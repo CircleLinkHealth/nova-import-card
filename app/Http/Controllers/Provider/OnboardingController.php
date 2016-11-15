@@ -32,7 +32,7 @@ class OnboardingController extends Controller
 
     public function getCreateProgramLeadUser()
     {
-        return view('provider.onboarding.create-program-lead');
+        return view('provider.onboarding.create-practice-lead');
     }
 
     public function getCreateLocations($numberOfLocations)
@@ -70,7 +70,7 @@ class OnboardingController extends Controller
                 ->withInput();
         }
 
-        $role = Role::whereName('program-lead')->first();
+        $role = Role::whereName('practice-lead')->first();
 
         $user->roles()
             ->attach($role->id);

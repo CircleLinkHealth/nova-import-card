@@ -23,10 +23,10 @@ class RolesPermissionsSeeder extends Seeder
 
         $roles = [
             [
-                'name' => 'program-lead',
+                'name'         => 'practice-lead',
                 'display_name' => 'Program Lead',
-                'description' => 'The provider that created the practice.',
-                'permissions' => [
+                'description'  => 'The provider that created the practice.',
+                'permissions'  => [
                     'practice-manage',
                     'observations-view',
                     'observations-create',

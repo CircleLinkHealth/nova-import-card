@@ -82,10 +82,10 @@ class OnboardingTest extends TestCase
         parent::setUp();
 
         $this->faker = Factory::create();
-        $this->createProgramLead();
+        $this->test_it_creates_practice_lead();
     }
 
-    public function createProgramLead()
+    public function test_it_creates_practice_lead()
     {
         $firstName = $this->faker->firstName;
         $lastName = $this->faker->lastName;
@@ -109,7 +109,7 @@ class OnboardingTest extends TestCase
 
         $this->assertTrue(Hash::check($password, $this->provider->password));
 
-        $this->assertTrue($this->provider->hasRole('program-lead'));
+        $this->assertTrue($this->provider->hasRole('practice-lead'));
     }
 
 }

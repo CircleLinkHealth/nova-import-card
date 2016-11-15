@@ -2,7 +2,7 @@
 
 @section('title', 'Create Program Lead')
 
-@section('instructions', "Let's start by creating an account manager? Page name is create-program-lead.")
+@section('instructions', "Let's start by creating an account manager? Page name is create-practice-lead.")
 
 @section('module')
 

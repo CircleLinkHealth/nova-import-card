@@ -27,7 +27,7 @@ class DashboardTest extends TestCase
 
     public function createPractice()
     {
-        $role = Role::whereName('program-lead')->first();
+        $role = Role::whereName('practice-lead')->first();
 
         $this->programLead = factory(App\User::class)
             ->create();
@@ -55,7 +55,7 @@ class DashboardTest extends TestCase
     {
         $inviteeEmail = $this->faker->email;
 
-        $role = Role::whereName('program-lead')->first();
+        $role = Role::whereName('practice-lead')->first();
 
         $subject = 'You are invited to join CPM';
         $message = 'Please create a CPM account.';

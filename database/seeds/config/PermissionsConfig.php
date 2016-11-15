@@ -93,7 +93,7 @@ class PermissionsConfig extends Seeder {
                     'query-api-for-patient-data'
                 )
             ),
-            'care-center' => array(
+            'care-center'   => array(
                 'display_name' => 'Care Center',
                 'description' => 'Care Center',
                 'permissions' => array(
@@ -113,7 +113,7 @@ class PermissionsConfig extends Seeder {
                     'users-view-self'
                 )
             ),
-            'participant' => array(
+            'participant'   => array(
                 'display_name' => 'Participant',
                 'description' => 'Participant',
                 'permissions' => array(
@@ -122,7 +122,7 @@ class PermissionsConfig extends Seeder {
                     'users-view-self'
                 )
             ),
-            'program-lead' => array(
+            'practice-lead' => array(
                 'display_name' => 'Program Lead',
                 'description' => 'The provider that created the practice.',
                 'permissions' => array(
@@ -133,7 +133,7 @@ class PermissionsConfig extends Seeder {
                     'users-view-self'
                 )
             ),
-            'provider' => array(
+            'provider'      => array(
                 'display_name' => 'Provider',
                 'description' => 'Provider',
                 'permissions' => array(
