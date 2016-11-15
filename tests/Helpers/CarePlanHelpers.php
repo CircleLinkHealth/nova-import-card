@@ -348,7 +348,7 @@ trait CarePlanHelpers
     public function createNewPatient()
     {
         $this->actingAs($this->provider)
-            ->visit('/manage-patients/dashboard')
+            ->visit(route('patients.dashboard'))
             ->see('Add a Patient')
             ->click('add-patient')
             ->seePageIs('/manage-patients/careplan/demographics');
@@ -388,7 +388,6 @@ trait CarePlanHelpers
         $ccmStatus = 'enrolled';
 
         $this
-            ->actingAs($this->provider)
             ->type($firstName, 'first_name')
             ->type($lastName, 'last_name')
             ->select($gender, 'gender')
