@@ -30,7 +30,7 @@ class TimeTrackingTest extends SeleniumTestCase
      *
      * @return void
      */
-    public function testPopupShowsUpAfterIdle()
+    public function test_it_counts_ccm_time_with_less_than_10_percent_inaccuracy_only_one_tab()
     {
         $initialCcmTime = $this->patient->ccmTime;
 
