@@ -49,7 +49,11 @@
             @include('provider.partials.mdl.form.text.textfield', [ 'name' => "locations[$i][phone]", 'label' => 'Phone ', 'class' =>'mdl-cell--6-col'])
         </div>
 
-        <input type="hidden" name="practice_id" value="{{$practiceId}}">
+        <div class="mdl-cell mdl-cell--12-col">
+            {!! Form::select("locations[$i][timezone]", timezones(), 'America/New_York', ['class' => 'form-control selectpicker', 'style' => 'width:50%;']) !!}
+        </div>
+
+        <input type="hidden" name="locations[{{$i}}][practice_id]" value="{{$practiceId}}">
 
     @endfor
 

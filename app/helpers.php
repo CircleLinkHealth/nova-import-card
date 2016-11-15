@@ -240,7 +240,7 @@ if (!function_exists('windowToTimestamps')) {
 
         return [
             'window_start' => $startDate,
-            'window_end' => $endDate
+            'window_end'   => $endDate,
         ];
     }
 }
@@ -254,7 +254,10 @@ if (!function_exists('dateAndTimeToCarbon')) {
      *
      * @return Carbon window
      */
-    function dateAndTimeToCarbon($date, $time) {
+    function dateAndTimeToCarbon(
+        $date,
+        $time
+    ) {
 
         $carbon_date = Carbon::parse($date);
 
@@ -288,3 +291,29 @@ if (!function_exists('secondsToHMS')) {
         return sprintf("%02d$delimiter%02d$delimiter%02d", $H2, $m2, $s2);
     }
 }
+
+
+if (!function_exists('timezones')) {
+    /**
+     * Get the timezones we support.
+     *
+     * @return array|string
+     * @internal param $totalTimeInSeconds
+     * @internal param string $delimiter
+     */
+    function timezones() : array
+    {
+        return [
+            'America/New_York'    => 'Eastern Time',
+            'America/Chicago'     => 'Central Time',
+            'America/Denver'      => 'Mountain Time',
+            'America/Phoenix'     => 'Mountain Time (no DST)',
+            'America/Los_Angeles' => 'Pacific Time',
+            'America/Anchorage'   => 'Alaska Time',
+            'America/Adak'        => 'Hawaii-Aleutian',
+            'Pacific/Honolulu'    => 'Hawaii-Aleutian Time (no DST)',
+        ];
+    }
+}
+
+

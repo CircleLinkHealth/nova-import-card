@@ -13,9 +13,24 @@ use Prettus\Validator\Exceptions\ValidatorException;
 
 class OnboardingController extends Controller
 {
+    /**
+     * @var InviteRepository
+     */
     protected $invites;
+
+    /**
+     * @var LocationRepository
+     */
     protected $locations;
+
+    /**
+     * @var PracticeRepository
+     */
     protected $practices;
+
+    /**
+     * @var UserRepository
+     */
     protected $users;
 
     /**
@@ -74,9 +89,25 @@ class OnboardingController extends Controller
         return view('provider.onboarding.create-practice');
     }
 
+    /**
+     * Store locations.
+     *
+     * @param Request $request
+     */
     public function postStoreLocations(Request $request)
     {
+        try {
+            foreach ($request->input('locations') as $newLocation) {
+                $locations = $this->locations->create($newLocation);
+            }
+        } catch (ValidatorException $e) {
+            return redirect()
+                ->back()
+                ->withErrors($e->getMessageBag()->getMessages())
+                ->withInput();
+        }
 
+        return redirect()->back();
     }
 
     /**
