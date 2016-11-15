@@ -18,6 +18,14 @@ class OnboardingController extends Controller
     protected $practices;
     protected $users;
 
+    /**
+     * OnboardingController constructor.
+     *
+     * @param InviteRepository $inviteRepository
+     * @param LocationRepository $locationRepository
+     * @param PracticeRepository $practiceRepository
+     * @param UserRepository $userRepository
+     */
     public function __construct(
         InviteRepository $inviteRepository,
         LocationRepository $locationRepository,
@@ -30,11 +38,23 @@ class OnboardingController extends Controller
         $this->users = $userRepository;
     }
 
-    public function getCreateProgramLeadUser()
+    /**
+     * Show the form to create practice lead user.
+     *
+     * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
+     */
+    public function getCreatePracticeLeadUser()
     {
         return view('provider.onboarding.create-practice-lead');
     }
 
+    /**
+     * Show the form to create Locations
+     *
+     * @param $numberOfLocations
+     *
+     * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
+     */
     public function getCreateLocations($numberOfLocations)
     {
         $nnumberOfLocations = $numberOfLocations ?? 1;
@@ -42,6 +62,11 @@ class OnboardingController extends Controller
         return view('provider.onboarding.create-locations', compact('numberOfLocations'));
     }
 
+    /**
+     * Show the form to create a practice
+     *
+     * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
+     */
     public function getCreatePractice()
     {
         return view('provider.onboarding.create-practice');
@@ -49,10 +74,17 @@ class OnboardingController extends Controller
 
     public function postStoreLocations(Request $request)
     {
-        dd($request->input());
+        return 'created';
     }
 
-    public function postStoreProgramLeadUser(Request $request)
+    /**
+     * Store Practice Lead User
+     *
+     * @param Request $request
+     *
+     * @return \Illuminate\Http\RedirectResponse
+     */
+    public function postStorePracticeLeadUser(Request $request)
     {
         $input = $request->input();
 
@@ -80,6 +112,13 @@ class OnboardingController extends Controller
         return redirect()->route('get.onboarding.create.practice');
     }
 
+    /**
+     * Store a Practice.
+     *
+     * @param Request $request
+     *
+     * @return $this|\Illuminate\Http\RedirectResponse
+     */
     public function postStorePractice(Request $request)
     {
         $input = $request->input();

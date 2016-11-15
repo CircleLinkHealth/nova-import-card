@@ -1206,7 +1206,7 @@ Route::group([
     ]);
 
     Route::post('store-practice-lead-user', [
-        'uses' => 'Provider\OnboardingController@postStoreProgramLeadUser',
+        'uses' => 'Provider\OnboardingController@postStorePracticeLeadUser',
         'as'   => 'post.onboarding.store.program.lead.user',
     ]);
 
@@ -1221,7 +1221,7 @@ Route::group([
     ]);
 
     Route::get('create-practice-lead-user', [
-        'uses' => 'Provider\OnboardingController@getCreateProgramLeadUser',
+        'uses' => 'Provider\OnboardingController@getCreatePracticeLeadUser',
         'as'   => 'get.onboarding.create.program.lead.user',
     ]);
 });

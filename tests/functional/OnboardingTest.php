@@ -25,17 +25,9 @@ class OnboardingTest extends TestCase
             ->see('password');
     }
 
-    public function test_it_creates_a_practice()
-    {
-        $this->createPractice();
-//        $this->createLocations($this->numberOfLocations);
-    }
-
-    public function createPractice()
+    public function test_it_stores_a_practice()
     {
         $name = $this->faker->company;
-        $description = $this->faker->text();
-        $this->numberOfLocations = $this->faker->numberBetween(1, 15);
 
         $this->actingAs($this->provider)
             ->visit(route('get.onboarding.create.practice'))
@@ -50,15 +42,15 @@ class OnboardingTest extends TestCase
         ]);
     }
 
-    public function createLocations($number)
+    public function test_it_stores_locations()
     {
         $this->actingAs($this->provider)
             ->visit(route('get.onboarding.create.locations', [
-                'numberOflocations' => $number,
+                'numberOfLocations' => $this->numberOfLocations,
             ]));
 
 
-        for ($i = 0; $i <= $number; $i++) {
+        for ($i = 1; $i <= $this->numberOfLocations; $i++) {
             $name = $this->faker->streetAddress;
             $addrLine2 = 'PO BOX: 500';
             $city = $this->faker->city;
@@ -82,10 +74,11 @@ class OnboardingTest extends TestCase
         parent::setUp();
 
         $this->faker = Factory::create();
-        $this->test_it_creates_practice_lead();
+        $this->it_creates_practice_lead();
+        $this->numberOfLocations = $this->faker->numberBetween(1, 3);
     }
 
-    public function test_it_creates_practice_lead()
+    public function it_creates_practice_lead()
     {
         $firstName = $this->faker->firstName;
         $lastName = $this->faker->lastName;
