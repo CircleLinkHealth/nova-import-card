@@ -99,7 +99,8 @@ class SuccessfulHandler implements CallHandler
                 if ($once_monthly) {
 
                     $this->logic = 'Add a month, 1x preference override';
-                    $this->nextCallDate->addMonth(1);
+                    //handle all cases with 28 days, prevent jump on 31st to next+1 month
+                    $this->nextCallDate->day(28);
 
                 } else {
 

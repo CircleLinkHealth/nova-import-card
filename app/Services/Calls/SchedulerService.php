@@ -136,6 +136,7 @@ class SchedulerService
             'inbound_phone_number'  => $patient->phone
                 ? $patient->phone
                 : '',
+            
             'outbound_phone_number' => '',
 
             'inbound_cpm_id'  => $patient->id,

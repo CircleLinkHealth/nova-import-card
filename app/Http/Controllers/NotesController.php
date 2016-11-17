@@ -56,11 +56,10 @@ class NotesController extends Controller
 
         $input = $request->all();
 
-
         $session_user = auth()->user();
 
-        $providers_for_blog = User::whereIn('id', $session_user->viewableProviderIds())->pluck('display_name',
-            'id')->sort();
+        $providers_for_blog = User::whereIn('id', $session_user->viewableProviderIds())
+            ->pluck('display_name', 'id')->sort();
         
         //TIME FILTERS
 
@@ -118,7 +117,7 @@ class NotesController extends Controller
                 'admin_filter'  => $admin_filter,
             ];
 
-        } else if (auth()->user()->hasRole('administrator') && $admin_filter) {
+        } else if ((auth()->user()->hasRole('administrator') || auth()->user()->hasRole('care-center')) && $admin_filter) {
 
             //If an admin is viewing this, we show them all
             //notes from all providers who are in the
