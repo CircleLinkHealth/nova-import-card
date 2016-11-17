@@ -9,6 +9,7 @@ use App\CLH\Repositories\CCDImporterRepository;
 use App\Models\CCD\Ccda;
 use App\Models\CCD\CcdVendor;
 use App\Models\CCD\QAImportSummary;
+use App\User;
 use Illuminate\Http\Request;
 
 class CCDImportController extends Controller
@@ -42,7 +43,28 @@ class CCDImportController extends Controller
                 $strategies = empty($ccda->vendor_id)
                     ?: CcdVendor::find($ccda->vendor_id)->routine()->first()->strategies()->get();
 
-                $user = $this->repo->createRandomUser($demographics);
+                if ($ccda->qaSummary->duplicate_id) {
+                    $user = User::find($ccda->qaSummary->duplicate_id);
+
+                    $user->ccdAllergies()->delete();
+                    $user->ccdInsurancePolicies()->delete();
+                    $user->ccdMedications()->delete();
+                    $user->ccdProblems()->delete();
+                    $user->patientCareTeamMembers()->delete();
+                    $user->cpmBloodPressure()->delete();
+                    $user->cpmBloodSugar()->delete();
+                    $user->cpmSmoking()->delete();
+                    $user->cpmWeight()->delete();
+
+                    $user->cpmProblems()->detach();
+                    $user->cpmBiometrics()->detach();
+                    $user->cpmLifestyles()->detach();
+                    $user->cpmMedicationGroups()->detach();
+                    $user->cpmMiscs()->detach();
+                    $user->cpmSymptoms()->detach();
+                } else {
+                    $user = $this->repo->createRandomUser($demographics);
+                }
 
                 $importer = new ImportManager($allergies->all(), $demographics, $medications->all(), $problems->all(), $strategies->all(), $user, $ccda);
                 $importer->import();

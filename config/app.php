@@ -200,7 +200,10 @@ return [
         App\Providers\AWSWorkerServiceProvider::class,
         Spatie\GoogleCalendar\GoogleCalendarServiceProvider::class,
         ObserversServiceProvider::class,
-        //        DraperStudio\ChartJS\ServiceProvider::class
+        //        DraperStudio\ChartJS\ServiceProvider::class,
+        Modelizer\Selenium\SeleniumServiceProvider::class,
+        Way\Generators\GeneratorsServiceProvider::class,
+        Xethron\MigrationsGenerator\MigrationsGeneratorServiceProvider::class,
 
 
     ],

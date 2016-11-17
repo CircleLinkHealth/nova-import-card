@@ -5,6 +5,12 @@
 @section('content')
 
     <?php
+
+     //Admins and Nurses have a complex role system which is regulated on the front end to minimize dev-time.
+     //Both of them will see all notes ever that were forwarded if they check the "All Forwa..." checkmark.
+     //Other users cannot see this. The regulation happens partly in NotesController@lisiting, which supplies
+     //this view.
+
     if (isset($results)) {
         $webix = "data:" . json_encode(array_values($results)) . "";
     }
@@ -23,11 +29,15 @@
                         @if(isset($only_mailed_notes) && $only_mailed_notes == true)
                             {{'checked'}}
                                 @endif>
-                        <label for="mail_filter"><span> </span>Only Forwarded Notes <br />
-                            @if(auth()->user()->ofType('administrator'))
-                                (* admins see all notes from provider's program)
-                            @endif
-                        </label>
+                        <label for="mail_filter"><span> </span>Only Forwarded Notes <br /></label>
+                    </li>
+                    <li class=""><input type="checkbox" id="admin_filter" name="admin_filter" value="true"
+                        @if(isset($admin_filter) && $admin_filter == true)
+                            {{'checked'}}
+                                @endif>
+                        @if(auth()->user()->hasRole('administrator') || auth()->user()->hasRole('care-center') )
+                            <label for="admin_filter"><span> </span>All Forwarded Notes for All Programs<br /></label>
+                        @endif
                     </li>
                 </ul>
                 <div class="form-group  pull-right" style="margin-top:10px; ">
@@ -37,8 +47,11 @@
 
                     <label for="provider" class="sr-only">Select Month:</label>
 
-                    <select name="provider" id="provider" class="selectpicker" data-width="200px" required="required"
-                            data-size="10" style="display: none;">
+                    <select name="provider" id="provider" class="selectpicker" data-width="200px"
+                            data-size="10" style="display: none;"@if(auth()->user()->hasRole('administrator') == false  &&
+                                                          auth()->user()->hasRole('care-center') == false)
+                            required
+                            @endif>
                         <option value="">Select Provider</option>
                         @foreach($providers_for_blog as $key => $value)
                             @if(isset($selected_provider) && $selected_provider->id == $key)
@@ -228,6 +241,14 @@
                                         </div>
                                         Forwarded To Provider
                                     </li>
+
+                                    <li>
+                                        <div class="label label-success" style="margin-right: 4px; text-align: right;">
+                                            <span class="glyphicon glyphicon-eye-open"></span>
+                                        </div>
+                                        Forward Seen By Provider
+                                    </li>
+
                                 </div>
 
                                 <div class="col-sm-6">
@@ -283,10 +304,6 @@
                     <div style="text-align:center;margin:50px;"><strong>Please select a Provider to view patient's
                             notes.</strong></div>
                 @endif
-                <div id="rohstar" style="color: #00ACC1">
-
-                    {{--                    {!! $results->render()  !!}--}}
-                </div>
             </div>
         </div>
 @stop

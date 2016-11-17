@@ -2,6 +2,7 @@
 
 use App\CLH\CCD\ImportedItems\DemographicsImport;
 use App\Contracts\Serviceable;
+use App\Models\CCD\Ccda;
 use App\Models\CCD\CcdAllergy;
 use App\Models\CCD\CcdInsurancePolicy;
 use App\Models\CCD\CcdMedication;
@@ -335,11 +336,6 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
         return $this->hasOne('App\ProviderInfo', 'user_id', 'id');
     }
 
-    public function patientInfo()
-    {
-        return $this->hasOne(PatientInfo::class, 'user_id', 'id');
-    }
-
     public function nurseInfo()
     {
         return $this->hasOne(NurseInfo::class, 'user_id', 'id');
@@ -374,7 +370,7 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
     {
         return $this->hasMany(Message::class, 'sender_cpm_id', 'id');
     }
-    
+
     /**
      * @return array
      */
@@ -433,9 +429,6 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
         return $patientIds;
     }
 
-
-    // END RELATIONSHIPS
-
     public function userMeta($key = null)
     {
         $userMeta = $this->meta->pluck('meta_value', 'meta_key')->all();
@@ -446,6 +439,9 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
             return $userMeta;
         }
     }
+
+
+    // END RELATIONSHIPS
 
     public function userConfig()
     {
@@ -1688,9 +1684,6 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
         return $this->belongsTo(Practice::class, 'program_id', 'id');
     }
 
-
-// MISC, these should be removed eventually
-
     public function scramble()
     {
         $faker = Factory::create();
@@ -1724,6 +1717,9 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
         $user->save();
 
     }
+
+
+// MISC, these should be removed eventually
 
     public function createNewUser(
         $email,
@@ -1778,12 +1774,12 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
         return $this->hasMany('App\CPRulesUCP', 'user_id', 'id');
     }
 
-// user data scrambler
-
     public function service()
     {
         return new UserService();
     }
+
+// user data scrambler
 
     public function emailSettings()
     {
@@ -1986,7 +1982,6 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
         return $leadContact->user ?? new User();
     }
 
-
     public function scopeWithCareTeamOfType(
         $query,
         $type
@@ -2002,7 +1997,6 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
         ]);
     }
 
-
     /**
      * Send the password reset notification.
      *
@@ -2013,5 +2007,20 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
     public function sendPasswordResetNotification($token)
     {
         $this->notify(new ResetPassword($token));
+    }
+
+    public function ccdas()
+    {
+        return $this->hasMany(Ccda::class, 'patient_id', 'id');
+    }
+
+    public function getCcmTimeAttribute()
+    {
+        return $this->patientInfo()->firstOrNew([])->cur_month_activity_time;
+    }
+
+    public function patientInfo()
+    {
+        return $this->hasOne(PatientInfo::class, 'user_id', 'id');
     }
 }

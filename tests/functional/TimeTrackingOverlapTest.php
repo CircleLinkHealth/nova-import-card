@@ -3,12 +3,15 @@
 
 use Carbon\Carbon;
 use Illuminate\Support\Collection;
-use Tests\Helpers\HandlesUsersAndCarePlans;
+use Tests\Helpers\CarePlanHelpers;
 use Tests\Helpers\TimeTrackingHelpers;
+use Tests\Helpers\UserHelpers;
 
 class TimeTrackingOverlapTest extends TestCase
 {
-    use HandlesUsersAndCarePlans, TimeTrackingHelpers;
+    use CarePlanHelpers,
+        UserHelpers,
+        TimeTrackingHelpers;
 
     protected $programId;
     protected $provider;

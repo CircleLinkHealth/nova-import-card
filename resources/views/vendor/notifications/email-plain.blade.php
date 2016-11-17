@@ -19,4 +19,4 @@ if (! empty($outroLines)) {
 }
 
 echo 'Regards,', "\n";
-echo config('app.name'), "\n";
+echo "CircleLink Team", "\n";

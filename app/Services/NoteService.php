@@ -6,11 +6,13 @@ use App\Call;
 use App\Events\NoteWasForwarded;
 use App\MailLog;
 use App\Note;
+use App\Notifications\NewNote;
+use App\PatientInfo;
 use App\Practice;
 use App\User;
 use Carbon\Carbon;
+use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\URL;
-use App\Notifications\NewNote;
 
 
 class NoteService
@@ -104,9 +106,9 @@ class NoteService
             }
 
             if ($newNoteFlag) {
-                $body = 'Please see new note for patient';
+                $body = 'Please see note for one of your patients';
             } else {
-                $body = 'Please see forwarded note for patient, created on ' . $performed_at . ' by ' . $sender->fullName;
+                $body = 'Please see forwarded note for one of your patients, created on ' . $performed_at . ' by ' . $sender->fullName;
             }
 
             $message = MailLog::create([
@@ -121,10 +123,7 @@ class NoteService
                 'note_id'         => $note->id,
             ]);
 
-            //temp for live testing
-            $user = \App\User::find(1752);
-
-            $user->notify(new NewNote($message, $url));
+            $receiver->notify(new NewNote($message, $url));
 
         }
 
@@ -255,10 +254,59 @@ class NoteService
 
     }
 
-    public function getAllForwardedNotesForPracticeWithRange(Practice $practice, Carbon $start, Carbon $end){
+    public function wasSentToProvider(Note $note)
+    {
+
+        $mails = $note->mail;
+
+        if (count($mails) < 1) {
+            return false;
+        }
+
+        foreach ($mails as $mail) {
+
+            $mail_recipient = User::find($mail->receiver_cpm_id);
+
+            if ($mail_recipient->hasRole('provider')) {
+
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    public function wasReadByBillingProvider(Note $note)
+    {
+
+        $mails = $note->mail;
+
+        if (count($mails) < 1) {
+            return false;
+        }
+
+        foreach ($mails as $mail) {
+
+            $mail_recipient = User::find($mail->receiver_cpm_id);
+            $patient = User::find($note->patient_id);
+
+            if ($mail_recipient->id == $patient->billingProvider()->id && $mail->seen_on != null) {
+
+                return true;
+
+            }
+        }
+
+        return false;
+    }
+
+    //MAIL HELPERS
+
+    //send notes when stored
+
+    public function getAllForwardedNotesWithRange(Carbon $start, Carbon $end){
 
         $patients = User::ofType('participant')
-            ->where('program_id', $practice->id)
             ->get()
             ->pluck('id');
 
@@ -285,33 +333,50 @@ class NoteService
 
     }
 
-    //MAIL HELPERS
+    //note sender
 
-    //send notes when stored
+    public function updateMailLogsForNote($viewer, Note $note){
 
-    public function wasSentToProvider(Note $note)
-    {
+        $mail = MailLog::where('note_id', $note->id)
+            ->where('receiver_cpm_id', $viewer)->first();
 
-        $mails = $note->mail;
+        if(is_object($mail)){
 
-        if (count($mails) < 1) {
-            return false;
+            $mail->seen_on = Carbon::now()->toDateTimeString();
+            $mail->save();
+
         }
 
-        foreach ($mails as $mail) {
+    }
 
-            $mail_recipient = User::find($mail->receiver_cpm_id);
+    public function getSeenForwards(Note $note){
 
-            if ($mail_recipient->hasRole('provider')) {
+        $mails = MailLog::where('note_id', $note->id)
+            ->whereNotNull('seen_on')->get();
 
-                return true;
-            }
+        $data = [];
+
+        foreach ($mails as $mail){
+
+            $name = User::find($mail->receiver_cpm_id)->fullName;
+            $data[$name] = $mail->seen_on;
+
+        }
+
+        if(count($data) > 0){
+            return $data;
         }
 
         return false;
+
     }
 
-    //note sender
+    public function forwardedNoteWasSeenByPrimaryProvider(Note $note, PatientInfo $patient){
+
+        $mail = MailLog::where('note_id', $note->id)
+            ->where('receiver_cpm_id', $patient->billingProvider()->id)->first();
+
+    }
 
     public function storeCallForNote(
         $note,

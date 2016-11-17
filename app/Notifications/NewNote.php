@@ -5,9 +5,8 @@ namespace App\Notifications;
 use App\MailLog;
 use App\Message;
 use Illuminate\Bus\Queueable;
-use Illuminate\Notifications\Notification;
-use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Messages\MailMessage;
+use Illuminate\Notifications\Notification;
 
 class NewNote extends Notification
 {
@@ -21,8 +20,10 @@ class NewNote extends Notification
      *
      * @param Message $cpmMessage
      */
-    public function __construct(MailLog $cpmMessage, $noteUrl)
-    {
+    public function __construct(
+        MailLog $cpmMessage,
+        $noteUrl
+    ) {
         $this->message = $cpmMessage;
         $this->url = $noteUrl;
     }
@@ -30,7 +31,8 @@ class NewNote extends Notification
     /**
      * Get the notification's delivery channels.
      *
-     * @param  mixed  $notifiable
+     * @param  mixed $notifiable
+     *
      * @return array
      */
     public function via($notifiable)
@@ -41,15 +43,16 @@ class NewNote extends Notification
     /**
      * Get the mail representation of the notification.
      *
-     * @param  mixed  $notifiable
+     * @param  mixed $notifiable
+     *
      * @return \Illuminate\Notifications\Messages\MailMessage
      */
     public function toMail($notifiable)
     {
-         return (new MailMessage)
+        return (new MailMessage)
             ->greeting($this->message->body)
             ->subject($this->message->subject)
-             ->cc('raph@circlelinkhealth.com')
+            ->cc('raph@circlelinkhealth.com')
             ->line('Click Below to see Note')
             ->action('View Note', $this->url);
     }
@@ -57,7 +60,8 @@ class NewNote extends Notification
     /**
      * Get the array representation of the notification.
      *
-     * @param  mixed  $notifiable
+     * @param  mixed $notifiable
+     *
      * @return array
      */
     public function toArray($notifiable)

@@ -27,12 +27,13 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot()
     {
-        // app config
-        $appConfigs = AppConfig::all();
-        $adminStylesheet = $appConfigs->where('config_key', 'admin_stylesheet')->first();
-        view()->share('app_config_admin_stylesheet', 'admin-bootswatch-default.css');
-        if($adminStylesheet) {
-            view()->share('app_config_admin_stylesheet', $adminStylesheet->config_value);
+        if (\Schema::hasTable((new AppConfig)->getTable())) {
+            $appConfigs = AppConfig::all();
+            $adminStylesheet = $appConfigs->where('config_key', 'admin_stylesheet')->first();
+            view()->share('app_config_admin_stylesheet', 'admin-bootswatch-default.css');
+            if ($adminStylesheet) {
+                view()->share('app_config_admin_stylesheet', $adminStylesheet->config_value);
+            }
         }
     }
 
@@ -92,8 +93,8 @@ class AppServiceProvider extends ServiceProvider
             WebixFormatter::class
         );
 
-        if ( $this->app->environment( 'local' ) ) {
-            $this->app->register( 'Orangehill\Iseed\IseedServiceProvider' );
+        if ($this->app->environment('local')) {
+            $this->app->register('Orangehill\Iseed\IseedServiceProvider');
         }
     }
 
