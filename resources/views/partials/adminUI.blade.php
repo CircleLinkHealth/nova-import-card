@@ -151,7 +151,7 @@
                                 </a>
                                 <ul class="dropdown-menu" role="menu">
                                     <li><a href="{{ URL::route('get.admin.nurse.schedules') }}">Nurse Schedules</a>
-                                    <li><a href="{{ URL::route('stats.nurse.info') }}">Nurse Statistics</a>
+{{--                                    <li><a href="{{ URL::route('stats.nurse.info') }}">Nurse Statistics</a>--}}
                                     <li><a href="{{ URL::route('admin.reports.nurseTime.index', array()) }}">Nurse Time</a></li>
                                     <li><a href="{{ URL::route('admin.reports.nurse.daily', array()) }}">Daily Nurse Report</a></li>
                                     <li><a href="{{ URL::route('admin.reports.nurse.invoice', array()) }}">Nurse Invoices</a> </li>
