@@ -5,6 +5,7 @@
 
 
 @section('content')
+    <script src="{{ asset('/js/patientsearch.js') }}"></script>
     <div class="container container--menu">
         <div class="row row-centered">
             <div class="col-sm-12">
