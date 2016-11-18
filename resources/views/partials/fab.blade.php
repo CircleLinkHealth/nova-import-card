@@ -34,6 +34,6 @@
     </div>
     <div class="FAB__action-button">
         <i class="action-button__icon material-icons">add</i>
-        <p class="action-button__text--hide">Add Patient Records</p>
+        {{--<p class="action-button__text--hide"></p>--}}
     </div>
 </section>
