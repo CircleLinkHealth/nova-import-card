@@ -27,20 +27,6 @@
                         <a href="{{ empty($patient->id) ? URL::route('patients.search') : URL::route('patient.reports.progress', array('patient' => $patient->id)) }}">Progress
                             Report</a>
                     </li>
-                    <li>
-                        <a href="{{ URL::route('patient.note.listing') }}">Notes Report</a>
-                    </li>
-
-                    <li>
-                        <a href="{{URL::route('patient.reports.u20')}}">Under 20 Minute Report</a>
-                    </li>
-                    <li>
-                        <a href="{{URL::route('patient.reports.billing')}}">Patient Billing Report</a>
-                    </li>
-                    <li>
-                        <a href="{{ URL::route('patients.careplan.printlist', array()) }}">Patient Care Plan Print
-                            List</a>
-                    </li>
                 </ul>
             </li>
 
