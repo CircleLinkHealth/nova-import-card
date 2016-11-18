@@ -3,27 +3,13 @@
 if (app()->environment() != 'production') {
 
 
-    Route::get('rohan', function () {
-
-        $request = new \Illuminate\Http\Request();
-
-        return (new \App\Http\Controllers\NurseController($request))->dailyReport();
-
-//        $day = Carbon\Carbon::parse('2016-10-23');
+//    Route::get('rohan', function () {
 //
-//        return (new \App\Algorithms\Calls\SuccessfulHandler(App\PatientInfo::find(1272), $day))
-//            ->getPatientOffset(1500, $day->dayOfWeek);
+//    //        canCareforPatient
+//        $nurse = \App\NurseInfo::find(25);
+//        $nurse->
 
-//        return (new \App\PatientContactWindow())
-//            ->getEarliestWindowForPatientFromDate(\App\PatientInfo::find(3198),
-//            \Carbon\Carbon::today());
-
-//        $result = Practice::find(21)->enrollmentByProgram(Carbon\Carbon::parse('2016-09-01 00:00:00'),
-//            Carbon\Carbon::parse('2016-09-30 23:59:59'));
-//
-//        return ['thing' => $result];
-
-    });
+//    });
 }
 
 //Algo test routes.
@@ -339,6 +325,28 @@ Route::group(['middleware' => 'auth'], function () {
                 'uses' => 'Patient\PatientCareplanController@storePatientCareplan',
                 'as'   => 'patient.careplan.store',
             ]);
+        });
+
+
+        // appointments
+        Route::group(['prefix' => 'appointments'], function () {
+            Route::get('create', [
+                'uses' => 'AppointmentsController@create',
+                'as'   => 'patient.appointment.create',
+            ]);
+            Route::post('store', [
+                'uses' => 'AppointmentsController@store',
+                'as'   => 'patient.appointment.store',
+            ]);
+            Route::get('', [
+                'uses' => 'AppointmentsController@index',
+                'as'   => 'patient.appointment.index',
+            ]);
+            Route::get('view/{appointmentId}', [
+                'uses' => 'AppointmentsController@show',
+                'as'   => 'patient.appointment.view',
+            ]);
+            
         });
 
         // notes
