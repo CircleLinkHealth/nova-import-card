@@ -12,8 +12,8 @@
             <ul class="nav navbar-nav">
                 {{--URL::route('patients.dashboard', array())--}}
                 <li><a href="{{ URL::route('patients.dashboard') }}"><i class="icon--home--white"></i> Home</a></li>
-                <li><a href="{{ URL::route('patients.search') }}"><i class="icon--search--white"></i> Search Patient</a>
-                </li>
+                {{--<li><a href="{{ URL::route('patients.search') }}"><i class="icon--search--white"></i> Search Patient</a>--}}
+                {{--</li>--}}
                 <li><a href="{{ URL::route('patients.listing') }}"><i class="icon--patients"></i> Patient List</a>
                 </li>
                 <li><a href="{{ URL::route('patients.demographics.show') }}"><i class="icon--add-user"></i> Add
