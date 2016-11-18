@@ -331,22 +331,22 @@ Route::group(['middleware' => 'auth'], function () {
         // appointments
         Route::group(['prefix' => 'appointments'], function () {
             Route::get('create', [
-                'uses' => 'AppointmentsController@create',
+                'uses' => 'AppointmentController@create',
                 'as'   => 'patient.appointment.create',
             ]);
             Route::post('store', [
-                'uses' => 'AppointmentsController@store',
+                'uses' => 'AppointmentController@store',
                 'as'   => 'patient.appointment.store',
             ]);
             Route::get('', [
-                'uses' => 'AppointmentsController@index',
+                'uses' => 'AppointmentController@index',
                 'as'   => 'patient.appointment.index',
             ]);
             Route::get('view/{appointmentId}', [
-                'uses' => 'AppointmentsController@show',
+                'uses' => 'AppointmentController@show',
                 'as'   => 'patient.appointment.view',
             ]);
-            
+
         });
 
         // notes
