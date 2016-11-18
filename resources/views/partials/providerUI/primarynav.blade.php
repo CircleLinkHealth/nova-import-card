@@ -14,10 +14,6 @@
                 <li><a href="{{ URL::route('patients.dashboard') }}"><i class="icon--home--white"></i> Home</a></li>
                 <li><a href="{{ URL::route('patients.search') }}"><i class="icon--search--white"></i> Search Patient</a>
                 </li>
-                <li><a href="{{ URL::route('patient.note.listing') }}"><span class="glyphicon glyphicon-envelope"
-                                                                             aria-hidden="true"
-                                                                             style="height: 16px; width: 22px; font-size: 17px; top: 4px"></span>Notes
-                        Report</a></li>
                 <li><a href="{{ URL::route('patients.listing') }}"><i class="icon--patients"></i> Patient List</a>
                 </li>
                 <li><a href="{{ URL::route('patients.demographics.show') }}"><i class="icon--add-user"></i> Add
@@ -27,7 +23,7 @@
                     <div class="dropdown-toggle" data-toggle="dropdown" role="button"
                          aria-expanded="false"
                          style="background: none !important;padding: 15px;line-height: 20px;cursor: pointer;">
-                        <i class="glyphicon glyphicon-option-vertical"></i>
+                        <i class="glyphicon glyphicon-list-alt"></i>
                         Reports
                         <span class="caret" style="color: #fff"></span>
                     </div>
@@ -56,8 +52,8 @@
                     <div class="dropdown-toggle" data-toggle="dropdown" role="button"
                          aria-expanded="false"
                          style="background: none !important;padding: 15px;line-height: 20px;cursor: pointer;">
-                        <i class="glyphicon glyphicon-option-vertical"></i>
-                        Settings
+                        <i class="glyphicon glyphicon glyphicon-cog"></i>
+                        {{auth()->user()->fullName}}
                         <span class="caret" style="color: #fff"></span>
                     </div>
                     <ul class="dropdown-menu" role="menu" style="background: white !important;">
