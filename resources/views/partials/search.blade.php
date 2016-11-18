@@ -92,5 +92,5 @@
         <label for="patients"></label>
         <div id="bloodhound">
             <input class="typeahead form-item-spacing form-control" size="50" type="text" name="users"
-                   autofocus="autofocus" placeholder="Please enter an MRN, a Patient Name or a Patient's Date of Birth (mm-dd-yyyy)">
+                   autofocus="autofocus" placeholder="Please enter a Patient Name, an MRN or a Date of Birth (mm-dd-yyyy)">
         </div>
