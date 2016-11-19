@@ -64,7 +64,7 @@
                     @endif
                     @if( auth()->user()->can(['ccd-import']) )
                     <li class="menu-item">
-                        <a id="patient-list" href="{{ URL::route('patientCallList.index', array()) }}">
+                        <a id="patient-list" href="{{ route('import.ccd') }}">
                             <div class="icon-container column-centered">
                                 <i class="icon--menu" aria-hidden="true">
                                     <img src="/img/icon--download.png"

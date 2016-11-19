@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\User;
 use Illuminate\Http\Request;
 
 class AppointmentController extends Controller
@@ -13,14 +14,18 @@ class AppointmentController extends Controller
 
     }
     
-    public function create(){
+    public function create(Request $request, $patientId){
+
+        $patient = User::find($patientId);
 
         $data = [
+
+            'patient' => $patient,
 
         ];
 
 
-        return view('patient.appointment.create', $data);
+        return view('wpUsers.patient.appointment.create', $data);
         
     }
 
