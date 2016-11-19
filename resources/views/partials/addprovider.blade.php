@@ -25,7 +25,7 @@
                 <h4 class="modal-title">Please Add Provider Details</h4>
             </div>
             <div class="modal-body">
-                <form id="create" name="create"
+                <form id="form" name="create" method="post"
                       action="{{URL::route('provider.store', array('patientId' => $patient->id))}}">
                     <div class="row providerForm">
                         <div class="form-group">
@@ -111,28 +111,30 @@
                     </div>
                 </form>
             </div>
+
+            <input type="hidden" name="created_by" value="{{auth()->user()->id}}">
+
             <div class="row">
                 <div class="modal-footer">
-                    <button type="submit" id="create" class="btn btn-primary">Add</button>
+                    <button type="submit" class="create" id="create" class="btn btn-primary">Add</button>
                 </div>
             </div>
             <div class="row">
                 <span class="result"></span>
             </div>
         </div>
-
+        </form>
 
     </div>
-</div>
-</div>
 </div>
 
 
 <script>
 
-    $("#create").submit(function (e) {
-
+    $("#create").on('click',function () {
         var url = '{!! route('provider.store') !!}'; // the script where you handle the form input.
+
+        var frm = $('#contactForm1');
 
         $.ajax({
             type: "POST",
@@ -141,18 +143,18 @@
                 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
             },
             data: {
+                phone: $('#phone').val(),
                 name: $('#name').val(),
-                address: $('#address').val(),
-                type: $('#type').val(),
                 practice: $('#practice').val(),
+                type: $('#type').val(),
+                email: $('#email').val(),
             },
             success: function (data) {
                 console.log(data); // show response from the php script.
                 $('#result').text(data);
             }
         });
-
-        e.preventDefault(); // avoid to execute the actual submit of the form.
+        return false;
     });
 
 </script>

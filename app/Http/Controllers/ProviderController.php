@@ -11,7 +11,7 @@ class ProviderController extends Controller
 
         if($request->ajax()){
 
-            return 'hwl';
+            return $request->input();
 
         }
 

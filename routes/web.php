@@ -255,7 +255,7 @@ Route::group(['middleware' => 'auth'], function () {
             'as'   => 'patient.note.listing',
         ]);
 
-        Route::get('provider/create', [
+        Route::post('provider/create', [
             'uses' => 'ProviderController@store',
             'as'   => 'provider.store',
         ]);
