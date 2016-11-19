@@ -25,99 +25,134 @@
                 <h4 class="modal-title">Please Add Provider Details</h4>
             </div>
             <div class="modal-body">
-                <div class="row">
-                    <form>
-                        <div class="row providerForm">
-                            <div class="form-group">
-                                <label class="col-md-6 control-label" for="name">Provider Name</label>
-                                <div class="col-md-3">
-                                    <input id="name" name="name" type="text" placeholder=""
-                                           class="form-control input-md"
-                                           required="">
-                                </div>
+                <form id="create" name="create"
+                      action="{{URL::route('provider.store', array('patientId' => $patient->id))}}">
+                    <div class="row providerForm">
+                        <div class="form-group">
+                            <label class="col-md-3 control-label" for="name">Provider Name</label>
+                            <div class="col-md-6">
+                                <input id="name" name="name" type="text" placeholder=""
+                                       class="form-control input-md"
+                                       required="">
                             </div>
                         </div>
+                    </div>
 
-                        <div class="row providerForm">
-                            <div class="form-group">
-                                <label class="col-md-3 control-label" for="speciality">Speciality</label>
-                                <div class="col-md-6">
-                                    <input id="speciality" name="speciality" type="text" placeholder=""
-                                           class="form-control input-md"
-                                           required="">
-                                </div>
+                    <div class="row providerForm">
+                        <div class="form-group">
+                            <label class="col-md-3 control-label" for="speciality">Speciality</label>
+                            <div class="col-md-6">
+                                <input id="speciality" name="speciality" type="text" placeholder=""
+                                       class="form-control input-md"
+                                       required="">
                             </div>
                         </div>
+                    </div>
 
-                        <div class="row providerForm">
-                            <div class="form-group">
-                                <label class="col-md-3 control-label" for="address">Address</label>
-                                <div class="col-md-6">
-                                    <input id="address" name="address" type="text" placeholder=""
-                                           class="form-control input-md"
-                                           required="">
+                    <div class="row providerForm">
+                        <div class="form-group">
+                            <label class="col-md-3 control-label" for="address">Address</label>
+                            <div class="col-md-6">
+                                <input id="address" name="address" type="text" placeholder=""
+                                       class="form-control input-md"
+                                       required="">
 
-                                </div>
                             </div>
                         </div>
+                    </div>
 
-                        <div class="row providerForm">
-                            <div class="form-group">
-                                <label class="col-md-3 control-label" for="phone">Address</label>
-                                <div class="col-md-6">
-                                    <input id="phone" name="phone" type="number" placeholder=""
-                                           class="form-control input-md"
-                                           required="">
+                    <div class="row providerForm">
+                        <div class="form-group">
+                            <label class="col-md-3 control-label" for="phone">Phone Number</label>
+                            <div class="col-md-6">
+                                <input id="phone" name="phone" type="text" placeholder=""
+                                       class="form-control input-md"
+                                       required="">
 
-                                </div>
                             </div>
                         </div>
+                    </div>
 
-                        <div class="row providerForm">
-                            <div class="form-group">
-                                <label class="col-md-3 control-label" for="email">Address</label>
-                                <div class="col-md-6">
-                                    <input id="email" name="email" type="email" placeholder=""
-                                           class="form-control input-md"
-                                           required="">
+                    <div class="row providerForm">
+                        <div class="form-group">
+                            <label class="col-md-3 control-label" for="practice">Practice/Program Name</label>
+                            <div class="col-md-6">
+                                <input id="practice" name="practice" type="text" placeholder=""
+                                       class="form-control input-md"
+                                       required="">
 
-                                </div>
                             </div>
                         </div>
+                    </div>
 
-                        <div class="row providerForm">
-                            <div class="form-group">
-                                <label class="col-md-3 control-label" for="email">Address</label>
-                                <div class="col-md-6">
-                                    <input id="email" name="email" type="email" placeholder=""
-                                           class="form-control input-md"
-                                           required="">
+                    <div class="row providerForm">
+                        <div class="form-group">
+                            <label class="col-md-3 control-label" for="email">Email</label>
+                            <div class="col-md-6">
+                                <input id="email" name="email" type="email" placeholder=""
+                                       class="form-control input-md"
+                                       required="">
 
-                                </div>
                             </div>
                         </div>
+                    </div>
 
-                        <div class="row providerForm">
-                            <div class="form-group">
-                                <label class="col-md-3 control-label" for="type">Select Type</label>
-                                <div class="col-md-6">
-                                    <select id="type" name="type" class="form-control">
-                                        <option value="clinical">Clinical (MD, RN or other clinician)</option>
-                                        <option value="non-clinical">Non-clinical</option>
-                                    </select>
-                                </div>
+
+                    <div class="row providerForm">
+                        <div class="form-group">
+                            <label class="col-md-3 control-label" for="type">Select Type</label>
+                            <div class="col-md-6">
+                                <select id="type" name="type" class="form-control">
+                                    <option value="clinical">Clinical (MD, RN or other clinician)</option>
+                                    <option value="non-clinical">Non-clinical</option>
+                                </select>
                             </div>
                         </div>
-
-                    </form>
+                    </div>
+                </form>
+            </div>
+            <div class="row">
+                <div class="modal-footer">
+                    <button type="submit" id="create" class="btn btn-primary">Add</button>
                 </div>
             </div>
             <div class="row">
-
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-primary" data-dismiss="modal">Add</button>
-                </div>
+                <span class="result"></span>
             </div>
         </div>
+
+
     </div>
 </div>
+</div>
+</div>
+
+
+<script>
+
+    $("#create").submit(function (e) {
+
+        var url = '{!! route('provider.store') !!}'; // the script where you handle the form input.
+
+        $.ajax({
+            type: "POST",
+            url: url,
+            headers: {
+                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+            },
+            data: {
+                name: $('#name').val(),
+                address: $('#address').val(),
+                type: $('#type').val(),
+                practice: $('#practice').val(),
+            },
+            success: function (data) {
+                console.log(data); // show response from the php script.
+                $('#result').text(data);
+            }
+        });
+
+        e.preventDefault(); // avoid to execute the actual submit of the form.
+    });
+
+</script>

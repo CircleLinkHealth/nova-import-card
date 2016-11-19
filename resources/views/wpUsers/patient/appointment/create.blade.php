@@ -9,7 +9,7 @@
 
     <style>
 
-        .save-btn{
+        .save-btn {
             width: 100px;
             height: 42px;
             position: relative;
@@ -30,8 +30,7 @@
                 </div>
                 @include('partials.userheader')
                 <div class="main-form-block main-form-horizontal main-form-primary-horizontal col-md-12">
-
-                    {!! Form::open(array('url' => URL::route('patient.appointment.store', array('patientId' => $patient->id)), 'class' => 'form-horizontal')) !!}
+                    <form id="save" action="{{URL::route('patient.appointment.store', array('patientId' => $patient->id))}}">
                     <div class="row">
                         <div class="form-block col-md-6">
                             <div class="row">
@@ -39,15 +38,19 @@
                                     <div class="form-group">
                                         <div class="col-sm-12">
                                             <label for="observationDate">
-                                                Select Existing Provider <span style="">(or, <a id="addNewProvider" href="#">add new)</a></span>
+                                                Select Existing Provider <span style="">(or, <a id="addNewProvider"
+                                                                                                href="#">add new)</a></span>
                                             </label>
                                         </div>
                                         <div class="col-sm-12">
                                             <div class="form-group">
-                                                <select id="observationType" name="observationType"
-                                                        class="selectpickerX dropdownValid form-control" data-size="10"
-                                                        required>
+                                                <select id="provider" name="provider"
+                                                        class="selectpickerX dropdownValid form-control"
+                                                        data-size="10" required>
                                                     <option value=""></option>
+                                                    @foreach ($providers as $key => $value)
+                                                        <option value="{{$key}}"> {{$value}} </option>
+                                                    @endforeach
                                                 </select>
                                             </div>
                                         </div>
@@ -96,7 +99,7 @@
                                     <div class="col-sm-12">
                                         <div class="form-group">
                                         <textarea class="form-control" id="comment" name="comment"
-                                                  placeholder="Please enter appointment details..." rows="8"></textarea>
+                                                  placeholder="Please enter appointment details..." rows="9"></textarea>
                                         </div>
                                     </div>
                                 </div>
@@ -116,9 +119,8 @@
                                 </div>
                                 {!! Form::close() !!}
                             </div>
-
                         </div>
                     </div>
-                </div>
             </div>
+        </div>
 @stop

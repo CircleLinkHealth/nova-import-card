@@ -25,7 +25,7 @@
 
 
         <div class="mini-action-button--hide mini-action-button">
-            <a href="{{ URL::route('patient.appointment.create', array('patient' => $patient->id)) }}">
+            <a href="{{ URL::route('patient.appointment.create', array('patientId' => $patient->id)) }}">
                 <i class="mini-action-button__icon material-icons">today</i>
             </a>
             <p class="mini-action-button__text--hide">Add Appointment</p>

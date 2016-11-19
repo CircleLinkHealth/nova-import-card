@@ -254,6 +254,12 @@ Route::group(['middleware' => 'auth'], function () {
             'uses' => 'NotesController@listing',
             'as'   => 'patient.note.listing',
         ]);
+
+        Route::get('provider/create', [
+            'uses' => 'ProviderController@store',
+            'as'   => 'provider.store',
+        ]);
+
         // nurse call list
         Route::group(['prefix' => 'patient-call-list'], function () {
             Route::get('', [
@@ -372,6 +378,8 @@ Route::group(['middleware' => 'auth'], function () {
                 'as'   => 'patient.note.send',
             ]);
         });
+
+
         Route::get('progress', [
             'uses' => 'ReportsController@index',
             'as'   => 'patient.reports.progress',

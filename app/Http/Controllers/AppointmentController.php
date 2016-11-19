@@ -18,9 +18,25 @@ class AppointmentController extends Controller
 
         $patient = User::find($patientId);
 
+        $providers = [];
+        $providerList = User::whereHas('roles', function ($q) {
+            $q->where('name', '=', 'provider');
+        })->get()->all();
+
+        foreach ($providerList as $provider){
+                if ($provider->fullName) {
+                    $providers[$provider->id] = $provider->fullName;
+                }
+        }
+        
+        asort($providers);
+
+
         $data = [
 
-            'patient' => $patient,
+            'providers' => $providers,
+            'patientId' => $patient->id,
+            'patient' => $patient
 
         ];
 
