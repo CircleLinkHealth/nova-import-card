@@ -29,7 +29,7 @@ elixir(function(mix) {
     //     '/css/animate.min.css'
     // ], 'public/css/stylesheet.css');
 
-    mix.sass('fab.scss');
+    // mix.sass('fab.scss');
 
     // mix.browserify('uploader.js');
     // mix.browserify('ccd-models/items/medicationItem.js');
