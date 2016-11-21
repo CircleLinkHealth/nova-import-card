@@ -18,13 +18,19 @@
         @include('provider.partials.mdl.form.text.textfield', [
             'name' => 'firstName',
             'label' => 'First name',
-            'class' => 'col s6'
+            'class' => 'col s6',
+            'attributes' => [
+                'required' => 'required',
+            ]
         ])
 
         @include('provider.partials.mdl.form.text.textfield', [
             'name' => 'lastName',
             'label' => 'Last name',
-            'class' => 'col s6'
+            'class' => 'col s6',
+            'attributes' => [
+                'required' => 'required',
+            ]
         ])
     </div>
 
@@ -36,6 +42,7 @@
             'type' => 'email',
             'attributes' => [
                 'autocomplete' => 'new-email',
+                'required' => 'required',
             ]
         ])
     </div>
@@ -48,6 +55,7 @@
             'type' => 'password',
             'attributes' => [
                 'autocomplete' => 'new-password',
+                'required' => 'required',
             ]
         ])
     </div>
