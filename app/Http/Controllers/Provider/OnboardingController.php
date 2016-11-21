@@ -118,7 +118,7 @@ class OnboardingController extends Controller
                 ->withInput();
         }
 
-        return redirect()->back();
+        return redirect()->route('get.onboarding.create.staff');
     }
 
     /**
