@@ -133,7 +133,7 @@ class OnboardingController extends Controller
         $input = $request->input();
 
         try {
-            $user = $this->users->create([
+            $user = $this->users->skipPresenter()->create([
                 'email'      => $input['email'],
                 'first_name' => $input['firstName'],
                 'last_name'  => $input['lastName'],

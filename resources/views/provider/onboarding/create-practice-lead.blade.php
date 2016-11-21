@@ -6,26 +6,29 @@
 
 @section('module')
 
-        @include('errors.errors')
+    @include('errors.errors')
 
-        {!! Form::open([
-            'url' => route('post.onboarding.store.program.lead.user'),
-            'method' => 'post',
-            'id' => 'registration',
-        ]) !!}
+    {!! Form::open([
+        'url' => route('post.onboarding.store.program.lead.user'),
+        'method' => 'post',
+        'id' => 'registration',
+    ]) !!}
 
+    <div class="row">
         @include('provider.partials.mdl.form.text.textfield', [
             'name' => 'firstName',
             'label' => 'First name',
-            'class' => 'col s12'
+            'class' => 'col s6'
         ])
 
         @include('provider.partials.mdl.form.text.textfield', [
             'name' => 'lastName',
             'label' => 'Last name',
-            'class' => 'col s12'
+            'class' => 'col s6'
         ])
+    </div>
 
+    <div class="row">
         @include('provider.partials.mdl.form.text.textfield', [
             'name' => 'email',
             'label' => 'Email',
@@ -35,7 +38,9 @@
                 'autocomplete' => 'new-email',
             ]
         ])
+    </div>
 
+    <div class="row">
         @include('provider.partials.mdl.form.text.textfield', [
             'name' => 'password',
             'label' => 'Password',
@@ -45,10 +50,11 @@
                 'autocomplete' => 'new-password',
             ]
         ])
+    </div>
 
-        <button class="btn blue waves-effect waves-light col s12" type="submit" name="submit" id="update-practice">
-                Create program lead
-        </button>
+    <button class="btn blue waves-effect waves-light col s12" type="submit" name="submit" id="update-practice">
+        Create program lead
+    </button>
 
     {!! Form::close() !!}
 
