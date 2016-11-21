@@ -19,7 +19,7 @@
 
     @include('partials.addprovider')
 
-    <div class="row" style="margin:60px 0px;">
+    <div class="row" style="margin:30px 0px;">
         <div class="col-lg-10 col-lg-offset-1">
             @include('errors.errors')
         </div>
@@ -96,10 +96,10 @@
                                             Additional Details:
                                         </label>
                                     </div>
-                                    <div class="col-sm-12">
+                                    <div class="col-sm-12" style="margin-top: -11px;">
                                         <div class="form-group">
                                         <textarea class="form-control" id="comment" name="comment"
-                                                  placeholder="Please enter appointment details..." rows="9"></textarea>
+                                                  placeholder="Please enter appointment details..." rows="8"></textarea>
                                         </div>
                                     </div>
                                 </div>
