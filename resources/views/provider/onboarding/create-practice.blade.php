@@ -6,7 +6,7 @@
 
 @section('module')
 
-        @include('errors.errors')
+        @include('provider.partials.errors.validation')
 
         {!! Form::open([
             'url' => route('post.onboarding.store.practice'),
@@ -16,7 +16,7 @@
 
         @include('provider.partials.mdl.form.text.textfield', [
             'name' => 'name',
-            'label' => 'Name',
+            'label' => 'Organization Name',
             'class' => 'col s12',
         ])
 
@@ -25,6 +25,12 @@
             'label' => 'How many locations?',
             'class' => 'col s12',
             'type'  => 'number',
+        ])
+
+        @include('provider.partials.mdl.form.text.textfield', [
+            'name' => 'tax-id',
+            'label' => 'Tax Id',
+            'class' => 'col s12',
         ])
 
         <button class="btn blue waves-effect waves-light col s12"

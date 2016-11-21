@@ -6,9 +6,9 @@
 
 @section('module')
 
-    <div class="row">
+    <div id="create-locations-component" class="row">
 
-        @include('errors.errors')
+        @include('provider.partials.errors.validation')
 
         {!! Form::open([
             'url' => route('post.onboarding.store.locations'),
@@ -61,6 +61,7 @@
 
     </div>
 
-
+    <script src="/js/create-locations.js"></script>
 
 @endsection
+

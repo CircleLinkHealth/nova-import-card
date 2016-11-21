@@ -33,6 +33,7 @@ elixir(function(mix) {
         '/css/provider/dashboard.scss',
     ], 'public/css/provider-dashboard.css');
 
+    mix.browserify('provider/create-locations.js');
 
     // mix.browserify('uploader.js');
     // mix.browserify('ccd-models/items/medicationItem.js');

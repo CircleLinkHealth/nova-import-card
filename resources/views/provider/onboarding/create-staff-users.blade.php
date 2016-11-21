@@ -6,7 +6,7 @@
 
 @section('module')
 
-    @include('errors.errors')
+    @include('provider.partials.errors.validation')
 
     {!! Form::open([
         'url' => route('post.onboarding.store.staff'),

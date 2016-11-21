@@ -5,6 +5,8 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="description" content="Circle Link Health - CarePlan Manager Provider Dashboard.">
     <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="csrf-token" content="{{ csrf_token() }}">
+
     <title>CarePlan Manager | @yield('title')</title>
 
     <!-- Add to homescreen for Chrome on Android -->

@@ -8,13 +8,13 @@
                        type="{{ isset($type) ? $type : 'text' }}"
                        id="{{ $name }}"
                        name="{{ $name }}"
-                {{ isset($value) ? "value=$value" : old($name) }}
+                {{ isset($value) ? "value=$value" : !empty(old($name)) ? 'value='.old($name) : '' }}
                 @if(isset($attributes))
                     @foreach($attributes as $key => $val)
                         {{ $key }}="{{ $val }}"
                     @endforeach
                 @endif>
-                <label for="{{ $name }}">{{ $label }}</label>
+                <label for="{{ $name }}" data-error="Invalid input." data-success="">{{ $label }}</label>
             </div>
 
 

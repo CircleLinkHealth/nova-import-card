@@ -6,7 +6,7 @@
 
 @section('module')
 
-    @include('errors.errors')
+    @include('provider.partials.errors.validation')
 
     {!! Form::open([
         'url' => route('post.onboarding.store.program.lead.user'),
@@ -61,7 +61,7 @@
     </div>
 
     <button class="btn blue waves-effect waves-light col s12" type="submit" name="submit" id="update-practice">
-        Create program lead
+        Save practice lead
     </button>
 
     {!! Form::close() !!}

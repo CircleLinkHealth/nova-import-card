@@ -142,8 +142,8 @@ class OnboardingController extends Controller
         } catch (ValidatorException $e) {
             return redirect()
                 ->back()
-                ->withErrors($e->getMessageBag()->getMessages())
-                ->withInput();
+                ->withInput($input)
+                ->withErrors($e->getMessageBag()->getMessages());
         }
 
         $role = Role::whereName('practice-lead')->first();
