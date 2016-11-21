@@ -1,67 +1,26 @@
-<?php namespace App\Http\Middleware;
+<?php
+
+namespace App\Http\Middleware;
 
 use App\Models\PatientSession;
 use Closure;
-use Illuminate\Contracts\Auth\Factory as Auth;
-use Illuminate\Contracts\Auth\Guard;
 use Illuminate\Http\Request;
 
-class Authenticate extends \Illuminate\Auth\Middleware\Authenticate
+
+class ClearPatientSessions
 {
-
-    /**
-     * The Guard implementation.
-     *
-     * @var Guard
-     */
-    protected $auth;
-
-    /**
-     * Create a new filter instance.
-     *
-     * @param Auth|Guard $auth
-     *
-     */
-    public function __construct(Auth $auth)
-    {
-        parent::__construct($auth);
-
-        $this->auth = $auth;
-    }
-
     /**
      * Handle an incoming request.
      *
      * @param  \Illuminate\Http\Request $request
      * @param  \Closure $next
-     * @param  string[] ...$guards
      *
-*@return mixed
-     *
-     * @throws \Illuminate\Auth\AuthenticationException
+     * @return mixed
      */
     public function handle(
         $request,
-        Closure $next,
-        ...$guards
+        Closure $next
     ) {
-        //Enable this when we figure out how to handle ajax requests to web
-//        parent::handle($request, $next, $guards);
-
-        // ensure user->access_disabled and user->status are passable
-        if (!$this->auth->guest()) {
-            if (auth()->user()) {
-                if (auth()->user()->status == 'Inactive' || auth()->user()->access_disabled == 1) {
-                    auth()->logout();
-                    session()->flush();
-
-                    return redirect()->route('login', [])
-                        ->withErrors(['Account access disabled'])
-                        ->send();
-                }
-            }
-        }
-
         $this->clearPatientSession($request);
 
         return $next($request);
@@ -99,5 +58,4 @@ class Authenticate extends \Illuminate\Auth\Middleware\Authenticate
                 ->delete();
         }
     }
-
 }

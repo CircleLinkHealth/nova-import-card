@@ -1200,6 +1200,11 @@ Route::group([
         'as'   => 'get.onboarding.create.program.lead.user',
     ]);
 
+    Route::post('store-practice-lead-user', [
+        'uses' => 'Provider\OnboardingController@postStorePracticeLeadUser',
+        'as'   => 'post.onboarding.store.program.lead.user',
+    ]);
+
     Route::group([
         'middleware' => 'auth',
     ], function () {
@@ -1211,11 +1216,6 @@ Route::group([
         Route::post('store-practice', [
             'uses' => 'Provider\OnboardingController@postStorePractice',
             'as'   => 'post.onboarding.store.practice',
-        ]);
-
-        Route::post('store-practice-lead-user', [
-            'uses' => 'Provider\OnboardingController@postStorePracticeLeadUser',
-            'as'   => 'post.onboarding.store.program.lead.user',
         ]);
 
         Route::get('create-locations/{numberOfLocations}/{practiceId}', [
