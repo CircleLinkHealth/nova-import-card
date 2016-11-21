@@ -2,54 +2,53 @@
 
 @section('title', 'Create Program Lead')
 
-@section('instructions', "Let's start by creating an account manager? Page name is create-practice-lead.")
+@section('instructions', "Let's start by creating an account manager? Page name is create-practice-lead. Step 1/4")
 
 @section('module')
 
-    @include('errors.errors')
+        @include('errors.errors')
 
-    {!! Form::open([
-        'url' => route('post.onboarding.store.program.lead.user'),
-        'method' => 'post',
-        'id' => 'registration',
-    ]) !!}
+        {!! Form::open([
+            'url' => route('post.onboarding.store.program.lead.user'),
+            'method' => 'post',
+            'id' => 'registration',
+        ]) !!}
 
-    @include('provider.partials.mdl.form.text.textfield', [
-        'name' => 'firstName',
-        'label' => 'First name',
-        'class' => 'mdl-cell--12-col'
-    ])
+        @include('provider.partials.mdl.form.text.textfield', [
+            'name' => 'firstName',
+            'label' => 'First name',
+            'class' => 'col s12'
+        ])
 
-    @include('provider.partials.mdl.form.text.textfield', [
-        'name' => 'lastName',
-        'label' => 'Last name',
-        'class' => 'mdl-cell--12-col'
-    ])
+        @include('provider.partials.mdl.form.text.textfield', [
+            'name' => 'lastName',
+            'label' => 'Last name',
+            'class' => 'col s12'
+        ])
 
-    @include('provider.partials.mdl.form.text.textfield', [
-        'name' => 'email',
-        'label' => 'Email',
-        'class' => 'mdl-cell--12-col',
-        'type' => 'email',
-        'attributes' => [
-            'autocomplete' => 'new-email',
-        ]
-    ])
+        @include('provider.partials.mdl.form.text.textfield', [
+            'name' => 'email',
+            'label' => 'Email',
+            'class' => 'col s12',
+            'type' => 'email',
+            'attributes' => [
+                'autocomplete' => 'new-email',
+            ]
+        ])
 
-    @include('provider.partials.mdl.form.text.textfield', [
-        'name' => 'password',
-        'label' => 'Password',
-        'class' => 'mdl-cell--12-col',
-        'type' => 'password',
-        'attributes' => [
-            'autocomplete' => 'new-password',
-        ]
-    ])
+        @include('provider.partials.mdl.form.text.textfield', [
+            'name' => 'password',
+            'label' => 'Password',
+            'class' => 'col s12',
+            'type' => 'password',
+            'attributes' => [
+                'autocomplete' => 'new-password',
+            ]
+        ])
 
-    <button class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-button--primary mdl-cell--12-col"
-            id="update-practice">
-        Create program lead
-    </button>
+        <button class="btn blue waves-effect waves-light col s12" type="submit" name="submit" id="update-practice">
+                Create program lead
+        </button>
 
     {!! Form::close() !!}
 

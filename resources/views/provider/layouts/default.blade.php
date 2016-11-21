@@ -23,23 +23,27 @@
 
     <link rel="shortcut icon" href="images/favicon.png">
 
-    <!-- SEO: If your mobile URL is different from the desktop URL, add a canonical link to the desktop page https://developers.google.com/webmasters/smartphone-sites/feature-phones -->
-    <!--
-    <link rel="canonical" href="http://www.example.com/">
-    -->
 
     <link href="{{ asset('/img/favicon.png') }}" rel="icon">
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.97.8/css/materialize.min.css">
 
     <link rel="stylesheet"
           href="https://fonts.googleapis.com/css?family=Roboto:regular,bold,italic,thin,light,bolditalic,black,medium&amp;lang=en">
     <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
-    <link rel="stylesheet" href="https://code.getmdl.io/1.1.3/material.blue-green.min.css" />
-    <link rel="stylesheet" href="{{ asset('/css/provider-dashboard.css') }}" />
+    <link rel="stylesheet" href="{{ asset('/css/provider-dashboard.css') }}"/>
 </head>
 <body>
 
 @yield('content')
 
-<script src="https://code.getmdl.io/1.1.0/material.min.js"></script>
+<script type="text/javascript" src="https://code.jquery.com/jquery-2.1.1.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.97.8/js/materialize.min.js"></script>
+
+<script>
+    $(document).ready(function () {
+        $('select').material_select();
+    });
+</script>
 </body>
 </html>

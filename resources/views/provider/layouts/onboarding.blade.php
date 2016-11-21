@@ -19,16 +19,16 @@
 
 @section('content')
 
-    <div class="mdl-layout mdl-js-layout">
-        <div class="mdl-grid full-height">
+    <div class="container">
 
-            <div class="v-center">
+        <div class="v-center">
 
-                <div class="mdl-card mdl-shadow--1dp onboarding-user-card">
+            <div class="mdl-card mdl-shadow--1dp onboarding-user-card">
 
-                    <div class="mdl-card__title"></div>
+                <div class="mdl-card__title"></div>
 
-                    <div class="mdl-cell--12-col">
+                <div class="row">
+                    <div class="col s12">
                         <h5 class="mdl-typography--text-center">
                             Welcome to CarePlan Manager!
                         </h5>
@@ -39,14 +39,16 @@
                             @yield('instructions')
                         </h6>
                     </div>
+                </div>
 
-                    <div class="mdl-cell--12-col">
+                <div class="row">
+                    <div class="col s12">
                         @yield('module')
                     </div>
                 </div>
-
             </div>
 
         </div>
+
     </div>
 @endsection

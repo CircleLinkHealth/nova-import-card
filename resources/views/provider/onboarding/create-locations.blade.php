@@ -2,66 +2,67 @@
 
 @section('title', 'Create locations')
 
-@section('instructions', "Create locations blah blah. Title: create-locations")
-
-<head>
-    <style>
-        {{--Hack to make this page scrollable--}}
-        .v-center {
-            display: block !important;
-        }
-    </style>
-</head>
+@section('instructions', "Create locations blah blah. Title: create-locations Step 3/4")
 
 @section('module')
-    {{$numberOfLocations}}
-    @include('errors.errors')
 
-    {!! Form::open([
-        'url' => route('post.onboarding.store.locations'),
-        'method' => 'post',
-        'id' => 'create-practice',
-    ]) !!}
+    <div class="row">
 
-    @for($i = 1; $numberOfLocations >= $i; $i++)
+        @include('errors.errors')
 
-        <h6>locations {{ $i }}</h6>
+        {!! Form::open([
+            'url' => route('post.onboarding.store.locations'),
+            'method' => 'post',
+            'id' => 'create-practice',
+        ]) !!}
 
-        <div class="mdl-cell mdl-cell--12-col">
-            @include('provider.partials.mdl.form.text.textfield', [ 'name' => "locations[$i][name]", 'label' => 'Name ', 'class' =>'mdl-cell--12-col '])
-        </div>
+        <ul class="collapsible" data-collapsible="accordion">
+            @for($i = 1; $numberOfLocations >= $i; $i++)
+                <li>
+                    <div class="collapsible-header active">
+                        <h6>
+                            locations {{ $i }}
+                        </h6>
+                    </div>
 
-        <div class="mdl-cell mdl-cell--12-col">
-            @include('provider.partials.mdl.form.text.textfield', [ 'name' => "locations[$i][address_line_1]", 'label' => 'Address Line 1 ', 'class' =>'mdl-cell--12-col'])
-        </div>
+                    <div class="collapsible-body">
 
-        <div class="mdl-cell mdl-cell--12-col">
-            @include('provider.partials.mdl.form.text.textfield', [ 'name' => "locations[$i][address_line_2]", 'label' => 'Address Line 2 ', 'class' =>'mdl-cell--12-col'])
-        </div>
+                        <div class="row">
+                            @include('provider.partials.mdl.form.text.textfield', [ 'name' => "locations[$i][name]", 'label' => 'Name ', 'class' =>'col s6'])
+                            {!! Form::select("locations[$i][timezone]", timezones(), 'America/New_York', ['class' => 'col s6']) !!}
+                        </div>
 
-        <div class="mdl-cell mdl-cell--12-col">
-            @include('provider.partials.mdl.form.text.textfield', [ 'name' => "locations[$i][city]", 'label' => 'City ', 'class' =>'mdl-cell--6-col'])
-            @include('provider.partials.mdl.form.text.textfield', [ 'name' => "locations[$i][state]", 'label' => 'State ', 'class' =>'mdl-cell--6-col'])
-        </div>
+                        <div class="row">
+                            @include('provider.partials.mdl.form.text.textfield', [ 'name' => "locations[$i][address_line_1]", 'label' => 'Address Line 1 ', 'class' =>'col s8'])
 
-        <div class="mdl-cell mdl-cell--12-col">
-            @include('provider.partials.mdl.form.text.textfield', [ 'name' => "locations[$i][postal_code]", 'label' => 'Postal Code ', 'class' =>'mdl-cell--6-col'])
-            @include('provider.partials.mdl.form.text.textfield', [ 'name' => "locations[$i][phone]", 'label' => 'Phone ', 'class' =>'mdl-cell--6-col'])
-        </div>
+                            @include('provider.partials.mdl.form.text.textfield', [ 'name' => "locations[$i][address_line_2]", 'label' => 'Address Line 2 ', 'class' =>'col s4'])
+                        </div>
 
-        <div class="mdl-cell mdl-cell--12-col">
-            {!! Form::select("locations[$i][timezone]", timezones(), 'America/New_York', ['class' => 'form-control selectpicker', 'style' => 'width:50%;']) !!}
-        </div>
+                        <div class="row">
+                            @include('provider.partials.mdl.form.text.textfield', [ 'name' => "locations[$i][city]", 'label' => 'City ', 'class' =>'col s6'])
 
-        <input type="hidden" name="locations[{{$i}}][practice_id]" value="{{$practiceId}}">
+                            @include('provider.partials.mdl.form.text.textfield', [ 'name' => "locations[$i][state]", 'label' => 'State ', 'class' =>'col s6'])
+                        </div>
 
-    @endfor
+                        <div class="row">
+                            @include('provider.partials.mdl.form.text.textfield', [ 'name' => "locations[$i][postal_code]", 'label' => 'Postal Code ', 'class' =>'col s6'])
+                            @include('provider.partials.mdl.form.text.textfield', [ 'name' => "locations[$i][phone]", 'label' => 'Phone ', 'class' =>'col s6'])
+                        </div>
 
-    <button class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-button--primary mdl-cell--12-col"
-            id="submit">
-        Create location(s)
-    </button>
+                        <input type="hidden" name="locations[{{$i}}][practice_id]" value="{{$practiceId}}">
+                    </div>
+                </li>
+            @endfor
+        </ul>
 
-    {!! Form::close() !!}
+        <button class="btn blue waves-effect waves-light col s12" id="submit">
+            Create location(s)
+        </button>
+
+        {!! Form::close() !!}
+
+    </div>
+
+
 
 @endsection
