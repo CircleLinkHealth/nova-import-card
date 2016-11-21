@@ -89,6 +89,17 @@ class OnboardingController extends Controller
         return view('provider.onboarding.create-practice');
     }
 
+
+    /**
+     * Show the form to create staff members
+     *
+     * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
+     */
+    public function getCreateStaff()
+    {
+        return view('provider.onboarding.create-staff-users');
+    }
+
     /**
      * Store locations.
      *
@@ -153,6 +164,39 @@ class OnboardingController extends Controller
      * @return $this|\Illuminate\Http\RedirectResponse
      */
     public function postStorePractice(Request $request)
+    {
+        $input = $request->input();
+
+        try {
+            $numberOfLocations = $input['numberOfLocations'];
+
+            $practice = $this->practices
+                ->skipPresenter()
+                ->create([
+                    'name'         => str_slug($input['name']),
+                    'user_id'      => auth()->user()->id,
+                    'display_name' => $input['name'],
+                ]);
+
+            $practiceId = $practice->id;
+        } catch (ValidatorException $e) {
+            return redirect()
+                ->back()
+                ->withErrors($e->getMessageBag()->getMessages())
+                ->withInput();
+        }
+
+        return redirect()->route('get.onboarding.create.locations', compact('numberOfLocations', 'practiceId'));
+    }
+
+    /**
+     * Store Staff.
+     *
+     * @param Request $request
+     *
+     * @return $this|\Illuminate\Http\RedirectResponse
+     */
+    public function postStoreStaff(Request $request)
     {
         $input = $request->input();
 

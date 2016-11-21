@@ -1195,35 +1195,49 @@ Route::group([
     'prefix' => 'onboarding',
 ], function () {
 
-    Route::post('store-locations', [
-        'uses' => 'Provider\OnboardingController@postStoreLocations',
-        'as'   => 'post.onboarding.store.locations',
-    ]);
-
-    Route::post('store-practice', [
-        'uses' => 'Provider\OnboardingController@postStorePractice',
-        'as'   => 'post.onboarding.store.practice',
-    ]);
-
-    Route::post('store-practice-lead-user', [
-        'uses' => 'Provider\OnboardingController@postStorePracticeLeadUser',
-        'as'   => 'post.onboarding.store.program.lead.user',
-    ]);
-
-    Route::get('create-locations/{numberOfLocations}/{practiceId}', [
-        'uses' => 'Provider\OnboardingController@getCreateLocations',
-        'as'   => 'get.onboarding.create.locations',
-    ]);
-
-    Route::get('create-practice', [
-        'uses' => 'Provider\OnboardingController@getCreatePractice',
-        'as'   => 'get.onboarding.create.practice',
-    ]);
-
     Route::get('create-practice-lead-user', [
         'uses' => 'Provider\OnboardingController@getCreatePracticeLeadUser',
         'as'   => 'get.onboarding.create.program.lead.user',
     ]);
+
+    Route::group([
+        'middleware' => 'auth',
+    ], function () {
+        Route::post('store-locations', [
+            'uses' => 'Provider\OnboardingController@postStoreLocations',
+            'as'   => 'post.onboarding.store.locations',
+        ]);
+
+        Route::post('store-practice', [
+            'uses' => 'Provider\OnboardingController@postStorePractice',
+            'as'   => 'post.onboarding.store.practice',
+        ]);
+
+        Route::post('store-practice-lead-user', [
+            'uses' => 'Provider\OnboardingController@postStorePracticeLeadUser',
+            'as'   => 'post.onboarding.store.program.lead.user',
+        ]);
+
+        Route::get('create-locations/{numberOfLocations}/{practiceId}', [
+            'uses' => 'Provider\OnboardingController@getCreateLocations',
+            'as'   => 'get.onboarding.create.locations',
+        ]);
+
+        Route::get('create-practice', [
+            'uses' => 'Provider\OnboardingController@getCreatePractice',
+            'as'   => 'get.onboarding.create.practice',
+        ]);
+
+        Route::get('create-staff', [
+            'uses' => 'Provider\OnboardingController@getCreateStaff',
+            'as'   => 'get.onboarding.create.staff',
+        ]);
+
+        Route::post('store-staff', [
+            'uses' => 'Provider\OnboardingController@postStoreStaff',
+            'as'   => 'post.onboarding.store.staff',
+        ]);
+    });
 });
 
 
