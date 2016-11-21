@@ -1,7 +1,7 @@
 @extends('partials.providerUI')
 
-@section('title', 'Input Observations')
-@section('activity', 'Input Observations')
+@section('title', 'Input Appointments')
+@section('activity', 'Input Appointments')
 
 @section('content')
 

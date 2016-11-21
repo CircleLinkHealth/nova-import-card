@@ -33,7 +33,7 @@
                             <div class="col-md-6">
                                 <input id="name" name="name" type="text" placeholder=""
                                        class="form-control input-md"
-                                       required="">
+                                       required="required">
                             </div>
                         </div>
                     </div>
@@ -109,14 +109,13 @@
                             </div>
                         </div>
                     </div>
-                </form>
             </div>
 
             <input type="hidden" name="created_by" value="{{auth()->user()->id}}">
 
             <div class="row">
                 <div class="modal-footer">
-                    <button type="submit" class="create" id="create" class="btn btn-primary">Add</button>
+                    <button type="submit" id="create" class="create btn btn-primary">Add</button>
                 </div>
             </div>
             <div class="row">
@@ -134,8 +133,6 @@
     $("#create").on('click',function () {
         var url = '{!! route('provider.store') !!}'; // the script where you handle the form input.
 
-        var frm = $('#contactForm1');
-
         $.ajax({
             type: "POST",
             url: url,
@@ -151,7 +148,7 @@
             },
             success: function (data) {
                 console.log(data); // show response from the php script.
-                $('#result').text(data);
+                $('#result').text("HALLO");
             }
         });
         return false;

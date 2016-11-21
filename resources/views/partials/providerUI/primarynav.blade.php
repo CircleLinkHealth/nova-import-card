@@ -1,23 +1,28 @@
 <nav class="navbar primary-navbar">
-    <div class="container-fluid">
-        <div class="navbar-header">
+    <div class="container-fluid col-md-12" style="width: 100%;">
+
+        <div class="navbar-header" style="width: 285px;">
             <a href="{{ URL::route('patients.dashboard') }}" class="navbar-brand"><img src="/img/ui/clh_logo_lt.png"
                                                                                        alt="Care Plan Manager"
                                                                                        style="position:relative;top:-15px"
                                                                                        width="50px"/></a>
-            <a href="{{ URL::route('patients.dashboard') }}"
+            <a href="{{ URL::route('patients.dashboard') }}" style="font-size: 19px;"
                class="navbar-title collapse navbar-collapse navbar-text navbar-left">CarePlan<span class="thin">Manager™</span></a>
+
+
         </div>
-        <div class="navbar-right hidden-xs ">
+        @include('partials.search')
+        <div class="navbar-right hidden-xs" style="width: 513px;">
             <ul class="nav navbar-nav">
+                <li></li>
                 {{--URL::route('patients.dashboard', array())--}}
                 <li><a href="{{ URL::route('patients.dashboard') }}"><i class="icon--home--white"></i> Home</a></li>
                 {{--<li><a href="{{ URL::route('patients.search') }}"><i class="icon--search--white"></i> Search Patient</a>--}}
                 {{--</li>--}}
                 <li><a href="{{ URL::route('patients.listing') }}"><i class="icon--patients"></i> Patient List</a>
                 </li>
-                <li><a href="{{ URL::route('patients.demographics.show') }}"><i class="icon--add-user"></i> Add
-                        Patient</a></li>
+                {{--<li><a href="{{ URL::route('patients.demographics.show') }}"><i class="icon--add-user"></i> Add--}}
+                        {{--Patient</a></li>--}}
 
                 <li class="dropdown">
                     <div class="dropdown-toggle" data-toggle="dropdown" role="button"

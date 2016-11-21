@@ -10,6 +10,108 @@
     <meta http-equiv="pragma" content="no-cache">
     <meta name="csrf-token" content="{{ csrf_token() }}">
 
+    <style>
+        #bloodhound{
+            /*background-color: #fff;*/
+            min-width: 250px;
+            position: relative;
+            margin-bottom: -35px;
+            margin-top: -3px;
+        }
+
+        #bloodhound li{
+            padding: 5px;
+        }
+
+        #bloodhound li.active{
+            background-color: #eee;
+        }
+
+        .typeahead,
+        .tt-query,
+        .tt-hint {
+            /*width: 100% !important;*/
+            /*height: 30px;*/
+            /*padding: 8px 12px;*/
+            /*font-size: 24px;*/
+            /*line-height: 30px;*/
+            /*border: 2px solid #ccc;*/
+            /*-webkit-border-radius: 8px;*/
+            /*-moz-border-radius: 8px;*/
+            /*border-radius: 8px;*/
+            outline: none;
+        }
+
+        .typeahead {
+            background-color: #fff;
+        }
+
+        .twitter-typeahead {
+
+
+        }
+
+        .typeahead:focus {
+            /*border: 2px solid #63bbe8;*/
+            /*height: 40px;*/
+            /*font-size: 15px;*/
+        }
+
+        .tt-query {
+            -webkit-box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075);
+            -moz-box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075);
+            box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075);
+        }
+
+        .tt-hint {
+            color: #999
+        }
+
+        .tt-menu {
+            position: absolute !important;
+            left:-2px !important;
+            max-height: 250px;
+            min-height: 220px;
+            overflow-y: auto;
+            width: 535px !important;
+            margin: 38px 0;
+            padding: 3px 0;
+            background-color: #fff;
+            border: 1px solid #ccc;
+            -webkit-border-radius: 8px;
+            -moz-border-radius: 8px;
+            border-radius: 8px;
+            -webkit-box-shadow: 0 5px 10px rgba(0,0,0,.2);
+            -moz-box-shadow: 0 5px 10px rgba(0,0,0,.2);
+            box-shadow: 0 5px 10px rgba(0,0,0,.2);
+        }
+
+        .tt-suggestion {
+            text-align: left;
+            padding: 3px 20px;
+            font-size: 16px;
+            line-height: 28px;
+            color: #4795c1;
+        }
+
+        .tt-suggestion:hover {
+            cursor: pointer;
+            color: #fff;
+            background-color: #0097cf;
+        }
+
+        .tt-suggestion.tt-cursor {
+            color: #fff;
+            background-color: #0097cf;
+
+        }
+
+        .tt-suggestion p {
+            margin: 0;
+        }
+
+    </style>
+
     <title>CarePlanManager - @yield('title')</title>
 
     <link href="{{ asset('/css/stylesheet.css') }}" rel="stylesheet">
@@ -22,7 +124,7 @@
     <link href='https://fonts.googleapis.com/css?family=Roboto:400,300' rel='stylesheet' type='text/css'>
 
     <!-- Metrialize CDN -->
-    {{--<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-material-design/4.0.2/bootstrap-material-design.css" />--}}
+{{--<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-material-design/4.0.2/bootstrap-material-design.css" />--}}
 
 @if(!isset($isPdf))
     <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
@@ -37,8 +139,6 @@
 
         <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
         <script src="//code.jquery.com/ui/1.11.4/jquery-ui.js"></script>
-
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.97.8/js/materialize.min.js"></script>
 
         <!-- http://trentrichardson.com/examples/timepicker/
     <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/jquery-ui-timepicker-addon/1.4.5/jquery-ui-timepicker-addon.min.css">
@@ -94,12 +194,13 @@
 
     @include('partials.providerUI.primarynav')
 
+
     @if(!empty($patient->id))
 
         @include('partials.providerUI.patientnav')
 
+    @endif
 
-        @endif
     @endif
 
     @if(!empty($patient->id))
