@@ -5,3 +5,4 @@
                    autofocus="autofocus" @if(!empty($patient->id)) placeholder="{!!$patient->fullName!!}"> @else placeholder="Enter a Patient Name, MRN or DOB (mm-dd-yyyy)">@endif
 
     </div>
+    <script src="{{ asset('/js/patientsearch.js') }}"></script>
