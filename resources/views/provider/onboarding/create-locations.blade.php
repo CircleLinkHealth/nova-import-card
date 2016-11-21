@@ -18,18 +18,16 @@
 
         <ul class="collapsible" data-collapsible="accordion">
             @for($i = 1; $numberOfLocations >= $i; $i++)
-                <li>
+                <li id="location-{{ $i }}">
                     <div class="collapsible-header active">
-                        <h6>
-                            locations {{ $i }}
-                        </h6>
+                        Location #{{ $i }}
                     </div>
 
-                    <div class="collapsible-body">
+                    <div class="collapsible-body" style="padding: 5%;">
 
                         <div class="row">
                             @include('provider.partials.mdl.form.text.textfield', [ 'name' => "locations[$i][name]", 'label' => 'Name ', 'class' =>'col s6'])
-                            {!! Form::select("locations[$i][timezone]", timezones(), 'America/New_York', ['class' => 'col s6']) !!}
+                            {!! Form::select("locations[$i][timezone]", timezones(), 'America/New_York', ['class' => 'col s6 input-field']) !!}
                         </div>
 
                         <div class="row">

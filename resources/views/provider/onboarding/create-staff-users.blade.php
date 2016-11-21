@@ -20,8 +20,6 @@
         'class' => 'col s6',
     ])
 
-
-
     <div class="input-field col s6">
         <select>
             <option value="" disabled selected>Choose a role</option>

@@ -33,7 +33,7 @@
     <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
     <link rel="stylesheet" href="{{ asset('/css/provider-dashboard.css') }}"/>
 </head>
-<body>
+<body class="onboarding-container">
 
 @yield('content')
 

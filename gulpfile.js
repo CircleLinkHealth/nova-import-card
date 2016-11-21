@@ -29,8 +29,8 @@ elixir(function(mix) {
     //     '/css/animate.min.css'
     // ], 'public/css/stylesheet.css');
 
-    mix.less([
-        '/css/provider/dashboard.less',
+    mix.sass([
+        '/css/provider/dashboard.scss',
     ], 'public/css/provider-dashboard.css');
 
 

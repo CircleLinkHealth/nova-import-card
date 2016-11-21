@@ -12,7 +12,13 @@
         }
 
         .onboarding-user-card.mdl-card {
-            width: 500px !important;
+            width: 600px !important;
+        }
+
+        .container {
+            padding-top: 3%;
+            background-color: #ffffff;
+            min-height: 100%;
         }
     </style>
 </head>
