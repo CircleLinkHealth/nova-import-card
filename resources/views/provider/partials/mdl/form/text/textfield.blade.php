@@ -1,18 +1,24 @@
 @if(isset($class))
-    <div class="mdl-textfield mdl-js-textfield {{ $class }}">
+    <div class="input-field {{ $class }}">
         @else
-            <div class="mdl-textfield mdl-js-textfield">
+            <div class="input-field">
                 @endif
 
-                <input class="mdl-textfield__input"
+                <input class="validate"
                        type="{{ isset($type) ? $type : 'text' }}"
                        id="{{ $name }}"
                        name="{{ $name }}"
-                {{ isset($value) ? "value=$value" : '' }}
+                {{ isset($value) ? "value=$value" : old($name) }}
                 @if(isset($attributes))
                     @foreach($attributes as $key => $val)
                         {{ $key }}="{{ $val }}"
                     @endforeach
                 @endif>
-                <label class="mdl-textfield__label" for="{{ $name }}">{{ $label }}</label>
+                <label for="{{ $name }}">{{ $label }}</label>
             </div>
+
+
+
+
+
+
