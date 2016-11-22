@@ -26,9 +26,7 @@ class ProviderController extends Controller
                 'user_id' => $user->id
             ]);
 
-            $patient = User::find($input['patient_id'])->get();
-
-            return $patient;
+            $patient = User::find($input['patient_id']);
 
             //Care Team Add
             $care_team_member = new PatientCareTeamMember([
@@ -53,6 +51,7 @@ class ProviderController extends Controller
 
                     'user_id' => $user->id,
                     'type' => 'work',
+                    'number' => $input['phone'],
                     'is_primary' => 1
 
                 ]);
