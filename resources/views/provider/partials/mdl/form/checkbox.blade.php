@@ -1,4 +1,4 @@
-<input name="{{$name}}" type="radio"
+<input name="{{$name}}" type="checkbox"
        id="{{$id ?? $name}}"
        value="{{$value}}"
 @if(isset($attributes))

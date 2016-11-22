@@ -60,8 +60,11 @@
         ])
 
         <p class="right-align">
-            <input type="checkbox" id="different-ehr-login-per-location"/>
-            <label for="different-ehr-login-per-location">Different for each location?</label>
+            @include('provider.partials.mdl.form.checkbox', [
+               'label' => 'Different for each location?',
+               'name' => 'different-ehr-login-per-location',
+               'value' => '1',
+           ])
         </p>
     </div>
 
@@ -75,6 +78,7 @@
                 'id' => 'billing-provider',
                 'label' => 'Patient billing provider.',
                 'name' => 'clinical-contact',
+                'value' => 'billing-provider',
             ])
         </p>
 
@@ -83,6 +87,7 @@
                 'id' => 'instead-of-billing-provider',
                 'label' => 'Someone else instead of billing provider.',
                 'name' => 'clinical-contact',
+                'value' => 'instead-of-billing-provider',
             ])
         </p>
 
@@ -91,13 +96,17 @@
                 'id' => 'in-addition-to-billing-provider',
                 'label' => 'Someone else in addition to the billing provider.',
                 'name' => 'clinical-contact',
+                'value' => 'in-addition-to-billing-provider',
             ])
         </p>
 
 
         <p class="right-align">
-            <input type="checkbox" id="different-clinical-contact-per-location"/>
-            <label for="different-clinical-contact-per-location">Different for each location?</label>
+            @include('provider.partials.mdl.form.checkbox', [
+               'label' => 'Different for each location?',
+               'name' => 'different-clinical-contact-per-location',
+               'value' => '1',
+           ])
         </p>
     </div>
 
