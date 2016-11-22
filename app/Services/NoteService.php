@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use App\Appointment;
 use App\Call;
 use App\Events\NoteWasForwarded;
 use App\MailLog;
@@ -148,6 +149,10 @@ class NoteService
         $notes = $this->getNotesForPatient($patient);
 
         $activities = (new ActivityService())->getOfflineActivitiesForPatient($patient);
+
+        $appointments = $this->getAppointmentsForPatient($patient->patientInfo);
+
+        $activities = $activities->merge($appointments);
 
         //Convert to Collections
         $activities = collect($activities);
@@ -298,6 +303,13 @@ class NoteService
         }
 
         return false;
+    }
+
+    public function getAppointmentsForPatient(PatientInfo $patient){
+
+        return Appointment::where('patient_id', $patient->user_id)
+            ->get();
+
     }
 
     //MAIL HELPERS
