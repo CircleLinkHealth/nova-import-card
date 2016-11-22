@@ -3,13 +3,13 @@
 if (app()->environment() != 'production') {
 
 
-//    Route::get('rohan', function () {
-//
-//    //        canCareforPatient
-//        $nurse = \App\NurseInfo::find(25);
-//        $nurse->
+    Route::get('rohan', function () {
 
-//    });
+        $user = new App\User();
+        $user->save();
+        return $user->id;
+
+    });
 }
 
 //Algo test routes.

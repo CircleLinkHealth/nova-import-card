@@ -30,8 +30,13 @@
                     <div class="row providerForm">
                         <div class="form-group">
                             <label class="col-md-3 control-label" for="name">Provider Name</label>
-                            <div class="col-md-6">
-                                <input id="name" name="name" type="text" placeholder=""
+                            <div class="col-md-3">
+                                <input id="first_name" name="first_name" type="text" placeholder="First"
+                                       class="form-control input-md"
+                                       required="first_name">
+                            </div>
+                            <div class="col-md-3">
+                                <input id="last_name" name="last_name" type="text" placeholder="Last"
                                        class="form-control input-md"
                                        required="required">
                             </div>
@@ -103,26 +108,34 @@
                             <label class="col-md-3 control-label" for="type">Select Type</label>
                             <div class="col-md-6">
                                 <select id="type" name="type" class="form-control">
-                                    <option value="clinical">Clinical (MD, RN or other clinician)</option>
+                                    <option value="clinical">Clinical (MD)</option>
                                     <option value="non-clinical">Non-clinical</option>
                                 </select>
                             </div>
                         </div>
                     </div>
-            </div>
 
-            <input type="hidden" name="created_by" value="{{auth()->user()->id}}">
+                    <input type="hidden" id="created_by" name="created_by" value="{{auth()->user()->id}}">
+                    <input type="hidden" id="patient_id" name="patient_id" value="{{$patient->id}}">
 
-            <div class="row">
-                <div class="modal-footer">
-                    <button type="submit" id="create" class="create btn btn-primary">Add</button>
+                    <div>
+                        <button type="submit" id="create" class="create btn btn-primary">Add</button>
+                    </div>
+
+                    <div class="modal-footer">
+                    </div>
+
+                </form>
+
+                <div class="row">
+
+                </div>
+                <div class="row">
+                    <span class="result"></span>
                 </div>
             </div>
-            <div class="row">
-                <span class="result"></span>
-            </div>
+
         </div>
-        </form>
 
     </div>
 </div>
@@ -130,7 +143,7 @@
 
 <script>
 
-    $("#create").on('click',function () {
+    $("#create").on('click', function () {
         var url = '{!! route('provider.store') !!}'; // the script where you handle the form input.
 
         $.ajax({
@@ -141,14 +154,19 @@
             },
             data: {
                 phone: $('#phone').val(),
-                name: $('#name').val(),
+                first_name: $('#first_name').val(),
+                address: $('#address').val(),
+                last_name: $('#last_name').val(),
+                specialty: $('#specialty').val(),
                 practice: $('#practice').val(),
                 type: $('#type').val(),
                 email: $('#email').val(),
+                created_by: $('#created_by').val(),
+                patient_id: $('#patient_id').val(),
             },
             success: function (data) {
                 console.log(data); // show response from the php script.
-                $('#result').text("HALLO");
+                $('#result').text("data");
             }
         });
         return false;
