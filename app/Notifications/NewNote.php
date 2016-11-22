@@ -53,7 +53,6 @@ class NewNote extends Notification
             ->greeting($this->message->body)
             ->subject($this->message->subject)
             ->cc('raph@circlelinkhealth.com')
-            ->line('Click Below to see Note')
             ->action('View Note', $this->url);
     }
 

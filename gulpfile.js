@@ -23,11 +23,13 @@ elixir(function(mix) {
     // ]);
     // mix.less(['/css/wpstyle.less'], 'public/css/wpstyle.css');
 
-    //PLEASE DON'T CHANGE THIS - michalis
+    // PLEASE DON'T CHANGE THIS - michalis
     // mix.less([
     //     '/css/app.less',
     //     '/css/animate.min.css'
     // ], 'public/css/stylesheet.css');
+
+    // mix.sass('fab.scss');
 
     mix.sass([
         '/css/provider/dashboard.scss',

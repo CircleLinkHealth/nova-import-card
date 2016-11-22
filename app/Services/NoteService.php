@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use App\Appointment;
 use App\Call;
 use App\Events\NoteWasForwarded;
 use App\MailLog;
@@ -106,9 +107,9 @@ class NoteService
             }
 
             if ($newNoteFlag) {
-                $body = 'Please see note for one of your patients';
+                $body = 'Please click below button to see a note regarding one of your patients.';
             } else {
-                $body = 'Please see forwarded note for one of your patients, created on ' . $performed_at . ' by ' . $sender->fullName;
+                $body = 'Please click below button to see a forwarded note regarding one of your patients, created on ' . $performed_at . ' by ' . $sender->fullName;
             }
 
             $message = MailLog::create([
@@ -148,6 +149,10 @@ class NoteService
         $notes = $this->getNotesForPatient($patient);
 
         $activities = (new ActivityService())->getOfflineActivitiesForPatient($patient);
+
+        $appointments = $this->getAppointmentsForPatient($patient->patientInfo);
+
+        $activities = $activities->merge($appointments);
 
         //Convert to Collections
         $activities = collect($activities);
@@ -298,6 +303,13 @@ class NoteService
         }
 
         return false;
+    }
+
+    public function getAppointmentsForPatient(PatientInfo $patient){
+
+        return Appointment::where('patient_id', $patient->user_id)
+            ->get();
+
     }
 
     //MAIL HELPERS
