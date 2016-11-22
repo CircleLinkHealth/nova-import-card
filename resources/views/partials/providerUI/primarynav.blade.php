@@ -1,18 +1,18 @@
 <nav class="navbar primary-navbar">
     <div class="container-fluid col-md-12" style="width: 100%;">
 
-        <div class="navbar-header" style="width: 285px;">
-            <a href="{{ URL::route('patients.dashboard') }}" class="navbar-brand"><img src="/img/ui/clh_logo_lt.png"
+        <div class="navbar-header" style="width: 6%;">
+            <a href="{{ URL::route('patients.dashboard') }}" style="border: none" class="navbar-brand"><img src="/img/ui/clh_logo_lt.png"
                                                                                        alt="Care Plan Manager"
                                                                                        style="position:relative;top:-15px"
                                                                                        width="50px"/></a>
-            <a href="{{ URL::route('patients.dashboard') }}" style="font-size: 19px;"
-               class="navbar-title collapse navbar-collapse navbar-text navbar-left">CarePlan<span class="thin">Manager™</span></a>
-
+            {{--<a href="{{ URL::route('patients.dashboard') }}" style="font-size: 19px;"--}}
+               {{--class="navbar-title collapse navbar-collapse navbar-text navbar-left">CarePlan<span class="thin">Manager™</span></a>--}}
 
         </div>
         @include('partials.search')
-        <div class="navbar-right hidden-xs" style="width: 513px;">
+
+        <div class="navbar-right hidden-xs" style="">
             <ul class="nav navbar-nav">
                 <li></li>
                 {{--URL::route('patients.dashboard', array())--}}
