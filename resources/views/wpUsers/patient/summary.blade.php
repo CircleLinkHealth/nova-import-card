@@ -26,13 +26,13 @@
 @endif
 
 @section('content')
-    <div class="row" style="margin-top:60px;">
+    <div class="row" style="margin-top:30px;">
         <div class="main-form-container col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
             <div class="row">
                 <div class="main-form-title col-lg-12">
                     Patient Overview
                 </div>
-                @include('partials.userheader');
+                @include('partials.userheader')
                 <div class="main-form-block main-form-horizontal main-form-primary-horizontal col-md-12">
                     <?php
                     $filter = '';

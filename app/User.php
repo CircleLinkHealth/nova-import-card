@@ -1856,7 +1856,7 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
     }
 
     /**
-     * Scope a query to intersect locations with the given user.
+     * Scope a query to intersect practices with the given user.
      *
      * @param $query
      * @param $user

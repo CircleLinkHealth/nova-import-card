@@ -5,23 +5,9 @@ if (app()->environment() != 'production') {
 
     Route::get('rohan', function () {
 
-        $request = new \Illuminate\Http\Request();
-
-        return (new \App\Http\Controllers\NurseController($request))->dailyReport();
-
-//        $day = Carbon\Carbon::parse('2016-10-23');
-//
-//        return (new \App\Algorithms\Calls\SuccessfulHandler(App\PatientInfo::find(1272), $day))
-//            ->getPatientOffset(1500, $day->dayOfWeek);
-
-//        return (new \App\PatientContactWindow())
-//            ->getEarliestWindowForPatientFromDate(\App\PatientInfo::find(3198),
-//            \Carbon\Carbon::today());
-
-//        $result = Practice::find(21)->enrollmentByProgram(Carbon\Carbon::parse('2016-09-01 00:00:00'),
-//            Carbon\Carbon::parse('2016-09-30 23:59:59'));
-//
-//        return ['thing' => $result];
+        $user = new App\User();
+        $user->save();
+        return $user->id;
 
     });
 }
@@ -268,6 +254,12 @@ Route::group(['middleware' => 'auth'], function () {
             'uses' => 'NotesController@listing',
             'as'   => 'patient.note.listing',
         ]);
+
+        Route::post('provider/create', [
+            'uses' => 'ProviderController@store',
+            'as'   => 'provider.store',
+        ]);
+
         // nurse call list
         Route::group(['prefix' => 'patient-call-list'], function () {
             Route::get('', [
@@ -341,6 +333,28 @@ Route::group(['middleware' => 'auth'], function () {
             ]);
         });
 
+
+        // appointments
+        Route::group(['prefix' => 'appointments'], function () {
+            Route::get('create', [
+                'uses' => 'AppointmentController@create',
+                'as'   => 'patient.appointment.create',
+            ]);
+            Route::post('store', [
+                'uses' => 'AppointmentController@store',
+                'as'   => 'patient.appointment.store',
+            ]);
+            Route::get('', [
+                'uses' => 'AppointmentController@index',
+                'as'   => 'patient.appointment.index',
+            ]);
+            Route::get('view/{appointmentId}', [
+                'uses' => 'AppointmentController@show',
+                'as'   => 'patient.appointment.view',
+            ]);
+
+        });
+
         // notes
         Route::group(['prefix' => 'notes'], function () {
             Route::get('create', [
@@ -364,6 +378,8 @@ Route::group(['middleware' => 'auth'], function () {
                 'as'   => 'patient.note.send',
             ]);
         });
+
+
         Route::get('progress', [
             'uses' => 'ReportsController@index',
             'as'   => 'patient.reports.progress',

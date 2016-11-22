@@ -9,7 +9,7 @@ class PatientCareTeamMember extends Model
     const LEAD_CONTACT = 'lead_contact';
     const MEMBER = 'member';
     const SEND_ALERT_TO = 'send_alert_to';
-
+    const EXTERNAL = 'external';
     /**
      * The connection name for the model.
      *

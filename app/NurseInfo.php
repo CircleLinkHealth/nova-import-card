@@ -93,6 +93,12 @@ class NurseInfo extends Model
                             
 
     }
+
+    public function canCareforPatient(PatientInfo $patient){
+
+        $patient->user()->intersectLocationsWith($this->user);
+
+    }
     
     
 

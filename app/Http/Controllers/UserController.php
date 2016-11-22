@@ -191,7 +191,7 @@ class UserController extends Controller
         ]);
 
     }
-
+    
     public function storeQuickPatient()
     {
         if (!Auth::user()->can('users-create')) {
