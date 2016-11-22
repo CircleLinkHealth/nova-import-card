@@ -71,7 +71,7 @@
             if (arguments.length > 1) {
                 for (var i = 1; i < arguments.length; i++) {
                     args[i - 1] = arguments[i];
-                }
+        }
             }
             queue.push(new Item(fun, args));
             if (queue.length === 1 && !draining) {
@@ -482,7 +482,7 @@
                 } catch (e) {
                     if (!called) {
                         promise.reject(e);
-                    }
+            }
                     return;
                 }
                 promise.state = RESOLVED;
@@ -658,7 +658,7 @@
                 }
                         if (_.isArray(source[key]) && !_.isArray(target[key])) {
                             target[key] = [];
-                        }
+                }
                         extend(target[key], source[key], deep);
                     } else if (source[key] !== undefined) {
                         target[key] = source[key];
@@ -8505,7 +8505,7 @@
                         } else {
                             arg = dirName;
                             pushDir('bind', directives.bind);
-                        }
+            }
                     } else
 
                     // normal directives
