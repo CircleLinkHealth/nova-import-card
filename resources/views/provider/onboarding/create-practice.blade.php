@@ -60,32 +60,44 @@
         ])
 
         <p class="right-align">
-            <input type="checkbox" id="test5"/>
-            <label for="test5">Same for all locations?</label>
+            <input type="checkbox" id="different-ehr-login-per-location"/>
+            <label for="different-ehr-login-per-location">Different for each location?</label>
         </p>
     </div>
 
     <div class="row">
         <h6>
-            Who should be notified for patient issues?
+            Who should be notified for patient clinical issues?
         </h6>
 
         <p>
-            <input name="group1" type="radio" id="test1"/>
-            <label for="test1">Patient's billing provider.</label>
-        </p>
-        <p>
-            <input name="group1" type="radio" id="test2"/>
-            <label for="test2">Someone else instead of billing provider.</label>
-        </p>
-        <p>
-            <input name="group1" type="radio" id="test3"/>
-            <label for="test3">Someone else in addition to the billing provider.</label>
+            @include('provider.partials.mdl.form.radio', [
+                'id' => 'billing-provider',
+                'label' => 'Patient billing provider.',
+                'name' => 'clinical-contact',
+            ])
         </p>
 
+        <p>
+            @include('provider.partials.mdl.form.radio', [
+                'id' => 'instead-of-billing-provider',
+                'label' => 'Someone else instead of billing provider.',
+                'name' => 'clinical-contact',
+            ])
+        </p>
+
+        <p>
+            @include('provider.partials.mdl.form.radio', [
+                'id' => 'in-addition-to-billing-provider',
+                'label' => 'Someone else in addition to the billing provider.',
+                'name' => 'clinical-contact',
+            ])
+        </p>
+
+
         <p class="right-align">
-            <input type="checkbox" id="test5"/>
-            <label for="test5">Same for all locations?</label>
+            <input type="checkbox" id="different-clinical-contact-per-location"/>
+            <label for="different-clinical-contact-per-location">Different for each location?</label>
         </p>
     </div>
 

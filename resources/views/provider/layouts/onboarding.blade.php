@@ -4,7 +4,7 @@
     <style>
         .onboarding-user-card > .mdl-card__title {
             color: #fff;
-            height: 190px;
+            height: 170px;
             background: url({{asset('/img/clh_logo.svg')}}) center / contain;
             background-repeat: no-repeat;
             padding: 0;
@@ -35,8 +35,8 @@
 
                 <div class="row">
                     <div class="col s12">
-                        <h5 class="mdl-typography--text-center">
-                            Welcome to CarePlan Manager!
+                        <h5 class="center-align">
+                            CarePlan Manager Onboarding Process
                         </h5>
 
                         <div class="mdl-layout-spacer" style="height: 2%;"></div>
