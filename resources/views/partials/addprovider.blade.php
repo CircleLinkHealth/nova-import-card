@@ -165,9 +165,11 @@
                 patient_id: $('#patient_id').val(),
             },
             success: function (data) {
+
+                console.log(data); // show response from the php script.
+
                 var dataArray = JSON.parse(data);
 
-                console.log(dataArray['name']); // show response from the php script.
                 $('<option>').val(dataArray['id']).text(dataArray['name']).appendTo('#provider');
                 $("#provider").val(dataArray['id']).trigger("change");
                 $('#result').text('Hello');

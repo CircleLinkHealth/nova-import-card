@@ -19,11 +19,11 @@ class ProviderController extends Controller
 
         if($request->ajax()){
 
-            $user = new User();
-            $user->save();
+            $provider_user = new User();
+            $provider_user->save();
             
             $provider = new ProviderInfo([
-                'user_id' => $user->id
+                'user_id' => $provider_user->id
             ]);
 
             $patient = User::find($input['patient_id']);
@@ -32,24 +32,23 @@ class ProviderController extends Controller
             $care_team_member = new PatientCareTeamMember([
 
                 'user_id' => $patient->id,
-                'member_user_id' => $user->id,
+                'member_user_id' => $provider_user->id,
                 'type' => PatientCareTeamMember::EXTERNAL
 
             ]);
 
-            $care_team_member->save();
-            $user->patientCareTeamMembers()->save($care_team_member);
+            $provider_user->patientCareTeamMembers()->save($care_team_member);
 
-            $user->first_name = $input['first_name'];
-            $user->last_name = $input['last_name'];
+            $provider_user->first_name = $input['first_name'];
+            $provider_user->last_name = $input['last_name'];
 
-            $user->email = (isset($input['email'])) ? $input['email'] : '';
+            $provider_user->email = (isset($input['email'])) ? $input['email'] : '';
 
             if($input['phone'] != ''){
 
                 $phone = new PhoneNumber([
 
-                    'user_id' => $user->id,
+                    'user_id' => $provider_user->id,
                     'type' => 'work',
                     'number' => $input['phone'],
                     'is_primary' => 1
@@ -57,11 +56,11 @@ class ProviderController extends Controller
                 ]);
 
                 $phone->save();
-                $user->phoneNumbers()->save($phone);
+                $provider_user->phoneNumbers()->save($phone);
 
             }
 
-            $user->address = (isset($input['address'])) ? $input['address'] : '';
+            $provider_user->address = (isset($input['address'])) ? $input['address'] : '';
 
             $provider->specialty = (isset($input['specialty'])) ? $input['specialty'] : '';
             $provider->qualification = (isset($input['type'])) ? $input['type'] : '';
@@ -73,19 +72,19 @@ class ProviderController extends Controller
                 $practice->name = strtolower(str_replace(" ", "-", $input['practice']));
                 $practice->save();
 
-                $user->program_id = $practice->id;
+                $provider_user->program_id = $practice->id;
 
             }
 
             $provider->save();
 
-            $user->providerInfo()->save($provider);
-            $user->save();
+            $provider_user->providerInfo()->save($provider);
+            $provider_user->save();
 
             return json_encode([
                 'message' => 'Created!',
-                'name' => $user->fullName,
-                'user_id' => $user->id
+                'name' => $provider_user->fullName,
+                'user_id' => $provider_user->id
             ]);
 
         }
