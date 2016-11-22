@@ -80,13 +80,13 @@
                    'name' => 'different-ehr-login-per-location',
                    'value' => '1',
                    'attributes' => [
-                    'v-model' => 'manyEHRLogins',
-                ]
+                        'v-model' => 'manyEHRLogins',
+                    ]
                ])
                 <transition>
                     <div v-if="manyEHRLogins == 1 ? true : false" name="fade" mode="in-out"
                          class="red-text right-align">
-                        * You will be prompted to provide an EHR location for each location at a later screen.
+                        * You will be prompted to provide EHR credentials for each location later on.
                     </div>
                 </transition>
             </p>
@@ -103,6 +103,11 @@
                     'label' => 'Patient billing provider.',
                     'name' => 'clinical-contact',
                     'value' => 'billing-provider',
+                    'attributes' => [
+                        'v-model' => 'patientClinicalIssuesContact',
+                        'required' => 'required',
+                        ':disabled' => 'manyClinicalIssuesContacts == 1 ? true : false'
+                    ]
                 ])
             </p>
 
@@ -112,7 +117,30 @@
                     'label' => 'Someone else instead of billing provider.',
                     'name' => 'clinical-contact',
                     'value' => 'instead-of-billing-provider',
+                    'attributes' => [
+                        'v-model' => 'patientClinicalIssuesContact',
+                        'required' => 'required',
+                        ':disabled' => 'manyClinicalIssuesContacts == 1 ? true : false',
+                    ]
                 ])
+                <transition>
+                    <div v-if="!manyClinicalIssuesContacts && patientClinicalIssuesContact == 'instead-of-billing-provider' ? true : false"
+                         name="fade"
+                         mode="in-out">
+                        @include('provider.partials.mdl.form.text.textfield', [
+                            'name' => 'instead_of_billing_provider_email',
+                            'label' => 'E-mail',
+                            'class' => 'col s6',
+                            'type' => 'email',
+                        ])
+
+                        @include('provider.partials.mdl.form.text.textfield', [
+                            'name' => 'instead_of_billing_provider_phone',
+                            'label' => 'Phone',
+                            'class' => 'col s6'
+                        ])
+                    </div>
+                </transition>
             </p>
 
             <p>
@@ -121,7 +149,29 @@
                     'label' => 'Someone else in addition to the billing provider.',
                     'name' => 'clinical-contact',
                     'value' => 'in-addition-to-billing-provider',
+                    'attributes' => [
+                        'v-model' => 'patientClinicalIssuesContact',
+                        'required' => 'required',
+                        ':disabled' => 'manyClinicalIssuesContacts == 1 ? true : false'
+                    ]
                 ])
+                <transition>
+                    <div v-if="!manyClinicalIssuesContacts && patientClinicalIssuesContact == 'in-addition-to-billing-provider' ? true : false"
+                         name="fade" mode="in-out">
+                        @include('provider.partials.mdl.form.text.textfield', [
+                            'name' => 'in_addition_to_billing_provider_email',
+                            'label' => 'E-mail',
+                            'class' => 'col s6',
+                            'type' => 'email',
+                        ])
+
+                        @include('provider.partials.mdl.form.text.textfield', [
+                            'name' => 'in_addition_to_billing_provider_phone',
+                            'label' => 'Phone',
+                            'class' => 'col s6'
+                        ])
+                    </div>
+                </transition>
             </p>
 
 
@@ -130,7 +180,16 @@
                    'label' => 'Different for each location?',
                    'name' => 'different-clinical-contact-per-location',
                    'value' => '1',
+                   'attributes' => [
+                        'v-model' => 'manyClinicalIssuesContacts'
+                   ]
                ])
+                <transition>
+                    <div v-if="manyClinicalIssuesContacts == 1 ? true : false" name="fade" mode="in-out"
+                         class="red-text right-align">
+                        * You will be prompted to provide a contact for patient issues for each location later on.
+                    </div>
+                </transition>
             </p>
         </div>
 
