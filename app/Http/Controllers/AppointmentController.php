@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Appointment;
+use App\PatientInfo;
 use App\User;
 use Illuminate\Http\Request;
 
@@ -47,11 +49,22 @@ class AppointmentController extends Controller
 
     public function store(Request $request){
 
-        $data = [
+        $input = $request->input();
 
-        ];
 
-        return view('', $data);
+        $data = Appointment::create([
+
+            'patient_id' => $input['patientId'],
+            'author_id' => auth()->user()->id,
+            'provider_id' => $input['provider'],
+            'date' => $input['date'],
+            'time' => $input['time'],
+            'comment' => $input['comment'],
+
+        ]);
+
+        return redirect()->route('patient.note.index', ['patient' => $input['patientId']])->with('messages',
+            ['Successfully Created Note']);
 
     }
 

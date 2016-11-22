@@ -82,7 +82,11 @@ class ProviderController extends Controller
             $user->providerInfo()->save($provider);
             $user->save();
 
-            return 'Created!';
+            return json_encode([
+                'message' => 'Created!',
+                'name' => $user->fullName,
+                'user_id' => $user->id
+            ]);
 
         }
 

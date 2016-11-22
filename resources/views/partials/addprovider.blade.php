@@ -6,12 +6,12 @@
             return false;
         });
     });
+
 </script>
 
 <style>
     .providerForm {
         padding: 10px;
-
     }
 </style>
 
@@ -107,7 +107,7 @@
                         <div class="form-group">
                             <label class="col-md-3 control-label" for="type">Select Type</label>
                             <div class="col-md-6">
-                                <select id="type" name="type" class="form-control">
+                                <select id="type" name="type" class="form-control type">
                                     <option value="clinical">Clinical (MD)</option>
                                     <option value="non-clinical">Non-clinical</option>
                                 </select>
@@ -123,16 +123,13 @@
                     </div>
 
                     <div class="modal-footer">
+                        <div class="row">
+                            <span class="result"></span>
+                        </div>
                     </div>
 
                 </form>
 
-                <div class="row">
-
-                </div>
-                <div class="row">
-                    <span class="result"></span>
-                </div>
             </div>
 
         </div>
@@ -144,7 +141,10 @@
 <script>
 
     $("#create").on('click', function () {
+
         var url = '{!! route('provider.store') !!}'; // the script where you handle the form input.
+        var name = null;
+        var id = null;
 
         $.ajax({
             type: "POST",
@@ -165,10 +165,16 @@
                 patient_id: $('#patient_id').val(),
             },
             success: function (data) {
-                console.log(data); // show response from the php script.
-                $('#result').text("data");
+                var dataArray = JSON.parse(data);
+
+                console.log(dataArray['name']); // show response from the php script.
+                $('<option>').val(dataArray['id']).text(dataArray['name']).appendTo('#provider');
+                $("#provider").val(dataArray['id']).trigger("change");
+                $('#result').text('Hello');
             }
         });
+
+
         return false;
     });
 

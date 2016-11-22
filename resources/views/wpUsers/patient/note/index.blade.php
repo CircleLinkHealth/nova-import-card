@@ -112,7 +112,12 @@
                                                                 'patientId' => $patient->id,
                                                                 'actId'     => ''
                                                         ]); ?>/" + obj.id + "'>" + obj.comment + "</a>"
-                                            }
+                                            }else if (obj.logged_from == "appointment"){
+                                                return "<a href='<?php echo route('patient.appointment.view', [
+                                                                'patientId' => $patient->id,
+                                                                'appointmentId'     => ''
+                                                        ]); ?>/" + obj.id + "'>" + obj.comment + "</a>"
+                                            } else
                                             return obj.type_name;
                                         },
                                         fillspace: true,
