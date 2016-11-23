@@ -115,7 +115,10 @@
                                                                 'actId'     => ''
                                                         ]); ?>/" + obj.id + "'>" + obj.comment + "</a>"
                                             }else if (obj.logged_from == "appointment"){
-                                                return "<a href='#" + obj.id + "'>" + obj.comment + "</a>"
+                                                return "<a href='<a href='<?php echo route('patient.appointment.view', [
+                                                                'patientId' => $patient->id,
+                                                                'appointmentId'     => ''
+                                                        ]); ?>/" + obj.id + "'>" + obj.comment + "</a>"
                                             } else
                                             return obj.type_name;
                                         },
@@ -204,7 +207,7 @@
                                                header: 'Circlelink Health notes for {!!  $patient->fullName . ", Dr. " . $patient->billingProviderName . " as of " . Carbon\Carbon::now()->toDateString() !!}',
                                                orientation:'landscape',
                                                autowidth:true,
-                                               filename: 'PatientNotesReport . {{Carbon\Carbon::now()->toDateString()}}',
+                                               filename: 'PatientNotesReport{{Carbon\Carbon::now()->toDateString()}}',
                                                columns:{
                                                'performed_at':       { header:'Date/Time', width: 200, template: webix.template('#performed_at#') },
                                                'logger_name':             { header:'Author Name',    width:200, sort:'string', template: webix.template('#logger_name#')},
@@ -218,7 +221,7 @@
                                                header:'Circlelink Health notes for {!! $patient->fullName . ", Dr. " . $patient->billingProviderName . " as of " . Carbon\Carbon::now()->toDateString() !!}',
                                                orientation:'landscape',
                                                autowidth:true,
-                                               filename: 'PatientNotesReport . {{Carbon\Carbon::now()->toDateString()}}',
+                                               filename: 'PatientNotesReport{{Carbon\Carbon::now()->toDateString()}}',
 
                                                 columns:{
                                                'performed_at':       { header:'Date/Time', width: 200, template: webix.template('#performed_at#') },
