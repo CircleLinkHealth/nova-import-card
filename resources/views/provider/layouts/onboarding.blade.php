@@ -25,6 +25,19 @@
 
 @section('content')
 
+    <div class="row">
+        <nav>
+            <div class="nav-wrapper cyan">
+                <div class="col s12">
+                    <div id="step1" style="display: inline;" class="breadcrumb">Create Practice</div>
+                    <div id="step2" style="display: inline;" class="breadcrumb">Add Locations</div>
+                    <div id="step3" style="display: inline;" class="breadcrumb">Add Staff Members</div>
+                    <div id="step4" style="display: inline;" class="breadcrumb">Welcome Page</div>
+                </div>
+            </div>
+        </nav>
+    </div>
+
     <div class="container">
 
         <div class="v-center">
@@ -55,6 +68,9 @@
             </div>
 
         </div>
-
     </div>
+
+
 @endsection
+
+

@@ -6,6 +6,18 @@
 
 @section('module')
 
+    <head>
+        <style>
+            .breadcrumb:last-child {
+                color: rgba(255, 255, 255, 0.7);
+            }
+
+            #step2 {
+                color: #fff;
+            }
+        </style>
+    </head>
+
     <div id="create-locations-component" class="row">
 
         @include('provider.partials.errors.validation')

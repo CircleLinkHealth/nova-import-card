@@ -6,6 +6,18 @@
 
 @section('module')
 
+    <head>
+        <style>
+            .breadcrumb:last-child {
+                color: rgba(255, 255, 255, 0.7);
+            }
+
+            #step1 {
+                color: #fff;
+            }
+        </style>
+    </head>
+
     <div id="create-practice-component">
         @include('provider.partials.errors.validation')
 
