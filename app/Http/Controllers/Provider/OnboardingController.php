@@ -66,15 +66,13 @@ class OnboardingController extends Controller
     /**
      * Show the form to create Locations
      *
-     * @param $numberOfLocations
-     *
      * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
+     * @internal param $numberOfLocations
+     *
      */
     public function getCreateLocations()
     {
-        $practiceId = auth()->user()->primaryPracticeId;
-
-        return view('provider.onboarding.create-locations', compact('practiceId'));
+        return view('provider.onboarding.create-locations');
     }
 
     /**
@@ -107,6 +105,15 @@ class OnboardingController extends Controller
     {
         try {
             foreach ($request->input('locations') as $newLocation) {
+
+                $primaryPractice = $this->practices
+                    ->skipPresenter()
+                    ->findWhere([
+                        'user_id' => auth()->user()->id,
+                    ])->first();
+
+                $newLocation = array_add($newLocation, 'practice_id', $primaryPractice->id);
+
                 $locations = $this->locations->create($newLocation);
             }
         } catch (ValidatorException $e) {
@@ -164,8 +171,6 @@ class OnboardingController extends Controller
         $input = $request->input();
 
         try {
-            $numberOfLocations = $input['numberOfLocations'];
-
             $practice = $this->practices
                 ->skipPresenter()
                 ->create([
@@ -173,8 +178,6 @@ class OnboardingController extends Controller
                     'user_id'      => auth()->user()->id,
                     'display_name' => $input['name'],
                 ]);
-
-            $practiceId = $practice->id;
         } catch (ValidatorException $e) {
             return redirect()
                 ->back()
@@ -182,7 +185,7 @@ class OnboardingController extends Controller
                 ->withInput();
         }
 
-        return redirect()->route('get.onboarding.create.locations', compact('numberOfLocations', 'practiceId'));
+        return redirect()->route('get.onboarding.create.locations');
     }
 
     /**

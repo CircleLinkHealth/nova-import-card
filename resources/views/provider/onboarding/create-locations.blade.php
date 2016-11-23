@@ -69,7 +69,6 @@
                                     'value' => '@{{loc.address_line_2}}',
                                     'attributes' => [
                                         'v-model' => 'loc.address_line_2',
-                                        'required' => 'required'
                                     ]
                                 ])
                         </div>
@@ -128,26 +127,29 @@
                             </h6>
 
                             @include('provider.partials.mdl.form.text.textfield', [
-                                'name' => 'ehr-login',
+                                'name' => 'locations[@{{index}}][ehr_login]',
                                 'label' => 'EHR Login',
                                 'class' => 'col s6',
                                 'attributes' => [
+                                    'v-model' => 'loc.ehrLogin',
                                     'required' => 'required',
+                                    ':disabled' => 'sameEHRLogin && index > 0'
                                 ]
                             ])
 
                             @include('provider.partials.mdl.form.text.textfield', [
-                                'name' => 'ehr-password',
+                                'name' => 'locations[@{{index}}][ehr_password]',
                                 'label' => 'EHR Password',
                                 'class' => 'col s6',
                                 'type' => 'password',
                                 'attributes' => [
                                     'autocomplete' => 'new-password',
                                     'required' => 'required',
+                                    ':disabled' => 'sameEHRLogin && index > 0'
                                 ]
                             ])
 
-                            <p class="right-align">
+                            <p class="right-align" v-if="index == 0 || (!sameEHRLogin && index < 1)">
                                 @include('provider.partials.mdl.form.checkbox', [
                                    'label' => 'Same for all locations?',
                                    'name' => 'same-ehr-login',
@@ -250,8 +252,6 @@
                                ])
                             </div>
                         </div>
-
-                        <input type="hidden" name="locations[@{{index}}][practice_id]" value="{{$practiceId}}">
 
                         <div class="row" v-if="newLocations.length > 1">
                             <a class="waves-effect waves-teal btn-flat red lighten-3 white-text"

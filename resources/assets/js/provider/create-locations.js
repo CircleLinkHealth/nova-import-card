@@ -29,7 +29,13 @@ var locationsVM = new Vue({
 
     methods: {
         addLocation: function () {
-            this.newLocations.push({});
+            if (this.sameEHRLogin) {
+                this.newLocations.push({
+                    ehrLogin: this.newLocations[0].ehrLogin
+                });
+            } else {
+                this.newLocations.push({});
+            }
 
             this.$nextTick(function () {
                 $('select').material_select();
