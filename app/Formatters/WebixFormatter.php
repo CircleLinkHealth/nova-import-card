@@ -118,7 +118,7 @@ class WebixFormatter implements ReportFormatter
 
             } else if(get_class($data) == Appointment::class)// handles appointments
             {
-                $formatted_data[$count]['logger_name'] = User::withTrashed()->find($data->provider_id)->fullName;
+                $formatted_data[$count]['logger_name'] = User::withTrashed()->find($data->author_id)->fullName;
                 $formatted_data[$count]['comment'] = $data->comment;
                 $formatted_data[$count]['type_name'] = 'Appointment w/ ' . User::find($data->provider_id)->fullName;
                 $formatted_data[$count]['logged_from'] = 'appointment';
@@ -134,6 +134,9 @@ class WebixFormatter implements ReportFormatter
                 $formatted_data[$count]['performed_at'] = $data->performed_at;
 
             }
+
+            $formatted_data[$count]['provider_name'] = User::find($data->patient_id)->billingProviderName;
+
 
 
             //TAGS
