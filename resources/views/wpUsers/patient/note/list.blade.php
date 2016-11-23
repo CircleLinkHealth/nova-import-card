@@ -257,7 +257,7 @@
                                         <input type="button" value="Export as Excel" class="btn btn-primary"
                                                style='margin:15px;'
                                                onclick="webix.toExcel($$(obs_alerts_dtable), {
-                                                       header:'CarePlanManager.com - All Patient Notes @if($isset($selected_provider)) for {{$selected_provider->fullName}} @endif since <?=\Carbon\Carbon::now()->subMonth($dateFilter ?? 0)->format('F, Y') ?>',
+                                                       header:'CarePlanManager.com - All Patient Notes @if(isset($selected_provider)) for {{$selected_provider->fullName}} @endif since <?=\Carbon\Carbon::now()->subMonth($dateFilter ?? 0)->format('F, Y') ?>',
                                                        orientation:'landscape',
                                                        autowidth:true,
                                                        columns:{
@@ -273,7 +273,7 @@
                                         <input type="button" value="Export as PDF" class="btn btn-primary"
                                                style='margin:15px;'
                                                onclick="webix.toPDF($$(obs_alerts_dtable), {
-                                                       header:'CarePlanManager.com - All Patient Notes @if($isset($selected_provider)) for {{$selected_provider->fullName}} @endif @if(isset($dateFilter)) since <?=\Carbon\Carbon::now()->subMonth($dateFilter)->format('F, Y') ?> @endif',
+                                                       header:'CarePlanManager.com - All Patient Notes @if(isset($selected_provider)) for {{$selected_provider->fullName}} @endif @if(isset($dateFilter)) since <?=\Carbon\Carbon::now()->subMonth($dateFilter)->format('F, Y') ?> @endif',
                                                        orientation:'landscape',
                                                        autowidth:true,
                                                        columns:{
