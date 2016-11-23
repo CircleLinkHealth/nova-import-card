@@ -6,7 +6,8 @@ use Illuminate\Database\Eloquent\Model;
 use Prettus\Repository\Contracts\Transformable;
 use Prettus\Repository\Traits\TransformableTrait;
 
-class Ccda extends Model implements Transformable {
+class Ccda extends Model implements Transformable
+{
 
     use ModelLogRelationship, TransformableTrait;
 
@@ -19,9 +20,9 @@ class Ccda extends Model implements Transformable {
     const EMAIL_DOMAIN_TO_VENDOR_MAP = [
         //Carolina Medical Associates
         '@direct.novanthealth.org'        => 10,
-        '@test.directproject.net'         => 2,
+        '@test.directproject.net'         => 14,
         '@direct.welltrackone.com'        => 14,
-        '@treatrelease.direct.aprima.com' => 16,
+        '@treatrelease.direct.aprima.com' => 1,
     ];
 
     protected $fillable = [
@@ -46,6 +47,6 @@ class Ccda extends Model implements Transformable {
 
     public function qaSummary()
     {
-		return $this->hasOne(QAImportSummary::class);
+        return $this->hasOne(QAImportSummary::class);
     }
 }

@@ -31,6 +31,13 @@ elixir(function(mix) {
 
     // mix.sass('fab.scss');
 
+    mix.sass([
+        '/css/provider/dashboard.scss',
+    ], 'public/css/provider-dashboard.css');
+
+    mix.browserify('provider/create-locations.js');
+    mix.browserify('provider/create-staff.js');
+
     // mix.browserify('uploader.js');
     // mix.browserify('ccd-models/items/medicationItem.js');
     // mix.browserify('ccd-models/items/allergiesItem.js');

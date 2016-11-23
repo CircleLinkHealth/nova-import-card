@@ -10,8 +10,13 @@
     ?>
 
     <style type="text/css">
-        div.inline { float:left; }
-        .clearBoth { clear:both; }
+        div.inline {
+            float: left;
+        }
+
+        .clearBoth {
+            clear: both;
+        }
 
         blockquote {
             padding: 10px 20px;
@@ -20,7 +25,6 @@
             border-left: 5px solid #50b2e2;
             line-height: 24px;
         }
-
     </style>
 
     <div class="row" style="margin-top:30px;">
@@ -113,7 +117,9 @@
                                                     </h5>
                                                 @elseif(strpos($tag, 'Forward') !== false)
                                                     <h5>
-                                                        <div class="label label-info" data-toggle="tooltip" title="{{$tag}}">Forwarded</div>
+                                                        <div class="label label-info" data-toggle="tooltip"
+                                                             title="{{$tag}}">Forwarded
+                                                        </div>
                                                     </h5>
                                                 @else
                                                     <h5>
@@ -121,20 +127,24 @@
                                                     </h5>
                                                 @endif
                                             @endforeach
-                                                @if(is_array($hasReaders))
-                                                    @foreach($hasReaders as $key => $value)
+                                            @if(is_array($hasReaders))
+                                                @foreach($hasReaders as $key => $value)
                                                     <h5>
-                                                        <div style="margin-right: 2px; margin-bottom: 4px;" class="inline label label-success" data-toggle="tooltip" title="{{$value}}">
-                                                            <div style="padding: 1px; padding-left: 0px" class="label label-success">
-                                                                <span class="glyphicon glyphicon-eye-open" aria-hidden="true"></span>
+                                                        <div style="margin-right: 2px; margin-bottom: 4px;"
+                                                             class="inline label label-success" data-toggle="tooltip"
+                                                             title="{{$value}}">
+                                                            <div style="padding: 1px; padding-left: 0px"
+                                                                 class="label label-success">
+                                                                <span class="glyphicon glyphicon-eye-open"
+                                                                      aria-hidden="true"></span>
                                                                 @if($key == $note['provider_name'])
                                                                     (B.P.)
                                                                 @endif
                                                             </div>{{$key}}
                                                         </div>
                                                     </h5>
-                                                    @endforeach
-                                                @endif
+                                                @endforeach
+                                            @endif
                                         </div>
                                     </div>
                                 </div>
@@ -170,13 +180,13 @@
 
                                                             <!-- rework later, quick fix ticket: 679 !-->
                                                             @if($patient->program_id == 29)
-                                                                    <option value="2584">Tina Booze</option>
+                                                                <option value="2584">Tina Booze</option>
                                                             @else
                                                                 @foreach ($careteam_info as $id => $name)
                                                                     <option value="{{$id}}"> {{$name}} </option>
                                                                 @endforeach
-                                                                    <option value="948">Patient Support</option>
                                                             @endif
+                                                            <option value="948">Patient Support</option>
 
                                                         </select>
                                                     </div>
@@ -231,12 +241,10 @@
                         </div>
                     </div>
                 </div>
-
             </div>
-
         </div>
     </div>
     <div class="form-block col-md-6">
-        <br />
+        <br/>
     </div>
 @endsection

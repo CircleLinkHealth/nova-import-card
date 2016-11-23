@@ -9,6 +9,12 @@ class Practice extends Model
 
     use SoftDeletes;
 
+    protected $fillable = [
+        'name',
+        'display_name',
+        'user_id',
+    ];
+
     public static function getProviders($blogId){
         $providers = User::whereHas('practices', function ($q) use
         (
@@ -144,4 +150,13 @@ class Practice extends Model
 
     }
 
+    public function lead()
+    {
+        return $this->belongsTo(User::class);
+    }
+
+    public function getSubdomainAttribute()
+    {
+        return explode('.', $this->domain)[0];
+    }
 }

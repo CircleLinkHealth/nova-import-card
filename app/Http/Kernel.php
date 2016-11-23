@@ -18,6 +18,8 @@ class Kernel extends HttpKernel
             \Illuminate\View\Middleware\ShareErrorsFromSession::class,
             \App\Http\Middleware\VerifyCsrfToken::class,
             \Illuminate\Routing\Middleware\SubstituteBindings::class,
+            \App\Http\Middleware\LogoutIfAccessDisabled::class,
+            \App\Http\Middleware\ClearPatientSessions::class,
         ],
         'api' => [
             'throttle:60,1',
@@ -43,12 +45,12 @@ class Kernel extends HttpKernel
      */
     protected $routeMiddleware = [
         //Laravel Middleware
-        'auth'                       => \App\Http\Middleware\Authenticate::class,
-        'auth.basic'                 => \Illuminate\Auth\Middleware\AuthenticateWithBasicAuth::class,
-        'bindings'                   => \Illuminate\Routing\Middleware\SubstituteBindings::class,
-        'can'                        => \Illuminate\Auth\Middleware\Authorize::class,
-        'guest'                      => \App\Http\Middleware\RedirectIfAuthenticated::class,
-        'throttle'                   => \Illuminate\Routing\Middleware\ThrottleRequests::class,
+        'auth'       => \Illuminate\Auth\Middleware\Authenticate::class,
+        'auth.basic' => \Illuminate\Auth\Middleware\AuthenticateWithBasicAuth::class,
+        'bindings'   => \Illuminate\Routing\Middleware\SubstituteBindings::class,
+        'can'        => \Illuminate\Auth\Middleware\Authorize::class,
+        'guest'      => \App\Http\Middleware\RedirectIfAuthenticated::class,
+        'throttle'   => \Illuminate\Routing\Middleware\ThrottleRequests::class,
 
         //CLH Middleware
         'ability'                    => \Zizaco\Entrust\Middleware\EntrustAbility::class,

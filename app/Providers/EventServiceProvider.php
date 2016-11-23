@@ -11,19 +11,22 @@ class EventServiceProvider extends ServiceProvider
      * @var array
      */
     protected $listen = [
-        'Illuminate\Auth\Events\Login'   => [
+        'Illuminate\Auth\Events\Login'          => [
             'App\Events\UpdateUserLoginInfo',
         ],
-        'App\Events\CarePlanWasApproved' => [
+        'App\Events\CarePlanWasApproved'        => [
             'App\Listeners\UpdateCarePlanStatus',
             'App\Listeners\CreateAprimaPdfCarePlan',
             'App\Listeners\CreateAthenaPdfCarePlan',
         ],
-        'App\Events\NoteWasForwarded'    => [
+        'App\Events\NoteWasForwarded'           => [
             'App\Listeners\CreateAprimaPdfNote',
         ],
-        'Illuminate\Auth\Events\Logout'  => [
+        'Illuminate\Auth\Events\Logout'         => [
             'App\Listeners\ClosePatientSession',
+        ],
+        'Illuminate\Mail\Events\MessageSending' => [
+            'App\Listeners\LogSentMessage',
         ],
     ];
 

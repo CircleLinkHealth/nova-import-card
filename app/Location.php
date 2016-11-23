@@ -17,6 +17,7 @@ class Location extends Model
      * @var array
      */
     protected $fillable = [
+        'practice_id',
         'name',
         'phone',
         'address_line_1',
@@ -25,7 +26,6 @@ class Location extends Model
         'state',
         'timezone',
         'postal_code',
-        'position',
     ];
 
     public static function getLocationsForBlog($blogId)

@@ -459,6 +459,11 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
         return $this->program_id;
     }
 
+    public function getPrimaryPracticeIdAttribute()
+    {
+        return $this->program_id;
+    }
+
     public function getUserMetaByKey($key)
     {
         $value = '';
