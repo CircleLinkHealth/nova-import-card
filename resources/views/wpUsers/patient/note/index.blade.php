@@ -198,8 +198,18 @@
                             </div>
                         @if(auth()->user()->hasRole(['administrator', 'med_assistant', 'provider']))
 
-                                <input type="button" value="Export as PDF" class="btn btn-primary" style='margin:15px;'
-                                   onclick="webix.toPDF($$(obs_alerts_dtable));">
+                                <input type="button" value="Export as PDF" class="btn btn-primary"
+                                       style='margin:15px;'
+                                       onclick="webix.toPDF($$(obs_alerts_dtable), {
+                                               header:'CarePlanManager.com - All Patient Notes <?= date('M d,Y') ?>',
+                                               orientation:'landscape',
+                                               autowidth:true,
+                                               columns:{
+                                               'date':       { header:'Patient Name', width: 200, template: webix.template('#date#') },
+                                               'provider_name':             { header:'Author Name',    width:200, sort:'string', template: webix.template('#author_name#')},
+                                               'comment':             { header:'Preview',    width:200, sort:'string', template: webix.template('#comment#')},
+
+                                               }});">
 
 
 
@@ -211,11 +221,9 @@
                                                orientation:'landscape',
                                                autowidth:true,
                                                columns:{
-                                               'patient_name':       { header:'Patient Name', width: 200, template: webix.template('#patient_name#') },
-                                               'author_name':             { header:'Author Name',    width:200, sort:'string', template: webix.template('#author_name#')},
+                                               'date':       { header:'Patient Name', width: 200, template: webix.template('#date#') },
+                                               'provider_name':             { header:'Author Name',    width:200, sort:'string', template: webix.template('#author_name#')},
                                                'comment':             { header:'Preview',    width:200, sort:'string', template: webix.template('#comment#')},
-                                               'type':             { header:'Type',    width:200, sort:'string', template: webix.template('#type#')},
-                                               'date':             { header:'Performed',    width:200, sort:'string', template: webix.template('#author_name#')},
 
                                                }});">
                         @endif
