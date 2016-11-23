@@ -256,7 +256,7 @@
                                         <input type="button" value="Export as Excel" class="btn btn-primary"
                                                style='margin:15px;'
                                                onclick="webix.toExcel($$(obs_alerts_dtable), {
-                                                       header:'CarePlanManager.com - All Patient Notes since @if(isset($dateFilter)) since <?=\Carbon\Carbon::now()->subMonth($dateFilter)->format('F, Y') ?> @endif',
+                                                       header:'CarePlanManager.com - All Patient Notes since <?=\Carbon\Carbon::now()->subMonth($dateFilter ?? 0)->format('F, Y') ?>',
                                                        orientation:'landscape',
                                                        autowidth:true,
                                                        columns:{
@@ -264,7 +264,7 @@
                                                        'author_name':             { header:'Author Name',    width:200, sort:'string', template: webix.template('#author_name#')},
                                                        'comment':             { header:'Preview',    width:200, sort:'string', template: webix.template('#comment#')},
                                                        'type':             { header:'Type',    width:200, sort:'string', template: webix.template('#type#')},
-                                                       'date':             { header:'Performed',    width:200, sort:'string', template: webix.template('#author_name#')},
+                                                       'date':             { header:'Performed',    width:200, sort:'string', template: webix.template('#date#')},
 
                                                        }});">
 
@@ -280,7 +280,7 @@
                                                        'author_name':             { header:'Author Name',    width:200, sort:'string', template: webix.template('#author_name#')},
                                                        'comment':             { header:'Preview',    width:200, sort:'string', template: webix.template('#comment#')},
                                                        'type':             { header:'Type',    width:200, sort:'string', template: webix.template('#type#')},
-                                                       'date':             { header:'Performed',    width:200, sort:'string', template: webix.template('#author_name#')},
+                                                       'date':             { header:'Performed',    width:200, sort:'string', template: webix.template('#date#')},
 
                                                        }});">
                                     @endif
