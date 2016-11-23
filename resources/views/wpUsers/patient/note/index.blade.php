@@ -208,7 +208,7 @@
                                                columns:{
                                                'performed_at':       { header:'Date/Time', width: 200, template: webix.template('#performed_at#') },
                                                'logger_name':             { header:'Author Name',    width:200, sort:'string', template: webix.template('#logger_name#')},
-                                               'comment':             { header:'Preview',    width:200, sort:'string', template: webix.template('#comment#')}
+                                               'comment':             { header:'Note Contents',    width:200, sort:'string', template: webix.template('#comment#')}
 
                                                }});">
 
@@ -223,7 +223,7 @@
                                                 columns:{
                                                'performed_at':       { header:'Date/Time', width: 200, template: webix.template('#performed_at#') },
                                                'logger_name':             { header:'Author Name',    width:200, sort:'string', template: webix.template('#logger_name#')},
-                                               'comment':             { header:'Note Contents',    width:200, sort:'string', template: webix.template('#comment#')},
+                                               'comment':             { header:'Note Contents',    width:200, sort:'string', template: webix.template('#comment#')}
 
                                                }});">
                         @endif
