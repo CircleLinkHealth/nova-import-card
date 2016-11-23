@@ -4,11 +4,11 @@ Vue.use(require('vue-resource'));
 
 /**
  *
- * CREATE PRACTICE VUE INSTANCE
+ * CREATE STAFF VUE INSTANCE
  *
  */
-var createPractice = new Vue({
-    el: '#create-practice-component',
+var createStaffVM = new Vue({
+    el: '#create-staff-component',
 
     data: function () {
         return {
