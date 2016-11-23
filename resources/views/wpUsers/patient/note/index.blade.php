@@ -133,7 +133,7 @@
 
                                     {
                                         id: "logger_name",
-                                        header: ["Provider", {content: "textFilter", placeholder: "Filter"}],
+                                        header: ["Author", {content: "textFilter", placeholder: "Filter"}],
                                         width: 210,
                                         sort: 'string',
                                         css: {"color": "black", "text-align": "left"}
@@ -204,6 +204,7 @@
                                                header:'CarePlanManager.com - Patient Notes for {{ $patient->fullName . " (" .  date('M d,Y') }})',
                                                orientation:'landscape',
                                                autowidth:true,
+                                               filename: 'PatientNotesReport',
                                                columns:{
                                                'performed_at':       { header:'Patient Name', width: 200, template: webix.template('#performed_at#') },
                                                'provider_name':             { header:'Author Name',    width:200, sort:'string', template: webix.template('#provider_name#')},
@@ -217,7 +218,9 @@
                                                header:'CarePlanManager.com - All Patient Notes for {{ $patient->fullName . " (" . date('M d,Y') }})',
                                                orientation:'landscape',
                                                autowidth:true,
-                                               columns:{
+                                               filename: 'PatientNotesReport',
+
+                                                columns:{
                                                'performed_at':       { header:'Patient Name', width: 200, template: webix.template('#performed_at#') },
                                                'provider_name':             { header:'Author Name',    width:200, sort:'string', template: webix.template('#provider_name#')},
                                                'comment':             { header:'Preview',    width:200, sort:'string', template: webix.template('#comment#')},

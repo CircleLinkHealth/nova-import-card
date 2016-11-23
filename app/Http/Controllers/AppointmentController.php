@@ -70,7 +70,9 @@ class AppointmentController extends Controller
 
     }
 
-    public function view(Request $request){
+    public function view(Request $request, $appointmentId){
+        
+        
 
 
         $data = [
