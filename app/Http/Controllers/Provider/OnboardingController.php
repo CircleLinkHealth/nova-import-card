@@ -197,11 +197,11 @@ class OnboardingController extends Controller
      */
     public function postStoreStaff(Request $request)
     {
-        $input = $request->input();
-        dd($input);
-        try {
-            $numberOfLocations = $input['numberOfLocations'];
+        return view('provider.onboarding.welcome');
 
+        $input = $request->input();
+
+        try {
             $practice = $this->practices
                 ->skipPresenter()
                 ->create([

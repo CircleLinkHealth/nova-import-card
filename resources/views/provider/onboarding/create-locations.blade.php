@@ -121,7 +121,7 @@
                             ])
                         </div>
 
-                        <div class="row">
+                        <div class="row" v-if="index == 0 || (!sameEHRLogin && index < 1)">
                             <h6>
                                 Please provide login information for your EHR system.
                             </h6>
@@ -149,7 +149,7 @@
                                 ]
                             ])
 
-                            <p class="right-align" v-if="index == 0 || (!sameEHRLogin && index < 1)">
+                            <p class="right-align">
                                 @include('provider.partials.mdl.form.checkbox', [
                                    'label' => 'Same for all locations?',
                                    'name' => 'same-ehr-login',
@@ -161,7 +161,7 @@
                             </p>
                         </div>
 
-                        <div class="row">
+                        <div class="row" v-if="index == 0 || (!sameClinicalIssuesContact && index < 1)">
                             <h6>
                                 Who should be notified for patient clinical issues?
                             </h6>
