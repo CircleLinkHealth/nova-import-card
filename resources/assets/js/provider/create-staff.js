@@ -13,6 +13,8 @@ var createStaffVM = new Vue({
     data: function () {
         return {
             newUsers: [],
+            regular_select: null,
+            materialize_select: null,
         }
     },
 
