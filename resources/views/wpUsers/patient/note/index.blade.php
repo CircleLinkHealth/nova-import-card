@@ -201,7 +201,7 @@
                                 <input type="button" value="Export as PDF" class="btn btn-primary"
                                        style='margin:15px;'
                                        onclick="webix.toPDF($$(obs_alerts_dtable), {
-                                               header:'CarePlanManager.com - Patient Notes for {{ $patient->fullName . " (" .  date('M d,Y') }})',
+                                               header:'CarePlanManager.com - Patient Notes for {{ $patient->fullName . " (B.P: ". $patient->billingProviderName .")" . date('M d,Y') }}',
                                                orientation:'landscape',
                                                autowidth:true,
                                                filename: 'PatientNotesReport',
@@ -215,7 +215,7 @@
                                 <input type="button" value="Export as Excel" class="btn btn-primary"
                                        style='margin:15px;'
                                        onclick="webix.toExcel($$(obs_alerts_dtable), {
-                                               header:'CarePlanManager.com - All Patient Notes for {{ $patient->fullName . " (" . date('M d,Y') }})',
+                                               header:'CarePlanManager.com - Patient Notes for {{ $patient->fullName . " (B.P: ". $patient->billingProviderName .")" . date('M d,Y') }}',
                                                orientation:'landscape',
                                                autowidth:true,
                                                filename: 'PatientNotesReport',
