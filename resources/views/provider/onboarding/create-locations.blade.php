@@ -133,7 +133,7 @@
                             ])
                         </div>
 
-                        <div class="row" v-if="index == 0 || (!sameEHRLogin && index < 1)">
+                        <div class="row" v-if="index == 0 || !sameEHRLogin">
                             <h6>
                                 Please provide login information for your EHR system.
                             </h6>
@@ -173,7 +173,7 @@
                             </p>
                         </div>
 
-                        <div class="row" v-if="index == 0 || (!sameClinicalIssuesContact && index < 1)">
+                        <div class="row" v-if="index == 0 || !sameClinicalIssuesContact">
                             <h6>
                                 Who should be notified for patient clinical issues?
                             </h6>
