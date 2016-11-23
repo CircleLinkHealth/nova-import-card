@@ -9,7 +9,7 @@ Vue.use(require('vue-resource'));
  * VUE INSTANCE
  *
  */
-var vm = new Vue({
+var locationsVM = new Vue({
     el: '#create-locations-component',
 
     data: function () {
@@ -32,6 +32,10 @@ var vm = new Vue({
                 $('select').material_select();
                 $('.collapsible').collapsible();
             });
+        },
+
+        deleteLocation: function (index) {
+            this.newLocations.splice(index, 1);
         }
     }
 });

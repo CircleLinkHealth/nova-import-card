@@ -125,7 +125,8 @@
                         <input type="hidden" name="locations[@{{index}}][practice_id]" value="{{$practiceId}}">
 
                         <div class="row" v-if="newLocations.length > 1">
-                            <a class="waves-effect waves-teal btn-flat red lighten-3 white-text"><i
+                            <a class="waves-effect waves-teal btn-flat red lighten-3 white-text"
+                               v-on:click="deleteLocation(index)"><i
                                         class="material-icons left">delete</i>Trash @{{ loc.name }}</a>
                         </div>
                     </div>
