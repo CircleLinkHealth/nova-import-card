@@ -13,6 +13,7 @@ class Appointment extends Model
         'patient_id',
         'author_id',
         'provider_id',
+        'was_completed',
         'date',
         'time',
         'comment',

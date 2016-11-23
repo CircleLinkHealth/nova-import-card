@@ -51,6 +51,7 @@ class AppointmentController extends Controller
 
         $input = $request->input();
 
+        $was_completed = isset($input['is_completed']) ?? false;
 
         $data = Appointment::create([
 
@@ -60,8 +61,11 @@ class AppointmentController extends Controller
             'date' => $input['date'],
             'time' => $input['time'],
             'comment' => $input['comment'],
+            'was_completed' => $was_completed,
 
         ]);
+
+        dd($data);
 
         return redirect()->route('patient.note.index', ['patient' => $input['patientId']])->with('messages',
             ['Successfully Created Note']);

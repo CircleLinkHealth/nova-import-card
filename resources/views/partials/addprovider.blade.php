@@ -118,14 +118,15 @@
                     <input type="hidden" id="created_by" name="created_by" value="{{auth()->user()->id}}">
                     <input type="hidden" id="patient_id" name="patient_id" value="{{$patient->id}}">
 
-                    <div>
-                        <button type="submit" id="create" class="create btn btn-primary">Add</button>
+                    <div class="modal-footer">
+                        <div class="row result">
+
+                        </div>
                     </div>
 
-                    <div class="modal-footer">
-                        <div class="row">
-                            <span class="result"></span>
-                        </div>
+
+                    <div>
+                        <button type="submit" id="create" class="create btn btn-primary">Add</button>
                     </div>
 
                 </form>
@@ -138,46 +139,3 @@
 </div>
 
 
-<script>
-
-    $("#create").on('click', function () {
-
-        var url = '{!! route('provider.store') !!}'; // the script where you handle the form input.
-        var name = null;
-        var id = null;
-
-        $.ajax({
-            type: "POST",
-            url: url,
-            headers: {
-                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-            },
-            data: {
-                phone: $('#phone').val(),
-                first_name: $('#first_name').val(),
-                address: $('#address').val(),
-                last_name: $('#last_name').val(),
-                specialty: $('#specialty').val(),
-                practice: $('#practice').val(),
-                type: $('#type').val(),
-                email: $('#email').val(),
-                created_by: $('#created_by').val(),
-                patient_id: $('#patient_id').val(),
-            },
-            success: function (data) {
-
-                console.log(data); // show response from the php script.
-
-                var dataArray = JSON.parse(data);
-
-                $('<option>').val(dataArray['id']).text(dataArray['name']).appendTo('#provider');
-                $("#provider").val(dataArray['id']).trigger("change");
-                $('#result').text('Hello');
-            }
-        });
-
-
-        return false;
-    });
-
-</script>
