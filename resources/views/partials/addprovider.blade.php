@@ -33,7 +33,7 @@
                             <div class="col-md-3">
                                 <input id="first_name" name="first_name" type="text" placeholder="First"
                                        class="form-control input-md"
-                                       required="first_name">
+                                       required="required">
                             </div>
                             <div class="col-md-3">
                                 <input id="last_name" name="last_name" type="text" placeholder="Last"
@@ -45,7 +45,7 @@
 
                     <div class="row providerForm">
                         <div class="form-group">
-                            <label class="col-md-3 control-label" for="speciality">Speciality</label>
+                            <label class="col-md-3 control-label" for="speciality">Specialty or Service Type</label>
                             <div class="col-md-6">
                                 <input id="speciality" name="speciality" type="text" placeholder=""
                                        class="form-control input-md"
@@ -80,7 +80,7 @@
 
                     <div class="row providerForm">
                         <div class="form-group">
-                            <label class="col-md-3 control-label" for="practice">Practice/Program Name</label>
+                            <label class="col-md-3 control-label" for="practice">Practice Name</label>
                             <div class="col-md-6">
                                 <input id="practice" name="practice" type="text" placeholder=""
                                        class="form-control input-md"

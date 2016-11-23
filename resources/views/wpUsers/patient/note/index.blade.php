@@ -64,7 +64,9 @@
                                                                 'patientId' => $patient->id,
                                                                 'noteId'    => ''
                                                         ]); ?>/" + obj.id + "'>" + obj.type_name + "</a>";
-                                            else if (obj.logged_from == "manual_input" || obj.logged_from == "activity") {
+                                            else if (obj.logged_from == "appointment") {
+                                                return "Appointment";
+                                            } else {
                                                 return "<a href='<?php echo route('patient.activity.view', [
                                                                 'patientId' => $patient->id,
                                                                 'actId'     => ''
@@ -113,10 +115,7 @@
                                                                 'actId'     => ''
                                                         ]); ?>/" + obj.id + "'>" + obj.comment + "</a>"
                                             }else if (obj.logged_from == "appointment"){
-                                                return "<a href='<?php echo route('patient.appointment.view', [
-                                                                'patientId' => $patient->id,
-                                                                'appointmentId'     => ''
-                                                        ]); ?>/" + obj.id + "'>" + obj.comment + "</a>"
+                                                return "<a href='#" + obj.id + "'>" + obj.comment + "</a>"
                                             } else
                                             return obj.type_name;
                                         },

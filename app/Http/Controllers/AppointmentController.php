@@ -65,8 +65,6 @@ class AppointmentController extends Controller
 
         ]);
 
-        dd($data);
-
         return redirect()->route('patient.note.index', ['patient' => $input['patientId']])->with('messages',
             ['Successfully Created Note']);
 
