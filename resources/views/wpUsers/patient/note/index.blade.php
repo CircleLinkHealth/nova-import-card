@@ -207,7 +207,7 @@
                                                header: 'Circlelink Health notes for {!!  $patient->fullName . ", Dr. " . $patient->billingProviderName . " as of " . Carbon\Carbon::now()->toDateString() !!}',
                                                orientation:'landscape',
                                                autowidth:true,
-                                               filename: 'PatientNotesReport{{Carbon\Carbon::now()->toDateString()}}',
+                                               filename: {{$patient->fullNameCarbon . \Carbon::now()->toDateString()}}',
                                                columns:{
                                                'performed_at':       { header:'Date/Time', width: 200, template: webix.template('#performed_at#') },
                                                'logger_name':             { header:'Author Name',    width:200, sort:'string', template: webix.template('#logger_name#')},
@@ -221,7 +221,7 @@
                                                header:'Circlelink Health notes for {!! $patient->fullName . ", Dr. " . $patient->billingProviderName . " as of " . Carbon\Carbon::now()->toDateString() !!}',
                                                orientation:'landscape',
                                                autowidth:true,
-                                               filename: 'PatientNotesReport{{Carbon\Carbon::now()->toDateString()}}',
+                                               filename: {{$patient->fullName . Carbon\Carbon::now()->toDateString()}}',
 
                                                 columns:{
                                                'performed_at':       { header:'Date/Time', width: 200, template: webix.template('#performed_at#') },

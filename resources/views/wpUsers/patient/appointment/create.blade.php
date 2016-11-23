@@ -111,6 +111,7 @@
                             </div>
                         </div>
                         <div class="form-block col-md-6">
+
                             <div class="new-observation-item">
                                 <div class="form-group">
                                     <div class="col-sm-12">
@@ -121,7 +122,23 @@
                                     <div class="col-sm-12" style="margin-top: -11px;">
                                         <div class="form-group">
                                         <textarea class="form-control" id="comment" name="comment"
-                                                  placeholder="Please enter appointment details..." rows="8"></textarea>
+                                                  placeholder="Please enter appointment details..." rows="3"></textarea>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="new-observation-item">
+                                <div class="form-group">
+                                    <div class="col-sm-12">
+                                        <label for="observationSource">
+                                            Additional Details:
+                                        </label>
+                                    </div>
+                                    <div class="col-sm-12" style="margin-top: -11px;">
+                                        <div class="form-group">
+                                        <textarea class="form-control" id="comment" name="comment"
+                                                  placeholder="Please enter appointment details..." rows="3"></textarea>
                                         </div>
                                     </div>
                                 </div>

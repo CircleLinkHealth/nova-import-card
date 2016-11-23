@@ -14,6 +14,7 @@ class Appointment extends Model
         'author_id',
         'provider_id',
         'was_completed',
+        'type',
         'date',
         'time',
         'comment',

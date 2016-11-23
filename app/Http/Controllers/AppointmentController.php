@@ -57,6 +57,7 @@ class AppointmentController extends Controller
 
             'patient_id' => $input['patientId'],
             'author_id' => auth()->user()->id,
+            'type' =>  $input['type'],
             'provider_id' => $input['provider'],
             'date' => $input['date'],
             'time' => $input['time'],
