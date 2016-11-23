@@ -71,7 +71,8 @@
 
                             <div class="input-field col s6">
                                 <select id="roles" v-model="newUser.role">
-                                    <option v-bind:value="{id:1, name:'No Role Selected'}" disabled>Choose a role
+                                    <option v-bind:value="{id:0, name:'No Role Selected'}" disabled selected>Choose a
+                                        role
                                     </option>
                                     <option v-bind:value="{id:1, name:'Medical Assistant'}">Medical Assistant</option>
                                     <option v-bind:value="{id:1, name:'Specialist Doctor'}">Specialist Doctor</option>
