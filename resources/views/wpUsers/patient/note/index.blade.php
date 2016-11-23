@@ -197,8 +197,13 @@
 
                             </div>
                         @if(auth()->user()->hasRole(['administrator', 'med_assistant', 'provider']))
-                            <input type="button" value="Export as PDF" class="btn btn-primary" style='margin:15px;'
-                                   onclick="webix.toPDF(obs_alerts_dtable);">
+
+                                <input type="button" value="Export as PDF" class="btn btn-primary" style='margin:15px;'
+                                   onclick="webix.toPDF($$(obs_alerts_dtable));">
+
+
+
+
                                 <input type="button" value="Export as Excel" class="btn btn-primary"
                                        style='margin:15px;'
                                        onclick="webix.toExcel($$(obs_alerts_dtable), {
