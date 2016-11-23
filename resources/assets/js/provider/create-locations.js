@@ -13,14 +13,27 @@ var vm = new Vue({
     el: '#create-locations-component',
 
     data: function () {
-        return {}
+        return {
+            newLocations: []
+        }
     },
 
     ready: function () {
-        console.log('yo');
+        this.newLocations.push({
+            name: 'location'
+        });
     },
 
-    methods: {}
+    methods: {
+        addLocation: function () {
+            this.newLocations.push({});
+
+            this.$nextTick(function () {
+                $('select').material_select();
+                $('.collapsible').collapsible();
+            });
+        }
+    }
 });
 
 

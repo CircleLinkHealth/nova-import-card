@@ -8,7 +8,7 @@
                        type="{{ isset($type) ? $type : 'text' }}"
                        id="{{ $name }}"
                        name="{{ $name }}"
-                {{ isset($value) ? "value=$value" : !empty(old($name)) ? 'value='.old($name) : '' }}
+                       value="{{ isset($value) ? $value : !empty(old($name)) ? old($name) : '' }}"
                 @if(isset($attributes))
                     @foreach($attributes as $key => $val)
                         {{ $key }}="{{ $val }}"

@@ -1234,7 +1234,7 @@ Route::group([
             'as'   => 'post.onboarding.store.practice',
         ]);
 
-        Route::get('create-locations/{numberOfLocations}/{practiceId}', [
+        Route::get('create-locations', [
             'uses' => 'Provider\OnboardingController@getCreateLocations',
             'as'   => 'get.onboarding.create.locations',
         ]);

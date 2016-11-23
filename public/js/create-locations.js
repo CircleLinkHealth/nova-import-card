@@ -3992,7 +3992,7 @@ function flushBatcherQueue() {
     // keep flushing until it depletes
     if (queue.length) {
       _again = true;
-      continue _function;
+        continue;
     }
     // dev tool hook
     /* istanbul ignore if */
@@ -11016,14 +11016,27 @@ var vm = new Vue({
     el: '#create-locations-component',
 
     data: function data() {
-        return {};
+        return {
+            newLocations: []
+        };
     },
 
     ready: function ready() {
-        console.log('yo');
+        this.newLocations.push({
+            name: 'location'
+        });
     },
 
-    methods: {}
+    methods: {
+        addLocation: function addLocation() {
+            this.newLocations.push({});
+
+            this.$nextTick(function () {
+                $('select').material_select();
+                $('.collapsible').collapsible();
+            });
+        }
+    }
 });
 
 },{"vue":10,"vue-resource":3}]},{},[11]);
