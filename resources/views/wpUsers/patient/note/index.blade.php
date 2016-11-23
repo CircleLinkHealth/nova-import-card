@@ -205,14 +205,11 @@
                                                orientation:'landscape',
                                                autowidth:true,
                                                columns:{
-                                               'date':       { header:'Patient Name', width: 200, template: webix.template('#date#') },
+                                               'performed_at':       { header:'Patient Name', width: 200, template: webix.template('#performed_at#') },
                                                'provider_name':             { header:'Author Name',    width:200, sort:'string', template: webix.template('#author_name#')},
-                                               'comment':             { header:'Preview',    width:200, sort:'string', template: webix.template('#comment#')},
+                                               'comment':             { header:'Preview',    width:200, sort:'string', template: webix.template('#comment#')}
 
                                                }});">
-
-
-
 
                                 <input type="button" value="Export as Excel" class="btn btn-primary"
                                        style='margin:15px;'
@@ -221,7 +218,7 @@
                                                orientation:'landscape',
                                                autowidth:true,
                                                columns:{
-                                               'date':       { header:'Patient Name', width: 200, template: webix.template('#date#') },
+                                               'performed_at':       { header:'Patient Name', width: 200, template: webix.template('#performed_at#') },
                                                'provider_name':             { header:'Author Name',    width:200, sort:'string', template: webix.template('#author_name#')},
                                                'comment':             { header:'Preview',    width:200, sort:'string', template: webix.template('#comment#')},
 

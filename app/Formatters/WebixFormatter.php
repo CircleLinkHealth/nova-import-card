@@ -122,7 +122,7 @@ class WebixFormatter implements ReportFormatter
                 $formatted_data[$count]['comment'] = $data->comment;
                 $formatted_data[$count]['type_name'] = 'Appointment w/ ' . User::find($data->provider_id)->fullName;
                 $formatted_data[$count]['logged_from'] = 'appointment';
-                $formatted_data[$count]['performed_at'] = Carbon::parse($data->created_at)->toDateString();
+                $formatted_data[$count]['performed_at'] = Carbon::parse($data->date)->toDateString();
 
 
             } else {

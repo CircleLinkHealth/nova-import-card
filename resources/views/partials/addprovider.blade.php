@@ -108,7 +108,7 @@
                             <label class="col-md-3 control-label" for="type">Select Type</label>
                             <div class="col-md-6">
                                 <select id="type" name="type" class="form-control type">
-                                    <option value="clinical">Clinical (MD)</option>
+                                    <option value="clinical">Clinical (MD, RN or other)</option>
                                     <option value="non-clinical">Non-clinical</option>
                                 </select>
                             </div>
