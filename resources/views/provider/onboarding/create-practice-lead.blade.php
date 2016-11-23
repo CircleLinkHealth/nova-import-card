@@ -6,6 +6,18 @@
 
 @section('module')
 
+    <head>
+        <style>
+            .breadcrumb:last-child {
+                color: rgba(255, 255, 255, 0.7);
+            }
+
+            #step0 {
+                color: #fff;
+            }
+        </style>
+    </head>
+
     @include('provider.partials.errors.validation')
 
     {!! Form::open([
