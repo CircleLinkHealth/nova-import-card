@@ -12,13 +12,7 @@ var createPractice = new Vue({
 
     data: function () {
         return {
-            //For variables prefixed with many:
-            //  true => different value for each location
-            //  false => same value for all locations
-            manyEHRLogins: false,
-            manyClinicalIssuesContacts: false,
 
-            patientClinicalIssuesContact: false
         }
     },
 

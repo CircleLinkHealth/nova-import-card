@@ -122,6 +122,135 @@
                             ])
                         </div>
 
+                        <div class="row">
+                            <h6>
+                                Please provide login information for your EHR system.
+                            </h6>
+
+                            @include('provider.partials.mdl.form.text.textfield', [
+                                'name' => 'ehr-login',
+                                'label' => 'EHR Login',
+                                'class' => 'col s6',
+                                'attributes' => [
+                                    'required' => 'required',
+                                ]
+                            ])
+
+                            @include('provider.partials.mdl.form.text.textfield', [
+                                'name' => 'ehr-password',
+                                'label' => 'EHR Password',
+                                'class' => 'col s6',
+                                'type' => 'password',
+                                'attributes' => [
+                                    'autocomplete' => 'new-password',
+                                    'required' => 'required',
+                                ]
+                            ])
+
+                            <p class="right-align">
+                                @include('provider.partials.mdl.form.checkbox', [
+                                   'label' => 'Same for all locations?',
+                                   'name' => 'same-ehr-login',
+                                   'value' => '1',
+                                   'attributes' => [
+                                        'v-model' => 'sameEHRLogin',
+                                    ]
+                               ])
+                            </p>
+                        </div>
+
+                        <div class="row">
+                            <h6>
+                                Who should be notified for patient clinical issues?
+                            </h6>
+
+                            <div>
+                                @include('provider.partials.mdl.form.radio', [
+                                    'id' => 'billing-provider',
+                                    'label' => 'Patient billing provider.',
+                                    'name' => 'clinical-contact',
+                                    'value' => 'billing-provider',
+                                    'attributes' => [
+                                        'v-model' => 'patientClinicalIssuesContact',
+                                        'required' => 'required',
+                                    ]
+                                ])
+                            </div>
+
+                            <div>
+                                @include('provider.partials.mdl.form.radio', [
+                                    'id' => 'instead-of-billing-provider',
+                                    'label' => 'Someone else instead of billing provider.',
+                                    'name' => 'clinical-contact',
+                                    'value' => 'instead-of-billing-provider',
+                                    'attributes' => [
+                                        'v-model' => 'patientClinicalIssuesContact',
+                                        'required' => 'required',
+                                    ]
+                                ])
+                                <transition>
+                                    <div v-if="patientClinicalIssuesContact == 'instead-of-billing-provider' ? true : false"
+                                         name="fade"
+                                         mode="in-out">
+                                        @include('provider.partials.mdl.form.text.textfield', [
+                                            'name' => 'instead_of_billing_provider_email',
+                                            'label' => 'E-mail',
+                                            'class' => 'col s6',
+                                            'type' => 'email',
+                                        ])
+
+                                        @include('provider.partials.mdl.form.text.textfield', [
+                                            'name' => 'instead_of_billing_provider_phone',
+                                            'label' => 'Phone',
+                                            'class' => 'col s6'
+                                        ])
+                                    </div>
+                                </transition>
+                            </div>
+
+                            <div>
+                                @include('provider.partials.mdl.form.radio', [
+                                    'id' => 'in-addition-to-billing-provider',
+                                    'label' => 'Someone else in addition to the billing provider.',
+                                    'name' => 'clinical-contact',
+                                    'value' => 'in-addition-to-billing-provider',
+                                    'attributes' => [
+                                        'v-model' => 'patientClinicalIssuesContact',
+                                        'required' => 'required',
+                                    ]
+                                ])
+                                <transition>
+                                    <div v-if="patientClinicalIssuesContact == 'in-addition-to-billing-provider' ? true : false"
+                                         name="fade" mode="in-out">
+                                        @include('provider.partials.mdl.form.text.textfield', [
+                                            'name' => 'in_addition_to_billing_provider_email',
+                                            'label' => 'E-mail',
+                                            'class' => 'col s6',
+                                            'type' => 'email',
+                                        ])
+
+                                        @include('provider.partials.mdl.form.text.textfield', [
+                                            'name' => 'in_addition_to_billing_provider_phone',
+                                            'label' => 'Phone',
+                                            'class' => 'col s6'
+                                        ])
+                                    </div>
+                                </transition>
+                            </div>
+
+
+                            <div class="right-align">
+                                @include('provider.partials.mdl.form.checkbox', [
+                                   'label' => 'Same for all locations?',
+                                   'name' => 'same-clinical-contact',
+                                   'value' => '1',
+                                   'attributes' => [
+                                        'v-model' => 'sameClinicalIssuesContact'
+                                   ]
+                               ])
+                            </div>
+                        </div>
+
                         <input type="hidden" name="locations[@{{index}}][practice_id]" value="{{$practiceId}}">
 
                         <div class="row" v-if="newLocations.length > 1">

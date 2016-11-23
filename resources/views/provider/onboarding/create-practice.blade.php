@@ -28,169 +28,13 @@
 
         <div class="row">
             @include('provider.partials.mdl.form.text.textfield', [
-                'name' => 'numberOfLocations',
-                'label' => 'How many locations?',
-                'class' => 'col s6',
-                'type'  => 'number',
-                'attributes' => [
-                    'required' => 'required',
-                ]
-            ])
-
-            @include('provider.partials.mdl.form.text.textfield', [
                 'name' => 'tax-id',
                 'label' => 'Tax Id',
-                'class' => 'col s6',
+                'class' => 'col s12',
                 'attributes' => [
                     'required' => 'required',
                 ]
             ])
-        </div>
-
-        <div class="row">
-            <h6>
-                Please provide login information for your EHR system.
-            </h6>
-
-            @include('provider.partials.mdl.form.text.textfield', [
-                'name' => 'ehr-login',
-                'label' => 'EHR Login',
-                'class' => 'col s6',
-                'attributes' => [
-                    'required' => 'required',
-                    ':disabled' => 'manyEHRLogins == 1 ? true : false'
-                ]
-            ])
-
-            @include('provider.partials.mdl.form.text.textfield', [
-                'name' => 'ehr-password',
-                'label' => 'EHR Password',
-                'class' => 'col s6',
-                'type' => 'password',
-                'attributes' => [
-                    'autocomplete' => 'new-password',
-                    'required' => 'required',
-                    ':disabled' => 'manyEHRLogins == 1 ? true : false'
-                ]
-            ])
-
-            <p class="right-align">
-                @include('provider.partials.mdl.form.checkbox', [
-                   'label' => 'Different for each location?',
-                   'name' => 'different-ehr-login-per-location',
-                   'value' => '1',
-                   'attributes' => [
-                        'v-model' => 'manyEHRLogins',
-                    ]
-               ])
-                <transition>
-                    <div v-if="manyEHRLogins == 1 ? true : false" name="fade" mode="in-out"
-                         class="red-text right-align">
-                        * You will be prompted to provide EHR credentials for each location later on.
-                    </div>
-                </transition>
-            </p>
-        </div>
-
-        <div class="row">
-            <h6>
-                Who should be notified for patient clinical issues?
-            </h6>
-
-            <p>
-                @include('provider.partials.mdl.form.radio', [
-                    'id' => 'billing-provider',
-                    'label' => 'Patient billing provider.',
-                    'name' => 'clinical-contact',
-                    'value' => 'billing-provider',
-                    'attributes' => [
-                        'v-model' => 'patientClinicalIssuesContact',
-                        'required' => 'required',
-                        ':disabled' => 'manyClinicalIssuesContacts == 1 ? true : false'
-                    ]
-                ])
-            </p>
-
-            <p>
-                @include('provider.partials.mdl.form.radio', [
-                    'id' => 'instead-of-billing-provider',
-                    'label' => 'Someone else instead of billing provider.',
-                    'name' => 'clinical-contact',
-                    'value' => 'instead-of-billing-provider',
-                    'attributes' => [
-                        'v-model' => 'patientClinicalIssuesContact',
-                        'required' => 'required',
-                        ':disabled' => 'manyClinicalIssuesContacts == 1 ? true : false',
-                    ]
-                ])
-                <transition>
-                    <div v-if="!manyClinicalIssuesContacts && patientClinicalIssuesContact == 'instead-of-billing-provider' ? true : false"
-                         name="fade"
-                         mode="in-out">
-                        @include('provider.partials.mdl.form.text.textfield', [
-                            'name' => 'instead_of_billing_provider_email',
-                            'label' => 'E-mail',
-                            'class' => 'col s6',
-                            'type' => 'email',
-                        ])
-
-                        @include('provider.partials.mdl.form.text.textfield', [
-                            'name' => 'instead_of_billing_provider_phone',
-                            'label' => 'Phone',
-                            'class' => 'col s6'
-                        ])
-                    </div>
-                </transition>
-            </p>
-
-            <p>
-                @include('provider.partials.mdl.form.radio', [
-                    'id' => 'in-addition-to-billing-provider',
-                    'label' => 'Someone else in addition to the billing provider.',
-                    'name' => 'clinical-contact',
-                    'value' => 'in-addition-to-billing-provider',
-                    'attributes' => [
-                        'v-model' => 'patientClinicalIssuesContact',
-                        'required' => 'required',
-                        ':disabled' => 'manyClinicalIssuesContacts == 1 ? true : false'
-                    ]
-                ])
-                <transition>
-                    <div v-if="!manyClinicalIssuesContacts && patientClinicalIssuesContact == 'in-addition-to-billing-provider' ? true : false"
-                         name="fade" mode="in-out">
-                        @include('provider.partials.mdl.form.text.textfield', [
-                            'name' => 'in_addition_to_billing_provider_email',
-                            'label' => 'E-mail',
-                            'class' => 'col s6',
-                            'type' => 'email',
-                        ])
-
-                        @include('provider.partials.mdl.form.text.textfield', [
-                            'name' => 'in_addition_to_billing_provider_phone',
-                            'label' => 'Phone',
-                            'class' => 'col s6'
-                        ])
-                    </div>
-                </transition>
-            </p>
-
-
-            <p class="right-align">
-                @include('provider.partials.mdl.form.checkbox', [
-                   'label' => 'Different for each location?',
-                   'name' => 'different-clinical-contact-per-location',
-                   'value' => '1',
-                   'attributes' => [
-                        'v-model' => 'manyClinicalIssuesContacts'
-                   ]
-               ])
-                <transition>
-                    <div v-if="manyClinicalIssuesContacts == 1 ? true : false" name="fade" mode="in-out"
-                         class="red-text right-align">
-                        * You will be prompted to provide a contact for patient issues for each location later on.
-                    </div>
-                </transition>
-            </p>
         </div>
 
         <button class="btn blue waves-effect waves-light col s12"
@@ -200,6 +44,4 @@
 
         {!! Form::close() !!}
     </div>
-
-    <script src="/js/create-practice.js"></script>
 @endsection

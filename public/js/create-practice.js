@@ -11083,8 +11083,8 @@
                     //For variables prefixed with many:
                     //  true => different value for each location
                     //  false => same value for all locations
-                    manyEHRLogins: false,
-                    manyClinicalIssuesContacts: false,
+                    sameEHRLogin: false,
+                    sameClinicalIssuesContact: false,
 
                     patientClinicalIssuesContact: false
                 };

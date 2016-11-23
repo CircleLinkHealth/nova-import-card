@@ -14,7 +14,12 @@ var locationsVM = new Vue({
 
     data: function () {
         return {
-            newLocations: []
+            newLocations: [],
+
+            sameEHRLogin: false,
+            sameClinicalIssuesContact: false,
+
+            patientClinicalIssuesContact: false
         }
     },
 
