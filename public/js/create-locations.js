@@ -11027,9 +11027,7 @@ var locationsVM = new Vue({
     },
 
     ready: function ready() {
-        this.newLocations.push({
-            name: 'location'
-        });
+        this.newLocations.push({});
     },
 
     methods: {

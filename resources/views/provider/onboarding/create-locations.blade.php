@@ -264,8 +264,7 @@
         </div>
 
         <div class="row right-align">
-            <div v-on:click="addLocation" class="btn waves-effect waves-light blue accent-1" type="submit"
-                 name="action">
+            <div v-on:click="addLocation" class="btn waves-effect waves-light blue accent-1">
                 Add Location
                 <i class="material-icons right">send</i>
             </div>
@@ -280,8 +279,10 @@
         {!! Form::close() !!}
 
     </div>
+@endsection
 
+
+@section('scripts')
     <script src="/js/create-locations.js"></script>
-
 @endsection
 

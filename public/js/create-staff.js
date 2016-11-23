@@ -56,8 +56,8 @@
                 while (++queueIndex < len) {
                     if (currentQueue) {
                         currentQueue[queueIndex].run();
-            }
-        }
+                    }
+                }
                 queueIndex = -1;
                 len = queue.length;
             }
@@ -71,7 +71,7 @@
             if (arguments.length > 1) {
                 for (var i = 1; i < arguments.length; i++) {
                     args[i - 1] = arguments[i];
-        }
+                }
             }
             queue.push(new Item(fun, args));
             if (queue.length === 1 && !draining) {
@@ -276,7 +276,7 @@
                     }
 
                     return this(url, _.extend({method: method, data: data, success: success}, options));
-        };
+                };
             });
 
             return _.http = Http;
@@ -313,7 +313,7 @@
                     get: function () {
                         return Vue.resource.bind(this);
                     }
-        }
+                }
 
             });
         }
@@ -431,7 +431,7 @@
 
                         if (count === iterable.length) {
                             resolve(result);
-                }
+                        }
                     };
                 }
 
@@ -468,21 +468,21 @@
                         then.call(x, function (x) {
                             if (!called) {
                                 promise.resolve(x);
-                    }
+                            }
                             called = true;
 
                         }, function (r) {
-                    if (!called) {
-                        promise.reject(r);
-                    }
+                            if (!called) {
+                                promise.reject(r);
+                            }
                             called = true;
                         });
                         return;
-            }
+                    }
                 } catch (e) {
                     if (!called) {
                         promise.reject(e);
-            }
+                    }
                     return;
                 }
                 promise.state = RESOLVED;
@@ -523,17 +523,17 @@
                                     resolve(onResolved.call(undefined, promise.value));
                                 } else {
                                     resolve(promise.value);
-                        }
+                                }
                             } else if (promise.state === REJECTED) {
                                 if (typeof onRejected === 'function') {
                                     resolve(onRejected.call(undefined, promise.value));
                                 } else {
                                     reject(promise.value);
                                 }
-                    }
+                            }
                         } catch (e) {
                             reject(e);
-                }
+                        }
                     }
                 }
             });
@@ -627,7 +627,7 @@
                     for (key in obj) {
                         if (obj.hasOwnProperty(key)) {
                             iterator.call(obj[key], obj[key], key);
-                }
+                        }
                     }
                 }
 
@@ -655,14 +655,14 @@
                     if (deep && (_.isPlainObject(source[key]) || _.isArray(source[key]))) {
                         if (_.isPlainObject(source[key]) && !_.isPlainObject(target[key])) {
                             target[key] = {};
-                }
+                        }
                         if (_.isArray(source[key]) && !_.isArray(target[key])) {
                             target[key] = [];
-                }
+                        }
                         extend(target[key], source[key], deep);
                     } else if (source[key] !== undefined) {
                         target[key] = source[key];
-            }
+                    }
                 }
             }
 
@@ -711,7 +711,7 @@
                     }
 
                     (request.ok ? resolve : reject)(request);
-        };
+                };
 
                 request.onload = handler;
                 request.onabort = handler;
@@ -875,7 +875,7 @@
                 _.each(options.params, function (value, key) {
                     if (!urlParams[key]) {
                         queryParams[key] = value;
-            }
+                    }
                 });
 
                 query = Url.params(queryParams);
@@ -962,7 +962,7 @@
 
                     if (scope) {
                         key = scope + '[' + (plain || hash ? key : '') + ']';
-            }
+                    }
 
                     if (!scope && array) {
                         params.add(value.name, value.value);
@@ -970,7 +970,7 @@
                         serialize(params, value, key);
                     } else {
                         params.add(key, value);
-            }
+                    }
                 });
             }
 
@@ -1982,7 +1982,7 @@
                      * the text parser to re-compile the regular expressions.
                      *
                      * @type {Array<String>}
-                 */
+                     */
 
                     get: function get() {
                         return delimiters;
@@ -7119,7 +7119,7 @@
                                 } else {
                                     // root instance
                                     initProp(vm, prop, vm.$get(prop.parentPath));
-            }
+                                }
                             }
                         } else if (prop.optimizedLiteral) {
                             // optimized literal, cast it and just set once
@@ -8505,7 +8505,7 @@
                         } else {
                             arg = dirName;
                             pushDir('bind', directives.bind);
-            }
+                        }
                     } else
 
                     // normal directives
@@ -8522,7 +8522,7 @@
                         if (dirDef) {
                             pushDir(dirName, dirDef);
                         }
-            }
+                    }
                 }
 
                 /**
@@ -11072,31 +11072,39 @@
 
         /**
          *
-         * CREATE PRACTICE VUE INSTANCE
+         * CREATE STAFF VUE INSTANCE
          *
          */
-        var createPractice = new Vue({
-            el: '#create-practice-component',
+        var createStaffVM = new Vue({
+            el: '#create-staff-component',
 
             data: function data() {
                 return {
-                    //For variables prefixed with many:
-                    //  true => different value for each location
-                    //  false => same value for all locations
-                    sameEHRLogin: false,
-                    sameClinicalIssuesContact: false,
-
-                    patientClinicalIssuesContact: false
+                    newUsers: []
                 };
             },
 
             ready: function ready() {
+                this.newUsers.push({});
             },
 
-            methods: {}
+            methods: {
+                addUser: function addUser() {
+                    this.newUsers.push({});
+
+                    this.$nextTick(function () {
+                        $('select').material_select();
+                        $('.collapsible').collapsible();
+                    });
+                },
+
+                deleteUser: function deleteUser(index) {
+                    this.newUsers.splice(index, 1);
+                }
+            }
         });
 
     }, {"vue": 10, "vue-resource": 3}]
 }, {}, [11]);
 
-//# sourceMappingURL=create-practice.js.map
+//# sourceMappingURL=create-staff.js.map

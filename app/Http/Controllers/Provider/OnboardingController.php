@@ -7,7 +7,6 @@ use App\Contracts\Repositories\LocationRepository;
 use App\Contracts\Repositories\PracticeRepository;
 use App\Contracts\Repositories\UserRepository;
 use App\Http\Controllers\Controller;
-use App\Location;
 use App\Role;
 use Illuminate\Http\Request;
 use Prettus\Validator\Exceptions\ValidatorException;
@@ -74,16 +73,6 @@ class OnboardingController extends Controller
     public function getCreateLocations()
     {
         $practiceId = auth()->user()->primaryPracticeId;
-
-        //Initialize a location with all null values to help with the view
-        $locationAttributes = (new Location())->getFillable();
-        foreach ($locationAttributes as $attribute) {
-            $location[$attribute] = null;
-        }
-
-        \JavaScript::put([
-            'newLocation' => $location,
-        ]);
 
         return view('provider.onboarding.create-locations', compact('practiceId'));
     }
@@ -206,7 +195,7 @@ class OnboardingController extends Controller
     public function postStoreStaff(Request $request)
     {
         $input = $request->input();
-
+        dd($input);
         try {
             $numberOfLocations = $input['numberOfLocations'];
 

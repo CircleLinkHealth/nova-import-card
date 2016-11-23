@@ -12,16 +12,30 @@ var createStaffVM = new Vue({
 
     data: function () {
         return {
-
+            newUsers: [],
         }
     },
 
     ready: function () {
-
+        this.newUsers.push({});
     },
 
-    methods: {}
+    methods: {
+        addUser: function () {
+            this.newUsers.push({});
+
+            this.$nextTick(function () {
+                $('select').material_select();
+                $('.collapsible').collapsible();
+            });
+        },
+
+        deleteUser: function (index) {
+            this.newUsers.splice(index, 1);
+        }
+    }
 });
+
 
 
 
