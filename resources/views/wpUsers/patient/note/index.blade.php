@@ -198,16 +198,20 @@
                             </div>
                         @if(auth()->user()->hasRole(['administrator', 'med_assistant', 'provider']))
 
+                            <?php
+                                $title = "Circlelink Health notes for " . $patient->fullName . ", Dr. " . $patient->billingProviderName . " as of " . Carbon\Carbon::now()->toDateString();
+                                ?>
+
                                 <input type="button" value="Export as PDF" class="btn btn-primary"
                                        style='margin:15px;'
                                        onclick="webix.toPDF($$(obs_alerts_dtable), {
-                                               header:'CarePlanManager.com - Patient Notes for {{ $patient->fullName . " (B.P: ". $patient->billingProviderName .")"}}',
+                                               header:{!! $title !!},
                                                orientation:'landscape',
                                                autowidth:true,
                                                filename: 'PatientNotesReport . {{Carbon\Carbon::now()->toDateString()}}',
                                                columns:{
-                                               'performed_at':       { header:'Patient Name', width: 200, template: webix.template('#performed_at#') },
-                                               'provider_name':             { header:'Author Name',    width:200, sort:'string', template: webix.template('#provider_name#')},
+                                               'performed_at':       { header:'Date/Time', width: 200, template: webix.template('#performed_at#') },
+                                               'logger_name':             { header:'Author Name',    width:200, sort:'string', template: webix.template('#logger_name#')},
                                                'comment':             { header:'Preview',    width:200, sort:'string', template: webix.template('#comment#')}
 
                                                }});">
@@ -215,15 +219,15 @@
                                 <input type="button" value="Export as Excel" class="btn btn-primary"
                                        style='margin:15px;'
                                        onclick="webix.toExcel($$(obs_alerts_dtable), {
-                                               header:'CarePlanManager.com - Patient Notes for {{ $patient->fullName . " (B.P: ". $patient->billingProviderName .")"}}',
+                                               header:{!! $title !!},
                                                orientation:'landscape',
                                                autowidth:true,
                                                filename: 'PatientNotesReport . {{Carbon\Carbon::now()->toDateString()}}',
 
                                                 columns:{
-                                               'performed_at':       { header:'Patient Name', width: 200, template: webix.template('#performed_at#') },
-                                               'provider_name':             { header:'Author Name',    width:200, sort:'string', template: webix.template('#provider_name#')},
-                                               'comment':             { header:'Preview',    width:200, sort:'string', template: webix.template('#comment#')},
+                                               'performed_at':       { header:'Date/Time', width: 200, template: webix.template('#performed_at#') },
+                                               'logger_name':             { header:'Author Name',    width:200, sort:'string', template: webix.template('#logger_name#')},
+                                               'comment':             { header:'Note Contents',    width:200, sort:'string', template: webix.template('#comment#')},
 
                                                }});">
                         @endif
