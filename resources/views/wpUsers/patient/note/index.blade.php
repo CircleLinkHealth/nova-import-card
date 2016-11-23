@@ -201,10 +201,10 @@
                                 <input type="button" value="Export as PDF" class="btn btn-primary"
                                        style='margin:15px;'
                                        onclick="webix.toPDF($$(obs_alerts_dtable), {
-                                               header:'CarePlanManager.com - Patient Notes for {{ $patient->fullName . " (B.P: ". $patient->billingProviderName .")" . date('M d,Y') }}',
+                                               header:'CarePlanManager.com - Patient Notes for {{ $patient->fullName . " (B.P: ". $patient->billingProviderName .")"}}',
                                                orientation:'landscape',
                                                autowidth:true,
-                                               filename: 'PatientNotesReport',
+                                               filename: 'PatientNotesReport . {{Carbon\Carbon::now()->toDateString()}}',
                                                columns:{
                                                'performed_at':       { header:'Patient Name', width: 200, template: webix.template('#performed_at#') },
                                                'provider_name':             { header:'Author Name',    width:200, sort:'string', template: webix.template('#provider_name#')},
@@ -215,10 +215,10 @@
                                 <input type="button" value="Export as Excel" class="btn btn-primary"
                                        style='margin:15px;'
                                        onclick="webix.toExcel($$(obs_alerts_dtable), {
-                                               header:'CarePlanManager.com - Patient Notes for {{ $patient->fullName . " (B.P: ". $patient->billingProviderName .")" . date('M d,Y') }}',
+                                               header:'CarePlanManager.com - Patient Notes for {{ $patient->fullName . " (B.P: ". $patient->billingProviderName .")"}}',
                                                orientation:'landscape',
                                                autowidth:true,
-                                               filename: 'PatientNotesReport',
+                                               filename: 'PatientNotesReport . {{Carbon\Carbon::now()->toDateString()}}',
 
                                                 columns:{
                                                'performed_at':       { header:'Patient Name', width: 200, template: webix.template('#performed_at#') },
