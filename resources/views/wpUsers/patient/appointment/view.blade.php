@@ -89,7 +89,7 @@
                                                 <div class="form-group">
                                                     <input name="time" type="time" class="selectpickerX form-control"
                                                            value="{{$appointment['time']}}"
-                                                           data-field="time" data-format="H:i" disabled>
+                                                            disabled>
                                                 </div>
                                             </div>
                                         </div>
