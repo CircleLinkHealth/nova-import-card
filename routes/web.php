@@ -349,7 +349,7 @@ Route::group(['middleware' => 'auth'], function () {
                 'as'   => 'patient.appointment.index',
             ]);
             Route::get('view/{appointmentId}', [
-                'uses' => 'AppointmentController@show',
+                'uses' => 'AppointmentController@view',
                 'as'   => 'patient.appointment.view',
             ]);
 

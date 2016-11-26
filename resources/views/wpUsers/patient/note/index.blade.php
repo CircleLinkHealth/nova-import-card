@@ -65,7 +65,10 @@
                                                                 'noteId'    => ''
                                                         ]); ?>/" + obj.id + "'>" + obj.type_name + "</a>";
                                             else if (obj.logged_from == "appointment") {
-                                                return "Appointment";
+                                                return "<a href='<?php echo route('patient.appointment.view', [
+                                                                'patientId' => $patient->id,
+                                                                'appointmentId'     => ''
+                                                        ]); ?>/" + obj.id + "'>" + obj.type_name + "</a>"
                                             } else {
                                                 return "<a href='<?php echo route('patient.activity.view', [
                                                                 'patientId' => $patient->id,

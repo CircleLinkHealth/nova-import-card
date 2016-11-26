@@ -59,6 +59,7 @@ class AppointmentController extends Controller
             'author_id' => auth()->user()->id,
             'type' =>  $input['type'],
             'provider_id' => $input['provider'],
+            'type' => $input['appointment_type'],
             'date' => $input['date'],
             'time' => $input['time'],
             'comment' => $input['comment'],
@@ -71,16 +72,39 @@ class AppointmentController extends Controller
 
     }
 
-    public function view(Request $request, $appointmentId){
-        
-        
+    public function view(Request $request, $patientId, $appointmentId){
+
+        $patient = User::find($patientId);
+        $appointment = Appointment::find($appointmentId);
+
+        //Set up note packet for view
+        $data = [];
 
 
-        $data = [
+        $data['type'] = $appointment->type;
+        $data['id'] = $appointment->id;
+        $data['date'] = $appointment->date;
+        $data['time'] = $appointment->time;
+        $provider = User::find($appointment->provider_id);
+        if ($provider) {
+            $data['provider_name'] = $provider->fullName;
+        } else {
+            $data['provider_name'] = '';
+        }
 
+        $data['comment'] = $appointment->comment;
+        $data['type'] = $appointment->type;
+        $data['is_completed'] = $appointment->was_completed;
+;
+
+        $view_data = [
+            'appointment'          => $data,
+            'userTimeZone'  => $patient->timeZone,
+            'patient'       => $patient,
+            'program_id'    => $patient->program_id,
         ];
 
-        return view('patient.appointment.view', $data);
+        return view('wpUsers.patient.appointment.view', $view_data);
 
     }
     

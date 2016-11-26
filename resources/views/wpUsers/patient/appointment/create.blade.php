@@ -111,23 +111,22 @@
                             </div>
                         </div>
                         <div class="form-block col-md-6">
-
                             <div class="new-observation-item">
                                 <div class="form-group">
                                     <div class="col-sm-12">
                                         <label for="observationSource">
-                                            Additional Details:
+                                            Appointment Status:
                                         </label>
                                     </div>
                                     <div class="col-sm-12" style="margin-top: -11px;">
                                         <div class="form-group">
-                                        <textarea class="form-control" id="comment" name="comment"
-                                                  placeholder="Please enter appointment details..." rows="3"></textarea>
+                                        <textarea class="form-control" id="appointment_type" name="appointment_type"
+                                                  placeholder="Please specify appointment type..."
+                                                  rows="2"></textarea>
                                         </div>
                                     </div>
                                 </div>
                             </div>
-
                             <div class="new-observation-item">
                                 <div class="form-group">
                                     <div class="col-sm-12">
@@ -138,7 +137,7 @@
                                     <div class="col-sm-12" style="margin-top: -11px;">
                                         <div class="form-group">
                                         <textarea class="form-control" id="comment" name="comment"
-                                                  placeholder="Please enter appointment details..." rows="3"></textarea>
+                                                  placeholder="Please enter appointment details..." rows="4"></textarea>
                                         </div>
                                     </div>
                                 </div>
