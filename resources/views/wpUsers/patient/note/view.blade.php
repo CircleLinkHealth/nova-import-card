@@ -167,13 +167,13 @@
                                         <div class="new-note-item">
                                             <div class="form-group">
                                                 <div class="col-sm-12">
-                                                    <label for="activityKey">
+                                                    <label for="performedBy">
                                                         Send Note To:
                                                     </label>
                                                 </div>
                                                 <div class="col-sm-12">
                                                     <div class="form-group">
-                                                        <select id=performedBy" name=careteam[]"
+                                                        <select id="performedBy" name=careteam[]"
                                                                 class="selectpicker dropdown Valid form-control"
                                                                 data-size="10"
                                                                 multiple>

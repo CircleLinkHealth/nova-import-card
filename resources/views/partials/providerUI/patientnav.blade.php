@@ -3,7 +3,7 @@
         <ul class="navbar-nav nav">
             <li class="inline-block">
                 <a href="{{ empty($patient->id) ? URL::route('patients.search') : URL::route('patient.note.index', array('patient' => $patient->id)) }}">
-                    Notes/Offline Activities
+                    Notes and Activities
                 </a>
             </li>
 

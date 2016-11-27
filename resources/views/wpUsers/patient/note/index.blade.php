@@ -1,6 +1,6 @@
 @extends('partials.providerUI')
 
-@section('title', 'Patient Notes')
+@section('title', 'Notes and Activities')
 @section('activity', 'Notes/Offline Activities Review')
 
 @section('content')
@@ -9,7 +9,7 @@
         <div class="main-form-container col-lg-8 col-lg-offset-2">
             <div class="row">
                 <div class="main-form-title col-lg-12">
-                    Notes / Offline Activities
+                    Notes and Activities
                 </div>
                 @include('partials.userheader')
                 <div class="col-sm-2">

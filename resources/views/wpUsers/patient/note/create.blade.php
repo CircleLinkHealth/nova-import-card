@@ -85,7 +85,7 @@
                                 <div class="new-note-item">
                                     <div class="form-group">
                                         <div class="col-sm-12">
-                                            <label for="observationDate">
+                                            <label for="performed_at">
                                                 When (Patient Local Time):
                                             </label>
                                         </div>
@@ -109,7 +109,7 @@
                                 <div class="new-note-item">
                                     <div class="form-group">
                                         <div class="col-sm-12">
-                                            <label for="activityKey">
+                                            <label for="author_id">
                                                 Performed By
                                             </label>
                                         </div>
@@ -228,17 +228,18 @@
                                             <div class="new-note-item">
                                                 <div class="form-group">
                                                     <div class="col-sm-12">
-                                                        <label for="activityKey">
+                                                        <label for="performedBy">
                                                             Send Note To:
                                                         </label>
                                                     </div>
                                                     <div class="col-sm-12">
                                                         <div class="form-group">
-                                                            <select id=performedBy" name="careteam[]"
+                                                            <select id="performedBy" name="careteam[]"
                                                                     class="selectpicker dropdown Valid form-control"
                                                                     data-size="10"
                                                                     multiple>
                                                                 <!-- rework later, quick fix ticket: 679 !-->
+                                                                <option value="2584">None Selected</option>
                                                                 @if($patient->program_id == 29)
                                                                     <option value="2584">Tina Booze</option>
                                                                 @else
