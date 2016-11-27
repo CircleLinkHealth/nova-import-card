@@ -37,7 +37,7 @@
                 </div>
                 @include('partials.userheader')
                 <div class="main-form-block main-form-horizontal main-form-primary-horizontal col-md-12">
-                    <form id="save" method="post"
+                    <form id="save" method="get"
                           action="{{URL::route('patient.note.index', array('patientId' => $patient->id))}}">
                         {{ csrf_field() }}
 
