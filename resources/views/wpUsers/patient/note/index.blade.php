@@ -230,9 +230,9 @@
                                                filename: '{{$patient->fullName }} {{Carbon\Carbon::now()->toDateString()}}',
 
                                                 columns:{
-                                               'performed_at':       { header:'Date/Time', width: 200, template: webix.template('#performed_at#') },
-                                               'logger_name':             { header:'Author Name',    width:200, sort:'string', template: webix.template('#logger_name#')},
-                                               'comment':             { header:'Note Contents',    width:200, sort:'string', template: webix.template('#comment#')}
+                                               'performed_at':       { header:'Date/Time', width: 110, template: webix.template('#performed_at#') },
+                                               'logger_name':             { header:'Author Name',    width:75, sort:'string', template: webix.template('#logger_name#')},
+                                               'comment':             { header:'Note Contents',    width:400, sort:'string', template: webix.template('#comment#')}
 
                                                }});">
                         @endif
