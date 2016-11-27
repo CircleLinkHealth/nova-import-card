@@ -90,6 +90,9 @@
                                                 return "Note";
                                             else if (obj.logged_from == "manual_input") {
                                                 return "Offline Activity";
+                                            } else  if(obj.logged_from == "appointment") {
+                                                return "Appointment";
+
                                             }
                                             return obj.type_name;
                                         },
@@ -117,11 +120,11 @@
                                                                 'patientId' => $patient->id,
                                                                 'actId'     => ''
                                                         ]); ?>/" + obj.id + "'>" + obj.comment + "</a>"
-                                            }else if (obj.logged_from == "appointment"){
-                                                return "<a href='<a href='<?php echo route('patient.appointment.view', [
+                                            }else if (obj.logged_from == "appointment") {
+                                                return "<a href='<?php echo route('patient.appointment.view', [
                                                                 'patientId' => $patient->id,
                                                                 'appointmentId'     => ''
-                                                        ]); ?>/" + obj.id + "'>" + obj.comment + "</a>"
+                                                        ]); ?>/" + obj.id + "'>" + obj.type_name + "</a>"
                                             } else
                                             return obj.type_name;
                                         },
