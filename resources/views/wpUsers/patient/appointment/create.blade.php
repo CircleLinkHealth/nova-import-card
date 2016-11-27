@@ -68,7 +68,7 @@
                                 <div class="new-observation-item">
                                     <div class="form-group">
                                         <div class="col-sm-12">
-                                            <label for="observationDate">
+                                            <label for="date">
                                                 Appointment Date:
                                             </label>
                                         </div>
@@ -82,13 +82,13 @@
                                     </div>
                                     <div class="form-group">
                                         <div class="col-sm-12">
-                                            <label for="observationDate">
+                                            <label for="time">
                                                 Appointment Time:
                                             </label>
                                         </div>
                                         <div class="col-sm-12">
                                             <div class="form-group">
-                                                <input name="time" type="time" class="selectpickerX form-control"
+                                                <input name="time" id="time" type="time" class="selectpickerX form-control"
                                                        value="{{date('H:i')}}"
                                                        data-field="time" data-format="H:i" required>
                                             </div>
@@ -101,7 +101,7 @@
                                                     <div class="radio-inline"><input type="checkbox"
                                                                                      name="is_completed"
                                                                                      id="is_completed"/><label
-                                                                for="is_completed"><span> </span>Completed</label>
+                                                                for="is_completed"><span> </span>Attended</label>
                                                     </div>
                                                 </div>
                                             </div>
@@ -115,14 +115,14 @@
                                 <div class="form-group">
                                     <div class="col-sm-12">
                                         <label for="observationSource">
-                                            Appointment Status:
+                                            Appointment Type:
                                         </label>
                                     </div>
                                     <div class="col-sm-12" style="margin-top: -11px;">
                                         <div class="form-group">
                                         <textarea class="form-control" id="appointment_type" name="appointment_type"
                                                   placeholder="Please specify appointment type..."
-                                                  rows="2"></textarea>
+                                                  rows="1" maxlength="50"></textarea>
                                         </div>
                                     </div>
                                 </div>
