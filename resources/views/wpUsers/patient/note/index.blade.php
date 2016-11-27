@@ -124,7 +124,7 @@
                                                 return "<a href='<?php echo route('patient.appointment.view', [
                                                                 'patientId' => $patient->id,
                                                                 'appointmentId'     => ''
-                                                        ]); ?>/" + obj.id + "'>" + obj.type_name + "</a>"
+                                                        ]); ?>/" + obj.id + "'>" + obj.comment + "</a>"
                                             } else
                                             return obj.type_name;
                                         },
