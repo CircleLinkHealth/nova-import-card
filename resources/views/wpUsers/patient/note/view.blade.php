@@ -177,7 +177,6 @@
                                                                 class="selectpicker dropdown Valid form-control"
                                                                 data-size="10"
                                                                 multiple>
-
                                                             <!-- rework later, quick fix ticket: 679 !-->
                                                             @if($patient->program_id == 29)
                                                                 <option value="2584">Tina Booze</option>

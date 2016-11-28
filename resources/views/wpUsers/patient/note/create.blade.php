@@ -239,7 +239,6 @@
                                                                     data-size="10"
                                                                     multiple>
                                                                 <!-- rework later, quick fix ticket: 679 !-->
-                                                                <option value="2584">None Selected</option>
                                                                 @if($patient->program_id == 29)
                                                                     <option value="2584">Tina Booze</option>
                                                                 @else
