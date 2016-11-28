@@ -175,6 +175,8 @@ class PageTimerController extends Controller
         // check params to see if rule exists
         $params = [];
 
+        dd($params);
+
         //provider
         $provider = User::find($pageTimer->provider_id);
 
@@ -193,19 +195,19 @@ class PageTimerController extends Controller
         $ruleActions = $rulesService->getActions($params, 'ATT');
 
         if ($ruleActions) {
-            $activiyParams = [];
-            $activiyParams['type'] = $params['activity'];
-            $activiyParams['provider_id'] = $pageTimer->provider_id;
-            $activiyParams['performed_at'] = $pageTimer->start_time;
-            $activiyParams['duration'] = $pageTimer->billable_duration;
-            $activiyParams['duration_unit'] = 'seconds';
-            $activiyParams['patient_id'] = $pageTimer->patient_id;
-            $activiyParams['logged_from'] = 'pagetimer';
-            $activiyParams['logger_id'] = $pageTimer->provider_id;
-            $activiyParams['page_timer_id'] = $pageTimer->id;
+            $activityParams = [];
+            $activityParams['type'] = $params['activity'];
+            $activityParams['provider_id'] = $pageTimer->provider_id;
+            $activityParams['performed_at'] = $pageTimer->start_time;
+            $activityParams['duration'] = $pageTimer->billable_duration;
+            $activityParams['duration_unit'] = 'seconds';
+            $activityParams['patient_id'] = $pageTimer->patient_id;
+            $activityParams['logged_from'] = 'pagetimer';
+            $activityParams['logger_id'] = $pageTimer->provider_id;
+            $activityParams['page_timer_id'] = $pageTimer->id;
 
             // if rule exists, create activity
-            $activityId = Activity::createNewActivity($activiyParams);
+            $activityId = Activity::createNewActivity($activityParams);
 
             $activityService = new ActivityService;
             $result = $activityService->reprocessMonthlyActivityTime($pageTimer->patient_id);
