@@ -1,10 +1,12 @@
 <?php namespace App\Formatters;
 
+use App\Appointment;
 use App\Contracts\ReportFormatter;
 use App\Models\CCD\CcdAllergy;
 use App\Models\CCD\CcdMedication;
 use App\Models\CPM\CpmBiometric;
 use App\Models\CPM\CpmMisc;
+use App\Note;
 use App\Services\CPM\CpmMiscService;
 use App\Services\NoteService;
 use App\Services\ReportsService;
@@ -105,27 +107,43 @@ class WebixFormatter implements ReportFormatter
             $formatted_data[$count]['id'] = $data->id;
 
 
-            if (isset($data->author_id)) // only notes have authors
+            if (get_class($data) == Note::class) // only notes have authors
             {
                 $formatted_data[$count]['logger_name'] = User::withTrashed()->find($data->author_id)->fullName;
                 $formatted_data[$count]['comment'] = $data->body;
                 $formatted_data[$count]['logged_from'] = 'note';
+                $formatted_data[$count]['type_name'] = $data->type;
+                $formatted_data[$count]['performed_at'] = $data->performed_at;
 
-            } else // handles activities
+
+            } else if(get_class($data) == Appointment::class)// handles appointments
             {
+                $formatted_data[$count]['logger_name'] = User::withTrashed()->find($data->author_id)->fullName;
+                $formatted_data[$count]['comment'] = $data->comment;
+                $formatted_data[$count]['type_name'] = $data->type;
+                $formatted_data[$count]['logged_from'] = 'appointment';
+                $formatted_data[$count]['performed_at'] = Carbon::parse($data->date)->toDateString();
+
+
+            } else {
+
                 $formatted_data[$count]['logger_name'] = User::withTrashed()->find($data->provider_id)->fullName;
                 $formatted_data[$count]['comment'] = $data->getCommentForActivity();
                 $formatted_data[$count]['logged_from'] = 'manual_input';
+                $formatted_data[$count]['type_name'] = $data->type;
+                $formatted_data[$count]['performed_at'] = $data->performed_at;
+
             }
 
-            $formatted_data[$count]['type_name'] = $data->type;
-            $formatted_data[$count]['performed_at'] = $data->performed_at;
+            $formatted_data[$count]['provider_name'] = User::find($data->patient_id)->billingProviderName;
+
+
 
             //TAGS
             $formatted_data[$count]['tags'] = '';
 
             //check if it's a note, if yes, add tags
-            if(isset($data->isTCM)) {
+            if(get_class($data) == Note::class) {
 
                 if (count($data->mail) > 0) {
                     if ((new NoteService())->wasSentToProvider($data)) {

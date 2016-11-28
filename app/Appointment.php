@@ -7,11 +7,24 @@ use Illuminate\Database\Eloquent\Model;
 class Appointment extends Model
 {
 
-    protected $fillable = ['*'];
+    protected $table = 'appointments';
+
+    protected $fillable = [
+        'patient_id',
+        'author_id',
+        'provider_id',
+        'was_completed',
+        'type',
+        'date',
+        'time',
+        'comment',
+        'created_at',
+        'updated_at'
+    ];
 
     public function patient(){
 
-        return $this->belongsTo(PatientInfo::class, 'patient_id');
+        return $this->belongsTo(User::class, 'patient_id');
 
     }
 
@@ -23,7 +36,7 @@ class Appointment extends Model
 
     public function provider(){
 
-        return $this->belongsTo(ProviderInfo::class, 'provider_id');
+        return $this->belongsTo(User::class, 'provider_id');
 
     }
 

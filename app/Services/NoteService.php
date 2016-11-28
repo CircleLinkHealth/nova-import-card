@@ -158,7 +158,7 @@ class NoteService
         $activities = collect($activities);
         $notes = collect($notes);
 
-        $data = $notes->merge($activities)->sortByDesc('performed_at');
+        $data = $notes->merge($activities)->sortByDesc('created_at');
 
         return $data;
 

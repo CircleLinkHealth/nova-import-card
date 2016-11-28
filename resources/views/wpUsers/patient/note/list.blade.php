@@ -55,6 +55,7 @@
                         <option value="">Select Provider</option>
                         @foreach($providers_for_blog as $key => $value)
                             @if(isset($selected_provider) && $selected_provider->id == $key)
+                                <?php $selected = $selected_provider->display_name ?>
                                 <option value="{{$selected_provider->id}}"
                                         selected>{{$selected_provider->display_name}}</option>
                             @else
@@ -256,7 +257,7 @@
                                         <input type="button" value="Export as Excel" class="btn btn-primary"
                                                style='margin:15px;'
                                                onclick="webix.toExcel($$(obs_alerts_dtable), {
-                                                       header:'CarePlanManager.com - All Patient Notes <?= date('M d,Y') ?>',
+                                                       header:'CarePlanManager.com - All Patient Notes @if(isset($selected_provider)) for {{$selected_provider->fullName}} @endif since <?=\Carbon\Carbon::now()->subMonth($dateFilter ?? 0)->format('F, Y') ?>',
                                                        orientation:'landscape',
                                                        autowidth:true,
                                                        columns:{
@@ -264,7 +265,7 @@
                                                        'author_name':             { header:'Author Name',    width:200, sort:'string', template: webix.template('#author_name#')},
                                                        'comment':             { header:'Preview',    width:200, sort:'string', template: webix.template('#comment#')},
                                                        'type':             { header:'Type',    width:200, sort:'string', template: webix.template('#type#')},
-                                                       'date':             { header:'Performed',    width:200, sort:'string', template: webix.template('#author_name#')},
+                                                       'date':             { header:'Performed',    width:200, sort:'string', template: webix.template('#date#')},
 
                                                        }});">
 
@@ -272,7 +273,7 @@
                                         <input type="button" value="Export as PDF" class="btn btn-primary"
                                                style='margin:15px;'
                                                onclick="webix.toPDF($$(obs_alerts_dtable), {
-                                                       header:'CarePlanManager.com - All Patient Notes <?= date('M d,Y') ?>',
+                                                       header:'CarePlanManager.com - All Patient Notes @if(isset($selected_provider)) for {{$selected_provider->fullName}} @endif @if(isset($dateFilter)) since <?=\Carbon\Carbon::now()->subMonth($dateFilter)->format('F, Y') ?> @endif',
                                                        orientation:'landscape',
                                                        autowidth:true,
                                                        columns:{
@@ -280,7 +281,7 @@
                                                        'author_name':             { header:'Author Name',    width:200, sort:'string', template: webix.template('#author_name#')},
                                                        'comment':             { header:'Preview',    width:200, sort:'string', template: webix.template('#comment#')},
                                                        'type':             { header:'Type',    width:200, sort:'string', template: webix.template('#type#')},
-                                                       'date':             { header:'Performed',    width:200, sort:'string', template: webix.template('#author_name#')},
+                                                       'date':             { header:'Performed',    width:200, sort:'string', template: webix.template('#date#')},
 
                                                        }});">
                                     @endif

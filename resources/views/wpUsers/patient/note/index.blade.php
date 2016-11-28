@@ -1,6 +1,6 @@
 @extends('partials.providerUI')
 
-@section('title', 'Patient Notes')
+@section('title', 'Notes and Activities')
 @section('activity', 'Notes/Offline Activities Review')
 
 @section('content')
@@ -9,7 +9,7 @@
         <div class="main-form-container col-lg-8 col-lg-offset-2">
             <div class="row">
                 <div class="main-form-title col-lg-12">
-                    Notes / Offline Activities
+                    Notes and Activities
                 </div>
                 @include('partials.userheader')
                 <div class="col-sm-2">
@@ -64,7 +64,12 @@
                                                                 'patientId' => $patient->id,
                                                                 'noteId'    => ''
                                                         ]); ?>/" + obj.id + "'>" + obj.type_name + "</a>";
-                                            else if (obj.logged_from == "manual_input" || obj.logged_from == "activity") {
+                                            else if (obj.logged_from == "appointment") {
+                                                return "<a href='<?php echo route('patient.appointment.view', [
+                                                                'patientId' => $patient->id,
+                                                                'appointmentId'     => ''
+                                                        ]); ?>/" + obj.id + "'>" + obj.type_name + "</a>"
+                                            } else {
                                                 return "<a href='<?php echo route('patient.activity.view', [
                                                                 'patientId' => $patient->id,
                                                                 'actId'     => ''
@@ -85,6 +90,9 @@
                                                 return "Note";
                                             else if (obj.logged_from == "manual_input") {
                                                 return "Offline Activity";
+                                            } else  if(obj.logged_from == "appointment") {
+                                                return "Appointment";
+
                                             }
                                             return obj.type_name;
                                         },
@@ -112,7 +120,12 @@
                                                                 'patientId' => $patient->id,
                                                                 'actId'     => ''
                                                         ]); ?>/" + obj.id + "'>" + obj.comment + "</a>"
-                                            }
+                                            }else if (obj.logged_from == "appointment") {
+                                                return "<a href='<?php echo route('patient.appointment.view', [
+                                                                'patientId' => $patient->id,
+                                                                'appointmentId'     => ''
+                                                        ]); ?>/" + obj.id + "'>" + obj.comment + "</a>"
+                                            } else
                                             return obj.type_name;
                                         },
                                         fillspace: true,
@@ -129,7 +142,7 @@
 
                                     {
                                         id: "logger_name",
-                                        header: ["Provider", {content: "textFilter", placeholder: "Filter"}],
+                                        header: ["Author", {content: "textFilter", placeholder: "Filter"}],
                                         width: 210,
                                         sort: 'string',
                                         css: {"color": "black", "text-align": "left"}
@@ -193,10 +206,35 @@
 
                             </div>
                         @if(auth()->user()->hasRole(['administrator', 'med_assistant', 'provider']))
-                            <input type="button" value="Export as PDF" class="btn btn-primary" style='margin:15px;'
-                                   onclick="webix.toPDF(obs_alerts_dtable);">
-                            <input type="button" value="Export as Excel" class="btn btn-primary" style='margin:15px;'
-                                   onclick="webix.toExcel(obs_alerts_dtable);">
+
+                                <input type="button" value="Export as PDF" class="btn btn-primary"
+                                       style='margin:15px;'
+                                       onclick="webix.toPDF($$(obs_alerts_dtable), {
+                                               header: 'Circlelink Health notes for {!!  $patient->fullName . ", Dr. " . $patient->billingProviderName . " as of " . Carbon\Carbon::now()->toDateString() !!}',
+                                               orientation:'landscape',
+                                               autowidth:true,
+                                               filename: '{{$patient->fullName }} {{Carbon\Carbon::now()->toDateString()}}',
+                                               columns:{
+                                               'performed_at':       { header:'Date/Time', width: 200, template: webix.template('#performed_at#') },
+                                               'logger_name':             { header:'Author Name',    width:200, sort:'string', template: webix.template('#logger_name#')},
+                                               'comment':             { header:'Note Contents',    width:200, sort:'string', template: webix.template('#comment#')}
+
+                                               }});">
+
+                                <input type="button" value="Export as Excel" class="btn btn-primary"
+                                       style='margin:15px;'
+                                       onclick="webix.toExcel($$(obs_alerts_dtable), {
+                                               header:'Circlelink Health notes for {!! $patient->fullName . ", Dr. " . $patient->billingProviderName . " as of " . Carbon\Carbon::now()->toDateString() !!}',
+                                               orientation:'landscape',
+                                               autowidth:true,
+                                               filename: '{{$patient->fullName }} {{Carbon\Carbon::now()->toDateString()}}',
+
+                                                columns:{
+                                               'performed_at':       { header:'Date/Time', width: 110, template: webix.template('#performed_at#') },
+                                               'logger_name':             { header:'Author Name',    width:75, sort:'string', template: webix.template('#logger_name#')},
+                                               'comment':             { header:'Note Contents',    width:400, sort:'string', template: webix.template('#comment#')}
+
+                                               }});">
                         @endif
                     @else
                         <div style="text-align:center;margin:50px;">There are no patient Notes/Offline Activities to

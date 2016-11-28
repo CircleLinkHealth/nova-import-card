@@ -25,7 +25,7 @@ class CreateAppointmentsTable extends Migration
                 $table->unsignedInteger('provider_id')->nullable();
 
                 $table->date('date');
-                $table->timestamp('time');
+                $table->time('time');
 
                 $table->text('status');
 
