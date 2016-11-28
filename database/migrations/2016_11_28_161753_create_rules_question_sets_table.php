@@ -23,7 +23,7 @@ class CreateRulesQuestionSetsTable extends Migration
             $table->bigInteger('aid')->nullable();
             $table->bigInteger('low')->nullable();
             $table->bigInteger('high')->nullable();
-            $table->string('action', 200)->nullable()->default('fxGoto(\'\')');
+            $table->string('action', 200)->nullable()->default("fxGoto('')");
         });
     }
 
