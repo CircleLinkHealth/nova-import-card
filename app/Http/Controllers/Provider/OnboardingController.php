@@ -156,6 +156,8 @@ class OnboardingController extends Controller
         $user->roles()
             ->attach($role->id);
 
+        auth()->login($user);
+
         return redirect()->route('get.onboarding.create.practice');
     }
 

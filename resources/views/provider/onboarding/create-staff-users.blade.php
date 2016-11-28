@@ -2,7 +2,7 @@
 
 @section('title', 'Create Staff')
 
-@section('instructions', "Congratulations! You have successfully created a bunch of locations. Now add a bunch of staff members. Title: create-staff-users Step 4/4")
+@section('instructions', "One more! <br>Let's <u>create your team</u>.")
 
 @section('module')
 
@@ -13,7 +13,7 @@
             }
 
             #step3 {
-                color: #fff;
+                color: #039be5 !important;
             }
         </style>
     </head>
@@ -85,8 +85,11 @@
                                 <select id="roles" v-model="newUser.role">
                                     <option v-bind:value="{id:0, name:'No Role Selected'}" disabled selected></option>
                                     <option v-bind:value="{id:1, name:'Medical Assistant'}">Medical Assistant</option>
-                                    <option v-bind:value="{id:1, name:'Specialist Doctor'}">Specialist Doctor</option>
-                                    <option v-bind:value="{id:1, name:'Program Lead'}">Program Lead</option>
+                                    <option v-bind:value="{id:1, name:'Office Staff'}">Office Staff</option>
+                                    <option v-bind:value="{id:1, name:'Practice Lead'}">Practice Lead</option>
+                                    <option v-bind:value="{id:1, name:'Provider (PCP)'}">Provider (PCP)</option>
+                                    <option v-bind:value="{id:1, name:'Registered Nurse'}">Registered Nurse</option>
+                                    <option v-bind:value="{id:1, name:'Specialist'}">Specialist</option>
                                 </select>
                                 <label>Role</label>
                             </div>
@@ -106,14 +109,16 @@
         <div class="row right-align">
             <div v-on:click="addUser" class="btn waves-effect waves-light blue accent-1">
                 Add User
-                <i class="material-icons right">send</i>
+                <i class="material-icons right">add</i>
             </div>
         </div>
 
-        <button class="btn blue waves-effect waves-light col s12"
-                id="store-staff">
-            Save Staff
-        </button>
+        <div class="row">
+            <button class="btn blue waves-effect waves-light col s12"
+                    id="store-staff">
+                Next
+            </button>
+        </div>
 
         {!! Form::close() !!}
     </div>

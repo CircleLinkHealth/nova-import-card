@@ -2,7 +2,7 @@
 
 @section('title', 'Lead')
 
-@section('instructions', "Welcome! Let's start by creating your implementation lead.")
+@section('instructions', "Welcome! Let's start by creating <u>your implementation lead</u>.")
 
 @section('module')
 
@@ -13,7 +13,7 @@
             }
 
             #step0 {
-                color: #fff;
+                color: #039be5 !important;
             }
         </style>
     </head>
@@ -46,6 +46,15 @@
         ])
     </div>
 
+    <div class="right-align">
+        @include('provider.partials.mdl.form.checkbox', [
+            'label' => 'Is the lead a provider or clinical staff?',
+            'name' => 'countCcmTime',
+            'value' => '1',
+            'class' => 'col s12',
+        ])
+    </div>
+
     <div class="row">
         @include('provider.partials.mdl.form.text.textfield', [
             'name' => 'email',
@@ -72,9 +81,11 @@
         ])
     </div>
 
-    <button class="btn blue waves-effect waves-light col s12" type="submit" name="submit" id="update-practice">
-        Save practice lead
-    </button>
+    <div class="row">
+        <button class="btn blue waves-effect waves-light col s12" type="submit" name="submit" id="update-practice">
+            Next
+        </button>
+    </div>
 
     {!! Form::close() !!}
 

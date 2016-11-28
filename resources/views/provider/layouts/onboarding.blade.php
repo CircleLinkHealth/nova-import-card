@@ -53,13 +53,23 @@
 
                 <div class="row">
                     <nav>
-                        <div class="nav-wrapper cyan">
-                            <div class="col s12">
-                                <div id="step0" style="display: inline;" class="breadcrumb">Lead</div>
-                                <div id="step1" style="display: inline;" class="breadcrumb">Organization</div>
-                                <div id="step2" style="display: inline;" class="breadcrumb">Location(s)</div>
-                                <div id="step3" style="display: inline;" class="breadcrumb">CCM Staff</div>
-                                <div id="step4" style="display: inline;" class="breadcrumb">Welcome!</div>
+                        <div class="nav-wrapper grey lighten-3">
+                            <div class="col s12 center-align">
+                                <div id="step0" style="display: inline;"
+                                     class="breadcrumb light-blue-text text-lighten-4">Lead
+                                </div>
+                                <div id="step1" style="display: inline;"
+                                     class="breadcrumb light-blue-text text-lighten-4">Organization
+                                </div>
+                                <div id="step2" style="display: inline;"
+                                     class="breadcrumb light-blue-text text-lighten-4">Location(s)
+                                </div>
+                                <div id="step3" style="display: inline;"
+                                     class="breadcrumb light-blue-text text-lighten-4">CCM Staff
+                                </div>
+                                <div id="step4" style="display: inline;"
+                                     class="breadcrumb light-blue-text text-lighten-4">Welcome!
+                                </div>
                             </div>
                         </div>
                     </nav>

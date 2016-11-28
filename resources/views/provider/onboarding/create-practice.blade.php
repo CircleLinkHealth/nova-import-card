@@ -2,7 +2,7 @@
 
 @section('title', 'Create Practice')
 
-@section('instructions', "Let's create your organization.")
+@section('instructions', "Let's <u>create your organization</u>.")
 
 @section('module')
 
@@ -13,7 +13,7 @@
             }
 
             #step1 {
-                color: #fff;
+                color: #039be5 !important;
             }
         </style>
     </head>
@@ -49,10 +49,12 @@
             ])
         </div>
 
-        <button class="btn blue waves-effect waves-light col s12"
-                id="store-practice">
-            Save practice
-        </button>
+        <div class="row">
+            <button class="btn blue waves-effect waves-light col s12"
+                    id="store-practice">
+                Next
+            </button>
+        </div>
 
         {!! Form::close() !!}
     </div>
