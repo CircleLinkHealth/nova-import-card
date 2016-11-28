@@ -15,33 +15,17 @@ class CreateInvitesTable extends Migration
     {
         Schema::create('invites', function (Blueprint $table) {
             $table->increments('id');
-
-            $table->unsignedInteger('inviter_id');
-            $table->foreign('inviter_id')
-                ->references('id')
-                ->on('users')
-                ->onUpdate('cascade')
-                ->onDelete('cascade');
-
-            $table->unsignedInteger('role_id')
-                ->nullable();
-            $table->foreign('role_id')
-                ->references('id')
-                ->on('lv_roles')
-                ->onUpdate('cascade')
-                ->onDelete('set null');
-
+            $table->integer('inviter_id')->unsigned()->index('invites_inviter_id_foreign');
+            $table->integer('role_id')->unsigned()->nullable()->index('invites_role_id_foreign');
             $table->string('email');
             $table->string('subject')->nullable();
             $table->string('message')->nullable();
-
             $table->string('code')->nullable();
-
             $table->timestamps();
-
             $table->softDeletes();
         });
     }
+
 
     /**
      * Reverse the migrations.

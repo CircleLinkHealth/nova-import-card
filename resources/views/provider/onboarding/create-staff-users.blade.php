@@ -37,7 +37,7 @@
                                 | @{{newUser.role.name}}
                             </span>
                             <span v-else>
-                                User #@{{index}}
+                                NEW USER
                             </span>
                         </div>
                     </div>

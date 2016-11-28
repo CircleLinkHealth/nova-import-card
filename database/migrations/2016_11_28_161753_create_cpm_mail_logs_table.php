@@ -24,6 +24,7 @@ class CreateCpmMailLogsTable extends Migration
             $table->integer('receiver_cpm_id')->unsigned()->index('cpm_mail_logs_receiver_cpm_id_foreign');
             $table->timestamps();
             $table->integer('note_id')->unsigned()->nullable()->index('cpm_mail_logs_note_id_foreign');
+            $table->dateTime('seen_on')->nullable();
         });
     }
 

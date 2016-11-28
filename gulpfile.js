@@ -33,6 +33,7 @@ elixir(function(mix) {
 
     mix.sass([
         '/css/provider/dashboard.scss',
+        './resources/assets/less/css/animate.min.css'
     ], 'public/css/provider-dashboard.css');
 
     mix.browserify('provider/create-locations.js');

@@ -1,8 +1,8 @@
 @extends('provider.layouts.onboarding')
 
-@section('title', 'Create Program Lead')
+@section('title', 'Lead')
 
-@section('instructions', "Let's start by creating an account manager? Page name is create-practice-lead. Step 1/4")
+@section('instructions', "Welcome! Let's start by creating your implementation lead.")
 
 @section('module')
 
@@ -49,7 +49,7 @@
     <div class="row">
         @include('provider.partials.mdl.form.text.textfield', [
             'name' => 'email',
-            'label' => 'Email',
+            'label' => 'Email (Will also be the username)',
             'class' => 'col s12',
             'type' => 'email',
             'attributes' => [

@@ -2,7 +2,7 @@
 
 @section('title', 'Create locations')
 
-@section('instructions', "Create locations. Click on Add Location to add locations, and save to continue blah blah. Title: create-locations Step 3/4")
+@section('instructions', "Almost done! Let's setup locations, then your relevant staff.")
 
 @section('module')
 
@@ -37,7 +37,7 @@
                                 @{{loc.name | uppercase}}
                             </span>
                             <span v-else>
-                                LOCATION #@{{index}}
+                                NEW LOCATION
                             </span>
                         </div>
                     </div>
@@ -181,7 +181,7 @@
                             <div>
                                 @include('provider.partials.mdl.form.radio', [
                                     'id' => 'billing-provider',
-                                    'label' => 'Patient billing provider.',
+                                    'label' => 'Patient\'s Billing / Main provider.',
                                     'name' => 'clinical-contact',
                                     'value' => 'billing-provider',
                                     'attributes' => [
@@ -194,7 +194,7 @@
                             <div>
                                 @include('provider.partials.mdl.form.radio', [
                                     'id' => 'instead-of-billing-provider',
-                                    'label' => 'Someone else instead of billing provider.',
+                                    'label' => 'Someone else instead of the billing provider.',
                                     'name' => 'clinical-contact',
                                     'value' => 'instead-of-billing-provider',
                                     'attributes' => [
@@ -204,20 +204,11 @@
                                 ])
                                 <transition>
                                     <div v-if="patientClinicalIssuesContact == 'instead-of-billing-provider' ? true : false"
-                                         name="fade"
+                                         name="custom-classes-transition"
+                                         enter-active-class="animated tada"
+                                         leave-active-class="animated bounceOutRight"
                                          mode="in-out">
-                                        @include('provider.partials.mdl.form.text.textfield', [
-                                            'name' => 'instead_of_billing_provider_email',
-                                            'label' => 'E-mail',
-                                            'class' => 'col s6',
-                                            'type' => 'email',
-                                        ])
-
-                                        @include('provider.partials.mdl.form.text.textfield', [
-                                            'name' => 'instead_of_billing_provider_phone',
-                                            'label' => 'Phone',
-                                            'class' => 'col s6'
-                                        ])
+                                        @include('provider.partials.clinical-issues-contact')
                                     </div>
                                 </transition>
                             </div>
@@ -236,18 +227,7 @@
                                 <transition>
                                     <div v-if="patientClinicalIssuesContact == 'in-addition-to-billing-provider' ? true : false"
                                          name="fade" mode="in-out">
-                                        @include('provider.partials.mdl.form.text.textfield', [
-                                            'name' => 'in_addition_to_billing_provider_email',
-                                            'label' => 'E-mail',
-                                            'class' => 'col s6',
-                                            'type' => 'email',
-                                        ])
-
-                                        @include('provider.partials.mdl.form.text.textfield', [
-                                            'name' => 'in_addition_to_billing_provider_phone',
-                                            'label' => 'Phone',
-                                            'class' => 'col s6'
-                                        ])
+                                        @include('provider.partials.clinical-issues-contact')
                                     </div>
                                 </transition>
                             </div>

@@ -12,7 +12,7 @@
         }
 
         .onboarding-user-card.mdl-card {
-            width: 600px !important;
+            width: 650px !important;
         }
 
         .container {
@@ -25,20 +25,6 @@
 
 @section('content')
 
-    <div class="row">
-        <nav>
-            <div class="nav-wrapper cyan">
-                <div class="col s12">
-                    <div id="step0" style="display: inline;" class="breadcrumb">Create Account</div>
-                    <div id="step1" style="display: inline;" class="breadcrumb">Create Practice</div>
-                    <div id="step2" style="display: inline;" class="breadcrumb">Add Locations</div>
-                    <div id="step3" style="display: inline;" class="breadcrumb">Add Staff Members</div>
-                    <div id="step4" style="display: inline;" class="breadcrumb">Welcome Page</div>
-                </div>
-            </div>
-        </nav>
-    </div>
-
     <div class="container">
 
         <div class="v-center">
@@ -49,15 +35,11 @@
 
                 <div class="row">
                     <div class="col s12">
-                        <h5 class="center-align">
-                            CarePlan Manager Onboarding Process
+                        <h5 class="left-align">
+                            @yield('instructions')
                         </h5>
 
                         <div class="mdl-layout-spacer" style="height: 2%;"></div>
-
-                        <h6>
-                            @yield('instructions')
-                        </h6>
                     </div>
                 </div>
 
@@ -65,6 +47,22 @@
                     <div class="col s12">
                         @yield('module')
                     </div>
+                </div>
+
+                <br>
+
+                <div class="row">
+                    <nav>
+                        <div class="nav-wrapper cyan">
+                            <div class="col s12">
+                                <div id="step0" style="display: inline;" class="breadcrumb">Lead</div>
+                                <div id="step1" style="display: inline;" class="breadcrumb">Organization</div>
+                                <div id="step2" style="display: inline;" class="breadcrumb">Location(s)</div>
+                                <div id="step3" style="display: inline;" class="breadcrumb">CCM Staff</div>
+                                <div id="step4" style="display: inline;" class="breadcrumb">Welcome!</div>
+                            </div>
+                        </div>
+                    </nav>
                 </div>
             </div>
 
