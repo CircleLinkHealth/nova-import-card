@@ -2,7 +2,7 @@
 
 @section('title', 'Create Practice')
 
-@section('instructions', "Congratulations! You have successfully created a lead user account. What is the name of the practice? How should we word this Raph? Title: create-practice. Step 2/4")
+@section('instructions', "Let's create your organization.")
 
 @section('module')
 
@@ -41,7 +41,7 @@
         <div class="row">
             @include('provider.partials.mdl.form.text.textfield', [
                 'name' => 'tax-id',
-                'label' => 'Tax Id',
+                'label' => 'Federal Tax ID#',
                 'class' => 'col s12',
                 'attributes' => [
                     'required' => 'required',

@@ -11080,9 +11080,7 @@
 
             data: function data() {
                 return {
-                    newUsers: [],
-                    regular_select: null,
-                    materialize_select: null
+                    newUsers: []
                 };
             },
 
