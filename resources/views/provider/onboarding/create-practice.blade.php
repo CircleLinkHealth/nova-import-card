@@ -2,7 +2,7 @@
 
 @section('title', 'Create Practice')
 
-@section('instructions', "Let's create your organization.")
+@section('instructions', "Let's <u>create your organization</u>.")
 
 @section('module')
 
@@ -13,7 +13,7 @@
             }
 
             #step1 {
-                color: #fff;
+                color: #039be5 !important;
             }
         </style>
     </head>
@@ -49,10 +49,24 @@
             ])
         </div>
 
-        <button class="btn blue waves-effect waves-light col s12"
-                id="store-practice">
-            Save practice
-        </button>
+        <div class="row">
+            For billing, please fill out either an <a
+                    href="https://docs.google.com/forms/d/e/1FAIpQLSePRPBlacUiqlcrHwRd5u4dz7y_ZSvSReaVKzzacONuUMaZ7Q/viewform"
+                    target="_blank">ACH
+                Transfer Form</a>
+            or a
+            <a href="https://docs.google.com/forms/d/e/1FAIpQLScTbtb0A2MWNfJ-yE42Ll7chi2nClcIOxqY5BHsPJG67gvGKA/viewform"
+               target="_blank">
+                Credit Card Form.
+            </a>
+        </div>
+
+        <div class="row">
+            <button class="btn blue waves-effect waves-light col s12"
+                    id="store-practice">
+                Next
+            </button>
+        </div>
 
         {!! Form::close() !!}
     </div>

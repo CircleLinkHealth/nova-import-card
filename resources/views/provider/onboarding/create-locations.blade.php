@@ -2,7 +2,7 @@
 
 @section('title', 'Create locations')
 
-@section('instructions', "Almost done! Let's setup locations, then your relevant staff.")
+@section('instructions', "Almost done! Let's <u>setup locations</u>, then your relevant staff.")
 
 @section('module')
 
@@ -13,7 +13,7 @@
             }
 
             #step2 {
-                color: #fff;
+                color: #039be5 !important;
             }
         </style>
     </head>
@@ -258,13 +258,13 @@
         <div class="row right-align">
             <div v-on:click="addLocation" class="btn waves-effect waves-light blue accent-1">
                 Add Location
-                <i class="material-icons right">send</i>
+                <i class="material-icons right">add</i>
             </div>
         </div>
 
         <div class="row">
             <button class="btn blue waves-effect waves-light col s12" id="submit">
-                Save location(s)
+                Next
             </button>
         </div>
 
