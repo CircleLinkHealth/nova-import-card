@@ -3,7 +3,7 @@ jQuery(document).ready(function ($) {
         datumTokenizer: Bloodhound.tokenizers.obj.whitespace('search'),
         queryTokenizer: Bloodhound.tokenizers.whitespace,
         remote: {
-            url: 'queryPatient?users=%QUERY',
+            url: '?users=%QUERY',
             wildcard: '%QUERY'
         }
     });

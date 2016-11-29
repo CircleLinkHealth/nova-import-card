@@ -69,7 +69,7 @@
         <script src="{{ asset('/js/bootstrap-select.min.js') }}"></script>
         <script src="{{ asset('/js/typeahead.bundle.js') }}"></script>
         <script src="{{ asset('/js/fab.js') }}"></script>
-
+        @include('partials.searchjs')
 
         <!-- http://curioussolutions.github.io/DateTimePicker/ -->
         <link rel="stylesheet" type="text/css" href="//cdn.jsdelivr.net/datetimepicker/latest/DateTimePicker.min.css"/>
