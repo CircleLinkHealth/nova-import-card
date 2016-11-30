@@ -25,7 +25,7 @@
             limit: 50,
             templates: {
                 empty: [
-                    '<div class="empty-message">No Patients Found</div>'
+                    '<div class="empty-message">No Patients Found...</div>'
                 ]
             }
         });
