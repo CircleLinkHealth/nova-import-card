@@ -103,7 +103,7 @@ class CcdApiController extends Controller
 
         return isset($results)
             ? response()->json($results, 200)
-            : response()->json(["message" => "No pending care events."], 404);
+            : response()->json([], 200);
     }
 
     public function getApiUserLocation($user)
@@ -153,7 +153,7 @@ class CcdApiController extends Controller
         $pendingReports = $pendingReports->get();
 
         if ($pendingReports->isEmpty()) {
-            return response()->json(["message" => "No Pending Notes."], 200);
+            return response()->json([], 200);
         }
 
         $json = [];
@@ -236,7 +236,7 @@ class CcdApiController extends Controller
         $pendingReports = $pendingReports->get();
 
         if ($pendingReports->isEmpty()) {
-            return response()->json(["message" => "No Pending Reports."], 200);
+            return response()->json([], 200);
         }
 
         $json = [];
