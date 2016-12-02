@@ -20,7 +20,7 @@ class OnboardingTest extends TestCase
     {
         $this->it_stores_practice_lead();
         $this->it_stores_a_practice(3);
-        $this->it_stores_locations(3);
+        $this->it_stores_locations();
     }
 
     public function it_stores_practice_lead()
@@ -35,7 +35,7 @@ class OnboardingTest extends TestCase
             ->type($lastName, 'lastName')
             ->type($email, 'email')
             ->type($password, 'password')
-            ->press('Create program lead')
+            ->press('Next')
             ->seeInDatabase('users', [
                 'first_name' => $firstName,
                 'last_name'  => $lastName,
@@ -57,8 +57,7 @@ class OnboardingTest extends TestCase
         $this->actingAs($this->provider)
             ->visit(route('get.onboarding.create.practice'))
             ->type($name, 'name')
-            ->type($numberOfLocations, 'numberOfLocations')
-            ->press('create-practice');
+            ->press('Next');
 
         $this->practice = Practice::whereUserId($this->provider->id)->first();
 
@@ -69,15 +68,17 @@ class OnboardingTest extends TestCase
         ]);
     }
 
-    public function it_stores_locations($numberOfLocations)
+    public function it_stores_locations()
     {
+        //May make this dynamic later, but for now just create one location
+        $numberOfLocations = 1;
+
         $this->actingAs($this->provider)
             ->visit(route('get.onboarding.create.locations', [
-                'numberOfLocations' => $numberOfLocations,
                 'practiceId'        => $this->practice->id,
             ]));
 
-        for ($i = 1; $i <= $numberOfLocations; $i++) {
+        for ($i = 0; $i <= $numberOfLocations; $i++) {
             $name = $this->faker->streetAddress;
             $addrLine2 = 'PO BOX: 500';
             $city = $this->faker->city;

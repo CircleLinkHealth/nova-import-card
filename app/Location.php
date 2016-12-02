@@ -26,6 +26,8 @@ class Location extends Model
         'state',
         'timezone',
         'postal_code',
+        'ehr_login',
+        'ehr_password',
     ];
 
     public static function getLocationsForBlog($blogId)

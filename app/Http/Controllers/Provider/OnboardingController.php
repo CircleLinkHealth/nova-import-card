@@ -7,6 +7,7 @@ use App\Contracts\Repositories\LocationRepository;
 use App\Contracts\Repositories\PracticeRepository;
 use App\Contracts\Repositories\UserRepository;
 use App\Http\Controllers\Controller;
+use App\PatientCareTeamMember;
 use App\Role;
 use Illuminate\Http\Request;
 use Prettus\Validator\Exceptions\ValidatorException;
@@ -104,6 +105,9 @@ class OnboardingController extends Controller
     public function postStoreLocations(Request $request)
     {
         try {
+            $sameEHRLogin = isset($request->input('locations')[0]['same_ehr_login']);
+            $sameClinicalContact = isset($request->input('locations')[0]['same_clinical_contact']);
+
             foreach ($request->input('locations') as $newLocation) {
 
                 $primaryPractice = $this->practices
@@ -112,9 +116,33 @@ class OnboardingController extends Controller
                         'user_id' => auth()->user()->id,
                     ])->first();
 
-                $newLocation = array_add($newLocation, 'practice_id', $primaryPractice->id);
+                $location = $this->locations
+                    ->skipPresenter()
+                    ->create([
+                        'practice_id'    => $primaryPractice->id,
+                        'name'           => $newLocation['name'],
+                        'phone'          => $newLocation['phone'],
+                        'address_line_1' => $newLocation['address_line_1'],
+                        'address_line_2' => $newLocation['address_line_2'],
+                        'city'           => $newLocation['city'],
+                        'state'          => $newLocation['state'],
+                        'timezone'       => $newLocation['timezone'],
+                        'postal_code'    => $newLocation['postal_code'],
+                        'ehr_login'      => $sameEHRLogin
+                            ? $request->input('locations')[0]['ehr_login']
+                            : $newLocation['ehr_login'],
+                        'ehr_password'   => $sameEHRLogin
+                            ? $request->input('locations')[0]['ehr_password']
+                            : $newLocation['ehr_password'],
+                    ]);
 
-                $locations = $this->locations->create($newLocation);
+                if ($sameClinicalContact) {
+
+                }
+
+                if ($newLocation['clinical_contact'] != PatientCareTeamMember::BILLING_PROVIDER) {
+
+                }
             }
         } catch (ValidatorException $e) {
             return redirect()
@@ -139,10 +167,11 @@ class OnboardingController extends Controller
 
         try {
             $user = $this->users->skipPresenter()->create([
-                'email'      => $input['email'],
-                'first_name' => $input['firstName'],
-                'last_name'  => $input['lastName'],
-                'password'   => bcrypt($input['password']),
+                'email'          => $input['email'],
+                'first_name'     => $input['firstName'],
+                'last_name'      => $input['lastName'],
+                'password'       => bcrypt($input['password']),
+                'count_ccm_time' => (bool)$input['countCcmTime'],
             ]);
         } catch (ValidatorException $e) {
             return redirect()
