@@ -32,7 +32,8 @@
                                 <td>{{ $role->display_name }}</td>
                                 <td>
                                     @if(Entrust::can('roles-manage'))
-                                        <a href="{{ URL::route('admin.roles.edit', array('id' => $role->id)) }}" class="btn btn-primary">Edit</a>
+                                        <a href="{{ URL::route('roles.edit', array('id' => $role->id)) }}"
+                                           class="btn btn-primary">Edit</a>
                                     @endif
                                 </td>
                             </tr>
@@ -47,7 +48,7 @@
                                         <strong>{!! $permission->display_name !!}</strong> [{!! $permission->name !!}]
                                     </div>
                                 @endforeach
-                                    <br /><br />
+                                <br/><br/>
                             </div>
                         </div>
 
