@@ -2,7 +2,7 @@
 
 @section('title', 'Create locations')
 
-@section('instructions', "Almost done! Let's <u>setup locations</u>, then your relevant staff.")
+@section('instructions', "Almost done! Let's <u>setup locations</u>.")
 
 @section('module')
 
@@ -203,7 +203,7 @@
                                     ]
                                 ])
                                 <transition>
-                                    <div v-if="patientClinicalIssuesContact == 'instead-of-billing-provider' ? true : false"
+                                    <div v-if="patientClinicalIssuesContact == 'instead_of_billing_provider' ? true : false"
                                          name="custom-classes-transition"
                                          enter-active-class="animated tada"
                                          leave-active-class="animated bounceOutRight"
@@ -225,7 +225,7 @@
                                     ]
                                 ])
                                 <transition>
-                                    <div v-if="patientClinicalIssuesContact == 'in-addition-to-billing-provider' ? true : false"
+                                    <div v-if="patientClinicalIssuesContact == 'in_addition_to_billing_provider' ? true : false"
                                          name="fade" mode="in-out">
                                         @include('provider.partials.clinical-issues-contact')
                                     </div>
