@@ -5,8 +5,6 @@
 
 @section('content')
 
-    <script type="text/javascript" src="{{ asset('/js/patient/observation-create.js') }}"></script>
-
     <script>
         $(document).ready(function () {
             $(".provider").select2();
@@ -37,7 +35,7 @@
                 </div>
                 @include('partials.userheader')
                 <div class="main-form-block main-form-horizontal main-form-primary-horizontal col-md-12">
-                    <form id="save" method="post" action="{{URL::route('patient.appointment.store', array('patientId' => $patient->id))}}">
+                    <form id="save" name="save" method="post" action="{{URL::route('patient.appointment.store', array('patientId' => $patient->id))}}">
                         {{ csrf_field() }}
 
                         <div class="row">
@@ -75,7 +73,7 @@
                                         <div class="col-sm-12">
                                             <div class="form-group">
                                                 <input name="date" type="date" class="selectpickerX form-control"
-                                                       value="{{ date('Y-m-d') }}"
+                                                       value=""
                                                        data-field="date" data-format="yyyy-MM-dd" required>
                                             </div>
                                         </div>
@@ -89,7 +87,7 @@
                                         <div class="col-sm-12">
                                             <div class="form-group">
                                                 <input name="time" id="time" type="time" class="selectpickerX form-control"
-                                                       value="{{date('H:i')}}"
+                                                       value="12:00"
                                                        data-field="time" data-format="H:i" required>
                                             </div>
                                         </div>
@@ -151,10 +149,10 @@
                                         {!! Form::submit('Save', array('name' => 'save','class' => 'btn btn-primary save-btn')) !!}
                                     </div>
                                 </div>
-                                {!! Form::close() !!}
                             </div>
                         </div>
                     </div>
+                    </form>
             </div>
         </div>
             <script>
@@ -176,6 +174,7 @@
                             first_name: $('#first_name').val(),
                             address: $('#address').val(),
                             last_name: $('#last_name').val(),
+                            provider: $('#provider').val(),
                             specialty: $('#specialty').val(),
                             practice: $('#practice').val(),
                             type: $('#type').val(),
@@ -197,11 +196,11 @@
                                     "<select id='provider' " +
                                     "name='provider' " +
                                     "class='provider selectpickerX dropdownValid form-control' " +
-                                    "data-size='10' required>  " +
+                                    "data-size='10' disabled>  " +
                                     "<option value=" + dataArray['user_id'] + ">" + dataArray['name'] +
                                     "</option>");
-                            $('#provider').prop('disabled', true);
                             $('#providerDiv').css('padding-bottom','10px');
+                            $("#save").append('<input type="hidden" value="'+dataArray['user_id']+'" id="provider" name="provider">');
                             $("#addProvider").modal('hide');
 
                         },completed: function (data) {
