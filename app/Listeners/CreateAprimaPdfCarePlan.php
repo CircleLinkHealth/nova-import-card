@@ -41,7 +41,7 @@ class CreateAprimaPdfCarePlan
 
         $locationObj = $this->location->find($locationId);
 
-        if (!empty($locationObj) && $locationObj->parent_id == Location::UPG_PARENT_LOCATION_ID) {
+        if (!empty($locationObj) && $locationObj->practice->name == 'upg') {
             $this->reportsService->createAprimaPatientCarePlanPdfReport($user, $user->getCarePlanProviderApproverAttribute());
         }
     }
