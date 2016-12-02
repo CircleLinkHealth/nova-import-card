@@ -42,6 +42,7 @@ class PageTimerController extends Controller
      */
     public function store(Request $request)
     {
+
         $data = $request->input();
 
         $patientId = $request->input('patientId');
@@ -191,7 +192,18 @@ class PageTimerController extends Controller
 //        $rulesService = new RulesService;
 //        $ruleActions = $rulesService->getActions($params, 'ATT');
 
-        if ($provider->count_ccm_time && '$pageTimer->title is not patient activity report, or input offline activities') {
+        $omitted_routes = [
+            'patient.activity.create',
+            'patient.activity.providerUIIndex'
+        ];
+
+        if(!auth()->user()->count_ccm_time){
+            $omitted_routes[] = 'patient.activity.view';
+        }
+
+        $is_ommited = in_array($pageTimer->title, $omitted_routes);
+
+        if ($provider->count_ccm_time && !$is_ommited) {
             $activityParams = [];
             $activityParams['type'] = $params['activity'];
             $activityParams['provider_id'] = $pageTimer->provider_id;

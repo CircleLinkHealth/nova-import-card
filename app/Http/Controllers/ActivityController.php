@@ -261,7 +261,7 @@ class ActivityController extends Controller {
 					->Orwhere('logged_from', 'pagetimer');
 			})
 			->groupBy(DB::raw('provider_id, DATE(performed_at),type'))
-			->orderBy('performed_at', 'desc')
+			->orderBy('created_at', 'desc')
 			->get();
 
 		$acts = json_decode(json_encode($acts), true);			//debug($acts);

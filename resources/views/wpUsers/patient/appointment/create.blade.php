@@ -120,7 +120,7 @@
                                         <div class="form-group">
                                         <textarea class="form-control" id="appointment_type" name="appointment_type"
                                                   placeholder="Please specify appointment type..."
-                                                  rows="1" maxlength="50"></textarea>
+                                                  rows="1" maxlength="50" required></textarea>
                                         </div>
                                     </div>
                                 </div>

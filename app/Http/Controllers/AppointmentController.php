@@ -7,6 +7,7 @@ use App\PatientInfo;
 use App\User;
 use Illuminate\Http\Request;
 
+
 class AppointmentController extends Controller
 {
 
@@ -52,8 +53,6 @@ class AppointmentController extends Controller
         $input = $request->input();
 
         $was_completed = isset($input['is_completed']) ?? false;
-
-//        dd($data);
 
         $data = Appointment::create([
 
