@@ -53,6 +53,8 @@ class AppointmentController extends Controller
 
         $was_completed = isset($input['is_completed']) ?? false;
 
+//        dd($data);
+
         $data = Appointment::create([
 
             'patient_id' => $input['patientId'],
