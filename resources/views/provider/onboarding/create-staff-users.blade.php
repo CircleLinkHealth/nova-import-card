@@ -95,6 +95,15 @@
                             </div>
                         </div>
 
+                        <div class="right-align">
+                            @include('provider.partials.mdl.form.checkbox', [
+                                'label' => 'Grant admin rights',
+                                'name' => 'users[@{{index}}][grand_admin_rights]',
+                                'value' => '1',
+                                'class' => 'col s12',
+                            ])
+                        </div>
+
                         <div class="row" v-if="newUsers.length > 1">
                             <a class="waves-effect waves-teal btn-flat red lighten-3 white-text"
                                v-on:click="deleteUser(index)"><i
