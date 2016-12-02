@@ -175,12 +175,16 @@ class PageTimerController extends Controller
         // check params to see if rule exists
         $params = [];
 
-        //provider
-        $provider = User::find($pageTimer->provider_id);
+        //user
+        $user = User::find($pageTimer->provider_id);
 
-        // provider role param
+        if (!(bool)$user->count_ccm_time || $pageTimer->patient_id == 0) {
+            return false;
+        }
+
+        // user role param
         $params['role'] = '';
-        $role = $provider->roles()->first();
+        $role = $user->roles()->first();
         if ($role) {
             $params['role'] = $role->name;
         }
@@ -188,22 +192,14 @@ class PageTimerController extends Controller
         // activity param
         $params['activity'] = $pageTimer->activity_type;
 
-//        // check against rules and add activity if passes
-//        $rulesService = new RulesService;
-//        $ruleActions = $rulesService->getActions($params, 'ATT');
-
         $omitted_routes = [
             'patient.activity.create',
-            'patient.activity.providerUIIndex'
+            'patient.activity.providerUIIndex',
         ];
-
-        if(!auth()->user()->count_ccm_time){
-            $omitted_routes[] = 'patient.activity.view';
-        }
 
         $is_ommited = in_array($pageTimer->title, $omitted_routes);
 
-        if ($provider->count_ccm_time && !$is_ommited) {
+        if (!$is_ommited) {
             $activityParams = [];
             $activityParams['type'] = $params['activity'];
             $activityParams['provider_id'] = $pageTimer->provider_id;
@@ -225,9 +221,7 @@ class PageTimerController extends Controller
         // update pagetimer
         $pageTimer->processed = 'Y';
         $pageTimer->rule_params = serialize($params);
-        $pageTimer->rule_id = ($ruleActions)
-            ? $ruleActions[0]->id
-            : '';
+
         $pageTimer->save();
 
         return true;
