@@ -4,7 +4,6 @@ use App\Activity;
 use App\Models\PatientSession;
 use App\PageTimer;
 use App\Services\ActivityService;
-use App\Services\RulesService;
 use App\Services\TimeTracking\Service as TimeTrackingService;
 use App\User;
 use Carbon\Carbon;
@@ -175,8 +174,6 @@ class PageTimerController extends Controller
         // check params to see if rule exists
         $params = [];
 
-        dd($params);
-
         //provider
         $provider = User::find($pageTimer->provider_id);
 
@@ -190,11 +187,11 @@ class PageTimerController extends Controller
         // activity param
         $params['activity'] = $pageTimer->activity_type;
 
-        // check against rules and add activity if passes
-        $rulesService = new RulesService;
-        $ruleActions = $rulesService->getActions($params, 'ATT');
+//        // check against rules and add activity if passes
+//        $rulesService = new RulesService;
+//        $ruleActions = $rulesService->getActions($params, 'ATT');
 
-        if ($ruleActions) {
+        if ($provider->count_ccm_time && '$pageTimer->title is not patient activity report, or input offline activities') {
             $activityParams = [];
             $activityParams['type'] = $params['activity'];
             $activityParams['provider_id'] = $pageTimer->provider_id;
