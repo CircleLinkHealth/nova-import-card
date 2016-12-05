@@ -233,7 +233,7 @@ class OnboardingController extends Controller
         $input = $request->input();
 
         try {
-            $practice = $this->practices
+            $practice = $this->users
                 ->skipPresenter()
                 ->create([
                     'name'         => str_slug($input['name']),
