@@ -282,4 +282,30 @@ class PatientInfo extends Model {
 
 	}
 
+    public function nursesThatCanCareforPatient(){
+
+        $nurses = \App\NurseInfo::all();
+        $result = [];
+        $user_locations = $this->patient->user->locations()->get();
+
+        foreach ($nurses as $nurse){
+
+            if($nurse->user->user_status == 1) {
+
+                $nurse_locations = $nurse->user->locations()->get();
+
+                $intersections = $nurse_locations->intersect($user_locations);
+
+                if ($intersections->count() > 0) {
+                    $result[] = $nurse->id;
+                }
+            }
+
+        }
+
+        return $result;
+
+    }
+
+
 }

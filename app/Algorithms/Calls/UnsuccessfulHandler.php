@@ -38,7 +38,7 @@ class UnsuccessfulHandler implements CallHandler
     private $week;
     private $patient;
     private $ccmTime;
-    private $nurse;
+    private $nurses = [];
     private $nextCallDate;
     private $attemptNote;
     private $matchArray = [];

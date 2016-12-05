@@ -77,9 +77,9 @@ trait CallAlgoHelper
 
     //exec function for window intersection checks
 
+
     public function intersectWithNurseWindows()
     {
-
         //last contacted nurse is first up
         $this->nurse = NurseInfo::where('user_id', $this->patient->lastReachedNurse())
             ->with('windows')
@@ -107,6 +107,18 @@ trait CallAlgoHelper
 
 
             } else {
+
+                //check for other nurses that may be available.
+//                $other_nurses = $this->patient->nursesThatCanCareforPatient();
+//
+//                foreach ($other_nurses as $nurse){
+//
+//                    $this->checkForIntersectingDays($nurse); //first days
+//                    $this->checkForIntersectingTimes(); //then whether they have intersecting times
+//
+//                    $adjustment = collect($this->matchArray)->first();
+//
+//                }
 
                 $this->prediction['logic'] .= '. We didn\'t find a nurse window... (note, currently only supports last contacted nurse)';
                 $this->prediction['nurse'] = null;
