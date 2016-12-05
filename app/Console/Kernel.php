@@ -13,6 +13,7 @@ use App\Console\Commands\ImportNurseScheduleFromGoogleCalendar;
 use App\Console\Commands\Inspire;
 use App\Console\Commands\MapSnomedToCpmProblems;
 use App\Console\Commands\NukeItemAndMeta;
+use App\Console\Commands\ResetCcmTime;
 use App\Services\Calls\SchedulerService;
 use App\Services\PhiMail\PhiMail;
 use Illuminate\Console\Scheduling\Schedule;
@@ -38,6 +39,7 @@ class Kernel extends ConsoleKernel
         NukeItemAndMeta::class,
         GetTodaysAppointments::class,
         GetCcds::class,
+        ResetCcmTime::class,
     ];
 
     /**
@@ -99,5 +101,9 @@ class Kernel extends ConsoleKernel
         $schedule->command('nurses:emailDailyReport')
             ->weekdays()
             ->at('21:00');
+
+        //Run at 12:01am every 1st of month
+        $schedule->command('reset:ccm_time')
+            ->cron('1 0 1 * *');
     }
 }
