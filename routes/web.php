@@ -1,7 +1,6 @@
 <?php
 
 if (app()->environment() != 'production') {
-
     Route::get('rohan', function () {
 
         $patient = \App\PatientInfo::find(1272);
@@ -9,9 +8,9 @@ if (app()->environment() != 'production') {
         $result = [];
         $user_location = $patient->user->locations()->get();
 
-        foreach ($nurses as $nurse){
+        foreach ($nurses as $nurse) {
 
-            if($nurse->user->user_status == 1) {
+            if ($nurse->user->user_status == 1) {
 
                 $nurse_locations = $nurse->user->locations()->get();
 

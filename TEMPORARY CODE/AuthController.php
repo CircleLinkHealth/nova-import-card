@@ -153,8 +153,6 @@ class AuthController extends Controller
         Request $request,
         User $user
     ) {
-
-
         return redirect()->intended($this->redirectPath());
     }
 }
