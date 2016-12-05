@@ -32,11 +32,13 @@ class NurseInfo extends Model
     public function scopeActive()
     {
 
-        return NurseInfo::whereStatus('active');
+        return User::whereHas('roles', function ($q) {
+            $q->where('name', '=', 'care-center');
+        })->where('user_status', 1)->get();
 
     }
 
-    public function activeNursesForUI()
+    public static function activeNursesForUI()
     {
 
         return User::whereHas('roles', function ($q) {
@@ -93,13 +95,5 @@ class NurseInfo extends Model
                             
 
     }
-
-    public function canCareforPatient(PatientInfo $patient){
-
-        $patient->user()->intersectLocationsWith($this->user);
-
-    }
-    
-    
 
 }
