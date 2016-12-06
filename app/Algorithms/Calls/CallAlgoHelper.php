@@ -25,7 +25,7 @@ trait CallAlgoHelper
             //this will give us the first available call window from the date the logic offsets, per the patient's preferred times.
             $next_predicted_contact_window = (new PatientContactWindow)->getEarliestWindowForPatientFromDate($this->patient,
                 $this->nextCallDate);
-            
+
         } else {
 
             //This override is to schedule calls on weekends.
@@ -37,11 +37,11 @@ trait CallAlgoHelper
         }
 
         $this->prediction = [
-            'patient'      => $this->patient,
-            'date'         => $next_predicted_contact_window['day'],
+            'patient' => $this->patient,
+            'date' => $next_predicted_contact_window['day'],
             'window_start' => $next_predicted_contact_window['window_start'],
-            'window_end'   => $next_predicted_contact_window['window_end'],
-            'logic'        => $this->logic,
+            'window_end' => $next_predicted_contact_window['window_end'],
+            'logic' => $this->logic,
             'attempt_note' => $this->attemptNote,
         ];
 
@@ -77,59 +77,114 @@ trait CallAlgoHelper
 
     //exec function for window intersection checks
 
+    /**
+     * First, we try to locate whether the last successfully reached Nurse has a window
+     * If not, we move on the next Nurse who has jurisdiction.
+     */
 
-    public function intersectWithNurseWindows()
+    public function findNurse()
     {
+
         //last contacted nurse is first up
         $this->nurse = NurseInfo::where('user_id', $this->patient->lastReachedNurse())
             ->with('windows')
             ->first();
 
-        //see if there are any window intersections within the next 3 days.
-        //supplies $this->matchArray
+        $found = $this->checkNurseForTargetDays($this->nurse);
 
-         $this->checkForIntersectingDays($this->nurse); //first days
-         $this->checkForIntersectingTimes(); //then whether they have intersecting times
+        if ($found != false) {
 
-        $adjustment = collect($this->matchArray)->first();
+            $this->prediction['nurse'] = $found['nurse'];
+            $this->prediction['window_match'] = $found['window_match'];
 
-            if($adjustment && isset($adjustment['intersects'])){
+            return $this->prediction;
 
-                $startWindow = Carbon::parse($adjustment['patient']['window_start']);
-                $endWindow = Carbon::parse($adjustment['patient']['window_end']);
+        } else {
 
-                $this->prediction['date'] = $startWindow->toDateString();
-                $this->prediction['window_start'] = $startWindow->format('H:i');
-                $this->prediction['window_end'] = $endWindow->format('H:i');
+            $found = $this->checkAdditionalNurses();
 
-                $this->prediction['logic'] .= '. We also found an intersecting nurse window!';
-                $this->prediction['nurse'] = $this->nurse->user_id;
+            if(!$found) {
 
-
-            } else {
-
-                //check for other nurses that may be available.
-//                $other_nurses = $this->patient->nursesThatCanCareforPatient();
-//
-//                foreach ($other_nurses as $nurse){
-//
-//                    $this->checkForIntersectingDays($nurse); //first days
-//                    $this->checkForIntersectingTimes(); //then whether they have intersecting times
-//
-//                    $adjustment = collect($this->matchArray)->first();
-//
-//                }
-
-                $this->prediction['logic'] .= '. We didn\'t find a nurse window... (note, currently only supports last contacted nurse)';
                 $this->prediction['nurse'] = null;
+                $this->prediction['window_match'] = 'We didn\'t find a nurse window, careable nurses didn\'t have connact windows';
 
             }
 
+            return $this->prediction;
+
+        }
+
     }
+
+    public function checkAdditionalNurses()
+    {
+
+        /*check for other nurses that may be available.
+
+        Noted that this will recount the originally checked nurse,
+        but since it won't return a value, it's not worth delving
+        into the checks.*/
+
+        $other_nurses = $this->patient->nursesThatCanCareforPatient();
+
+        foreach ($other_nurses as $nurse) {
+
+            $found = $this->checkNurseForTargetDays($nurse);
+
+            //will exit on first match, to prevent overwriting.
+            if ($found != false) {
+
+                $this->prediction['nurse'] = $found['nurse'];
+                $this->prediction['window_match'] = $found['window_match'];
+
+                return true;
+
+            }
+
+        }
+
+    }
+
+    public function checkNurseForTargetDays(NurseInfo $nurse)
+    {
+
+        //see if there are any window intersections within the next 3 days.
+        //supplies $this->matchArray
+        $date_matches = $this->checkForIntersectingDays($nurse); //first days
+
+        foreach ($date_matches as $key => $value) {
+
+            if (isset($value['patient']) && isset($value['nurse'])) {
+
+                if ($this->checkForIntersectingTimes($value['patient'], $value['nurse'])) {
+
+                    $startWindow = Carbon::parse($value['patient']['window_start']);
+                    $endWindow = Carbon::parse($value['patient']['window_end']);
+
+                    $match['date'] = $startWindow->toDateString();
+                    $match['window_start'] = $startWindow->format('H:i');
+                    $match['window_end'] = $endWindow->format('H:i');
+
+                    $match['window_match'] = 'We found an intersecting nurse window with: ' . $this->nurse->user->fullName;
+                    $match['nurse'] = $nurse->user_id;
+
+                    return $match;
+
+                }
+
+            }
+
+        }
+
+        //nurse has no windows
+        return false;
+    }
+
 
     //finds any days that have windows for patient and nurse
     //supplies $this->matchArray()
-    public function checkForIntersectingDays($nurse){
+    public function checkForIntersectingDays($nurse)
+    {
 
         $patientWindow['date'] = Carbon::parse($this->prediction['date'])->toDateString();
         $patientWindow['window_start'] = $this->prediction['window_start'];
@@ -143,7 +198,8 @@ trait CallAlgoHelper
 
         ];
 
-        $patientUpcomingWindows = PatientContactWindow::getNextWindowsForPatientFromDate($this->patient, $patientWindow['date']);
+        $patientUpcomingWindows = PatientContactWindow::getNextWindowsForPatientFromDate($this->patient,
+            $patientWindow['date']);
 
         foreach ($targetDays as $day) {
 
@@ -154,31 +210,43 @@ trait CallAlgoHelper
 
             //CHECK for nurse window on target day
 
-            $nurseWindow = $nurse->windows->first(function ($value, $key) use ($day) {
+            $nurseWindow = $nurse->windows->first(function (
+                $value,
+                $key
+            ) use
+            (
+                $dayString
+            ) {
 
                 //check whether any days fall in this window
-                return $value->date->toDateString() == $day->toDateString();
+                return $value->date->toDateString() == $dayString;
 
             });
 
-            if($nurseWindow != null) {
+            if ($nurseWindow != null) {
 
                 $this->matchArray[$dayString]['nurse'] = clhWindowToTimestamps($nurseWindow['date'],
-                                                                          $nurseWindow['window_time_start'],
-                                                                          $nurseWindow['window_time_end']);
+                    $nurseWindow['window_time_start'],
+                    $nurseWindow['window_time_end']);
             }
 
             //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~//
 
             //CHECK for patient window on target day
 
-            $patientWindow = $patientUpcomingWindows->filter(function ($value, $key) use ($day) {
+            $patientWindow = $patientUpcomingWindows->filter(function (
+                $value,
+                $key
+            ) use
+            (
+                $day
+            ) {
 
                 return Carbon::parse($value['window_start'])->toDateString() == $day->toDateString();
 
             })->first();
 
-            if($nurseWindow != null) {
+            if ($patientWindow != null) {
 
                 $this->matchArray[$dayString]['patient'] = $patientWindow;
 
@@ -188,29 +256,25 @@ trait CallAlgoHelper
 
         }
 
+        return $this->matchArray;
+
     }
 
     //for every day window-pair given for nurses and patients, this will return whether they intersect.
     //supplies $this->matchArray()
-    public function checkForIntersectingTimes(){
+    public function checkForIntersectingTimes(
+        $patientWindow,
+        $nurseWindow
+    ) {
 
-        foreach ($this->matchArray as $day) {
+        $patientStartCarbon = Carbon::parse($patientWindow['window_start']);
+        $patientEndCarbon = Carbon::parse($patientWindow['window_end']);
 
-            $patientStartCarbon = Carbon::parse($day['patient']['window_start']);
-            $patientEndCarbon = Carbon::parse($day['patient']['window_end']);
+        $nurseStartCarbon = Carbon::parse($nurseWindow['window_start'])->subMinutes(15); //padding
+        $nurseEndCarbon = Carbon::parse($nurseWindow['window_end'])->addMinutes(15); //padding
 
-            $nurseStartCarbon = Carbon::parse($day['nurse']['window_start'])->subMinutes(15); //padding
-            $nurseEndCarbon = Carbon::parse($day['nurse']['window_end'])->subMinutes(15); //padding
-
-            $timeBorder1 = $nurseStartCarbon->between($patientStartCarbon, $patientEndCarbon);
-            $timeBorder2 = $nurseEndCarbon->between($patientStartCarbon, $patientEndCarbon);
-
-
-            $this->matchArray[$patientStartCarbon->toDateString()]['intersects'] = $timeBorder1 || $timeBorder2;
-
-        }
-
-        return $this->matchArray;
+        //any overlap is true
+        return ($patientStartCarbon < $nurseEndCarbon) && ($patientEndCarbon > $nurseStartCarbon);
 
     }
 

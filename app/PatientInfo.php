@@ -282,22 +282,40 @@ class PatientInfo extends Model {
 
 	}
 
+
+	/**
+	 * Returns nurseInfos that have:
+     *  - a call window in the future
+     *  - location intersection with the patient's preferred contact location
+     *
+	 */
+
     public function nursesThatCanCareforPatient(){
 
-        $nurses = \App\NurseInfo::all();
+        $nurses = NurseInfo::whereHas('windows', function($q){
+            $q->where('date', '>', Carbon::now()->toDateTimeString());
+        })->get();
+
+        //Result array with Nurses
         $result = [];
-        $user_locations = $this->patient->user->locations()->get();
+
+        //Get user's locations
+        $user_locations = $this->user->locations()->get()->pluck('id');
 
         foreach ($nurses as $nurse){
 
             if($nurse->user->user_status == 1) {
 
-                $nurse_locations = $nurse->user->locations()->get();
+                //get all locations for nurse
+                $nurse_locations = $nurse->user->locations()->get()->pluck('id');
+                $intersection = $nurse_locations->intersect($user_locations);
 
-                $intersections = $nurse_locations->intersect($user_locations);
+                //to optimize further, check whether the nurse has any windows upcoming
+                $future_windows = $nurse->windows->where('date', '>', Carbon::now()->toDateTimeString());
 
-                if ($intersections->count() > 0) {
-                    $result[] = $nurse->id;
+                //check if they can care for patient AND if they have a window.
+                if ($intersection->count() > 0 && $future_windows->count() > 0) {
+                    $result[] = $nurse;
                 }
             }
 
