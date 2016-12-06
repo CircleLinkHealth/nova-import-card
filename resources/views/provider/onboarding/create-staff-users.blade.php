@@ -95,13 +95,34 @@
                             </div>
                         </div>
 
-                        <div class="right-align">
-                            @include('provider.partials.mdl.form.checkbox', [
-                                'label' => 'Grant admin rights',
-                                'name' => 'users[@{{index}}][grand_admin_rights]',
-                                'value' => '1',
-                                'class' => 'col s12',
+                        <div class="row">
+                            @include('provider.partials.mdl.form.text.textfield', [
+                                'name' => 'instead_of_billing_provider_phone',
+                                'label' => 'Phone',
+                                'class' => 'col s6'
                             ])
+                        </div>
+
+                        <div class="row">
+                            <div class="col s5 offset-s8">
+                                <div class="left-align">
+                                    @include('provider.partials.mdl.form.checkbox', [
+                                        'label' => 'Grant admin rights',
+                                        'name' => 'users[@{{index}}][grand_admin_rights]',
+                                        'value' => '1',
+                                        'class' => 'col s12',
+                                    ])
+                                </div>
+
+                                <div class="left-align">
+                                    @include('provider.partials.mdl.form.checkbox', [
+                                        'label' => 'Send billing reports',
+                                        'name' => 'users[@{{index}}][send_billing_reports]',
+                                        'value' => '1',
+                                        'class' => 'col s12',
+                                    ])
+                                </div>
+                            </div>
                         </div>
 
                         <div class="row" v-if="newUsers.length > 1">

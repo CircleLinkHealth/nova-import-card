@@ -1,10 +1,29 @@
 <?php
 
 if (app()->environment() != 'production') {
-
     Route::get('rohan', function () {
 
-        //TEST
+        $patient = \App\PatientInfo::find(1272);
+        $nurses = \App\NurseInfo::all();
+        $result = [];
+        $user_location = $patient->user->locations()->get();
+
+        foreach ($nurses as $nurse) {
+
+            if ($nurse->user->user_status == 1) {
+
+                $nurse_locations = $nurse->user->locations()->get();
+
+                $intersections = $nurse_locations->intersect($user_location);
+
+                if ($intersections->count() > 0) {
+                    $result[] = $nurse->id;
+                }
+            }
+
+        }
+
+        return $result;
 
     });
 }

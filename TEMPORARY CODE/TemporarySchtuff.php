@@ -10,7 +10,10 @@
 //
 //
 
+use App\Activity;
 use App\PageTimer;
+use App\PatientInfo;
+use Carbon\Carbon;
 use Carbon\Carbon;
 
 $all = App\PageTimer::onlyTrashed()->get();
@@ -135,3 +138,35 @@ foreach ($all as $pt) {
 //
 //    (new App\Http\Controllers\PageTimerController($request, new App\Services\TimeTracking\Service))->store($request);
 //}
+
+
+/**
+ * Used to reset CCM Time, that time it went south. #december #2016 #hack
+ */
+
+if (isset($_GET['reset'])) {
+    if ($_GET['reset'] == 'kra') {
+        PatientInfo::withTrashed()
+            ->update([
+                'cur_month_activity_time' => '0',
+            ]);
+
+        $acts = Activity::where('performed_at', '>=', Carbon::now()->startOfMonth())
+            ->where('performed_at', '<=', Carbon::now()->endOfMonth())
+            ->groupBy('patient_id')
+            ->selectRaw('sum(duration) as total_duration, patient_id')
+            ->pluck('total_duration', 'patient_id');
+
+        foreach ($acts as $id => $ccmTime) {
+            $info = PatientInfo::whereUserId($id)
+                ->first();
+
+            if ($info) {
+                $info->cur_month_activity_time = $ccmTime;
+                $info->save();
+            }
+        }
+
+        dd($acts);
+    }
+}
