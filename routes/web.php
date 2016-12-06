@@ -4,9 +4,7 @@ if (app()->environment() != 'production') {
 
     Route::get('rohan', function () {
 
-        $patient = \App\PatientInfo::find(1272);
-
-        return $patient->nursesThatCanCareforPatient();
+        //TEST
 
     });
 }
