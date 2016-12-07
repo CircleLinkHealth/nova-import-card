@@ -75,7 +75,7 @@ class UnsuccessfulHandler implements CallHandler
         $this->getNextWindow();
 
         //attach nurse to call, if any windows match.
-        $this->intersectWithNurseWindows();
+        $this->findNurse();
 
         //Add debug string
         $this->prediction['predicament'] = $this->createSchedulerInfoString();
