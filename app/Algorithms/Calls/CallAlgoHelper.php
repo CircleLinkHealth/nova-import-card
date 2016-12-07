@@ -106,7 +106,7 @@ trait CallAlgoHelper
             if(!$found) {
 
                 $this->prediction['nurse'] = null;
-                $this->prediction['window_match'] = 'We didn\'t find a nurse window, careable nurses didn\'t have connact windows';
+                $this->prediction['window_match'] = 'We didn\'t find a free nurse but will reassign patient name to a call soon!';
 
             }
 
