@@ -127,8 +127,8 @@ class PhiMail
 
                     if ($cr == null) {
 
-//                        Slack::to('#background-tasks')
-//                            ->send("Checked EMR Direct Mailbox. There where no messages. \n");
+                        Slack::to('#background-tasks-dev')
+                            ->send("Checked EMR Direct Mailbox. There where no messages. \n" . env('DB_DATABASE'));
                         break;
 
                     } else {
@@ -136,16 +136,17 @@ class PhiMail
                             // If you are checking messages for an address group,
                             // $cr->recipient will contain the address in that
                             // group to which this message should be delivered.
-                            Log::info("A new message is available for " . $cr->recipient . "\n");
-                            Log::info("from " . $cr->sender . "; id "
+                            Log::critical("A new message is available for " . $cr->recipient . "\n");
+                            Log::critical("from " . $cr->sender . "; id "
                                 . $cr->messageId . "; #att=" . $cr->numAttachments
                                 . "\n");
 
                             for ($i = 0; $i <= $cr->numAttachments; $i++) {
                                 // Get content for part i of the current message.
                                 $showRes = $c->show($i);
-//                            echo ("MimeType = " . $showRes->mimeType
-//                                . "; length=" . $showRes->length . "\n");
+
+                                Log::critical("MimeType = " . $showRes->mimeType
+                                    . "; length=" . $showRes->length . "\n");
 
                                 // List all the headers. Headers are set by the
                                 // sender and may include Subject, Date, additional
@@ -153,9 +154,9 @@ class PhiMail
                                 // Do NOT use the To: header to determine the address
                                 // to which this message should be delivered
                                 // internally; use $cr->recipient instead.
-//                            foreach ($showRes->headers as $header) {
-//                                echo ("Header: " . $header . "\n");
-//                            }
+                                foreach ($showRes->headers as $header) {
+                                    Log::critical("Header: " . $header . "\n");
+                                }
 
                                 // Process the content; for this example text data
                                 // is echoed to the console and non-text data is
@@ -163,8 +164,8 @@ class PhiMail
 
                                 if (str_contains($showRes->mimeType, 'plain')) {
                                     // ... do something with text parts ...
-                                    Log::info('The plain text part of the mail');
-                                    Log::info($showRes->data);
+                                    Log::critical('The plain text part of the mail');
+                                    Log::critical($showRes->data);
                                     self::writeDataFile(storage_path(str_random(20) . '.txt'), $showRes->data);
                                 } elseif (str_contains($showRes->mimeType, 'xml')) {
                                     //save ccd to file
@@ -181,7 +182,7 @@ class PhiMail
                                 // Display the list of attachments and associated info. This info is only
                                 // included with message part 0.
                                 for ($k = 0; $i == 0 && $k < $cr->numAttachments; $k++) {
-                                    Log::info("Attachment " . ($k + 1)
+                                    Log::critical("Attachment " . ($k + 1)
                                         . ": " . $showRes->attachmentInfo[$k]->mimeType
                                         . " fn:" . $showRes->attachmentInfo[$k]->filename
                                         . " Desc:" . $showRes->attachmentInfo[$k]->description
@@ -193,19 +194,19 @@ class PhiMail
                             // retrieved and processed.
                             $c->acknowledgeMessage();
 
-                            Log::info('Number of Attachments: ' . $cr->numAttachments);
+                            Log::critical('Number of Attachments: ' . $cr->numAttachments);
 
                             if ($cr->numAttachments > 0) {
                                 $this->notifyAdmins($cr->numAttachments);
 
-                                $message = "Checked EMR Direct Mailbox. There where {$cr->numAttachments} messages. \n";
+                                $message = "Checked EMR Direct Mailbox. There where {$cr->numAttachments} attachment(s). \n";
 
                                 echo $message;
 
                                 Slack::to('#background-tasks')->send($message);
                             }
 
-                            Log::info('***************');
+                            Log::critical('***************');
 
                         } else {
 
@@ -274,7 +275,7 @@ class PhiMail
         //get the domain of the sender's emr address to see where it came from
         $senderDomain = substr($sender, $atPosition);
 
-        Log::info("Sender EMR Address Domain: {$senderDomain}");
+        Log::critical("Sender EMR Address Domain: {$senderDomain}");
 
         $vendorMap = Ccda::EMAIL_DOMAIN_TO_VENDOR_MAP;
 
