@@ -5,10 +5,11 @@ namespace App\Console\Commands\Athena;
 use App\ForeignId;
 use App\Models\CCD\CcdVendor;
 use App\Services\AthenaAPI\Service;
+use Carbon\Carbon;
 use Illuminate\Console\Command;
 use Maknz\Slack\Facades\Slack;
 
-class GetTodaysAppointments extends Command
+class GetAppointments extends Command
 {
     /**
      * The name and signature of the console command.
@@ -47,8 +48,11 @@ class GetTodaysAppointments extends Command
     {
         $vendors = CcdVendor::whereEhrName(ForeignId::ATHENA)->get();
 
+        $today = Carbon::today();
+        $aWeekAgo = $today->copy()->subDays(7);
+
         foreach ($vendors as $vendor) {
-            $this->service->getAppointmentsForToday($vendor->practice_id);
+            $this->service->getAppointments($vendor->practice_id, $aWeekAgo, $today);
         }
 
         if (app()->environment('worker')) {
