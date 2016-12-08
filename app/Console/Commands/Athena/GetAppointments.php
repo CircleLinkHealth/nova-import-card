@@ -49,7 +49,7 @@ class GetAppointments extends Command
         $vendors = CcdVendor::whereEhrName(ForeignId::ATHENA)->get();
 
         $today = Carbon::today();
-        $aWeekAgo = $today->subDays(7);
+        $aWeekAgo = $today->copy()->subDays(7);
 
         foreach ($vendors as $vendor) {
             $this->service->getAppointments($vendor->practice_id, $aWeekAgo, $today);
