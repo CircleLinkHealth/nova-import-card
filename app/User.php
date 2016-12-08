@@ -49,6 +49,7 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
         'password'         => 'required',
         'password_confirm' => 'required|same:password',
     ];
+
     public $patient_rules = [
         "daily_reminder_optin"    => "required",
         "daily_reminder_time"     => "required",
@@ -66,19 +67,9 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
         "ccm_status"              => "required",
         "program_id"              => "required",
     ];
+
     protected $revisionCreationsEnabled = true;
-    /**
-     * The database table used by the model.
-     *
-     * @var string
-     */
-    protected $table = 'users';
-    /**
-     * The primary key for the model.
-     *
-     * @var string
-     */
-    protected $primaryKey = 'id';
+
     /**
      * The attributes that are mass assignable.
      *
@@ -108,13 +99,12 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
         'last_login',
         'is_online',
     ];
+
     protected $hidden = [
         'password',
     ];
+
     protected $dates = ['user_registered'];
-
-
-    // for revisionable
 
     public static function boot()
     {
@@ -140,8 +130,6 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
         return $this->email;
     }
 
-
-    // START RELATIONSHIPS
 
     /*
      *
@@ -2027,5 +2015,12 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
     public function patientInfo()
     {
         return $this->hasOne(PatientInfo::class, 'user_id', 'id');
+    }
+
+    public function clinicalEmergencyContactLocations()
+    {
+        return $this->morphedByMany(Location::class, 'contactable', 'contacts')
+            ->wherePivot('name', '=', 'clinical_emergency_contact')
+            ->withTimestamps();
     }
 }

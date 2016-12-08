@@ -101,6 +101,16 @@
                                 'label' => 'Phone',
                                 'class' => 'col s6'
                             ])
+
+                            <div class="input-field col s6">
+                                <select id="phones">
+                                    <option v-bind:value="{id:0, name:'No Role Selected'}" disabled selected></option>
+                                    <option v-bind:value="{id:1, name:'Medical Assistant'}">Cell</option>
+                                    <option v-bind:value="{id:1, name:'Medical Assistant'}">Home</option>
+                                    <option v-bind:value="{id:1, name:'Office Staff'}">Work</option>
+                                </select>
+                                <label>Phone Type</label>
+                            </div>
                         </div>
 
                         <div class="row">

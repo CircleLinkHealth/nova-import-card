@@ -82,6 +82,13 @@ class Location extends Model
         return Location::where('parent_id', '=', $id)->pluck('name', 'id')->all();
     }
 
+    public function clinicalEmergencyContact()
+    {
+        return $this->morphToMany(User::class, 'contactable', 'contacts')
+            ->wherePivot('name', '=', 'clinical_emergency_contact')
+            ->withTimestamps();
+    }
+
     public function practice()
     {
         return $this->belongsTo(Practice::class);
