@@ -55,7 +55,7 @@ class Service
 
             //Get 'CCM Enabled' custom field id from the practice's custom fields
             foreach ($practiceCustomFields as $customField) {
-                if ($customField['name'] == 'CCM Enabled') {
+                if (strtolower($customField['name']) == 'ccm enabled') {
                     $ccmEnabledFieldId = $customField['customfieldid'];
                 }
             }
