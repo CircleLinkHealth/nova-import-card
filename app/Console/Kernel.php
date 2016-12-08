@@ -2,8 +2,8 @@
 
 use App\Algorithms\Calls\PredictCall;
 use App\Algorithms\Calls\ReschedulerHandler;
+use App\Console\Commands\Athena\GetAppointments;
 use App\Console\Commands\Athena\GetCcds;
-use App\Console\Commands\Athena\GetTodaysAppointments;
 use App\Console\Commands\EmailRNDailyReport;
 use App\Console\Commands\EmailsProvidersToApproveCareplans;
 use App\Console\Commands\ExportNurseSchedulesToGoogleCalendar;
@@ -36,7 +36,7 @@ class Kernel extends ConsoleKernel
         Inspire::class,
         MapSnomedToCpmProblems::class,
         NukeItemAndMeta::class,
-        GetTodaysAppointments::class,
+        GetAppointments::class,
         GetCcds::class,
     ];
 
@@ -91,10 +91,10 @@ class Kernel extends ConsoleKernel
             ->everyThirtyMinutes();
 
         $schedule->command('athena:getTodaysAppointments')
-            ->dailyAt('22:30');
+            ->hourly();
 
         $schedule->command('athena:getCcds')
-            ->everyTenMinutes();
+            ->everyThirtyMinutes();
 
         $schedule->command('nurses:emailDailyReport')
             ->weekdays()

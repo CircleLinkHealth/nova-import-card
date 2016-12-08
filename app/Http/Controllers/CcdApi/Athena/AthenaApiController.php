@@ -4,9 +4,7 @@ namespace App\Http\Controllers\CcdApi\Athena;
 
 use App\ForeignId;
 use App\Http\Controllers\Controller;
-use App\Http\Requests;
 use App\Models\CCD\CcdVendor;
-use App\Services\AthenaAPI\Calls;
 use App\Services\AthenaAPI\Service;
 use Carbon\Carbon;
 
@@ -23,9 +21,12 @@ class AthenaApiController extends Controller
     {
         $vendors = CcdVendor::whereEhrName(ForeignId::ATHENA)->get();
 
+        $today = Carbon::today();
+        $aWeekAgo = $today->subDays(7);
+
         foreach ($vendors as $vendor)
         {
-            $this->service->getAppointmentsForToday($vendor->practice_id);
+            $this->service->getAppointments($vendor->practice_id, $aWeekAgo, $today);
             $this->service->getCcdsFromRequestQueue(5);
         }
     }

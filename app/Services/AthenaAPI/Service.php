@@ -31,15 +31,20 @@ class Service
         $this->ccdas = $ccdas;
     }
 
-    public function getAppointmentsForToday($practiceId)
+    public function getAppointments(
+        $practiceId,
+        Carbon $startDate,
+        Carbon $endDate
+    )
     {
-        $today = Carbon::today()->format('m/d/Y');
+        $start = $startDate->format('m/d/Y');
+        $end = $endDate->format('m/d/Y');
 
         $departments = $this->api->getDepartmentIds($practiceId);
 
         foreach ($departments['departments'] as $department)
         {
-            $response = $this->api->getBookedAppointments($practiceId, $today, $today, $department['departmentid']);
+            $response = $this->api->getBookedAppointments($practiceId, $start, $end, $department['departmentid']);
             $this->logPatientIdsFromAppointments($response, $practiceId);
         }
     }
