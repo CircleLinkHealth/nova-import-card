@@ -51,6 +51,10 @@ class Service
 
     public function logPatientIdsFromAppointments($response, $practiceId)
     {
+        if (!isset($response['appointments'])) {
+            return;
+        }
+
         foreach ($response['appointments'] as $bookedAppointment) {
 
             $patientId = $bookedAppointment['patientid'];
