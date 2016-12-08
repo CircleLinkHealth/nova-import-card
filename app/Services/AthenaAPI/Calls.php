@@ -77,7 +77,9 @@ class Calls
                 \Log::error(\GuzzleHttp\json_encode($response));
             }
 
-            abort(400, json_encode($response));
+//            Athena sends an ampty response if a patient doesn't have custom fields.
+//            Therefore, this is commented out.
+//            abort(400, json_encode($response));
         }
 
         return $response;
