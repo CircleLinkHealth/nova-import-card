@@ -48,11 +48,11 @@ class GetAppointments extends Command
     {
         $vendors = CcdVendor::whereEhrName(ForeignId::ATHENA)->get();
 
-        $today = Carbon::today();
-        $aWeekAgo = $today->copy()->subDays(7);
+        $endDate = Carbon::today();
+        $startDate = $endDate->copy()->subMonth(1);
 
         foreach ($vendors as $vendor) {
-            $this->service->getAppointments($vendor->practice_id, $aWeekAgo, $today);
+            $this->service->getAppointments($vendor->practice_id, $startDate, $endDate);
         }
 
         if (app()->environment('worker')) {
