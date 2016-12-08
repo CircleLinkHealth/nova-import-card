@@ -18,7 +18,7 @@ trait NoteAndCallHelpers
             //Enter a note
             ->type('Just Recorded some vitals for patient.', 'body')
             //Add someone to email
-            ->select('Patient Support', 'careteam[]')
+            ->select(948, 'careteam[]')
             ->press('Submit')
             ->seePageIs("/manage-patients/{$this->patient->id}/notes");
 

@@ -1,29 +1,36 @@
 <?php
 
+use App\Algorithms\Calls\NurseCallStatistics;
+
 if (app()->environment() != 'production') {
     Route::get('rohan', function () {
 
-        $patient = \App\PatientInfo::find(1272);
-        $nurses = \App\NurseInfo::all();
-        $result = [];
-        $user_location = $patient->user->locations()->get();
+    for ($i = 0; $i < 3; $i++){
 
-        foreach ($nurses as $nurse) {
+        $st = \Carbon\Carbon::parse('2016-09-01')->addMonth($i);
+        $end = \Carbon\Carbon::parse('2016-09-30')->addMonth($i);
 
-            if ($nurse->user->user_status == 1) {
+        $data[$st->format('M')] = [
 
-                $nurse_locations = $nurse->user->locations()->get();
+            'successful' => \App\Call::whereStatus('reached')
+            ->where('updated_at', '>', $st)
+            ->where('updated_at', '<', $end)
+            ->count(),
 
-                $intersections = $nurse_locations->intersect($user_location);
+            'unsuccessful' => $not_reached_calls[$st->format('M')] = \App\Call::whereStatus('not reached')
+                ->where('updated_at', '>', $st)
+                ->where('updated_at', '<', $end)
+                ->count(),
 
-                if ($intersections->count() > 0) {
-                    $result[] = $nurse->id;
-                }
-            }
+//            'total' => $not_reached_calls[$st->format('M')] = \App\Call
+//                ::where('updated_at', '>', $st)
+//                ->where('updated_at', '<', $end)
+//                ->count(),
 
-        }
+        ];
 
-        return $result;
+    }
+        return $data;
 
     });
 }

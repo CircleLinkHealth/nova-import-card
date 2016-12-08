@@ -23,9 +23,9 @@ class NurseCallStatistics
     protected $systemTime;
     protected $startTime;
     protected $endTime;
-    protected $minutesPadding = 5;
-    protected $minCallsForAverageConsideration = 6;
-    protected $minMinutesForAverageConsideration = 30;
+    protected $minutesPadding = 0;
+    protected $minCallsForAverageConsideration = 0;
+    protected $minMinutesForAverageConsideration = 0;
 
     public function __construct( $nurses, Carbon $startRange, Carbon $endRange)
     {
@@ -33,6 +33,12 @@ class NurseCallStatistics
         $this->nurses = $nurses;
         $this->startTime = $startRange; //->subMinutes($this->minutesPadding);
         $this->endTime = $endRange;//->addMinutes($this->minutesPadding);
+
+    }
+
+    public function callsPerHour(Carbon $month){
+
+
 
     }
 
