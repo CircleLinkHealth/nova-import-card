@@ -1,36 +1,9 @@
 <?php
 
-use App\Algorithms\Calls\NurseCallStatistics;
 
 if (app()->environment() != 'production') {
     Route::get('rohan', function () {
 
-    for ($i = 0; $i < 3; $i++){
-
-        $st = \Carbon\Carbon::parse('2016-09-01')->addMonth($i);
-        $end = \Carbon\Carbon::parse('2016-09-30')->addMonth($i);
-
-        $data[$st->format('M')] = [
-
-            'successful' => \App\Call::whereStatus('reached')
-            ->where('updated_at', '>', $st)
-            ->where('updated_at', '<', $end)
-            ->count(),
-
-            'unsuccessful' => $not_reached_calls[$st->format('M')] = \App\Call::whereStatus('not reached')
-                ->where('updated_at', '>', $st)
-                ->where('updated_at', '<', $end)
-                ->count(),
-
-//            'total' => $not_reached_calls[$st->format('M')] = \App\Call
-//                ::where('updated_at', '>', $st)
-//                ->where('updated_at', '<', $end)
-//                ->count(),
-
-        ];
-
-    }
-        return $data;
 
     });
 }
@@ -482,6 +455,16 @@ Route::group(['middleware' => 'auth'], function () {
         Route::post('nurses/{id}/windows', [
             'uses' => 'CareCenter\WorkScheduleController@postAdminStoreWindow',
             'as'   => 'post.admin.store.nurse.schedules',
+        ]);
+
+        Route::get('invites/create', [
+            'uses' => 'InviteController@create',
+            'as'   => 'invite.create',
+        ]);
+
+        Route::post('invites/store', [
+            'uses' => 'InviteController@store',
+            'as'   => 'invite.store',
         ]);
 
         Route::patch('nurses/window/{id}', [
