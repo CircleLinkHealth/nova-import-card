@@ -31,12 +31,12 @@ elixir(function(mix) {
 
     // mix.sass('fab.scss');
 
-    mix.sass([
-        '/css/provider/dashboard.scss',
-        './resources/assets/less/css/animate.min.css'
-    ], 'public/css/provider-dashboard.css');
+    // mix.sass([
+    //     '/css/provider/dashboard.scss',
+    //     './resources/assets/less/css/animate.min.css'
+    // ], 'public/css/provider-dashboard.css');
 
-    mix.browserify('provider/create-locations.js');
+    // mix.browserify('provider/create-locations.js');
     mix.browserify('provider/create-staff.js');
 
     // mix.browserify('uploader.js');

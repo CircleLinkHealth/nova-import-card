@@ -13,6 +13,7 @@ use App\Role;
 use Illuminate\Http\Request;
 use Prettus\Validator\Exceptions\ValidatorException;
 
+
 class OnboardingController extends Controller
 {
     /**
@@ -95,6 +96,29 @@ class OnboardingController extends Controller
      */
     public function getCreateStaff()
     {
+        $primaryPractice = $this->practices
+            ->skipPresenter()
+            ->findWhere([
+                'user_id' => auth()->user()->id,
+            ])->first();
+
+        $users = $primaryPractice->users->map(function ($user) {
+            return [
+                'id'         => $user->id,
+                'role'       => [
+                    'id'   => 0,
+                    'name' => 'No Role Selected',
+                ],
+                'email'      => $user->email,
+                'last_name'  => $user->last_name,
+                'first_name' => $user->first_name,
+            ];
+        });
+
+        \JavaScript::put([
+            'existingUsers' => $users,
+        ]);
+
         return view('provider.onboarding.create-staff-users');
     }
 

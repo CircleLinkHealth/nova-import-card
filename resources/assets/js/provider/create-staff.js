@@ -17,6 +17,10 @@ var createStaffVM = new Vue({
     },
 
     ready: function () {
+        for (var i = 0, len = cpm.existingUsers.length; i < len; i++) {
+            this.newUsers.$set(i, cpm.existingUsers[i]);
+        }
+
         this.newUsers.push({});
     },
 
