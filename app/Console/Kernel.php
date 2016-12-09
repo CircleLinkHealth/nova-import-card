@@ -90,8 +90,8 @@ class Kernel extends ConsoleKernel
         $schedule->command('nurseSchedule:export')
             ->hourly();
 
-        $schedule->command('athena:getTodaysAppointments')
-            ->hourly();
+        $schedule->command('athena:getAppointments')
+            ->dailyAt('23:00');
 
         $schedule->command('athena:getCcds')
             ->everyThirtyMinutes();

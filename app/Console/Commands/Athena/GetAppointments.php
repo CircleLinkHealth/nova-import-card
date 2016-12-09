@@ -16,7 +16,7 @@ class GetAppointments extends Command
      *
      * @var string
      */
-    protected $signature = 'athena:getTodaysAppointments';
+    protected $signature = 'athena:getAppointments';
 
     /**
      * The console command description.
