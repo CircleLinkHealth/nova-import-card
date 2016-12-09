@@ -161,6 +161,8 @@
                             </div>
                         </div>
 
+                        <input v-if="newUser.id" type="hidden" name="users[@{{index}}][user_id]"
+                               value="@{{ newUser.id }}">
 
                         <div class="row" v-if="newUsers.length > 1">
                             <a class="waves-effect waves-teal btn-flat red lighten-3 white-text"

@@ -102,7 +102,6 @@ class OnboardingController extends Controller
                 'user_id' => auth()->user()->id,
             ])->first();
 
-
         $existingUsers = $primaryPractice->users->map(function ($user) {
             return [
                 'id'         => $user->id,
@@ -164,12 +163,16 @@ class OnboardingController extends Controller
                             : $newLocation['ehr_password'],
                     ]);
 
+                //If clinical contact is same for all, then get the data from the first location.
                 if ($sameClinicalContact) {
-
+                    $newLocation['clinical_contact']['type'] = $request->input('locations')[0]['clinical_contact']['type'];
+                    $newLocation['clinical_contact']['email'] = $request->input('locations')[0]['clinical_contact']['email'];
+                    $newLocation['clinical_contact']['firstName'] = $request->input('locations')[0]['clinical_contact']['firstName'];
+                    $newLocation['clinical_contact']['lastName'] = $request->input('locations')[0]['clinical_contact']['lastName'];
                 }
 
                 if ($newLocation['clinical_contact']['type'] == PatientCareTeamMember::BILLING_PROVIDER) {
-
+                    //do nothing
                 } else {
                     $user = $this->users->create([
                         'program_id' => $primaryPractice->id,
@@ -271,8 +274,6 @@ class OnboardingController extends Controller
      */
     public function postStoreStaff(Request $request)
     {
-        return view('provider.onboarding.welcome');
-
         $input = $request->input();
 
         try {
@@ -292,6 +293,6 @@ class OnboardingController extends Controller
                 ->withInput();
         }
 
-        return redirect()->route('get.onboarding.create.locations', compact('numberOfLocations', 'practiceId'));
+        return view('provider.onboarding.welcome');
     }
 }
