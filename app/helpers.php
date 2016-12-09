@@ -209,6 +209,20 @@ if (!function_exists('timestampsToWindow')) {
     }
 }
 
+if (!function_exists('generateRandomString')) {
+    /**
+     * uses mt_rand to give a random string.
+     *
+     * @return string
+     */
+    function generateRandomString($l, $c = 'abcdefghijklmnopqrstuvwxyz1234567890') {
+        for ($s = '', $cl = strlen($c)-1, $i = 0; $i < $l; $s .= $c[mt_rand(0, $cl)], ++$i);
+        return $s;
+    }
+}
+
+
+
 if (!function_exists('windowToTimestamps')) {
     /**
      * Convert timestamps to a Contact Window.

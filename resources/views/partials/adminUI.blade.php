@@ -286,7 +286,21 @@
                         </ul>
                     </li>
 
+                        @if ( ! Auth::guest())
+                            <li role="presentation" class="dropdown">
+                                <a class="dropdown-toggle" data-toggle="dropdown" href="#" role="button"
+                                   aria-expanded="false">
+                                    Onboarding Invites <span class="caret"></span>
+                                </a>
+                                <ul class="dropdown-menu" role="menu">
+                                    <li><a href="{{ URL::route('invite.create', array()) }}">Send Invite</a>
+                                </ul>
+                            </li>
+                        @endif
+
                 </ul>
+
+
 
                 <ul class="nav navbar-nav navbar-right">
                     @if (Auth::guest())
