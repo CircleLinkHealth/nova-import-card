@@ -102,7 +102,8 @@ class OnboardingController extends Controller
                 'user_id' => auth()->user()->id,
             ])->first();
 
-        $users = $primaryPractice->users->map(function ($user) {
+
+        $existingUsers = $primaryPractice->users->map(function ($user) {
             return [
                 'id'         => $user->id,
                 'role'       => [
@@ -116,10 +117,12 @@ class OnboardingController extends Controller
         });
 
         \JavaScript::put([
-            'existingUsers' => $users,
+            'existingUsers' => $existingUsers,
         ]);
 
-        return view('provider.onboarding.create-staff-users');
+        return view('provider.onboarding.create-staff-users', [
+            'locations' => $primaryPractice->locations,
+        ]);
     }
 
     /**
