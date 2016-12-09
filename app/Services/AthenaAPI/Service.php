@@ -17,6 +17,7 @@ use App\Contracts\Repositories\CcdaRequestRepository;
 use App\Models\CCD\Ccda;
 use App\Models\CCD\CcdVendor;
 use Carbon\Carbon;
+use Maknz\Slack\Facades\Slack;
 
 class Service
 {
@@ -129,6 +130,13 @@ class Service
 
             $importer = new QAImportManager($vendor->program_id, $ccda);
             $output = $importer->generateCarePlanFromCCD();
+
+            if (app()->environment('worker')) {
+                $link = 'https://www.careplanmanager.com/ccd-importer/qaimport';
+
+                Slack::to('#ccd-file-status')
+                    ->send("We received a CCD from Athena. \n Please visit {$link} to import.");
+            }
 
             return $ccda;
         });

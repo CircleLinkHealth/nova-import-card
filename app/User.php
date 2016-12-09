@@ -2020,7 +2020,9 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
     public function clinicalEmergencyContactLocations()
     {
         return $this->morphedByMany(Location::class, 'contactable', 'contacts')
-            ->wherePivot('name', '=', 'clinical_emergency_contact')
+            ->withPivot('name')
+            ->wherePivot('name', '=', 'in_addition_to_billing_provider')
+            ->orWherePivot('name', '=', 'instead_of_billing_provider')
             ->withTimestamps();
     }
 }

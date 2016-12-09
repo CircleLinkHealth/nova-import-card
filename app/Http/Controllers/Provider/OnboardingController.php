@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Provider;
 
+use App\CLH\Facades\StringManipulation;
 use App\Contracts\Repositories\InviteRepository;
 use App\Contracts\Repositories\LocationRepository;
 use App\Contracts\Repositories\PracticeRepository;
@@ -121,7 +122,7 @@ class OnboardingController extends Controller
                     ->create([
                         'practice_id'    => $primaryPractice->id,
                         'name'           => $newLocation['name'],
-                        'phone'          => $newLocation['phone'],
+                        'phone'          => StringManipulation::formatPhoneNumber($newLocation['phone']),
                         'address_line_1' => $newLocation['address_line_1'],
                         'address_line_2' => $newLocation['address_line_2'],
                         'city'           => $newLocation['city'],
@@ -140,22 +141,30 @@ class OnboardingController extends Controller
 
                 }
 
-                if ($newLocation['clinical_contact'] == PatientCareTeamMember::BILLING_PROVIDER) {
-
-                } elseif ($newLocation['clinical_contact'] == PatientCareTeamMember::IN_ADDITION_TO_BILLING_PROVIDER) {
-
-
-                } elseif ($newLocation['clinical_contact'] == PatientCareTeamMember::INSTEAD_OF_BILLING_PROVIDER) {
+                if ($newLocation['clinical_contact']['type'] == PatientCareTeamMember::BILLING_PROVIDER) {
 
                 } else {
+                    $user = $this->users->create([
+                        'program_id' => $primaryPractice->id,
+                        'email'      => $newLocation['clinical_contact']['email'],
+                        'first_name' => $newLocation['clinical_contact']['firstName'],
+                        'last_name'  => $newLocation['clinical_contact']['lastName'],
+                        'password'   => 'password_not_set',
+                    ]);
 
+                    $user->attachPractice($primaryPractice);
+                    $user->attachLocation($location);
+
+                    $location->clinicalEmergencyContact()->attach($user->id, [
+                        'name' => $newLocation['clinical_contact']['type'],
+                    ]);
                 }
             }
         } catch (ValidatorException $e) {
             return redirect()
                 ->back()
-                ->withErrors($e->getMessageBag()->getMessages())
-                ->withInput();
+                ->withInput($request->input())
+                ->withErrors($e->getMessageBag()->getMessages());
         }
 
         return redirect()->route('get.onboarding.create.staff');
