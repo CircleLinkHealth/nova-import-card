@@ -92,7 +92,7 @@
                             ])
 
                             <div class="input-field col s6">
-                                <select id="roles" v-model="newUser.role">
+                                <select id="roles" v-model="newUser.role" name="users[@{{index}}][role_id] required">
                                     <option v-bind:value="{id:0, name:'No Role Selected'}" disabled selected></option>
                                     <option v-bind:value="{id:1, name:'Medical Assistant'}">Medical Assistant</option>
                                     <option v-bind:value="{id:1, name:'Office Staff'}">Office Staff</option>
@@ -107,7 +107,7 @@
 
                         <div class="row">
                             @include('provider.partials.mdl.form.text.textfield', [
-                                'name' => 'phone_number',
+                                'name' => 'users[@{{index}}][phone_number]',
                                 'label' => 'Phone',
                                 'class' => 'col s6',
                                 'attributes' => [
@@ -161,6 +161,8 @@
                             </div>
                         </div>
 
+                        <input v-if="newUser.id" type="hidden" name="users[@{{index}}][user_id]"
+                               value="@{{ newUser.id }}">
 
                         <div class="row" v-if="newUsers.length > 1">
                             <a class="waves-effect waves-teal btn-flat red lighten-3 white-text"

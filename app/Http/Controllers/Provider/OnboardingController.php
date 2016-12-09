@@ -102,7 +102,6 @@ class OnboardingController extends Controller
                 'user_id' => auth()->user()->id,
             ])->first();
 
-
         $existingUsers = $primaryPractice->users->map(function ($user) {
             return [
                 'id'         => $user->id,
@@ -164,12 +163,16 @@ class OnboardingController extends Controller
                             : $newLocation['ehr_password'],
                     ]);
 
+                //If clinical contact is same for all, then get the data from the first location.
                 if ($sameClinicalContact) {
-
+                    $newLocation['clinical_contact']['type'] = $request->input('locations')[0]['clinical_contact']['type'];
+                    $newLocation['clinical_contact']['email'] = $request->input('locations')[0]['clinical_contact']['email'];
+                    $newLocation['clinical_contact']['firstName'] = $request->input('locations')[0]['clinical_contact']['firstName'];
+                    $newLocation['clinical_contact']['lastName'] = $request->input('locations')[0]['clinical_contact']['lastName'];
                 }
 
                 if ($newLocation['clinical_contact']['type'] == PatientCareTeamMember::BILLING_PROVIDER) {
-
+                    //do nothing
                 } else {
                     $user = $this->users->create([
                         'program_id' => $primaryPractice->id,
@@ -267,31 +270,43 @@ class OnboardingController extends Controller
      *
      * @param Request $request
      *
-     * @return $this|\Illuminate\Http\RedirectResponse
+     * @return OnboardingController|\Illuminate\Http\RedirectResponse
      */
     public function postStoreStaff(Request $request)
     {
-        return view('provider.onboarding.welcome');
+        $primaryPractice = $this->practices
+            ->skipPresenter()
+            ->findWhere([
+                'user_id' => auth()->user()->id,
+            ])->first();
 
-        $input = $request->input();
+        foreach ($request->input('users') as $newUser) {
+            try {
+                $practice = $this->users
+                    ->skipPresenter()
+                    ->updateOrCreate([
+                        'user_id' => isset($newUser['user_id'])
+                            ? $newUser['user_id']
+                            : null,
+                    ],
+                        [
+                            'name'         => str_slug($newUser['name']),
+                            'program_id'   => $primaryPractice->id,
+                            'email'        => $newUser['email'],
+                            'first_name'   => $newUser['first_name'],
+                            'last_name'    => $newUser['last_name'],
+                            'password'     => 'password_not_set',
+                            'display_name' => "{$newUser['first_name']} {$newUser['last_name']}",
+                        ]);
 
-        try {
-            $practice = $this->users
-                ->skipPresenter()
-                ->create([
-                    'name'         => str_slug($input['name']),
-                    'user_id'      => auth()->user()->id,
-                    'display_name' => $input['name'],
-                ]);
-
-            $practiceId = $practice->id;
-        } catch (ValidatorException $e) {
-            return redirect()
-                ->back()
-                ->withErrors($e->getMessageBag()->getMessages())
-                ->withInput();
+            } catch (ValidatorException $e) {
+                return redirect()
+                    ->back()
+                    ->withErrors($e->getMessageBag()->getMessages())
+                    ->withInput();
+            }
         }
 
-        return redirect()->route('get.onboarding.create.locations', compact('numberOfLocations', 'practiceId'));
+        return view('provider.onboarding.welcome');
     }
 }
