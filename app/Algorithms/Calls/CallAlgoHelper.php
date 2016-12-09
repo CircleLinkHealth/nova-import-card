@@ -95,6 +95,7 @@ trait CallAlgoHelper
         if ($found != false) {
 
             $this->prediction['nurse'] = $found['nurse'];
+            $this->prediction['date'] = $found['date'];
             $this->prediction['window_match'] = $found['window_match'];
 
             return $this->prediction;
@@ -136,6 +137,7 @@ trait CallAlgoHelper
             if ($found != false) {
 
                 $this->prediction['nurse'] = $found['nurse'];
+                $this->prediction['date'] = $found['date'];
                 $this->prediction['window_match'] = $found['window_match'];
 
                 return true;

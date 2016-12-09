@@ -49,13 +49,18 @@ class NurseMatchTest extends TestCase
         //create main nurse
         $nurse = $this->createUser($this->practice->id, 'care-center');
         $this->nurse = $nurse->nurseInfo;
+        $this->prediction['Nurse1'] = $nurse->fullName;
 
         //create nurse with matching window
         $nurse2 = $this->createUser($this->practice->id, 'care-center');
         $this->nurse2 = $nurse2->nurseInfo;
+        $this->prediction['Nurse2'] = $nurse2->fullName;
+
 
         $patient = $this->createUser($this->practice->id, 'participant');
         $this->patient = $patient->patientInfo;
+        $this->prediction['Patient'] = $patient->fullName;
+
 
         //mock the last success to test for previously contacted nurses
         $call = $this->createLastCallForPatient($this->patient, $this->nurse);

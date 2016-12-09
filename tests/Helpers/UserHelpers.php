@@ -126,7 +126,7 @@ trait UserHelpers
         $call = Call::create([
 
             'service' => 'phone',
-            'status'  => 'reached',
+            'status'  => 'not reached',
             'called_date'  => '2016-07-16',
 
             'attempt_note' => '',
