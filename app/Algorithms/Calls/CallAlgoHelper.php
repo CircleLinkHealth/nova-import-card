@@ -166,7 +166,7 @@ trait CallAlgoHelper
                     $match['window_start'] = $startWindow->format('H:i');
                     $match['window_end'] = $endWindow->format('H:i');
 
-                    $match['window_match'] = 'We found an intersecting nurse window with: ' . $this->nurse->user->fullName;
+                    $match['window_match'] = 'We found an intersecting nurse window with: ' . $nurse->user->fullName;
                     $match['nurse'] = $nurse->user_id;
 
                     return $match;

@@ -65,7 +65,6 @@ class NurseMatchTest extends TestCase
             Carbon\Carbon::parse('17:00:00'),
             5);
 
-
         $this->createWindowForNurse($this->nurse,
                                      Carbon\Carbon::parse('2016-12-15 08:00:00'),
                                      Carbon\Carbon::parse('2016-12-15 11:00:00'));
@@ -76,13 +75,7 @@ class NurseMatchTest extends TestCase
 
         $this->findNurse();
 
-        dd([
-            $this->nurse2->user_id,
-            $this->prediction
-        ]);
-
         $this->assertTrue($this->prediction['nurse'] == $this->nurse->user_id);
-
 
     }
 
