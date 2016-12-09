@@ -155,7 +155,10 @@ trait ValidatesQAImportOutput
 
             if ($deleteTheCCD) {
                 \Log::info("Duplicate CCD with id {$ccda->id} was deleted.");
-                $ccda->delete();
+                $ccda->source = 'duplicate';
+                $ccda->save();
+
+                
 
                 return false;
             }
