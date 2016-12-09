@@ -251,15 +251,18 @@ class PatientContactWindow extends Model
         //contact days
 
         //Since we need a static date to keep adding to
-//        $offset_date = $offset_date->toDateTimeString();
+        //$offset_date = $offset_date->toDateTimeString();
 
-        $weeks_to_project = 2;
+        $weeks_range = 2;
 
-        for ($i = 0; $i < $weeks_to_project; $i++) {
+        for ($i = 0; $i < $weeks_range; $i++) {
 
             //add windows for each week needed.
 
             foreach ($patient_windows as $window) {
+
+                //the first date should include the target date, so we backtrack one day
+                //and see whether the date is a window.
 
                 if ($i == 0) {
 
@@ -268,8 +271,8 @@ class PatientContactWindow extends Model
 
                 } else {
 
-                    $carbon_date_start = Carbon::parse($offset_date)->next($week[$window->day_of_week])->addWeek($i);
-                    $carbon_date_end = Carbon::parse($offset_date)->next($week[$window->day_of_week])->addWeek($i);
+                    $carbon_date_start = Carbon::parse($offset_date)->addWeek($i)->next($week[$window->day_of_week]);
+                    $carbon_date_end = Carbon::parse($offset_date)->addWeek($i)->next($week[$window->day_of_week]);
 
                 }
 
