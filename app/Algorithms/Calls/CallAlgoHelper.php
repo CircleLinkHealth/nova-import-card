@@ -95,6 +95,7 @@ trait CallAlgoHelper
         if ($found != false) {
 
             $this->prediction['nurse'] = $found['nurse'];
+            $this->prediction['date'] = $found['date'];
             $this->prediction['window_match'] = $found['window_match'];
 
             return $this->prediction;
@@ -136,6 +137,7 @@ trait CallAlgoHelper
             if ($found != false) {
 
                 $this->prediction['nurse'] = $found['nurse'];
+                $this->prediction['date'] = $found['date'];
                 $this->prediction['window_match'] = $found['window_match'];
 
                 return true;
@@ -199,8 +201,8 @@ trait CallAlgoHelper
 
         ];
 
-        $patientUpcomingWindows = PatientContactWindow::getNextWindowsForPatientFromDate($this->patient,
-            $patientWindow['date']);
+
+        $patientUpcomingWindows = PatientContactWindow::getNextWindowsForPatientFromDate($this->patient, $patientWindow['date']);
 
         foreach ($targetDays as $day) {
 
@@ -208,16 +210,13 @@ trait CallAlgoHelper
 
             //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~//
 
-
             //CHECK for nurse window on target day
 
             $nurseWindow = $nurse->windows->first(function (
                 $value,
                 $key
             ) use
-            (
-                $dayString
-            ) {
+            ($dayString) {
 
                 //check whether any days fall in this window
                 return $value->date->toDateString() == $dayString;
@@ -235,13 +234,8 @@ trait CallAlgoHelper
 
             //CHECK for patient window on target day
 
-            $patientWindow = $patientUpcomingWindows->filter(function (
-                $value,
-                $key
-            ) use
-            (
-                $day
-            ) {
+            $patientWindow = $patientUpcomingWindows->filter(function ($value, $key) use
+            ($day) {
 
                 return Carbon::parse($value['window_start'])->toDateString() == $day->toDateString();
 
