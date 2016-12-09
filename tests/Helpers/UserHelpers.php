@@ -8,11 +8,18 @@
 
 namespace Tests\Helpers;
 
+use App\Call;
 use App\CLH\Facades\StringManipulation;
 use App\CLH\Repositories\UserRepository;
+use App\NurseContactWindow;
+use App\NurseInfo;
+use App\PatientContactWindow;
+use App\PatientInfo;
 use App\Practice;
 use App\Role;
+use App\Services\Calls\SchedulerService;
 use App\User;
+use Carbon\Carbon;
 use Faker\Factory;
 use Symfony\Component\HttpFoundation\ParameterBag;
 
@@ -111,6 +118,79 @@ trait UserHelpers
         //By default PHPUnit fails the test if the output buffer wasn't closed.
         //So we're adding this to make the test work.
         ob_end_clean();
+    }
+
+    public function createLastCallForPatient(PatientInfo $patient, NurseInfo $scheduler){
+
+        $call = Call::create([
+
+            'service' => 'phone',
+            'status'  => 'reached',
+            'called_date'  => '2016-07-16',
+
+            'attempt_note' => '',
+
+            'scheduler' => $scheduler->user->id,
+
+            'inbound_phone_number'  => '111-111-1111',
+
+            'outbound_phone_number' => '',
+
+            'inbound_cpm_id'  => $patient->user->id,
+            'outbound_cpm_id' => $scheduler->user->id,
+
+            'call_time'  => 0,
+            'created_at' => Carbon::now()->toDateTimeString(),
+
+            'scheduled_date' => '2016-12-01',
+            'window_start'   => '09:00:00',
+            'window_end'     => '10:00:00',
+
+            'is_cpm_outbound' => true,
+
+        ]);
+
+        return $call;
+
+    }
+
+    public function createWindowForNurse(NurseInfo $nurse, Carbon $st, Carbon $end){
+
+        $window =  timestampsToWindow($st, $end);
+
+        $res =  NurseContactWindow::create([
+
+            'date' => $st->toDateString(),
+            'window_time_start' => $window['start'],
+            'window_time_end' => $window['end'],
+
+            'day_of_week' => 5,
+
+            'nurse_info_id' => $nurse->id
+
+        ]);
+
+        return $res;
+
+    }
+
+    //NURSE TEST HELPERS
+
+    public function createWindowForPatient(PatientInfo $patient, Carbon $st, Carbon $end, $dayOfWeek){
+
+       $window =  timestampsToWindow($st, $end);
+
+       return PatientContactWindow::create([
+
+           'window_time_start' => $window['start'],
+           'window_time_end' => $window['end'],
+
+           'day_of_week' => $dayOfWeek,
+
+           'patient_info_id' => $patient->id
+
+       ]);
+
     }
 
 }

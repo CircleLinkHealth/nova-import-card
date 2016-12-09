@@ -43,6 +43,7 @@ class SuccessfulHandler implements CallHandler
 
     private $week;
     private $patient;
+    private $nurse;
     private $nurses = [];
     private $ccmTime;
     private $nextCallDate;
