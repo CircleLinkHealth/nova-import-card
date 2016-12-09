@@ -58,6 +58,7 @@ trait UserHelpers
             'program_id'        => $practiceId,
             //id=9 is testdrive
             'address'           => $faker->streetAddress,
+            'user_status'           => 1,
             'address2'          => '',
             'city'              => $faker->city,
             'state'             => 'AL',

@@ -35,16 +35,24 @@ class NurseMatchTest extends TestCase
     public function testNursesMatchTest()
     {
 
+        //init mock algo predictions
         $this->prediction['date'] = '2016-12-16';
         $this->prediction['window_start'] = '09:00:00';
         $this->prediction['window_end'] = '17:00:00';
 
+        //create main nurse
         $nurse = $this->createUser(9, 'care-center');
         $this->nurse = $nurse->nurseInfo;
+
+        //create nurse with matching window
+        $nurse2 = $this->createUser(9, 'care-center');
+        $nurse2->user_status = 1;
+        $this->nurse2 = $nurse2->nurseInfo;
 
         $patient = $this->createUser(9, 'participant');
         $this->patient = $patient->patientInfo;
 
+        //mock the last success to test for previously contacted nurses
         $call = $this->createLastCallForPatient($this->patient, $this->nurse);
 
         $patientWindow = $this->createWindowForPatient($this->patient,
@@ -53,12 +61,20 @@ class NurseMatchTest extends TestCase
             5);
 
 
-        $windowNurse1 = $this->createWindowForNurse($this->nurse,
-                                     Carbon\Carbon::parse('2016-12-16 08:00:00'),
-                                     Carbon\Carbon::parse('2016-12-16 11:00:00'));
+        $this->createWindowForNurse($this->nurse,
+                                     Carbon\Carbon::parse('2016-12-15 08:00:00'),
+                                     Carbon\Carbon::parse('2016-12-15 11:00:00'));
 
+        $this->createWindowForNurse($this->nurse2,
+            Carbon\Carbon::parse('2016-12-16 08:00:00'),
+            Carbon\Carbon::parse('2016-12-16 11:00:00'));
 
         $this->findNurse();
+
+        dd([
+            $this->nurse2->user_id,
+            $this->prediction
+        ]);
 
         $this->assertTrue($this->prediction['nurse'] == $this->nurse->user_id);
 
