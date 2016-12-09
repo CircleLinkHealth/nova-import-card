@@ -16,7 +16,7 @@ class Calls
         $this->secret = env('ATHENA_SECRET');
         $this->version = env('ATHENA_VERSION');
 
-        $this->api = new Connection($this->version, $this->key, $this->secret, env('ATHENA_CLH_PRACTICE_ID'));
+        $this->api = new Connection($this->version, $this->key, $this->secret);
     }
 
     /**
@@ -77,7 +77,9 @@ class Calls
                 \Log::error(\GuzzleHttp\json_encode($response));
             }
 
-            abort(400, json_encode($response));
+            if (!empty($response)) {
+                abort(400, json_encode($response));
+            }
         }
 
         return $response;
@@ -97,6 +99,8 @@ class Calls
         $practiceId,
         $departmentId
     ) {
+        $this->api->setPracticeId($practiceId);
+
         $response = $this->api->GET("patients/{$patientId}/ccda", [
             'patientid'    => $patientId,
             'practiceid'   => $practiceId,

@@ -20,9 +20,12 @@ class AthenaApiController extends Controller
     {
         $vendors = CcdVendor::whereEhrName(ForeignId::ATHENA)->get();
 
+        $endDate = Carbon::today();
+        $startDate = $endDate->copy()->subMonth(1);
+
         foreach ($vendors as $vendor)
         {
-            $this->service->getAppointmentsForToday($vendor->practice_id);
+            $this->service->getAppointments($vendor->practice_id, $startDate, $endDate);
             $this->service->getCcdsFromRequestQueue(5);
         }
     }

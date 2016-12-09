@@ -182,7 +182,7 @@
                                 @include('provider.partials.mdl.form.radio', [
                                     'id' => 'billing-provider',
                                     'label' => 'Patient\'s Billing / Main provider.',
-                                    'name' => 'locations[@{{index}}][clinical_contact]',
+                                    'name' => 'locations[@{{index}}][clinical_contact][type]',
                                     'value' => 'billing_provider',
                                     'attributes' => [
                                         'v-model' => 'patientClinicalIssuesContact',
@@ -195,7 +195,7 @@
                                 @include('provider.partials.mdl.form.radio', [
                                     'id' => 'instead-of-billing-provider',
                                     'label' => 'Someone else instead of the billing provider.',
-                                    'name' => 'locations[@{{index}}][clinical_contact]',
+                                    'name' => 'locations[@{{index}}][clinical_contact][type]',
                                     'value' => 'instead_of_billing_provider',
                                     'attributes' => [
                                         'v-model' => 'patientClinicalIssuesContact',
@@ -217,7 +217,7 @@
                                 @include('provider.partials.mdl.form.radio', [
                                     'id' => 'in-addition-to-billing-provider',
                                     'label' => 'Someone else in addition to the billing provider.',
-                                    'name' => 'locations[@{{index}}][clinical_contact]',
+                                    'name' => 'locations[@{{index}}][clinical_contact][type]',
                                     'value' => 'in_addition_to_billing_provider',
                                     'attributes' => [
                                         'v-model' => 'patientClinicalIssuesContact',

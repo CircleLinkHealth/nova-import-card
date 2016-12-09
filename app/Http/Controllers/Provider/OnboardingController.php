@@ -140,7 +140,14 @@ class OnboardingController extends Controller
 
                 }
 
-                if ($newLocation['clinical_contact'] != PatientCareTeamMember::BILLING_PROVIDER) {
+                if ($newLocation['clinical_contact'] == PatientCareTeamMember::BILLING_PROVIDER) {
+
+                } elseif ($newLocation['clinical_contact'] == PatientCareTeamMember::IN_ADDITION_TO_BILLING_PROVIDER) {
+
+
+                } elseif ($newLocation['clinical_contact'] == PatientCareTeamMember::INSTEAD_OF_BILLING_PROVIDER) {
+
+                } else {
 
                 }
             }

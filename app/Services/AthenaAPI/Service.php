@@ -31,21 +31,30 @@ class Service
         $this->ccdas = $ccdas;
     }
 
-    public function getAppointmentsForToday($practiceId)
+    public function getAppointments(
+        $practiceId,
+        Carbon $startDate,
+        Carbon $endDate
+    )
     {
-        $today = Carbon::today()->format('m/d/Y');
+        $start = $startDate->format('m/d/Y');
+        $end = $endDate->format('m/d/Y');
 
         $departments = $this->api->getDepartmentIds($practiceId);
 
         foreach ($departments['departments'] as $department)
         {
-            $response = $this->api->getBookedAppointments($practiceId, $today, $today, $department['departmentid']);
+            $response = $this->api->getBookedAppointments($practiceId, $start, $end, $department['departmentid']);
             $this->logPatientIdsFromAppointments($response, $practiceId);
         }
     }
 
     public function logPatientIdsFromAppointments($response, $practiceId)
     {
+        if (!isset($response['appointments'])) {
+            return;
+        }
+
         foreach ($response['appointments'] as $bookedAppointment) {
 
             $patientId = $bookedAppointment['patientid'];
@@ -55,7 +64,7 @@ class Service
 
             //Get 'CCM Enabled' custom field id from the practice's custom fields
             foreach ($practiceCustomFields as $customField) {
-                if ($customField['name'] == 'CCM Enabled') {
+                if (strtolower($customField['name']) == 'ccm enabled') {
                     $ccmEnabledFieldId = $customField['customfieldid'];
                 }
             }
