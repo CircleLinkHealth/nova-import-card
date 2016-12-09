@@ -270,27 +270,41 @@ class OnboardingController extends Controller
      *
      * @param Request $request
      *
-     * @return $this|\Illuminate\Http\RedirectResponse
+     * @return OnboardingController|\Illuminate\Http\RedirectResponse
      */
     public function postStoreStaff(Request $request)
     {
-        $input = $request->input();
+        $primaryPractice = $this->practices
+            ->skipPresenter()
+            ->findWhere([
+                'user_id' => auth()->user()->id,
+            ])->first();
 
-        try {
-            $practice = $this->users
-                ->skipPresenter()
-                ->create([
-                    'name'         => str_slug($input['name']),
-                    'user_id'      => auth()->user()->id,
-                    'display_name' => $input['name'],
-                ]);
+        foreach ($request->input('users') as $newUser) {
+            try {
+                $practice = $this->users
+                    ->skipPresenter()
+                    ->updateOrCreate([
+                        'user_id' => isset($newUser['user_id'])
+                            ? $newUser['user_id']
+                            : null,
+                    ],
+                        [
+                            'name'         => str_slug($newUser['name']),
+                            'program_id'   => $primaryPractice->id,
+                            'email'        => $newUser['email'],
+                            'first_name'   => $newUser['first_name'],
+                            'last_name'    => $newUser['last_name'],
+                            'password'     => 'password_not_set',
+                            'display_name' => "{$newUser['first_name']} {$newUser['last_name']}",
+                        ]);
 
-            $practiceId = $practice->id;
-        } catch (ValidatorException $e) {
-            return redirect()
-                ->back()
-                ->withErrors($e->getMessageBag()->getMessages())
-                ->withInput();
+            } catch (ValidatorException $e) {
+                return redirect()
+                    ->back()
+                    ->withErrors($e->getMessageBag()->getMessages())
+                    ->withInput();
+            }
         }
 
         return view('provider.onboarding.welcome');
