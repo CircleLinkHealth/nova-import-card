@@ -127,6 +127,7 @@ trait CallAlgoHelper
 
         $other_nurses = $this->patient->nursesThatCanCareforPatient();
 
+
         foreach ($other_nurses as $nurse) {
 
             $found = $this->checkNurseForTargetDays($nurse);

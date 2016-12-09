@@ -292,29 +292,30 @@ class PatientInfo extends Model {
 
     public function nursesThatCanCareforPatient(){
 
-        $nurses = NurseInfo::whereHas('windows', function($q){
-            $q->where('date', '>', Carbon::now()->toDateTimeString());
-        })->get();
+        //Get user's programs
+
+        $nurses = NurseInfo
+            ::whereHas('windows', function($q){
+                $q->where('date', '>', Carbon::now()->toDateTimeString());
+            })->get();
 
         //Result array with Nurses
         $result = [];
-
-        //Get user's locations
-        $user_locations = $this->user->locations()->get()->pluck('id');
 
         foreach ($nurses as $nurse){
 
             if($nurse->user->user_status == 1) {
 
                 //get all locations for nurse
-                $nurse_locations = $nurse->user->locations()->get()->pluck('id');
-                $intersection = $nurse_locations->intersect($user_locations);
+                $nurse_programs = $nurse->user->viewableProgramIds();
+
+                $intersection = in_array($this->user->program_id, $nurse_programs);
 
                 //to optimize further, check whether the nurse has any windows upcoming
                 $future_windows = $nurse->windows->where('date', '>', Carbon::now()->toDateTimeString());
 
                 //check if they can care for patient AND if they have a window.
-                if ($intersection->count() > 0 && $future_windows->count() > 0) {
+                if ($intersection && $future_windows->count() > 0) {
                     $result[] = $nurse;
                 }
             }
