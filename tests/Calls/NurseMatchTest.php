@@ -23,7 +23,7 @@ class NurseMatchTest extends TestCase
 {
     private $nurse;
     private $nurse2;
-    private $program;
+    private $practice;
 
     private $patient;
 
@@ -40,16 +40,21 @@ class NurseMatchTest extends TestCase
         $this->prediction['window_start'] = '09:00:00';
         $this->prediction['window_end'] = '17:00:00';
 
+        $this->practice = \App\Practice::create([
+
+            'name' => 'program'. \Carbon\Carbon::now()->secondsSinceMidnight()
+
+        ]);
+
         //create main nurse
-        $nurse = $this->createUser(9, 'care-center');
+        $nurse = $this->createUser($this->practice->id, 'care-center');
         $this->nurse = $nurse->nurseInfo;
 
         //create nurse with matching window
-        $nurse2 = $this->createUser(9, 'care-center');
-        $nurse2->user_status = 1;
+        $nurse2 = $this->createUser( $this->practice->id, 'care-center');
         $this->nurse2 = $nurse2->nurseInfo;
 
-        $patient = $this->createUser(9, 'participant');
+        $patient = $this->createUser( $this->practice->id, 'participant');
         $this->patient = $patient->patientInfo;
 
         //mock the last success to test for previously contacted nurses
