@@ -8,6 +8,8 @@ class PatientCareTeamMember extends Model
     const BILLING_PROVIDER = 'billing_provider';
     const IN_ADDITION_TO_BILLING_PROVIDER = 'in_addition_to_billing_provider';
     const INSTEAD_OF_BILLING_PROVIDER = 'instead_of_billing_provider';
+
+
     const LEAD_CONTACT = 'lead_contact';
     const MEMBER = 'member';
     const SEND_ALERT_TO = 'send_alert_to';
