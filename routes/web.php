@@ -155,9 +155,14 @@ Route::group(['middleware' => 'auth'], function () {
     /****************************
      * CCD STUFF
      ****************************/
-    Route::get('ccd/show/{userId}', [
+    Route::get('ccd/show/user/{userId}', [
         'uses' => 'CCDViewer\CCDViewerController@showByUserId',
         'as'   => 'get.CCDViewerController.showByUserId',
+    ]);
+
+    Route::get('ccd/show/{ccdaId}', [
+        'uses' => 'CCDViewer\CCDViewerController@show',
+        'as'   => 'get.CCDViewerController.show',
     ]);
 
     Route::post('ccd', [
