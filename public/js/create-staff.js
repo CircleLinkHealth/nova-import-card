@@ -11085,6 +11085,10 @@
             },
 
             ready: function ready() {
+                for (var i = 0, len = cpm.existingUsers.length; i < len; i++) {
+                    this.newUsers.$set(i, cpm.existingUsers[i]);
+                }
+
                 this.newUsers.push({});
             },
 

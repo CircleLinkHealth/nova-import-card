@@ -19,6 +19,7 @@
     </head>
 
     <div id="create-staff-component">
+
         @include('provider.partials.errors.validation')
 
         {!! Form::open([
@@ -49,9 +50,8 @@
                                     'name' => "users[@{{index}}][first_name]",
                                     'label' => 'First Name',
                                     'class' =>'col s6',
-                                    'value' => '@{{newUser.first_name}}',
                                     'attributes' => [
-                                        'v-model' => 'newUser.first_name',
+                                        'v-bind:value' => 'newUser.first_name',
                                         'required' => 'required'
                                     ]
                                 ])
@@ -60,9 +60,8 @@
                                     'name' => "users[@{{index}}][last_name]",
                                     'label' => 'Last Name',
                                     'class' =>'col s6',
-                                    'value' => '@{{newUser.last_name}}',
                                     'attributes' => [
-                                        'v-model' => 'newUser.last_name',
+                                        'v-bind:value' => 'newUser.last_name',
                                         'required' => 'required'
                                     ]
                                 ])
@@ -74,9 +73,8 @@
                                 'label' => 'Email',
                                 'class' => 'col s6',
                                 'type' => 'email',
-                                'value' => '@{{newUser.email}}',
                                     'attributes' => [
-                                        'v-model' => 'newUser.email',
+                                        'v-bind:value' => 'newUser.email',
                                         'required' => 'required'
                                     ]
                             ])
