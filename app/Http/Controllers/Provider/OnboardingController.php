@@ -152,6 +152,7 @@ class OnboardingController extends Controller
                         'password'   => 'password_not_set',
                     ]);
 
+                    $user->attachPractice($primaryPractice);
                     $user->attachLocation($location);
 
                     $location->clinicalEmergencyContact()->attach($user->id, [
