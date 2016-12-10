@@ -9,6 +9,7 @@ use App\Contracts\Repositories\PracticeRepository;
 use App\Contracts\Repositories\UserRepository;
 use App\Http\Controllers\Controller;
 use App\PatientCareTeamMember;
+use App\PhoneNumber;
 use App\Role;
 use Illuminate\Http\Request;
 use Prettus\Validator\Exceptions\ValidatorException;
@@ -102,21 +103,38 @@ class OnboardingController extends Controller
                 'user_id' => auth()->user()->id,
             ])->first();
 
+        //Get the users that were as clinical emergency contacts from the locations page
         $existingUsers = $primaryPractice->users->map(function ($user) {
             return [
-                'id'         => $user->id,
-                'role'       => [
+                'id'           => $user->id,
+                'role'         => [
                     'id'   => 0,
                     'name' => 'No Role Selected',
                 ],
-                'email'      => $user->email,
-                'last_name'  => $user->last_name,
-                'first_name' => $user->first_name,
+                'email'        => $user->email,
+                'last_name'    => $user->last_name,
+                'first_name'   => $user->first_name,
+                'phone_number' => '',
+                'phone_type'   => '',
             ];
         });
 
+        //get the relevant roles
+        $roles = Role::whereIn('name', [
+            'med_assistant',
+            'office_admin',
+            'practice-lead',
+            'provider',
+            'registered-nurse',
+            'specialist',
+        ])->get()
+            ->keyBy('id')
+            ->sortBy('display_name')
+            ->all();
+
         \JavaScript::put([
             'existingUsers' => $existingUsers,
+            'roles'         => $roles,
         ]);
 
         return view('provider.onboarding.create-staff-users', [
@@ -282,15 +300,14 @@ class OnboardingController extends Controller
 
         foreach ($request->input('users') as $newUser) {
             try {
-                $practice = $this->users
+                $user = $this->users
                     ->skipPresenter()
                     ->updateOrCreate([
-                        'user_id' => isset($newUser['user_id'])
+                        'id' => isset($newUser['user_id'])
                             ? $newUser['user_id']
                             : null,
                     ],
                         [
-                            'name'         => str_slug($newUser['name']),
                             'program_id'   => $primaryPractice->id,
                             'email'        => $newUser['email'],
                             'first_name'   => $newUser['first_name'],
@@ -298,14 +315,34 @@ class OnboardingController extends Controller
                             'password'     => 'password_not_set',
                             'display_name' => "{$newUser['first_name']} {$newUser['last_name']}",
                         ]);
-
             } catch (ValidatorException $e) {
                 return redirect()
                     ->back()
                     ->withErrors($e->getMessageBag()->getMessages())
                     ->withInput();
             }
+
+            try {
+                $user->roles()->attach($newUser['role_id']);
+            } catch (\Exception $e) {
+                if ($e instanceof \Illuminate\Database\QueryException) {
+                    $errorCode = $e->errorInfo[1];
+                    if ($errorCode == 1062) {
+                        //do nothing
+                        //we don't actually want to terminate the program if we detect duplicates
+                        //we just don't wanna add the row again
+                    }
+                }
+            }
+
+            $user->phoneNumbers()->create([
+                'number'     => StringManipulation::formatPhoneNumber($newUser['phone_number']),
+                'type'       => PhoneNumber::getTypes()[$newUser['phone_type']],
+                'is_primary' => true,
+            ]);
+
         }
+
 
         return view('provider.onboarding.welcome');
     }

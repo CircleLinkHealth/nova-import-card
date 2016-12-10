@@ -34,6 +34,28 @@ class RolesPermissionsSeeder extends Seeder
                     'users-view-self'
                 ]
             ],
+            [
+                'name'         => 'registered-nurse',
+                'display_name' => 'Registered Nurse',
+                'description'  => 'A nurse that belongs to a practice and not our care center.',
+                'permissions'  => [
+                    'observations-view',
+                    'observations-create',
+                    'users-view-all',
+                    'users-view-self',
+                ],
+            ],
+            [
+                'name'         => 'specialist',
+                'display_name' => 'Specialist',
+                'description'  => 'An outside specialist doctor.',
+                'permissions'  => [
+                    'observations-view',
+                    'observations-create',
+                    'users-view-all',
+                    'users-view-self',
+                ],
+            ],
         ];
 
         foreach ($permissions as $perm) {
