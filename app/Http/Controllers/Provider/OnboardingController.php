@@ -298,7 +298,9 @@ class OnboardingController extends Controller
                 'first_name'     => $input['firstName'],
                 'last_name'      => $input['lastName'],
                 'password'       => bcrypt($input['password']),
-                'count_ccm_time' => (bool)$input['countCcmTime'],
+                'count_ccm_time' => isset($input['countCcmTime'])
+                    ? (bool)$input['countCcmTime']
+                    : false,
             ]);
         } catch (ValidatorException $e) {
             return redirect()
