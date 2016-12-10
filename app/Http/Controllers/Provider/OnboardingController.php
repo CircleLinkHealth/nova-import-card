@@ -352,6 +352,9 @@ class OnboardingController extends Controller
                 ->withInput();
         }
 
+        auth()->user()->program_id = $practice->id;
+        auth()->user()->save();
+
         return redirect()->route('get.onboarding.create.locations');
     }
 
