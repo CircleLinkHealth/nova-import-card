@@ -81,6 +81,11 @@ class Practice extends Model
         }
     }
 
+    public function getFormattedNameAttribute()
+    {
+        return ucwords($this->display_name);
+    }
+
     public function pcp()
     {
         return $this->hasMany('App\CPRulesPCP', 'prov_id', 'id');
@@ -152,7 +157,7 @@ class Practice extends Model
 
     public function lead()
     {
-        return $this->belongsTo(User::class);
+        return $this->belongsTo(User::class, 'user_id');
     }
 
     public function getSubdomainAttribute()

@@ -8,6 +8,7 @@ use App\Contracts\Repositories\LocationRepository;
 use App\Contracts\Repositories\PracticeRepository;
 use App\Contracts\Repositories\UserRepository;
 use App\Http\Controllers\Controller;
+use App\Notifications\Onboarding\ImplementationLeadWelcome;
 use App\PatientCareTeamMember;
 use App\PhoneNumber;
 use App\Role;
@@ -340,9 +341,10 @@ class OnboardingController extends Controller
                 'type'       => PhoneNumber::getTypes()[$newUser['phone_type']],
                 'is_primary' => true,
             ]);
-
         }
 
+        $implementationLead = $primaryPractice->lead;
+        $implementationLead->notify(new ImplementationLeadWelcome($primaryPractice));
 
         return view('provider.onboarding.welcome');
     }
