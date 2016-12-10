@@ -88,8 +88,15 @@ class OnboardingController extends Controller
      *
      * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
      */
-    public function getCreatePracticeLeadUser()
+    public function getCreatePracticeLeadUser($code)
     {
+        $invite = Invite::whereCode($code)
+            ->first();
+
+        if (!$invite) {
+            abort(403);
+        }
+
         return view('provider.onboarding.create-practice-lead');
     }
 
@@ -307,6 +314,13 @@ class OnboardingController extends Controller
 
         auth()->login($user);
 
+        $invite = Invite::whereEmail($user->email)
+            ->first();
+
+        if ($invite) {
+            $invite->delete();
+        }
+
         return redirect()->route('get.onboarding.create.practice');
     }
 
@@ -403,13 +417,6 @@ class OnboardingController extends Controller
         }
 
         $implementationLead->notify(new ImplementationLeadWelcome($primaryPractice));
-
-        $invite = Invite::whereEmail($implementationLead->email)
-            ->first();
-
-        if ($invite) {
-            $invite->delete();
-        }
 
         return view('provider.onboarding.welcome');
     }

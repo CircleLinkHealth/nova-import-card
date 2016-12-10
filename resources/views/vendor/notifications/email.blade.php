@@ -137,7 +137,7 @@ $style = [
                                 <!-- Outro -->
                                     @foreach ($outroLines as $line)
                                         <p style="{{ $style['paragraph'] }}">
-                                            {{ $line }}
+                                            {!! $line !!}
                                         </p>
                                     @endforeach
 
