@@ -97,7 +97,7 @@ class OnboardingController extends Controller
             abort(403);
         }
 
-        return view('provider.onboarding.create-practice-lead');
+        return view('provider.onboarding.create-practice-lead', compact('invite'));
     }
 
     /**
@@ -248,7 +248,9 @@ class OnboardingController extends Controller
                 ->withErrors($e->getMessageBag()->getMessages());
         }
 
-        return redirect()->route('get.onboarding.create.staff');
+        return redirect()->route('get.onboarding.create.staff', [
+            'practiceSlug' => $primaryPractice->name,
+        ]);
     }
 
     /**
@@ -292,6 +294,7 @@ class OnboardingController extends Controller
     {
         $input = $request->input();
 
+        //Create the User
         try {
             $user = $this->users->skipPresenter()->create([
                 'email'          => $input['email'],
@@ -309,6 +312,7 @@ class OnboardingController extends Controller
                 ->withErrors($e->getMessageBag()->getMessages());
         }
 
+        //Attach role
         $role = Role::whereName('practice-lead')->first();
 
         $user->roles()
@@ -316,11 +320,13 @@ class OnboardingController extends Controller
 
         auth()->login($user);
 
-        $invite = Invite::whereEmail($user->email)
-            ->first();
+        if (isset($input['code'])) {
+            $invite = Invite::whereCode($input['code'])
+                ->first();
 
-        if ($invite) {
-            $invite->delete();
+            if ($invite) {
+                $invite->delete();
+            }
         }
 
         return redirect()->route('get.onboarding.create.practice');
@@ -331,7 +337,7 @@ class OnboardingController extends Controller
      *
      * @param Request $request
      *
-     * @return $this|\Illuminate\Http\RedirectResponse
+     * @return OnboardingController|\Illuminate\Http\RedirectResponse
      */
     public function postStorePractice(Request $request)
     {
@@ -341,9 +347,10 @@ class OnboardingController extends Controller
             $practice = $this->practices
                 ->skipPresenter()
                 ->create([
-                    'name'         => str_slug($input['name']),
-                    'user_id'      => auth()->user()->id,
-                    'display_name' => $input['name'],
+                    'name'           => str_slug($input['name']),
+                    'user_id'        => auth()->user()->id,
+                    'display_name'   => $input['name'],
+                    'federal_tax_id' => $input['federal_tax_id'],
                 ]);
         } catch (ValidatorException $e) {
             return redirect()
@@ -355,7 +362,9 @@ class OnboardingController extends Controller
         auth()->user()->program_id = $practice->id;
         auth()->user()->save();
 
-        return redirect()->route('get.onboarding.create.locations');
+        return redirect()->route('get.onboarding.create.locations', [
+            'practiceSlug' => $practice->name,
+        ]);
     }
 
     /**
@@ -399,8 +408,27 @@ class OnboardingController extends Controller
                     ->withInput();
             }
 
+            //Attach the role
             try {
                 $user->roles()->attach($newUser['role_id']);
+            } catch (\Exception $e) {
+                if ($e instanceof \Illuminate\Database\QueryException) {
+                    $errorCode = $e->errorInfo[1];
+                    if ($errorCode == 1062) {
+                        //do nothing
+                        //we don't actually want to terminate the program if we detect duplicates
+                        //we just don't wanna add the row again
+                    }
+                }
+            }
+
+            //Attach the locations
+            try {
+                foreach ($newUser['locations'] as $locId) {
+                    if (!$user->locations->contains($locId)) {
+                        $user->locations()->attach($locId);
+                    }
+                }
             } catch (\Exception $e) {
                 if ($e instanceof \Illuminate\Database\QueryException) {
                     $errorCode = $e->errorInfo[1];

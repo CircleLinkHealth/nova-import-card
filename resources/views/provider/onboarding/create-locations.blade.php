@@ -32,13 +32,25 @@
             <ul class="collapsible" data-collapsible="accordion">
                 <li v-for="(index, loc) in newLocations" id="location-@{{index}}">
                     <div class="collapsible-header" v-bind:class="{ active: index == newLocations.length - 1 }">
-                        <div class="col s11">
+                        <div class="col s10">
                             <span v-if="loc.name">
                                 @{{loc.name | uppercase}}
                             </span>
                             <span v-else>
                                 NEW LOCATION
                             </span>
+                        </div>
+                        <div class="col s1">
+                            <span v-if="!loc.name
+                            || !loc.address_line_1
+                            || !loc.city
+                            || !loc.state
+                            || !loc.phone
+                            || !loc.postal_code
+                            || !loc.ehr_login
+                            || !loc.ehr_password
+                            " class="red-text">Incomplete</span>
+                            <span v-else class="green-text">Complete!</span>
                         </div>
                     </div>
 
@@ -57,7 +69,11 @@
                                 ])
 
                             @include('provider.partials.locations-dropdown', [
-                                'name' => 'locations[0][timezone]'
+                                'name' => 'locations[@{{index}}][timezone]',
+                                'attributes' => [
+                                        'v-model' => 'loc.timezone',
+                                        'required' => 'required'
+                                ]
                             ])
                         </div>
 
@@ -143,7 +159,7 @@
                                 'label' => 'EHR Login',
                                 'class' => 'col s6',
                                 'attributes' => [
-                                    'v-model' => 'loc.ehrLogin',
+                                    'v-model' => 'loc.ehr_login',
                                     'required' => 'required',
                                     ':disabled' => 'sameEHRLogin && index > 0'
                                 ]
@@ -155,9 +171,10 @@
                                 'class' => 'col s6',
                                 'type' => 'password',
                                 'attributes' => [
+                                    'v-model' => 'loc.ehr_password',
                                     'autocomplete' => 'new-password',
                                     'required' => 'required',
-                                    ':disabled' => 'sameEHRLogin && index > 0'
+                                    ':disabled' => 'sameEHRLogin && index > 0',
                                 ]
                             ])
 
@@ -187,6 +204,7 @@
                                     'attributes' => [
                                         'v-model' => 'patientClinicalIssuesContact',
                                         'required' => 'required',
+                                        'checked' => 'checked',
                                     ]
                                 ])
                             </div>

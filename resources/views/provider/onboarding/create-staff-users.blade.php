@@ -149,7 +149,7 @@
 
                         <div class="row">
                             <div class="input-field col s12">
-                                <select multiple>
+                                <select name="users[@{{index}}][locations][]" required multiple>
                                     @foreach($locations as $location)
                                         <option value="{{ $location->id }}" selected>{{$location->name}}</option>
                                     @endforeach

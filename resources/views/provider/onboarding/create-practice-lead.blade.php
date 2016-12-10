@@ -61,6 +61,7 @@
             'label' => 'Email (Will also be the username)',
             'class' => 'col s12',
             'type' => 'email',
+            'value' => isset($invite) ? $invite->email : '',
             'attributes' => [
                 'autocomplete' => 'new-email',
                 'required' => 'required',
@@ -80,6 +81,10 @@
             ]
         ])
     </div>
+
+    @if(isset($invite))
+        <input type="hidden" name="code" value="{{$invite->code}}">
+    @endif
 
     <div class="row">
         <button class="btn blue waves-effect waves-light col s12" type="submit" name="submit" id="update-practice">

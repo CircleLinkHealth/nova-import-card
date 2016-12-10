@@ -12,6 +12,7 @@ class Practice extends Model
     protected $fillable = [
         'name',
         'display_name',
+        'federal_tax_id',
         'user_id',
     ];
 

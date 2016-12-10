@@ -1255,7 +1255,7 @@ Route::group([
             'as'   => 'post.onboarding.store.practice',
         ]);
 
-        Route::get('create-locations', [
+        Route::get('{practiceSlug}/locations/create', [
             'uses' => 'Provider\OnboardingController@getCreateLocations',
             'as'   => 'get.onboarding.create.locations',
         ]);
@@ -1265,7 +1265,7 @@ Route::group([
             'as'   => 'get.onboarding.create.practice',
         ]);
 
-        Route::get('create-staff', [
+        Route::get('{practiceSlug}/staff/create', [
             'uses' => 'Provider\OnboardingController@getCreateStaff',
             'as'   => 'get.onboarding.create.staff',
         ]);
