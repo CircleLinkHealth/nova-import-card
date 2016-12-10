@@ -404,6 +404,13 @@ class OnboardingController extends Controller
 
         $implementationLead->notify(new ImplementationLeadWelcome($primaryPractice));
 
+        $invite = Invite::whereEmail($implementationLead->email)
+            ->first();
+
+        if ($invite) {
+            $invite->delete();
+        }
+
         return view('provider.onboarding.welcome');
     }
 }

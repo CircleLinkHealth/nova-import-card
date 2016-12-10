@@ -5,12 +5,13 @@ namespace App\Entities;
 use App\Role;
 use App\User;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
 use Prettus\Repository\Contracts\Transformable;
 use Prettus\Repository\Traits\TransformableTrait;
 
 class Invite extends Model implements Transformable
 {
-    use TransformableTrait;
+    use SoftDeletes, TransformableTrait;
 
     /**
      * The attributes that should be mutated to dates.
