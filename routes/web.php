@@ -1,6 +1,5 @@
 <?php
 
-
 if (app()->environment() != 'production') {
     Route::get('rohan', function () {
 
@@ -1222,15 +1221,26 @@ Route::group([
     'prefix' => 'onboarding',
 ], function () {
 
+    Route::get('create-invited-user/{code}', [
+        'uses' => 'Provider\OnboardingController@getCreateInvitedUser',
+        'as'   => 'get.onboarding.create.invited.user',
+    ]);
+
     Route::get('create-practice-lead-user', [
         'uses' => 'Provider\OnboardingController@getCreatePracticeLeadUser',
         'as'   => 'get.onboarding.create.program.lead.user',
+    ]);
+
+    Route::post('store-invited-user', [
+        'uses' => 'Provider\OnboardingController@postStoreInvitedUser',
+        'as'   => 'get.onboarding.store.invited.user',
     ]);
 
     Route::post('store-practice-lead-user', [
         'uses' => 'Provider\OnboardingController@postStorePracticeLeadUser',
         'as'   => 'post.onboarding.store.program.lead.user',
     ]);
+
 
     Route::group([
         'middleware' => 'auth',

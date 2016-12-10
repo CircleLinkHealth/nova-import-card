@@ -60,7 +60,6 @@ class ImplementationLeadWelcome extends Notification
      */
     public function toMail($notifiable)
     {
-
         return (new MailMessage)
             ->subject("Welcome to CircleLink Health!")
             ->greeting("Dear $notifiable->fullName:")

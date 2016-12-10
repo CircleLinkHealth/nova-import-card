@@ -7,11 +7,14 @@ use App\Contracts\Repositories\InviteRepository;
 use App\Contracts\Repositories\LocationRepository;
 use App\Contracts\Repositories\PracticeRepository;
 use App\Contracts\Repositories\UserRepository;
+use App\Entities\Invite;
 use App\Http\Controllers\Controller;
 use App\Notifications\Onboarding\ImplementationLeadWelcome;
+use App\Notifications\Onboarding\StaffInvite;
 use App\PatientCareTeamMember;
 use App\PhoneNumber;
 use App\Role;
+use App\User;
 use Illuminate\Http\Request;
 use Prettus\Validator\Exceptions\ValidatorException;
 
@@ -56,6 +59,28 @@ class OnboardingController extends Controller
         $this->locations = $locationRepository;
         $this->practices = $practiceRepository;
         $this->users = $userRepository;
+    }
+
+    /**
+     * Show the form for an invited user to create their account.
+     *
+     * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
+     */
+    public function getCreateInvitedUser($code)
+    {
+        $invite = Invite::whereCode($code)
+            ->first();
+
+        if (!$invite) {
+            abort(403);
+        }
+
+        $user = User::whereEmail($invite->email)
+            ->first();
+
+        return view('provider.onboarding.invited-staff', [
+            'user' => $user,
+        ]);
     }
 
     /**
@@ -220,6 +245,36 @@ class OnboardingController extends Controller
     }
 
     /**
+     * Store Invited User
+     *
+     * @param Request $request
+     *
+     * @return \Illuminate\Http\RedirectResponse
+     */
+    public function postStoreInvitedUser(Request $request)
+    {
+        $input = $request->input();
+
+        try {
+            $user = $this->users->skipPresenter()->create([
+                'email'      => $input['email'],
+                'first_name' => $input['firstName'],
+                'last_name'  => $input['lastName'],
+                'password'   => bcrypt($input['password']),
+            ]);
+        } catch (ValidatorException $e) {
+            return redirect()
+                ->back()
+                ->withInput($input)
+                ->withErrors($e->getMessageBag()->getMessages());
+        }
+
+        auth()->login($user);
+
+        return redirect()->route('/');
+    }
+
+    /**
      * Store Practice Lead User
      *
      * @param Request $request
@@ -299,6 +354,8 @@ class OnboardingController extends Controller
                 'user_id' => auth()->user()->id,
             ])->first();
 
+        $implementationLead = $primaryPractice->lead;
+
         foreach ($request->input('users') as $newUser) {
             try {
                 $user = $this->users
@@ -341,9 +398,10 @@ class OnboardingController extends Controller
                 'type'       => PhoneNumber::getTypes()[$newUser['phone_type']],
                 'is_primary' => true,
             ]);
+
+            $user->notify(new StaffInvite($implementationLead, $primaryPractice));
         }
 
-        $implementationLead = $primaryPractice->lead;
         $implementationLead->notify(new ImplementationLeadWelcome($primaryPractice));
 
         return view('provider.onboarding.welcome');
