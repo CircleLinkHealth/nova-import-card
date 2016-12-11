@@ -14,7 +14,8 @@
                         {{ $key }}="{{ $val }}"
                     @endforeach
                 @endif>
-                <label for="{{ $name }}" data-error="Invalid input." data-success="">{{ $label }}</label>
+                <label class="{{$label_class ?? ''}}" for="{{ $name }}" data-error="Invalid input."
+                       data-success="">{{ $label }}</label>
             </div>
 
 
