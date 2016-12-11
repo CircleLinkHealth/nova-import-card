@@ -186,13 +186,13 @@ class OnboardingController extends Controller
             $sameEHRLogin = isset($request->input('locations')[0]['same_ehr_login']);
             $sameClinicalContact = isset($request->input('locations')[0]['same_clinical_contact']);
 
-            foreach ($request->input('locations') as $newLocation) {
+            $primaryPractice = $this->practices
+                ->skipPresenter()
+                ->findWhere([
+                    'user_id' => auth()->user()->id,
+                ])->first();
 
-                $primaryPractice = $this->practices
-                    ->skipPresenter()
-                    ->findWhere([
-                        'user_id' => auth()->user()->id,
-                    ])->first();
+            foreach ($request->input('locations') as $newLocation) {
 
                 $location = $this->locations
                     ->skipPresenter()
@@ -244,7 +244,7 @@ class OnboardingController extends Controller
         } catch (ValidatorException $e) {
             return redirect()
                 ->back()
-                ->withInput($request->input())
+                ->withInput()
                 ->withErrors($e->getMessageBag()->getMessages());
         }
 
@@ -384,7 +384,11 @@ class OnboardingController extends Controller
 
         $implementationLead = $primaryPractice->lead;
 
+        $adminRole = Role::whereName('practice-lead')
+            ->first();
+
         foreach ($request->input('users') as $newUser) {
+            //create the user
             try {
                 $user = $this->users
                     ->skipPresenter()
@@ -411,6 +415,10 @@ class OnboardingController extends Controller
             //Attach the role
             try {
                 $user->roles()->attach($newUser['role_id']);
+
+                if ($newUser['grand_admin_rights']) {
+                    $user->roles()->attach($adminRole);
+                }
             } catch (\Exception $e) {
                 if ($e instanceof \Illuminate\Database\QueryException) {
                     $errorCode = $e->errorInfo[1];
@@ -440,6 +448,7 @@ class OnboardingController extends Controller
                 }
             }
 
+            //attach phone
             $user->phoneNumbers()->create([
                 'number'     => StringManipulation::formatPhoneNumber($newUser['phone_number']),
                 'type'       => PhoneNumber::getTypes()[$newUser['phone_type']],
