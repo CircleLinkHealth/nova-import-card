@@ -68,14 +68,10 @@ class Calls
     private function response($response)
     {
         //check for errors
-        if (isset($response['error']) || !$response) {
-            \Log::alert(__METHOD__ . __LINE__ . 'Response logged below');
+        if (isset($response['error'])) {
+            \Log::alert(__METHOD__ . __LINE__ . 'Response logged below ' . PHP_EOL);
 
-            if (!$response) {
-                \Log::error('ATHENA API: Authentication failed.');
-            } else {
-                \Log::error(\GuzzleHttp\json_encode($response));
-            }
+            \Log::error(\GuzzleHttp\json_encode($response));
 
             if (!empty($response)) {
                 abort(400, json_encode($response));

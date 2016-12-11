@@ -56,21 +56,23 @@ class Service
             return;
         }
 
+        $practiceCustomFields = $this->api->getPracticeCustomFields($practiceId);
+
+        //Get 'CCM Enabled' custom field id from the practice's custom fields
+        foreach ($practiceCustomFields as $customField) {
+            if (strtolower($customField['name']) == 'ccm enabled') {
+                $ccmEnabledFieldId = $customField['customfieldid'];
+            }
+        }
+
+        if (!isset($ccmEnabledFieldId)) {
+            return;
+        }
+
         foreach ($response['appointments'] as $bookedAppointment) {
 
             $patientId = $bookedAppointment['patientid'];
             $departmentId = $bookedAppointment['departmentid'];
-
-            $practiceCustomFields = $this->api->getPracticeCustomFields($practiceId);
-
-            //Get 'CCM Enabled' custom field id from the practice's custom fields
-            foreach ($practiceCustomFields as $customField) {
-                if (strtolower($customField['name']) == 'ccm enabled') {
-                    $ccmEnabledFieldId = $customField['customfieldid'];
-                }
-            }
-
-            if (!isset($ccmEnabledFieldId)) continue;
 
             $patientCustomFields = $this->api->getPatientCustomFields($patientId, $practiceId, $departmentId);
 
@@ -79,7 +81,7 @@ class Service
                 if ($customField['customfieldid'] == $ccmEnabledFieldId
                     && str_contains($customField['customfieldvalue'], ['Y', 'y'])
                 ) {
-                    $this->ccdaRequests->create([
+                    $ccdaRequest = $this->ccdaRequests->create([
                         'patient_id' => $patientId,
                         'department_id' => $departmentId,
                         'vendor' => 'athena',
