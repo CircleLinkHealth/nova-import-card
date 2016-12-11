@@ -5,17 +5,18 @@
                 @endif
 
                 <input class="validate"
-                       type="{{ isset($type) ? $type : 'text' }}"
+                       type="{{ $type ?? 'text' }}"
                        id="{{ $name }}"
                        name="{{ $name }}"
-                       value="{{ isset($value) ? $value : old($name)}}"
+                       value="{{ $value ?? old($name)}}"
                 @if(isset($attributes))
                     @foreach($attributes as $key => $val)
                         {{ $key }}="{{ $val }}"
                     @endforeach
                 @endif>
-                <label class="{{$label_class ?? ''}}" for="{{ $name }}" data-error="Invalid input."
-                       data-success="">{{ $label }}</label>
+                <label class="{{$label_class ?? ''}}" for="{{ $name }}"
+                       data-error="{{ $data_error ?? 'Invalid input.' }}"
+                       data-success="{{ $data_success ?? '' }}">{{ $label }}</label>
             </div>
 
 
