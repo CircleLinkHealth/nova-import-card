@@ -49,15 +49,21 @@ class GetAppointments extends Command
         $vendors = CcdVendor::whereEhrName(ForeignId::ATHENA)->get();
 
         $endDate = Carbon::today();
-        $startDate = $endDate->copy()->subMonth(4);
+        $startDate = $endDate->copy()->subWeeks(2);
 
         foreach ($vendors as $vendor) {
+
+            if (app()->environment('worker')) {
+                Slack::to('#background-tasks')
+                    ->send("Getting appointments for vendor: {$vendor->vendor_name}. \n");
+            }
+
             $this->service->getAppointments($vendor->practice_id, $startDate, $endDate);
         }
 
         if (app()->environment('worker')) {
             Slack::to('#background-tasks')
-                ->send("Polled Athena for today's appointments. \n");
+                ->send("Finished getting appointments from Athena API. \n");
         }
     }
 }
