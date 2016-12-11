@@ -47,8 +47,8 @@
                             || !loc.state
                             || !loc.phone
                             || !loc.postal_code
-                            || !loc.ehr_login
-                            || !loc.ehr_password
+                            || (!loc.ehr_login && !sameEHRLogin)
+                            || (!loc.ehr_password && !sameEHRLogin)
                             " class="red-text">Incomplete</span>
                             <span v-else class="green-text">Complete!</span>
                         </div>
@@ -178,7 +178,7 @@
                                 ]
                             ])
 
-                            <p class="right-align">
+                            <p class="right-align" v-if="index == 0">
                                 @include('provider.partials.mdl.form.checkbox', [
                                    'label' => 'Same for all locations?',
                                    'name' => 'locations[@{{index}}][same_ehr_login]',
@@ -251,7 +251,7 @@
                             </div>
 
 
-                            <div class="right-align">
+                            <div class="right-align" v-if="index == 0">
                                 @include('provider.partials.mdl.form.checkbox', [
                                    'label' => 'Same for all locations?',
                                    'name' => 'locations[@{{index}}][same_clinical_contact]',
