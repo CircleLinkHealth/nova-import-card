@@ -55,7 +55,7 @@ class CreateAthenaPdfCarePlan
 
 
         //If it's an Athena patient, send the PDF to Athena API
-        $programId = auth()->user()->program_id;
+        $programId = $event->patient->program_id;
         $user = $event->patient;
 
         if (isset($programId)) {
@@ -84,7 +84,8 @@ class CreateAthenaPdfCarePlan
                         $ccdaRequest->patient_id,
                         $ccdaRequest->practice_id,
                         $pathToPdf,
-                        $ccdaRequest->department_id);
+                        $ccdaRequest->department_id
+                    );
 
                     $decodedResponse = json_decode($response, true);
 
