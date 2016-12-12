@@ -228,7 +228,7 @@ class Calls
          * HACK
          * @todo: Figure out why the above doesn't work
          */
-        $command = "curl -v -k 'https://api.athenahealth.com/preview1/$practiceId/patients/$patientId/documents' -XPOST -F documentsubclass=$documentSubClass -F departmentid=$departmentId -F 'attachmentcontents=@$attachmentContent' -H 'Authorization: Bearer {$this->api->get_token()}'";
+        $command = "curl -v -k 'https://api.athenahealth.com/v1/$practiceId/patients/$patientId/documents' -XPOST -F documentsubclass=$documentSubClass -F departmentid=$departmentId -F 'attachmentcontents=@$attachmentContent' -H 'Authorization: Bearer {$this->api->get_token()}'";
 
         $response = exec($command);
 
