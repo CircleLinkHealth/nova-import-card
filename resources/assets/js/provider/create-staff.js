@@ -17,6 +17,7 @@ var createStaffVM = new Vue({
             newUsers: [],
             roles: [],
             deleteTheseUsers: [],
+            invalidCount: 0
         }
     },
 
@@ -70,6 +71,8 @@ var createStaffVM = new Vue({
 
         //Is the form for the given user filled out?
         isValidated: function (index) {
+            this.$set('invalidCount', $('.invalid').length);
+
             this.$set('newUsers[' + index + '].isComplete', this.newUsers[index].first_name
                 && this.newUsers[index].last_name
                 && this.newUsers[index].email

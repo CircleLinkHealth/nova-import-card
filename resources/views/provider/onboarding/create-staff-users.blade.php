@@ -70,6 +70,8 @@
                                         'required' => 'required',
                                         'v-on:change' => 'isValidated(index)',
                                         'v-on:invalid' => 'isValidated(index)',
+                                        'v-on:keyup' => 'isValidated(index)',
+                                        'v-on:click' => 'isValidated(index)',
                                     ]
                                 ])
 
@@ -83,6 +85,8 @@
                                         'required' => 'required',
                                         'v-on:change' => 'isValidated(index)',
                                         'v-on:invalid' => 'isValidated(index)',
+                                        'v-on:keyup' => 'isValidated(index)',
+                                        'v-on:click' => 'isValidated(index)',
                                     ]
                                 ])
                         </div>
@@ -100,8 +104,9 @@
                                     'v-on:change' => 'isValidated(index)',
                                     'v-on:invalid' => 'isValidated(index)',
                                     'v-on:keyup' => 'isValidated(index)',
+                                    'v-on:click' => 'isValidated(index)',
                                 ],
-                                'data_error' => 'Invalid email address.',
+                                'data_error' => 'Email needs to contain an @.',
                             ])
 
                             <div class="input-field col s6 validate">
@@ -127,7 +132,11 @@
                                     'maxlength' => 12,
                                     'v-on:change' => 'isValidated(index)',
                                     'v-on:invalid' => 'isValidated(index)',
-                                ]
+                                    'v-on:keyup' => 'isValidated(index)',
+                                    'v-on:click' => 'isValidated(index)',
+                                    'pattern' => '\d{3}[\-]\d{3}[\-]\d{4}'
+                                ],
+                                'data_error' => 'Phone number must have this format: xxx-xxx-xxxx'
                             ])
 
                             <div class="input-field col s6">

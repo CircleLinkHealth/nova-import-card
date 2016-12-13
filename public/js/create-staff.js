@@ -50,13 +50,13 @@
         }
             } catch (e) {
                 cachedSetTimeout = defaultSetTimout;
-    }
+            }
             try {
                 if (typeof clearTimeout === 'function') {
                     cachedClearTimeout = clearTimeout;
                 } else {
                     cachedClearTimeout = defaultClearTimeout;
-                }
+        }
             } catch (e) {
                 cachedClearTimeout = defaultClearTimeout;
             }
@@ -81,8 +81,8 @@
                 } catch (e) {
                     // same as above but when it's a version of I.E. that must have the global object for 'this', hopfully our context correct otherwise it will throw a global error
                     return cachedSetTimeout.call(this, fun, 0);
-                }
-            }
+        }
+    }
 
 
         }
@@ -11376,7 +11376,8 @@
                 return {
                     newUsers: [],
                     roles: [],
-                    deleteTheseUsers: []
+                    deleteTheseUsers: [],
+                    invalidCount: 0
                 };
             },
 
@@ -11430,6 +11431,8 @@
 
                 //Is the form for the given user filled out?
                 isValidated: function isValidated(index) {
+                    this.$set('invalidCount', $('.invalid').length);
+
                     this.$set('newUsers[' + index + '].isComplete', this.newUsers[index].first_name && this.newUsers[index].last_name && this.newUsers[index].email && this.newUsers[index].phone_number && this.newUsers[index].role_id && this.newUsers[index].phone_type);
 
                     this.$set('newUsers[' + index + '].errorCount', $('#user-' + index).find('.invalid').length);
