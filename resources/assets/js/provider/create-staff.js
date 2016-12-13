@@ -26,6 +26,8 @@ var createStaffVM = new Vue({
         formCompleted: function () {
             for (var index = 0; index < this.newUsers.length; index++) {
 
+                this.isValidated(index);
+
                 if (!this.newUsers[index].isComplete || this.newUsers[index].errorCount > 0) {
                     return false;
                 }

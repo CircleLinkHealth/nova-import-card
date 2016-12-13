@@ -18,7 +18,7 @@
         </style>
     </head>
 
-    <div id="create-staff-component">
+    <div id="create-staff-component" v-on:click="isValidated(index)">
 
         <div v-if="showErrorBanner" class="row">
             <div class="card-panel red lighten-5 red-text text-darken-4">
@@ -34,7 +34,7 @@
 
         <div class="row">
             <ul id="users" class="collapsible" data-collapsible="accordion">
-                <li v-for="(index, newUser) in newUsers" id="user-@{{index}}">
+                <li v-for="(index, newUser) in newUsers" id="user-@{{index}}" v-on:click="isValidated(index)">
                     <div class="collapsible-header" v-bind:class="{ active: (index == newUsers.length - 1) }">
                         <div class="col s9">
                             <span v-if="newUser.first_name || newUser.last_name">
