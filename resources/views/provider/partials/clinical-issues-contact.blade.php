@@ -5,6 +5,10 @@
     'class' => 'col s6',
     'attributes' => [
         'required' => 'required',
+        'v-on:change' => 'isValidated(index)',
+            'v-on:invalid' => 'isValidated(index)',
+            'v-on:keyup' => 'isValidated(index)',
+            'v-on:click' => 'isValidated(index)',
     ]
 ])
 
@@ -14,6 +18,10 @@
         'class' => 'col s6',
         'attributes' => [
             'required' => 'required',
+            'v-on:change' => 'isValidated(index)',
+            'v-on:invalid' => 'isValidated(index)',
+            'v-on:keyup' => 'isValidated(index)',
+            'v-on:click' => 'isValidated(index)',
         ]
     ])
 </div>
@@ -24,5 +32,12 @@
         'label' => 'E-mail',
         'class' => 'col s12',
         'type' => 'email',
+        'attributes' => [
+            'required' => 'required',
+            'v-on:change' => 'isValidated(index)',
+            'v-on:invalid' => 'isValidated(index)',
+            'v-on:keyup' => 'isValidated(index)',
+            'v-on:click' => 'isValidated(index)',
+        ]
     ])
 </div>

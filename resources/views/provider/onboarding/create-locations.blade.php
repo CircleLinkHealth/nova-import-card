@@ -20,7 +20,11 @@
 
     <div id="create-locations-component" class="row">
 
-        @include('provider.partials.errors.validation')
+        <div v-if="showErrorBanner" class="row">
+            <div class="card-panel red lighten-5 red-text text-darken-4">
+                <b>Whoops! We found some errors with your Input. Please correct them and click Next</b>.
+            </div>
+        </div>
 
         {!! Form::open([
             'url' => route('post.onboarding.store.locations'),
@@ -30,7 +34,7 @@
 
         <div class="row">
             <ul class="collapsible" data-collapsible="accordion">
-                <li v-for="(index, loc) in newLocations" id="location-@{{index}}">
+                <li v-for="(index, loc) in newLocations" id="location-@{{index}}" v-on:click="isValidated(index)">
                     <div class="collapsible-header" v-bind:class="{ active: index == newLocations.length - 1 }">
                         <div class="col s10">
                             <span v-if="loc.name">
@@ -40,17 +44,14 @@
                                 NEW LOCATION
                             </span>
                         </div>
-                        <div class="col s1">
-                            <span v-if="!loc.name
-                            || !loc.address_line_1
-                            || !loc.city
-                            || !loc.state
-                            || !loc.phone
-                            || !loc.postal_code
-                            || (!loc.ehr_login && !sameEHRLogin)
-                            || (!loc.ehr_password && !sameEHRLogin)
-                            " class="red-text">Incomplete</span>
-                            <span v-else class="green-text">Complete!</span>
+                        <div class="col s2">
+                            <div v-if="isValidated(index)">
+                                <span class="green-text">Complete!</span>
+                            </div>
+                            <div v-else>
+                                <span v-if="loc.errorCount > 0" class="red-text"><u>Invalid Input</u></span>
+                                <span v-else class="red-text">Incomplete</span>
+                            </div>
                         </div>
                     </div>
 
@@ -64,7 +65,11 @@
                                     'value' => '@{{loc.name}}',
                                     'attributes' => [
                                         'v-model' => 'loc.name',
-                                        'required' => 'required'
+                                        'required' => 'required',
+                                        'v-on:change' => 'isValidated(index)',
+                                        'v-on:invalid' => 'isValidated(index)',
+                                        'v-on:keyup' => 'isValidated(index)',
+                                        'v-on:click' => 'isValidated(index)',
                                     ]
                                 ])
 
@@ -72,7 +77,11 @@
                                 'name' => 'locations[@{{index}}][timezone]',
                                 'attributes' => [
                                         'v-model' => 'loc.timezone',
-                                        'required' => 'required'
+                                        'required' => 'required',
+                                        'v-on:change' => 'isValidated(index)',
+                                        'v-on:invalid' => 'isValidated(index)',
+                                        'v-on:keyup' => 'isValidated(index)',
+                                        'v-on:click' => 'isValidated(index)',
                                 ]
                             ])
                         </div>
@@ -85,8 +94,11 @@
                                     'value' => '@{{loc.address_line_1}}',
                                     'attributes' => [
                                         'v-model' => 'loc.address_line_1',
-                                        'required' => 'required'
-
+                                        'required' => 'required',
+                                        'v-on:change' => 'isValidated(index)',
+                                        'v-on:invalid' => 'isValidated(index)',
+                                        'v-on:keyup' => 'isValidated(index)',
+                                        'v-on:click' => 'isValidated(index)',
                                     ]
                                 ])
 
@@ -97,6 +109,10 @@
                                     'value' => '@{{loc.address_line_2}}',
                                     'attributes' => [
                                         'v-model' => 'loc.address_line_2',
+                                        'v-on:change' => 'isValidated(index)',
+                                        'v-on:invalid' => 'isValidated(index)',
+                                        'v-on:keyup' => 'isValidated(index)',
+                                        'v-on:click' => 'isValidated(index)',
                                     ]
                                 ])
                         </div>
@@ -109,7 +125,11 @@
                                     'value' => '@{{loc.city}}',
                                     'attributes' => [
                                         'v-model' => 'loc.city',
-                                        'required' => 'required'
+                                        'required' => 'required',
+                                        'v-on:change' => 'isValidated(index)',
+                                        'v-on:invalid' => 'isValidated(index)',
+                                        'v-on:keyup' => 'isValidated(index)',
+                                        'v-on:click' => 'isValidated(index)',
                                     ]
                                 ])
 
@@ -120,7 +140,11 @@
                                     'value' => '@{{loc.state}}',
                                     'attributes' => [
                                         'v-model' => 'loc.state',
-                                        'required' => 'required'
+                                        'required' => 'required',
+                                        'v-on:change' => 'isValidated(index)',
+                                        'v-on:invalid' => 'isValidated(index)',
+                                        'v-on:keyup' => 'isValidated(index)',
+                                        'v-on:click' => 'isValidated(index)',
                                     ]
                                 ])
                         </div>
@@ -133,7 +157,11 @@
                                 'value' => '@{{loc.postal_code}}',
                                     'attributes' => [
                                         'v-model' => 'loc.postal_code',
-                                        'required' => 'required'
+                                        'required' => 'required',
+                                        'v-on:change' => 'isValidated(index)',
+                                        'v-on:invalid' => 'isValidated(index)',
+                                        'v-on:keyup' => 'isValidated(index)',
+                                        'v-on:click' => 'isValidated(index)',
                                     ]
                             ])
 
@@ -144,8 +172,14 @@
                                 'value' => '@{{loc.phone}}',
                                     'attributes' => [
                                         'v-model' => 'loc.phone',
-                                        'required' => 'required'
-                                    ]
+                                        'required' => 'required',
+                                        'pattern' => '\d{3}[\-]\d{3}[\-]\d{4}',
+                                        'v-on:change' => 'isValidated(index)',
+                                        'v-on:invalid' => 'isValidated(index)',
+                                        'v-on:keyup' => 'isValidated(index)',
+                                        'v-on:click' => 'isValidated(index)',
+                                    ],
+                                'data_error' => 'Phone number must have this format: xxx-xxx-xxxx'
                             ])
                         </div>
 
@@ -161,7 +195,11 @@
                                 'attributes' => [
                                     'v-model' => 'loc.ehr_login',
                                     'required' => 'required',
-                                    ':disabled' => 'sameEHRLogin && index > 0'
+                                    ':disabled' => 'sameEHRLogin && index > 0',
+                                    'v-on:change' => 'isValidated(index)',
+                                        'v-on:invalid' => 'isValidated(index)',
+                                        'v-on:keyup' => 'isValidated(index)',
+                                        'v-on:click' => 'isValidated(index)',
                                 ]
                             ])
 
@@ -175,6 +213,10 @@
                                     'autocomplete' => 'new-password',
                                     'required' => 'required',
                                     ':disabled' => 'sameEHRLogin && index > 0',
+                                    'v-on:change' => 'isValidated(index)',
+                                        'v-on:invalid' => 'isValidated(index)',
+                                        'v-on:keyup' => 'isValidated(index)',
+                                        'v-on:click' => 'isValidated(index)',
                                 ]
                             ])
 
@@ -185,6 +227,10 @@
                                    'value' => '1',
                                    'attributes' => [
                                         'v-model' => 'sameEHRLogin',
+                                        'v-on:change' => 'isValidated(index)',
+                                        'v-on:invalid' => 'isValidated(index)',
+                                        'v-on:keyup' => 'isValidated(index)',
+                                        'v-on:click' => 'isValidated(index)',
                                     ]
                                ])
                             </p>
@@ -205,6 +251,10 @@
                                         'v-model' => 'patientClinicalIssuesContact',
                                         'required' => 'required',
                                         'checked' => 'checked',
+                                        'v-on:change' => 'isValidated(index)',
+                                        'v-on:invalid' => 'isValidated(index)',
+                                        'v-on:keyup' => 'isValidated(index)',
+                                        'v-on:click' => 'isValidated(index)',
                                     ]
                                 ])
                             </div>
@@ -218,6 +268,10 @@
                                     'attributes' => [
                                         'v-model' => 'patientClinicalIssuesContact',
                                         'required' => 'required',
+                                        'v-on:change' => 'isValidated(index)',
+                                        'v-on:invalid' => 'isValidated(index)',
+                                        'v-on:keyup' => 'isValidated(index)',
+                                        'v-on:click' => 'isValidated(index)',
                                     ]
                                 ])
                                 <transition>
@@ -240,6 +294,10 @@
                                     'attributes' => [
                                         'v-model' => 'patientClinicalIssuesContact',
                                         'required' => 'required',
+                                        'v-on:change' => 'isValidated(index)',
+                                        'v-on:invalid' => 'isValidated(index)',
+                                        'v-on:keyup' => 'isValidated(index)',
+                                        'v-on:click' => 'isValidated(index)',
                                     ]
                                 ])
                                 <transition>
@@ -257,7 +315,11 @@
                                    'name' => 'locations[@{{index}}][same_clinical_contact]',
                                    'value' => '1',
                                    'attributes' => [
-                                        'v-model' => 'sameClinicalIssuesContact'
+                                        'v-model' => 'sameClinicalIssuesContact',
+                                        'v-on:change' => 'isValidated(index)',
+                                        'v-on:invalid' => 'isValidated(index)',
+                                        'v-on:keyup' => 'isValidated(index)',
+                                        'v-on:click' => 'isValidated(index)',
                                    ]
                                ])
                             </div>
@@ -281,7 +343,9 @@
         </div>
 
         <div class="row">
-            <button class="btn blue waves-effect waves-light col s12" id="submit">
+            <button v-on:click="submitForm('{{route('post.onboarding.store.locations')}}')"
+                    class="btn blue waves-effect waves-light col s12" id="submit"
+                    v-bind:class="{disabled: !formCompleted}">
                 Next
             </button>
         </div>

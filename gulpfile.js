@@ -36,7 +36,7 @@ elixir(function(mix) {
     //     './resources/assets/less/css/animate.min.css'
     // ], 'public/css/provider-dashboard.css');
 
-    // mix.browserify('provider/create-locations.js');
+    mix.browserify('provider/create-locations.js');
     mix.browserify('provider/create-staff.js');
 
     // mix.browserify('uploader.js');
