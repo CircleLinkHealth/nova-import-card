@@ -11,7 +11,6 @@ namespace App\Billing;
 use App\Activity;
 use App\Call;
 use App\MailLog;
-use App\Note;
 use App\Observation;
 use App\User;
 use Carbon\Carbon;
@@ -97,5 +96,8 @@ class ProviderStatsHelper
         ->count();
 
     }
+
+
+
 
 }

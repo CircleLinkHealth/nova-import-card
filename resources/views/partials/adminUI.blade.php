@@ -282,7 +282,10 @@
 
                             <li><a href="{{ URL::route('excel.report.t2', array()) }}">Paused Patients (export)</a></li>
 
-                            <li><a href="{{ URL::route('reports.sales.create', array()) }}">Account Status</a></li>
+                            <li><a href="{{ URL::route('reports.sales.location.create', array()) }}">Location Sales Report</a></li>
+
+                            <li><a href="{{ URL::route('reports.sales.provider.create', array()) }}">Provider Sales Report</a></li>
+
                         </ul>
                     </li>
 

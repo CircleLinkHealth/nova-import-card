@@ -2,13 +2,13 @@
 
 @section('content')
     <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/font-awesome/4.4.0/css/font-awesome.min.css">
-    {!! Form::open(array('url' => URL::route('reports.sales.location.make', array()),'class' => 'form-horizontal')) !!}
+    {!! Form::open(array('url' => URL::route('reports.sales.make', array()),'class' => 'form-horizontal')) !!}
     <div class="container-fluid">
         <div class="row">
             <div class="col-md-8 col-md-offset-2">
 
                 <div class="panel panel-default">
-                    <div class="panel-heading">Account Status Report Generator</div>
+                    <div class="panel-heading">Provider Sales Report Generator</div>
                     <div class="panel-body">
                         <form class="form-horizontal">
                             {{ csrf_field() }}
@@ -21,6 +21,19 @@
                                     <div class="col-md-6">
                                         <select id="nurse" name="programs[]" class=" dropdown Valid form-control" multiple required>
                                             @foreach($programs as $key => $value)
+                                                <option value="{{$key}}">{{$value}}</option>
+                                            @endforeach
+                                        </select>
+                                    </div>
+                                </div>
+
+                                <div class="form-group">
+                                    <label class="col-md-2 control-label" for="days">
+                                        Sections<br>
+                                        Select All <kbd><kbd>cmd</kbd> + <kbd>A</kbd></kbd></label>
+                                    <div class="col-md-6">
+                                        <select id="nurse" name="programs[]" class=" dropdown Valid form-control" multiple required>
+                                            @foreach($sections as $key => $value)
                                                 <option value="{{$key}}">{{$value}}</option>
                                             @endforeach
                                         </select>

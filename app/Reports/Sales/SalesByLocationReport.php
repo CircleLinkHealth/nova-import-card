@@ -5,6 +5,7 @@ use App\Practice;
 use Barryvdh\Snappy\Facades\SnappyPdf as PDF;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
+use App\Billing\ProviderStatsHelper;
 
 
 /**
@@ -63,6 +64,10 @@ class SalesByLocationReport
         $this->formatSalesData();
 
         return $this->generatePdf();
+
+    }
+
+    public function introParagraph(){
 
     }
 
@@ -145,24 +150,6 @@ class SalesByLocationReport
 
     }
 
-//    public function getStatsByProvider(){
-//
-//        foreach ($this->providers as $provider){
-//
-//            $patients = PatientInfo::whereHas('user', function ($q){
-//
-//                $q->where('program_id', $this->id);
-//
-//            })
-//                ->whereNotNull('ccm_status')
-//                ->where('ccm_status')
-//                ->get();
-//
-//
-//        }
-//
-//    }
-
     public function getEnrollmentNumbers()
     {
         $this->enrollmentCount = PatientInfo::whereHas('user', function ($q) {
@@ -209,7 +196,7 @@ class SalesByLocationReport
 
     }
 
-//
+
 //    public function mail(){
 //
 //        $nurse = $this->nurse;

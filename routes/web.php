@@ -4,6 +4,12 @@ if (app()->environment() != 'production') {
     Route::get('rohan', function () {
 
 
+        $provider = \App\User::find(852);
+
+        return (new \App\Billing\ProviderStatsHelper(
+            Carbon\Carbon::now()->subYear(), Carbon\Carbon::now()))
+            ->noteStats($provider);
+
     });
 }
 
@@ -499,15 +505,34 @@ Route::group(['middleware' => 'auth'], function () {
                 'as'   => 'MonthlyBillingReportsController.makeMonthlyReport',
             ]);
 
-            Route::get('sales/create', [
-                'uses' => 'ReportsController@createSalesReport',
-                'as'   => 'reports.sales.create',
-            ]);
+            Route::group([
+                'prefix' => 'sales',
+            ], function () {
 
-            Route::post('sales/make', [
-                'uses' => 'ReportsController@makeSalesReport',
-                'as'   => 'reports.sales.make',
-            ]);
+                //PROVIDERS
+
+                Route::get('sales/location/create', [
+                    'uses' => 'SalesReportsController@createSalesReport',
+                    'as'   => 'reports.sales.location.create',
+                ]);
+
+                Route::post('sales/location/make', [
+                    'uses' => 'SalesReportsController@makeSalesReport',
+                    'as'   => 'reports.sales.location.make',
+                ]);
+
+                //LOCATIONS
+
+                Route::get('sales/provider/create', [
+                    'uses' => 'SalesReportsController@createLocationReport',
+                    'as'   => 'reports.sales.provider.create',
+                ]);
+
+                Route::post('sales/provider/make', [
+                    'uses' => 'SalesReportsController@makeLocationReport',
+                    'as'   => 'reports.sales.provider.make',
+                ]);
+            });
 
             Route::get('monthly-billing/create', [
                 'uses' => 'Admin\Reports\MonthlyBillingReportsController@create',
