@@ -7,9 +7,14 @@ use App\Contracts\Repositories\InviteRepository;
 use App\Contracts\Repositories\LocationRepository;
 use App\Contracts\Repositories\PracticeRepository;
 use App\Contracts\Repositories\UserRepository;
+use App\Entities\Invite;
 use App\Http\Controllers\Controller;
+use App\Notifications\Onboarding\ImplementationLeadWelcome;
+use App\Notifications\Onboarding\StaffInvite;
 use App\PatientCareTeamMember;
+use App\PhoneNumber;
 use App\Role;
+use App\User;
 use Illuminate\Http\Request;
 use Prettus\Validator\Exceptions\ValidatorException;
 
@@ -57,13 +62,42 @@ class OnboardingController extends Controller
     }
 
     /**
+     * Show the form for an invited user to create their account.
+     *
+     * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
+     */
+    public function getCreateInvitedUser($code)
+    {
+        $invite = Invite::whereCode($code)
+            ->first();
+
+        if (!$invite) {
+            abort(403);
+        }
+
+        $user = User::whereEmail($invite->email)
+            ->first();
+
+        return view('provider.onboarding.invited-staff', [
+            'user' => $user,
+        ]);
+    }
+
+    /**
      * Show the form to create practice lead user.
      *
      * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
      */
-    public function getCreatePracticeLeadUser()
+    public function getCreatePracticeLeadUser($code)
     {
-        return view('provider.onboarding.create-practice-lead');
+        $invite = Invite::whereCode($code)
+            ->first();
+
+        if (!$invite) {
+            abort(403);
+        }
+
+        return view('provider.onboarding.create-practice-lead', compact('invite'));
     }
 
     /**
@@ -102,21 +136,38 @@ class OnboardingController extends Controller
                 'user_id' => auth()->user()->id,
             ])->first();
 
+        //Get the users that were as clinical emergency contacts from the locations page
         $existingUsers = $primaryPractice->users->map(function ($user) {
             return [
-                'id'         => $user->id,
-                'role'       => [
+                'id'           => $user->id,
+                'role'         => [
                     'id'   => 0,
                     'name' => 'No Role Selected',
                 ],
-                'email'      => $user->email,
-                'last_name'  => $user->last_name,
-                'first_name' => $user->first_name,
+                'email'        => $user->email,
+                'last_name'    => $user->last_name,
+                'first_name'   => $user->first_name,
+                'phone_number' => '',
+                'phone_type'   => '',
             ];
         });
 
+        //get the relevant roles
+        $roles = Role::whereIn('name', [
+            'med_assistant',
+            'office_admin',
+            'practice-lead',
+            'provider',
+            'registered-nurse',
+            'specialist',
+        ])->get()
+            ->keyBy('id')
+            ->sortBy('display_name')
+            ->all();
+
         \JavaScript::put([
             'existingUsers' => $existingUsers,
+            'roles'         => $roles,
         ]);
 
         return view('provider.onboarding.create-staff-users', [
@@ -135,13 +186,13 @@ class OnboardingController extends Controller
             $sameEHRLogin = isset($request->input('locations')[0]['same_ehr_login']);
             $sameClinicalContact = isset($request->input('locations')[0]['same_clinical_contact']);
 
-            foreach ($request->input('locations') as $newLocation) {
+            $primaryPractice = $this->practices
+                ->skipPresenter()
+                ->findWhere([
+                    'user_id' => auth()->user()->id,
+                ])->first();
 
-                $primaryPractice = $this->practices
-                    ->skipPresenter()
-                    ->findWhere([
-                        'user_id' => auth()->user()->id,
-                    ])->first();
+            foreach ($request->input('locations') as $newLocation) {
 
                 $location = $this->locations
                     ->skipPresenter()
@@ -193,11 +244,43 @@ class OnboardingController extends Controller
         } catch (ValidatorException $e) {
             return redirect()
                 ->back()
-                ->withInput($request->input())
+                ->withInput()
                 ->withErrors($e->getMessageBag()->getMessages());
         }
 
-        return redirect()->route('get.onboarding.create.staff');
+        return redirect()->route('get.onboarding.create.staff', [
+            'practiceSlug' => $primaryPractice->name,
+        ]);
+    }
+
+    /**
+     * Store Invited User
+     *
+     * @param Request $request
+     *
+     * @return \Illuminate\Http\RedirectResponse
+     */
+    public function postStoreInvitedUser(Request $request)
+    {
+        $input = $request->input();
+
+        try {
+            $user = $this->users->skipPresenter()->create([
+                'email'      => $input['email'],
+                'first_name' => $input['firstName'],
+                'last_name'  => $input['lastName'],
+                'password'   => bcrypt($input['password']),
+            ]);
+        } catch (ValidatorException $e) {
+            return redirect()
+                ->back()
+                ->withInput($input)
+                ->withErrors($e->getMessageBag()->getMessages());
+        }
+
+        auth()->login($user);
+
+        return redirect()->route('/');
     }
 
     /**
@@ -211,13 +294,16 @@ class OnboardingController extends Controller
     {
         $input = $request->input();
 
+        //Create the User
         try {
             $user = $this->users->skipPresenter()->create([
                 'email'          => $input['email'],
                 'first_name'     => $input['firstName'],
                 'last_name'      => $input['lastName'],
                 'password'       => bcrypt($input['password']),
-                'count_ccm_time' => (bool)$input['countCcmTime'],
+                'count_ccm_time' => isset($input['countCcmTime'])
+                    ? (bool)$input['countCcmTime']
+                    : false,
             ]);
         } catch (ValidatorException $e) {
             return redirect()
@@ -226,12 +312,22 @@ class OnboardingController extends Controller
                 ->withErrors($e->getMessageBag()->getMessages());
         }
 
+        //Attach role
         $role = Role::whereName('practice-lead')->first();
 
         $user->roles()
             ->attach($role->id);
 
         auth()->login($user);
+
+        if (isset($input['code'])) {
+            $invite = Invite::whereCode($input['code'])
+                ->first();
+
+            if ($invite) {
+                $invite->delete();
+            }
+        }
 
         return redirect()->route('get.onboarding.create.practice');
     }
@@ -241,7 +337,7 @@ class OnboardingController extends Controller
      *
      * @param Request $request
      *
-     * @return $this|\Illuminate\Http\RedirectResponse
+     * @return OnboardingController|\Illuminate\Http\RedirectResponse
      */
     public function postStorePractice(Request $request)
     {
@@ -251,9 +347,10 @@ class OnboardingController extends Controller
             $practice = $this->practices
                 ->skipPresenter()
                 ->create([
-                    'name'         => str_slug($input['name']),
-                    'user_id'      => auth()->user()->id,
-                    'display_name' => $input['name'],
+                    'name'           => str_slug($input['name']),
+                    'user_id'        => auth()->user()->id,
+                    'display_name'   => $input['name'],
+                    'federal_tax_id' => $input['federal_tax_id'],
                 ]);
         } catch (ValidatorException $e) {
             return redirect()
@@ -262,7 +359,12 @@ class OnboardingController extends Controller
                 ->withInput();
         }
 
-        return redirect()->route('get.onboarding.create.locations');
+        auth()->user()->program_id = $practice->id;
+        auth()->user()->save();
+
+        return redirect()->route('get.onboarding.create.locations', [
+            'practiceSlug' => $practice->name,
+        ]);
     }
 
     /**
@@ -280,17 +382,22 @@ class OnboardingController extends Controller
                 'user_id' => auth()->user()->id,
             ])->first();
 
+        $implementationLead = $primaryPractice->lead;
+
+        $adminRole = Role::whereName('practice-lead')
+            ->first();
+
         foreach ($request->input('users') as $newUser) {
+            //create the user
             try {
-                $practice = $this->users
+                $user = $this->users
                     ->skipPresenter()
                     ->updateOrCreate([
-                        'user_id' => isset($newUser['user_id'])
+                        'id' => isset($newUser['user_id'])
                             ? $newUser['user_id']
                             : null,
                     ],
                         [
-                            'name'         => str_slug($newUser['name']),
                             'program_id'   => $primaryPractice->id,
                             'email'        => $newUser['email'],
                             'first_name'   => $newUser['first_name'],
@@ -298,14 +405,60 @@ class OnboardingController extends Controller
                             'password'     => 'password_not_set',
                             'display_name' => "{$newUser['first_name']} {$newUser['last_name']}",
                         ]);
-
             } catch (ValidatorException $e) {
                 return redirect()
                     ->back()
                     ->withErrors($e->getMessageBag()->getMessages())
                     ->withInput();
             }
+
+            //Attach the role
+            try {
+                $user->roles()->attach($newUser['role_id']);
+
+                if ($newUser['grand_admin_rights']) {
+                    $user->roles()->attach($adminRole);
+                }
+            } catch (\Exception $e) {
+                if ($e instanceof \Illuminate\Database\QueryException) {
+                    $errorCode = $e->errorInfo[1];
+                    if ($errorCode == 1062) {
+                        //do nothing
+                        //we don't actually want to terminate the program if we detect duplicates
+                        //we just don't wanna add the row again
+                    }
+                }
+            }
+
+            //Attach the locations
+            try {
+                foreach ($newUser['locations'] as $locId) {
+                    if (!$user->locations->contains($locId)) {
+                        $user->locations()->attach($locId);
+                    }
+                }
+            } catch (\Exception $e) {
+                if ($e instanceof \Illuminate\Database\QueryException) {
+                    $errorCode = $e->errorInfo[1];
+                    if ($errorCode == 1062) {
+                        //do nothing
+                        //we don't actually want to terminate the program if we detect duplicates
+                        //we just don't wanna add the row again
+                    }
+                }
+            }
+
+            //attach phone
+            $user->phoneNumbers()->create([
+                'number'     => StringManipulation::formatPhoneNumber($newUser['phone_number']),
+                'type'       => PhoneNumber::getTypes()[$newUser['phone_type']],
+                'is_primary' => true,
+            ]);
+
+            $user->notify(new StaffInvite($implementationLead, $primaryPractice));
         }
+
+        $implementationLead->notify(new ImplementationLeadWelcome($primaryPractice));
 
         return view('provider.onboarding.welcome');
     }

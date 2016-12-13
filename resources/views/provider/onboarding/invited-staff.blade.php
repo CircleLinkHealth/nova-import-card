@@ -1,8 +1,8 @@
 @extends('provider.layouts.onboarding')
 
-@section('title', 'Lead')
+@section('title', 'Welcome!')
 
-@section('instructions', "Welcome! Let's start by creating <u>your implementation lead</u>.")
+@section('instructions', "Welcome! Let's create <u>your user account</u>.")
 
 @section('module')
 
@@ -15,13 +15,17 @@
             #step0 {
                 color: #039be5 !important;
             }
+
+            nav {
+                display: none;
+            }
         </style>
     </head>
 
     @include('provider.partials.errors.validation')
 
     {!! Form::open([
-        'url' => route('post.onboarding.store.program.lead.user'),
+        'url' => route('get.onboarding.store.invited.user'),
         'method' => 'post',
         'id' => 'registration',
     ]) !!}
@@ -31,6 +35,7 @@
             'name' => 'firstName',
             'label' => 'First name',
             'class' => 'col s6',
+            'value' => $user->first_name,
             'attributes' => [
                 'required' => 'required',
             ]
@@ -40,18 +45,10 @@
             'name' => 'lastName',
             'label' => 'Last name',
             'class' => 'col s6',
+            'value' => $user->last_name,
             'attributes' => [
                 'required' => 'required',
             ]
-        ])
-    </div>
-
-    <div class="right-align">
-        @include('provider.partials.mdl.form.checkbox', [
-            'label' => 'Is the lead a provider or clinical staff?',
-            'name' => 'countCcmTime',
-            'value' => '1',
-            'class' => 'col s12',
         ])
     </div>
 
@@ -61,7 +58,7 @@
             'label' => 'Email (Will also be the username)',
             'class' => 'col s12',
             'type' => 'email',
-            'value' => isset($invite) ? $invite->email : '',
+            'value' => $user->email,
             'attributes' => [
                 'autocomplete' => 'new-email',
                 'required' => 'required',
@@ -82,13 +79,9 @@
         ])
     </div>
 
-    @if(isset($invite))
-        <input type="hidden" name="code" value="{{$invite->code}}">
-    @endif
-
     <div class="row">
-        <button class="btn blue waves-effect waves-light col s12" type="submit" name="submit" id="update-practice">
-            Next
+        <button class="btn blue waves-effect waves-light col s12" type="submit" name="submit">
+            Create account
         </button>
     </div>
 

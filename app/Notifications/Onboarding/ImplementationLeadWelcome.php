@@ -2,10 +2,10 @@
 
 namespace App\Notifications\Onboarding;
 
+use App\Practice;
 use Illuminate\Bus\Queueable;
-use Illuminate\Notifications\Notification;
-use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Messages\MailMessage;
+use Illuminate\Notifications\Notification;
 
 /*
  * Subject: Welcome to CircleLink Health!
@@ -23,26 +23,27 @@ use Illuminate\Notifications\Messages\MailMessage;
 
  */
 
-class ImplementationLead extends Notification
+class ImplementationLeadWelcome extends Notification
 {
     use Queueable;
 
-    private $link;
+    private $practice;
 
     /**
      * Create a new notification instance.
      *
-     * @return void
+     * @param Practice $practice
      */
-    public function __construct($url)
+    public function __construct(Practice $practice)
     {
-        $this->link = $url;
+        $this->practice = $practice;
     }
 
     /**
      * Get the notification's delivery channels.
      *
-     * @param  mixed  $notifiable
+     * @param  mixed $notifiable
+     *
      * @return array
      */
     public function via($notifiable)
@@ -53,24 +54,25 @@ class ImplementationLead extends Notification
     /**
      * Get the mail representation of the notification.
      *
-     * @param  mixed  $notifiable
+     * @param  mixed $notifiable
+     *
      * @return \Illuminate\Notifications\Messages\MailMessage
      */
     public function toMail($notifiable)
     {
-
         return (new MailMessage)
             ->subject("Welcome to CircleLink Health!")
             ->greeting("Dear $notifiable->fullName:")
-            ->line(" You just launched [organization name]’s Personalized Care Management program with CircleLink Health!")
-            ->line(" If you have any questions, please <a href='mailto:contact@circlelinkhealth.com'>email</a> us")
-            ->action('Go To Dashboard', $this->link);
+            ->line("You just launched {$this->practice->formatted_name}’s Personalized Care Management program with CircleLink Health!")
+            ->line("If you have any questions, please <a href=\"mailto:contact@circlelinkhealth.com\">email us</a>.")
+            ->action('Go To Dashboard', url('/'));
     }
 
     /**
      * Get the array representation of the notification.
      *
-     * @param  mixed  $notifiable
+     * @param  mixed $notifiable
+     *
      * @return array
      */
     public function toArray($notifiable)

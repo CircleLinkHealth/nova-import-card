@@ -51,6 +51,7 @@
         syncSelectElements();
     });
 
+    //Syncronize MDL's select with HTML select on the DOM
     function syncSelectElements() {
         var suspend = false;
 

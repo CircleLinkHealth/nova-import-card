@@ -3,6 +3,9 @@
 namespace App\Http\Controllers;
 
 use App\Entities\Invite;
+use App\Notifications\Onboarding\ImplementationLeadInvite;
+use App\Role;
+use App\User;
 use Illuminate\Http\Request;
 
 class InviteController extends Controller
@@ -32,7 +35,8 @@ class InviteController extends Controller
     /**
      * Store a newly created resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
+     * @param  \Illuminate\Http\Request $request
+     *
      * @return \Illuminate\Http\Response
      */
     public function store(Request $request)
@@ -42,22 +46,24 @@ class InviteController extends Controller
 
         $exists = Invite::whereEmail($input['email'])->first();
 
-        if(!empty($exists)){
+        if (!empty($exists)) {
             $message = $input['email'] . " has already been invited.";
+
             return view('admin.invites.create', ['message' => $message]);
         }
 
-        //@todo actually send email
-
         $invite = Invite::create([
-
             'inviter_id' => auth()->user()->id,
-            'email' => $input['email'],
-            'subject' => $input['subject'],
-            'message' => $input['body'],
-            'code' => generateRandomString(20)
-
+            'role_id'    => Role::whereName('practice-lead')->first()->id,
+            'email'      => $input['email'],
+            'subject'    => $input['subject'],
+            'message'    => $input['body'],
+            'code'       => generateRandomString(20),
         ]);
+
+        $user = new User(['email' => $invite->email]);
+
+        \Illuminate\Support\Facades\Notification::send([$user], new ImplementationLeadInvite($invite));
 
         return view('admin.invites.create', ['message' => "Invite sent to: $invite->email"]);
 
@@ -66,7 +72,8 @@ class InviteController extends Controller
     /**
      * Display the specified resource.
      *
-     * @param  int  $id
+     * @param  int $id
+     *
      * @return \Illuminate\Http\Response
      */
     public function show($id)
@@ -77,7 +84,8 @@ class InviteController extends Controller
     /**
      * Show the form for editing the specified resource.
      *
-     * @param  int  $id
+     * @param  int $id
+     *
      * @return \Illuminate\Http\Response
      */
     public function edit($id)
@@ -88,19 +96,23 @@ class InviteController extends Controller
     /**
      * Update the specified resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  int  $id
+     * @param  \Illuminate\Http\Request $request
+     * @param  int $id
+     *
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, $id)
-    {
+    public function update(
+        Request $request,
+        $id
+    ) {
         //
     }
 
     /**
      * Remove the specified resource from storage.
      *
-     * @param  int  $id
+     * @param  int $id
+     *
      * @return \Illuminate\Http\Response
      */
     public function destroy($id)

@@ -12,6 +12,7 @@ class Practice extends Model
     protected $fillable = [
         'name',
         'display_name',
+        'federal_tax_id',
         'user_id',
     ];
 
@@ -79,6 +80,11 @@ class Practice extends Model
                 return false;
             }
         }
+    }
+
+    public function getFormattedNameAttribute()
+    {
+        return ucwords($this->display_name);
     }
 
     public function pcp()
@@ -152,7 +158,7 @@ class Practice extends Model
 
     public function lead()
     {
-        return $this->belongsTo(User::class);
+        return $this->belongsTo(User::class, 'user_id');
     }
 
     public function getSubdomainAttribute()

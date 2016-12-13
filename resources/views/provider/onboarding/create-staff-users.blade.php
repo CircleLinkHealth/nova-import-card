@@ -35,7 +35,7 @@
                         <div class="col s10">
                             <span v-if="newUser.first_name || newUser.last_name">
                                 @{{newUser.first_name | uppercase}} @{{newUser.last_name | uppercase}}
-                                | @{{newUser.role.name}}
+                                | @{{ newUser.role_id > 0 ? roles[newUser.role_id].display_name : 'No role selected'}}
                             </span>
                             <span v-else>
                                 NEW USER
@@ -45,10 +45,11 @@
                             <span v-if="!newUser.first_name
                             || !newUser.last_name
                             || !newUser.email
-                            || !newUser.phone.number
-                            || !newUser.role.id
-                            || !newUser.phone.id"
-                                  class="red-text">incomplete</span>
+                            || !newUser.phone_number
+                            || !newUser.role_id
+                            || !newUser.phone_type"
+                                  class="red-text">Incomplete</span>
+                            <span v-else class="green-text">Complete!</span>
                         </div>
                     </div>
 
@@ -92,14 +93,9 @@
                             ])
 
                             <div class="input-field col s6">
-                                <select id="roles" v-model="newUser.role" name="users[@{{index}}][role_id] required">
-                                    <option v-bind:value="{id:0, name:'No Role Selected'}" disabled selected></option>
-                                    <option v-bind:value="{id:1, name:'Medical Assistant'}">Medical Assistant</option>
-                                    <option v-bind:value="{id:1, name:'Office Staff'}">Office Staff</option>
-                                    <option v-bind:value="{id:1, name:'Practice Lead'}">Practice Lead</option>
-                                    <option v-bind:value="{id:1, name:'Provider (PCP)'}">Provider (PCP)</option>
-                                    <option v-bind:value="{id:1, name:'Registered Nurse'}">Registered Nurse</option>
-                                    <option v-bind:value="{id:1, name:'Specialist'}">Specialist</option>
+                                <select id="roles" v-model="newUser.role_id" name="users[@{{index}}][role_id]" required>
+                                    <option value="0" disabled selected></option>
+                                    <option v-for="role in roles" value="@{{role.id}}">@{{role.display_name}}</option>
                                 </select>
                                 <label>Role</label>
                             </div>
@@ -111,18 +107,19 @@
                                 'label' => 'Phone',
                                 'class' => 'col s6',
                                 'attributes' => [
-                                    'v-model' => 'newUser.phone.number',
-                                    'v-bind:value' => 'newUser.phone.number',
+                                    'v-model' => 'newUser.phone_number',
+                                    'v-bind:value' => 'newUser.phone_number',
                                     'required' => 'required'
                                 ]
                             ])
 
                             <div class="input-field col s6">
-                                <select id="phones" v-model="newUser.phone">
-                                    <option v-bind:value="{id:0, name:'No Role Selected'}" disabled selected></option>
-                                    <option v-bind:value="{id:1, name:'Medical Assistant'}">Cell</option>
-                                    <option v-bind:value="{id:1, name:'Medical Assistant'}">Home</option>
-                                    <option v-bind:value="{id:1, name:'Office Staff'}">Work</option>
+                                <select id="phones" v-model="newUser.phone_type" name="users[@{{index}}][phone_type]"
+                                        required>
+                                    <option value="" disabled selected></option>
+                                    @foreach(App\PhoneNumber::getTypes() as $index => $type)
+                                        <option value="{{$index}}">{{ucfirst($type)}}</option>
+                                    @endforeach
                                 </select>
                                 <label>Phone Type</label>
                             </div>
@@ -152,7 +149,7 @@
 
                         <div class="row">
                             <div class="input-field col s12">
-                                <select multiple>
+                                <select name="users[@{{index}}][locations][]" required multiple>
                                     @foreach($locations as $location)
                                         <option value="{{ $location->id }}" selected>{{$location->name}}</option>
                                     @endforeach

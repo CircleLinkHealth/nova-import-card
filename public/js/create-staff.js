@@ -11080,7 +11080,8 @@
 
             data: function data() {
                 return {
-                    newUsers: []
+                    newUsers: [],
+                    roles: []
                 };
             },
 
@@ -11088,6 +11089,8 @@
                 for (var i = 0, len = cpm.existingUsers.length; i < len; i++) {
                     this.newUsers.$set(i, cpm.existingUsers[i]);
                 }
+
+                this.$set('roles', cpm.roles);
 
                 this.newUsers.push({});
             },

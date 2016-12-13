@@ -68,14 +68,10 @@ class Calls
     private function response($response)
     {
         //check for errors
-        if (isset($response['error']) || !$response) {
-            \Log::alert(__METHOD__ . __LINE__ . 'Response logged below');
+        if (isset($response['error'])) {
+            \Log::alert(__METHOD__ . __LINE__ . 'Response logged below ' . PHP_EOL);
 
-            if (!$response) {
-                \Log::error('ATHENA API: Authentication failed.');
-            } else {
-                \Log::error(\GuzzleHttp\json_encode($response));
-            }
+            \Log::error(\GuzzleHttp\json_encode($response));
 
             if (!empty($response)) {
                 abort(400, json_encode($response));
@@ -232,7 +228,7 @@ class Calls
          * HACK
          * @todo: Figure out why the above doesn't work
          */
-        $command = "curl -v -k 'https://api.athenahealth.com/preview1/$practiceId/patients/$patientId/documents' -XPOST -F documentsubclass=$documentSubClass -F departmentid=$departmentId -F 'attachmentcontents=@$attachmentContent' -H 'Authorization: Bearer {$this->api->get_token()}'";
+        $command = "curl -v -k 'https://api.athenahealth.com/v1/$practiceId/patients/$patientId/documents' -XPOST -F documentsubclass=$documentSubClass -F departmentid=$departmentId -F 'attachmentcontents=@$attachmentContent' -H 'Authorization: Bearer {$this->api->get_token()}'";
 
         $response = exec($command);
 

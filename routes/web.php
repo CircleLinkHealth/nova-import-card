@@ -1,6 +1,5 @@
 <?php
 
-
 if (app()->environment() != 'production') {
     Route::get('rohan', function () {
 
@@ -1222,15 +1221,26 @@ Route::group([
     'prefix' => 'onboarding',
 ], function () {
 
-    Route::get('create-practice-lead-user', [
+    Route::get('create-invited-user/{code}', [
+        'uses' => 'Provider\OnboardingController@getCreateInvitedUser',
+        'as'   => 'get.onboarding.create.invited.user',
+    ]);
+
+    Route::get('create-practice-lead-user/{code}', [
         'uses' => 'Provider\OnboardingController@getCreatePracticeLeadUser',
         'as'   => 'get.onboarding.create.program.lead.user',
+    ]);
+
+    Route::post('store-invited-user', [
+        'uses' => 'Provider\OnboardingController@postStoreInvitedUser',
+        'as'   => 'get.onboarding.store.invited.user',
     ]);
 
     Route::post('store-practice-lead-user', [
         'uses' => 'Provider\OnboardingController@postStorePracticeLeadUser',
         'as'   => 'post.onboarding.store.program.lead.user',
     ]);
+
 
     Route::group([
         'middleware' => 'auth',
@@ -1245,7 +1255,7 @@ Route::group([
             'as'   => 'post.onboarding.store.practice',
         ]);
 
-        Route::get('create-locations', [
+        Route::get('{practiceSlug}/locations/create', [
             'uses' => 'Provider\OnboardingController@getCreateLocations',
             'as'   => 'get.onboarding.create.locations',
         ]);
@@ -1255,7 +1265,7 @@ Route::group([
             'as'   => 'get.onboarding.create.practice',
         ]);
 
-        Route::get('create-staff', [
+        Route::get('{practiceSlug}/staff/create', [
             'uses' => 'Provider\OnboardingController@getCreateStaff',
             'as'   => 'get.onboarding.create.staff',
         ]);

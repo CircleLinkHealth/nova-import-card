@@ -40,7 +40,7 @@
 
         <div class="row">
             @include('provider.partials.mdl.form.text.textfield', [
-                'name' => 'tax-id',
+                'name' => 'federal_tax_id',
                 'label' => 'Federal Tax ID#',
                 'class' => 'col s12',
                 'attributes' => [
