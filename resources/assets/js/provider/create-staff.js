@@ -33,10 +33,6 @@ var createStaffVM = new Vue({
             return true;
         },
 
-        invalidCount: function () {
-            return $('.invalid').length;
-        },
-
         showErrorBanner: function () {
             if (this.invalidCount > 0) {
                 return true;
