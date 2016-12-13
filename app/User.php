@@ -1227,6 +1227,8 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
         return $bp;
     }
 
+
+
     public function setBillingProviderIDAttribute($value)
     {
         if (empty($value)) {
@@ -1840,7 +1842,7 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
         $query,
         $user
     ) {
-        $query->whereHas('locations', function ($q) use
+        return $query->whereHas('locations', function ($q) use
         (
             $user
         ) {
@@ -1858,7 +1860,7 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
         $query,
         $user
     ) {
-        $query->whereHas('practices', function ($q) use
+        return $query->whereHas('practices', function ($q) use
         (
             $user
         ) {
@@ -1960,6 +1962,16 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
 
         return $billingProvider->user ?? new User();
     }
+
+    public function scopeHasBillingProvider($query, $billing_provider_id)
+    {
+        return $query->whereHas('patientCareTeamMembers', function ($k) use ($billing_provider_id){
+            $k->whereType('billing_provider')
+            ->whereMemberUserId($billing_provider_id);
+        });
+    }
+
+
 
     /**
      * Get billing provider.
