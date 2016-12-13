@@ -15,6 +15,7 @@ use App\PatientCareTeamMember;
 use App\PhoneNumber;
 use App\Role;
 use App\User;
+use Illuminate\Database\QueryException;
 use Illuminate\Http\Request;
 use Prettus\Validator\Exceptions\ValidatorException;
 
@@ -140,15 +141,14 @@ class OnboardingController extends Controller
         $existingUsers = $primaryPractice->users->map(function ($user) {
             return [
                 'id'           => $user->id,
-                'role'         => [
-                    'id'   => 0,
-                    'name' => 'No Role Selected',
-                ],
                 'email'        => $user->email,
                 'last_name'    => $user->last_name,
                 'first_name'   => $user->first_name,
                 'phone_number' => '',
                 'phone_type'   => '',
+                'isComplete'   => false,
+                'validated'    => false,
+                'errorCount'   => 0,
             ];
         });
 
@@ -372,7 +372,7 @@ class OnboardingController extends Controller
      *
      * @param Request $request
      *
-     * @return OnboardingController|\Illuminate\Http\RedirectResponse
+     * @return OnboardingController|array|\Illuminate\Http\RedirectResponse
      */
     public function postStoreStaff(Request $request)
     {
@@ -387,17 +387,28 @@ class OnboardingController extends Controller
         $adminRole = Role::whereName('practice-lead')
             ->first();
 
-        foreach ($request->input('users') as $newUser) {
+        foreach ($request->input('deleteTheseUsers') as $id) {
+            $this->users->delete($id);
+        }
+
+        foreach ($request->input('users') as $index => $newUser) {
             //create the user
             try {
-                $user = $this->users
-                    ->skipPresenter()
-                    ->updateOrCreate([
-                        'id' => isset($newUser['user_id'])
-                            ? $newUser['user_id']
-                            : null,
-                    ],
-                        [
+                if (isset($newUser['id'])) {
+                    $user = $this->users
+                        ->skipPresenter()
+                        ->update([
+                            'program_id'   => $primaryPractice->id,
+                            'email'        => $newUser['email'],
+                            'first_name'   => $newUser['first_name'],
+                            'last_name'    => $newUser['last_name'],
+                            'password'     => 'password_not_set',
+                            'display_name' => "{$newUser['first_name']} {$newUser['last_name']}",
+                        ], $newUser['id']);
+                } else {
+                    $user = $this->users
+                        ->skipPresenter()
+                        ->create([
                             'program_id'   => $primaryPractice->id,
                             'email'        => $newUser['email'],
                             'first_name'   => $newUser['first_name'],
@@ -405,57 +416,52 @@ class OnboardingController extends Controller
                             'password'     => 'password_not_set',
                             'display_name' => "{$newUser['first_name']} {$newUser['last_name']}",
                         ]);
-            } catch (ValidatorException $e) {
-                return redirect()
-                    ->back()
-                    ->withErrors($e->getMessageBag()->getMessages())
-                    ->withInput();
-            }
+                }
 
-            //Attach the role
-            try {
+                //Attach the role
                 $user->roles()->attach($newUser['role_id']);
 
                 if ($newUser['grand_admin_rights']) {
                     $user->roles()->attach($adminRole);
                 }
-            } catch (\Exception $e) {
-                if ($e instanceof \Illuminate\Database\QueryException) {
-                    $errorCode = $e->errorInfo[1];
-                    if ($errorCode == 1062) {
-                        //do nothing
-                        //we don't actually want to terminate the program if we detect duplicates
-                        //we just don't wanna add the row again
-                    }
-                }
-            }
 
-            //Attach the locations
-            try {
+                //Attach the locations
                 foreach ($newUser['locations'] as $locId) {
                     if (!$user->locations->contains($locId)) {
                         $user->locations()->attach($locId);
                     }
                 }
+
+                //attach phone
+                $user->phoneNumbers()->create([
+                    'number'     => StringManipulation::formatPhoneNumber($newUser['phone_number']),
+                    'type'       => PhoneNumber::getTypes()[$newUser['phone_type']],
+                    'is_primary' => true,
+                ]);
+
+                $user->notify(new StaffInvite($implementationLead, $primaryPractice));
             } catch (\Exception $e) {
-                if ($e instanceof \Illuminate\Database\QueryException) {
+                if ($e instanceof QueryException) {
                     $errorCode = $e->errorInfo[1];
                     if ($errorCode == 1062) {
                         //do nothing
                         //we don't actually want to terminate the program if we detect duplicates
                         //we just don't wanna add the row again
                     }
+                } elseif ($e instanceof ValidatorException) {
+                    $errors[] = [
+                        'index'    => $index,
+                        'messages' => $e->getMessageBag()->getMessages(),
+                        'input'    => $newUser,
+                    ];
                 }
             }
+        }
 
-            //attach phone
-            $user->phoneNumbers()->create([
-                'number'     => StringManipulation::formatPhoneNumber($newUser['phone_number']),
-                'type'       => PhoneNumber::getTypes()[$newUser['phone_type']],
-                'is_primary' => true,
-            ]);
-
-            $user->notify(new StaffInvite($implementationLead, $primaryPractice));
+        if (isset($errors)) {
+            return response()->json([
+                'errors' => $errors,
+            ], 400);
         }
 
         $implementationLead->notify(new ImplementationLeadWelcome($primaryPractice));

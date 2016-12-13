@@ -45,9 +45,9 @@ class PhoneNumber extends Model
     public static function getTypes() : array
     {
         return [
-            PhoneNumber::HOME,
-            PhoneNumber::MOBILE,
-            PhoneNumber::WORK,
+            1 => PhoneNumber::HOME,
+            2 => PhoneNumber::MOBILE,
+            3 => PhoneNumber::WORK,
         ];
     }
 

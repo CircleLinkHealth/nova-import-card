@@ -20,7 +20,11 @@
 
     <div id="create-staff-component">
 
-        @include('provider.partials.errors.validation')
+        <div v-if="showErrorBanner" class="row">
+            <div class="card-panel red lighten-5 red-text text-darken-4">
+                <b>Whoops! We found some errors with your Input. Please correct them and click Next</b>.
+            </div>
+        </div>
 
         {!! Form::open([
             'url' => route('post.onboarding.store.staff'),
@@ -29,10 +33,10 @@
         ]) !!}
 
         <div class="row">
-            <ul class="collapsible" data-collapsible="accordion">
+            <ul id="users" class="collapsible" data-collapsible="accordion">
                 <li v-for="(index, newUser) in newUsers" id="user-@{{index}}">
-                    <div class="collapsible-header" v-bind:class="{ active: index == newUsers.length - 1 }">
-                        <div class="col s10">
+                    <div class="collapsible-header" v-bind:class="{ active: (index == newUsers.length - 1) }">
+                        <div class="col s9">
                             <span v-if="newUser.first_name || newUser.last_name">
                                 @{{newUser.first_name | uppercase}} @{{newUser.last_name | uppercase}}
                                 | @{{ newUser.role_id > 0 ? roles[newUser.role_id].display_name : 'No role selected'}}
@@ -41,15 +45,15 @@
                                 NEW USER
                             </span>
                         </div>
-                        <div class="col s1">
-                            <span v-if="!newUser.first_name
-                            || !newUser.last_name
-                            || !newUser.email
-                            || !newUser.phone_number
-                            || !newUser.role_id
-                            || !newUser.phone_type"
-                                  class="red-text">Incomplete</span>
-                            <span v-else class="green-text">Complete!</span>
+
+                        <div class="col s3 right-align">
+                            <div v-if="newUser.validated && newUser.errorCount == 0">
+                                <span class="green-text">Complete!</span>
+                            </div>
+                            <div v-else>
+                                <span v-if="newUser.errorCount > 0" class="red-text"><u>Invalid Input</u></span>
+                                <span v-else class="red-text">Incomplete</span>
+                            </div>
                         </div>
                     </div>
 
@@ -63,7 +67,9 @@
                                     'attributes' => [
                                         'v-model' => 'newUser.first_name',
                                         'v-bind:value' => 'newUser.first_name',
-                                        'required' => 'required'
+                                        'required' => 'required',
+                                        'v-on:change' => 'isValidated(index)',
+                                        'v-on:invalid' => 'isValidated(index)',
                                     ]
                                 ])
 
@@ -74,7 +80,9 @@
                                     'attributes' => [
                                         'v-model' => 'newUser.last_name',
                                         'v-bind:value' => 'newUser.last_name',
-                                        'required' => 'required'
+                                        'required' => 'required',
+                                        'v-on:change' => 'isValidated(index)',
+                                        'v-on:invalid' => 'isValidated(index)',
                                     ]
                                 ])
                         </div>
@@ -88,13 +96,18 @@
                                 'attributes' => [
                                     'v-model' => 'newUser.email',
                                     'v-bind:value' => 'newUser.email',
-                                    'required' => 'required'
-                                ]
+                                    'required' => 'required',
+                                    'v-on:change' => 'isValidated(index)',
+                                    'v-on:invalid' => 'isValidated(index)',
+                                    'v-on:keyup' => 'isValidated(index)',
+                                ],
+                                'data_error' => 'Invalid email address.',
                             ])
 
-                            <div class="input-field col s6">
-                                <select id="roles" v-model="newUser.role_id" name="users[@{{index}}][role_id]" required>
-                                    <option value="0" disabled selected></option>
+                            <div class="input-field col s6 validate">
+                                <select id="roles" v-model="newUser.role_id" name="users[@{{index}}][role_id]" required
+                                        v-on:change="isValidated(index)">
+                                    <option value="" disabled selected></option>
                                     <option v-for="role in roles" value="@{{role.id}}">@{{role.display_name}}</option>
                                 </select>
                                 <label>Role</label>
@@ -109,13 +122,17 @@
                                 'attributes' => [
                                     'v-model' => 'newUser.phone_number',
                                     'v-bind:value' => 'newUser.phone_number',
-                                    'required' => 'required'
+                                    'required' => 'required',
+                                    'minlength' => 10,
+                                    'maxlength' => 12,
+                                    'v-on:change' => 'isValidated(index)',
+                                    'v-on:invalid' => 'isValidated(index)',
                                 ]
                             ])
 
                             <div class="input-field col s6">
                                 <select id="phones" v-model="newUser.phone_type" name="users[@{{index}}][phone_type]"
-                                        required>
+                                        required v-on:change="isValidated(index)">
                                     <option value="" disabled selected></option>
                                     @foreach(App\PhoneNumber::getTypes() as $index => $type)
                                         <option value="{{$index}}">{{ucfirst($type)}}</option>
@@ -149,7 +166,8 @@
 
                         <div class="row">
                             <div class="input-field col s12">
-                                <select name="users[@{{index}}][locations][]" required multiple>
+                                <select v-model="newUser.locations" name="users[@{{index}}][locations][]" required
+                                        multiple>
                                     @foreach($locations as $location)
                                         <option value="{{ $location->id }}" selected>{{$location->name}}</option>
                                     @endforeach
@@ -158,7 +176,7 @@
                             </div>
                         </div>
 
-                        <input v-if="newUser.id" type="hidden" name="users[@{{index}}][user_id]"
+                        <input v-if="newUser.id" type="hidden" name="users[@{{index}}][id]"
                                value="@{{ newUser.id }}">
 
                         <div class="row" v-if="newUsers.length > 1">
@@ -180,10 +198,12 @@
         </div>
 
         <div class="row">
-            <button class="btn blue waves-effect waves-light col s12"
-                    id="store-staff">
+            <div v-on:click="submitForm('{{route('post.onboarding.store.staff')}}')"
+                 class="btn blue waves-effect waves-light col s12"
+                 v-bind:class="{disabled: !formCompleted}"
+                 id="store-staff">
                 Next
-            </button>
+            </div>
         </div>
 
         {!! Form::close() !!}
