@@ -186,7 +186,7 @@ class SalesByLocationReport
 
     public function generatePdf(){
 
-        $pdf = PDF::loadView('sales.make', ['data' => $this->data]);
+        $pdf = PDF::loadView('sales.by-location.make', ['data' => $this->data]);
 
         $name = trim($this->program->name).'-'.Carbon::now()->toDateString();
 

@@ -8,15 +8,15 @@
 
 namespace App\Billing;
 
-
-use App\Location;
-use App\Practice;
+use Barryvdh\Snappy\Facades\SnappyPdf as PDF;
+use App\User;
 use Carbon\Carbon;
 
-class SalesReport
+class SalesByProviderReport
 {
 
     private $service;
+    private $providerInfo;
 
     /*
         [# of call attempts at org]
@@ -40,10 +40,11 @@ class SalesReport
 
      */
 
-    public function __construct(Practice $practice, Carbon $st, Carbon $end)
+    public function __construct(User $provider, Carbon $st, Carbon $end)
     {
 
-        $this->service = (new PracticeStatsHelper($practice, $st, $end));
+        $this->service = (new ProviderStatsHelper($provider, $st, $end));
+        $this->providerInfo = $provider->providerInfo;
 
     }
 
@@ -53,7 +54,25 @@ class SalesReport
 
     }
 
+    public function formatSalesData(){
+
+        $this->data = [
+            'provider_name' => $this->providerInfo->user->fullName,
+
+        ];
+
+
+    }
+
     public function generatePdf(){
+
+        $pdf = PDF::loadView('sales.by-location.make', ['data' => $this->data]);
+
+        $name = trim($this->program->name).'-'.Carbon::now()->toDateString();
+
+        $pdf->save( storage_path("download/$name.pdf"), true );
+
+        return $name.'.pdf';
 
     }
 

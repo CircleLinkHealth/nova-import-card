@@ -2,7 +2,7 @@
 
 @section('content')
     <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/font-awesome/4.4.0/css/font-awesome.min.css">
-    {!! Form::open(array('url' => URL::route('reports.sales.make', array()),'class' => 'form-horizontal')) !!}
+    {!! Form::open(array('url' => URL::route('reports.sales.provider.make', array()),'class' => 'form-horizontal')) !!}
     <div class="container-fluid">
         <div class="row">
             <div class="col-md-8 col-md-offset-2">
@@ -19,8 +19,9 @@
                                         Active Program<br>
                                         Select All <kbd><kbd>cmd</kbd> + <kbd>A</kbd></kbd></label>
                                     <div class="col-md-6">
-                                        <select id="nurse" name="programs[]" class=" dropdown Valid form-control" multiple required>
-                                            @foreach($programs as $key => $value)
+                                        <select id="providers" class="provider selectpickerX dropdownValid form-control" name="providers[]" class=" dropdown Valid form-control" multiple required>
+
+                                            @foreach($providers as $key => $value)
                                                 <option value="{{$key}}">{{$value}}</option>
                                             @endforeach
                                         </select>
@@ -98,6 +99,11 @@
     <script>
 
         $('.collapse').collapse();
+
+        $(document).ready(function () {
+            $(".providers").select2();
+
+        });
 
     </script>
 @stop

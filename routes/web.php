@@ -509,27 +509,27 @@ Route::group(['middleware' => 'auth'], function () {
                 'prefix' => 'sales',
             ], function () {
 
-                //PROVIDERS
+                //LOCATIONS
 
-                Route::get('sales/location/create', [
-                    'uses' => 'SalesReportsController@createSalesReport',
+                Route::get('location/create', [
+                    'uses' => 'SalesReportsController@createLocationReport',
                     'as'   => 'reports.sales.location.create',
                 ]);
 
-                Route::post('sales/location/make', [
-                    'uses' => 'SalesReportsController@makeSalesReport',
+                Route::post('location/make', [
+                    'uses' => 'SalesReportsController@makeLocationReport',
                     'as'   => 'reports.sales.location.make',
                 ]);
 
-                //LOCATIONS
+                //PROVIDERS
 
-                Route::get('sales/provider/create', [
-                    'uses' => 'SalesReportsController@createLocationReport',
+                Route::get('provider/create', [
+                    'uses' => 'SalesReportsController@createProviderReport',
                     'as'   => 'reports.sales.provider.create',
                 ]);
 
-                Route::post('sales/provider/make', [
-                    'uses' => 'SalesReportsController@makeLocationReport',
+                Route::post('provider/make', [
+                    'uses' => 'SalesReportsController@makeProviderReport',
                     'as'   => 'reports.sales.provider.make',
                 ]);
             });

@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Practice;
+use App\User;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 
@@ -14,26 +15,24 @@ class SalesReportsController extends Controller
     public function createProviderReport(Request $request)
     {
 
-        $programs = Practice::all()->pluck('display_name', 'id');
+        $providers = User::ofType('provider')->pluck('display_name', 'id');
 
         $sections = [
             'Enrollment Summary',
             'Financial Summary'
         ];
 
-        return view('sales.create',
+        return view('sales.by-provider.create',
             [
 
-                'programs' => $programs,
-                'sections' => $sections
+                'sections' => $sections,
+                'providers' => $providers
 
             ]);
 
     }
 
-
-
-    public function makeLocationReport(Request $request)
+    public function makeProviderReport(Request $request)
     {
 
         $input = $request->all();
@@ -57,9 +56,10 @@ class SalesReportsController extends Controller
             )->handle();
         }
 
-        return view('sales.reportlist', ['reports' => $links]);
+        return view('sales.by-provider.report', ['reports' => $links]);
 
     }
+
 
     //LOCATION REPORTS
 
@@ -73,7 +73,7 @@ class SalesReportsController extends Controller
             'Financial Summary'
         ];
 
-        return view('sales.create',
+        return view('sales.by-location.create',
             [
 
                 'programs' => $programs,
@@ -85,7 +85,7 @@ class SalesReportsController extends Controller
 
 
 
-    public function makeLocations(Request $request)
+    public function makeLocationsReport(Request $request)
     {
 
         $input = $request->all();
