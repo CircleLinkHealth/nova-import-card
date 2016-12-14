@@ -140,15 +140,18 @@ class OnboardingController extends Controller
         //Get the users that were as clinical emergency contacts from the locations page
         $existingUsers = $primaryPractice->users->map(function ($user) {
             return [
-                'id'           => $user->id,
-                'email'        => $user->email,
-                'last_name'    => $user->last_name,
-                'first_name'   => $user->first_name,
-                'phone_number' => '',
-                'phone_type'   => '',
-                'isComplete'   => false,
-                'validated'    => false,
-                'errorCount'   => 0,
+                'id'                 => $user->id,
+                'email'              => $user->email,
+                'last_name'          => $user->last_name,
+                'first_name'         => $user->first_name,
+                'phone_number'       => '',
+                'phone_type'         => '',
+                'isComplete'         => false,
+                'validated'          => false,
+                'grandAdminRights'   => false,
+                'sendBillingReports' => false,
+                'errorCount'         => 0,
+                'role_id'            => 0,
             ];
         });
 
@@ -160,19 +163,22 @@ class OnboardingController extends Controller
             'provider',
             'registered-nurse',
             'specialist',
-        ])->get()
-            ->keyBy('id')
-            ->sortBy('display_name')
-            ->all();
+        ])->get([
+            'id',
+            'display_name',
+        ])
+            ->sortBy('display_name');
 
         \JavaScript::put([
             'existingUsers' => $existingUsers,
-            'roles'         => $roles,
+            'locations'     => $primaryPractice->locations,
+            'phoneTypes'    => PhoneNumber::getTypes(),
+            'roles'         => $roles->all(),
+            //this will help us get role names on the views: rolesMap[id]
+            'rolesMap'      => $roles->keyBy('id')->all(),
         ]);
 
-        return view('provider.onboarding.create-staff-users', [
-            'locations' => $primaryPractice->locations,
-        ]);
+        return view('provider.onboarding.create-staff-users');
     }
 
     /**

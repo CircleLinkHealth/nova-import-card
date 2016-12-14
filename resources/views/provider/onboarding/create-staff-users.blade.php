@@ -39,7 +39,7 @@
                         <div class="col s9">
                             <span v-if="newUser.first_name || newUser.last_name">
                                 @{{newUser.first_name | uppercase}} @{{newUser.last_name | uppercase}}
-                                | @{{ newUser.role_id > 0 ? roles[newUser.role_id].display_name : 'No role selected'}}
+                                | @{{ newUser.role_id > 0 ? rolesMap[newUser.role_id].display_name : 'No role selected'}}
                             </span>
                             <span v-else>
                                 NEW USER
@@ -110,10 +110,9 @@
                             ])
 
                             <div class="input-field col s6 validate">
-                                <select id="roles" v-model="newUser.role_id" name="users[@{{index}}][role_id]" required
-                                        v-on:change="isValidated(index)">
+                                <select v-select="newUser.role_id" required>
                                     <option value="" disabled selected></option>
-                                    <option v-for="role in roles" value="@{{role.id}}">@{{role.display_name}}</option>
+                                    <option v-for="role in roles" v-bind:value="role.id">@{{role.display_name}}</option>
                                 </select>
                                 <label>Role</label>
                             </div>
@@ -140,12 +139,9 @@
                             ])
 
                             <div class="input-field col s6">
-                                <select id="phones" v-model="newUser.phone_type" name="users[@{{index}}][phone_type]"
+                                <select id="phones" v-select="newUser.phone_type" name="users[@{{index}}][phone_type]"
                                         required v-on:change="isValidated(index)">
-                                    <option value="" disabled selected></option>
-                                    @foreach(App\PhoneNumber::getTypes() as $index => $type)
-                                        <option value="{{$index}}">{{ucfirst($type)}}</option>
-                                    @endforeach
+                                    <option v-for="(index, type) in phoneTypes" :value="index">@{{ type }}</option>
                                 </select>
                                 <label>Phone Type</label>
                             </div>
@@ -159,6 +155,9 @@
                                         'name' => 'users[@{{index}}][grand_admin_rights]',
                                         'value' => '1',
                                         'class' => 'col s12',
+                                        'attributes' => [
+                                            'v-model' => 'newUser.grandAdminRights'
+                                        ],
                                     ])
                                 </div>
 
@@ -168,6 +167,9 @@
                                         'name' => 'users[@{{index}}][send_billing_reports]',
                                         'value' => '1',
                                         'class' => 'col s12',
+                                        'attributes' => [
+                                            'v-model' => 'newUser.sendBillingReports'
+                                        ],
                                     ])
                                 </div>
                             </div>
@@ -175,11 +177,9 @@
 
                         <div class="row">
                             <div class="input-field col s12">
-                                <select v-model="newUser.locations" name="users[@{{index}}][locations][]" required
-                                        multiple>
-                                    @foreach($locations as $location)
-                                        <option value="{{ $location->id }}" selected>{{$location->name}}</option>
-                                    @endforeach
+                                <select v-select="newUser.locations" required multiple>
+                                    <option v-for="location in locations" :value="location.id"
+                                            selected>@{{location.name}}</option>
                                 </select>
                                 <label>Locations</label>
                             </div>
