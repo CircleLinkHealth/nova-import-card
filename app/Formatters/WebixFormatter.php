@@ -99,6 +99,8 @@ class WebixFormatter implements ReportFormatter
             return false;
         }
 
+        $report_data = $report_data->sortByDesc('performed_at');
+
         $formatted_data = [];
         $count = 0;
 

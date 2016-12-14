@@ -40,7 +40,6 @@ class NotesController extends Controller
         
         $report_data = $this->formatter->formatDataForNotesAndOfflineActivitiesReport($data);
 
-
         return view('wpUsers.patient.note.index',
             [
                 'activity_json' => $report_data,
