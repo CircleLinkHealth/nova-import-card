@@ -93,16 +93,21 @@ var createStaffVM = new Vue({
         }
 
         this.$set('locations', cpm.locations);
+        this.$set('locationIds', cpm.locationIds);
         this.$set('roles', cpm.roles);
         this.$set('rolesMap', cpm.rolesMap);
         this.$set('phoneTypes', cpm.phoneTypes);
 
-        this.newUsers.push({});
+        this.newUsers.push({
+            locations: this.locationIds
+        });
     },
 
     methods: {
         addUser: function () {
-            this.newUsers.push({});
+            this.newUsers.push({
+                locations: this.locationIds
+            });
 
             this.$nextTick(function () {
                 $('select').material_select();
@@ -150,6 +155,10 @@ var createStaffVM = new Vue({
                 $('html').html(response.data);
             }, function (response) {
                 //fail
+
+                let created = response.data.created.map(function (index) {
+                    createStaffVM.newUsers.splice(index, 1);
+                });
 
                 let errors = response.data.errors;
 

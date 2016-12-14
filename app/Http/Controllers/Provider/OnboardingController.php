@@ -155,6 +155,17 @@ class OnboardingController extends Controller
             ];
         });
 
+        $locations = $primaryPractice->locations->map(function ($loc) {
+            return [
+                'id'   => $loc->id,
+                'name' => $loc->name,
+            ];
+        });
+
+        $locationIds = $primaryPractice->locations->map(function ($loc) {
+            return $loc->id;
+        });
+
         //get the relevant roles
         $roles = Role::whereIn('name', [
             'med_assistant',
@@ -171,7 +182,8 @@ class OnboardingController extends Controller
 
         \JavaScript::put([
             'existingUsers' => $existingUsers,
-            'locations'     => $primaryPractice->locations,
+            'locations'     => $locations,
+            'locationIds'   => $locationIds,
             'phoneTypes'    => PhoneNumber::getTypes(),
             'roles'         => $roles->all(),
             //this will help us get role names on the views: rolesMap[id]
@@ -397,6 +409,9 @@ class OnboardingController extends Controller
             $this->users->delete($id);
         }
 
+        $created = [];
+        $i = 0;
+
         foreach ($request->input('users') as $index => $newUser) {
             //create the user
             try {
@@ -422,6 +437,8 @@ class OnboardingController extends Controller
                             'password'     => 'password_not_set',
                             'display_name' => "{$newUser['first_name']} {$newUser['last_name']}",
                         ]);
+
+                    $created[] = $i;
                 }
 
                 //Attach the role
@@ -462,11 +479,14 @@ class OnboardingController extends Controller
                     ];
                 }
             }
+
+            $i++;
         }
 
         if (isset($errors)) {
             return response()->json([
-                'errors' => $errors,
+                'errors'  => $errors,
+                'created' => $created,
             ], 400);
         }
 

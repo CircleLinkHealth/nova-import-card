@@ -141,6 +141,7 @@
                             <div class="input-field col s6">
                                 <select id="phones" v-select="newUser.phone_type" name="users[@{{index}}][phone_type]"
                                         required v-on:change="isValidated(index)">
+                                    <option value="" disabled selected></option>
                                     <option v-for="(index, type) in phoneTypes" :value="index">@{{ type }}</option>
                                 </select>
                                 <label>Phone Type</label>
