@@ -73,17 +73,16 @@
                                     ]
                                 ])
 
-                            @include('provider.partials.locations-dropdown', [
-                                'name' => 'locations[@{{index}}][timezone]',
-                                'attributes' => [
-                                        'v-model' => 'loc.timezone',
-                                        'required' => 'required',
-                                        'v-on:change' => 'isValidated(index)',
-                                        'v-on:invalid' => 'isValidated(index)',
-                                        'v-on:keyup' => 'isValidated(index)',
-                                        'v-on:click' => 'isValidated(index)',
-                                ]
-                            ])
+                            <select class="col s6 input-field" v-select="loc.timezone">
+                                <option value="America/New_York" selected="selected">Eastern Time</option>
+                                <option value="America/Chicago">Central Time</option>
+                                <option value="America/Denver">Mountain Time</option>
+                                <option value="America/Phoenix">Mountain Time (no DST)</option>
+                                <option value="America/Los_Angeles">Pacific Time</option>
+                                <option value="America/Anchorage">Alaska Time</option>
+                                <option value="America/Adak">Hawaii-Aleutian</option>
+                                <option value="Pacific/Honolulu">Hawaii-Aleutian Time (no DST)</option>
+                            </select>
                         </div>
 
                         <div class="row">
@@ -194,7 +193,6 @@
                                 'class' => 'col s6',
                                 'attributes' => [
                                     'v-model' => 'loc.ehr_login',
-                                    'required' => 'required',
                                     ':disabled' => 'sameEHRLogin && index > 0',
                                     'v-on:change' => 'isValidated(index)',
                                         'v-on:invalid' => 'isValidated(index)',
@@ -211,7 +209,6 @@
                                 'attributes' => [
                                     'v-model' => 'loc.ehr_password',
                                     'autocomplete' => 'new-password',
-                                    'required' => 'required',
                                     ':disabled' => 'sameEHRLogin && index > 0',
                                     'v-on:change' => 'isValidated(index)',
                                         'v-on:invalid' => 'isValidated(index)',
