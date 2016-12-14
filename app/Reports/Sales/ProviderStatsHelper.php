@@ -6,7 +6,7 @@
  * Time: 2:40 PM
  */
 
-namespace App\Billing;
+namespace App\Reports\Sales;
 
 use App\Activity;
 use App\Call;
@@ -14,6 +14,7 @@ use App\MailLog;
 use App\Observation;
 use App\User;
 use Carbon\Carbon;
+use Illuminate\Support\Facades\URL;
 
 class ProviderStatsHelper
 {
@@ -94,6 +95,26 @@ class ProviderStatsHelper
         ::whereReceiverCpmId($id)
         ->whereNotNull('note_id')
         ->count();
+
+    }
+
+    public function emergencyNotesCount(User $provider){
+
+        $id = $provider->id;
+
+        return MailLog
+            ::whereHas('note', function ($q){
+                $q->where('isTCM', 1);
+            })
+        ->whereReceiverCpmId($id)
+        ->whereNotNull('note_id')
+        ->count();
+
+    }
+
+    public function linkToProviderNotes(User $provider){
+
+        return URL::route('patient.note.listing') . "/?provider=$provider->id";
 
     }
 

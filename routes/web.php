@@ -6,9 +6,10 @@ if (app()->environment() != 'production') {
 
         $provider = \App\User::find(852);
 
-        return (new \App\Billing\ProviderStatsHelper(
-            Carbon\Carbon::now()->subYear(), Carbon\Carbon::now()))
-            ->noteStats($provider);
+        return (new \App\Reports\Sales\SalesByProviderReport($provider, Carbon\Carbon::now()->subYear(), Carbon\Carbon::now()))->handle();
+
+//        return (new App\Reports\Sales\SalesByProviderReport($provider, Carbon\Carbon::now()->subYear(), Carbon\Carbon::now()));
+
 
     });
 }

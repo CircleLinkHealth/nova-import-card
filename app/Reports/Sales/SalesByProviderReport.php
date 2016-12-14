@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Created by PhpStorm.
  * User: RohanM
@@ -6,8 +7,9 @@
  * Time: 1:08 PM
  */
 
-namespace App\Billing;
+namespace App\Reports\Sales;
 
+use App\ThirdPartyApiConfig;
 use Barryvdh\Snappy\Facades\SnappyPdf as PDF;
 use App\User;
 use Carbon\Carbon;
@@ -17,15 +19,11 @@ class SalesByProviderReport
 
     private $service;
     private $providerInfo;
+    private $sections = [];
 
     /*
-        [# of call attempts at org]
-        [# of successful calls]
-        [CCM time at org for week]
-        [# of biometric inputs]
-        [# forwarded notes at organization]
-
-        You can see a list of forwarded notes here
+        Overall Summary
+        Financial Performance
 
         CCM Revenue to date: ~$2,200
         CCM Profit to date: ~$770
@@ -33,31 +31,49 @@ class SalesByProviderReport
 
         [# of Leads/Admins at customer]
 
-       [# of Providers + # of Specialists] are Providers,
-       [# of RNs] are RNs [# of office staff]
-       [# of MAs] are MAs
-
+        [# of Providers + # of Specialists] are Providers,
+        [# of RNs] are RNs [# of office staff]
+        [# of MAs] are MAs
 
      */
 
     public function __construct(User $provider, Carbon $st, Carbon $end)
     {
 
-        $this->service = (new ProviderStatsHelper($provider, $st, $end));
+        $this->service = (new ProviderStatsHelper($st, $end));
         $this->providerInfo = $provider->providerInfo;
+        $this->user = $provider;
 
     }
 
     public function handle(){
 
-        $data = [];
+        $this->formatSalesData();
+
+        return $this->sections;
 
     }
 
     public function formatSalesData(){
 
+        $this->sections['Overall Summary'] = [
+            'no_of_call_attempts' =>             $this->service->callCountForProvider($this->user),
+            'no_of_successful_calls' =>          $this->service->successfulCallCountForProvider($this->user),
+            'total_ccm_time' =>                  $this->service->totalCCMTime($this->user),
+            'no_of_biometric_entries' =>         $this->service->numberOfBiometricsRecorded($this->user),
+            'no_of_forwarded_notes' =>           $this->service->noteStats($this->user),
+            'no_of_forwarded_emergency_notes' => $this->service->emergencyNotesCount($this->user),
+            'link_to_notes_listing' =>           $this->service->linkToProviderNotes($this->user)
+        ];
+
+        $this->sections['Financial Performance'] = [
+
+
+
+        ];
+
         $this->data = [
-            'provider_name' => $this->providerInfo->user->fullName,
+            'provider_name' => $this->user->fullName,
 
         ];
 
