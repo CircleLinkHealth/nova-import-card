@@ -219,7 +219,7 @@
 
                             <p class="right-align" v-if="index == 0">
                                 @include('provider.partials.mdl.form.checkbox', [
-                                   'name' => '',
+                                   'name' => 'sameEHRLogin',
                                    'label' => 'Same for all locations?',
                                    'value' => '1',
                                    'attributes' => [
