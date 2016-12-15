@@ -56,11 +56,11 @@ class SalesReportsController extends Controller
                 Carbon::parse($input['start_date']),
                 Carbon::parse($input['end_date'])
             ))
-//                ->getData();
-                ->printData();
+                ->getData();
+//                ->printData();
         }
 
-//        dd($links);
+        dd($links);
 
         return view('sales.reportlist', ['reports' => $links]);
 

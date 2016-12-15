@@ -9,10 +9,12 @@
 
 namespace App\Reports\Sales;
 
+use App\PatientInfo;
 use App\ThirdPartyApiConfig;
 use Barryvdh\Snappy\Facades\SnappyPdf as PDF;
 use App\User;
 use Carbon\Carbon;
+use Illuminate\Support\Facades\DB;
 
 class SalesByProviderReport
 {
@@ -28,7 +30,7 @@ class SalesByProviderReport
     //CircleLink pppm price at account
     private $clh_pppm = 10;
 
-    public function __construct(User $provider, $sections, Carbon $st, Carbon $end)
+    public function __construct(User $provider,  $sections, Carbon $st, Carbon $end)
     {
 
         $this->requestedSections = $sections;
@@ -82,6 +84,24 @@ class SalesByProviderReport
 
     public function generateEnrollmentSummary(){
 
+        //MAKE TOTAL ENROLLMENTS
+        $id = $this->user->id;
+
+        $enrollmentCumulative = PatientInfo::whereHas('user', function ($q) use ($id) {
+
+            $q->hasBillingProvider($id);
+
+        })
+            ->whereNotNull('ccm_status')
+            ->select(DB::raw('count(ccm_status) as total, ccm_status'))
+            ->groupBy('ccm_status')
+            ->get()
+            ->toArray();
+
+        $this->sections['Enrollment Summary']['enrolled'] = $enrollmentCumulative[0]['total'];
+        $this->sections['Enrollment Summary']['paused'] = $enrollmentCumulative[1]['total'];
+        $this->sections['Enrollment Summary']['withdrawn'] = $enrollmentCumulative[2]['total'];
+
         for ($i = 0; $i < 4; $i++) {
 
             $billable = $this->service->billableCountForMonth($this->user, Carbon::parse($this->start)->subMonths($i));
@@ -116,6 +136,13 @@ class SalesByProviderReport
 
     public function generateFinancials(){
 
+
+        $total =  $this->service->totalBilled($this->user);
+        $this->sections['Financial Performance']['billed_so_far'] = $total;
+
+        $this->sections['Financial Performance']['revenue_so_far'] = '$'.round($total * 40, -2);
+        $this->sections['Financial Performance']['profit_so_far']  = '$'.($total * 40 - $total * $this->clh_pppm);
+
         for ($i = 1; $i < 5; $i++) {
 
             $iMonthsAgo = Carbon::parse($this->start)->subMonths($i);
@@ -130,7 +157,7 @@ class SalesByProviderReport
                 = $billable;
 
             $this->sections['Financial Performance'][$month]['CCM Revenue']
-                = '$' . $billable * 40;
+                = '$' . round($billable * 40, -2);
 
             $this->sections['Financial Performance'][$month]['CCM Profit']
                 = '$' . ($billable * 40 - $billable * $this->clh_pppm);

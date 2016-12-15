@@ -167,6 +167,23 @@ class ProviderStatsHelper
 
     }
 
+    public function totalBilled(User $billingProvider){
+
+        return PatientMonthlySummary
+            ::whereHas('patient_info', function ($q) use ($billingProvider){
+                $q->whereHas('user', function ($k) use ($billingProvider){
+                    $k->whereHas('patientCareTeamMembers', function ($q) use ($billingProvider){
+                        $q->whereType(PatientCareTeamMember::BILLING_PROVIDER)
+                          ->whereMemberUserId($billingProvider->id);
+
+                    });
+            });
+        })
+            ->where('ccm_time', '>', 1199)
+            ->count();
+
+    }
+
     public function billableCountForMonth(User $billingProvider, Carbon $month){
 
         return User::ofType('participant')
