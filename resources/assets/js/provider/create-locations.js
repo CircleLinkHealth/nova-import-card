@@ -68,7 +68,13 @@ var locationsVM = new Vue({
     },
 
     ready: function () {
-        this.newLocations.push({});
+        this.newLocations.push({
+            clinical_contact: {
+                firstName: '',
+                lastName: '',
+                email: '',
+            }
+        });
     },
 
     methods: {
