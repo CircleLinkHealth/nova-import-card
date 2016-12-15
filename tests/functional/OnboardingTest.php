@@ -114,6 +114,19 @@ class OnboardingTest extends TestCase
             ->see('password');
     }
 
+
+    /**
+     * Check that the form to create a User is there.
+     */
+    public function test_it_shows_403_unauthorized_if_no_code_present()
+    {
+        $this->expectException(\Illuminate\Foundation\Testing\HttpException::class);
+
+        $this->visit(route('get.onboarding.create.program.lead.user', [
+            'code' => 'q',
+        ]))->seeStatusCode(403);
+    }
+
     protected function setUp()
     {
         parent::setUp();
