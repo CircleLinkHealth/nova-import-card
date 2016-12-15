@@ -266,8 +266,10 @@ class OnboardingController extends Controller
                 ->withErrors($e->getMessageBag()->getMessages());
         }
 
-        return redirect()->route('get.onboarding.create.staff', [
-            'practiceSlug' => $primaryPractice->name,
+        return response()->json([
+            'redirect_to' => route('get.onboarding.create.staff', [
+                'practiceSlug' => $primaryPractice->name,
+            ]),
         ]);
     }
 
