@@ -184,20 +184,25 @@ class PatientContactWindow extends Model
 
         }
 
-        $window = $patient_windows->first();
-
-        // we sub one day to check whether the offset day is an option.
         $adjusted_offset = Carbon::parse($offset_date)->subDay()->toDateString();
 
-        $date_compare = Carbon::parse($adjusted_offset)->next(carbonToClhDayOfWeek($window->day_of_week))->toDateString();
+        foreach ($patient_windows as $window){
+
+            $days[] = Carbon::parse($adjusted_offset)->next(carbonToClhDayOfWeek($window->day_of_week));
+
+        }
+
+        $date = min($days)->toDateString();
 
         return [
 
-            'day'          => $date_compare,
+            'day'          => $date,
             'window_start' => Carbon::parse($window->window_time_start)->format('H:i'),
             'window_end'   => Carbon::parse($window->window_time_end)->format('H:i'),
 
         ];
+
+        // we sub one day to check whether the offset day is an option.
         
     }
 
