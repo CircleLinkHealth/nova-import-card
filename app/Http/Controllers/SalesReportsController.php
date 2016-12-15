@@ -55,8 +55,12 @@ class SalesReportsController extends Controller
                 $sections,
                 Carbon::parse($input['start_date']),
                 Carbon::parse($input['end_date'])
-            ))->printData();
+            ))
+//                ->getData();
+                ->printData();
         }
+
+//        dd($links);
 
         return view('sales.reportlist', ['reports' => $links]);
 

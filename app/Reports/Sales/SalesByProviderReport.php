@@ -73,7 +73,8 @@ class SalesByProviderReport
 
         $this->data = [
             'sections' => $this->sections,
-            'range' => $this->start->format('l, jS F Y') .' to '. $this->end->format('l, jS F Y'),
+            'range_start' => $this->start->format('l, jS F Y'),
+            'range_end' => $this->end->format('l, jS F Y'),
             'providerUser' => $this->user
         ];
 
@@ -81,7 +82,9 @@ class SalesByProviderReport
 
     public function generateEnrollmentSummary(){
 
-        for ($i = 0; $i < 3; $i++) {
+        for ($i = 0; $i < 4; $i++) {
+
+            $billable = $this->service->billableCountForMonth($this->user, Carbon::parse($this->start)->subMonths($i));
 
             //if first month, do a month-to-date
             if ($i == 0) {
@@ -90,15 +93,20 @@ class SalesByProviderReport
                 $this->sections['Enrollment Summary'][$month] = $this->service->enrollmentCountByProvider($this->user,
                     $this->start, $this->end);
 
+                $this->sections['Enrollment Summary'][$month]['billable'] = $billable;
+
+            } else {
+
+                $iMonthsAgo = Carbon::parse($this->start)->subMonths($i);
+                $start = Carbon::parse($iMonthsAgo)->firstOfMonth();
+                $end = Carbon::parse($iMonthsAgo)->lastOfMonth();
+
+                $month = Carbon::parse($iMonthsAgo)->format('F Y');
+                $this->sections['Enrollment Summary'][$month] = $this->service->enrollmentCountByProvider($this->user,
+                    $start, $end);
+
+                $this->sections['Enrollment Summary'][$month]['billable'] = $billable;
             }
-
-            $iMonthsAgo = Carbon::parse($this->start)->subMonths($i);
-            $start = Carbon::parse($iMonthsAgo)->firstOfMonth();
-            $end = Carbon::parse($iMonthsAgo)->lastOfMonth();
-
-            $month = Carbon::parse($iMonthsAgo)->format('F Y');
-            $this->sections['Enrollment Summary'][$month] = $this->service->enrollmentCountByProvider($this->user,
-                $start, $end);
 
         }
 
