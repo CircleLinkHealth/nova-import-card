@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Practice;
+use App\Reports\Sales\SalesByLocationReport;
 use App\Reports\Sales\SalesByProviderReport;
 use App\User;
 use Carbon\Carbon;
@@ -57,7 +58,7 @@ class SalesReportsController extends Controller
             ))->printData();
         }
 
-        return view('sales.by-location.reportlist', ['reports' => $links]);
+        return view('sales.reportlist', ['reports' => $links]);
 
     }
 
@@ -86,7 +87,7 @@ class SalesReportsController extends Controller
 
 
 
-    public function makeLocationsReport(Request $request)
+    public function makeLocationReport(Request $request)
     {
 
         $input = $request->all();
