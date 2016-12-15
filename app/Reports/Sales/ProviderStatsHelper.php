@@ -12,6 +12,9 @@ use App\Activity;
 use App\Call;
 use App\MailLog;
 use App\Observation;
+use App\PatientCareTeamMember;
+use App\PatientInfo;
+use App\PatientMonthlySummary;
 use App\User;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\URL;
@@ -118,7 +121,64 @@ class ProviderStatsHelper
 
     }
 
+    public function enrollmentCountByProvider(User $billingProvider, Carbon $start, Carbon $end){
 
+        $patients = User::ofType('participant')
+            ->whereHas('patientCareTeamMembers', function ($q) use ($billingProvider){
 
+            $q->whereType(PatientCareTeamMember::BILLING_PROVIDER)
+              ->whereMemberUserId($billingProvider->id);
+
+        })->get();
+
+        $data = [
+
+            'withdrawn' => 0,
+            'paused' => 0,
+            'added' => 0,
+
+        ];
+
+        foreach ($patients as $patient){
+
+            if($patient->created_at > $start->toDateTimeString() && $patient->created_at <= $end->toDateTimeString()){
+
+                $data['added']++;
+
+            }
+
+            if($patient->patientInfo->date_withdrawn > $start->toDateTimeString() && $patient->patientInfo->date_withdrawn <= $end->toDateTimeString()){
+
+                $data['withdrawn']++;
+
+            }
+
+            if($patient->patientInfo->date_paused > $start->toDateTimeString() && $patient->patientInfo->date_paused <= $end->toDateTimeString()){
+
+                $data['paused']++;
+
+            }
+
+        }
+
+        return $data;
+
+    }
+
+    public function billableCount(User $billingProvider, Carbon $month){
+
+        return User::ofType('participant')
+            ->whereHas('patientCareTeamMembers', function ($q) use ($billingProvider){
+                $q->whereType(PatientCareTeamMember::BILLING_PROVIDER)
+                  ->whereMemberUserId($billingProvider->id);
+            })->whereHas('patientInfo', function ($k) use ($billingProvider, $month){
+                $k->whereHas('patientSummaries', function ($j) use ($month){
+                  $j->where('month_year', $month->firstOfMonth())
+                  ->where('ccm_time', '>', 1199);
+                });
+            })
+            ->count();
+
+    }
 
 }

@@ -5,7 +5,6 @@ use App\Practice;
 use Barryvdh\Snappy\Facades\SnappyPdf as PDF;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
-use App\Billing\ProviderStatsHelper;
 
 
 /**

@@ -20,6 +20,8 @@ class SalesByProviderReport
     private $service;
     private $providerInfo;
     private $sections = [];
+    private $start;
+    private $end;
 
     /*
         Overall Summary
@@ -44,6 +46,9 @@ class SalesByProviderReport
         $this->providerInfo = $provider->providerInfo;
         $this->user = $provider;
 
+        $this->start = $st;
+        $this->end = $end;
+
     }
 
     public function handle(){
@@ -66,14 +71,13 @@ class SalesByProviderReport
             'link_to_notes_listing' =>           $this->service->linkToProviderNotes($this->user)
         ];
 
-        $this->sections['Financial Performance'] = [
+        $this->sections['Enrollment Summary'] = $this->service->enrollmentCountByProvider($this->user, $this->start, $this->end);
 
-
-
-        ];
+        $this->sections['Financial Performance'] = $this->service->billableCount($this->user, $this->start);
 
         $this->data = [
-            'provider_name' => $this->user->fullName,
+            'sections' => $this->sections,
+            'range'
 
         ];
 
