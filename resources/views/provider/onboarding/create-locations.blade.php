@@ -219,8 +219,8 @@
 
                             <p class="right-align" v-if="index == 0">
                                 @include('provider.partials.mdl.form.checkbox', [
+                                   'name' => '',
                                    'label' => 'Same for all locations?',
-                                   'name' => 'locations[@{{index}}][same_ehr_login]',
                                    'value' => '1',
                                    'attributes' => [
                                         'v-model' => 'sameEHRLogin',
@@ -245,7 +245,7 @@
                                     'name' => 'locations[@{{index}}][clinical_contact][type]',
                                     'value' => 'billing_provider',
                                     'attributes' => [
-                                        'v-model' => 'patientClinicalIssuesContact',
+                                        'v-model' => 'loc.clinical_contact.type',
                                         'required' => 'required',
                                         'checked' => 'checked',
                                         'v-on:change' => 'isValidated(index)',
@@ -260,10 +260,9 @@
                                 @include('provider.partials.mdl.form.radio', [
                                     'id' => 'instead-of-billing-provider',
                                     'label' => 'Someone else instead of the billing provider.',
-                                    'name' => 'locations[@{{index}}][clinical_contact][type]',
                                     'value' => 'instead_of_billing_provider',
                                     'attributes' => [
-                                        'v-model' => 'patientClinicalIssuesContact',
+                                        'v-model' => 'loc.clinical_contact.type',
                                         'required' => 'required',
                                         'v-on:change' => 'isValidated(index)',
                                         'v-on:invalid' => 'isValidated(index)',
@@ -272,7 +271,7 @@
                                     ]
                                 ])
                                 <transition>
-                                    <div v-if="patientClinicalIssuesContact == 'instead_of_billing_provider' ? true : false"
+                                    <div v-if="loc.clinical_contact.type == 'instead_of_billing_provider' ? true : false"
                                          name="custom-classes-transition"
                                          enter-active-class="animated tada"
                                          leave-active-class="animated bounceOutRight"
@@ -286,10 +285,9 @@
                                 @include('provider.partials.mdl.form.radio', [
                                     'id' => 'in-addition-to-billing-provider',
                                     'label' => 'Someone else in addition to the billing provider.',
-                                    'name' => 'locations[@{{index}}][clinical_contact][type]',
                                     'value' => 'in_addition_to_billing_provider',
                                     'attributes' => [
-                                        'v-model' => 'patientClinicalIssuesContact',
+                                        'v-model' => 'loc.clinical_contact.type',
                                         'required' => 'required',
                                         'v-on:change' => 'isValidated(index)',
                                         'v-on:invalid' => 'isValidated(index)',
@@ -298,7 +296,7 @@
                                     ]
                                 ])
                                 <transition>
-                                    <div v-if="patientClinicalIssuesContact == 'in_addition_to_billing_provider' ? true : false"
+                                    <div v-if="loc.clinical_contact.type == 'in_addition_to_billing_provider' ? true : false"
                                          name="fade" mode="in-out">
                                         @include('provider.partials.clinical-issues-contact')
                                     </div>

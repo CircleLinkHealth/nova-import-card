@@ -73,7 +73,7 @@ var process = module.exports = {};
         if ((cachedClearTimeout === defaultClearTimeout || !cachedClearTimeout) && clearTimeout) {
             cachedClearTimeout = clearTimeout;
             return clearTimeout(marker);
-        }
+    }
         try {
             // when when somebody has screwed with setTimeout but no I.E. maddness
             return cachedClearTimeout(marker);
@@ -11373,7 +11373,13 @@ var locationsVM = new Vue({
     },
 
     ready: function ready() {
-        this.newLocations.push({});
+        this.newLocations.push({
+            clinical_contact: {
+                firstName: '',
+                lastName: '',
+                email: ''
+            }
+        });
     },
 
     methods: {
