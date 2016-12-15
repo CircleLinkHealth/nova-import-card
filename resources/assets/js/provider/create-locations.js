@@ -68,16 +68,21 @@ var locationsVM = new Vue({
     },
 
     ready: function () {
-        this.newLocations.push({
-            clinical_contact: {
-                firstName: '',
-                lastName: '',
-                email: '',
-            }
-        });
+        this.create();
     },
 
     methods: {
+        create: function () {
+            this.newLocations.push({
+                clinical_contact: {
+                    firstName: '',
+                    lastName: '',
+                    email: '',
+                },
+                timezone: 'America/New_York'
+            });
+        },
+
         //Is the form for the given user filled out?
         isValidated: function (index) {
             this.$set('invalidCount', $('.invalid').length);
@@ -98,8 +103,7 @@ var locationsVM = new Vue({
         },
 
         addLocation: function () {
-
-            this.newLocations.push({});
+            this.create();
 
             this.$nextTick(function () {
                 $('select').material_select();
