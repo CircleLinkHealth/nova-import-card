@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Practice;
+use App\Reports\Sales\SalesByProviderReport;
 use App\User;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
@@ -15,11 +16,13 @@ class SalesReportsController extends Controller
     public function createProviderReport(Request $request)
     {
 
-        $providers = User::ofType('provider')->pluck('display_name', 'id');
+        $providers = User::ofType('provider')->get()->sortBy('display_name')->pluck('display_name', 'id');
 
         $sections = [
+            'Overall Summary',
             'Enrollment Summary',
-            'Financial Summary'
+            'Financial Performance',
+            'Practice Demographics'
         ];
 
         return view('sales.by-provider.create',
@@ -37,26 +40,24 @@ class SalesReportsController extends Controller
 
         $input = $request->all();
 
-        $programs = $input['programs'];
-
-        $withHistory = isset($input['withPastMonth'])
-            ? true
-            : false;
+        $providers = $input['providers'];
+        $sections = $input['sections'];
 
         $links = [];
 
-        foreach ($programs as $program) {
+        foreach ($providers as $provider) {
 
-            $program = Practice::find($program);
+            $provider = User::find($provider);
 
-            $links[$program->display_name] = (new SalesByLocationReport($program,
+            $links[$provider->fullName] = (new SalesByProviderReport
+            (   $provider,
+                $sections,
                 Carbon::parse($input['start_date']),
-                Carbon::parse($input['end_date']),
-                $withHistory)
-            )->handle();
+                Carbon::parse($input['end_date'])
+            ))->printData();
         }
 
-        return view('sales.by-provider.report', ['reports' => $links]);
+        return view('sales.by-location.reportlist', ['reports' => $links]);
 
     }
 

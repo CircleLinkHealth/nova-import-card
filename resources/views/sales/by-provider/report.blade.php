@@ -3,8 +3,9 @@
       xmlns="http://www.w3.org/1999/html">
 
 <div class="page-header">
-    <h1>{{$data['provider_name']}}
-        <small><span style="color: #50b2e2"> CircleLink Health </span> Account Status Report
-            <b>({{Carbon\Carbon::now()->toDayDateTimeString()}})</b></small>
+    <h1>{{$data['providerUser']->fullName}} ({{$data['providerUser']->primaryPracticeName}})
+        <small><span style="color: #50b2e2"> CircleLink Health </span> <br />
+            <b>Sales Report - {{$data['range']}}</b></small>
     </h1>
 </div>
+

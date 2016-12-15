@@ -15,6 +15,8 @@ use App\Observation;
 use App\PatientCareTeamMember;
 use App\PatientInfo;
 use App\PatientMonthlySummary;
+use App\Practice;
+use App\Role;
 use App\User;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\URL;
@@ -165,19 +167,62 @@ class ProviderStatsHelper
 
     }
 
-    public function billableCount(User $billingProvider, Carbon $month){
+    public function billableCountForMonth(User $billingProvider, Carbon $month){
 
         return User::ofType('participant')
+
             ->whereHas('patientCareTeamMembers', function ($q) use ($billingProvider){
+
                 $q->whereType(PatientCareTeamMember::BILLING_PROVIDER)
                   ->whereMemberUserId($billingProvider->id);
+
             })->whereHas('patientInfo', function ($k) use ($billingProvider, $month){
+
                 $k->whereHas('patientSummaries', function ($j) use ($month){
+
                   $j->where('month_year', $month->firstOfMonth())
-                  ->where('ccm_time', '>', 1199);
+                    ->where('ccm_time', '>', 1199);
+
                 });
             })
             ->count();
+
+    }
+
+    public function getAllUsersAtProvidersPractice(User $provider){
+
+        $practice = Practice::find($provider->primaryPracticeId);
+
+        $lead = $practice->lead->fullName ?? 'N/A';
+        $providers = $practice->getCountOfUserTypeAtPractice('provider');
+        $mas = $practice->getCountOfUserTypeAtPractice('med_assistant');
+        $cc = $practice->getCountOfUserTypeAtPractice('care-center');
+        $oa = $practice->getCountOfUserTypeAtPractice('office_admin');
+
+        $disabled_count = User
+                          ::whereHas('practices', function ($q) use ($practice) {
+                             $q->whereId($practice->id);
+                          })->whereHas('roles', function ($q){
+                             $q->where('name', '!=', 'participant');
+                          })
+                          ->whereUserStatus(0)
+                          ->count();
+
+        $total = $providers + $mas + $cc + $oa - $disabled_count;
+
+        return [
+
+            'lead' =>  $lead,
+            'providers' => $providers,
+            'mas' => $mas,
+            'cc' => $cc,
+            'oas' => $oa,
+            'disabled' => $disabled_count,
+
+            'total' => $total
+
+        ];
+
 
     }
 
