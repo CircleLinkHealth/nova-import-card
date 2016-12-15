@@ -37,7 +37,7 @@ trait CallAlgoHelper
         }
 
         $this->prediction = [
-            'patient' => $this->patient,
+            'patient' => $this->patient->user,
             'date' => $next_predicted_contact_window['day'],
             'window_start' => $next_predicted_contact_window['window_start'],
             'window_end' => $next_predicted_contact_window['window_end'],

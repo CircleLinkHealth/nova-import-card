@@ -48,7 +48,7 @@
                     @endif
                 </div>
                 {!!
-                Form::open(array('url' => URL::route('call.schedule', array('patient' => $patient->user_id)), 'method' => 'POST'))
+                Form::open(array('url' => URL::route('call.schedule', array('patientId' => $patient->id)), 'method' => 'POST'))
                 !!}
 
                 <div class="form-block col-md-4" style="padding-top: 13px">
@@ -109,7 +109,7 @@
                     </div>
                 </div>
 
-            <input type="hidden" name="patient_id" value="{{$patient->user_id}}"/>
+            <input type="hidden" name="patient_id" value="{{$patient->id}}"/>
             <input type="hidden" name="attempt_note" value="{{$attempt_note}}"/>
 
 

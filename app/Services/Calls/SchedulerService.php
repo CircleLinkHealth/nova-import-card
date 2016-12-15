@@ -117,6 +117,7 @@ class SchedulerService
         $nurse_id = null,
         $attempt_note = ''
     ) {
+
         $patient = User::find($patientId);
 
         $window_start = Carbon::parse($window_start)->format('H:i');
@@ -133,8 +134,8 @@ class SchedulerService
 
             'scheduler' => $scheduler,
 
-            'inbound_phone_number'  => $patient->phone
-                ? $patient->phone
+            'inbound_phone_number'  => $patient->patientInfo->phone
+                ? $patient->patientInfo->phone
                 : '',
             
             'outbound_phone_number' => '',
