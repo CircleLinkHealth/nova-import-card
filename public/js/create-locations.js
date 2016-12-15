@@ -23,8 +23,8 @@ var process = module.exports = {};
             if (typeof setTimeout === 'function') {
                 cachedSetTimeout = setTimeout;
             } else {
-                cachedSetTimeout = defaultSetTimout;
-            }
+            cachedSetTimeout = defaultSetTimout;
+        }
         } catch (e) {
             cachedSetTimeout = defaultSetTimout;
         }
@@ -32,8 +32,8 @@ var process = module.exports = {};
             if (typeof clearTimeout === 'function') {
                 cachedClearTimeout = clearTimeout;
             } else {
-                cachedClearTimeout = defaultClearTimeout;
-            }
+            cachedClearTimeout = defaultClearTimeout;
+        }
         } catch (e) {
             cachedClearTimeout = defaultClearTimeout;
         }
@@ -52,13 +52,13 @@ var process = module.exports = {};
             // when when somebody has screwed with setTimeout but no I.E. maddness
             return cachedSetTimeout(fun, 0);
         } catch (e) {
-            try {
-                // When we are in I.E. but the script has been evaled so I.E. doesn't trust the global object when called normally
-                return cachedSetTimeout.call(null, fun, 0);
-            } catch (e) {
-                // same as above but when it's a version of I.E. that must have the global object for 'this', hopfully our context correct otherwise it will throw a global error
-                return cachedSetTimeout.call(this, fun, 0);
-            }
+        try {
+            // When we are in I.E. but the script has been evaled so I.E. doesn't trust the global object when called normally
+            return cachedSetTimeout.call(null, fun, 0);
+        } catch (e) {
+            // same as above but when it's a version of I.E. that must have the global object for 'this', hopfully our context correct otherwise it will throw a global error
+            return cachedSetTimeout.call(this, fun, 0);
+        }
         }
 
 
@@ -68,7 +68,7 @@ var process = module.exports = {};
         if (cachedClearTimeout === clearTimeout) {
             //normal enviroments in sane situations
             return clearTimeout(marker);
-        }
+    }
         // if clearTimeout wasn't available but was latter defined
         if ((cachedClearTimeout === defaultClearTimeout || !cachedClearTimeout) && clearTimeout) {
             cachedClearTimeout = clearTimeout;
@@ -78,14 +78,14 @@ var process = module.exports = {};
             // when when somebody has screwed with setTimeout but no I.E. maddness
             return cachedClearTimeout(marker);
         } catch (e) {
-            try {
-                // When we are in I.E. but the script has been evaled so I.E. doesn't  trust the global object when called normally
-                return cachedClearTimeout.call(null, marker);
-            } catch (e) {
-                // same as above but when it's a version of I.E. that must have the global object for 'this', hopfully our context correct otherwise it will throw a global error.
-                // Some versions of I.E. have different rules for clearTimeout vs setTimeout
-                return cachedClearTimeout.call(this, marker);
-            }
+        try {
+            // When we are in I.E. but the script has been evaled so I.E. doesn't  trust the global object when called normally
+            return cachedClearTimeout.call(null, marker);
+        } catch (e) {
+            // same as above but when it's a version of I.E. that must have the global object for 'this', hopfully our context correct otherwise it will throw a global error.
+            // Some versions of I.E. have different rules for clearTimeout vs setTimeout
+            return cachedClearTimeout.call(this, marker);
+        }
         }
 
 
@@ -4105,7 +4105,7 @@ function makeGetterFn(body) {
               warn('It seems you are using the default build of Vue.js in an environment ' + 'with Content Security Policy that prohibits unsafe-eval. ' + 'Use the CSP-compliant build instead: ' + 'http://vuejs.org/guide/installation.html#CSP-compliant-build');
           } else {
               warn('Invalid expression. ' + 'Generated function body: ' + body);
-          }
+      }
       }
       return noop;
   }
@@ -8141,7 +8141,7 @@ function sortDirectives(dirs) {
         if (!array) {
             array = groupedMap[priority] = [];
             priorities.push(priority);
-        }
+    }
         array.push(dir);
     }
 
@@ -8152,7 +8152,7 @@ function sortDirectives(dirs) {
         var group = groupedMap[priorities[i]];
         for (k = 0, l = group.length; k < l; k++) {
             dirs[index++] = group[k];
-        }
+    }
     }
 }
 
@@ -11307,7 +11307,29 @@ var Vue = require('vue');
 
 Vue.use(require('vue-resource'));
 
-// Vue.http.headers.common['X-CSRF-TOKEN'] = $('meta[name="csrf-token"]').attr('content');
+    Vue.http.headers.common['X-CSRF-TOKEN'] = $('meta[name="csrf-token"]').attr('content');
+
+    Vue.directive("select", {
+        "twoWay": true,
+
+        "bind": function bind() {
+            $(this.el).material_select();
+
+            var self = this;
+
+            $(this.el).on('change', function () {
+                self.set($(self.el).val());
+            });
+        },
+
+        update: function update(newValue, oldValue) {
+            $(this.el).val(newValue);
+        },
+
+        "unbind": function unbind() {
+            $(this.el).material_select('destroy');
+        }
+    });
 
 /**
  *

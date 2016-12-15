@@ -252,7 +252,8 @@ class DatamonitorService
 
         // send email
         if ($send_email) {
-            $log_string .= $this->send_email($observation, $message_id, $extra_vars, $this->int_id);
+            //Disable sending alerts to providers
+//            $log_string .= $this->send_email($observation, $message_id, $extra_vars, $this->int_id);
         } else {
             $log_string .= 'No email sent' . PHP_EOL;
         }

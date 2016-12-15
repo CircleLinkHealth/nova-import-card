@@ -11364,6 +11364,47 @@
 
         Vue.http.headers.common['X-CSRF-TOKEN'] = $('meta[name="csrf-token"]').attr('content');
 
+        Vue.directive("select", {
+            "twoWay": true,
+
+            "bind": function bind() {
+                $(this.el).material_select();
+
+                var self = this;
+
+                $(this.el).on('change', function () {
+                    self.set($(self.el).val());
+                });
+            },
+
+            update: function update(newValue, oldValue) {
+                $(this.el).val(newValue);
+            },
+
+            "unbind": function unbind() {
+                $(this.el).material_select('destroy');
+            }
+        });
+
+// Vue.component('user', {
+//     props: [
+//         'id',
+//         'email',
+//         'last_name',
+//         'first_name',
+//         'phone_number',
+//         'phone_type',
+//         'isComplete',
+//         'validated',
+//         'errorCount',
+//         'role_id',
+//         'locations'
+//     ],
+//
+//     template: '<h2>{{first_name}}, {{role_id}}</h2>'
+//
+// });
+
         /**
          *
          * CREATE STAFF VUE INSTANCE
@@ -11374,9 +11415,12 @@
 
             data: function data() {
                 return {
+                    locations: [],
                     newUsers: [],
                     roles: [],
+                    rolesMap: [],
                     deleteTheseUsers: [],
+                    phoneTypes: [],
                     invalidCount: 0
                 };
             },
@@ -11408,14 +11452,22 @@
                     this.newUsers.$set(i, cpm.existingUsers[i]);
                 }
 
+                this.$set('locations', cpm.locations);
+                this.$set('locationIds', cpm.locationIds);
                 this.$set('roles', cpm.roles);
+                this.$set('rolesMap', cpm.rolesMap);
+                this.$set('phoneTypes', cpm.phoneTypes);
 
-                this.newUsers.push({});
+                this.newUsers.push({
+                    locations: this.locationIds
+                });
             },
 
             methods: {
                 addUser: function addUser() {
-                    this.newUsers.push({});
+                    this.newUsers.push({
+                        locations: this.locationIds
+                    });
 
                     this.$nextTick(function () {
                         $('select').material_select();
@@ -11458,12 +11510,16 @@
                     }, function (response) {
                         //fail
 
+                        var created = response.data.created.map(function (index) {
+                            createStaffVM.newUsers.splice(index, 1);
+                        });
+
                         var errors = response.data.errors;
 
                         createStaffVM.$set('invalidCount', errors.length);
 
                         for (var i = 0; i < errors.length; i++) {
-                            $('input[name="users[' + i + '][' + Object.keys(errors[i].messages)[0] + ']"]').addClass('invalid').focus();
+                            $('input[name="users[' + i + '][' + Object.keys(errors[i].messages)[0] + ']"]').addClass('invalid');
 
                             $('label[for="users[' + i + '][' + Object.keys(errors[i].messages)[0] + ']"]').attr('data-error', errors[i].messages[Object.keys(errors[i].messages)[0]][0]);
 

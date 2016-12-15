@@ -2,7 +2,29 @@ var Vue = require('vue');
 
 Vue.use(require('vue-resource'));
 
-// Vue.http.headers.common['X-CSRF-TOKEN'] = $('meta[name="csrf-token"]').attr('content');
+Vue.http.headers.common['X-CSRF-TOKEN'] = $('meta[name="csrf-token"]').attr('content');
+
+Vue.directive("select", {
+    "twoWay": true,
+
+    "bind": function () {
+        $(this.el).material_select();
+
+        var self = this;
+
+        $(this.el).on('change', function () {
+            self.set($(self.el).val());
+        });
+    },
+
+    update: function (newValue, oldValue) {
+        $(this.el).val(newValue);
+    },
+
+    "unbind": function () {
+        $(this.el).material_select('destroy');
+    }
+});
 
 /**
  *

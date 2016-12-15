@@ -140,16 +140,30 @@ class OnboardingController extends Controller
         //Get the users that were as clinical emergency contacts from the locations page
         $existingUsers = $primaryPractice->users->map(function ($user) {
             return [
-                'id'           => $user->id,
-                'email'        => $user->email,
-                'last_name'    => $user->last_name,
-                'first_name'   => $user->first_name,
-                'phone_number' => '',
-                'phone_type'   => '',
-                'isComplete'   => false,
-                'validated'    => false,
-                'errorCount'   => 0,
+                'id'                 => $user->id,
+                'email'              => $user->email,
+                'last_name'          => $user->last_name,
+                'first_name'         => $user->first_name,
+                'phone_number'       => '',
+                'phone_type'         => '',
+                'isComplete'         => false,
+                'validated'          => false,
+                'grandAdminRights'   => false,
+                'sendBillingReports' => false,
+                'errorCount'         => 0,
+                'role_id'            => 0,
             ];
+        });
+
+        $locations = $primaryPractice->locations->map(function ($loc) {
+            return [
+                'id'   => $loc->id,
+                'name' => $loc->name,
+            ];
+        });
+
+        $locationIds = $primaryPractice->locations->map(function ($loc) {
+            return $loc->id;
         });
 
         //get the relevant roles
@@ -160,19 +174,23 @@ class OnboardingController extends Controller
             'provider',
             'registered-nurse',
             'specialist',
-        ])->get()
-            ->keyBy('id')
-            ->sortBy('display_name')
-            ->all();
+        ])->get([
+            'id',
+            'display_name',
+        ])
+            ->sortBy('display_name');
 
         \JavaScript::put([
             'existingUsers' => $existingUsers,
-            'roles'         => $roles,
+            'locations'     => $locations,
+            'locationIds'   => $locationIds,
+            'phoneTypes'    => PhoneNumber::getTypes(),
+            'roles'         => $roles->all(),
+            //this will help us get role names on the views: rolesMap[id]
+            'rolesMap'      => $roles->keyBy('id')->all(),
         ]);
 
-        return view('provider.onboarding.create-staff-users', [
-            'locations' => $primaryPractice->locations,
-        ]);
+        return view('provider.onboarding.create-staff-users');
     }
 
     /**
@@ -391,6 +409,9 @@ class OnboardingController extends Controller
             $this->users->delete($id);
         }
 
+        $created = [];
+        $i = 0;
+
         foreach ($request->input('users') as $index => $newUser) {
             //create the user
             try {
@@ -416,6 +437,8 @@ class OnboardingController extends Controller
                             'password'     => 'password_not_set',
                             'display_name' => "{$newUser['first_name']} {$newUser['last_name']}",
                         ]);
+
+                    $created[] = $i;
                 }
 
                 //Attach the role
@@ -456,11 +479,14 @@ class OnboardingController extends Controller
                     ];
                 }
             }
+
+            $i++;
         }
 
         if (isset($errors)) {
             return response()->json([
-                'errors' => $errors,
+                'errors'  => $errors,
+                'created' => $created,
             ], 400);
         }
 
