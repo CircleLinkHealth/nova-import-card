@@ -1,12 +1,14 @@
 <?php
 
+use App\PatientInfo;
+
 if (app()->environment() != 'production') {
     Route::get('rohan', function () {
 
 
         $provider = \App\User::find(852);
 
-        return (new \App\Reports\Sales\SalesByProviderReport($provider, Carbon\Carbon::now()->subYear(), Carbon\Carbon::now()))->handle();
+        return (new \App\Reports\Sales\SalesByProviderReport($provider, Carbon\Carbon::now(), Carbon\Carbon::now()->firstOfMonth()))->handle();
 
 //        return (new App\Reports\Sales\SalesByProviderReport($provider, Carbon\Carbon::now()->subYear(), Carbon\Carbon::now()));
 
