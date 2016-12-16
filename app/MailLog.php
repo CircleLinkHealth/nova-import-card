@@ -34,6 +34,7 @@ class MailLog extends Model
     {
         return $this->belongsTo('App\User', 'receiver_cpm_id', 'id');
     }
+
     public function note()
     {
         return $this->belongsTo('App\Note', 'note_id');
