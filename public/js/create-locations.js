@@ -11341,6 +11341,7 @@ var locationsVM = new Vue({
 
     data: function data() {
         return {
+            deleteTheseLocations: [],
             newLocations: [],
 
             sameEHRLogin: false,
@@ -11373,16 +11374,21 @@ var locationsVM = new Vue({
     },
 
     ready: function ready() {
-        this.newLocations.push({
-            clinical_contact: {
-                firstName: '',
-                lastName: '',
-                email: ''
-            }
-        });
+        this.create();
     },
 
     methods: {
+        create: function create() {
+            this.newLocations.push({
+                clinical_contact: {
+                    firstName: '',
+                    lastName: '',
+                    email: ''
+                },
+                timezone: 'America/New_York'
+            });
+        },
+
         //Is the form for the given user filled out?
         isValidated: function isValidated(index) {
             this.$set('invalidCount', $('.invalid').length);
@@ -11396,8 +11402,7 @@ var locationsVM = new Vue({
         },
 
         addLocation: function addLocation() {
-
-            this.newLocations.push({});
+            this.create();
 
             this.$nextTick(function () {
                 $('select').material_select();
@@ -11406,7 +11411,41 @@ var locationsVM = new Vue({
         },
 
         deleteLocation: function deleteLocation(index) {
+            if (this.newLocations[index].id) {
+                this.deleteTheseLocations.push(this.newLocations[index].id);
+            }
+
             this.newLocations.splice(index, 1);
+        },
+
+        submitForm: function submitForm(url) {
+            this.$http.post(url, {
+                deleteTheseLocations: this.deleteTheseLocations,
+                locations: this.newLocations
+            }).then(function (response) {
+                // success
+                window.location.href = response.data.redirect_to;
+            }, function (response) {
+                //fail
+
+                var created = response.data.created.map(function (index) {
+                    locationsVM.newLocations.splice(index, 1);
+                });
+
+                var errors = response.data.errors;
+
+                locationsVM.$set('invalidCount', errors.length);
+
+                for (var i = 0; i < errors.length; i++) {
+                    $('input[name="locations[' + i + '][' + Object.keys(errors[i].messages)[0] + ']"]').addClass('invalid');
+
+                    $('label[for="locations[' + i + '][' + Object.keys(errors[i].messages)[0] + ']"]').attr('data-error', errors[i].messages[Object.keys(errors[i].messages)[0]][0]);
+
+                    locationsVM.$set('newLocations[' + i + '].errorCount', errors.length);
+                }
+
+                $("html, body").animate({scrollTop: 0}, {duration: 300, queue: false});
+            });
         }
     }
 });

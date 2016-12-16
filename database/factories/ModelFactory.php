@@ -11,6 +11,8 @@
 |
 */
 
+use App\Entities\Invite;
+
 $factory->define(App\User::class, function (Faker\Generator $faker) {
     return [
         'display_name' => $faker->name,
@@ -22,9 +24,9 @@ $factory->define(App\User::class, function (Faker\Generator $faker) {
 });
 
 $factory->define(\App\Models\CPM\Biometrics\CpmWeight::class, function (Faker\Generator $faker) {
-    
+
     $starting = rand(300, 450);
-    
+
     return [
         'monitor_changes_for_chf' => $faker->boolean(),
 //        'patient_id' => '', this has to be passed in when calling the factory
@@ -68,15 +70,15 @@ $factory->define(\App\Models\CPM\Biometrics\CpmSmoking::class, function (Faker\G
 });
 
 $factory->define(\App\Models\CCD\CcdInsurancePolicy::class, function (Faker\Generator $faker) {
-    
+
     $types = [
-        'Medicare', 
+        'Medicare',
         'Medicaid'
     ];
-    
+
     $relations = [
-        'Self', 
-        'G8', 
+        'Self',
+        'G8',
         'Next Of Kin'
     ];
 
@@ -89,5 +91,15 @@ $factory->define(\App\Models\CCD\CcdInsurancePolicy::class, function (Faker\Gene
         'relation' => $relations[array_rand($relations, 1)],
         'subscriber' => $faker->name,
         'approved' => rand(0, 1),
+    ];
+});
+
+$factory->define(Invite::class, function (Faker\Generator $faker) {
+    return [
+        'inviter_id' => factory(App\User::class)->create()->id,
+        'email'      => $faker->email,
+        'subject'    => 'subject',
+        'message'    => 'message',
+        'code'       => generateRandomString(20),
     ];
 });
