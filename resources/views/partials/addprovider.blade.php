@@ -49,7 +49,7 @@
                             <div class="col-md-6">
                                 <input id="speciality" name="speciality" type="text" placeholder=""
                                        class="form-control input-md"
-                                       required="">
+                                       required="required">
                             </div>
                         </div>
                     </div>

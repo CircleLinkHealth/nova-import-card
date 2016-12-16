@@ -296,7 +296,7 @@
                     <li role="presentation" class="dropdown">
                         <a class="dropdown-toggle" data-toggle="dropdown" href="#" role="button"
                            aria-expanded="false">
-                            Sales Reports<span class="caret"></span>
+                            Account Data<span class="caret"></span>
                         </a>
                         <ul class="dropdown-menu" role="menu" aria-labelledby="dLabel">
                                     <li><a href="{{ URL::route('reports.sales.location.create', array()) }}">by Location
