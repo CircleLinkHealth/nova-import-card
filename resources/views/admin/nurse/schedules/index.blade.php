@@ -2,20 +2,24 @@
 
 @section('content')
     <div class="container">
-        @foreach($windows as $windowCollection)
+        @foreach($data as $d)
             <div class="row" style="padding-bottom: 5%;">
                 <h3>
-                    <b>{{ $windowCollection->first()->nurse->user->fullName }}</b>
-                    <span class="pull-right red-text">Timezone: {{ $windowCollection->first()->nurse->user->timezone ? $windowCollection->first()->nurse->user->timezone : 'Not set' }}</span>
+                    <b>{{ $d->fullName }}</b>
+                    <span class="pull-right red-text">Timezone: {{ $d->timezone ? $d->timezone : 'Not set' }}</span>
                 </h3>
 
                 <div class="row">
-                    @include('partials.care-center.work-schedule-slot.admin-store', [ 'nurseInfo' => $windowCollection->first()->nurse ])
+                    @include('partials.care-center.work-schedule-slot.admin-store', [ 'nurseInfo' => $d->nurseInfo ])
                 </div>
 
-                <h4>Existing Windows</h4>
+                @if($d->nurseInfo->upcomingWindows->count() > 0)
+                    <h4>Existing Windows</h4>
+                @else
+                    <h4>This nurse does not have any windows.</h4>
+                @endif
 
-                @foreach($windowCollection as $w)
+                @foreach($d->nurseInfo->upcomingWindows as $w)
                     <div class="row">
                         @include('partials.care-center.work-schedule-slot.admin-edit', [ 'window' => $w ])
                     </div>

@@ -5,7 +5,8 @@
         <div class="col-sm-12">
             <div class="list-group">
                 <template v-for="medicationitem in medications">
-                <div href="#" class="list-group-item" v-on:submit.prevent style="padding:5px;font-size:12px;">
+                    <div class="list-group-item" v-on:submit.prevent v-if="medicationitem.name || medicationitem.sig"
+                         style="padding:5px;font-size:12px;">
                     <div class="row">
                         <div class="col-sm-10">
                             <div class="list-group-item-heading">
@@ -41,7 +42,7 @@
                 <div class="panel-body">
                     <div class="row">
                         <div class="col-sm-9">
-                            <input type="hidden" id="patient_id" name="patient_id" value="{{ $patient->ID }}">
+                            <input type="hidden" id="patient_id" name="patient_id" value="{{ $patient->id }}">
                             <div class="form-group">
                                 <input class="form-control" placeholder="Medication Name" v-model="medication.name">
                                 <input class="form-control" placeholder="Instructions" v-model="medication.sig">

@@ -9,10 +9,7 @@
 namespace App\Services\CPM;
 
 
-use App\CarePlanTemplate;
 use App\Contracts\Services\CpmModel;
-use App\Models\CPM\CpmInstruction;
-use App\Services\UserService;
 use App\User;
 
 class CpmMiscService implements CpmModel
@@ -32,7 +29,7 @@ class CpmMiscService implements CpmModel
 
         //get cpmMiscs on cptMiscsIds with this page
         $cptMiscsIds = $templateMiscs
-            ->lists('id')
+            ->pluck('id')
             ->all();
 
         //get the user's miscs

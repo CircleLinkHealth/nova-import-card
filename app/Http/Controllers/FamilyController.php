@@ -3,7 +3,6 @@
 namespace App\Http\Controllers;
 
 use App\Family;
-use App\Http\Requests;
 use App\PatientInfo;
 use Illuminate\Http\Request;
 
@@ -39,7 +38,7 @@ class FamilyController extends Controller
 
         $fam = new Family();
 
-        $fam->created_by = auth()->user()->ID;
+        $fam->created_by = auth()->user()->id;
 
         $fam->save();
 

@@ -10,7 +10,7 @@ $new_user = false;
     <link href="{{ asset('/css/wpstyle.css') }}" rel="stylesheet">
     <script>
     </script>
-    {!! Form::open(array('url' => URL::route('patient.careteam.store', array('patientId' => $patient->ID)), 'class' => 'form-horizontal', 'id' => 'ucpForm')) !!}
+    {!! Form::open(array('url' => URL::route('patient.careteam.store', array('patientId' => $patient->id)), 'class' => 'form-horizontal', 'id' => 'ucpForm')) !!}
     <style>
         .careTeamMemberContainer {
             margin-top:30px;
@@ -24,7 +24,7 @@ $new_user = false;
             @endif
         </div>
     </div>
-    <input type=hidden name=user_id value="{{ $patient->ID }}">
+    <input type=hidden name=user_id value="{{ $patient->id }}">
     <input type=hidden name=program_id value="{{ $patient->program_id }}">
 
 
@@ -60,7 +60,7 @@ $new_user = false;
                                 <div class="row">
                                     <input class="ctmCountArr" type="hidden" name="ctmCountArr[]" value="' + ctmCount + '">
                                     <div class="col-sm-4">';
-                                        {!! Form::select('providers', $providersData, (old('providers') ? old('providers') : $careTeamUser->ID ? $careTeamUser->ID : ''), ['class' => 'form-control selectpicker', 'style' => 'width:50%;']) !!}
+                                        {!! Form::select('providers', $providersData, (old('providers') ? old('providers') : $careTeamUser->id ? $careTeamUser->id : ''), ['class' => 'form-control selectpicker', 'style' => 'width:50%;']) !!}
                                     </div>
                                     <div class="col-sm-5" id="ctm' + ctmCount + 'Info">
                                     </div>

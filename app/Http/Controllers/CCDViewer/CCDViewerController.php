@@ -1,9 +1,8 @@
 <?php namespace App\Http\Controllers\CCDViewer;
 
-use App\Models\CCD\Ccda;
 use App\CLH\Repositories\CCDImporterRepository;
-use App\Http\Requests;
 use App\Http\Controllers\Controller;
+use App\Models\CCD\Ccda;
 use Illuminate\Http\Request;
 use JavaScript;
 
@@ -21,6 +20,19 @@ class CCDViewerController extends Controller
     public function create()
     {
         return view('CCDViewer.old-viewer');
+    }
+
+    public function show($ccdaId)
+    {
+        $ccda = Ccda::find($ccdaId);
+
+        if ($ccda) {
+            $ccd = json_decode($ccda->json);
+
+            return view('CCDViewer.old-viewer', compact('ccd'));
+        }
+
+        abort(400, "CCDA was not found.");
     }
 
     public function showByUserId($userId)

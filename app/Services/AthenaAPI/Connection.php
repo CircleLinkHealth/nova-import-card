@@ -54,9 +54,9 @@ class Connection {
      * Connects to the host, authenticates to the specified API version using key and secret.
      *
      * @param string $version the specified API version to access
-     * @param string $key the client key (also known as ID)
+     * @param string $key the client key (also known as id)
      * @param string $secret the client secret
-     * @param string|int $practiceid|null the practice ID to be used in requests (optional)
+     * @param string|int $practiceid |null the practice id to be used in requests (optional)
      */
     public function __construct($version, $key, $secret, $practiceid=null) {
         $this->version = $version;
@@ -73,11 +73,6 @@ class Connection {
         $this->authurl = 'https://api.athenahealth.com/' . $auth_prefixes[$this->version];
 
         $this->authenticate();
-    }
-
-    public function setPracticeId($practiceId)
-    {
-        $this->practiceid = $practiceId;
     }
 
     private function authenticate() {
@@ -144,7 +139,7 @@ class Connection {
                 /*
                  * Hack to check for 401 response without needing to install PECL to be able to use http_parse_headers()
                  */
-                if (str_contains($http_response_header[0], '401'))
+                if (isset($http_response_header) && str_contains($http_response_header[0], '401'))
                 {
                     return false;
                 }
@@ -158,24 +153,41 @@ class Connection {
         return json_decode($contents, true);
     }
 
-    /**
-     * This method abstracts away adding the authorization header to requests.
-     *
-     * @access private
-     */
-    private function authorized_call($verb, $url, $body, $headers, $secondcall=false) {
-        $auth_header = array('Authorization' => 'Bearer ' . $this->token);
-        $response = $this->call($verb, $url, $body, array_merge($auth_header, $headers));
-
-        # $response is false if we had a 401 Not Authorized, so re-authenticate and try again.
-        if ($response === false && !$secondcall) {
-            $this->authenticate();
-            return $this->authorized_call($verb, $url, $body, $headers, $secondcall=true);
-        }
-
-        return $response;
+    public function setPracticeId($practiceId)
+    {
+        $this->practiceid = $practiceId;
     }
 
+    /**
+     * Perform at HTTP GET request and return an associative array of the API response.
+     *
+     * @param string $url the path (URI) of the resource
+     * @param mixed array $parameters|null the request parameters
+     * @param mixed array $headers|null the request headers
+     */
+    public function GET(
+        $url,
+        $parameters = null,
+        $headers = null
+    ) {
+        $new_parameters = [];
+        if ($parameters) {
+            $new_parameters = array_merge($new_parameters, $parameters);
+        }
+
+        $new_headers = [];
+        if ($headers) {
+            $new_headers = array_merge($new_headers, $headers);
+        }
+
+        # Join up a URL and add the parameters, since GET requests require parameters in the URL.
+        $new_url = $this->url_join($this->baseurl, $this->practiceid, $url);
+        if ($new_parameters) {
+            $new_url .= '?' . http_build_query($new_parameters);
+        }
+
+        return $this->authorized_call('GET', $new_url, [], $new_headers);
+    }
 
     /**
      * This method joins together parts of a URL to make a valid one.
@@ -196,30 +208,28 @@ class Connection {
     }
 
     /**
-     * Perform at HTTP GET request and return an associative array of the API response.
+     * This method abstracts away adding the authorization header to requests.
      *
-     * @param string $url the path (URI) of the resource
-     * @param mixed array $parameters|null the request parameters
-     * @param mixed array $headers|null the request headers
+     * @access private
      */
-    public function GET($url, $parameters=null, $headers=null) {
-        $new_parameters = array();
-        if ($parameters) {
-            $new_parameters = array_merge($new_parameters, $parameters);
+    private function authorized_call(
+        $verb,
+        $url,
+        $body,
+        $headers,
+        $secondcall = false
+    ) {
+        $auth_header = ['Authorization' => 'Bearer ' . $this->token];
+        $response = $this->call($verb, $url, $body, array_merge($auth_header, $headers));
+
+        # $response is false if we had a 401 Not Authorized, so re-authenticate and try again.
+        if ($response === false && !$secondcall) {
+            $this->authenticate();
+
+            return $this->authorized_call($verb, $url, $body, $headers, $secondcall = true);
         }
 
-        $new_headers = array();
-        if ($headers) {
-            $new_headers = array_merge($new_headers, $headers);
-        }
-
-        # Join up a URL and add the parameters, since GET requests require parameters in the URL.
-        $new_url = $this->url_join($this->baseurl, $this->practiceid, $url);
-        if ($new_parameters) {
-            $new_url .= '?' . http_build_query($new_parameters);
-        }
-
-        return $this->authorized_call('GET', $new_url, array(), $new_headers);
+        return $response;
     }
 
     /**

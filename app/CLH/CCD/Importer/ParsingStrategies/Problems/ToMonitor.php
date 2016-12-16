@@ -3,12 +3,12 @@
 namespace App\CLH\CCD\Importer\ParsingStrategies\Problems;
 
 
-use App\Models\CCD\Ccda;
 use App\CLH\CCD\ImportedItems\ProblemImport;
-use App\Models\CPM\CpmProblem;
 use App\CLH\CCD\Importer\SnomedToCpmIcdMap;
 use App\CLH\Contracts\CCD\ParsingStrategy;
 use App\CLH\Contracts\CCD\ValidationStrategy;
+use App\Models\CCD\Ccda;
+use App\Models\CPM\CpmProblem;
 
 class ToMonitor implements ParsingStrategy
 {
@@ -47,7 +47,7 @@ class ToMonitor implements ParsingStrategy
                  * SNOMED Check
                  */
             if (in_array($ccdProblem->code_system_name, ['SNOMED CT']) || $ccdProblem->code_system == '2.16.840.1.113883.6.96') {
-                $potentialICD10List = SnomedToCpmIcdMap::whereSnomedCode($ccdProblem->code)->lists('icd_10_code')->all();
+                $potentialICD10List = SnomedToCpmIcdMap::whereSnomedCode($ccdProblem->code)->pluck('icd_10_code')->all();
 
                 if (!empty($potentialICD10List[0])) {
                     $ccdProblem->code_system_name = 'ICD-10';

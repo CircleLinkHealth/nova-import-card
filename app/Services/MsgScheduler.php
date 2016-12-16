@@ -1,18 +1,12 @@
 <?php namespace App\Services;
 
-use App\Observation;
-use App\ObservationMeta;
 use App\Comment;
+use App\Observation;
 use App\User;
-use App\UserMeta;
-use App\Services\MsgUser;
-use App\Services\MsgChooser;
-
 use Date;
 use DateTime;
 use DateTimeZone;
 
-use DB;
 /*
  *
  * $this->load->model('cpm_1_7_users_model','meta');
@@ -240,7 +234,7 @@ class MsgScheduler {
                     echo "<br>MsgScheduler->createScheduledMessages() Skip, Missing User Config";
                     continue 1;
                 }
-                if(!$wpUser->blogId()) {
+                if(!$wpUser->primaryProgramId()) {
                     echo "<br>MsgScheduler->createScheduledMessages() Skip, Missing ProgramId";
                     continue 1;
                 }
@@ -285,17 +279,6 @@ class MsgScheduler {
         echo "<br><br>#################### end createScheduledMessages() ######################";
     }
 
-
-    function triggerUrl($strUrl)
-    {
-        // echo "Calling: $strUrl<br>";
-        $this->curl->simple_get($strUrl);
-        echo "Called: $strUrl<BR>";
-        return 'OK';
-
-    }
-
-
     public function create_app_schedule($arrData){
         reset($arrData);
         $user_id        =  key($arrData);
@@ -306,11 +289,11 @@ class MsgScheduler {
             echo "<br>MsgScheduler->create_app_schedule() Missing User Config";
             return false;
         }
-        if(!$wpUser->blogId()) {
+        if (!$wpUser->program_id) {
             echo "<br>MsgScheduler->create_app_schedule() Missing ProgramId";
             return false;
         }
-        $provider_id    = $arrData[$user_id]['usermeta']['intProgramId']; // Provider ID
+        $provider_id = $arrData[$user_id]['usermeta']['intProgramId']; // Provider id
         $qstype         = $arrData[$user_id]['usermeta']['msgtype'];  // Question Group Type
         $qtype          = $arrData[$user_id]['usermeta']['wp_'.$provider_id.'_user_config']['preferred_contact_method']."_".$arrData[$user_id]['usermeta']['wp_'.$provider_id.'_user_config']['preferred_contact_language'];
         $strMessageId   = 'schedulercontroller';
@@ -361,6 +344,16 @@ class MsgScheduler {
 
         echo "<br>MsgScheduler->create_app_schedule() End";
         return 0;
+    }
+
+    function triggerUrl($strUrl)
+    {
+        // echo "Calling: $strUrl<br>";
+        $this->curl->simple_get($strUrl);
+        echo "Called: $strUrl<BR>";
+
+        return 'OK';
+
     }
 
 

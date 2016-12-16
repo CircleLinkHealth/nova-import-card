@@ -1,8 +1,5 @@
 <?php namespace App\Http\Controllers;
 
-use App\Http\Requests;
-use App\Http\Controllers\Controller;
-
 use Illuminate\Http\Request;
 
 class AuthorizationController extends Controller {
@@ -24,10 +21,10 @@ class AuthorizationController extends Controller {
 
 		// working code
 		// get credentials
-		$credentials = \Input::only('user_email', 'user_pass');
+        $credentials = \Input::only('email', 'password');
 
 		// set the identifier for wp_users
-		\JWTAuth::setIdentifier('ID');
+        \JWTAuth::setIdentifier('id');
 
 		// attempt authorization
 		if ( ! $token = \JWTAuth::attempt($credentials) )
@@ -50,7 +47,7 @@ class AuthorizationController extends Controller {
 		//return Response::json('testing');
 
 		// set the identifier for wp_users
-		\JWTAuth::setIdentifier('ID');
+        \JWTAuth::setIdentifier('id');
 		$token = \JWTAuth::getToken();
 		$user = \JWTAuth::parseToken()->authenticate();
 		return response()->json($user);

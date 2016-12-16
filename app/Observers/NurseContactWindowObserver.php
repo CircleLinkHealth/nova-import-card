@@ -23,7 +23,7 @@ class NurseContactWindowObserver
 
         $auth = auth()->user();
 
-        if ($auth->ID != $window->nurse->user->ID) {
+        if ($auth->id != $window->nurse->user->id) {
             return;
         }
 
@@ -50,7 +50,7 @@ class NurseContactWindowObserver
 
         $auth = auth()->user();
 
-        if ($auth->ID != $window->nurse->user->ID) {
+        if ($auth->id != $window->nurse->user->id) {
             return;
         }
 

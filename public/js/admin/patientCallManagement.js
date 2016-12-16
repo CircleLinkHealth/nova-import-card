@@ -136,6 +136,9 @@ $(function () {
     $('#addCallModalYes').on("click", function () {
 
         $.ajax({
+            headers: {
+                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+            },
             type: $('#addCallForm').attr('method'),
             url: $('#addCallForm').attr('action'),
             data: $('#addCallForm').serialize(),
@@ -267,6 +270,9 @@ $(function () {
         };
         if (consoleDebug) console.log(data);
         $.ajax({
+            headers: {
+                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+            },
             type: "POST",
             url: callUpdatePostUri,
             data: data,

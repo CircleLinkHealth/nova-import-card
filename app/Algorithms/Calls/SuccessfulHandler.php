@@ -43,9 +43,11 @@ class SuccessfulHandler implements CallHandler
 
     private $week;
     private $patient;
+    private $nurse;
     private $ccmTime;
     private $nextCallDate;
     private $attemptNote;
+    private $matchArray = [];
 
     //return package
     private $prediction;
@@ -69,12 +71,14 @@ class SuccessfulHandler implements CallHandler
 
     public function handle()
     {
-
         //Calculate the next date before which we can call patient
-        $this->getPatientOffset($this->ccmTime);
+        $this->getPatientOffset($this->ccmTime, $this->week);
 
         //get the next call date based on patient preferences
         $this->getNextWindow();
+
+        //attach nurse to call, if any windows match.
+        $this->intersectWithNurseWindows();
 
         //Add debug string
         $this->prediction['predicament'] = $this->createSchedulerInfoString();
@@ -83,9 +87,7 @@ class SuccessfulHandler implements CallHandler
 
     }
     
-    public function getPatientOffset($ccmTime){
-
-        $week = $this->week;
+    public function getPatientOffset($ccmTime, $week){
 
         if ($ccmTime > 1199) { // More than 20 mins
 
@@ -97,7 +99,8 @@ class SuccessfulHandler implements CallHandler
                 if ($once_monthly) {
 
                     $this->logic = 'Add a month, 1x preference override';
-                    $this->nextCallDate->addMonth(1);
+                    //handle all cases with 28 days, prevent jump on 31st to next+1 month
+                    $this->nextCallDate->day(28);
 
                 } else {
 

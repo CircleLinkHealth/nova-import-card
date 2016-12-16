@@ -1,12 +1,14 @@
 var Vue = require('vue');
 var Vmdl = require('vue-mdl');
-var MDL = require('material-design-lite');
+// var MDL = require('material-design-lite');
 
 Vue.config.debug = true;
 
 Vmdl.registerAll(Vue);
 
 Vue.use(require('vue-resource'));
+
+Vue.http.headers.common['X-CSRF-TOKEN'] = $('meta[name="csrf-token"]').attr('content');
 
 /**
  *
@@ -18,14 +20,15 @@ var CcdUploader = Vue.extend({
 
     data: function () {
         return {
-            blogs: new Array,
-            ccdVendors: new Array,
+            blogs: [],
+            ccdVendors: [],
             selectedVendor: null,
             selectedProgram: null,
             progress: 0,
             buffer: 100,
             message: 'Drop CCD Records in the box below, or click on it to browse your computer for CCDs. It is recommended that you import up to 5 CCDs in one go.',
             enabled: false, // submit button enabled
+            csrfToken: null
         }
     },
 
@@ -33,6 +36,7 @@ var CcdUploader = Vue.extend({
         this.watchForFileInput();
         this.blogs = window.cpm.userBlogs;
         this.ccdVendors = window.cpm.ccdVendors;
+        this.csrfToken = $('meta[name="csrf-token"]').attr('content');
     },
 
     methods: {
@@ -65,9 +69,9 @@ var UploadedCcdsPanel = Vue.extend({
 
     data: function () {
         return {
-            qaSummaries: new Array,
-            okToImport: new Array,
-            okToDelete: new Array
+            qaSummaries: [],
+            okToImport: [],
+            okToDelete: []
         }
     },
 

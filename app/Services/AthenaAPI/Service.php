@@ -17,6 +17,7 @@ use App\Contracts\Repositories\CcdaRequestRepository;
 use App\Models\CCD\Ccda;
 use App\Models\CCD\CcdVendor;
 use Carbon\Carbon;
+use Maknz\Slack\Facades\Slack;
 
 class Service
 {
@@ -31,47 +32,56 @@ class Service
         $this->ccdas = $ccdas;
     }
 
-    public function getAppointmentsForToday($practiceId)
+    public function getAppointments(
+        $practiceId,
+        Carbon $startDate,
+        Carbon $endDate
+    )
     {
-        $today = Carbon::today()->format('m/d/Y');
+        $start = $startDate->format('m/d/Y');
+        $end = $endDate->format('m/d/Y');
 
         $departments = $this->api->getDepartmentIds($practiceId);
 
         foreach ($departments['departments'] as $department)
         {
-            $response = $this->api->getBookedAppointments($practiceId, $today, $today, $department['departmentid']);
+            $response = $this->api->getBookedAppointments($practiceId, $start, $end, $department['departmentid']);
             $this->logPatientIdsFromAppointments($response, $practiceId);
         }
-
-
     }
 
     public function logPatientIdsFromAppointments($response, $practiceId)
     {
+        if (!isset($response['appointments'])) {
+            return;
+        }
+
+        $practiceCustomFields = $this->api->getPracticeCustomFields($practiceId);
+
+        //Get 'CCM Enabled' custom field id from the practice's custom fields
+        foreach ($practiceCustomFields as $customField) {
+            if (strtolower($customField['name']) == 'ccm enabled') {
+                $ccmEnabledFieldId = $customField['customfieldid'];
+            }
+        }
+
+        if (!isset($ccmEnabledFieldId)) {
+            return;
+        }
+
         foreach ($response['appointments'] as $bookedAppointment) {
 
             $patientId = $bookedAppointment['patientid'];
             $departmentId = $bookedAppointment['departmentid'];
 
-            $practiceCustomFields = $this->api->getPracticeCustomFields($practiceId);
-
-            //Get 'CCM Enabled' custom field id from the practice's custom fields
-            foreach ($practiceCustomFields as $customField) {
-                if ($customField['name'] == 'CCM Enabled') {
-                    $ccmEnabledFieldId = $customField['customfieldid'];
-                }
-            }
-
-            if (!isset($ccmEnabledFieldId)) continue;
-
             $patientCustomFields = $this->api->getPatientCustomFields($patientId, $practiceId, $departmentId);
 
-            //If 'CCM Enabled' contains a y (meaning yes), then save the patient ID
+            //If 'CCM Enabled' contains a y (meaning yes), then save the patient id
             foreach ($patientCustomFields as $customField) {
                 if ($customField['customfieldid'] == $ccmEnabledFieldId
                     && str_contains($customField['customfieldvalue'], ['Y', 'y'])
                 ) {
-                    $this->ccdaRequests->create([
+                    $ccdaRequest = $this->ccdaRequests->create([
                         'patient_id' => $patientId,
                         'department_id' => $departmentId,
                         'vendor' => 'athena',
@@ -122,6 +132,13 @@ class Service
 
             $importer = new QAImportManager($vendor->program_id, $ccda);
             $output = $importer->generateCarePlanFromCCD();
+
+            if (app()->environment('worker')) {
+                $link = 'https://www.careplanmanager.com/ccd-importer/qaimport';
+
+                Slack::to('#ccd-file-status')
+                    ->send("We received a CCD from Athena. \n Please visit {$link} to import.");
+            }
 
             return $ccda;
         });

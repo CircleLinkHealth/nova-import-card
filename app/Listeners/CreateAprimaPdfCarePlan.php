@@ -5,8 +5,6 @@ namespace App\Listeners;
 use App\Events\CarePlanWasApproved;
 use App\Location;
 use App\Services\ReportsService;
-use Illuminate\Queue\InteractsWithQueue;
-use Illuminate\Contracts\Queue\ShouldQueue;
 
 class CreateAprimaPdfCarePlan
 {
@@ -43,7 +41,7 @@ class CreateAprimaPdfCarePlan
 
         $locationObj = $this->location->find($locationId);
 
-        if (!empty($locationObj) && $locationObj->parent_id == Location::APRIMA_ID) {
+        if (!empty($locationObj) && $locationObj->parent_id == Location::UPG_PARENT_LOCATION_ID) {
             $this->reportsService->createAprimaPatientCarePlanPdfReport($user, $user->getCarePlanProviderApproverAttribute());
         }
     }

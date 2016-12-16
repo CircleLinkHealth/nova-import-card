@@ -1,114 +1,12 @@
 <?php namespace App\Services;
 
-use App\CPRulesItem;
-use App\CPRulesQuestions;
 use App\CPRulesPCP;
-use App\Services\ReportsService;
-use App\Http\Requests;
 use App\User;
-use App\CPRulesUCP;
-use App\Observation;
-use DateTime;
-use DateTimeZone;
 use DB;
 use Illuminate\Support\Facades\Facade;
-use Validator;
 
 class CareplanUIService extends Facade {
 
-
-	public function getCareplanSectionData($programId, $pcpSectionText, $user) {
-
-		$blog_id = $programId;
-		$section_text = $pcpSectionText;
-		$user_id = '0';
-		if($user) {
-			$user_id = $user->ID;
-		}
-
-		// build sql string
-		$sql_ucp = "select p.*, i.*, its.meta_value 'item_status', si.items_text 'sub_parent', u.ucp_id, u.user_id, u.meta_key, u.meta_value
-,imf.meta_value 'ui_fld_type',im_ro.meta_value 'radio_options', ims.meta_value 'ui_sort', imv.meta_value 'ui_fld_select', imd.meta_value 'ui_default', im_usd.meta_value 'ui_show_detail', im_urs.meta_value 'ui_row_start', im_ure.meta_value 'ui_row_end', im_ucs.meta_value 'ui_col_start', im_uce.meta_value 'ui_col_end', im_tao.meta_value 'track_as_observation', im_uip.meta_value 'ui_placeholder'
-	from rules_pcp p
-        Left join     rules_items i ON i.pcp_id = p.pcp_id and p.status = 'active'
-        Left join     rules_items si ON si.items_id = i.items_parent and p.status = 'active'
-        Left Join     rules_ucp u ON u.items_id = i.items_id and u.user_id = ". $user_id ." and u.meta_key != 'TOD'
-        Left Join     rules_ucp its ON its.items_id = i.items_id and its.meta_key = 'status'  AND its.user_id = ". $user_id ."
- 		Left Join 	rules_itemmeta imf on imf.items_id = i.items_id and imf.meta_key = 'ui_fld_type'
- 		Left Join 	rules_itemmeta im_ro on im_ro.items_id = i.items_id and im_ro.meta_key = 'radio_options'
- 		Left Join 	rules_itemmeta im_usd on im_usd.items_id = i.items_id and im_usd.meta_key = 'ui_show_detail'
- 		Left Join 	rules_itemmeta im_urs on im_urs.items_id = i.items_id and im_urs.meta_key = 'ui_row_start'
- 		Left Join 	rules_itemmeta im_ure on im_ure.items_id = i.items_id and im_ure.meta_key = 'ui_row_end'
- 		Left Join 	rules_itemmeta im_ucs on im_ucs.items_id = i.items_id and im_ucs.meta_key = 'ui_col_start'
- 		Left Join 	rules_itemmeta im_uce on im_uce.items_id = i.items_id and im_uce.meta_key = 'ui_col_end'
- 		Left Join 	rules_itemmeta im_tao on im_tao.items_id = i.items_id and im_tao.meta_key = 'track_as_observation'
- 		Left Join 	rules_itemmeta im_uip on im_uip.items_id = i.items_id and im_uip.meta_key = 'ui_placeholder'
- 		Left Join 	rules_itemmeta ims on ims.items_id = i.items_id and ims.meta_key = 'ui_sort'
- 		Left Join 	rules_itemmeta imv on imv.items_id = i.items_id and imv.meta_key = 'ui_fld_select'
- 		left join 	rules_itemmeta imd ON imd.items_id = i.items_id AND imd.meta_key = 'ui_default'
-	where cpset_id = 1
-		and p.prov_id = ".$blog_id."
-		and p.section_text = '".$section_text."'
-		and imf.meta_value <> ''
-order by ui_sort
- -- and p.status = 'active'
-;";
-
-		$results = DB::connection('mysql_no_prefix')->select( DB::raw($sql_ucp) );
-
-		if(isset($results)) {
-			//dd($results);
-		} else {
-			die('no result');
-			return false;
-		}
-
-		$items = array();
-		$sub_meta = array();
-		foreach($results as $row)
-		{
-			//echo "<pre>";var_dump($row);echo "</pre>";
-			$sections[$row->section_text] = $row->status;
-
-			if ($row->items_parent > 0) {
-				$sub_meta[$row->section_text][$row->sub_parent][$row->items_text]['value'] = $row->meta_value;
-				$sub_meta[$row->section_text][$row->sub_parent][$row->items_text]['items_id'] = $row->items_id;
-				$sub_meta[$row->section_text][$row->sub_parent][$row->items_text]['ui_fld_type'] = $row->ui_fld_type;
-				$sub_meta[$row->section_text][$row->sub_parent][$row->items_text]['radio_options'] = $row->radio_options;
-				$sub_meta[$row->section_text][$row->sub_parent][$row->items_text]['ui_sort'] = $row->ui_sort;
-				$sub_meta[$row->section_text][$row->sub_parent][$row->items_text]['items_parent'] = $row->items_parent;
-				$sub_meta[$row->section_text][$row->sub_parent][$row->items_text]['ucp_id'] = $row->ucp_id;
-				$sub_meta[$row->section_text][$row->sub_parent][$row->items_text]['pcp_id'] = $row->pcp_id;
-				$sub_meta[$row->section_text][$row->sub_parent][$row->items_text]['ui_show_detail'] = $row->ui_show_detail;
-				$sub_meta[$row->section_text][$row->sub_parent][$row->items_text]['ui_row_start'] = $row->ui_row_start;
-				$sub_meta[$row->section_text][$row->sub_parent][$row->items_text]['ui_row_end'] = $row->ui_row_end;
-				$sub_meta[$row->section_text][$row->sub_parent][$row->items_text]['ui_col_start'] = $row->ui_col_start;
-				$sub_meta[$row->section_text][$row->sub_parent][$row->items_text]['ui_col_end'] = $row->ui_col_end;
-				$sub_meta[$row->section_text][$row->sub_parent][$row->items_text]['ui_default'] = $row->ui_default;
-				$sub_meta[$row->section_text][$row->sub_parent][$row->items_text]['track_as_observation'] = $row->track_as_observation;
-				$sub_meta[$row->section_text][$row->sub_parent][$row->items_text]['ui_placeholder'] = $row->ui_placeholder;
-				if ($row->ui_fld_type == 'SELECT') {
-					$sub_meta[$row->section_text][$row->sub_parent][$row->items_text]['ui_fld_select'] = $row->ui_fld_select;
-				}
-			} else {
-				$items[$row->section_text][$row->items_text] = null;
-				$sub_meta[$row->section_text][$row->items_parent][$row->items_text]['items_id'] = $row->items_id;
-				$sub_meta[$row->section_text][$row->items_parent][$row->items_text]['item_status'] = $row->item_status;
-				$sub_meta[$row->section_text][$row->items_parent][$row->items_text]['ui_sort'] = $row->ui_sort;
-				$sub_meta[$row->section_text][$row->items_parent][$row->items_text]['pcp_id'] = $row->pcp_id;
-			}
-
-			if (!isset($items[$row->section_text][$row->sub_parent]) )	{
-				if (!isset($items[$row->section_text][$row->items_text])) {
-					if ( $row->meta_key == 'status' )	{
-						$items[$row->section_text][$row->items_text] = array('status' => $row->item_status, 'ucp_id' => $row->ucp_id, 'ui_sort' => $row->ui_sort);
-					}
-				}
-			}
-		}
-
-		return array('items' => $items, 'sub_meta' => $sub_meta);
-	}
 
 	/**
 	 * Render Careplan Sections
@@ -140,8 +38,6 @@ order by ui_sort
 		return $pcpSectionHtml;
 	}
 
-
-
 	/**
 	 * Render Careplan Section
 	 *
@@ -157,7 +53,7 @@ order by ui_sort
 
 		$user_id = '0';
 		if($user) {
-			$user_id = $user->ID;
+            $user_id = $user->id;
 		}
 
 		$sectionData = $this->getCareplanSectionData($programId, $pcpSectionText, $user);
@@ -433,7 +329,111 @@ order by ui_sort
 
 		//dd($content);
 		return $content;
-	}
+    }
+
+    public function getCareplanSectionData(
+        $programId,
+        $pcpSectionText,
+        $user
+    ) {
+
+        $id = $programId;
+        $section_text = $pcpSectionText;
+        $user_id = '0';
+        if ($user) {
+            $user_id = $user->id;
+        }
+
+        // build sql string
+        $sql_ucp = "select p.*, i.*, its.meta_value 'item_status', si.items_text 'sub_parent', u.ucp_id, u.user_id, u.meta_key, u.meta_value
+,imf.meta_value 'ui_fld_type',im_ro.meta_value 'radio_options', ims.meta_value 'ui_sort', imv.meta_value 'ui_fld_select', imd.meta_value 'ui_default', im_usd.meta_value 'ui_show_detail', im_urs.meta_value 'ui_row_start', im_ure.meta_value 'ui_row_end', im_ucs.meta_value 'ui_col_start', im_uce.meta_value 'ui_col_end', im_tao.meta_value 'track_as_observation', im_uip.meta_value 'ui_placeholder'
+	from rules_pcp p
+        Left join     rules_items i ON i.pcp_id = p.pcp_id and p.status = 'active'
+        Left join     rules_items si ON si.items_id = i.items_parent and p.status = 'active'
+        Left Join     rules_ucp u ON u.items_id = i.items_id and u.user_id = " . $user_id . " and u.meta_key != 'TOD'
+        Left Join     rules_ucp its ON its.items_id = i.items_id and its.meta_key = 'status'  AND its.user_id = " . $user_id . "
+ 		Left Join 	rules_itemmeta imf on imf.items_id = i.items_id and imf.meta_key = 'ui_fld_type'
+ 		Left Join 	rules_itemmeta im_ro on im_ro.items_id = i.items_id and im_ro.meta_key = 'radio_options'
+ 		Left Join 	rules_itemmeta im_usd on im_usd.items_id = i.items_id and im_usd.meta_key = 'ui_show_detail'
+ 		Left Join 	rules_itemmeta im_urs on im_urs.items_id = i.items_id and im_urs.meta_key = 'ui_row_start'
+ 		Left Join 	rules_itemmeta im_ure on im_ure.items_id = i.items_id and im_ure.meta_key = 'ui_row_end'
+ 		Left Join 	rules_itemmeta im_ucs on im_ucs.items_id = i.items_id and im_ucs.meta_key = 'ui_col_start'
+ 		Left Join 	rules_itemmeta im_uce on im_uce.items_id = i.items_id and im_uce.meta_key = 'ui_col_end'
+ 		Left Join 	rules_itemmeta im_tao on im_tao.items_id = i.items_id and im_tao.meta_key = 'track_as_observation'
+ 		Left Join 	rules_itemmeta im_uip on im_uip.items_id = i.items_id and im_uip.meta_key = 'ui_placeholder'
+ 		Left Join 	rules_itemmeta ims on ims.items_id = i.items_id and ims.meta_key = 'ui_sort'
+ 		Left Join 	rules_itemmeta imv on imv.items_id = i.items_id and imv.meta_key = 'ui_fld_select'
+ 		left join 	rules_itemmeta imd ON imd.items_id = i.items_id AND imd.meta_key = 'ui_default'
+	where cpset_id = 1
+		and p.prov_id = " . $id . "
+		and p.section_text = '" . $section_text . "'
+		and imf.meta_value <> ''
+order by ui_sort
+ -- and p.status = 'active'
+;";
+
+        $results = DB::connection('mysql_no_prefix')->select(DB::raw($sql_ucp));
+
+        if (isset($results)) {
+            //dd($results);
+        } else {
+            die('no result');
+
+            return false;
+        }
+
+        $items = [];
+        $sub_meta = [];
+        foreach ($results as $row) {
+            //echo "<pre>";var_dump($row);echo "</pre>";
+            $sections[$row->section_text] = $row->status;
+
+            if ($row->items_parent > 0) {
+                $sub_meta[$row->section_text][$row->sub_parent][$row->items_text]['value'] = $row->meta_value;
+                $sub_meta[$row->section_text][$row->sub_parent][$row->items_text]['items_id'] = $row->items_id;
+                $sub_meta[$row->section_text][$row->sub_parent][$row->items_text]['ui_fld_type'] = $row->ui_fld_type;
+                $sub_meta[$row->section_text][$row->sub_parent][$row->items_text]['radio_options'] = $row->radio_options;
+                $sub_meta[$row->section_text][$row->sub_parent][$row->items_text]['ui_sort'] = $row->ui_sort;
+                $sub_meta[$row->section_text][$row->sub_parent][$row->items_text]['items_parent'] = $row->items_parent;
+                $sub_meta[$row->section_text][$row->sub_parent][$row->items_text]['ucp_id'] = $row->ucp_id;
+                $sub_meta[$row->section_text][$row->sub_parent][$row->items_text]['pcp_id'] = $row->pcp_id;
+                $sub_meta[$row->section_text][$row->sub_parent][$row->items_text]['ui_show_detail'] = $row->ui_show_detail;
+                $sub_meta[$row->section_text][$row->sub_parent][$row->items_text]['ui_row_start'] = $row->ui_row_start;
+                $sub_meta[$row->section_text][$row->sub_parent][$row->items_text]['ui_row_end'] = $row->ui_row_end;
+                $sub_meta[$row->section_text][$row->sub_parent][$row->items_text]['ui_col_start'] = $row->ui_col_start;
+                $sub_meta[$row->section_text][$row->sub_parent][$row->items_text]['ui_col_end'] = $row->ui_col_end;
+                $sub_meta[$row->section_text][$row->sub_parent][$row->items_text]['ui_default'] = $row->ui_default;
+                $sub_meta[$row->section_text][$row->sub_parent][$row->items_text]['track_as_observation'] = $row->track_as_observation;
+                $sub_meta[$row->section_text][$row->sub_parent][$row->items_text]['ui_placeholder'] = $row->ui_placeholder;
+                if ($row->ui_fld_type == 'SELECT') {
+                    $sub_meta[$row->section_text][$row->sub_parent][$row->items_text]['ui_fld_select'] = $row->ui_fld_select;
+                }
+            } else {
+                $items[$row->section_text][$row->items_text] = null;
+                $sub_meta[$row->section_text][$row->items_parent][$row->items_text]['items_id'] = $row->items_id;
+                $sub_meta[$row->section_text][$row->items_parent][$row->items_text]['item_status'] = $row->item_status;
+                $sub_meta[$row->section_text][$row->items_parent][$row->items_text]['ui_sort'] = $row->ui_sort;
+                $sub_meta[$row->section_text][$row->items_parent][$row->items_text]['pcp_id'] = $row->pcp_id;
+            }
+
+            if (!isset($items[$row->section_text][$row->sub_parent])) {
+                if (!isset($items[$row->section_text][$row->items_text])) {
+                    if ($row->meta_key == 'status') {
+                        $items[$row->section_text][$row->items_text] = [
+                            'status'  => $row->item_status,
+                            'ucp_id'  => $row->ucp_id,
+                            'ui_sort' => $row->ui_sort,
+                        ];
+                    }
+                }
+            }
+        }
+
+        return [
+            'items'    => $items,
+            'sub_meta' => $sub_meta,
+        ];
+    }
 
 
 }

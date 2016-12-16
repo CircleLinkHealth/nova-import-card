@@ -26,9 +26,7 @@ class AlgoController extends Controller
             $ccm = $request->input('seconds');
             $date = Carbon::parse($request->input('date'));
             $status = (bool) $request->input('status');
-            $contact_day = $request->input('days')[0];
-
-//          $successThisMonth = (bool) $request->input('call_success');
+            $contact_day = $request->input('days');
 
             $guineaPig = PatientInfo::find(1272);
 
@@ -54,10 +52,15 @@ class AlgoController extends Controller
 
             }
 
+            $days = [];
 
-            debug(Carbon::SUNDAY);
-//            debug($day->toDateTimeString());
-            return $day->next($contact_day)->format('l, jS M');
+            foreach ($contact_day as $week_day){
+                $days[] = Carbon::parse($day)->next($week_day);
+            }
+
+            $upcoming = min($days);
+
+            return $upcoming->format('l, jS M');
 
         }
 

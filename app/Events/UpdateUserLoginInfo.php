@@ -2,6 +2,7 @@
 
 namespace App\Events;
 
+use App\Models\PatientSession;
 use Carbon\Carbon;
 use Illuminate\Auth\Events\Login;
 
@@ -28,5 +29,9 @@ class UpdateUserLoginInfo
         $event->user->last_login = Carbon::now()->toDateTimeString();
         $event->user->is_online = true;
         $event->user->save();
+
+        //CLEAR OUT ANY REMAINING PATIENT SESSIONS ON LOGIN
+        $session = PatientSession::where('user_id', '=', $event->user->id)
+            ->delete();
     }
 }

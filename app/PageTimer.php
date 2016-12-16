@@ -1,8 +1,12 @@
 <?php namespace App;
 
+use App\Scopes\Universal\DateScopesTrait;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
-class PageTimer extends Model {
+class PageTimer extends Model
+{
+    use DateScopesTrait, SoftDeletes;
 
     /**
      * The connection name for the model.
@@ -19,29 +23,37 @@ class PageTimer extends Model {
     protected $table = 'lv_page_timer';
 
     /**
-     * The primary key for the model.
-     *
-     * @var string
-     */
-    protected $primaryKey = 'id';
-
-    /**
      * The attributes that are mass assignable.
      *
      * @var array
      */
-    protected $fillable = ['duration', 'duration_unit', 'patient_id', 'provider_id', 'start_time', 'start_time_gmt', 'end_time', 'end_time_gmt', 'url_full', 'url_short', 'program_id'];
+    protected $fillable = [
+        'billable_duration',
+        'duration',
+        'duration_unit',
+        'patient_id',
+        'provider_id',
+        'start_time',
+        'actual_start_time',
+        'end_time',
+        'actual_end_time',
+        'redirect_to',
+        'url_full',
+        'url_short',
+        'program_id',
+        'ip_addr',
+    ];
 
     protected $dates = ['deleted_at'];
 
     public function logger()
     {
-        return $this->belongsTo('App\User', 'provider_id', 'ID');
+        return $this->belongsTo('App\User', 'provider_id', 'id');
     }
 
     public function patient()
     {
-        return $this->belongsTo('App\User', 'patient_id', 'ID');
+        return $this->belongsTo('App\User', 'patient_id', 'id');
     }
 
     public function rule()

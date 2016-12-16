@@ -1,17 +1,8 @@
 <?php namespace App\Services;
 
-use App\CPRulesItem;
-use App\CPRulesQuestions;
-use App\CPRulesPCP;
-use App\Services\ReportsService;
-use App\Http\Requests;
-use App\User;
 use App\CPRulesUCP;
 use App\Observation;
-use DateTime;
-use DateTimeZone;
 use DB;
-use Validator;
 
 class CareplanService {
 
@@ -31,16 +22,16 @@ class CareplanService {
 	{
 		// set universal user / vars
 		$this->wpUser = $wpUser;
-		$this->programId = $wpUser->blogId();
+        $this->programId = $wpUser->program_id;
 
 		// start feed
 		$feed = array(
-			"User_ID" => $this->wpUser->ID,
-			"Comments" => "All data string are variable, DMS quantity and type of messages will change daily for each patient. Messages with Return Responses can nest. Message Content will have variable fields filled in by CPM and can vary between each patient. Message quantities will vary from day to day.",
-			"Data" => array(
+            "User_ID"  => $this->wpUser->id,
+            "Comments" => "All data string are variable, DMS quantity and type of messages will change daily for each patient. Messages with Return Responses can nest. Message Content will have variable fields filled in by CPM and can vary between each patient. Message quantities will vary from day to day.",
+            "Data"     => array(
 				"Version" => "2.1",
 				"EventDateTime" => date('Y-m-d H:i:s')),
-			"CP_Feed" => array(),
+            "CP_Feed"  => array(),
 		);
 
 		$i = 0;
@@ -88,7 +79,7 @@ class CareplanService {
 		$i = 0;
 		foreach($dmsMsgIds as $dmsMsgId) {
 			$observation = Observation::where('obs_message_id', '=', $dmsMsgId)
-				->where('user_id', '=', $this->wpUser->ID)
+                ->where('user_id', '=', $this->wpUser->id)
 				->where('obs_unit', '!=', 'scheduled')
 				->where('obs_unit', '!=', 'invalid')
 				->where('obs_unit', '!=', 'outbound')
@@ -107,14 +98,16 @@ class CareplanService {
 		$msgChooser = new MsgChooser;
 		$msgCPRules = new MsgCPRules;
 		$msgSubstitutions = new MsgSubstitutions;
-		$responseMsgId = $msgChooser->fxAlgorithmicForApp($this->wpUser->program_id, $this->wpUser->ID, $this->date);
+        $responseMsgId = $msgChooser->fxAlgorithmicForApp($this->wpUser->program_id, $this->wpUser->id, $this->date);
 
 		if(!empty($responseMsgId)) {
-			$qsType = $msgCPRules->getQsType($responseMsgId, $this->wpUser->ID);
-			$currQuestionInfo = $msgCPRules->getQuestion($responseMsgId, $this->wpUser->ID, $this->msgLanguageType, $this->programId, $qsType);
+            $qsType = $msgCPRules->getQsType($responseMsgId, $this->wpUser->id);
+            $currQuestionInfo = $msgCPRules->getQuestion($responseMsgId, $this->wpUser->id, $this->msgLanguageType,
+                $this->programId, $qsType);
 			if ($currQuestionInfo) {
 				if (isset($currQuestionInfo->message)) {
-					$currQuestionInfo->message = $msgSubstitutions->doSubstitutions($currQuestionInfo->message, $this->programId, $this->wpUser->ID);
+                    $currQuestionInfo->message = $msgSubstitutions->doSubstitutions($currQuestionInfo->message,
+                        $this->programId, $this->wpUser->id);
 				} else {
 					$currQuestionInfo->message = '-';
 				}
@@ -139,147 +132,63 @@ class CareplanService {
 		return $this->sortObs($dmsObs);
 	}
 
-
 	/**
-	 * @return array
+     * @param $programId
+     * @param $userId
+     * @param $date
+     * @param $obsKey
+     *
+     * @return array
      */
-	private function setObsReminders()
-	{
-		$hspObs = array();
+    public function getScheduledDMS()
+    {
+        // first get all active items
+        $ucp = CPRulesUCP::where('user_id', '=', $this->wpUser->id)
+            ->whereHas('item', function ($q) {
+                $q->whereHas('pcp', function ($q2) {
+                    $q2->where(function ($query) {
+                        $query->orWhere('section_text', '=', 'Lifestyle to Monitor');
+                        $query->orWhere('section_text', '=', 'Medications to Monitor');
+                    });
+                });
+                $q->has('question');
+            })
+            ->with('item')
+            ->with('item.question')
+            ->with('item.question.questionSets')
+            ->where('meta_value', '=', 'Active')
+            ->get();
+        //dd($ucp);
+        $msgIds = [];
+        $today = date('N', strtotime($this->date));
+        if ($ucp->count() > 0) {
+            foreach ($ucp as $ucpItem) {
+                //echo $ucpItem->items_id . '['. $ucpItem->item->items_parent .']-'. $ucpItem->meta_key . '<br>';
+                if ($ucpItem->meta_key == 'status') {
+                    // get contact days for item
+                    $ucpItemContactDays = CPRulesUCP::where('user_id', '=', $this->wpUser->id)
+                        ->whereHas('item', function ($query) use
+                        (
+                            $ucpItem
+                        ) {
+                            $query->where('items_parent', '=', $ucpItem->items_id);
+                            $query->where('items_text', '=', 'Contact Days');
+                        })
+                        ->first();
 
-		// get all users ucp
-		$ucpItems = CPRulesUCP::where('user_id', '=', $this->wpUser->ID)->get();
-
-		// find hsp items
-		$contactDays = '';
-		$status = 'Inactive';
-		foreach ($ucpItems as $ucpItem) {
-			if(isset($ucpItem->item->pcp->section_text)) {
-				if ($ucpItem->item->pcp->section_text == 'Transitional Care Management'
-					&& $ucpItem->item->items_text == 'Track Care Transitions'
-				) {
-					$status = $ucpItem->meta_value;
+                    // add if contact days for today
+                    if ($ucpItem->meta_value == 'Active' && $ucpItem->item->question && (strpos($ucpItemContactDays->meta_value,
+                                $today) !== false)
+                    ) {
+                        //echo 'obs_key = '.$ucpItem->item->question->obs_key . '<br>';
+                        $msgIds[] = $ucpItem->item->question->msg_id;
+                    }
 				}
 			}
 		}
 
-		if($status == 'Active') {
-			$observation = Observation::where('obs_message_id', '=', 'CF_HSP_10')
-				->where('user_id', '=', $this->wpUser->ID)
-				->where('obs_unit', '!=', 'scheduled')
-				->where('obs_unit', '!=', 'invalid')
-				->where('obs_unit', '!=', 'outbound')
-				->whereRaw("obs_date BETWEEN '" . $this->date . " 00:00:00' AND '" . $this->date . " 23:59:59'", array())
-				->orderBy('obs_date_gmt', 'desc')
-				->first();
-			//dd($observation);
-			if(!empty($observation)) {
-				$hspObs[0] = $this->renderCommentThread('CF_HSP_10', $observation->comment_id);
-			} else {
-				$hspObs[0] = $this->renderCommentThread('CF_HSP_10', false);
-			}
-		}
-
-		return $hspObs;
-	}
-
-
-	/**
-	 * @return array
-     */
-	private function setObsBiometric()
-	{
-		$msgUser = new MsgUser;
-		$bioMsgIds = array();
-		$userInfo = $msgUser->get_users_data($this->wpUser->ID, 'id', $this->programId, true);
-		if (!empty($userInfo[$this->wpUser->ID]['usermeta']['user_care_plan'])) {
-			$userInfoUCP = $userInfo[$this->wpUser->ID]['usermeta']['user_care_plan'];
-			// loop through care plan
-			foreach($userInfoUCP as $obsKey => $ucpItem) {
-				if(isset($ucpItem['parent_status'])) {
-					// if active
-					if ($ucpItem['parent_status'] == 'Active') {
-						$query = DB::connection('mysql_no_prefix')->table('rules_questions')->select('msg_id')
-							->where('obs_key', "=", $obsKey);
-						$questionInfo = $query->first();
-						if ($questionInfo) {
-							$msgId = $questionInfo->msg_id;
-							$bioMsgIds[] = $msgId;
-						}
-					}
-				}
-			}
-		}
-		$bioObs = array();
-		$i = 0;
-		foreach($bioMsgIds as $bioMsgId) {
-			$observation = Observation::where('obs_message_id', '=', $bioMsgId)
-				->where('user_id', '=', $this->wpUser->ID)
-				->where('obs_unit', '!=', 'scheduled')
-				->where('obs_unit', '!=', 'invalid')
-				->where('obs_unit', '!=', 'outbound')
-				->whereRaw("obs_date BETWEEN '" . $this->date . " 00:00:00' AND '" . $this->date . " 23:59:59'", array())
-				->orderBy('obs_date_gmt', 'desc')
-				->first();
-			if(!empty($observation) && $observation->comment_id != 0) {
-				$bioObs[$i] = $this->renderCommentThread($bioMsgId, $observation->comment_id);
-			} else {
-				$bioObs[$i] = $this->renderCommentThread($bioMsgId, 0);
-			}
-			$i++;
-		}
-		return $this->sortObs($bioObs);
-	}
-
-
-	/**
-	 * @return array
-     */
-	private function setObsSymptoms()
-	{
-		$symMsgIds = $this->getScheduledSymptoms();
-		$symObs = array();
-		$i = 0;
-		$answered = '';
-		foreach($symMsgIds as $symMsgId) {
-			$observation = Observation::where('obs_message_id', '=', $symMsgId)
-				->where('user_id', '=', $this->wpUser->ID)
-				->where('obs_unit', '!=', 'scheduled')
-				->where('obs_unit', '!=', 'invalid')
-				->where('obs_unit', '!=', 'outbound')
-				->whereRaw("obs_date BETWEEN '" . $this->date . " 00:00:00' AND '" . $this->date . " 23:59:59'", array())
-				->orderBy('obs_date_gmt', 'desc')
-				->first();
-			if(!empty($observation) && $observation->comment_id != 0) {
-				$answered = 'Yes';
-				$symObs[$i] = $this->renderCommentThread($symMsgId, $observation->comment_id);
-			} else {
-				$symObs[$i] = $this->renderCommentThread($symMsgId, 0);
-			}
-			$i++;
-		}
-		if(!empty($symObs)) {
-			$symObs = array(
-				0 => array(
-					"MessageID" => "CF_SYM_MNU_10",
-					"Obs_Key" => "Severity",
-					"ParentID" => "603",
-					"MessageIcon" => "question",
-					"MessageCategory" => "Question",
-					"MessageContent" => "Any <b>symptoms</b> Today?",
-					"ReturnFieldType" => '',
-					"ReturnDataRangeLow" => '',
-					"ReturnDataRangeHigh" => '',
-					"ReturnValidAnswers" => '',
-					"PatientAnswer" => $answered,
-					"ReadingUnit" => '',
-					"ResponseDate" => '',
-					"Response" => $this->sortObs($symObs))
-			);
-		}
-		return $symObs;
-	}
-
+        return $msgIds;
+    }
 
 	private function renderCommentThread($msgId, $commentId = 0) {
 		$msgCPRules = new MsgCPRules;
@@ -287,11 +196,13 @@ class CareplanService {
 		$reportsService = new ReportsService;
 		// for unanswered:
 		if(empty($commentId)) {
-			$qsType = $msgCPRules->getQsType($msgId, $this->wpUser->ID);
-			$currQuestionInfo = $msgCPRules->getQuestion($msgId, $this->wpUser->ID, $this->msgLanguageType, $this->programId, $qsType);
-			$currQuestionInfo->message = $msgSubstitutions->doSubstitutions($currQuestionInfo->message, $this->programId, $this->wpUser->ID);
-			//echo $msgId .'-'. $this->wpUser->ID .'-'. $this->msgLanguageType .'-'. $this->programId .'-'. $qsType."<br><BR>".PHP_EOL;
-			//var_dump($currQuestionInfo);
+            $qsType = $msgCPRules->getQsType($msgId, $this->wpUser->id);
+            $currQuestionInfo = $msgCPRules->getQuestion($msgId, $this->wpUser->id, $this->msgLanguageType,
+                $this->programId, $qsType);
+            $currQuestionInfo->message = $msgSubstitutions->doSubstitutions($currQuestionInfo->message,
+                $this->programId, $this->wpUser->id);
+            //echo $msgId .'-'. $this->wpUser->id .'-'. $this->msgLanguageType .'-'. $this->programId .'-'. $qsType."<br><BR>".PHP_EOL;
+            //var_dump($currQuestionInfo);
 			//echo "<br><BR>".PHP_EOL;
 			// add to feed
 			$obsArr = array(
@@ -329,9 +240,10 @@ class CareplanService {
 					}
 				}
 				//obtain message type
-				$qsType = $msgCPRules->getQsType($observation->obs_message_id, $this->wpUser->ID);
-				$currQuestionInfo = $msgCPRules->getQuestion($observation->obs_message_id, $this->wpUser->ID, $this->msgLanguageType, $this->programId, $qsType);
-				if($currQuestionInfo) {
+                $qsType = $msgCPRules->getQsType($observation->obs_message_id, $this->wpUser->id);
+                $currQuestionInfo = $msgCPRules->getQuestion($observation->obs_message_id, $this->wpUser->id,
+                    $this->msgLanguageType, $this->programId, $qsType);
+                if ($currQuestionInfo) {
 					// convert y/n to Yes/No for oab @todo fix this?
 					if(strtolower($observation->obs_value) == 'y') {
 						$observation->obs_value = 'Yes';
@@ -339,8 +251,9 @@ class CareplanService {
 						$observation->obs_value = 'No';
 					}
 					if (isset($currQuestionInfo->message)) {
-						$currQuestionInfo->message = $msgSubstitutions->doSubstitutions($currQuestionInfo->message, $this->programId, $this->wpUser->ID);
-					} else {
+                        $currQuestionInfo->message = $msgSubstitutions->doSubstitutions($currQuestionInfo->message,
+                            $this->programId, $this->wpUser->id);
+                    } else {
 						$currQuestionInfo->message = '-';
 					}
 					// add to feed
@@ -384,7 +297,6 @@ class CareplanService {
 		return $obsArr;
 	}
 
-
 	public function sortObs($observations) {
 		// bypass for now
 		return $observations;
@@ -414,64 +326,154 @@ class CareplanService {
 	}
 
 	/**
-	 * @param $programId
-	 * @param $userId
-	 * @param $date
-	 * @param $obsKey
 	 * @return array
      */
-	public function getScheduledDMS() {
-		// first get all active items
-		$ucp = CPRulesUCP::where('user_id', '=', $this->wpUser->ID)
-			->whereHas('item', function($q){
-				$q->whereHas('pcp', function($q2){
-					$q2->where(function ($query) {
-						$query->orWhere('section_text', '=', 'Lifestyle to Monitor');
-						$query->orWhere('section_text', '=', 'Medications to Monitor');
-					});
-				});
-				$q->has('question');
-			})
-			->with('item')
-			->with('item.question')
-			->with('item.question.questionSets')
-			->where('meta_value', '=', 'Active')
-			->get();
-		//dd($ucp);
-		$msgIds = array();
-		$today = date('N', strtotime($this->date));
-		if($ucp->count() > 0) {
-			foreach($ucp as $ucpItem) {
-				//echo $ucpItem->items_id . '['. $ucpItem->item->items_parent .']-'. $ucpItem->meta_key . '<br>';
-				if($ucpItem->meta_key == 'status') {
-					// get contact days for item
-					$ucpItemContactDays = CPRulesUCP::where('user_id', '=', $this->wpUser->ID)
-						->whereHas('item', function ($query) use ($ucpItem) {
-							$query->where('items_parent', '=', $ucpItem->items_id);
-							$query->where('items_text', '=', 'Contact Days');
-						})
-						->first();
+    private function setObsReminders()
+    {
+        $hspObs = [];
 
-					// add if contact days for today
-					if($ucpItem->meta_value == 'Active' && $ucpItem->item->question && (strpos($ucpItemContactDays->meta_value,$today) !== false)) {
-						//echo 'obs_key = '.$ucpItem->item->question->obs_key . '<br>';
-						$msgIds[] = $ucpItem->item->question->msg_id;
-					}
-				}
-			}
+        // get all users ucp
+        $ucpItems = CPRulesUCP::where('user_id', '=', $this->wpUser->id)->get();
+
+        // find hsp items
+        $contactDays = '';
+        $status = 'Inactive';
+        foreach ($ucpItems as $ucpItem) {
+            if (isset($ucpItem->item->pcp->section_text)) {
+                if ($ucpItem->item->pcp->section_text == 'Transitional Care Management'
+                    && $ucpItem->item->items_text == 'Track Care Transitions'
+                ) {
+                    $status = $ucpItem->meta_value;
+                }
+            }
 		}
 
-		return $msgIds;
-	}
+        if ($status == 'Active') {
+            $observation = Observation::where('obs_message_id', '=', 'CF_HSP_10')
+                ->where('user_id', '=', $this->wpUser->id)
+                ->where('obs_unit', '!=', 'scheduled')
+                ->where('obs_unit', '!=', 'invalid')
+                ->where('obs_unit', '!=', 'outbound')
+                ->whereRaw("obs_date BETWEEN '" . $this->date . " 00:00:00' AND '" . $this->date . " 23:59:59'", [])
+                ->orderBy('obs_date_gmt', 'desc')
+                ->first();
+            //dd($observation);
+            if (!empty($observation)) {
+                $hspObs[0] = $this->renderCommentThread('CF_HSP_10', $observation->comment_id);
+            } else {
+                $hspObs[0] = $this->renderCommentThread('CF_HSP_10', false);
+            }
+        }
 
+        return $hspObs;
+    }
 
-	/**
-	 * @return array
+    /**
+     * @return array
      */
-	public function getScheduledSymptoms() {
-		$ucp = CPRulesUCP::where('user_id', '=', $this->wpUser->ID)
-			->whereHas('item', function($q){
-				$q->whereHas('pcp', function($q2){
+    private function setObsBiometric()
+    {
+        $msgUser = new MsgUser;
+        $bioMsgIds = [];
+        $userInfo = $msgUser->get_users_data($this->wpUser->id, 'id', $this->programId, true);
+        if (!empty($userInfo[$this->wpUser->id]['usermeta']['user_care_plan'])) {
+            $userInfoUCP = $userInfo[$this->wpUser->id]['usermeta']['user_care_plan'];
+            // loop through care plan
+            foreach ($userInfoUCP as $obsKey => $ucpItem) {
+                if (isset($ucpItem['parent_status'])) {
+                    // if active
+                    if ($ucpItem['parent_status'] == 'Active') {
+                        $query = DB::connection('mysql_no_prefix')->table('rules_questions')->select('msg_id')
+                            ->where('obs_key', "=", $obsKey);
+                        $questionInfo = $query->first();
+                        if ($questionInfo) {
+                            $msgId = $questionInfo->msg_id;
+                            $bioMsgIds[] = $msgId;
+                        }
+                    }
+                }
+            }
+        }
+        $bioObs = [];
+        $i = 0;
+        foreach ($bioMsgIds as $bioMsgId) {
+            $observation = Observation::where('obs_message_id', '=', $bioMsgId)
+                ->where('user_id', '=', $this->wpUser->id)
+                ->where('obs_unit', '!=', 'scheduled')
+                ->where('obs_unit', '!=', 'invalid')
+                ->where('obs_unit', '!=', 'outbound')
+                ->whereRaw("obs_date BETWEEN '" . $this->date . " 00:00:00' AND '" . $this->date . " 23:59:59'", [])
+                ->orderBy('obs_date_gmt', 'desc')
+                ->first();
+            if (!empty($observation) && $observation->comment_id != 0) {
+                $bioObs[$i] = $this->renderCommentThread($bioMsgId, $observation->comment_id);
+            } else {
+                $bioObs[$i] = $this->renderCommentThread($bioMsgId, 0);
+            }
+            $i++;
+        }
+
+        return $this->sortObs($bioObs);
+    }
+
+    /**
+     * @return array
+     */
+    private function setObsSymptoms()
+    {
+        $symMsgIds = $this->getScheduledSymptoms();
+        $symObs = [];
+        $i = 0;
+        $answered = '';
+        foreach ($symMsgIds as $symMsgId) {
+            $observation = Observation::where('obs_message_id', '=', $symMsgId)
+                ->where('user_id', '=', $this->wpUser->id)
+                ->where('obs_unit', '!=', 'scheduled')
+                ->where('obs_unit', '!=', 'invalid')
+                ->where('obs_unit', '!=', 'outbound')
+                ->whereRaw("obs_date BETWEEN '" . $this->date . " 00:00:00' AND '" . $this->date . " 23:59:59'", [])
+                ->orderBy('obs_date_gmt', 'desc')
+                ->first();
+            if (!empty($observation) && $observation->comment_id != 0) {
+                $answered = 'Yes';
+                $symObs[$i] = $this->renderCommentThread($symMsgId, $observation->comment_id);
+            } else {
+                $symObs[$i] = $this->renderCommentThread($symMsgId, 0);
+            }
+            $i++;
+        }
+        if (!empty($symObs)) {
+            $symObs = [
+                0 => [
+                    "MessageID"           => "CF_SYM_MNU_10",
+                    "Obs_Key"             => "Severity",
+                    "ParentID"            => "603",
+                    "MessageIcon"         => "question",
+                    "MessageCategory"     => "Question",
+                    "MessageContent"      => "Any <b>symptoms</b> Today?",
+                    "ReturnFieldType"     => '',
+                    "ReturnDataRangeLow"  => '',
+                    "ReturnDataRangeHigh" => '',
+                    "ReturnValidAnswers"  => '',
+                    "PatientAnswer"       => $answered,
+                    "ReadingUnit"         => '',
+                    "ResponseDate"        => '',
+                    "Response"            => $this->sortObs($symObs),
+                ],
+            ];
+        }
+
+        return $symObs;
+    }
+
+    /**
+     * @return array
+     */
+    public function getScheduledSymptoms()
+    {
+        $ucp = CPRulesUCP::where('user_id', '=', $this->wpUser->id)
+            ->whereHas('item', function ($q) {
+                $q->whereHas('pcp', function ($q2) {
 					$q2->where('section_text', '=', 'Symptoms to Monitor');
 				});
 			})

@@ -8,13 +8,16 @@
         <form method="POST" v-on:submit="onSubmitForm" enctype="multipart/form-data"
               class="mdl-cell mdl-cell--12-col" action="/ccd-importer/qaimport">
 
+            <input type="hidden" name="_token" value="{{ csrfToken }}">
+
             <!--VENDOR LIST-->
             <div class="mdl-cell mdl-cell--12-col">
                 <h5>Please choose an Import profile for this CCD.</h5>
 
-                <label v-for="vendor in ccdVendors" class="mdl-radio mdl-js-radio mdl-js-ripple-effect mdl-cell--4-col"
+                <label id="label-vendor-{{ vendor.id }}" v-for="vendor in ccdVendors"
+                       class="mdl-radio mdl-js-radio mdl-js-ripple-effect mdl-cell--4-col"
                        for="vendor-{{ vendor.id }}">
-                    <input type="radio" id="vendor-{{ vendor.id }}" class="mdl-radio__button" name="ccd_vendor_id"
+                    <input id="vendor-{{ vendor.id }}" type="radio" class="mdl-radio__button" name="ccd_vendor_id"
                            value="{{ vendor.id }}" v-model="selectedVendor" required>
                     <span class="mdl-radio__label">{{ vendor.vendor_name }}</span>
                 </label>
@@ -26,7 +29,7 @@
                 <input type="file" id="ccd" name="file[]" class="dropzone" multiple>
 
                 <div class="mdl-typography--text-center mdl-cell mdl-cell--12-col">
-                    <mdl-button primary raised v-mdl-ripple-effect type="submit" :disabled="!enabled">
+                    <mdl-button primary raised v-mdl-ripple-effect type="submit" :disabled="!enabled" id="upload-ccdas">
                         Upload CCD Records
                     </mdl-button>
                 </div>

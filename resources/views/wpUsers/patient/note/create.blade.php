@@ -30,11 +30,13 @@
                     Record New Note
                 </div>
 
-                @include('partials.userheader')
 
                 <form method="post" action="{{URL::route('patient.note.store', ['patientId' => $patient])}}"
                       class="form-horizontal">
 
+                    {{ csrf_field() }}
+
+                    @include('partials.userheader')
 
                     <div class="main-form-block main-form-horizontal main-form-primary-horizontal col-md-12"
                          style=" border-bottom:3px solid #50b2e2;padding: 10px 48px;">
@@ -43,7 +45,8 @@
                             <input type="text" class="form-control" name="general_comment" id="general_comment"
                                    value="{{$patient->patientInfo->general_comment}}"
                                    placeholder="{{$patient->patientInfo->general_comment == '' ? 'Enter General Comment...' : $patient->patientInfo->general_comment}}"
-                                   aria-describedby="sizing-addon2" style="margin: 0 auto; text-align: left; color: #333;">
+                                   aria-describedby="sizing-addon2"
+                                   style="margin: 0 auto; text-align: left; color: #333;">
                         </div>
                     </div>
 
@@ -151,17 +154,41 @@
                                                                                      value="outbound"
                                                                                      id="Outbound"/><label
                                                                 for="Outbound"><span> </span>Outbound</label></div>
+
                                                     @if(auth()->user()->isCCMCountable())
-                                                    <div>
-                                                        <div class="radio-inline"><input type="checkbox"
-                                                                                         name="call_status"
-                                                                                         value="reached"
-                                                                                         id="reached"/><label
-                                                                    for="reached"><span> </span>Successful Clinical
-                                                                Call</label>
+                                                        <div>
+                                                            <div class="radio-inline"><input type="checkbox"
+                                                                                             name="call_status"
+                                                                                             value="reached"
+                                                                                             id="reached"/><label
+                                                                        for="reached"><span> </span>Successful Clinical
+                                                                    Call</label>
+                                                            </div>
                                                         </div>
-                                                    </div>
+
+                                                    @else
+
+                                                        <div>
+                                                            <div class="radio-inline"><input type="checkbox"
+                                                                                             name="welcome_call"
+                                                                                             value="welcome_call"
+                                                                                             id="welcome_call"/><label
+                                                                        for="welcome_call"><span> </span>Successful
+                                                                    Welcome Call</label>
+                                                            </div>
+                                                        </div>
+                                                        <div>
+                                                            <div class="radio-inline"><input type="checkbox"
+                                                                                             name="other_call"
+                                                                                             value="other_call"
+                                                                                             id="other_call"/><label
+                                                                        for="other_call"><span> </span>Successful Other
+                                                                    Patient Call</label>
+                                                            </div>
+                                                        </div>
+
                                                     @endif
+
                                                     <input type="hidden" name="tcm" value="hospital">
                                                     <div>
                                                         <div class="radio-inline"><input type="checkbox"
@@ -189,9 +216,9 @@
                                     <div class="form-group">
                                         <div class="col-sm-12">
                                             <input type="hidden" name="body" value="body">
-                                        <textarea id="note" class="form-control" rows="10" cols="100"
-                                                  placeholder="Enter Note..."
-                                                  name="body" required></textarea> <br/>
+                                            <textarea id="note" class="form-control" rows="10" cols="100"
+                                                      placeholder="Enter Note..."
+                                                      name="body" required></textarea> <br/>
                                         </div>
                                     </div>
 
@@ -211,9 +238,14 @@
                                                                     class="selectpicker dropdown Valid form-control"
                                                                     data-size="10"
                                                                     multiple>
-                                                                @foreach ($careteam_info as $id => $name)
-                                                                    <option value="{{$id}}"> {{$name}} </option>
-                                                                @endforeach
+                                                                <!-- rework later, quick fix ticket: 679 !-->
+                                                                @if($patient->program_id == 29)
+                                                                    <option value="2584">Tina Booze</option>
+                                                                @else
+                                                                    @foreach ($careteam_info as $id => $name)
+                                                                        <option value="{{$id}}"> {{$name}} </option>
+                                                                    @endforeach
+                                                                @endif
                                                                 <option value="948">Patient Support</option>
                                                             </select>
                                                         </div>
@@ -225,10 +257,10 @@
 
                                     <!-- Hidden Fields -->
                                     <div class="form-group col-sm-4">
-                                        <input type="hidden" name="patient_id" value="{{$patient->ID}}">
-                                        <input type="hidden" name="logger_id" value="{{Auth::user()->ID}}">
-                                        <input type="hidden" name="author_id" value="{{Auth::user()->ID}}">
-                                        <input type="hidden" name="patientID" id="patientID" value="{{$patient->ID}}">
+                                        <input type="hidden" name="patient_id" value="{{$patient->id}}">
+                                        <input type="hidden" name="logger_id" value="{{Auth::user()->id}}">
+                                        <input type="hidden" name="author_id" value="{{Auth::user()->id}}">
+                                        <input type="hidden" name="patientID" id="patientID" value="{{$patient->id}}">
                                         <input type="hidden" name="programId" id="programId" value="{{$program_id}}">
                                     </div>
 
@@ -237,13 +269,13 @@
                                         <div>
                                             <div class="col-sm-12">
                                                 <button name="Submit" id="Submit" type="submit" value="Submit"
-                                                        class="btn btn-primary btn-lg form-item--button form-item-spacing">Save/Send Note</button>
+                                                        class="btn btn-primary btn-lg form-item--button form-item-spacing">
+                                                    Save/Send Note
+                                                </button>
                                             </div>
                                         </div>
                                     </div>
-
                                 </div>
-
                             </div>
                         </div>
                     </div>
@@ -257,8 +289,6 @@
         // Script is for the "phone session" part
 
         $('.collapse').collapse();
-
-        //@todo check bug later.
 
         $("#phone").on('click', function () {
             // in the handler, 'this' refers to the box clicked on

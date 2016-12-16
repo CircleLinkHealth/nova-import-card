@@ -49,10 +49,10 @@ class NurseContactWindow extends Model
         $info->windows()->delete();
 
         return self::create([
-            'nurse_info_id' => $info->id,
-            'day_of_week' => $dayOfWeek,
+            'nurse_info_id'     => $info->id,
+            'day_of_week'       => $dayOfWeek,
             'window_time_start' => $startTime,
-            'window_time_end' => $endTime,
+            'window_time_end'   => $endTime,
         ]);
     }
 
@@ -75,4 +75,17 @@ class NurseContactWindow extends Model
             ->get();
     }
 
+    /**
+     * Scope query to only include upcoming (future) windows.
+     *
+     * @param $query
+     *
+     * @return mixed
+     */
+    public function scopeUpcoming($query)
+    {
+        return $query->where('date', '>=', Carbon::today()->format('Y-m-d'))
+            ->orderBy('date', 'asc')
+            ->orderBy('window_time_start', 'asc');
+    }
 }

@@ -29,7 +29,7 @@ return [
     |
     */
 
-    'lifetime' => 120,
+    'lifetime' => 60,
 
     'expire_on_close' => true,
 
@@ -125,17 +125,17 @@ return [
     'path' => '/',
 
     /*
-    |--------------------------------------------------------------------------
-    | Session Cookie Domain
-    |--------------------------------------------------------------------------
-    |
-    | Here you may change the domain of the cookie used to identify a session
-    | in your application. This will determine which domains the cookie is
-    | available to in your application. A sensible default has been set.
-    |
-    */
+   |--------------------------------------------------------------------------
+   | Session Cookie Domain
+   |--------------------------------------------------------------------------
+   |
+   | Here you may change the domain of the cookie used to identify a session
+   | in your application. This will determine which domains the cookie is
+   | available to in your application. A sensible default has been set.
+   |
+   */
 
-    'domain' => null,
+    'domain' => env('SESSION_DOMAIN', null),
 
     /*
     |--------------------------------------------------------------------------
@@ -148,6 +148,19 @@ return [
     |
     */
 
-    'secure' => env('APP_ENV') == 'production',
+    'secure' => env('SESSION_DOMAIN', env('APP_ENV') == 'production'),
+
+    /*
+    |--------------------------------------------------------------------------
+    | HTTP Access Only
+    |--------------------------------------------------------------------------
+    |
+    | Setting this value to true will prevent JavaScript from accessing the
+    | value of the cookie and the cookie will only be accessible through
+    | the HTTP protocol. You are free to modify this option if needed.
+    |
+    */
+
+    'http_only' => true,
 
 ];

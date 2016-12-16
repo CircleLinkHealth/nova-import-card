@@ -20,20 +20,20 @@
                 </div>
                 <div class="panel panel-default">
                     <div class="panel-heading">
-                        Program ID: {{ $program->blog_id }}
+                        Program ID: {{ $program->id }}
                     </div>
                     <div class="panel-body">
                         @include('errors.errors')
 
                         <div class="row">
-                            {!! Form::open(array('url' => URL::route('admin.programs.update', array('id' => $program->blog_id)), 'class' => 'form-horizontal')) !!}
+                            {!! Form::open(array('url' => URL::route('admin.programs.update', array('id' => $program->id)), 'class' => 'form-horizontal')) !!}
                         </div>
 
                         <div class="row" style="">
                             <div class="col-sm-12">
                                 <div class="pull-right">
                                     <a href="{{ URL::route('admin.programs.index', array()) }}" class="btn btn-danger">Cancel</a>
-                                    {!! Form::submit('Update Program', array('class' => 'btn btn-success')) !!}
+                                    {!! Form::submit('Practice', array('class' => 'btn btn-success')) !!}
                                 </div>
                             </div>
                         </div>
@@ -47,8 +47,8 @@
                             </div>
 
                             <div class="row" style="margin-top:20px;">
-                                <div class="col-xs-2">{!! Form::label('location_id', 'Location:') !!}</div>
-                                <div class="col-xs-4">{!! Form::select('location_id', $locations, $program->location_id, ['class' => 'form-control select-picker', 'style' => 'width:50%;']) !!}</div>
+                                <div class="col-xs-2">{!! Form::label('locations', 'Locations') !!}</div>
+                                {{--                                <div class="col-xs-4">{!! Form::select('location_id', $locations, $program->location_id, ['class' => 'form-control select-picker', 'style' => 'width:50%;']) !!}</div>--}}
                             </div>
 
                             <div class="row" style="margin-top:20px;">
@@ -64,11 +64,6 @@
                             <div class="row" style="margin-top:20px;">
                                 <div class="col-xs-2">{!! Form::label('short_display_name', 'Short Display Name:') !!}</div>
                                 <div class="col-xs-10">{!! Form::text('short_display_name', $program->short_display_name, ['class' => 'form-control', 'style' => 'width:100%;']) !!}</div>
-                            </div>
-
-                            <div class="row" style="margin-top:20px;">
-                                <div class="col-xs-2">{!! Form::label('description', 'Description:') !!}</div>
-                                <div class="col-xs-10">{!! Form::textarea('description', $program->description) !!}</div>
                             </div>
                         </div>
 

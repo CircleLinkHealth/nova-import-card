@@ -7,7 +7,8 @@ use App\Location;
 use App\Models\CPM\CpmProblem;
 use App\PageTimer;
 use App\PatientCareTeamMember;
-use App\Program;
+use App\Practice;
+use App\Reports\Sales\SalesByLocationReport;
 use App\Services\CCD\CcdInsurancePolicyService;
 use App\Services\CPM\CpmProblemService;
 use App\Services\ReportsService;
@@ -18,7 +19,6 @@ use DatePeriod;
 use DateTime;
 use Excel;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 
 class ReportsController extends Controller
@@ -28,8 +28,11 @@ class ReportsController extends Controller
 
     public function __construct(
         ReportsService $service,
-        WebixFormatter $formatter
+        WebixFormatter $formatter,
+        Request $request
     ) {
+        parent::__construct($request);
+
         $this->service = $service;
         $this->formatter = $formatter;
     }
@@ -51,12 +54,18 @@ class ReportsController extends Controller
         }
 
         foreach ($biometrics_data as $key => $value) {
+            $value = $value->all();
             $bio_name = $key;
             if ($value != null) {
                 $first = reset($value);
                 $last = end($value);
-                $changes = $this->service->biometricsIndicators(intval($last->Avg), intval($first->Avg), $bio_name,
-                    (new ReportsService())->getTargetValueForBiometric($bio_name, $user));
+                $changes = $this->service
+                    ->biometricsIndicators(
+                        intval($last->Avg),
+                        intval($first->Avg),
+                        $bio_name,
+                        (new ReportsService())->getTargetValueForBiometric($bio_name, $user)
+                    );
 
                 $biometrics_array[$bio_name]['change'] = $changes['change'];
                 $biometrics_array[$bio_name]['progression'] = $changes['progression'];
@@ -131,7 +140,8 @@ class ReportsController extends Controller
             $end = Carbon::now()->endOfMonth()->format('Y-m-d');
         }
 
-        $patients = User::whereIn('ID', Auth::user()->viewablePatientIds())
+        $patients = User::intersectPracticesWith(auth()->user())
+            ->ofType('participant')
             ->with('primaryProgram')
             ->get();
 
@@ -173,69 +183,57 @@ class ReportsController extends Controller
 
         $patient_counter = 0;
         foreach ($patients as $patient) {
-            //$monthly_time = intval($patient->getMonthlyTimeAttribute());
-            $program = $patient->primaryProgram;
-            if ($program) {
-                $programName = $program->display_name;
-            }
+            $u20_patients[$patient_counter]['site'] = $patient->primaryProgram->display_name;
 
-            if ($patient->hasRole('participant')) {
-                $u20_patients[$patient_counter]['site'] = $programName;
+            $u20_patients[$patient_counter]['colsum_careplan'] = 0;
+            $u20_patients[$patient_counter]['colsum_changes'] = 0;
+            $u20_patients[$patient_counter]['colsum_progress'] = 0;
+            $u20_patients[$patient_counter]['colsum_rpm'] = 0;
+            $u20_patients[$patient_counter]['colsum_tcc'] = 0;
+            $u20_patients[$patient_counter]['colsum_other'] = 0;
+            $u20_patients[$patient_counter]['colsum_total'] = 0;
+            $u20_patients[$patient_counter]['ccm_status'] = ucwords($patient->CCMStatus);
+            $u20_patients[$patient_counter]['dob'] = Carbon::parse($patient->birthDate)->format('m/d/Y');
+            $u20_patients[$patient_counter]['patient_name'] = $patient->fullName;
+            $u20_patients[$patient_counter]['patient_id'] = $patient->id;
+            $acts = DB::table('lv_activities')
+                ->select(DB::raw('*,DATE(performed_at),provider_id, type, SUM(duration) as duration'))
+                ->where('patient_id', $patient->id)
+                ->whereBetween('performed_at', [
+                    $start,
+                    $end,
+                ])
+                ->groupBy(DB::raw('provider_id, DATE(performed_at),type'))
+                ->orderBy('performed_at', 'desc')
+                ->get();
 
-                $u20_patients[$patient_counter]['colsum_careplan'] = 0;
-                $u20_patients[$patient_counter]['colsum_changes'] = 0;
-                $u20_patients[$patient_counter]['colsum_progress'] = 0;
-                $u20_patients[$patient_counter]['colsum_rpm'] = 0;
-                $u20_patients[$patient_counter]['colsum_tcc'] = 0;
-                $u20_patients[$patient_counter]['colsum_other'] = 0;
-                $u20_patients[$patient_counter]['colsum_total'] = 0;
-                $u20_patients[$patient_counter]['ccm_status'] = ucwords($patient->CCMStatus);
-                $u20_patients[$patient_counter]['dob'] = Carbon::parse($patient->birthDate)->format('m/d/Y');
-                $u20_patients[$patient_counter]['patient_name'] = $patient->fullName;
-                $u20_patients[$patient_counter]['patient_id'] = $patient->ID;
-                $acts = DB::table('lv_activities')
-                    ->select(DB::raw('*,DATE(performed_at),provider_id, type, SUM(duration) as duration'))
-                    ->where('patient_id', $patient->ID)
-                    ->whereBetween('performed_at', [
-                        $start,
-                        $end,
-                    ])
-                    ->groupBy(DB::raw('provider_id, DATE(performed_at),type'))
-                    ->orderBy('performed_at', 'desc')
-                    ->get();
-
-//				foreach ($acts as $key => $value) {
-//					$acts[$key]['patient'] = User::find($patient->ID);
-//				}
-
-                foreach ($acts as $activity) {
-                    if (in_array($activity->type, $CarePlan)) {
-                        $u20_patients[$patient_counter]['colsum_careplan'] += intval($activity->duration);
+            foreach ($acts as $activity) {
+                if (in_array($activity->type, $CarePlan)) {
+                    $u20_patients[$patient_counter]['colsum_careplan'] += intval($activity->duration);
+                } else {
+                    if (in_array($activity->type, $Progress)) {
+                        $u20_patients[$patient_counter]['colsum_progress'] += intval($activity->duration);
                     } else {
-                        if (in_array($activity->type, $Progress)) {
-                            $u20_patients[$patient_counter]['colsum_progress'] += intval($activity->duration);
+                        if (in_array($activity->type, $RPM)) {
+                            $u20_patients[$patient_counter]['colsum_rpm'] += intval($activity->duration);
                         } else {
-                            if (in_array($activity->type, $RPM)) {
-                                $u20_patients[$patient_counter]['colsum_rpm'] += intval($activity->duration);
+                            if (in_array($activity->type, $TCM)) {
+                                $u20_patients[$patient_counter]['colsum_tcc'] += intval($activity->duration);
                             } else {
-                                if (in_array($activity->type, $TCM)) {
-                                    $u20_patients[$patient_counter]['colsum_tcc'] += intval($activity->duration);
-                                } else {
-                                    $u20_patients[$patient_counter]['colsum_other'] += intval($activity->duration);
-                                }
+                                $u20_patients[$patient_counter]['colsum_other'] += intval($activity->duration);
                             }
                         }
                     }
-                    $u20_patients[$patient_counter]['colsum_total'] += intval($activity->duration);
-
-                    if ($u20_patients[$patient_counter]['colsum_total'] >= 1200) {
-                        unset($u20_patients[$patient_counter]);
-                        continue 2;
-                    }
-
                 }
-                $patient_counter++;
+                $u20_patients[$patient_counter]['colsum_total'] += intval($activity->duration);
+
+                if ($u20_patients[$patient_counter]['colsum_total'] >= 1200) {
+                    unset($u20_patients[$patient_counter]);
+                    continue 2;
+                }
+
             }
+            $patient_counter++;
         }
         $reportData = "data:" . json_encode(array_values($u20_patients)) . "";
 
@@ -270,11 +268,8 @@ class ReportsController extends Controller
             'month_selected_text' => $month_selected_text,
             'year_selected'       => $year_selected,
             'months'              => $months,
-            //'patient' => $patient_,
             'data'                => $act_data,
         ];
-
-        //debug($reportData);
 
         return view('reports.u20', $data);
     }
@@ -283,7 +278,6 @@ class ReportsController extends Controller
         Request $request,
         $patientId = false
     ) {
-        //$patient_ = User::find($patientId);
         $input = $request->all();
 
         if (isset($input['selectMonth'])) {
@@ -303,7 +297,8 @@ class ReportsController extends Controller
 
         }
 
-        $patients = User::whereIn('ID', Auth::user()->viewablePatientIds())
+        $patients = User::intersectPracticesWith(auth()->user())
+            ->ofType('participant')
             ->with('primaryProgram')
             ->get();
 
@@ -346,75 +341,63 @@ class ReportsController extends Controller
         $act_count = 0;
 
         foreach ($patients as $patient) {
-//            $monthly_time = intval($patient->getMonthlyTimeAttribute());
-            $program = $patient->primaryProgram;
-            if ($program) {
-                $programName = $program->display_name;
+            $u20_patients[$act_count]['site'] = $patient->primaryProgram->display_name;
+            $u20_patients[$act_count]['colsum_careplan'] = 0;
+            $u20_patients[$act_count]['colsum_changes'] = 0;
+            $u20_patients[$act_count]['colsum_progress'] = 0;
+            $u20_patients[$act_count]['colsum_rpm'] = 0;
+            $u20_patients[$act_count]['colsum_tcc'] = 0;
+            $u20_patients[$act_count]['colsum_other'] = 0;
+            $u20_patients[$act_count]['colsum_total'] = 0;
+            $u20_patients[$act_count]['ccm_status'] = ucwords($patient->CCMStatus);
+            $u20_patients[$act_count]['dob'] = Carbon::parse($patient->birthDate)->format('m/d/Y');
+            $u20_patients[$act_count]['patient_name'] = $patient->fullName;
+            $provider = User::find(intval($patient->getBillingProviderIDAttribute()));
+            if ($provider) {
+                $u20_patients[$act_count]['provider_name'] = $provider->fullName;
+            } else {
+                $u20_patients[$act_count]['provider_name'] = '';
             }
+            $u20_patients[$act_count]['patient_id'] = $patient->id;
+            $acts = DB::table('lv_activities')
+                ->select(DB::raw('*,DATE(performed_at),provider_id, type, SUM(duration) as duration'))
+                ->where('patient_id', $patient->id)
+                ->whereBetween('performed_at', [
+                    $start,
+                    $end,
+                ])
+                ->where('duration', '>', 1200)
+                ->groupBy(DB::raw('provider_id, DATE(performed_at),type'))
+                ->orderBy('performed_at', 'desc')
+                ->get();
 
-            if ($patient->hasRole('participant')) {
-                $u20_patients[$act_count]['site'] = $programName;
-                $u20_patients[$act_count]['colsum_careplan'] = 0;
-                $u20_patients[$act_count]['colsum_changes'] = 0;
-                $u20_patients[$act_count]['colsum_progress'] = 0;
-                $u20_patients[$act_count]['colsum_rpm'] = 0;
-                $u20_patients[$act_count]['colsum_tcc'] = 0;
-                $u20_patients[$act_count]['colsum_other'] = 0;
-                $u20_patients[$act_count]['colsum_total'] = 0;
-                $u20_patients[$act_count]['ccm_status'] = ucwords($patient->CCMStatus);
-                $u20_patients[$act_count]['dob'] = Carbon::parse($patient->birthDate)->format('m/d/Y');
-                $u20_patients[$act_count]['patient_name'] = $patient->fullName;
-                $provider = User::find(intval($patient->getBillingProviderIDAttribute()));
-                if ($provider) {
-                    $u20_patients[$act_count]['provider_name'] = $provider->fullName;
+            foreach ($acts as $activity) {
+                if (in_array($activity->type, $CarePlan)) {
+                    $u20_patients[$act_count]['colsum_careplan'] += intval($activity->duration);
                 } else {
-                    $u20_patients[$act_count]['provider_name'] = '';
-                }
-                $u20_patients[$act_count]['patient_id'] = $patient->ID;
-                $acts = DB::table('lv_activities')
-                    ->select(DB::raw('*,DATE(performed_at),provider_id, type, SUM(duration) as duration'))
-                    ->where('patient_id', $patient->ID)
-                    ->whereBetween('performed_at', [
-                        $start,
-                        $end,
-                    ])
-                    ->groupBy(DB::raw('provider_id, DATE(performed_at),type'))
-                    ->orderBy('performed_at', 'desc')
-                    ->get();
-
-//				foreach ($acts as $key => $value) {
-//					$acts[$key]['patient'] = User::find($patient->ID);
-//				}
-
-                foreach ($acts as $activity) {
-                    //$u20_patients[$act_count]['provider'] = User::find($activity->provider_id)->getFullNameAttribute();
-                    if (in_array($activity->type, $CarePlan)) {
-                        $u20_patients[$act_count]['colsum_careplan'] += intval($activity->duration);
+                    if (in_array($activity->type, $Progress)) {
+                        $u20_patients[$act_count]['colsum_progress'] += intval($activity->duration);
                     } else {
-                        if (in_array($activity->type, $Progress)) {
-                            $u20_patients[$act_count]['colsum_progress'] += intval($activity->duration);
+                        if (in_array($activity->type, $RPM)) {
+                            $u20_patients[$act_count]['colsum_rpm'] += intval($activity->duration);
                         } else {
-                            if (in_array($activity->type, $RPM)) {
-                                $u20_patients[$act_count]['colsum_rpm'] += intval($activity->duration);
+                            if (in_array($activity->type, $TCM)) {
+                                $u20_patients[$act_count]['colsum_tcc'] += intval($activity->duration);
                             } else {
-                                if (in_array($activity->type, $TCM)) {
-                                    $u20_patients[$act_count]['colsum_tcc'] += intval($activity->duration);
-                                } else {
-                                    $u20_patients[$act_count]['colsum_other'] += intval($activity->duration);
-                                }
+                                $u20_patients[$act_count]['colsum_other'] += intval($activity->duration);
                             }
                         }
                     }
-                    $u20_patients[$act_count]['colsum_total'] += intval($activity->duration);
-
                 }
+                $u20_patients[$act_count]['colsum_total'] += intval($activity->duration);
 
-                if ($u20_patients[$act_count]['colsum_total'] < 1200) {
-                    unset($u20_patients[$act_count]);
-                }
-
-                $act_count++;
             }
+
+            if ($u20_patients[$act_count]['colsum_total'] < 1200) {
+                unset($u20_patients[$act_count]);
+            }
+
+            $act_count++;
 
         }
 
@@ -463,7 +446,7 @@ class ReportsController extends Controller
     ) {
         if ($request->header('Client') == 'mobi') {
             // get and validate current user
-            \JWTAuth::setIdentifier('ID');
+            \JWTAuth::setIdentifier('id');
             $wpUser = \JWTAuth::parseToken()->authenticate();
             if (!$wpUser) {
                 return response()->json(['error' => 'invalid_credentials'], 401);
@@ -476,7 +459,7 @@ class ReportsController extends Controller
             }
         }
 
-        $feed = $this->service->progress($wpUser->ID);
+        $feed = $this->service->progress($wpUser->id);
 
         return json_encode($feed);
     }
@@ -487,7 +470,7 @@ class ReportsController extends Controller
     ) {
         if ($request->header('Client') == 'mobi') {
             // get and validate current user
-            \JWTAuth::setIdentifier('ID');
+            \JWTAuth::setIdentifier('id');
             $wpUser = \JWTAuth::parseToken()->authenticate();
             if (!$wpUser) {
                 return response()->json(['error' => 'invalid_credentials'], 401);
@@ -500,7 +483,7 @@ class ReportsController extends Controller
             }
         }
 
-        $feed = $this->service->careplan($wpUser->ID);
+        $feed = $this->service->careplan($wpUser->id);
 
         return response()->json($feed);
     }
@@ -525,8 +508,7 @@ class ReportsController extends Controller
         $patient = User::find($patientId);
 
         $careTeam = PatientCareTeamMember::with('user')
-            ->whereUserId($patient->ID)
-
+            ->whereUserId($patient->id)
             ->get();
 
         $showInsuranceReviewFlag = $insurances->checkPendingInsuranceApproval($patient);
@@ -589,6 +571,43 @@ class ReportsController extends Controller
         ]);
     }
 
+    public function createSalesReport(Request $request)
+    {
+
+        $programs = Practice::all()->pluck('display_name', 'id');
+
+        return view('sales.create', ['programs' => $programs]);
+
+    }
+
+    public function makeSalesReport(Request $request)
+    {
+
+        $input = $request->all();
+
+        $programs = $input['programs'];
+
+        $withHistory = isset($input['withPastMonth'])
+            ? true
+            : false;
+
+        $links = [];
+
+        foreach ($programs as $program) {
+
+            $program = Practice::find($program);
+
+            $links[$program->display_name] = (new SalesByLocationReport($program,
+                Carbon::parse($input['start_date']),
+                Carbon::parse($input['end_date']),
+                $withHistory)
+            )->handle();
+        }
+
+        return view('sales.reportlist', ['reports' => $links]);
+
+    }
+
     public function excelReportT1()
     {
         // get all users with 1 condition
@@ -601,8 +620,8 @@ class ReportsController extends Controller
                 $problemNames[] = $cpmProblem->name;
             }
         }
-        $careItemNames = CareItem::whereIn('display_name', $problemNames)->lists('display_name', 'id')->all();
-        $careItems = CareItem::whereIn('display_name', $problemNames)->lists('id')->all();
+        $careItemNames = CareItem::whereIn('display_name', $problemNames)->pluck('display_name', 'id')->all();
+        $careItems = CareItem::whereIn('display_name', $problemNames)->pluck('id')->all();
         $careItemUserValues = CareItemUserValue::whereIn('care_item_id', $careItems)->where('value', 'Active')->get();
         if ($careItemUserValues->count() > 0) {
             foreach ($careItemUserValues as $careItemUserValue) {
@@ -652,16 +671,16 @@ class ReportsController extends Controller
                     }
 
                     $condition = 'N/A';
-                    if (isset($usersCondition[$user->ID])) {
-                        $condition = $usersCondition[$user->ID];
+                    if (isset($usersCondition[$user->id])) {
+                        $condition = $usersCondition[$user->id];
                     }
                     $programName = 'N/A';
-                    $program = Program::find($user->program_id);
+                    $program = Practice::find($user->program_id);
                     if ($program) {
                         $programName = $program->display_name;
                     }
                     $sheet->appendRow([
-                        $user->ID,
+                        $user->id,
                         $user->fullName,
                         $condition,
                         $programName,
@@ -717,7 +736,7 @@ class ReportsController extends Controller
                 $i = 0;
                 // header
                 $sheet->appendRow([
-                    'Patient ID',
+                    'Patient id',
                     'First Name',
                     'Last Name',
                     'Billing Provider',
@@ -734,8 +753,8 @@ class ReportsController extends Controller
                     'Date Paused',
                     'Date Withdrawn',
                     'Site',
-                    'Caller ID',
-                    'Location ID',
+                    'Caller id',
+                    'Location id',
                     'Location Name',
                     'Location Phone',
                     'Location Address',
@@ -775,7 +794,7 @@ class ReportsController extends Controller
                     }
 
                     $sheet->appendRow([
-                        $user->ID,
+                        $user->id,
                         $user->first_name,
                         $user->last_name,
                         $billingProviderName,
@@ -792,7 +811,7 @@ class ReportsController extends Controller
                         $user->patientInfo->date_paused,
                         $user->patientInfo->date_withdrawn,
                         $user->program_id,
-                        'Caller ID',
+                        'Caller id',
                         // provider_phone
                         $user->patientInfo->preferred_contact_location,
                         $locationName,
@@ -883,7 +902,7 @@ class ReportsController extends Controller
                             $dt->format('Y-m-d') . ' 00:00:01',
                             $dt->format('Y-m-d') . ' 23:59:59',
                         ])
-                            ->where('provider_id', $user->ID)
+                            ->where('provider_id', $user->id)
                             ->where('activity_type', '!=', '')
                             ->sum('duration');
 
@@ -953,7 +972,7 @@ class ReportsController extends Controller
                 $sheet->appendRow([
                     'id',
                     'Provider',
-                    'Program',
+                    'Practice',
                     'CCM Status',
                     'DOB',
                     'Phone',
@@ -982,7 +1001,7 @@ class ReportsController extends Controller
 
                     // program
                     $programName = 'N/A';
-                    $program = Program::find($user->program_id);
+                    $program = Practice::find($user->program_id);
                     if ($program) {
                         $programName = $program->display_name;
                     }

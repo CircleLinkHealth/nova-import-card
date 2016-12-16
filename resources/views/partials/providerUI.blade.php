@@ -4,6 +4,12 @@
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <meta http-equiv="cache-control" content="no-cache, must-revalidate, post-check=0, pre-check=0">
+    <meta http-equiv="expires" content={{ Carbon\Carbon::now()->format('D M d Y H:i:s O') }}>
+    <meta http-equiv="pragma" content="no-cache">
+    <meta name="csrf-token" content="{{ csrf_token() }}">
+
     <title>CarePlanManager - @yield('title')</title>
 
     <link href="{{ asset('/css/stylesheet.css') }}" rel="stylesheet">
@@ -102,25 +108,26 @@
 
                     @if ( !Auth::guest() && Auth::user()->can(['admin-access']))
                         <li><a class="btn btn-primary btn-xs"
-                               href="{{ empty($patient->ID) ? URL::route('admin.dashboard') : URL::route('admin.users.edit', array('patient' => $patient->ID)) }}"><i
+                               href="{{ empty($patient->id) ? URL::route('admin.dashboard') : URL::route('admin.users.edit', array('patient' => $patient->id)) }}"><i
                                         class="icon--home--white"></i>Admin</a></li>
                     @endif
                     <li class="dropdown">
-                        <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button"
-                           aria-expanded="false" style="background: none !important;">
+                        <div class="dropdown-toggle" data-toggle="dropdown" role="button"
+                             aria-expanded="false"
+                             style="background: none !important;padding: 15px;line-height: 20px;cursor: pointer;">
                             <i class="glyphicon glyphicon-option-vertical"></i>
                             {{ Auth::user()->full_name }}
                             <span class="caret"></span>
-                        </a>
+                        </div>
                         <ul class="dropdown-menu" role="menu" style="background: white !important;">
-                            @role(['care-center'])
-                            <li>
-                                <a href="{{ route('care.center.work.schedule.index') }}" id="work-schedule-link">
-                                    <i class="glyphicon glyphicon-calendar"></i>
-                                    Work Schedule
-                                </a>
-                            </li>
-                            @endrole
+                            @if(auth()->user()->hasRole(['care-center']))
+                                <li>
+                                    <a href="{{ route('care.center.work.schedule.index') }}" id="work-schedule-link">
+                                        <i class="glyphicon glyphicon-calendar"></i>
+                                        Work Schedule
+                                    </a>
+                                </li>
+                            @endif
                             <li>
                                 <a href="{{ url('/auth/logout') }}">
                                     <i class="glyphicon glyphicon-log-out"></i>
@@ -145,31 +152,32 @@
                        omitsubmit="yes">Notes/Offline Activity<span class="caret"></span></a>
                     <ul class="dropdown-menu" role="menu">
                         <li>
-                            <a href="{{ empty($patient->ID) ? URL::route('patients.search') : URL::route('patient.note.index', array('patient' => $patient->ID)) }}">Notes/Offline
-                                Activities</a>
+                            <a href="{{ empty($patient->id) ? URL::route('patients.search') : URL::route('patient.note.index', array('patient' => $patient->id)) }}">
+                                Notes/Offline Activities
+                            </a>
                         </li>
                         <li>
-                            <a href="{{ empty($patient->ID) ? URL::route('patients.search') : URL::route('patient.note.create', array('patient' => $patient->ID)) }}">Add
+                            <a href="{{ empty($patient->id) ? URL::route('patients.search') : URL::route('patient.note.create', array('patient' => $patient->id)) }}">Add
                                 New Note</a>
                         </li>
                     </ul>
                 </li>
                 <li class="inline-block">
-                    <a href="{{ empty($patient->ID) ? URL::route('patients.search') : URL::route('patient.summary', array('patient' => $patient->ID)) }}"
+                    <a href="{{ empty($patient->id) ? URL::route('patients.search') : URL::route('patient.summary', array('patient' => $patient->id)) }}"
                        role="button">Patient Overview</a>
                 </li>
                 <li class="inline-block">
-                    <a href="{{ empty($patient->ID) ? URL::route('patients.search') : URL::route('patient.careplan.show', array('patient' => $patient->ID, 'page' => '1')) }}"
+                    <a href="{{ empty($patient->id) ? URL::route('patients.search') : URL::route('patient.careplan.show', array('patient' => $patient->id, 'page' => '1')) }}"
                        role="button">Edit Care Plan</a></li>
                 <li class="inline-block dropdown">
                     <a href="" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false"
                        omitsubmit="yes">Input<span class="caret"></span></a>
                     <ul class="dropdown-menu" role="menu">
                         <li>
-                            <a href="{{ empty($patient->ID) ? URL::route('patients.search') : URL::route('patient.observation.create', array('patient' => $patient->ID)) }}">Observations</a>
+                            <a href="{{ empty($patient->id) ? URL::route('patients.search') : URL::route('patient.observation.create', array('patient' => $patient->id)) }}">Observations</a>
                         </li>
                         <li>
-                            <a href="{{ empty($patient->ID) ? URL::route('patients.search') : URL::route('patient.activity.create', array('patient' => $patient->ID)) }}">Offline
+                            <a href="{{ empty($patient->id) ? URL::route('patients.search') : URL::route('patient.activity.create', array('patient' => $patient->id)) }}">Offline
                                 Activities</a>
                         </li>
                     </ul>
@@ -179,14 +187,14 @@
                        omitsubmit="yes">Patient Reports <span class="caret"></span></a>
                     <ul class="dropdown-menu" role="menu">
                         <li>
-                            <a href="{{ empty($patient->ID) ? URL::route('patients.search') : URL::route('patient.reports.progress', array('patient' => $patient->ID)) }}">Progress
+                            <a href="{{ empty($patient->id) ? URL::route('patients.search') : URL::route('patient.reports.progress', array('patient' => $patient->id)) }}">Progress
                                 Report</a>
                         </li>
                         <li>
                             <a href="{{ URL::route('patient.note.listing') }}">Notes Report</a>
                         </li>
                         <li>
-                            <a href="{{ empty($patient->ID) ? URL::route('patients.search') : URL::route('patient.activity.providerUIIndex', array('patient' => $patient->ID)) }}">Patient
+                            <a href="{{ empty($patient->id) ? URL::route('patients.search') : URL::route('patient.activity.providerUIIndex', array('patient' => $patient->id)) }}">Patient
                                 Activity Report</a>
                         </li>
                         <li>
@@ -202,7 +210,7 @@
                     </ul>
                 </li>
                 <li class="inline-block">
-                    <a href="{{ empty($patient->ID) ? URL::route('patients.search') : URL::route('patient.careplan.print', array('patient' => $patient->ID)) }}"
+                    <a href="{{ empty($patient->id) ? URL::route('patients.search') : URL::route('patient.careplan.print', array('patient' => $patient->id)) }}"
                        role="button">View Care Plan</a>
                 </li>
             </ul>
@@ -211,7 +219,7 @@
     @endif
 
 
-	<!--[if lt IE 8]>
+<!--[if lt IE 8]>
     <p class="chromeframe">You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade
         your browser</a> or <a href="http://www.google.com/chromeframe/?redirect=true">activate Google Chrome Frame</a>
         to improve your experience.</p>
@@ -220,16 +228,16 @@
     {{--
     PROVIDER UI TEMPLATE:
     <div class="row" style="margin-top:60px;">
-        <div class="main-form-container col-lg-8 col-lg-offset-2">
-            <div class="row">
-                <div class="main-form-title col-lg-12">
-                    title
-                </div>
-                <div class="main-form-block main-form-horizontal main-form-primary-horizontal col-md-12">
-                    content text
-                </div>
-            </div>
-        </div>
+    <div class="main-form-container col-lg-8 col-lg-offset-2">
+    <div class="row">
+    <div class="main-form-title col-lg-12">
+    title
+    </div>
+    <div class="main-form-block main-form-horizontal main-form-primary-horizontal col-md-12">
+    content text
+    </div>
+    </div>
+    </div>
     </div>
     --}}
     @if(!isset($isPdf))

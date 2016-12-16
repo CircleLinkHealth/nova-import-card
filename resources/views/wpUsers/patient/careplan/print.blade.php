@@ -35,7 +35,7 @@ if (isset($patient) && !empty($patient)) {
                                         Insurance plans in record may be expired.
                                         <a class="alert-link"
                                            href="{{ URL::route('patient.demographics.show', [
-                                           'patientId' => $patient->ID,
+                                           'patientId' => $patient->id,
                                            'scrollTo' => 'insurance-policies'
                                            ]) }}">
                                             Click to edit
@@ -44,19 +44,20 @@ if (isset($patient) && !empty($patient)) {
                                 @endif
 
                                 <span class="btn btn-group text-right">
-                                @role(['administrator', 'med_assistant', 'provider'])
-                                    <a style="margin-right:10px;" class="btn btn-info btn-sm inline-block"
-                                       aria-label="..."
-                                       role="button"
-                                       href="{{ URL::route('patients.listing', ['patient_approval_id' => $patient->ID]) }}">Approve Care Plan</a>
-                                <a class="btn btn-info btn-sm inline-block" aria-label="..." role="button"
-                                   href="{{ URL::route('patients.careplan.multi') }}?users={{ $patient->ID }}">Print This Page</a>
-                                    @endrole
+        @if(auth()->user()->hasRole(['administrator', 'med_assistant', 'provider']))
+                                        <a style="margin-right:10px;" class="btn btn-info btn-sm inline-block"
+                                           aria-label="..."
+                                           role="button"
+                                           href="{{ URL::route('patients.listing', ['patient_approval_id' => $patient->id]) }}">Approve Care Plan</a>
+                                        <a class="btn btn-info btn-sm inline-block" aria-label="..." role="button"
+                                           href="{{ URL::route('patients.careplan.multi') }}?users={{ $patient->id }}">Print This Page</a>
+                                    @endif
                                     <form class="lang" action="#" method="POST" id="form">
-                        <input type="hidden" name="lang" value="es"/>
+                                        {{ csrf_field() }}
+                                        <input type="hidden" name="lang" value="es"/>
                                         <!-- <button type="submit" class="btn btn-info btn-sm text-right" aria-label="..." value="">Translate to Spanish</button>
                               -->
-                    </form></span></div>
+</form></span></div>
                         </div>
                     @endif
                     <div class="row gutter">
@@ -138,7 +139,7 @@ if (isset($patient) && !empty($patient)) {
                         <div class="col-xs-12">
                             <h2 class="patient-summary__subtitles patient-summary--careplan-background">Medications <a
                                         class="btn btn-primary"
-                                        href="{{ URL::route('patient.careplan.show', array('patient' => $patient->ID, 'page' => '1')) }}"><span
+                                        href="{{ URL::route('patient.careplan.show', array('patient' => $patient->id, 'page' => '1')) }}"><span
                                             class="glyphicon glyphicon-edit" aria-hidden="true"></span></a></h2>
                         </div>
                         <div class="col-xs-10">
@@ -320,24 +321,24 @@ if (isset($patient) && !empty($patient)) {
                                     <strong>Billing
                                         Provider: </strong> {{$billing->fullName}}{{($billing->getSpecialtyAttribute() == '') ? '' : ', ' .  $billing->getSpecialtyAttribute() }}
                                     <br>
-                                    <?php $alreadyShown[] = $billing->ID; ?>
+                                    <?php $alreadyShown[] = $billing->id; ?>
                                 @endif
 
                                 @if(!empty($lead))
                                     <strong>Lead
                                         Contact: </strong> {{$lead->fullName}}{{($lead->getSpecialtyAttribute() == '')? '' : ', ' .  $lead->getSpecialtyAttribute() }}
                                     <br>
-                                    <?php $alreadyShown[] = $lead->ID; ?>
+                                    <?php $alreadyShown[] = $lead->id; ?>
                                 @endif
 
                                 @if(isset($careTeam))
                                     @foreach($careTeam as $member)
                                         @if(! in_array($member->type, [App\PatientCareTeamMember::BILLING_PROVIDER, App\PatientCareTeamMember::LEAD_CONTACT]))
                                             {{--Making sure we're not showing any CareTeam Members more than once--}}
-                                            @if(!in_array($member->user->ID, $alreadyShown))
+                                            @if(!in_array($member->user->id, $alreadyShown))
                                                 <strong>Member:</strong> {{$member->user->fullName}}{{($member->user->getSpecialtyAttribute() == '')? '' : ', ' .  $member->user->getSpecialtyAttribute() }}
                                                 <br>
-                                                <?php $alreadyShown[] = $member->user->ID; ?>
+                                                <?php $alreadyShown[] = $member->user->id; ?>
                                             @endif
                                         @endif
                                     @endforeach

@@ -9,6 +9,20 @@
     $userTime = $userTime->format('Y-m-d\TH:i');
     ?>
 
+    <style type="text/css">
+        div.inline { float:left; }
+        .clearBoth { clear:both; }
+
+        blockquote {
+            padding: 10px 20px;
+            margin: 10px 0 20px;
+            font-size: 17.5px;
+            border-left: 5px solid #50b2e2;
+            line-height: 24px;
+        }
+
+    </style>
+
     <div class="row" style="margin-top:60px;">
         <div class="main-form-container col-lg-6 col-lg-offset-3 col-md-10 col-md-offset-1">
             <div class="row">
@@ -107,6 +121,20 @@
                                                     </h5>
                                                 @endif
                                             @endforeach
+                                                @if(is_array($hasReaders))
+                                                    @foreach($hasReaders as $key => $value)
+                                                    <h5>
+                                                        <div style="margin-right: 2px; margin-bottom: 4px;" class="inline label label-success" data-toggle="tooltip" title="{{$value}}">
+                                                            <div style="padding: 1px; padding-left: 0px" class="label label-success">
+                                                                <span class="glyphicon glyphicon-eye-open" aria-hidden="true"></span>
+                                                                @if($key == $note['provider_name'])
+                                                                    (B.P.)
+                                                                @endif
+                                                            </div>{{$key}}
+                                                        </div>
+                                                    </h5>
+                                                    @endforeach
+                                                @endif
                                         </div>
                                     </div>
                                 </div>
@@ -121,7 +149,7 @@
                                         <input type="hidden" name="meta[1][meta_key]" value="comment">
                                         <textarea id="note" class="form-control" rows="10"
                                                   name="meta[1][meta_value]"
-                                                  disabled>{{trim($note['comment'])}}</textarea> <br/>
+                                                  readonly>{{trim($note['comment'])}}</textarea> <br/>
                                     </div>
                                 </div>
                                 <div class="form-block col-md-6">
@@ -139,9 +167,17 @@
                                                                 class="selectpicker dropdown Valid form-control"
                                                                 data-size="10"
                                                                 multiple>
-                                                            @foreach ($careteam_info as $id => $name)
-                                                                <option value="{{$id}}"> {{$name}} </option>
-                                                            @endforeach
+
+                                                            <!-- rework later, quick fix ticket: 679 !-->
+                                                            @if($patient->program_id == 29)
+                                                                    <option value="2584">Tina Booze</option>
+                                                            @else
+                                                                @foreach ($careteam_info as $id => $name)
+                                                                    <option value="{{$id}}"> {{$name}} </option>
+                                                                @endforeach
+                                                                    <option value="948">Patient Support</option>
+                                                            @endif
+
                                                         </select>
                                                     </div>
                                                 </div>
@@ -150,10 +186,10 @@
                                     </div>
                                 </div>
                                 <div class="form-group col-sm-4">
-                                    <input type="hidden" name="patient_id" value="{{$patient->ID}}">
-                                    <input type="hidden" name="logger_id" value="{{Auth::user()->ID}}">
+                                    <input type="hidden" name="patient_id" value="{{$patient->id}}">
+                                    <input type="hidden" name="logger_id" value="{{Auth::user()->id}}">
                                     <input type="hidden" name="noteId" value="{{$note['id']}}">
-                                    <input type="hidden" name="patientID" id="patientID" value="{{$patient->ID}}">
+                                    <input type="hidden" name="patientID" id="patientID" value="{{$patient->id}}">
                                     <input type="hidden" name="programId" id="programId" value="{{$program_id}}">
                                 </div>
                                 <div class="form-item form-item-spacing text-center">
@@ -167,8 +203,6 @@
                                         </div>
                                     </div>
                                 </div>
-
-
                                 <script>
                                     $(function () {
                                         $('[data-toggle="tooltip"]').tooltip()
@@ -202,5 +236,7 @@
 
         </div>
     </div>
+    <div class="form-block col-md-6">
+        <br />
     </div>
 @endsection

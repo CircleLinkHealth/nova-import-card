@@ -208,3 +208,83 @@ if (!function_exists('timestampsToWindow')) {
         ];
     }
 }
+
+if (!function_exists('windowToTimestamps')) {
+    /**
+     * Convert timestamps to a Contact Window.
+     *
+     * @param $startTimestamp
+     * @param $endTimestamp
+     * @param string $timezone
+     *
+     * @return array
+     */
+    function clhWindowToTimestamps(
+        $date,
+        $start,
+        $end
+    ) {
+        $startDate = Carbon::parse($date);
+
+        $startTimeH = Carbon::parse($start)->format('H');
+        $startTimei = Carbon::parse($start)->format('i');
+
+        $startDate = $startDate->setTime($startTimeH, $startTimei)->toDateTimeString();
+
+        $endDate = Carbon::parse($date);
+
+        $endTimeH = Carbon::parse($end)->format('H');
+        $endTimei = Carbon::parse($end)->format('i');
+
+        $endDate = $endDate->setTime($endTimeH, $endTimei)->toDateTimeString();;
+
+        return [
+            'window_start' => $startDate,
+            'window_end' => $endDate
+        ];
+    }
+}
+
+if (!function_exists('dateAndTimeToCarbon')) {
+    /**
+     * Convert a Date and Time Object to one Carbon Object.
+     *
+     * @param $date
+     * @param $time
+     *
+     * @return Carbon window
+     */
+    function dateAndTimeToCarbon($date, $time) {
+
+        $carbon_date = Carbon::parse($date);
+
+        $carbon_hour = Carbon::parse($time)->format('H');
+        $carbon_minutes = Carbon::parse($time)->format('i');
+        $carbon_date->setTime($carbon_hour, $carbon_minutes);
+
+        return $carbon_date;
+    }
+}
+
+
+if (!function_exists('secondsToHMS')) {
+    /**
+     * Converts a string of time in seconds to H:m:s
+     *
+     * @param $totalTimeInSeconds
+     * @param string $delimiter
+     *
+     * @return string
+     */
+    function secondsToHMS(
+        $totalTimeInSeconds,
+        $delimiter = ':'
+    ) {
+
+        $H2 = floor($totalTimeInSeconds / 3600);
+        $m2 = ($totalTimeInSeconds / 60) % 60;
+        $s2 = $totalTimeInSeconds % 60;
+
+        return sprintf("%02d$delimiter%02d$delimiter%02d", $H2, $m2, $s2);
+    }
+}

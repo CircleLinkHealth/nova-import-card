@@ -4,11 +4,14 @@
 
 if (!function_exists('checkIfExists')) {
     //check if exists
-    function checkIfExists($arr, $val)
-    {
+    function checkIfExists(
+            $arr,
+            $val
+    ) {
         if (isset($arr[$val])) {
             return $arr[$val];
         }
+
         return '';
     }
 }
@@ -24,11 +27,8 @@ $today = \Carbon\Carbon::now()->toFormattedDateString();
     @foreach($careplans as $id => $careplan)
         <?php
         $patient = App\User::find($id);
-        //$config = $patient->userConfig();
-        $billing = null;
-        $lead = null;
-        if (!empty($patient->getBillingProviderIDAttribute())) $billing = App\User::find($patient->getBillingProviderIDAttribute());
-        if (!empty($patient->getLeadContactIDAttribute())) $lead = App\User::find($patient->getLeadContactIDAttribute());
+        $billing = $patient->billingProvider();
+        $lead = $patient->leadContact();
         ?>
         <style type="text/css">
             div.address {
@@ -49,6 +49,7 @@ $today = \Carbon\Carbon::now()->toFormattedDateString();
 					<!--<A class="btn btn-info btn-sm inline-block" aria-label="..." role="button"
                        HREF="javascript:window.print()">Print This Page</A>-->
 				<form class="lang" action="#" method="POST" id="form">
+                    {{ csrf_field() }}
                     <input type="hidden" name="lang" value="es"/>
                     <!-- <button type="submit" class="btn btn-info btn-sm text-right" aria-label="..." value="">Translate to Spanish</button>
           -->
@@ -71,12 +72,12 @@ $today = \Carbon\Carbon::now()->toFormattedDateString();
                                     <div class="col-xs-7 address">{{$patient->primaryProgram->display_name}}</div>
                                     <div class="col-xs-4 col-xs-offset-1 print-row text-right">Stamford, CT 06902</div>
                                     @if($patient->getPreferredLocationAddress())
-                                    <div class="col-xs-12 address">{{$patient->getPreferredLocationAddress()->address_line_1}}</div>
-                                    <!-- <div class="col-xs-4 col-xs-offset-1 print-row text-right">Phone: 203 847 5890</div> -->
-                                    <div class="col-xs-12 address">{{$patient->getPreferredLocationAddress()->city}}
-                                        , {{$patient->getPreferredLocationAddress()->state}} {{$patient->getPreferredLocationAddress()->postal_code}}</div>
-                                    @endif
-                                    <!-- <div class="col-xs-4 col-xs-offset-1 print-row text-right">Fax: 203 847 5899</div> -->
+                                        <div class="col-xs-12 address">{{$patient->getPreferredLocationAddress()->address_line_1}}</div>
+                                        <!-- <div class="col-xs-4 col-xs-offset-1 print-row text-right">Phone: 203 847 5890</div> -->
+                                        <div class="col-xs-12 address">{{$patient->getPreferredLocationAddress()->city}}
+                                            , {{$patient->getPreferredLocationAddress()->state}} {{$patient->getPreferredLocationAddress()->postal_code}}</div>
+                                @endif
+                                <!-- <div class="col-xs-4 col-xs-offset-1 print-row text-right">Fax: 203 847 5899</div> -->
                                     <!-- <div class="col-xs-12 address"></div> -->
                                 </div>
                             </div>
@@ -122,31 +123,42 @@ $today = \Carbon\Carbon::now()->toFormattedDateString();
                                     <div class="row gutter">
                                     </div>
                                     <div class="row gutter" style="line-height: 1.0em;">
-                                        Welcome to your doctor's chronic care management program! We are happy that you
-                                        have decided to enroll in this very worthwhile program designed for Medicare
-                                        patients like you. As a participant, you will benefit in a number of ways:
+                                        Welcome to Dr. {{$billing->fullName}}'s Personalized Care Management program!
+                                    </div>
+                                    <br>
+                                    <div class="row gutter" style="line-height: 1.0em;">
+                                        We are happy you have decided to enroll in this invite-only program for
+                                        continued health.
+                                    </div>
+                                    <br>
+                                    <div class="row gutter" style="line-height: 1.0em;">
+                                        As Dr. {{$billing->fullName}} mentioned, this program is an important part of
+                                        better
+                                        self-management of your health. By participating, you benefit in a number ways:
                                     </div>
                                     <div class="row gutter"><BR>
                                         <ul type="disc" style="line-height: 1.0em;list-style-type: disc;">
-                                            <li style="list-style-type: disc;margin: 15px 0;">Receive regular calls to check up on how you are doing
+                                            <li style="list-style-type: disc;margin: 15px 0;">Regular calls to check-in
+                                                on behalf of Dr. {{$billing->fullName}}, so (s)he can help keep you
+                                                healthy between visits
+
                                             </li>
                                             <li style="list-style-type: disc;margin: 15px 0;">Avoid the inconvenience of
                                                 frequent office visits and co-pays by using this program's remote care
                                             </li>
                                             <li style="list-style-type: disc;margin: 15px 0;">All of the information
                                                 gathered will be available to your doctor and will allow them to see how
-                                                you
-                                                are doing even when you are not in their office
+                                                you are doing even when you are not in their office
                                             </li>
-                                            <li style="list-style-type: disc;margin: 5px 0;">This program will help you
-                                                take
-                                                better care of yourself by staying connected to your care team and
-                                                doctor
+                                            <li style="list-style-type: disc;margin: 5px 0;">Help you take better care
+                                                of yourself by staying connected to your care team and doctor
                                             </li>
                                         </ul>
                                     </div>
                                     <div class="row gutter" style="line-height: 1.0em;">
-                                        Enclosed please find a copy of your personalized care plan. Please take a few minutes to review the care plan and call us if you have any questions. You can leave a message for your care team 24/7 at the following number:
+                                        Enclosed please find a copy of your personalized care plan. Please take a few
+                                        minutes to review the care plan and call us if you have any questions. You can
+                                        leave a message for your care team 24/7 at the following number:
                                     </div>
                                     <div class="row gutter">
                                     </div>
@@ -156,7 +168,7 @@ $today = \Carbon\Carbon::now()->toFormattedDateString();
                                     <div class="row gutter"><BR><BR>
                                     </div>
                                     <div class="row gutter">
-                                        Thanks and we look forward to working with you!
+                                        Thanks so much. We are eager to have you benefit from this worthwhile program!
                                     </div>
                                     <div class="row gutter">
                                     </div>

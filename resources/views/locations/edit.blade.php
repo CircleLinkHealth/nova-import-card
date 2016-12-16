@@ -31,7 +31,8 @@
                             <div class="form-group">
                                 <label class="col-md-4 control-label">Phone Number</label>
                                 <div class="col-md-6">
-                                    <input type="tel" class="form-control" name="phone" value="{{$location->phone}}" required">
+                                    <input type="tel" class="form-control" name="phone" value="{{$location->phone}}"
+                                           required>
                                 </div>
                             </div>
 
@@ -88,37 +89,6 @@
                                 </div>
                             </div>
 
-                            <div class="form-group">
-                                <label class="col-md-4 control-label">Billing Code</label>
-                                <div class="col-md-6">
-                                    <input type="text" class="form-control" name="billing_code" value="{{$location->billing_code}}" required>
-                                </div>
-                            </div>
-
-                            <div class="form-group">
-                                <label class="col-md-4 control-label">Location Code</label>
-                                <div class="col-md-6">
-                                    <input type="text" class="form-control" name="location_code" value="{{$location->location_code}}" required>
-                                </div>
-                            </div>
-
-                            <div class="form-group">
-                                <label class="col-md-4 control-label">Parent</label>
-                                <div class="col-md-6">
-                                    <select name="parent_id">
-                                        <option value="">None</option>
-                                        <?php foreach( $locations as $id => $loc ){ ?>
-                                            <option value="{{ $id }}"
-                                                    <?php
-                                                    if($location->parent_id == $id){
-                                                        echo 'selected';
-                                                    }
-                                                    ?>
-                                                    >{{ $loc }}</option>
-                                        <?php } ?>
-                                    </select>
-                                </div>
-                            </div>
                             <div class="form-group">
                                 <div class="col-md-6 col-md-offset-4">
                                     <button type="submit" class="btn btn-primary">

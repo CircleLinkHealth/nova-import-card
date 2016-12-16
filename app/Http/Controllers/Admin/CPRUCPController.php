@@ -1,14 +1,11 @@
 <?php namespace App\Http\Controllers\Admin;
 
-use App\User;
-use App\CPRulesUCP;
 use App\CPRulesPCP;
-use App\Http\Requests;
+use App\CPRulesUCP;
 use App\Http\Controllers\Controller;
-
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Crypt;
+use App\User;
 use Auth;
+use Illuminate\Http\Request;
 
 class CPRUCPController extends Controller {
 
@@ -29,9 +26,15 @@ class CPRUCPController extends Controller {
 		$params = $request->all();
 
 		// filter user
-		$users = User::whereIn('ID', Auth::user()->viewablePatientIds())->OrderBy('id', 'desc')->get()->lists('fullNameWithId', 'ID')->all();
+        $users = User::intersectPracticesWith(auth()->user())
+            ->orderBy('id', 'desc')
+            ->get()
+            ->pluck('fullNameWithId', 'id')
+            ->all();
+
 		$filterUser = 'all';
-		if(!empty($params['filterUser'])) {
+
+        if(!empty($params['filterUser'])) {
 			$filterUser = $params['filterUser'];
 			if($params['filterUser'] != 'all') {
 				$ucps->where('user_id', '=', $filterUser);
@@ -39,7 +42,8 @@ class CPRUCPController extends Controller {
 		}
 
 		// filter pcp
-		$pcps = CPRulesPCP::select('section_text')->groupBy('section_text')->get()->lists('section_text', 'section_text')->all();
+        $pcps = CPRulesPCP::select('section_text')->groupBy('section_text')->get()->pluck('section_text',
+            'section_text')->all();
 		$filterPCP = 'all';
 		if(!empty($params['filterPCP'])) {
 			$filterPCP = $params['filterPCP'];

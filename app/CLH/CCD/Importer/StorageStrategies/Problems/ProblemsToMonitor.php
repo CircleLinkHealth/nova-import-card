@@ -26,25 +26,25 @@ class ProblemsToMonitor extends BaseStorageStrategy implements StorageStrategy
             $biometricsToActivate = $cpmProblem
                 ->cpmBiometricsToBeActivated()
                 ->wherePivot('care_plan_template_id', $this->carePlanTemplateId)
-                ->lists('cpm_biometric_id')
+                ->pluck('cpm_biometric_id')
                 ->all();
 
             $lifestylesToActivate = $cpmProblem
                 ->cpmLifestylesToBeActivated()
                 ->wherePivot('care_plan_template_id', $this->carePlanTemplateId)
-                ->lists('cpm_lifestyle_id')
+                ->pluck('cpm_lifestyle_id')
                 ->all();
 
             $medsToActivate = $cpmProblem
                 ->cpmMedicationGroupsToBeActivated()
                 ->wherePivot('care_plan_template_id', $this->carePlanTemplateId)
-                ->lists('cpm_medication_group_id')
+                ->pluck('cpm_medication_group_id')
                 ->all();
 
             $symptomsToActivate = $cpmProblem
                 ->cpmSymptomsToBeActivated()
                 ->wherePivot('care_plan_template_id', $this->carePlanTemplateId)
-                ->lists('cpm_symptom_id')
+                ->pluck('cpm_symptom_id')
                 ->all();
 
             if ($biometricsToActivate) $this->user->cpmBiometrics()->sync($biometricsToActivate, false);

@@ -36,7 +36,8 @@
                                     @endforeach
                                 </select>
                             </div>
-                            <button type="submit" value="Search" name="find" id="find" class="btn btn-primary">Go</button>
+                            <button type="submit" value="Search" name="find" id="find" class="btn btn-primary">Go
+                            </button>
                         </div>
                     </div>
                     {!! Form::close() !!}
@@ -56,22 +57,22 @@
                             }
                         </style>
                         <script>
-                            function filterText(text){
+                            function filterText(text) {
                                 // var text = node;
                                 if (!text) return obs_alerts_dtable.filter();
 
-                                obs_alerts_dtable.filter(function(obj){
+                                obs_alerts_dtable.filter(function (obj) {
                                     return obj.patient_status_ccm == text;
                                 })
                             }
-                            function sortByParam(a,b){
+                            function sortByParam(a, b) {
                                 a = a.patient_name_sort;
                                 b = b.patient_name_sort;
-                                return a>b?1:(a<b?-1:0);
+                                return a > b ? 1 : (a < b ? -1 : 0);
                             }
-                            function zeroPad(nr,base){
-                                var  len = (String(base).length - String(nr).length)+1;
-                                return len > 0? new Array(len).join('0')+nr : nr;
+                            function zeroPad(nr, base) {
+                                var len = (String(base).length - String(nr).length) + 1;
+                                return len > 0 ? new Array(len).join('0') + nr : nr;
                             }
 
                             function startCompare(value, filter) {
@@ -111,10 +112,16 @@
                                         header: ["Patient", {content: "textFilter", placeholder: "Filter"}],
                                         fillspace: true,
                                         width: 90,
-                                        sort:'string',
-                                        template:"<a href='<?php echo URL::route('patient.activity.providerUIIndex', array('patient' => '#patient_id#')); ?>'>#patient_name#</a>"
+                                        sort: 'string',
+                                        template: "<a href='<?php echo URL::route('patient.activity.providerUIIndex',
+                                                array('patient' => '#patient_id#')); ?>'>#patient_name#</a>"
                                     },
-                                { id:"site",   header:["Program",{content:"selectFilter"}],    width:150, sort:'string'},
+                                    {
+                                        id: "site",
+                                        header: ["Program", {content: "selectFilter"}],
+                                        width: 150,
+                                        sort: 'string'
+                                    },
                                     {
                                         id: "ccm_status",
                                         header: ["CCM Status", {content: "selectFilter", placeholder: "Filter"}],
@@ -133,12 +140,12 @@
                                         width: 70,
                                         sort: 'int',
                                         css: {"color": "black", "text-align": "left"},
-                                        template:function (obj) {
+                                        template: function (obj) {
                                             var seconds = obj.colsum_careplan;
                                             var date = new Date(seconds * 1000);
-                                            var mm = Math.floor(seconds/60);
+                                            var mm = Math.floor(seconds / 60);
                                             var ss = date.getSeconds();
-                                            return "<span style='float:right;'>"+mm + ":" + zeroPad(ss,10)+"</span>";
+                                            return "<span style='float:right;'>" + mm + ":" + zeroPad(ss, 10) + "</span>";
                                         }
                                     },
                                     {
@@ -147,12 +154,12 @@
                                         width: 70,
                                         sort: 'int',
                                         css: {"color": "black", "text-align": "left"},
-                                        template:function (obj) {
+                                        template: function (obj) {
                                             var seconds = obj.colsum_progress;
                                             var date = new Date(seconds * 1000);
-                                            var mm = Math.floor(seconds/60);
+                                            var mm = Math.floor(seconds / 60);
                                             var ss = date.getSeconds();
-                                            return "<span style='float:right;'>"+mm + ":" + zeroPad(ss,10)+"</span>";
+                                            return "<span style='float:right;'>" + mm + ":" + zeroPad(ss, 10) + "</span>";
                                         }
                                     },
                                     {
@@ -161,12 +168,12 @@
                                         width: 70,
                                         sort: 'int',
                                         css: {"color": "black", "text-align": "left"},
-                                        template:function (obj) {
+                                        template: function (obj) {
                                             var seconds = obj.colsum_rpm;
                                             var date = new Date(seconds * 1000);
-                                            var mm = Math.floor(seconds/60);
+                                            var mm = Math.floor(seconds / 60);
                                             var ss = date.getSeconds();
-                                            return "<span style='float:right;'>"+mm + ":" + zeroPad(ss,10)+"</span>";
+                                            return "<span style='float:right;'>" + mm + ":" + zeroPad(ss, 10) + "</span>";
                                         }
                                     },
                                     {
@@ -176,12 +183,12 @@
                                         sort: 'int',
                                         css: {"color": "black", "text-align": "left"},
                                         format: webix.numberFormat,
-                                        template:function (obj) {
+                                        template: function (obj) {
                                             var seconds = obj.colsum_tcc;
                                             var date = new Date(seconds * 1000);
-                                            var mm = Math.floor(seconds/60);
+                                            var mm = Math.floor(seconds / 60);
                                             var ss = date.getSeconds();
-                                            return "<span style='float:right;'>"+mm + ":" + zeroPad(ss,10)+"</span>";
+                                            return "<span style='float:right;'>" + mm + ":" + zeroPad(ss, 10) + "</span>";
                                         }
                                     },
                                     {
@@ -190,18 +197,18 @@
                                         width: 70,
                                         sort: 'int',
                                         css: {"color": "black", "text-align": "left"}
-                                        ,template:function (obj) {
+                                        , template: function (obj) {
                                         var seconds = obj.colsum_other;
                                         var date = new Date(seconds * 1000);
-                                        var mm = Math.floor(seconds/60);
+                                        var mm = Math.floor(seconds / 60);
                                         var ss = date.getSeconds();
                                         console.log("This: " + obj);
-                                        return "<span style='float:right;'>"+mm + ":" + zeroPad(ss,10)+"</span>";
+                                        return "<span style='float:right;'>" + mm + ":" + zeroPad(ss, 10) + "</span>";
                                     }
                                     },
                                     {
                                         id: "colsum_total",
-                                        header:["Total", "(Min:Sec)"],
+                                        header: ["Total", "(Min:Sec)"],
                                         width: 70,
                                         sort: 'int',
                                         css: {"color": "black", "text-align": "left"},
@@ -209,9 +216,9 @@
                                         template: function (obj, common) {
                                             var seconds = obj.colsum_total;
                                             var date = new Date(seconds * 1000);
-                                            var mm = Math.floor(seconds/60);
+                                            var mm = Math.floor(seconds / 60);
                                             var ss = date.getSeconds();
-                                            return "<span style='float:right;'>"+mm + ":" + zeroPad(ss,10)+"</span>";
+                                            return "<span style='float:right;'>" + mm + ":" + zeroPad(ss, 10) + "</span>";
                                         }
                                     }
                                 ],
@@ -234,7 +241,7 @@
                                         footer: {
                                             colsum_total: ["colsum_total", "sum"],
                                             row: function (obj) {
-                                                return "<span style='float:right;'>Total: " + zeroPad(Math.floor(obj.colsum_total/60),10) + "</span>";
+                                                return "<span style='float:right;'>Total: " + zeroPad(Math.floor(obj.colsum_total / 60), 10) + "</span>";
                                             }
                                         }
                                     }
@@ -249,7 +256,7 @@
                                     size: 10, // the number of records per a page
                                     group: 5   // the number of pages in the pager
                                 },
-                            {!! $activity_json !!}
+                                {!! $activity_json !!}
                             });
                             function gby() {
                                 obs_alerts_dtable.ungroup();
@@ -264,9 +271,9 @@
                                         row: function (obj) {
                                             var seconds = obj.colsum_total;
                                             var date = new Date(seconds * 1000);
-                                            var mm = Math.floor(seconds/60);
+                                            var mm = Math.floor(seconds / 60);
                                             var ss = date.getSeconds();
-                                            var time = mm+":"+zeroPad(ss,10);
+                                            var time = mm + ":" + zeroPad(ss, 10);
                                             return "<span style='float:right;'>Total Time: " + time + "</span>";
                                         }
                                     },
@@ -286,10 +293,12 @@
                                         row: function (obj) {
                                             var seconds = obj.colsum_total;
                                             var date = new Date(seconds * 1000);
-                                            var mm = Math.floor(seconds/60);
+                                            var mm = Math.floor(seconds / 60);
                                             var ss = date.getSeconds();
-                                            if (ss < 10) {ss = "0"+ss;}
-                                            var time = mm+":"+ss;
+                                            if (ss < 10) {
+                                                ss = "0" + ss;
+                                            }
+                                            var time = mm + ":" + ss;
                                             return "<span style='float:right;'>Total Time: " + time + "</span>";
                                         }
                                     },
@@ -307,84 +316,89 @@
                                 obs_alerts_dtable.adjust();
                             })
                         </script>
-                        @role(['administrator', 'med_assistant', 'provider'])
-                        <input type="button" value="Export as PDF" class="btn btn-primary" style='margin:15px;'
-                               onclick="webix.toPDF($$(obs_alerts_dtable), {
-                                header:'CarePlanManager.com - Billing Report <?= date('M d,Y') ?>',
-                                orientation:'landscape',
-                                autowidth:true,
-                                        columns:{
-                                'provider_name':    { header:'Provider',    width:200, sort:'string', template: webix.template('#provider_name#') },
-                                'patient_name':       { header:'Patient Name', width: 200, template: webix.template('#patient_name#') },
-                                'site':             { header:'Program',    width:150, sort:'string', template: webix.template('#site#')},
-                                'dob':              { header:'DOB',    width:100, sort:'string', template: webix.template('#dob#')},
+                        @if(auth()->user()->hasRole(['administrator', 'med_assistant', 'provider']))
+                            <input type="button" value="Export as PDF" class="btn btn-primary" style='margin:15px;'
+                                   onclick="webix.toPDF($$(obs_alerts_dtable), {
+                                           header:'CarePlanManager.com - Billing Report <?= date('M d,Y') ?>',
+                                           orientation:'landscape',
+                                           autowidth:true,
+                                           columns:{
+                                           'provider_name':    { header:'Provider',    width:200, sort:'string', template: webix.template('#provider_name#') },
+                                           'patient_name':       { header:'Patient Name', width: 200, template: webix.template('#patient_name#') },
+                                           'site':             { header:'Program',    width:150, sort:'string', template: webix.template('#site#')},
+                                           'dob':              { header:'DOB',    width:100, sort:'string', template: webix.template('#dob#')},
 
-                                'colsum_careplan':  { header: 'CarePlan (Min:Sec)', width: 70, sort: 'int',
-                                        template:function (obj) {
-                                            var seconds = obj.colsum_careplan;
-                                            var date = new Date(seconds * 1000);
-                                            var mm = Math.floor(seconds/60);
-                                            var ss = date.getSeconds();
-                                            return mm + ':' + zeroPad(ss,10);
-                                        }
-                                    },
-                                'colsum_progress':  { header: 'Progress (Min:Sec)', width: 70, sort: 'int',
-                                        template:function (obj) {
-                                            var seconds = obj.colsum_progress;
-                                            var date = new Date(seconds * 1000);
-                                            var mm = Math.floor(seconds/60);
-                                            var ss = date.getSeconds();
-                                            return mm + ':' + zeroPad(ss,10);
-                                        }
-                                    },
-                                'colsum_rpm':  { header: 'RPM (Min:Sec)', width: 70, sort: 'int',
-                                        template:function (obj) {
-                                            var seconds = obj.colsum_rpm;
-                                            var date = new Date(seconds * 1000);
-                                            var mm = Math.floor(seconds/60);
-                                            var ss = date.getSeconds();
-                                            return mm + ':' + zeroPad(ss,10);
-                                        }
-                                    },
-                                'colsum_tcc':  { header: 'CC (Min:Sec)', width: 50, sort: 'int',
-                                        format: webix.numberFormat,
-                                        template:function (obj) {
-                                            var seconds = obj.colsum_tcc;
-                                            var date = new Date(seconds * 1000);
-                                            var mm = Math.floor(seconds/60);
-                                            var ss = date.getSeconds();
-                                            return mm + ':' + zeroPad(ss,10);
-                                        }
-                                    },
-                                'colsum_other':  { header: 'Other (Min:Sec)', width: 70, sort: 'int',
-                                        template:function (obj) {
-                                        var seconds = obj.colsum_other;
-                                        var date = new Date(seconds * 1000);
-                                        var mm = Math.floor(seconds/60);
-                                        var ss = date.getSeconds();
-                                        return mm + ':' + zeroPad(ss,10);
-                                    }
-                                    },
-                                'colsum_total':  { header: 'Total (Min:Sec)', width: 70, sort: 'int',
-                                        format: webix.numberFormat,
-                                        template: function (obj, common) {
-                                            var seconds = obj.colsum_total;
-                                            var date = new Date(seconds * 1000);
-                                            var mm = Math.floor(seconds/60);
-                                            var ss = date.getSeconds();
-                                            return mm + ':' + zeroPad(ss,10);
-                                        }
-                                    }}
-                                                                              });">
-                        <input type="button" value="Export as Excel" class="btn btn-primary" style='margin:15px;'
-                               onclick="webix.toExcel(obs_alerts_dtable);">
-                        @endrole
- @if ( !Auth::guest() && Auth::user()->can(['admin-access']))
-                     <input id='site_show_btn' type='button' class='btn btn-primary' value='Show Program' style='margin:15px;' onclick='obs_alerts_dtable.showColumn("site");this.style.display = "none";getElementById("site_hide_btn").style.display = "inline-block";'>
-                    <input id='site_hide_btn' type='button' class='btn btn-primary' value='Hide Program' style='display:none;margin:15px;' onclick='obs_alerts_dtable.hideColumn("site");this.style.display = "none";getElementById("site_show_btn").style.display = "inline-block";'>
-@endif 
+                                           'colsum_careplan':  { header: 'CarePlan (Min:Sec)', width: 70, sort: 'int',
+                                           template:function (obj) {
+                                           var seconds = obj.colsum_careplan;
+                                           var date = new Date(seconds * 1000);
+                                           var mm = Math.floor(seconds/60);
+                                           var ss = date.getSeconds();
+                                           return mm + ':' + zeroPad(ss,10);
+                                           }
+                                           },
+                                           'colsum_progress':  { header: 'Progress (Min:Sec)', width: 70, sort: 'int',
+                                           template:function (obj) {
+                                           var seconds = obj.colsum_progress;
+                                           var date = new Date(seconds * 1000);
+                                           var mm = Math.floor(seconds/60);
+                                           var ss = date.getSeconds();
+                                           return mm + ':' + zeroPad(ss,10);
+                                           }
+                                           },
+                                           'colsum_rpm':  { header: 'RPM (Min:Sec)', width: 70, sort: 'int',
+                                           template:function (obj) {
+                                           var seconds = obj.colsum_rpm;
+                                           var date = new Date(seconds * 1000);
+                                           var mm = Math.floor(seconds/60);
+                                           var ss = date.getSeconds();
+                                           return mm + ':' + zeroPad(ss,10);
+                                           }
+                                           },
+                                           'colsum_tcc':  { header: 'CC (Min:Sec)', width: 50, sort: 'int',
+                                           format: webix.numberFormat,
+                                           template:function (obj) {
+                                           var seconds = obj.colsum_tcc;
+                                           var date = new Date(seconds * 1000);
+                                           var mm = Math.floor(seconds/60);
+                                           var ss = date.getSeconds();
+                                           return mm + ':' + zeroPad(ss,10);
+                                           }
+                                           },
+                                           'colsum_other':  { header: 'Other (Min:Sec)', width: 70, sort: 'int',
+                                           template:function (obj) {
+                                           var seconds = obj.colsum_other;
+                                           var date = new Date(seconds * 1000);
+                                           var mm = Math.floor(seconds/60);
+                                           var ss = date.getSeconds();
+                                           return mm + ':' + zeroPad(ss,10);
+                                           }
+                                           },
+                                           'colsum_total':  { header: 'Total (Min:Sec)', width: 70, sort: 'int',
+                                           format: webix.numberFormat,
+                                           template: function (obj, common) {
+                                           var seconds = obj.colsum_total;
+                                           var date = new Date(seconds * 1000);
+                                           var mm = Math.floor(seconds/60);
+                                           var ss = date.getSeconds();
+                                           return mm + ':' + zeroPad(ss,10);
+                                           }
+                                           }}
+                                           });">
+                            <input type="button" value="Export as Excel" class="btn btn-primary" style='margin:15px;'
+                                   onclick="webix.toExcel(obs_alerts_dtable);">
+                        @endif
+                        @if ( !Auth::guest() && Auth::user()->can(['admin-access']))
+                            <input id='site_show_btn' type='button' class='btn btn-primary' value='Show Program'
+                                   style='margin:15px;'
+                                   onclick='obs_alerts_dtable.showColumn("site");this.style.display = "none";getElementById("site_hide_btn").style.display = "inline-block";'>
+                            <input id='site_hide_btn' type='button' class='btn btn-primary' value='Hide Program'
+                                   style='display:none;margin:15px;'
+                                   onclick='obs_alerts_dtable.hideColumn("site");this.style.display = "none";getElementById("site_show_btn").style.display = "inline-block";'>
+                        @endif
                     @else
-                        <div style="text-align:center;margin:50px;">There are no patients eligible for billing this month.
+                        <div style="text-align:center;margin:50px;">There are no patients eligible for billing this
+                            month.
                         </div>
                     @endif
 

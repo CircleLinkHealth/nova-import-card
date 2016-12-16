@@ -12,7 +12,6 @@ use App\Call;
 use App\PatientContactWindow;
 use App\PatientInfo;
 use App\Services\Calls\SchedulerService;
-use App\User;
 use Carbon\Carbon;
 
 //READ ME:
@@ -97,20 +96,26 @@ class ReschedulerHandler
 
             $patient = PatientInfo::where('user_id', $call->inbound_cpm_id)->first();
 
-            //this will give us the first available call window from the date the logic offsets, per the patient's preferred times.
-            $next_predicted_contact_window = (new PatientContactWindow)->getEarliestWindowForPatientFromDate($patient, Carbon::now());
+            if(is_object($patient)) {
 
-            $window_start = Carbon::parse($next_predicted_contact_window['window_start'])->format('H:i');
-            $window_end = Carbon::parse($next_predicted_contact_window['window_end'])->format('H:i');
-            $day = Carbon::parse($next_predicted_contact_window['day'])->toDateString();
+                //this will give us the first available call window from the date the logic offsets, per the patient's preferred times.
+                $next_predicted_contact_window = (new PatientContactWindow)->getEarliestWindowForPatientFromDate($patient,
+                    Carbon::now());
 
-            $this->rescheduledCalls[] = (new SchedulerService())->storeScheduledCall($patient->user->ID,
-                $window_start,
-                $window_end,
-                $day,
-                'rescheduler algorithm',
-                $call->outbound_cpm_id
-            );
+                $window_start = Carbon::parse($next_predicted_contact_window['window_start'])->format('H:i');
+                $window_end = Carbon::parse($next_predicted_contact_window['window_end'])->format('H:i');
+                $day = Carbon::parse($next_predicted_contact_window['day'])->toDateString();
+
+                $this->rescheduledCalls[] = (new SchedulerService())->storeScheduledCall(
+                    $patient->user->id,
+                    $window_start,
+                    $window_end,
+                    $day,
+                    'rescheduler algorithm',
+                    $call->outbound_cpm_id ? $call->outbound_cpm_id : null,
+                    ''
+                );
+            }
 
         }
 

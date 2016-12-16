@@ -8,22 +8,22 @@ $new_user = false;
 @section('content')
     <script type="text/javascript" src="{{ asset('/js/patient/careplan.js') }}"></script>
     <link href="{{ asset('/css/wpstyle.css') }}" rel="stylesheet">
-    {!! Form::open(array('url' => URL::route('patients.demographics.store', array('patientId' => $patient->ID)), 'class' => 'form-horizontal', 'id' => 'ucpForm')) !!}
+    {!! Form::open(array('url' => URL::route('patients.demographics.store', array('patientId' => $patient->id)), 'class' => 'form-horizontal', 'id' => 'ucpForm')) !!}
     <div class="row">
         <div class="icon-container col-lg-12">
-            @if(isset($patient->ID) && !$new_user )
+            @if(isset($patient->id) && !$new_user )
                 @include('wpUsers.patient.careplan.nav')
             @endif
         </div>
     </div>
     <div class="row" style="margin-top:60px;">
-        @if(!isset($patient->ID) && !$new_user )
+        @if(!isset($patient->id) && !$new_user )
             <div class=" col-lg-8 col-lg-offset-2 alert alert-info">NOTE: Adding a new patient</div>
         @endif
         <div class="main-form-container col-lg-8 col-lg-offset-2">
             <div class="row">
                 <div class="main-form-title">
-                    @if(isset($patient->ID) && !$new_user )
+                    @if(isset($patient->id) && !$new_user )
                         <div class="main-form-title col-lg-12">
                             Edit Patient
                         </div>
@@ -38,7 +38,7 @@ $new_user = false;
                         <div class="main-form-block main-form-primary main-form-primary-vertical col-lg-7">
                             <h4 class="form-title">Contact Information</h4>
                             <p><span class="attention">*</span> Required Field</p>
-                            <input type=hidden name=user_id value="{{ $patient->ID }}">
+                            <input type=hidden name=user_id value="{{ $patient->id }}">
                             <input type=hidden name=program_id value="{{ $programId }}">
                             <input type=hidden name=display_name value="{{ $patient->display_name }}">
                             <input type=hidden name=role value="{{ $patientRoleId }}">

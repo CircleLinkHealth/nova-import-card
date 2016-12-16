@@ -2,18 +2,13 @@
 
 use App\Activity;
 use App\ActivityMeta;
-use App\Program;
-use App\User;
-use App\UserMeta;
+use App\Practice;
 use App\Services\ActivityService;
-use App\Http\Requests;
-use App\Http\Controllers\Controller;
-
+use App\User;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Crypt;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Mail;
 
 /**
  * Class ActivityController
@@ -59,17 +54,16 @@ class ActivityController extends Controller {
 			}
 			if(!empty($careteam_ids) && is_array($careteam_ids)) {
 				foreach ($careteam_ids as $id) {
-					$careteam_info[$id] = User::find($id)->getFullNameAttribute();;
+                    $careteam_info[$id] = User::find($id)->getFullNameAttribute();
 				}
 			}
 
 			//providers
-			$providers = Program::getProviders($user->blogId());
+            $providers = Practice::getProviders($user->program_id);
 			$provider_info = array();
 
-			$nurse_ids = User::whereHas('roles', function ($q) {
-				$q->where('name', '=', 'care-center');
-			})->pluck('ID');
+            $nurse_ids = User::ofType('care-center')
+                ->pluck('id');
 
 			foreach ($nurse_ids as $nurse_id){
 
@@ -78,18 +72,18 @@ class ActivityController extends Controller {
 				$viewable_patients = $nurse->viewablePatientIds();
 
 				if(in_array($patientId, $viewable_patients)){
-					$provider_info[$nurse->ID] = $nurse->fullName;
+                    $provider_info[$nurse->id] = $nurse->fullName;
 				}
 
 			}
 
 
 			foreach ($providers as $provider) {
-				$provider_info[$provider->ID] = User::find($provider->ID)->getFullNameAttribute();
+                $provider_info[$provider->id] = User::find($provider->id)->getFullNameAttribute();
 			}
 
 			foreach ($providers as $provider) {
-				$provider_info[$provider->ID] = User::find($provider->ID)->getFullNameAttribute();
+                $provider_info[$provider->id] = User::find($provider->id)->getFullNameAttribute();
 			}
 
 			
@@ -97,13 +91,13 @@ class ActivityController extends Controller {
 			asort($provider_info);
 
 			$view_data = [
-				'program_id' => $user->blogId(),
-				'patient' => $user,
-				'patient_name' => $patient_name,
-				'activity_types' => Activity::input_activity_types(),
-				'provider_info' => $provider_info,
-				'careteam_info' => $careteam_info,
-				'userTimeZone' => $userTimeZone
+                'program_id'     => $user->program_id,
+                'patient'        => $user,
+                'patient_name'   => $patient_name,
+                'activity_types' => Activity::input_activity_types(),
+                'provider_info'  => $provider_info,
+                'careteam_info'  => $careteam_info,
+                'userTimeZone'   => $userTimeZone
 			];
 
 			return view('wpUsers.patient.activity.create', $view_data);
@@ -181,12 +175,12 @@ class ActivityController extends Controller {
 		}
 
 		$view_data = [
-			'activity' => $activity,
-			'userTimeZone' => $patient->timeZone,
-			'careteam_info' => $careteam_info,
-			'patient' => $patient,
-			'program_id' => $patient->blogId(),
-			'messages' => $messages];
+            'activity'      => $activity,
+            'userTimeZone'  => $patient->timeZone,
+            'careteam_info' => $careteam_info,
+            'patient'       => $patient,
+            'program_id'    => $patient->program_id,
+            'messages'      => $messages];
 
 		return view('wpUsers.patient.activity.view', $view_data);
 	}

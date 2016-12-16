@@ -9,9 +9,6 @@ use App\ForeignId;
 use App\Models\CCD\CcdVendor;
 use App\Services\AthenaAPI\Service;
 use App\Services\ReportsService;
-use Illuminate\Container\Container;
-use Illuminate\Queue\InteractsWithQueue;
-use Illuminate\Contracts\Queue\ShouldQueue;
 
 class CreateAthenaPdfCarePlan
 {
@@ -24,12 +21,13 @@ class CreateAthenaPdfCarePlan
      * @param ReportsService $reportsService
      * @param Service $athenaService
      */
-    public function __construct(CcdVendor $ccdVendor,
-                                CcdaRepository $ccdaRepository,
-                                CcdaRequestRepository $ccdaRequest,
-                                ReportsService $reportsService,
-                                Service $athenaService)
-    {
+    public function __construct(
+        CcdVendor $ccdVendor,
+        CcdaRepository $ccdaRepository,
+        CcdaRequestRepository $ccdaRequest,
+        ReportsService $reportsService,
+        Service $athenaService
+    ) {
         $this->ccdVendor = $ccdVendor;
         $this->ccdaRepository = $ccdaRepository;
         $this->ccdaRequest = $ccdaRequest;
@@ -41,6 +39,7 @@ class CreateAthenaPdfCarePlan
      * Handle the event.
      *
      * @param  CarePlanWasApproved $event
+     *
      * @return mixed|void
      * @internal param CcdVendor $ccdVendor
      * @internal param CcdaRepository $ccdaRepository
@@ -50,7 +49,9 @@ class CreateAthenaPdfCarePlan
      */
     public function handle(CarePlanWasApproved $event)
     {
-        if (!auth()->user()->hasRole(['provider'])) return;
+        if (!auth()->user()->hasRole(['provider'])) {
+            return;
+        }
 
 
         //If it's an Athena patient, send the PDF to Athena API
@@ -69,7 +70,7 @@ class CreateAthenaPdfCarePlan
                 $ccda = $this->ccdaRepository
                     ->skipPresenter()
                     ->findWhere([
-                        'patient_id' => $user->ID
+                        'patient_id' => $user->id,
                     ])->first();
 
                 $ccdaRequest = $this->ccdaRequest
@@ -78,8 +79,12 @@ class CreateAthenaPdfCarePlan
                         'ccda_id' => $ccda->id,
                     ])->first();
 
-                if ($pathToPdf) {
-                    $response = $this->athenaService->postPatientDocument($ccdaRequest->patient_id, $ccdaRequest->practice_id, $pathToPdf, $ccdaRequest->department_id);
+                if ($pathToPdf && $ccdaRequest) {
+                    $response = $this->athenaService->postPatientDocument(
+                        $ccdaRequest->patient_id,
+                        $ccdaRequest->practice_id,
+                        $pathToPdf,
+                        $ccdaRequest->department_id);
 
                     $decodedResponse = json_decode($response, true);
 

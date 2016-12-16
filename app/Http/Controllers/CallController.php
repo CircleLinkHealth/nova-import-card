@@ -9,7 +9,6 @@ use App\User;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Log;
 
 class CallController extends Controller
 {
@@ -90,7 +89,7 @@ class CallController extends Controller
         $call->is_cpm_outbound = 1;
         $call->service = 'phone';
         $call->status = 'scheduled';
-        $call->scheduler = Auth::user()->ID;
+        $call->scheduler = auth()->user()->id;
         $call->save();
 
         return response("successfully created call ", 201);
@@ -104,7 +103,11 @@ class CallController extends Controller
         $window_start = Carbon::parse($input['window_start'])->format('H:i');
         $window_end = Carbon::parse($input['window_end'])->format('H:i');
 
-        $scheduler = ($input['suggested_date'] == $input['date']) ? 'core algorithm' : Auth::user()->ID;
+        //If the suggested date doesn't match the one in the input,
+        //the scheduler has changed the date, mark it.
+        $scheduler = ($input['suggested_date'] == $input['date'])
+            ? 'core algorithm'
+            : Auth::user()->id;
 
         //We are storing the current caller as the next scheduled call's outbound cpm_id
         $this->scheduler->storeScheduledCall(
@@ -113,7 +116,7 @@ class CallController extends Controller
                                                 $window_end,
                                                 $input['date'],
                                                 $scheduler,
-                                                Auth::user()->hasRole('care-center') ? Auth::user()->ID : null,
+                                                $input['nurse'],
                                                 isset($input['attempt_note']) ? $input['attempt_note'] : ''
 
                                             );
@@ -161,10 +164,13 @@ class CallController extends Controller
 
         // for null outbound_cpm_id
         if($data['columnName'] == 'outbound_cpm_id' && (empty($data['value']) || strtolower($data['value']) == 'unassigned' )) {
-            $call->$data['columnName'] = null;
-            $call->scheduler = Auth::user()->ID;
+
+            $call->scheduler = Auth::user()->id;
+            $col = $data['columnName'];
+            $call->$col = null;
+
         } else if($data['columnName'] == 'attempt_note' && (empty($data['value']) || strtolower($data['value']) == 'add text' )) {
-            $call->$data['columnName'] = '';
+            $call->attempt_note = '';
         } else if($data['columnName'] == 'general_comment') {
             $generalComment = $data['value'];
             if((empty($generalComment) || strtolower($generalComment) == 'add text' )) {
@@ -175,7 +181,7 @@ class CallController extends Controller
                 $call->inboundUser->patientInfo->save();
             }
         } else {
-            $call->scheduler = Auth::user()->ID;
+            $call->scheduler = Auth::user()->id;
             $col = $data['columnName'];
             $call->$col = $data['value'];
         }

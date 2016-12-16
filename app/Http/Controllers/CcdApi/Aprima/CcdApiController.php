@@ -119,7 +119,7 @@ class CcdApiController extends Controller
         return $locationId;
     }
 
-    public function reports(Request $request)
+    public function notes(Request $request)
     {
         if (!\Session::has('apiUser')) {
             return response()->json(['error' => 'Authentication failed.'], 403);
@@ -142,6 +142,7 @@ class CcdApiController extends Controller
         $locationId = $this->getApiUserLocation($user);
 
         $pendingReports = PatientReports::where('location_id', $locationId)
+            ->whereFileType(PatientReports::NOTE)
             ->whereBetween('created_at', [
                 $startDate,
                 $endDate,
@@ -152,7 +153,7 @@ class CcdApiController extends Controller
         $pendingReports = $pendingReports->get();
 
         if ($pendingReports->isEmpty()) {
-            return response()->json(["message" => "No Pending Reports"], 404);
+            return response()->json(["message" => "No Pending Notes."], 200);
         }
 
         $json = [];
@@ -194,7 +195,92 @@ class CcdApiController extends Controller
             }
         }
 
-        PatientReports::where('location_id', $locationId)->delete();
+        PatientReports::where('location_id', $locationId)
+            ->whereFileType(PatientReports::NOTE)
+            ->delete();
+
+        return response()->json($json, 200, ['fileCount' => count($json)]);
+    }
+
+    public function reports(Request $request)
+    {
+        if (!\Session::has('apiUser')) {
+            return response()->json(['error' => 'Authentication failed.'], 403);
+        }
+
+        $user = \Session::get('apiUser');
+
+        //If there is no start date, set a really old date to include all activities
+        $startDate = empty($from = $request->input('start_date'))
+            ? Carbon::createFromDate('1990', '01', '01')
+            : Carbon::parse($from)->startOfDay();
+
+        //If there is no end date, set tomorrow's date to include all activities
+        $endDate = empty($to = $request->input('end_date'))
+            ? Carbon::tomorrow()
+            : Carbon::parse($to)->endOfDay();
+
+        $sendAll = filter_var($request->input('send_all'), FILTER_VALIDATE_BOOLEAN);
+
+        $locationId = $this->getApiUserLocation($user);
+
+        $pendingReports = PatientReports::where('location_id', $locationId)
+            ->whereFileType(PatientReports::CAREPLAN)
+            ->whereBetween('created_at', [
+                $startDate,
+                $endDate,
+            ]);
+        if ($sendAll) {
+            $pendingReports->withTrashed();
+        }
+        $pendingReports = $pendingReports->get();
+
+        if ($pendingReports->isEmpty()) {
+            return response()->json(["message" => "No Pending Reports."], 200);
+        }
+
+        $json = [];
+
+        foreach ($pendingReports as $report) {
+
+            //Get patient's lead provider
+            $provider = PatientCareTeamMember::whereUserId($report->patient_id)
+                ->whereType('lead_contact')
+                ->first();
+
+            if (empty($provider)) {
+                continue;
+            }
+
+            //Get lead provider's foreign_id
+            $foreignId_obj = ForeignId::where('system', ForeignId::APRIMA)
+                ->where('user_id', $provider->member_user_id)
+                ->where('location_id', $locationId)
+                ->first();
+
+            if (empty($foreignId_obj)) {
+                continue;
+            }
+
+            if (empty($report->file_base64)) {
+                continue;
+            }
+
+            if ($foreignId_obj->foreign_id) {
+                $json[] = [
+                    'patientId'  => $report->patient_mrn,
+                    'providerId' => $foreignId_obj->foreign_id,
+                    'comment'    => null,
+                    'file'       => $report->file_base64,
+                    'fileType'   => $report->file_type,
+                    'created_at' => $report->created_at->toDateTimeString(),
+                ];
+            }
+        }
+
+        PatientReports::where('location_id', $locationId)
+            ->whereFileType(PatientReports::CAREPLAN)
+            ->delete();
 
         return response()->json($json, 200, ['fileCount' => count($json)]);
     }
@@ -240,7 +326,7 @@ class CcdApiController extends Controller
 
             try {
                 ForeignId::updateOrCreate([
-                    'user_id'     => $provider['ID'],
+                    'user_id'     => $provider['id'],
                     'system'      => ForeignId::APRIMA,
                     'location_id' => $locationId,
                 ], [
@@ -251,7 +337,7 @@ class CcdApiController extends Controller
             }
         }
 
-        $programId = $user->blogId();
+        $programId = $user->program_id;
 
         try {
             $xml = base64_decode($request->input('file'));
@@ -260,7 +346,7 @@ class CcdApiController extends Controller
         }
 
         $ccdObj = $this->ccda->create([
-            'user_id'   => $user->ID,
+            'user_id'   => $user->id,
             'vendor_id' => 1,
             'xml'       => $xml,
             'source'    => Ccda::API,
@@ -276,9 +362,9 @@ class CcdApiController extends Controller
             $logger = new CcdItemLogger($ccdObj);
             $logger->logAll();
 
-            $providerId = empty($provider['ID'])
+            $providerId = empty($provider['id'])
                 ? null
-                : $provider['ID'];
+                : $provider['id'];
             $importer = new QAImportManager($programId, $ccdObj, $providerId, $locationId);
             $output = $importer->generateCarePlanFromCCD();
 
@@ -336,7 +422,7 @@ class CcdApiController extends Controller
 //        $data = [
 //            'ccdId' => $ccda->id,
 //            'errorMessage' => $errorMessage,
-//            'userId' => $user->ID,
+//            'userId' => $user->id,
 //            'line' => $line,
 //            'providerInfo' => $providerInfo
 //        ];

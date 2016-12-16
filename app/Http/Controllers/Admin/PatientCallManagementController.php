@@ -1,13 +1,10 @@
 <?php namespace App\Http\Controllers\Admin;
 
 use App\Call;
-use App\Http\Requests;
 use App\Http\Controllers\Controller;
 use App\User;
-use Carbon\Carbon;
-use DateTime;
 use Auth;
-
+use DateTime;
 use Illuminate\Http\Request;
 
 class PatientCallManagementController extends Controller {
@@ -92,7 +89,7 @@ class PatientCallManagementController extends Controller {
 				});
 			})
 			->orderBy('last_name', 'ASC')
-			->pluck('display_name', 'ID');
+            ->pluck('display_name', 'id');
 
 
 
@@ -108,9 +105,9 @@ class PatientCallManagementController extends Controller {
 					$query->where('status', '=', 'scheduled');
 				});
 			})->where( 'program_id', '!=', '' )
-			->orderBy( 'ID', 'desc' )
+            ->orderBy('id', 'desc')
 			->get()
-			->lists( 'fullNameWithId', 'ID' )
+            ->pluck('fullNameWithId', 'id')
 			->all();
 
 		return view('admin.patientCallManagement.index', compact(['calls', 'date', 'nurses', 'filterNurse', 'filterStatus', 'patientList']));
@@ -145,7 +142,7 @@ class PatientCallManagementController extends Controller {
 				});
 			})
 			->orderBy('last_name', 'ASC')
-			->pluck('display_name', 'ID');
+            ->pluck('display_name', 'id');
 
 		return view('admin.patientCallManagement.edit', compact(['call', 'nurses']));
 	}

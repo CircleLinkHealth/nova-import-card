@@ -66,8 +66,8 @@ class SchedulerService
         (
             $patient
         ) {
-            $q->where('outbound_cpm_id', $patient->ID)
-                ->orWhere('inbound_cpm_id', $patient->ID);
+            $q->where('outbound_cpm_id', $patient->id)
+                ->orWhere('inbound_cpm_id', $patient->id);
         })
             ->where('status', '=', 'scheduled')
             ->first();
@@ -89,7 +89,7 @@ class SchedulerService
             $call->status = $status;
             $call->note_id = $note->id;
             $call->called_date = Carbon::now()->toDateTimeString();
-            $call->outbound_cpm_id = Auth::user()->ID;
+            $call->outbound_cpm_id = Auth::user()->id;
             $call->save();
 
         } else { // If call doesn't exist, make one and store it
@@ -114,7 +114,7 @@ class SchedulerService
         $window_end,
         $date,
         $scheduler,
-        $nurse_id = false,
+        $nurse_id = null,
         $attempt_note = ''
     ) {
         $patient = User::find($patientId);
@@ -122,7 +122,9 @@ class SchedulerService
         $window_start = Carbon::parse($window_start)->format('H:i');
         $window_end = Carbon::parse($window_end)->format('H:i');
 
-        return Call::create([
+        $nurse_id = ($nurse_id == '') ? null : $nurse_id;
+
+        $call = Call::create([
 
             'service' => 'phone',
             'status'  => 'scheduled',
@@ -134,12 +136,11 @@ class SchedulerService
             'inbound_phone_number'  => $patient->phone
                 ? $patient->phone
                 : '',
+            
             'outbound_phone_number' => '',
 
-            'inbound_cpm_id'  => $patient->ID,
-            'outbound_cpm_id' => isset($nurse_id)
-                ? $nurse_id
-                : '',
+            'inbound_cpm_id'  => $patient->id,
+            'outbound_cpm_id' => $nurse_id,
 
             'call_time'  => 0,
             'created_at' => Carbon::now()->toDateTimeString(),
@@ -151,26 +152,32 @@ class SchedulerService
             'is_cpm_outbound' => true,
 
         ]);
+
+        return $call;
+
     }
 
-    public function removeScheduledCallsForWithdrawnPatients()
+    public function removeScheduledCallsForWithdrawnAndPausedPatients()
     {
 
         //get all patients that are withdrawn
         $withdrawn = PatientInfo::where('ccm_status', 'withdrawn')
-            ->lists('user_id');
+                                ->orWhere('ccm_status', 'paused')
+            ->pluck('user_id');
 
-        $withdrawn_patients_with_calls = [];
+        $removed = [];
 
         //get scheduled calls for them, if any, and delete them.
         foreach ($withdrawn as $patient) {
             $temp = $this->getScheduledCallForPatient(User::find($patient));
 
             if (is_object($temp)) {
-                $withdrawn_patients_with_calls[] = $temp;
+                $removed[] = $temp;
                 $temp->delete();
             }
         }
+
+        return $removed;
     }
 
     public function importCallsFromCsv($csv)
@@ -225,7 +232,7 @@ class SchedulerService
                     : '',
                 'outbound_phone_number' => '',
 
-                'inbound_cpm_id'  => $patient->ID,
+                'inbound_cpm_id'  => $patient->id,
                 'outbound_cpm_id' => NurseInfo::$nurseMap[$row['Nurse']],
 
                 'call_time' => 0,

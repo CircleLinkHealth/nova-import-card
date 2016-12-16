@@ -1,8 +1,8 @@
 <?php namespace App\CLH\Traits\Auth;
 
-use Illuminate\Http\Request;
 use Illuminate\Contracts\Auth\Guard;
 use Illuminate\Contracts\Auth\PasswordBroker;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
@@ -113,7 +113,7 @@ trait ResetsPasswords {
 
         $response = $this->passwords->reset($credentials, function($user, $password)
         {
-            $user->user_pass = $password;
+            $user->password = $password;
             $user->save();
 
             return redirect()->route('login');
@@ -143,7 +143,9 @@ trait ResetsPasswords {
             return $this->redirectPath;
         }
 
-        return property_exists($this, 'redirectTo') ? $this->redirectTo : '/login';
+        return property_exists($this, 'redirectTo')
+            ? $this->redirectTo
+            : '/auth/login';
     }
 
 }

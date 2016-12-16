@@ -1,37 +1,26 @@
 <div class="main-form-block main-form-horizontal main-form-primary-horizontal col-md-12">
 
-    @role(['administrator'])
-    {{--@if(App\Models\CCD\Ccda::wherePatientId($patient->ID)->exists())--}}
-        {{--<div class="pull-right">--}}
-            {{--<a href="{{ route('get.CCDViewerController.showByUserId', [ 'userId' => $patient->ID]) }}"--}}
-               {{--class="btn btn-primary btn-xs"--}}
-               {{--target="_blank"--}}
-            {{-->--}}
-                {{--View CCDA--}}
-            {{--</a>--}}
-        {{--</div>--}}
-    {{--@else--}}
-        {{--<div class="pull-right">--}}
-            {{--<b>CCDA not available for this patient.</b>--}}
-        {{--</div>--}}
-    {{--@endif--}}
-    @endrole
+    @if(auth()->user()->hasRole(['administrator']))
+        @include('partials.viewCcdaButton')
+    @endif
 
     <div class="row">
         <div class="col-sm-12">
             <p class="text-medium clearfix">
-                <span class="pull-left"><strong>
-                        <?php
-                        $provider = App\User::find($patient->getBillingProviderIDAttribute());
-                        ?>
-                        @if($provider)
-                            Provider: </strong> {{$provider->getFullNameAttribute()}} <strong> 
-                        @else
-                            Provider: <em>No Provider Selected </em>
-                        @endif
-                        Location:</strong>
-                    <?= (empty($patient->getPreferredLocationName())) ? 'Not Set' : $patient->getPreferredLocationName();  ?>
-                </span>
+            <span class="pull-left"><strong>
+                    <?php
+                    $provider = App\User::find($patient->getBillingProviderIDAttribute());
+                    ?>
+                    @if($provider)
+                        Provider: </strong> {{$provider->getFullNameAttribute()}} <strong>
+                    @else
+                        Provider: <em>No Provider Selected </em>
+                    @endif
+                    Location:</strong>
+                <?= (empty($patient->getPreferredLocationName()))
+                        ? 'Not Set'
+                        : $patient->getPreferredLocationName();  ?>
+            </span>
                 <?php
                 // calculate display, fix bug where gmdate('i:s') doesnt work for > 24hrs
                 $seconds = $patient->patientInfo()->first()->cur_month_activity_time;
@@ -40,14 +29,14 @@
                 $s = $seconds % 60;
                 $monthlyTime = sprintf("%02d:%02d:%02d", $H, $i, $s);
                 ?>
-                <a href="{{URL::route('patient.activity.providerUIIndex', array('patient' => $patient->ID))}}"><span
+                <a href="{{URL::route('patient.activity.providerUIIndex', array('patient' => $patient->id))}}"><span
                             class="pull-right">{{
-                date("F", mktime(0, 0, 0, Carbon\Carbon::now()->month, 10))
-                 }} Time: {{ $monthlyTime }}</span></a></p>
-            <a href="{{ URL::route('patient.summary', array('patient' => $patient->ID)) }}">
-                <span class="person-name text-big text-dark text-serif"
-                      title="{{$patient->ID}}">{{$patient->fullName}}</span></a><a
-                    href="{{ URL::route('patient.demographics.show', array('patient' => $patient->ID)) }}"><span
+            date("F", mktime(0, 0, 0, Carbon\Carbon::now()->month, 10))
+             }} Time: {{ $monthlyTime }}</span></a></p>
+            <a href="{{ URL::route('patient.summary', array('patient' => $patient->id)) }}">
+            <span class="person-name text-big text-dark text-serif"
+                  title="{{$patient->id}}">{{$patient->fullName}}</span></a><a
+                    href="{{ URL::route('patient.demographics.show', array('patient' => $patient->id)) }}"><span
                         class="glyphicon glyphicon-pencil" style="margin-right:3px;"></span></a>
             <ul class="person-info-list inline-block text-medium">
                 <li class="inline-block">DOB: {{$patient->birthDate}}</li>
@@ -71,7 +60,9 @@
                         </select>
                     </li>
                 @else
-                    <li id="status" class="inline-block {{$patient->ccm_status}}"><?= (empty($patient->ccm_status)) ? 'N/A' : ucwords($patient->ccm_status);  ?></li>
+                    <li id="status" class="inline-block {{$patient->ccm_status}}"><?= (empty($patient->ccm_status))
+                                ? 'N/A'
+                                : ucwords($patient->ccm_status);  ?></li>
                 @endif
             </ul>
         </div>
@@ -84,7 +75,8 @@
                                 title="{{$patient->agentEmail}}">({{$patient->agentRelationship}}
                             ) {{$patient->agentName}}&nbsp;&nbsp;</span></li>
                     <li class="inline-block">{{$patient->agentPhone}}</li>
-                {{--</ul><div style="clear:both"></div><ul class="person-conditions-list inline-block text-medium"></ul>--}}
+                </ul>
+                {{--<div style="clear:both"></div><ul class="person-conditions-list inline-block text-medium"></ul>--}}
             </div>
         </div>
     @endif

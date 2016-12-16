@@ -16,7 +16,7 @@
         <div class="main-form-container col-lg-6 col-lg-offset-3 col-md-10 col-md-offset-1">
             <div class="row">
                 <div class="main-form-title col-lg-12">
-                    Record New activity
+                    Record New Activity
                 </div>
                 {!! Form::open(array('url' => URL::route('patient.activity.store', ['patientId' => $patient]), 'class' => 'form-horizontal')) !!}
 
@@ -132,10 +132,10 @@
                                 <div class="">
                                     <input type="hidden" name="duration_unit" value="seconds">
                                     <input type="hidden" name="perfomred_at_gmt" value="{{ $userTimeGMT }}">
-                                    <input type="hidden" name="patient_id" value="{{$patient->ID}}">
+                                    <input type="hidden" name="patient_id" value="{{$patient->id}}">
                                     <input type="hidden" name="logged_from" value="manual_input">
-                                    <input type="hidden" name="logger_id" value="{{Auth::user()->ID}}">
-                                    <input type="hidden" name="patientID" id="patientID" value="{{$patient->ID}}">
+                                    <input type="hidden" name="logger_id" value="{{Auth::user()->id}}">
+                                    <input type="hidden" name="patientID" id="patientID" value="{{$patient->id}}">
                                     <input type="hidden" name="programId" id="programId" value="{{$program_id}}">
                                 </div>
                                 <div class="new-activity-item">

@@ -5,12 +5,11 @@ namespace App\Http\Controllers\Admin\Reports;
 use App\Call;
 use App\CLH\CCD\Importer\SnomedToICD10Map;
 use App\Http\Controllers\Controller;
-use App\Http\Requests;
 use App\Models\CCD\CcdProblem;
 use App\Models\CPM\CpmInstruction;
 use App\Models\CPM\CpmMisc;
 use App\Models\CPM\CpmProblem;
-use App\Program;
+use App\Practice;
 use App\Role;
 use App\User;
 use Carbon\Carbon;
@@ -23,7 +22,7 @@ class MonthlyBillingReportsController extends Controller
 {
     public function create()
     {
-        $programs = Program::orderBy('blog_id', 'desc')->lists('display_name', 'blog_id')->all();
+        $programs = Practice::orderBy('id', 'desc')->pluck('display_name', 'id')->all();
 
         return view('admin.monthlyBillingReports.create', compact(['programs']));
     }
@@ -50,7 +49,7 @@ class MonthlyBillingReportsController extends Controller
         $ccmStatuses = $request->input('status', []);
 
         foreach ($programs as $programId) {
-            $program = Program::find($programId);
+            $program = Practice::find($programId);
 
             $time = Carbon::createFromDate($year, $month, 15);
             $start = $time->startOfMonth()->startOfDay()->format("Y-m-d H:i:s");
@@ -65,7 +64,7 @@ class MonthlyBillingReportsController extends Controller
                 ->groupBy('patient_id');
 
             $patientsOver20Mins = (new Collection($patientsOver20MinsQuery->get()))->keyBy('patient_id');
-            $patientsOver20MinsIds = $patientsOver20MinsQuery->lists('patient_id');
+            $patientsOver20MinsIds = $patientsOver20MinsQuery->pluck('patient_id');
 
 
             $patients = User::with([
@@ -82,7 +81,7 @@ class MonthlyBillingReportsController extends Controller
                     $query->whereIn('ccm_status', $ccmStatuses);
                 })
                 ->where('program_id', '=', $programId)
-                ->whereIn('ID', $patientsOver20MinsIds)
+                ->whereIn('id', $patientsOver20MinsIds)
                 ->get();
 
             $problems = [];
@@ -92,11 +91,11 @@ class MonthlyBillingReportsController extends Controller
                 $billableCpmProblems = [];
 
                 $calls = Call::where(function ($q) use ($patient) {
-                    $q->where('inbound_cpm_id', $patient->ID)
-                        ->orWhere('outbound_cpm_id', $patient->ID);
+                    $q->where('inbound_cpm_id', $patient->id)
+                        ->orWhere('outbound_cpm_id', $patient->id);
                 })
                     ->whereStatus('reached')
-                    ->whereBetween('created_at', [
+                    ->whereBetween('updated_at', [
                         $start, $end
                     ])
                     ->get();
@@ -159,7 +158,7 @@ class MonthlyBillingReportsController extends Controller
                         //put this in a function later
 
                         $keywords = SnomedToICD10Map::where('icd_10_code', 'like', "%$cpmProblem->icd10from%")
-                            ->lists('icd_10_name');
+                            ->pluck('icd_10_name');
 
                         foreach ($keywords as $keyword) {
                             if (empty($keyword)) continue;
@@ -215,7 +214,7 @@ class MonthlyBillingReportsController extends Controller
 
                         'ccm_status' => $patient->patientInfo->ccm_status,
 
-                        'ccm_time' => number_format($patientsOver20Mins->get($patient->ID)->ccmTime / 60, 2),
+                        'ccm_time' => number_format($patientsOver20Mins->get($patient->id)->ccmTime / 60, 2),
 
                         '#_succ_clin_calls' => $calls->count(),
                     ];
@@ -252,7 +251,7 @@ class MonthlyBillingReportsController extends Controller
 
                     'ccm_status' => $patient->patientInfo->ccm_status,
 
-                    'ccm_time' => number_format($patientsOver20Mins->get($patient->ID)->ccmTime / 60, 2),
+                    'ccm_time' => number_format($patientsOver20Mins->get($patient->id)->ccmTime / 60, 2),
 
                     '#_succ_clin_calls' => $calls->count(),
                 ]);

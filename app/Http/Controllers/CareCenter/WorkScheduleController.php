@@ -4,6 +4,7 @@ namespace App\Http\Controllers\CareCenter;
 
 use App\Http\Controllers\Controller;
 use App\NurseContactWindow;
+use App\User;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Validator;
@@ -46,7 +47,12 @@ class WorkScheduleController extends Controller
             ? Carbon::now(auth()->user()->timezone)->format('T')
             : false;
 
+        //I think time tracking submits along with the form, thus messing up sessions.
+        //Temporary fix
+        $disableTimeTracking = true;
+
         return view('care-center.work-schedule', compact([
+            'disableTimeTracking',
             'windows',
             'tzAbbr',
         ]));
@@ -76,7 +82,7 @@ class WorkScheduleController extends Controller
         ) {
             if (!$this->canAddNewWindow($date)) {
                 $validator->errors()->add('date',
-                    "The windows was not created because it is out of the allowed date range.");
+                    "The window was not created because it is out of the allowed date range.");
             }
             if ($date->format('Y-m-d') == '0000-00-00') {
                 $validator->errors()->add('date',
@@ -136,15 +142,15 @@ class WorkScheduleController extends Controller
 
     public function getAllNurseSchedules()
     {
-        $windows = $this->nurseContactWindows
-            ->getScheduleForAllNurses()
-            ->sortBy(function ($item) {
-                return Carbon::createFromFormat('Y-m-d H:i:s',
-                    "{$item->date->format('Y-m-d')} $item->window_time_start");
+        $data = User::ofType('care-center')
+            ->with('nurseInfo.upcomingWindows')
+            ->whereHas('nurseInfo', function ($q) {
+                $q->where('status', 'active');
             })
-            ->groupBy('nurse_info_id');
+            ->get()
+            ->sortBy('first_name');
 
-        return view('admin.nurse.schedules.index', compact('windows'));
+        return view('admin.nurse.schedules.index', compact('data'));
     }
 
     public function patchAdminEditWindow(

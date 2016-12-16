@@ -86,40 +86,40 @@ class ImportManager
         if ($providerId) {
             //care team
             $member = PatientCareTeamMember::create([
-                'user_id' => $this->user->ID,
+                'user_id'        => $this->user->id,
                 'member_user_id' => $providerId,
-                'type' => PatientCareTeamMember::MEMBER,
+                'type'           => PatientCareTeamMember::MEMBER,
             ]);
 
             $billing = PatientCareTeamMember::create([
-                'user_id' => $this->user->ID,
+                'user_id'        => $this->user->id,
                 'member_user_id' => $providerId,
-                'type' => PatientCareTeamMember::BILLING_PROVIDER,
+                'type'           => PatientCareTeamMember::BILLING_PROVIDER,
             ]);
 
             $lead = PatientCareTeamMember::create([
-                'user_id' => $this->user->ID,
+                'user_id'        => $this->user->id,
                 'member_user_id' => $providerId,
-                'type' => PatientCareTeamMember::LEAD_CONTACT,
+                'type'           => PatientCareTeamMember::LEAD_CONTACT,
             ]);
         }
 
 
         //patient info
         $patientInfo = PatientInfo::updateOrCreate([
-            'user_id' => $this->user->ID,
+            'user_id' => $this->user->id,
         ], [
-            'ccda_id' => $this->ccda->id,
-            'birth_date' => $this->demographicsImport->dob,
-            'careplan_status' => 'draft',
-            'ccm_status' => 'enrolled',
-            'consent_date' => $this->demographicsImport->consent_date,
-            'gender' => $this->demographicsImport->gender,
-            'mrn_number' => $this->demographicsImport->mrn_number,
+            'ccda_id'                    => $this->ccda->id,
+            'birth_date'                 => $this->demographicsImport->dob,
+            'careplan_status'            => 'draft',
+            'ccm_status'                 => 'enrolled',
+            'consent_date'               => $this->demographicsImport->consent_date,
+            'gender'                     => $this->demographicsImport->gender,
+            'mrn_number'                 => $this->demographicsImport->mrn_number,
             'preferred_contact_language' => $this->demographicsImport->preferred_contact_language,
             'preferred_contact_location' => $this->demographicsImport->location_id,
-            'preferred_contact_method' => 'CCT',
-            'user_id' => $this->user->ID,
+            'preferred_contact_method'   => 'CCT',
+            'user_id'                    => $this->user->id,
         ]);
 
         // update timezone
@@ -134,25 +134,25 @@ class ImportManager
 
         if (!empty($homeNumber = $this->demographicsImport->home_phone)) {
             $homePhone = PhoneNumber::create([
-                'user_id' => $this->user->ID,
-                'number' => $homeNumber,
-                'type' => PhoneNumber::HOME,
+                'user_id' => $this->user->id,
+                'number'  => $homeNumber,
+                'type'    => PhoneNumber::HOME,
             ]);
         }
 
         if (!empty($mobileNumber = $this->demographicsImport->cell_phone)) {
             $mobilePhone = PhoneNumber::create([
-                'user_id' => $this->user->ID,
-                'number' => $mobileNumber,
-                'type' => PhoneNumber::MOBILE,
+                'user_id' => $this->user->id,
+                'number'  => $mobileNumber,
+                'type'    => PhoneNumber::MOBILE,
             ]);
         }
 
         if (!empty($workNumber = $this->demographicsImport->work_phone)) {
             $workPhone = PhoneNumber::create([
-                'user_id' => $this->user->ID,
-                'number' => $workNumber,
-                'type' => PhoneNumber::WORK,
+                'user_id' => $this->user->id,
+                'number'  => $workNumber,
+                'type'    => PhoneNumber::WORK,
             ]);
         }
 
@@ -197,7 +197,8 @@ class ImportManager
         //Insurance
         $insurance = CcdInsurancePolicy::where('ccda_id', '=', $this->ccda->id)
             ->update([
-                    'patient_id' => $this->user->ID]
+                    'patient_id' => $this->user->id,
+                ]
             );
 
         return true;
@@ -210,11 +211,11 @@ class ImportManager
         foreach ($this->allergiesImport as $allergy) {
 
             $ccdAllergy = CcdAllergy::create([
-                'ccda_id' => $allergy->ccda_id,
-                'vendor_id' => $allergy->vendor_id,
-                'patient_id' => $this->user->ID,
+                'ccda_id'            => $allergy->ccda_id,
+                'vendor_id'          => $allergy->vendor_id,
+                'patient_id'         => $this->user->id,
                 'ccd_allergy_log_id' => $allergy->ccd_allergy_log_id,
-                'allergen_name' => $allergy->allergen_name,
+                'allergen_name'      => $allergy->allergen_name,
             ]);
         }
 
@@ -230,16 +231,16 @@ class ImportManager
 
         foreach ($this->problemsImport as $problem) {
             $ccdProblem = CcdProblem::create([
-                'ccda_id' => $problem->ccda_id,
-                'vendor_id' => $problem->vendor_id,
+                'ccda_id'            => $problem->ccda_id,
+                'vendor_id'          => $problem->vendor_id,
                 'ccd_problem_log_id' => $problem->ccd_problem_log_id,
-                'name' => $problem->name,
-                'code' => $problem->code,
-                'code_system' => $problem->code_system,
-                'code_system_name' => $problem->code_system_name,
-                'activate' => $problem->activate,
-                'cpm_problem_id' => $problem->cpm_problem_id,
-                'patient_id' => $this->user->ID,
+                'name'               => $problem->name,
+                'code'               => $problem->code,
+                'code_system'        => $problem->code_system,
+                'code_system_name'   => $problem->code_system_name,
+                'activate'           => $problem->activate,
+                'cpm_problem_id'     => $problem->cpm_problem_id,
+                'patient_id'         => $this->user->id,
             ]);
         }
 
@@ -274,16 +275,16 @@ class ImportManager
 
         foreach ($this->medicationsImport as $medication) {
             $ccdMedication = CcdMedication::create([
-                'ccda_id' => $medication->ccda_id,
-                'vendor_id' => $medication->vendor_id,
+                'ccda_id'               => $medication->ccda_id,
+                'vendor_id'             => $medication->vendor_id,
                 'ccd_medication_log_id' => $medication->ccd_medication_log_id,
-                'medication_group_id' => $medication->medication_group_id,
-                'name' => $medication->name,
-                'sig' => $medication->sig,
-                'code' => $medication->code,
-                'code_system' => $medication->code_system,
-                'code_system_name' => $medication->code_system_name,
-                'patient_id' => $this->user->ID,
+                'medication_group_id'   => $medication->medication_group_id,
+                'name'                  => $medication->name,
+                'sig'                   => $medication->sig,
+                'code'                  => $medication->code,
+                'code_system'           => $medication->code_system,
+                'code_system_name'      => $medication->code_system_name,
+                'patient_id'            => $this->user->id,
             ]);
         }
 

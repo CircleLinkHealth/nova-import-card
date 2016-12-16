@@ -2,6 +2,9 @@
 
 use App\Algorithms\Calls\PredictCall;
 use App\Algorithms\Calls\ReschedulerHandler;
+use App\Console\Commands\Athena\GetAppointments;
+use App\Console\Commands\Athena\GetCcds;
+use App\Console\Commands\EmailRNDailyReport;
 use App\Console\Commands\EmailsProvidersToApproveCareplans;
 use App\Console\Commands\ExportNurseSchedulesToGoogleCalendar;
 use App\Console\Commands\FormatLocationPhone;
@@ -24,6 +27,7 @@ class Kernel extends ConsoleKernel
      * @var array
      */
     protected $commands = [
+        EmailRNDailyReport::class,
         EmailsProvidersToApproveCareplans::class,
         ExportNurseSchedulesToGoogleCalendar::class,
         FormatLocationPhone::class,
@@ -32,6 +36,8 @@ class Kernel extends ConsoleKernel
         Inspire::class,
         MapSnomedToCpmProblems::class,
         NukeItemAndMeta::class,
+        GetAppointments::class,
+        GetCcds::class,
     ];
 
     /**
@@ -62,11 +68,10 @@ class Kernel extends ConsoleKernel
 
         })->dailyAt('00:05');
 
-
         //tunes scheduled call dates.
-//        $schedule->call(function () {
-//            (new SchedulerService())->tuneScheduledCallsWithUpdatedCCMTime();
-//        })->dailyAt('00:20');
+        $schedule->call(function () {
+            (new SchedulerService())->tuneScheduledCallsWithUpdatedCCMTime();
+        })->dailyAt('00:20');
 
         //syncs families.
         $schedule->call(function () {
@@ -75,9 +80,7 @@ class Kernel extends ConsoleKernel
 
         //Removes All Scheduled Calls for patients that are withdrawn
         $schedule->call(function () {
-
-            (new SchedulerService())->removeScheduledCallsForWithdrawnPatients();
-
+            (new SchedulerService())->removeScheduledCallsForWithdrawnAndPausedPatients();
         })->everyMinute();
 
         $schedule->command('emailapprovalreminder:providers')
@@ -85,6 +88,16 @@ class Kernel extends ConsoleKernel
             ->dailyAt('08:00');
 
         $schedule->command('nurseSchedule:export')
-            ->everyFiveMinutes();
+            ->hourly();
+
+        $schedule->command('athena:getAppointments')
+            ->dailyAt('23:00');
+
+        $schedule->command('athena:getCcds')
+            ->everyThirtyMinutes();
+
+        $schedule->command('nurses:emailDailyReport')
+            ->weekdays()
+            ->at('21:00');
     }
 }

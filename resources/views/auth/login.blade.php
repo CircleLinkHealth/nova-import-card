@@ -32,7 +32,9 @@
 		<nav class="navbar primary-navbar">
 			<div class="container-fluid">
 				<div class="navbar-header">
-						<a href="{{ url('/') }}" class="navbar-brand"><img src="img/clh_logo_lt.png" alt="CarePlan Manager" width='50px' style="position:relative;top:-15px"></a>
+                    <a href="{{ url('/') }}" class="navbar-brand"><img src="{{ url('/img/clh_logo_lt.png') }}"
+                                                                       alt="CarePlan Manager" width='50px'
+                                                                       style="position:relative;top:-15px"></a>
 				   	<a href="{{ url('/') }}" class="navbar-title Xcollapse navbar-collapse navbar-text navbar-left">CarePlan<span class="thin">Manager™</span></a>
 				</div>
 			</div><!-- /container-fluid -->
@@ -57,15 +59,16 @@
 
 									<div class="col-md-12">
 								<p>
-									<label class="col-md-12 control-label text-center" for="user_email">Username</label></BR>
-										<input type="text" class="form-control" name="user_email" value="{{ old('user_email') }}">
+                                    <label class="col-md-12 control-label text-center" for="email">Username</label></BR>
+									<input id="email" type="text" class="form-control" name="email"
+										   value="{{ old('email') }}">
 								</p>
 									</div>
 
 									<div class="col-md-12">
 								<p>
 									<label class="col-md-12 control-label text-center" for="password">Password</label></br>
-										<input type="password" class="form-control" name="password">
+									<input id="password" type="password" class="form-control" name="password">
 								</p>
 									</div>
 
@@ -73,7 +76,8 @@
 									<div class="col-md-12 text-center">
 										<button type="submit" class="btn btn-primary btn-large" style="background-color: #50B2E2;">Log In</button><br />
 
-										<a class="btn btn-link" href="{{ url('/password/email') }}">Lost Your Password?</a>
+                                        <a class="btn btn-link" href="{{ url('auth/password/reset') }}">Lost Your
+                                            Password?</a>
 									</div>
 								</div>
 							</form>

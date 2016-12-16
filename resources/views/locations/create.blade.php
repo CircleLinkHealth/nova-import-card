@@ -31,7 +31,8 @@
                             <div class="form-group">
                                 <label class="col-md-4 control-label">Phone Number</label>
                                 <div class="col-md-6">
-                                    <input type="tel" class="form-control" name="phone" value="{{ old('phone') }}" required">
+                                    <input type="tel" class="form-control" name="phone" value="{{ old('phone') }}"
+                                           required>
                                 </div>
                             </div>
 
@@ -85,20 +86,6 @@
                                 <label class="col-md-4 control-label">Postal Code</label>
                                 <div class="col-md-6">
                                     <input type="text" class="form-control" name="postal_code" value="{{ old('postal_code') }}" required>
-                                </div>
-                            </div>
-
-                            <div class="form-group">
-                                <label class="col-md-4 control-label">Billing Code</label>
-                                <div class="col-md-6">
-                                    <input type="text" class="form-control" name="billing_code" value="{{ old('billing_code') }}" required>
-                                </div>
-                            </div>
-
-                            <div class="form-group">
-                                <label class="col-md-4 control-label">Location Code</label>
-                                <div class="col-md-6">
-                                    <input type="text" class="form-control" name="location_code" value="{{ old('location_code') }}" required>
                                 </div>
                             </div>
 
