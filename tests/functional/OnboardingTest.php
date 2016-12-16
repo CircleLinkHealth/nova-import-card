@@ -127,6 +127,12 @@ class OnboardingTest extends TestCase
         ]))->seeStatusCode(403);
     }
 
+    public function test_post_locations()
+    {
+        dd((new LocationFormRequest)->post());
+        $this->call('POST', route('post.onboarding.store.locations'), []);
+    }
+
     protected function setUp()
     {
         parent::setUp();
