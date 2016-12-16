@@ -66,6 +66,10 @@ class SalesByLocationReport
 
     }
 
+    public function introParagraph(){
+
+    }
+
     public function patientsForProgram(){
         
         $this->currentMonth = $this->program->enrollmentByProgram(Carbon::parse($this->startDateString),
@@ -145,24 +149,6 @@ class SalesByLocationReport
 
     }
 
-//    public function getStatsByProvider(){
-//
-//        foreach ($this->providers as $provider){
-//
-//            $patients = PatientInfo::whereHas('user', function ($q){
-//
-//                $q->where('program_id', $this->id);
-//
-//            })
-//                ->whereNotNull('ccm_status')
-//                ->where('ccm_status')
-//                ->get();
-//
-//
-//        }
-//
-//    }
-
     public function getEnrollmentNumbers()
     {
         $this->enrollmentCount = PatientInfo::whereHas('user', function ($q) {
@@ -199,7 +185,7 @@ class SalesByLocationReport
 
     public function generatePdf(){
 
-        $pdf = PDF::loadView('sales.make', ['data' => $this->data]);
+        $pdf = PDF::loadView('sales.by-location.make', ['data' => $this->data]);
 
         $name = trim($this->program->name).'-'.Carbon::now()->toDateString();
 
@@ -209,7 +195,7 @@ class SalesByLocationReport
 
     }
 
-//
+
 //    public function mail(){
 //
 //        $nurse = $this->nurse;

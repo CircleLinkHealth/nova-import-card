@@ -2,13 +2,13 @@
 
 @section('content')
     <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/font-awesome/4.4.0/css/font-awesome.min.css">
-    {!! Form::open(array('url' => URL::route('reports.sales.make', array()),'class' => 'form-horizontal')) !!}
+    {!! Form::open(array('url' => URL::route('reports.sales.provider.make', array()),'class' => 'form-horizontal')) !!}
     <div class="container-fluid">
         <div class="row">
             <div class="col-md-8 col-md-offset-2">
 
                 <div class="panel panel-default">
-                    <div class="panel-heading">Account Status Report Generator</div>
+                    <div class="panel-heading">Provider Sales Report Generator</div>
                     <div class="panel-body">
                         <form class="form-horizontal">
                             {{ csrf_field() }}
@@ -19,9 +19,25 @@
                                         Active Program<br>
                                         Select All <kbd><kbd>cmd</kbd> + <kbd>A</kbd></kbd></label>
                                     <div class="col-md-6">
-                                        <select id="nurse" name="programs[]" class=" dropdown Valid form-control" multiple required>
-                                            @foreach($programs as $key => $value)
+                                        <select id="providers" class="provider selectpickerX dropdownValid form-control" name="providers[]" class=" dropdown Valid form-control"
+                                                {{--multiple --}}
+                                                required>
+
+                                            @foreach($providers as $key => $value)
                                                 <option value="{{$key}}">{{$value}}</option>
+                                            @endforeach
+                                        </select>
+                                    </div>
+                                </div>
+
+                                <div class="form-group">
+                                    <label class="col-md-2 control-label" for="days">
+                                        Sections<br>
+                                        Select All <kbd><kbd>cmd</kbd> + <kbd>A</kbd></kbd></label>
+                                    <div class="col-md-6">
+                                        <select id="sections" name="sections[]" class=" dropdown Valid form-control" multiple required>
+                                            @foreach($sections as $section)
+                                                <option value="{{$section}}">{{$section}}</option>
                                             @endforeach
                                         </select>
                                     </div>
@@ -44,16 +60,6 @@
                                                id="end_date" required>
                                     </div>
                                 </div>
-
-                                <div class="form-group">
-                                    <label class="col-md-2 control-label" for="end_date">Include Prior Month</label>
-                                    <div class="col-md-6">
-                                        <input class="form-control" type="checkbox"
-                                               value="1" name="withPastMonth"
-                                               id="withPastMonth">
-                                    </div>
-                                </div>
-
 
                                 <!-- Button -->
                                 <div class="form-group">
@@ -85,6 +91,11 @@
     <script>
 
         $('.collapse').collapse();
+
+        $(document).ready(function () {
+            $(".providers").select2();
+
+        });
 
     </script>
 @stop

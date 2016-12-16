@@ -16,10 +16,24 @@ class Practice extends Model
         'user_id',
     ];
 
-    public static function getProviders($blogId){
+    public function getCountOfUserTypeAtPractice($role){
+
+        $id = $this->id;
+
+        return User::whereHas('practices', function ($q) use
+        ($id) {
+            $q->whereId($id);
+        })->whereHas('roles', function ($q) use ($role){
+            $q->whereName($role);
+        })
+            ->count();
+
+    }
+
+    public static function getProviders($practiceId){
         $providers = User::whereHas('practices', function ($q) use
         (
-            $blogId
+            $practiceId
         ) {
             $q->where('id', '=', $blogId);
         })->whereHas('roles', function ($q) {
@@ -28,24 +42,24 @@ class Practice extends Model
         return $providers;
     }
 
-    public static function getNonCCMCareCenterUsers($blogId){
+    public static function getNonCCMCareCenterUsers($practiceId){
         $providers = User::whereHas('practices', function ($q) use
         (
-            $blogId
+            $practiceId
         ) {
-            $q->where('id', '=', $blogId);
+            $q->where('id', '=', $practiceId);
         })->whereHas('roles', function ($q) {
             $q->where('name', '=', 'no-ccm-care-center');
         })->get();
         return $providers;
     }
 
-    public static function getCareCenterUsers($blogId){
+    public static function getCareCenterUsers($practiceId){
         $providers = User::whereHas('practices', function ($q) use
         (
-            $blogId
+            $practiceId
         ) {
-            $q->where('id', '=', $blogId);
+            $q->where('id', '=', $practiceId);
         })->whereHas('roles', function ($q) {
             $q->where('name', '=', 'care-center');
         })->get();
@@ -112,6 +126,11 @@ class Practice extends Model
         return $this->location_id;
     }
 
+    public function lead()
+    {
+        return $this->belongsTo(User::class, 'user_id');
+    }
+
     public function enrollmentByProgram(Carbon $start, Carbon $end){
 
         $patients = PatientInfo::whereHas('user', function ($q){
@@ -119,8 +138,8 @@ class Practice extends Model
             $q->where('program_id', $this->id);
 
         })
-        ->whereNotNull('ccm_status')
-        ->get();
+            ->whereNotNull('ccm_status')
+            ->get();
 
         $data = [
 
@@ -154,11 +173,6 @@ class Practice extends Model
 
         return $data;
 
-    }
-
-    public function lead()
-    {
-        return $this->belongsTo(User::class, 'user_id');
     }
 
     public function getSubdomainAttribute()

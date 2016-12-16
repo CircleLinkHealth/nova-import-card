@@ -571,43 +571,6 @@ class ReportsController extends Controller
         ]);
     }
 
-    public function createSalesReport(Request $request)
-    {
-
-        $programs = Practice::all()->pluck('display_name', 'id');
-
-        return view('sales.create', ['programs' => $programs]);
-
-    }
-
-    public function makeSalesReport(Request $request)
-    {
-
-        $input = $request->all();
-
-        $programs = $input['programs'];
-
-        $withHistory = isset($input['withPastMonth'])
-            ? true
-            : false;
-
-        $links = [];
-
-        foreach ($programs as $program) {
-
-            $program = Practice::find($program);
-
-            $links[$program->display_name] = (new SalesByLocationReport($program,
-                Carbon::parse($input['start_date']),
-                Carbon::parse($input['end_date']),
-                $withHistory)
-            )->handle();
-        }
-
-        return view('sales.reportlist', ['reports' => $links]);
-
-    }
-
     public function excelReportT1()
     {
         // get all users with 1 condition

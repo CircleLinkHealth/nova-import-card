@@ -1,7 +1,16 @@
 <?php
 
+use App\PatientInfo;
+
 if (app()->environment() != 'production') {
     Route::get('rohan', function () {
+
+
+        $provider = \App\User::find(852);
+
+        return (new \App\Reports\Sales\SalesByProviderReport($provider, Carbon\Carbon::now(), Carbon\Carbon::now()->firstOfMonth()))->handle();
+
+//        return (new App\Reports\Sales\SalesByProviderReport($provider, Carbon\Carbon::now()->subYear(), Carbon\Carbon::now()));
 
 
     });
@@ -499,15 +508,34 @@ Route::group(['middleware' => 'auth'], function () {
                 'as'   => 'MonthlyBillingReportsController.makeMonthlyReport',
             ]);
 
-            Route::get('sales/create', [
-                'uses' => 'ReportsController@createSalesReport',
-                'as'   => 'reports.sales.create',
-            ]);
+            Route::group([
+                'prefix' => 'sales',
+            ], function () {
 
-            Route::post('sales/make', [
-                'uses' => 'ReportsController@makeSalesReport',
-                'as'   => 'reports.sales.make',
-            ]);
+                //LOCATIONS
+
+                Route::get('location/create', [
+                    'uses' => 'SalesReportsController@createLocationReport',
+                    'as'   => 'reports.sales.location.create',
+                ]);
+
+                Route::post('location/make', [
+                    'uses' => 'SalesReportsController@makeLocationReport',
+                    'as'   => 'reports.sales.location.make',
+                ]);
+
+                //PROVIDERS
+
+                Route::get('provider/create', [
+                    'uses' => 'SalesReportsController@createProviderReport',
+                    'as'   => 'reports.sales.provider.create',
+                ]);
+
+                Route::post('provider/make', [
+                    'uses' => 'SalesReportsController@makeProviderReport',
+                    'as'   => 'reports.sales.provider.make',
+                ]);
+            });
 
             Route::get('monthly-billing/create', [
                 'uses' => 'Admin\Reports\MonthlyBillingReportsController@create',
