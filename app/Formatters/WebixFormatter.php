@@ -99,7 +99,7 @@ class WebixFormatter implements ReportFormatter
             return false;
         }
 
-        $report_data = $report_data->sortByDesc('performed_at');
+        $report_data = $report_data->sortByDesc('created_at');
 
         $formatted_data = [];
         $count = 0;
@@ -172,6 +172,7 @@ class WebixFormatter implements ReportFormatter
             }
 
             $count++;
+
 
         }
 

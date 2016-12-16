@@ -35,7 +35,7 @@ class Practice extends Model
         (
             $practiceId
         ) {
-            $q->where('id', '=', $blogId);
+            $q->where('id', '=', $practiceId);
         })->whereHas('roles', function ($q) {
             $q->where('name', '=', 'provider');
         })->get();

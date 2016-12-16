@@ -7,6 +7,7 @@ use App\PatientInfo;
 use App\PhoneNumber;
 use App\Practice;
 use App\ProviderInfo;
+use App\Role;
 use App\User;
 use Illuminate\Http\Request;
 
@@ -25,6 +26,10 @@ class ProviderController extends Controller
             $provider = new ProviderInfo([
                 'user_id' => $provider_user->id
             ]);
+
+            $role = Role::whereName('provider')->first();
+
+            $provider_user->attachRole($role);
 
             $patient = User::find($input['patient_id']);
 

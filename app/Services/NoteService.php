@@ -307,7 +307,7 @@ class NoteService
 
     public function getAppointmentsForPatient(PatientInfo $patient){
 
-        return Appointment::where('patient_id', $patient->user_id)
+        return Appointment::wherePatientId($patient->user_id)
             ->get();
 
     }

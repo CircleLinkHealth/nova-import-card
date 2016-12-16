@@ -392,7 +392,6 @@ class NotesController extends Controller
 
                 }
 
-
                 if (isset($input['other_call'])) {
 
                     $this->service->storeCallForNote($note, 'other call', $patient, auth()->user(), auth()->user()->id,

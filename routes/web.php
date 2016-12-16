@@ -7,6 +7,9 @@ if (app()->environment() != 'production') {
 
 
         $provider = \App\User::find(852);
+        $patient = PatientInfo::find(1272);
+
+        return (new App\Services\NoteService())->getAppointmentsForPatient($patient);
 
         return (new \App\Reports\Sales\SalesByProviderReport($provider, Carbon\Carbon::now(), Carbon\Carbon::now()->firstOfMonth()))->handle();
 
