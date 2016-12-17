@@ -371,12 +371,17 @@ class SchedulerService
         foreach ($patients as $patient) {
 
             //Get time for last note entered
-            $last_note_time = Activity::whereType('Patient Note Creation')->wherePatientId($patient->user_id)->orderBy('created_at',
-                'desc')->pluck('created_at')->first();
+            $last_note_time = Activity::whereType('Patient Note Creation')
+                ->wherePatientId($patient->user_id)
+                ->orderBy('created_at', 'desc')
+                ->pluck('created_at')
+                ->first();
 
             //Get time for last activity recorded
-            $last_activity_time = Activity::wherePatientId($patient->user_id)->orderBy('created_at',
-                'desc')->pluck('created_at')->first();
+            $last_activity_time = Activity::wherePatientId($patient->user_id)
+                ->orderBy('created_at', 'desc')
+                ->pluck('created_at')
+                ->first();
 
             //check if they both exist
             if ($last_note_time != null && $last_activity_time != null) {
@@ -386,10 +391,15 @@ class SchedulerService
 
                     //have to pull the last scheduled call, but only if it was made by the algo
                     //since we don't mess with calls scheduled manually
-                    $scheduled_call = $patient->user->inboundCalls()->where('status', 'scheduled')->where('scheduler',
-                        'algorithm')->first();
-                    $last_attempted_call = $patient->user->inboundCalls()->where('status', '!=',
-                        'scheduled')->orderBy('created_at', 'desc')->first();
+                    $scheduled_call = $patient->user->inboundCalls()
+                        ->where('status', 'scheduled')
+                        ->where('scheduler', 'algorithm')
+                        ->first();
+
+                    $last_attempted_call = $patient->user->inboundCalls()
+                        ->where('status', '!=', 'scheduled')
+                        ->orderBy('created_at', 'desc')
+                        ->first();
 
                     //make sure we have a call attempt and a scheduled call.
                     if (is_object($scheduled_call) && is_object($last_attempted_call)) {
@@ -398,15 +408,20 @@ class SchedulerService
                             ? true
                             : false;
 
-                        //see how much time should wait now that the algo has updated information
-                        $scheduled_call->scheduled_date = (new PredictCall($patient->user, $last_attempted_call,
-                            $status))
-                            ->getUnsuccessfulCallTimeOffset(
-                                Carbon::now()->weekOfMonth,
-                                Carbon::now())
-                            ->toDateString();
+                        $last_attempted_time = $last_attempted_call->called_date;
+
+                        if($status){
+
+                            $data = (new SuccessfulHandler($patient, Carbon::parse($last_attempted_time)));
+
+                        } else {
+
+                            $data = (new UnsuccessfulHandler($patient, Carbon::parse($last_attempted_time)));
+
+                        }
 
                         $scheduled_call->scheduler = 'refresher algorithm';
+                        $scheduled_call->scheduled_date = $data['date'];
                         $scheduled_call->save();
 
                         $reprocess_bucket[] = 'Patient: ' . $patient->user_id . ' was tuned, will now be called on ' . $scheduled_call->scheduled_date;
