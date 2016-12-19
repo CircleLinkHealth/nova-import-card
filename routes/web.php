@@ -761,15 +761,15 @@ Route::group(['middleware' => 'auth'], function () {
                 'uses' => 'UserController@showMsgCenter',
                 'as'   => 'admin.users.msgCenterUpdate',
             ]);
-            Route::get('users/patientCallManagement', [
+            Route::get('calls/', [
                 'uses' => 'Admin\PatientCallManagementController@index',
                 'as'   => 'admin.patientCallManagement.index',
             ]);
-            Route::get('users/patientCallManagement/{id}/edit', [
+            Route::get('calls/{id}/edit', [
                 'uses' => 'Admin\PatientCallManagementController@edit',
                 'as'   => 'admin.patientCallManagement.edit',
             ]);
-            Route::post('users/patientCallManagement/{id}/edit', [
+            Route::post('calls/{id}/edit', [
                 'uses' => 'Admin\PatientCallManagementController@update',
                 'as'   => 'admin.patientCallManagement.update',
             ]);

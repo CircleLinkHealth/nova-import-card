@@ -51,8 +51,10 @@ class ReschedulerHandler
     public function collectCallsToBeRescheduled()
     {
 
-        $calls = Call::whereStatus('scheduled')
-            ->where('scheduled_date', '<=', Carbon::now()->toDateString())->get();
+        $calls = Call
+            ::whereStatus('scheduled')
+            ->where('scheduled_date', '<=', Carbon::now()->toDateString())
+            ->get();
 
         $missed = array();
 
