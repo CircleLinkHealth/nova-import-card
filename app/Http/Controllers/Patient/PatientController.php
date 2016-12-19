@@ -241,7 +241,7 @@ class PatientController extends Controller
         $patientData = [];
         $patients = User::intersectPracticesWith(auth()->user())
             ->ofType('participant')
-            ->with('primaryProgram')
+            ->with('primaryPractice')
             ->with([
                 'observations'           => function ($query) {
                     $query->where('obs_key', '!=', 'Outbound');
@@ -318,7 +318,7 @@ class PatientController extends Controller
             $bpName = '';
             $bpID = $patient->billingProviderID;
             if (!isset($foundPrograms[$patient->program_id])) {
-                $program = $patient->primaryProgram;
+                $program = $patient->primaryPractice;
                 $foundPrograms[$patient->program_id] = $program;
             } else {
                 $program = $foundPrograms[$patient->program_id];

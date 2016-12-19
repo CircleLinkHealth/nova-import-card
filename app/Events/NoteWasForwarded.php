@@ -22,15 +22,9 @@ class NoteWasForwarded extends Event
      * @param Note $note
      */
     public function __construct(
-        User $patient,
-        User $sender,
-        Note $note,
-        array $careteam
+        Note $note
     ) {
-        $this->patient = $patient;
-        $this->sender = $sender;
         $this->note = $note;
-        $this->careteam = $careteam;
     }
 
     /**

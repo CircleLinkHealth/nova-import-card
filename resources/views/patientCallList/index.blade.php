@@ -157,8 +157,8 @@
                                                             @endif
                                                         </td>
                                                         <td>
-                                                            @if($call->inboundUser && $call->inboundUser->primaryProgram)
-                                                                {{ $call->inboundUser->primaryProgram->display_name }}
+                                                            @if($call->inboundUser && $call->inboundUser->primaryPractice)
+                                                                {{ $call->inboundUser->primaryPractice->display_name }}
                                                             @else
                                                                 <em style="color:red;">n/a</em>
                                                             @endif
