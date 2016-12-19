@@ -104,8 +104,10 @@
 
     @endif
 
-    @if(!empty($patient->id))
-        @include('partials.fab')
+    @if(!isset($isPdf))
+        @if(!empty($patient->id))
+            @include('partials.fab')
+        @endif
     @endif
 
 <!--[if lt IE 8]>
