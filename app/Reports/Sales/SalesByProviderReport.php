@@ -16,7 +16,7 @@ use App\User;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
 
-class SalesByProviderReport
+class SalesByProviderReport implements SalesReport
 {
 
     private $service;
@@ -188,8 +188,13 @@ class SalesByProviderReport
 
     }
 
-    public function generatePdf(){
+    public function generateData()
+    {
+        // TODO: Implement generateData() method.
+    }
 
+    public function renderPDF()
+    {
         $pdf = PDF::loadView('sales.by-provider.report', ['data' => $this->data]);
 
         $name = trim($this->user->fullName).'-'.Carbon::now()->toDateString();
@@ -197,7 +202,5 @@ class SalesByProviderReport
         $pdf->save( storage_path("download/$name.pdf"), true );
 
         return $name.'.pdf';
-
     }
-
 }
