@@ -542,6 +542,7 @@ class PatientCareplanController extends Controller
         $ctbp = $user->billingProviderID;
         $ctlc = $user->leadContactID;
 
+
         //dd($userConfig);
 
         $careTeamUsers = [];
@@ -564,6 +565,9 @@ class PatientCareplanController extends Controller
             }
 
         }
+
+        dd($careTeamUsers);
+
 
         // get providers
         $providers = [];

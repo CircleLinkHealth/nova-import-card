@@ -349,7 +349,6 @@ if (isset($patient) && !empty($patient)) {
                 </div>
                 <!-- /CARE TEAM -->
 
-
                 <!-- Appointments -->
                 <div class="patient-info__subareas">
                     <div class="row">
@@ -358,11 +357,24 @@ if (isset($patient) && !empty($patient)) {
                                 Appointments:</h2>
                         </div>
                         <div class="col-xs-12">
-                            @if($appointments)
-                                <p><?= nl2br($appointments) ?></p>
+                            <ul><strong>Upcoming</strong><BR>
+                            @if(isset($appointments['upcoming'] ))
+                                    @foreach($appointments['upcoming'] as $upcoming)
+                                    <li class='subareas__item print-row'>{{$upcoming}}</li>
+                                    @endforeach
                             @else
-                                <p>No instructions at this time</p>
+                                <p>None</p>
                             @endif
+                            </ul>
+                            <ul><strong>Past</strong><BR>
+                                @if(isset($appointments['past'] ))
+                                        @foreach($appointments['past'] as $past)
+                                            <li>{{$past}}</li>
+                                        @endforeach
+                                @else
+                                    <p>None</p>
+                                @endif
+                            </ul>
                         </div>
                     </div>
                 </div>

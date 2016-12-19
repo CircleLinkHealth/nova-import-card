@@ -137,7 +137,8 @@
                             <div class="col-xs-4">
                                 With selected calls:&nbsp;&nbsp;
                                 <select name="action">
-                                    <option value="assign">Assign Nurse:</option>
+                                    <option value="assign">Assign Nurse</option>
+                                    <option value="delete">Delete Calls</option>
                                 </select>
                             </div>
                             <div class="col-xs-6">Nurse:&nbsp;&nbsp;

@@ -12,6 +12,7 @@ use App\Services\NoteService;
 use App\Services\ReportsService;
 use App\User;
 use Carbon\Carbon;
+use Illuminate\Support\Facades\App;
 
 class WebixFormatter implements ReportFormatter
 {
@@ -402,11 +403,49 @@ class WebixFormatter implements ReportFormatter
         }
 
         //Appointments
-        if($user->cpmMiscs->where('name',CpmMisc::APPOINTMENTS)->first()){
-            $careplanReport[$user->id]['appointments'] = (new CpmMiscService())->getMiscWithInstructionsForUser($user,
-                CpmMisc::APPOINTMENTS);
-        } else {
-            $careplanReport[$user->id]['appointments'] = '';
+        $upcoming = Appointment
+            ::wherePatientId($user->id)
+            ->where('date', '>', Carbon::now()->toDateString())
+            ->orderBy('date')
+            ->take(3)->get();
+
+        foreach ($upcoming as $appt){
+
+            $provider = User::find($appt->provider_id);
+            $providerName = $provider->fullName;
+            $date = $appt->date;
+            $time = Carbon::parse($appt->time)->format('H:i A') . ' ' . $user->timezone;
+
+            $formattedAppointment = "$providerName visit on $date at $time. ";
+
+            $formattedAppointment .=  $appt->status ?? '';
+            $formattedAppointment .=  $provider->address ? "Address: $provider->address. " : '';
+            $formattedAppointment .=  $provider->primaryPhone ? "Phone: $provider->primaryPhone. " : '';
+
+            $careplanReport[$user->id]['appointments']['upcoming'][] = $formattedAppointment;
+        }
+
+        $past = Appointment
+            ::wherePatientId($user->id)
+            ->where('date', '<', Carbon::now()->toDateString())
+            ->orderBy('date')
+            ->take(3)->get();
+
+        foreach ($past as $appt){
+
+            $provider = User::find($appt->provider_id);
+            $providerName = $provider->fullName;
+            $date = $appt->date;
+            $time = Carbon::parse($appt->time)->format('H:i A') . ' ' . $user->timezone;
+
+            $formattedAppointment = "$providerName visit on $date at $time. ";
+
+            $formattedAppointment .=  $appt->status ?? '';
+            $formattedAppointment .=  $provider->address ? "Address: $provider->address. " : '';
+            $formattedAppointment .=  $provider->primaryPhone ? "Phone: $provider->primaryPhone. " : '';
+
+            $careplanReport[$user->id]['appointments']['past'][] = $formattedAppointment;
+
         }
 
 //        array_reverse($biometrics)

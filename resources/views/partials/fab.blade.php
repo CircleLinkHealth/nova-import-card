@@ -1,8 +1,20 @@
+<style>
+
+    @media print
+    {
+        .hidden-print, .hidden-print *
+        {
+            display: none !important;
+        }
+    }
+
+</style>
+
 <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
 
-<section class="FAB">
-    <div class="FAB__mini-action-button">
-        <div class="mini-action-button--hide mini-action-button">
+<section class="FAB hidden-print">
+    <div class="FAB__mini-action-button hidden-print">
+        <div class="mini-action-button--hide mini-action-button hidden-print">
             <a href="{{  URL::route('patient.note.create', array('patient' => $patient->id)) }}">
                 <i class="mini-action-button__icon material-icons">speaker_notes</i>
             </a>
@@ -32,8 +44,7 @@
         </div>
 
     </div>
-    <div class="FAB__action-button">
-        <i class="action-button__icon material-icons">add</i>
-        {{--<p class="action-button__text--hide"></p>--}}
+    <div class="FAB__action-button hidden-print">
+        <i class="action-button__icon material-icons hidden-print">add</i>
     </div>
 </section>
