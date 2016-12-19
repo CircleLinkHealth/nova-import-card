@@ -402,6 +402,8 @@ class WebixFormatter implements ReportFormatter
             $careplanReport[$user->id]['other'] = '';
         }
 
+        $careplanReport[$user->id]['appointments'] = null;
+
         //Appointments
         $upcoming = Appointment
             ::wherePatientId($user->id)
@@ -447,6 +449,7 @@ class WebixFormatter implements ReportFormatter
             $careplanReport[$user->id]['appointments']['past'][] = $formattedAppointment;
 
         }
+
 
 //        array_reverse($biometrics)
         return $careplanReport;
