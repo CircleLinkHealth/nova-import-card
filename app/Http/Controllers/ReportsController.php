@@ -464,30 +464,6 @@ class ReportsController extends Controller
         return json_encode($feed);
     }
 
-    public function careplan(
-        Request $request,
-        $id = false
-    ) {
-        if ($request->header('Client') == 'mobi') {
-            // get and validate current user
-            \JWTAuth::setIdentifier('id');
-            $wpUser = \JWTAuth::parseToken()->authenticate();
-            if (!$wpUser) {
-                return response()->json(['error' => 'invalid_credentials'], 401);
-            }
-        } else {
-            // get user
-            $wpUser = User::find($id);
-            if (!$wpUser) {
-                return response("User not found", 401);
-            }
-        }
-
-        $feed = $this->service->careplan($wpUser->id);
-
-        return response()->json($feed);
-    }
-
     public function viewPrintCareplan(
         Request $request,
         $patientId = false,

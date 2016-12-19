@@ -467,14 +467,28 @@ $today = \Carbon\Carbon::now()->toFormattedDateString();
                                 Appointments:</h2>
                         </div>
                         <div class="col-xs-12">
-                            @if($careplan['appointments'])
-                                <p><?= nl2br($careplan['appointments']) ?></p>
-                            @else
-                                <p>No instructions at this time</p>
-                            @endif
+                            <ul><strong>Upcoming</strong><BR>
+                                @if(isset($careplan['appointments']['upcoming'] ))
+                                    @foreach($careplan['appointments']['upcoming'] as $upcoming)
+                                        <li class='subareas__item print-row'>{{$upcoming}}</li>
+                                    @endforeach
+                                @else
+                                    <p>None</p>
+                                @endif
+                            </ul>
+                            <ul><strong>Past</strong><BR>
+                                @if(isset($careplan['appointments']['past'] ))
+                                    @foreach($careplan['appointments']['past'] as $past)
+                                        <li>{{$past}}</li>
+                                    @endforeach
+                                @else
+                                    <p>None</p>
+                                @endif
+                            </ul>
                         </div>
                     </div>
                 </div>
+
                 <!-- /Appointments -->
 
                 <!-- OTHER NOTES -->
