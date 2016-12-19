@@ -9,11 +9,17 @@
 namespace App\Reports\Sales;
 
 
-interface SalesReport
+abstract class SalesReport
 {
 
-    public function generateData();
 
-    public function renderPDF();
+
+    public function generateData(){
+
+    }
+
+    public function renderPDF(){
+
+    }
 
 }
