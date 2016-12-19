@@ -1674,7 +1674,7 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
         }
     }
 
-    public function primaryProgram()
+    public function primaryPractice()
     {
         return $this->belongsTo(Practice::class, 'program_id', 'id');
     }
@@ -1932,7 +1932,7 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
      */
     public function getPrimaryPracticeNameAttribute()
     {
-        return ucwords($this->primaryProgram->display_name);
+        return ucwords($this->primaryPractice->display_name);
     }
 
     /**

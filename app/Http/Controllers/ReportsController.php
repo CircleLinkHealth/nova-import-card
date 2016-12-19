@@ -8,7 +8,6 @@ use App\Models\CPM\CpmProblem;
 use App\PageTimer;
 use App\PatientCareTeamMember;
 use App\Practice;
-use App\Reports\Sales\SalesByLocationReport;
 use App\Services\CCD\CcdInsurancePolicyService;
 use App\Services\CPM\CpmProblemService;
 use App\Services\ReportsService;
@@ -142,7 +141,7 @@ class ReportsController extends Controller
 
         $patients = User::intersectPracticesWith(auth()->user())
             ->ofType('participant')
-            ->with('primaryProgram')
+            ->with('primaryPractice')
             ->get();
 
         $u20_patients = [];
@@ -183,7 +182,7 @@ class ReportsController extends Controller
 
         $patient_counter = 0;
         foreach ($patients as $patient) {
-            $u20_patients[$patient_counter]['site'] = $patient->primaryProgram->display_name;
+            $u20_patients[$patient_counter]['site'] = $patient->primaryPractice->display_name;
 
             $u20_patients[$patient_counter]['colsum_careplan'] = 0;
             $u20_patients[$patient_counter]['colsum_changes'] = 0;
@@ -299,7 +298,7 @@ class ReportsController extends Controller
 
         $patients = User::intersectPracticesWith(auth()->user())
             ->ofType('participant')
-            ->with('primaryProgram')
+            ->with('primaryPractice')
             ->get();
 
         $u20_patients = [];
@@ -341,7 +340,7 @@ class ReportsController extends Controller
         $act_count = 0;
 
         foreach ($patients as $patient) {
-            $u20_patients[$act_count]['site'] = $patient->primaryProgram->display_name;
+            $u20_patients[$act_count]['site'] = $patient->primaryPractice->display_name;
             $u20_patients[$act_count]['colsum_careplan'] = 0;
             $u20_patients[$act_count]['colsum_changes'] = 0;
             $u20_patients[$act_count]['colsum_progress'] = 0;

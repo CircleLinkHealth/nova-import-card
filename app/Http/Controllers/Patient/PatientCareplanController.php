@@ -39,7 +39,7 @@ class PatientCareplanController extends Controller
 
         $patients = User::intersectPracticesWith(auth()->user())
             ->ofType('participant')
-            ->with('primaryProgram')
+            ->with('primaryPractice')
             ->with([
                 'patientInfo' => function ($q) {
                     $q->with('carePlanProviderApproverUser');

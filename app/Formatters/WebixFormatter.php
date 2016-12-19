@@ -12,7 +12,6 @@ use App\Services\NoteService;
 use App\Services\ReportsService;
 use App\User;
 use Carbon\Carbon;
-use Illuminate\Support\Facades\App;
 
 class WebixFormatter implements ReportFormatter
 {
@@ -34,7 +33,7 @@ class WebixFormatter implements ReportFormatter
             //id
             $formatted_notes[$count]['patient_id'] = $note->patient_id;
 
-            $formatted_notes[$count]['program_name'] = $note->patient->primaryProgram->display_name;
+            $formatted_notes[$count]['program_name'] = $note->patient->primaryPractice->display_name;
 
             //Provider Name
             $provider = User::find(intval($note->patient->billingProviderID));
