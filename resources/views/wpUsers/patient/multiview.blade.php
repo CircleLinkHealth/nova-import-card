@@ -66,7 +66,7 @@ $today = \Carbon\Carbon::now()->toFormattedDateString();
                                         @endif
                                     </div>
                                     <div class="col-xs-4 col-xs-offset-1 print-row text-right">290 Harbor Drive</div>
-                                    <div class="col-xs-7 address">{{$patient->primaryProgram->display_name}}</div>
+                                    <div class="col-xs-7 address">{{$patient->primaryPractice->display_name}}</div>
                                     <div class="col-xs-4 col-xs-offset-1 print-row text-right">Stamford, CT 06902</div>
                                     @if($patient->getPreferredLocationAddress())
                                         <div class="col-xs-12 address">{{$patient->getPreferredLocationAddress()->address_line_1}}</div>
