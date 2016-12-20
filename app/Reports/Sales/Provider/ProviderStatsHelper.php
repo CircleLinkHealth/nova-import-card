@@ -6,7 +6,7 @@
  * Time: 2:40 PM
  */
 
-namespace App\Reports\Sales;
+namespace App\Reports\Sales\Provider;
 
 use App\Activity;
 use App\Call;

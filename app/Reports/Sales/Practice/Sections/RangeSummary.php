@@ -1,14 +1,10 @@
-<?php
+<?php namespace App\Reports\Sales\Practice\Sections;
+
 use App\Practice;
+use App\Reports\Sales\SalesReportSection;
 use Carbon\Carbon;
 
-/**
- * Created by PhpStorm.
- * User: RohanM
- * Date: 12/19/16
- * Time: 5:20 PM
- */
-class PracticeDemographics extends SalesReportSection
+class RangeSummary extends SalesReportSection
 {
 
     private $practice;
@@ -24,9 +20,5 @@ class PracticeDemographics extends SalesReportSection
     public function renderSection()
     {
 
-
-
     }
-
-
 }

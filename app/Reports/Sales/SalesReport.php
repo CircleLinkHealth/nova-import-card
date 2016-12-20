@@ -8,13 +8,26 @@
 
 namespace App\Reports\Sales;
 
+use Carbon\Carbon;
 
 abstract class SalesReport
 {
 
+    protected $startRange;
+    protected $endRange;
+    protected $for;
+    protected $requestedSections;
 
+    public function __construct($for, Carbon $start, Carbon $end)
+    {
 
-    public function generateData(){
+        $this->for = $for;
+        $this->startRange = $start;
+        $this->endRange = $end;
+
+    }
+
+    public function data(){
 
     }
 
