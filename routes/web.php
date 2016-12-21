@@ -1,20 +1,19 @@
 <?php
 
-use App\PatientInfo;
+use App\Reports\Sales\Provider\SalesByProviderReport;
 
 if (app()->environment() != 'production') {
     Route::get('rohan', function () {
 
 
         $provider = \App\User::find(852);
-        $patient = PatientInfo::find(1272);
+        $patient = \App\PatientInfo::find(1272);
 
-        return (new App\Services\NoteService())->getAppointmentsForPatient($patient);
-
-        return (new \App\Reports\Sales\SalesByProviderReport($provider, Carbon\Carbon::now(), Carbon\Carbon::now()->firstOfMonth()))->handle();
-
-//        return (new App\Reports\Sales\SalesByProviderReport($provider, Carbon\Carbon::now()->subYear(), Carbon\Carbon::now()));
-
+        return (new SalesByProviderReport(
+            $provider,
+            SalesByProviderReport::SECTIONS,
+            Carbon\Carbon::now(),
+            Carbon\Carbon::now()->firstOfMonth()))->data(true);
 
     });
 }

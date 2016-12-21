@@ -11,8 +11,8 @@ use Carbon\Carbon;
 abstract class SalesReportSection
 {
 
-    protected $startRange;
-    protected $endRange;
+    protected $start;
+    protected $end;
     protected $for;
 
     protected $data;
@@ -21,8 +21,8 @@ abstract class SalesReportSection
     {
 
         $this->for = $for;
-        $this->startRange = $start;
-        $this->endRange = $end;
+        $this->start = $start;
+        $this->end = $end;
 
     }
 

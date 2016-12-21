@@ -206,41 +206,6 @@ class ProviderStatsHelper
 
     }
 
-    public function getAllUsersAtProvidersPractice(User $provider){
 
-        $practice = Practice::find($provider->primaryPracticeId);
-
-        $lead = $practice->lead->fullName ?? 'N/A';
-        $providers = $practice->getCountOfUserTypeAtPractice('provider');
-        $mas = $practice->getCountOfUserTypeAtPractice('med_assistant');
-        $cc = $practice->getCountOfUserTypeAtPractice('care-center');
-        $oa = $practice->getCountOfUserTypeAtPractice('office_admin');
-
-        $disabled_count = User
-                          ::whereHas('practices', function ($q) use ($practice) {
-                             $q->whereId($practice->id);
-                          })->whereHas('roles', function ($q){
-                             $q->where('name', '!=', 'participant');
-                          })
-                          ->whereUserStatus(0)
-                          ->count();
-
-        $total = $providers + $mas + $cc + $oa - $disabled_count;
-
-        return [
-
-            'lead' =>  $lead,
-            'providers' => $providers,
-            'mas' => $mas,
-            'cc' => $cc,
-            'oas' => $oa,
-            'disabled' => $disabled_count,
-
-            'total' => $total
-
-        ];
-
-
-    }
 
 }
