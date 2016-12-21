@@ -21,6 +21,6 @@ class QueueForPickupPdfHandler implements PdfReportHandler
      */
     public function pdfHandle(PdfReport $report)
     {
-        dd('here');
+
     }
 }
