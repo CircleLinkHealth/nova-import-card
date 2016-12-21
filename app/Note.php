@@ -94,6 +94,6 @@ class Note extends Model implements PdfReport
         return $this->patient
             ->primaryPractice
             ->ehr
-            ->pdf_dispatcher;
+            ->pdf_report_handler;
     }
 }

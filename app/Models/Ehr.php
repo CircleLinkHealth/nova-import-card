@@ -8,6 +8,6 @@ class Ehr extends Model
 {
     public $fillable = [
         'name',
-        'pdf_dispatcher',
+        'pdf_report_handler',
     ];
 }
