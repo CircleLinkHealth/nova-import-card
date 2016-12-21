@@ -1,7 +1,7 @@
 <?php namespace App\Services\PdfReports\Dispatchers;
 
 use App\Contracts\PdfReport;
-use App\Contracts\PdfReportDispatcher;
+use App\Contracts\PdfReportHandler;
 
 /**
  * Created by PhpStorm.
@@ -9,7 +9,7 @@ use App\Contracts\PdfReportDispatcher;
  * Date: 19/12/2016
  * Time: 2:24 PM
  */
-class QueueForPickupPdfDispatcher implements PdfReportDispatcher
+class QueueForPickupPdfHandler implements PdfReportHandler
 {
 
     /**
@@ -19,7 +19,7 @@ class QueueForPickupPdfDispatcher implements PdfReportDispatcher
      *
      * @return mixed
      */
-    public function pdfDispatch(PdfReport $report)
+    public function pdfHandle(PdfReport $report)
     {
 
     }

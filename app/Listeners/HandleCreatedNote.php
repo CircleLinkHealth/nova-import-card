@@ -4,7 +4,7 @@ namespace App\Listeners;
 
 use App\Events\NoteWasForwarded;
 
-class DispatchNote
+class HandleCreatedNote
 {
     /**
      * Create the event listener.
@@ -25,6 +25,6 @@ class DispatchNote
      */
     public function handle(NoteWasForwarded $event)
     {
-        $event->note->pdfDispatch();
+        $event->note->pdfHandleCreated();
     }
 }
