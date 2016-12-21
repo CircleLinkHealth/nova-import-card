@@ -7,7 +7,6 @@ use App\Models\CCD\CcdProblem;
 use App\Models\CPM\Cpm;
 use App\Models\CPM\CpmBiometric;
 use App\Models\CPM\CpmMisc;
-use App\Note;
 use App\PatientReports;
 use App\User;
 use App\UserMeta;
@@ -1119,79 +1118,4 @@ class ReportsService
         */
 
     }
-
-    public function createNotePdfReport(
-        User $patient,
-        User $sender,
-        Note $note,
-        array $careteam
-    ) {
-        foreach ($careteam as $providerId) {
-
-            $provider = User::find($providerId);
-
-            if (!$provider) {
-                return false;
-            }
-
-            $locationId = $patient->getpreferredContactLocationAttribute();
-
-            if (empty($locationId)) {
-                return false;
-            }
-
-            //get foreign provider id
-            $foreign_id = ForeignId::where('user_id', $providerId)->where('system', ForeignId::APRIMA)->first();
-
-            if (empty($foreign_id)) {
-                \Log::error("Provider $providerId has no Aprima Foreign id.");
-
-                return false;
-            }
-
-            //update the foreign id to include a location as well
-            if (empty($foreign_id->location_id)) {
-                $foreign_id->location_id = $locationId;
-                $foreign_id->save();
-            }
-
-            $file_name = $this->makePdfNote($patient, $sender, $note, $provider);
-
-            $base_64_report = base64_encode(file_get_contents($file_name));
-
-            $patientReport = PatientReports::create([
-                'patient_id'  => $patient->id,
-                'patient_mrn' => $patient->getMRNAttribute(),
-                'provider_id' => $foreign_id->foreign_id,
-                'file_type'   => PatientReports::NOTE,
-                'file_base64' => $base_64_report,
-                'location_id' => $locationId,
-            ]);
-        }
-    }
-
-    public function makePdfNote(
-        User $patient,
-        User $sender,
-        Note $note,
-        User $provider
-    ) {
-        $problems = $patient->cpmProblems()->get()->pluck('name')->all();
-
-        $pdf = App::make('snappy.pdf.wrapper');
-        $pdf->loadView('pdfs.note', [
-            'patient'  => $patient,
-            'problems' => $problems,
-            'sender'   => $sender,
-            'note'     => $note,
-            'provider' => $provider,
-        ]);
-
-        $file_name = base_path('storage/pdfs/notes/' . str_random(40) . '.pdf');
-        $pdf->save($file_name, true);
-
-        return $file_name;
-    }
-
-
 }
