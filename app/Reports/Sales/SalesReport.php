@@ -8,12 +8,31 @@
 
 namespace App\Reports\Sales;
 
+use Carbon\Carbon;
 
-interface SalesReport
+abstract class SalesReport
 {
 
-    public function generateData();
+    protected $startRange;
+    protected $endRange;
+    protected $for;
+    protected $requestedSections;
 
-    public function renderPDF();
+    public function __construct($for, Carbon $start, Carbon $end)
+    {
+
+        $this->for = $for;
+        $this->startRange = $start;
+        $this->endRange = $end;
+
+    }
+
+    public function data(){
+
+    }
+
+    public function renderPDF(){
+
+    }
 
 }

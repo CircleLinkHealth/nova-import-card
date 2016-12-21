@@ -19,12 +19,7 @@ class SalesReportsController extends Controller
 
         $providers = User::ofType('provider')->get()->sortBy('display_name')->pluck('display_name', 'id');
 
-        $sections = [
-            'Overall Summary',
-            'Enrollment Summary',
-            'Financial Performance',
-            'Practice Demographics'
-        ];
+        $sections = \App\Reports\Sales\Provider\SalesByProviderReport::SECTIONS;
 
         return view('sales.by-provider.create',
             [

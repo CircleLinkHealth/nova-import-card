@@ -1,4 +1,5 @@
-<?php
+<?php namespace App\Reports\Sales;
+
 use Carbon\Carbon;
 
 /**
@@ -10,16 +11,18 @@ use Carbon\Carbon;
 abstract class SalesReportSection
 {
 
-    private $startRange;
-    private $endRange;
-    private $for;
+    protected $start;
+    protected $end;
+    protected $for;
+
+    protected $data;
 
     public function __construct($for, Carbon $start, Carbon $end)
     {
 
         $this->for = $for;
-        $this->startRange = $start;
-        $this->endRange = $end;
+        $this->start = $start;
+        $this->end = $end;
 
     }
 

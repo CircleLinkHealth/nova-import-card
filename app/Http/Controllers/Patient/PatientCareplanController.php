@@ -566,9 +566,6 @@ class PatientCareplanController extends Controller
 
         }
 
-        dd($careTeamUsers);
-
-
         // get providers
         $providers = [];
         $providers = User::with('phoneNumbers', 'providerInfo')
