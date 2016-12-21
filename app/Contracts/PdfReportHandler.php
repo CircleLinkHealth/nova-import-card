@@ -9,7 +9,7 @@
 namespace App\Contracts;
 
 
-interface PdfReportDispatcher
+interface PdfReportHandler
 {
     /**
      * Dispatch a PDFReport to an API, or EMR Direct Mailbox.
@@ -18,5 +18,5 @@ interface PdfReportDispatcher
      *
      * @return mixed
      */
-    public function pdfDispatch(PdfReport $report);
+    public function pdfHandle(PdfReport $report);
 }

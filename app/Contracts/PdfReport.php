@@ -16,12 +16,12 @@ interface PdfReport extends Pdfable
      *
      * @return mixed
      */
-    public function pdfDispatch();
+    public function pdfHandleCreated();
 
     /**
      * Get the PDF dispatcher.
      *
-     * @return PdfReportDispatcher
+     * @return PdfReportHandler
      */
-    public function pdfDispatcher() : PdfReportDispatcher;
+    public function pdfReportHandler() : PdfReportHandler;
 }

@@ -10,9 +10,9 @@ namespace App\Services\PdfReports\Dispatchers;
 
 
 use App\Contracts\PdfReport;
-use App\Contracts\PdfReportDispatcher;
+use App\Contracts\PdfReportHandler;
 
-class AthenaApiPdfDispatcher implements PdfReportDispatcher
+class AthenaApiPdfHandler implements PdfReportHandler
 {
 
     /**
@@ -22,8 +22,8 @@ class AthenaApiPdfDispatcher implements PdfReportDispatcher
      *
      * @return mixed
      */
-    public function pdfDispatch(PdfReport $report)
+    public function pdfHandle(PdfReport $report)
     {
-        // TODO: Implement pdfDispatch() method.
+        // TODO: Implement pdfHandle() method.
     }
 }

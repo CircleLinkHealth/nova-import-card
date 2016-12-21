@@ -3,7 +3,7 @@
 namespace App;
 
 use App\Contracts\PdfReport;
-use App\Contracts\PdfReportDispatcher;
+use App\Contracts\PdfReportHandler;
 use Illuminate\Database\Eloquent\Model;
 
 class Note extends Model implements PdfReport
@@ -78,18 +78,18 @@ class Note extends Model implements PdfReport
      *
      * @return mixed
      */
-    public function pdfDispatch()
+    public function pdfHandleCreated()
     {
-        $this->pdfDispatcher()
-            ->pdfDispatch($this);
+        $this->pdfReportHandler()
+            ->pdfHandle($this);
     }
 
     /**
      * Get the PDF dispatcher.
      *
-     * @return PdfReportDispatcher
+     * @return PdfReportHandler
      */
-    public function pdfDispatcher() : PdfReportDispatcher
+    public function pdfReportHandler() : PdfReportHandler
     {
         return $this->patient
             ->primaryPractice
