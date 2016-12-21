@@ -69,7 +69,7 @@ class AprimaApiPdfHandler implements PdfReportHandler
                 'patient_id'  => $patient->id,
                 'patient_mrn' => $patient->getMRNAttribute(),
                 'provider_id' => $foreign_id->foreign_id,
-                'file_type'   => strtolower(get_class($report)),
+                'file_type'   => get_class($report),
                 'file_base64' => $base_64_report,
                 'location_id' => $locationId,
             ]);
