@@ -6,7 +6,7 @@
  * Time: 4:27 PM
  */
 
-namespace App\Services\PdfReports\Dispatchers;
+namespace App\Services\PdfReports\Handlers;
 
 
 use App\Contracts\PdfReport;

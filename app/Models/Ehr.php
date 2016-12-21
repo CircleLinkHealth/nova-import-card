@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Practice;
 use Illuminate\Database\Eloquent\Model;
 
 class Ehr extends Model
@@ -10,4 +11,9 @@ class Ehr extends Model
         'name',
         'pdf_report_handler',
     ];
+
+    public function practices()
+    {
+        return $this->hasMany(Practice::class);
+    }
 }

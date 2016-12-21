@@ -1,5 +1,6 @@
 <?php namespace App;
 
+use App\Models\Ehr;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
@@ -15,20 +16,6 @@ class Practice extends Model
         'federal_tax_id',
         'user_id',
     ];
-
-    public function getCountOfUserTypeAtPractice($role){
-
-        $id = $this->id;
-
-        return User::whereHas('practices', function ($q) use
-        ($id) {
-            $q->whereId($id);
-        })->whereHas('roles', function ($q) use ($role){
-            $q->whereName($role);
-        })
-            ->count();
-
-    }
 
     public static function getProviders($practiceId){
         $providers = User::whereHas('practices', function ($q) use
@@ -94,6 +81,26 @@ class Practice extends Model
                 return false;
             }
         }
+    }
+
+    public function getCountOfUserTypeAtPractice($role)
+    {
+
+        $id = $this->id;
+
+        return User::whereHas('practices', function ($q) use
+        (
+            $id
+        ) {
+            $q->whereId($id);
+        })->whereHas('roles', function ($q) use
+        (
+            $role
+        ) {
+            $q->whereName($role);
+        })
+            ->count();
+
     }
 
     public function getFormattedNameAttribute()
@@ -178,5 +185,10 @@ class Practice extends Model
     public function getSubdomainAttribute()
     {
         return explode('.', $this->domain)[0];
+    }
+
+    public function ehr()
+    {
+        return $this->belongsTo(Ehr::class);
     }
 }

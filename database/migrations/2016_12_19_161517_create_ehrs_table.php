@@ -1,8 +1,8 @@
 <?php
 
 use App\Models\Ehr;
-use App\Services\PdfReports\Dispatchers\AthenaApiPdfHandler;
-use App\Services\PdfReports\Dispatchers\QueueForPickupPdfHandler;
+use App\Services\PdfReports\Handlers\AthenaApiPdfHandler;
+use App\Services\PdfReports\Handlers\QueueForPickupPdfHandler;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;

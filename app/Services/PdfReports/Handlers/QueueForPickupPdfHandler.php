@@ -1,4 +1,4 @@
-<?php namespace App\Services\PdfReports\Dispatchers;
+<?php namespace App\Services\PdfReports\Handlers;
 
 use App\Contracts\PdfReport;
 use App\Contracts\PdfReportHandler;
@@ -21,6 +21,6 @@ class QueueForPickupPdfHandler implements PdfReportHandler
      */
     public function pdfHandle(PdfReport $report)
     {
-
+        dd('here');
     }
 }

@@ -9,10 +9,8 @@ use App\MailLog;
 use App\Note;
 use App\Notifications\NewNote;
 use App\PatientInfo;
-use App\Practice;
 use App\User;
 use Carbon\Carbon;
-use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\URL;
 
 
@@ -79,7 +77,7 @@ class NoteService
         $patient = User::find($note->patient_id);
         $sender = User::find($note->logger_id);
 
-        event(new NoteWasForwarded($patient, $sender, $note, $careteam));
+        event(new NoteWasForwarded($note));
 
         for ($i = 0; $i < count($careteam); $i++) {
 
@@ -173,6 +171,16 @@ class NoteService
 
     //Get all notes that were forwarded with specified date range
 
+    public function getAppointmentsForPatient(PatientInfo $patient)
+    {
+
+        return Appointment::wherePatientId($patient->user_id)
+            ->get();
+
+    }
+
+    //Get all notes for a given provider with specified date range
+
     public function getNotesWithRangeForProvider(
         $provider,
         $start,
@@ -194,7 +202,7 @@ class NoteService
 
     }
 
-    //Get all notes for a given provider with specified date range
+    //Get all notes that have been sent to anyone for a given provider with specified date range
 
     public function getNotesWithRangeForPatients(
         $patients,
@@ -213,7 +221,7 @@ class NoteService
 
     }
 
-    //Get all notes that have been sent to anyone for a given provider with specified date range
+    //Save call information for note
 
     public function getForwardedNotesWithRangeForProvider($provider, $start, $end) {
 
@@ -224,8 +232,8 @@ class NoteService
                 $q->where('member_user_id', $provider)
                     ->where('type', 'billing_provider');
             })->pluck('id');
-        
-            $notes = $this->getForwardedNotesWithRangeForPatients($patients, $start, $end);
+
+        $notes = $this->getForwardedNotesWithRangeForPatients($patients, $start, $end);
 
             $provider_forwarded_notes = [];
 
@@ -240,7 +248,6 @@ class NoteService
 
     }
 
-    //Save call information for note
     public function getForwardedNotesWithRangeForPatients(
         $patients,
         $start,
@@ -303,13 +310,6 @@ class NoteService
         }
 
         return false;
-    }
-
-    public function getAppointmentsForPatient(PatientInfo $patient){
-
-        return Appointment::wherePatientId($patient->user_id)
-            ->get();
-
     }
 
     //MAIL HELPERS
