@@ -40,9 +40,9 @@ class EnrollmentSummary extends SalesReportSection
             ->get()
             ->toArray();
 
-        $this->data['enrolled'] = $enrollmentCumulative[0]['total'];
-        $this->data['paused'] = $enrollmentCumulative[1]['total'];
-        $this->data['withdrawn'] = $enrollmentCumulative[2]['total'];
+        $this->data['enrolled'] = $enrollmentCumulative[0]['total'] ?? 0;
+        $this->data['paused'] = $enrollmentCumulative[1]['total'] ?? 0;
+        $this->data['withdrawn'] = $enrollmentCumulative[2]['total'] ?? 0;
 
         for ($i = 0; $i < 4; $i++) {
 

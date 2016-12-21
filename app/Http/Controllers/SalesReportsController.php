@@ -3,8 +3,9 @@
 namespace App\Http\Controllers;
 
 use App\Practice;
+use App\Reports\Sales\Practice\SalesByPractice;
+use App\Reports\Sales\Provider\SalesByProviderReport;
 use App\Reports\Sales\SalesByLocationReport;
-use App\Reports\Sales\SalesByProviderReport;
 use App\User;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
@@ -51,7 +52,56 @@ class SalesReportsController extends Controller
                 Carbon::parse($input['start_date']),
                 Carbon::parse($input['end_date'])
             ))
-                ->getData();
+                ->data();
+//                ->printData();
+        }
+
+        dd($links);
+
+        return view('sales.reportlist', ['reports' => $links]);
+
+    }
+
+    public function createPracticeReport(Request $request)
+    {
+
+            // @TODO get practices.
+        $practices = null;
+//        $practices = Practice::all('display_name')->pluck('display_name', 'id');
+
+        $sections = SalesByPracticeReport::SECTIONS;
+
+        return view('sales.by-provider.create',
+            [
+
+                'sections' => $sections,
+                'providers' => $practices
+
+            ]);
+
+    }
+
+    public function makePracticeReport(Request $request)
+    {
+
+        $input = $request->all();
+
+        $providers = $input['providers'];
+        $sections = $input['sections'];
+
+        $links = [];
+
+        foreach ($providers as $provider) {
+
+            $provider = User::find($provider);
+
+            $links[$provider->fullName] = (new SalesByProviderReport
+            (   $provider,
+                $sections,
+                Carbon::parse($input['start_date']),
+                Carbon::parse($input['end_date'])
+            ))
+                ->data();
 //                ->printData();
         }
 

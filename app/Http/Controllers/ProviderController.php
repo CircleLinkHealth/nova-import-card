@@ -79,6 +79,10 @@ class ProviderController extends Controller
 
                 $provider_user->program_id = $practice->id;
 
+            } else {
+
+                $provider_user->program_id = $patient->id;
+
             }
 
             $provider->save();
