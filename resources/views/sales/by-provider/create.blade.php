@@ -36,8 +36,8 @@
                                         Select All <kbd><kbd>cmd</kbd> + <kbd>A</kbd></kbd></label>
                                     <div class="col-md-6">
                                         <select id="sections" name="sections[]" class=" dropdown Valid form-control" multiple required>
-                                            @foreach($sections as $section)
-                                                <option value="{{$section}}">{{$section}}</option>
+                                            @foreach($sections as $key => $value)
+                                                <option value="{{$value}}">{{$key}}</option>
                                             @endforeach
                                         </select>
                                     </div>

@@ -22,7 +22,7 @@ class FinancialSummary extends SalesReportSection
         parent::__construct($provider, $start, $end);
         $this->provider = $provider;
         $this->service = (new ProviderStatsHelper($start, $end));
-        $this->clhpppm = $this->provider->primaryPractice->clh_pppm;
+        $this->clhpppm = $this->provider->primaryPractice->clh_pppm ?? 20;
     }
 
     public function renderSection()
