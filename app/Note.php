@@ -80,7 +80,10 @@ class Note extends Model implements PdfReport
      */
     public function pdfHandleCreated()
     {
-        if (!$this->pdfReportHandler()) {
+        if (!$this->patient
+            ->primaryPractice
+            ->ehr
+        ) {
             return false;
         }
 
@@ -95,13 +98,6 @@ class Note extends Model implements PdfReport
      */
     public function pdfReportHandler() : PdfReportHandler
     {
-        if (!$this->patient
-            ->primaryPractice
-            ->ehr
-        ) {
-            return null;
-        }
-
         return app($this->patient
             ->primaryPractice
             ->ehr
