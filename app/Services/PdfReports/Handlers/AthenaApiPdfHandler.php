@@ -32,9 +32,14 @@ class AthenaApiPdfHandler implements PdfReportHandler
         $pathToPdf = $report->toPdf();
 
         try {
-            $ccdaRequest = $report->patient
-                ->latestCcda()
-                ->ccdaRequest;
+            $ccda = $report->patient
+                ->latestCcda();
+
+            if (!$ccda) {
+                return false;
+            }
+
+            $ccdaRequest = $ccda->ccdaRequest;
 
             if (!$ccdaRequest) {
                 return false;
