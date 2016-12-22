@@ -1,5 +1,7 @@
 <?php namespace App\Providers;
 
+use App\Events\PdfableCreated;
+use App\Listeners\CreateAndHandlePdfReport;
 use Illuminate\Foundation\Support\Providers\EventServiceProvider as ServiceProvider;
 
 class EventServiceProvider extends ServiceProvider
@@ -19,8 +21,8 @@ class EventServiceProvider extends ServiceProvider
             'App\Listeners\CreateAprimaPdfCarePlan',
             'App\Listeners\CreateAthenaPdfCarePlan',
         ],
-        'App\Events\NoteWasForwarded'           => [
-            'App\Listeners\HandleCreatedNote',
+        PdfableCreated::class                   => [
+            CreateAndHandlePdfReport::class,
         ],
         'Illuminate\Auth\Events\Logout'         => [
             'App\Listeners\ClosePatientSession',

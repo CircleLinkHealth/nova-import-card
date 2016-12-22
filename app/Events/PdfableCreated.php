@@ -2,17 +2,21 @@
 
 namespace App\Events;
 
+use App\Contracts\PdfReport;
 use App\Note;
 use App\User;
 use Illuminate\Queue\SerializesModels;
 
-class NoteWasForwarded extends Event
+class PdfableCreated extends Event
 {
     use SerializesModels;
-    public $patient;
-    public $sender;
-    public $note;
-    public $careteam;
+
+    /**
+     * An entity implementing App\Contracts\PdfReport
+     *
+     * @var PdfReport
+     */
+    public $pdfReport;
 
     /**
      * Create a new event instance.
@@ -22,9 +26,9 @@ class NoteWasForwarded extends Event
      * @param Note $note
      */
     public function __construct(
-        Note $note
+        PdfReport $pdfable
     ) {
-        $this->note = $note;
+        $this->pdfReport = $pdfable;
     }
 
     /**

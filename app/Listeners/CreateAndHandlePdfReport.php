@@ -2,9 +2,9 @@
 
 namespace App\Listeners;
 
-use App\Events\NoteWasForwarded;
+use App\Events\PdfableCreated;
 
-class HandleCreatedNote
+class CreateAndHandlePdfReport
 {
     /**
      * Create the event listener.
@@ -19,12 +19,12 @@ class HandleCreatedNote
     /**
      * Handle the event.
      *
-     * @param  NoteWasForwarded $event
+     * @param  PdfableCreated $event
      *
      * @return void
      */
-    public function handle(NoteWasForwarded $event)
+    public function handle(PdfableCreated $event)
     {
-        $event->note->pdfHandleCreated();
+        $event->pdfReport->pdfHandleCreated();
     }
 }

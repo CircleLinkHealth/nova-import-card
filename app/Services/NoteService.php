@@ -4,7 +4,7 @@ namespace App\Services;
 
 use App\Appointment;
 use App\Call;
-use App\Events\NoteWasForwarded;
+use App\Events\PdfableCreated;
 use App\MailLog;
 use App\Note;
 use App\Notifications\NewNote;
@@ -77,7 +77,7 @@ class NoteService
         $patient = User::find($note->patient_id);
         $sender = User::find($note->logger_id);
 
-        event(new NoteWasForwarded($note));
+        event(new PdfableCreated($note));
 
         for ($i = 0; $i < count($careteam); $i++) {
 
