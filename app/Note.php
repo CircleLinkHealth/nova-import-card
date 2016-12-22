@@ -80,15 +80,33 @@ class Note extends Model implements PdfReport
      */
     public function pdfHandleCreated()
     {
-        if (!$this->patient
-            ->primaryPractice
-            ->ehr
-        ) {
+        if (!$this->hasPdfHandler()) {
             return false;
         }
 
         $this->pdfReportHandler()
             ->pdfHandle($this);
+    }
+
+    /**
+     * Check whether this PDFable has a pdf handler
+     *
+     * @return bool
+     */
+    public function hasPdfHandler() : bool
+    {
+        $practice = $this->patient
+            ->primaryPractice;
+
+        if (!$practice->ehr) {
+            return false;
+        }
+
+        if (!$practice->ehr->pdf_report_handler) {
+            return false;
+        }
+
+        return true;
     }
 
     /**
