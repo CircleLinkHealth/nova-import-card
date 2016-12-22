@@ -22,10 +22,12 @@ class SalesByPracticeReport extends SalesReport
     private $practice;
 
     const SECTIONS = [
-        RangeSummary::class,
-        EnrollmentSummary::class,
-        FinancialSummary::class,
-        PracticeDemographics::class,
+
+        'Overall Summary' => RangeSummary::class,
+        'Enrollment Summary' => EnrollmentSummary::class,
+        'Financial Performance' => FinancialSummary::class,
+        'Practice Demographics'=> PracticeDemographics::class
+
     ];
 
     public function __construct(

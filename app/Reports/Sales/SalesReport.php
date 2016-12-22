@@ -24,8 +24,8 @@ abstract class SalesReport
     {
 
         $this->for = $for;
-        $this->startRange = $start;
-        $this->endRange = $end;
+        $this->start = $start;
+        $this->end = $end;
         $this->requestedSections = $sections;
 
     }
