@@ -2,7 +2,7 @@
 
 @section('content')
     <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/font-awesome/4.4.0/css/font-awesome.min.css">
-    {!! Form::open(array('url' => URL::route('reports.sales.practice.make', array()),'id' => 'compute','class' => 'form-horizontal')) !!}
+    {!! Form::open(array('url' => URL::route('reports.sales.practice.report', array()),'id' => 'form' ,'class' => 'form-horizontal')) !!}
     <div class="container-fluid">
         <div class="row">
             <div class="col-md-8 col-md-offset-2">
@@ -15,11 +15,11 @@
                             <fieldset>
 
                                 <div class="form-group">
-                                    <label class="col-md-2 control-label" for="practices">
+                                    <label class="col-md-2 control-label" for="practice">
                                         Active Program<br>
                                         Select All <kbd><kbd>cmd</kbd> + <kbd>A</kbd></kbd></label>
                                     <div class="col-md-6">
-                                        <select id="practices" name="practices[]" class=" dropdown Valid form-control" multiple required>
+                                        <select id="practice" name="practice" class="dropdown Valid form-control" required>
                                             @foreach($practices as $key => $value)
                                                 <option value="{{$key}}">{{$value}}</option>
                                             @endforeach
@@ -28,13 +28,13 @@
                                 </div>
 
                                 <div class="form-group">
-                                    <label class="col-md-2 control-label" for="days">
+                                    <label class="col-md-2 control-label" for="sections">
                                         Sections<br>
                                         Select All <kbd><kbd>cmd</kbd> + <kbd>A</kbd></kbd></label>
                                     <div class="col-md-6">
                                         <select id="sections" name="sections[]" class=" dropdown Valid form-control" multiple required>
                                             @foreach($sections as $key => $value)
-                                                <option name="{{$key}}" value="{{$value}}">{{$key}}</option>
+                                                <option value="{{$value}}">{{$key}}</option>
                                             @endforeach
                                         </select>
                                     </div>
@@ -62,14 +62,15 @@
                                 <div class="form-group">
                                     <div class="row" style="padding-left: 12px;">
                                         <label class="col-md-2 control-label" for="end_date"></label>
+                                        {{--<div class="col-md-2" style="padding-left: 40px">--}}
+                                            {{--<button id="compute" name="compute" value="email" class="btn btn-success">Preview Data</button>--}}
+                                        {{--</div>--}}
                                         <div class="col-md-2">
                                             <button id="submit" name="submit" value="download" class="btn btn-success">
                                                 Generate Report(s)
                                             </button>
                                         </div>
-                                        <div class="col-md-2" style="padding-left: 40px">
-                                            <button id="compute" name="compute" value="email" class="btn btn-success">Preview Data</button>
-                                        </div>
+
                                     </div>
                                 </div>
 
@@ -95,7 +96,7 @@
 
         {{--$("#compute").submit(function (e) {--}}
 
-            {{--var url = '{!! route('reports.sales.practice.make') !!}'; // the script where you handle the form input.--}}
+            {{--var url = '{!! route('reports.sales.practice.report') !!}'; // the script where you handle the form input.--}}
 
             {{--$.ajax({--}}
                 {{--type: "POST",--}}

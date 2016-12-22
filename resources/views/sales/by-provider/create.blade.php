@@ -2,7 +2,7 @@
 
 @section('content')
     <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/font-awesome/4.4.0/css/font-awesome.min.css">
-    {!! Form::open(array('url' => URL::route('reports.sales.provider.make', array()),'class' => 'form-horizontal')) !!}
+    {!! Form::open(array('url' => URL::route('reports.sales.provider.report', array()),'class' => 'form-horizontal')) !!}
     <div class="container-fluid">
         <div class="row">
             <div class="col-md-8 col-md-offset-2">
@@ -15,7 +15,7 @@
                             <fieldset>
 
                                 <div class="form-group">
-                                    <label class="col-md-2 control-label" for="days">
+                                    <label class="col-md-2 control-label" for="providers">
                                         Active Program<br>
                                         Select All <kbd><kbd>cmd</kbd> + <kbd>A</kbd></kbd></label>
                                     <div class="col-md-6">
@@ -31,13 +31,13 @@
                                 </div>
 
                                 <div class="form-group">
-                                    <label class="col-md-2 control-label" for="days">
+                                    <label class="col-md-2 control-label" for="sections">
                                         Sections<br>
                                         Select All <kbd><kbd>cmd</kbd> + <kbd>A</kbd></kbd></label>
                                     <div class="col-md-6">
                                         <select id="sections" name="sections[]" class=" dropdown Valid form-control" multiple required>
                                             @foreach($sections as $key => $value)
-                                                <option name="{{$key}}" value="{{$value}}">{{$key}}</option>
+                                                <option id={{$key}} name="sections[{{$key}}]" value="{{$value}}">{{$key}}</option>
                                             @endforeach
                                         </select>
                                     </div>

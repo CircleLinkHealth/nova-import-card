@@ -53,19 +53,17 @@ class SalesReportsController extends Controller
                 Carbon::parse($input['end_date'])
             ))
                 ->data();
-//                ->printData();
         }
 
-        dd($links);
-
-        return view('sales.reportlist', ['reports' => $links]);
+        return view('sales.by-provider.report', ['data' => $links[$provider->fullName]]);
 
     }
+
+    //PRACTICE REPORTS
 
     public function createPracticeReport(Request $request)
     {
 
-        // @TODO get practices.
         $practices = Practice::all()->pluck('display_name', 'id');
 
         $sections = SalesByPracticeReport::SECTIONS;
@@ -82,35 +80,22 @@ class SalesReportsController extends Controller
 
     public function makePracticeReport(Request $request)
     {
-
         $input = $request->all();
 
-        $practices = $input['practices'];
         $sections = $input['sections'];
+        $practice = Practice::find($input['practice']);
 
-        $links = [];
-
-        foreach ($practices as $practice) {
-
-            $practice = Practice::find($practice);
-
-            $links[$practice->name] = (new SalesByPracticeReport
+        $data = (new SalesByPracticeReport
             (   $practice,
                 $sections,
                 Carbon::parse($input['start_date']),
                 Carbon::parse($input['end_date'])
             ))
-                ->data();
-//                ->printData();
-        }
-        dd($links);
+                ->renderView();
 
-//        return json_encode($links);
-
-//        return view('sales.reportlist', ['reports' => $links]);
+        return view('sales.by-practice.report', ['data' => $data]);
 
     }
-
 
     //LOCATION REPORTS
 
@@ -133,8 +118,6 @@ class SalesReportsController extends Controller
             ]);
 
     }
-
-
 
     public function makeLocationReport(Request $request)
     {

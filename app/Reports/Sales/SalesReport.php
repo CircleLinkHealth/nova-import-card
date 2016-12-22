@@ -31,7 +31,6 @@ abstract class SalesReport
     }
 
     public function data(){
-
         foreach ($this->requestedSections as $key => $section){
 
             $this->data[$key] = (new $section(
@@ -43,14 +42,21 @@ abstract class SalesReport
         return $this->data;
 
     }
-    public function renderView(){
+
+    public function renderView($name)
+    {
+
+        $this->data();
+        return view($name, ['data' => $this->data]);
 
     }
 
-    public function renderPDF($name, $view, $data)
+    public function renderPDF($name, $view)
     {
 
-        $pdf = PDF::loadView($view, ['data' => $data]);
+        $this->data();
+
+        $pdf = PDF::loadView($view, ['data' => $this->data]);
 
         $pdf->save( storage_path("download/$name.pdf"), true );
 

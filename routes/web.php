@@ -521,9 +521,9 @@ Route::group(['middleware' => 'auth'], function () {
                     'as'   => 'reports.sales.location.create',
                 ]);
 
-                Route::post('location/make', [
+                Route::post('location/report', [
                     'uses' => 'SalesReportsController@makeLocationReport',
-                    'as'   => 'reports.sales.location.make',
+                    'as'   => 'reports.sales.location.report',
                 ]);
 
                 //PROVIDERS
@@ -533,9 +533,9 @@ Route::group(['middleware' => 'auth'], function () {
                     'as'   => 'reports.sales.provider.create',
                 ]);
 
-                Route::post('provider/make', [
+                Route::post('provider/report', [
                     'uses' => 'SalesReportsController@makeProviderReport',
-                    'as'   => 'reports.sales.provider.make',
+                    'as'   => 'reports.sales.provider.report',
                 ]);
 
                 //PRACTICES
@@ -545,9 +545,9 @@ Route::group(['middleware' => 'auth'], function () {
                     'as'   => 'reports.sales.practice.create',
                 ]);
 
-                Route::post('practice/make', [
+                Route::post('practice/report', [
                     'uses' => 'SalesReportsController@makePracticeReport',
-                    'as'   => 'reports.sales.practice.make',
+                    'as'   => 'reports.sales.practice.report',
                 ]);
 
             });
