@@ -2,6 +2,7 @@
 
 namespace App\Entities;
 
+use App\Models\CCD\Ccda;
 use Illuminate\Database\Eloquent\Model;
 use Prettus\Repository\Contracts\Transformable;
 use Prettus\Repository\Traits\TransformableTrait;
@@ -19,4 +20,8 @@ class CcdaRequest extends Model implements Transformable
         'successful_call',
     ];
 
+    public function ccda()
+    {
+        return $this->belongsTo(Ccda::class);
+    }
 }

@@ -11,9 +11,14 @@ namespace App\Services\PdfReports\Handlers;
 
 use App\Contracts\PdfReport;
 use App\Contracts\PdfReportHandler;
+use App\Services\AthenaAPI\Service as AthenaApi;
 
 class AthenaApiPdfHandler implements PdfReportHandler
 {
+    public function __construct(AthenaApi $athenaApi)
+    {
+        $this->athenaApi = $athenaApi;
+    }
 
     /**
      * Dispatch a PDFReport to an API, or EMR Direct Mailbox.
@@ -24,6 +29,37 @@ class AthenaApiPdfHandler implements PdfReportHandler
      */
     public function pdfHandle(PdfReport $report)
     {
-        // TODO: Implement pdfHandle() method.
+        $pathToPdf = $report->toPdf();
+
+        try {
+            $ccdaRequest = $report->patient
+                ->latestCcda()
+                ->ccdaRequest;
+
+            if (!$ccdaRequest) {
+                return false;
+            }
+
+            $response = $this->athenaApi->postPatientDocument(
+                $ccdaRequest->patient_id,
+                $ccdaRequest->practice_id,
+                $pathToPdf,
+                $ccdaRequest->department_id
+            );
+
+            $decodedResponse = json_decode($response, true);
+        } catch (\Exception $e) {
+            \Log::error($e);
+
+            return false;
+        }
+
+        if (key_exists('documentid', $decodedResponse)) {
+            \Log::info("Sent {$report->id} {$decodedResponse['documentid']}");
+
+            return true;
+        }
+
+        return false;
     }
 }

@@ -12,6 +12,7 @@ namespace App\Services\PdfReports\Handlers;
 use App\Contracts\PdfReport;
 use App\Contracts\PdfReportHandler;
 use App\ForeignId;
+use App\PatientCareTeamMember;
 use App\PatientReports;
 use App\User;
 
@@ -30,9 +31,10 @@ class AprimaApiPdfHandler implements PdfReportHandler
         //assuming relation patient exists and it returns a user object
         $patient = $report->patient;
 
-        $careTeam = $patient->careTeam;
+        $careTeam = $patient->patientCareTeamMembers->where('type', PatientCareTeamMember::SEND_ALERT_TO);
 
-        foreach ($careTeam as $providerId) {
+        foreach ($careTeam as $member) {
+            $providerId = $member->member_user_id;
 
             $provider = User::find($providerId);
 

@@ -1,6 +1,7 @@
 <?php namespace App\Models\CCD;
 
 use App\CLH\CCD\ItemLogger\ModelLogRelationship;
+use App\Entities\CcdaRequest;
 use App\User;
 use Illuminate\Database\Eloquent\Model;
 use Prettus\Repository\Contracts\Transformable;
@@ -48,5 +49,10 @@ class Ccda extends Model implements Transformable
     public function qaSummary()
     {
         return $this->hasOne(QAImportSummary::class);
+    }
+
+    public function ccdaRequest()
+    {
+        return $this->hasOne(CcdaRequest::class);
     }
 }

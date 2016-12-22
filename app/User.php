@@ -1228,7 +1228,6 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
     }
 
 
-
     public function setBillingProviderIDAttribute($value)
     {
         if (empty($value)) {
@@ -1963,14 +1962,18 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
         return $billingProvider->user ?? new User();
     }
 
-    public function scopeHasBillingProvider($query, $billing_provider_id)
-    {
-        return $query->whereHas('patientCareTeamMembers', function ($k) use ($billing_provider_id){
+    public function scopeHasBillingProvider(
+        $query,
+        $billing_provider_id
+    ) {
+        return $query->whereHas('patientCareTeamMembers', function ($k) use
+        (
+            $billing_provider_id
+        ) {
             $k->whereType('billing_provider')
-            ->whereMemberUserId($billing_provider_id);
+                ->whereMemberUserId($billing_provider_id);
         });
     }
-
 
 
     /**
@@ -2012,6 +2015,13 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
     public function sendPasswordResetNotification($token)
     {
         $this->notify(new ResetPassword($token));
+    }
+
+    public function latestCcda()
+    {
+        return $this->ccdas()
+            ->orderBy('updated_at', 'desc')
+            ->first();
     }
 
     public function ccdas()
