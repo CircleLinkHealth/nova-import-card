@@ -37,25 +37,21 @@ class SalesReportsController extends Controller
 
         $input = $request->all();
 
-        $providers = $input['providers'];
+        $provider = User::find($input['provider']);
         $sections = $input['sections'];
 
-        $links = [];
-
-        foreach ($providers as $provider) {
-
-            $provider = User::find($provider);
-
-            $links[$provider->fullName] = (new SalesByProviderReport
+        $data = (new SalesByProviderReport
             (   $provider,
                 $sections,
                 Carbon::parse($input['start_date']),
                 Carbon::parse($input['end_date'])
             ))
                 ->data();
-        }
 
-        return view('sales.by-provider.report', ['data' => $links[$provider->fullName]]);
+        dd($data);
+
+
+        return view('sales.by-provider.report', ['data' => $data]);
 
     }
 
@@ -91,7 +87,13 @@ class SalesReportsController extends Controller
                 Carbon::parse($input['start_date']),
                 Carbon::parse($input['end_date'])
             ))
-                ->renderView();
+                ->data();
+
+        dd($data);
+
+        $data['name'] = $practice->display_name;
+        $data['start'] = Carbon::parse($input['start_date'])->toDateString();
+        $data['end'] = Carbon::parse($input['end_date'])->toDateString();
 
         return view('sales.by-practice.report', ['data' => $data]);
 

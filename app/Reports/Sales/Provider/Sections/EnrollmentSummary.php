@@ -52,10 +52,13 @@ class EnrollmentSummary extends SalesReportSection
             if ($i == 0) {
 
                 $month = Carbon::parse($this->start)->format('F Y');
-                $this->data['Enrollment Summary'][$month] = $this->service->enrollmentCountByProvider($this->provider,
-                    $this->start, $this->end);
+                $this->data['historical'][$month] =
+                                            $this->service->enrollmentCountByProvider(
+                                            $this->provider,
+                                            $this->start,
+                                            $this->end);
 
-                $this->data[$month]['billable'] = $billable;
+                $this->data['historical'][$month]['billable'] = $billable;
 
             } else {
 
@@ -64,10 +67,10 @@ class EnrollmentSummary extends SalesReportSection
                 $end = Carbon::parse($iMonthsAgo)->lastOfMonth();
 
                 $month = Carbon::parse($iMonthsAgo)->format('F Y');
-                $this->data[$month] = $this->service->enrollmentCountByProvider($this->provider,
+                $this->data['historical'][$month] = $this->service->enrollmentCountByProvider($this->provider,
                     $start, $end);
 
-                $this->data[$month]['billable'] = $billable;
+                $this->data['historical'][$month]['billable'] = $billable;
             }
 
         }

@@ -33,7 +33,7 @@ abstract class SalesReport
     public function data(){
         foreach ($this->requestedSections as $key => $section){
 
-            $this->data[$key] = (new $section(
+            $this->data[$section] = (new $section(
                 $this->for, $this->start, $this->end
             ))->renderSection();
 

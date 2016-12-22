@@ -19,7 +19,7 @@
                                         Active Program<br>
                                         Select All <kbd><kbd>cmd</kbd> + <kbd>A</kbd></kbd></label>
                                     <div class="col-md-6">
-                                        <select id="providers" class="provider selectpickerX dropdownValid form-control" name="providers[]" class=" dropdown Valid form-control"
+                                        <select id="provider" class="provider selectpickerX dropdownValid form-control" name="provider" class=" dropdown Valid form-control"
                                                 {{--multiple --}}
                                                 required>
 
