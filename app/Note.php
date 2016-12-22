@@ -13,11 +13,11 @@ class Note extends Model implements PdfReport
     protected $fillable = [
         'patient_id',
         'author_id',
-        'logger_id',        
+        'logger_id',
         'body',
         'isTCM',
         'type',
-        'performed_at'
+        'performed_at',
     ];
 
 
@@ -80,6 +80,10 @@ class Note extends Model implements PdfReport
      */
     public function pdfHandleCreated()
     {
+        if (!$this->pdfReportHandler()) {
+            return false;
+        }
+
         $this->pdfReportHandler()
             ->pdfHandle($this);
     }
@@ -91,6 +95,13 @@ class Note extends Model implements PdfReport
      */
     public function pdfReportHandler() : PdfReportHandler
     {
+        if (!$this->patient
+            ->primaryPractice
+            ->ehr
+        ) {
+            return null;
+        }
+
         return app($this->patient
             ->primaryPractice
             ->ehr

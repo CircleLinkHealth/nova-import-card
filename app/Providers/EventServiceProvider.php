@@ -1,5 +1,11 @@
 <?php namespace App\Providers;
 
+use App\Events\CarePlanWasApproved;
+use App\Events\PdfableCreated;
+use App\Listeners\CreateAndHandlePdfReport;
+use App\Listeners\CreateAprimaPdfCarePlan;
+use App\Listeners\CreateAthenaPdfCarePlan;
+use App\Listeners\UpdateCarePlanStatus;
 use Illuminate\Foundation\Support\Providers\EventServiceProvider as ServiceProvider;
 
 class EventServiceProvider extends ServiceProvider
@@ -14,13 +20,13 @@ class EventServiceProvider extends ServiceProvider
         'Illuminate\Auth\Events\Login'          => [
             'App\Events\UpdateUserLoginInfo',
         ],
-        'App\Events\CarePlanWasApproved'        => [
-            'App\Listeners\UpdateCarePlanStatus',
-            'App\Listeners\CreateAprimaPdfCarePlan',
-            'App\Listeners\CreateAthenaPdfCarePlan',
+        CarePlanWasApproved::class              => [
+            UpdateCarePlanStatus::class,
+            CreateAprimaPdfCarePlan::class,
+            CreateAthenaPdfCarePlan::class,
         ],
-        'App\Events\NoteWasForwarded'           => [
-            'App\Listeners\HandleCreatedNote',
+        PdfableCreated::class                   => [
+            CreateAndHandlePdfReport::class,
         ],
         'Illuminate\Auth\Events\Logout'         => [
             'App\Listeners\ClosePatientSession',
