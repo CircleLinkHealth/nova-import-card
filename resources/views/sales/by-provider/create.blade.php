@@ -37,7 +37,7 @@
                                     <div class="col-md-6">
                                         <select id="sections" name="sections[]" class=" dropdown Valid form-control" multiple required>
                                             @foreach($sections as $key => $value)
-                                                <option value="{{$value}}">{{$key}}</option>
+                                                <option name="{{$key}}" value="{{$value}}">{{$key}}</option>
                                             @endforeach
                                         </select>
                                     </div>

@@ -514,7 +514,7 @@ Route::group(['middleware' => 'auth'], function () {
                 'prefix' => 'sales',
             ], function () {
 
-                //LOCATIONS
+                //LOCATIONS -hidden on adminUI currently.
 
                 Route::get('location/create', [
                     'uses' => 'SalesReportsController@createLocationReport',
@@ -537,6 +537,19 @@ Route::group(['middleware' => 'auth'], function () {
                     'uses' => 'SalesReportsController@makeProviderReport',
                     'as'   => 'reports.sales.provider.make',
                 ]);
+
+                //PRACTICES
+
+                Route::get('practice/create', [
+                    'uses' => 'SalesReportsController@createPracticeReport',
+                    'as'   => 'reports.sales.practice.create',
+                ]);
+
+                Route::post('practice/make', [
+                    'uses' => 'SalesReportsController@makePracticeReport',
+                    'as'   => 'reports.sales.practice.make',
+                ]);
+
             });
 
             Route::get('monthly-billing/create', [
