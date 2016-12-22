@@ -3,9 +3,9 @@
 namespace App\Http\Controllers;
 
 use App\Practice;
-use App\Reports\Sales\Practice\SalesByPractice;
 use App\Reports\Sales\Provider\SalesByProviderReport;
-use App\Reports\Sales\SalesByLocationReport;
+use App\Reports\Sales\Location\SalesByLocationReport;
+use App\Reports\Sales\Practice\SalesByPracticeReport;
 use App\User;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
@@ -20,7 +20,7 @@ class SalesReportsController extends Controller
 
         $providers = User::ofType('provider')->get()->sortBy('display_name')->pluck('display_name', 'id');
 
-        $sections = \App\Reports\Sales\Provider\SalesByProviderReport::SECTIONS;
+        $sections = SalesByProviderReport::SECTIONS;
 
         return view('sales.by-provider.create',
             [
@@ -65,17 +65,16 @@ class SalesReportsController extends Controller
     public function createPracticeReport(Request $request)
     {
 
-            // @TODO get practices.
-        $practices = null;
-//        $practices = Practice::all('display_name')->pluck('display_name', 'id');
+        // @TODO get practices.
+        $practices = Practice::all()->pluck('display_name', 'id');
 
         $sections = SalesByPracticeReport::SECTIONS;
 
-        return view('sales.by-provider.create',
+        return view('sales.by-practice.create',
             [
 
                 'sections' => $sections,
-                'providers' => $practices
+                'practices' => $practices
 
             ]);
 
@@ -86,16 +85,16 @@ class SalesReportsController extends Controller
 
         $input = $request->all();
 
-        $providers = $input['providers'];
+        $practices = $input['practices'];
         $sections = $input['sections'];
 
         $links = [];
 
-        foreach ($providers as $provider) {
+        foreach ($practices as $practice) {
 
-            $provider = User::find($provider);
+            $provider = Practice::find($practice);
 
-            $links[$provider->fullName] = (new SalesByProviderReport
+            $links[$provider->fullName] = (new SalesByPracticeReport
             (   $provider,
                 $sections,
                 Carbon::parse($input['start_date']),

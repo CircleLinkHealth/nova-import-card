@@ -1,4 +1,4 @@
-<?php namespace App\Reports\Sales;
+<?php namespace App\Reports\Sales\Location;
 
 use App\PatientInfo;
 use App\Practice;

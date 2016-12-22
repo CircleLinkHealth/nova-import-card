@@ -299,11 +299,14 @@
                             Account Data<span class="caret"></span>
                         </a>
                         <ul class="dropdown-menu" role="menu" aria-labelledby="dLabel">
-                                    <li><a href="{{ URL::route('reports.sales.location.create', array()) }}">by Location
-                                            </a></li>
+                                    {{--<li><a href="{{ URL::route('reports.sales.location.create', array()) }}">by Location--}}
+                                            {{--</a></li>--}}
 
                                     <li><a href="{{ URL::route('reports.sales.provider.create', array()) }}">by Provider
                                             </a></li>
+
+                                    <li><a href="{{ URL::route('reports.sales.practice.create', array()) }}">by Practice
+                                        </a></li>
                         </ul>
                     </li>
 
