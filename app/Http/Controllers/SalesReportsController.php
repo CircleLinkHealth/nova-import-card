@@ -103,10 +103,11 @@ class SalesReportsController extends Controller
                 ->data();
 //                ->printData();
         }
-
         dd($links);
 
-        return view('sales.reportlist', ['reports' => $links]);
+//        return json_encode($links);
+
+//        return view('sales.reportlist', ['reports' => $links]);
 
     }
 

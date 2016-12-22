@@ -2,7 +2,7 @@
 
 @section('content')
     <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/font-awesome/4.4.0/css/font-awesome.min.css">
-    {!! Form::open(array('url' => URL::route('reports.sales.practice.make', array()),'class' => 'form-horizontal')) !!}
+    {!! Form::open(array('url' => URL::route('reports.sales.practice.make', array()),'id' => 'compute','class' => 'form-horizontal')) !!}
     <div class="container-fluid">
         <div class="row">
             <div class="col-md-8 col-md-offset-2">
@@ -68,14 +68,21 @@
                                             </button>
                                         </div>
                                         <div class="col-md-2" style="padding-left: 40px">
-                                            <button id="submit" name="submit" value="email" class="btn btn-success" disabled>Email (s)
-                                            </button>
+                                            <button id="compute" name="compute" value="email" class="btn btn-success">Preview Data</button>
                                         </div>
                                     </div>
                                 </div>
 
                             </fieldset>
                         </form>
+
+                        <div class="row">
+                            <div class="col-md-6 col-md-offset-3">
+                                <div class="jumbotron text-center">
+                                    <h1><span id="result"></span></h1>
+                                </div>
+                            </div>
+                        </div>
 
                     </div>
                 </div>
@@ -84,9 +91,32 @@
     </div>
 
 
-    <script>
+    {{--<script>--}}
 
-        $('.collapse').collapse();
+        {{--$("#compute").submit(function (e) {--}}
 
-    </script>
+            {{--var url = '{!! route('reports.sales.practice.make') !!}'; // the script where you handle the form input.--}}
+
+            {{--$.ajax({--}}
+                {{--type: "POST",--}}
+                {{--url: url,--}}
+                {{--headers: {--}}
+                    {{--'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')--}}
+                {{--},--}}
+                {{--data: {--}}
+                    {{--practices: $('#practices').val(),--}}
+                    {{--start_date: $('#start_date').val(),--}}
+                    {{--sections: $('#sections').val(),--}}
+                    {{--end_date: $('#end_date').val()--}}
+                {{--}, // serializes the form's elements.--}}
+                {{--success: function (data) {--}}
+                    {{--console.log(data); // show response from the php script.--}}
+                    {{--$('#result').text(JSON.parse(data));--}}
+                {{--}--}}
+            {{--});--}}
+
+            {{--e.preventDefault(); // avoid to execute the actual submit of the form.--}}
+        {{--});--}}
+
+    {{--</script>--}}
 @stop
