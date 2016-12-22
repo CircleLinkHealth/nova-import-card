@@ -20,8 +20,7 @@ class EventServiceProvider extends ServiceProvider
             'App\Listeners\CreateAthenaPdfCarePlan',
         ],
         'App\Events\NoteWasForwarded'           => [
-            'App\Listeners\DispatchNote',
-            'App\Listeners\CreateAprimaPdfNote',
+            'App\Listeners\HandleCreatedNote',
         ],
         'Illuminate\Auth\Events\Logout'         => [
             'App\Listeners\ClosePatientSession',

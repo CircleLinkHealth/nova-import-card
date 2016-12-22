@@ -1,8 +1,8 @@
 <?php
 
 use App\Models\Ehr;
-use App\Services\PdfReports\Dispatchers\AthenaApiPdfHandler;
-use App\Services\PdfReports\Dispatchers\QueueForPickupPdfHandler;
+use App\Services\PdfReports\Handlers\AthenaApiPdfHandler;
+use App\Services\PdfReports\Handlers\QueueForPickupPdfHandler;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
@@ -19,18 +19,18 @@ class CreateEhrsTable extends Migration
         Schema::create('ehrs', function (Blueprint $table) {
             $table->increments('id');
             $table->string('name');
-            $table->string('pdf_dispatcher');
+            $table->string('pdf_report_handler');
             $table->timestamps();
         });
 
         Ehr::create([
-            'name'           => 'Aprima',
-            'pdf_dispatcher' => QueueForPickupPdfHandler::class,
+            'name'               => 'Aprima',
+            'pdf_report_handler' => QueueForPickupPdfHandler::class,
         ]);
 
         Ehr::create([
-            'name'           => 'Athena',
-            'pdf_dispatcher' => AthenaApiPdfHandler::class,
+            'name'               => 'Athena',
+            'pdf_report_handler' => AthenaApiPdfHandler::class,
         ]);
     }
 

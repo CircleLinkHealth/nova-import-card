@@ -91,9 +91,9 @@ class Note extends Model implements PdfReport
      */
     public function pdfReportHandler() : PdfReportHandler
     {
-        return $this->patient
+        return app($this->patient
             ->primaryPractice
             ->ehr
-            ->pdf_dispatcher;
+            ->pdf_report_handler);
     }
 }

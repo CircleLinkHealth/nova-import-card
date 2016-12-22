@@ -1,18 +1,15 @@
-<?php
-/**
- * Created by PhpStorm.
- * User: michalis
- * Date: 19/12/2016
- * Time: 4:27 PM
- */
-
-namespace App\Services\PdfReports\Dispatchers;
-
+<?php namespace App\Services\PdfReports\Handlers;
 
 use App\Contracts\PdfReport;
 use App\Contracts\PdfReportHandler;
 
-class AthenaApiPdfHandler implements PdfReportHandler
+/**
+ * Created by PhpStorm.
+ * User: michalis
+ * Date: 19/12/2016
+ * Time: 2:24 PM
+ */
+class QueueForPickupPdfHandler implements PdfReportHandler
 {
 
     /**
@@ -24,6 +21,6 @@ class AthenaApiPdfHandler implements PdfReportHandler
      */
     public function pdfHandle(PdfReport $report)
     {
-        // TODO: Implement pdfHandle() method.
+
     }
 }
