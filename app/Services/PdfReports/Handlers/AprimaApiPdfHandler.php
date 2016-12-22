@@ -33,8 +33,15 @@ class AprimaApiPdfHandler implements PdfReportHandler
 
         $careTeam = $patient->patientCareTeamMembers->where('type', PatientCareTeamMember::SEND_ALERT_TO);
 
+        //ProviderId of the Users this was sent to
+        $sendTo = [];
+
         foreach ($careTeam as $member) {
             $providerId = $member->member_user_id;
+
+            if (in_array($providerId, $sendTo)) {
+                continue;
+            }
 
             $provider = User::find($providerId);
 
@@ -75,6 +82,8 @@ class AprimaApiPdfHandler implements PdfReportHandler
                 'file_base64' => $base_64_report,
                 'location_id' => $locationId,
             ]);
+
+            $sendTo[] = $providerId;
         }
     }
 }
