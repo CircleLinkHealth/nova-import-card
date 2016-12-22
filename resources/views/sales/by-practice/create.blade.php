@@ -2,7 +2,7 @@
 
 @section('content')
     <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/font-awesome/4.4.0/css/font-awesome.min.css">
-    {!! Form::open(array('url' => URL::route('reports.sales.location.make', array()),'class' => 'form-horizontal')) !!}
+    {!! Form::open(array('url' => URL::route('reports.sales.practice.make', array()),'class' => 'form-horizontal')) !!}
     <div class="container-fluid">
         <div class="row">
             <div class="col-md-8 col-md-offset-2">
@@ -28,6 +28,19 @@
                                 </div>
 
                                 <div class="form-group">
+                                    <label class="col-md-2 control-label" for="days">
+                                        Sections<br>
+                                        Select All <kbd><kbd>cmd</kbd> + <kbd>A</kbd></kbd></label>
+                                    <div class="col-md-6">
+                                        <select id="sections" name="sections[]" class=" dropdown Valid form-control" multiple required>
+                                            @foreach($sections as $key => $value)
+                                                <option name="{{$key}}" value="{{$value}}">{{$key}}</option>
+                                            @endforeach
+                                        </select>
+                                    </div>
+                                </div>
+
+                                <div class="form-group">
                                     <label class="col-md-2 control-label" for="start_date">From</label>
                                     <div class="col-md-6">
                                         <input class="form-control" type="date"
@@ -36,9 +49,30 @@
                                     </div>
                                 </div>
 
-                                <input class="form-control" type="hidden"
-                                       value="{{\Carbon\Carbon::now()->toDateString()}}" name="end_date"
-                                       id="end_date" required>
+                                <div class="form-group">
+                                    <label class="col-md-2 control-label" for="end_date">To</label>
+                                    <div class="col-md-6">
+                                        <input class="form-control" type="date"
+                                               value="{{\Carbon\Carbon::now()->toDateString()}}" name="end_date"
+                                               id="end_date" required>
+                                    </div>
+                                </div>
+
+                                <!-- Button -->
+                                <div class="form-group">
+                                    <div class="row" style="padding-left: 12px;">
+                                        <label class="col-md-2 control-label" for="end_date"></label>
+                                        <div class="col-md-2">
+                                            <button id="submit" name="submit" value="download" class="btn btn-success">
+                                                Generate Report(s)
+                                            </button>
+                                        </div>
+                                        <div class="col-md-2" style="padding-left: 40px">
+                                            <button id="submit" name="submit" value="email" class="btn btn-success" disabled>Email (s)
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
 
                             </fieldset>
                         </form>

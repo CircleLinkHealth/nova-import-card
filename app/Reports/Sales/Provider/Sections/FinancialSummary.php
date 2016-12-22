@@ -22,7 +22,7 @@ class FinancialSummary extends SalesReportSection
         parent::__construct($provider, $start, $end);
         $this->provider = $provider;
         $this->service = (new ProviderStatsHelper($start, $end));
-        $this->clhpppm = $this->provider->primaryPractice->clh_pppm ?? 20;
+        $this->clhpppm = $this->provider->primaryPractice->clh_pppm ?? false;
     }
 
     public function renderSection()
@@ -51,7 +51,7 @@ class FinancialSummary extends SalesReportSection
                 = '$' . round($billable * 40, -2);
 
             $this->data[$month]['CCM Profit']
-                = '$' . ($billable * 40 - $billable * $this->clhpppm);
+                = ($this->clhpppm) ? '$' . ($billable * 40 - $billable * $this->clhpppm) : 'N/A';
 
         }
 

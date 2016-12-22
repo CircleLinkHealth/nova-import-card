@@ -44,19 +44,4 @@
         </tr>
     @endforeach
 
-    {{--@foreach($data['provider_data'] as $key => $value)--}}
-
-    {{--<tr>--}}
-    {{--<td>{{$data['program_name']}}</td>--}}
-    {{--<td>{{'Total ' . $data['program_name']}}</td>--}}
-    {{--<td>{{$key}}</td>--}}
-    {{--        <td>{{$data['current'][$key]}}</td>--}}
-    {{--<td>{{$data['current'][$key]}}</td>--}}
-    {{--        <td>{{$data['data'][$key]['percent']}}</td>--}}
-    {{--<td>{{$data['last'][$key]}}</td>--}}
-    {{--<td>{{$data['last'][$status]}}</td>--}}
-    {{--</tr>--}}
-    {{--@endforeach--}}
-
-
 </table>

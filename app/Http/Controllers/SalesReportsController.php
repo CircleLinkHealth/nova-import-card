@@ -92,10 +92,10 @@ class SalesReportsController extends Controller
 
         foreach ($practices as $practice) {
 
-            $provider = Practice::find($practice);
+            $practice = Practice::find($practice);
 
-            $links[$provider->fullName] = (new SalesByPracticeReport
-            (   $provider,
+            $links[$practice->name] = (new SalesByPracticeReport
+            (   $practice,
                 $sections,
                 Carbon::parse($input['start_date']),
                 Carbon::parse($input['end_date'])
