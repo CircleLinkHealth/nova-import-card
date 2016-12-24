@@ -44,13 +44,13 @@ class FinancialSummary extends SalesReportSection
 
             $billable = $this->service->billableCountForMonth($this->practice, $start);
 
-            $this->data[$month]['Billable']
+            $this->data['historical']['Billable'][$month]
                 = $billable;
 
-            $this->data[$month]['CCM Revenue']
+            $this->data['historical']['CCM Revenue'][$month]
                 = '$' . round($billable * 40, -2);
 
-            $this->data[$month]['CCM Profit']
+            $this->data['historical']['CCM Profit'][$month]
                 = ($this->clhpppm) ? '$' . ($billable * 40 - $billable * $this->clhpppm) : 'N/A';
 
         }

@@ -48,8 +48,7 @@ class SalesReportsController extends Controller
             ))
                 ->data();
 
-        dd($data);
-
+//        dd($data);
 
         return view('sales.by-provider.report', ['data' => $data]);
 
@@ -89,7 +88,7 @@ class SalesReportsController extends Controller
             ))
                 ->data();
 
-        dd($data);
+//        dd($data);
 
         $data['name'] = $practice->display_name;
         $data['start'] = Carbon::parse($input['start_date'])->toDateString();
