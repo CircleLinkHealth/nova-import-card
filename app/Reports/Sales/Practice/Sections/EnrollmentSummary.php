@@ -48,37 +48,6 @@ class EnrollmentSummary extends SalesReportSection
 
         $this->data['historical'] = $this->service->historicalEnrollmentPerformance($this->practice, Carbon::parse($this->start), Carbon::parse($this->end));
 
-//        for ($i = 0; $i < 4; $i++) {
-//
-//            $billable = $this->service->billableCountForMonth($this->practice, Carbon::parse($this->start)->subMonths($i));
-//
-//            //if first month, do a month-to-date
-//            if ($i == 0) {
-//
-//                $month = Carbon::parse($this->start)->format('F Y');
-//                $this->data['historical'][$month] =
-//                                        $this->service->enrollmentCountByPractice(
-//                                                    $this->practice,
-//                                                    $this->start,
-//                                                    $this->end);
-//
-//                $this->data['historical'][$month]['billable'] = $billable;
-//
-//            } else {
-//
-//                $iMonthsAgo = Carbon::parse($this->start)->subMonths($i);
-//                $start = Carbon::parse($iMonthsAgo)->firstOfMonth();
-//                $end = Carbon::parse($iMonthsAgo)->lastOfMonth();
-//
-//                $month = Carbon::parse($iMonthsAgo)->format('F Y');
-//                $this->data['historical'][$month] = $this->service->enrollmentCountByPractice($this->practice,
-//                    $start, $end);
-//
-//                $this->data['historical'][$month]['billable'] = $billable;
-//            }
-
-//        }
-
         return $this->data;
 
     }

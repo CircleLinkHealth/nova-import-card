@@ -167,6 +167,67 @@ class ProviderStatsHelper
 
     }
 
+    public function historicalEnrollmentPerformance(User $billingProvider, Carbon $start, Carbon $end){
+
+        $initTime = Carbon::parse($start)->toDateString();
+        $endTime = Carbon::parse($end)->toDateString();
+
+        $patients = User::ofType('participant')
+            ->whereHas('patientCareTeamMembers', function ($q) use ($billingProvider){
+
+                $q->whereType(PatientCareTeamMember::BILLING_PROVIDER)
+                    ->whereMemberUserId($billingProvider->id);
+
+            })->get();
+
+        for ($i = 0; $i < 5; $i++){
+
+            if($i == 0){
+
+                $start = Carbon::parse($initTime);
+                $end = Carbon::parse($endTime);
+
+            } else {
+
+                $start = Carbon::parse($initTime)->subMonth($i)->firstOfMonth();
+                $end = Carbon::parse($initTime)->subMonth($i)->endOfMonth();
+
+            }
+
+            $index = $start->toDateString();
+            $data['withdrawn'][$index] = 0;
+            $data['paused'][$index] = 0;
+            $data['added'][$index] = 0;
+
+            foreach ($patients as $patient){
+
+                if($patient->created_at > $start->toDateTimeString() && $patient->created_at <= $end->toDateTimeString()){
+
+                    $data['added'][$index]++;
+
+                }
+
+                if($patient->patientInfo->date_withdrawn > $start->toDateTimeString() && $patient->patientInfo->date_withdrawn <= $end->toDateTimeString()){
+
+                    $data['withdrawn'][$index]++;
+
+                }
+
+                if($patient->patientInfo->date_paused > $start->toDateTimeString() && $patient->patientInfo->date_paused <= $end->toDateTimeString()){
+
+                    $data['paused'][$index]++;
+
+                }
+
+            }
+
+
+        }
+
+        return $data;
+
+    }
+
     public function totalBilled(User $billingProvider){
 
         return PatientMonthlySummary

@@ -48,7 +48,9 @@ class SalesReportsController extends Controller
             ))
                 ->data();
 
-//        dd($data);
+        $data['name'] = $provider->fullName;
+        $data['start'] = Carbon::parse($input['start_date'])->toDateString();
+        $data['end'] = Carbon::parse($input['end_date'])->toDateString();
 
         return view('sales.by-provider.report', ['data' => $data]);
 
