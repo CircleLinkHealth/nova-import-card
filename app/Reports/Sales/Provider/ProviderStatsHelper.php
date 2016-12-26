@@ -68,13 +68,15 @@ class ProviderStatsHelper
 
         $id = $provider->id;
 
-        return gmdate('H:i', Activity
+        $duration = Activity
             ::whereHas('patient',function ($q) use ($id){
-            $q->hasBillingProvider($id);
+                $q->hasBillingProvider($id);
             })
-            ->where('created_at', '>', $this->start)
-            ->where('created_at', '<', $this->end)
-            ->count('duration'));
+            ->where('created_at', '>', $this->start->toDateTimeString())
+            ->where('created_at', '<', $this->end->toDateTimeString())
+            ->sum('duration');
+
+        return gmdate('h:i', $duration);
 
     }
 
