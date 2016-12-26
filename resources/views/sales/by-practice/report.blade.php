@@ -125,4 +125,6 @@
 
     <hr/>
 
+    @include('sales.partials.footer', ['data' => $data])
+
 </div>

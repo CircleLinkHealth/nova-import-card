@@ -125,4 +125,5 @@ $practiceSection = \App\Reports\Sales\Provider\Sections\PracticeDemographics::cl
     <hr/>
 
     @include('sales.partials.footer', ['data' => $data])
+
 </div>
