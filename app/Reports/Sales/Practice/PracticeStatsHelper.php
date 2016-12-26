@@ -241,6 +241,7 @@ class PracticeStatsHelper
 
     }
 
+
     public function billableCountForMonth(Practice $practice, Carbon $month){
 
         return User::ofType('participant')

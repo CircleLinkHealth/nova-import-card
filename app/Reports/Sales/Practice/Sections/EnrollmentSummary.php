@@ -42,9 +42,9 @@ class EnrollmentSummary extends SalesReportSection
             ->get()
             ->toArray();
 
-        $this->data['enrolled'] = $enrollmentCumulative[0]['total'] ?? 0;
-        $this->data['paused'] = $enrollmentCumulative[1]['total'] ?? 0;
-        $this->data['withdrawn'] = $enrollmentCumulative[2]['total'] ?? 0;
+        $this->data['enrolled'] = $enrollmentCumulative[0]['total'] ?? 'N/A';
+        $this->data['paused'] = $enrollmentCumulative[1]['total'] ?? 'N/A';
+        $this->data['withdrawn'] = $enrollmentCumulative[2]['total'] ?? 'N/A';
 
         $this->data['historical'] = $this->service->historicalEnrollmentPerformance($this->practice, Carbon::parse($this->start), Carbon::parse($this->end));
 

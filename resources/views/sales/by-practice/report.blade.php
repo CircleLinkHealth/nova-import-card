@@ -1,10 +1,10 @@
 <?php
 
-$enrollmentSection = \App\Reports\Sales\Practice\Sections\EnrollmentSummary::class;
-$rangeSection = \App\Reports\Sales\Practice\Sections\RangeSummary::class;
-$financialSection = \App\Reports\Sales\Practice\Sections\FinancialSummary::class;
-$practiceSection = \App\Reports\Sales\Practice\Sections\PracticeDemographics::class;
-//dd($data[$enrollmentSection]);
+    $enrollmentSection = \App\Reports\Sales\Practice\Sections\EnrollmentSummary::class;
+    $rangeSection = \App\Reports\Sales\Practice\Sections\RangeSummary::class;
+    $financialSection = \App\Reports\Sales\Practice\Sections\FinancialSummary::class;
+    $practiceSection = \App\Reports\Sales\Practice\Sections\PracticeDemographics::class;
+
 ?>
 
 
@@ -20,33 +20,14 @@ $practiceSection = \App\Reports\Sales\Practice\Sections\PracticeDemographics::cl
     </div>
 
     @if(array_key_exists($rangeSection, $data))
-        <div>
-            <h3>Overall Summary</h3>
 
-            <p>
-                Last week at your offices CircleLink nurses placed {{$data[$rangeSection]['no_of_call_attempts']}}
-                calls, including {{$data[$rangeSection]['no_of_successful_calls']}} successful phone sessions, totaling
-                {{$data[$rangeSection]['total_ccm_time']}} care hours. We also collected
-                {{$data[$rangeSection]['no_of_biometric_entries']}} vitals readings and our nurses forwarded
-                {{$data[$rangeSection]['no_of_forwarded_notes']}} notifications to you.
-            </p>
-
-            <p>
-                You can see a list of forwarded notes for your patients <a
-                        href="{{$data[$rangeSection]['link_to_notes_listing']}}">here</a>,
-                including {{$data[$rangeSection]['no_of_forwarded_emergency_notes']}} notifications that your patient is
-                in
-                the ER/Hospital.
-            </p>
-
-        </div>
+        @include('sales.partials.overall-section', ['data' => $data])
 
     @endif
 
-    <hr/>
-
-
     @if(array_key_exists($enrollmentSection, $data))
+
+        <hr/>
 
         <h3>Enrollment Summary</h3>
 
@@ -89,10 +70,9 @@ $practiceSection = \App\Reports\Sales\Practice\Sections\PracticeDemographics::cl
 
     @endif
 
-    <hr/>
-
-
     @if(array_key_exists($financialSection, $data))
+
+        <hr/>
 
         <h3>Financial Performance</h3>
 
@@ -135,10 +115,9 @@ $practiceSection = \App\Reports\Sales\Practice\Sections\PracticeDemographics::cl
 
     @endif
 
-    <hr/>
-
-
     @if(array_key_exists($practiceSection, $data))
+
+        <hr/>
 
         @include('sales.partials.practice-section', ['data' => $data])
 

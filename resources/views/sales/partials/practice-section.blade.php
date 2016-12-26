@@ -4,11 +4,10 @@
     are {{$data[$practiceSection]['total']}} members on your CCM team (that’s not
     including {{$data[$practiceSection]['disabled']}} disabled users).
 </p>
-@if($data[$practiceSection]['total'] != 0)
+@if($data[$practiceSection]['total'] > 0)
 
-    <p>Of the active users, {{$data[$practiceSection]['providers']}} are Providers, {{$data[$practiceSection]['cc']}}
-        are
-        RNs, {{$data[$practiceSection]['oas']}} are office staff and {{$data[$practiceSection]['mas']}} are MAs.
+    <p>Of the active users, {{$data[$practiceSection]['providers']}} are Providers, {{$data[$practiceSection]['rns']}}
+        are RNs or MAs and {{$data[$practiceSection]['oas']}} are office staff.
     </p>
 
 @endif

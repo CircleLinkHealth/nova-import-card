@@ -28,11 +28,12 @@ class FinancialSummary extends SalesReportSection
     public function renderSection()
     {
 
-        $total =  $this->service->totalBilled($this->practice);
+        $total = $this->service->totalBilled($this->practice);
         $this->data['billed_so_far'] = $total;
 
-        $this->data['revenue_so_far'] = '$'.round($total * 40, -2);
-        $this->data['profit_so_far']  = '$'.($total * 40 - $total * $this->clhpppm);
+
+        $this->data['revenue_so_far'] = '$' . round($total * 40, -2);
+        $this->data['profit_so_far'] = '$' . ($total * 40 - $total * $this->clhpppm);
 
         for ($i = 1; $i < 5; $i++) {
 
@@ -43,15 +44,26 @@ class FinancialSummary extends SalesReportSection
             $month = Carbon::parse($iMonthsAgo)->format('F Y');
 
             $billable = $this->service->billableCountForMonth($this->practice, $start);
+            $billableDollars = $billable * 40;
+            $billableRounded = intval($billableDollars / 100) * 100;
+
+            if($billableDollars == 0){
+                $profit = 0;
+            } else {
+                $profit = ($billableRounded * ( 1 - ($this->clhpppm/40)));
+            }
+
 
             $this->data['historical']['Billable'][$month]
                 = $billable;
 
             $this->data['historical']['CCM Revenue'][$month]
-                = '$' . round($billable * 40, -2);
+                = '$' . $billableRounded;
 
             $this->data['historical']['CCM Profit'][$month]
-                = ($this->clhpppm) ? '$' . ($billable * 40 - $billable * $this->clhpppm) : 'N/A';
+                = ($this->clhpppm)
+                ? '$' . round($profit, 0)
+                : 'N/A';
 
         }
 

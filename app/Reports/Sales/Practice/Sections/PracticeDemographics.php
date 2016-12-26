@@ -41,14 +41,18 @@ class PracticeDemographics extends SalesReportSection
             ->whereUserStatus(0)
             ->count();
 
-        $total = $providers + $mas + $cc + $oa - $disabled_count;
+        $total = $providers + $mas + $oa - $disabled_count;
+
+        //prevent non negative total
+        if($total < 0){
+            $total = 0;
+        }
 
         return [
 
             'lead' =>  $lead,
             'providers' => $providers,
-            'mas' => $mas,
-            'cc' => $cc,
+            'rns' => $mas,
             'oas' => $oa,
             'disabled' => $disabled_count,
 
