@@ -129,7 +129,7 @@ class OnboardingTest extends TestCase
 
     public function test_post_locations()
     {
-        dd((new LocationFormRequest)->post());
+        (new LocationFormRequest)->post();
         $this->call('POST', route('post.onboarding.store.locations'), []);
     }
 
