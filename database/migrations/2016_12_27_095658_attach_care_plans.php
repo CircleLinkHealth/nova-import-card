@@ -13,6 +13,8 @@ class AttachCarePlans extends Migration
      */
     public function up()
     {
+        //this is to map the fields we are migrating from PatientInfo to CarePlan
+        //CarePlan field => PatientInfo Field
         $patientInfoToCarePlanMap = [
             'provider_approver_id' => 'careplan_provider_approver',
             'qa_approver_id'       => 'careplan_qa_approver',
