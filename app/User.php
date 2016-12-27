@@ -336,7 +336,7 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
 
     public function carePlan()
     {
-        return $this->hasOne(CarePlan::class, 'patient_id', 'id');
+        return $this->hasOne(CarePlan::class, 'user_id', 'id');
     }
 
     public function inboundCalls()

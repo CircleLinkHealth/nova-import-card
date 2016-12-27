@@ -29,17 +29,19 @@ class CarePlan extends Model
         ) {
             $pendingApprovals = User::ofType('participant')
                 ->intersectPracticesWith($user)
-                ->whereHas('patientInfo', function ($q) {
-                    $q->whereCareplanStatus('draft');
+                ->whereHas('carePlan', function ($q) {
+                    $q->whereStatus('draft');
                 })
                 ->count();
         } else {
             if ($user->hasRole(['provider'])) {
                 $pendingApprovals = User::ofType('participant')
                     ->intersectPracticesWith($user)
+                    ->whereHas('carePlan', function ($q) {
+                        $q->whereStatus('qa_approved');
+                    })
                     ->whereHas('patientInfo', function ($q) {
-                        $q->whereCareplanStatus('qa_approved')
-                            ->whereCcmStatus('enrolled');
+                        $q->whereCcmStatus('enrolled');
                     })
                     ->whereHas('patientCareTeamMembers', function ($q) use
                     (
@@ -62,7 +64,7 @@ class CarePlan extends Model
 
     public function patient()
     {
-        return $this->belongsTo(User::class, 'patient_id');
+        return $this->belongsTo(User::class, 'user_id');
     }
 
     public function getCarePlanTemplateIdAttribute()
