@@ -4,8 +4,19 @@ use Illuminate\Database\Eloquent\Model;
 
 class CarePlan extends Model
 {
-
-    protected $guarded = [];
+    protected $fillable = [
+        'patient_id',
+        'provider_approver_id',
+        'qa_approver_id',
+        'care_plan_template_id',
+        'type',
+        'status',
+        'qa_date',
+        'provider_date',
+        'last_printed',
+        'created_at',
+        'updated_at',
+    ];
 
     public static function getNumberOfCareplansPendingApproval(User $user)
     {
