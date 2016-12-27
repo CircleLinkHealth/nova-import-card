@@ -489,7 +489,11 @@ trait CarePlanHelpers
             'hospital_reminder_optin'    => 'Y',
             'hospital_reminder_time'     => '19:00',
             'hospital_reminder_areas'    => 'TBD',
-            'careplan_status'            => 'draft',
+        ]);
+
+        $this->seeInDatabase('care_plans', [
+            'user_id' => $patient->id,
+            'status'  => 'draft',
         ]);
 
         //By default PHPUnit fails the test if the output buffer wasn't closed.

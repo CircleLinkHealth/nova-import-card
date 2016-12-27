@@ -1509,40 +1509,40 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
 
     public function getCarePlanProviderApproverAttribute()
     {
-        if (!$this->patientInfo) {
+        if (!$this->carePlan) {
             return '';
         }
 
-        return $this->patientInfo->careplan_provider_approver;
+        return $this->carePlan->provider_approver_id;
     }
 
     public function setCarePlanProviderApproverAttribute($value)
     {
-        if (!$this->patientInfo) {
+        if (!$this->carePlan) {
             return '';
         }
-        $this->patientInfo->careplan_provider_approver = $value;
-        $this->patientInfo->save();
+        $this->carePlan->provider_approver_id = $value;
+        $this->carePlan->save();
 
         return true;
     }
 
     public function getCarePlanProviderApproverDateAttribute()
     {
-        if (!$this->patientInfo) {
+        if (!$this->carePlan) {
             return '';
         }
 
-        return $this->patientInfo->careplan_provider_date;
+        return $this->carePlan->provider_date;
     }
 
     public function setCarePlanProviderApproverDateAttribute($value)
     {
-        if (!$this->patientInfo) {
+        if (!$this->carePlan) {
             return '';
         }
-        $this->patientInfo->careplan_provider_date = $value;
-        $this->patientInfo->save();
+        $this->carePlan->provider_date = $value;
+        $this->carePlan->save();
 
         return true;
     }
@@ -1569,20 +1569,20 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
 
     public function getCareplanLastPrintedAttribute()
     {
-        if (!$this->patientInfo) {
+        if (!$this->carePlan) {
             return '';
         }
 
-        return $this->patientInfo->careplan_last_printed;
+        return $this->carePlan->last_printed;
     }
 
     public function setCareplanLastPrintedAttribute($value)
     {
-        if (!$this->patientInfo) {
+        if (!$this->carePlan) {
             return '';
         }
-        $this->patientInfo->careplan_last_printed = $value;
-        $this->patientInfo->save();
+        $this->carePlan->last_printed = $value;
+        $this->carePlan->save();
 
         return true;
     }
