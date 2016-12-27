@@ -1549,20 +1549,20 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
 
     public function getCarePlanStatusAttribute()
     {
-        if (!$this->patientInfo) {
+        if (!$this->carePlan) {
             return '';
         }
 
-        return $this->patientInfo->careplan_status;
+        return $this->carePlan->status;
     }
 
     public function setCarePlanStatusAttribute($value)
     {
-        if (!$this->patientInfo) {
+        if (!$this->carePlan) {
             return '';
         }
-        $this->patientInfo->careplan_status = $value;
-        $this->patientInfo->save();
+        $this->carePlan->status = $value;
+        $this->carePlan->save();
 
         return true;
     }

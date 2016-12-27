@@ -2,10 +2,6 @@
 
 use App\Reports\Sales\Provider\SalesByProviderReport;
 
-//event(new PdfableCreated(Note::find(16696)));
-//event(new PdfableCreated(Note::find(17438)));
-
-
 if (app()->environment() != 'production') {
     Route::get('rohan', function () {
 

@@ -72,4 +72,10 @@ class CarePlan extends Model
         //@todo: pretty sure that's not the way it's done. come back here later
         return $this->attributes['care_plan_template_id'];
     }
+
+    public function providerApproverUser()
+    {
+        return $this->belongsTo(User::class, 'provider_approver_id', 'id');
+    }
+
 }

@@ -255,8 +255,7 @@ class PatientController extends Controller
                 'phoneNumbers'           => function ($q) {
                     $q->where('type', '=', PhoneNumber::HOME);
                 },
-                'patientInfo'            => function ($q) {
-                    $q->with('carePlanProviderApproverUser');
+                'carePlan'               => function ($q) {
                 },
             ])
             ->get();
@@ -276,22 +275,21 @@ class PatientController extends Controller
                 continue 1;
             }
 
-            // careplan status stuff from 2.x
-            $careplanStatus = $patient->carePlanStatus;
+            $careplanStatus = $patient->carePlan->status ?? '';
             $careplanStatusLink = '';
             $approverName = 'NA';
             $tooltip = 'NA';
 
             if ($careplanStatus == 'provider_approved') {
-                $approver = $patient->patientInfo->carePlanProviderApproverUser;
+                $approver = $patient->carePlan->providerApproverUser;
                 if ($approver) {
                     $approverName = $approver->fullName;
-                    $carePlanProviderDate = $patient->carePlanProviderDate;
-
-                    $careplanStatus = 'Approved';
-                    $careplanStatusLink = '<span data-toggle="" title="' . $approverName . ' ' . $carePlanProviderDate . '">Approved</span>';
-                    $tooltip = $approverName . ' ' . $carePlanProviderDate;
                 }
+
+                $carePlanProviderDate = $patient->carePlan->provider_date;
+                $careplanStatus = 'Approved';
+                $careplanStatusLink = '<span data-toggle="" title="' . $approverName . ' ' . $carePlanProviderDate . '">Approved</span>';
+                $tooltip = $approverName . ' ' . $carePlanProviderDate;
             } else {
                 if ($careplanStatus == 'qa_approved') {
                     $careplanStatus = 'Approve Now';
