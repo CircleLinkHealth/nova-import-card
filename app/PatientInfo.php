@@ -92,12 +92,6 @@ class PatientInfo extends Model {
 		return $this->hasMany(PatientMonthlySummary::class, 'patient_info_id', 'id');
 	}
 
-    public function carePlanProviderApproverUser()
-    {
-        return $this->belongsTo(User::class, 'user_id', 'id');
-    }
-
-
 	// END RELATIONSHIPS
 
 

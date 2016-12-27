@@ -1,4 +1,5 @@
-<?php
+<?php namespace Tests\Helpers\FormRequests\Onboarding;
+
 use Tests\Helpers\FormRequests\FormRequest;
 
 /**

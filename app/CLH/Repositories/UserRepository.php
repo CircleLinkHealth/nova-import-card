@@ -1,5 +1,7 @@
 <?php namespace App\CLH\Repositories;
 
+use App\CarePlan;
+use App\CarePlanTemplate;
 use App\NurseInfo;
 use App\PatientInfo;
 use App\PhoneNumber;
@@ -267,6 +269,16 @@ class UserRepository implements \App\CLH\Contracts\Repositories\UserRepository
                     : $contactDays[$i] . ', ';
             }
             $params->add(['preferred_cc_contact_days' => $contactDaysDelmited]);
+        }
+
+        if ($params->has('careplan_status')) {
+            CarePlan::create([
+                'user_id'               => $user->id,
+                'care_plan_template_id' => CarePlanTemplate::whereType(CarePlanTemplate::CLH_DEFAULT)->first()->id,
+                'status'                => $params->get('careplan_status'),
+            ]);
+
+            $params->remove('careplan_status');
         }
 
         foreach ($patientInfo as $key => $value) {

@@ -17,7 +17,6 @@ use App\PatientContactWindow;
 use App\PatientInfo;
 use App\Practice;
 use App\Role;
-use App\Services\Calls\SchedulerService;
 use App\User;
 use Carbon\Carbon;
 use Faker\Factory;
@@ -113,8 +112,7 @@ trait UserHelpers
             ->see('CarePlanManager')
             ->type($user->email, 'email')
             ->type('password', 'password')
-            ->press('Log In')
-            ->seePageIs('/manage-patients/dashboard');
+            ->press('Log In');
 
         //By default PHPUnit fails the test if the output buffer wasn't closed.
         //So we're adding this to make the test work.

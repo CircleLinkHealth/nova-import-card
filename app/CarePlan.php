@@ -2,10 +2,21 @@
 
 use Illuminate\Database\Eloquent\Model;
 
-class PatientCarePlan extends Model
+class CarePlan extends Model
 {
-
-    protected $guarded = [];
+    protected $fillable = [
+        'user_id',
+        'provider_approver_id',
+        'qa_approver_id',
+        'care_plan_template_id',
+        'type',
+        'status',
+        'qa_date',
+        'provider_date',
+        'last_printed',
+        'created_at',
+        'updated_at',
+    ];
 
     public static function getNumberOfCareplansPendingApproval(User $user)
     {
@@ -18,17 +29,19 @@ class PatientCarePlan extends Model
         ) {
             $pendingApprovals = User::ofType('participant')
                 ->intersectPracticesWith($user)
-                ->whereHas('patientInfo', function ($q) {
-                    $q->whereCareplanStatus('draft');
+                ->whereHas('carePlan', function ($q) {
+                    $q->whereStatus('draft');
                 })
                 ->count();
         } else {
             if ($user->hasRole(['provider'])) {
                 $pendingApprovals = User::ofType('participant')
                     ->intersectPracticesWith($user)
+                    ->whereHas('carePlan', function ($q) {
+                        $q->whereStatus('qa_approved');
+                    })
                     ->whereHas('patientInfo', function ($q) {
-                        $q->whereCareplanStatus('qa_approved')
-                            ->whereCcmStatus('enrolled');
+                        $q->whereCcmStatus('enrolled');
                     })
                     ->whereHas('patientCareTeamMembers', function ($q) use
                     (
@@ -51,7 +64,7 @@ class PatientCarePlan extends Model
 
     public function patient()
     {
-        return $this->belongsTo(User::class, 'patient_id');
+        return $this->belongsTo(User::class, 'user_id');
     }
 
     public function getCarePlanTemplateIdAttribute()
@@ -59,4 +72,10 @@ class PatientCarePlan extends Model
         //@todo: pretty sure that's not the way it's done. come back here later
         return $this->attributes['care_plan_template_id'];
     }
+
+    public function providerApproverUser()
+    {
+        return $this->belongsTo(User::class, 'provider_approver_id', 'id');
+    }
+
 }

@@ -1,7 +1,7 @@
 <?php
 
+use App\CarePlan;
 use App\Note;
-use App\PatientCarePlan;
 use App\PatientReports;
 use Illuminate\Database\Migrations\Migration;
 
@@ -18,7 +18,7 @@ class ChangePdfReportsNames extends Migration
             if ($r->file_type == 'note') {
                 $r->file_type = Note::class;
             } elseif ($r->file_type == 'careplan') {
-                $r->file_type = PatientCarePlan::class;
+                $r->file_type = CarePlan::class;
             }
             $r->save();
 

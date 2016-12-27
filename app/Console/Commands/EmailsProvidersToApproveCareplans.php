@@ -2,9 +2,9 @@
 
 namespace App\Console\Commands;
 
+use App\CarePlan;
 use App\CLH\Contracts\Repositories\UserRepository;
 use App\Models\EmailSettings;
-use App\PatientCarePlan;
 use Carbon\Carbon;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Mail;
@@ -89,7 +89,7 @@ class EmailsProvidersToApproveCareplans extends Command
                 //            'mantoniou@circlelinkhealth.com',
             ];
 
-            $numberOfCareplans = PatientCarePlan::getNumberOfCareplansPendingApproval($user);
+            $numberOfCareplans = CarePlan::getNumberOfCareplansPendingApproval($user);
 
             if ($numberOfCareplans < 1) {
                 return false;
