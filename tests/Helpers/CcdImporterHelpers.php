@@ -25,8 +25,9 @@ trait CcdImporterHelpers
         $pathToCcda,
         CcdVendor $ccdVendor
     ) {
-        $this->actingAs($this->admin)
-            ->visit(route('patients.dashboard'))
+        $this->userLogin($this->admin);
+
+        $this->visit(route('patients.dashboard'))
             ->click('Import CCDs')
             ->seePageIs('/ccd-importer/create')
             ->findElement("label-vendor-{$ccdVendor->id}")
