@@ -6,7 +6,7 @@
 
 <div style="text-align: center">Made by CircleLink Health ▪ <a href="{!! 'https://medium.com/@circlelink' !!}"> Our
         Blog </a>
-    [note: launching blog with our content]
+    [note: launching blog with our content
 </div>
 
 <br/><br/>
