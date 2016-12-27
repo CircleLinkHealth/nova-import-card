@@ -11,9 +11,31 @@ $practiceSection = \App\Reports\Sales\Provider\Sections\PracticeDemographics::cl
 
 @section('content')
 
+    <div class="page-header">
+        <div style="text-align: center"><img src="/img/ui/logo.png"
+                                             alt="Care Plan Manager"
+                                             style="position:relative;"
+                                             width="200px"/>
+            <h1 style="margin-bottom: 0px">{{$data['name']}}'s Summary</h1>
+            <span>(Your Patients)</span><br />
+
+            <span>{{Carbon\Carbon::parse($data['start'])->format('l, jS F') . ' - ' . Carbon\Carbon::parse($data['end'])->format('l, jS F') }}</span>
+
+        </div>
+    </div>
+
     @if(array_key_exists($rangeSection, $data))
 
-        @include('sales.partials.overall-section', ['data' => $data])
+        <p>Last week CircleLink nurses placed <b>{{$data[$rangeSection]['no_of_call_attempts']}}</b>
+            calls to your patients, including <b>{{$data[$rangeSection]['no_of_successful_calls']}}</b>
+            successful phone sessions, totaling <b>{{$data[$rangeSection]['total_ccm_time']}}</b>
+            care hours. We also collected <b>{{$data[$rangeSection]['no_of_biometric_entries']}}</b>
+            vital and adherence reading(s), and our nurses forwarded <b>{{$data[$rangeSection]['no_of_forwarded_notes']}}</b>
+            note(s) to you.</p>
+
+        <p>You can see a list of forwarded notes for your patients <a href="{{$data[$rangeSection]['link_to_notes_listing']}}">here</a>,
+            including <b>{{$data[$rangeSection]['no_of_forwarded_emergency_notes']}}</b>
+            notification(s) indicating a patient visited a ER/Hospital.</p>
 
     @endif
 
@@ -21,12 +43,12 @@ $practiceSection = \App\Reports\Sales\Provider\Sections\PracticeDemographics::cl
 
         @include('sales.partials.enrollement-section', ['data' => $data])
 
+
     @endif
 
     @if(array_key_exists($financialSection, $data))
 
         @include('sales.partials.financial-section', ['data' => $data])
-
 
     @endif
 

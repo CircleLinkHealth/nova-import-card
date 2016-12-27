@@ -12,6 +12,7 @@ use App\Activity;
 use App\Call;
 use App\MailLog;
 use App\Observation;
+use App\PatientInfo;
 use App\PatientMonthlySummary;
 use App\Practice;
 use App\User;
@@ -69,11 +70,14 @@ class PracticeStatsHelper
             ::whereHas('patient',function ($q) use ($id){
                 $q->whereProgramId($id);
             })
-            ->where('created_at', '>', $this->start->toDateTimeString())
-            ->where('created_at', '<', $this->end->toDateTimeString())
+            ->where('performed_at', '>', $this->start->toDateTimeString())
+            ->where('performed_at', '<', $this->end->toDateTimeString())
             ->sum('duration');
 
-        return gmdate('h:i', $duration);
+        $getHours = floor($duration / 3600);
+        $getMins = floor(($duration - ($getHours*3600)) / 60);
+
+        return gmdate($getHours.':'.$getMins);
 
 
     }
@@ -102,9 +106,10 @@ class PracticeStatsHelper
                     $k->whereProgramId($id);
                 });
             })
+        ->where('created_at', '>', $this->start)
+        ->where('created_at', '<', $this->end)
         ->whereNotNull('note_id')
         ->count();
-
     }
 
     public function emergencyNotesCount(Practice $practice){
@@ -119,7 +124,10 @@ class PracticeStatsHelper
                     $k->whereProgramId($id);
 
                 });
-            })->count();
+            })
+            ->where('created_at', '>', $this->start)
+            ->where('created_at', '<', $this->end)
+            ->count();
 
     }
 
@@ -240,7 +248,6 @@ class PracticeStatsHelper
             ->count();
 
     }
-
 
     public function billableCountForMonth(Practice $practice, Carbon $month){
 
