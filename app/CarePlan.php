@@ -5,7 +5,7 @@ use Illuminate\Database\Eloquent\Model;
 class CarePlan extends Model
 {
     protected $fillable = [
-        'patient_id',
+        'user_id',
         'provider_approver_id',
         'qa_approver_id',
         'care_plan_template_id',
