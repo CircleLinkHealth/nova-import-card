@@ -4,10 +4,8 @@ use App\CarePlan;
 use App\ForeignId;
 use App\Location;
 use App\Models\CCD\CcdProblem;
-use App\Models\CPM\Cpm;
 use App\Models\CPM\CpmBiometric;
 use App\Models\CPM\CpmMisc;
-use App\PatientCarePlan;
 use App\PatientReports;
 use App\User;
 use App\UserMeta;
@@ -545,7 +543,7 @@ class ReportsService
             'patient_id'  => $user->id,
             'patient_mrn' => $user->getMRNAttribute(),
             'provider_id' => $foreign_id->foreign_id,
-            'file_type'   => PatientCarePlan::class,
+            'file_type'   => CarePlan::class,
             'file_base64' => $base_64_report,
             'location_id' => $locationId,
         ]);

@@ -2,7 +2,7 @@
 
 use Illuminate\Database\Eloquent\Model;
 
-class PatientCarePlan extends Model
+class CarePlan extends Model
 {
 
     protected $guarded = [];

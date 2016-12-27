@@ -1,11 +1,11 @@
 <?php namespace App\Http\Controllers\Patient;
 
 use App\CareItem;
+use App\CarePlan;
 use App\CPRulesQuestions;
 use App\Events\CarePlanWasApproved;
 use App\Http\Controllers\Controller;
 use App\Observation;
-use App\PatientCarePlan;
 use App\PatientCareTeamMember;
 use App\PhoneNumber;
 use App\Practice;
@@ -28,7 +28,7 @@ class PatientController extends Controller
      */
     public function showDashboard(Request $request)
     {
-        $pendingApprovals = PatientCarePlan::getNumberOfCareplansPendingApproval(auth()->user());
+        $pendingApprovals = CarePlan::getNumberOfCareplansPendingApproval(auth()->user());
 
         return view('wpUsers.patient.dashboard', compact(['pendingApprovals']));
     }
