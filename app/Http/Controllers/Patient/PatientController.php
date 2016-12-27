@@ -242,6 +242,7 @@ class PatientController extends Controller
         $patients = User::intersectPracticesWith(auth()->user())
             ->ofType('participant')
             ->with('primaryPractice')
+            ->with('carePlan')
             ->with([
                 'observations'           => function ($query) {
                     $query->where('obs_key', '!=', 'Outbound');
@@ -254,8 +255,6 @@ class PatientController extends Controller
                 },
                 'phoneNumbers'           => function ($q) {
                     $q->where('type', '=', PhoneNumber::HOME);
-                },
-                'carePlan'               => function ($q) {
                 },
             ])
             ->get();
