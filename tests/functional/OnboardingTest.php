@@ -3,6 +3,7 @@
 use App\Entities\Invite;
 use App\User;
 use Faker\Factory;
+use Tests\Helpers\FormRequests\Onboarding\LocationFormRequest;
 
 class OnboardingTest extends TestCase
 {
