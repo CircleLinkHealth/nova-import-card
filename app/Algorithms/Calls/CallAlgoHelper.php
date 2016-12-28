@@ -100,6 +100,7 @@ trait CallAlgoHelper
 
             return $this->prediction;
 
+
         } else {
 
             $found = $this->checkAdditionalNurses();
@@ -155,6 +156,7 @@ trait CallAlgoHelper
         //supplies $this->matchArray
         $date_matches = $this->checkForIntersectingDays($nurse); //first days
 
+
         foreach ($date_matches as $key => $value) {
 
             if (isset($value['patient']) && isset($value['nurse'])) {
@@ -174,6 +176,17 @@ trait CallAlgoHelper
                     return $match;
 
                 }
+
+            } else { // temp override
+
+                $match['date'] = $this->prediction['date'];
+                $match['window_start'] = $this->prediction['window_start'];
+                $match['window_end'] = $this->prediction['window_end'];
+
+                $match['window_match'] = 'No windows found, assigning to same nurse: ' . $nurse->user->fullName;
+                $match['nurse'] = $nurse->user_id;
+
+                return $match;
 
             }
 
