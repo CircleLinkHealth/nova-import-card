@@ -3,12 +3,14 @@
 namespace App;
 
 use App\Contracts\PdfReport;
-use App\Contracts\PdfReportHandler;
+use App\Traits\PdfReportTrait;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
 
 class Note extends Model implements PdfReport
 {
+    use PdfReportTrait;
+
     protected $table = 'notes';
 
     protected $fillable = [
@@ -72,54 +74,5 @@ class Note extends Model implements PdfReport
         $pdf->save($file_name, true);
 
         return $file_name;
-    }
-
-    /**
-     * Dispatch the PDF report.
-     *
-     * @return mixed
-     */
-    public function pdfHandleCreated()
-    {
-        if (!$this->hasPdfHandler()) {
-            return false;
-        }
-
-        $this->pdfReportHandler()
-            ->pdfHandle($this);
-    }
-
-    /**
-     * Check whether this PDFable has a pdf handler
-     *
-     * @return bool
-     */
-    public function hasPdfHandler() : bool
-    {
-        $practice = $this->patient
-            ->primaryPractice;
-
-        if (!$practice->ehr) {
-            return false;
-        }
-
-        if (!$practice->ehr->pdf_report_handler) {
-            return false;
-        }
-
-        return true;
-    }
-
-    /**
-     * Get the PDF dispatcher.
-     *
-     * @return PdfReportHandler
-     */
-    public function pdfReportHandler() : PdfReportHandler
-    {
-        return app($this->patient
-            ->primaryPractice
-            ->ehr
-            ->pdf_report_handler);
     }
 }
