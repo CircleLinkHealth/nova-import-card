@@ -26,7 +26,7 @@
 
     @foreach($data[$financialSection]['historical'] as $key => $values)
         <tr>
-            <td style="width: 27%">{{$key}}</td>
+            <td style="width: 30%"><strong>{{$key}}</strong></td>
             @foreach($values as $value)
                 <td>{{$value}}</td>
             @endforeach
