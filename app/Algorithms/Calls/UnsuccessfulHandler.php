@@ -203,8 +203,7 @@ class UnsuccessfulHandler implements CallHandler
                                     } else {
 
                                         $this->logic = 'Less than 17, tomorrow. ';
-
-                                        return $this->nextCallDate->tomorrow();
+                                        return $this->nextCallDate->addDay(1);
 
                                     }
 
