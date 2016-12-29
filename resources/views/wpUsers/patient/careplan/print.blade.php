@@ -360,7 +360,13 @@ if (isset($patient) && !empty($patient)) {
                             <ul><strong>Upcoming</strong><BR>
                             @if(isset($appointments['upcoming'] ))
                                     @foreach($appointments['upcoming'] as $upcoming)
-                                    <li class='subareas__item print-row'>{{$upcoming}}</li>
+                                    <li style="list-style: dash">
+
+                                        - <strong>{{$upcoming['name']}}, ({{$upcoming['specialty']}})</strong> visit on {{$upcoming['date']}}
+                                        at {{$upcoming['time']}}. {{$upcoming['type']}}
+                                        {{$upcoming['address']}}; {{$upcoming['phone']}}
+
+                                    </li>
                                     @endforeach
                             @else
                                 <p>None</p>
@@ -369,7 +375,13 @@ if (isset($patient) && !empty($patient)) {
                             <ul><strong>Past</strong><BR>
                                 @if(isset($appointments['past'] ))
                                         @foreach($appointments['past'] as $past)
-                                            <li>{{$past}}</li>
+                                        <li style="list-style: dash">
+
+                                            - <strong>{{$past['name']}}, {{$past['specialty']}}</strong> visit on {{$past['date']}}
+                                             at {{$past['time']}}. {{$past['type']}}
+                                             {{$past['address']}} {{$past['phone']}}
+
+                                        </li>
                                         @endforeach
                                 @else
                                     <p>None</p>

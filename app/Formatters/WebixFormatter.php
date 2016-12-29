@@ -413,17 +413,33 @@ class WebixFormatter implements ReportFormatter
         foreach ($upcoming as $appt){
 
             $provider = User::find($appt->provider_id);
-            $providerName = $provider->fullName;
-            $date = $appt->date;
-            $time = Carbon::parse($appt->time)->format('H:i A') . ' ' . $user->timezone;
 
-            $formattedAppointment = "$providerName visit on $date at $time. ";
+            $specialty = $provider->providerInfo->specialty ?? null;
+            if($specialty){
+                $specialty = '(' . $specialty . ')';
+            }
 
-            $formattedAppointment .=  $appt->status ?? '';
-            $formattedAppointment .=  $provider->address ? "Address: $provider->address. " : '';
-            $formattedAppointment .=  $provider->primaryPhone ? "Phone: $provider->primaryPhone. " : '';
+            //format super specific phone number requirements
+            if($provider->primaryPhone){
+                $phone = "Phone: " . preg_replace('~.*(\d{3})[^\d]{0,7}(\d{3})[^\d]{0,7}(\d{4}).*~', '$1-$2-$3', $provider->primaryPhone);
+            } else {
+                $phone = null;
+            }
 
-            $careplanReport[$user->id]['appointments']['upcoming'][] = $formattedAppointment;
+            $formattedAppointment[$appt->id] = [
+
+                'name' => $provider->fullName,
+                'specialty' => $specialty,
+                'date' => $appt->date,
+                'type' => $appt->type,
+                'time' => Carbon::parse($appt->time)->format('H:i A') . ' ' . Carbon::parse($user->timezone)->format('T'),
+                'address' => $provider->address ? "Address: $provider->address. " : '',
+                'phone' => $phone
+
+            ];
+
+            $careplanReport[$user->id]['appointments']['upcoming'] = $formattedAppointment;
+
         }
 
         $past = Appointment
@@ -435,17 +451,32 @@ class WebixFormatter implements ReportFormatter
         foreach ($past as $appt){
 
             $provider = User::find($appt->provider_id);
-            $providerName = $provider->fullName;
-            $date = $appt->date;
-            $time = Carbon::parse($appt->time)->format('H:i A') . ' ' . $user->timezone;
 
-            $formattedAppointment = "$providerName visit on $date at $time. ";
+            $specialty = $provider->providerInfo->specialty ?? null;
+            if($specialty){
+                $specialty = '(' . $specialty . ')';
+            }
 
-            $formattedAppointment .=  $appt->status ?? '';
-            $formattedAppointment .=  $provider->address ? "Address: $provider->address. " : '';
-            $formattedAppointment .=  $provider->primaryPhone ? "Phone: $provider->primaryPhone. " : '';
+            //format super specific phone number requirements
+            if($provider->primaryPhone){
+                $phone = "Phone: " . preg_replace('~.*(\d{3})[^\d]{0,7}(\d{3})[^\d]{0,7}(\d{4}).*~', '$1-$2-$3', $provider->primaryPhone);
+            } else {
+                $phone = null;
+            }
 
-            $careplanReport[$user->id]['appointments']['past'][] = $formattedAppointment;
+            $formattedAppointment[$appt->id] = [
+
+                'name' => $provider->fullName,
+                'specialty' => $specialty,
+                'date' => $appt->date,
+                'type' => $appt->type ? "Type: $appt->type. " : '',
+                'time' => Carbon::parse($appt->time)->format('H:i A') . ' ' . Carbon::parse($user->timezone)->format('T'),
+                'address' => $provider->address ? "Address: $provider->address. " : '',
+                'phone' => $phone
+
+            ];
+
+            $careplanReport[$user->id]['appointments']['past'] = $formattedAppointment;
 
         }
 
