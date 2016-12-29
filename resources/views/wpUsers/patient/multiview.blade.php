@@ -472,10 +472,11 @@ $today = \Carbon\Carbon::now()->toFormattedDateString();
                                         @foreach($careplan['appointments']['upcoming'] as $upcoming)
                                             <li style="list-style: dash">
 
-                                                - <strong>{{$upcoming['name']}}, {{$upcoming['specialty']}}
-                                                </strong> visit on {{$upcoming['date']}}
-                                                at {{$upcoming['time']}}. {{$upcoming['type']}}
-                                                {{$upcoming['address']}}; {{$upcoming['phone']}}
+                                                - {{$past['type']}},
+                                                <strong>({{$past['specialty']}}) </strong>
+                                                visit on {{$past['date']}}
+                                                at {{$past['time']}}.
+                                                <strong>{{$past['name']}}</strong> {{$past['address']}} {{$past['phone']}}
 
                                             </li>
                                         @endforeach
@@ -487,10 +488,11 @@ $today = \Carbon\Carbon::now()->toFormattedDateString();
                                             @foreach($careplan['appointments']['past'] as $past)
                                                 <li style="list-style: dash">
 
-                                                    - <strong>{{$past['name']}}, {{$past['specialty']}}</strong>
+                                                    - {{$past['type']}},
+                                                    <strong>{{$past['specialty']}} </strong>
                                                     visit on {{$past['date']}}
-                                                    at {{$past['time']}}. {{$past['type']}}
-                                                    {{$past['address']}} {{$past['phone']}}
+                                                    at {{$past['time']}}.
+                                                    <strong>{{$past['name']}}</strong> {{$past['address']}} {{$past['phone']}}
 
                                                 </li>
                                             @endforeach
