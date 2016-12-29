@@ -103,12 +103,12 @@ class PracticeStatsHelper
         return MailLog
             ::whereHas('note',function ($q) use ($id){
                 $q->whereHas('patient', function ($k) use ($id){
-                    $k->whereProgramId($id);
+                    $k->where('program_id', $id);
                 });
             })
         ->where('created_at', '>', $this->start)
         ->where('created_at', '<', $this->end)
-        ->whereNotNull('note_id')
+        ->whereType('note')
         ->count();
     }
 
@@ -119,12 +119,11 @@ class PracticeStatsHelper
         return MailLog
             ::whereHas('note', function ($q) use ($id){
                 $q->where('isTCM', 1)
-                  ->whereNotNull('note_id')
-                    ->whereHas('patient', function ($k) use ($id){
-                    $k->whereProgramId($id);
-
+                  ->whereHas('patient', function ($k) use ($id){
+                        $k->where('program_id', $id);
                 });
             })
+            ->whereType('note')
             ->where('created_at', '>', $this->start)
             ->where('created_at', '<', $this->end)
             ->count();
@@ -168,7 +167,7 @@ class PracticeStatsHelper
 
             foreach ($patients as $patient){
 
-                if($patient->created_at > $start->toDateTimeString() && $patient->created_at <= $end->toDateTimeString()){
+                if($patient->user_registered > $start->toDateTimeString() && $patient->user_registered <= $end->toDateTimeString()){
 
                     $data['added'][$index]++;
 
@@ -267,6 +266,28 @@ class PracticeStatsHelper
 
     }
 
+    public function billableCountCurrentMonth(Practice $practice){
 
+        $patientsForPractice = $practice->users()->ofType('participant')->get();
+
+        $month = Carbon::now()->startOfMonth()->toDateString();
+        $count = 0;
+
+        foreach ($patientsForPractice as $patient){
+
+            $data[] = PatientInfo
+            ::where('cur_month_activity_time', '>', 1199)
+            ->whereUserId($patient->id)
+            ->first();
+
+            if($data){
+                $count++;
+            }
+
+        }
+
+        return $data;
+
+    }
 
 }

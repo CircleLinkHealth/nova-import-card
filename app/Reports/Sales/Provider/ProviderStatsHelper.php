@@ -245,7 +245,7 @@ class ProviderStatsHelper
 
             foreach ($patients as $patient) {
 
-                if ($patient->created_at > $start->toDateTimeString() && $patient->created_at <= $end->toDateTimeString()) {
+                if ($patient->user_registered > $start->toDateTimeString() && $patient->user_registered <= $end->toDateTimeString()) {
 
                     $data['added'][$index]++;
 

@@ -168,18 +168,6 @@
                         </li>
                     @endif
 
-                    @if(Entrust::can('app-config-view'))
-                        <li role="presentation" class="dropdown">
-                            <a class="dropdown-toggle" data-toggle="dropdown" href="#" role="button"
-                               aria-expanded="false">
-                                Settings<span class="caret"></span>
-                            </a>
-                            <ul class="dropdown-menu" role="menu">
-                                <li><a href="{{ URL::route('appConfig.index', array()) }}">App Config</a></li>
-                            </ul>
-                        </li>
-                    @endif
-
                     @if(Entrust::can('roles-view'))
                         <li role="presentation" class="dropdown">
                             <a class="dropdown-toggle" data-toggle="dropdown" href="#" role="button"
@@ -334,6 +322,17 @@
                         <li class="dropdown">
                             <a href="{{ URL::route('patients.dashboard', array()) }}" class="btn-xs btn-primary"
                                style=""><i class="glyphicon glyphicon-eye-open"></i> Provider UI</a></li>
+                        @if(Entrust::can('app-config-view'))
+                            <li role="presentation" class="dropdown">
+                                <a class="dropdown-toggle" data-toggle="dropdown" href="#" role="button"
+                                   aria-expanded="false">
+                                    Settings<span class="caret"></span>
+                                </a>
+                                <ul class="dropdown-menu" role="menu">
+                                    <li><a href="{{ URL::route('appConfig.index', array()) }}">App Config</a></li>
+                                </ul>
+                            </li>
+                        @endif
                         <li class="dropdown">
                             <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button"
                                aria-expanded="false">{{ Auth::user()->full_name }} [ID:{{ Auth::user()->id }}]<span
