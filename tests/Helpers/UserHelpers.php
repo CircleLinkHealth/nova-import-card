@@ -57,7 +57,7 @@ trait UserHelpers
             'program_id'        => $practiceId,
             //id=9 is testdrive
             'address'           => $faker->streetAddress,
-            'user_status'           => 1,
+            'user_status'       => 1,
             'address2'          => '',
             'city'              => $faker->city,
             'state'             => 'AL',
@@ -119,19 +119,22 @@ trait UserHelpers
         ob_end_clean();
     }
 
-    public function createLastCallForPatient(PatientInfo $patient, NurseInfo $scheduler){
+    public function createLastCallForPatient(
+        PatientInfo $patient,
+        NurseInfo $scheduler
+    ) {
 
         $call = Call::create([
 
-            'service' => 'phone',
-            'status'  => 'not reached',
-            'called_date'  => '2016-07-16',
+            'service'     => 'phone',
+            'status'      => 'not reached',
+            'called_date' => '2016-07-16',
 
             'attempt_note' => '',
 
             'scheduler' => $scheduler->user->id,
 
-            'inbound_phone_number'  => '111-111-1111',
+            'inbound_phone_number' => '111-111-1111',
 
             'outbound_phone_number' => '',
 
@@ -153,19 +156,23 @@ trait UserHelpers
 
     }
 
-    public function createWindowForNurse(NurseInfo $nurse, Carbon $st, Carbon $end){
+    public function createWindowForNurse(
+        NurseInfo $nurse,
+        Carbon $st,
+        Carbon $end
+    ) {
 
-        $window =  timestampsToWindow($st, $end);
+        $window = timestampsToWindow($st, $end);
 
-        $res =  NurseContactWindow::create([
+        $res = NurseContactWindow::create([
 
-            'date' => $st->toDateString(),
+            'date'              => $st->toDateString(),
             'window_time_start' => $window['start'],
-            'window_time_end' => $window['end'],
+            'window_time_end'   => $window['end'],
 
             'day_of_week' => 5,
 
-            'nurse_info_id' => $nurse->id
+            'nurse_info_id' => $nurse->id,
 
         ]);
 
@@ -175,20 +182,25 @@ trait UserHelpers
 
     //NURSE TEST HELPERS
 
-    public function createWindowForPatient(PatientInfo $patient, Carbon $st, Carbon $end, $dayOfWeek){
+    public function createWindowForPatient(
+        PatientInfo $patient,
+        Carbon $st,
+        Carbon $end,
+        $dayOfWeek
+    ) {
 
-       $window =  timestampsToWindow($st, $end);
+        $window = timestampsToWindow($st, $end);
 
-       return PatientContactWindow::create([
+        return PatientContactWindow::create([
 
-           'window_time_start' => $window['start'],
-           'window_time_end' => $window['end'],
+            'window_time_start' => $window['start'],
+            'window_time_end'   => $window['end'],
 
-           'day_of_week' => $dayOfWeek,
+            'day_of_week' => $dayOfWeek,
 
-           'patient_info_id' => $patient->id
+            'patient_info_id' => $patient->id,
 
-       ]);
+        ]);
 
     }
 
