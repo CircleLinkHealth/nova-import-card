@@ -130,7 +130,7 @@ if (isset($patient) && !empty($patient)) {
                             </ul>
                         </div>
                     </div>
-            @endif
+                @endif
             <!-- /BIOMETRICS -->
 
                 <!-- MEDICATIONS -->
@@ -244,8 +244,8 @@ if (isset($patient) && !empty($patient)) {
                         </div>
                     </div>
                 </div>
-            @if($problems)
-                <?php foreach($problems as $key => $value){ ?>
+                @if($problems)
+                    <?php foreach($problems as $key => $value){ ?>
                 <!-- Hypertension -->
                     <div class="patient-info__subareas">
                         <div class="row">
@@ -258,8 +258,8 @@ if (isset($patient) && !empty($patient)) {
                             </div>
                         </div>
                     </div>
-                <?php } ?>
-            @endif
+                    <?php } ?>
+                @endif
             <!-- /INSTRUCTIONS -->
 
                 <!-- OTHER INFORMATION -->
@@ -350,47 +350,52 @@ if (isset($patient) && !empty($patient)) {
                 <!-- /CARE TEAM -->
 
                 <!-- Appointments -->
-                <div class="patient-info__subareas">
-                    <div class="row">
-                        <div class="col-xs-12">
-                            <h2 class="patient-summary__subtitles patient-summary--careplan-background">
-                                Appointments:</h2>
-                        </div>
-                        <div class="col-xs-12">
-                            <ul><strong>Upcoming</strong><BR>
-                            @if(isset($appointments['upcoming'] ))
-                                    @foreach($appointments['upcoming'] as $upcoming)
-                                    <li style="list-style: dash">
+                @if(isset($appointments['upcoming'] ) || isset($appointments['past'] ))
 
-                                        - <strong>{{$upcoming['name']}}, ({{$upcoming['specialty']}})</strong> visit on {{$upcoming['date']}}
-                                        at {{$upcoming['time']}}. {{$upcoming['type']}}
-                                        {{$upcoming['address']}}; {{$upcoming['phone']}}
+                    <div class="patient-info__subareas">
+                        <div class="row">
+                            <div class="col-xs-12">
+                                <h2 class="patient-summary__subtitles patient-summary--careplan-background">
+                                    Appointments:</h2>
+                            </div>
+                            <div class="col-xs-12">
 
-                                    </li>
-                                    @endforeach
-                            @else
-                                <p>None</p>
-                            @endif
-                            </ul>
-                            <ul><strong>Past</strong><BR>
-                                @if(isset($appointments['past'] ))
-                                        @foreach($appointments['past'] as $past)
-                                        <li style="list-style: dash">
+                                @if(isset($appointments['upcoming'] ))
+                                    <h3 class="patient-summary__subtitles--subareas patient-summary--careplan">
+                                        Upcoming </h3>
+                                    <ul style="line-height: 30px">
+                                        @foreach($appointments['upcoming'] as $upcoming)
+                                            <li style="list-style: dash">
 
-                                            - <strong>{{$past['name']}}, {{$past['specialty']}}</strong> visit on {{$past['date']}}
-                                             at {{$past['time']}}. {{$past['type']}}
-                                             {{$past['address']}} {{$past['phone']}}
+                                                - <strong>{{$upcoming['name']}}, {{$upcoming['specialty']}}
+                                                    </strong> visit on {{$upcoming['date']}}
+                                                at {{$upcoming['time']}}. {{$upcoming['type']}}
+                                                {{$upcoming['address']}}; {{$upcoming['phone']}}
 
-                                        </li>
+                                            </li>
                                         @endforeach
-                                @else
-                                    <p>None</p>
-                                @endif
-                            </ul>
+                                        @endif
+                                    </ul>
+                                    @if(isset($appointments['past'] ))
+                                        <h3 class="patient-summary__subtitles--subareas patient-summary--careplan">Past</h3>
+                                        <ul style="line-height: 30px">
+                                        @foreach($appointments['past'] as $past)
+                                            <li style="list-style: dash">
+
+                                                - <strong>{{$past['name']}}, {{$past['specialty']}}</strong>
+                                                visit on {{$past['date']}}
+                                                at {{$past['time']}}. {{$past['type']}}
+                                                {{$past['address']}} {{$past['phone']}}
+
+                                            </li>
+                                            @endforeach
+                                            @endif
+                                            </ul>
+                            </div>
                         </div>
                     </div>
-                </div>
-                <!-- /Appointments -->
+            @endif
+            <!-- /Appointments -->
 
                 <!-- OTHER NOTES -->
                 <div class="patient-info__subareas">
