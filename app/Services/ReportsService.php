@@ -1,16 +1,13 @@
 <?php namespace App\Services;
 
 use App\CarePlan;
-use App\ForeignId;
 use App\Location;
 use App\Models\CCD\CcdProblem;
 use App\Models\CPM\CpmBiometric;
 use App\Models\CPM\CpmMisc;
-use App\PatientReports;
 use App\User;
 use App\UserMeta;
 use Carbon\Carbon;
-use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\DB;
 use Mockery\CountValidator\Exception;
 
@@ -501,81 +498,6 @@ class ReportsService
         $changes_array['status'] = $copy;
 
         return $changes_array;
-    }
-
-    public function createAprimaPatientCarePlanPdfReport(
-        $user,
-        $provider_id
-    ) {
-        $file_name = $this->makePdfCareplan($user);
-
-        $base_64_report = base64_encode(file_get_contents($file_name));
-
-        $locationId = $user->getpreferredContactLocationAttribute();
-
-        if (empty($locationId)) {
-            return false;
-        }
-
-        try {
-            //get foreign provider id
-            $foreign_id = ForeignId::where('user_id', $provider_id)->where('system', ForeignId::APRIMA)->first();
-
-            //update the foreign id to include a location as well
-            if (empty($foreign_id->location_id)) {
-                $foreign_id->location_id = $locationId;
-                $foreign_id->save();
-            }
-
-        } catch (\Exception $e) {
-            \Log::error("No foreign Id found when creating report. Message: $e->getMessage(). Code: $e->getCode()");
-
-            return;
-        }
-
-        if (empty($foreign_id)) {
-            \Log::error("Patient with UserId $user->id has no Aprima ProviderId");
-
-            return;
-        }
-
-        $patientReport = PatientReports::create([
-            'patient_id'  => $user->id,
-            'patient_mrn' => $user->getMRNAttribute(),
-            'provider_id' => $foreign_id->foreign_id,
-            'file_type'   => CarePlan::class,
-            'file_base64' => $base_64_report,
-            'location_id' => $locationId,
-        ]);
-    }
-
-    //Generates View Data for Careplans
-    // If only one element is passed, it returns just one array, otherwise it gives an assoc array
-
-    public function makePdfCareplan($user)
-    {
-        $careplan = $this->carePlanGenerator([$user]);
-
-        $pdf = App::make('snappy.pdf.wrapper');
-        $pdf->loadView('wpUsers.patient.careplan.print', [
-            'patient'             => $user,
-            'problems'            => $careplan[$user->id]['problems'],
-            'biometrics'          => $careplan[$user->id]['bio_data'],
-            'symptoms'            => $careplan[$user->id]['symptoms'],
-            'lifestyle'           => $careplan[$user->id]['lifestyle'],
-            'medications_monitor' => $careplan[$user->id]['medications'],
-            'taking_medications'  => $careplan[$user->id]['taking_meds'],
-            'allergies'           => $careplan[$user->id]['allergies'],
-            'social'              => $careplan[$user->id]['social'],
-            'appointments'        => $careplan[$user->id]['appointments'],
-            'other'               => $careplan[$user->id]['other'],
-            'isPdf'               => true,
-        ]);
-
-        $file_name = base_path('storage/pdfs/careplans/' . str_random(40) . '.pdf');
-        $pdf->save($file_name, true);
-
-        return $file_name;
     }
 
     public function carePlanGenerator($patients)

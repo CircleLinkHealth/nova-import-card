@@ -3,6 +3,7 @@
 namespace App\Listeners;
 
 use App\Events\CarePlanWasApproved;
+use App\Events\PdfableCreated;
 
 class UpdateCarePlanStatus
 {
@@ -40,6 +41,8 @@ class UpdateCarePlanStatus
         }
 
         $user->save();
+
+        event(new PdfableCreated($user->carePlan));
     }
 
 }
