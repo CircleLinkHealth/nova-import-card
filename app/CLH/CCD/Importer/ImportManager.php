@@ -95,6 +95,12 @@ class ImportManager
                 'type'           => PatientCareTeamMember::MEMBER,
             ]);
 
+            $sendAlertTo = PatientCareTeamMember::create([
+                'user_id'        => $this->user->id,
+                'member_user_id' => $providerId,
+                'type'           => PatientCareTeamMember::SEND_ALERT_TO,
+            ]);
+
             $billing = PatientCareTeamMember::create([
                 'user_id'        => $this->user->id,
                 'member_user_id' => $providerId,
