@@ -12,10 +12,25 @@
                     Notes and Activities
                 </div>
                 @include('partials.userheader')
-                <div class="col-sm-2">
-                    <a href="{{ URL::route('patient.note.create', array('patient' => $patient->id)) }}"
-                       class="btn btn-primary btn-default form-item--button form-item-spacing" role="button">+NEW
-                        NOTE</a><br>
+                <div class="col-sm-12">
+                    <div class="col-sm-6"><a
+                                href="{{ URL::route('patient.note.create', array('patient' => $patient->id)) }}"
+                                class="btn btn-primary btn-default form-item--button form-item-spacing" role="button">+NEW
+                            NOTE</a></div>
+                    <div class="col-sm-6 pull-right"
+                         style="text-align: right;top: 12px;font-size: 22px;color: #ec683e;">
+                        <form method="post" action="{{URL::route('patient.ccm.toggle', array('patient' => $patient->id))}}"
+                              class="form-horizontal">
+                            {{ csrf_field() }}
+                            <div class="radio-inline"><input onChange="this.form.submit()"
+                                                             type="checkbox"
+                                                             name="complex"
+                                                             {{$ccm_complex ? 'checked' : ''}}
+                                                             id="complex"/><label
+                                        for="complex"><span> </span>Complex CCM</label>
+                            </div>
+                        </form>
+                    </div>
                 </div>
                 <div class="main-form-horizontal main-form-primary-horizontal col-md-12"
                      style="border-top: 3px solid #50b2e2">
@@ -61,19 +76,19 @@
                                         template: function (obj) {
                                             if (obj.logged_from == "note")
                                                 return "<a href='<?php echo route('patient.note.view', [
-                                                                'patientId' => $patient->id,
-                                                                'noteId'    => ''
-                                                        ]); ?>/" + obj.id + "'>" + obj.type_name + "</a>";
+                                                        'patientId' => $patient->id,
+                                                        'noteId'    => ''
+                                                    ]); ?>/" + obj.id + "'>" + obj.type_name + "</a>";
                                             else if (obj.logged_from == "appointment") {
                                                 return "<a href='<?php echo route('patient.appointment.view', [
-                                                                'patientId' => $patient->id,
-                                                                'appointmentId'     => ''
-                                                        ]); ?>/" + obj.id + "'>" + obj.type_name + "</a>"
+                                                        'patientId'     => $patient->id,
+                                                        'appointmentId' => ''
+                                                    ]); ?>/" + obj.id + "'>" + obj.type_name + "</a>"
                                             } else {
                                                 return "<a href='<?php echo route('patient.activity.view', [
-                                                                'patientId' => $patient->id,
-                                                                'actId'     => ''
-                                                        ]); ?>/" + obj.id + "'>" + obj.type_name + "</a>"
+                                                        'patientId' => $patient->id,
+                                                        'actId'     => ''
+                                                    ]); ?>/" + obj.id + "'>" + obj.type_name + "</a>"
                                             }
                                             return obj.type_name;
                                         },
@@ -90,7 +105,7 @@
                                                 return "Note";
                                             else if (obj.logged_from == "manual_input") {
                                                 return "Offline Activity";
-                                            } else  if(obj.logged_from == "appointment") {
+                                            } else if (obj.logged_from == "appointment") {
                                                 return "Appointment";
 
                                             }
@@ -112,21 +127,21 @@
                                         template: function (obj) {
                                             if (obj.logged_from == "note")
                                                 return "<a href='<?php echo route('patient.note.view', [
-                                                                'patientId' => $patient->id,
-                                                                'noteId'    => ''
-                                                        ]); ?>/" + obj.id + "'>" + obj.comment + "</a>";
+                                                        'patientId' => $patient->id,
+                                                        'noteId'    => ''
+                                                    ]); ?>/" + obj.id + "'>" + obj.comment + "</a>";
                                             else if (obj.logged_from == "manual_input" || obj.logged_from == "activity") {
                                                 return "<a href='<?php echo route('patient.activity.view', [
-                                                                'patientId' => $patient->id,
-                                                                'actId'     => ''
-                                                        ]); ?>/" + obj.id + "'>" + obj.comment + "</a>"
-                                            }else if (obj.logged_from == "appointment") {
+                                                        'patientId' => $patient->id,
+                                                        'actId'     => ''
+                                                    ]); ?>/" + obj.id + "'>" + obj.comment + "</a>"
+                                            } else if (obj.logged_from == "appointment") {
                                                 return "<a href='<?php echo route('patient.appointment.view', [
-                                                                'patientId' => $patient->id,
-                                                                'appointmentId'     => ''
-                                                        ]); ?>/" + obj.id + "'>" + obj.comment + "</a>"
+                                                        'patientId'     => $patient->id,
+                                                        'appointmentId' => ''
+                                                    ]); ?>/" + obj.id + "'>" + obj.comment + "</a>"
                                             } else
-                                            return obj.type_name;
+                                                return obj.type_name;
                                         },
                                         fillspace: true,
                                         width: 400,
@@ -205,7 +220,7 @@
                                 </li>
 
                             </div>
-                        @if(auth()->user()->hasRole(['administrator', 'med_assistant', 'provider']))
+                            @if(auth()->user()->hasRole(['administrator', 'med_assistant', 'provider']))
 
                                 <input type="button" value="Export as PDF" class="btn btn-primary"
                                        style='margin:15px;'
@@ -229,21 +244,22 @@
                                                autowidth:true,
                                                filename: '{{$patient->fullName }} {{Carbon\Carbon::now()->toDateString()}}',
 
-                                                columns:{
+                                               columns:{
                                                'performed_at':       { header:'Date/Time', width: 110, template: webix.template('#performed_at#') },
                                                'logger_name':             { header:'Author Name',    width:75, sort:'string', template: webix.template('#logger_name#')},
                                                'comment':             { header:'Note Contents',    width:400, sort:'string', template: webix.template('#comment#')}
 
                                                }});">
-                        @endif
-                    @else
-                        <div style="text-align:center;margin:50px;">There are no patient Notes/Offline Activities to
-                            display for this month.
+                            @endif
+                            @else
+                                <div style="text-align:center;margin:50px;">There are no patient Notes/Offline
+                                    Activities to
+                                    display for this month.
+                                </div>
+                            @endif
                         </div>
-                    @endif
                 </div>
             </div>
         </div>
-    </div>
 
 @stop

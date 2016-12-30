@@ -40,12 +40,15 @@ class NotesController extends Controller
         
         $report_data = $this->formatter->formatDataForNotesAndOfflineActivitiesReport($data);
 
+        $ccm_complex = $patient->patientInfo->isCCMComplex() ?? false;
+
         return view('wpUsers.patient.note.index',
             [
                 'activity_json' => $report_data,
                 'patient'       => $patient,
                 'messages'      => $messages,
                 'data'          => $data,
+                'ccm_complex'   => $ccm_complex
             ]);
 
     }
