@@ -20,35 +20,39 @@
                             </div>
                         @endif
                         <form class="form-horizontal">
-                                <div class="form-group">
-                                    <label class="col-md-2 control-label" for="email">Email Address</label>
-                                    <div class="col-md-6">
-                                        <input id="email" name="email" type="email" placeholder="" class="form-control input-md" required="">
+                            <div class="form-group">
+                                <label class="col-md-2 control-label" for="email">Email Address</label>
+                                <div class="col-md-6">
+                                    <input id="email" name="email" type="email" placeholder=""
+                                           class="form-control input-md" required="">
 
-                                    </div>
                                 </div>
+                            </div>
 
-                                <div class="form-group">
-                                    <label class="col-md-2 control-label" for="subject">Subject</label>
-                                    <div class="col-md-6">
-                                        <input id="subject" name="subject" type="text" placeholder="" class="form-control input-md" required="">
+                            <div class="form-group">
+                                <label class="col-md-2 control-label" for="subject">Subject</label>
+                                <div class="col-md-6">
+                                    <input id="subject" name="subject" type="text"
+                                           value="Invitation to join CircleLink's CarePlanManager"
+                                           class="form-control input-md" required="">
 
-                                    </div>
                                 </div>
+                            </div>
 
-                                <div class="form-group">
-                                    <label class="col-md-2 control-label" for="body">Body</label>
-                                    <div class="col-md-6">
-                                        <textarea class="form-control" rows="20" id="body" name="body" required></textarea>
-                                    </div>
+                            <div class="form-group">
+                                <label class="col-md-2 control-label" for="body">Body</label>
+                                <div class="col-md-6">
+                                    <textarea class="form-control" rows="20" id="body" name="body" required>Welcome to CircleLink's CarePlanManager for preventative care and/or CCM! Please click on below button to input your practice information (team, location, EHR login etc.). If you'd prefer to send us that information separately through a spreadsheet or other medium, no problem! Just e-mail contact@circlelinkhealth
+                                        .com with your request.&#013;&#010;&#013;&#010;Once your practice is setup in our system and we have a list of your patients, we'll begin enrolling patients.&#013;&#010;&#013;&#010;Look forward to kicking things off!&#013;&#010;&#013;&#010;CircleLink Team</textarea>
                                 </div>
+                            </div>
 
-                                <div class="form-group">
-                                    <label class="col-md-2 control-label" for="submit"></label>
-                                    <div class="col-md-7">
-                                        <button id="submit" name="submit" class="btn btn-success">Send Invite!</button>
-                                    </div>
+                            <div class="form-group">
+                                <label class="col-md-2 control-label" for="submit"></label>
+                                <div class="col-md-7">
+                                    <button id="submit" name="submit" class="btn btn-success">Send Invite!</button>
                                 </div>
+                            </div>
 
                         </form>
 
