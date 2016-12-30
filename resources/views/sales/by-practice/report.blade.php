@@ -17,7 +17,7 @@ $practiceSection = \App\Reports\Sales\Practice\Sections\PracticeDemographics::cl
                                              style="position:relative;"
                                              width="200px"/>
             <h1 style="margin-bottom: 0px">{{$data['name']}}'s Summary</h1>
-            <span>(Organization-Wide)</span><br />
+            <span style="font-size: 16px">(Organization-Wide)</span><br />
 
             <span>{{Carbon\Carbon::parse($data['start'])->format('l, jS F') . ' - ' . Carbon\Carbon::parse($data['end'])->format('l, jS F') }}</span>
 
@@ -26,7 +26,7 @@ $practiceSection = \App\Reports\Sales\Practice\Sections\PracticeDemographics::cl
 
     @if(array_key_exists($rangeSection, $data))
 
-        <div>
+        <div style="font-size: 16px">
             <p>
                 Last week CircleLink nurses placed <b>{{$data[$rangeSection]['no_of_call_attempts']}}</b>
                 calls, including <b>{{$data[$rangeSection]['no_of_successful_calls']}}</b> successful phone session, totaling
@@ -36,7 +36,7 @@ $practiceSection = \App\Reports\Sales\Practice\Sections\PracticeDemographics::cl
                 note(s) to you.
             </p>
 
-            <p>
+            <p style="font-size: 16px">
                 You can see a list of forwarded notes <a href="{{$data[$rangeSection]['link_to_notes_listing']}}">here</a>,
                 including <b>{{$data[$rangeSection]['no_of_forwarded_emergency_notes']}}</b> notification(s) indicating a patient visited an ER/Hospital.
             </p>

@@ -141,7 +141,7 @@
                                         Call Management</a>
                                 <li><a href="{{ URL::route('admin.families.index', array()) }}">Patient Families</a>
                                 <li><a href="{{ URL::route('algo.mock.create', array()) }}">Algo
-                                        v{{\App\Algorithms\Calls\SuccessfulHandler::VERSION}}</a>
+                                        v{{\App\Algorithms\Calls\SuccessfulHandler::VERSION}} Simulator</a>
                                 <li><a href="{{ URL::route('CallReportController.exportxls', array()) }}">Calls</a></li>
 
                             </ul>
