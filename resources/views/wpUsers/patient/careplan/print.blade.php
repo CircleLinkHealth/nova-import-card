@@ -362,7 +362,7 @@ if (isset($patient) && !empty($patient)) {
 
                                 @if(isset($appointments['upcoming'] ))
                                     <h3 class="patient-summary__subtitles--subareas patient-summary--careplan">
-                                        Upcoming </h3>
+                                        Upcoming: </h3>
                                     <ul style="line-height: 30px">
                                         @foreach($appointments['upcoming'] as $upcoming)
                                             <li style="list-style: dash">
@@ -378,7 +378,7 @@ if (isset($patient) && !empty($patient)) {
                                     </ul>
                                 @endif
                                     @if(isset($appointments['past'] ))
-                                        <h3 class="patient-summary__subtitles--subareas patient-summary--careplan">Past</h3>
+                                        <h3 class="patient-summary__subtitles--subareas patient-summary--careplan">Past:</h3>
                                         <ul style="line-height: 30px">
                                         @foreach($appointments['past'] as $past)
                                             <li style="list-style: dash">
