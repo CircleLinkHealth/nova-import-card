@@ -141,7 +141,7 @@ class UnsuccessfulHandler implements CallHandler
 
                             $this->logic = 'Next Day';
 
-                            return $this->nextCallDate->tomorrow();
+                            return $this->nextCallDate->addDay(1);
 
                         }
 
@@ -190,7 +190,6 @@ class UnsuccessfulHandler implements CallHandler
 
                         } else {
                             if ($week == 5) { //last-ish week of month
-
                                 if ($successfulCallsThisMonth > 0) { //If there was a successful call this month...
 
                                     if ($ccmTime > 1020) {
@@ -259,11 +258,12 @@ class UnsuccessfulHandler implements CallHandler
                             }
 
                         } else {
+
                             if ($week == 5) { //last-ish week of month
 
                                 $this->logic = 'Less than 17, tomorrow. ';
 
-                                return $this->nextCallDate->tomorrow();
+                                return $this->nextCallDate->addDay(1);
 
                             }
                         }
@@ -314,7 +314,7 @@ class UnsuccessfulHandler implements CallHandler
 
                                 $this->logic = 'Next window';
 
-                                return $this->nextCallDate->tomorrow();
+                                return $this->nextCallDate->addDay(1);
 
                             }
 
@@ -323,7 +323,7 @@ class UnsuccessfulHandler implements CallHandler
 
                                 $this->logic = 'Next window';
 
-                                return $this->nextCallDate;
+                                return $this->nextCallDate->addDay(1);
 
                             }
                         }
