@@ -122,7 +122,10 @@ class PatientController extends Controller
             }
             $observation['parent_item_text'] = '---';
             switch ($observation["obs_key"]) {
-                case 'HSP':
+                case 'A1c':
+                    $observation['description'] = 'A1c';
+                    $obs_by_pcp['obs_biometrics'][] = $observation;
+                    break;
                 case 'HSP_ER':
                 case 'HSP_HOSP':
                     break;
