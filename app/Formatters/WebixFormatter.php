@@ -461,7 +461,7 @@ class WebixFormatter implements ReportFormatter
 
             //format super specific phone number requirements
             if($provider->primaryPhone){
-                $phone = "Phone: " . preg_replace('~.*(\d{3})[^\d]{0,7}(\d{3})[^\d]{0,7}(\d{4}).*~', '$1-$2-$3', $provider->primaryPhone);
+                $phone = "P: " . preg_replace('~.*(\d{3})[^\d]{0,7}(\d{3})[^\d]{0,7}(\d{4}).*~', '$1-$2-$3', $provider->primaryPhone);
             } else {
                 $phone = null;
             }
@@ -471,7 +471,7 @@ class WebixFormatter implements ReportFormatter
                 'name' => $provider->fullName,
                 'specialty' => $specialty,
                 'date' => $appt->date,
-                'type' => $appt->type ? "Type: $appt->type" : '',
+                'type' => $appt->type ? "$appt->type," : '',
                 'time' => Carbon::parse($appt->time)->format('H:i A') . ' ' . Carbon::parse($user->timezone)->format('T'),
                 'address' => $provider->address ? "Address: $provider->address. " : '',
                 'phone' => $phone
