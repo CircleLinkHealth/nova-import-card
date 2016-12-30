@@ -17,7 +17,7 @@ $practiceSection = \App\Reports\Sales\Provider\Sections\PracticeDemographics::cl
                                              style="position:relative;"
                                              width="200px"/>
             <h1 style="margin-bottom: 0px">{{$data['name']}}'s Summary</h1>
-            <span>(Your Patients)</span><br />
+            <span style="font-size: 16px">(Your Patients)</span><br />
 
             <span>{{Carbon\Carbon::parse($data['start'])->format('l, jS F') . ' - ' . Carbon\Carbon::parse($data['end'])->format('l, jS F') }}</span>
 
