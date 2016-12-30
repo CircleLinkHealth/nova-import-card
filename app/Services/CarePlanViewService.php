@@ -168,7 +168,6 @@ class CarePlanViewService
         $additionalInfo->title = 'Additional Information';
         $additionalInfo->miscs = $template->cpmMiscs()->whereIn('name', [
                 CpmMisc::ALLERGIES,
-                CpmMisc::APPOINTMENTS,
                 CpmMisc::SOCIAL_SERVICES,
                 CpmMisc::OTHER,
             ])
