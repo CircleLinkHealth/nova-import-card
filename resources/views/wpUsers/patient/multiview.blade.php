@@ -454,39 +454,55 @@ $today = \Carbon\Carbon::now()->toFormattedDateString();
                     </div>
                 </div>
                 <!-- /CARE TEAM -->
-
-
                 <!-- Appointments -->
-                <div class="patient-info__subareas">
-                    <div class="row">
-                        <div class="col-xs-12">
-                            <h2 class="patient-summary__subtitles patient-summary--careplan-background">
-                                Appointments:</h2>
-                        </div>
-                        <div class="col-xs-12">
-                            <ul><strong>Upcoming</strong><BR>
+                @if(isset($careplan['appointments']['upcoming']) || isset($careplan['appointments']['past'] ))
+
+                    <div class="patient-info__subareas">
+                        <div class="row">
+                            <div class="col-xs-12">
+                                <h2 class="patient-summary__subtitles patient-summary--careplan-background">
+                                    Appointments</h2>
+                            </div>
+                            <div class="col-xs-12">
+
                                 @if(isset($careplan['appointments']['upcoming'] ))
-                                    @foreach($careplan['appointments']['upcoming'] as $upcoming)
-                                        <li class='subareas__item print-row'>{{$upcoming}}</li>
-                                    @endforeach
-                                @else
-                                    <p>None</p>
-                                @endif
-                            </ul>
-                            <ul><strong>Past</strong><BR>
-                                @if(isset($careplan['appointments']['past'] ))
-                                    @foreach($careplan['appointments']['past'] as $past)
-                                        <li>{{$past}}</li>
-                                    @endforeach
-                                @else
-                                    <p>None</p>
-                                @endif
-                            </ul>
+                                    <h3 class="patient-summary__subtitles--subareas patient-summary--careplan">
+                                        Upcoming: </h3>
+                                    <ul style="line-height: 30px">
+                                        @foreach($careplan['appointments']['upcoming'] as $upcoming)
+                                            <li style="list-style: dash">
+
+                                                - {{$upcoming['type']}}
+                                                <strong>{{$upcoming['specialty']}} </strong>
+                                                 on {{$upcoming['date']}}
+                                                at {{$upcoming['time']}} with
+                                                <strong>{{$upcoming['name']}}</strong>; {{$upcoming['address']}} {{$upcoming['phone']}}
+
+                                            </li>
+                                        @endforeach
+                                        @endif
+                                    </ul>
+                                    @if(isset($careplan['appointments']['past'] ))
+                                        <h3 class="patient-summary__subtitles--subareas patient-summary--careplan">Past:</h3>
+                                        <ul style="line-height: 30px">
+                                            @foreach($careplan['appointments']['past'] as $past)
+                                                <li style="list-style: dash">
+
+                                                    - {{$past['type']}}
+                                                    <strong>{{$past['specialty']}} </strong>
+                                                     on {{$past['date']}}
+                                                    at {{$past['time']}} with
+                                                    <strong>{{$past['name']}}</strong>; {{$past['address']}} {{$past['phone']}}
+
+                                                </li>
+                                            @endforeach
+                                            @endif
+                                        </ul>
+                            </div>
                         </div>
                     </div>
-                </div>
-
-                <!-- /Appointments -->
+            @endif
+            <!-- /Appointments -->
 
                 <!-- OTHER NOTES -->
                 <div class="patient-info__subareas">

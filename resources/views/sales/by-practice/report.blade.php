@@ -29,7 +29,7 @@ $practiceSection = \App\Reports\Sales\Practice\Sections\PracticeDemographics::cl
         <div>
             <p>
                 Last week CircleLink nurses placed <b>{{$data[$rangeSection]['no_of_call_attempts']}}</b>
-                calls to your patients, including <b>{{$data[$rangeSection]['no_of_successful_calls']}}</b> successful phone session, totaling
+                calls, including <b>{{$data[$rangeSection]['no_of_successful_calls']}}</b> successful phone session, totaling
                 <b>{{$data[$rangeSection]['total_ccm_time']}}</b>
                 care hours. We also collected <b>{{$data[$rangeSection]['no_of_biometric_entries']}}</b>
                 vital(s) and adherence reading(s), and our nurses forwarded <b>{{$data[$rangeSection]['no_of_forwarded_notes']}}</b>
@@ -37,7 +37,7 @@ $practiceSection = \App\Reports\Sales\Practice\Sections\PracticeDemographics::cl
             </p>
 
             <p>
-                You can see a list of forwarded notes for your patients <a href="{{$data[$rangeSection]['link_to_notes_listing']}}">here</a>,
+                You can see a list of forwarded notes <a href="{{$data[$rangeSection]['link_to_notes_listing']}}">here</a>,
                 including <b>{{$data[$rangeSection]['no_of_forwarded_emergency_notes']}}</b> notification(s) indicating a patient visited an ER/Hospital.
             </p>
 

@@ -130,7 +130,7 @@ if (isset($patient) && !empty($patient)) {
                             </ul>
                         </div>
                     </div>
-            @endif
+                @endif
             <!-- /BIOMETRICS -->
 
                 <!-- MEDICATIONS -->
@@ -244,8 +244,8 @@ if (isset($patient) && !empty($patient)) {
                         </div>
                     </div>
                 </div>
-            @if($problems)
-                <?php foreach($problems as $key => $value){ ?>
+                @if($problems)
+                    <?php foreach($problems as $key => $value){ ?>
                 <!-- Hypertension -->
                     <div class="patient-info__subareas">
                         <div class="row">
@@ -258,8 +258,8 @@ if (isset($patient) && !empty($patient)) {
                             </div>
                         </div>
                     </div>
-                <?php } ?>
-            @endif
+                    <?php } ?>
+                @endif
             <!-- /INSTRUCTIONS -->
 
                 <!-- OTHER INFORMATION -->
@@ -350,35 +350,54 @@ if (isset($patient) && !empty($patient)) {
                 <!-- /CARE TEAM -->
 
                 <!-- Appointments -->
-                <div class="patient-info__subareas">
-                    <div class="row">
-                        <div class="col-xs-12">
-                            <h2 class="patient-summary__subtitles patient-summary--careplan-background">
-                                Appointments:</h2>
-                        </div>
-                        <div class="col-xs-12">
-                            <ul><strong>Upcoming</strong><BR>
-                            @if(isset($appointments['upcoming'] ))
-                                    @foreach($appointments['upcoming'] as $upcoming)
-                                    <li class='subareas__item print-row'>{{$upcoming}}</li>
-                                    @endforeach
-                            @else
-                                <p>None</p>
-                            @endif
-                            </ul>
-                            <ul><strong>Past</strong><BR>
-                                @if(isset($appointments['past'] ))
-                                        @foreach($appointments['past'] as $past)
-                                            <li>{{$past}}</li>
+                @if(isset($appointments['upcoming'] ) || isset($appointments['past'] ))
+
+                    <div class="patient-info__subareas">
+                        <div class="row">
+                            <div class="col-xs-12">
+                                <h2 class="patient-summary__subtitles patient-summary--careplan-background">
+                                    Appointments</h2>
+                            </div>
+                            <div class="col-xs-12">
+
+                                @if(isset($appointments['upcoming'] ))
+                                    <h3 class="patient-summary__subtitles--subareas patient-summary--careplan">
+                                        Upcoming: </h3>
+                                    <ul style="line-height: 30px">
+                                        @foreach($appointments['upcoming'] as $upcoming)
+                                            <li style="list-style: dash">
+
+                                                - {{$upcoming['type']}}
+                                                <strong>{{$upcoming['specialty']}} </strong>
+                                                 on {{$upcoming['date']}}
+                                                at {{$upcoming['time']}} with
+                                                <strong>{{$upcoming['name']}}</strong>; {{$upcoming['address']}} {{$upcoming['phone']}}
+
+                                            </li>
                                         @endforeach
-                                @else
-                                    <p>None</p>
+                                    </ul>
                                 @endif
-                            </ul>
+                                    @if(isset($appointments['past'] ))
+                                        <h3 class="patient-summary__subtitles--subareas patient-summary--careplan">Past:</h3>
+                                        <ul style="line-height: 30px">
+                                        @foreach($appointments['past'] as $past)
+                                            <li style="list-style: dash">
+
+                                                - {{$past['type']}}
+                                                <strong>{{$past['specialty']}} </strong>
+                                                 on {{$past['date']}}
+                                                at {{$past['time']}} with
+                                                <strong>{{$past['name']}}</strong>; {{$past['address']}} {{$past['phone']}}
+
+                                            </li>
+                                            @endforeach
+                                        </ul>
+                                    @endif
+                            </div>
                         </div>
                     </div>
-                </div>
-                <!-- /Appointments -->
+            @endif
+            <!-- /Appointments -->
 
                 <!-- OTHER NOTES -->
                 <div class="patient-info__subareas">

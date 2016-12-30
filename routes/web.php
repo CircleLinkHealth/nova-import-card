@@ -8,12 +8,13 @@ if (app()->environment() != 'production') {
 
         $provider = \App\User::find(852);
         $patient = \App\PatientInfo::find(1272);
+        $practice = \App\Practice::find(35);
 
-        return (new SalesByProviderReport(
-            $provider,
-            SalesByProviderReport::SECTIONS,
-            Carbon\Carbon::now(),
-            Carbon\Carbon::now()->firstOfMonth()))->data(true);
+        return $practice->users;
+
+        return (new \App\Reports\Sales\Practice\PracticeStatsHelper(
+            \Carbon\Carbon::now(), \Carbon\Carbon::now()
+        ))->billableCountCurrentMonth($practice);
 
     });
 }

@@ -21,7 +21,7 @@
 
         @foreach($data[$enrollmentSection]['historical'] as $key => $values)
             <tr>
-                <td style="width: 27%">Patients {{ucwords($key)}}</td>
+                <td style="width: 30%"><strong>Patients {{ucwords($key)}}</strong></td>
                 @foreach($values as $value)
                     <td>{{$value}}</td>
                 @endforeach
