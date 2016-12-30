@@ -1469,40 +1469,40 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
 
     public function getCarePlanQAApproverAttribute()
     {
-        if (!$this->patientInfo) {
+        if (!$this->carePlan) {
             return '';
         }
 
-        return $this->patientInfo->careplan_qa_approver;
+        return $this->carePlan->qa_approver_id;
     }
 
     public function setCarePlanQAApproverAttribute($value)
     {
-        if (!$this->patientInfo) {
+        if (!$this->carePlan) {
             return '';
         }
-        $this->patientInfo->careplan_qa_approver = $value;
-        $this->patientInfo->save();
+        $this->carePlan->qa_approver_id = $value;
+        $this->carePlan->save();
 
         return true;
     }
 
     public function getCarePlanQADateAttribute()
     {
-        if (!$this->patientInfo) {
+        if (!$this->carePlan) {
             return '';
         }
 
-        return $this->patientInfo->careplan_qa_date;
+        return $this->carePlan->qa_date;
     }
 
     public function setCarePlanQADateAttribute($value)
     {
-        if (!$this->patientInfo) {
+        if (!$this->carePlan) {
             return '';
         }
-        $this->patientInfo->careplan_qa_date = $value;
-        $this->patientInfo->save();
+        $this->carePlan->qa_date = $value;
+        $this->carePlan->save();
 
         return true;
     }

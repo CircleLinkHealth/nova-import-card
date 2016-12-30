@@ -226,10 +226,10 @@ class OnboardingController extends Controller
                         'postal_code'    => $newLocation['postal_code'],
                         'ehr_login'      => $sameEHRLogin
                             ? $request->input('locations')[0]['ehr_login']
-                            : $newLocation['ehr_login'],
+                            : $newLocation['ehr_login'] ?? null,
                         'ehr_password'   => $sameEHRLogin
                             ? $request->input('locations')[0]['ehr_password']
-                            : $newLocation['ehr_password'],
+                            : $newLocation['ehr_password'] ?? null,
                     ]);
 
                 //If clinical contact is same for all, then get the data from the first location.

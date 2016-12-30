@@ -41,8 +41,8 @@ class PatientCareplanController extends Controller
             ->ofType('participant')
             ->with('primaryPractice')
             ->with([
-                'patientInfo' => function ($q) {
-                    $q->with('carePlanProviderApproverUser');
+                'carePlan' => function ($q) {
+                    $q->with('providerApproverUser');
                 },
             ])
             ->withCareTeamOfType('billing_provider')
@@ -71,7 +71,7 @@ class PatientCareplanController extends Controller
             $tooltip = 'NA';
 
             if ($careplanStatus == 'provider_approved') {
-                $approver = $patient->patientInfo->carePlanProviderApproverUser;
+                $approver = $patient->carePlan->providerApproverUser;
                 if ($approver) {
                     $approverName = $approver->fullName;
                     $carePlanProviderDate = $patient->carePlanProviderDate;

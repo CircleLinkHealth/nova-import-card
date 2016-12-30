@@ -1,15 +1,11 @@
 <?php namespace App\Services;
 
-use App\Activity;
 use App\Comment;
 use App\Observation;
 use App\ObservationMeta;
 use App\User;
-use App\UserMeta;
-use Carbon\Carbon;
 use DateTime;
 use DateTimeZone;
-use Illuminate\Support\Facades\DB;
 
 class ObservationService {
 
@@ -153,6 +149,12 @@ class ObservationService {
 			$newObservationMeta->meta_value = 'yes';
 			$newObservationMeta->save();
 		}
+
+        //Hack to validate a1c.
+        //This code is gross
+        if ($obsKey == 'A1c') {
+            return true;
+        }
 
 		// Next Message Block
 		$msgChooser = new MsgChooser();
