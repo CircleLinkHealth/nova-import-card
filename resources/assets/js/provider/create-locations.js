@@ -79,6 +79,7 @@ var locationsVM = new Vue({
                     firstName: '',
                     lastName: '',
                     email: '',
+                    type: 'billing_provider'
                 },
                 timezone: 'America/New_York'
             });
