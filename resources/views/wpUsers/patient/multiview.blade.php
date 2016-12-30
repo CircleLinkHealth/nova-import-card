@@ -461,7 +461,7 @@ $today = \Carbon\Carbon::now()->toFormattedDateString();
                         <div class="row">
                             <div class="col-xs-12">
                                 <h2 class="patient-summary__subtitles patient-summary--careplan-background">
-                                    Appointments:</h2>
+                                    Appointments</h2>
                             </div>
                             <div class="col-xs-12">
 
@@ -472,11 +472,11 @@ $today = \Carbon\Carbon::now()->toFormattedDateString();
                                         @foreach($careplan['appointments']['upcoming'] as $upcoming)
                                             <li style="list-style: dash">
 
-                                                - {{$past['type']}},
-                                                <strong>({{$past['specialty']}}) </strong>
-                                                visit on {{$past['date']}}
-                                                at {{$past['time']}}.
-                                                <strong>{{$past['name']}}</strong> {{$past['address']}} {{$past['phone']}}
+                                                - {{$upcoming['type']}},
+                                                <strong>{{$upcoming['specialty']}} </strong>
+                                                visit on {{$upcoming['date']}}
+                                                at {{$upcoming['time']}}.
+                                                <strong>{{$upcoming['name']}}</strong> {{$upcoming['address']}} {{$upcoming['phone']}}
 
                                             </li>
                                         @endforeach

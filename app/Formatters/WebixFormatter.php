@@ -404,6 +404,7 @@ class WebixFormatter implements ReportFormatter
         $careplanReport[$user->id]['appointments'] = null;
 
         //Appointments
+            //Upcoming
         $upcoming = Appointment
             ::wherePatientId($user->id)
             ->where('date', '>', Carbon::now()->toDateString())
@@ -426,7 +427,7 @@ class WebixFormatter implements ReportFormatter
                 $phone = null;
             }
 
-            $formattedAppointment[$appt->id] = [
+            $formattedUpcomingAppointment[$appt->id] = [
 
                 'name' => $provider->fullName,
                 'specialty' => $specialty,
@@ -438,10 +439,11 @@ class WebixFormatter implements ReportFormatter
 
             ];
 
-            $careplanReport[$user->id]['appointments']['upcoming'] = $formattedAppointment;
+            $careplanReport[$user->id]['appointments']['upcoming'] = $formattedUpcomingAppointment;
 
         }
 
+        //past
         $past = Appointment
             ::wherePatientId($user->id)
             ->where('date', '<', Carbon::now()->toDateString())
@@ -464,7 +466,7 @@ class WebixFormatter implements ReportFormatter
                 $phone = null;
             }
 
-            $formattedAppointment[$appt->id] = [
+            $formattedPastAppointment[$appt->id] = [
 
                 'name' => $provider->fullName,
                 'specialty' => $specialty,
@@ -476,7 +478,8 @@ class WebixFormatter implements ReportFormatter
 
             ];
 
-            $careplanReport[$user->id]['appointments']['past'] = $formattedAppointment;
+            $careplanReport[$user->id]['appointments']['past'] = $formattedPastAppointment;
+
 
         }
 

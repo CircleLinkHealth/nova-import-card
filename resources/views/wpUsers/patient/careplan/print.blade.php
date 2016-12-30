@@ -356,7 +356,7 @@ if (isset($patient) && !empty($patient)) {
                         <div class="row">
                             <div class="col-xs-12">
                                 <h2 class="patient-summary__subtitles patient-summary--careplan-background">
-                                    Appointments:</h2>
+                                    Appointments</h2>
                             </div>
                             <div class="col-xs-12">
 
@@ -367,30 +367,32 @@ if (isset($patient) && !empty($patient)) {
                                         @foreach($appointments['upcoming'] as $upcoming)
                                             <li style="list-style: dash">
 
-                                                - <strong>{{$upcoming['name']}}, {{$upcoming['specialty']}}
-                                                    </strong> visit on {{$upcoming['date']}}
-                                                at {{$upcoming['time']}}. {{$upcoming['type']}}
-                                                {{$upcoming['address']}}; {{$upcoming['phone']}}
+                                                - {{$upcoming['type']}},
+                                                <strong>{{$upcoming['specialty']}} </strong>
+                                                visit on {{$upcoming['date']}}
+                                                at {{$upcoming['time']}}.
+                                                <strong>{{$upcoming['name']}}</strong> {{$upcoming['address']}} {{$upcoming['phone']}}
 
                                             </li>
                                         @endforeach
-                                        @endif
                                     </ul>
+                                @endif
                                     @if(isset($appointments['past'] ))
                                         <h3 class="patient-summary__subtitles--subareas patient-summary--careplan">Past</h3>
                                         <ul style="line-height: 30px">
                                         @foreach($appointments['past'] as $past)
                                             <li style="list-style: dash">
 
-                                                - <strong>{{$past['name']}}, {{$past['specialty']}}</strong>
+                                                - {{$past['type']}},
+                                                <strong>{{$past['specialty']}} </strong>
                                                 visit on {{$past['date']}}
-                                                at {{$past['time']}}. {{$past['type']}}
-                                                {{$past['address']}} {{$past['phone']}}
+                                                at {{$past['time']}}.
+                                                <strong>{{$past['name']}}</strong> {{$past['address']}} {{$past['phone']}}
 
                                             </li>
                                             @endforeach
-                                            @endif
-                                            </ul>
+                                        </ul>
+                                    @endif
                             </div>
                         </div>
                     </div>
