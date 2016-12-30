@@ -258,6 +258,7 @@ class UnsuccessfulHandler implements CallHandler
                             }
 
                         } else {
+
                             if ($week == 5) { //last-ish week of month
 
                                 $this->logic = 'Less than 17, tomorrow. ';
@@ -322,7 +323,7 @@ class UnsuccessfulHandler implements CallHandler
 
                                 $this->logic = 'Next window';
 
-                                return $this->nextCallDate;
+                                return $this->nextCallDate->addDay(1);
 
                             }
                         }
