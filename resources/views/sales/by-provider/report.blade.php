@@ -33,7 +33,7 @@ $practiceSection = \App\Reports\Sales\Provider\Sections\PracticeDemographics::cl
             vital and adherence reading(s), and our nurses forwarded <b>{{$data[$rangeSection]['no_of_forwarded_notes']}}</b>
             note(s) to you.</p>
 
-        <p style="font-size: 15px">You can see a list of forwarded notes for your patients <a href="{{$data[$rangeSection]['link_to_notes_listing']}}">here</a>,
+        <p style="font-size: 16px">You can see a list of forwarded notes for your patients <a href="{{$data[$rangeSection]['link_to_notes_listing']}}">here</a>,
             including <b>{{$data[$rangeSection]['no_of_forwarded_emergency_notes']}}</b>
             notification(s) indicating a patient visited a ER/Hospital.</p>
 

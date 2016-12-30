@@ -36,7 +36,7 @@ $practiceSection = \App\Reports\Sales\Practice\Sections\PracticeDemographics::cl
                 note(s) to you.
             </p>
 
-            <p>
+            <p style="font-size: 16px">
                 You can see a list of forwarded notes <a href="{{$data[$rangeSection]['link_to_notes_listing']}}">here</a>,
                 including <b>{{$data[$rangeSection]['no_of_forwarded_emergency_notes']}}</b> notification(s) indicating a patient visited an ER/Hospital.
             </p>
