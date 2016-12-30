@@ -447,7 +447,7 @@ class WebixFormatter implements ReportFormatter
         $past = Appointment
             ::wherePatientId($user->id)
             ->where('date', '<', Carbon::now()->toDateString())
-            ->orderBy('date')
+            ->orderBy('date', 'desc')
             ->take(3)->get();
 
         foreach ($past as $appt){
