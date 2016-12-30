@@ -48,7 +48,7 @@
 
     <div class="right-align">
         @include('provider.partials.mdl.form.checkbox', [
-            'label' => 'Is the lead a provider or clinical staff?',
+            'label' => 'Provider or Clinical Staff',
             'name' => 'countCcmTime',
             'value' => '1',
             'class' => 'col s12',
