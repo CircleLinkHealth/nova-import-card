@@ -26,7 +26,7 @@ $practiceSection = \App\Reports\Sales\Practice\Sections\PracticeDemographics::cl
 
     @if(array_key_exists($rangeSection, $data))
 
-        <div>
+        <div style="font-size: 15px">
             <p>
                 Last week CircleLink nurses placed <b>{{$data[$rangeSection]['no_of_call_attempts']}}</b>
                 calls, including <b>{{$data[$rangeSection]['no_of_successful_calls']}}</b> successful phone session, totaling
