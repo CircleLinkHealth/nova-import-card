@@ -50,15 +50,17 @@
         </div>
 
         <div class="row">
-            For billing, please fill out either an <a
-                    href="https://docs.google.com/forms/d/e/1FAIpQLSePRPBlacUiqlcrHwRd5u4dz7y_ZSvSReaVKzzacONuUMaZ7Q/viewform"
-                    target="_blank">ACH
-                Transfer Form</a>
-            or a
-            <a href="https://docs.google.com/forms/d/e/1FAIpQLScTbtb0A2MWNfJ-yE42Ll7chi2nClcIOxqY5BHsPJG67gvGKA/viewform"
-               target="_blank">
-                Credit Card Form.
-            </a>
+            <h5>
+                For billing, please fill out either an <a
+                        href="https://docs.google.com/forms/d/e/1FAIpQLSePRPBlacUiqlcrHwRd5u4dz7y_ZSvSReaVKzzacONuUMaZ7Q/viewform"
+                        target="_blank">ACH
+                    Transfer Form</a>
+                or a
+                <a href="https://docs.google.com/forms/d/e/1FAIpQLScTbtb0A2MWNfJ-yE42Ll7chi2nClcIOxqY5BHsPJG67gvGKA/viewform"
+                   target="_blank">
+                    Credit Card Form.
+                </a>
+            </h5>
         </div>
 
         <div class="row">

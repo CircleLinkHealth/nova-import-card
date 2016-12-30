@@ -11393,7 +11393,7 @@ var locationsVM = new Vue({
         isValidated: function isValidated(index) {
             this.$set('invalidCount', $('.invalid').length);
 
-            this.$set('newLocations[' + index + '].isComplete', this.newLocations[index].name && this.newLocations[index].address_line_1 && this.newLocations[index].city && this.newLocations[index].state && this.newLocations[index].postal_code && (this.newLocations[index].ehr_login || this.sameEHRLogin) && (this.newLocations[index].ehr_password || this.sameEHRLogin));
+            this.$set('newLocations[' + index + '].isComplete', this.newLocations[index].name && this.newLocations[index].address_line_1 && this.newLocations[index].city && this.newLocations[index].state && this.newLocations[index].postal_code);
 
             this.$set('newLocations[' + index + '].errorCount', $('#location-' + index).find('.invalid').length);
             this.$set('newLocations[' + index + '].validated', this.newLocations[index].isComplete && this.newLocations[index].errorCount == 0);
