@@ -26,7 +26,7 @@ $practiceSection = \App\Reports\Sales\Provider\Sections\PracticeDemographics::cl
 
     @if(array_key_exists($rangeSection, $data))
 
-        <p style="font-size: 15px">Last week CircleLink nurses placed <b>{{$data[$rangeSection]['no_of_call_attempts']}}</b>
+        <p style="font-size: 16px">Last week CircleLink nurses placed <b>{{$data[$rangeSection]['no_of_call_attempts']}}</b>
             calls to your patients, including <b>{{$data[$rangeSection]['no_of_successful_calls']}}</b>
             successful phone sessions, totaling <b>{{$data[$rangeSection]['total_ccm_time']}}</b>
             care hours. We also collected <b>{{$data[$rangeSection]['no_of_biometric_entries']}}</b>

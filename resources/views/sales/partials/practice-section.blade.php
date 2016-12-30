@@ -1,4 +1,4 @@
-<p style="font-size: 15px">
+<p style="font-size: 16px">
     @if($data[$practiceSection]['lead'] != 'N/A')
         Your team has {{$data[$practiceSection]['lead']}} lead(s): N/A.
     @endif
