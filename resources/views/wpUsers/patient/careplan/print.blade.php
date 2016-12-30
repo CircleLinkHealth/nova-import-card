@@ -370,8 +370,8 @@ if (isset($patient) && !empty($patient)) {
                                                 - {{$upcoming['type']}}
                                                 <strong>{{$upcoming['specialty']}} </strong>
                                                  on {{$upcoming['date']}}
-                                                at {{$upcoming['time']}}.
-                                                <strong>{{$upcoming['name']}}</strong> {{$upcoming['address']}} {{$upcoming['phone']}}
+                                                at {{$upcoming['time']}} with
+                                                <strong>{{$upcoming['name']}}</strong>; {{$upcoming['address']}} {{$upcoming['phone']}}
 
                                             </li>
                                         @endforeach
@@ -386,8 +386,8 @@ if (isset($patient) && !empty($patient)) {
                                                 - {{$past['type']}}
                                                 <strong>{{$past['specialty']}} </strong>
                                                  on {{$past['date']}}
-                                                at {{$past['time']}}.
-                                                <strong>{{$past['name']}}</strong> {{$past['address']}} {{$past['phone']}}
+                                                at {{$past['time']}} with
+                                                <strong>{{$past['name']}}</strong>; {{$past['address']}} {{$past['phone']}}
 
                                             </li>
                                             @endforeach
