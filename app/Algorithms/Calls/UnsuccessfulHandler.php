@@ -211,7 +211,7 @@ class UnsuccessfulHandler implements CallHandler
 
                                     $this->logic = 'Next Day';
 
-                                    return $this->nextCallDate->tomorrow();
+                                    return $this->nextCallDate->addDay(1);
 
                                 }
 
