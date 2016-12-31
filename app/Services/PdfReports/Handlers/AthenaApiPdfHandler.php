@@ -53,6 +53,12 @@ class AthenaApiPdfHandler implements PdfReportHandler
             );
 
             $decodedResponse = json_decode($response, true);
+
+
+            if (!is_array($decodedResponse)) {
+                $line = __METHOD__ . __LINE__;
+                throw new \Exception("Athena Response is not an array on: $line");
+            }
         } catch (\Exception $e) {
             \Log::error($e);
 
