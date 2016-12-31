@@ -1271,15 +1271,15 @@ class DatamonitorService
         if (empty($obs_value) && $obs_value != 0) {
             return false;
         }
-        //An A1C level below 5.7 percent is considered normal
+        //An A1C level below this percent is considered normal
         $normalLevel = 5.7;
 
-        //An A1C level of 6.5 percent or higher on two separate tests indicates type 2 diabetes
-        $diabetesLevel = 6.5;
+        //An A1C level higher than this indicates diabetes
+        $diabetesLevel = 7.1;
 
-        if ($obs_value >= $diabetesLevel) {
+        if ($obs_value > $diabetesLevel) {
             $label = 'danger';
-        } elseif ($obs_value >= $normalLevel && $obs_value < $diabetesLevel) {
+        } elseif ($obs_value >= $normalLevel && $obs_value <= $diabetesLevel) {
             $label = 'warning';
         } else {
             $label = 'success';
