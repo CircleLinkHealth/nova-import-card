@@ -6,7 +6,10 @@ $i = ($seconds / 60) % 60;
 $s = $seconds % 60;
 $monthlyTime = sprintf("%02d:%02d:%02d", $H, $i, $s);
 $ccm_above = false;
-if($seconds > 1199){
+$ccm_complex = $patient->patientInfo->isCCMComplex() ?? false;
+if($seconds > 1199 && !$ccm_complex){
+    $ccm_above = true;
+} elseif ($seconds > 3599 && !$ccm_complex){
     $ccm_above = true;
 }
 
@@ -20,17 +23,19 @@ $location = empty($patient->getPreferredLocationName())
 
 ?>
 
-<div class="main-form-block main-form-horizontal main-form-primary-horizontal col-md-12">
+<div class="main-form-block main-form-horizontal main-form-primary-horizontal col-md-12" style="padding-bottom:9px">
 
 
     <div class="row">
         <div class="col-sm-12">
-            <div class="col-sm-8" style="line-height: 20px;">
+            <div class="col-sm-8" style="line-height: 22px;">
                 <span style="font-size: 30px;"> <a
                             href="{{ URL::route('patient.summary', array('patient' => $patient->id)) }}">
                     {{$patient->fullName}}
                     </a> </span>
+                @if($ccm_complex)
                 <span style=" background-color: #ec683e;font-size: 15px; position: relative; top: -7px;" class="label label-warning"> Complex CCM</span>
+                @endif
                 <a
                         href="{{ URL::route('patient.demographics.show', array('patient' => $patient->id)) }}"><span
                             class="glyphicon glyphicon-pencil" style="margin-right:3px;"></span></a><br/>
@@ -59,7 +64,7 @@ $location = empty($patient->getPreferredLocationName())
                     <li class="inline-block">
                         <select id="status" name="status" class="selectpickerX dropdownValid form-control" data-size="2"
                                 style="width: 135px">
-                            <option class="enrolled"
+                            <option style="color: #47beab"
                                     value="enrolled" {{$patient->ccm_status == 'enrolled' ? 'selected' : ''}}> Enrolled
                             </option>
                             <option class="withdrawn"
@@ -86,7 +91,7 @@ $location = empty($patient->getPreferredLocationName())
         </div>
         @if(!empty($problems))
             <div style="clear:both"></div>
-            <ul class="person-conditions-list inline-block text-medium">
+            <ul class="person-conditions-list inline-block text-medium" style="margin-top: -10px">
                 @foreach($problems as $problem)
                     <li class="inline-block"><input type="checkbox" id="item27" name="condition27" value="Active"
                                                     checked="checked" disabled="disabled">

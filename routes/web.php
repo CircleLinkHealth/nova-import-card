@@ -10,8 +10,6 @@ if (app()->environment() != 'production') {
         $patient = \App\PatientInfo::find(1272);
         $practice = \App\Practice::find(35);
 
-        return $practice->users;
-
         return (new \App\Reports\Sales\Practice\PracticeStatsHelper(
             \Carbon\Carbon::now(), \Carbon\Carbon::now()
         ))->billableCountCurrentMonth($practice);
@@ -390,6 +388,11 @@ Route::group(['middleware' => 'auth'], function () {
                 'as'   => 'patient.note.send',
             ]);
         });
+
+        Route::post('ccm/toggle', [
+            'uses' => 'CCMComplexToggleController@toggle',
+            'as' => 'patient.ccm.toggle'
+        ]);
 
 
         Route::get('progress', [

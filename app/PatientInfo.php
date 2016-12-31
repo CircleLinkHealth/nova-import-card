@@ -320,5 +320,14 @@ class PatientInfo extends Model {
 
     }
 
+    public function isCCMComplex(){
+
+        return $this->patientSummaries
+            ->where('month_year', Carbon::now()
+                ->firstOfMonth()
+                ->toDateString())->first()->is_ccm_complex ?? false;
+
+    }
+
 
 }
