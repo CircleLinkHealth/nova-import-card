@@ -102,7 +102,7 @@
 
         <br>
 
-        <a href="{{URL::previous()}}" class="btn btn-warning">No</a>
+        <a href="{{route('patients.dashboard')}}" class="btn btn-warning">No</a>
         &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
         <a href="{{URL::current() . '?clearSession=asd7abacd7asjkdy3'}}" class="btn btn-success">Yes</a>
     </div>
