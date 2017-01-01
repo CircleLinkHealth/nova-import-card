@@ -3,7 +3,6 @@
 namespace App\Http\Controllers;
 
 use App\PatientCareTeamMember;
-use App\PatientInfo;
 use App\PhoneNumber;
 use App\Practice;
 use App\ProviderInfo;

@@ -66,12 +66,8 @@ class SalesByLocationReport
 
     }
 
-    public function introParagraph(){
-
-    }
-
     public function patientsForProgram(){
-        
+
         $this->currentMonth = $this->program->enrollmentByProgram(Carbon::parse($this->startDateString),
                                                                   Carbon::parse($this->endDate));
 
@@ -192,6 +188,11 @@ class SalesByLocationReport
         $pdf->save( storage_path("download/$name.pdf"), true );
 
         return $name.'.pdf';
+
+    }
+
+    public function introParagraph()
+    {
 
     }
 

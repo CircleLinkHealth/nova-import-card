@@ -389,7 +389,7 @@ Route::group(['middleware' => 'auth'], function () {
 
         Route::post('ccm/toggle', [
             'uses' => 'CCMComplexToggleController@toggle',
-            'as' => 'patient.ccm.toggle'
+            'as'   => 'patient.ccm.toggle',
         ]);
 
 

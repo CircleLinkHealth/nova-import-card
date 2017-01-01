@@ -3,9 +3,9 @@
 namespace App\Http\Controllers;
 
 use App\Practice;
-use App\Reports\Sales\Provider\SalesByProviderReport;
 use App\Reports\Sales\Location\SalesByLocationReport;
 use App\Reports\Sales\Practice\SalesByPracticeReport;
+use App\Reports\Sales\Provider\SalesByProviderReport;
 use App\User;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
@@ -25,8 +25,8 @@ class SalesReportsController extends Controller
         return view('sales.by-provider.create',
             [
 
-                'sections' => $sections,
-                'providers' => $providers
+                'sections'  => $sections,
+                'providers' => $providers,
 
             ]);
 
@@ -41,12 +41,12 @@ class SalesReportsController extends Controller
         $sections = $input['sections'];
 
         $data = (new SalesByProviderReport
-            (   $provider,
-                $sections,
-                Carbon::parse($input['start_date']),
-                Carbon::parse($input['end_date'])
-            ))
-                ->data();
+        ($provider,
+            $sections,
+            Carbon::parse($input['start_date']),
+            Carbon::parse($input['end_date'])
+        ))
+            ->data();
 
         $data['name'] = $provider->fullName;
         $data['start'] = Carbon::parse($input['start_date'])->toDateString();
@@ -68,8 +68,8 @@ class SalesReportsController extends Controller
         return view('sales.by-practice.create',
             [
 
-                'sections' => $sections,
-                'practices' => $practices
+                'sections'  => $sections,
+                'practices' => $practices,
 
             ]);
 
@@ -83,12 +83,12 @@ class SalesReportsController extends Controller
         $practice = Practice::find($input['practice']);
 
         $data = (new SalesByPracticeReport
-            (   $practice,
-                $sections,
-                Carbon::parse($input['start_date']),
-                Carbon::parse($input['end_date'])
-            ))
-                ->data();
+        ($practice,
+            $sections,
+            Carbon::parse($input['start_date']),
+            Carbon::parse($input['end_date'])
+        ))
+            ->data();
 
 //        dd($data);
 
@@ -109,14 +109,14 @@ class SalesReportsController extends Controller
 
         $sections = [
             'Enrollment Summary',
-            'Financial Summary'
+            'Financial Summary',
         ];
 
         return view('sales.by-location.create',
             [
 
                 'programs' => $programs,
-                'sections' => $sections
+                'sections' => $sections,
 
             ]);
 

@@ -77,7 +77,8 @@ class PatientMonthlySummary extends Model
         return $this->belongsTo(PatientInfo::class);
     }
 
-    public function scopeGetCurrent($q){
+    public function scopeGetCurrent($q)
+    {
 
         return $q->whereMonthYear(Carbon::now()->firstOfMonth()->toDateString());
 

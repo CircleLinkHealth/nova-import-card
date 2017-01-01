@@ -404,38 +404,41 @@ class WebixFormatter implements ReportFormatter
         $careplanReport[$user->id]['appointments'] = null;
 
         //Appointments
-            //Upcoming
+        //Upcoming
         $upcoming = Appointment
             ::wherePatientId($user->id)
             ->where('date', '>', Carbon::now()->toDateString())
             ->orderBy('date')
             ->take(3)->get();
 
-        foreach ($upcoming as $appt){
+        foreach ($upcoming as $appt) {
 
             $provider = User::find($appt->provider_id);
 
             $specialty = $provider->providerInfo->specialty ?? null;
-            if($specialty){
+            if ($specialty) {
                 $specialty = '(' . $specialty . ')';
             }
 
             //format super specific phone number requirements
-            if($provider->primaryPhone){
-                $phone = "P: " . preg_replace('~.*(\d{3})[^\d]{0,7}(\d{3})[^\d]{0,7}(\d{4}).*~', '$1-$2-$3', $provider->primaryPhone);
+            if ($provider->primaryPhone) {
+                $phone = "P: " . preg_replace('~.*(\d{3})[^\d]{0,7}(\d{3})[^\d]{0,7}(\d{4}).*~', '$1-$2-$3',
+                        $provider->primaryPhone);
             } else {
                 $phone = null;
             }
 
             $formattedUpcomingAppointment[$appt->id] = [
 
-                'name' => $provider->fullName,
+                'name'      => $provider->fullName,
                 'specialty' => $specialty,
-                'date' => $appt->date,
-                'type' => $appt->type,
-                'time' => Carbon::parse($appt->time)->format('H:i A') . ' ' . Carbon::parse($user->timezone)->format('T'),
-                'address' => $provider->address ? "A: $provider->address. " : '',
-                'phone' => $phone
+                'date'      => $appt->date,
+                'type'      => $appt->type,
+                'time'      => Carbon::parse($appt->time)->format('H:i A') . ' ' . Carbon::parse($user->timezone)->format('T'),
+                'address'   => $provider->address
+                    ? "A: $provider->address. "
+                    : '',
+                'phone'     => $phone,
 
             ];
 
@@ -450,31 +453,36 @@ class WebixFormatter implements ReportFormatter
             ->orderBy('date', 'desc')
             ->take(3)->get();
 
-        foreach ($past as $appt){
+        foreach ($past as $appt) {
 
             $provider = User::find($appt->provider_id);
 
             $specialty = $provider->providerInfo->specialty ?? null;
-            if($specialty){
+            if ($specialty) {
                 $specialty = '(' . $specialty . ')';
             }
 
             //format super specific phone number requirements
-            if($provider->primaryPhone){
-                $phone = "P: " . preg_replace('~.*(\d{3})[^\d]{0,7}(\d{3})[^\d]{0,7}(\d{4}).*~', '$1-$2-$3', $provider->primaryPhone);
+            if ($provider->primaryPhone) {
+                $phone = "P: " . preg_replace('~.*(\d{3})[^\d]{0,7}(\d{3})[^\d]{0,7}(\d{4}).*~', '$1-$2-$3',
+                        $provider->primaryPhone);
             } else {
                 $phone = null;
             }
 
             $formattedPastAppointment[$appt->id] = [
 
-                'name' => $provider->fullName,
+                'name'      => $provider->fullName,
                 'specialty' => $specialty,
-                'date' => $appt->date,
-                'type' => $appt->type ? "$appt->type," : '',
-                'time' => Carbon::parse($appt->time)->format('H:i A') . ' ' . Carbon::parse($user->timezone)->format('T'),
-                'address' => $provider->address ? "A: $provider->address. " : '',
-                'phone' => $phone
+                'date'      => $appt->date,
+                'type'      => $appt->type
+                    ? "$appt->type,"
+                    : '',
+                'time'      => Carbon::parse($appt->time)->format('H:i A') . ' ' . Carbon::parse($user->timezone)->format('T'),
+                'address'   => $provider->address
+                    ? "A: $provider->address. "
+                    : '',
+                'phone'     => $phone,
 
             ];
 

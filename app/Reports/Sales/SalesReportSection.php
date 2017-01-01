@@ -17,8 +17,11 @@ abstract class SalesReportSection
 
     protected $data;
 
-    public function __construct($for, Carbon $start, Carbon $end)
-    {
+    public function __construct(
+        $for,
+        Carbon $start,
+        Carbon $end
+    ) {
 
         $this->for = $for;
         $this->start = $start;
@@ -26,8 +29,8 @@ abstract class SalesReportSection
 
     }
 
-    public function renderSection(){
-
+    public function renderSection()
+    {
 
 
     }

@@ -31,7 +31,10 @@ class EnrollmentSummary extends SalesReportSection
     {
         $id = $this->practice->id;
 
-        $enrollmentCumulative = PatientInfo::whereHas('user', function ($q) use ($id) {
+        $enrollmentCumulative = PatientInfo::whereHas('user', function ($q) use
+        (
+            $id
+        ) {
 
             $q->whereProgramId($id);
 
@@ -46,7 +49,8 @@ class EnrollmentSummary extends SalesReportSection
         $this->data['paused'] = $enrollmentCumulative[1]['total'] ?? 'N/A';
         $this->data['withdrawn'] = $enrollmentCumulative[2]['total'] ?? 'N/A';
 
-        $this->data['historical'] = $this->service->historicalEnrollmentPerformance($this->practice, Carbon::parse($this->start), Carbon::parse($this->end));
+        $this->data['historical'] = $this->service->historicalEnrollmentPerformance($this->practice,
+            Carbon::parse($this->start), Carbon::parse($this->end));
 
         return $this->data;
 

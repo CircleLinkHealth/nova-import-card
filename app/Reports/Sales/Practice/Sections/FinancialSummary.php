@@ -36,7 +36,7 @@ class FinancialSummary extends SalesReportSection
 
         for ($i = 0; $i < 3; $i++) {
 
-            if($i == 0){
+            if ($i == 0) {
 
                 $start = Carbon::parse($this->start)->firstOfMonth();
                 $month = Carbon::parse($this->start)->format('F Y');
@@ -54,10 +54,10 @@ class FinancialSummary extends SalesReportSection
             $billableDollars = $billable * 40;
             $billableRounded = intval($billableDollars / 100) * 100;
 
-            if($billableDollars == 0){
+            if ($billableDollars == 0) {
                 $profit = 0;
             } else {
-                $profit = ($billableRounded * ( 1 - ($this->clhpppm/40)));
+                $profit = ($billableRounded * (1 - ($this->clhpppm / 40)));
             }
 
 
@@ -69,7 +69,7 @@ class FinancialSummary extends SalesReportSection
 
             $this->data['historical']['CCM Profit'][$month]
                 = ($this->clhpppm != 0)
-                ? '~'.money_format('%.0n',round($profit, 0))
+                ? '~' . money_format('%.0n', round($profit, 0))
                 : 'N/A';
 
         }

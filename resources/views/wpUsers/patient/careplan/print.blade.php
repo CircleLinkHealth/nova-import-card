@@ -369,7 +369,7 @@ if (isset($patient) && !empty($patient)) {
 
                                                 - {{$upcoming['type']}}
                                                 <strong>{{$upcoming['specialty']}} </strong>
-                                                 on {{$upcoming['date']}}
+                                                on {{$upcoming['date']}}
                                                 at {{$upcoming['time']}} with
                                                 <strong>{{$upcoming['name']}}</strong>; {{$upcoming['address']}} {{$upcoming['phone']}}
 
@@ -377,22 +377,23 @@ if (isset($patient) && !empty($patient)) {
                                         @endforeach
                                     </ul>
                                 @endif
-                                    @if(isset($appointments['past'] ))
-                                        <h3 class="patient-summary__subtitles--subareas patient-summary--careplan">Past:</h3>
-                                        <ul style="line-height: 30px">
+                                @if(isset($appointments['past'] ))
+                                    <h3 class="patient-summary__subtitles--subareas patient-summary--careplan">
+                                        Past:</h3>
+                                    <ul style="line-height: 30px">
                                         @foreach($appointments['past'] as $past)
                                             <li style="list-style: dash">
 
                                                 - {{$past['type']}}
                                                 <strong>{{$past['specialty']}} </strong>
-                                                 on {{$past['date']}}
+                                                on {{$past['date']}}
                                                 at {{$past['time']}} with
                                                 <strong>{{$past['name']}}</strong>; {{$past['address']}} {{$past['phone']}}
 
                                             </li>
-                                            @endforeach
-                                        </ul>
-                                    @endif
+                                        @endforeach
+                                    </ul>
+                                @endif
                             </div>
                         </div>
                     </div>

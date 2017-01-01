@@ -2,7 +2,6 @@
 
 use App\Activity;
 use App\Formatters\WebixFormatter;
-use App\Note;
 use App\PatientContactWindow;
 use App\PatientMonthlySummary;
 use App\Practice;
@@ -48,7 +47,7 @@ class NotesController extends Controller
                 'patient'       => $patient,
                 'messages'      => $messages,
                 'data'          => $data,
-                'ccm_complex'   => $ccm_complex
+                'ccm_complex'   => $ccm_complex,
             ]);
 
     }

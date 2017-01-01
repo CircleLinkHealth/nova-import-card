@@ -8,8 +8,8 @@
 
 namespace App\Reports\Sales;
 
-use Carbon\Carbon;
 use Barryvdh\Snappy\Facades\SnappyPdf as PDF;
+use Carbon\Carbon;
 
 abstract class SalesReport
 {
@@ -20,8 +20,12 @@ abstract class SalesReport
     protected $requestedSections;
     protected $data;
 
-    public function __construct($for, $sections, Carbon $start, Carbon $end)
-    {
+    public function __construct(
+        $for,
+        $sections,
+        Carbon $start,
+        Carbon $end
+    ) {
 
         $this->for = $for;
         $this->start = $start;
@@ -30,8 +34,18 @@ abstract class SalesReport
 
     }
 
-    public function data(){
-        foreach ($this->requestedSections as $key => $section){
+    public function renderView($name)
+    {
+
+        $this->data();
+
+        return view($name, ['data' => $this->data]);
+
+    }
+
+    public function data()
+    {
+        foreach ($this->requestedSections as $key => $section) {
 
             $this->data[$section] = (new $section(
                 $this->for, $this->start, $this->end
@@ -43,24 +57,18 @@ abstract class SalesReport
 
     }
 
-    public function renderView($name)
-    {
-
-        $this->data();
-        return view($name, ['data' => $this->data]);
-
-    }
-
-    public function renderPDF($name, $view)
-    {
+    public function renderPDF(
+        $name,
+        $view
+    ) {
 
         $this->data();
 
         $pdf = PDF::loadView($view, ['data' => $this->data]);
 
-        $pdf->save( storage_path("download/$name.pdf"), true );
+        $pdf->save(storage_path("download/$name.pdf"), true);
 
-        return $name.'.pdf';
+        return $name . '.pdf';
     }
 
 }
