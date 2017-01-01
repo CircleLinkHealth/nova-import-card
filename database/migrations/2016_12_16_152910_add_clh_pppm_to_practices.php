@@ -17,7 +17,7 @@ class AddClhPppmToPractices extends Migration
 
             $table->integer('clh_pppm')->after('display_name');
 
-            \Illuminate\Support\Facades\Artisan::call('php artisan db:seed --class=AddsCLHPPPMToPractices');
+            \Illuminate\Support\Facades\Artisan::call('db:seed --class=AddsCLHPPPMToPractices');
 
         });
     }
