@@ -1,11 +1,11 @@
 <?php namespace App\Http\Controllers\Patient;
 
 use App\CareItem;
+use App\CarePlan;
 use App\CPRulesQuestions;
 use App\Events\CarePlanWasApproved;
 use App\Http\Controllers\Controller;
 use App\Observation;
-use App\PatientCarePlan;
 use App\PatientCareTeamMember;
 use App\PhoneNumber;
 use App\Practice;
@@ -28,7 +28,7 @@ class PatientController extends Controller
      */
     public function showDashboard(Request $request)
     {
-        $pendingApprovals = PatientCarePlan::getNumberOfCareplansPendingApproval(auth()->user());
+        $pendingApprovals = CarePlan::getNumberOfCareplansPendingApproval(auth()->user());
 
         return view('wpUsers.patient.dashboard', compact(['pendingApprovals']));
     }
@@ -122,7 +122,10 @@ class PatientController extends Controller
             }
             $observation['parent_item_text'] = '---';
             switch ($observation["obs_key"]) {
-                case 'HSP':
+                case 'A1c':
+                    $observation['description'] = 'A1c';
+                    $obs_by_pcp['obs_biometrics'][] = $observation;
+                    break;
                 case 'HSP_ER':
                 case 'HSP_HOSP':
                     break;
@@ -241,7 +244,8 @@ class PatientController extends Controller
         $patientData = [];
         $patients = User::intersectPracticesWith(auth()->user())
             ->ofType('participant')
-            ->with('primaryProgram')
+            ->with('primaryPractice')
+            ->with('carePlan')
             ->with([
                 'observations'           => function ($query) {
                     $query->where('obs_key', '!=', 'Outbound');
@@ -254,9 +258,6 @@ class PatientController extends Controller
                 },
                 'phoneNumbers'           => function ($q) {
                     $q->where('type', '=', PhoneNumber::HOME);
-                },
-                'patientInfo'            => function ($q) {
-                    $q->with('carePlanProviderApproverUser');
                 },
             ])
             ->get();
@@ -276,22 +277,21 @@ class PatientController extends Controller
                 continue 1;
             }
 
-            // careplan status stuff from 2.x
-            $careplanStatus = $patient->carePlanStatus;
+            $careplanStatus = $patient->carePlan->status ?? '';
             $careplanStatusLink = '';
             $approverName = 'NA';
             $tooltip = 'NA';
 
             if ($careplanStatus == 'provider_approved') {
-                $approver = $patient->patientInfo->carePlanProviderApproverUser;
+                $approver = $patient->carePlan->providerApproverUser;
                 if ($approver) {
                     $approverName = $approver->fullName;
-                    $carePlanProviderDate = $patient->carePlanProviderDate;
-
-                    $careplanStatus = 'Approved';
-                    $careplanStatusLink = '<span data-toggle="" title="' . $approverName . ' ' . $carePlanProviderDate . '">Approved</span>';
-                    $tooltip = $approverName . ' ' . $carePlanProviderDate;
                 }
+
+                $carePlanProviderDate = $patient->carePlan->provider_date;
+                $careplanStatus = 'Approved';
+                $careplanStatusLink = '<span data-toggle="" title="' . $approverName . ' ' . $carePlanProviderDate . '">Approved</span>';
+                $tooltip = $approverName . ' ' . $carePlanProviderDate;
             } else {
                 if ($careplanStatus == 'qa_approved') {
                     $careplanStatus = 'Approve Now';
@@ -318,7 +318,7 @@ class PatientController extends Controller
             $bpName = '';
             $bpID = $patient->billingProviderID;
             if (!isset($foundPrograms[$patient->program_id])) {
-                $program = $patient->primaryProgram;
+                $program = $patient->primaryPractice;
                 $foundPrograms[$patient->program_id] = $program;
             } else {
                 $program = $foundPrograms[$patient->program_id];

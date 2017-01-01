@@ -116,7 +116,7 @@
                                     <div class="form-group">
                                         <div class="col-sm-12">
                                             <label for="observationSource">
-                                                Appointment Status:
+                                                Appointment Type:
                                             </label>
                                         </div>
                                         <div class="col-sm-12" style="margin-top: -11px;">

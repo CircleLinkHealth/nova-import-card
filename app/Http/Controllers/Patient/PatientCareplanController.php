@@ -39,10 +39,10 @@ class PatientCareplanController extends Controller
 
         $patients = User::intersectPracticesWith(auth()->user())
             ->ofType('participant')
-            ->with('primaryProgram')
+            ->with('primaryPractice')
             ->with([
-                'patientInfo' => function ($q) {
-                    $q->with('carePlanProviderApproverUser');
+                'carePlan' => function ($q) {
+                    $q->with('providerApproverUser');
                 },
             ])
             ->withCareTeamOfType('billing_provider')
@@ -71,7 +71,7 @@ class PatientCareplanController extends Controller
             $tooltip = 'NA';
 
             if ($careplanStatus == 'provider_approved') {
-                $approver = $patient->patientInfo->carePlanProviderApproverUser;
+                $approver = $patient->carePlan->providerApproverUser;
                 if ($approver) {
                     $approverName = $approver->fullName;
                     $carePlanProviderDate = $patient->carePlanProviderDate;
@@ -541,6 +541,7 @@ class PatientCareplanController extends Controller
         $ctmsa = $user->sendAlertTo;
         $ctbp = $user->billingProviderID;
         $ctlc = $user->leadContactID;
+
 
         //dd($userConfig);
 

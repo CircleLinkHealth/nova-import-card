@@ -9,11 +9,11 @@
 namespace App\Services;
 
 
+use App\CarePlan as CarePlan;
 use App\CarePlanTemplate;
 use App\Models\CPM\CpmMisc;
 use App\Models\CPM\UI\Biometrics;
 use App\Models\CPM\UI\Section;
-use App\PatientCarePlan as CarePlan;
 use App\User;
 
 /**
@@ -168,7 +168,6 @@ class CarePlanViewService
         $additionalInfo->title = 'Additional Information';
         $additionalInfo->miscs = $template->cpmMiscs()->whereIn('name', [
                 CpmMisc::ALLERGIES,
-                CpmMisc::APPOINTMENTS,
                 CpmMisc::SOCIAL_SERVICES,
                 CpmMisc::OTHER,
             ])

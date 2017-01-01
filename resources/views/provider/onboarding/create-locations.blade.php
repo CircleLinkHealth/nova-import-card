@@ -338,11 +338,11 @@
         </div>
 
         <div class="row">
-            <button v-on:click="submitForm('{{route('post.onboarding.store.locations')}}')"
-                    class="btn blue waves-effect waves-light col s12" id="submit"
-                    v-bind:class="{disabled: !formCompleted}">
+            <div v-on:click="submitForm('{{route('post.onboarding.store.locations')}}')"
+                 class="btn blue waves-effect waves-light col s12" id="submit"
+                 v-bind:class="{disabled: !formCompleted}">
                 Next
-            </button>
+            </div>
         </div>
 
         {!! Form::close() !!}

@@ -56,6 +56,10 @@ class Service
             return;
         }
 
+        if (count($response['appointments']) == 0) {
+            return;
+        }
+
         $practiceCustomFields = $this->api->getPracticeCustomFields($practiceId);
 
         //Get 'CCM Enabled' custom field id from the practice's custom fields

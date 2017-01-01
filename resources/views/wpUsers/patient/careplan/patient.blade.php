@@ -279,10 +279,10 @@ $user_info = array();
                                     </div>
 
                                     @if(isset($patient->id) )
-                                        @if(($patient->primaryProgram) )
+                                        @if(($patient->primaryPractice) )
                                             <div class="form-group form-item form-item-spacing col-sm-12 {{ $errors->first('program_id') ? 'has-error' : '' }} hidden">
                                                 Program:
-                                                <strong>{{ $patient->primaryProgram->display_name }}</strong>
+                                                <strong>{{ $patient->primaryPractice->display_name }}</strong>
                                             </div>
                                         @endif
                                         <input type=hidden name=program_id value="{{ $programId }}">

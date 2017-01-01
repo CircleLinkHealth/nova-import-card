@@ -33,7 +33,7 @@ class WebixFormatter implements ReportFormatter
             //id
             $formatted_notes[$count]['patient_id'] = $note->patient_id;
 
-            $formatted_notes[$count]['program_name'] = $note->patient->primaryProgram->display_name;
+            $formatted_notes[$count]['program_name'] = $note->patient->primaryPractice->display_name;
 
             //Provider Name
             $provider = User::find(intval($note->patient->billingProviderID));
@@ -99,7 +99,7 @@ class WebixFormatter implements ReportFormatter
             return false;
         }
 
-        $report_data = $report_data->sortByDesc('performed_at');
+        $report_data = $report_data->sortByDesc('created_at');
 
         $formatted_data = [];
         $count = 0;
@@ -172,6 +172,7 @@ class WebixFormatter implements ReportFormatter
             }
 
             $count++;
+
 
         }
 
@@ -400,13 +401,88 @@ class WebixFormatter implements ReportFormatter
             $careplanReport[$user->id]['other'] = '';
         }
 
+        $careplanReport[$user->id]['appointments'] = null;
+
         //Appointments
-        if($user->cpmMiscs->where('name',CpmMisc::APPOINTMENTS)->first()){
-            $careplanReport[$user->id]['appointments'] = (new CpmMiscService())->getMiscWithInstructionsForUser($user,
-                CpmMisc::APPOINTMENTS);
-        } else {
-            $careplanReport[$user->id]['appointments'] = '';
+            //Upcoming
+        $upcoming = Appointment
+            ::wherePatientId($user->id)
+            ->where('date', '>', Carbon::now()->toDateString())
+            ->orderBy('date')
+            ->take(3)->get();
+
+        foreach ($upcoming as $appt){
+
+            $provider = User::find($appt->provider_id);
+
+            $specialty = $provider->providerInfo->specialty ?? null;
+            if($specialty){
+                $specialty = '(' . $specialty . ')';
+            }
+
+            //format super specific phone number requirements
+            if($provider->primaryPhone){
+                $phone = "P: " . preg_replace('~.*(\d{3})[^\d]{0,7}(\d{3})[^\d]{0,7}(\d{4}).*~', '$1-$2-$3', $provider->primaryPhone);
+            } else {
+                $phone = null;
+            }
+
+            $formattedUpcomingAppointment[$appt->id] = [
+
+                'name' => $provider->fullName,
+                'specialty' => $specialty,
+                'date' => $appt->date,
+                'type' => $appt->type,
+                'time' => Carbon::parse($appt->time)->format('H:i A') . ' ' . Carbon::parse($user->timezone)->format('T'),
+                'address' => $provider->address ? "A: $provider->address. " : '',
+                'phone' => $phone
+
+            ];
+
+            $careplanReport[$user->id]['appointments']['upcoming'] = $formattedUpcomingAppointment;
+
         }
+
+        //past
+        $past = Appointment
+            ::wherePatientId($user->id)
+            ->where('date', '<', Carbon::now()->toDateString())
+            ->orderBy('date', 'desc')
+            ->take(3)->get();
+
+        foreach ($past as $appt){
+
+            $provider = User::find($appt->provider_id);
+
+            $specialty = $provider->providerInfo->specialty ?? null;
+            if($specialty){
+                $specialty = '(' . $specialty . ')';
+            }
+
+            //format super specific phone number requirements
+            if($provider->primaryPhone){
+                $phone = "P: " . preg_replace('~.*(\d{3})[^\d]{0,7}(\d{3})[^\d]{0,7}(\d{4}).*~', '$1-$2-$3', $provider->primaryPhone);
+            } else {
+                $phone = null;
+            }
+
+            $formattedPastAppointment[$appt->id] = [
+
+                'name' => $provider->fullName,
+                'specialty' => $specialty,
+                'date' => $appt->date,
+                'type' => $appt->type ? "$appt->type," : '',
+                'time' => Carbon::parse($appt->time)->format('H:i A') . ' ' . Carbon::parse($user->timezone)->format('T'),
+                'address' => $provider->address ? "A: $provider->address. " : '',
+                'phone' => $phone
+
+            ];
+
+            $careplanReport[$user->id]['appointments']['past'] = $formattedPastAppointment;
+
+
+        }
+
 
 //        array_reverse($biometrics)
         return $careplanReport;

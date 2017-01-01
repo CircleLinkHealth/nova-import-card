@@ -3,6 +3,7 @@
 namespace App\Listeners;
 
 use App\Events\CarePlanWasApproved;
+use App\Events\PdfableCreated;
 
 class UpdateCarePlanStatus
 {
@@ -33,6 +34,9 @@ class UpdateCarePlanStatus
             $user->carePlanStatus = 'provider_approved'; // careplan_status
             $user->carePlanProviderApprover = auth()->user()->id; // careplan_provider_approver
             $user->carePlanProviderApproverDate = date('Y-m-d H:i:s'); // careplan_provider_date
+
+            event(new PdfableCreated($user->carePlan));
+
         } else {
             $user->carePlanStatus = 'qa_approved'; // careplan_status
             $user->carePlanQaApprover = auth()->user()->id; // careplan_qa_approver

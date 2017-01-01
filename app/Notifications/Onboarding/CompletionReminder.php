@@ -2,11 +2,9 @@
 
 namespace App\Notifications\Onboarding;
 
-use App\User;
 use Illuminate\Bus\Queueable;
-use Illuminate\Notifications\Notification;
-use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Messages\MailMessage;
+use Illuminate\Notifications\Notification;
 
 class CompletionReminder extends Notification
 {
@@ -55,7 +53,7 @@ class CompletionReminder extends Notification
      */
     public function toMail($notifiable)
     {
-        $program_name = $notifiable->primaryProgram->display_name;
+        $program_name = $notifiable->primaryPractice->display_name;
 
         return (new MailMessage)
             ->subject("Let’s Finish Your CircleLink Health Profile!")

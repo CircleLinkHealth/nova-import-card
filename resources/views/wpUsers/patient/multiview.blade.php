@@ -46,13 +46,10 @@ $today = \Carbon\Carbon::now()->toFormattedDateString();
                     <div class="row">
                         <div class="col-xs-12 text-right hidden-print">
 					<span class="btn btn-group text-right">
-					<!--<A class="btn btn-info btn-sm inline-block" aria-label="..." role="button"
-                       HREF="javascript:window.print()">Print This Page</A>-->
 				<form class="lang" action="#" method="POST" id="form">
                     {{ csrf_field() }}
                     <input type="hidden" name="lang" value="es"/>
-                    <!-- <button type="submit" class="btn btn-info btn-sm text-right" aria-label="..." value="">Translate to Spanish</button>
-          -->
+
                 </form></span></div>
                     </div>
                     <div class="patient-info__main">
@@ -69,7 +66,7 @@ $today = \Carbon\Carbon::now()->toFormattedDateString();
                                         @endif
                                     </div>
                                     <div class="col-xs-4 col-xs-offset-1 print-row text-right">290 Harbor Drive</div>
-                                    <div class="col-xs-7 address">{{$patient->primaryProgram->display_name}}</div>
+                                    <div class="col-xs-7 address">{{$patient->primaryPractice->display_name}}</div>
                                     <div class="col-xs-4 col-xs-offset-1 print-row text-right">Stamford, CT 06902</div>
                                     @if($patient->getPreferredLocationAddress())
                                         <div class="col-xs-12 address">{{$patient->getPreferredLocationAddress()->address_line_1}}</div>
@@ -457,25 +454,55 @@ $today = \Carbon\Carbon::now()->toFormattedDateString();
                     </div>
                 </div>
                 <!-- /CARE TEAM -->
-
-
                 <!-- Appointments -->
-                <div class="patient-info__subareas">
-                    <div class="row">
-                        <div class="col-xs-12">
-                            <h2 class="patient-summary__subtitles patient-summary--careplan-background">
-                                Appointments:</h2>
-                        </div>
-                        <div class="col-xs-12">
-                            @if($careplan['appointments'])
-                                <p><?= nl2br($careplan['appointments']) ?></p>
-                            @else
-                                <p>No instructions at this time</p>
-                            @endif
+                @if(isset($careplan['appointments']['upcoming']) || isset($careplan['appointments']['past'] ))
+
+                    <div class="patient-info__subareas">
+                        <div class="row">
+                            <div class="col-xs-12">
+                                <h2 class="patient-summary__subtitles patient-summary--careplan-background">
+                                    Appointments</h2>
+                            </div>
+                            <div class="col-xs-12">
+
+                                @if(isset($careplan['appointments']['upcoming'] ))
+                                    <h3 class="patient-summary__subtitles--subareas patient-summary--careplan">
+                                        Upcoming: </h3>
+                                    <ul style="line-height: 30px">
+                                        @foreach($careplan['appointments']['upcoming'] as $upcoming)
+                                            <li style="list-style: dash">
+
+                                                - {{$upcoming['type']}}
+                                                <strong>{{$upcoming['specialty']}} </strong>
+                                                 on {{$upcoming['date']}}
+                                                at {{$upcoming['time']}} with
+                                                <strong>{{$upcoming['name']}}</strong>; {{$upcoming['address']}} {{$upcoming['phone']}}
+
+                                            </li>
+                                        @endforeach
+                                        @endif
+                                    </ul>
+                                    @if(isset($careplan['appointments']['past'] ))
+                                        <h3 class="patient-summary__subtitles--subareas patient-summary--careplan">Past:</h3>
+                                        <ul style="line-height: 30px">
+                                            @foreach($careplan['appointments']['past'] as $past)
+                                                <li style="list-style: dash">
+
+                                                    - {{$past['type']}}
+                                                    <strong>{{$past['specialty']}} </strong>
+                                                     on {{$past['date']}}
+                                                    at {{$past['time']}} with
+                                                    <strong>{{$past['name']}}</strong>; {{$past['address']}} {{$past['phone']}}
+
+                                                </li>
+                                            @endforeach
+                                            @endif
+                                        </ul>
+                            </div>
                         </div>
                     </div>
-                </div>
-                <!-- /Appointments -->
+            @endif
+            <!-- /Appointments -->
 
                 <!-- OTHER NOTES -->
                 <div class="patient-info__subareas">
@@ -485,7 +512,9 @@ $today = \Carbon\Carbon::now()->toFormattedDateString();
                                 Notes:</h2>
                         </div>
                         <div class="col-xs-12">
-                            @if($careplan['other'])
+                            <?php $careplan['other'] ?>
+
+                        @if($careplan['other'])
                                 <p><?= nl2br($careplan['other']) ?></p>
                             @else
                                 <p>No instructions at this time</p>

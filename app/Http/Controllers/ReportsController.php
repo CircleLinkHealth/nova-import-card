@@ -8,7 +8,6 @@ use App\Models\CPM\CpmProblem;
 use App\PageTimer;
 use App\PatientCareTeamMember;
 use App\Practice;
-use App\Reports\Sales\SalesByLocationReport;
 use App\Services\CCD\CcdInsurancePolicyService;
 use App\Services\CPM\CpmProblemService;
 use App\Services\ReportsService;
@@ -142,7 +141,7 @@ class ReportsController extends Controller
 
         $patients = User::intersectPracticesWith(auth()->user())
             ->ofType('participant')
-            ->with('primaryProgram')
+            ->with('primaryPractice')
             ->get();
 
         $u20_patients = [];
@@ -183,7 +182,7 @@ class ReportsController extends Controller
 
         $patient_counter = 0;
         foreach ($patients as $patient) {
-            $u20_patients[$patient_counter]['site'] = $patient->primaryProgram->display_name;
+            $u20_patients[$patient_counter]['site'] = $patient->primaryPractice->display_name;
 
             $u20_patients[$patient_counter]['colsum_careplan'] = 0;
             $u20_patients[$patient_counter]['colsum_changes'] = 0;
@@ -299,7 +298,7 @@ class ReportsController extends Controller
 
         $patients = User::intersectPracticesWith(auth()->user())
             ->ofType('participant')
-            ->with('primaryProgram')
+            ->with('primaryPractice')
             ->get();
 
         $u20_patients = [];
@@ -341,7 +340,7 @@ class ReportsController extends Controller
         $act_count = 0;
 
         foreach ($patients as $patient) {
-            $u20_patients[$act_count]['site'] = $patient->primaryProgram->display_name;
+            $u20_patients[$act_count]['site'] = $patient->primaryPractice->display_name;
             $u20_patients[$act_count]['colsum_careplan'] = 0;
             $u20_patients[$act_count]['colsum_changes'] = 0;
             $u20_patients[$act_count]['colsum_progress'] = 0;
@@ -464,30 +463,6 @@ class ReportsController extends Controller
         return json_encode($feed);
     }
 
-    public function careplan(
-        Request $request,
-        $id = false
-    ) {
-        if ($request->header('Client') == 'mobi') {
-            // get and validate current user
-            \JWTAuth::setIdentifier('id');
-            $wpUser = \JWTAuth::parseToken()->authenticate();
-            if (!$wpUser) {
-                return response()->json(['error' => 'invalid_credentials'], 401);
-            }
-        } else {
-            // get user
-            $wpUser = User::find($id);
-            if (!$wpUser) {
-                return response("User not found", 401);
-            }
-        }
-
-        $feed = $this->service->careplan($wpUser->id);
-
-        return response()->json($feed);
-    }
-
     public function viewPrintCareplan(
         Request $request,
         $patientId = false,
@@ -569,43 +544,6 @@ class ReportsController extends Controller
             'patient'          => $patient,
             'biometrics_array' => $biometrics_array,
         ]);
-    }
-
-    public function createSalesReport(Request $request)
-    {
-
-        $programs = Practice::all()->pluck('display_name', 'id');
-
-        return view('sales.create', ['programs' => $programs]);
-
-    }
-
-    public function makeSalesReport(Request $request)
-    {
-
-        $input = $request->all();
-
-        $programs = $input['programs'];
-
-        $withHistory = isset($input['withPastMonth'])
-            ? true
-            : false;
-
-        $links = [];
-
-        foreach ($programs as $program) {
-
-            $program = Practice::find($program);
-
-            $links[$program->display_name] = (new SalesByLocationReport($program,
-                Carbon::parse($input['start_date']),
-                Carbon::parse($input['end_date']),
-                $withHistory)
-            )->handle();
-        }
-
-        return view('sales.reportlist', ['reports' => $links]);
-
     }
 
     public function excelReportT1()

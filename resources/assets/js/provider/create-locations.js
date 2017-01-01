@@ -79,6 +79,7 @@ var locationsVM = new Vue({
                     firstName: '',
                     lastName: '',
                     email: '',
+                    type: 'billing_provider'
                 },
                 timezone: 'America/New_York'
             });
@@ -93,8 +94,6 @@ var locationsVM = new Vue({
                 && this.newLocations[index].city
                 && this.newLocations[index].state
                 && this.newLocations[index].postal_code
-                && (this.newLocations[index].ehr_login || this.sameEHRLogin)
-                && (this.newLocations[index].ehr_password || this.sameEHRLogin)
             );
 
             this.$set('newLocations[' + index + '].errorCount', $('#location-' + index).find('.invalid').length);

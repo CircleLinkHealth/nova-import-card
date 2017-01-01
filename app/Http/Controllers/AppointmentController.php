@@ -60,7 +60,6 @@ class AppointmentController extends Controller
             'author_id' => auth()->user()->id,
             'type' =>  $input['appointment_type'],
             'provider_id' => $input['provider'],
-            'type' => $input['appointment_type'],
             'date' => $input['date'],
             'time' => $input['time'],
             'comment' => $input['comment'],

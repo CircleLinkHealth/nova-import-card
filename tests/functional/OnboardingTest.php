@@ -3,6 +3,7 @@
 use App\Entities\Invite;
 use App\User;
 use Faker\Factory;
+use Tests\Helpers\FormRequests\Onboarding\LocationFormRequest;
 
 class OnboardingTest extends TestCase
 {
@@ -129,7 +130,7 @@ class OnboardingTest extends TestCase
 
     public function test_post_locations()
     {
-        dd((new LocationFormRequest)->post());
+        (new LocationFormRequest)->post();
         $this->call('POST', route('post.onboarding.store.locations'), []);
     }
 

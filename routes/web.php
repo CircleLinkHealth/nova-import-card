@@ -4,6 +4,14 @@ if (app()->environment() != 'production') {
     Route::get('rohan', function () {
 
 
+        $provider = \App\User::find(852);
+        $patient = \App\PatientInfo::find(1272);
+        $practice = \App\Practice::find(35);
+
+        return (new \App\Reports\Sales\Practice\PracticeStatsHelper(
+            \Carbon\Carbon::now(), \Carbon\Carbon::now()
+        ))->billableCountCurrentMonth($practice);
+
     });
 }
 
@@ -379,6 +387,11 @@ Route::group(['middleware' => 'auth'], function () {
             ]);
         });
 
+        Route::post('ccm/toggle', [
+            'uses' => 'CCMComplexToggleController@toggle',
+            'as' => 'patient.ccm.toggle'
+        ]);
+
 
         Route::get('progress', [
             'uses' => 'ReportsController@index',
@@ -471,7 +484,7 @@ Route::group(['middleware' => 'auth'], function () {
             'as'   => 'patch.admin.edit.nurse.schedules',
         ]);
 
-        Route::get('athena/check', 'CcdApi\Athena\AthenaApiController@getTodays');
+        Route::get('athena/check', 'CcdApi\Athena\AthenaApiTestController@getTodays');
 
         Route::post('calls/import', [
             'uses' => 'CallController@import',
@@ -499,15 +512,47 @@ Route::group(['middleware' => 'auth'], function () {
                 'as'   => 'MonthlyBillingReportsController.makeMonthlyReport',
             ]);
 
-            Route::get('sales/create', [
-                'uses' => 'ReportsController@createSalesReport',
-                'as'   => 'reports.sales.create',
-            ]);
+            Route::group([
+                'prefix' => 'sales',
+            ], function () {
 
-            Route::post('sales/make', [
-                'uses' => 'ReportsController@makeSalesReport',
-                'as'   => 'reports.sales.make',
-            ]);
+                //LOCATIONS -hidden on adminUI currently.
+
+                Route::get('location/create', [
+                    'uses' => 'SalesReportsController@createLocationReport',
+                    'as'   => 'reports.sales.location.create',
+                ]);
+
+                Route::post('location/report', [
+                    'uses' => 'SalesReportsController@makeLocationReport',
+                    'as'   => 'reports.sales.location.report',
+                ]);
+
+                //PROVIDERS
+
+                Route::get('provider/create', [
+                    'uses' => 'SalesReportsController@createProviderReport',
+                    'as'   => 'reports.sales.provider.create',
+                ]);
+
+                Route::post('provider/report', [
+                    'uses' => 'SalesReportsController@makeProviderReport',
+                    'as'   => 'reports.sales.provider.report',
+                ]);
+
+                //PRACTICES
+
+                Route::get('practice/create', [
+                    'uses' => 'SalesReportsController@createPracticeReport',
+                    'as'   => 'reports.sales.practice.create',
+                ]);
+
+                Route::post('practice/report', [
+                    'uses' => 'SalesReportsController@makePracticeReport',
+                    'as'   => 'reports.sales.practice.report',
+                ]);
+
+            });
 
             Route::get('monthly-billing/create', [
                 'uses' => 'Admin\Reports\MonthlyBillingReportsController@create',
@@ -730,15 +775,15 @@ Route::group(['middleware' => 'auth'], function () {
                 'uses' => 'UserController@showMsgCenter',
                 'as'   => 'admin.users.msgCenterUpdate',
             ]);
-            Route::get('users/patientCallManagement', [
+            Route::get('calls/', [
                 'uses' => 'Admin\PatientCallManagementController@index',
                 'as'   => 'admin.patientCallManagement.index',
             ]);
-            Route::get('users/patientCallManagement/{id}/edit', [
+            Route::get('calls/{id}/edit', [
                 'uses' => 'Admin\PatientCallManagementController@edit',
                 'as'   => 'admin.patientCallManagement.edit',
             ]);
-            Route::post('users/patientCallManagement/{id}/edit', [
+            Route::post('calls/{id}/edit', [
                 'uses' => 'Admin\PatientCallManagementController@update',
                 'as'   => 'admin.patientCallManagement.update',
             ]);

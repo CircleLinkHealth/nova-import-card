@@ -106,4 +106,14 @@ class Kernel extends ConsoleKernel
         $schedule->command('reset:ccm_time')
             ->cron('1 0 1 * *');
     }
+
+    /**
+     * Register the Closure based commands for the application.
+     *
+     * @return void
+     */
+    protected function commands()
+    {
+        require base_path('routes/console.php');
+    }
 }

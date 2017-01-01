@@ -45,11 +45,11 @@
 
                     <div class="row providerForm">
                         <div class="form-group">
-                            <label class="col-md-3 control-label" for="speciality">Specialty or Service Type</label>
+                            <label class="col-md-3 control-label" for="specialty">Specialty or Service Type</label>
                             <div class="col-md-6">
-                                <input id="speciality" name="speciality" type="text" placeholder=""
+                                <input id="specialty" name="specialty" type="text" placeholder=""
                                        class="form-control input-md"
-                                       required="">
+                                       required="required">
                             </div>
                         </div>
                     </div>

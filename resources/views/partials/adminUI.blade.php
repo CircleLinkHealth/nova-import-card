@@ -47,6 +47,11 @@
     <!-- START BOOTSTRAP -->
     <!-- Latest compiled and minified CSS -->
     <link href="{{ asset('/css/'.$app_config_admin_stylesheet) }}" rel="stylesheet">
+
+    <script src="{{ asset('/js/bootstrap-select.min.js') }}"></script>
+    <link href="//cdnjs.cloudflare.com/ajax/libs/select2/4.0.0/css/select2.min.css" rel="stylesheet"/>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/select2/4.0.0/js/select2.min.js"></script>
+
     <style>
         .table-striped > tbody > tr:nth-child(odd) > td,
         .table-striped > tbody > tr:nth-child(odd) > th {
@@ -57,10 +62,10 @@
         (function (i, s, o, g, r, a, m) {
             i['GoogleAnalyticsObject'] = r;
             i[r] = i[r] || function () {
-                        (i[r].q = i[r].q || []).push(arguments)
-                    }, i[r].l = 1 * new Date();
+                    (i[r].q = i[r].q || []).push(arguments)
+                }, i[r].l = 1 * new Date();
             a = s.createElement(o),
-                    m = s.getElementsByTagName(o)[0];
+                m = s.getElementsByTagName(o)[0];
             a.async = 1;
             a.src = g;
             m.parentNode.insertBefore(a, m)
@@ -136,38 +141,29 @@
                                         Call Management</a>
                                 <li><a href="{{ URL::route('admin.families.index', array()) }}">Patient Families</a>
                                 <li><a href="{{ URL::route('algo.mock.create', array()) }}">Algo
-                                        v{{\App\Algorithms\Calls\SuccessfulHandler::VERSION}}</a>
+                                        v{{\App\Algorithms\Calls\SuccessfulHandler::VERSION}} Simulator</a>
                                 <li><a href="{{ URL::route('CallReportController.exportxls', array()) }}">Calls</a></li>
 
                             </ul>
                         </li>
                     @endif
 
-                        @if ( ! Auth::guest())
-                            <li role="presentation" 0lass="dropdown">
-                                <a class="dropdown-toggle" data-toggle="dropdown" href="#" role="button"
-                                   aria-expanded="false">
-                                    Nurse Management <span class="caret"></span>
-                                </a>
-                                <ul class="dropdown-menu" role="menu">
-                                    <li><a href="{{ URL::route('get.admin.nurse.schedules') }}">Nurse Schedules</a>
-{{--                                    <li><a href="{{ URL::route('stats.nurse.info') }}">Nurse Statistics</a>--}}
-                                    <li><a href="{{ URL::route('admin.reports.nurseTime.index', array()) }}">Nurse Time</a></li>
-                                    <li><a href="{{ URL::route('admin.reports.nurse.daily', array()) }}">Daily Nurse Report</a></li>
-                                    <li><a href="{{ URL::route('admin.reports.nurse.invoice', array()) }}">Nurse Invoices</a> </li>
-
-                                </ul>
-                            </li>
-                        @endif
-
-                    @if(Entrust::can('app-config-view'))
-                        <li role="presentation" class="dropdown">
+                    @if ( ! Auth::guest())
+                        <li role="presentation" 0lass="dropdown">
                             <a class="dropdown-toggle" data-toggle="dropdown" href="#" role="button"
                                aria-expanded="false">
-                                Settings<span class="caret"></span>
+                                Nurse Management <span class="caret"></span>
                             </a>
                             <ul class="dropdown-menu" role="menu">
-                                <li><a href="{{ URL::route('appConfig.index', array()) }}">App Config</a></li>
+                                <li><a href="{{ URL::route('get.admin.nurse.schedules') }}">Nurse Schedules</a>
+                                {{--                                    <li><a href="{{ URL::route('stats.nurse.info') }}">Nurse Statistics</a>--}}
+                                <li><a href="{{ URL::route('admin.reports.nurseTime.index', array()) }}">Nurse Time</a>
+                                </li>
+                                <li><a href="{{ URL::route('admin.reports.nurse.daily', array()) }}">Daily Nurse
+                                        Report</a></li>
+                                <li><a href="{{ URL::route('admin.reports.nurse.invoice', array()) }}">Nurse
+                                        Invoices</a></li>
+
                             </ul>
                         </li>
                     @endif
@@ -188,7 +184,7 @@
                         </li>
                     @endif
 
-                        @if(Entrust::can('practices-view'))
+                    @if(Entrust::can('practices-view'))
                         <li role="presentation" class="dropdown">
                             <a class="dropdown-toggle" data-toggle="dropdown" href="#" role="button"
                                aria-expanded="false">
@@ -200,16 +196,16 @@
                                     <li><a href="{{ URL::route('locations.index', array()) }}">Locations</a></li>
                                 @endif
                                 {{--@if(Entrust::can('practices-manage'))--}}
-                                    {{--<li><a href="{{ URL::route('admin.questions.index', array()) }}">Questions</a></li>--}}
-                                    {{--<li><a href="{{ URL::route('admin.questionSets.index', array()) }}">Question--}}
-                                            {{--Sets</a></li>--}}
-                                    {{--<li><a href="{{ URL::route('admin.items.index', array()) }}">Items</a></li>--}}
+                                {{--<li><a href="{{ URL::route('admin.questions.index', array()) }}">Questions</a></li>--}}
+                                {{--<li><a href="{{ URL::route('admin.questionSets.index', array()) }}">Question--}}
+                                {{--Sets</a></li>--}}
+                                {{--<li><a href="{{ URL::route('admin.items.index', array()) }}">Items</a></li>--}}
                                 {{--@endif--}}
                             </ul>
                         </li>
                     @endif
 
-                        {{--@if(Entrust::can('practices-view'))--}}
+                    {{--@if(Entrust::can('practices-view'))--}}
                     {{--<li role="presentation" class="dropdown">--}}
                     {{--<a class="dropdown-toggle" data-toggle="dropdown" href="#" role="button"--}}
                     {{--aria-expanded="false">--}}
@@ -223,33 +219,33 @@
                     {{--@endif--}}
 
                     {{--@if(Entrust::can('activities-view'))--}}
-                        {{--<li role="presentation" class="dropdown">--}}
-                            {{--<a class="dropdown-toggle" data-toggle="dropdown" href="#" role="button"--}}
-                               {{--aria-expanded="false">--}}
-                                {{--Activities <span class="caret"></span>--}}
-                            {{--</a>--}}
-                            {{--<ul class="dropdown-menu" role="menu">--}}
-                                {{--<li><a href="{{ URL::route('admin.activities.index', array()) }}">Activities</a></li>--}}
-                                {{--@if(Entrust::can('activities-pagetimer-view'))--}}
-                                    {{--<li><a href="{{ URL::route('admin.pagetimer.index', array()) }}">Page Timer</a></li>--}}
-                                {{--@endif--}}
-                            {{--</ul>--}}
-                        {{--</li>--}}
+                    {{--<li role="presentation" class="dropdown">--}}
+                    {{--<a class="dropdown-toggle" data-toggle="dropdown" href="#" role="button"--}}
+                    {{--aria-expanded="false">--}}
+                    {{--Activities <span class="caret"></span>--}}
+                    {{--</a>--}}
+                    {{--<ul class="dropdown-menu" role="menu">--}}
+                    {{--<li><a href="{{ URL::route('admin.activities.index', array()) }}">Activities</a></li>--}}
+                    {{--@if(Entrust::can('activities-pagetimer-view'))--}}
+                    {{--<li><a href="{{ URL::route('admin.pagetimer.index', array()) }}">Page Timer</a></li>--}}
+                    {{--@endif--}}
+                    {{--</ul>--}}
+                    {{--</li>--}}
                     {{--@endif--}}
 
                     {{--@if(Entrust::can('rules-engine-view'))--}}
-                        {{--<li role="presentation" class="dropdown">--}}
-                            {{--<a class="dropdown-toggle" data-toggle="dropdown" href="#" role="button"--}}
-                               {{--aria-expanded="false">--}}
-                                {{--Rules <span class="caret"></span>--}}
-                            {{--</a>--}}
-                            {{--<ul class="dropdown-menu" role="menu">--}}
-                                {{--<li><a href="{{ URL::route('admin.rules.index', array()) }}">Rules</a></li>--}}
-                                {{--@if(Entrust::can('rules-engine-manage'))--}}
-                                    {{--<li><a href="{{ URL::route('admin.rules.create', array()) }}">Add new</a></li>--}}
-                                {{--@endif--}}
-                            {{--</ul>--}}
-                        {{--</li>--}}
+                    {{--<li role="presentation" class="dropdown">--}}
+                    {{--<a class="dropdown-toggle" data-toggle="dropdown" href="#" role="button"--}}
+                    {{--aria-expanded="false">--}}
+                    {{--Rules <span class="caret"></span>--}}
+                    {{--</a>--}}
+                    {{--<ul class="dropdown-menu" role="menu">--}}
+                    {{--<li><a href="{{ URL::route('admin.rules.index', array()) }}">Rules</a></li>--}}
+                    {{--@if(Entrust::can('rules-engine-manage'))--}}
+                    {{--<li><a href="{{ URL::route('admin.rules.create', array()) }}">Add new</a></li>--}}
+                    {{--@endif--}}
+                    {{--</ul>--}}
+                    {{--</li>--}}
                     {{--@endif--}}
                     {{--@if(Entrust::can('apikeys-view'))--}}
                     {{--<li role="presentation" class="dropdown">--}}
@@ -270,36 +266,52 @@
                            aria-expanded="false">
                             Reports<span class="caret"></span>
                         </a>
-                        <ul class="dropdown-menu" role="menu">
+                        <ul class="dropdown-menu" role="menu" aria-labelledby="dLabel">
                             <li><a href="{{ URL::route('view.files.ready.to.import', []) }}">CCDs To Import</a></li>
                             <li><a href="{{ URL::route('EthnicityReportController.getReport', []) }}">Ethnicity/Race
-                                    Report</a></li>
+                                </a></li>
                             <li><a href="{{ URL::route('MonthlyBillingReportsController.create', []) }}">Monthly
-                                    Billing Report</a></li>
+                                    Billing</a></li>
                             <li><a href="{{ URL::route('PatientConditionsReportController.getReport', array()) }}">Patient
                                     Conditions (export)</a>
                             </li>
 
                             <li><a href="{{ URL::route('excel.report.t2', array()) }}">Paused Patients (export)</a></li>
 
-                            <li><a href="{{ URL::route('reports.sales.create', array()) }}">Account Status</a></li>
                         </ul>
                     </li>
 
-                        @if ( ! Auth::guest())
-                            <li role="presentation" class="dropdown">
-                                <a class="dropdown-toggle" data-toggle="dropdown" href="#" role="button"
-                                   aria-expanded="false">
-                                    Onboarding Invites <span class="caret"></span>
-                                </a>
-                                <ul class="dropdown-menu" role="menu">
-                                    <li><a href="{{ URL::route('invite.create', array()) }}">Send Invite</a>
-                                </ul>
-                            </li>
-                        @endif
+                    <li role="presentation" class="dropdown">
+                        <a class="dropdown-toggle" data-toggle="dropdown" href="#" role="button"
+                           aria-expanded="false">
+                            Account Data<span class="caret"></span>
+                        </a>
+                        <ul class="dropdown-menu" role="menu" aria-labelledby="dLabel">
+                                    {{--<li><a href="{{ URL::route('reports.sales.location.create', array()) }}">by Location--}}
+                                            {{--</a></li>--}}
+
+                                    <li><a href="{{ URL::route('reports.sales.provider.create', array()) }}">by Provider
+                                            </a></li>
+
+                                    <li><a href="{{ URL::route('reports.sales.practice.create', array()) }}">by Practice
+                                        </a></li>
+                        </ul>
+                    </li>
+
+
+                    @if ( ! Auth::guest())
+                        <li role="presentation" class="dropdown">
+                            <a class="dropdown-toggle" data-toggle="dropdown" href="#" role="button"
+                               aria-expanded="false">
+                                Onboarding Invites <span class="caret"></span>
+                            </a>
+                            <ul class="dropdown-menu" role="menu">
+                                <li><a href="{{ URL::route('invite.create', array()) }}">Send Invite</a>
+                            </ul>
+                        </li>
+                    @endif
 
                 </ul>
-
 
 
                 <ul class="nav navbar-nav navbar-right">
@@ -310,6 +322,17 @@
                         <li class="dropdown">
                             <a href="{{ URL::route('patients.dashboard', array()) }}" class="btn-xs btn-primary"
                                style=""><i class="glyphicon glyphicon-eye-open"></i> Provider UI</a></li>
+                        @if(Entrust::can('app-config-view'))
+                            <li role="presentation" class="dropdown">
+                                <a class="dropdown-toggle" data-toggle="dropdown" href="#" role="button"
+                                   aria-expanded="false">
+                                    Settings<span class="caret"></span>
+                                </a>
+                                <ul class="dropdown-menu" role="menu">
+                                    <li><a href="{{ URL::route('appConfig.index', array()) }}">App Config</a></li>
+                                </ul>
+                            </li>
+                        @endif
                         <li class="dropdown">
                             <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button"
                                aria-expanded="false">{{ Auth::user()->full_name }} [ID:{{ Auth::user()->id }}]<span

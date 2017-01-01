@@ -1,5 +1,6 @@
 <?php namespace App\Http\Controllers\CcdApi\Aprima;
 
+use App\CarePlan;
 use App\CLH\CCD\Importer\QAImportManager;
 use App\CLH\CCD\ItemLogger\CcdItemLogger;
 use App\CLH\Repositories\CCDImporterRepository;
@@ -12,6 +13,7 @@ use App\ForeignId;
 use App\Http\Controllers\Controller;
 use App\Models\CCD\Ccda;
 use App\Models\CCD\ValidatesQAImportOutput;
+use App\Note;
 use App\PatientCareTeamMember;
 use App\PatientReports;
 use App\User;
@@ -142,7 +144,7 @@ class CcdApiController extends Controller
         $locationId = $this->getApiUserLocation($user);
 
         $pendingReports = PatientReports::where('location_id', $locationId)
-            ->whereFileType(PatientReports::NOTE)
+            ->whereFileType(Note::class)
             ->whereBetween('created_at', [
                 $startDate,
                 $endDate,
@@ -196,7 +198,7 @@ class CcdApiController extends Controller
         }
 
         PatientReports::where('location_id', $locationId)
-            ->whereFileType(PatientReports::NOTE)
+            ->whereFileType(Note::class)
             ->delete();
 
         return response()->json($json, 200, ['fileCount' => count($json)]);
@@ -225,7 +227,7 @@ class CcdApiController extends Controller
         $locationId = $this->getApiUserLocation($user);
 
         $pendingReports = PatientReports::where('location_id', $locationId)
-            ->whereFileType(PatientReports::CAREPLAN)
+            ->whereFileType(CarePlan::class)
             ->whereBetween('created_at', [
                 $startDate,
                 $endDate,
@@ -279,7 +281,7 @@ class CcdApiController extends Controller
         }
 
         PatientReports::where('location_id', $locationId)
-            ->whereFileType(PatientReports::CAREPLAN)
+            ->whereFileType(CarePlan::class)
             ->delete();
 
         return response()->json($json, 200, ['fileCount' => count($json)]);

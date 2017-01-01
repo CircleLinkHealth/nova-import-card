@@ -336,7 +336,7 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
 
     public function carePlan()
     {
-        return $this->hasOne(PatientCarePlan::class, 'patient_id', 'id');
+        return $this->hasOne(CarePlan::class, 'user_id', 'id');
     }
 
     public function inboundCalls()
@@ -1228,7 +1228,6 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
     }
 
 
-
     public function setBillingProviderIDAttribute($value)
     {
         if (empty($value)) {
@@ -1470,120 +1469,120 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
 
     public function getCarePlanQAApproverAttribute()
     {
-        if (!$this->patientInfo) {
+        if (!$this->carePlan) {
             return '';
         }
 
-        return $this->patientInfo->careplan_qa_approver;
+        return $this->carePlan->qa_approver_id;
     }
 
     public function setCarePlanQAApproverAttribute($value)
     {
-        if (!$this->patientInfo) {
+        if (!$this->carePlan) {
             return '';
         }
-        $this->patientInfo->careplan_qa_approver = $value;
-        $this->patientInfo->save();
+        $this->carePlan->qa_approver_id = $value;
+        $this->carePlan->save();
 
         return true;
     }
 
     public function getCarePlanQADateAttribute()
     {
-        if (!$this->patientInfo) {
+        if (!$this->carePlan) {
             return '';
         }
 
-        return $this->patientInfo->careplan_qa_date;
+        return $this->carePlan->qa_date;
     }
 
     public function setCarePlanQADateAttribute($value)
     {
-        if (!$this->patientInfo) {
+        if (!$this->carePlan) {
             return '';
         }
-        $this->patientInfo->careplan_qa_date = $value;
-        $this->patientInfo->save();
+        $this->carePlan->qa_date = $value;
+        $this->carePlan->save();
 
         return true;
     }
 
     public function getCarePlanProviderApproverAttribute()
     {
-        if (!$this->patientInfo) {
+        if (!$this->carePlan) {
             return '';
         }
 
-        return $this->patientInfo->careplan_provider_approver;
+        return $this->carePlan->provider_approver_id;
     }
 
     public function setCarePlanProviderApproverAttribute($value)
     {
-        if (!$this->patientInfo) {
+        if (!$this->carePlan) {
             return '';
         }
-        $this->patientInfo->careplan_provider_approver = $value;
-        $this->patientInfo->save();
+        $this->carePlan->provider_approver_id = $value;
+        $this->carePlan->save();
 
         return true;
     }
 
     public function getCarePlanProviderApproverDateAttribute()
     {
-        if (!$this->patientInfo) {
+        if (!$this->carePlan) {
             return '';
         }
 
-        return $this->patientInfo->careplan_provider_date;
+        return $this->carePlan->provider_date;
     }
 
     public function setCarePlanProviderApproverDateAttribute($value)
     {
-        if (!$this->patientInfo) {
+        if (!$this->carePlan) {
             return '';
         }
-        $this->patientInfo->careplan_provider_date = $value;
-        $this->patientInfo->save();
+        $this->carePlan->provider_date = $value;
+        $this->carePlan->save();
 
         return true;
     }
 
     public function getCarePlanStatusAttribute()
     {
-        if (!$this->patientInfo) {
+        if (!$this->carePlan) {
             return '';
         }
 
-        return $this->patientInfo->careplan_status;
+        return $this->carePlan->status;
     }
 
     public function setCarePlanStatusAttribute($value)
     {
-        if (!$this->patientInfo) {
+        if (!$this->carePlan) {
             return '';
         }
-        $this->patientInfo->careplan_status = $value;
-        $this->patientInfo->save();
+        $this->carePlan->status = $value;
+        $this->carePlan->save();
 
         return true;
     }
 
     public function getCareplanLastPrintedAttribute()
     {
-        if (!$this->patientInfo) {
+        if (!$this->carePlan) {
             return '';
         }
 
-        return $this->patientInfo->careplan_last_printed;
+        return $this->carePlan->last_printed;
     }
 
     public function setCareplanLastPrintedAttribute($value)
     {
-        if (!$this->patientInfo) {
+        if (!$this->carePlan) {
             return '';
         }
-        $this->patientInfo->careplan_last_printed = $value;
-        $this->patientInfo->save();
+        $this->carePlan->last_printed = $value;
+        $this->carePlan->save();
 
         return true;
     }
@@ -1674,7 +1673,7 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
         }
     }
 
-    public function primaryProgram()
+    public function primaryPractice()
     {
         return $this->belongsTo(Practice::class, 'program_id', 'id');
     }
@@ -1932,7 +1931,7 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
      */
     public function getPrimaryPracticeNameAttribute()
     {
-        return ucwords($this->primaryProgram->display_name);
+        return ucwords($this->primaryPractice->display_name);
     }
 
     /**
@@ -1963,14 +1962,18 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
         return $billingProvider->user ?? new User();
     }
 
-    public function scopeHasBillingProvider($query, $billing_provider_id)
-    {
-        return $query->whereHas('patientCareTeamMembers', function ($k) use ($billing_provider_id){
+    public function scopeHasBillingProvider(
+        $query,
+        $billing_provider_id
+    ) {
+        return $query->whereHas('patientCareTeamMembers', function ($k) use
+        (
+            $billing_provider_id
+        ) {
             $k->whereType('billing_provider')
-            ->whereMemberUserId($billing_provider_id);
+                ->whereMemberUserId($billing_provider_id);
         });
     }
-
 
 
     /**
@@ -2012,6 +2015,13 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
     public function sendPasswordResetNotification($token)
     {
         $this->notify(new ResetPassword($token));
+    }
+
+    public function latestCcda()
+    {
+        return $this->ccdas()
+            ->orderBy('updated_at', 'desc')
+            ->first();
     }
 
     public function ccdas()

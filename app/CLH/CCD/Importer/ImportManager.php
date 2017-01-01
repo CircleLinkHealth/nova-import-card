@@ -3,6 +3,7 @@
 namespace App\CLH\CCD\Importer;
 
 
+use App\CarePlan;
 use App\CLH\CCD\ImportedItems\DemographicsImport;
 use App\CLH\CCD\Importer\StorageStrategies\Biometrics\BloodPressure;
 use App\CLH\CCD\Importer\StorageStrategies\Biometrics\Weight;
@@ -29,14 +30,15 @@ class ImportManager
     private $user;
     private $decodedCcda;
 
-    public function __construct(array $allergiesImport = null,
-                                DemographicsImport $demographicsImport,
-                                array $medicationsImport,
-                                array $problemsImport,
-                                array $strategies,
-                                User $user,
-                                Ccda $ccda)
-    {
+    public function __construct(
+        array $allergiesImport = null,
+        DemographicsImport $demographicsImport,
+        array $medicationsImport,
+        array $problemsImport,
+        array $strategies,
+        User $user,
+        Ccda $ccda
+    ) {
         $this->allergiesImport = $allergiesImport;
         $this->demographicsImport = $demographicsImport;
         $this->medicationsImport = $medicationsImport;
@@ -81,7 +83,9 @@ class ImportManager
         /**
          * The following Sections are the same for each CCD
          */
-        $providerId = empty($this->demographicsImport->provider_id) ? null : $this->demographicsImport->provider_id;
+        $providerId = empty($this->demographicsImport->provider_id)
+            ? null
+            : $this->demographicsImport->provider_id;
 
         if ($providerId) {
             //care team
@@ -89,6 +93,12 @@ class ImportManager
                 'user_id'        => $this->user->id,
                 'member_user_id' => $providerId,
                 'type'           => PatientCareTeamMember::MEMBER,
+            ]);
+
+            $sendAlertTo = PatientCareTeamMember::create([
+                'user_id'        => $this->user->id,
+                'member_user_id' => $providerId,
+                'type'           => PatientCareTeamMember::SEND_ALERT_TO,
             ]);
 
             $billing = PatientCareTeamMember::create([
@@ -111,7 +121,6 @@ class ImportManager
         ], [
             'ccda_id'                    => $this->ccda->id,
             'birth_date'                 => $this->demographicsImport->dob,
-            'careplan_status'            => 'draft',
             'ccm_status'                 => 'enrolled',
             'consent_date'               => $this->demographicsImport->consent_date,
             'gender'                     => $this->demographicsImport->gender,
@@ -122,10 +131,23 @@ class ImportManager
             'user_id'                    => $this->user->id,
         ]);
 
+        $carePlan = CarePlan::updateOrCreate([
+            'user_id' => $this->user->id,
+        ], [
+            'care_plan_template_id' => $this->user->service()->firstOrDefaultCarePlan($this->user)->getCarePlanTemplateIdAttribute(),
+            'status'                => 'draft',
+        ]);
+
         // update timezone
         $this->user->timezone = 'America/New_York';
 
-        PatientContactWindow::sync($patientInfo, [1,2,3,4,5]);
+        PatientContactWindow::sync($patientInfo, [
+            1,
+            2,
+            3,
+            4,
+            5,
+        ]);
 
 
         if (empty($patientInfo)) {
@@ -186,12 +208,16 @@ class ImportManager
         //Weight
         $weightParseAndStore = new Weight($this->user->program_id, $this->user);
         $weight = $weightParseAndStore->parse($this->decodedCcda);
-        if (!empty($weight)) $weightParseAndStore->import($weight);
+        if (!empty($weight)) {
+            $weightParseAndStore->import($weight);
+        }
 
         //Blood Pressure
         $bloodPressureParseAndStore = new BloodPressure($this->user->program_id, $this->user);
         $bloodPressure = $bloodPressureParseAndStore->parse($this->decodedCcda);
-        if (!empty($bloodPressure)) $bloodPressureParseAndStore->import($bloodPressure);
+        if (!empty($bloodPressure)) {
+            $bloodPressureParseAndStore->import($bloodPressure);
+        }
 
 
         //Insurance
@@ -206,7 +232,9 @@ class ImportManager
 
     private function storeAllergies($allergiesListStorage)
     {
-        if (empty($this->allergiesImport)) return false;
+        if (empty($this->allergiesImport)) {
+            return false;
+        }
 
         foreach ($this->allergiesImport as $allergy) {
 
@@ -227,7 +255,9 @@ class ImportManager
 
     private function storeProblemsList($problemsListStorage)
     {
-        if (empty($this->problemsImport)) return false;
+        if (empty($this->problemsImport)) {
+            return false;
+        }
 
         foreach ($this->problemsImport as $problem) {
             $ccdProblem = CcdProblem::create([
@@ -252,7 +282,9 @@ class ImportManager
 
     private function storeProblemsToMonitor($problemsToMonitorStorage)
     {
-        if (empty($this->problemsImport)) return false;
+        if (empty($this->problemsImport)) {
+            return false;
+        }
 
         if (class_exists($problemsToMonitorStorage)) {
             $storage = new $problemsToMonitorStorage($this->user->program_id, $this->user);
@@ -260,7 +292,9 @@ class ImportManager
             $problemsToActivate = [];
 
             foreach ($this->problemsImport as $problem) {
-                if (empty($problem->cpm_problem_id)) continue;
+                if (empty($problem->cpm_problem_id)) {
+                    continue;
+                }
 
                 $problemsToActivate[] = $problem->cpm_problem_id;
             }
@@ -271,7 +305,9 @@ class ImportManager
 
     private function storeMedications($medicationsListStorage)
     {
-        if (empty($this->medicationsImport)) return false;
+        if (empty($this->medicationsImport)) {
+            return false;
+        }
 
         foreach ($this->medicationsImport as $medication) {
             $ccdMedication = CcdMedication::create([

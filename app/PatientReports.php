@@ -8,10 +8,6 @@ class PatientReports extends Model {
 
 	use SoftDeletes;
 
-	//report types
-	const CAREPLAN = 'careplan';
-    const NOTE = 'note';
-
 	protected $guarded = [];
 
 }
