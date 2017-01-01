@@ -15,12 +15,12 @@ class AddClhPppmToPractices extends Migration
     {
         Schema::table('practices', function (Blueprint $table) {
             $table->integer('clh_pppm')->after('display_name');
-
-            //now the data migration
-            Artisan::call('db:seed', [
-                '--class' => AddsCLHPPPMToPractices::class,
-            ]);
         });
+
+        //now the data migration
+        Artisan::call('db:seed', [
+            '--class' => AddsCLHPPPMToPractices::class,
+        ]);
     }
 
     /**
