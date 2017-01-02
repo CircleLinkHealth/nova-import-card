@@ -142,7 +142,7 @@ class Kernel extends ConsoleKernel
                 $message->to($recipients)->subject($subjectPractice);
             });
 
-        })->weeklyOn(1, '11:00');
+        })->weeklyOn(1, '11:30');
 
         $schedule->command('emailapprovalreminder:providers')
             ->weekdays()
