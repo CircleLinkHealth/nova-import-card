@@ -94,13 +94,12 @@ class Kernel extends ConsoleKernel
 
         $schedule->call(function (){
 
-            //temp send to raph only.
             $raph = User::find(2430);
 
-            $startRange = Carbon::now()->setTime(0,0,0);
-            $endRange = Carbon::now()->setTime(0,0,0)->subWeek();
+            $startRange = Carbon::now()->setTime(0, 0, 0);
+            $endRange = Carbon::now()->setTime(0, 0, 0)->subWeek();
 
-            $providerReportData = (new SalesByProviderReport(
+            $providerData = (new SalesByProviderReport(
                 $raph,
                 SalesByProviderReport::SECTIONS,
                 $startRange,
@@ -108,7 +107,19 @@ class Kernel extends ConsoleKernel
 
             ))->data(true);
 
-            $practiceReportData = (new SalesByPracticeReport(
+            $providerData['name'] = $raph->display_name;
+            $providerData['start'] = $startRange->toDateString();
+            $providerData['end'] = $endRange->toDateString();
+
+            $subjectProvider = 'Dr. Raph\'s Patient Weekly Summary';
+            $subjectPractice = 'Dr. Raph\'s Organization Weekly Summary';
+
+            $recipients = [
+                'raph@circlelinkhealth.com',
+                'rohanm@circlelinkhealth.com',
+            ];
+
+            $practiceData = (new SalesByPracticeReport(
                 $raph->primaryPractice,
                 SalesByPracticeReport::SECTIONS,
                 $startRange,
@@ -116,15 +127,15 @@ class Kernel extends ConsoleKernel
 
             ))->data(true);
 
-            $subjectProvider = 'Dr. Raph\'s Patient Weekly Summary';
-            $subjectPractice = 'Dr. Raph\'s Organization Weekly Summary';
+            $providerData['name'] = $raph->display_name;
+            $providerData['start'] = $startRange->toDateString();
+            $providerData['end'] = $endRange->toDateString();
 
-            $recipients = [
-                                                'raph@circlelinkhealth.com',
-                                              'rohanm@circlelinkhealth.com',
-            ];
+            $practiceData['name'] = $raph->primaryPractice->name;
+            $practiceData['start'] = $startRange->toDateString();
+            $practiceData['end'] = $endRange->toDateString();
 
-            Mail::send('sales.by-provider.report', $providerReportData, function ($message) use
+            Mail::send('sales.by-provider.report', ['data' => $providerData], function ($message) use
             (
                 $recipients,
                 $subjectProvider
@@ -133,7 +144,7 @@ class Kernel extends ConsoleKernel
                 $message->to($recipients)->subject($subjectProvider);
             });
 
-            Mail::send('sales.by-practice.report', $practiceReportData, function ($message) use
+            Mail::send('sales.by-practice.report', ['data' => $practiceData], function ($message) use
             (
                 $recipients,
                 $subjectPractice
@@ -142,7 +153,8 @@ class Kernel extends ConsoleKernel
                 $message->to($recipients)->subject($subjectPractice);
             });
 
-        })->weeklyOn(1, '11:30');
+
+        })->weeklyOn(1, '12:10');
 
         $schedule->command('emailapprovalreminder:providers')
             ->weekdays()

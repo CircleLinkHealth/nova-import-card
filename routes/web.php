@@ -1,16 +1,16 @@
 <?php
 
+use App\Reports\Sales\Practice\SalesByPracticeReport;
+use App\Reports\Sales\Provider\SalesByProviderReport;
+use App\User;
+use Carbon\Carbon;
+use Illuminate\Support\Facades\Mail;
+
 if (app()->environment() != 'production') {
     Route::get('rohan', function () {
 
 
-        $provider = \App\User::find(852);
-        $patient = \App\PatientInfo::find(1272);
-        $practice = \App\Practice::find(35);
 
-        return (new \App\Reports\Sales\Practice\PracticeStatsHelper(
-            \Carbon\Carbon::now(), \Carbon\Carbon::now()
-        ))->billableCountCurrentMonth($practice);
 
     });
 }
