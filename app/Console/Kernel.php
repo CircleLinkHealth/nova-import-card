@@ -108,7 +108,7 @@ class Kernel extends ConsoleKernel
 
             ))->data(true);
 
-            $practiceReportData = (new SalesByProviderReport(
+            $practiceReportData = (new SalesByPracticeReport(
                 $raph->primaryPractice,
                 SalesByPracticeReport::SECTIONS,
                 $startRange,
@@ -142,7 +142,7 @@ class Kernel extends ConsoleKernel
                 $message->to($recipients)->subject($subjectPractice);
             });
 
-        })->weeklyOn(1, '9:30');
+        })->weeklyOn(1, '9:45');
 
         $schedule->command('emailapprovalreminder:providers')
             ->weekdays()
