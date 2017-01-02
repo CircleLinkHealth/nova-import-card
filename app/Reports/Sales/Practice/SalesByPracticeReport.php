@@ -45,7 +45,8 @@ class SalesByPracticeReport extends SalesReport
 
         if ($defaultSections) {
 
-            return $this->requestedSections = self::SECTIONS;
+            $this->requestedSections = self::SECTIONS;
+            return parent::data();
 
         } else {
 
