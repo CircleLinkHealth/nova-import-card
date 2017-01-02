@@ -124,7 +124,7 @@ class Kernel extends ConsoleKernel
                                               'rohanm@circlelinkhealth.com',
             ];
 
-            Mail::send('sales.by-provider.create', $providerReportData, function ($message) use
+            Mail::send('sales.by-provider.report', $providerReportData, function ($message) use
             (
                 $recipients,
                 $subjectProvider
@@ -133,7 +133,7 @@ class Kernel extends ConsoleKernel
                 $message->to($recipients)->subject($subjectProvider);
             });
 
-            Mail::send('sales.by-practice.create', $practiceReportData, function ($message) use
+            Mail::send('sales.by-practice.report', $practiceReportData, function ($message) use
             (
                 $recipients,
                 $subjectPractice
@@ -142,7 +142,7 @@ class Kernel extends ConsoleKernel
                 $message->to($recipients)->subject($subjectPractice);
             });
 
-        })->weeklyOn(1, '9:45');
+        })->weeklyOn(1, '11:00');
 
         $schedule->command('emailapprovalreminder:providers')
             ->weekdays()
