@@ -19,7 +19,8 @@
                             NOTE</a></div>
                     <div class="col-sm-6 pull-right"
                          style="text-align: right;top: 12px;font-size: 22px;color: #ec683e;">
-                        <form method="post" action="{{URL::route('patient.ccm.toggle', array('patient' => $patient->id))}}"
+                        <form method="post"
+                              action="{{URL::route('patient.ccm.toggle', array('patient' => $patient->id))}}"
                               class="form-horizontal">
                             {{ csrf_field() }}
                             <div class="radio-inline"><input onChange="this.form.submit()"
@@ -76,19 +77,19 @@
                                         template: function (obj) {
                                             if (obj.logged_from == "note")
                                                 return "<a href='<?php echo route('patient.note.view', [
-                                                        'patientId' => $patient->id,
-                                                        'noteId'    => ''
-                                                    ]); ?>/" + obj.id + "'>" + obj.type_name + "</a>";
+                                                                'patientId' => $patient->id,
+                                                                'noteId'    => ''
+                                                        ]); ?>/" + obj.id + "'>" + obj.type_name + "</a>";
                                             else if (obj.logged_from == "appointment") {
                                                 return "<a href='<?php echo route('patient.appointment.view', [
-                                                        'patientId'     => $patient->id,
-                                                        'appointmentId' => ''
-                                                    ]); ?>/" + obj.id + "'>" + obj.type_name + "</a>"
+                                                                'patientId'     => $patient->id,
+                                                                'appointmentId' => ''
+                                                        ]); ?>/" + obj.id + "'>" + obj.type_name + "</a>"
                                             } else {
                                                 return "<a href='<?php echo route('patient.activity.view', [
-                                                        'patientId' => $patient->id,
-                                                        'actId'     => ''
-                                                    ]); ?>/" + obj.id + "'>" + obj.type_name + "</a>"
+                                                                'patientId' => $patient->id,
+                                                                'actId'     => ''
+                                                        ]); ?>/" + obj.id + "'>" + obj.type_name + "</a>"
                                             }
                                             return obj.type_name;
                                         },
@@ -127,19 +128,19 @@
                                         template: function (obj) {
                                             if (obj.logged_from == "note")
                                                 return "<a href='<?php echo route('patient.note.view', [
-                                                        'patientId' => $patient->id,
-                                                        'noteId'    => ''
-                                                    ]); ?>/" + obj.id + "'>" + obj.comment + "</a>";
+                                                                'patientId' => $patient->id,
+                                                                'noteId'    => ''
+                                                        ]); ?>/" + obj.id + "'>" + obj.comment + "</a>";
                                             else if (obj.logged_from == "manual_input" || obj.logged_from == "activity") {
                                                 return "<a href='<?php echo route('patient.activity.view', [
-                                                        'patientId' => $patient->id,
-                                                        'actId'     => ''
-                                                    ]); ?>/" + obj.id + "'>" + obj.comment + "</a>"
+                                                                'patientId' => $patient->id,
+                                                                'actId'     => ''
+                                                        ]); ?>/" + obj.id + "'>" + obj.comment + "</a>"
                                             } else if (obj.logged_from == "appointment") {
                                                 return "<a href='<?php echo route('patient.appointment.view', [
-                                                        'patientId'     => $patient->id,
-                                                        'appointmentId' => ''
-                                                    ]); ?>/" + obj.id + "'>" + obj.comment + "</a>"
+                                                                'patientId'     => $patient->id,
+                                                                'appointmentId' => ''
+                                                        ]); ?>/" + obj.id + "'>" + obj.comment + "</a>"
                                             } else
                                                 return obj.type_name;
                                         },

@@ -1,9 +1,7 @@
 <style>
 
-    @media print
-    {
-        .hidden-print, .hidden-print *
-        {
+    @media print {
+        .hidden-print, .hidden-print * {
             display: none !important;
         }
     }

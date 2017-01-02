@@ -17,7 +17,8 @@ class Practice extends Model
         'user_id',
     ];
 
-    public static function getProviders($practiceId){
+    public static function getProviders($practiceId)
+    {
         $providers = User::whereHas('practices', function ($q) use
         (
             $practiceId
@@ -29,7 +30,8 @@ class Practice extends Model
         return $providers;
     }
 
-    public static function getNonCCMCareCenterUsers($practiceId){
+    public static function getNonCCMCareCenterUsers($practiceId)
+    {
         $providers = User::whereHas('practices', function ($q) use
         (
             $practiceId
@@ -41,7 +43,8 @@ class Practice extends Model
         return $providers;
     }
 
-    public static function getCareCenterUsers($practiceId){
+    public static function getCareCenterUsers($practiceId)
+    {
         $providers = User::whereHas('practices', function ($q) use
         (
             $practiceId

@@ -1,10 +1,11 @@
 <?php
 
+use App\Practice;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class AddClhPppmToPractices extends Migration
+class AddsEhrsToSomePractises extends Migration
 {
     /**
      * Run the migrations.
@@ -13,14 +14,13 @@ class AddClhPppmToPractices extends Migration
      */
     public function up()
     {
-        Schema::table('practices', function (Blueprint $table) {
-            $table->integer('clh_pppm')->after('display_name');
-        });
+        $upg = Practice::whereName('upg')->first();
+        $upg->ehr_id = 1;
+        $upg->save();
 
-        //now the data migration
-        Artisan::call('db:seed', [
-            '--class' => AddsCLHPPPMToPractices::class,
-        ]);
+        $mazhar = Practice::whereName('mazhar')->first();
+        $mazhar->ehr_id = 2;
+        $mazhar->save();
     }
 
     /**
@@ -31,9 +31,7 @@ class AddClhPppmToPractices extends Migration
     public function down()
     {
         Schema::table('practices', function (Blueprint $table) {
-
-            $table->dropColumn('clh_ppm');
-
+            //
         });
     }
 }

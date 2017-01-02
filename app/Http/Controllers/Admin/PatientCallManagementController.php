@@ -24,7 +24,7 @@ class PatientCallManagementController extends Controller
             if ($request->input('action') == 'assign') {
                 if (($request->input('calls')
                         && !empty($request->input('calls')))
-                        && ($request->input('assigned_nurse')
+                    && ($request->input('assigned_nurse')
                         && !empty($request->input('assigned_nurse')))
                 ) {
                     if (is_array($request->input('calls'))) {

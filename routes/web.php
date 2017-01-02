@@ -1,7 +1,5 @@
 <?php
 
-use App\Reports\Sales\Provider\SalesByProviderReport;
-
 if (app()->environment() != 'production') {
     Route::get('rohan', function () {
 
@@ -391,7 +389,7 @@ Route::group(['middleware' => 'auth'], function () {
 
         Route::post('ccm/toggle', [
             'uses' => 'CCMComplexToggleController@toggle',
-            'as' => 'patient.ccm.toggle'
+            'as'   => 'patient.ccm.toggle',
         ]);
 
 
@@ -486,7 +484,7 @@ Route::group(['middleware' => 'auth'], function () {
             'as'   => 'patch.admin.edit.nurse.schedules',
         ]);
 
-        Route::get('athena/check', 'CcdApi\Athena\AthenaApiController@getTodays');
+        Route::get('athena/check', 'CcdApi\Athena\AthenaApiTestController@getTodays');
 
         Route::post('calls/import', [
             'uses' => 'CallController@import',

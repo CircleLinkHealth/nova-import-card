@@ -7,9 +7,9 @@ $s = $seconds % 60;
 $monthlyTime = sprintf("%02d:%02d:%02d", $H, $i, $s);
 $ccm_above = false;
 $ccm_complex = $patient->patientInfo->isCCMComplex() ?? false;
-if($seconds > 1199 && !$ccm_complex){
+if ($seconds > 1199 && !$ccm_complex) {
     $ccm_above = true;
-} elseif ($seconds > 3599 && !$ccm_complex){
+} elseif ($seconds > 3599 && !$ccm_complex) {
     $ccm_above = true;
 }
 
@@ -18,8 +18,8 @@ $provider = App\User::find($patient->billingProviderID)->fullName ?? 'No Provide
 
 
 $location = empty($patient->getPreferredLocationName())
-    ? 'Not Set'
-    : $patient->getPreferredLocationName();
+        ? 'Not Set'
+        : $patient->getPreferredLocationName();
 
 ?>
 
@@ -34,23 +34,27 @@ $location = empty($patient->getPreferredLocationName())
                     {{$patient->fullName}}
                     </a> </span>
                 @if($ccm_complex)
-                <span style=" background-color: #ec683e;font-size: 15px; position: relative; top: -7px;" class="label label-warning"> Complex CCM</span>
+                    <span style=" background-color: #ec683e;font-size: 15px; position: relative; top: -7px;"
+                          class="label label-warning"> Complex CCM</span>
                 @endif
                 <a
                         href="{{ URL::route('patient.demographics.show', array('patient' => $patient->id)) }}"><span
                             class="glyphicon glyphicon-pencil" style="margin-right:3px;"></span></a><br/>
 
                 <ul class="inline-block" style="margin-left: -40px; font-size: 16px">
-                    <b><li class="inline-block">{{$patient->birthDate}} <span style="color: #4390b5">•</span> </li>
-                    <li class="inline-block">{{$patient->gender}} <span style="color: #4390b5">•</span> </li>
-                    <li class="inline-block">{{$patient->age}} yrs <span style="color: #4390b5">•</span> </li>
-                    <li class="inline-block">{{$patient->phone}} </li></b>
+                    <b>
+                        <li class="inline-block">{{$patient->birthDate}} <span style="color: #4390b5">•</span></li>
+                        <li class="inline-block">{{$patient->gender}} <span style="color: #4390b5">•</span></li>
+                        <li class="inline-block">{{$patient->age}} yrs <span style="color: #4390b5">•</span></li>
+                        <li class="inline-block">{{$patient->phone}} </li>
+                    </b>
                     <li><span> <b>Provider</b>: {{$provider}}  </span></li>
                     <li><span> <b>Location</b>: {{$location}}  </span></li>
                     @if($patient->agentName)
-                    <li class="inline-block"><b>Alternate Contact</b>: <span
-                                title="{{$patient->agentEmail}}">({{$patient->agentRelationship}}) {{$patient->agentName}} {{$patient->agentPhone}}</span></li>
-                    <li class="inline-block"></li>
+                        <li class="inline-block"><b>Alternate Contact</b>: <span
+                                    title="{{$patient->agentEmail}}">({{$patient->agentRelationship}}
+                                ) {{$patient->agentName}} {{$patient->agentPhone}}</span></li>
+                        <li class="inline-block"></li>
                     @endif
                 </ul>
 
@@ -77,9 +81,10 @@ $location = empty($patient->getPreferredLocationName())
                         </select>
                     </li>
                 @else
-                    <li style="font-size: 18px" id="status" class="inline-block {{$patient->ccm_status}}"><?= (empty($patient->ccm_status))
-                            ? 'N/A'
-                            : ucwords($patient->ccm_status);  ?></li>
+                    <li style="font-size: 18px" id="status"
+                        class="inline-block {{$patient->ccm_status}}"><?= (empty($patient->ccm_status))
+                                ? 'N/A'
+                                : ucwords($patient->ccm_status);  ?></li>
                 @endif
                 <br/>
                 @if(auth()->user()->hasRole(['administrator']))

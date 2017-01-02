@@ -19,7 +19,8 @@
                                         Active Program<br>
                                         Select All <kbd><kbd>cmd</kbd> + <kbd>A</kbd></kbd></label>
                                     <div class="col-md-6">
-                                        <select id="provider" class="provider selectpickerX dropdownValid form-control" name="provider" class=" dropdown Valid form-control"
+                                        <select id="provider" class="provider selectpickerX dropdownValid form-control"
+                                                name="provider" class=" dropdown Valid form-control"
                                                 {{--multiple --}}
                                                 required>
 
@@ -35,9 +36,11 @@
                                         Sections<br>
                                         Select All <kbd><kbd>cmd</kbd> + <kbd>A</kbd></kbd></label>
                                     <div class="col-md-6">
-                                        <select id="sections" name="sections[]" class=" dropdown Valid form-control" multiple required>
+                                        <select id="sections" name="sections[]" class=" dropdown Valid form-control"
+                                                multiple required>
                                             @foreach($sections as $key => $value)
-                                                <option id={{$key}} name="sections[{{$key}}]" value="{{$value}}">{{$key}}</option>
+                                                <option id={{$key}} name="sections[{{$key}}]"
+                                                        value="{{$value}}">{{$key}}</option>
                                             @endforeach
                                         </select>
                                     </div>
@@ -47,7 +50,8 @@
                                     <label class="col-md-2 control-label" for="start_date">From</label>
                                     <div class="col-md-6">
                                         <input class="form-control" type="date"
-                                               value="{{\Carbon\Carbon::now()->startOfMonth()->toDateString()}}" name="start_date"
+                                               value="{{\Carbon\Carbon::now()->startOfMonth()->toDateString()}}"
+                                               name="start_date"
                                                id="start_date" required>
                                     </div>
                                 </div>
@@ -71,7 +75,8 @@
                                             </button>
                                         </div>
                                         <div class="col-md-2" style="padding-left: 40px">
-                                            <button id="submit" name="submit" value="email" class="btn btn-success" disabled>Email (s)
+                                            <button id="submit" name="submit" value="email" class="btn btn-success"
+                                                    disabled>Email (s)
                                             </button>
                                         </div>
                                     </div>

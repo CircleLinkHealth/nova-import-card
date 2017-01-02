@@ -6,8 +6,9 @@ use App\ForeignId;
 use App\Http\Controllers\Controller;
 use App\Models\CCD\CcdVendor;
 use App\Services\AthenaAPI\Service;
+use Carbon\Carbon;
 
-class AthenaApiController extends Controller
+class AthenaApiTestController extends Controller
 {
     private $service;
 
@@ -20,12 +21,12 @@ class AthenaApiController extends Controller
     {
         $vendors = CcdVendor::whereEhrName(ForeignId::ATHENA)->get();
 
-        $endDate = Carbon::today();
-        $startDate = $endDate->copy()->subMonth(1);
+        $endDate = Carbon::today()->addDay(1);
+        $startDate = $endDate->copy()->subDay(2);
 
         foreach ($vendors as $vendor)
         {
-            $this->service->getAppointments($vendor->practice_id, $startDate, $endDate);
+            $this->service->getAppointments(1959188, $startDate, $endDate);
             $this->service->getCcdsFromRequestQueue(5);
         }
     }

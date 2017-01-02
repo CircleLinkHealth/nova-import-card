@@ -31,7 +31,7 @@ class PracticeDemographics extends SalesReportSection
 
         $disabled_count = User
             ::whereProgramId($this->practice->id)
-            ->whereHas('roles', function ($q){
+            ->whereHas('roles', function ($q) {
                 $q->where('name', '!=', 'participant');
             })
             ->whereUserStatus(0)
@@ -40,19 +40,19 @@ class PracticeDemographics extends SalesReportSection
         $total = $providers + $mas + $oa - $disabled_count;
 
         //prevent non negative total
-        if($total < 0){
+        if ($total < 0) {
             $total = 0;
         }
 
         return [
 
-            'lead' =>  $lead,
+            'lead'      => $lead,
             'providers' => $providers,
-            'rns' => $mas,
-            'oas' => $oa,
-            'disabled' => $disabled_count,
+            'rns'       => $mas,
+            'oas'       => $oa,
+            'disabled'  => $disabled_count,
 
-            'total' => $total
+            'total' => $total,
 
         ];
 

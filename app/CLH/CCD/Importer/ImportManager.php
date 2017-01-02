@@ -134,7 +134,8 @@ class ImportManager
         $carePlan = CarePlan::updateOrCreate([
             'user_id' => $this->user->id,
         ], [
-            'status' => 'draft',
+            'care_plan_template_id' => $this->user->service()->firstOrDefaultCarePlan($this->user)->getCarePlanTemplateIdAttribute(),
+            'status'                => 'draft',
         ]);
 
         // update timezone

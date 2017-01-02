@@ -21,10 +21,10 @@ class SalesByProviderReport extends SalesReport
 {
     const SECTIONS = [
 
-        'Overall Summary' => RangeSummary::class,
-        'Enrollment Summary' => EnrollmentSummary::class,
+        'Overall Summary'       => RangeSummary::class,
+        'Enrollment Summary'    => EnrollmentSummary::class,
         'Financial Performance' => FinancialSummary::class,
-        'Practice Demographics'=> PracticeDemographics::class
+        'Practice Demographics' => PracticeDemographics::class,
 
     ];
 
@@ -46,9 +46,19 @@ class SalesByProviderReport extends SalesReport
 
     }
 
-    public function data($defaultSections = false){
+    public function renderPDF(
+        $name,
+        $view = 'sales.by-provider.create'
+    ) {
+        $this->data();
 
-        if($defaultSections){
+        return parent::renderPDF($name, $view);
+    }
+
+    public function data($defaultSections = false)
+    {
+
+        if ($defaultSections) {
 
             $this->requestedSections = self::SECTIONS;
             return parent::data();
@@ -59,14 +69,6 @@ class SalesByProviderReport extends SalesReport
 
         }
 
-    }
-
-    public function renderPDF(
-        $name,
-        $view = 'sales.by-provider.create'
-    ) {
-        $this->data();
-        return parent::renderPDF($name, $view);
     }
 
     public function renderView($view = 'sales.by-provider.create')

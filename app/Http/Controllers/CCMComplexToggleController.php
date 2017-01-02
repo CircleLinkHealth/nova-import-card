@@ -9,19 +9,21 @@ use Illuminate\Http\Request;
 class CCMComplexToggleController extends Controller
 {
 
-    public function toggle(Request $request,
-                           $patientId){
+    public function toggle(
+        Request $request,
+        $patientId
+    ) {
 
         $patient = User::find($patientId)
-                ->patientInfo
-                ->patientSummaries
-                ->where('month_year', Carbon::now()
-                                        ->firstOfMonth()
-                                        ->toDateString())->first();
+            ->patientInfo
+            ->patientSummaries
+            ->where('month_year', Carbon::now()
+                ->firstOfMonth()
+                ->toDateString())->first();
 
         $input = $request->all();
 
-        if(isset($input['complex'])){
+        if (isset($input['complex'])) {
             $patient->is_ccm_complex = 1;
             $patient->save();
         } else {

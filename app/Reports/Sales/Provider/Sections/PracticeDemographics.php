@@ -27,9 +27,9 @@ class PracticeDemographics extends SalesReportSection
     {
 
         return (new \App\Reports\Sales\Practice\Sections\PracticeDemographics(
-                            $this->provider->primaryPractice,
-                            $this->start,
-                            $this->end))->renderSection();
+            $this->provider->primaryPractice,
+            $this->start,
+            $this->end))->renderSection();
 
     }
 

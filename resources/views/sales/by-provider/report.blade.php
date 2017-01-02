@@ -17,7 +17,7 @@ $practiceSection = \App\Reports\Sales\Provider\Sections\PracticeDemographics::cl
                                              style="position:relative;"
                                              width="200px"/>
             <h1 style="margin-bottom: 0px">{{$data['name']}}'s Summary</h1>
-            <span style="font-size: 16px">(Your Patients)</span><br />
+            <span style="font-size: 16px">(Your Patients)</span><br/>
 
             <span>{{Carbon\Carbon::parse($data['start'])->format('l, jS F') . ' - ' . Carbon\Carbon::parse($data['end'])->format('l, jS F') }}</span>
 
@@ -26,14 +26,17 @@ $practiceSection = \App\Reports\Sales\Provider\Sections\PracticeDemographics::cl
 
     @if(array_key_exists($rangeSection, $data))
 
-        <p style="font-size: 16px">Last week CircleLink nurses placed <b>{{$data[$rangeSection]['no_of_call_attempts']}}</b>
+        <p style="font-size: 16px">Last week CircleLink nurses placed
+            <b>{{$data[$rangeSection]['no_of_call_attempts']}}</b>
             calls to your patients, including <b>{{$data[$rangeSection]['no_of_successful_calls']}}</b>
             successful phone sessions, totaling <b>{{$data[$rangeSection]['total_ccm_time']}}</b>
             care hours. We also collected <b>{{$data[$rangeSection]['no_of_biometric_entries']}}</b>
-            vital and adherence reading(s), and our nurses forwarded <b>{{$data[$rangeSection]['no_of_forwarded_notes']}}</b>
+            vital and adherence reading(s), and our nurses forwarded
+            <b>{{$data[$rangeSection]['no_of_forwarded_notes']}}</b>
             note(s) to you.</p>
 
-        <p style="font-size: 16px">You can see a list of forwarded notes for your patients <a href="{{$data[$rangeSection]['link_to_notes_listing']}}">here</a>,
+        <p style="font-size: 16px">You can see a list of forwarded notes for your patients <a
+                    href="{{$data[$rangeSection]['link_to_notes_listing']}}">here</a>,
             including <b>{{$data[$rangeSection]['no_of_forwarded_emergency_notes']}}</b>
             notification(s) indicating a patient visited a ER/Hospital.</p>
 

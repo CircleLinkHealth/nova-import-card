@@ -474,7 +474,7 @@ $today = \Carbon\Carbon::now()->toFormattedDateString();
 
                                                 - {{$upcoming['type']}}
                                                 <strong>{{$upcoming['specialty']}} </strong>
-                                                 on {{$upcoming['date']}}
+                                                on {{$upcoming['date']}}
                                                 at {{$upcoming['time']}} with
                                                 <strong>{{$upcoming['name']}}</strong>; {{$upcoming['address']}} {{$upcoming['phone']}}
 
@@ -483,14 +483,15 @@ $today = \Carbon\Carbon::now()->toFormattedDateString();
                                         @endif
                                     </ul>
                                     @if(isset($careplan['appointments']['past'] ))
-                                        <h3 class="patient-summary__subtitles--subareas patient-summary--careplan">Past:</h3>
+                                        <h3 class="patient-summary__subtitles--subareas patient-summary--careplan">
+                                            Past:</h3>
                                         <ul style="line-height: 30px">
                                             @foreach($careplan['appointments']['past'] as $past)
                                                 <li style="list-style: dash">
 
                                                     - {{$past['type']}}
                                                     <strong>{{$past['specialty']}} </strong>
-                                                     on {{$past['date']}}
+                                                    on {{$past['date']}}
                                                     at {{$past['time']}} with
                                                     <strong>{{$past['name']}}</strong>; {{$past['address']}} {{$past['phone']}}
 
@@ -514,7 +515,7 @@ $today = \Carbon\Carbon::now()->toFormattedDateString();
                         <div class="col-xs-12">
                             <?php $careplan['other'] ?>
 
-                        @if($careplan['other'])
+                            @if($careplan['other'])
                                 <p><?= nl2br($careplan['other']) ?></p>
                             @else
                                 <p>No instructions at this time</p>

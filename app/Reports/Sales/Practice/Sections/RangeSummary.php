@@ -32,7 +32,7 @@ class RangeSummary extends SalesReportSection
             'no_of_biometric_entries'         => $this->service->numberOfBiometricsRecorded($this->practice),
             'no_of_forwarded_notes'           => $this->service->noteStats($this->practice),
             'no_of_forwarded_emergency_notes' => $this->service->emergencyNotesCount($this->practice),
-            'link_to_notes_listing'           => $this->service->linkToPracticeNotes($this->practice)
+            'link_to_notes_listing'           => $this->service->linkToPracticeNotes($this->practice),
         ];
 
     }

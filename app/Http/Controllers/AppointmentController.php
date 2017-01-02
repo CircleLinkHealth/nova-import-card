@@ -3,7 +3,6 @@
 namespace App\Http\Controllers;
 
 use App\Appointment;
-use App\PatientInfo;
 use App\User;
 use Illuminate\Http\Request;
 
