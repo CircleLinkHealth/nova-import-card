@@ -96,6 +96,7 @@ class Kernel extends ConsoleKernel
 
             $raph = User::find(2430);
 
+            //@todo check range
             $startRange = Carbon::now()->setTime(0, 0, 0);
             $endRange = Carbon::now()->setTime(0, 0, 0)->subWeek();
 

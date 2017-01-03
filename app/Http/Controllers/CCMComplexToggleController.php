@@ -39,7 +39,7 @@ class CCMComplexToggleController extends Controller
 
                 } else {
 
-                    $patient->is_ccm_complex = 0;
+                    $patientRecord->is_ccm_complex = 0;
 
                 }
 
@@ -52,13 +52,11 @@ class CCMComplexToggleController extends Controller
 
             } else {
 
-                $patient->is_ccm_complex = 0;
+                $patientRecord->is_ccm_complex = 0;
 
             }
 
         }
-
-        dd($patientRecord);
 
         $patientRecord->save();
 
