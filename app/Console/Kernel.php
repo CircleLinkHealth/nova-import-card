@@ -14,11 +14,18 @@ use App\Console\Commands\Inspire;
 use App\Console\Commands\MapSnomedToCpmProblems;
 use App\Console\Commands\NukeItemAndMeta;
 use App\Console\Commands\ResetCcmTime;
+use App\Practice;
+use App\Reports\Sales\Practice\SalesByPracticeReport;
+use App\Reports\Sales\Provider\SalesByProviderReport;
 use App\Services\Calls\SchedulerService;
 use App\Services\PhiMail\PhiMail;
+use App\User;
+use Carbon\Carbon;
 use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Foundation\Console\Kernel as ConsoleKernel;
 use Maknz\Slack\Facades\Slack;
+use Illuminate\Support\Facades\Mail;
+
 
 class Kernel extends ConsoleKernel
 {
@@ -84,6 +91,58 @@ class Kernel extends ConsoleKernel
         $schedule->call(function () {
             (new SchedulerService())->removeScheduledCallsForWithdrawnAndPausedPatients();
         })->everyMinute();
+
+        $schedule->call(function (){
+
+            //temp send to raph only.
+            $raph = User::find(2430);
+
+            $startRange = Carbon::now()->setTime(0,0,0);
+            $endRange = Carbon::now()->setTime(0,0,0)->subWeek();
+
+            $providerReportData = (new SalesByProviderReport(
+                $raph,
+                SalesByProviderReport::SECTIONS,
+                $startRange,
+                $endRange
+
+            ))->data(true);
+
+            $practiceReportData = (new SalesByProviderReport(
+                $raph->primaryPractice,
+                SalesByPracticeReport::SECTIONS,
+                $startRange,
+                $endRange
+
+            ))->data(true);
+
+            $subjectProvider = 'Dr. Raph\'s Patient Weekly Summary';
+            $subjectPractice = 'Dr. Raph\'s Organization Weekly Summary';
+
+            $recipients = [
+                                                'raph@circlelinkhealth.com',
+                                              'rohanm@circlelinkhealth.com',
+            ];
+
+            Mail::send('sales.by-provider.create', $providerReportData, function ($message) use
+            (
+                $recipients,
+                $subjectProvider
+            ) {
+                $message->from('notifications@careplanmanager.com', 'CircleLink Health');
+                $message->to($recipients)->subject($subjectProvider);
+            });
+
+            Mail::send('sales.by-practice.create', $practiceReportData, function ($message) use
+            (
+                $recipients,
+                $subjectPractice
+            ) {
+                $message->from('notifications@careplanmanager.com', 'CircleLink Health');
+                $message->to($recipients)->subject($subjectPractice);
+            });
+
+        })->weeklyOn(1, '9:30');
 
         $schedule->command('emailapprovalreminder:providers')
             ->weekdays()
