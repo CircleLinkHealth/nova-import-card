@@ -118,6 +118,37 @@ trait CallAlgoHelper
 
     }
 
+    public function checkAdditionalNurses()
+    {
+
+        /*check for other nurses that may be available.
+
+        Noted that this will recount the originally checked nurse,
+        but since it won't return a value, it's not worth delving
+        into the checks.*/
+
+        $other_nurses = $this->patient->nursesThatCanCareforPatient();
+
+
+        foreach ($other_nurses as $nurse) {
+
+            $found = $this->checkNurseForTargetDays($nurse);
+
+            //will exit on first match, to prevent overwriting.
+            if ($found != false) {
+
+                $this->prediction['nurse'] = $found['nurse'];
+                $this->prediction['date'] = $found['date'];
+                $this->prediction['window_match'] = $found['window_match'];
+
+                return true;
+
+            }
+
+        }
+
+    }
+
     public function checkNurseForTargetDays(NurseInfo $nurse)
     {
 
@@ -165,6 +196,9 @@ trait CallAlgoHelper
         return false;
     }
 
+
+    //finds any days that have windows for patient and nurse
+    //supplies $this->matchArray()
     public function checkForIntersectingDays($nurse)
     {
 
@@ -234,10 +268,8 @@ trait CallAlgoHelper
 
     }
 
-
-    //finds any days that have windows for patient and nurse
+    //for every day window-pair given for nurses and patients, this will return whether they intersect.
     //supplies $this->matchArray()
-
     public function checkForIntersectingTimes(
         $patientWindow,
         $nurseWindow
@@ -251,40 +283,6 @@ trait CallAlgoHelper
 
         //any overlap is true
         return ($patientStartCarbon < $nurseEndCarbon) && ($patientEndCarbon > $nurseStartCarbon);
-
-    }
-
-    //for every day window-pair given for nurses and patients, this will return whether they intersect.
-    //supplies $this->matchArray()
-
-    public function checkAdditionalNurses()
-    {
-
-        /*check for other nurses that may be available.
-
-        Noted that this will recount the originally checked nurse,
-        but since it won't return a value, it's not worth delving
-        into the checks.*/
-
-        $other_nurses = $this->patient->nursesThatCanCareforPatient();
-
-
-        foreach ($other_nurses as $nurse) {
-
-            $found = $this->checkNurseForTargetDays($nurse);
-
-            //will exit on first match, to prevent overwriting.
-            if ($found != false) {
-
-                $this->prediction['nurse'] = $found['nurse'];
-                $this->prediction['date'] = $found['date'];
-                $this->prediction['window_match'] = $found['window_match'];
-
-                return true;
-
-            }
-
-        }
 
     }
 
