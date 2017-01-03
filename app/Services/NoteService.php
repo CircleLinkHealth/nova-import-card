@@ -26,6 +26,13 @@ class NoteService
         } else {
             $note->isTCM = false;
         }
+
+        if ($input['medication_recon'] == 'true') {
+            $note->did_medication_recon = true;
+        } else {
+            $note->did_medication_recon = false;
+        }
+
         $note->save();
 
         $patient = User::find($note->patient_id);

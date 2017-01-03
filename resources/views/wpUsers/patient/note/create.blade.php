@@ -22,6 +22,63 @@
         }
     </style>
 
+    <script>
+        $(document).ready(function () {
+            $("#addNewProvider").click(function (e) {
+                $("#addProvider").modal();
+                e.preventDefault();
+                return false;
+            });
+        });
+
+    </script>
+
+    <style>
+        .providerForm {
+            padding: 10px;
+        }
+    </style>
+
+    <div id="addProvider" class="modal fade" role="dialog">
+        <div class="modal-dialog">
+
+            <!-- Modal content-->
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    <h4 class="modal-title">Are You </h4>
+                </div>
+                <div class="modal-body">
+                    <form id="form" name="create" method="post"
+                          action="{{URL::route('provider.store', array('patientId' => $patient->id))}}">
+
+
+                        <input type="hidden" id="created_by" name="created_by" value="{{auth()->user()->id}}">
+                        <input type="hidden" id="patient_id" name="patient_id" value="{{$patient->id}}">
+
+                        <div class="modal-footer">
+                            <div class="row result">
+
+                            </div>
+                        </div>
+
+
+                        <div>
+                            <button type="submit" id="create" class="create btn btn-primary">Add</button>
+                        </div>
+
+                    </form>
+
+                </div>
+
+            </div>
+
+        </div>
+    </div>
+
+
+
+
     <div class="row" style="margin-top:30px;">
         <div class="main-form-container col-lg-6 col-lg-offset-3 col-md-10 col-md-offset-1"
              style="border-bottom: 3px solid #50b2e2;">
@@ -188,13 +245,20 @@
                                                         </div>
 
                                                     @endif
-
+                                                    <div>
+                                                        <div class="radio-inline"><input type="checkbox"
+                                                                                         name="medication_recon"
+                                                                                         value="true" id="medication_recon"/><label
+                                                                    for="medication_recon"><span> </span>Medication Reconciliation
+                                                            </label>
+                                                        </div>
+                                                    </div>
                                                     <input type="hidden" name="tcm" value="hospital">
                                                     <div>
                                                         <div class="radio-inline"><input type="checkbox"
                                                                                          name="tcm"
-                                                                                         value="true" id="true"/><label
-                                                                    for="true"><span> </span>Patient in Hospital/ER (now
+                                                                                         value="true" id="tcm"/><label
+                                                                    for="tcm"><span> </span>Patient in Hospital/ER (now
                                                                 or
                                                                 recently)</label>
                                                         </div>
