@@ -16,8 +16,6 @@ if ($seconds > 1199 && !$ccm_complex) {
 
 $provider = App\User::find($patient->billingProviderID)->fullName ?? 'No Provider Selected';
 
-
-
 $location = empty($patient->getPreferredLocationName())
         ? 'Not Set'
         : $patient->getPreferredLocationName();
@@ -25,8 +23,6 @@ $location = empty($patient->getPreferredLocationName())
 ?>
 
 <div class="main-form-block main-form-horizontal main-form-primary-horizontal col-md-12" style="padding-bottom:9px">
-
-
     <div class="row">
         <div class="col-sm-12">
             <div class="col-sm-8" style="line-height: 22px;">
@@ -34,10 +30,7 @@ $location = empty($patient->getPreferredLocationName())
                             href="{{ URL::route('patient.summary', array('patient' => $patient->id)) }}">
                     {{$patient->fullName}}
                     </a> </span>
-                @if($ccm_complex)
-                    <span style=" background-color: #ec683e;font-size: 15px; position: relative; top: -7px;"
-                          class="label label-warning"> Complex CCM</span>
-                @endif
+                    <span id="complex_tag" hidden style="background-color: #ec683e;font-size: 15px; position: relative; top: -7px;" class="label label-warning"> Complex CCM</span>
                 <a
                         href="{{ URL::route('patient.demographics.show', array('patient' => $patient->id)) }}"><span
                             class="glyphicon glyphicon-pencil" style="margin-right:3px;"></span></a><br/>
@@ -108,6 +101,20 @@ $location = empty($patient->getPreferredLocationName())
         @endif
     </div>
 </div>
+
+<script>
+
+    $(document).ready(function () {
+
+        if({!! $ccm_complex !!}){
+            $( "#complex_tag").show();
+        } else {
+            $( "#complex_tag").hide();
+        }
+
+    });
+
+</script>
 
 
 

@@ -22,71 +22,37 @@
         }
     </style>
 
-    <script>
-        $(document).ready(function () {
-            $("#addNewProvider").click(function (e) {
-                $("#addProvider").modal();
-                e.preventDefault();
-                return false;
-            });
-        });
-
-    </script>
-
-    <style>
-        .providerForm {
-            padding: 10px;
-        }
-    </style>
-
-    <div id="addProvider" class="modal fade" role="dialog">
+    <div id="confirmButtonModal" class="modal fade" role="dialog">
         <div class="modal-dialog">
 
             <!-- Modal content-->
             <div class="modal-content">
                 <div class="modal-header">
                     <button type="button" class="close" data-dismiss="modal">&times;</button>
-                    <h4 class="modal-title">Are You </h4>
+                    <h4 class="modal-title">Confirm Complex CCM Patient</h4>
                 </div>
                 <div class="modal-body">
-                    <form id="form" name="create" method="post"
-                          action="{{URL::route('provider.store', array('patientId' => $patient->id))}}">
-
-
-                        <input type="hidden" id="created_by" name="created_by" value="{{auth()->user()->id}}">
-                        <input type="hidden" id="patient_id" name="patient_id" value="{{$patient->id}}">
-
-                        <div class="modal-footer">
-                            <div class="row result">
-
-                            </div>
-                        </div>
-
-
-                        <div>
-                            <button type="submit" id="create" class="create btn btn-primary">Add</button>
-                        </div>
-
-                    </form>
-
+                    <p>Please confirm patient will benefit from extra CCM care time this month.</p>
+                    <p>Friendly Reminder: A Medication Reconciliation is required for Complex CCM patients.</p>
                 </div>
-
+                <div class="modal-footer">
+                    <button type="button" name="complex_confirm" id="complex_confirm" class="btn btn-primary"
+                            data-dismiss="modal">Confirm
+                    </button>
+                    <button type="button" name="complex_cancel" id="complex_cancel" class="btn btn-danger"
+                            data-dismiss="modal">Disable
+                    </button>
+                </div>
             </div>
 
         </div>
     </div>
 
-
-
-
     <div class="row" style="margin-top:30px;">
         <div class="main-form-container col-lg-6 col-lg-offset-3 col-md-10 col-md-offset-1"
              style="border-bottom: 3px solid #50b2e2;">
             <div class="row">
-                <div class="main-form-title col-lg-12">
-                    Record New Note
-                </div>
-
+                <div class="main-form-title col-lg-12"> Record New Note</div>
 
                 <form method="post" action="{{URL::route('patient.note.store', ['patientId' => $patient])}}"
                       class="form-horizontal">
@@ -96,14 +62,26 @@
                     @include('partials.userheader')
 
                     <div class="main-form-block main-form-horizontal main-form-primary-horizontal col-md-12"
-                         style=" border-bottom:3px solid #50b2e2;padding: 10px 48px;">
+                         style=" border-bottom:3px solid #50b2e2;padding: 8px 0px;">
 
                         <div class="col-xs-12" style="">
-                            <input type="text" class="form-control" name="general_comment" id="general_comment"
-                                   value="{{$patient->patientInfo->general_comment}}"
-                                   placeholder="{{$patient->patientInfo->general_comment == '' ? 'Enter General Comment...' : $patient->patientInfo->general_comment}}"
-                                   aria-describedby="sizing-addon2"
-                                   style="margin: 0 auto; text-align: left; color: #333;">
+                            <div class="col-xs-8"><input type="text" class="form-control" name="general_comment"
+                                                         id="general_comment"
+                                                         value="{{$patient->patientInfo->general_comment}}"
+                                                         placeholder="{{$patient->patientInfo->general_comment == '' ? 'Enter General Comment...' : $patient->patientInfo->general_comment}}"
+                                                         aria-describedby="sizing-addon2"
+                                                         style="margin: 0 auto; text-align: left; color: #333;">
+                            </div>
+                            <div class="col-sm-4 pull-right"
+                                 style="text-align: right;top: 9px;font-size: 22px;color: #ec683e;">
+                                    <div style="position: relative; top: -6px; padding-top: 2px" class="radio-inline">
+                                        <input type="checkbox"
+                                               name="complex"
+                                               {{$ccm_complex ? 'checked' : ''}}
+                                               id="complex"/><label
+                                                for="complex"><span> </span>Complex CCM</label>
+                                    </div>
+                            </div>
                         </div>
                     </div>
 
@@ -248,8 +226,10 @@
                                                     <div>
                                                         <div class="radio-inline"><input type="checkbox"
                                                                                          name="medication_recon"
-                                                                                         value="true" id="medication_recon"/><label
-                                                                    for="medication_recon"><span> </span>Medication Reconciliation
+                                                                                         value="true"
+                                                                                         id="medication_recon"/><label
+                                                                    for="medication_recon"><span> </span>Medication
+                                                                Reconciliation
                                                             </label>
                                                         </div>
                                                     </div>
@@ -348,10 +328,13 @@
         </div>
     </div>
 
+    <div>
+    <br />
+    </div>
+
     <script>
 
         // Script is for the "phone session" part
-
         $('.collapse').collapse();
 
         $("#phone").on('click', function () {
@@ -373,6 +356,21 @@
             }
         });
 
-    </script>
+        $(document).ready(function () {
+            $("#complex").click(function (e) {
+                $("#confirmButtonModal").modal();
+            });
 
+            $("#complex_confirm").click(function (e) {
+                $("#complex").prop("checked", true);
+                $("#complex_tag").show();
+            });
+
+            $("#complex_cancel").click(function (e) {
+                $("#complex").prop("checked", false);
+                $("#complex_tag").hide();
+            });
+        });
+
+    </script>
 @endsection
