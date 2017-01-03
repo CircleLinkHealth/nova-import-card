@@ -184,7 +184,7 @@ class PatientContactWindow extends Model
 
         }
 
-        $adjusted_offset = Carbon::parse($offset_date)->toDateString();
+        $adjusted_offset = Carbon::parse($offset_date)->subDay()->toDateString();
 
         foreach ($patient_windows as $window){
 
