@@ -27,7 +27,7 @@ class NoteService
             $note->isTCM = false;
         }
 
-        if ($input['medication_recon'] == 'true') {
+        if (isset($input['medication_recon'])) {
             $note->did_medication_recon = true;
         } else {
             $note->did_medication_recon = false;
