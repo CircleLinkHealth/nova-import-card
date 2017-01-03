@@ -455,6 +455,10 @@ class NotesController extends Controller
             $meta_tags[] = 'Patient Recently in Hospital/ER';
         }
 
+        if ($note->did_medication_recon) {
+            $meta_tags[] = 'Medication Reconciliation';
+        }
+
         $data['type'] = $note->type;
         $data['id'] = $note->id;
         $data['performed_at'] = $note->performed_at;
