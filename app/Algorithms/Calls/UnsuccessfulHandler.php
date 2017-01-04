@@ -55,8 +55,7 @@ class UnsuccessfulHandler implements CallHandler
         PatientInfo $calledPatient,
         Carbon $initTime,
         $isComplex
-    )
-    {
+    ) {
         $this->week = $initTime->weekOfMonth;
         $this->patient = $calledPatient;
         $this->ccmTime = $calledPatient->cur_month_activity_time;
@@ -96,11 +95,13 @@ class UnsuccessfulHandler implements CallHandler
     }
 
     public
-    function getComplexPatientOffset($ccmTime,
-                                     $week)
-    {
+    function getComplexPatientOffset(
+        $ccmTime,
+        $week
+    ) {
         //always the next window.
         $this->logic = 'Next Window';
+
         return $this->nextCallDate->addWeekday();
 
     }
@@ -108,8 +109,7 @@ class UnsuccessfulHandler implements CallHandler
     public function getPatientOffset(
         $ccmTime,
         $week
-    )
-    {
+    ) {
 
         $successfulCallsThisMonth = Call::numberOfSuccessfulCallsForPatientForMonth($this->patient->user,
             Carbon::now()->toDateTimeString());
