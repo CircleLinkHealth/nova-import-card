@@ -20,8 +20,8 @@ class FinancialSummary extends SalesReportSection
         Carbon $end
     ) {
         parent::__construct($practice, $start, $end);
-        //override report to always give current data.
-//        $this->start = Carbon::now();
+        // override report to always give current data.
+        // $this->start = Carbon::now();
         $this->practice = $practice;
         $this->service = (new PracticeStatsHelper($start, $end));
         $this->clhpppm = $this->practice->clh_pppm ?? false;

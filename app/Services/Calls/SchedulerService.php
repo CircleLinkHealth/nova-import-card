@@ -24,6 +24,8 @@ class SchedulerService
         $success
     ) {
 
+        $isComplex = $patient->patientInfo->isCCMComplex();
+
         //Collect last known scheduled call
         $scheduled_call = $this->getScheduledCallForPatient($patient);
 
@@ -42,7 +44,7 @@ class SchedulerService
 
         if ($success) {
 
-            $prediction = (new SuccessfulHandler($patient->patientInfo, Carbon::now()))->handle();
+            $prediction = (new SuccessfulHandler($patient->patientInfo, Carbon::now(), $isComplex))->handle();
 
             $prediction['successful'] = true;
 
@@ -50,7 +52,7 @@ class SchedulerService
 
         }
 
-        $prediction = (new UnsuccessfulHandler($patient->patientInfo, Carbon::now()))->handle();
+        $prediction = (new UnsuccessfulHandler($patient->patientInfo, Carbon::now(), $isComplex))->handle();
 
         $prediction['successful'] = false;
 

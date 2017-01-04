@@ -4,7 +4,6 @@
 @section('activity', 'Patient Call Scheduler')
 
 @section('content')
-
     <script>
         $(document).ready(function(){
             /* $( ".submitFormBtn").click(function(e) { */
@@ -51,18 +50,18 @@
                 Form::open(array('url' => URL::route('call.schedule', array('patientId' => $patient->id)), 'method' => 'POST'))
                 !!}
 
-                <div class="form-block col-md-4" style="padding-top: 13px">
+                <div class="form-block col-md-4" style="padding-top: 0px">
                     <div class="row">
                         <div class="new-note-item">
                             <div class="form-group">
                                 <div class="col-sm-12">
-                                    <label for="observationDate">
+                                    <label for="date" style="font-weight: 500 !important;">
                                         Predicted Next Contact Date
                                     </label>
                                 </div>
                                 <div class="col-sm-12">
                                     <div class="form-group">
-                                        <input name="date" type="date"
+                                        <input name="date" type="date" id="date"
                                                class="selectpickerX form-control"
                                                data-width="95px" data-size="10"
                                                value="{{\Carbon\Carbon::parse($date)->format('Y-m-d')}}"
@@ -78,12 +77,12 @@
                 <input type="hidden" name="suggested_date" value="{{\Carbon\Carbon::parse($date)->format('Y-m-d')}}">
                 <input type="hidden" name="nurse" value="{{$nurse}}">
 
-                <div class="form-block col-md-8" style="padding-top: 28px">
+                <div class="form-block col-md-8" style="padding-top: 15px">
                         <div class="row form-inline">
                             <div class="new-note-item">
                                 <div class="form-group">
                                     <div class="col-sm-12">
-                                        <label for="activityKey">
+                                        <label for="window_start" style="font-weight: 500 !important;">
                                             Next Call Window
                                         </label>
                                     </div>
