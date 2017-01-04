@@ -355,7 +355,7 @@ class UnsuccessfulHandler implements CallHandler
     {
         //always the next window.
         $this->logic = 'Next Window';
-        return $this->nextCallDate;
+        return $this->nextCallDate->addWeekday();
 
     }
 
