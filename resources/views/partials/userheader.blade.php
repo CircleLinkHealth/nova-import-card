@@ -55,7 +55,7 @@ $location = empty($patient->getPreferredLocationName())
             </div>
             <div class="col-sm-4" style="line-height: 22px; text-align: right">
 
-                <span style="font-size: 27px;{{$ccm_above ? 'color: #47beab;' : ''}}">{{$monthlyTime}}</span>
+                <span style="font-size: 27px;{{$ccm_above ? 'color: #47beab;' : ''}}"><a style="color: inherit" href="{{ empty($patient->id) ? URL::route('patients.search') : URL::route('patient.activity.providerUIIndex', array('patient' => $patient->id)) }}">{{$monthlyTime}}</a></span>
                 <span style="font-size:15px"></span><br/>
 
                 @if(Route::is('patient.note.create'))
