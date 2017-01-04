@@ -383,6 +383,22 @@ class NotesController extends Controller
                 $info->last_contact_time = Carbon::now()->format('Y-m-d H:i:s');
                 $info->save();
 
+                $seconds = $patient->patientInfo()->first()->cur_month_activity_time;
+
+                $ccm_complex = $patient->patientInfo->isCCMComplex() ?? false;
+
+                $ccm_above = false;
+
+                if ($seconds > 1199 && !$ccm_complex) {
+                    $ccm_above = true;
+                } elseif ($seconds > 3599 && $ccm_complex) {
+                    $ccm_above = true;
+                }
+
+                $prediction['ccm_above'] = $ccm_above;
+                $prediction['ccm_complex'] = $ccm_complex;
+
+
                 return view('wpUsers.patient.calls.create', $prediction);
 
             }

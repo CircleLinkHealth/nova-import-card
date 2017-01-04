@@ -37,10 +37,10 @@ $location = empty($patient->getPreferredLocationName())
 
                 <ul class="inline-block" style="margin-left: -40px; font-size: 16px">
                     <b>
-                        <li class="inline-block">{{$patient->birthDate}} <span style="color: #4390b5">•</span></li>
-                        <li class="inline-block">{{$patient->gender}} <span style="color: #4390b5">•</span></li>
-                        <li class="inline-block">{{$patient->age}} yrs <span style="color: #4390b5">•</span></li>
-                        <li class="inline-block">{{$patient->phone}} </li>
+                        <li class="inline-block">{{$patient->birthDate ?? 'N/A'}}  <span style="color: #4390b5">•</span></li>
+                        <li class="inline-block">{{$patient->gender ?? 'N/A'}} <span style="color: #4390b5">•</span></li>
+                        <li class="inline-block">{{$patient->age ?? 'N/A'}} yrs <span style="color: #4390b5">•</span></li>
+                        <li class="inline-block">{{$patient->phone ?? 'N/A'}} </li>
                     </b>
                     <li><span> <b>Provider</b>: {{$provider}}  </span></li>
                     <li><span> <b>Location</b>: {{$location}}  </span></li>

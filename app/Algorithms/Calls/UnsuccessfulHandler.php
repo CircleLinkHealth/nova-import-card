@@ -43,6 +43,7 @@ class UnsuccessfulHandler implements CallHandler
     private $nextCallDate;
     private $attemptNote;
     private $matchArray = [];
+    private $isComplex;
 
     //return package
     private $prediction;
@@ -52,9 +53,9 @@ class UnsuccessfulHandler implements CallHandler
 
     public function __construct(
         PatientInfo $calledPatient,
-        Carbon $initTime
+        Carbon $initTime,
+        $isComplex
     ) {
-
         $this->week = $initTime->weekOfMonth;
         $this->patient = $calledPatient;
         $this->ccmTime = $calledPatient->cur_month_activity_time;
@@ -62,16 +63,24 @@ class UnsuccessfulHandler implements CallHandler
         $this->logic = '';
         $this->attemptNote = '';
         $this->prediction = [];
+        $this->isComplex = $isComplex;
 
     }
 
     //exec
     public function handle()
     {
-
         //Calculate the next date before which we can call patient
-        $this->getPatientOffset($this->ccmTime, $this->week);
-        
+        if ($this->isComplex) {
+
+            $this->getComplexPatientOffset($this->ccmTime, $this->week);
+
+        } else {
+
+            $this->getPatientOffset($this->ccmTime, $this->week);
+
+        }
+
         //get the next call date based on patient preferences
         $this->getNextWindow();
 
@@ -82,6 +91,18 @@ class UnsuccessfulHandler implements CallHandler
         $this->prediction['predicament'] = $this->createSchedulerInfoString();
 
         return $this->prediction;
+
+    }
+
+    public
+    function getComplexPatientOffset(
+        $ccmTime,
+        $week
+    ) {
+        //always the next window.
+        $this->logic = 'Next Window';
+
+        return $this->nextCallDate->addWeekday();
 
     }
 
@@ -111,227 +132,203 @@ class UnsuccessfulHandler implements CallHandler
 
                 }
 
-            } else {
-                if ($week == 3 || $week == 4) { //second last week of month
+            } elseif ($week == 3 || $week == 4) { //second last week of month
 
-                    if ($successfulCallsThisMonth > 0) { //If there was a successful call this month...
+                if ($successfulCallsThisMonth > 0) { //If there was a successful call this month...
 
-                        $this->logic = 'First week of next month';
+                    $this->logic = 'First week of next month';
 
-                        return $this->nextCallDate->addMonth()->firstOfMonth();
+                    return $this->nextCallDate->addMonth()->firstOfMonth();
+
+                } else {
+
+                    $this->logic = 'Next window';
+
+                    return $this->nextCallDate;
+
+                }
+
+            } elseif ($week == 5) { //last-ish week of month
+
+                if ($successfulCallsThisMonth > 0) { //If there was a successful call this month...
+
+                    $this->logic = 'First week of next month';
+
+                    return $this->nextCallDate->addMonth()->firstOfMonth();
+
+                } else {
+
+                    $this->logic = 'Next Day';
+
+                    return $this->nextCallDate->addDay(1);
+
+                }
+            }
+
+        } elseif ($ccmTime > 899) { // 15 - 20 mins
+
+            if ($week == 1 || $week == 2) { // We are in the first two weeks of the month
+
+                if ($successfulCallsThisMonth > 0) { //If there was a successful call this month...
+
+                    $this->logic = 'Add one week';
+
+                    return $this->nextCallDate->addWeek(1);
+
+                } else {
+
+                    $this->logic = 'Next window';
+
+                    return $this->nextCallDate;
+
+                }
+
+            } elseif ($week == 3) { //second last week of month
+
+                if ($successfulCallsThisMonth > 0) { //If there was a successful call this month...
+
+                    $this->logic = 'Add one week';
+
+                    return $this->nextCallDate->addWeek(1);
+
+                }
+
+            } elseif ($week == 4) {
+
+                $this->logic = 'Next window';
+
+                return $this->nextCallDate;
+
+
+            } elseif ($week == 5) { //last-ish week of month
+
+                if ($successfulCallsThisMonth > 0) { //If there was a successful call this month...
+
+                    if ($ccmTime > 1020) {
+
+                        $this->logic = 'Greater than 17, same day, add attempt note';
+                        $this->attemptNote = 'Please review careplan';
+
+                        return $this->nextCallDate;
 
                     } else {
 
-                        $this->logic = 'Next window';
+                        $this->logic = 'Less than 17, tomorrow. ';
 
-                        return $this->nextCallDate;
+                        return $this->nextCallDate->addDay(1);
 
                     }
 
                 } else {
-                    if ($week == 5) { //last-ish week of month
 
-                        if ($successfulCallsThisMonth > 0) { //If there was a successful call this month...
+                    $this->logic = 'Next Day';
 
-                            $this->logic = 'First week of next month';
+                    return $this->nextCallDate->addDay(1);
 
-                            return $this->nextCallDate->addMonth()->firstOfMonth();
-
-                        } else {
-
-                            $this->logic = 'Next Day';
-
-                            return $this->nextCallDate->addDay(1);
-
-                        }
-
-                    }
                 }
+
             }
 
+        } elseif ($ccmTime > 599) { // 10 - 15 mins
 
-        } else {
-            if ($ccmTime > 899) { // 15 - 20 mins
+            if ($week == 1 || $week == 2 || $week == 3) { // We are in the first three weeks of the month
 
-                if ($week == 1 || $week == 2) { // We are in the first two weeks of the month
+                if ($successfulCallsThisMonth > 0) { //If there was a successful call this month...
 
-                    if ($successfulCallsThisMonth > 0) { //If there was a successful call this month...
+                    $this->logic = 'Add one week';
 
-                        $this->logic = 'Add one week';
-
-                        return $this->nextCallDate->addWeek(1);
-
-                    } else {
-
-                        $this->logic = 'Next window';
-
-                        return $this->nextCallDate;
-
-                    }
+                    return $this->nextCallDate->addWeek(1);
 
                 } else {
-                    if ($week == 3) { //second last week of month
 
-                        if ($successfulCallsThisMonth > 0) { //If there was a successful call this month...
+                    $this->logic = 'Next window';
 
-                            $this->logic = 'Add one week';
+                    return $this->nextCallDate;
 
-                            return $this->nextCallDate->addWeek(1);
-
-                        }
-
-                    } else {
-                        if ($week == 4) {
-
-                            $this->logic = 'Next window';
-
-                            return $this->nextCallDate;
-
-
-                        } else {
-                            if ($week == 5) { //last-ish week of month
-                                if ($successfulCallsThisMonth > 0) { //If there was a successful call this month...
-
-                                    if ($ccmTime > 1020) {
-
-                                        $this->logic = 'Greater than 17, same day, add attempt note';
-                                        $this->attemptNote = 'Please review careplan';
-
-                                        return $this->nextCallDate;
-
-                                    } else {
-
-                                        $this->logic = 'Less than 17, tomorrow. ';
-
-                                        return $this->nextCallDate->addDay(1);
-
-                                    }
-
-                                } else {
-
-                                    $this->logic = 'Next Day';
-
-                                    return $this->nextCallDate->addDay(1);
-
-                                }
-
-                            }
-                        }
-                    }
                 }
 
-            } else {
-                if ($ccmTime > 599) { // 10 - 15 mins
+            } elseif ($week == 4) {
 
-                    if ($week == 1 || $week == 2 || $week == 3) { // We are in the first three weeks of the month
+                if ($successfulCallsThisMonth > 0) {
 
-                        if ($successfulCallsThisMonth > 0) { //If there was a successful call this month...
+                    $this->logic = 'This Case Is Tricky, need to call this person on a Saturday or closest contact window';
+                    $this->attemptNote = 'Call This Weekend';
 
-                            $this->logic = 'Add one week';
+                    return $this->nextCallDate->next(null);
 
-                            return $this->nextCallDate->addWeek(1);
+                } else {
 
-                        } else {
+                    $this->logic = 'Next window';
 
-                            $this->logic = 'Next window';
+                    return $this->nextCallDate;
 
-                            return $this->nextCallDate;
-
-                        }
-
-                    } else {
-                        if ($week == 4) {
-
-                            if ($successfulCallsThisMonth > 0) {
-
-                                $this->logic = 'This Case Is Tricky, need to call this person on a Saturday or closest contact window';
-                                $this->attemptNote = 'Call This Weekend';
-
-                                return $this->nextCallDate->next(null);
-
-                            } else {
-
-                                $this->logic = 'Next window';
-
-                                return $this->nextCallDate;
-
-
-                            }
-
-                        } else {
-
-                            if ($week == 5) { //last-ish week of month
-
-                                $this->logic = 'Less than 17, tomorrow. ';
-
-                                return $this->nextCallDate->addDay(1);
-
-                            }
-                        }
-                    }
-                } else { // 0 - 10 mins
-
-                    if ($week == 1 || $week == 2) {
-
-                        $three_weeks_ago = Carbon::now()->subWeek(3)->toDateTimeString();
-                        $last_successful_call = Call::whereStatus('reached')
-                            ->where('outbound_cpm_id', $this->patient->id)
-                            ->where('called_date', '>=', $three_weeks_ago)
-                            ->count();
-
-                        if ($successfulCallsThisMonth > 0 && $last_successful_call > 0) {
-
-                            $this->logic = 'Check for successful calls in last 3 weeks, found, ';
-                            $this->attemptNote = 'Next Window';
-
-                            return $this->nextCallDate;
-
-                        } else {
-                            if ($successfulCallsThisMonth > 0) {
-
-                                $this->logic = 'Next Week';
-
-                                return $this->nextCallDate->addWeek(1);
-
-                            } else {
-
-                                $this->logic = 'Next Week';
-
-                                return $this->nextCallDate->addWeek(1);
-
-                            }
-                        }
-                    } else {
-                        if ($week == 3) {
-
-                            if ($successfulCallsThisMonth > 0) { //If there was a successful call this month...
-
-                                $this->logic = 'This Case Is Tricky, need to call this person on a Saturday';
-                                $this->attemptNote = 'Call This Weekend';
-
-                                return $this->nextCallDate->next(Carbon::SATURDAY);
-
-                            } else {
-
-                                $this->logic = 'Next window';
-
-                                return $this->nextCallDate->addDay(1);
-
-                            }
-
-                        } else {
-                            if ($week == 4 || $week == 5) {
-
-                                $this->logic = 'Next window';
-
-                                return $this->nextCallDate->addDay(1);
-
-                            }
-                        }
-                    }
 
                 }
+
+            } elseif ($week == 5) { //last-ish week of month
+
+                $this->logic = 'Less than 17, tomorrow. ';
+
+                return $this->nextCallDate->addDay(1);
+
             }
+        } else { // 0 - 10 mins
+
+            if ($week == 1 || $week == 2) {
+
+                $three_weeks_ago = Carbon::now()->subWeek(3)->toDateTimeString();
+                $last_successful_call = Call::whereStatus('reached')
+                    ->where('outbound_cpm_id', $this->patient->id)
+                    ->where('called_date', '>=', $three_weeks_ago)
+                    ->count();
+
+                if ($successfulCallsThisMonth > 0 && $last_successful_call > 0) {
+
+                    $this->logic = 'Check for successful calls in last 3 weeks, found, ';
+                    $this->attemptNote = 'Next Window';
+
+                    return $this->nextCallDate;
+
+                } elseif ($successfulCallsThisMonth > 0) {
+
+                    $this->logic = 'Next Week';
+
+                    return $this->nextCallDate->addWeek(1);
+
+                } else {
+
+                    $this->logic = 'Next Week';
+
+                    return $this->nextCallDate->addWeek(1);
+
+                }
+
+            } elseif ($week == 3) {
+
+                if ($successfulCallsThisMonth > 0) { //If there was a successful call this month...
+
+                    $this->logic = 'This Case Is Tricky, need to call this person on a Saturday';
+                    $this->attemptNote = 'Call This Weekend';
+
+                    return $this->nextCallDate->next(Carbon::SATURDAY);
+
+                } else {
+
+                    $this->logic = 'Next window';
+
+                    return $this->nextCallDate->addDay(1);
+
+                }
+
+            } elseif ($week == 4 || $week == 5) {
+
+                $this->logic = 'Next window';
+
+                return $this->nextCallDate->addDay(1);
+
+
+            }
+
         }
 
         //If nothing matches, just return the same date
@@ -339,10 +336,12 @@ class UnsuccessfulHandler implements CallHandler
 
     }
 
-    public function createSchedulerInfoString()
+    public
+    function createSchedulerInfoString()
     {
 
         $status = '<span style="color: red">unsuccessfully</span>';
+        $this->prediction['complex'] = $this->isComplex;
 
         return
             'You just called ' . $this->patient->user->fullName

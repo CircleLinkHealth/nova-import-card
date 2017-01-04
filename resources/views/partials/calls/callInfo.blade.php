@@ -58,9 +58,12 @@
                             <div class="col-sm-12">
                                 <div class="row">
                                     <div class="col-sm-12">
-                                        <h3 style="{{$ccm_time_achieved ? 'color: #47beab;' : ''}}">{{$formatted_monthly_time}}
-                                            @if($ccm_time_achieved)
+                                        <h3 style="{{$ccm_above ? 'color: #47beab;' : ''}}">{{$formatted_monthly_time}}
+                                            @if($ccm_above)
                                                 <span class="glyphicon glyphicon-ok"></span>
+                                            @endif
+                                            @if($ccm_complex)
+                                                <span id="complex_tag" style="background-color: #ec683e;font-size: 11px;" class="label label-warning"> Complex CCM</span>
                                             @endif
                                         </h3>
                                     </div>
