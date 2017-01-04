@@ -505,7 +505,10 @@ Route::group(['middleware' => 'auth'], function () {
                 'as'   => 'MonthlyBillingReportsController.makeMonthlyReport',
             ]);
 
-            Route::get('patients-for-insurance-check', 'Reports\PatientsForInsuranceCheck@make');
+            Route::get('patients-for-insurance-check', [
+                'uses' => 'Reports\PatientsForInsuranceCheck@make',
+                'as'   => 'get.patients.for.insurance.check',
+            ]);
 
 
             Route::group([
