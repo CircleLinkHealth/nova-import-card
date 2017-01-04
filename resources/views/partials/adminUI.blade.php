@@ -149,7 +149,7 @@
                     @endif
 
                         @if ( ! Auth::guest())
-                            <li role="presentation" 0lass="dropdown">
+                            <li role="presentation" class="dropdown">
                             <a class="dropdown-toggle" data-toggle="dropdown" href="#" role="button"
                                aria-expanded="false">
                                 Nurse Management <span class="caret"></span>

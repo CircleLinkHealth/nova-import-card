@@ -22,14 +22,13 @@
         }
     </style>
 
+    @include('partials.confirm-ccm-complexity-modal')
+
     <div class="row" style="margin-top:30px;">
         <div class="main-form-container col-lg-6 col-lg-offset-3 col-md-10 col-md-offset-1"
              style="border-bottom: 3px solid #50b2e2;">
             <div class="row">
-                <div class="main-form-title col-lg-12">
-                    Record New Note
-                </div>
-
+                <div class="main-form-title col-lg-12"> Record New Note</div>
 
                 <form method="post" action="{{URL::route('patient.note.store', ['patientId' => $patient])}}"
                       class="form-horizontal">
@@ -39,14 +38,26 @@
                     @include('partials.userheader')
 
                     <div class="main-form-block main-form-horizontal main-form-primary-horizontal col-md-12"
-                         style=" border-bottom:3px solid #50b2e2;padding: 10px 48px;">
+                         style=" border-bottom:3px solid #50b2e2;padding: 8px 0px;">
 
                         <div class="col-xs-12" style="">
-                            <input type="text" class="form-control" name="general_comment" id="general_comment"
-                                   value="{{$patient->patientInfo->general_comment}}"
-                                   placeholder="{{$patient->patientInfo->general_comment == '' ? 'Enter General Comment...' : $patient->patientInfo->general_comment}}"
-                                   aria-describedby="sizing-addon2"
-                                   style="margin: 0 auto; text-align: left; color: #333;">
+                            <div class="col-xs-8"><input type="text" class="form-control" name="general_comment"
+                                                         id="general_comment"
+                                                         value="{{$patient->patientInfo->general_comment}}"
+                                                         placeholder="{{$patient->patientInfo->general_comment == '' ? 'Enter General Comment...' : $patient->patientInfo->general_comment}}"
+                                                         aria-describedby="sizing-addon2"
+                                                         style="margin: 0 auto; text-align: left; color: #333;">
+                            </div>
+                            <div class="col-sm-4 pull-right"
+                                 style="text-align: right;top: 9px;font-size: 22px;color: #ec683e;">
+                                    <div style="position: relative; top: -6px; padding-top: 2px" class="radio-inline">
+                                        <input type="checkbox"
+                                               name="complex"
+                                               {{$ccm_complex ? 'checked' : ''}}
+                                               id="complex"/><label
+                                                for="complex"><span> </span>Complex CCM</label>
+                                    </div>
+                            </div>
                         </div>
                     </div>
 
@@ -188,13 +199,22 @@
                                                         </div>
 
                                                     @endif
-
+                                                    <div>
+                                                        <div class="radio-inline"><input type="checkbox"
+                                                                                         name="medication_recon"
+                                                                                         value="true"
+                                                                                         id="medication_recon"/><label
+                                                                    for="medication_recon"><span> </span>Medication
+                                                                Reconciliation
+                                                            </label>
+                                                        </div>
+                                                    </div>
                                                     <input type="hidden" name="tcm" value="hospital">
                                                     <div>
                                                         <div class="radio-inline"><input type="checkbox"
                                                                                          name="tcm"
-                                                                                         value="true" id="true"/><label
-                                                                    for="true"><span> </span>Patient in Hospital/ER (now
+                                                                                         value="true" id="tcm"/><label
+                                                                    for="tcm"><span> </span>Patient in Hospital/ER (now
                                                                 or
                                                                 recently)</label>
                                                         </div>
@@ -284,10 +304,13 @@
         </div>
     </div>
 
+    <div>
+    <br />
+    </div>
+
     <script>
 
         // Script is for the "phone session" part
-
         $('.collapse').collapse();
 
         $("#phone").on('click', function () {
@@ -309,6 +332,21 @@
             }
         });
 
-    </script>
+        $(document).ready(function () {
+            $("#complex").click(function (e) {
+                $("#confirmButtonModal").modal();
+            });
 
+            $("#complex_confirm").click(function (e) {
+                $("#complex").prop("checked", true);
+                $("#complex_tag").show();
+            });
+
+            $("#complex_cancel").click(function (e) {
+                $("#complex").prop("checked", false);
+                $("#complex_tag").hide();
+            });
+        });
+
+    </script>
 @endsection

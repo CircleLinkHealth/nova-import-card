@@ -36,7 +36,7 @@ class NotesController extends Controller
         $messages = \Session::get('messages');
 
         $data = $this->service->getNotesAndOfflineActivitiesForPatient($patient);
-        
+
         $report_data = $this->formatter->formatDataForNotesAndOfflineActivitiesReport($data);
 
         $ccm_complex = $patient->patientInfo->isCCMComplex() ?? false;
@@ -47,7 +47,7 @@ class NotesController extends Controller
                 'patient'       => $patient,
                 'messages'      => $messages,
                 'data'          => $data,
-                'ccm_complex'   => $ccm_complex,
+                'ccm_complex'   => $ccm_complex
             ]);
 
     }
@@ -61,7 +61,7 @@ class NotesController extends Controller
 
         $providers_for_blog = User::whereIn('id', $session_user->viewableProviderIds())
             ->pluck('display_name', 'id')->sort();
-        
+
         //TIME FILTERS
 
         //if month and year are selected
@@ -77,11 +77,11 @@ class NotesController extends Controller
             $start = Carbon::now()->startOfMonth()->format('Y-m-d');
             $end = Carbon::now()->endOfMonth()->format('Y-m-d');
         }
-        
+
         $only_mailed_notes = (isset($input['mail_filter'])) ? true : false;
-        
+
         $admin_filter = (isset($input['admin_filter'])) ? true : false;
-        
+
         //Check to see whether a provider was selected.
         if (isset($input['provider']) && $input['provider'] != '') {
 
@@ -224,7 +224,6 @@ class NotesController extends Controller
             $careCenterUsers = Practice::getCareCenterUsers($patient->program_id);
             $provider_info = [];
 
-
             $author = Auth::user();
             $author_id = $author->id;
             $author_name = $author->fullName;
@@ -260,6 +259,8 @@ class NotesController extends Controller
                 $contact_days_array = array_merge(explode(',', $patient->patientInfo->preferred_cc_contact_days));
             }
 
+            $ccm_complex = $patient->patientInfo->isCCMComplex() ?? false;
+
             asort($provider_info);
             asort($careteam_info);
 
@@ -275,6 +276,8 @@ class NotesController extends Controller
                 'window'        => $window,
                 'window_flag'   => $patient_contact_window_exists,
                 'contact_days_array' => $contact_days_array,
+                'ccm_complex'   => $ccm_complex
+
             ];
 
             return view('wpUsers.patient.note.create', $view_data);
@@ -287,7 +290,7 @@ class NotesController extends Controller
     ) {
 
         $input = $input->all();
-        
+
         $input['performed_at'] = Carbon::parse($input['performed_at'])->toDateTimeString();
 
         $note = $this->service->storeNote($input);
@@ -300,6 +303,32 @@ class NotesController extends Controller
         if (isset($input['status'])) {
             $info->ccm_status = $input['status'];
         }
+
+        //CCM Complexity Handle
+
+        $date_index = Carbon::now()->firstOfMonth()->toDateString();
+
+        $patientRecord = $patient
+            ->patientInfo
+            ->patientSummaries
+            ->where('month_year', $date_index)->first();
+
+        if (empty($patientRecord)) {
+
+            $patientRecord = PatientMonthlySummary::updateCCMInfoForPatient(
+                $patient->patientInfo,
+                $patient->patientInfo->cur_month_activity_time
+            );
+
+            $patientRecord->is_ccm_complex = isset($input['complex']) ? 1 : 0;
+
+            } else {
+
+            $patientRecord->is_ccm_complex = isset($input['complex']) ? 1 : 0;
+
+            }
+
+        $patientRecord->save();
 
         if (isset($input['general_comment'])) {
             $info->general_comment = $input['general_comment'];
@@ -349,7 +378,7 @@ class NotesController extends Controller
                     $prediction = (new SchedulerService())->getNextCall($patient, $note->id, false);
 
                 }
-                
+
                 // add last contact time regardless of if success
                 $info->last_contact_time = Carbon::now()->format('Y-m-d H:i:s');
                 $info->save();
@@ -417,11 +446,11 @@ class NotesController extends Controller
 
         $patient = User::find($patientId);
         $note = $this->service->getNoteWithCommunications($noteId);
-        
+
         $this->service->updateMailLogsForNote(auth()->user()->id, $note);
-        
+
         $readers = $this->service->getSeenForwards($note);
-        
+
         //Set up note packet for view
         $data = [];
 
@@ -453,6 +482,10 @@ class NotesController extends Controller
 
         if ($note->isTCM) {
             $meta_tags[] = 'Patient Recently in Hospital/ER';
+        }
+
+        if ($note->did_medication_recon) {
+            $meta_tags[] = 'Medication Reconciliation';
         }
 
         $data['type'] = $note->type;

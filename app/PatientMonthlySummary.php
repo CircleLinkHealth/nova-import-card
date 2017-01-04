@@ -70,6 +70,8 @@ class PatientMonthlySummary extends Model
             $record->save();
         }
 
+        return $record;
+
     }
 
     public function patient_info()

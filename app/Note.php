@@ -20,6 +20,7 @@ class Note extends Model implements PdfReport
         'body',
         'isTCM',
         'type',
+        'did_medication_recon',
         'performed_at',
     ];
 

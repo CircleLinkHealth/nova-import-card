@@ -5,6 +5,32 @@
 
 @section('content')
 
+    <div id="confirmButtonModal" class="modal fade" role="dialog">
+        <div class="modal-dialog">
+
+            <!-- Modal content-->
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    <h4 class="modal-title">Confirm Complex CCM Patient</h4>
+                </div>
+                <div class="modal-body">
+                    <p>Please confirm patient will benefit from extra CCM care time this month.</p>
+                    <p>Friendly Reminder: A Medication Reconciliation is required for Complex CCM patients.</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" name="complex_confirm" id="complex_confirm" class="btn btn-primary"
+                            data-dismiss="modal">Confirm
+                    </button>
+                    <button type="button" name="complex_cancel" id="complex_cancel" class="btn btn-danger"
+                            data-dismiss="modal">Cancel
+                    </button>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
     <div class="row main-form-block" style="margin-top:30px;">
         <div class="main-form-container col-lg-8 col-lg-offset-2">
             <div class="row">
@@ -19,12 +45,11 @@
                             NOTE</a></div>
                     <div class="col-sm-6 pull-right"
                          style="text-align: right;top: 12px;font-size: 22px;color: #ec683e;">
-                        <form method="post"
+                        <form method="post" name="complexity_toggle" id="complexity_toggle"
                               action="{{URL::route('patient.ccm.toggle', array('patient' => $patient->id))}}"
                               class="form-horizontal">
                             {{ csrf_field() }}
-                            <div class="radio-inline"><input onChange="this.form.submit()"
-                                                             type="checkbox"
+                            <div class="radio-inline"><input type="checkbox"
                                                              name="complex"
                                                              {{$ccm_complex ? 'checked' : ''}}
                                                              id="complex"/><label
@@ -262,5 +287,32 @@
                 </div>
             </div>
         </div>
+
+        <script>
+
+            $(document).ready(function () {
+                $("#complex").click(function (e) {
+                        if($(this).is(':checked')){
+                            $("#confirmButtonModal").modal();
+                        } else {
+                            $("#complex").prop("checked", false);
+                            $("#complexity_toggle").submit();
+                        }
+
+                });
+
+                $("#complex_confirm").click(function (e) {
+                    $("#complex").prop("checked", true);
+                    $("#complexity_toggle").submit();
+                });
+
+                $("#complex_cancel").click(function (e) {
+                    $("#complex").prop("checked", false);
+                });
+
+            });
+
+
+        </script>
 
 @stop

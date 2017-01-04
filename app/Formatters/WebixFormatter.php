@@ -139,8 +139,6 @@ class WebixFormatter implements ReportFormatter
 
             $formatted_data[$count]['provider_name'] = User::find($data->patient_id)->billingProviderName;
 
-
-
             //TAGS
             $formatted_data[$count]['tags'] = '';
 
@@ -176,9 +174,12 @@ class WebixFormatter implements ReportFormatter
 
         }
 
-        if (!empty($formatted_data)) {
 
-            return "data:" . json_encode($formatted_data) . "";
+        $report_data = collect($formatted_data)->sortByDesc('performed_at')->toArray();
+
+        if (!empty($report_data)) {
+
+            return "data:" . json_encode(array_values($report_data)) . "";
 
         } else {
 

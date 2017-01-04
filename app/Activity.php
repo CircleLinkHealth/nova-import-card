@@ -141,7 +141,6 @@ class Activity extends Model implements Transformable
             'CCM Welcome Call'                        => 'CCM Welcome Call',
             'Reengaged'                               => 'Reengaged',
             'General (Clinical)'                      => 'General (Clinical)',
-            'Medication Reconciliation'               => 'Medication Reconciliation',
             'Test (Scheduling, Communications, etc)'  => 'Test (Scheduling, Communications, etc)',
             'Call to Other Care Team Member'          => 'Call to Other Care Team Member',
             'Review Care Plan'                        => 'Review Care Plan',
