@@ -20,6 +20,8 @@ class FinancialSummary extends SalesReportSection
         Carbon $end
     ) {
         parent::__construct($practice, $start, $end);
+        //override report to always give current data.
+//        $this->start = Carbon::now();
         $this->practice = $practice;
         $this->service = (new PracticeStatsHelper($start, $end));
         $this->clhpppm = $this->practice->clh_pppm ?? false;
@@ -49,7 +51,6 @@ class FinancialSummary extends SalesReportSection
                 $month = Carbon::parse($iMonthsAgo)->format('F Y');
 
             }
-            debug($start);
 
             $billable = $this->service->billableCountForMonth($this->practice, $start);
             $billableDollars = $billable * 40;
@@ -75,12 +76,8 @@ class FinancialSummary extends SalesReportSection
 
         }
 
-        debug($this->data);
-
         return $this->data;
 
-
     }
-
 
 }

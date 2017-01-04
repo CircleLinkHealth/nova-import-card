@@ -1,6 +1,6 @@
 <h3 style="text-align: center">Financial Performance</h3>
 
-<?php $currentMonth = Carbon\Carbon::now()->format('F Y') ?>
+<?php $start = Carbon\Carbon::parse($data['start']) ?>
 {{--<h5>--}}
 {{--CCM Revenue to date: <span--}}
 {{--style="color: green"> {{$data[$financialSection]['revenue_so_far'] ?? 'N/A'}} </span><br />--}}
@@ -18,9 +18,9 @@
 <table class="table table-bordered">
     <tr>
         <td></td>
-        <th>{{\Carbon\Carbon::now()->format('F') . ' to Date'}}</th>
-        <th>{{\Carbon\Carbon::now()->subMonths(1)->format('F')}}</th>
-        <th>{{\Carbon\Carbon::now()->subMonths(2)->format('F')}}</th>
+        <th>{{\Carbon\Carbon::parse($start)->format('F') . ' to Date'}}</th>
+        <th>{{\Carbon\Carbon::parse($start)->subMonths(1)->format('F')}}</th>
+        <th>{{\Carbon\Carbon::parse($start)->subMonths(2)->format('F')}}</th>
 
     </tr>
 
