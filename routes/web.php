@@ -1,15 +1,7 @@
 <?php
 
-use App\Reports\Sales\Practice\SalesByPracticeReport;
-use App\Reports\Sales\Provider\SalesByProviderReport;
-use App\User;
-use Carbon\Carbon;
-use Illuminate\Support\Facades\Mail;
-
 if (app()->environment() != 'production') {
     Route::get('rohan', function () {
-
-
 
 
     });
@@ -449,6 +441,7 @@ Route::group(['middleware' => 'auth'], function () {
         'prefix'     => 'admin',
     ], function () {
 
+
         /**
          * LOGGER
          */
@@ -511,6 +504,12 @@ Route::group(['middleware' => 'auth'], function () {
                 'uses' => 'Admin\Reports\MonthlyBillingReportsController@makeMonthlyReport',
                 'as'   => 'MonthlyBillingReportsController.makeMonthlyReport',
             ]);
+
+            Route::get('patients-for-insurance-check', [
+                'uses' => 'Reports\PatientsForInsuranceCheck@make',
+                'as'   => 'get.patients.for.insurance.check',
+            ]);
+
 
             Route::group([
                 'prefix' => 'sales',
