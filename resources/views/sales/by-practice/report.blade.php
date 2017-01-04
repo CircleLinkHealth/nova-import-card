@@ -16,10 +16,10 @@ $practiceSection = \App\Reports\Sales\Practice\Sections\PracticeDemographics::cl
                                              alt="Care Plan Manager"
                                              style="position:relative;"
                                              width="200px"/>
-            <h1 style="margin-bottom: 0px">{{$data['name']}}'s Summary</h1>
-            <span style="font-size: 16px">(Organization-Wide)</span><br/>
+            <h1 style="margin-bottom: 0px">CircleLink Weekly CCM Summary</h1>
+            <b><span style="font-size: 16px">(Organization-Wide)</span><br/></b>
 
-            <span>{{Carbon\Carbon::parse($data['start'])->format('l, jS F') . ' - ' . Carbon\Carbon::parse($data['end'])->format('l, jS F') }}</span>
+            <b><br><span>{{Carbon\Carbon::parse($data['start'])->format('l, jS F') . ' - ' . Carbon\Carbon::parse($data['end'])->format('l, jS F') }}</span></b>
 
         </div>
     </div>
@@ -27,6 +27,9 @@ $practiceSection = \App\Reports\Sales\Practice\Sections\PracticeDemographics::cl
     @if(array_key_exists($rangeSection, $data))
 
         <div style="font-size: 16px">
+
+            <p>Hope you had a good weekend! Here's a summary of CCM activities for last week:</p>
+
             <p>
                 Last week CircleLink nurses placed <b>{{$data[$rangeSection]['no_of_call_attempts']}}</b>
                 calls, including <b>{{$data[$rangeSection]['no_of_successful_calls']}}</b> successful phone session,
