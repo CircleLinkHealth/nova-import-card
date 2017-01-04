@@ -74,7 +74,7 @@ class UnsuccessfulHandler implements CallHandler
         //Calculate the next date before which we can call patient
         if ($this->isComplex) {
 
-            $this->getComplexPatientOffset();
+            $this->getComplexPatientOffset($this->ccmTime, $this->week);
 
         } else {
 
