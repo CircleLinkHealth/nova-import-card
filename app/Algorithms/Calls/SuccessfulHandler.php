@@ -125,7 +125,7 @@ class SuccessfulHandler implements CallHandler
 
             if ($week == 1 || $week == 2 || $week == 3) { // We are in the first three weeks of the month
 
-                $this->logic = 'First window after one weeks';
+                $this->logic = 'First window after one week';
                 $this->nextCallDate->addWeek(1);
 
             } elseif ($week == 4) { //second last week of month
@@ -144,7 +144,7 @@ class SuccessfulHandler implements CallHandler
 
             if ($week == 1 || $week == 2 || $week == 3) { // We are in the first three weeks of the month
 
-                $this->logic = 'First window after one weeks';
+                $this->logic = 'First window after one week';
                 $this->nextCallDate->addWeek(1);
 
             } elseif ($week == 4) { //second last week of month
