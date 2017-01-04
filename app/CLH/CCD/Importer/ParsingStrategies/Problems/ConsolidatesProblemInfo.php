@@ -3,6 +3,8 @@
 namespace App\CLH\CCD\Importer\ParsingStrategies\Problems;
 
 
+use App\CLH\CCD\ItemLogger\CcdProblemLog;
+
 trait ConsolidatesProblemInfo
 {
     /**
@@ -14,14 +16,14 @@ trait ConsolidatesProblemInfo
      * @param $ccdProblem
      * @return mixed
      */
-    private function consolidateProblemInfo($ccdProblem)
+    private function consolidateProblemInfo(CcdProblemLog $ccdProblem)
     {
         $consolidatedProblem = new \stdClass();
 
         $consolidatedProblem->cons_code = null;
         $consolidatedProblem->cons_code_system = null;
         $consolidatedProblem->cons_code_system_name = null;
-        $consolidatedProblem->cons_name = null;
+        $consolidatedProblem->cons_name = $ccdProblem->name;
 
         if ( !empty($ccdProblem->translation_code) ) {
             $consolidatedProblem->cons_code = $ccdProblem->translation_code;
