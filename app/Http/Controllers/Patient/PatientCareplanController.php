@@ -197,21 +197,16 @@ class PatientCareplanController extends Controller
 
             // append blank page if needed
             if ((count($users) > 1) && $pageCount % 2 != 0) {
-//                echo PHP_EOL . '<br /><br />Add blank page...';
-//                echo PHP_EOL . '<br /><br />'.$fileName;
-//                echo PHP_EOL . '<br /><br />'.$fileNameBlankPage;
                 $fileName = $storageDirectory . $this->merge_pages([
                         $fileName,
                         $fileNameBlankPage,
                     ], $prefix, $storageDirectory);
                 $fileNameWithPath = base_path($fileName);
-//                echo PHP_EOL . '<br /><br />Merge complete..';
             }
 
             // add to array
             $pageFileNames[] = $fileName;
 
-//            echo PHP_EOL . '<br /><br />' . $fileNameWithPath . ' - PAGE COUNT: ' . $this->count_pages($fileNameWithPath);
             $p++;
         }
 
