@@ -49,6 +49,7 @@ class FinancialSummary extends SalesReportSection
                 $month = Carbon::parse($iMonthsAgo)->format('F Y');
 
             }
+            debug($start);
 
             $billable = $this->service->billableCountForMonth($this->practice, $start);
             $billableDollars = $billable * 40;
@@ -74,7 +75,10 @@ class FinancialSummary extends SalesReportSection
 
         }
 
+        debug($this->data);
+
         return $this->data;
+
 
     }
 

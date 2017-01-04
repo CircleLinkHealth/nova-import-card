@@ -89,9 +89,9 @@
                                             <div class="form-group">
                                                 <select id="observationSource" name="observationSource" class="selectpickerX dropdownValid form-control" data-size="10"  required>
                                                     <option value=""> Select Source </option>
-                                                    <option value="ov_reading" SELECTED>Office Visit (OV) reading</option>
+                                                    <option value="ov_reading" >Office Visit (OV) reading</option>
                                                     <option value="lab">Lab Test</option>
-                                                    <option value="manual_input">Patient Reported</option>
+                                                    <option value="manual_input" selected>Patient Reported</option>
                                                     <option value="device">Device</option>
                                                 </select>
                                             </div>

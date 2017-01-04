@@ -300,24 +300,20 @@ class PracticeStatsHelper
         Practice $practice,
         Carbon $month
     ) {
-
-        return User::ofType('participant')
-            ->whereProgramId($practice->id)
-            ->whereHas('patientInfo', function ($k) use
+        return PatientMonthlySummary
+            ::whereHas('patient_info', function ($q) use
             (
-                $month
+                $practice
             ) {
-
-                $k->whereHas('patientSummaries', function ($j) use
+                $q->whereHas('user', function ($k) use
                 (
-                    $month
+                    $practice
                 ) {
-
-                    $j->where('month_year', $month->firstOfMonth())
-                        ->where('ccm_time', '>', 1199);
-
+                    $k->whereProgramId($practice->id);
                 });
             })
+            ->where('ccm_time', '>', 1199)
+            ->where('month_year', $month->firstOfMonth())
             ->count();
 
     }
