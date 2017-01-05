@@ -1,5 +1,6 @@
 <div class="row">
     @include('provider.partials.mdl.form.text.textfield', [
+    'name' => 'locations[@{{index}}][clinical_contact][firstName]',
     'label' => 'First name',
     'class' => 'col s6',
     'attributes' => [
@@ -13,6 +14,7 @@
 ])
 
     @include('provider.partials.mdl.form.text.textfield', [
+        'name' => 'locations[@{{index}}][clinical_contact][lastName]',
         'label' => 'Last name',
         'class' => 'col s6',
         'attributes' => [
@@ -28,6 +30,7 @@
 
 <div class="row">
     @include('provider.partials.mdl.form.text.textfield', [
+        'name' => 'locations[@{{index}}][clinical_contact][email]',
         'label' => 'E-mail',
         'class' => 'col s12',
         'type' => 'email',

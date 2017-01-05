@@ -42,7 +42,8 @@ var locationsVM = new Vue({
             sameEHRLogin: false,
             sameClinicalIssuesContact: false,
 
-            patientClinicalIssuesContact: false
+            patientClinicalIssuesContact: false,
+            invalidCount: 0
         }
     },
 
@@ -76,9 +77,9 @@ var locationsVM = new Vue({
         create: function () {
             this.newLocations.push({
                 clinical_contact: {
+                    email: '',
                     firstName: '',
                     lastName: '',
-                    email: '',
                     type: 'billing_provider'
                 },
                 timezone: 'America/New_York'
