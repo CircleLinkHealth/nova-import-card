@@ -27,7 +27,7 @@
         </div>
 
         {!! Form::open([
-            'url' => route('post.onboarding.store.locations'),
+            'url' => route('post.onboarding.store.locations', ['lead_id' => $leadId]),
             'method' => 'post',
             'id' => 'create-practice',
         ]) !!}
@@ -338,7 +338,7 @@
         </div>
 
         <div class="row">
-            <div v-on:click="submitForm('{{route('post.onboarding.store.locations')}}')"
+            <div v-on:click="submitForm('{{route('post.onboarding.store.locations', ['lead_id' => $leadId])}}')"
                  class="btn blue waves-effect waves-light col s12" id="submit"
                  v-bind:class="{disabled: !formCompleted}">
                 Next

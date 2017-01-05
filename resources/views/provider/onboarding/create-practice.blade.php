@@ -22,7 +22,7 @@
         @include('provider.partials.errors.validation')
 
         {!! Form::open([
-            'url' => route('post.onboarding.store.practice'),
+            'url' => route('post.onboarding.store.practice', ['lead_id' => $leadId]),
             'method' => 'post',
             'id' => 'create-practice',
         ]) !!}

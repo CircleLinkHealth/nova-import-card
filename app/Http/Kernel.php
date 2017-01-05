@@ -45,12 +45,12 @@ class Kernel extends HttpKernel
      */
     protected $routeMiddleware = [
         //Laravel Middleware
-        'auth'       => \Illuminate\Auth\Middleware\Authenticate::class,
-        'auth.basic' => \Illuminate\Auth\Middleware\AuthenticateWithBasicAuth::class,
-        'bindings'   => \Illuminate\Routing\Middleware\SubstituteBindings::class,
-        'can'        => \Illuminate\Auth\Middleware\Authorize::class,
-        'guest'      => \App\Http\Middleware\RedirectIfAuthenticated::class,
-        'throttle'   => \Illuminate\Routing\Middleware\ThrottleRequests::class,
+        'auth'                       => \Illuminate\Auth\Middleware\Authenticate::class,
+        'auth.basic'                 => \Illuminate\Auth\Middleware\AuthenticateWithBasicAuth::class,
+        'bindings'                   => \Illuminate\Routing\Middleware\SubstituteBindings::class,
+        'can'                        => \Illuminate\Auth\Middleware\Authorize::class,
+        'guest'                      => \App\Http\Middleware\RedirectIfAuthenticated::class,
+        'throttle'                   => \Illuminate\Routing\Middleware\ThrottleRequests::class,
 
         //CLH Middleware
         'ability'                    => \Zizaco\Entrust\Middleware\EntrustAbility::class,
@@ -61,6 +61,7 @@ class Kernel extends HttpKernel
         'patientProgramSecurity'     => \App\Http\Middleware\PatientProgramSecurity::class,
         'patient.session'            => \App\Http\Middleware\CheckPatientSession::class,
         'role'                       => \Zizaco\Entrust\Middleware\EntrustRole::class,
+        'verify.invite'              => \App\Http\Middleware\CheckOnboardingInvite::class,
     ];
 
 }
