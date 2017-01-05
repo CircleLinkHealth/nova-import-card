@@ -23,6 +23,13 @@ use Prettus\Validator\Exceptions\ValidatorException;
 class OnboardingController extends Controller
 {
     /**
+     * The User's invite, if one exists.
+     *
+     * @var Invite
+     */
+    protected $invite;
+
+    /**
      * @var InviteRepository
      */
     protected $invites;
@@ -54,12 +61,19 @@ class OnboardingController extends Controller
         InviteRepository $inviteRepository,
         LocationRepository $locationRepository,
         PracticeRepository $practiceRepository,
-        UserRepository $userRepository
+        UserRepository $userRepository,
+        Request $request
     ) {
+        parent::__construct($request);
+
         $this->invites = $inviteRepository;
         $this->locations = $locationRepository;
         $this->practices = $practiceRepository;
         $this->users = $userRepository;
+
+        if ($request->route('code')) {
+            $this->invite = Invite::whereCode($request->route('code'))->first();
+        }
     }
 
     /**
@@ -67,16 +81,9 @@ class OnboardingController extends Controller
      *
      * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
      */
-    public function getCreateInvitedUser($code)
+    public function getCreateInvitedUser()
     {
-        $invite = Invite::whereCode($code)
-            ->first();
-
-        if (!$invite) {
-            abort(403);
-        }
-
-        $user = User::whereEmail($invite->email)
+        $user = User::whereEmail($this->invite->email)
             ->first();
 
         return view('provider.onboarding.invited-staff', [
@@ -89,14 +96,9 @@ class OnboardingController extends Controller
      *
      * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
      */
-    public function getCreatePracticeLeadUser($code)
+    public function getCreatePracticeLeadUser()
     {
-        $invite = Invite::whereCode($code)
-            ->first();
-
-        if (!$invite) {
-            abort(403);
-        }
+        $invite = $this->invite ?? new Invite();
 
         return view('provider.onboarding.create-practice-lead', compact('invite'));
     }
@@ -108,9 +110,12 @@ class OnboardingController extends Controller
      * @internal param $numberOfLocations
      *
      */
-    public function getCreateLocations()
+    public function getCreateLocations(
+        $practiceSlug,
+        $leadId
+    )
     {
-        return view('provider.onboarding.create-locations');
+        return view('provider.onboarding.create-locations', compact(['leadId']));
     }
 
     /**
@@ -118,9 +123,9 @@ class OnboardingController extends Controller
      *
      * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
      */
-    public function getCreatePractice()
+    public function getCreatePractice($leadId)
     {
-        return view('provider.onboarding.create-practice');
+        return view('provider.onboarding.create-practice', compact(['leadId']));
     }
 
 
@@ -129,12 +134,12 @@ class OnboardingController extends Controller
      *
      * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
      */
-    public function getCreateStaff()
+    public function getCreateStaff($practiceSlug)
     {
         $primaryPractice = $this->practices
             ->skipPresenter()
             ->findWhere([
-                'user_id' => auth()->user()->id,
+                'name' => $practiceSlug,
             ])->first();
 
         //Get the users that were as clinical emergency contacts from the locations page
@@ -190,7 +195,7 @@ class OnboardingController extends Controller
             'rolesMap'      => $roles->keyBy('id')->all(),
         ]);
 
-        return view('provider.onboarding.create-staff-users');
+        return view('provider.onboarding.create-staff-users', compact(['practiceSlug']));
     }
 
     /**
@@ -198,8 +203,12 @@ class OnboardingController extends Controller
      *
      * @param Request $request
      */
-    public function postStoreLocations(Request $request)
-    {
+    public function postStoreLocations(
+        Request $request,
+        $leadId
+    ) {
+        $lead = User::find($leadId);
+
         try {
             $sameEHRLogin = isset($request->input('locations')[0]['same_ehr_login']);
             $sameClinicalContact = isset($request->input('locations')[0]['same_clinical_contact']);
@@ -207,7 +216,7 @@ class OnboardingController extends Controller
             $primaryPractice = $this->practices
                 ->skipPresenter()
                 ->findWhere([
-                    'user_id' => auth()->user()->id,
+                    'user_id' => $lead->id,
                 ])->first();
 
             foreach ($request->input('locations') as $newLocation) {
@@ -349,7 +358,9 @@ class OnboardingController extends Controller
             }
         }
 
-        return redirect()->route('get.onboarding.create.practice');
+        return redirect()->route('get.onboarding.create.practice', [
+            'lead_id' => $user->id,
+        ]);
     }
 
     /**
@@ -359,16 +370,20 @@ class OnboardingController extends Controller
      *
      * @return OnboardingController|\Illuminate\Http\RedirectResponse
      */
-    public function postStorePractice(Request $request)
-    {
+    public function postStorePractice(
+        Request $request,
+        $leadId
+    ) {
         $input = $request->input();
+
+        $lead = User::find($leadId);
 
         try {
             $practice = $this->practices
                 ->skipPresenter()
                 ->create([
                     'name'           => str_slug($input['name']),
-                    'user_id'        => auth()->user()->id,
+                    'user_id'        => $lead->id,
                     'display_name'   => $input['name'],
                     'federal_tax_id' => $input['federal_tax_id'],
                 ]);
@@ -379,11 +394,12 @@ class OnboardingController extends Controller
                 ->withInput();
         }
 
-        auth()->user()->program_id = $practice->id;
-        auth()->user()->save();
+        $lead->program_id = $practice->id;
+        $lead->save();
 
         return redirect()->route('get.onboarding.create.locations', [
             'practiceSlug' => $practice->name,
+            'lead_id'      => $lead->id,
         ]);
     }
 
@@ -394,12 +410,15 @@ class OnboardingController extends Controller
      *
      * @return OnboardingController|array|\Illuminate\Http\RedirectResponse
      */
-    public function postStoreStaff(Request $request)
+    public function postStoreStaff(
+        Request $request,
+        $practiceSlug
+    )
     {
         $primaryPractice = $this->practices
             ->skipPresenter()
             ->findWhere([
-                'user_id' => auth()->user()->id,
+                'name' => $practiceSlug,
             ])->first();
 
         $implementationLead = $primaryPractice->lead;

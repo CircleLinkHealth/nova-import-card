@@ -27,7 +27,7 @@
         </div>
 
         {!! Form::open([
-            'url' => route('post.onboarding.store.locations'),
+            'url' => route('post.onboarding.store.locations', ['lead_id' => $leadId]),
             'method' => 'post',
             'id' => 'create-practice',
         ]) !!}
@@ -240,7 +240,7 @@
 
                             <div>
                                 @include('provider.partials.mdl.form.radio', [
-                                    'id' => 'billing-provider',
+                                    'id' => 'billing-provider-@{{index}}',
                                     'label' => 'Patient\'s Billing / Main provider.',
                                     'name' => 'locations[@{{index}}][clinical_contact][type]',
                                     'value' => 'billing_provider',
@@ -258,8 +258,9 @@
 
                             <div>
                                 @include('provider.partials.mdl.form.radio', [
-                                    'id' => 'instead-of-billing-provider',
+                                    'id' => 'instead-of-billing-provider-@{{index}}',
                                     'label' => 'Someone else instead of the billing provider.',
+                                    'name' => 'locations[@{{index}}][clinical_contact][type]',
                                     'value' => 'instead_of_billing_provider',
                                     'attributes' => [
                                         'v-model' => 'loc.clinical_contact.type',
@@ -270,7 +271,7 @@
                                         'v-on:click' => 'isValidated(index)',
                                     ]
                                 ])
-                                <transition>
+                                <transition name="fade">
                                     <div v-if="loc.clinical_contact.type == 'instead_of_billing_provider' ? true : false"
                                          name="custom-classes-transition"
                                          enter-active-class="animated tada"
@@ -283,8 +284,9 @@
 
                             <div>
                                 @include('provider.partials.mdl.form.radio', [
-                                    'id' => 'in-addition-to-billing-provider',
+                                    'id' => 'in-addition-to-billing-provider-@{{index}}',
                                     'label' => 'Someone else in addition to the billing provider.',
+                                    'name' => 'locations[@{{index}}][clinical_contact][type]',
                                     'value' => 'in_addition_to_billing_provider',
                                     'attributes' => [
                                         'v-model' => 'loc.clinical_contact.type',
@@ -295,7 +297,7 @@
                                         'v-on:click' => 'isValidated(index)',
                                     ]
                                 ])
-                                <transition>
+                                <transition name="fade">
                                     <div v-if="loc.clinical_contact.type == 'in_addition_to_billing_provider' ? true : false"
                                          name="fade" mode="in-out">
                                         @include('provider.partials.clinical-issues-contact')
@@ -338,7 +340,7 @@
         </div>
 
         <div class="row">
-            <div v-on:click="submitForm('{{route('post.onboarding.store.locations')}}')"
+            <div v-on:click="submitForm('{{route('post.onboarding.store.locations', ['lead_id' => $leadId])}}')"
                  class="btn blue waves-effect waves-light col s12" id="submit"
                  v-bind:class="{disabled: !formCompleted}">
                 Next

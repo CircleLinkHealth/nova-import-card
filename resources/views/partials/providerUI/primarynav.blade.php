@@ -41,10 +41,10 @@
                             <a href="{{URL::route('patient.reports.u20')}}">
                                 Under 20 Minute Report</a>
                         </li>
-                        <li>
-                            <a href="{{URL::route('patient.reports.billing')}}">
-                                Patient Billing Report</a>
-                        </li>
+                        {{--<li>--}}
+                        {{--<a href="{{URL::route('patient.reports.billing')}}">--}}
+                        {{--Patient Billing Report</a>--}}
+                        {{--</li>--}}
                         <li>
                             <a href="{{ URL::route('patients.careplan.printlist', array()) }}">
                                 Patient Care Plan Print

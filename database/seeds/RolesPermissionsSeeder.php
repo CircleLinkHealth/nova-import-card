@@ -19,6 +19,11 @@ class RolesPermissionsSeeder extends Seeder
                 'display_name' => 'Practice Manage',
                 'description' => 'Can Update or Delete a Practice.',
             ],
+            [
+                'name'         => 'use-onboarding',
+                'display_name' => 'Use Onboarding without a code',
+                'description'  => 'Can use Onboarding to set up a Practice.',
+            ],
         ];
 
         $roles = [
@@ -54,6 +59,14 @@ class RolesPermissionsSeeder extends Seeder
                     'observations-create',
                     'users-view-all',
                     'users-view-self',
+                ],
+            ],
+            [
+                'name'         => 'salesperson',
+                'display_name' => 'Salesperson',
+                'description'  => 'A Salesperson',
+                'permissions'  => [
+                    'use-onboarding',
                 ],
             ],
         ];

@@ -1,15 +1,7 @@
 <?php
 
-use App\Reports\Sales\Practice\SalesByPracticeReport;
-use App\Reports\Sales\Provider\SalesByProviderReport;
-use App\User;
-use Carbon\Carbon;
-use Illuminate\Support\Facades\Mail;
-
 if (app()->environment() != 'production') {
     Route::get('rohan', function () {
-
-
 
 
     });
@@ -449,6 +441,7 @@ Route::group(['middleware' => 'auth'], function () {
         'prefix'     => 'admin',
     ], function () {
 
+
         /**
          * LOGGER
          */
@@ -511,6 +504,12 @@ Route::group(['middleware' => 'auth'], function () {
                 'uses' => 'Admin\Reports\MonthlyBillingReportsController@makeMonthlyReport',
                 'as'   => 'MonthlyBillingReportsController.makeMonthlyReport',
             ]);
+
+            Route::get('patients-for-insurance-check', [
+                'uses' => 'Reports\PatientsForInsuranceCheck@make',
+                'as'   => 'get.patients.for.insurance.check',
+            ]);
+
 
             Route::group([
                 'prefix' => 'sales',
@@ -1266,14 +1265,16 @@ Route::group([
     'prefix' => 'onboarding',
 ], function () {
 
-    Route::get('create-invited-user/{code}', [
-        'uses' => 'Provider\OnboardingController@getCreateInvitedUser',
-        'as'   => 'get.onboarding.create.invited.user',
+    Route::get('create-invited-user/{code?}', [
+        'middleware' => 'verify.invite',
+        'uses'       => 'Provider\OnboardingController@getCreateInvitedUser',
+        'as'         => 'get.onboarding.create.invited.user',
     ]);
 
-    Route::get('create-practice-lead-user/{code}', [
-        'uses' => 'Provider\OnboardingController@getCreatePracticeLeadUser',
-        'as'   => 'get.onboarding.create.program.lead.user',
+    Route::get('create-practice-lead-user/{code?}', [
+        'middleware' => 'verify.invite',
+        'uses'       => 'Provider\OnboardingController@getCreatePracticeLeadUser',
+        'as'         => 'get.onboarding.create.program.lead.user',
     ]);
 
     Route::post('store-invited-user', [
@@ -1290,22 +1291,22 @@ Route::group([
     Route::group([
         'middleware' => 'auth',
     ], function () {
-        Route::post('store-locations', [
+        Route::post('store-locations/{lead_id}', [
             'uses' => 'Provider\OnboardingController@postStoreLocations',
             'as'   => 'post.onboarding.store.locations',
         ]);
 
-        Route::post('store-practice', [
+        Route::post('store-practice/{lead_id}', [
             'uses' => 'Provider\OnboardingController@postStorePractice',
             'as'   => 'post.onboarding.store.practice',
         ]);
 
-        Route::get('{practiceSlug}/locations/create', [
+        Route::get('{practiceSlug}/locations/create/{lead_id}', [
             'uses' => 'Provider\OnboardingController@getCreateLocations',
             'as'   => 'get.onboarding.create.locations',
         ]);
 
-        Route::get('create-practice', [
+        Route::get('create-practice/{lead_id}', [
             'uses' => 'Provider\OnboardingController@getCreatePractice',
             'as'   => 'get.onboarding.create.practice',
         ]);
@@ -1315,7 +1316,7 @@ Route::group([
             'as'   => 'get.onboarding.create.staff',
         ]);
 
-        Route::post('store-staff', [
+        Route::post('{practiceSlug}/store-staff', [
             'uses' => 'Provider\OnboardingController@postStoreStaff',
             'as'   => 'post.onboarding.store.staff',
         ]);

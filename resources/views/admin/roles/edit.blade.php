@@ -2,7 +2,7 @@
 
 @section('content')
     <script type="text/javascript" src="{{ asset('/js/rules/rules.js') }}"></script>
-    {!! Form::open(array('url' => URL::route('roles.update', array('id' => $role->id)), 'class' => 'form-horizontal')) !!}
+    {!! Form::open(array('url' => URL::route('roles.update', array('id' => $role->id)), 'method' => 'patch', 'class' => 'form-horizontal')) !!}
     <div class="container-fluid">
         <div class="row">
             <div class="col-md-10 col-md-offset-1">
