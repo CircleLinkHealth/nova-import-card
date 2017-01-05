@@ -11,7 +11,6 @@
     <meta name="csrf-token" content="{{ csrf_token() }}">
 
 
-
     <title>CarePlanManager - @yield('title')</title>
 
     <link href="{{ asset('/css/stylesheet.css') }}" rel="stylesheet">
@@ -49,10 +48,10 @@
             (function (i, s, o, g, r, a, m) {
                 i['GoogleAnalyticsObject'] = r;
                 i[r] = i[r] || function () {
-                            (i[r].q = i[r].q || []).push(arguments)
-                        }, i[r].l = 1 * new Date();
+                        (i[r].q = i[r].q || []).push(arguments)
+                    }, i[r].l = 1 * new Date();
                 a = s.createElement(o),
-                        m = s.getElementsByTagName(o)[0];
+                    m = s.getElementsByTagName(o)[0];
                 a.async = 1;
                 a.src = g;
                 m.parentNode.insertBefore(a, m)
@@ -69,9 +68,9 @@
         <script src="{{ asset('/js/bootstrap-select.min.js') }}"></script>
         <script src="{{ asset('/js/typeahead.bundle.js') }}"></script>
         <script src="{{ asset('/js/fab.js') }}"></script>
-        @include('partials.searchjs')
+    @include('partials.searchjs')
 
-        <!-- http://curioussolutions.github.io/DateTimePicker/ -->
+    <!-- http://curioussolutions.github.io/DateTimePicker/ -->
         <link rel="stylesheet" type="text/css" href="//cdn.jsdelivr.net/datetimepicker/latest/DateTimePicker.min.css"/>
         <script type="text/javascript" src="//cdn.jsdelivr.net/datetimepicker/latest/DateTimePicker.min.js"></script>
 
@@ -91,10 +90,9 @@
         <div class="container-fluid text-center" style="background-color: #E46745; color: black; padding: 0.6%;">
             You are impersonating user with email <b>{{ $impersonatedUserEmail }}</b>
         </div>
-    @endif
+        @endif
 
     @include('partials.providerUI.primarynav')
-
 
     @if(!empty($patient->id))
 
@@ -111,31 +109,39 @@
     @endif
 
 <!--[if lt IE 8]>
-    <p class="chromeframe">You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade
-        your browser</a> or <a href="http://www.google.com/chromeframe/?redirect=true">activate Google Chrome Frame</a>
-        to improve your experience.</p>
-    <![endif]-->
-    @yield('content')
-    {{--
-    PROVIDER UI TEMPLATE:
-    <div class="row" style="margin-top:60px;">
-    <div class="main-form-container col-lg-8 col-lg-offset-2">
-    <div class="row">
-    <div class="main-form-title col-lg-12">
-    title
-    </div>
-    <div class="main-form-block main-form-horizontal main-form-primary-horizontal col-md-12">
-    content text
-    </div>
-    </div>
-    </div>
-    </div>
-    --}}
-    @if(!isset($isPdf))
-        <!-- PAGE TIMER START -->
-        @include('partials.providerUItimer')
-        <!-- PAGE TIMER END -->
-    @endif
+        <p class="chromeframe">You are using an <strong>outdated</strong> browser. Please <a
+                href="http://browsehappy.com/">upgrade
+            your browser</a> or <a href="http://www.google.com/chromeframe/?redirect=true">activate Google Chrome
+            Frame</a>
+            to improve your experience.</p>
+        <![endif]-->
+        @yield('content')
+        {{--
+        PROVIDER UI TEMPLATE:
+        <div class="row" style="margin-top:60px;">
+        <div class="main-form-container col-lg-8 col-lg-offset-2">
+        <div class="row">
+        <div class="main-form-title col-lg-12">
+        title
+        </div>
+        <div class="main-form-block main-form-horizontal main-form-primary-horizontal col-md-12">
+        content text
+        </div>
+        </div>
+        </div>
+        </div>
+        --}}
+        @if(!isset($isPdf))
+            <!-- PAGE TIMER START -->
+            @include('partials.providerUItimer')
+            <!-- PAGE TIMER END -->
+        @endif
+
+        @if(!isset($isPdf))
+            @if(!empty($patient->id))
+                @include('partials.addprovider')
+            @endif
+        @endif
 
 </body>
 

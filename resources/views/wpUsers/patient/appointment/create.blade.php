@@ -22,8 +22,6 @@
 
     </style>
 
-    @include('partials.addprovider')
-
     <div class="row" style="margin:30px 0px;">
         <div class="col-lg-10 col-lg-offset-1">
             @include('errors.errors')
@@ -46,9 +44,7 @@
                                         <div class="form-group">
                                             <div class="col-sm-12 provider-label" id="provider-label">
                                                 <label for="provider">
-                                                    Select Existing Provider (or, <span style="color: #4fb2e2"><a
-                                                                id="addNewProvider"
-                                                                href="#">add new</a></span>)
+                                                    Select Existing Provider (or, add new from "+")
                                                 </label>
                                             </div>
                                             <div class="col-sm-12" id="providerDiv">
@@ -161,63 +157,4 @@
             </div>
         </div>
     </div>
-    <script>
-
-        $("#create").on('click', function () {
-
-            var url = '{!! route('provider.store') !!}'; // the script where you handle the form input.
-            var name = null;
-            var id = null;
-
-            $.ajax({
-                type: "POST",
-                url: url,
-                headers: {
-                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-                },
-                data: {
-                    phone: $('#phone').val(),
-                    first_name: $('#first_name').val(),
-                    address: $('#address').val(),
-                    last_name: $('#last_name').val(),
-                    provider: $('#provider').val(),
-                    specialty: $('#specialty').val(),
-                    practice: $('#practice').val(),
-                    type: $('#type').val(),
-                    email: $('#email').val(),
-                    is_completed: $('#is_completed').val(),
-                    created_by: $('#created_by').val(),
-                    patient_id: $('#patient_id').val()
-                },
-                success: function (data) {
-
-
-                    var dataArray = JSON.parse(data);
-
-                    //setting up the select2 and dynamic picking wasn't working,
-                    //quick work around to replace the whole innerhtml with a
-                    //disabled div
-
-                    $('#providerBox').replaceWith("" +
-                            "<select id='provider' " +
-                            "name='provider' " +
-                            "class='provider selectpickerX dropdownValid form-control' " +
-                            "data-size='10' disabled>  " +
-                            "<option value=" + dataArray['user_id'] + ">" + dataArray['name'] +
-                            "</option>");
-                    $('#providerDiv').css('padding-bottom', '10px');
-                    $("#save").append('<input type="hidden" value="' + dataArray['user_id'] + '" id="provider" name="provider">');
-                    $("#addProvider").modal('hide');
-                    console.log(dataArray);
-
-                }, completed: function (data) {
-
-                }
-            });
-
-
-            return false;
-        });
-
-    </script>
 @stop

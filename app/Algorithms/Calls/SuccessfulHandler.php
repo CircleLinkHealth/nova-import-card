@@ -39,7 +39,7 @@ class SuccessfulHandler implements CallHandler
 
     use CallAlgoHelper;
 
-    const VERSION = '2.0';
+    const VERSION = '2.2';
 
     private $week;
     private $patient;
