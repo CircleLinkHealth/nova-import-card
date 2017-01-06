@@ -20,7 +20,6 @@ use App\Models\CCD\CcdInsurancePolicy;
 use App\Models\CCD\CcdVendor;
 use App\Models\CCD\ValidatesQAImportOutput;
 use App\User;
-use Illuminate\Support\Facades\Log;
 
 class QAImportManager
 {
@@ -47,8 +46,6 @@ class QAImportManager
         $this->routine = empty($ccda->vendor_id)
             ? (new RoutineBuilder($this->ccd))->getRoutine()
             : CcdVendor::find($ccda->vendor_id)->routine()->first()->strategies()->get();
-
-        Log::info('Routine id: ' . $this->routine[0]->ccd_import_routine_id . ' ' . $this->ccd->demographics->name->family);
     }
 
     public function generateCarePlanFromCCD()
