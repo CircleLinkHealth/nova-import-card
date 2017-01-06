@@ -41,7 +41,7 @@ class ProviderController extends Controller
 
             ]);
 
-            $provider_user->patientCareTeamMembers()->save($care_team_member);
+            $patient->patientCareTeamMembers()->save($care_team_member);
 
             $provider_user->first_name = $input['first_name'];
             $provider_user->last_name = $input['last_name'];
@@ -80,7 +80,7 @@ class ProviderController extends Controller
 
             } else {
 
-                $provider_user->program_id = $patient->id;
+                $provider_user->program_id = null;
 
             }
 
