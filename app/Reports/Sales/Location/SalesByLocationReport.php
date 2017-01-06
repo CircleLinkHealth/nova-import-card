@@ -1,6 +1,6 @@
 <?php namespace App\Reports\Sales\Location;
 
-use App\PatientInfo;
+use App\Patient;
 use App\Practice;
 use Barryvdh\Snappy\Facades\SnappyPdf as PDF;
 use Carbon\Carbon;
@@ -147,7 +147,7 @@ class SalesByLocationReport
 
     public function getEnrollmentNumbers()
     {
-        $this->enrollmentCount = PatientInfo::whereHas('user', function ($q) {
+        $this->enrollmentCount = Patient::whereHas('user', function ($q) {
 
             $q->where('program_id', $this->program->id);
 

@@ -5,7 +5,7 @@ namespace App\Algorithms\Calls;
 
 use App\Call;
 use App\Contracts\CallHandler;
-use App\PatientInfo;
+use App\Patient;
 use Carbon\Carbon;
 
 //READ ME
@@ -52,7 +52,7 @@ class UnsuccessfulHandler implements CallHandler
     private $logic;
 
     public function __construct(
-        PatientInfo $calledPatient,
+        Patient $calledPatient,
         Carbon $initTime,
         $isComplex
     ) {

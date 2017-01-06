@@ -1,6 +1,6 @@
 <?php
 
-use App\PatientInfo;
+use App\Patient;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
@@ -14,7 +14,7 @@ class MakeCcdaIdDefaultToNull extends Migration
      */
     public function up()
     {
-        PatientInfo::withTrashed()
+        Patient::withTrashed()
             ->where('ccda_id', '=', 0)
             ->update([
                 'ccda_id' => null,

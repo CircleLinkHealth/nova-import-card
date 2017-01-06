@@ -15,7 +15,7 @@ use App\Models\CCD\CcdProblem;
 use App\Models\CPM\CpmMisc;
 use App\PatientCareTeamMember;
 use App\PatientContactWindow;
-use App\PatientInfo;
+use App\Patient;
 use App\PhoneNumber;
 use App\User;
 
@@ -116,7 +116,7 @@ class ImportManager
 
 
         //patient info
-        $patientInfo = PatientInfo::updateOrCreate([
+        $patientInfo = Patient::updateOrCreate([
             'user_id' => $this->user->id,
         ], [
             'ccda_id'                    => $this->ccda->id,

@@ -2036,7 +2036,7 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
 
     public function patientInfo()
     {
-        return $this->hasOne(PatientInfo::class, 'user_id', 'id');
+        return $this->hasOne(Patient::class, 'user_id', 'id');
     }
 
     public function clinicalEmergencyContactLocations()

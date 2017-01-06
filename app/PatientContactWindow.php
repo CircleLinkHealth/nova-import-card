@@ -21,7 +21,7 @@ class PatientContactWindow extends Model
 
     public function patient_info()
     {
-        return $this->belongsTo(PatientInfo::class);
+        return $this->belongsTo(Patient::class);
     }
 
     // END RELATIONSHIPS
@@ -157,7 +157,7 @@ class PatientContactWindow extends Model
     }
 
     public function getEarliestWindowForPatientFromDate(
-        PatientInfo $patient,
+        Patient $patient,
         Carbon $offset_date
     ) {
 
@@ -305,7 +305,7 @@ class PatientContactWindow extends Model
      * Delete all current call windows. Then add the ones given.
      * Returns an array of contact windows created.
      *
-     * @param PatientInfo $info
+     * @param Patient $info
      * @param array $days
      * @param string $windowStart
      * @param string $windowEnd
@@ -313,7 +313,7 @@ class PatientContactWindow extends Model
      * @return array $created
      */
     public static function sync(
-        PatientInfo $info,
+        Patient $info,
         array $days = [],
         $windowStart = '09:00:00',
         $windowEnd = '17:00:00'
@@ -336,7 +336,7 @@ class PatientContactWindow extends Model
     }
 
 
-    public static function getPreferred(PatientInfo $patientInfo)
+    public static function getPreferred(Patient $patientInfo)
     {
         $window = PatientContactWindow::firstOrNew([
             'patient_info_id' => $patientInfo->id,

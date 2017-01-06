@@ -14,7 +14,7 @@ use App\CLH\Repositories\UserRepository;
 use App\NurseContactWindow;
 use App\NurseInfo;
 use App\PatientContactWindow;
-use App\PatientInfo;
+use App\Patient;
 use App\Practice;
 use App\Role;
 use App\User;
@@ -120,7 +120,7 @@ trait UserHelpers
     }
 
     public function createLastCallForPatient(
-        PatientInfo $patient,
+        Patient $patient,
         NurseInfo $scheduler
     ) {
 
@@ -183,7 +183,7 @@ trait UserHelpers
     //NURSE TEST HELPERS
 
     public function createWindowForPatient(
-        PatientInfo $patient,
+        Patient $patient,
         Carbon $st,
         Carbon $end,
         $dayOfWeek

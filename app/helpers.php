@@ -80,6 +80,28 @@ if (!function_exists('parseCsvToArray')) {
     }
 }
 
+if (!function_exists('secondsToHHMM')) {
+    function secondsToHHMM($seconds)
+    {
+        $getHours = floor($seconds / 3600);
+        $getMins = floor(($seconds - ($getHours * 3600)) / 60);
+
+        return $getHours . ':' . $getMins;
+    }
+}
+
+if (!function_exists('secondsToMMSS')) {
+    function secondsToMMSS($seconds)
+    {
+        $minutes = sprintf('%02d', floor($seconds / 60));
+        $seconds = sprintf(':%02d', (int) $seconds % 60);
+
+        return $minutes . $seconds;
+    }
+}
+
+
+
 
 if (!function_exists('parseDaysStringToNumbers')) {
     /**

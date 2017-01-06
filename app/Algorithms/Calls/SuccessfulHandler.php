@@ -9,7 +9,7 @@
 namespace App\Algorithms\Calls;
 
 use App\Contracts\CallHandler;
-use App\PatientInfo;
+use App\Patient;
 use Carbon\Carbon;
 
 //READ ME
@@ -59,7 +59,7 @@ class SuccessfulHandler implements CallHandler
 
 
     public function __construct(
-        PatientInfo $calledPatient,
+        Patient $calledPatient,
         Carbon $initTime,
         $isComplex
     ) {

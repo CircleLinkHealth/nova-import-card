@@ -12,7 +12,7 @@ class PatientMonthlySummary extends Model
 
     protected $fillable = ['month_year, ccm_time, no_of_calls, no_of_successful_calls', 'patient_info_id'];
 
-    public static function updateCallInfoForPatient(PatientInfo $patient, $ifSuccessful){
+    public static function updateCallInfoForPatient(Patient $patient, $ifSuccessful){
 
         // get record for month
         $day_start = Carbon::parse(Carbon::now()->firstOfMonth())->format('Y-m-d');
@@ -50,7 +50,7 @@ class PatientMonthlySummary extends Model
 
     //updates Call info for patient
 
-    public static function updateCCMInfoForPatient(PatientInfo $patient, $ccmTime){
+    public static function updateCCMInfoForPatient(Patient $patient, $ccmTime){
 
         // get record for month
         $day_start = Carbon::parse(Carbon::now()->firstOfMonth())->format('Y-m-d');
@@ -76,7 +76,7 @@ class PatientMonthlySummary extends Model
 
     public function patient_info()
     {
-        return $this->belongsTo(PatientInfo::class);
+        return $this->belongsTo(Patient::class);
     }
 
     public function scopeGetCurrent($q)
@@ -90,7 +90,7 @@ class PatientMonthlySummary extends Model
 
     public function createCallReportsForCurrentMonth(){
 
-        $patients = PatientInfo::all();
+        $patients = Patient::all();
 
         foreach ($patients as $patient){
 

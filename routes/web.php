@@ -1,7 +1,15 @@
 <?php
 
+use App\Reports\PatientDailyAuditReport;
+
 if (app()->environment() != 'production') {
+
     Route::get('rohan', function () {
+
+    return (new PatientDailyAuditReport(
+        \App\Patient::find(1272),
+        \Carbon\Carbon::parse('2017-01-01')
+    ))->renderData();
 
 
     });
@@ -192,7 +200,6 @@ Route::group(['middleware' => 'auth'], function () {
     //CCD Parser Demo Route
     Route::get('ccd-parser-demo', 'CCDParserDemoController@index');
 
-
     /****************************/
     // PROVIDER UI (/manage-patients, /reports, ect)
     /****************************/
@@ -206,6 +213,12 @@ Route::group(['middleware' => 'auth'], function () {
             'uses' => 'Patient\PatientController@showDashboard',
             'as'   => 'patients.dashboard',
         ]);
+
+        Route::get('download/{fileName}', [
+            'uses' => 'DownloadController@file',
+            'as'   => 'download',
+        ])->where('filename', '[A-Za-z0-9\-\_\.]+');
+
         Route::get('listing', [
             'uses' => 'Patient\PatientController@showPatientListing',
             'as'   => 'patients.listing',

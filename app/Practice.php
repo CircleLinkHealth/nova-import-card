@@ -143,7 +143,7 @@ class Practice extends Model
 
     public function enrollmentByProgram(Carbon $start, Carbon $end){
 
-        $patients = PatientInfo::whereHas('user', function ($q){
+        $patients = Patient::whereHas('user', function ($q){
 
             $q->where('program_id', $this->id);
 

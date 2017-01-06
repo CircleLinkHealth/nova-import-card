@@ -3,7 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Family;
-use App\PatientInfo;
+use App\Patient;
 use Illuminate\Http\Request;
 
 class FamilyController extends Controller
@@ -21,7 +21,7 @@ class FamilyController extends Controller
     public function create()
     {
 
-        $wpUsers = PatientInfo::enrolled()->pluck('user_id');
+        $wpUsers = Patient::enrolled()->pluck('user_id');
 
         return view('admin.families.create', compact(['users, filterUser ']));
 
@@ -44,7 +44,7 @@ class FamilyController extends Controller
 
         foreach ($family_member_ids as $patient_id){
 
-            $patient = PatientInfo::where('user_id', trim($patient_id))->first();
+            $patient = Patient::where('user_id', trim($patient_id))->first();
             $contact_rohan = "Please contact Rohan for Manual Edits.";
 
             if(!is_object($patient)){

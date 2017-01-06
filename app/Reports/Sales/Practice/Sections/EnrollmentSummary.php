@@ -2,7 +2,7 @@
 
 namespace App\Reports\Sales\Practice\Sections;
 
-use App\PatientInfo;
+use App\Patient;
 use App\Practice;
 use App\Reports\Sales\Practice\PracticeStatsHelper;
 use App\Reports\Sales\SalesReportSection;
@@ -31,7 +31,7 @@ class EnrollmentSummary extends SalesReportSection
     {
         $id = $this->practice->id;
 
-        $enrollmentCumulative = PatientInfo::whereHas('user', function ($q) use
+        $enrollmentCumulative = Patient::whereHas('user', function ($q) use
         (
             $id
         ) {

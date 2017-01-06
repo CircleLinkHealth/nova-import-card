@@ -1,7 +1,7 @@
 <?php namespace App\Services;
 
 use App\Activity;
-use App\PatientInfo;
+use App\Patient;
 use App\PatientMonthlySummary;
 use App\User;
 use Carbon\Carbon;
@@ -89,7 +89,7 @@ class ActivityService
                 (new PatientMonthlySummary())->updateCCMInfoForPatient($user->patientInfo, $totalDuration);
 
                 // update cur_month_activity_time with total
-                PatientInfo::updateOrCreate([
+                Patient::updateOrCreate([
                     'user_id' => $user->id,
                 ], [
                     'cur_month_activity_time' => $totalDuration,

@@ -3,7 +3,7 @@
 namespace App\Console\Commands;
 
 use App\AppConfig;
-use App\PatientInfo;
+use App\Patient;
 use Carbon\Carbon;
 use Illuminate\Console\Command;
 
@@ -44,7 +44,7 @@ class ResetCcmTime extends Command
 
         $lastReset = $appConfigs->where('config_key', 'cur_month_ccm_time_last_reset')->first();
 
-        PatientInfo::withTrashed()
+        Patient::withTrashed()
             ->update([
                 'cur_month_activity_time' => '0',
             ]);

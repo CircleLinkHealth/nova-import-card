@@ -8,7 +8,7 @@ use App\Events\PdfableCreated;
 use App\MailLog;
 use App\Note;
 use App\Notifications\NewNote;
-use App\PatientInfo;
+use App\Patient;
 use App\User;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\URL;
@@ -178,7 +178,7 @@ class NoteService
 
     //Get all notes that were forwarded with specified date range
 
-    public function getAppointmentsForPatient(PatientInfo $patient)
+    public function getAppointmentsForPatient(Patient $patient)
     {
 
         return Appointment::wherePatientId($patient->user_id)
@@ -390,7 +390,7 @@ class NoteService
 
     }
 
-    public function forwardedNoteWasSeenByPrimaryProvider(Note $note, PatientInfo $patient){
+    public function forwardedNoteWasSeenByPrimaryProvider(Note $note, Patient $patient){
 
         $mail = MailLog::where('note_id', $note->id)
             ->where('receiver_cpm_id', $patient->billingProvider()->id)->first();

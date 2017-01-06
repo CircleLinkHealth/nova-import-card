@@ -12,7 +12,7 @@
 
 use App\Activity;
 use App\PageTimer;
-use App\PatientInfo;
+use App\Patient;
 use Carbon\Carbon;
 use Carbon\Carbon;
 
@@ -146,7 +146,7 @@ foreach ($all as $pt) {
 
 if (isset($_GET['reset'])) {
     if ($_GET['reset'] == 'kra') {
-        PatientInfo::withTrashed()
+        Patient::withTrashed()
             ->update([
                 'cur_month_activity_time' => '0',
             ]);
@@ -158,7 +158,7 @@ if (isset($_GET['reset'])) {
             ->pluck('total_duration', 'patient_id');
 
         foreach ($acts as $id => $ccmTime) {
-            $info = PatientInfo::whereUserId($id)
+            $info = Patient::whereUserId($id)
                 ->first();
 
             if ($info) {

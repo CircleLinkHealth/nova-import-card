@@ -7,7 +7,7 @@ use App\Call;
 use App\Family;
 use App\Note;
 use App\NurseInfo;
-use App\PatientInfo;
+use App\Patient;
 use App\PatientMonthlySummary;
 use App\Services\NoteService;
 use App\User;
@@ -164,7 +164,7 @@ class SchedulerService
     {
 
         //get all patients that are withdrawn
-        $withdrawn = PatientInfo::where('ccm_status', 'withdrawn')
+        $withdrawn = Patient::where('ccm_status', 'withdrawn')
                                 ->orWhere('ccm_status', 'paused')
             ->pluck('user_id');
 
@@ -366,7 +366,7 @@ class SchedulerService
     {
 
         //Get all enrolled Patients
-        $patients = PatientInfo::enrolled()->get();
+        $patients = Patient::enrolled()->get();
 
         $reprocess_bucket = [];
 

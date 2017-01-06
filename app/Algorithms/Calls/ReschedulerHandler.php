@@ -10,7 +10,7 @@ namespace App\Algorithms\Calls;
 
 use App\Call;
 use App\PatientContactWindow;
-use App\PatientInfo;
+use App\Patient;
 use App\Services\Calls\SchedulerService;
 use Carbon\Carbon;
 
@@ -96,7 +96,7 @@ class ReschedulerHandler
             $call->scheduler = 'rescheduler algorithm';
             $call->save();
 
-            $patient = PatientInfo::where('user_id', $call->inbound_cpm_id)->first();
+            $patient = Patient::where('user_id', $call->inbound_cpm_id)->first();
 
             if(is_object($patient)) {
 

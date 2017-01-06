@@ -3,6 +3,7 @@
 use App\Activity;
 use App\ActivityMeta;
 use App\Practice;
+use App\Reports\PatientDailyAuditReport;
 use App\Services\ActivityService;
 use App\User;
 use Carbon\Carbon;
@@ -227,11 +228,14 @@ class ActivityController extends Controller {
 	public function providerUIIndex(Request $request, $patientId)
 	{
 
-
 		$patient = User::find($patientId);
+
 		$input = $request->all();
-		$messages = \Session::get('messages');
+
+            $messages = \Session::get('messages');
+
 		if (isset($input['selectMonth'])) {
+
 			$time = Carbon::createFromDate($input['selectYear'], $input['selectMonth'], 15);
 			$start = $time->startOfMonth()->format('Y-m-d');
 			$end = $time->endOfMonth()->format('Y-m-d');
@@ -240,6 +244,7 @@ class ActivityController extends Controller {
 			$year_selected = $time->format('Y');
 
 		} else {
+
 			$time = Carbon::now();
 			$start = Carbon::now()->startOfMonth()->format('Y-m-d');
 			$end = Carbon::now()->endOfMonth()->format('Y-m-d');
@@ -248,6 +253,14 @@ class ActivityController extends Controller {
 			$year_selected = $time->format('Y');
 
 		}
+
+        //downloads patient audit
+        if($request->ajax()) {
+
+            $data = (new PatientDailyAuditReport($patient->patientInfo, Carbon::parse($start)))->renderPDF();
+            return $data;
+
+        }
 
 		$acts = DB::table('lv_activities')
 			->select(DB::raw('id,provider_id,logged_from,DATE(performed_at)as performed_at, type, SUM(duration) as duration'))

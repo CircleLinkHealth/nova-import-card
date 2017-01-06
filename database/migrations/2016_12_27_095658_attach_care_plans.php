@@ -1,7 +1,7 @@
 <?php
 
 use App\CarePlan;
-use App\PatientInfo;
+use App\Patient;
 use Illuminate\Database\Migrations\Migration;
 
 class AttachCarePlans extends Migration
@@ -13,8 +13,8 @@ class AttachCarePlans extends Migration
      */
     public function up()
     {
-        //this is to map the fields we are migrating from PatientInfo to CarePlan
-        //CarePlan field => PatientInfo Field
+        //this is to map the fields we are migrating from Patient to CarePlan
+        //CarePlan field => Patient Field
         $patientInfoToCarePlanMap = [
             'provider_approver_id' => 'careplan_provider_approver',
             'qa_approver_id'       => 'careplan_qa_approver',
@@ -24,7 +24,7 @@ class AttachCarePlans extends Migration
             'last_printed'         => 'careplan_last_printed',
         ];
 
-        PatientInfo::withTrashed()
+        Patient::withTrashed()
             ->where('careplan_provider_approver', '=', 0)
             ->update([
                 'careplan_provider_approver' => null,
@@ -32,7 +32,7 @@ class AttachCarePlans extends Migration
 
         try {
             foreach (CarePlan::all() as $cp) {
-                $patient = PatientInfo::where('user_id', '=', $cp->patient_id)
+                $patient = Patient::where('user_id', '=', $cp->patient_id)
                     ->first();
 
                 if (!$patient) {

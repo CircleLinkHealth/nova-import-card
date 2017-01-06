@@ -12,7 +12,7 @@ use App\Activity;
 use App\Call;
 use App\MailLog;
 use App\Observation;
-use App\PatientInfo;
+use App\Patient;
 use App\PatientMonthlySummary;
 use App\Practice;
 use App\User;
@@ -88,10 +88,7 @@ class PracticeStatsHelper
             ->where('performed_at', '<', $this->end->toDateTimeString())
             ->sum('duration');
 
-        $getHours = floor($duration / 3600);
-        $getMins = floor(($duration - ($getHours * 3600)) / 60);
-
-        return gmdate($getHours . ':' . $getMins);
+        return secondsToHHMM($duration);
 
 
     }
@@ -328,7 +325,7 @@ class PracticeStatsHelper
 
         foreach ($patientsForPractice as $patient) {
 
-            $data[] = PatientInfo
+            $data[] = Patient
                 ::where('cur_month_activity_time', '>', 1199)
                 ->whereUserId($patient->id)
                 ->first();

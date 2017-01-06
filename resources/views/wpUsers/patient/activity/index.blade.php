@@ -37,7 +37,14 @@
                                 @endforeach
                             </select>
                         </div>
-                        <button type="submit" value="Search" name="find" id="find" class="btn btn-primary">Go</button>
+                        <button type="submit" value="find" name="find" id="find" class="btn btn-primary">Go</button>
+                        <button type="submit"
+                                href="{{route('patient.activity.providerUIIndex', ['patientId' => $patient])}}"
+                                value="audit" name="audit" id="audit" class="btn btn-primary">Audit Report
+                        </button>
+
+                        <a id="downloadAudit" href="" hidden></a>
+
                     </div>
                 </div>
                 {!! Form::close() !!}
@@ -109,9 +116,9 @@
                                         template: function (obj) {
                                             if (obj.logged_from == "manual_input" || obj.logged_from == "activity")
                                                 return "<a href='<?php echo URL::route('patient.activity.view', array(
-                                                                'patientId' => $patient->id,
-                                                                'atcId'     => ''
-                                                        )); ?>/" + obj.id + "'>" + obj.type + "</a>";
+                                                        'patientId' => $patient->id,
+                                                        'atcId'     => ''
+                                                    )); ?>/" + obj.id + "'>" + obj.type + "</a>";
                                             else
                                                 return obj.type;
                                         },
@@ -203,4 +210,34 @@
             </div>
         </div>
     </div>
+
+    <script>
+
+        $("#audit").on('click', function () {
+
+            var url = '{!! route('patient.activity.providerUIIndex', ['patientId' => $patient]) !!}';
+
+            $.ajax({
+                type: "GET",
+                url: url,
+                headers: {
+                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                },
+                data: {
+                    selectMonth: $('#selectMonth').val(),
+                    selectYear: $('#selectYear').val()
+                },
+                success: function (data) {
+                    console.log(data);
+                    var a = document.getElementById('downloadAudit');
+                    a.href = "{{url('/manage-patients/download/')}}" + data;
+                    a.click();
+                }
+            });
+
+            return false;
+        });
+
+    </script>
+
 @stop

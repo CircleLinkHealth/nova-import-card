@@ -4,7 +4,7 @@ use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
-class PatientInfo extends Model {
+class Patient extends Model {
 
 	use SoftDeletes;
 	use \Venturecraft\Revisionable\RevisionableTrait;
@@ -196,7 +196,7 @@ class PatientInfo extends Model {
 
     // Return s current months CCM time formatted for UI
 
-	public function getFamilyMembers(PatientInfo $patient){
+	public function getFamilyMembers(Patient $patient){
 
 		$family = $patient->family;
 

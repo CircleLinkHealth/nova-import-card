@@ -6,7 +6,7 @@ namespace App\Repositories;
 use App\Contracts\Repositories\AprimaCcdApiRepository;
 use App\ForeignId;
 use App\PatientCareTeamMember;
-use App\PatientInfo;
+use App\Patient;
 use App\ProviderInfo;
 use Illuminate\Support\Facades\DB;
 
@@ -22,9 +22,9 @@ class AprimaCcdApiRepositoryEloquent implements AprimaCcdApiRepository
         //Dynamically get all the tables' names since we'll probably change them soon
         $careTeamTable = (new PatientCareTeamMember())->getTable();
         $foreignIdTable = (new ForeignId())->getTable();
-        $patientTable = (new PatientInfo())->getTable();
+        $patientTable = (new Patient())->getTable();
 
-        $patientAndProviderIds = PatientInfo::select(DB::raw("
+        $patientAndProviderIds = Patient::select(DB::raw("
                 $patientTable.mrn_number as patientId,
                 $patientTable.user_id as clhPatientUserId,
                 $foreignIdTable.foreign_id as providerId,

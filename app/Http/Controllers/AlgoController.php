@@ -5,7 +5,7 @@ namespace App\Http\Controllers;
 
 use App\Algorithms\Calls\SuccessfulHandler;
 use App\Algorithms\Calls\UnsuccessfulHandler;
-use App\PatientInfo;
+use App\Patient;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 
@@ -28,7 +28,7 @@ class AlgoController extends Controller
             $status = (bool) $request->input('status');
             $contact_day = $request->input('days');
 
-            $guineaPig = PatientInfo::find(1272);
+            $guineaPig = Patient::find(1272);
 
             if($status){
 
