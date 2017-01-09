@@ -11,10 +11,14 @@
                     Patient Activity Report
                 </div>
                 @include('partials.userheader')
-                <div class="col-sm-3">
-                    <h4 class="time-report__month">{{$month_selected_text}} {{$year_selected}}</h4>
-                </div>
+
                 {!! Form::open(array('url' => URL::route('patient.activity.providerUIIndex', ['patientId' => $patient]), 'method' => 'GET', 'class' => 'form-horizontal', 'style' => 'margin-right: 10px')) !!}
+                <div class="col-sm-3" style="top: 16px">
+                    <button type="submit"
+                            href="{{route('patient.activity.providerUIIndex', ['patientId' => $patient])}}"
+                            value="audit" name="audit" id="audit" class="btn btn-info">Audit Report
+                    </button>
+                </div>
                 <div class="form-group  pull-right" style="margin-top:10px; ">
                     <i class="icon icon--date-time"></i>
                     <div class="inline-block">
@@ -38,10 +42,6 @@
                             </select>
                         </div>
                         <button type="submit" value="find" name="find" id="find" class="btn btn-primary">Go</button>
-                        <button type="submit"
-                                href="{{route('patient.activity.providerUIIndex', ['patientId' => $patient])}}"
-                                value="audit" name="audit" id="audit" class="btn btn-primary">Audit Report
-                        </button>
 
                         <a id="downloadAudit" href="" hidden></a>
 
