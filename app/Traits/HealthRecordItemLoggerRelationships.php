@@ -1,6 +1,5 @@
-<?php
+<?php namespace App\Traits;
 
-namespace App\Traits;
 use App\CLH\CCD\ImportedItems\DemographicsImport;
 use App\Importer\Models\ItemLogs\AllergyLog;
 use App\Importer\Models\ItemLogs\DemographicsLog;
@@ -50,7 +49,7 @@ trait HealthRecordItemLoggerRelationships
 
     public function demographicsImports()
     {
-        return $this->hasOne( DemographicsImport::class );
+        return $this->hasOne(DemographicsImport::class);
     }
 
 }

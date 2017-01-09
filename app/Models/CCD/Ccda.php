@@ -6,6 +6,7 @@ use App\Contracts\Importer\HealthRecord\Section\ItemLog;
 use App\Contracts\Importer\ImportedHealthRecord\ImportedHealthRecord;
 use App\Entities\CcdaRequest;
 use App\Importer\Loggers\Ccda\CcdaSectionsLogger;
+use App\Traits\HealthRecordItemLoggerRelationships;
 use App\User;
 use Illuminate\Database\Eloquent\Model;
 use Prettus\Repository\Contracts\Transformable;
@@ -14,7 +15,7 @@ use Prettus\Repository\Traits\TransformableTrait;
 class Ccda extends Model implements HealthRecord, Transformable
 {
 
-    use App\Traits\HealthRecordItemLoggerRelationships, TransformableTrait;
+    use HealthRecordItemLoggerRelationships, TransformableTrait;
 
     //define sources here
     const ATHENA_API = 'athena_api';
