@@ -5,10 +5,10 @@
 
 @section('content')
     <script>
-        $(document).ready(function(){
+        $(document).ready(function () {
             /* $( ".submitFormBtn").click(function(e) { */
-            $( "a").click(function(e) {
-                $( "#confirmButtonModal" ).modal();
+            $("a").click(function (e) {
+                $("#confirmButtonModal").modal();
                 e.preventDefault();
                 return false;
             });
@@ -78,42 +78,42 @@
                 <input type="hidden" name="nurse" value="{{$nurse}}">
 
                 <div class="form-block col-md-8" style="padding-top: 15px">
-                        <div class="row form-inline">
-                            <div class="new-note-item">
-                                <div class="form-group">
-                                    <div class="col-sm-12">
-                                        <label for="window_start" style="font-weight: 500 !important;">
-                                            Next Call Window
-                                        </label>
-                                    </div>
-                                    <div class="col-sm-12">
-                                        <div class="form-group">
-                                            <input class="form-control" name="window_start" type="time"
-                                                   value="{{$window_start}}"
-                                                   id="window_start" placeholder="time">
+                    <div class="row form-inline">
+                        <div class="new-note-item">
+                            <div class="form-group">
+                                <div class="col-sm-12">
+                                    <label for="window_start" style="font-weight: 500 !important;">
+                                        Next Call Window
+                                    </label>
+                                </div>
+                                <div class="col-sm-12">
+                                    <div class="form-group">
+                                        <input class="form-control" name="window_start" type="time"
+                                               value="{{$window_start}}"
+                                               id="window_start" placeholder="time">
 
-                                        </div>
-                                        <div class="form-group">
+                                    </div>
+                                    <div class="form-group">
                                         <label for="window_end">
                                             to
                                         </label>
                                         <input class="form-control" name="window_end" type="time"
                                                value="{{$window_end}}"
                                                id="window_end" placeholder="time">
-                                        </div>
                                     </div>
                                 </div>
                             </div>
                         </div>
                     </div>
                 </div>
+            </div>
 
             <input type="hidden" name="patient_id" value="{{$patient->id}}"/>
             <input type="hidden" name="attempt_note" value="{{$attempt_note}}"/>
 
 
             {{--@if($next_contact_windows)--}}
-                @include('partials.calls.callInfo')
+            @include('partials.calls.callInfo')
             {{--@endif--}}
 
             <div class="form-block col-md-12">
@@ -138,5 +138,5 @@
                     </div>
                 </div>
             </div>
-            <div>
+            </form>
 @stop
