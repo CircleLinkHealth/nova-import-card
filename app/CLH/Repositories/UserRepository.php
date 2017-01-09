@@ -275,6 +275,7 @@ class UserRepository implements \App\CLH\Contracts\Repositories\UserRepository
             CarePlan::updateOrCreate([
                 'user_id' => $user->id,
             ], [
+                'user_id'               => $user->id,
                 'care_plan_template_id' => CarePlanTemplate::whereType(CarePlanTemplate::CLH_DEFAULT)->first()->id,
                 'status'                => $params->get('careplan_status'),
             ]);
