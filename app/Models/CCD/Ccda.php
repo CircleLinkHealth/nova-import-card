@@ -1,13 +1,14 @@
 <?php namespace App\Models\CCD;
 
 use App\CLH\CCD\ItemLogger\ModelLogRelationship;
+use App\Contracts\Importer\HealthRecord\HealthRecord;
 use App\Entities\CcdaRequest;
 use App\User;
 use Illuminate\Database\Eloquent\Model;
 use Prettus\Repository\Contracts\Transformable;
 use Prettus\Repository\Traits\TransformableTrait;
 
-class Ccda extends Model implements Transformable
+class Ccda extends Model implements HealthRecord, Transformable
 {
 
     use ModelLogRelationship, TransformableTrait;

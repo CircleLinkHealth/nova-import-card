@@ -1,14 +1,10 @@
 <?php namespace App\CLH\CCD\ItemLogger;
 
-use App\Models\CCD\Ccda;
 use App\CLH\CCD\ImportedItems\AllergyImport;
-use App\CLH\CCD\ItemLogger\BelongsToCcda;
-use App\CLH\CCD\ItemLogger\LogVendorRelationship;
-use App\CLH\Contracts\CCD\CcdItemLog;
+use App\CLH\Contracts\CCD\HealthRecordSectionLog;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Support\Collection;
 
-class CcdAllergyLog extends Model implements CcdItemLog
+class CcdAllergyLog extends Model implements HealthRecordSectionLog
 {
     use BelongsToCcda, LogVendorRelationship;
 

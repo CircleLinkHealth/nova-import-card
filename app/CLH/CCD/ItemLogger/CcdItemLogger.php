@@ -4,7 +4,6 @@ namespace App\CLH\CCD\ItemLogger;
 
 
 use App\Models\CCD\Ccda;
-use App\CLH\CCD\Importer\ParsingStrategies\Facades\UserMetaParserHelpers;
 
 class CcdItemLogger
 {
@@ -18,12 +17,12 @@ class CcdItemLogger
 
     public function __construct(Ccda $ccd)
     {
-        $this->ccd = json_decode( $ccd->json );
+        $this->ccd = json_decode($ccd->json);
         $this->ccdaId = $ccd->id;
         $this->vendorId = $ccd->vendor_id;
 
         $this->foreignKeys = [
-            'ccda_id' => $this->ccdaId,
+            'ccda_id'   => $this->ccdaId,
             'vendor_id' => $this->vendorId,
         ];
 
@@ -44,9 +43,9 @@ class CcdItemLogger
     {
         $allergies = $this->ccd->allergies;
 
-        foreach ( $allergies as $allergy ) {
-            $saved = ( new CcdAllergyLog() )->create(
-                array_merge($this->transformer->allergy( $allergy ), $this->foreignKeys)
+        foreach ($allergies as $allergy) {
+            $saved = CcdAllergyLog::create(
+                array_merge($this->transformer->allergy($allergy), $this->foreignKeys)
             );
         }
 
@@ -57,7 +56,7 @@ class CcdItemLogger
     {
         $demographics = $this->ccd->demographics;
 
-        $saved = ( new CcdDemographicsLog() )->create(
+        $saved = CcdDemographicsLog::create(
             array_merge($this->transformer->demographics($demographics), $this->foreignKeys)
         );
 
@@ -68,7 +67,7 @@ class CcdItemLogger
     {
         $document = $this->ccd->document;
 
-        $saved = ( new CcdDocumentLog() )->create(
+        $saved = CcdDocumentLog::create(
             array_merge($this->transformer->document($document), $this->foreignKeys)
         );
 
@@ -79,8 +78,8 @@ class CcdItemLogger
     {
         $medications = $this->ccd->medications;
 
-        foreach ( $medications as $med ) {
-            $saved = ( new CcdMedicationLog() )->create(
+        foreach ($medications as $med) {
+            $saved = CcdMedicationLog::create(
                 array_merge($this->transformer->medication($med), $this->foreignKeys)
             );
         }
@@ -92,8 +91,8 @@ class CcdItemLogger
     {
         $problems = $this->ccd->problems;
 
-        foreach ( $problems as $prob ) {
-            $saved = ( new CcdProblemLog() )->create(
+        foreach ($problems as $prob) {
+            $saved = CcdProblemLog::create(
                 array_merge($this->transformer->problem($prob), $this->foreignKeys)
             );
 
@@ -103,14 +102,14 @@ class CcdItemLogger
     public function logProvider()
     {
         //Add them both together
-        array_push( $this->ccd->document->documentation_of, $this->ccd->document->author );
+        array_push($this->ccd->document->documentation_of, $this->ccd->document->author);
 
         array_push($this->ccd->document->documentation_of, $this->ccd->demographics->provider);
 
         $providers = $this->ccd->document->documentation_of;
 
-        foreach ( $providers as $provider ) {
-            $saved = ( new CcdProviderLog() )->create(
+        foreach ($providers as $provider) {
+            $saved = CcdProviderLog::create(
                 array_merge($this->transformer->provider($provider), $this->foreignKeys)
             );
         }

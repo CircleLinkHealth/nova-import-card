@@ -1,12 +1,11 @@
 <?php namespace App\CLH\CCD\ItemLogger;
 
-use App\Models\CCD\Ccda;
 use App\CLH\CCD\ImportedItems\DemographicsImport;
-use App\CLH\Contracts\CCD\CcdItemLog;
+use App\CLH\Contracts\CCD\HealthRecordSectionLog;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Support\Collection;
 
-class CcdDemographicsLog extends Model implements CcdItemLog {
+class CcdDemographicsLog extends Model implements HealthRecordSectionLog
+{
 
     use BelongsToCcda, LogVendorRelationship;
 
