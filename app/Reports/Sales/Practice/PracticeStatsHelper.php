@@ -114,20 +114,15 @@ class PracticeStatsHelper
     public function noteStats(Practice $practice)
     {
 
-        $id = $practice->id;
+        $providers = User::where('program_id', $practice->id)
+            ->whereHas('roles', function ($q){
+                $q->whereName('provider');
+            })->pluck('id')->toArray();
+
+        debug($providers);
 
         return MailLog
-            ::whereHas('note', function ($q) use
-            (
-                $id
-            ) {
-                $q->whereHas('patient', function ($k) use
-                (
-                    $id
-                ) {
-                    $k->where('program_id', $id);
-                });
-            })
+            ::whereIn('receiver_cpm_id', $providers)
             ->where('created_at', '>', $this->start)
             ->where('created_at', '<', $this->end)
             ->whereType('note')
