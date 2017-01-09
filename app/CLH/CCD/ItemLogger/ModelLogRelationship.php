@@ -14,32 +14,32 @@ trait ModelLogRelationship
 {
     public function allergies()
     {
-        return $this->hasMany( CcdAllergyLog::class );
+        return $this->hasMany(AllergyLog::class);
     }
 
     public function demographics()
     {
-        return $this->hasOne( CcdDemographicsLog::class );
+        return $this->hasOne(DemographicsLog::class);
     }
 
     public function document()
     {
-        return $this->hasOne( CcdDocumentLog::class );
+        return $this->hasOne(DocumentLog::class);
     }
 
     public function medications()
     {
-        return $this->hasMany( CcdMedicationLog::class );
+        return $this->hasMany(MedicationLog::class);
     }
 
     public function problems()
     {
-        return $this->hasMany( CcdProblemLog::class );
+        return $this->hasMany(ProblemLog::class);
     }
 
     public function providers()
     {
-        return $this->hasMany( CcdProviderLog::class );
+        return $this->hasMany(ProviderLog::class);
     }
 
     public function demographicsImports()
