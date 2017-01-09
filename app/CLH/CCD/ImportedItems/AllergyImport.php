@@ -1,6 +1,6 @@
 <?php namespace App\CLH\CCD\ImportedItems;
 
-use App\CLH\CCD\ItemLogger\AllergyLog;
+use App\Importer\Models\ItemLogs\AllergyLog;
 use Illuminate\Database\Eloquent\Model;
 
 class AllergyImport extends Model {

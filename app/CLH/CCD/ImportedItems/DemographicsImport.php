@@ -1,7 +1,6 @@
 <?php namespace App\CLH\CCD\ImportedItems;
 
-use App\CLH\CCD\ItemLogger\BelongsToCcda;
-use App\CLH\CCD\ItemLogger\DemographicsLog;
+use App\Importer\Models\ItemLogs\DemographicsLog;
 use App\User;
 use Illuminate\Database\Eloquent\Model;
 use Prettus\Repository\Contracts\Transformable;
@@ -10,7 +9,7 @@ use Prettus\Repository\Traits\TransformableTrait;
 class DemographicsImport extends Model implements Transformable
 {
 
-    use BelongsToCcda, TransformableTrait;
+    use App\Traits\BelongsToCcda, TransformableTrait;
 
     protected $guarded = [];
 

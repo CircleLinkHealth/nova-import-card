@@ -1,6 +1,6 @@
 <?php namespace App\Models\CCD;
 
-use App\CLH\CCD\ItemLogger\AllergyLog;
+use App\Importer\Models\ItemLogs\AllergyLog;
 use App\User;
 use Illuminate\Database\Eloquent\Model;
 

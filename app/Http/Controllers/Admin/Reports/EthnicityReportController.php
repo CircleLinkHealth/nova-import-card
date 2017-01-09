@@ -2,8 +2,8 @@
 
 namespace App\Http\Controllers\Admin\Reports;
 
-use App\CLH\CCD\ItemLogger\DemographicsLog;
 use App\Http\Controllers\Controller;
+use App\Importer\Models\ItemLogs\DemographicsLog;
 use App\Models\CCD\CcdVendor;
 use App\Practice;
 use Maatwebsite\Excel\Facades\Excel;

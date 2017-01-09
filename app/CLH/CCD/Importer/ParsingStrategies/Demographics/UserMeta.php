@@ -3,10 +3,10 @@
 namespace App\CLH\CCD\Importer\ParsingStrategies\Demographics;
 
 
-use App\CLH\CCD\ItemLogger\DemographicsLog;
 use App\CLH\Contracts\CCD\ParsingStrategy;
 use App\CLH\Contracts\CCD\ValidationStrategy;
 use App\CLH\DataTemplates\UserMetaTemplate;
+use App\Importer\Models\ItemLogs\DemographicsLog;
 use App\Models\CCD\Ccda;
 
 class UserMeta implements ParsingStrategy

@@ -4,9 +4,9 @@ namespace App\CLH\CCD\Importer\ParsingStrategies\Allergies;
 
 
 use App\CLH\CCD\ImportedItems\AllergyImport;
-use App\CLH\CCD\ItemLogger\AllergyLog;
 use App\CLH\Contracts\CCD\ParsingStrategy;
 use App\CLH\Contracts\CCD\ValidationStrategy;
+use App\Importer\Models\ItemLogs\AllergyLog;
 use App\Models\CCD\Ccda;
 
 class AllergenNamesList implements ParsingStrategy

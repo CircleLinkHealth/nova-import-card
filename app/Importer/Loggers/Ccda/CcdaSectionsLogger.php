@@ -3,13 +3,13 @@
 namespace App\Importer\Loggers\Ccda;
 
 
-use App\CLH\CCD\ItemLogger\AllergyLog;
-use App\CLH\CCD\ItemLogger\DemographicsLog;
-use App\CLH\CCD\ItemLogger\DocumentLog;
-use App\CLH\CCD\ItemLogger\MedicationLog;
-use App\CLH\CCD\ItemLogger\ProblemLog;
-use App\CLH\CCD\ItemLogger\ProviderLog;
 use App\Contracts\Importer\HealthRecord\HealthRecordLogger;
+use App\Importer\Models\ItemLogs\AllergyLog;
+use App\Importer\Models\ItemLogs\DemographicsLog;
+use App\Importer\Models\ItemLogs\DocumentLog;
+use App\Importer\Models\ItemLogs\MedicationLog;
+use App\Importer\Models\ItemLogs\ProblemLog;
+use App\Importer\Models\ItemLogs\ProviderLog;
 use App\Models\CCD\Ccda;
 
 class CcdaSectionsLogger implements HealthRecordLogger

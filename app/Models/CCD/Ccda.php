@@ -1,6 +1,5 @@
 <?php namespace App\Models\CCD;
 
-use App\CLH\CCD\ItemLogger\ModelLogRelationship;
 use App\Contracts\Importer\HealthRecord\HealthRecord;
 use App\Contracts\Importer\HealthRecord\HealthRecordLogger;
 use App\Contracts\Importer\HealthRecord\Section\ItemLog;
@@ -15,7 +14,7 @@ use Prettus\Repository\Traits\TransformableTrait;
 class Ccda extends Model implements HealthRecord, Transformable
 {
 
-    use ModelLogRelationship, TransformableTrait;
+    use App\Traits\HealthRecordItemLoggerRelationships, TransformableTrait;
 
     //define sources here
     const ATHENA_API = 'athena_api';

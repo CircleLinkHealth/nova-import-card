@@ -4,10 +4,10 @@ namespace App\CLH\CCD\Importer\ParsingStrategies\Medications;
 
 
 use App\CLH\CCD\ImportedItems\MedicationImport;
-use App\CLH\CCD\ItemLogger\MedicationLog;
 use App\CLH\Contracts\CCD\ParsingStrategy;
 use App\CLH\Contracts\CCD\ValidationStrategy;
 use App\CLH\Facades\StringManipulation;
+use App\Importer\Models\ItemLogs\MedicationLog;
 use App\Models\CCD\Ccda;
 
 class ProductNameAndTextList implements ParsingStrategy

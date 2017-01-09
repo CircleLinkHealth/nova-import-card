@@ -1,6 +1,6 @@
 <?php namespace App\CLH\CCD\ImportedItems;
 
-use App\CLH\CCD\ItemLogger\MedicationLog;
+use App\Importer\Models\ItemLogs\MedicationLog;
 use Illuminate\Database\Eloquent\Model;
 
 class MedicationImport extends Model {

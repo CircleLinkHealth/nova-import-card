@@ -4,8 +4,8 @@ namespace App\Importer\Loggers\Ccda;
 
 
 use App\CLH\CCD\Importer\ParsingStrategies\Facades\UserMetaParserHelpers;
-use App\CLH\CCD\ItemLogger\AllergyLog;
-use App\CLH\CCD\ItemLogger\DemographicsLog;
+use App\Importer\Models\ItemLogs\AllergyLog;
+use App\Importer\Models\ItemLogs\DemographicsLog;
 
 /**
  * Takes data from the the json CCD and transforms it so that it can be saved as one of the transformer Models.
@@ -87,7 +87,7 @@ class CcdToLogTranformer
     }
 
     /**
-     * @see @see App\CLH\CCD\ItemLogger\MedicationLog
+     * @see @see App\Importer\Models\ItemLogs\MedicationLog
      *
      * @param $medication
      *

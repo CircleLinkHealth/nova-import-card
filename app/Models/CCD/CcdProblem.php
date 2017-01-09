@@ -1,6 +1,6 @@
 <?php namespace App\Models\CCD;
 
-use App\CLH\CCD\ItemLogger\ProblemLog;
+use App\Importer\Models\ItemLogs\ProblemLog;
 use App\Models\CPM\CpmProblem;
 use App\User;
 use Illuminate\Database\Eloquent\Model;

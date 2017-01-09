@@ -3,7 +3,7 @@
 namespace App\CLH\CCD\Importer\ParsingStrategies\Problems;
 
 
-use App\CLH\CCD\ItemLogger\ProblemLog;
+use App\Importer\Models\ItemLogs\ProblemLog;
 
 trait ConsolidatesProblemInfo
 {

@@ -1,6 +1,6 @@
 <?php
 
-namespace App\CLH\CCD\ItemLogger;
+namespace App\Traits;
 
 
 use App\Models\CCD\Ccda;

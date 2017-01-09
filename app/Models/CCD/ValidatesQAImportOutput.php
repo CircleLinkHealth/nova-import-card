@@ -2,7 +2,7 @@
 
 namespace App\Models\CCD;
 
-use App\CLH\CCD\ItemLogger\DemographicsLog;
+use App\Importer\Models\ItemLogs\DemographicsLog;
 use App\User;
 use Carbon\Carbon;
 

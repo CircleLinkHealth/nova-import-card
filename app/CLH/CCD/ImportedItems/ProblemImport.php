@@ -1,6 +1,6 @@
 <?php namespace App\CLH\CCD\ImportedItems;
 
-use App\CLH\CCD\ItemLogger\ProblemLog;
+use App\Importer\Models\ItemLogs\ProblemLog;
 use Illuminate\Database\Eloquent\Model;
 
 class ProblemImport extends Model {

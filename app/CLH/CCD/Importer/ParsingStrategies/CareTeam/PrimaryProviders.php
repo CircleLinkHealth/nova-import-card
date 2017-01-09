@@ -3,11 +3,11 @@
 namespace App\CLH\CCD\Importer\ParsingStrategies\CareTeam;
 
 
-use App\CLH\CCD\ItemLogger\ProviderLog;
 use App\CLH\Contracts\CCD\ParsingStrategy;
 use App\CLH\Contracts\CCD\ValidationStrategy;
 use App\CLH\Contracts\Repositories\UserRepository;
 use App\ForeignId;
+use App\Importer\Models\ItemLogs\ProviderLog;
 use App\Models\CCD\Ccda;
 
 class PrimaryProviders implements ParsingStrategy

@@ -1,6 +1,6 @@
 <?php namespace App\Models\CCD;
 
-use App\CLH\CCD\ItemLogger\MedicationLog;
+use App\Importer\Models\ItemLogs\MedicationLog;
 use App\Models\CPM\CpmMedicationGroup;
 use App\User;
 use Illuminate\Database\Eloquent\Model;
