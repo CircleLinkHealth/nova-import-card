@@ -32,7 +32,8 @@ class PracticeDemographics extends SalesReportSection
         $disabled_count = User
             ::whereProgramId($this->practice->id)
             ->whereHas('roles', function ($q) {
-                $q->where('name', '!=', 'participant');
+                $q->where('name', '!=', 'participant')
+                ->where('name', '!=', 'administrator');
             })
             ->whereUserStatus(0)
             ->count();
