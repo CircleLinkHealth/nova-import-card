@@ -1,6 +1,6 @@
 <?php namespace App\Models\CCD;
 
-use App\CLH\CCD\ItemLogger\CcdProblemLog;
+use App\CLH\CCD\ItemLogger\ProblemLog;
 use App\Models\CPM\CpmProblem;
 use App\User;
 use Illuminate\Database\Eloquent\Model;
@@ -28,7 +28,7 @@ class CcdProblem extends Model
      */
     public function ccdLog()
     {
-        return $this->belongsTo(CcdProblemLog::class);
+        return $this->belongsTo(ProblemLog::class);
     }
 
     /**

@@ -3,18 +3,18 @@
 namespace App\CLH\CCD\Importer\ParsingStrategies\Allergies;
 
 
-use App\Models\CCD\Ccda;
 use App\CLH\CCD\ImportedItems\AllergyImport;
-use App\CLH\CCD\ItemLogger\CcdAllergyLog;
+use App\CLH\CCD\ItemLogger\AllergyLog;
 use App\CLH\Contracts\CCD\ParsingStrategy;
 use App\CLH\Contracts\CCD\ValidationStrategy;
+use App\Models\CCD\Ccda;
 
 class AllergenNamesList implements ParsingStrategy
 {
 
     public function parse(Ccda $ccd, ValidationStrategy $validator = null)
     {
-        $ccdAllergiesSection = CcdAllergyLog::whereCcdaId($ccd->id)->get();
+        $ccdAllergiesSection = AllergyLog::whereCcdaId($ccd->id)->get();
         $allergiesList = [];
 
         foreach ( $ccdAllergiesSection as $ccdAllergyLog )

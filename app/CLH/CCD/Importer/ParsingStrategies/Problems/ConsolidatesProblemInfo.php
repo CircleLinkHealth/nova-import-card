@@ -3,7 +3,7 @@
 namespace App\CLH\CCD\Importer\ParsingStrategies\Problems;
 
 
-use App\CLH\CCD\ItemLogger\CcdProblemLog;
+use App\CLH\CCD\ItemLogger\ProblemLog;
 
 trait ConsolidatesProblemInfo
 {
@@ -17,7 +17,7 @@ trait ConsolidatesProblemInfo
      *
      * @return mixed
      */
-    private function consolidateProblemInfo(CcdProblemLog $ccdProblem)
+    private function consolidateProblemInfo(ProblemLog $ccdProblem)
     {
         $consolidatedProblem = new \stdClass();
 

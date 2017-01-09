@@ -3,12 +3,12 @@
 namespace App\CLH\CCD\Importer\ParsingStrategies\Medications;
 
 
-use App\Models\CCD\Ccda;
 use App\CLH\CCD\ImportedItems\MedicationImport;
-use App\CLH\CCD\ItemLogger\CcdMedicationLog;
+use App\CLH\CCD\ItemLogger\MedicationLog;
 use App\CLH\Contracts\CCD\ParsingStrategy;
 use App\CLH\Contracts\CCD\ValidationStrategy;
 use App\CLH\Facades\StringManipulation;
+use App\Models\CCD\Ccda;
 
 class ProductNameAndTextList implements ParsingStrategy
 {
@@ -16,7 +16,7 @@ class ProductNameAndTextList implements ParsingStrategy
 
     public function parse(Ccda $ccd, ValidationStrategy $validator = null)
     {
-        $medicationsSection = CcdMedicationLog::whereCcdaId($ccd->id)->get();
+        $medicationsSection = MedicationLog::whereCcdaId($ccd->id)->get();
 
         $medsList = '';
 

@@ -13,7 +13,7 @@ use App\CLH\CCD\Importer\QAImportManager;
 use App\CLH\Repositories\CCDImporterRepository;
 use App\Contracts\Repositories\CcdaRepository;
 use App\Contracts\Repositories\CcdaRequestRepository;
-use App\Importer\Loggers\CcdaSectionsLogger;
+use App\Importer\Loggers\Ccda\CcdaSectionsLogger;
 use App\Models\CCD\Ccda;
 use App\Models\CCD\CcdVendor;
 use Carbon\Carbon;

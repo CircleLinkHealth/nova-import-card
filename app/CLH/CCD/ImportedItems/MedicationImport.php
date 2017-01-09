@@ -1,6 +1,6 @@
 <?php namespace App\CLH\CCD\ImportedItems;
 
-use App\CLH\CCD\ItemLogger\CcdMedicationLog;
+use App\CLH\CCD\ItemLogger\MedicationLog;
 use Illuminate\Database\Eloquent\Model;
 
 class MedicationImport extends Model {
@@ -9,7 +9,7 @@ class MedicationImport extends Model {
 
     public function ccdLog()
     {
-        return $this->belongsTo(CcdMedicationLog::class);
+        return $this->belongsTo(MedicationLog::class);
     }
 
 }

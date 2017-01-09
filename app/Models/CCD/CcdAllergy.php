@@ -1,6 +1,6 @@
 <?php namespace App\Models\CCD;
 
-use App\CLH\CCD\ItemLogger\CcdAllergyLog;
+use App\CLH\CCD\ItemLogger\AllergyLog;
 use App\User;
 use Illuminate\Database\Eloquent\Model;
 
@@ -22,7 +22,7 @@ class CcdAllergy extends Model
      */
     public function ccdLog()
     {
-        return $this->belongsTo(CcdAllergyLog::class);
+        return $this->belongsTo(AllergyLog::class);
     }
 
     /**

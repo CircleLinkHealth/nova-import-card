@@ -3,12 +3,11 @@
 namespace App\CLH\CCD\Importer\ParsingStrategies\Demographics;
 
 
-use App\Models\CCD\Ccda;
-use App\CLH\CCD\Importer\ParsingStrategies\Facades\UserMetaParserHelpers;
-use App\CLH\CCD\ItemLogger\CcdDemographicsLog;
+use App\CLH\CCD\ItemLogger\DemographicsLog;
 use App\CLH\Contracts\CCD\ParsingStrategy;
 use App\CLH\Contracts\CCD\ValidationStrategy;
 use App\CLH\DataTemplates\UserConfigTemplate;
+use App\Models\CCD\Ccda;
 use Carbon\Carbon;
 
 class UserConfig implements ParsingStrategy
@@ -24,7 +23,7 @@ class UserConfig implements ParsingStrategy
 
     public function parse(Ccda $ccd, ValidationStrategy $validator = null)
     {
-        $demographicsSection = CcdDemographicsLog::whereCcdaId($ccd->id)->first();
+        $demographicsSection = DemographicsLog::whereCcdaId($ccd->id)->first();
 
         $this->template->email = $demographicsSection->email;
         $this->template->mrn_number = $demographicsSection->mrn_number;

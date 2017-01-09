@@ -10,7 +10,7 @@ use App\Contracts\Repositories\CcmTimeApiLogRepository;
 use App\Contracts\Repositories\UserRepository;
 use App\ForeignId;
 use App\Http\Controllers\Controller;
-use App\Importer\Loggers\CcdaSectionsLogger;
+use App\Importer\Loggers\Ccda\CcdaSectionsLogger;
 use App\Models\CCD\Ccda;
 use App\Models\CCD\ValidatesQAImportOutput;
 use App\Note;

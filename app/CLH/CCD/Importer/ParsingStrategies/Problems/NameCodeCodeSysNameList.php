@@ -2,11 +2,11 @@
 
 namespace App\CLH\CCD\Importer\ParsingStrategies\Problems;
 
-use App\Models\CCD\Ccda;
 use App\CLH\CCD\ImportedItems\ProblemImport;
-use App\CLH\CCD\ItemLogger\CcdProblemLog;
+use App\CLH\CCD\ItemLogger\ProblemLog;
 use App\CLH\Contracts\CCD\ParsingStrategy;
 use App\CLH\Contracts\CCD\ValidationStrategy;
+use App\Models\CCD\Ccda;
 
 class NameCodeCodeSysNameList implements ParsingStrategy
 {
@@ -14,7 +14,7 @@ class NameCodeCodeSysNameList implements ParsingStrategy
 
     public function parse(Ccda $ccd, ValidationStrategy $validator = null)
     {
-        $problemsSection = CcdProblemLog::whereCcdaId($ccd->id)->get();;
+        $problemsSection = ProblemLog::whereCcdaId($ccd->id)->get();;
 
         $problemsList = '';
 

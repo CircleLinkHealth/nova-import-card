@@ -1,15 +1,14 @@
 <?php
 
-namespace App\Importer\Loggers;
+namespace App\Importer\Loggers\Ccda;
 
 
-use App\CLH\CCD\ItemLogger\CcdAllergyLog;
-use App\CLH\CCD\ItemLogger\CcdDemographicsLog;
-use App\CLH\CCD\ItemLogger\CcdDocumentLog;
-use App\CLH\CCD\ItemLogger\CcdMedicationLog;
-use App\CLH\CCD\ItemLogger\CcdProblemLog;
-use App\CLH\CCD\ItemLogger\CcdProviderLog;
-use App\CLH\CCD\ItemLogger\CcdToLogTranformer;
+use App\CLH\CCD\ItemLogger\AllergyLog;
+use App\CLH\CCD\ItemLogger\DemographicsLog;
+use App\CLH\CCD\ItemLogger\DocumentLog;
+use App\CLH\CCD\ItemLogger\MedicationLog;
+use App\CLH\CCD\ItemLogger\ProblemLog;
+use App\CLH\CCD\ItemLogger\ProviderLog;
 use App\Contracts\Importer\HealthRecord\HealthRecordLogger;
 use App\Models\CCD\Ccda;
 
@@ -45,7 +44,7 @@ class CcdaSectionsLogger implements HealthRecordLogger
     {
         $demographics = $this->ccd->demographics;
 
-        $saved = CcdDemographicsLog::create(
+        $saved = DemographicsLog::create(
             array_merge($this->transformer->demographics($demographics), $this->foreignKeys)
         );
 
@@ -60,7 +59,7 @@ class CcdaSectionsLogger implements HealthRecordLogger
     {
         $document = $this->ccd->document;
 
-        $saved = CcdDocumentLog::create(
+        $saved = DocumentLog::create(
             array_merge($this->transformer->document($document), $this->foreignKeys)
         );
 
@@ -76,7 +75,7 @@ class CcdaSectionsLogger implements HealthRecordLogger
         $medications = $this->ccd->medications;
 
         foreach ($medications as $med) {
-            $saved = CcdMedicationLog::create(
+            $saved = MedicationLog::create(
                 array_merge($this->transformer->medication($med), $this->foreignKeys)
             );
         }
@@ -93,7 +92,7 @@ class CcdaSectionsLogger implements HealthRecordLogger
         $problems = $this->ccd->problems;
 
         foreach ($problems as $prob) {
-            $saved = CcdProblemLog::create(
+            $saved = ProblemLog::create(
                 array_merge($this->transformer->problem($prob), $this->foreignKeys)
             );
         }
@@ -115,7 +114,7 @@ class CcdaSectionsLogger implements HealthRecordLogger
         $providers = $this->ccd->document->documentation_of;
 
         foreach ($providers as $provider) {
-            $saved = CcdProviderLog::create(
+            $saved = ProviderLog::create(
                 array_merge($this->transformer->provider($provider), $this->foreignKeys)
             );
         }
@@ -146,7 +145,7 @@ class CcdaSectionsLogger implements HealthRecordLogger
         $allergies = $this->ccd->allergies;
 
         foreach ($allergies as $allergy) {
-            $saved = CcdAllergyLog::create(
+            $saved = AllergyLog::create(
                 array_merge($this->transformer->allergy($allergy), $this->foreignKeys)
             );
         }

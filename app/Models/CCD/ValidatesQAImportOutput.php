@@ -2,7 +2,7 @@
 
 namespace App\Models\CCD;
 
-use App\CLH\CCD\ItemLogger\CcdDemographicsLog;
+use App\CLH\CCD\ItemLogger\DemographicsLog;
 use App\User;
 use Carbon\Carbon;
 
@@ -13,7 +13,7 @@ trait ValidatesQAImportOutput
         Ccda $ccda,
         $output
     ) {
-        $demographics = CcdDemographicsLog::whereCcdaId($ccda->id)->first();
+        $demographics = DemographicsLog::whereCcdaId($ccda->id)->first();
 
         $name = function () use
         (

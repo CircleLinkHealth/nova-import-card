@@ -1,6 +1,6 @@
 <?php namespace App\CLH\CCD\ImportedItems;
 
-use App\CLH\CCD\ItemLogger\CcdProblemLog;
+use App\CLH\CCD\ItemLogger\ProblemLog;
 use Illuminate\Database\Eloquent\Model;
 
 class ProblemImport extends Model {
@@ -9,7 +9,7 @@ class ProblemImport extends Model {
 
     public function ccdLog()
     {
-        return $this->belongsTo(CcdProblemLog::class);
+        return $this->belongsTo(ProblemLog::class);
     }
 
 }

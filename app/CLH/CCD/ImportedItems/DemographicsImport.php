@@ -1,7 +1,7 @@
 <?php namespace App\CLH\CCD\ImportedItems;
 
 use App\CLH\CCD\ItemLogger\BelongsToCcda;
-use App\CLH\CCD\ItemLogger\CcdDemographicsLog;
+use App\CLH\CCD\ItemLogger\DemographicsLog;
 use App\User;
 use Illuminate\Database\Eloquent\Model;
 use Prettus\Repository\Contracts\Transformable;
@@ -16,7 +16,7 @@ class DemographicsImport extends Model implements Transformable
 
     public function ccdLog()
     {
-        return $this->belongsTo(CcdDemographicsLog::class);
+        return $this->belongsTo(DemographicsLog::class);
     }
 
     public function provider()

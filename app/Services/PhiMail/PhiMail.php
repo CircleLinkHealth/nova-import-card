@@ -2,7 +2,7 @@
 
 use App\CLH\CCD\Importer\QAImportManager;
 use App\CLH\Repositories\CCDImporterRepository;
-use App\Importer\Loggers\CcdaSectionsLogger;
+use App\Importer\Loggers\Ccda\CcdaSectionsLogger;
 use App\Models\CCD\Ccda;
 use App\Models\CCD\CcdVendor;
 use App\User;

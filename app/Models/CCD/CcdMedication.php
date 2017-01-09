@@ -1,6 +1,6 @@
 <?php namespace App\Models\CCD;
 
-use App\CLH\CCD\ItemLogger\CcdMedicationLog;
+use App\CLH\CCD\ItemLogger\MedicationLog;
 use App\Models\CPM\CpmMedicationGroup;
 use App\User;
 use Illuminate\Database\Eloquent\Model;
@@ -28,7 +28,7 @@ class CcdMedication extends Model
      */
     public function ccdLog()
     {
-        return $this->belongsTo(CcdMedicationLog::class);
+        return $this->belongsTo(MedicationLog::class);
     }
 
     /**

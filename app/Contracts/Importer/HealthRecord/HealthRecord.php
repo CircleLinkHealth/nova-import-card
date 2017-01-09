@@ -8,7 +8,7 @@
 
 namespace App\Contracts\Importer\HealthRecord;
 
-use App\CLH\Contracts\CCD\HealthRecordSectionLog;
+use App\Contracts\Importer\HealthRecord\Section\ItemLog;
 use App\Contracts\Importer\ImportedHealthRecord\ImportedHealthRecord;
 use App\User;
 
@@ -32,7 +32,7 @@ interface HealthRecord
     /**
      * Transform the data into HealthRecordSectionLogs, so that they can be fed to the Importer
      *
-     * @return HealthRecordSectionLog|HealthRecord
+     * @return ItemLog|HealthRecord
      */
     public function createLogs() : HealthRecord;
 

@@ -1,12 +1,12 @@
 <?php namespace App\Models\CCD;
 
 use App\CLH\CCD\ItemLogger\ModelLogRelationship;
-use App\CLH\Contracts\CCD\HealthRecordSectionLog;
 use App\Contracts\Importer\HealthRecord\HealthRecord;
 use App\Contracts\Importer\HealthRecord\HealthRecordLogger;
+use App\Contracts\Importer\HealthRecord\Section\ItemLog;
 use App\Contracts\Importer\ImportedHealthRecord\ImportedHealthRecord;
 use App\Entities\CcdaRequest;
-use App\Importer\Loggers\CcdaSectionsLogger;
+use App\Importer\Loggers\Ccda\CcdaSectionsLogger;
 use App\User;
 use Illuminate\Database\Eloquent\Model;
 use Prettus\Repository\Contracts\Transformable;
@@ -69,7 +69,27 @@ class Ccda extends Model implements HealthRecord, Transformable
      */
     public function import() : ImportedHealthRecord
     {
-        // TODO: Implement import() method.
+        $this->createLogs();
+    }
+
+    /**
+     * Log the data into HealthRecordSectionLogs, so that they can be fed to the Importer
+     *
+     * @return ItemLog|HealthRecord
+     */
+    public function createLogs() : HealthRecord
+    {
+        $this->getLogger()->logAllSections();
+    }
+
+    /**
+     * Get the Logger
+     *
+     * @return HealthRecordLogger
+     */
+    public function getLogger() : HealthRecordLogger
+    {
+        return new CcdaSectionsLogger($this);
     }
 
     /**
@@ -140,25 +160,5 @@ class Ccda extends Model implements HealthRecord, Transformable
     public function importProviders() : HealthRecord
     {
         // TODO: Implement importProviders() method.
-    }
-
-    /**
-     * Log the data into HealthRecordSectionLogs, so that they can be fed to the Importer
-     *
-     * @return HealthRecordSectionLog|HealthRecord
-     */
-    public function createLogs() : HealthRecord
-    {
-        $this->getLogger()->logAllSections();
-    }
-
-    /**
-     * Get the Logger
-     *
-     * @return HealthRecordLogger
-     */
-    public function getLogger() : HealthRecordLogger
-    {
-        return new CcdaSectionsLogger($this);
     }
 }

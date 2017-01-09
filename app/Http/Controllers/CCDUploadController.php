@@ -7,7 +7,6 @@ use App\Models\CCD\CcdVendor;
 use App\Models\CCD\QAImportSummary;
 use App\Practice;
 use Illuminate\Http\Request;
-use Illuminate\Support\Collection;
 use Laracasts\Utilities\JavaScript\JavaScriptFacade as JavaScript;
 
 class CCDUploadController extends Controller
@@ -32,8 +31,6 @@ class CCDUploadController extends Controller
         if ( !$request->hasFile( 'file' ) ) {
             return response()->json( 'No file found', 400 );
         }
-
-        $qaSummaries = new Collection();
 
         foreach ( $request->file( 'file' ) as $file ) {
             $xml = file_get_contents( $file );
