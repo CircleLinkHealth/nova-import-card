@@ -10,10 +10,10 @@ namespace App\Services\AthenaAPI;
 
 
 use App\CLH\CCD\Importer\QAImportManager;
-use App\CLH\CCD\ItemLogger\CcdItemLogger;
 use App\CLH\Repositories\CCDImporterRepository;
 use App\Contracts\Repositories\CcdaRepository;
 use App\Contracts\Repositories\CcdaRequestRepository;
+use App\Importer\Loggers\CcdaSectionsLogger;
 use App\Models\CCD\Ccda;
 use App\Models\CCD\CcdVendor;
 use Carbon\Carbon;
@@ -131,7 +131,7 @@ class Service
             $ccda->json = $json;
             $ccda->save();
 
-            $logger = new CcdItemLogger($ccda);
+            $logger = new CcdaSectionsLogger($ccda);
             $logger->logAll();
 
             $importer = new QAImportManager($vendor->program_id, $ccda);

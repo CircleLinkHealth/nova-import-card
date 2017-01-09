@@ -1,8 +1,12 @@
 <?php namespace App\Models\CCD;
 
 use App\CLH\CCD\ItemLogger\ModelLogRelationship;
+use App\CLH\Contracts\CCD\HealthRecordSectionLog;
 use App\Contracts\Importer\HealthRecord\HealthRecord;
+use App\Contracts\Importer\HealthRecord\HealthRecordLogger;
+use App\Contracts\Importer\ImportedHealthRecord\ImportedHealthRecord;
 use App\Entities\CcdaRequest;
+use App\Importer\Loggers\CcdaSectionsLogger;
 use App\User;
 use Illuminate\Database\Eloquent\Model;
 use Prettus\Repository\Contracts\Transformable;
@@ -55,5 +59,106 @@ class Ccda extends Model implements HealthRecord, Transformable
     public function ccdaRequest()
     {
         return $this->hasOne(CcdaRequest::class);
+    }
+
+    /**
+     * Handles importing a HealthRecord for QA.
+     *
+     * @return ImportedHealthRecord
+     *
+     */
+    public function import() : ImportedHealthRecord
+    {
+        // TODO: Implement import() method.
+    }
+
+    /**
+     * Get the User to whom this record belongs to, if one exists.
+     *
+     * @return User
+     */
+    public function getPatient() : User
+    {
+        // TODO: Implement getPatient() method.
+    }
+
+    /**
+     * Import Allergies for QA
+     *
+     * @return HealthRecord
+     */
+    public function importAllergies() : HealthRecord
+    {
+        // TODO: Implement importAllergies() method.
+    }
+
+    /**
+     * Import Demographics for QA
+     *
+     * @return HealthRecord
+     */
+    public function importDemographics() : HealthRecord
+    {
+        // TODO: Implement importDemographics() method.
+    }
+
+    /**
+     * Import Document for QA
+     *
+     * @return HealthRecord
+     */
+    public function importDocument() : HealthRecord
+    {
+        // TODO: Implement importDocument() method.
+    }
+
+    /**
+     * Import Medications for QA
+     *
+     * @return HealthRecord
+     */
+    public function importMedications() : HealthRecord
+    {
+        // TODO: Implement importMedications() method.
+    }
+
+    /**
+     * Import Problems for QA
+     *
+     * @return HealthRecord
+     */
+    public function importProblems() : HealthRecord
+    {
+        // TODO: Implement importProblems() method.
+    }
+
+    /**
+     * Import Providers for QA
+     *
+     * @return HealthRecord
+     */
+    public function importProviders() : HealthRecord
+    {
+        // TODO: Implement importProviders() method.
+    }
+
+    /**
+     * Log the data into HealthRecordSectionLogs, so that they can be fed to the Importer
+     *
+     * @return HealthRecordSectionLog|HealthRecord
+     */
+    public function createLogs() : HealthRecord
+    {
+        $this->getLogger()->logAllSections();
+    }
+
+    /**
+     * Get the Logger
+     *
+     * @return HealthRecordLogger
+     */
+    public function getLogger() : HealthRecordLogger
+    {
+        return new CcdaSectionsLogger($this);
     }
 }

@@ -1,8 +1,8 @@
 <?php namespace App\Services\PhiMail;
 
 use App\CLH\CCD\Importer\QAImportManager;
-use App\CLH\CCD\ItemLogger\CcdItemLogger;
 use App\CLH\Repositories\CCDImporterRepository;
+use App\Importer\Loggers\CcdaSectionsLogger;
 use App\Models\CCD\Ccda;
 use App\Models\CCD\CcdVendor;
 use App\User;
@@ -299,7 +299,7 @@ class PhiMail
         $ccda->json = $json;
         $ccda->save();
 
-        $logger = new CcdItemLogger($ccda);
+        $logger = new CcdaSectionsLogger($ccda);
         $logger->logAll();
 
         $importer = new QAImportManager($vendor->program_id, $ccda);

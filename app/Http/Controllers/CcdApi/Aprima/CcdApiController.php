@@ -2,7 +2,6 @@
 
 use App\CarePlan;
 use App\CLH\CCD\Importer\QAImportManager;
-use App\CLH\CCD\ItemLogger\CcdItemLogger;
 use App\CLH\Repositories\CCDImporterRepository;
 use App\Contracts\Repositories\ActivityRepository;
 use App\Contracts\Repositories\AprimaCcdApiRepository;
@@ -11,6 +10,7 @@ use App\Contracts\Repositories\CcmTimeApiLogRepository;
 use App\Contracts\Repositories\UserRepository;
 use App\ForeignId;
 use App\Http\Controllers\Controller;
+use App\Importer\Loggers\CcdaSectionsLogger;
 use App\Models\CCD\Ccda;
 use App\Models\CCD\ValidatesQAImportOutput;
 use App\Note;
@@ -361,7 +361,7 @@ class CcdApiController extends Controller
             $ccdObj->json = $json;
             $ccdObj->save();
 
-            $logger = new CcdItemLogger($ccdObj);
+            $logger = new CcdaSectionsLogger($ccdObj);
             $logger->logAll();
 
             $providerId = empty($provider['id'])

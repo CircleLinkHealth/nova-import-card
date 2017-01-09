@@ -1,7 +1,6 @@
 <?php namespace App\Http\Controllers;
 
 use App\CLH\CCD\Importer\QAImportManager;
-use App\CLH\CCD\ItemLogger\CcdItemLogger;
 use App\CLH\Repositories\CCDImporterRepository;
 use App\Models\CCD\Ccda;
 use App\Models\CCD\CcdVendor;
@@ -57,8 +56,7 @@ class CCDUploadController extends Controller
                 'source'    => Ccda::IMPORTER,
             ] );
 
-            $logger = new CcdItemLogger( $ccda );
-            $logger->logAll();
+            $ccda->createLogs();
 
             $importer = new QAImportManager($program->id, $ccda);
             $output = $importer->generateCarePlanFromCCD();

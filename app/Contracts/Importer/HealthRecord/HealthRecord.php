@@ -22,8 +22,7 @@ use App\User;
 interface HealthRecord
 {
     /**
-     * This handles parsing a resource and storing it for QA.
-     * Parsing a resource means it
+     * Handles importing a HealthRecord for QA.
      *
      * @return ImportedHealthRecord
      *
@@ -35,14 +34,14 @@ interface HealthRecord
      *
      * @return HealthRecordSectionLog|HealthRecord
      */
-    public function transform() : self;
+    public function createLogs() : HealthRecord;
 
     /**
      * Get the Transformer
      *
-     * @return HealthRecordTransformer
+     * @return HealthRecordLogger
      */
-    public function getTransformer() : HealthRecordTransformer;
+    public function getLogger() : HealthRecordLogger;
 
     /**
      * Get the User to whom this record belongs to, if one exists.
@@ -56,40 +55,40 @@ interface HealthRecord
      *
      * @return HealthRecord
      */
-    public function importAllergies() : self;
+    public function importAllergies() : HealthRecord;
 
     /**
      * Import Demographics for QA
      *
      * @return HealthRecord
      */
-    public function importDemographics() : self;
+    public function importDemographics() : HealthRecord;
 
     /**
      * Import Document for QA
      *
      * @return HealthRecord
      */
-    public function importDocument() : self;
+    public function importDocument() : HealthRecord;
 
     /**
      * Import Medications for QA
      *
      * @return HealthRecord
      */
-    public function importMedications() : self;
+    public function importMedications() : HealthRecord;
 
     /**
      * Import Problems for QA
      *
      * @return HealthRecord
      */
-    public function importProblems() : self;
+    public function importProblems() : HealthRecord;
 
     /**
      * Import Providers for QA
      *
      * @return HealthRecord
      */
-    public function importProviders() : self;
+    public function importProviders() : HealthRecord;
 }
