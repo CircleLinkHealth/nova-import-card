@@ -6,7 +6,7 @@ use App\Algorithms\Calls\UnsuccessfulHandler;
 use App\Call;
 use App\Family;
 use App\Note;
-use App\NurseInfo;
+use App\Nurse;
 use App\Patient;
 use App\PatientMonthlySummary;
 use App\Services\NoteService;
@@ -236,7 +236,7 @@ class SchedulerService
                 'outbound_phone_number' => '',
 
                 'inbound_cpm_id'  => $patient->id,
-                'outbound_cpm_id' => NurseInfo::$nurseMap[$row['Nurse']],
+                'outbound_cpm_id' => Nurse::$nurseMap[$row['Nurse']],
 
                 'call_time' => 0,
 

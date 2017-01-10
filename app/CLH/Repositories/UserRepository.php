@@ -2,7 +2,7 @@
 
 use App\CarePlan;
 use App\CarePlanTemplate;
-use App\NurseInfo;
+use App\Nurse;
 use App\Patient;
 use App\PhoneNumber;
 use App\Practice;
@@ -149,7 +149,7 @@ class UserRepository implements \App\CLH\Contracts\Repositories\UserRepository
 
         // add nurse info
         if ($user->hasRole('care-center') && !$user->nurseInfo) {
-            $nurseInfo = new NurseInfo;
+            $nurseInfo = new Nurse;
             $nurseInfo->user_id = $user->id;
             $nurseInfo->save();
             $user->load('nurseInfo');

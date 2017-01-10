@@ -5,7 +5,7 @@ namespace App;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
 
-class NurseInfo extends Model
+class Nurse extends Model
 {
     //nurse mapping for import csv
     public static $nurseMap = [

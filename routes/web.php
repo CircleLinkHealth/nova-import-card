@@ -1,16 +1,12 @@
 <?php
 
-use App\Reports\PatientDailyAuditReport;
+use Illuminate\Support\Facades\Artisan;
 
 if (app()->environment() != 'production') {
 
     Route::get('rohan', function () {
 
-    return (new PatientDailyAuditReport(
-        \App\Patient::find(1272),
-        \Carbon\Carbon::parse('2017-01-01')
-    ))->renderData();
-
+        $exitCode = Artisan::call('command:name', ['--option' => 'foo']);
 
     });
 }
