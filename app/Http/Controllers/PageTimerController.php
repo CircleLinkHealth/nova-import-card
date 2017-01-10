@@ -133,14 +133,19 @@ class PageTimerController extends Controller
             ->get();
 
         if (!$overlaps->isEmpty() && $startTime->diffInSeconds($endTime) > 0) {
-            $overlapsAsc = $overlaps->sortBy('start_time');
 
+            $overlapsAsc = $overlaps->sortBy('start_time');
             $this->timeTrackingService->figureOutOverlaps($newActivity, $overlapsAsc);
+
         } else {
+
             $newActivity->billable_duration = $duration;
             $newActivity->end_time = $startTime->addSeconds($duration)->toDateTimeString();
             $newActivity->save();
+
         }
+
+        //
 
         if ($newActivity->billable_duration > 3600) {
             $error = __METHOD__ . ' ' . __LINE__;
@@ -178,7 +183,8 @@ class PageTimerController extends Controller
         //user
         $user = User::find($pageTimer->provider_id);
 
-        if (!(bool)$user->count_ccm_time || $pageTimer->patient_id == 0) {
+        //todo: replace with the new things
+        if (!(bool)$user->isCCMCountable() || $pageTimer->patient_id == 0) {
             return false;
         }
 
