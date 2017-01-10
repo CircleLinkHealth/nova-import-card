@@ -16,7 +16,7 @@
                 <div class="col-sm-3" style="top: 16px">
                     <button type="submit"
                             href="{{route('patient.activity.providerUIIndex', ['patientId' => $patient])}}"
-                            value="audit" name="audit" id="audit" class="btn btn-info">Audit Report
+                            value="audit" style="background-color: #E7AD5A;border-color: #E7AD5A;" name="audit" id="audit" class="btn btn-info">Audit Report
                     </button>
                 </div>
                 <div class="form-group  pull-right" style="margin-top:10px; ">
