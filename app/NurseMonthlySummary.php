@@ -12,7 +12,7 @@ class NurseMonthlySummary extends Model
 
     public function nurse(){
 
-        $this->belongsTo(NurseInfo::class, 'id' ,'nurse_id');
+        $this->belongsTo(Nurse::class, 'id' ,'nurse_id');
 
     }
 

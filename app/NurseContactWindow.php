@@ -32,7 +32,7 @@ class NurseContactWindow extends Model
      * Delete all current call windows. Then add the ones given.
      * Returns an array of contact windows created.
      *
-     * @param NurseInfo $info
+     * @param Nurse $info
      * @param $dayOfWeek
      * @param $startTime
      * @param $endTime
@@ -40,7 +40,7 @@ class NurseContactWindow extends Model
      * @return static
      */
     public static function sync(
-        NurseInfo $info,
+        Nurse $info,
         $dayOfWeek,
         $startTime,
         $endTime
@@ -60,7 +60,7 @@ class NurseContactWindow extends Model
 
     public function nurse()
     {
-        return $this->belongsTo(NurseInfo::class, 'nurse_info_id', 'id');
+        return $this->belongsTo(Nurse::class, 'nurse_info_id', 'id');
     }
 
     public function getDayNameAttribute()
