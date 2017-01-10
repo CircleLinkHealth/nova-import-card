@@ -96,9 +96,9 @@ class Nurse extends Model
 
     }
 
-    public function createOrIncrementNurseWindow(
+    public function createOrIncrementNurseWindow( // note, not storing call data for now.
         Nurse $nurse,
-        $overCCMMins, $underCCMMins
+        $toAddToAccuredTowardsCCM, $toAddToAccuredAfterCCM
     ) {
 
         $day_start = Carbon::parse(Carbon::now()->firstOfMonth()->format('Y-m-d'));
@@ -106,18 +106,34 @@ class Nurse extends Model
 
         if($report){
 
+            $report->accured_after_ccm = $toAddToAccuredAfterCCM + $report->accured_after_ccm;
+            $report->accured_towards_ccm = $toAddToAccuredTowardsCCM + $report->accured_towards_ccm;
+            $report->save();
+
+            return $report;
 
          } else {
 
-            NurseMonthlySummary::create([
+            return NurseMonthlySummary::create([
 
-
+                'nurse_id' => $nurse->id,
+                'month_year' => $day_start,
+                'accrued_after_ccm' => $toAddToAccuredAfterCCM,
+                'accrued_towards_ccm' => $toAddToAccuredTowardsCCM,
+                'no_of_calls' => 0,
+                'no_of_successful_calls' => 0
 
 
             ]);
 
         }
 
+    }
+
+    public function adjustCCMPaybleForActivity(Activity $activity){
+
+        $toAddToAccuredTowardsCCM = 0;
+        $toAddToAccuredAfterCCM = 0;
 
         $patient = $activity->patient->patientInfo;
         $ccm_after_activity = $patient->cur_month_activity_time;
@@ -134,21 +150,19 @@ class Nurse extends Model
             if ($ccm_before_activity >= 1200) {
 
                 //add all time to post, paid at lower rate
-                $activity->post_ccm_duration = $activity->duration;
-                $activity->pre_ccm_duration = 0;
+                $toAddToAccuredAfterCCM = $activity->duration;
 
             } elseif ($ccm_before_activity < 1200) { //if patient hasn't met 20mins
 
                 if ($ccm_after_activity > 1200) {//patient reached 20mins with this activity
 
-                    $activity->post_ccm_duration = abs(1200 - $ccm_after_activity);
-                    $activity->pre_ccm_duration = abs(1200 - $ccm_before_activity);
+                    $toAddToAccuredAfterCCM = abs(1200 - $ccm_after_activity);
+                    $toAddToAccuredTowardsCCM = abs(1200 - $ccm_before_activity);
 
                 } else {//patient is still under 20mins
 
                     //all to pre_ccm
-                    $activity->post_ccm_duration = 0;
-                    $activity->pre_ccm_duration = $activity->duration;
+                    $toAddToAccuredTowardsCCM = $activity->duration;
 
                 }
 
@@ -156,6 +170,10 @@ class Nurse extends Model
 
         }
 
+        return [
+            'toAddToAccuredTowardsCCM' => $toAddToAccuredTowardsCCM,
+            'toAddToAccuredAfterCCM' => $toAddToAccuredAfterCCM
+        ];
 
     }
 
