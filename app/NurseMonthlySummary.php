@@ -8,13 +8,19 @@ use Illuminate\Support\Facades\App;
 class NurseMonthlySummary extends Model
 {
 
-    protected $fillable = ['*'];
+    protected $fillable = [
+        'nurse_id',
+        'month_year',
+        'accrued_after_ccm',
+        'accrued_towards_ccm',
+        'no_of_calls',
+        'no_of_successful_calls'
+    ];
 
-    public function nurse(){
+    public function nurse()
+    {
 
-        $this->belongsTo(Nurse::class, 'id' ,'nurse_id');
+        $this->belongsTo(Nurse::class, 'id', 'nurse_id');
 
     }
-
-
 }

@@ -96,4 +96,67 @@ class Nurse extends Model
 
     }
 
+    public function createOrIncrementNurseWindow(
+        Nurse $nurse,
+        $overCCMMins, $underCCMMins
+    ) {
+
+        $day_start = Carbon::parse(Carbon::now()->firstOfMonth()->format('Y-m-d'));
+        $report = PatientMonthlySummary::where('patient_info_id', $this->id)->where('month_year', $day_start)->exists();
+
+        if($report){
+
+
+         } else {
+
+            NurseMonthlySummary::create([
+
+
+
+
+            ]);
+
+        }
+
+
+        $patient = $activity->patient->patientInfo;
+        $ccm_after_activity = $patient->cur_month_activity_time;
+        $isComplex = $patient->isCCMComplex();
+
+        $ccm_before_activity = $ccm_after_activity - $activity->duration;
+
+        if ($isComplex) {
+
+
+        } else {
+
+            //if patient was already over 20 mins.
+            if ($ccm_before_activity >= 1200) {
+
+                //add all time to post, paid at lower rate
+                $activity->post_ccm_duration = $activity->duration;
+                $activity->pre_ccm_duration = 0;
+
+            } elseif ($ccm_before_activity < 1200) { //if patient hasn't met 20mins
+
+                if ($ccm_after_activity > 1200) {//patient reached 20mins with this activity
+
+                    $activity->post_ccm_duration = abs(1200 - $ccm_after_activity);
+                    $activity->pre_ccm_duration = abs(1200 - $ccm_before_activity);
+
+                } else {//patient is still under 20mins
+
+                    //all to pre_ccm
+                    $activity->post_ccm_duration = 0;
+                    $activity->pre_ccm_duration = $activity->duration;
+
+                }
+
+            }
+
+        }
+
+
+    }
+
 }

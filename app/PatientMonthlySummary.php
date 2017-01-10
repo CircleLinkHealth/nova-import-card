@@ -95,7 +95,6 @@ class PatientMonthlySummary extends Model
         foreach ($patients as $patient){
 
             $day_start = Carbon::parse(Carbon::now()->firstOfMonth()->format('Y-m-d'));
-            $day_end = Carbon::parse(Carbon::now()->endOfMonth()->format('Y-m-d'));
 
             PatientMonthlySummary::create([
                 'patient_info_id' => $patient->id,
