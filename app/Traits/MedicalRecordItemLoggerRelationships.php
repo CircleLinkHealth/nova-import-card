@@ -1,6 +1,6 @@
 <?php namespace App\Traits;
 
-use App\CLH\CCD\ImportedItems\DemographicsImport;
+use App\Importer\Models\ImportedItems\DemographicsImport;
 use App\Importer\Models\ItemLogs\AllergyLog;
 use App\Importer\Models\ItemLogs\DemographicsLog;
 use App\Importer\Models\ItemLogs\DocumentLog;
@@ -12,10 +12,10 @@ use App\Importer\Models\ItemLogs\ProviderLog;
  * This trait defines all the CCD Logger relationships.
  * We are putting them all together in this trait so that they can be easily re-used in case.
  *
- * Class HealthRecordItemLoggerRelationships
+ * Class MedicalRecordItemLoggerRelationships
  * @package App\CLH\CCD\ItemLogger
  */
-trait HealthRecordItemLoggerRelationships
+trait MedicalRecordItemLoggerRelationships
 {
     public function allergies()
     {

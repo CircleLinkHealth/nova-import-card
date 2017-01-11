@@ -7,7 +7,7 @@ use App\CLH\Contracts\CCD\ParsingStrategy;
 use App\CLH\Contracts\CCD\ValidationStrategy;
 use App\Importer\Models\ItemLogs\ProviderLog;
 use App\Location;
-use App\Models\CCD\Ccda;
+use App\Models\MedicalRecords\Ccda;
 
 class ProviderLocation implements ParsingStrategy
 {

@@ -1,6 +1,6 @@
 <?php namespace App\Importer\Models\ItemLogs;
 
-use App\Contracts\Importer\HealthRecord\Section\ItemLog;
+use App\Contracts\Importer\MedicalRecord\Section\ItemLog;
 use App\Importer\Models\ImportedItems\AllergyImport;
 use App\Traits\BelongsToCcda;
 use App\Traits\BelongsToVendor;

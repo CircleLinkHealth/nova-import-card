@@ -4,18 +4,18 @@ namespace App\CLH\CCD\Importer;
 
 
 use App\CarePlan;
-use App\CLH\CCD\ImportedItems\DemographicsImport;
 use App\CLH\CCD\Importer\StorageStrategies\Biometrics\BloodPressure;
 use App\CLH\CCD\Importer\StorageStrategies\Biometrics\Weight;
-use App\Models\CCD\Ccda;
+use App\Importer\Models\ImportedItems\DemographicsImport;
 use App\Models\CCD\CcdAllergy;
 use App\Models\CCD\CcdInsurancePolicy;
 use App\Models\CCD\CcdMedication;
 use App\Models\CCD\CcdProblem;
 use App\Models\CPM\CpmMisc;
+use App\Models\MedicalRecords\Ccda;
+use App\Patient;
 use App\PatientCareTeamMember;
 use App\PatientContactWindow;
-use App\Patient;
 use App\PhoneNumber;
 use App\User;
 

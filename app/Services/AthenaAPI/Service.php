@@ -14,8 +14,8 @@ use App\CLH\Repositories\CCDImporterRepository;
 use App\Contracts\Repositories\CcdaRepository;
 use App\Contracts\Repositories\CcdaRequestRepository;
 use App\Importer\Loggers\Ccda\CcdaSectionsLogger;
-use App\Models\CCD\Ccda;
 use App\Models\CCD\CcdVendor;
+use App\Models\MedicalRecords\Ccda;
 use Carbon\Carbon;
 use Maknz\Slack\Facades\Slack;
 

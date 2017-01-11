@@ -3,7 +3,7 @@
 namespace App\Traits;
 
 
-use App\Models\CCD\Ccda;
+use App\Models\MedicalRecords\Ccda;
 
 trait BelongsToCcda
 {

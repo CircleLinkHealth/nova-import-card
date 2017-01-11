@@ -1,6 +1,5 @@
 <?php namespace App\Models\CCD;
 
-use App\Models\CCD\Ccda;
 use Illuminate\Database\Eloquent\Model;
 
 class QAImportSummary extends Model {
@@ -21,7 +20,7 @@ class QAImportSummary extends Model {
 
     public function ccda()
     {
-        return $this->belongsTo(Ccda::class);
+        return $this->belongsTo(\App\Models\MedicalRecords\Ccda::class);
     }
 
 }

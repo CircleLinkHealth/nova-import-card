@@ -3,11 +3,11 @@
 namespace App\CLH\CCD\Importer\ParsingStrategies\Allergies;
 
 
-use App\CLH\CCD\ImportedItems\AllergyImport;
 use App\CLH\Contracts\CCD\ParsingStrategy;
 use App\CLH\Contracts\CCD\ValidationStrategy;
+use App\Importer\Models\ImportedItems\AllergyImport;
 use App\Importer\Models\ItemLogs\AllergyLog;
-use App\Models\CCD\Ccda;
+use App\Models\MedicalRecords\Ccda;
 
 class AllergenNamesList implements ParsingStrategy
 {

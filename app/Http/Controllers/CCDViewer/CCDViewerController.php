@@ -2,7 +2,7 @@
 
 use App\CLH\Repositories\CCDImporterRepository;
 use App\Http\Controllers\Controller;
-use App\Models\CCD\Ccda;
+use App\Models\MedicalRecords\Ccda;
 use Illuminate\Http\Request;
 use JavaScript;
 

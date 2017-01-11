@@ -3,8 +3,8 @@
 use App\CLH\CCD\Importer\QAImportManager;
 use App\CLH\Repositories\CCDImporterRepository;
 use App\Importer\Loggers\Ccda\CcdaSectionsLogger;
-use App\Models\CCD\Ccda;
 use App\Models\CCD\CcdVendor;
+use App\Models\MedicalRecords\Ccda;
 use App\User;
 use Illuminate\Support\Facades\Log;
 use Maknz\Slack\Facades\Slack;
@@ -316,7 +316,7 @@ class PhiMail
      *
      *
      * @param User $user
-     * @param Ccda $ccda
+     * @param \App\Models\MedicalRecords\Ccda $ccda
      * @param $fileNames
      * @param null $line
      * @param null $errorMessage

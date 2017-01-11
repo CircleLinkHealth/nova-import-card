@@ -1,10 +1,9 @@
 <?php namespace App\Http\Controllers;
 
-use App\CLH\CCD\Importer\QAImportManager;
 use App\CLH\Repositories\CCDImporterRepository;
-use App\Models\CCD\Ccda;
 use App\Models\CCD\CcdVendor;
 use App\Models\CCD\QAImportSummary;
+use App\Models\MedicalRecords\Ccda;
 use App\Practice;
 use Illuminate\Http\Request;
 use Laracasts\Utilities\JavaScript\JavaScriptFacade as JavaScript;
@@ -16,7 +15,6 @@ class CCDUploadController extends Controller
     public function __construct(CCDImporterRepository $repo)
     {
         $this->repo = $repo;
-        ini_set( 'memory_limit', '-1' );
     }
 
     /**
@@ -53,10 +51,10 @@ class CCDUploadController extends Controller
                 'source'    => Ccda::IMPORTER,
             ] );
 
-            $ccda->createLogs();
+            $ccda->import();
 
-            $importer = new QAImportManager($program->id, $ccda);
-            $output = $importer->generateCarePlanFromCCD();
+//            $importer = new QAImportManager($program->id, $ccda);
+//            $output = $importer->generateCarePlanFromCCD();
         }
 
         return redirect()->route('view.files.ready.to.import');

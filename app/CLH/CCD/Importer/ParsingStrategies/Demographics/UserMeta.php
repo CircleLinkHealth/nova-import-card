@@ -7,7 +7,7 @@ use App\CLH\Contracts\CCD\ParsingStrategy;
 use App\CLH\Contracts\CCD\ValidationStrategy;
 use App\CLH\DataTemplates\UserMetaTemplate;
 use App\Importer\Models\ItemLogs\DemographicsLog;
-use App\Models\CCD\Ccda;
+use App\Models\MedicalRecords\Ccda;
 
 class UserMeta implements ParsingStrategy
 {

@@ -3,12 +3,12 @@
 namespace App\CLH\CCD\Importer\ParsingStrategies\Medications;
 
 
-use App\CLH\CCD\ImportedItems\MedicationImport;
 use App\CLH\Contracts\CCD\ParsingStrategy;
 use App\CLH\Contracts\CCD\ValidationStrategy;
 use App\CLH\Facades\StringManipulation;
+use App\Importer\Models\ImportedItems\MedicationImport;
 use App\Importer\Models\ItemLogs\MedicationLog;
-use App\Models\CCD\Ccda;
+use App\Models\MedicalRecords\Ccda;
 
 class ReferenceTitleAndSig implements ParsingStrategy
 {

@@ -445,7 +445,7 @@ trait CarePlanHelpers
             'user_id'     => $patient->id,
         ]);
 
-        $ccda = \App\Models\CCD\Ccda::create([
+        $ccda = \App\Models\MedicalRecords\Ccda::create([
             'user_id'   => $patient->id,
             'vendor_id' => 1,
             'source'    => 'test',

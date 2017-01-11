@@ -11,8 +11,8 @@ use App\Contracts\Repositories\UserRepository;
 use App\ForeignId;
 use App\Http\Controllers\Controller;
 use App\Importer\Loggers\Ccda\CcdaSectionsLogger;
-use App\Models\CCD\Ccda;
 use App\Models\CCD\ValidatesQAImportOutput;
+use App\Models\MedicalRecords\Ccda;
 use App\Note;
 use App\PatientCareTeamMember;
 use App\PatientReports;
@@ -391,7 +391,7 @@ class CcdApiController extends Controller
      *
      *
      * @param User $user
-     * @param Ccda $ccda
+     * @param \App\Models\MedicalRecords\Ccda $ccda
      * @param $status
      * @param null $line
      * @param null $errorMessage

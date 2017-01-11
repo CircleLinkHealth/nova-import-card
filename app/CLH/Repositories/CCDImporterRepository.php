@@ -3,7 +3,7 @@
 namespace App\CLH\Repositories;
 
 
-use App\CLH\CCD\ImportedItems\DemographicsImport;
+use App\Importer\Models\ImportedItems\DemographicsImport;
 use App\Role;
 use App\User;
 use GuzzleHttp\Client;

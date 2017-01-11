@@ -6,24 +6,21 @@
  * Time: 12:53 AM
  */
 
-namespace App\Contracts\Importer\ImportedHealthRecord;
+namespace App\Contracts\Importer\ImportedMedicalRecord;
 
 
 use App\CarePlan;
-use App\CLH\CCD\ImportedItems\AllergyImport;
-use App\CLH\CCD\ImportedItems\DemographicsImport;
-use App\CLH\CCD\ImportedItems\MedicationImport;
-use App\CLH\CCD\ImportedItems\ProblemImport;
-use App\Contracts\Importer\HealthRecord\HealthRecord;
+use App\Contracts\Importer\MedicalRecord\MedicalRecord;
+use App\Importer\Models\ImportedItems\DemographicsImport;
 use App\Practice;
 use App\User;
 
-interface ImportedHealthRecord
+interface ImportedMedicalRecord
 {
     /**
      * Get the Allergies that were imported for QA
      *
-     * @return AllergyImport[]
+     * @return \App\Importer\Models\ImportedItems\AllergyImport[]
      */
     public function getAllergies() : array;
 
@@ -37,18 +34,18 @@ interface ImportedHealthRecord
     /**
      * Get the Medications that were imported for QA
      *
-     * @return MedicationImport[]
+     * @return \App\Importer\Models\ImportedItems\MedicationImport[]
      */
     public function getMedications() : array;
 
     /**
      * Get the Problems that were imported for QA
      *
-     * @return ProblemImport[]
+     * @return \App\Importer\Models\ImportedItems\ProblemImport[]
      */
     public function getProblems() : array;
 
-    public function getHealthRecord() : HealthRecord;
+    public function getMedicalRecord() : MedicalRecord;
 
     public function getPractice() : Practice;
 

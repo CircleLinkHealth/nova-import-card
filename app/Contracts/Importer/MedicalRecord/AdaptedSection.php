@@ -1,16 +1,16 @@
 <?php
 
-namespace App\Contracts\Importer\HealthRecord;
+namespace App\Contracts\Importer\MedicalRecord;
 
-use App\Contracts\Importer\HealthRecord\Section\Validator;
-use App\Contracts\Importer\ImportedHealthRecord\ImportedSection;
+use App\Contracts\Importer\ImportedMedicalRecord\ImportedSection;
+use App\Contracts\Importer\MedicalRecord\Section\Validator;
 
 /**
  * This is any Section from a Health Record.
  * Examples include Problems, Medications, Demographics, Vitals, Appointments, Insurance and so
  * on.
  *
- * Interface HealthRecordSection
+ * Interface MedicalRecordSection
  * @package App\Contracts\CCDA
  */
 interface AdaptedSection

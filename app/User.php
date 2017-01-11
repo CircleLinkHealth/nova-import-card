@@ -1,8 +1,7 @@
 <?php namespace App;
 
-use App\CLH\CCD\ImportedItems\DemographicsImport;
 use App\Contracts\Serviceable;
-use App\Models\CCD\Ccda;
+use App\Importer\Models\ImportedItems\DemographicsImport;
 use App\Models\CCD\CcdAllergy;
 use App\Models\CCD\CcdInsurancePolicy;
 use App\Models\CCD\CcdMedication;
@@ -18,6 +17,7 @@ use App\Models\CPM\CpmMisc;
 use App\Models\CPM\CpmProblem;
 use App\Models\CPM\CpmSymptom;
 use App\Models\EmailSettings;
+use App\Models\MedicalRecords\Ccda;
 use App\Notifications\ResetPassword;
 use App\Services\UserService;
 use DateTime;

@@ -8,7 +8,7 @@ use App\CLH\Contracts\CCD\ValidationStrategy;
 use App\CLH\Contracts\Repositories\UserRepository;
 use App\ForeignId;
 use App\Importer\Models\ItemLogs\ProviderLog;
-use App\Models\CCD\Ccda;
+use App\Models\MedicalRecords\Ccda;
 
 class PrimaryProviders implements ParsingStrategy
 {

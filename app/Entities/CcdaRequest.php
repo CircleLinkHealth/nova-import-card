@@ -2,7 +2,7 @@
 
 namespace App\Entities;
 
-use App\Models\CCD\Ccda;
+use App\Models\MedicalRecords\Ccda;
 use Illuminate\Database\Eloquent\Model;
 use Prettus\Repository\Contracts\Transformable;
 use Prettus\Repository\Traits\TransformableTrait;

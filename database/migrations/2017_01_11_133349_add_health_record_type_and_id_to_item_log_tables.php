@@ -29,10 +29,10 @@ class AddHealthRecordTypeAndIdToItemLogTables extends Migration
 
         foreach ($tables as $t) {
             Schema::table($t, function (Blueprint $table) {
-                $table->unsignedInteger('health_record_id')
+                $table->unsignedInteger('medical_record_id')
                     ->nullable()
                     ->after('id');
-                $table->string('health_record_type')
+                $table->string('medical_record_type')
                     ->nullable()
                     ->after('id');
             });
@@ -62,8 +62,8 @@ class AddHealthRecordTypeAndIdToItemLogTables extends Migration
 
         foreach ($tables as $t) {
             Schema::table($t, function (Blueprint $table) {
-                $table->dropColumn('health_record_id');
-                $table->dropColumn('health_record_type');
+                $table->dropColumn('medical_record_id');
+                $table->dropColumn('medical_record_type');
             });
         }
     }

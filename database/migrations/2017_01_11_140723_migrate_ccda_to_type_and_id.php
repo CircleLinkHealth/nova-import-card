@@ -10,7 +10,7 @@ use App\Importer\Models\ItemLogs\DocumentLog;
 use App\Importer\Models\ItemLogs\MedicationLog;
 use App\Importer\Models\ItemLogs\ProblemLog;
 use App\Importer\Models\ItemLogs\ProviderLog;
-use App\Models\HealthRecords\Ccda;
+use App\Models\MedicalRecords\Ccda;
 use Illuminate\Database\Migrations\Migration;
 
 class MigrateCcdaToTypeAndId extends Migration
@@ -41,8 +41,8 @@ class MigrateCcdaToTypeAndId extends Migration
 
             foreach ($allRows as $row) {
                 if ($row->ccda_id) {
-                    $row->health_record_type = Ccda::class;
-                    $row->health_record_id = $row->ccda_id;
+                    $row->medical_record_type = Ccda::class;
+                    $row->medical_record_id = $row->ccda_id;
                     $row->save();
                 }
             }

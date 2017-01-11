@@ -3,7 +3,6 @@
 namespace App\CLH\CCD\Importer;
 
 
-use App\CLH\CCD\ImportedItems\DemographicsImport;
 use App\CLH\CCD\Importer\ParsingStrategies\CareTeam\PrimaryProviders as PrimaryProvidersParser;
 use App\CLH\CCD\Importer\ParsingStrategies\Demographics\UserConfig as UserConfigParser;
 use App\CLH\CCD\Importer\ParsingStrategies\Demographics\UserMeta as UserMetaParser;
@@ -14,11 +13,12 @@ use App\CLH\CCD\ImportRoutine\RoutineBuilder;
 use App\CLH\DataTemplates\UserConfigTemplate;
 use App\CLH\DataTemplates\UserMetaTemplate;
 use App\CLH\Repositories\UserRepository;
+use App\Importer\Models\ImportedItems\DemographicsImport;
 use App\Location;
-use App\Models\CCD\Ccda;
 use App\Models\CCD\CcdInsurancePolicy;
 use App\Models\CCD\CcdVendor;
 use App\Models\CCD\ValidatesQAImportOutput;
+use App\Models\MedicalRecords\Ccda;
 use App\User;
 
 class QAImportManager

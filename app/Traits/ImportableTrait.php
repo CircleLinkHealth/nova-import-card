@@ -9,7 +9,7 @@
 namespace App\Traits;
 
 
-use App\Contracts\Importer\ImportedHealthRecord\ImportedHealthRecord;
+use App\Contracts\Importer\ImportedMedicalRecord\ImportedMedicalRecord;
 
 trait ImportableTrait
 {
@@ -17,10 +17,10 @@ trait ImportableTrait
      * This handles parsing a resource and storing it for QA.
      * Parsing a resource means it
      *
-     * @return ImportedHealthRecord
+     * @return ImportedMedicalRecord
      *
      */
-    public function import() : ImportedHealthRecord
+    public function import() : ImportedMedicalRecord
     {
         $this->importAllergies()
             ->importDemographics()

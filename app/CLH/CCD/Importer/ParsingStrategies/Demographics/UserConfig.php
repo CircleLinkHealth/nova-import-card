@@ -7,7 +7,7 @@ use App\CLH\Contracts\CCD\ParsingStrategy;
 use App\CLH\Contracts\CCD\ValidationStrategy;
 use App\CLH\DataTemplates\UserConfigTemplate;
 use App\Importer\Models\ItemLogs\DemographicsLog;
-use App\Models\CCD\Ccda;
+use App\Models\MedicalRecords\Ccda;
 use Carbon\Carbon;
 
 class UserConfig implements ParsingStrategy
