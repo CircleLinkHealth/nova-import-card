@@ -39,10 +39,12 @@ class Allergies implements SectionImporter
             $itemLog->save();
 
             $allergiesList[] = AllergyImport::create([
-                'ccda_id'            => $itemLog->ccda_id,
-                'vendor_id'          => $itemLog->vendor_id,
-                'ccd_allergy_log_id' => $itemLog->id,
-                'allergen_name'      => $itemLog->allergen_name,
+                'ccda_id'             => $itemLog->ccda_id,
+                'vendor_id'           => $itemLog->vendor_id,
+                'ccd_allergy_log_id'  => $itemLog->id,
+                'allergen_name'       => $itemLog->allergen_name,
+                'medical_record_type' => $healthRecordType,
+                'medical_record_id'   => $healthRecordId,
             ]);
         }
     }

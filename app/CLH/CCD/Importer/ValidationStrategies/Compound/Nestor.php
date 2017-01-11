@@ -3,9 +3,9 @@
 namespace App\CLH\CCD\Importer\ValidationStrategies\Compound;
 
 
-use App\CLH\CCD\Importer\ValidationStrategies\ValidEndDate;
-use App\CLH\CCD\Importer\ValidationStrategies\ValidStartDateNoEndDate;
 use App\CLH\Contracts\CCD\ValidationStrategy;
+use App\Importer\Section\Validators\ValidEndDate;
+use App\Importer\Section\Validators\ValidStartDateNoEndDate;
 
 class Nestor implements ValidationStrategy
 {
