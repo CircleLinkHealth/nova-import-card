@@ -7,6 +7,7 @@ use App\Contracts\Importer\MedicalRecord\Section\ItemLog;
 use App\Entities\CcdaRequest;
 use App\Importer\Loggers\Ccda\CcdaSectionsLogger;
 use App\Importer\Section\Importers\Allergies;
+use App\Importer\Section\Importers\Medications;
 use App\Importer\Section\Importers\Problems;
 use App\Models\CCD\QAImportSummary;
 use App\Traits\MedicalRecordItemLoggerRelationships;
@@ -123,7 +124,7 @@ class Ccda extends Model implements MedicalRecord, Transformable
      */
     public function getPatient() : User
     {
-        // TODO: Implement getPatient() method.
+        return $this->patient;
     }
 
     /**
@@ -155,8 +156,10 @@ class Ccda extends Model implements MedicalRecord, Transformable
      */
     public function importMedications() : MedicalRecord
     {
-        return $this;
+        $importer = new Medications();
+        $importer->import($this->id, self::class);
 
+        return $this;
     }
 
     /**
