@@ -1,4 +1,4 @@
-<?php namespace App\CLH\CCD\ImportedItems;
+<?php namespace App\Importer\Models\ImportedItems;
 
 use App\Importer\Models\ItemLogs\AllergyLog;
 use Illuminate\Database\Eloquent\Model;
