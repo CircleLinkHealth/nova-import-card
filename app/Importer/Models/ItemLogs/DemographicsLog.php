@@ -1,13 +1,17 @@
 <?php namespace App\Importer\Models\ItemLogs;
 
-use App\CLH\CCD\ImportedItems\DemographicsImport;
 use App\Contracts\Importer\HealthRecord\Section\ItemLog;
+use App\Importer\Models\ImportedItems\DemographicsImport;
+use App\Traits\BelongsToCcda;
+use App\Traits\BelongsToVendor;
 use Illuminate\Database\Eloquent\Model;
 
 class DemographicsLog extends Model implements ItemLog
 {
 
-    use App\Traits\BelongsToCcda, App\Traits\BelongsToVendor;
+    use BelongsToCcda, BelongsToVendor;
+
+    protected $table = 'ccd_demographics_logs';
 
     protected $guarded = [];
 

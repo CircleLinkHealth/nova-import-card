@@ -2,12 +2,16 @@
 
 use App\CLH\CCD\ImportedItems\ProviderImport;
 use App\Contracts\Importer\HealthRecord\Section\ItemLog;
+use App\Traits\BelongsToCcda;
+use App\Traits\BelongsToVendor;
 use Illuminate\Database\Eloquent\Model;
 
 class ProviderLog extends Model implements ItemLog
 {
 
-    use App\Traits\BelongsToCcda, App\Traits\BelongsToVendor;
+    use BelongsToCcda, BelongsToVendor;
+
+    protected $table = 'ccd_provider_logs';
 
     protected $guarded = [];
 

@@ -1,12 +1,16 @@
 <?php namespace App\Importer\Models\ItemLogs;
 
-use App\CLH\CCD\ImportedItems\AllergyImport;
 use App\Contracts\Importer\HealthRecord\Section\ItemLog;
+use App\Importer\Models\ImportedItems\AllergyImport;
+use App\Traits\BelongsToCcda;
+use App\Traits\BelongsToVendor;
 use Illuminate\Database\Eloquent\Model;
 
 class AllergyLog extends Model implements ItemLog
 {
-    use App\Traits\BelongsToCcda, App\Traits\BelongsToVendor;
+    use BelongsToCcda, BelongsToVendor;
+
+    protected $table = 'ccd_allergy_logs';
 
     protected $guarded = [];
 
