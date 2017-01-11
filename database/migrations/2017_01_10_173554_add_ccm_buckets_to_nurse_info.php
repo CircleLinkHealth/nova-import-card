@@ -1,8 +1,8 @@
 <?php
 
-use Illuminate\Support\Facades\Schema;
-use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Schema;
 
 class AddCcmBucketsToNurseInfo extends Migration
 {
@@ -15,10 +15,15 @@ class AddCcmBucketsToNurseInfo extends Migration
     {
         Schema::table('nurse_monthly_summaries', function (Blueprint $table) {
 
-            $table->dropColumn('time');
-            $table->dropColumn('ccm_time');
-            $table->integer('accrued_towards_ccm')->default(0)->after('month_year');
-            $table->integer('accrued_after_ccm')->default(0)->after('month_year');
+            if (Schema::hasColumn('nurse_monthly_summaries', 'time')) {
+                $table->dropColumn('time');
+                $table->dropColumn('ccm_time');
+            }
+
+            if (!Schema::hasColumn('nurse_monthly_summaries', 'accrued_towards_ccm')) {
+                $table->integer('accrued_towards_ccm')->default(0)->after('month_year');
+                $table->integer('accrued_after_ccm')->default(0)->after('month_year');
+            }
 
         });
     }
