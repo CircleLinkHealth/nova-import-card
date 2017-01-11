@@ -1,6 +1,6 @@
 <?php
 
-namespace App\CLH\CCD\Importer\ParsingStrategies\Problems;
+namespace App\Importer\Section\Importers;
 
 
 use App\Importer\Models\ItemLogs\ProblemLog;

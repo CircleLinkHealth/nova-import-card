@@ -17,8 +17,8 @@ namespace App\Contracts\Importer\MedicalRecord\Section;
 interface Importer
 {
     public function import(
-        $healthRecordId,
-        $healthRecordType
+        $medicalRecordId,
+        $medicalRecordType
     );
 
     public function chooseValidator(ItemLog $item);

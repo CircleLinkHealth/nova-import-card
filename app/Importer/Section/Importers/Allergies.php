@@ -15,11 +15,11 @@ use App\Importer\Models\ItemLogs\AllergyLog;
 class Allergies extends BaseImporter
 {
     public function import(
-        $healthRecordId,
-        $healthRecordType
+        $medicalRecordId,
+        $medicalRecordType
     ) {
-        $itemLogs = AllergyLog::where('medical_record_type', '=', $healthRecordType)
-            ->where('medical_record_id', '=', $healthRecordId)
+        $itemLogs = AllergyLog::where('medical_record_type', '=', $medicalRecordType)
+            ->where('medical_record_id', '=', $medicalRecordId)
             ->get();
 
         foreach ($itemLogs as $itemLog) {
@@ -39,8 +39,8 @@ class Allergies extends BaseImporter
                 'vendor_id'           => $itemLog->vendor_id,
                 'ccd_allergy_log_id'  => $itemLog->id,
                 'allergen_name'       => $itemLog->allergen_name,
-                'medical_record_type' => $healthRecordType,
-                'medical_record_id'   => $healthRecordId,
+                'medical_record_type' => $medicalRecordType,
+                'medical_record_id'   => $medicalRecordId,
             ]);
         }
     }

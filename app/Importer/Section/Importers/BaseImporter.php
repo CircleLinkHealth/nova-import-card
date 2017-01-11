@@ -47,8 +47,8 @@ abstract class BaseImporter implements SectionImporter
         return \Config::get('importer')['validators'];
     }
 
-    abstract function import(
-        $healthRecordId,
-        $healthRecordType
+    abstract public function import(
+        $medicalRecordId,
+        $medicalRecordType
     );
 }
