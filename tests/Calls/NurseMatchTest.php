@@ -4,21 +4,6 @@ use App\Algorithms\Calls\CallAlgoHelper;
 use App\User;
 use Tests\Helpers\UserHelpers;
 
-/**
- * Tests CallAlgoHelper::findNurse()
- *
- * Script:
- *
- * Patient1 has just finished a scheduled call and the portion of the
- * algorithm that matches Nurse Windows to determine the next call runs.
- *
- * The Logic looks for the last called Nurse and checks for whether
- * they have a contact window. If not, it then moves on to the
- * other nurses in the system who are allowed to see the
- * program
- *
- */
-
 class NurseMatchTest extends TestCase
 {
     private $nurse;

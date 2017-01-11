@@ -22,6 +22,9 @@
         <testsuite name="Notes">
             <directory>./tests/Notes/</directory>
         </testsuite>
+        <testsuite name="TimeTracking">
+            <directory>./tests/TimeTracking/</directory>
+        </testsuite>
         <testsuite name="Calls">
             <directory>./tests/Calls/</directory>
         </testsuite>

@@ -163,7 +163,9 @@ class PageTimerController extends Controller
 
         }
 
-        $this->addPageTimerActivities($newActivity);
+        $pagerTimer = $this->addPageTimerActivities($newActivity);
+
+        //@todo
 
         return response("PageTimer Logged, duration:" . $duration, 201);
     }
@@ -173,7 +175,7 @@ class PageTimerController extends Controller
      *
      * @param array $page_timer_ids
      *
-     * @return bool
+     * @return PageTimer
      */
     public function addPageTimerActivities(PageTimer $pageTimer)
     {
@@ -183,7 +185,6 @@ class PageTimerController extends Controller
         //user
         $user = User::find($pageTimer->provider_id);
 
-        //todo: replace with the new things
         if (!(bool)$user->isCCMCountable() || $pageTimer->patient_id == 0) {
             return false;
         }
@@ -222,6 +223,13 @@ class PageTimerController extends Controller
 
             $activityService = new ActivityService;
             $result = $activityService->reprocessMonthlyActivityTime($pageTimer->patient_id);
+
+            $pageTimer->processed = 'Y';
+            $pageTimer->rule_params = serialize($params);
+
+            $pageTimer->save();
+
+            return $activityId;
         }
 
         // update pagetimer
@@ -230,7 +238,7 @@ class PageTimerController extends Controller
 
         $pageTimer->save();
 
-        return true;
+        return false;
     }
 
     /**
