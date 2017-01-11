@@ -109,6 +109,22 @@ class Calls
     }
 
     /**
+     * Get available practices. Passing in practiceId of 1 will return all practices we have access to.
+     *
+     * @param $practiceId
+     *
+     * @return mixed
+     */
+    public function getAvailablePractices($practiceId = 1)
+    {
+        $response = $this->api->GET("$practiceId/practiceinfo", [
+            //$practiceId defaults to 1, which will give us all practices we have access to
+        ]);
+
+        return $this->response($response);
+    }
+
+    /**
      * Get all department ids for a practice.
      *
      * @param $practiceId

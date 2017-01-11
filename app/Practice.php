@@ -102,6 +102,7 @@ class Practice extends Model
         ) {
             $q->whereName($role);
         })
+            ->where('user_status', 1)
             ->count();
 
     }

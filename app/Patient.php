@@ -288,7 +288,7 @@ class Patient extends Model {
 
         //Get user's programs
 
-        $nurses = NurseInfo
+        $nurses = Nurse
             ::whereHas('windows', function($q){
                 $q->where('date', '>', Carbon::now()->toDateTimeString());
             })->get();

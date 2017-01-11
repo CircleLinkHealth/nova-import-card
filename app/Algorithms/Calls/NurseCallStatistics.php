@@ -46,7 +46,7 @@ class NurseCallStatistics
 
         $results = [];
 
-//        $this->nurses = [NurseInfo::find(5)];
+//        $this->nurses = [Nurse::find(5)];
 
         foreach ($this->nurses as $nurse) {
 

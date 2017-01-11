@@ -16,10 +16,12 @@ class ActivityService
      * @param $userId
      * @param Carbon $from
      * @param Carbon $to
+     *
      * @return mixed
      */
 
-    public function getOfflineActivitiesForPatient(User $patient){
+    public function getOfflineActivitiesForPatient(User $patient)
+    {
 
         return Activity::select(DB::raw('*'))
             ->where('patient_id', $patient->id)
@@ -30,12 +32,16 @@ class ActivityService
 
     }
 
-    public function getTotalActivityTimeForRange($userId, Carbon $from, Carbon $to)
-    {
+    public function getTotalActivityTimeForRange(
+        $userId,
+        Carbon $from,
+        Carbon $to
+    ) {
         $acts = new Collection(DB::table('lv_activities')
             ->select(DB::raw('id,provider_id,logged_from,DATE(performed_at), type, SUM(duration) as duration'))
             ->whereBetween('performed_at', [
-                $from, $to
+                $from,
+                $to,
             ])
             ->where('patient_id', $userId)
             ->where(function ($q) {
@@ -100,8 +106,11 @@ class ActivityService
         return true;
     }
 
-    public function getTotalActivityTimeForMonth($userId, $month = false, $year = false)
-    {
+    public function getTotalActivityTimeForMonth(
+        $userId,
+        $month = false,
+        $year = false
+    ) {
         // if no month, set to current month
         if (!$month) {
             $month = date('m');
@@ -120,7 +129,8 @@ class ActivityService
         $acts = DB::table('lv_activities')
             ->select(DB::raw('id,provider_id,logged_from, performed_at, type, SUM(duration) as duration'))
             ->whereBetween('performed_at', [
-                $start, $end
+                $start,
+                $end,
             ])
             ->where('patient_id', $userId)
             ->where(function ($q) {
@@ -140,6 +150,7 @@ class ActivityService
         /*
         $totalDuration = Activity::where( \DB::raw('MONTH(performed_at)'), '=', $month )->where( \DB::raw('YEAR(performed_at)'), '=', $year )->where( 'patient_id', '=', $userId )->sum('duration');
         */
+
         return $totalDuration;
     }
 

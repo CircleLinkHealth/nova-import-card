@@ -10,7 +10,7 @@ namespace App\Algorithms\Calls;
 
 
 use App\Call;
-use App\NurseInfo;
+use App\Nurse;
 use App\PatientContactWindow;
 use Carbon\Carbon;
 
@@ -86,7 +86,7 @@ trait CallAlgoHelper
     {
 
         //last contacted nurse is first up
-        $this->nurse = NurseInfo::where('user_id', $this->patient->lastReachedNurse())
+        $this->nurse = Nurse::where('user_id', $this->patient->lastReachedNurse())
             ->with('windows')
             ->first();
 
@@ -149,7 +149,7 @@ trait CallAlgoHelper
 
     }
 
-    public function checkNurseForTargetDays(NurseInfo $nurse)
+    public function checkNurseForTargetDays(Nurse $nurse)
     {
 
         //see if there are any window intersections within the next 3 days.

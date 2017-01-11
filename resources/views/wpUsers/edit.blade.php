@@ -232,7 +232,7 @@
                                             <div class="col-xs-2">{!! Form::label('ccm_status', 'CCM Status:') !!}</div>
                                             <div class="col-xs-4">{!! Form::select('ccm_status', array('paused' => 'paused', 'enrolled' => 'enrolled', 'withdrawn' => 'withdrawn'), $patient->ccmStatus, ['class' => 'form-control select-picker', 'style' => 'width:40%;']) !!}</div>
                                             <div class="col-xs-2">{!! Form::label('careplan_status', 'Careplan Status:') !!}</div>
-                                            <div class="col-xs-4">{!! Form::select('careplan_status', array('draft' => 'draft', 'qa_approved' => 'qa_approved', 'provider_approved' => 'provider_approved'), $patient->careplan_status, ['class' => 'form-control select-picker', 'style' => 'width:40%;']) !!}</div>
+                                            <div class="col-xs-4">{!! Form::select('careplan_status', array('draft' => 'draft', 'qa_approved' => 'qa_approved', 'provider_approved' => 'provider_approved'), $patient->careplan->status, ['class' => 'form-control select-picker', 'style' => 'width:40%;']) !!}</div>
                                         </div>
                                     </div>
 

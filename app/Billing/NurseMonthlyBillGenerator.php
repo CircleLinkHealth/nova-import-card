@@ -4,7 +4,7 @@ namespace App\Billing;
 
 use App\Activity;
 use App\Call;
-use App\NurseInfo;
+use App\Nurse;
 use App\PageTimer;
 use Barryvdh\Snappy\Facades\SnappyPdf as PDF;
 use Carbon\Carbon;
@@ -44,7 +44,7 @@ class NurseMonthlyBillGenerator
     //total ccm time accumulated
     protected $activityTime;
 
-    public function __construct(NurseInfo $newNurse,
+    public function __construct(Nurse $newNurse,
                                 Carbon $billingDateStart,
                                 Carbon $billingDateEnd,
                                 $manualTimeAdd = 0,
@@ -75,7 +75,6 @@ class NurseMonthlyBillGenerator
     }
 
     public function getSystemTimeForNurse(){
-
 
         $this->systemTime = PageTimer::where('provider_id', $this->nurse->user_id)
             ->where(function ($q){

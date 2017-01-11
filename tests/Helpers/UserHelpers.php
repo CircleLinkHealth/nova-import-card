@@ -12,7 +12,7 @@ use App\Call;
 use App\CLH\Facades\StringManipulation;
 use App\CLH\Repositories\UserRepository;
 use App\NurseContactWindow;
-use App\NurseInfo;
+use App\Nurse;
 use App\PatientContactWindow;
 use App\Patient;
 use App\Practice;
@@ -121,7 +121,7 @@ trait UserHelpers
 
     public function createLastCallForPatient(
         Patient $patient,
-        NurseInfo $scheduler
+        Nurse $scheduler
     ) {
 
         $call = Call::create([
@@ -157,7 +157,7 @@ trait UserHelpers
     }
 
     public function createWindowForNurse(
-        NurseInfo $nurse,
+        Nurse $nurse,
         Carbon $st,
         Carbon $end
     ) {

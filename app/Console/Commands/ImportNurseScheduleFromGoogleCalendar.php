@@ -3,7 +3,7 @@
 namespace App\Console\Commands;
 
 use App\NurseContactWindow;
-use App\NurseInfo;
+use App\Nurse;
 use App\User;
 use Carbon\Carbon;
 use Illuminate\Console\Command;
@@ -55,7 +55,7 @@ class ImportNurseScheduleFromGoogleCalendar extends Command
 
         foreach ($events as $event) {
             try {
-                $nurseId = NurseInfo::$nurseMap[$event->name];
+                $nurseId = Nurse::$nurseMap[$event->name];
             } catch (\Exception $e) {
                 continue;
             }

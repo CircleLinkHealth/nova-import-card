@@ -5,7 +5,7 @@ namespace App\Http\Controllers;
 use App\Activity;
 use App\Billing\NurseMonthlyBillGenerator;
 use App\Call;
-use App\NurseInfo;
+use App\Nurse;
 use App\PageTimer;
 use App\User;
 use Carbon\Carbon;
@@ -19,7 +19,7 @@ class NurseController extends Controller
     public function makeInvoice()
     {
 
-        $nurses = (new \App\NurseInfo())->activeNursesForUI();
+        $nurses = (new \App\Nurse())->activeNursesForUI();
 
         return view('billing.nurse.create',
             [
@@ -46,7 +46,7 @@ class NurseController extends Controller
 
             foreach ($nurses as $nurse) {
 
-                $nurse = NurseInfo::where('user_id', $nurse)->first();
+                $nurse = Nurse::where('user_id', $nurse)->first();
                 $startDate = Carbon::parse($request->input('start_date'));
                 $endDate = Carbon::parse($request->input('end_date'));
 
@@ -188,7 +188,7 @@ class NurseController extends Controller
     public function makeHourlyStatistics()
     {
 
-//        $data = (new NurseCallStatistics(NurseInfo::all(),
+//        $data = (new NurseCallStatistics(Nurse::all(),
 //                                Carbon::parse('2016-09-29 09:00:00'),
 //                                Carbon::parse('2016-09-29 10:00:00')))
 //            ->nurseCallsPerHour();
@@ -205,7 +205,7 @@ class NurseController extends Controller
         foreach ($data as $nurse_array) {
             
             $fileName = $nurse_array['link'];
-            $nurse = NurseInfo::find($nurse_array['id']);
+            $nurse = Nurse::find($nurse_array['id']);
             $date_start = $nurse_array['date_start'];
             $date_end = $nurse_array['date_end'];
 
