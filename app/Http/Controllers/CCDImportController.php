@@ -7,8 +7,8 @@ use App\Importer\Models\ImportedItems\DemographicsImport;
 use App\Importer\Models\ImportedItems\MedicationImport;
 use App\Importer\Models\ImportedItems\ProblemImport;
 use App\Models\CCD\CcdVendor;
-use App\Models\CCD\QAImportSummary;
 use App\Models\MedicalRecords\Ccda;
+use App\Models\MedicalRecords\ImportedMedicalRecord;
 use App\User;
 use Illuminate\Http\Request;
 
@@ -94,7 +94,7 @@ class CCDImportController extends Controller
             foreach ($ccdsToDelete as $id) {
                 if (empty($id)) continue;
                 Ccda::destroy($id);
-                $summary = QAImportSummary::whereCcdaId($id)->first();
+                $summary = ImportedMedicalRecord::whereCcdaId($id)->first();
                 if (!empty($summary)) $summary->delete();
 
                 $deleted[] = $id;

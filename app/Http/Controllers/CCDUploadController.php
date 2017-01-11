@@ -2,8 +2,8 @@
 
 use App\CLH\Repositories\CCDImporterRepository;
 use App\Models\CCD\CcdVendor;
-use App\Models\CCD\QAImportSummary;
 use App\Models\MedicalRecords\Ccda;
+use App\Models\MedicalRecords\ImportedMedicalRecord;
 use App\Practice;
 use Illuminate\Http\Request;
 use Laracasts\Utilities\JavaScript\JavaScriptFacade as JavaScript;
@@ -85,9 +85,10 @@ class CCDUploadController extends Controller
     public function index()
     {
         //get rid of orphans
-        $delete = QAImportSummary::whereNull('ccda_id')->delete();
+        $delete = ImportedMedicalRecord::whereNull('ccda_id')->delete();
 
-        $qaSummaries = QAImportSummary::with(['ccda' => function ($query) {
+        $qaSummaries = ImportedMedicalRecord::with([
+            'ccda' => function ($query) {
                 $query->select('id', 'source', 'created_at')
                     ->whereNull('patient_id');
             }])

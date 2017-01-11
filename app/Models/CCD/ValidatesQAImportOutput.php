@@ -4,6 +4,7 @@ namespace App\Models\CCD;
 
 use App\Importer\Models\ItemLogs\DemographicsLog;
 use App\Models\MedicalRecords\Ccda;
+use App\Models\MedicalRecords\ImportedMedicalRecord;
 use App\User;
 use Carbon\Carbon;
 
@@ -131,7 +132,7 @@ trait ValidatesQAImportOutput
             $allergies,
             $fullName
         ) {
-            return QAImportSummary::whereMedications($medications)
+            return ImportedMedicalRecord::whereMedications($medications)
                 ->whereProblems($problems)
                 ->whereAllergies($allergies)
                 ->whereName($fullName)
@@ -165,7 +166,7 @@ trait ValidatesQAImportOutput
             }
         }
 
-        $qaSummary = new QAImportSummary();
+        $qaSummary = new ImportedMedicalRecord();
         $qaSummary->ccda_id = $ccda->id;
         $qaSummary->name = $fullName;
         $qaSummary->medications = $medications;

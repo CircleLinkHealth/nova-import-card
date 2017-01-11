@@ -10,7 +10,7 @@ namespace Tests\Helpers;
 
 
 use App\Models\CCD\CcdVendor;
-use App\Models\CCD\QAImportSummary;
+use App\Models\MedicalRecords\ImportedMedicalRecord;
 
 trait CcdImporterHelpers
 {
@@ -44,7 +44,7 @@ trait CcdImporterHelpers
             ->see('Delete')
             ->see('IMPORT/DELETE CHECKED CCDS');
 
-        $summary = QAImportSummary::all()->last();
+        $summary = ImportedMedicalRecord::all()->last();
 
         $this->assertTrue(!empty($summary->name));
         $this->see($summary->name);
