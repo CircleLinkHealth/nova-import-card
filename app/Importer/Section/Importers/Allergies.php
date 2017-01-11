@@ -8,16 +8,12 @@
 
 namespace App\Importer\Section\Importers;
 
-use App\Contracts\Importer\MedicalRecord\Section\Importer as SectionImporter;
-use App\Contracts\Importer\MedicalRecord\Section\ItemLog;
-use App\Contracts\Importer\MedicalRecord\Section\Validator;
 use App\Importer\Models\ImportedItems\AllergyImport;
 use App\Importer\Models\ItemLogs\AllergyLog;
 
 
-class Allergies implements SectionImporter
+class Allergies extends BaseImporter
 {
-
     public function import(
         $healthRecordId,
         $healthRecordType
@@ -48,38 +44,4 @@ class Allergies implements SectionImporter
             ]);
         }
     }
-
-    public function validate(ItemLog $item)
-    {
-        $validator = $this->chooseValidator($item);
-
-        if (!$validator) {
-            return false;
-        }
-
-        return $validator->isValid($item);
-    }
-
-    public function chooseValidator(ItemLog $item)
-    {
-        foreach ($this->validators() as $className) {
-
-            $validator = app($className);
-
-            if ($validator->shouldValidate($item)) {
-                return $validator;
-            }
-        }
-
-        return false;
-    }
-
-    /**
-     * @return Validator[]
-     */
-    public function validators() : array
-    {
-        return \Config::get('importer')['validators'];
-    }
-
 }
