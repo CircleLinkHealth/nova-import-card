@@ -166,32 +166,15 @@ class PageTimerController extends Controller
 
         $activityId = $this->addPageTimerActivities($newActivity);
 
-        if($activityId){
+        if ($activityId) {
 
-            $activity = Activity::find($activityId);
-            $nurse = User::find($activity->provider_id)->nurseInfo;
-
-            if($nurse){
-                $data = (new NurseMonthlySummary())->adjustCCMPaybleForActivity($activity);
-
-                $report = (new NurseMonthlySummary())->createOrIncrementNurseSummary(
-                    $nurse, $data['toAddToAccuredTowardsCCM'], $data['toAddToAccuredAfterCCM']);
-            }
+            $this->handleNurseLogs($activityId);
 
         }
-
-        //@todo
 
         return response("PageTimer Logged, duration:" . $duration, 201);
     }
 
-    /**
-     * Add an activity for a page time
-     *
-     * @param array $page_timer_ids
-     *
-     * @return PageTimer
-     */
     public function addPageTimerActivities(PageTimer $pageTimer)
     {
         // check params to see if rule exists
@@ -275,6 +258,23 @@ class PageTimerController extends Controller
         //This is intentionally left blank!
         //All the logic happens in Controller, because of some restrictions with Laravel at the time I'm writing this,
         //that's the best way I can come up with right now. Gross, I know, but it's 3:30am on a Saturday
+    }
+
+    public function handleNurseLogs($activityId)
+    {
+
+        $activity = Activity::find($activityId);
+        $nurse = User::find($activity->provider_id)->nurseInfo;
+
+        if ($nurse) {
+            $data = (new NurseMonthlySummary())->adjustCCMPaybleForActivity($activity);
+
+            return (new NurseMonthlySummary())->createOrIncrementNurseSummary(
+                $nurse, $data['toAddToAccuredTowardsCCM'], $data['toAddToAccuredAfterCCM'], $data['activity_id']);
+        }
+
+        return false;
+
     }
 
 }

@@ -89,6 +89,12 @@ class Nurse extends Model
 
         return $this->belongsToMany(State::class, 'nurse_info_state');
     }
+
+    public function careRateLogs(){
+
+        return $this->hasMany(NurseCareRateLog::class);
+
+    }
     
     public function callStatsForRange(Carbon $start, Carbon $end){
 

@@ -26,7 +26,7 @@ class NurseMonthlySummary extends Model
     }
 
     public function createOrIncrementNurseSummary( // note, not storing call data for now.
-        $nurse, $toAddToAccruedTowardsCCM, $toAddToAccruedAfterCCM
+        $nurse, $toAddToAccruedTowardsCCM, $toAddToAccruedAfterCCM, $activityId
     ) {
 
         $day_start = Carbon::parse(Carbon::now()->firstOfMonth()->format('Y-m-d'));
@@ -38,11 +38,9 @@ class NurseMonthlySummary extends Model
             $report->accrued_towards_ccm = $toAddToAccruedTowardsCCM + $report->accrued_towards_ccm;
             $report->save();
 
-            return $report;
-
         } else {
 
-            return self::create([
+            $report = self::create([
 
                 'nurse_id' => $nurse->id,
                 'month_year' => $day_start,
@@ -53,6 +51,32 @@ class NurseMonthlySummary extends Model
             ]);
 
         }
+
+        if($toAddToAccruedAfterCCM != 0){
+
+            NurseCareRateLog::create([
+
+                'nurse_id' => $nurse->id,
+                'activity_id' => $activityId,
+                'ccm_type' => 'accrued_after_ccm',
+                'increment' => $toAddToAccruedAfterCCM
+
+            ]);
+        }
+
+        if($toAddToAccruedTowardsCCM != 0){
+
+            NurseCareRateLog::create([
+
+                'nurse_id' => $nurse->id,
+                'activity_id' => $activityId,
+                'ccm_type' => 'accrued_towards_ccm',
+                'increment' => $toAddToAccruedTowardsCCM
+
+            ]);
+        }
+
+        return $report;
 
     }
 
@@ -100,9 +124,9 @@ class NurseMonthlySummary extends Model
         }
 
         return [
-            'Duration' =>  $activity->duration,
             'toAddToAccuredTowardsCCM' => $toAddToAccuredTowardsCCM,
-            'toAddToAccuredAfterCCM' => $toAddToAccuredAfterCCM
+            'toAddToAccuredAfterCCM' => $toAddToAccuredAfterCCM,
+            'activity_id' => $activity->id
         ];
 
     }

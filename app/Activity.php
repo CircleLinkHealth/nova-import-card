@@ -167,6 +167,11 @@ class Activity extends Model implements Transformable
         return $this->hasMany('App\ActivityMeta');
     }
 
+    public function careRateLogs()
+    {
+        return $this->hasMany(NurseCareRateLog::class);
+    }
+
     public function patient()
     {
         return $this->belongsTo('App\User', 'patient_id', 'id');

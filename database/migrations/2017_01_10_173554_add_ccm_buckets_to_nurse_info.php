@@ -32,6 +32,8 @@ class AddCcmBucketsToNurseInfo extends Migration
     {
         Schema::table('nurse_monthly_summaries', function (Blueprint $table) {
 
+            $table->integer('time');
+            $table->integer('ccm_time');
             $table->dropColumn('accrued_towards_ccm');
             $table->dropColumn('accrued_after_ccm');
 
