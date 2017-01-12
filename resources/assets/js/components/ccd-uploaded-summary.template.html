@@ -14,28 +14,28 @@
         <tbody>
 
         <tr v-for="qaSummary in importedMedicalRecords" v-bind:class="{ 'flag': qaSummary.flag }"
-            id="row-{{ qaSummary.medical_record_id }}">
+            id="row-{{ qaSummary.id }}">
 
-            <td id="import-row-{{ qaSummary.medical_record_id }}">
+            <td id="import-row-{{ qaSummary.id }}">
                 <label class="mdl-checkbox mdl-js-checkbox mdl-js-ripple-effect"
-                       for="import-{{ qaSummary.medical_record_id }}"
-                       id="import-label-{{ qaSummary.medical_record_id }}">
-                    <input v-model="okToImport" value="{{ qaSummary.medical_record_id }}" type="checkbox"
-                           id="import-{{ qaSummary.medical_record_id }}" class="mdl-checkbox__input"
+                       for="import-{{ qaSummary.id }}"
+                       id="import-label-{{ qaSummary.id }}">
+                    <input v-model="okToImport" value="{{ qaSummary.id }}" type="checkbox"
+                           id="import-{{ qaSummary.id }}" class="mdl-checkbox__input"
                            v-on:click="toggleCheckboxes">
                     <span class="mdl-checkbox__label"></span>
                 </label>
             </td>
-            <td id="edit-row-{{ qaSummary.medical_record_id }}" class="mdl-data-table__cell--non-numeric">
-                <a href="/ccd-importer/uploaded-ccd-items/{{qaSummary.medical_record_id}}/edit">Edit</a>
+            <td id="edit-row-{{ qaSummary.id }}" class="mdl-data-table__cell--non-numeric">
+                <a href="/ccd-importer/uploaded-ccd-items/{{qaSummary.id}}/edit">Edit</a>
             </td>
 
-            <td id="delete-row-{{ qaSummary.medical_record_id }}">
+            <td id="delete-row-{{ qaSummary.id }}">
                 <label class="mdl-switch mdl-js-switch mdl-js-ripple-effect"
-                       for="delete-{{ qaSummary.medical_record_id }}"
-                       id="delete-label-{{ qaSummary.medical_record_id }}">
-                    <input v-model="okToDelete" value="{{ qaSummary.medical_record_id }}" type="checkbox"
-                           id="delete-{{ qaSummary.medical_record_id }}" class="mdl-switch__input"
+                       for="delete-{{ qaSummary.id }}"
+                       id="delete-label-{{ qaSummary.id }}">
+                    <input v-model="okToDelete" value="{{ qaSummary.id }}" type="checkbox"
+                           id="delete-{{ qaSummary.id }}" class="mdl-switch__input"
                            v-on:click="toggleCheckboxes">
                     <span class="mdl-switch__label"></span>
                 </label>

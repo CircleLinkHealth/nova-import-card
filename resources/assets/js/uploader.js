@@ -80,8 +80,8 @@ var UploadedCcdsPanel = Vue.extend({
             $('#syncCcdsBtn').attr('disabled', true);
 
             var payload = {
-                ccdsToImport: this.okToImport,
-                ccdsToDelete: this.okToDelete
+                medicalRecordsImport: this.okToImport,
+                medicalRecordsToDelete: this.okToDelete
             };
 
             this.$http.post('/ccd-importer/import', payload, function (data, status, request) {

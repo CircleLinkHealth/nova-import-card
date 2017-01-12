@@ -188,7 +188,7 @@ Route::group(['middleware' => 'auth'], function () {
 
         Route::post('import', 'CCDImportController@import');
 
-        Route::get('uploaded-ccd-items/{ccdaId}/edit', 'QAImportedController@edit');
+        Route::get('uploaded-ccd-items/{importedMedicalRecordId}/edit', 'ImportedMedicalRecordController@edit');
 
         Route::post('demographics', 'EditImportedCcda\DemographicsImportsController@store');
     });
