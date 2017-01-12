@@ -1,7 +1,6 @@
 <?php namespace App\Http\Controllers;
 
 use App\CLH\Repositories\CCDImporterRepository;
-use App\Models\CCD\CcdVendor;
 use App\Models\MedicalRecords\Ccda;
 use App\Models\MedicalRecords\ImportedMedicalRecord;
 use Illuminate\Http\Request;
@@ -56,11 +55,6 @@ class CCDUploadController extends Controller
      */
     public function create()
     {
-        JavaScript::put([
-            'userBlogs'  => auth()->user()->practices->keyBy('name')->sortBy('name'),
-            'ccdVendors' => CcdVendor::all(),
-        ]);
-
         return view('CCDUploader.uploader');
     }
 
