@@ -2,6 +2,7 @@
 
 use App\Activity;
 use App\Models\PatientSession;
+use App\NurseMonthlySummary;
 use App\PageTimer;
 use App\Services\ActivityService;
 use App\Services\TimeTracking\Service as TimeTrackingService;
@@ -163,7 +164,21 @@ class PageTimerController extends Controller
 
         }
 
-        $pagerTimer = $this->addPageTimerActivities($newActivity);
+        $activityId = $this->addPageTimerActivities($newActivity);
+
+        if($activityId){
+
+            $activity = Activity::find($activityId);
+            $nurse = User::find($activity->provider_id)->nurseInfo;
+
+            if($nurse){
+                $data = (new NurseMonthlySummary())->adjustCCMPaybleForActivity($activity);
+
+                $report = (new NurseMonthlySummary())->createOrIncrementNurseSummary(
+                    $nurse, $data['toAddToAccuredTowardsCCM'], $data['toAddToAccuredAfterCCM']);
+            }
+
+        }
 
         //@todo
 

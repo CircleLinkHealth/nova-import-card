@@ -27,24 +27,29 @@ class CareTimeTrackerTest extends TestCase
         $this->patient = User::ofType('participant')
             ->with('patientInfo')
             ->intersectPracticesWith($this->nurse)
-            ->first();
+            ->first()->patientInfo;
     }
 
     public function testCareTime()
     {
 
-        $pre_ccm = $this->patient->patientInfo->cur_month_activity_time = 600;
-        $this->activity = $this->createActivityForPatientNurse($this->patient, $this->nurse, 10);
+        //pretends patient has 10 mins of care.
+        $pre_ccm = 100;
+        $this->patient->cur_month_activity_time = $pre_ccm;
 
-        $post_ccm = $this->patient->patientInfo->cur_month_activity_time;
+        //creates new activity on 12 mins.
+        $this->activity = $this->createActivityForPatientNurse($this->patient, $this->nurse, 720);
 
-        $report = (new NurseMonthlySummary())->createOrIncrementNurseSummary(
-            $this->nurse->nurseInfo, 100, 100);
+        //new ccm time
+        $post_ccm = $this->patient->cur_month_activity_time;
 
         $data = (new NurseMonthlySummary())->adjustCCMPaybleForActivity($this->activity);
 
-        dd($data);
+        $report = (new NurseMonthlySummary())->createOrIncrementNurseSummary(
+            $this->nurse->nurseInfo, $data['toAddToAccuredTowardsCCM'], $data['toAddToAccuredAfterCCM']);
 
-        $this->assertTrue(is_object($this->activity), true);
+//        dd();
+
+        $this->assertTrue($report->accrued_towards_ccm == 720, true);
     }
 }

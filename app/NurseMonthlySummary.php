@@ -32,7 +32,7 @@ class NurseMonthlySummary extends Model
         $day_start = Carbon::parse(Carbon::now()->firstOfMonth()->format('Y-m-d'));
         $report = self::where('nurse_id', $nurse->id)->where('month_year', $day_start)->first();
 
-        if($report->exists()){
+        if($report){
 
             $report->accrued_after_ccm = $toAddToAccruedAfterCCM + $report->accrued_after_ccm;
             $report->accrued_towards_ccm = $toAddToAccruedTowardsCCM + $report->accrued_towards_ccm;
