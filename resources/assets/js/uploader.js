@@ -20,8 +20,6 @@ var CcdUploader = Vue.extend({
 
     data: function () {
         return {
-            blogs: [],
-            ccdVendors: [],
             selectedVendor: null,
             selectedProgram: null,
             progress: 0,
@@ -34,8 +32,6 @@ var CcdUploader = Vue.extend({
 
     ready: function () {
         this.watchForFileInput();
-        this.blogs = window.cpm.userBlogs;
-        this.ccdVendors = window.cpm.ccdVendors;
         this.csrfToken = $('meta[name="csrf-token"]').attr('content');
     },
 
@@ -69,14 +65,14 @@ var UploadedCcdsPanel = Vue.extend({
 
     data: function () {
         return {
-            qaSummaries: [],
+            importedMedicalRecords: [],
             okToImport: [],
             okToDelete: []
         }
     },
 
     ready: function () {
-        this.qaSummaries = window.cpm.qaSummaries;
+        this.importedMedicalRecords = window.cpm.importedMedicalRecords;
     },
 
     methods: {
@@ -123,22 +119,22 @@ var UploadedCcdsPanel = Vue.extend({
         },
         toggleCheckboxes: function (event) {
             //get id of clicked element
-            var ccdaId = event.target.id.split('-')[1];
+            var medicalRecordId = event.target.id.split('-')[1];
             var itemClicked = event.target.id.split('-')[0];
 
-            var importLabel = $('#import-label-' + ccdaId);
-            var deleteLabel = $('#delete-label-' + ccdaId);
+            var importLabel = $('#import-label-' + medicalRecordId);
+            var deleteLabel = $('#delete-label-' + medicalRecordId);
 
-            if (itemClicked == 'delete' && this.okToDelete.indexOf(ccdaId) == -1 && importLabel.hasClass('is-checked')) {
-                if (this.okToImport.indexOf(ccdaId) !== -1) {
-                    this.okToImport.$remove(ccdaId);
+            if (itemClicked == 'delete' && this.okToDelete.indexOf(medicalRecordId) == -1 && importLabel.hasClass('is-checked')) {
+                if (this.okToImport.indexOf(medicalRecordId) !== -1) {
+                    this.okToImport.$remove(medicalRecordId);
                     importLabel.toggleClass('is-checked');
                 }
             }
 
-            if (itemClicked == 'import' && this.okToImport.indexOf(ccdaId) == -1 && deleteLabel.hasClass('is-checked')) {
-                if (this.okToDelete.indexOf(ccdaId) !== -1) {
-                    this.okToDelete.$remove(ccdaId);
+            if (itemClicked == 'import' && this.okToImport.indexOf(medicalRecordId) == -1 && deleteLabel.hasClass('is-checked')) {
+                if (this.okToDelete.indexOf(medicalRecordId) !== -1) {
+                    this.okToDelete.$remove(medicalRecordId);
                     deleteLabel.toggleClass('is-checked');
                 }
             }
