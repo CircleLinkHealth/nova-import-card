@@ -6,6 +6,7 @@ use App\Entities\CcdaRequest;
 use App\Importer\Loggers\Ccda\CcdaSectionsLogger;
 use App\Importer\Section\Importers\Allergies;
 use App\Importer\Section\Importers\Demographics;
+use App\Importer\Section\Importers\Insurance;
 use App\Importer\Section\Importers\Medications;
 use App\Importer\Section\Importers\Problems;
 use App\Traits\MedicalRecordItemLoggerRelationships;
@@ -82,6 +83,7 @@ class Ccda extends Model implements MedicalRecord, Transformable
             ->importAllergies()
             ->importDemographics()
             ->importDocument()
+            ->importInsurance()
             ->importMedications()
             ->importProblems()
             ->importProviders();
@@ -206,6 +208,18 @@ class Ccda extends Model implements MedicalRecord, Transformable
     public function importProviders() : MedicalRecord
     {
         return $this;
+    }
 
+    /**
+     * Import Insurance Policies for QA
+     *
+     * @return MedicalRecord
+     */
+    public function importInsurance() : MedicalRecord
+    {
+        $importer = new Insurance();
+        $importer->import($this->id, self::class, $this->importedMedicalRecord);
+
+        return $this;
     }
 }

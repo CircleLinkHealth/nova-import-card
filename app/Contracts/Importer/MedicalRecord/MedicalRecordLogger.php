@@ -29,6 +29,13 @@ interface MedicalRecordLogger
     public function logDemographicsSection() : MedicalRecordLogger;
 
     /**
+     * Log Insurance Section.
+     * @return MedicalRecordLogger
+     */
+    public function logInsuranceSection() : MedicalRecordLogger;
+
+
+    /**
      * Log Document Section.
      * @return MedicalRecordLogger
      */

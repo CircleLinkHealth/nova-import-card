@@ -72,6 +72,13 @@ interface MedicalRecord
     public function importDocument() : MedicalRecord;
 
     /**
+     * Import Insurance Policies for QA
+     *
+     * @return MedicalRecord
+     */
+    public function importInsurance() : MedicalRecord;
+
+    /**
      * Import Medications for QA
      *
      * @return MedicalRecord

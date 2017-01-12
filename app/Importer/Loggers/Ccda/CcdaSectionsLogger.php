@@ -7,6 +7,7 @@ use App\Contracts\Importer\MedicalRecord\MedicalRecordLogger;
 use App\Importer\Models\ItemLogs\AllergyLog;
 use App\Importer\Models\ItemLogs\DemographicsLog;
 use App\Importer\Models\ItemLogs\DocumentLog;
+use App\Importer\Models\ItemLogs\InsuranceLog;
 use App\Importer\Models\ItemLogs\MedicationLog;
 use App\Importer\Models\ItemLogs\ProblemLog;
 use App\Importer\Models\ItemLogs\ProviderLog;
@@ -132,6 +133,7 @@ class CcdaSectionsLogger implements MedicalRecordLogger
         $this->logAllergiesSection()
             ->logDemographicsSection()
             ->logDocumentSection()
+            ->logInsuranceSection()
             ->logMedicationsSection()
             ->logProblemsSection()
             ->logProvidersSection();
@@ -149,6 +151,36 @@ class CcdaSectionsLogger implements MedicalRecordLogger
             $saved = AllergyLog::create(
                 array_merge($this->transformer->allergy($allergy), $this->foreignKeys)
             );
+        }
+
+        return $this;
+    }
+
+    /**
+     * Log Insurance Section.
+     * @return MedicalRecordLogger
+     */
+    public function logInsuranceSection() : MedicalRecordLogger
+    {
+        if (!empty($this->ccd->payers)) {
+            foreach ($this->ccd->payers as $payer) {
+
+                if (empty($payer->insurance)) {
+                    continue;
+                }
+
+                $insurance = InsuranceLog::create([
+                    'medical_record_id'   => $this->ccdaId,
+                    'medical_record_type' => Ccda::class,
+                    'name'                => $payer->insurance,
+                    'type'                => $payer->policy_type,
+                    'policy_id'           => $payer->policy_id,
+                    'relation'            => $payer->relation,
+                    'subscriber'          => $payer->subscriber,
+                    'approved'            => false,
+                    'import'              => true,
+                ]);
+            }
         }
 
         return $this;
