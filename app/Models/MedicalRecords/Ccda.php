@@ -1,15 +1,13 @@
 <?php namespace App\Models\MedicalRecords;
 
-use App\Contracts\Importer\ImportedMedicalRecord\ImportedMedicalRecord;
 use App\Contracts\Importer\MedicalRecord\MedicalRecord;
 use App\Contracts\Importer\MedicalRecord\MedicalRecordLogger;
-use App\Contracts\Importer\MedicalRecord\Section\ItemLog;
 use App\Entities\CcdaRequest;
 use App\Importer\Loggers\Ccda\CcdaSectionsLogger;
 use App\Importer\Section\Importers\Allergies;
+use App\Importer\Section\Importers\Demographics;
 use App\Importer\Section\Importers\Medications;
 use App\Importer\Section\Importers\Problems;
-use App\Models\CCD\QAImportSummary;
 use App\Traits\MedicalRecordItemLoggerRelationships;
 use App\User;
 use Illuminate\Database\Eloquent\Model;
@@ -46,6 +44,12 @@ class Ccda extends Model implements MedicalRecord, Transformable
     ];
 
     /**
+     * @var
+     */
+    protected $billingProvider;
+    protected $location;
+
+    /**
      * This is the patient that owns this CCDA.
      *
      * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
@@ -57,7 +61,7 @@ class Ccda extends Model implements MedicalRecord, Transformable
 
     public function qaSummary()
     {
-        return $this->hasOne(QAImportSummary::class);
+        return $this->hasOne(ImportedMedicalRecord::class);
     }
 
     public function ccdaRequest()
@@ -74,6 +78,7 @@ class Ccda extends Model implements MedicalRecord, Transformable
     public function import()
     {
         $this->createLogs()
+            ->createImportedMedicalRecord()
             ->importAllergies()
             ->importDemographics()
             ->importDocument()
@@ -85,7 +90,7 @@ class Ccda extends Model implements MedicalRecord, Transformable
     /**
      * Log the data into MedicalRecordSectionLogs, so that they can be fed to the Importer
      *
-     * @return ItemLog|\App\Contracts\Importer\MedicalRecord\MedicalRecord
+     * @return MedicalRecord
      */
     public function createLogs() : MedicalRecord
     {
@@ -105,6 +110,22 @@ class Ccda extends Model implements MedicalRecord, Transformable
     }
 
     /**
+     * @return MedicalRecord
+     */
+    public function createImportedMedicalRecord() : MedicalRecord
+    {
+        $this->importedMedicalRecord = ImportedMedicalRecord::create([
+            'medical_record_type' => self::class,
+            'medical_record_id'   => $this->id,
+            'billing_provider_id' => null,
+            'location_id'         => null,
+            'practice_id'         => null,
+        ]);
+
+        return $this;
+    }
+
+    /**
      * Import Allergies for QA
      *
      * @return MedicalRecord
@@ -112,7 +133,7 @@ class Ccda extends Model implements MedicalRecord, Transformable
     public function importAllergies() : MedicalRecord
     {
         $importer = new Allergies();
-        $importer->import($this->id, self::class);
+        $importer->import($this->id, self::class, $this->importedMedicalRecord);
 
         return $this;
     }
@@ -134,8 +155,10 @@ class Ccda extends Model implements MedicalRecord, Transformable
      */
     public function importDemographics() : MedicalRecord
     {
-        return $this;
+        $importer = new Demographics();
+        $importer->import($this->id, self::class, $this->importedMedicalRecord);
 
+        return $this;
     }
 
     /**
@@ -157,7 +180,7 @@ class Ccda extends Model implements MedicalRecord, Transformable
     public function importMedications() : MedicalRecord
     {
         $importer = new Medications();
-        $importer->import($this->id, self::class);
+        $importer->import($this->id, self::class, $this->importedMedicalRecord);
 
         return $this;
     }
@@ -170,7 +193,7 @@ class Ccda extends Model implements MedicalRecord, Transformable
     public function importProblems() : MedicalRecord
     {
         $importer = new Problems();
-        $importer->import($this->id, self::class);
+        $importer->import($this->id, self::class, $this->importedMedicalRecord);
 
         return $this;
     }

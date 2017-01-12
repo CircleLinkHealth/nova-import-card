@@ -4,7 +4,6 @@ use App\CLH\Repositories\CCDImporterRepository;
 use App\Models\CCD\CcdVendor;
 use App\Models\MedicalRecords\Ccda;
 use App\Models\MedicalRecords\ImportedMedicalRecord;
-use App\Practice;
 use Illuminate\Http\Request;
 use Laracasts\Utilities\JavaScript\JavaScriptFacade as JavaScript;
 
@@ -21,40 +20,30 @@ class CCDUploadController extends Controller
      * Receives XML files, saves them in DB, and returns them JSON Encoded
      *
      * @param Request $request
+     *
      * @return string
      * @throws \Exception
      */
     public function uploadRawFiles(Request $request)
     {
-        if ( !$request->hasFile( 'file' ) ) {
-            return response()->json( 'No file found', 400 );
+        if (!$request->hasFile('file')) {
+            return response()->json('No file found', 400);
         }
 
-        foreach ( $request->file( 'file' ) as $file ) {
-            $xml = file_get_contents( $file );
+        foreach ($request->file('file') as $file) {
+            $xml = file_get_contents($file);
 
-            $json = $this->repo->toJson( $xml );
+            $json = $this->repo->toJson($xml);
 
-            $vendor = empty($request->input( 'ccd_vendor_id' )) ?: CcdVendor::find($request->input( 'ccd_vendor_id' ));
-
-            $program = Practice::find($vendor->program_id);
-
-            if (empty($program)) {
-                throw new \Exception('Practice not found,', 400);
-            }
-
-            $ccda = Ccda::create( [
+            $ccda = Ccda::create([
                 'user_id'   => auth()->user()->id,
-                'vendor_id' => $vendor->id,
+                'vendor_id' => 1,
                 'xml'       => $xml,
                 'json'      => $json,
                 'source'    => Ccda::IMPORTER,
-            ] );
+            ]);
 
             $ccda->import();
-
-//            $importer = new QAImportManager($program->id, $ccda);
-//            $output = $importer->generateCarePlanFromCCD();
         }
 
         return redirect()->route('view.files.ready.to.import');
@@ -67,12 +56,12 @@ class CCDUploadController extends Controller
      */
     public function create()
     {
-        JavaScript::put( [
+        JavaScript::put([
             'userBlogs'  => auth()->user()->practices->keyBy('name')->sortBy('name'),
             'ccdVendors' => CcdVendor::all(),
-        ] );
+        ]);
 
-        return view( 'CCDUploader.uploader' );
+        return view('CCDUploader.uploader');
     }
 
     /**
@@ -85,22 +74,18 @@ class CCDUploadController extends Controller
     public function index()
     {
         //get rid of orphans
-        $delete = ImportedMedicalRecord::whereNull('ccda_id')->delete();
+        $delete = ImportedMedicalRecord::whereNull('medical_record_id')->delete();
 
-        $qaSummaries = ImportedMedicalRecord::with([
-            'ccda' => function ($query) {
-                $query->select('id', 'source', 'created_at')
-                    ->whereNull('patient_id');
-            }])
+        $qaSummaries = ImportedMedicalRecord::
+        with('demographics')
             ->get()
-            ->sortBy('name')
             ->all();
 
-        JavaScript::put( [
-            'qaSummaries' => array_values($qaSummaries),
-        ] );
+        JavaScript::put([
+            'importedMedicalRecords' => array_values($qaSummaries),
+        ]);
 
-        return view( 'CCDUploader.uploadedSummary' );
+        return view('CCDUploader.uploadedSummary');
     }
 
 }

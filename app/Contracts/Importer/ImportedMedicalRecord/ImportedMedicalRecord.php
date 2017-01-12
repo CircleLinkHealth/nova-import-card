@@ -19,35 +19,33 @@ interface ImportedMedicalRecord
 {
     /**
      * Get the Allergies that were imported for QA
-     *
-     * @return \App\Importer\Models\ImportedItems\AllergyImport[]
      */
-    public function getAllergies() : array;
+    public function allergies();
 
     /**
      * Get the Demographics that were imported for QA
      *
      * @return DemographicsImport[]
      */
-    public function getDemographics() : array;
+    public function demographics();
 
     /**
      * Get the Medications that were imported for QA
      *
      * @return \App\Importer\Models\ImportedItems\MedicationImport[]
      */
-    public function getMedications() : array;
+    public function medications();
 
     /**
      * Get the Problems that were imported for QA
      *
      * @return \App\Importer\Models\ImportedItems\ProblemImport[]
      */
-    public function getProblems() : array;
+    public function problems();
 
-    public function getMedicalRecord() : MedicalRecord;
+    public function medicalRecord() : MedicalRecord;
 
-    public function getPractice() : Practice;
+    public function practice() : Practice;
 
     public function providers() : array;
 
