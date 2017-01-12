@@ -9,8 +9,8 @@
 namespace App\Importer\Section\Importers;
 
 
-use App\CLH\Facades\StringManipulation;
 use App\Contracts\Importer\ImportedMedicalRecord\ImportedMedicalRecord;
+use App\Facades\StringManipulation;
 use App\Importer\Models\ImportedItems\MedicationImport;
 use App\Importer\Models\ItemLogs\MedicationLog;
 

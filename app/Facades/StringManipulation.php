@@ -1,11 +1,10 @@
 <?php
 
-namespace App\CLH\CCD\Importer\ParsingStrategies\Facades;
-
+namespace App\Facades;
 
 use Illuminate\Support\Facades\Facade;
 
-class UserMetaParserHelpers extends Facade
+class StringManipulation extends Facade
 {
     /**
      * Get the registered name of the component.
@@ -14,6 +13,6 @@ class UserMetaParserHelpers extends Facade
      */
     protected static function getFacadeAccessor()
     {
-        return 'userMetaParserHelpers';
+        return 'stringManipulation';
     }
 }

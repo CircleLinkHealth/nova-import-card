@@ -3,7 +3,7 @@
 namespace App\Importer\Loggers\Ccda;
 
 
-use App\CLH\CCD\Importer\ParsingStrategies\Facades\UserMetaParserHelpers;
+use App\Facades\UserMetaParserHelpers;
 use App\Importer\Models\ItemLogs\AllergyLog;
 use App\Importer\Models\ItemLogs\DemographicsLog;
 

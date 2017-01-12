@@ -1,6 +1,6 @@
 <?php namespace Tests\Helpers;
 
-use App\CLH\Facades\StringManipulation;
+use App\Facades\StringManipulation;
 use App\Models\CPM\Biometrics\CpmWeight;
 use App\PatientCareTeamMember;
 use App\User;

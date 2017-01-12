@@ -1,10 +1,8 @@
 <?php namespace App\Console\Commands;
 
-use App\CLH\Facades\StringManipulation;
+use App\Facades\StringManipulation;
 use App\Location;
 use Illuminate\Console\Command;
-use Symfony\Component\Console\Input\InputOption;
-use Symfony\Component\Console\Input\InputArgument;
 
 class FormatLocationPhone extends Command
 {

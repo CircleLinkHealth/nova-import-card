@@ -2,12 +2,12 @@
 
 namespace App\Http\Controllers\Provider;
 
-use App\CLH\Facades\StringManipulation;
 use App\Contracts\Repositories\InviteRepository;
 use App\Contracts\Repositories\LocationRepository;
 use App\Contracts\Repositories\PracticeRepository;
 use App\Contracts\Repositories\UserRepository;
 use App\Entities\Invite;
+use App\Facades\StringManipulation;
 use App\Http\Controllers\Controller;
 use App\Notifications\Onboarding\ImplementationLeadWelcome;
 use App\Notifications\Onboarding\StaffInvite;

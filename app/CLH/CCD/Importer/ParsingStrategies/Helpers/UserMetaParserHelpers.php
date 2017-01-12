@@ -2,7 +2,7 @@
 
 namespace App\CLH\CCD\Importer\ParsingStrategies\Helpers;
 
-use App\CLH\Facades\StringManipulation;
+use App\Facades\StringManipulation;
 
 class UserMetaParserHelpers
 {
