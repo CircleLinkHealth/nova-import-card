@@ -9,6 +9,7 @@
 namespace App\Importer\Section\Importers;
 
 
+use App\Contracts\Importer\ImportedMedicalRecord\ImportedMedicalRecord;
 use App\Importer\Models\ImportedItems\DemographicsImport;
 use App\Importer\Models\ItemLogs\DemographicsLog;
 use Carbon\Carbon;
@@ -17,96 +18,97 @@ class Demographics extends BaseImporter
 {
     public function import(
         $medicalRecordId,
-        $medicalRecordType
+        $medicalRecordType,
+        ImportedMedicalRecord $importedMedicalRecord
     ) {
         $itemLog = DemographicsLog::where('medical_record_type', '=', $medicalRecordType)
             ->where('medical_record_id', '=', $medicalRecordId)
             ->first();
 
-        $demographicsImport = new DemographicsImport();
+        $demographicsImport = DemographicsImport::updateOrCreate([
+            'first_name'                 => ucwords(strtolower($itemLog->first_name)),
+            'last_name'                  => ucwords(strtolower($itemLog->last_name)),
+            'dob'                        => (new Carbon($itemLog->dob, 'America/New_York'))->format('Y-m-d'),
+            'gender'                     => call_user_func(function () use
+            (
+                $itemLog
+            ) {
+                $maleVariations = [
+                    'm',
+                    'male',
+                    'man',
+                ];
 
-        $demographicsImport->first_name = ucwords(strtolower($itemLog->first_name));
-        $demographicsImport->last_name = ucwords(strtolower($itemLog->last_name));
-        $demographicsImport->dob = (new Carbon($itemLog->dob, 'America/New_York'))->format('Y-m-d');
-        $demographicsImport->gender = call_user_func(function () use
-        (
-            $itemLog
-        ) {
-            $maleVariations = [
-                'm',
-                'male',
-                'man',
-            ];
+                $femaleVariations = [
+                    'f',
+                    'female',
+                    'woman',
+                ];
 
-            $femaleVariations = [
-                'f',
-                'female',
-                'woman',
-            ];
-
-            if (in_array(strtolower($itemLog->gender), $maleVariations)) {
-                $gender = 'M';
-            } else {
-                if (in_array(strtolower($itemLog->gender), $femaleVariations)) {
-                    $gender = 'F';
+                if (in_array(strtolower($itemLog->gender), $maleVariations)) {
+                    $gender = 'M';
+                } else {
+                    if (in_array(strtolower($itemLog->gender), $femaleVariations)) {
+                        $gender = 'F';
+                    }
                 }
-            }
 
-            return empty($gender)
-                ?: $gender;
-        });
-        $demographicsImport->mrn_number = $itemLog->mrn_number;
-        $demographicsImport->street = empty($itemLog->street2)
-            ? $itemLog->street
-            : $itemLog->street . '' . $itemLog->street2;
-        $demographicsImport->city = $itemLog->city;
-        $demographicsImport->state = $itemLog->state;
-        $demographicsImport->zip = $itemLog->zip;
-        $demographicsImport->cell_phone = $itemLog->cell_phone;
-        $demographicsImport->home_phone = $itemLog->home_phone;
-        $demographicsImport->work_phone = $itemLog->work_phone;
-        $demographicsImport->email = strtolower(str_replace('/', '', $itemLog->email));
-        $demographicsImport->study_phone_number = empty($itemLog->cell_phone)
-            ? empty($itemLog->home_phone)
-                ? $itemLog->work_phone
-                : $itemLog->home_phone
-            : $itemLog->cell_phone;
-        $demographicsImport->preferred_contact_language = call_user_func(function () use
-        (
-            $itemLog
-        ) {
-            $englishVariations = [
-                'english',
-                'eng',
-                'en',
-                'e',
-            ];
+                return empty($gender)
+                    ?: $gender;
+            }),
+            'mrn_number'                 => $itemLog->mrn_number,
+            'street'                     => empty($itemLog->street2)
+                ? $itemLog->street
+                : "{$itemLog->street}, {$itemLog->street2}",
+            'city'                       => $itemLog->city,
+            'state'                      => $itemLog->state,
+            'zip'                        => $itemLog->zip,
+            'cell_phone'                 => $itemLog->cell_phone,
+            'home_phone'                 => $itemLog->home_phone,
+            'work_phone'                 => $itemLog->work_phone,
+            'email'                      => strtolower(str_replace('/', '', $itemLog->email)),
+            'study_phone_number'         => empty($itemLog->cell_phone)
+                ? empty($itemLog->home_phone)
+                    ? $itemLog->work_phone
+                    : $itemLog->home_phone
+                : $itemLog->cell_phone,
+            'preferred_contact_language' => call_user_func(function () use
+            (
+                $itemLog
+            ) {
+                $englishVariations = [
+                    'english',
+                    'eng',
+                    'en',
+                    'e',
+                ];
 
-            $spanishVariations = [
-                'spanish',
-                'es',
-            ];
+                $spanishVariations = [
+                    'spanish',
+                    'es',
+                ];
 
-            $default = 'EN';
+                $default = 'EN';
 
-            if (in_array(strtolower($itemLog->preferred_contact_language), $englishVariations)) {
-                $language = 'EN';
-            } else {
-                if (in_array(strtolower($itemLog->preferred_contact_language), $spanishVariations)) {
-                    $language = 'ES';
+                if (in_array(strtolower($itemLog->preferred_contact_language), $englishVariations)) {
+                    $language = 'EN';
+                } else {
+                    if (in_array(strtolower($itemLog->preferred_contact_language), $spanishVariations)) {
+                        $language = 'ES';
+                    }
                 }
-            }
 
-            return empty($language)
-                ? $default
-                : $language;
-        });
-        $demographicsImport->preferred_contact_timezone = 'America/New_York';
-        $demographicsImport->consent_date = date("Y-m-d");
-        $demographicsImport->vendor_id = 1;
-        $demographicsImport->ccda_id = $medicalRecordId;
-        $demographicsImport->medical_record_type = $medicalRecordType;
-        $demographicsImport->medical_record_id = $medicalRecordId;
-        $demographicsImport->save();
+                return empty($language)
+                    ? $default
+                    : $language;
+            }),
+            'preferred_contact_timezone' => 'America/New_York',
+            'consent_date'               => date("Y-m-d"),
+            'vendor_id'                  => 1,
+            'ccda_id'                    => $medicalRecordId,
+            'medical_record_type'        => $medicalRecordType,
+            'medical_record_id'          => $medicalRecordId,
+            'imported_medical_record_id' => $importedMedicalRecord->id,
+        ]);
     }
 }

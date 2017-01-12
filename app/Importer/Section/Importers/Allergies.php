@@ -8,6 +8,7 @@
 
 namespace App\Importer\Section\Importers;
 
+use App\Contracts\Importer\ImportedMedicalRecord\ImportedMedicalRecord;
 use App\Importer\Models\ImportedItems\AllergyImport;
 use App\Importer\Models\ItemLogs\AllergyLog;
 
@@ -16,7 +17,8 @@ class Allergies extends BaseImporter
 {
     public function import(
         $medicalRecordId,
-        $medicalRecordType
+        $medicalRecordType,
+        ImportedMedicalRecord $importedMedicalRecord
     ) {
         $itemLogs = AllergyLog::where('medical_record_type', '=', $medicalRecordType)
             ->where('medical_record_id', '=', $medicalRecordId)
@@ -35,12 +37,13 @@ class Allergies extends BaseImporter
             $itemLog->save();
 
             $allergiesList[] = AllergyImport::create([
-                'ccda_id'             => $itemLog->ccda_id,
-                'vendor_id'           => $itemLog->vendor_id,
-                'ccd_allergy_log_id'  => $itemLog->id,
-                'allergen_name'       => $itemLog->allergen_name,
-                'medical_record_type' => $medicalRecordType,
-                'medical_record_id'   => $medicalRecordId,
+                'ccda_id'                    => $itemLog->ccda_id,
+                'vendor_id'                  => $itemLog->vendor_id,
+                'ccd_allergy_log_id'         => $itemLog->id,
+                'allergen_name'              => $itemLog->allergen_name,
+                'medical_record_type'        => $medicalRecordType,
+                'medical_record_id'          => $medicalRecordId,
+                'imported_medical_record_id' => $importedMedicalRecord->id,
             ]);
         }
     }

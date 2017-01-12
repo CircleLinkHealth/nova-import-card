@@ -8,6 +8,7 @@
 
 namespace App\Importer\Section\Importers;
 
+use App\Contracts\Importer\ImportedMedicalRecord\ImportedMedicalRecord;
 use App\Contracts\Importer\MedicalRecord\Section\Importer as SectionImporter;
 use App\Contracts\Importer\MedicalRecord\Section\ItemLog;
 use App\Contracts\Importer\MedicalRecord\Section\Validator;
@@ -49,6 +50,7 @@ abstract class BaseImporter implements SectionImporter
 
     abstract public function import(
         $medicalRecordId,
-        $medicalRecordType
+        $medicalRecordType,
+        ImportedMedicalRecord $importedMedicalRecord
     );
 }
