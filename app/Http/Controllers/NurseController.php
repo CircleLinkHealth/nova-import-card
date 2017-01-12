@@ -32,13 +32,19 @@ class NurseController extends Controller
     public function generateInvoice(Request $request)
     {
 
+        $input = $request->input();
+
         $nurses = $request->input('nurses');
+
         $addTime = $request->input('manual_time')
             ? $request->input('manual_time')
             : 0;
+
         $addNotes = $request->input('manual_time_notes')
             ? $request->input('manual_time_notes')
             : '';
+
+        $variablePay = isset($input['alternative_pay']);
 
         if ($request->input('submit') == 'download') {
 
@@ -50,8 +56,11 @@ class NurseController extends Controller
                 $startDate = Carbon::parse($request->input('start_date'));
                 $endDate = Carbon::parse($request->input('end_date'));
 
-                $generator = (new NurseMonthlyBillGenerator($nurse, $startDate, $endDate, $addTime,
-                    $addNotes))->handle();
+                $generator = (new NurseMonthlyBillGenerator($nurse, $startDate, $endDate, $variablePay, $addTime,
+                    $addNotes))
+//                    ->formatItemizedActivities();
+                    ->handle();
+
                 $data[] = $generator;
 
                 $links[$generator['name']] = $generator['link'];
@@ -203,20 +212,26 @@ class NurseController extends Controller
         $data = json_decode($request->input('data'), true);
 
         foreach ($data as $nurse_array) {
-            
+
             $fileName = $nurse_array['link'];
             $nurse = Nurse::find($nurse_array['id']);
             $date_start = $nurse_array['date_start'];
             $date_end = $nurse_array['date_end'];
 
-            Mail::send('billing.nurse.mail', $nurse_array['email_body'], function ($m) use ($nurse, $fileName, $date_start, $date_end) {
+            Mail::send('billing.nurse.mail', $nurse_array['email_body'], function ($m) use
+            (
+                $nurse,
+                $fileName,
+                $date_start,
+                $date_end
+            ) {
 
                 $m->from('billing@circlelinkhealth.com', 'CircleLink Health');
 
                 $m->attach(storage_path("download/$fileName"));
 
                 $m->to($nurse->user->email, $nurse->user->fullName)
-                    ->subject('New Invoice from CircleLink Health ['.$date_start.' to '.$date_end .']');
+                    ->subject('New Invoice from CircleLink Health [' . $date_start . ' to ' . $date_end . ']');
 
                 $m->cc('raph@circlelinkhealth.com');
 

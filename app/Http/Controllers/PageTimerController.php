@@ -1,6 +1,7 @@
 <?php namespace App\Http\Controllers;
 
 use App\Activity;
+use App\Algorithms\Invoicing\AlternativeCareTimePayableCalculator;
 use App\Models\PatientSession;
 use App\NurseMonthlySummary;
 use App\PageTimer;
@@ -267,9 +268,9 @@ class PageTimerController extends Controller
         $nurse = User::find($activity->provider_id)->nurseInfo;
 
         if ($nurse) {
-            $data = (new NurseMonthlySummary())->adjustCCMPaybleForActivity($activity);
+            $data = (new AlternativeCareTimePayableCalculator())->adjustCCMPaybleForActivity($activity);
 
-            return (new NurseMonthlySummary())->createOrIncrementNurseSummary(
+            return (new AlternativeCareTimePayableCalculator())->createOrIncrementNurseSummary(
                 $nurse, $data['toAddToAccuredTowardsCCM'], $data['toAddToAccuredAfterCCM'], $data['activity_id']);
         }
 

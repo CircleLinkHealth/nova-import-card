@@ -2,6 +2,7 @@
 
 use App\Activity;
 use App\Algorithms\Calls\CallAlgoHelper;
+use App\Algorithms\Invoicing\AlternativeCareTimePayableCalculator;
 use App\NurseMonthlySummary;
 use App\User;
 use Illuminate\Foundation\Testing\WithoutMiddleware;
@@ -34,7 +35,7 @@ class CareTimeTrackerTest extends TestCase
     {
 
         //pretends patient has 10 mins of care.
-        $pre_ccm = 100;
+        $pre_ccm = 600;
         $this->patient->cur_month_activity_time = $pre_ccm;
 
         //creates new activity on 12 mins.
@@ -43,12 +44,12 @@ class CareTimeTrackerTest extends TestCase
         //new ccm time
         $post_ccm = $this->patient->cur_month_activity_time;
 
-        $data = (new NurseMonthlySummary())->adjustCCMPaybleForActivity($this->activity);
+        $data = (new AlternativeCareTimePayableCalculator())->adjustCCMPaybleForActivity($this->activity);
 
-        $report = (new NurseMonthlySummary())->createOrIncrementNurseSummary(
-            $this->nurse->nurseInfo, $data['toAddToAccuredTowardsCCM'], $data['toAddToAccuredAfterCCM']);
+        $report = (new AlternativeCareTimePayableCalculator())->createOrIncrementNurseSummary(
+            $this->nurse->nurseInfo, $data['toAddToAccuredTowardsCCM'], $data['toAddToAccuredAfterCCM'], $this->activity->id);
 
-//        dd();
+        dd($data);
 
         $this->assertTrue($report->accrued_towards_ccm == 720, true);
     }

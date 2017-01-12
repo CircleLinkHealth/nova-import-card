@@ -3,6 +3,8 @@
 namespace App\Billing;
 
 use App\Activity;
+use App\Algorithms\Invoicing\AlternativeCareTimePayableCalculator;
+use App\Billing\NurseInvoices\VariablePay;
 use App\Call;
 use App\Nurse;
 use App\PageTimer;
@@ -37,6 +39,8 @@ class NurseMonthlyBillGenerator
     protected $payable;
     protected $percentTime;
 
+    protected $withVariablePaymentSystem;
+
     //total time in system
     protected $systemTime;
     protected $formattedSystemTime;
@@ -47,6 +51,7 @@ class NurseMonthlyBillGenerator
     public function __construct(Nurse $newNurse,
                                 Carbon $billingDateStart,
                                 Carbon $billingDateEnd,
+                                $withVariablePaymentSystem,
                                 $manualTimeAdd = 0,
                                 $notes = ''){
 
@@ -56,6 +61,7 @@ class NurseMonthlyBillGenerator
         $this->endDate = $billingDateEnd;
         $this->addDuration = $manualTimeAdd;
         $this->addNotes = $notes;
+        $this->withVariablePaymentSystem = $withVariablePaymentSystem;
 
         if($this->addDuration != 0){ $this->hasAddedTime = true; }
 
@@ -212,13 +218,22 @@ class NurseMonthlyBillGenerator
 
         }
 
-        $this->formattedItemizedActivities = [
+        if($this->withVariablePaymentSystem){
+            $variable = ( new VariablePay($this->nurse, $this->startDate, $this->endDate))->getItemizedActivities();
+        } else {
+            $variable = false;
+        }
+
+        return $this->formattedItemizedActivities = [
         //days data
             'data' => $data,
             'hasAddedTime' => $this->hasAddedTime,
             'manual_time' => $this->formattedAddDuration,
             'manual_time_notes' => $this->addNotes,
             'manual_time_amount' => $this->formattedAddDuration * $this->nurse->hourly_rate,
+
+        //variable
+            'variable_pay' => $variable,
 
             //headers
             'nurse_billable_time' => $this->formattedSystemTime,

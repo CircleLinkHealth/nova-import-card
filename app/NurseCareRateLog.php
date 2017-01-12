@@ -9,7 +9,7 @@ class NurseCareRateLog extends Model
 
     protected $table = 'nurse_care_rate_logs';
 
-    protected $fillable = ['nurse_id', 'activity_id', 'ccm_type', 'increment', 'patient_performed_on'];
+    protected $fillable = ['nurse_id', 'activity_id', 'ccm_type', 'increment', 'created_at'];
 
     public function nurse(){
 

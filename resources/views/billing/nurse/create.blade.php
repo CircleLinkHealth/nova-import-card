@@ -46,6 +46,17 @@
                                 </div>
 
                                 <div class="form-group" style="padding-left:40px;">
+                                    <label data-target="#collapseOne" class="col-md-3"
+                                           style="width: 25%">
+                                        <div class="radio"><input type="checkbox" name="alternative_pay"
+                                                                  id="alternative_pay"
+                                                                  value="alternative_pay"/><label
+                                                    for="alternative_pay"><span> </span>Alternative Pay</label>
+                                        </div>
+                                    </label>
+                                </div>
+
+                                <div class="form-group" style="padding-left:40px;">
                                     <div class="panel-group" id="accordion">
 
                                         <div>
@@ -82,6 +93,7 @@
                                         </div>
 
                                     </div>
+
                                 </div>
 
 
