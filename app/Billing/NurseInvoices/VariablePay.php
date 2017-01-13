@@ -37,6 +37,10 @@ class VariablePay extends NurseInvoice
         $this->ccm_under_payable = ($this->ccm_over_duration / 3600) * 10;
         $this->ccm_over_payable = ($this->ccm_under_duration / 3600) * 30;
 
+        $this->data['after'] = ($this->ccm_over_duration / 3600);
+        $this->data['towards'] = ($this->ccm_under_duration / 3600);
+
+        $this->data['Payable'] = round($this->ccm_over_payable + $this->ccm_over_payable, 2);
 
     }
 
@@ -71,7 +75,7 @@ class VariablePay extends NurseInvoice
                 ->where('ccm_type', 'accrued_after_ccm')
                 ->sum('increment');
 
-            $this->data[$dayCounter]['after'] = round($raw_after / 60, 2);
+            $this->data[$dayCounter]['after'] = round($raw_after / 3600, 1);
 
             $raw_towards = NurseCareRateLog::where('nurse_id', $this->nurse->id)
                 ->where(function ($q) use
@@ -84,7 +88,7 @@ class VariablePay extends NurseInvoice
                 ->where('ccm_type', 'accrued_towards_ccm')
                 ->sum('increment');
 
-            $this->data[$dayCounter]['towards'] = round($raw_towards / 60, 2);
+            $this->data[$dayCounter]['towards'] = round($raw_towards / 3600, 1);
 
             $this->data[$dayCounter]['total'] = NurseCareRateLog::where('nurse_id', $this->nurse->id)
                 ->where(function ($q) use

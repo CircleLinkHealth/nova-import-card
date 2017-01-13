@@ -219,9 +219,13 @@ class NurseMonthlyBillGenerator
         }
 
         if($this->withVariablePaymentSystem){
+
             $variable = ( new VariablePay($this->nurse, $this->startDate, $this->endDate))->getItemizedActivities();
+
         } else {
+
             $variable = false;
+
         }
 
         return $this->formattedItemizedActivities = [

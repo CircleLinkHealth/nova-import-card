@@ -61,6 +61,7 @@ class NurseController extends Controller
 //                    ->formatItemizedActivities();
                     ->handle();
 
+
                 $data[] = $generator;
 
                 $links[$generator['name']] = $generator['link'];

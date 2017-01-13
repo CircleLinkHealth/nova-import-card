@@ -25,10 +25,10 @@
         <dt>Invoice Amount</dt>
         <dd>{{$total_billable_amount}} ({{$total_billable_rate}}/hr)</dd>
 
-        @if(isset($variable_pay))
+        @if($variable_pay)
 
             <dt>Variable Pay</dt>
-            <dd>{{$total_billable_amount}} ({{$total_billable_rate}}/hr)</dd>
+            <dd>${{$variable_pay['Payable']}}</dd>
 
         @endif
     </h4>
@@ -36,21 +36,28 @@
 
 <table class="table table-bordered">
     <tr>
-        <th>Date</th>
-        <th>Minutes</th>
-        <th>Hours</th>
-        @if(isset($variable_pay))
-            <th>CCM Mins ($30/Hour)</th>
-            <th>CCM Mins ($10/Hour)</th>
+        <th style="width: 25%">Date</th>
+        @if(!$variable_pay)
+            <th style="width: 25%">Minutes</th>
+        @endif
+
+        <th style="width: 25%">Hours</th>
+        @if($variable_pay)
+            <th style="width: 25%">CCM Hours ($30/Hour)</th>
+            <th style="width: 25%">CCM Hours ($10/Hour)</th>
         @endif
     </tr>
     @foreach($data as $key => $value)
 
         <tr>
-            <td>{{$data[$key]['Date']}}</td>
-            <td>{{$data[$key]['Minutes']}}</td>
+            <b>
+                <td>{{$data[$key]['Date']}}</td>
+            </b>
+            @if(!$variable_pay)
+                <td>{{$data[$key]['Minutes']}}</td>
+            @endif
             <td>{{$data[$key]['Hours']}}</td>
-            @if(isset($variable_pay))
+            @if($variable_pay)
                 <td>{{$variable_pay[$key]['towards']}}</td>
                 <td>{{$variable_pay[$key]['after']}}</td>
             @endif
