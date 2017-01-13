@@ -5,6 +5,14 @@
 
 @section('content')
 
+
+    <script>
+        $(document).ready(function () {
+            $(".observation").select2();
+
+        });
+    </script>
+
     <script type="text/javascript" src="{{ asset('/js/patient/observation-create.js') }}"></script>
     <div id="dtBox"></div>
     <div class="row" style="margin:60px 0px;">
@@ -33,7 +41,7 @@
                                         </div>
                                         <div class="col-sm-12">
                                             <div class="form-group">
-                                                <select id="observationType" name="observationType" class="selectpickerX dropdownValid form-control" data-size="10" required>
+                                                <select id="observationType" name="observationType" class="observation selectpickerX dropdownValid form-control" data-size="10" required>
                                                     <option value=""> Select an Observation </option>
                                                     <optgroup label="Biometrics">
                                                         <option value="RPT/CF_RPT_20">Blood Pressure</option>

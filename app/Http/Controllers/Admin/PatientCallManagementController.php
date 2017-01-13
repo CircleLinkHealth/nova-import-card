@@ -137,6 +137,8 @@ class PatientCallManagementController extends Controller
             ->pluck('fullNameWithId', 'id')
             ->all();
 
+//        dd($patientList);
+
         return view('admin.patientCallManagement.index', compact([
             'calls',
             'date',

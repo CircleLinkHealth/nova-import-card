@@ -168,6 +168,8 @@ class NotesController extends Controller
         $patientId
     ) {
 
+        //@todo segregate to helper functions :/
+
         if ($patientId) {
             // patient view
             $patient = User::find($patientId);

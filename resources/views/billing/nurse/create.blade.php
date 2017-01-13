@@ -1,6 +1,14 @@
 @extends('partials.adminUI')
 
 @section('content')
+
+    <script>
+        $(document).ready(function () {
+            $(".nurses").select2();
+
+        });
+    </script>
+
     <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/font-awesome/4.4.0/css/font-awesome.min.css">
     {!! Form::open(array('url' => URL::route('admin.reports.nurse.generate', array()),'class' => 'form-horizontal')) !!}
     <div class="container-fluid">
@@ -19,7 +27,7 @@
                                         Active Nurse<br>
                                         Select All <kbd><kbd>cmd</kbd> + <kbd>A</kbd></kbd></label>
                                     <div class="col-md-6">
-                                        <select id="nurse" name="nurses[]" class=" dropdown Valid form-control" multiple required>
+                                        <select id="nurse" name="nurses[]" class="nurses dropdown Valid form-control" multiple required>
                                             @foreach($nurses as $key => $value)
                                                 <option value="{{$key}}">{{$value}}</option>
                                             @endforeach

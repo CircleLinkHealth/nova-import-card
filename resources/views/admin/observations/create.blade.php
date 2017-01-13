@@ -1,6 +1,7 @@
 @extends('partials.adminUI')
 
 @section('content')
+
     <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/font-awesome/4.4.0/css/font-awesome.min.css">
     {!! Form::open(array('url' => URL::route('admin.observations.store', array()), 'class' => 'form-horizontal')) !!}
     <div class="container-fluid">
