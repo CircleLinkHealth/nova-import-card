@@ -98,4 +98,25 @@ interface MedicalRecord
      * @return MedicalRecord
      */
     public function importProviders() : MedicalRecord;
+
+    /**
+     * Predict which Practice should be attached to this MedicalRecord.
+     *
+     * @return MedicalRecord
+     */
+    public function predictPractice() : MedicalRecord;
+
+    /**
+     * Predict which Location should be attached to this MedicalRecord.
+     *
+     * @return MedicalRecord
+     */
+    public function predictLocation() : MedicalRecord;
+
+    /**
+     * Predict which BillingProvider should be attached to this MedicalRecord.
+     *
+     * @return MedicalRecord
+     */
+    public function predictBillingProvider() : MedicalRecord;
 }

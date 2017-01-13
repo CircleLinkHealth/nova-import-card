@@ -4,6 +4,7 @@ use App\Contracts\Importer\MedicalRecord\MedicalRecord;
 use App\Contracts\Importer\MedicalRecord\MedicalRecordLogger;
 use App\Entities\CcdaRequest;
 use App\Importer\Loggers\Ccda\CcdaSectionsLogger;
+use App\Importer\Models\ItemLogs\DocumentLog;
 use App\Importer\Section\Importers\Allergies;
 use App\Importer\Section\Importers\Demographics;
 use App\Importer\Section\Importers\Insurance;
@@ -12,13 +13,16 @@ use App\Importer\Section\Importers\Problems;
 use App\Traits\MedicalRecordItemLoggerRelationships;
 use App\User;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
 use Prettus\Repository\Contracts\Transformable;
 use Prettus\Repository\Traits\TransformableTrait;
 
 class Ccda extends Model implements MedicalRecord, Transformable
 {
 
-    use MedicalRecordItemLoggerRelationships, TransformableTrait;
+    use MedicalRecordItemLoggerRelationships,
+        TransformableTrait,
+        SoftDeletes;
 
     //define sources here
     const ATHENA_API = 'athena_api';
@@ -48,7 +52,10 @@ class Ccda extends Model implements MedicalRecord, Transformable
      * @var
      */
     protected $billingProvider;
+
     protected $location;
+
+    protected $practice;
 
     /**
      * This is the patient that owns this CCDA.
@@ -70,6 +77,13 @@ class Ccda extends Model implements MedicalRecord, Transformable
         return $this->hasOne(CcdaRequest::class);
     }
 
+    public function importedMedicalRecord()
+    {
+        return ImportedMedicalRecord::where('medical_record_type', '=', Ccda::class)
+            ->where('medical_record_id', '=', $this->id)
+            ->first();
+    }
+
     /**
      * Handles importing a MedicalRecord for QA.
      *
@@ -80,6 +94,9 @@ class Ccda extends Model implements MedicalRecord, Transformable
     {
         $this->createLogs()
             ->createImportedMedicalRecord()
+            ->predictPractice()
+            ->predictLocation()
+            ->predictBillingProvider()
             ->importAllergies()
             ->importDemographics()
             ->importDocument()
@@ -219,6 +236,97 @@ class Ccda extends Model implements MedicalRecord, Transformable
     {
         $importer = new Insurance();
         $importer->import($this->id, self::class, $this->importedMedicalRecord);
+
+        return $this;
+    }
+
+    /**
+     * Predict which Practice should be attached to this MedicalRecord.
+     *
+     * @return MedicalRecord
+     */
+    public function predictPractice() : MedicalRecord
+    {
+        //historic custodian lookup
+        DocumentLog::where('custodian', '=', $this->document->custodian)->groupBy('practice_id');
+    }
+
+    /**
+     * Predict which Location should be attached to this MedicalRecord.
+     *
+     * @return MedicalRecord
+     */
+    public function predictLocation() : MedicalRecord
+    {
+        // TODO: Implement predictLocation() method.
+    }
+
+    /**
+     * Predict which BillingProvider should be attached to this MedicalRecord.
+     *
+     * @return MedicalRecord
+     */
+    public function predictBillingProvider() : MedicalRecord
+    {
+        // TODO: Implement predictBillingProvider() method.
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getBillingProvider()
+    {
+        return $this->billingProvider;
+    }
+
+    /**
+     * @param mixed $billingProvider
+     *
+     * @return Ccda
+     */
+    public function setBillingProvider($billingProvider)
+    {
+        $this->billingProvider = $billingProvider;
+
+        return $this;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getLocation()
+    {
+        return $this->location;
+    }
+
+    /**
+     * @param mixed $location
+     *
+     * @return Ccda
+     */
+    public function setLocation($location)
+    {
+        $this->location = $location;
+
+        return $this;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getPractice()
+    {
+        return $this->practice;
+    }
+
+    /**
+     * @param mixed $practice
+     *
+     * @return Ccda
+     */
+    public function setPractice($practice)
+    {
+        $this->practice = $practice;
 
         return $this;
     }
