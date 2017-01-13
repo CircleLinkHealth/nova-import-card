@@ -15,6 +15,7 @@ use App\NurseContactWindow;
 use App\Nurse;
 use App\PatientContactWindow;
 use App\Patient;
+use App\PatientMonthlySummary;
 use App\Practice;
 use App\Role;
 use App\User;
@@ -34,8 +35,7 @@ trait UserHelpers
     public function createUser(
         $practiceId = 9,
         $roleName = 'provider'
-    ) : User
-    {
+    ): User {
         $faker = Factory::create();
 
         $firstName = $faker->firstName;
@@ -201,6 +201,13 @@ trait UserHelpers
             'patient_info_id' => $patient->id,
 
         ]);
+
+    }
+
+    public function makePatientMonthlyRecord(Patient $patient)
+    {
+
+        return PatientMonthlySummary::updateCallInfoForPatient($patient, true);
 
     }
 

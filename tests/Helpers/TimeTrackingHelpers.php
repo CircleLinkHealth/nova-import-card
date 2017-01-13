@@ -116,8 +116,10 @@ trait TimeTrackingHelpers
         //since this doesn't happen automatically, for testing purposes we update the patient's
         //current ccm_time
 
+        $pre_ccm = $patient->cur_month_activity_time;
+        $new_ccm = $pre_ccm + $duration;
 
-        $patient->cur_month_activity_time = $patient->cur_month_activity_time + $duration;
+        $patient->cur_month_activity_time = $new_ccm;
         $patient->save();
 
         return Activity::create([
