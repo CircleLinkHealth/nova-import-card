@@ -2,6 +2,7 @@
 
 use App\Activity;
 use App\ActivityMeta;
+use App\Algorithms\Invoicing\AlternativeCareTimePayableCalculator;
 use App\Practice;
 use App\Reports\PatientDailyAuditReport;
 use App\Services\ActivityService;
@@ -123,6 +124,24 @@ class ActivityController extends Controller {
 
 		// store activity
 		$actId = Activity::createNewActivity($input);
+
+        $activity = Activity::find($actId);
+        $nurse = User::find($activity->provider_id)->nurseInfo;
+
+        if ($nurse) {
+
+            $activity = Activity::find($actId);
+
+            $computer = new AlternativeCareTimePayableCalculator($nurse);
+
+            $data = $computer->adjustCCMPaybleForActivity($activity);
+
+             $computer->createOrIncrementNurseSummary(
+                    $data['toAddToAccuredTowardsCCM'],
+                    $data['toAddToAccuredAfterCCM'],
+                    $data['activity_id']
+                );
+        }
 
 		// store meta
 		if (array_key_exists('meta',$input)) {

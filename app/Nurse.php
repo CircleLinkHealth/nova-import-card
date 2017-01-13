@@ -95,6 +95,17 @@ class Nurse extends Model
         return $this->hasMany(NurseCareRateLog::class);
 
     }
+
+    public static function careGivenToPatientForCurrentMonthByNurse(Patient $patient, Nurse $nurse){
+
+        return Activity::where('provider_id', $nurse->user_id)
+            ->where('patient_id', $patient->user_id)
+            ->where(function ($q){
+                $q->where('created_at', '>=', Carbon::now()->startOfMonth())
+                    ->where('updated_at', '<=', Carbon::now()->endOfMonth());
+            })
+            ->sum('duration');
+    }
     
     public function callStatsForRange(Carbon $start, Carbon $end){
 
