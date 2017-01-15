@@ -15,10 +15,11 @@ class AddIcd9ToSnomedMap extends Migration
     {
         Schema::create('snomed_to_icd9_map', function (Blueprint $table) {
             $table->increments('id');
-            $table->string('icd_9_code');
-            $table->string('icd_9_name');
-            $table->double('icd_9_avg_usage');
-            $table->boolean('icd_9_is_nec');
+            $table->boolean('ccm_eligible');
+            $table->string('code');
+            $table->string('name');
+            $table->double('avg_usage');
+            $table->boolean('is_nec');
             $table->integer('snomed_code');
             $table->string('snomed_name');
         });

@@ -9,6 +9,8 @@
 namespace App\Services;
 
 
+use App\Models\CPM\CpmProblem;
+use App\SnomedToICD9Map;
 use Carbon\Carbon;
 use Illuminate\Support\Collection;
 use Maatwebsite\Excel\Facades\Excel;
@@ -39,7 +41,23 @@ class WelcomeCallListGenerator
     protected function byNumberOfProblems() : WelcomeCallListGenerator
     {
         $this->patientList = $this->patientList->reject(function ($row) {
+            $row['ccm_condition_1'] = '';
+            $row['ccm_condition_2'] = '';
 
+            $problems = new Collection(explode(',', $row['problems']));
+
+            $qualifyingProblems = $problems->reject(function ($problem) {
+                //try icd 9
+
+                //try icd 10
+            });
+
+            if (!$qualifyingProblems->count() < 3) {
+                return true;
+            }
+
+            $row['ccm_condition_1'] = $qualifyingProblems[0];
+            $row['ccm_condition_2'] = $qualifyingProblems[1];
         });
 
         return $this;
