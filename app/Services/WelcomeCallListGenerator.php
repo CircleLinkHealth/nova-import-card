@@ -40,7 +40,7 @@ class WelcomeCallListGenerator
 
     protected function byNumberOfProblems() : WelcomeCallListGenerator
     {
-        $this->patientList = $this->patientList->map(function ($row) {
+        $patientList = $this->patientList->map(function ($row) {
             $row['ccm_condition_1'] = '';
             $row['ccm_condition_2'] = '';
 
@@ -83,6 +83,8 @@ class WelcomeCallListGenerator
 
             return $row;
         })->values();
+
+        $this->patientList = $patientList;
 
         return $this;
     }
