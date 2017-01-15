@@ -10,7 +10,6 @@ namespace App\Services;
 
 
 use App\CLH\CCD\Importer\SnomedToCpmIcdMap;
-use App\SnomedToICD9Map;
 use Carbon\Carbon;
 use Illuminate\Support\Collection;
 use Maatwebsite\Excel\Facades\Excel;
@@ -47,6 +46,8 @@ class WelcomeCallListGenerator
             $problems = new Collection(explode(',', $row['problems']));
 
             $qualifyingProblems = [];
+            //the cpm_problem_id for qualifying problems
+            $qualifyingProblemsCpmIdStack = [];
 
             foreach ($problems as $problemCode) {
 
@@ -55,12 +56,12 @@ class WelcomeCallListGenerator
                 }
 
                 //try icd 9
-                $problem = SnomedToICD9Map::where('code', '=', $problemCode)
-                    ->where('ccm_eligible', '=', true)
+                $problem = SnomedToCpmIcdMap::where('icd_9_code', '=', $problemCode)
                     ->first();
 
-                if ($problem) {
-                    $qualifyingProblems[] = "{$problem->name}, ICD9: $problemCode";
+                if ($problem && !in_array($problem->cpm_problem_id, $qualifyingProblemsCpmIdStack)) {
+                    $qualifyingProblems[] = "{$problem->icd_9_name}, ICD9: $problemCode";
+                    $qualifyingProblemsCpmIdStack[] = $problem->cpm_problem_id;
                     continue;
                 }
 
@@ -68,8 +69,9 @@ class WelcomeCallListGenerator
                 $problem = SnomedToCpmIcdMap::where('icd_10_code', '=', $problemCode)
                     ->first();
 
-                if ($problem) {
+                if ($problem && !in_array($problem->cpm_problem_id, $qualifyingProblemsCpmIdStack)) {
                     $qualifyingProblems[] = "{$problem->icd_10_name}, ICD10: $problemCode";
+                    $qualifyingProblemsCpmIdStack[] = $problem->cpm_problem_id;
                     continue;
                 }
             }
@@ -84,7 +86,7 @@ class WelcomeCallListGenerator
             return $row;
         })->values();
 
-        $this->patientList = new Collection(array_values($patientList->all()));
+        $this->patientList = new Collection(array_filter($patientList->all()));
 
         return $this;
     }
