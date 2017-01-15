@@ -1,7 +1,5 @@
 <?php
 
-use Illuminate\Support\Facades\Artisan;
-
 if (app()->environment() != 'production') {
 
     Route::get('rohan', function () {
@@ -498,6 +496,11 @@ Route::group(['middleware' => 'auth'], function () {
         Route::post('calls/import', [
             'uses' => 'CallController@import',
             'as'   => 'post.CallController.import',
+        ]);
+
+        Route::post('make-welcome-call-list', [
+            'uses' => 'Admin\WelcomeCallListController@makeWelcomeCallList',
+            'as'   => 'make.welcome.call.list',
         ]);
 
         Route::get('families/create', [
