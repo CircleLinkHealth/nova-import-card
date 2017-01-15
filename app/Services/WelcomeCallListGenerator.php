@@ -84,7 +84,7 @@ class WelcomeCallListGenerator
             return $row;
         })->values();
 
-        $this->patientList = $patientList;
+        $this->patientList = new Collection(array_values($patientList->all()));
 
         return $this;
     }
