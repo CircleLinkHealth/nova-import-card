@@ -60,7 +60,7 @@ class WelcomeCallListGenerator
                     ->first();
 
                 if ($problem && !in_array($problem->cpm_problem_id, $qualifyingProblemsCpmIdStack)) {
-                    $qualifyingProblems[] = "{$problem->icd_9_name}, ICD9: $problemCode";
+                    $qualifyingProblems[] = "{$problem->cpmProblem->name}, ICD9: $problemCode";
                     $qualifyingProblemsCpmIdStack[] = $problem->cpm_problem_id;
                     continue;
                 }
@@ -70,7 +70,7 @@ class WelcomeCallListGenerator
                     ->first();
 
                 if ($problem && !in_array($problem->cpm_problem_id, $qualifyingProblemsCpmIdStack)) {
-                    $qualifyingProblems[] = "{$problem->icd_10_name}, ICD10: $problemCode";
+                    $qualifyingProblems[] = "{$problem->cpmProblem->name}, ICD10: $problemCode";
                     $qualifyingProblemsCpmIdStack[] = $problem->cpm_problem_id;
                     continue;
                 }
