@@ -9,7 +9,7 @@
 namespace App\Services;
 
 
-use App\Models\CPM\CpmProblem;
+use App\CLH\CCD\Importer\SnomedToCpmIcdMap;
 use App\SnomedToICD9Map;
 use Carbon\Carbon;
 use Illuminate\Support\Collection;
@@ -40,25 +40,49 @@ class WelcomeCallListGenerator
 
     protected function byNumberOfProblems() : WelcomeCallListGenerator
     {
-        $this->patientList = $this->patientList->reject(function ($row) {
+        $this->patientList = $this->patientList->map(function ($row) {
             $row['ccm_condition_1'] = '';
             $row['ccm_condition_2'] = '';
 
             $problems = new Collection(explode(',', $row['problems']));
 
-            $qualifyingProblems = $problems->reject(function ($problem) {
+            $qualifyingProblems = [];
+
+            foreach ($problems as $problemCode) {
+
+                if (count($qualifyingProblems) > 1) {
+                    break;
+                }
+
                 //try icd 9
+                $problem = SnomedToICD9Map::where('code', '=', $problemCode)
+                    ->where('ccm_eligible', '=', true)
+                    ->first();
+
+                if ($problem) {
+                    $qualifyingProblems[] = "{$problem->name}, ICD9: $problemCode";
+                    continue;
+                }
 
                 //try icd 10
-            });
+                $problem = SnomedToCpmIcdMap::where('icd_10_code', '=', $problemCode)
+                    ->first();
 
-            if (!$qualifyingProblems->count() < 3) {
-                return true;
+                if ($problem) {
+                    $qualifyingProblems[] = "{$problem->icd_10_name}, ICD10: $problemCode";
+                    continue;
+                }
+            }
+
+            if (count($qualifyingProblems) < 2) {
+                return false;
             }
 
             $row['ccm_condition_1'] = $qualifyingProblems[0];
             $row['ccm_condition_2'] = $qualifyingProblems[1];
-        });
+
+            return $row;
+        })->values();
 
         return $this;
     }
