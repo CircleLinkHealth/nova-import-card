@@ -248,7 +248,15 @@ class Ccda extends Model implements MedicalRecord, Transformable
     public function predictPractice() : MedicalRecord
     {
         //historic custodian lookup
-        DocumentLog::where('custodian', '=', $this->document->custodian)->groupBy('practice_id');
+        $custodianLookup = DocumentLog::where('custodian', '=', 'athenahealth')
+            ->whereNotNull('practice_id')
+            ->groupBy('practice_id')
+            ->get(['practice_id'])
+            ->keyBy('practice_id')
+            ->keys();
+
+
+        return $this;
     }
 
     /**
@@ -258,7 +266,14 @@ class Ccda extends Model implements MedicalRecord, Transformable
      */
     public function predictLocation() : MedicalRecord
     {
-        // TODO: Implement predictLocation() method.
+        //historic custodian lookup
+        $custodianLookup = DocumentLog::where('custodian', '=', $this->document->custodian)
+            ->whereNotNull('location_id')
+            ->groupBy('location_id')
+            ->get(['location_id']);
+
+
+        return $this;
     }
 
     /**
@@ -269,6 +284,7 @@ class Ccda extends Model implements MedicalRecord, Transformable
     public function predictBillingProvider() : MedicalRecord
     {
         // TODO: Implement predictBillingProvider() method.
+        return $this;
     }
 
     /**
