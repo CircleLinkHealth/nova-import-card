@@ -38,6 +38,8 @@ class NurseMonthlyBillGenerator
     protected $formattedItemizedActivities;
     protected $payable;
     protected $percentTime;
+    protected $rate;
+    protected $total;
 
     protected $withVariablePaymentSystem;
 
@@ -125,16 +127,6 @@ class NurseMonthlyBillGenerator
 
         }
 
-        //handle any extra time
-        if($this->hasAddedTime){
-
-            //round to .5
-            $this->formattedAddDuration = ceil(($this->addDuration * 2) / 60) / 2;
-
-            $this->formattedSystemTime += $this->formattedAddDuration;
-
-        }
-
         $this->payable = $this->formattedSystemTime * $this->nurse->hourly_rate;
 
         return '$'.$this->payable;
@@ -173,13 +165,50 @@ class NurseMonthlyBillGenerator
 
         $data = [];
 
+        $this->total['hours'] = $this->formattedSystemTime;
+        $this->total['minutes'] = $this->formattedSystemTime * 60;
+
+        if($this->withVariablePaymentSystem){
+
+            $variable = ( new VariablePay($this->nurse, $this->startDate, $this->endDate))->getItemizedActivities();
+            $this->total['after'] = $variable['total']['after'];
+            $this->total['towards'] = $variable['total']['towards'];
+
+            $payableVariable = $variable['payable'];
+
+            if($payableVariable > $this->payable){
+
+                $this->payable = $payableVariable;
+                $this->rate = 'Variable Rates: $30/hr or $10/hr';
+
+            } else {
+
+                $this->rate = 'Fixed Rate: '. $this->nurse->hourly_rate . '/hr';
+
+            }
+
+        } else {
+
+            $variable = false;
+            $this->rate = 'Fixed Rate: '. $this->nurse->hourly_rate . '/hr';
+
+        }
+
         $dayCounterCarbon = Carbon::parse($this->startDate->toDateString());
         $dayCounterDate = $dayCounterCarbon->toDateString();
 
         //handle any extra time
         if($this->hasAddedTime){
 
-            $data['Others'] = [
+            //round to .5
+            $this->formattedAddDuration = ceil(($this->addDuration * 2) / 60) / 2;
+            $this->formattedSystemTime += $this->formattedAddDuration;
+
+            $extraMultiplier = ($this->withVariablePaymentSystem) ? 30 : 20;
+
+            $this->payable += $this->formattedAddDuration * $extraMultiplier;
+
+            $others = [
 
                 'Date'    => $this->addNotes,
                 'Minutes' => $this->addDuration,
@@ -187,6 +216,9 @@ class NurseMonthlyBillGenerator
 
             ];
 
+        } else {
+
+            $others = false;
         }
 
         while($this->endDate->toDateString() >= $dayCounterDate){
@@ -218,15 +250,6 @@ class NurseMonthlyBillGenerator
 
         }
 
-        if($this->withVariablePaymentSystem){
-
-            $variable = ( new VariablePay($this->nurse, $this->startDate, $this->endDate))->getItemizedActivities();
-
-        } else {
-
-            $variable = false;
-
-        }
 
         $this->formattedItemizedActivities = [
         //days data
@@ -238,11 +261,13 @@ class NurseMonthlyBillGenerator
 
         //variable
             'variable_pay' => $variable,
+            'total' => $this->total,
+            'others' => $others,
 
             //headers
             'nurse_billable_time' => $this->formattedSystemTime,
             'total_billable_amount' => '$'.$this->payable,
-            'total_billable_rate' => '$'.$this->nurse->hourly_rate,
+            'total_billable_rate' => $this->rate,
             'nurse_name' => $this->nurse->user->fullName,
 
             //range
@@ -286,55 +311,6 @@ class NurseMonthlyBillGenerator
             'date_end' => $this->endDate->toDateString(),
             'email_body' => $data
         ];
-
-    }
-    
-    public function email()
-    {
-
-        $this->getSystemTimeForNurse();
-
-        $this->getItemizedActivities();
-
-        $this->formatItemizedActivities();
-
-        $this->mail();
-
-        return [
-            'id' => $this->nurse->id,
-            'email' => $this->nurse->user->email,
-            'link' => $this->generatePdf(),
-        ];
-
-    }
-
-    public function mail(){
-
-        $nurse = $this->nurse;
-
-        $fileName = $this->generatePdf();
-
-        Mail::send('billing.nurse.invoice', $this->formattedItemizedActivities, function ($m) use ($nurse, $fileName) {
-
-            $m->from('billing@circlelinkhealth.com', 'CircleLink Health');
-
-            $m->attach(storage_path("download/$fileName"));
-
-            $m->to($nurse->user->email, $nurse->user->fullName)
-                ->subject('New Invoice from CircleLink Health');
-        });
-
-//        MailLog::create([
-//            'sender_email' => $sender->email,
-//            'receiver_email' => $receiver->email,
-//            'body' => $body,
-//            'subject' => $email_subject,
-//            'type' => 'note',
-//            'sender_cpm_id' => $sender->id,
-//            'receiver_cpm_id' => $receiver->id,
-//            'created_at' => $note->created_at,
-//            'note_id' => $note->id
-//        ]);
 
     }
 

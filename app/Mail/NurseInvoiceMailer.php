@@ -3,6 +3,7 @@
 namespace App\Mail;
 
 use App\Billing\NurseMonthlyBillGenerator;
+use App\MailLog;
 use App\Nurse;
 use Carbon\Carbon;
 use Illuminate\Bus\Queueable;
@@ -19,7 +20,6 @@ class NurseInvoiceMailer extends Mailable
 
     protected $rangeStart;
     protected $rangeEnd;
-
 
     public function __construct(Nurse $nurse, Carbon $start, Carbon $end, $withVariable = false)
     {
@@ -41,6 +41,19 @@ class NurseInvoiceMailer extends Mailable
     {
 
         $month = Carbon::now()->format('F');
+
+        MailLog::create([
+            'sender_email' => 'no-reply@circlelinkhealth.com',
+            'receiver_email' => $this->nurse->user->email,
+            'body' => '',
+            'subject' => "$month Time and Fees Earned Report",
+            'type' => 'invoice',
+            'sender_cpm_id' => 1752,
+            'receiver_cpm_id' => $this->nurse->user->id,
+            'created_at' => Carbon::now()->toDateTimeString(),
+            'note_id' => null
+        ]);
+
 
         return $this->view('emails.nurseInvoice')
             ->with(['name' => $this->nurse->user->fullName])
