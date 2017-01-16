@@ -510,6 +510,11 @@ Route::group(['middleware' => 'auth'], function () {
             'as'   => 'post.CallController.import',
         ]);
 
+        Route::post('make-welcome-call-list', [
+            'uses' => 'Admin\WelcomeCallListController@makeWelcomeCallList',
+            'as'   => 'make.welcome.call.list',
+        ]);
+
         Route::get('families/create', [
             'uses' => 'FamilyController@create',
             'as'   => 'family.create',
