@@ -1,6 +1,7 @@
 <?php namespace App\Models\MedicalRecords;
 
 
+use App\Contracts\Importer\MedicalRecord\MedicalRecord;
 use App\Contracts\Importer\MedicalRecord\MedicalRecordLogger;
 use App\Entities\CcdaRequest;
 use App\Importer\Loggers\Ccda\CcdaSectionsLogger;
@@ -90,19 +91,19 @@ class Ccda extends MedicalRecordEloquent implements Transformable
     /**
      * @return mixed
      */
-    public function getBillingProvider()
+    public function getBillingProviderIdPrediction()
     {
-        return $this->billingProviderPrediction;
+        return $this->billingProviderIdPrediction;
     }
 
     /**
      * @param mixed $billingProvider
      *
-     * @return Ccda
+     * @return MedicalRecord
      */
-    public function setBillingProvider($billingProvider)
+    public function setBillingProviderIdPrediction($billingProvider) : MedicalRecord
     {
-        $this->billingProviderPrediction = $billingProvider;
+        $this->billingProviderIdPrediction = $billingProvider;
 
         return $this;
     }
@@ -110,19 +111,19 @@ class Ccda extends MedicalRecordEloquent implements Transformable
     /**
      * @return mixed
      */
-    public function getLocation()
+    public function getLocationIdPrediction()
     {
-        return $this->locationPrediction;
+        return $this->locationIdPrediction;
     }
 
     /**
      * @param mixed $location
      *
-     * @return Ccda
+     * @return MedicalRecord
      */
-    public function setLocation($location)
+    public function setLocationIdPrediction($location) : MedicalRecord
     {
-        $this->locationPrediction = $location;
+        $this->locationIdPrediction = $location;
 
         return $this;
     }
@@ -130,19 +131,19 @@ class Ccda extends MedicalRecordEloquent implements Transformable
     /**
      * @return mixed
      */
-    public function getPractice()
+    public function getPracticeIdPrediction()
     {
-        return $this->practicePrediction;
+        return $this->practiceIdPrediction;
     }
 
     /**
      * @param mixed $practice
      *
-     * @return Ccda
+     * @return MedicalRecord
      */
-    public function setPractice($practice)
+    public function setPracticeIdPrediction($practice) : MedicalRecord
     {
-        $this->practicePrediction = $practice;
+        $this->practiceIdPrediction = $practice;
 
         return $this;
     }
