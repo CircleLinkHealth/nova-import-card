@@ -37,8 +37,8 @@ class VariablePay extends NurseInvoice
         $this->ccm_under_payable = ($this->ccm_over_duration / 3600) * 10;
         $this->ccm_over_payable = ($this->ccm_under_duration / 3600) * 30;
 
-        $this->data['after'] = ($this->ccm_over_duration / 3600);
-        $this->data['towards'] = ($this->ccm_under_duration / 3600);
+        $this->data['after'] = round(($this->ccm_over_duration / 3600) , 1);
+        $this->data['towards'] = round(($this->ccm_under_duration / 3600) , 1);
 
         $this->data['Payable'] = round($this->ccm_over_payable + $this->ccm_over_payable, 2);
 
@@ -90,7 +90,7 @@ class VariablePay extends NurseInvoice
 
             $this->data[$dayCounter]['towards'] = round($raw_towards / 3600, 1);
 
-            $this->data[$dayCounter]['total'] = NurseCareRateLog::where('nurse_id', $this->nurse->id)
+            $total = NurseCareRateLog::where('nurse_id', $this->nurse->id)
                 ->where(function ($q) use
                 (
                     $dayCounter
@@ -99,6 +99,8 @@ class VariablePay extends NurseInvoice
                         ->where('created_at', '<=', Carbon::parse($dayCounter)->endOfDay());
                 })
                 ->sum('increment');
+
+            $this->data[$dayCounter]['total'] = round($total / 3600, 1);
 
             $dayCounter = Carbon::parse($dayCounter)->addDay(1)->toDateString();
 
