@@ -30,7 +30,6 @@ class NurseInvoiceMailer extends Mailable
         $this->rangeStart = $start;
         $this->rangeEnd = $end;
 
-
     }
 
     /**
@@ -40,8 +39,12 @@ class NurseInvoiceMailer extends Mailable
      */
     public function build()
     {
+
+        $month = Carbon::now()->format('F');
+
         return $this->view('emails.nurseInvoice')
             ->with(['name' => $this->nurse->user->fullName])
+            ->subject("$month Time and Fees Earned Report")
             ->attach($this->reportLink, [
                 'as' => 'invoice.pdf',
                 'mime' => 'application/pdf',
