@@ -8,7 +8,7 @@
  */
 
 use App\Contracts\Importer\MedicalRecord\MedicalRecord;
-use App\Importer\Models\ItemLogs\DocumentLog;
+use App\Importer\Predictors\HistoricLocationPredictor;
 use App\Importer\Predictors\HistoricPracticePredictor;
 use App\Importer\Section\Importers\Allergies;
 use App\Importer\Section\Importers\Demographics;
@@ -220,11 +220,11 @@ abstract class MedicalRecordEloquent extends Model implements MedicalRecord
      */
     public function predictPractice() : MedicalRecord
     {
-        if ($this->practiceIdPrediction) {
+        if ($this->getPracticeIdPrediction()) {
             return $this;
         }
 
-        //historic custodian lookup
+        //historic lookup
         $historicPredictor = new HistoricPracticePredictor($this->document->custodian, $this->providers);
         $historicPrediction = $historicPredictor->predict();
 
@@ -245,11 +245,18 @@ abstract class MedicalRecordEloquent extends Model implements MedicalRecord
      */
     public function predictLocation() : MedicalRecord
     {
-        //historic custodian lookup
-        $custodianLookup = DocumentLog::where('custodian', '=', $this->document->custodian)
-            ->whereNotNull('location_id')
-            ->groupBy('location_id')
-            ->get(['location_id']);
+        if ($this->getLocationIdPrediction()) {
+            return $this;
+        }
+        //historic lookup
+        $historicPredictor = new HistoricLocationPredictor($this->document->custodian, $this->providers);
+        $historicPrediction = $historicPredictor->predict();
+
+        if ($historicPrediction) {
+            $this->setLocationIdPrediction($historicPrediction);
+
+            return $this;
+        }
 
 
         return $this;

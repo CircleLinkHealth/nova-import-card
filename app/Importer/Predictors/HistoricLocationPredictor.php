@@ -12,7 +12,7 @@ use Illuminate\Support\Facades\DB;
  * Date: 16/01/2017
  * Time: 5:36 PM
  */
-class HistoricPracticePredictor implements Predictor
+class HistoricLocationPredictor implements Predictor
 {
     /**
      * @var string
@@ -27,7 +27,7 @@ class HistoricPracticePredictor implements Predictor
     /**
      * @var integer
      */
-    protected $practiceIdPrediction;
+    protected $locationIdPrediction;
 
     public function __construct(
         $custodian,
@@ -56,7 +56,7 @@ class HistoricPracticePredictor implements Predictor
 
         $merged = $custodianLookup->merge($providersLookup)
             ->merge($addressesLookup)
-            ->groupBy('practice_id')
+            ->groupBy('location_id')
             ->
             map(function (
                 $item,
@@ -65,15 +65,15 @@ class HistoricPracticePredictor implements Predictor
                 $collection = new Collection($item);
 
                 return [
-                    'practice_id'    => $key,
-                    'practice_count' => $collection->sum('practice_count'),
+                    'location_id'    => $key,
+                    'location_count' => $collection->sum('location_count'),
                 ];
             })
             ->values()
-            ->sortByDesc('practice_count');
+            ->sortByDesc('location_count');
 
 
-        return $merged->first()['practice_id'] ?? null;
+        return $merged->first()['location_id'] ?? null;
 
     }
 
@@ -84,20 +84,20 @@ class HistoricPracticePredictor implements Predictor
             return new Collection();
         }
 
-        return DocumentLog::select(DB::raw("count('practice_id') as practice_count, practice_id"))
+        return DocumentLog::select(DB::raw("count('location_id') as location_count, location_id"))
             ->where('custodian', '=', $this->custodian)
-            ->whereNotNull('practice_id')
-            ->orderBy('practice_count', 'desc')
-            ->groupBy('practice_id')
-            ->get(['practice_id'])
+            ->whereNotNull('location_id')
+            ->orderBy('location_count', 'desc')
+            ->groupBy('location_id')
+            ->get(['location_id'])
             ->map(function ($item) {
                 return [
-                    'practice_id'    => $item->practice_id,
-                    'practice_count' => $item->practice_count,
+                    'location_id'    => $item->location_id,
+                    'location_count' => $item->location_count,
                 ];
             })
             ->reject(function ($item) {
-                return !$item['practice_id'];
+                return !$item['location_id'];
             });
     }
 
@@ -108,21 +108,21 @@ class HistoricPracticePredictor implements Predictor
             return new Collection();
         }
 
-        return ProviderLog::select(DB::raw("count('practice_id') as practice_count, practice_id"))
+        return ProviderLog::select(DB::raw("count('location_id') as location_count, location_id"))
             ->whereIn('first_name', $this->providerLogs->pluck('first_name'))
             ->whereIn('last_name', $this->providerLogs->pluck('last_name'))
-            ->whereNotNull('practice_id')
-            ->orderBy('practice_count', 'desc')
-            ->groupBy('practice_id')
-            ->get(['practice_id'])
+            ->whereNotNull('location_id')
+            ->orderBy('location_count', 'desc')
+            ->groupBy('location_id')
+            ->get(['location_id'])
             ->map(function ($item) {
                 return [
-                    'practice_id'    => $item->practice_id,
-                    'practice_count' => $item->practice_count,
+                    'location_id'    => $item->location_id,
+                    'location_count' => $item->location_count,
                 ];
             })
             ->reject(function ($item) {
-                return !$item['practice_id'];
+                return !$item['location_id'];
             });
     }
 
@@ -133,8 +133,8 @@ class HistoricPracticePredictor implements Predictor
             return new Collection();
         }
 
-        return ProviderLog::select(DB::raw("count('practice_id') as practice_count, practice_id"))
-            ->whereNotNull('practice_id')
+        return ProviderLog::select(DB::raw("count('location_id') as location_count, location_id"))
+            ->whereNotNull('location_id')
             ->whereIn('street', $this->providerLogs->pluck('street'))
             ->whereIn('city', $this->providerLogs->pluck('city'))
             ->whereIn('state', $this->providerLogs->pluck('state'))
@@ -142,17 +142,17 @@ class HistoricPracticePredictor implements Predictor
             ->orWhereIn('cell_phone', $this->providerLogs->pluck('cell_phone'))
             ->orWhereIn('home_phone', $this->providerLogs->pluck('home_phone'))
             ->orWhereIn('work_phone', $this->providerLogs->pluck('work_phone'))
-            ->orderBy('practice_count', 'desc')
-            ->groupBy('practice_id')
-            ->get(['practice_id'])
+            ->orderBy('location_count', 'desc')
+            ->groupBy('location_id')
+            ->get(['location_id'])
             ->map(function ($item) {
                 return [
-                    'practice_id'    => $item->practice_id,
-                    'practice_count' => $item->practice_count,
+                    'location_id'    => $item->location_id,
+                    'location_count' => $item->location_count,
                 ];
             })
             ->reject(function ($item) {
-                return !$item['practice_id'];
+                return !$item['location_id'];
             });
     }
 }
