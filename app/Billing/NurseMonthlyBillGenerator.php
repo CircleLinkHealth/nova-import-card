@@ -228,7 +228,7 @@ class NurseMonthlyBillGenerator
 
         }
 
-        return $this->formattedItemizedActivities = [
+        $this->formattedItemizedActivities = [
         //days data
             'data' => $data,
             'hasAddedTime' => $this->hasAddedTime,
@@ -251,15 +251,23 @@ class NurseMonthlyBillGenerator
 
         ];
 
+        return $this->formattedItemizedActivities;
+
     }
 
-    public function generatePdf(){
+    public function generatePdf($onlyLink = false){
+
+        $this->formatItemizedActivities();
 
         $pdf = PDF::loadView('billing.nurse.invoice', $this->formattedItemizedActivities);
 
         $name = trim($this->nurseName).'-'.Carbon::now()->toDateString();
 
         $pdf->save( storage_path("download/$name.pdf"), true );
+
+        if($onlyLink){
+            return storage_path("download/$name.pdf");
+        }
 
         $data = [
             'name' => $this->nurse->user->fullName,

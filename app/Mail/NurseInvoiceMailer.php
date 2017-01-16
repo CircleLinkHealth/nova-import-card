@@ -15,20 +15,17 @@ class NurseInvoiceMailer extends Mailable
     use Queueable, SerializesModels;
 
     protected $nurse;
-    protected $reportData;
-    protected $view;
+    protected $reportLink;
 
     protected $rangeStart;
     protected $rangeEnd;
 
 
-    public function __construct(Nurse $nurse, $withVariable, Carbon $start, Carbon $end)
+    public function __construct(Nurse $nurse, Carbon $start, Carbon $end, $withVariable = false)
     {
 
         $this->nurse = $nurse;
-        $this->reportData = (new NurseMonthlyBillGenerator($nurse, $start, $end, $withVariable))->generatePdf();
-        $this->reportData;
-        $this->view = 'emails.nurseInvoice';
+        $this->reportLink = (new NurseMonthlyBillGenerator($nurse, $start, $end, $withVariable))->generatePdf(true);
 
         $this->rangeStart = $start;
         $this->rangeEnd = $end;
@@ -43,12 +40,12 @@ class NurseInvoiceMailer extends Mailable
      */
     public function build()
     {
-
-        dd($this->reportData);
-
-        return $this->view($this->view)
-            ->from('no-reply@circlelinkhealth.com');
-//            ->;
+        return $this->view('emails.nurseInvoice')
+            ->with(['name' => $this->nurse->user->fullName])
+            ->attach($this->reportLink, [
+                'as' => 'invoice.pdf',
+                'mime' => 'application/pdf',
+        ]);
 
     }
 }
