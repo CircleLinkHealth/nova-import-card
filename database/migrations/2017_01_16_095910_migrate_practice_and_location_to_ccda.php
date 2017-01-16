@@ -1,7 +1,5 @@
 <?php
 
-use App\Models\MedicalRecords\Ccda;
-use App\User;
 use Illuminate\Database\Migrations\Migration;
 
 class MigratePracticeAndLocationToCcda extends Migration
@@ -13,39 +11,9 @@ class MigratePracticeAndLocationToCcda extends Migration
      */
     public function up()
     {
-        foreach (Ccda::withTrashed()->get() as $ccda) {
-            if ($ccda->patient_id) {
-                $patient = User::find($ccda->patient_id);
-
-                if (!$patient) {
-                    continue;
-                }
-
-                $ccda->location_id = $patient->preferred_contact_location;
-                $ccda->practice_id = $patient->primary_practice_id;
-                $ccda->save();
-
-                $docLog = $ccda->document;
-
-                if ($docLog) {
-                    $docLog->location_id = $ccda->location_id;
-                    $docLog->practice_id = $ccda->practice_id;
-                    $docLog->save();
-                }
-
-
-                $providersLog = $ccda->providers;
-
-                if ($providersLog) {
-                    foreach ($providersLog as $providerLog) {
-                        $providerLog->location_id = $ccda->location_id;
-                        $providerLog->practice_id = $ccda->practice_id;
-                        $providerLog->save();
-                    }
-                }
-
-            }
-        }
+        Artisan::call('db:seed', [
+            '--class' => 'CcdaImporterPredictionSeeder',
+        ]);
     }
 
     /**
