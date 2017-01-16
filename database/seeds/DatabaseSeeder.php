@@ -39,6 +39,7 @@ class DatabaseSeeder extends Seeder {
 //      $this->call('CpmProblemsTableSeeder');
 
 
+        $this->call(SnomedToIcd9MapTableSeeder::class);
     }
 
 }

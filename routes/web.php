@@ -1,30 +1,17 @@
 <?php
 
-use App\Billing\NurseMonthlyBillGenerator;
-use App\Mail\NurseInvoiceMailer;
-use Illuminate\Support\Facades\Artisan;
-use Illuminate\Support\Facades\Mail;
-
 if (app()->environment() != 'production') {
 
     Route::get('rohan', function () {
 
         $nurse = \App\User::find(1755)->nurseInfo;
         $patient = \App\Patient::find(1423);
-        $start = \Carbon\Carbon::now()->startOfMonth();
-        $end = \Carbon\Carbon::now()->endOfMonth()
-        ;
-        $reportData = (new NurseMonthlyBillGenerator($nurse, $start, $end, true))->formatItemizedActivities();
 
-        return $reportData;
+        dd($nurse->careGivenToPatientForCurrentMonth($patient, $nurse));
 
-//        dd(Mail::to($nurse)->send(new NurseInvoiceMailer($nurse, true, , \Carbon\Carbon::now()->endOfMonth())));
-
-//        dd($nurse->careGivenToPatientForCurrentMonth($patient, $nurse));
-
-//        dd((new \App\Billing\NurseInvoices\VariablePay($nurse,
-//            \Carbon\Carbon::now()->startOfMonth(),
-//            \Carbon\Carbon::now()->endOfMonth()))->getItemizedActivities());
+        dd((new \App\Billing\NurseInvoices\VariablePay($nurse,
+            \Carbon\Carbon::now()->startOfMonth(),
+            \Carbon\Carbon::now()->endOfMonth()))->getItemizedActivities());
 
     });
 }
@@ -509,6 +496,11 @@ Route::group(['middleware' => 'auth'], function () {
         Route::post('calls/import', [
             'uses' => 'CallController@import',
             'as'   => 'post.CallController.import',
+        ]);
+
+        Route::post('make-welcome-call-list', [
+            'uses' => 'Admin\WelcomeCallListController@makeWelcomeCallList',
+            'as'   => 'make.welcome.call.list',
         ]);
 
         Route::get('families/create', [
