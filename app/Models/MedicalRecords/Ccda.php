@@ -1,27 +1,18 @@
 <?php namespace App\Models\MedicalRecords;
 
-use App\Contracts\Importer\MedicalRecord\MedicalRecord;
+
 use App\Contracts\Importer\MedicalRecord\MedicalRecordLogger;
 use App\Entities\CcdaRequest;
 use App\Importer\Loggers\Ccda\CcdaSectionsLogger;
-use App\Importer\Models\ItemLogs\DocumentLog;
-use App\Importer\Section\Importers\Allergies;
-use App\Importer\Section\Importers\Demographics;
-use App\Importer\Section\Importers\Insurance;
-use App\Importer\Section\Importers\Medications;
-use App\Importer\Section\Importers\Problems;
-use App\Traits\MedicalRecordItemLoggerRelationships;
+use App\Importer\MedicalRecordEloquent;
 use App\User;
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Prettus\Repository\Contracts\Transformable;
 use Prettus\Repository\Traits\TransformableTrait;
 
-class Ccda extends Model implements MedicalRecord, Transformable
+class Ccda extends MedicalRecordEloquent implements Transformable
 {
-
-    use MedicalRecordItemLoggerRelationships,
-        TransformableTrait,
+    use TransformableTrait,
         SoftDeletes;
 
     //define sources here
@@ -47,15 +38,6 @@ class Ccda extends Model implements MedicalRecord, Transformable
         'xml',
         'json',
     ];
-
-    /**
-     * @var
-     */
-    protected $billingProvider;
-
-    protected $location;
-
-    protected $practice;
 
     /**
      * This is the patient that owns this CCDA.
@@ -84,39 +66,6 @@ class Ccda extends Model implements MedicalRecord, Transformable
             ->first();
     }
 
-    /**
-     * Handles importing a MedicalRecord for QA.
-     *
-     * @return ImportedMedicalRecord
-     *
-     */
-    public function import()
-    {
-        $this->createLogs()
-            ->createImportedMedicalRecord()
-            ->predictPractice()
-            ->predictLocation()
-            ->predictBillingProvider()
-            ->importAllergies()
-            ->importDemographics()
-            ->importDocument()
-            ->importInsurance()
-            ->importMedications()
-            ->importProblems()
-            ->importProviders();
-    }
-
-    /**
-     * Log the data into MedicalRecordSectionLogs, so that they can be fed to the Importer
-     *
-     * @return MedicalRecord
-     */
-    public function createLogs() : MedicalRecord
-    {
-        $this->getLogger()->logAllSections();
-
-        return $this;
-    }
 
     /**
      * Get the Logger
@@ -126,35 +75,6 @@ class Ccda extends Model implements MedicalRecord, Transformable
     public function getLogger() : MedicalRecordLogger
     {
         return new CcdaSectionsLogger($this);
-    }
-
-    /**
-     * @return MedicalRecord
-     */
-    public function createImportedMedicalRecord() : MedicalRecord
-    {
-        $this->importedMedicalRecord = ImportedMedicalRecord::create([
-            'medical_record_type' => self::class,
-            'medical_record_id'   => $this->id,
-            'billing_provider_id' => null,
-            'location_id'         => null,
-            'practice_id'         => null,
-        ]);
-
-        return $this;
-    }
-
-    /**
-     * Import Allergies for QA
-     *
-     * @return MedicalRecord
-     */
-    public function importAllergies() : MedicalRecord
-    {
-        $importer = new Allergies();
-        $importer->import($this->id, self::class, $this->importedMedicalRecord);
-
-        return $this;
     }
 
     /**
@@ -168,131 +88,11 @@ class Ccda extends Model implements MedicalRecord, Transformable
     }
 
     /**
-     * Import Demographics for QA
-     *
-     * @return \App\Contracts\Importer\MedicalRecord\MedicalRecord
-     */
-    public function importDemographics() : MedicalRecord
-    {
-        $importer = new Demographics();
-        $importer->import($this->id, self::class, $this->importedMedicalRecord);
-
-        return $this;
-    }
-
-    /**
-     * Import Document for QA
-     *
-     * @return \App\Contracts\Importer\MedicalRecord\MedicalRecord
-     */
-    public function importDocument() : MedicalRecord
-    {
-        return $this;
-
-    }
-
-    /**
-     * Import Medications for QA
-     *
-     * @return \App\Contracts\Importer\MedicalRecord\MedicalRecord
-     */
-    public function importMedications() : MedicalRecord
-    {
-        $importer = new Medications();
-        $importer->import($this->id, self::class, $this->importedMedicalRecord);
-
-        return $this;
-    }
-
-    /**
-     * Import Problems for QA
-     *
-     * @return \App\Contracts\Importer\MedicalRecord\MedicalRecord
-     */
-    public function importProblems() : MedicalRecord
-    {
-        $importer = new Problems();
-        $importer->import($this->id, self::class, $this->importedMedicalRecord);
-
-        return $this;
-    }
-
-    /**
-     * Import Providers for QA
-     *
-     * @return \App\Contracts\Importer\MedicalRecord\MedicalRecord
-     */
-    public function importProviders() : MedicalRecord
-    {
-        return $this;
-    }
-
-    /**
-     * Import Insurance Policies for QA
-     *
-     * @return MedicalRecord
-     */
-    public function importInsurance() : MedicalRecord
-    {
-        $importer = new Insurance();
-        $importer->import($this->id, self::class, $this->importedMedicalRecord);
-
-        return $this;
-    }
-
-    /**
-     * Predict which Practice should be attached to this MedicalRecord.
-     *
-     * @return MedicalRecord
-     */
-    public function predictPractice() : MedicalRecord
-    {
-        //historic custodian lookup
-        $custodianLookup = DocumentLog::where('custodian', '=', 'athenahealth')
-            ->whereNotNull('practice_id')
-            ->groupBy('practice_id')
-            ->get(['practice_id'])
-            ->keyBy('practice_id')
-            ->keys();
-
-
-        return $this;
-    }
-
-    /**
-     * Predict which Location should be attached to this MedicalRecord.
-     *
-     * @return MedicalRecord
-     */
-    public function predictLocation() : MedicalRecord
-    {
-        //historic custodian lookup
-        $custodianLookup = DocumentLog::where('custodian', '=', $this->document->custodian)
-            ->whereNotNull('location_id')
-            ->groupBy('location_id')
-            ->get(['location_id']);
-
-
-        return $this;
-    }
-
-    /**
-     * Predict which BillingProvider should be attached to this MedicalRecord.
-     *
-     * @return MedicalRecord
-     */
-    public function predictBillingProvider() : MedicalRecord
-    {
-        // TODO: Implement predictBillingProvider() method.
-        return $this;
-    }
-
-    /**
      * @return mixed
      */
     public function getBillingProvider()
     {
-        return $this->billingProvider;
+        return $this->billingProviderPrediction;
     }
 
     /**
@@ -302,7 +102,7 @@ class Ccda extends Model implements MedicalRecord, Transformable
      */
     public function setBillingProvider($billingProvider)
     {
-        $this->billingProvider = $billingProvider;
+        $this->billingProviderPrediction = $billingProvider;
 
         return $this;
     }
@@ -312,7 +112,7 @@ class Ccda extends Model implements MedicalRecord, Transformable
      */
     public function getLocation()
     {
-        return $this->location;
+        return $this->locationPrediction;
     }
 
     /**
@@ -322,7 +122,7 @@ class Ccda extends Model implements MedicalRecord, Transformable
      */
     public function setLocation($location)
     {
-        $this->location = $location;
+        $this->locationPrediction = $location;
 
         return $this;
     }
@@ -332,7 +132,7 @@ class Ccda extends Model implements MedicalRecord, Transformable
      */
     public function getPractice()
     {
-        return $this->practice;
+        return $this->practicePrediction;
     }
 
     /**
@@ -342,7 +142,7 @@ class Ccda extends Model implements MedicalRecord, Transformable
      */
     public function setPractice($practice)
     {
-        $this->practice = $practice;
+        $this->practicePrediction = $practice;
 
         return $this;
     }
