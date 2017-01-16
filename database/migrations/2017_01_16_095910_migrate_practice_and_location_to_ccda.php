@@ -2,16 +2,16 @@
 
 use App\Models\MedicalRecords\Ccda;
 use App\User;
-use Illuminate\Database\Seeder;
+use Illuminate\Database\Migrations\Migration;
 
-class MigratePraticeIdAndLocationIdToCcdaTableSeeder extends Seeder
+class MigratePracticeAndLocationToCcda extends Migration
 {
     /**
-     * Run the database seeds.
+     * Run the migrations.
      *
      * @return void
      */
-    public function run()
+    public function up()
     {
         foreach (Ccda::withTrashed()->get() as $ccda) {
             if ($ccda->patient_id) {
@@ -46,5 +46,15 @@ class MigratePraticeIdAndLocationIdToCcdaTableSeeder extends Seeder
 
             }
         }
+    }
+
+    /**
+     * Reverse the migrations.
+     *
+     * @return void
+     */
+    public function down()
+    {
+        //
     }
 }
