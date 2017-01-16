@@ -41,12 +41,14 @@
             <p class="mini-action-button__text--hide">Add Appointment</p>
         </div>
 
-        <div class="mini-action-button--hide mini-action-button">
-            <a href="#" id="addNewProvider">
-                <i class="mini-action-button__icon material-icons">contact_mail</i>
-            </a>
-            <p class="mini-action-button__text--hide">Add Care Person</p>
-        </div>
+{{--        @if(Route::current()->getName() != 'patient.appointment.create')--}}
+            <div class="mini-action-button--hide mini-action-button">
+                <a href="#" id="addNewProviderFAB">
+                    <i class="mini-action-button__icon material-icons">contact_mail</i>
+                </a>
+                <p class="mini-action-button__text--hide">Add Care Person</p>
+            </div>
+        {{--@endif--}}
 
     </div>
     <div class="FAB__action-button hidden-print">

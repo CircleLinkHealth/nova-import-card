@@ -44,7 +44,9 @@
                                         <div class="form-group">
                                             <div class="col-sm-12 provider-label" id="provider-label">
                                                 <label for="provider">
-                                                    Select Existing Provider (or, add new from "+")
+                                                    Select Existing Provider (or, <span style="color: #4fb2e2"><a
+                                                                id="addNewProvider"
+                                                                href="#">add new</a></span>)
                                                 </label>
                                             </div>
                                             <div class="col-sm-12" id="providerDiv">
@@ -70,7 +72,7 @@
                                             </div>
                                             <div class="col-sm-12">
                                                 <div class="form-group">
-                                                    <input name="date" type="date" class="selectpickerX form-control"
+                                                    <input name="date" type="date" id="date" class="selectpickerX form-control"
                                                            value=""
                                                            data-field="date" data-format="yyyy-MM-dd" required>
                                                 </div>

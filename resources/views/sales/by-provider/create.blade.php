@@ -1,6 +1,14 @@
 @extends('partials.adminUI')
 
 @section('content')
+
+    <script>
+        $(document).ready(function () {
+            $(".providers").select2();
+
+        });
+    </script>
+
     <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/font-awesome/4.4.0/css/font-awesome.min.css">
     {!! Form::open(array('url' => URL::route('reports.sales.provider.report', array()),'class' => 'form-horizontal')) !!}
     <div class="container-fluid">
@@ -19,7 +27,7 @@
                                         Active Program<br>
                                         Select All <kbd><kbd>cmd</kbd> + <kbd>A</kbd></kbd></label>
                                     <div class="col-md-6">
-                                        <select id="provider" class="provider selectpickerX dropdownValid form-control"
+                                        <select id="provider" class="providers selectpickerX dropdownValid form-control"
                                                 name="provider" class=" dropdown Valid form-control"
                                                 {{--multiple --}}
                                                 required>

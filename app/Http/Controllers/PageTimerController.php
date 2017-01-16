@@ -1,7 +1,9 @@
 <?php namespace App\Http\Controllers;
 
 use App\Activity;
+use App\Algorithms\Invoicing\AlternativeCareTimePayableCalculator;
 use App\Models\PatientSession;
+use App\NurseMonthlySummary;
 use App\PageTimer;
 use App\Services\ActivityService;
 use App\Services\TimeTracking\Service as TimeTrackingService;
@@ -163,18 +165,17 @@ class PageTimerController extends Controller
 
         }
 
-        $this->addPageTimerActivities($newActivity);
+        $activityId = $this->addPageTimerActivities($newActivity);
+
+        if ($activityId) {
+
+            $this->handleNurseLogs($activityId);
+
+        }
 
         return response("PageTimer Logged, duration:" . $duration, 201);
     }
 
-    /**
-     * Add an activity for a page time
-     *
-     * @param array $page_timer_ids
-     *
-     * @return bool
-     */
     public function addPageTimerActivities(PageTimer $pageTimer)
     {
         // check params to see if rule exists
@@ -183,7 +184,6 @@ class PageTimerController extends Controller
         //user
         $user = User::find($pageTimer->provider_id);
 
-        //todo: replace with the new things
         if (!(bool)$user->isCCMCountable() || $pageTimer->patient_id == 0) {
             return false;
         }
@@ -222,6 +222,13 @@ class PageTimerController extends Controller
 
             $activityService = new ActivityService;
             $result = $activityService->reprocessMonthlyActivityTime($pageTimer->patient_id);
+
+            $pageTimer->processed = 'Y';
+            $pageTimer->rule_params = serialize($params);
+
+            $pageTimer->save();
+
+            return $activityId;
         }
 
         // update pagetimer
@@ -230,7 +237,7 @@ class PageTimerController extends Controller
 
         $pageTimer->save();
 
-        return true;
+        return false;
     }
 
     /**
@@ -252,6 +259,27 @@ class PageTimerController extends Controller
         //This is intentionally left blank!
         //All the logic happens in Controller, because of some restrictions with Laravel at the time I'm writing this,
         //that's the best way I can come up with right now. Gross, I know, but it's 3:30am on a Saturday
+    }
+
+    public function handleNurseLogs($activityId)
+    {
+
+        $activity = Activity::find($activityId);
+        $nurse = User::find($activity->provider_id)->nurseInfo;
+
+        if ($nurse) {
+            $data = (new AlternativeCareTimePayableCalculator($nurse))->adjustCCMPaybleForActivity($activity);
+
+            return (new AlternativeCareTimePayableCalculator($nurse))
+                        ->createOrIncrementNurseSummary(
+                                $data['toAddToAccuredTowardsCCM'],
+                                $data['toAddToAccuredAfterCCM'],
+                                $data['activity_id']
+                        );
+        }
+
+        return false;
+
     }
 
 }

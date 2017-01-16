@@ -1,12 +1,17 @@
 <?php
 
-use Illuminate\Support\Facades\Artisan;
-
 if (app()->environment() != 'production') {
 
     Route::get('rohan', function () {
 
-        $exitCode = Artisan::call('command:name', ['--option' => 'foo']);
+        $nurse = \App\User::find(1755)->nurseInfo;
+        $patient = \App\Patient::find(1423);
+
+        dd($nurse->careGivenToPatientForCurrentMonth($patient, $nurse));
+
+        dd((new \App\Billing\NurseInvoices\VariablePay($nurse,
+            \Carbon\Carbon::now()->startOfMonth(),
+            \Carbon\Carbon::now()->endOfMonth()))->getItemizedActivities());
 
     });
 }
@@ -491,6 +496,11 @@ Route::group(['middleware' => 'auth'], function () {
         Route::post('calls/import', [
             'uses' => 'CallController@import',
             'as'   => 'post.CallController.import',
+        ]);
+
+        Route::post('make-welcome-call-list', [
+            'uses' => 'Admin\WelcomeCallListController@makeWelcomeCallList',
+            'as'   => 'make.welcome.call.list',
         ]);
 
         Route::get('families/create', [

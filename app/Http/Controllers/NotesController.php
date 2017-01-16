@@ -168,6 +168,8 @@ class NotesController extends Controller
         $patientId
     ) {
 
+        //@todo segregate to helper functions :/
+
         if ($patientId) {
             // patient view
             $patient = User::find($patientId);
@@ -305,30 +307,9 @@ class NotesController extends Controller
         }
 
         //CCM Complexity Handle
+        $this->service->updatePatientRecords($patient->patientInfo);
 
-        $date_index = Carbon::now()->firstOfMonth()->toDateString();
 
-        $patientRecord = $patient
-            ->patientInfo
-            ->patientSummaries
-            ->where('month_year', $date_index)->first();
-
-        if (empty($patientRecord)) {
-
-            $patientRecord = PatientMonthlySummary::updateCCMInfoForPatient(
-                $patient->patientInfo,
-                $patient->patientInfo->cur_month_activity_time
-            );
-
-            $patientRecord->is_ccm_complex = isset($input['complex']) ? 1 : 0;
-
-            } else {
-
-            $patientRecord->is_ccm_complex = isset($input['complex']) ? 1 : 0;
-
-            }
-
-        $patientRecord->save();
 
         if (isset($input['general_comment'])) {
             $info->general_comment = $input['general_comment'];

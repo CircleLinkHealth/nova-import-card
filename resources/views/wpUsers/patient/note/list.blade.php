@@ -16,6 +16,15 @@
     }
 
     ?>
+
+    <script>
+        $(document).ready(function () {
+            $(".provider").select2();
+            $(".range").select2();
+
+        });
+    </script>
+
     <div class="row main-form-block" style="margin-top:30px;">
         <div class="main-form-container col-lg-8 col-lg-offset-2">
             <div class="row ">
@@ -47,7 +56,7 @@
 
                     <label for="provider" class="sr-only">Select Month:</label>
 
-                    <select name="provider" id="provider" class="selectpicker" data-width="200px"
+                    <select name="provider" id="provider" class="provider selectpicker" data-width="200px"
                             data-size="10" style="display: none;"@if(auth()->user()->hasRole('administrator') == false  &&
                                                           auth()->user()->hasRole('care-center') == false)
                             required
@@ -66,7 +75,7 @@
 
                     <div class="inline-block">
                         <label for="year" class="sr-only">Date Range:</label>
-                        <select name="range" id="range" class="selectpicker" data-width="250px" style="display: none;"
+                        <select name="range" id="range" class="range selectpicker" data-width="250px" style="display: none;"
                                 required="required">
                             <option value="">Select Range</option>
                             @for($i = 0; $i < 4; $i++)

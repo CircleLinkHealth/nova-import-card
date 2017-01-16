@@ -1,14 +1,3 @@
-<script>
-    $(document).ready(function () {
-        $("#addNewProvider").click(function (e) {
-            $("#addProvider").modal();
-            e.preventDefault();
-            return false;
-        });
-    });
-
-</script>
-
 <style>
     .providerForm {
         padding: 10px;
@@ -35,7 +24,7 @@
     </div>
 </div>
 
-<div id="addProvider" class="modal fade" role="dialog">
+<div id="addProviderModal" class="modal fade" role="dialog">
     <div class="modal-dialog">
 
         <!-- Modal content-->
@@ -205,18 +194,32 @@
                     "</option>");
                 $('#providerDiv').css('padding-bottom', '10px');
                 $("#save").append('<input type="hidden" value="' + dataArray['user_id'] + '" id="provider" name="provider">');
-                $("#addProvider").modal('hide');
+                $("#addProviderModal").modal('hide');
                 console.log(dataArray);
                 $("#newProviderName").text(dataArray['name']);
                 $("#success").modal('show');
             }
         });
 
+        return false;
+    });
 
+
+    $("#addNewProviderFAB").click(function (e) {
+        $("#addProviderModal").modal();
+        e.preventDefault();
+        return false;
+    });
+
+    $("#addNewProvider").click(function (e) {
+        $("#addProviderModal").modal();
+        e.preventDefault();
         return false;
     });
 
 </script>
+
+
 
 
 

@@ -48,6 +48,7 @@
     <!-- Latest compiled and minified CSS -->
     <link href="{{ asset('/css/'.$app_config_admin_stylesheet) }}" rel="stylesheet">
 
+    <!-- select2 -->
     <script src="{{ asset('/js/bootstrap-select.min.js') }}"></script>
     <link href="//cdnjs.cloudflare.com/ajax/libs/select2/4.0.0/css/select2.min.css" rel="stylesheet"/>
     <script src="//cdnjs.cloudflare.com/ajax/libs/select2/4.0.0/js/select2.min.js"></script>
@@ -137,11 +138,11 @@
                             </a>
                             <ul class="dropdown-menu" role="menu">
 
-                                <li><a href="{{ URL::route('admin.patientCallManagement.index', array()) }}">Patient
+                                <li><a href="{{ URL::route('admin.patientCallManagement.index', array()) }}">
                                         Call Management</a>
                                 <li><a href="{{ URL::route('admin.families.index', array()) }}">Patient Families</a>
-                                <li><a href="{{ URL::route('algo.mock.create', array()) }}">Algo
-                                        v{{\App\Algorithms\Calls\SuccessfulHandler::VERSION}} Simulator</a>
+                                <li><a href="{{ URL::route('algo.mock.create', array()) }}">
+                                        Algo v{{\App\Algorithms\Calls\SuccessfulHandler::VERSION}} Simulator</a>
                                 <li><a href="{{ URL::route('CallReportController.exportxls', array()) }}">Calls</a></li>
 
                             </ul>

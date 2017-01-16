@@ -9,6 +9,7 @@ use App\MailLog;
 use App\Note;
 use App\Notifications\NewNote;
 use App\Patient;
+use App\PatientMonthlySummary;
 use App\User;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\URL;
@@ -394,6 +395,35 @@ class NoteService
 
         $mail = MailLog::where('note_id', $note->id)
             ->where('receiver_cpm_id', $patient->billingProvider()->id)->first();
+
+    }
+
+    public function updatePatientRecords(Patient $patient){
+
+        $date_index = Carbon::now()->firstOfMonth()->toDateString();
+
+        $patientRecord = $patient
+            ->patientSummaries
+            ->where('month_year', $date_index)->first();
+
+        if (empty($patientRecord)) {
+
+            $patientRecord = PatientMonthlySummary::updateCCMInfoForPatient(
+                $patient,
+                $patient->cur_month_activity_time
+            );
+
+            $patientRecord->is_ccm_complex = isset($input['complex']) ? 1 : 0;
+
+        } else {
+
+            $patientRecord->is_ccm_complex = isset($input['complex']) ? 1 : 0;
+
+        }
+
+        $patientRecord->save();
+
+        return $patientRecord;
 
     }
 

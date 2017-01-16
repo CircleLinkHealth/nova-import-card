@@ -1,6 +1,14 @@
 @extends('partials.adminUI')
 
 @section('content')
+
+    <script>
+        $(document).ready(function () {
+            $(".practices").select2();
+
+        });
+    </script>
+
     <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/font-awesome/4.4.0/css/font-awesome.min.css">
     {!! Form::open(array('url' => URL::route('reports.sales.practice.report', array()),'id' => 'form' ,'class' => 'form-horizontal')) !!}
     <div class="container-fluid">
@@ -19,7 +27,7 @@
                                         Active Program<br>
                                         Select All <kbd><kbd>cmd</kbd> + <kbd>A</kbd></kbd></label>
                                     <div class="col-md-6">
-                                        <select id="practice" name="practice" class="dropdown Valid form-control"
+                                        <select id="practice" name="practice" class="practices dropdown Valid form-control"
                                                 required>
                                             @foreach($practices as $key => $value)
                                                 <option value="{{$key}}">{{$value}}</option>

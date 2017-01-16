@@ -12,6 +12,13 @@
     $userTimeGMT = $userTimeGMT->format('Y-m-d\TH:i');
     ?>
 
+    <script>
+        $(document).ready(function () {
+            $(".provider").select2();
+
+        });
+    </script>
+
     <div class="row" style="margin-top:60px;">
         <div class="main-form-container col-lg-6 col-lg-offset-3 col-md-10 col-md-offset-1">
             <div class="row">
@@ -79,7 +86,7 @@
                                     <div class="col-sm-12">
                                         <div class="form-group">
                                             <select id="performedBy" name="provider_id"
-                                                    class="selectpickerX dropdown Valid form-control" data-size="10" required>
+                                                    class="selectpickerX provider dropdown Valid form-control" data-size="10" required>
                                                 <option value=""> Select Provider</option>
                                                 @foreach ($provider_info as $id => $name)
                                                     <option value="{{$id}}"> {{$name}} </option>

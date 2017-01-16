@@ -9,10 +9,13 @@
 namespace Tests\Helpers;
 
 use App\Activity;
+use App\NurseMonthlySummary;
 use App\PageTimer;
+use App\Patient;
 use App\User;
 use Carbon\Carbon;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\App;
 
 trait TimeTrackingHelpers
 {
@@ -99,5 +102,35 @@ trait TimeTrackingHelpers
         ]);
 
         $this->assertResponseStatus(201);
+    }
+
+    /**
+     * @param User $patient
+     * @param User $nurse
+     * @param $duration
+     *
+     * @return Activity
+     */
+    public function createActivityForPatientNurse(Patient $patient, User $nurse, $duration) : Activity {
+
+        //since this doesn't happen automatically, for testing purposes we update the patient's
+        //current ccm_time
+
+        $pre_ccm = $patient->cur_month_activity_time;
+        $new_ccm = $pre_ccm + $duration;
+
+        $patient->cur_month_activity_time = $new_ccm;
+        $patient->save();
+
+        return Activity::create([
+
+            'duration' => $duration,
+            'duration_unit' => 'seconds',
+            'patient_id' => $patient->user_id,
+            'provider_id' => $nurse->id,
+            'type' => 'Test Activity'
+
+        ]);
+
     }
 }
