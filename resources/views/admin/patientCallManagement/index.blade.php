@@ -156,6 +156,7 @@
                                 <th class="nosearch" style="width:50px;"></th>
                                 <th>Nurse</th>
                                 <th>Patient</th>
+                                <th>Status</th>
                                 <th>Practice</th>
                                 <th>Last Call Status</th>
                                 <th>Next Call</th>
@@ -179,6 +180,7 @@
                                 <th style="width:50px;"></th>
                                 <th>Nurse</th>
                                 <th>Patient</th>
+                                <th>Status</th>
                                 <th>Practice</th>
                                 <th>Last Call Status</th>
                                 <th>Next Call Date</th>

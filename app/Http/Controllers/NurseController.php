@@ -223,7 +223,6 @@ class NurseController extends Controller
             if($nurse->billing_type != 'fixed'){
                 $variable = true;
             }
-            dd($variable);
 
             Mail::to($nurse->user)->send(new NurseInvoiceMailer($nurse, $start, $end, $variable));
 
