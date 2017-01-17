@@ -31,16 +31,32 @@ class VariablePay extends NurseInvoice
         $day_start = Carbon::parse(Carbon::now()->firstOfMonth()->format('Y-m-d'));
         $this->report = NurseMonthlySummary::where('nurse_id', $nurse->id)->where('month_year', $day_start)->first();
 
-        $this->ccm_over_duration = round($this->report->accrued_after_ccm / 3600, 1) ?? 0;
-        $this->ccm_under_duration = round($this->report->accrued_towards_ccm /3600 , 1) ?? 0;
+        if($this->report != null){
 
-        $this->ccm_under_payable = ($this->report->accrued_towards_ccm / 3600) * 10 ?? 0;
-        $this->ccm_over_payable = ($this->report->accrued_after_ccm / 3600) * 30 ?? 0;
+            $this->ccm_over_duration = round($this->report->accrued_after_ccm / 3600, 1);
+            $this->ccm_under_duration = round($this->report->accrued_towards_ccm /3600 , 1);
 
-        $this->data['after'] = round(($this->ccm_over_duration / 3600) , 1) ?? 0;
-        $this->data['towards'] = round(($this->ccm_under_duration / 3600) , 1) ?? 0;
+            $this->ccm_under_payable = ($this->report->accrued_towards_ccm / 3600) * 10;
+            $this->ccm_over_payable = ($this->report->accrued_after_ccm / 3600) * 30;
 
-        $this->data['payable'] = round($this->ccm_over_payable + $this->ccm_over_payable, 2) ?? 0;
+            $this->data['after'] = round(($this->ccm_over_duration / 3600) , 1);
+            $this->data['towards'] = round(($this->ccm_under_duration / 3600) , 1);
+
+            $this->data['payable'] = round($this->ccm_over_payable + $this->ccm_over_payable, 2);
+
+        } else {
+
+            $this->ccm_over_duration = 0;
+            $this->ccm_under_duration = 0;
+            $this->ccm_under_payable = 0;
+            $this->ccm_over_payable = 0;
+            $this->data['after'] = 0;
+            $this->data['towards'] = 0;
+            $this->data['payable'] = 0;
+
+        }
+
+
     }
 
     public function activityDurationForPeriod()

@@ -41,6 +41,8 @@ class NurseMonthlyBillGenerator
     protected $rate;
     protected $total;
 
+    protected $hasReport;
+
     protected $withVariablePaymentSystem;
 
     //total time in system
