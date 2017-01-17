@@ -15,15 +15,11 @@ class IgnoreDemoAndTestdrive extends Migration
     {
         DocumentLog::where('practice_id', '=', 8)
             ->where('practice_id', '=', 9)
-            ->update([
-                'ml_ignore' => true,
-            ]);
+            ->delete();
 
         ProviderLog::where('practice_id', '=', 8)
             ->where('practice_id', '=', 9)
-            ->update([
-                'ml_ignore' => true,
-            ]);
+            ->delete();
     }
 
     /**
