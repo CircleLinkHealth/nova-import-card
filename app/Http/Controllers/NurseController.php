@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Activity;
 use App\Billing\NurseMonthlyBillGenerator;
 use App\Call;
+use App\Mail\NurseInvoiceMailer;
 use App\Nurse;
 use App\PageTimer;
 use App\User;
@@ -214,33 +215,20 @@ class NurseController extends Controller
 
         foreach ($data as $nurse_array) {
 
-            $fileName = $nurse_array['link'];
             $nurse = Nurse::find($nurse_array['id']);
-            $date_start = $nurse_array['date_start'];
-            $date_end = $nurse_array['date_end'];
+            $start = Carbon::parse($nurse_array['date_start']);
+            $end = Carbon::parse($nurse_array['date_end']);
 
-            Mail::send('billing.nurse.mail', $nurse_array['email_body'], function ($m) use
-            (
-                $nurse,
-                $fileName,
-                $date_start,
-                $date_end
-            ) {
+            $variable = false;
+            if($nurse->billing_type != 'fixed'){
+                $variable = true;
+            }
 
-                $m->from('billing@circlelinkhealth.com', 'CircleLink Health');
-
-                $m->attach(storage_path("download/$fileName"));
-
-                $m->to($nurse->user->email, $nurse->user->fullName)
-                    ->subject('New Invoice from CircleLink Health [' . $date_start . ' to ' . $date_end . ']');
-
-                $m->cc('raph@circlelinkhealth.com');
-
-            });
+            Mail::to($nurse->user)->send(new NurseInvoiceMailer($nurse, $start, $end, $variable));
 
         }
 
-        return redirect()->route('admin.reports.nurse.invoice');
+        return redirect()->route('admin.reports.nurse.invoice')->with(['success' => 'yes']);
     }
 
 }

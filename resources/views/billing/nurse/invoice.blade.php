@@ -13,24 +13,16 @@
         <dt>Duration</dt>
         <dd>{{$date_start}} to {{$date_end}}</dd>
 
-        <dt>Billable Time:</dt> {{$nurse_billable_time}}
-
         @if($hasAddedTime)
 
-            <dt>Extras:</dt>
-            <dd>{{$manual_time_notes}}: {{$manual_time. ' Hours'}} (${{$manual_time_amount}})</dd>
+        <dt>Extras:</dt>
+        <dd>{{$manual_time_notes}}: {{$manual_time. ' Hours'}} (${{$manual_time_amount}})</dd>
 
         @endif
 
         <dt>Invoice Amount</dt>
-        <dd>{{$total_billable_amount}} ({{$total_billable_rate}}/hr)</dd>
+        <dd>{{$total_billable_amount}} ({{$total_billable_rate}})</dd>
 
-        @if($variable_pay)
-
-            <dt>Variable Pay</dt>
-            <dd>${{$variable_pay['Payable']}}</dd>
-
-        @endif
     </h4>
 </dl>
 
@@ -47,16 +39,37 @@
             <th style="width: 25%">CCM Hours ($10/Hour)</th>
         @endif
     </tr>
-    @foreach($data as $key => $value)
 
+    <tr>
+        <b>
+            <td>Total</td>
+        </b>
+
+        @if(!$variable_pay)
+            <td>{{$total['minutes']}}</td>
+        @endif
+
+        <td>{{$total['hours']}}</td>
+
+
+        @if($variable_pay)
+            <td>{{$total['towards']}}</td>
+            <td>{{$total['after']}}</td>
+        @endif
+    </tr>
+
+    @foreach($data as $key => $value)
         <tr>
             <b>
                 <td>{{$data[$key]['Date']}}</td>
             </b>
+
             @if(!$variable_pay)
                 <td>{{$data[$key]['Minutes']}}</td>
             @endif
+
             <td>{{$data[$key]['Hours']}}</td>
+
             @if($variable_pay)
                 <td>{{$variable_pay[$key]['towards']}}</td>
                 <td>{{$variable_pay[$key]['after']}}</td>

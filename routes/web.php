@@ -1,17 +1,29 @@
 <?php
 
+use App\Billing\NurseMonthlyBillGenerator;
+use Illuminate\Support\Facades\Artisan;
+
 if (app()->environment() != 'production') {
 
     Route::get('rohan', function () {
 
         $nurse = \App\User::find(1755)->nurseInfo;
         $patient = \App\Patient::find(1423);
+        $start = Carbon\Carbon::now()->startOfMonth();
+        $end = Carbon\Carbon::now()->endOfMonth();
 
-        dd($nurse->careGivenToPatientForCurrentMonth($patient, $nurse));
+        \Illuminate\Support\Facades\Mail::to($nurse->user)->send(new \App\Mail\NurseInvoiceMailer(
+            $nurse, $start, $end, true
+        ));
 
-        dd((new \App\Billing\NurseInvoices\VariablePay($nurse,
-            \Carbon\Carbon::now()->startOfMonth(),
-            \Carbon\Carbon::now()->endOfMonth()))->getItemizedActivities());
+//
+//        dd($reportLink);
+//
+//        dd($nurse->careGivenToPatientForCurrentMonth($patient, $nurse));
+//
+//        dd((new \App\Billing\NurseInvoices\VariablePay($nurse,
+//            \Carbon\Carbon::now()->startOfMonth(),
+//            \Carbon\Carbon::now()->endOfMonth()))->getItemizedActivities());
 
     });
 }

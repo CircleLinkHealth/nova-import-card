@@ -10,28 +10,46 @@
                     <div class="panel-heading">Nurse Invoice Generator</div>
                     {!! Form::open(array('url' => URL::route('admin.reports.nurse.send', array()),'method' => 'post','id' => 'form', 'class' => 'form-horizontal')) !!}
                     <div class="panel-body">
-                            <h3>Generated invoices</h3>
-                            @foreach($invoices as $key => $value)
-                                <li>
-                                    <a href="{{url('/admin/download/'. $value)}}">{{$key}}</a>
-                                </li>
-                            @endforeach
-                        <div class="row">
-                            <input type="hidden" value="{{json_encode($data)}}" name="data">
-                            <button id="submit" name="submit" class="btn btn-success">Send To RNs</button>
-                        </div>
+                        <h3>Generated invoices</h3>
+                        @foreach($invoices as $key => $value)
+                            <li>
+                                <a href="{{url('/admin/download/'. $value)}}">{{$key}}</a>
+                            </li>
+                        @endforeach
                     </div>
-                    </div>
-                    {!! Form::close() !!}
                 </div>
             </div>
         </div>
+    </div>
 
-        <div class="row">
-            <div class="col-md-6 col-md-offset-3">
-                <div class="jumbotron text-center">
-                    <h1><span id="result"></span></h1>
+    <div class="row">
+        <div class="col-md-8 col-md-offset-2">
+            <div class="jumbotron" style="padding-top: 0px">
+                <h3>Email Preview</h3>
+                <h3>Subject: {{Carbon\Carbon::now()->format('F')}} Time and Fees Earned Report</h3>
+                <span id="result">
+                    <hr>
+
+                        <p>Hi [RN Name],</p>
+
+                        <p>Thanks for your efforts at CircleLink Health!</p>
+
+                        <p>Attached please find a time receipt and calculation of fees payable to you for subject line hours.</p>
+
+                        <p>Please let us know any questions or concerns. We’d like to initiate funds transfer to you in the next day or two.</p>
+
+                        <p>Best,</p>
+                        <p>CircleLink Team</p>
+
+
+                        </span>
+                <div class="row">
+                    <input type="hidden" value="{{json_encode($data)}}" name="data">
+                    <button id="submit" name="submit" class="btn btn-success">Send To RNs</button>
                 </div>
             </div>
         </div>
+    </div>
+    {!! Form::close() !!}
+
 @stop
