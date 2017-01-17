@@ -62,8 +62,19 @@ class CcdaSectionsLogger implements MedicalRecordLogger
     {
         $document = $this->ccd->document;
 
+        $data = $this->transformer->document($document);
+
+        $shouldBeIgnored = DocumentLog::where('ml_ignore', '=', 1)
+            ->where('custodian', $data['custodian'])
+            ->first();
+
+        if ($shouldBeIgnored) {
+            return $this;
+        }
+
+
         $saved = DocumentLog::create(
-            array_merge($this->transformer->document($document), $this->foreignKeys)
+            array_merge($data, $this->foreignKeys)
         );
 
         return $this;
@@ -117,8 +128,24 @@ class CcdaSectionsLogger implements MedicalRecordLogger
         $providers = $this->ccd->document->documentation_of;
 
         foreach ($providers as $provider) {
+            $data = $this->transformer->provider($provider);
+
+            $shouldBeIgnored = ProviderLog::where('ml_ignore', '=', 1)
+                ->where('street', $data['street'])
+                ->where('city', $data['city'])
+                ->where('state', $data['state'])
+                ->where('zip', $data['zip'])
+                ->where('cell_phone', $data['cell_phone'])
+                ->where('home_phone', $data['home_phone'])
+                ->where('work_phone', $data['work_phone'])
+                ->first();
+
+            if ($shouldBeIgnored) {
+                continue;
+            }
+
             $saved = ProviderLog::create(
-                array_merge($this->transformer->provider($provider), $this->foreignKeys)
+                array_merge($data, $this->foreignKeys)
             );
         }
 

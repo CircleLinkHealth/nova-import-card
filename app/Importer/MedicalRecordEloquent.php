@@ -8,16 +8,14 @@
  */
 
 use App\Contracts\Importer\MedicalRecord\MedicalRecord;
-use App\Importer\Models\ItemLogs\DocumentLog;
-use App\Importer\Models\ItemLogs\ProviderLog;
+use App\Importer\Predictors\HistoricLocationPredictor;
+use App\Importer\Predictors\HistoricPracticePredictor;
 use App\Importer\Section\Importers\Allergies;
 use App\Importer\Section\Importers\Demographics;
 use App\Importer\Section\Importers\Insurance;
 use App\Importer\Section\Importers\Medications;
 use App\Importer\Section\Importers\Problems;
-use App\Location;
 use App\Models\MedicalRecords\ImportedMedicalRecord;
-use App\Practice;
 use App\Traits\MedicalRecordItemLoggerRelationships;
 use Illuminate\Database\Eloquent\Model;
 
@@ -27,19 +25,19 @@ abstract class MedicalRecordEloquent extends Model implements MedicalRecord
     use MedicalRecordItemLoggerRelationships;
 
     /**
-     * @var ProviderLog;
+     * @var integer;
      */
-    protected $billingProviderPrediction;
+    protected $billingProviderIdPrediction;
 
     /**
-     * @var Location
+     * @var integer
      */
-    protected $locationPrediction;
+    protected $locationIdPrediction;
 
     /**
-     * @var Practice
+     * @var integer
      */
-    protected $practicePrediction;
+    protected $practiceIdPrediction;
 
     /**
      * Handles importing a MedicalRecord for QA.
@@ -50,10 +48,10 @@ abstract class MedicalRecordEloquent extends Model implements MedicalRecord
     public function import()
     {
         $this->createLogs()
-            ->createImportedMedicalRecord()
             ->predictPractice()
             ->predictLocation()
             ->predictBillingProvider()
+            ->createImportedMedicalRecord()
             ->importAllergies()
             ->importDemographics()
             ->importDocument()
@@ -83,13 +81,52 @@ abstract class MedicalRecordEloquent extends Model implements MedicalRecord
         $this->importedMedicalRecord = ImportedMedicalRecord::create([
             'medical_record_type' => get_class($this),
             'medical_record_id'   => $this->id,
-            'billing_provider_id' => null,
-            'location_id'         => null,
-            'practice_id'         => null,
+            'billing_provider_id' => $this->getBillingProviderIdPrediction(),
+            'location_id'         => $this->getLocationIdPrediction(),
+            'practice_id'         => $this->getPracticeIdPrediction(),
         ]);
 
         return $this;
     }
+
+    /**
+     * @return mixed
+     */
+    abstract public function getBillingProviderIdPrediction();
+
+    /**
+     * @param mixed $billingProvider
+     *
+     * @return MedicalRecord
+     */
+    abstract public function setBillingProviderIdPrediction($billingProvider) : MedicalRecord;
+
+    /**
+     * @return mixed
+     */
+    abstract public function getLocationIdPrediction();
+
+    /**
+     * @param mixed $location
+     *
+     * @return MedicalRecord
+     */
+    abstract public function setLocationIdPrediction($location) : MedicalRecord;
+
+    /**
+     * @return mixed
+     */
+    public function getPracticeIdPrediction()
+    {
+        return $this->practiceIdPrediction;
+    }
+
+    /**
+     * @param mixed $practice
+     *
+     * @return MedicalRecord
+     */
+    abstract public function setPracticeIdPrediction($practice) : MedicalRecord;
 
     /**
      * Import Allergies for QA
@@ -125,7 +162,6 @@ abstract class MedicalRecordEloquent extends Model implements MedicalRecord
     public function importDocument() : MedicalRecord
     {
         return $this;
-
     }
 
     /**
@@ -184,16 +220,31 @@ abstract class MedicalRecordEloquent extends Model implements MedicalRecord
      */
     public function predictPractice() : MedicalRecord
     {
-        //historic custodian lookup
-        $custodianLookup = DocumentLog::where('custodian', '=', $this->document->custodian)
-            ->whereNotNull('practice_id')
-            ->groupBy('practice_id')
-            ->get(['practice_id'])
-            ->keyBy('practice_id')
-            ->keys();
+        if ($this->getPracticeIdPrediction()) {
+            return $this;
+        }
+
+        //historic lookup
+        $historicPredictor = new HistoricPracticePredictor($this->getDocumentCustodian(), $this->providers);
+        $historicPrediction = $historicPredictor->predict();
+
+        if ($historicPrediction) {
+            $this->setPracticeIdPrediction($historicPrediction);
+
+            return $this;
+        }
 
 
         return $this;
+    }
+
+    public function getDocumentCustodian() : string
+    {
+        if ($this->document) {
+            return $this->document->custodian;
+        }
+
+        return '';
     }
 
     /**
@@ -203,11 +254,20 @@ abstract class MedicalRecordEloquent extends Model implements MedicalRecord
      */
     public function predictLocation() : MedicalRecord
     {
-        //historic custodian lookup
-        $custodianLookup = DocumentLog::where('custodian', '=', $this->document->custodian)
-            ->whereNotNull('location_id')
-            ->groupBy('location_id')
-            ->get(['location_id']);
+        if ($this->getLocationIdPrediction()) {
+            return $this;
+        }
+
+
+        //historic lookup
+        $historicPredictor = new HistoricLocationPredictor($this->getDocumentCustodian(), $this->providers);
+        $historicPrediction = $historicPredictor->predict();
+
+        if ($historicPrediction) {
+            $this->setLocationIdPrediction($historicPrediction);
+
+            return $this;
+        }
 
 
         return $this;
