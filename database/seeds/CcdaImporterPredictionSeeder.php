@@ -23,6 +23,7 @@ class CcdaImporterPredictionSeeder extends Seeder
 
                 $ccda->location_id = $patient->preferred_contact_location;
                 $ccda->practice_id = $patient->primary_practice_id;
+                $ccda->billing_provider_id = $patient->billing_provider_id;
                 $ccda->save();
 
                 $docLog = $ccda->document;
@@ -30,6 +31,7 @@ class CcdaImporterPredictionSeeder extends Seeder
                 if ($docLog) {
                     $docLog->location_id = $ccda->location_id;
                     $docLog->practice_id = $ccda->practice_id;
+                    $docLog->billing_provider_id = $ccda->billing_provider_id;
                     $docLog->save();
                 }
 
@@ -40,6 +42,7 @@ class CcdaImporterPredictionSeeder extends Seeder
                     foreach ($providersLog as $providerLog) {
                         $providerLog->location_id = $ccda->location_id;
                         $providerLog->practice_id = $ccda->practice_id;
+                        $providerLog->billing_provider_id = $ccda->billing_provider_id;
                         $providerLog->save();
                     }
                 }
