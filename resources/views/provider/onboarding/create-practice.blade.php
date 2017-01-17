@@ -44,7 +44,7 @@
                 'label' => 'Federal Tax ID#',
                 'class' => 'col s12',
                 'attributes' => [
-                    'required' => 'required',
+
                 ]
             ])
         </div>
