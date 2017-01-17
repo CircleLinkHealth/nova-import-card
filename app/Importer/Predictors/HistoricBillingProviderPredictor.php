@@ -11,8 +11,8 @@ use App\Contracts\Importer\Predictor;
 class HistoricBillingProviderPredictor extends BaseHistoricPredictor implements Predictor
 {
     /**
-     * Predicts the Practice for a medical record.
-     * Returns a Practice id.
+     * Predicts the Billing Provider for a medical record.
+     * Returns a Billing Provider id.
      *
      * @return integer
      */

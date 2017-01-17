@@ -11,8 +11,8 @@ use App\Contracts\Importer\Predictor;
 class HistoricLocationPredictor extends BaseHistoricPredictor implements Predictor
 {
     /**
-     * Predicts the Location, and Practice for a medical record.
-     * Returns an id.
+     * Predicts the Location for a medical record.
+     * Returns a Location id.
      *
      * @return integer
      */
