@@ -12,7 +12,7 @@ use App\Models\MedicalRecords\ImportedMedicalRecord;
 use App\User;
 use Illuminate\Http\Request;
 
-class CCDImportController extends Controller
+class MedicalRecordImportController extends Controller
 {
     private $repo;
 
@@ -23,12 +23,12 @@ class CCDImportController extends Controller
 
     public function import(Request $request)
     {
-        $ccdsToImport = $request->input('ccdsToImport');
-        $ccdsToDelete = $request->input('ccdsToDelete');
+        $medicalRecordsToImport = $request->input('medicalRecordsToImport');
+        $medicalRecordsToDelete = $request->input('medicalRecordsToDelete');
 
 
-        if (!empty($ccdsToImport)) {
-            foreach ($ccdsToImport as $id) {
+        if (!empty($medicalRecordsToImport)) {
+            foreach ($medicalRecordsToImport as $id) {
                 $ccda = Ccda::find($id);
 
                 if (empty($ccda)) continue;
@@ -88,10 +88,10 @@ class CCDImportController extends Controller
         }
 
 
-        if (!empty($ccdsToDelete)) {
+        if (!empty($medicalRecordsToDelete)) {
             $deleted = [];
 
-            foreach ($ccdsToDelete as $id) {
+            foreach ($medicalRecordsToDelete as $id) {
                 if (empty($id)) continue;
                 Ccda::destroy($id);
                 $summary = ImportedMedicalRecord::whereCcdaId($id)->first();

@@ -1,8 +1,5 @@
 <?php
 
-use App\Billing\NurseMonthlyBillGenerator;
-use Illuminate\Support\Facades\Artisan;
-
 if (app()->environment() != 'production') {
 
     Route::get('rohan', function () {
@@ -203,7 +200,7 @@ Route::group(['middleware' => 'auth'], function () {
             'as'   => 'view.files.ready.to.import',
         ]);
 
-        Route::post('import', 'CCDImportController@import');
+        Route::post('import', 'MedicalRecordImportController@import');
 
         Route::get('uploaded-ccd-items/{importedMedicalRecordId}/edit', 'ImportedMedicalRecordController@edit');
 
