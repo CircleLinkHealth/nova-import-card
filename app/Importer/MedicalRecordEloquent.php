@@ -8,6 +8,7 @@
  */
 
 use App\Contracts\Importer\MedicalRecord\MedicalRecord;
+use App\Importer\Predictors\HistoricBillingProviderPredictor;
 use App\Importer\Predictors\HistoricLocationPredictor;
 use App\Importer\Predictors\HistoricPracticePredictor;
 use App\Importer\Section\Importers\Allergies;
@@ -280,7 +281,21 @@ abstract class MedicalRecordEloquent extends Model implements MedicalRecord
      */
     public function predictBillingProvider() : MedicalRecord
     {
-        // TODO: Implement predictBillingProvider() method.
+        if ($this->getBillingProviderIdPrediction()) {
+            return $this;
+        }
+
+        //historic lookup
+        $historicPredictor = new HistoricBillingProviderPredictor($this->getDocumentCustodian(), $this->providers);
+        $historicPrediction = $historicPredictor->predict();
+
+        if ($historicPrediction) {
+            $this->setBillingProviderIdPrediction($historicPrediction);
+
+            return $this;
+        }
+
+
         return $this;
     }
 
