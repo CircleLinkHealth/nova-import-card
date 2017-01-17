@@ -25,13 +25,6 @@
     <script src="//cdn.datatables.net/buttons/1.2.2/js/buttons.html5.min.js"></script>
 
     <script>
-        $(document).ready(function () {
-            $(".nurses").select2();
-
-        });
-    </script>
-
-    <script>
         $(document).ready(function() {
 
         } );
@@ -62,7 +55,7 @@
 
 
     <div id="nurseFormWrapper" style="display:none;">
-        {!! Form::select('nurseFormSelect', array('unassigned' => 'Unassigned') + $active_nurses->all(), '', ['class' => 'nurses select-picker nurseFormSelect', 'style' => 'width:150px;']) !!}
+        {!! Form::select('nurseFormSelect', array('unassigned' => 'Unassigned') + $active_nurses->all(), '', ['class' => 'nurse_assign select-picker nurseFormSelect', 'style' => 'width:150px;']) !!}
     </div>
 
     <div class="modal fade" id="addCallModal" role="dialog" style="height: 10000px; opacity: 1;background-color: black">

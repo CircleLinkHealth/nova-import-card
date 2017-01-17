@@ -55,7 +55,7 @@ return [
     */
 
     'from' => [
-        'address' => 'no-reply@circleLinkHealth.com',
+        'address' => 'no-reply@circlelinkhealth.com',
         'name'    => 'CircleLink Health',
     ],
 
