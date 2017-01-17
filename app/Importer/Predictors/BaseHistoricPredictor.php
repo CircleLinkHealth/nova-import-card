@@ -78,7 +78,7 @@ abstract class BaseHistoricPredictor
             return new Collection();
         }
 
-        $collection = ProviderLog::select(DB::raw("count('$label') as total_count, $label"))
+        $results = ProviderLog::select(DB::raw("*, count('$label') as total_count"))
             ->whereNotNull("$label")
             ->where('ml_ignore', '=', false)
             ->whereNull('first_name')
@@ -93,8 +93,9 @@ abstract class BaseHistoricPredictor
                     ->orWhereIn('work_phone', $this->providerLogs->pluck('work_phone'));
             })
             ->groupBy("$label")
-            ->get()
-            ->map(function (
+            ->get();
+
+        $collection = $results->map(function (
                 $item,
                 $key
             ) use
@@ -130,25 +131,26 @@ abstract class BaseHistoricPredictor
             return new Collection();
         }
 
-        $collection = DocumentLog::select(DB::raw("count('$label') as total_count, $label"))
+        $results = DocumentLog::select(DB::raw("*, count('$label') as total_count"))
             ->where('ml_ignore', '=', false)
             ->where('custodian', '=', $this->custodian)
             ->whereNotNull("$label")
             ->orderBy('total_count', 'desc')
             ->groupBy("$label")
-            ->get(["$label"])
-            ->map(function (
-                $item,
-                $weightMultiplier
-            ) use
-            (
-                $label
-            ) {
-                return [
-                    $label        => $item->{$label},
-                    'total_count' => $item->total_count * $weightMultiplier,
-                ];
-            })
+            ->get();
+
+        $collection = $results->map(function (
+            $item,
+            $weightMultiplier
+        ) use
+        (
+            $label
+        ) {
+            return [
+                $label        => $item->{$label},
+                'total_count' => $item->total_count * $weightMultiplier,
+            ];
+        })
             ->reject(function ($item) use
             (
                 $label
@@ -172,24 +174,25 @@ abstract class BaseHistoricPredictor
             return new Collection();
         }
 
-        $collection = ProviderLog::select(DB::raw("count('$label') as total_count, $label"))
+        $results = ProviderLog::select(DB::raw("*, count('$label') as total_count"))
             ->where('ml_ignore', '=', false)
             ->whereIn('first_name', $this->providerLogs->pluck('first_name'))
             ->whereIn('last_name', $this->providerLogs->pluck('last_name'))
             ->whereNotNull("$label")
             ->orderBy('total_count', 'desc')
             ->groupBy("$label")
-            ->get(["$label"])
-            ->map(function ($item) use
-            (
-                $label,
-                $weightMultiplier
-            ) {
-                return [
-                    $label        => $item->{$label},
-                    'total_count' => $item->total_count * $weightMultiplier,
-                ];
-            })
+            ->get();
+
+        $collection = $results->map(function ($item) use
+        (
+            $label,
+            $weightMultiplier
+        ) {
+            return [
+                $label        => $item->{$label},
+                'total_count' => $item->total_count * $weightMultiplier,
+            ];
+        })
             ->reject(function ($item) use
             (
                 $label
