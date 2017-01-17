@@ -225,7 +225,7 @@ abstract class MedicalRecordEloquent extends Model implements MedicalRecord
         }
 
         //historic lookup
-        $historicPredictor = new HistoricPracticePredictor($this->document->custodian, $this->providers);
+        $historicPredictor = new HistoricPracticePredictor($this->getDocumentCustodian(), $this->providers);
         $historicPrediction = $historicPredictor->predict();
 
         if ($historicPrediction) {
@@ -238,6 +238,15 @@ abstract class MedicalRecordEloquent extends Model implements MedicalRecord
         return $this;
     }
 
+    public function getDocumentCustodian() : string
+    {
+        if ($this->document) {
+            return $this->document->custodian;
+        }
+
+        return '';
+    }
+
     /**
      * Predict which Location should be attached to this MedicalRecord.
      *
@@ -248,8 +257,10 @@ abstract class MedicalRecordEloquent extends Model implements MedicalRecord
         if ($this->getLocationIdPrediction()) {
             return $this;
         }
+
+
         //historic lookup
-        $historicPredictor = new HistoricLocationPredictor($this->document->custodian, $this->providers);
+        $historicPredictor = new HistoricLocationPredictor($this->getDocumentCustodian(), $this->providers);
         $historicPrediction = $historicPredictor->predict();
 
         if ($historicPrediction) {
