@@ -51,7 +51,7 @@ interface ImportedMedicalRecord
 
     public function billingProvider() : User;
 
-    public function createCarePLan() : CarePlan;
+    public function createCarePlan() : CarePlan;
 
     public function reimport() : self;
 

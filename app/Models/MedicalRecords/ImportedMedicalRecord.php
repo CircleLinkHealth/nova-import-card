@@ -5,6 +5,8 @@ use App\Contracts\Importer\ImportedMedicalRecord\ImportedMedicalRecord as Import
 use App\Contracts\Importer\MedicalRecord\MedicalRecord;
 use App\Importer\Models\ImportedItems\AllergyImport;
 use App\Importer\Models\ImportedItems\DemographicsImport;
+use App\Importer\Models\ImportedItems\MedicationImport;
+use App\Importer\Models\ImportedItems\ProblemImport;
 use App\Practice;
 use App\User;
 use Illuminate\Database\Eloquent\Model;
@@ -36,7 +38,7 @@ class ImportedMedicalRecord extends Model implements ImportedMedicalRecordInterf
      */
     public function medications()
     {
-        // TODO: Implement medications() method.
+        return $this->hasMany(MedicationImport::class);
     }
 
     /**
@@ -46,17 +48,17 @@ class ImportedMedicalRecord extends Model implements ImportedMedicalRecordInterf
      */
     public function problems()
     {
-        // TODO: Implement problems() method.
+        return $this->hasMany(ProblemImport::class);
     }
 
     public function medicalRecord() : MedicalRecord
     {
-        // TODO: Implement medicalRecord() method.
+        return app($this->medical_record_type)->find($this->medical_record_id);
     }
 
     public function practice() : Practice
     {
-        // TODO: Implement practice() method.
+        return Practice::find($this->practice_id);
     }
 
     public function providers() : array
@@ -66,12 +68,12 @@ class ImportedMedicalRecord extends Model implements ImportedMedicalRecordInterf
 
     public function billingProvider() : User
     {
-        // TODO: Implement billingProvider() method.
+        return User::find($this->billing_provider_id);
     }
 
-    public function createCarePLan() : CarePlan
+    public function createCarePlan() : CarePlan
     {
-        // TODO: Implement createCarePLan() method.
+        // TODO: Implement createCarePlan() method.
     }
 
     public function reimport() : ImportedMedicalRecordInterface

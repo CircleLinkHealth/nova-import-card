@@ -31,7 +31,7 @@ interface AdaptedSection
      *
      * for example, for problem names: [name, translation_name, reference_title] and so on and so forth
      */
-    public function getField() : string; //which key to createCarePLan?
+    public function getField() : string; //which key to createCarePlan?
 
     public function getValidator() : Validator; //which validator to use? if has status use status and so on
 }
