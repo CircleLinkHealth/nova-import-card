@@ -1,118 +1,57 @@
 <?php
 
-namespace App\CLH\CCD\Importer;
+namespace App\Importer;
 
 
 use App\CarePlan;
 use App\CLH\CCD\Importer\StorageStrategies\Biometrics\BloodPressure;
 use App\CLH\CCD\Importer\StorageStrategies\Biometrics\Weight;
-use App\Importer\Models\ImportedItems\DemographicsImport;
-use App\Models\CCD\CcdAllergy;
+use App\CLH\CCD\Importer\StorageStrategies\Problems\ProblemsToMonitor;
+use App\Models\CCD\Allergy;
 use App\Models\CCD\CcdInsurancePolicy;
-use App\Models\CCD\CcdMedication;
-use App\Models\CCD\CcdProblem;
+use App\Models\CCD\Medication;
+use App\Models\CCD\Problem;
 use App\Models\CPM\CpmMisc;
-use App\Models\MedicalRecords\Ccda;
+use App\Models\MedicalRecords\ImportedMedicalRecord;
 use App\Patient;
 use App\PatientCareTeamMember;
 use App\PatientContactWindow;
 use App\PhoneNumber;
 use App\User;
 
-class ImportManager
+class CarePlanHelper
 {
     private $allergiesImport;
-    private $ccda;
     private $demographicsImport;
     private $medicationsImport;
     private $problemsImport;
-    private $ccdaStrategies;
     private $user;
-    private $decodedCcda;
+    private $importedMedicalRecord;
+    private $carePlan;
 
     public function __construct(
-        array $allergiesImport = null,
-        DemographicsImport $demographicsImport,
-        array $medicationsImport,
-        array $problemsImport,
-        array $strategies,
         User $user,
-        Ccda $ccda
+        ImportedMedicalRecord $importedMedicalRecord
     ) {
-        $this->allergiesImport = $allergiesImport;
-        $this->demographicsImport = $demographicsImport;
-        $this->medicationsImport = $medicationsImport;
-        $this->problemsImport = $problemsImport;
-        $this->ccdaStrategies = $strategies;
+        $this->allergiesImport = $importedMedicalRecord->allergies->all();
+        $this->demographicsImport = $importedMedicalRecord->demographics;
+        $this->medicationsImport = $importedMedicalRecord->medications->all();
+        $this->problemsImport = $importedMedicalRecord->problems->all();
         $this->user = $user;
-        $this->ccda = $ccda;
-        $this->decodedCcda = \GuzzleHttp\json_decode($ccda->json);
+        $this->importedMedicalRecord = $importedMedicalRecord;
     }
 
-    public function import()
+    public function storeImportedValues()
     {
-        $strategies = \Config::get('ccdimporterstrategiesmaps');
-
-        /**
-         * Allergies List
-         */
-        $this->storeAllergies($strategies['storage'][0]);
-
-
-        /**
-         * Problems List
-         */
-        //this gets the storage strategy from config/ccdimportersections by sectionId
-        $this->storeProblemsList($strategies['storage'][2]);
+        $this->createNewCarePlan()
+            ->storeAllergies()
+            ->storeProblemsList()
+            ->storeProblemsToMonitor()
+            ->storeMedications()
+            ->storeBillingProvider();
 
 
-        /**
-         * Problems To Monitor
-         */
-        //this gets the storage strategy from config/ccdimportersections by sectionId
-        $this->storeProblemsToMonitor($strategies['storage'][3]);
 
-
-        /**
-         * Medications List
-         */
-        //this gets the storage strategy from config/ccdimportersections by sectionId
-        $this->storeMedications($strategies['storage'][1]);
-
-
-        /**
-         * The following Sections are the same for each CCD
-         */
-        $providerId = empty($this->demographicsImport->provider_id)
-            ? null
-            : $this->demographicsImport->provider_id;
-
-        if ($providerId) {
-            //care team
-            $member = PatientCareTeamMember::create([
-                'user_id'        => $this->user->id,
-                'member_user_id' => $providerId,
-                'type'           => PatientCareTeamMember::MEMBER,
-            ]);
-
-            $sendAlertTo = PatientCareTeamMember::create([
-                'user_id'        => $this->user->id,
-                'member_user_id' => $providerId,
-                'type'           => PatientCareTeamMember::SEND_ALERT_TO,
-            ]);
-
-            $billing = PatientCareTeamMember::create([
-                'user_id'        => $this->user->id,
-                'member_user_id' => $providerId,
-                'type'           => PatientCareTeamMember::BILLING_PROVIDER,
-            ]);
-
-            $lead = PatientCareTeamMember::create([
-                'user_id'        => $this->user->id,
-                'member_user_id' => $providerId,
-                'type'           => PatientCareTeamMember::LEAD_CONTACT,
-            ]);
-        }
 
 
         //patient info
@@ -230,89 +169,61 @@ class ImportManager
         return true;
     }
 
-    private function storeAllergies($allergiesListStorage)
+    /**
+     * Store Billing Provider
+     *
+     * @return $this
+     */
+    public function storeBillingProvider()
     {
-        if (empty($this->allergiesImport)) {
-            return false;
-        }
+        $providerId = empty($this->demographicsImport->provider_id)
+            ? null
+            : $this->demographicsImport->provider_id;
 
-        foreach ($this->allergiesImport as $allergy) {
+        if ($providerId) {
+            //care team
+            $member = PatientCareTeamMember::create([
+                'user_id'        => $this->user->id,
+                'member_user_id' => $providerId,
+                'type'           => PatientCareTeamMember::MEMBER,
+            ]);
 
-            $ccdAllergy = CcdAllergy::create([
-                'ccda_id'            => $allergy->ccda_id,
-                'vendor_id'          => $allergy->vendor_id,
-                'patient_id'         => $this->user->id,
-                'ccd_allergy_log_id' => $allergy->ccd_allergy_log_id,
-                'allergen_name'      => $allergy->allergen_name,
+            $sendAlertTo = PatientCareTeamMember::create([
+                'user_id'        => $this->user->id,
+                'member_user_id' => $providerId,
+                'type'           => PatientCareTeamMember::SEND_ALERT_TO,
+            ]);
+
+            $billing = PatientCareTeamMember::create([
+                'user_id'        => $this->user->id,
+                'member_user_id' => $providerId,
+                'type'           => PatientCareTeamMember::BILLING_PROVIDER,
+            ]);
+
+            $lead = PatientCareTeamMember::create([
+                'user_id'        => $this->user->id,
+                'member_user_id' => $providerId,
+                'type'           => PatientCareTeamMember::LEAD_CONTACT,
             ]);
         }
 
-        $misc = CpmMisc::whereName(CpmMisc::ALLERGIES)
-            ->first();
-
-        $this->user->cpmMiscs()->attach($misc->id);
+        return $this;
     }
 
-    private function storeProblemsList($problemsListStorage)
-    {
-        if (empty($this->problemsImport)) {
-            return false;
-        }
-
-        foreach ($this->problemsImport as $problem) {
-            $ccdProblem = CcdProblem::create([
-                'ccda_id'            => $problem->ccda_id,
-                'vendor_id'          => $problem->vendor_id,
-                'ccd_problem_log_id' => $problem->ccd_problem_log_id,
-                'name'               => $problem->name,
-                'code'               => $problem->code,
-                'code_system'        => $problem->code_system,
-                'code_system_name'   => $problem->code_system_name,
-                'activate'           => $problem->activate,
-                'cpm_problem_id'     => $problem->cpm_problem_id,
-                'patient_id'         => $this->user->id,
-            ]);
-        }
-
-        $misc = CpmMisc::whereName(CpmMisc::OTHER_CONDITIONS)
-            ->first();
-
-        $this->user->cpmMiscs()->attach($misc->id);
-    }
-
-    private function storeProblemsToMonitor($problemsToMonitorStorage)
-    {
-        if (empty($this->problemsImport)) {
-            return false;
-        }
-
-        if (class_exists($problemsToMonitorStorage)) {
-            $storage = new $problemsToMonitorStorage($this->user->program_id, $this->user);
-
-            $problemsToActivate = [];
-
-            foreach ($this->problemsImport as $problem) {
-                if (empty($problem->cpm_problem_id)) {
-                    continue;
-                }
-
-                $problemsToActivate[] = $problem->cpm_problem_id;
-            }
-
-            $storage->import(array_unique($problemsToActivate));
-        }
-    }
-
-    private function storeMedications($medicationsListStorage)
+    /**
+     * Stores MedicationImports as Medication Models
+     *
+     * @return $this
+     */
+    private function storeMedications()
     {
         if (empty($this->medicationsImport)) {
-            return false;
+            return $this;
         }
 
         foreach ($this->medicationsImport as $medication) {
-            $ccdMedication = CcdMedication::create([
-                'ccda_id'               => $medication->ccda_id,
-                'vendor_id'             => $medication->vendor_id,
+            $ccdMedication = Medication::create([
+                'medication_import_id'  => $medication->id,
                 'ccd_medication_log_id' => $medication->ccd_medication_log_id,
                 'medication_group_id'   => $medication->medication_group_id,
                 'name'                  => $medication->name,
@@ -328,5 +239,112 @@ class ImportManager
             ->first();
 
         $this->user->cpmMiscs()->attach($misc->id);
+
+        return $this;
+    }
+
+    /**
+     * Activates Problems to Monitor (CCM Conditions)
+     *
+     * @return $this
+     */
+    private function storeProblemsToMonitor()
+    {
+        if (empty($this->problemsImport)) {
+            return $this;
+        }
+
+        $storage = new ProblemsToMonitor($this->user->program_id, $this->user);
+
+        $problemsToActivate = [];
+
+        foreach ($this->problemsImport as $problem) {
+            if (empty($problem->cpm_problem_id)) {
+                continue;
+            }
+
+            $problemsToActivate[] = $problem->cpm_problem_id;
+        }
+
+        $storage->import(array_unique($problemsToActivate));
+
+        return $this;
+    }
+
+    /**
+     * Store ProblemImports as Problem Models
+     *
+     * @return $this
+     */
+    private function storeProblemsList()
+    {
+        if (empty($this->problemsImport)) {
+            return $this;
+        }
+
+        foreach ($this->problemsImport as $problem) {
+            $ccdProblem = Problem::create([
+                'problem_import_id'  => $problem->id,
+                'ccd_problem_log_id' => $problem->ccd_problem_log_id,
+                'name'               => $problem->name,
+                'code'               => $problem->code,
+                'code_system'        => $problem->code_system,
+                'code_system_name'   => $problem->code_system_name,
+                'activate'           => $problem->activate,
+                'cpm_problem_id'     => $problem->cpm_problem_id,
+                'patient_id'         => $this->user->id,
+            ]);
+        }
+
+        $misc = CpmMisc::whereName(CpmMisc::OTHER_CONDITIONS)
+            ->first();
+
+        $this->user->cpmMiscs()->attach($misc->id);
+
+        return $this;
+    }
+
+    /**
+     * Store AllergyImports as Allergy Models
+     *
+     * @return $this
+     */
+    private function storeAllergies()
+    {
+        if (empty($this->allergiesImport)) {
+            return $this;
+        }
+
+        foreach ($this->allergiesImport as $allergy) {
+            $ccdAllergy = Allergy::create([
+                'allergy_import_id'  => $allergy->id,
+                'patient_id'         => $this->user->id,
+                'ccd_allergy_log_id' => $allergy->ccd_allergy_log_id,
+                'allergen_name'      => $allergy->allergen_name,
+            ]);
+        }
+
+        $misc = CpmMisc::whereName(CpmMisc::ALLERGIES)
+            ->first();
+
+        $this->user->cpmMiscs()->attach($misc->id);
+
+        return $this;
+    }
+
+    /**
+     * Create a new CarePlan
+     *
+     * @return $this
+     */
+    private function createNewCarePlan()
+    {
+        $this->carePlan = CarePlan::create([
+            'user_id'               => $this->user->id,
+            'care_plan_template_id' => getDefaultCarePlanTemplate()->id,
+            'status'                => 'draft',
+        ]);
+
+        return $this;
     }
 }

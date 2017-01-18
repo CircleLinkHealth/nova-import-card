@@ -1,8 +1,10 @@
 <?php namespace App\Models\MedicalRecords;
 
 use App\CarePlan;
+use App\CLH\Repositories\CCDImporterRepository;
 use App\Contracts\Importer\ImportedMedicalRecord\ImportedMedicalRecord as ImportedMedicalRecordInterface;
 use App\Contracts\Importer\MedicalRecord\MedicalRecord;
+use App\Importer\CarePlanHelper;
 use App\Importer\Models\ImportedItems\AllergyImport;
 use App\Importer\Models\ImportedItems\DemographicsImport;
 use App\Importer\Models\ImportedItems\MedicationImport;
@@ -73,7 +75,10 @@ class ImportedMedicalRecord extends Model implements ImportedMedicalRecordInterf
 
     public function createCarePlan() : CarePlan
     {
-        // TODO: Implement createCarePlan() method.
+        $user = (new CCDImporterRepository())->createRandomUser($this->demographics);
+
+        $helper = new CarePlanHelper($user, $this);
+        $helper->storeImportedValues();
     }
 
     public function reimport() : ImportedMedicalRecordInterface
