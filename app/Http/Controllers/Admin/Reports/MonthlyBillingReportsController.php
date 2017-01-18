@@ -5,7 +5,7 @@ namespace App\Http\Controllers\Admin\Reports;
 use App\Call;
 use App\CLH\CCD\Importer\SnomedToICD10Map;
 use App\Http\Controllers\Controller;
-use App\Models\CCD\CcdProblem;
+use App\Models\CCD\Problem;
 use App\Models\CPM\CpmInstruction;
 use App\Models\CPM\CpmMisc;
 use App\Models\CPM\CpmProblem;
@@ -227,11 +227,11 @@ class MonthlyBillingReportsController extends Controller
 
                 $billableCcdProblems[0] = isset($patientCcdProblems[0])
                     ? $patientCcdProblems[0]
-                    : new CcdProblem();
+                    : new Problem();
 
                 $billableCcdProblems[1] = isset($patientCcdProblems[1])
                     ? $patientCcdProblems[1]
-                    : new CcdProblem();
+                    : new Problem();
 
                 array_push($problems, [
                     'provider_name' => $provider->fullName,

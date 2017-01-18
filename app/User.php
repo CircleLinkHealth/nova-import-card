@@ -2,10 +2,10 @@
 
 use App\Contracts\Serviceable;
 use App\Importer\Models\ImportedItems\DemographicsImport;
-use App\Models\CCD\CcdAllergy;
+use App\Models\CCD\Allergy;
 use App\Models\CCD\CcdInsurancePolicy;
-use App\Models\CCD\CcdMedication;
-use App\Models\CCD\CcdProblem;
+use App\Models\CCD\Medication;
+use App\Models\CCD\Problem;
 use App\Models\CPM\Biometrics\CpmBloodPressure;
 use App\Models\CPM\Biometrics\CpmBloodSugar;
 use App\Models\CPM\Biometrics\CpmSmoking;
@@ -142,7 +142,7 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
      */
     public function ccdAllergies()
     {
-        return $this->hasMany(CcdAllergy::class, 'patient_id');
+        return $this->hasMany(Allergy::class, 'patient_id');
     }
 
     /**
@@ -158,7 +158,7 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
      */
     public function ccdMedications()
     {
-        return $this->hasMany(CcdMedication::class, 'patient_id');
+        return $this->hasMany(Medication::class, 'patient_id');
     }
 
     /**
@@ -166,7 +166,7 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
      */
     public function ccdProblems()
     {
-        return $this->hasMany(CcdProblem::class, 'patient_id');
+        return $this->hasMany(Problem::class, 'patient_id');
     }
 
     /*****/

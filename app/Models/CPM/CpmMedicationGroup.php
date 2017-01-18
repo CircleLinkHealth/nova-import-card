@@ -1,10 +1,9 @@
 <?php namespace App\Models\CPM;
 
 use App\CareItem;
-use App\CarePlanItem;
 use App\CarePlanTemplate;
 use App\Contracts\Serviceable;
-use App\Models\CCD\CcdMedication;
+use App\Models\CCD\Medication;
 use App\Services\CPM\CpmMedicationGroupService;
 use App\User;
 use Illuminate\Database\Eloquent\Model;
@@ -28,7 +27,7 @@ class CpmMedicationGroup extends Model implements Serviceable{
      */
     public function medications()
     {
-        return $this->hasMany(CcdMedication::class);
+        return $this->hasMany(Medication::class);
     }
     
     public function carePlanItemIdDeprecated()
