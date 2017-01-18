@@ -13,17 +13,23 @@ class AddsCcdaTypesToPatient extends Migration
      */
     public function up()
     {
-        Schema::table('patient_info', function (Blueprint $table) {
-            $table->unsignedInteger('imported_medical_record_id')
-                ->nullable()
-                ->after('user_id');
+        $tables = [
+            'patient_info',
+        ];
 
-            $table->foreign('imported_medical_record_id')
-                ->references('id')
-                ->on('imported_medical_records')
-                ->onDelete('cascade')
-                ->onUpdate('cascade');
-        });
+        foreach ($tables as $t) {
+            Schema::table($t, function (Blueprint $table) {
+                $table->unsignedInteger('imported_medical_record_id')
+                    ->nullable()
+                    ->after('id');
+
+                $table->foreign('imported_medical_record_id')
+                    ->references('id')
+                    ->on('imported_medical_records')
+                    ->onDelete('cascade')
+                    ->onUpdate('cascade');
+            });
+        }
     }
 
     /**
