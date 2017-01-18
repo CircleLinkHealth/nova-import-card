@@ -28,6 +28,7 @@ class CarePlanHelper
     private $user;
     private $importedMedicalRecord;
     private $carePlan;
+    private $patientInfo;
 
     public function __construct(
         User $user,
@@ -48,51 +49,69 @@ class CarePlanHelper
             ->storeProblemsList()
             ->storeProblemsToMonitor()
             ->storeMedications()
-            ->storeBillingProvider();
+            ->storeBillingProvider()
+            ->storePatientInfo()
+            ->storeContactWindows()
+            ->storePhones()
+            ->storeInsurance();
 
+        /**
+         * Populate display_name on User
+         */
+        $this->user->display_name = "{$this->user->first_name} {$this->user->last_name}";
+        $this->user->save();
 
+        /**
+         * CarePlan Defaults
+         */
 
+        /**
+         * Biometrics
+         */
 
-
-        //patient info
-        $patientInfo = Patient::updateOrCreate([
-            'user_id' => $this->user->id,
-        ], [
-            'ccda_id'                    => $this->ccda->id,
-            'birth_date'                 => $this->demographicsImport->dob,
-            'ccm_status'                 => 'enrolled',
-            'consent_date'               => $this->demographicsImport->consent_date,
-            'gender'                     => $this->demographicsImport->gender,
-            'mrn_number'                 => $this->demographicsImport->mrn_number,
-            'preferred_contact_language' => $this->demographicsImport->preferred_contact_language,
-            'preferred_contact_location' => $this->demographicsImport->location_id,
-            'preferred_contact_method'   => 'CCT',
-            'user_id'                    => $this->user->id,
-        ]);
-
-        $carePlan = CarePlan::updateOrCreate([
-            'user_id' => $this->user->id,
-        ], [
-            'care_plan_template_id' => $this->user->service()->firstOrDefaultCarePlan($this->user)->getCarePlanTemplateIdAttribute(),
-            'status'                => 'draft',
-        ]);
-
-        // update timezone
-        $this->user->timezone = 'America/New_York';
-
-        PatientContactWindow::sync($patientInfo, [
-            1,
-            2,
-            3,
-            4,
-            5,
-        ]);
-
-
-        if (empty($patientInfo)) {
-            throw new \Exception('Unable to create patient info');
+        //Weight
+        $weightParseAndStore = new Weight($this->user->program_id, $this->user);
+        $weight = $weightParseAndStore->parse($this->decodedCcda);
+        if (!empty($weight)) {
+            $weightParseAndStore->import($weight);
         }
 
+        //Blood Pressure
+        $bloodPressureParseAndStore = new BloodPressure($this->user->program_id, $this->user);
+        $bloodPressure = $bloodPressureParseAndStore->parse($this->decodedCcda);
+        if (!empty($bloodPressure)) {
+            $bloodPressureParseAndStore->import($bloodPressure);
+        }
+
+
+        return $this->carePlan;
+    }
+
+    /**
+     * Stores Insurance
+     *
+     * @return $this
+     */
+    public function storeInsurance()
+    {
+        $insurance = CcdInsurancePolicy::withMedicalRecord(
+            $this->importedMedicalRecord->medical_record_id,
+            $this->importedMedicalRecord->medical_record_type
+        )->update([
+                'patient_id' => $this->user->id,
+            ]
+        );
+
+        return $this;
+    }
+
+    /**
+     * Store Phone Numbers
+     *
+     * @return $this
+     */
+    public function storePhones()
+    {
         if (!empty($homeNumber = $this->demographicsImport->home_phone)) {
             $homePhone = PhoneNumber::create([
                 'user_id' => $this->user->id,
@@ -130,43 +149,53 @@ class CarePlanHelper
             $primaryPhone->save();
         }
 
-        /**
-         * Populate display_name on User
-         */
-        $this->user->display_name = "{$this->user->first_name} {$this->user->last_name}";
-        $this->user->save();
+        return $this;
+    }
 
-        /**
-         * CarePlan Defaults
-         */
+    /**
+     * Store Contact Windows
+     *
+     * @return $this
+     */
+    public function storeContactWindows()
+    {
+        // update timezone
+        $this->user->timezone = 'America/New_York';
 
-        /**
-         * Biometrics
-         */
+        PatientContactWindow::sync($this->patientInfo, [
+            1,
+            2,
+            3,
+            4,
+            5,
+        ]);
 
-        //Weight
-        $weightParseAndStore = new Weight($this->user->program_id, $this->user);
-        $weight = $weightParseAndStore->parse($this->decodedCcda);
-        if (!empty($weight)) {
-            $weightParseAndStore->import($weight);
-        }
+        return $this;
+    }
 
-        //Blood Pressure
-        $bloodPressureParseAndStore = new BloodPressure($this->user->program_id, $this->user);
-        $bloodPressure = $bloodPressureParseAndStore->parse($this->decodedCcda);
-        if (!empty($bloodPressure)) {
-            $bloodPressureParseAndStore->import($bloodPressure);
-        }
+    /**
+     * Store Patient Info
+     *
+     * @return $this
+     */
+    public function storePatientInfo()
+    {
+        $this->patientInfo = Patient::updateOrCreate([
+            'user_id' => $this->user->id,
+        ], [
+            'imported_medical_record_id' => $this->importedMedicalRecord->id,
+            'birth_date'                 => $this->demographicsImport->dob,
+            'ccm_status'                 => 'enrolled',
+            'consent_date'               => $this->demographicsImport->consent_date,
+            'gender'                     => $this->demographicsImport->gender,
+            'mrn_number'                 => $this->demographicsImport->mrn_number,
+            'preferred_contact_language' => $this->demographicsImport->preferred_contact_language,
+            'preferred_contact_location' => $this->demographicsImport->location_id,
+            'preferred_contact_method'   => 'CCT',
+            'user_id'                    => $this->user->id,
+        ]);
 
-
-        //Insurance
-        $insurance = CcdInsurancePolicy::where('ccda_id', '=', $this->ccda->id)
-            ->update([
-                    'patient_id' => $this->user->id,
-                ]
-            );
-
-        return true;
+        return $this;
     }
 
     /**
@@ -339,9 +368,10 @@ class CarePlanHelper
      */
     private function createNewCarePlan()
     {
-        $this->carePlan = CarePlan::create([
-            'user_id'               => $this->user->id,
-            'care_plan_template_id' => getDefaultCarePlanTemplate()->id,
+        $this->carePlan = CarePlan::updateOrCreate([
+            'user_id' => $this->user->id,
+        ], [
+            'care_plan_template_id' => $this->user->service()->firstOrDefaultCarePlan($this->user)->getCarePlanTemplateIdAttribute(),
             'status'                => 'draft',
         ]);
 
