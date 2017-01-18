@@ -39,6 +39,7 @@ $(function () {
             {data: 'call_id', name: 'call_id'},
             {data: 'nurse_name', name: 'nurse_name'},
             {data: 'patient_name', name: 'patient_name'},
+            {data: 'ccm_complex', name: 'ccm_complex'},
             {data: 'program_name', name: 'program_name'},
             {data: 'no_call_attempts_since_last_success', name: 'no_call_attempts_since_last_success'},
             {data: 'scheduled_date', name: 'scheduled_date'},
