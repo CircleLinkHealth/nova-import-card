@@ -4,7 +4,7 @@ use App\Importer\Models\ItemLogs\AllergyLog;
 use App\User;
 use Illuminate\Database\Eloquent\Model;
 
-class CcdAllergy extends Model
+class Allergy extends Model
 {
 
     protected $fillable = [
