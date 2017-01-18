@@ -5,7 +5,7 @@ use App\Models\CPM\CpmProblem;
 use App\User;
 use Illuminate\Database\Eloquent\Model;
 
-class CcdProblem extends Model
+class Problem extends Model
 {
 
     protected $fillable = [
