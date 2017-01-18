@@ -12,6 +12,7 @@ use App\Models\CCD\CcdInsurancePolicy;
 use App\Models\CCD\Medication;
 use App\Models\CCD\Problem;
 use App\Models\CPM\CpmMisc;
+use App\Models\MedicalRecords\Ccda;
 use App\Models\MedicalRecords\ImportedMedicalRecord;
 use App\Patient;
 use App\PatientCareTeamMember;
@@ -53,7 +54,8 @@ class CarePlanHelper
             ->storePatientInfo()
             ->storeContactWindows()
             ->storePhones()
-            ->storeInsurance();
+            ->storeInsurance()
+            ->storeVitals();
 
         /**
          * Populate display_name on User
@@ -61,30 +63,42 @@ class CarePlanHelper
         $this->user->display_name = "{$this->user->first_name} {$this->user->last_name}";
         $this->user->save();
 
-        /**
-         * CarePlan Defaults
-         */
+        return $this->carePlan;
+    }
 
-        /**
-         * Biometrics
-         */
+
+    /**
+     * Store Vitals
+     *
+     * @todo: This only applies to CCDAs. Find a cleaner solution. This doesn't fit here.
+     *
+     * @return $this
+     */
+    public function storeVitals()
+    {
+        if ($this->importedMedicalRecord->medical_record_type != Ccda::class) {
+            return $this;
+        }
+
+        $ccda = Ccda::find($this->importedMedicalRecord->medical_record_id);
+
+        $decodedCcda = json_decode($ccda->json);
 
         //Weight
         $weightParseAndStore = new Weight($this->user->program_id, $this->user);
-        $weight = $weightParseAndStore->parse($this->decodedCcda);
+        $weight = $weightParseAndStore->parse($decodedCcda);
         if (!empty($weight)) {
             $weightParseAndStore->import($weight);
         }
 
         //Blood Pressure
         $bloodPressureParseAndStore = new BloodPressure($this->user->program_id, $this->user);
-        $bloodPressure = $bloodPressureParseAndStore->parse($this->decodedCcda);
+        $bloodPressure = $bloodPressureParseAndStore->parse($decodedCcda);
         if (!empty($bloodPressure)) {
             $bloodPressureParseAndStore->import($bloodPressure);
         }
 
-
-        return $this->carePlan;
+        return $this;
     }
 
     /**

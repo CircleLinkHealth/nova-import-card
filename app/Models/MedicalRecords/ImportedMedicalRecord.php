@@ -10,11 +10,16 @@ use App\Importer\Models\ImportedItems\DemographicsImport;
 use App\Importer\Models\ImportedItems\MedicationImport;
 use App\Importer\Models\ImportedItems\ProblemImport;
 use App\Practice;
+use App\Scopes\Universal\MedicalRecordIdAndTypeTrait;
 use App\User;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class ImportedMedicalRecord extends Model implements ImportedMedicalRecordInterface
 {
+    use MedicalRecordIdAndTypeTrait,
+        SoftDeletes;
+
     protected $fillable = [
         'medical_record_type',
         'medical_record_id',
@@ -76,6 +81,9 @@ class ImportedMedicalRecord extends Model implements ImportedMedicalRecordInterf
     public function createCarePlan() : CarePlan
     {
         $user = (new CCDImporterRepository())->createRandomUser($this->demographics);
+
+        $this->patient_id = $user->id;
+        $this->save();
 
         $helper = new CarePlanHelper($user, $this);
         $helper->storeImportedValues();

@@ -1,12 +1,6 @@
 <?php namespace App\Http\Controllers;
 
-use App\CLH\CCD\Importer\ImportManager;
 use App\CLH\Repositories\CCDImporterRepository;
-use App\Importer\Models\ImportedItems\AllergyImport;
-use App\Importer\Models\ImportedItems\DemographicsImport;
-use App\Importer\Models\ImportedItems\MedicationImport;
-use App\Importer\Models\ImportedItems\ProblemImport;
-use App\Models\MedicalRecords\Ccda;
 use App\Models\MedicalRecords\ImportedMedicalRecord;
 use Illuminate\Http\Request;
 
@@ -33,62 +27,12 @@ class MedicalRecordImportController extends Controller
                     continue;
                 }
 
-                $imr->createCarePlan();
-
-                $allergies = AllergyImport::where('medical_record_type', '=', $imr->medical_record_type)
-                    ->where('medical_record_id', '=', $imr->medical_record_id)
-                    ->get();
-
-                $demographics = DemographicsImport::where('medical_record_type', '=', $imr->medical_record_type)
-                    ->where('medical_record_id', '=', $imr->medical_record_id)
-                    ->first();
-
-                $medications = MedicationImport::where('medical_record_type', '=', $imr->medical_record_type)
-                    ->where('medical_record_id', '=', $imr->medical_record_id)
-                    ->get();
-
-                $problems = ProblemImport::where('medical_record_type', '=', $imr->medical_record_type)
-                    ->where('medical_record_id', '=', $imr->medical_record_id)
-                    ->get();
-
-                /**
-                 * @todo: Figure out what happens to duplicate CCDAs
-                 */
-//                if ($imr->qaSummary->duplicate_id) {
-//                    $user = User::find($imr->qaSummary->duplicate_id);
-//
-//                    $user->ccdAllergies()->delete();
-//                    $user->ccdInsurancePolicies()->delete();
-//                    $user->ccdMedications()->delete();
-//                    $user->ccdProblems()->delete();
-//                    $user->patientCareTeamMembers()->delete();
-//                    $user->cpmBloodPressure()->delete();
-//                    $user->cpmBloodSugar()->delete();
-//                    $user->cpmSmoking()->delete();
-//                    $user->cpmWeight()->delete();
-//
-//                    $user->cpmProblems()->detach();
-//                    $user->cpmBiometrics()->detach();
-//                    $user->cpmLifestyles()->detach();
-//                    $user->cpmMedicationGroups()->detach();
-//                    $user->cpmMiscs()->detach();
-//                    $user->cpmSymptoms()->detach();
-//                } else {
-                    $user = $this->repo->createRandomUser($demographics);
-//                }
-
-                $importer = new ImportManager($allergies->all(), $demographics, $medications->all(), $problems->all(),
-                    $strategies->all(), $user, $imr);
-                $importer->import();
+                $carePlan = $imr->createCarePlan();
 
                 $imported[] = [
-                    'ccdaId' => $id,
-                    'userId' => $user->id,
+                    'importedMedicalRecordId' => $id,
+                    'userId'                  => $carePlan->user_id,
                 ];
-
-                $imr->imported = true;
-                $imr->patient_id = $user->id;
-                $imr->save();
             }
         }
 
@@ -100,13 +44,13 @@ class MedicalRecordImportController extends Controller
                 if (empty($id)) {
                     continue;
                 }
-                Ccda::destroy($id);
-                $summary = ImportedMedicalRecord::where('medical_record_type', '=',
-                    $imr->medical_record_type)->where('medical_record_id', '=',
-                    $imr->medical_record_id)->first();
-                if (!empty($summary)) {
-                    $summary->delete();
-                }
+
+                $imr = ImportedMedicalRecord::find($id);
+
+                $medicalRecord = app($imr->medical_record_type)->find($imr->medical_record_id);
+                $medicalRecord->delete();
+
+                $imr->delete();
 
                 $deleted[] = $id;
             }

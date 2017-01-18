@@ -87,7 +87,7 @@ var UploadedCcdsPanel = Vue.extend({
             this.$http.post('/ccd-importer/import', payload, function (data, status, request) {
                 if (data.imported) {
                     for (var i = 0; i < data.imported.length; i++) {
-                        $('#import-row-' + data.imported[i].ccdaId).html(
+                        $('#import-row-' + data.imported[i].importedMedicalRecordId).html(
                             '<a target="_blank" href="https://'
                             + window.location.href.match(/:\/\/(.[^/]+)/)[1]
                             + '/manage-patients/'
@@ -95,8 +95,8 @@ var UploadedCcdsPanel = Vue.extend({
                             + '/summary'
                             + '"><b style="color: #06B106">Go to CarePlan</b></a>'
                         );
-                        $('#delete-row-' + data.imported[i].ccdaId).html('N/A');
-                        $('#edit-row-' + data.imported[i].ccdaId).html('N/A');
+                        $('#delete-row-' + data.imported[i].importedMedicalRecordId).html('N/A');
+                        $('#edit-row-' + data.imported[i].importedMedicalRecordId).html('N/A');
                     }
                     this.okToImport = [];
                 }
