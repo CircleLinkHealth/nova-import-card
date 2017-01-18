@@ -85,6 +85,7 @@ class CarePlanHelper
 
         //doing this here to not break Gavril's View CCDA button
         $ccda->patient_id = $this->user->id;
+        $ccda->save();
 
         $decodedCcda = json_decode($ccda->json);
 
