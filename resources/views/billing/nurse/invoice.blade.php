@@ -42,7 +42,7 @@
 
     <tr>
         <b>
-            <td>Total</td>
+            <td>Total Hours</td>
         </b>
 
         @if(!$variable_pay)
