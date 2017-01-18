@@ -1292,6 +1292,29 @@ Route::group([
     ]);
 });
 
+
+/*
+ * Enrollment Consent
+ */
+
+Route::group([
+    'prefix' => 'join',
+], function () {
+
+    Route::get('{program_name}', [
+//        'middleware' => 'verify.invite'/{code?},
+        'uses'       => 'Patient\EnrollmentConsentController@create',
+        'as'         => 'patient.enroll.create',
+    ]);
+
+    Route::get('{program_name}/{code?}', [
+        'middleware' => 'verify.invite',
+        'uses'       => 'Patient\EnrollmentConsentController@create',
+        'as'         => 'patient.enroll.create',
+    ]);
+
+});
+
 Route::group([
     'prefix' => 'onboarding',
 ], function () {
