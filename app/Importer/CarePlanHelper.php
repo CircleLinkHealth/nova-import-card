@@ -83,6 +83,9 @@ class CarePlanHelper
 
         $ccda = Ccda::find($this->importedMedicalRecord->medical_record_id);
 
+        //doing this here to not break Gavril's View CCDA button
+        $ccda->patient_id = $this->user->id;
+
         $decodedCcda = json_decode($ccda->json);
 
         //Weight
@@ -199,6 +202,9 @@ class CarePlanHelper
             'user_id' => $this->user->id,
         ], [
             'imported_medical_record_id' => $this->importedMedicalRecord->id,
+            'ccda_id'                    => $this->importedMedicalRecord->medical_record_type == Ccda::class
+                ? $this->importedMedicalRecord->medical_record_id
+                : null,
             'birth_date'                 => $this->demographicsImport->dob,
             'ccm_status'                 => 'enrolled',
             'consent_date'               => $this->demographicsImport->consent_date,
