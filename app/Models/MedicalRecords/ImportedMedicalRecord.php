@@ -86,7 +86,8 @@ class ImportedMedicalRecord extends Model implements ImportedMedicalRecordInterf
         $this->save();
 
         $helper = new CarePlanHelper($user, $this);
-        $helper->storeImportedValues();
+
+        return $helper->storeImportedValues();
     }
 
     public function reimport() : ImportedMedicalRecordInterface

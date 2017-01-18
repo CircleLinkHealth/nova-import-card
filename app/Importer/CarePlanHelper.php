@@ -61,6 +61,7 @@ class CarePlanHelper
          * Populate display_name on User
          */
         $this->user->display_name = "{$this->user->first_name} {$this->user->last_name}";
+        $this->user->program_id = $this->importedMedicalRecord->practice_id ?? null;
         $this->user->save();
 
         return $this->carePlan;
@@ -204,7 +205,7 @@ class CarePlanHelper
             'gender'                     => $this->demographicsImport->gender,
             'mrn_number'                 => $this->demographicsImport->mrn_number,
             'preferred_contact_language' => $this->demographicsImport->preferred_contact_language,
-            'preferred_contact_location' => $this->demographicsImport->location_id,
+            'preferred_contact_location' => $this->importedMedicalRecord->location_id,
             'preferred_contact_method'   => 'CCT',
             'user_id'                    => $this->user->id,
         ]);
@@ -219,9 +220,8 @@ class CarePlanHelper
      */
     public function storeBillingProvider()
     {
-        $providerId = empty($this->demographicsImport->provider_id)
-            ? null
-            : $this->demographicsImport->provider_id;
+        $providerId = empty($this->importedMedicalRecord->billing_provider_id)
+            ?: $this->importedMedicalRecord->billing_provider_id;
 
         if ($providerId) {
             //care team

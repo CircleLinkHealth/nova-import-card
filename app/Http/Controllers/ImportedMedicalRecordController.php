@@ -1,11 +1,8 @@
 <?php namespace App\Http\Controllers;
 
 
-use App\Importer\Models\ImportedItems\AllergyImport;
-use App\Importer\Models\ImportedItems\DemographicsImport;
-use App\Importer\Models\ImportedItems\MedicationImport;
-use App\Importer\Models\ImportedItems\ProblemImport;
-use App\Models\CCD\CcdVendor;
+use App\Location;
+use App\Models\MedicalRecords\ImportedMedicalRecord;
 use App\Practice;
 use App\User;
 use Illuminate\Http\Request;
@@ -18,52 +15,59 @@ class ImportedMedicalRecordController extends Controller
         Request $request,
         $importedMedicalRecordId
     ) {
-        $demographics = DemographicsImport::where('imported_medical_record_id', '=', $importedMedicalRecordId)->first();
-        $allergies = AllergyImport::where('imported_medical_record_id', '=', $importedMedicalRecordId)->get();
-        $medications = MedicationImport::where('imported_medical_record_id', '=', $importedMedicalRecordId)->get();
-        $problems = ProblemImport::where('imported_medical_record_id', '=', $importedMedicalRecordId)->get();
+        $imr = ImportedMedicalRecord::find($importedMedicalRecordId);
 
-        $programId = $demographics->program_id;
-        $programObj = Practice::find($programId);
+        $demographics = $imr->demographics;
+        $allergies = $imr->allergies->all();
+        $medications = $imr->medications->all();
+        $problems = $imr->problems->all();
 
-        //get program's location
-        $locations = $programObj->locations;
+        $practiceId = $imr->practice_id;
 
-        $vendor = CcdVendor::find($demographics->vendor_id);
+        if ($practiceId) {
+            $practiceObj = Practice::find($practiceId);
 
-        $providers = User::ofType('provider')
-            ->whereProgramId($programId)
-            ->get();
+            //get program's location
+            $locations = $practiceObj->locations;
 
-        $providers = $providers->map(function ($provider) {
-            return [
-                'id'   => $provider->id,
-                'name' => $provider->display_name,
+            $providers = User::ofType('provider')
+                ->whereProgramId($practiceId)
+                ->get();
+
+            $providers = $providers->map(function ($provider) {
+                return [
+                    'id'   => $provider->id,
+                    'name' => $provider->display_name,
+                ];
+            });
+
+            $locations = $locations->map(function ($loc) {
+                return [
+                    'id'   => $loc->id,
+                    'name' => $loc->name,
+                ];
+            });
+
+            $practice = [
+                'id'     => $practiceId,
+                'name'   => $practiceObj->display_name,
+                'domain' => $practiceObj->domain,
             ];
-        });
-
-        $locations = $locations->map(function ($loc) {
-            return [
-                'id'   => $loc->id,
-                'name' => $loc->name,
-            ];
-        });
-
-        $program = [
-            'id'     => $programId,
-            'name'   => $programObj->display_name,
-            'domain' => $programObj->domain,
-        ];
+        } else {
+            $locations = Location::all();
+            $practice = Practice::all();
+            $providers = User::ofType('provider')->get();
+        }
 
         JavaScript::put([
             'demographics' => $demographics,
             'allergies'    => $allergies,
-            'locations'    => $locations,
+            'locations'    => $locations ?? null,
             'medications'  => $medications,
             'problems'     => $problems,
-            'program'      => $program,
-            'providers'    => $providers,
-            'vendor'       => $vendor->vendor_name,
+            'program'      => $practice ?? null,
+            'providers'    => $providers ?? null,
+            'vendor'       => 'Deprecated',
         ]);
 
         return view('CCDUploader.editUploadedItems');
