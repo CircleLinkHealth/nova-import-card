@@ -39,7 +39,8 @@ elixir(function(mix) {
     // mix.browserify('provider/create-locations.js');
     // mix.browserify('provider/create-staff.js');
 
-    mix.browserify('uploader.js');
+    // mix.browserify('uploader.js');
+    mix.browserify('importer-training.js');
     // mix.browserify('ccd-models/items/medicationItem.js');
     // mix.browserify('ccd-models/items/allergiesItem.js');
     // mix.browserify('ccd-models/items/problemsItem.js');

@@ -68,6 +68,9 @@ class ImportedMedicalRecord extends Model implements ImportedMedicalRecordInterf
         return Practice::find($this->practice_id);
     }
 
+    /**
+     * @return array
+     */
     public function providers() : array
     {
         // TODO: Implement providers() method.

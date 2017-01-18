@@ -164,10 +164,17 @@ Route::group(['middleware' => 'auth'], function () {
         'uses' => 'CCDViewer\CCDViewerController@viewSource',
         'as'   => 'ccd.old.viewer',
     ]);
+
     Route::get('ccd/old-viewer', 'CCDViewer\CCDViewerController@create');
+
     Route::post('ccd-old', [
         'uses' => 'CCDViewer\CCDViewerController@oldViewer',
         'as'   => 'ccd-old-viewer.post',
+    ]);
+
+    Route::post('importer/train', [
+        'uses' => 'ImporterController@train',
+        'as'   => 'post.train.importing.algorithm',
     ]);
 
 
@@ -190,13 +197,13 @@ Route::group(['middleware' => 'auth'], function () {
     ], function () {
 
         Route::get('create', [
-            'uses' => 'CCDUploadController@create',
+            'uses' => 'ImporterController@create',
             'as'   => 'import.ccd',
         ]);
 
-        Route::post('qaimport', 'CCDUploadController@uploadRawFiles');
+        Route::post('qaimport', 'ImporterController@uploadRawFiles');
         Route::get('qaimport', [
-            'uses' => 'CCDUploadController@index',
+            'uses' => 'ImporterController@index',
             'as'   => 'view.files.ready.to.import',
         ]);
 

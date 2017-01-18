@@ -5,7 +5,7 @@
 <div class="container-fluid">
     <div class="row">
         <div class="col-md-12">
-            <form action="{{ route('make.welcome.call.list') }}" method="post" enctype="multipart/form-data">
+            <form action="{{ route('post.train.importing.algorithm') }}" method="post" enctype="multipart/form-data">
                 {{ csrf_field() }}
                 <div class="form-group">
                     <label for="ccda">Just upload a CCDA to train the algo.</label>

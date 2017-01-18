@@ -60,6 +60,8 @@ abstract class MedicalRecordEloquent extends Model implements MedicalRecord
             ->importMedications()
             ->importProblems()
             ->importProviders();
+
+        return $this->importedMedicalRecord;
     }
 
     /**

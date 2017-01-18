@@ -106,6 +106,12 @@ class Location extends Model
         return $this->belongsTo(Location::class, 'parent_id');
     }
 
+    public function providers()
+    {
+        return $this->belongsToMany(User::class)
+            ->ofType('provider');
+    }
+
     public function user()
     {
         return $this->belongsToMany(User::class);

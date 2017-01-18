@@ -358,7 +358,12 @@
         to improve your experience.</p>
     <![endif]-->
 @endif
+
+{{--This is for JS variables. Purposefully included before content.--}}
+@include('partials.footer')
+
 @yield('content')
+@yield('javascript')
 <div style="clear:both;height:100px;"></div>
 </body>
 </html>
