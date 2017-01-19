@@ -1,6 +1,8 @@
 <?php namespace App\Http\Controllers;
 
 use App\CLH\Repositories\CCDImporterRepository;
+use App\Importer\Models\ItemLogs\DocumentLog;
+use App\Importer\Models\ItemLogs\ProviderLog;
 use App\Models\MedicalRecords\Ccda;
 use App\Models\MedicalRecords\ImportedMedicalRecord;
 use App\Practice;
@@ -145,11 +147,33 @@ class ImporterController extends Controller
         return view('importer.show-training-findings', compact([
             'document',
             'providers',
-            'predictedLocationId',
-            'predictedPracticeId',
-            'predictedBillingProviderId',
-            'practices',
+            'importedMedicalRecord',
         ]));
+    }
+
+    public function storeTrainingFeatures(Request $request)
+    {
+        if ($request->has('documentId')) {
+            DocumentLog::whereId($request->input('documentId'))
+                ->update([
+                    'ml_ignore' => true,
+                ]);
+        }
+
+        if ($request->has('providerIds')) {
+            ProviderLog::whereIn('id', $request->input('providerIds'))
+                ->update([
+                    'ml_ignore' => true,
+                ]);
+        }
+
+        $imr = ImportedMedicalRecord::find($request->input('imported_medical_record_id'));
+        $imr->practice_id = $request->input('practice_id');
+        $imr->location_id = $request->input('location_id');
+        $imr->billing_provider_id = $request->input('billing_provider_id');
+        $imr->save();
+
+        return 'Thanks for training me!';
     }
 
 }

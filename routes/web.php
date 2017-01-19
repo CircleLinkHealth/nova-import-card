@@ -177,6 +177,10 @@ Route::group(['middleware' => 'auth'], function () {
         'as'   => 'post.train.importing.algorithm',
     ]);
 
+    Route::post('importer/train/store', [
+        'uses' => 'ImporterController@storeTrainingFeatures',
+        'as'   => 'post.store.training.features',
+    ]);
 
     /****************************
      * VUE CCD VIEWER
