@@ -38,13 +38,11 @@ var vm = new Vue({
             },
 
             providers: function () {
-                this.$set('providersCollection', this.locationsCollection[this.location].providersCollection[this.provider]);
+                this.$set('providersCollection', this.locations[this.location].providers);
 
                 return this.providersCollection;
             }
-        },
-
-        methods: {}
+        }
     })
     ;
 

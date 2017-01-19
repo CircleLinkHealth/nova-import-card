@@ -5,6 +5,7 @@ use App\Models\MedicalRecords\Ccda;
 use App\Models\MedicalRecords\ImportedMedicalRecord;
 use App\Practice;
 use Illuminate\Http\Request;
+use Illuminate\Support\Collection;
 use Laracasts\Utilities\JavaScript\JavaScriptFacade as JavaScript;
 
 class ImporterController extends Controller
@@ -124,7 +125,9 @@ class ImporterController extends Controller
                     'id'           => $practice->id,
                     'display_name' => $practice->display_name,
                     'locations'    => $practice->locations->map(function ($loc) {
-                        $loc->providers = $loc->providers->keyBy('id');
+                        $loc = new Collection($loc);
+
+                        $loc['providers'] = collect($loc['providers'])->keyBy('id');
 
                         return $loc;
                     })

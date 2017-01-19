@@ -62,7 +62,8 @@
                 <h1>Billing Provider</h1>
 
                 <select v-model="billingProvider" class="col-md-12">
-                    <option v-for="prov in providers" v-bind:value="prov.id">@{{ prov.id }}</option>
+                    <option v-for="prov in providers"
+                            v-bind:value="prov.id">@{{ prov.first_name }} @{{ prov.last_name }}</option>
                 </select>
             </div>
         </div>
