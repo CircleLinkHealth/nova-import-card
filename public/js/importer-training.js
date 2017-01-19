@@ -47,7 +47,7 @@
                     cachedSetTimeout = setTimeout;
                 } else {
                     cachedSetTimeout = defaultSetTimout;
-                }
+        }
             } catch (e) {
                 cachedSetTimeout = defaultSetTimout;
             }
@@ -56,7 +56,7 @@
                     cachedClearTimeout = clearTimeout;
                 } else {
                     cachedClearTimeout = defaultClearTimeout;
-                }
+        }
             } catch (e) {
                 cachedClearTimeout = defaultClearTimeout;
             }
@@ -108,7 +108,7 @@
                     // same as above but when it's a version of I.E. that must have the global object for 'this', hopfully our context correct otherwise it will throw a global error.
                     // Some versions of I.E. have different rules for clearTimeout vs setTimeout
                     return cachedClearTimeout.call(this, marker);
-                }
+        }
             }
 
 
@@ -148,8 +148,8 @@
                 while (++queueIndex < len) {
                     if (currentQueue) {
                         currentQueue[queueIndex].run();
-                    }
-                }
+            }
+        }
                 queueIndex = -1;
                 len = queue.length;
             }
@@ -163,7 +163,7 @@
             if (arguments.length > 1) {
                 for (var i = 1; i < arguments.length; i++) {
                     args[i - 1] = arguments[i];
-                }
+        }
             }
             queue.push(new Item(fun, args));
             if (queue.length === 1 && !draining) {
@@ -368,7 +368,7 @@
                     }
 
                     return this(url, _.extend({method: method, data: data, success: success}, options));
-                };
+        };
             });
 
             return _.http = Http;
@@ -405,7 +405,7 @@
                     get: function () {
                         return Vue.resource.bind(this);
                     }
-                }
+        }
 
             });
         }
@@ -523,7 +523,7 @@
 
                         if (count === iterable.length) {
                             resolve(result);
-                        }
+                }
                     };
                 }
 
@@ -560,17 +560,17 @@
                         then.call(x, function (x) {
                             if (!called) {
                                 promise.resolve(x);
-                            }
+                    }
                             called = true;
 
                         }, function (r) {
-                            if (!called) {
-                                promise.reject(r);
-                            }
+                    if (!called) {
+                        promise.reject(r);
+                    }
                             called = true;
                         });
                         return;
-                    }
+            }
                 } catch (e) {
                     if (!called) {
                         promise.reject(e);
@@ -615,17 +615,17 @@
                                     resolve(onResolved.call(undefined, promise.value));
                                 } else {
                                     resolve(promise.value);
-                                }
+                        }
                             } else if (promise.state === REJECTED) {
                                 if (typeof onRejected === 'function') {
                                     resolve(onRejected.call(undefined, promise.value));
                                 } else {
                                     reject(promise.value);
                                 }
-                            }
+                    }
                         } catch (e) {
                             reject(e);
-                        }
+                }
                     }
                 }
             });
@@ -719,7 +719,7 @@
                     for (key in obj) {
                         if (obj.hasOwnProperty(key)) {
                             iterator.call(obj[key], obj[key], key);
-                        }
+                }
                     }
                 }
 
@@ -747,14 +747,14 @@
                     if (deep && (_.isPlainObject(source[key]) || _.isArray(source[key]))) {
                         if (_.isPlainObject(source[key]) && !_.isPlainObject(target[key])) {
                             target[key] = {};
-                        }
+                }
                         if (_.isArray(source[key]) && !_.isArray(target[key])) {
                             target[key] = [];
                         }
                         extend(target[key], source[key], deep);
                     } else if (source[key] !== undefined) {
                         target[key] = source[key];
-                    }
+            }
                 }
             }
 
@@ -803,7 +803,7 @@
                     }
 
                     (request.ok ? resolve : reject)(request);
-                };
+        };
 
                 request.onload = handler;
                 request.onabort = handler;
@@ -967,7 +967,7 @@
                 _.each(options.params, function (value, key) {
                     if (!urlParams[key]) {
                         queryParams[key] = value;
-                    }
+            }
                 });
 
                 query = Url.params(queryParams);
@@ -1054,7 +1054,7 @@
 
                     if (scope) {
                         key = scope + '[' + (plain || hash ? key : '') + ']';
-                    }
+            }
 
                     if (!scope && array) {
                         params.add(value.name, value.value);
@@ -1062,7 +1062,7 @@
                         serialize(params, value, key);
                     } else {
                         params.add(key, value);
-                    }
+            }
                 });
             }
 
@@ -2188,7 +2188,7 @@
                      * the text parser to re-compile the regular expressions.
                      *
                      * @type {Array<String>}
-                     */
+                 */
 
                     get: function get() {
                         return delimiters;
@@ -7366,7 +7366,7 @@
                                 } else {
                                     // root instance
                                     initProp(vm, prop, vm.$get(prop.parentPath));
-                                }
+            }
                             }
                         } else if (prop.optimizedLiteral) {
                             // optimized literal, cast it and just set once
@@ -8803,7 +8803,7 @@
                         if (dirDef) {
                             pushDir(dirName, dirDef);
                         }
-                    }
+            }
                 }
 
                 /**
@@ -11376,8 +11376,8 @@
 
             data: {
                 practices: [],
-                locations: [],
-                providers: [],
+                locationsCollection: [],
+                providersCollection: [],
                 practice: '',
                 location: '',
                 billingProvider: ''
@@ -11388,8 +11388,20 @@
                 this.$set('practice', cpm.predictedPracticeId);
                 this.$set('location', cpm.predictedLocationId);
                 this.$set('billingProvider', cpm.predictedBillingProviderId);
-                this.$set('locations', this.practices[this.practice].locations);
-                this.$set('providers', this.locations[this.location].providers[this.provider]);
+            },
+
+            computed: {
+                locations: function locations() {
+                    this.$set('locationsCollection', this.practices[this.practice].locations);
+
+                    return this.locationsCollection;
+                },
+
+                providers: function providers() {
+                    this.$set('providersCollection', this.locationsCollection[this.location].providersCollection[this.provider]);
+
+                    return this.providersCollection;
+                }
             },
 
             methods: {}

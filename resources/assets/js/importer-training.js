@@ -16,8 +16,8 @@ var vm = new Vue({
 
         data: {
             practices: [],
-            locations: [],
-            providers: [],
+            locationsCollection: [],
+            providersCollection: [],
             practice: '',
             location: '',
             billingProvider: '',
@@ -28,8 +28,20 @@ var vm = new Vue({
             this.$set('practice', cpm.predictedPracticeId);
             this.$set('location', cpm.predictedLocationId);
             this.$set('billingProvider', cpm.predictedBillingProviderId);
-            this.$set('locations', this.practices[this.practice].locations);
-            this.$set('providers', this.locations[this.location].providers[this.provider]);
+        },
+
+        computed: {
+            locations: function () {
+                this.$set('locationsCollection', this.practices[this.practice].locations);
+
+                return this.locationsCollection;
+            },
+
+            providers: function () {
+                this.$set('providersCollection', this.locationsCollection[this.location].providersCollection[this.provider]);
+
+                return this.providersCollection;
+            }
         },
 
         methods: {}
