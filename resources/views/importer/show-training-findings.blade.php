@@ -4,9 +4,8 @@
     <div class="container-fluid">
 
         <h1>Hola, human.</h1>
-        <h1>Here's what I found. Please check off the information I should forget. I need specific information
-            that identifies a practice, location and billing provider. Information such as 'athenahealth' is considered
-            too broad, so it should not be saved.</h1>
+        <h1>Here's what I see as feautures to help me identify future CCDs from this Practice. Please check off
+            irrelevant information. Information such as 'athenahealth' is too broad, so it should not be saved.</h1>
 
         <form class="form-group" action="{{route('post.store.training.features')}}" method="POST">
 

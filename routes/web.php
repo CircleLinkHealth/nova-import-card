@@ -205,8 +205,8 @@ Route::group(['middleware' => 'auth'], function () {
             'as'   => 'import.ccd',
         ]);
 
-        Route::post('qaimport', 'ImporterController@uploadRawFiles');
-        Route::get('qaimport', [
+        Route::post('imported-medical-records', 'ImporterController@uploadRawFiles');
+        Route::get('imported-medical-records', [
             'uses' => 'ImporterController@index',
             'as'   => 'view.files.ready.to.import',
         ]);

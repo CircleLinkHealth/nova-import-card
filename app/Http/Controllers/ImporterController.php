@@ -173,7 +173,7 @@ class ImporterController extends Controller
         $imr->billing_provider_id = $request->input('billing_provider_id');
         $imr->save();
 
-        return 'Thanks for training me!';
+        return redirect()->route('view.files.ready.to.import');
     }
 
 }
