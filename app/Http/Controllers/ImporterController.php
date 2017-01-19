@@ -91,19 +91,17 @@ class ImporterController extends Controller
             return 'Please upload a CCDA';
         }
 
-//        $xml = file_get_contents($request->file('ccda'));
-//
-//        $json = $this->repo->toJson($xml);
-//
-//        $ccda = Ccda::create([
-//            'user_id' => auth()->user()->id,
-//            'vendor_id' => 1,
-//            'xml'     => $xml,
-//            'json'    => $json,
-//            'source'  => Ccda::IMPORTER,
-//        ]);
+        $xml = file_get_contents($request->file('ccda'));
 
-        $ccda = Ccda::find(7360);
+        $json = $this->repo->toJson($xml);
+
+        $ccda = Ccda::create([
+            'user_id'   => auth()->user()->id,
+            'vendor_id' => 1,
+            'xml'       => $xml,
+            'json'      => $json,
+            'source'    => Ccda::IMPORTER,
+        ]);
 
         $importedMedicalRecord = $ccda->import();
 
@@ -119,12 +117,14 @@ class ImporterController extends Controller
                 'display_name',
             ]);
 
+        //fixing up the data for vue. basically keying locations and providers by id
         $practices = $practicesCollection->keyBy('id')
             ->map(function ($practice) {
                 return [
                     'id'           => $practice->id,
                     'display_name' => $practice->display_name,
                     'locations'    => $practice->locations->map(function ($loc) {
+                        //is there no better way to do this?
                         $loc = new Collection($loc);
 
                         $loc['providers'] = collect($loc['providers'])->keyBy('id');

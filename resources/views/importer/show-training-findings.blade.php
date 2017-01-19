@@ -47,21 +47,21 @@
             <div class="col-md-4">
                 <h1>Practice</h1>
 
-                <select v-model="practice" class="col-md-12">
+                <select v-model="practice" class="col-md-12" name="practiceId">
                     <option v-for="p in practices" v-bind:value="p.id">@{{ p.display_name }}</option>
                 </select>
             </div>
             <div class="col-md-4">
                 <h1>Location</h1>
 
-                <select v-model="location" class="col-md-12">
+                <select v-model="location" class="col-md-12" name="locationId">
                     <option v-for="l in locations" v-bind:value="l.id">@{{ l.name }}</option>
                 </select>
             </div>
             <div class="col-md-4">
                 <h1>Billing Provider</h1>
 
-                <select v-model="billingProvider" class="col-md-12">
+                <select v-model="billingProvider" class="col-md-12" name="billingProviderId">
                     <option v-for="prov in providers"
                             v-bind:value="prov.id">@{{ prov.first_name }} @{{ prov.last_name }}</option>
                 </select>
