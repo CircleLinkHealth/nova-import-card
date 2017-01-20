@@ -142,6 +142,10 @@ class OnboardingController extends Controller
                 'name' => $practiceSlug,
             ])->first();
 
+        if (!$primaryPractice) {
+            return response('Practice not found', 404);
+        }
+
         //Get the users that were as clinical emergency contacts from the locations page
         $existingUsers = $primaryPractice->users->map(function ($user) {
             return [
