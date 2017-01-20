@@ -14,8 +14,13 @@ use App\Http\Controllers\Controller;
 class EnrollmentConsentController extends Controller
 {
 
-    public function create($practice_name){
+    public function index(){
 
+        $enrolled = Patient::where('ccm_status', 'consented')->with('user')->get();
+
+    }
+
+    public function create($practice_name){
 
         $practice = Practice::whereName($practice_name)->first();
 
@@ -30,7 +35,6 @@ class EnrollmentConsentController extends Controller
     }
 
     public function store(Request $request){
-
 
         $input = $request->input();
 

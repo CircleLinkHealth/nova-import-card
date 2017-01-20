@@ -488,6 +488,11 @@ Route::group(['middleware' => 'auth'], function () {
             'as'   => 'post.admin.store.nurse.schedules',
         ]);
 
+        Route::get('enroll/list', [
+            'uses' => 'Patient\EnrollmentConsentController@index',
+            'as'   => 'patient.enroll.index',
+        ]);
+
         Route::get('invites/create', [
             'uses' => 'InviteController@create',
             'as'   => 'invite.create',
