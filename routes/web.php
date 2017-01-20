@@ -489,6 +489,11 @@ Route::group(['middleware' => 'auth'], function () {
         ]);
 
         Route::get('enroll/list', [
+            'uses' => 'Patient\EnrollmentConsentController@makeEnrollmentReport',
+            'as'   => 'patient.enroll.makeReport',
+        ]);
+
+        Route::get('enroll/list/data', [
             'uses' => 'Patient\EnrollmentConsentController@index',
             'as'   => 'patient.enroll.index',
         ]);

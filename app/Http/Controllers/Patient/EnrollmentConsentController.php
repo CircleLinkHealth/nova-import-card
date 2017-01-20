@@ -10,6 +10,7 @@ use Carbon\Carbon;
 use App\User;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
+use Yajra\Datatables\Facades\Datatables;
 
 class EnrollmentConsentController extends Controller
 {
@@ -17,6 +18,35 @@ class EnrollmentConsentController extends Controller
     public function index(){
 
         $enrolled = Patient::where('ccm_status', 'consented')->with('user')->get();
+
+        $formatted = [];
+        $count = 0;
+
+        foreach ($enrolled as $patient){
+
+            $formatted[$count] = [
+
+                'name' => $patient->user->fullName,
+                'date' => $patient->consent_date,
+                'phone' => $patient->user->primaryPhone
+
+            ];
+            $count++;
+
+        }
+
+        $formatted = collect($formatted);
+        $formatted->sortByDesc('date');
+
+
+        return Datatables::collection($formatted)->make(true);
+
+    }
+
+    public function makeEnrollmentReport()
+    {
+
+        return view('admin.reports.enrollment-list');
 
     }
 

@@ -151,7 +151,7 @@
 
                     @if ( ! Auth::guest())
                         <li role="presentation" class="dropdown">
-                            <a href="{{ URL::route('patient.enroll.index', array()) }}">Enrollment List</a></li>
+                            <a href="{{ URL::route('patient.enroll.makeReport', array()) }}">Enrollment List</a></li>
                         </li>
                     @endif
 
