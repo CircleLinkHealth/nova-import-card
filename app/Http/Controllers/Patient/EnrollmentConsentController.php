@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Patient;
 
 use App\Practice;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 
@@ -19,7 +20,20 @@ class EnrollmentConsentController extends Controller
 
         }
 
-        return view('enrollment-consent.create', $practice);
+        return view('enrollment-consent.create', ['practice' => $practice]);
+
+    }
+
+    public function store(Request $request){
+
+
+        $input = $request->input();
+
+        $enrolled = Carbon::parse($input['enrolled_time'])->toDateTimeString();
+        $confirmed = Carbon::parse($input['confirmed_time'])->toDateTimeString();
+
+        dd([$enrolled, $confirmed]);
+
 
     }
 
