@@ -50,7 +50,7 @@ class CarePlan extends Model implements PdfReport
                     ->whereHas('patientInfo', function ($q) {
                         $q->whereCcmStatus('enrolled');
                     })
-                    ->whereHas('patientCareTeamMembers', function ($q) use
+                    ->whereHas('careTeamMembers', function ($q) use
                     (
                         $user
                     ) {

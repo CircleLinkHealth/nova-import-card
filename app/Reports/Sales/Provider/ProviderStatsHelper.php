@@ -157,7 +157,7 @@ class ProviderStatsHelper
     ) {
 
         $patients = User::ofType('participant')
-            ->whereHas('patientCareTeamMembers', function ($q) use
+            ->whereHas('careTeamMembers', function ($q) use
             (
                 $billingProvider
             ) {
@@ -211,7 +211,7 @@ class ProviderStatsHelper
         $endTime = Carbon::parse($end)->toDateString();
 
         $patients = User::ofType('participant')
-            ->whereHas('patientCareTeamMembers', function ($q) use
+            ->whereHas('careTeamMembers', function ($q) use
             (
                 $billingProvider
             ) {
@@ -281,7 +281,7 @@ class ProviderStatsHelper
                 (
                     $billingProvider
                 ) {
-                    $k->whereHas('patientCareTeamMembers', function ($q) use
+                    $k->whereHas('careTeamMembers', function ($q) use
                     (
                         $billingProvider
                     ) {
@@ -302,7 +302,7 @@ class ProviderStatsHelper
     ) {
 
         return User::ofType('participant')
-            ->whereHas('patientCareTeamMembers', function ($q) use
+            ->whereHas('careTeamMembers', function ($q) use
             (
                 $billingProvider
             ) {
