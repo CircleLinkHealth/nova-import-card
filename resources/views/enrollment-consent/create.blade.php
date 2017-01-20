@@ -150,12 +150,14 @@
                         <label class="mdl-textfield__label" for="phone">Phone</label>
                     </div>
                     <div class="mdl-card__actions mdl-card--border" style="padding: 10px; text-align: right">
-                        <button type="submit" class="submit_button mdl-button mdl-js-button mdl-js-ripple-effect">Enroll!
+                        <button type="submit" class="submit_button mdl-button mdl-js-button mdl-js-ripple-effect">
+                            Enroll!
                         </button>
                     </div>
 
                     <input type="datetime" id="enrolled_time" name="enrolled_time" hidden>
                     <input type="datetime" id="confirmed_time" name="confirmed_time" hidden>
+                    <input type="datetime" id="practice_id" name="practice_id" value="{{$practice->id}}" hidden>
 
                 </form>
             </div>
@@ -168,7 +170,6 @@
 <script>
     (function () {
         'use strict';
-        var dialogButton = document.querySelector('.submit_button');
 
         var dialog = document.querySelector('#dialog');
 
@@ -176,18 +177,34 @@
             dialogPolyfill.registerDialog(dialog);
         }
 
-        dialogButton.addEventListener('click', function () {
-            $("#enrolled_time").val(Date.now());
+        $(".submit_button").click(function (e) {
+            $("#enrolled_time").val(formatCurrentJSTime());
             dialog.showModal();
+            e.preventDefault();
+            return false;
         });
 
         dialog.querySelector('button:not([disabled])')
                 .addEventListener('click', function () {
-                    $("#confirmed_time").val(Date.now());
+                    $("#confirmed_time").val(formatCurrentJSTime());
                     $("#enroll").submit();
                     dialog.close();
                 });
     }());
+
+
+    function formatCurrentJSTime() {
+        var today = new Date();
+
+        var month = today.getMonth();
+
+        month = month > 9 ? month : "0" + month;
+
+        var date = today.getFullYear()+'-'+month+'-'+today.getDate();
+        var time = today.getHours() + ":" + today.getMinutes() + ":" + today.getSeconds();
+        return date+' '+time;
+
+    }
 
 </script>
 
