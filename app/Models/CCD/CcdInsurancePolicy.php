@@ -2,13 +2,15 @@
 
 namespace App\Models\CCD;
 
+use App\Scopes\Universal\MedicalRecordIdAndTypeTrait;
 use App\User;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 class CcdInsurancePolicy extends Model
 {
-    use SoftDeletes;
+    use MedicalRecordIdAndTypeTrait,
+        SoftDeletes;
 
     protected $fillable = [
         'ccda_id',

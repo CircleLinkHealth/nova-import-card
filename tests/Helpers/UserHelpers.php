@@ -9,13 +9,13 @@
 namespace Tests\Helpers;
 
 use App\Call;
-use App\CLH\Facades\StringManipulation;
 use App\CLH\Repositories\UserRepository;
-use App\NurseContactWindow;
+use App\Facades\StringManipulation;
 use App\Nurse;
-use App\PatientContactWindow;
+use App\NurseContactWindow;
 use App\Patient;
 use App\PatientMonthlySummary;
+use App\PatientContactWindow;
 use App\Practice;
 use App\Role;
 use App\User;

@@ -2,8 +2,8 @@
 
 namespace App\Http\Controllers\Admin\Reports;
 
-use App\CLH\CCD\ItemLogger\CcdDemographicsLog;
 use App\Http\Controllers\Controller;
+use App\Importer\Models\ItemLogs\DemographicsLog;
 use App\Models\CCD\CcdVendor;
 use App\Practice;
 use Maatwebsite\Excel\Facades\Excel;
@@ -12,7 +12,7 @@ class EthnicityReportController extends Controller
 {
     public function getReport()
     {
-        $data = CcdDemographicsLog::all();
+        $data = DemographicsLog::all();
 
         //Prepare spreadsheet data
         $filtered = $data->map(function ($demoLog){

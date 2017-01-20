@@ -1,12 +1,8 @@
 <?php namespace App\Http\Controllers\CCDModels\Items;
 
-use App\User;
-use App\Http\Requests;
 use App\Http\Controllers\Controller;
-
-use App\Models\CCD\CcdAllergy;
+use App\Models\CCD\Allergy;
 use Illuminate\Http\Request;
-use Illuminate\Http\Response;
 
 /**
  * Class AllergyListItemController
@@ -18,7 +14,7 @@ class AllergiesItemController extends Controller {
 	{
 		$data   = array();
 		$patientId = $request->input('patient_id');
-		$ccdAllergies = CcdAllergy::where('patient_id', '=', $patientId)->orderBy('allergen_name')->get();
+        $ccdAllergies = Allergy::where('patient_id', '=', $patientId)->orderBy('allergen_name')->get();
 		if($ccdAllergies->count() > 0) {
 			foreach($ccdAllergies as $ccdAllergy) {
 				$data[] = array(
@@ -37,7 +33,7 @@ class AllergiesItemController extends Controller {
 		// pass back some data, along with the original data, just to prove it was received
 		$allergy = $request->input('allergy');
 		if(!empty($allergy)) {
-			$ccdAllergy = New CcdAllergy;
+            $ccdAllergy = New Allergy;
 			$ccdAllergy->patient_id = $allergy['patient_id'];
 			$ccdAllergy->allergen_name = $allergy['name'];
 			$ccdAllergy->ccda_id = null;
@@ -54,7 +50,7 @@ class AllergiesItemController extends Controller {
 		// pass back some data, along with the original data, just to prove it was received
 		$allergy = $request->input('allergy');
 		if(!empty($allergy)) {
-			$ccdAllergy = CcdAllergy::find( $allergy['id'] );
+            $ccdAllergy = Allergy::find($allergy['id']);
 			if ( !$ccdAllergy ) {
 				return response( "Allergy not found", 401 );
 			}
@@ -70,7 +66,7 @@ class AllergiesItemController extends Controller {
 	{
 		$allergy = $request->input('allergy');
 		if(!empty($allergy)) {
-			$ccdAllergy = CcdAllergy::find( $allergy['id'] );
+            $ccdAllergy = Allergy::find($allergy['id']);
 			if ( !$ccdAllergy ) {
 				return response( "Allergy " . $allergy['id'] . " not found", 401 );
 			}

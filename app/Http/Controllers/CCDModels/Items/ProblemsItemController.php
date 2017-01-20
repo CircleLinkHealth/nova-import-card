@@ -1,12 +1,8 @@
 <?php namespace App\Http\Controllers\CCDModels\Items;
 
-use App\User;
-use App\Http\Requests;
 use App\Http\Controllers\Controller;
-
-use App\Models\CCD\CcdProblem;
+use App\Models\CCD\Problem;
 use Illuminate\Http\Request;
-use Illuminate\Http\Response;
 
 /**
  * Class ProblemListItemController
@@ -18,7 +14,7 @@ class ProblemsItemController extends Controller {
 	{
 		$data   = array();
 		$patientId = $request->input('patient_id');
-		$ccdProblems = CcdProblem::where('patient_id', '=', $patientId)->orderBy('name')->get();
+        $ccdProblems = Problem::where('patient_id', '=', $patientId)->orderBy('name')->get();
 		if($ccdProblems->count() > 0) {
 			foreach($ccdProblems as $ccdProblem) {
 				$data[] = array(
@@ -36,7 +32,7 @@ class ProblemsItemController extends Controller {
 		// pass back some data, along with the original data, just to prove it was received
 		$problem = $request->input('problem');
 		if(!empty($problem)) {
-			$ccdProblem = New CcdProblem;
+            $ccdProblem = New Problem;
 			$ccdProblem->patient_id = $problem['patient_id'];
 			$ccdProblem->name = $problem['name'];
 			$ccdProblem->save();
@@ -52,7 +48,7 @@ class ProblemsItemController extends Controller {
 		// pass back some data, along with the original data, just to prove it was received
 		$problem = $request->input('problem');
 		if(!empty($problem)) {
-			$ccdProblem = CcdProblem::find( $problem['id'] );
+            $ccdProblem = Problem::find($problem['id']);
 			if ( !$ccdProblem ) {
 				return response( "Problem not found", 401 );
 			}
@@ -68,7 +64,7 @@ class ProblemsItemController extends Controller {
 	{
 		$problem = $request->input('problem');
 		if(!empty($problem)) {
-			$ccdProblem = CcdProblem::find( $problem['id'] );
+            $ccdProblem = Problem::find($problem['id']);
 			if ( !$ccdProblem ) {
 				return response( "Problem " . $problem['id'] . " not found", 401 );
 			}

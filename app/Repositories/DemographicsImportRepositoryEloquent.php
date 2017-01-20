@@ -2,14 +2,14 @@
 
 namespace App\Repositories;
 
-use App\Models\CCD\Ccda;
-use App\CLH\CCD\ImportedItems\DemographicsImport;
-use App\ForeignId;
-use Illuminate\Support\Facades\DB;
-use Prettus\Repository\Eloquent\BaseRepository;
-use Prettus\Repository\Criteria\RequestCriteria;
 use App\Contracts\Repositories\DemographicsImportRepository;
+use App\ForeignId;
+use App\Importer\Models\ImportedItems\DemographicsImport;
+use App\Models\MedicalRecords\Ccda;
 use App\Validators\DemographicsImportValidator;
+use Illuminate\Support\Facades\DB;
+use Prettus\Repository\Criteria\RequestCriteria;
+use Prettus\Repository\Eloquent\BaseRepository;
 
 /**
  * Class DemographicsImportRepositoryEloquent

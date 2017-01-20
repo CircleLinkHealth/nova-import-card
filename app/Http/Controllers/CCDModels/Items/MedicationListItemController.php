@@ -1,12 +1,8 @@
 <?php namespace App\Http\Controllers\CCDModels\Items;
 
-use App\User;
-use App\Http\Requests;
 use App\Http\Controllers\Controller;
-
-use App\Models\CCD\CcdMedication;
+use App\Models\CCD\Medication;
 use Illuminate\Http\Request;
-use Illuminate\Http\Response;
 
 /**
  * Class MedicationListItemController
@@ -18,7 +14,7 @@ class MedicationListItemController extends Controller {
 	{
 		$data   = array();
 		$patientId = $request->input('patient_id');
-		$ccdMedications = CcdMedication::where('patient_id', '=', $patientId)->orderBy('name')->get();
+        $ccdMedications = Medication::where('patient_id', '=', $patientId)->orderBy('name')->get();
 		if($ccdMedications->count() > 0) {
 			foreach($ccdMedications as $ccdMedication) {
 				$data[] = array(
@@ -37,7 +33,7 @@ class MedicationListItemController extends Controller {
 		// pass back some data, along with the original data, just to prove it was received
 		$medication = $request->input('medication');
 		if(!empty($medication)) {
-			$ccdMedication = New CcdMedication;
+            $ccdMedication = New Medication;
 			$ccdMedication->patient_id = $medication['patient_id'];
 			$ccdMedication->name = $medication['name'];
 			$ccdMedication->sig = $medication['sig'];
@@ -54,7 +50,7 @@ class MedicationListItemController extends Controller {
 		// pass back some data, along with the original data, just to prove it was received
 		$medication = $request->input('medication');
 		if(!empty($medication)) {
-			$ccdMedication = CcdMedication::find( $medication['id'] );
+            $ccdMedication = Medication::find($medication['id']);
 			if ( !$ccdMedication ) {
 				return response( "Medication not found", 401 );
 			}
@@ -71,7 +67,7 @@ class MedicationListItemController extends Controller {
 	{
 		$medication = $request->input('medication');
 		if(!empty($medication)) {
-			$ccdMedication = CcdMedication::find( $medication['id'] );
+            $ccdMedication = Medication::find($medication['id']);
 			if ( !$ccdMedication ) {
 				return response( "Medication " . $medication['id'] . " not found", 401 );
 			}

@@ -3,11 +3,11 @@
 return [
 //        [
 //            'name' => '',
-//            'validatorsIds' => [],
 //            'parsersIds' => [],
 //            'storageIds' => [],
 //        ],
-    [ //0
+
+[ //0
         'name' => 'Allergies List',
         'parsersIds' => [0],
         'storageIds' => [0],

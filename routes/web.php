@@ -1,8 +1,5 @@
 <?php
 
-use App\Billing\NurseMonthlyBillGenerator;
-use Illuminate\Support\Facades\Artisan;
-
 if (app()->environment() != 'production') {
 
     Route::get('rohan', function () {
@@ -167,12 +164,23 @@ Route::group(['middleware' => 'auth'], function () {
         'uses' => 'CCDViewer\CCDViewerController@viewSource',
         'as'   => 'ccd.old.viewer',
     ]);
+
     Route::get('ccd/old-viewer', 'CCDViewer\CCDViewerController@create');
+
     Route::post('ccd-old', [
         'uses' => 'CCDViewer\CCDViewerController@oldViewer',
         'as'   => 'ccd-old-viewer.post',
     ]);
 
+    Route::post('importer/train', [
+        'uses' => 'ImporterController@train',
+        'as'   => 'post.train.importing.algorithm',
+    ]);
+
+    Route::post('importer/train/store', [
+        'uses' => 'ImporterController@storeTrainingFeatures',
+        'as'   => 'post.store.training.features',
+    ]);
 
     /****************************
      * VUE CCD VIEWER
@@ -193,19 +201,22 @@ Route::group(['middleware' => 'auth'], function () {
     ], function () {
 
         Route::get('create', [
-            'uses' => 'CCDUploadController@create',
+            'uses' => 'ImporterController@create',
             'as'   => 'import.ccd',
         ]);
 
-        Route::post('qaimport', 'CCDUploadController@uploadRawFiles');
-        Route::get('qaimport', [
-            'uses' => 'CCDUploadController@index',
+        Route::post('imported-medical-records', [
+            'uses' => 'ImporterController@uploadRawFiles',
+            'as'   => 'upload.ccda',
+        ]);
+        Route::get('imported-medical-records', [
+            'uses' => 'ImporterController@index',
             'as'   => 'view.files.ready.to.import',
         ]);
 
-        Route::post('import', 'CCDImportController@import');
+        Route::post('import', 'MedicalRecordImportController@import');
 
-        Route::get('uploaded-ccd-items/{ccdaId}/edit', 'QAImportedController@edit');
+        Route::get('uploaded-ccd-items/{importedMedicalRecordId}/edit', 'ImportedMedicalRecordController@edit');
 
         Route::post('demographics', 'EditImportedCcda\DemographicsImportsController@store');
     });
