@@ -205,7 +205,10 @@ Route::group(['middleware' => 'auth'], function () {
             'as'   => 'import.ccd',
         ]);
 
-        Route::post('imported-medical-records', 'ImporterController@uploadRawFiles');
+        Route::post('imported-medical-records', [
+            'uses' => 'ImporterController@uploadRawFiles',
+            'as'   => 'upload.ccda',
+        ]);
         Route::get('imported-medical-records', [
             'uses' => 'ImporterController@index',
         Route::post('imported-medical-records', [
