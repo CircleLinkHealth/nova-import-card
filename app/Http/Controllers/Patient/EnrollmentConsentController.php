@@ -27,6 +27,8 @@ class EnrollmentConsentController extends Controller
             $formatted[$count] = [
 
                 'name' => $patient->user->fullName,
+                'program' => ucwords(Practice::find($patient->user->program_id)->name),
+                'dob' => $patient->birth_date,
                 'date' => $patient->consent_date,
                 'phone' => $patient->user->primaryPhone
 

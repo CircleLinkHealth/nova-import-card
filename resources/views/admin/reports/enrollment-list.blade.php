@@ -24,7 +24,13 @@
                                             Patient Name
                                         </th>
                                         <th>
-                                            Consent Date
+                                            Program
+                                        </th>
+                                        <th>
+                                            DOB
+                                        </th>
+                                        <th>
+                                            Consent Timestamp
                                         </th>
                                         <th>
                                             Phone Number
@@ -48,6 +54,8 @@
                     ajax: '{!! url('/admin/enroll/list/data') !!}',
                     columns: [
                         {data: 'name', name: 'name'},
+                        {data: 'program', name: 'program'},
+                        {data: 'dob', name: 'dob'},
                         {data: 'date', name: 'date'},
                         {data: 'phone', name: 'phone'},
                     ],
