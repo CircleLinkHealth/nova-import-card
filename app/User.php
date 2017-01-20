@@ -1139,14 +1139,14 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
     public function setCareTeamAttribute($memberUserIds)
     {
         if (!is_array($memberUserIds)) {
-            $this->patientCareTeamMembers()->where('type', 'member')->delete();
+            $this->careTeamMembers()->where('type', 'member')->delete();
 
             return false; // must be array
         }
-        $this->patientCareTeamMembers()->where('type', 'member')->whereNotIn('member_user_id',
+        $this->careTeamMembers()->where('type', 'member')->whereNotIn('member_user_id',
             $memberUserIds)->delete();
         foreach ($memberUserIds as $memberUserId) {
-            $careTeamMember = $this->patientCareTeamMembers()->where('type', 'member')->where('member_user_id',
+            $careTeamMember = $this->careTeamMembers()->where('type', 'member')->where('member_user_id',
                 $memberUserId)->first();
             if ($careTeamMember) {
                 $careTeamMember->member_user_id = $memberUserId;
@@ -1162,7 +1162,7 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
         return true;
     }
 
-    public function patientCareTeamMembers()
+    public function careTeamMembers()
     {
         return $this->hasMany(PatientCareTeamMember::class, 'user_id', 'id');
     }
@@ -1187,14 +1187,14 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
     public function setSendAlertToAttribute($memberUserIds)
     {
         if (!is_array($memberUserIds)) {
-            $this->patientCareTeamMembers()->where('type', 'send_alert_to')->delete();
+            $this->careTeamMembers()->where('type', 'send_alert_to')->delete();
 
             return false; // must be array
         }
-        $this->patientCareTeamMembers()->where('type', 'send_alert_to')->whereNotIn('member_user_id',
+        $this->careTeamMembers()->where('type', 'send_alert_to')->whereNotIn('member_user_id',
             $memberUserIds)->delete();
         foreach ($memberUserIds as $memberUserId) {
-            $careTeamMember = $this->patientCareTeamMembers()->where('type', 'send_alert_to')->where('member_user_id',
+            $careTeamMember = $this->careTeamMembers()->where('type', 'send_alert_to')->where('member_user_id',
                 $memberUserId)->first();
             if ($careTeamMember) {
                 $careTeamMember->member_user_id = $memberUserId;
@@ -1231,11 +1231,11 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
     public function setBillingProviderIDAttribute($value)
     {
         if (empty($value)) {
-            $this->patientCareTeamMembers()->where('type', 'billing_provider')->delete();
+            $this->careTeamMembers()->where('type', 'billing_provider')->delete();
 
             return true;
         }
-        $careTeamMember = $this->patientCareTeamMembers()->where('type', 'billing_provider')->first();
+        $careTeamMember = $this->careTeamMembers()->where('type', 'billing_provider')->first();
         if ($careTeamMember) {
             $careTeamMember->member_user_id = $value;
         } else {
@@ -1269,11 +1269,11 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
     public function setLeadContactIDAttribute($value)
     {
         if (empty($value)) {
-            $this->patientCareTeamMembers()->where('type', 'lead_contact')->delete();
+            $this->careTeamMembers()->where('type', 'lead_contact')->delete();
 
             return true;
         }
-        $careTeamMember = $this->patientCareTeamMembers()->where('type', 'lead_contact')->first();
+        $careTeamMember = $this->careTeamMembers()->where('type', 'lead_contact')->first();
         if ($careTeamMember) {
             $careTeamMember->member_user_id = $value;
         } else {
@@ -1966,7 +1966,7 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
         $query,
         $billing_provider_id
     ) {
-        return $query->whereHas('patientCareTeamMembers', function ($k) use
+        return $query->whereHas('careTeamMembers', function ($k) use
         (
             $billing_provider_id
         ) {
@@ -1995,7 +1995,7 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
         $type
     ) {
         $query->with([
-            'patientCareTeamMembers' => function ($q) use
+            'careTeamMembers' => function ($q) use
             (
                 $type
             ) {

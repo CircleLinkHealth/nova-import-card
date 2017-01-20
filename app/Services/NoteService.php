@@ -195,7 +195,7 @@ class NoteService
         $end
     ) {
 
-        $patients = User::whereHas('patientCareTeamMembers',
+        $patients = User::whereHas('careTeamMembers',
 
             function ($q) use
             (
@@ -233,7 +233,7 @@ class NoteService
 
     public function getForwardedNotesWithRangeForProvider($provider, $start, $end) {
 
-            $patients = User::whereHas('patientCareTeamMembers', function ($q) use
+        $patients = User::whereHas('careTeamMembers', function ($q) use
             (
                 $provider
             ) {

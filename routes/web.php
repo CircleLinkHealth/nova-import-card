@@ -496,6 +496,16 @@ Route::group(['middleware' => 'auth'], function () {
             'as'   => 'post.admin.store.nurse.schedules',
         ]);
 
+        Route::get('enroll/list', [
+            'uses' => 'Patient\EnrollmentConsentController@makeEnrollmentReport',
+            'as'   => 'patient.enroll.makeReport',
+        ]);
+
+        Route::get('enroll/list/data', [
+            'uses' => 'Patient\EnrollmentConsentController@index',
+            'as'   => 'patient.enroll.index',
+        ]);
+
         Route::get('invites/create', [
             'uses' => 'InviteController@create',
             'as'   => 'invite.create',
@@ -1298,6 +1308,28 @@ Route::group([
         'uses' => 'Provider\DashboardController@getCreateLocation',
         'as'   => 'get.create.location',
     ]);
+});
+
+
+/*
+ * Enrollment Consent
+ */
+
+Route::group([
+    'prefix' => 'join',
+], function () {
+
+    Route::get('{program_name}', [
+        'uses' => 'Patient\EnrollmentConsentController@create',
+        'as'   => 'patient.enroll.create',
+    ]);
+
+    Route::post('store', [
+        'uses' => 'Patient\EnrollmentConsentController@store',
+        'as'   => 'patient.enroll.store',
+    ]);
+
+
 });
 
 Route::group([
