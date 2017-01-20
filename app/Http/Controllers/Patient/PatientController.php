@@ -247,16 +247,16 @@ class PatientController extends Controller
             ->with('primaryPractice')
             ->with('carePlan')
             ->with([
-                'observations'           => function ($query) {
+                'observations'    => function ($query) {
                     $query->where('obs_key', '!=', 'Outbound');
                     $query->orderBy('obs_date', 'DESC');
                     $query->first();
                 },
-                'patientCareTeamMembers' => function ($q) {
+                'careTeamMembers' => function ($q) {
                     $q->where('type', '=', PatientCareTeamMember::BILLING_PROVIDER)
                         ->with('user');
                 },
-                'phoneNumbers'           => function ($q) {
+                'phoneNumbers'    => function ($q) {
                     $q->where('type', '=', PhoneNumber::HOME);
                 },
             ])
@@ -405,7 +405,7 @@ class PatientController extends Controller
 
         $patientData = [];
         $patients = User::intersectPracticesWith(auth()->user())
-            ->with('phoneNumbers', 'patientInfo', 'patientCareTeamMembers')->whereHas('roles', function ($q) {
+            ->with('phoneNumbers', 'patientInfo', 'careTeamMembers')->whereHas('roles', function ($q) {
                 $q->where('name', '=', 'participant');
             })->get();
         if ($patients->count() > 0) {
@@ -519,7 +519,7 @@ class PatientController extends Controller
     {
         // get number of approvals
         $patients = User::intersectPracticesWith(auth()->user())
-            ->with('phoneNumbers', 'patientInfo', 'patientCareTeamMembers')->whereHas('roles', function ($q) {
+            ->with('phoneNumbers', 'patientInfo', 'careTeamMembers')->whereHas('roles', function ($q) {
                 $q->where('name', '=', 'participant');
             })->get()->pluck('fullNameWithId', 'id')->all();
 

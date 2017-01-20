@@ -82,7 +82,18 @@ var locationsVM = new Vue({
                     lastName: '',
                     type: 'billing_provider'
                 },
-                timezone: 'America/New_York'
+                timezone: 'America/New_York',
+                ehr_password: '',
+                city: '',
+                address_line_1: '',
+                ehr_login: '',
+                errorCount: 0,
+                isComplete: false,
+                name: '',
+                phone: '',
+                postal_code: '',
+                state: '',
+                validated: false
             });
         },
 

@@ -415,7 +415,7 @@ class PatientCareplanController extends Controller
         // instantiate user
         $user = new User;
         if ($patientId) {
-            $user = User::with('phoneNumbers', 'patientInfo', 'patientCareTeamMembers')->find($patientId);
+            $user = User::with('phoneNumbers', 'patientInfo', 'careTeamMembers')->find($patientId);
             if (!$user) {
                 return response("User not found", 401);
             }
@@ -618,7 +618,7 @@ class PatientCareplanController extends Controller
         }
 
         // instantiate user
-        $patient = User::with('phoneNumbers', 'patientInfo', 'patientCareTeamMembers')->find($patientId);
+        $patient = User::with('phoneNumbers', 'patientInfo', 'careTeamMembers')->find($patientId);
         if (!$patient) {
             return response("Patient user not found", 401);
         }
