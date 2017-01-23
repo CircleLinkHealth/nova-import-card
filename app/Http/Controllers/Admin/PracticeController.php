@@ -39,7 +39,6 @@ class PracticeController extends Controller
 		$messages = \Session::get('messages');
 
         $locations = Location::all()
-            ->orderBy('id', 'desc')
             ->pluck('name', 'id')
             ->all();
 
@@ -62,19 +61,8 @@ class PracticeController extends Controller
 
         $program = new Practice;
 
-        $program->locations->attach($params['location_id']);
-
 		$program->name = $params['name'];
 		$program->display_name = $params['display_name'];
-		$program->short_display_name = $params['short_display_name'];
-		$program->site_id = 1;
-		$program->path = '/';
-		$program->public = 0;
-		$program->archived = 0;
-		$program->mature = 0;
-		$program->spam = 0;
-		$program->deleted = 0;
-		$program->lang_id = 0;
 		$program->save();
 
 		// attach to all users who get auto attached
@@ -160,7 +148,7 @@ class PracticeController extends Controller
 
         $program = Practice::find($id);
 
-        $locations = Location::where('parent_id', '=', null)->orderBy('id', 'desc')->pluck('name', 'id')->all();
+        $locations = $program->locations->pluck('name', 'id')->all();
 
 		return view('admin.wpBlogs.edit', compact([ 'program', 'locations', 'errors', 'messages' ]));
 	}

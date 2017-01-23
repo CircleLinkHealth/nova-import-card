@@ -9,8 +9,6 @@ use App\Contracts\Repositories\PracticeRepository;
 use App\Contracts\Repositories\UserRepository;
 use App\Entities\Invite;
 use App\Http\Controllers\Controller;
-use App\Notifications\Onboarding\ImplementationLeadWelcome;
-use App\Notifications\Onboarding\StaffInvite;
 use App\PatientCareTeamMember;
 use App\PhoneNumber;
 use App\Role;
@@ -483,7 +481,7 @@ class OnboardingController extends Controller
                     'is_primary' => true,
                 ]);
 
-                $user->notify(new StaffInvite($implementationLead, $primaryPractice));
+//                $user->notify(new StaffInvite($implementationLead, $primaryPractice));
             } catch (\Exception $e) {
                 if ($e instanceof QueryException) {
                     $errorCode = $e->errorInfo[1];
@@ -511,7 +509,7 @@ class OnboardingController extends Controller
             ], 400);
         }
 
-        $implementationLead->notify(new ImplementationLeadWelcome($primaryPractice));
+//        $implementationLead->notify(new ImplementationLeadWelcome($primaryPractice));
 
         return view('provider.onboarding.welcome');
     }
