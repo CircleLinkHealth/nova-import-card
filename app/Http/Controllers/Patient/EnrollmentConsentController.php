@@ -109,7 +109,9 @@ class EnrollmentConsentController extends Controller
         $phone->save();
         $enrollee->phoneNumbers()->save($phone);
 
-        dd([$enrollee, $patient]);
+//        dd([$enrollee, $patient]);
+
+        return view('enrollment-consent.thanks', ['name' => $input['first_name']]);
 
 
     }
