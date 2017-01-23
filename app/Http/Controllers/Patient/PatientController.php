@@ -325,7 +325,7 @@ class PatientController extends Controller
             }
             $programName = $program->display_name;
 
-            $bpCareTeamMember = $patient->patientCareTeamMembers->first();
+            $bpCareTeamMember = $patient->careTeamMembers->first();
 
             if ($bpCareTeamMember) {
                 $bpUser = $bpCareTeamMember->user;

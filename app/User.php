@@ -114,14 +114,14 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
             $user->providerInfo()->delete();
             $user->patientInfo()->delete();
             $user->carePlan()->delete();
-            $user->patientCareTeamMembers()->delete();
+            $user->careTeamMembers()->delete();
         });
 
         self::restoring(function ($user) {
             $user->providerInfo()->restore();
             $user->patientInfo()->restore();
             $user->carePlan()->restore();
-            $user->patientCareTeamMembers()->restore();
+            $user->careTeamMembers()->restore();
         });
     }
 
@@ -1126,7 +1126,7 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
     public function getCareTeamAttribute()
     {
         $ct = [];
-        $careTeamMembers = $this->patientCareTeamMembers->where('type', 'member');
+        $careTeamMembers = $this->careTeamMembers->where('type', 'member');
         if ($careTeamMembers->count() > 0) {
             foreach ($careTeamMembers as $careTeamMember) {
                 $ct[] = $careTeamMember->member_user_id;
@@ -1170,11 +1170,11 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
     public function getSendAlertToAttribute()
     {
         $ctmsa = [];
-        if (!$this->patientCareTeamMembers) {
+        if (!$this->careTeamMembers) {
             return '';
         }
-        if ($this->patientCareTeamMembers->count() > 0) {
-            foreach ($this->patientCareTeamMembers as $careTeamMember) {
+        if ($this->careTeamMembers->count() > 0) {
+            foreach ($this->careTeamMembers as $careTeamMember) {
                 if ($careTeamMember->type == 'send_alert_to') {
                     $ctmsa[] = $careTeamMember->member_user_id;
                 }
@@ -1213,11 +1213,11 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
     public function getBillingProviderIDAttribute()
     {
         $bp = '';
-        if (!$this->patientCareTeamMembers) {
+        if (!$this->careTeamMembers) {
             return '';
         }
-        if ($this->patientCareTeamMembers->count() > 0) {
-            foreach ($this->patientCareTeamMembers as $careTeamMember) {
+        if ($this->careTeamMembers->count() > 0) {
+            foreach ($this->careTeamMembers as $careTeamMember) {
                 if ($careTeamMember->type == 'billing_provider') {
                     $bp = $careTeamMember->member_user_id;
                 }
@@ -1252,11 +1252,11 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
     public function getLeadContactIDAttribute()
     {
         $lc = [];
-        if (!$this->patientCareTeamMembers) {
+        if (!$this->careTeamMembers) {
             return '';
         }
-        if ($this->patientCareTeamMembers->count() > 0) {
-            foreach ($this->patientCareTeamMembers as $careTeamMember) {
+        if ($this->careTeamMembers->count() > 0) {
+            foreach ($this->careTeamMembers as $careTeamMember) {
                 if ($careTeamMember->type == 'lead_contact') {
                     $lc = $careTeamMember->member_user_id;
                 }
@@ -1955,7 +1955,7 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
      */
     public function billingProvider() : User
     {
-        $billingProvider = $this->patientCareTeamMembers
+        $billingProvider = $this->careTeamMembers
             ->where('type', 'billing_provider')
             ->first();
 
@@ -1983,7 +1983,7 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
      */
     public function leadContact() : User
     {
-        $leadContact = $this->patientCareTeamMembers
+        $leadContact = $this->careTeamMembers
             ->where('type', 'lead_contact')
             ->first();
 

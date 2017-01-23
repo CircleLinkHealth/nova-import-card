@@ -31,7 +31,7 @@ class AprimaApiPdfHandler implements PdfReportHandler
         //assuming relation patient exists and it returns a user object
         $patient = $report->patient;
 
-        $careTeam = $patient->patientCareTeamMembers->where('type', PatientCareTeamMember::SEND_ALERT_TO);
+        $careTeam = $patient->careTeamMembers->where('type', PatientCareTeamMember::SEND_ALERT_TO);
 
         //ProviderId of the Users this was sent to
         $sendTo = [];

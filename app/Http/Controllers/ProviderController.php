@@ -41,7 +41,7 @@ class ProviderController extends Controller
 
             ]);
 
-            $patient->patientCareTeamMembers()->save($care_team_member);
+            $patient->careTeamMembers()->save($care_team_member);
 
             $provider_user->first_name = $input['first_name'];
             $provider_user->last_name = $input['last_name'];
