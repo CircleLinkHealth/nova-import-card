@@ -12,6 +12,7 @@ if (isset($patient) && !empty($patient)) {
 
     $today = \Carbon\Carbon::now()->toFormattedDateString();
 // $provider = App\User::find($patient->getLeadContactIDAttribute());
+    $alreadyShown = [];
 }
 ?>
 @if(!isset($isPdf))

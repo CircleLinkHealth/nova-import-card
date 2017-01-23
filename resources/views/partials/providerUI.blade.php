@@ -116,21 +116,7 @@
             to improve your experience.</p>
         <![endif]-->
         @yield('content')
-        {{--
-        PROVIDER UI TEMPLATE:
-        <div class="row" style="margin-top:60px;">
-        <div class="main-form-container col-lg-8 col-lg-offset-2">
-        <div class="row">
-        <div class="main-form-title col-lg-12">
-        title
-        </div>
-        <div class="main-form-block main-form-horizontal main-form-primary-horizontal col-md-12">
-        content text
-        </div>
-        </div>
-        </div>
-        </div>
-        --}}
+
         @if(!isset($isPdf))
             <!-- PAGE TIMER START -->
             @include('partials.providerUItimer')
