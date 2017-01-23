@@ -33,7 +33,7 @@
         <div class="mdl-cell mdl-cell--3-col">
             <div class="demo-card-wide mdl-card mdl-shadow--2dp">
                 <div class="mdl-card__title">
-                    <h1 class="mdl-card__title-text" style="font-size: 45px">Welcome, {{$name}}!</h1>
+                    <h1 class="mdl-card__title-text" style="font-size: 45px">Welcome{{$name == null ? '' : ', ' . $name}}!</h1>
                 </div>
                 <div class="mdl-card__supporting-text">
                     A personalized care coach will be touch with you shortly.<br />
