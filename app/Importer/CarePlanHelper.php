@@ -231,13 +231,8 @@ class CarePlanHelper
             ?: $this->importedMedicalRecord->billing_provider_id;
 
         if ($providerId) {
-            $sendAlertTo = PatientCareTeamMember::create([
-                'user_id'        => $this->user->id,
-                'member_user_id' => $providerId,
-                'type'           => PatientCareTeamMember::SEND_ALERT_TO,
-            ]);
-
             $billing = PatientCareTeamMember::create([
+                'alert'          => true,
                 'user_id'        => $this->user->id,
                 'member_user_id' => $providerId,
                 'type'           => PatientCareTeamMember::BILLING_PROVIDER,

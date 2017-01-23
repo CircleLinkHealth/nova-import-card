@@ -484,6 +484,7 @@ class ReportsController extends Controller
 
         $careTeam = PatientCareTeamMember::with('user')
             ->whereUserId($patient->id)
+            ->orderBy('type')
             ->get();
 
         $showInsuranceReviewFlag = $insurances->checkPendingInsuranceApproval($patient);

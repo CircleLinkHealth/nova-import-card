@@ -1175,7 +1175,7 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
         }
         if ($this->careTeamMembers->count() > 0) {
             foreach ($this->careTeamMembers as $careTeamMember) {
-                if ($careTeamMember->type == 'send_alert_to') {
+                if ($careTeamMember->alert) {
                     $ctmsa[] = $careTeamMember->member_user_id;
                 }
             }
@@ -1187,24 +1187,20 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
     public function setSendAlertToAttribute($memberUserIds)
     {
         if (!is_array($memberUserIds)) {
-            $this->careTeamMembers()->where('type', 'send_alert_to')->delete();
+            $this->careTeamMembers()->where('alert', '=', true)->delete();
 
             return false; // must be array
         }
-        $this->careTeamMembers()->where('type', 'send_alert_to')->whereNotIn('member_user_id',
+        $this->careTeamMembers()->where('alert', '=', true)->whereNotIn('member_user_id',
             $memberUserIds)->delete();
         foreach ($memberUserIds as $memberUserId) {
-            $careTeamMember = $this->careTeamMembers()->where('type', 'send_alert_to')->where('member_user_id',
-                $memberUserId)->first();
+            $careTeamMember = $this->careTeamMembers()->where('alert', '=', false)
+                ->where('member_user_id', $memberUserId)
+                ->first();
             if ($careTeamMember) {
-                $careTeamMember->member_user_id = $memberUserId;
-            } else {
-                $careTeamMember = new PatientCareTeamMember();
-                $careTeamMember->user_id = $this->id;
-                $careTeamMember->member_user_id = $memberUserId;
-                $careTeamMember->type = 'send_alert_to';
+                $careTeamMember->alert = true;
+                $careTeamMember->save();
             }
-            $careTeamMember->save();
         }
 
         return true;
