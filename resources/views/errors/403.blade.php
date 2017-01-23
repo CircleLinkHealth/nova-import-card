@@ -35,7 +35,7 @@
 <body>
 <div class="container">
     <div class="content">
-        <div class="title">@if(isset($message)) {!! $message !!} @else Unauthorized. You dont have permissions to view
+        <div class="title">@if(isset($message)) {!! $message !!} @else Unauthorized. You don't have permissions to view
             this page. @endif</div>
 
         <a class="btn btn-primary" href="{{ URL::previous() }}"
