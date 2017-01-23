@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Patient;
 
+use App\CLH\Helpers\StringManipulation;
 use App\Patient;
 use App\PhoneNumber;
 use App\Practice;
