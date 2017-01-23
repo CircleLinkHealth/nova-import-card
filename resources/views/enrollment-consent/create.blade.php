@@ -90,7 +90,7 @@
                     </div>
                     <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
                         <input class="mdl-textfield__input" name="phone" type="text" id="phone" required/>
-                        <label class="mdl-textfield__label" for="phone">Phone</label>
+                        <label class="mdl-textfield__label" id="phone_label"  for="phone">Phone</label>
                     </div>
                     <div class="mdl-card__actions mdl-card--border" style="padding: 10px; text-align: right">
                         <button type="submit" class="submit_button mdl-button mdl-js-button mdl-js-ripple-effect">
@@ -100,7 +100,7 @@
 
                     <input type="datetime" id="enrolled_time" name="enrolled_time" hidden>
                     <input type="datetime" id="confirmed_time" name="confirmed_time" hidden>
-                    <input type="datetime" id="practice_id" name="practice_id" value="{{$practice->id}}" hidden>
+                    <input type="text" id="practice_id" name="practice_id" value="{{$practice->id}}" hidden>
 
                 </form>
             </div>
@@ -113,6 +113,24 @@
 <script>
     (function () {
         'use strict';
+
+        $("#phone").bind('input propertychange', function() {
+
+            var VAL = this.value;
+            var label = $("#phone_label");
+
+            var phoneno = /^\(?([0-9]{3})\)?[-. ]?([0-9]{3})[-. ]?([0-9]{4})$/;
+
+            if(VAL.match(phoneno)) {
+                label.css({"color":"green"});
+                label.html('Valid!');
+            }
+            else {
+                label.css({"color":"red"});
+                label.html('Invalid..');
+            }
+
+        });
 
         var dialog = document.querySelector('#dialog');
 
