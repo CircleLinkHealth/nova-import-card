@@ -306,10 +306,14 @@
                         <li role="presentation" class="dropdown">
                             <a class="dropdown-toggle" data-toggle="dropdown" href="#" role="button"
                                aria-expanded="false">
-                                Onboarding Invites <span class="caret"></span>
+                                Onboarding <span class="caret"></span>
                             </a>
                             <ul class="dropdown-menu" role="menu">
                                 <li><a href="{{ URL::route('invite.create', array()) }}">Send Invite</a>
+                                <li><a href="{{ URL::route('get.onboarding.create.program.lead.user', []) }}">Salesperson
+                                        Mode</a></li>
+                                <li><a href="{{ URL::route('admin.programs.index', []) }}">Practices</a></li>
+                                <li><a href="{{ URL::route('locations.index', []) }}">Locations</a></li>
                             </ul>
                         </li>
                         @endif

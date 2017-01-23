@@ -41,14 +41,10 @@
                         <h2>Program - {{ $program->display_name }}</h2>
 
                         <div class="form-group">
-                            <div class="row">
-                                <div class="col-xs-2">{!! Form::label('domain', 'Domain:') !!}</div>
-                                <div class="col-xs-10">{!! Form::text('domain', $program->domain, ['class' => 'form-control', 'style' => 'width:100%;']) !!}</div>
-                            </div>
 
                             <div class="row" style="margin-top:20px;">
                                 <div class="col-xs-2">{!! Form::label('locations', 'Locations') !!}</div>
-                                {{--                                <div class="col-xs-4">{!! Form::select('location_id', $locations, $program->location_id, ['class' => 'form-control select-picker', 'style' => 'width:50%;']) !!}</div>--}}
+                                <div class="col-xs-4">{!! Form::select('location_id', $locations, $program->location_id, ['class' => 'form-control select-picker', 'style' => 'width:50%;']) !!}</div>
                             </div>
 
                             <div class="row" style="margin-top:20px;">
@@ -61,10 +57,6 @@
                                 <div class="col-xs-10">{!! Form::text('name', $program->name, ['class' => 'form-control', 'style' => 'width:100%;']) !!}</div>
                             </div>
 
-                            <div class="row" style="margin-top:20px;">
-                                <div class="col-xs-2">{!! Form::label('short_display_name', 'Short Display Name:') !!}</div>
-                                <div class="col-xs-10">{!! Form::text('short_display_name', $program->short_display_name, ['class' => 'form-control', 'style' => 'width:100%;']) !!}</div>
-                            </div>
                         </div>
 
                         <div class="row" style="margin-top:50px;">

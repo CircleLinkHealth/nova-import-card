@@ -18,13 +18,26 @@
                     <div class="panel-body">
                         @include('errors.errors')
 
-                        <form id="location-form" class="form-horizontal" role="form" method="POST" action="{{ action('LocationController@store') }}">
+                        <form id="location-form" class="form-horizontal" role="form" method="POST"
+                              action="{{ action('LocationController@store') }}">
                             <input type="hidden" name="_token" value="{{ csrf_token() }}">
+
+                            <div class="form-group">
+                                <label class="col-md-4 control-label">PRactice</label>
+                                <div class="col-md-6">
+                                    <select name="practice_id" class="form-control">
+                                        @foreach($practices as $practice)
+                                            <option value="{{$practice->id}}">{{$practice->display_name}}</option>
+                                        @endforeach
+                                    </select>
+                                </div>
+                            </div>
 
                             <div class="form-group">
                                 <label class="col-md-4 control-label">Name</label>
                                 <div class="col-md-6">
-                                    <input type="text" class="form-control" name="name" value="{{ old('name') }}" required>
+                                    <input type="text" class="form-control" name="name" value="{{ old('name') }}"
+                                           required>
                                 </div>
                             </div>
 
@@ -39,28 +52,32 @@
                             <div class="form-group">
                                 <label class="col-md-4 control-label">Address Line 1</label>
                                 <div class="col-md-6">
-                                    <input type="text" class="form-control" name="address_line_1" value="{{ old('address_line_1') }}" required>
+                                    <input type="text" class="form-control" name="address_line_1"
+                                           value="{{ old('address_line_1') }}" required>
                                 </div>
                             </div>
 
                             <div class="form-group">
                                 <label class="col-md-4 control-label">Address Line 2</label>
                                 <div class="col-md-6">
-                                    <input type="text" class="form-control" name="address_line_2" value="{{ old('address_line_2') }}">
+                                    <input type="text" class="form-control" name="address_line_2"
+                                           value="{{ old('address_line_2') }}">
                                 </div>
                             </div>
 
                             <div class="form-group">
                                 <label class="col-md-4 control-label">City</label>
                                 <div class="col-md-6">
-                                    <input type="text" class="form-control" name="city" value="{{ old('city') }}" required>
+                                    <input type="text" class="form-control" name="city" value="{{ old('city') }}"
+                                           required>
                                 </div>
                             </div>
 
                             <div class="form-group">
                                 <label class="col-md-4 control-label">State</label>
                                 <div class="col-md-6">
-                                    <input type="text" class="form-control" name="state" value="{{ old('state') }}" required>
+                                    <input type="text" class="form-control" name="state" value="{{ old('state') }}"
+                                           required>
                                 </div>
                             </div>
 
@@ -85,20 +102,8 @@
                             <div class="form-group">
                                 <label class="col-md-4 control-label">Postal Code</label>
                                 <div class="col-md-6">
-                                    <input type="text" class="form-control" name="postal_code" value="{{ old('postal_code') }}" required>
-                                </div>
-                            </div>
-
-                            <div class="form-group">
-                                <label class="col-md-4 control-label">Parent</label>
-                                <div class="col-md-6">
-                                    <select name="parent_id">
-                                        <option value="">None</option>
-                                        @foreach( $locations as $id => $loc )
-                                            <?php debug($loc) ?>
-                                            <option value="{{ $id }}">{{ $loc }}</option>
-                                        @endforeach
-                                    </select>
+                                    <input type="text" class="form-control" name="postal_code"
+                                           value="{{ old('postal_code') }}" required>
                                 </div>
                             </div>
 
