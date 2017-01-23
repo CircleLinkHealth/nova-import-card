@@ -3,12 +3,12 @@
 namespace App\CLH\CCD\Importer\ParsingStrategies\CareTeam;
 
 
-use App\CLH\CCD\ItemLogger\CcdProviderLog;
 use App\CLH\Contracts\CCD\ParsingStrategy;
 use App\CLH\Contracts\CCD\ValidationStrategy;
 use App\CLH\Contracts\Repositories\UserRepository;
 use App\ForeignId;
-use App\Models\CCD\Ccda;
+use App\Importer\Models\ItemLogs\ProviderLog;
+use App\Models\MedicalRecords\Ccda;
 
 class PrimaryProviders implements ParsingStrategy
 {
@@ -28,7 +28,7 @@ class PrimaryProviders implements ParsingStrategy
      */
     public function parse(Ccda $ccd, ValidationStrategy $validator = null)
     {
-        $documentationOf = CcdProviderLog::whereCcdaId($ccd->id)->get();
+        $documentationOf = ProviderLog::whereCcdaId($ccd->id)->get();
 
         if ( empty($documentationOf) ) return false;
 
@@ -48,7 +48,7 @@ class PrimaryProviders implements ParsingStrategy
             $matchedProviders = $providers->where('display_name', $docName)->all();
 
             foreach ($matchedProviders as $provider){
-                $providerLog = CcdProviderLog::find($docId);
+                $providerLog = ProviderLog::find($docId);
                 $providerLog->import = true;
                 $providerLog->save();
 

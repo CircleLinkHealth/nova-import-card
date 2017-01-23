@@ -1,6 +1,6 @@
 <?php namespace Tests\Helpers;
 
-use App\CLH\Facades\StringManipulation;
+use App\Facades\StringManipulation;
 use App\Models\CPM\Biometrics\CpmWeight;
 use App\PatientCareTeamMember;
 use App\User;
@@ -445,7 +445,7 @@ trait CarePlanHelpers
             'user_id'     => $patient->id,
         ]);
 
-        $ccda = \App\Models\CCD\Ccda::create([
+        $ccda = \App\Models\MedicalRecords\Ccda::create([
             'user_id'   => $patient->id,
             'vendor_id' => 1,
             'source'    => 'test',

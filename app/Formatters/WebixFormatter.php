@@ -2,8 +2,8 @@
 
 use App\Appointment;
 use App\Contracts\ReportFormatter;
-use App\Models\CCD\CcdAllergy;
-use App\Models\CCD\CcdMedication;
+use App\Models\CCD\Allergy;
+use App\Models\CCD\Medication;
 use App\Models\CPM\CpmBiometric;
 use App\Models\CPM\CpmMisc;
 use App\Note;
@@ -347,7 +347,7 @@ class WebixFormatter implements ReportFormatter
         $careplanReport[$user->id]['taking_meds'] = 'No instructions at this time';
         $medicationList = $user->cpmMiscs->where('name',CpmMisc::MEDICATION_LIST)->all();
         if(!empty($medicationList)) {
-            $meds = CcdMedication::where('patient_id', '=', $user->id)->orderBy('name')->get();
+            $meds = Medication::where('patient_id', '=', $user->id)->orderBy('name')->get();
             if ($meds->count() > 0) {
                 $i = 0;
                 $careplanReport[$user->id]['taking_meds'] = [];
@@ -369,7 +369,7 @@ class WebixFormatter implements ReportFormatter
         $careplanReport[$user->id]['allergies'] = 'No instructions at this time';
         $allergy = $user->cpmMiscs->where('name',CpmMisc::ALLERGIES)->all();
         if(!empty($allergy)){
-            $allergies = CcdAllergy::where('patient_id', '=', $user->id)->orderBy('allergen_name')->get();
+            $allergies = Allergy::where('patient_id', '=', $user->id)->orderBy('allergen_name')->get();
             if($allergies->count() > 0) {
                 $careplanReport[$user->id]['allergies'] = '';
                 $i = 0;

@@ -3,17 +3,17 @@
 namespace App\CLH\CCD\Importer\ParsingStrategies\Location;
 
 
-use App\CLH\CCD\ItemLogger\CcdProviderLog;
 use App\CLH\Contracts\CCD\ParsingStrategy;
 use App\CLH\Contracts\CCD\ValidationStrategy;
+use App\Importer\Models\ItemLogs\ProviderLog;
 use App\Location;
-use App\Models\CCD\Ccda;
+use App\Models\MedicalRecords\Ccda;
 
 class ProviderLocation implements ParsingStrategy
 {
     public function parse(Ccda $ccd, ValidationStrategy $validator = null)
     {
-        $providers = CcdProviderLog::whereCcdaId($ccd->id)->get();
+        $providers = ProviderLog::whereCcdaId($ccd->id)->get();
 
         $locations = [];
         foreach ($providers as $provider)

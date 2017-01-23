@@ -1,12 +1,12 @@
 <?php namespace App\Models\CCD;
 
-use App\CLH\CCD\ItemLogger\ModelLogRelationship;
 use App\CLH\CCD\ImportRoutine\CcdImportRoutine;
+use App\Traits\MedicalRecordItemLoggerRelationships;
 use Illuminate\Database\Eloquent\Model;
 
 class CcdVendor extends Model {
 
-    use ModelLogRelationship;
+    use MedicalRecordItemLoggerRelationships;
 
     protected $guarded = [];
 

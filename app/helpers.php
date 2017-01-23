@@ -1,6 +1,7 @@
 <?php
 
 
+use App\CarePlanTemplate;
 use Carbon\Carbon;
 use Illuminate\Support\Collection;
 
@@ -94,13 +95,11 @@ if (!function_exists('secondsToMMSS')) {
     function secondsToMMSS($seconds)
     {
         $minutes = sprintf('%02d', floor($seconds / 60));
-        $seconds = sprintf(':%02d', (int) $seconds % 60);
+        $seconds = sprintf(':%02d', (int)$seconds % 60);
 
         return $minutes . $seconds;
     }
 }
-
-
 
 
 if (!function_exists('parseDaysStringToNumbers')) {
@@ -237,12 +236,17 @@ if (!function_exists('generateRandomString')) {
      *
      * @return string
      */
-    function generateRandomString($l, $c = 'abcdefghijklmnopqrstuvwxyz1234567890') {
-        for ($s = '', $cl = strlen($c)-1, $i = 0; $i < $l; $s .= $c[mt_rand(0, $cl)], ++$i);
+    function generateRandomString(
+        $l,
+        $c = 'abcdefghijklmnopqrstuvwxyz1234567890'
+    ) {
+        for ($s = '', $cl = strlen($c) - 1, $i = 0; $i < $l; $s .= $c[mt_rand(0, $cl)], ++$i) {
+            ;
+        }
+
         return $s;
     }
 }
-
 
 
 if (!function_exists('windowToTimestamps')) {
@@ -349,6 +353,20 @@ if (!function_exists('timezones')) {
             'America/Adak'        => 'Hawaii-Aleutian',
             'Pacific/Honolulu'    => 'Hawaii-Aleutian Time (no DST)',
         ];
+    }
+}
+
+
+if (!function_exists('defaultCarePlanTemplate')) {
+    /**
+     * Returns CircleLink's default CarePlanTemplate
+     *
+     * @return CarePlanTemplate
+     */
+    function getDefaultCarePlanTemplate() : CarePlanTemplate
+    {
+        return CarePlanTemplate::whereType(CarePlanTemplate::CLH_DEFAULT)
+            ->first();
     }
 }
 

@@ -2,9 +2,14 @@
 
 class ValidStatusTest extends TestCase
 {
+    public function test_null_status_returns_inactive()
+    {
+        $this->assertFalse($this->getValidationStrategy()->isValid($this->mockProblem(null)));
+    }
+
     public function getValidationStrategy()
     {
-        return new \App\CLH\CCD\Importer\ValidationStrategies\ValidStatus();
+        return new \App\Importer\Section\Validators\ValidStatus();
     }
 
     public function mockProblem($status)
@@ -15,28 +20,23 @@ class ValidStatusTest extends TestCase
         return $problem;
     }
 
-    public function test_null_status_returns_inactive()
-    {
-        $this->assertFalse( $this->getValidationStrategy()->validate( $this->mockProblem( null ) ) );
-    }
-
     public function test_active_status_returns_active()
     {
-        $this->assertTrue( $this->getValidationStrategy()->validate( $this->mockProblem( 'active' ) ) );
+        $this->assertTrue($this->getValidationStrategy()->isValid($this->mockProblem('active')));
     }
 
     public function test_chronic_status_returns_active()
     {
-        $this->assertTrue( $this->getValidationStrategy()->validate( $this->mockProblem( 'chronic' ) ) );
+        $this->assertTrue($this->getValidationStrategy()->isValid($this->mockProblem('chronic')));
     }
 
     public function test_empty_string_status_returns_inactive()
     {
-        $this->assertFalse( $this->getValidationStrategy()->validate( $this->mockProblem( '' ) ) );
+        $this->assertFalse($this->getValidationStrategy()->isValid($this->mockProblem('')));
     }
 
     public function test_not_object_returns_inactive()
     {
-        $this->assertFalse( $this->getValidationStrategy()->validate( 'not an object' ) );
+        $this->assertFalse($this->getValidationStrategy()->isValid('not an object'));
     }
 }

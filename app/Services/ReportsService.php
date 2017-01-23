@@ -2,7 +2,7 @@
 
 use App\CarePlan;
 use App\Location;
-use App\Models\CCD\CcdProblem;
+use App\Models\CCD\Problem;
 use App\Models\CPM\CpmBiometric;
 use App\Models\CPM\CpmMisc;
 use App\User;
@@ -647,11 +647,11 @@ class ReportsService
             return "User not found...";
         }
 
-        // Other Conditions / CcdProblem List
+        // Other Conditions / Problem List
         $ccdProblems = 'No instructions at this time';
         $problem = $user->cpmMiscs->where('name', CpmMisc::OTHER_CONDITIONS)->all();
         if (!empty($problem)) {
-            $problems = CcdProblem::where('patient_id', '=', $user->id)->orderBy('name')->get();
+            $problems = Problem::where('patient_id', '=', $user->id)->orderBy('name')->get();
             if ($problems->count() > 0) {
                 $ccdProblems = '';
                 $i = 0;

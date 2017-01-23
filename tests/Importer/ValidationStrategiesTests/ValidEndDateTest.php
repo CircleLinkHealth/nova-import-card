@@ -8,9 +8,14 @@
  */
 class ValidEndDateTest extends TestCase
 {
+    public function test_null_date_returns_inactive()
+    {
+        $this->assertFalse($this->getValidationStrategy()->validate($this->mockProblem(null)));
+    }
+
     public function getValidationStrategy()
     {
-        return new \App\CLH\CCD\Importer\ValidationStrategies\ValidEndDate();
+        return new \App\Importer\Section\Validators\ValidEndDate();
     }
 
     public function mockProblem($date)
@@ -19,11 +24,6 @@ class ValidEndDateTest extends TestCase
         @$problem->date_range->end = $date;
 
         return $problem;
-    }
-
-    public function test_null_date_returns_inactive()
-    {
-        $this->assertFalse( $this->getValidationStrategy()->validate( $this->mockProblem( null ) ) );
     }
 
     public function test_past_date_returns_inactive()

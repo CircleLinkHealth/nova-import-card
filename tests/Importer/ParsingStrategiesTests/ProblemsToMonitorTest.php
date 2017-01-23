@@ -14,9 +14,15 @@ class ProblemsToMonitorTest extends TestCase
     public $keywordsDiabetes = '{"reference":"#problem-66989","reference_title":"Disorder due to type 2 diabetes mellitus","date_range":{"start":null,"end":null},"name":"Disorder due to type 2 diabetes mellitus","status":"Active","age":null,"code":null,"code_system":null,"code_system_name":null,"translation":{"name":null,"code":"422014003","code_system":"2.16.840.1.113883.6.96","code_system_name":"SNOMED CT"},"comment":null  }';
     public $emptyProblem = '{"reference":"","reference_title":"","date_range":{"start":null,"end":null},"name":"null","status":"","age":null,"code":null,"code_system":null,"code_system_name":null,"translation":{"name":null,"code":"null","code_system":"","code_system_name":""},"comment":null  }';
 
-    public function getParser()
+    public function test_icd10_returns_expected()
     {
-        return new \App\CLH\CCD\Importer\ParsingStrategies\Problems\ToMonitor();
+        $expected = '{"0":"High Cholesterol"}';
+
+        $problems = $this->mockProblems(json_decode($this->icd10highCholesterol));
+        $parser = $this->getParser();
+
+        $this->assertEquals(json_decode($expected, true),
+            $parser->parse($problems, new \App\Importer\Section\Validators\ImportAllItems()));
     }
 
     public function mockProblems($problems)
@@ -30,17 +36,10 @@ class ProblemsToMonitorTest extends TestCase
         return $problemsJson;
     }
 
-
-    public function test_icd10_returns_expected()
+    public function getParser()
     {
-        $expected = '{"0":"High Cholesterol"}';
-
-        $problems = $this->mockProblems( json_decode( $this->icd10highCholesterol ) );
-        $parser = $this->getParser();
-
-        $this->assertEquals( json_decode( $expected, true ), $parser->parse( $problems, new \App\CLH\CCD\Importer\ValidationStrategies\ImportAllItems() ) );
+        return new \App\CLH\CCD\Importer\ParsingStrategies\Problems\ToMonitor();
     }
-
 
     public function test_icd9_returns_expected()
     {
@@ -49,7 +48,8 @@ class ProblemsToMonitorTest extends TestCase
         $problems = $this->mockProblems( json_decode( $this->icd9hypertension ) );
         $parser = $this->getParser();
 
-        $this->assertEquals( json_decode( $expected, true ), $parser->parse( $problems, new \App\CLH\CCD\Importer\ValidationStrategies\ImportAllItems() ) );
+        $this->assertEquals(json_decode($expected, true),
+            $parser->parse($problems, new \App\Importer\Section\Validators\ImportAllItems()));
     }
 
     public function test_keywords_returns_expected()
@@ -59,7 +59,8 @@ class ProblemsToMonitorTest extends TestCase
         $problems = $this->mockProblems( json_decode( $this->keywordsDiabetes ) );
         $parser = $this->getParser();
 
-        $this->assertEquals( json_decode( $expected, true ), $parser->parse( $problems, new \App\CLH\CCD\Importer\ValidationStrategies\ImportAllItems() ) );
+        $this->assertEquals(json_decode($expected, true),
+            $parser->parse($problems, new \App\Importer\Section\Validators\ImportAllItems()));
     }
 
     public function test_snomed_returns_expected()
@@ -69,7 +70,8 @@ class ProblemsToMonitorTest extends TestCase
         $problems = $this->mockProblems( json_decode( $this->snomedObesity ) );
         $parser = $this->getParser();
 
-        $this->assertEquals( json_decode( $expected, true ), $parser->parse( $problems, new \App\CLH\CCD\Importer\ValidationStrategies\ImportAllItems() ) );
+        $this->assertEquals(json_decode($expected, true),
+            $parser->parse($problems, new \App\Importer\Section\Validators\ImportAllItems()));
     }
 
     public function test_one_of_each_returns_expected()
@@ -86,7 +88,8 @@ class ProblemsToMonitorTest extends TestCase
         ] );
         $parser = $this->getParser();
 
-        $this->assertEquals( json_decode( $expected, true ), $parser->parse( $problems, new \App\CLH\CCD\Importer\ValidationStrategies\ImportAllItems() ) );
+        $this->assertEquals(json_decode($expected, true),
+            $parser->parse($problems, new \App\Importer\Section\Validators\ImportAllItems()));
     }
 
     public function test_empty_problem_returns_nothing()
@@ -98,6 +101,7 @@ class ProblemsToMonitorTest extends TestCase
         ] );
         $parser = $this->getParser();
 
-        $this->assertEquals( json_decode( $expected, true ), $parser->parse( $problems, new \App\CLH\CCD\Importer\ValidationStrategies\ImportAllItems() ) );
+        $this->assertEquals(json_decode($expected, true),
+            $parser->parse($problems, new \App\Importer\Section\Validators\ImportAllItems()));
     }
 }

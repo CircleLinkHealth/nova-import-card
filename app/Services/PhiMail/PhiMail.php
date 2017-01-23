@@ -1,10 +1,10 @@
 <?php namespace App\Services\PhiMail;
 
 use App\CLH\CCD\Importer\QAImportManager;
-use App\CLH\CCD\ItemLogger\CcdItemLogger;
 use App\CLH\Repositories\CCDImporterRepository;
-use App\Models\CCD\Ccda;
+use App\Importer\Loggers\Ccda\CcdaSectionsLogger;
 use App\Models\CCD\CcdVendor;
+use App\Models\MedicalRecords\Ccda;
 use App\User;
 use Illuminate\Support\Facades\Log;
 use Maknz\Slack\Facades\Slack;
@@ -299,7 +299,7 @@ class PhiMail
         $ccda->json = $json;
         $ccda->save();
 
-        $logger = new CcdItemLogger($ccda);
+        $logger = new CcdaSectionsLogger($ccda);
         $logger->logAll();
 
         $importer = new QAImportManager($vendor->program_id, $ccda);
@@ -316,7 +316,7 @@ class PhiMail
      *
      *
      * @param User $user
-     * @param Ccda $ccda
+     * @param \App\Models\MedicalRecords\Ccda $ccda
      * @param $fileNames
      * @param null $line
      * @param null $errorMessage

@@ -2,11 +2,11 @@
 
 namespace App\Repositories;
 
-use App\Models\CCD\Ccda;
-use Prettus\Repository\Eloquent\BaseRepository;
-use Prettus\Repository\Criteria\RequestCriteria;
 use App\Contracts\Repositories\CcdaRepository;
+use App\Models\MedicalRecords\Ccda;
 use App\Validators\CcdaValidator;
+use Prettus\Repository\Criteria\RequestCriteria;
+use Prettus\Repository\Eloquent\BaseRepository;
 
 /**
  * Class CcdaRepositoryEloquent
