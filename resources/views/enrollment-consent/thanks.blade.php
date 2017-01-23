@@ -22,7 +22,7 @@
 
     <body>
     <div class="centeritems mdl-grid">
-        <div class="mdl-cell mdl-cell--3-col mdl-cell--4-col-phone">
+        <div class="mdl-cell" >
             <div class="demo-card-wide mdl-card mdl-shadow--2dp">
                 <div class="mdl-card__title">
                     <h1 class="mdl-card__title-text" style="font-size: 45px">Welcome{{$name == null ? '' : ', ' . $name}}!</h1>
@@ -33,7 +33,6 @@
             </div>
 
         </div>
-        <div class="mdl-layout-spacer"></div>
     </div>
     </body>
 
