@@ -36,6 +36,7 @@
     <link href='https://fonts.googleapis.com/css?family=Roboto:400,300' rel='stylesheet' type='text/css'>
 
     <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
     <script src="//code.jquery.com/ui/1.11.4/jquery-ui.js"></script>
 
