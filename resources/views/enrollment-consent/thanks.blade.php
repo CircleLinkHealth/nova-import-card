@@ -28,7 +28,7 @@
                     <h1 class="mdl-card__title-text" style="font-size: 45px">Welcome{{$name == null ? '' : ', ' . $name}}!</h1>
                 </div>
                 <div class="mdl-card__supporting-text" style="font-size: 17px">
-                    A personalized care coach will be touch with you shortly.<br />
+                    A personal care coach will be in touch shortly.<br />
                 </div>
             </div>
 

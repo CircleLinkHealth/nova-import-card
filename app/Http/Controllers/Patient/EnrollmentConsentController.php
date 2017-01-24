@@ -133,6 +133,7 @@ class EnrollmentConsentController extends Controller
 
             $phone->save();
             $enrollee->phoneNumbers()->save($phone);
+            
             debug('Does not exist');
 
         }
