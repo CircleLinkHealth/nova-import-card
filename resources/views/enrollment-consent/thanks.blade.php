@@ -5,7 +5,7 @@
     <!-- Square card -->
     <style>
         .demo-card-wide.mdl-card {
-            width: 512px;
+            width: 100%;
         }
         .demo-card-wide > .mdl-card__title {
             color: #fff;
@@ -20,8 +20,8 @@
 
     <html>
 
-    <body>
-    <div class="centeritems mdl-grid">
+    <main class="mdl-layout__content">
+        <div class="mdl-card" style="width: 100%; align-items: center">
         <div class="mdl-cell" >
             <div class="demo-card-wide mdl-card mdl-shadow--2dp">
                 <div class="mdl-card__title">
@@ -34,7 +34,7 @@
 
         </div>
     </div>
-    </body>
+    </main>
 
     </html>
 
