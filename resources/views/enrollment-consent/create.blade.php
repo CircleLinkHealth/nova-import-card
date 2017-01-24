@@ -36,10 +36,6 @@
 
         }
 
-        li {
-
-        }
-
     </style>
 
     <dialog id="dialog" class="mdl-dialog" style="width: 80%">

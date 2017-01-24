@@ -128,21 +128,6 @@ class ActivityController extends Controller {
         $activity = Activity::find($actId);
         $nurse = User::find($activity->provider_id)->nurseInfo;
 
-        if ($nurse) {
-
-            $activity = Activity::find($actId);
-
-            $computer = new AlternativeCareTimePayableCalculator($nurse);
-
-            $data = $computer->adjustCCMPaybleForActivity($activity);
-
-             $computer->createOrIncrementNurseSummary(
-                    $data['toAddToAccuredTowardsCCM'],
-                    $data['toAddToAccuredAfterCCM'],
-                    $data['activity_id']
-                );
-        }
-
 		// store meta
 		if (array_key_exists('meta',$input)) {
 			$meta = $input['meta'];
@@ -160,6 +145,21 @@ class ActivityController extends Controller {
 		// update usermeta: cur_month_activity_time
 		$activityService = new ActivityService;
 		$activityService->reprocessMonthlyActivityTime($input['patient_id']);
+
+		if ($nurse) {
+
+			$activity = Activity::find($actId);
+
+			$computer = new AlternativeCareTimePayableCalculator($nurse);
+
+			$data = $computer->adjustCCMPaybleForActivity($activity);
+
+			$computer->createOrIncrementNurseSummary(
+				$data['toAddToAccuredTowardsCCM'],
+				$data['toAddToAccuredAfterCCM'],
+				$data['activity_id']
+			);
+		}
 
 		return redirect()->route('patient.activity.view', ['patient' => $activity->patient_id, 'actId' => $activity->id])->with('messages', ['Successfully Created New Offline Activity']);
 	}
