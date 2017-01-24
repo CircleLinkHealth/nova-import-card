@@ -292,10 +292,7 @@ Route::group(['middleware' => 'auth'], function () {
             'as'   => 'patient.note.listing',
         ]);
 
-        Route::post('provider/create', [
-            'uses' => 'ProviderController@store',
-            'as'   => 'provider.store',
-        ]);
+        Route::resource('provider', 'CareTeamController');
 
         // nurse call list
         Route::group(['prefix' => 'patient-call-list'], function () {

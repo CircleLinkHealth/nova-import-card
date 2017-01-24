@@ -10,7 +10,7 @@ use App\Role;
 use App\User;
 use Illuminate\Http\Request;
 
-class ProviderController extends Controller
+class CareTeamController extends Controller
 {
 
     public function store(Request $request){
@@ -97,6 +97,21 @@ class ProviderController extends Controller
 
         }
 
+    }
+
+    public function destroy(
+        Request $request,
+        $id
+    ) {
+
+        if (!$request->ajax()) {
+            return abort('403', 'Care Team Members cannot be deleted using this method');
+        }
+
+        $member = PatientCareTeamMember::find($id);
+        $member->delete();
+
+        return response()->json([], 200);
     }
 
 }
