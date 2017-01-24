@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\CLH\Facades\StringManipulation;
 use App\PatientCareTeamMember;
 use App\PhoneNumber;
 use App\Practice;
@@ -124,6 +125,71 @@ class CareTeamController extends Controller
 
         $member = PatientCareTeamMember::find($id);
         $member->delete();
+
+        return response()->json([], 200);
+    }
+
+    public function update(
+        Request $request,
+        $id
+    ) {
+
+        if (!$request->ajax()) {
+            return abort('403', 'Care Team Members cannot be deleted using this method');
+        }
+
+        $input = $request->input('careTeamMember');
+
+        $careTeam = PatientCareTeamMember::where('id', '=', $input['id'])
+            ->update([
+                'alert' => $input['alert'],
+            ]);
+
+        $user = User::find($input['user']['id']);
+        $user->first_name = $input['user']['first_name'];
+        $user->last_name = $input['user']['last_name'];
+        $user->address = $input['user']['address'];
+        $user->email = $input['user']['email'];
+        $user->save();
+
+        if (isset($input['user']['phone_numbers'][0])) {
+            $phone = $input['user']['phone_numbers'][0];
+
+            if (isset($phone['id'])) {
+                $phone = PhoneNumber::where('id', '=', $phone['id'])
+                    ->update([
+                        'number' => StringManipulation::formatPhoneNumber($phone['number']),
+                    ]);
+            } else {
+                $phone = PhoneNumber::create([
+                    'user_id'    => $user->id,
+                    'type'       => 'work',
+                    'number'     => StringManipulation::formatPhoneNumber($phone['number']),
+                    'is_primary' => 1,
+                ]);
+            }
+        }
+
+        if (isset($input['user']['provider_info'])) {
+            $providerInfo = $input['user']['provider_info'];
+
+            $provider = ProviderInfo::updateOrCreate([
+                'id' => $providerInfo['id'],
+            ], [
+                'qualification' => $providerInfo['qualification'],
+                'specialty'     => $providerInfo['specialty'],
+            ]);
+        }
+
+        if (isset($input['user']['primary_practice'])) {
+            $primaryPractice = $input['user']['primary_practice'];
+
+            $practice = Practice::updateOrCreate([
+                'id' => $primaryPractice['id'],
+            ], [
+                'display_name' => $primaryPractice['display_name'],
+            ]);
+        }
 
         return response()->json([], 200);
     }

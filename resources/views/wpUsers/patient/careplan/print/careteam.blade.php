@@ -1,5 +1,6 @@
 <script type="text/x-template" id="care-team-template">
     <meta name="provider-destroy-route" content="{{ route('provider.destroy', ['id'=>'']) }}">
+    <meta name="provider-update-route" content="{{ route('provider.update', ['id'=>'']) }}">
 
     <ul class="col-xs-12">
         <li v-for="member in careTeamCollection" class="col-xs-12">
@@ -64,7 +65,8 @@
                                     <label class="col-md-3 control-label" for="popup_specialty">Specialty or Service
                                         Type</label>
                                     <div class="col-md-6">
-                                        <input v-model="member.specialty" id="popup_specialty" name="popup_specialty"
+                                        <input v-model="member.user.provider_info.specialty" id="popup_specialty"
+                                               name="popup_specialty"
                                                type="text" placeholder=""
                                                class="form-control input-md"
                                                required="required">
@@ -154,7 +156,9 @@
                             <input type="hidden" id="popup_patient_id" name="popup_patient_id" value="{{$patient->id}}">
 
                             <div>
-                                <button type="submit" id="editCarePerson" class="create btn btn-primary">Save</button>
+                                <button v-on:click="updateCareTeamMember(member.id, $index)" type="submit"
+                                        id="editCarePerson" class="create btn btn-primary">Save
+                                </button>
                             </div>
 
                         </div>

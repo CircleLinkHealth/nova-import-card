@@ -13,6 +13,7 @@ var careTeamContainer = Vue.component('careTeamContainer', {
         return {
             careTeamCollection: [],
             destroyRoute: '',
+            updateRoute: '',
         }
     },
 
@@ -21,7 +22,8 @@ var careTeamContainer = Vue.component('careTeamContainer', {
             this.careTeamCollection.$set(i, cpm.careTeam[i]);
         }
 
-        this.$set('destroyRoute', $('meta[name="provider-destroy-route"]').attr('content'))
+        this.$set('destroyRoute', $('meta[name="provider-destroy-route"]').attr('content'));
+        this.$set('updateRoute', $('meta[name="provider-update-route"]').attr('content'));
     },
 
     methods: {
@@ -41,6 +43,14 @@ var careTeamContainer = Vue.component('careTeamContainer', {
 
         editCareTeamMember: function (id, index) {
             $("#editCareTeamModal-" + index).modal();
+        },
+
+        updateCareTeamMember: function (id, index) {
+            this.$http.patch(this.updateRoute + '/' + id, {careTeamMember: this.careTeamCollection[index]}).then(function (response) {
+
+            }, function (response) {
+                //error
+            });
         }
     }
 });

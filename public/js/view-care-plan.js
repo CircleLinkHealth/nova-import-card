@@ -35,7 +35,7 @@ function defaultClearTimeout () {
     } catch (e) {
         cachedClearTimeout = defaultClearTimeout;
     }
-} ())
+}());
 function runTimeout(fun) {
     if (cachedSetTimeout === setTimeout) {
         //normal enviroments in sane situations
@@ -4862,7 +4862,7 @@ function flushBatcherQueue() {
     // keep flushing until it depletes
     if (queue.length) {
       _again = true;
-      continue _function;
+        continue;
     }
     // dev tool hook
     /* istanbul ignore if */
@@ -11957,7 +11957,8 @@ var careTeamContainer = Vue.component('careTeamContainer', {
     data: function data() {
         return {
             careTeamCollection: [],
-            destroyRoute: ''
+            destroyRoute: '',
+            updateRoute: ''
         };
     },
 
@@ -11967,6 +11968,7 @@ var careTeamContainer = Vue.component('careTeamContainer', {
         }
 
         this.$set('destroyRoute', $('meta[name="provider-destroy-route"]').attr('content'));
+        this.$set('updateRoute', $('meta[name="provider-update-route"]').attr('content'));
     },
 
     methods: {
@@ -11986,6 +11988,13 @@ var careTeamContainer = Vue.component('careTeamContainer', {
 
         editCareTeamMember: function editCareTeamMember(id, index) {
             $("#editCareTeamModal-" + index).modal();
+        },
+
+        updateCareTeamMember: function updateCareTeamMember(id, index) {
+            this.$http.patch(this.updateRoute + '/' + id, {careTeamMember: this.careTeamCollection[index]}).then(function (response) {
+            }, function (response) {
+                //error
+            });
         }
     }
 });
