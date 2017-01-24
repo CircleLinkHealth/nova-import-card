@@ -5,7 +5,8 @@
         <li v-for="member in careTeamCollection" class="col-xs-12">
             <div class="col-md-5">
                 <p style="margin-left: -10px;">
-                    <strong>@{{member.formatted_type}}: </strong>@{{member.formatted_title}}
+                    <strong>@{{member.formatted_type}}: </strong>@{{member.user.first_name}} @{{member.user.last_name}}
+                    <em>@{{member.specialty}}</em>
                 </p>
             </div>
 
@@ -128,7 +129,8 @@
                                 <div class="form-group">
                                     <label class="col-md-3 control-label" for="popup_type">Select Type</label>
                                     <div class="col-md-6">
-                                        <select id="popup_type" name="popup_type" class="form-control type">
+                                        <select v-model="member.user.provider_info.qualification" id="popup_type"
+                                                name="popup_type" class="form-control type">
                                             <option value="clinical">Clinical (MD, RN or other)</option>
                                             <option value="non-clinical">Non-clinical</option>
                                         </select>
