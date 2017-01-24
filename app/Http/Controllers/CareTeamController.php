@@ -87,7 +87,7 @@ class CareTeamController extends Controller
                 if (!$practice) {
                     $practice = new Practice();
                     $practice->display_name = $input['practice'];
-                    $practice->name = strtolower(str_replace(" ", "-", $input['practice']));
+                    $practice->name = str_slug($input['practice']);
                     $practice->save();
                 }
 
