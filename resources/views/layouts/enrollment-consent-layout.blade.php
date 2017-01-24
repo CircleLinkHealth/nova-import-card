@@ -47,12 +47,8 @@
 </head>
 <div class="mdl-layout mdl-js-layout">
     <header class="mdl-layout__header">
-        <div class="mdl-layout-icon" style="overflow: visible "><img src="/img/ui/clh_logo_lt.png"
-                                                                     alt="Care Plan Manager"
-                                                                     style="position:relative;top:-10px; right:20px"
-                                                                     width="50px"/></div>
         <div class="mdl-layout__header-row" style="background: #4fb2e2;">
-            <span class="mdl-layout__title" style="color: white;">CircleLink Health</span>
+            <span class="mdl-layout__title" style="color: white;">{{$practice->display_name}}'s Personalized Care Management Program</span>
         </div>
     </header>
 @yield('content')
