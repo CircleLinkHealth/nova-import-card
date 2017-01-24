@@ -13,7 +13,7 @@
             <div class="col-md-5">
                 <p style="margin-left: -10px;">
                     <strong>@{{member.formatted_type}}: </strong>@{{member.user.first_name}} @{{member.user.last_name}}
-                    <em>@{{member.specialty}}</em>
+                    <em>@{{member.user.provider_info.specialty}}</em>
                 </p>
             </div>
 

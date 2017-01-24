@@ -47,7 +47,7 @@ var careTeamContainer = Vue.component('careTeamContainer', {
 
         updateCareTeamMember: function (id, index) {
             this.$http.patch(this.updateRoute + '/' + id, {careTeamMember: this.careTeamCollection[index]}).then(function (response) {
-
+                $("#editCareTeamModal-" + index).modal('hide');
             }, function (response) {
                 //error
             });
