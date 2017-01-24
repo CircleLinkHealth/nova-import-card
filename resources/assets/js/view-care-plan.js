@@ -12,7 +12,7 @@ var careTeamContainer = Vue.component('careTeamContainer', {
     data: function () {
         return {
             careTeamCollection: [],
-            destroyRoute: ''
+            destroyRoute: '',
         }
     },
 
@@ -37,6 +37,10 @@ var careTeamContainer = Vue.component('careTeamContainer', {
             }, function (response) {
                 //error
             });
+        },
+
+        editCareTeamMember: function (id, index) {
+            $("#editCareTeamModal-" + index).modal();
         }
     }
 });

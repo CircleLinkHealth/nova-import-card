@@ -1,19 +1,16 @@
 <script type="text/x-template" id="care-team-template">
-
     <meta name="provider-destroy-route" content="{{ route('provider.destroy', ['id'=>'']) }}">
 
     <ul class="col-xs-12">
-        <li v-for="member in careTeamCollection">
+        <li v-for="member in careTeamCollection" class="col-xs-12">
             <div class="col-md-5">
-                <p style="margin-left: -10px;"><strong>@{{member.formatted_type}}: </strong>@{{member.formatted_title}}
+                <p style="margin-left: -10px;">
+                    <strong>@{{member.formatted_type}}: </strong>@{{member.formatted_title}}
                 </p>
             </div>
 
             <div class="col-md-5">
-                <div class="radio-inline">
-                    <input type="checkbox" name="ctmsa[]" id="ctm1sa" value="">
-                    <label for="ctm1sa"><span></span>Send Alerts</label>
-                </div>
+                <p v-if="member.alert">Receives Alerts</p>
             </div>
 
             <div class="col-md-2">
@@ -32,6 +29,128 @@
                 </button>
             </div>
             <br>
+
+            <div id="editCareTeamModal-@{{ $index }}" class="modal fade" role="dialog">
+                <div class="modal-dialog">
+
+                    <!-- Modal content-->
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <button type="button" class="close" data-dismiss="modal">&times;</button>
+                            <h4 class="modal-title">Please Edit Provider Details</h4>
+                        </div>
+                        <div class="modal-body">
+                            <div class="row providerForm">
+                                <div class="form-group">
+                                    <label class="col-md-3 control-label" for="name">Provider Name</label>
+                                    <div class="col-md-3">
+                                        <input v-model="member.user.first_name" id="popup_first_name"
+                                               name="popup_first_name" type="text" placeholder="First"
+                                               class="form-control input-md"
+                                               required="required">
+                                    </div>
+                                    <div class="col-md-3">
+                                        <input v-model="member.user.last_name" id="popup_last_name"
+                                               name="popup_last_name" type="text" placeholder="Last"
+                                               class="form-control input-md"
+                                               required="required">
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="row providerForm">
+                                <div class="form-group">
+                                    <label class="col-md-3 control-label" for="popup_specialty">Specialty or Service
+                                        Type</label>
+                                    <div class="col-md-6">
+                                        <input v-model="member.specialty" id="popup_specialty" name="popup_specialty"
+                                               type="text" placeholder=""
+                                               class="form-control input-md"
+                                               required="required">
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="row providerForm">
+                                <div class="form-group">
+                                    <label class="col-md-3 control-label" for="popup_address">Address</label>
+                                    <div class="col-md-6">
+                                        <input v-model="member.user.address" id="popup_address" name="popup_address"
+                                               type="text" placeholder=""
+                                               class="form-control input-md"
+                                               required="">
+
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="row providerForm">
+                                <div class="form-group">
+                                    <label class="col-md-3 control-label" for="popup_phone">Phone Number</label>
+                                    <div class="col-md-6">
+                                        <input v-model="member.user.phone_numbers[0].number" id="popup_phone"
+                                               name="popup_phone" type="text" placeholder=""
+                                               class="form-control input-md"
+                                               required="">
+
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="row providerForm">
+                                <div class="form-group">
+                                    <label class="col-md-3 control-label" for="popup_practice">Practice Name</label>
+                                    <div class="col-md-6">
+                                        <input v-model="member.user.primary_practice.display_name" id="popup_practice"
+                                               name="popup_practice" type="text" placeholder=""
+                                               class="form-control input-md"
+                                               required="">
+
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="row providerForm">
+                                <div class="form-group">
+                                    <label class="col-md-3 control-label" for="popup_email">Email</label>
+                                    <div class="col-md-6">
+                                        <input v-model="member.user.email" id="popup_email" name="popup_email"
+                                               type="email" placeholder=""
+                                               class="form-control input-md"
+                                               required="">
+
+                                    </div>
+                                </div>
+                            </div>
+
+
+                            <div class="row providerForm">
+                                <div class="form-group">
+                                    <label class="col-md-3 control-label" for="popup_type">Select Type</label>
+                                    <div class="col-md-6">
+                                        <select id="popup_type" name="popup_type" class="form-control type">
+                                            <option value="clinical">Clinical (MD, RN or other)</option>
+                                            <option value="non-clinical">Non-clinical</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <input type="hidden" id="popup_created_by" name="popup_created_by"
+                                   value="{{auth()->user()->id}}">
+                            <input type="hidden" id="popup_patient_id" name="popup_patient_id" value="{{$patient->id}}">
+
+                            <div>
+                                <button type="submit" id="editCarePerson" class="create btn btn-primary">Save</button>
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </div>
+            </div>
+
         </li>
     </ul>
 </script>
@@ -40,11 +159,4 @@
 
 @section('scripts')
     <script src="/js/view-care-plan.js"></script>
-    <script>
-        $("#addNewProviderFAB").click(function (e) {
-            $("#addProviderModal").modal();
-            e.preventDefault();
-            return false;
-        });
-    </script>
 @endsection

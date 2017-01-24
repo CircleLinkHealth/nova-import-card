@@ -13,17 +13,18 @@ use Illuminate\Http\Request;
 class CareTeamController extends Controller
 {
 
-    public function store(Request $request){
+    public function store(Request $request)
+    {
 
         $input = $request->input();
 
-        if($request->ajax()){
+        if ($request->ajax()) {
 
             $provider_user = new User();
             $provider_user->save();
-            
+
             $provider = new ProviderInfo([
-                'user_id' => $provider_user->id
+                'user_id' => $provider_user->id,
             ]);
 
             $role = Role::whereName('provider')->first();
@@ -35,9 +36,9 @@ class CareTeamController extends Controller
             //Care Team Add
             $care_team_member = new PatientCareTeamMember([
 
-                'user_id' => $patient->id,
+                'user_id'        => $patient->id,
                 'member_user_id' => $provider_user->id,
-                'type' => PatientCareTeamMember::EXTERNAL
+                'type'           => PatientCareTeamMember::EXTERNAL,
 
             ]);
 
@@ -46,16 +47,18 @@ class CareTeamController extends Controller
             $provider_user->first_name = $input['first_name'];
             $provider_user->last_name = $input['last_name'];
 
-            $provider_user->email = (isset($input['email'])) ? $input['email'] : '';
+            $provider_user->email = (isset($input['email']))
+                ? $input['email']
+                : '';
 
-            if($input['phone'] != ''){
+            if ($input['phone'] != '') {
 
                 $phone = new PhoneNumber([
 
-                    'user_id' => $provider_user->id,
-                    'type' => 'work',
-                    'number' => $input['phone'],
-                    'is_primary' => 1
+                    'user_id'    => $provider_user->id,
+                    'type'       => 'work',
+                    'number'     => $input['phone'],
+                    'is_primary' => 1,
 
                 ]);
 
@@ -64,17 +67,28 @@ class CareTeamController extends Controller
 
             }
 
-            $provider_user->address = (isset($input['address'])) ? $input['address'] : '';
+            $provider_user->address = (isset($input['address']))
+                ? $input['address']
+                : '';
 
-            $provider->specialty = (isset($input['specialty'])) ? $input['specialty'] : '';
-            $provider->qualification = (isset($input['type'])) ? $input['type'] : '';
-            
-            if($input['practice'] != ''){
+            $provider->specialty = (isset($input['specialty']))
+                ? $input['specialty']
+                : '';
+            $provider->qualification = (isset($input['type']))
+                ? $input['type']
+                : '';
 
-                $practice = new Practice();
-                $practice->display_name = $input['practice'];
-                $practice->name = strtolower(str_replace(" ", "-", $input['practice']));
-                $practice->save();
+
+            if ($input['practice'] != '') {
+
+                $practice = Practice::where('display_name', '=', $input['practice'])->first();
+
+                if (!$practice) {
+                    $practice = new Practice();
+                    $practice->display_name = $input['practice'];
+                    $practice->name = strtolower(str_replace(" ", "-", $input['practice']));
+                    $practice->save();
+                }
 
                 $provider_user->program_id = $practice->id;
 
@@ -91,8 +105,8 @@ class CareTeamController extends Controller
 
             return json_encode([
                 'message' => 'Created!',
-                'name' => $provider_user->fullName,
-                'user_id' => $provider_user->id
+                'name'    => $provider_user->fullName,
+                'user_id' => $provider_user->id,
             ]);
 
         }

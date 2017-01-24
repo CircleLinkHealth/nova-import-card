@@ -482,12 +482,17 @@ class ReportsController extends Controller
 
         $patient = User::find($patientId);
 
-        $careTeam = PatientCareTeamMember::with('user')
+        $careTeam = PatientCareTeamMember::with([
+            'user.phoneNumbers',
+            'user.providerInfo',
+            'user.primaryPractice',
+        ])
             ->whereUserId($patient->id)
             ->orderBy('type')
             ->get()
             ->transform(function ($member) {
                 $member->formatted_type = snakeToSentenceCase($member->type);
+                $member->specialty = $member->user->getSpecialtyAttribute();
                 $member->formatted_title = empty($member->user->getSpecialtyAttribute())
                     ? $member->user->fullName
                     : $member->user->fullName . ', ' . $member->user->getSpecialtyAttribute();

@@ -11982,6 +11982,10 @@ var careTeamContainer = Vue.component('careTeamContainer', {
             }, function (response) {
                 //error
             });
+        },
+
+        editCareTeamMember: function editCareTeamMember(id, index) {
+            $("#editCareTeamModal-" + index).modal();
         }
     }
 });
