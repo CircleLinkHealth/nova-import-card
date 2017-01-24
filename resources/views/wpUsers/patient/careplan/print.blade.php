@@ -317,9 +317,7 @@ if (isset($patient) && !empty($patient)) {
                             <h2 class="patient-summary__subtitles patient-summary--careplan-background">Care Team:</h2>
                         </div>
                         <div class="col-xs-12">
-                            <p>
-                                @include('wpUsers.patient.careplan.print.careteam')
-                            </p>
+                            @include('wpUsers.patient.careplan.print.careteam')
                         </div>
                     </div>
                 </div>
