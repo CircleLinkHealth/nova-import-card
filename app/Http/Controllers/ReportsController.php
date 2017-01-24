@@ -485,7 +485,15 @@ class ReportsController extends Controller
         $careTeam = PatientCareTeamMember::with('user')
             ->whereUserId($patient->id)
             ->orderBy('type')
-            ->get();
+            ->get()
+            ->transform(function ($member) {
+                $member->formatted_type = snakeToSentenceCase($member->type);
+                $member->formatted_title = empty($member->user->getSpecialtyAttribute())
+                    ? $member->user->fullName
+                    : $member->user->fullName . ', ' . $member->user->getSpecialtyAttribute();
+
+                return $member;
+            });
 
         $showInsuranceReviewFlag = $insurances->checkPendingInsuranceApproval($patient);
 
