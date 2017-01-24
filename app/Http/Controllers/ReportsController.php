@@ -497,6 +497,10 @@ class ReportsController extends Controller
 
         $showInsuranceReviewFlag = $insurances->checkPendingInsuranceApproval($patient);
 
+        \JavaScript::put([
+            'careTeam' => $careTeam,
+        ]);
+
         return view('wpUsers.patient.careplan.print',
             [
                 'patient'                 => $patient,
