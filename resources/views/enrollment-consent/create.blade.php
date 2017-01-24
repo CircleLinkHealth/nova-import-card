@@ -43,10 +43,10 @@
     </style>
 
     <dialog id="dialog" class="mdl-dialog" style="width: 80%">
-        <h3 class="mdl-dialog__title" style="color: #47beab">Great! Remember</h3>
+        <h3 class="mdl-dialog__title" style="color: #47beab">Great! Remember:</h3>
         <div class="mdl-dialog__content" style="">
             <ul class="mdl-list">
-                <li style="font-size: 20px;" class="mdl-list__item">A personal care coach— registered nurse-- will do a quick
+                <li style="font-size: 20px;" class="mdl-list__item">A personal care coach— registered nurse— will do a quick
                     phone check-in
                     periodically
                 <li style="font-size: 20px;" class="mdl-list__item">You can also leave a message for us 24/7 at (888) 729-4045
@@ -86,20 +86,20 @@
                     <hr>
                     <div class="mdl-grid">
                         <div class="mdl-cell mdl-cell--6-col mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
-                            <input style="font-size: 30px; padding-top: 20px;" class="mdl-textfield__input" type="text" name="first_name" id="first_name" required/>
+                            <input style="font-size: 30px; padding-top: 20px;" class="mdl-textfield__input" type="text" name="first_name" id="first_name"/>
                             <label style="font-size: 20px" class="mdl-textfield__label" for="first_name">First Name</label>
                         </div>
                         <div class="mdl-cell mdl-cell--6-col mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
-                            <input style="font-size: 30px; padding-top: 20px;" class="mdl-textfield__input" type="text" name="last_name" id="last_name" required/>
+                            <input style="font-size: 30px; padding-top: 20px;" class="mdl-textfield__input" type="text" name="last_name" id="last_name"/>
                             <label style="font-size: 20px" class="mdl-textfield__label" for="last_name">Last Name</label>
                         </div>
                         <div class="mdl-cell mdl-cell--6-col mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
-                            <input style="font-size: 30px; padding-top: 20px;" class="mdl-textfield__input dob" name="dob" type="date" id="dob" required/>
+                            <input style="font-size: 30px; padding-top: 20px;" class="mdl-textfield__input dob" name="dob" type="date" id="dob"/>
                             <label style="font-size: 20px" class="mdl-textfield__label" for="dob">Date Of Birth</label>
                         </div>
                         <div></div>
                         <div class="mdl-cell mdl-cell--6-col mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
-                            <input style="font-size: 30px; padding-top: 20px;" class="mdl-textfield__input" name="phone" type="text" id="phone" required/>
+                            <input style="font-size: 30px; padding-top: 20px;" class="mdl-textfield__input" name="phone" type="text" id="phone"/>
                             <label style="font-size: 20px" class="mdl-textfield__label" id="phone_label" for="phone">Phone Number</label>
                         </div>
                         <div class="mdl-card__actions mdl-card--border" style="padding: 10px; text-align: right">
