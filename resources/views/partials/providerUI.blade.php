@@ -48,10 +48,10 @@
             (function (i, s, o, g, r, a, m) {
                 i['GoogleAnalyticsObject'] = r;
                 i[r] = i[r] || function () {
-                        (i[r].q = i[r].q || []).push(arguments)
-                    }, i[r].l = 1 * new Date();
+                            (i[r].q = i[r].q || []).push(arguments)
+                        }, i[r].l = 1 * new Date();
                 a = s.createElement(o),
-                    m = s.getElementsByTagName(o)[0];
+                        m = s.getElementsByTagName(o)[0];
                 a.async = 1;
                 a.src = g;
                 m.parentNode.insertBefore(a, m)
@@ -116,21 +116,7 @@
             to improve your experience.</p>
         <![endif]-->
         @yield('content')
-        {{--
-        PROVIDER UI TEMPLATE:
-        <div class="row" style="margin-top:60px;">
-        <div class="main-form-container col-lg-8 col-lg-offset-2">
-        <div class="row">
-        <div class="main-form-title col-lg-12">
-        title
-        </div>
-        <div class="main-form-block main-form-horizontal main-form-primary-horizontal col-md-12">
-        content text
-        </div>
-        </div>
-        </div>
-        </div>
-        --}}
+
         @if(!isset($isPdf))
             <!-- PAGE TIMER START -->
             @include('partials.providerUItimer')
@@ -142,6 +128,10 @@
                 @include('partials.addprovider')
             @endif
         @endif
+
+        @include('partials.footer')
+
+        @yield('scripts')
 
 </body>
 

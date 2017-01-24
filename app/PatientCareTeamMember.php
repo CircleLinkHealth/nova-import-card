@@ -43,7 +43,8 @@ class PatientCareTeamMember extends Model
     protected $fillable = [
         'user_id',
         'member_user_id',
-        'type'
+        'type',
+        'alert',
     ];
 
     // START RELATIONSHIPS

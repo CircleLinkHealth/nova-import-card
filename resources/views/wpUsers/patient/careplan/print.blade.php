@@ -12,6 +12,7 @@ if (isset($patient) && !empty($patient)) {
 
     $today = \Carbon\Carbon::now()->toFormattedDateString();
 // $provider = App\User::find($patient->getLeadContactIDAttribute());
+    $alreadyShown = [];
 }
 ?>
 @if(!isset($isPdf))
@@ -316,34 +317,7 @@ if (isset($patient) && !empty($patient)) {
                             <h2 class="patient-summary__subtitles patient-summary--careplan-background">Care Team:</h2>
                         </div>
                         <div class="col-xs-12">
-                            <p>
-                                @if($billing)
-                                    <strong>Billing
-                                        Provider: </strong> {{$billing->fullName}}{{($billing->getSpecialtyAttribute() == '') ? '' : ', ' .  $billing->getSpecialtyAttribute() }}
-                                    <br>
-                                    <?php $alreadyShown[] = $billing->id; ?>
-                                @endif
-
-                                @if(!empty($lead))
-                                    <strong>Lead
-                                        Contact: </strong> {{$lead->fullName}}{{($lead->getSpecialtyAttribute() == '')? '' : ', ' .  $lead->getSpecialtyAttribute() }}
-                                    <br>
-                                    <?php $alreadyShown[] = $lead->id; ?>
-                                @endif
-
-                                @if(isset($careTeam))
-                                    @foreach($careTeam as $member)
-                                        @if(! in_array($member->type, [App\PatientCareTeamMember::BILLING_PROVIDER, App\PatientCareTeamMember::LEAD_CONTACT]))
-                                            {{--Making sure we're not showing any CareTeam Members more than once--}}
-                                            @if(!in_array($member->user->id, $alreadyShown))
-                                                <strong>Member:</strong> {{$member->user->fullName}}{{($member->user->getSpecialtyAttribute() == '')? '' : ', ' .  $member->user->getSpecialtyAttribute() }}
-                                                <br>
-                                                <?php $alreadyShown[] = $member->user->id; ?>
-                                            @endif
-                                        @endif
-                                    @endforeach
-                                @endif
-                            </p>
+                            @include('wpUsers.patient.careplan.print.careteam')
                         </div>
                     </div>
                 </div>

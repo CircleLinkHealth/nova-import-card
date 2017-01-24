@@ -444,11 +444,6 @@ $today = \Carbon\Carbon::now()->toFormattedDateString();
                                         Provider: </strong> {{$billing->fullName}} {{($billing->getSpecialtyAttribute() == '')? '' : ' ' .  $billing->getSpecialtyAttribute() }}
                                     <br>
                                 @endif
-                                @if(!empty($lead))
-                                    <strong>Lead
-                                        Contact: </strong>     {{$lead->getFullNameAttribute()}}{{($lead->getSpecialtyAttribute() == '')? '' : ' ' .  $lead->getSpecialtyAttribute() }}
-                                    <br>
-                                @endif
                             </p>
                         </div>
                     </div>

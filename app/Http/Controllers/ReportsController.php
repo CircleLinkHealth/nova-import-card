@@ -482,11 +482,26 @@ class ReportsController extends Controller
 
         $patient = User::find($patientId);
 
-        $careTeam = PatientCareTeamMember::with('user')
+        $careTeam = PatientCareTeamMember::with([
+            'user.phoneNumbers',
+            'user.providerInfo',
+            'user.primaryPractice',
+        ])
             ->whereUserId($patient->id)
-            ->get();
+            ->orderBy('type')
+            ->get()
+            ->transform(function ($member) {
+                $member->formatted_type = snakeToSentenceCase($member->type);
+                $member->specialty = $member->user->getSpecialtyAttribute();
+
+                return $member;
+            });
 
         $showInsuranceReviewFlag = $insurances->checkPendingInsuranceApproval($patient);
+
+        \JavaScript::put([
+            'careTeam' => $careTeam,
+        ]);
 
         return view('wpUsers.patient.careplan.print',
             [

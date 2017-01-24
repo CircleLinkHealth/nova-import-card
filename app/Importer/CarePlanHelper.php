@@ -231,29 +231,11 @@ class CarePlanHelper
             ?: $this->importedMedicalRecord->billing_provider_id;
 
         if ($providerId) {
-            //care team
-            $member = PatientCareTeamMember::create([
-                'user_id'        => $this->user->id,
-                'member_user_id' => $providerId,
-                'type'           => PatientCareTeamMember::MEMBER,
-            ]);
-
-            $sendAlertTo = PatientCareTeamMember::create([
-                'user_id'        => $this->user->id,
-                'member_user_id' => $providerId,
-                'type'           => PatientCareTeamMember::SEND_ALERT_TO,
-            ]);
-
             $billing = PatientCareTeamMember::create([
+                'alert'          => true,
                 'user_id'        => $this->user->id,
                 'member_user_id' => $providerId,
                 'type'           => PatientCareTeamMember::BILLING_PROVIDER,
-            ]);
-
-            $lead = PatientCareTeamMember::create([
-                'user_id'        => $this->user->id,
-                'member_user_id' => $providerId,
-                'type'           => PatientCareTeamMember::LEAD_CONTACT,
             ]);
         }
 
