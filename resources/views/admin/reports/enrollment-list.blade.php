@@ -35,6 +35,12 @@
                                         <th>
                                             Phone Number
                                         </th>
+                                        <th>
+                                            Scheduled Call
+                                        </th>
+                                        <th>
+                                            Medical Record
+                                        </th>
                                     </tr>
                                     </thead>
                                 </table>
@@ -58,6 +64,8 @@
                         {data: 'dob', name: 'dob'},
                         {data: 'date', name: 'date'},
                         {data: 'phone', name: 'phone'},
+                        {data: 'hasCallScheduled', name: 'hasCallScheduled'},
+                        {data: 'hasMedicalRecord', name: 'hasMedicalRecord'}
                     ],
                     "iDisplayLength": 25
                 });

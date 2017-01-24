@@ -60,7 +60,7 @@ class SchedulerService
 
     }
 
-    //Create new scheduled call
+    //Get scheduled call
     public function getScheduledCallForPatient($patient)
     {
 

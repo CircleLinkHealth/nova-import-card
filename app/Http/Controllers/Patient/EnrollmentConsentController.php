@@ -2,7 +2,9 @@
 
 namespace App\Http\Controllers\Patient;
 
+use App\Call;
 use App\CLH\Helpers\StringManipulation;
+use App\Models\MedicalRecords\ImportedMedicalRecord;
 use App\Patient;
 use App\PhoneNumber;
 use App\Practice;
@@ -16,6 +18,9 @@ use Yajra\Datatables\Facades\Datatables;
 class EnrollmentConsentController extends Controller
 {
 
+    /**
+     * @return mixed
+     */
     public function index(){
 
         $enrolled = Patient::where('ccm_status', 'consented')->with('user')->get();
@@ -24,6 +29,24 @@ class EnrollmentConsentController extends Controller
         $count = 0;
 
         foreach ($enrolled as $patient){
+            
+            $medicalRecord = ImportedMedicalRecord::where('patient_id', $patient->user->id)->first();
+            $scheduledCall = Call
+                ::where('inbound_cpm_id', $patient->user->id)
+                ->where('status', '=', 'scheduled')
+                ->first();
+
+            if($medicalRecord == null){
+                $medicalRecord = 'N/A';
+            } else {
+                $medicalRecord = 'Exists';
+            }
+
+            if($scheduledCall == null){
+                $scheduledCall = 'N/A';
+            } else {
+                $scheduledCall = $scheduledCall->scheduled_date;
+            }
 
             $formatted[$count] = [
 
@@ -31,7 +54,9 @@ class EnrollmentConsentController extends Controller
                 'program' => ucwords(Practice::find($patient->user->program_id)->name),
                 'dob' => $patient->birth_date,
                 'date' => $patient->consent_date,
-                'phone' => $patient->user->primaryPhone
+                'phone' => $patient->user->primaryPhone,
+                'hasCallScheduled' => $scheduledCall,
+                'hasMedicalRecord' => $medicalRecord
 
             ];
             $count++;
