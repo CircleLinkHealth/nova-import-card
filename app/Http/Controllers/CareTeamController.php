@@ -143,6 +143,7 @@ class CareTeamController extends Controller
         $careTeam = PatientCareTeamMember::where('id', '=', $input['id'])
             ->update([
                 'alert' => $input['alert'],
+                'type'  => snake_case($input['formatted_type']),
             ]);
 
         $user = User::find($input['user']['id']);

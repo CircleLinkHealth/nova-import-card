@@ -1,3 +1,9 @@
+<style>
+    label {
+        font-size: 14px;
+    }
+</style>
+
 <script type="text/x-template" id="care-team-template">
     <meta name="provider-destroy-route" content="{{ route('provider.destroy', ['id'=>'']) }}">
     <meta name="provider-update-route" content="{{ route('provider.update', ['id'=>'']) }}">
@@ -147,6 +153,16 @@
                                         <input v-model="member.alert" id="popup_send_alerts"
                                                name="popup_send_alerts" class="form-control type" type="checkbox"
                                                style="display: inline;">
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="row providerForm">
+                                <div class="form-group">
+                                    <label class="col-md-3 control-label" for="popup_send_alerts">Type</label>
+                                    <div class="col-md-6">
+                                        <input v-model="member.formatted_type" id="popup_type"
+                                               name="popup_type" class="form-control type" type="text">
                                     </div>
                                 </div>
                             </div>
