@@ -138,6 +138,17 @@
                                 </div>
                             </div>
 
+                            <div class="row providerForm">
+                                <div class="form-group">
+                                    <label class="col-md-3 control-label" for="popup_send_alerts">Send Alerts</label>
+                                    <div class="col-md-6">
+                                        <input v-model="member.alert" id="popup_send_alerts"
+                                               name="popup_send_alerts" class="form-control type" type="checkbox"
+                                               style="display: inline;">
+                                    </div>
+                                </div>
+                            </div>
+
                             <input type="hidden" id="popup_created_by" name="popup_created_by"
                                    value="{{auth()->user()->id}}">
                             <input type="hidden" id="popup_patient_id" name="popup_patient_id" value="{{$patient->id}}">
