@@ -139,8 +139,8 @@
                             <ul class="dropdown-menu" role="menu">
 
                                 <li><a href="{{ URL::route('admin.patientCallManagement.index', array()) }}">
-                                        Call Management</a>
-                                <li><a href="{{ URL::route('admin.families.index', array()) }}">Patient Families</a>
+                                        Manage</a>
+                                <li><a href="{{ URL::route('admin.families.index', array()) }}">Families</a>
                                 <li><a href="{{ URL::route('algo.mock.create', array()) }}">
                                         Algo v{{\App\Algorithms\Calls\SuccessfulHandler::VERSION}} Simulator</a>
                                 <li><a href="{{ URL::route('CallReportController.exportxls', array()) }}">Calls</a></li>
@@ -162,13 +162,13 @@
                                 Nurse Management <span class="caret"></span>
                             </a>
                             <ul class="dropdown-menu" role="menu">
-                                <li><a href="{{ URL::route('get.admin.nurse.schedules') }}">Nurse Schedules</a>
+                                <li><a href="{{ URL::route('get.admin.nurse.schedules') }}">Schedules</a>
                                 {{--                                    <li><a href="{{ URL::route('stats.nurse.info') }}">Nurse Statistics</a>--}}
                                 <li><a href="{{ URL::route('admin.reports.nurseTime.index', array()) }}">Nurse Time</a>
                                 </li>
-                                <li><a href="{{ URL::route('admin.reports.nurse.daily', array()) }}">Daily Nurse
+                                <li><a href="{{ URL::route('admin.reports.nurse.daily', array()) }}">Daily
                                         Report</a></li>
-                                <li><a href="{{ URL::route('admin.reports.nurse.invoice', array()) }}">Nurse
+                                <li><a href="{{ URL::route('admin.reports.nurse.invoice', array()) }}">
                                         Invoices</a></li>
 
                             </ul>

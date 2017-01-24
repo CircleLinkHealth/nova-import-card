@@ -128,6 +128,9 @@ class EnrollmentConsentController extends Controller
             $enrollee->program_id = $input['practice_id'];
             $enrollee->first_name = $input['first_name'];
             $enrollee->last_name = $input['last_name'];
+
+            //@todo identify timezone
+            $enrollee->timezone = 'America/New_York';
             $enrollee->save();
 
             //Create Patient
@@ -139,6 +142,7 @@ class EnrollmentConsentController extends Controller
             $patient->consent_date = $confirmed_date;
             $patient->registration_date = $enrolled_date;
             $patient->birth_date = $input['dob'];
+            $patient->preferred_contact_timezone = 'America/New_York';
             $patient->save();
 
             //Attach Role

@@ -239,6 +239,7 @@ class DatatablesController extends Controller
                 }
             })
             ->addColumn('patient_timezone', function ($call) {
+
                 $dateTime = new DateTime();
                 $dateTime->setTimeZone(new DateTimeZone($call->patient_timezone));
 
