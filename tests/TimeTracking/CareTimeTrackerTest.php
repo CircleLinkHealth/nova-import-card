@@ -40,10 +40,10 @@ class CareTimeTrackerTest extends TestCase
     public function testCareTime()
     {
 
-        //pretends patient has 20 mins of care.
-        $pre_ccm = 4000;
-        //gets 30 mins more
-        $care_given = 4000;
+        //pretends patient has 45 mins of care.
+        $pre_ccm = 2700;
+        //gets 20 mins more
+        $care_given = 1200;
         $this->patient->cur_month_activity_time = $pre_ccm;
 
         //create scenario where patient has been given care by only this nurse
@@ -51,8 +51,8 @@ class CareTimeTrackerTest extends TestCase
 
             'nurse_id' => $this->nurse->nurseInfo->id,
             'month_year' => $this->date,
-            'accrued_after_ccm' => 0,
-            'accrued_towards_ccm' => 0,
+            'accrued_after_ccm' => 1500,
+            'accrued_towards_ccm' => 1200,
             'no_of_calls' => 0,
             'no_of_successful_calls' => 0
         ]);

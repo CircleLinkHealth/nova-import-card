@@ -116,14 +116,46 @@ class AlternativeCareTimePayableCalculator
         $ccm_after_under_90 = $ccm_after_activity < 5400;
         $ccm_after_over_90 = $ccm_after_activity >= 5400;
 
+        //120mins
+        $ccm_before_under_120 = $ccm_before_activity < 7200;
+        $ccm_before_over_120 = $ccm_before_activity >= 7200;
+        $ccm_after_under_120 = $ccm_after_activity < 7200;
+        $ccm_after_over_120 = $ccm_after_activity >= 7200;
+
         if ($isComplex) {
 
-            if($ccm_before_over_90){
+            if($ccm_before_over_120){
 
-                // before: 6000, add: 200, total: 6200; target: 5400
+                // before: 8000, add: 200, total: 8200; target (was): 7200
                 // towards: 0, after: 200
 
                 $toAddToAccuredAfterCCM = $activity->duration;
+
+            } elseif($ccm_before_under_120 && $ccm_before_over_90){
+
+                if($ccm_after_over_90){//patient just reached 120
+
+                    // before: 0, add: 20, total: 20; target: 20
+                    //  Hi: x + 20       Li: y + 0
+
+                    // current: 30, add: 50, total: 80; target: 60
+                    //  Hf: (CURRENT TOTAL + 20) + 40 = +40  Lf: CURRENT TOTAL - (30 - 20) + (80 - 60) = +10
+                    //  Hf: (CURRENT TOTAL + 20) + 40 = +40  Lf: CURRENT TOTAL - (old_ccm - previous_goal) + (new_ccm - current_goal)
+
+                    $toAddToAccuredTowardsCCM += 1800;
+                    $toAddToAccuredAfterCCM = ($ccm_after_activity - 7200) + (5400 - $ccm_before_activity);
+
+
+//                    $patient = User::find($activity->patient_id)->patientInfo;
+//                    $nurse = User::find($activity->logger_id)->nurseInfo;
+//
+//                    $nurseCareForPatient = $nurse->careGivenToPatientForCurrentMonth($patient, $nurse);
+
+                } else { //still under, mins go to
+
+                    $toAddToAccuredAfterCCM = $activity->duration;
+
+                }
 
             } elseif($ccm_before_under_90 && $ccm_before_over_60){
 
@@ -137,7 +169,7 @@ class AlternativeCareTimePayableCalculator
                     //  Hf: (CURRENT TOTAL + 20) + 40 = +40  Lf: CURRENT TOTAL - (old_ccm - previous_goal) + (new_ccm - current_goal)
 
                     $toAddToAccuredTowardsCCM += 1800;
-                    $toAddToAccuredAfterCCM = $ccm_after_activity - 5400; //after - last_goal
+                    $toAddToAccuredAfterCCM = ($ccm_after_activity - 5400) + (3600 - $ccm_before_activity);
 
 
 //                    $patient = User::find($activity->patient_id)->patientInfo;
@@ -157,7 +189,9 @@ class AlternativeCareTimePayableCalculator
                 if($ccm_after_over_60){//patient just reached 60
 
                     $toAddToAccuredTowardsCCM += 2400; //40 mins
-                    $toAddToAccuredAfterCCM = $ccm_after_activity - 3600; //after - last_goal
+
+                    //Removes all the credit given for lower rate (20 - mins over 20) + new mins over 60
+                    $toAddToAccuredAfterCCM = ($ccm_after_activity - 3600) + (1200 - $ccm_before_activity);
 
                 } else { //still under, mins go to
 
