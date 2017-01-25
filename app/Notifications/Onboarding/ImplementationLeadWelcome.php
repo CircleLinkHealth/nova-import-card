@@ -63,9 +63,9 @@ class ImplementationLeadWelcome extends Notification
         return (new MailMessage)
             ->subject("Welcome to CircleLink Health!")
             ->greeting("Dear $notifiable->fullName:")
-            ->line("You just launched {$this->practice->formatted_name}’s Personalized Care Management program with CircleLink Health!")
-            ->line("If you have any questions, please <a href=\"mailto:contact@circlelinkhealth.com\">email us</a>.")
-            ->action('Go To Dashboard', url('/'));
+            ->line("{$this->practice->formatted_name}’s Personalized Care Management program with CircleLink Health just launched!")
+            ->line("Please reset your password with below button.")
+            ->action('Reset Password', url('auth/password/reset'));
     }
 
     /**
