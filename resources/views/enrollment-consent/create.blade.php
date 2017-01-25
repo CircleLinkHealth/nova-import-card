@@ -46,11 +46,7 @@
                     phone check-in
                     periodically
                 <li style="font-size: 20px;" class="mdl-list__item">You can also leave a message for us 24/7 at (888) 729-4045
-                <li style="font-size: 20px;" class="mdl-list__item">All the information we collect is private, securely
-                    stored
-                    and communicated, and
-                    available to your
-                    doctor and care team
+                <li style="font-size: 20px;" class="mdl-list__item">You can only be part of one doctor’s care management program at a time
                 <li style="font-size: 20px;" class="mdl-list__item">You can withdraw at any time you want. Just give us a
                     call!
                 </li>
