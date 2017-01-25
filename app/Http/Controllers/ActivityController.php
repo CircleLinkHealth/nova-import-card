@@ -153,7 +153,7 @@ class ActivityController extends Controller {
 			$computer = new AlternativeCareTimePayableCalculator($nurse);
 
 			$data = $computer->adjustCCMPaybleForActivity($activity);
-
+			
 			$computer->createOrIncrementNurseSummary(
 				$data['toAddToAccuredTowardsCCM'],
 				$data['toAddToAccuredAfterCCM'],
