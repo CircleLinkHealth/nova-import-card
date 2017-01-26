@@ -167,8 +167,8 @@ class EnrollmentConsentController extends Controller
 
         }
 
-        return view('enrollment-consent.thanks', ['name' => $input['first_name']]);
-
+        return view('enrollment-consent.thanks', ['name' => $input['first_name'],
+                                                  'practice' => Practice::find($input['practice_id'])]);
 
     }
 
