@@ -1,5 +1,7 @@
 <?php
 
+use App\PageTimer;
+
 if (app()->environment() != 'production') {
 
     Route::get('rohan', function () {
@@ -9,12 +11,15 @@ if (app()->environment() != 'production') {
         $start = Carbon\Carbon::now()->startOfMonth();
         $end = Carbon\Carbon::now()->endOfMonth();
 
-        \Illuminate\Support\Facades\Mail::to($nurse->user)->send(new \App\Mail\NurseInvoiceMailer(
-            $nurse, $start, $end, true
-        ));
+        $systemTime = PageTimer::where('provider_id',2785)
+            ->where(function ($q) use ($start, $end){
+                $q->where('updated_at', '>=', $start)
+                    ->where('updated_at', '<=', $end);
+            })
+            ->sum('duration');
 
-//
-//        dd($reportLink);
+
+        dd($systemTime);
 //
 //        dd($nurse->careGivenToPatientForCurrentMonth($patient, $nurse));
 //

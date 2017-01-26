@@ -41,18 +41,21 @@ class CareTimeTrackerTest extends TestCase
     {
 
         //pretends patient has 45 mins of care.
-        $pre_ccm = 2700;
+        $pre_ccm = 4800;
         //gets 20 mins more
         $care_given = 1200;
         $this->patient->cur_month_activity_time = $pre_ccm;
+
+        $report_seed_after = 1200;
+        $report_seed_towards = 3600;
 
         //create scenario where patient has been given care by only this nurse
         $report = NurseMonthlySummary::create([
 
             'nurse_id' => $this->nurse->nurseInfo->id,
             'month_year' => $this->date,
-            'accrued_after_ccm' => 1500,
-            'accrued_towards_ccm' => 1200,
+            'accrued_after_ccm' => $report_seed_after,
+            'accrued_towards_ccm' => $report_seed_towards,
             'no_of_calls' => 0,
             'no_of_successful_calls' => 0
         ]);
@@ -75,14 +78,16 @@ class CareTimeTrackerTest extends TestCase
                                                 $this->activity->id);
 
         $post_ccm = $this->patient->cur_month_activity_time;
-        $data['complexity'] = $record->is_ccm_complex;
-        $data['before_ccm'] = $pre_ccm;
-        $data['care_given'] = $care_given;
-        $data['after_ccm'] = $post_ccm;
+        $data['is_ccm_complex'] = $record->is_ccm_complex;
+        $data['ccm_before_activity'] = $pre_ccm;
+        $data['new_activity_duration'] = $care_given;
+        $data['ccm_after_activity'] = $post_ccm;
         $data['report'] = [
 
-            'high_rate' => $report->accrued_towards_ccm,
-            'low_rate' => $report->accrued_after_ccm
+            'high_rate_after' => $report->accrued_towards_ccm,
+            'low_rate_after' => $report->accrued_after_ccm,
+            'high_rate_before' => $report_seed_towards,
+            'low_rate_before' => $report_seed_after
 
         ];
 
