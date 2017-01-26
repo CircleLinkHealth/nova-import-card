@@ -46,10 +46,6 @@
                     phone check-in
                     periodically
                 <li style="font-size: 20px;" class="mdl-list__item">You can also leave a message for us 24/7 at (888) 729-4045
-                <li style="font-size: 20px;" class="mdl-list__item">You can only be part of one doctor’s care management program at a time
-                <li style="font-size: 20px;" class="mdl-list__item">You can withdraw at any time you want. Just give us a
-                    call!
-                </li>
             </ul>
         </div>
         <div class="mdl-dialog__actions">
@@ -67,15 +63,19 @@
 
                     {{ csrf_field() }}
                     <div>
-                        <p class="headings" style="padding-top: 20px">Your Doctor
+                        <p class="headings" style="padding-top: 20px; color: black">Your Doctor
                             at {{ucwords($practice->name)}} has invited you to
                             his/her new personalized
                             care management program!</p>
 
-                        <p class="headings">Can we let your Dr. know you consented to enroll in this program?
-                            <span style=""> (You can always withdraw if you don’t like it)</span></p>
+                        <p class="headings" style="color: black">
+
+                            Please enroll by completing below form, and note:
+                        <li style="font-size: 20px;" class="mdl-list__item"> - Only one practice or doctor at a time can provide this program</li>
+                        <li style="font-size: 20px;" class="mdl-list__item"> - You can withdraw anytime</li>
+
+                        </p>
                     </div>
-                    <hr>
                     <div class="mdl-grid">
                         <div class="mdl-cell mdl-cell--6-col mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
                             <input style="font-size: 30px; padding-top: 20px;" class="mdl-textfield__input" type="text" name="first_name" id="first_name"/>
