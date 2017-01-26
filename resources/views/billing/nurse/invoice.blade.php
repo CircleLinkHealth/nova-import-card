@@ -77,6 +77,4 @@
         </tr>
     @endforeach
 
-    <?php dd(); ?>
-
 </table>
