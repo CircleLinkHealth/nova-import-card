@@ -45,12 +45,6 @@
     <script src="//cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.1/js/bootstrap.min.js"></script>
 
 </head>
-<div class="mdl-layout mdl-js-layout">
-    <header class="mdl-layout__header">
-        <div class="mdl-layout__header-row" style="background: #4fb2e2;">
-            <span class="mdl-layout__title" style="color: white;">{{$practice->display_name}}'s Personalized Care Management Program</span>
-        </div>
-    </header>
 @yield('content')
 
 </html>
