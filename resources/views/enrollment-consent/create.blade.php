@@ -191,7 +191,7 @@
         function formatCurrentJSTime() {
             var today = new Date();
 
-            var month = today.getMonth();
+            var month = today.getMonth() + 1;
 
             month = month > 9 ? month : "0" + month;
 
