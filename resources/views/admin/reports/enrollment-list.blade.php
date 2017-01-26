@@ -67,10 +67,12 @@
                         {data: 'hasCallScheduled', name: 'hasCallScheduled'},
                         {data: 'hasMedicalRecord', name: 'hasMedicalRecord'}
                     ],
+                    "aaSorting":[3,'desc'],
                     "iDisplayLength": 25
                 });
 
             });
+
 
         </script>
         <script src="//cdn.datatables.net/1.10.7/js/jquery.dataTables.min.js"></script>
