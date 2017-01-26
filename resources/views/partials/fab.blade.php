@@ -1,11 +1,9 @@
 <style>
-
     @media print {
         .hidden-print, .hidden-print * {
             display: none !important;
         }
     }
-
 </style>
 
 <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
@@ -41,17 +39,19 @@
             <p class="mini-action-button__text--hide">Add Appointment</p>
         </div>
 
-{{--        @if(Route::current()->getName() != 'patient.appointment.create')--}}
-            <div class="mini-action-button--hide mini-action-button">
-                <a href="#" id="addNewProviderFAB">
-                    <i class="mini-action-button__icon material-icons">contact_mail</i>
-                </a>
-                <p class="mini-action-button__text--hide">Add Care Person</p>
-            </div>
-        {{--@endif--}}
+        <div class="mini-action-button--hide mini-action-button">
+            <a href="#" v-on:click="createCarePerson">
+                <i class="mini-action-button__icon material-icons">contact_mail</i>
+            </a>
+            <p class="mini-action-button__text--hide">Add Care Person</p>
+        </div>
 
     </div>
     <div class="FAB__action-button hidden-print">
         <i class="action-button__icon material-icons hidden-print">add</i>
     </div>
 </section>
+
+@section('scripts')
+    <script src="/js/view-care-plan.js"></script>
+@endsection
