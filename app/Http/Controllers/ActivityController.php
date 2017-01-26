@@ -28,6 +28,11 @@ class ActivityController extends Controller {
 
 	public function create(Request $request, $patientId)
 	{
+		if (auth()->user()->hasRole('care-center')) {
+
+			return abort(403);
+
+		}
 
 		if ($patientId) {
 			// patient view
