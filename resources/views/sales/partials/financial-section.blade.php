@@ -15,7 +15,7 @@
 {{--</h5>--}}
 
 
-<table class="table table-bordered">
+<table class="table table-bordered myTable">
     <tr>
         <td></td>
         <th>{{\Carbon\Carbon::parse($start)->format('F') . ' to Date'}}</th>

@@ -91,18 +91,15 @@ class Practice extends Model
 
         $id = $this->id;
 
-        return User::whereHas('practices', function ($q) use
-        (
-            $id
-        ) {
-            $q->whereId($id);
-        })->whereHas('roles', function ($q) use
+        return User
+            ::where('user_status', 1)
+            ->whereProgramId($this->id)
+            ->whereHas('roles', function ($q) use
         (
             $role
         ) {
             $q->whereName($role);
         })
-            ->where('user_status', 1)
             ->count();
 
     }

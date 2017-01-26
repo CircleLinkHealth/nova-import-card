@@ -1,6 +1,7 @@
 <h3 style="text-align: center">Summary</h3>
 
 <?php $start = Carbon\Carbon::parse($data['start']) ?>
+
 <div class="">
     <span style="font-size: 17px">
         <u><span style="text-align: left">TOTALS</span></u>
@@ -9,7 +10,7 @@
         <br/>Paused<span style="color: darkorange"> {{$data[$enrollmentSection]['paused'] ?? 'N/A'}} </span>
     </span>
 
-    <table class="table table-bordered">
+    <table class="table table-bordered myTable">
         <tr>
             <td></td>
             <th>{{\Carbon\Carbon::parse($start)->format('F') . ' to Date'}}</th>

@@ -9,6 +9,12 @@ $practiceSection = \App\Reports\Sales\Provider\Sections\PracticeDemographics::cl
 
 ?>
 
+<style type="text/css">
+    .myTable { background-color:#fff;border-collapse:collapse; }
+    .myTable th { background-color:#fff;color:black;width:50%; }
+    .myTable td, .myTable th { padding:5px;border:1px solid black; }
+</style>
+
 @section('content')
 
     <div class="page-header">

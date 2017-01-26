@@ -29,16 +29,33 @@ class PracticeDemographics extends SalesReportSection
         $mas = $this->practice->getCountOfUserTypeAtPractice('med_assistant');
         $oa = $this->practice->getCountOfUserTypeAtPractice('office_admin');
 
-        $disabled_count = User
+        $disabled_users = User
             ::whereProgramId($this->practice->id)
             ->whereHas('roles', function ($q) {
                 $q->where('name', '!=', 'participant')
                 ->where('name', '!=', 'administrator');
             })
-            ->whereUserStatus(0)
-            ->count();
+            ->where('user_status', 0)
+            ->get();
 
-        $total = $providers + $mas + $oa - $disabled_count;
+        foreach ($disabled_users as $user){
+
+            if($user->roles[0]->name == 'provider'){
+                $providers--;
+            }
+
+            if($user->roles[0]->name == 'med_assistant'){
+                $mas--;
+            }
+
+            if($user->roles[0]->name == 'office_admin'){
+                $oa--;
+            }
+
+        }
+
+
+        $total = $providers + $mas + $oa;
 
         //prevent non negative total
         if ($total < 0) {
@@ -51,7 +68,7 @@ class PracticeDemographics extends SalesReportSection
             'providers' => $providers,
             'rns'       => $mas,
             'oas'       => $oa,
-            'disabled'  => $disabled_count,
+            'disabled'  => count($disabled_users),
 
             'total' => $total,
 
