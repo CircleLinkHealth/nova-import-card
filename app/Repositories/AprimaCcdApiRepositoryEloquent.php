@@ -3,11 +3,10 @@
 namespace App\Repositories;
 
 
+use App\CarePerson;
 use App\Contracts\Repositories\AprimaCcdApiRepository;
 use App\ForeignId;
-use App\PatientCareTeamMember;
 use App\Patient;
-use App\ProviderInfo;
 use Illuminate\Support\Facades\DB;
 
 class AprimaCcdApiRepositoryEloquent implements AprimaCcdApiRepository
@@ -20,7 +19,7 @@ class AprimaCcdApiRepositoryEloquent implements AprimaCcdApiRepository
     public function getPatientAndProviderIdsByLocationAndForeignSystem($locationId, $foreignSystem)
     {
         //Dynamically get all the tables' names since we'll probably change them soon
-        $careTeamTable = (new PatientCareTeamMember())->getTable();
+        $careTeamTable = (new CarePerson())->getTable();
         $foreignIdTable = (new ForeignId())->getTable();
         $patientTable = (new Patient())->getTable();
 
@@ -34,7 +33,7 @@ class AprimaCcdApiRepositoryEloquent implements AprimaCcdApiRepository
             ->where("$patientTable.preferred_contact_location", $locationId)
             ->whereNotNull("$patientTable.preferred_contact_location")
             ->join($careTeamTable, "$careTeamTable.user_id", '=', "$patientTable.user_id")
-            ->where("$careTeamTable.type", '=', PatientCareTeamMember::BILLING_PROVIDER)
+            ->where("$careTeamTable.type", '=', CarePerson::BILLING_PROVIDER)
             ->join($foreignIdTable, "$foreignIdTable.user_id", '=', "$careTeamTable.member_user_id")
             ->where("$foreignIdTable.system", '=', $foreignSystem)
             ->where("$foreignIdTable.location_id", '=', $locationId)

@@ -2,7 +2,7 @@
 
 use Illuminate\Database\Eloquent\Model;
 
-class PatientCareTeamMember extends Model
+class CarePerson extends Model
 {
 
     const BILLING_PROVIDER = 'billing_provider';

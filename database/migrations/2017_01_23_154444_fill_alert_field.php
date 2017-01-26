@@ -1,6 +1,6 @@
 <?php
 
-use App\PatientCareTeamMember;
+use App\CarePerson;
 use Illuminate\Database\Migrations\Migration;
 
 class FillAlertField extends Migration
@@ -12,8 +12,8 @@ class FillAlertField extends Migration
      */
     public function up()
     {
-        foreach (PatientCareTeamMember::where('type', '=', PatientCareTeamMember::SEND_ALERT_TO)->get() as $row) {
-            PatientCareTeamMember::where('user_id', '=', $row->user_id)
+        foreach (CarePerson::where('type', '=', CarePerson::SEND_ALERT_TO)->get() as $row) {
+            CarePerson::where('user_id', '=', $row->user_id)
                 ->where('member_user_id', '=', $row->member_user_id)
                 ->update(['alert' => true]);
 
