@@ -1,6 +1,6 @@
 <?php
 
-use App\PatientCareTeamMember;
+use App\CarePerson;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
@@ -14,15 +14,15 @@ class MakeCareTeamGreatAgain extends Migration
      */
     public function up()
     {
-        PatientCareTeamMember::where('type', '=', PatientCareTeamMember::LEAD_CONTACT)
+        CarePerson::where('type', '=', CarePerson::LEAD_CONTACT)
             ->delete();
 
-        $careTeams = PatientCareTeamMember::get()->groupBy('user_id');
+        $careTeams = CarePerson::get()->groupBy('user_id');
         $membersToDelete = [];
 
         foreach ($careTeams as $team) {
-            $billingProvider = $team->where('type', '=', PatientCareTeamMember::BILLING_PROVIDER)->first();
-            $members = $team->where('type', '=', PatientCareTeamMember::MEMBER)->reject(function ($member) use
+            $billingProvider = $team->where('type', '=', CarePerson::BILLING_PROVIDER)->first();
+            $members = $team->where('type', '=', CarePerson::MEMBER)->reject(function ($member) use
             (
                 $billingProvider,
                 &
@@ -38,7 +38,7 @@ class MakeCareTeamGreatAgain extends Migration
             });
         }
 
-        PatientCareTeamMember::whereIn('id', $membersToDelete)
+        CarePerson::whereIn('id', $membersToDelete)
             ->delete();
     }
 

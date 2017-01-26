@@ -55,7 +55,7 @@ class CarePlan extends Model implements PdfReport
                         $user
                     ) {
                         $q->where('member_user_id', '=', $user->id)
-                            ->where('type', '=', PatientCareTeamMember::BILLING_PROVIDER);
+                            ->where('type', '=', CarePerson::BILLING_PROVIDER);
                     })
                     ->count();
             }

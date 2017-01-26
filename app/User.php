@@ -1151,7 +1151,7 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
             if ($careTeamMember) {
                 $careTeamMember->member_user_id = $memberUserId;
             } else {
-                $careTeamMember = new PatientCareTeamMember();
+                $careTeamMember = new CarePerson();
                 $careTeamMember->user_id = $this->id;
                 $careTeamMember->member_user_id = $memberUserId;
                 $careTeamMember->type = 'member';
@@ -1164,7 +1164,7 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
 
     public function careTeamMembers()
     {
-        return $this->hasMany(PatientCareTeamMember::class, 'user_id', 'id');
+        return $this->hasMany(CarePerson::class, 'user_id', 'id');
     }
 
     public function getSendAlertToAttribute()
@@ -1235,7 +1235,7 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
         if ($careTeamMember) {
             $careTeamMember->member_user_id = $value;
         } else {
-            $careTeamMember = new PatientCareTeamMember();
+            $careTeamMember = new CarePerson();
             $careTeamMember->user_id = $this->id;
             $careTeamMember->member_user_id = $value;
             $careTeamMember->type = 'billing_provider';
@@ -1273,7 +1273,7 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
         if ($careTeamMember) {
             $careTeamMember->member_user_id = $value;
         } else {
-            $careTeamMember = new PatientCareTeamMember();
+            $careTeamMember = new CarePerson();
             $careTeamMember->user_id = $this->id;
             $careTeamMember->member_user_id = $value;
             $careTeamMember->type = 'lead_contact';

@@ -1,5 +1,6 @@
 <?php namespace App\Http\Controllers\CcdApi\Aprima;
 
+use App\CarePerson;
 use App\CarePlan;
 use App\CLH\CCD\Importer\QAImportManager;
 use App\CLH\Repositories\CCDImporterRepository;
@@ -14,7 +15,6 @@ use App\Importer\Loggers\Ccda\CcdaSectionsLogger;
 use App\Models\CCD\ValidatesQAImportOutput;
 use App\Models\MedicalRecords\Ccda;
 use App\Note;
-use App\PatientCareTeamMember;
 use App\PatientReports;
 use App\User;
 use Carbon\Carbon;
@@ -163,7 +163,7 @@ class CcdApiController extends Controller
         foreach ($pendingReports as $report) {
 
             //Get patient's lead provider
-            $provider = PatientCareTeamMember::whereUserId($report->patient_id)
+            $provider = CarePerson::whereUserId($report->patient_id)
                 ->whereType('lead_contact')
                 ->first();
 
@@ -246,7 +246,7 @@ class CcdApiController extends Controller
         foreach ($pendingReports as $report) {
 
             //Get patient's lead provider
-            $provider = PatientCareTeamMember::whereUserId($report->patient_id)
+            $provider = CarePerson::whereUserId($report->patient_id)
                 ->whereType('lead_contact')
                 ->first();
 

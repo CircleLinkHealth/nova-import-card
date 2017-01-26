@@ -2,11 +2,11 @@
 
 use App\CareItem;
 use App\CareItemUserValue;
+use App\CarePerson;
 use App\Formatters\WebixFormatter;
 use App\Location;
 use App\Models\CPM\CpmProblem;
 use App\PageTimer;
-use App\PatientCareTeamMember;
 use App\Practice;
 use App\Services\CCD\CcdInsurancePolicyService;
 use App\Services\CPM\CpmProblemService;
@@ -482,7 +482,7 @@ class ReportsController extends Controller
 
         $patient = User::find($patientId);
 
-        $careTeam = PatientCareTeamMember::with([
+        $careTeam = CarePerson::with([
             'user.phoneNumbers',
             'user.providerInfo',
             'user.primaryPractice',

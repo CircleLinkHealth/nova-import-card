@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Provider;
 
+use App\CarePerson;
 use App\Contracts\Repositories\InviteRepository;
 use App\Contracts\Repositories\LocationRepository;
 use App\Contracts\Repositories\PracticeRepository;
@@ -9,7 +10,6 @@ use App\Contracts\Repositories\UserRepository;
 use App\Entities\Invite;
 use App\Facades\StringManipulation;
 use App\Http\Controllers\Controller;
-use App\PatientCareTeamMember;
 use App\PhoneNumber;
 use App\Role;
 use App\User;
@@ -251,7 +251,7 @@ class OnboardingController extends Controller
                     $newLocation['clinical_contact']['lastName'] = $request->input('locations')[0]['clinical_contact']['lastName'];
                 }
 
-                if ($newLocation['clinical_contact']['type'] == PatientCareTeamMember::BILLING_PROVIDER) {
+                if ($newLocation['clinical_contact']['type'] == CarePerson::BILLING_PROVIDER) {
                     //do nothing
                 } else {
                     $user = $this->users->create([

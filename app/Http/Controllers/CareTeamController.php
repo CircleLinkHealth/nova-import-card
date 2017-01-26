@@ -2,8 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\CarePerson;
 use App\CLH\Facades\StringManipulation;
-use App\PatientCareTeamMember;
 use App\PhoneNumber;
 use App\Practice;
 use App\ProviderInfo;
@@ -35,11 +35,11 @@ class CareTeamController extends Controller
             $patient = User::find($input['patient_id']);
 
             //Care Team Add
-            $care_team_member = new PatientCareTeamMember([
+            $care_team_member = new CarePerson([
 
                 'user_id'        => $patient->id,
                 'member_user_id' => $provider_user->id,
-                'type'           => PatientCareTeamMember::EXTERNAL,
+                'type'           => CarePerson::EXTERNAL,
 
             ]);
 
@@ -123,7 +123,7 @@ class CareTeamController extends Controller
             return abort('403', 'Care Team Members cannot be deleted using this method');
         }
 
-        $member = PatientCareTeamMember::find($id);
+        $member = CarePerson::find($id);
         $member->delete();
 
         return response()->json([], 200);
@@ -140,7 +140,7 @@ class CareTeamController extends Controller
 
         $input = $request->input('careTeamMember');
 
-        $careTeam = PatientCareTeamMember::where('id', '=', $input['id'])
+        $careTeam = CarePerson::where('id', '=', $input['id'])
             ->update([
                 'alert' => $input['alert'],
                 'type'  => snake_case($input['formatted_type']),

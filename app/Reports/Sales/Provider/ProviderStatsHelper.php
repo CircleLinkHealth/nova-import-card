@@ -10,9 +10,9 @@ namespace App\Reports\Sales\Provider;
 
 use App\Activity;
 use App\Call;
+use App\CarePerson;
 use App\MailLog;
 use App\Observation;
-use App\PatientCareTeamMember;
 use App\PatientMonthlySummary;
 use App\User;
 use Carbon\Carbon;
@@ -162,7 +162,7 @@ class ProviderStatsHelper
                 $billingProvider
             ) {
 
-                $q->whereType(PatientCareTeamMember::BILLING_PROVIDER)
+                $q->whereType(CarePerson::BILLING_PROVIDER)
                     ->whereMemberUserId($billingProvider->id);
 
             })->get();
@@ -216,7 +216,7 @@ class ProviderStatsHelper
                 $billingProvider
             ) {
 
-                $q->whereType(PatientCareTeamMember::BILLING_PROVIDER)
+                $q->whereType(CarePerson::BILLING_PROVIDER)
                     ->whereMemberUserId($billingProvider->id);
 
             })->get();
@@ -285,7 +285,7 @@ class ProviderStatsHelper
                     (
                         $billingProvider
                     ) {
-                        $q->whereType(PatientCareTeamMember::BILLING_PROVIDER)
+                        $q->whereType(CarePerson::BILLING_PROVIDER)
                             ->whereMemberUserId($billingProvider->id);
 
                     });
@@ -307,7 +307,7 @@ class ProviderStatsHelper
                 $billingProvider
             ) {
 
-                $q->whereType(PatientCareTeamMember::BILLING_PROVIDER)
+                $q->whereType(CarePerson::BILLING_PROVIDER)
                     ->whereMemberUserId($billingProvider->id);
 
             })->whereHas('patientInfo', function ($k) use

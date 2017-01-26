@@ -3,6 +3,7 @@
 namespace App\Importer;
 
 
+use App\CarePerson;
 use App\CarePlan;
 use App\CLH\CCD\Importer\StorageStrategies\Biometrics\BloodPressure;
 use App\CLH\CCD\Importer\StorageStrategies\Biometrics\Weight;
@@ -15,7 +16,6 @@ use App\Models\CPM\CpmMisc;
 use App\Models\MedicalRecords\Ccda;
 use App\Models\MedicalRecords\ImportedMedicalRecord;
 use App\Patient;
-use App\PatientCareTeamMember;
 use App\PatientContactWindow;
 use App\PhoneNumber;
 use App\User;
@@ -231,11 +231,11 @@ class CarePlanHelper
             ?: $this->importedMedicalRecord->billing_provider_id;
 
         if ($providerId) {
-            $billing = PatientCareTeamMember::create([
+            $billing = CarePerson::create([
                 'alert'          => true,
                 'user_id'        => $this->user->id,
                 'member_user_id' => $providerId,
-                'type'           => PatientCareTeamMember::BILLING_PROVIDER,
+                'type'           => CarePerson::BILLING_PROVIDER,
             ]);
         }
 

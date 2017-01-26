@@ -63,6 +63,7 @@ if (!function_exists('parseCsvToArray')) {
         if ($handle) {
             while (($row = fgetcsv($handle, 4096)) !== false) {
                 if (empty($fields)) {
+                    $row = array_map('strtolower', $row);
                     $fields = array_map('trim', $row);
                     continue;
                 }

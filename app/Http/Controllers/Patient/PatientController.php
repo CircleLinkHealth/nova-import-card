@@ -1,12 +1,12 @@
 <?php namespace App\Http\Controllers\Patient;
 
 use App\CareItem;
+use App\CarePerson;
 use App\CarePlan;
 use App\CPRulesQuestions;
 use App\Events\CarePlanWasApproved;
 use App\Http\Controllers\Controller;
 use App\Observation;
-use App\PatientCareTeamMember;
 use App\PhoneNumber;
 use App\Practice;
 use App\Services\CarePlanViewService;
@@ -253,7 +253,7 @@ class PatientController extends Controller
                     $query->first();
                 },
                 'careTeamMembers' => function ($q) {
-                    $q->where('type', '=', PatientCareTeamMember::BILLING_PROVIDER)
+                    $q->where('type', '=', CarePerson::BILLING_PROVIDER)
                         ->with('user');
                 },
                 'phoneNumbers'    => function ($q) {

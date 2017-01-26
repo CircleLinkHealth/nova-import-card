@@ -1,8 +1,8 @@
 <?php namespace Tests\Helpers;
 
+use App\CarePerson;
 use App\Facades\StringManipulation;
 use App\Models\CPM\Biometrics\CpmWeight;
-use App\PatientCareTeamMember;
 use App\User;
 use Carbon\Carbon;
 use Faker\Factory;
@@ -34,28 +34,28 @@ trait CarePlanHelpers
         //Therefore, we're gonna add a provider programmatically
         //and make sure they show up.
 
-        $member = PatientCareTeamMember::create([
+        $member = CarePerson::create([
             'user_id'        => $patient->id,
             'member_user_id' => $this->provider->id,
-            'type'           => PatientCareTeamMember::MEMBER,
+            'type'           => CarePerson::MEMBER,
         ]);
 
-        $billing = PatientCareTeamMember::create([
+        $billing = CarePerson::create([
             'user_id'        => $patient->id,
             'member_user_id' => $this->provider->id,
-            'type'           => PatientCareTeamMember::BILLING_PROVIDER,
+            'type'           => CarePerson::BILLING_PROVIDER,
         ]);
 
-        $lead = PatientCareTeamMember::create([
+        $lead = CarePerson::create([
             'user_id'        => $patient->id,
             'member_user_id' => $this->provider->id,
-            'type'           => PatientCareTeamMember::LEAD_CONTACT,
+            'type'           => CarePerson::LEAD_CONTACT,
         ]);
 
-        $sendAlerts = PatientCareTeamMember::create([
+        $sendAlerts = CarePerson::create([
             'user_id'        => $patient->id,
             'member_user_id' => $this->provider->id,
-            'type'           => PatientCareTeamMember::SEND_ALERT_TO,
+            'type'           => CarePerson::SEND_ALERT_TO,
         ]);
 
         $this
