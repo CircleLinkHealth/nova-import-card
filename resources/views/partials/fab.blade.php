@@ -23,7 +23,7 @@
             </a>
             <p class="mini-action-button__text--hide">Add Observation</p>
         </div>
-        @if(!auth()->user()->hasRole('care-center')) {
+{{--        @if(!auth()->user()->hasRole('care-center')) {--}}
 
         <div class="mini-action-button--hide mini-action-button">
             <a href="{{ URL::route('patient.activity.create', array('patient' => $patient->id)) }}">
@@ -31,7 +31,7 @@
             </a>
             <p class="mini-action-button__text--hide">Add Offline Activity</p>
         </div>
-        @endif
+        {{--@endif--}}
 
         <div class="mini-action-button--hide mini-action-button">
             <a href="{{ URL::route('patient.appointment.create', array('patientId' => $patient->id)) }}">
