@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use App\Algorithms\Invoicing\AlternativeCareTimePayableCalculator;
 use App\Appointment;
 use App\Call;
 use App\Events\PdfableCreated;
@@ -398,7 +399,7 @@ class NoteService
 
     }
 
-    public function updatePatientRecords(Patient $patient){
+    public function updatePatientRecords(Patient $patient, $ccmComplex){
 
         $date_index = Carbon::now()->firstOfMonth()->toDateString();
 
@@ -413,15 +414,25 @@ class NoteService
                 $patient->cur_month_activity_time
             );
 
-            $patientRecord->is_ccm_complex = isset($input['complex']) ? 1 : 0;
-
         } else {
 
-            $patientRecord->is_ccm_complex = isset($input['complex']) ? 1 : 0;
+            $patientRecord->is_ccm_complex = 0;
+            $patientRecord->save();
 
         }
 
-        $patientRecord->save();
+        if($ccmComplex){
+
+            $patientRecord->is_ccm_complex = 1;
+            $patientRecord->save();
+
+            if($patient->cur_month_activity_time > 3600){
+
+                (new AlternativeCareTimePayableCalculator(auth()->user()->nurseInfo))->adjustPayOnCCMComplexSwitch60Mins();
+
+            }
+
+        }
 
         return $patientRecord;
 

@@ -268,15 +268,11 @@ class PageTimerController extends Controller
         $nurse = User::find($activity->provider_id)->nurseInfo;
 
         if ($nurse) {
+
+            $alternativePayComputer = new AlternativeCareTimePayableCalculator($nurse);
             
-            $data = (new AlternativeCareTimePayableCalculator($nurse))->adjustCCMPaybleForActivity($activity);
+            $alternativePayComputer->adjustCCMPaybleForActivity($activity);
             
-            return (new AlternativeCareTimePayableCalculator($nurse))
-                        ->createOrIncrementNurseSummary(
-                                $data['toAddToAccuredTowardsCCM'],
-                                $data['toAddToAccuredAfterCCM'],
-                                $data['activity_id']
-                        );
         }
 
         return false;

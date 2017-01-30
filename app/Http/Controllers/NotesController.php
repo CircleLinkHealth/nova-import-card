@@ -1,6 +1,7 @@
 <?php namespace App\Http\Controllers;
 
 use App\Activity;
+use App\Algorithms\Invoicing\AlternativeCareTimePayableCalculator;
 use App\Formatters\WebixFormatter;
 use App\PatientContactWindow;
 use App\PatientMonthlySummary;
@@ -307,9 +308,7 @@ class NotesController extends Controller
         }
 
         //CCM Complexity Handle
-        $this->service->updatePatientRecords($patient->patientInfo);
-
-
+        $this->service->updatePatientRecords($patient->patientInfo, isset($input['status']));
 
         if (isset($input['general_comment'])) {
             $info->general_comment = $input['general_comment'];
@@ -369,7 +368,6 @@ class NotesController extends Controller
                 $ccm_complex = $patient->patientInfo->isCCMComplex() ?? false;
 
                 $ccm_above = false;
-
                 if ($seconds > 1199 && !$ccm_complex) {
                     $ccm_above = true;
                 } elseif ($seconds > 3599 && $ccm_complex) {

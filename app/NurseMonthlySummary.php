@@ -24,5 +24,5 @@ class NurseMonthlySummary extends Model
         $this->belongsTo(Nurse::class, 'id', 'nurse_id');
 
     }
-
+    
 }
