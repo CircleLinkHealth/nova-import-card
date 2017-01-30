@@ -50,7 +50,7 @@
             <div class="modal-content">
                 <div class="modal-header">
                     <button type="button" class="close" data-dismiss="modal">&times;</button>
-                    <h4 class="modal-title">Please Edit Provider Details</h4>
+                    <h4 class="modal-title">Provider Details</h4>
                 </div>
                 <div class="modal-body">
                     <div class="row providerForm">
@@ -172,9 +172,8 @@
                         </div>
                     </div>
 
-                    <input type="hidden" id="popup_created_by" name="popup_created_by"
-                           value="{{auth()->user()->id}}">
-                    <input type="hidden" id="popup_patient_id" name="popup_patient_id" value="{{$patient->id}}">
+                    <meta name="popup_created_by" content="{{auth()->user()->id}}">
+                    <meta name="popup_patient_id" content="{{$patient->id}}">
 
                     <div>
                         <button v-on:click="updateCareTeamMember(care_person.id)" type="submit"

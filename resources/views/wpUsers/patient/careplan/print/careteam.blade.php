@@ -1,4 +1,4 @@
-@include('vue-templates.view-careplan.care-team-container')
+@include('vue-templates.care-person')
 
 <ul class="col-xs-12">
     <div v-for="member in careTeamCollection">

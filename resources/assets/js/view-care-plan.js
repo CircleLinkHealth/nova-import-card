@@ -17,6 +17,7 @@ var carePerson = Vue.component('carePerson', {
     data: function () {
         return {
             destroyRoute: '',
+            patientId: '',
             updateRoute: '',
         }
     },
@@ -24,6 +25,7 @@ var carePerson = Vue.component('carePerson', {
     ready: function () {
         this.$set('destroyRoute', $('meta[name="provider-destroy-route"]').attr('content'));
         this.$set('updateRoute', $('meta[name="provider-update-route"]').attr('content'));
+        this.$set('patientId', $('meta[name="popup_patient_ide"]').attr('content'));
     },
 
     methods: {
@@ -48,7 +50,10 @@ var carePerson = Vue.component('carePerson', {
         },
 
         updateCareTeamMember: function (id) {
-            this.$http.patch(this.updateRoute + '/' + id, {careTeamMember: this.care_person}).then(function (response) {
+            this.$http.patch(this.updateRoute + '/' + id, {
+                careTeamMember: this.care_person,
+                patientId: this.patientId,
+            }).then(function (response) {
                 $("#editCareTeamModal-" + id).modal('hide');
             }, function (response) {
                 //error
@@ -56,8 +61,6 @@ var carePerson = Vue.component('carePerson', {
         }
     }
 });
-
-var careTeamContainer = {};
 
 /**
  *
@@ -72,8 +75,10 @@ var vm = new Vue({
     },
 
     ready: function () {
-        for (var i = 0, len = cpm.careTeam.length; i < len; i++) {
-            this.careTeamCollection.$set(i, cpm.careTeam[i]);
+        if (typeof cpm !== 'undefined') {
+            for (var i = 0, len = cpm.careTeam.length; i < len; i++) {
+                this.careTeamCollection.$set(i, cpm.careTeam[i]);
+            }
         }
     },
 
@@ -84,6 +89,7 @@ var vm = new Vue({
             this.careTeamCollection.push({
                 id: id,
                 formatted_type: 'External',
+                alert: '',
                 user: {
                     first_name: '',
                     last_name: '',

@@ -140,11 +140,18 @@ class CareTeamController extends Controller
 
         $input = $request->input('careTeamMember');
 
-        $careTeam = CarePerson::where('id', '=', $input['id'])
-            ->update([
+        if (str_contains($input['id'], 'new')) {
+            $careTeam = CarePerson::create([
                 'alert' => $input['alert'],
                 'type'  => snake_case($input['formatted_type']),
             ]);
+        } else {
+            $careTeam = CarePerson::where('id', '=', $input['id'])
+                ->update([
+                    'alert' => $input['alert'],
+                    'type'  => snake_case($input['formatted_type']),
+                ]);
+        }
 
         $user = User::find($input['user']['id']);
         $user->first_name = $input['user']['first_name'];

@@ -123,12 +123,6 @@
             <!-- PAGE TIMER END -->
         @endif
 
-        @if(!isset($isPdf))
-            @if(!empty($patient->id))
-                @include('partials.addprovider')
-            @endif
-        @endif
-
         @include('partials.footer')
 
         @yield('scripts')
