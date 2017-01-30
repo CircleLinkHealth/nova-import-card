@@ -171,14 +171,14 @@ class CareTeamController extends Controller
 
 
         if (str_contains($input['id'], 'new')) {
-            $careTeam = CarePerson::create([
+            $carePerson = CarePerson::create([
                 'alert'          => $input['alert'],
                 'type'           => snake_case($input['formatted_type']),
                 'user_id'        => $patientId,
                 'member_user_id' => $user->id,
             ]);
         } else {
-            $careTeam = CarePerson::where('id', '=', $input['id'])
+            $carePerson = CarePerson::where('id', '=', $input['id'])
                 ->update([
                     'alert' => $input['alert'],
                     'type'  => snake_case($input['formatted_type']),
@@ -195,9 +195,9 @@ class CareTeamController extends Controller
                     ]);
             } else {
                 $phone = PhoneNumber::updateOrCreate([
-                    'user_id'    => $user->id,
-                    'type'       => 'work',
-                    'number'     => StringManipulation::formatPhoneNumber($phone['number']),
+                    'user_id' => $user->id,
+                    'type'    => 'work',
+                    'number'  => StringManipulation::formatPhoneNumber($phone['number']),
                 ]);
             }
         }
@@ -223,7 +223,7 @@ class CareTeamController extends Controller
             ]);
         }
 
-        return response()->json([], 200);
+        return response()->json(['carePerson' => $carePerson], 200);
     }
 
 }

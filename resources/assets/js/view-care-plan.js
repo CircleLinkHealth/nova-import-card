@@ -1,7 +1,6 @@
 var Vue = require('vue');
 Vue.use(require('vue-resource'));
-require('./components/CareTeam/search-providers.js');
-require('./components/CareTeam/care-person.js');
+require('./components/CareTeam/care-team.js');
 
 Vue.http.headers.common['X-CSRF-TOKEN'] = $('meta[name="csrf-token"]').attr('content');
 
@@ -17,6 +16,12 @@ const vm = new Vue({
         careTeamCollection: [],
     },
 
+    events: {
+        'care-person-created': function (data) {
+            this.careTeamCollection.push(data.newCarePerson);
+        }
+    },
+
     ready: function () {
         if (typeof cpm !== 'undefined') {
             for (var i = 0, len = cpm.careTeam.length; i < len; i++) {
@@ -29,38 +34,40 @@ const vm = new Vue({
         createCarePerson: function () {
             let id = 'new' + parseInt((Math.random() * 100), 10);
 
-            this.careTeamCollection.push({
-                id: id,
-                formatted_type: 'External',
-                alert: false,
-                user: {
-                    id: '',
-                    email: '',
-                    first_name: '',
-                    last_name: '',
-                    address: '',
-                    address2: '',
-                    city: '',
-                    state: '',
-                    zip: '',
-                    phone_numbers: {
-                        0: {
-                            number: '',
+            this.$dispatch('care-person-created', {
+                newCarePerson: {
+                    id: id,
+                    formatted_type: 'External',
+                    alert: false,
+                    user: {
+                        id: '',
+                        email: '',
+                        first_name: '',
+                        last_name: '',
+                        address: '',
+                        address2: '',
+                        city: '',
+                        state: '',
+                        zip: '',
+                        phone_numbers: {
+                            0: {
+                                number: '',
+                            }
+                        },
+                        primary_practice: {
+                            display_name: ''
+                        },
+                        provider_info: {
+                            specialty: '',
                         }
                     },
-                    primary_practice: {
-                        display_name: ''
-                    },
-                    provider_info: {
-                        specialty: '',
-                    }
                 },
             });
 
             this.$nextTick(function () {
                 $("#editCareTeamModal-" + id).modal();
             });
-        }
+        },
     }
 });
 

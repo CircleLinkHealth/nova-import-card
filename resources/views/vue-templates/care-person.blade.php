@@ -1,6 +1,6 @@
 {{--The component's css--}}
 <style>
-    label {
+    .modal label {
         font-size: 14px;
     }
 
@@ -12,43 +12,11 @@
 
 {{--Declare any variables the component may need here--}}
 {{--In this case I need routes to be able to delete multiple components--}}
-<meta name="provider-destroy-route" content="{{ route('care-team.destroy', ['id'=>'']) }}">
 <meta name="provider-update-route" content="{{ route('care-team.update', ['id'=>'']) }}">
 <meta name="providers-search" content="{{ route('providers.search') }}">
 
 {{--The component's Template--}}
-<script type="text/x-template" id="care-person-template">
-
-    <div v-show="care_person.user.first_name && care_person.user.last_name">
-        <div class="col-md-7">
-            <p style="margin-left: -10px;">
-                <strong>@{{care_person.formatted_type}}
-                    : </strong>@{{care_person.user.first_name}} @{{care_person.user.last_name}}
-                <em>@{{care_person.user.provider_info.specialty}}</em>
-            </p>
-        </div>
-
-        <div class="col-md-3">
-            <p v-if="care_person.alert">Receives Alerts</p>
-        </div>
-
-        <div class="col-md-2">
-            <button id="deleteCareTeamMember-@{{care_person.id}}"
-                    class="btn btn-xs btn-danger problem-delete-btn"
-                    v-on:click.stop.prevent="deleteCareTeamMember(care_person.id)">
-                    <span>
-                        <i class="glyphicon glyphicon-remove"></i>
-                    </span>
-            </button>
-            <button class="btn btn-xs btn-primary problem-edit-btn"
-                    v-on:click.stop.prevent="editCareTeamMember(care_person.id)">
-            <span>
-                <i class="glyphicon glyphicon-pencil"></i>
-            </span>
-            </button>
-        </div>
-    </div>
-
+<script type="text/x-template" id="care-person-modal-template">
     <div id="editCareTeamModal-@{{ care_person.id }}" class="modal fade" role="dialog">
         <div class="modal-dialog">
 
@@ -239,15 +207,12 @@
                     <meta name="popup_patient_id" content="{{$patient->id}}">
 
                     <div>
-                        <button v-on:click="updateCareTeamMember(care_person.id)" type="submit"
+                        <button v-on:click="updateCarePerson(care_person.id)" type="submit"
                                 id="editCarePerson" class="create btn btn-primary">Save
                         </button>
                     </div>
-
                 </div>
-
             </div>
-
         </div>
     </div>
 </script>

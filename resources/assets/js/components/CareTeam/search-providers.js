@@ -3,7 +3,7 @@ Vue.use(require('vue-resource'));
 Vue.http.headers.common['X-CSRF-TOKEN'] = $('meta[name="csrf-token"]').attr('content');
 
 let searchProviders = Vue.component('searchProviders', {
-        template: '<div v-if="matchedUsers.length>0" class="alert alert-info"><h4>Did you mean?</h4><ul><li v-for="user in matchedUsers"><a href="#" v-on:click="attachExistingProvider(user)">{{user.first_name}} {{user.last_name}}, {{user.primary_practice.display_name}}</a></li></ul></div>',
+        template: '<div v-if="matchedUsers.length>0" class="alert alert-info"><h4>Did you mean?</h4><ul><li v-for="user in matchedUsers"><a href="#" v-on:click.stop.prevent="attachExistingProvider(user)">{{user.first_name}} {{user.last_name}}, {{user.primary_practice.display_name}}</a></li></ul></div>',
 
         props: ['first_name', 'last_name'],
 
@@ -20,7 +20,7 @@ let searchProviders = Vue.component('searchProviders', {
 
         computed: {
             validFullName: function () {
-                return this.first_name.length > 2;
+                return this.first_name.length > 2 || this.last_name.length > 2;
             },
 
             fullName: function () {
