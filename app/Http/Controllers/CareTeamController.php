@@ -13,6 +13,36 @@ use Illuminate\Http\Request;
 
 class CareTeamController extends Controller
 {
+    public function destroy(
+        Request $request,
+        $id
+    ) {
+
+        if (!$request->ajax()) {
+            return abort('403', 'Care Team Members cannot be deleted using this method');
+        }
+
+        $member = CarePerson::find($id);
+        $member->delete();
+
+        return response()->json([], 200);
+    }
+
+    public function searchProviders(Request $request)
+    {
+        $firstNameTerm = $request->input('firstName');
+        $lastNameTerm = $request->input('lastName');
+
+        $users = User::ofType(['provider'])
+            ->with('primaryPractice')
+            ->with('providerInfo')
+            ->with('phoneNumbers')
+            ->where('first_name', 'like', "$firstNameTerm%")
+            ->where('last_name', 'like', "$lastNameTerm%")
+            ->get();
+
+        return response()->json(['results' => $users]);
+    }
 
     public function store(Request $request)
     {
@@ -114,21 +144,6 @@ class CareTeamController extends Controller
 
     }
 
-    public function destroy(
-        Request $request,
-        $id
-    ) {
-
-        if (!$request->ajax()) {
-            return abort('403', 'Care Team Members cannot be deleted using this method');
-        }
-
-        $member = CarePerson::find($id);
-        $member->delete();
-
-        return response()->json([], 200);
-    }
-
     public function update(
         Request $request,
         $id
@@ -139,19 +154,36 @@ class CareTeamController extends Controller
         }
 
         $input = $request->input('careTeamMember');
+        $patientId = $request->input('patientId');
 
-        $careTeam = CarePerson::where('id', '=', $input['id'])
-            ->update([
-                'alert' => $input['alert'],
-                'type'  => snake_case($input['formatted_type']),
+        $user = User::updateOrCreate([
+            'id' => $input['user']['id'],
+        ], [
+            'first_name' => $input['user']['first_name'],
+            'last_name'  => $input['user']['last_name'],
+            'address'    => $input['user']['address'],
+            'address2'   => $input['user']['address2'],
+            'city'       => $input['user']['city'],
+            'state'      => $input['user']['state'],
+            'zip'        => $input['user']['zip'],
+            'email'      => $input['user']['email'],
+        ]);
+
+
+        if (str_contains($input['id'], 'new')) {
+            $carePerson = CarePerson::create([
+                'alert'          => $input['alert'],
+                'type'           => snake_case($input['formatted_type']),
+                'user_id'        => $patientId,
+                'member_user_id' => $user->id,
             ]);
-
-        $user = User::find($input['user']['id']);
-        $user->first_name = $input['user']['first_name'];
-        $user->last_name = $input['user']['last_name'];
-        $user->address = $input['user']['address'];
-        $user->email = $input['user']['email'];
-        $user->save();
+        } else {
+            $carePerson = CarePerson::where('id', '=', $input['id'])
+                ->update([
+                    'alert' => $input['alert'],
+                    'type'  => snake_case($input['formatted_type']),
+                ]);
+        }
 
         if (isset($input['user']['phone_numbers'][0])) {
             $phone = $input['user']['phone_numbers'][0];
@@ -162,11 +194,10 @@ class CareTeamController extends Controller
                         'number' => StringManipulation::formatPhoneNumber($phone['number']),
                     ]);
             } else {
-                $phone = PhoneNumber::create([
-                    'user_id'    => $user->id,
-                    'type'       => 'work',
-                    'number'     => StringManipulation::formatPhoneNumber($phone['number']),
-                    'is_primary' => 1,
+                $phone = PhoneNumber::updateOrCreate([
+                    'user_id' => $user->id,
+                    'type'    => 'work',
+                    'number'  => StringManipulation::formatPhoneNumber($phone['number']),
                 ]);
             }
         }
@@ -192,7 +223,7 @@ class CareTeamController extends Controller
             ]);
         }
 
-        return response()->json([], 200);
+        return response()->json(['carePerson' => $carePerson], 200);
     }
 
 }

@@ -8,6 +8,16 @@
 
 <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
 
+@include('vue-templates.care-person')
+
+<ul class="col-xs-12">
+    <div v-for="care_person in careTeamCollection">
+        <li class="col-xs-12">
+            <care-person v-bind:care_person="care_person"></care-person>
+        </li>
+    </div>
+</ul>
+
 <section class="FAB hidden-print">
     <div class="FAB__mini-action-button hidden-print">
         <div class="mini-action-button--hide mini-action-button hidden-print">
@@ -23,7 +33,7 @@
             </a>
             <p class="mini-action-button__text--hide">Add Observation</p>
         </div>
-{{--        @if(!auth()->user()->hasRole('care-center')) {--}}
+        {{--        @if(!auth()->user()->hasRole('care-center')) {--}}
 
         <div class="mini-action-button--hide mini-action-button">
             <a href="{{ URL::route('patient.activity.create', array('patient' => $patient->id)) }}">
@@ -41,9 +51,9 @@
         </div>
 
         <div class="mini-action-button--hide mini-action-button">
-            <a href="#" v-on:click="createCarePerson">
+            <p v-on:click="createCarePerson">
                 <i class="mini-action-button__icon material-icons">contact_mail</i>
-            </a>
+            </p>
             <p class="mini-action-button__text--hide">Add Care Person</p>
         </div>
 

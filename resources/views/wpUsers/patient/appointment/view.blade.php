@@ -24,8 +24,6 @@
 
     </style>
 
-    @include('partials.addprovider')
-
     <div class="row" style="margin:30px 0px;">
         <div class="col-lg-10 col-lg-offset-1">
             @include('errors.errors')
