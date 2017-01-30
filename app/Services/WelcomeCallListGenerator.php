@@ -10,6 +10,7 @@ namespace App\Services;
 
 
 use App\CLH\CCD\Importer\SnomedToCpmIcdMap;
+use App\Models\CPM\CpmProblem;
 use Carbon\Carbon;
 use Illuminate\Support\Collection;
 use Maatwebsite\Excel\Facades\Excel;
@@ -39,7 +40,12 @@ class WelcomeCallListGenerator
 
     protected function byNumberOfProblems() : WelcomeCallListGenerator
     {
-        $patientList = $this->patientList->map(function ($row) {
+        $cpmProblems = CpmProblem::all();
+
+        $patientList = $this->patientList->map(function ($row) use
+        (
+            $cpmProblems
+        ) {
             $row['ccm_condition_1'] = '';
             $row['ccm_condition_2'] = '';
 
@@ -51,9 +57,13 @@ class WelcomeCallListGenerator
 
             foreach ($problems as $problemCode) {
 
-                if (count($qualifyingProblems) > 1) {
-                    break;
-                }
+                //This was used for a list where problems where written as such: ICD-209: Diabetes,
+//                $from = strpos($problemCode, '-');
+//                $to = strpos($problemCode, ':');
+//
+//                if ($from !== false && $to !== false) {
+//                    $problemCode = substr($problemCode, ++$from, $to - $from);
+//                }
 
                 //try icd 9
                 $problem = SnomedToCpmIcdMap::where('icd_9_code', '=', $problemCode)
@@ -74,7 +84,21 @@ class WelcomeCallListGenerator
                     $qualifyingProblemsCpmIdStack[] = $problem->cpm_problem_id;
                     continue;
                 }
+
+                //Iffy ICD-9 test
+                foreach ($cpmProblems as $problem) {
+                    if ($problemCode >= $problem->icd9from
+                        && $problemCode <= $problem->icd9to
+                        && !in_array($problem->id, $qualifyingProblemsCpmIdStack)
+                    ) {
+                        $qualifyingProblems[] = "{$problem->name}, ICD9: $problemCode";
+                        $qualifyingProblemsCpmIdStack[] = $problem->id;
+                        continue 2;
+                    }
+                }
             }
+
+            $qualifyingProblems = array_unique($qualifyingProblems);
 
             if (count($qualifyingProblems) < 2) {
                 return false;
@@ -94,8 +118,8 @@ class WelcomeCallListGenerator
     protected function byInsurance() : WelcomeCallListGenerator
     {
         $this->patientList = $this->patientList->reject(function ($row) {
-            $primary = strtolower($row['primary_insurance']);
-            $secondary = strtolower($row['secondary_insurance']);
+            $primary = strtolower($row['primary_insurance'] ?? null);
+            $secondary = strtolower($row['secondary_insurance']  ?? null);
 
             //Change none to an empty string
             if (str_contains($primary, 'none')) {
@@ -106,14 +130,15 @@ class WelcomeCallListGenerator
             }
 
             //Keep the patient if they have medicaid
-            if (str_contains($primary, 'medicaid') || str_contains($secondary, 'medicaid')) {
-                return false;
-            }
+//            if (str_contains($primary, 'medicaid') || str_contains($secondary, 'medicaid')) {
+//                return false;
+//            }
 
             //Keep the patient if they have medicate b AND a secondary insurance
             if (str_contains($primary, [
                     'medicare b',
                     'medicare part b',
+                    'medicare',
                 ]) && !empty($secondary)
             ) {
                 return false;
