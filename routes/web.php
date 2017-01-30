@@ -301,7 +301,7 @@ Route::group(['middleware' => 'auth'], function () {
             'as'   => 'patient.note.listing',
         ]);
 
-        Route::resource('providers', 'CareTeamController');
+        Route::resource('care-team', 'CareTeamController');
 
         Route::get('provider/search', [
             'uses' => 'CareTeamController@searchProviders',

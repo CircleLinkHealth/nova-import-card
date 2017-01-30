@@ -3,6 +3,15 @@ Vue.use(require('vue-resource'));
 Vue.http.headers.common['X-CSRF-TOKEN'] = $('meta[name="csrf-token"]').attr('content');
 
 var carePerson = Vue.component('carePerson', {
+    events: {
+        'existing-user-selected': function (data) {
+            alert(data.user.id);
+
+            this.$set('care_person.user.first_name', data.user.first_name);
+            this.$set('care_person.user.address', data.user.address);
+        }
+    },
+
     template: '#care-person-template',
 
     props: [
@@ -21,7 +30,7 @@ var carePerson = Vue.component('carePerson', {
     ready: function () {
         this.$set('destroyRoute', $('meta[name="provider-destroy-route"]').attr('content'));
         this.$set('updateRoute', $('meta[name="provider-update-route"]').attr('content'));
-        this.$set('patientId', $('meta[name="popup_patient_ide"]').attr('content'));
+        this.$set('patientId', $('meta[name="popup_patient_id"]').attr('content'));
     },
 
     methods: {

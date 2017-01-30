@@ -60,7 +60,7 @@
             } catch (e) {
                 cachedClearTimeout = defaultClearTimeout;
             }
-        }());
+        }())
         function runTimeout(fun) {
             if (cachedSetTimeout === setTimeout) {
                 //normal enviroments in sane situations
@@ -81,7 +81,7 @@
                 } catch (e) {
                     // same as above but when it's a version of I.E. that must have the global object for 'this', hopfully our context correct otherwise it will throw a global error
                     return cachedSetTimeout.call(this, fun, 0);
-                }
+        }
             }
 
 
@@ -326,7 +326,7 @@
                 } catch (e) {
                     if (!called) {
                         promise.reject(e);
-                    }
+            }
                     return;
                 }
 
@@ -573,7 +573,7 @@
             if (obj && typeof obj.length == 'number') {
                 for (i = 0; i < obj.length; i++) {
                     iterator.call(obj[i], obj[i], i);
-                }
+        }
             } else if (isObject(obj)) {
                 for (key in obj) {
                     if (obj.hasOwnProperty(key)) {
@@ -633,7 +633,7 @@
             }
                     if (isArray(source[key]) && !isArray(target[key])) {
                         target[key] = [];
-                    }
+            }
                     _merge(target[key], source[key], deep);
                 } else if (source[key] !== undefined) {
                     target[key] = source[key];
@@ -4916,7 +4916,7 @@
                     // keep flushing until it depletes
                     if (queue.length) {
                         _again = true;
-                        continue;
+                        continue _function;
                     }
                     // dev tool hook
                     /* istanbul ignore if */
@@ -9441,7 +9441,7 @@
                         } else {
                             arg = dirName;
                             pushDir('bind', directives.bind);
-                        }
+            }
                     } else
 
                     // normal directives
@@ -12018,6 +12018,15 @@
         Vue.http.headers.common['X-CSRF-TOKEN'] = $('meta[name="csrf-token"]').attr('content');
 
         var carePerson = Vue.component('carePerson', {
+            events: {
+                'existing-user-selected': function existingUserSelected(data) {
+                    alert(data.user.id);
+
+                    this.$set('care_person.user.first_name', data.user.first_name);
+                    this.$set('care_person.user.address', data.user.address);
+                }
+            },
+
             template: '#care-person-template',
 
             props: [
@@ -12035,7 +12044,7 @@
             ready: function ready() {
                 this.$set('destroyRoute', $('meta[name="provider-destroy-route"]').attr('content'));
                 this.$set('updateRoute', $('meta[name="provider-update-route"]').attr('content'));
-                this.$set('patientId', $('meta[name="popup_patient_ide"]').attr('content'));
+                this.$set('patientId', $('meta[name="popup_patient_id"]').attr('content'));
             },
 
             methods: {
@@ -12044,7 +12053,7 @@
 
                     if (!disassociate) {
                         return true;
-                    }
+            }
 
                     this.$http.delete(this.destroyRoute + '/' + id).then(function (response) {
                         this.$destroy(true);
@@ -12080,13 +12089,13 @@
         Vue.http.headers.common['X-CSRF-TOKEN'] = $('meta[name="csrf-token"]').attr('content');
 
         var searchProviders = Vue.component('searchProviders', {
-            template: '<div v-if="matchedCarePeople.length>0" class="alert alert-info"><h4>Did you mean?</h4><ul><li v-for="care_person in matchedCarePeople"><a href="" v-on:click="updateCareTeamMember(care_person.id)">{{care_person.first_name}} {{care_person.last_name}}, {{care_person.primary_practice.display_name}}</a></li></ul></div>',
+            template: '<div v-if="matchedUsers.length>0" class="alert alert-info"><h4>Did you mean?</h4><ul><li v-for="user in matchedUsers"><a href="#" v-on:click="attachExistingProvider(user)">{{user.first_name}} {{user.last_name}}, {{user.primary_practice.display_name}}</a></li></ul></div>',
 
             props: ['first_name', 'last_name'],
 
             data: function data() {
                 return {
-                    matchedCarePeople: [],
+                    matchedUsers: [],
                     getSearchUrl: ''
                 };
             },
@@ -12111,9 +12120,15 @@
                     var url = this.getSearchUrl + '?firstName=' + this.first_name + '&lastName=' + this.last_name;
 
                     this.$http.get(url).then(function (response) {
-                        this.$set('matchedCarePeople', response.data.results);
+                        this.$set('matchedUsers', response.data.results);
                     }, function (response) {
                         //error
+                    });
+                },
+
+                attachExistingProvider: function attachExistingProvider(user_obj) {
+                    this.$dispatch('existing-user-selected', {
+                        user: user_obj
                     });
                 }
             },
@@ -12166,14 +12181,20 @@
                     this.careTeamCollection.push({
                         id: id,
                         formatted_type: 'External',
-                        alert: '',
+                        alert: false,
                         user: {
+                            id: '',
                             first_name: '',
                             last_name: '',
+                            address: '',
+                            address2: '',
+                            city: '',
+                            state: '',
+                            zip: '',
                             phone_numbers: {
                                 0: {
                                     number: ''
-                                }
+                        }
                             },
                             primary_practice: {
                                 display_name: ''
@@ -12181,7 +12202,7 @@
                             provider_info: {
                                 specialty: ''
                             }
-                        }
+                }
                     });
 
                     this.$nextTick(function () {

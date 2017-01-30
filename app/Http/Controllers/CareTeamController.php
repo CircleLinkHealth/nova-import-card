@@ -13,7 +13,6 @@ use Illuminate\Http\Request;
 
 class CareTeamController extends Controller
 {
-
     public function destroy(
         Request $request,
         $id
@@ -154,10 +153,21 @@ class CareTeamController extends Controller
 
         $input = $request->input('careTeamMember');
 
+        $user = User::firstOrNew([
+            'id' => $input['user']['id'],
+        ]);
+        $user->first_name = $input['user']['first_name'];
+        $user->last_name = $input['user']['last_name'];
+        $user->address = $input['user']['address'];
+        $user->email = $input['user']['email'];
+        $user->save();
+
         if (str_contains($input['id'], 'new')) {
             $careTeam = CarePerson::create([
-                'alert' => $input['alert'],
-                'type'  => snake_case($input['formatted_type']),
+                'alert'          => $input['alert'],
+                'type'           => snake_case($input['formatted_type']),
+                'user_id'        => $input['patientId'],
+                'member_user_id' => $user->id,
             ]);
         } else {
             $careTeam = CarePerson::where('id', '=', $input['id'])
@@ -166,13 +176,6 @@ class CareTeamController extends Controller
                     'type'  => snake_case($input['formatted_type']),
                 ]);
         }
-
-        $user = User::find($input['user']['id']);
-        $user->first_name = $input['user']['first_name'];
-        $user->last_name = $input['user']['last_name'];
-        $user->address = $input['user']['address'];
-        $user->email = $input['user']['email'];
-        $user->save();
 
         if (isset($input['user']['phone_numbers'][0])) {
             $phone = $input['user']['phone_numbers'][0];

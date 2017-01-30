@@ -10,7 +10,7 @@ Vue.http.headers.common['X-CSRF-TOKEN'] = $('meta[name="csrf-token"]').attr('con
  * VUE INSTANCE
  *
  */
-var vm = new Vue({
+const vm = new Vue({
     el: 'body',
 
     data: {
@@ -32,10 +32,16 @@ var vm = new Vue({
             this.careTeamCollection.push({
                 id: id,
                 formatted_type: 'External',
-                alert: '',
+                alert: false,
                 user: {
+                    id: '',
                     first_name: '',
                     last_name: '',
+                    address: '',
+                    address2: '',
+                    city: '',
+                    state: '',
+                    zip: '',
                     phone_numbers: {
                         0: {
                             number: '',
@@ -56,7 +62,6 @@ var vm = new Vue({
         }
     }
 });
-
 
 
 
