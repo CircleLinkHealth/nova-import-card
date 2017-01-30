@@ -1,8 +1,6 @@
 var Vue = require('vue');
-
-Vue.config.debug = true;
-
 Vue.use(require('vue-resource'));
+require('./search-providers.js');
 
 Vue.http.headers.common['X-CSRF-TOKEN'] = $('meta[name="csrf-token"]').attr('content');
 

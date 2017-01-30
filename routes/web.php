@@ -11,8 +11,12 @@ if (app()->environment() != 'production') {
         $start = Carbon\Carbon::now()->startOfMonth();
         $end = Carbon\Carbon::now()->endOfMonth();
 
-        $systemTime = PageTimer::where('provider_id',2785)
-            ->where(function ($q) use ($start, $end){
+        $systemTime = PageTimer::where('provider_id', 2785)
+            ->where(function ($q) use
+            (
+                $start,
+                $end
+            ) {
                 $q->where('updated_at', '>=', $start)
                     ->where('updated_at', '<=', $end);
             })
@@ -297,7 +301,12 @@ Route::group(['middleware' => 'auth'], function () {
             'as'   => 'patient.note.listing',
         ]);
 
-        Route::resource('provider', 'CareTeamController');
+        Route::resource('providers', 'CareTeamController');
+
+        Route::get('provider/search', [
+            'uses' => 'CareTeamController@searchProviders',
+            'as'   => 'providers.search',
+        ]);
 
         // nurse call list
         Route::group(['prefix' => 'patient-call-list'], function () {

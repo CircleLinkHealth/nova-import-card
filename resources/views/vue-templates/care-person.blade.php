@@ -7,8 +7,9 @@
 
 {{--Declare any variables the component may need here--}}
 {{--In this case I need routes to be able to delete multiple components--}}
-<meta name="provider-destroy-route" content="{{ route('provider.destroy', ['id'=>'']) }}">
-<meta name="provider-update-route" content="{{ route('provider.update', ['id'=>'']) }}">
+<meta name="provider-destroy-route" content="{{ route('providers.destroy', ['id'=>'']) }}">
+<meta name="provider-update-route" content="{{ route('providers.update', ['id'=>'']) }}">
+<meta name="providers-search" content="{{ route('providers.search') }}">
 
 {{--The component's Template--}}
 <script type="text/x-template" id="care-person-template">
@@ -53,6 +54,14 @@
                     <h4 class="modal-title">Provider Details</h4>
                 </div>
                 <div class="modal-body">
+
+                    <div class="row providerForm">
+                        <search-providers v-if="!care_person.user.id"
+                                          v-bind:first_name="care_person.user.first_name"
+                                          v-bind:last_name="care_person.user.last_name"
+                        ></search-providers>
+                    </div>
+
                     <div class="row providerForm">
                         <div class="form-group">
                             <label class="col-md-3 control-label" for="name">Provider Name</label>

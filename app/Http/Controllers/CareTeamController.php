@@ -14,6 +14,35 @@ use Illuminate\Http\Request;
 class CareTeamController extends Controller
 {
 
+    public function destroy(
+        Request $request,
+        $id
+    ) {
+
+        if (!$request->ajax()) {
+            return abort('403', 'Care Team Members cannot be deleted using this method');
+        }
+
+        $member = CarePerson::find($id);
+        $member->delete();
+
+        return response()->json([], 200);
+    }
+
+    public function searchProviders(Request $request)
+    {
+        $firstNameTerm = $request->input('firstName');
+        $lastNameTerm = $request->input('lastName');
+
+        $users = User::ofType(['provider'])
+            ->with('primaryPractice')
+            ->where('first_name', 'like', "$firstNameTerm%")
+            ->where('last_name', 'like', "$lastNameTerm%")
+            ->get();
+
+        return response()->json(['results' => $users]);
+    }
+
     public function store(Request $request)
     {
 
@@ -112,21 +141,6 @@ class CareTeamController extends Controller
 
         }
 
-    }
-
-    public function destroy(
-        Request $request,
-        $id
-    ) {
-
-        if (!$request->ajax()) {
-            return abort('403', 'Care Team Members cannot be deleted using this method');
-        }
-
-        $member = CarePerson::find($id);
-        $member->delete();
-
-        return response()->json([], 200);
     }
 
     public function update(
