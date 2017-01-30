@@ -35,6 +35,8 @@ class CareTeamController extends Controller
 
         $users = User::ofType(['provider'])
             ->with('primaryPractice')
+            ->with('providerInfo')
+            ->with('phoneNumbers')
             ->where('first_name', 'like', "$firstNameTerm%")
             ->where('last_name', 'like', "$lastNameTerm%")
             ->get();
@@ -192,11 +194,10 @@ class CareTeamController extends Controller
                         'number' => StringManipulation::formatPhoneNumber($phone['number']),
                     ]);
             } else {
-                $phone = PhoneNumber::create([
+                $phone = PhoneNumber::updateOrCreate([
                     'user_id'    => $user->id,
                     'type'       => 'work',
                     'number'     => StringManipulation::formatPhoneNumber($phone['number']),
-                    'is_primary' => 1,
                 ]);
             }
         }

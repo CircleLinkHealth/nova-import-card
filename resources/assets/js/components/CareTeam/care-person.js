@@ -5,10 +5,7 @@ Vue.http.headers.common['X-CSRF-TOKEN'] = $('meta[name="csrf-token"]').attr('con
 var carePerson = Vue.component('carePerson', {
     events: {
         'existing-user-selected': function (data) {
-            alert(data.user.id);
-
-            this.$set('care_person.user.first_name', data.user.first_name);
-            this.$set('care_person.user.address', data.user.address);
+            this.$set('care_person.user', data.user);
         }
     },
 
