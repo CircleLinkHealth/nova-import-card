@@ -47,7 +47,7 @@
                     cachedSetTimeout = setTimeout;
                 } else {
                     cachedSetTimeout = defaultSetTimout;
-                }
+        }
             } catch (e) {
                 cachedSetTimeout = defaultSetTimout;
             }
@@ -56,7 +56,7 @@
                     cachedClearTimeout = clearTimeout;
                 } else {
                     cachedClearTimeout = defaultClearTimeout;
-                }
+        }
             } catch (e) {
                 cachedClearTimeout = defaultClearTimeout;
             }
@@ -108,7 +108,7 @@
                     // same as above but when it's a version of I.E. that must have the global object for 'this', hopfully our context correct otherwise it will throw a global error.
                     // Some versions of I.E. have different rules for clearTimeout vs setTimeout
                     return cachedClearTimeout.call(this, marker);
-                }
+        }
             }
 
 
@@ -148,8 +148,8 @@
                 while (++queueIndex < len) {
                     if (currentQueue) {
                         currentQueue[queueIndex].run();
-                    }
-                }
+            }
+        }
                 queueIndex = -1;
                 len = queue.length;
             }
@@ -163,7 +163,7 @@
             if (arguments.length > 1) {
                 for (var i = 1; i < arguments.length; i++) {
                     args[i - 1] = arguments[i];
-                }
+        }
             }
             queue.push(new Item(fun, args));
             if (queue.length === 1 && !draining) {
@@ -275,8 +275,8 @@
                         count += 1;
 
                         if (count === iterable.length) {
-                            resolve(result);
-                        }
+                    resolve(result);
+                }
                     };
                 }
 
@@ -313,16 +313,16 @@
                         then.call(x, function (x) {
                             if (!called) {
                                 promise.resolve(x);
-                            }
+                    }
                             called = true;
                         }, function (r) {
-                            if (!called) {
-                                promise.reject(r);
-                            }
+                    if (!called) {
+                        promise.reject(r);
+                    }
                             called = true;
                         });
                         return;
-                    }
+            }
                 } catch (e) {
                     if (!called) {
                         promise.reject(e);
@@ -368,17 +368,17 @@
                                     resolve(onResolved.call(undefined, promise.value));
                                 } else {
                                     resolve(promise.value);
-                                }
+                        }
                             } else if (promise.state === REJECTED) {
                                 if (typeof onRejected === 'function') {
                                     resolve(onRejected.call(undefined, promise.value));
                                 } else {
                                     reject(promise.value);
                                 }
-                            }
+                    }
                         } catch (e) {
                             reject(e);
-                        }
+                }
                     }
                 }
             });
@@ -578,8 +578,8 @@
                 for (key in obj) {
                     if (obj.hasOwnProperty(key)) {
                         iterator.call(obj[key], obj[key], key);
-                    }
-                }
+            }
+        }
             }
 
             return obj;
@@ -608,7 +608,7 @@
                     if (target[key] === undefined) {
                         target[key] = source[key];
                     }
-                }
+        }
             });
 
             return target;
@@ -630,14 +630,14 @@
                 if (deep && (isPlainObject(source[key]) || isArray(source[key]))) {
                     if (isPlainObject(source[key]) && !isPlainObject(target[key])) {
                         target[key] = {};
-                    }
+            }
                     if (isArray(source[key]) && !isArray(target[key])) {
                         target[key] = [];
                     }
                     _merge(target[key], source[key], deep);
                 } else if (source[key] !== undefined) {
                     target[key] = source[key];
-                }
+        }
             }
         }
 
@@ -730,7 +730,7 @@
                                     separator = '&';
                                 } else if (operator !== '#') {
                                     separator = operator;
-                                }
+                        }
 
                                 return (values.length !== 0 ? operator : '') + values.join(separator);
                             } else {
@@ -738,9 +738,9 @@
                             }
                         } else {
                             return encodeReserved(literal);
-                        }
-                    });
                 }
+                    });
+        }
             };
         }
 
@@ -764,11 +764,11 @@
                             value.filter(isDefined).forEach(function (value) {
                                 result.push(encodeValue(operator, value, isKeyOperator(operator) ? key : null));
                             });
-                        } else {
+                } else {
                             Object.keys(value).forEach(function (k) {
                                 if (isDefined(value[k])) {
                                     result.push(encodeValue(operator, value[k], k));
-                                }
+                        }
                             });
                         }
                     } else {
@@ -783,7 +783,7 @@
                                 if (isDefined(value[k])) {
                                     tmp.push(encodeURIComponent(k));
                                     tmp.push(encodeValue(operator, value[k].toString()));
-                                }
+                        }
                             });
                         }
 
@@ -791,9 +791,9 @@
                             result.push(encodeURIComponent(key) + '=' + tmp.join(','));
                         } else if (tmp.length !== 0) {
                             result.push(tmp.join(','));
-                        }
-                    }
                 }
+            }
+        }
             } else {
                 if (operator === ';') {
                     result.push(encodeURIComponent(key));
@@ -801,7 +801,7 @@
                     result.push(encodeURIComponent(key) + '=');
                 } else if (value === '') {
                     result.push('');
-                }
+        }
             }
 
             return result;
@@ -830,7 +830,7 @@
             return str.split(/(%[0-9A-Fa-f]{2})/g).map(function (part) {
                 if (!/%[0-9A-Fa-f]/.test(part)) {
                     part = encodeURI(part);
-                }
+        }
                 return part;
             }).join('');
         }
@@ -975,7 +975,7 @@
                     serialize(params, value, key);
                 } else {
                     params.add(key, value);
-                }
+        }
             });
         }
 
@@ -1166,8 +1166,8 @@
                         response.body = json;
 
                         return response;
-                    });
-                }
+            });
+        }
             });
         }
 
@@ -1209,7 +1209,7 @@
             each(headers, function (value, name) {
                 if (!request.headers.has(name)) {
                     request.headers.set(name, value);
-                }
+        }
             });
 
             next();
@@ -1277,7 +1277,7 @@
 
                 if (request.credentials === true) {
                     xhr.withCredentials = true;
-                }
+        }
 
                 request.headers.forEach(function (value, name) {
                     xhr.setRequestHeader(name, value);
@@ -1338,7 +1338,7 @@
                         }
 
                         exec();
-                    }
+            }
 
                     exec();
                 }, context);
@@ -1473,7 +1473,7 @@
 
                     if (isBlobText(body)) {
                         this.bodyText = blobText(body);
-                    }
+            }
                 }
             }
 
@@ -1572,7 +1572,7 @@
 
                 if (response instanceof Error) {
                     error(response);
-                }
+        }
 
                 return PromiseObj.reject(response);
             });
@@ -1724,7 +1724,7 @@
                             return new Vue.Promise(executor, _this);
                         };
                     }
-                }
+        }
 
             });
         }
@@ -2843,7 +2843,7 @@
                      * the text parser to re-compile the regular expressions.
                      *
                      * @type {Array<String>}
-                     */
+                 */
 
                     get: function get() {
                         return delimiters;
@@ -8021,7 +8021,7 @@
                                 } else {
                                     // root instance
                                     initProp(vm, prop, vm.$get(prop.parentPath));
-                                }
+            }
                             }
                         } else if (prop.optimizedLiteral) {
                             // optimized literal, cast it and just set once
@@ -9458,7 +9458,7 @@
                         if (dirDef) {
                             pushDir(dirName, dirDef);
                         }
-                    }
+            }
                 }
 
                 /**
@@ -12017,65 +12017,6 @@
         Vue.use(require('vue-resource'));
         Vue.http.headers.common['X-CSRF-TOKEN'] = $('meta[name="csrf-token"]').attr('content');
 
-        var searchProviders = Vue.component('searchProviders', {
-            template: '<div v-if="matchedCarePeople.length>0" class="alert alert-info"><h4>Did you mean?</h4><ul><li v-for="care_person in matchedCarePeople"><a href="" v-on:click="updateCareTeamMember(care_person.id)">{{care_person.first_name}} {{care_person.last_name}}, {{care_person.primary_practice.display_name}}</a></li></ul></div>',
-
-            props: ['first_name', 'last_name'],
-
-            data: function data() {
-                return {
-                    matchedCarePeople: [],
-                    getSearchUrl: ''
-                };
-            },
-
-            ready: function ready() {
-                this.getSearchUrl = $('meta[name="providers-search"]').attr('content');
-            },
-
-            computed: {
-                validFullName: function validFullName() {
-                    return this.first_name.length > 2;
-                },
-
-                fullName: function fullName() {
-                    return this.first_name + ' ' + this.last_name;
-                }
-            },
-
-            methods: {
-                search: function search() {
-
-                    var url = this.getSearchUrl + '?firstName=' + this.first_name + '&lastName=' + this.last_name;
-
-                    this.$http.get(url).then(function (response) {
-                        this.$set('matchedCarePeople', response.data.results);
-                    }, function (response) {
-                        //error
-                    });
-                }
-            },
-
-            watch: {
-                fullName: function fullName() {
-                    if (this.validFullName) {
-                        this.search();
-                    }
-                }
-            }
-        });
-
-        module.exports = searchProviders;
-
-    }, {"vue": 3, "vue-resource": 2}], 5: [function (require, module, exports) {
-        'use strict';
-
-        var Vue = require('vue');
-        Vue.use(require('vue-resource'));
-        require('./search-providers.js');
-
-        Vue.http.headers.common['X-CSRF-TOKEN'] = $('meta[name="csrf-token"]').attr('content');
-
         var carePerson = Vue.component('carePerson', {
             template: '#care-person-template',
 
@@ -12129,6 +12070,75 @@
             }
         });
 
+        module.exports = carePerson;
+
+    }, {"vue": 3, "vue-resource": 2}], 5: [function (require, module, exports) {
+        'use strict';
+
+        var Vue = require('vue');
+        Vue.use(require('vue-resource'));
+        Vue.http.headers.common['X-CSRF-TOKEN'] = $('meta[name="csrf-token"]').attr('content');
+
+        var searchProviders = Vue.component('searchProviders', {
+            template: '<div v-if="matchedCarePeople.length>0" class="alert alert-info"><h4>Did you mean?</h4><ul><li v-for="care_person in matchedCarePeople"><a href="" v-on:click="updateCareTeamMember(care_person.id)">{{care_person.first_name}} {{care_person.last_name}}, {{care_person.primary_practice.display_name}}</a></li></ul></div>',
+
+            props: ['first_name', 'last_name'],
+
+            data: function data() {
+                return {
+                    matchedCarePeople: [],
+                    getSearchUrl: ''
+                };
+            },
+
+            ready: function ready() {
+                this.getSearchUrl = $('meta[name="providers-search"]').attr('content');
+            },
+
+            computed: {
+                validFullName: function validFullName() {
+                    return this.first_name.length > 2;
+                },
+
+                fullName: function fullName() {
+                    return this.first_name + ' ' + this.last_name;
+                }
+            },
+
+            methods: {
+                search: function search() {
+
+                    var url = this.getSearchUrl + '?firstName=' + this.first_name + '&lastName=' + this.last_name;
+
+                    this.$http.get(url).then(function (response) {
+                        this.$set('matchedCarePeople', response.data.results);
+                    }, function (response) {
+                        //error
+                    });
+                }
+            },
+
+            watch: {
+                fullName: function fullName() {
+                    if (this.validFullName) {
+                        this.search();
+            }
+                }
+            }
+        });
+
+        module.exports = searchProviders;
+
+    }, {"vue": 3, "vue-resource": 2}], 6: [function (require, module, exports) {
+        'use strict';
+
+        var Vue = require('vue');
+        Vue.use(require('vue-resource'));
+        require('./components/CareTeam/search-providers.js');
+        require('./components/CareTeam/care-person.js');
+
+        Vue.http.headers.common['X-CSRF-TOKEN'] = $('meta[name="csrf-token"]').attr('content');
+
         /**
          *
          * VUE INSTANCE
@@ -12145,7 +12155,7 @@
                 if (typeof cpm !== 'undefined') {
                     for (var i = 0, len = cpm.careTeam.length; i < len; i++) {
                         this.careTeamCollection.$set(i, cpm.careTeam[i]);
-                    }
+            }
                 }
             },
 
@@ -12181,7 +12191,12 @@
             }
         });
 
-    }, {"./search-providers.js": 4, "vue": 3, "vue-resource": 2}]
-}, {}, [5]);
+    }, {
+        "./components/CareTeam/care-person.js": 4,
+        "./components/CareTeam/search-providers.js": 5,
+        "vue": 3,
+        "vue-resource": 2
+    }]
+}, {}, [6]);
 
 //# sourceMappingURL=view-care-plan.js.map
