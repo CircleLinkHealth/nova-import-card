@@ -153,14 +153,19 @@ class CareTeamController extends Controller
 
         $input = $request->input('careTeamMember');
 
-        $user = User::firstOrNew([
+        $user = User::updateOrCreate([
             'id' => $input['user']['id'],
+        ], [
+            'first_name' => $input['user']['first_name'],
+            'last_name'  => $input['user']['last_name'],
+            'address'    => $input['user']['address'],
+            'address2'   => $input['user']['address2'],
+            'city'       => $input['user']['city'],
+            'state'      => $input['user']['state'],
+            'zip'        => $input['user']['zip'],
+            'email'      => $input['user']['email'],
         ]);
-        $user->first_name = $input['user']['first_name'];
-        $user->last_name = $input['user']['last_name'];
-        $user->address = $input['user']['address'];
-        $user->email = $input['user']['email'];
-        $user->save();
+
 
         if (str_contains($input['id'], 'new')) {
             $careTeam = CarePerson::create([
