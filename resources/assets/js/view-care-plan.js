@@ -35,6 +35,7 @@ const vm = new Vue({
                 alert: false,
                 user: {
                     id: '',
+                    email: '',
                     first_name: '',
                     last_name: '',
                     address: '',

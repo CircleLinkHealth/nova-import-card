@@ -152,6 +152,7 @@ class CareTeamController extends Controller
         }
 
         $input = $request->input('careTeamMember');
+        $patientId = $request->input('patientId');
 
         $user = User::updateOrCreate([
             'id' => $input['user']['id'],
@@ -171,7 +172,7 @@ class CareTeamController extends Controller
             $careTeam = CarePerson::create([
                 'alert'          => $input['alert'],
                 'type'           => snake_case($input['formatted_type']),
-                'user_id'        => $input['patientId'],
+                'user_id'        => $patientId,
                 'member_user_id' => $user->id,
             ]);
         } else {

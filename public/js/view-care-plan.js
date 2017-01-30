@@ -60,7 +60,7 @@
             } catch (e) {
                 cachedClearTimeout = defaultClearTimeout;
             }
-        }())
+        }());
         function runTimeout(fun) {
             if (cachedSetTimeout === setTimeout) {
                 //normal enviroments in sane situations
@@ -4916,7 +4916,7 @@
                     // keep flushing until it depletes
                     if (queue.length) {
                         _again = true;
-                        continue _function;
+                        continue;
                     }
                     // dev tool hook
                     /* istanbul ignore if */
@@ -12184,6 +12184,7 @@
                         alert: false,
                         user: {
                             id: '',
+                            email: '',
                             first_name: '',
                             last_name: '',
                             address: '',
