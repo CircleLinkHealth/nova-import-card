@@ -186,7 +186,7 @@
 
                         <div class="row providerForm">
                             <div class="form-group">
-                                <label class="col-md-3 control-label" for="type">Select Type</label>
+                                <label class="col-md-3 control-label" for="type">Clinical Type</label>
                                 <div class="col-md-9">
                                     <div class="col-md-12">
                                         <select v-model="care_person.user.provider_info.qualification" id="type"
