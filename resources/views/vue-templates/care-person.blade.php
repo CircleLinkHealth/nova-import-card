@@ -23,6 +23,30 @@
 
 {{--The component's Template--}}
 <script type="text/x-template" id="care-person-modal-template">
+
+
+    <div id="successModal-@{{ care_person.id }}" class="modal fade" role="dialog">
+        <div class="modal-dialog">
+
+            <!-- Modal content-->
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    <h4 class="modal-title">Care Team Updated</h4>
+                </div>
+                <div class="modal-body">
+                    <p>The changes you made to @{{ care_person.user.first_name }} @{{ care_person.user.last_name }} will
+                        be reflected on the patient's care team.</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-primary" data-dismiss="modal">Close</button>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+
     <div id="editCareTeamModal-@{{ care_person.id }}" class="modal fade" role="dialog">
         <div class="modal-dialog">
 

@@ -41,6 +41,7 @@ var carePerson = Vue.component('carePerson', {
             }).then(function (response) {
                 this.$set('care_person.id', response.data.carePerson.id);
                 $("#editCareTeamModal-" + id).modal('hide');
+                $("#successModal-" + id).modal();
             }, function (response) {
                 //error
             });
