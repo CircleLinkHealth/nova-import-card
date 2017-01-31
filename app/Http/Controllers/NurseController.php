@@ -88,7 +88,7 @@ class NurseController extends Controller
     public function dailyReport()
     {
 
-        $nurse_users = User::ofType('care-center')->get();
+        $nurse_users = User::ofType('care-center')->where('access_disabled', 0)->get();
 
         $nurses = [];
 

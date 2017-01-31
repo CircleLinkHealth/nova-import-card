@@ -79,6 +79,7 @@
                             $('td', nRow).css('background-color', 'rgba(151, 218, 172, 1)');
                         }
                     },
+                    "aaSorting":[6,'desc'],
                     "iDisplayLength": 25,
                     "columnDefs": [
                         { "type": "date", targets: 'last_activity' }
