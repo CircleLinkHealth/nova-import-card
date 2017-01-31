@@ -51,13 +51,17 @@ const vm = new Vue({
                         zip: '',
                         phone_numbers: {
                             0: {
+                                id: '',
                                 number: '',
                             }
                         },
                         primary_practice: {
+                            id: '',
                             display_name: ''
                         },
                         provider_info: {
+                            id: '',
+                            qualification: '',
                             specialty: '',
                         }
                     },
