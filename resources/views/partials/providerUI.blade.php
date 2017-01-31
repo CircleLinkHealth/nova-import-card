@@ -34,7 +34,7 @@
         <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
         <script src="//code.jquery.com/ui/1.11.4/jquery-ui.js"></script>
         <script src="//cdnjs.cloudflare.com/ajax/libs/select2/4.0.3/js/select2.min.js"></script>
-
+        <script src="{{ asset('/webix/codebase/webix.js') }}" type="text/javascript"></script>
     @endif
 </head>
 <body>
@@ -79,7 +79,6 @@
 @include('partials.providerUItimer')
     <script type="text/javascript"
             src="//cdn.jsdelivr.net/datetimepicker/latest/DateTimePicker.min.js"></script>
-    <script src="{{ asset('/webix/codebase/webix.js') }}" type="text/javascript"></script>
     <script src="{{ asset('/js/bootstrap-select.min.js') }}"></script>
 
     @yield('scripts')
