@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Algorithms\Invoicing\AlternativeCareTimePayableCalculator;
 use App\Call;
 use App\PatientMonthlySummary;
 use App\User;
@@ -28,20 +29,27 @@ class CCMComplexToggleController extends Controller
 
         if (empty($patientRecord)) {
 
-                $patientRecord = PatientMonthlySummary::updateCCMInfoForPatient(
-                    $patient->patientInfo,
-                    $patient->patientInfo->cur_month_activity_time
-                );
+            $patientRecord = PatientMonthlySummary::updateCCMInfoForPatient(
+                $patient->patientInfo,
+                $patient->patientInfo->cur_month_activity_time
+            );
 
-                if (isset($input['complex'])) {
+            if (isset($input['complex'])) {
 
-                    $patientRecord->is_ccm_complex = 1;
+                $patientRecord->is_ccm_complex = 1;
+                $patientRecord->save();
 
-                } else {
-
-                    $patientRecord->is_ccm_complex = 0;
-
+                if ($patient->patientInfo->cur_month_activity_time > 3600) {
+                    (new AlternativeCareTimePayableCalculator(auth()->user()->nurseInfo))->adjustPayOnCCMComplexSwitch60Mins();
                 }
+
+
+            } else {
+
+                $patientRecord->is_ccm_complex = 0;
+                $patientRecord->save();
+
+            }
 
 
         } else { // if exists
@@ -49,16 +57,20 @@ class CCMComplexToggleController extends Controller
             if (isset($input['complex'])) {
 
                 $patientRecord->is_ccm_complex = 1;
+                $patientRecord->save();
+
+                if ($patient->patientInfo->cur_month_activity_time > 3600) {
+                    (new AlternativeCareTimePayableCalculator(auth()->user()->nurseInfo))->adjustPayOnCCMComplexSwitch60Mins();
+                }
 
             } else {
 
                 $patientRecord->is_ccm_complex = 0;
+                $patientRecord->save();
 
             }
 
         }
-
-        $patientRecord->save();
 
         return redirect()->back();
 
