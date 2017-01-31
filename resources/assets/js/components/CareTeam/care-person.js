@@ -42,6 +42,26 @@ var carePerson = Vue.component('carePerson', {
                 this.$set('care_person.id', response.data.carePerson.id);
                 $("#editCareTeamModal-" + id).modal('hide');
                 $("#successModal-" + id).modal();
+
+                let carePerson = response.data.carePerson;
+
+                //setting up the select2 and dynamic picking wasn't working,
+                //quick work around to replace the whole innerhtml with a
+                //disabled div
+
+                $('#providerBox').replaceWith("" +
+                    "<select id='provider' " +
+                    "name='provider' " +
+                    "class='provider selectpickerX dropdownValid form-control' " +
+                    "data-size='10' disabled>  " +
+                    "<option value=" + carePerson.user_id + ">" + carePerson.user.first_name + ' ' + carePerson.user.last_name + "</option>");
+
+                $('#providerDiv').css('padding-bottom', '10px');
+                $("#save").append('<input type="hidden" value="' + carePerson.user_id + '" id="provider" name="provider">');
+                $("#addProviderModal").modal('hide');
+
+                $("#newProviderName").text(carePerson.name);
+
             }, function (response) {
                 //error
             });
