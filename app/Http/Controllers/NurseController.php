@@ -111,23 +111,35 @@ class NurseController extends Controller
 
             }
 
-            $nurses[$i]['# Calls Today'] =
+            $nurses[$i]['# Scheduled Calls Today'] =
                 Call::where('outbound_cpm_id', $nurse->id)
                     ->where(function ($q) {
-                        $q->where('updated_at', '>=', Carbon::now()->startOfDay())
-                            ->where('updated_at', '<=', Carbon::now()->endOfDay());
+                        $q->where('scheduled_date', '>=', Carbon::now()->startOfDay())
+                            ->where('scheduled_date', '<=', Carbon::now()->endOfDay());
                     })
                     ->where(function ($k) {
                         $k->where('status', 'reached')
-                            ->orWhere('status', '');
+                            ->orWhere('status', 'not reached');
+                    })
+                    ->count();
+
+            $nurses[$i]['# Completed Calls Today'] =
+                Call::where('outbound_cpm_id', $nurse->id)
+                    ->where(function ($q) {
+                        $q->where('called_date', '>=', Carbon::now()->startOfDay())
+                            ->where('called_date', '<=', Carbon::now()->endOfDay());
+                    })
+                    ->where(function ($k) {
+                        $k->where('status', 'reached')
+                            ->orWhere('status', 'not reached');
                     })
                     ->count();
 
             $nurses[$i]['# Successful Calls Today'] =
                 Call::where('outbound_cpm_id', $nurse->id)
                     ->where(function ($j) {
-                        $j->where('updated_at', '>=', Carbon::now()->startOfDay())
-                            ->where('updated_at', '<=', Carbon::now()->endOfDay());
+                        $j->where('called_date', '>=', Carbon::now()->startOfDay())
+                            ->where('called_date', '<=', Carbon::now()->endOfDay());
                     })
                     ->where('status', 'reached')
                     ->count();
@@ -189,7 +201,7 @@ class NurseController extends Controller
 
         $nurses = collect($nurses);
         $nurses->sortBy('last_activity');
-        
+
         return Datatables::collection($nurses)->make(true);
 
     }

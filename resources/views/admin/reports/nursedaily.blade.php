@@ -27,10 +27,13 @@
                                             Time Since Last Activity
                                         </th>
                                         <th>
-                                            # Calls Today
+                                            # Successful Calls Today
                                         </th>
                                         <th>
-                                            # Successful Calls Today
+                                            # Scheduled Calls Today
+                                        </th>
+                                        <th>
+                                            # Completed Calls Today
                                         </th>
                                         <th>
                                             CCM Mins Today
@@ -64,9 +67,9 @@
                         {data: 'name', name: 'name'},
                         {data: 'Time Since Last Activity', name: 'Time Since Last Activity'},
                         {data: '# Successful Calls Today', name: '# Successful Calls Today'},
-                        {data: '# Calls Today', name: '# Calls Today'},
+                        {data: '# Scheduled Calls Today', name: '# Scheduled Calls Today'},
+                        {data: '# Completed Calls Today', name: '# Completed Calls Today'},
                         {data: 'CCM Mins Today', name: 'CCM Mins Today'},
-//                        {data: 'Total Mins Today', name: 'Total Mins Today'},
                         {data: 'last_activity', name: 'Last Activity'},
                     ],
                     "fnRowCallback": function( nRow, aData, iDisplayIndex, iDisplayIndexFull ) {
