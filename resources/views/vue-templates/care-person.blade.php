@@ -73,12 +73,17 @@
                                 <label class="col-md-3 control-label" for="specialty">Specialty</label>
                                 <div class="col-md-9">
                                     <div class="col-md-12">
-                                        <input v-model="care_person.user.provider_info.specialty" id="specialty"
-                                               name="specialty"
-                                               type="text" placeholder=""
-                                               class="form-control input-md"
-                                               v-form-ctrl
-                                               required>
+
+                                        <select v-select2="care_person.user.provider_info.specialty" id="specialty"
+                                                class="cpm-select2" name="specialty" v-form-ctrl require
+                                                style="width: 100%;">
+                                            <option value="Homecare Nurse">Homecare Nurse</option>
+                                            <option value="MD">MD</option>
+                                            <option value="Physical Therapy">Physical Therapy</option>
+                                            <option value="Social Worker">Social Worker</option>
+                                            <option value="Therapist">Therapist</option>
+                                        </select>
+
                                         <p class="validation-error alert-danger text-right"
                                            v-if="addCarePersonForm.specialty.$error.required">*required</p>
                                     </div>

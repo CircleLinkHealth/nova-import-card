@@ -62,10 +62,6 @@
 @yield('content')
 
 @if(!isset($isPdf))
-    <!-- PAGE TIMER START -->
-    @include('partials.providerUItimer')
-    <!-- PAGE TIMER END -->
-
     @include('partials.footer')
 
          <!--[if lt IE 9]>
@@ -80,6 +76,7 @@
     <script src="{{ asset('/js/typeahead.bundle.js') }}"></script>
     <script src="{{ asset('/js/fab.js') }}"></script>
     @include('partials.searchjs')
+@include('partials.providerUItimer')
     <script type="text/javascript"
             src="//cdn.jsdelivr.net/datetimepicker/latest/DateTimePicker.min.js"></script>
     <script src="{{ asset('/webix/codebase/webix.js') }}" type="text/javascript"></script>
