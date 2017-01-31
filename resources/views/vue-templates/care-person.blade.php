@@ -77,6 +77,22 @@
                                         <select v-select2="care_person.user.provider_info.specialty" id="specialty"
                                                 class="cpm-select2" name="specialty" v-form-ctrl require
                                                 style="width: 100%;">
+                                            <option value=""></option>
+                                            <option value="Abdominal Radiology">Abdominal Radiology</option>
+                                            <option value="Addiction Psychiatry">Addiction Psychiatry</option>
+                                            <option value="Adolescent Medicine">Adolescent Medicine</option>
+                                            <option value="Adult Reconstructive Orthopaedics">Adult Reconstructive
+                                                Orthopaedics
+                                            </option>
+                                            <option value="Advanced Heart Failure & Transplant Cardiology">Advanced
+                                                Heart Failure & Transplant Cardiology
+                                            </option>
+                                            <option value="Allergy & Immunology">Allergy & Immunology</option>
+                                            <option value="Anesthesiology">Anesthesiology</option>
+                                            <option value="Biochemical Genetics">Biochemical Genetics</option>
+                                            <option value="Blood Banking - Transfusion Medicine">Blood Banking -
+                                                Transfusion Medicine
+                                            </option>
                                             <option value="Homecare Nurse">Homecare Nurse</option>
                                             <option value="MD">MD</option>
                                             <option value="Physical Therapy">Physical Therapy</option>
