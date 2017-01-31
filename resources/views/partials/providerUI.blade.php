@@ -118,13 +118,14 @@
             <!-- PAGE TIMER START -->
             @include('partials.providerUItimer')
             <!-- PAGE TIMER END -->
-        @endif
 
-        @if(!isset($isPdf))
             @if(!empty($patient->id))
                 @include('partials.addprovider')
             @endif
+
+            @include('partials.footer')
         @endif
+
 
 </body>
 
