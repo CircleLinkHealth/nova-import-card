@@ -22,6 +22,7 @@ var carePerson = Vue.component('carePerson', {
 
     data: function () {
         return {
+            addCarePersonForm: {},
             patientId: '',
             updateRoute: '',
         }
