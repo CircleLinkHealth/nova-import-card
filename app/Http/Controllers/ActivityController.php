@@ -139,11 +139,11 @@ class ActivityController extends Controller
 		Request $request,
 		$patientId
 	) {
-//		if (auth()->user()->hasRole('care-center') && app()->environment() == 'production') {
-//
-//			return abort(403);
-//
-//		}
+		if (auth()->user()->hasRole('care-center') && app()->environment() == 'production') {
+
+			return abort(403);
+
+		}
 
 		if ($patientId) {
 			// patient view
