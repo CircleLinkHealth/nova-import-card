@@ -153,7 +153,8 @@ class NurseController extends Controller
 //                ->where('status', 'scheduled')
 //                ->count();
 
-            $activity_time = Activity::createdBy($nurse)
+            $activity_time = Activity::
+            where('provider_id', $nurse->id)
                 ->createdToday()
                 ->sum('duration');
 
