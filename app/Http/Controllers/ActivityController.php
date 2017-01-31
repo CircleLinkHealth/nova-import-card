@@ -19,6 +19,113 @@ use Illuminate\Support\Facades\DB;
 class ActivityController extends Controller
 {
 
+	public function providerUIIndex(
+		Request $request,
+		$patientId
+	) {
+
+		$patient = User::find($patientId);
+
+		$input = $request->all();
+
+		$messages = \Session::get('messages');
+
+		if (isset($input['selectMonth'])) {
+
+			$time = Carbon::createFromDate($input['selectYear'], $input['selectMonth'], 15);
+			$start = $time->startOfMonth()->format('Y-m-d H:i:s');
+			$end = $time->endOfMonth()->format('Y-m-d H:i:s');
+			$month_selected = $time->format('m');
+			$month_selected_text = $time->format('F');
+			$year_selected = $time->format('Y');
+
+		} else {
+
+			$time = Carbon::now();
+			$start = Carbon::now()->startOfMonth()->format('Y-m-d H:i:s');
+			$end = Carbon::now()->endOfMonth()->format('Y-m-d H:i:s');
+			$month_selected = $time->format('m');
+			$month_selected_text = $time->format('F');
+			$year_selected = $time->format('Y');
+
+		}
+
+		//downloads patient audit
+		if ($request->ajax()) {
+
+			$data = (new PatientDailyAuditReport($patient->patientInfo, Carbon::parse($start)))->renderPDF();
+
+			return $data;
+
+		}
+
+		$acts = DB::table('lv_activities')
+//			->select(DB::raw('id,provider_id,logged_from,DATE(performed_at)as performed_at, type, SUM(duration) as duration'))
+			->where('created_at', '>=', $start)
+			->where('created_at', '<=', $end)
+			->where('patient_id', $patientId)
+			->where(function ($q) {
+				$q->where('logged_from', 'activity')
+					->Orwhere('logged_from', 'manual_input')
+					->Orwhere('logged_from', 'pagetimer');
+			})
+			->groupBy(DB::raw('provider_id, DATE(performed_at),type'))
+			->orderBy('created_at', 'desc')
+			->get();
+
+
+		$acts = json_decode(json_encode($acts), true);            //debug($acts);
+
+
+		foreach ($acts as $key => $value) {
+			$provider = User::find($acts[$key]['provider_id']);
+			if ($provider) {
+				$acts[$key]['provider_name'] = $provider->getFullNameAttribute();
+			}
+			unset($acts[$key]['provider_id']);
+		}
+		if ($acts) {
+			$data = true;
+		} else {
+			$data = false;
+		}
+
+		$reportData = "data:" . json_encode($acts) . "";
+
+		$years = [];
+		for ($i = 0; $i < 3; $i++) {
+			$years[] = Carbon::now()->subYear($i)->year;
+		}
+
+		$months = [
+			'Jan',
+			'Feb',
+			'Mar',
+			'Apr',
+			'May',
+			'Jun',
+			'Jul',
+			'Aug',
+			'Sep',
+			'Oct',
+			'Nov',
+			'Dec',
+		];
+
+		return view('wpUsers.patient.activity.index',
+			[
+				'activity_json'       => $reportData,
+				'years'               => array_reverse($years),
+				'month_selected'      => $month_selected,
+				'month_selected_text' => $month_selected_text,
+				'year_selected'       => $year_selected,
+				'months'              => $months,
+				'patient'             => $patient,
+				'data'                => $data,
+				'messages'            => $messages,
+			]);
+	}
+
 	public function index(Request $request)
 	{
 		// display view
@@ -32,11 +139,11 @@ class ActivityController extends Controller
 		Request $request,
 		$patientId
 	) {
-//		if (auth()->user()->hasRole('care-center') && app()->environment() == 'production') {
-//
-//			return abort(403);
-//
-//		}
+		if (auth()->user()->hasRole('care-center') && app()->environment() == 'production') {
+
+			return abort(403);
+
+		}
 
 		if ($patientId) {
 			// patient view
@@ -264,113 +371,5 @@ class ActivityController extends Controller
 	public function destroy($id)
 	{
 		//
-	}
-
-	public function providerUIIndex(
-		Request $request,
-		$patientId
-	) {
-
-		$patient = User::find($patientId);
-
-		$input = $request->all();
-
-		$messages = \Session::get('messages');
-
-		if (isset($input['selectMonth'])) {
-
-			$time = Carbon::createFromDate($input['selectYear'], $input['selectMonth'], 15);
-			$start = $time->startOfMonth()->format('Y-m-d');
-			$end = $time->endOfMonth()->format('Y-m-d');
-			$month_selected = $time->format('m');
-			$month_selected_text = $time->format('F');
-			$year_selected = $time->format('Y');
-
-		} else {
-
-			$time = Carbon::now();
-			$start = Carbon::now()->startOfMonth()->format('Y-m-d');
-			$end = Carbon::now()->endOfMonth()->format('Y-m-d');
-			$month_selected = $time->format('m');
-			$month_selected_text = $time->format('F');
-			$year_selected = $time->format('Y');
-
-		}
-
-		//downloads patient audit
-		if ($request->ajax()) {
-
-			$data = (new PatientDailyAuditReport($patient->patientInfo, Carbon::parse($start)))->renderPDF();
-
-			return $data;
-
-		}
-
-		$acts = DB::table('lv_activities')
-			->select(DB::raw('id,provider_id,logged_from,DATE(performed_at)as performed_at, type, SUM(duration) as duration'))
-			->whereBetween('performed_at', [
-				$start,
-				$end,
-			])
-			->where('patient_id', $patientId)
-			->where(function ($q) {
-				$q->where('logged_from', 'activity')
-					->Orwhere('logged_from', 'manual_input')
-					->Orwhere('logged_from', 'pagetimer');
-			})
-			->groupBy(DB::raw('provider_id, DATE(performed_at),type'))
-			->orderBy('created_at', 'desc')
-			->get();
-
-		$acts = json_decode(json_encode($acts), true);            //debug($acts);
-
-
-		foreach ($acts as $key => $value) {
-			$provider = User::find($acts[$key]['provider_id']);
-			if ($provider) {
-				$acts[$key]['provider_name'] = $provider->getFullNameAttribute();
-			}
-			unset($acts[$key]['provider_id']);
-		}
-		if ($acts) {
-			$data = true;
-		} else {
-			$data = false;
-		}
-
-		$reportData = "data:" . json_encode($acts) . "";
-
-		$years = [];
-		for ($i = 0; $i < 3; $i++) {
-			$years[] = Carbon::now()->subYear($i)->year;
-		}
-
-		$months = [
-			'Jan',
-			'Feb',
-			'Mar',
-			'Apr',
-			'May',
-			'Jun',
-			'Jul',
-			'Aug',
-			'Sep',
-			'Oct',
-			'Nov',
-			'Dec',
-		];
-
-		return view('wpUsers.patient.activity.index',
-			[
-				'activity_json'       => $reportData,
-				'years'               => array_reverse($years),
-				'month_selected'      => $month_selected,
-				'month_selected_text' => $month_selected_text,
-				'year_selected'       => $year_selected,
-				'months'              => $months,
-				'patient'             => $patient,
-				'data'                => $data,
-				'messages'            => $messages,
-			]);
 	}
 }
