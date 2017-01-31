@@ -5,6 +5,7 @@ namespace App\Services;
 use App\Algorithms\Invoicing\AlternativeCareTimePayableCalculator;
 use App\Appointment;
 use App\Call;
+use App\CarePerson;
 use App\Events\PdfableCreated;
 use App\MailLog;
 use App\Note;
@@ -500,6 +501,8 @@ class NoteService
 
         if (isset($input['careteam'])) {
 
+            dd($input['careteam']);
+
             $note = Note::findOrFail($input['noteId']);
 
             $author = User::find($input['logger_id']);
@@ -524,5 +527,24 @@ class NoteService
 
         return true;
     }
+
+    public function getPatientCareTeamMembers($patientId)
+    {
+
+        $careteam_info = [];
+        $careteam_ids = CarePerson
+            ::whereUserId($patientId)->pluck('member_user_id');
+
+        foreach ($careteam_ids as $id) {
+            if (User::find($id)) {
+                $careteam_info[$id] = User::find($id)->fullName;
+            }
+        }
+
+        return $careteam_info;
+
+    }
+
+
 
 }
