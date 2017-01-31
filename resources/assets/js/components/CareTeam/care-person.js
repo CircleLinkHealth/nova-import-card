@@ -1,5 +1,7 @@
 var Vue = require('vue');
 Vue.use(require('vue-resource'));
+var vueForm = require('vue-form');
+Vue.use(vueForm);
 Vue.http.headers.common['X-CSRF-TOKEN'] = $('meta[name="csrf-token"]').attr('content');
 
 require('./search-providers.js');
@@ -8,7 +10,7 @@ var carePerson = Vue.component('carePerson', {
     events: {
         'existing-user-selected': function (data) {
             this.$set('care_person.user', data.user);
-        },
+        }
     },
 
     template: '#care-person-modal-template',
@@ -20,6 +22,7 @@ var carePerson = Vue.component('carePerson', {
 
     data: function () {
         return {
+            addCarePersonForm: {},
             patientId: '',
             updateRoute: '',
         }
@@ -27,7 +30,7 @@ var carePerson = Vue.component('carePerson', {
 
     ready: function () {
         this.$set('updateRoute', $('meta[name="provider-update-route"]').attr('content'));
-        this.$set('patientId', $('meta[name="popup_patient_id"]').attr('content'));
+        this.$set('patientId', $('meta[name="patient_id"]').attr('content'));
     },
 
     methods: {
@@ -38,6 +41,7 @@ var carePerson = Vue.component('carePerson', {
             }).then(function (response) {
                 this.$set('care_person.id', response.data.carePerson.id);
                 $("#editCareTeamModal-" + id).modal('hide');
+                $("#successModal-" + id).modal();
             }, function (response) {
                 //error
             });

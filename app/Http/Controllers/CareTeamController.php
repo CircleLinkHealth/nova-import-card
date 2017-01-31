@@ -23,7 +23,9 @@ class CareTeamController extends Controller
         }
 
         $member = CarePerson::find($id);
-        $member->delete();
+        if ($member) {
+            $member->delete();
+        }
 
         return response()->json([], 200);
     }
@@ -156,7 +158,7 @@ class CareTeamController extends Controller
         $input = $request->input('careTeamMember');
         $patientId = $request->input('patientId');
 
-        $user = User::updateOrCreate([
+        $providerUser = User::updateOrCreate([
             'id' => $input['user']['id'],
         ], [
             'first_name' => $input['user']['first_name'],
@@ -175,7 +177,7 @@ class CareTeamController extends Controller
                 'alert'          => $input['alert'],
                 'type'           => snake_case($input['formatted_type']),
                 'user_id'        => $patientId,
-                'member_user_id' => $user->id,
+                'member_user_id' => $providerUser->id,
             ]);
         } else {
             $carePerson = CarePerson::where('id', '=', $input['id'])
@@ -195,7 +197,7 @@ class CareTeamController extends Controller
                     ]);
             } else {
                 $phone = PhoneNumber::updateOrCreate([
-                    'user_id' => $user->id,
+                    'user_id' => $providerUser->id,
                     'type'    => 'work',
                     'number'  => StringManipulation::formatPhoneNumber($phone['number']),
                 ]);
@@ -206,7 +208,8 @@ class CareTeamController extends Controller
             $providerInfo = $input['user']['provider_info'];
 
             $provider = ProviderInfo::updateOrCreate([
-                'id' => $providerInfo['id'],
+                'id'      => $providerInfo['id'],
+                'user_id' => $providerUser->id,
             ], [
                 'qualification' => $providerInfo['qualification'],
                 'specialty'     => $providerInfo['specialty'],
@@ -216,11 +219,16 @@ class CareTeamController extends Controller
         if (isset($input['user']['primary_practice'])) {
             $primaryPractice = $input['user']['primary_practice'];
 
-            $practice = Practice::updateOrCreate([
-                'id' => $primaryPractice['id'],
-            ], [
-                'display_name' => $primaryPractice['display_name'],
-            ]);
+            if ($primaryPractice['display_name']) {
+                $practice = Practice::updateOrCreate([
+                    'id' => $primaryPractice['id'],
+                ], [
+                    'display_name' => $primaryPractice['display_name'],
+                ]);
+
+                $providerUser->program_id = $practice->id;
+                $providerUser->save();
+            }
         }
 
         return response()->json(['carePerson' => $carePerson], 200);

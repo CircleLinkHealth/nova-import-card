@@ -19,6 +19,8 @@
     "vue": "^1.0.8",
     "vue-mdl": "^0.3.2",
     "vue-resource": "^1",
-    "vuejs-paginator": "^1.0.13"
+    "vuejs-paginator": "^1.0.13",
+    "vue-form": "*",
+    "lodash": "*"
   }
 }
