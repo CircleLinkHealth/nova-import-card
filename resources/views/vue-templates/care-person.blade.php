@@ -94,23 +94,29 @@
 
                         <div class="row providerForm">
                             <div class="form-group">
-                                <label class="col-md-3 control-label" for="specialty">Specialty</label>
+                                <label class="col-md-3 control-label"
+                                       for="specialty-@{{ care_person.id }}">Specialty</label>
                                 <div class="col-md-9">
                                     <div class="col-md-12">
 
-                                        <select v-select2="care_person.user.provider_info.specialty" id="specialty"
-                                                class="cpm-select2" name="specialty" v-form-ctrl require
-                                                style="width: 100%;">
-                                            <option value=""></option>
-                                            @include('partials.specialties')
-                                        </select>
+                                        <div id="select2-@{{ care_person.id }}">
+                                            <select v-select2="care_person.user.provider_info.specialty"
+                                                    id="specialty-@{{ care_person.id }}"
+                                                    class="cpm-select2" name="specialty" v-form-ctrl require
+                                                    style="width: 100%;">
+                                                <option value=""></option>
+                                                @include('partials.specialties')
+                                            </select>
 
-                                        <p class="validation-error alert-danger text-right"
-                                           v-if="addCarePersonForm.specialty.$error.required">*required</p>
+                                            <p class="validation-error alert-danger text-right"
+                                               v-if="addCarePersonForm.specialty.$error.required">*required
+                                            </p>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
                         </div>
+
 
                         <div class="row providerForm">
                             <div class="form-group">
