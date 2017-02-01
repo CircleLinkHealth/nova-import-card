@@ -88,7 +88,8 @@
                                                v-form-ctrl
                                                required>
                                         <p class="validation-error alert-danger text-right"
-                                           v-if="addCarePersonForm.last_name.$error.required">*required</p>
+                                           v-if="addCarePersonForm.last_name.$error.required">*required
+                                        </p>
                                     </div>
                                 </div>
                             </div>
@@ -104,7 +105,7 @@
                                         <div id="select2-@{{ care_person.id }}">
                                             <select v-select2="care_person.user.provider_info.specialty"
                                                     id="specialty-@{{ care_person.id }}"
-                                                    class="cpm-select2" name="specialty" v-form-ctrl require
+                                                    class="cpm-select2" name="specialty" v-form-ctrl required
                                                     style="width: 100%;">
                                                 <option value=""></option>
                                                 @include('partials.specialties')
@@ -211,7 +212,8 @@
                                                class="form-control input-md"
                                                v-form-ctrl>
                                         <p class="validation-error alert-danger"
-                                           v-if="addCarePersonForm.email.$error.email">invalid email.</p>
+                                           v-if="addCarePersonForm.email.$error.email">invalid email.
+                                        </p>
                                     </div>
                                 </div>
                             </div>
@@ -220,14 +222,19 @@
 
                         <div class="row providerForm">
                             <div class="form-group">
-                                <label class="col-md-3 control-label" for="type">Clinical Type</label>
+                                <label class="col-md-3 control-label" for="qualification">Clinical Type</label>
                                 <div class="col-md-9">
                                     <div class="col-md-12">
-                                        <select v-model="care_person.user.provider_info.qualification" id="type"
-                                                name="type" class="form-control type">
+                                        <select v-model="care_person.user.provider_info.qualification"
+                                                id="qualification"
+                                                name="qualification" class="form-control type" required v-form-ctrl>
+                                            <option value="" selected></option>
                                             <option value="clinical">Clinical (MD, RN or other)</option>
                                             <option value="non-clinical">Non-clinical</option>
                                         </select>
+                                        <p class="validation-error alert-danger text-right"
+                                           v-if="addCarePersonForm.qualification.$error.required">*required
+                                        </p>
                                     </div>
                                 </div>
                             </div>
