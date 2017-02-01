@@ -11,17 +11,11 @@ var carePerson = Vue.component('carePerson', {
         'existing-user-selected': function (data) {
             this.$set('care_person.user', data.user);
 
-            //HACK
             let specialty = data.user.provider_info.specialty;
+            let selectId = '#specialty-' + this.care_person.id;
 
-            let selectId = 'select2-' + this.care_person.id;
-
-            $('#' + selectId).replaceWith(
-                "<select id='" + selectId +
-                "name='specialty' " +
-                "class='cpm-select2 form-control' " +
-                "data-size='10' disabled>" +
-                "<option value=" + specialty + ">" + specialty + "</option></select>");
+            //Update select box
+            $(selectId).val(specialty).trigger("change");
         }
     },
 
