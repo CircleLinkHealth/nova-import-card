@@ -10,12 +10,7 @@ var carePerson = Vue.component('carePerson', {
     events: {
         'existing-user-selected': function (data) {
             this.$set('care_person.user', data.user);
-
-            let specialty = data.user.provider_info.specialty;
-            let selectId = '#specialty-' + this.care_person.id;
-
-            //Update select box
-            $(selectId).val(specialty).trigger("change");
+            this.selectSpecialty(data.user.provider_info.specialty);
         }
     },
 
@@ -37,9 +32,17 @@ var carePerson = Vue.component('carePerson', {
     ready: function () {
         this.$set('updateRoute', $('meta[name="provider-update-route"]').attr('content'));
         this.$set('patientId', $('meta[name="patient_id"]').attr('content'));
+        this.selectSpecialty(this.care_person.user.provider_info.specialty);
     },
 
     methods: {
+        //programmatically select specialty in select box
+        selectSpecialty: function (specialty) {
+            let selectId = '#specialty-' + this.care_person.id;
+            //Update select box
+            $(selectId).val(specialty).trigger("change");
+        },
+
         updateCarePerson: function (id) {
             this.$http.patch(this.updateRoute + '/' + id, {
                 careTeamMember: this.care_person,

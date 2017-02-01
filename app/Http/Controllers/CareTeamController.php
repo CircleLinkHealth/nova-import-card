@@ -70,11 +70,14 @@ class CareTeamController extends Controller
             'email'      => $input['user']['email'],
         ]);
 
+        $type = $input['is_billing_provider']
+            ? CarePerson::BILLING_PROVIDER
+            : snake_case($input['formatted_type']);
 
         if (str_contains($input['id'], 'new')) {
             $carePerson = CarePerson::create([
                 'alert'          => $input['alert'],
-                'type'           => snake_case($input['formatted_type']),
+                'type'           => $type,
                 'user_id'        => $patientId,
                 'member_user_id' => $providerUser->id,
             ]);
@@ -82,7 +85,7 @@ class CareTeamController extends Controller
             $carePerson = CarePerson::where('id', '=', $input['id'])
                 ->update([
                     'alert' => $input['alert'],
-                    'type'  => snake_case($input['formatted_type']),
+                    'type'  => $type,
                 ]);
         }
 

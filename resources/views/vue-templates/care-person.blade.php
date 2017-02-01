@@ -20,6 +20,8 @@
 {{--In this case I need routes to be able to delete multiple components--}}
 <meta name="provider-update-route" content="{{ route('care-team.update', ['id'=>'']) }}">
 <meta name="providers-search" content="{{ route('providers.search') }}">
+<meta name="created_by" content="{{auth()->user()->id}}">
+<meta name="patient_id" content="{{$patient->id}}">
 
 {{--The component's Template--}}
 <script type="text/x-template" id="care-person-modal-template">
@@ -246,28 +248,24 @@
 
                         <div class="row providerForm">
                             <div class="form-group">
-                                <label class="col-md-3 control-label" for="send_alerts">Type</label>
+                                <label class="col-md-3 control-label" for="is_billing_provider">CCM Billing
+                                    Provider
+                                </label>
                                 <div class="col-md-9">
                                     <div class="col-md-12">
-                                        <input v-model="care_person.formatted_type" id="type"
-                                               name="type" class="form-control type" type="text">
+                                        <input v-model="care_person.is_billing_provider" id="is_billing_provider"
+                                               name="is_billing_provider" class="form-control type" type="checkbox"
+                                               style="display: inline;">
                                     </div>
                                 </div>
                             </div>
                         </div>
 
-                        <meta name="created_by" content="{{auth()->user()->id}}">
-                        <meta name="patient_id" content="{{$patient->id}}">
+                        <button v-on:click.stop.prevent="updateCarePerson(care_person.id)" type="submit"
+                                id="editCarePerson" class="create btn btn-primary"
+                                v-bind:disabled="addCarePersonForm.$invalid">Save
+                        </button>
 
-                        <div>
-                            <button v-on:click.stop.prevent="updateCarePerson(care_person.id)"
-                                    type="submit"
-                                    id="editCarePerson"
-                                    class="create btn btn-primary"
-                                    v-bind:disabled="addCarePersonForm.$invalid"
-                            >Save
-                            </button>
-                        </div>
                     </form>
                 </div>
             </div>
