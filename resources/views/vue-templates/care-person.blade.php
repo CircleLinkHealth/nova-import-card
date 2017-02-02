@@ -20,6 +20,8 @@
 {{--In this case I need routes to be able to delete multiple components--}}
 <meta name="provider-update-route" content="{{ route('care-team.update', ['id'=>'']) }}">
 <meta name="providers-search" content="{{ route('providers.search') }}">
+<meta name="created_by" content="{{auth()->user()->id}}">
+<meta name="patient_id" content="{{$patient->id}}">
 
 {{--The component's Template--}}
 <script type="text/x-template" id="care-person-modal-template">
@@ -86,7 +88,8 @@
                                                v-form-ctrl
                                                required>
                                         <p class="validation-error alert-danger text-right"
-                                           v-if="addCarePersonForm.last_name.$error.required">*required</p>
+                                           v-if="addCarePersonForm.last_name.$error.required">*required
+                                        </p>
                                     </div>
                                 </div>
                             </div>
@@ -94,23 +97,29 @@
 
                         <div class="row providerForm">
                             <div class="form-group">
-                                <label class="col-md-3 control-label" for="specialty">Specialty</label>
+                                <label class="col-md-3 control-label"
+                                       for="specialty-@{{ care_person.id }}">Specialty</label>
                                 <div class="col-md-9">
                                     <div class="col-md-12">
 
-                                        <select v-select2="care_person.user.provider_info.specialty" id="specialty"
-                                                class="cpm-select2" name="specialty" v-form-ctrl require
-                                                style="width: 100%;">
-                                            <option value=""></option>
-                                            @include('partials.specialties')
-                                        </select>
+                                        <div id="select2-@{{ care_person.id }}">
+                                            <select v-select2="care_person.user.provider_info.specialty"
+                                                    id="specialty-@{{ care_person.id }}"
+                                                    class="cpm-select2" name="specialty" v-form-ctrl required
+                                                    style="width: 100%;">
+                                                <option value=""></option>
+                                                @include('partials.specialties')
+                                            </select>
 
-                                        <p class="validation-error alert-danger text-right"
-                                           v-if="addCarePersonForm.specialty.$error.required">*required</p>
+                                            <p class="validation-error alert-danger text-right"
+                                               v-if="addCarePersonForm.specialty.$error.required">*required
+                                            </p>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
                         </div>
+
 
                         <div class="row providerForm">
                             <div class="form-group">
@@ -203,7 +212,8 @@
                                                class="form-control input-md"
                                                v-form-ctrl>
                                         <p class="validation-error alert-danger"
-                                           v-if="addCarePersonForm.email.$error.email">invalid email.</p>
+                                           v-if="addCarePersonForm.email.$error.email">invalid email.
+                                        </p>
                                     </div>
                                 </div>
                             </div>
@@ -212,14 +222,19 @@
 
                         <div class="row providerForm">
                             <div class="form-group">
-                                <label class="col-md-3 control-label" for="type">Clinical Type</label>
+                                <label class="col-md-3 control-label" for="qualification">Clinical Type</label>
                                 <div class="col-md-9">
                                     <div class="col-md-12">
-                                        <select v-model="care_person.user.provider_info.qualification" id="type"
-                                                name="type" class="form-control type">
+                                        <select v-model="care_person.user.provider_info.qualification"
+                                                id="qualification"
+                                                name="qualification" class="form-control type" required v-form-ctrl>
+                                            <option value=""></option>
                                             <option value="clinical">Clinical (MD, RN or other)</option>
                                             <option value="non-clinical">Non-clinical</option>
                                         </select>
+                                        <p class="validation-error alert-danger text-right"
+                                           v-if="addCarePersonForm.qualification.$error.required">*required
+                                        </p>
                                     </div>
                                 </div>
                             </div>
@@ -240,28 +255,24 @@
 
                         <div class="row providerForm">
                             <div class="form-group">
-                                <label class="col-md-3 control-label" for="send_alerts">Type</label>
+                                <label class="col-md-3 control-label" for="is_billing_provider">CCM Billing
+                                    Provider
+                                </label>
                                 <div class="col-md-9">
                                     <div class="col-md-12">
-                                        <input v-model="care_person.formatted_type" id="type"
-                                               name="type" class="form-control type" type="text">
+                                        <input v-model="care_person.is_billing_provider" id="is_billing_provider"
+                                               name="is_billing_provider" class="form-control type" type="checkbox"
+                                               style="display: inline;">
                                     </div>
                                 </div>
                             </div>
                         </div>
 
-                        <meta name="created_by" content="{{auth()->user()->id}}">
-                        <meta name="patient_id" content="{{$patient->id}}">
+                        <button v-on:click.stop.prevent="updateCarePerson(care_person.id)" type="submit"
+                                id="editCarePerson" class="create btn btn-primary"
+                                v-bind:disabled="addCarePersonForm.$invalid">Save
+                        </button>
 
-                        <div>
-                            <button v-on:click.stop.prevent="updateCarePerson(care_person.id)"
-                                    type="submit"
-                                    id="editCarePerson"
-                                    class="create btn btn-primary"
-                                    v-bind:disabled="addCarePersonForm.$invalid"
-                            >Save
-                            </button>
-                        </div>
                     </form>
                 </div>
             </div>

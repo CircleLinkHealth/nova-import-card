@@ -13,6 +13,7 @@
 <option value="Blood Banking - Transfusion Medicine">Blood Banking -
     Transfusion Medicine
 </option>
+<option value="Cardiology">Cardiology</option>
 <option value="Cardiothoracic Radiology">Cardiothoracic Radiology</option>
 <option value="Cardiovascular Disease">Cardiovascular Disease</option>
 <option value="Chemical Pathology">Chemical Pathology</option>
@@ -40,6 +41,7 @@
 <option value="Developmental-Behavioral Pediatrics">Developmental-Behavioral
     Pediatrics
 </option>
+<option value="Ears, Nose, Throat (ENT)">Ears, Nose, Throat (ENT)</option>
 <option value="Emergency Medicine">Emergency Medicine</option>
 <option value="Endocrinology, Diabetes & Metabolism">Endocrinology, Diabetes
     & Metabolism

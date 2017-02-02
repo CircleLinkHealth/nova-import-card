@@ -7,7 +7,6 @@ use App\CLH\Facades\StringManipulation;
 use App\PhoneNumber;
 use App\Practice;
 use App\ProviderInfo;
-use App\Role;
 use App\User;
 use Illuminate\Http\Request;
 
@@ -46,106 +45,6 @@ class CareTeamController extends Controller
         return response()->json(['results' => $users]);
     }
 
-    public function store(Request $request)
-    {
-
-        $input = $request->input();
-
-        if ($request->ajax()) {
-
-            $provider_user = new User();
-            $provider_user->save();
-
-            $provider = new ProviderInfo([
-                'user_id' => $provider_user->id,
-            ]);
-
-            $role = Role::whereName('provider')->first();
-
-            $provider_user->attachRole($role);
-
-            $patient = User::find($input['patient_id']);
-
-            //Care Team Add
-            $care_team_member = new CarePerson([
-
-                'user_id'        => $patient->id,
-                'member_user_id' => $provider_user->id,
-                'type'           => CarePerson::EXTERNAL,
-
-            ]);
-
-            $patient->careTeamMembers()->save($care_team_member);
-
-            $provider_user->first_name = $input['first_name'];
-            $provider_user->last_name = $input['last_name'];
-
-            $provider_user->email = (isset($input['email']))
-                ? $input['email']
-                : '';
-
-            if ($input['phone'] != '') {
-
-                $phone = new PhoneNumber([
-
-                    'user_id'    => $provider_user->id,
-                    'type'       => 'work',
-                    'number'     => $input['phone'],
-                    'is_primary' => 1,
-
-                ]);
-
-                $phone->save();
-                $provider_user->phoneNumbers()->save($phone);
-
-            }
-
-            $provider_user->address = (isset($input['address']))
-                ? $input['address']
-                : '';
-
-            $provider->specialty = (isset($input['specialty']))
-                ? $input['specialty']
-                : '';
-            $provider->qualification = (isset($input['type']))
-                ? $input['type']
-                : '';
-
-
-            if ($input['practice'] != '') {
-
-                $practice = Practice::where('display_name', '=', $input['practice'])->first();
-
-                if (!$practice) {
-                    $practice = new Practice();
-                    $practice->display_name = $input['practice'];
-                    $practice->name = str_slug($input['practice']);
-                    $practice->save();
-                }
-
-                $provider_user->program_id = $practice->id;
-
-            } else {
-
-                $provider_user->program_id = null;
-
-            }
-
-            $provider->save();
-
-            $provider_user->providerInfo()->save($provider);
-            $provider_user->save();
-
-            return json_encode([
-                'message' => 'Created!',
-                'name'    => $provider_user->fullName,
-                'user_id' => $provider_user->id,
-            ]);
-
-        }
-
-    }
-
     public function update(
         Request $request,
         $id
@@ -171,11 +70,35 @@ class CareTeamController extends Controller
             'email'      => $input['user']['email'],
         ]);
 
+        $type = $input['is_billing_provider']
+            ? CarePerson::BILLING_PROVIDER
+            : snake_case($input['formatted_type']);
+
+        if ($type == CarePerson::BILLING_PROVIDER) {
+            $billingProvider = CarePerson::where('user_id', '=', $patientId)
+                ->where('type', '=', CarePerson::BILLING_PROVIDER)
+                ->first();
+
+            //then get rid of other billing providers
+            $billingProviderUpdated = CarePerson::where('user_id', '=', $patientId)
+                ->where('type', '=', CarePerson::BILLING_PROVIDER)
+                ->update([
+                    'type' => 'external',
+                ]);
+
+            //If the Billing Provider has changed, we want to reflect that change on the front end.
+            //If it's the same, we'll return null
+            if ($billingProvider) {
+                $billingProvider = $billingProvider->id == $providerUser->id
+                    ? null
+                    : $billingProvider;
+            }
+        }
 
         if (str_contains($input['id'], 'new')) {
             $carePerson = CarePerson::create([
                 'alert'          => $input['alert'],
-                'type'           => snake_case($input['formatted_type']),
+                'type'           => $type,
                 'user_id'        => $patientId,
                 'member_user_id' => $providerUser->id,
             ]);
@@ -183,7 +106,7 @@ class CareTeamController extends Controller
             $carePerson = CarePerson::where('id', '=', $input['id'])
                 ->update([
                     'alert' => $input['alert'],
-                    'type'  => snake_case($input['formatted_type']),
+                    'type'  => $type,
                 ]);
         }
 
@@ -231,7 +154,14 @@ class CareTeamController extends Controller
             }
         }
 
-        return response()->json(['carePerson' => $carePerson], 200);
+        if (is_object($carePerson)) {
+            $carePerson->load('user');
+        }
+
+        return response()->json([
+            'carePerson'         => $carePerson,
+            'oldBillingProvider' => $billingProvider ?? null,
+        ], 200);
     }
 
 }

@@ -5,6 +5,21 @@ Vue.http.headers.common['X-CSRF-TOKEN'] = $('meta[name="csrf-token"]').attr('con
 require('./care-person.js');
 
 var careTeam = Vue.component('careTeam', {
+
+    events: {
+        'billing-provider-changed': function (data) {
+            let bp = data.oldBillingProvider;
+
+            this.careTeamCollection = this.careTeamCollection.map(function (carePerson) {
+                if (carePerson.id == bp.id) {
+                    carePerson.formatted_type = 'External';
+                }
+
+                return carePerson;
+            })
+        }
+    },
+
     template: '#care-team-template',
 
     props: [

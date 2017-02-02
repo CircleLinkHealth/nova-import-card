@@ -493,6 +493,15 @@ class ReportsController extends Controller
             ->transform(function ($member) {
                 $member->formatted_type = snakeToSentenceCase($member->type);
                 $member->specialty = $member->user->getSpecialtyAttribute();
+                $member->is_billing_provider = $member->type == CarePerson::BILLING_PROVIDER;
+
+                if ($member->user->phoneNumbers) {
+                    $member->user->phoneNumbers->push(['number' => '']);
+                }
+
+                if ($member->user->primaryPractice) {
+                    $member->user->primaryPractice->push(['display_name' => '']);
+                }
 
                 return $member;
             });

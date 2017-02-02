@@ -63,6 +63,7 @@ const vm = new Vue({
                     id: id,
                     formatted_type: 'External',
                     alert: false,
+                    is_billing_provider: false,
                     user: {
                         id: '',
                         email: '',
