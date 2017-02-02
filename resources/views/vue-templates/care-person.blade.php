@@ -228,7 +228,7 @@
                                         <select v-model="care_person.user.provider_info.qualification"
                                                 id="qualification"
                                                 name="qualification" class="form-control type" required v-form-ctrl>
-                                            <option value="" selected></option>
+                                            <option value=""></option>
                                             <option value="clinical">Clinical (MD, RN or other)</option>
                                             <option value="non-clinical">Non-clinical</option>
                                         </select>

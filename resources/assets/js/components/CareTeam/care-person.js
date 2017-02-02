@@ -44,16 +44,27 @@ var carePerson = Vue.component('carePerson', {
         },
 
         updateCarePerson: function (id) {
+
+            if (this.care_person.is_billing_provider) {
+                this.$set('care_person.formatted_type', 'Billing Provider');
+            }
+
             this.$http.patch(this.updateRoute + '/' + id, {
                 careTeamMember: this.care_person,
                 patientId: this.patientId,
             }).then(function (response) {
                 this.$set('care_person.id', response.data.carePerson.id);
                 $("#editCareTeamModal-" + id).modal('hide');
+
+                if (response.data.oldBillingProvider) {
+                    this.$dispatch('billing-provider-changed', {
+                        oldBillingProvider: response.data.oldBillingProvider,
+                    });
+                }
+
                 $("#successModal-" + id).modal();
 
-
-                //HACK to replace select2 with newly added provider
+                //HACK to replace select2 with newly added provider on appointments page
                 let carePerson = response.data.carePerson;
 
                 $('#providerBox').replaceWith("" +

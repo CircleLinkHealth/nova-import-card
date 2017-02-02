@@ -74,6 +74,27 @@ class CareTeamController extends Controller
             ? CarePerson::BILLING_PROVIDER
             : snake_case($input['formatted_type']);
 
+        if ($type == CarePerson::BILLING_PROVIDER) {
+            $billingProvider = CarePerson::where('user_id', '=', $patientId)
+                ->where('type', '=', CarePerson::BILLING_PROVIDER)
+                ->first();
+
+            //then get rid of other billing providers
+            $billingProviderUpdated = CarePerson::where('user_id', '=', $patientId)
+                ->where('type', '=', CarePerson::BILLING_PROVIDER)
+                ->update([
+                    'type' => 'external',
+                ]);
+
+            //If the Billing Provider has changed, we want to reflect that change on the front end.
+            //If it's the same, we'll return null
+            if ($billingProvider) {
+                $billingProvider = $billingProvider->id == $providerUser->id
+                    ? null
+                    : $billingProvider;
+            }
+        }
+
         if (str_contains($input['id'], 'new')) {
             $carePerson = CarePerson::create([
                 'alert'          => $input['alert'],
@@ -137,7 +158,10 @@ class CareTeamController extends Controller
             $carePerson->load('user');
         }
 
-        return response()->json(['carePerson' => $carePerson], 200);
+        return response()->json([
+            'carePerson'         => $carePerson,
+            'oldBillingProvider' => $billingProvider ?? null,
+        ], 200);
     }
 
 }
