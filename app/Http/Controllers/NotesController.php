@@ -274,7 +274,7 @@ class NotesController extends Controller
         }
 
         //CCM Complexity Handle
-        $this->service->updatePatientRecords($patient->patientInfo, isset($input['status']));
+        $this->service->updatePatientRecords($patient->patientInfo, isset($input['complex']));
 
         if (isset($input['general_comment'])) {
             $info->general_comment = $input['general_comment'];
