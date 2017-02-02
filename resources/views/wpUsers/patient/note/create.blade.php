@@ -322,6 +322,8 @@
             $("#complex").click(function (e) {
                 if($("#complex").is(':checked')){
                     $("#confirmButtonModal").modal();
+                } else {
+                    $("#complex_tag").hide();
                 }
             });
 
