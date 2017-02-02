@@ -13,8 +13,8 @@ use App\Console\Commands\ImportNurseScheduleFromGoogleCalendar;
 use App\Console\Commands\Inspire;
 use App\Console\Commands\MapSnomedToCpmProblems;
 use App\Console\Commands\NukeItemAndMeta;
+use App\Console\Commands\RecalculateCcmTime;
 use App\Console\Commands\ResetCcmTime;
-use App\Practice;
 use App\Reports\Sales\Practice\SalesByPracticeReport;
 use App\Reports\Sales\Provider\SalesByProviderReport;
 use App\Services\Calls\SchedulerService;
@@ -23,8 +23,8 @@ use App\User;
 use Carbon\Carbon;
 use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Foundation\Console\Kernel as ConsoleKernel;
-use Maknz\Slack\Facades\Slack;
 use Illuminate\Support\Facades\Mail;
+use Maknz\Slack\Facades\Slack;
 
 
 class Kernel extends ConsoleKernel
@@ -47,6 +47,7 @@ class Kernel extends ConsoleKernel
         GetAppointments::class,
         GetCcds::class,
         ResetCcmTime::class,
+        RecalculateCcmTime::class,
     ];
 
     /**
@@ -175,7 +176,7 @@ class Kernel extends ConsoleKernel
             ->at('21:00');
 
         //Run at 12:01am every 1st of month
-        $schedule->command('reset:ccm_time')
+        $schedule->command('ccm_time:reset')
             ->cron('1 0 1 * *');
     }
 
