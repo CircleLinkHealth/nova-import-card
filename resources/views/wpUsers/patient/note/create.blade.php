@@ -145,7 +145,8 @@
                                     <div class="form-group">
                                         <div class="col-sm-12">
                                             <div class="panel-group" id="accordion">
-                                                <label data-toggle="collapse" data-target="#collapseOne">
+
+                                                <label>
                                                     <div class="radio"><input type="checkbox" name="meta[0][meta_key]"
                                                                               id="phone"
                                                                               value="phone"/><label
@@ -153,7 +154,7 @@
                                                     </div>
                                                 </label>
 
-                                                <div id="collapseOne" class="panel-collapse collapse in">
+                                                <div id="collapseOne" class="panel-collapse collapse in" style="display:none">
                                                     <div class="radio-inline"><input type="radio"
                                                                                      name="phone"
                                                                                      value="inbound"
@@ -310,26 +311,11 @@
 
     <script>
 
-        // Script is for the "phone session" part
-        $('.collapse').collapse();
-
-        $("#phone").on('click', function () {
-            // in the handler, 'this' refers to the box clicked on
-            var $box = $(this);
-            if ($box.is(":checked")) {
-                // the name of the box is retrieved using the .attr() method
-                // as it is assumed and expected to be immutable
-                var group = "input:checkbox[name='" + $box.attr("name") + "']";
-                // the checked state of the group/box on the other hand will change
-                // and the current value is retrieved using .prop() method
-                $(group).prop("checked", false);
+        $(document).ready(function() {
+            $('#phone').change(function() {
+                $('#collapseOne').toggle();
                 $("#Outbound").prop("checked", true);
-                $box.prop("checked", true);
-
-            } else {
-                $("#Outbound").prop("checked", false);
-                $box.prop("checked", false);
-            }
+            });
         });
 
         $(document).ready(function () {
