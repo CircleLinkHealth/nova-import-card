@@ -143,11 +143,18 @@ class CareTeamController extends Controller
             $primaryPractice = $input['user']['primary_practice'];
 
             if ($primaryPractice['display_name']) {
-                $practice = Practice::updateOrCreate([
-                    'id' => $primaryPractice['id'],
-                ], [
-                    'display_name' => $primaryPractice['display_name'],
-                ]);
+                if (!empty($primaryPractice['id'])) {
+                    $practice = Practice::updateOrCreate([
+                        'id' => $primaryPractice['id'],
+                    ], [
+                        'display_name' => $primaryPractice['display_name'],
+                    ]);
+                } else {
+                    $practice = Practice::create([
+                        'display_name' => $primaryPractice['display_name'],
+                        'name'         => str_slug($primaryPractice['display_name']),
+                    ]);
+                }
 
                 $providerUser->program_id = $practice->id;
                 $providerUser->save();
