@@ -320,7 +320,9 @@
 
         $(document).ready(function () {
             $("#complex").click(function (e) {
-                $("#confirmButtonModal").modal();
+                if($("#complex").is(':checked')){
+                    $("#confirmButtonModal").modal();
+                }
             });
 
             $("#complex_confirm").click(function (e) {
