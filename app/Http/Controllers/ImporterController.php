@@ -167,11 +167,39 @@ class ImporterController extends Controller
                 ]);
         }
 
+        $practiceId = $request->input('practiceId');
+        $locationId = $request->input('locationId');
+        $billingProviderId = $request->input('billingProviderId');
+
         $imr = ImportedMedicalRecord::find($request->input('imported_medical_record_id'));
-        $imr->practice_id = $request->input('practice_id');
-        $imr->location_id = $request->input('location_id');
-        $imr->billing_provider_id = $request->input('billing_provider_id');
+        $imr->practice_id = $practiceId;
+        $imr->location_id = $locationId;
+        $imr->billing_provider_id = $billingProviderId;
         $imr->save();
+
+
+        //save the features on the medical record, document and provider logs
+        $mr = app($imr->medical_record_type)->find($imr->medical_record_id);
+        $mr->practice_id = $practiceId;
+        $mr->location_id = $locationId;
+        $mr->billing_provider_id = $billingProviderId;
+        $mr->save();
+
+        $docs = DocumentLog::where('medical_record_type', '=', $imr->medical_record_type)
+            ->where('medical_record_id', '=', $imr->medical_record_id)
+            ->update([
+                'practice_id'         => $practiceId,
+                'location_id'         => $locationId,
+                'billing_provider_id' => $billingProviderId,
+            ]);
+
+        $provs = ProviderLog::where('medical_record_type', '=', $imr->medical_record_type)
+            ->where('medical_record_id', '=', $imr->medical_record_id)
+            ->update([
+                'practice_id'         => $practiceId,
+                'location_id'         => $locationId,
+                'billing_provider_id' => $billingProviderId,
+            ]);
 
         return redirect()->route('view.files.ready.to.import');
     }
