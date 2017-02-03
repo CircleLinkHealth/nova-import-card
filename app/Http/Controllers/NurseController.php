@@ -117,10 +117,6 @@ class NurseController extends Controller
                         $q->where('scheduled_date', '>=', Carbon::now()->startOfDay())
                             ->where('scheduled_date', '<=', Carbon::now()->endOfDay());
                     })
-                    ->where(function ($k) {
-                        $k->where('status', 'reached')
-                            ->orWhere('status', 'not reached');
-                    })
                     ->count();
 
             $nurses[$i]['# Completed Calls Today'] =
