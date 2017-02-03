@@ -83,7 +83,7 @@ class ImportedMedicalRecord extends Model implements ImportedMedicalRecordInterf
 
     public function createCarePlan() : CarePlan
     {
-        $user = (new CCDImporterRepository())->createRandomUser($this->demographics);
+        $user = (new CCDImporterRepository())->createRandomUser($this->demographics, $this);
 
         $this->patient_id = $user->id;
         $this->save();

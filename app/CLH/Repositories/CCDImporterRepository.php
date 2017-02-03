@@ -4,6 +4,7 @@ namespace App\CLH\Repositories;
 
 
 use App\Importer\Models\ImportedItems\DemographicsImport;
+use App\Models\MedicalRecords\ImportedMedicalRecord;
 use App\Role;
 use App\User;
 use GuzzleHttp\Client;
@@ -17,8 +18,10 @@ class CCDImporterRepository
      *
      * @return \App\User
      */
-    public function createRandomUser(DemographicsImport $demographics)
-    {
+    public function createRandomUser(
+        DemographicsImport $demographics,
+        ImportedMedicalRecord $imr
+    ) {
         $role = Role::whereName('participant')->first();
 
         if (empty($role)) {
@@ -47,7 +50,7 @@ class CCDImporterRepository
             'first_name'        => $demographics->first_name,
             'last_name'         => $demographics->last_name,
             'username'          => $username,
-            'program_id'        => $demographics->program_id,
+            'program_id'        => $imr->practice_id,
             'address'           => $demographics->street,
             'address2'          => $demographics->street2,
             'city'              => $demographics->city,
