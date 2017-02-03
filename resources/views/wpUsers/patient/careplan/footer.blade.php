@@ -7,19 +7,8 @@
             <div class="progress-buttons col-sm-12 col-centered text-center">
 
                 @if(Route::is('patient.demographics.show'))
-
-                    @if( isset($showApprovalButton) && $showApprovalButton )
-                        <a id="approve-forward" href="#" class="btn btn-primary btn-next inline-block submitFormBtn"
-                           dtarget="{{ URL::route('patient.careteam.show', array('patientId' => $patient->id)) }}">Approve/Next
-                            Page&nbsp; <span class="glyphicon glyphicon-circle-arrow-right"></span></a>
-                    @endif
-                @endif
-                @if(Route::is('patient.careteam.show'))
                 <!-- <button type="submit" class="btn btn-primary btn-next inline-block">Submit</button> -->
                     @if( isset($showApprovalButton) && $showApprovalButton )
-                        <a id="approve-backward" href="#" class="btn btn-primary btn-next inline-block submitFormBtn"
-                           dtarget="{{ URL::route('patient.demographics.show', array('patientId' => $patient->id)) }}"><span
-                                    class="glyphicon glyphicon-circle-arrow-left"></span></a>
                         <a id="approve-forward" href="#" class="btn btn-primary btn-next inline-block submitFormBtn"
                            dtarget="{{ URL::route('patient.careplan.show', array('patientId' => $patient->id, 'page' => 1)) }}">Approve/Next
                             Page&nbsp; <span class="glyphicon glyphicon-circle-arrow-right"></span></a>
