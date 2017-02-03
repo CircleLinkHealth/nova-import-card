@@ -13,6 +13,7 @@ class CcdaImporterPredictionSeeder extends Seeder
      */
     public function run()
     {
+        DB::statement('SET FOREIGN_KEY_CHECKS=0');
         foreach (Ccda::withTrashed()->get() as $ccda) {
             try {
                 if ($ccda->patient_id) {
@@ -53,5 +54,6 @@ class CcdaImporterPredictionSeeder extends Seeder
                 echo $e->getMessage();
             }
         }
+        DB::statement('SET FOREIGN_KEY_CHECKS=1');
     }
 }
