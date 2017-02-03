@@ -21,17 +21,17 @@ class CcdaImporterPredictionSeeder extends Seeder
                     continue;
                 }
 
-                $ccda->location_id = $patient->preferred_contact_location;
-                $ccda->practice_id = $patient->primary_practice_id;
-                $ccda->billing_provider_id = $patient->billing_provider_id;
+                $ccda->location_id = $patient->preferred_contact_location ?? null;
+                $ccda->practice_id = $patient->primary_practice_id ?? null;
+                $ccda->billing_provider_id = $patient->billing_provider_id ?? null;
                 $ccda->save();
 
                 $docLog = $ccda->document;
 
                 if ($docLog) {
-                    $docLog->location_id = $ccda->location_id;
-                    $docLog->practice_id = $ccda->practice_id;
-                    $docLog->billing_provider_id = $ccda->billing_provider_id;
+                    $docLog->location_id = $ccda->location_id ?? null;
+                    $docLog->practice_id = $ccda->practice_id ?? null;
+                    $docLog->billing_provider_id = $ccda->billing_provider_id ?? null;
                     $docLog->save();
                 }
 
@@ -40,9 +40,9 @@ class CcdaImporterPredictionSeeder extends Seeder
 
                 if ($providersLog) {
                     foreach ($providersLog as $providerLog) {
-                        $providerLog->location_id = $ccda->location_id;
-                        $providerLog->practice_id = $ccda->practice_id;
-                        $providerLog->billing_provider_id = $ccda->billing_provider_id;
+                        $providerLog->location_id = $ccda->location_id ?? null;
+                        $providerLog->practice_id = $ccda->practice_id ?? null;
+                        $providerLog->billing_provider_id = $ccda->billing_provider_id ?? null;
                         $providerLog->save();
                     }
                 }
