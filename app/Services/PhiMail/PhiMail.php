@@ -1,9 +1,6 @@
 <?php namespace App\Services\PhiMail;
 
-use App\CLH\CCD\Importer\QAImportManager;
 use App\CLH\Repositories\CCDImporterRepository;
-use App\Importer\Loggers\Ccda\CcdaSectionsLogger;
-use App\Models\CCD\CcdVendor;
 use App\Models\MedicalRecords\Ccda;
 use App\User;
 use Illuminate\Support\Facades\Log;
@@ -266,44 +263,19 @@ class PhiMail
         $sender,
         $attachment
     ) {
-        $atPosition = strpos($sender, '@');
+        $ccdaRepo = new CCDImporterRepository;
 
-        if (!$atPosition) {
-            return false;
-        }
-
-        //get the domain of the sender's emr address to see where it came from
-        $senderDomain = substr($sender, $atPosition);
-
-        Log::critical("Sender EMR Address Domain: {$senderDomain}");
-
-        $vendorMap = Ccda::EMAIL_DOMAIN_TO_VENDOR_MAP;
-
-        //Map the email domain of the sender to one of our CCD Vendors, or assume carolina meds
-        $vendorId = key_exists($senderDomain, $vendorMap)
-            ? $vendorMap[$senderDomain]
-            : 10;
-
-        $vendor = CcdVendor::find($vendorId);
+        $json = $ccdaRepo->toJson($attachment->data);
 
         $ccda = Ccda::create([
             'user_id'   => null,
-            'vendor_id' => $vendorId,
+            'vendor_id' => 1,
+            'json'      => $json,
             'xml'       => $attachment->data,
             'source'    => Ccda::EMR_DIRECT,
         ]);
 
-        $ccdaRepo = new CCDImporterRepository;
-
-        $json = $ccdaRepo->toJson($ccda->xml);
-        $ccda->json = $json;
-        $ccda->save();
-
-        $logger = new CcdaSectionsLogger($ccda);
-        $logger->logAll();
-
-        $importer = new QAImportManager($vendor->program_id, $ccda);
-        $importer->generateCarePlanFromCCD();
+        $ccda->import();
 
         return [
             'id'       => $ccda->id,
