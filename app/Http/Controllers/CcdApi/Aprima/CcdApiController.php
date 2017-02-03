@@ -11,7 +11,6 @@ use App\Contracts\Repositories\CcmTimeApiLogRepository;
 use App\Contracts\Repositories\UserRepository;
 use App\ForeignId;
 use App\Http\Controllers\Controller;
-use App\Importer\Loggers\Ccda\CcdaSectionsLogger;
 use App\Models\CCD\ValidatesQAImportOutput;
 use App\Models\MedicalRecords\Ccda;
 use App\Note;
@@ -358,17 +357,15 @@ class CcdApiController extends Controller
         //If Parsing fails we let ourselves know, but not Aprima.
         try {
             $json = $this->importer->toJson($xml);
+
             $ccdObj->json = $json;
             $ccdObj->save();
-
-            $logger = new CcdaSectionsLogger($ccdObj);
-            $logger->logAll();
 
             $providerId = empty($provider['id'])
                 ? null
                 : $provider['id'];
-            $importer = new QAImportManager($programId, $ccdObj, $providerId, $locationId);
-            $output = $importer->generateCarePlanFromCCD();
+
+            $ccdObj->import();
 
         } catch (\Exception $e) {
             if (app()->environment('production')) {
