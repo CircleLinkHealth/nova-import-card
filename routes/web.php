@@ -2,14 +2,14 @@
 
 use App\PageTimer;
 
-//if (app()->environment() != 'production') {
+if (app()->environment() != 'production') {
 
     Route::get('rohan', function () {
 
         dd((new \App\Algorithms\Invoicing\ReconcileVariablePay())->adjust());
         
     });
-//}
+}
 
 //Algo test routes.
 
