@@ -72,7 +72,7 @@ var carePerson = Vue.component('carePerson', {
                     "name='provider' " +
                     "class='provider selectpickerX dropdownValid form-control' " +
                     "data-size='10' disabled>  " +
-                    "<option value=" + carePerson.user_id + ">" + carePerson.user.first_name + ' ' + carePerson.user.last_name + "</option></select>");
+                    "<option value=" + carePerson.member_user_id + ">" + carePerson.user.first_name + ' ' + carePerson.user.last_name + "</option></select>");
 
                 $('#providerDiv').css('padding-bottom', '10px');
                 $("#save").append('<input type="hidden" value="' + carePerson.user_id + '" id="provider" name="provider">');
