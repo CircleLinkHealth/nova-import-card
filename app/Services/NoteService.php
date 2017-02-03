@@ -500,9 +500,7 @@ class NoteService
     ) {
 
         if (isset($input['careteam'])) {
-
-            dd($input['careteam']);
-
+            
             $note = Note::findOrFail($input['noteId']);
 
             $author = User::find($input['logger_id']);
