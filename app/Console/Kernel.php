@@ -156,7 +156,8 @@ class Kernel extends ConsoleKernel
             });
 
 
-        })->weeklyOn(1, '12:10');
+        })->dailyAt('10:00');
+//            ->weeklyOn(1, '12:10');
 
         $schedule->command('emailapprovalreminder:providers')
             ->weekdays()
