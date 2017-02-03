@@ -50,12 +50,7 @@ class CcdaImporterPredictionSeeder extends Seeder
 
                 }
             } catch (Exception $e) {
-                if ($e instanceof \Illuminate\Database\QueryException) {
-                    $errorCode = $e->errorInfo[1];
-                    if ($errorCode == 1452) {
-                        //do nothing
-                    }
-                }
+                echo $e->getMessage();
             }
         }
     }
