@@ -40,7 +40,11 @@ class CCMComplexToggleController extends Controller
                 $patientRecord->save();
 
                 if ($patient->patientInfo->cur_month_activity_time > 3600) {
-                    (new AlternativeCareTimePayableCalculator(auth()->user()->nurseInfo))->adjustPayOnCCMComplexSwitch60Mins();
+                    
+                    //Get nurse that did the last activity.
+                    
+                    (new AlternativeCareTimePayableCalculator($patient->patientInfo->lastNurseThatPerformedActivity()))
+                            ->adjustPayOnCCMComplexSwitch60Mins();
                 }
 
 
@@ -60,7 +64,7 @@ class CCMComplexToggleController extends Controller
                 $patientRecord->save();
 
                 if ($patient->patientInfo->cur_month_activity_time > 3600) {
-                    (new AlternativeCareTimePayableCalculator(auth()->user()->nurseInfo))->adjustPayOnCCMComplexSwitch60Mins();
+                    (new AlternativeCareTimePayableCalculator($patient->patientInfo->lastNurseThatPerformedActivity()))->adjustPayOnCCMComplexSwitch60Mins();
                 }
 
             } else {

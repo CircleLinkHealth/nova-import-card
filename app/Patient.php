@@ -276,6 +276,21 @@ class Patient extends Model {
 
 	}
 
+	public function lastNurseThatPerformedActivity(){
+
+		$id =  Activity::where('patient_id', $this->user_id)
+				   ->whereHas('provider', function ($q){
+					   $q->whereHas('roles', function ($k){
+						   $k->where('name', 'care-center');
+					   });
+				   })
+				   ->orderBy('created_at', 'desc')
+				   ->first()['provider_id'];
+		
+		return Nurse::where('user_id', $id)->first();
+
+	}
+
 
 	/**
 	 * Returns nurseInfos that have:
