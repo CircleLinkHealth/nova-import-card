@@ -2,37 +2,14 @@
 
 use App\PageTimer;
 
-if (app()->environment() != 'production') {
+//if (app()->environment() != 'production') {
 
     Route::get('rohan', function () {
 
-        $nurse = \App\User::find(1755)->nurseInfo;
-        $patient = \App\Patient::find(1423);
-        $start = Carbon\Carbon::now()->startOfMonth();
-        $end = Carbon\Carbon::now()->endOfMonth();
-
-        $systemTime = PageTimer::where('provider_id', 2785)
-            ->where(function ($q) use
-            (
-                $start,
-                $end
-            ) {
-                $q->where('updated_at', '>=', $start)
-                    ->where('updated_at', '<=', $end);
-            })
-            ->sum('duration');
-
-
-        dd($systemTime);
-//
-//        dd($nurse->careGivenToPatientForCurrentMonth($patient, $nurse));
-//
-//        dd((new \App\Billing\NurseInvoices\VariablePay($nurse,
-//            \Carbon\Carbon::now()->startOfMonth(),
-//            \Carbon\Carbon::now()->endOfMonth()))->getItemizedActivities());
-
+        dd((new \App\Algorithms\Invoicing\ReconcileVariablePay())->adjust());
+        
     });
-}
+//}
 
 //Algo test routes.
 
