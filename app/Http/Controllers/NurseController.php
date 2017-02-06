@@ -229,14 +229,38 @@ class NurseController extends Controller
         return redirect()->route('admin.reports.nurse.invoice')->with(['success' => 'yes']);
     }
 
-    public function monthlyOverview(){
-        
+    public function monthlyOverview(Request $request){
+
+
+
+        $input = $request->input();
+
+
+        if(isset($input['next'])){
+
+            $dayCounter = Carbon::parse($input['next'])->firstOfMonth()->toDateTimeString();
+            $last = Carbon::parse($input['next'])->lastOfMonth()->toDateTimeString();
+
+        } elseif(isset($input['previous'])){
+
+            $dayCounter = Carbon::parse($input['previous'])->firstOfMonth()->toDateTimeString();
+            $last = Carbon::parse($input['previous'])->lastOfMonth()->toDateTimeString();
+
+        } else {
+
+            $dayCounter = Carbon::now()->firstOfMonth()->toDateTimeString();
+            $last = Carbon::now()->lastOfMonth()->toDateTimeString();
+
+        }
+
+//        dd($dayCounter, $last);
+
+
         $nurses = User::ofType('care-center')->where('access_disabled', 0)->get();
         $data = [];
 
-        $dayCounter = Carbon::now()->firstOfMonth()->toDateTimeString();
 
-        while ($dayCounter <= Carbon::now()->lastOfMonth()->toDateTimeString()){
+        while ($dayCounter <= $last){
 
             foreach ($nurses as $nurse){
 
@@ -266,7 +290,10 @@ class NurseController extends Controller
 
         }
         
-        return view('admin.reports.allocation', ['data' => $data]);
+        return view('admin.reports.allocation', [
+            'data' => $data,
+            'month' => Carbon::parse($last)
+        ]);
 
     }
 
