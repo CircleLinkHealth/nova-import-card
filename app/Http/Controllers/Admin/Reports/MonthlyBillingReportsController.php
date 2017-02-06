@@ -191,9 +191,9 @@ class MonthlyBillingReportsController extends Controller
                     $message = is_object($instruction) ? $instruction->name : 'N/A';
 
                     $problems[] = [
-                        'provider_name' => $provider->fullName,
-                        'patient_name' => $patient->fullName,
-                        'patient_dob' => $patient->birthDate,
+                        'provider_name' => $provider->fullName ?? 'N/A',
+                        'patient_name'  => $patient->fullName,
+                        'patient_dob'   => $patient->birthDate,
                         'patient_phone' => $patient->primaryPhone,
 
                         'problem_name_1' => $billableCpmProblems[0]->name,
@@ -234,9 +234,9 @@ class MonthlyBillingReportsController extends Controller
                     : new Problem();
 
                 array_push($problems, [
-                    'provider_name' => $provider->fullName,
-                    'patient_name' => $patient->fullName,
-                    'patient_dob' => $patient->birthDate,
+                    'provider_name' => $provider->fullName ?? 'N/A',
+                    'patient_name'  => $patient->fullName,
+                    'patient_dob'   => $patient->birthDate,
                     'patient_phone' => $patient->primaryPhone,
 
                     'problem_name_1' => $billableCcdProblems[0]->name,
