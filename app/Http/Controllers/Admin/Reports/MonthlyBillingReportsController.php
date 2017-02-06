@@ -320,7 +320,14 @@ class MonthlyBillingReportsController extends Controller
                 );
             });
             foreach ($worksheets as $worksheet) {
-                $excel->sheet("{$worksheet['program']->name}", function ($sheet) use
+
+                $sheetName = $worksheet['program']->name;
+
+                if (strlen($sheetName) > 31) {
+                    $sheetName = substr($sheetName, 0, 31);
+                }
+
+                $excel->sheet("$sheetName", function ($sheet) use
                 (
                     $worksheet
                 ) {
