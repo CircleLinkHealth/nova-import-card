@@ -51,21 +51,22 @@ class NurseController extends Controller
 
             $links = [];
 
+            $startDate = Carbon::parse($request->input('start_date'));
+            $endDate = Carbon::parse($request->input('end_date'));
+
             foreach ($nurses as $nurse) {
 
                 $nurse = Nurse::where('user_id', $nurse)->first();
-                $startDate = Carbon::parse($request->input('start_date'));
-                $endDate = Carbon::parse($request->input('end_date'));
 
                 $generator = (new NurseMonthlyBillGenerator($nurse, $startDate, $endDate, $variablePay, $addTime,
                     $addNotes))
 //                    ->formatItemizedActivities();
                     ->handle();
 
-
                 $data[] = $generator;
 
-                $links[$generator['name']] = $generator['link'];
+                $links[$nurse->user_id]['link'] = $generator['link'];
+                $links[$nurse->user_id]['name'] = $generator['name'];
 
             }
 
@@ -73,9 +74,29 @@ class NurseController extends Controller
                 [
                     'invoices' => $links,
                     'data'     => $data,
+                    'month'  => Carbon::parse($startDate)->format('F')
                 ]
             );
         }
+    }
+
+    public function sendInvoice(Request $request)
+    {
+
+        $invoices = (array) json_decode($request->input('links'));
+        $month = $request->input('month');
+
+        foreach ($invoices as $key => $value) {
+
+            $value = (array) $value;
+
+            $user = User::find($key);
+
+            Mail::to($user)->send(new NurseInvoiceMailer($key, $value['link'], $month));
+
+        }
+
+        return redirect()->route('admin.reports.nurse.invoice')->with(['success' => 'yes']);
     }
 
     public function makeDailyReport()
@@ -206,35 +227,9 @@ class NurseController extends Controller
 
     }
 
-    public function sendInvoice(Request $request)
-    {
-
-        $data = json_decode($request->input('data'), true);
-
-        foreach ($data as $nurse_array) {
-
-            $nurse = Nurse::find($nurse_array['id']);
-            $start = Carbon::parse($nurse_array['date_start']);
-            $end = Carbon::parse($nurse_array['date_end']);
-
-            $variable = false;
-            if($nurse->billing_type != 'fixed'){
-                $variable = true;
-            }
-
-            Mail::to($nurse->user)->send(new NurseInvoiceMailer($nurse, $start, $end, $variable));
-
-        }
-
-        return redirect()->route('admin.reports.nurse.invoice')->with(['success' => 'yes']);
-    }
-
     public function monthlyOverview(Request $request){
 
-
-
         $input = $request->input();
-
 
         if(isset($input['next'])){
 
@@ -252,9 +247,6 @@ class NurseController extends Controller
             $last = Carbon::now()->lastOfMonth()->toDateTimeString();
 
         }
-
-//        dd($dayCounter, $last);
-
 
         $nurses = User::ofType('care-center')->where('access_disabled', 0)->get();
         $data = [];

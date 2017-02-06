@@ -7,7 +7,6 @@
                 <div class="row">
                     <div class="col-md-12">
                         <div class="panel panel-default">
-                            <div class="panel-heading">Scheduled Calls by Day</div>
                             <form class="text-center" method="get"
                                   action="{{URL::route('admin.reports.nurse.allocation')}}">
                                 <button type="submit" value="{{Carbon\Carbon::parse($month)->firstOfMonth()->subMonth(1)->toDateString()}}" style="display:inline-block;" name="previous"> <</button>

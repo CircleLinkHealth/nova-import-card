@@ -181,7 +181,16 @@ class NurseMonthlyBillGenerator
 
         foreach ($offlineActivities as $offlineActivity){
 
-            $data[Carbon::parse($offlineActivity[0]['created_at'])->toDateString()] += $offlineActivity->sum('duration');
+            if(isset($data[Carbon::parse($offlineActivity[0]['created_at'])->toDateString()])){
+
+                $data[Carbon::parse($offlineActivity[0]['created_at'])->toDateString()] += $offlineActivity->sum('duration');
+
+            } else {
+
+                $data[Carbon::parse($offlineActivity[0]['created_at'])->toDateString()] = $offlineActivity->sum('duration');
+
+            }
+
 
         };
 
@@ -238,7 +247,7 @@ class NurseMonthlyBillGenerator
 
             $extraMultiplier = ($this->withVariablePaymentSystem) ? 30 : 20;
 
-            $this->payable += $this->formattedAddDuration * $extraMultiplier;
+//            $this->payable += $this->formattedAddDuration * $extraMultiplier;
 
             $others = [
 
