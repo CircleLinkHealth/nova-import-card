@@ -6,7 +6,7 @@ if (app()->environment() != 'production') {
 
     Route::get('rohan', function () {
 
-        dd((new \App\Algorithms\Invoicing\ReconcileVariablePay())->adjust());
+        return view('vue-tutorial');
         
     });
 }
@@ -959,9 +959,15 @@ Route::group(['middleware' => 'auth'], function () {
             'uses' => 'NurseController@makeDailyReport',
             'as'   => 'admin.reports.nurse.daily',
         ]);
+
         Route::get('reports/nurse/daily/data', [
             'uses' => 'NurseController@dailyReport',
             'as'   => 'admin.reports.nurse.daily.data',
+        ]);
+
+        Route::get('reports/nurse/allocation', [
+            'uses' => 'NurseController@monthlyOverview',
+            'as'   => 'admin.reports.nurse.allocation',
         ]);
 
         Route::get('reports/nurseTime/exportxls', [

@@ -140,15 +140,6 @@ class NurseController extends Controller
                     ->where('status', 'reached')
                     ->count();
 
-//        $nurses[$nurse->fullName]['# Scheduled Calls Today'] =
-//            \App\Call::where('outbound_cpm_id', $nurse->id)
-//                ->where(function ($q){
-//                    $q->where('updated_at', '>=' , Carbon::now()->startOfDay())
-//                        ->where('updated_at', '<=' , Carbon::now()->endOfDay());
-//                })
-//                ->where('status', 'scheduled')
-//                ->count();
-
             $activity_time = Activity::
             where('provider_id', $nurse->id)
                 ->createdToday()
@@ -236,6 +227,47 @@ class NurseController extends Controller
         }
 
         return redirect()->route('admin.reports.nurse.invoice')->with(['success' => 'yes']);
+    }
+
+    public function monthlyOverview(){
+        
+        $nurses = User::ofType('care-center')->where('access_disabled', 0)->get();
+        $data = [];
+
+        $dayCounter = Carbon::now()->firstOfMonth()->toDateTimeString();
+
+        while ($dayCounter <= Carbon::now()->lastOfMonth()->toDateTimeString()){
+
+            foreach ($nurses as $nurse){
+
+                $count =
+                    Call::where('outbound_cpm_id', $nurse->id)
+                        ->where(function ($q) use ($dayCounter){
+                            $q->where('scheduled_date', '>=', Carbon::parse($dayCounter)->startOfDay())
+                                ->where('scheduled_date', '<=', Carbon::parse($dayCounter)->endOfDay());
+                        })
+                        ->count();
+
+                $formattedDate = Carbon::parse($dayCounter)->toDateString();
+
+                 if($count > 0){
+
+                     $data[$formattedDate][$nurse->fullName] = $count;
+
+                 } else {
+
+                     $data[$formattedDate][$nurse->fullName] = null;
+
+                 }
+
+            }
+
+            $dayCounter = Carbon::parse($dayCounter)->addDays(1)->toDateTimeString();
+
+        }
+        
+        return view('admin.reports.allocation', ['data' => $data]);
+
     }
 
 }
