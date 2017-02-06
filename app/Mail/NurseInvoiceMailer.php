@@ -61,7 +61,7 @@ class NurseInvoiceMailer extends Mailable
             ->attach($this->reportLink, [
                 'as' => 'invoice.pdf',
                 'mime' => 'application/pdf',
-            ])->attach();
+            ]);
 
     }
 }
