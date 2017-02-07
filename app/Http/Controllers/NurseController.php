@@ -268,11 +268,11 @@ class NurseController extends Controller
 
                  if($count > 0){
 
-                     $data[$formattedDate][$nurse->fullName] = $count;
+                     $data[$formattedDate][$nurse->last_name] = $count;
 
                  } else {
 
-                     $data[$formattedDate][$nurse->fullName] = null;
+                     $data[$formattedDate][$nurse->last_name] = null;
 
                  }
 
