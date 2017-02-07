@@ -264,7 +264,7 @@ class NurseController extends Controller
                         })
                         ->count();
 
-                $formattedDate = Carbon::parse($dayCounter)->format('m/d/y D');
+                $formattedDate = Carbon::parse($dayCounter)->format('m/d D');
 
                  if($count > 0){
 

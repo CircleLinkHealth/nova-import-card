@@ -32,8 +32,8 @@
 
                                         $d = Carbon\Carbon::parse($date)->subDays($boxSpaces - $i)->format('m/d/y D');
 
-                                        echo '<div class="container"style="display:inline-block; width: 146px; vertical-align: text-top;">
-                                                  <h4 style="color: dimgray">' . $d . '</h4>
+                                        echo '<div class="container"style="display:inline-block; width: 130px; vertical-align: text-top;">
+                                                  <h4 style="color: dimgray; font-size: 17px;">' . $d . '</h4>
                                              </div>';
                                     }
                                 }
@@ -41,8 +41,8 @@
                                 ?>
 
                                 <div class="container"
-                                     style="display:inline-block; width: 146px; vertical-align: text-top;">
-                                    <h4><b>{{$date}}</b></h4>
+                                     style="display:inline-block; width: 130px;  vertical-align: text-top;">
+                                    <h4 style="font-size: 17px;"><b>{{$date}}</b></h4>
                                     <div class="">
                                         @foreach($nurses as $nurse => $count)
                                             @if($count != null)
