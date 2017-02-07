@@ -45,7 +45,15 @@
                                 <label class="col-md-4 control-label">Phone Number</label>
                                 <div class="col-md-6">
                                     <input type="tel" class="form-control" name="phone" value="{{ old('phone') }}"
-                                           required>
+                                           required placeholder="+12224446666" pattern="^\+?[1-9]\d{1,14}$">
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label class="col-md-4 control-label">Fax Number</label>
+                                <div class="col-md-6">
+                                    <input type="tel" class="form-control" name="fax" value="{{ old('fax') }}"
+                                           placeholder="+13334445555" pattern="^\+?[1-9]\d{1,14}$">
                                 </div>
                             </div>
 
