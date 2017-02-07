@@ -6,6 +6,9 @@
             <th class="mdl-data-table__cell--non-numeric">Edit</th>
             <th class="mdl-data-table__cell--non-numeric">Delete</th>
             <th class="mdl-data-table__cell--non-numeric">Name</th>
+            <th class="mdl-data-table__cell--non-numeric">Practice</th>
+            <th class="mdl-data-table__cell--non-numeric">Location</th>
+            <th class="mdl-data-table__cell--non-numeric">Billing Provider</th>
             <th class="mdl-data-table__cell--non-numeric">Source</th>
             <th class="mdl-data-table__cell--non-numeric">Created At</th>
         </tr>
@@ -44,6 +47,18 @@
 
             <td class="mdl-data-table__cell--non-numeric">{{ importedMedicalRecord.demographics.first_name }} {{
                 importedMedicalRecord.demographics.last_name }}
+            </td>
+
+            <td class="mdl-data-table__cell--non-numeric">
+                {{ importedMedicalRecord.practice.display_name }}
+            </td>
+
+            <td class="mdl-data-table__cell--non-numeric">
+                {{ importedMedicalRecord.location.name }}
+            </td>
+
+            <td class="mdl-data-table__cell--non-numeric">{{ importedMedicalRecord.billing_provider.first_name }}
+                {{importedMedicalRecord.billing_provider.last_name }}
             </td>
 
             <td v-if="importedMedicalRecord.source" class="mdl-data-table__cell--non-numeric">{{

@@ -31,7 +31,7 @@
                                 @foreach( $locations as $loc )
                                     <tr>
                                         <td>
-                                            <a href='/admin/locations/{{ $loc->id }}'>{{ $loc->name }}</a>
+                                            <a href="{{ URL::route('locations.edit', array('id' => $loc->id)) }}">{{ $loc->name }}</a>
                                         </td>
                                         <td>
                                             <a href="{{ URL::route('locations.edit', array('id' => $loc->id)) }}"
