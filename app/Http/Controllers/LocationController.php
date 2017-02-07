@@ -80,19 +80,11 @@ class LocationController extends Controller
         }
         $messages = \Session::get('messages');
         $location = Location::find($id);
-        if (is_null($location->parent_id)) {
-            $locationParents = null;
-        } else {
-            $locationParents = Location::getParents($id);
-        }
 
         // return $id;
         return view('locations.show', [
-            'messages'            => $messages,
-            'location'            => $location,
-            'locationParents'     => $locationParents,
-            'locationSubs'        => Location::getNonRootLocations(),
-            'locationParentsSubs' => Location::getParentsSubs($id),
+            'messages' => $messages,
+            'location' => $location,
         ]);
     }
 
