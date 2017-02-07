@@ -15,16 +15,16 @@ class ValidStatus implements SectionValidator
             return false;
         }
 
+        return true;
+    }
+
+    public function shouldValidate(ItemLog $item) : bool
+    {
         return empty($item->status)
             ? false
             : in_array(strtolower($item->status), [
                 'active',
                 'chronic',
             ]);
-    }
-
-    public function shouldValidate(ItemLog $item) : bool
-    {
-        return !empty($item->status);
     }
 }
