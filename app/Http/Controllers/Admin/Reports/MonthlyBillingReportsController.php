@@ -58,7 +58,8 @@ class MonthlyBillingReportsController extends Controller
             $patientsOver20MinsQuery = DB::table('lv_activities')
                 ->select(DB::raw('patient_id, SUM(duration) as ccmTime'))
                 ->whereBetween('performed_at', [
-                    $start, $end
+                    $start,
+                    $end,
                 ])
                 ->having('ccmTime', $overOrUnder, $ccmTimeSec)
                 ->groupBy('patient_id');
@@ -72,12 +73,18 @@ class MonthlyBillingReportsController extends Controller
                     $query->whereNotNull('cpm_problem_id');
                 },
                 'cpmProblems',
-                'patientInfo'
+                'patientInfo',
             ])
-                ->whereHas('roles', function ($q) use ($patientRole) {
+                ->whereHas('roles', function ($q) use
+                (
+                    $patientRole
+                ) {
                     $q->where('name', '=', $patientRole->name);
                 })
-                ->whereHas('patientInfo', function ($query) use ($ccmStatuses) {
+                ->whereHas('patientInfo', function ($query) use
+                (
+                    $ccmStatuses
+                ) {
                     $query->whereIn('ccm_status', $ccmStatuses);
                 })
                 ->where('program_id', '=', $programId)
@@ -90,17 +97,25 @@ class MonthlyBillingReportsController extends Controller
 
                 $billableCpmProblems = [];
 
-                $calls = Call::where(function ($q) use ($patient) {
+                $calls = Call::where(function ($q) use
+                (
+                    $patient
+                ) {
                     $q->where('inbound_cpm_id', $patient->id)
                         ->orWhere('outbound_cpm_id', $patient->id);
                 })
                     ->whereStatus('reached')
                     ->whereBetween('updated_at', [
-                        $start, $end
+                        $start,
+                        $end,
                     ])
                     ->get();
 
                 $provider = User::find($patient->billingProviderID);
+
+                if (!$provider) {
+                    continue;
+                }
 
                 //for patients whose ccd problems were not logged
                 //we're gonna pick their cpm problems
@@ -139,13 +154,16 @@ class MonthlyBillingReportsController extends Controller
                         $keywords = explode(',', $cpmProblem->contains);
 
                         foreach ($keywords as $keyword) {
-                            if (empty($keyword)) continue;
+                            if (empty($keyword)) {
+                                continue;
+                            }
 
                             if ($strPos = strpos($instruction->name, $keyword)) {
 
                                 $break = strpos($instruction->name, ';', $strPos);
 
-                                $otherConditionsText[$cpmProblem->id] = substr($instruction->name, $strPos, $break - $strPos);
+                                $otherConditionsText[$cpmProblem->id] = substr($instruction->name, $strPos,
+                                    $break - $strPos);
 
                                 //add it to billable
                                 $billableCpmProblems[] = $cpmProblem;
@@ -161,13 +179,16 @@ class MonthlyBillingReportsController extends Controller
                             ->pluck('icd_10_name');
 
                         foreach ($keywords as $keyword) {
-                            if (empty($keyword)) continue;
+                            if (empty($keyword)) {
+                                continue;
+                            }
 
                             if ($strPos = strpos($instruction->name, $keyword)) {
 
                                 $break = strpos($instruction->name, ';', $strPos);
 
-                                $otherConditionsText[$cpmProblem->id] = substr($instruction->name, $strPos, $break - $strPos);
+                                $otherConditionsText[$cpmProblem->id] = substr($instruction->name, $strPos,
+                                    $break - $strPos);
 
                                 //add it to billable
                                 $billableCpmProblems[] = $cpmProblem;
@@ -188,25 +209,29 @@ class MonthlyBillingReportsController extends Controller
                         ? $billableCpmProblems[1]
                         : new CpmProblem();
 
-                    $message = is_object($instruction) ? $instruction->name : 'N/A';
+                    $message = is_object($instruction)
+                        ? $instruction->name
+                        : 'N/A';
 
                     $problems[] = [
-                        'provider_name' => $provider->fullName,
-                        'patient_name' => $patient->fullName,
-                        'patient_dob' => $patient->birthDate,
+                        'provider_name' => isset($provider)
+                            ? $provider->fullName
+                            : 'N/A',
+                        'patient_name'  => $patient->fullName,
+                        'patient_dob'   => $patient->birthDate,
                         'patient_phone' => $patient->primaryPhone,
 
-                        'problem_name_1' => $billableCpmProblems[0]->name,
-                        'problem_code_1' => 'N/A',
-                        'code_system_name_1' => 'N/A',
+                        'problem_name_1'          => $billableCpmProblems[0]->name,
+                        'problem_code_1'          => 'N/A',
+                        'code_system_name_1'      => 'N/A',
                         'other_conditions_text_1' => isset($otherConditionsText[$billableCpmProblems[0]->id])
                             ? $otherConditionsText[$billableCpmProblems[0]->id]
                             //otherwise just output the whole instruction
                             : $message,
 
-                        'problem_name_2' => $billableCpmProblems[1]->name,
-                        'problem_code_2' => 'N/A',
-                        'code_system_name_2' => 'N/A',
+                        'problem_name_2'          => $billableCpmProblems[1]->name,
+                        'problem_code_2'          => 'N/A',
+                        'code_system_name_2'      => 'N/A',
                         'other_conditions_text_2' => isset($otherConditionsText[$billableCpmProblems[1]->id])
                             ? $otherConditionsText[$billableCpmProblems[1]->id]
                             //otherwise just output the whole instruction
@@ -234,19 +259,21 @@ class MonthlyBillingReportsController extends Controller
                     : new Problem();
 
                 array_push($problems, [
-                    'provider_name' => $provider->fullName,
-                    'patient_name' => $patient->fullName,
-                    'patient_dob' => $patient->birthDate,
+                    'provider_name' => isset($provider)
+                        ? $provider->fullName
+                        : 'N/A',
+                    'patient_name'  => $patient->fullName,
+                    'patient_dob'   => $patient->birthDate,
                     'patient_phone' => $patient->primaryPhone,
 
-                    'problem_name_1' => $billableCcdProblems[0]->name,
-                    'problem_code_1' => $billableCcdProblems[0]->code,
-                    'code_system_name_1' => $billableCcdProblems[0]->code_system_name,
+                    'problem_name_1'          => $billableCcdProblems[0]->name,
+                    'problem_code_1'          => $billableCcdProblems[0]->code,
+                    'code_system_name_1'      => $billableCcdProblems[0]->code_system_name,
                     'other_conditions_text_1' => 'N/A',
 
-                    'problem_name_2' => $billableCcdProblems[1]->name,
-                    'problem_code_2' => $billableCcdProblems[1]->code,
-                    'code_system_name_2' => $billableCcdProblems[1]->code_system_name,
+                    'problem_name_2'          => $billableCcdProblems[1]->name,
+                    'problem_code_2'          => $billableCcdProblems[1]->code,
+                    'code_system_name_2'      => $billableCcdProblems[1]->code_system_name,
                     'other_conditions_text_2' => 'N/A',
 
                     'ccm_status' => $patient->patientInfo->ccm_status,
@@ -257,7 +284,9 @@ class MonthlyBillingReportsController extends Controller
                 ]);
             }
 
-            $direction = $under ? 'under' : 'over';
+            $direction = $under
+                ? 'under'
+                : 'over';
 
             $worksheets[] = compact([
                 'problems',
@@ -268,26 +297,37 @@ class MonthlyBillingReportsController extends Controller
 
         }
 
-        Excel::create("Billing Report $direction $ccmTimeMin minutes - $month/$year", function ($excel) use ($worksheets) {
+        Excel::create("Billing Report $direction $ccmTimeMin minutes - $month/$year", function ($excel) use
+        (
+            $worksheets
+        ) {
 
             //Add program to each patient for master list
             $masterList = [];
-            foreach ($worksheets as $worksheet)
-            {
-                foreach ($worksheet['problems'] as $row)
-                {
+            foreach ($worksheets as $worksheet) {
+                foreach ($worksheet['problems'] as $row) {
                     $row['program'] = $worksheet['program']->display_name;
                     $masterList[] = $row;
                 }
             }
 
-            $excel->sheet('Master', function ($sheet) use ($masterList) {
+            $excel->sheet('Master', function ($sheet) use
+            (
+                $masterList
+            ) {
                 $sheet->fromArray(
                     $masterList
                 );
             });
             foreach ($worksheets as $worksheet) {
-                $excel->sheet("{$worksheet['program']->name}", function ($sheet) use
+
+                $sheetName = $worksheet['program']->name;
+
+                if (strlen($sheetName) > 31) {
+                    $sheetName = substr($sheetName, 0, 31);
+                }
+
+                $excel->sheet("$sheetName", function ($sheet) use
                 (
                     $worksheet
                 ) {

@@ -341,6 +341,11 @@ class UserRepository implements \App\CLH\Contracts\Repositories\UserRepository
 
         $email_view = 'emails.newpatientnotify';
         $program = Practice::find($user->primaryProgramId());
+
+        if (!$program) {
+            return;
+        }
+
         $program_name = $program->display_name;
         $email_subject = '[' . $program_name . '] New User Registration!';
         $data = [

@@ -177,6 +177,11 @@ class Activity extends Model implements Transformable
         return $this->belongsTo('App\User', 'patient_id', 'id');
     }
 
+    public function provider()
+    {
+        return $this->belongsTo('App\User', 'provider_id', 'id');
+    }
+
     public function pageTime()
     {
         return $this->belongsTo('App\PageTimer');

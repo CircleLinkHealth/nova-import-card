@@ -51,6 +51,8 @@ class CarePlanHelper
             ->storeProblemsToMonitor()
             ->storeMedications()
             ->storeBillingProvider()
+            ->storeLocation()
+            ->storePractice()
             ->storePatientInfo()
             ->storeContactWindows()
             ->storePhones()
@@ -216,6 +218,35 @@ class CarePlanHelper
             'preferred_contact_method'   => 'CCT',
             'user_id'                    => $this->user->id,
         ]);
+
+        return $this;
+    }
+
+    public function storePractice()
+    {
+        $practiceId = empty($this->importedMedicalRecord->practice_id)
+            ?: $this->importedMedicalRecord->practice_id;
+
+        if ($practiceId) {
+            $this->user->attachPractice($practiceId);
+        }
+
+        return $this;
+    }
+
+    /**
+     * Store Location
+     *
+     * @return $this
+     */
+    public function storeLocation()
+    {
+        $locationId = empty($this->importedMedicalRecord->location_id)
+            ?: $this->importedMedicalRecord->location_id;
+
+        if ($locationId) {
+            $this->user->attachLocation($locationId);
+        }
 
         return $this;
     }

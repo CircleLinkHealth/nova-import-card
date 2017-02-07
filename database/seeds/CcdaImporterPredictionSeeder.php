@@ -13,41 +13,47 @@ class CcdaImporterPredictionSeeder extends Seeder
      */
     public function run()
     {
+        DB::statement('SET FOREIGN_KEY_CHECKS=0');
         foreach (Ccda::withTrashed()->get() as $ccda) {
-            if ($ccda->patient_id) {
-                $patient = User::withTrashed()->find($ccda->patient_id);
+            try {
+                if ($ccda->patient_id) {
+                    $patient = User::withTrashed()->find($ccda->patient_id);
 
-                if (!$patient) {
-                    continue;
-                }
-
-                $ccda->location_id = $patient->preferred_contact_location;
-                $ccda->practice_id = $patient->primary_practice_id;
-                $ccda->billing_provider_id = $patient->billing_provider_id;
-                $ccda->save();
-
-                $docLog = $ccda->document;
-
-                if ($docLog) {
-                    $docLog->location_id = $ccda->location_id;
-                    $docLog->practice_id = $ccda->practice_id;
-                    $docLog->billing_provider_id = $ccda->billing_provider_id;
-                    $docLog->save();
-                }
-
-
-                $providersLog = $ccda->providers;
-
-                if ($providersLog) {
-                    foreach ($providersLog as $providerLog) {
-                        $providerLog->location_id = $ccda->location_id;
-                        $providerLog->practice_id = $ccda->practice_id;
-                        $providerLog->billing_provider_id = $ccda->billing_provider_id;
-                        $providerLog->save();
+                    if (!$patient) {
+                        continue;
                     }
-                }
 
+                    $ccda->location_id = $patient->preferred_contact_location ?? null;
+                    $ccda->practice_id = $patient->primary_practice_id ?? null;
+                    $ccda->billing_provider_id = $patient->billing_provider_id ?? null;
+                    $ccda->save();
+
+                    $docLog = $ccda->document;
+
+                    if ($docLog) {
+                        $docLog->location_id = $ccda->location_id ?? null;
+                        $docLog->practice_id = $ccda->practice_id ?? null;
+                        $docLog->billing_provider_id = $ccda->billing_provider_id ?? null;
+                        $docLog->save();
+                    }
+
+
+                    $providersLog = $ccda->providers;
+
+                    if ($providersLog) {
+                        foreach ($providersLog as $providerLog) {
+                            $providerLog->location_id = $ccda->location_id ?? null;
+                            $providerLog->practice_id = $ccda->practice_id ?? null;
+                            $providerLog->billing_provider_id = $ccda->billing_provider_id ?? null;
+                            $providerLog->save();
+                        }
+                    }
+
+                }
+            } catch (Exception $e) {
+                echo $e->getMessage();
             }
         }
+        DB::statement('SET FOREIGN_KEY_CHECKS=1');
     }
 }
