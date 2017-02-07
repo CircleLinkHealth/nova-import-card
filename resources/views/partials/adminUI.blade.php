@@ -126,15 +126,10 @@
                                 <li><a href="{{ URL::route('admin.families.index', array()) }}">Families</a>
                                 <li><a href="{{ URL::route('algo.mock.create', array()) }}">
                                         Algo v{{\App\Algorithms\Calls\SuccessfulHandler::VERSION}} Simulator</a>
-                                <li><a href="{{ URL::route('CallReportController.exportxls', array()) }}">Calls</a></li>
+                                <li><a href="{{ URL::route('CallReportController.exportxls', array()) }}">Export
+                                        Calls</a></li>
 
                             </ul>
-                        </li>
-                    @endif
-
-                    @if ( ! Auth::guest())
-                        <li role="presentation" class="dropdown">
-                            <a href="{{ URL::route('patient.enroll.makeReport', array()) }}">Enrollment List</a></li>
                         </li>
                     @endif
 
@@ -153,8 +148,16 @@
                                         Report</a></li>
                                 <li><a href="{{ URL::route('admin.reports.nurse.invoice', array()) }}">
                                         Invoices</a></li>
+                                <li><a href="{{ URL::route('admin.reports.nurse.allocation', array()) }}">
+                                        Allocation</a></li>
 
                             </ul>
+                        </li>
+                    @endif
+
+                    @if ( ! Auth::guest())
+                        <li role="presentation" class="dropdown">
+                            <a href="{{ URL::route('patient.enroll.makeReport', array()) }}">Enrollment List</a></li>
                         </li>
                     @endif
 

@@ -13,7 +13,7 @@
                         <h3>Generated invoices</h3>
                         @foreach($invoices as $key => $value)
                             <li>
-                                <a href="{{url('/admin/download/'. $value)}}">{{$key}}</a>
+                                <a href="{{url('/admin/download/'. $value['link'])}}">{{$value['name']}}</a>
                             </li>
                         @endforeach
                     </div>
@@ -44,7 +44,8 @@
 
                         </span>
                 <div class="row">
-                    <input type="hidden" value="{{json_encode($data)}}" name="data">
+                    <input type="hidden" value="{{json_encode($invoices)}}" name="links">
+                    <input type="hidden" value="{{$month}}" name="month">
                     <button id="submit" name="submit" class="btn btn-success">Send To RNs</button>
                 </div>
             </div>
