@@ -72,20 +72,8 @@
                     <li class="progress-item progress-fifth"></li>
                 </ul>
                 <div class="progress-status">
-                    <p class="">PROGRESS: 1 of 5</p>
+                    <p class="">PROGRESS: 1 of 4</p>
                 </div>
-                @endif
-                @if(Route::is('patient.careteam.show'))
-                    <ul class="progress-list col-lg-12">
-                        <li class="progress-item progress-first progress-active"></li>
-                        <li class="progress-item progress-second progress-active"></li>
-                        <li class="progress-item progress-third"></li>
-                        <li class="progress-item progress-fourth"></li>
-                        <li class="progress-item progress-fifth"></li>
-                    </ul>
-                    <div class="progress-status">
-                        <p class="">PROGRESS: 2 of 5</p>
-                    </div>
                 @endif
                 @if(Route::is('patient.careplan.show') && isset($page) && $page == 1)
                     <ul class="progress-list col-lg-12">
@@ -96,7 +84,7 @@
                         <li class="progress-item progress-fifth"></li>
                     </ul>
                     <div class="progress-status">
-                        <p class="">PROGRESS: 3 of 5</p>
+                        <p class="">PROGRESS: 2 of 4</p>
                     </div>
                 @endif
                 @if(Route::is('patient.careplan.show') && isset($page) && $page == 2)
@@ -108,7 +96,7 @@
                         <li class="progress-item progress-fifth"></li>
                     </ul>
                     <div class="progress-status">
-                        <p class="">PROGRESS: 4 of 5</p>
+                        <p class="">PROGRESS: 3 of 4</p>
                     </div>
                 @endif
                 @if(Route::is('patient.careplan.show') && isset($page) && $page == 3)
@@ -120,7 +108,7 @@
                         <li class="progress-item progress-fifth progress-active"></li>
                     </ul>
                     <div class="progress-status">
-                        <p class="">PROGRESS: 5 of 5</p>
+                        <p class="">PROGRESS: 4 of 4</p>
                     </div>
                 @endif
             @else
