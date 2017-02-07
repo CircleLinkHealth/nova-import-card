@@ -9,6 +9,7 @@ use App\Importer\Models\ImportedItems\AllergyImport;
 use App\Importer\Models\ImportedItems\DemographicsImport;
 use App\Importer\Models\ImportedItems\MedicationImport;
 use App\Importer\Models\ImportedItems\ProblemImport;
+use App\Location;
 use App\Practice;
 use App\Scopes\Universal\MedicalRecordIdAndTypeTrait;
 use App\User;
@@ -63,7 +64,7 @@ class ImportedMedicalRecord extends Model implements ImportedMedicalRecordInterf
         return app($this->medical_record_type)->find($this->medical_record_id);
     }
 
-    public function practice() : Practice
+    public function getPractice() : Practice
     {
         return Practice::find($this->practice_id);
     }
@@ -76,7 +77,7 @@ class ImportedMedicalRecord extends Model implements ImportedMedicalRecordInterf
         // TODO: Implement providers() method.
     }
 
-    public function billingProvider() : User
+    public function getBillingProvider() : User
     {
         return User::find($this->billing_provider_id);
     }
@@ -96,5 +97,20 @@ class ImportedMedicalRecord extends Model implements ImportedMedicalRecordInterf
     public function reimport() : ImportedMedicalRecordInterface
     {
         // TODO: Implement reimport() method.
+    }
+
+    public function practice()
+    {
+        return $this->belongsTo(Practice::class);
+    }
+
+    public function location()
+    {
+        return $this->belongsTo(Location::class);
+    }
+
+    public function billingProvider()
+    {
+        return $this->belongsTo(User::class, 'billing_provider_id', 'id');
     }
 }

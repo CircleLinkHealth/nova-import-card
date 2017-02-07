@@ -76,6 +76,9 @@ class ImporterController extends Controller
 
         $qaSummaries = ImportedMedicalRecord::whereNull('patient_id')
             ->with('demographics')
+            ->with('practice')
+            ->with('location')
+            ->with('billingProvider')
             ->get()
             ->all();
 
