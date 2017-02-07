@@ -30,7 +30,7 @@
 
                                     for ($i = 0; $i < $boxSpaces; $i++) {
 
-                                        $d = Carbon\Carbon::parse($date)->subDays($i + 1)->format('m/d/y D');
+                                        $d = Carbon\Carbon::parse($date)->subDays($boxSpaces - $i)->format('m/d/y D');
 
                                         echo '<div class="container"style="display:inline-block; width: 190px; vertical-align: text-top;">
                                                   <h4 style="color: dimgray">' . $d . '</h4>
