@@ -74,8 +74,11 @@ class ImporterController extends Controller
         //get rid of orphans
         $delete = ImportedMedicalRecord::whereNull('medical_record_id')->delete();
 
-        $qaSummaries = ImportedMedicalRecord::
-        with('demographics')
+        $qaSummaries = ImportedMedicalRecord::whereNull('patient_id')
+            ->with('demographics')
+            ->with('practice')
+            ->with('location')
+            ->with('billingProvider')
             ->get()
             ->all();
 

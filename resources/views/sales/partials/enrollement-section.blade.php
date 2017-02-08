@@ -13,11 +13,11 @@
     <table class="table table-bordered myTable">
         <tr>
             <td></td>
-            <th>{{\Carbon\Carbon::parse($start)->format('F') . ' to Date'}}</th>
-            <th>{{\Carbon\Carbon::parse($start)->subMonths(1)->format('F')}}</th>
-            <th>{{\Carbon\Carbon::parse($start)->subMonths(2)->format('F')}}</th>
-            <th>{{\Carbon\Carbon::parse($start)->subMonths(3)->format('F')}}</th>
-            <th>{{\Carbon\Carbon::parse($start)->subMonths(4)->format('F')}}</th>
+            <th>{{$start->format('F') . ' to Date'}}</th>
+            <th>{{$start->subMonthNoOverflow()->format('F')}}</th>
+            <th>{{$start->subMonthNoOverflow()->format('F')}}</th>
+            <th>{{$start->subMonthNoOverflow()->format('F')}}</th>
+            <th>{{$start->subMonthNoOverflow()->format('F')}}</th>
         </tr>
 
         @foreach($data[$enrollmentSection]['historical'] as $key => $values)
