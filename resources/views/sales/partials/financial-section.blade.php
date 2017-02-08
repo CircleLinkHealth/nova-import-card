@@ -17,10 +17,10 @@
 
 <table class="table table-bordered myTable">
     <tr>
-        <td></td>
-        <th>{{$start->format('F') . ' to Date'}}</th>
-        <th>{{$start->subMonthNoOverflow()->format('F')}}</th>
-        <th>{{$start->subMonthNoOverflow()->format('F')}}</th>
+        <td style="width: 25%"></td>
+        <th style="width: 25%">{{$start->format('F') . ' to Date'}}</th>
+        <th style="width: 25%">{{$start->subMonthNoOverflow()->format('F')}}</th>
+        <th style="width: 25%">{{$start->subMonthNoOverflow()->format('F')}}</th>
 
     </tr>
 
