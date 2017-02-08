@@ -1,8 +1,8 @@
 var Vue = require('vue');
 var Vmdl = require('vue-mdl');
-// var MDL = require('material-design-lite');
+var MDL = require('material-design-lite');
 
-Vue.config.debug = true;
+// Vue.config.debug = true;
 
 Vmdl.registerAll(Vue);
 
