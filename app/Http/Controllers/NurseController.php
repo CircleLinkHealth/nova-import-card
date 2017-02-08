@@ -266,13 +266,15 @@ class NurseController extends Controller
 
                 $formattedDate = Carbon::parse($dayCounter)->format('m/d D');
 
+                $name = $nurse->first_name[0] . '. ' . $nurse->last_name;
+
                  if($count > 0){
 
-                     $data[$formattedDate][$nurse->last_name] = $count;
+                     $data[$formattedDate][$name] = $count;
 
                  } else {
 
-                     $data[$formattedDate][$nurse->last_name] = null;
+                     $data[$formattedDate][$name] = null;
 
                  }
 
