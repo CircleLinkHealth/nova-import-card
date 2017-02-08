@@ -20,6 +20,9 @@ class WelcomeCallListController extends Controller
 
         $generator = new WelcomeCallListGenerator(new Collection($list));
 
+        //If we only want to export ineligible patients
+//        return $generator->exportIneligibleToCsv();
+
         return $generator->exportToCsv();
     }
 }
