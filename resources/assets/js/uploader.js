@@ -1,8 +1,8 @@
 var Vue = require('vue');
 var Vmdl = require('vue-mdl');
-// var MDL = require('material-design-lite');
+var MDL = require('material-design-lite');
 
-Vue.config.debug = true;
+// Vue.config.debug = true;
 
 Vmdl.registerAll(Vue);
 
@@ -61,86 +61,84 @@ var CcdUploader = Vue.extend({
  *
  */
 var UploadedCcdsPanel = Vue.extend({
-    template: require('./components/ccd-uploaded-summary.template.html'),
+        template: require('./components/ccd-uploaded-summary.template.html'),
 
-    data: function () {
-        return {
-            importedMedicalRecords: [],
-            okToImport: [],
-            okToDelete: []
-        }
-    },
-
-    ready: function () {
-        this.importedMedicalRecords = window.cpm.importedMedicalRecords;
-    },
-
-    methods: {
-        syncCcds: function () {
-            $('#syncCcdsBtn').attr('disabled', true);
-
-            var payload = {
-                medicalRecordsToImport: this.okToImport,
-                medicalRecordsToDelete: this.okToDelete
-            };
-
-            this.$http.post('/ccd-importer/import', payload, function (data, status, request) {
-                if (data.imported) {
-                    for (var i = 0; i < data.imported.length; i++) {
-                        $('#import-row-' + data.imported[i].importedMedicalRecordId).html(
-                            '<a target="_blank" href="https://'
-                            + window.location.href.match(/:\/\/(.[^/]+)/)[1]
-                            + '/manage-patients/'
-                            + data.imported[i].userId
-                            + '/summary'
-                            + '"><b style="color: #06B106">Go to CarePlan</b></a>'
-                        );
-                        $('#delete-row-' + data.imported[i].importedMedicalRecordId).html('N/A');
-                        $('#edit-row-' + data.imported[i].importedMedicalRecordId).html('N/A');
-                    }
-                    this.okToImport = [];
-                }
-
-                if (data.deleted) {
-                    for (var i = 0; i < data.deleted.length; i++) {
-                        var target = $('#row-' + data.deleted[i]);
-                        target.hide('slow', function () {
-                            target.remove();
-                        });
-                        this.okToDelete = [];
-                    }
-                }
-
-            }).error(function (data, status, request) {
-                console.log('Data: \n' + data);
-                console.log('Status: \n' + status);
-                console.log('Request: \n' + request);
-            });
+        data: function () {
+            return {
+                importedMedicalRecords: [],
+                okToImport: [],
+                okToDelete: []
+            }
         },
-        toggleCheckboxes: function (event) {
-            //get id of clicked element
-            var medicalRecordId = event.target.id.split('-')[1];
-            var itemClicked = event.target.id.split('-')[0];
 
-            var importLabel = $('#import-label-' + medicalRecordId);
-            var deleteLabel = $('#delete-label-' + medicalRecordId);
+        ready: function () {
+            this.importedMedicalRecords = window.cpm.importedMedicalRecords;
+        },
 
-            if (itemClicked == 'delete' && this.okToDelete.indexOf(medicalRecordId) == -1 && importLabel.hasClass('is-checked')) {
-                if (this.okToImport.indexOf(medicalRecordId) !== -1) {
-                    this.okToImport.$remove(medicalRecordId);
-                    importLabel.toggleClass('is-checked');
+        methods: {
+            syncCcds: function () {
+                $('#syncCcdsBtn').attr('disabled', true);
+
+                var payload = {
+                    medicalRecordsToImport: this.okToImport,
+                    medicalRecordsToDelete: this.okToDelete
+                };
+
+                this.$http.post('/ccd-importer/import', payload).then(function (response) {
+                    let data = response.data;
+                    if (data.imported) {
+                        for (var i = 0; i < data.imported.length; i++) {
+                            $('#import-row-' + data.imported[i].importedMedicalRecordId).html(
+                                '<a target="_blank" href="https://'
+                                + window.location.href.match(/:\/\/(.[^/]+)/)[1]
+                                + '/manage-patients/'
+                                + data.imported[i].userId
+                                + '/summary'
+                                + '"><b style="color: #06B106">Go to CarePlan</b></a>'
+                            );
+                            $('#delete-row-' + data.imported[i].importedMedicalRecordId).html('N/A');
+                            $('#edit-row-' + data.imported[i].importedMedicalRecordId).html('N/A');
+                        }
+                        this.okToImport = [];
+                    }
+
+
+                    if (data.deleted) {
+                        for (var i = 0; i < data.deleted.length; i++) {
+                            var target = $('#row-' + data.deleted[i]);
+                            target.hide('slow', function () {
+                                target.remove();
+                            });
+                            this.okToDelete = [];
+                        }
+                    }
+                });
+            },
+            toggleCheckboxes: function (event) {
+                //get id of clicked element
+                var medicalRecordId = event.target.id.split('-')[1];
+                var itemClicked = event.target.id.split('-')[0];
+
+                var importLabel = $('#import-label-' + medicalRecordId);
+                var deleteLabel = $('#delete-label-' + medicalRecordId);
+
+                if (itemClicked == 'delete' && this.okToDelete.indexOf(medicalRecordId) == -1 && importLabel.hasClass('is-checked')) {
+                    if (this.okToImport.indexOf(medicalRecordId) !== -1) {
+                        this.okToImport.$remove(medicalRecordId);
+                        importLabel.toggleClass('is-checked');
+                    }
                 }
-            }
 
-            if (itemClicked == 'import' && this.okToImport.indexOf(medicalRecordId) == -1 && deleteLabel.hasClass('is-checked')) {
-                if (this.okToDelete.indexOf(medicalRecordId) !== -1) {
-                    this.okToDelete.$remove(medicalRecordId);
-                    deleteLabel.toggleClass('is-checked');
+                if (itemClicked == 'import' && this.okToImport.indexOf(medicalRecordId) == -1 && deleteLabel.hasClass('is-checked')) {
+                    if (this.okToDelete.indexOf(medicalRecordId) !== -1) {
+                        this.okToDelete.$remove(medicalRecordId);
+                        deleteLabel.toggleClass('is-checked');
+                    }
                 }
             }
         }
-    }
-});
+    })
+    ;
 
 
 /**

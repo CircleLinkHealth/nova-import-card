@@ -1,7 +1,5 @@
 <?php
 
-use App\PageTimer;
-
 if (app()->environment() != 'production') {
 
     Route::get('rohan', function () {

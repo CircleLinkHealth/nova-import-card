@@ -174,7 +174,7 @@ abstract class MedicalRecordEloquent extends Model implements MedicalRecord
      */
     public function importMedications() : MedicalRecord
     {
-        $importer = new Medications();
+        $importer = new Medications($this->id, get_class($this), $this->importedMedicalRecord);
         $importer->import($this->id, get_class($this), $this->importedMedicalRecord);
 
         return $this;

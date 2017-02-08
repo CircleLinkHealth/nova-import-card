@@ -18,6 +18,22 @@ class Medications extends BaseImporter
 {
     use ConsolidatesMedicationInfo;
 
+    protected $medicalRecordId;
+    protected $medicalRecordType;
+    protected $importedMedicalRecord;
+
+    protected $imported = [];
+
+    public function __construct(
+        $medicalRecordId,
+        $medicalRecordType,
+        ImportedMedicalRecord $importedMedicalRecord
+    ) {
+        $this->medicalRecordId = $medicalRecordId;
+        $this->medicalRecordType = $medicalRecordType;
+        $this->importedMedicalRecord = $importedMedicalRecord;
+    }
+
     public function import(
         $medicalRecordId,
         $medicalRecordType,
@@ -27,10 +43,27 @@ class Medications extends BaseImporter
             ->where('medical_record_id', '=', $medicalRecordId)
             ->get();
 
-        $medsList = [];
+        $this->processLogs($itemLogs);
 
+        if (count($this->imported) == 0) {
+            $this->processLogs($itemLogs, true);
+        }
+
+        return $this->imported;
+    }
+
+    /**
+     * Loop through the logs and decide what to import
+     *
+     * @param $itemLogs
+     * @param bool $importAll
+     */
+    public function processLogs(
+        $itemLogs,
+        $importAll = false
+    ) {
         foreach ($itemLogs as $itemLog) {
-            if (!$this->validate($itemLog)) {
+            if (!$this->validate($itemLog) && !$importAll) {
                 continue;
             }
 
@@ -39,22 +72,33 @@ class Medications extends BaseImporter
 
             $consMed = $this->consolidateMedicationInfo($itemLog);
 
-            $medsList[] = MedicationImport::updateOrCreate([
-                'medical_record_type'        => $medicalRecordType,
-                'medical_record_id'          => $medicalRecordId,
-                'imported_medical_record_id' => $importedMedicalRecord->id,
-                'ccda_id'                    => $medicalRecordId,
-                'vendor_id'                  => $itemLog->vendor_id,
-                'ccd_medication_log_id'      => $itemLog->id,
-                'name'                       => ucfirst($consMed->cons_name),
-                'sig'                        => ucfirst(StringManipulation::stringDiff($consMed->cons_name,
-                    $itemLog->cons_text)),
-                'code'                       => $consMed->cons_code,
-                'code_system'                => $consMed->cons_code_system,
-                'code_system_name'           => $consMed->cons_code_system_name,
-            ]);
+            $this->importMedication($itemLog, $consMed);
         }
+    }
 
-        return $medsList;
+    /**
+     * Import a single Medication from an Item Log
+     *
+     * @param MedicationLog $itemLog
+     * @param $consolidatedMed
+     */
+    public function importMedication(
+        MedicationLog $itemLog,
+        $consolidatedMed
+    ) {
+        $this->imported[] = MedicationImport::updateOrCreate([
+            'medical_record_type'        => $this->medicalRecordType,
+            'medical_record_id'          => $this->medicalRecordId,
+            'imported_medical_record_id' => $this->importedMedicalRecord->id,
+            'ccda_id'                    => $this->medicalRecordId,
+            'vendor_id'                  => $itemLog->vendor_id,
+            'ccd_medication_log_id'      => $itemLog->id,
+            'name'                       => ucfirst($consolidatedMed->cons_name),
+            'sig'                        => ucfirst(StringManipulation::stringDiff($consolidatedMed->cons_name,
+                $itemLog->cons_text)),
+            'code'                       => $consolidatedMed->cons_code,
+            'code_system'                => $consolidatedMed->cons_code_system,
+            'code_system_name'           => $consolidatedMed->cons_code_system_name,
+        ]);
     }
 }
