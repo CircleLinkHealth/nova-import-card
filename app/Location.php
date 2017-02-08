@@ -20,6 +20,7 @@ class Location extends Model
         'practice_id',
         'name',
         'phone',
+        'fax',
         'address_line_1',
         'address_line_2',
         'city',

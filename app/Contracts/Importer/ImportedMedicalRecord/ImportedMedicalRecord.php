@@ -45,11 +45,11 @@ interface ImportedMedicalRecord
 
     public function medicalRecord() : MedicalRecord;
 
-    public function practice() : Practice;
+    public function getPractice() : Practice;
 
     public function providers() : array;
 
-    public function billingProvider() : User;
+    public function getBillingProvider() : User;
 
     public function createCarePlan() : CarePlan;
 
