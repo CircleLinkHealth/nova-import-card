@@ -1,6 +1,7 @@
 <?php namespace App\Providers;
 
 use App\AppConfig;
+use App\Contracts\Efax;
 use App\Contracts\ReportFormatter;
 use App\Contracts\Repositories\ActivityRepository;
 use App\Contracts\Repositories\AprimaCcdApiRepository;
@@ -21,6 +22,7 @@ use App\Repositories\InviteRepositoryEloquent;
 use App\Repositories\LocationRepositoryEloquent;
 use App\Repositories\PracticeRepositoryEloquent;
 use App\Repositories\UserRepositoryEloquent;
+use App\Services\Phaxio\PhaxioService;
 use Illuminate\Support\ServiceProvider;
 
 class AppServiceProvider extends ServiceProvider
@@ -82,6 +84,11 @@ class AppServiceProvider extends ServiceProvider
         $this->app->bind(
             AprimaCcdApiRepository::class,
             AprimaCcdApiRepositoryEloquent::class
+        );
+
+        $this->app->bind(
+            Efax::class,
+            PhaxioService::class
         );
 
         $this->app->bind(

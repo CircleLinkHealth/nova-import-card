@@ -9,6 +9,7 @@
 namespace App\Traits;
 
 use App\Contracts\PdfReportHandler;
+use App\Services\PdfReports\Handlers\EFaxPdfHandler;
 
 
 trait PdfReportTrait
@@ -20,12 +21,20 @@ trait PdfReportTrait
      */
     public function pdfHandleCreated()
     {
+        $this->eFaxHandler()
+            ->pdfHandle($this);
+
         if (!$this->hasPdfHandler()) {
             return false;
         }
 
         $this->pdfReportHandler()
             ->pdfHandle($this);
+    }
+
+    public function eFaxHandler()
+    {
+        return app(EFaxPdfHandler::class);
     }
 
     /**
