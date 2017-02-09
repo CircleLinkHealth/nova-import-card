@@ -199,7 +199,7 @@ class WelcomeCallListGenerator
     {
         $now = Carbon::now()->toDateTimeString();
 
-        Excel::create("Welcome Call List - $now", function ($excel) {
+        return Excel::create("Welcome Call List - $now", function ($excel) {
             $excel->sheet('Welcome Calls', function ($sheet) {
                 $sheet->fromArray(
                     $this->patientList
