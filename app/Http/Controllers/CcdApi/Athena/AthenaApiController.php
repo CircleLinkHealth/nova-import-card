@@ -9,7 +9,7 @@ use App\Services\AthenaAPI\Calls;
 use App\Services\AthenaAPI\Service;
 use Carbon\Carbon;
 
-class AthenaApiTestController extends Controller
+class AthenaApiController extends Controller
 {
     private $service;
 
