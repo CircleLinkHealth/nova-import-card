@@ -1,11 +1,12 @@
 <?php
 
+
 if (app()->environment() != 'production') {
 
     Route::get('rohan', function () {
 
         return view('vue-tutorial');
-        
+
     });
 }
 
@@ -510,7 +511,9 @@ Route::group(['middleware' => 'auth'], function () {
             'as'   => 'patch.admin.edit.nurse.schedules',
         ]);
 
-        Route::get('athena/check', 'CcdApi\Athena\AthenaApiTestController@getTodays');
+        Route::get('athena/ccdas/check', 'CcdApi\Athena\AthenaApiController@getTodays');
+
+        Route::get('athena/ccdas/{practiceId}/{departmentId}', 'CcdApi\Athena\AthenaApiController@fetchCcdas');
 
         Route::post('calls/import', [
             'uses' => 'CallController@import',
