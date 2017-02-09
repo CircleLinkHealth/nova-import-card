@@ -37,6 +37,8 @@ class NotesController extends Controller
         $patient = User::find($patientId);
         $messages = \Session::get('messages');
 
+        //test comment
+
         $data = $this->service->getNotesAndOfflineActivitiesForPatient($patient);
 
         $report_data = $this->formatter->formatDataForNotesAndOfflineActivitiesReport($data);
