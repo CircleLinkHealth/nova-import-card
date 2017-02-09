@@ -14,12 +14,17 @@ use Phaxio\Phaxio;
 
 class PhaxioService implements Efax
 {
-    public function __construct()
+    public function __construct($mode = null)
     {
         $config = config('phaxio');
-        $mode = app()->environment('production')
-            ? 'production'
-            : 'test';
+
+        if (!$mode) {
+            $mode = app()->environment('production')
+                ? 'production'
+                : 'test';
+        }
+
+
         $this->phaxio = new Phaxio($config[$mode]['key'], $config[$mode]['secret'], $config['host']);
     }
 
