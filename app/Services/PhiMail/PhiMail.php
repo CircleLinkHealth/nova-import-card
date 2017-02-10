@@ -262,6 +262,8 @@ class PhiMail
         } catch (\Exception $e) {
             $this->handleException($e);
         }
+
+        echo '===END===';
     }
 
     private function writeDataFile(
