@@ -22,11 +22,15 @@ trait PdfReportTrait
      */
     public function pdfHandleCreated()
     {
-        //Send an eFax if the Patient's Location has one
+        // Send an eFax if the Patient's Location has one
         $this->eFaxHandler()
             ->pdfHandle($this);
 
-        //Check if we have a designated report handler for this EHR, for example an API.
+        // Send an EmrDirectMessage if the Location has one.
+        $this->emrDirectHandler()
+            ->pdfHandle($this);
+
+        // Check if we have a designated report handler for this EHR, for example an API.
         if (!$this->hasPdfHandler()) {
             return false;
         }
@@ -44,6 +48,16 @@ trait PdfReportTrait
     private function eFaxHandler()
     {
         return app(EFaxPdfHandler::class);
+    }
+
+    /**
+     * Get an instance of EmrDirectPdfHandler from the Container.
+     *
+     * @return EmrDirectPdfHandler
+     */
+    private function emrDirectHandler()
+    {
+        return app(EmrDirectPdfHandler::class);
     }
 
     /**
@@ -78,15 +92,5 @@ trait PdfReportTrait
             ->primaryPractice
             ->ehr
             ->pdf_report_handler);
-    }
-
-    /**
-     * Get an instance of EmrDirectPdfHandler from the Container.
-     *
-     * @return EmrDirectPdfHandler
-     */
-    private function emrDirectHandler()
-    {
-        return app(EmrDirectPdfHandler::class);
     }
 }
