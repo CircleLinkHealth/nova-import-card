@@ -464,6 +464,31 @@ Route::group(['middleware' => 'auth'], function () {
         'prefix'     => 'admin',
     ], function () {
 
+        Route::get('nursecalls/{from}/{to}', function ($from, $to) {
+
+            $nurses = App\Nurse::all();
+            $data = [];
+            $total = 0;
+
+            foreach ($nurses as $nurse) {
+
+                $data[$nurse->user->fullName] = (new \App\Billing\NurseMonthlyBillGenerator(
+                    $nurse,
+                    \Carbon\Carbon::now()->subMonths($from),
+                    \Carbon\Carbon::now()->subMonths($to),
+                    false
+
+                ))->getCallsPerHourOverPeriod();
+
+                $total += $data[$nurse->user->fullName]['calls/hour'];
+
+            }
+
+            $data['AVERAGE'] = $total / $nurses->count();
+
+            return $data;
+
+        });
 
         /**
          * LOGGER
