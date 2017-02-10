@@ -204,7 +204,7 @@ return [
         Modelizer\Selenium\SeleniumServiceProvider::class,
         Way\Generators\GeneratorsServiceProvider::class,
         Xethron\MigrationsGenerator\MigrationsGeneratorServiceProvider::class,
-        NotificationChannels\Twilio\TwilioProvider::class
+        //        NotificationChannels\Twilio\TwilioProvider::class
 
     ],
 
