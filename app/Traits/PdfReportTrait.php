@@ -35,6 +35,11 @@ trait PdfReportTrait
             ->pdfHandle($this);
     }
 
+    /**
+     * Get an instance of EFaxPdfHandler from the Container.
+     *
+     * @return EFaxPdfHandler
+     */
     public function eFaxHandler()
     {
         return app(EFaxPdfHandler::class);
