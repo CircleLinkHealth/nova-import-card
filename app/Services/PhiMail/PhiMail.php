@@ -73,7 +73,7 @@ class PhiMail
         $outboundRecipient,
         $binaryAttachmentFilePath = null,
         $binaryAttachmentFileName = null,
-        $ccdaPath = null
+        $ccdaAttachmentPath = null
     ) {
         echo("Sending a CDA as an attachment\n");
 
@@ -92,8 +92,10 @@ class PhiMail
         // Add the main body of the message.
         $this->connector->addText("This is the main message content. A CDA is attached.");
 
-        // Add a CDA attachment and let phiMail server assign a filename.
-//        $this->connector->addCDA(self::loadFile("/tmp/Test_cda.xml"));
+        if ($ccdaAttachmentPath) {
+            // Add a CDA attachment and let phiMail server assign a filename.
+            $this->connector->addCDA(self::loadFile($ccdaAttachmentPath));
+        }
 
         if ($binaryAttachmentFilePath) {
             // Add a binary attachment and specify the attachment filename.
