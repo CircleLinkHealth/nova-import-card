@@ -46,9 +46,13 @@ class EmrDirectPdfHandler implements PdfReportHandler
             return;
         }
 
-        $recipient = $location->contactCard->first()->emr_direct;
+        $recipient = $location->contactCard->first();
 
         if (!$recipient) {
+            return;
+        }
+
+        if (!$recipient->emr_direct) {
             return;
         }
 
