@@ -7,23 +7,23 @@
   ],
   "license": "MIT",
   "type": "project",
-  "repositories": {
-    "0": {
+  "repositories": [
+    {
       "type": "vcs",
       "url": "https://github.com/michalisantoniou6/l5-repository"
     },
-    "repo-name": {
+    {
       "type": "git",
       "url": "git@github.com:jamisonvalenta/Laravel-4-Generators.git"
     },
-    "d": {
+    {
       "type": "composer",
       "url": "https://packagist.org"
     },
-    "a": {
+    {
       "packagist": false
     }
-  },
+  ],
   "require": {
     "laravel/framework": "5.3.*",
     "chrisbjr/api-guard": "~2.0",
