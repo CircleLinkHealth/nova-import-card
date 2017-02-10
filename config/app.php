@@ -194,18 +194,17 @@ return [
         \Fideloper\Proxy\TrustedProxyServiceProvider::class,
         \Maatwebsite\Excel\ExcelServiceProvider::class,
         \rigor789\AirbrakeLaravel\AirbrakeServiceProvider::class,
-//        Prettus\Repository\Providers\RepositoryServiceProvider::class,
+        Prettus\Repository\Providers\RepositoryServiceProvider::class,
         \Maknz\Slack\SlackServiceProvider::class,
         Yajra\Datatables\DatatablesServiceProvider::class,
         App\Providers\AWSWorkerServiceProvider::class,
         Spatie\GoogleCalendar\GoogleCalendarServiceProvider::class,
         ObserversServiceProvider::class,
         Barryvdh\Debugbar\ServiceProvider::class,
-//        Modelizer\Selenium\SeleniumServiceProvider::class,
-//        Way\Generators\GeneratorsServiceProvider::class,
-//        Xethron\MigrationsGenerator\MigrationsGeneratorServiceProvider::class,
-        //        DraperStudio\ChartJS\ServiceProvider::class,
-
+        Modelizer\Selenium\SeleniumServiceProvider::class,
+        Way\Generators\GeneratorsServiceProvider::class,
+        Xethron\MigrationsGenerator\MigrationsGeneratorServiceProvider::class,
+        NotificationChannels\Twilio\TwilioProvider::class
 
     ],
 
@@ -268,7 +267,6 @@ return [
         'PDF'            => \Barryvdh\Snappy\Facades\SnappyPdf::class,
         'Slack'          => Maknz\Slack\Facades\Slack::class,
         'GoogleCalendar' => Spatie\GoogleCalendar\GoogleCalendarFacade::class,
-        //        'ChartJS' => DraperStudio\ChartJS\Facades\ChartJS::class
 
     ],
 
