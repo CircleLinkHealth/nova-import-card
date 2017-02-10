@@ -77,12 +77,12 @@ class PhiMail
         // template. Begin building this message by adding a recipient.
         // Multiple recipients can be added by calling this command more
         // than once. A separate message will be sent for each recipient.
-        $recip = $this->connector->addRecipient($outboundRecipient);
+        $recipient = $this->connector->addRecipient($outboundRecipient);
 
         // The server returns information about the recipient if the
         // address entered is accepted, otherwise an exception is thrown.
         // How you use this recipient information is up to you...
-        echo('Recipient Info = ' . $recip . "\n");
+        echo('Recipient Info = ' . $recipient . "\n");
 
         // Optionally, set the Subject of the outgoing message.
         // This will override the default message Subject set by the server.
@@ -110,15 +110,16 @@ class PhiMail
         // If more than one recipient was specified, then each would have an entry.
         $srList = $this->connector->send();
         foreach ($srList as $sr) {
-            echo("Send to " . $sr->recipient);
-            echo($sr->succeeded
-                ? " succeeded id="
-                : "failed err=");
-            echo($sr->succeeded
-                ? $sr->messageId
-                : $sr->errorText);
-            echo("\n");
+            $status = $sr->succeeded
+                ? " succeeded id={$sr->messageId}"
+                : "failed err={$sr->errorText}";
+
+            Slack::to('#background-tasks')->send(
+                "Send to {$sr->recipient}: $status \n"
+            );
         }
+
+        return $srList;
     }
 
     public function loadFile($filename)
