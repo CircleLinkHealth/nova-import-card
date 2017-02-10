@@ -3,16 +3,24 @@ use Aloha\Twilio\Twilio;
 
 if (app()->environment() != 'production') {
 
-    Route::get('rohan', function () {
+    Route::get('rohan/{from}/{to}', function ($from, $to) {
 
-        $user = App\User::find(1752);
-        (new Twilio(
-            'AC2a6d09cf856b2cdd6dfdc9e07dcdbaaf',
-            '73d3fd740152bc65c326542a139f5172',
-            '14694163114'
-        ))->call('+19727622642', function ($message) {
-            $message->say('Hello From CircleLink Health');
-        });
+        $nurses = App\Nurse::all();
+        $data = [];
+
+        foreach ($nurses as $nurse) {
+
+            $data[$nurse->user->fullName] = (new \App\Billing\NurseMonthlyBillGenerator(
+                $nurse,
+                \Carbon\Carbon::now()->subMonths($from),
+                \Carbon\Carbon::now()->subMonths($to),
+                false
+
+            ))->getCallsPerHourOverPeriod();
+        }
+
+        return $data;
+
     });
 }
 
@@ -471,6 +479,31 @@ Route::group(['middleware' => 'auth'], function () {
         'prefix'     => 'admin',
     ], function () {
 
+        Route::get('nursecalls/{from}/{to}', function ($from, $to) {
+
+            $nurses = App\Nurse::all();
+            $data = [];
+            $total = 0;
+
+            foreach ($nurses as $nurse) {
+
+                $data[$nurse->user->fullName] = (new \App\Billing\NurseMonthlyBillGenerator(
+                    $nurse,
+                    \Carbon\Carbon::now()->subMonths($from),
+                    \Carbon\Carbon::now()->subMonths($to),
+                    false
+
+                ))->getCallsPerHourOverPeriod();
+
+                $total += $data[$nurse->user->fullName]['calls/hour'];
+
+            }
+
+            $data['AVERAGE'] = $total / $nurses->count();
+
+            return $data;
+
+        });
 
         /**
          * LOGGER
