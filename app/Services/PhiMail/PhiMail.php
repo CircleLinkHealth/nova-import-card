@@ -127,10 +127,12 @@ class PhiMail
                 );
             }
 
-            return $srList;
         } catch (\Exception $e) {
             $this->handleException($e);
         }
+
+        return $srList ?? false;
+
     }
 
     public function loadFile(
