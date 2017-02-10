@@ -36,8 +36,6 @@ class EmrDirectPdfHandler implements PdfReportHandler
      */
     public function pdfHandle(PdfReport $report)
     {
-        $pathToPdf = $report->toPdf();
-
         $location = Location::find($report->patient->preferredContactLocation);
 
         if (!$location) {
@@ -48,9 +46,13 @@ class EmrDirectPdfHandler implements PdfReportHandler
             return;
         }
 
-        if ($recipient = $location->contactCard->first()->emr_direct == null) {
+        $recipient = $location->contactCard->first()->emr_direct;
+
+        if (!$recipient) {
             return;
         }
+
+        $pathToPdf = $report->toPdf();
 
         $fileName = $report->patient->fullName . ' ' . Carbon::now()->toDateTimeString();
 
