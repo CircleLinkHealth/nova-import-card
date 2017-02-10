@@ -1,5 +1,6 @@
 <?php namespace App\Http\Controllers;
 
+use App\ContactCard;
 use App\Location;
 use App\Practice;
 use Auth;
@@ -59,6 +60,15 @@ class LocationController extends Controller
         $newLocation = new Location($input);
         $saved = $newLocation->save();
 
+        if (!empty($input['emr_direct'])) {
+            ContactCard::updateOrCreate([
+                'contactcardable_type' => Location::class,
+                'contactcardable_id'   => $newLocation->id,
+            ], [
+                'emr_direct' => $input['emr_direct'],
+            ]);
+        }
+
         return $saved
             ?
             redirect()->route('locations.index')->with('messages', ['Location Created!!'])
@@ -100,13 +110,13 @@ class LocationController extends Controller
         if (!Auth::user()->can('locations-manage')) {
             abort(403);
         }
-        debug(Location::getParents($id));
+
         $blogs = Practice::all();
+        $location = Location::find($id);
 
         return view('locations.edit', [
-            'location'  => Location::find($id),
-            'locations' => Location::getParents($id),
-            'blogs'     => $blogs,
+            'location' => $location,
+            'blogs'    => $blogs,
         ]);
     }
 
@@ -135,7 +145,17 @@ class LocationController extends Controller
             $input['parent_id'] = null;
         }
 
-        Location::find($input['id'])->update($input);
+        $loc = Location::find($input['id']);
+        $loc->update($input);
+
+        if (!empty($input['emr_direct'])) {
+            ContactCard::updateOrCreate([
+                'contactcardable_type' => Location::class,
+                'contactcardable_id'   => $loc->id,
+            ], [
+                'emr_direct' => $input['emr_direct'],
+            ]);
+        }
 
         return redirect()->route('locations.index')->with('messages', ['Location Updated!!']);
     }
