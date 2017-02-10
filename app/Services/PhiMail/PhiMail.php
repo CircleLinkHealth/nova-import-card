@@ -2,6 +2,7 @@
 
 use App\CLH\Repositories\CCDImporterRepository;
 use App\Models\MedicalRecords\Ccda;
+use App\User;
 use Illuminate\Support\Facades\Log;
 use Maknz\Slack\Facades\Slack;
 
@@ -73,7 +74,8 @@ class PhiMail
         $outboundRecipient,
         $binaryAttachmentFilePath = null,
         $binaryAttachmentFileName = null,
-        $ccdaAttachmentPath = null
+        $ccdaAttachmentPath = null,
+        User $patient = null
     ) {
         echo("Sending a CDA as an attachment\n");
 
@@ -89,8 +91,10 @@ class PhiMail
         // This will override the default message Subject set by the server.
         $this->connector->setSubject('Message from CircleLink Health');
 
-        // Add the main body of the message.
-        $this->connector->addText("This is the main message content. A CDA is attached.");
+        if ($patient) {
+            // Add the main body of the message.
+            $this->connector->addText("This is message regarding patient {$patient}.");
+        }
 
         if ($ccdaAttachmentPath) {
             // Add a CDA attachment and let phiMail server assign a filename.
@@ -285,9 +289,7 @@ class PhiMail
             return;
         }
 
-        //the worker generates the route using localhost so I am hardcoding it
-//        $link = route('view.files.ready.to.import');
-        $link = 'https://www.careplanmanager.com/ccd-importer/qaimport';
+        $link = route('view.files.ready.to.import');
 
         Slack::to('#ccd-file-status')
             ->send("We received {$numberOfCcds} CCDs from EMR Direct. \n Please visit {$link} to import.");
