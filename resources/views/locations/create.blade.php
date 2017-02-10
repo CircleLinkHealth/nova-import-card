@@ -23,7 +23,7 @@
                             <input type="hidden" name="_token" value="{{ csrf_token() }}">
 
                             <div class="form-group">
-                                <label class="col-md-4 control-label">PRactice</label>
+                                <label class="col-md-4 control-label">Practice</label>
                                 <div class="col-md-6">
                                     <select name="practice_id" class="form-control">
                                         @foreach($practices as $practice)
@@ -38,6 +38,15 @@
                                 <div class="col-md-6">
                                     <input type="text" class="form-control" name="name" value="{{ old('name') }}"
                                            required>
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label class="col-md-4 control-label">EMR Direct Address</label>
+                                <div class="col-md-6">
+                                    <input type="email" class="form-control" name="emr_direct"
+                                           value="{{ old('emr_direct') }}"
+                                           placeholder="circlelinkhealth@test.directproject.net">
                                 </div>
                             </div>
 

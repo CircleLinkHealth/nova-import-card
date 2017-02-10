@@ -12,12 +12,12 @@
 
     <table class="table table-bordered myTable">
         <tr>
-            <td></td>
-            <th>{{$start->format('F') . ' to Date'}}</th>
-            <th>{{$start->subMonthNoOverflow()->format('F')}}</th>
-            <th>{{$start->subMonthNoOverflow()->format('F')}}</th>
-            <th>{{$start->subMonthNoOverflow()->format('F')}}</th>
-            <th>{{$start->subMonthNoOverflow()->format('F')}}</th>
+            <td style="width: 12%"></td>
+            <th style="width: 12%">{{$start->format('F') . ' to Date'}}</th>
+            <th style="width: 12%">{{$start->subMonthNoOverflow()->format('F')}}</th>
+            <th style="width: 12%">{{$start->subMonthNoOverflow()->format('F')}}</th>
+            <th style="width: 12%">{{$start->subMonthNoOverflow()->format('F')}}</th>
+            <th style="width: 12%">{{$start->subMonthNoOverflow()->format('F')}}</th>
         </tr>
 
         @foreach($data[$enrollmentSection]['historical'] as $key => $values)

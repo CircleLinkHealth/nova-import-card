@@ -17,10 +17,10 @@
 </div>
 
 <div class="col-md-12" style="">
-    <div class="row"style="padding-bottom: 10px">
+    <div class="row" style="padding-bottom: 10px">
         <label for="window_start">Calls Start Time</label>
         <input class="form-control" name="window_start" type="time"
-               value="@if(isset($contactWindows[0])) {{$contactWindows[0]->window_time_start}} @endif"
+               value="{{isset($contactWindows[0]) ? $contactWindows[0]->window_time_start : ''}}"
                id="window_start" placeholder="time">
     </div>
 </div>
@@ -29,7 +29,7 @@
     <div class="row" style="padding-bottom: 10px">
         <label for="window_end">Calls End Time</label>
         <input class="form-control" name="window_end" type="time"
-               value="@if(isset($contactWindows[0])) {{$contactWindows[0]->window_time_end}} @endif"
+               value="{{isset($contactWindows[0]) ? $contactWindows[0]->window_time_end : ''}}"
                id="window_end" placeholder="time">
     </div>
 </div>
@@ -39,17 +39,25 @@
         <label for="frequency">Frequency</label>
         <select id="frequency" name="frequency"
                 class="selectpickerX dropdown Valid form-control" data-size="2"
-                style="width: 90px" >
+                style="width: 90px">
             @if(!$patient->patientInfo)
                 <option value="1"> 1x Monthly</option>
                 <option value="2" selected> 2x Monthly</option>
                 <option value="3"> 3x Monthly</option>
                 <option value="4"> 4x Monthly</option>
             @else
-                <option value="1" {{$patient->patientInfo->preferred_calls_per_month == 1 ? 'selected' : ''}}> 1x Monthly</option>
-                <option value="2" {{$patient->patientInfo->preferred_calls_per_month == 2 ? 'selected' : ''}}> 2x Monthly</option>
-                <option value="3" {{$patient->patientInfo->preferred_calls_per_month == 3 ? 'selected' : ''}}> 3x Monthly</option>
-                <option value="4" {{$patient->patientInfo->preferred_calls_per_month == 4 ? 'selected' : ''}}> 4x Monthly</option>
+                <option value="1" {{$patient->patientInfo->preferred_calls_per_month == 1 ? 'selected' : ''}}> 1x
+                    Monthly
+                </option>
+                <option value="2" {{$patient->patientInfo->preferred_calls_per_month == 2 ? 'selected' : ''}}> 2x
+                    Monthly
+                </option>
+                <option value="3" {{$patient->patientInfo->preferred_calls_per_month == 3 ? 'selected' : ''}}> 3x
+                    Monthly
+                </option>
+                <option value="4" {{$patient->patientInfo->preferred_calls_per_month == 4 ? 'selected' : ''}}> 4x
+                    Monthly
+                </option>
             @endif
         </select>
     </div>

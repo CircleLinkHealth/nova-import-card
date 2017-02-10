@@ -60,7 +60,7 @@ class Kernel extends ConsoleKernel
     protected function schedule(Schedule $schedule)
     {
         $schedule->call(function () {
-            (new PhiMail)->sendReceive();
+            (new PhiMail)->receive();
         })->everyMinute();
 
         //Reconciles missed calls and creates a new call for patient using algo
@@ -156,7 +156,8 @@ class Kernel extends ConsoleKernel
             });
 
 
-        })->weeklyOn(1, '12:10');
+        })->dailyAt('10:00');
+//            ->weeklyOn(1, '12:10');
 
         $schedule->command('emailapprovalreminder:providers')
             ->weekdays()
