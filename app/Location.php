@@ -92,6 +92,11 @@ class Location extends Model
             ->withTimestamps();
     }
 
+    public function contactCard()
+    {
+        return $this->morphMany(ContactCard::class, 'contactCardable');
+    }
+
     public function practice()
     {
         return $this->belongsTo(Practice::class);

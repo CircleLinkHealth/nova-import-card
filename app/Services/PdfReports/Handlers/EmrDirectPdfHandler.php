@@ -2,25 +2,29 @@
 /**
  * Created by PhpStorm.
  * User: michalis
- * Date: 06/02/2017
- * Time: 8:34 PM
+ * Date: 10/02/2017
+ * Time: 3:01 PM
  */
 
 namespace App\Services\PdfReports\Handlers;
 
 
-use App\Contracts\Efax;
 use App\Contracts\PdfReport;
 use App\Contracts\PdfReportHandler;
 use App\Location;
+use App\Services\PhiMail\PhiMail;
+use Carbon\Carbon;
 
-class EFaxPdfHandler implements PdfReportHandler
+class EmrDirectPdfHandler implements PdfReportHandler
 {
-    protected $efax;
+    /**
+     * @var PhiMail
+     */
+    private $phiMail;
 
-    public function __construct(Efax $efax)
+    public function __construct(PhiMail $phiMail)
     {
-        $this->efax = $efax;
+        $this->phiMail = $phiMail;
     }
 
     /**
@@ -38,14 +42,20 @@ class EFaxPdfHandler implements PdfReportHandler
             return;
         }
 
-        if (!$location->fax) {
+        if (!$location->contactCard) {
+            return;
+        }
+
+        $recipient = $location->contactCard->first()->emr_direct;
+
+        if (!$recipient) {
             return;
         }
 
         $pathToPdf = $report->toPdf();
 
-        $result = $this->efax->send($location->fax, $pathToPdf);
+        $fileName = $report->patient->fullName . ' ' . Carbon::now()->toDateTimeString();
 
-        return $result;
+        $this->phiMail->send($recipient, $pathToPdf, $fileName);
     }
 }

@@ -10,7 +10,7 @@ class PatientContactWindow extends Model
 
     protected $primaryKey = 'id';
 
-    protected $guarded = ['id'];
+    protected $guarded = [];
 
     protected $attributes = [
         'window_time_start' => '09:00:00',
@@ -19,69 +19,6 @@ class PatientContactWindow extends Model
 
     // START RELATIONSHIPS
 
-    public function patient_info()
-    {
-        return $this->belongsTo(Patient::class);
-    }
-
-    // END RELATIONSHIPS
-
-    public function getEarliestWindowForPatient(User $patient)
-    {
-
-        $patient_windows = $patient->patientInfo->patientContactWindows()->get();
-
-        //If there are no contact windows, we just return the next day for now. @todo confirm logic
-        if (!$patient_windows) {
-
-            return Carbon::tomorrow()->toDateTimeString();
-
-        }
-
-        // leaving first blank to offset weird way of storing week as 1-7 instead of 0-6.
-        // Returns a datetime string with all the necessary time information
-        $week = [
-            '',
-            'Monday',
-            'Tuesday',
-            'Wednesday',
-            'Thursday',
-            'Friday',
-            'Saturday',
-            'Sunday',
-        ];
-
-        $min_date = Carbon::maxValue();
-
-        foreach ($patient_windows as $window) {
-
-            $carbon_date = Carbon::parse('next ' . $week[$window->day_of_week]);
-
-            $carbon_hour = Carbon::parse($window->window_time_start)->format('H');
-            $carbon_minutes = Carbon::parse($window->window_time_start)->format('i');
-            $carbon_date->setTime($carbon_hour, $carbon_minutes);
-
-            $date_string = $carbon_date->toDateTimeString();
-
-            if ($min_date > $date_string) {
-
-                $min_date = $date_string;
-                $min_date_carbon = $date_string;
-                $closest_window = $window;
-            }
-        }
-
-        return [
-
-            'day'          => $min_date_carbon,
-            'window_start' => Carbon::parse($closest_window->window_time_start)->format('H:i'),
-            'window_end'   => Carbon::parse($closest_window->window_time_end)->format('H:i'),
-
-        ];
-
-    }
-
-    //Returns Array with each element containing a start_window_time and an end_window_time in dateString format
     public static function getNextWindowsForPatient($patient)
     {
 
@@ -156,57 +93,8 @@ class PatientContactWindow extends Model
 
     }
 
-    public function getEarliestWindowForPatientFromDate(
-        Patient $patient,
-        Carbon $offset_date
-    ) {
+    // END RELATIONSHIPS
 
-
-        $patient_windows = $patient->patientContactWindows()->get();
-
-        //If no contact window, just return the same date.
-        if ($patient_windows->count() == 0) {
-
-            //to make sure the day returned is a weekday for calls. 
-            while (!$offset_date->isWeekday()) {
-                $offset_date->addDay();
-            }
-
-            $day = $offset_date->toDateTimeString();
-
-            return [
-
-                'day'          => $day,
-                'window_start' => Carbon::parse('09:00:00')->format('H:i'),
-                'window_end'   => Carbon::parse('17:00:00')->format('H:i'),
-
-            ];
-
-        }
-
-        $adjusted_offset = Carbon::parse($offset_date)->subDay()->toDateString();
-
-        foreach ($patient_windows as $window){
-
-            $days[] = Carbon::parse($adjusted_offset)->next(carbonToClhDayOfWeek($window->day_of_week));
-
-        }
-
-        $date = min($days)->toDateString();
-
-        return [
-
-            'day'          => $date,
-            'window_start' => Carbon::parse($window->window_time_start)->format('H:i'),
-            'window_end'   => Carbon::parse($window->window_time_end)->format('H:i'),
-
-        ];
-
-        // we sub one day to check whether the offset day is an option.
-        
-    }
-
-    //Returns Array with each element containing a start_window_time and an end_window_time in dateString format
     public static function getNextWindowsForPatientFromDate(
         $patient,
         $offset_date
@@ -301,6 +189,8 @@ class PatientContactWindow extends Model
 
     }
 
+    //Returns Array with each element containing a start_window_time and an end_window_time in dateString format
+
     /**
      * Delete all current call windows. Then add the ones given.
      * Returns an array of contact windows created.
@@ -335,7 +225,6 @@ class PatientContactWindow extends Model
         return $created;
     }
 
-
     public static function getPreferred(Patient $patientInfo)
     {
         $window = PatientContactWindow::firstOrNew([
@@ -349,5 +238,117 @@ class PatientContactWindow extends Model
             'start' => $window_start,
             'end'   => $window_end,
         ];
+    }
+
+    //Returns Array with each element containing a start_window_time and an end_window_time in dateString format
+
+    public function patient_info()
+    {
+        return $this->belongsTo(Patient::class);
+    }
+
+    public function getEarliestWindowForPatient(User $patient)
+    {
+
+        $patient_windows = $patient->patientInfo->patientContactWindows()->get();
+
+        //If there are no contact windows, we just return the next day for now. @todo confirm logic
+        if (!$patient_windows) {
+
+            return Carbon::tomorrow()->toDateTimeString();
+
+        }
+
+        // leaving first blank to offset weird way of storing week as 1-7 instead of 0-6.
+        // Returns a datetime string with all the necessary time information
+        $week = [
+            '',
+            'Monday',
+            'Tuesday',
+            'Wednesday',
+            'Thursday',
+            'Friday',
+            'Saturday',
+            'Sunday',
+        ];
+
+        $min_date = Carbon::maxValue();
+
+        foreach ($patient_windows as $window) {
+
+            $carbon_date = Carbon::parse('next ' . $week[$window->day_of_week]);
+
+            $carbon_hour = Carbon::parse($window->window_time_start)->format('H');
+            $carbon_minutes = Carbon::parse($window->window_time_start)->format('i');
+            $carbon_date->setTime($carbon_hour, $carbon_minutes);
+
+            $date_string = $carbon_date->toDateTimeString();
+
+            if ($min_date > $date_string) {
+
+                $min_date = $date_string;
+                $min_date_carbon = $date_string;
+                $closest_window = $window;
+            }
+        }
+
+        return [
+
+            'day'          => $min_date_carbon,
+            'window_start' => Carbon::parse($closest_window->window_time_start)->format('H:i'),
+            'window_end'   => Carbon::parse($closest_window->window_time_end)->format('H:i'),
+
+        ];
+
+    }
+
+    public function getEarliestWindowForPatientFromDate(
+        Patient $patient,
+        Carbon $offset_date
+    ) {
+
+
+        $patient_windows = $patient->patientContactWindows()->get();
+
+        //If no contact window, just return the same date.
+        if ($patient_windows->count() == 0) {
+
+            //to make sure the day returned is a weekday for calls.
+            while (!$offset_date->isWeekday()) {
+                $offset_date->addDay();
+            }
+
+            $day = $offset_date->toDateTimeString();
+
+            return [
+
+                'day'          => $day,
+                'window_start' => Carbon::parse('09:00:00')->format('H:i'),
+                'window_end'   => Carbon::parse('17:00:00')->format('H:i'),
+
+            ];
+
+        }
+
+        $adjusted_offset = Carbon::parse($offset_date)->subDay()->toDateString();
+
+        foreach ($patient_windows as $window) {
+
+            $days[] = Carbon::parse($adjusted_offset)->next(carbonToClhDayOfWeek($window->day_of_week));
+
+        }
+
+        $date = min($days)->toDateString();
+
+        return [
+
+            'day'          => $date,
+            'window_start' => Carbon::parse($window->window_time_start)->format('H:i'),
+            'window_end'   => Carbon::parse($window->window_time_end)->format('H:i'),
+
+        ];
+
+        // we sub one day to check whether the offset day is an option.
+
     }
 }

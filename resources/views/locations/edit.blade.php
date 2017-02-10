@@ -31,6 +31,15 @@
                             </div>
 
                             <div class="form-group">
+                                <label class="col-md-4 control-label">EMR Direct Address</label>
+                                <div class="col-md-6">
+                                    <input type="email" class="form-control" name="emr_direct"
+                                           value="{{$location->contactCard->first()->emr_direct ?? ''}}"
+                                           placeholder="circlelinkhealth@test.directproject.net">
+                                </div>
+                            </div>
+
+                            <div class="form-group">
                                 <label class="col-md-4 control-label">Phone Number</label>
                                 <div class="col-md-6">
                                     <input type="tel" class="form-control" name="phone" value="{{$location->phone}}"
