@@ -74,10 +74,9 @@ class Problems extends BaseImporter
             /*
              * ICD-9 Check
              */
-            if (in_array($importedProblem->code_system_name, [
-                    'ICD-9',
-                    'ICD9',
-                ]) || $importedProblem->code_system == '2.16.840.1.113883.6.103'
+            if ((str_contains(strtolower($importedProblem->code_system_name), 'icd')
+                    && str_contains(strtolower($importedProblem->code_system_name), '9'))
+                || $importedProblem->code_system == '2.16.840.1.113883.6.103'
             ) {
                 foreach ($cpmProblems as $cpmProblem) {
                     if ($importedProblem->code >= $cpmProblem->icd9from
@@ -95,26 +94,28 @@ class Problems extends BaseImporter
             /*
                  * SNOMED Check
                  */
-            if (in_array($importedProblem->code_system_name,
-                    ['SNOMED CT']) || $importedProblem->code_system == '2.16.840.1.113883.6.96'
+            if (str_contains(strtolower($importedProblem->code_system_name), 'snomed')
+                || $importedProblem->code_system == '2.16.840.1.113883.6.96'
             ) {
-                $potentialICD10List = SnomedToCpmIcdMap::whereSnomedCode($importedProblem->code)->pluck('icd_10_code')->all();
+                $potentialICD10List = SnomedToCpmIcdMap::whereSnomedCode($importedProblem->code)
+                    ->get();
 
-                if (!empty($potentialICD10List[0])) {
+                if (!$potentialICD10List->isEmpty()) {
+                    $condition = $potentialICD10List->first();
+
                     $importedProblem->code_system_name = 'ICD-10';
                     $importedProblem->code_system = '2.16.840.1.113883.6.3';
-                    $importedProblem->code = $potentialICD10List[0];
+                    $importedProblem->code = $condition->icd_10_code;
+                    $importedProblem->name = $condition->icd_10_name;
                 }
             }
 
             /*
              * ICD-10 Check
              */
-            if (in_array($importedProblem->code_system_name, [
-                    'ICD-10',
-                    'ICD10',
-                    'ICD-10-CM',
-                ]) || in_array($importedProblem->code_system, [
+            if ((str_contains(strtolower($importedProblem->code_system_name), 'icd')
+                    && str_contains(strtolower($importedProblem->code_system_name), '10'))
+                || in_array($importedProblem->code_system, [
                     '2.16.840.1.113883.6.3',
                     '2.16.840.1.113883.6.4',
                 ])

@@ -112,7 +112,7 @@ class CarePlan extends Model implements PdfReport
             'isPdf'               => true,
         ]);
 
-        $file_name = base_path('storage/pdfs/careplans/' . Carbon::now()->toDateString() . '-' . str_random(40) . '.pdf');
+        $file_name = base_path('storage/pdfs/careplans/' . Carbon::now()->toDateString() . '-' . $user->fullName . '.pdf');
         $pdf->save($file_name, true);
 
         return $file_name;
