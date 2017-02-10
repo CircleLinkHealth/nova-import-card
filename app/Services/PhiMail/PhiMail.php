@@ -41,11 +41,20 @@ class PhiMail
         $this->connector->authenticateUser($phiMailUser, $phiMailPass);
     }
 
+    public function __destruct()
+    {
+        try {
+            $this->connector->close();
+        } catch (\Exception $ignore) {
+        }
+    }
+
     /**
      * @param args the command line arguments
      */
-    public function sendReceive($outboundReceipient = null)
-    {
+    public function sendReceive(
+        $outboundReceipient = null
+    ) {
         try {
             if ($outboundReceipient) {
                 $this->send($outboundReceipient);
@@ -54,20 +63,8 @@ class PhiMail
             //Receive mail
             $this->receive();
         } catch (\Exception $e) {
-            $message = $e->getMessage() . "\n" . $e->getFile() . "\n" . $e->getLine();
-            $traceString = $e->getTraceAsString() . "\n";
-
-            Log::error($message);
-            Log::error($traceString);
+            $this->handleException($e);
         }
-
-        try {
-            $this->connector->close();
-        } catch (\Exception $ignore) {
-        }
-
-        echo("============END\n");
-
     }
 
     public function send(
@@ -77,173 +74,191 @@ class PhiMail
         $ccdaAttachmentPath = null,
         User $patient = null
     ) {
-        echo("Sending a CDA as an attachment\n");
+        try {
+            echo("Sending a CDA as an attachment\n");
 
-        // After authentication, the server has a blank outgoing message
-        // template. Begin building this message by adding a recipient.
-        // Multiple recipients can be added by calling this command more
-        // than once. A separate message will be sent for each recipient.
-        // The server returns information about the recipient if the
-        // address entered is accepted, otherwise an exception is thrown.
-        $recipient = $this->connector->addRecipient($outboundRecipient);
+            // After authentication, the server has a blank outgoing message
+            // template. Begin building this message by adding a recipient.
+            // Multiple recipients can be added by calling this command more
+            // than once. A separate message will be sent for each recipient.
+            // The server returns information about the recipient if the
+            // address entered is accepted, otherwise an exception is thrown.
+            $recipient = $this->connector->addRecipient($outboundRecipient);
 
-        // Optionally, set the Subject of the outgoing message.
-        // This will override the default message Subject set by the server.
-        $this->connector->setSubject('Message from CircleLink Health');
+            // Optionally, set the Subject of the outgoing message.
+            // This will override the default message Subject set by the server.
+            $this->connector->setSubject('Message from CircleLink Health');
 
-        if ($patient) {
-            // Add the main body of the message.
-            $this->connector->addText("This is message regarding patient {$patient}.");
+            if ($patient) {
+                // Add the main body of the message.
+                $this->connector->addText("This is message regarding patient {$patient}.");
+            }
+
+            if ($ccdaAttachmentPath) {
+                // Add a CDA attachment and let phiMail server assign a filename.
+                $this->connector->addCDA(self::loadFile($ccdaAttachmentPath));
+            }
+
+            if ($binaryAttachmentFilePath) {
+                // Add a binary attachment and specify the attachment filename.
+                $this->connector->addRaw(self::loadFile($binaryAttachmentFilePath), $binaryAttachmentFileName);
+            }
+
+            // Optionally, request a final delivery notification message.
+            // Note that not all HISPs can provide this notification when requested.
+            // If the receiving HISP does not support this feature, the message will
+            // result in a failure notification after the timeout period has elapsed.
+            // This command will override the default setting set by the server.
+            //
+            //$this->connector->setDeliveryNotification(true);
+
+            // Send the message. srList will contain one entry for each recipient.
+            // If more than one recipient was specified, then each would have an entry.
+            $srList = $this->connector->send();
+
+            //Report to Slack
+            foreach ($srList as $sr) {
+                $status = $sr->succeeded
+                    ? " succeeded id={$sr->messageId}"
+                    : "failed err={$sr->errorText}";
+
+                Slack::to('#background-tasks')->send(
+                    "Send to {$sr->recipient}: $status \n"
+                );
+            }
+
+            return $srList;
+        } catch (\Exception $e) {
+            $this->handleException($e);
         }
-
-        if ($ccdaAttachmentPath) {
-            // Add a CDA attachment and let phiMail server assign a filename.
-            $this->connector->addCDA(self::loadFile($ccdaAttachmentPath));
-        }
-
-        if ($binaryAttachmentFilePath) {
-            // Add a binary attachment and specify the attachment filename.
-            $this->connector->addRaw(self::loadFile($binaryAttachmentFilePath), $binaryAttachmentFileName);
-        }
-
-        // Optionally, request a final delivery notification message.
-        // Note that not all HISPs can provide this notification when requested.
-        // If the receiving HISP does not support this feature, the message will
-        // result in a failure notification after the timeout period has elapsed.
-        // This command will override the default setting set by the server.
-        //
-        //$this->connector->setDeliveryNotification(true);
-
-        // Send the message. srList will contain one entry for each recipient.
-        // If more than one recipient was specified, then each would have an entry.
-        $srList = $this->connector->send();
-
-        //Report to Slack
-        foreach ($srList as $sr) {
-            $status = $sr->succeeded
-                ? " succeeded id={$sr->messageId}"
-                : "failed err={$sr->errorText}";
-
-            Slack::to('#background-tasks')->send(
-                "Send to {$sr->recipient}: $status \n"
-            );
-        }
-
-        return $srList;
     }
 
-    public function loadFile($filename)
-    {
+    public function loadFile(
+        $filename
+    ) {
         return file_get_contents($filename);
+    }
+
+    private function handleException(\Exception $e)
+    {
+        $message = $e->getMessage() . "\n" . $e->getFile() . "\n" . $e->getLine();
+        $traceString = $e->getTraceAsString() . "\n";
+
+        Log::error($message);
+        Log::error($traceString);
     }
 
     public function receive()
     {
-        while (true) {
-            // check next message or status update
-            $message = $this->connector->check();
+        try {
+            while (true) {
+                // check next message or status update
+                $message = $this->connector->check();
 
-            if ($message == null) {
-                Slack::to('#background-tasks-dev')
-                    ->send("Checked EMR Direct Mailbox. There where no messages. \n" . env('DB_DATABASE'));
-                break;
-            }
+                if ($message == null) {
+                    Slack::to('#background-tasks-dev')
+                        ->send("Checked EMR Direct Mailbox. There where no messages. \n" . env('DB_DATABASE'));
+                    break;
+                }
 
-            if (!$message->isMail()) {
-                // Process a status update for a previously sent message.
+                if (!$message->isMail()) {
+                    // Process a status update for a previously sent message.
 //                        echo ("Status message for id = " . $message->messageId . "\n");
 //                        echo ("  StatusCode = " . $message->statusCode . "\n");
 //                        if ($message->info != null) echo ("  Info = " . $message->info . "\n");
-                if ($message->statusCode == "failed") {
-                    // ...do something about a failed message...
-                    // $message->messageId will match the messageId returned
-                    // when you originally sent the corresponding message
-                    // See the API documentation for information about
-                    // status notification types and their meanings.
-                }
-
-                // This signals the server that the status update can be
-                // safely removed from the queue,
-                // i.e. it has been successfully received and processed.
-                // Note: this is NOT the same method used to acknowledge
-                // regular messages.
-                $this->connector->acknowledgeStatus();
-            }
-
-            // If you are checking messages for an address group,
-            // $message->recipient will contain the address in that
-            // group to which this message should be delivered.
-            Log::critical("A new message is available for " . $message->recipient . "\n");
-            Log::critical("from " . $message->sender . "; id "
-                . $message->messageId . "; #att=" . $message->numAttachments
-                . "\n");
-
-            for ($i = 0; $i <= $message->numAttachments; $i++) {
-                // Get content for part i of the current message.
-                $showRes = $this->connector->show($i);
-
-                Log::critical("MimeType = " . $showRes->mimeType
-                    . "; length=" . $showRes->length . "\n");
-
-                // List all the headers. Headers are set by the
-                // sender and may include Subject, Date, additional
-                // addresses to which the message was sent, etc.
-                // Do NOT use the To: header to determine the address
-                // to which this message should be delivered
-                // internally; use $messagerecipient instead.
-                foreach ($showRes->headers as $header) {
-                    Log::critical("Header: " . $header . "\n");
-                }
-
-                // Process the content; for this example text data
-                // is echoed to the console and non-text data is
-                // written to files.
-
-                if (str_contains($showRes->mimeType, 'plain')) {
-                    // ... do something with text parts ...
-                    Log::critical('The plain text part of the mail');
-                    Log::critical($showRes->data);
-                    self::writeDataFile(storage_path(str_random(20) . '.txt'), $showRes->data);
-                } elseif (str_contains($showRes->mimeType, 'xml')) {
-                    //save ccd to file
-                    self::writeDataFile(storage_path(str_random(20) . '.xml'), $showRes->data);
-                    $import = $this->importCcd($message->sender, $showRes);
-
-                    if (!$import) {
-                        continue;
+                    if ($message->statusCode == "failed") {
+                        // ...do something about a failed message...
+                        // $message->messageId will match the messageId returned
+                        // when you originally sent the corresponding message
+                        // See the API documentation for information about
+                        // status notification types and their meanings.
                     }
 
-                    $this->ccdas[] = $import;
+                    // This signals the server that the status update can be
+                    // safely removed from the queue,
+                    // i.e. it has been successfully received and processed.
+                    // Note: this is NOT the same method used to acknowledge
+                    // regular messages.
+                    $this->connector->acknowledgeStatus();
                 }
 
-                // Display the list of attachments and associated info. This info is only
-                // included with message part 0.
-                for ($k = 0; $i == 0 && $k < $message->numAttachments; $k++) {
-                    Log::critical("Attachment " . ($k + 1)
-                        . ": " . $showRes->attachmentInfo[$k]->mimeType
-                        . " fn:" . $showRes->attachmentInfo[$k]->filename
-                        . " Desc:" . $showRes->attachmentInfo[$k]->description
-                        . "\n");
+                // If you are checking messages for an address group,
+                // $message->recipient will contain the address in that
+                // group to which this message should be delivered.
+                Log::critical("A new message is available for " . $message->recipient . "\n");
+                Log::critical("from " . $message->sender . "; id "
+                    . $message->messageId . "; #att=" . $message->numAttachments
+                    . "\n");
+
+                for ($i = 0; $i <= $message->numAttachments; $i++) {
+                    // Get content for part i of the current message.
+                    $showRes = $this->connector->show($i);
+
+                    Log::critical("MimeType = " . $showRes->mimeType
+                        . "; length=" . $showRes->length . "\n");
+
+                    // List all the headers. Headers are set by the
+                    // sender and may include Subject, Date, additional
+                    // addresses to which the message was sent, etc.
+                    // Do NOT use the To: header to determine the address
+                    // to which this message should be delivered
+                    // internally; use $messagerecipient instead.
+                    foreach ($showRes->headers as $header) {
+                        Log::critical("Header: " . $header . "\n");
+                    }
+
+                    // Process the content; for this example text data
+                    // is echoed to the console and non-text data is
+                    // written to files.
+
+                    if (str_contains($showRes->mimeType, 'plain')) {
+                        // ... do something with text parts ...
+                        Log::critical('The plain text part of the mail');
+                        Log::critical($showRes->data);
+                        self::writeDataFile(storage_path(str_random(20) . '.txt'), $showRes->data);
+                    } elseif (str_contains($showRes->mimeType, 'xml')) {
+                        //save ccd to file
+                        self::writeDataFile(storage_path(str_random(20) . '.xml'), $showRes->data);
+                        $import = $this->importCcd($message->sender, $showRes);
+
+                        if (!$import) {
+                            continue;
+                        }
+
+                        $this->ccdas[] = $import;
+                    }
+
+                    // Display the list of attachments and associated info. This info is only
+                    // included with message part 0.
+                    for ($k = 0; $i == 0 && $k < $message->numAttachments; $k++) {
+                        Log::critical("Attachment " . ($k + 1)
+                            . ": " . $showRes->attachmentInfo[$k]->mimeType
+                            . " fn:" . $showRes->attachmentInfo[$k]->filename
+                            . " Desc:" . $showRes->attachmentInfo[$k]->description
+                            . "\n");
+                    }
                 }
+                // This signals the server that the message can be safely removed from the queue
+                // and should only be sent after all required parts of the message have been
+                // retrieved and processed.
+                $this->connector->acknowledgeMessage();
+
+                Log::critical('Number of Attachments: ' . $message->numAttachments);
+
+                if ($message->numAttachments > 0) {
+                    $this->notifyAdmins($message->numAttachments);
+
+                    $message = "Checked EMR Direct Mailbox. There where {$message->numAttachments} attachment(s). \n";
+
+                    echo $message;
+
+                    Slack::to('#background-tasks')->send($message);
+                }
+
+                Log::critical('***************');
             }
-            // This signals the server that the message can be safely removed from the queue
-            // and should only be sent after all required parts of the message have been
-            // retrieved and processed.
-            $this->connector->acknowledgeMessage();
-
-            Log::critical('Number of Attachments: ' . $message->numAttachments);
-
-            if ($message->numAttachments > 0) {
-                $this->notifyAdmins($message->numAttachments);
-
-                $message = "Checked EMR Direct Mailbox. There where {$message->numAttachments} attachment(s). \n";
-
-                echo $message;
-
-                Slack::to('#background-tasks')->send($message);
-            }
-
-            Log::critical('***************');
+        } catch (\Exception $e) {
+            $this->handleException($e);
         }
     }
 
@@ -283,8 +298,9 @@ class PhiMail
      *
      * @param $numberOfCcds
      */
-    private function notifyAdmins($numberOfCcds)
-    {
+    private function notifyAdmins(
+        $numberOfCcds
+    ) {
         if (app()->environment('local')) {
             return;
         }
@@ -294,4 +310,5 @@ class PhiMail
         Slack::to('#ccd-file-status')
             ->send("We received {$numberOfCcds} CCDs from EMR Direct. \n Please visit {$link} to import.");
     }
+
 }
