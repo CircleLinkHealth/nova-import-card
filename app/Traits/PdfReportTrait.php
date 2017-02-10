@@ -10,6 +10,7 @@ namespace App\Traits;
 
 use App\Contracts\PdfReportHandler;
 use App\Services\PdfReports\Handlers\EFaxPdfHandler;
+use App\Services\PdfReports\Handlers\EmrDirectPdfHandler;
 
 
 trait PdfReportTrait
@@ -40,7 +41,7 @@ trait PdfReportTrait
      *
      * @return EFaxPdfHandler
      */
-    public function eFaxHandler()
+    private function eFaxHandler()
     {
         return app(EFaxPdfHandler::class);
     }
@@ -77,5 +78,15 @@ trait PdfReportTrait
             ->primaryPractice
             ->ehr
             ->pdf_report_handler);
+    }
+
+    /**
+     * Get an instance of EmrDirectPdfHandler from the Container.
+     *
+     * @return EmrDirectPdfHandler
+     */
+    private function emrDirectHandler()
+    {
+        return app(EmrDirectPdfHandler::class);
     }
 }
