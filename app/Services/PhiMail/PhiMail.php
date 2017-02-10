@@ -8,6 +8,37 @@ use Maknz\Slack\Facades\Slack;
 
 class PhiMail
 {
+    public function __construct()
+    {
+        $phiMailServer = env('EMR_DIRECT_MAIL_SERVER');
+        $phiMailPort = env('EMR_DIRECT_PORT'); // this is the default port #
+
+        $phiMailUser = env('EMR_DIRECT_USER');
+        $phiMailPass = env('EMR_DIRECT_PASSWORD');
+
+        $outboundRecipient = "recipient@direct.anotherdomain.com";
+//            $attachmentSaveDirectory = base_path() . '/storage/ccdas/';
+
+        // Use the following command to enable client TLS authentication, if
+        // required. The key file referenced should contain the following
+        // PEM data concatenated into one file:
+        //   <your_private_key.pem>
+        //   <your_client_certificate.pem>
+        //   <intermediate_CA_certificate.pem>
+        //   <root_CA_certificate.pem>
+        //
+        PhiMailConnector::setClientCertificate(
+            base_path() . env('EMR_DIRECT_CONC_KEYS_PEM_PATH'),
+            env('EMR_DIRECT_PASS_PHRASE')
+        );
+
+        // This command is recommended for added security to set the trusted
+        // SSL certificate or trust anchor for the phiMail server.
+        PhiMailConnector::setServerCertificate(base_path() . env('EMR_DIRECT_SERVER_CERT_PEM_PATH'));
+
+        $this->connector = new PhiMailConnector($phiMailServer, $phiMailPort);
+        $this->connector->authenticateUser($phiMailUser, $phiMailPass);
+    }
 
     /**
      * @param args the command line arguments
@@ -17,7 +48,7 @@ class PhiMail
 
         try {
             $fileNames = [];
-            $ccdas = [];
+            $this->connectorcdas = [];
 
             // Specify which parts of the example to run.
             // Note: Send and receive examples are grouped here for demonstration
@@ -26,85 +57,10 @@ class PhiMail
             $send = false;
             $receive = true;
 
-            $phiMailServer = env('EMR_DIRECT_MAIL_SERVER');
-            $phiMailPort = env('EMR_DIRECT_PORT'); // this is the default port #
-
-            $phiMailUser = env('EMR_DIRECT_USER');
-            $phiMailPass = env('EMR_DIRECT_PASSWORD');
-
-            $outboundRecipient = "recipient@direct.anotherdomain.com";
-//            $attachmentSaveDirectory = base_path() . '/storage/ccdas/';
-
-            // Use the following command to enable client TLS authentication, if
-            // required. The key file referenced should contain the following
-            // PEM data concatenated into one file:
-            //   <your_private_key.pem>
-            //   <your_client_certificate.pem>
-            //   <intermediate_CA_certificate.pem>
-            //   <root_CA_certificate.pem>
-            //
-            PhiMailConnector::setClientCertificate(
-                base_path() . env('EMR_DIRECT_CONC_KEYS_PEM_PATH'),
-                env('EMR_DIRECT_PASS_PHRASE')
-            );
-
-            // This command is recommended for added security to set the trusted
-            // SSL certificate or trust anchor for the phiMail server.
-            PhiMailConnector::setServerCertificate(base_path() . env('EMR_DIRECT_SERVER_CERT_PEM_PATH'));
-
-            $c = new PhiMailConnector($phiMailServer, $phiMailPort);
-            $c->authenticateUser($phiMailUser, $phiMailPass);
 
             // Sample code to send a Direct message.
             if ($send) {
-                echo("Sending a CDA as an attachment\n");
-
-                // After authentication, the server has a blank outgoing message
-                // template. Begin building this message by adding a recipient.
-                // Multiple recipients can be added by calling this command more
-                // than once. A separate message will be sent for each recipient.
-                $recip = $c->addRecipient($outboundRecipient);
-
-                // The server returns information about the recipient if the
-                // address entered is accepted, otherwise an exception is thrown.
-                // How you use this recipient information is up to you...
-                echo('Recipient Info = ' . $recip . "\n");
-
-                // Optionally, set the Subject of the outgoing message.
-                // This will override the default message Subject set by the server.
-                $c->setSubject('Test Subject sent by PHP connector');
-
-                // Add the main body of the message.
-                $c->addText("This is the main message content. A CDA is attached.");
-
-                // Add a CDA attachment and let phiMail server assign a filename.
-                $c->addCDA(self::loadFile("/tmp/Test_cda.xml"));
-
-                // Optionally, add a binary attachment and specify the
-                // attachment filename yourself.
-                $c->addRaw(self::loadFile("/tmp/Test_pdf.pdf"), "test.pdf");
-
-                // Optionally, request a final delivery notification message.
-                // Note that not all HISPs can provide this notification when requested.
-                // If the receiving HISP does not support this feature, the message will
-                // result in a failure notification after the timeout period has elapsed.
-                // This command will override the default setting set by the server.
-                //
-                //$c->setDeliveryNotification(true);
-
-                // Send the message. srList will contain one entry for each recipient.
-                // If more than one recipient was specified, then each would have an entry.
-                $srList = $c->send();
-                foreach ($srList as $sr) {
-                    echo("Send to " . $sr->recipient);
-                    echo($sr->succeeded
-                        ? " succeeded id="
-                        : "failed err=");
-                    echo($sr->succeeded
-                        ? $sr->messageId
-                        : $sr->errorText);
-                    echo("\n");
-                }
+                $this->send();
             }
 
             // Sample code to check for any incoming messages. Generally, this
@@ -120,27 +76,27 @@ class PhiMail
                     echo("Checking mailbox\n");
 
                     // check next message or status update
-                    $cr = $c->check();
+                    $this->connectorr = $this->connector->check();
 
-                    if ($cr == null) {
+                    if ($this->connectorr == null) {
 
                         Slack::to('#background-tasks-dev')
                             ->send("Checked EMR Direct Mailbox. There where no messages. \n" . env('DB_DATABASE'));
                         break;
 
                     } else {
-                        if ($cr->isMail()) {
+                        if ($this->connectorr->isMail()) {
                             // If you are checking messages for an address group,
-                            // $cr->recipient will contain the address in that
+                            // $this->connectorr->recipient will contain the address in that
                             // group to which this message should be delivered.
-                            Log::critical("A new message is available for " . $cr->recipient . "\n");
-                            Log::critical("from " . $cr->sender . "; id "
-                                . $cr->messageId . "; #att=" . $cr->numAttachments
+                            Log::critical("A new message is available for " . $this->connectorr->recipient . "\n");
+                            Log::critical("from " . $this->connectorr->sender . "; id "
+                                . $this->connectorr->messageId . "; #att=" . $this->connectorr->numAttachments
                                 . "\n");
 
-                            for ($i = 0; $i <= $cr->numAttachments; $i++) {
+                            for ($i = 0; $i <= $this->connectorr->numAttachments; $i++) {
                                 // Get content for part i of the current message.
-                                $showRes = $c->show($i);
+                                $showRes = $this->connector->show($i);
 
                                 Log::critical("MimeType = " . $showRes->mimeType
                                     . "; length=" . $showRes->length . "\n");
@@ -150,7 +106,7 @@ class PhiMail
                                 // addresses to which the message was sent, etc.
                                 // Do NOT use the To: header to determine the address
                                 // to which this message should be delivered
-                                // internally; use $cr->recipient instead.
+                                // internally; use $this->connectorr->recipient instead.
                                 foreach ($showRes->headers as $header) {
                                     Log::critical("Header: " . $header . "\n");
                                 }
@@ -167,18 +123,18 @@ class PhiMail
                                 } elseif (str_contains($showRes->mimeType, 'xml')) {
                                     //save ccd to file
                                     self::writeDataFile(storage_path(str_random(20) . '.xml'), $showRes->data);
-                                    $import = $this->importCcd($cr->sender, $showRes);
+                                    $import = $this->importCcd($this->connectorr->sender, $showRes);
 
                                     if (!$import) {
                                         continue;
                                     }
 
-                                    $ccdas[] = $import;
+                                    $this->connectorcdas[] = $import;
                                 }
 
                                 // Display the list of attachments and associated info. This info is only
                                 // included with message part 0.
-                                for ($k = 0; $i == 0 && $k < $cr->numAttachments; $k++) {
+                                for ($k = 0; $i == 0 && $k < $this->connectorr->numAttachments; $k++) {
                                     Log::critical("Attachment " . ($k + 1)
                                         . ": " . $showRes->attachmentInfo[$k]->mimeType
                                         . " fn:" . $showRes->attachmentInfo[$k]->filename
@@ -189,14 +145,14 @@ class PhiMail
                             // This signals the server that the message can be safely removed from the queue
                             // and should only be sent after all required parts of the message have been
                             // retrieved and processed.
-                            $c->acknowledgeMessage();
+                            $this->connector->acknowledgeMessage();
 
-                            Log::critical('Number of Attachments: ' . $cr->numAttachments);
+                            Log::critical('Number of Attachments: ' . $this->connectorr->numAttachments);
 
-                            if ($cr->numAttachments > 0) {
-                                $this->notifyAdmins($cr->numAttachments);
+                            if ($this->connectorr->numAttachments > 0) {
+                                $this->notifyAdmins($this->connectorr->numAttachments);
 
-                                $message = "Checked EMR Direct Mailbox. There where {$cr->numAttachments} attachment(s). \n";
+                                $message = "Checked EMR Direct Mailbox. There where {$this->connectorr->numAttachments} attachment(s). \n";
 
                                 echo $message;
 
@@ -208,12 +164,12 @@ class PhiMail
                         } else {
 
                             // Process a status update for a previously sent message.
-//                        echo ("Status message for id = " . $cr->messageId . "\n");
-//                        echo ("  StatusCode = " . $cr->statusCode . "\n");
-//                        if ($cr->info != null) echo ("  Info = " . $cr->info . "\n");
-                            if ($cr->statusCode == "failed") {
+//                        echo ("Status message for id = " . $this->connectorr->messageId . "\n");
+//                        echo ("  StatusCode = " . $this->connectorr->statusCode . "\n");
+//                        if ($this->connectorr->info != null) echo ("  Info = " . $this->connectorr->info . "\n");
+                            if ($this->connectorr->statusCode == "failed") {
                                 // ...do something about a failed message...
-                                // $cr->messageId will match the messageId returned
+                                // $this->connectorr->messageId will match the messageId returned
                                 // when you originally sent the corresponding message
                                 // See the API documentation for information about
                                 // status notification types and their meanings.
@@ -224,7 +180,7 @@ class PhiMail
                             // i.e. it has been successfully received and processed.
                             // Note: this is NOT the same method used to acknowledge
                             // regular messages.
-                            $c->acknowledgeStatus();
+                            $this->connector->acknowledgeStatus();
                         }
                     }
                 }
@@ -239,12 +195,64 @@ class PhiMail
         }
 
         try {
-            $c->close();
+            $this->connector->close();
         } catch (\Exception $ignore) {
         }
 
         echo("============END\n");
 
+    }
+
+    public function send($outboundRecipient)
+    {
+        echo("Sending a CDA as an attachment\n");
+
+        // After authentication, the server has a blank outgoing message
+        // template. Begin building this message by adding a recipient.
+        // Multiple recipients can be added by calling this command more
+        // than once. A separate message will be sent for each recipient.
+        $recip = $this->connector->addRecipient($outboundRecipient);
+
+        // The server returns information about the recipient if the
+        // address entered is accepted, otherwise an exception is thrown.
+        // How you use this recipient information is up to you...
+        echo('Recipient Info = ' . $recip . "\n");
+
+        // Optionally, set the Subject of the outgoing message.
+        // This will override the default message Subject set by the server.
+        $this->connector->setSubject('Test Subject sent by PHP connector');
+
+        // Add the main body of the message.
+        $this->connector->addText("This is the main message content. A CDA is attached.");
+
+        // Add a CDA attachment and let phiMail server assign a filename.
+        $this->connector->addCDA(self::loadFile("/tmp/Test_cda.xml"));
+
+        // Optionally, add a binary attachment and specify the
+        // attachment filename yourself.
+        $this->connector->addRaw(self::loadFile("/tmp/Test_pdf.pdf"), "test.pdf");
+
+        // Optionally, request a final delivery notification message.
+        // Note that not all HISPs can provide this notification when requested.
+        // If the receiving HISP does not support this feature, the message will
+        // result in a failure notification after the timeout period has elapsed.
+        // This command will override the default setting set by the server.
+        //
+        //$this->connector->setDeliveryNotification(true);
+
+        // Send the message. srList will contain one entry for each recipient.
+        // If more than one recipient was specified, then each would have an entry.
+        $srList = $this->connector->send();
+        foreach ($srList as $sr) {
+            echo("Send to " . $sr->recipient);
+            echo($sr->succeeded
+                ? " succeeded id="
+                : "failed err=");
+            echo($sr->succeeded
+                ? $sr->messageId
+                : $sr->errorText);
+            echo("\n");
+        }
     }
 
     public function loadFile($filename)
@@ -263,11 +271,11 @@ class PhiMail
         $sender,
         $attachment
     ) {
-        $ccdaRepo = new CCDImporterRepository;
+        $this->connectorcdaRepo = new CCDImporterRepository;
 
-        $json = $ccdaRepo->toJson($attachment->data);
+        $json = $this->connectorcdaRepo->toJson($attachment->data);
 
-        $ccda = Ccda::create([
+        $this->connectorcda = Ccda::create([
             'user_id'   => null,
             'vendor_id' => 1,
             'json'      => $json,
@@ -275,10 +283,10 @@ class PhiMail
             'source'    => Ccda::EMR_DIRECT,
         ]);
 
-        $ccda->import();
+        $this->connectorcda->import();
 
         return [
-            'id'       => $ccda->id,
+            'id'       => $this->connectorcda->id,
             'fileName' => $attachment->filename,
         ];
     }
@@ -288,7 +296,7 @@ class PhiMail
      *
      *
      * @param User $user
-     * @param \App\Models\MedicalRecords\Ccda $ccda
+     * @param \App\Models\MedicalRecords\Ccda $this ->connectorcda
      * @param $fileNames
      * @param null $line
      * @param null $errorMessage
