@@ -69,20 +69,21 @@ class PhiMail
 
     }
 
-    public function send($outboundRecipient)
-    {
+    public function send(
+        $outboundRecipient,
+        $binaryAttachmentFilePath = null,
+        $binaryAttachmentFileName = null,
+        $ccdaPath = null
+    ) {
         echo("Sending a CDA as an attachment\n");
 
         // After authentication, the server has a blank outgoing message
         // template. Begin building this message by adding a recipient.
         // Multiple recipients can be added by calling this command more
         // than once. A separate message will be sent for each recipient.
-        $recipient = $this->connector->addRecipient($outboundRecipient);
-
         // The server returns information about the recipient if the
         // address entered is accepted, otherwise an exception is thrown.
-        // How you use this recipient information is up to you...
-        echo('Recipient Info = ' . $recipient . "\n");
+        $recipient = $this->connector->addRecipient($outboundRecipient);
 
         // Optionally, set the Subject of the outgoing message.
         // This will override the default message Subject set by the server.
@@ -94,9 +95,10 @@ class PhiMail
         // Add a CDA attachment and let phiMail server assign a filename.
 //        $this->connector->addCDA(self::loadFile("/tmp/Test_cda.xml"));
 
-        // Optionally, add a binary attachment and specify the
-        // attachment filename yourself.
-        $this->connector->addRaw(self::loadFile("/tmp/Test_pdf.pdf"), "test.pdf");
+        if ($binaryAttachmentFilePath) {
+            // Add a binary attachment and specify the attachment filename.
+            $this->connector->addRaw(self::loadFile($binaryAttachmentFilePath), $binaryAttachmentFileName);
+        }
 
         // Optionally, request a final delivery notification message.
         // Note that not all HISPs can provide this notification when requested.
@@ -109,6 +111,8 @@ class PhiMail
         // Send the message. srList will contain one entry for each recipient.
         // If more than one recipient was specified, then each would have an entry.
         $srList = $this->connector->send();
+
+        //Report to Slack
         foreach ($srList as $sr) {
             $status = $sr->succeeded
                 ? " succeeded id={$sr->messageId}"
