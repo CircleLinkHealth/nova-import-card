@@ -204,7 +204,7 @@ return [
         Modelizer\Selenium\SeleniumServiceProvider::class,
         Way\Generators\GeneratorsServiceProvider::class,
         Xethron\MigrationsGenerator\MigrationsGeneratorServiceProvider::class,
-        NotificationChannels\Twilio\TwilioProvider::class
+        Aloha\Twilio\Support\Laravel\ServiceProvider::class,
 
     ],
 
@@ -267,6 +267,7 @@ return [
         'PDF'            => \Barryvdh\Snappy\Facades\SnappyPdf::class,
         'Slack'          => Maknz\Slack\Facades\Slack::class,
         'GoogleCalendar' => Spatie\GoogleCalendar\GoogleCalendarFacade::class,
+        'Twilio'         => Aloha\Twilio\Support\Laravel\Facade::class
 
     ],
 

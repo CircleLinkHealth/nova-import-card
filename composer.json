@@ -51,7 +51,8 @@
     "spatie/laravel-google-calendar": "^1.0",
     "modelizer/selenium": "~1.0",
     "phaxio/phaxio": "^1.0",
-    "laravel-notification-channels/twilio": "^1.0"
+    "laravel-notification-channels/twilio": "^1.0",
+    "aloha/twilio": "^3.0"
   },
   "require-dev": {
     "symfony/dom-crawler": "3.1.*",

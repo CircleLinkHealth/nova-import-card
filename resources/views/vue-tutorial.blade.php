@@ -6,10 +6,22 @@
 </head>
 <body>
 
+<style>
+
+    .red{
+        color: red;
+    }
+
+    .green{
+        color: green;
+    }
+
+</style>
+
 <div id="root">
 
     <input v-model="num" type="text" name="input">
-    <button v-bind:disabled="disabled" v-on:click="check">Do I work?</button>
+    <button v-bind:class="color" v-on:click="check">Do I work?</button>
 
 </div>
 
@@ -18,15 +30,14 @@
 <script type="application/javascript">
 
 
-    var app = new Vue({
+    let app = new Vue({
 
         el: "#root",
 
         data: {
 
-            color: 'red',
             num: 100,
-            disabled: ''
+            color: "red"
 
         },
 
@@ -34,15 +45,7 @@
 
             check() {
 
-                if(this.num > 100){
-
-                    this.disabled = 'disabled'
-
-                } else {
-
-                    this.disabled = ''
-
-                }
+                this.color = (this.num > 1000) ? "green" : "red";
 
             }
 

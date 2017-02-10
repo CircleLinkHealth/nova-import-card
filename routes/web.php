@@ -1,12 +1,18 @@
 <?php
-
+use Aloha\Twilio\Twilio;
 
 if (app()->environment() != 'production') {
 
     Route::get('rohan', function () {
 
-        return view('vue-tutorial');
-
+        $user = App\User::find(1752);
+        (new Twilio(
+            'AC2a6d09cf856b2cdd6dfdc9e07dcdbaaf',
+            '73d3fd740152bc65c326542a139f5172',
+            '14694163114'
+        ))->call('+19727622642', function ($message) {
+            $message->say('Hello From CircleLink Health');
+        });
     });
 }
 

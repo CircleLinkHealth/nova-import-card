@@ -2044,4 +2044,9 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
             ->orWherePivot('name', '=', 'instead_of_billing_provider')
             ->withTimestamps();
     }
+
+    public function routeNotificationForTwilio()
+    {
+        return $this->primaryPhone;
+    }
 }
