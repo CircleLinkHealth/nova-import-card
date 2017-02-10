@@ -48,7 +48,7 @@ class EmrDirectPdfHandler implements PdfReportHandler
             return;
         }
 
-        if ($recipient = $location->contactCard->emr_direct != null) {
+        if ($recipient = $location->contactCard->first()->emr_direct == null) {
             return;
         }
 
