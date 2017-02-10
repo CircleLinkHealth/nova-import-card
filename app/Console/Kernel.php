@@ -60,7 +60,7 @@ class Kernel extends ConsoleKernel
     protected function schedule(Schedule $schedule)
     {
         $schedule->call(function () {
-            (new PhiMail)->sendReceive();
+            (new PhiMail)->receive();
         })->everyMinute();
 
         //Reconciles missed calls and creates a new call for patient using algo

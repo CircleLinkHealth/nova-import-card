@@ -10,6 +10,7 @@ namespace App\Traits;
 
 use App\Contracts\PdfReportHandler;
 use App\Services\PdfReports\Handlers\EFaxPdfHandler;
+use App\Services\PdfReports\Handlers\EmrDirectPdfHandler;
 
 
 trait PdfReportTrait
@@ -21,20 +22,42 @@ trait PdfReportTrait
      */
     public function pdfHandleCreated()
     {
+        // Send an eFax if the Patient's Location has one
         $this->eFaxHandler()
             ->pdfHandle($this);
 
+        // Send an EmrDirectMessage if the Location has one.
+        $this->emrDirectHandler()
+            ->pdfHandle($this);
+
+        // Check if we have a designated report handler for this EHR, for example an API.
         if (!$this->hasPdfHandler()) {
             return false;
         }
 
+        //And if we do, then handle the PDF accordingly
         $this->pdfReportHandler()
             ->pdfHandle($this);
     }
 
-    public function eFaxHandler()
+    /**
+     * Get an instance of EFaxPdfHandler from the Container.
+     *
+     * @return EFaxPdfHandler
+     */
+    private function eFaxHandler()
     {
         return app(EFaxPdfHandler::class);
+    }
+
+    /**
+     * Get an instance of EmrDirectPdfHandler from the Container.
+     *
+     * @return EmrDirectPdfHandler
+     */
+    private function emrDirectHandler()
+    {
+        return app(EmrDirectPdfHandler::class);
     }
 
     /**
