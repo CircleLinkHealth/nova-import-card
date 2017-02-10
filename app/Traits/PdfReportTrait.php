@@ -21,13 +21,16 @@ trait PdfReportTrait
      */
     public function pdfHandleCreated()
     {
+        //Send an eFax if the Patient's Location has one
         $this->eFaxHandler()
             ->pdfHandle($this);
 
+        //Check if we have a designated report handler for this EHR, for example an API.
         if (!$this->hasPdfHandler()) {
             return false;
         }
 
+        //And if we do, then handle the PDF accordingly
         $this->pdfReportHandler()
             ->pdfHandle($this);
     }
