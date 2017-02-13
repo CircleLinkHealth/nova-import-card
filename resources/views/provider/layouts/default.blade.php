@@ -28,7 +28,9 @@
 
     <link href="{{ asset('/img/favicon.png') }}" rel="icon">
 
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.97.8/css/materialize.min.css">
+    <link rel="stylesheet" href="{{ asset('/css/materialize.min.css') }}"/>
+
+    {{--<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.97.8/css/materialize.min.css">--}}
 
     <link rel="stylesheet"
           href="https://fonts.googleapis.com/css?family=Roboto:regular,bold,italic,thin,light,bolditalic,black,medium&amp;lang=en">
@@ -44,7 +46,7 @@
 @yield('content')
 
 <script type="text/javascript" src="https://code.jquery.com/jquery-2.1.1.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.97.8/js/materialize.min.js"></script>
+<script src="{{asset('/js/materialize.min.js')}}"></script>
 
 <script>
     $(document).ready(function () {

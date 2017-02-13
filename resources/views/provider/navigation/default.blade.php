@@ -1,26 +1,30 @@
-<nav class="provider-navigation mdl-navigation mdl-color--blue-grey-800">
-    <a class="mdl-navigation__link" href="{{ route('get.onboarding.create.practice') }}">
-        <i class="mdl-color-text--blue-grey-400 material-icons"
-           role="presentation">business</i>
+<li>
+    <a class="" href="{{ route('get.create.practice') }}">
+        <i class=" material-icons">perm_identity</i>
+        Account
+    </a>
+</li>
+<li>
+    <a class="" href="{{ route('get.create.practice') }}">
+        <i class=" material-icons">business</i>
         Practice
     </a>
-
-    <a class="mdl-navigation__link" href="{{ route('get.create.location') }}">
-        <i class="mdl-color-text--blue-grey-400 material-icons"
-           role="presentation">add_location</i>
+</li>
+<li>
+    <a class="" href="{{ route('get.create.location') }}">
+        <i class=" material-icons">add_location</i>
         Locations
     </a>
-
-    <a class="mdl-navigation__link" href="{{ route('get.create.staff') }}">
-        <i class="mdl-color-text--blue-grey-400 material-icons"
-           role="presentation">assignment_ind</i>
+</li>
+<li>
+    <a class="" href="{{ route('get.create.staff') }}">
+        <i class=" material-icons">assignment_ind</i>
         Staff
     </a>
+</li>
+<div class="layout-spacer"></div>
 
-    <div class="mdl-layout-spacer"></div>
-
-    <a class="mdl-navigation__link" href=""><i class="mdl-color-text--blue-grey-400 material-icons"
-                                               role="presentation">help_outline</i><span
+<li>
+    <a class="" href=""><i class=" material-icons">help_outline</i><span
                 class="">Chat with us on Slack</span></a>
-
-</nav>
+</li>
