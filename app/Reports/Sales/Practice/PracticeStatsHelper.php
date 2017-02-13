@@ -88,7 +88,7 @@ class PracticeStatsHelper
             ->where('performed_at', '<', $this->end->toDateTimeString())
             ->sum('duration');
 
-        return secondsToHHMM($duration);
+        return round($duration / 3600 , 1);
 
 
     }
