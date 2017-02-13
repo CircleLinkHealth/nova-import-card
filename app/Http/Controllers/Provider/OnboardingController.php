@@ -120,6 +120,18 @@ class OnboardingController extends Controller
         $practiceSlug,
         $leadId
     ) {
+        $primaryPractice = $this->practices
+            ->skipPresenter()
+            ->findWhere([
+                'name' => $practiceSlug,
+            ])->first();
+
+        if (!$primaryPractice) {
+            return response('Practice not found', 404);
+        }
+
+        $this->onboardingService->getExistingLocations($primaryPractice);
+
         return view('provider.onboarding.create-locations', compact(['leadId']));
     }
 
