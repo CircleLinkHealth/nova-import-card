@@ -1,5 +1,15 @@
-<header class="grey lighten-4">
-    <div class="row">
-        <span class="title">@yield('title')</span>
+<nav>
+    <div class="nav-wrapper primary-color">
+        <ul class="right hide-on-med-and-down">
+            <li>
+                <a href="#!">
+                    Dr. Jane Doe
+                </a>
+            </li>
+        </ul>
     </div>
-</header>
+</nav>
+
+@section('scripts')
+
+@endsection
