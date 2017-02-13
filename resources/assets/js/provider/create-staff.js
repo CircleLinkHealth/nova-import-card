@@ -98,15 +98,15 @@ var createStaffVM = new Vue({
         this.$set('rolesMap', cpm.rolesMap);
         this.$set('phoneTypes', cpm.phoneTypes);
 
-        this.newUsers.push({
-            locations: this.locationIds
-        });
+        this.addUser();
     },
 
     methods: {
         addUser: function () {
             this.newUsers.push({
-                locations: this.locationIds
+                locations: this.locationIds,
+                grandAdminRights: false,
+                sendBillingReports: false
             });
 
             this.$nextTick(function () {
