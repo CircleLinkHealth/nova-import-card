@@ -3,23 +3,29 @@
 @section('title', 'Provider Dashboard')
 
 @section('content')
-    <div class="provider-layout mdl-layout mdl-js-layout mdl-layout--fixed-drawer mdl-layout--fixed-header">
+    <div class="container full-width">
 
-        @include('provider.partials.topBarHeader')
+        <div class="row">
+            <div class="col s3">
+                @include('provider.partials.avatar')
+                @include('provider.navigation.default')
+            </div>
+            <main class="col s9">
 
-        <div class="provider-drawer mdl-layout__drawer mdl-color--blue-grey-900 mdl-color-text--blue-grey-50">
+                <div class="col s12">
+                    @include('provider.partials.topBarHeader')
+                </div>
 
-            @include('provider.partials.avatar')
-
-            @include('provider.navigation.default')
-
-        </div>
-        <main class="mdl-layout__content mdl-color--grey-100">
-            <div class="mdl-grid provider-content ">
-                <div id="app" class="mdl-cell mdl-cell--12-col">
+                <div id="app" class="">
                     @yield('module')
                 </div>
-            </div>
-        </main>
+            </main>
+
+        </div>
+
     </div>
+@endsection
+
+@section('scripts')
+
 @endsection
