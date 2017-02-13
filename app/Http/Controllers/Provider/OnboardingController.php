@@ -467,7 +467,7 @@ class OnboardingController extends Controller
                 //Attach the role
                 $user->roles()->attach($newUser['role_id']);
 
-                if ($newUser['grand_admin_rights']) {
+                if ($newUser['grandAdminRights']) {
                     $user->roles()->attach($adminRole);
                 }
 
@@ -477,6 +477,8 @@ class OnboardingController extends Controller
                         $user->locations()->attach($locId);
                     }
                 }
+
+                $attachPractice = $user->practices()->attach($primaryPractice->id);
 
                 //attach phone
                 $user->phoneNumbers()->create([
