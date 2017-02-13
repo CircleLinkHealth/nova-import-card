@@ -98,7 +98,9 @@ var createStaffVM = new Vue({
         this.$set('rolesMap', cpm.rolesMap);
         this.$set('phoneTypes', cpm.phoneTypes);
 
-        this.addUser();
+        if (len < 1) {
+            this.addUser();
+        }
     },
 
     methods: {
