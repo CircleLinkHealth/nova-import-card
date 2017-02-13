@@ -47,7 +47,7 @@ elixir(function (mix) {
         ],
         'public/css/onboarding.css');
 
-    // mix.browserify('provider/create-locations.js');
+    mix.browserify('provider/create-locations.js');
     mix.browserify('provider/create-staff.js');
 
     // mix.browserify('uploader.js');
