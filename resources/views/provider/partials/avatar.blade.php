@@ -1,7 +1,7 @@
-<header class="provider-drawer-header">
+<header class="blue lighten-2">
     <img src="{{ asset('/img/avatar.jpg') }}" class="provider-avatar">
 
-    <div class="provider-avatar-dropdown">
+    <div class="">
         <span>Dr. Jane Doe</span>
 
         {{--<div class="mdl-layout-spacer"></div>--}}
