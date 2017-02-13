@@ -9,11 +9,12 @@
 namespace App\Services;
 
 use App\PhoneNumber;
+use App\Practice;
 use App\Role;
 
 class OnboardingService
 {
-    public function getExistingStaff($primaryPractice)
+    public function getExistingStaff(Practice $primaryPractice)
     {
         //Get the users that were as clinical emergency contacts from the locations page
         $existingUsers = $primaryPractice->users->map(function ($user) {
@@ -67,6 +68,38 @@ class OnboardingService
             'roles'         => $roles->all(),
             //this will help us get role names on the views: rolesMap[id]
             'rolesMap'      => $roles->keyBy('id')->all(),
+        ]);
+    }
+
+    public function getExistingLocations(Practice $primaryPractice)
+    {
+        $existingLocations = $primaryPractice->locations->map(function ($loc) {
+            return [
+                'id'               => $loc->id,
+                'clinical_contact' => [
+                    'email'     => '',
+                    'firstName' => '',
+                    'lastName'  => '',
+                    'type'      => 'billing_provider',
+                ],
+                'timezone'         => 'America/New_York',
+                'ehr_password'     => $loc->ehr_password,
+                'city'             => $loc->city,
+                'address_line_1'   => $loc->address_line_1,
+                'ehr_login'        => $loc->ehr_login,
+                'errorCount'       => 0,
+                'isComplete'       => true,
+                'name'             => $loc->name,
+                'postal_code'      => $loc->postal_code,
+                'state'            => $loc->state,
+                'validated'        => true,
+                'phone'            => $loc->phone,
+            ];
+        });
+
+
+        \JavaScript::put([
+            'existingLocations' => $existingLocations,
         ]);
     }
 
