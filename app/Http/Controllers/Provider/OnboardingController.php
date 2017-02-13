@@ -12,6 +12,7 @@ use App\Facades\StringManipulation;
 use App\Http\Controllers\Controller;
 use App\PhoneNumber;
 use App\Role;
+use App\Services\OnboardingService;
 use App\User;
 use Illuminate\Database\QueryException;
 use Illuminate\Http\Request;
@@ -48,6 +49,11 @@ class OnboardingController extends Controller
     protected $users;
 
     /**
+     * @var OnboardingService
+     */
+    protected $onboardingService;
+
+    /**
      * OnboardingController constructor.
      *
      * @param InviteRepository $inviteRepository
@@ -60,6 +66,7 @@ class OnboardingController extends Controller
         LocationRepository $locationRepository,
         PracticeRepository $practiceRepository,
         UserRepository $userRepository,
+        OnboardingService $onboardingService,
         Request $request
     ) {
         parent::__construct($request);
@@ -68,6 +75,7 @@ class OnboardingController extends Controller
         $this->locations = $locationRepository;
         $this->practices = $practiceRepository;
         $this->users = $userRepository;
+        $this->onboardingService = $onboardingService;
 
         if ($request->route('code')) {
             $this->invite = Invite::whereCode($request->route('code'))->first();
@@ -143,59 +151,7 @@ class OnboardingController extends Controller
             return response('Practice not found', 404);
         }
 
-        //Get the users that were as clinical emergency contacts from the locations page
-        $existingUsers = $primaryPractice->users->map(function ($user) {
-            return [
-                'id'                 => $user->id,
-                'email'              => $user->email,
-                'last_name'          => $user->last_name,
-                'first_name'         => $user->first_name,
-                'phone_number'       => $user->phoneNumbers->first()['number'] ?? '',
-                'phone_type'         => array_search($user->phoneNumbers->first()['type'],
-                        PhoneNumber::getTypes()) ?? '',
-                'isComplete'         => false,
-                'validated'          => false,
-                'grandAdminRights'   => false,
-                'sendBillingReports' => false,
-                'errorCount'         => 0,
-                'role_id'            => $user->roles->first()['id'] ?? 0,
-            ];
-        });
-
-        $locations = $primaryPractice->locations->map(function ($loc) {
-            return [
-                'id'   => $loc->id,
-                'name' => $loc->name,
-            ];
-        });
-
-        $locationIds = $primaryPractice->locations->map(function ($loc) {
-            return $loc->id;
-        });
-
-        //get the relevant roles
-        $roles = Role::whereIn('name', [
-            'med_assistant',
-            'office_admin',
-            'practice-lead',
-            'provider',
-            'registered-nurse',
-            'specialist',
-        ])->get([
-            'id',
-            'display_name',
-        ])
-            ->sortBy('display_name');
-
-        \JavaScript::put([
-            'existingUsers' => $existingUsers,
-            'locations'     => $locations,
-            'locationIds'   => $locationIds,
-            'phoneTypes'    => PhoneNumber::getTypes(),
-            'roles'         => $roles->all(),
-            //this will help us get role names on the views: rolesMap[id]
-            'rolesMap'      => $roles->keyBy('id')->all(),
-        ]);
+        $this->onboardingService->getExistingStaff($primaryPractice);
 
         return view('provider.onboarding.create-staff-users', compact(['practiceSlug']));
     }

@@ -7,6 +7,7 @@ use App\Contracts\Repositories\LocationRepository;
 use App\Contracts\Repositories\PracticeRepository;
 use App\Contracts\Repositories\UserRepository;
 use App\Http\Controllers\Controller;
+use App\Services\OnboardingService;
 use Illuminate\Http\Request;
 use Prettus\Validator\Exceptions\ValidatorException;
 
@@ -16,12 +17,14 @@ class DashboardController extends Controller
     protected $locations;
     protected $practices;
     protected $users;
+    protected $onboardingService;
 
     public function __construct(
         InviteRepository $inviteRepository,
         LocationRepository $locationRepository,
         PracticeRepository $practiceRepository,
         UserRepository $userRepository,
+        OnboardingService $onboardingService,
         Request $request
     ) {
         parent::__construct($request);
@@ -30,6 +33,7 @@ class DashboardController extends Controller
         $this->locations = $locationRepository;
         $this->practices = $practiceRepository;
         $this->users = $userRepository;
+        $this->onboardingService = $onboardingService;
     }
 
     public function getCreateLocation()
@@ -50,11 +54,17 @@ class DashboardController extends Controller
 
     public function getCreateStaff()
     {
-        $invite = $this->invites->firstOrNew([
-            'inviter_id' => auth()->user()->id,
-        ]);
+        $primaryPractice = auth()->user()->primaryPractice;
 
-        return view('provider.user.create-staff', compact('invite'));
+        if (!$primaryPractice) {
+            return response('Practice not found', 404);
+        }
+
+        $this->onboardingService->getExistingStaff($primaryPractice);
+
+        $practiceSlug = $primaryPractice->display_name;
+
+        return view('provider.user.create-staff', compact('invite', 'practiceSlug'));
     }
 
     public function getIndex()
