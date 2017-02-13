@@ -70,7 +70,14 @@ var locationsVM = new Vue({
     },
 
     ready: function () {
-        this.create();
+        for (var i = 0, len = cpm.existingLocations.length; i < len; i++) {
+            this.newLocations.$set(i, cpm.existingLocations[i]);
+        }
+
+        if (len < 1) {
+            this.create();
+        }
+
     },
 
     methods: {
