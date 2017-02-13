@@ -1,5 +1,4 @@
 <?php
-use Aloha\Twilio\Twilio;
 
 if (app()->environment() != 'production') {
 
@@ -1331,7 +1330,7 @@ Route::group([
         'as'   => 'get.create.practice',
     ]);
 
-    Route::get('create-staff', [
+    Route::get('manate-staff', [
         'uses' => 'Provider\DashboardController@getCreateStaff',
         'as'   => 'get.create.staff',
     ]);
@@ -1341,7 +1340,7 @@ Route::group([
         'as'   => 'get.provider.dashboard',
     ]);
 
-    Route::get('create-location', [
+    Route::get('manage-locations', [
         'uses' => 'Provider\DashboardController@getCreateLocation',
         'as'   => 'get.create.location',
     ]);
