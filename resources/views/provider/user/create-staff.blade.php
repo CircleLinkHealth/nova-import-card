@@ -1,6 +1,6 @@
 @extends('provider.layouts.dashboard')
 
-@section('title', 'Invite Staff Members')
+@section('title', 'Manage Staff Members')
 
 @section('module')
 
