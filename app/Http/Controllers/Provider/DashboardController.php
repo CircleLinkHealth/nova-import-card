@@ -38,9 +38,17 @@ class DashboardController extends Controller
 
     public function getCreateLocation()
     {
-        $locations[] = $this->locations->firstOrNew([]);
+        $primaryPractice = auth()->user()->primaryPractice;
 
-        return view('provider.location.create', compact('locations'));
+        if (!$primaryPractice) {
+            return response('Practice not found', 404);
+        }
+
+        $this->onboardingService->getExistingLocations($primaryPractice);
+
+        return view('provider.location.create', [
+            'leadId' => auth()->user()->id,
+        ]);
     }
 
     public function getCreatePractice()
