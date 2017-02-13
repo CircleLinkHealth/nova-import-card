@@ -5,7 +5,7 @@
 @section('module')
 
     <div class="container">
-        @include('provider.partials.modules.create-users', [
+        @include('provider.partials.modules.manage-staff', [
         'submitLabel' => 'Save',
         'postUrl' => route('post.onboarding.store.staff', ['practiceSlug' => $practiceSlug])
     ])
