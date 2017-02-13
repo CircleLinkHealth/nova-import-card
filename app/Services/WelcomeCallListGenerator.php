@@ -24,6 +24,13 @@ class WelcomeCallListGenerator
      */
     public $patientList;
 
+    /**
+     * An array representation of the Ineligible. This will normally be uploaded as a csv file.
+     *
+     * @var Collection
+     */
+    public $ineligiblePatients;
+
     public function __construct(Collection $patientList)
     {
         $this->patientList = $patientList;
@@ -56,6 +63,8 @@ class WelcomeCallListGenerator
             $qualifyingProblemsCpmIdStack = [];
 
             foreach ($problems as $problemCode) {
+
+                $problemCode = trim($problemCode);
 
                 //This was used for a list where problems where written as such: ICD-209: Diabetes,
 //                $from = strpos($problemCode, '-');
@@ -101,6 +110,7 @@ class WelcomeCallListGenerator
             $qualifyingProblems = array_unique($qualifyingProblems);
 
             if (count($qualifyingProblems) < 2) {
+                $this->ineligiblePatients[] = $row;
                 return false;
             }
 
@@ -145,6 +155,7 @@ class WelcomeCallListGenerator
             }
 
             //Otherwise, remove the patient from the list
+//            $this->ineligiblePatients[] = $row;
             return true;
 
         });
@@ -164,12 +175,18 @@ class WelcomeCallListGenerator
             $minEligibleDate = Carbon::createFromDate('2016', '02', '01');
 
             if (!$row['last_encounter']) {
-                return false;
+//                $this->ineligiblePatients[] = $row;
+                return true;
             }
 
             $lastEncounterDate = new Carbon($row['last_encounter']);
 
-            return $lastEncounterDate->lt($minEligibleDate);
+            if ($lastEncounterDate->lt($minEligibleDate)) {
+//                $this->ineligiblePatients[] = $row;
+                return true;
+            }
+
+            return false;
         });
 
         return $this;
@@ -182,14 +199,29 @@ class WelcomeCallListGenerator
     {
         $now = Carbon::now()->toDateTimeString();
 
-        Excel::create("Welcome Call List - $now", function ($excel) {
+        return Excel::create("Welcome Call List - $now", function ($excel) {
             $excel->sheet('Welcome Calls', function ($sheet) {
                 $sheet->fromArray(
                     $this->patientList
                 );
             });
         })->export('xls');
+    }
 
+    /**
+     * Exports the Ineligible Patient List to a csv file.
+     */
+    public function exportIneligibleToCsv()
+    {
+        $now = Carbon::now()->toDateTimeString();
+
+        Excel::create("Ineligible Patients Welcome Call List - $now", function ($excel) {
+            $excel->sheet('Ineligible', function ($sheet) {
+                $sheet->fromArray(
+                    $this->ineligiblePatients
+                );
+            });
+        })->export('xls');
     }
 
     /**

@@ -1,8 +1,8 @@
 <?php
 
 use App\Models\Ehr;
+use App\Services\PdfReports\Handlers\AprimaApiPdfHandler;
 use App\Services\PdfReports\Handlers\AthenaApiPdfHandler;
-use App\Services\PdfReports\Handlers\QueueForPickupPdfHandler;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
@@ -25,7 +25,7 @@ class CreateEhrsTable extends Migration
 
         Ehr::create([
             'name'               => 'Aprima',
-            'pdf_report_handler' => QueueForPickupPdfHandler::class,
+            'pdf_report_handler' => AprimaApiPdfHandler::class,
         ]);
 
         Ehr::create([

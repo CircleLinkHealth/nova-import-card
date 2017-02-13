@@ -32,8 +32,6 @@ class EFaxPdfHandler implements PdfReportHandler
      */
     public function pdfHandle(PdfReport $report)
     {
-        $pathToPdf = $report->toPdf();
-
         $location = Location::find($report->patient->preferredContactLocation);
 
         if (!$location) {
@@ -43,6 +41,8 @@ class EFaxPdfHandler implements PdfReportHandler
         if (!$location->fax) {
             return;
         }
+
+        $pathToPdf = $report->toPdf();
 
         $result = $this->efax->send($location->fax, $pathToPdf);
 
