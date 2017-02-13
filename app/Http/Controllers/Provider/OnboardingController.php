@@ -111,8 +111,7 @@ class OnboardingController extends Controller
     public function getCreateLocations(
         $practiceSlug,
         $leadId
-    )
-    {
+    ) {
         return view('provider.onboarding.create-locations', compact(['leadId']));
     }
 
@@ -151,14 +150,15 @@ class OnboardingController extends Controller
                 'email'              => $user->email,
                 'last_name'          => $user->last_name,
                 'first_name'         => $user->first_name,
-                'phone_number'       => '',
-                'phone_type'         => '',
+                'phone_number'       => $user->phoneNumbers->first()['number'] ?? '',
+                'phone_type'         => array_search($user->phoneNumbers->first()['type'],
+                        PhoneNumber::getTypes()) ?? '',
                 'isComplete'         => false,
                 'validated'          => false,
                 'grandAdminRights'   => false,
                 'sendBillingReports' => false,
                 'errorCount'         => 0,
-                'role_id'            => 0,
+                'role_id'            => $user->roles->first()['id'] ?? 0,
             ];
         });
 
@@ -415,8 +415,7 @@ class OnboardingController extends Controller
     public function postStoreStaff(
         Request $request,
         $practiceSlug
-    )
-    {
+    ) {
         $primaryPractice = $this->practices
             ->skipPresenter()
             ->findWhere([
