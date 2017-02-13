@@ -71,7 +71,7 @@ class Note extends Model implements PdfReport
             'provider' => $this->patient->billingProvider(),
         ]);
 
-        $file_name = base_path('storage/pdfs/notes/' . Carbon::now()->toDateString() . '-' . str_random(40) . '.pdf');
+        $file_name = base_path('storage/pdfs/notes/' . Carbon::now()->toDateString() . '-' . $this->patient->fullName . '.pdf');
         $pdf->save($file_name, true);
 
         return $file_name;

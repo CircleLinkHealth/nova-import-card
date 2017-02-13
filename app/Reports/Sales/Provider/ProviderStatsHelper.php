@@ -90,7 +90,7 @@ class ProviderStatsHelper
         $getHours = floor($duration / 3600);
         $getMins = floor(($duration - ($getHours * 3600)) / 60);
 
-        return gmdate($getHours . ':' . $getMins);
+        return round($duration / 3600 , 1);
 
     }
 
