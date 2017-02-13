@@ -4,8 +4,8 @@
 
         <ul class="right hide-on-med-and-down">
             <li>
-                <a href="#!">
-                    Dr. Jane Doe
+                <a href="#!" style="margin-right: 15px;">
+                    {{ auth()->user()->display_name }}
                 </a>
             </li>
         </ul>
