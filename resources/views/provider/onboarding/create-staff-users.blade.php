@@ -18,7 +18,7 @@
         </style>
     </head>
 
-    @include('provider.partials.modules.create-users', [
+    @include('provider.partials.modules.manage-staff', [
         'submitLabel' => 'Next',
         'postUrl' => route('post.onboarding.store.staff', ['practiceSlug' => $practiceSlug])
     ])
