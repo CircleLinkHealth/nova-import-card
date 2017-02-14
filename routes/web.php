@@ -1330,9 +1330,9 @@ Route::group([
         'as'   => 'provider.dashboard.store.practice',
     ]);
 
-    Route::get('create-practice', [
+    Route::get('manage-practice', [
         'uses' => 'Provider\DashboardController@getCreatePractice',
-        'as'   => 'get.create.practice',
+        'as'   => 'provider.dashboard.manage.practice',
     ]);
 
     Route::get('manage-staff', [
