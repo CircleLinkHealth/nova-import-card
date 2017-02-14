@@ -463,7 +463,10 @@ Route::group(['middleware' => 'auth'], function () {
         'prefix'     => 'admin',
     ], function () {
 
-        Route::get('nursecalls/{from}/{to}', function ($from, $to) {
+        Route::get('nursecalls/{from}/{to}', function (
+            $from,
+            $to
+        ) {
 
             $nurses = App\Nurse::all();
             $data = [];
@@ -1345,22 +1348,22 @@ Route::group([
  * Enrollment Consent
  */
 
-//Route::group([
-//    'prefix' => 'join',
-//], function () {
-//
-//    Route::get('{program_name}', [
-//        'uses' => 'Patient\EnrollmentConsentController@create',
-//        'as'   => 'patient.enroll.create',
-//    ]);
-//
-//    Route::post('store', [
-//        'uses' => 'Patient\EnrollmentConsentController@store',
-//        'as'   => 'patient.enroll.store',
-//    ]);
-//
-//
-//});
+Route::group([
+    'prefix' => 'join',
+], function () {
+
+    Route::get('{program_name}', [
+        'uses' => 'Patient\EnrollmentConsentController@create',
+        'as'   => 'patient.enroll.create',
+    ]);
+
+    Route::post('store', [
+        'uses' => 'Patient\EnrollmentConsentController@store',
+        'as'   => 'patient.enroll.store',
+    ]);
+
+
+});
 
 Route::group([
     'prefix' => 'onboarding',
