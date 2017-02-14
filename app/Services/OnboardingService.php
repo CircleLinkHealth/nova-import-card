@@ -76,21 +76,22 @@ class OnboardingService
             $primaryPractice
         ) {
             $permissions = $user->practice($primaryPractice->id);
+            $phone = $user->phoneNumbers->first();
 
             return [
                 'id'                 => $user->id,
                 'email'              => $user->email,
                 'last_name'          => $user->last_name,
                 'first_name'         => $user->first_name,
-                'phone_number'       => $user->phoneNumbers->first()['number'] ?? '',
-                'phone_type'         => array_search($user->phoneNumbers->first()['type'],
-                        PhoneNumber::getTypes()) ?? '',
+                'phone_number'       => $phone->number ?? '',
+                'phone_type'         => array_search($phone->type ?? '', PhoneNumber::getTypes()) ?? '',
                 'isComplete'         => false,
                 'validated'          => false,
                 'grandAdminRights'   => $permissions->pivot->has_admin_rights,
                 'sendBillingReports' => $permissions->pivot->send_billing_reports,
                 'errorCount'         => 0,
                 'role_id'            => $user->roles->first()['id'] ?? 0,
+                'locations'          => $user->locations->pluck('id'),
             ];
         });
 
@@ -328,24 +329,29 @@ class OnboardingService
                     $created[] = $i;
                 }
 
-                //Attach the role
-                $user->roles()->attach($newUser['role_id']);
+                $user->attachRole($newUser['role_id']);
 
+                $grandAdminRights = false;
                 if ($newUser['grandAdminRights']) {
-                    $user->roles()->attach($adminRole);
+                    $grandAdminRights = true;
+                }
+
+                $sendBillingReports = false;
+                if ($newUser['sendBillingReports']) {
+                    $sendBillingReports = true;
                 }
 
                 //Attach the locations
-                foreach ($newUser['locations'] as $locId) {
-                    if (!$user->locations->contains($locId)) {
-                        $user->locations()->attach($locId);
-                    }
-                }
+                $user->attachLocation($newUser['locations']);
 
-                $attachPractice = $user->practices()->attach($primaryPractice->id);
+                $attachPractice = $user->practices()->save($primaryPractice, [
+                    'has_admin_rights'     => $grandAdminRights,
+                    'send_billing_reports' => $sendBillingReports,
+                    'role_id'              => $newUser['role_id'],
+                ]);
 
                 //attach phone
-                $user->phoneNumbers()->create([
+                $phone = $user->phoneNumbers()->create([
                     'number'     => StringManipulation::formatPhoneNumber($newUser['phone_number']),
                     'type'       => PhoneNumber::getTypes()[$newUser['phone_type']],
                     'is_primary' => true,
