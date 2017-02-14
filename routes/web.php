@@ -1307,7 +1307,10 @@ Route::group([
  *
  */
 Route::group([
-    'prefix' => '{practiceSlug}/provider-dashboard',
+    'prefix'     => '{practiceSlug}/provider-dashboard',
+    'middleware' => [
+        'auth',
+    ],
 ], function () {
 
     Route::post('store-invite', [
