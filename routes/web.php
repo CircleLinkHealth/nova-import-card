@@ -1307,7 +1307,7 @@ Route::group([
  *
  */
 Route::group([
-    'prefix' => 'provider',
+    'prefix' => '{practiceSlug}/provider-dashboard',
 ], function () {
 
     Route::post('store-invite', [
@@ -1316,7 +1316,7 @@ Route::group([
     ]);
 
     Route::post('store-location', [
-        'uses' => 'Provider\DashboardController@postStoreLocation',
+        'uses' => 'Provider\DashboardController@postStoreLocations',
         'as'   => 'post.store.location',
     ]);
 
