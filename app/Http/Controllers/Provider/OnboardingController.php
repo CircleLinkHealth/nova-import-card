@@ -305,10 +305,9 @@ class OnboardingController extends Controller
         $lead->program_id = $practice->id;
         $lead->save();
 
-        $attachPractice = $lead->practices()->save($practice, [
-            'has_admin_rights'     => true,
-            'send_billing_reports' => true,
-        ]);
+        $leadRole = Role::whereName('practice-lead')->first();
+
+        $attachPractice = $lead->attachPractice($practice, true, true, $leadRole);
 
         return redirect()->route('get.onboarding.create.locations', [
             'practiceSlug' => $practice->name,

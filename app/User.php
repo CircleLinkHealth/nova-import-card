@@ -1865,15 +1865,35 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
         });
     }
 
-    public function attachPractice($practice)
-    {
+    public function attachPractice(
+        $practice,
+        bool $grantAdminRights,
+        bool $subscribeToBillingReports,
+        $roleId = null
+    ) {
+        if (is_array($practice)) {
+            foreach ($practice as $key => $pract) {
+                $this->attachPractice($pract, $grantAdminRights, $subscribeToBillingReports, $roleId);
+                unset($key);
+            }
+        }
+
         $id = is_object($practice)
             ? $practice->id
             : $practice;
 
-
         try {
-            $this->practices()->attach($id);
+            $exists = $this->practice($id);
+
+            if ($exists) {
+                $this->practices()->detach($id);
+            }
+
+            $attachPractice = $this->practices()->save($practice, [
+                'has_admin_rights'     => $grantAdminRights,
+                'send_billing_reports' => $subscribeToBillingReports,
+                'role_id'              => $roleId,
+            ]);
         } catch (\Exception $e) {
             //check if this is a mysql exception for unique key constraint
             if ($e instanceof \Illuminate\Database\QueryException) {
@@ -1886,12 +1906,6 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
                 }
             }
         }
-    }
-
-    public function practices()
-    {
-        return $this->belongsToMany(Practice::class, 'practice_user', 'user_id', 'program_id')
-            ->withPivot('role_id', 'has_admin_rights', 'send_billing_reports');
     }
 
     /**
@@ -1910,6 +1924,12 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
         return $this->practices()
             ->where('program_id', '=', $practiceId)
             ->first();
+    }
+
+    public function practices()
+    {
+        return $this->belongsToMany(Practice::class, 'practice_user', 'user_id', 'program_id')
+            ->withPivot('role_id', 'has_admin_rights', 'send_billing_reports');
     }
 
     /**

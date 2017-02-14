@@ -344,11 +344,8 @@ class OnboardingService
                 //Attach the locations
                 $user->attachLocation($newUser['locations']);
 
-                $attachPractice = $user->practices()->save($primaryPractice, [
-                    'has_admin_rights'     => $grandAdminRights,
-                    'send_billing_reports' => $sendBillingReports,
-                    'role_id'              => $newUser['role_id'],
-                ]);
+                $attachPractice = $user->attachPractice($primaryPractice, $grandAdminRights, $sendBillingReports,
+                    $newUser['role_id']);
 
                 //attach phone
                 $phone = $user->phoneNumbers()->create([
