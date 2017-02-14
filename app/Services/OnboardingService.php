@@ -133,13 +133,17 @@ class OnboardingService
     public function getExistingLocations(Practice $primaryPractice)
     {
         $existingLocations = $primaryPractice->locations->map(function ($loc) {
+
+            $contactType = $loc->clinicalEmergencyContact->first()->pivot->name ?? null;
+            $contactUser = $loc->clinicalEmergencyContact->first() ?? null;
+
             return [
                 'id'               => $loc->id,
                 'clinical_contact' => [
-                    'email'     => '',
-                    'firstName' => '',
-                    'lastName'  => '',
-                    'type'      => 'billing_provider',
+                    'email'     => $contactUser->email ?? null,
+                    'firstName' => $contactUser->first_name ?? null,
+                    'lastName'  => $contactUser->last_name ?? null,
+                    'type'      => $contactType ?? 'billing_provider',
                 ],
                 'timezone'         => 'America/New_York',
                 'ehr_password'     => $loc->ehr_password,
@@ -171,14 +175,17 @@ class OnboardingService
             $this->locations->delete($id);
         }
 
+        $created = [];
+        $i = 0;
+
         try {
             $sameEHRLogin = isset($request->input('locations')[0]['same_ehr_login']);
             $sameClinicalContact = isset($request->input('locations')[0]['same_clinical_contact']);
 
-            foreach ($request->input('locations') as $newLocation) {
+            foreach ($request->input('locations') as $index => $newLocation) {
 
                 if (isset($newLocation['id'])) {
-                    $user = $this->locations
+                    $location = $this->locations
                         ->skipPresenter()
                         ->update([
                             'practice_id'    => $primaryPractice->id,
@@ -217,6 +224,8 @@ class OnboardingService
                                 ? $request->input('locations')[0]['ehr_password']
                                 : $newLocation['ehr_password'] ?? null,
                         ]);
+
+                    $created[] = $i;
                 }
 
                 //If clinical contact is same for all, then get the data from the first location.
@@ -245,12 +254,22 @@ class OnboardingService
                         'name' => $newLocation['clinical_contact']['type'],
                     ]);
                 }
+
+                $i++;
             }
         } catch (ValidatorException $e) {
-            return redirect()
-                ->back()
-                ->withInput()
-                ->withErrors($e->getMessageBag()->getMessages());
+            $errors[] = [
+                'index'    => $index,
+                'messages' => $e->getMessageBag()->getMessages(),
+                'input'    => $newLocation,
+            ];
+        }
+
+        if (isset($errors)) {
+            return response()->json([
+                'errors'  => $errors,
+                'created' => $created,
+            ], 400);
         }
     }
 
