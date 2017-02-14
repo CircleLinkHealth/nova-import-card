@@ -17,6 +17,7 @@ use App\Facades\StringManipulation;
 use App\PhoneNumber;
 use App\Practice;
 use App\Role;
+use App\User;
 use Illuminate\Database\QueryException;
 use Illuminate\Http\Request;
 use Prettus\Validator\Exceptions\ValidatorException;
@@ -294,7 +295,8 @@ class OnboardingService
             ->first();
 
         foreach ($request->input('deleteTheseUsers') as $id) {
-            $this->users->delete($id);
+            $detachUser = User::find($id);
+            $detachUser->practices()->detach($primaryPractice->id);
         }
 
         $created = [];
@@ -311,7 +313,6 @@ class OnboardingService
                             'email'        => $newUser['email'],
                             'first_name'   => $newUser['first_name'],
                             'last_name'    => $newUser['last_name'],
-                            'password'     => 'password_not_set',
                             'display_name' => "{$newUser['first_name']} {$newUser['last_name']}",
                         ], $newUser['id']);
                 } else {
