@@ -109,7 +109,18 @@ class DashboardController extends Controller
         $this->onboardingService->postStoreLocations($primaryPractice, $request);
 
         return response()->json([
-            'message' => "{$primaryPractice->display_name}'s locations were successfully updated.",
+            'message' => "{$primaryPractice->display_name}'s Locations were successfully updated.",
+        ]);
+    }
+
+    public function postStoreStaff(Request $request)
+    {
+        $primaryPractice = $this->primaryPractice;
+
+        $this->onboardingService->postStoreStaff($primaryPractice, $request);
+
+        return response()->json([
+            'message' => "{$primaryPractice->display_name}'s Staff were successfully updated.",
         ]);
     }
 
