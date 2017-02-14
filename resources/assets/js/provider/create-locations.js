@@ -86,6 +86,7 @@ var locationsVM = new Vue({
                 ehr_password: '',
                 city: '',
                 address_line_1: '',
+                address_line_2: '',
                 ehr_login: '',
                 errorCount: 0,
                 isComplete: false,
