@@ -1,9 +1,9 @@
-<li>
-    <a class="" href="{{ route('provider.dashboard.manage.practice', ['practiceSlug' => $practiceSlug]) }}">
-        <i class=" material-icons">perm_identity</i>
-        Account
-    </a>
-</li>
+{{--<li>--}}
+{{--<a class="" href="{{ route('provider.dashboard.manage.practice', ['practiceSlug' => $practiceSlug]) }}">--}}
+{{--<i class=" material-icons">perm_identity</i>--}}
+{{--Account--}}
+{{--</a>--}}
+{{--</li>--}}
 <li>
     <a class="" href="{{ route('provider.dashboard.manage.practice', ['practiceSlug' => $practiceSlug]) }}">
         <i class=" material-icons">business</i>
