@@ -28,6 +28,7 @@ use Illuminate\Contracts\Auth\Authenticatable as AuthenticatableContract;
 use Illuminate\Contracts\Auth\CanResetPassword as CanResetPasswordContract;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Database\QueryException;
 use Illuminate\Notifications\Notifiable;
 use Zizaco\Entrust\Traits\EntrustUserTrait;
 
@@ -1909,6 +1910,13 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
 
     public function attachLocation($location)
     {
+        if (is_array($location)) {
+            foreach ($location as $key => $loc) {
+                $this->attachLocation($loc);
+                unset($location[$key]);
+            }
+        }
+
         $id = is_object($location)
             ? $location->id
             : $location;
@@ -1924,7 +1932,6 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
                     //do nothing
                     //we don't actually want to terminate the program if we detect duplicates
                     //we just don't wanna add the row again
-                    \Log::alert($e);
                 }
             }
         }
@@ -2063,5 +2070,31 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
     public function routeNotificationForTwilio()
     {
         return $this->primaryPhone;
+    }
+
+    /**
+     * Attach Role to User.
+     * Returns false if Role was already attached, and true if it was attached now.
+     *
+     * @param $roleId
+     *
+     * @return bool
+     */
+    public function attachRole($roleId)
+    {
+        try {
+            //Attach the role
+            $this->roles()->attach($roleId);
+        } catch (\Exception $e) {
+            if ($e instanceof QueryException) {
+                $errorCode = $e->errorInfo[1];
+                if ($errorCode == 1062) {
+                    //return false so we know nothing was attached
+                    return false;
+                }
+            }
+        }
+
+        return true;
     }
 }
