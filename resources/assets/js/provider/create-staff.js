@@ -56,6 +56,7 @@ var createStaffVM = new Vue({
     data: function () {
         return {
             locations: [],
+            locationIds: [],
             newUsers: [],
             roles: [],
             rolesMap: [],

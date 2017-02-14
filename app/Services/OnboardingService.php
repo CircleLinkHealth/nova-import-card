@@ -17,6 +17,7 @@ use App\Facades\StringManipulation;
 use App\PhoneNumber;
 use App\Practice;
 use App\Role;
+use App\User;
 use Illuminate\Database\QueryException;
 use Illuminate\Http\Request;
 use Prettus\Validator\Exceptions\ValidatorException;
@@ -70,22 +71,53 @@ class OnboardingService
      */
     public function getExistingStaff(Practice $primaryPractice)
     {
+        $relevantRoles = [
+            'med_assistant',
+            'office_admin',
+            'practice-lead',
+            'provider',
+            'registered-nurse',
+            'specialist',
+        ];
+
+        $practiceUsers = User::ofType($relevantRoles)
+            ->whereHas('practices', function ($q) use
+            (
+                $primaryPractice
+            ) {
+                $q->where('id', '=', $primaryPractice->id);
+            })
+            ->get();
+
+        if (!auth()->user()->hasRole('administrator')) {
+            $practiceUsers->reject(function ($user) {
+                return $user->hasRole('administrator');
+            })
+                ->values();
+        }
+
         //Get the users that were as clinical emergency contacts from the locations page
-        $existingUsers = $primaryPractice->users->map(function ($user) {
+        $existingUsers = $practiceUsers->map(function ($user) use
+        (
+            $primaryPractice
+        ) {
+            $permissions = $user->practice($primaryPractice->id);
+            $phone = $user->phoneNumbers->first();
+
             return [
                 'id'                 => $user->id,
                 'email'              => $user->email,
                 'last_name'          => $user->last_name,
                 'first_name'         => $user->first_name,
-                'phone_number'       => $user->phoneNumbers->first()['number'] ?? '',
-                'phone_type'         => array_search($user->phoneNumbers->first()['type'],
-                        PhoneNumber::getTypes()) ?? '',
+                'phone_number'       => $phone->number ?? '',
+                'phone_type'         => array_search($phone->type ?? '', PhoneNumber::getTypes()) ?? '',
                 'isComplete'         => false,
                 'validated'          => false,
-                'grandAdminRights'   => false,
-                'sendBillingReports' => false,
+                'grandAdminRights'   => $permissions->pivot->has_admin_rights ?? false,
+                'sendBillingReports' => $permissions->pivot->send_billing_reports ?? false,
                 'errorCount'         => 0,
                 'role_id'            => $user->roles->first()['id'] ?? 0,
+                'locations'          => $user->locations->pluck('id'),
             ];
         });
 
@@ -101,17 +133,11 @@ class OnboardingService
         });
 
         //get the relevant roles
-        $roles = Role::whereIn('name', [
-            'med_assistant',
-            'office_admin',
-            'practice-lead',
-            'provider',
-            'registered-nurse',
-            'specialist',
-        ])->get([
-            'id',
-            'display_name',
-        ])
+        $roles = Role::whereIn('name', $relevantRoles)
+            ->get([
+                'id',
+                'display_name',
+            ])
             ->sortBy('display_name');
 
         \JavaScript::put([
@@ -194,7 +220,7 @@ class OnboardingService
                             'phone'          => StringManipulation::formatPhoneNumberE164($newLocation['phone']),
                             'fax'            => StringManipulation::formatPhoneNumberE164($newLocation['fax']),
                             'address_line_1' => $newLocation['address_line_1'],
-                            'address_line_2' => $newLocation['address_line_2'],
+                            'address_line_2' => $newLocation['address_line_2'] ?? null,
                             'city'           => $newLocation['city'],
                             'state'          => $newLocation['state'],
                             'timezone'       => $newLocation['timezone'],
@@ -288,7 +314,8 @@ class OnboardingService
             ->first();
 
         foreach ($request->input('deleteTheseUsers') as $id) {
-            $this->users->delete($id);
+            $detachUser = User::find($id);
+            $detachUser->practices()->detach($primaryPractice->id);
         }
 
         $created = [];
@@ -305,7 +332,6 @@ class OnboardingService
                             'email'        => $newUser['email'],
                             'first_name'   => $newUser['first_name'],
                             'last_name'    => $newUser['last_name'],
-                            'password'     => 'password_not_set',
                             'display_name' => "{$newUser['first_name']} {$newUser['last_name']}",
                         ], $newUser['id']);
                 } else {
@@ -323,24 +349,26 @@ class OnboardingService
                     $created[] = $i;
                 }
 
-                //Attach the role
-                $user->roles()->attach($newUser['role_id']);
+                $user->attachRole($newUser['role_id']);
 
+                $grandAdminRights = false;
                 if ($newUser['grandAdminRights']) {
-                    $user->roles()->attach($adminRole);
+                    $grandAdminRights = true;
+                }
+
+                $sendBillingReports = false;
+                if ($newUser['sendBillingReports']) {
+                    $sendBillingReports = true;
                 }
 
                 //Attach the locations
-                foreach ($newUser['locations'] as $locId) {
-                    if (!$user->locations->contains($locId)) {
-                        $user->locations()->attach($locId);
-                    }
-                }
+                $user->attachLocation($newUser['locations']);
 
-                $attachPractice = $user->practices()->attach($primaryPractice->id);
+                $attachPractice = $user->attachPractice($primaryPractice, $grandAdminRights, $sendBillingReports,
+                    $newUser['role_id']);
 
                 //attach phone
-                $user->phoneNumbers()->create([
+                $phone = $user->phoneNumbers()->create([
                     'number'     => StringManipulation::formatPhoneNumber($newUser['phone_number']),
                     'type'       => PhoneNumber::getTypes()[$newUser['phone_type']],
                     'is_primary' => true,

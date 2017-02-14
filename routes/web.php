@@ -1,5 +1,4 @@
 <?php
-use Aloha\Twilio\Twilio;
 
 if (app()->environment() != 'production') {
 
@@ -1308,49 +1307,49 @@ Route::group([
  *
  */
 Route::group([
-    'prefix'     => '{practiceSlug}/provider-dashboard',
+    'prefix'     => '{practiceSlug}/admin',
     'middleware' => [
         'auth',
         'providerDashboardACL:administrator',
     ],
 ], function () {
 
-    Route::post('store-invite', [
+    Route::post('invite', [
         'uses' => 'Provider\DashboardController@postStoreInvite',
         'as'   => 'post.store.invite',
     ]);
 
-    Route::post('store-locations', [
+    Route::post('locations', [
         'uses' => 'Provider\DashboardController@postStoreLocations',
         'as'   => 'provider.dashboard.store.locations',
     ]);
 
-    Route::post('store-staff', [
+    Route::post('staff', [
         'uses' => 'Provider\DashboardController@postStoreStaff',
         'as'   => 'provider.dashboard.store.staff',
     ]);
 
-    Route::post('store-practice', [
+    Route::post('practice', [
         'uses' => 'Provider\DashboardController@postStorePractice',
         'as'   => 'provider.dashboard.store.practice',
     ]);
 
-    Route::get('manage-practice', [
+    Route::get('practice', [
         'uses' => 'Provider\DashboardController@getCreatePractice',
         'as'   => 'provider.dashboard.manage.practice',
     ]);
 
-    Route::get('manage-staff', [
+    Route::get('staff', [
         'uses' => 'Provider\DashboardController@getCreateStaff',
         'as'   => 'provider.dashboard.manage.staff',
     ]);
 
-    Route::get('index', [
+    Route::get('', [
         'uses' => 'Provider\DashboardController@getIndex',
         'as'   => 'provider.dashboard.index',
     ]);
 
-    Route::get('manage-locations', [
+    Route::get('locations', [
         'uses' => 'Provider\DashboardController@getCreateLocation',
         'as'   => 'provider.dashboard.manage.locations',
     ]);
