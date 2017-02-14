@@ -7,8 +7,10 @@ use App\Contracts\Repositories\LocationRepository;
 use App\Contracts\Repositories\PracticeRepository;
 use App\Contracts\Repositories\UserRepository;
 use App\Http\Controllers\Controller;
+use App\Practice;
 use App\Services\OnboardingService;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Route;
 use Prettus\Validator\Exceptions\ValidatorException;
 
 class DashboardController extends Controller
@@ -34,6 +36,10 @@ class DashboardController extends Controller
         $this->practices = $practiceRepository;
         $this->users = $userRepository;
         $this->onboardingService = $onboardingService;
+
+        $this->practiceSlug = Route::current()->getParameter('practiceSlug');
+
+        $this->primaryPractice = Practice::whereName($this->practiceSlug)->first();
     }
 
     public function getCreateLocation()
@@ -47,7 +53,8 @@ class DashboardController extends Controller
         $this->onboardingService->getExistingLocations($primaryPractice);
 
         return view('provider.location.create', [
-            'leadId' => auth()->user()->id,
+            'leadId'       => auth()->user()->id,
+            'practiceSlug' => $this->practiceSlug,
         ]);
     }
 
@@ -57,12 +64,15 @@ class DashboardController extends Controller
             'user_id' => auth()->user()->id,
         ]);
 
-        return view('provider.practice.create', compact('practice'));
+        return view('provider.practice.create', [
+            'practiceSlug' => $this->practiceSlug,
+            'practice'     => $practice,
+        ]);
     }
 
     public function getCreateStaff()
     {
-        $primaryPractice = auth()->user()->primaryPractice;
+        $primaryPractice = $this->primaryPractice;
 
         if (!$primaryPractice) {
             return response('Practice not found', 404);
@@ -70,7 +80,7 @@ class DashboardController extends Controller
 
         $this->onboardingService->getExistingStaff($primaryPractice);
 
-        $practiceSlug = $primaryPractice->display_name;
+        $practiceSlug = $this->practiceSlug;
 
         return view('provider.user.create-staff', compact('invite', 'practiceSlug'));
     }
@@ -92,9 +102,17 @@ class DashboardController extends Controller
         ]);
     }
 
-    public function postStoreLocation(Request $request)
+    public function postStoreLocations(Request $request)
     {
+        $primaryPractice = $this->primaryPractice;
 
+        $this->onboardingService->postStoreLocations($primaryPractice, $request);
+
+        return response()->json([
+            'redirect_to' => route('get.onboarding.create.staff', [
+                'practiceSlug' => $primaryPractice->name,
+            ]),
+        ]);
     }
 
     public function postStorePractice(Request $request)
