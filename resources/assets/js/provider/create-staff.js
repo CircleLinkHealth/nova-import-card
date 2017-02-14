@@ -98,7 +98,9 @@ var createStaffVM = new Vue({
         this.$set('rolesMap', cpm.rolesMap);
         this.$set('phoneTypes', cpm.phoneTypes);
 
-        this.addUser();
+        if (len < 1) {
+            this.addUser();
+        }
     },
 
     methods: {
@@ -152,7 +154,12 @@ var createStaffVM = new Vue({
                 users: this.newUsers
             }).then(function (response) {
                 // success
-                $('html').html(response.data);
+                if (response.data.message) {
+                    Materialize.toast(response.data.message, 4000);
+                } else {
+                    //render the view sent
+                    $('html').html(response.data);
+                }
             }, function (response) {
                 //fail
 

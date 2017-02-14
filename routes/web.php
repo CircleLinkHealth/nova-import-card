@@ -1308,7 +1308,11 @@ Route::group([
  *
  */
 Route::group([
-    'prefix' => 'provider',
+    'prefix'     => '{practiceSlug}/provider-dashboard',
+    'middleware' => [
+        'auth',
+        'providerDashboardACL:administrator',
+    ],
 ], function () {
 
     Route::post('store-invite', [
@@ -1316,34 +1320,39 @@ Route::group([
         'as'   => 'post.store.invite',
     ]);
 
-    Route::post('store-location', [
-        'uses' => 'Provider\DashboardController@postStoreLocation',
-        'as'   => 'post.store.location',
+    Route::post('store-locations', [
+        'uses' => 'Provider\DashboardController@postStoreLocations',
+        'as'   => 'provider.dashboard.store.locations',
+    ]);
+
+    Route::post('store-staff', [
+        'uses' => 'Provider\DashboardController@postStoreStaff',
+        'as'   => 'provider.dashboard.store.staff',
     ]);
 
     Route::post('store-practice', [
         'uses' => 'Provider\DashboardController@postStorePractice',
-        'as'   => 'post.store.practice',
+        'as'   => 'provider.dashboard.store.practice',
     ]);
 
-    Route::get('create-practice', [
+    Route::get('manage-practice', [
         'uses' => 'Provider\DashboardController@getCreatePractice',
-        'as'   => 'get.create.practice',
+        'as'   => 'provider.dashboard.manage.practice',
     ]);
 
-    Route::get('create-staff', [
+    Route::get('manage-staff', [
         'uses' => 'Provider\DashboardController@getCreateStaff',
-        'as'   => 'get.create.staff',
+        'as'   => 'provider.dashboard.manage.staff',
     ]);
 
     Route::get('index', [
         'uses' => 'Provider\DashboardController@getIndex',
-        'as'   => 'get.provider.dashboard',
+        'as'   => 'provider.dashboard.index',
     ]);
 
-    Route::get('create-location', [
+    Route::get('manage-locations', [
         'uses' => 'Provider\DashboardController@getCreateLocation',
-        'as'   => 'get.create.location',
+        'as'   => 'provider.dashboard.manage.locations',
     ]);
 });
 

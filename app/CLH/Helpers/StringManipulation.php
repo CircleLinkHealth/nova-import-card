@@ -56,6 +56,32 @@ class StringManipulation
     }
 
     /**
+     * Formats a phone number in E164 format, eg. +12223334444
+     *
+     * @param $string
+     *
+     * @param string $countryCode
+     *
+     * @return bool|string
+     */
+    public function formatPhoneNumberE164(
+        $string,
+        $countryCode = '1'
+    ) {
+        $sanitized = $this->extractNumbers($string);
+
+        if (strlen($sanitized) < 10) {
+            return false;
+        }
+
+        if (strlen($sanitized) > 10) {
+            $sanitized = substr($sanitized, -10);
+        }
+
+        return "+$countryCode$sanitized";
+    }
+
+    /**
      * Returns the differences between two strings.
      *
      * Used for importing Aprima CCD Records.

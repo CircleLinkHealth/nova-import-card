@@ -60,6 +60,7 @@ class Kernel extends HttpKernel
         'permission'                 => \Zizaco\Entrust\Middleware\EntrustPermission::class,
         'patientProgramSecurity'     => \App\Http\Middleware\PatientProgramSecurity::class,
         'patient.session'            => \App\Http\Middleware\CheckPatientSession::class,
+        'providerDashboardACL'       => \App\Http\Middleware\ProviderDashboardACL::class,
         'role'                       => \Zizaco\Entrust\Middleware\EntrustRole::class,
         'verify.invite'              => \App\Http\Middleware\CheckOnboardingInvite::class,
     ];

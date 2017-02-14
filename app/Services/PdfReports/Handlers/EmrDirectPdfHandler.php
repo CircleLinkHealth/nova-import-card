@@ -60,6 +60,6 @@ class EmrDirectPdfHandler implements PdfReportHandler
 
         $fileName = $report->patient->fullName . ' ' . Carbon::now()->toDateTimeString();
 
-        $this->phiMail->send($recipient, $pathToPdf, $fileName);
+        $this->phiMail->send($recipient->emr_direct, $pathToPdf, $fileName);
     }
 }
