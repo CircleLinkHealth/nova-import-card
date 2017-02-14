@@ -253,7 +253,9 @@ class OnboardingController extends Controller
         $user->roles()
             ->attach($role->id);
 
-        auth()->login($user);
+        if (!auth()->user()->hasRole('salesperson')) {
+            auth()->login($user);
+        }
 
         if (isset($input['code'])) {
             $invite = Invite::whereCode($input['code'])
@@ -303,7 +305,10 @@ class OnboardingController extends Controller
         $lead->program_id = $practice->id;
         $lead->save();
 
-        $attachPractice = $lead->practices()->attach($practice->id);
+        $attachPractice = $lead->practices()->save($practice, [
+            'has_admin_rights'     => true,
+            'send_billing_reports' => true,
+        ]);
 
         return redirect()->route('get.onboarding.create.locations', [
             'practiceSlug' => $practice->name,
