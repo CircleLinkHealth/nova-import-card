@@ -71,7 +71,12 @@ class OnboardingService
     public function getExistingStaff(Practice $primaryPractice)
     {
         //Get the users that were as clinical emergency contacts from the locations page
-        $existingUsers = $primaryPractice->users->map(function ($user) {
+        $existingUsers = $primaryPractice->users->map(function ($user) use
+        (
+            $primaryPractice
+        ) {
+            $permissions = $user->practice($primaryPractice->id);
+
             return [
                 'id'                 => $user->id,
                 'email'              => $user->email,
@@ -82,8 +87,8 @@ class OnboardingService
                         PhoneNumber::getTypes()) ?? '',
                 'isComplete'         => false,
                 'validated'          => false,
-                'grandAdminRights'   => false,
-                'sendBillingReports' => false,
+                'grandAdminRights'   => $permissions->pivot->has_admin_rights,
+                'sendBillingReports' => $permissions->pivot->send_billing_reports,
                 'errorCount'         => 0,
                 'role_id'            => $user->roles->first()['id'] ?? 0,
             ];
