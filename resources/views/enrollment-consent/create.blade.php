@@ -72,11 +72,11 @@
             <div class="row">
                 <div class="input-field col s12 m6">
                     <label for="first_name">First Name</label>
-                    <input placeholder="Enter First Name..." id="first_name" type="text">
+                    <input placeholder="Enter First Name..." id="first_name" name="first_name" type="text">
                 </div>
                 <div class="input-field col s12 m6">
                     <label for="last_name">Last Name</label>
-                    <input placeholder="Enter Last Name..." id="last_name" type="text">
+                    <input placeholder="Enter Last Name..." id="last_name" name="last_name" type="text">
                 </div>
             </div>
             <div class="row">
@@ -105,16 +105,8 @@
             <div id="confirm" class="modal modal-fixed-footer">
                 <div class="modal-content">
                     <h4 class="" style="color: #47beab">Great! Remember:</h4>
-                    <ul>
-                        <li style="font-size: 20px;" class=""> - A personal care coach— registered nurse—
-                            will do
-                            a quick
-                            phone check-in
-                            periodically
-                        <li style="font-size: 20px;" class=""> - You can also leave a message for us 24/7 at
-                            (888) 729-4045
-                    </ul>
-                    <blockquote>Optionally, you can tell us the best time to reach you:</blockquote>
+                    <blockquote>“Great! We’ll be in touch shortly.
+                        Optionally, you can tell us the best time to reach you:</blockquote>
                     <div class="row">
                         <div class="col s12 m6">
                             <select class="input-field" name="day" id="day">
@@ -139,14 +131,11 @@
                     </div>
                 </div>
                 <div class="modal-footer">
-                    <button type="submit" id="submit" name="submit" v-on:onclick="submitForm"
-                            class="modal-action modal-close waves-effect waves-green btn-flat">Acknowledge and Exit
+                    <button id="submit" name="submit" v-on:onclick="submitForm"
+                            class="modal-action waves-effect waves-green btn-flat">Acknowledge and Exit
                     </button>
                 </div>
             </div>
-
-
-
 
         </form>
     </div>
@@ -199,7 +188,7 @@
 
             submitForm(){
                 this.confirmed_time = new Date();
-                $('#enroll').submit();
+//                $('#enroll').submit();
             },
 
         }
