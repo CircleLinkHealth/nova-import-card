@@ -11,13 +11,13 @@
     </a>
 </li>
 <li>
-    <a class="" href="{{ route('get.create.location', ['practiceSlug' => $practiceSlug]) }}">
+    <a class="" href="{{ route('provider.dashboard.manage.locations', ['practiceSlug' => $practiceSlug]) }}">
         <i class=" material-icons">add_location</i>
         Locations
     </a>
 </li>
 <li>
-    <a class="" href="{{ route('get.create.staff', ['practiceSlug' => $practiceSlug]) }}">
+    <a class="" href="{{ route('provider.dashboard.manage.staff', ['practiceSlug' => $practiceSlug]) }}">
         <i class=" material-icons">assignment_ind</i>
         Staff
     </a>

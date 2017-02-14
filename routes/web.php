@@ -1315,14 +1315,14 @@ Route::group([
         'as'   => 'post.store.invite',
     ]);
 
-    Route::post('store-location', [
+    Route::post('store-locations', [
         'uses' => 'Provider\DashboardController@postStoreLocations',
-        'as'   => 'post.store.location',
+        'as'   => 'provider.dashboard.store.locations',
     ]);
 
     Route::post('store-practice', [
         'uses' => 'Provider\DashboardController@postStorePractice',
-        'as'   => 'post.store.practice',
+        'as'   => 'provider.dashboard.store.practice',
     ]);
 
     Route::get('create-practice', [
@@ -1332,17 +1332,17 @@ Route::group([
 
     Route::get('manate-staff', [
         'uses' => 'Provider\DashboardController@getCreateStaff',
-        'as'   => 'get.create.staff',
+        'as'   => 'provider.dashboard.manage.staff',
     ]);
 
     Route::get('index', [
         'uses' => 'Provider\DashboardController@getIndex',
-        'as'   => 'get.provider.dashboard',
+        'as'   => 'provider.dashboard.index',
     ]);
 
     Route::get('manage-locations', [
         'uses' => 'Provider\DashboardController@getCreateLocation',
-        'as'   => 'get.create.location',
+        'as'   => 'provider.dashboard.manage.locations',
     ]);
 });
 
