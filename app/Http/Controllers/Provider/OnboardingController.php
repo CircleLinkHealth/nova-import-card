@@ -230,7 +230,7 @@ class OnboardingController extends Controller
                         'name'           => $newLocation['name'],
                         'phone'          => StringManipulation::formatPhoneNumber($newLocation['phone']),
                         'address_line_1' => $newLocation['address_line_1'],
-                        'address_line_2' => $newLocation['address_line_2'],
+                        'address_line_2' => $newLocation['address_line_2'] ?? null,
                         'city'           => $newLocation['city'],
                         'state'          => $newLocation['state'],
                         'timezone'       => $newLocation['timezone'],
