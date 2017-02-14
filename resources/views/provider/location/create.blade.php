@@ -7,7 +7,7 @@
     <div class="container">
         @include('provider.partials.modules.manage-locations', [
         'submitLabel' => 'Save',
-        'postUrl' => route('provider.dashboard.store.locations', ['practiceSlug' => $practiceSlug])
+        'postUrl' => route('provider.dashboard.store.locations', ['practiceSlug' => $practiceSlug]),
     ])
     </div>
 
