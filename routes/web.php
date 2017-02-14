@@ -3,24 +3,9 @@ use Aloha\Twilio\Twilio;
 
 if (app()->environment() != 'production') {
 
-    Route::get('rohan/{from}/{to}', function ($from, $to) {
+    Route::get('rohan', function () {
 
-        $nurses = App\Nurse::all();
-        $data = [];
-
-        foreach ($nurses as $nurse) {
-
-            $data[$nurse->user->fullName] = (new \App\Billing\NurseMonthlyBillGenerator(
-                $nurse,
-                \Carbon\Carbon::now()->subMonths($from),
-                \Carbon\Carbon::now()->subMonths($to),
-                false
-
-            ))->getCallsPerHourOverPeriod();
-        }
-
-        return $data;
-
+        dd((new \App\Services\Calls\SchedulerService())->getMostFrequentNursesForPatient(\App\User::find(2417)->patientInfo));
     });
 }
 
@@ -1361,22 +1346,22 @@ Route::group([
  * Enrollment Consent
  */
 
-Route::group([
-    'prefix' => 'join',
-], function () {
-
-    Route::get('{program_name}', [
-        'uses' => 'Patient\EnrollmentConsentController@create',
-        'as'   => 'patient.enroll.create',
-    ]);
-
-    Route::post('store', [
-        'uses' => 'Patient\EnrollmentConsentController@store',
-        'as'   => 'patient.enroll.store',
-    ]);
-
-
-});
+//Route::group([
+//    'prefix' => 'join',
+//], function () {
+//
+//    Route::get('{program_name}', [
+//        'uses' => 'Patient\EnrollmentConsentController@create',
+//        'as'   => 'patient.enroll.create',
+//    ]);
+//
+//    Route::post('store', [
+//        'uses' => 'Patient\EnrollmentConsentController@store',
+//        'as'   => 'patient.enroll.store',
+//    ]);
+//
+//
+//});
 
 Route::group([
     'prefix' => 'onboarding',
