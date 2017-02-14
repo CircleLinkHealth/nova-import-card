@@ -1310,6 +1310,7 @@ Route::group([
     'prefix'     => '{practiceSlug}/provider-dashboard',
     'middleware' => [
         'auth',
+        'providerDashboardACL:administrator',
     ],
 ], function () {
 
