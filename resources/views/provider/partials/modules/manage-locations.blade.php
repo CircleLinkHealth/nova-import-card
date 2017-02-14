@@ -227,7 +227,6 @@
                                 'attributes' => [
                                     'v-model' => 'loc.clinical_contact.type',
                                     'required' => 'required',
-                                    'checked' => 'checked',
                                     'v-on:change' => 'isValidated(index)',
                                     'v-on:invalid' => 'isValidated(index)',
                                     'v-on:keyup' => 'isValidated(index)',
