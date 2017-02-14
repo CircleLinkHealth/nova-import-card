@@ -31,7 +31,7 @@ class StringManipulation
         $sanitized = $this->extractNumbers($string);
 
         if (strlen($sanitized) < 10) {
-            return false;
+            return '';
         }
 
         if (strlen($sanitized) > 10) {
@@ -71,7 +71,7 @@ class StringManipulation
         $sanitized = $this->extractNumbers($string);
 
         if (strlen($sanitized) < 10) {
-            return false;
+            return '';
         }
 
         if (strlen($sanitized) > 10) {
