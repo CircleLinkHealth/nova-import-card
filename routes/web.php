@@ -1320,6 +1320,11 @@ Route::group([
         'as'   => 'provider.dashboard.store.locations',
     ]);
 
+    Route::post('store-staff', [
+        'uses' => 'Provider\DashboardController@postStoreStaff',
+        'as'   => 'provider.dashboard.store.staff',
+    ]);
+
     Route::post('store-practice', [
         'uses' => 'Provider\DashboardController@postStorePractice',
         'as'   => 'provider.dashboard.store.practice',
@@ -1330,7 +1335,7 @@ Route::group([
         'as'   => 'get.create.practice',
     ]);
 
-    Route::get('manate-staff', [
+    Route::get('manage-staff', [
         'uses' => 'Provider\DashboardController@getCreateStaff',
         'as'   => 'provider.dashboard.manage.staff',
     ]);
