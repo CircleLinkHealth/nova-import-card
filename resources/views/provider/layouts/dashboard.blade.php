@@ -2,24 +2,40 @@
 
 @section('title', 'Provider Dashboard')
 
+@section('head')
+    <link rel="stylesheet" href="{{ asset('/css/provider-dashboard.css') }}"/>
+@endsection
+
 @section('content')
-    <div class="provider-layout mdl-layout mdl-js-layout mdl-layout--fixed-drawer mdl-layout--fixed-header">
+    <div class="container full-width">
+        <div class="row">
+            <div class="col s12 m3">
+                <ul id="slide-out" class="side-nav col s12 m3" style="transform: translateX(0);">
+                    <li class="center-align">
+                        <img src="{{asset('/img/clh_logo.svg')}}" height="64" class="brand-logo">
+                    </li>
+                    <li>
+                        <div class="divider"></div>
+                    </li>
+                    <li>
+                        @include('provider.navigation.default')
+                    </li>
+                </ul>
+            </div>
+            <main class="col s12 m9 offset-3">
+                <div class="row">
+                    @include('provider.partials.topBarHeader')
+                </div>
 
-        @include('provider.partials.topBarHeader')
-
-        <div class="provider-drawer mdl-layout__drawer mdl-color--blue-grey-900 mdl-color-text--blue-grey-50">
-
-            @include('provider.partials.avatar')
-
-            @include('provider.navigation.default')
-
-        </div>
-        <main class="mdl-layout__content mdl-color--grey-100">
-            <div class="mdl-grid provider-content ">
-                <div id="app" class="mdl-cell mdl-cell--12-col">
+                <div id="app" class="row">
                     @yield('module')
                 </div>
-            </div>
-        </main>
+            </main>
+        </div>
+
     </div>
+@endsection
+
+@section('scripts')
+
 @endsection
