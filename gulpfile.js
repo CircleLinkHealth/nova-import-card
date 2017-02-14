@@ -17,7 +17,7 @@ elixir.config.js.browserify.transformers.push({
  |
  */
 
-elixir(function(mix) {
+elixir(function (mix) {
     // mix.phpUnit([
     //     'tests/AprimaApi/*'
     // ]);
@@ -31,18 +31,29 @@ elixir(function(mix) {
 
     // mix.sass('fab.scss');
 
-    // mix.sass([
-    //     '/css/provider/dashboard.scss',
-    //     './resources/assets/less/css/animate.min.css'
-    // ], 'public/css/provider-dashboard.css');
+    mix.sass('./node_modules/materialize-css/dist/css/materialize.min.css', 'public/css/materialize.min.css');
 
-    // mix.browserify('provider/create-locations.js');
-    // mix.browserify('provider/create-staff.js');
+    mix.sass([
+        '/css/provider/dashboard.scss',
+        './resources/assets/less/css/animate.min.css'
+    ], 'public/css/provider-dashboard.css');
 
-    mix.browserify('uploader.js');
+    mix.scripts([
+        './node_modules/materialize-css/dist/js/materialize.min.js'
+    ], 'public/js/materialize.min.js');
+
+    mix.sass([
+            '/css/onboarding.scss',
+        ],
+        'public/css/onboarding.css');
+
+    mix.browserify('provider/create-locations.js');
+    mix.browserify('provider/create-staff.js');
+
+    // mix.browserify('uploader.js');
     // mix.browserify('importer-training.js');
-    mix.browserify('view-care-plan.js');
-    mix.browserify('components/CareTeam/care-person.js');
+    // mix.browserify('view-care-plan.js');
+    // mix.browserify('components/CareTeam/care-person.js');
     // mix.browserify('ccd-models/items/medicationItem.js');
     // mix.browserify('ccd-models/items/allergiesItem.js');
     // mix.browserify('ccd-models/items/problemsItem.js');
