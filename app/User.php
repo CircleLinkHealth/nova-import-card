@@ -1882,6 +1882,10 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
             ? $practice->id
             : $practice;
 
+        $roleId = is_object($roleId)
+            ? $roleId->id
+            : $roleId;
+
         try {
             $exists = $this->practice($id);
 
