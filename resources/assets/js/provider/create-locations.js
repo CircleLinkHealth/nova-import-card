@@ -97,6 +97,7 @@ var locationsVM = new Vue({
                 isComplete: false,
                 name: '',
                 phone: '',
+                fax: '',
                 postal_code: '',
                 state: '',
                 validated: false

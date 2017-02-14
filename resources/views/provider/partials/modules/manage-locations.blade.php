@@ -7,7 +7,7 @@
     </div>
 
     {!! Form::open([
-        'url' => route('post.onboarding.store.locations', ['lead_id' => $leadId]),
+        'url' => $postUrl,
         'method' => 'post',
         'id' => 'create-practice',
     ]) !!}
@@ -146,7 +146,7 @@
 
                         @include('provider.partials.mdl.form.text.textfield', [
                             'name' => "locations[@{{index}}][phone]",
-                            'label' => 'Phone ',
+                            'label' => 'Phone',
                             'class' =>'col s6',
                             'value' => '@{{loc.phone}}',
                                 'attributes' => [
@@ -160,6 +160,25 @@
                                 ],
                             'data_error' => 'Phone number must have this format: xxx-xxx-xxxx'
                         ])
+                    </div>
+
+                    <div class="row">
+                        @include('provider.partials.mdl.form.text.textfield', [
+                           'name' => "locations[@{{index}}][fax]",
+                           'label' => 'Fax',
+                           'class' =>'col s6',
+                           'value' => '@{{loc.fax}}',
+                               'attributes' => [
+                                   'v-model' => 'loc.fax',
+                                   'required' => 'required',
+                                   'pattern' => '\d{3}[\-]\d{3}[\-]\d{4}',
+                                   'v-on:change' => 'isValidated(index)',
+                                   'v-on:invalid' => 'isValidated(index)',
+                                   'v-on:keyup' => 'isValidated(index)',
+                                   'v-on:click' => 'isValidated(index)',
+                               ],
+                           'data_error' => 'Fax number must have this format: xxx-xxx-xxxx'
+                       ])
                     </div>
 
                     <div class="row" v-if="index == 0 || !sameEHRLogin">
