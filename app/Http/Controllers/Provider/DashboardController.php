@@ -109,9 +109,7 @@ class DashboardController extends Controller
         $this->onboardingService->postStoreLocations($primaryPractice, $request);
 
         return response()->json([
-            'redirect_to' => route('get.onboarding.create.staff', [
-                'practiceSlug' => $primaryPractice->name,
-            ]),
+            'message' => "{$primaryPractice->display_name}'s locations were successfully updated.",
         ]);
     }
 
