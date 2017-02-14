@@ -44,7 +44,7 @@ class DashboardController extends Controller
 
     public function getCreateLocation()
     {
-        $primaryPractice = auth()->user()->primaryPractice;
+        $primaryPractice = $this->primaryPractice;
 
         if (!$primaryPractice) {
             return response('Practice not found', 404);
