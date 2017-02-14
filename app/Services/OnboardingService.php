@@ -194,7 +194,7 @@ class OnboardingService
                             'phone'          => StringManipulation::formatPhoneNumberE164($newLocation['phone']),
                             'fax'            => StringManipulation::formatPhoneNumberE164($newLocation['fax']),
                             'address_line_1' => $newLocation['address_line_1'],
-                            'address_line_2' => $newLocation['address_line_2'],
+                            'address_line_2' => $newLocation['address_line_2'] ?? null,
                             'city'           => $newLocation['city'],
                             'state'          => $newLocation['state'],
                             'timezone'       => $newLocation['timezone'],
