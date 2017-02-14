@@ -30,6 +30,11 @@ class ProviderDashboardACL
             return $next($request);
         }
 
+        if (auth()->user()->practice($practice)
+        ) {
+            return $next($request);
+        }
+
         abort(403, 'You do not have access to this page.');
     }
 }

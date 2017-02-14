@@ -83,7 +83,10 @@ class DashboardController extends Controller
 
     public function getIndex()
     {
-        return view('provider.layouts.dashboard');
+        return view('provider.layouts.dashboard', [
+            'practiceSlug' => $this->practiceSlug,
+            'practice'     => $this->primaryPractice,
+        ]);
     }
 
     public function postStoreInvite(Request $request)
@@ -107,8 +110,8 @@ class DashboardController extends Controller
         return get_class($result) == JsonResponse::class
             ? $result
             : response()->json([
-            'message' => "{$primaryPractice->display_name}'s Locations were successfully updated.",
-        ]);
+                'message' => "{$primaryPractice->display_name}'s Locations were successfully updated.",
+            ]);
     }
 
     public function postStoreStaff(Request $request)
