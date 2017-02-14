@@ -77,7 +77,6 @@ var locationsVM = new Vue({
         if (len < 1) {
             this.create();
         }
-
     },
 
     methods: {

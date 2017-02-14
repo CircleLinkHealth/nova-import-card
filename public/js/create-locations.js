@@ -47,7 +47,7 @@
                     cachedSetTimeout = setTimeout;
                 } else {
                     cachedSetTimeout = defaultSetTimout;
-                }
+        }
             } catch (e) {
                 cachedSetTimeout = defaultSetTimout;
             }
@@ -56,7 +56,7 @@
                     cachedClearTimeout = clearTimeout;
                 } else {
                     cachedClearTimeout = defaultClearTimeout;
-                }
+        }
             } catch (e) {
                 cachedClearTimeout = defaultClearTimeout;
             }
@@ -108,7 +108,7 @@
                     // same as above but when it's a version of I.E. that must have the global object for 'this', hopfully our context correct otherwise it will throw a global error.
                     // Some versions of I.E. have different rules for clearTimeout vs setTimeout
                     return cachedClearTimeout.call(this, marker);
-                }
+        }
             }
 
 
@@ -148,8 +148,8 @@
                 while (++queueIndex < len) {
                     if (currentQueue) {
                         currentQueue[queueIndex].run();
-                    }
-                }
+            }
+        }
                 queueIndex = -1;
                 len = queue.length;
             }
@@ -163,7 +163,7 @@
             if (arguments.length > 1) {
                 for (var i = 1; i < arguments.length; i++) {
                     args[i - 1] = arguments[i];
-                }
+        }
             }
             queue.push(new Item(fun, args));
             if (queue.length === 1 && !draining) {
@@ -274,8 +274,8 @@
                         count += 1;
 
                         if (count === iterable.length) {
-                            resolve(result);
-                        }
+                    resolve(result);
+                }
                     };
                 }
 
@@ -310,9 +310,9 @@
 
                     if (x !== null && typeof x === 'object' && typeof then === 'function') {
                         then.call(x, function (x) {
-                            if (!called) {
-                                promise.resolve(x);
-                            }
+                    if (!called) {
+                        promise.resolve(x);
+                    }
                             called = true;
 
                         }, function (r) {
@@ -322,7 +322,7 @@
                             called = true;
                         });
                         return;
-                    }
+            }
                 } catch (e) {
                     if (!called) {
                         promise.reject(e);
@@ -368,17 +368,17 @@
                                     resolve(onResolved.call(undefined, promise.value));
                                 } else {
                                     resolve(promise.value);
-                                }
+                        }
                             } else if (promise.state === REJECTED) {
                                 if (typeof onRejected === 'function') {
                                     resolve(onRejected.call(undefined, promise.value));
                                 } else {
                                     reject(promise.value);
                                 }
-                            }
+                    }
                         } catch (e) {
                             reject(e);
-                        }
+                }
                     }
                 }
             });
@@ -582,8 +582,8 @@
                 for (key in obj) {
                     if (hasOwnProperty.call(obj, key)) {
                         iterator.call(obj[key], obj[key], key);
-                    }
-                }
+            }
+        }
             }
 
             return obj;
@@ -612,7 +612,7 @@
                     if (target[key] === undefined) {
                         target[key] = source[key];
                     }
-                }
+        }
 
             });
 
@@ -635,14 +635,14 @@
                 if (deep && (isPlainObject(source[key]) || isArray(source[key]))) {
                     if (isPlainObject(source[key]) && !isPlainObject(target[key])) {
                         target[key] = {};
-                    }
+            }
                     if (isArray(source[key]) && !isArray(target[key])) {
                         target[key] = [];
                     }
                     _merge(target[key], source[key], deep);
                 } else if (source[key] !== undefined) {
                     target[key] = source[key];
-                }
+        }
             }
         }
 
@@ -739,9 +739,9 @@
 
                         } else {
                             return encodeReserved(literal);
-                        }
-                    });
                 }
+                    });
+        }
             };
         }
 
@@ -764,11 +764,11 @@
                             value.filter(isDefined).forEach(function (value) {
                                 result.push(encodeValue(operator, value, isKeyOperator(operator) ? key : null));
                             });
-                        } else {
+                } else {
                             Object.keys(value).forEach(function (k) {
                                 if (isDefined(value[k])) {
                                     result.push(encodeValue(operator, value[k], k));
-                                }
+                        }
                             });
                         }
                     } else {
@@ -783,7 +783,7 @@
                                 if (isDefined(value[k])) {
                                     tmp.push(encodeURIComponent(k));
                                     tmp.push(encodeValue(operator, value[k].toString()));
-                                }
+                        }
                             });
                         }
 
@@ -791,9 +791,9 @@
                             result.push(encodeURIComponent(key) + '=' + tmp.join(','));
                         } else if (tmp.length !== 0) {
                             result.push(tmp.join(','));
-                        }
-                    }
                 }
+            }
+        }
             } else {
                 if (operator === ';') {
                     result.push(encodeURIComponent(key));
@@ -801,7 +801,7 @@
                     result.push(encodeURIComponent(key) + '=');
                 } else if (value === '') {
                     result.push('');
-                }
+        }
             }
 
             return result;
@@ -830,7 +830,7 @@
             return str.split(/(%[0-9A-Fa-f]{2})/g).map(function (part) {
                 if (!/%[0-9A-Fa-f]/.test(part)) {
                     part = encodeURI(part);
-                }
+        }
                 return part;
             }).join('');
         }
@@ -969,7 +969,7 @@
                     serialize(params, value, key);
                 } else {
                     params.add(key, value);
-                }
+        }
             });
         }
 
@@ -993,7 +993,7 @@
                     }
 
                     resolve(request.respondWith(xdr.responseText, {status: status}));
-                };
+        };
 
                 request.abort = function () {
                     return xdr.abort();
@@ -1032,7 +1032,7 @@
 
                 if (!SUPPORTS_CORS) {
                     request.client = xdrClient;
-                }
+        }
 
                 delete request.emulateHTTP;
             }
@@ -1135,7 +1135,7 @@
 
                 window[callback] = function (result) {
                     body = JSON.stringify(result);
-                };
+        };
 
                 request.abort = function () {
                     handler({type: 'abort'});
@@ -1176,7 +1176,7 @@
                         response.body = JSON.parse(response.body);
                     } catch (e) {
                         response.body = null;
-                    }
+            }
 
                 }
 
@@ -1243,7 +1243,7 @@
                         'response' in xhr ? xhr.response : xhr.responseText, {
                             status: xhr.status === 1223 ? 204 : xhr.status, // IE9 status bug
                             statusText: xhr.status === 1223 ? 'No Content' : trim(xhr.statusText)
-                        }
+                }
                     );
 
                     each(trim(xhr.getAllResponseHeaders()).split('\n'), function (row) {
@@ -1338,7 +1338,7 @@
                         }
 
                         exec();
-                    }
+            }
 
                     exec();
 
@@ -1556,7 +1556,7 @@
 
                 if (response instanceof Error) {
                     error(response);
-                }
+        }
 
                 return PromiseObj.reject(response);
             });
@@ -1710,7 +1710,7 @@
                             return new Vue.Promise(executor, this$1);
                         };
                     }
-                }
+        }
 
             });
         }
@@ -2830,7 +2830,7 @@
                      * the text parser to re-compile the regular expressions.
                      *
                      * @type {Array<String>}
-                     */
+                 */
 
                     get: function get() {
                         return delimiters;
@@ -8008,7 +8008,7 @@
                                 } else {
                                     // root instance
                                     initProp(vm, prop, vm.$get(prop.parentPath));
-                                }
+            }
                             }
                         } else if (prop.optimizedLiteral) {
                             // optimized literal, cast it and just set once
@@ -9445,7 +9445,7 @@
                         if (dirDef) {
                             pushDir(dirName, dirDef);
                         }
-                    }
+            }
                 }
 
                 /**
@@ -12016,7 +12016,7 @@
 
                 $(this.el).on('change', function () {
                     self.set($(self.el).val());
-                });
+        });
             },
 
             update: function update(newValue, oldValue) {
@@ -12058,7 +12058,7 @@
 
                         if (!this.newLocations[index].isComplete || this.newLocations[index].errorCount > 0) {
                             return false;
-                        }
+                }
                     }
 
                     return true;
@@ -12164,7 +12164,7 @@
                             $('label[for="locations[' + i + '][' + Object.keys(errors[i].messages)[0] + ']"]').attr('data-error', errors[i].messages[Object.keys(errors[i].messages)[0]][0]);
 
                             locationsVM.$set('newLocations[' + i + '].errorCount', errors.length);
-                        }
+                }
 
                         $("html, body").animate({scrollTop: 0}, {duration: 300, queue: false});
                     });
