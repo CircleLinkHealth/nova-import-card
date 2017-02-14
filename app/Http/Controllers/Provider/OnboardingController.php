@@ -399,6 +399,8 @@ class OnboardingController extends Controller
         $lead->program_id = $practice->id;
         $lead->save();
 
+        $attachPractice = $lead->practices()->attach($practice->id);
+
         return redirect()->route('get.onboarding.create.locations', [
             'practiceSlug' => $practice->name,
             'lead_id'      => $lead->id,
