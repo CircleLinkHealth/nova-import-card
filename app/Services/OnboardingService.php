@@ -258,6 +258,8 @@ class OnboardingService
                     ]);
                 }
 
+                $primaryPractice->lead->attachLocation($location);
+
                 $i++;
             }
         } catch (ValidatorException $e) {
