@@ -9,9 +9,9 @@ use App\Contracts\Repositories\UserRepository;
 use App\Http\Controllers\Controller;
 use App\Practice;
 use App\Services\OnboardingService;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
-use Prettus\Validator\Exceptions\ValidatorException;
 
 class DashboardController extends Controller
 {
@@ -60,13 +60,9 @@ class DashboardController extends Controller
 
     public function getCreatePractice()
     {
-        $practice = $this->practices->firstOrNew([
-            'user_id' => auth()->user()->id,
-        ]);
-
         return view('provider.practice.create', [
             'practiceSlug' => $this->practiceSlug,
-            'practice'     => $practice,
+            'practice'     => $this->primaryPractice,
         ]);
     }
 
@@ -106,9 +102,11 @@ class DashboardController extends Controller
     {
         $primaryPractice = $this->primaryPractice;
 
-        $this->onboardingService->postStoreLocations($primaryPractice, $request);
+        $result = $this->onboardingService->postStoreLocations($primaryPractice, $request);
 
-        return response()->json([
+        return get_class($result) == JsonResponse::class
+            ? $result
+            : response()->json([
             'message' => "{$primaryPractice->display_name}'s Locations were successfully updated.",
         ]);
     }
@@ -126,21 +124,9 @@ class DashboardController extends Controller
 
     public function postStorePractice(Request $request)
     {
-        $input = $request->input();
-
-        try {
-            $program = $this->practices->create([
-                'name'         => str_slug($input['name']),
-                'user_id'      => auth()->user()->id,
-                'display_name' => $input['name'],
-                'description'  => $input['description'],
-            ]);
-        } catch (ValidatorException $e) {
-            return redirect()
-                ->back()
-                ->withErrors($e->getMessageBag()->getMessages())
-                ->withInput();
-        }
+        $this->primaryPractice->update([
+            'federal_tax_id' => $request->input('federal_tax_id'),
+        ]);
 
         return redirect()->back();
     }
