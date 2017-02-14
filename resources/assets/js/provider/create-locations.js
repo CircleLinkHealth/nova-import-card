@@ -144,7 +144,13 @@ var locationsVM = new Vue({
                 locations: this.newLocations
             }).then(function (response) {
                 // success
-                window.location.href = response.data.redirect_to;
+                if (response.data.redirect_to) {
+                    window.location.href = response.data.redirect_to;
+                }
+
+                if (response.data.message) {
+                    Materialize.toast(response.data.message, 4000);
+                }
             }, function (response) {
                 //fail
 
