@@ -104,6 +104,10 @@ class OnboardingService
             $permissions = $user->practice($primaryPractice->id);
             $phone = $user->phoneNumbers->first();
 
+            $roleId = $permissions->pivot->role_id
+                ? $permissions->pivot->role_id
+                : $user->roles->first()['id'];
+
             return [
                 'id'                 => $user->id,
                 'email'              => $user->email,
@@ -116,7 +120,7 @@ class OnboardingService
                 'grandAdminRights'   => $permissions->pivot->has_admin_rights ?? false,
                 'sendBillingReports' => $permissions->pivot->send_billing_reports ?? false,
                 'errorCount'         => 0,
-                'role_id'            => $user->roles->first()['id'] ?? 0,
+                'role_id'            => $roleId,
                 'locations'          => $user->locations->pluck('id'),
             ];
         });
