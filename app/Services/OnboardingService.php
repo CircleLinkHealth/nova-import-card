@@ -71,8 +71,33 @@ class OnboardingService
      */
     public function getExistingStaff(Practice $primaryPractice)
     {
+        $relevantRoles = [
+            'med_assistant',
+            'office_admin',
+            'practice-lead',
+            'provider',
+            'registered-nurse',
+            'specialist',
+        ];
+
+        $practiceUsers = User::ofType($relevantRoles)
+            ->whereHas('practices', function ($q) use
+            (
+                $primaryPractice
+            ) {
+                $q->where('id', '=', $primaryPractice->id);
+            })
+            ->get();
+
+        if (!auth()->user()->hasRole('administrator')) {
+            $practiceUsers->reject(function ($user) {
+                return $user->hasRole('administrator');
+            })
+                ->values();
+        }
+
         //Get the users that were as clinical emergency contacts from the locations page
-        $existingUsers = $primaryPractice->users->map(function ($user) use
+        $existingUsers = $practiceUsers->map(function ($user) use
         (
             $primaryPractice
         ) {
@@ -88,8 +113,8 @@ class OnboardingService
                 'phone_type'         => array_search($phone->type ?? '', PhoneNumber::getTypes()) ?? '',
                 'isComplete'         => false,
                 'validated'          => false,
-                'grandAdminRights'   => $permissions->pivot->has_admin_rights,
-                'sendBillingReports' => $permissions->pivot->send_billing_reports,
+                'grandAdminRights'   => $permissions->pivot->has_admin_rights ?? false,
+                'sendBillingReports' => $permissions->pivot->send_billing_reports ?? false,
                 'errorCount'         => 0,
                 'role_id'            => $user->roles->first()['id'] ?? 0,
                 'locations'          => $user->locations->pluck('id'),
@@ -108,17 +133,11 @@ class OnboardingService
         });
 
         //get the relevant roles
-        $roles = Role::whereIn('name', [
-            'med_assistant',
-            'office_admin',
-            'practice-lead',
-            'provider',
-            'registered-nurse',
-            'specialist',
-        ])->get([
-            'id',
-            'display_name',
-        ])
+        $roles = Role::whereIn('name', $relevantRoles)
+            ->get([
+                'id',
+                'display_name',
+            ])
             ->sortBy('display_name');
 
         \JavaScript::put([
