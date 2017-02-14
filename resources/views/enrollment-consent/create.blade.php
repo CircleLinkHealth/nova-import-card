@@ -23,6 +23,12 @@
             line-height: 30px;
         }
 
+        .info-list {
+           font-size: 20px;
+           margin-top: 10px;
+           margin-bottom: 10px;
+        }
+
         .invalid-phone {
             color: red;
         }
@@ -45,14 +51,14 @@
 
 <div class="container">
     <div>
-        <p class="headings" style="padding-top: 20px; color: black">“Dr. {{$dr_name}} has invited you to their new personalized care management program for improved wellness!</p>
-        <p class="headings" style="color: black">
-            Please enroll by completing below form, and note:
-        <p style="font-size: 20px;" class="flow-text"> - Only one practice or doctor at a time can provide this program
-            You can withdraw anytime by calling your doctor or leaving a message at (888) 729-4045
-        </p>
+        <p class="headings" style="padding-top: 20px; color: black">“Dr. [first_name] [last_name] has invited you to their new personalized care management program for improved wellness!</p>
+
+        <p class="flow-text info-list">- A personal care coach --registered nurse-- will do a quick phone check in about 2x a month for Dr. [Dr._first_name] [Dr._last_name] to provide support, health information and to see how you’re doing</p>
+        <p class="flow-text info-list">- You can leave a message 24/7 at (888) 729-4045 if anything comes up, and a care coach will get back to you shortly</p>
+        <p class="flow-text info-list">- Only one practice/doctor at a time can provide this program</p>
+        <p class="flow-text info-list">- You can withdraw anytime by calling (888) 729-4045</p>
         @if(isset($has_copay))
-            <p style="font-size: 20px;" class="flow-text">Medicare covers the program you may be responsible for a ~$8 per month co-pay</p>
+            <p style="font-size: 20px;" class="flow-text">- Medicare covers the program you may be responsible for a ~$8 per month co-pay</p>
         @endif
 
     </div>
@@ -90,7 +96,7 @@
             <input type="text" id="practice_id" name="practice_id" value="{{$practice->id}}" hidden>
 
             <div class="row right">
-                <a class="waves-effect waves-light btn modal-trigger" v-on:click="openModal" href="#confirm">Modal</a>
+                <a class="waves-effect waves-light btn modal-trigger" v-on:click="openModal" href="#confirm">Consent</a>
             </div>
 
 
