@@ -1903,11 +1903,20 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
      */
     public function practice($practiceId)
     {
+        if (is_object($practiceId)) {
+            $practiceId = $practiceId->id;
+        }
+
         return $this->practices()
             ->where('program_id', '=', $practiceId)
             ->first();
     }
 
+    /**
+     * Attach Location(s)
+     *
+     * @param $location |array
+     */
     public function attachLocation($location)
     {
         if (is_array($location)) {
@@ -2082,6 +2091,17 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
      */
     public function attachRole($roleId)
     {
+        if (is_array($roleId)) {
+            foreach ($roleId as $key => $role) {
+                $this->attachRole($role);
+                unset($key);
+            }
+        }
+
+        if (is_object($roleId)) {
+            $roleId = $roleId->id;
+        }
+
         try {
             //Attach the role
             $this->roles()->attach($roleId);
