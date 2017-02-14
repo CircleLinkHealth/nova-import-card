@@ -1,23 +1,23 @@
 <li>
-    <a class="" href="{{ route('get.create.practice') }}">
+    <a class="" href="{{ route('get.create.practice', ['practiceSlug' => $practiceSlug]) }}">
         <i class=" material-icons">perm_identity</i>
         Account
     </a>
 </li>
 <li>
-    <a class="" href="{{ route('get.create.practice') }}">
+    <a class="" href="{{ route('get.create.practice', ['practiceSlug' => $practiceSlug]) }}">
         <i class=" material-icons">business</i>
         Practice
     </a>
 </li>
 <li>
-    <a class="" href="{{ route('get.create.location') }}">
+    <a class="" href="{{ route('get.create.location', ['practiceSlug' => $practiceSlug]) }}">
         <i class=" material-icons">add_location</i>
         Locations
     </a>
 </li>
 <li>
-    <a class="" href="{{ route('get.create.staff') }}">
+    <a class="" href="{{ route('get.create.staff', ['practiceSlug' => $practiceSlug]) }}">
         <i class=" material-icons">assignment_ind</i>
         Staff
     </a>
