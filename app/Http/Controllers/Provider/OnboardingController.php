@@ -269,6 +269,8 @@ class OnboardingController extends Controller
                         'name' => $newLocation['clinical_contact']['type'],
                     ]);
                 }
+
+                $primaryPractice->lead->attachLocation($location);
             }
         } catch (ValidatorException $e) {
             return redirect()
