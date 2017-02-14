@@ -1893,6 +1893,20 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
             ->withPivot('role_id', 'has_admin_rights', 'send_billing_reports');
     }
 
+    /**
+     * Get the specified Practice, if it is related to this User
+     *
+     * @param $practiceId
+     *
+     * @return mixed
+     */
+    public function practice($practiceId)
+    {
+        return $this->practices()
+            ->where('program_id', '=', $practiceId)
+            ->first();
+    }
+
     public function attachLocation($location)
     {
         $id = is_object($location)
