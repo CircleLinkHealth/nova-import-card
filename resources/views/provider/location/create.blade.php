@@ -1,22 +1,14 @@
 @extends('provider.layouts.dashboard')
 
-@section('title', 'Locations')
+@section('title', 'Manage Locations')
 
 @section('module')
 
-    @include('errors.errors')
-
-    <div class="mdl-layout mdl-js-layout">
-        <main class="mdl-layout__content mdl-cell--12-col">
-
-            @foreach($locations as $location)
-                <section class="mdl-cell--4-col">
-                    @include('provider.partials.location.show', $location)
-                </section>
-            @endforeach
-        </main>
+    <div class="container">
+        @include('provider.partials.modules.manage-locations', [
+        'submitLabel' => 'Save',
+        'postUrl' => route('provider.dashboard.store.locations', ['practiceSlug' => $practiceSlug]),
+    ])
     </div>
-
-
 
 @endsection

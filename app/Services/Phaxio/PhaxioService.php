@@ -24,7 +24,6 @@ class PhaxioService implements Efax
                 : 'test';
         }
 
-
         $this->phaxio = new Phaxio($config[$mode]['key'], $config[$mode]['secret'], $config['host']);
     }
 

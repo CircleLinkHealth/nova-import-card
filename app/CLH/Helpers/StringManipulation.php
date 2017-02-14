@@ -31,7 +31,7 @@ class StringManipulation
         $sanitized = $this->extractNumbers($string);
 
         if (strlen($sanitized) < 10) {
-            return false;
+            return '';
         }
 
         if (strlen($sanitized) > 10) {
@@ -53,6 +53,32 @@ class StringManipulation
         preg_match_all('/([\d]+)/', $string, $match);
 
         return implode($match[0]);
+    }
+
+    /**
+     * Formats a phone number in E164 format, eg. +12223334444
+     *
+     * @param $string
+     *
+     * @param string $countryCode
+     *
+     * @return bool|string
+     */
+    public function formatPhoneNumberE164(
+        $string,
+        $countryCode = '1'
+    ) {
+        $sanitized = $this->extractNumbers($string);
+
+        if (strlen($sanitized) < 10) {
+            return '';
+        }
+
+        if (strlen($sanitized) > 10) {
+            $sanitized = substr($sanitized, -10);
+        }
+
+        return "+$countryCode$sanitized";
     }
 
     /**

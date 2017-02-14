@@ -1,43 +1,39 @@
 @extends('provider.layouts.dashboard')
 
-@section('title', 'Practice')
+@section('title', 'Manage Practice')
 
 @section('module')
 
     @include('errors.errors')
 
-    <div class="mdl-layout mdl-js-layout">
+    <div class="container">
+        <div class="row">
+            {!! Form::open(['url' => route('provider.dashboard.store.practice', ['practiceSlug' => $practiceSlug]), 'method' => 'post', 'class' => 'col s12']) !!}
 
-        <main class="mdl-layout__content mdl-cell--4-col">
 
-            {!! Form::open(['url' => route('post.store.practice'), 'method' => 'post']) !!}
+            <div class="row">
+                <div class="input-field col s12">
+                    <input id="name" name="name" type="text" class="validate" value="{{$practice->display_name}}"
+                           required disabled>
+                    <label for="name" data-error="required" data-success="">Name</label>
+                </div>
 
-            @include('provider.partials.mdl.form.text.textfield', [
-                'name' => 'name',
-                'label' =>
-                'Name',
-                'value' => $practice->display_name,
-                'class' => 'mdl-cell--12-col',
-            ])
+                <div class="input-field col s12">
+                    <input id="federal_tax_id" type="text" class="validate" value="{{$practice->federal_tax_id}}"
+                           name="federal_tax_id">
+                    <label for="federal_tax_id" data-error="required" data-success="">Federal tax ID</label>
+                </div>
+            </div>
 
-            @include('provider.partials.mdl.form.text.textfield', [
-                'name' => 'description',
-                'label' =>
-                'Description',
-                'value' => $practice->description,
-                'class' => 'mdl-cell--12-col',
-            ])
 
-            <button class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-button--primary mdl-cell--12-col"
-                    id="update-practice">
+            <button class="btn blue waves-effect waves-light col s12"
+                    id="update-practice"
+                    onclick="Materialize.toast('{{$practice->display_name}} was successfully updated.', 4000)">
                 Update Practice
             </button>
 
             {!! Form::close() !!}
 
-
-        </main>
-
+        </div>
     </div>
-
 @endsection
