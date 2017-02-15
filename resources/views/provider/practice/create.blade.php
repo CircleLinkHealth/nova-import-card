@@ -27,6 +27,11 @@
                 <div class="input-field col s6">
                     <select id="lead" name="lead_id"
                             class="validate" required>
+
+                        @if(!$practice->user_id)
+                            <option value="0">None</option>
+                        @endif
+
                         @foreach($staff as $user)
                             <option value="{{$user['id']}}" @if($user['id']==$practice->user_id){{'selected'}}@endif>{{$user['first_name']}} {{$user['last_name']}}</option>
                         @endforeach

@@ -130,11 +130,13 @@ class DashboardController extends Controller
 
     public function postStorePractice(Request $request)
     {
-        $this->primaryPractice->update([
-            'federal_tax_id' => $request->input('federal_tax_id'),
-            'user_id'        => $request->input('lead_id'),
-        ]);
+        $update['federal_tax_id'] = $request->input('federal_tax_id');
 
+        if ($request->input('lead_id')) {
+            $update['user_id'] = $request->input('lead_id');
+        }
+
+        $this->primaryPractice->update($update);
 
         return redirect()->back();
     }
