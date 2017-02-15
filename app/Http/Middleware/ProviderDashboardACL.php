@@ -24,8 +24,15 @@ class ProviderDashboardACL
         $practiceSlug = Route::current()->getParameter('practiceSlug');
         $practice = Practice::whereName($practiceSlug)->first();
 
+        if (!$practice) {
+            abort(404, 'This Practice does not exist.');
+        }
+
         if (auth()->user()->hasRole($role)
-            && in_array($practice->id, auth()->user()->practices->pluck('id')->all())
+            && in_array(
+                $practice->id,
+                auth()->user()->practices->pluck('id')->all()
+            )
         ) {
             return $next($request);
         }
