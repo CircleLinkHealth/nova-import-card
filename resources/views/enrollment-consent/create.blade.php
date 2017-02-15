@@ -21,7 +21,7 @@
 
             font-size: 23px;
             line-height: 30px;
-            text-align: center;
+            text-align: left;
         }
 
         .info-list {
@@ -49,75 +49,80 @@
 </nav>
 
 <div class="container">
-    <p class="headings" style="padding-top: 20px; color: black">Mr. John Doe, Dr. Selma Mazhar has invited you to their
-        new personalized care management program for improved wellness!</p>
+    <p class="headings" style="padding-top: 0px; margin-bottom: -5px; color: black">Dear. John Doe, <br /> <br /> Dr. [Salma Mazhar] invites you to their new and @if(isset($has_copay)) free @endif personalized care program! Please read and enroll below.</p>
 </div>
 
 <div class="info">
 
-    <p class="info-list">Calls from Registered Nurses 2x Monthly to track your health</p>
-    <p class="info-list">24/7 Helpline (888) 729-4045</p>
-    <p class="info-list">Only one practice/doctor at a time can provide this program</p>
-    <p class="info-list">Withdraw anytime by calling (888) 729-4045</p>
-    @if(isset($has_copay))
-        <p style="font-size: 20px;" class="flow-text">- Medicare covers the program you may be responsible for a ~$8 per
-            month co-pay</p>
-    @endif
+    <div class="row" id="enrollment_module">
 
-</div>
+        <form method="post" name="enroll" id="enroll"
+              action="{{URL::route('patient.enroll.store', ['program_name' => $practice])}}"
+              class="col s12" style="padding-top: 20px;">
 
-<div class="row" id="enrollment_module">
-    <form method="post" name="enroll" id="enroll"
-          action="{{URL::route('patient.enroll.store', ['program_name' => $practice])}}"
-          class="col s12" style="padding-top: 20px;">
-        {{ csrf_field() }}
+            <div class="row center">
+                <a class="waves-effect waves-light btn modal-trigger" v-on:click="openModal" href="#confirm">Consent</a>
+            </div>
 
-        <input type="datetime" v-model="enrolled_time" id="enrolled_time" name="enrolled_time" hidden>
-        <input type="datetime" v-model="confirmed_time" id="confirmed_time" name="confirmed_time" hidden>
-        <input type="text" id="practice_id" name="practice_id" value="{{$practice->id}}" hidden>
+            <p class="info-list">Calls from registered nurses 1-2x monthly on behalf of Dr. [Mazhar]</p>
+            <p class="info-list">24/7 health message line (nurses call back shortly): (888) 729-4045</p>
+            <p class="info-list">Only one doctor at a time can provide this program</p>
+            <p class="info-list">Withdraw anytime by calling: (888) 729-4045</p>
+            @if(isset($has_copay))
+                <p style="font-size: 20px;" class="flow-text">- Medicare covers the program you may be responsible for a ~$8 per
+                    month co-pay</p>
+            @endif
 
-        <div class="row center">
-            <a class="waves-effect waves-light btn modal-trigger" v-on:click="openModal" href="#confirm">Consent</a>
-        </div>
+            {{ csrf_field() }}
 
-        <div id="confirm" class="modal modal-fixed-footer">
-            <div class="modal-content">
-                <h4 class="" style="color: #47beab">Great! Remember:</h4>
-                <blockquote>“Great! We’ll be in touch shortly.
-                    Optionally, you can tell us the best time to reach you:
-                </blockquote>
-                <div class="row">
-                    <div class="col s12 m6">
-                        <select class="input-field" name="day" id="day">
-                            <option disabled selected>Select Day</option>
-                            <option value="1">Monday</option>
-                            <option value="2">Tuesday</option>
-                            <option value="3">Wednesday</option>
-                            <option value="4">Thursday</option>
-                            <option value="5">Friday</option>
-                        </select>
-                        <label class="active" for="day">Day</label>
-                    </div>
-                    <div class="col s12 m6">
-                        <select class="input-field" name="time" id="time">
-                            <option disabled selected>Select Day</option>
-                            <option value="09:00-12:00">9AM - Noon</option>
-                            <option value="12:00-15:00">Noon - 3PM</option>
-                            <option value="15:00-18:00">3PM - 6PM</option>
-                        </select>
-                        <label class="active" for="time">Time</label>
+            <input type="datetime" v-model="enrolled_time" id="enrolled_time" name="enrolled_time" hidden>
+            <input type="datetime" v-model="confirmed_time" id="confirmed_time" name="confirmed_time" hidden>
+            <input type="text" id="practice_id" name="practice_id" value="{{$practice->id}}" hidden>
+
+
+
+            <div id="confirm" class="modal modal-fixed-footer">
+                <div class="modal-content">
+                    <h4 class="" style="color: #47beab">Great! We’ll be in touch shortly!</h4>
+                    <blockquote>
+                        Optionally, you can tell us the best time to reach you:
+                    </blockquote>
+                    <div class="row">
+                        <div class="col s12 m6">
+                            <select class="input-field" name="day" id="day">
+                                <option disabled selected>Select Day</option>
+                                <option value="1">Monday</option>
+                                <option value="2">Tuesday</option>
+                                <option value="3">Wednesday</option>
+                                <option value="4">Thursday</option>
+                                <option value="5">Friday</option>
+                            </select>
+                            <label class="active" for="day">Day</label>
+                        </div>
+                        <div class="col s12 m6">
+                            <select class="input-field" name="time" id="time">
+                                <option disabled selected>Select Day</option>
+                                <option value="10:00-12:00">10AM - Noon</option>
+                                <option value="12:00-15:00">Noon - 3PM</option>
+                                <option value="15:00-18:00">3PM - 6PM</option>
+                            </select>
+                            <label class="active" for="time">Time</label>
+                        </div>
                     </div>
                 </div>
+                <div class="modal-footer">
+                    <button id="submit" name="submit" v-on:onclick="submitForm"
+                            class="modal-action waves-effect waves-green btn-flat">Acknowledge and Exit
+                    </button>
+                </div>
             </div>
-            <div class="modal-footer">
-                <button id="submit" name="submit" v-on:onclick="submitForm"
-                        class="modal-action waves-effect waves-green btn-flat">Acknowledge and Exit
-                </button>
-            </div>
-        </div>
 
-    </form>
+        </form>
+    </div>
+
 </div>
+
+
 
 
 </html>
