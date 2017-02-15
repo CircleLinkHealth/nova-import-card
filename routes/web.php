@@ -11,8 +11,6 @@ if (app()->environment() != 'production') {
         $link = url()->current() . '/join/' . $enrollee->invite_code;
         $provider_name = App\User::find($enrollee->provider_id)->fullName;
 
-        dd($link);
-
         $twilio->message($enrollee->phone,
             "Dr. $provider_name 
             has invited you to their new wellness program! 
