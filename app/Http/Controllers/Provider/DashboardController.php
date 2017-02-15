@@ -60,9 +60,12 @@ class DashboardController extends Controller
 
     public function getCreatePractice()
     {
+        $users = $this->onboardingService->getExistingStaff($this->primaryPractice);
+
         return view('provider.practice.create', [
             'practiceSlug' => $this->practiceSlug,
             'practice'     => $this->primaryPractice,
+            'staff'        => $users['existingUsers'],
         ]);
     }
 
@@ -127,9 +130,13 @@ class DashboardController extends Controller
 
     public function postStorePractice(Request $request)
     {
-        $this->primaryPractice->update([
-            'federal_tax_id' => $request->input('federal_tax_id'),
-        ]);
+        $update['federal_tax_id'] = $request->input('federal_tax_id');
+
+        if ($request->input('lead_id')) {
+            $update['user_id'] = $request->input('lead_id');
+        }
+
+        $this->primaryPractice->update($update);
 
         return redirect()->back();
     }
