@@ -1867,8 +1867,8 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
 
     public function attachPractice(
         $practice,
-        bool $grantAdminRights,
-        bool $subscribeToBillingReports,
+        bool $grantAdminRights = null,
+        bool $subscribeToBillingReports = null,
         $roleId = null
     ) {
         if (is_array($practice)) {
@@ -1893,11 +1893,21 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
                 $this->practices()->detach($id);
             }
 
-            $attachPractice = $this->practices()->save($practice, [
-                'has_admin_rights'     => $grantAdminRights,
-                'send_billing_reports' => $subscribeToBillingReports,
-                'role_id'              => $roleId,
-            ]);
+            $update = [];
+
+            if (!is_null($grantAdminRights)) {
+                $update['has_admin_rights'] = $grantAdminRights;
+            }
+
+            if (!is_null($subscribeToBillingReports)) {
+                $update['send_billing_reports'] = $subscribeToBillingReports;
+            }
+
+            if (!is_null($roleId)) {
+                $update['role_id'] = $roleId;
+            }
+
+            $attachPractice = $this->practices()->save($practice, $update);
         } catch (\Exception $e) {
             //check if this is a mysql exception for unique key constraint
             if ($e instanceof \Illuminate\Database\QueryException) {
