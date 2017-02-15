@@ -1,6 +1,6 @@
 @extends('provider.layouts.default')
 
-<head>
+@section('head')
     <style>
         .onboarding-user-card > .mdl-card__title {
             color: #fff;
@@ -25,7 +25,9 @@
             color: #dadada !important;
         }
     </style>
-</head>
+
+    <link rel="stylesheet" href="{{ asset('/css/onboarding.css') }}"/>
+@endsection
 
 @section('content')
 

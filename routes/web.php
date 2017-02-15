@@ -1,12 +1,10 @@
 <?php
 
-
 if (app()->environment() != 'production') {
 
     Route::get('rohan', function () {
 
-        return view('vue-tutorial');
-
+        dd((new \App\Services\Calls\SchedulerService())->getMostFrequentNursesForPatient(\App\User::find(2417)->patientInfo));
     });
 }
 
@@ -1294,42 +1292,51 @@ Route::group([
  *
  */
 Route::group([
-    'prefix' => 'provider',
+    'prefix'     => '{practiceSlug}/admin',
+    'middleware' => [
+        'auth',
+        'providerDashboardACL:administrator',
+    ],
 ], function () {
 
-    Route::post('store-invite', [
+    Route::post('invite', [
         'uses' => 'Provider\DashboardController@postStoreInvite',
         'as'   => 'post.store.invite',
     ]);
 
-    Route::post('store-location', [
-        'uses' => 'Provider\DashboardController@postStoreLocation',
-        'as'   => 'post.store.location',
+    Route::post('locations', [
+        'uses' => 'Provider\DashboardController@postStoreLocations',
+        'as'   => 'provider.dashboard.store.locations',
     ]);
 
-    Route::post('store-practice', [
+    Route::post('staff', [
+        'uses' => 'Provider\DashboardController@postStoreStaff',
+        'as'   => 'provider.dashboard.store.staff',
+    ]);
+
+    Route::post('practice', [
         'uses' => 'Provider\DashboardController@postStorePractice',
-        'as'   => 'post.store.practice',
+        'as'   => 'provider.dashboard.store.practice',
     ]);
 
-    Route::get('create-practice', [
+    Route::get('practice', [
         'uses' => 'Provider\DashboardController@getCreatePractice',
-        'as'   => 'get.create.practice',
+        'as'   => 'provider.dashboard.manage.practice',
     ]);
 
-    Route::get('create-staff', [
+    Route::get('staff', [
         'uses' => 'Provider\DashboardController@getCreateStaff',
-        'as'   => 'get.create.staff',
+        'as'   => 'provider.dashboard.manage.staff',
     ]);
 
-    Route::get('index', [
+    Route::get('', [
         'uses' => 'Provider\DashboardController@getIndex',
-        'as'   => 'get.provider.dashboard',
+        'as'   => 'provider.dashboard.index',
     ]);
 
-    Route::get('create-location', [
+    Route::get('locations', [
         'uses' => 'Provider\DashboardController@getCreateLocation',
-        'as'   => 'get.create.location',
+        'as'   => 'provider.dashboard.manage.locations',
     ]);
 });
 
@@ -1338,22 +1345,22 @@ Route::group([
  * Enrollment Consent
  */
 
-Route::group([
-    'prefix' => 'join',
-], function () {
-
-    Route::get('{program_name}', [
-        'uses' => 'Patient\EnrollmentConsentController@create',
-        'as'   => 'patient.enroll.create',
-    ]);
-
-    Route::post('store', [
-        'uses' => 'Patient\EnrollmentConsentController@store',
-        'as'   => 'patient.enroll.store',
-    ]);
-
-
-});
+//Route::group([
+//    'prefix' => 'join',
+//], function () {
+//
+//    Route::get('{program_name}', [
+//        'uses' => 'Patient\EnrollmentConsentController@create',
+//        'as'   => 'patient.enroll.create',
+//    ]);
+//
+//    Route::post('store', [
+//        'uses' => 'Patient\EnrollmentConsentController@store',
+//        'as'   => 'patient.enroll.store',
+//    ]);
+//
+//
+//});
 
 Route::group([
     'prefix' => 'onboarding',

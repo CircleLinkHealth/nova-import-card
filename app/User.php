@@ -28,6 +28,7 @@ use Illuminate\Contracts\Auth\Authenticatable as AuthenticatableContract;
 use Illuminate\Contracts\Auth\CanResetPassword as CanResetPasswordContract;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Database\QueryException;
 use Illuminate\Notifications\Notifiable;
 use Zizaco\Entrust\Traits\EntrustUserTrait;
 
@@ -1864,15 +1865,49 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
         });
     }
 
-    public function attachPractice($practice)
-    {
-        $id = is_object($practice)
-            ? $practice->id
-            : $practice;
+    public function attachPractice(
+        $practice,
+        bool $grantAdminRights = null,
+        bool $subscribeToBillingReports = null,
+        $roleId = null
+    ) {
+        if (is_array($practice)) {
+            foreach ($practice as $key => $pract) {
+                $this->attachPractice($pract, $grantAdminRights, $subscribeToBillingReports, $roleId);
+                unset($key);
+            }
+        }
 
+        $practice = is_object($practice)
+            ? $practice
+            : Practice::find($practice);
+
+        $roleId = is_object($roleId)
+            ? $roleId->id
+            : $roleId;
 
         try {
-            $this->practices()->attach($id);
+            $exists = $this->practice($practice);
+
+            if ($exists) {
+                $this->practices()->detach($practice);
+            }
+
+            $update = [];
+
+            if (!is_null($grantAdminRights)) {
+                $update['has_admin_rights'] = $grantAdminRights;
+            }
+
+            if (!is_null($subscribeToBillingReports)) {
+                $update['send_billing_reports'] = $subscribeToBillingReports;
+            }
+
+            if (!is_null($roleId)) {
+                $update['role_id'] = $roleId;
+            }
+
+            $attachPractice = $this->practices()->save($practice, $update);
         } catch (\Exception $e) {
             //check if this is a mysql exception for unique key constraint
             if ($e instanceof \Illuminate\Database\QueryException) {
@@ -1887,13 +1922,44 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
         }
     }
 
-    public function practices()
+    /**
+     * Get the specified Practice, if it is related to this User
+     *
+     * @param $practiceId
+     *
+     * @return mixed
+     */
+    public function practice($practiceId)
     {
-        return $this->belongsToMany(Practice::class, 'practice_user', 'user_id', 'program_id');
+        if (is_object($practiceId)) {
+            $practiceId = $practiceId->id;
+        }
+
+        return $this->practices()
+            ->where('program_id', '=', $practiceId)
+            ->first();
     }
 
+    public function practices()
+    {
+        return $this->belongsToMany(Practice::class, 'practice_user', 'user_id', 'program_id')
+            ->withPivot('role_id', 'has_admin_rights', 'send_billing_reports');
+    }
+
+    /**
+     * Attach Location(s)
+     *
+     * @param $location |array
+     */
     public function attachLocation($location)
     {
+        if (is_array($location)) {
+            foreach ($location as $key => $loc) {
+                $this->attachLocation($loc);
+                unset($location[$key]);
+            }
+        }
+
         $id = is_object($location)
             ? $location->id
             : $location;
@@ -1909,7 +1975,6 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
                     //do nothing
                     //we don't actually want to terminate the program if we detect duplicates
                     //we just don't wanna add the row again
-                    \Log::alert($e);
                 }
             }
         }
@@ -2043,5 +2108,47 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
             ->wherePivot('name', '=', 'in_addition_to_billing_provider')
             ->orWherePivot('name', '=', 'instead_of_billing_provider')
             ->withTimestamps();
+    }
+
+    public function routeNotificationForTwilio()
+    {
+        return $this->primaryPhone;
+    }
+
+    /**
+     * Attach Role to User.
+     * Returns false if Role was already attached, and true if it was attached now.
+     *
+     * @param $roleId
+     *
+     * @return bool
+     */
+    public function attachRole($roleId)
+    {
+        if (is_array($roleId)) {
+            foreach ($roleId as $key => $role) {
+                $this->attachRole($role);
+                unset($key);
+            }
+        }
+
+        if (is_object($roleId)) {
+            $roleId = $roleId->id;
+        }
+
+        try {
+            //Attach the role
+            $this->roles()->attach($roleId);
+        } catch (\Exception $e) {
+            if ($e instanceof QueryException) {
+                $errorCode = $e->errorInfo[1];
+                if ($errorCode == 1062) {
+                    //return false so we know nothing was attached
+                    return false;
+                }
+            }
+        }
+
+        return true;
     }
 }

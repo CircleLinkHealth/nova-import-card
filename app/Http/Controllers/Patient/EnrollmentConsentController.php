@@ -96,6 +96,8 @@ class EnrollmentConsentController extends Controller
 
         $input = $request->input();
 
+        dd($input);
+
         $enrolled_date = Carbon::parse($input['enrolled_time'])->toDateTimeString();
         $confirmed_date = Carbon::parse($input['confirmed_time'])->toDateTimeString();
 

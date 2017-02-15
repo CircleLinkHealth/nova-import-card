@@ -70,7 +70,13 @@ var locationsVM = new Vue({
     },
 
     ready: function () {
-        this.create();
+        for (var i = 0, len = cpm.existingLocations.length; i < len; i++) {
+            this.newLocations.$set(i, cpm.existingLocations[i]);
+        }
+
+        if (len < 1) {
+            this.create();
+        }
     },
 
     methods: {
@@ -86,11 +92,13 @@ var locationsVM = new Vue({
                 ehr_password: '',
                 city: '',
                 address_line_1: '',
+                address_line_2: '',
                 ehr_login: '',
                 errorCount: 0,
                 isComplete: false,
                 name: '',
                 phone: '',
+                fax: '',
                 postal_code: '',
                 state: '',
                 validated: false
@@ -137,7 +145,13 @@ var locationsVM = new Vue({
                 locations: this.newLocations
             }).then(function (response) {
                 // success
-                window.location.href = response.data.redirect_to;
+                if (response.data.redirect_to) {
+                    window.location.href = response.data.redirect_to;
+                }
+
+                if (response.data.message) {
+                    Materialize.toast(response.data.message, 4000);
+                }
             }, function (response) {
                 //fail
 
