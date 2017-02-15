@@ -22,6 +22,8 @@ class Enrollee extends Model
         'consented_at',
         'last_attempt_at',
         'attempt_count',
+        'preferred_window',
+        'preferred_days',
         'status',
     ];
 
@@ -33,7 +35,13 @@ class Enrollee extends Model
 
     public function provider(){
 
-        return $this->belongsTo(User::class, 'user_id');
+        return $this->belongsTo(User::class, 'provider_id');
+
+    }
+
+    public function practice(){
+
+        return $this->belongsTo(Practice::class, 'practice_id');
 
     }
 

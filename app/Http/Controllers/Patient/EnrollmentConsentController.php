@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Patient;
 
 use App\Call;
 use App\CLH\Helpers\StringManipulation;
+use App\Enrollee;
 use App\Models\MedicalRecords\ImportedMedicalRecord;
 use App\Patient;
 use App\PhoneNumber;
@@ -23,6 +24,7 @@ class EnrollmentConsentController extends Controller
      */
     public function index(){
 
+        //todo change to Enrollee
         $enrolled = Patient::where('ccm_status', 'consented')->with('user')->get();
 
         $formatted = [];
@@ -78,17 +80,18 @@ class EnrollmentConsentController extends Controller
 
     }
 
-    public function create($practice_name){
+    public function create($invite_code){
 
-        $practice = Practice::whereName($practice_name)->first();
+        $enrollee = Enrollee::whereInviteCode($invite_code)->first();
+        $enrollee->invite_opened_at = Carbon::now()->toDateTimeString();
 
-        if(is_null($practice)){
+        if(is_null($enrollee)){
 
             return view('errors.enrollmentConsentUrlError');
 
         }
 
-        return view('enrollment-consent.create', ['practice' => $practice]);
+        return view('enrollment-consent.create', ['enrollee' => $enrollee]);
 
     }
 
@@ -96,79 +99,27 @@ class EnrollmentConsentController extends Controller
 
         $input = $request->input();
 
-        $enrolled_date = Carbon::parse($input['enrolled_time'])->toDateTimeString();
-        $confirmed_date = Carbon::parse($input['confirmed_time'])->toDateTimeString();
+        $enrollee = Enrollee::find($input['enrollee_id']);
 
+        $enrollee->consented_at = Carbon::parse($input['consented_at'])->toDateTimeString();
+        $enrollee->status = 'consented';
+        $enrollee->save();
 
-        //Check if patient exists.
-        $phone = $input['phone'];
+        return json_encode($enrollee);
 
-        $exists = User
-            ::where('first_name', trim($input['first_name']))
-            ->where('last_name', trim($input['last_name']))
-            ->whereHas('phoneNumbers', function ($q) use ($phone){
+    }
 
-                $q->where('number', $phone);
+    public function update(Request $request){
 
-            })->first();
+        $input = $request->input();
 
-        if($exists){
+        $enrollee = Enrollee::find($input['enrollee_id']);
+        $enrollee->preferred_days = implode(', ', $input['days']);
+        $enrollee->preferred_window = $input['time'];
+        $enrollee->save();
 
-            $exists->patientInfo->consent_date = $confirmed_date;
-            $exists->patientInfo->registration_date = $enrolled_date;
+        return view('enrollment-consent.thanks', ['enrollee' => $enrollee]);
 
-            $exists->patientInfo->save();
-
-            debug('Exists');
-
-        } else {
-
-            //Create User
-            $enrollee = new User;
-            $enrollee->program_id = $input['practice_id'];
-            $enrollee->first_name = $input['first_name'];
-            $enrollee->last_name = $input['last_name'];
-
-            //@todo identify timezone
-            $enrollee->timezone = 'America/New_York';
-            $enrollee->save();
-
-            //Create Patient
-            $patient = new Patient([
-                'user_id' => $enrollee->id
-            ]);
-
-            $patient->ccm_status = 'consented';
-            $patient->consent_date = $confirmed_date;
-            $patient->registration_date = $enrolled_date;
-            $patient->birth_date = $input['dob'];
-            $patient->preferred_contact_timezone = 'America/New_York';
-            $patient->save();
-
-            //Attach Role
-            $role = Role::whereName('participant')->first();
-            $enrollee->attachRole($role);
-            $enrollee->save();
-
-            //Create phone
-            $phone = new PhoneNumber([
-
-                'user_id'    => $enrollee->id,
-                'type'       => 'work',
-                'number'     => $input['phone'],
-                'is_primary' => 1
-
-            ]);
-
-            $phone->save();
-            $enrollee->phoneNumbers()->save($phone);
-            
-            debug('Does not exist');
-
-        }
-
-        return view('enrollment-consent.thanks', ['name' => $input['first_name'],
-                                                  'practice' => Practice::find($input['practice_id'])]);
 
     }
 
