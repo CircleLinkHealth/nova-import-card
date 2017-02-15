@@ -8,13 +8,11 @@ if (app()->environment() != 'production') {
         $twilio = new Aloha\Twilio\Twilio(env('TWILIO_SID'), env('TWILIO_TOKEN'), env('TWILIO_FROM'));
 
         $enrollee = \App\Enrollee::find(1);
-        $link = url()->current() . '/join/' . $enrollee->invite_code;
+        $link = url("join/$enrollee->invite_code");
         $provider_name = App\User::find($enrollee->provider_id)->fullName;
 
         $twilio->message($enrollee->phone,
-            "Dr. $provider_name 
-            has invited you to their new wellness program! 
-            Please enroll here: $link)");
+            "Dr. $provider_name has invited you to their new wellness program! Please enroll here: $link");
 
     });
 
