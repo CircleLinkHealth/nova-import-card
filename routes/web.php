@@ -4,7 +4,10 @@ if (app()->environment() != 'production') {
 
     Route::get('rohan', function () {
 
-        dd((new \App\Services\Calls\SchedulerService())->getMostFrequentNursesForPatient(\App\User::find(2417)->patientInfo));
+
+        return 'sunsets';
+
+
     });
 }
 
@@ -1352,14 +1355,19 @@ Route::group([
     'prefix' => 'join',
 ], function () {
 
-    Route::get('{program_name}', [
+    Route::post('/save', [
+        'uses' => 'Patient\EnrollmentConsentController@store',
+        'as'   => 'patient.enroll.store',
+    ]);
+
+    Route::get('{invite_code}', [
         'uses' => 'Patient\EnrollmentConsentController@create',
         'as'   => 'patient.enroll.create',
     ]);
 
-    Route::post('store', [
-        'uses' => 'Patient\EnrollmentConsentController@store',
-        'as'   => 'patient.enroll.store',
+    Route::post('/update', [
+        'uses' => 'Patient\EnrollmentConsentController@update',
+        'as'   => 'patient.enroll.update',
     ]);
 
 
