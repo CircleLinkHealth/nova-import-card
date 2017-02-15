@@ -262,6 +262,7 @@ class NurseController extends Controller
                             $q->where('scheduled_date', '>=', Carbon::parse($dayCounter)->startOfDay())
                                 ->where('scheduled_date', '<=', Carbon::parse($dayCounter)->endOfDay());
                         })
+                        ->where('status', 'scheduled')
                         ->count();
 
                 $formattedDate = Carbon::parse($dayCounter)->format('m/d D');
