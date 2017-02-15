@@ -13,12 +13,16 @@ class AddUniquePair extends Migration
      */
     public function up()
     {
-        Schema::table('practice_user', function (Blueprint $table) {
-            $table->unique([
-                'program_id',
-                'user_id',
-            ]);
-        });
+        try {
+            Schema::table('practice_user', function (Blueprint $table) {
+                $table->unique([
+                    'program_id',
+                    'user_id',
+                ]);
+            });
+        } catch (\Exception $e) {
+            //already ran this on prod, so it doesn't matter if it doesn't run elsewhere
+        }
     }
 
     /**

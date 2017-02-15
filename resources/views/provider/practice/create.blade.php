@@ -23,6 +23,22 @@
                            name="federal_tax_id">
                     <label for="federal_tax_id" data-error="required" data-success="">Federal tax ID</label>
                 </div>
+
+                <div class="input-field col s6">
+                    <label for="lead" class="active" data-error="required">Implementation Lead</label>
+                    <div style="height: 15px;"></div>
+                    <select id="lead" name="lead_id"
+                            class="validate" required>
+
+                        @if(!$practice->user_id)
+                            <option value="0">None</option>
+                        @endif
+
+                        @foreach($staff as $user)
+                            <option value="{{$user['id']}}" @if($user['id']==$practice->user_id){{'selected'}}@endif>{{$user['first_name']}} {{$user['last_name']}}</option>
+                        @endforeach
+                    </select>
+                </div>
             </div>
 
 
@@ -36,4 +52,10 @@
 
         </div>
     </div>
+@endsection
+
+@section('scripts')
+    <script type="text/javascript">
+        $('select').select2();
+    </script>
 @endsection
