@@ -144,7 +144,7 @@ class OnboardingService
             ])
             ->sortBy('display_name');
 
-        \JavaScript::put([
+        $result = [
             'existingUsers' => $existingUsers,
             'locations'     => $locations,
             'locationIds'   => $locationIds,
@@ -152,7 +152,11 @@ class OnboardingService
             'roles'         => $roles->all(),
             //this will help us get role names on the views: rolesMap[id]
             'rolesMap'      => $roles->keyBy('id')->all(),
-        ]);
+        ];
+
+        \JavaScript::put($result);
+
+        return $result;
     }
 
     /**
