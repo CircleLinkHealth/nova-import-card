@@ -15,6 +15,8 @@ class Practice extends Model
         'display_name',
         'federal_tax_id',
         'user_id',
+        'same_clinical_contact',
+        'same_ehr_login',
     ];
 
     public static function getProviders($practiceId)
