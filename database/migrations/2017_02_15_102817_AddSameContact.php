@@ -14,7 +14,11 @@ class AddSameContact extends Migration
     public function up()
     {
         Schema::table('practices', function (Blueprint $table) {
-            $table->boolean('same_contact')
+            $table->boolean('same_clinical_contact')
+                ->nullable()
+                ->after('federal_tax_id');
+
+            $table->boolean('same_ehr_login')
                 ->nullable()
                 ->after('federal_tax_id');
         });
@@ -28,7 +32,8 @@ class AddSameContact extends Migration
     public function down()
     {
         Schema::table('practices', function (Blueprint $table) {
-            //
+            $table->dropColumn('same_clinical_contact');
+            $table->dropColumn('same_ehr_login');
         });
     }
 }
