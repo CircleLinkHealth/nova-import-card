@@ -67,12 +67,12 @@ class WelcomeCallListGenerator
                 $problemCode = trim($problemCode);
 
                 //This was used for a list where problems where written as such: ICD-209: Diabetes,
-//                $from = strpos($problemCode, '-');
-//                $to = strpos($problemCode, ':');
-//
-//                if ($from !== false && $to !== false) {
-//                    $problemCode = substr($problemCode, ++$from, $to - $from);
-//                }
+                $from = strpos($problemCode, '-');
+                $to = strpos($problemCode, ':');
+
+                if ($from !== false && $to !== false) {
+                    $problemCode = substr($problemCode, ++$from, $to - $from);
+                }
 
                 //try icd 9
                 $problem = SnomedToCpmIcdMap::where('icd_9_code', '=', $problemCode)
