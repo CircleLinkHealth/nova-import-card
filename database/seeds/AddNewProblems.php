@@ -1,5 +1,8 @@
 <?php
 
+use App\CarePlanTemplate;
+use App\CLH\CCD\Importer\SnomedToCpmIcdMap;
+use App\Models\CPM\CpmProblem;
 use Illuminate\Database\Seeder;
 
 class AddNewProblems extends Seeder
@@ -12,7 +15,50 @@ class AddNewProblems extends Seeder
      */
     public function run()
     {
-        //
+        CpmProblem::whereName('Asthma--COPD')
+            ->update([
+                'name' => 'Asthma',
+            ]);
+
+        $defaultCarePlan = CarePlanTemplate::find(1);
+        $uiSort = 12;
+
+        foreach ($this->problems() as $name => $codes) {
+            //Does a CPMProblem exist?
+            $cpmProblem = CpmProblem::firstOrCreate(['name' => $name]);
+
+            if (!in_array($cpmProblem->id, $defaultCarePlan->cpmProblems->pluck('id')->all())) {
+                $defaultCarePlan->cpmProblems()->attach($cpmProblem, [
+                    'has_instruction' => true,
+                    'page'            => 1,
+                    'ui_sort'         => $uiSort,
+                ]);
+
+                $uiSort++;
+            }
+
+            //ICD9 Check
+            foreach ($codes['icd9'] as $icd9) {
+                $map = SnomedToCpmIcdMap::updateOrCreate([
+                    'icd_9_code' => $icd9,
+                ], [
+                    'cpm_problem_id' => $cpmProblem->id,
+                    'icd_9_name'     => $cpmProblem->name,
+                ]);
+            }
+
+            //ICD10 Check
+            foreach ($codes['icd10'] as $icd10) {
+                $map = SnomedToCpmIcdMap::updateOrCreate([
+                    'icd_10_code' => $icd10,
+                ], [
+                    'cpm_problem_id' => $cpmProblem->id,
+                    'icd_10_name'    => $cpmProblem->name,
+                ]);
+            }
+        }
+
+
     }
 
     /**
@@ -296,7 +342,7 @@ class AddNewProblems extends Seeder
             ],
         ];
 
-        $problems['Asthma--COPD'] = [
+        $problems['Asthma'] = [
             'icd9'  => [
                 'DX 493.00',
                 '493.01',
