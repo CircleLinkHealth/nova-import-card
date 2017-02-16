@@ -40,7 +40,7 @@ class WelcomeCallListGenerator
 
     protected function filterPatientList()
     {
-        $this->byLastEncounter()
+        $this//->byLastEncounter()
             ->byInsurance()
             ->byNumberOfProblems();
     }
@@ -67,12 +67,12 @@ class WelcomeCallListGenerator
                 $problemCode = trim($problemCode);
 
                 //This was used for a list where problems where written as such: ICD-209: Diabetes,
-//                $from = strpos($problemCode, '-');
-//                $to = strpos($problemCode, ':');
-//
-//                if ($from !== false && $to !== false) {
-//                    $problemCode = substr($problemCode, ++$from, $to - $from);
-//                }
+                $from = strpos($problemCode, '-');
+                $to = strpos($problemCode, ':');
+
+                if ($from !== false && $to !== false) {
+                    $problemCode = substr($problemCode, ++$from, $to - $from);
+                }
 
                 //try icd 9
                 $problem = SnomedToCpmIcdMap::where('icd_9_code', '=', $problemCode)
@@ -164,35 +164,6 @@ class WelcomeCallListGenerator
     }
 
     /**
-     * Removes Patients whose last encounter was before Feb. 1st, 2016 from the list.
-     *
-     * @return WelcomeCallListGenerator
-     */
-    protected function byLastEncounter() : WelcomeCallListGenerator
-    {
-        $this->patientList = $this->patientList->reject(function ($row) {
-            //Anything past this date is valid
-            $minEligibleDate = Carbon::createFromDate('2016', '02', '01');
-
-            if (!$row['last_encounter']) {
-//                $this->ineligiblePatients[] = $row;
-                return true;
-            }
-
-            $lastEncounterDate = new Carbon($row['last_encounter']);
-
-            if ($lastEncounterDate->lt($minEligibleDate)) {
-//                $this->ineligiblePatients[] = $row;
-                return true;
-            }
-
-            return false;
-        });
-
-        return $this;
-    }
-
-    /**
      * Exports the Patient List to a csv file.
      */
     public function exportToCsv()
@@ -230,5 +201,39 @@ class WelcomeCallListGenerator
     public function getPatientList(): Collection
     {
         return $this->patientList;
+    }
+
+    /**
+     * Removes Patients whose last encounter was before Feb. 1st, 2016 from the list.
+     *
+     * @return WelcomeCallListGenerator
+     */
+    protected function byLastEncounter() : WelcomeCallListGenerator
+    {
+        $this->patientList = $this->patientList->reject(function ($row) {
+            //Anything past this date is valid
+            $minEligibleDate = Carbon::createFromDate('2016', '02', '01');
+
+            if (!isset($row['last_encounter'])) {
+//                $this->ineligiblePatients[] = $row;
+                return true;
+            }
+
+            if (!$row['last_encounter']) {
+//                $this->ineligiblePatients[] = $row;
+                return true;
+            }
+
+            $lastEncounterDate = new Carbon($row['last_encounter']);
+
+            if ($lastEncounterDate->lt($minEligibleDate)) {
+//                $this->ineligiblePatients[] = $row;
+                return true;
+            }
+
+            return false;
+        });
+
+        return $this;
     }
 }
