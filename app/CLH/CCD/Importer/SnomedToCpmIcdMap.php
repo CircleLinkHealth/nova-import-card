@@ -5,6 +5,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class SnomedToCpmIcdMap extends Model
 {
+    protected $guarded = [];
 
     public function cpmProblem()
     {
