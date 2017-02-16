@@ -84,6 +84,7 @@ class EnrollmentConsentController extends Controller
 
         $enrollee = Enrollee::whereInviteCode($invite_code)->first();
         $enrollee->invite_opened_at = Carbon::now()->toDateTimeString();
+        $enrollee->save();
 
         if(is_null($enrollee)){
 
@@ -91,7 +92,7 @@ class EnrollmentConsentController extends Controller
 
         }
 
-        return view('enrollment-consent.create', ['enrollee' => $enrollee]);
+        return view('enrollment-consent.create', ['enrollee' => $enrollee, 'has_copay' => true]);
 
     }
 

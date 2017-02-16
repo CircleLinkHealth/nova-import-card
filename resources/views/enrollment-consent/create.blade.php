@@ -51,7 +51,13 @@
 </nav>
 
 <div class="container">
-    <p class="headings" style="padding-top: 0px; margin-bottom: -5px; color: black">Dear. {{$enrollee->first_name . ' ' . $enrollee->last_name}}, <br /> <br /> Dr. {{$enrollee->provider->fullName}} invites you to their new and @if(isset($has_copay)) free @endif personalized care program! Please read and enroll below.</p>
+    <p class="headings" style="padding-top: 0px; margin-bottom: 15px; color: black">
+        Dear. {{$enrollee->first_name . ' ' . $enrollee->last_name}}, <br /> <br />
+
+        I highly recommend you join my new personalized care program. @if(isset($has_copay))It’s free so please @else Please @endif enroll and read below.
+    <br />
+    <div class="right headings">- Dr. {{$enrollee->provider->last_name}}</div>
+
 </div>
 
 <div class="info">
@@ -66,12 +72,12 @@
                 <a class="waves-effect waves-light btn modal-trigger" v-on:click="saveConsent" href="#confirm">Consent</a>
             </div>
 
-            <p class="info-list">Calls from registered nurses 1-2x monthly on behalf of Dr. {{$enrollee->provider->last_name}}</p>
-            <p class="info-list">24/7 health message line (nurses call back shortly): (888) 729-4045</p>
+            <p class="info-list">Calls from registered nurses ~2x monthly so I can stay updated</p>
+            <p class="info-list">Health line for any question (nurses call you back): (888) 729-4045</p>
             <p class="info-list">Only one doctor at a time can provide this program</p>
-            <p class="info-list">Withdraw anytime by calling: (888) 729-4045</p>
+            <p class="info-list">Withdraw anytime. Just give us a call</p>
             @if(isset($has_copay))
-                <p style="font-size: 20px;" class="flow-text">- Medicare covers the program you may be responsible for a ~$8 per
+                <p style="font-size: 20px;" class="flow-text">Medicare covers the program you may be responsible for a ~$8 per
                     month co-pay</p>
             @endif
 
