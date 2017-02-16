@@ -2,10 +2,24 @@
 
 namespace App;
 
+use Aloha\Twilio\Twilio;
 use Illuminate\Database\Eloquent\Model;
 
 class Enrollee extends Model
 {
+
+    /**
+     * STATUS TYPES:
+     *
+     * eligible: just imported to enrollees table, queue of sms recipients.
+     * sms_sent: initial sms sent
+     * sms_received: patient opened link
+     * consented: client consented
+     * ccd_obtained: medical records were imported
+     * ccd_qaed: QAed, good to go for enrollment
+     *
+     */
+
     protected $table = 'enrollees';
 
     protected $fillable = [
@@ -14,6 +28,8 @@ class Enrollee extends Model
         'provider_id',
         'practice_id',
         'mrn_number',
+        'dob',
+        'invite_sent_at',
         'first_name',
         'last_name',
         'address',
@@ -27,21 +43,55 @@ class Enrollee extends Model
         'status',
     ];
 
-    public function user(){
+    public function user()
+    {
 
         return $this->belongsTo(User::class, 'user_id');
 
     }
 
-    public function provider(){
+    public function provider()
+    {
 
         return $this->belongsTo(User::class, 'provider_id');
 
     }
 
-    public function practice(){
+    public function practice()
+    {
 
         return $this->belongsTo(Practice::class, 'practice_id');
+
+    }
+
+    public function sendEnrollmentConsentSMS()
+    {
+
+        $twilio = new Twilio(env('TWILIO_SID'), env('TWILIO_TOKEN'), env('TWILIO_FROM'));
+
+        $link = url("join/$this->invite_code");
+        $provider_name = User::find($this->provider_id)->fullName;
+
+        $twilio->message($this->phone,
+            "Dr. $provider_name has invited you to their new wellness program! Please enroll here: $link");
+
+
+    }
+
+    public function sendEnrollmentConsentReminderSMS()
+    {
+
+        $emjo = 'u"\U0001F31F"';
+
+        $twilio = new Twilio(env('TWILIO_SID'), env('TWILIO_TOKEN'), env('TWILIO_FROM'));
+
+        $link = url("join/$this->invite_code");
+
+        $provider_name = User::find($this->provider_id)->fullName;
+
+        $twilio->message($this->phone,
+            "Dr. $provider_name hasn’t heard from you regarding their new wellness program $emjo. Please enroll here: $link");
+
 
     }
 
