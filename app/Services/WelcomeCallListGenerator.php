@@ -174,6 +174,11 @@ class WelcomeCallListGenerator
             //Anything past this date is valid
             $minEligibleDate = Carbon::createFromDate('2016', '02', '01');
 
+            if (!isset($row['last_encounter'])) {
+//                $this->ineligiblePatients[] = $row;
+                return true;
+            }
+
             if (!$row['last_encounter']) {
 //                $this->ineligiblePatients[] = $row;
                 return true;
