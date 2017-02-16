@@ -1,6 +1,5 @@
 <?php
 
-use App\CarePlanTemplate;
 use App\CLH\CCD\Importer\SnomedToCpmIcdMap;
 use App\Models\CPM\CpmProblem;
 use Illuminate\Database\Seeder;
@@ -20,22 +19,22 @@ class AddNewProblems extends Seeder
                 'name' => 'Asthma',
             ]);
 
-        $defaultCarePlan = CarePlanTemplate::find(1);
-        $uiSort = 12;
+//        $defaultCarePlan = CarePlanTemplate::find(1);
+//        $uiSort = 12;
 
         foreach ($this->problems() as $name => $codes) {
             //Does a CPMProblem exist?
             $cpmProblem = CpmProblem::firstOrCreate(['name' => $name]);
 
-            if (!in_array($cpmProblem->id, $defaultCarePlan->cpmProblems->pluck('id')->all())) {
-                $defaultCarePlan->cpmProblems()->attach($cpmProblem, [
-                    'has_instruction' => true,
-                    'page'            => 1,
-                    'ui_sort'         => $uiSort,
-                ]);
-
-                $uiSort++;
-            }
+//            if (!in_array($cpmProblem->id, $defaultCarePlan->cpmProblems->pluck('id')->all())) {
+//                $defaultCarePlan->cpmProblems()->attach($cpmProblem, [
+//                    'has_instruction' => true,
+//                    'page'            => 1,
+//                    'ui_sort'         => $uiSort,
+//                ]);
+//
+//                $uiSort++;
+//            }
 
             //ICD9 Check
             foreach ($codes['icd9'] as $icd9) {
