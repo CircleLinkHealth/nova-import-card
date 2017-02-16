@@ -104,7 +104,7 @@
                     </blockquote>
                     <div class="row">
                         <div class="col s12 m6">
-                            <select class="" name="days[]" id="days[]" multiple>
+                            <select class="browser-default" name="days[]" id="days[]" multiple>
                                 <option disabled selected>Select Days</option>
                                 <option value="1">Monday</option>
                                 <option value="2">Tuesday</option>
@@ -115,7 +115,7 @@
                             <label class="active" for="day">Day</label>
                         </div>
                         <div class="col s12 m6">
-                            <select class="" name="time" id="time">
+                            <select class="browser-default" name="time" id="time">
                                 <option disabled selected>Select Times</option>
                                 <option value="10:00-12:00">10AM - Noon</option>
                                 <option value="12:00-15:00">Noon - 3PM</option>
