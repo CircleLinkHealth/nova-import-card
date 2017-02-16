@@ -46,6 +46,17 @@
             border-bottom: white 2px solid;
         }
 
+        .select-custom{
+
+            font-size: 12px;
+
+        }
+
+        .label{
+            font-size: 20px;
+            color: black;
+        }
+
 
     </style>
 
@@ -103,7 +114,8 @@
                         Optionally, you can tell us the best time to reach you:
                     </blockquote>
                     <div class="row">
-                        <div class="col s12 m6">
+                        <div class="col s12 m6 select-custom">
+                            <label for="days[]" class="label">Day</label>
                             <select class="browser-default" name="days[]" id="days[]" multiple>
                                 <option disabled selected>Select Days</option>
                                 <option value="1">Monday</option>
@@ -112,16 +124,15 @@
                                 <option value="4">Thursday</option>
                                 <option value="5">Friday</option>
                             </select>
-                            <label class="active" for="day">Day</label>
                         </div>
-                        <div class="col s12 m6">
+                        <div class="col s12 m6 select-custom" >
+                            <label for="time" class="label">Times</label>
                             <select class="browser-default" name="time" id="time">
                                 <option disabled selected>Select Times</option>
                                 <option value="10:00-12:00">10AM - Noon</option>
                                 <option value="12:00-15:00">Noon - 3PM</option>
                                 <option value="15:00-18:00">3PM - 6PM</option>
                             </select>
-                            <label class="active" for="time">Times</label>
                         </div>
                     </div>
                 </div>
