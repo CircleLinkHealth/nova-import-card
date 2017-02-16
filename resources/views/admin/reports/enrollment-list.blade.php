@@ -36,10 +36,16 @@
                                             MRN Number
                                         </th>
                                         <th>
+                                            DOB
+                                        </th>
+                                        <th>
                                             Phone Number
                                         </th>
                                         <th>
                                             Attempt Count
+                                        </th>
+                                        <th>
+                                            Invite Sent At
                                         </th>
                                         <th>
                                             Invite Opened At
@@ -73,8 +79,10 @@
                         {data: 'provider', name: 'provider'},
                         {data: 'status', name: 'status'},
                         {data: 'mrn_number', name: 'mrn_number'},
+                        {data: 'dob', name: 'dob'},
                         {data: 'phone', name: 'phone'},
                         {data: 'attempt_count', name: 'attempt_count'},
+                        {data: 'invite_sent_at', name: 'invite_sent_at'},
                         {data: 'invite_opened_at', name: 'invite_opened_at'},
                         {data: 'last_attempt_at', name: 'last_attempt_at'},
                         {data: 'consented_at', name: 'consented_at'},
