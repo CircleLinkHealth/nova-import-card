@@ -40,7 +40,7 @@ class WelcomeCallListGenerator
 
     protected function filterPatientList()
     {
-        $this->byLastEncounter()
+        $this//->byLastEncounter()
             ->byInsurance()
             ->byNumberOfProblems();
     }
@@ -164,40 +164,6 @@ class WelcomeCallListGenerator
     }
 
     /**
-     * Removes Patients whose last encounter was before Feb. 1st, 2016 from the list.
-     *
-     * @return WelcomeCallListGenerator
-     */
-    protected function byLastEncounter() : WelcomeCallListGenerator
-    {
-        $this->patientList = $this->patientList->reject(function ($row) {
-            //Anything past this date is valid
-            $minEligibleDate = Carbon::createFromDate('2016', '02', '01');
-
-            if (!isset($row['last_encounter'])) {
-//                $this->ineligiblePatients[] = $row;
-                return true;
-            }
-
-            if (!$row['last_encounter']) {
-//                $this->ineligiblePatients[] = $row;
-                return true;
-            }
-
-            $lastEncounterDate = new Carbon($row['last_encounter']);
-
-            if ($lastEncounterDate->lt($minEligibleDate)) {
-//                $this->ineligiblePatients[] = $row;
-                return true;
-            }
-
-            return false;
-        });
-
-        return $this;
-    }
-
-    /**
      * Exports the Patient List to a csv file.
      */
     public function exportToCsv()
@@ -235,5 +201,39 @@ class WelcomeCallListGenerator
     public function getPatientList(): Collection
     {
         return $this->patientList;
+    }
+
+    /**
+     * Removes Patients whose last encounter was before Feb. 1st, 2016 from the list.
+     *
+     * @return WelcomeCallListGenerator
+     */
+    protected function byLastEncounter() : WelcomeCallListGenerator
+    {
+        $this->patientList = $this->patientList->reject(function ($row) {
+            //Anything past this date is valid
+            $minEligibleDate = Carbon::createFromDate('2016', '02', '01');
+
+            if (!isset($row['last_encounter'])) {
+//                $this->ineligiblePatients[] = $row;
+                return true;
+            }
+
+            if (!$row['last_encounter']) {
+//                $this->ineligiblePatients[] = $row;
+                return true;
+            }
+
+            $lastEncounterDate = new Carbon($row['last_encounter']);
+
+            if ($lastEncounterDate->lt($minEligibleDate)) {
+//                $this->ineligiblePatients[] = $row;
+                return true;
+            }
+
+            return false;
+        });
+
+        return $this;
     }
 }
