@@ -27,19 +27,28 @@
                                             Program
                                         </th>
                                         <th>
-                                            DOB
+                                            Provider
                                         </th>
                                         <th>
-                                            Consent Timestamp
+                                            Status
+                                        </th>
+                                        <th>
+                                            MRN Number
                                         </th>
                                         <th>
                                             Phone Number
                                         </th>
                                         <th>
-                                            Scheduled Call
+                                            Attempt Count
                                         </th>
                                         <th>
-                                            Medical Record
+                                            Invite Opened At
+                                        </th>
+                                        <th>
+                                            Last Attempt At
+                                        </th>
+                                        <th>
+                                            Consented At
                                         </th>
                                     </tr>
                                     </thead>
@@ -61,13 +70,16 @@
                     columns: [
                         {data: 'name', name: 'name'},
                         {data: 'program', name: 'program'},
-                        {data: 'dob', name: 'dob'},
-                        {data: 'date', name: 'date'},
+                        {data: 'provider', name: 'provider'},
+                        {data: 'status', name: 'status'},
+                        {data: 'mrn_number', name: 'mrn_number'},
                         {data: 'phone', name: 'phone'},
-                        {data: 'hasCallScheduled', name: 'hasCallScheduled'},
-                        {data: 'hasMedicalRecord', name: 'hasMedicalRecord'}
+                        {data: 'attempt_count', name: 'attempt_count'},
+                        {data: 'invite_opened_at', name: 'invite_opened_at'},
+                        {data: 'last_attempt_at', name: 'last_attempt_at'},
+                        {data: 'consented_at', name: 'consented_at'},
                     ],
-                    "aaSorting":[3,'desc'],
+//                    "aaSorting":[3,'desc'],
                     "iDisplayLength": 25
                 });
 
