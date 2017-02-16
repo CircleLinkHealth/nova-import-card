@@ -39,8 +39,8 @@ var locationsVM = new Vue({
             deleteTheseLocations: [],
             newLocations: [],
 
-            sameEHRLogin: false,
             sameClinicalIssuesContact: false,
+            sameEHRLogin: false,
 
             patientClinicalIssuesContact: false,
             invalidCount: 0
@@ -72,6 +72,11 @@ var locationsVM = new Vue({
     ready: function () {
         for (var i = 0, len = cpm.existingLocations.length; i < len; i++) {
             this.newLocations.$set(i, cpm.existingLocations[i]);
+
+            if (i == 0) {
+                this.sameClinicalIssuesContact = cpm.existingLocations[i].sameClinicalIssuesContact;
+                this.sameEHRLogin = cpm.existingLocations[i].sameEHRLogin;
+            }
         }
 
         if (len < 1) {
@@ -142,7 +147,10 @@ var locationsVM = new Vue({
         submitForm: function (url) {
             this.$http.post(url, {
                 deleteTheseLocations: this.deleteTheseLocations,
-                locations: this.newLocations
+                locations: this.newLocations,
+                sameClinicalIssuesContact: this.sameClinicalIssuesContact,
+                sameEHRLogin: this.sameEHRLogin,
+
             }).then(function (response) {
                 // success
                 if (response.data.redirect_to) {
