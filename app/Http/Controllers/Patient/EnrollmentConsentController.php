@@ -115,8 +115,17 @@ class EnrollmentConsentController extends Controller
         $input = $request->input();
 
         $enrollee = Enrollee::find($input['enrollee_id']);
-        $enrollee->preferred_days = implode(', ', $input['days']);
-        $enrollee->preferred_window = $input['time'];
+
+        if(isset($input['days'])) {
+            $enrollee->preferred_days = implode(', ', $input['days']);
+
+        }
+
+        if(isset($input['time'])) {
+
+            $enrollee->preferred_window = $input['time'];
+        }
+
         $enrollee->save();
 
         return view('enrollment-consent.thanks', ['enrollee' => $enrollee]);

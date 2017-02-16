@@ -77,7 +77,7 @@
             <p class="info-list">Only one doctor at a time can provide this program</p>
             <p class="info-list">Withdraw anytime. Just give us a call</p>
             @if(isset($has_copay))
-                <p style="font-size: 20px;" class="flow-text">Medicare covers the program you may be responsible for a ~$8 per
+                <p class="info-list">Medicare covers the program you may be responsible for a ~$8 per
                     month co-pay</p>
             @endif
 
@@ -95,7 +95,7 @@
                     </blockquote>
                     <div class="row">
                         <div class="col s12 m6">
-                            <select class="input-field" name="days[]" id="days[]" multiple>
+                            <select class="" name="days[]" id="days[]" multiple>
                                 <option disabled selected>Select Days</option>
                                 <option value="1">Monday</option>
                                 <option value="2">Tuesday</option>
@@ -106,7 +106,7 @@
                             <label class="active" for="day">Day</label>
                         </div>
                         <div class="col s12 m6">
-                            <select class="input-field" name="time" id="time">
+                            <select class="" name="time" id="time">
                                 <option disabled selected>Select Times</option>
                                 <option value="10:00-12:00">10AM - Noon</option>
                                 <option value="12:00-15:00">Noon - 3PM</option>
