@@ -1878,19 +1878,19 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
             }
         }
 
-        $id = is_object($practice)
-            ? $practice->id
-            : $practice;
+        $practice = is_object($practice)
+            ? $practice
+            : Practice::find($practice);
 
         $roleId = is_object($roleId)
             ? $roleId->id
             : $roleId;
 
         try {
-            $exists = $this->practice($id);
+            $exists = $this->practice($practice);
 
             if ($exists) {
-                $this->practices()->detach($id);
+                $this->practices()->detach($practice);
             }
 
             $update = [];
