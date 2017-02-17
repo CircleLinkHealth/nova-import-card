@@ -86,6 +86,7 @@ var locationsVM = new Vue({
                 name: '',
                 phone: '',
                 fax: '',
+                emr_direct_address: '',
                 postal_code: '',
                 state: '',
                 validated: false
