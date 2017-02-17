@@ -34,7 +34,7 @@
                                 <label class="col-md-4 control-label">EMR Direct Address</label>
                                 <div class="col-md-6">
                                     <input type="email" class="form-control" name="emr_direct"
-                                           value="{{$location->emrDirect->first()->emr_direct ?? ''}}"
+                                           value="{{$location->emrDirect->first()->address ?? ''}}"
                                            placeholder="circlelinkhealth@test.directproject.net">
                                 </div>
                             </div>
