@@ -125,11 +125,12 @@ class Location extends Model
 
     public function setEmrDirectAddressAttribute($address)
     {
-        if (empty($address)) {
-            return false;
-        }
-
         $this->emrDirect()->delete();
+
+        if (empty($address)) {
+            //assume we wanted to delete the previous address
+            return true;
+        }
 
         $this->emrDirect()->create([
             'address' => $address,
