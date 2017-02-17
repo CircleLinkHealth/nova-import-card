@@ -118,7 +118,12 @@ class Location extends Model
         return $this->belongsToMany(User::class);
     }
 
-    public function setEmrDirectAddress($address)
+    public function getEmrDirectAddressAttribute()
+    {
+        return $this->emrDirect->first()->address ?? null;
+    }
+
+    public function setEmrDirectAddressAttribute($address)
     {
         if (empty($address)) {
             return false;
