@@ -25,40 +25,27 @@ class EnrollmentConsentController extends Controller
     public function index(){
 
         //todo change to Enrollee
-        $enrolled = Patient::where('ccm_status', 'consented')->with('user')->get();
+        $enrollees = Enrollee::where('status', '!=', 'enrolled')->get();
 
         $formatted = [];
         $count = 0;
 
-        foreach ($enrolled as $patient){
-            
-            $medicalRecord = ImportedMedicalRecord::where('patient_id', $patient->user->id)->first();
-            $scheduledCall = Call
-                ::where('inbound_cpm_id', $patient->user->id)
-                ->where('status', '=', 'scheduled')
-                ->first();
-
-            if($medicalRecord == null){
-                $medicalRecord = 'N/A';
-            } else {
-                $medicalRecord = 'Exists';
-            }
-
-            if($scheduledCall == null){
-                $scheduledCall = 'N/A';
-            } else {
-                $scheduledCall = $scheduledCall->scheduled_date;
-            }
+        foreach ($enrollees as $enrollee){
 
             $formatted[$count] = [
 
-                'name' => $patient->user->fullName,
-                'program' => ucwords(Practice::find($patient->user->program_id)->name),
-                'dob' => $patient->birth_date,
-                'date' => $patient->consent_date,
-                'phone' => $patient->user->primaryPhone,
-                'hasCallScheduled' => $scheduledCall,
-                'hasMedicalRecord' => $medicalRecord
+                'name' => $enrollee->first_name . ' ' . $enrollee->last_name,
+                'program' => ucwords(Practice::find($enrollee->practice_id)->name),
+                'provider' => ucwords(User::find($enrollee->provider_id)->fullName),
+                'status' => ucwords($enrollee->status),
+                'mrn_number' => ucwords($enrollee->mrn_number),
+                'dob' => ucwords($enrollee->dob),
+                'phone' => ucwords($enrollee->phone),
+                'attempt_count' => ucwords($enrollee->attempt_count),
+                'invite_sent_at' => ucwords($enrollee->invite_sent_at),
+                'invite_opened_at' => ucwords($enrollee->invite_opened_at),
+                'last_attempt_at' => ucwords($enrollee->last_attempt_at),
+                'consented_at' => ucwords($enrollee->consented_at),
 
             ];
             $count++;
@@ -67,7 +54,6 @@ class EnrollmentConsentController extends Controller
 
         $formatted = collect($formatted);
         $formatted->sortByDesc('date');
-
 
         return Datatables::collection($formatted)->make(true);
 
@@ -84,6 +70,7 @@ class EnrollmentConsentController extends Controller
 
         $enrollee = Enrollee::whereInviteCode($invite_code)->first();
         $enrollee->invite_opened_at = Carbon::now()->toDateTimeString();
+        $enrollee->save();
 
         if(is_null($enrollee)){
 
@@ -91,7 +78,7 @@ class EnrollmentConsentController extends Controller
 
         }
 
-        return view('enrollment-consent.create', ['enrollee' => $enrollee]);
+        return view('enrollment-consent.create', ['enrollee' => $enrollee, 'has_copay' => true]);
 
     }
 
@@ -114,8 +101,17 @@ class EnrollmentConsentController extends Controller
         $input = $request->input();
 
         $enrollee = Enrollee::find($input['enrollee_id']);
-        $enrollee->preferred_days = implode(', ', $input['days']);
-        $enrollee->preferred_window = $input['time'];
+
+        if(isset($input['days'])) {
+            $enrollee->preferred_days = implode(', ', $input['days']);
+
+        }
+
+        if(isset($input['time'])) {
+
+            $enrollee->preferred_window = $input['time'];
+        }
+
         $enrollee->save();
 
         return view('enrollment-consent.thanks', ['enrollee' => $enrollee]);

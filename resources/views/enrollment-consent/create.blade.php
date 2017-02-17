@@ -19,6 +19,15 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.98.0/js/materialize.min.js"></script>
 
     <style>
+
+        input.select-dropdown {
+            -webkit-user-select:none;
+            -moz-user-select:none;
+            -ms-user-select:none;
+            -o-user-select:none;
+            user-select:none;
+        }
+
         .headings {
 
             font-size: 23px;
@@ -37,6 +46,17 @@
             border-bottom: white 2px solid;
         }
 
+        .select-custom{
+
+            font-size: 12px;
+
+        }
+
+        .label{
+            font-size: 20px;
+            color: black;
+        }
+
 
     </style>
 
@@ -51,7 +71,13 @@
 </nav>
 
 <div class="container">
-    <p class="headings" style="padding-top: 0px; margin-bottom: -5px; color: black">Dear. {{$enrollee->first_name . ' ' . $enrollee->last_name}}, <br /> <br /> Dr. {{$enrollee->provider->fullName}} invites you to their new and @if(isset($has_copay)) free @endif personalized care program! Please read and enroll below.</p>
+    <p class="headings" style="padding-top: 0px; margin-bottom: 15px; color: black">
+        Dear. {{$enrollee->first_name . ' ' . $enrollee->last_name}}, <br /> <br />
+
+        I highly recommend you join my new personalized care program. @if(isset($has_copay))It’s free so please @else Please @endif enroll and read below.
+    <br />
+    <div class="right headings">- Dr. {{$enrollee->provider->last_name}}</div>
+
 </div>
 
 <div class="info">
@@ -66,12 +92,12 @@
                 <a class="waves-effect waves-light btn modal-trigger" v-on:click="saveConsent" href="#confirm">Consent</a>
             </div>
 
-            <p class="info-list">Calls from registered nurses 1-2x monthly on behalf of Dr. {{$enrollee->provider->last_name}}</p>
-            <p class="info-list">24/7 health message line (nurses call back shortly): (888) 729-4045</p>
+            <p class="info-list">Calls from registered nurses ~2x monthly so I can stay updated</p>
+            <p class="info-list">Health line for any question (nurses call you back): (888) 729-4045</p>
             <p class="info-list">Only one doctor at a time can provide this program</p>
-            <p class="info-list">Withdraw anytime by calling: (888) 729-4045</p>
+            <p class="info-list">Withdraw anytime. Just give us a call</p>
             @if(isset($has_copay))
-                <p style="font-size: 20px;" class="flow-text">- Medicare covers the program you may be responsible for a ~$8 per
+                <p class="info-list">Medicare covers the program you may be responsible for a ~$8 per
                     month co-pay</p>
             @endif
 
@@ -88,8 +114,9 @@
                         Optionally, you can tell us the best time to reach you:
                     </blockquote>
                     <div class="row">
-                        <div class="col s12 m6">
-                            <select class="input-field" name="days[]" id="days[]" multiple>
+                        <div class="col s12 m6 select-custom">
+                            <label for="days[]" class="label">Day</label>
+                            <select class="browser-default" name="days[]" id="days[]" multiple>
                                 <option disabled selected>Select Days</option>
                                 <option value="1">Monday</option>
                                 <option value="2">Tuesday</option>
@@ -97,16 +124,15 @@
                                 <option value="4">Thursday</option>
                                 <option value="5">Friday</option>
                             </select>
-                            <label class="active" for="day">Day</label>
                         </div>
-                        <div class="col s12 m6">
-                            <select class="input-field" name="time" id="time">
+                        <div class="col s12 m6 select-custom" >
+                            <label for="time" class="label">Times</label>
+                            <select class="browser-default" name="time" id="time">
                                 <option disabled selected>Select Times</option>
                                 <option value="10:00-12:00">10AM - Noon</option>
                                 <option value="12:00-15:00">Noon - 3PM</option>
                                 <option value="15:00-18:00">3PM - 6PM</option>
                             </select>
-                            <label class="active" for="time">Times</label>
                         </div>
                     </div>
                 </div>
