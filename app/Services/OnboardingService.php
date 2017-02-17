@@ -293,13 +293,19 @@ class OnboardingService
                 if ($newLocation['clinical_contact']['type'] == CarePerson::BILLING_PROVIDER) {
                     //do nothing
                 } else {
-                    $user = $this->users->create([
-                        'program_id' => $primaryPractice->id,
-                        'email'      => $newLocation['clinical_contact']['email'],
-                        'first_name' => $newLocation['clinical_contact']['firstName'],
-                        'last_name'  => $newLocation['clinical_contact']['lastName'],
-                        'password'   => 'password_not_set',
-                    ]);
+
+                    $user = User::whereEmail($newLocation['clinical_contact']['email'])
+                        ->first();
+
+                    if (!$user) {
+                        $user = $this->users->create([
+                            'program_id' => $primaryPractice->id,
+                            'email'      => $newLocation['clinical_contact']['email'],
+                            'first_name' => $newLocation['clinical_contact']['firstName'],
+                            'last_name'  => $newLocation['clinical_contact']['lastName'],
+                            'password'   => 'password_not_set',
+                        ]);
+                    }
 
                     $user->attachPractice($primaryPractice);
                     $user->attachLocation($location);
