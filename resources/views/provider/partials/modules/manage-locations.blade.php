@@ -188,7 +188,7 @@
                                'attributes' => [
                                    'v-model' => 'loc.emr_direct_address',
                                    'required' => 'required',
-                                   'pattern' => '',
+
                                    'v-on:change' => 'isValidated(index)',
                                    'v-on:invalid' => 'isValidated(index)',
                                    'v-on:keyup' => 'isValidated(index)',
@@ -209,7 +209,6 @@
                             'class' => 'col s6',
                             'attributes' => [
                                 'v-model' => 'loc.ehr_login',
-                                ':disabled' => 'sameEHRLogin && index > 0',
                                 'v-on:change' => 'isValidated(index)',
                                     'v-on:invalid' => 'isValidated(index)',
                                     'v-on:keyup' => 'isValidated(index)',
@@ -225,7 +224,6 @@
                             'attributes' => [
                                 'v-model' => 'loc.ehr_password',
                                 'autocomplete' => 'new-password',
-                                ':disabled' => 'sameEHRLogin && index > 0',
                                 'v-on:change' => 'isValidated(index)',
                                     'v-on:invalid' => 'isValidated(index)',
                                     'v-on:keyup' => 'isValidated(index)',

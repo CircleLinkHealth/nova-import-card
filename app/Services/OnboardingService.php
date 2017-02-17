@@ -278,6 +278,7 @@ class OnboardingService
                 ];
             }
 
+            $location->emr_direct_address = $newLocation['emr_direct_address'];
             $primaryPractice->same_clinical_contact = false;
 
             //If clinical contact is same for all, then get the data from the first location.
