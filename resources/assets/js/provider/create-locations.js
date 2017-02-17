@@ -4,14 +4,9 @@ Vue.use(require('vue-resource'));
 
 //Load components
 require('../components/CareTeam/search-providers.js');
-require('../components/Entities/location.js');
 require('../components/src/select.js');
 
 Vue.http.headers.common['X-CSRF-TOKEN'] = $('meta[name="csrf-token"]').attr('content');
-
-
-
-
 
 /**
  *
