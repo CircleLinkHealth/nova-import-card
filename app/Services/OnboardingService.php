@@ -325,6 +325,7 @@ class OnboardingService
                 $user->attachPractice($primaryPractice);
                 $user->attachLocation($location);
 
+                //clean up other contacts before adding the new one
                 $location->clinicalEmergencyContact()->sync([]);
 
                 $location->clinicalEmergencyContact()->attach($user->id, [
