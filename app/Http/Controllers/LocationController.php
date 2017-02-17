@@ -60,7 +60,7 @@ class LocationController extends Controller
         $saved = $newLocation->save();
 
         if (!empty($input['emr_direct'])) {
-            $saved->setEmrDirectAddress($input['emr_direct']);
+            $saved->emr_direct_address = $input['emr_direct'];
         }
 
         return $saved
@@ -143,7 +143,7 @@ class LocationController extends Controller
         $loc->update($input);
 
         if (!empty($input['emr_direct'])) {
-            $loc->setEmrDirectAddress($input['emr_direct']);
+            $loc->emr_direct_address = $input['emr_direct'];
         }
 
         return redirect()->route('locations.index')->with('messages', ['Location Updated!!']);

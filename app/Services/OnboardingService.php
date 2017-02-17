@@ -196,6 +196,7 @@ class OnboardingService
                 'validated'                 => true,
                 'phone'                     => StringManipulation::formatPhoneNumber($loc->phone),
                 'fax'                       => StringManipulation::formatPhoneNumber($loc->fax),
+                'emr_direct_address'        => $loc->emr_direct_address,
                 'sameClinicalIssuesContact' => $primaryPractice->same_clinical_contact,
                 'sameEHRLogin'              => $primaryPractice->same_ehr_login,
             ];
