@@ -95,16 +95,16 @@ class WelcomeCallListGenerator
                 }
 
                 //Iffy ICD-9 test
-                foreach ($cpmProblems as $problem) {
-                    if ($problemCode >= $problem->icd9from
-                        && $problemCode <= $problem->icd9to
-                        && !in_array($problem->id, $qualifyingProblemsCpmIdStack)
-                    ) {
-                        $qualifyingProblems[] = "{$problem->name}, ICD9: $problemCode";
-                        $qualifyingProblemsCpmIdStack[] = $problem->id;
-                        continue 2;
-                    }
-                }
+//                foreach ($cpmProblems as $problem) {
+//                    if ($problemCode >= $problem->icd9from
+//                        && $problemCode <= $problem->icd9to
+//                        && !in_array($problem->id, $qualifyingProblemsCpmIdStack)
+//                    ) {
+//                        $qualifyingProblems[] = "{$problem->name}, ICD9: $problemCode";
+//                        $qualifyingProblemsCpmIdStack[] = $problem->id;
+//                        continue 2;
+//                    }
+//                }
             }
 
             $qualifyingProblems = array_unique($qualifyingProblems);
