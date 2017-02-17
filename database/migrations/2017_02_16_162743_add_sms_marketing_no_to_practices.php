@@ -15,7 +15,7 @@ class AddSmsMarketingNoToPractices extends Migration
     {
         Schema::table('practices', function (Blueprint $table) {
 
-            $table->string('sms_marketing_number')->after('same_clinical_contact')->nullable();
+            $table->string('sms_marketing_number')->nullable();
 
         });
     }
