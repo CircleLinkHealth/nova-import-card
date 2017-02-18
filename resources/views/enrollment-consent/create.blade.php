@@ -65,7 +65,7 @@
 <nav>
     <div class="nav-wrapper center">
         <div class="mdl-layout__header-row" style="background: #4fb2e2; padding-left: 10px">
-            <span class="mdl-layout__title" style="color: white; font-size: 1.4em;">On Behalf of Dr. {{$enrollee->provider->last_name}}’s Office</span>
+            <span class="mdl-layout__title" style="color: white; font-size: 1.4em;">Dr. {{$enrollee->provider->fullName}}’s Office</span>
         </div>
     </div>
 </nav>
@@ -74,7 +74,8 @@
     <p class="headings" style="padding-top: 0px; margin-bottom: 15px; color: black">
         Dear. {{$enrollee->first_name . ' ' . $enrollee->last_name}}, <br /> <br />
 
-        I highly recommend you join my new personalized care program. @if(isset($has_copay))It’s free so please @else Please @endif enroll and read below.
+        I recommend you join my new personalized care program.
+        @if(isset($has_copay)) It’s free so please read below @else Please read below @endif and enroll.
     <br />
     <div class="right headings">- Dr. {{$enrollee->provider->last_name}}</div>
 
@@ -89,14 +90,14 @@
               class="col s12" style="padding-top: 20px;">
 
             <div class="row center">
-                <a class="waves-effect waves-light btn modal-trigger" v-on:click="saveConsent" href="#confirm">Consent</a>
+                <a class="waves-effect waves-light btn modal-trigger" v-on:click="saveConsent" href="#confirm">Enroll</a>
             </div>
 
             <p class="info-list">Calls from registered nurses ~2x monthly so I can stay updated</p>
             <p class="info-list">Health line for any question (nurses call you back): (888) 729-4045</p>
             <p class="info-list">Only one doctor at a time can provide this program</p>
             <p class="info-list">Withdraw anytime. Just give us a call</p>
-            @if(isset($has_copay))
+            @if(!isset($has_copay))
                 <p class="info-list">Medicare covers the program you may be responsible for a ~$8 per
                     month co-pay</p>
             @endif

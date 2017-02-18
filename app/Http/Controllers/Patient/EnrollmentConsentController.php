@@ -78,7 +78,7 @@ class EnrollmentConsentController extends Controller
 
         }
 
-        return view('enrollment-consent.create', ['enrollee' => $enrollee, 'has_copay' => true]);
+        return view('enrollment-consent.create', ['enrollee' => $enrollee]);
 
     }
 
