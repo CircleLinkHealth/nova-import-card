@@ -98,7 +98,7 @@ class NurseFinder
         //No matches, return first available window of
 
         $date_match['nurse'] = $this->nursesForPatient->first();
-        $date_match['window_match'] = 'No windows found, assigning same nurse to original patient target';
+        $date_match['window_match'] = 'No windows found, assigning `most successfully reached nurse` to original patient target';
 
         return $date_match;
 
