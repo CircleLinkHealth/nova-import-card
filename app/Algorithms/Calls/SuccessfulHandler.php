@@ -91,8 +91,16 @@ class SuccessfulHandler implements CallHandler
         //get the next call date based on patient preferences
         $this->getNextWindow();
 
-        //attach nurse to call, if any windows match.
-        $this->findNurse();
+        $result = (new NurseFinder(
+            $this->patient,
+            $this->nextCallDate,
+            $this->prediction['window_start'],
+            $this->prediction['window_end']))
+            ->find();
+
+        $this->prediction = (collect($this->prediction))->merge($result)->toArray();
+
+        $this->prediction['patient'] = $this->patient;
 
         //Add debug string
         $this->prediction['predicament'] = $this->createSchedulerInfoString();

@@ -9,6 +9,7 @@ use App\Note;
 use App\Nurse;
 use App\Patient;
 use App\PatientMonthlySummary;
+use App\Services\AthenaAPI\Calls;
 use App\Services\NoteService;
 use App\User;
 use Carbon\Carbon;
@@ -125,7 +126,9 @@ class SchedulerService
         $window_start = Carbon::parse($window_start)->format('H:i');
         $window_end = Carbon::parse($window_end)->format('H:i');
 
-        $nurse_id = ($nurse_id == '') ? null : $nurse_id;
+        $nurse_id = ($nurse_id == '')
+            ? null
+            : $nurse_id;
 
         $call = Call::create([
 
@@ -136,10 +139,10 @@ class SchedulerService
 
             'scheduler' => $scheduler,
 
-            'inbound_phone_number'  => $patient->patientInfo->phone
+            'inbound_phone_number' => $patient->patientInfo->phone
                 ? $patient->patientInfo->phone
                 : '',
-            
+
             'outbound_phone_number' => '',
 
             'inbound_cpm_id'  => $patient->id,
@@ -165,7 +168,7 @@ class SchedulerService
 
         //get all patients that are withdrawn
         $withdrawn = Patient::where('ccm_status', 'withdrawn')
-                                ->orWhere('ccm_status', 'paused')
+            ->orWhere('ccm_status', 'paused')
             ->pluck('user_id');
 
         $removed = [];
@@ -412,7 +415,7 @@ class SchedulerService
 
                         $last_attempted_time = $last_attempted_call->called_date;
 
-                        if($status){
+                        if ($status) {
 
                             $data = (new SuccessfulHandler($patient, Carbon::parse($last_attempted_time)));
 
