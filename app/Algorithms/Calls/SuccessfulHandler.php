@@ -102,9 +102,6 @@ class SuccessfulHandler implements CallHandler
 
         $this->prediction['patient'] = $this->patient;
 
-//        attach nurse to call, if any windows match.
-//        $this->findNurse();
-
         //Add debug string
         $this->prediction['predicament'] = $this->createSchedulerInfoString();
 
