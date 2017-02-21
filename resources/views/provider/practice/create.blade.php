@@ -25,7 +25,7 @@
                 </div>
 
                 <div class="input-field col s6">
-                    <label for="lead" class="active" data-error="required">Program Lead</label>
+                    <label for="lead" class="active" data-error="required">Practice Lead</label>
                     <div style="height: 15px;"></div>
                     <select id="lead" name="lead_id"
                             class="validate" required>
