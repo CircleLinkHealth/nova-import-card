@@ -488,6 +488,11 @@ Route::group(['middleware' => 'auth'], function () {
         'prefix'     => 'admin',
     ], function () {
 
+        Route::post('get-athena-ccdas', [
+            'uses' => 'CcdApi\Athena\AthenaApiController@getCcdas',
+            'as'   => 'get.athena.ccdas',
+        ]);
+
         Route::get('nursecalls/{from}/{to}', function (
             $from,
             $to
