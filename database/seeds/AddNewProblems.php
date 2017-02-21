@@ -1,5 +1,6 @@
 <?php
 
+use App\CarePlanTemplate;
 use App\CLH\CCD\Importer\SnomedToCpmIcdMap;
 use App\Models\CPM\CpmProblem;
 use Illuminate\Database\Seeder;
@@ -19,22 +20,39 @@ class AddNewProblems extends Seeder
                 'name' => 'Asthma',
             ]);
 
-//        $defaultCarePlan = CarePlanTemplate::find(1);
-//        $uiSort = 12;
+        CpmProblem::whereName('CAD')
+            ->update([
+                'name' => 'CAD/Ischemic Heart Disease',
+            ]);
+
+        $defaultCarePlan = CarePlanTemplate::find(1);
+        $uiSort = 12;
 
         foreach ($this->problems() as $name => $codes) {
             //Does a CPMProblem exist?
             $cpmProblem = CpmProblem::firstOrCreate(['name' => $name]);
 
-//            if (!in_array($cpmProblem->id, $defaultCarePlan->cpmProblems->pluck('id')->all())) {
-//                $defaultCarePlan->cpmProblems()->attach($cpmProblem, [
-//                    'has_instruction' => true,
-//                    'page'            => 1,
-//                    'ui_sort'         => $uiSort,
-//                ]);
-//
-//                $uiSort++;
-//            }
+            if ($name == 'COPD') {
+                $asthma = CpmProblem::whereName('Asthma')
+                    ->with('cpmInstructions')
+                    ->first();
+
+                if (count($asthma->cpmInstructions) > 0) {
+                    $defaultCarePlan->cpmProblems()->updateExistingPivot($cpmProblem->id, [
+                        'cpm_instruction_id' => $asthma->cpmInstructions[0]->id,
+                    ]);
+                }
+            }
+
+            if (!in_array($cpmProblem->id, $defaultCarePlan->cpmProblems->pluck('id')->all())) {
+                $defaultCarePlan->cpmProblems()->attach($cpmProblem, [
+                    'has_instruction' => true,
+                    'page'            => 1,
+                    'ui_sort'         => $uiSort,
+                ]);
+
+                $uiSort++;
+            }
 
             //ICD9 Check
             foreach ($codes['icd9'] as $icd9) {
@@ -2116,7 +2134,7 @@ class AddNewProblems extends Seeder
             ],
         ];
 
-        $problems['Ischemic Heart Disease'] = [
+        $problems['CAD/Ischemic Heart Disease'] = [
             'icd9'  => [
                 'DX 410.00',
                 '410.01',
