@@ -74,7 +74,6 @@ class OnboardingService
         $relevantRoles = [
             'med_assistant',
             'office_admin',
-            'practice-lead',
             'provider',
             'registered-nurse',
             'specialist',
