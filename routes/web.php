@@ -1,5 +1,14 @@
 <?php
 
+//$pdf = storage_path('pdfs/notes/2017-02-07-xsKTIK4106WdXiMNu8iMla4FPJSOcosNBXXMkAsX.pdf');
+//$efaxHandler = new PhaxioService('production');
+//$send = $efaxHandler->send('+18569839936', $pdf);
+//
+//dd($send);
+
+//(new PhiMail())->send('nbloch@emg.ssdirect.aprima.com', storage_path('pdfs/notes/2017-02-07-xsKTIK4106WdXiMNu8iMla4FPJSOcosNBXXMkAsX.pdf'), 'Sample-Pdf-Note-Circle_Link_Health.pdf');
+//dd();
+
 if (app()->environment() != 'production') {
 
     Route::get('rohan', function () {
