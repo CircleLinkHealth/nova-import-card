@@ -49,7 +49,7 @@
 
             <div class="col-md-4">
                 <div class="panel panel-default">
-                    <div class="panel-heading">Get Athena CCDs</div>
+                    <div class="panel-heading">Grab Athena CCDs by the EHR</div>
 
                     <div class="panel-body">
                         @include('partials.getAthenaCcdsById')

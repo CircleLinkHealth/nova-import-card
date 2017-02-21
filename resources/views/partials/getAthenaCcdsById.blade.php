@@ -15,7 +15,7 @@
             </select>
         </div>
 
-        <input type="submit" class="btn btn-primary" value="Go get em!" name="submit">
+        <input type="submit" class="btn btn-primary" value="Grab em!" name="submit">
 
     </form>
 </div>
