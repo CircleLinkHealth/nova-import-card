@@ -99,9 +99,9 @@ if (isset($patient) && !empty($patient)) {
                     <div class="row gutter">
                         <div class="col-xs-12">
                             <ul class="subareas__list">
-                                @if($problems)
-                                    @foreach($problems as $key => $value)
-                                        <li class='subareas__item inline-block col-xs-6 col-sm-3 print-row'>{{$key}}</li>
+                                @if($problemNames)
+                                    @foreach($problemNames as $prob)
+                                        <li class='subareas__item inline-block col-xs-6 col-sm-3 print-row'>{{$prob}}</li>
                                     @endforeach
                                 @endif
                             </ul>
