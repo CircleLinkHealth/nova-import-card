@@ -1169,6 +1169,11 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
         return $this->hasMany(CarePerson::class, 'user_id', 'id');
     }
 
+    public function getCareTeamReceivesAlertsAttribute()
+    {
+        return $this->careTeamMembers->where('alert', '=', true);
+    }
+
     public function getSendAlertToAttribute()
     {
         $ctmsa = [];
