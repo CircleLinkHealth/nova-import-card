@@ -13,7 +13,6 @@ use App\Contracts\PdfReport;
 use App\Contracts\PdfReportHandler;
 use App\ForeignId;
 use App\PatientReports;
-use App\User;
 
 class AprimaApiPdfHandler implements PdfReportHandler
 {
@@ -30,22 +29,16 @@ class AprimaApiPdfHandler implements PdfReportHandler
         //assuming relation patient exists and it returns a user object
         $patient = $report->patient;
 
-        $careTeam = $patient->careTeamMembers->where('alert', '=', true);
+        $careTeam = $patient->care_team_receives_alerts;
 
         //ProviderId of the Users this was sent to
         $sendTo = [];
 
-        foreach ($careTeam as $member) {
-            $providerId = $member->member_user_id;
+        foreach ($careTeam as $carePerson) {
+            $providerId = $carePerson->id;
 
             if (in_array($providerId, $sendTo)) {
                 continue;
-            }
-
-            $provider = User::find($providerId);
-
-            if (!$provider) {
-                return false;
             }
 
             $locationId = $patient->getpreferredContactLocationAttribute();
@@ -55,7 +48,9 @@ class AprimaApiPdfHandler implements PdfReportHandler
             }
 
             //get foreign provider id
-            $foreign_id = ForeignId::where('user_id', $providerId)->where('system', ForeignId::APRIMA)->first();
+            $foreign_id = ForeignId::where('user_id', $providerId)
+                ->where('system', ForeignId::APRIMA)
+                ->first();
 
             if (empty($foreign_id)) {
                 \Log::error("Provider $providerId has no Aprima Foreign id.");
