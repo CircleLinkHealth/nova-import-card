@@ -427,7 +427,8 @@ class NoteService
             $patientRecord->is_ccm_complex = 1;
             $patientRecord->save();
 
-            if($patient->cur_month_activity_time > 3600){
+            if($patient->cur_month_activity_time > 3600 && auth()->user()->roles[0]->name == 'care-center'){
+                // @todo fix to make update independent of nurses.
 
                 (new AlternativeCareTimePayableCalculator(auth()->user()->nurseInfo))->adjustPayOnCCMComplexSwitch60Mins();
 
