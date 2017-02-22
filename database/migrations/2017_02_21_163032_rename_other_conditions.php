@@ -14,7 +14,7 @@ class RenameOtherConditions extends Migration
     {
         CpmMisc::whereName('Other Conditions')
             ->update([
-                'name' => 'Conditions List',
+                'name' => 'Full Conditions List',
             ]);
     }
 

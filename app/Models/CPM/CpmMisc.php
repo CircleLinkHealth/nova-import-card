@@ -15,7 +15,7 @@ class CpmMisc extends Model implements Serviceable{
     const MEDICATION_LIST = 'Medication List';
     const OLD_MEDS_LIST = 'Old Meds List';
     const OTHER = 'Other';
-    const OTHER_CONDITIONS = 'Conditions List';
+    const OTHER_CONDITIONS = 'Full Conditions List';
     const SOCIAL_SERVICES = 'Social Services';
     const TRACK_CARE_TRANSITIONS = 'Track Care Transitions';
 
