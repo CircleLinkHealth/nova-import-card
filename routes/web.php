@@ -695,7 +695,7 @@ Route::group(['middleware' => 'auth'], function () {
         });
 
         Route::get('emr-direct/check', function () {
-            (new \App\Services\PhiMail\PhiMail())->sendReceive();
+            (new \App\Services\PhiMail\PhiMail())->receive();
         });
 
         Route::get('dupes', function () {
