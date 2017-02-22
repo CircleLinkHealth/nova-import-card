@@ -593,7 +593,6 @@ Route::group(['middleware' => 'auth'], function () {
 
         Route::get('calls/{patientId}', 'CallController@showCallsForPatient');
 
-
         Route::group([
             'prefix' => 'reports',
         ], function () {
