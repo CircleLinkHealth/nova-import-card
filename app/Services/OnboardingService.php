@@ -74,7 +74,6 @@ class OnboardingService
         $relevantRoles = [
             'med_assistant',
             'office_admin',
-            'practice-lead',
             'provider',
             'registered-nurse',
             'specialist',
@@ -196,6 +195,7 @@ class OnboardingService
                 'validated'                 => true,
                 'phone'                     => StringManipulation::formatPhoneNumber($loc->phone),
                 'fax'                       => StringManipulation::formatPhoneNumber($loc->fax),
+                'emr_direct_address'        => $loc->emr_direct_address,
                 'sameClinicalIssuesContact' => $primaryPractice->same_clinical_contact,
                 'sameEHRLogin'              => $primaryPractice->same_ehr_login,
             ];
@@ -218,12 +218,12 @@ class OnboardingService
         $created = [];
         $i = 0;
 
-        try {
-            $sameClinicalContact = $request->input('sameClinicalIssuesContact');
-            $sameEHRLogin = $request->input('sameEHRLogin');
 
-            foreach ($request->input('locations') as $index => $newLocation) {
+        $sameClinicalContact = $request->input('sameClinicalIssuesContact');
+        $sameEHRLogin = $request->input('sameEHRLogin');
 
+        foreach ($request->input('locations') as $index => $newLocation) {
+            try {
                 if (isset($newLocation['id'])) {
                     $location = $this->locations
                         ->skipPresenter()
@@ -269,56 +269,75 @@ class OnboardingService
 
                     $created[] = $i;
                 }
-
-                $primaryPractice->same_clinical_contact = false;
-
-                //If clinical contact is same for all, then get the data from the first location.
-                if ($sameClinicalContact) {
-                    $newLocation['clinical_contact']['type'] = $request->input('locations')[0]['clinical_contact']['type'];
-                    $newLocation['clinical_contact']['email'] = $request->input('locations')[0]['clinical_contact']['email'];
-                    $newLocation['clinical_contact']['firstName'] = $request->input('locations')[0]['clinical_contact']['firstName'];
-                    $newLocation['clinical_contact']['lastName'] = $request->input('locations')[0]['clinical_contact']['lastName'];
-
-                    $primaryPractice->same_clinical_contact = true;
-                }
-
-                $primaryPractice->same_ehr_login = false;
-
-                if ($sameEHRLogin) {
-                    $primaryPractice->same_ehr_login = true;
-                }
-
-                $primaryPractice->save();
-
-                if ($newLocation['clinical_contact']['type'] == CarePerson::BILLING_PROVIDER) {
-                    //do nothing
-                } else {
-                    $user = $this->users->create([
-                        'program_id' => $primaryPractice->id,
-                        'email'      => $newLocation['clinical_contact']['email'],
-                        'first_name' => $newLocation['clinical_contact']['firstName'],
-                        'last_name'  => $newLocation['clinical_contact']['lastName'],
-                        'password'   => 'password_not_set',
-                    ]);
-
-                    $user->attachPractice($primaryPractice);
-                    $user->attachLocation($location);
-
-                    $location->clinicalEmergencyContact()->attach($user->id, [
-                        'name' => $newLocation['clinical_contact']['type'],
-                    ]);
-                }
-
-                $primaryPractice->lead->attachLocation($location);
-
-                $i++;
+            } catch (ValidatorException $e) {
+                $errors[] = [
+                    'index'    => $index,
+                    'messages' => $e->getMessageBag()->getMessages(),
+                    'input'    => $newLocation,
+                ];
             }
-        } catch (ValidatorException $e) {
-            $errors[] = [
-                'index'    => $index,
-                'messages' => $e->getMessageBag()->getMessages(),
-                'input'    => $newLocation,
-            ];
+
+            $location->emr_direct_address = $newLocation['emr_direct_address'];
+            $primaryPractice->same_clinical_contact = false;
+
+            //If clinical contact is same for all, then get the data from the first location.
+            if ($sameClinicalContact) {
+                $newLocation['clinical_contact']['type'] = $request->input('locations')[0]['clinical_contact']['type'];
+                $newLocation['clinical_contact']['email'] = $request->input('locations')[0]['clinical_contact']['email'];
+                $newLocation['clinical_contact']['firstName'] = $request->input('locations')[0]['clinical_contact']['firstName'];
+                $newLocation['clinical_contact']['lastName'] = $request->input('locations')[0]['clinical_contact']['lastName'];
+
+                $primaryPractice->same_clinical_contact = true;
+            }
+
+            $primaryPractice->same_ehr_login = false;
+
+            if ($sameEHRLogin) {
+                $primaryPractice->same_ehr_login = true;
+            }
+
+            $primaryPractice->save();
+
+            if ($newLocation['clinical_contact']['type'] == CarePerson::BILLING_PROVIDER) {
+                //do nothing
+            } else {
+
+                $user = User::whereEmail($newLocation['clinical_contact']['email'])
+                    ->first();
+
+                if (!$user) {
+                    try {
+                        $user = $this->users->create([
+                            'program_id' => $primaryPractice->id,
+                            'email'      => $newLocation['clinical_contact']['email'],
+                            'first_name' => $newLocation['clinical_contact']['firstName'],
+                            'last_name'  => $newLocation['clinical_contact']['lastName'],
+                            'password'   => 'password_not_set',
+                        ]);
+                    } catch (ValidatorException $e) {
+                        $errors[] = [
+                            'index'    => $index,
+                            'messages' => $e->getMessageBag()->getMessages(),
+                            'input'    => $newLocation,
+                        ];
+                    }
+                }
+
+                $user->attachPractice($primaryPractice);
+                $user->attachLocation($location);
+
+                //clean up other contacts before adding the new one
+                $location->clinicalEmergencyContact()->sync([]);
+
+                $location->clinicalEmergencyContact()->attach($user->id, [
+                    'name' => $newLocation['clinical_contact']['type'],
+                ]);
+            }
+
+            if ($primaryPractice->lead) {
+                $primaryPractice->lead->attachLocation($location);
+            }
+            $i++;
         }
 
         if (isset($errors)) {

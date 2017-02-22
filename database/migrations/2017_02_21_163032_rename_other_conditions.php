@@ -1,8 +1,9 @@
 <?php
 
+use App\Models\CPM\CpmMisc;
 use Illuminate\Database\Migrations\Migration;
 
-class UpdateProblems extends Migration
+class RenameOtherConditions extends Migration
 {
     /**
      * Run the migrations.
@@ -11,9 +12,10 @@ class UpdateProblems extends Migration
      */
     public function up()
     {
-        Artisan::call('db:seed', [
-            '--class' => AddNewProblems::class,
-        ]);
+        CpmMisc::whereName('Other Conditions')
+            ->update([
+                'name' => 'Full Conditions List',
+            ]);
     }
 
     /**

@@ -92,11 +92,6 @@ class Location extends Model
             ->withTimestamps();
     }
 
-    public function contactCard()
-    {
-        return $this->morphMany(ContactCard::class, 'contactCardable');
-    }
-
     public function practice()
     {
         return $this->belongsTo(Practice::class);
@@ -123,4 +118,27 @@ class Location extends Model
         return $this->belongsToMany(User::class);
     }
 
+    public function getEmrDirectAddressAttribute()
+    {
+        return $this->emrDirect->first()->address ?? null;
+    }
+
+    public function setEmrDirectAddressAttribute($address)
+    {
+        $this->emrDirect()->delete();
+
+        if (empty($address)) {
+            //assume we wanted to delete the previous address
+            return true;
+        }
+
+        $this->emrDirect()->create([
+            'address' => $address,
+        ]);
+    }
+
+    public function emrDirect()
+    {
+        return $this->morphMany(EmrDirectAddress::class, 'emrDirectable');
+    }
 }

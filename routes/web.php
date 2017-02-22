@@ -1,5 +1,20 @@
 <?php
 
+//I kinda hate having those here. @todo: Move them
+//Send Fax Sample
+//
+//$pdf = storage_path('pdfs/notes/2017-02-07-xsKTIK4106WdXiMNu8iMla4FPJSOcosNBXXMkAsX.pdf');
+//$efaxHandler = new PhaxioService('production');
+//$send = $efaxHandler->send('+18569839936', $pdf);
+//
+//dd($send);
+
+//Send EMR Direct Sample
+//
+//(new PhiMail())->send('nbloch@emg.ssdirect.aprima.com', storage_path('pdfs/notes/2017-02-07-xsKTIK4106WdXiMNu8iMla4FPJSOcosNBXXMkAsX.pdf'), 'Sample-Pdf-Note-Circle_Link_Health.pdf');
+//
+//dd();
+
 if (app()->environment() != 'production') {
 
     Route::get('rohan', function () {
@@ -474,6 +489,11 @@ Route::group(['middleware' => 'auth'], function () {
         'prefix'     => 'admin',
     ], function () {
 
+        Route::post('get-athena-ccdas', [
+            'uses' => 'CcdApi\Athena\AthenaApiController@getCcdas',
+            'as'   => 'get.athena.ccdas',
+        ]);
+
         Route::get('nursecalls/{from}/{to}', function (
             $from,
             $to
@@ -573,7 +593,6 @@ Route::group(['middleware' => 'auth'], function () {
         ]);
 
         Route::get('calls/{patientId}', 'CallController@showCallsForPatient');
-
 
         Route::group([
             'prefix' => 'reports',
@@ -676,7 +695,7 @@ Route::group(['middleware' => 'auth'], function () {
         });
 
         Route::get('emr-direct/check', function () {
-            (new \App\Services\PhiMail\PhiMail())->sendReceive();
+            (new \App\Services\PhiMail\PhiMail())->receive();
         });
 
         Route::get('dupes', function () {

@@ -99,7 +99,8 @@
                         class="btn btn-default btn-xs btn-monitor collapse {{ in_array($item->id, $section->patientItemIds) ? 'in' : '' }} text-right"
                         id="collapseItem-{{ $section->name }}-{{$i}}{{$item->id}}" data-toggle="modal"
                         data-target="#{{ $section->name }}-{{$i}}{{$item->id}}-Detail"
-                        style="margin-top:0px;    margin-bottom: 0px;">{{ $buttonLabel }}</button>
+                        style="margin-top:0px;    margin-bottom: 0px;"><span><i class="glyphicon glyphicon-pencil"></i></span>
+                </button>
 
                 <!-- Modal -->
                 <div id="{{ $section->name }}-{{$i}}{{$item->id}}-Detail" class="modal fade text-left"
@@ -122,8 +123,8 @@
                                     @include('partials.ccd-models.items.allergies')
                                 @else
                                     <textarea id="item-{{ $section->name }}-{{$i}}{{$item->id}}-modal"
-                                          name="instructions[{{ $section->name }}][{{ $item->id }}]"
-                                          style="height: 400px;">{{ trim($instructionName) }}</textarea>
+                                              name="instructions[{{ $section->name }}][{{ $item->id }}]"
+                                              style="height: 400px;">{{ trim($instructionName) }}</textarea>
                                 @endif
                             </div>
                             <div class="modal-footer">

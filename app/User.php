@@ -1169,6 +1169,19 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
         return $this->hasMany(CarePerson::class, 'user_id', 'id');
     }
 
+    /**
+     * Get the CarePeople who have subscribed to receive alerts for this Patient.
+     * Returns an array of User objects.
+     *
+     * @return User[]
+     */
+    public function getCareTeamReceivesAlertsAttribute()
+    {
+        return $this->careTeamMembers->where('alert', '=', true)->map(function ($carePerson) {
+            return $carePerson->user;
+        });
+    }
+
     public function getSendAlertToAttribute()
     {
         $ctmsa = [];
@@ -1924,19 +1937,26 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
 
     /**
      * Get the specified Practice, if it is related to this User
+     * You can pass in a practice_id, practice_slug, or  App\Practice object
      *
-     * @param $practiceId
+     * @param $practice
      *
      * @return mixed
      */
-    public function practice($practiceId)
+    public function practice($practice)
     {
-        if (is_object($practiceId)) {
-            $practiceId = $practiceId->id;
+        if (is_string($practice) && !is_int($practice)) {
+            return $this->practices()
+                ->where('name', '=', $practice)
+                ->first();
+        }
+
+        if (is_object($practice)) {
+            $practice = $practice->id;
         }
 
         return $this->practices()
-            ->where('program_id', '=', $practiceId)
+            ->where('program_id', '=', $practice)
             ->first();
     }
 
