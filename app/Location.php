@@ -1,12 +1,14 @@
 <?php
 namespace App;
 
+use App\Traits\HasEmrDirectAddress;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Location extends Model
 {
-    use SoftDeletes;
+    use HasEmrDirectAddress,
+        SoftDeletes;
 
     //Aprima's constant location id.
     const UPG_PARENT_LOCATION_ID = 26;
@@ -116,29 +118,5 @@ class Location extends Model
     public function user()
     {
         return $this->belongsToMany(User::class);
-    }
-
-    public function getEmrDirectAddressAttribute()
-    {
-        return $this->emrDirect->first()->address ?? null;
-    }
-
-    public function setEmrDirectAddressAttribute($address)
-    {
-        $this->emrDirect()->delete();
-
-        if (empty($address)) {
-            //assume we wanted to delete the previous address
-            return true;
-        }
-
-        $this->emrDirect()->create([
-            'address' => $address,
-        ]);
-    }
-
-    public function emrDirect()
-    {
-        return $this->morphMany(EmrDirectAddress::class, 'emrDirectable');
     }
 }
