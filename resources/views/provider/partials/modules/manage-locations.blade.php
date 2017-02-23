@@ -184,6 +184,7 @@
                            'name' => "locations[@{{index}}][emr_direct_address]",
                            'label' => 'EMR Direct Address',
                            'class' =>'col s6',
+                           'type' => 'email',
                            'value' => '@{{loc.emr_direct_address}}',
                                'attributes' => [
                                    'v-model' => 'loc.emr_direct_address',
