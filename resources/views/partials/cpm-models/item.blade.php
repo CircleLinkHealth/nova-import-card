@@ -115,11 +115,11 @@
                                     : {{ $buttonLabel }}</h4>
                             </div>
                             <div class="modal-body">
-                                @if( $item->name == 'Medication List' )
+                                @if( $item->name == App\Models\CPM\CpmMisc::MEDICATION_LIST )
                                     @include('partials.ccd-models.items.medications')
-                                @elseif( $item->name == 'Other Conditions' )
+                                @elseif( $item->name == App\Models\CPM\CpmMisc::OTHER_CONDITIONS )
                                     @include('partials.ccd-models.items.problems')
-                                @elseif( $item->name == 'Allergies' )
+                                @elseif( $item->name == App\Models\CPM\CpmMisc::ALLERGIES )
                                     @include('partials.ccd-models.items.allergies')
                                 @else
                                     <textarea id="item-{{ $section->name }}-{{$i}}{{$item->id}}-modal"
