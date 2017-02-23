@@ -20,6 +20,7 @@ use App\Models\EmailSettings;
 use App\Models\MedicalRecords\Ccda;
 use App\Notifications\ResetPassword;
 use App\Services\UserService;
+use App\Traits\HasEmrDirectAddress;
 use DateTime;
 use Faker\Factory;
 use Illuminate\Auth\Authenticatable;
@@ -36,7 +37,11 @@ use Zizaco\Entrust\Traits\EntrustUserTrait;
 class User extends Model implements AuthenticatableContract, CanResetPasswordContract, Serviceable
 {
 
-    use Authenticatable, CanResetPassword, Notifiable, SoftDeletes;
+    use Authenticatable,
+        CanResetPassword,
+        HasEmrDirectAddress,
+        Notifiable,
+        SoftDeletes;
 
     use EntrustUserTrait {
         EntrustUserTrait::restore insteadof SoftDeletes;
