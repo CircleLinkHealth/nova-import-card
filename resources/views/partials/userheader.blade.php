@@ -1,12 +1,19 @@
 <?php
 // calculate display, fix bug where gmdate('i:s') doesnt work for > 24hrs
-$seconds = $patient->patientInfo()->first()->cur_month_activity_time;
+$seconds = 0;
+if ($patient->patientInfo) {
+    $seconds = $patient->patientInfo()->first()->cur_month_activity_time;
+}
 $H = floor($seconds / 3600);
 $i = ($seconds / 60) % 60;
 $s = $seconds % 60;
 $monthlyTime = sprintf("%02d:%02d:%02d", $H, $i, $s);
 $ccm_above = false;
-$ccm_complex = $patient->patientInfo->isCCMComplex() ?? false;
+
+$ccm_complex = false;
+if ($patient->patientInfo) {
+    $ccm_complex = $patient->patientInfo->isCCMComplex() ?? false;
+}
 
 if ($seconds > 1199 && !$ccm_complex) {
     $ccm_above = true;

@@ -9,6 +9,7 @@ use App\Models\CPM\Biometrics\CpmBloodPressure;
 use App\Models\CPM\Biometrics\CpmBloodSugar;
 use App\Models\CPM\Biometrics\CpmSmoking;
 use App\Models\CPM\Biometrics\CpmWeight;
+use App\Patient;
 use App\PatientContactWindow;
 use App\Practice;
 use App\Role;
@@ -440,6 +441,13 @@ class PatientCareplanController extends Controller
             $patient = User::where('id', $patientId)->first();
             //Update patient info changes
             $info = $patient->patientInfo;
+
+            if (!$patient->patientInfo) {
+                $info = new Patient([
+                    'user_id' => $patient->id,
+                ]);
+            }
+
             if ($params->get('general_comment')) {
                 $info->general_comment = $params->get('general_comment');
             }

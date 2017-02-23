@@ -129,12 +129,16 @@ class DatatablesController extends Controller
                 return '<a href="#"><span class="cpm-editable-icon" call-id="'.$call->call_id.'" column-name="attempt_note" column-value="'.$attemptNote.'">'.$attemptNote.'</span>';
             })
             ->addColumn('ccm_complex', function($call) {
-                 if($call->inboundUser->patientInfo->isCCMComplex()){
+                $isCcmComplex = $call->inboundUser->patientInfo
+                    ? $call->inboundUser->patientInfo->isCCMComplex()
+                    : null;
+
+                if ($isCcmComplex) {
                      return "<span id=\"complex_tag\" hidden style=\"background-color: #ec683e;\" class=\"label label-warning\"> Complex CCM</span>";
 
                  } else {
                      return '';
-                 };
+                }
             })
             ->editColumn('scheduled_date', function($call) {
                 return '<a href="#"><span class="cpm-editable-icon" call-id="'.$call->call_id.'" column-name="scheduled_date" column-value="'.$call->scheduled_date.'">'.$call->scheduled_date.'</span>';
