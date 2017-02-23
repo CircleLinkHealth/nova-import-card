@@ -73,15 +73,17 @@ class Problems extends BaseImporter
 
             $codeType = $importedProblem->getCodeType();
 
-            $problemMap = SnomedToCpmIcdMap::where($codeType, '=', $importedProblem->code)
-                ->first();
+            if ($codeType && $importedProblem->code) {
+                $problemMap = SnomedToCpmIcdMap::where($codeType, '=', $importedProblem->code)
+                    ->first();
 
-            if ($problemMap) {
-                array_push($problemsToActivate, $problemMap->cpm_problem_id);
-                $importedProblem->activate = true;
-                $importedProblem->cpm_problem_id = $problemMap->cpm_problem_id;
-                $importedProblem->save();
-                continue;
+                if ($problemMap) {
+                    array_push($problemsToActivate, $problemMap->cpm_problem_id);
+                    $importedProblem->activate = true;
+                    $importedProblem->cpm_problem_id = $problemMap->cpm_problem_id;
+                    $importedProblem->save();
+                    continue;
+                }
             }
 
             /*
@@ -95,7 +97,7 @@ class Problems extends BaseImporter
                         continue;
                     }
 
-                    if (strpos($importedProblem->name, $keyword)) {
+                    if (str_contains(strtolower($importedProblem->name), strtolower($keyword))) {
                         array_push($problemsToActivate, $cpmProblem->id);
                         $importedProblem->activate = true;
                         $importedProblem->cpm_problem_id = $cpmProblem->id;
