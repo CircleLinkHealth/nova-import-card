@@ -71,66 +71,17 @@ class Problems extends BaseImporter
 
         foreach ($problemImports as $importedProblem) {
 
-            /*
-             * ICD-9 Check
-             */
-            if ((str_contains(strtolower($importedProblem->code_system_name), 'icd')
-                    && str_contains(strtolower($importedProblem->code_system_name), '9'))
-                || $importedProblem->code_system == '2.16.840.1.113883.6.103'
-            ) {
-                foreach ($cpmProblems as $cpmProblem) {
-                    if ($importedProblem->code >= $cpmProblem->icd9from
-                        && $importedProblem->code <= $cpmProblem->icd9to
-                    ) {
-                        array_push($problemsToActivate, $cpmProblem->name);
-                        $importedProblem->activate = true;
-                        $importedProblem->cpm_problem_id = $cpmProblem->id;
-                        $importedProblem->save();
-                        continue 2;
-                    }
-                }
-            }
+            $codeType = $importedProblem->getCodeType();
 
-            /*
-                 * SNOMED Check
-                 */
-            if (str_contains(strtolower($importedProblem->code_system_name), 'snomed')
-                || $importedProblem->code_system == '2.16.840.1.113883.6.96'
-            ) {
-                $potentialICD10List = SnomedToCpmIcdMap::whereSnomedCode($importedProblem->code)
-                    ->get();
+            $problemMap = SnomedToCpmIcdMap::where($codeType, '=', $importedProblem->code)
+                ->first();
 
-                if (!$potentialICD10List->isEmpty()) {
-                    $condition = $potentialICD10List->first();
-
-                    $importedProblem->code_system_name = 'ICD-10';
-                    $importedProblem->code_system = '2.16.840.1.113883.6.3';
-                    $importedProblem->code = $condition->icd_10_code;
-                    $importedProblem->name = $condition->icd_10_name;
-                }
-            }
-
-            /*
-             * ICD-10 Check
-             */
-            if ((str_contains(strtolower($importedProblem->code_system_name), 'icd')
-                    && str_contains(strtolower($importedProblem->code_system_name), '10'))
-                || in_array($importedProblem->code_system, [
-                    '2.16.840.1.113883.6.3',
-                    '2.16.840.1.113883.6.4',
-                ])
-            ) {
-                foreach ($cpmProblems as $cpmProblem) {
-                    if ((string)$importedProblem->code >= (string)$cpmProblem->icd10from
-                        && (string)$importedProblem->code <= (string)$cpmProblem->icd10to
-                    ) {
-                        array_push($problemsToActivate, $cpmProblem->name);
-                        $importedProblem->activate = true;
-                        $importedProblem->cpm_problem_id = $cpmProblem->id;
-                        $importedProblem->save();
-                        continue 2;
-                    }
-                }
+            if ($problemMap) {
+                array_push($problemsToActivate, $problemMap->cpm_problem_id);
+                $importedProblem->activate = true;
+                $importedProblem->cpm_problem_id = $problemMap->cpm_problem_id;
+                $importedProblem->save();
+                continue;
             }
 
             /*
@@ -145,7 +96,7 @@ class Problems extends BaseImporter
                     }
 
                     if (strpos($importedProblem->name, $keyword)) {
-                        array_push($problemsToActivate, $cpmProblem->name);
+                        array_push($problemsToActivate, $cpmProblem->id);
                         $importedProblem->activate = true;
                         $importedProblem->cpm_problem_id = $cpmProblem->id;
                         $importedProblem->save();
