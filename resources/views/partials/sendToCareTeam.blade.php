@@ -3,11 +3,11 @@
         <label>Send To</label>
     </div>
     <div class="col-sm-12">
-        <input type="checkbox" id="notify-circlelink-support" name="notify_circlelink_support">
+        <input type="checkbox" id="notify-circlelink-support" name="notify_circlelink_support" value="1">
         <label for="notify-circlelink-support"><span> </span>CircleLink Support</label>
     </div>
     <div class="col-sm-12">
-        <input type="checkbox" id="notify-careteam" name="notify_careteam">
+        <input type="checkbox" id="notify-careteam" name="notify_careteam" value="1">
         <label for="notify-careteam"><span> </span>Provider/CareTeam</label>
     </div>
     <div class="col-sm-12">
