@@ -121,6 +121,7 @@ class OnboardingService
                 'errorCount'         => 0,
                 'role_id'            => $roleId,
                 'locations'          => $user->locations->pluck('id'),
+                'emr_direct_address' => $user->emr_direct_address,
             ];
         });
 
@@ -393,6 +394,7 @@ class OnboardingService
                     $created[] = $i;
                 }
 
+                $user->emr_direct_address = $newUser['emr_direct_address'];
                 $user->attachRole($newUser['role_id']);
 
                 $grandAdminRights = false;
