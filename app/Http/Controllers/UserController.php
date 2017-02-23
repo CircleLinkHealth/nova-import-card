@@ -191,7 +191,7 @@ class UserController extends Controller
         ]);
 
     }
-    
+
     public function storeQuickPatient()
     {
         if (!Auth::user()->can('users-create')) {
@@ -406,9 +406,13 @@ class UserController extends Controller
         // patientInfo
         if ($role->name == 'participant') {
             $revisionHistory = collect([]);
-            foreach ($patient->patientInfo->revisionHistory->sortByDesc('updated_at')->take(10) as $history) {
-                $revisionHistory->push($history);
+
+            if ($patient->patientInfo) {
+                foreach ($patient->patientInfo->revisionHistory->sortByDesc('updated_at')->take(10) as $history) {
+                    $revisionHistory->push($history);
+                }
             }
+
             $revisions['Patient Info'] = $revisionHistory;
         }
 
