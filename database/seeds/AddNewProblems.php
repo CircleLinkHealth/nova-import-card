@@ -48,7 +48,7 @@ class AddNewProblems extends Seeder
                 $defaultCarePlan->cpmProblems()->attach($cpmProblem, [
                     'has_instruction' => true,
                     'page'            => 1,
-                    'ui_sort'         => $uiSort,
+                    //                    'ui_sort'         => $uiSort,
                 ]);
 
                 $uiSort++;
