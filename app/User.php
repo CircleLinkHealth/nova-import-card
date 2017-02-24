@@ -871,12 +871,23 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
         if (!$this->phoneNumbers) {
             return '';
         }
-        $phoneNumber = $this->phoneNumbers->where('type', 'home')->first();
-        if ($phoneNumber) {
-            return $phoneNumber->number;
-        } else {
-            return '';
+
+        $phoneNumbers = $this->phoneNumbers;
+
+        if (count($phoneNumbers) == 1) {
+            return $phoneNumbers->first()->number;
         }
+
+        $primary = $phoneNumbers->where('is_primary', true)->first();
+        if ($primary) {
+            return $primary->number;
+        }
+
+        if ($phoneNumbers) {
+            return $phoneNumbers->first()->number;
+        }
+
+        return '';
     }
 
     public function setHomePhoneNumberAttribute($value)
