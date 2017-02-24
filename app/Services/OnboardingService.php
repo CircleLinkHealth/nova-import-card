@@ -16,6 +16,7 @@ use App\Contracts\Repositories\UserRepository;
 use App\Facades\StringManipulation;
 use App\PhoneNumber;
 use App\Practice;
+use App\ProviderInfo;
 use App\Role;
 use App\User;
 use Illuminate\Database\QueryException;
@@ -380,6 +381,10 @@ class OnboardingService
                     'number'     => StringManipulation::formatPhoneNumber($newUser['phone_number']),
                     'type'       => PhoneNumber::getTypes()[$newUser['phone_type']],
                     'is_primary' => true,
+                ]);
+
+                $providerInfoCreated = ProviderInfo::firstOrCreate([
+                    'user_id' => $user->id,
                 ]);
 
 //                $user->notify(new StaffInvite($implementationLead, $primaryPractice));
