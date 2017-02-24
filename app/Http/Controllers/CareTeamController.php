@@ -131,7 +131,7 @@ class CareTeamController extends Controller
             $providerInfo = $input['user']['provider_info'];
 
             $provider = ProviderInfo::updateOrCreate([
-                'id'      => $providerInfo['id'],
+                'id'      => $providerInfo['id'] ?? null,
                 'user_id' => $providerUser->id,
             ], [
                 'qualification' => $providerInfo['qualification'],
