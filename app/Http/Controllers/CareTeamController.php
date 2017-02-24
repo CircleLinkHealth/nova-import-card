@@ -131,10 +131,10 @@ class CareTeamController extends Controller
             $providerInfo = $input['user']['provider_info'];
 
             $args = [];
-            if ($providerInfo['qualification']) {
+            if (array_key_exists('qualification', $providerInfo)) {
                 $args['qualification'] = $providerInfo['qualification'];
             }
-            if ($providerInfo['specialty']) {
+            if (array_key_exists('specialty', $providerInfo)) {
                 $args['specialty'] = $providerInfo['specialty'];
             }
 
