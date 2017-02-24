@@ -491,6 +491,8 @@ class ReportsController extends Controller
             ->orderBy('type')
             ->get()
             ->transform(function ($member) {
+                $member->user->firstOrNewProviderInfo();
+
                 $member->formatted_type = snakeToSentenceCase($member->type);
                 $member->specialty = $member->user->getSpecialtyAttribute();
                 $member->is_billing_provider = $member->type == CarePerson::BILLING_PROVIDER;

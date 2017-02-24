@@ -2151,4 +2151,15 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
 
         return true;
     }
+
+    public function firstOrNewProviderInfo()
+    {
+        if (!$this->hasRole('provider')) {
+            return false;
+        }
+
+        return ProviderInfo::firstOrCreate([
+            'user_id' => $this->id,
+        ]);
+    }
 }
