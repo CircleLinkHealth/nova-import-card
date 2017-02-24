@@ -130,13 +130,18 @@ class CareTeamController extends Controller
         if (isset($input['user']['provider_info'])) {
             $providerInfo = $input['user']['provider_info'];
 
+            $args = [];
+            if ($providerInfo['qualification']) {
+                $args['qualification'] = $providerInfo['qualification'];
+            }
+            if ($providerInfo['specialty']) {
+                $args['specialty'] = $providerInfo['specialty'];
+            }
+
             $provider = ProviderInfo::updateOrCreate([
                 'id'      => $providerInfo['id'] ?? null,
                 'user_id' => $providerUser->id,
-            ], [
-                'qualification' => $providerInfo['qualification'],
-                'specialty'     => $providerInfo['specialty'],
-            ]);
+            ], $args);
         }
 
         if (isset($input['user']['primary_practice'])) {
