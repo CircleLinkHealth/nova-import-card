@@ -59,7 +59,7 @@ class CarePlanViewService
         $problems = new Section();
         $problems->name = 'cpmProblems';
         $problems->title = 'Diagnosis / Problems to Monitor';
-        $problems->items = $template->cpmProblems;
+        $problems->items = $template->cpmProblems->sortBy('name')->values();
         $problems->patientItemIds = $patientProblemsIds;
         $problems->patientItems = $patientProblems->keyBy('id');
         $problems->miscs = $template->cpmMiscs()->where('name', CpmMisc::OTHER_CONDITIONS)->get();
