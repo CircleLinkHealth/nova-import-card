@@ -34,12 +34,14 @@ class WelcomeCallListGenerator
     public $filterLastEncounter;
     public $filterInsurance;
     public $filterProblems;
+    public $createPreEnrollees;
 
     public function __construct(
         Collection $patientList,
         $filterLastEncounter = true,
         $filterInsurance = true,
-        $filterProblems = true
+        $filterProblems = true,
+        $createPreEnrollees = true
     ) {
         $this->patientList = $patientList;
 
@@ -48,6 +50,8 @@ class WelcomeCallListGenerator
         $this->filterProblems = $filterProblems;
 
         $this->filterPatientList();
+
+        $this->createPreEnrollees();
     }
 
     protected function filterPatientList()
@@ -219,6 +223,13 @@ class WelcomeCallListGenerator
         });
 
         return $this;
+    }
+
+    protected function createPreEnrollees()
+    {
+        if (!$this->createPreEnrollees) {
+            return $this;
+        }
     }
 
     /**

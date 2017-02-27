@@ -16,18 +16,19 @@ class WelcomeCallListController extends Controller
             dd('Please upload a CSV file.');
         }
 
-        $list = parseCsvToArray($request->file('patient_list'));
+        $csv = parseCsvToArray($request->file('patient_list'));
 
         $filterLastEncounter = (boolean)$request->input('filterLastEncounter');
         $filterInsurance = (boolean)$request->input('filterInsurance');
         $filterProblems = (boolean)$request->input('filterProblems');
+        $createPreEnrollees = (boolean)$request->input('createPreEnrollees');
 
-        $generator = new WelcomeCallListGenerator(new Collection($list), $filterLastEncounter, $filterInsurance,
-            $filterProblems);
+        $list = new WelcomeCallListGenerator(new Collection($csv), $filterLastEncounter, $filterInsurance,
+            $filterProblems, $createPreEnrollees);
 
         //If we only want to export ineligible patients
-//        return $generator->exportIneligibleToCsv();
+//        return $list->exportIneligibleToCsv();
 
-        return $generator->exportToCsv();
+        return $list->exportToCsv();
     }
 }
