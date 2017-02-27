@@ -122,7 +122,7 @@ class PracticeController extends Controller
         $program = Practice::find($id);
 
         $locations = null;
-//        $program->locations->pluck('name', 'id')->all();
+//      $program->locations->pluck('name', 'id')->all();
 
 		return view('admin.wpBlogs.edit', compact([ 'program', 'locations', 'errors', 'messages' ]));
 	}
