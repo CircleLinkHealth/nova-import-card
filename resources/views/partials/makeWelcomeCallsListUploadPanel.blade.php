@@ -16,7 +16,13 @@
                     <input type="checkbox" name="filterInsurance" id="filterInsurance" checked>
                     <label for="">filterInsurance</label>
 
-                    <input type="submit" class="btn btn-default" value="Create Enrollees" name="submit">
+                    <br>
+
+                    <input type="submit" class="btn btn-default" value="Generate" name="submit">
+
+                    <input type="checkbox" name="createPreEnrollees" id="createPreEnrollees" checked>
+                    <label for="">createPreEnrollees</label>
+
                 </div>
             </form>
         </div>
