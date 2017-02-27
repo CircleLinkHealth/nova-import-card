@@ -888,7 +888,7 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
             return $primary->number;
         }
 
-        if ($phoneNumbers) {
+        if (count($phoneNumbers) > 0) {
             return $phoneNumbers->first()->number;
         }
 
