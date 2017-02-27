@@ -31,22 +31,37 @@ class WelcomeCallListGenerator
      */
     public $ineligiblePatients;
 
-    public function __construct(Collection $patientList)
-    {
+    public $filterLastEncounter;
+    public $filterInsurance;
+    public $filterProblems;
+
+    public function __construct(
+        Collection $patientList,
+        $filterLastEncounter = true,
+        $filterInsurance = true,
+        $filterProblems = true
+    ) {
         $this->patientList = $patientList;
+
+        $this->filterLastEncounter = $filterLastEncounter;
+        $this->filterInsurance = $filterInsurance;
+        $this->filterProblems = $filterProblems;
 
         $this->filterPatientList();
     }
 
     protected function filterPatientList()
     {
-        $this//->byLastEncounter()
+        $this->byLastEncounter()
             ->byInsurance()
             ->byNumberOfProblems();
     }
 
     protected function byNumberOfProblems() : WelcomeCallListGenerator
     {
+        if (!$this->filterProblems) {
+            return $this;
+        }
         $cpmProblems = CpmProblem::all();
 
         $patientList = $this->patientList->map(function ($row) use
@@ -111,6 +126,7 @@ class WelcomeCallListGenerator
 
             if (count($qualifyingProblems) < 2) {
                 $this->ineligiblePatients[] = $row;
+
                 return false;
             }
 
@@ -127,6 +143,10 @@ class WelcomeCallListGenerator
 
     protected function byInsurance() : WelcomeCallListGenerator
     {
+        if (!$this->filterInsurance) {
+            return $this;
+        }
+
         $this->patientList = $this->patientList->reject(function ($row) {
             $primary = strtolower($row['primary_insurance'] ?? null);
             $secondary = strtolower($row['secondary_insurance']  ?? null);
@@ -158,6 +178,44 @@ class WelcomeCallListGenerator
 //            $this->ineligiblePatients[] = $row;
             return true;
 
+        });
+
+        return $this;
+    }
+
+    /**
+     * Removes Patients whose last encounter was before Feb. 1st, 2016 from the list.
+     *
+     * @return WelcomeCallListGenerator
+     */
+    protected function byLastEncounter() : WelcomeCallListGenerator
+    {
+        if (!$this->filterLastEncounter) {
+            return $this;
+        }
+
+        $this->patientList = $this->patientList->reject(function ($row) {
+            //Anything past this date is valid
+            $minEligibleDate = Carbon::createFromDate('2016', '02', '01');
+
+            if (!isset($row['last_encounter'])) {
+//                $this->ineligiblePatients[] = $row;
+                return true;
+            }
+
+            if (!$row['last_encounter']) {
+//                $this->ineligiblePatients[] = $row;
+                return true;
+            }
+
+            $lastEncounterDate = new Carbon($row['last_encounter']);
+
+            if ($lastEncounterDate->lt($minEligibleDate)) {
+//                $this->ineligiblePatients[] = $row;
+                return true;
+            }
+
+            return false;
         });
 
         return $this;
@@ -201,39 +259,5 @@ class WelcomeCallListGenerator
     public function getPatientList(): Collection
     {
         return $this->patientList;
-    }
-
-    /**
-     * Removes Patients whose last encounter was before Feb. 1st, 2016 from the list.
-     *
-     * @return WelcomeCallListGenerator
-     */
-    protected function byLastEncounter() : WelcomeCallListGenerator
-    {
-        $this->patientList = $this->patientList->reject(function ($row) {
-            //Anything past this date is valid
-            $minEligibleDate = Carbon::createFromDate('2016', '02', '01');
-
-            if (!isset($row['last_encounter'])) {
-//                $this->ineligiblePatients[] = $row;
-                return true;
-            }
-
-            if (!$row['last_encounter']) {
-//                $this->ineligiblePatients[] = $row;
-                return true;
-            }
-
-            $lastEncounterDate = new Carbon($row['last_encounter']);
-
-            if ($lastEncounterDate->lt($minEligibleDate)) {
-//                $this->ineligiblePatients[] = $row;
-                return true;
-            }
-
-            return false;
-        });
-
-        return $this;
     }
 }
