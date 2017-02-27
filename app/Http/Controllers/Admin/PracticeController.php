@@ -63,6 +63,7 @@ class PracticeController extends Controller
 
 		$program->name = $params['name'];
 		$program->display_name = $params['display_name'];
+		$program->weekly_report_recipients = $params['weekly_report_recipients'];
 		$program->save();
 
 		// attach to all users who get auto attached
@@ -97,37 +98,9 @@ class PracticeController extends Controller
 		// display view
         $program = Practice::find($id);
 
-		/*
-		$cPRulesPCP = CPRulesPCP::where('prov_id', '=', $id)->where('status', '=', 'Active')->with('items.meta')->get();
-		if(!empty($cPRulesPCP)) {
-			$programItems = array();
-			foreach ($cPRulesPCP as $pcp) {
-				$programItems[$pcp->pcp_id] = array('section_text' => $pcp->section_text, 'items' => array());
-				$cPRulesItems = CPRulesItem::where('pcp_id', '=', $pcp->pcp_id)->where('items_parent', '=', '0')->with('meta', 'question')->get();
-				if(!empty($cPRulesItems)) {
-					$pcpItems = array();
-					foreach($cPRulesItems as $cPItem) {
-						// set item and item meta
-						$pcpItems[$cPItem->items_id] = $cPItem;
-						// get children items, set them and their meta
-						$childItems = array();
-						$cPRulesChildItems = CPRulesItem::where('pcp_id', '=', $pcp->pcp_id)->where('items_parent', '=', $cPItem->items_id)->with('meta', 'question')->get();
-						if(!empty($cPRulesChildItems)) {
-							foreach($cPRulesChildItems as $cPChildItem) {
-								// set child item and item meta
-								$childItems[$cPChildItem->items_id] = $cPChildItem;
-							}
-						}
-						$pcpItems[$cPItem->items_id]['child_items'] = $childItems;
-					}
-					// add to main array
-					$programItems[$pcp->pcp_id]['items'] = $pcpItems;
-				}
-			}
-		}
-		*/
-
-        $locations = Location::where('parent_id', '=', null)->orderBy('id', 'desc')->pluck('name', 'id')->all();
+		//to update...
+        $locations = null;
+            //Location::where('parent_id', '=', null)->orderBy('id', 'desc')->pluck('name', 'id')->all();
 
 		return view('admin.wpBlogs.show', compact([ 'program', 'locations', 'errors', 'messages' ]));
 	}
@@ -148,7 +121,8 @@ class PracticeController extends Controller
 
         $program = Practice::find($id);
 
-        $locations = $program->locations->pluck('name', 'id')->all();
+        $locations = null;
+//        $program->locations->pluck('name', 'id')->all();
 
 		return view('admin.wpBlogs.edit', compact([ 'program', 'locations', 'errors', 'messages' ]));
 	}
@@ -171,10 +145,12 @@ class PracticeController extends Controller
 		}
 		// get params
 		$params = $request->input();
-        $program->locations->attach($params['location_id']);
+
+		isset($params['location_id']) ? $program->locations->attach($params['location_id']) : '';
+
 		$program->name = $params['name'];
 		$program->display_name = $params['display_name'];
-		$program->short_display_name = $params['short_display_name'];
+		$program->weekly_report_recipients = $params['weekly_report_recipients'];
 		$program->save();
 		return redirect()->back()->with('messages', ['successfully updated program']);
 	}

@@ -50,9 +50,17 @@
                                 <div class="col-xs-2">{!! Form::label('name', 'Unique Name:') !!}</div>
                                 <div class="col-xs-10">{!! Form::text('name', '', ['class' => 'form-control', 'style' => 'width:100%;']) !!}</div>
                             </div>
+
+                            <div class="row" style="margin-top:20px;">
+                                <div class="col-xs-2">{!! Form::label('weekly_report_recipients', 'Weekly Organization Summary Recipients (comma separated) ') !!}</div>
+                                <div class="col-xs-10"><textarea name="weekly_report_recipients" style="width: 100%"> </textarea></div>
+                            </div>
+
+
+
                         </div>
 
-                        
+
 
                         <div class="row" style="margin-top:50px;">
                             <div class="col-sm-12">
