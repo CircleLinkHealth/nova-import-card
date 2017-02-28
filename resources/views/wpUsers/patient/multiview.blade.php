@@ -229,7 +229,9 @@ $today = \Carbon\Carbon::now()->toFormattedDateString();
                             <ul class="subareas__list">
                                 @if(isset($careplan['problems']) && !empty($careplan['problems']))
                                     @foreach($careplan['problems'] as $key => $value)
-                                        <li class='subareas__item inline-block col-xs-6 col-sm-3 print-row'>{{$key}}</li>
+                                        @if($key != App\Models\CPM\CpmMisc::OTHER_CONDITIONS)
+                                            <li class='subareas__item inline-block col-xs-6 col-sm-3 print-row'>{{$key}}</li>
+                                        @endif
                                     @endforeach
                                 @endif
                             </ul>
