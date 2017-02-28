@@ -22,7 +22,7 @@ class AddNewProblems extends Seeder
 
         CpmProblem::whereName('CAD')
             ->update([
-                'name' => 'CAD/Ischemic Heart Disease',
+                'name' => 'CAD/IHD',
             ]);
 
         $defaultCarePlan = CarePlanTemplate::find(1);
@@ -105,7 +105,7 @@ class AddNewProblems extends Seeder
             ],
         ];
 
-        $problems['Acute Myocardial Infarction'] = [
+        $problems['Myocardial Infarction'] = [
             'icd9'  => [
                 'DX 410.01',
                 410.11,
@@ -412,7 +412,7 @@ class AddNewProblems extends Seeder
             ],
         ];
 
-        $problems['Benign Prostatic Hyperplasia'] = [
+        $problems['BPH'] = [
             'icd9'  => [
                 'DX 600.00',
                 '600.01',
@@ -2134,7 +2134,7 @@ class AddNewProblems extends Seeder
             ],
         ];
 
-        $problems['CAD/Ischemic Heart Disease'] = [
+        $problems['CAD/IHD'] = [
             'icd9'  => [
                 'DX 410.00',
                 '410.01',
@@ -2275,7 +2275,7 @@ class AddNewProblems extends Seeder
             ],
         ];
 
-        $problems['Rheumatoid Arthritis/Osteoarthritis'] = [
+        $problems['Rheumatoid/Osteo-Arthritis'] = [
             'icd9'  => [
                 'DX 714.0',
                 '714.1',
