@@ -10,8 +10,7 @@
         <input type="checkbox" id="notify-careteam" name="notify_careteam" value="1">
         <label for="notify-careteam"><span> </span>Provider/CareTeam
             @if(count($patient->care_team_receives_alerts) > 0)
-                (Notifies: @foreach($patient->care_team_receives_alerts as $carePerson){{ ($loop->first ? '' : ', ') . $carePerson->fullName }}
-                )@endforeach
+                (Notifies: @foreach($patient->care_team_receives_alerts as $carePerson){{ ($loop->first ? '' : ', ') . $carePerson->fullName }}@endforeach)
             @else
                 The CareTeam is empty. Please visit
                 <strong>{{link_to_route('patient.careplan.print', 'View CarePlan', ['patientId' => $patient->id])}}</strong>
