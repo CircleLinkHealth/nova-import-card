@@ -209,9 +209,10 @@ class WebixFormatter implements ReportFormatter
 
         $other_problems = (new ReportsService())->getInstructionsforOtherProblems($user);
 
-        if(!empty($other_problems)) {
-            $careplanReport[$user->id]['problems']['Other Problems'] = $other_problems;
-        }
+//Comment out other problems
+//        if(!empty($other_problems)) {
+//            $careplanReport[$user->id]['problems']['Other Problems'] = $other_problems;
+//        }
 
         //Get Biometrics with Values
         $careplanReport[$user->id]['bio_data'] = [];
