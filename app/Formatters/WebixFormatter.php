@@ -200,7 +200,7 @@ class WebixFormatter implements ReportFormatter
 //            }
 
             $careplanReport[$user->id]['symptoms'] = $user->cpmSymptoms()->get()->pluck('name')->all();
-            $careplanReport[$user->id]['problem'] = $user->cpmProblems()->get()->pluck('name')->all();
+            $careplanReport[$user->id]['problem'] = $user->cpmProblems()->get()->sortBy('name')->pluck('name')->all();
             $careplanReport[$user->id]['problems'] = (new \App\Services\CPM\CpmProblemService())->getProblemsWithInstructionsForUser($user);
             $careplanReport[$user->id]['lifestyle'] = $user->cpmLifestyles()->get()->pluck('name')->all();
             $careplanReport[$user->id]['biometrics'] = $user->cpmBiometrics()->get()->pluck('name')->all();
