@@ -1,23 +1,18 @@
 <?php
 
-//I kinda hate having those here. @todo: Move them
-//Send Fax Sample
-//
-//$pdf = storage_path('pdfs/notes/2017-02-07-xsKTIK4106WdXiMNu8iMla4FPJSOcosNBXXMkAsX.pdf');
-//$efaxHandler = new PhaxioService('production');
-//$send = $efaxHandler->send('+18569839936', $pdf);
-//
-//dd($send);
-
-//Send EMR Direct Sample
-//
-//(new PhiMail())->send('nbloch@emg.ssdirect.aprima.com', storage_path('pdfs/notes/2017-02-07-xsKTIK4106WdXiMNu8iMla4FPJSOcosNBXXMkAsX.pdf'), 'Sample-Pdf-Note-Circle_Link_Health.pdf');
-//
-//dd();
+use App\Practice;
+use App\Reports\Sales\Practice\SalesByPracticeReport;
+use App\Reports\Sales\Provider\SalesByProviderReport;
+use Carbon\Carbon;
+use Illuminate\Support\Facades\Mail;
 
 if (app()->environment() != 'production') {
 
     Route::get('rohan', function () {
+
+
+
+        die();
 
 
         $twilio = new Aloha\Twilio\Twilio(env('TWILIO_SID'), env('TWILIO_TOKEN'), env('TWILIO_FROM'));
@@ -593,6 +588,7 @@ Route::group(['middleware' => 'auth'], function () {
         ]);
 
         Route::get('calls/{patientId}', 'CallController@showCallsForPatient');
+
 
         Route::group([
             'prefix' => 'reports',
