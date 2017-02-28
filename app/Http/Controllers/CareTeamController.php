@@ -95,9 +95,15 @@ class CareTeamController extends Controller
             }
         }
 
+        $alert = $input['alert'];
+
+        if (!$providerUser->email) {
+            $alert = false;
+        }
+
         if (str_contains($input['id'], 'new')) {
             $carePerson = CarePerson::create([
-                'alert'          => $input['alert'],
+                'alert'          => $alert,
                 'type'           => $type,
                 'user_id'        => $patientId,
                 'member_user_id' => $providerUser->id,
@@ -105,7 +111,7 @@ class CareTeamController extends Controller
         } else {
             $carePerson = CarePerson::where('id', '=', $input['id'])
                 ->update([
-                    'alert' => $input['alert'],
+                    'alert' => $alert,
                     'type'  => $type,
                 ]);
         }

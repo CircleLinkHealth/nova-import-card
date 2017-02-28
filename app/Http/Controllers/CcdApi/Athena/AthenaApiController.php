@@ -59,7 +59,12 @@ class AthenaApiController extends Controller
         $patientIds = array_filter(explode(',', $request->input('ids')), 'trim');
 
         foreach ($patientIds as $id) {
+            $id = trim($id);
             $ccdaExternal = $api->getCcd($id, $practiceId, $departmentId);
+
+            if (!isset($ccdaExternal[0])) {
+                continue;
+            }
 
             $ccda = Ccda::create([
                 'practice_id' => $practice->id,

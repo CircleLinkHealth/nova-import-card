@@ -183,9 +183,10 @@ class PatientCareplanController extends Controller
             // build pdf
             $pdf = App::make('snappy.pdf.wrapper');
             $pdf->loadView('wpUsers.patient.multiview', [
-                'careplans' => [$user_id => $careplan],
-                'isPdf'     => true,
-                'letter'    => $letter,
+                'careplans'    => [$user_id => $careplan],
+                'isPdf'        => true,
+                'letter'       => $letter,
+                'problemNames' => $careplan['problem'],
             ]);
             $pdf->setOption('footer-center', 'Page [page]');
             //$pdf->setOption('margin-top', '2');
