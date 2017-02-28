@@ -2275,7 +2275,7 @@ class AddNewProblems extends Seeder
             ],
         ];
 
-        $problems['Rheumatoid/Osteo-Arthritis'] = [
+        $problems['Arthritis'] = [
             'icd9'  => [
                 'DX 714.0',
                 '714.1',
