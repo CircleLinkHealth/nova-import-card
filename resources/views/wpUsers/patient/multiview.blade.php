@@ -258,7 +258,7 @@ $today = \Carbon\Carbon::now()->toFormattedDateString();
                             </ul>
                         </div>
                     </div>
-            @endif
+                @endif
             <!-- /BIOMETRICS -->
 
                 <!-- MEDICATIONS -->
@@ -365,8 +365,8 @@ $today = \Carbon\Carbon::now()->toFormattedDateString();
                         </div>
                     </div>
                 </div>
-            @if($careplan['problems'])
-                <?php foreach($careplan['problems'] as $key => $value){ ?>
+                @if($careplan['problems'])
+                    <?php foreach($careplan['problems'] as $key => $value){ ?>
                 <!-- Hypertension -->
                     <div class="patient-info__subareas">
                         <div class="row">
@@ -379,8 +379,8 @@ $today = \Carbon\Carbon::now()->toFormattedDateString();
                             </div>
                         </div>
                     </div>
-                <?php } ?>
-            @endif
+                    <?php } ?>
+                @endif
 
             <!-- /INSTRUCTIONS -->
 
