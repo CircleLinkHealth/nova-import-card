@@ -17,6 +17,8 @@ class Practice extends Model
         'user_id',
         'same_clinical_contact',
         'same_ehr_login',
+        'sms_marketing_number',
+        'weekly_report_recipients'
     ];
 
     public static function getProviders($practiceId)

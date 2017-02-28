@@ -82,10 +82,8 @@ class NurseFinder
 
                 $no_of_calls_in_window = $this->countScheduledCallCountForNurseForWindow($date_match);
 
-
                 //check threshold for nurse
-                if ($no_of_calls_in_window < 2) {
-
+                if ($no_of_calls_in_window < 7) {
 
                     return $date_match;
 
@@ -252,9 +250,7 @@ class NurseFinder
         //to count the current day in the calculation as well, we sub one day.
         $offset_date = Carbon::parse($this->offsetDate)->subDay()->toDateString();
 
-        $windows = [];
-
-        //If there are no contact windows, we just the same day. @todo confirm logic
+        //If there are no contact windows, we just return the same day. @todo confirm logic
         if (!$patient_windows) {
 
             $carbon_date_start = Carbon::parse($offset_date);
@@ -263,12 +259,14 @@ class NurseFinder
             $carbon_date_start->setTime('10', '00');
             $carbon_date_end->setTime('12', '00');
 
-            $windows[0]['window_start'] = $carbon_date_start->toDateTimeString();
-            $windows[0]['window_end'] = $carbon_date_end->toDateTimeString();
+            $windows[0]['window_start'] = $carbon_date_start->addDay()->toDateTimeString();
+            $windows[0]['window_end'] = $carbon_date_end->addDay()->toDateTimeString();
 
             return collect($windows);
 
         }
+
+        $windows = [];
 
         // leaving first blank to offset weird way of storing week as 1-7 instead of 0-6.
         // Returns a datetime string with all the necessary time information

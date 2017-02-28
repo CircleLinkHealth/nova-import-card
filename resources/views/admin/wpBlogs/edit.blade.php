@@ -42,10 +42,12 @@
 
                         <div class="form-group">
 
+                            @if($locations != null)
                             <div class="row" style="margin-top:20px;">
                                 <div class="col-xs-2">{!! Form::label('locations', 'Locations') !!}</div>
                                 <div class="col-xs-4">{!! Form::select('location_id', $locations, $program->location_id, ['class' => 'form-control select-picker', 'style' => 'width:50%;']) !!}</div>
                             </div>
+                            @endif
 
                             <div class="row" style="margin-top:20px;">
                                 <div class="col-xs-2">{!! Form::label('display_name', 'Display Name:') !!}</div>
@@ -57,6 +59,12 @@
                                 <div class="col-xs-10">{!! Form::text('name', $program->name, ['class' => 'form-control', 'style' => 'width:100%;']) !!}</div>
                             </div>
 
+                            <div class="row" style="margin-top:20px;">
+                                <div class="col-xs-2">{!! Form::label('weekly_report_recipients', 'Weekly Organization Summary Recipients (comma separated) ') !!}</div>
+                                <div class="col-xs-10"><textarea class="form-control" name="weekly_report_recipients" style="width: 100%">@if(isset($program->weekly_report_recipients)){{$program->weekly_report_recipients}}@endif</textarea>
+                                    <small>The emails above will receive weekly summary reports.</small>
+                                </div>
+                            </div>
                         </div>
 
                         <div class="row" style="margin-top:50px;">
