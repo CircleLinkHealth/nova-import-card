@@ -90,7 +90,6 @@ class Enrollee extends Model
 
     public function sendEnrollmentConsentSMS()
     {
-
         $twilio = new Twilio(env('TWILIO_SID'), env('TWILIO_TOKEN'), env('TWILIO_FROM'));
 
         $link = url("join/$this->invite_code");
@@ -98,8 +97,6 @@ class Enrollee extends Model
 
         $twilio->message($this->primary_phone,
             "Dr. $provider_name has invited you to their new wellness program! Please enroll here: $link");
-
-
     }
 
     /**

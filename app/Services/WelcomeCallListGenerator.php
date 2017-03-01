@@ -273,6 +273,7 @@ class WelcomeCallListGenerator
             $args = $patient;
             $args['status'] = Enrollee::ELIGIBLE;
             $args['practice_id'] = $this->practice->id;
+            $args['provider_id'] = $this->practice->user_id;
 
             $this->enrollees = Enrollee::updateOrCreate([
                 'mrn' => $args['mrn'],
