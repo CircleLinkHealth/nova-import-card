@@ -94,10 +94,15 @@ class Enrollee extends Model
         $link = url("join/$this->invite_code");
         $provider_name = User::find($this->provider_id)->fullName;
 
-        $twilio->message($this->phone,
+        $twilio->message($this->getPhone(),
             "Dr. $provider_name has invited you to their new wellness program! Please enroll here: $link");
 
 
+    }
+
+    public function getPhone()
+    {
+        return $this->phone;
     }
 
     public function sendEnrollmentConsentReminderSMS()
@@ -111,7 +116,7 @@ class Enrollee extends Model
 
         $provider_name = User::find($this->provider_id)->fullName;
 
-        $twilio->message($this->phone,
+        $twilio->message($this->getPhone(),
             "Dr. $provider_name hasn’t heard from you regarding their new wellness program $emjo. Please enroll here: $link");
 
 
