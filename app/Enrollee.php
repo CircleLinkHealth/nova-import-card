@@ -7,6 +7,10 @@ use Illuminate\Database\Eloquent\Model;
 
 class Enrollee extends Model
 {
+    /**
+     * status = eligible
+     */
+    const ELIGIBLE = 'eligible';
 
     /**
      * STATUS TYPES:
@@ -39,6 +43,7 @@ class Enrollee extends Model
         'state',
         'zip',
         'invite_code',
+        //primary_phone
         'phone',
         'consented_at',
         'last_attempt_at',

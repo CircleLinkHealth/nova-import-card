@@ -10,6 +10,7 @@ namespace App\Services;
 
 
 use App\CLH\CCD\Importer\SnomedToCpmIcdMap;
+use App\Enrollee;
 use App\Models\CPM\CpmProblem;
 use Carbon\Carbon;
 use Illuminate\Support\Collection;
@@ -260,7 +261,12 @@ class WelcomeCallListGenerator
             return $this;
         }
 
+        foreach ($this->patientList as $patient) {
+            $args['status'] = Enrollee::ELIGIBLE;
+            $args[] = $patient;
 
+            $this->enrollees = Enrollee::create($args);
+        }
     }
 
     /**
