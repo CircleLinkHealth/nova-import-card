@@ -3,6 +3,7 @@
 namespace App;
 
 use Aloha\Twilio\Twilio;
+use App\CLH\Helpers\StringManipulation;
 use Illuminate\Database\Eloquent\Model;
 
 class Enrollee extends Model
@@ -32,7 +33,7 @@ class Enrollee extends Model
         'provider_id',
         'practice_id',
         // patient_id in EHR Software
-        'mrn_number',
+        'mrn',
         'dob',
         'invite_sent_at',
         'first_name',
@@ -94,13 +95,20 @@ class Enrollee extends Model
         $link = url("join/$this->invite_code");
         $provider_name = User::find($this->provider_id)->fullName;
 
-        $twilio->message($this->getPhone(),
+        $twilio->message($this->primary_phone,
             "Dr. $provider_name has invited you to their new wellness program! Please enroll here: $link");
 
 
     }
 
-    public function getPhone()
+    public function setPrimaryPhoneNumberAttribute($phone)
+    {
+        $helper = new StringManipulation();
+
+        $this->attributes['primary_phone'] = $helper->formatPhoneNumberE164($phone);
+    }
+
+    public function getPrimaryPhoneAttribute()
     {
         return $this->primary_phone;
     }
@@ -116,7 +124,7 @@ class Enrollee extends Model
 
         $provider_name = User::find($this->provider_id)->fullName;
 
-        $twilio->message($this->getPhone(),
+        $twilio->message($this->primary_phone,
             "Dr. $provider_name hasn’t heard from you regarding their new wellness program $emjo. Please enroll here: $link");
 
 
