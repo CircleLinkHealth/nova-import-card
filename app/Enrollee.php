@@ -44,7 +44,7 @@ class Enrollee extends Model
         'zip',
         'invite_code',
         //primary_phone
-        'phone',
+        'primary_phone',
         'consented_at',
         'last_attempt_at',
         'attempt_count',
@@ -61,8 +61,8 @@ class Enrollee extends Model
         'last_encounter',
         'referring_provider_name',
         'problems',
-        'ccm_condition_1',
-        'ccm_condition_2',
+        'cpm_problem_1',
+        'cpm_problem_2',
     ];
 
     public function user()
@@ -102,7 +102,7 @@ class Enrollee extends Model
 
     public function getPhone()
     {
-        return $this->phone;
+        return $this->primary_phone;
     }
 
     public function sendEnrollmentConsentReminderSMS()
