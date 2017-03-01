@@ -31,9 +31,32 @@ class WelcomeCallListGenerator
      */
     public $ineligiblePatients;
 
+    /**
+     * Filter the list by Last Encounter
+     *
+     * @var bool
+     */
     public $filterLastEncounter;
+
+    /**
+     * Filter the list by Insurance
+     *
+     * @var bool
+     */
     public $filterInsurance;
+
+    /**
+     * Filter the list by the number of CCM problems. Eligible Patients need to have at least 2.
+     *
+     * @var bool
+     */
     public $filterProblems;
+
+    /**
+     * Create PreEnrollees
+     *
+     * @var bool
+     */
     public $createPreEnrollees;
 
     public function __construct(
@@ -48,6 +71,7 @@ class WelcomeCallListGenerator
         $this->filterLastEncounter = $filterLastEncounter;
         $this->filterInsurance = $filterInsurance;
         $this->filterProblems = $filterProblems;
+        $this->createPreEnrollees = $createPreEnrollees;
 
         $this->filterPatientList();
 
