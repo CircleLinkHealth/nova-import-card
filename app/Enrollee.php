@@ -27,12 +27,17 @@ class Enrollee extends Model
         'user_id',
         'provider_id',
         'practice_id',
+        // patient_id in EHR Software
         'mrn_number',
         'dob',
         'invite_sent_at',
         'first_name',
         'last_name',
         'address',
+        'address_2',
+        'city',
+        'state',
+        'zip',
         'invite_code',
         'phone',
         'consented_at',
@@ -41,6 +46,18 @@ class Enrollee extends Model
         'preferred_window',
         'preferred_days',
         'status',
+
+        'primary_insurance',
+        'secondary_insurance',
+        'cell_phone',
+        'home_phone',
+        'other_phone',
+        'email',
+        'last_encounter',
+        'referring_provider_name',
+        'problems',
+        'ccm_condition_1',
+        'ccm_condition_2',
     ];
 
     public function user()
