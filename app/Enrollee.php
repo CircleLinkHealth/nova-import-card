@@ -4,6 +4,7 @@ namespace App;
 
 use Aloha\Twilio\Twilio;
 use App\CLH\Helpers\StringManipulation;
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
 
 class Enrollee extends Model
@@ -101,16 +102,72 @@ class Enrollee extends Model
 
     }
 
-    public function setPrimaryPhoneNumberAttribute($phone)
+    /**
+     * Set DOB
+     *
+     * @param $dob
+     */
+    public function setDobAttribute($dob)
+    {
+        $this->attributes['dob'] = Carbon::parse($dob);
+    }
+
+    /**
+     * Set Home Phone
+     *
+     * @param $homePhone
+     */
+    public function setHomePhoneAttribute($homePhone)
     {
         $helper = new StringManipulation();
 
-        $this->attributes['primary_phone'] = $helper->formatPhoneNumberE164($phone);
+        $this->attributes['home_phone'] = $helper->formatPhoneNumberE164($homePhone);
     }
 
-    public function getPrimaryPhoneAttribute()
+    /**
+     * Set Cell Phone
+     *
+     * @param $homePhone
+     */
+    public function setCellPhoneAttribute($homePhone)
     {
-        return $this->primary_phone;
+        $helper = new StringManipulation();
+
+        $this->attributes['home_phone'] = $helper->formatPhoneNumberE164($homePhone);
+    }
+
+    /**
+     * Set Other Phone
+     *
+     * @param $homePhone
+     */
+    public function setOtherPhoneAttribute($homePhone)
+    {
+        $helper = new StringManipulation();
+
+        $this->attributes['home_phone'] = $helper->formatPhoneNumberE164($homePhone);
+    }
+
+    /**
+     * Set Primary Phone
+     *
+     * @param $primaryPhone
+     */
+    public function setPrimaryPhoneNumberAttribute($primaryPhone)
+    {
+        $helper = new StringManipulation();
+
+        $this->attributes['primary_phone'] = $helper->formatPhoneNumberE164($primaryPhone);
+    }
+
+    /**
+     * Get Primary Phone
+     *
+     * @return mixed
+     */
+    public function getPrimaryPhoneAttribute($value)
+    {
+        return $value;
     }
 
     public function sendEnrollmentConsentReminderSMS()
