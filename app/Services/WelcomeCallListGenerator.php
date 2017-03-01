@@ -12,6 +12,7 @@ namespace App\Services;
 use App\CLH\CCD\Importer\SnomedToCpmIcdMap;
 use App\Enrollee;
 use App\Models\CPM\CpmProblem;
+use App\Practice;
 use Carbon\Carbon;
 use Illuminate\Support\Collection;
 use Maatwebsite\Excel\Facades\Excel;
@@ -65,7 +66,8 @@ class WelcomeCallListGenerator
         $filterLastEncounter = true,
         $filterInsurance = true,
         $filterProblems = true,
-        $createEnrollees = true
+        $createEnrollees = true,
+        Practice $practice = null
     ) {
         $this->patientList = $patientList;
 
@@ -73,6 +75,7 @@ class WelcomeCallListGenerator
         $this->filterInsurance = $filterInsurance;
         $this->filterProblems = $filterProblems;
         $this->createEnrollees = $createEnrollees;
+        $this->practice = $practice;
 
         $this->filterPatientList();
 
@@ -269,6 +272,7 @@ class WelcomeCallListGenerator
         foreach ($this->patientList as $patient) {
             $args = $patient;
             $args['status'] = Enrollee::ELIGIBLE;
+            $args['practice_id'] = $this->practice->id;
 
             $this->enrollees = Enrollee::updateOrCreate([
                 'mrn' => $args['mrn'],

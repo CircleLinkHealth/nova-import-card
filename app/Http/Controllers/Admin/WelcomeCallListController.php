@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Practice;
 use App\Services\WelcomeCallListGenerator;
 use Illuminate\Http\Request;
 use Illuminate\Support\Collection;
@@ -24,7 +25,7 @@ class WelcomeCallListController extends Controller
         $createEnrollees = (boolean)$request->input('createEnrollees');
 
         $list = new WelcomeCallListGenerator(new Collection($csv), $filterLastEncounter, $filterInsurance,
-            $filterProblems, $createEnrollees);
+            $filterProblems, $createEnrollees, Practice::find($request->input('practice_id')));
 
         //If we only want to export ineligible patients
 //        return $list->exportIneligibleToCsv();
