@@ -14,23 +14,33 @@ class ChangeCcmConditions extends Migration
     public function up()
     {
         Schema::table('enrollees', function (Blueprint $table) {
-            $table->dropColumn('ccm_condition_1');
-            $table->dropColumn('ccm_condition_2');
+            if (Schema::hasColumn('enrollees', 'ccm_condition_1')) {
+                $table->dropColumn('ccm_condition_1');
+            }
+
+            if (Schema::hasColumn('enrollees', 'ccm_condition_2')) {
+                $table->dropColumn('ccm_condition_2');
+            }
         });
 
         Schema::table('enrollees', function (Blueprint $table) {
-            $table->unsignedInteger('cpm_problem_1');
-            $table->unsignedInteger('cpm_problem_2');
+            if (!Schema::hasColumn('enrollees', 'cpm_problem_1')) {
+                $table->unsignedInteger('cpm_problem_1');
 
-            $table->foreign('cpm_problem_1')
-                ->references('id')
-                ->on('cpm_problems')
-                ->onUpdate('cascade');
+                $table->foreign('cpm_problem_1')
+                    ->references('id')
+                    ->on('cpm_problems')
+                    ->onUpdate('cascade');
+            }
 
-            $table->foreign('cpm_problem_2')
-                ->references('id')
-                ->on('cpm_problems')
-                ->onUpdate('cascade');
+            if (!Schema::hasColumn('enrollees', 'cpm_problem_2')) {
+                $table->unsignedInteger('cpm_problem_2');
+
+                $table->foreign('cpm_problem_2')
+                    ->references('id')
+                    ->on('cpm_problems')
+                    ->onUpdate('cascade');
+            }
         });
     }
 
