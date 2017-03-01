@@ -99,6 +99,8 @@ class WelcomeCallListGenerator
         ) {
             $row['ccm_condition_1'] = '';
             $row['ccm_condition_2'] = '';
+            $row['cpm_problem_1'] = '';
+            $row['cpm_problem_2'] = '';
 
             $problems = new Collection(explode(',', $row['problems']));
 
@@ -161,6 +163,9 @@ class WelcomeCallListGenerator
 
             $row['ccm_condition_1'] = $qualifyingProblems[0];
             $row['ccm_condition_2'] = $qualifyingProblems[1];
+
+            $row['cpm_problem_1'] = $qualifyingProblemsCpmIdStack[0];
+            $row['cpm_problem_2'] = $qualifyingProblemsCpmIdStack[1];
 
             return $row;
         })->values();
@@ -262,10 +267,12 @@ class WelcomeCallListGenerator
         }
 
         foreach ($this->patientList as $patient) {
+            $args = $patient;
             $args['status'] = Enrollee::ELIGIBLE;
-            $args[] = $patient;
 
-            $this->enrollees = Enrollee::create($args);
+            $this->enrollees = Enrollee::updateOrCreate([
+                'mrn' => $args['mrn'],
+            ], $args);
         }
     }
 
