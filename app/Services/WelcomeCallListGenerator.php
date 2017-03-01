@@ -57,25 +57,25 @@ class WelcomeCallListGenerator
      *
      * @var bool
      */
-    public $createPreEnrollees;
+    public $createEnrollees;
 
     public function __construct(
         Collection $patientList,
         $filterLastEncounter = true,
         $filterInsurance = true,
         $filterProblems = true,
-        $createPreEnrollees = true
+        $createEnrollees = true
     ) {
         $this->patientList = $patientList;
 
         $this->filterLastEncounter = $filterLastEncounter;
         $this->filterInsurance = $filterInsurance;
         $this->filterProblems = $filterProblems;
-        $this->createPreEnrollees = $createPreEnrollees;
+        $this->createEnrollees = $createEnrollees;
 
         $this->filterPatientList();
 
-        $this->createPreEnrollees();
+        $this->createEnrollees();
     }
 
     protected function filterPatientList()
@@ -249,11 +249,18 @@ class WelcomeCallListGenerator
         return $this;
     }
 
-    protected function createPreEnrollees()
+    /**
+     * Create PreEnrollees from the filtered patientList
+     *
+     * @return $this
+     */
+    protected function createEnrollees()
     {
-        if (!$this->createPreEnrollees) {
+        if (!$this->createEnrollees) {
             return $this;
         }
+
+
     }
 
     /**

@@ -20,8 +20,8 @@
 
                     <input type="submit" class="btn btn-default" value="Generate" name="submit">
 
-                    <input type="checkbox" name="createPreEnrollees" id="createPreEnrollees" checked>
-                    <label for="">createPreEnrollees</label>
+                    <input type="checkbox" name="createEnrollees" id="createEnrollees" checked>
+                    <label for="createEnrollees">createEnrollees</label>
 
                 </div>
             </form>

@@ -21,10 +21,10 @@ class WelcomeCallListController extends Controller
         $filterLastEncounter = (boolean)$request->input('filterLastEncounter');
         $filterInsurance = (boolean)$request->input('filterInsurance');
         $filterProblems = (boolean)$request->input('filterProblems');
-        $createPreEnrollees = (boolean)$request->input('createPreEnrollees');
+        $createEnrollees = (boolean)$request->input('createEnrollees');
 
         $list = new WelcomeCallListGenerator(new Collection($csv), $filterLastEncounter, $filterInsurance,
-            $filterProblems, $createPreEnrollees);
+            $filterProblems, $createEnrollees);
 
         //If we only want to export ineligible patients
 //        return $list->exportIneligibleToCsv();
