@@ -1,6 +1,7 @@
 <?php namespace App;
 
 use App\Contracts\Serviceable;
+use App\Facades\StringManipulation;
 use App\Importer\Models\ImportedItems\DemographicsImport;
 use App\Models\CCD\Allergy;
 use App\Models\CCD\CcdInsurancePolicy;
@@ -336,11 +337,6 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
         return $this->hasOne(Nurse::class, 'user_id', 'id');
     }
 
-    public function phoneNumbers()
-    {
-        return $this->hasMany(PhoneNumber::class, 'user_id', 'id');
-    }
-
     public function carePlan()
     {
         return $this->hasOne(CarePlan::class, 'user_id', 'id');
@@ -435,9 +431,6 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
         }
     }
 
-
-    // END RELATIONSHIPS
-
     public function userConfig()
     {
         $key = 'wp_' . $this->primaryProgramId() . '_user_config';
@@ -448,6 +441,9 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
             return unserialize($userConfig['meta_value']);
         }
     }
+
+
+    // END RELATIONSHIPS
 
     public function primaryProgramId()
     {
@@ -864,6 +860,39 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
         } else {
             return '';
         }
+    }
+
+    /**
+     * Delete all existing Phone Numbers and replace them with a new primary number.
+     *
+     * @param $number
+     * @param $type
+     * @param bool $isPrimary
+     *
+     * @return bool
+     */
+    public function clearAllPhonesAndAddNewPrimary(
+        $number,
+        $type,
+        $isPrimary = false
+    ) {
+        $this->phoneNumbers()->delete();
+
+        if (empty($number)) {
+            //assume we wanted to delete the phone(s)
+            return true;
+        }
+
+        return $this->phoneNumbers()->create([
+            'number' => StringManipulation::formatPhoneNumber($number),
+            'type' => PhoneNumber::getTypes()[$type],
+            'is_primary' => $isPrimary,
+        ]);
+    }
+
+    public function phoneNumbers()
+    {
+        return $this->hasMany(PhoneNumber::class, 'user_id', 'id');
     }
 
     public function getHomePhoneNumberAttribute()

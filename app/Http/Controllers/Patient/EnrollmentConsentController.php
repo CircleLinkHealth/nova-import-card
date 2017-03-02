@@ -2,18 +2,12 @@
 
 namespace App\Http\Controllers\Patient;
 
-use App\Call;
-use App\CLH\Helpers\StringManipulation;
 use App\Enrollee;
-use App\Models\MedicalRecords\ImportedMedicalRecord;
-use App\Patient;
-use App\PhoneNumber;
-use App\Practice;
-use App\Role;
-use Carbon\Carbon;
-use App\User;
-use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
+use App\Practice;
+use App\User;
+use Carbon\Carbon;
+use Illuminate\Http\Request;
 use Yajra\Datatables\Facades\Datatables;
 
 class EnrollmentConsentController extends Controller
@@ -34,18 +28,18 @@ class EnrollmentConsentController extends Controller
 
             $formatted[$count] = [
 
-                'name' => $enrollee->first_name . ' ' . $enrollee->last_name,
-                'program' => ucwords(Practice::find($enrollee->practice_id)->name),
-                'provider' => ucwords(User::find($enrollee->provider_id)->fullName),
-                'status' => ucwords($enrollee->status),
-                'mrn_number' => ucwords($enrollee->mrn_number),
-                'dob' => ucwords($enrollee->dob),
-                'phone' => ucwords($enrollee->phone),
-                'attempt_count' => ucwords($enrollee->attempt_count),
-                'invite_sent_at' => ucwords($enrollee->invite_sent_at),
+                'name'             => $enrollee->first_name . ' ' . $enrollee->last_name,
+                'program'          => ucwords(Practice::find($enrollee->practice_id)->name),
+                'provider'         => ucwords(User::find($enrollee->provider_id)->fullName ?? null),
+                'status'           => ucwords($enrollee->status),
+                'mrn_number'       => ucwords($enrollee->mrn_number),
+                'dob'              => ucwords($enrollee->dob),
+                'phone'            => ucwords($enrollee->primary_phone),
+                'attempt_count'    => ucwords($enrollee->attempt_count),
+                'invite_sent_at'   => ucwords($enrollee->invite_sent_at),
                 'invite_opened_at' => ucwords($enrollee->invite_opened_at),
-                'last_attempt_at' => ucwords($enrollee->last_attempt_at),
-                'consented_at' => ucwords($enrollee->consented_at),
+                'last_attempt_at'  => ucwords($enrollee->last_attempt_at),
+                'consented_at'     => ucwords($enrollee->consented_at),
 
             ];
             $count++;

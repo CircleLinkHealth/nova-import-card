@@ -10,7 +10,9 @@ namespace App\Services;
 
 
 use App\CLH\CCD\Importer\SnomedToCpmIcdMap;
+use App\Enrollee;
 use App\Models\CPM\CpmProblem;
+use App\Practice;
 use Carbon\Carbon;
 use Illuminate\Support\Collection;
 use Maatwebsite\Excel\Facades\Excel;
@@ -31,27 +33,53 @@ class WelcomeCallListGenerator
      */
     public $ineligiblePatients;
 
+    /**
+     * Filter the list by Last Encounter
+     *
+     * @var bool
+     */
     public $filterLastEncounter;
+
+    /**
+     * Filter the list by Insurance
+     *
+     * @var bool
+     */
     public $filterInsurance;
+
+    /**
+     * Filter the list by the number of CCM problems. Eligible Patients need to have at least 2.
+     *
+     * @var bool
+     */
     public $filterProblems;
-    public $createPreEnrollees;
+
+    /**
+     * Create PreEnrollees
+     *
+     * @var bool
+     */
+    public $createEnrollees;
 
     public function __construct(
         Collection $patientList,
         $filterLastEncounter = true,
         $filterInsurance = true,
         $filterProblems = true,
-        $createPreEnrollees = true
+        $createEnrollees = true,
+        Practice $practice = null
     ) {
         $this->patientList = $patientList;
 
         $this->filterLastEncounter = $filterLastEncounter;
         $this->filterInsurance = $filterInsurance;
         $this->filterProblems = $filterProblems;
+        $this->createEnrollees = $createEnrollees;
+        $this->practice = $practice;
 
         $this->filterPatientList();
 
-        $this->createPreEnrollees();
+        $this->createEnrollees();
     }
 
     protected function filterPatientList()
@@ -74,6 +102,8 @@ class WelcomeCallListGenerator
         ) {
             $row['ccm_condition_1'] = '';
             $row['ccm_condition_2'] = '';
+            $row['cpm_problem_1'] = '';
+            $row['cpm_problem_2'] = '';
 
             $problems = new Collection(explode(',', $row['problems']));
 
@@ -136,6 +166,9 @@ class WelcomeCallListGenerator
 
             $row['ccm_condition_1'] = $qualifyingProblems[0];
             $row['ccm_condition_2'] = $qualifyingProblems[1];
+
+            $row['cpm_problem_1'] = $qualifyingProblemsCpmIdStack[0];
+            $row['cpm_problem_2'] = $qualifyingProblemsCpmIdStack[1];
 
             return $row;
         })->values();
@@ -225,10 +258,26 @@ class WelcomeCallListGenerator
         return $this;
     }
 
-    protected function createPreEnrollees()
+    /**
+     * Create PreEnrollees from the filtered patientList
+     *
+     * @return $this
+     */
+    protected function createEnrollees()
     {
-        if (!$this->createPreEnrollees) {
+        if (!$this->createEnrollees) {
             return $this;
+        }
+
+        foreach ($this->patientList as $patient) {
+            $args = $patient;
+            $args['status'] = Enrollee::ELIGIBLE;
+            $args['practice_id'] = $this->practice->id;
+            $args['provider_id'] = $this->practice->user_id;
+
+            $this->enrollees = Enrollee::updateOrCreate([
+                'mrn' => $args['mrn'],
+            ], $args);
         }
     }
 
