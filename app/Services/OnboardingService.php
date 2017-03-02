@@ -415,11 +415,7 @@ class OnboardingService
                     $newUser['role_id']);
 
                 //attach phone
-                $phone = $user->phoneNumbers()->create([
-                    'number'     => StringManipulation::formatPhoneNumber($newUser['phone_number']),
-                    'type'       => PhoneNumber::getTypes()[$newUser['phone_type']],
-                    'is_primary' => true,
-                ]);
+                $phone = $user->clearAllPhonesAndAddNewPrimary($newUser['phone_number'], $newUser['phone_type'], true);
 
                 $providerInfoCreated = ProviderInfo::firstOrCreate([
                     'user_id' => $user->id,
