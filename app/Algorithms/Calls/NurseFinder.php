@@ -54,25 +54,50 @@ class NurseFinder
     function getMostFrequentNursesForPatient()
     {
 
-        return Call
-            ::select(\DB::raw('count(*) as count, outbound_cpm_id'))
-            ->whereHas('outboundUser', function ($q) {
-                $q->whereHas('roles', function ($k) {
-                    $k->where('name', '=', 'care-center');
-                });
-            })
-            ->where('inbound_cpm_id', $this->patient->user_id)
-            ->whereStatus('reached')
-            ->groupBy('outbound_cpm_id')
-            ->orderBy(\DB::raw('count'), 'desc')
-            ->pluck('outbound_cpm_id', 'count');
+        //get all nurses that can care for a patient
+        $nurses = Nurse::whereHas('user', function ($q) {
+
+            $q->where('user_status', 1);
+
+        })->get();
+
+        //Result array with Nurses
+        $canCare = [];
+
+        foreach ($nurses as $nurse) {
+
+            //get all locations for nurse
+            $nurse_programs = $nurse->user->viewableProgramIds();
+
+            $intersection = in_array($this->patient->user->program_id, $nurse_programs);
+
+            if ($intersection) {
+
+                $successfulCallCount =
+                    Call
+                        ::where('outbound_cpm_id', $nurse->user_id)
+                        ->where('inbound_cpm_id', $this->patient->user_id)
+                        ->where('status', 'reached')
+                        ->count();
+
+                $canCare[$nurse->user_id] = $successfulCallCount;
+
+            }
+        }
+
+        arsort($canCare);
+
+        return $canCare;
 
     }
+
 
     public function find()
     {
 
-        foreach ($this->nursesForPatient as $nurseId) {
+//        dd($this->nursesForPatient);
+
+        foreach ($this->nursesForPatient as $nurseId => $count) {
 
             $nurse = Nurse::where('user_id', $nurseId)->first();
 
@@ -83,7 +108,7 @@ class NurseFinder
                 $no_of_calls_in_window = $this->countScheduledCallCountForNurseForWindow($date_match);
 
                 //check threshold for nurse
-                if ($no_of_calls_in_window < 7) {
+                if ($no_of_calls_in_window < 6) {
 
                     return $date_match;
 
@@ -93,9 +118,10 @@ class NurseFinder
 
         }
 
+
         //No matches, return first available window of
 
-        $date_match['nurse'] = $this->nursesForPatient->first();
+        $date_match['nurse'] = current(array_keys($this->nursesForPatient));
         $date_match['window_match'] = 'No windows found, assigning `most successfully reached nurse` to original patient target';
 
         return $date_match;
@@ -145,20 +171,6 @@ class NurseFinder
 
 //finds any days that have windows for patient and nurse
 //supplies $this->matchArray()
-
-    public
-    function countScheduledCallCountForNurseForWindow(
-        $date_matches
-    ) {
-
-        return Call::where('outbound_cpm_id', $date_matches['nurse'])
-            ->where('scheduled_date', $date_matches['date'])
-            ->where('window_start', '>=', $date_matches['window_start'])
-            ->where('window_end', '<=', $date_matches['window_end'])
-            ->count();
-
-
-    }
 
     public
     function checkForIntersectingDays(
@@ -237,9 +249,6 @@ class NurseFinder
         return $matchArray;
 
     }
-
-//for every day window-pair given for nurses and patients, this will return whether they intersect.
-//supplies $this->matchArray()
 
     public
     function getNextWindowsForPatient()
@@ -334,6 +343,9 @@ class NurseFinder
 
     }
 
+//for every day window-pair given for nurses and patients, this will return whether they intersect.
+//supplies $this->matchArray()
+
     public
     function checkForIntersectingTimes(
         $patientWindow,
@@ -348,6 +360,20 @@ class NurseFinder
 
         //any overlap is true
         return ($patientStartCarbon < $nurseEndCarbon) && ($patientEndCarbon > $nurseStartCarbon);
+
+    }
+
+    public
+    function countScheduledCallCountForNurseForWindow(
+        $date_matches
+    ) {
+
+        return Call::where('outbound_cpm_id', $date_matches['nurse'])
+            ->where('scheduled_date', $date_matches['date'])
+            ->where('window_start', '>=', $date_matches['window_start'])
+            ->where('window_end', '<=', $date_matches['window_end'])
+            ->count();
+
 
     }
 
