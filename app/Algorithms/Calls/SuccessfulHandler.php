@@ -252,9 +252,9 @@ class SuccessfulHandler implements CallHandler
 
                 } else {
 
-                    $this->logic = 'Call patient in the first week of the next month';
+                    $this->logic = 'First week of next month, [but at least 7 days in future]';
 
-                    return $this->nextCallDate->addMonth(1)->startOfMonth();
+                    return $this->nextCallDate->addMonth(1)->startOfMonth()->addDays(3);
 
                 }
 
