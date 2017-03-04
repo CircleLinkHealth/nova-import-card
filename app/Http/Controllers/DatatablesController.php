@@ -47,7 +47,7 @@ class DatatablesController extends Controller
     {
         $date = Carbon::now()->startOfMonth();
 
-        $calls = Call::with('inboundUser')
+        $calls = Call::whereHas('inboundUser')
             ->with('outboundUser')
             ->with('note')
             ->select(
@@ -261,6 +261,11 @@ class DatatablesController extends Controller
                 return '<span style="font-weight:bold;color:green;">' . $dateTime->format('T') . '</a>';
             })
             ->addColumn('notes_link', function ($call) {
+
+                if (!$call) {
+                    return '';
+                }
+
                 return '<a target="_blank" href="' . \URL::route('patient.note.index',
                     ['patientId' => $call->inboundUser->id]) . '">Notes</a>';
             })
