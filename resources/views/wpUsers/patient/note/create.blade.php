@@ -30,7 +30,7 @@
             <div class="row">
                 <div class="main-form-title col-lg-12"> Record New Note</div>
 
-                <form method="post" action="{{URL::route('patient.note.store', ['patientId' => $patient])}}"
+                <form method="post" action="{{URL::route('patient.note.store', ['patientId' => $patient->id])}}"
                       class="form-horizontal">
 
                     {{ csrf_field() }}
