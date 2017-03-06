@@ -4,19 +4,12 @@ namespace App\Models\MedicalRecords;
 
 use App\Contracts\Importer\MedicalRecord\MedicalRecord;
 use App\Contracts\Importer\MedicalRecord\MedicalRecordLogger;
-use App\Importer\Loggers\Csv\CsvSectionsLogger;
+use App\Importer\Loggers\Csv\TabularMedicalRecordSectionsLogger;
 use App\Importer\MedicalRecordEloquent;
 use App\User;
 
-class Csv extends MedicalRecordEloquent
+class TabularMedicalRecord extends MedicalRecordEloquent
 {
-    /**
-     * Table Name
-     *
-     * @var string
-     */
-    protected $table = 'csv_medical_records';
-
     protected $fillable = [
         'practice_id',
         'location_id',
@@ -37,7 +30,7 @@ class Csv extends MedicalRecordEloquent
      */
     public function getLogger() : MedicalRecordLogger
     {
-        return new CsvSectionsLogger($this);
+        return new TabularMedicalRecordSectionsLogger($this);
     }
 
     /**

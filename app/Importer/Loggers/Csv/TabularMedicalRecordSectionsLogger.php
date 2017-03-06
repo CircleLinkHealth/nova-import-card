@@ -1,20 +1,26 @@
 <?php namespace App\Importer\Loggers\Csv;
 
 use App\Contracts\Importer\MedicalRecord\MedicalRecordLogger;
-use App\Models\MedicalRecords\Csv;
+use App\Importer\Models\ItemLogs\DemographicsLog;
+use App\Models\MedicalRecords\TabularMedicalRecord;
 
-class CsvSectionsLogger implements MedicalRecordLogger
+class TabularMedicalRecordSectionsLogger implements MedicalRecordLogger
 {
+    /**
+     * The Medical Record
+     *
+     * @var TabularMedicalRecord
+     */
     private $csv;
 
-    public function __construct(Csv $csv)
+    public function __construct(TabularMedicalRecord $csv)
     {
         $this->csv = $csv;
 
         $this->foreignKeys = [
             'ccda_id'             => '1',
             'vendor_id'           => '1',
-            'medical_record_type' => Csv::class,
+            'medical_record_type' => TabularMedicalRecord::class,
             'medical_record_id'   => $csv->id,
         ];
     }
@@ -48,6 +54,12 @@ class CsvSectionsLogger implements MedicalRecordLogger
      */
     public function logDemographicsSection() : MedicalRecordLogger
     {
+        $saved = DemographicsLog::create(
+            array_merge([
+
+            ], $this->foreignKeys)
+        );
+
         return $this;
     }
 
