@@ -13,6 +13,10 @@ class RenameMrn extends Migration
      */
     public function up()
     {
+        if (!Schema::hasColumn('enrollees', 'mrn_number')) {
+            return;
+        }
+
         Schema::table('enrollees', function (Blueprint $table) {
             $table->renameColumn('mrn_number', 'mrn');
         });
