@@ -90,10 +90,10 @@ class Demographics extends BaseImporter
 
                 $default = 'EN';
 
-                if (in_array(strtolower($itemLog->preferred_contact_language), $englishVariations)) {
+                if (in_array(strtolower($itemLog->language), $englishVariations)) {
                     $language = 'EN';
                 } else {
-                    if (in_array(strtolower($itemLog->preferred_contact_language), $spanishVariations)) {
+                    if (in_array(strtolower($itemLog->language), $spanishVariations)) {
                         $language = 'ES';
                     }
                 }
