@@ -2,16 +2,39 @@
 
 use App\Contracts\Importer\MedicalRecord\Section\ItemLog;
 use App\Importer\Models\ImportedItems\DemographicsImport;
+use App\Traits\Relationships\BelongsToCcda;
+use App\Traits\Relationships\BelongsToVendor;
 use Illuminate\Database\Eloquent\Model;
 
 class DemographicsLog extends Model implements ItemLog
 {
 
-    use App\Traits\Relationships\BelongsToCcda, App\Traits\Relationships\BelongsToVendor;
+    use BelongsToCcda,
+        BelongsToVendor;
 
     protected $table = 'ccd_demographics_logs';
 
-    protected $guarded = [];
+    protected $fillable = [
+        'medical_record_type',
+        'medical_record_id',
+        'first_name',
+        'last_name',
+        'dob',
+        'gender',
+        'mrn_number',
+        'street',
+        'street2',
+        'city',
+        'state',
+        'zip',
+        'cell_phone',
+        'home_phone',
+        'work_phone',
+        'email',
+        'language',
+        'race',
+        'ethnicity',
+    ];
 
     public function importedItem()
     {
