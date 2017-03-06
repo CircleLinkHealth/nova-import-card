@@ -11,17 +11,17 @@ class TabularMedicalRecordSectionsLogger implements MedicalRecordLogger
      *
      * @var TabularMedicalRecord
      */
-    private $csv;
+    private $medicalRecord;
 
-    public function __construct(TabularMedicalRecord $csv)
+    public function __construct(TabularMedicalRecord $tmr)
     {
-        $this->csv = $csv;
+        $this->medicalRecord = $tmr;
 
         $this->foreignKeys = [
             'ccda_id'             => '1',
             'vendor_id'           => '1',
             'medical_record_type' => TabularMedicalRecord::class,
-            'medical_record_id'   => $csv->id,
+            'medical_record_id'   => $tmr->id,
         ];
     }
 
