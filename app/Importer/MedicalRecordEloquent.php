@@ -17,13 +17,12 @@ use App\Importer\Section\Importers\Insurance;
 use App\Importer\Section\Importers\Medications;
 use App\Importer\Section\Importers\Problems;
 use App\Models\MedicalRecords\ImportedMedicalRecord;
-use App\Traits\MedicalRecordItemLoggerRelationships;
 use Illuminate\Database\Eloquent\Model;
 
 
 abstract class MedicalRecordEloquent extends Model implements MedicalRecord
 {
-    use MedicalRecordItemLoggerRelationships;
+    use App\Traits\Relationships\MedicalRecordItemLoggerRelationships;
 
     /**
      * @var integer;

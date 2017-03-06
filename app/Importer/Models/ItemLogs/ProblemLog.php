@@ -2,14 +2,12 @@
 
 use App\Contracts\Importer\MedicalRecord\Section\ItemLog;
 use App\Importer\Models\ImportedItems\ProblemImport;
-use App\Traits\BelongsToCcda;
-use App\Traits\BelongsToVendor;
 use Illuminate\Database\Eloquent\Model;
 
 class ProblemLog extends Model implements ItemLog
 {
 
-    use BelongsToCcda, BelongsToVendor;
+    use App\Traits\Relationships\BelongsToCcda, App\Traits\Relationships\BelongsToVendor;
 
     protected $table = 'ccd_problem_logs';
 

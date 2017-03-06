@@ -6,6 +6,7 @@ use App\Contracts\Importer\MedicalRecord\MedicalRecordLogger;
 use App\Entities\CcdaRequest;
 use App\Importer\Loggers\Ccda\CcdaSectionsLogger;
 use App\Importer\MedicalRecordEloquent;
+use App\Traits\Relationships\BelongsToPatientUser;
 use App\User;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Prettus\Repository\Contracts\Transformable;
@@ -13,7 +14,8 @@ use Prettus\Repository\Traits\TransformableTrait;
 
 class Ccda extends MedicalRecordEloquent implements Transformable
 {
-    use TransformableTrait,
+    use BelongsToPatientUser,
+        TransformableTrait,
         SoftDeletes;
 
     //define sources here
@@ -39,16 +41,6 @@ class Ccda extends MedicalRecordEloquent implements Transformable
         'xml',
         'json',
     ];
-
-    /**
-     * This is the patient that owns this CCDA.
-     *
-     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
-     */
-    public function patient()
-    {
-        return $this->belongsTo(User::class, 'patient_id', 'id');
-    }
 
     public function qaSummary()
     {

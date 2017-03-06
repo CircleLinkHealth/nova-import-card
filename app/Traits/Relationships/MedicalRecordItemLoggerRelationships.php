@@ -1,4 +1,4 @@
-<?php namespace App\Traits;
+<?php namespace App\Traits\Relationships;
 
 use App\Importer\Models\ImportedItems\DemographicsImport;
 use App\Importer\Models\ItemLogs\AllergyLog;

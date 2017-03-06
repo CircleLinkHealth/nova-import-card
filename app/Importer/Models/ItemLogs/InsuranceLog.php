@@ -3,13 +3,11 @@
 namespace App\Importer\Models\ItemLogs;
 
 use App\Models\CCD\CcdInsurancePolicy;
-use App\Traits\BelongsToCcda;
-use App\Traits\BelongsToVendor;
 use Illuminate\Database\Eloquent\Model;
 
 class InsuranceLog extends Model
 {
-    use BelongsToCcda, BelongsToVendor;
+    use App\Traits\Relationships\BelongsToCcda, App\Traits\Relationships\BelongsToVendor;
 
     protected $fillable = [
         'medical_record_id',
