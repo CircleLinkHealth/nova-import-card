@@ -111,7 +111,7 @@ class CallController extends Controller
 
         //We are storing the current caller as the next scheduled call's outbound cpm_id
         $this->scheduler->storeScheduledCall(
-                                                $input['patient_id'],
+                                                $input['patientId'],
                                                 $window_start,
                                                 $window_end,
                                                 $input['date'],
@@ -122,9 +122,9 @@ class CallController extends Controller
                                             );
 
 
-        $patient = Patient::where('user_id', intval($input['patient_id']))->first();
+        $patient = Patient::where('user_id', intval($input['patientId']))->first();
 
-        return redirect()->route('patient.note.index', ['patient' => $input['patient_id']])
+        return redirect()->route('patient.note.index', ['patientId' => $input['patientId']])
                          ->with('messages', ['Successfully Created Note']);
         
     }
