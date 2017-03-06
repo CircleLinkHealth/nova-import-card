@@ -5,6 +5,7 @@ use App\Importer\Models\ItemLogs\DocumentLog;
 use App\Importer\Models\ItemLogs\ProviderLog;
 use App\Models\MedicalRecords\Ccda;
 use App\Models\MedicalRecords\ImportedMedicalRecord;
+use App\Models\MedicalRecords\TabularMedicalRecord;
 use App\Practice;
 use Illuminate\Http\Request;
 use Illuminate\Support\Collection;
@@ -92,27 +93,42 @@ class ImporterController extends Controller
     //Train the Importing Algo
     public function train(Request $request)
     {
-        if (!$request->hasFile('ccda')) {
+        if (!$request->hasFile('medical_record')) {
             return 'Please upload a CCDA';
         }
 
-        $xml = file_get_contents($request->file('ccda'));
+        $file = $request->file('medical_record');
 
-        $json = $this->repo->toJson($xml);
+        if ($file->getClientOriginalExtension() == 'csv') {
+            $csv = parseCsvToArray($file);
 
-        $ccda = Ccda::create([
-            'user_id'   => auth()->user()->id,
-            'vendor_id' => 1,
-            'xml'       => $xml,
-            'json'      => $json,
-            'source'    => Ccda::IMPORTER,
-        ]);
+            foreach ($csv as $row) {
+                $mr = TabularMedicalRecord::create($row);
 
-        $importedMedicalRecord = $ccda->import();
+                $mr->import();
+            }
+        } //assume XML CCDA
+        else {
+            $xml = file_get_contents($file);
 
-        //gather the features for review
-        $document = $ccda->document;
-        $providers = $ccda->providers;
+            $json = $this->repo->toJson($xml);
+
+            $ccda = Ccda::create([
+                'user_id'   => auth()->user()->id,
+                'vendor_id' => 1,
+                'xml'       => $xml,
+                'json'      => $json,
+                'source'    => Ccda::IMPORTER,
+            ]);
+
+            $importedMedicalRecord = $ccda->import();
+
+            //gather the features for review
+            $document = $ccda->document->first();
+            $providers = $ccda->providers;
+        }
+
+
         $predictedLocationId = $importedMedicalRecord->location_id;
         $predictedPracticeId = $importedMedicalRecord->practice_id;
         $predictedBillingProviderId = $importedMedicalRecord->billing_provider_id;
