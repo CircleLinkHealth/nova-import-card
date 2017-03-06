@@ -105,7 +105,6 @@ class Demographics extends BaseImporter
             'preferred_contact_timezone' => 'America/New_York',
             'consent_date'               => date("Y-m-d"),
             'vendor_id'                  => 1,
-            'ccda_id'                    => $medicalRecordId,
             'medical_record_type'        => $medicalRecordType,
             'medical_record_id'          => $medicalRecordId,
             'imported_medical_record_id' => $importedMedicalRecord->id,

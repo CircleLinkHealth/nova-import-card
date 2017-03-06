@@ -7,7 +7,6 @@ use Illuminate\Database\Eloquent\Model;
 
 class ProviderLog extends Model implements ItemLog
 {
-
     use BelongsToCcda,
         BelongsToVendor;
 
@@ -20,4 +19,11 @@ class ProviderLog extends Model implements ItemLog
         return $this->hasOne(ProviderImport::class);
     }
 
+    /**
+     * Get all of the owning commentable models.
+     */
+    public function providerLoggable()
+    {
+        return $this->morphTo();
+    }
 }
