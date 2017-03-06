@@ -11,9 +11,9 @@ class UpdateProblems extends Migration
      */
     public function up()
     {
-//        Artisan::call('db:seed', [
-//            '--class' => AddNewProblems::class,
-//        ]);
+        Artisan::call('db:seed', [
+            '--class' => AddNewProblems::class,
+        ]);
     }
 
     /**

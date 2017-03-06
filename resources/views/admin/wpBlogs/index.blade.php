@@ -49,16 +49,27 @@
                                         <td>{{ date('F d, Y g:i A', strtotime($wpBlog->created_at)) }}</td>
                                         <td class="text-right">
                                             @if(Entrust::can('programs-manage'))
+                                                <a href="{{ URL::route('provider.dashboard.index', ['practiceSlug' => $wpBlog->name]) }}"
+                                                   class="btn btn-xs btn-success">
+                                                    Admin
+                                                </a>
+
                                                 <a href="{{ URL::route('admin.programs.edit', array('id' => $wpBlog->id)) }}"
-                                                   class="btn btn-xs btn-info">Edit</a><a
-                                                        href="{{ URL::route('admin.programs.destroy', array('id' => $wpBlog->id)) }}"
-                                                        class="btn btn-xs btn btn-warning" style="margin-left:10px;">Remove</a>
+                                                   class="btn btn-xs btn-info">Edit
+                                                </a>
+
+                                                <a href="{{ URL::route('admin.programs.destroy', array('id' => $wpBlog->id)) }}"
+                                                   class="btn btn-xs btn btn-warning"
+                                                   style="margin-left:10px;">Remove
+                                                </a>
                                             @endif
                                         </td>
                                     </tr>
                                 @endforeach
                             @else
-                                <tr><td colspan="6">No programs found</td></tr>
+                                <tr>
+                                    <td colspan="6">No programs found</td>
+                                </tr>
                             @endif
                             </tbody>
                         </table>

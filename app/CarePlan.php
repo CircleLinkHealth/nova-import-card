@@ -100,6 +100,7 @@ class CarePlan extends Model implements PdfReport
         $pdf->loadView('wpUsers.patient.careplan.print', [
             'patient'             => $user,
             'problems'            => $careplan[$user->id]['problems'],
+            'problemNames'        => $user->cpmProblems()->get()->sortBy('name')->pluck('name')->all(),
             'biometrics'          => $careplan[$user->id]['bio_data'],
             'symptoms'            => $careplan[$user->id]['symptoms'],
             'lifestyle'           => $careplan[$user->id]['lifestyle'],

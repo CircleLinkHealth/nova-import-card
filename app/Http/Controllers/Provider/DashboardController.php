@@ -11,7 +11,6 @@ use App\Practice;
 use App\Services\OnboardingService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Route;
 
 class DashboardController extends Controller
 {
@@ -37,7 +36,7 @@ class DashboardController extends Controller
         $this->users = $userRepository;
         $this->onboardingService = $onboardingService;
 
-        $this->practiceSlug = Route::current()->getParameter('practiceSlug');
+        $this->practiceSlug = $request->route('practiceSlug');
 
         $this->primaryPractice = Practice::whereName($this->practiceSlug)->first();
     }

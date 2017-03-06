@@ -179,6 +179,24 @@
                                ],
                            'data_error' => 'Fax number must have this format: xxx-xxx-xxxx'
                        ])
+
+                        @include('provider.partials.mdl.form.text.textfield', [
+                           'name' => "locations[@{{index}}][emr_direct_address]",
+                           'label' => 'EMR Direct Address',
+                           'class' =>'col s6',
+                           'type' => 'email',
+                           'value' => '@{{loc.emr_direct_address}}',
+                               'attributes' => [
+                                   'v-model' => 'loc.emr_direct_address',
+                                   'required' => 'required',
+
+                                   'v-on:change' => 'isValidated(index)',
+                                   'v-on:invalid' => 'isValidated(index)',
+                                   'v-on:keyup' => 'isValidated(index)',
+                                   'v-on:click' => 'isValidated(index)',
+                               ],
+                           'data_error' => 'EMR Direct Address must include an @.'
+                       ])
                     </div>
 
                     <div class="row" v-if="index == 0 || !sameEHRLogin">
@@ -192,7 +210,6 @@
                             'class' => 'col s6',
                             'attributes' => [
                                 'v-model' => 'loc.ehr_login',
-                                ':disabled' => 'sameEHRLogin && index > 0',
                                 'v-on:change' => 'isValidated(index)',
                                     'v-on:invalid' => 'isValidated(index)',
                                     'v-on:keyup' => 'isValidated(index)',
@@ -208,7 +225,6 @@
                             'attributes' => [
                                 'v-model' => 'loc.ehr_password',
                                 'autocomplete' => 'new-password',
-                                ':disabled' => 'sameEHRLogin && index > 0',
                                 'v-on:change' => 'isValidated(index)',
                                     'v-on:invalid' => 'isValidated(index)',
                                     'v-on:keyup' => 'isValidated(index)',

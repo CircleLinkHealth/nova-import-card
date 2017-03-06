@@ -20,6 +20,11 @@ class AddNewProblems extends Seeder
                 'name' => 'Asthma',
             ]);
 
+        CpmProblem::whereName('CAD')
+            ->update([
+                'name' => 'CAD/IHD',
+            ]);
+
         $defaultCarePlan = CarePlanTemplate::find(1);
         $uiSort = 12;
 
@@ -27,11 +32,23 @@ class AddNewProblems extends Seeder
             //Does a CPMProblem exist?
             $cpmProblem = CpmProblem::firstOrCreate(['name' => $name]);
 
+            if ($name == 'COPD') {
+                $asthma = CpmProblem::whereName('Asthma')
+                    ->with('cpmInstructions')
+                    ->first();
+
+                if (count($asthma->cpmInstructions) > 0) {
+                    $defaultCarePlan->cpmProblems()->updateExistingPivot($cpmProblem->id, [
+                        'cpm_instruction_id' => $asthma->cpmInstructions[0]->id,
+                    ]);
+                }
+            }
+
             if (!in_array($cpmProblem->id, $defaultCarePlan->cpmProblems->pluck('id')->all())) {
                 $defaultCarePlan->cpmProblems()->attach($cpmProblem, [
                     'has_instruction' => true,
                     'page'            => 1,
-                    'ui_sort'         => $uiSort,
+                    //                    'ui_sort'         => $uiSort,
                 ]);
 
                 $uiSort++;
@@ -88,7 +105,7 @@ class AddNewProblems extends Seeder
             ],
         ];
 
-        $problems['Acute Myocardial Infarction'] = [
+        $problems['Myocardial Infarction'] = [
             'icd9'  => [
                 'DX 410.01',
                 410.11,
@@ -395,7 +412,7 @@ class AddNewProblems extends Seeder
             ],
         ];
 
-        $problems['Benign Prostatic Hyperplasia'] = [
+        $problems['BPH'] = [
             'icd9'  => [
                 'DX 600.00',
                 '600.01',
@@ -2117,7 +2134,7 @@ class AddNewProblems extends Seeder
             ],
         ];
 
-        $problems['Ischemic Heart Disease'] = [
+        $problems['CAD/IHD'] = [
             'icd9'  => [
                 'DX 410.00',
                 '410.01',
@@ -2258,7 +2275,7 @@ class AddNewProblems extends Seeder
             ],
         ];
 
-        $problems['Rheumatoid Arthritis/Osteoarthritis'] = [
+        $problems['Arthritis'] = [
             'icd9'  => [
                 'DX 714.0',
                 '714.1',

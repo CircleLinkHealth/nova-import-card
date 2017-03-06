@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Middleware;
+namespace App\Http\Middleware\ACL;
 
 use App\Practice;
 use Closure;
@@ -24,20 +24,21 @@ class ProviderDashboardACL
         $practiceSlug = Route::current()->getParameter('practiceSlug');
         $practice = Practice::whereName($practiceSlug)->first();
 
+
+        //CLH Admins can see everything
+        if (auth()->user()->hasRole('administrator')) {
+            return $next($request);
+        }
+
+
+        $practice = auth()->user()->practice($practiceSlug);
+
         if (!$practice) {
             abort(404, 'This Practice does not exist.');
         }
 
-        if (auth()->user()->hasRole($role)
-            && in_array(
-                $practice->id,
-                auth()->user()->practices->pluck('id')->all()
-            )
-        ) {
-            return $next($request);
-        }
-
-        if (auth()->user()->practice($practice)
+        if ($practice->pivot->has_admin_rights
+            || auth()->user()->id == $practice->user_id
         ) {
             return $next($request);
         }

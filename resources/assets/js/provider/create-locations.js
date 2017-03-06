@@ -2,29 +2,11 @@ var Vue = require('vue');
 
 Vue.use(require('vue-resource'));
 
+//Load components
+require('../components/CareTeam/search-providers.js');
+require('../components/src/select.js');
+
 Vue.http.headers.common['X-CSRF-TOKEN'] = $('meta[name="csrf-token"]').attr('content');
-
-Vue.directive("select", {
-    "twoWay": true,
-
-    "bind": function () {
-        $(this.el).material_select();
-
-        var self = this;
-
-        $(this.el).on('change', function () {
-            self.set($(self.el).val());
-        });
-    },
-
-    update: function (newValue, oldValue) {
-        $(this.el).val(newValue);
-    },
-
-    "unbind": function () {
-        $(this.el).material_select('destroy');
-    }
-});
 
 /**
  *
@@ -39,8 +21,8 @@ var locationsVM = new Vue({
             deleteTheseLocations: [],
             newLocations: [],
 
-            sameEHRLogin: false,
             sameClinicalIssuesContact: false,
+            sameEHRLogin: false,
 
             patientClinicalIssuesContact: false,
             invalidCount: 0
@@ -72,6 +54,11 @@ var locationsVM = new Vue({
     ready: function () {
         for (var i = 0, len = cpm.existingLocations.length; i < len; i++) {
             this.newLocations.$set(i, cpm.existingLocations[i]);
+
+            if (i == 0) {
+                this.sameClinicalIssuesContact = cpm.existingLocations[i].sameClinicalIssuesContact;
+                this.sameEHRLogin = cpm.existingLocations[i].sameEHRLogin;
+            }
         }
 
         if (len < 1) {
@@ -99,6 +86,7 @@ var locationsVM = new Vue({
                 name: '',
                 phone: '',
                 fax: '',
+                emr_direct_address: '',
                 postal_code: '',
                 state: '',
                 validated: false
@@ -142,7 +130,10 @@ var locationsVM = new Vue({
         submitForm: function (url) {
             this.$http.post(url, {
                 deleteTheseLocations: this.deleteTheseLocations,
-                locations: this.newLocations
+                locations: this.newLocations,
+                sameClinicalIssuesContact: this.sameClinicalIssuesContact,
+                sameEHRLogin: this.sameEHRLogin,
+
             }).then(function (response) {
                 // success
                 if (response.data.redirect_to) {
