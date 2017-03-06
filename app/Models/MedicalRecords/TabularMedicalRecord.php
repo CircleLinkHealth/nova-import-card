@@ -33,12 +33,16 @@ class TabularMedicalRecord extends MedicalRecordEloquent
         'cell_phone',
         'home_phone',
         'work_phone',
+        'email',
 
         'address',
         'address2',
         'city',
         'state',
         'zip',
+
+        'primary_insurance',
+        'secondary_insurance',
     ];
 
     /**
