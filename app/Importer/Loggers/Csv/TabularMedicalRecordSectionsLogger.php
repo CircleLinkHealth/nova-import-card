@@ -4,6 +4,7 @@ use App\Contracts\Importer\MedicalRecord\MedicalRecordLogger;
 use App\Importer\Models\ItemLogs\DemographicsLog;
 use App\Importer\Models\ItemLogs\InsuranceLog;
 use App\Models\MedicalRecords\TabularMedicalRecord;
+use Carbon\Carbon;
 
 class TabularMedicalRecordSectionsLogger implements MedicalRecordLogger
 {
@@ -58,7 +59,7 @@ class TabularMedicalRecordSectionsLogger implements MedicalRecordLogger
             array_merge([
                 'first_name'    => $this->medicalRecord->first_name,
                 'last_name'     => $this->medicalRecord->last_name,
-                'dob'           => $this->medicalRecord->dob,
+                'dob'           => Carbon::parse($this->medicalRecord->dob),
                 'provider_name' => $this->medicalRecord->provider_name,
                 'phone'         => $this->medicalRecord->phone,
                 'mrn'           => $this->medicalRecord->mrn,
