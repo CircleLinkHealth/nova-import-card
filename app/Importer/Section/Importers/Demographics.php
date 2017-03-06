@@ -66,6 +66,7 @@ class Demographics extends BaseImporter
             'cell_phone'                 => $itemLog->cell_phone,
             'home_phone'                 => $itemLog->home_phone,
             'work_phone'                 => $itemLog->work_phone,
+            'primary_phone'              => $itemLog->primary_phone,
             'email'                      => strtolower(str_replace('/', '', $itemLog->email)),
             'study_phone_number'         => empty($itemLog->cell_phone)
                 ? empty($itemLog->home_phone)
