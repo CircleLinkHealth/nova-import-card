@@ -14,13 +14,31 @@ class TabularMedicalRecord extends MedicalRecordEloquent
         'practice_id',
         'location_id',
         'billing_provider_id',
+
         'uploaded_by',
+
         'patient_id',
+
+        'mrn',
         'first_name',
         'last_name',
         'dob',
+
+        'gender',
+        'language',
+
         'provider_name',
-        'phone',
+
+        'primary_phone',
+        'cell_phone',
+        'home_phone',
+        'work_phone',
+
+        'address',
+        'address2',
+        'city',
+        'state',
+        'zip',
     ];
 
     /**
