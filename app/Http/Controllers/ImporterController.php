@@ -105,8 +105,52 @@ class ImporterController extends Controller
             foreach ($csv as $row) {
                 $mr = TabularMedicalRecord::create($row);
 
-                $mr->import();
+                $importedMedicalRecords[] = $mr->import();
             }
+
+            //gather the features for review
+            $document = null;
+            $providers = [];
+
+            $predictedLocationId = null;
+            $predictedPracticeId = null;
+            $predictedBillingProviderId = null;
+            $practicesCollection = Practice::with('locations.providers')
+                ->get([
+                    'id',
+                    'display_name',
+                ]);
+
+            //fixing up the data for vue. basically keying locations and providers by id
+            $practices = $practicesCollection->keyBy('id')
+                ->map(function ($practice) {
+                    return [
+                        'id'           => $practice->id,
+                        'display_name' => $practice->display_name,
+                        'locations'    => $practice->locations->map(function ($loc) {
+                            //is there no better way to do this?
+                            $loc = new Collection($loc);
+
+                            $loc['providers'] = collect($loc['providers'])->keyBy('id');
+
+                            return $loc;
+                        })
+                            ->keyBy('id'),
+                    ];
+                });
+
+            \JavaScript::put([
+                'predictedLocationId'        => $predictedLocationId,
+                'predictedPracticeId'        => $predictedPracticeId,
+                'predictedBillingProviderId' => $predictedBillingProviderId,
+                'practices'                  => $practices,
+            ]);
+
+            return view('importer.show-training-findings', compact([
+                'document',
+                'providers',
+                'importedMedicalRecords',
+            ]));
         } //assume XML CCDA
         else {
             $xml = file_get_contents($file);
@@ -126,48 +170,47 @@ class ImporterController extends Controller
             //gather the features for review
             $document = $ccda->document->first();
             $providers = $ccda->providers;
-        }
 
+            $predictedLocationId = $importedMedicalRecord->location_id;
+            $predictedPracticeId = $importedMedicalRecord->practice_id;
+            $predictedBillingProviderId = $importedMedicalRecord->billing_provider_id;
+            $practicesCollection = Practice::with('locations.providers')
+                ->get([
+                    'id',
+                    'display_name',
+                ]);
 
-        $predictedLocationId = $importedMedicalRecord->location_id;
-        $predictedPracticeId = $importedMedicalRecord->practice_id;
-        $predictedBillingProviderId = $importedMedicalRecord->billing_provider_id;
-        $practicesCollection = Practice::with('locations.providers')
-            ->get([
-                'id',
-                'display_name',
+            //fixing up the data for vue. basically keying locations and providers by id
+            $practices = $practicesCollection->keyBy('id')
+                ->map(function ($practice) {
+                    return [
+                        'id'           => $practice->id,
+                        'display_name' => $practice->display_name,
+                        'locations'    => $practice->locations->map(function ($loc) {
+                            //is there no better way to do this?
+                            $loc = new Collection($loc);
+
+                            $loc['providers'] = collect($loc['providers'])->keyBy('id');
+
+                            return $loc;
+                        })
+                            ->keyBy('id'),
+                    ];
+                });
+
+            \JavaScript::put([
+                'predictedLocationId'        => $predictedLocationId,
+                'predictedPracticeId'        => $predictedPracticeId,
+                'predictedBillingProviderId' => $predictedBillingProviderId,
+                'practices'                  => $practices,
             ]);
 
-        //fixing up the data for vue. basically keying locations and providers by id
-        $practices = $practicesCollection->keyBy('id')
-            ->map(function ($practice) {
-                return [
-                    'id'           => $practice->id,
-                    'display_name' => $practice->display_name,
-                    'locations'    => $practice->locations->map(function ($loc) {
-                        //is there no better way to do this?
-                        $loc = new Collection($loc);
-
-                        $loc['providers'] = collect($loc['providers'])->keyBy('id');
-
-                        return $loc;
-                    })
-                        ->keyBy('id'),
-                ];
-            });
-
-        \JavaScript::put([
-            'predictedLocationId'        => $predictedLocationId,
-            'predictedPracticeId'        => $predictedPracticeId,
-            'predictedBillingProviderId' => $predictedBillingProviderId,
-            'practices'                  => $practices,
-        ]);
-
-        return view('importer.show-training-findings', compact([
-            'document',
-            'providers',
-            'importedMedicalRecord',
-        ]));
+            return view('importer.show-training-findings', compact([
+                'document',
+                'providers',
+                'importedMedicalRecord',
+            ]));
+        }
     }
 
     public function storeTrainingFeatures(Request $request)
@@ -190,35 +233,43 @@ class ImporterController extends Controller
         $locationId = $request->input('locationId');
         $billingProviderId = $request->input('billingProviderId');
 
-        $imr = ImportedMedicalRecord::find($request->input('imported_medical_record_id'));
-        $imr->practice_id = $practiceId;
-        $imr->location_id = $locationId;
-        $imr->billing_provider_id = $billingProviderId;
-        $imr->save();
+        $ids[] = $request->input('imported_medical_record_id');
+
+        if ($request->has('imported_medical_record_ids')) {
+            $ids = $request->input('imported_medical_record_ids');
+        }
+
+        foreach ($ids as $mrId) {
+            $imr = ImportedMedicalRecord::find($mrId);
+            $imr->practice_id = $practiceId;
+            $imr->location_id = $locationId;
+            $imr->billing_provider_id = $billingProviderId;
+            $imr->save();
 
 
-        //save the features on the medical record, document and provider logs
-        $mr = app($imr->medical_record_type)->find($imr->medical_record_id);
-        $mr->practice_id = $practiceId;
-        $mr->location_id = $locationId;
-        $mr->billing_provider_id = $billingProviderId;
-        $mr->save();
+            //save the features on the medical record, document and provider logs
+            $mr = app($imr->medical_record_type)->find($imr->medical_record_id);
+            $mr->practice_id = $practiceId;
+            $mr->location_id = $locationId;
+            $mr->billing_provider_id = $billingProviderId;
+            $mr->save();
 
-        $docs = DocumentLog::where('medical_record_type', '=', $imr->medical_record_type)
-            ->where('medical_record_id', '=', $imr->medical_record_id)
-            ->update([
-                'practice_id'         => $practiceId,
-                'location_id'         => $locationId,
-                'billing_provider_id' => $billingProviderId,
-            ]);
+            $docs = DocumentLog::where('medical_record_type', '=', $imr->medical_record_type)
+                ->where('medical_record_id', '=', $imr->medical_record_id)
+                ->update([
+                    'practice_id'         => $practiceId,
+                    'location_id'         => $locationId,
+                    'billing_provider_id' => $billingProviderId,
+                ]);
 
-        $provs = ProviderLog::where('medical_record_type', '=', $imr->medical_record_type)
-            ->where('medical_record_id', '=', $imr->medical_record_id)
-            ->update([
-                'practice_id'         => $practiceId,
-                'location_id'         => $locationId,
-                'billing_provider_id' => $billingProviderId,
-            ]);
+            $provs = ProviderLog::where('medical_record_type', '=', $imr->medical_record_type)
+                ->where('medical_record_id', '=', $imr->medical_record_id)
+                ->update([
+                    'practice_id'         => $practiceId,
+                    'location_id'         => $locationId,
+                    'billing_provider_id' => $billingProviderId,
+                ]);
+        }
 
         return redirect()->route('view.files.ready.to.import');
     }
