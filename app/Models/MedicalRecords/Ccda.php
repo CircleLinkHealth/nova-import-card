@@ -139,4 +139,16 @@ class Ccda extends MedicalRecordEloquent implements Transformable
 
         return $this;
     }
+
+    /**
+     * @return string
+     */
+    public function getDocumentCustodian() : string
+    {
+        if ($this->document->first()) {
+            return $this->document->first()->custodian;
+        }
+
+        return '';
+    }
 }

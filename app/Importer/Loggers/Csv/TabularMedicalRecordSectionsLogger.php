@@ -2,7 +2,9 @@
 
 use App\Contracts\Importer\MedicalRecord\MedicalRecordLogger;
 use App\Importer\Models\ItemLogs\DemographicsLog;
+use App\Importer\Models\ItemLogs\InsuranceLog;
 use App\Models\MedicalRecords\TabularMedicalRecord;
+use Carbon\Carbon;
 
 class TabularMedicalRecordSectionsLogger implements MedicalRecordLogger
 {
@@ -18,7 +20,6 @@ class TabularMedicalRecordSectionsLogger implements MedicalRecordLogger
         $this->medicalRecord = $tmr;
 
         $this->foreignKeys = [
-            'ccda_id'             => '1',
             'vendor_id'           => '1',
             'medical_record_type' => TabularMedicalRecord::class,
             'medical_record_id'   => $tmr->id,
@@ -56,7 +57,24 @@ class TabularMedicalRecordSectionsLogger implements MedicalRecordLogger
     {
         $saved = DemographicsLog::create(
             array_merge([
-
+                'first_name'    => $this->medicalRecord->first_name,
+                'last_name'     => $this->medicalRecord->last_name,
+                'dob'           => Carbon::parse($this->medicalRecord->dob),
+                'provider_name' => $this->medicalRecord->provider_name,
+                'phone'         => $this->medicalRecord->phone,
+                'mrn'           => $this->medicalRecord->mrn,
+                'gender'        => $this->medicalRecord->gender,
+                'language'      => $this->medicalRecord->language ?? 'EN',
+                'primary_phone' => $this->medicalRecord->primary_phone,
+                'cell_phone'    => $this->medicalRecord->cell_phone,
+                'home_phone'    => $this->medicalRecord->home_phone,
+                'work_phone'    => $this->medicalRecord->work_phone,
+                'email'         => $this->medicalRecord->email,
+                'street'        => $this->medicalRecord->address,
+                'street2'       => $this->medicalRecord->address2,
+                'city'          => $this->medicalRecord->city,
+                'state'         => $this->medicalRecord->state,
+                'zip'           => $this->medicalRecord->zip,
             ], $this->foreignKeys)
         );
 
@@ -69,6 +87,24 @@ class TabularMedicalRecordSectionsLogger implements MedicalRecordLogger
      */
     public function logInsuranceSection() : MedicalRecordLogger
     {
+        $insurances = [];
+
+        if ($this->medicalRecord->primary_insurance) {
+            $insurances['primary'] = $this->medicalRecord->primary_insurance;
+        }
+
+        if ($this->medicalRecord->secondary_insurance) {
+            $insurances['secondary'] = $this->medicalRecord->secondary_insurance;
+        }
+
+        foreach ($insurances as $insurance) {
+            $insurance = InsuranceLog::create(array_merge([
+                'name'     => $insurance,
+                'approved' => false,
+                'import'   => true,
+            ], $this->foreignKeys));
+        }
+
         return $this;
     }
 

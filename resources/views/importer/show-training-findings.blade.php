@@ -10,8 +10,16 @@
         <form class="form-group" action="{{route('post.store.training.features')}}" method="POST">
 
             <input type="hidden" name="_token" value="{{ csrf_token() }}">
-            <input type="hidden" name="imported_medical_record_id" value="{{ $importedMedicalRecord->id }}">
 
+            @if(isset($importedMedicalRecord))
+                <input type="hidden" name="imported_medical_record_id" value="{{ $importedMedicalRecord->id }}">
+            @endif
+
+            @if(isset($importedMedicalRecords))
+                @foreach($importedMedicalRecords as $importedMedicalRecord)
+                    <input type="hidden" name="imported_medical_record_ids[]" value="{{ $importedMedicalRecord->id }}">
+                @endforeach
+            @endif
 
             @if($document)
                 <div class="row">

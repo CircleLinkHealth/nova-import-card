@@ -139,7 +139,7 @@ $user_info = array();
                                                     <input type="tel" pattern='\d{3}[\-]\d{3}[\-]\d{4}'
                                                            class="form-control" name="home_phone_number"
                                                            id="home_phone_number" placeholder="Telephone *"
-                                                           value="{{ (old('home_phone_number') ? old('home_phone_number') : ($patient->home_phone_number ? $patient->home_phone_number : '')) }}">
+                                                           value="{{ (old('home_phone_number') ? old('home_phone_number') : ($patient->home_phone_number ? (new App\CLH\Helpers\StringManipulation())->formatPhoneNumber($patient->home_phone_number) : '')) }}">
                                                     <span class="help-block">{{ $errors->first('home_phone_number') }}</span>
                                                 </div>
                                             </div>
@@ -149,7 +149,7 @@ $user_info = array();
                                                     <input type="tel" pattern='\d{3}[\-]\d{3}[\-]\d{4}'
                                                            class="form-control" name="mobile_phone_number"
                                                            id="mobile_phone_number" placeholder="Mobile Telephone *"
-                                                           value="{{ (old('mobile_phone_number') ? old('mobile_phone_number') : ($patient->mobile_phone_number ? $patient->mobile_phone_number : '')) }}">
+                                                           value="{{ (old('mobile_phone_number') ? old('mobile_phone_number') : ($patient->mobile_phone_number ? (new App\CLH\Helpers\StringManipulation())->formatPhoneNumber($patient->mobile_phone_number) : '')) }}">
                                                     <span class="help-block">{{ $errors->first('mobile_phone_number') }}</span>
                                                 </div>
                                             </div>

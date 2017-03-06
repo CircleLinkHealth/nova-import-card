@@ -34,7 +34,6 @@ class CcdaSectionsLogger implements MedicalRecordLogger
         $this->vendorId = $ccd->vendor_id;
 
         $this->foreignKeys = [
-            'ccda_id'             => $this->ccdaId,
             'vendor_id'           => $this->vendorId,
             'medical_record_type' => Ccda::class,
             'medical_record_id'   => $this->ccdaId,

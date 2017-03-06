@@ -30,6 +30,7 @@ class DemographicsLog extends Model implements ItemLog
         'cell_phone',
         'home_phone',
         'work_phone',
+        'primary_phone',
         'email',
         'language',
         'race',
