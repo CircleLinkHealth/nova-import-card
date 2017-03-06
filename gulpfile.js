@@ -31,23 +31,23 @@ elixir(function (mix) {
 
     // mix.sass('fab.scss');
 
-    mix.sass('./node_modules/materialize-css/dist/css/materialize.min.css', 'public/css/materialize.min.css');
-
-    mix.sass([
-        '/css/provider/dashboard.scss',
-        './resources/assets/less/css/animate.min.css'
-    ], 'public/css/provider-dashboard.css');
-
-    mix.scripts([
-        './node_modules/materialize-css/dist/js/materialize.min.js'
-    ], 'public/js/materialize.min.js');
-
-    mix.sass([
-            '/css/onboarding.scss',
-        ],
-        'public/css/onboarding.css');
-
-    mix.browserify('provider/create-locations.js');
+    // mix.sass('./node_modules/materialize-css/dist/css/materialize.min.css', 'public/css/materialize.min.css');
+    //
+    // mix.sass([
+    //     '/css/provider/dashboard.scss',
+    //     './resources/assets/less/css/animate.min.css'
+    // ], 'public/css/provider-dashboard.css');
+    //
+    // mix.scripts([
+    //     './node_modules/materialize-css/dist/js/materialize.min.js'
+    // ], 'public/js/materialize.min.js');
+    //
+    // mix.sass([
+    //         '/css/onboarding.scss',
+    //     ],
+    //     'public/css/onboarding.css');
+    //
+    // mix.browserify('provider/create-locations.js');
     mix.browserify('provider/create-staff.js');
 
     // mix.browserify('uploader.js');

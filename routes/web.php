@@ -1,11 +1,32 @@
 <?php
 
+use App\Practice;
+use App\Reports\Sales\Practice\SalesByPracticeReport;
+use App\Reports\Sales\Provider\SalesByProviderReport;
+use Carbon\Carbon;
+use Illuminate\Support\Facades\Mail;
+
 if (app()->environment() != 'production') {
 
     Route::get('rohan', function () {
 
-        dd((new \App\Services\Calls\SchedulerService())->getMostFrequentNursesForPatient(\App\User::find(2417)->patientInfo));
+
+
+        die();
+
+
+        $twilio = new Aloha\Twilio\Twilio(env('TWILIO_SID'), env('TWILIO_TOKEN'), env('TWILIO_FROM'));
+
+        $enrollee = \App\Enrollee::find(1);
+        $link = url("join/$enrollee->invite_code");
+        $provider_name = App\User::find($enrollee->provider_id)->fullName;
+
+        $twilio->message($enrollee->phone,
+            "Dr. $provider_name has invited you to their new wellness program! Please enroll here: $link");
+
     });
+
+
 }
 
 //Algo test routes.
@@ -463,7 +484,15 @@ Route::group(['middleware' => 'auth'], function () {
         'prefix'     => 'admin',
     ], function () {
 
-        Route::get('nursecalls/{from}/{to}', function ($from, $to) {
+        Route::post('get-athena-ccdas', [
+            'uses' => 'CcdApi\Athena\AthenaApiController@getCcdas',
+            'as'   => 'get.athena.ccdas',
+        ]);
+
+        Route::get('nursecalls/{from}/{to}', function (
+            $from,
+            $to
+        ) {
 
             $nurses = App\Nurse::all();
             $data = [];
@@ -662,7 +691,7 @@ Route::group(['middleware' => 'auth'], function () {
         });
 
         Route::get('emr-direct/check', function () {
-            (new \App\Services\PhiMail\PhiMail())->sendReceive();
+            (new \App\Services\PhiMail\PhiMail())->receive();
         });
 
         Route::get('dupes', function () {
@@ -1345,22 +1374,27 @@ Route::group([
  * Enrollment Consent
  */
 
-//Route::group([
-//    'prefix' => 'join',
-//], function () {
-//
-//    Route::get('{program_name}', [
-//        'uses' => 'Patient\EnrollmentConsentController@create',
-//        'as'   => 'patient.enroll.create',
-//    ]);
-//
-//    Route::post('store', [
-//        'uses' => 'Patient\EnrollmentConsentController@store',
-//        'as'   => 'patient.enroll.store',
-//    ]);
-//
-//
-//});
+Route::group([
+    'prefix' => 'join',
+], function () {
+
+    Route::post('/save', [
+        'uses' => 'Patient\EnrollmentConsentController@store',
+        'as'   => 'patient.enroll.store',
+    ]);
+
+    Route::get('{invite_code}', [
+        'uses' => 'Patient\EnrollmentConsentController@create',
+        'as'   => 'patient.enroll.create',
+    ]);
+
+    Route::post('/update', [
+        'uses' => 'Patient\EnrollmentConsentController@update',
+        'as'   => 'patient.enroll.update',
+    ]);
+
+
+});
 
 Route::group([
     'prefix' => 'onboarding',

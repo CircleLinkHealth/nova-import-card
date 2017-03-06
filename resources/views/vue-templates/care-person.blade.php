@@ -247,7 +247,10 @@
                                     <div class="col-md-12">
                                         <input v-model="care_person.alert" id="send_alerts"
                                                name="send_alerts" class="form-control type" type="checkbox"
+                                               v-bind:disabled="!care_person.user.email"
                                                style="display: inline;">
+                                        <p class="validation-error alert-info"
+                                           v-if="!care_person.user.email">Email needs to be filled out.
                                     </div>
                                 </div>
                             </div>

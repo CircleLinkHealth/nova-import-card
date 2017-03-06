@@ -126,6 +126,23 @@
                             </select>
                             <label>Phone Type</label>
                         </div>
+
+                        @include('provider.partials.mdl.form.text.textfield', [
+                           'name' => "users[@{{index}}][emr_direct_address]",
+                           'label' => 'EMR Direct Address',
+                           'type' => 'email',
+                           'class' =>'col s6',
+                           'value' => '@{{loc.emr_direct_address}}',
+                               'attributes' => [
+                                   'v-model' => 'newUser.emr_direct_address',
+                                   'required' => 'required',
+                                   'v-on:change' => 'isValidated(index)',
+                                   'v-on:invalid' => 'isValidated(index)',
+                                   'v-on:keyup' => 'isValidated(index)',
+                                   'v-on:click' => 'isValidated(index)',
+                               ],
+                           'data_error' => 'EMR Direct Address must include an @.'
+                       ])
                     </div>
 
                     <div class="row">

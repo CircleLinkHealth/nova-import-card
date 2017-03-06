@@ -99,9 +99,9 @@ if (isset($patient) && !empty($patient)) {
                     <div class="row gutter">
                         <div class="col-xs-12">
                             <ul class="subareas__list">
-                                @if($problems)
-                                    @foreach($problems as $key => $value)
-                                        <li class='subareas__item inline-block col-xs-6 col-sm-3 print-row'>{{$key}}</li>
+                                @if($problemNames)
+                                    @foreach($problemNames as $prob)
+                                        <li class='subareas__item inline-block col-xs-6 col-sm-3 print-row'>{{$prob}}</li>
                                     @endforeach
                                 @endif
                             </ul>
@@ -245,23 +245,8 @@ if (isset($patient) && !empty($patient)) {
                         </div>
                     </div>
                 </div>
-                @if($problems)
-                    <?php foreach($problems as $key => $value){ ?>
-                <!-- Hypertension -->
-                    <div class="patient-info__subareas">
-                        <div class="row">
-                            <div class="col-xs-12">
-                                <h3 class="patient-summary__subtitles--subareas patient-summary--careplan">For
-                                    <?= $key ?>:</h3>
-                            </div>
-                            <div class="col-xs-12">
-                                <p><?= nl2br($value) ?></p>
-                            </div>
-                        </div>
-                    </div>
-                    <?php } ?>
-                @endif
-            <!-- /INSTRUCTIONS -->
+
+                @include('partials.view-care-plan.followTheseInstructions')
 
                 <!-- OTHER INFORMATION -->
                 <div class="row pb-before">

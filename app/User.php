@@ -1,6 +1,7 @@
 <?php namespace App;
 
 use App\Contracts\Serviceable;
+use App\Facades\StringManipulation;
 use App\Importer\Models\ImportedItems\DemographicsImport;
 use App\Models\CCD\Allergy;
 use App\Models\CCD\CcdInsurancePolicy;
@@ -20,6 +21,7 @@ use App\Models\EmailSettings;
 use App\Models\MedicalRecords\Ccda;
 use App\Notifications\ResetPassword;
 use App\Services\UserService;
+use App\Traits\HasEmrDirectAddress;
 use DateTime;
 use Faker\Factory;
 use Illuminate\Auth\Authenticatable;
@@ -36,7 +38,11 @@ use Zizaco\Entrust\Traits\EntrustUserTrait;
 class User extends Model implements AuthenticatableContract, CanResetPasswordContract, Serviceable
 {
 
-    use Authenticatable, CanResetPassword, Notifiable, SoftDeletes;
+    use Authenticatable,
+        CanResetPassword,
+        HasEmrDirectAddress,
+        Notifiable,
+        SoftDeletes;
 
     use EntrustUserTrait {
         EntrustUserTrait::restore insteadof SoftDeletes;
@@ -331,11 +337,6 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
         return $this->hasOne(Nurse::class, 'user_id', 'id');
     }
 
-    public function phoneNumbers()
-    {
-        return $this->hasMany(PhoneNumber::class, 'user_id', 'id');
-    }
-
     public function carePlan()
     {
         return $this->hasOne(CarePlan::class, 'user_id', 'id');
@@ -430,9 +431,6 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
         }
     }
 
-
-    // END RELATIONSHIPS
-
     public function userConfig()
     {
         $key = 'wp_' . $this->primaryProgramId() . '_user_config';
@@ -443,6 +441,9 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
             return unserialize($userConfig['meta_value']);
         }
     }
+
+
+    // END RELATIONSHIPS
 
     public function primaryProgramId()
     {
@@ -861,6 +862,39 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
         }
     }
 
+    /**
+     * Delete all existing Phone Numbers and replace them with a new primary number.
+     *
+     * @param $number
+     * @param $type
+     * @param bool $isPrimary
+     *
+     * @return bool
+     */
+    public function clearAllPhonesAndAddNewPrimary(
+        $number,
+        $type,
+        $isPrimary = false
+    ) {
+        $this->phoneNumbers()->delete();
+
+        if (empty($number)) {
+            //assume we wanted to delete the phone(s)
+            return true;
+        }
+
+        return $this->phoneNumbers()->create([
+            'number' => StringManipulation::formatPhoneNumber($number),
+            'type' => PhoneNumber::getTypes()[$type],
+            'is_primary' => $isPrimary,
+        ]);
+    }
+
+    public function phoneNumbers()
+    {
+        return $this->hasMany(PhoneNumber::class, 'user_id', 'id');
+    }
+
     public function getHomePhoneNumberAttribute()
     {
         return $this->getPhoneAttribute();
@@ -1178,6 +1212,19 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
     public function careTeamMembers()
     {
         return $this->hasMany(CarePerson::class, 'user_id', 'id');
+    }
+
+    /**
+     * Get the CarePeople who have subscribed to receive alerts for this Patient.
+     * Returns an array of User objects.
+     *
+     * @return User[]
+     */
+    public function getCareTeamReceivesAlertsAttribute()
+    {
+        return $this->careTeamMembers->where('alert', '=', true)->map(function ($carePerson) {
+            return $carePerson->user;
+        });
     }
 
     public function getSendAlertToAttribute()
@@ -1935,19 +1982,26 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
 
     /**
      * Get the specified Practice, if it is related to this User
+     * You can pass in a practice_id, practice_slug, or  App\Practice object
      *
-     * @param $practiceId
+     * @param $practice
      *
      * @return mixed
      */
-    public function practice($practiceId)
+    public function practice($practice)
     {
-        if (is_object($practiceId)) {
-            $practiceId = $practiceId->id;
+        if (is_string($practice) && !is_int($practice)) {
+            return $this->practices()
+                ->where('name', '=', $practice)
+                ->first();
+        }
+
+        if (is_object($practice)) {
+            $practice = $practice->id;
         }
 
         return $this->practices()
-            ->where('program_id', '=', $practiceId)
+            ->where('program_id', '=', $practice)
             ->first();
     }
 
