@@ -4,6 +4,7 @@ namespace App\Models\MedicalRecords;
 
 use App\Contracts\Importer\MedicalRecord\MedicalRecord;
 use App\Contracts\Importer\MedicalRecord\MedicalRecordLogger;
+use App\Importer\Loggers\Csv\CsvSectionsLogger;
 use App\Importer\MedicalRecordEloquent;
 use App\User;
 
@@ -36,7 +37,7 @@ class Csv extends MedicalRecordEloquent
      */
     public function getLogger() : MedicalRecordLogger
     {
-
+        return new CsvSectionsLogger($this);
     }
 
     /**
