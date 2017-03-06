@@ -47,7 +47,7 @@
                     @endif
                 </div>
                 {!!
-                Form::open(array('url' => URL::route('call.schedule', array('patientId' => $patient->id)), 'method' => 'POST'))
+                Form::open(array('url' => URL::route('call.schedule', array('patientId' => $patient->user_id)), 'method' => 'POST'))
                 !!}
 
                 <div class="form-block col-md-4" style="padding-top: 0px">

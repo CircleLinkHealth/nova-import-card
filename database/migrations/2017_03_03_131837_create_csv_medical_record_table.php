@@ -66,30 +66,30 @@ class CreateCsvMedicalRecordTable extends Migration
                 ->onUpdate('cascade')
                 ->onDelete('cascade');
 
-            $table->string('first_name');
-            $table->string('last_name');
-            $table->date('dob');
-            $table->string('provider_name');
+            $table->string('first_name')->nullable();
+            $table->string('last_name')->nullable();
+            $table->date('dob')->nullable();
+            $table->string('provider_name')->nullable();
 
-            $table->string('mrn');
-            $table->string('gender');
-            $table->string('language');
+            $table->string('mrn')->nullable();
+            $table->string('gender')->nullable();
+            $table->string('language')->nullable();
 
-            $table->string('primary_phone');
-            $table->string('cell_phone');
-            $table->string('home_phone');
-            $table->string('work_phone');
+            $table->string('primary_phone')->nullable();
+            $table->string('cell_phone')->nullable();
+            $table->string('home_phone')->nullable();
+            $table->string('work_phone')->nullable();
 
-            $table->string('email');
+            $table->string('email')->nullable();
 
-            $table->string('address');
-            $table->string('address2');
-            $table->string('city');
-            $table->string('state');
-            $table->string('zip');
+            $table->string('address')->nullable();
+            $table->string('address2')->nullable();
+            $table->string('city')->nullable();
+            $table->string('state')->nullable();
+            $table->string('zip')->nullable();
 
-            $table->string('primary_insurance');
-            $table->string('secondary_insurance');
+            $table->string('primary_insurance')->nullable();
+            $table->string('secondary_insurance')->nullable();
 
             $table->timestamps();
         });
