@@ -1369,6 +1369,25 @@ Route::group([
     ]);
 });
 
+/*
+ * Enrollment Center UI
+ */
+
+Route::group([
+    'prefix' => '/enrollment',
+], function () {
+
+    Route::get('/', [
+        'uses' => 'EnrollmentCenterController@dashboard',
+        'as'   => 'enrollment-center.dashboard',
+    ]);
+
+    Route::get('/training', [
+        'uses' => 'EnrollmentCenterController@training',
+        'as'   => 'enrollment-center.training',
+    ]);
+
+});
 
 /*
  * Enrollment Consent
