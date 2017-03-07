@@ -66,6 +66,7 @@ class Demographics extends BaseImporter
             'cell_phone'                 => $itemLog->cell_phone,
             'home_phone'                 => $itemLog->home_phone,
             'work_phone'                 => $itemLog->work_phone,
+            'primary_phone'              => $itemLog->primary_phone,
             'email'                      => strtolower(str_replace('/', '', $itemLog->email)),
             'study_phone_number'         => empty($itemLog->cell_phone)
                 ? empty($itemLog->home_phone)
@@ -90,10 +91,10 @@ class Demographics extends BaseImporter
 
                 $default = 'EN';
 
-                if (in_array(strtolower($itemLog->preferred_contact_language), $englishVariations)) {
+                if (in_array(strtolower($itemLog->language), $englishVariations)) {
                     $language = 'EN';
                 } else {
-                    if (in_array(strtolower($itemLog->preferred_contact_language), $spanishVariations)) {
+                    if (in_array(strtolower($itemLog->language), $spanishVariations)) {
                         $language = 'ES';
                     }
                 }
@@ -105,7 +106,6 @@ class Demographics extends BaseImporter
             'preferred_contact_timezone' => 'America/New_York',
             'consent_date'               => date("Y-m-d"),
             'vendor_id'                  => 1,
-            'ccda_id'                    => $medicalRecordId,
             'medical_record_type'        => $medicalRecordType,
             'medical_record_id'          => $medicalRecordId,
             'imported_medical_record_id' => $importedMedicalRecord->id,

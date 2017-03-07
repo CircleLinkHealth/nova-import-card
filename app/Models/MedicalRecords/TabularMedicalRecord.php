@@ -110,4 +110,10 @@ class TabularMedicalRecord extends MedicalRecordEloquent
     {
         // TODO: Implement setPracticeIdPrediction() method.
     }
+
+
+    public function getDocumentCustodian() : string
+    {
+        return '';
+    }
 }

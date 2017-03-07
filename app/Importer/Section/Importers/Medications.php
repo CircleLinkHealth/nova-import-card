@@ -90,7 +90,6 @@ class Medications extends BaseImporter
             'medical_record_type'        => $this->medicalRecordType,
             'medical_record_id'          => $this->medicalRecordId,
             'imported_medical_record_id' => $this->importedMedicalRecord->id,
-            'ccda_id'                    => $this->medicalRecordId,
             'vendor_id'                  => $itemLog->vendor_id,
             'ccd_medication_log_id'      => $itemLog->id,
             'name'                       => ucfirst($consolidatedMed->cons_name),

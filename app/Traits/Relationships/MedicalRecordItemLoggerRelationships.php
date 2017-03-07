@@ -19,37 +19,38 @@ trait MedicalRecordItemLoggerRelationships
 {
     public function allergies()
     {
-        return $this->hasMany(AllergyLog::class);
+        return $this->morphMany(AllergyLog::class, 'providerLoggable', 'medical_record_type', 'medical_record_id');
     }
 
     public function demographics()
     {
-        return $this->hasOne(DemographicsLog::class);
+        return $this->morphMany(DemographicsLog::class, 'providerLoggable', 'medical_record_type', 'medical_record_id');
     }
 
     public function document()
     {
-        return $this->hasOne(DocumentLog::class);
+        return $this->morphMany(DocumentLog::class, 'providerLoggable', 'medical_record_type', 'medical_record_id');
     }
 
     public function medications()
     {
-        return $this->hasMany(MedicationLog::class);
+        return $this->morphMany(MedicationLog::class, 'providerLoggable', 'medical_record_type', 'medical_record_id');
     }
 
     public function problems()
     {
-        return $this->hasMany(ProblemLog::class);
+        return $this->morphMany(ProblemLog::class, 'providerLoggable', 'medical_record_type', 'medical_record_id');
     }
 
     public function providers()
     {
-        return $this->hasMany(ProviderLog::class);
+        return $this->morphMany(ProviderLog::class, 'providerLoggable', 'medical_record_type', 'medical_record_id');
     }
 
     public function demographicsImports()
     {
-        return $this->hasOne(DemographicsImport::class);
+        return $this->morphMany(DemographicsImport::class, 'providerLoggable', 'medical_record_type',
+            'medical_record_id');
     }
 
 }

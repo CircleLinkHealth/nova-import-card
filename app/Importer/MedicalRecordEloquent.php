@@ -241,15 +241,6 @@ abstract class MedicalRecordEloquent extends Model implements MedicalRecord
         return $this;
     }
 
-    public function getDocumentCustodian() : string
-    {
-        if ($this->document) {
-            return $this->document->custodian;
-        }
-
-        return '';
-    }
-
     /**
      * Predict which Location should be attached to this MedicalRecord.
      *
