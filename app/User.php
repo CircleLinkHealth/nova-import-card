@@ -874,7 +874,8 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
     public function clearAllPhonesAndAddNewPrimary(
         $number,
         $type,
-        $isPrimary = false
+        $isPrimary = false,
+        $extension = null
     ) {
         $this->phoneNumbers()->delete();
 
@@ -884,9 +885,10 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
         }
 
         return $this->phoneNumbers()->create([
-            'number' => StringManipulation::formatPhoneNumber($number),
-            'type' => PhoneNumber::getTypes()[$type],
+            'number'     => StringManipulation::formatPhoneNumber($number),
+            'type'       => PhoneNumber::getTypes()[$type],
             'is_primary' => $isPrimary,
+            'extension'  => $extension,
         ]);
     }
 

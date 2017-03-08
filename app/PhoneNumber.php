@@ -40,6 +40,7 @@ class PhoneNumber extends Model
         'number',
         'type',
         'is_primary',
+        'extension',
     ];
 
     public static function getTypes() : array
