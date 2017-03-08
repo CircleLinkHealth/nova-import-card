@@ -110,7 +110,10 @@ var createStaffVM = new Vue({
                 locations: this.locationIds,
                 grandAdminRights: false,
                 sendBillingReports: false,
-                emr_direct_address: ''
+                emr_direct_address: '',
+                phone_number: '',
+                phone_extension: '',
+                phone_type: '',
             });
 
             this.$nextTick(function () {
