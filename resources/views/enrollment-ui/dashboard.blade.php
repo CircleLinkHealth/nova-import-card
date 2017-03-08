@@ -87,9 +87,12 @@
                 home_phone: '{{ $enrollee->home_phone ?? 'N/A' }}',
                 cell_phone: '{{ $enrollee->cell_phone ?? 'N/A' }}',
                 address: '{{ $enrollee->address ?? 'N/A' }}',
+                address_2: '{{ $enrollee->address_2 ?? 'N/A' }}',
+                state: '{{ $enrollee->state ?? 'N/A' }}',
+                city: '{{ $enrollee->city ?? 'N/A' }}',
+                zip: '{{ $enrollee->zip ?? 'N/A' }}',
                 email: '{{ $enrollee->email ?? 'N/A' }}',
                 dob: '{{ $enrollee->dob ?? 'N/A' }}',
-
 
             },
 

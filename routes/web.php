@@ -1326,9 +1326,19 @@ Route::group([
         'as'   => 'enrollment-center.dashboard',
     ]);
 
-    Route::post('/', [
-        'uses' => 'EnrollmentCenterController@store',
-        'as'   => 'enrollment-center.store',
+    Route::post('/consented', [
+        'uses' => 'EnrollmentCenterController@consented',
+        'as'   => 'enrollment-center.consented',
+    ]);
+
+    Route::post('/utc', [
+        'uses' => 'EnrollmentCenterController@unableToContact',
+        'as'   => 'enrollment-center.utc',
+    ]);
+
+    Route::post('/rejected', [
+        'uses' => 'EnrollmentCenterController@rejected',
+        'as'   => 'enrollment-center.rejected',
     ]);
 
     Route::get('/training', [

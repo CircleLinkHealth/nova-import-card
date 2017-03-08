@@ -1,28 +1,44 @@
 <div id="consented" class="modal confirm modal-fixed-footer">
-    <form method="post" id="consented_form" action="{{URL::route('enrollment-center.store')}}"
+    <form method="post" id="consented_form" action="{{URL::route('enrollment-center.consented')}}"
           class="">
 
         {{ csrf_field() }}
 
         <div class="modal-content">
-            <h4 style="color: #47beab">Awesome! Please confirm patient details.</h4>
+            <h4 style="color: #47beab">Awesome! Please confirm patient details:</h4>
 
             <div class="row">
-                <blockquote style="border-left: 5px solid #26a69a;">
-                    Please confirm the patient's preferred contact details:
-                </blockquote>
-                <div class="col s6 m3 select-custom">
-                    <label for="phone" class="label">Home Phone</label>
-                    <input class="input-field" name="home_phone" id="phone" v-model="home_phone"/>
+                <div class="col s6 m4 select-custom">
+                    <label for="primary_phone" class="label">Primary Phone</label>
+                    <input class="input-field" name="primary_phone" id="primary_phone" v-model="primary_phone"/>
                 </div>
-                <div class="col s6 m3 select-custom">
-                    <label for="address" class="label">Cell Phone</label>
+                <div class="col s6 m4 select-custom">
+                    <label for="home_phone" class="label">Home Phone</label>
+                    <input class="input-field" name="home_phone" id="home_phone" v-model="home_phone"/>
+                </div>
+                <div class="col s6 m4 select-custom">
+                    <label for="cell_phone" class="label">Cell Phone</label>
                     <input class="input-field" name="cell_phone" id="cell_phone" v-model="cell_phone"/>
                 </div>
-                <div class="col s12 m6 select-custom">
-                    <label for="address" class="label">Preferred Address</label>
+                <div class="col s12 m4 select-custom">
+                    <label for="address" class="label">Address</label>
                     <input class="input-field" name="address" id="address" v-model="address"/>
-
+                </div>
+                <div class="col s12 m2 select-custom">
+                    <label for="address" class="label">Address Line 2</label>
+                    <input class="input-field" name="address_2" id="address_2" v-model="address_2"/>
+                </div>
+                <div class="col s12 m2 select-custom">
+                    <label for="address" class="label">City</label>
+                    <input class="input-field" name="city" id="city" v-model="city"/>
+                </div>
+                <div class="col s12 m2 select-custom">
+                    <label for="address" class="label">State</label>
+                    <input class="input-field" name="state" id="state" v-model="state"/>
+                </div>
+                <div class="col s12 m2 select-custom">
+                    <label for="address" class="label">Zip</label>
+                    <input class="input-field" name=zip" id="zip" v-model="zip"/>
                 </div>
 
             </div>
@@ -66,7 +82,7 @@
 
         </div>
         <div class="modal-footer">
-            <button id="submit" name="submit" type="submit" v-on:click="consent_submit"
+            <button id="submit" name="submit" type="submit"
                     class="modal-action waves-effect waves-light btn">Confirm and Call Next Patient
             </button>
         </div>
