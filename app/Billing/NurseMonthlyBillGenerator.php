@@ -60,7 +60,7 @@ class NurseMonthlyBillGenerator
                                 $notes = ''){
 
         $this->nurse = $newNurse;
-        $this->nurseName = $newNurse->user->last_name;
+        $this->nurseName = $newNurse->user->fullName;
         $this->startDate = $billingDateStart;
         $this->endDate = $billingDateEnd;
         $this->addDuration = $manualTimeAdd;

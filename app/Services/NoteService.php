@@ -63,7 +63,7 @@ class NoteService
 
                 $user_care_team = $patient->sendAlertTo;
 
-                $this->sendNoteToCareTeam($note, $user_care_team, $linkToNote, true, $notifyPatientSupport);
+                $this->sendNoteToCareTeam($note, $linkToNote, true, $notifyPatientSupport);
             }
         }
 
