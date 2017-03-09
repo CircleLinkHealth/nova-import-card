@@ -874,7 +874,8 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
     public function clearAllPhonesAndAddNewPrimary(
         $number,
         $type,
-        $isPrimary = false
+        $isPrimary = false,
+        $extension = null
     ) {
         $this->phoneNumbers()->delete();
 
@@ -884,9 +885,10 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
         }
 
         return $this->phoneNumbers()->create([
-            'number' => StringManipulation::formatPhoneNumber($number),
-            'type' => PhoneNumber::getTypes()[$type],
+            'number'     => StringManipulation::formatPhoneNumber($number),
+            'type'       => PhoneNumber::getTypes()[$type],
             'is_primary' => $isPrimary,
+            'extension'  => $extension,
         ]);
     }
 
@@ -1183,7 +1185,7 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
         return $ct;
     }
 
-    public function setCareTeamAttribute($memberUserIds)
+    public function setCareTeamAttribute(array $memberUserIds)
     {
         if (!is_array($memberUserIds)) {
             $this->careTeamMembers()->where('type', 'member')->delete();
@@ -1216,15 +1218,23 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
 
     /**
      * Get the CarePeople who have subscribed to receive alerts for this Patient.
-     * Returns an array of User objects.
+     * Returns a Collection of User objects, or an Empty Collection.
      *
-     * @return User[]
+     * @return \Illuminate\Database\Eloquent\Collection
      */
     public function getCareTeamReceivesAlertsAttribute()
     {
-        return $this->careTeamMembers->where('alert', '=', true)->map(function ($carePerson) {
-            return $carePerson->user;
-        });
+        if (!$this->primaryPractice->send_alerts) {
+            return new \Illuminate\Database\Eloquent\Collection();
+        }
+
+        return $this->careTeamMembers->where('alert', '=', true)
+            ->keyBy('member_user_id')
+            ->unique()
+            ->values()
+            ->map(function ($carePerson) {
+                return $carePerson->user;
+            });
     }
 
     public function getSendAlertToAttribute()

@@ -22,7 +22,7 @@
 <input type="hidden" name="activityName" id="activityName" value="@yield('activity')">
 
 <?php
-use Carbon\Carbon;
+use App\User;use Carbon\Carbon;
 
 if (!isset($activity)) {
     $activity = 'Undefined';
@@ -46,9 +46,12 @@ if (strpos($requestUri, 'login') !== false) {
 // set patient vars
 $patientId = '';
 $patientProgramId = '';
-if (isset($patient) && !empty($patient)) {
+if (isset($patient) && !empty($patient) && is_a($patient, App\User::class)) {
     $patientId = $patient->id;
     $patientProgramId = $patient->program_id;
+} elseif (isset($patient) && !empty($patient) && is_a($patient, App\Patient::class)) {
+    $patientId = $patient->user_id;
+    $patientProgramId = $patient->user->program_id;
 }
 ?>
 

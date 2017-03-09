@@ -30,7 +30,7 @@
             <div class="row">
                 <div class="main-form-title col-lg-12"> Record New Note</div>
 
-                <form method="post" action="{{URL::route('patient.note.store', ['patientId' => $patient])}}"
+                <form method="post" action="{{URL::route('patient.note.store', ['patientId' => $patient->id])}}"
                       class="form-horizontal">
 
                     {{ csrf_field() }}
@@ -258,7 +258,6 @@
                                         <input type="hidden" name="patient_id" value="{{$patient->id}}">
                                         <input type="hidden" name="logger_id" value="{{Auth::user()->id}}">
                                         <input type="hidden" name="author_id" value="{{Auth::user()->id}}">
-                                        <input type="hidden" name="patientID" id="patientID" value="{{$patient->id}}">
                                         <input type="hidden" name="programId" id="programId" value="{{$program_id}}">
                                     </div>
 

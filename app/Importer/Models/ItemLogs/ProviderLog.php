@@ -1,14 +1,14 @@
 <?php namespace App\Importer\Models\ItemLogs;
 
 use App\Contracts\Importer\MedicalRecord\Section\ItemLog;
-use App\Traits\BelongsToCcda;
-use App\Traits\BelongsToVendor;
+use App\Traits\Relationships\BelongsToCcda;
+use App\Traits\Relationships\BelongsToVendor;
 use Illuminate\Database\Eloquent\Model;
 
 class ProviderLog extends Model implements ItemLog
 {
-
-    use BelongsToCcda, BelongsToVendor;
+    use BelongsToCcda,
+        BelongsToVendor;
 
     protected $table = 'ccd_provider_logs';
 
@@ -19,4 +19,11 @@ class ProviderLog extends Model implements ItemLog
         return $this->hasOne(ProviderImport::class);
     }
 
+    /**
+     * Get all of the owning commentable models.
+     */
+    public function providerLoggable()
+    {
+        return $this->morphTo();
+    }
 }

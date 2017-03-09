@@ -27,7 +27,6 @@ class Insurance extends BaseImporter
 
         foreach ($itemLogs as $itemLog) {
             $insurance = CcdInsurancePolicy::create([
-                'ccda_id'             => $medicalRecordId,
                 'medical_record_id'   => $medicalRecordId,
                 'medical_record_type' => $medicalRecordType,
                 'name'                => $itemLog->name,

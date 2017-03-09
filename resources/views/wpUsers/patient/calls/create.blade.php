@@ -108,7 +108,7 @@
                 </div>
             </div>
 
-            <input type="hidden" name="patient_id" value="{{$patient->user_id}}"/>
+            <input type="hidden" name="patientId" value="{{$patient->user_id}}"/>
             <input type="hidden" name="attempt_note" value="{{$attempt_note}}"/>
 
 

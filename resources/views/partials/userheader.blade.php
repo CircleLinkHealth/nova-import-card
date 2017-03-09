@@ -52,7 +52,7 @@ $location = empty($patient->getPreferredLocationName())
                         </li>
                         <li class="inline-block">{{$patient->age ?? 'N/A'}} yrs <span style="color: #4390b5">•</span>
                         </li>
-                        <li class="inline-block">{{$patient->phone ?? 'N/A'}} </li>
+                        <li class="inline-block">{{(new App\CLH\Helpers\StringManipulation())->formatPhoneNumber($patient->phone) ?? 'N/A'}} </li>
                     </b>
                     <li><span> <b>Provider</b>: {{$provider}}  </span></li>
                     <li><span> <b>Location</b>: {{$location}}  </span></li>

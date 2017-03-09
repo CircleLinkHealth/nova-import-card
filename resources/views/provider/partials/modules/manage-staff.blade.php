@@ -118,7 +118,21 @@
                             'data_error' => 'Phone number must have this format: xxx-xxx-xxxx'
                         ])
 
-                        <div class="input-field col s6">
+                        @include('provider.partials.mdl.form.text.textfield', [
+                           'name' => 'users[@{{index}}][phone_extension]',
+                           'label' => 'Extension',
+                           'class' => 'col s3',
+                           'attributes' => [
+                               'v-model' => 'newUser.phone_extension',
+                               'v-bind:value' => 'newUser.phone_extension',
+                               'v-on:change' => 'isValidated(index)',
+                               'v-on:invalid' => 'isValidated(index)',
+                               'v-on:keyup' => 'isValidated(index)',
+                               'v-on:click' => 'isValidated(index)',
+                           ],
+                       ])
+
+                        <div class="input-field col s3">
                             <select id="phones" v-select="newUser.phone_type" name="users[@{{index}}][phone_type]"
                                     required v-on:change="isValidated(index)">
                                 <option value="" disabled selected></option>
@@ -126,7 +140,9 @@
                             </select>
                             <label>Phone Type</label>
                         </div>
+                    </div>
 
+                    <div class="row">
                         @include('provider.partials.mdl.form.text.textfield', [
                            'name' => "users[@{{index}}][emr_direct_address]",
                            'label' => 'EMR Direct Address',

@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class RenameMrn extends Migration
+class AddPrimaryPhoneDemogrImports extends Migration
 {
     /**
      * Run the migrations.
@@ -13,12 +13,10 @@ class RenameMrn extends Migration
      */
     public function up()
     {
-        if (!Schema::hasColumn('enrollees', 'mrn_number')) {
-            return;
-        }
-
-        Schema::table('enrollees', function (Blueprint $table) {
-            $table->renameColumn('mrn_number', 'mrn');
+        Schema::table('demographics_imports', function (Blueprint $table) {
+            $table->string('primary_phone')
+                ->nullable()
+                ->after('zip');
         });
     }
 
@@ -29,7 +27,7 @@ class RenameMrn extends Migration
      */
     public function down()
     {
-        Schema::table('enrollees', function (Blueprint $table) {
+        Schema::table('demographics_imports', function (Blueprint $table) {
             //
         });
     }
