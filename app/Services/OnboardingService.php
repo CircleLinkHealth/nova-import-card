@@ -87,7 +87,9 @@ class OnboardingService
             ) {
                 $q->where('id', '=', $primaryPractice->id);
             })
-            ->get();
+            ->get()
+            ->sortBy('first_name')
+            ->values();
 
         if (!auth()->user()->hasRole('administrator')) {
             $practiceUsers->reject(function ($user) {
