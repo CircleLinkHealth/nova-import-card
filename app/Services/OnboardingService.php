@@ -80,7 +80,7 @@ class OnboardingService
             'specialist',
         ];
 
-        $practiceUsers = User::ofType($relevantRoles)
+        $practiceUsers = User::ofType(array_merge($relevantRoles, ['practice-lead']))
             ->whereHas('practices', function ($q) use
             (
                 $primaryPractice
