@@ -148,6 +148,7 @@ class EmailsProvidersToApproveCareplans extends Command
             $bar->advance();
 
             return [
+                'practice'         => $user->primaryPractice->display_name,
                 'provider'         => $user->fullName,
                 'pendingApprovals' => $numberOfCareplans,
             ];
