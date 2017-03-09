@@ -22,6 +22,7 @@ class EnrollmentCenterController extends Controller
 
         }
 
+        //mark as engaged to prevent double dipping
         $enrollee->status = 'engaged';
         $enrollee->save();
 
@@ -35,9 +36,6 @@ class EnrollmentCenterController extends Controller
 
     public function consented(Request $request)
     {
-
-        //update details
-//        dd($request->input());
 
         $enrollee = Enrollee::find($request->input('enrollee_id'));
 
@@ -124,8 +122,6 @@ class EnrollmentCenterController extends Controller
         $enrollee->last_attempt_at = Carbon::now()->toDateTimeString();
 
         $enrollee->save();
-        dd($enrollee);
-
 
         return redirect()->action('EnrollmentCenterController@dashboard');
 
