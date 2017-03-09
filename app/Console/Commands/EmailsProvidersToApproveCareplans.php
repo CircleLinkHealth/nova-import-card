@@ -82,6 +82,10 @@ class EmailsProvidersToApproveCareplans extends Command
                 return false;
             }
 
+            if (!$user->primaryPractice->send_alerts) {
+                return false;
+            }
+
 
             $recipients = [
                 $user->email,
