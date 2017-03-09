@@ -38,6 +38,14 @@ class LogSentMessage
             $sender = User::whereEmail($sender_email)->first();
             $receiver = User::whereEmail($receiver_email)->first();
 
+            if ($receiver->primaryPractice->auto_approve_careplans) {
+                return false;
+            }
+
+            if (!$receiver->primaryPractice->send_alerts) {
+                return false;
+            }
+
             $sender_cpm_id = $sender->id ?? 357;
             $receiver_cpm_id = $receiver->id ?? 357;
 
