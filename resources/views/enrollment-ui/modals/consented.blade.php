@@ -9,19 +9,19 @@
 
             <div class="row">
                 <div class="col s6 m3 select-custom">
-                    <label for="primary_phone" class="label">Primary Phone</label>
+                    <label for="primary_phone" class="label">Primary Phone (+1xxxxxxxxxx)</label>
                     <input class="input-field" name="primary_phone" id="primary_phone" v-model="primary_phone"/>
                 </div>
                 <div class="col s6 m3 select-custom">
-                    <label for="home_phone" class="label">Home Phone</label>
+                    <label for="home_phone" class="label">Home Phone (+1xxxxxxxxxx)</label>
                     <input class="input-field" name="home_phone" id="home_phone" v-model="home_phone"/>
                 </div>
                 <div class="col s6 m3 select-custom">
-                    <label for="cell_phone" class="label">Cell Phone</label>
+                    <label for="cell_phone" class="label">Cell Phone (+1xxxxxxxxxx)</label>
                     <input class="input-field" name="cell_phone" id="cell_phone" v-model="cell_phone"/>
                 </div>
                 <div class="col s6 m3 select-custom">
-                    <label for="cell_phone" class="label">Other Phone</label>
+                    <label for="cell_phone" class="label">Other Phone (+1xxxxxxxxxx)</label>
                     <input class="input-field" name="other_phone" id="other_phone" v-model="other_phone"/>
                 </div>
                 <div class="col s12 m4 select-custom">
