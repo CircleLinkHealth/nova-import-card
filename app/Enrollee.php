@@ -33,6 +33,7 @@ class Enrollee extends Model
         'user_id',
         'provider_id',
         'practice_id',
+        'care_ambassador_id',
         // patient_id in EHR Software
         'mrn',
         'dob',
@@ -53,7 +54,8 @@ class Enrollee extends Model
         'preferred_window',
         'preferred_days',
         'status',
-
+        'last_call_outcome_reason',
+        'last_call_outcome',
         'primary_insurance',
         'secondary_insurance',
         'cell_phone',
@@ -193,7 +195,7 @@ class Enrollee extends Model
 
     public function scopeToSMS($query){
 
-        return $query->where('status', 'eligible');
+        return $query->where('status', 'sms_queue');
 
     }
 

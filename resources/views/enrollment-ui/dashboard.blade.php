@@ -107,29 +107,6 @@
 
             methods: {
 
-                utc_submit(){
-
-                },
-
-                consent_submit(){
-
-                    $('#consented_form').submit();
-
-                },
-
-                rejected_submit(){
-
-                },
-
-                toggle_other_text_input(){
-
-                    alert(this.utc_other);
-
-                    if (this.utc_other === 'other') {
-                        this.show_utc_other = true;
-                    }
-
-                }
 
 
             }

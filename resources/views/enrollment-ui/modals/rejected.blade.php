@@ -29,7 +29,7 @@
             <input type="hidden" name="enrollee_id" value="{{$enrollee->id}}">
 
             <div class="modal-footer" style="padding-right: 60px">
-                <button id="submit" name="submit" type="submit" v-on:click="utc_submit"
+                <button id="submit" name="submit" type="submit"
                         class="modal-action waves-effect waves-light btn">Call Next Patient
                 </button>
             </div>

@@ -17,10 +17,13 @@ class EnrollmentCenterController extends Controller
 
         if($enrollee == null){
 
-            //no calls available
+            //no calls availableE
             return view('enrollment-ui.no-available-calls');
 
         }
+
+        $enrollee->status = 'engaged';
+        $enrollee->save();
 
         return view('enrollment-ui.dashboard',
             [
@@ -52,6 +55,8 @@ class EnrollmentCenterController extends Controller
         $enrollee->last_call_outcome = $request->input('consented');
         $enrollee->care_ambassador_id = auth()->user()->id;
 
+        $enrollee->attempt_count = $enrollee->attempt_count + 1;
+
         if ($request->input('extra')) {
             $enrollee->last_call_outcome_reason = $request->input('extra');
         }
@@ -81,6 +86,21 @@ class EnrollmentCenterController extends Controller
 
         $enrollee = Enrollee::find($request->input('enrollee_id'));
 
+        $enrollee->last_call_outcome = $request->input('reason');
+
+        if ($request->input('reason_other')) {
+            $enrollee->last_call_outcome_reason = $request->input('reason_other');
+        }
+
+        $enrollee->care_ambassador_id = auth()->user()->id;
+
+        $enrollee->status = 'utc';
+        $enrollee->attempt_count = $enrollee->attempt_count + 1;
+        $enrollee->last_attempt_at = Carbon::now()->toDateTimeString();
+
+        $enrollee->save();
+
+
         return redirect()->action('EnrollmentCenterController@dashboard');
 
 
@@ -90,6 +110,22 @@ class EnrollmentCenterController extends Controller
     {
 
         $enrollee = Enrollee::find($request->input('enrollee_id'));
+
+        $enrollee->last_call_outcome = $request->input('reason');
+
+        if ($request->input('reason_other')) {
+            $enrollee->last_call_outcome_reason = $request->input('reason_other');
+        }
+
+        $enrollee->care_ambassador_id = auth()->user()->id;
+
+        $enrollee->status = 'rejected';
+        $enrollee->attempt_count = $enrollee->attempt_count + 1;
+        $enrollee->last_attempt_at = Carbon::now()->toDateTimeString();
+
+        $enrollee->save();
+        dd($enrollee);
+
 
         return redirect()->action('EnrollmentCenterController@dashboard');
 
