@@ -31,14 +31,15 @@
             </div>
 
             <span>
-            <li class="sidebar-demo-list"><span id="name">Name: @{{name}}</span></li>
-            <li class="sidebar-demo-list"><span id="cell_phone">Primary Phone: @{{primary_phone}}</span></li>
-            <li class="sidebar-demo-list"><span id="cell_phone">Cell Phone: @{{cell_phone}}</span></li>
-            <li class="sidebar-demo-list"><span id="home_phone">Home Phone: @{{home_phone}}</span></li>
-            <li class="sidebar-demo-list"><span id="address">Address: @{{address}}</span></li>
-            <li class="sidebar-demo-list"><span id="address">Email: @{{email}}</span></li>
-            <li class="sidebar-demo-list"><span id="dob">DOB: @{{dob}}</span></li>
-         </span>
+                    <li class="sidebar-demo-list"><span id="name">Name: @{{name}}</span></li>
+                    <li class="sidebar-demo-list"><span id="cell_phone">Primary Phone: @{{primary_phone}}</span></li>
+                    <li class="sidebar-demo-list"><span id="home_phone">Home Phone: @{{home_phone}}</span></li>
+                    <li class="sidebar-demo-list"><span id="home_phone">Cell Phone: @{{cell_phone}}</span></li>
+                    <li class="sidebar-demo-list"><span id="home_phone">Other Phone: @{{other_phone}}</span></li>
+                    <li class="sidebar-demo-list"><span id="address">Address: @{{address}}</span></li>
+                    <li class="sidebar-demo-list"><span id="address">Email: @{{email}}</span></li>
+                    <li class="sidebar-demo-list"><span id="dob">DOB: @{{dob}}</span></li>
+                 </span>
 
             <hr>
 
@@ -57,21 +58,19 @@
         <!-- MODALS -->
 
         <!-- Success / Patient Consented -->
-        @include('enrollment-ui.modals.consented')
+    @include('enrollment-ui.modals.consented')
 
-        <!-- Unable To Contact -->
-        @include('enrollment-ui.modals.utc')
+    <!-- Unable To Contact -->
+    @include('enrollment-ui.modals.utc')
 
-        <!-- Rejected -->
-        @include('enrollment-ui.modals.rejected')
+    <!-- Rejected -->
+    @include('enrollment-ui.modals.rejected')
 
     </div>
 
+    <script src="https://unpkg.com/vue@2.1.3/dist/vue.js"></script>
+    <script src="https://cdn.jsdelivr.net/vue.resource/1.2.0/vue-resource.min.js"></script>
 
-@stop
-
-
-@section('scripts')
     <script>
 
         Vue.http.headers.common['X-CSRF-TOKEN'] = $('meta[name="csrf-token"]').attr('content');
@@ -82,10 +81,11 @@
 
             data: {
 
-                name: '{{ $enrollee->first_name . $enrollee->last_name }}',
+                name: '{{ $enrollee->first_name ?? ''. $enrollee->last_name }}',
                 primary_phone: '{{ $enrollee->primary_phone ?? 'N/A' }}',
                 home_phone: '{{ $enrollee->home_phone ?? 'N/A' }}',
                 cell_phone: '{{ $enrollee->cell_phone ?? 'N/A' }}',
+                other_phone: '{{ $enrollee->other_phone ?? 'N/A' }}',
                 address: '{{ $enrollee->address ?? 'N/A' }}',
                 address_2: '{{ $enrollee->address_2 ?? 'N/A' }}',
                 state: '{{ $enrollee->state ?? 'N/A' }}',
@@ -125,7 +125,7 @@
 
                     alert(this.utc_other);
 
-                    if(this.utc_other === 'other'){
+                    if (this.utc_other === 'other') {
                         this.show_utc_other = true;
                     }
 

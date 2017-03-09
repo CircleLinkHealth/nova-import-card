@@ -47,10 +47,4 @@
 
 @yield('content')
 
-
 </html>
-
-<script src="https://unpkg.com/vue@2.1.3/dist/vue.js"></script>
-<script src="https://cdn.jsdelivr.net/vue.resource/1.2.0/vue-resource.min.js"></script>
-
-@yield('scripts')
