@@ -2,9 +2,15 @@
 
 use App\Events\CarePlanWasApproved;
 use App\Events\PdfableCreated;
+use App\Events\UpdateUserLoginInfo;
+use App\Listeners\ClosePatientSession;
 use App\Listeners\CreateAndHandlePdfReport;
+use App\Listeners\LogSentMessage;
 use App\Listeners\UpdateCarePlanStatus;
+use Illuminate\Auth\Events\Login;
+use Illuminate\Auth\Events\Logout;
 use Illuminate\Foundation\Support\Providers\EventServiceProvider as ServiceProvider;
+use Illuminate\Mail\Events\MessageSending;
 
 class EventServiceProvider extends ServiceProvider
 {
@@ -15,20 +21,20 @@ class EventServiceProvider extends ServiceProvider
      * @var array
      */
     protected $listen = [
-        'Illuminate\Auth\Events\Login'          => [
-            'App\Events\UpdateUserLoginInfo',
+        Login::class               => [
+            UpdateUserLoginInfo::class,
         ],
-        CarePlanWasApproved::class              => [
+        CarePlanWasApproved::class => [
             UpdateCarePlanStatus::class,
         ],
-        PdfableCreated::class                   => [
+        PdfableCreated::class      => [
             CreateAndHandlePdfReport::class,
         ],
-        'Illuminate\Auth\Events\Logout'         => [
-            'App\Listeners\ClosePatientSession',
+        Logout::class              => [
+            ClosePatientSession::class,
         ],
-        'Illuminate\Mail\Events\MessageSending' => [
-            'App\Listeners\LogSentMessage',
+        MessageSending::class      => [
+            LogSentMessage::class,
         ],
     ];
 
