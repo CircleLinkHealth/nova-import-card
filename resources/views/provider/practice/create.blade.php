@@ -39,6 +39,20 @@
                         @endforeach
                     </select>
                 </div>
+
+                <div class="col s6"></div>
+
+                <div class="input-field col s12">
+                    <input name="auto_approve_careplans" type="checkbox" id="auto_approve_careplans"
+                           value="1" @if($practice->auto_approve_careplans){{'checked'}}@endif>
+                    <label for="auto_approve_careplans">Auto Approve Care Plans</label>
+                </div>
+
+                <div class="input-field col s12">
+                    <input name="send_alerts" type="checkbox" id="send_alerts"
+                           value="1" @if($practice->send_alerts){{'checked'}}@endif>
+                    <label for="send_alerts">Send Alerts</label>
+                </div>
             </div>
 
 

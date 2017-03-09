@@ -80,14 +80,16 @@ class OnboardingService
             'specialist',
         ];
 
-        $practiceUsers = User::ofType($relevantRoles)
+        $practiceUsers = User::ofType(array_merge($relevantRoles, ['practice-lead']))
             ->whereHas('practices', function ($q) use
             (
                 $primaryPractice
             ) {
                 $q->where('id', '=', $primaryPractice->id);
             })
-            ->get();
+            ->get()
+            ->sortBy('first_name')
+            ->values();
 
         if (!auth()->user()->hasRole('administrator')) {
             $practiceUsers->reject(function ($user) {
