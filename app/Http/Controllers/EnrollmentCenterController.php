@@ -15,6 +15,13 @@ class EnrollmentCenterController extends Controller
         //get an eligible patient.
         $enrollee = Enrollee::toCall()->first();
 
+        if($enrollee == null){
+
+            //no calls available
+            return view('enrollment-ui.no-available-calls');
+
+        }
+
         return view('enrollment-ui.dashboard',
             [
                 'enrollee' => $enrollee,
@@ -34,6 +41,7 @@ class EnrollmentCenterController extends Controller
         $enrollee->primary_phone = $request->input('primary_phone');
         $enrollee->home_phone = $request->input('home_phone');
         $enrollee->cell_phone = $request->input('cell_phone');
+        $enrollee->other_phone = $request->input('other_phone');
         $enrollee->address = $request->input('address');
         $enrollee->address_2 = $request->input('address_2');
         $enrollee->state = $request->input('state');
@@ -73,6 +81,8 @@ class EnrollmentCenterController extends Controller
 
         $enrollee = Enrollee::find($request->input('enrollee_id'));
 
+        return redirect()->action('EnrollmentCenterController@dashboard');
+
 
     }
 
@@ -80,6 +90,8 @@ class EnrollmentCenterController extends Controller
     {
 
         $enrollee = Enrollee::find($request->input('enrollee_id'));
+
+        return redirect()->action('EnrollmentCenterController@dashboard');
 
     }
 

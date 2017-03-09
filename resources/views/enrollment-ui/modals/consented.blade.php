@@ -8,17 +8,21 @@
             <h4 style="color: #47beab">Awesome! Please confirm patient details:</h4>
 
             <div class="row">
-                <div class="col s6 m4 select-custom">
+                <div class="col s6 m3 select-custom">
                     <label for="primary_phone" class="label">Primary Phone</label>
                     <input class="input-field" name="primary_phone" id="primary_phone" v-model="primary_phone"/>
                 </div>
-                <div class="col s6 m4 select-custom">
+                <div class="col s6 m3 select-custom">
                     <label for="home_phone" class="label">Home Phone</label>
                     <input class="input-field" name="home_phone" id="home_phone" v-model="home_phone"/>
                 </div>
-                <div class="col s6 m4 select-custom">
+                <div class="col s6 m3 select-custom">
                     <label for="cell_phone" class="label">Cell Phone</label>
                     <input class="input-field" name="cell_phone" id="cell_phone" v-model="cell_phone"/>
+                </div>
+                <div class="col s6 m3 select-custom">
+                    <label for="cell_phone" class="label">Other Phone</label>
+                    <input class="input-field" name="other_phone" id="other_phone" v-model="other_phone"/>
                 </div>
                 <div class="col s12 m4 select-custom">
                     <label for="address" class="label">Address</label>
