@@ -30,10 +30,12 @@ class Enrollee extends Model
 
     protected $fillable = [
         'id',
+
         'user_id',
         'provider_id',
         'practice_id',
         'care_ambassador_id',
+
         // patient_id in EHR Software
         'mrn',
         'dob',
@@ -46,8 +48,12 @@ class Enrollee extends Model
         'state',
         'zip',
         'invite_code',
-        //primary_phone
+
         'primary_phone',
+        'cell_phone',
+        'home_phone',
+        'other_phone',
+
         'consented_at',
         'last_attempt_at',
         'attempt_count',
@@ -58,9 +64,6 @@ class Enrollee extends Model
         'last_call_outcome',
         'primary_insurance',
         'secondary_insurance',
-        'cell_phone',
-        'home_phone',
-        'other_phone',
         'email',
         'last_encounter',
         'referring_provider_name',
@@ -139,7 +142,7 @@ class Enrollee extends Model
     {
         $helper = new StringManipulation();
 
-        $this->attributes['home_phone'] = $helper->formatPhoneNumberE164($homePhone);
+        $this->attributes['cell_phone'] = $helper->formatPhoneNumberE164($homePhone);
     }
 
     /**
@@ -151,7 +154,7 @@ class Enrollee extends Model
     {
         $helper = new StringManipulation();
 
-        $this->attributes['home_phone'] = $helper->formatPhoneNumberE164($homePhone);
+        $this->attributes['other_phone'] = $helper->formatPhoneNumberE164($homePhone);
     }
 
     /**

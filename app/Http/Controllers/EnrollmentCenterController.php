@@ -39,10 +39,11 @@ class EnrollmentCenterController extends Controller
 
         $enrollee = Enrollee::find($request->input('enrollee_id'));
 
-        $enrollee->primary_phone = $request->input('primary_phone');
-        $enrollee->home_phone = $request->input('home_phone');
-        $enrollee->cell_phone = $request->input('cell_phone');
-        $enrollee->other_phone = $request->input('other_phone');
+        $enrollee->setHomePhoneAttribute($request->input('home_phone'));
+        $enrollee->setPrimaryPhoneNumberAttribute($request->input('primary_phone'));
+        $enrollee->setCellPhoneAttribute($request->input('cell_phone'));
+        $enrollee->setOtherPhoneAttribute($request->input('other_phone'));
+
         $enrollee->address = $request->input('address');
         $enrollee->address_2 = $request->input('address_2');
         $enrollee->state = $request->input('state');

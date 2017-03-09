@@ -36,14 +36,18 @@
                     <li class="sidebar-demo-list"><span id="home_phone">Home Phone: @{{home_phone}}</span></li>
                     <li class="sidebar-demo-list"><span id="home_phone">Cell Phone: @{{cell_phone}}</span></li>
                     <li class="sidebar-demo-list"><span id="home_phone">Other Phone: @{{other_phone}}</span></li>
+                    <li class="sidebar-demo-list"><span id="home_phone">Email: @{{email}}</span></li>
                     <li class="sidebar-demo-list"><span id="address">Address: @{{address}}</span></li>
-                    <li class="sidebar-demo-list"><span id="address">Email: @{{email}}</span></li>
+                    <li class="sidebar-demo-list"><span id="address">Address Line 2: @{{address_2}}</span></li>
+                    <li class="sidebar-demo-list"><span id="address">City: @{{city}}</span></li>
+                    <li class="sidebar-demo-list"><span id="address">State: @{{state}}</span></li>
+                    <li class="sidebar-demo-list"><span id="address">Zip: @{{zip}}</span></li>
                     <li class="sidebar-demo-list"><span id="dob">DOB: @{{dob}}</span></li>
                  </span>
 
             <hr>
 
-            <li class="sidebar-demo-list"><span id="billing_provider">Dr. John Doe</span></li>
+            <!--<li class="sidebar-demo-list"><span id="billing_provider">Dr. John Doe</span></li>-->
 
         </ul>
 
