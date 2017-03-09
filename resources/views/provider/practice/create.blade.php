@@ -39,6 +39,29 @@
                         @endforeach
                     </select>
                 </div>
+
+                <div class="col s6"></div>
+
+                <div class="input-field col s12">
+                    @include('provider.partials.mdl.form.checkbox', [
+                        'label' => 'Auto Approve Care Plans',
+                        'name' => 'auto_approve_careplans',
+                        'value' => '1',
+                        'class' => 'col s12',
+                    ])
+                </div>
+
+                <div class="input-field col s12">
+                    @include('provider.partials.mdl.form.checkbox', [
+                        'label' => 'Send Alerts',
+                        'name' => 'send_alerts',
+                        'value' => '1',
+                        'class' => 'col s12',
+                        'attributes' => [
+                            'checked' => 'checked',
+                        ]
+                    ])
+                </div>
             </div>
 
 
