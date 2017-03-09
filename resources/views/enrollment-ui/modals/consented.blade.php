@@ -1,4 +1,4 @@
-<div id="consented" class="modal confirm modal-fixed-footer">
+<div id="consented" class="modal confirm modal-fixed-footer" style="max-height: 100%; height: 86%">
     <form method="post" id="consented_form" action="{{URL::route('enrollment-center.consented')}}"
           class="">
 
