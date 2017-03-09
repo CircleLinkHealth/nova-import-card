@@ -4,7 +4,6 @@ namespace App\Observers;
 
 
 use App\Activity;
-use App\NurseContactWindow;
 use App\PageTimer;
 
 class PageTimerObserver
@@ -12,9 +11,7 @@ class PageTimerObserver
     /**
      * Listen for the NurseContactWindow created event.
      *
-     * @param NurseContactWindow $window
-     *
-     * @internal param User $user
+     * @param PageTimer $pageTimer
      */
     public function saved(PageTimer $pageTimer)
     {
