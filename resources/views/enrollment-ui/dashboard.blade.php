@@ -15,6 +15,14 @@
 
         }
 
+        .valid{
+            color: green;
+        }
+
+        .invalid{
+            color: red;
+        }
+
     </style>
 
     <div id="enrollment_calls">
@@ -97,6 +105,92 @@
                 zip: '{{ $enrollee->zip ?? 'N/A' }}',
                 email: '{{ $enrollee->email ?? 'N/A' }}',
                 dob: '{{ $enrollee->dob ?? 'N/A' }}',
+                phone_regex: /^\d{3}-\d{3}-\d{4}$/
+
+
+            },
+
+            computed: {
+
+                //primary phone computer vars
+                primary_phone_label:function () {
+
+                    if(this.primary_phone.match(this.phone_regex)){
+
+                        return 'Primary Phone Valid!';
+
+                    }
+
+                    return 'Primary Phone Invalid..'
+
+                },
+
+                primary_is_valid:function(){
+                    return this.primary_phone.match(this.phone_regex);
+                },
+                primary_is_invalid:function(){
+                    return !this.primary_phone.match(this.phone_regex);
+                },
+
+                //other phone computer vars
+                other_phone_label:function () {
+
+                    if(this.other_phone.match(this.phone_regex)){
+
+                        return 'Other Phone Valid!';
+
+                    }
+
+                    return 'Other Phone Invalid..'
+
+                },
+
+                other_is_valid:function(){
+                    return this.other_phone.match(this.phone_regex);
+                },
+                other_is_invalid:function(){
+                    return !this.other_phone.match(this.phone_regex);
+                },
+
+                //other phone computer vars
+                home_phone_label:function () {
+
+                    if(this.home_phone.match(this.phone_regex)){
+
+                        return 'Home Phone Valid!';
+
+                    }
+
+                    return 'Home Phone Invalid..'
+
+                },
+
+                home_is_valid:function(){
+                    return this.home_phone.match(this.phone_regex);
+                },
+                home_is_invalid:function(){
+                    return !this.home_phone.match(this.phone_regex);
+                },
+
+                //other phone computer vars
+                cell_phone_label:function () {
+
+                    if(this.cell_phone.match(this.phone_regex)){
+
+                        return 'Cell Phone Valid!';
+
+                    }
+
+                    return 'Cell Phone Invalid..'
+
+                },
+
+                cell_is_valid:function(){
+                    return this.cell_phone.match(this.phone_regex);
+                },
+                cell_is_invalid:function(){
+                    return !this.cell_phone.match(this.phone_regex);
+                },
 
             },
 
@@ -111,16 +205,32 @@
 
             methods: {
 
+                //implement!
+                validatePhone(VAL, name){
 
+                    //matches format +11111111111
 
-            }
+                    if (VAL.match(this.phone_regex)) {
+                        this.isValid = true;
+                        this.isInValid = false;
+                        this.primary_phone_label = name + ' Valid!';
+                        return true;
+                    }
+                    else {
+                        this.isValid = false;
+                        this.isInValid = true;
+                        this.primary_phone_label = name + ' Invalid..';
+                        return false;
+                    }
 
-
+                }
+            },
         });
+
 
     </script>
 
-    <script src="{{ asset('/js/idle-timer.min.js') }}"></script>
-    @include('partials.providerUItimer')
+    {{--<script src="{{ asset('/js/idle-timer.min.js') }}"></script>--}}
+    {{--@include('partials.providerUItimer')--}}
 
 @stop
