@@ -271,7 +271,13 @@ class WelcomeCallListGenerator
 
         foreach ($this->patientList as $patient) {
             $args = $patient;
-            $args['status'] = Enrollee::ELIGIBLE;
+
+            $args['status'] = Enrollee::TO_CALL;
+
+            if ($args['cell_phone']) {
+                $args['status'] = Enrollee::TO_SMS;
+            }
+
             $args['practice_id'] = $this->practice->id;
             $args['provider_id'] = $this->practice->user_id;
 

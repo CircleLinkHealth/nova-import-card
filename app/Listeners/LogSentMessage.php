@@ -38,12 +38,14 @@ class LogSentMessage
             $sender = User::whereEmail($sender_email)->first();
             $receiver = User::whereEmail($receiver_email)->first();
 
-            if ($receiver->primaryPractice->auto_approve_careplans) {
-                return false;
-            }
+            if ($receiver && $receiver->primaryPractice) {
+                if ($receiver->primaryPractice->auto_approve_careplans) {
+                    return false;
+                }
 
-            if (!$receiver->primaryPractice->send_alerts) {
-                return false;
+                if (!$receiver->primaryPractice->send_alerts) {
+                    return false;
+                }
             }
 
             $sender_cpm_id = $sender->id ?? 357;
@@ -60,10 +62,11 @@ class LogSentMessage
             ]);
         } catch (\Exception $e) {
             $environment = env('APP_ENV');
-            $exceptionLocation = __METHOD__ . ' ' . __LINE__;
-            $message = "Failed to log sent email. Message: {$e->getMessage()}. At Method/Line: $exceptionLocation. Env: $environment";
+            $exceptionLocation = $e->getLine();
+            $message = "Failed to log sent email. Message: {$e->getMessage()}. At Line: $exceptionLocation. Env: $environment";
 
             \Log::alert($message);
+            \Log::alert($e);
             Slack::to('#dev-chat')->send($message);
         }
 
