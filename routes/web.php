@@ -1,11 +1,10 @@
 <?php
 
-use App\Practice;
-use App\Reports\Sales\Practice\SalesByPracticeReport;
-use App\Reports\Sales\Provider\SalesByProviderReport;
-use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Mail;
+
+//This is to send a sample PDF Note via eFax from Michalis' local
+//$faxTest = (new PhaxioService('production'))->send('+12124910114', storage_path('pdfs/notes/2017-02-07-xsKTIK4106WdXiMNu8iMla4FPJSOcosNBXXMkAsX.pdf'));
+//dd($faxTest);
 
 if (app()->environment() != 'production') {
 
