@@ -63,6 +63,24 @@ class EmailsProvidersToApproveCareplans extends Command
             $bar,
             $pretend
         ) {
+            //Middletown
+            if ($user->program_id == 23) {
+                return false;
+            }
+
+            //Miller
+            if ($user->program_id == 10) {
+                return false;
+            }
+            //Icli
+            if ($user->program_id == 19) {
+                return false;
+            }
+            //Purser
+            if ($user->program_id == 22) {
+                return false;
+            }
+
             if (!$user->primaryPractice) {
                 return false;
             }
@@ -71,6 +89,9 @@ class EmailsProvidersToApproveCareplans extends Command
                 return false;
             }
 
+            if ($user->primaryPractice->auto_approve_careplans) {
+                return false;
+            }
 
             $recipients = [
                 $user->email,
