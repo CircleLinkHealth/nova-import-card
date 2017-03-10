@@ -2,9 +2,10 @@
     <div class="col s12" style="width: 100%; padding: 0px 10px">
         <div class="card" style="background: rgb(24, 150, 24); font-size: 18px;">
             <div class="card-content white-text">
-                <p>You’ve done {{$report->total_calls}} calls today and
-                    enrolled {{$report->no_enrolled}} patients.</p> <br />
-                <p>Time worked today: @{{formatted_total_time_in_system}}</p>
+                <h5>Today's stats:</h5>
+                <p>Total calls: {{$report->total_calls}}</p>
+                <p>Patients enrolled: {{$report->no_enrolled}}</p>
+                <p>Time worked: @{{formatted_total_time_in_system}}</p>
             </div>
         </div>
     </div>
