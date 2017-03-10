@@ -100,6 +100,12 @@ class Enrollee extends Model
 
     }
 
+    public function getProviderFullNameAttribute(){
+
+        return $this->provider->fullName ?? null;
+
+    }
+
     public function sendEnrollmentConsentSMS()
     {
         $twilio = new Twilio(env('TWILIO_SID'), env('TWILIO_TOKEN'), env('TWILIO_FROM'));

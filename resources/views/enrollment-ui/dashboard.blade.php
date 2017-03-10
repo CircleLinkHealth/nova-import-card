@@ -32,14 +32,15 @@
                 <div class="card blue-grey darken-1">
                     <div class="card-content white-text">
                         <p>You’ve done [x] calls today and
-                            Enrolled [x] patients. Nice work!
-                            Elapsed time: xx:xx minutes</p>
+                            enrolled [x] patients. Nice work!</p>
+                        <p>Elapsed time: xx:xx minutes</p>
                     </div>
                 </div>
             </div>
 
             <span>
                     <li class="sidebar-demo-list"><span id="name">Name: @{{name}}</span></li>
+                    <li class="sidebar-demo-list"><span id="name">Provider Name: @{{provider_name}}</span></li>
                     <li class="sidebar-demo-list"><span id="cell_phone">Primary Phone: @{{primary_phone}}</span></li>
                     <li class="sidebar-demo-list"><span id="home_phone">Home Phone: @{{home_phone}}</span></li>
                     <li class="sidebar-demo-list"><span id="home_phone">Cell Phone: @{{cell_phone}}</span></li>
@@ -94,6 +95,7 @@
             data: {
 
                 name: '{{ $enrollee->first_name ?? ''. $enrollee->last_name }}',
+                provider_name: '{{ $enrollee->providerFullName }}',
                 primary_phone: '{{ $enrollee->primary_phone ?? 'N/A' }}',
                 home_phone: '{{ $enrollee->home_phone ?? 'N/A' }}',
                 cell_phone: '{{ $enrollee->cell_phone ?? 'N/A' }}',
