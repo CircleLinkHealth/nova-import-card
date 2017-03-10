@@ -32,18 +32,20 @@ class CareAmbassadorLog extends Model
 
     public static function createOrGetLogs($care_ambassador_id){
 
-        $date = Carbon::now()->firstOfMonth()->format('Y-m-d');
-        $report = self::where('care_ambassador_id', $care_ambassador_id)->where('month_year', $date)->first();
+        $date = Carbon::now()->format('Y-m-d');
+        $report =
+                self
+                    ::where('care_ambassador_id', $care_ambassador_id)
+                    ->where('month-year', $date)
+                    ->first();
 
         if($report == null){
 
-            return self::create([
-
-                'care_ambassador_id' => $care_ambassador_id,
-                'month-year' => $date,
-
-
-            ]);
+            return self
+                   ::create([
+                        'care_ambassador_id' => $care_ambassador_id,
+                        'month-year' => $date,
+                   ]);
 
         }
 

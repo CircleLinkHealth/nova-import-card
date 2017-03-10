@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\CareAmbassadorLog;
 use App\Enrollee;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
@@ -17,7 +18,7 @@ class EnrollmentCenterController extends Controller
 
         if($enrollee == null){
 
-            //no calls availableE
+            //no calls available
             return view('enrollment-ui.no-available-calls');
 
         }
@@ -29,7 +30,9 @@ class EnrollmentCenterController extends Controller
         return view('enrollment-ui.dashboard',
             [
                 'enrollee' => $enrollee,
-            ]
+                'report' => CareAmbassadorLog::createOrGetLogs(auth()->user()->id)
+
+        ]
         );
 
     }
@@ -38,6 +41,13 @@ class EnrollmentCenterController extends Controller
     {
 
         $enrollee = Enrollee::find($request->input('enrollee_id'));
+
+        //update report for care ambassador:
+        $report = CareAmbassadorLog::createOrGetLogs(auth()->user()->id);
+        $report->no_enrolled = $report->no_enrolled + 1;
+        $report->total_calls = $report->total_calls + 1;
+        $report->total_time_in_system = $request->input('time_elapsed');
+        $report->save();
 
         $enrollee->setHomePhoneAttribute($request->input('home_phone'));
         $enrollee->setPrimaryPhoneNumberAttribute($request->input('primary_phone'));
@@ -85,6 +95,13 @@ class EnrollmentCenterController extends Controller
 
         $enrollee = Enrollee::find($request->input('enrollee_id'));
 
+        //update report for care ambassador:
+        $report = CareAmbassadorLog::createOrGetLogs(auth()->user()->id);
+        $report->no_utc = $report->no_utc + 1;
+        $report->total_calls = $report->total_calls + 1;
+        $report->total_time_in_system = $request->input('time_elapsed');
+        $report->save();
+
         $enrollee->last_call_outcome = $request->input('reason');
 
         if ($request->input('reason_other')) {
@@ -102,13 +119,20 @@ class EnrollmentCenterController extends Controller
 
         return redirect()->action('EnrollmentCenterController@dashboard');
 
-
     }
 
     public function rejected(Request $request)
     {
 
         $enrollee = Enrollee::find($request->input('enrollee_id'));
+
+        //update report for care ambassador:
+        $report = CareAmbassadorLog::createOrGetLogs(auth()->user()->id);
+        $report->no_rejected = $report->no_rejected + 1;
+        $report->total_calls = $report->total_calls + 1;
+        $report->total_time_in_system = $request->input('time_elapsed');
+        $report->save();
+
 
         $enrollee->last_call_outcome = $request->input('reason');
 
