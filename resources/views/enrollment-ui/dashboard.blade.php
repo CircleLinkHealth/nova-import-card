@@ -15,11 +15,11 @@
 
         }
 
-        .valid{
+        .valid {
             color: green;
         }
 
-        .invalid{
+        .invalid {
             color: red;
         }
 
@@ -27,38 +27,7 @@
 
     <div id="enrollment_calls">
 
-        <ul style="width:25%; margin-top:65px;" class="side-nav fixed">
-            <div class="col s12" style="width: 100%; padding: 0px 10px">
-                <div class="card blue-grey darken-1">
-                    <div class="card-content white-text">
-                        <p>You’ve done [x] calls today and
-                            enrolled [x] patients. Nice work!</p>
-                        <p>Elapsed time: xx:xx minutes</p>
-                    </div>
-                </div>
-            </div>
-
-            <span>
-                    <li class="sidebar-demo-list"><span id="name">Name: @{{name}}</span></li>
-                    <li class="sidebar-demo-list"><span id="name">Provider Name: @{{provider_name}}</span></li>
-                    <li class="sidebar-demo-list"><span id="cell_phone">Primary Phone: @{{primary_phone}}</span></li>
-                    <li class="sidebar-demo-list"><span id="home_phone">Home Phone: @{{home_phone}}</span></li>
-                    <li class="sidebar-demo-list"><span id="home_phone">Cell Phone: @{{cell_phone}}</span></li>
-                    <li class="sidebar-demo-list"><span id="home_phone">Other Phone: @{{other_phone}}</span></li>
-                    <li class="sidebar-demo-list"><span id="home_phone">Email: @{{email}}</span></li>
-                    <li class="sidebar-demo-list"><span id="address">Address: @{{address}}</span></li>
-                    <li class="sidebar-demo-list"><span id="address">Address Line 2: @{{address_2}}</span></li>
-                    <li class="sidebar-demo-list"><span id="address">City: @{{city}}</span></li>
-                    <li class="sidebar-demo-list"><span id="address">State: @{{state}}</span></li>
-                    <li class="sidebar-demo-list"><span id="address">Zip: @{{zip}}</span></li>
-                    <li class="sidebar-demo-list"><span id="dob">DOB: @{{dob}}</span></li>
-                 </span>
-
-            <hr>
-
-            <!--<li class="sidebar-demo-list"><span id="billing_provider">Dr. John Doe</span></li>-->
-
-        </ul>
+        @include('enrollment-ui.sidebar')
 
         <div style="margin-left: 375px; margin-top: 10px;">
             <a class="waves-effect waves-light btn" href="#consented">Patient Consented</a>
@@ -77,7 +46,7 @@
     @include('enrollment-ui.modals.utc')
 
     <!-- Rejected -->
-    @include('enrollment-ui.modals.rejected')
+        @include('enrollment-ui.modals.rejected')
 
     </div>
 
@@ -107,17 +76,24 @@
                 zip: '{{ $enrollee->zip ?? 'N/A' }}',
                 email: '{{ $enrollee->email ?? 'N/A' }}',
                 dob: '{{ $enrollee->dob ?? 'N/A' }}',
-                phone_regex: /^\d{3}-\d{3}-\d{4}$/
+                phone_regex: /^\d{3}-\d{3}-\d{4}$/,
 
+                total_time_in_system: '{!!$report->total_time_in_system !!}'
 
             },
 
             computed: {
 
-                //primary phone computer vars
-                primary_phone_label:function () {
+                formatted_total_time_in_system: function(){
 
-                    if(this.primary_phone.match(this.phone_regex)){
+                   return new Date(1000 * this.total_time_in_system).toISOString().substr(11, 8)
+
+                },
+
+                //primary phone computer vars
+                primary_phone_label: function () {
+
+                    if (this.primary_phone.match(this.phone_regex)) {
 
                         return 'Primary Phone Valid!';
 
@@ -127,17 +103,17 @@
 
                 },
 
-                primary_is_valid:function(){
+                primary_is_valid: function () {
                     return this.primary_phone.match(this.phone_regex);
                 },
-                primary_is_invalid:function(){
+                primary_is_invalid: function () {
                     return !this.primary_phone.match(this.phone_regex);
                 },
 
                 //other phone computer vars
-                other_phone_label:function () {
+                other_phone_label: function () {
 
-                    if(this.other_phone.match(this.phone_regex)){
+                    if (this.other_phone.match(this.phone_regex)) {
 
                         return 'Other Phone Valid!';
 
@@ -147,17 +123,17 @@
 
                 },
 
-                other_is_valid:function(){
+                other_is_valid: function () {
                     return this.other_phone.match(this.phone_regex);
                 },
-                other_is_invalid:function(){
+                other_is_invalid: function () {
                     return !this.other_phone.match(this.phone_regex);
                 },
 
                 //other phone computer vars
-                home_phone_label:function () {
+                home_phone_label: function () {
 
-                    if(this.home_phone.match(this.phone_regex)){
+                    if (this.home_phone.match(this.phone_regex)) {
 
                         return 'Home Phone Valid!';
 
@@ -167,17 +143,17 @@
 
                 },
 
-                home_is_valid:function(){
+                home_is_valid: function () {
                     return this.home_phone.match(this.phone_regex);
                 },
-                home_is_invalid:function(){
+                home_is_invalid: function () {
                     return !this.home_phone.match(this.phone_regex);
                 },
 
                 //other phone computer vars
-                cell_phone_label:function () {
+                cell_phone_label: function () {
 
-                    if(this.cell_phone.match(this.phone_regex)){
+                    if (this.cell_phone.match(this.phone_regex)) {
 
                         return 'Cell Phone Valid!';
 
@@ -187,16 +163,22 @@
 
                 },
 
-                cell_is_valid:function(){
+                cell_is_valid: function () {
                     return this.cell_phone.match(this.phone_regex);
                 },
-                cell_is_invalid:function(){
+                cell_is_invalid: function () {
                     return !this.cell_phone.match(this.phone_regex);
                 },
 
             },
 
             mounted: function () {
+
+                let self = this;
+
+                setInterval(function() {
+                    self.$data.total_time_in_system++;
+                }, 1000);
 
                 $('#consented').modal();
                 $('#utc').modal();
