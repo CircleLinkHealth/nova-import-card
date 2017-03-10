@@ -85,8 +85,8 @@ if (!function_exists('parseCsvToArray')) {
 if (!function_exists('secondsToHHMM')) {
     function secondsToHHMM($seconds)
     {
-        $getHours = floor($seconds / 3600);
-        $getMins = floor(($seconds - ($getHours * 3600)) / 60);
+        $getHours = sprintf('%02d',floor($seconds / 3600));
+        $getMins = sprintf('%02d',floor(($seconds - ($getHours * 3600)) / 60));
 
         return $getHours . ':' . $getMins;
     }
