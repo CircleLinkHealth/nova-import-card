@@ -7,7 +7,7 @@
         <label for="notify-circlelink-support"><span> </span>CircleLink Support</label>
     </div>
     <div class="col-sm-12">
-        @if(count($patient->care_team_receives_alerts) > 0)
+        @if(!$patient->care_team_receives_alerts->isEmpty())
             <input type="checkbox" id="notify-careteam" name="notify_careteam" value="1">
             <label for="notify-careteam"><span> </span>Provider/CareTeam
                 (Notifies: @foreach($patient->care_team_receives_alerts as $carePerson){{ ($loop->first ? '' : ', ') . $carePerson->fullName }}@endforeach)
