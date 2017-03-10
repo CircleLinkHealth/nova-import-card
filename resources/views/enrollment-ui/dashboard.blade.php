@@ -122,8 +122,7 @@
                     return 'Other Phone Invalid..'
 
                 },
-
-                other_is_valid: function () {
+                 other_is_valid: function () {
                     return this.other_phone.match(this.phone_regex);
                 },
                 other_is_invalid: function () {
@@ -142,7 +141,6 @@
                     return 'Home Phone Invalid..'
 
                 },
-
                 home_is_valid: function () {
                     return this.home_phone.match(this.phone_regex);
                 },
@@ -162,7 +160,6 @@
                     return 'Cell Phone Invalid..'
 
                 },
-
                 cell_is_valid: function () {
                     return this.cell_phone.match(this.phone_regex);
                 },
@@ -191,8 +188,6 @@
 
                 //implement!
                 validatePhone(VAL, name){
-
-                    //matches format +11111111111
 
                     if (VAL.match(this.phone_regex)) {
                         this.isValid = true;
