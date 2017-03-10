@@ -118,6 +118,10 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
     {
         parent::boot();
 
+        static::creating(function ($user) {
+
+        });
+
         static::deleting(function ($user) {
             $user->providerInfo()->delete();
             $user->patientInfo()->delete();
