@@ -1,32 +1,9 @@
 var Vue = require('vue');
 Vue.use(require('vue-resource'));
 require('./components/CareTeam/care-team.js');
+require('./components/src/select2.js');
 
 Vue.http.headers.common['X-CSRF-TOKEN'] = $('meta[name="csrf-token"]').attr('content');
-
-
-Vue.directive("select2", {
-    "twoWay": true,
-
-    "bind": function () {
-        $(this.el).select2();
-
-        var self = this;
-
-        $(this.el).on('change', function () {
-            self.set($(self.el).val());
-        });
-    },
-
-    update: function (newValue, oldValue) {
-        $(this.el).val(newValue);
-    },
-
-    "unbind": function () {
-        $(this.el).select2('destroy');
-    }
-});
-
 
 /**
  *

@@ -1,8 +1,5 @@
 <?php namespace App\Console\Commands;
 
-use App\CLH\CCD\Importer\SnomedToCpmIcdMap;
-use App\CLH\CCD\Importer\SnomedToICD10Map;
-use App\Models\CPM\CpmProblem;
 use Illuminate\Console\Command;
 
 class MapSnomedToCpmProblems extends Command
@@ -39,33 +36,35 @@ class MapSnomedToCpmProblems extends Command
      */
     public function fire()
     {
-        $cpmProblems = CpmProblem::all();
-        SnomedToCpmIcdMap::truncate();
-        foreach ($cpmProblems as $cpmProblem) {
-            $maps = SnomedToICD10Map::whereBetween('icd_10_code', [
-                $cpmProblem->icd10from,
-                $cpmProblem->icd10to,
-            ])->get()->toArray();
-            $saved = SnomedToCpmIcdMap::insert($maps);
+//        $cpmProblems = CpmProblem::all();
+//        SnomedToCpmIcdMap::truncate();
+//        foreach ($cpmProblems as $cpmProblem) {
+//            $maps = SnomedToICD10Map::whereBetween('icd_10_code', [
+//                $cpmProblem->icd10from,
+//                $cpmProblem->icd10to,
+//            ])->get()->toArray();
+//            $saved = SnomedToCpmIcdMap::insert($maps);
+//
+//            if ($saved) {
+//                continue;
+//            }
+//
+//            //or else add it to the report
+//            $failed[] = [
+//                'problem' => $cpmProblem,
+//                'saved'   => $saved,
+//            ];
+//        }
+//
+//        if (isset($failed)) {
+//            foreach ($failed as $problem) {
+//                $this->error($problem['problem']->name . ' failed.');
+//            }
+//        }
 
-            if ($saved) {
-                continue;
-            }
+//        $this->info('Map generated Successfully');
 
-            //or else add it to the report
-            $failed[] = [
-                'problem' => $cpmProblem,
-                'saved'   => $saved,
-            ];
-        }
-
-        if (isset($failed)) {
-            foreach ($failed as $problem) {
-                $this->error($problem['problem']->name . ' failed.');
-            }
-        }
-
-        $this->info('Map generated Successfully');
+        $this->alert('This module was commented out when we manually added new Cpm Problems.');
     }
 
     /**

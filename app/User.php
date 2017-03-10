@@ -1,6 +1,7 @@
 <?php namespace App;
 
 use App\Contracts\Serviceable;
+use App\Facades\StringManipulation;
 use App\Importer\Models\ImportedItems\DemographicsImport;
 use App\Models\CCD\Allergy;
 use App\Models\CCD\CcdInsurancePolicy;
@@ -20,6 +21,7 @@ use App\Models\EmailSettings;
 use App\Models\MedicalRecords\Ccda;
 use App\Notifications\ResetPassword;
 use App\Services\UserService;
+use App\Traits\HasEmrDirectAddress;
 use DateTime;
 use Faker\Factory;
 use Illuminate\Auth\Authenticatable;
@@ -28,6 +30,7 @@ use Illuminate\Contracts\Auth\Authenticatable as AuthenticatableContract;
 use Illuminate\Contracts\Auth\CanResetPassword as CanResetPasswordContract;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Database\QueryException;
 use Illuminate\Notifications\Notifiable;
 use Zizaco\Entrust\Traits\EntrustUserTrait;
 
@@ -35,7 +38,11 @@ use Zizaco\Entrust\Traits\EntrustUserTrait;
 class User extends Model implements AuthenticatableContract, CanResetPasswordContract, Serviceable
 {
 
-    use Authenticatable, CanResetPassword, Notifiable, SoftDeletes;
+    use Authenticatable,
+        CanResetPassword,
+        HasEmrDirectAddress,
+        Notifiable,
+        SoftDeletes;
 
     use EntrustUserTrait {
         EntrustUserTrait::restore insteadof SoftDeletes;
@@ -330,11 +337,6 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
         return $this->hasOne(Nurse::class, 'user_id', 'id');
     }
 
-    public function phoneNumbers()
-    {
-        return $this->hasMany(PhoneNumber::class, 'user_id', 'id');
-    }
-
     public function carePlan()
     {
         return $this->hasOne(CarePlan::class, 'user_id', 'id');
@@ -429,9 +431,6 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
         }
     }
 
-
-    // END RELATIONSHIPS
-
     public function userConfig()
     {
         $key = 'wp_' . $this->primaryProgramId() . '_user_config';
@@ -442,6 +441,9 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
             return unserialize($userConfig['meta_value']);
         }
     }
+
+
+    // END RELATIONSHIPS
 
     public function primaryProgramId()
     {
@@ -860,6 +862,41 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
         }
     }
 
+    /**
+     * Delete all existing Phone Numbers and replace them with a new primary number.
+     *
+     * @param $number
+     * @param $type
+     * @param bool $isPrimary
+     *
+     * @return bool
+     */
+    public function clearAllPhonesAndAddNewPrimary(
+        $number,
+        $type,
+        $isPrimary = false,
+        $extension = null
+    ) {
+        $this->phoneNumbers()->delete();
+
+        if (empty($number)) {
+            //assume we wanted to delete the phone(s)
+            return true;
+        }
+
+        return $this->phoneNumbers()->create([
+            'number'     => StringManipulation::formatPhoneNumber($number),
+            'type'       => PhoneNumber::getTypes()[$type],
+            'is_primary' => $isPrimary,
+            'extension'  => $extension,
+        ]);
+    }
+
+    public function phoneNumbers()
+    {
+        return $this->hasMany(PhoneNumber::class, 'user_id', 'id');
+    }
+
     public function getHomePhoneNumberAttribute()
     {
         return $this->getPhoneAttribute();
@@ -870,12 +907,23 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
         if (!$this->phoneNumbers) {
             return '';
         }
-        $phoneNumber = $this->phoneNumbers->where('type', 'home')->first();
-        if ($phoneNumber) {
-            return $phoneNumber->number;
-        } else {
-            return '';
+
+        $phoneNumbers = $this->phoneNumbers;
+
+        if (count($phoneNumbers) == 1) {
+            return $phoneNumbers->first()->number;
         }
+
+        $primary = $phoneNumbers->where('is_primary', true)->first();
+        if ($primary) {
+            return $primary->number;
+        }
+
+        if (count($phoneNumbers) > 0) {
+            return $phoneNumbers->first()->number;
+        }
+
+        return '';
     }
 
     public function setHomePhoneNumberAttribute($value)
@@ -1137,7 +1185,7 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
         return $ct;
     }
 
-    public function setCareTeamAttribute($memberUserIds)
+    public function setCareTeamAttribute(array $memberUserIds)
     {
         if (!is_array($memberUserIds)) {
             $this->careTeamMembers()->where('type', 'member')->delete();
@@ -1166,6 +1214,27 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
     public function careTeamMembers()
     {
         return $this->hasMany(CarePerson::class, 'user_id', 'id');
+    }
+
+    /**
+     * Get the CarePeople who have subscribed to receive alerts for this Patient.
+     * Returns a Collection of User objects, or an Empty Collection.
+     *
+     * @return \Illuminate\Database\Eloquent\Collection
+     */
+    public function getCareTeamReceivesAlertsAttribute()
+    {
+        if (!$this->primaryPractice->send_alerts) {
+            return new \Illuminate\Database\Eloquent\Collection();
+        }
+
+        return $this->careTeamMembers->where('alert', '=', true)
+            ->keyBy('member_user_id')
+            ->unique()
+            ->values()
+            ->map(function ($carePerson) {
+                return $carePerson->user;
+            });
     }
 
     public function getSendAlertToAttribute()
@@ -1864,15 +1933,49 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
         });
     }
 
-    public function attachPractice($practice)
-    {
-        $id = is_object($practice)
-            ? $practice->id
-            : $practice;
+    public function attachPractice(
+        $practice,
+        bool $grantAdminRights = null,
+        bool $subscribeToBillingReports = null,
+        $roleId = null
+    ) {
+        if (is_array($practice)) {
+            foreach ($practice as $key => $pract) {
+                $this->attachPractice($pract, $grantAdminRights, $subscribeToBillingReports, $roleId);
+                unset($key);
+            }
+        }
 
+        $practice = is_object($practice)
+            ? $practice
+            : Practice::find($practice);
+
+        $roleId = is_object($roleId)
+            ? $roleId->id
+            : $roleId;
 
         try {
-            $this->practices()->attach($id);
+            $exists = $this->practice($practice);
+
+            if ($exists) {
+                $this->practices()->detach($practice);
+            }
+
+            $update = [];
+
+            if (!is_null($grantAdminRights)) {
+                $update['has_admin_rights'] = $grantAdminRights;
+            }
+
+            if (!is_null($subscribeToBillingReports)) {
+                $update['send_billing_reports'] = $subscribeToBillingReports;
+            }
+
+            if (!is_null($roleId)) {
+                $update['role_id'] = $roleId;
+            }
+
+            $attachPractice = $this->practices()->save($practice, $update);
         } catch (\Exception $e) {
             //check if this is a mysql exception for unique key constraint
             if ($e instanceof \Illuminate\Database\QueryException) {
@@ -1887,13 +1990,51 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
         }
     }
 
-    public function practices()
+    /**
+     * Get the specified Practice, if it is related to this User
+     * You can pass in a practice_id, practice_slug, or  App\Practice object
+     *
+     * @param $practice
+     *
+     * @return mixed
+     */
+    public function practice($practice)
     {
-        return $this->belongsToMany(Practice::class, 'practice_user', 'user_id', 'program_id');
+        if (is_string($practice) && !is_int($practice)) {
+            return $this->practices()
+                ->where('name', '=', $practice)
+                ->first();
+        }
+
+        if (is_object($practice)) {
+            $practice = $practice->id;
+        }
+
+        return $this->practices()
+            ->where('program_id', '=', $practice)
+            ->first();
     }
 
+    public function practices()
+    {
+        return $this->belongsToMany(Practice::class, 'practice_user', 'user_id', 'program_id')
+            ->withPivot('role_id', 'has_admin_rights', 'send_billing_reports');
+    }
+
+    /**
+     * Attach Location(s)
+     *
+     * @param $location |array
+     */
     public function attachLocation($location)
     {
+        if (is_array($location)) {
+            foreach ($location as $key => $loc) {
+                $this->attachLocation($loc);
+                unset($location[$key]);
+            }
+        }
+
         $id = is_object($location)
             ? $location->id
             : $location;
@@ -1909,7 +2050,6 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
                     //do nothing
                     //we don't actually want to terminate the program if we detect duplicates
                     //we just don't wanna add the row again
-                    \Log::alert($e);
                 }
             }
         }
@@ -2043,5 +2183,58 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
             ->wherePivot('name', '=', 'in_addition_to_billing_provider')
             ->orWherePivot('name', '=', 'instead_of_billing_provider')
             ->withTimestamps();
+    }
+
+    public function routeNotificationForTwilio()
+    {
+        return $this->primaryPhone;
+    }
+
+    /**
+     * Attach Role to User.
+     * Returns false if Role was already attached, and true if it was attached now.
+     *
+     * @param $roleId
+     *
+     * @return bool
+     */
+    public function attachRole($roleId)
+    {
+        if (is_array($roleId)) {
+            foreach ($roleId as $key => $role) {
+                $this->attachRole($role);
+                unset($key);
+            }
+        }
+
+        if (is_object($roleId)) {
+            $roleId = $roleId->id;
+        }
+
+        try {
+            //Attach the role
+            $this->roles()->attach($roleId);
+        } catch (\Exception $e) {
+            if ($e instanceof QueryException) {
+                $errorCode = $e->errorInfo[1];
+                if ($errorCode == 1062) {
+                    //return false so we know nothing was attached
+                    return false;
+                }
+            }
+        }
+
+        return true;
+    }
+
+    public function firstOrNewProviderInfo()
+    {
+        if (!$this->hasRole('provider')) {
+            return false;
+        }
+
+        return ProviderInfo::firstOrCreate([
+            'user_id' => $this->id,
+        ]);
     }
 }

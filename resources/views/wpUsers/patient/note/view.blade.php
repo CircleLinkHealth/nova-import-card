@@ -33,7 +33,7 @@
                 <div class="main-form-title col-lg-12">
                     View Note
                 </div>
-                {!! Form::open(array('url' => URL::route('patient.note.send', ['patientId' => $patient, 'noteId' => $note['id']]), 'class' => 'form-horizontal')) !!}
+                {!! Form::open(array('url' => URL::route('patient.note.send', ['patientId' => $patient->id, 'noteId' => $note['id']]), 'class' => 'form-horizontal')) !!}
 
                 @include('partials.userheader')
 
@@ -162,35 +162,10 @@
                                                   readonly>{{trim($note['comment'])}}</textarea> <br/>
                                     </div>
                                 </div>
-                                <div class="form-block col-md-6">
+                                <div class="form-block col-md-12">
                                     <div class="row">
                                         <div class="new-note-item">
-                                            <div class="form-group">
-                                                <div class="col-sm-12">
-                                                    <label for="performedBy">
-                                                        Send Note To:
-                                                    </label>
-                                                </div>
-                                                <div class="col-sm-12">
-                                                    <div class="form-group">
-                                                        <select id="performedBy" name=careteam[]"
-                                                                class="selectpicker dropdown Valid form-control"
-                                                                data-size="10"
-                                                                multiple>
-                                                            <!-- rework later, quick fix ticket: 679 !-->
-                                                            @if($patient->program_id == 29)
-                                                                <option value="2584">Tina Booze</option>
-                                                            @else
-                                                                @foreach ($careteam_info as $id => $name)
-                                                                    <option value="{{$id}}"> {{$name}} </option>
-                                                                @endforeach
-                                                            @endif
-                                                            <option value="948">Patient Support</option>
-
-                                                        </select>
-                                                    </div>
-                                                </div>
-                                            </div>
+                                            @include('partials.sendToCareTeam')
                                         </div>
                                     </div>
                                 </div>

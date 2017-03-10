@@ -60,7 +60,7 @@ class NurseMonthlyBillGenerator
                                 $notes = ''){
 
         $this->nurse = $newNurse;
-        $this->nurseName = $newNurse->user->last_name;
+        $this->nurseName = $newNurse->user->fullName;
         $this->startDate = $billingDateStart;
         $this->endDate = $billingDateEnd;
         $this->addDuration = $manualTimeAdd;
@@ -395,8 +395,8 @@ class NurseMonthlyBillGenerator
             return [
 
                 'calls/hour'   => 0,
-                'duration'     => $duration,
-                'ccm_duration' => $ccm_duration,
+                'duration'     => round($duration / 3600, 2),
+                'ccm_duration' => round($ccm_duration / 3600, 2),
                 '%ccm'         => $percent,
 
             ];
@@ -406,8 +406,8 @@ class NurseMonthlyBillGenerator
         return [
 
             'calls/hour'   => round($calls / $hours, 2),
-            'duration'     => $duration,
-            'ccm_duration' => $ccm_duration,
+            'duration'     => round($duration / 3600, 2),
+            'ccm_duration' => round($ccm_duration / 3600, 2),
             '%ccm'         => $percent,
 
         ];

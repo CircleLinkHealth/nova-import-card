@@ -47,7 +47,7 @@ class DatatablesController extends Controller
     {
         $date = Carbon::now()->startOfMonth();
 
-        $calls = Call::with('inboundUser')
+        $calls = Call::whereHas('inboundUser')
             ->with('outboundUser')
             ->with('note')
             ->select(
@@ -83,25 +83,26 @@ class DatatablesController extends Controller
                     'patient.timezone AS patient_timezone',
                     \DB::raw('CONCAT_WS(", ", patient.last_name, patient.first_name) AS patient_name'),
                     'program.display_name AS program_name',
-                    'billing_provider.display_name AS billing_provider'
+                    'billing_provider.display_name AS billing_provider',
                 ])
 //            ->where('nurse_info.status', '=', 'active')
 //            ->orWhere('nurse_name')
             ->where('calls.status', '=', 'scheduled')
-            ->leftJoin('notes', 'calls.note_id','=','notes.id')
-            ->leftJoin('nurse_info', 'calls.outbound_cpm_id','=','nurse_info.user_id')
+            ->leftJoin('notes', 'calls.note_id', '=', 'notes.id')
+            ->leftJoin('nurse_info', 'calls.outbound_cpm_id', '=', 'nurse_info.user_id')
             ->leftJoin('users AS nurse', 'calls.outbound_cpm_id', '=', 'nurse.id')
             ->leftJoin('users AS patient', 'calls.inbound_cpm_id', '=', 'patient.id')
             ->leftJoin('users AS scheduler_user', 'calls.scheduler', '=', 'scheduler_user.id')
-            ->leftJoin('patient_info', 'calls.inbound_cpm_id','=','patient_info.user_id')
-            ->leftJoin('patient_monthly_summaries', function($join) use ($date)
-            {
+            ->leftJoin('patient_info', 'calls.inbound_cpm_id', '=', 'patient_info.user_id')
+            ->leftJoin('patient_monthly_summaries', function ($join) use
+            (
+                $date
+            ) {
                 $join->on('patient_monthly_summaries.patient_info_id', '=', 'patient_info.id');
                 $join->where('patient_monthly_summaries.month_year', '=', $date->format('Y-m-d'));
             })
             ->leftJoin('practices AS program', 'patient.program_id', '=', 'program.id')
-            ->leftJoin('patient_care_team_members', function($join)
-            {
+            ->leftJoin('patient_care_team_members', function ($join) {
                 $join->on('patient.id', '=', 'patient_care_team_members.user_id');
                 $join->where('patient_care_team_members.type', '=', "billing_provider");
             })
@@ -111,78 +112,90 @@ class DatatablesController extends Controller
             ->get();
 
         return Datatables::of($calls)
-            ->editColumn('call_id', function($call) {
-                return '<input type="checkbox" name="calls[]" value="'.$call->call_id.'">';
+            ->editColumn('call_id', function ($call) {
+                return '<input type="checkbox" name="calls[]" value="' . $call->call_id . '">';
             })
-            ->addColumn('general_comment_html', function($call) {
+            ->addColumn('general_comment_html', function ($call) {
                 $generalComment = 'Add Text';
-                if(!empty($call->general_comment)) {
+                if (!empty($call->general_comment)) {
                     $generalComment = $call->general_comment;
                 }
-                return '<a href="#"><span class="cpm-editable-icon" call-id="'.$call->call_id.'" column-name="general_comment" column-value="'.$generalComment.'">'.$generalComment.'</span>';
+
+                return '<a href="#"><span class="cpm-editable-icon" call-id="' . $call->call_id . '" column-name="general_comment" column-value="' . $generalComment . '">' . $generalComment . '</span>';
             })
-            ->addColumn('attempt_note_html', function($call) {
+            ->addColumn('attempt_note_html', function ($call) {
                 $attemptNote = 'Add Text';
-                if(!empty($call->attempt_note)) {
+                if (!empty($call->attempt_note)) {
                     $attemptNote = $call->attempt_note;
                 }
-                return '<a href="#"><span class="cpm-editable-icon" call-id="'.$call->call_id.'" column-name="attempt_note" column-value="'.$attemptNote.'">'.$attemptNote.'</span>';
-            })
-            ->addColumn('ccm_complex', function($call) {
-                 if($call->inboundUser->patientInfo->isCCMComplex()){
-                     return "<span id=\"complex_tag\" hidden style=\"background-color: #ec683e;\" class=\"label label-warning\"> Complex CCM</span>";
 
-                 } else {
-                     return '';
-                 };
+                return '<a href="#"><span class="cpm-editable-icon" call-id="' . $call->call_id . '" column-name="attempt_note" column-value="' . $attemptNote . '">' . $attemptNote . '</span>';
             })
-            ->editColumn('scheduled_date', function($call) {
-                return '<a href="#"><span class="cpm-editable-icon" call-id="'.$call->call_id.'" column-name="scheduled_date" column-value="'.$call->scheduled_date.'">'.$call->scheduled_date.'</span>';
+            ->addColumn('ccm_complex', function ($call) {
+                $isCcmComplex = null;
+
+                if ($call->inboundUser) {
+                    $isCcmComplex = $call->inboundUser->patientInfo
+                        ? $call->inboundUser->patientInfo->isCCMComplex()
+                        : null;
+                }
+
+                if ($isCcmComplex) {
+                    return "<span id=\"complex_tag\" hidden style=\"background-color: #ec683e;\" class=\"label label-warning\"> Complex CCM</span>";
+
+                } else {
+                    return '';
+                }
             })
-            ->editColumn('window_start', function($call) {
-                return '<a href="#"><span class="cpm-editable-icon" call-id="'.$call->call_id.'" column-name="window_start" column-value="'.$call->window_start.'">'.$call->window_start.'</span>';
+            ->editColumn('scheduled_date', function ($call) {
+                return '<a href="#"><span class="cpm-editable-icon" call-id="' . $call->call_id . '" column-name="scheduled_date" column-value="' . $call->scheduled_date . '">' . $call->scheduled_date . '</span>';
             })
-            ->editColumn('window_end', function($call) {
-                return '<a href="#"><span class="cpm-editable-icon" call-id="'.$call->call_id.'" column-name="window_end" column-value="'.$call->window_end.'">'.$call->window_end.'</span>';
+            ->editColumn('window_start', function ($call) {
+                return '<a href="#"><span class="cpm-editable-icon" call-id="' . $call->call_id . '" column-name="window_start" column-value="' . $call->window_start . '">' . $call->window_start . '</span>';
             })
-            ->editColumn('status', function($call) {
-                if($call->status == 'reached') {
+            ->editColumn('window_end', function ($call) {
+                return '<a href="#"><span class="cpm-editable-icon" call-id="' . $call->call_id . '" column-name="window_end" column-value="' . $call->window_end . '">' . $call->window_end . '</span>';
+            })
+            ->editColumn('status', function ($call) {
+                if ($call->status == 'reached') {
                     return '<span class="btn btn-success btn-xs"><i class="glyphicon glyphicon-ok"></i> Reached</span>';
-                } elseif($call->status == 'scheduled') {
+                } elseif ($call->status == 'scheduled') {
                     return '<span class="btn btn-warning btn-xs"><i class="glyphicon glyphicon-list"></i> Scheduled</span>';
                 }
             })
-            ->editColumn('patient_name', function($call) {
+            ->editColumn('patient_name', function ($call) {
                 return '<a href="' . \URL::route('patient.demographics.show',
                     ['patientId' => $call->inboundUser->id]) . '" target="_blank">' . $call->patient_name . '</span>';
             })
-            ->editColumn('nurse_name', function($call) {
-                return '<a href="#"><span class="cpm-editable-icon" call-id="'.$call->call_id.'" column-name="outbound_cpm_id" column-value="'.$call->outbound_cpm_id.'">'.$call->nurse_name.'</span>';
+            ->editColumn('nurse_name', function ($call) {
+                return '<a href="#"><span class="cpm-editable-icon" call-id="' . $call->call_id . '" column-name="outbound_cpm_id" column-value="' . $call->outbound_cpm_id . '">' . $call->nurse_name . '</span>';
             })
-            ->editColumn('cur_month_activity_time', function($call) {
-                if($call->inboundUser && $call->inboundUser->patientInfo) {
+            ->editColumn('cur_month_activity_time', function ($call) {
+                if ($call->inboundUser && $call->inboundUser->patientInfo) {
                     return substr($call->inboundUser->patientInfo->currentMonthCCMTime, 1);
                 } else {
                     return 'n/a';
                 }
             })
-            ->editColumn('scheduler', function($call) {
-                if( !empty($call->scheduler_user_name) ) {
+            ->editColumn('scheduler', function ($call) {
+                if (!empty($call->scheduler_user_name)) {
                     return $call->scheduler_user_name;
                 } else {
                     return $call->scheduler;
                 }
             })
-            ->editColumn('no_call_attempts_since_last_success', function($call) {
-                if($call->no_call_attempts_since_last_success == 'n/a') {
+            ->editColumn('no_call_attempts_since_last_success', function ($call) {
+                if ($call->no_call_attempts_since_last_success == 'n/a') {
                     return 'n/a';
-                } else if($call->no_call_attempts_since_last_success > 0) {
-                    return $call->no_call_attempts_since_last_success.'x Attempts';
                 } else {
-                    return 'Success';
+                    if ($call->no_call_attempts_since_last_success > 0) {
+                        return $call->no_call_attempts_since_last_success . 'x Attempts';
+                    } else {
+                        return 'Success';
+                    }
                 }
             })
-            ->addColumn('patient_call_windows', function($call) {
+            ->addColumn('patient_call_windows', function ($call) {
                 $days = [
                     1 => 'M',
                     2 => 'Tu',
@@ -190,18 +203,18 @@ class DatatablesController extends Controller
                     4 => 'Th',
                     5 => 'F',
                     6 => 'Sa',
-                    7 => 'Su'
+                    7 => 'Su',
                 ];
                 $windowText = '';
-                if($call->inboundUser && $call->inboundUser->patientInfo) {
+                if ($call->inboundUser && $call->inboundUser->patientInfo) {
                     $windows = $call->inboundUser->patientInfo->patientContactWindows()->get();
-                    if($windows) {
+                    if ($windows) {
                         $windowText .= '<ul>';
-                        foreach($days as $key => $val) {
+                        foreach ($days as $key => $val) {
                             foreach ($windows as $window) {
-                                if($window->day_of_week == $key) {
+                                if ($window->day_of_week == $key) {
                                     $windowText .= '<li>';
-                                    $windowText .= $days[$window->day_of_week] . ': ' . $window->window_time_start . ' - ' .$window->window_time_end;
+                                    $windowText .= $days[$window->day_of_week] . ': ' . $window->window_time_start . ' - ' . $window->window_time_end;
                                     $windowText .= '</li>';
                                 }
                             }
@@ -209,9 +222,10 @@ class DatatablesController extends Controller
                         $windowText .= '</ul>';
                     }
                 }
+
                 return $windowText;
             })
-            ->addColumn('patient_call_window_days_short', function($call) {
+            ->addColumn('patient_call_window_days_short', function ($call) {
                 $days = [
                     1 => 'M',
                     2 => 'Tu',
@@ -219,20 +233,21 @@ class DatatablesController extends Controller
                     4 => 'Th',
                     5 => 'F',
                     6 => 'Sa',
-                    7 => 'Su'
+                    7 => 'Su',
                 ];
-                if($call->inboundUser && $call->inboundUser->patientInfo) {
+                if ($call->inboundUser && $call->inboundUser->patientInfo) {
                     $windowText = '';
                     $windows = $call->inboundUser->patientInfo->patientContactWindows()->get();
-                    if($windows) {
-                        foreach($days as $key => $val) {
+                    if ($windows) {
+                        foreach ($days as $key => $val) {
                             foreach ($windows as $window) {
-                                if($window->day_of_week == $key) {
+                                if ($window->day_of_week == $key) {
                                     $windowText .= $days[$window->day_of_week] . ',';
                                 }
                             }
                         }
                     }
+
                     return rtrim($windowText, ',');
                 } else {
                     return 'n/a';
@@ -245,19 +260,25 @@ class DatatablesController extends Controller
 
                 return '<span style="font-weight:bold;color:green;">' . $dateTime->format('T') . '</a>';
             })
-            ->addColumn('notes_link', function($call) {
+            ->addColumn('notes_link', function ($call) {
+
+                if (!$call) {
+                    return '';
+                }
+
                 return '<a target="_blank" href="' . \URL::route('patient.note.index',
                     ['patientId' => $call->inboundUser->id]) . '">Notes</a>';
             })
-            ->addColumn('notes_html', function($call) {
+            ->addColumn('notes_html', function ($call) {
                 $notesHtml = '';
-                if($call->inboundUser) {
-                    $notes = $call->inboundUser->notes()->with('call')->with('mail')->orderBy('performed_at','desc')->limit(3)->get();
-                    if($notes->count() > 0) {
+                if ($call->inboundUser) {
+                    $notes = $call->inboundUser->notes()->with('call')->with('mail')->orderBy('performed_at',
+                        'desc')->limit(3)->get();
+                    if ($notes->count() > 0) {
                         $notesHtml .= '<ul>';
-                        foreach($notes as $note) {
+                        foreach ($notes as $note) {
                             $notesHtml .= '<li style="width:800px;margin:5px 0px;white-space:normal;">';
-                            $notesHtml .= 'Note '.$note->performed_at.': ';
+                            $notesHtml .= 'Note ' . $note->performed_at . ': ';
 
                             //Call Info
                             if (count($note->call) > 0) {
@@ -271,39 +292,41 @@ class DatatablesController extends Controller
                                     $notesHtml .= '<div class="label label-info" style="margin:5px;">Successful Clinical Call</div>';
                                 }
 
-                                if($note->mail->count() > 0) {
+                                if ($note->mail->count() > 0) {
                                     $mailText = 'Forwarded: ';
-                                    foreach($note->mail as $mail) {
-                                        if($mail->receiverUser) {
+                                    foreach ($note->mail as $mail) {
+                                        if ($mail->receiverUser) {
                                             $mailText .= $mail->receiverUser->display_name . ', ';
                                         }
                                     }
-                                    $notesHtml .= '<div class="label label-info" style="margin:5px;" data-toggle="tooltip" title="'.rtrim($mailText, ',').'">Forwarded</div>';
+                                    $notesHtml .= '<div class="label label-info" style="margin:5px;" data-toggle="tooltip" title="' . rtrim($mailText,
+                                            ',') . '">Forwarded</div>';
                                 }
                             }
                             if ($note->isTCM) {
                                 $notesHtml .= '<div class="label label-danger">Patient Recently in Hospital/ER</div>';
                             }
-                            $notesHtml .= '<span style="font-weight:bold;">'.$note->type.'</span> ';
+                            $notesHtml .= '<span style="font-weight:bold;">' . $note->type . '</span> ';
                             $notesHtml .= $note->body;
                             $notesHtml .= '</li>';
                         }
                         $notesHtml .= '</ul>';
                     }
                 }
+
                 return $notesHtml;
             })
-            ->addColumn('background_color', function($call) {
+            ->addColumn('background_color', function ($call) {
                 $curTime = Carbon::now();
                 $curDate = $curTime->toDateString();
                 $curTime = $curTime->toTimeString();
-                if($call->scheduled_date == $curDate && $call->window_end < $curTime) {
+                if ($call->scheduled_date == $curDate && $call->window_end < $curTime) {
                     return 'rgba(255, 0, 0, 0.4)';
                 } else {
                     return '';
                 }
             })
-            ->addColumn('blank', function($call) {
+            ->addColumn('blank', function ($call) {
                 return '';
             })
             ->make(true);

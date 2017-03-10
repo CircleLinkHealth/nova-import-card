@@ -17,9 +17,6 @@ class PhiMail
         $phiMailUser = env('EMR_DIRECT_USER');
         $phiMailPass = env('EMR_DIRECT_PASSWORD');
 
-        $outboundRecipient = "recipient@direct.anotherdomain.com";
-//            $attachmentSaveDirectory = base_path() . '/storage/ccdas/';
-
         // Use the following command to enable client TLS authentication, if
         // required. The key file referenced should contain the following
         // PEM data concatenated into one file:
@@ -74,6 +71,8 @@ class PhiMail
         $ccdaAttachmentPath = null,
         User $patient = null
     ) {
+        $this->connector->authenticateUser('careplanmanager@direct.circlelinkhealth.com', env('EMR_DIRECT_PASSWORD'));
+
         try {
             echo("Sending a CDA as an attachment\n");
 

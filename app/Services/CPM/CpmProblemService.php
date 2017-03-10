@@ -41,7 +41,7 @@ class CpmProblemService implements CpmModel
         $instructions = [];
 
         //Get all the User's Problems
-        $problems = $user->cpmProblems()->get()->all();
+        $problems = $user->cpmProblems()->get()->sortBy('name')->values()->all();
         if (!$problems) return '';
 
         //For each problem, extract the instructions and

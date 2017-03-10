@@ -1,12 +1,19 @@
 <?php
 // calculate display, fix bug where gmdate('i:s') doesnt work for > 24hrs
-$seconds = $patient->patientInfo()->first()->cur_month_activity_time;
+$seconds = 0;
+if ($patient->patientInfo) {
+    $seconds = $patient->patientInfo()->first()->cur_month_activity_time;
+}
 $H = floor($seconds / 3600);
 $i = ($seconds / 60) % 60;
 $s = $seconds % 60;
 $monthlyTime = sprintf("%02d:%02d:%02d", $H, $i, $s);
 $ccm_above = false;
-$ccm_complex = $patient->patientInfo->isCCMComplex() ?? false;
+
+$ccm_complex = false;
+if ($patient->patientInfo) {
+    $ccm_complex = $patient->patientInfo->isCCMComplex() ?? false;
+}
 
 if ($seconds > 1199 && !$ccm_complex) {
     $ccm_above = true;
@@ -30,17 +37,22 @@ $location = empty($patient->getPreferredLocationName())
                             href="{{ URL::route('patient.summary', array('patient' => $patient->id)) }}">
                     {{$patient->fullName}}
                     </a> </span>
-                    <span id="complex_tag" hidden style="background-color: #ec683e;font-size: 15px; position: relative; top: -7px;" class="label label-warning"> Complex CCM</span>
+                <span id="complex_tag" hidden
+                      style="background-color: #ec683e;font-size: 15px; position: relative; top: -7px;"
+                      class="label label-warning"> Complex CCM</span>
                 <a
                         href="{{ URL::route('patient.demographics.show', array('patient' => $patient->id)) }}"><span
                             class="glyphicon glyphicon-pencil" style="margin-right:3px;"></span></a><br/>
 
                 <ul class="inline-block" style="margin-left: -40px; font-size: 16px">
                     <b>
-                        <li class="inline-block">{{$patient->birthDate ?? 'N/A'}}  <span style="color: #4390b5">•</span></li>
-                        <li class="inline-block">{{$patient->gender ?? 'N/A'}} <span style="color: #4390b5">•</span></li>
-                        <li class="inline-block">{{$patient->age ?? 'N/A'}} yrs <span style="color: #4390b5">•</span></li>
-                        <li class="inline-block">{{$patient->phone ?? 'N/A'}} </li>
+                        <li class="inline-block">{{$patient->birthDate ?? 'N/A'}} <span style="color: #4390b5">•</span>
+                        </li>
+                        <li class="inline-block">{{$patient->gender ?? 'N/A'}} <span style="color: #4390b5">•</span>
+                        </li>
+                        <li class="inline-block">{{$patient->age ?? 'N/A'}} yrs <span style="color: #4390b5">•</span>
+                        </li>
+                        <li class="inline-block">{{(new App\CLH\Helpers\StringManipulation())->formatPhoneNumber($patient->phone) ?? 'N/A'}} </li>
                     </b>
                     <li><span> <b>Provider</b>: {{$provider}}  </span></li>
                     <li><span> <b>Location</b>: {{$location}}  </span></li>
@@ -55,7 +67,8 @@ $location = empty($patient->getPreferredLocationName())
             </div>
             <div class="col-sm-4" style="line-height: 22px; text-align: right">
 
-                <span style="font-size: 27px;{{$ccm_above ? 'color: #47beab;' : ''}}"><a style="color: inherit" href="{{ empty($patient->id) ? URL::route('patients.search') : URL::route('patient.activity.providerUIIndex', array('patient' => $patient->id)) }}">{{$monthlyTime}}</a></span>
+                <span style="font-size: 27px;{{$ccm_above ? 'color: #47beab;' : ''}}"><a style="color: inherit"
+                                                                                         href="{{ empty($patient->id) ? URL::route('patients.search') : URL::route('patient.activity.providerUIIndex', array('patient' => $patient->id)) }}">{{$monthlyTime}}</a></span>
                 <span style="font-size:15px"></span><br/>
 
                 @if(Route::is('patient.note.create'))
@@ -92,10 +105,12 @@ $location = empty($patient->getPreferredLocationName())
             <div style="clear:both"></div>
             <ul class="person-conditions-list inline-block text-medium" style="margin-top: -10px">
                 @foreach($problems as $problem)
-                    <li class="inline-block"><input type="checkbox" id="item27" name="condition27" value="Active"
-                                                    checked="checked" disabled="disabled">
-                        <label for="condition27"><span> </span>{{$problem}}</label>
-                    </li>
+                    @if($problem != App\Models\CPM\CpmMisc::OTHER_CONDITIONS)
+                        <li class="inline-block"><input type="checkbox" id="item27" name="condition27" value="Active"
+                                                        checked="checked" disabled="disabled">
+                            <label for="condition27"><span> </span>{{$problem}}</label>
+                        </li>
+                    @endif
                 @endforeach
             </ul>
         @endif
@@ -106,10 +121,10 @@ $location = empty($patient->getPreferredLocationName())
 
     $(document).ready(function () {
 
-        if({!! $ccm_complex !!}){
-            $( "#complex_tag").show();
+        if ({!! $ccm_complex !!}) {
+            $("#complex_tag").show();
         } else {
-            $( "#complex_tag").hide();
+            $("#complex_tag").hide();
         }
 
     });

@@ -4,6 +4,7 @@ var vueForm = require('vue-form');
 Vue.use(vueForm);
 Vue.http.headers.common['X-CSRF-TOKEN'] = $('meta[name="csrf-token"]').attr('content');
 
+//Load components
 require('./search-providers.js');
 
 var carePerson = Vue.component('carePerson', {

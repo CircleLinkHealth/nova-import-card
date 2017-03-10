@@ -491,6 +491,8 @@ class ReportsController extends Controller
             ->orderBy('type')
             ->get()
             ->transform(function ($member) {
+                $member->user->firstOrNewProviderInfo();
+
                 $member->formatted_type = snakeToSentenceCase($member->type);
                 $member->specialty = $member->user->getSpecialtyAttribute();
                 $member->is_billing_provider = $member->type == CarePerson::BILLING_PROVIDER;
@@ -514,14 +516,15 @@ class ReportsController extends Controller
 
         return view('wpUsers.patient.careplan.print',
             [
-                'patient'                 => $patient,
-                'problems'                => $careplan[$patientId]['problems'],
-                'biometrics'              => $careplan[$patientId]['bio_data'],
-                'symptoms'                => $careplan[$patientId]['symptoms'],
-                'lifestyle'               => $careplan[$patientId]['lifestyle'],
-                'medications_monitor'     => $careplan[$patientId]['medications'],
-                'taking_medications'      => $careplan[$patientId]['taking_meds'],
-                'allergies'               => $careplan[$patientId]['allergies'],
+                'patient'             => $patient,
+                'problems'            => $careplan[$patientId]['problems'],
+                'problemNames'        => $careplan[$patientId]['problem'],
+                'biometrics'          => $careplan[$patientId]['bio_data'],
+                'symptoms'            => $careplan[$patientId]['symptoms'],
+                'lifestyle'           => $careplan[$patientId]['lifestyle'],
+                'medications_monitor' => $careplan[$patientId]['medications'],
+                'taking_medications'  => $careplan[$patientId]['taking_meds'],
+                'allergies'           => $careplan[$patientId]['allergies'],
                 'social'                  => $careplan[$patientId]['social'],
                 'appointments'            => $careplan[$patientId]['appointments'],
                 'other'                   => $careplan[$patientId]['other'],

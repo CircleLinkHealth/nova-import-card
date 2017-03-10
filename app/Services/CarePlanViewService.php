@@ -24,9 +24,13 @@ use App\User;
  */
 class CarePlanViewService
 {
-    public function carePlanFirstPage(CarePlan $carePlan, User $patient)
-    {
-        if (empty($carePlan)) return false;
+    public function carePlanFirstPage(
+        CarePlan $carePlan,
+        User $patient
+    ) {
+        if (empty($carePlan)) {
+            return false;
+        }
 
         $cptId = $carePlan->care_plan_template_id;
         $template = CarePlanTemplate::find($cptId);
@@ -46,7 +50,7 @@ class CarePlanViewService
 
         $patientMedicationGroups = $patient->cpmMedicationGroups()->get();
         $patientMedicationGroupsIds = $patientMedicationGroups->pluck('id')->all();
-        
+
         $patientMiscs = $patient->cpmMiscs()->get();
         $patientMiscsIds = $patientMiscs->pluck('id')->all();
 
@@ -59,7 +63,7 @@ class CarePlanViewService
         $problems = new Section();
         $problems->name = 'cpmProblems';
         $problems->title = 'Diagnosis / Problems to Monitor';
-        $problems->items = $template->cpmProblems;
+        $problems->items = $template->cpmProblems->sortBy('name')->values();
         $problems->patientItemIds = $patientProblemsIds;
         $problems->patientItems = $patientProblems->keyBy('id');
         $problems->miscs = $template->cpmMiscs()->where('name', CpmMisc::OTHER_CONDITIONS)->get();
@@ -93,9 +97,13 @@ class CarePlanViewService
 
     }
 
-    public function carePlanSecondPage(CarePlan $carePlan, User $patient)
-    {
-        if (empty($carePlan)) return false;
+    public function carePlanSecondPage(
+        CarePlan $carePlan,
+        User $patient
+    ) {
+        if (empty($carePlan)) {
+            return false;
+        }
 
         $cptId = $carePlan->care_plan_template_id;
         $template = CarePlanTemplate::find($cptId);
@@ -107,12 +115,12 @@ class CarePlanViewService
 
         $patientMiscs = $patient->cpmMiscs()->get();
         $patientMiscsIds = $patientMiscs->pluck('id')->all();
-        
+
         $bloodPressure = $patient->cpmBloodPressure()->firstOrNew([]);
         $bloodSugar = $patient->cpmBloodSugar()->firstOrNew([]);
         $smoking = $patient->cpmSmoking()->firstOrNew([]);
         $weight = $patient->cpmWeight()->firstOrNew([]);
-        
+
         $patientBiometrics = $patient->cpmBiometrics()->get();
 
         $biometrics = new Section();
@@ -127,7 +135,7 @@ class CarePlanViewService
         $sections = [
             $biometrics,
         ];
-        
+
         $biometrics = new Biometrics();
         $biometrics->bloodPressure = $bloodPressure;
         $biometrics->bloodSugar = $bloodSugar;
@@ -136,22 +144,26 @@ class CarePlanViewService
 
         return compact('sections', 'biometrics');
     }
-    
-    public function carePlanThirdPage(CarePlan $carePlan, User $patient)
-    {
-        if (empty($carePlan)) return false;
+
+    public function carePlanThirdPage(
+        CarePlan $carePlan,
+        User $patient
+    ) {
+        if (empty($carePlan)) {
+            return false;
+        }
 
         $cptId = $carePlan->care_plan_template_id;
         $template = CarePlanTemplate::find($cptId);
 
         $template = $template->loadWithInstructionsAndSort([
-                'cpmSymptoms',
-            ]);
+            'cpmSymptoms',
+        ]);
 
         //get the User's cpmProblems
         $patientSymptoms = $patient->cpmSymptoms()->get();
         $patientSymptomsIds = $patientSymptoms->pluck('id')->all();
-        
+
         $patientMiscs = $patient->cpmMiscs()->get();
         $patientMiscsIds = $patientMiscs->pluck('id')->all();
 
@@ -167,10 +179,10 @@ class CarePlanViewService
         $additionalInfo->name = 'cpmMiscs';
         $additionalInfo->title = 'Additional Information';
         $additionalInfo->miscs = $template->cpmMiscs()->whereIn('name', [
-                CpmMisc::ALLERGIES,
-                CpmMisc::SOCIAL_SERVICES,
-                CpmMisc::OTHER,
-            ])
+            CpmMisc::ALLERGIES,
+            CpmMisc::SOCIAL_SERVICES,
+            CpmMisc::OTHER,
+        ])
             ->orderBy('pivot_ui_sort')->get();
         $additionalInfo->patientMiscsIds = $patientMiscsIds;
         $additionalInfo->patientMiscs = $patientMiscs->keyBy('id');
@@ -179,7 +191,7 @@ class CarePlanViewService
         //Add sections here in order
         $sections = [
             $symptoms,
-            $additionalInfo
+            $additionalInfo,
         ];
 
         return compact('sections');
@@ -189,25 +201,30 @@ class CarePlanViewService
      * Get the User's Problems to populate the User header
      *
      * @param User $patient
+     *
      * @return array
      */
     public function getProblemsToMonitor(User $patient)
     {
         $problems = $patient->cpmProblems()
-            ->pluck('name', 'cpm_problem_id')
+            ->get()
+            ->sortBy('name')
+            ->values()
+            ->pluck('name', 'id')
             ->all();
-        
+
         $otherConditions = $patient->cpmMiscs()
             ->where('name', CpmMisc::OTHER_CONDITIONS)
             ->pluck('name', 'cpm_misc_id')
             ->all();
-        
+
         return $otherConditions
             ? array_merge($problems, $otherConditions)
             : $problems;
     }
 
-    function convert_state_to_abbreviation($state_name) {
+    function convert_state_to_abbreviation($state_name)
+    {
         switch ($state_name) {
             case "Alabama":
                 return "AL";

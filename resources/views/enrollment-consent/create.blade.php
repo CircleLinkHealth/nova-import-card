@@ -1,207 +1,234 @@
-@extends('layouts.enrollment-consent-layout')
+<html>
+<head>
 
-@section('content')
+    <meta charset="utf-8">
+    <title>Enroll</title>
+
+    <meta id="token" name="csrf-token" content="{{ csrf_token() }}">
+
+    <!-- Compiled and minified CSS -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.98.0/css/materialize.min.css">
+
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
+
+    <script src="//code.jquery.com/ui/1.11.4/jquery-ui.js"></script>
+
+    <!-- Compiled and minified JavaScript -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.98.0/js/materialize.min.js"></script>
+
     <style>
-        .mdl-layout {
-            align-items: center;
-        }
 
-        .mdl-layout__content {
-            padding: 24px;
-            flex: none;
+        input.select-dropdown {
+            -webkit-user-select:none;
+            -moz-user-select:none;
+            -ms-user-select:none;
+            -o-user-select:none;
+            user-select:none;
         }
 
         .headings {
 
             font-size: 23px;
             line-height: 30px;
+            text-align: left;
+        }
+
+        .info-list {
+            margin-top: -1px;
+            margin-bottom: 0px;
+            color: black;
+            background: #dddddd;
+            padding: 18px 20px;
+            text-align: center;
+            font-size: 18px;
+            border-bottom: white 2px solid;
+        }
+
+        .select-custom{
+
+            font-size: 12px;
 
         }
 
-        .mdl-dialog__content {
-            padding: 0px 10px 0px;
+        .label{
+            font-size: 20px;
+            color: black;
         }
 
-        .mdl-list__item {
-            font-size: 15px;
-            line-height: 17px;
-            padding: 10px;
-        }
-
-        .submit_button {
-
-            text-align: right;
-            color: #26a69a;
-            font-size: 25px;
-
-        }
 
     </style>
-    <div class="mdl-layout mdl-js-layout">
-        <header class="mdl-layout__header">
-            <div class="mdl-layout__header-row" style="background: #4fb2e2;">
-                <span class="mdl-layout__title" style="color: white;">{{$practice->display_name}}'s Personalized Care Management Program</span>
+
+</head>
+
+<nav>
+    <div class="nav-wrapper center">
+        <div class="mdl-layout__header-row" style="background: #4fb2e2; padding-left: 10px">
+            <span class="mdl-layout__title" style="color: white; font-size: 1.4em;">Dr. {{$enrollee->provider->fullName}}’s Office</span>
+        </div>
+    </div>
+</nav>
+
+<div class="container">
+    <p class="headings" style="padding-top: 0px; margin-bottom: 15px; color: black">
+        Dear. {{$enrollee->first_name . ' ' . $enrollee->last_name}}, <br /> <br />
+
+        I recommend you join my new personalized care program.
+        @if(isset($has_copay)) It’s free so please read below @else Please read below @endif and enroll.
+    <br />
+    <div class="right headings">- Dr. {{$enrollee->provider->last_name}}</div>
+
+</div>
+
+<div class="info">
+
+    <div class="row" id="enrollment_module">
+
+        <form method="post" name="enroll" id="enroll"
+              action="{{URL::route('patient.enroll.update', ['enrollee_id' => $enrollee->id])}}"
+              class="col s12" style="padding-top: 20px;">
+
+            <div class="row center">
+                <a class="waves-effect waves-light btn modal-trigger" v-on:click="saveConsent" href="#confirm">Enroll</a>
             </div>
-        </header>
-        <dialog id="dialog" class="mdl-dialog" style="width: 80%">
-            <h3 class="mdl-dialog__title" style="color: #47beab">Great! Remember:</h3>
-            <div class="mdl-dialog__content" style="">
-                <ul class="mdl-list">
-                    <li style="font-size: 20px;" class="mdl-list__item">A personal care coach— registered nurse— will do
-                        a quick
-                        phone check-in
-                        periodically
-                    <li style="font-size: 20px;" class="mdl-list__item">You can also leave a message for us 24/7 at
-                        (888) 729-4045
-                </ul>
-            </div>
-            <div class="mdl-dialog__actions">
-                <button type="button" id="confirm" class="mdl-button">Acknowledge and Exit</button>
-            </div>
-        </dialog>
 
-        <main class="mdl-layout__content">
-            <div class="mdl-card mdl-shadow--6dp" style="width: 100%; align-items: center">
-                <div class="mdl-card__supporting-text">
-                    <form method="post" name="enroll" id="enroll"
-                          action="{{URL::route('patient.enroll.store', ['program_name' => $practice])}}"
-                          class="form-horizontal">
+            <p class="info-list">Calls from registered nurses ~2x monthly so I can stay updated</p>
+            <p class="info-list">Health line for any question (nurses call you back): (888) 729-4045</p>
+            <p class="info-list">Only one doctor at a time can provide this program</p>
+            <p class="info-list">Withdraw anytime. Just give us a call</p>
+            @if(!isset($has_copay))
+                <p class="info-list">Medicare covers the program you may be responsible for a ~$8 per
+                    month co-pay</p>
+            @endif
 
+            {{ csrf_field() }}
 
-                        {{ csrf_field() }}
-                        <div>
-                            <p class="headings" style="padding-top: 20px; color: black">Your Doctor
-                                at {{ucwords($practice->name)}} has invited you to
-                                his/her new personalized
-                                care management program!</p>
+            <input type="datetime" v-model="enrolled_time" id="enrolled_time" name="enrolled_time" hidden>
+            <input type="datetime" v-model="confirmed_time" id="confirmed_time" name="confirmed_time" hidden>
+            <input type="text" id="practice_id" name="practice_id" value="{{$enrollee->practice->id}}" hidden>
 
-                            <p class="headings" style="color: black">
-
-                                Please enroll by completing below form, and note:
-                            <li style="font-size: 20px;" class="mdl-list__item"> - Only one practice or doctor at a time
-                                can provide this program
-                            </li>
-                            <li style="font-size: 20px;" class="mdl-list__item"> - You can withdraw anytime</li>
-
-                            </p>
+            <div id="confirm" class="modal modal-fixed-footer">
+                <div class="modal-content">
+                    <h4 class="" style="color: #47beab">Great! We’ll be in touch shortly!</h4>
+                    <blockquote style="border-left: 5px solid #26a69a;">
+                        Optionally, you can tell us the best time to reach you:
+                    </blockquote>
+                    <div class="row">
+                        <div class="col s12 m6 select-custom">
+                            <label for="days[]" class="label">Day</label>
+                            <select class="browser-default" name="days[]" id="days[]" multiple>
+                                <option disabled selected>Select Days</option>
+                                <option value="1">Monday</option>
+                                <option value="2">Tuesday</option>
+                                <option value="3">Wednesday</option>
+                                <option value="4">Thursday</option>
+                                <option value="5">Friday</option>
+                            </select>
                         </div>
-                        <div class="mdl-grid">
-                            <div class="mdl-cell mdl-cell--6-col mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
-                                <input style="font-size: 30px; padding-top: 20px;" class="mdl-textfield__input"
-                                       type="text" name="first_name" id="first_name"/>
-                                <label style="font-size: 20px" class="mdl-textfield__label" for="first_name">First
-                                    Name</label>
-                            </div>
-                            <div class="mdl-cell mdl-cell--6-col mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
-                                <input style="font-size: 30px; padding-top: 20px;" class="mdl-textfield__input"
-                                       type="text" name="last_name" id="last_name"/>
-                                <label style="font-size: 20px" class="mdl-textfield__label" for="last_name">Last
-                                    Name</label>
-                            </div>
-                            <div class="mdl-cell mdl-cell--6-col mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
-                                <input style="font-size: 30px; padding-top: 20px;" class="mdl-textfield__input dob"
-                                       name="dob" type="date" id="dob"/>
-                                <label style="font-size: 20px" class="mdl-textfield__label" for="dob">Date Of
-                                    Birth</label>
-                            </div>
-                            <div></div>
-                            <div class="mdl-cell mdl-cell--6-col mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
-                                <input style="font-size: 30px; padding-top: 20px;" class="mdl-textfield__input"
-                                       name="phone" type="text" id="phone"/>
-                                <label style="font-size: 20px" class="mdl-textfield__label" id="phone_label"
-                                       for="phone">Phone Number</label>
-                            </div>
-                            <div class="mdl-card__actions mdl-card--border" style="padding: 10px; text-align: right">
-                                <button type="submit"
-                                        class="submit_button mdl-button mdl-js-button mdl-js-ripple-effect">
-                                    Enroll!
-                                </button>
-                            </div>
+                        <div class="col s12 m6 select-custom" >
+                            <label for="time" class="label">Times</label>
+                            <select class="browser-default" name="time" id="time">
+                                <option disabled selected>Select Times</option>
+                                <option value="10:00-12:00">10AM - Noon</option>
+                                <option value="12:00-15:00">Noon - 3PM</option>
+                                <option value="15:00-18:00">3PM - 6PM</option>
+                            </select>
                         </div>
-
-                        <input type="datetime" id="enrolled_time" name="enrolled_time" hidden>
-                        <input type="datetime" id="confirmed_time" name="confirmed_time" hidden>
-                        <input type="text" id="practice_id" name="practice_id" value="{{$practice->id}}" hidden>
-
-                    </form>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button id="submit" name="submit" v-on:onclick="updatePreferences"
+                            class="modal-action waves-effect waves-green btn-flat">Acknowledge and Exit
+                    </button>
                 </div>
             </div>
+
+        </form>
     </div>
-    </main>
 
-    </div>
+</div>
 
-    <script>
-        (function () {
-            'use strict';
 
-            $("#phone").bind('input propertychange', function () {
 
-                var VAL = this.value;
-                var label = $("#phone_label");
 
-                var phoneno = /^\(?([0-9]{3})\)?[-. ]?([0-9]{3})[-. ]?([0-9]{4})$/;
+</html>
 
-                if (VAL.match(phoneno)) {
-                    label.css({"color": "green"});
-                    label.html('Valid');
+<script src="https://unpkg.com/vue@2.1.3/dist/vue.js"></script>
+<script src="https://cdn.jsdelivr.net/vue.resource/1.2.0/vue-resource.min.js"></script>
+
+<script>
+
+    Vue.http.headers.common['X-CSRF-TOKEN'] = $('meta[name="csrf-token"]').attr('content');
+
+    let app = new Vue({
+
+        el: '#enrollment_module',
+
+        data: {
+
+            enrollee_id: {!!  $enrollee->id !!},
+            phone: '',
+            phoneValid: '',
+            enrolled_time: '',
+            confirmed_time: ''
+
+        },
+
+        ready: function () {
+
+        },
+
+
+        methods: {
+
+            checkPhone(){
+
+                let phoneValidator = /^\(?([0-9]{3})\)?[-. ]?([0-9]{3})[-. ]?([0-9]{4})$/;
+
+                if (phoneValidator.test(this.phone) == true) {
+                    this.phoneValid = 'valid-phone';
+                } else {
+                    this.phoneValid = 'invalid-phone';
                 }
-                else {
-                    label.css({"color": "red"});
-                    label.html('Please enter a valid phone number..');
-                }
 
-            });
+            },
 
-            var dialog = document.querySelector('#dialog');
+            saveConsent() {
 
-            if (!dialog.showModal) {
-                dialogPolyfill.registerDialog(dialog);
-            }
+                this.enrolled_time = new Date().toLocaleString();
 
-            $(".submit_button").click(function (e) {
+                //send form to update consented_time
+                this.$http.post('/join/save',
 
-                if ($
-                        ('#phone').val().length == 0
-                        || $('#dob').val().length == 0
-                        || $('#first_name').val().length == 0
-                        || $('#last_name').val().length == 0
+                        {
+                            'consented_at': this.enrolled_time,
+                            'enrollee_id' : this.enrollee_id
+                        }
 
-                ) {
-                    alert('Please enter all fields to continue.');
-                    return;
-                }
+                    )
 
-                $("#enrolled_time").val(formatCurrentJSTime());
-                dialog.showModal();
-                e.preventDefault();
-                return false;
+                    .then(response => {
 
-            });
+                    console.log(response.body);
 
-            dialog.querySelector('button:not([disabled])')
-                    .addEventListener('click', function () {
-                        $("#confirmed_time").val(formatCurrentJSTime());
-                        $("#enroll").submit();
-                        dialog.close();
-                    });
-        }());
+                    }
+                );
+
+                $('select').material_select();
+                $('.modal').modal();
 
 
-        function formatCurrentJSTime() {
-            var today = new Date();
+            },
 
-            var month = today.getMonth() + 1;
-
-            month = month > 9 ? month : "0" + month;
-
-            var date = today.getFullYear() + '-' + month + '-' + today.getDate();
-            var time = today.getHours() + ":" + today.getMinutes() + ":" + today.getSeconds();
-            return date + ' ' + time;
+            updatePreferences(){
+                this.confirmed_time = new Date();
+                $('#enroll').submit();
+            },
 
         }
 
-    </script>
 
-@stop
+    });
 
+</script>

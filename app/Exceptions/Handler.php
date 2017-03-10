@@ -79,7 +79,17 @@ class Handler extends ExceptionHandler
             ], 403);
         }
 
-        return parent::render($request, $e);
+        if ($this->isHttpException($e)) {
+            return $this->renderHttpException($e);
+        } elseif ($e instanceof \ErrorException) {
+            if (!env('APP_DEBUG')) {
+                abort(500);
+            }
+
+            return parent::render($request, $e);
+        } else {
+            return parent::render($request, $e);
+        }
     }
 
     /**

@@ -3,6 +3,7 @@
 namespace App\Importer\Loggers\Ccda;
 
 
+use App\CLH\Repositories\CCDImporterRepository;
 use App\Contracts\Importer\MedicalRecord\MedicalRecordLogger;
 use App\Importer\Models\ItemLogs\AllergyLog;
 use App\Importer\Models\ItemLogs\DemographicsLog;
@@ -25,12 +26,14 @@ class CcdaSectionsLogger implements MedicalRecordLogger
 
     public function __construct(Ccda $ccd)
     {
-        $this->ccd = json_decode($ccd->json);
+        $this->ccd = $ccd->json
+            ? json_decode($ccd->json)
+            : json_decode((new CCDImporterRepository())->toJson($ccd->xml));
+
         $this->ccdaId = $ccd->id;
         $this->vendorId = $ccd->vendor_id;
 
         $this->foreignKeys = [
-            'ccda_id'             => $this->ccdaId,
             'vendor_id'           => $this->vendorId,
             'medical_record_type' => Ccda::class,
             'medical_record_id'   => $this->ccdaId,

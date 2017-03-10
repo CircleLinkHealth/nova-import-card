@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Practice;
 use App\Services\WelcomeCallListGenerator;
 use Illuminate\Http\Request;
 use Illuminate\Support\Collection;
@@ -16,13 +17,19 @@ class WelcomeCallListController extends Controller
             dd('Please upload a CSV file.');
         }
 
-        $list = parseCsvToArray($request->file('patient_list'));
+        $csv = parseCsvToArray($request->file('patient_list'));
 
-        $generator = new WelcomeCallListGenerator(new Collection($list));
+        $filterLastEncounter = (boolean)$request->input('filterLastEncounter');
+        $filterInsurance = (boolean)$request->input('filterInsurance');
+        $filterProblems = (boolean)$request->input('filterProblems');
+        $createEnrollees = (boolean)$request->input('createEnrollees');
+
+        $list = new WelcomeCallListGenerator(new Collection($csv), $filterLastEncounter, $filterInsurance,
+            $filterProblems, $createEnrollees, Practice::find($request->input('practice_id')));
 
         //If we only want to export ineligible patients
-//        return $generator->exportIneligibleToCsv();
+//        return $list->exportIneligibleToCsv();
 
-        return $generator->exportToCsv();
+        return $list->exportToCsv();
     }
 }

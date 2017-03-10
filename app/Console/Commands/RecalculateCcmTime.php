@@ -48,8 +48,9 @@ class RecalculateCcmTime extends Command
             ->pluck('total_duration', 'patient_id');
 
         foreach ($acts as $id => $ccmTime) {
-            $info = Patient::whereUserId($id)
-                ->first();
+            $info = Patient::updateOrCreate([
+                'user_id' => $id,
+            ]);
 
             if ($info) {
                 $info->cur_month_activity_time = $ccmTime;

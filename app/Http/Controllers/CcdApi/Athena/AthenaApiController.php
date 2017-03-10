@@ -5,6 +5,8 @@ namespace App\Http\Controllers\CcdApi\Athena;
 use App\ForeignId;
 use App\Http\Controllers\Controller;
 use App\Models\CCD\CcdVendor;
+use App\Models\MedicalRecords\Ccda;
+use App\Practice;
 use App\Services\AthenaAPI\Calls;
 use App\Services\AthenaAPI\Service;
 use Carbon\Carbon;
@@ -45,17 +47,38 @@ class AthenaApiController extends Controller
         $ids = explode(',', $ids);
     }
 
-    private function getCcdas(
-        array $patientIds,
-        $practiceId,
-        $departmentId
-    ) {
+    public function getCcdas(Request $request)
+    {
         $api = new Calls();
 
+        $imported = [];
+        $practice = Practice::find($request->input('practice_id'));
+
+        $practiceId = $practice->external_id;
+        $departmentId = $practice->locations->first()->external_department_id;
+        $patientIds = array_filter(explode(',', $request->input('ids')), 'trim');
+
         foreach ($patientIds as $id) {
-            $ccda = $api->getCcd($id, $practiceId, $departmentId);
-            file_put_contents(storage_path('ccdas/' . $id . '.xml'), $ccda[0]['ccda']);
+            $id = trim($id);
+            $ccdaExternal = $api->getCcd($id, $practiceId, $departmentId);
+
+            if (!isset($ccdaExternal[0])) {
+                continue;
+            }
+
+            $ccda = Ccda::create([
+                'practice_id' => $practice->id,
+                'location_id' => $practice->locations->first()->id,
+                'user_id'     => auth()->user()->id,
+                'vendor_id'   => 1,
+                'xml'         => $ccdaExternal[0]['ccda'],
+            ]);
+
+            $imported[] = $ccda->import();
         }
+
+        return count($imported) . " CCDs were imported. To finish the importing process go to:  " . link_to_route('view.files.ready.to.import');
+
 
     }
 }

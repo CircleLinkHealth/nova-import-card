@@ -95,9 +95,15 @@ class CareTeamController extends Controller
             }
         }
 
+        $alert = $input['alert'];
+
+        if (!$providerUser->email) {
+            $alert = false;
+        }
+
         if (str_contains($input['id'], 'new')) {
             $carePerson = CarePerson::create([
-                'alert'          => $input['alert'],
+                'alert'          => $alert,
                 'type'           => $type,
                 'user_id'        => $patientId,
                 'member_user_id' => $providerUser->id,
@@ -105,7 +111,7 @@ class CareTeamController extends Controller
         } else {
             $carePerson = CarePerson::where('id', '=', $input['id'])
                 ->update([
-                    'alert' => $input['alert'],
+                    'alert' => $alert,
                     'type'  => $type,
                 ]);
         }
@@ -130,13 +136,18 @@ class CareTeamController extends Controller
         if (isset($input['user']['provider_info'])) {
             $providerInfo = $input['user']['provider_info'];
 
+            $args = [];
+            if (array_key_exists('qualification', $providerInfo)) {
+                $args['qualification'] = $providerInfo['qualification'];
+            }
+            if (array_key_exists('specialty', $providerInfo)) {
+                $args['specialty'] = $providerInfo['specialty'];
+            }
+
             $provider = ProviderInfo::updateOrCreate([
-                'id'      => $providerInfo['id'],
+                'id'      => $providerInfo['id'] ?? null,
                 'user_id' => $providerUser->id,
-            ], [
-                'qualification' => $providerInfo['qualification'],
-                'specialty'     => $providerInfo['specialty'],
-            ]);
+            ], $args);
         }
 
         if (isset($input['user']['primary_practice'])) {

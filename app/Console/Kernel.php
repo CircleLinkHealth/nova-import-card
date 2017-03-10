@@ -15,6 +15,8 @@ use App\Console\Commands\MapSnomedToCpmProblems;
 use App\Console\Commands\NukeItemAndMeta;
 use App\Console\Commands\RecalculateCcmTime;
 use App\Console\Commands\ResetCcmTime;
+use App\MailLog;
+use App\Practice;
 use App\Reports\Sales\Practice\SalesByPracticeReport;
 use App\Reports\Sales\Provider\SalesByProviderReport;
 use App\Services\Calls\SchedulerService;
@@ -93,77 +95,99 @@ class Kernel extends ConsoleKernel
             (new SchedulerService())->removeScheduledCallsForWithdrawnAndPausedPatients();
         })->everyMinute();
 
-        $schedule->call(function (){
+        $schedule->call(function () {
 
-            $recipients = [
-                User::find(852), // mazhar
-                User::find(832) //nestor
+            $practicesToSendTo = [
+                'carolina-medical-associates',
+                'clinicalosangeles',
+                'elmwood',
+                'tabernacle',
+                'envision',
+                'mazhar',
+                'middletownmedical',
+                'montgomery',
+                'nestor',
+                'rocky-mountain-health-centers-south',
+                'upg',
+                'urgent-medical-care-pc',
+                'quest-medical-care-pc',
+                'premier-heart-and-vein-care',
+                'river-city'
             ];
 
             //@todo check range
             $startRange = Carbon::now()->setTime(0, 0, 0)->subWeek();
             $endRange = Carbon::now()->setTime(0, 0, 0);
 
-            foreach ($recipients as $recipient) {
+            foreach ($practicesToSendTo as $name) {
 
-                $providerData = (new SalesByProviderReport(
-                    $recipient,
-                    SalesByProviderReport::SECTIONS,
-                    $startRange,
-                    $endRange
+                $practice = Practice::whereName($name)->first();
 
-                ))->data(true);
-
-                $providerData['name'] = $recipient->display_name;
-                $providerData['start'] = $startRange->toDateString();
-                $providerData['end'] = $endRange->toDateString();
-
-                $subjectProvider = 'Dr. '.$recipient->last_name.'\'s Patient Weekly Summary';
-                $subjectPractice = 'Dr. '.$recipient->last_name.'\'s Organization Weekly Summary';
-
-                $recipients = [
-                    $recipient->email,
-                    'raph@circlelinkhealth.com',
-                    'rohanm@circlelinkhealth.com',
-                ];
+                $subjectPractice = $practice->display_name . 's Organization Weekly Summary';
 
                 $practiceData = (new SalesByPracticeReport(
-                    $recipient->primaryPractice,
+                    $practice,
                     SalesByPracticeReport::SECTIONS,
                     $startRange,
                     $endRange
 
                 ))->data(true);
 
-                $providerData['name'] = $recipient->display_name;
-                $providerData['start'] = $startRange->toDateString();
-                $providerData['end'] = $endRange->toDateString();
-
-                $practiceData['name'] = $recipient->primaryPractice->name;
+                $practiceData['name'] = $practice->name;
                 $practiceData['start'] = $startRange->toDateString();
                 $practiceData['end'] = $endRange->toDateString();
 
-                Mail::send('sales.by-provider.report', ['data' => $providerData], function ($message) use
-                (
-                    $recipients,
-                    $subjectProvider
-                ) {
-                    $message->from('notifications@careplanmanager.com', 'CircleLink Health');
-                    $message->to($recipients)->subject($subjectProvider);
-                });
+                $organizationSummaryRecipiets = explode(', ', trim($practice->weekly_report_recipients));
 
-                Mail::send('sales.by-practice.report', ['data' => $practiceData], function ($message) use
-                (
-                    $recipients,
-                    $subjectPractice
-                ) {
-                    $message->from('notifications@careplanmanager.com', 'CircleLink Health');
-                    $message->to($recipients)->subject($subjectPractice);
-                });
+                //handle leads
+                foreach ($organizationSummaryRecipiets as $recipient) {
+
+                    Mail::send('sales.by-practice.report', ['data' => $practiceData], function ($message) use
+                    (
+                        $recipient,
+                        $subjectPractice
+                    ) {
+                        $message->from('notifications@careplanmanager.com', 'CircleLink Health');
+                        $message->to($recipient)->subject($subjectPractice);
+                    });
+
+                    echo $recipient;
+
+                }
+
+                $providers_for_practice = $practice->getProviders($practice->id);
+
+                //handle providers
+                foreach ($providers_for_practice as $provider) {
+
+                    $providerData = (new SalesByProviderReport(
+                        $provider,
+                        SalesByProviderReport::SECTIONS,
+                        $startRange,
+                        $endRange
+                    ))->data(true);
+
+                    $providerData['name'] = $provider->display_name;
+                    $providerData['start'] = $startRange->toDateString();
+                    $providerData['end'] = $endRange->toDateString();
+
+                    $subjectProvider = 'Dr. ' . $provider->last_name . '\'s Patient Weekly Summary';
+
+                    Mail::send('sales.by-provider.report', ['data' => $providerData], function ($message) use
+                    (
+                        $provider,
+                        $subjectProvider
+                    ) {
+                        $message->from('notifications@careplanmanager.com', 'CircleLink Health');
+                        $message->to($provider->email)->subject($subjectProvider);
+                    });
+
+                }
             }
 
+        }
 
-        })->weeklyOn(1, '10:00');
+        )->weeklyOn(1, '10:00');
 
         $schedule->command('emailapprovalreminder:providers')
             ->weekdays()

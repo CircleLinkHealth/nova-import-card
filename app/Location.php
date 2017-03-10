@@ -1,12 +1,14 @@
 <?php
 namespace App;
 
+use App\Traits\HasEmrDirectAddress;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Location extends Model
 {
-    use SoftDeletes;
+    use HasEmrDirectAddress,
+        SoftDeletes;
 
     //Aprima's constant location id.
     const UPG_PARENT_LOCATION_ID = 26;
@@ -92,11 +94,6 @@ class Location extends Model
             ->withTimestamps();
     }
 
-    public function contactCard()
-    {
-        return $this->morphMany(ContactCard::class, 'contactCardable');
-    }
-
     public function practice()
     {
         return $this->belongsTo(Practice::class);
@@ -122,5 +119,4 @@ class Location extends Model
     {
         return $this->belongsToMany(User::class);
     }
-
 }

@@ -62,7 +62,8 @@ $today = \Carbon\Carbon::now()->toFormattedDateString();
                                     <div class="col-xs-12 address"><br><strong>On Behalf of</strong></div>
                                     <div class="col-xs-7 address">
                                         @if($billing)
-                                            @if($billing->fullName){{$billing->fullName}}@endif @if($billing->qualification){{$billing->qualification}}@endif
+                                            @if($billing->fullName){{$billing->fullName}}@endif
+                                            {{--@if($billing->qualification){{$billing->qualification}}@endif--}}
                                         @endif
                                     </div>
                                     <div class="col-xs-4 col-xs-offset-1 print-row text-right">290 Harbor Drive</div>
@@ -227,9 +228,11 @@ $today = \Carbon\Carbon::now()->toFormattedDateString();
                     <div class="row gutter">
                         <div class="col-xs-12">
                             <ul class="subareas__list">
-                                @if(isset($careplan['problems']) && !empty($careplan['problems']))
-                                    @foreach($careplan['problems'] as $key => $value)
-                                        <li class='subareas__item inline-block col-xs-6 col-sm-3 print-row'>{{$key}}</li>
+                                @if($problemNames)
+                                    @foreach($problemNames as $problem)
+                                        @if($problem != App\Models\CPM\CpmMisc::OTHER_CONDITIONS)
+                                            <li class='subareas__item inline-block col-xs-6 col-sm-3 print-row'>{{$problem}}</li>
+                                        @endif
                                     @endforeach
                                 @endif
                             </ul>
@@ -258,7 +261,7 @@ $today = \Carbon\Carbon::now()->toFormattedDateString();
                             </ul>
                         </div>
                     </div>
-            @endif
+                @endif
             <!-- /BIOMETRICS -->
 
                 <!-- MEDICATIONS -->
@@ -365,26 +368,12 @@ $today = \Carbon\Carbon::now()->toFormattedDateString();
                         </div>
                     </div>
                 </div>
-            @if($careplan['problems'])
-                <?php foreach($careplan['problems'] as $key => $value){ ?>
-                <!-- Hypertension -->
-                    <div class="patient-info__subareas">
-                        <div class="row">
-                            <div class="col-xs-12">
-                                <h3 class="patient-summary__subtitles--subareas patient-summary--careplan">For
-                                    <?= $key ?>:</h3>
-                            </div>
-                            <div class="col-xs-12">
-                                <p><?= nl2br($value) ?></p>
-                            </div>
-                        </div>
-                    </div>
-                <?php } ?>
-            @endif
 
-            <!-- /INSTRUCTIONS -->
+                @include('partials.view-care-plan.followTheseInstructions', [
+                    'problems' => $careplan['problems']
+                ])
 
-                <!-- OTHER INFORMATION -->
+            <!-- OTHER INFORMATION -->
                 <div class="row pb-before">
                     <div class="col-xs-12 print-only">
                         <h1 class="patient-summary__title patient-summary__title_9  patient-summary--careplan">Care Plan

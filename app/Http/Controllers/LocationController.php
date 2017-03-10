@@ -1,6 +1,5 @@
 <?php namespace App\Http\Controllers;
 
-use App\ContactCard;
 use App\Location;
 use App\Practice;
 use Auth;
@@ -61,12 +60,7 @@ class LocationController extends Controller
         $saved = $newLocation->save();
 
         if (!empty($input['emr_direct'])) {
-            ContactCard::updateOrCreate([
-                'contactcardable_type' => Location::class,
-                'contactcardable_id'   => $newLocation->id,
-            ], [
-                'emr_direct' => $input['emr_direct'],
-            ]);
+            $saved->emr_direct_address = $input['emr_direct'];
         }
 
         return $saved
@@ -149,12 +143,7 @@ class LocationController extends Controller
         $loc->update($input);
 
         if (!empty($input['emr_direct'])) {
-            ContactCard::updateOrCreate([
-                'contactcardable_type' => Location::class,
-                'contactcardable_id'   => $loc->id,
-            ], [
-                'emr_direct' => $input['emr_direct'],
-            ]);
+            $loc->emr_direct_address = $input['emr_direct'];
         }
 
         return redirect()->route('locations.index')->with('messages', ['Location Updated!!']);

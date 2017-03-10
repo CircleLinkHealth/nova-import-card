@@ -119,4 +119,6 @@ interface MedicalRecord
      * @return MedicalRecord
      */
     public function predictBillingProvider() : MedicalRecord;
+
+    public function getDocumentCustodian() : string;
 }

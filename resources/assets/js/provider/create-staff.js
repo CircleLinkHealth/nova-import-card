@@ -56,6 +56,7 @@ var createStaffVM = new Vue({
     data: function () {
         return {
             locations: [],
+            locationIds: [],
             newUsers: [],
             roles: [],
             rolesMap: [],
@@ -98,15 +99,21 @@ var createStaffVM = new Vue({
         this.$set('rolesMap', cpm.rolesMap);
         this.$set('phoneTypes', cpm.phoneTypes);
 
-        this.newUsers.push({
-            locations: this.locationIds
-        });
+        if (len < 1) {
+            this.addUser();
+        }
     },
 
     methods: {
         addUser: function () {
             this.newUsers.push({
-                locations: this.locationIds
+                locations: this.locationIds,
+                grandAdminRights: false,
+                sendBillingReports: false,
+                emr_direct_address: '',
+                phone_number: '',
+                phone_extension: '',
+                phone_type: '',
             });
 
             this.$nextTick(function () {
@@ -152,7 +159,12 @@ var createStaffVM = new Vue({
                 users: this.newUsers
             }).then(function (response) {
                 // success
-                $('html').html(response.data);
+                if (response.data.message) {
+                    Materialize.toast(response.data.message, 4000);
+                } else {
+                    //render the view sent
+                    $('html').html(response.data);
+                }
             }, function (response) {
                 //fail
 
