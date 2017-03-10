@@ -38,7 +38,7 @@ class LogSentMessage
             $sender = User::whereEmail($sender_email)->first();
             $receiver = User::whereEmail($receiver_email)->first();
 
-            if ($receiver->primaryPractice) {
+            if ($receiver && $receiver->primaryPractice) {
                 if ($receiver->primaryPractice->auto_approve_careplans) {
                     return false;
                 }
@@ -66,6 +66,7 @@ class LogSentMessage
             $message = "Failed to log sent email. Message: {$e->getMessage()}. At Line: $exceptionLocation. Env: $environment";
 
             \Log::alert($message);
+            \Log::alert($e);
             Slack::to('#dev-chat')->send($message);
         }
 
