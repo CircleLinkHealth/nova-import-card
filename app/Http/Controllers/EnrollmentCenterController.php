@@ -16,7 +16,7 @@ class EnrollmentCenterController extends Controller
         //get an eligible patient.
         $enrollee = Enrollee::toCall()->first();
 
-        if($enrollee == null){
+        if ($enrollee == null) {
 
             //no calls available
             return view('enrollment-ui.no-available-calls');
@@ -30,9 +30,9 @@ class EnrollmentCenterController extends Controller
         return view('enrollment-ui.dashboard',
             [
                 'enrollee' => $enrollee,
-                'report' => CareAmbassadorLog::createOrGetLogs(auth()->user()->id)
+                'report'   => CareAmbassadorLog::createOrGetLogs(auth()->user()->id),
 
-        ]
+            ]
         );
 
     }

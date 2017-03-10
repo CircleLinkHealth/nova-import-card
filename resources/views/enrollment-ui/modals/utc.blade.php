@@ -11,10 +11,10 @@
                 <div class="col s12 m12">
                     <label for="reason" class="label">Reason:</label>
                     <select name="reason" id="reason" required>
-                        <option value="voicemail" >Left A Voicemail</option>
-                        <option value="disconnected" >Disconnected Number</option>
-                        <option value="requested callback" >Requested Call At Other Time</option>
-                        <option value="other" >Other...</option>
+                        <option value="voicemail">Left A Voicemail</option>
+                        <option value="disconnected">Disconnected Number</option>
+                        <option value="requested callback">Requested Call At Other Time</option>
+                        <option value="other">Other...</option>
                     </select>
                 </div>
 

@@ -1,8 +1,13 @@
 <?php
-$nurses = [1920, 1877];
+$nurses = [
+    1920,
+    1877,
+];
 
-$days = [ Carbon::parse('2017-02-01'),
-          Carbon::parse('2017-02-02') ];
+$days = [
+    Carbon::parse('2017-02-01'),
+    Carbon::parse('2017-02-02'),
+];
 
 $activities = [];
 
@@ -58,8 +63,10 @@ foreach ($days as $day) {
                     ->where('created_at', '<=', $day->endOfDay()->toDateTimeString())
                     ->sum('duration') / 3600, 1);
 
-        $activities[$day->toDateString()][$name]['over'] = round($activities[$day->toDateString()][$name]['over'] / 3600, 1);
-        $activities[$day->toDateString()][$name]['under'] = round($activities[$day->toDateString()][$name]['under'] / 3600, 1);
+        $activities[$day->toDateString()][$name]['over'] = round($activities[$day->toDateString()][$name]['over'] / 3600,
+            1);
+        $activities[$day->toDateString()][$name]['under'] = round($activities[$day->toDateString()][$name]['under'] / 3600,
+            1);
 
     }
 }

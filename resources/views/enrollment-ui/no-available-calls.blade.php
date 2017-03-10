@@ -5,7 +5,7 @@
 @section('content')
 
     <div class="container">
-        <div class="row" style="margin-top: 75px;" >
+        <div class="row" style="margin-top: 75px;">
             <div class="col">
                 <div class="card horizontal">
                     <div class="card-image">
