@@ -15,6 +15,16 @@ class Enrollee extends Model
     const ELIGIBLE = 'eligible';
 
     /**
+     * status = to_call
+     */
+    const TO_CALL = 'call_queue';
+
+    /**
+     * status = to_sms
+     */
+    const TO_SMS = 'sms_queue';
+
+    /**
      * STATUS TYPES:
      *
      * eligible: just imported to enrollees table, queue of sms recipients.
