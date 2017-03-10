@@ -28,21 +28,21 @@ class EnrollmentConsentController extends Controller
 
             $formatted[$count] = [
 
-                'name'                      => $enrollee->first_name . ' ' . $enrollee->last_name,
-                'program'                   => ucwords(Practice::find($enrollee->practice_id)->name),
-                'provider'                  => ucwords(User::find($enrollee->provider_id)->fullName ?? null),
-                'status'                    => ucwords($enrollee->status),
-                'care_ambassador'           => ucwords(User::find($enrollee->care_ambassador_id)->fullName ?? null),
-                'last_call_outcome'         => ucwords($enrollee->last_call_outcome),
-                'last_call_outcome_reason'  => ucwords($enrollee->last_call_outcome_reason),
-                'mrn_number'                => ucwords($enrollee->mrn_number),
-                'dob'                       => ucwords($enrollee->dob),
-                'phone'                     => ucwords($enrollee->primary_phone),
-                'attempt_count'             => ucwords($enrollee->attempt_count),
-                'invite_sent_at'            => ucwords($enrollee->invite_sent_at),
-                'invite_opened_at'          => ucwords($enrollee->invite_opened_at),
-                'last_attempt_at'           => ucwords($enrollee->last_attempt_at),
-                'consented_at'              => ucwords($enrollee->consented_at),
+                'name'                     => $enrollee->first_name . ' ' . $enrollee->last_name,
+                'program'                  => ucwords(Practice::find($enrollee->practice_id)->name),
+                'provider'                 => ucwords(User::find($enrollee->provider_id)->fullName ?? null),
+                'status'                   => ucwords($enrollee->status),
+                'care_ambassador'          => ucwords(User::find($enrollee->care_ambassador_id)->fullName ?? null),
+                'last_call_outcome'        => ucwords($enrollee->last_call_outcome),
+                'last_call_outcome_reason' => ucwords($enrollee->last_call_outcome_reason),
+                'mrn_number'               => ucwords($enrollee->mrn_number),
+                'dob'                      => ucwords($enrollee->dob),
+                'phone'                    => ucwords($enrollee->primary_phone),
+                'attempt_count'            => ucwords($enrollee->attempt_count),
+                'invite_sent_at'           => ucwords($enrollee->invite_sent_at),
+                'invite_opened_at'         => ucwords($enrollee->invite_opened_at),
+                'last_attempt_at'          => ucwords($enrollee->last_attempt_at),
+                'consented_at'             => ucwords($enrollee->consented_at),
 
             ];
             $count++;

@@ -1,31 +1,84 @@
 <?php
 
-use App\Practice;
-use App\Reports\Sales\Practice\SalesByPracticeReport;
-use App\Reports\Sales\Provider\SalesByProviderReport;
-use Carbon\Carbon;
-use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Facades\DB;
+
+//This is to send a sample PDF Note via eFax from Michalis' local
+//$faxTest = (new PhaxioService('production'))->send('+12124910114', storage_path('pdfs/notes/2017-02-07-xsKTIK4106WdXiMNu8iMla4FPJSOcosNBXXMkAsX.pdf'));
+//dd($faxTest);
 
 if (app()->environment() != 'production') {
 
-    Route::get('rohan', function () {
+    Route::get('/rohan', function () {
 
-        die();
+                dd();
 
 
-        $twilio = new Aloha\Twilio\Twilio(env('TWILIO_SID'), env('TWILIO_TOKEN'), env('TWILIO_FROM'));
-
-        $enrollee = \App\Enrollee::find(1);
-        $link = url("join/$enrollee->invite_code");
-        $provider_name = App\User::find($enrollee->provider_id)->fullName;
-
-        $twilio->message($enrollee->phone,
-            "Dr. $provider_name has invited you to their new wellness program! Please enroll here: $link");
+//        $twilio = new Aloha\Twilio\Twilio(env('TWILIO_SID'), env('TWILIO_TOKEN'), env('TWILIO_FROM'));
+//
+//        $enrollee = \App\Enrollee::find(1);
+//        $link = url("join/$enrollee->invite_code");
+//        $provider_name = App\User::find($enrollee->provider_id)->fullName;
+//
+//        $twilio->message($enrollee->phone,
+//            "Dr. $provider_name has invited you to their new wellness program! Please enroll here: $link");
 
     });
 
-
 }
+
+//Algo test routes.
+
+Route::group(['prefix' => 'algo'], function () {
+
+    Route::get('family', function () {
+
+        if (app()->environment() == 'production') {
+
+            return 'Sorry, this cannot be run on the production environment.';
+
+        }
+
+        return (new \App\Services\Calls\SchedulerService())->syncFamilialCalls();
+
+    });
+
+    Route::get('cleaner', function () {
+
+        if (app()->environment() == 'production') {
+
+            return 'Sorry, this cannot be run on the production environment.';
+
+        }
+
+        return (new \App\Services\Calls\SchedulerService())->removeScheduledCallsForWithdrawnAndPausedPatients();
+
+    });
+
+    Route::get('tuner', function () {
+
+        if (app()->environment() == 'production') {
+
+            return 'Sorry, this cannot be run on the production environment.';
+
+        }
+
+        return (new \App\Services\Calls\SchedulerService())->tuneScheduledCallsWithUpdatedCCMTime();
+
+    });
+
+    Route::get('rescheduler', function () {
+
+        if (app()->environment() == 'production') {
+
+            return 'Sorry, this cannot be run on the production environment.';
+
+        }
+
+        return (new \App\Algorithms\Calls\ReschedulerHandler())->handle();
+
+    });
+});
+
 
 Route::get('ajax/patients', 'UserController@getPatients');
 
@@ -1313,40 +1366,6 @@ Route::group([
     ]);
 });
 
-/*
- * Enrollment Center UI
- */
-
-Route::group([
-    'prefix' => '/enrollment',
-], function () {
-
-    Route::get('/', [
-        'uses' => 'EnrollmentCenterController@dashboard',
-        'as'   => 'enrollment-center.dashboard',
-    ]);
-
-    Route::post('/consented', [
-        'uses' => 'EnrollmentCenterController@consented',
-        'as'   => 'enrollment-center.consented',
-    ]);
-
-    Route::post('/utc', [
-        'uses' => 'EnrollmentCenterController@unableToContact',
-        'as'   => 'enrollment-center.utc',
-    ]);
-
-    Route::post('/rejected', [
-        'uses' => 'EnrollmentCenterController@rejected',
-        'as'   => 'enrollment-center.rejected',
-    ]);
-
-    Route::get('/training', [
-        'uses' => 'EnrollmentCenterController@training',
-        'as'   => 'enrollment-center.training',
-    ]);
-
-});
 
 /*
  * Enrollment Consent

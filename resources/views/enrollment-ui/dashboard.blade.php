@@ -40,10 +40,10 @@
         <!-- MODALS -->
 
         <!-- Success / Patient Consented -->
-    @include('enrollment-ui.modals.consented')
+        @include('enrollment-ui.modals.consented')
 
     <!-- Unable To Contact -->
-    @include('enrollment-ui.modals.utc')
+        @include('enrollment-ui.modals.utc')
 
     <!-- Rejected -->
         @include('enrollment-ui.modals.rejected')
@@ -84,9 +84,9 @@
 
             computed: {
 
-                formatted_total_time_in_system: function(){
+                formatted_total_time_in_system: function () {
 
-                   return new Date(1000 * this.total_time_in_system).toISOString().substr(11, 8)
+                    return new Date(1000 * this.total_time_in_system).toISOString().substr(11, 8)
 
                 },
 
@@ -176,7 +176,7 @@
 
                 let self = this;
 
-                setInterval(function() {
+                setInterval(function () {
                     self.$data.total_time_in_system++;
                 }, 1000);
 

@@ -100,7 +100,8 @@ class Enrollee extends Model
 
     }
 
-    public function getProviderFullNameAttribute(){
+    public function getProviderFullNameAttribute()
+    {
 
         return $this->provider->fullName ?? null;
 
@@ -202,13 +203,15 @@ class Enrollee extends Model
 
     }
 
-    public function scopeToSMS($query){
+    public function scopeToSMS($query)
+    {
 
         return $query->where('status', 'sms_queue');
 
     }
 
-    public function scopeToCall($query){
+    public function scopeToCall($query)
+    {
 
         return $query->where('status', 'call_queue');
 

@@ -11,10 +11,10 @@
                 <div class="col s12 m12">
                     <label for="reason" class="label">What reason did the Patient convey?</label>
                     <select name="reason" id="reason" required>
-                        <option value="Worried about co-pay" >Worried about co-pay</option>
-                        <option value="Doesn’t trust medicare" >Doesn’t trust medicare</option>
-                        <option value="Doesn’t need help with Health" >Doesn’t need help with Health</option>
-                        <option value="other" >Other...</option>
+                        <option value="Worried about co-pay">Worried about co-pay</option>
+                        <option value="Doesn’t trust medicare">Doesn’t trust medicare</option>
+                        <option value="Doesn’t need help with Health">Doesn’t need help with Health</option>
+                        <option value="other">Other...</option>
                     </select>
                 </div>
 

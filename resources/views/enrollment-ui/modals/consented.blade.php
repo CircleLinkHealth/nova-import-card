@@ -11,19 +11,24 @@
             </blockquote>
             <div class="row">
                 <div class="col s6 m3 select-custom">
-                    <label for="primary_phone" v-bind:class="{valid: primary_is_valid, invalid: primary_is_invalid}">@{{primary_phone_label}}</label>
-                    <input class="input-field" name="primary_phone" id="primary_phone" v-model="primary_phone" v-on:keyup="validatePhone(primary_phone, 'Primary Phone')"/>
+                    <label for="primary_phone"
+                           v-bind:class="{valid: primary_is_valid, invalid: primary_is_invalid}">@{{primary_phone_label}}</label>
+                    <input class="input-field" name="primary_phone" id="primary_phone" v-model="primary_phone"
+                           v-on:keyup="validatePhone(primary_phone, 'Primary Phone')"/>
                 </div>
                 <div class="col s6 m3 select-custom">
-                    <label for="home_phone" v-bind:class="{valid: home_is_valid, invalid: home_is_invalid}">@{{home_phone_label}}</label>
+                    <label for="home_phone"
+                           v-bind:class="{valid: home_is_valid, invalid: home_is_invalid}">@{{home_phone_label}}</label>
                     <input class="input-field" name="home_phone" id="home_phone" v-model="home_phone"/>
                 </div>
                 <div class="col s6 m3 select-custom">
-                    <label for="cell_phone" v-bind:class="{valid: cell_is_valid, invalid: cell_is_invalid}">@{{cell_phone_label}}</label>
+                    <label for="cell_phone"
+                           v-bind:class="{valid: cell_is_valid, invalid: cell_is_invalid}">@{{cell_phone_label}}</label>
                     <input class="input-field" name="cell_phone" id="cell_phone" v-model="cell_phone"/>
                 </div>
                 <div class="col s6 m3 select-custom">
-                    <label for="other_phone" v-bind:class="{valid: other_is_valid, invalid: other_is_invalid}">@{{other_phone_label}}</label>
+                    <label for="other_phone"
+                           v-bind:class="{valid: other_is_valid, invalid: other_is_invalid}">@{{other_phone_label}}</label>
                     <input class="input-field" name="other_phone" id="other_phone" v-model="other_phone"/>
                 </div>
                 <div class="col s12 m4 select-custom">
