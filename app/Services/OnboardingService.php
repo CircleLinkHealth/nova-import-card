@@ -80,14 +80,16 @@ class OnboardingService
             'specialist',
         ];
 
-        $practiceUsers = User::ofType($relevantRoles)
+        $practiceUsers = User::ofType(array_merge($relevantRoles, ['practice-lead']))
             ->whereHas('practices', function ($q) use
             (
                 $primaryPractice
             ) {
                 $q->where('id', '=', $primaryPractice->id);
             })
-            ->get();
+            ->get()
+            ->sortBy('first_name')
+            ->values();
 
         if (!auth()->user()->hasRole('administrator')) {
             $practiceUsers->reject(function ($user) {
@@ -114,6 +116,7 @@ class OnboardingService
                 'last_name'          => $user->last_name,
                 'first_name'         => $user->first_name,
                 'phone_number'       => $phone->number ?? '',
+                'phone_extension'    => $phone->extension ?? '',
                 'phone_type'         => array_search($phone->type ?? '', PhoneNumber::getTypes()) ?? '',
                 'isComplete'         => false,
                 'validated'          => false,
@@ -415,7 +418,8 @@ class OnboardingService
                     $newUser['role_id']);
 
                 //attach phone
-                $phone = $user->clearAllPhonesAndAddNewPrimary($newUser['phone_number'], $newUser['phone_type'], true);
+                $phone = $user->clearAllPhonesAndAddNewPrimary($newUser['phone_number'], $newUser['phone_type'], true,
+                    $newUser['phone_extension']);
 
                 $providerInfoCreated = ProviderInfo::firstOrCreate([
                     'user_id' => $user->id,

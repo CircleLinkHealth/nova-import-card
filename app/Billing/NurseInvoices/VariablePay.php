@@ -28,7 +28,8 @@ class VariablePay extends NurseInvoice
         $this->start = $start;
         $this->end = $end;
 
-        $day_start = Carbon::parse(Carbon::now()->firstOfMonth()->format('Y-m-d'));
+        $day_start = Carbon::parse($this->start->firstOfMonth()->format('Y-m-d'));
+
         $this->report = NurseMonthlySummary::where('nurse_id', $nurse->id)->where('month_year', $day_start)->first();
 
         if($this->report != null){

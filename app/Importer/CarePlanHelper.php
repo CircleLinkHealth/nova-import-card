@@ -8,6 +8,7 @@ use App\CarePlan;
 use App\CLH\CCD\Importer\StorageStrategies\Biometrics\BloodPressure;
 use App\CLH\CCD\Importer\StorageStrategies\Biometrics\Weight;
 use App\CLH\CCD\Importer\StorageStrategies\Problems\ProblemsToMonitor;
+use App\CLH\Helpers\StringManipulation;
 use App\Models\CCD\Allergy;
 use App\Models\CCD\CcdInsurancePolicy;
 use App\Models\CCD\Medication;
@@ -136,7 +137,7 @@ class CarePlanHelper
         if (!empty($homeNumber = $this->demographicsImport->home_phone)) {
             $homePhone = PhoneNumber::create([
                 'user_id' => $this->user->id,
-                'number'  => $homeNumber,
+                'number'  => (new StringManipulation())->formatPhoneNumberE164($homeNumber),
                 'type'    => PhoneNumber::HOME,
             ]);
         }
@@ -144,7 +145,7 @@ class CarePlanHelper
         if (!empty($mobileNumber = $this->demographicsImport->cell_phone)) {
             $mobilePhone = PhoneNumber::create([
                 'user_id' => $this->user->id,
-                'number'  => $mobileNumber,
+                'number'  => (new StringManipulation())->formatPhoneNumberE164($mobileNumber),
                 'type'    => PhoneNumber::MOBILE,
             ]);
         }
@@ -152,7 +153,7 @@ class CarePlanHelper
         if (!empty($workNumber = $this->demographicsImport->work_phone)) {
             $workPhone = PhoneNumber::create([
                 'user_id' => $this->user->id,
-                'number'  => $workNumber,
+                'number'  => (new StringManipulation())->formatPhoneNumberE164($workNumber),
                 'type'    => PhoneNumber::WORK,
             ]);
         }
@@ -168,6 +169,15 @@ class CarePlanHelper
         if ($primaryPhone) {
             $primaryPhone->setAttribute('is_primary', true);
             $primaryPhone->save();
+        }
+
+        if (!$primaryPhone && $this->demographicsImport->primary_phone) {
+            PhoneNumber::create([
+                'user_id'    => $this->user->id,
+                'number'     => (new StringManipulation())->formatPhoneNumberE164($this->demographicsImport->primary_phone),
+                'type'       => PhoneNumber::HOME,
+                'is_primary' => true,
+            ]);
         }
 
         return $this;

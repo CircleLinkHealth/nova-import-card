@@ -63,7 +63,6 @@ class EmailsProvidersToApproveCareplans extends Command
             $bar,
             $pretend
         ) {
-
             //Middletown
             if ($user->program_id == 23) {
                 return false;
@@ -82,6 +81,17 @@ class EmailsProvidersToApproveCareplans extends Command
                 return false;
             }
 
+            if (!$user->primaryPractice) {
+                return false;
+            }
+
+            if (!$user->primaryPractice->send_alerts) {
+                return false;
+            }
+
+            if ($user->primaryPractice->auto_approve_careplans) {
+                return false;
+            }
 
             $recipients = [
                 $user->email,
@@ -140,6 +150,7 @@ class EmailsProvidersToApproveCareplans extends Command
             $bar->advance();
 
             return [
+                'practice'         => $user->primaryPractice->display_name,
                 'provider'         => $user->fullName,
                 'pendingApprovals' => $numberOfCareplans,
             ];
