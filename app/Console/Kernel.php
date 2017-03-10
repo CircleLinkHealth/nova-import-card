@@ -98,6 +98,7 @@ class Kernel extends ConsoleKernel
         $schedule->call(function () {
 
             $practicesToSendTo = [
+                'demo',
                 'carolina-medical-associates',
                 'clinicalosangeles',
                 'elmwood',
