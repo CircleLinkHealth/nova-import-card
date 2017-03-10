@@ -1,68 +1,60 @@
 <?php
 
+use App\Practice;
+use App\Reports\Sales\Practice\SalesByPracticeReport;
+use App\Reports\Sales\Provider\SalesByProviderReport;
+use Carbon\Carbon;
+use Illuminate\Support\Facades\Mail;
 
 if (app()->environment() != 'production') {
 
     Route::get('rohan', function () {
 
-        return view('vue-tutorial');
+
+        $careAmbassadors = \App\User::whereHas('roles', function($q){
+
+            $q->where('name', 'care-ambassador');
+
+        })->pluck('id');
+
+        $data = [];
+
+        foreach ($careAmbassadors as $bassador){
+
+            $base = \App\CareAmbassadorLog::where('care_ambassador_id', $bassador)
+                ->where('day', '>=', Carbon::now()->subWeek()->toDateString())
+                ->where('day', '<=', Carbon::now()->toDateString())->get();
+
+            dd(secondsToHHMM($base->sum('total_time_in_system')));
+
+            //		Minutes per Enrollment	Total Calls	Conversion	Cost per Enrolment	Rate/hr
+
+
+            $data['total_hours'] = secondsToMMSS($base->sum('total_time_in_system'));
+            $data['no_enrolled'] = $base->sum('no_enrolled');
+            $data['mins_per_enrollment'] = ($base->sum('total_time_in_system') / 60) / $base->sum('no_enrolled');
+            $data['total_calls'] = $base->sum('total_calls');
+
+        }
+
+
+
+        dd($data);
+
+
+        $twilio = new Aloha\Twilio\Twilio(env('TWILIO_SID'), env('TWILIO_TOKEN'), env('TWILIO_FROM'));
+
+        $enrollee = \App\Enrollee::find(1);
+        $link = url("join/$enrollee->invite_code");
+        $provider_name = App\User::find($enrollee->provider_id)->fullName;
+
+        $twilio->message($enrollee->phone,
+            "Dr. $provider_name has invited you to their new wellness program! Please enroll here: $link");
 
     });
+
+
 }
-
-//Algo test routes.
-
-Route::group(['prefix' => 'algo'], function () {
-
-    Route::get('family', function () {
-
-        if (app()->environment() == 'production') {
-
-            return 'Sorry, this cannot be run on the production environment.';
-
-        }
-
-        return (new \App\Services\Calls\SchedulerService())->syncFamilialCalls();
-
-    });
-
-    Route::get('cleaner', function () {
-
-        if (app()->environment() == 'production') {
-
-            return 'Sorry, this cannot be run on the production environment.';
-
-        }
-
-        return (new \App\Services\Calls\SchedulerService())->removeScheduledCallsForWithdrawnAndPausedPatients();
-
-    });
-
-    Route::get('tuner', function () {
-
-        if (app()->environment() == 'production') {
-
-            return 'Sorry, this cannot be run on the production environment.';
-
-        }
-
-        return (new \App\Services\Calls\SchedulerService())->tuneScheduledCallsWithUpdatedCCMTime();
-
-    });
-
-    Route::get('rescheduler', function () {
-
-        if (app()->environment() == 'production') {
-
-            return 'Sorry, this cannot be run on the production environment.';
-
-        }
-
-        return (new \App\Algorithms\Calls\ReschedulerHandler())->handle();
-
-    });
-});
-
 
 Route::get('ajax/patients', 'UserController@getPatients');
 
@@ -465,6 +457,39 @@ Route::group(['middleware' => 'auth'], function () {
         'prefix'     => 'admin',
     ], function () {
 
+        Route::post('get-athena-ccdas', [
+            'uses' => 'CcdApi\Athena\AthenaApiController@getCcdas',
+            'as'   => 'get.athena.ccdas',
+        ]);
+
+        Route::get('nursecalls/{from}/{to}', function (
+            $from,
+            $to
+        ) {
+
+            $nurses = App\Nurse::all();
+            $data = [];
+            $total = 0;
+
+            foreach ($nurses as $nurse) {
+
+                $data[$nurse->user->fullName] = (new \App\Billing\NurseMonthlyBillGenerator(
+                    $nurse,
+                    \Carbon\Carbon::now()->subMonths($from),
+                    \Carbon\Carbon::now()->subMonths($to),
+                    false
+
+                ))->getCallsPerHourOverPeriod();
+
+                $total += $data[$nurse->user->fullName]['calls/hour'];
+
+            }
+
+            $data['AVERAGE'] = $total / $nurses->count();
+
+            return $data;
+
+        });
 
         /**
          * LOGGER
@@ -639,7 +664,7 @@ Route::group(['middleware' => 'auth'], function () {
         });
 
         Route::get('emr-direct/check', function () {
-            (new \App\Services\PhiMail\PhiMail())->sendReceive();
+            (new \App\Services\PhiMail\PhiMail())->receive();
         });
 
         Route::get('dupes', function () {
@@ -1269,45 +1294,88 @@ Route::group([
  *
  */
 Route::group([
-    'prefix' => 'provider',
+    'prefix'     => '{practiceSlug}/admin',
+    'middleware' => [
+        'auth',
+        'providerDashboardACL:administrator',
+    ],
 ], function () {
 
-    Route::post('store-invite', [
+    Route::post('invite', [
         'uses' => 'Provider\DashboardController@postStoreInvite',
         'as'   => 'post.store.invite',
     ]);
 
-    Route::post('store-location', [
-        'uses' => 'Provider\DashboardController@postStoreLocation',
-        'as'   => 'post.store.location',
+    Route::post('locations', [
+        'uses' => 'Provider\DashboardController@postStoreLocations',
+        'as'   => 'provider.dashboard.store.locations',
     ]);
 
-    Route::post('store-practice', [
+    Route::post('staff', [
+        'uses' => 'Provider\DashboardController@postStoreStaff',
+        'as'   => 'provider.dashboard.store.staff',
+    ]);
+
+    Route::post('practice', [
         'uses' => 'Provider\DashboardController@postStorePractice',
-        'as'   => 'post.store.practice',
+        'as'   => 'provider.dashboard.store.practice',
     ]);
 
-    Route::get('create-practice', [
+    Route::get('practice', [
         'uses' => 'Provider\DashboardController@getCreatePractice',
-        'as'   => 'get.create.practice',
+        'as'   => 'provider.dashboard.manage.practice',
     ]);
 
-    Route::get('create-staff', [
+    Route::get('staff', [
         'uses' => 'Provider\DashboardController@getCreateStaff',
-        'as'   => 'get.create.staff',
+        'as'   => 'provider.dashboard.manage.staff',
     ]);
 
-    Route::get('index', [
+    Route::get('', [
         'uses' => 'Provider\DashboardController@getIndex',
-        'as'   => 'get.provider.dashboard',
+        'as'   => 'provider.dashboard.index',
     ]);
 
-    Route::get('create-location', [
+    Route::get('locations', [
         'uses' => 'Provider\DashboardController@getCreateLocation',
-        'as'   => 'get.create.location',
+        'as'   => 'provider.dashboard.manage.locations',
     ]);
 });
 
+/*
+ * Enrollment Center UI
+ */
+
+Route::group([
+    'prefix' => '/enrollment',
+], function () {
+
+    Route::get('/', [
+        'uses' => 'EnrollmentCenterController@dashboard',
+        'as'   => 'enrollment-center.dashboard',
+    ]);
+
+    Route::post('/consented', [
+        'uses' => 'EnrollmentCenterController@consented',
+        'as'   => 'enrollment-center.consented',
+    ]);
+
+    Route::post('/utc', [
+        'uses' => 'EnrollmentCenterController@unableToContact',
+        'as'   => 'enrollment-center.utc',
+    ]);
+
+    Route::post('/rejected', [
+        'uses' => 'EnrollmentCenterController@rejected',
+        'as'   => 'enrollment-center.rejected',
+    ]);
+
+    Route::get('/training', [
+        'uses' => 'EnrollmentCenterController@training',
+        'as'   => 'enrollment-center.training',
+    ]);
+
+});
 
 /*
  * Enrollment Consent
@@ -1317,14 +1385,19 @@ Route::group([
     'prefix' => 'join',
 ], function () {
 
-    Route::get('{program_name}', [
+    Route::post('/save', [
+        'uses' => 'Patient\EnrollmentConsentController@store',
+        'as'   => 'patient.enroll.store',
+    ]);
+
+    Route::get('{invite_code}', [
         'uses' => 'Patient\EnrollmentConsentController@create',
         'as'   => 'patient.enroll.create',
     ]);
 
-    Route::post('store', [
-        'uses' => 'Patient\EnrollmentConsentController@store',
-        'as'   => 'patient.enroll.store',
+    Route::post('/update', [
+        'uses' => 'Patient\EnrollmentConsentController@update',
+        'as'   => 'patient.enroll.update',
     ]);
 
 
