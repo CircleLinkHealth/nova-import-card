@@ -71,6 +71,9 @@ class EmailsProvidersToApproveCareplans extends Command
                 return false;
             }
 
+            if ($user->primaryPractice->auto_approve_careplans) {
+                return false;
+            }
 
             $recipients = [
                 $user->email,
