@@ -14,7 +14,7 @@
             </label>
         @else
             <p style="color: red;">
-                No provider selected to receive alerts. Use the add or edit icons in the
+                No provider selected to receive alerts. Use the add ("+" sign) or edit (pencil) icons in the
                 <strong>{{link_to_route('patient.careplan.print', '"Care Team"', ['patientId' => $patient->id])}}</strong>
                 section of
                 the {{link_to_route('patient.careplan.print', 'View CarePlan', ['patientId' => $patient->id])}} page to
