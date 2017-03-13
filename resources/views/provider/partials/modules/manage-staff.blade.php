@@ -226,27 +226,38 @@
                                         'v-on:click' => 'isValidated(index)',
                                     ]
                                 ])
-                                <br>
-                                <transition name="fade">
-                                    <br>
-                                    <div v-show="newUser.clinical_issues_notify.who == 'instead_of_provider'"
-                                         name="custom-classes-transition"
-                                         enter-active-class="animated tada"
-                                         leave-active-class="animated bounceOutRight"
-                                         mode="in-out">
 
-                                        <select v-select2="newUser.clinical_issues_notify.user_id" style="width: 100%;">
-                                            <option value="">Select User to notify.</option>
+                                <transition>
+                                    <div v-show="newUser.clinical_issues_notify.who == 'instead_of_provider'">
+                                        <br>
+                                        <div class="col s12">
+                                            @include('provider.partials.clinicalIssuesNotifyUser')
+                                        </div>
+                                    </div>
+                                </transition>
+                            </div>
 
-                                            <option v-for="user in newUsers"
-                                                    value="@{{ user.id }}">@{{ user.first_name }} @{{ user.last_name }}</option>
-                                        </select>
-
-                                        <p class="validation-error alert-danger text-right"
-                                           v-if="addCarePersonForm.specialty.$error.required">*required
-                                        </p>
-
-
+                            <div>
+                                @include('provider.partials.mdl.form.radio', [
+                                    'id' => 'in-addition-@{{index}}',
+                                    'label' => 'Someone else in addition to provider.',
+                                    'name' => 'users[@{{index}}][clinical_issues_notify][who]',
+                                    'value' => 'in_addition_to_provider',
+                                    'attributes' => [
+                                        'v-model' => 'newUser.clinical_issues_notify.who',
+                                        'required' => 'required',
+                                        'v-on:change' => 'isValidated(index)',
+                                        'v-on:invalid' => 'isValidated(index)',
+                                        'v-on:keyup' => 'isValidated(index)',
+                                        'v-on:click' => 'isValidated(index)',
+                                    ]
+                                ])
+                                <transition>
+                                    <div v-show="newUser.clinical_issues_notify.who == 'in_addition_to_provider'">
+                                        <br>
+                                        <div class="col s12">
+                                            @include('provider.partials.clinicalIssuesNotifyUser')
+                                        </div>
                                     </div>
                                 </transition>
                             </div>
