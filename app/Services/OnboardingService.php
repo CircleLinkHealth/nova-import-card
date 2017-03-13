@@ -111,21 +111,25 @@ class OnboardingService
                 : $user->roles->first()['id'];
 
             return [
-                'id'                 => $user->id,
-                'email'              => $user->email,
-                'last_name'          => $user->last_name,
-                'first_name'         => $user->first_name,
-                'phone_number'       => $phone->number ?? '',
-                'phone_extension'    => $phone->extension ?? '',
-                'phone_type'         => array_search($phone->type ?? '', PhoneNumber::getTypes()) ?? '',
-                'isComplete'         => false,
-                'validated'          => false,
-                'grandAdminRights'   => $permissions->pivot->has_admin_rights ?? false,
-                'sendBillingReports' => $permissions->pivot->send_billing_reports ?? false,
-                'errorCount'         => 0,
-                'role_id'            => $roleId,
-                'locations'          => $user->locations->pluck('id'),
-                'emr_direct_address' => $user->emr_direct_address,
+                'id'                     => $user->id,
+                'email'                  => $user->email,
+                'last_name'              => $user->last_name,
+                'first_name'             => $user->first_name,
+                'phone_number'           => $phone->number ?? '',
+                'phone_extension'        => $phone->extension ?? '',
+                'phone_type'             => array_search($phone->type ?? '', PhoneNumber::getTypes()) ?? '',
+                'isComplete'             => false,
+                'validated'              => false,
+                'grandAdminRights'       => $permissions->pivot->has_admin_rights ?? false,
+                'sendBillingReports'     => $permissions->pivot->send_billing_reports ?? false,
+                'errorCount'             => 0,
+                'role_id'                => $roleId,
+                'locations'              => $user->locations->pluck('id'),
+                'emr_direct_address'     => $user->emr_direct_address,
+                'clinical_issues_notify' => [
+                    'who'     => 'billing_provider',
+                    'user_id' => '',
+                ],
             ];
         });
 
