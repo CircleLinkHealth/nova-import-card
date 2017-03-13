@@ -10,11 +10,13 @@
                 Please confirm the patient's preferred phone number (format: XXX-XXX-XXXX):
             </blockquote>
             <div class="row">
-                <div class="col s6 m3 select-custom">
-                    <label for="primary_phone"
-                           v-bind:class="{valid: primary_is_valid, invalid: primary_is_invalid}">@{{primary_phone_label}}</label>
-                    <input class="input-field" name="primary_phone" id="primary_phone" v-model="primary_phone"
-                           v-on:keyup="validatePhone(primary_phone, 'Primary Phone')"/>
+                <div class="col s6 m3" style="padding-top: 4px;">
+                    <label for="preferred_phone" class="preferred_phone">Preferred Contact Phone</label>
+                    <select name="preferred_phone" id="preferred_phone">
+                        <option value="home" selected>Home Phone</option>
+                        <option value="cell">Cell Phone</option>
+                        <option value="other">Other Phone</option>
+                    </select>
                 </div>
                 <div class="col s6 m3 select-custom">
                     <label for="home_phone"
@@ -31,7 +33,7 @@
                            v-bind:class="{valid: other_is_valid, invalid: other_is_invalid}">@{{other_phone_label}}</label>
                     <input class="input-field" name="other_phone" id="other_phone" v-model="other_phone"/>
                 </div>
-                <div class="col s12 m4 select-custom">
+                <div class="col s12 m3 select-custom">
                     <label for="address" class="label">Address</label>
                     <input class="input-field" name="address" id="address" v-model="address"/>
                 </div>
@@ -43,19 +45,22 @@
                     <label for="city" class="label">City</label>
                     <input class="input-field" name="city" id="city" v-model="city"/>
                 </div>
-                <div class="col s12 m2 select-custom">
+                <div class="col s12 m1 select-custom">
                     <label for="state" class="label">State</label>
                     <input class="input-field" name="state" id="state" v-model="state"/>
                 </div>
-                <div class="col s12 m2 select-custom">
+                <div class="col s12 m1 select-custom">
                     <label for="zip" class="label">Zip</label>
                     <input class="input-field" name=zip" id="zip" v-model="zip"/>
                 </div>
-
+                <div class="col s12 m3 select-custom">
+                    <label for="email" class="label">Email</label>
+                    <input class="input-field" name="email" id="email" v-model="email"/>
+                </div>
             </div>
             <div class="row">
                 <blockquote style="border-left: 5px solid #26a69a;">
-                    Please confirm the patient's preferred contact details:
+                    Please confirm the patient's preferred contact days and times:
                 </blockquote>
                 <div class="col s12 m6">
                     <label for="days[]" class="label">Day</label>
@@ -82,7 +87,7 @@
                 <blockquote style="border-left: 5px solid #26a69a;">
                     Is there anything else we should know about the patient?
                 </blockquote>
-                <div class="col s12 m6 select-custom">
+                <div class="col s12 m12 select-custom">
                             <textarea class="materialize-textarea input-field" id="extra" name="extra"
                                       placeholder="Optional additional information"></textarea>
                 </div>

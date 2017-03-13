@@ -65,7 +65,6 @@
 
                 name: '{{ $enrollee->first_name ?? ''. $enrollee->last_name }}',
                 provider_name: '{{ $enrollee->providerFullName }}',
-                primary_phone: '{{ $enrollee->primary_phone ?? 'N/A' }}',
                 home_phone: '{{ $enrollee->home_phone ?? 'N/A' }}',
                 cell_phone: '{{ $enrollee->cell_phone ?? 'N/A' }}',
                 other_phone: '{{ $enrollee->other_phone ?? 'N/A' }}',
@@ -88,26 +87,6 @@
 
                     return new Date(1000 * this.total_time_in_system).toISOString().substr(11, 8)
 
-                },
-
-                //primary phone computer vars
-                primary_phone_label: function () {
-
-                    if (this.primary_phone.match(this.phone_regex)) {
-
-                        return 'Primary Phone Valid!';
-
-                    }
-
-                    return 'Primary Phone Invalid..'
-
-                },
-
-                primary_is_valid: function () {
-                    return this.primary_phone.match(this.phone_regex);
-                },
-                primary_is_invalid: function () {
-                    return !this.primary_phone.match(this.phone_regex);
                 },
 
                 //other phone computer vars

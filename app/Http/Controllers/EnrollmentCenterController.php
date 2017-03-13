@@ -56,6 +56,14 @@ class EnrollmentCenterController extends Controller
         $enrollee->setCellPhoneAttribute($request->input('cell_phone'));
         $enrollee->setOtherPhoneAttribute($request->input('other_phone'));
 
+        //set preferred phone
+        switch($request->input('preferred_phone')){
+            case 'home': $enrollee->setPrimaryPhoneNumberAttribute($request->input('home_phone')); break;
+            case 'cell': $enrollee->setPrimaryPhoneNumberAttribute($request->input('cell_phone')); break;
+            case 'other': $enrollee->setPrimaryPhoneNumberAttribute($request->input('other_phone')); break;
+            default: $enrollee->setPrimaryPhoneNumberAttribute($request->input('home_phone'));
+        }
+
         $enrollee->address = $request->input('address');
         $enrollee->address_2 = $request->input('address_2');
         $enrollee->state = $request->input('state');
