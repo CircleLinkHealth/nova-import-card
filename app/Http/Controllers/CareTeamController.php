@@ -34,7 +34,13 @@ class CareTeamController extends Controller
         $firstNameTerm = $request->input('firstName');
         $lastNameTerm = $request->input('lastName');
 
-        $users = User::ofType(['provider'])
+        $users = User::ofType([
+            'med_assistant',
+            'office_admin',
+            'provider',
+            'registered-nurse',
+            'specialist',
+        ])
             ->with('primaryPractice')
             ->with('providerInfo')
             ->with('phoneNumbers')
