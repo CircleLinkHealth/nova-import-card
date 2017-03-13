@@ -29,7 +29,7 @@
 
         @include('enrollment-ui.sidebar')
 
-        <div style="margin-left: 375px; margin-top: 10px;">
+        <div style="margin-left: 26%; margin-top: 10px;">
             <a class="waves-effect waves-light btn" href="#consented">Patient Consented</a>
             <a class="waves-effect waves-light btn" href="#utc" style="background: #ecb70e">No Answer /
                 Requested Call Back</a>
