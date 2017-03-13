@@ -17,7 +17,7 @@
                             <div class="panel-heading">Enrollment Report</div>
 
                             <div class="panel-body">
-                                <table class="table table-striped" id="nurse_daily">
+                                <table class="table table-striped" id="enrollment_list">
                                     <thead>
                                     <tr>
                                         <th>
@@ -78,7 +78,7 @@
         <script>
 
             $(function() {
-                $('#nurse_daily').DataTable({
+                $('#enrollment_list').DataTable({
                     processing: true,
                     serverSide: false,
                     "scrollX": true,
