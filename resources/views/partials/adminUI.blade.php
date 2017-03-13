@@ -155,11 +155,19 @@
                         </li>
                     @endif
 
-                    @if ( ! Auth::guest())
-                        <li role="presentation" class="dropdown">
-                            <a href="{{ URL::route('patient.enroll.makeReport', array()) }}">Enrollment List</a></li>
-                        </li>
-                    @endif
+                    <li role="presentation" class="dropdown">
+                        <a class="dropdown-toggle" data-toggle="dropdown" href="#" role="button"
+                           aria-expanded="false">Enrollment<span class="caret"></span>
+                        </a>
+                        <ul class="dropdown-menu" role="menu">
+                            <li role="presentation" class="dropdown">
+                                <a href="{{ URL::route('patient.enroll.makeReport', array()) }}">Enrollment List</a>
+                            </li>
+                            <li role="presentation" class="dropdown">
+                                <a href="{{ URL::route('enrollment.ambassador.stats', array()) }}">Care Ambassador KPIs</a>
+                            </li>
+                        </ul>
+                    </li>
 
                     @if(Entrust::can('roles-view'))
                         <li role="presentation" class="dropdown">
