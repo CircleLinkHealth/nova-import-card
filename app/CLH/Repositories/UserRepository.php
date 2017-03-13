@@ -1,5 +1,6 @@
 <?php namespace App\CLH\Repositories;
 
+use App\CareAmbassador;
 use App\CarePlan;
 use App\CarePlanTemplate;
 use App\Nurse;
@@ -49,7 +50,16 @@ class UserRepository implements \App\CLH\Contracts\Repositories\UserRepository
 
         // nurse info
         if ($user->hasRole('care-center')) {
+
             $this->saveOrUpdateNurseInfo($user, $params);
+
+        }
+
+        // care ambassador info
+        if ($user->hasRole('care-ambassador')) {
+
+            $this->saveOrUpdateCareAmbassadorInfo($user, $params);
+
         }
 
         //Add Email Notification
@@ -298,6 +308,29 @@ class UserRepository implements \App\CLH\Contracts\Repositories\UserRepository
         $user->patientInfo->save();
     }
 
+    public function saveOrUpdateCareAmbassadorInfo(User $user, ParameterBag $params){
+
+        if($user->careAmbassador != null){
+
+            $user->careAmbassador->hourly_rate = $params->get('hourly_rate');
+            $user->careAmbassador->save();
+
+        } else {
+
+            $ambassador = CareAmbassador::create([
+                'user_id' => $user->id
+            ]);
+
+            $ambassador->save();
+
+            $user->careAmbassador()->save($ambassador);
+
+
+        }
+
+
+    }
+
     public function saveOrUpdateProviderInfo(
         User $user,
         ParameterBag $params
@@ -385,6 +418,13 @@ class UserRepository implements \App\CLH\Contracts\Repositories\UserRepository
         // participant info
         if ($user->hasRole('participant')) {
             $this->saveOrUpdatePatientInfo($user, $params);
+        }
+
+        // care ambassador
+        if ($user->hasRole('care-ambassador')) {
+
+            $this->saveOrUpdateCareAmbassadorInfo($user, $params);
+
         }
 
         // provider info
