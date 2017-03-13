@@ -13,7 +13,6 @@
     <span>
                     <li class="sidebar-demo-list"><span id="name">Name: @{{name}}</span></li>
                     <li class="sidebar-demo-list"><span id="name">Provider Name: @{{provider_name}}</span></li>
-                    <li class="sidebar-demo-list"><span id="cell_phone">Primary Phone: @{{primary_phone}}</span></li>
                     <li class="sidebar-demo-list"><span id="home_phone">Home Phone: @{{home_phone}}</span></li>
                     <li class="sidebar-demo-list"><span id="home_phone">Cell Phone: @{{cell_phone}}</span></li>
                     <li class="sidebar-demo-list"><span id="home_phone">Other Phone: @{{other_phone}}</span></li>
