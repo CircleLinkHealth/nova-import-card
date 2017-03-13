@@ -233,6 +233,15 @@
                                          leave-active-class="animated bounceOutRight"
                                          mode="in-out">
 
+                                        <div class="col s12">
+                                            <select v-select2="newUser.clinical_issues_notify.user_id"
+                                                    id="specialty-@{{ care_person.id }}"
+                                                    class="cpm-select2" name="specialty" v-form-ctrl required
+                                                    style="width: 100%;">
+                                                <option value=""></option>
+                                                @include('partials.specialties')
+                                            </select>
+                                        </div>
 
                                         <p class="validation-error alert-danger text-right"
                                            v-if="addCarePersonForm.specialty.$error.required">*required
