@@ -57,6 +57,9 @@
                                             Conversion
                                         </th>
                                         <th>
+                                            Hourly Rate
+                                        </th>
+                                        <th>
                                             Cost per Enrollment
                                         </th>
                                     </tr>
@@ -102,6 +105,7 @@
                         {data: 'total_hours', name: 'total_hours'},
                         {data: 'mins_per_enrollment', name: 'mins_per_enrollment'},
                         {data: 'conversion', name: 'conversion'},
+                        {data: 'hourly_rate', name: 'hourly_rate'},
                         {data: 'per_cost', name: 'per_cost'},
 
                     ],
