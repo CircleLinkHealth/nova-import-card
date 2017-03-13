@@ -226,22 +226,21 @@
                                         'v-on:click' => 'isValidated(index)',
                                     ]
                                 ])
+                                <br>
                                 <transition name="fade">
+                                    <br>
                                     <div v-show="newUser.clinical_issues_notify.who == 'instead_of_provider'"
                                          name="custom-classes-transition"
                                          enter-active-class="animated tada"
                                          leave-active-class="animated bounceOutRight"
                                          mode="in-out">
 
-                                        <div class="col s12">
-                                            <select v-select2="newUser.clinical_issues_notify.user_id"
-                                                    id="specialty-@{{ care_person.id }}"
-                                                    class="cpm-select2" name="specialty" v-form-ctrl required
-                                                    style="width: 100%;">
-                                                <option value=""></option>
-                                                @include('partials.specialties')
-                                            </select>
-                                        </div>
+                                        <select v-select2="newUser.clinical_issues_notify.user_id" style="width: 100%;">
+                                            <option value="">Select User to notify.</option>
+
+                                            <option v-for="user in newUsers"
+                                                    value="@{{ user.id }}">@{{ user.first_name }} @{{ user.last_name }}</option>
+                                        </select>
 
                                         <p class="validation-error alert-danger text-right"
                                            v-if="addCarePersonForm.specialty.$error.required">*required
