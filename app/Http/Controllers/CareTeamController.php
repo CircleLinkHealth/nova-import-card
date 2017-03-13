@@ -34,7 +34,13 @@ class CareTeamController extends Controller
         $firstNameTerm = $request->input('firstName');
         $lastNameTerm = $request->input('lastName');
 
-        $users = User::ofType(['provider'])
+        $users = User::ofType([
+            'med_assistant',
+            'office_admin',
+            'provider',
+            'registered-nurse',
+            'specialist',
+        ])
             ->with('primaryPractice')
             ->with('providerInfo')
             ->with('phoneNumbers')
@@ -110,10 +116,12 @@ class CareTeamController extends Controller
             ]);
         } else {
             $carePerson = CarePerson::where('id', '=', $input['id'])
-                ->update([
-                    'alert' => $alert,
-                    'type'  => $type,
-                ]);
+                ->with('user')
+                ->first();
+
+            $carePerson->alert = $alert;
+            $carePerson->type = $type;
+            $carePerson->save();
         }
 
         if (isset($input['user']['phone_numbers'][0])) {
