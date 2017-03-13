@@ -2,48 +2,10 @@ var Vue = require('vue');
 
 Vue.use(require('vue-resource'));
 
+require('../components/src/select2.js');
+require('../components/src/select.js');
+
 Vue.http.headers.common['X-CSRF-TOKEN'] = $('meta[name="csrf-token"]').attr('content');
-
-Vue.directive("select", {
-    "twoWay": true,
-
-    "bind": function () {
-        $(this.el).material_select();
-
-        var self = this;
-
-        $(this.el).on('change', function () {
-            self.set($(self.el).val());
-        });
-    },
-
-    update: function (newValue, oldValue) {
-        $(this.el).val(newValue);
-    },
-
-    "unbind": function () {
-        $(this.el).material_select('destroy');
-    }
-});
-
-// Vue.component('user', {
-//     props: [
-//         'id',
-//         'email',
-//         'last_name',
-//         'first_name',
-//         'phone_number',
-//         'phone_type',
-//         'isComplete',
-//         'validated',
-//         'errorCount',
-//         'role_id',
-//         'locations'
-//     ],
-//
-//     template: '<h2>{{first_name}}, {{role_id}}</h2>'
-//
-// });
 
 /**
  *
@@ -114,6 +76,10 @@ var createStaffVM = new Vue({
                 phone_number: '',
                 phone_extension: '',
                 phone_type: '',
+                clinical_issues_notify: {
+                    who: 'billing_provider',
+                    user_id: ''
+                }
             });
 
             this.$nextTick(function () {
