@@ -52,7 +52,6 @@ class EnrollmentCenterController extends Controller
         $report->save();
 
         $enrollee->setHomePhoneAttribute($request->input('home_phone'));
-        $enrollee->setPrimaryPhoneNumberAttribute($request->input('primary_phone'));
         $enrollee->setCellPhoneAttribute($request->input('cell_phone'));
         $enrollee->setOtherPhoneAttribute($request->input('other_phone'));
 
