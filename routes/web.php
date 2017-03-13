@@ -26,60 +26,6 @@ if (app()->environment() != 'production') {
 
 }
 
-//Algo test routes.
-
-Route::group(['prefix' => 'algo'], function () {
-
-    Route::get('family', function () {
-
-        if (app()->environment() == 'production') {
-
-            return 'Sorry, this cannot be run on the production environment.';
-
-        }
-
-        return (new \App\Services\Calls\SchedulerService())->syncFamilialCalls();
-
-    });
-
-    Route::get('cleaner', function () {
-
-        if (app()->environment() == 'production') {
-
-            return 'Sorry, this cannot be run on the production environment.';
-
-        }
-
-        return (new \App\Services\Calls\SchedulerService())->removeScheduledCallsForWithdrawnAndPausedPatients();
-
-    });
-
-    Route::get('tuner', function () {
-
-        if (app()->environment() == 'production') {
-
-            return 'Sorry, this cannot be run on the production environment.';
-
-        }
-
-        return (new \App\Services\Calls\SchedulerService())->tuneScheduledCallsWithUpdatedCCMTime();
-
-    });
-
-    Route::get('rescheduler', function () {
-
-        if (app()->environment() == 'production') {
-
-            return 'Sorry, this cannot be run on the production environment.';
-
-        }
-
-        return (new \App\Algorithms\Calls\ReschedulerHandler())->handle();
-
-    });
-});
-
-
 Route::get('ajax/patients', 'UserController@getPatients');
 
 /*
@@ -1366,6 +1312,40 @@ Route::group([
     ]);
 });
 
+/*
+ * Enrollment Center UI
+ */
+
+Route::group([
+    'prefix' => '/enrollment',
+], function () {
+
+    Route::get('/', [
+        'uses' => 'EnrollmentCenterController@dashboard',
+        'as'   => 'enrollment-center.dashboard',
+    ]);
+
+    Route::post('/consented', [
+        'uses' => 'EnrollmentCenterController@consented',
+        'as'   => 'enrollment-center.consented',
+    ]);
+
+    Route::post('/utc', [
+        'uses' => 'EnrollmentCenterController@unableToContact',
+        'as'   => 'enrollment-center.utc',
+    ]);
+
+    Route::post('/rejected', [
+        'uses' => 'EnrollmentCenterController@rejected',
+        'as'   => 'enrollment-center.rejected',
+    ]);
+
+    Route::get('/training', [
+        'uses' => 'EnrollmentCenterController@training',
+        'as'   => 'enrollment-center.training',
+    ]);
+
+});
 
 /*
  * Enrollment Consent
