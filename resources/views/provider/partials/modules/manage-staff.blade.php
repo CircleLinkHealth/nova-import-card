@@ -189,6 +189,62 @@
                         </div>
                     </div>
 
+                    <div v-show="newUser.role_id == 5" class="row">
+                        <div class="input-field col s12">
+
+                            <h6>Who should we notify for clinical issues regarding provider’s patients?</h6>
+
+                            <div>
+                                @include('provider.partials.mdl.form.radio', [
+                                    'id' => 'billing-provider-@{{index}}',
+                                    'label' => 'Provider',
+                                    'name' => 'users[@{{index}}][clinical_issues_notify][who]',
+                                    'value' => 'billing_provider',
+                                    'attributes' => [
+                                        'v-model' => 'newUser.clinical_issues_notify.who',
+                                        'required' => 'required',
+                                        'v-on:change' => 'isValidated(index)',
+                                        'v-on:invalid' => 'isValidated(index)',
+                                        'v-on:keyup' => 'isValidated(index)',
+                                        'v-on:click' => 'isValidated(index)',
+                                    ]
+                                ])
+                            </div>
+
+                            <div>
+                                @include('provider.partials.mdl.form.radio', [
+                                    'id' => 'instead-of-provider-@{{index}}',
+                                    'label' => 'Someone else instead of provider.',
+                                    'name' => 'users[@{{index}}][clinical_issues_notify][who]',
+                                    'value' => 'instead_of_provider',
+                                    'attributes' => [
+                                        'v-model' => 'newUser.clinical_issues_notify.who',
+                                        'required' => 'required',
+                                        'v-on:change' => 'isValidated(index)',
+                                        'v-on:invalid' => 'isValidated(index)',
+                                        'v-on:keyup' => 'isValidated(index)',
+                                        'v-on:click' => 'isValidated(index)',
+                                    ]
+                                ])
+                                <transition name="fade">
+                                    <div v-show="newUser.clinical_issues_notify.who == 'instead_of_provider'"
+                                         name="custom-classes-transition"
+                                         enter-active-class="animated tada"
+                                         leave-active-class="animated bounceOutRight"
+                                         mode="in-out">
+
+
+                                        <p class="validation-error alert-danger text-right"
+                                           v-if="addCarePersonForm.specialty.$error.required">*required
+                                        </p>
+
+
+                                    </div>
+                                </transition>
+                            </div>
+                        </div>
+                    </div>
+
                     <div class="row">
                         <div class="input-field col s12">
                             <select v-select="newUser.locations" required multiple>
