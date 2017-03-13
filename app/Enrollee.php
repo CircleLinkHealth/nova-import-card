@@ -222,6 +222,7 @@ class Enrollee extends Model
 
     public function scopeToCall($query)
     {
+        //@todo add check for where phones are not all null
 
         return $query->where('status', 'call_queue');
 

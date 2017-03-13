@@ -171,13 +171,11 @@
                     if (VAL.match(this.phone_regex)) {
                         this.isValid = true;
                         this.isInValid = false;
-                        this.primary_phone_label = name + ' Valid!';
                         return true;
                     }
                     else {
                         this.isValid = false;
                         this.isInValid = true;
-                        this.primary_phone_label = name + ' Invalid..';
                         return false;
                     }
 
