@@ -497,7 +497,7 @@ Route::group(['middleware' => 'auth'], function () {
         ]);
 
         Route::get('enroll/ambassador/kpis/data', [
-            'uses' => 'Enrollment\EnrollmentCenterController@ambassadorStats',
+            'uses' => 'Enrollment\EnrollmentStatsController@ambassadorStats',
             'as'   => 'enrollment.ambassador.stats.data',
         ]);
 
