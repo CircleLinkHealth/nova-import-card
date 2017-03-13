@@ -329,6 +329,11 @@ class PatientController extends Controller
 
             if ($bpCareTeamMember) {
                 $bpUser = $bpCareTeamMember->user;
+
+                if (!$bpUser) {
+                    continue;
+                }
+
                 $bpName = $bpUser->fullName;
                 $foundUsers[$bpID] = $bpUser;
             }
