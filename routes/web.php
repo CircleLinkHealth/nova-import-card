@@ -482,13 +482,23 @@ Route::group(['middleware' => 'auth'], function () {
         ]);
 
         Route::get('enroll/list', [
-            'uses' => 'Patient\EnrollmentConsentController@makeEnrollmentReport',
+            'uses' => 'Enrollment\EnrollmentConsentController@makeEnrollmentReport',
             'as'   => 'patient.enroll.makeReport',
         ]);
 
         Route::get('enroll/list/data', [
-            'uses' => 'Patient\EnrollmentConsentController@index',
+            'uses' => 'Enrollment\EnrollmentConsentController@index',
             'as'   => 'patient.enroll.index',
+        ]);
+
+        Route::get('enroll/ambassador/kpis', [
+            'uses' => 'Enrollment\EnrollmentStatsController@makeAmbassadorStats',
+            'as'   => 'enrollment.ambassador.stats',
+        ]);
+
+        Route::get('enroll/ambassador/kpis/data', [
+            'uses' => 'Enrollment\EnrollmentCenterController@ambassadorStats',
+            'as'   => 'enrollment.ambassador.stats.data',
         ]);
 
         Route::get('invites/create', [
@@ -1321,27 +1331,27 @@ Route::group([
 ], function () {
 
     Route::get('/', [
-        'uses' => 'EnrollmentCenterController@dashboard',
+        'uses' => 'Enrollment\EnrollmentCenterController@dashboard',
         'as'   => 'enrollment-center.dashboard',
     ]);
 
     Route::post('/consented', [
-        'uses' => 'EnrollmentCenterController@consented',
+        'uses' => 'Enrollment\EnrollmentCenterController@consented',
         'as'   => 'enrollment-center.consented',
     ]);
 
     Route::post('/utc', [
-        'uses' => 'EnrollmentCenterController@unableToContact',
+        'uses' => 'Enrollment\EnrollmentCenterController@unableToContact',
         'as'   => 'enrollment-center.utc',
     ]);
 
     Route::post('/rejected', [
-        'uses' => 'EnrollmentCenterController@rejected',
+        'uses' => 'Enrollment\EnrollmentCenterController@rejected',
         'as'   => 'enrollment-center.rejected',
     ]);
 
     Route::get('/training', [
-        'uses' => 'EnrollmentCenterController@training',
+        'uses' => 'Enrollment\EnrollmentCenterController@training',
         'as'   => 'enrollment-center.training',
     ]);
 
