@@ -116,10 +116,12 @@ class CareTeamController extends Controller
             ]);
         } else {
             $carePerson = CarePerson::where('id', '=', $input['id'])
-                ->update([
-                    'alert' => $alert,
-                    'type'  => $type,
-                ]);
+                ->with('user')
+                ->first();
+
+            $carePerson->alert = $alert;
+            $carePerson->type = $type;
+            $carePerson->save();
         }
 
         if (isset($input['user']['phone_numbers'][0])) {
