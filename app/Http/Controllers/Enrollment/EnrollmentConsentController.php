@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers\Patient;
+namespace App\Http\Controllers\Enrollment;
 
 use App\Enrollee;
 use App\Http\Controllers\Controller;
@@ -59,7 +59,7 @@ class EnrollmentConsentController extends Controller
     public function makeEnrollmentReport()
     {
 
-        return view('admin.reports.enrollment-list');
+        return view('admin.reports.enrollment.enrollment-list');
 
     }
 
