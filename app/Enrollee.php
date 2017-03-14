@@ -217,7 +217,7 @@ class Enrollee extends Model
     {
 
         return $query
-            ->where('status', 'sms_queue')
+            ->where('status', self::TO_SMS)
             ->whereNotNull('cell_phone');
 
     }
@@ -226,7 +226,7 @@ class Enrollee extends Model
     {
         //@todo add check for where phones are not all null
 
-        return $query->where('status', 'call_queue');
+        return $query->where('status', self::TO_CALL);
 
     }
 
