@@ -216,7 +216,9 @@ class Enrollee extends Model
     public function scopeToSMS($query)
     {
 
-        return $query->where('status', 'sms_queue');
+        return $query
+            ->where('status', 'sms_queue')
+            ->whereNotNull('cell_phone');
 
     }
 
