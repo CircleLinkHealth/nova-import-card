@@ -15,11 +15,21 @@ class Enrollee extends Model
     const ELIGIBLE = 'eligible';
 
     /**
+     * status = to_call
+     */
+    const TO_CALL = 'call_queue';
+
+    /**
+     * status = to_sms
+     */
+    const TO_SMS = 'sms_queue';
+
+    /**
      * STATUS TYPES:
-     *
+     * eligble, , , mailed, consented, rejected
      * eligible: just imported to enrollees table, queue of sms recipients.
-     * sms_sent: initial sms sent
-     * sms_received: patient opened link
+     * smsed: initial sms sent
+     * call_queue: patient will show up in enrollment UI
      * consented: client consented
      * ccd_obtained: medical records were imported
      * ccd_qaed: QAed, good to go for enrollment
@@ -30,9 +40,12 @@ class Enrollee extends Model
 
     protected $fillable = [
         'id',
+
         'user_id',
         'provider_id',
         'practice_id',
+        'care_ambassador_id',
+
         // patient_id in EHR Software
         'mrn',
         'dob',
@@ -45,20 +58,22 @@ class Enrollee extends Model
         'state',
         'zip',
         'invite_code',
-        //primary_phone
+
         'primary_phone',
+        'cell_phone',
+        'home_phone',
+        'other_phone',
+
         'consented_at',
         'last_attempt_at',
         'attempt_count',
         'preferred_window',
         'preferred_days',
         'status',
-
+        'last_call_outcome_reason',
+        'last_call_outcome',
         'primary_insurance',
         'secondary_insurance',
-        'cell_phone',
-        'home_phone',
-        'other_phone',
         'email',
         'last_encounter',
         'referring_provider_name',
@@ -81,10 +96,24 @@ class Enrollee extends Model
 
     }
 
+    public function careAmbassador()
+    {
+
+        return $this->belongsTo(User::class, 'care_ambassador_id');
+
+    }
+
     public function practice()
     {
 
         return $this->belongsTo(Practice::class, 'practice_id');
+
+    }
+
+    public function getProviderFullNameAttribute()
+    {
+
+        return $this->provider->fullName ?? null;
 
     }
 
@@ -130,7 +159,7 @@ class Enrollee extends Model
     {
         $helper = new StringManipulation();
 
-        $this->attributes['home_phone'] = $helper->formatPhoneNumberE164($homePhone);
+        $this->attributes['cell_phone'] = $helper->formatPhoneNumberE164($homePhone);
     }
 
     /**
@@ -142,7 +171,7 @@ class Enrollee extends Model
     {
         $helper = new StringManipulation();
 
-        $this->attributes['home_phone'] = $helper->formatPhoneNumberE164($homePhone);
+        $this->attributes['other_phone'] = $helper->formatPhoneNumberE164($homePhone);
     }
 
     /**
@@ -181,6 +210,21 @@ class Enrollee extends Model
         $twilio->message($this->primary_phone,
             "Dr. $provider_name hasn’t heard from you regarding their new wellness program $emjo. Please enroll here: $link");
 
+
+    }
+
+    public function scopeToSMS($query)
+    {
+
+        return $query->where('status', 'sms_queue');
+
+    }
+
+    public function scopeToCall($query)
+    {
+        //@todo add check for where phones are not all null
+
+        return $query->where('status', 'call_queue');
 
     }
 
