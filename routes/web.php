@@ -5,13 +5,12 @@
 //$faxTest = (new PhaxioService('production'))->send('+12124910114', storage_path('pdfs/notes/2017-02-07-xsKTIK4106WdXiMNu8iMla4FPJSOcosNBXXMkAsX.pdf'));
 //dd($faxTest);
 
-use App\Algorithms\Enrollment\EnrollmentSMSSender;
 
 if (app()->environment() != 'production') {
 
-    Route::get('/rohan', function () {
+    Route::get('/sms/test', function () {
 
-        dd((new EnrollmentSMSSender())->exec());
+        (new App\Algorithms\Enrollment\EnrollmentSMSSender())->exec();
 
     });
 
