@@ -46,7 +46,6 @@ class EnrollmentStatsController extends Controller
                 ->where('day', '>=', $start)
                 ->where('day', '<=', $end);
 
-            //@todo implement
             $hourCost = CareAmbassador::where('user_id', $ambassador)->first()['hourly_rate'] ?? 'Not Set';
 
             $data[$ambassador]['hourly_rate'] = $hourCost;
