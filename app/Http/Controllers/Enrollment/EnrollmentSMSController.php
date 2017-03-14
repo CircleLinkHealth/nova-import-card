@@ -20,7 +20,7 @@ class EnrollmentSMSController extends Controller
 
         $sender->message('+19727622642', 'We receieved a message!');
 
-        Log::message($request);
+        Log::info($request);
 
     }
 
