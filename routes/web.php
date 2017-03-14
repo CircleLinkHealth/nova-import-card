@@ -1361,17 +1361,17 @@ Route::group([
 ], function () {
 
     Route::post('/save', [
-        'uses' => 'Patient\EnrollmentConsentController@store',
+        'uses' => 'Enrollment\EnrollmentConsentController@store',
         'as'   => 'patient.enroll.store',
     ]);
 
     Route::get('{invite_code}', [
-        'uses' => 'Patient\EnrollmentConsentController@create',
+        'uses' => 'Enrollment\EnrollmentConsentController@create',
         'as'   => 'patient.enroll.create',
     ]);
 
     Route::post('/update', [
-        'uses' => 'Patient\EnrollmentConsentController@update',
+        'uses' => 'Enrollment\EnrollmentConsentController@update',
         'as'   => 'patient.enroll.update',
     ]);
 
