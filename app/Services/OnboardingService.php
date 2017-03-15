@@ -110,6 +110,9 @@ class OnboardingService
                 ? $permissions->pivot->role_id
                 : $user->roles->first()['id'];
 
+            $contactType = $user->forwardAlertsTo->first()->pivot->name ?? null;
+            $contactUser = $user->forwardAlertsTo->first() ?? null;
+
             return [
                 'id'                 => $user->id,
                 'email'              => $user->email,
@@ -126,6 +129,10 @@ class OnboardingService
                 'role_id'            => $roleId,
                 'locations'          => $user->locations->pluck('id'),
                 'emr_direct_address' => $user->emr_direct_address,
+                'forward_alerts_to'  => [
+                    'who'     => $contactType ?? 'billing_provider',
+                    'user_id' => $contactUser->id ?? null,
+                ],
             ];
         });
 
@@ -424,6 +431,15 @@ class OnboardingService
                 $providerInfoCreated = ProviderInfo::firstOrCreate([
                     'user_id' => $user->id,
                 ]);
+
+                if ($newUser['forward_alerts_to']['who'] != 'billing_provider') {
+                    //clean up other contacts before adding the new one
+                    $user->forwardAlertsTo()->sync([]);
+
+                    $user->forwardAlertsTo()->attach($newUser['forward_alerts_to']['user_id'], [
+                        'name' => $newUser['forward_alerts_to']['who'],
+                    ]);
+                }
 
 //                $user->notify(new StaffInvite($implementationLead, $primaryPractice));
             } catch (\Exception $e) {
