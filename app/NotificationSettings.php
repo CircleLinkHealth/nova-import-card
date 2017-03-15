@@ -19,4 +19,12 @@ class NotificationSettings extends Model
         'dm_pdf_careplan',
         'dm_pdf_notes',
     ];
+
+    /**
+     * Get all of the owning notifiable models.
+     */
+    public function notifiable()
+    {
+        return $this->morphTo();
+    }
 }
