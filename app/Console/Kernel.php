@@ -98,6 +98,7 @@ class Kernel extends ConsoleKernel
         $schedule->call(function () {
 
             $practicesToSendTo = [
+                'demo',
                 'carolina-medical-associates',
                 'clinicalosangeles',
                 'elmwood',
@@ -151,7 +152,9 @@ class Kernel extends ConsoleKernel
                         $message->to($recipient)->subject($subjectPractice);
                     });
 
-                    echo $recipient;
+                    Slack::to('#background-tasks')
+                        ->send("The CPMbot just sent the organization weekly summary for $practice->display_name to $recipient");
+
 
                 }
 
@@ -181,6 +184,9 @@ class Kernel extends ConsoleKernel
                         $message->from('notifications@careplanmanager.com', 'CircleLink Health');
                         $message->to($provider->email)->subject($subjectProvider);
                     });
+
+                    Slack::to('#background-tasks')
+                        ->send("The CPMbot just sent the provider's summary for $practice->display_name to $provider->fullName");
 
                 }
             }

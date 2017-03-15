@@ -69,6 +69,14 @@ class RolesPermissionsSeeder extends Seeder
                     'use-onboarding',
                 ],
             ],
+            [
+                'name'         => 'care-ambassador',
+                'display_name' => 'Care Ambassador',
+                'description'  => 'Makes calls to enroll patients.',
+                'permissions'  => [
+                    'use-enrollment-center',
+                ],
+            ],
         ];
 
         foreach ($permissions as $perm) {
