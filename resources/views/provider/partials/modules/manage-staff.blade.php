@@ -264,6 +264,8 @@
                         </div>
                     </div>
 
+                    <br>
+
                     <div class="row">
                         <div class="input-field col s12">
                             <select v-select="newUser.locations" required multiple>
