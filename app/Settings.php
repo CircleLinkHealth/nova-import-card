@@ -4,7 +4,7 @@ namespace App;
 
 use Illuminate\Database\Eloquent\Model;
 
-class NotificationSettings extends Model
+class Settings extends Model
 {
     protected $fillable = [
         //Email Notifications
@@ -25,6 +25,6 @@ class NotificationSettings extends Model
      */
     public function notifiable()
     {
-        return $this->morphTo();
+        return $this->morphTo('notifiable', 'settingsable_type', 'settingsable_id');
     }
 }
