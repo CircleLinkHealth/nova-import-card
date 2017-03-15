@@ -9,10 +9,6 @@
   "type": "project",
   "repositories": [
     {
-      "type": "vcs",
-      "url": "https://github.com/michalisantoniou6/l5-repository"
-    },
-    {
       "type": "git",
       "url": "git@github.com:jamisonvalenta/Laravel-4-Generators.git"
     },

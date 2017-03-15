@@ -118,6 +118,16 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
     {
         parent::boot();
 
+        static::creating(function ($user) {
+
+        });
+
+        self::saved(function ($user){
+
+//            $user->load('roles');
+
+        });
+
         static::deleting(function ($user) {
             $user->providerInfo()->delete();
             $user->patientInfo()->delete();
@@ -175,6 +185,12 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
     public function ccdProblems()
     {
         return $this->hasMany(Problem::class, 'patient_id');
+    }
+
+    public function careAmbassador(){
+
+        return $this->hasOne(CareAmbassador::class);
+
     }
 
     /*****/

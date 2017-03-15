@@ -9,7 +9,7 @@
                 @include('errors.errors')
             </div>
         </div>
-        <div class="row">
+        <div class="row" style="margin-left: -52px; margin-right: -55px;">
             <div class="col-md-10 col-md-offset-1">
                 <div class="row">
                     <div class="col-md-12">
@@ -17,7 +17,7 @@
                             <div class="panel-heading">Enrollment Report</div>
 
                             <div class="panel-body">
-                                <table class="table table-striped" id="nurse_daily">
+                                <table class="table table-striped" id="enrollment_list">
                                     <thead>
                                     <tr>
                                         <th>
@@ -30,7 +30,16 @@
                                             Provider
                                         </th>
                                         <th>
+                                            Care Ambassador
+                                        </th>
+                                        <th>
                                             Status
+                                        </th>
+                                        <th>
+                                            Last Call Outcome
+                                        </th>
+                                        <th>
+                                            Last Call Comment
                                         </th>
                                         <th>
                                             MRN Number
@@ -69,15 +78,19 @@
         <script>
 
             $(function() {
-                $('#nurse_daily').DataTable({
+                $('#enrollment_list').DataTable({
                     processing: true,
                     serverSide: false,
+                    "scrollX": true,
                     ajax: '{!! url('/admin/enroll/list/data') !!}',
                     columns: [
                         {data: 'name', name: 'name'},
                         {data: 'program', name: 'program'},
                         {data: 'provider', name: 'provider'},
+                        {data: 'care_ambassador', name: 'care_ambassador'},
                         {data: 'status', name: 'status'},
+                        {data: 'last_call_outcome', name: 'last_call_outcome'},
+                        {data: 'last_call_outcome_reason', name: 'last_call_outcome_reason'},
                         {data: 'mrn_number', name: 'mrn_number'},
                         {data: 'dob', name: 'dob'},
                         {data: 'phone', name: 'phone'},
@@ -88,7 +101,7 @@
                         {data: 'consented_at', name: 'consented_at'},
                     ],
 //                    "aaSorting":[3,'desc'],
-                    "iDisplayLength": 25
+                    "iDisplayLength": 25,
                 });
 
             });

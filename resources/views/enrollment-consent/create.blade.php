@@ -175,7 +175,7 @@
 
         },
 
-        ready: function () {
+        mounted: function () {
 
         },
 

@@ -44,6 +44,10 @@ class PatientProgramSecurity
             return $next($request);
         }
 
+        if (auth()->user()->hasRole('care-ambassador')) {
+            return redirect()->route('enrollment-center.dashboard', [])->send();
+        }
+
         if (!Auth::user()) {
             return redirect()->guest('login');
         }
