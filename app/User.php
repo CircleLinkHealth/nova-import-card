@@ -32,6 +32,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\QueryException;
 use Illuminate\Notifications\Notifiable;
+use Illuminate\Support\Collection;
 use Zizaco\Entrust\Traits\EntrustUserTrait;
 
 
@@ -1239,21 +1240,39 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
      * Get the CarePeople who have subscribed to receive alerts for this Patient.
      * Returns a Collection of User objects, or an Empty Collection.
      *
-     * @return \Illuminate\Database\Eloquent\Collection
+     * @return Collection
      */
     public function getCareTeamReceivesAlertsAttribute()
     {
         if (!$this->primaryPractice->send_alerts) {
-            return new \Illuminate\Database\Eloquent\Collection();
+            return new Collection();
         }
 
-        return $this->careTeamMembers->where('alert', '=', true)
+        $careTeam = $this->careTeamMembers->where('alert', '=', true)
             ->keyBy('member_user_id')
             ->unique()
-            ->values()
-            ->map(function ($carePerson) {
-                return $carePerson->user;
-            });
+            ->values();
+
+        $users = new Collection();
+
+        foreach ($careTeam as $carePerson) {
+            if ($carePerson->user->forwardAlertsTo->isEmpty() && $carePerson->user) {
+                $users->push($carePerson->user);
+            }
+
+            foreach ($carePerson->user->forwardAlertsTo as $forwardee) {
+                if ($forwardee->pivot->name == User::FORWARD_ALERTS_IN_ADDITION_TO_PROVIDER) {
+                    $users->push($carePerson->user);
+                    $users->push($forwardee);
+                }
+
+                if ($forwardee->pivot->name == User::FORWARD_ALERTS_INSTEAD_OF_PROVIDER) {
+                    $users->push($forwardee);
+                }
+            }
+        }
+
+        return $users;
     }
 
     public function getSendAlertToAttribute()
