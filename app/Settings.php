@@ -21,10 +21,10 @@ class Settings extends Model
     ];
 
     /**
-     * Get all of the owning notifiable models.
+     * Get all of the owning settingsable models.
      */
-    public function notifiable()
+    public function settingsable()
     {
-        return $this->morphTo('notifiable', 'settingsable_type', 'settingsable_id');
+        return $this->morphTo('settingsable', 'settingsable_type', 'settingsable_id');
     }
 }

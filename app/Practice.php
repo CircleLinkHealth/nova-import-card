@@ -209,4 +209,12 @@ class Practice extends Model
     {
         return $this->belongsTo(Ehr::class);
     }
+
+    /**
+     * Get the Practice's notification settings.
+     */
+    public function notificationSettings()
+    {
+        return $this->morphMany(Settings::class, 'settingsable', 'settingsable_type', 'settingsable_id');
+    }
 }
