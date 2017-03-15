@@ -110,6 +110,9 @@ class OnboardingService
                 ? $permissions->pivot->role_id
                 : $user->roles->first()['id'];
 
+            $contactType = $user->forwardAlertsTo->first()->pivot->name ?? null;
+            $contactUser = $user->forwardAlertsTo->first() ?? null;
+
             return [
                 'id'                     => $user->id,
                 'email'                  => $user->email,
@@ -127,8 +130,8 @@ class OnboardingService
                 'locations'              => $user->locations->pluck('id'),
                 'emr_direct_address'     => $user->emr_direct_address,
                 'clinical_issues_notify' => [
-                    'who'     => 'billing_provider',
-                    'user_id' => '',
+                    'who'     => $contactType ?? 'billing_provider',
+                    'user_id' => $contactUser,
                 ],
             ];
         });
