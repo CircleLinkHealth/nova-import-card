@@ -58,10 +58,12 @@ class EnrollmentStatsController extends Controller
             $data[$ambassador]['mins_per_enrollment'] =
                 ($base->sum('no_enrolled') != 0)
                     ?
-                    ($base->sum('total_time_in_system') / 60) / $base->sum('no_enrolled')
+                    round(($base->sum('total_time_in_system') / 60) / $base->sum('no_enrolled') , 2)
                     : 0;
 
             $data[$ambassador]['total_calls'] = $base->sum('total_calls');
+
+            $data[$ambassador]['calls_per_hour'] = round($base->sum('total_calls') / round($base->sum('total_time_in_system') / 3600, 1 ) , 2);
 
             if ($base->sum('total_calls') != 0 && $base->sum('no_enrolled') != 0 && $hourCost != 'Not Set') {
 

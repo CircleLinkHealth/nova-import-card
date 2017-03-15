@@ -18,16 +18,17 @@
                             <div class="panel-body">
 
                                 <div class="col-md-12">
+                                    <div class="row" style="padding-bottom: 27px;">
 
-                                    <label class="col-md-2 control-label" for="textinput">Start Date</label>
-                                    <input class="col-md-2" id="start_date" name="start_date"
-                                           value="{{Carbon\Carbon::now()->subWeek()->toDateString()}}" type="date"
-                                           placeholder="placeholder">
-
-                                    <label class="col-md-2 control-label" for="textinput">End Date</label>
-                                    <input class="col-md-2" id="end_date" name="end_date"
-                                           value="{{Carbon\Carbon::now()->toDateString()}}" type="date"
-                                           placeholder="placeholder">
+                                        <label class="col-md-1 control-label" for="textinput">Start Date</label>
+                                        <input class="col-md-2" id="start_date" name="start_date"
+                                               value="{{Carbon\Carbon::now()->subWeek()->toDateString()}}" type="date"
+                                               placeholder="placeholder">
+                                        <label class="col-md-1 control-label" for="textinput">End Date</label>
+                                        <input class="col-md-2" id="end_date" name="end_date"
+                                               value="{{Carbon\Carbon::now()->toDateString()}}" type="date"
+                                               placeholder="placeholder">
+                                    </div>
                                 </div>
 
                                 <hr>
@@ -49,6 +50,9 @@
                                         </th>
                                         <th>
                                             Total Time for Range
+                                        </th>
+                                        <th>
+                                            Calls/Hour
                                         </th>
                                         <th>
                                             Mins/Enrollment
@@ -103,6 +107,7 @@
                         {data: 'no_enrolled', name: 'no_enrolled'},
                         {data: 'total_calls', name: 'total_calls'},
                         {data: 'total_hours', name: 'total_hours'},
+                        {data: 'calls_per_hour', name: 'calls_per_hour'},
                         {data: 'mins_per_enrollment', name: 'mins_per_enrollment'},
                         {data: 'conversion', name: 'conversion'},
                         {data: 'hourly_rate', name: 'hourly_rate'},
