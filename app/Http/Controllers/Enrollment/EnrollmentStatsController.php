@@ -63,9 +63,10 @@ class EnrollmentStatsController extends Controller
 
             $data[$ambassador]['total_calls'] = $base->sum('total_calls');
 
-            $data[$ambassador]['calls_per_hour'] = round($base->sum('total_calls') / round($base->sum('total_time_in_system') / 3600, 1 ) , 2);
 
             if ($base->sum('total_calls') != 0 && $base->sum('no_enrolled') != 0 && $hourCost != 'Not Set') {
+
+                $data[$ambassador]['calls_per_hour'] = round($base->sum('total_calls') / round($base->sum('total_time_in_system') / 3600, 1 ) , 2);
 
                 $data[$ambassador]['conversion'] = round(($base->sum('no_enrolled') / $base->sum('total_calls')) * 100, 2) . '%';
 
@@ -74,7 +75,7 @@ class EnrollmentStatsController extends Controller
             } else {
 
                 $data[$ambassador]['conversion'] = '0%';
-
+                $data[$ambassador]['calls_per_hour'] = 'N/A';
                 $data[$ambassador]['per_cost'] = 'N/A';
 
             }
