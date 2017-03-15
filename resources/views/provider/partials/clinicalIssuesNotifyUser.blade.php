@@ -3,5 +3,6 @@
     </option>
 
     <option v-for="user in newUsers" v-if="user.id != newUser.id"
+            v-bind:selected="newUser.forward_alerts_to.user_id == user.id"
             value="@{{ user.id }}">@{{ user.first_name }} @{{ user.last_name }}</option>
 </select>
