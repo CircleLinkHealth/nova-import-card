@@ -89,8 +89,6 @@ class Location extends Model
     {
         return $this->morphToMany(User::class, 'contactable', 'contacts')
             ->withPivot('name')
-            ->wherePivot('name', '=', 'in_addition_to_billing_provider')
-            ->orWherePivot('name', '=', 'instead_of_billing_provider')
             ->withTimestamps();
     }
 

@@ -124,7 +124,7 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
 
         });
 
-        self::saved(function ($user){
+        self::saved(function ($user) {
 
 //            $user->load('roles');
 
@@ -189,7 +189,8 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
         return $this->hasMany(Problem::class, 'patient_id');
     }
 
-    public function careAmbassador(){
+    public function careAmbassador()
+    {
 
         return $this->hasOne(CareAmbassador::class);
 
@@ -2203,6 +2204,15 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
             ->withTimestamps();
     }
 
+    public function forwardAlertsToUser()
+    {
+        return $this->morphedByMany(User::class, 'contactable', 'contacts')
+            ->withPivot('name')
+            ->wherePivot('name', '=', User::FORWARD_ALERTS_IN_ADDITION_TO_PROVIDER)
+            ->orWherePivot('name', '=', User::FORWARD_ALERTS_INSTEAD_OF_PROVIDER)
+            ->withTimestamps();
+    }
+
     public function routeNotificationForTwilio()
     {
         return $this->primaryPhone;
@@ -2265,8 +2275,6 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
     {
         return $this->morphToMany(User::class, 'contactable', 'contacts')
             ->withPivot('name')
-            ->wherePivot('name', '=', User::FORWARD_ALERTS_IN_ADDITION_TO_PROVIDER)
-            ->orWherePivot('name', '=', User::FORWARD_ALERTS_INSTEAD_OF_PROVIDER)
             ->withTimestamps();
     }
 }
