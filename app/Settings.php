@@ -9,17 +9,19 @@ class Settings extends Model
     protected $table = 'settings';
 
     protected $fillable = [
-        //Email Notifications
-        'email_careplan_approval_reminders',
-        'email_note_was_forwarded',
+        'auto_approve_careplans',
+
+        //Direct Mail Notifications
+        'dm_pdf_careplan',
+        'dm_pdf_notes',
 
         //Efax Notifications
         'efax_pdf_careplan',
         'efax_pdf_notes',
 
-        //Direct Mail Notifications
-        'dm_pdf_careplan',
-        'dm_pdf_notes',
+        //Email Notifications
+        'email_careplan_approval_reminders',
+        'email_note_was_forwarded',
     ];
 
     /**
