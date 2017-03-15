@@ -1,4 +1,4 @@
-<select v-select2="newUser.clinical_issues_notify.user_id" style="width: 100%;">
+<select v-select2="newUser.forward_alerts_to.user_id" style="width: 100%;">
     <option value="" disabled selected>Select existing Staff Member.</option>
 
     <option v-for="user in newUsers"

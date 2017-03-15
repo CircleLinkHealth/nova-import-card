@@ -76,7 +76,7 @@ var createStaffVM = new Vue({
                 phone_number: '',
                 phone_extension: '',
                 phone_type: '',
-                clinical_issues_notify: {
+                forward_alerts_to: {
                     who: 'billing_provider',
                     user_id: ''
                 }

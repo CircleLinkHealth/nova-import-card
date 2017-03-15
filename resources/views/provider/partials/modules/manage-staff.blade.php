@@ -198,10 +198,10 @@
                                 @include('provider.partials.mdl.form.radio', [
                                     'id' => 'billing-provider-@{{index}}',
                                     'label' => 'Provider',
-                                    'name' => 'users[@{{index}}][clinical_issues_notify][who]',
+                                    'name' => 'users[@{{index}}][forward_alerts_to][who]',
                                     'value' => 'billing_provider',
                                     'attributes' => [
-                                        'v-model' => 'newUser.clinical_issues_notify.who',
+                                        'v-model' => 'newUser.forward_alerts_to.who',
                                         'required' => 'required',
                                         'v-on:change' => 'isValidated(index)',
                                         'v-on:invalid' => 'isValidated(index)',
@@ -215,10 +215,10 @@
                                 @include('provider.partials.mdl.form.radio', [
                                     'id' => 'instead-of-provider-@{{index}}',
                                     'label' => 'Someone else instead of provider.',
-                                    'name' => 'users[@{{index}}][clinical_issues_notify][who]',
+                                    'name' => 'users[@{{index}}][forward_alerts_to][who]',
                                     'value' => App\User::FORWARD_ALERTS_INSTEAD_OF_PROVIDER,
                                     'attributes' => [
-                                        'v-model' => 'newUser.clinical_issues_notify.who',
+                                        'v-model' => 'newUser.forward_alerts_to.who',
                                         'required' => 'required',
                                         'v-on:change' => 'isValidated(index)',
                                         'v-on:invalid' => 'isValidated(index)',
@@ -228,7 +228,7 @@
                                 ])
 
                                 <transition>
-                                    <div v-show="newUser.clinical_issues_notify.who == '{{App\User::FORWARD_ALERTS_INSTEAD_OF_PROVIDER}}'">
+                                    <div v-show="newUser.forward_alerts_to.who == '{{App\User::FORWARD_ALERTS_INSTEAD_OF_PROVIDER}}'">
                                         <br>
                                         <div class="col s12">
                                             @include('provider.partials.clinicalIssuesNotifyUser')
@@ -241,10 +241,10 @@
                                 @include('provider.partials.mdl.form.radio', [
                                     'id' => 'in-addition-@{{index}}',
                                     'label' => 'Someone else in addition to provider.',
-                                    'name' => 'users[@{{index}}][clinical_issues_notify][who]',
+                                    'name' => 'users[@{{index}}][forward_alerts_to][who]',
                                     'value' => App\User::FORWARD_ALERTS_IN_ADDITION_TO_PROVIDER,
                                     'attributes' => [
-                                        'v-model' => 'newUser.clinical_issues_notify.who',
+                                        'v-model' => 'newUser.forward_alerts_to.who',
                                         'required' => 'required',
                                         'v-on:change' => 'isValidated(index)',
                                         'v-on:invalid' => 'isValidated(index)',
@@ -253,7 +253,7 @@
                                     ]
                                 ])
                                 <transition>
-                                    <div v-show="newUser.clinical_issues_notify.who == '{{App\User::FORWARD_ALERTS_IN_ADDITION_TO_PROVIDER}}'">
+                                    <div v-show="newUser.forward_alerts_to.who == '{{App\User::FORWARD_ALERTS_IN_ADDITION_TO_PROVIDER}}'">
                                         <br>
                                         <div class="col s12">
                                             @include('provider.partials.clinicalIssuesNotifyUser')
