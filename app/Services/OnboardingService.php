@@ -114,13 +114,13 @@ class OnboardingService
             $contactUser = $user->forwardAlertsTo->first() ?? null;
 
             return [
-                'id'                     => $user->id,
-                'email'                  => $user->email,
-                'last_name'              => $user->last_name,
-                'first_name'             => $user->first_name,
-                'phone_number'           => $phone->number ?? '',
-                'phone_extension'        => $phone->extension ?? '',
-                'phone_type'             => array_search($phone->type ?? '', PhoneNumber::getTypes()) ?? '',
+                'id'                 => $user->id,
+                'email'              => $user->email,
+                'last_name'          => $user->last_name,
+                'first_name'         => $user->first_name,
+                'phone_number'       => $phone->number ?? '',
+                'phone_extension'    => $phone->extension ?? '',
+                'phone_type'         => array_search($phone->type ?? '', PhoneNumber::getTypes()) ?? '',
                 'isComplete'         => false,
                 'validated'          => false,
                 'grandAdminRights'   => $permissions->pivot->has_admin_rights ?? false,
@@ -131,7 +131,7 @@ class OnboardingService
                 'emr_direct_address' => $user->emr_direct_address,
                 'forward_alerts_to'  => [
                     'who'     => $contactType ?? 'billing_provider',
-                    'user_id' => $contactUser,
+                    'user_id' => $contactUser->id ?? null,
                 ],
             ];
         });
@@ -432,6 +432,14 @@ class OnboardingService
                     'user_id' => $user->id,
                 ]);
 
+                if ($newUser['forward_alerts_to']['who'] != 'billing_provider') {
+                    //clean up other contacts before adding the new one
+                    $user->forwardAlertsTo()->sync([]);
+
+                    $user->forwardAlertsTo()->attach($newUser['forward_alerts_to']['user_id'], [
+                        'name' => $newUser['forward_alerts_to']['who'],
+                    ]);
+                }
 
 //                $user->notify(new StaffInvite($implementationLead, $primaryPractice));
             } catch (\Exception $e) {
