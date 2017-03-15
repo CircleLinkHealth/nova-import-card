@@ -4,7 +4,7 @@ namespace App;
 
 use Illuminate\Database\Eloquent\Model;
 
-class NotificationSetings extends Model
+class NotificationSettings extends Model
 {
     protected $fillable = [
         //Email Notifications
