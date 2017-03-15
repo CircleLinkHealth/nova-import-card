@@ -216,7 +216,7 @@
                                     'id' => 'instead-of-provider-@{{index}}',
                                     'label' => 'Someone else instead of provider.',
                                     'name' => 'users[@{{index}}][clinical_issues_notify][who]',
-                                    'value' => 'instead_of_provider',
+                                    'value' => App\User::FORWARD_ALERTS_INSTEAD_OF_PROVIDER,
                                     'attributes' => [
                                         'v-model' => 'newUser.clinical_issues_notify.who',
                                         'required' => 'required',
@@ -228,7 +228,7 @@
                                 ])
 
                                 <transition>
-                                    <div v-show="newUser.clinical_issues_notify.who == 'instead_of_provider'">
+                                    <div v-show="newUser.clinical_issues_notify.who == '{{App\User::FORWARD_ALERTS_INSTEAD_OF_PROVIDER}}'">
                                         <br>
                                         <div class="col s12">
                                             @include('provider.partials.clinicalIssuesNotifyUser')
@@ -242,7 +242,7 @@
                                     'id' => 'in-addition-@{{index}}',
                                     'label' => 'Someone else in addition to provider.',
                                     'name' => 'users[@{{index}}][clinical_issues_notify][who]',
-                                    'value' => 'in_addition_to_provider',
+                                    'value' => App\User::FORWARD_ALERTS_IN_ADDITION_TO_PROVIDER,
                                     'attributes' => [
                                         'v-model' => 'newUser.clinical_issues_notify.who',
                                         'required' => 'required',
@@ -253,7 +253,7 @@
                                     ]
                                 ])
                                 <transition>
-                                    <div v-show="newUser.clinical_issues_notify.who == 'in_addition_to_provider'">
+                                    <div v-show="newUser.clinical_issues_notify.who == '{{App\User::FORWARD_ALERTS_IN_ADDITION_TO_PROVIDER}}'">
                                         <br>
                                         <div class="col s12">
                                             @include('provider.partials.clinicalIssuesNotifyUser')
