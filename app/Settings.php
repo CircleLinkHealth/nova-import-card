@@ -6,6 +6,8 @@ use Illuminate\Database\Eloquent\Model;
 
 class Settings extends Model
 {
+    protected $table = 'settings';
+
     protected $fillable = [
         //Email Notifications
         'email_careplan_approval_reminders',
