@@ -14,7 +14,7 @@ class CarePlanObserver
      */
     public function creating(CarePlan $carePlan)
     {
-        if ($carePlan->patient->primaryPractice->auto_approve_careplans) {
+        if ($carePlan->patient->primaryPractice->settings()->first()->auto_approve_careplans) {
             $carePlan->status = 'provider_approved';
         }
     }
