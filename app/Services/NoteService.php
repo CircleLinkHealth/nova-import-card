@@ -14,6 +14,7 @@ use App\Patient;
 use App\PatientMonthlySummary;
 use App\User;
 use Carbon\Carbon;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\URL;
 
 
@@ -78,7 +79,8 @@ class NoteService
         Note $note,
         $url,
         $newNoteFlag,
-        $notifyPatientSupport = false
+        $notifyPatientSupport = false,
+        $notifyCareteam = false
     ) {
 
         /*
@@ -89,10 +91,14 @@ class NoteService
         $patient = User::find($note->patient_id);
         $sender = User::find($note->logger_id);
 
-        $careteam = $patient->care_team_receives_alerts;
+        $careteam = new Collection();
+
+        if ($notifyCareteam) {
+            $careteam = $patient->care_team_receives_alerts;
+        }
 
         if ($notifyPatientSupport) {
-            $careteam->add(User::find(948));
+            $careteam->push(User::find(948));
         }
 
         event(new PdfableCreated($note));
@@ -525,35 +531,35 @@ class NoteService
         $input,
         $patientId
     ) {
+        $notifyPatientSupport = $input['notify_circlelink_support'] ?? false;
+        $notifyCareteam = $input['notify_careteam'] ?? false;
 
-        if (isset($input['notify_careteam'])) {
-
-            $note = Note::findOrFail($input['noteId']);
-
-            $author = User::find($input['logger_id']);
-
-            if (is_object($author)) {
-                $author_name = $author->fullName;
-            } else {
-                $author_name = '';
-            }
-
-            $linkToNote = route('patient.note.view', [
-                'patientId' => $patientId,
-                'noteId'    => $note->id,
-            ]);
-
-            $notifyPatientSupport = $input['notify_circlelink_support'] ?? false;
-
-            $result = $this->sendNoteToCareTeam(
-                $note,
-                $linkToNote,
-                false,
-                $notifyPatientSupport
-            );
+        if (!$notifyPatientSupport && !$notifyCareteam) {
+            return;
         }
 
-        return true;
+        $note = Note::findOrFail($input['noteId']);
+
+        $author = User::find($input['logger_id']);
+
+        if (is_object($author)) {
+            $author_name = $author->fullName;
+        } else {
+            $author_name = '';
+        }
+
+        $linkToNote = route('patient.note.view', [
+            'patientId' => $patientId,
+            'noteId'    => $note->id,
+        ]);
+
+        $result = $this->sendNoteToCareTeam(
+            $note,
+            $linkToNote,
+            false,
+            $notifyPatientSupport,
+            $notifyCareteam
+        );
     }
 
     public function getPatientCareTeamMembers($patientId)

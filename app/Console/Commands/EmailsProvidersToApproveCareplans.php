@@ -85,11 +85,11 @@ class EmailsProvidersToApproveCareplans extends Command
                 return false;
             }
 
-            if (!$user->primaryPractice->send_alerts) {
+            if (!$user->primaryPractice->settings()->first()->email_careplan_approval_reminders) {
                 return false;
             }
 
-            if ($user->primaryPractice->auto_approve_careplans) {
+            if ($user->primaryPractice->settings()->first()->auto_approve_careplans) {
                 return false;
             }
 
