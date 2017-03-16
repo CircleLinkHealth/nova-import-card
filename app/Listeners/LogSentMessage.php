@@ -39,11 +39,11 @@ class LogSentMessage
             $receiver = User::whereEmail($receiver_email)->first();
 
             if ($receiver && $receiver->primaryPractice) {
-                if ($receiver->primaryPractice->auto_approve_careplans) {
+                if ($receiver->primaryPractice->settings()->first()->auto_approve_careplans) {
                     return false;
                 }
 
-                if (!$receiver->primaryPractice->send_alerts) {
+                if (!$receiver->primaryPractice->settings()->first()->email_careplan_approval_reminders) {
                     return false;
                 }
             }
