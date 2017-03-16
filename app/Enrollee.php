@@ -58,7 +58,7 @@ class Enrollee extends Model
         'zip',
         'invite_code',
 
-        'lang',
+        'lang', // 'ES' (default) or 'EN'
 
         'primary_phone',
         'cell_phone',
