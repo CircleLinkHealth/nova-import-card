@@ -46,7 +46,6 @@ class EnrollmentStatsController extends Controller
                 ->where('day', '>=', $start)
                 ->where('day', '<=', $end);
 
-            //@todo implement
             $hourCost = CareAmbassador::where('user_id', $ambassador)->first()['hourly_rate'] ?? 'Not Set';
 
             $data[$ambassador]['hourly_rate'] = $hourCost;
@@ -59,12 +58,15 @@ class EnrollmentStatsController extends Controller
             $data[$ambassador]['mins_per_enrollment'] =
                 ($base->sum('no_enrolled') != 0)
                     ?
-                    ($base->sum('total_time_in_system') / 60) / $base->sum('no_enrolled')
+                    round(($base->sum('total_time_in_system') / 60) / $base->sum('no_enrolled') , 2)
                     : 0;
 
             $data[$ambassador]['total_calls'] = $base->sum('total_calls');
 
+
             if ($base->sum('total_calls') != 0 && $base->sum('no_enrolled') != 0 && $hourCost != 'Not Set') {
+
+                $data[$ambassador]['calls_per_hour'] = round($base->sum('total_calls') / round($base->sum('total_time_in_system') / 3600, 1 ) , 2);
 
                 $data[$ambassador]['conversion'] = round(($base->sum('no_enrolled') / $base->sum('total_calls')) * 100, 2) . '%';
 
@@ -73,7 +75,7 @@ class EnrollmentStatsController extends Controller
             } else {
 
                 $data[$ambassador]['conversion'] = '0%';
-
+                $data[$ambassador]['calls_per_hour'] = 'N/A';
                 $data[$ambassador]['per_cost'] = 'N/A';
 
             }

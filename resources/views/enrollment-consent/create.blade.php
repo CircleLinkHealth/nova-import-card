@@ -75,7 +75,7 @@
         Dear. {{$enrollee->first_name . ' ' . $enrollee->last_name}}, <br /> <br />
 
         I recommend you join my new personalized care program.
-        @if(isset($has_copay)) It’s free so please read below @else Please read below @endif and enroll.
+        @if(!isset($has_copay)) It’s free so please read below @else Please read below @endif and enroll.
     <br />
     <div class="right headings">- Dr. {{$enrollee->provider->last_name}}</div>
 
@@ -97,7 +97,7 @@
             <p class="info-list">Health line for any question (nurses call you back): (888) 729-4045</p>
             <p class="info-list">Only one doctor at a time can provide this program</p>
             <p class="info-list">Withdraw anytime. Just give us a call</p>
-            @if(!isset($has_copay))
+            @if(isset($has_copay))
                 <p class="info-list">Medicare covers the program you may be responsible for a ~$8 per
                     month co-pay</p>
             @endif

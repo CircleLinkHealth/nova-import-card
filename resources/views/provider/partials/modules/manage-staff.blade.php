@@ -189,6 +189,83 @@
                         </div>
                     </div>
 
+                    <div v-show="newUser.role_id == 5" class="row">
+                        <div class="input-field col s12">
+
+                            <h6>Who should we notify for clinical issues regarding provider’s patients?</h6>
+
+                            <div>
+                                @include('provider.partials.mdl.form.radio', [
+                                    'id' => 'billing-provider-@{{index}}',
+                                    'label' => 'Provider',
+                                    'name' => 'users[@{{index}}][forward_alerts_to][who]',
+                                    'value' => 'billing_provider',
+                                    'attributes' => [
+                                        'v-model' => 'newUser.forward_alerts_to.who',
+                                        'required' => 'required',
+                                        'v-on:change' => 'isValidated(index)',
+                                        'v-on:invalid' => 'isValidated(index)',
+                                        'v-on:keyup' => 'isValidated(index)',
+                                        'v-on:click' => 'isValidated(index)',
+                                    ]
+                                ])
+                            </div>
+
+                            <div>
+                                @include('provider.partials.mdl.form.radio', [
+                                    'id' => 'instead-of-provider-@{{index}}',
+                                    'label' => 'Someone else instead of provider.',
+                                    'name' => 'users[@{{index}}][forward_alerts_to][who]',
+                                    'value' => App\User::FORWARD_ALERTS_INSTEAD_OF_PROVIDER,
+                                    'attributes' => [
+                                        'v-model' => 'newUser.forward_alerts_to.who',
+                                        'required' => 'required',
+                                        'v-on:change' => 'isValidated(index)',
+                                        'v-on:invalid' => 'isValidated(index)',
+                                        'v-on:keyup' => 'isValidated(index)',
+                                        'v-on:click' => 'isValidated(index)',
+                                    ]
+                                ])
+
+                                <transition>
+                                    <div v-show="newUser.forward_alerts_to.who == '{{App\User::FORWARD_ALERTS_INSTEAD_OF_PROVIDER}}'">
+                                        <br>
+                                        <div class="col s12">
+                                            @include('provider.partials.clinicalIssuesNotifyUser')
+                                        </div>
+                                    </div>
+                                </transition>
+                            </div>
+
+                            <div>
+                                @include('provider.partials.mdl.form.radio', [
+                                    'id' => 'in-addition-@{{index}}',
+                                    'label' => 'Someone else in addition to provider.',
+                                    'name' => 'users[@{{index}}][forward_alerts_to][who]',
+                                    'value' => App\User::FORWARD_ALERTS_IN_ADDITION_TO_PROVIDER,
+                                    'attributes' => [
+                                        'v-model' => 'newUser.forward_alerts_to.who',
+                                        'required' => 'required',
+                                        'v-on:change' => 'isValidated(index)',
+                                        'v-on:invalid' => 'isValidated(index)',
+                                        'v-on:keyup' => 'isValidated(index)',
+                                        'v-on:click' => 'isValidated(index)',
+                                    ]
+                                ])
+                                <transition>
+                                    <div v-show="newUser.forward_alerts_to.who == '{{App\User::FORWARD_ALERTS_IN_ADDITION_TO_PROVIDER}}'">
+                                        <br>
+                                        <div class="col s12">
+                                            @include('provider.partials.clinicalIssuesNotifyUser')
+                                        </div>
+                                    </div>
+                                </transition>
+                            </div>
+                        </div>
+                    </div>
+
+                    <br>
+
                     <div class="row">
                         <div class="input-field col s12">
                             <select v-select="newUser.locations" required multiple>

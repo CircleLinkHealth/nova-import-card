@@ -1,26 +1,20 @@
 <?php
 
-use Illuminate\Support\Facades\DB;
 
 //This is to send a sample PDF Note via eFax from Michalis' local
 //$faxTest = (new PhaxioService('production'))->send('+12124910114', storage_path('pdfs/notes/2017-02-07-xsKTIK4106WdXiMNu8iMla4FPJSOcosNBXXMkAsX.pdf'));
 //dd($faxTest);
 
+
+use App\Reports\WeeklyReportDispatcher;
+
 if (app()->environment() != 'production') {
 
     Route::get('/rohan', function () {
 
-                dd();
+        (new WeeklyReportDispatcher())->exec();
 
-
-//        $twilio = new Aloha\Twilio\Twilio(env('TWILIO_SID'), env('TWILIO_TOKEN'), env('TWILIO_FROM'));
-//
-//        $enrollee = \App\Enrollee::find(1);
-//        $link = url("join/$enrollee->invite_code");
-//        $provider_name = App\User::find($enrollee->provider_id)->fullName;
-//
-//        $twilio->message($enrollee->phone,
-//            "Dr. $provider_name has invited you to their new wellness program! Please enroll here: $link");
+//        (new App\Algorithms\Enrollment\EnrollmentSMSSender())->exec();
 
     });
 
@@ -1384,6 +1378,11 @@ Route::group([
     'prefix' => '/enrollment',
 ], function () {
 
+    Route::post('/sms/reply', [
+        'uses' => 'Enrollment\EnrollmentSMSController@handleIncoming',
+        'as'   => 'enrollment.sms.reply',
+    ]);
+
     Route::get('/', [
         'uses' => 'Enrollment\EnrollmentCenterController@dashboard',
         'as'   => 'enrollment-center.dashboard',
@@ -1420,17 +1419,17 @@ Route::group([
 ], function () {
 
     Route::post('/save', [
-        'uses' => 'Patient\EnrollmentConsentController@store',
+        'uses' => 'Enrollment\EnrollmentConsentController@store',
         'as'   => 'patient.enroll.store',
     ]);
 
     Route::get('{invite_code}', [
-        'uses' => 'Patient\EnrollmentConsentController@create',
+        'uses' => 'Enrollment\EnrollmentConsentController@create',
         'as'   => 'patient.enroll.create',
     ]);
 
     Route::post('/update', [
-        'uses' => 'Patient\EnrollmentConsentController@update',
+        'uses' => 'Enrollment\EnrollmentConsentController@update',
         'as'   => 'patient.enroll.update',
     ]);
 

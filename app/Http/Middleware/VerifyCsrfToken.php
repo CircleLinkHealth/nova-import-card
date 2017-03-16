@@ -5,6 +5,12 @@ use Illuminate\Foundation\Http\Middleware\VerifyCsrfToken as BaseVerifier;
 
 class VerifyCsrfToken extends BaseVerifier {
 
+    protected $except = [
+
+        'enrollment/sms/reply'
+
+    ];
+
 	/**
 	 * Handle an incoming request.
 	 *

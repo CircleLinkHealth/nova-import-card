@@ -32,11 +32,14 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\QueryException;
 use Illuminate\Notifications\Notifiable;
+use Illuminate\Support\Collection;
 use Zizaco\Entrust\Traits\EntrustUserTrait;
 
 
 class User extends Model implements AuthenticatableContract, CanResetPasswordContract, Serviceable
 {
+    const FORWARD_ALERTS_IN_ADDITION_TO_PROVIDER = 'forward_alerts_in_addition_to_provider';
+    const FORWARD_ALERTS_INSTEAD_OF_PROVIDER = 'forward_alerts_instead_of_provider';
 
     use Authenticatable,
         CanResetPassword,
@@ -122,7 +125,7 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
 
         });
 
-        self::saved(function ($user){
+        self::saved(function ($user) {
 
 //            $user->load('roles');
 
@@ -187,7 +190,8 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
         return $this->hasMany(Problem::class, 'patient_id');
     }
 
-    public function careAmbassador(){
+    public function careAmbassador()
+    {
 
         return $this->hasOne(CareAmbassador::class);
 
@@ -1236,21 +1240,39 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
      * Get the CarePeople who have subscribed to receive alerts for this Patient.
      * Returns a Collection of User objects, or an Empty Collection.
      *
-     * @return \Illuminate\Database\Eloquent\Collection
+     * @return Collection
      */
     public function getCareTeamReceivesAlertsAttribute()
     {
         if (!$this->primaryPractice->send_alerts) {
-            return new \Illuminate\Database\Eloquent\Collection();
+            return new Collection();
         }
 
-        return $this->careTeamMembers->where('alert', '=', true)
+        $careTeam = $this->careTeamMembers->where('alert', '=', true)
             ->keyBy('member_user_id')
             ->unique()
-            ->values()
-            ->map(function ($carePerson) {
-                return $carePerson->user;
-            });
+            ->values();
+
+        $users = new Collection();
+
+        foreach ($careTeam as $carePerson) {
+            if ($carePerson->user->forwardAlertsTo->isEmpty() && $carePerson->user) {
+                $users->push($carePerson->user);
+            }
+
+            foreach ($carePerson->user->forwardAlertsTo as $forwardee) {
+                if ($forwardee->pivot->name == User::FORWARD_ALERTS_IN_ADDITION_TO_PROVIDER) {
+                    $users->push($carePerson->user);
+                    $users->push($forwardee);
+                }
+
+                if ($forwardee->pivot->name == User::FORWARD_ALERTS_INSTEAD_OF_PROVIDER) {
+                    $users->push($forwardee);
+                }
+            }
+        }
+
+        return $users;
     }
 
     public function getSendAlertToAttribute()
@@ -2201,6 +2223,15 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
             ->withTimestamps();
     }
 
+    public function forwardAlertsToUser()
+    {
+        return $this->morphedByMany(User::class, 'contactable', 'contacts')
+            ->withPivot('name')
+            ->wherePivot('name', '=', User::FORWARD_ALERTS_IN_ADDITION_TO_PROVIDER)
+            ->orWherePivot('name', '=', User::FORWARD_ALERTS_INSTEAD_OF_PROVIDER)
+            ->withTimestamps();
+    }
+
     public function routeNotificationForTwilio()
     {
         return $this->primaryPhone;
@@ -2252,5 +2283,17 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
         return ProviderInfo::firstOrCreate([
             'user_id' => $this->id,
         ]);
+    }
+
+    /**
+     * Forward Alerts to another User
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
+     */
+    public function forwardAlertsTo()
+    {
+        return $this->morphToMany(User::class, 'contactable', 'contacts')
+            ->withPivot('name')
+            ->withTimestamps();
     }
 }
