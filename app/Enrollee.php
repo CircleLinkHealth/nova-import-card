@@ -33,7 +33,6 @@ class Enrollee extends Model
      * consented: client consented
      * ccd_obtained: medical records were imported
      * ccd_qaed: QAed, good to go for enrollment
-     *
      */
 
     protected $table = 'enrollees';
@@ -58,6 +57,8 @@ class Enrollee extends Model
         'state',
         'zip',
         'invite_code',
+
+        'lang',
 
         'primary_phone',
         'cell_phone',

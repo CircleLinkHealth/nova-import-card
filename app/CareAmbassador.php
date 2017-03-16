@@ -9,7 +9,8 @@ class CareAmbassador extends Model
 
     protected $fillable = [
         'user_id',
-        'hourly_rate'
+        'hourly_rate',
+        'speaks_spanish'
     ];
 
     public function user(){
