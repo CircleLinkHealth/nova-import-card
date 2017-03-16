@@ -17,14 +17,19 @@ class CreateSettingsTable extends Migration
             $table->increments('id');
             $table->unsignedInteger('settingsable_id');
             $table->string('settingsable_type');
-            $table->boolean('auto_approve_careplans')->default(false)->nullable();
-            $table->boolean('dm_pdf_careplan')->default(true)->nullable();
-            $table->boolean('dm_pdf_notes')->default(true)->nullable();
-            $table->boolean('email_careplan_approval_reminders')->default(true)->nullable();
-            $table->boolean('email_note_was_forwarded')->default(true)->nullable();
-            $table->boolean('efax_pdf_careplan')->default(true)->nullable();
-            $table->boolean('efax_pdf_notes')->default(true)->nullable();
+            $table->boolean('auto_approve_careplans')->default(false);
+            $table->boolean('dm_pdf_careplan')->default(true);
+            $table->boolean('dm_pdf_notes')->default(true);
+            $table->boolean('email_careplan_approval_reminders')->default(true);
+            $table->boolean('email_note_was_forwarded')->default(true);
+            $table->boolean('efax_pdf_careplan')->default(true);
+            $table->boolean('efax_pdf_notes')->default(true);
             $table->timestamps();
+
+            $table->unique([
+                'settingsable_id',
+                'settingsable_type',
+            ]);
         });
     }
 
