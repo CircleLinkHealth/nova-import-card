@@ -211,9 +211,9 @@ class Practice extends Model
     }
 
     /**
-     * Get the Practice's notification settings.
+     * Get the Practice's settings.
      */
-    public function notificationSettings()
+    public function settings()
     {
         return $this->morphMany(Settings::class, 'settingsable', 'settingsable_type', 'settingsable_id');
     }
