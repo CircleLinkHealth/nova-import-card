@@ -1,7 +1,7 @@
 <?php namespace App\Console;
 
-use App\Algorithms\Calls\PredictCall;
 use App\Algorithms\Calls\ReschedulerHandler;
+use App\Algorithms\Enrollment\EnrollmentSMSSender;
 use App\Console\Commands\Athena\GetAppointments;
 use App\Console\Commands\Athena\GetCcds;
 use App\Console\Commands\EmailRNDailyReport;
@@ -19,10 +19,12 @@ use App\MailLog;
 use App\Practice;
 use App\Reports\Sales\Practice\SalesByPracticeReport;
 use App\Reports\Sales\Provider\SalesByProviderReport;
+use App\Reports\WeeklyReportDispatcher;
 use App\Services\Calls\SchedulerService;
 use App\Services\PhiMail\PhiMail;
 use App\User;
 use Carbon\Carbon;
+//use EnrollmentSMSSender;
 use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Foundation\Console\Kernel as ConsoleKernel;
 use Illuminate\Support\Facades\Mail;
@@ -85,6 +87,11 @@ class Kernel extends ConsoleKernel
             (new SchedulerService())->tuneScheduledCallsWithUpdatedCCMTime();
         })->dailyAt('00:20');
 
+//        $schedule->call(function () {
+//            (new EnrollmentSMSSender())->exec();
+//        })->dailyAt('13:00');
+
+
         //syncs families.
         $schedule->call(function () {
             (new SchedulerService())->syncFamilialCalls();
@@ -97,103 +104,9 @@ class Kernel extends ConsoleKernel
 
         $schedule->call(function () {
 
-            $practicesToSendTo = [
-                'demo',
-                'carolina-medical-associates',
-                'clinicalosangeles',
-                'elmwood',
-                'tabernacle',
-                'envision',
-                'mazhar',
-                'middletownmedical',
-                'montgomery',
-                'nestor',
-                'rocky-mountain-health-centers-south',
-                'upg',
-                'urgent-medical-care-pc',
-                'quest-medical-care-pc',
-                'premier-heart-and-vein-care',
-                'river-city'
-            ];
+            (new WeeklyReportDispatcher())->exec();
 
-            //@todo check range
-            $startRange = Carbon::now()->setTime(0, 0, 0)->subWeek();
-            $endRange = Carbon::now()->setTime(0, 0, 0);
-
-            foreach ($practicesToSendTo as $name) {
-
-                $practice = Practice::whereName($name)->first();
-
-                $subjectPractice = $practice->display_name . 's Organization Weekly Summary';
-
-                $practiceData = (new SalesByPracticeReport(
-                    $practice,
-                    SalesByPracticeReport::SECTIONS,
-                    $startRange,
-                    $endRange
-
-                ))->data(true);
-
-                $practiceData['name'] = $practice->name;
-                $practiceData['start'] = $startRange->toDateString();
-                $practiceData['end'] = $endRange->toDateString();
-
-                $organizationSummaryRecipiets = explode(', ', trim($practice->weekly_report_recipients));
-
-                //handle leads
-                foreach ($organizationSummaryRecipiets as $recipient) {
-
-                    Mail::send('sales.by-practice.report', ['data' => $practiceData], function ($message) use
-                    (
-                        $recipient,
-                        $subjectPractice
-                    ) {
-                        $message->from('notifications@careplanmanager.com', 'CircleLink Health');
-                        $message->to($recipient)->subject($subjectPractice);
-                    });
-
-                    Slack::to('#background-tasks')
-                        ->send("The CPMbot just sent the organization weekly summary for $practice->display_name to $recipient");
-
-
-                }
-
-                $providers_for_practice = $practice->getProviders($practice->id);
-
-                //handle providers
-                foreach ($providers_for_practice as $provider) {
-
-                    $providerData = (new SalesByProviderReport(
-                        $provider,
-                        SalesByProviderReport::SECTIONS,
-                        $startRange,
-                        $endRange
-                    ))->data(true);
-
-                    $providerData['name'] = $provider->display_name;
-                    $providerData['start'] = $startRange->toDateString();
-                    $providerData['end'] = $endRange->toDateString();
-
-                    $subjectProvider = 'Dr. ' . $provider->last_name . '\'s Patient Weekly Summary';
-
-                    Mail::send('sales.by-provider.report', ['data' => $providerData], function ($message) use
-                    (
-                        $provider,
-                        $subjectProvider
-                    ) {
-                        $message->from('notifications@careplanmanager.com', 'CircleLink Health');
-                        $message->to($provider->email)->subject($subjectProvider);
-                    });
-
-                    Slack::to('#background-tasks')
-                        ->send("The CPMbot just sent the provider's summary for $practice->display_name to $provider->fullName");
-
-                }
-            }
-
-        }
-
-        )->weeklyOn(1, '10:00');
+        })->weeklyOn(1, '10:00');
 
         $schedule->command('emailapprovalreminder:providers')
             ->weekdays()
