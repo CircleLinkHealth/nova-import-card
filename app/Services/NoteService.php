@@ -128,6 +128,8 @@ class NoteService
                 $body = 'Please click below button to see a forwarded note regarding one of your patients, created on ' . $performed_at . ' by ' . $sender->fullName;
             }
 
+            \Log::info("Email sent to {$receiver->email}");
+
             $message = MailLog::create([
                 'sender_email'    => $sender->email,
                 'receiver_email'  => $receiver->email,
