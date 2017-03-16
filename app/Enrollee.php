@@ -75,6 +75,7 @@ class Enrollee extends Model
         'last_call_outcome',
         'primary_insurance',
         'secondary_insurance',
+        'has_copay',
         'email',
         'last_encounter',
         'referring_provider_name',
