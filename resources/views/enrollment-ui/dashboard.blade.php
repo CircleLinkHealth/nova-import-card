@@ -7,6 +7,13 @@
 
     <style>
 
+        .consented_modal {
+            max-height: 100% !important;
+            height: 90% !important;
+            width: 80% !important;
+            top: 4% !important;
+        }
+
         .sidebar-demo-list {
 
             height: 27px;
@@ -29,12 +36,38 @@
 
         @include('enrollment-ui.sidebar')
 
-        <div style="margin-left: 26%; margin-top: 10px;">
-            <a class="waves-effect waves-light btn" href="#consented">Patient Consented</a>
-            <a class="waves-effect waves-light btn" href="#utc" style="background: #ecb70e">No Answer /
-                Requested Call Back</a>
-            <a class="waves-effect waves-light btn" href="#rejected" style="background: red;">Patient
-                Declined</a>
+        <div style="margin-left: 26%;">
+            <div style="margin-top: 10px; text-align: center">
+                <a class="waves-effect waves-light btn" href="#utc" style="background: #ecb70e">No Answer /
+                    Requested Call Back</a>
+            </div>
+
+            <div style="text-align: center">
+                <h4> @{{ name }}</h4>
+                <h5> @{{ home_phone}} @{{ cell_phone }} @{{ other_phone }}</h5>
+            </div>
+
+            <div>@if($enrollee->has_copay)
+                    @if($enrollee->lang == 'ES')
+                        @include('enrollment-ui.script.es-has-co-pay')
+                    @else
+                        @include('enrollment-ui.script.en-has-co-pay')
+
+                    @endif
+                @else
+                    @if($enrollee->lang == 'ES')
+                        @include('enrollment-ui.script.es-no-co-pay')
+                    @else
+                        @include('enrollment-ui.script.en-has-co-pay')
+                    @endif
+                @endif
+            </div>
+
+            <div style="text-align: center">
+                <a class="waves-effect waves-light btn" href="#consented">Patient Consented</a>
+                <a class="waves-effect waves-light btn" href="#rejected" style="background: red;">Patient
+                    Declined</a>
+            </div>
         </div>
 
         <!-- MODALS -->
@@ -64,6 +97,7 @@
             data: {
 
                 name: '{{ $enrollee->first_name ?? ''. $enrollee->last_name }}',
+                lang: '{{ $enrollee->lang}}',
                 provider_name: '{{ $enrollee->providerFullName }}',
                 practice_name: '{{ $enrollee->practiceName }}',
                 home_phone: '{{ $enrollee->home_phone ?? 'N/A' }}',
@@ -93,6 +127,12 @@
                 //other phone computer vars
                 other_phone_label: function () {
 
+                    if (this.other_phone == '') {
+
+                        return 'Other Phone Unknown...';
+
+                    }
+
                     if (this.other_phone.match(this.phone_regex)) {
 
                         return 'Other Phone Valid!';
@@ -102,7 +142,7 @@
                     return 'Other Phone Invalid..'
 
                 },
-                 other_is_valid: function () {
+                other_is_valid: function () {
                     return this.other_phone.match(this.phone_regex);
                 },
                 other_is_invalid: function () {
@@ -111,6 +151,12 @@
 
                 //other phone computer vars
                 home_phone_label: function () {
+
+                    if (this.home_phone == '') {
+
+                        return 'Home Phone Unknown...';
+
+                    }
 
                     if (this.home_phone.match(this.phone_regex)) {
 
@@ -130,6 +176,12 @@
 
                 //other phone computer vars
                 cell_phone_label: function () {
+
+                    if (this.cell_phone == '') {
+
+                        return 'Cell Phone Unknown...';
+
+                    }
 
                     if (this.cell_phone.match(this.phone_regex)) {
 
