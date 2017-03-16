@@ -117,6 +117,13 @@ class Enrollee extends Model
 
     }
 
+    public function getPracticeNameAttribute()
+    {
+
+        return $this->practice->name ?? null;
+
+    }
+
     public function sendEnrollmentConsentSMS()
     {
         $twilio = new Twilio(env('TWILIO_SID'), env('TWILIO_TOKEN'), env('TWILIO_FROM'));

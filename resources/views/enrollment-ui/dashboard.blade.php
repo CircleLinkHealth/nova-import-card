@@ -1,6 +1,6 @@
 @extends('enrollment-ui.layout')
 
-@section('title', 'Enrollment Calls')
+@section('title', 'Enrollment Center')
 @section('activity', 'Enrollment Call')
 
 @section('content')
@@ -65,6 +65,7 @@
 
                 name: '{{ $enrollee->first_name ?? ''. $enrollee->last_name }}',
                 provider_name: '{{ $enrollee->providerFullName }}',
+                practice_name: '{{ $enrollee->practiceName }}',
                 home_phone: '{{ $enrollee->home_phone ?? 'N/A' }}',
                 cell_phone: '{{ $enrollee->cell_phone ?? 'N/A' }}',
                 other_phone: '{{ $enrollee->other_phone ?? 'N/A' }}',

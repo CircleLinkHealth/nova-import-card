@@ -11,17 +11,18 @@
     </div>
 
     <span>
-                    <li class="sidebar-demo-list"><span id="name">Name: @{{name}}</span></li>
-                    <li class="sidebar-demo-list"><span id="name">Provider Name: @{{provider_name}}</span></li>
-                    <li class="sidebar-demo-list"><span id="home_phone">Home Phone: @{{home_phone}}</span></li>
-                    <li class="sidebar-demo-list"><span id="home_phone">Cell Phone: @{{cell_phone}}</span></li>
-                    <li class="sidebar-demo-list"><span id="home_phone">Other Phone: @{{other_phone}}</span></li>
-                    <li class="sidebar-demo-list"><span id="home_phone">Email: @{{email}}</span></li>
+                    <li class="sidebar-demo-list"><span id="name"><b>Name: @{{name}}</b></span></li>
+                    <li class="sidebar-demo-list"><span id="name"><b>Provider Name: @{{provider_name}}</b></span></li>
+                    <li class="sidebar-demo-list"><span id="name"><b>Practice Name: @{{practice_name}}</b></span></li>
+                    <li class="sidebar-demo-list"><span id="home_phone"><b>Home Phone: @{{home_phone}}</b></span></li>
+                    <li class="sidebar-demo-list"><span id="cell_phone"><b>Cell Phone: @{{cell_phone}}</b></span></li>
+                    <li class="sidebar-demo-list"><span id="other_phone"><b>Other Phone: @{{other_phone}}</b></span></li>
+                    <li class="sidebar-demo-list"><span id="email">Email: @{{email}}</span></li>
                     <li class="sidebar-demo-list"><span id="address">Address: @{{address}}</span></li>
-                    <li class="sidebar-demo-list"><span id="address">Address Line 2: @{{address_2}}</span></li>
-                    <li class="sidebar-demo-list"><span id="address">City: @{{city}}</span></li>
-                    <li class="sidebar-demo-list"><span id="address">State: @{{state}}</span></li>
-                    <li class="sidebar-demo-list"><span id="address">Zip: @{{zip}}</span></li>
+                    <li class="sidebar-demo-list"><span id="address_2">Address Line 2: @{{address_2}}</span></li>
+                    <li class="sidebar-demo-list"><span id="city">City: @{{city}}</span></li>
+                    <li class="sidebar-demo-list"><span id="state">State: @{{state}}</span></li>
+                    <li class="sidebar-demo-list"><span id="zip">Zip: @{{zip}}</span></li>
                     <li class="sidebar-demo-list"><span id="dob">DOB: @{{dob}}</span></li>
                  </span>
 
