@@ -1,14 +1,15 @@
 <?php namespace App;
 
 use App\Models\Ehr;
+use App\Traits\HasSettings;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Practice extends Model
 {
-
-    use SoftDeletes;
+    use HasSettings,
+        SoftDeletes;
 
     protected $fillable = [
         'name',
