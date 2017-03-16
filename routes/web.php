@@ -6,11 +6,15 @@
 //dd($faxTest);
 
 
+use App\Reports\WeeklyReportDispatcher;
+
 if (app()->environment() != 'production') {
 
-    Route::get('/sms/test', function () {
+    Route::get('/rohan', function () {
 
-        (new App\Algorithms\Enrollment\EnrollmentSMSSender())->exec();
+        (new WeeklyReportDispatcher())->exec();
+
+//        (new App\Algorithms\Enrollment\EnrollmentSMSSender())->exec();
 
     });
 
