@@ -9,6 +9,7 @@ use App\Contracts\Repositories\UserRepository;
 use App\Http\Controllers\Controller;
 use App\Practice;
 use App\Services\OnboardingService;
+use App\Settings;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
@@ -130,14 +131,13 @@ class DashboardController extends Controller
     public function postStorePractice(Request $request)
     {
         $update['federal_tax_id'] = $request->input('federal_tax_id');
-        $update['auto_approve_careplans'] = $request->input('auto_approve_careplans');
-        $update['send_alerts'] = $request->input('send_alerts');
 
         if ($request->input('lead_id')) {
             $update['user_id'] = $request->input('lead_id');
         }
 
         $this->primaryPractice->update($update);
+        $this->primaryPractice->syncSettings(new Settings($request->input('settings') ?? []));
 
         return redirect()->back();
     }
