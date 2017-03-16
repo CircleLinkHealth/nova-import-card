@@ -12,11 +12,13 @@
 
     <span>
                     <li class="sidebar-demo-list"><span id="name"><b>Name: @{{name}}</b></span></li>
+                    <li class="sidebar-demo-list"><span id="name"><b>Language: @{{ lang }}</b></span></li>
                     <li class="sidebar-demo-list"><span id="name"><b>Provider Name: @{{provider_name}}</b></span></li>
                     <li class="sidebar-demo-list"><span id="name"><b>Practice Name: @{{practice_name}}</b></span></li>
                     <li class="sidebar-demo-list"><span id="home_phone"><b>Home Phone: @{{home_phone}}</b></span></li>
                     <li class="sidebar-demo-list"><span id="cell_phone"><b>Cell Phone: @{{cell_phone}}</b></span></li>
-                    <li class="sidebar-demo-list"><span id="other_phone"><b>Other Phone: @{{other_phone}}</b></span></li>
+                    <li class="sidebar-demo-list"><span
+                                id="other_phone"><b>Other Phone: @{{other_phone}}</b></span></li>
                     <li class="sidebar-demo-list"><span id="email">Email: @{{email}}</span></li>
                     <li class="sidebar-demo-list"><span id="address">Address: @{{address}}</span></li>
                     <li class="sidebar-demo-list"><span id="address_2">Address Line 2: @{{address_2}}</span></li>
