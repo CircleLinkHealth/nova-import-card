@@ -1,12 +1,18 @@
-<div id="consented" class="modal confirm modal-fixed-footer" style="max-height: 100%; height: 86%">
-    <form method="post" id="consented_form" action="{{URL::route('enrollment-center.consented')}}"
-          class="">
+<div id="consented" class="modal confirm modal-fixed-footer consented_modal">
+    <form method="post" id="consented_form" action="{{URL::route('enrollment-center.consented')}}">
 
         {{ csrf_field() }}
 
         <div class="modal-content">
             <h4 style="color: #47beab">Awesome! Please confirm patient details:</h4>
             <blockquote style="border-left: 5px solid #26a69a;">
+                @if($enrollee->lang == 'ES')
+                    Ask patient: ¿Quiere quele llamemos directamente o hay alguien más con el cual quiere quenos pongamos en
+                    contacto?
+                @else
+                    <b>Ask patient: Do you want us to call you directly or is there someone else we should contact?</b>
+                @endif
+                <br>
                 Please confirm the patient's preferred phone number (format: XXX-XXX-XXXX):
             </blockquote>
             <div class="row">
@@ -84,14 +90,28 @@
                 </div>
             </div>
             <div class="row input-field">
-                <blockquote style="border-left: 5px solid #26a69a;">
+                <blockquote style="border-left: 5px solid #26a69a; margin: 10px 0;">
                     Is there anything else we should know about the patient?
                 </blockquote>
                 <div class="col s12 m12 select-custom">
-                            <textarea class="materialize-textarea input-field" id="extra" name="extra"
-                                      placeholder="Optional additional information"></textarea>
+                    <input class="materialize-textarea input-field" id="extra" name="extra"
+                           placeholder="Optional additional information" style="margin-bottom: 10px">
                 </div>
             </div>
+            <blockquote style="border-left: 5px solid #26a69a;">
+
+                <b>TELL PATIENT BEFORE HANGING UP!</b><br>
+                @if($enrollee->lang == 'ES')
+                    Una enfermera registrada le llamará en breve del mismo desde el cual lo estoy llamando
+                    [number of practice]. Por favor, guárdelo para que acepte la llamada cuando suene el teléfono.
+                    ¡Me alegro de haberme conectado! ¡Que tenga un muy buen día!
+                @else
+                    A Registered Nurse will call you shortly from the same # I’m calling from, [number of
+                    practice]. Please save it so you accept the call when she/he rings. So glad we
+                    connected! Have a great day!
+
+                @endif
+            </blockquote>
 
             <input type="hidden" name="status" value="consented">
             <input type="hidden" name="enrollee_id" value="{{$enrollee->id}}">
