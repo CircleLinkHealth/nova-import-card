@@ -31,6 +31,7 @@ class EnrollmentConsentController extends Controller
                 'name'                     => $enrollee->first_name . ' ' . $enrollee->last_name,
                 'program'                  => ucwords(Practice::find($enrollee->practice_id)->name),
                 'provider'                 => ucwords(User::find($enrollee->provider_id)->fullName ?? null),
+                'has_copay'                => $enrollee->has_copay ? 'Yes' : 'No',
                 'status'                   => ucwords($enrollee->status),
                 'care_ambassador'          => ucwords(User::find($enrollee->care_ambassador_id)->fullName ?? null),
                 'last_call_outcome'        => ucwords($enrollee->last_call_outcome),

@@ -30,6 +30,9 @@
                                             Provider
                                         </th>
                                         <th>
+                                            Has co-pay
+                                        </th>
+                                        <th>
                                             Care Ambassador
                                         </th>
                                         <th>
@@ -87,6 +90,7 @@
                         {data: 'name', name: 'name'},
                         {data: 'program', name: 'program'},
                         {data: 'provider', name: 'provider'},
+                        {data: 'has_copay', name: 'has_copay'},
                         {data: 'care_ambassador', name: 'care_ambassador'},
                         {data: 'status', name: 'status'},
                         {data: 'last_call_outcome', name: 'last_call_outcome'},
