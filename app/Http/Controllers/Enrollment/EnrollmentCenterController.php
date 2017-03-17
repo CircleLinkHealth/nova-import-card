@@ -16,8 +16,25 @@ class EnrollmentCenterController extends Controller
     public function dashboard()
     {
 
-        //get an eligible patient.
-        $enrollee = Enrollee::toCall()->first();
+        $ambassador = auth()->user()->careAmbassador;
+
+        //if logged in ambassador is spanish, pick up a spanish patient
+        if($ambassador->speaks_spanish){
+
+            $enrollee = Enrollee::toCall()->where('lang', 'ES')->first();
+
+            //if no spanish, get a EN user.
+            if($enrollee == null){
+
+                $enrollee = Enrollee::toCall()->first();
+
+            }
+
+        } else { // auth ambassador doesn't speak ES, get a regular user.
+
+            $enrollee = Enrollee::toCall()->first();
+
+        }
 
         if ($enrollee == null) {
 
