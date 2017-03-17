@@ -2021,6 +2021,8 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
                 \Log::alert($e);
             }
         }
+
+        return true;
     }
 
     /**

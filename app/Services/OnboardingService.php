@@ -440,6 +440,7 @@ class OnboardingService
 
 //                $user->notify(new StaffInvite($implementationLead, $primaryPractice));
             } catch (\Exception $e) {
+                \Log::alert($e);
                 if ($e instanceof QueryException) {
                     $errorCode = $e->errorInfo[1];
                     if ($errorCode == 1062) {
