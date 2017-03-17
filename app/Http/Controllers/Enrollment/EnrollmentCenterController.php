@@ -16,10 +16,10 @@ class EnrollmentCenterController extends Controller
     public function dashboard()
     {
 
-        $ambassador = auth()->user()->careAmbassador;
+        $careAmbassador = auth()->user()->careAmbassador;
 
         //if logged in ambassador is spanish, pick up a spanish patient
-        if($ambassador->speaks_spanish){
+        if($careAmbassador->speaks_spanish){
 
             $enrollee = Enrollee::toCall()->where('lang', 'ES')->first();
 
@@ -50,7 +50,7 @@ class EnrollmentCenterController extends Controller
         return view('enrollment-ui.dashboard',
             [
                 'enrollee' => $enrollee,
-                'report'   => CareAmbassadorLog::createOrGetLogs(auth()->user()->careAmbassador->id),
+                'report'   => CareAmbassadorLog::createOrGetLogs($careAmbassador->id),
 
             ]
         );
@@ -59,11 +59,12 @@ class EnrollmentCenterController extends Controller
 
     public function consented(Request $request)
     {
+        $careAmbassador = auth()->user()->careAmbassador;
 
         $enrollee = Enrollee::find($request->input('enrollee_id'));
 
         //update report for care ambassador:
-        $report = CareAmbassadorLog::createOrGetLogs(auth()->user()->careAmbassador->id);
+        $report = CareAmbassadorLog::createOrGetLogs($careAmbassador->id);
         $report->no_enrolled = $report->no_enrolled + 1;
         $report->total_calls = $report->total_calls + 1;
         $report->total_time_in_system = $request->input('time_elapsed');
@@ -89,7 +90,7 @@ class EnrollmentCenterController extends Controller
         $enrollee->email = $request->input('email');
         $enrollee->dob = $request->input('dob');
         $enrollee->last_call_outcome = $request->input('consented');
-        $enrollee->care_ambassador_id = auth()->user()->id;
+        $enrollee->care_ambassador_id = $careAmbassador->id;
 
         $enrollee->attempt_count = $enrollee->attempt_count + 1;
 
@@ -121,9 +122,10 @@ class EnrollmentCenterController extends Controller
     {
 
         $enrollee = Enrollee::find($request->input('enrollee_id'));
+        $careAmbassador = auth()->user()->careAmbassador;
 
         //update report for care ambassador:
-        $report = CareAmbassadorLog::createOrGetLogs(auth()->user()->careAmbassador->id);
+        $report = CareAmbassadorLog::createOrGetLogs($careAmbassador->id);
         $report->no_utc = $report->no_utc + 1;
         $report->total_calls = $report->total_calls + 1;
         $report->total_time_in_system = $request->input('time_elapsed');
@@ -135,7 +137,7 @@ class EnrollmentCenterController extends Controller
             $enrollee->last_call_outcome_reason = $request->input('reason_other');
         }
 
-        $enrollee->care_ambassador_id = auth()->user()->id;
+        $enrollee->care_ambassador_id = $careAmbassador->id;
 
         $enrollee->status = 'utc';
         $enrollee->attempt_count = $enrollee->attempt_count + 1;
@@ -151,9 +153,10 @@ class EnrollmentCenterController extends Controller
     {
 
         $enrollee = Enrollee::find($request->input('enrollee_id'));
+        $careAmbassador = auth()->user()->careAmbassador;
 
         //update report for care ambassador:
-        $report = CareAmbassadorLog::createOrGetLogs(auth()->user()->careAmbassador->id);
+        $report = CareAmbassadorLog::createOrGetLogs($careAmbassador->id);
         $report->no_rejected = $report->no_rejected + 1;
         $report->total_calls = $report->total_calls + 1;
         $report->total_time_in_system = $request->input('time_elapsed');
@@ -166,7 +169,7 @@ class EnrollmentCenterController extends Controller
             $enrollee->last_call_outcome_reason = $request->input('reason_other');
         }
 
-        $enrollee->care_ambassador_id = auth()->user()->id;
+        $enrollee->care_ambassador_id = $careAmbassador->id;
 
         $enrollee->status = 'rejected';
         $enrollee->attempt_count = $enrollee->attempt_count + 1;
