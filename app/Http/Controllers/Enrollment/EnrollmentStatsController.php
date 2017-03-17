@@ -82,7 +82,7 @@ class EnrollmentStatsController extends Controller
 
             } else {
 
-                $data[$ambassador->id]['conversion'] = '0%';
+                $data[$ambassador->id]['conversion'] = 'N/A';
                 $data[$ambassador->id]['calls_per_hour'] = 'N/A';
                 $data[$ambassador->id]['per_cost'] = 'N/A';
 
