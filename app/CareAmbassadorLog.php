@@ -9,7 +9,7 @@ class CareAmbassadorLog extends Model
 {
 
     protected $fillable  = [
-        'care_ambassador_id',
+        'enroller_id',
         'day',
         'no_enrolled',
         'no_rejected',
@@ -18,24 +18,24 @@ class CareAmbassadorLog extends Model
         'total_time_in_system'
     ];
 
-    public function user(){
+    public function enroller(){
 
-        return $this->belongsTo(User::class, 'care_ambassador_id');
-
-    }
-
-    public function totalUniquePatientsCalled(){
-
-        return Enrollee::where('care_ambassador_id', $this->care_ambassador_id)->count();
+        return $this->belongsTo(CareAmbassador::class, 'enroller_id');
 
     }
 
-    public static function createOrGetLogs($care_ambassador_id){
+//    public function totalUniquePatientsCalled(){
+//
+//        return Enrollee::where('care_ambassador_id', $this->care_ambassador_id)->count();
+//
+//    }
+
+    public static function createOrGetLogs($enroller_id){
 
         $date = Carbon::now()->format('Y-m-d');
         $report =
                 self
-                    ::where('care_ambassador_id', $care_ambassador_id)
+                    ::where('enroller_id', $enroller_id)
                     ->where('day', $date)
                     ->first();
 
@@ -43,7 +43,7 @@ class CareAmbassadorLog extends Model
 
             return self
                    ::create([
-                        'care_ambassador_id' => $care_ambassador_id,
+                        'enroller_id' => $enroller_id,
                         'day' => $date,
                    ]);
 
