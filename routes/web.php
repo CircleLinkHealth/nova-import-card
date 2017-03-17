@@ -5,8 +5,10 @@
 //$faxTest = (new PhaxioService('production'))->send('+12124910114', storage_path('pdfs/notes/2017-02-07-xsKTIK4106WdXiMNu8iMla4FPJSOcosNBXXMkAsX.pdf'));
 //dd($faxTest);
 
-
-use App\Reports\WeeklyReportDispatcher;
+use App\Enrollee;
+use App\Practice;
+use Carbon\Carbon;
+use Illuminate\Support\Facades\DB;
 
 if (app()->environment() != 'production') {
 
@@ -18,8 +20,6 @@ if (app()->environment() != 'production') {
 
     Route::get('/rohan', function () {
 
-
-//        (new App\Algorithms\Enrollment\EnrollmentSMSSender())->exec();
 
     });
 
@@ -1390,7 +1390,7 @@ Route::group([
  */
 
 Route::group([
-    'prefix' => '/enrollment'
+    'prefix' => '/enrollment',
 ], function () {
 
     Route::post('/sms/reply', [
@@ -1420,7 +1420,9 @@ Route::group([
 
     Route::get('/training', function () {
 
-        return response()->file('/');
+        return response()->download(storage_path('training_enrollment.pdf'), 'CLHCareAmbassadorManual', [
+            'Content-Length: ' . filesize(storage_path('training_enrollment.pdf')),
+        ]);
 
     });
 
