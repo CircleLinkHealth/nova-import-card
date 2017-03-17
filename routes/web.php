@@ -529,24 +529,34 @@ Route::group(['middleware' => 'auth'], function () {
             'as'   => 'post.admin.store.nurse.schedules',
         ]);
 
-        Route::get('enroll/list', [
+        Route::get('enrollment/list', [
             'uses' => 'Enrollment\EnrollmentConsentController@makeEnrollmentReport',
             'as'   => 'patient.enroll.makeReport',
         ]);
 
-        Route::get('enroll/list/data', [
+        Route::get('enrollment/list/data', [
             'uses' => 'Enrollment\EnrollmentConsentController@index',
             'as'   => 'patient.enroll.index',
         ]);
 
-        Route::get('enroll/ambassador/kpis', [
+        Route::get('enrollment/ambassador/kpis', [
             'uses' => 'Enrollment\EnrollmentStatsController@makeAmbassadorStats',
             'as'   => 'enrollment.ambassador.stats',
         ]);
 
-        Route::get('enroll/ambassador/kpis/data', [
+        Route::get('enrollment/ambassador/kpis/data', [
             'uses' => 'Enrollment\EnrollmentStatsController@ambassadorStats',
             'as'   => 'enrollment.ambassador.stats.data',
+        ]);
+
+        Route::get('enrollment/practice/kpis', [
+            'uses' => 'Enrollment\EnrollmentStatsController@makePracticeStats',
+            'as'   => 'enrollment.practice.stats',
+        ]);
+
+        Route::get('enrollment/practice/kpis/data', [
+            'uses' => 'Enrollment\EnrollmentStatsController@practiceStats',
+            'as'   => 'enrollment.practice.stats.data',
         ]);
 
         Route::get('invites/create', [
@@ -1375,7 +1385,7 @@ Route::group([
  */
 
 Route::group([
-    'prefix' => '/enrollment',
+    'prefix' => '/enrollment'
 ], function () {
 
     Route::post('/sms/reply', [
@@ -1403,10 +1413,11 @@ Route::group([
         'as'   => 'enrollment-center.rejected',
     ]);
 
-    Route::get('/training', [
-        'uses' => 'Enrollment\EnrollmentCenterController@training',
-        'as'   => 'enrollment-center.training',
-    ]);
+    Route::get('/training', function () {
+
+        return response()->file('/');
+
+    });
 
 });
 
