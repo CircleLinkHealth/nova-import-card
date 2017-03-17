@@ -16,19 +16,12 @@ class CreateCareAmbassadorLogsTable extends Migration
         Schema::create('care_ambassador_logs', function (Blueprint $table) {
 
             $table->increments('id');
-            $table->unsignedInteger('care_ambassador_id');
             $table->date('month-year');
             $table->integer('no_enrolled');
             $table->integer('no_rejected');
             $table->integer('no_utc');
             $table->integer('total_calls');
             $table->integer('total_time_in_system');
-
-            $table->foreign('care_ambassador_id')
-                ->references('id')
-                ->on('users')
-                ->onUpdate('cascade')
-                ->onDelete('cascade');
 
         });
     }
