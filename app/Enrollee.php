@@ -44,6 +44,7 @@ class Enrollee extends Model
         'provider_id',
         'practice_id',
         'care_ambassador_id',
+        'total_time_spent',
 
         // patient_id in EHR Software
         'mrn',
