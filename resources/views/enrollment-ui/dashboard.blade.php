@@ -43,8 +43,7 @@
             </div>
 
             <div style="text-align: center">
-                <h4> @{{ name }}</h4>
-                <h5> @{{ home_phone}} @{{ cell_phone }} @{{ other_phone }}</h5>
+                <h5> Call @{{ name }} at: @{{ home_phone}} @{{ cell_phone }} @{{ other_phone }}</h5>
             </div>
 
             <div>@if($enrollee->has_copay)
