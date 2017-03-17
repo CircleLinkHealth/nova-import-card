@@ -43,10 +43,10 @@
                                             #Unique Patients Called
                                         </th>
                                         <th>
-                                            #Enrolled
+                                            #Consented
                                         </th>
                                         <th>
-                                            #UTC
+                                            #Unable to Contact
                                         </th>
                                         <th>
                                             #Rejected
