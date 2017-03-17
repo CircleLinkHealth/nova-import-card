@@ -34,8 +34,8 @@
 
             <input type="hidden" name="status" value="utc">
             <input type="hidden" name="enrollee_id" value="{{$enrollee->id}}">
-            <input type="hidden" name="time_elapsed" v-bind:value="total_time_in_system">
-
+            <input type="hidden" name="total_time_in_system" v-bind:value="total_time_in_system">
+            <input type="hidden" name="time_elapsed" v-bind:value="time_elapsed">
 
             <div class="modal-footer" style="padding-right: 60px">
                 <button id="submit" name="submit" type="submit"

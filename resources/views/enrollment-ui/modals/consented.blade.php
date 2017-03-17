@@ -115,7 +115,8 @@
 
             <input type="hidden" name="status" value="consented">
             <input type="hidden" name="enrollee_id" value="{{$enrollee->id}}">
-            <input type="hidden" name="time_elapsed" v-bind:value="total_time_in_system">
+            <input type="hidden" name="total_time_in_system" v-bind:value="total_time_in_system">
+            <input type="hidden" name="time_elapsed" v-bind:value="time_elapsed">
 
         </div>
         <div class="modal-footer">
