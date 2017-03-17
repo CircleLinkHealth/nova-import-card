@@ -98,9 +98,9 @@
                            placeholder="Optional additional information" style="margin-bottom: 10px">
                 </div>
             </div>
-            <blockquote style="border-left: 5px solid #26a69a;">
+            <blockquote style="border-left: 5px solid red;">
 
-                <b>TELL PATIENT BEFORE HANGING UP!</b><br>
+                <span style="color: red"><b>TELL PATIENT BEFORE HANGING UP!</b></span><br>
                 @if($enrollee->lang == 'ES')
                     Una enfermera registrada le llamará en breve del mismo desde el cual lo estoy llamando
                     [number of practice]. Por favor, guárdelo para que acepte la llamada cuando suene el teléfono.
