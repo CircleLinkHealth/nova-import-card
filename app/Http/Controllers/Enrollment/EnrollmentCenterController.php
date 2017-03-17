@@ -50,7 +50,7 @@ class EnrollmentCenterController extends Controller
         return view('enrollment-ui.dashboard',
             [
                 'enrollee' => $enrollee,
-                'report'   => CareAmbassadorLog::createOrGetLogs(auth()->user()->id),
+                'report'   => CareAmbassadorLog::createOrGetLogs(auth()->user()->careAmbassador->id),
 
             ]
         );
@@ -63,7 +63,7 @@ class EnrollmentCenterController extends Controller
         $enrollee = Enrollee::find($request->input('enrollee_id'));
 
         //update report for care ambassador:
-        $report = CareAmbassadorLog::createOrGetLogs(auth()->user()->id);
+        $report = CareAmbassadorLog::createOrGetLogs(auth()->user()->careAmbassador->id);
         $report->no_enrolled = $report->no_enrolled + 1;
         $report->total_calls = $report->total_calls + 1;
         $report->total_time_in_system = $request->input('time_elapsed');
@@ -123,7 +123,7 @@ class EnrollmentCenterController extends Controller
         $enrollee = Enrollee::find($request->input('enrollee_id'));
 
         //update report for care ambassador:
-        $report = CareAmbassadorLog::createOrGetLogs(auth()->user()->id);
+        $report = CareAmbassadorLog::createOrGetLogs(auth()->user()->careAmbassador->id);
         $report->no_utc = $report->no_utc + 1;
         $report->total_calls = $report->total_calls + 1;
         $report->total_time_in_system = $request->input('time_elapsed');
@@ -153,7 +153,7 @@ class EnrollmentCenterController extends Controller
         $enrollee = Enrollee::find($request->input('enrollee_id'));
 
         //update report for care ambassador:
-        $report = CareAmbassadorLog::createOrGetLogs(auth()->user()->id);
+        $report = CareAmbassadorLog::createOrGetLogs(auth()->user()->careAmbassador->id);
         $report->no_rejected = $report->no_rejected + 1;
         $report->total_calls = $report->total_calls + 1;
         $report->total_time_in_system = $request->input('time_elapsed');
