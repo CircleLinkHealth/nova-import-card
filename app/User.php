@@ -2018,12 +2018,7 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
             //check if this is a mysql exception for unique key constraint
             if ($e instanceof \Illuminate\Database\QueryException) {
                 $errorCode = $e->errorInfo[1];
-                if ($errorCode == 1062) {
-                    //do nothing
-                    //we don't actually want to terminate the program if we detect duplicates
-                    //we just don't wanna add the row again
-                    \Log::alert($e);
-                }
+                \Log::alert($e);
             }
         }
     }

@@ -366,9 +366,6 @@ class OnboardingService
     ) {
         $implementationLead = $primaryPractice->lead;
 
-        $adminRole = Role::whereName('practice-lead')
-            ->first();
-
         foreach ($request->input('deleteTheseUsers') as $id) {
             $detachUser = User::find($id);
             $detachUser->practices()->detach($primaryPractice->id);
