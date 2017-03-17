@@ -10,9 +10,14 @@ use App\Reports\WeeklyReportDispatcher;
 
 if (app()->environment() != 'production') {
 
+    Route::get('/sms/test', function () {
+
+        (new App\Algorithms\Enrollment\EnrollmentSMSSender())->exec();
+
+    });
+
     Route::get('/rohan', function () {
 
-        (new WeeklyReportDispatcher())->exec();
 
 //        (new App\Algorithms\Enrollment\EnrollmentSMSSender())->exec();
 
