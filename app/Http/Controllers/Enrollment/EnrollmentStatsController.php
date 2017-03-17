@@ -141,9 +141,20 @@ class EnrollmentStatsController extends Controller
                 })
                     ->count();
 
-            $data[$practice->id]['consented'] = $base->where('status', 'consented')->count();
-            $data[$practice->id]['utc'] = $base->where('status', 'utc')->count();
-            $data[$practice->id]['rejected'] = $base->where('status', 'rejected')->count();
+            $data[$practice->id]['consented'] = Enrollee
+                ::where('practice_id', $practice->id)
+                ->where('last_attempt_at', '>=', $start)
+                ->where('last_attempt_at', '<=', $end)->where('status', 'consented')->count();
+
+            $data[$practice->id]['utc'] = Enrollee
+                ::where('practice_id', $practice->id)
+                ->where('last_attempt_at', '>=', $start)
+                ->where('last_attempt_at', '<=', $end)->where('status', 'utc')->count();
+
+            $data[$practice->id]['rejected'] = Enrollee
+                ::where('practice_id', $practice->id)
+                ->where('last_attempt_at', '>=', $start)
+                ->where('last_attempt_at', '<=', $end)->where('status', 'rejected')->count();
 
 //            //get all enrollees who worked for the practice
 //            $data[$practice->id]['serving'] =
