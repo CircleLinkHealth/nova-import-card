@@ -6,6 +6,13 @@
 
         <div class="modal-content">
             <h4 style="color: #47beab">Please provide some details:</h4>
+            <blockquote style="border-left: 5px solid #26a69a;">
+                <b>If Caller Reaches Machine, Leave Voice Message: </b><br>
+                Hi this is {{auth()->user()->fullName}} calling on
+                behalf of @{{ provider_name }} at @{{ practice_name }}. The doctor[s] have invited you to their new
+                personalized care management program. Please give us a call at [number Ambassador calling from on page 2] to learn more. Please note there is
+                nothing to worry about, this program just lets the Dr. take better care of you between visits. Again the number is [number Ambassador calling from]
+            </blockquote>
 
             <div class="row">
                 <div class="col s12 m12">
