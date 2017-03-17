@@ -2,11 +2,12 @@
     <b>Dr. @{{provider_name}}'s </b> office. How are you doing today?</p>
 
 <p>I’m fine. The doctor[s] have invited you to their new personalized care management program. You may have received a
-    letter about this. <b>Dr. @{{provider_name}}</b> think(s) that this program would be helpful to your health and would like you
+    letter about this. <b>Dr. @{{provider_name}}</b> think(s) that this program would be helpful to your health and
+    would like you
     to enroll. May I tell you a little about this program?</p>
 
-<p><i>Patients interested usually discuss their conditions here.. be sure to listen. If patient asks where calling from,
-        use the practice name in goog sheet, e.g., CareMedica or Ferguson</i></p>
+<p><i>[Patients interested usually discuss their conditions here.. be sure to listen. If patient asks where calling from,
+        use the practice name in goog sheet, e.g., CareMedica or Ferguson]</i></p>
 
 <p>This is a new preventative care program from Medicare to help you and your doctor take better care of your
     health.</p>
@@ -20,7 +21,8 @@
 
     Here’s some details on the program:</p>
 
-<li> A personal care coach— registered nurse-- will do a quick phone checkin about twice a month, to provide support, personalized care, and to see how you’re doing
+<li> A personal care coach— registered nurse-- will do a quick phone checkin about twice a month, to provide support,
+    personalized care, and to see how you’re doing
 </li>
 
 <li> The information we collect is available to your doctor, and will be shared with your doctor immediately if you
@@ -33,6 +35,9 @@
 
 <li> You can only be part of one doctor’s care management program at a time</li>
 
-Can let your Dr. know you consented to enroll in this program today? (Remember you can always
+<p>Can let your Dr. know you consented to enroll in this program today? (Remember you can always
 
-withdraw if you don’t like it)
+    withdraw if you don’t like it)</p>
+
+<p><i> [Ambassador, Please click the appropriate button based on patient’s answer and follow instructions in subsequent
+        popup forms. Thank you!]</i></p>

@@ -7,8 +7,8 @@
     letter about this. <b> Dr. @{{provider_name}}</b> think(s) that this program would be helpful to your health and would like you
     to enroll. May I tell you a little about this program?</p>
 
-<p><i>Patients interested usually discuss their conditions here.. be sure to listen. If patient asks where calling from,
-        use the practice name in goog sheet, e.g., CareMedica or Ferguson</i></p>
+<p><i>[Patients interested usually discuss their conditions here.. be sure to listen. If patient asks where calling from,
+        use the practice name in goog sheet, e.g., CareMedica or Ferguson]</i></p>
 
 <p>This is a new preventative care program from Medicare to help you and your doctor take better care of your
     health.</p>
@@ -40,5 +40,5 @@
 <p>Can let your Dr. know you consented to enroll in this program today? (Remember you can always withdraw if you don’t
     like it)</p>
 
-<p><i> Ambassador, Please click the appropriate button based on patient’s answer and follow instructions in subsequent
-        popup forms. Thank you!</i></p>
+<p><i> [Ambassador, Please click the appropriate button based on patient’s answer and follow instructions in subsequent
+        popup forms. Thank you!]</i></p>
