@@ -19,4 +19,10 @@ class CareAmbassador extends Model
 
     }
 
+    public function logs(){
+
+        return $this->hasMany(CareAmbassadorLog::class, 'enroller_id');
+
+    }
+
 }
