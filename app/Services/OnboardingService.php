@@ -387,6 +387,8 @@ class OnboardingService
                             'last_name'    => $newUser['last_name'],
                             'display_name' => "{$newUser['first_name']} {$newUser['last_name']}",
                         ], $newUser['id']);
+                } elseif (User::whereEmail($newUser['email'])->first()) {
+                    $user = User::whereEmail($newUser['email'])->first();
                 } else {
                     $user = $this->users
                         ->skipPresenter()
@@ -399,11 +401,12 @@ class OnboardingService
                             'display_name' => "{$newUser['first_name']} {$newUser['last_name']}",
                         ]);
 
+                    $user->attachRole($newUser['role_id']);
+
                     $created[] = $i;
                 }
 
                 $user->emr_direct_address = $newUser['emr_direct_address'];
-                $user->attachRole($newUser['role_id']);
 
                 $grandAdminRights = false;
                 if ($newUser['grandAdminRights']) {
