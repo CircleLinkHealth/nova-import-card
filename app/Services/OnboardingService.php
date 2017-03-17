@@ -80,6 +80,10 @@ class OnboardingService
             'specialist',
         ];
 
+        if (auth()->user()->hasRole('administrator')) {
+            $relevantRoles[] = 'administrator';
+        }
+
         $practiceUsers = User::ofType(array_merge($relevantRoles, ['practice-lead']))
             ->whereHas('practices', function ($q) use
             (
