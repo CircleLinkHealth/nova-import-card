@@ -30,5 +30,6 @@
 <li> Solamente puedes ser parte de un programa de cuidados del Doctor a la vez</li>
 
 <p>¿Puede informarle a su doctor que usted aceptó inscribirse en este programa? (Recuerde que siempre
-    puede retirarse si no le gusta) [Ambassador: Please click the appropriate button based on patient’s
-    answer and follow instructions in subsequent popup forms. Thank you!] </p>
+    puede retirarse si no le gusta) </p>
+<p><i>[Ambassador: Please click the appropriate button based on patient’s
+        answer and follow instructions in subsequent popup forms. Thank you!]</i></p>
