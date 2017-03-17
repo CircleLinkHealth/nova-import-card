@@ -38,12 +38,12 @@
 
         <div style="margin-left: 26%;">
             <div style="margin-top: 10px; text-align: center">
-                <a class="waves-effect waves-light btn" href="#utc" style="background: #ecb70e">No Answer /
+                <a class="waves-effect waves-light btn" href="#utc" style="background: #ecb70e">No Answer (Voicemail Script) /
                     Requested Call Back</a>
             </div>
 
             <div style="text-align: center">
-                <h5> Call @{{ name }} at: @{{ home_phone}} @{{ cell_phone }} @{{ other_phone }}</h5>
+                <h5> Call @{{ name }} at: @{{ home_phone}} @if($enrollee->cell_phone != '') or @endif @{{ cell_phone }} @if($enrollee->other_phone != '') or @endif @{{ other_phone }}</h5>
             </div>
 
             <div>@if($enrollee->has_copay)
@@ -110,6 +110,8 @@
                 email: '{{ $enrollee->email ?? 'N/A' }}',
                 dob: '{{ $enrollee->dob ?? 'N/A' }}',
                 phone_regex: /^\d{3}-\d{3}-\d{4}$/,
+
+                time_elapsed: 0,
 
                 total_time_in_system: '{!!$report->total_time_in_system !!}'
 
@@ -206,6 +208,7 @@
 
                 setInterval(function () {
                     self.$data.total_time_in_system++;
+                    self.$data.time_elapsed++;
                 }, 1000);
 
                 $('#consented').modal();
