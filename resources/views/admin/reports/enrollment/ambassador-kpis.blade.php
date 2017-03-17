@@ -93,7 +93,7 @@
                     serverSide: false,
                     "scrollX": true,
                     ajax: {
-                        "url": '{!! url('/admin/enroll/ambassador/kpis/data') !!}',
+                        "url": '{!! url('/admin/enrollment/ambassador/kpis/data') !!}',
                         "type": "GET",
                         "data": function (d) {
                             d.start_date = $('#start_date').val();
