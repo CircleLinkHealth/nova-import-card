@@ -59,6 +59,7 @@ class EnrollmentCenterController extends Controller
 
     public function consented(Request $request)
     {
+
         $careAmbassador = auth()->user()->careAmbassador;
 
         $enrollee = Enrollee::find($request->input('enrollee_id'));
@@ -67,7 +68,7 @@ class EnrollmentCenterController extends Controller
         $report = CareAmbassadorLog::createOrGetLogs($careAmbassador->id);
         $report->no_enrolled = $report->no_enrolled + 1;
         $report->total_calls = $report->total_calls + 1;
-        $report->total_time_in_system = $request->input('time_elapsed');
+        $report->total_time_in_system = $request->input('total_time_in_system');
         $report->save();
 
         $enrollee->setHomePhoneAttribute($request->input('home_phone'));
@@ -91,6 +92,8 @@ class EnrollmentCenterController extends Controller
         $enrollee->dob = $request->input('dob');
         $enrollee->last_call_outcome = $request->input('consented');
         $enrollee->care_ambassador_id = $careAmbassador->id;
+
+        $enrollee->total_time_spent = $enrollee->total_time_spent + $request->input('time_elapsed');
 
         $enrollee->attempt_count = $enrollee->attempt_count + 1;
 
@@ -128,7 +131,7 @@ class EnrollmentCenterController extends Controller
         $report = CareAmbassadorLog::createOrGetLogs($careAmbassador->id);
         $report->no_utc = $report->no_utc + 1;
         $report->total_calls = $report->total_calls + 1;
-        $report->total_time_in_system = $request->input('time_elapsed');
+        $report->total_time_in_system = $request->input('total_time_in_system');
         $report->save();
 
         $enrollee->last_call_outcome = $request->input('reason');
@@ -142,6 +145,7 @@ class EnrollmentCenterController extends Controller
         $enrollee->status = 'utc';
         $enrollee->attempt_count = $enrollee->attempt_count + 1;
         $enrollee->last_attempt_at = Carbon::now()->toDateTimeString();
+        $enrollee->total_time_spent = $enrollee->total_time_spent + $request->input('time_elapsed');
 
         $enrollee->save();
 
@@ -159,7 +163,7 @@ class EnrollmentCenterController extends Controller
         $report = CareAmbassadorLog::createOrGetLogs($careAmbassador->id);
         $report->no_rejected = $report->no_rejected + 1;
         $report->total_calls = $report->total_calls + 1;
-        $report->total_time_in_system = $request->input('time_elapsed');
+        $report->total_time_in_system = $request->input('total_time_in_system');
         $report->save();
 
 
@@ -174,6 +178,7 @@ class EnrollmentCenterController extends Controller
         $enrollee->status = 'rejected';
         $enrollee->attempt_count = $enrollee->attempt_count + 1;
         $enrollee->last_attempt_at = Carbon::now()->toDateTimeString();
+        $enrollee->total_time_spent = $enrollee->total_time_spent + $request->input('time_elapsed');
 
         $enrollee->save();
 
