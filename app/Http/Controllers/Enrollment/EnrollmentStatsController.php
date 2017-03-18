@@ -104,6 +104,7 @@ class EnrollmentStatsController extends Controller
     public function practiceStats(Request $request)
     {
 
+
         $input = $request->input();
 
         if (isset($input['start_date']) && isset($input['end_date'])) {
@@ -128,17 +129,15 @@ class EnrollmentStatsController extends Controller
 
             $data[$practice->id]['name'] = $practice->display_name;
 
-            $base = Enrollee
-                ::where('practice_id', $practice->id)
-                ->where('last_attempt_at', '>=', $start)
-                ->where('last_attempt_at', '<=', $end);
-
             $data[$practice->id]['unique_patients_called'] =
-                $base->where(function ($q) {
-                    $q->where('status', 'utc')
-                        ->orWhere('status', 'consented')
-                        ->orWhere('status', 'rejected');
-                })
+                Enrollee
+                    ::where('practice_id', $practice->id)
+                    ->where('last_attempt_at', '>=', $start)
+                    ->where('last_attempt_at', '<=', $end)->where(function ($q) {
+                        $q->where('status', 'utc')
+                            ->orWhere('status', 'consented')
+                            ->orWhere('status', 'rejected');
+                    })
                     ->count();
 
             $data[$practice->id]['consented'] = Enrollee
@@ -156,48 +155,59 @@ class EnrollmentStatsController extends Controller
                 ->where('last_attempt_at', '>=', $start)
                 ->where('last_attempt_at', '<=', $end)->where('status', 'rejected')->count();
 
-//            //get all enrollees who worked for the practice
-//            $data[$practice->id]['serving'] =
-//                DB::table('enrollees')
-//                    ->where('practice_id', $practice->id)
-//                    ->whereNotNull('care_ambassador_id')
-//                    ->distinct('care_ambassador_id')
-//                    ->where('last_attempt_at', '>=', $start)
-//                    ->where('last_attempt_at', '<=', $end)
-//                    ->where(function ($q) {
-//                        $q->where('status', 'utc')
-//                            ->orWhere('status', 'consented')
-//                            ->orWhere('status', 'rejected');
-//                    })
-//                    ->pluck('care_ambassador_id');
-//
-//
-////            get a sum of all hours they've spent on the practice
-//            $data[$practice->id]['logs'] = CareAmbassadorLog
-//                ::where('day', '>=', $start)
-//                ->where('day', '<=', $end)
-//                ->whereIn('enroller_id', $data[$practice->id]['serving'])
-//                ->sum('total_time_in_system');
+            $total_time = Enrollee
+                ::where('practice_id', $practice->id)
+                ->where('last_attempt_at', '>=', $start)
+                ->where('last_attempt_at', '<=', $end)
+                ->sum('total_time_spent');
 
+            $data[$practice->id]['labor_hours'] =
+                secondsToHHMM($total_time);
 
-//            $data[$practice->id]['labor_hours'] =
-//
-//                $base->whereHas('careAmbassador', function ($q) {
-//                    $q->whereHas('logs', function ($k) {
-//                        $k->where('enroller_id', )
-//                        });
-//                })->get();
+            $enrollers = Enrollee
+                ::select(DB::raw('care_ambassador_id, sum(total_time_spent) as total'))
+                ->where('practice_id', $practice->id)
+                ->where('last_attempt_at', '>=', $start)
+                ->where('last_attempt_at', '<=', $end)
+                ->groupBy('care_ambassador_id')->pluck('total', 'care_ambassador_id');
 
+            $data[$practice->id]['total_cost'] = 0;
 
-//            $data[$practice->id]['total_hours'] = secondsToHHMM($base->sum('total_time_in_system'));
-//
-//            $data[$practice->id]['no_enrolled'] = $base->sum('no_enrolled');
-//            $data[$practice->id]['mins_per_enrollment'] =
-//                ($base->sum('no_enrolled') != 0)
-//                    ?
-//                    round(($base->sum('total_time_in_system') / 60) / $base->sum('no_enrolled'), 2)
-//                    : 0;
-//
+            foreach ($enrollers as $enrollerId => $time) {
+
+                $enrollee = CareAmbassador::find($enrollerId);
+                $data[$practice->id]['total_cost'] += $enrollee->hourly_rate * round($time / 3600, 2);
+
+            }
+
+            if ($data[$practice->id]['unique_patients_called'] > 0 && $data[$practice->id]['consented'] > 0) {
+
+                $data[$practice->id]['conversion'] =
+                    round($data[$practice->id]['consented'] / $data[$practice->id]['unique_patients_called'] * 100,
+                        2) . '%';
+
+            } else {
+
+                $data[$practice->id]['conversion'] = 'N/A';
+
+            }
+
+            if ($data[$practice->id]['total_cost'] > 0 && $data[$practice->id]['consented'] > 0) {
+
+                $data[$practice->id]['acq_cost'] = $data[$practice->id]['total_cost'] / $data[$practice->id]['consented'];
+
+            } else {
+
+                $data[$practice->id]['acq_cost'] = 'N/A';
+
+            }
+
+            if ($data[$practice->id]['total_cost'] > 0 && $total_time > 0){
+                $data[$practice->id]['labor_rate'] = round($data[$practice->id]['total_cost'] / ($total_time / 3600), 2);
+            } else {
+                $data[$practice->id]['labor_rate'] = 'N/A';
+
+            }
 
         }
 
