@@ -35,7 +35,7 @@
                         <div class="col-md-4">@{{ map.medication_group }}</div>
                         <div class="col-md-4">
                             <button class="btn btn-xs btn-danger problem-delete-btn"
-                                    v-on:click.stop.prevent="remove(index)"><span><i
+                                    v-on:click.stop.prevent="remove(index, map.id)"><span><i
                                             class="glyphicon glyphicon-remove"></i></span></button>
                         </div>
                     </li>
@@ -122,8 +122,15 @@
             },
 
             methods: {
-                remove: function (index) {
-                    this.maps.splice(index, 1);
+                remove: function (index, id) {
+                    var formData = new FormData();
+                    formData.append('id', id);
+
+                    this.$http.delete('{{route('medication-groups-maps.destroy', ['medication_groups_map'=>''])}}/id', formData).then(function (response) {
+                        this.maps.splice(index, 1);
+                    }, function (response) {
+
+                    });
                 },
 
                 store: function () {
@@ -132,7 +139,12 @@
                     formData.append('medication_group_id', this.newMap.medication_group_id);
 
                     this.$http.post('{{route('medication-groups-maps.store')}}', formData).then(function (response) {
-                        alert(response.data.stored.keyword);
+                        this.maps.push({
+                            id: response.data.stored.id,
+                            keyword: response.data.stored.keyword,
+                            medication_group_id: response.data.stored.medication_group_id,
+                            medication_group: response.data.stored.cpm_medication_group.name,
+                        });
                     }, function (response) {
 
                     });
