@@ -96,6 +96,6 @@ class MedicationGroupsMapController extends Controller
      */
     public function destroy($id)
     {
-        //
+        MedicationGroupsMap::destroy($id);
     }
 }
