@@ -102,7 +102,7 @@ class Enrollee extends Model
     public function careAmbassador()
     {
 
-        return $this->belongsTo(User::class, 'care_ambassador_id');
+        return $this->belongsTo(CareAmbassador::class, 'care_ambassador_id');
 
     }
 
