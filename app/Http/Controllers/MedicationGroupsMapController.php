@@ -41,6 +41,7 @@ class MedicationGroupsMapController extends Controller
     public function store(Request $request)
     {
         $stored = MedicationGroupsMap::create($request->input());
+        $stored->load('cpmMedicationGroup');
 
         return response()->json([
             'stored' => $stored,
