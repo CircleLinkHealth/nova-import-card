@@ -22,7 +22,9 @@
 
                     <div class="col-md-5">
                         <select2 :options="options" v-model="newMap.medication_group_id"
-                                 style="width: 100%;height: 100%;"></select2>
+                                 style="width: 100%;height: 100%;">
+                            <option selected value="0">Select a medication group</option>
+                        </select2>
                     </div>
 
                     <div class="col-md-2">
@@ -36,6 +38,9 @@
 
             <div class="row">
                 <h3>Existing Maps</h3>
+
+                <p v-show="maps.length == 0">Nothing to see here. Get back to adding maps!</p>
+
                 <ul style="list-style: none;">
                     <li v-for="(map, index) in maps">
                         <div class="col-md-4">@{{ map.keyword }}</div>
