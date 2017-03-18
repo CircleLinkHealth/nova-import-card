@@ -24,6 +24,10 @@
                     </div>
                 </div>
             </div>
+
+            <div class="row">
+
+            </div>
         </div>
     </script>
 
@@ -82,18 +86,26 @@
                     keyword: '',
                     medication_group_id: [],
                 },
+                maps: [
+                    //populate existing maps
+                        @foreach($maps as $map)
+                    {
+                        id: '{{$map->id}}',
+                        keyword: '{{$map->keyword}}',
+                        medication_group_id: '{{$map->medication_group_id}}',
+                        medication_group: '{{$map->cpmMedicationGroup->name}}',
+                    },
+                    @endforeach
+                ],
                 options: [
                     //populate select2 options
                         @foreach($medicationGroups as $group)
                     {
-                        id: '{{$group->id}}', text: '{{$group->name}}'
+                        id: '{{$group->id}}',
+                        text: '{{$group->name}}'
                     },
                     @endforeach
                 ]
-            },
-
-            mounted: function () {
-
             },
 
             methods: {
