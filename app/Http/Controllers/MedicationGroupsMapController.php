@@ -13,7 +13,7 @@ class MedicationGroupsMapController extends Controller
      */
     public function index()
     {
-        //
+        return view('admin.medicationGroupsMaps.index');
     }
 
     /**
