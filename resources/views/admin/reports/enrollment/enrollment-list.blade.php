@@ -85,7 +85,7 @@
                     processing: true,
                     serverSide: false,
                     "scrollX": true,
-                    ajax: '{!! url('/admin/enroll/list/data') !!}',
+                    ajax: '{!! url('/admin/enrollment/list/data') !!}',
                     columns: [
                         {data: 'name', name: 'name'},
                         {data: 'program', name: 'program'},
