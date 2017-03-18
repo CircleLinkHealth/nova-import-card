@@ -8,6 +8,12 @@
         <div class="container">
 
             <div class="row">
+                <h3>Add new Medication Group Map</h3>
+
+                <p>For the Add button to become Enabled, fill in the keyword, and select a Medication Group.</p>
+                <p>The Importer will apply pattern matching to see if medications contain the keywords, and activate the
+                    relevant groups. For example 'asp' will math 'aspirin'.</p>
+                <br>
                 <div class="form-group">
                     <div class="col-md-5">
                         <input class="form-control" v-model="newMap.keyword" type="text"
