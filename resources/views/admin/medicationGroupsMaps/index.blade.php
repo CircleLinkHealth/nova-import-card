@@ -98,8 +98,12 @@
 
             methods: {
                 store: function () {
-                    this.$http.post('{{route('medication-groups-maps.store')}}', {}, {}).then(function (response) {
+                    var formData = new FormData();
+                    formData.append('keyword', this.newMap.keyword);
+                    formData.append('medication_group_id', this.newMap.medication_group_id);
 
+                    this.$http.post('{{route('medication-groups-maps.store')}}', formData).then(function (response) {
+                        alert(response.data.stored.keyword);
                     }, function (response) {
 
                     });
