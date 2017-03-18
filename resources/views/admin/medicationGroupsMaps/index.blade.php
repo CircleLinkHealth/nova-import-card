@@ -20,7 +20,8 @@
                     </div>
 
                     <div class="col-md-2">
-                        <input type="submit" class="btn btn-primary" value="Add" name="submit" v-on:click="store">
+                        <input type="submit" class="btn btn-primary" value="Add" name="submit" v-on:click="store"
+                               v-bind:disabled="!isValid">
                     </div>
                 </div>
             </div>
@@ -97,7 +98,7 @@
             data: {
                 newMap: {
                     keyword: '',
-                    medication_group_id: [],
+                    medication_group_id: '',
                 },
                 maps: [
                     //populate existing maps
@@ -121,12 +122,18 @@
                 ]
             },
 
+            computed: {
+                isValid: function () {
+                    return this.newMap.keyword && this.newMap.medication_group_id;
+                }
+            },
+
             methods: {
                 remove: function (index, id) {
                     var formData = new FormData();
                     formData.append('id', id);
 
-                    this.$http.delete('{{route('medication-groups-maps.destroy', ['medication_groups_map'=>''])}}/id', formData).then(function (response) {
+                    this.$http.delete('{{route('medication-groups-maps.destroy', ['medication_groups_map'=>''])}}/' + id, formData).then(function (response) {
                         this.maps.splice(index, 1);
                     }, function (response) {
 
