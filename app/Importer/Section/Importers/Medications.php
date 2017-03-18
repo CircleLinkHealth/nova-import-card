@@ -117,7 +117,7 @@ class Medications extends BaseImporter
         $maps = MedicationGroupsMap::all();
 
         foreach ($maps as $map) {
-            if (str_contains($name, $map->keyword)) {
+            if (str_contains(strtolower($name), strtolower($map->keyword))) {
                 return $map->medication_group_id;
             }
         }
