@@ -25,8 +25,21 @@
                 </div>
             </div>
 
-            <div class="row">
+            <br><br>
 
+            <div class="row">
+                <h3>Existing Maps</h3>
+                <ul style="list-style: none;">
+                    <li v-for="(map, index) in maps">
+                        <div class="col-md-4">@{{ map.keyword }}</div>
+                        <div class="col-md-4">@{{ map.medication_group }}</div>
+                        <div class="col-md-4">
+                            <button class="btn btn-xs btn-danger problem-delete-btn"
+                                    v-on:click.stop.prevent="remove(index)"><span><i
+                                            class="glyphicon glyphicon-remove"></i></span></button>
+                        </div>
+                    </li>
+                </ul>
             </div>
         </div>
     </script>
@@ -109,6 +122,10 @@
             },
 
             methods: {
+                remove: function (index) {
+                    this.maps.splice(index, 1);
+                },
+
                 store: function () {
                     var formData = new FormData();
                     formData.append('keyword', this.newMap.keyword);
