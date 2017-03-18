@@ -51,6 +51,21 @@
                                         <th>
                                             #Rejected
                                         </th>
+                                        <th>
+                                            Labor Hours
+                                        </th>
+                                        <th>
+                                            Conversion %
+                                        </th>
+                                        <th>
+                                            Labor Rate
+                                        </th>
+                                        <th>
+                                            Total Cost
+                                        </th>
+                                        <th>
+                                            Acq. Cost
+                                        </th>
                                     </tr>
                                     </thead>
                                 </table>
@@ -91,7 +106,12 @@
                         {data: 'unique_patients_called', name: 'unique_patients_called'},
                         {data: 'consented', name: 'consented'},
                         {data: 'utc', name: 'utc'},
-                        {data: 'rejected', name: 'rejected'}
+                        {data: 'rejected', name: 'rejected'},
+                        {data: 'labor_hours', name: 'labor_hours'},
+                        {data: 'conversion', name: 'conversion'},
+                        {data: 'labor_rate', name: 'labor_rate'},
+                        {data: 'total_cost', name: 'total_cost'},
+                        {data: 'acq_cost', name: 'acq_cost'}
 
                     ],
                     "aaSorting": [2, 'desc'],
