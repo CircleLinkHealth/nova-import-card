@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\CPM\CpmMedicationGroup;
 use Illuminate\Http\Request;
 
 class MedicationGroupsMapController extends Controller
@@ -13,7 +14,9 @@ class MedicationGroupsMapController extends Controller
      */
     public function index()
     {
-        return view('admin.medicationGroupsMaps.index');
+        $medicationGroups = CpmMedicationGroup::all()->sortBy('name');
+
+        return view('admin.medicationGroupsMaps.index', compact('medicationGroups'));
     }
 
     /**
