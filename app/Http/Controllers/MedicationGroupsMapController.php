@@ -11,13 +11,14 @@ class MedicationGroupsMapController extends Controller
     /**
      * Display a listing of the resource.
      *
-     * @return \Illuminate\Http\Response
+     * @return \Illuminate\Http\ResponseX
      */
     public function index()
     {
         $medicationGroups = CpmMedicationGroup::all()->sortBy('name');
+        $maps = MedicationGroupsMap::with('cpmMedicationGroup')->get()->sortBy('keyword')->values();
 
-        return view('admin.medicationGroupsMaps.index', compact('medicationGroups'));
+        return view('admin.medicationGroupsMaps.index', compact('medicationGroups', 'maps'));
     }
 
     /**
