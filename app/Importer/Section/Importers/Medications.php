@@ -13,6 +13,7 @@ use App\Contracts\Importer\ImportedMedicalRecord\ImportedMedicalRecord;
 use App\Facades\StringManipulation;
 use App\Importer\Models\ImportedItems\MedicationImport;
 use App\Importer\Models\ItemLogs\MedicationLog;
+use App\MedicationGroupsMap;
 
 class Medications extends BaseImporter
 {
@@ -86,12 +87,15 @@ class Medications extends BaseImporter
         MedicationLog $itemLog,
         $consolidatedMed
     ) {
+        $medicationGroupId = $this->getMedicationGroup($consolidatedMed->cons_name);
+
         $this->imported[] = MedicationImport::updateOrCreate([
             'medical_record_type'        => $this->medicalRecordType,
             'medical_record_id'          => $this->medicalRecordId,
             'imported_medical_record_id' => $this->importedMedicalRecord->id,
             'vendor_id'                  => $itemLog->vendor_id,
             'ccd_medication_log_id'      => $itemLog->id,
+            'medication_group_id'        => $medicationGroupId,
             'name'                       => ucfirst($consolidatedMed->cons_name),
             'sig'                        => ucfirst(StringManipulation::stringDiff($consolidatedMed->cons_name,
                 $itemLog->cons_text)),
@@ -99,5 +103,25 @@ class Medications extends BaseImporter
             'code_system'                => $consolidatedMed->cons_code_system,
             'code_system_name'           => $consolidatedMed->cons_code_system_name,
         ]);
+    }
+
+    /**
+     * Get the medication group to activate.
+     *
+     * @param $name
+     *
+     * @return integer|null
+     */
+    public function getMedicationGroup($name)
+    {
+        $maps = MedicationGroupsMap::all();
+
+        foreach ($maps as $map) {
+            if (str_contains($name, $map->keyword)) {
+                return $map->medication_group_id;
+            }
+        }
+
+        return null;
     }
 }
