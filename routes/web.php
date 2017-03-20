@@ -18,9 +18,6 @@ if (app()->environment() != 'production') {
 
     });
 
-    Route::get('twilio/call', 'TwilioCallController@makeCall');
-
-
     Route::get('/rohan', function () {
 
 
@@ -1525,10 +1522,12 @@ Route::post('/twilio/token', [
     'as'   => 'twilio.token',
 ]);
 
-Route::post('/twilio/call', [
+Route::post('/twilio/call/make', [
     'uses' => 'TwilioCallController@newCall',
     'as'   => 'twilio.call',
 ]);
+
+Route::get('twilio/call', 'TwilioCallController@makeCall');
 
 
 
