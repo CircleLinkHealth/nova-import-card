@@ -16,7 +16,7 @@
                     <div class="panel-body">
                         <p><strong>Status</strong></p>
                         <div class="well well-sm" id="call-status">
-                           @{{ callStatus }}
+                            @{{ callStatus }}
                         </div>
 
                         <button class="btn btn-lg btn-success answer-button" disabled>Answer call</button>
@@ -61,6 +61,7 @@
 <script src="//static.twilio.com/libs/twiliojs/1.3/twilio.min.js"></script>
 <script src="{{ asset('js/browser-calls.js', true) }}"></script>
 <script src="https://unpkg.com/vue@2.1.3/dist/vue.js"></script>
+<script src="https://cdn.jsdelivr.net/vue.resource/1.2.0/vue-resource.min.js"></script>
 
 <script>
 
@@ -73,10 +74,28 @@
             toCall: ''
 
         },
+
+        mounted: function () {
+
+            this.$http.post("/twilio/token", {forPage: window.location.pathname}, function (data) {
+
+                // Set up the Twilio Client Device with the token
+
+            }).then(response => {
+
+                    this.callStatus = 'Ready';
+                    Twilio.Device.setup(response.body.token);
+                    console.log(response.body.token);
+
+                }
+            );
+
+        },
+
         methods: {
             call(){
                 callCustomer(this.toCall)
-            }
+            },
 
         }
 

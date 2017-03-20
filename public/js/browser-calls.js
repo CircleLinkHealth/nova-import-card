@@ -10,13 +10,7 @@ function updateCallStatus(status) {
     callStatus.text(status);
 }
 
-/* Get a Twilio Client token with an AJAX request */
-$(document).ready(function() {
-    $.post("/twilio/token", {forPage: window.location.pathname}, function(data) {
-        // Set up the Twilio Client Device with the token
-        Twilio.Device.setup(data.token);
-    });
-});
+
 
 /* Callback to let us know Twilio Client is ready */
 Twilio.Device.ready(function (device) {
