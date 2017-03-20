@@ -25,6 +25,7 @@ Twilio.Device.ready(function (device) {
 
 /* Report any errors to the call status display */
 Twilio.Device.error(function (error) {
+    console.log(error);
     updateCallStatus("ERROR: " + error.message);
 });
 
@@ -85,6 +86,7 @@ Twilio.Device.incoming(function(connection) {
 
 /* Call a customer from a support ticket */
 function callCustomer(phoneNumber) {
+    console.log(phoneNumber);
     updateCallStatus("Calling " + phoneNumber + "...");
 
     var params = {"phoneNumber": phoneNumber};

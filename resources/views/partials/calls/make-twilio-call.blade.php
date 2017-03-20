@@ -57,5 +57,5 @@
 
 <script src="//code.jquery.com/jquery-2.1.4.min.js"></script>
 <script src="//maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
-<script src="//static.twilio.com/libs/twiliojs/1.2/twilio.min.js"></script>
+<script src="//static.twilio.com/libs/twiliojs/1.3/twilio.min.js"></script>
 <script src="{{ asset('js/browser-calls.js', true) }}"></script>
