@@ -34,27 +34,10 @@ class TwilioCallController extends Controller
     public function makeCall()
     {
 
-        // put a phone number you've verified with Twilio to use as a caller ID number
-        $callerId = "+14694496305";
-
-        // put your default Twilio Client name here, for when a phone number isn't given
-        $number = "CircleLink Health";
-
-        // get the phone number from the page request parameters, if given
-        if (isset($_REQUEST['PhoneNumber'])) {
-            $number = htmlspecialchars($_REQUEST['PhoneNumber']);
-        }
-
-        // wrap the phone number or client name in the appropriate TwiML verb
-        // by checking if the number given has only digits and format symbols
-        $numberOrClient = "<Number>" . $number . "</Number>";
-
         return view('partials.calls.make-twilio-call',
             [
                 'token' => $this->token,
-                'callerId' => $callerId,
-                'numberOrClient' => $numberOrClient
-        ]);
+            ]);
 
     }
 
@@ -67,11 +50,7 @@ class TwilioCallController extends Controller
 
         $phoneNumberToDial = $request->input('phoneNumber');
 
-        if (isset($phoneNumberToDial)) {
-            $dial->number($phoneNumberToDial);
-        } else {
-            $dial->client('support_agent');
-        }
+        $dial->number($phoneNumberToDial);
 
         return $response;
     }
