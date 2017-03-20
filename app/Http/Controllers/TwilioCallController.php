@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use Barryvdh\Debugbar\Middleware\Debugbar;
 use Illuminate\Http\Request;
 use Twilio\Jwt\ClientToken;
 use Twilio\Twiml;
@@ -43,6 +44,8 @@ class TwilioCallController extends Controller
 
     public function newCall(Request $request)
     {
+        Debugbar::disable();
+
         $response = new Twiml();
         $callerIdNumber = $_ENV['TWILIO_FROM'];
 
