@@ -10,8 +10,6 @@ function updateCallStatus(status) {
     callStatus.text(status);
 }
 
-
-
 /* Callback to let us know Twilio Client is ready */
 Twilio.Device.ready(function (device) {
     updateCallStatus("Ready");
@@ -21,17 +19,6 @@ Twilio.Device.ready(function (device) {
 Twilio.Device.error(function (error) {
     console.log(error);
     updateCallStatus("ERROR: " + error.message);
-});
-
-/* Callback to determine if "support_agent" is available or not */
-Twilio.Device.presence(function(presenceEvent) {
-    if (presenceEvent.from === 'support_agent') {
-        if (presenceEvent.available) {
-            $("#support-unavailable").hide();
-        } else {
-            $("#support-unavailable").show();
-        }
-    }
 });
 
 /* Callback for when Twilio Client initiates a new connection */
@@ -78,24 +65,6 @@ Twilio.Device.incoming(function(connection) {
     answerButton.prop("disabled", false);
 });
 
-/* Call a customer from a support ticket */
-function callCustomer(phoneNumber) {
-    console.log(phoneNumber);
-    updateCallStatus("Calling " + phoneNumber + "...");
-
-    var params = {"phoneNumber": phoneNumber};
-    Twilio.Device.connect(params);
-}
-
-/* Call the support_agent from the home page */
-function callSupport() {
-    updateCallStatus("Calling support...");
-
-    // Our backend will assume that no params means a call to support_agent
-    Twilio.Device.connect();
-}
-
 /* End a call */
 function hangUp() {
-    Twilio.Device.disconnectAll();
 }
