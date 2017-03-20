@@ -21,15 +21,17 @@
 
                         <div class="form-group">
                             <label for="num">Phone Number:</label>
-                            <input v-model="toCall" id="num" type="text" class="form-control">
+                            <input v-model="toCall" id="num" type="text" class="form-control"
+                                   v-on:keyup="checkPhoneFormatValidity">
                             <p><strong>Status:</strong></p>
                             <div class="well well-sm" id="call-status">
                                 @{{ callStatus }}
                             </div>
+                            <small style="color: red">@{{ warning }}</small>
                         </div>
 
                         <div class="pull-right">
-                            <button v-on:click="call" type="button"
+                            <button v-on:click="call" type="button" v-bind:disabled="disableCall"
                                     class="btn btn-primary btn-lg call-customer-button">
                                 <span class="glyphicon glyphicon-earphone" aria-hidden="true"></span>
                                 Make Call
@@ -63,7 +65,9 @@
         data: {
             callStatus: 'Summoning Calling Gods...',
             toCall: '',
-            enableHangUp: true
+            enableHangUp: true,
+            disableCall: true,
+            warning: 'Enter Valid Phone Format (+1XXXXXXXXXX) to make call...'
         },
 
         mounted: function () {
@@ -83,6 +87,22 @@
         },
 
         methods: {
+
+            checkPhoneFormatValidity(){
+
+                let regex = /^\+?[1]\d{10}$/;
+
+                if (this.toCall.match(regex) != null) {
+                    this.disableCall = false;
+                    this.warning = ''
+                } else {
+                    this.disableCall = true;
+                    this.warning = 'Enter Valid Phone Format (+1XXXXXXXXXX) to make call...'
+
+                }
+
+            },
+
             call(){
 
                 this.callStatus = "Calling " + this.toCall + "...";
