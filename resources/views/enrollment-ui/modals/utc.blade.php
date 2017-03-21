@@ -41,6 +41,10 @@
                 <button id="submit" name="submit" type="submit"
                         class="modal-action waves-effect waves-light btn">Call Next Patient
                 </button>
+                <div v-if="onCall === true" style="text-align: center">
+                    <a v-on:click="hangUp" class="waves-effect waves-light btn" style="background: red"><i
+                                class="material-icons left">call_end</i>Hang Up</a>
+                </div>
             </div>
         </div>
     </form>
