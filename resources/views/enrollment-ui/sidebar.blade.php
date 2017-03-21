@@ -1,6 +1,6 @@
 <ul style="width:25%; margin-top:65px;" class="side-nav fixed">
     <div class="col s12" style="width: 100%; padding: 0px 10px">
-        <div class="card" style="background: rgb(24, 150, 24); font-size: 18px;">
+        <div class="card" style="background: rgb(24, 150, 24); font-size: 18px; padding: 14px">
             <div class="card-content white-text">
                 <h5>Today's stats:</h5>
                 <p>Total calls: {{$report->total_calls}}</p>
@@ -29,7 +29,4 @@
                  </span>
 
     <hr>
-
-    <!--<li class="sidebar-demo-list"><span id="billing_provider">Dr. John Doe</span></li>-->
-
 </ul>

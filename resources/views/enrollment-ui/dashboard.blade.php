@@ -38,13 +38,34 @@
         @include('enrollment-ui.sidebar')
 
         <div style="margin-left: 26%;">
-            <div style="margin-top: 10px; text-align: center">
-                <a class="waves-effect waves-light btn" href="#utc" style="background: #ecb70e">No Answer (Voicemail Script) /
-                    Requested Call Back</a>
-            </div>
 
             <div style="text-align: center">
-                <h5> Call @{{ name }} at: @{{ home_phone}} @if($enrollee->cell_phone != '') or @endif @{{ cell_phone }} @if($enrollee->other_phone != '') or @endif @{{ other_phone }}</h5>
+                <h5> @{{ name }} </h5>
+
+                <div v-if="onCall === true" style="text-align: center">
+                    <a v-on:click="hangUp" class="waves-effect waves-light btn" style="background: red"><i
+                                class="material-icons left">call_end</i>Hang Up</a>
+                </div>
+                <div v-else style="text-align: center">
+                    @if($enrollee->home_phone != '')
+                        <a v-on:click="call(home_phone)" class="waves-effect waves-light btn" style="background: #4caf50"><i
+                                    class="material-icons left">phone</i>Home</a>
+                    @endif
+                    @if($enrollee->cell_phone != '')
+                        <a v-on:click="call(cell_phone)" class="waves-effect waves-light btn" style="background: #4caf50"><i
+                                    class="material-icons left">phone</i>Cell</a>
+                    @endif
+                    @if($enrollee->other_phone != '')
+                        <a v-on:click="call(other_phone)" class="waves-effect waves-light btn" style="background: #4caf50"><i
+                                    class="material-icons left">phone</i>Other</a>
+                    @endif
+                </div>
+            </div>
+
+            <div style="margin-top: 10px; text-align: center">
+                <a class="waves-effect waves-light btn" href="#utc" style="background: #ecb70e">No Answer (Voicemail
+                    Script) /
+                    Requested Call Back</a>
             </div>
 
             <div style="padding: 0px 10px;">
@@ -64,6 +85,7 @@
                 @endif
             </div>
 
+            <div style="padding: 10px;"></div>
             <div style="text-align: center">
                 <a class="waves-effect waves-light btn" href="#consented">Patient Consented</a>
                 <a class="waves-effect waves-light btn" href="#rejected" style="background: red;">Patient
@@ -99,7 +121,7 @@
 
             data: {
 
-                name: '{{ $enrollee->first_name ?? ''. $enrollee->last_name }}',
+                name: '{{ $enrollee->first_name .' '. $enrollee->last_name }}',
                 lang: '{{ $enrollee->lang}}',
                 provider_name: '{{ $enrollee->providerFullName }}',
                 practice_name: '{{ $enrollee->practiceName }}',
@@ -116,6 +138,9 @@
                 phone_regex: /^\d{3}-\d{3}-\d{4}$/,
 
                 time_elapsed: 0,
+                onCall: false,
+                callStatus: 'Summoning Calling Gods...',
+                toCall: '',
 
                 total_time_in_system: '{!!$report->total_time_in_system !!}'
 
@@ -208,6 +233,19 @@
 
             mounted: function () {
 
+                this.$http.post("/twilio/token", {forPage: window.location.pathname}, function (data) {
+
+                    // Set up the Twilio Client Device with the token
+
+                }).then(response => {
+
+                    this.callStatus = 'Caller Ready';
+                    Materialize.toast(this.callStatus, 5000);
+                    Twilio.Device.setup(response.body.token);
+
+                    }
+                );
+
                 let self = this;
 
                 setInterval(function () {
@@ -238,6 +276,22 @@
                         return false;
                     }
 
+                },
+
+                call(phone){
+
+                    this.callStatus = "Calling " + phone + "...";
+                    Materialize.toast(this.callStatus, 3000);
+                    Twilio.Device.connect({"phoneNumber": phone});
+                    this.onCall = true;
+
+                },
+
+                hangUp(){
+                    Twilio.Device.disconnectAll();
+                    this.callStatus = "Ended Call";
+                    Materialize.toast(this.callStatus, 3000);
+                    this.onCall = false;
                 }
             },
         });
