@@ -16,9 +16,10 @@
 
         .sidebar-demo-list {
 
-            height: 27px;
-            font-size: 17px;
+            height: 24px;
+            font-size: 16px;
             padding-left: 15px;
+            line-height: 20px !important;
 
         }
 
@@ -46,7 +47,8 @@
                 <h5> Call @{{ name }} at: @{{ home_phone}} @if($enrollee->cell_phone != '') or @endif @{{ cell_phone }} @if($enrollee->other_phone != '') or @endif @{{ other_phone }}</h5>
             </div>
 
-            <div>@if($enrollee->has_copay)
+            <div style="padding: 0px 10px;">
+                @if($enrollee->has_copay)
                     @if($enrollee->lang == 'ES')
                         @include('enrollment-ui.script.es-has-co-pay')
                     @else
@@ -57,7 +59,7 @@
                     @if($enrollee->lang == 'ES')
                         @include('enrollment-ui.script.es-no-co-pay')
                     @else
-                        @include('enrollment-ui.script.en-has-co-pay')
+                        @include('enrollment-ui.script.en-no-co-pay')
                     @endif
                 @endif
             </div>
@@ -84,6 +86,8 @@
 
     <script src="https://unpkg.com/vue@2.1.3/dist/vue.js"></script>
     <script src="https://cdn.jsdelivr.net/vue.resource/1.2.0/vue-resource.min.js"></script>
+    <script src="//static.twilio.com/libs/twiliojs/1.3/twilio.min.js"></script>
+    <script src="{{ asset('js/browser-calls.js', true) }}"></script>
 
     <script>
 
