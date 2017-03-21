@@ -1761,22 +1761,6 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
         return true;
     }
 
-    public function role($blogId = false)
-    {
-        if (!$blogId) {
-            $blogId = $this->primaryProgramId();
-        }
-        $role = UserMeta::select('meta_value')->where('user_id', $this->id)->where('meta_key',
-            'wp_' . $blogId . '_capabilities')->first();
-        if (!$role) {
-            return false;
-        } else {
-            $data = unserialize($role['meta_value']);
-
-            return key($data);
-        }
-    }
-
     public function primaryPractice()
     {
         return $this->belongsTo(Practice::class, 'program_id', 'id');
@@ -2042,12 +2026,12 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
         }
 
         if (is_object($practice)) {
-            $practice = $practice->id;
+            return $this->practices()
+                ->where('program_id', '=', $practice->id)
+                ->first();
         }
 
-        return $this->practices()
-            ->where('program_id', '=', $practice)
-            ->first();
+        return null;
     }
 
     public function practices()
@@ -2242,11 +2226,11 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
      *
      * @return bool
      */
-    public function attachRole($roleId)
+    public function attachGlobalRole($roleId)
     {
         if (is_array($roleId)) {
             foreach ($roleId as $key => $role) {
-                $this->attachRole($role);
+                $this->attachGlobalRole($role);
                 unset($key);
             }
         }

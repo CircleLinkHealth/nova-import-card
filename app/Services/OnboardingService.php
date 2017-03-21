@@ -405,7 +405,7 @@ class OnboardingService
                             'display_name' => "{$newUser['first_name']} {$newUser['last_name']}",
                         ]);
 
-                    $user->attachRole($newUser['role_id']);
+                    $user->attachGlobalRole($newUser['role_id']);
 
                     $created[] = $i;
                 }
