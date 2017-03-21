@@ -19,9 +19,13 @@ class ProblemsToMonitor extends BaseStorageStrategy implements StorageStrategy
         foreach ($cpmProblems as $cpmProblem) {
             $instructions = $cpmProblem->cpmInstructions()->get();
 
-            $this->user->cpmProblems()->attach($cpmProblem->id, [
-                'cpm_instruction_id' => $instructions->isEmpty() ?: $instructions[0]->id,
-            ]);
+            $args = [];
+
+            if (!$instructions->isEmpty()) {
+                $args['cpm_instruction_id'] = $instructions[0]->id;
+            }
+
+            $this->user->cpmProblems()->attach($cpmProblem->id, $args);
 
             $biometricsToActivate = $cpmProblem
                 ->cpmBiometricsToBeActivated()

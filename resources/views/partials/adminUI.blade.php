@@ -340,7 +340,9 @@
                                     Settings<span class="caret"></span>
                                 </a>
                                 <ul class="dropdown-menu" role="menu">
-                                    <li><a href="{{ URL::route('appConfig.index', array()) }}">App Config</a></li>
+                                    <li><a href="{{ URL::route('appConfig.index', []) }}">App Config</a></li>
+                                    <li><a href="{{ URL::route('medication-groups-maps.index', []) }}">Medication Groups
+                                            Maps</a></li>
                                 </ul>
                             </li>
                         @endif
