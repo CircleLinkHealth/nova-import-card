@@ -306,12 +306,15 @@ class CarePlanHelper
                 'code_system_name'      => $medication->code_system_name,
                 'patient_id'            => $this->user->id,
             ]);
+
+            $medicationGroups[] = $medication->medication_group_id;
         }
 
         $misc = CpmMisc::whereName(CpmMisc::MEDICATION_LIST)
             ->first();
 
         $this->user->cpmMiscs()->attach($misc->id);
+        $this->user->cpmMedicationGroups()->sync(array_filter($medicationGroups));
 
         return $this;
     }

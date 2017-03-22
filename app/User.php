@@ -1761,22 +1761,6 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
         return true;
     }
 
-    public function role($blogId = false)
-    {
-        if (!$blogId) {
-            $blogId = $this->primaryProgramId();
-        }
-        $role = UserMeta::select('meta_value')->where('user_id', $this->id)->where('meta_key',
-            'wp_' . $blogId . '_capabilities')->first();
-        if (!$role) {
-            return false;
-        } else {
-            $data = unserialize($role['meta_value']);
-
-            return key($data);
-        }
-    }
-
     public function primaryPractice()
     {
         return $this->belongsTo(Practice::class, 'program_id', 'id');
@@ -2018,14 +2002,11 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
             //check if this is a mysql exception for unique key constraint
             if ($e instanceof \Illuminate\Database\QueryException) {
                 $errorCode = $e->errorInfo[1];
-                if ($errorCode == 1062) {
-                    //do nothing
-                    //we don't actually want to terminate the program if we detect duplicates
-                    //we just don't wanna add the row again
-                    \Log::alert($e);
-                }
+                \Log::alert($e);
             }
         }
+
+        return true;
     }
 
     /**
@@ -2044,12 +2025,22 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
                 ->first();
         }
 
+        $practiceId = null;
+
         if (is_object($practice)) {
-            $practice = $practice->id;
+            $practiceId = $practice->id;
+        }
+
+        if (is_int($practice)) {
+            $practiceId = $practice;
+        }
+
+        if (!$practiceId) {
+            return null;
         }
 
         return $this->practices()
-            ->where('program_id', '=', $practice)
+            ->where('program_id', '=', $practiceId)
             ->first();
     }
 
@@ -2245,11 +2236,11 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
      *
      * @return bool
      */
-    public function attachRole($roleId)
+    public function attachGlobalRole($roleId)
     {
         if (is_array($roleId)) {
             foreach ($roleId as $key => $role) {
-                $this->attachRole($role);
+                $this->attachGlobalRole($role);
                 unset($key);
             }
         }
@@ -2295,5 +2286,23 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
         return $this->morphToMany(User::class, 'contactable', 'contacts')
             ->withPivot('name')
             ->withTimestamps();
+    }
+
+    /**
+     * Get the User's Primary Or Global Role
+     *
+     * @return Role|null
+     */
+    public function role()
+    {
+        if ($this->practice($this->primaryPractice)) {
+            $primaryPractice = $this->practice($this->primaryPractice);
+
+            if ($primaryPractice->pivot->role_id) {
+                return Role::find($primaryPractice->pivot->role_id);
+            }
+        }
+
+        return $this->roles->first();
     }
 }

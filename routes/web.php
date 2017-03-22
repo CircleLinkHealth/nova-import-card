@@ -475,6 +475,8 @@ Route::group(['middleware' => 'auth'], function () {
         'prefix'     => 'admin',
     ], function () {
 
+        Route::resource('medication-groups-maps', 'MedicationGroupsMapController');
+
         Route::post('get-athena-ccdas', [
             'uses' => 'CcdApi\Athena\AthenaApiController@getCcdas',
             'as'   => 'get.athena.ccdas',
