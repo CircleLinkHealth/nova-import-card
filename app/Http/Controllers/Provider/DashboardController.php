@@ -67,15 +67,14 @@ class DashboardController extends Controller
     {
         $users = $this->onboardingService->getExistingStaff($this->primaryPractice);
 
-        $practiceSettings = Settings::firstOrCreate([
-            'settingsable_id'   => $this->primaryPractice->id,
-            'settingsable_type' => Practice::class,
-        ]);
+        if ($this->primaryPractice->settings->isEmpty()) {
+            $practiceSettings = $this->primaryPractice->syncSettings(new Settings());
+        }
 
         return view('provider.practice.create', array_merge([
             'practiceSlug'     => $this->practiceSlug,
             'staff'            => $users['existingUsers'],
-            'practiceSettings' => $practiceSettings,
+            'practiceSettings' => $practiceSettings ?? $this->primaryPractice->settings->first(),
         ], $this->returnWithAll));
     }
 
