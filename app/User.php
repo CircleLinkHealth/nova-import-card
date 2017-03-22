@@ -2025,13 +2025,23 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
                 ->first();
         }
 
+        $practiceId = null;
+
         if (is_object($practice)) {
-            return $this->practices()
-                ->where('program_id', '=', $practice->id)
-                ->first();
+            $practiceId = $practice->id;
         }
 
-        return null;
+        if (is_int($practice)) {
+            $practiceId = $practice;
+        }
+
+        if (!$practiceId) {
+            return null;
+        }
+
+        return $this->practices()
+            ->where('program_id', '=', $practiceId)
+            ->first();
     }
 
     public function practices()
@@ -2276,5 +2286,23 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
         return $this->morphToMany(User::class, 'contactable', 'contacts')
             ->withPivot('name')
             ->withTimestamps();
+    }
+
+    /**
+     * Get the User's Primary Or Global Role
+     *
+     * @return Role|null
+     */
+    public function role()
+    {
+        if ($this->practice($this->primaryPractice)) {
+            $primaryPractice = $this->practice($this->primaryPractice);
+
+            if ($primaryPractice->pivot->role_id) {
+                return Role::find($primaryPractice->pivot->role_id);
+            }
+        }
+
+        return $this->roles->first();
     }
 }
