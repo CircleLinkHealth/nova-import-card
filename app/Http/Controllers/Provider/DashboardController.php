@@ -40,6 +40,11 @@ class DashboardController extends Controller
         $this->practiceSlug = $request->route('practiceSlug');
 
         $this->primaryPractice = Practice::whereName($this->practiceSlug)->first();
+
+        //return these with all requests
+        $this->returnWithAll = [
+            'practice' => $this->primaryPractice,
+        ];
     }
 
     public function getCreateLocation()
@@ -52,25 +57,26 @@ class DashboardController extends Controller
 
         $this->onboardingService->getExistingLocations($primaryPractice);
 
-        return view('provider.location.create', [
+        return view('provider.location.create', array_merge([
             'leadId'       => auth()->user()->id,
             'practiceSlug' => $this->practiceSlug,
-        ]);
+        ], $this->returnWithAll));
     }
 
     public function getCreatePractice()
     {
         $users = $this->onboardingService->getExistingStaff($this->primaryPractice);
 
-        if (!$this->primaryPractice) {
-            $this->primaryPractice->settings()->create();
-        }
-
-        return view('provider.practice.create', [
-            'practiceSlug' => $this->practiceSlug,
-            'practice'     => $this->primaryPractice,
-            'staff'        => $users['existingUsers'],
+        $practiceSettings = Settings::firstOrCreate([
+            'settingsable_id'   => $this->primaryPractice->id,
+            'settingsable_type' => Practice::class,
         ]);
+
+        return view('provider.practice.create', array_merge([
+            'practiceSlug'     => $this->practiceSlug,
+            'staff'            => $users['existingUsers'],
+            'practiceSettings' => $practiceSettings,
+        ], $this->returnWithAll));
     }
 
     public function getCreateStaff()
@@ -85,15 +91,14 @@ class DashboardController extends Controller
 
         $practiceSlug = $this->practiceSlug;
 
-        return view('provider.user.create-staff', compact('invite', 'practiceSlug'));
+        return view('provider.user.create-staff', array_merge(compact('invite', 'practiceSlug'), $this->returnWithAll));
     }
 
     public function getIndex()
     {
-        return view('provider.layouts.dashboard', [
+        return view('provider.layouts.dashboard', array_merge([
             'practiceSlug' => $this->practiceSlug,
-            'practice'     => $this->primaryPractice,
-        ]);
+        ], $this->returnWithAll));
     }
 
     public function postStoreInvite(Request $request)
