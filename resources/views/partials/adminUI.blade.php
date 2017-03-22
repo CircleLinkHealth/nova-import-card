@@ -161,10 +161,13 @@
                         </a>
                         <ul class="dropdown-menu" role="menu">
                             <li role="presentation" class="dropdown">
-                                <a href="{{ URL::route('patient.enroll.makeReport', array()) }}">Enrollment List</a>
+                                <a href="{{ URL::route('patient.enroll.makeReport', array()) }}">Enrollee List</a>
                             </li>
                             <li role="presentation" class="dropdown">
                                 <a href="{{ URL::route('enrollment.ambassador.stats', array()) }}">Care Ambassador KPIs</a>
+                            </li>
+                            <li role="presentation" class="dropdown">
+                                <a href="{{ URL::route('enrollment.practice.stats', array()) }}">Practice KPIs</a>
                             </li>
                         </ul>
                     </li>

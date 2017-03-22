@@ -33,7 +33,6 @@ class Enrollee extends Model
      * consented: client consented
      * ccd_obtained: medical records were imported
      * ccd_qaed: QAed, good to go for enrollment
-     *
      */
 
     protected $table = 'enrollees';
@@ -45,6 +44,7 @@ class Enrollee extends Model
         'provider_id',
         'practice_id',
         'care_ambassador_id',
+        'total_time_spent',
 
         // patient_id in EHR Software
         'mrn',
@@ -58,6 +58,8 @@ class Enrollee extends Model
         'state',
         'zip',
         'invite_code',
+
+        'lang', // 'ES' (default) or 'EN'
 
         'primary_phone',
         'cell_phone',
@@ -74,6 +76,7 @@ class Enrollee extends Model
         'last_call_outcome',
         'primary_insurance',
         'secondary_insurance',
+        'has_copay',
         'email',
         'last_encounter',
         'referring_provider_name',
@@ -99,7 +102,7 @@ class Enrollee extends Model
     public function careAmbassador()
     {
 
-        return $this->belongsTo(User::class, 'care_ambassador_id');
+        return $this->belongsTo(CareAmbassador::class, 'care_ambassador_id');
 
     }
 

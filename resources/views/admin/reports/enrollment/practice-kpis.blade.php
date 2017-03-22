@@ -14,7 +14,7 @@
                 <div class="row">
                     <div class="col-md-12">
                         <div class="panel panel-default">
-                            <div class="panel-heading">Ambassador KPIs</div>
+                            <div class="panel-heading">Practice Enrollment KPIs</div>
                             <div class="panel-body">
 
                                 <div class="col-md-12">
@@ -33,38 +33,38 @@
 
                                 <hr>
 
-                                <table class="table table-striped" id="ambassador_kpis">
+                                <table class="table table-striped" id="practice_kpis">
                                     <thead>
                                     <tr>
                                         <th>
-                                            Ambassador Name
+                                            Practice Name
                                         </th>
                                         <th>
-                                            Total Hours
+                                            #Unique Patients Called
                                         </th>
                                         <th>
-                                            #Enrolled
+                                            #Consented
                                         </th>
                                         <th>
-                                            #Called
+                                            #Unable to Contact
                                         </th>
                                         <th>
-                                            Total Time for Range
+                                            #Rejected
                                         </th>
                                         <th>
-                                            Calls/Hour
+                                            Labor Hours
                                         </th>
                                         <th>
-                                            Mins/Enrollment
+                                            Conversion %
                                         </th>
                                         <th>
-                                            Conversion
+                                            Labor Rate
                                         </th>
                                         <th>
-                                            Hourly Rate
+                                            Total Cost
                                         </th>
                                         <th>
-                                            Cost per Enrollment
+                                            Acq. Cost
                                         </th>
                                     </tr>
                                     </thead>
@@ -88,12 +88,12 @@
                     // whatever you need to be done on change of the input field
                 });
 
-                $('#ambassador_kpis').DataTable({
+                $('#practice_kpis').DataTable({
                     processing: true,
                     serverSide: false,
                     "scrollX": true,
                     ajax: {
-                        "url": '{!! url('/admin/enrollment/ambassador/kpis/data') !!}',
+                        "url": '{!! url('/admin/enrollment/practice/kpis/data') !!}',
                         "type": "GET",
                         "data": function (d) {
                             d.start_date = $('#start_date').val();
@@ -103,15 +103,15 @@
                     columns: [
 
                         {data: 'name', name: 'name'},
-                        {data: 'total_hours', name: 'total_hours'},
-                        {data: 'no_enrolled', name: 'no_enrolled'},
-                        {data: 'total_calls', name: 'total_calls'},
-                        {data: 'total_hours', name: 'total_hours'},
-                        {data: 'calls_per_hour', name: 'calls_per_hour'},
-                        {data: 'mins_per_enrollment', name: 'mins_per_enrollment'},
+                        {data: 'unique_patients_called', name: 'unique_patients_called'},
+                        {data: 'consented', name: 'consented'},
+                        {data: 'utc', name: 'utc'},
+                        {data: 'rejected', name: 'rejected'},
+                        {data: 'labor_hours', name: 'labor_hours'},
                         {data: 'conversion', name: 'conversion'},
-                        {data: 'hourly_rate', name: 'hourly_rate'},
-                        {data: 'per_cost', name: 'per_cost'},
+                        {data: 'labor_rate', name: 'labor_rate'},
+                        {data: 'total_cost', name: 'total_cost'},
+                        {data: 'acq_cost', name: 'acq_cost'}
 
                     ],
                     "aaSorting": [2, 'desc'],
@@ -122,22 +122,21 @@
 
             $('#start_date').on('change', function () {
                 console.log($('#start_date').val());
-                $('#ambassador_kpis').DataTable().ajax.reload();
+                $('#practice_kpis').DataTable().ajax.reload();
             });
 
             $('#end_date').on('change', function () {
                 console.log($('#end_date').val());
-                $('#ambassador_kpis').DataTable().ajax.reload();
+                $('#practice_kpis').DataTable().ajax.reload();
             });
 
             $.fn.dataTable.ext.errMode = 'none';
 
-            $('#ambassador_kpis')
+            $('#practice_kpis')
                 .on('error.dt', function (e, settings, techNote, message) {
                     console.log('An error has been reported by DataTables: ', message);
                 })
                 .DataTable();
-
 
         </script>
         <script src="//cdn.datatables.net/1.10.7/js/jquery.dataTables.min.js"></script>
