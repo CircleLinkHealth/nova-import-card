@@ -1,17 +1,16 @@
-<?php namespace App\Importer\Models\ImportedItems;
+<?php
 
-use App\Importer\Models\ItemLogs\MedicationLog;
+namespace App;
+
 use App\Models\CPM\CpmMedicationGroup;
 use Illuminate\Database\Eloquent\Model;
 
-class MedicationImport extends Model {
-
-    protected $guarded = [];
-
-    public function ccdLog()
-    {
-        return $this->belongsTo(MedicationLog::class);
-    }
+class MedicationGroupsMap extends Model
+{
+    protected $fillable = [
+        'keyword',
+        'medication_group_id',
+    ];
 
     /**
      * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
