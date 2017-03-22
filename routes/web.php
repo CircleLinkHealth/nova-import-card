@@ -12,11 +12,7 @@ use Illuminate\Support\Facades\DB;
 
 if (app()->environment() != 'production') {
 
-    Route::get('/sms/test', function () {
-
-        (new App\Algorithms\Enrollment\EnrollmentSMSSender())->exec();
-
-    });
+    Route::get('/sms/test', 'TwilioCallController@sendTestSMS');
 
     Route::get('/rohan', function () {
 
