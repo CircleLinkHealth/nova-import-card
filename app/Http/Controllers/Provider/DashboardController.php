@@ -62,6 +62,10 @@ class DashboardController extends Controller
     {
         $users = $this->onboardingService->getExistingStaff($this->primaryPractice);
 
+        if (!$this->primaryPractice) {
+            $this->primaryPractice->settings()->create();
+        }
+
         return view('provider.practice.create', [
             'practiceSlug' => $this->practiceSlug,
             'practice'     => $this->primaryPractice,
