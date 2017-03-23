@@ -65,7 +65,7 @@ class TwilioCallController extends Controller
 
         $dial->number($phoneNumberToDial);
 
-        return $request->input('phoneNumber');
+        return $response;
     }
 
     public function sendTestSMS(){
