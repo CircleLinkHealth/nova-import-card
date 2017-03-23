@@ -48,15 +48,15 @@
                 </div>
                 <div v-else style="text-align: center">
                     @if($enrollee->home_phone != '')
-                        <a v-on:click="call(home_phone)" class="waves-effect waves-light btn" style="background: #4caf50"><i
+                        <a v-on:click="call(home_phone, 'Home')" class="waves-effect waves-light btn" style="background: #4caf50"><i
                                     class="material-icons left">phone</i>Home</a>
                     @endif
                     @if($enrollee->cell_phone != '')
-                        <a v-on:click="call(cell_phone)" class="waves-effect waves-light btn" style="background: #4caf50"><i
+                        <a v-on:click="call(cell_phone, 'Cell')" class="waves-effect waves-light btn" style="background: #4caf50"><i
                                     class="material-icons left">phone</i>Cell</a>
                     @endif
                     @if($enrollee->other_phone != '')
-                        <a v-on:click="call(other_phone)" class="waves-effect waves-light btn" style="background: #4caf50"><i
+                        <a v-on:click="call(other_phone, 'Other')" class="waves-effect waves-light btn" style="background: #4caf50"><i
                                     class="material-icons left">phone</i>Other</a>
                     @endif
                 </div>
@@ -68,7 +68,7 @@
                     Requested Call Back</a>
             </div>
 
-            <div style="padding: 0px 10px;">
+            <div style="padding: 0px 10px; font-size: 16px;">
                 @if($enrollee->has_copay)
                     @if($enrollee->lang == 'ES')
                         @include('enrollment-ui.script.es-has-co-pay')
@@ -282,9 +282,9 @@
 
                 },
 
-                call(phone){
+                call(phone, type){
 
-                    this.callStatus = "Calling " + phone + "...";
+                    this.callStatus = "Calling " + type + "...";
                     Materialize.toast(this.callStatus, 3000);
                     Twilio.Device.connect({"phoneNumber": phone});
                     this.onCall = true;
