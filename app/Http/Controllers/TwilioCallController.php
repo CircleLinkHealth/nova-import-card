@@ -6,6 +6,7 @@ use App\Enrollee;
 use App\User;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 use Twilio\Jwt\ClientToken;
 use Twilio\Twiml;
 use Twilio\Rest\Client;
@@ -48,7 +49,7 @@ class TwilioCallController extends Controller
     {
 
         $response = new Twiml();
-//        $callerIdNumber = $_ENV['TWILIO_FROM'];
+
         $callerIdNumber = "+17046664445";
 
         $dial = $response->dial(['callerId' => $callerIdNumber]);
@@ -57,12 +58,13 @@ class TwilioCallController extends Controller
 
         $dial->number($phoneNumberToDial);
 
-        return $response;
+        Log::info($request);
+
+        return $request->input('phoneNumber');
     }
 
     public function sendTestSMS(){
 
-        // Step 3: instantiate a new Twilio Rest Client
         $client = new Client($_ENV['TWILIO_SID'], $_ENV['TWILIO_TOKEN']);
 
         $smsQueue = Enrollee::toSMS()->get();

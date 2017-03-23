@@ -240,8 +240,11 @@
                     }
                     , function (data) {
 
+                    console.log(data.body)
 
                 }).then(response => {
+
+                    console.log(response.body)
 
                     this.callStatus = 'Caller Ready';
                     Materialize.toast(this.callStatus, 5000);
@@ -252,6 +255,7 @@
 
                 let self = this;
 
+                //timer
                 setInterval(function () {
                     self.$data.total_time_in_system++;
                     self.$data.time_elapsed++;
