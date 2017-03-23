@@ -233,9 +233,13 @@
 
             mounted: function () {
 
-                this.$http.post("/twilio/token", {forPage: window.location.pathname}, function (data) {
+                this.$http.post("/twilio/token",
+                    {
+                        forPage: window.location.pathname,
+                        practice: '{{ $enrollee->practice_id }}'
+                    }
+                    , function (data) {
 
-                    // Set up the Twilio Client Device with the token
 
                 }).then(response => {
 
