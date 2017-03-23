@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Enrollee;
+use App\Practice;
 use App\User;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
@@ -50,15 +51,19 @@ class TwilioCallController extends Controller
 
         $response = new Twiml();
 
-        $callerIdNumber = "+17046664445";
+        $phoneNumberToDial = $request->input('phoneNumber');
+
+        $practiceId = Enrollee::where(function ($q) use ($phoneNumberToDial){
+            $q->where('cell_phone', $phoneNumberToDial)
+                ->orWhere('home_phone', $phoneNumberToDial)
+                ->orWhere('other_phone', $phoneNumberToDial);
+        })->first()['practice_id'];
+
+        $callerIdNumber = Practice::find($practiceId)->outgoing_phone_number;
 
         $dial = $response->dial(['callerId' => $callerIdNumber]);
 
-        $phoneNumberToDial = $request->input('phoneNumber');
-
         $dial->number($phoneNumberToDial);
-
-        Log::info($request);
 
         return $request->input('phoneNumber');
     }
