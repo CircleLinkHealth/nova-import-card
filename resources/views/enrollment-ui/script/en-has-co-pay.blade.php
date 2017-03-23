@@ -10,9 +10,7 @@
         would like you
         to enroll. May I tell you a little about this program?</p>
 
-    <p><i>[Patients interested usually discuss their conditions here.. be sure to listen. If patient asks where calling
-            from,
-            use the practice name in goog sheet, e.g., CareMedica or Ferguson]</i></p>
+    <p><i>[Patients interested usually discuss their conditions here.. be sure to listen. If patient asks where calling from, use the practice name in left bar, e.g., CareMedica or Ferguson]</i></p>
 
     <p>This is a new preventative care program from Medicare to help you and your doctor take better care of your
         health.</p>
