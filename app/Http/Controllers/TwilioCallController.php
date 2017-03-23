@@ -61,6 +61,8 @@ class TwilioCallController extends Controller
 
         $callerIdNumber = Practice::find($practiceId)->outgoing_phone_number;
 
+        Log::info([$practiceId, $callerIdNumber]);
+
         $dial = $response->dial(['callerId' => $callerIdNumber]);
 
         $dial->number($phoneNumberToDial);
