@@ -255,7 +255,7 @@
 
     </div>
 
-    <footer class="page-footer" style="padding-top: 0;">
+    <footer class="page-footer teal" style="padding-top: 0;">
         {{--<div class="container">--}}
         {{--<div class="row">--}}
         {{--<div class="col l6 s12">--}}
