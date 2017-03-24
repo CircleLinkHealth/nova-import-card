@@ -106,8 +106,7 @@
                     [number of practice]. Por favor, guárdelo para que acepte la llamada cuando suene el teléfono.
                     ¡Me alegro de haberme conectado! ¡Que tenga un muy buen día!
                 @else
-                    A Registered Nurse will call you shortly from the same # I’m calling from, [number of
-                    practice]. Please save it so you accept the call when she/he rings. So glad we
+                    A Registered Nurse will call you shortly from the same # I’m calling from, @{{practice_phone}}. Please save it so you accept the call when she/he rings. So glad we
                     connected! Have a great day!
 
                 @endif
