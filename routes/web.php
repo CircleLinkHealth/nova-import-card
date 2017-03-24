@@ -8,11 +8,7 @@
 use Illuminate\Support\Facades\DB;
 
 //Patient Landing Pages
-Route::get('patient-sign-up-for-chronic-care-management/', function () {
-    return view('patient.signup', [
-        'version' => $version ?? null,
-    ]);
-});
+Route::resource('patient-sign-up-for-chronic-care-management', 'PatientSignupController');
 
 if (app()->environment() != 'production') {
 
