@@ -5,6 +5,10 @@
 //$faxTest = (new PhaxioService('production'))->send('+12124910114', storage_path('pdfs/notes/2017-02-07-xsKTIK4106WdXiMNu8iMla4FPJSOcosNBXXMkAsX.pdf'));
 //dd($faxTest);
 
+//Patient Landing Pages
+Route::get('patient-sign-up-for-chronic-care-management', function () {
+    return view('patient.signup');
+});
 
 if (app()->environment() != 'production') {
 
