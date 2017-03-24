@@ -23,6 +23,11 @@
                 <img src="{{asset('/img/clh_logo.svg')}}" height="64" class="brand-logo">
             </li>
             <li>
+                <div class="col s12" style="background-color: rgba(173, 216, 230, 0.42);color: #74b0d7;">
+                    <p class="center-align">{{$practice->display_name}}</p>
+                </div>
+            </li>
+            <li>
                 <div class="divider"></div>
             </li>
             <li>
