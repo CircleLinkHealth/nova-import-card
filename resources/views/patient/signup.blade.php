@@ -373,7 +373,7 @@
                 <div class="center" style="margin-top: 6%;">
                     <h5 class="blue-grey-text text-lighten-5 center">Get remote health coaching for $49.99/ month..</h5>
                     <br>
-                    <a class="waves-effect waves-light btn-large scroll-to-form green accent-3">Sign me up</a>
+                    <a class="waves-effect waves-light btn-large scroll-to-form teal accent-3">Sign me up</a>
                 </div>
             </div>
 
