@@ -246,7 +246,7 @@
                     <div class="row">
                         <div class="input-field col s12 center">
                             <input type="submit" class="waves-effect waves-light btn-large blue center"
-                                   value="Reach out to me"/>
+                                   value="Schedule a call"/>
                         </div>
                     </div>
                 </div>
