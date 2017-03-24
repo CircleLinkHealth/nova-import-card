@@ -279,7 +279,7 @@
                     <input v-if="newUser.id" type="hidden" name="users[@{{index}}][id]"
                            value="@{{ newUser.id }}">
 
-                    <div class="row" v-if="newUsers.length > 1">
+                    <div class="row" v-if="newUsers.length > 0">
                         <a class="waves-effect waves-teal btn-flat red lighten-3 white-text"
                            v-on:click="deleteUser(index)"><i
                                     class="material-icons left">delete</i>Trash @{{ newUser.first_name }} @{{ newUser.last_name }}
