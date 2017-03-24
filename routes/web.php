@@ -6,8 +6,10 @@
 //dd($faxTest);
 
 //Patient Landing Pages
-Route::get('patient-sign-up-for-chronic-care-management', function () {
-    return view('patient.signup');
+Route::get('patient-sign-up-for-chronic-care-management/{version?}', function ($version) {
+    return view('patient.signup', [
+        'version' => $version ?? null,
+    ]);
 });
 
 if (app()->environment() != 'production') {
