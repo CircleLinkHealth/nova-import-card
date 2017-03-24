@@ -338,6 +338,12 @@
             padding-bottom: 1rem;
         }
     </style>
+
+    <meta property="og:image" content="{{asset('/img/landing-pages/coordination-with-family.png')}}"/>
+    <meta property="og:image:secure_url" content="{{asset('/img/landing-pages/coordination-with-family.png')}}"/>
+    <meta property="og:image:type" content="image/jpeg"/>
+    <meta property="og:image:width" content="400"/>
+    <meta property="og:image:height" content="300"/>
 @endsection
 
 @section('content')
