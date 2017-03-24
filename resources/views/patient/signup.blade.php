@@ -370,9 +370,10 @@
                 <h5 class="blue-grey-text text-lighten-5 center">Put your mind at ease with our fully licensed
                     registered nurse care coaches just a phone call away.</h5>
 
-
                 <div class="center" style="margin-top: 6%;">
-                    <a class="waves-effect waves-light btn-large scroll-to-form light-blue accent-1">Sign me up</a>
+                    <h5 class="blue-grey-text text-lighten-5 center">Get remote health coaching for $49.99/ month..</h5>
+                    <br>
+                    <a class="waves-effect waves-light btn-large scroll-to-form green accent-3">Sign me up</a>
                 </div>
             </div>
 
