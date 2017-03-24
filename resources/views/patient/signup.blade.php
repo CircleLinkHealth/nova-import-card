@@ -16,6 +16,24 @@
             margin: 14px 14px 10px 40px;;
             max-height: 100px;
         }
+
+        .promo-caption {
+            font-size: 1.6rem;
+        }
+
+        .promo-paragraph {
+            font-size: 1.4rem;
+        }
+
+        .promo {
+            padding-top: 3rem;
+            padding-bottom: 1rem;
+        }
+
+        .section {
+            padding-top: 3rem;
+            padding-bottom: 1rem;
+        }
     </style>
 @endsection
 
@@ -57,77 +75,75 @@
 
         </div>
 
-        @if($version == 1)
-            <div class="section">
-                @elseif($version == 2)
-                    <div class="container">
-                        @endif
-
-                        <div class="row">
-                            <div class="col s4">
-                                <div class="center promo promo-picture">
-                                    <img class="col s12" src="{{asset('/img/landing-pages/registered-nurse.png')}}"
-                                         alt="">
-                                    <p class="promo-caption">Fully Registered Nurse Care Coach</p>
-                                    <p class="light center">Our trained nurses guide you or a loved one to wellness
-                                        while taking the
-                                        stress off managing chronic illness.</p>
-                                </div>
-                            </div>
-                            <div class="col s4">
-                                <div class="center promo promo-picture">
-                                    <img class="col s12" src="{{asset('/img/landing-pages/careplan.png')}}" alt="">
-                                    <p class="promo-caption">Care Plan and Unlimited Educational Info</p>
-                                    <p class="light center">Our nurses formulate a care plan based on doctor’s orders
-                                        and we
-                                        provide
-                                        unlimited access to wellness and diet content/education materials.</p>
-                                </div>
-                            </div>
-                            <div class="col s4">
-                                <div class="center promo promo-picture">
-                                    <img class="col s12"
-                                         src="{{asset('/img/landing-pages/coordination-with-family.png')}}"
-                                         alt="">
-                                    <p class="promo-caption">Coordination with Family and Doctors</p>
-                                    <p class="light center">Family members can stay at ease with real-time updates from
-                                        our
-                                        system
-                                        as our nurses track progress. Your participating doctors also stay updated.</p>
-                                </div>
-                            </div>
-                        </div>
+        <div class="section">
+            <div class="row">
+                <div class="col s4">
+                    <div class="center promo promo-picture">
+                        <img class="col s12" src="{{asset('/img/landing-pages/registered-nurse.png')}}"
+                             alt="">
+                        <p class="col s12 promo-caption">Fully Registered Nurse Care Coach</p>
+                        <p class="col s12 light center promo-paragraph">Our trained nurses guide you or a loved one to
+                            wellness
+                            while taking the
+                            stress off managing chronic illness.</p>
                     </div>
-
+                </div>
+                <div class="col s4">
+                    <div class="center promo promo-picture">
+                        <img class="col s12" src="{{asset('/img/landing-pages/careplan.png')}}" alt="">
+                        <p class="col s12 promo-caption">Care Plan and Unlimited Educational Info</p>
+                        <p class="col s12 light center promo-paragraph">Our nurses formulate a care plan based on
+                            doctor’s orders
+                            and we
+                            provide
+                            unlimited access to wellness and diet content/education materials.</p>
+                    </div>
+                </div>
+                <div class="col s4">
+                    <div class="center promo promo-picture">
+                        <img class="col s12"
+                             src="{{asset('/img/landing-pages/coordination-with-family.png')}}"
+                             alt="">
+                        <p class="col s12 promo-caption">Coordination with Family and Doctors</p>
+                        <p class="col s12 light center promo-paragraph">Family members can stay at ease with real-time
+                            updates from
+                            our
+                            system
+                            as our nurses track progress. Your participating doctors also stay updated.</p>
+                    </div>
+                </div>
             </div>
+        </div>
 
-            <footer class="page-footer">
-                <div class="container">
-                    <div class="row">
-                        <div class="col l6 s12">
-                            <h5 class="white-text">Footer Content</h5>
-                            <p class="grey-text text-lighten-4">You can use rows and columns here to organize your
-                                footer
-                                content.</p>
-                        </div>
-                        <div class="col l4 offset-l2 s12">
-                            <h5 class="white-text">Olark live chat, maybe?</h5>
-                            {{--<ul>--}}
-                            {{--<li><a class="grey-text text-lighten-3" href="#!">Link 1</a></li>--}}
-                            {{--<li><a class="grey-text text-lighten-3" href="#!">Link 2</a></li>--}}
-                            {{--<li><a class="grey-text text-lighten-3" href="#!">Link 3</a></li>--}}
-                            {{--<li><a class="grey-text text-lighten-3" href="#!">Link 4</a></li>--}}
-                            {{--</ul>--}}
-                        </div>
-                    </div>
+    </div>
+
+    <footer class="page-footer">
+        <div class="container">
+            <div class="row">
+                <div class="col l6 s12">
+                    <h5 class="white-text">Footer Content</h5>
+                    <p class="grey-text text-lighten-4">You can use rows and columns here to organize your
+                        footer
+                        content.</p>
                 </div>
-                <div class="footer-copyright">
-                    <div class="container">
-                        © 2017 Copyright Text
-                        <a class="grey-text text-lighten-4 right" href="#!">Call CLH maybe?</a>
-                    </div>
+                <div class="col l4 offset-l2 s12">
+                    <h5 class="white-text">Olark live chat, maybe?</h5>
+                    {{--<ul>--}}
+                    {{--<li><a class="grey-text text-lighten-3" href="#!">Link 1</a></li>--}}
+                    {{--<li><a class="grey-text text-lighten-3" href="#!">Link 2</a></li>--}}
+                    {{--<li><a class="grey-text text-lighten-3" href="#!">Link 3</a></li>--}}
+                    {{--<li><a class="grey-text text-lighten-3" href="#!">Link 4</a></li>--}}
+                    {{--</ul>--}}
                 </div>
-            </footer>
+            </div>
+        </div>
+        <div class="footer-copyright">
+            <div class="container">
+                © 2017 Copyright Text
+                <a class="grey-text text-lighten-4 right" href="#!">Call CLH maybe?</a>
+            </div>
+        </div>
+    </footer>
 
 
 @endsection
