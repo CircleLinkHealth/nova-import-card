@@ -1,5 +1,7 @@
 @extends('provider.layouts.default')
 
+@section('title', 'Signup for Wellness Management')
+
 @section('head')
     <style>
 
