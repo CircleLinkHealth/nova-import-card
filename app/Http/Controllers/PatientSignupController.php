@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\PatientSignup;
 use Illuminate\Http\Request;
 
 class PatientSignupController extends Controller
@@ -35,7 +36,8 @@ class PatientSignupController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $signup = PatientSignup::create($request->input());
+
     }
 
     /**
