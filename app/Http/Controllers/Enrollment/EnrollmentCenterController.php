@@ -24,7 +24,7 @@ class EnrollmentCenterController extends Controller
             $enrollee = Enrollee
                 ::toCall()
                 ->where('lang', 'ES')
-                ->orderBy('last_attempt_at', 'asc')
+                ->orderBy('attempt_count')
                 ->first();
 
             //if no spanish, get a EN user.
@@ -32,7 +32,7 @@ class EnrollmentCenterController extends Controller
 
                 $enrollee = Enrollee
                     ::toCall()
-                    ->orderBy('last_attempt_at', 'asc')
+                    ->orderBy('attempt_count')
                     ->first();
 
             }
@@ -41,7 +41,7 @@ class EnrollmentCenterController extends Controller
 
             $enrollee = Enrollee
                 ::toCall()
-                ->orderBy('last_attempt_at', 'asc')
+                ->orderBy('attempt_count')
                 ->first();
 
         }
