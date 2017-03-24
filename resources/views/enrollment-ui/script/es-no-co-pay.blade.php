@@ -1,5 +1,5 @@
 <div>
-    <p>[speak clearly and cheerfully]: Hola, [nombre de la persona que llama] estoy llamando en nombre de
+    <p><b>Speak clearly and cheerfully</b>: Hola, @{{ name }} estoy llamando en nombre de
         los doctores Dr. @{{provider_name}} de la @{{practice_name}}. Los médicos le han invitado a su nuevo programa de
         gestión de atención personalizada y es posible que haya recibido una carta a este efecto.</p>
 
