@@ -32,7 +32,7 @@ class EnrollmentConsentController extends Controller
                 'program'                  => ucwords(Practice::find($enrollee->practice_id)->name),
                 'provider'                 => ucwords(User::find($enrollee->provider_id)->fullName ?? null),
                 'has_copay'                => $enrollee->has_copay ? 'Yes' : 'No',
-                'status'                   => ucwords($enrollee->status),
+                'status'                   => $enrollee->status == 'utc' ? 'UTC' : ucwords($enrollee->status),
                 'care_ambassador'          => ucwords($enrollee->careAmbassador->user->fullName ?? null),
                 'last_call_outcome'        => ucwords($enrollee->last_call_outcome),
                 'last_call_outcome_reason' => ucwords($enrollee->last_call_outcome_reason),
