@@ -19,7 +19,10 @@ class EnrollmentConsentController extends Controller
     public function index(){
 
         //todo change to Enrollee
-        $enrollees = Enrollee::where('status', '!=', 'enrolled')->get();
+        $enrollees = Enrollee
+            ::where('status', '!=', 'enrolled')
+            ->where('attempt_count', '<', 3)
+            ->get();
 
         $formatted = [];
         $count = 0;
