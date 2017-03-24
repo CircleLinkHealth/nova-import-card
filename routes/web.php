@@ -1425,8 +1425,8 @@ Route::group([
 
     Route::get('/training', function () {
 
-        return response()->download(storage_path('/pdf/training_enrollment.pdf'), 'CLHCareAmbassadorManual', [
-            'Content-Length: ' . filesize(storage_path('/pdf/training_enrollment.pdf')),
+        return response()->download(storage_path('pdf/training_enrollment.pdf'), 'CLHCareAmbassadorManual', [
+            'Content-Length: ' . filesize(storage_path('pdf/training_enrollment.pdf')),
         ]);
 
     });
