@@ -1,6 +1,7 @@
 @extends('provider.layouts.default')
 
 @section('title', 'Signup for Wellness Management')
+@section('meta-image-url', "{{asset('/img/landing-pages/coordination-with-family.png')}}")
 
 @section('head')
     <style>
@@ -338,6 +339,20 @@
             padding-bottom: 1rem;
         }
     </style>
+
+    <meta property="og:url" content="{{url('patient-sign-up-for-chronic-care-management/')}}"/>
+    <meta property="og:title" content="Do you or a loved one need a hand managing chronic conditions?"/>
+    <meta property="og:image" content="{{asset('/img/landing-pages/coordination-with-family.png')}}"/>
+    <meta property="og:image:secure_url" content="{{asset('/img/landing-pages/coordination-with-family.png')}}"/>
+    <meta property="og:image:width" content="1050"/>
+    <meta property="og:image:height" content="550"/>
+    <meta property="og:type" content="image.other"/>
+
+    <meta property="og:image" content="{{asset('/img/landing-pages/coordination-with-family.png')}}"/>
+    <meta property="og:image:secure_url" content="{{asset('/img/landing-pages/coordination-with-family.png')}}"/>
+    <meta property="og:image:type" content="image/jpeg"/>
+    <meta property="og:image:width" content="1050"/>
+    <meta property="og:image:height" content="550"/>
 @endsection
 
 @section('content')
@@ -553,7 +568,7 @@ Medications List:
         </div>
         <div class="footer-copyright">
             <div class="container">
-                © 2017 Copyright Text
+                © 2017 CicleLink Health
                 <a class="grey-text text-lighten-4 right" href="#!">Call CLH maybe?</a>
             </div>
         </div>
