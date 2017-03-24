@@ -5,13 +5,10 @@
 //$faxTest = (new PhaxioService('production'))->send('+12124910114', storage_path('pdfs/notes/2017-02-07-xsKTIK4106WdXiMNu8iMla4FPJSOcosNBXXMkAsX.pdf'));
 //dd($faxTest);
 
-use App\Enrollee;
-use App\Practice;
-use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
 
 //Patient Landing Pages
-Route::get('patient-sign-up-for-chronic-care-management/{version?}', function ($version) {
+Route::get('patient-sign-up-for-chronic-care-management/', function () {
     return view('patient.signup', [
         'version' => $version ?? null,
     ]);
