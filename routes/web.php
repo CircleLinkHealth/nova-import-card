@@ -12,7 +12,7 @@ use Illuminate\Support\Facades\DB;
 
 if (app()->environment() != 'production') {
 
-    Route::get('/sms/test', 'TwilioCallController@sendTestSMS');
+    Route::get('/sms/test', 'TwilioController@sendTestSMS');
 
     Route::get('/rohan', function () {
 
@@ -1516,16 +1516,16 @@ Route::group([
 
 
 Route::post('/twilio/token', [
-    'uses' => 'TwilioCallController@obtainToken',
+    'uses' => 'TwilioController@obtainToken',
     'as'   => 'twilio.token',
 ]);
 
 Route::post('/twilio/call/make', [
-    'uses' => 'TwilioCallController@newCall',
+    'uses' => 'TwilioController@newCall',
     'as'   => 'twilio.call',
 ]);
 
-Route::get('twilio/call', 'TwilioCallController@makeCall');
+Route::get('twilio/call', 'TwilioController@makeCall');
 
 
 

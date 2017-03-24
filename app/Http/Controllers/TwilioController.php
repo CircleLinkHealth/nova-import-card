@@ -13,7 +13,7 @@ use Twilio\Twiml;
 use Twilio\Rest\Client;
 
 
-class TwilioCallController extends Controller
+class TwilioController extends Controller
 {
 
     private $capability;
