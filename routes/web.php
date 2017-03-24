@@ -10,6 +10,13 @@ use App\Practice;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
 
+//Patient Landing Pages
+Route::get('patient-sign-up-for-chronic-care-management/{version?}', function ($version) {
+    return view('patient.signup', [
+        'version' => $version ?? null,
+    ]);
+});
+
 if (app()->environment() != 'production') {
 
     Route::get('/sms/test', 'TwilioController@sendTestSMS');

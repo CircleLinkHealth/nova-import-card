@@ -14,15 +14,7 @@ use App\Settings;
 trait HasSettings
 {
     /**
-     * Get the settings.
-     */
-    public function settings()
-    {
-        return $this->morphMany(Settings::class, 'settingsable', 'settingsable_type', 'settingsable_id');
-    }
-
-    /**
-     * Updates or Creates settings.
+     * Sync settings.
      *
      * @param Settings $settings
      */
@@ -31,12 +23,23 @@ trait HasSettings
         $args = [];
 
         foreach ($settings->getFillable() as $fieldName) {
-            $args[$fieldName] = $settings->{$fieldName};
+            $args[$fieldName] = $settings->{$fieldName} ?? false;
         }
 
-        Settings::updateOrCreate([
-            'settingsable_type' => self::class,
-            'settingsable_id'   => $this->id,
-        ], $args);
+        if ($this->settings->isEmpty()) {
+            return $this->settings()->create($args);
+        }
+
+        $settings = $this->settings()->delete();
+
+        return $this->settings()->create($args);
+    }
+
+    /**
+     * Get the settings.
+     */
+    public function settings()
+    {
+        return $this->morphMany(Settings::class, 'settingsable', 'settingsable_type', 'settingsable_id');
     }
 }
