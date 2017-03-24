@@ -245,8 +245,10 @@
 
                     <div class="row">
                         <div class="input-field col s12 center">
-                            <input type="submit" class="waves-effect waves-light btn-large blue center"
-                                   value="Schedule a call"/>
+                            <button class="btn-large waves-effect waves-light blue center" type="submit" name="action">
+                                Schedule a call
+                                <i class="material-icons right">send</i>
+                            </button>
                         </div>
                     </div>
                 </div>
