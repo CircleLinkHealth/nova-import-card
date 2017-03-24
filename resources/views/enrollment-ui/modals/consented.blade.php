@@ -24,8 +24,7 @@
                            @if($enrollee->home_phone != '') checked @endif/>
                     <label for="home_radio"
                            v-bind:class="{valid: home_is_valid, invalid: home_is_invalid}">@{{home_phone_label}}</label>
-                    <input class="input-field" name="home_phone" id="home_phone" v-model="home_phone"
-                           v-bind:disabled="disableCall"/>
+                    <input class="input-field" name="home_phone" id="home_phone" v-model="home_phone"/>
                 </div>
                 <div class="col s6 m4 select-custom">
                     <input name="preferred_phone" type="radio" id="cell_radio" value="cell"
