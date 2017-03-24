@@ -38,6 +38,7 @@ class PatientSignupController extends Controller
     {
         $signup = PatientSignup::create($request->input());
 
+        return view('patient.thank-you');
     }
 
     /**
