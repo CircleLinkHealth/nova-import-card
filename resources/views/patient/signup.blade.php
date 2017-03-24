@@ -238,17 +238,8 @@
                 <div class="row">
                     <div class="input-field col s12">
                         <i class="material-icons prefix">message</i>
-                        <textarea id="textarea1" class="materialize-textarea" name="comment">
-
-Best time to call:
-
-Allergies:
-
-Conditions List:
-
-Medications List:
-
-                        </textarea>
+                        <textarea id="textarea1" class="materialize-textarea" name="comment"
+                                  placeholder="Let us know when to call you. It would great if you could include information regarding the patient's Allergies, Conditions, and current Medications List."></textarea>
                         <label for="textarea1">Message</label>
                     </div>
 
