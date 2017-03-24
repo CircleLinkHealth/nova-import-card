@@ -2,38 +2,8 @@
 
 @section('head')
     <style>
-        .logo {
-            height: 60px;
 
-        }
-
-        .overlay {
-            padding-top: 5%;
-            height: 410px;
-        }
-
-        .header {
-            margin: 14px 14px 10px 40px;;
-            max-height: 100px;
-        }
-
-        .promo-caption {
-            font-size: 1.6rem;
-        }
-
-        .promo-paragraph {
-            font-size: 1.4rem;
-        }
-
-        .promo {
-            padding-top: 3rem;
-            padding-bottom: 1rem;
-        }
-
-        .section {
-            padding-top: 3rem;
-            padding-bottom: 1rem;
-        }
+        /*#SECTION_1*/
 
         #SECTION_1 {
             box-sizing: border-box;
@@ -54,8 +24,6 @@
             outline: rgb(255, 255, 255) none 0px;
             padding: 65px 0px 20px;
         }
-
-        /*#SECTION_1*/
 
         #DIV_2 {
             box-sizing: border-box;
@@ -335,24 +303,54 @@
         }
 
         /*#P_17*/
+        .logo {
+            height: 50px;
+            margin-top: 6px;
+        }
 
+        .overlay {
+            padding-top: 5%;
+            height: 410px;
+        }
 
+        .header {
+            margin: 0px 14px 0px 40px;
+            max-height: 100px;
+        }
+
+        .promo-caption {
+            font-size: 1.6rem;
+        }
+
+        .promo-paragraph {
+            font-size: 1.4rem;
+        }
+
+        .promo {
+            padding-top: 3rem;
+            padding-bottom: 1rem;
+        }
+
+        .section {
+            padding-top: 3rem;
+            padding-bottom: 1rem;
+        }
     </style>
 @endsection
 
 @section('content')
 
     <div class="content">
-        <div class="header row">
-            <div class="col s12">
-                <div class="col s2">
-                    <img class="logo" src="{{asset('/img/clh_logo.svg')}}" alt="">
+
+        <div class="navbar-fixed">
+            <nav class="white">
+                <div class="header nav-wrapper">
+                    <a href="#" class="col s2"><img class="logo" src="{{asset('/img/clh_logo.svg')}}" alt=""></a>
+                    <ul id="nav-mobile" class="right hide-on-med-and-down">
+                        <a class="waves-effect waves-light btn-large blue">Sign me up</a>
+                    </ul>
                 </div>
-                <div class="col s8"></div>
-                <div class="col s2">
-                    <a class="waves-effect waves-light btn-large blue">Sign me up</a>
-                </div>
-            </div>
+            </nav>
         </div>
 
         <div class="col s12 blue lighten-1">
@@ -467,6 +465,11 @@
             </div>
         </div>
 
+        <div class="section">
+            <div class="row">
+
+            </div>
+        </div>
     </div>
 
     <footer class="page-footer">
