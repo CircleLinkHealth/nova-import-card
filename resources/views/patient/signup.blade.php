@@ -1,6 +1,7 @@
 @extends('provider.layouts.default')
 
 @section('title', 'Signup for Wellness Management')
+@section('meta-image-url', "{{asset('/img/landing-pages/coordination-with-family.png')}}")
 
 @section('head')
     <style>
