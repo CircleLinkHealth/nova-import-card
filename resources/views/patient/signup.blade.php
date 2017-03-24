@@ -465,11 +465,67 @@
             </div>
         </div>
 
-        <div class="section">
-            <div class="row">
+        <form>
+            <div class="section container">
+                <h1 class="center">Sign Up for Wellness Manager</h1>
 
+                <br>
+                <br>
+
+                <div class="row">
+                    <div class="input-field col s6">
+                        <i class="material-icons prefix">account_circle</i>
+                        <input id="first_name" type="text" class="validate" required>
+                        <label for="first_name">First Name</label>
+                    </div>
+                    <div class="input-field col s6">
+                        <input id="last_name" type="text" class="validate" required>
+                        <label for="last_name">Last Name</label>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="input-field col s12">
+                        <i class="material-icons prefix">phone</i>
+                        <input id="text" type="text" class="validate"
+                               pattern="\d{3}[\-]\d{3}[\-]\d{4}" required>
+                        <label for="text" data-error="The phone number must match format xxx-xxx-xxxx">Phone Number
+                            xxx-xxx-xxxx</label>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="input-field col s12">
+                        <i class="material-icons prefix">email</i>
+                        <input id="email" type="email" class="validate">
+                        <label for="email" data-error="The email must contain an @">Email</label>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="input-field col s12">
+                        <i class="material-icons prefix">message</i>
+                        <textarea id="textarea1" class="materialize-textarea">
+
+Best time to call:
+
+Allergies:
+
+Conditions List:
+
+Medications List:
+
+                        </textarea>
+                        <label for="textarea1">Message</label>
+                    </div>
+
+                    <div class="row">
+                        <div class="input-field col s12 center">
+                            <a class="waves-effect waves-light btn-large blue center">Reach out to me</a>
+                        </div>
+                    </div>
+                </div>
             </div>
-        </div>
+        </form>
     </div>
 
     <footer class="page-footer">
