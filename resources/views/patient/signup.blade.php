@@ -349,7 +349,7 @@
                 <div class="header nav-wrapper">
                     <a href="#" class="col s2"><img class="logo" src="{{asset('/img/clh_logo.svg')}}" alt=""></a>
                     <ul id="nav-mobile" class="right hide-on-med-and-down">
-                        <a class="waves-effect waves-light btn-large blue">Sign me up</a>
+                        <a class="waves-effect waves-light btn-large scroll-to-form blue">Sign me up</a>
                     </ul>
                 </div>
             </nav>
@@ -372,7 +372,7 @@
 
 
                 <div class="center" style="margin-top: 6%;">
-                    <a class="waves-effect waves-light btn-large light-blue accent-1">Sign me up</a>
+                    <a class="waves-effect waves-light btn-large scroll-to-form light-blue accent-1">Sign me up</a>
                 </div>
             </div>
 
@@ -467,7 +467,7 @@
             </div>
         </div>
 
-        <form>
+        <form id="signup-form">
             <div class="section container">
                 <h1 class="center">Sign Up for Wellness Manager</h1>
 
@@ -478,7 +478,7 @@
                     <div class="input-field col s6">
                         <i class="material-icons prefix">account_circle</i>
                         <input id="first_name" type="text" class="validate" required>
-                        <label for="first_name">First Name</label>
+                        <label for="first_name" id="first_name_label">First Name</label>
                     </div>
                     <div class="input-field col s6">
                         <input id="last_name" type="text" class="validate" required>
@@ -559,6 +559,20 @@ Medications List:
     </footer>
 
 
+@endsection
+
+@section('scripts')
+    <script>
+        $(document).ready(function () {
+            $(".scroll-to-form").click(function () {
+                $('html, body').animate({
+                    scrollTop: $("#signup-form").offset().top
+                }, 600);
+
+                $("#first_name_label").trigger("click");
+            });
+        });
+    </script>
 @endsection
 
 
