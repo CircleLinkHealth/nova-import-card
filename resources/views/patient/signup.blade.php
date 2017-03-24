@@ -371,7 +371,7 @@
                     registered nurse care coaches just a phone call away.</h5>
 
                 <div class="center" style="margin-top: 6%;">
-                    <h5 class="blue-grey-text text-lighten-5 center">Get remote health coaching for $49.99/ month..</h5>
+                    <h5 class="teal-text text-accent-1 center">Get remote health coaching for just $49.99/ month..</h5>
                     <br>
                     <a class="waves-effect waves-light btn-large scroll-to-form teal accent-3">Sign me up</a>
                 </div>
