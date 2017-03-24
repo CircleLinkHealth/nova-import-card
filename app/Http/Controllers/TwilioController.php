@@ -59,6 +59,8 @@ class TwilioController extends Controller
                 ->orWhere('other_phone', $phoneNumberToDial);
         })->first()['practice_id'];
 
+        Log::info([$practiceId]);
+
         $callerIdNumber = Practice::find($practiceId)->outgoing_phone_number;
 
         Log::info([$practiceId, $callerIdNumber]);
