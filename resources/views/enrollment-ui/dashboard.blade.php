@@ -66,9 +66,12 @@
             </div>
 
             <div style="margin-top: 10px; text-align: center">
+                <a class="waves-effect waves-light btn" href="#consented">Patient Consented</a>
                 <a class="waves-effect waves-light btn" href="#utc" style="background: #ecb70e">No Answer (Voicemail
                     Script) /
                     Requested Call Back</a>
+                <a class="waves-effect waves-light btn" href="#rejected" style="background: red;">Patient
+                    Declined</a>
             </div>
 
             <div v-if="onCall === true" style="text-align: center">
@@ -80,7 +83,7 @@
                 @if($enrollee->last_call_outcome != '')
                     <blockquote>Last Call Outcome: {{$enrollee->last_call_outcome}}
                         @if($enrollee->last_call_outcome_reason != '')
-                           <br/> Last Call Comment: {{$enrollee->last_call_outcome_reason}}
+                            <br/> Last Call Comment: {{$enrollee->last_call_outcome_reason}}
                         @endif
                     </blockquote>
                 @endif
@@ -103,9 +106,7 @@
 
             <div style="padding: 10px; margin-bottom: 15px"></div>
             <div style="text-align: center">
-                <a class="waves-effect waves-light btn" href="#consented">Patient Consented</a>
-                <a class="waves-effect waves-light btn" href="#rejected" style="background: red;">Patient
-                    Declined</a>
+
             </div>
         </div>
 
@@ -153,6 +154,9 @@
                 email: '{{ $enrollee->email ?? 'N/A' }}',
                 dob: '{{ $enrollee->dob ?? 'N/A' }}',
                 phone_regex: /^\d{3}-\d{3}-\d{4}$/,
+                disableHome: false,
+                disableCell: false,
+                disableOther: false,
 
                 time_elapsed: 0,
                 onCall: false,
@@ -287,17 +291,18 @@
 
             methods: {
 
-                //implement!
                 validatePhone(VAL, name){
+
+                    console.log(name);
 
                     if (VAL.match(this.phone_regex)) {
                         this.isValid = true;
-                        this.isInValid = false;
+                        this.disableHome = true;
                         return true;
                     }
                     else {
                         this.isValid = false;
-                        this.isInValid = true;
+                        this.disableHome = true;
                         return false;
                     }
 
@@ -323,8 +328,5 @@
 
 
     </script>
-
-    {{--<script src="{{ asset('/js/idle-timer.min.js') }}"></script>--}}
-    {{--@include('partials.providerUItimer')--}}
 
 @stop
