@@ -69,9 +69,9 @@
                                     <img class="col s12" src="{{asset('/img/landing-pages/registered-nurse.png')}}"
                                          alt="">
                                     <p class="promo-caption">Fully Registered Nurse Care Coach</p>
-                                    <p class="light center">Our trained nurses guide you to wellness while taking the
-                                        stress off
-                                        managing chronic illness.</p>
+                                    <p class="light center">Our trained nurses guide you or a loved one to wellness
+                                        while taking the
+                                        stress off managing chronic illness.</p>
                                 </div>
                             </div>
                             <div class="col s4">
