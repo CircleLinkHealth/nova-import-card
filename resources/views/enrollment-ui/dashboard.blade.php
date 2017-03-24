@@ -48,15 +48,18 @@
                 </div>
                 <div v-else style="text-align: center">
                     @if($enrollee->home_phone != '')
-                        <a v-on:click="call(home_phone, 'Home')" class="waves-effect waves-light btn" style="background: #4caf50"><i
+                        <a v-on:click="call(home_phone, 'Home')" class="waves-effect waves-light btn"
+                           style="background: #4caf50"><i
                                     class="material-icons left">phone</i>Home</a>
                     @endif
                     @if($enrollee->cell_phone != '')
-                        <a v-on:click="call(cell_phone, 'Cell')" class="waves-effect waves-light btn" style="background: #4caf50"><i
+                        <a v-on:click="call(cell_phone, 'Cell')" class="waves-effect waves-light btn"
+                           style="background: #4caf50"><i
                                     class="material-icons left">phone</i>Cell</a>
                     @endif
                     @if($enrollee->other_phone != '')
-                        <a v-on:click="call(other_phone, 'Other')" class="waves-effect waves-light btn" style="background: #4caf50"><i
+                        <a v-on:click="call(other_phone, 'Other')" class="waves-effect waves-light btn"
+                           style="background: #4caf50"><i
                                     class="material-icons left">phone</i>Other</a>
                     @endif
                 </div>
@@ -68,7 +71,20 @@
                     Requested Call Back</a>
             </div>
 
+            <div v-if="onCall === true" style="text-align: center">
+                <blockquote>Call Status: @{{ this.callStatus }}</blockquote>
+            </div>
+
             <div style="padding: 0px 10px; font-size: 16px;">
+
+                @if($enrollee->last_call_outcome != '')
+                    <blockquote>Last Call Outcome: {{$enrollee->last_call_outcome}}
+                        @if($enrollee->last_call_outcome_reason != '')
+                           <br/> Last Call Comment: {{$enrollee->last_call_outcome_reason}}
+                        @endif
+                    </blockquote>
+                @endif
+
                 @if($enrollee->has_copay)
                     @if($enrollee->lang == 'ES')
                         @include('enrollment-ui.script.es-has-co-pay')
@@ -85,7 +101,7 @@
                 @endif
             </div>
 
-            <div style="padding: 10px;"></div>
+            <div style="padding: 10px; margin-bottom: 15px"></div>
             <div style="text-align: center">
                 <a class="waves-effect waves-light btn" href="#consented">Patient Consented</a>
                 <a class="waves-effect waves-light btn" href="#rejected" style="background: red;">Patient
@@ -125,6 +141,7 @@
                 lang: '{{ $enrollee->lang}}',
                 provider_name: '{{ $enrollee->providerFullName }}',
                 practice_name: '{{ $enrollee->practiceName }}',
+                practice_phone: '{{ $enrollee->practice->outgoing_phone_number}}',
                 home_phone: '{{ $enrollee->home_phone ?? 'N/A' }}',
                 cell_phone: '{{ $enrollee->cell_phone ?? 'N/A' }}',
                 other_phone: '{{ $enrollee->other_phone ?? 'N/A' }}',
@@ -240,15 +257,15 @@
                     }
                     , function (data) {
 
-                    console.log(data.body)
+                        console.log(data.body)
 
-                }).then(response => {
+                    }).then(response => {
 
-                    console.log(response.body)
+                        console.log(response.body)
 
-                    this.callStatus = 'Caller Ready';
-                    Materialize.toast(this.callStatus, 5000);
-                    Twilio.Device.setup(response.body.token);
+                        this.callStatus = 'Caller Ready';
+                        Materialize.toast(this.callStatus, 5000);
+                        Twilio.Device.setup(response.body.token);
 
                     }
                 );
