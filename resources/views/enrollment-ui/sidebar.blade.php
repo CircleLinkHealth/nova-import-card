@@ -16,12 +16,9 @@
                     <li class="sidebar-demo-list"><span id="name"><b>Provider Name: @{{provider_name}}</b></span></li>
                     <li class="sidebar-demo-list"><span id="name"><b>Practice Name: @{{practice_name}}</b></span></li>
                     <li class="sidebar-demo-list"><span id="email">Email: @{{email}}</span></li>
-                    <li class="sidebar-demo-list"><span id="address">Address: @{{address}}</span></li>
-                    <li class="sidebar-demo-list"><span id="address_2">Address Line 2: @{{address_2}}</span></li>
                     <li class="sidebar-demo-list"><span id="city">City: @{{city}}</span></li>
                     <li class="sidebar-demo-list"><span id="state">State: @{{state}}</span></li>
                     <li class="sidebar-demo-list"><span id="zip">Zip: @{{zip}}</span></li>
-                    <li class="sidebar-demo-list"><span id="dob">DOB: @{{dob}}</span></li>
                  </span>
 
     <hr>
