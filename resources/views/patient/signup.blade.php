@@ -1,5 +1,8 @@
 @extends('provider.layouts.default')
 
+@section('title', 'Signup for Wellness Management')
+@section('meta-image-url', "{{asset('/img/landing-pages/coordination-with-family.png')}}")
+
 @section('head')
     <style>
 
@@ -336,6 +339,20 @@
             padding-bottom: 1rem;
         }
     </style>
+
+    <meta property="og:url" content="{{url('patient-sign-up-for-chronic-care-management/')}}"/>
+    <meta property="og:title" content="Do you or a loved one need a hand managing chronic conditions?"/>
+    <meta property="og:image" content="{{asset('/img/landing-pages/coordination-with-family.png')}}"/>
+    <meta property="og:image:secure_url" content="{{asset('/img/landing-pages/coordination-with-family.png')}}"/>
+    <meta property="og:image:width" content="1050"/>
+    <meta property="og:image:height" content="550"/>
+    <meta property="og:type" content="image.other"/>
+
+    <meta property="og:image" content="{{asset('/img/landing-pages/coordination-with-family.png')}}"/>
+    <meta property="og:image:secure_url" content="{{asset('/img/landing-pages/coordination-with-family.png')}}"/>
+    <meta property="og:image:type" content="image/jpeg"/>
+    <meta property="og:image:width" content="1050"/>
+    <meta property="og:image:height" content="550"/>
 @endsection
 
 @section('content')
@@ -347,7 +364,7 @@
                 <div class="header nav-wrapper">
                     <a href="#" class="col s2"><img class="logo" src="{{asset('/img/clh_logo.svg')}}" alt=""></a>
                     <ul id="nav-mobile" class="right hide-on-med-and-down">
-                        <a class="waves-effect waves-light btn-large blue">Sign me up</a>
+                        <a class="waves-effect waves-light btn-large scroll-to-form blue">Sign me up</a>
                     </ul>
                 </div>
             </nav>
@@ -368,9 +385,10 @@
                 <h5 class="blue-grey-text text-lighten-5 center">Put your mind at ease with our fully licensed
                     registered nurse care coaches just a phone call away.</h5>
 
-
                 <div class="center" style="margin-top: 6%;">
-                    <a class="waves-effect waves-light btn-large light-blue accent-1">Sign me up</a>
+                    <h5 class="teal-text text-accent-1 center">Get remote health coaching for just $49.99/ month..</h5>
+                    <br>
+                    <a class="waves-effect waves-light btn-large scroll-to-form teal accent-3">Sign me up</a>
                 </div>
             </div>
 
@@ -465,7 +483,7 @@
             </div>
         </div>
 
-        <form>
+        <form id="signup-form">
             <div class="section container">
                 <h1 class="center">Sign Up for Wellness Manager</h1>
 
@@ -476,7 +494,7 @@
                     <div class="input-field col s6">
                         <i class="material-icons prefix">account_circle</i>
                         <input id="first_name" type="text" class="validate" required>
-                        <label for="first_name">First Name</label>
+                        <label for="first_name" id="first_name_label">First Name</label>
                     </div>
                     <div class="input-field col s6">
                         <input id="last_name" type="text" class="validate" required>
@@ -528,35 +546,49 @@ Medications List:
         </form>
     </div>
 
-    <footer class="page-footer">
-        <div class="container">
-            <div class="row">
-                <div class="col l6 s12">
-                    <h5 class="white-text">Footer Content</h5>
-                    <p class="grey-text text-lighten-4">You can use rows and columns here to organize your
-                        footer
-                        content.</p>
-                </div>
-                <div class="col l4 offset-l2 s12">
-                    <h5 class="white-text">Olark live chat, maybe?</h5>
+    <footer class="page-footer" style="padding-top: 0;">
+        {{--<div class="container">--}}
+        {{--<div class="row">--}}
+        {{--<div class="col l6 s12">--}}
+        {{--<h5 class="white-text">Footer Content</h5>--}}
+        {{--<p class="grey-text text-lighten-4">You can use rows and columns here to organize your--}}
+        {{--footer--}}
+        {{--content.</p>--}}
+        {{--</div>--}}
+        {{--<div class="col l4 offset-l2 s12">--}}
+        {{--<h5 class="white-text">Olark live chat, maybe?</h5>--}}
                     {{--<ul>--}}
                     {{--<li><a class="grey-text text-lighten-3" href="#!">Link 1</a></li>--}}
                     {{--<li><a class="grey-text text-lighten-3" href="#!">Link 2</a></li>--}}
                     {{--<li><a class="grey-text text-lighten-3" href="#!">Link 3</a></li>--}}
                     {{--<li><a class="grey-text text-lighten-3" href="#!">Link 4</a></li>--}}
                     {{--</ul>--}}
-                </div>
-            </div>
-        </div>
+        {{--</div>--}}
+        {{--</div>--}}
+        {{--</div>--}}
         <div class="footer-copyright">
             <div class="container">
-                © 2017 Copyright Text
-                <a class="grey-text text-lighten-4 right" href="#!">Call CLH maybe?</a>
+                © 2017 CicleLink Health
+                {{--<a class="grey-text text-lighten-4 right" href="#!">Call CLH maybe?</a>--}}
             </div>
         </div>
     </footer>
 
 
+@endsection
+
+@section('scripts')
+    <script>
+        $(document).ready(function () {
+            $(".scroll-to-form").click(function () {
+                $('html, body').animate({
+                    scrollTop: $("#signup-form").offset().top
+                }, 600);
+
+                $("#first_name_label").trigger("click");
+            });
+        });
+    </script>
 @endsection
 
 
