@@ -4,8 +4,8 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "806f3a619ea4985fa6f5f1ef067f7045",
-    "content-hash": "6dff76ae3267864ef417de486216228b",
+    "hash": "32bd6161f4ced92f5ae15ac83294fffb",
+    "content-hash": "e1bfd60e283afef4705b5551d2fb7c63",
     "packages": [
         {
             "name": "aloha/twilio",
@@ -3322,16 +3322,16 @@
         },
         {
             "name": "prettus/l5-repository",
-            "version": "dev-master",
+            "version": "dev-develop",
             "source": {
                 "type": "git",
-                "url": "https://github.com/michalisantoniou6/l5-repository.git",
-                "reference": "e3541c8d467f43a0fd4aba33e54822bc32423cfd"
+                "url": "https://github.com/andersao/l5-repository.git",
+                "reference": "c438c2320fc4bd0249d9e0e65cb028bbd60ca0b0"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/michalisantoniou6/l5-repository/zipball/e3541c8d467f43a0fd4aba33e54822bc32423cfd",
-                "reference": "e3541c8d467f43a0fd4aba33e54822bc32423cfd",
+                "url": "https://api.github.com/repos/andersao/l5-repository/zipball/c438c2320fc4bd0249d9e0e65cb028bbd60ca0b0",
+                "reference": "c438c2320fc4bd0249d9e0e65cb028bbd60ca0b0",
                 "shasum": ""
             },
             "require": {
@@ -3359,6 +3359,7 @@
                     "Prettus\\Repository\\": "src/Prettus/Repository/"
                 }
             },
+            "notification-url": "https://packagist.org/downloads/",
             "license": [
                 "MIT"
             ],
@@ -3377,13 +3378,7 @@
                 "model",
                 "repository"
             ],
-            "support": {
-                "email": "contato@andersonandra.de",
-                "issues": "https://github.com/andersao/l5-repository/issues",
-                "wiki": "https://github.com/andersao/l5-repository",
-                "source": "https://github.com/andersao/l5-repository"
-            },
-            "time": "2017-03-24 22:27:16"
+            "time": "2016-08-30 20:38:45"
         },
         {
             "name": "prettus/laravel-validation",
