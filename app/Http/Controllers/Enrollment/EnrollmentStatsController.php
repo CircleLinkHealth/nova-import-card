@@ -71,8 +71,9 @@ class EnrollmentStatsController extends Controller
 
             if ($base->sum('total_calls') != 0 && $base->sum('no_enrolled') != 0 && $hourCost != 'Not Set') {
 
-                $data[$ambassador->id]['calls_per_hour'] = round($base->sum('total_calls') / round($base->sum('total_time_in_system') / 3600,
-                        1), 2);
+                $data[$ambassador->id]['earnings'] = '$' . round($hourCost * ( $base->sum('total_time_in_system') / 3600 ), 2);
+
+                $data[$ambassador->id]['calls_per_hour'] = round($base->sum('total_calls') / $base->sum('total_time_in_system') / 3600, 2);
 
                 $data[$ambassador->id]['conversion'] = round(($base->sum('no_enrolled') / $base->sum('total_calls')) * 100,
                         2) . '%';
@@ -82,6 +83,7 @@ class EnrollmentStatsController extends Controller
 
             } else {
 
+                $data[$ambassador->id]['earnings'] = 'N/A';
                 $data[$ambassador->id]['conversion'] = 'N/A';
                 $data[$ambassador->id]['calls_per_hour'] = 'N/A';
                 $data[$ambassador->id]['per_cost'] = 'N/A';
@@ -103,7 +105,6 @@ class EnrollmentStatsController extends Controller
 
     public function practiceStats(Request $request)
     {
-
 
         $input = $request->input();
 
@@ -175,8 +176,8 @@ class EnrollmentStatsController extends Controller
 
             foreach ($enrollers as $enrollerId => $time) {
 
-                $enrollee = CareAmbassador::find($enrollerId);
-                $data[$practice->id]['total_cost'] += $enrollee->hourly_rate * round($time / 3600, 2);
+                $enroller = CareAmbassador::find($enrollerId);
+                $data[$practice->id]['total_cost'] += $enroller->hourly_rate * round($time / 3600, 2);
 
             }
 

@@ -66,6 +66,9 @@
                                         <th>
                                             Cost per Enrollment
                                         </th>
+                                        <th>
+                                            Earnings
+                                        </th>
                                     </tr>
                                     </thead>
                                 </table>
@@ -112,6 +115,7 @@
                         {data: 'conversion', name: 'conversion'},
                         {data: 'hourly_rate', name: 'hourly_rate'},
                         {data: 'per_cost', name: 'per_cost'},
+                        {data: 'earnings', name: 'earnings'},
 
                     ],
                     "aaSorting": [2, 'desc'],
