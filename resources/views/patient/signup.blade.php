@@ -86,15 +86,10 @@
             <br>
 
             <div class="row">
-                <div class="input-field col s12 m6">
+                <div class="input-field col s12">
                     <i class="material-icons prefix">account_circle</i>
-                    <input id="first_name" type="text" class="validate" required name="first_name">
-                    <label for="first_name" id="first_name_label">First Name</label>
-                </div>
-                <div class="input-field col s12 m6">
-                    <i class="material-icons prefix">account_box</i>
-                    <input id="last_name" type="text" class="validate" required name="last_name">
-                    <label for="last_name">Last Name</label>
+                    <input id="name" type="text" class="validate" required name="name">
+                    <label for="name" id="name_label"> Name</label>
                 </div>
             </div>
 
@@ -176,7 +171,7 @@
                     scrollTop: $("#signup-form").offset().top
                 }, 600);
 
-                $("#first_name_label").trigger("click");
+                $("#name_label").trigger("click");
             });
         });
     </script>
