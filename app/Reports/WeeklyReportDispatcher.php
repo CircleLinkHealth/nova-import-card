@@ -65,6 +65,7 @@ class WeeklyReportDispatcher
             $practiceData['name'] = $practice->name;
             $practiceData['start'] = $startRange->toDateString();
             $practiceData['end'] = $endRange->toDateString();
+            $practiceData['isPDF'] = false;
 
             if($practice->weekly_report_recipients != null) {
 
