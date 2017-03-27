@@ -64,7 +64,7 @@
                                             Total Cost
                                         </th>
                                         <th>
-                                            Acq. Cost
+                                            Patient Acq. Cost
                                         </th>
                                     </tr>
                                     </thead>

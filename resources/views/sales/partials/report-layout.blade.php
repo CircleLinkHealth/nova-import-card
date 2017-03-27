@@ -6,6 +6,10 @@
 
     @yield('content')
 
-    @include('sales.partials.footer', ['data' => $data])
+    @if($data['isEmail'])
+
+        @include('sales.partials.footer', ['data' => $data])
+
+    @endif
 
 </div>

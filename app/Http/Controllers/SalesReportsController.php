@@ -9,6 +9,7 @@ use App\Reports\Sales\Provider\SalesByProviderReport;
 use App\User;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
+use Barryvdh\Snappy\Facades\SnappyPdf as PDF;
 
 class SalesReportsController extends Controller
 {
@@ -51,6 +52,24 @@ class SalesReportsController extends Controller
         $data['name'] = $provider->fullName;
         $data['start'] = Carbon::parse($input['start_date'])->toDateString();
         $data['end'] = Carbon::parse($input['end_date'])->toDateString();
+        $data['isEmail'] = false;
+
+        //PDF download support
+        if ($input['submit'] == 'download') {
+
+            $pdf = PDF::loadView('sales.by-practice.report', ['data' => $data]);
+
+            $name = $provider->last_name . '-' . Carbon::now()->toDateString();
+
+            $path = storage_path("download/$name.pdf");
+
+            $pdf->save($path, true);
+
+            return response()->download($path, $name, [
+                'Content-Length: ' . filesize($path),
+            ]);
+
+        }
 
         return view('sales.by-provider.report', ['data' => $data]);
 
@@ -90,11 +109,27 @@ class SalesReportsController extends Controller
         ))
             ->data();
 
-//        dd($data);
-
         $data['name'] = $practice->display_name;
         $data['start'] = Carbon::parse($input['start_date'])->toDateString();
         $data['end'] = Carbon::parse($input['end_date'])->toDateString();
+        $data['isEmail'] = false;
+
+        //PDF download support
+        if ($input['submit'] == 'download') {
+
+            $pdf = PDF::loadView('sales.by-practice.report', ['data' => $data]);
+
+            $name = $practice->display_name . '-' . Carbon::now()->toDateString();
+
+            $path = storage_path("download/$name.pdf");
+
+            $pdf->save($path, true);
+
+            return response()->download($path, $name, [
+                'Content-Length: ' . filesize($path),
+            ]);
+
+        }
 
         return view('sales.by-practice.report', ['data' => $data]);
 

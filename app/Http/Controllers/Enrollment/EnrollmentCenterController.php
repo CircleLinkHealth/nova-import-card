@@ -19,20 +19,30 @@ class EnrollmentCenterController extends Controller
         $careAmbassador = auth()->user()->careAmbassador;
 
         //if logged in ambassador is spanish, pick up a spanish patient
-        if($careAmbassador->speaks_spanish){
+        if ($careAmbassador->speaks_spanish) {
 
-            $enrollee = Enrollee::toCall()->where('lang', 'ES')->first();
+            $enrollee = Enrollee
+                ::toCall()
+                ->where('lang', 'ES')
+                ->orderBy('attempt_count')
+                ->first();
 
             //if no spanish, get a EN user.
-            if($enrollee == null){
+            if ($enrollee == null) {
 
-                $enrollee = Enrollee::toCall()->first();
+                $enrollee = Enrollee
+                    ::toCall()
+                    ->orderBy('attempt_count')
+                    ->first();
 
             }
 
         } else { // auth ambassador doesn't speak ES, get a regular user.
 
-            $enrollee = Enrollee::toCall()->first();
+            $enrollee = Enrollee
+                ::toCall()
+                ->orderBy('attempt_count')
+                ->first();
 
         }
 
@@ -76,11 +86,18 @@ class EnrollmentCenterController extends Controller
         $enrollee->setOtherPhoneAttribute($request->input('other_phone'));
 
         //set preferred phone
-        switch($request->input('preferred_phone')){
-            case 'home': $enrollee->setPrimaryPhoneNumberAttribute($request->input('home_phone')); break;
-            case 'cell': $enrollee->setPrimaryPhoneNumberAttribute($request->input('cell_phone')); break;
-            case 'other': $enrollee->setPrimaryPhoneNumberAttribute($request->input('other_phone')); break;
-            default: $enrollee->setPrimaryPhoneNumberAttribute($request->input('home_phone'));
+        switch ($request->input('preferred_phone')) {
+            case 'home':
+                $enrollee->setPrimaryPhoneNumberAttribute($request->input('home_phone'));
+                break;
+            case 'cell':
+                $enrollee->setPrimaryPhoneNumberAttribute($request->input('cell_phone'));
+                break;
+            case 'other':
+                $enrollee->setPrimaryPhoneNumberAttribute($request->input('other_phone'));
+                break;
+            default:
+                $enrollee->setPrimaryPhoneNumberAttribute($request->input('home_phone'));
         }
 
         $enrollee->address = $request->input('address');
@@ -142,7 +159,12 @@ class EnrollmentCenterController extends Controller
 
         $enrollee->care_ambassador_id = $careAmbassador->id;
 
-        $enrollee->status = 'utc';
+        if ($request->input('reason') == "requested callback") {
+            $enrollee->status = 'call_queue';
+        } else {
+            $enrollee->status = 'utc';
+        }
+
         $enrollee->attempt_count = $enrollee->attempt_count + 1;
         $enrollee->last_attempt_at = Carbon::now()->toDateTimeString();
         $enrollee->total_time_spent = $enrollee->total_time_spent + $request->input('time_elapsed');

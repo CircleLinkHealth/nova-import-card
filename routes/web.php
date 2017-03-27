@@ -8,11 +8,7 @@
 use Illuminate\Support\Facades\DB;
 
 //Patient Landing Pages
-Route::get('patient-sign-up-for-chronic-care-management/', function () {
-    return view('patient.signup', [
-        'version' => $version ?? null,
-    ]);
-});
+//Route::resource('patient-sign-up-for-chronic-care-management', 'PatientSignupController');
 
 if (app()->environment() != 'production') {
 
@@ -1422,8 +1418,8 @@ Route::group([
 
     Route::get('/training', function () {
 
-        return response()->download(storage_path('/pdf/training_enrollment.pdf'), 'CLHCareAmbassadorManual', [
-            'Content-Length: ' . filesize(storage_path('/pdf/training_enrollment.pdf')),
+        return response()->download(storage_path('training_enrollment.pdf'), 'CLHCareAmbassadorManual', [
+            'Content-Length: ' . filesize(storage_path('training_enrollment.pdf')),
         ]);
 
     });
@@ -1519,17 +1515,26 @@ Route::group([
 });
 
 
-Route::post('/twilio/token', [
-    'uses' => 'TwilioController@obtainToken',
-    'as'   => 'twilio.token',
-]);
+Route::group([
+    'prefix' => 'twilio',
+], function () {
 
-Route::post('/twilio/call/make', [
-    'uses' => 'TwilioController@newCall',
-    'as'   => 'twilio.call',
-]);
 
-Route::get('twilio/call', 'TwilioController@makeCall');
+    Route::post('/token', [
+        'uses' => 'TwilioController@obtainToken',
+        'as'   => 'twilio.token',
+    ]);
 
+    Route::post('/call/make', [
+        'uses' => 'TwilioController@newCall',
+        'as'   => 'twilio.call',
+    ]);
+
+    Route::get('/call', 'TwilioController@makeCall');
+
+
+
+
+});
 
 

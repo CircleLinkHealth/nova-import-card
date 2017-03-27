@@ -97,7 +97,7 @@ class TwilioController extends Controller
 
                     array(
 
-                        'from' => "+17046664445",
+                        'from' => $recipient->practice->outgoing_phone_number,
                         'body' => $message,
                     )
                 );
@@ -110,6 +110,7 @@ class TwilioController extends Controller
                 $recipient->invite_sent_at = Carbon::now()->toDateTimeString();
                 $recipient->last_attempt_at = Carbon::now()->toDateTimeString();
                 $recipient->attempt_count = 2;
+                $recipient->save();
 
                 $message = "Dr. $provider_name hasn’t heard from you regarding their new wellness program. $sad_face_emoji Please enroll here: $link";
 
@@ -120,7 +121,7 @@ class TwilioController extends Controller
 
                     array(
 
-                        'from' => "+17046664445",
+                        'from' => $recipient->practice->outgoing_phone_number,
                         'body' => $message,
                     )
                 );
