@@ -49,10 +49,14 @@ $practiceSection = \App\Reports\Sales\Practice\Sections\PracticeDemographics::cl
 
         <div style="font-size: 16px">
 
-            <p>Hope you had a good weekend! Here's a summary of CCM activities for last week:</p>
+            @if($data['isPDF'])
+                <p>Here's a summary of CCM activities for the period specified: {{Carbon\Carbon::parse($data['start'])->format('l, jS F') . ' - ' . Carbon\Carbon::parse($data['end'])->format('l, jS F') }}</p>
+            @else
+                <p>Hope you had a good weekend! Here's a summary of CCM activities for last week:</p>
+            @endif
 
             <p>
-                Last week CircleLink nurses placed <b>{{$data[$rangeSection]['no_of_call_attempts']}}</b>
+                @if($data['isPDF']) During the period, @else Last week @endif CircleLink nurses placed <b>{{$data[$rangeSection]['no_of_call_attempts']}}</b>
                 calls, including <b>{{$data[$rangeSection]['no_of_successful_calls']}}</b> successful phone session,
                 totaling
                 <b>{{$data[$rangeSection]['total_ccm_time']}}</b>
