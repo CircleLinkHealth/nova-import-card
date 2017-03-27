@@ -76,9 +76,12 @@
                                         {{--<div class="col-md-2" style="padding-left: 40px">--}}
                                         {{--<button id="compute" name="compute" value="email" class="btn btn-success">Preview Data</button>--}}
                                         {{--</div>--}}
-                                        <div class="col-md-2">
+                                        <div class="col-md-6">
+                                            <button id="submit" name="submit" value="display" class="btn btn-success">
+                                                Generate Report
+                                            </button>
                                             <button id="submit" name="submit" value="download" class="btn btn-success">
-                                                Generate Report(s)
+                                                Download Report
                                             </button>
                                         </div>
 

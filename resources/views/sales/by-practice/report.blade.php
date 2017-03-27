@@ -10,19 +10,34 @@ $practiceSection = \App\Reports\Sales\Practice\Sections\PracticeDemographics::cl
 ?>
 
 <style type="text/css">
-    .myTable { background-color:#fff;border-collapse:collapse; }
-    .myTable th { background-color:#fff;color:black;width:50%; }
-    .myTable td, .myTable th { padding:5px;border:1px solid black; }
+    .myTable {
+        background-color: #fff;
+        border-collapse: collapse;
+    }
+
+    .myTable th {
+        background-color: #fff;
+        color: black;
+        width: 50%;
+    }
+
+    .myTable td, .myTable th {
+        padding: 5px;
+        border: 1px solid black;
+    }
 </style>
 
 @section('content')
 
     <div class="page-header">
-        <div style="text-align: center"><img src="/img/ui/logo.png"
-                                             alt="Care Plan Manager"
-                                             style="position:relative;"
-                                             width="200px"/>
-            <h1 style="margin-bottom: 0px">CircleLink Weekly CCM Summary</h1>
+
+        <div style="text-align: center">
+            @if(!$data['isPDF'])<img src="/img/ui/logo.png"
+                                    alt="Care Plan Manager"
+                                    style="position:relative;"
+                                    width="200px"/>
+            @endif
+            <h1 style="margin-bottom: 0px">{{$data['name']}}'s Weekly CCM Summary</h1>
             <b><span style="font-size: 16px">(Organization-Wide)</span><br/></b>
 
             <b><br><span>{{Carbon\Carbon::parse($data['start'])->format('l, jS F') . ' - ' . Carbon\Carbon::parse($data['end'])->format('l, jS F') }}</span></b>
