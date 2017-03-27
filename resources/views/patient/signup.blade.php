@@ -73,19 +73,16 @@
             <div class="row overlay"
                  style="background: url('http://www.circlelinkhealth.com/wp-content/themes/CLH_132/images/bg.png')">
 
-                <h4 class="white-text center">Do you or a loved one need a hand managing chronic conditions?</h4>
+                <h5 class="white-text center"><b>WELLNESS MANAGER</b> <em>from CircleLink Health</em></h5>
 
-                <div class="col s12">
-                    <div class="divider" style="width: 13%;
-    margin: 1px auto 15px auto;"></div>
-                </div>
+                <br>
 
+                <h5 class="white-text center">Let our registered nurse care coaches take the stress out of chronic
+                    condition for you <u>or</u> a loved one.</h5>
 
-                <h5 class="blue-grey-text text-lighten-5 center">Put your mind at ease with our fully licensed
-                    registered nurse care coaches just a phone call away.</h5>
-
-                <div class="center" style="margin-top: 6%;">
-                    <h5 class="teal-text text-accent-1 center">Get remote health coaching for just $49.99/ month..</h5>
+                <div class="center" style="margin-top: 4%;">
+                    <h5 class="teal-text text-accent-1 center">Telephone health coaching, care plan setup and
+                        coordination with family and doctors. Just $49.99/month!</h5>
                     <br>
                     <a class="waves-effect waves-light btn-large scroll-to-form teal accent-3">Sign me up</a>
                 </div>
