@@ -90,46 +90,6 @@
 
         </div>
 
-        <div class="section">
-            <div class="row">
-                <div class="col s12 m4 center">
-                    <div class="center promo promo-picture">
-                        <img class="col s12" src="{{asset('/img/landing-pages/registered-nurse.png')}}"
-                             alt="">
-                        <p class="col s12 promo-caption">Fully Registered Nurse Care Coach</p>
-                        <p class="col s12 light center promo-paragraph">Our trained nurses guide you or a loved one to
-                            wellness
-                            while taking the
-                            stress off managing chronic illness.</p>
-                    </div>
-                </div>
-                <div class="col s12 m4 center">
-                    <div class="center promo promo-picture">
-                        <img class="col s12" src="{{asset('/img/landing-pages/careplan.png')}}" alt="">
-                        <p class="col s12 promo-caption">Care Plan and Unlimited Educational Info</p>
-                        <p class="col s12 light center promo-paragraph">Our nurses formulate a care plan based on
-                            doctor’s orders
-                            and we
-                            provide
-                            unlimited access to wellness and diet content/education materials.</p>
-                    </div>
-                </div>
-                <div class="col s12 m4 center">
-                    <div class="center promo promo-picture">
-                        <img class="col s12"
-                             src="{{asset('/img/landing-pages/coordination-with-family.png')}}"
-                             alt="">
-                        <p class="col s12 promo-caption">Coordination with Family and Doctors</p>
-                        <p class="col s12 light center promo-paragraph">Family members can stay at ease with real-time
-                            updates from
-                            our
-                            system
-                            as our nurses track progress. Your participating doctors also stay updated.</p>
-                    </div>
-                </div>
-            </div>
-        </div>
-
         {!! Form::open(['url' => route('sign-up.store'), 'method' => 'post', 'class' => 'col s12', 'id' => 'signup-form']) !!}
             <div class="section container">
                 <h1 class="center">Sign Up for Wellness Manager</h1>
