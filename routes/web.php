@@ -8,7 +8,7 @@
 use Illuminate\Support\Facades\DB;
 
 //Patient Landing Pages
-Route::resource('patient-sign-up-for-chronic-care-management', 'PatientSignupController');
+//Route::resource('patient-sign-up-for-chronic-care-management', 'PatientSignupController');
 
 if (app()->environment() != 'production') {
 
