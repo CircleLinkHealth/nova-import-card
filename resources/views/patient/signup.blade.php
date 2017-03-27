@@ -37,33 +37,9 @@
             padding-top: 3rem;
             padding-bottom: 1rem;
         }
-
-        .results-item {
-            -ms-flex-item-align: center;
-            align-self: center;
-            background: hsla(0, 0%, 100%, .2);
-            background-image: -webkit-linear-gradient(top, #32ab97, hsla(0, 0%, 100%, 0) 98%);
-            background-image: linear-gradient(-180deg, #32ab97, hsla(0, 0%, 100%, 0) 98%);
-            padding: 1em;
-            box-shadow: 0 2px 4px 0 rgba(77, 77, 77, .1);
-            min-height: 430px !important;
-            display: -webkit-box;
-            display: -ms-flexbox;
-            display: flex;
-            -webkit-box-orient: vertical;
-            -webkit-box-direction: normal;
-            -ms-flex-flow: column;
-            flex-flow: column;
-            -ms-flex-pack: distribute;
-            justify-content: space-around;
-        }
-
-        .results-text {
-            font-size: 1.5rem;
-        }
     </style>
 
-    <meta property="og:url" content="{{url('patient-sign-up-for-chronic-care-management/')}}"/>
+    <meta property="og:url" content="{{url('sign-up/')}}"/>
     <meta property="og:title" content="Do you or a loved one need a hand managing chronic conditions?"/>
     <meta property="og:image" content="{{asset('/img/landing-pages/coordination-with-family.png')}}"/>
     <meta property="og:image:secure_url" content="{{asset('/img/landing-pages/coordination-with-family.png')}}"/>
@@ -157,48 +133,7 @@
             </div>
         </div>
 
-        <section id="results" class="section teal">
-            <div class="row">
-                <h3 class="col s12 center white-text">Proven Results and Engagement</h3>
-
-                <div class="col s12" style="height: 20px;"></div>
-
-                <div class="container">
-                    <div class="row">
-                        <div class="col s12 m4 l4 center">
-                            <div class="results-item">
-                                <h4 class="title white-text">Diabetes</h4>
-                                <h1 class="white-text">18%</h1>
-                                <p class="blue-grey-text text-lighten-5 center results-text">A1c improvement (1.7%
-                                    absolute change) versus control group</p>
-                            </div>
-                        </div>
-                        <div class="col s12 m4 l4 center">
-                            <div class="results-item">
-                                <h4 class="title white-text">HIV</h4>
-                                <h1 class="white-text">44%</h1>
-                                <p class="blue-grey-text text-lighten-5 center results-text">Of patients improved from
-                                    detectable to undetectable
-                                    viral loads</p>
-                            </div>
-
-                        </div>
-                        <div class="col s12 m4 l4 center">
-                            <div class="results-item">
-                                <h4 class="title white-text">IBS</h4>
-                                <h1 class="white-text">+80%</h1>
-                                <p class="blue-grey-text text-lighten-5 center results-text">Over 80% patient engagement
-                                    when prompted weekly or
-                                    bi-weekly</p>
-                            </div>
-
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </section>
-
-        {!! Form::open(['url' => route('patient-sign-up-for-chronic-care-management.store'), 'method' => 'post', 'class' => 'col s12', 'id' => 'signup-form']) !!}
+        {!! Form::open(['url' => route('sign-up.store'), 'method' => 'post', 'class' => 'col s12', 'id' => 'signup-form']) !!}
             <div class="section container">
                 <h1 class="center">Sign Up for Wellness Manager</h1>
 
