@@ -14,7 +14,7 @@
                 <div class="row">
                     <div class="col-md-12">
                         <div class="panel panel-default">
-                            <div class="panel-heading">Enrollment Report</div>
+                            <div class="panel-heading">Billable Patients Report</div>
 
                             <div class="panel-body">
                                 <table class="table table-striped" id="enrollment_list">
