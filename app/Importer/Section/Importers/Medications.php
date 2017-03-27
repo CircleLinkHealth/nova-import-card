@@ -94,9 +94,10 @@ class Medications extends BaseImporter
             'medical_record_id'          => $this->medicalRecordId,
             'imported_medical_record_id' => $this->importedMedicalRecord->id,
             'vendor_id'                  => $itemLog->vendor_id,
+            'name'                       => ucfirst($consolidatedMed->cons_name),
+        ], [
             'ccd_medication_log_id'      => $itemLog->id,
             'medication_group_id'        => $medicationGroupId,
-            'name'                       => ucfirst($consolidatedMed->cons_name),
             'sig'                        => ucfirst(StringManipulation::stringDiff($consolidatedMed->cons_name,
                 $itemLog->cons_text)),
             'code'                       => $consolidatedMed->cons_code,
