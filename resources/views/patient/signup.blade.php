@@ -60,7 +60,8 @@
             <div class="row overlay"
                  style="background: url('http://www.circlelinkhealth.com/wp-content/themes/CLH_132/images/bg.png')">
 
-                <h5 class="white-text center"><b>WELLNESS MANAGER</b> <em>from CircleLink Health</em></h5>
+                <h1 style="line-height: 110%;font-size: 1.64rem;margin: .82rem 0 .656rem;" class="white-text center"><b>WELLNESS
+                        MANAGER</b> <em>from CircleLink Health</em></h1>
 
                 <br>
 
@@ -78,60 +79,60 @@
         </div>
 
         {!! Form::open(['url' => route('sign-up.store'), 'method' => 'post', 'class' => 'col s12', 'id' => 'signup-form']) !!}
-            <div class="section container">
-                <h1 class="center">Sign Up for Wellness Manager</h1>
+        <div class="section container">
+            <h1 class="center">Sign Up for Wellness Manager</h1>
 
-                <br>
-                <br>
+            <br>
+            <br>
 
-                <div class="row">
-                    <div class="input-field col s12 m6">
-                        <i class="material-icons prefix">account_circle</i>
-                        <input id="first_name" type="text" class="validate" required name="first_name">
-                        <label for="first_name" id="first_name_label">First Name</label>
-                    </div>
-                    <div class="input-field col s12 m6">
-                        <i class="material-icons prefix">account_box</i>
-                        <input id="last_name" type="text" class="validate" required name="last_name">
-                        <label for="last_name">Last Name</label>
-                    </div>
+            <div class="row">
+                <div class="input-field col s12 m6">
+                    <i class="material-icons prefix">account_circle</i>
+                    <input id="first_name" type="text" class="validate" required name="first_name">
+                    <label for="first_name" id="first_name_label">First Name</label>
+                </div>
+                <div class="input-field col s12 m6">
+                    <i class="material-icons prefix">account_box</i>
+                    <input id="last_name" type="text" class="validate" required name="last_name">
+                    <label for="last_name">Last Name</label>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="input-field col s12">
+                    <i class="material-icons prefix">phone</i>
+                    <input id="text" type="text" class="validate"
+                           pattern="\d{3}[\-]\d{3}[\-]\d{4}" required name="phone">
+                    <label for="text" data-error="The phone number must match format xxx-xxx-xxxx">Phone Number
+                        xxx-xxx-xxxx</label>
+                </div>
+            </div>
+            <div class="row">
+                <div class="input-field col s12">
+                    <i class="material-icons prefix">email</i>
+                    <input id="email" type="email" name="email" class="validate">
+                    <label for="email" data-error="The email must contain an @">Email</label>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="input-field col s12">
+                    <i class="material-icons prefix">message</i>
+                    <textarea id="textarea1" class="materialize-textarea" name="comment"
+                              placeholder="Let us know when to call you. It would great if you could include information regarding the patient's Allergies, Conditions, and current Medications List."></textarea>
+                    <label for="textarea1">Message</label>
                 </div>
 
                 <div class="row">
-                    <div class="input-field col s12">
-                        <i class="material-icons prefix">phone</i>
-                        <input id="text" type="text" class="validate"
-                               pattern="\d{3}[\-]\d{3}[\-]\d{4}" required name="phone">
-                        <label for="text" data-error="The phone number must match format xxx-xxx-xxxx">Phone Number
-                            xxx-xxx-xxxx</label>
-                    </div>
-                </div>
-                <div class="row">
-                    <div class="input-field col s12">
-                        <i class="material-icons prefix">email</i>
-                        <input id="email" type="email" name="email" class="validate">
-                        <label for="email" data-error="The email must contain an @">Email</label>
-                    </div>
-                </div>
-
-                <div class="row">
-                    <div class="input-field col s12">
-                        <i class="material-icons prefix">message</i>
-                        <textarea id="textarea1" class="materialize-textarea" name="comment"
-                                  placeholder="Let us know when to call you. It would great if you could include information regarding the patient's Allergies, Conditions, and current Medications List."></textarea>
-                        <label for="textarea1">Message</label>
-                    </div>
-
-                    <div class="row">
-                        <div class="input-field col s12 center">
-                            <button class="btn-large waves-effect waves-light blue center" type="submit" name="action">
-                                Schedule a call
-                                <i class="material-icons right">send</i>
-                            </button>
-                        </div>
+                    <div class="input-field col s12 center">
+                        <button class="btn-large waves-effect waves-light blue center" type="submit" name="action">
+                            Schedule a call
+                            <i class="material-icons right">send</i>
+                        </button>
                     </div>
                 </div>
             </div>
+        </div>
         {!! Form::close() !!}
 
     </div>
