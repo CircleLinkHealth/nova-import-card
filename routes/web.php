@@ -5,6 +5,7 @@
 //$faxTest = (new PhaxioService('production'))->send('+12124910114', storage_path('pdfs/notes/2017-02-07-xsKTIK4106WdXiMNu8iMla4FPJSOcosNBXXMkAsX.pdf'));
 //dd($faxTest);
 
+use App\Reports\WeeklyReportDispatcher;
 use Illuminate\Support\Facades\DB;
 
 //Patient Landing Pages
@@ -15,6 +16,8 @@ if (app()->environment() != 'production') {
     Route::get('/sms/test', 'TwilioController@sendTestSMS');
 
     Route::get('/rohan', function () {
+
+        (new WeeklyReportDispatcher())->exec();
 
 
     });
@@ -611,6 +614,23 @@ Route::group(['middleware' => 'auth'], function () {
                 'uses' => 'Admin\Reports\MonthlyBillingReportsController@makeMonthlyReport',
                 'as'   => 'MonthlyBillingReportsController.makeMonthlyReport',
             ]);
+
+            Route::group([
+                'prefix' => 'monthly-billing/v2',
+            ], function () {
+
+                Route::get('/make', [
+                    'uses' => 'Admin\Reports\MonthlyBillingReportsController@make',
+                    'as'   => 'monthly.billing.make',
+                ]);
+
+                Route::post('/data', [
+                    'uses' => 'Admin\Reports\MonthlyBillingReportsController@data',
+                    'as'   => 'monthly.billing.data',
+                ]);
+
+            });
+
 
             Route::get('patients-for-insurance-check', [
                 'uses' => 'Reports\PatientsForInsuranceCheck@make',
@@ -1531,9 +1551,6 @@ Route::group([
     ]);
 
     Route::get('/call', 'TwilioController@makeCall');
-
-
-
 
 });
 

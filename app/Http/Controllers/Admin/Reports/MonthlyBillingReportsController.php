@@ -9,6 +9,7 @@ use App\Models\CCD\Problem;
 use App\Models\CPM\CpmInstruction;
 use App\Models\CPM\CpmMisc;
 use App\Models\CPM\CpmProblem;
+use App\Patient;
 use App\Practice;
 use App\Role;
 use App\User;
@@ -16,7 +17,9 @@ use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 use Maatwebsite\Excel\Facades\Excel;
+use Yajra\Datatables\Facades\Datatables;
 
 class MonthlyBillingReportsController extends Controller
 {
@@ -337,6 +340,52 @@ class MonthlyBillingReportsController extends Controller
                 });
             }
         })->export('xls');
+
+    }
+
+    public function make(){
+
+        return view('admin.reports.billing');
+
+    }
+
+    public function data(){
+
+        $patients =
+            Patient::whereHas('patientSummaries', function ($q){
+                $q->where('ccm_time', '>', 1199)
+                 ->where('month_year', Carbon::now()->subMonth()->firstOfMonth()->toDateString());
+
+            })
+                ->take(10)
+            ->pluck('user_id');
+
+        //CCM Mins	CPT Code	Problem 1	Problem 2	Status [Yellow highlight withdrawn or paused]
+
+        $count = 0;
+        $formatted = [];
+
+        foreach ($patients as $p) {
+
+            $u = User::find($p);
+            $info = $u->patientInfo;
+
+            $formatted[$count] = [
+
+                'name'                     => $u->fullName,
+                'provider'                     => $u->billingProvider()->fullName,
+                'dob'                     => $info->birth_date,
+                'ccm'                     => round($info->cur_month_activity_time / 60 , 2),
+
+            ];
+            $count++;
+
+        }
+
+        $formatted = collect($formatted);
+        $formatted->sortByDesc('date');
+
+        return Datatables::collection($formatted)->make(true);
 
     }
 }
