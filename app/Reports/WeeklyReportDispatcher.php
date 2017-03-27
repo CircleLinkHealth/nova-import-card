@@ -65,7 +65,7 @@ class WeeklyReportDispatcher
             $practiceData['name'] = $practice->name;
             $practiceData['start'] = $startRange->toDateString();
             $practiceData['end'] = $endRange->toDateString();
-            $practiceData['isPDF'] = false;
+            $practiceData['isEmail'] = true;
 
             if($practice->weekly_report_recipients != null) {
 
@@ -105,6 +105,8 @@ class WeeklyReportDispatcher
                 $providerData['name'] = $provider->display_name;
                 $providerData['start'] = $startRange->toDateString();
                 $providerData['end'] = $endRange->toDateString();
+                $providerData['isEmail'] = true;
+
 
                 $subjectProvider = 'Dr. ' . $provider->last_name . '\'s CCM Weekly Summary';
 
