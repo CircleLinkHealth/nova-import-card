@@ -44,7 +44,8 @@ $practiceSection = \App\Reports\Sales\Provider\Sections\PracticeDemographics::cl
         @else
             <h1>{{$data['name']}}
                 <small>CircleLink Health CCM Summary <b></b>
-                    <span>({{Carbon\Carbon::parse($data['start'])->format('jS F') . ' - ' . Carbon\Carbon::parse($data['end'])->format('jS F') }})</span></small>
+                    <span>({{Carbon\Carbon::parse($data['start'])->format('jS F') . ' - ' . Carbon\Carbon::parse($data['end'])->format('jS F') }}
+                        )</span></small>
             </h1>
         @endif
 
@@ -72,10 +73,12 @@ $practiceSection = \App\Reports\Sales\Provider\Sections\PracticeDemographics::cl
                 <b>{{$data[$rangeSection]['no_of_forwarded_notes']}}</b>
                 note(s) to you.</p>
 
-            <p>You can see a list of forwarded notes for your patients <a
-                        href="{{$data[$rangeSection]['link_to_notes_listing']}}">here</a>,
-                including <b>{{$data[$rangeSection]['no_of_forwarded_emergency_notes']}}</b>
-                notification(s) indicating a patient visited a ER/Hospital.</p>
+            @if(!$data['isEmail'])
+                <p>You can see a list of forwarded notes for your patients <a
+                            href="{{$data[$rangeSection]['link_to_notes_listing']}}">here</a>,
+                    including <b>{{$data[$rangeSection]['no_of_forwarded_emergency_notes']}}</b>
+                    notification(s) indicating a patient visited a ER/Hospital.</p>
+            @endif
 
         </div>
     @endif
