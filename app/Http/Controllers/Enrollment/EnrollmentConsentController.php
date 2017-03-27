@@ -148,9 +148,9 @@ class EnrollmentConsentController extends Controller
 
         }
 
-        if (isset($input['time'])) {
+        if (isset($input['times'])) {
+            $enrollee->preferred_window = implode(', ', $input['times']);
 
-            $enrollee->preferred_window = $input['time'];
         }
 
         $enrollee->save();
