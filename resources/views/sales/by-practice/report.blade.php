@@ -27,36 +27,42 @@ $practiceSection = \App\Reports\Sales\Practice\Sections\PracticeDemographics::cl
     }
 </style>
 
+
 @section('content')
 
     <div class="page-header">
+        @if($data['isEmail'])
+            <div style="text-align: center">
+                <img src="/img/ui/logo.png"
+                     alt="Care Plan Manager"
+                     style="position:relative;"
+                     width="200px"/>
+                <h1 style="margin-bottom: 0px">{{$data['name']}}'s Weekly CCM Summary</h1>
+                <b><span style="font-size: 16px">(Organization-Wide)</span><br/></b>
 
-        <div style="text-align: center">
-            @if(!$data['isPDF'])<img src="/img/ui/logo.png"
-                                    alt="Care Plan Manager"
-                                    style="position:relative;"
-                                    width="200px"/>
-            @endif
-            <h1 style="margin-bottom: 0px">{{$data['name']}}'s Weekly CCM Summary</h1>
-            <b><span style="font-size: 16px">(Organization-Wide)</span><br/></b>
-
-            <b><br><span>{{Carbon\Carbon::parse($data['start'])->format('l, jS F') . ' - ' . Carbon\Carbon::parse($data['end'])->format('l, jS F') }}</span></b>
-
-        </div>
+            </div>
+        @else
+            <h1>{{$data['name']}}
+                <small>CircleLink Health  CCM Summary <b></b>
+                    <span>({{Carbon\Carbon::parse($data['start'])->format('jS F') . ' - ' . Carbon\Carbon::parse($data['end'])->format('jS F') }})</span></small>
+            </h1>
+        @endif
     </div>
 
     @if(array_key_exists($rangeSection, $data))
 
         <div style="font-size: 16px">
 
-            @if($data['isPDF'])
-                <p>Here's a summary of CCM activities for the period specified: {{Carbon\Carbon::parse($data['start'])->format('l, jS F') . ' - ' . Carbon\Carbon::parse($data['end'])->format('l, jS F') }}</p>
+            @if(!$data['isEmail'])
+                <p>Here's a summary of CCM activities for the period
+                    specified: {{Carbon\Carbon::parse($data['start'])->format('l, jS F') . ' - ' . Carbon\Carbon::parse($data['end'])->format('l, jS F') }}</p>
             @else
                 <p>Hope you had a good weekend! Here's a summary of CCM activities for last week:</p>
             @endif
 
             <p>
-                @if($data['isPDF']) During the period, @else Last week @endif CircleLink nurses placed <b>{{$data[$rangeSection]['no_of_call_attempts']}}</b>
+                @if(!$data['isEmail']) During the period, @else Last week @endif CircleLink nurses placed
+                <b>{{$data[$rangeSection]['no_of_call_attempts']}}</b>
                 calls, including <b>{{$data[$rangeSection]['no_of_successful_calls']}}</b> successful phone session,
                 totaling
                 <b>{{$data[$rangeSection]['total_ccm_time']}}</b>
@@ -66,12 +72,15 @@ $practiceSection = \App\Reports\Sales\Practice\Sections\PracticeDemographics::cl
                 note(s) to you.
             </p>
 
+            @if($data['isEmail'])
             <p style="font-size: 16px">
                 You can see a list of forwarded notes <a
                         href="{{$data[$rangeSection]['link_to_notes_listing']}}">here</a>,
                 including <b>{{$data[$rangeSection]['no_of_forwarded_emergency_notes']}}</b> notification(s) indicating
                 a patient visited an ER/Hospital.
             </p>
+            @endif
+
 
         </div>
     @endif
