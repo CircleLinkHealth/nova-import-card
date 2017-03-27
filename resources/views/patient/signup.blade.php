@@ -20,19 +20,6 @@
             max-height: 100px;
         }
 
-        .promo-caption {
-            font-size: 1.6rem;
-        }
-
-        .promo-paragraph {
-            font-size: 1.4rem;
-        }
-
-        .promo {
-            padding-top: 3rem;
-            padding-bottom: 1rem;
-        }
-
         .section {
             padding-top: 3rem;
             padding-bottom: 1rem;
