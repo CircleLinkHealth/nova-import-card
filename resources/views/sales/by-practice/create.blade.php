@@ -73,9 +73,6 @@
                                 <div class="form-group">
                                     <div class="row" style="padding-left: 12px;">
                                         <label class="col-md-2 control-label" for="end_date"></label>
-                                        {{--<div class="col-md-2" style="padding-left: 40px">--}}
-                                        {{--<button id="compute" name="compute" value="email" class="btn btn-success">Preview Data</button>--}}
-                                        {{--</div>--}}
                                         <div class="col-md-6">
                                             <button id="submit" name="submit" value="display" class="btn btn-success">
                                                 Generate Report
@@ -104,34 +101,4 @@
             </div>
         </div>
     </div>
-
-
-    {{--<script>--}}
-
-    {{--$("#compute").submit(function (e) {--}}
-
-    {{--var url = '{!! route('reports.sales.practice.report') !!}'; // the script where you handle the form input.--}}
-
-    {{--$.ajax({--}}
-    {{--type: "POST",--}}
-    {{--url: url,--}}
-    {{--headers: {--}}
-    {{--'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')--}}
-    {{--},--}}
-    {{--data: {--}}
-    {{--practices: $('#practices').val(),--}}
-    {{--start_date: $('#start_date').val(),--}}
-    {{--sections: $('#sections').val(),--}}
-    {{--end_date: $('#end_date').val()--}}
-    {{--}, // serializes the form's elements.--}}
-    {{--success: function (data) {--}}
-    {{--console.log(data); // show response from the php script.--}}
-    {{--$('#result').text(JSON.parse(data));--}}
-    {{--}--}}
-    {{--});--}}
-
-    {{--e.preventDefault(); // avoid to execute the actual submit of the form.--}}
-    {{--});--}}
-
-    {{--</script>--}}
 @stop
