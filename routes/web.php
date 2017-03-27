@@ -1519,17 +1519,26 @@ Route::group([
 });
 
 
-Route::post('/twilio/token', [
-    'uses' => 'TwilioController@obtainToken',
-    'as'   => 'twilio.token',
-]);
+Route::group([
+    'prefix' => 'twilio',
+], function () {
 
-Route::post('/twilio/call/make', [
-    'uses' => 'TwilioController@newCall',
-    'as'   => 'twilio.call',
-]);
 
-Route::get('twilio/call', 'TwilioController@makeCall');
+    Route::post('/token', [
+        'uses' => 'TwilioController@obtainToken',
+        'as'   => 'twilio.token',
+    ]);
 
+    Route::post('/call/make', [
+        'uses' => 'TwilioController@newCall',
+        'as'   => 'twilio.call',
+    ]);
+
+    Route::get('/call', 'TwilioController@makeCall');
+
+
+
+
+});
 
 
