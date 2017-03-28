@@ -19,6 +19,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\URL;
 use Maatwebsite\Excel\Facades\Excel;
 use Yajra\Datatables\Facades\Datatables;
 
@@ -361,7 +362,7 @@ class MonthlyBillingReportsController extends Controller
 
             })
                 ->orderBy('updated_at', 'desc')
-                ->take(10)
+                ->take(100)
                 ->pluck('user_id');
 
         //CCM Mins	CPT Code	Problem 1	Problem 2	Status [Yellow highlight withdrawn or paused]
@@ -375,31 +376,36 @@ class MonthlyBillingReportsController extends Controller
             $info = $u->patientInfo;
             $problems = $u->cpmProblems()->take(2)->pluck('name');
 
-            if (!isset($problems[0])) {
-                $problems[0] = 'N/A';
-            }
-
-            if (!isset($problems[1])) {
-                $problems[1] = 'N/A';
-            }
-
             $day_start = Carbon::parse(Carbon::now()->firstOfMonth()->format('Y-m-d'));
             $report = PatientMonthlySummary::where('patient_info_id', $info->id)->where('month_year',
                 $day_start)->first();
+
 
             if ($report != null) {
                 $checked = ($report->approved == 1)
                     ? 'checked'
                     : '';
             } else {
-                $checked = 0;
+                $checked = '';
             }
 
+            if (!isset($problems[0])) {
+                $problems[0] = 'N/A';
+                $checked = '';
+            }
+
+            if (!isset($problems[1])) {
+                $problems[1] = 'N/A';
+                $checked = '';
+            }
+
+            $name = "<a href=" . URL::route('patient.summary', array('patient' => $u->id)) . "> ". $u->fullName  . "</a>";
 
             $formatted[$count] = [
 
-                'name'     => $u->fullName,
+                'name'     => $name,
                 'provider' => $u->billingProvider()->fullName,
+                'practice' => $u->primaryPractice->display_name,
                 'dob'      => $info->birth_date,
                 'ccm'      => round($info->cur_month_activity_time / 60, 2),
                 'problem1' => $problems[0],
@@ -422,7 +428,7 @@ class MonthlyBillingReportsController extends Controller
 
                 Log::info($a);
 
-                if ($a['problem1'] == 'N/A' || $a['problem2'] == 'N/A') {
+                if ($a['problem1'] == 'N / A' || $a['problem2'] == 'N / A') {
                     return 'rgba(234, 230, 11, 0.41)';
                 } else {
                     return '';

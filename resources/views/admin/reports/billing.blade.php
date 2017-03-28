@@ -27,6 +27,9 @@
                                             Patient Name
                                         </th>
                                         <th>
+                                            Practice Name
+                                        </th>
+                                        <th>
                                             DOB
                                         </th>
                                         <th>
@@ -64,21 +67,23 @@
                     },
 
                     columns: [
-                        {data: 'provider', name: 'provider'},
                         {data: 'name', name: 'name'},
+                        {data: 'provider', name: 'provider'},
+                        {data: 'practice', name: 'practice'},
                         {data: 'dob', name: 'dob'},
                         {data: 'ccm', name: 'ccm'},
                         {data: 'problem1', name: 'problem1'},
                         {data: 'problem2', name: 'problem2'},
                         {data: 'approve', name: 'approve'},
                     ],
+                    "iDisplayLength": 25,
+                    "aaSorting":[1,'desc'],
                     "fnRowCallback": function (nRow, aData, iDisplayIndex, iDisplayIndexFull) {
-                        console.log(aData);
                         if (aData['background_color'] != '') {
                             $('td', nRow).css('background-color', aData['background_color']);
                         }
                     },
-                    "iDisplayLength": 25,
+
                 });
 
             });
