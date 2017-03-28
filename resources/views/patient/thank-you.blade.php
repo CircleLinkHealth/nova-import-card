@@ -21,7 +21,7 @@
         }
     </style>
 
-    <meta property="og:url" content="{{url('patient-sign-up-for-chronic-care-management/')}}"/>
+    <meta property="og:url" content="{{url('sign-up/')}}"/>
     <meta property="og:title" content="Do you or a loved one need a hand managing chronic conditions?"/>
     <meta property="og:image" content="{{asset('/img/landing-pages/coordination-with-family.png')}}"/>
     <meta property="og:image:secure_url" content="{{asset('/img/landing-pages/coordination-with-family.png')}}"/>

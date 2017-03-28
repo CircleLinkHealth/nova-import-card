@@ -7,8 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 class PatientSignup extends Model
 {
     protected $fillable = [
-        'first_name',
-        'last_name',
+        'name',
         'phone',
         'email',
         'comment',
