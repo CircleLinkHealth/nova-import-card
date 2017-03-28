@@ -399,7 +399,7 @@ class MonthlyBillingReportsController extends Controller
                 $checked = '';
             }
 
-            $name = "<a href=" . URL::route('patient.summary', array('patient' => $u->id)) . "> ". $u->fullName  . "</a>";
+            $name = "<a href=" . URL::route('patient.summary', ['patient' => $u->id]) . "> " . $u->fullName . "</a>";
 
             $formatted[$count] = [
 
@@ -428,7 +428,7 @@ class MonthlyBillingReportsController extends Controller
 
                 Log::info($a);
 
-                if ($a['problem1'] == 'N / A' || $a['problem2'] == 'N / A') {
+                if ($a['problem1'] == 'N/A' || $a['problem2'] == 'N/A') {
                     return 'rgba(234, 230, 11, 0.41)';
                 } else {
                     return '';
