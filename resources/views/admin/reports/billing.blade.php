@@ -32,6 +32,12 @@
                                         <th>
                                             CCM (Mins)
                                         </th>
+                                        <th>
+                                            Problem 1
+                                        </th>
+                                        <th>
+                                            Problem 2
+                                        </th>
                                     </tr>
                                     </thead>
                                 </table>
@@ -59,6 +65,8 @@
                         {data: 'name', name: 'name'},
                         {data: 'dob', name: 'dob'},
                         {data: 'ccm', name: 'ccm'},
+                        {data: 'problem1', name: 'problem1'},
+                        {data: 'problem2', name: 'problem2'},
                     ],
                     "iDisplayLength": 25,
                 });

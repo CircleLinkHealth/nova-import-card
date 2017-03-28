@@ -369,6 +369,7 @@ class MonthlyBillingReportsController extends Controller
 
             $u = User::find($p);
             $info = $u->patientInfo;
+            $problems = $u->cpmProblems()->take(2)->pluck('name');
 
             $formatted[$count] = [
 
@@ -376,6 +377,8 @@ class MonthlyBillingReportsController extends Controller
                 'provider'                     => $u->billingProvider()->fullName,
                 'dob'                     => $info->birth_date,
                 'ccm'                     => round($info->cur_month_activity_time / 60 , 2),
+                'problem1'                     => $problems[0],
+                'problem2'                     => $problems[1],
 
             ];
             $count++;
