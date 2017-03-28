@@ -53,7 +53,7 @@
 
         <script>
 
-            $(function() {
+            $(function () {
                 $('#enrollment_list').DataTable({
                     processing: true,
                     serverSide: false,
@@ -72,6 +72,12 @@
                         {data: 'problem2', name: 'problem2'},
                         {data: 'approve', name: 'approve'},
                     ],
+                    "fnRowCallback": function (nRow, aData, iDisplayIndex, iDisplayIndexFull) {
+                        console.log(aData);
+                        if (aData['background_color'] != '') {
+                            $('td', nRow).css('background-color', aData['background_color']);
+                        }
+                    },
                     "iDisplayLength": 25,
                 });
 

@@ -10,6 +10,7 @@ use App\Models\CPM\CpmInstruction;
 use App\Models\CPM\CpmMisc;
 use App\Models\CPM\CpmProblem;
 use App\Patient;
+use App\PatientMonthlySummary;
 use App\Practice;
 use App\Role;
 use App\User;
@@ -343,22 +344,25 @@ class MonthlyBillingReportsController extends Controller
 
     }
 
-    public function make(){
+    public function make()
+    {
 
         return view('admin.reports.billing');
 
     }
 
-    public function data(){
+    public function data()
+    {
 
         $patients =
-            Patient::whereHas('patientSummaries', function ($q){
+            Patient::whereHas('patientSummaries', function ($q) {
                 $q->where('ccm_time', '>', 1199)
-                 ->where('month_year', Carbon::now()->subMonth()->firstOfMonth()->toDateString());
+                    ->where('month_year', Carbon::now()->subMonth()->firstOfMonth()->toDateString());
 
             })
+                ->orderBy('updated_at', 'desc')
                 ->take(10)
-            ->pluck('user_id');
+                ->pluck('user_id');
 
         //CCM Mins	CPT Code	Problem 1	Problem 2	Status [Yellow highlight withdrawn or paused]
 
@@ -371,14 +375,37 @@ class MonthlyBillingReportsController extends Controller
             $info = $u->patientInfo;
             $problems = $u->cpmProblems()->take(2)->pluck('name');
 
+            if (!isset($problems[0])) {
+                $problems[0] = 'N/A';
+            }
+
+            if (!isset($problems[1])) {
+                $problems[1] = 'N/A';
+            }
+
+            $day_start = Carbon::parse(Carbon::now()->firstOfMonth()->format('Y-m-d'));
+            $report = PatientMonthlySummary::where('patient_info_id', $info->id)->where('month_year',
+                $day_start)->first();
+
+            if ($report != null) {
+                $checked = ($report->approved == 1)
+                    ? 'checked'
+                    : '';
+            } else {
+                $checked = 0;
+            }
+
+
             $formatted[$count] = [
 
-                'name'                     => $u->fullName,
-                'provider'                     => $u->billingProvider()->fullName,
-                'dob'                     => $info->birth_date,
-                'ccm'                     => round($info->cur_month_activity_time / 60 , 2),
-                'problem1'                     => $problems[0],
-                'problem2'                     => $problems[1],
+                'name'     => $u->fullName,
+                'provider' => $u->billingProvider()->fullName,
+                'dob'      => $info->birth_date,
+                'ccm'      => round($info->cur_month_activity_time / 60, 2),
+                'problem1' => $problems[0],
+                'problem2' => $problems[1],
+                'status'   => $info->ccm_status,
+                'approve'  => "<input type=\"checkbox\" id='$u->id' $checked>",
 
             ];
             $count++;
@@ -386,9 +413,21 @@ class MonthlyBillingReportsController extends Controller
         }
 
         $formatted = collect($formatted);
-        $formatted->sortByDesc('date');
 
-        return Datatables::collection($formatted)->make(true);
+
+//        $formatted->sortByDesc('date');
+
+        return Datatables::of($formatted)
+            ->addColumn('background_color', function ($a) {
+
+                Log::info($a);
+
+                if ($a['problem1'] == 'N/A' || $a['problem2'] == 'N/A') {
+                    return 'rgba(234, 230, 11, 0.41)';
+                } else {
+                    return '';
+                }
+            })->make(true);
 
     }
 }
