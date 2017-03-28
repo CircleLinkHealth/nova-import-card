@@ -24,6 +24,10 @@
             padding-top: 3rem;
             padding-bottom: 1rem;
         }
+
+        .promo-picture {
+            max-height: 165px;
+        }
     </style>
 
     <meta property="og:url" content="{{url('sign-up/')}}"/>
@@ -48,10 +52,7 @@
         <div class="navbar-fixed">
             <nav class="white">
                 <div class="header nav-wrapper">
-                    <a href="#" class="col s2"><img class="logo" src="{{asset('/img/clh_logo.svg')}}" alt=""></a>
-                    <ul id="nav-mobile" class="right hide-on-med-and-down">
-                        <a class="waves-effect waves-light btn-large scroll-to-form blue">Sign me up</a>
-                    </ul>
+                    <a href="#" class="col s2"><img class="logo" src="{{asset('/img/clh_logo.svg')}}"></a>
                 </div>
             </nav>
         </div>
@@ -76,6 +77,31 @@
                 </div>
             </div>
 
+        </div>
+
+        <div class="section">
+            <div class="row">
+                <h4 class="center">Care protocols built with top clinician advisors</h4>
+                <div class="col s12 m4 center">
+                    <div class="center">
+                        <h5>Instructor at</h5>
+                        <img class="promo-picture" src="{{asset('/img/harvard-medical-school.png')}}"
+                        >
+                    </div>
+                </div>
+                <div class="col s12 m4 center">
+                    <div class="center">
+                        <h5>Medical Director at</h5>
+                        <img class="promo-picture" src="{{asset('/img/keck-medical-center.jpg')}}">
+                    </div>
+                </div>
+                <div class="col s12 m4 center">
+                    <div class="center">
+                        <h5>Chief of Medicine at</h5>
+                        <img class="promo-picture" src="{{asset('/img/brickham-and-womens-hospital.jpg')}}">
+                    </div>
+                </div>
+            </div>
         </div>
 
         {!! Form::open(['url' => route('sign-up.store'), 'method' => 'post', 'class' => 'col s12', 'id' => 'signup-form']) !!}
@@ -133,29 +159,9 @@
     </div>
 
     <footer class="page-footer teal" style="padding-top: 0;">
-        {{--<div class="container">--}}
-        {{--<div class="row">--}}
-        {{--<div class="col l6 s12">--}}
-        {{--<h5 class="white-text">Footer Content</h5>--}}
-        {{--<p class="grey-text text-lighten-4">You can use rows and columns here to organize your--}}
-        {{--footer--}}
-        {{--content.</p>--}}
-        {{--</div>--}}
-        {{--<div class="col l4 offset-l2 s12">--}}
-        {{--<h5 class="white-text">Olark live chat, maybe?</h5>--}}
-        {{--<ul>--}}
-        {{--<li><a class="grey-text text-lighten-3" href="#!">Link 1</a></li>--}}
-        {{--<li><a class="grey-text text-lighten-3" href="#!">Link 2</a></li>--}}
-        {{--<li><a class="grey-text text-lighten-3" href="#!">Link 3</a></li>--}}
-        {{--<li><a class="grey-text text-lighten-3" href="#!">Link 4</a></li>--}}
-        {{--</ul>--}}
-        {{--</div>--}}
-        {{--</div>--}}
-        {{--</div>--}}
         <div class="footer-copyright">
             <div class="container">
                 © 2017 CicleLink Health
-                {{--<a class="grey-text text-lighten-4 right" href="#!">Call CLH maybe?</a>--}}
             </div>
         </div>
     </footer>
