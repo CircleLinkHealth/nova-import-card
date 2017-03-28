@@ -38,6 +38,9 @@
                                         <th>
                                             Problem 2
                                         </th>
+                                        <th>
+                                            Approve
+                                        </th>
                                     </tr>
                                     </thead>
                                 </table>
@@ -67,6 +70,7 @@
                         {data: 'ccm', name: 'ccm'},
                         {data: 'problem1', name: 'problem1'},
                         {data: 'problem2', name: 'problem2'},
+                        {data: 'approve', name: 'approve'},
                     ],
                     "iDisplayLength": 25,
                 });
