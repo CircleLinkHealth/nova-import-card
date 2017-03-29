@@ -4,8 +4,8 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "806f3a619ea4985fa6f5f1ef067f7045",
-    "content-hash": "6dff76ae3267864ef417de486216228b",
+    "hash": "139bd490aaa698ead1fa0986eaafb0cd",
+    "content-hash": "9ff69768b510bf16c21530051ec4ddea",
     "packages": [
         {
             "name": "aloha/twilio",
@@ -105,16 +105,16 @@
         },
         {
             "name": "aws/aws-sdk-php",
-            "version": "3.24.7",
+            "version": "3.24.9",
             "source": {
                 "type": "git",
                 "url": "https://github.com/aws/aws-sdk-php.git",
-                "reference": "f062d7ea2123fe2aefef91da855c10ef8ff3af1c"
+                "reference": "26212252dcd0f9b9b7b19702577d0b0b364888df"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/aws/aws-sdk-php/zipball/f062d7ea2123fe2aefef91da855c10ef8ff3af1c",
-                "reference": "f062d7ea2123fe2aefef91da855c10ef8ff3af1c",
+                "url": "https://api.github.com/repos/aws/aws-sdk-php/zipball/26212252dcd0f9b9b7b19702577d0b0b364888df",
+                "reference": "26212252dcd0f9b9b7b19702577d0b0b364888df",
                 "shasum": ""
             },
             "require": {
@@ -181,7 +181,7 @@
                 "s3",
                 "sdk"
             ],
-            "time": "2017-03-23 22:17:20"
+            "time": "2017-03-28 20:19:24"
         },
         {
             "name": "barryvdh/laravel-debugbar",
@@ -1750,16 +1750,16 @@
         },
         {
             "name": "maatwebsite/excel",
-            "version": "2.1.12",
+            "version": "2.1.16",
             "source": {
                 "type": "git",
                 "url": "https://github.com/Maatwebsite/Laravel-Excel.git",
-                "reference": "46f1f9168202877d2d9c570042af315567b268c0"
+                "reference": "655def96b5e98d1fe0974d9c4e2ec5f2b591a322"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/Maatwebsite/Laravel-Excel/zipball/46f1f9168202877d2d9c570042af315567b268c0",
-                "reference": "46f1f9168202877d2d9c570042af315567b268c0",
+                "url": "https://api.github.com/repos/Maatwebsite/Laravel-Excel/zipball/655def96b5e98d1fe0974d9c4e2ec5f2b591a322",
+                "reference": "655def96b5e98d1fe0974d9c4e2ec5f2b591a322",
                 "shasum": ""
             },
             "require": {
@@ -1814,7 +1814,7 @@
                 "import",
                 "laravel"
             ],
-            "time": "2017-03-24 12:44:02"
+            "time": "2017-03-28 10:47:04"
         },
         {
             "name": "maknz/slack",
@@ -3325,13 +3325,13 @@
             "version": "dev-master",
             "source": {
                 "type": "git",
-                "url": "https://github.com/michalisantoniou6/l5-repository.git",
-                "reference": "e3541c8d467f43a0fd4aba33e54822bc32423cfd"
+                "url": "https://github.com/andersao/l5-repository.git",
+                "reference": "5fbab77b9f295f0c3d2bb1f8b1e42f6ff0affad7"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/michalisantoniou6/l5-repository/zipball/e3541c8d467f43a0fd4aba33e54822bc32423cfd",
-                "reference": "e3541c8d467f43a0fd4aba33e54822bc32423cfd",
+                "url": "https://api.github.com/repos/andersao/l5-repository/zipball/5fbab77b9f295f0c3d2bb1f8b1e42f6ff0affad7",
+                "reference": "5fbab77b9f295f0c3d2bb1f8b1e42f6ff0affad7",
                 "shasum": ""
             },
             "require": {
@@ -3359,6 +3359,7 @@
                     "Prettus\\Repository\\": "src/Prettus/Repository/"
                 }
             },
+            "notification-url": "https://packagist.org/downloads/",
             "license": [
                 "MIT"
             ],
@@ -3377,13 +3378,7 @@
                 "model",
                 "repository"
             ],
-            "support": {
-                "email": "contato@andersonandra.de",
-                "issues": "https://github.com/andersao/l5-repository/issues",
-                "wiki": "https://github.com/andersao/l5-repository",
-                "source": "https://github.com/andersao/l5-repository"
-            },
-            "time": "2017-03-24 22:27:16"
+            "time": "2017-03-29 10:49:41"
         },
         {
             "name": "prettus/laravel-validation",
@@ -3597,16 +3592,16 @@
         },
         {
             "name": "ramsey/uuid",
-            "version": "3.6.0",
+            "version": "3.6.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/ramsey/uuid.git",
-                "reference": "0b7bdfb180e72c8d76e75a649ced67e392201458"
+                "reference": "4ae32dd9ab8860a4bbd750ad269cba7f06f7934e"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/ramsey/uuid/zipball/0b7bdfb180e72c8d76e75a649ced67e392201458",
-                "reference": "0b7bdfb180e72c8d76e75a649ced67e392201458",
+                "url": "https://api.github.com/repos/ramsey/uuid/zipball/4ae32dd9ab8860a4bbd750ad269cba7f06f7934e",
+                "reference": "4ae32dd9ab8860a4bbd750ad269cba7f06f7934e",
                 "shasum": ""
             },
             "require": {
@@ -3618,9 +3613,9 @@
             },
             "require-dev": {
                 "apigen/apigen": "^4.1",
-                "codeception/aspect-mock": "1.0.0",
+                "codeception/aspect-mock": "^1.0 | ^2.0",
                 "doctrine/annotations": "~1.2.0",
-                "goaop/framework": "1.0.0-alpha.2",
+                "goaop/framework": "1.0.0-alpha.2 | ^1.0 | ^2.1",
                 "ircmaxell/random-lib": "^1.1",
                 "jakub-onderka/php-parallel-lint": "^0.9.0",
                 "mockery/mockery": "^0.9.4",
@@ -3675,7 +3670,7 @@
                 "identifier",
                 "uuid"
             ],
-            "time": "2017-03-18 15:38:09"
+            "time": "2017-03-26 20:37:53"
         },
         {
             "name": "rap2hpoutre/laravel-log-viewer",
