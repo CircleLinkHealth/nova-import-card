@@ -75,7 +75,7 @@
         Dear. {{$enrollee->first_name . ' ' . $enrollee->last_name}}, <br /> <br />
 
         I recommend you join my new personalized care program.
-        @if(isset($has_copay)) It’s free so please read below @else Please read below @endif and enroll.
+        @if(!$enrollee->has_copay) It’s free so please read below @else Please read below @endif and enroll.
     <br />
     <div class="right headings">- Dr. {{$enrollee->provider->last_name}}</div>
 
@@ -94,11 +94,11 @@
             </div>
 
             <p class="info-list">Calls from registered nurses ~2x monthly so I can stay updated</p>
-            <p class="info-list">Health line for any question (nurses call you back): (888) 729-4045</p>
+            <p class="info-list">Health line for any questions (nurses call you back): (888) 729-4045</p>
             <p class="info-list">Only one doctor at a time can provide this program</p>
             <p class="info-list">Withdraw anytime. Just give us a call</p>
-            @if(!isset($has_copay))
-                <p class="info-list">Medicare covers the program you may be responsible for a ~$8 per
+            @if($enrollee->has_copay)
+                <p class="info-list">Medicare covers the program but you may be responsible for a ~$8 per
                     month co-pay</p>
             @endif
 
@@ -112,7 +112,7 @@
                 <div class="modal-content">
                     <h4 class="" style="color: #47beab">Great! We’ll be in touch shortly!</h4>
                     <blockquote style="border-left: 5px solid #26a69a;">
-                        Optionally, you can tell us the best time to reach you:
+                        (Optional) Please tell us the best time to reach you:
                     </blockquote>
                     <div class="row">
                         <div class="col s12 m6 select-custom">
@@ -128,7 +128,7 @@
                         </div>
                         <div class="col s12 m6 select-custom" >
                             <label for="time" class="label">Times</label>
-                            <select class="browser-default" name="time" id="time">
+                            <select class="browser-default" name="times[]" id="times[]" multiple>
                                 <option disabled selected>Select Times</option>
                                 <option value="10:00-12:00">10AM - Noon</option>
                                 <option value="12:00-15:00">Noon - 3PM</option>

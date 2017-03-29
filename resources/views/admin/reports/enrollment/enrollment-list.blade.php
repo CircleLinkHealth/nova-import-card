@@ -30,6 +30,9 @@
                                             Provider
                                         </th>
                                         <th>
+                                            Has co-pay
+                                        </th>
+                                        <th>
                                             Care Ambassador
                                         </th>
                                         <th>
@@ -49,9 +52,6 @@
                                         </th>
                                         <th>
                                             Phone Number
-                                        </th>
-                                        <th>
-                                            Attempt Count
                                         </th>
                                         <th>
                                             Invite Sent At
@@ -82,11 +82,12 @@
                     processing: true,
                     serverSide: false,
                     "scrollX": true,
-                    ajax: '{!! url('/admin/enroll/list/data') !!}',
+                    ajax: '{!! url('/admin/enrollment/list/data') !!}',
                     columns: [
                         {data: 'name', name: 'name'},
                         {data: 'program', name: 'program'},
                         {data: 'provider', name: 'provider'},
+                        {data: 'has_copay', name: 'has_copay'},
                         {data: 'care_ambassador', name: 'care_ambassador'},
                         {data: 'status', name: 'status'},
                         {data: 'last_call_outcome', name: 'last_call_outcome'},
@@ -94,7 +95,6 @@
                         {data: 'mrn_number', name: 'mrn_number'},
                         {data: 'dob', name: 'dob'},
                         {data: 'phone', name: 'phone'},
-                        {data: 'attempt_count', name: 'attempt_count'},
                         {data: 'invite_sent_at', name: 'invite_sent_at'},
                         {data: 'invite_opened_at', name: 'invite_opened_at'},
                         {data: 'last_attempt_at', name: 'last_attempt_at'},

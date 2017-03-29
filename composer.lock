@@ -4,63 +4,9 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "139bd490aaa698ead1fa0986eaafb0cd",
-    "content-hash": "9ff69768b510bf16c21530051ec4ddea",
+    "hash": "b1841ab58494252d44f025aff7a70840",
+    "content-hash": "c52aec12de208f4abbda0d037114ee61",
     "packages": [
-        {
-            "name": "aloha/twilio",
-            "version": "3.0.0",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/aloha/laravel-twilio.git",
-                "reference": "eb4817d33640a4e248222483d485f255ae891feb"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/aloha/laravel-twilio/zipball/eb4817d33640a4e248222483d485f255ae891feb",
-                "reference": "eb4817d33640a4e248222483d485f255ae891feb",
-                "shasum": ""
-            },
-            "require": {
-                "php": ">=5.5.0",
-                "twilio/sdk": "~3.12||~4.0"
-            },
-            "require-dev": {
-                "friendsofphp/php-cs-fixer": "^1.9",
-                "illuminate/console": "~4||~5",
-                "illuminate/support": "~4||~5",
-                "phpunit/phpunit": "~4.5"
-            },
-            "type": "library",
-            "autoload": {
-                "psr-4": {
-                    "Aloha\\Twilio\\": "src/"
-                }
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "MIT"
-            ],
-            "authors": [
-                {
-                    "name": "Hannes Van De Vreken",
-                    "email": "vandevreken.hannes@gmail.com"
-                },
-                {
-                    "name": "Travis J Ryan",
-                    "email": "travisjryan@gmail.com"
-                }
-            ],
-            "description": "Twilio API for Laravel",
-            "homepage": "https://github.com/aloha/laravel-twilio",
-            "keywords": [
-                "ivr",
-                "laravel",
-                "sms",
-                "twilio"
-            ],
-            "time": "2016-07-23 08:49:47"
-        },
         {
             "name": "arcturial/clickatell",
             "version": "3.0.0",
@@ -105,16 +51,16 @@
         },
         {
             "name": "aws/aws-sdk-php",
-            "version": "3.24.9",
+            "version": "3.24.7",
             "source": {
                 "type": "git",
                 "url": "https://github.com/aws/aws-sdk-php.git",
-                "reference": "26212252dcd0f9b9b7b19702577d0b0b364888df"
+                "reference": "f062d7ea2123fe2aefef91da855c10ef8ff3af1c"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/aws/aws-sdk-php/zipball/26212252dcd0f9b9b7b19702577d0b0b364888df",
-                "reference": "26212252dcd0f9b9b7b19702577d0b0b364888df",
+                "url": "https://api.github.com/repos/aws/aws-sdk-php/zipball/f062d7ea2123fe2aefef91da855c10ef8ff3af1c",
+                "reference": "f062d7ea2123fe2aefef91da855c10ef8ff3af1c",
                 "shasum": ""
             },
             "require": {
@@ -181,7 +127,7 @@
                 "s3",
                 "sdk"
             ],
-            "time": "2017-03-28 20:19:24"
+            "time": "2017-03-23 22:17:20"
         },
         {
             "name": "barryvdh/laravel-debugbar",
@@ -1373,54 +1319,6 @@
             "time": "2015-10-01 05:16:28"
         },
         {
-            "name": "laravel-notification-channels/twilio",
-            "version": "1.0.2",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/laravel-notification-channels/twilio.git",
-                "reference": "b8ac11c1a7aa8560eec6bc23c9ab169f12708676"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/laravel-notification-channels/twilio/zipball/b8ac11c1a7aa8560eec6bc23c9ab169f12708676",
-                "reference": "b8ac11c1a7aa8560eec6bc23c9ab169f12708676",
-                "shasum": ""
-            },
-            "require": {
-                "illuminate/events": "5.1.*|5.2.*|5.3.*|5.4.*",
-                "illuminate/notifications": "5.1.*|5.2.*|5.3.*|5.4.*",
-                "illuminate/queue": "5.1.*|5.2.*|5.3.*|5.4.*",
-                "illuminate/support": "5.1.*|5.2.*|5.3.*|5.4.*",
-                "php": ">=5.5.9",
-                "twilio/sdk": "^4.11"
-            },
-            "require-dev": {
-                "mockery/mockery": "^0.9.5",
-                "phpunit/phpunit": "4.*"
-            },
-            "type": "library",
-            "autoload": {
-                "psr-4": {
-                    "NotificationChannels\\Twilio\\": "src"
-                }
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "MIT"
-            ],
-            "authors": [
-                {
-                    "name": "Gregorio Hernández Caso",
-                    "email": "gregoriohc@gmail.com",
-                    "homepage": "https://github.com/gregoriohc",
-                    "role": "Developer"
-                }
-            ],
-            "description": "A boilerplate for contributions.",
-            "homepage": "https://github.com/laravel-notification-channels/twilio",
-            "time": "2017-02-02 06:22:20"
-        },
-        {
             "name": "laravel/framework",
             "version": "v5.3.31",
             "source": {
@@ -1750,16 +1648,16 @@
         },
         {
             "name": "maatwebsite/excel",
-            "version": "2.1.16",
+            "version": "2.1.14",
             "source": {
                 "type": "git",
                 "url": "https://github.com/Maatwebsite/Laravel-Excel.git",
-                "reference": "655def96b5e98d1fe0974d9c4e2ec5f2b591a322"
+                "reference": "2a0f21352254c3c5b2248222cbaaf985253905bf"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/Maatwebsite/Laravel-Excel/zipball/655def96b5e98d1fe0974d9c4e2ec5f2b591a322",
-                "reference": "655def96b5e98d1fe0974d9c4e2ec5f2b591a322",
+                "url": "https://api.github.com/repos/Maatwebsite/Laravel-Excel/zipball/2a0f21352254c3c5b2248222cbaaf985253905bf",
+                "reference": "2a0f21352254c3c5b2248222cbaaf985253905bf",
                 "shasum": ""
             },
             "require": {
@@ -1814,7 +1712,7 @@
                 "import",
                 "laravel"
             ],
-            "time": "2017-03-28 10:47:04"
+            "time": "2017-03-27 17:06:29"
         },
         {
             "name": "maknz/slack",
@@ -3325,13 +3223,13 @@
             "version": "dev-master",
             "source": {
                 "type": "git",
-                "url": "https://github.com/andersao/l5-repository.git",
-                "reference": "5fbab77b9f295f0c3d2bb1f8b1e42f6ff0affad7"
+                "url": "https://github.com/michalisantoniou6/l5-repository.git",
+                "reference": "e3541c8d467f43a0fd4aba33e54822bc32423cfd"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/andersao/l5-repository/zipball/5fbab77b9f295f0c3d2bb1f8b1e42f6ff0affad7",
-                "reference": "5fbab77b9f295f0c3d2bb1f8b1e42f6ff0affad7",
+                "url": "https://api.github.com/repos/michalisantoniou6/l5-repository/zipball/e3541c8d467f43a0fd4aba33e54822bc32423cfd",
+                "reference": "e3541c8d467f43a0fd4aba33e54822bc32423cfd",
                 "shasum": ""
             },
             "require": {
@@ -3359,7 +3257,6 @@
                     "Prettus\\Repository\\": "src/Prettus/Repository/"
                 }
             },
-            "notification-url": "https://packagist.org/downloads/",
             "license": [
                 "MIT"
             ],
@@ -3378,7 +3275,13 @@
                 "model",
                 "repository"
             ],
-            "time": "2017-03-29 10:49:41"
+            "support": {
+                "email": "contato@andersonandra.de",
+                "issues": "https://github.com/andersao/l5-repository/issues",
+                "wiki": "https://github.com/andersao/l5-repository",
+                "source": "https://github.com/andersao/l5-repository"
+            },
+            "time": "2017-03-24 22:27:16"
         },
         {
             "name": "prettus/laravel-validation",
@@ -5325,30 +5228,30 @@
         },
         {
             "name": "twilio/sdk",
-            "version": "4.12.0",
+            "version": "5.7.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/twilio/twilio-php.git",
-                "reference": "6e4b45fc3f8b56c088dfecf4bced76c712cb6182"
+                "reference": "29306b582c461e300e85d18877cf4a9b67fb6175"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/twilio/twilio-php/zipball/6e4b45fc3f8b56c088dfecf4bced76c712cb6182",
-                "reference": "6e4b45fc3f8b56c088dfecf4bced76c712cb6182",
+                "url": "https://api.github.com/repos/twilio/twilio-php/zipball/29306b582c461e300e85d18877cf4a9b67fb6175",
+                "reference": "29306b582c461e300e85d18877cf4a9b67fb6175",
                 "shasum": ""
             },
             "require": {
-                "php": ">=5.2.1"
+                "php": ">=5.3.0"
             },
             "require-dev": {
-                "mockery/mockery": ">=0.7.2",
+                "apigen/apigen": "^4.1",
                 "phpunit/phpunit": "4.5.*"
             },
             "type": "library",
             "autoload": {
-                "files": [
-                    "Services/Twilio.php"
-                ]
+                "psr-4": {
+                    "Twilio\\": "Twilio/"
+                }
             },
             "notification-url": "https://packagist.org/downloads/",
             "license": [
@@ -5356,12 +5259,8 @@
             ],
             "authors": [
                 {
-                    "name": "Kevin Burke",
-                    "email": "kevin@twilio.com"
-                },
-                {
-                    "name": "Kyle Conroy",
-                    "email": "kyle+pear@twilio.com"
+                    "name": "Twilio API Team",
+                    "email": "api@twilio.com"
                 }
             ],
             "description": "A PHP wrapper for Twilio's API",
@@ -5371,7 +5270,7 @@
                 "sms",
                 "twilio"
             ],
-            "time": "2016-09-01 18:42:52"
+            "time": "2017-03-13 22:00:13"
         },
         {
             "name": "tymon/jwt-auth",

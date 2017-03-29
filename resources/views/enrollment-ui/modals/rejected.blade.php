@@ -27,13 +27,17 @@
 
             <input type="hidden" name="status" value="rejected">
             <input type="hidden" name="enrollee_id" value="{{$enrollee->id}}">
-            <input type="hidden" name="time_elapsed" v-bind:value="total_time_in_system">
-
+            <input type="hidden" name="total_time_in_system" v-bind:value="total_time_in_system">
+            <input type="hidden" name="time_elapsed" v-bind:value="time_elapsed">
 
             <div class="modal-footer" style="padding-right: 60px">
                 <button id="submit" name="submit" type="submit"
                         class="modal-action waves-effect waves-light btn">Call Next Patient
                 </button>
+                <div v-if="onCall === true" style="text-align: center">
+                    <a v-on:click="hangUp" class="waves-effect waves-light btn" style="background: red"><i
+                                class="material-icons left">call_end</i>Hang Up</a>
+                </div>
             </div>
         </div>
     </form>

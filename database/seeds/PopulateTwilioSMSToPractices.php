@@ -1,5 +1,6 @@
 <?php
 
+use App\Practice;
 use Illuminate\Database\Seeder;
 
 class PopulateTwilioSMSToPractices extends Seeder
@@ -12,25 +13,30 @@ class PopulateTwilioSMSToPractices extends Seeder
     public function run()
     {
 
-        $clinica = \App\Practice::whereName('clinicalosangeles')->first();
+        $practicesToSendTo = [
+            'carolina-medical-associates'         => '+17046664445',
+            'clinicalosangeles'                   => '+17272050515',
+            'elmwood'                             => '+18568326269',
+            'tabernacle'                          => '+16094003030',
+            'envision'                            => '+12488003080',
+            'mazhar'                              => '+19724026269',
+            'montgomery'                          => '+18886958537',
+            'nestor'                              => '+19174777065',
+            'rocky-mountain-health-centers-south' => '+17206050215',
+            'upg'                                 => '+17186827501',
+            'urgent-medical-care-pc'              => '+19174777065',
+            'care-medica'                         => '+12036016075'
+        ];
 
-        if($clinica != null){
-            $clinica->sms_marketing_number = '+17272050515';
-            $clinica->save();
-        }
+        foreach ($practicesToSendTo as $key => $value) {
 
-        $river_city = \App\Practice::whereName('river-city')->first();
+            $practice = Practice::whereName($key)->first();
 
-        if($river_city != null){
-            $river_city->sms_marketing_number = '+19162490619';
-            $river_city->save();
-        }
+            if ($practice != null) {
+                $practice->outgoing_phone_number = $value;
+                $practice->save();
+            }
 
-        $quest = \App\Practice::whereName('quest-medical-care-pc')->first();
-
-        if($quest != null){
-            $quest->sms_marketing_number = '+16312120015 ';
-            $quest->save();
         }
 
     }
