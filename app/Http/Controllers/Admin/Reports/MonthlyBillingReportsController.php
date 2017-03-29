@@ -435,7 +435,7 @@ class MonthlyBillingReportsController extends Controller
         }
 
 
-        Log::message($formatted);
+        Log::info($formatted);
 
         $formatted = collect($formatted);
 
