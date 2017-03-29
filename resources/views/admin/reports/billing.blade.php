@@ -1,6 +1,20 @@
 @extends('partials.adminUI')
 
 @section('content')
+
+    <script>
+        $(document).ready(function () {
+            $(".practices").select2();
+
+        });
+    </script>
+
+    <style>
+        .select2-container {
+            width: 300px !important;
+        }
+    </style>
+
     <link rel="stylesheet" href="//cdn.datatables.net/1.10.7/css/jquery.dataTables.min.css">
 
     <div class="container-fluid">
@@ -15,9 +29,27 @@
                     <div class="col-md-12">
                         <div class="panel panel-default">
                             <div class="panel-heading">Billable Patients Report</div>
-
                             <div class="panel-body">
-                                <table class="table table-striped" id="enrollment_list">
+
+                                <div class="col-md-12">
+                                    <div class="row" style="padding-bottom: 27px;">
+
+                                        <label class="col-md-1 control-label" for="practice_id">Select Practice</label>
+                                        <select class="col-md-4 practices dropdown Valid form-control" name="practice_id" id="practice_id">
+
+                                            <option value="0">All</option>
+                                            @foreach($practices as $practice)
+                                                <option value="{{$practice->id}}">{{$practice->display_name}}</option>
+                                            @endforeach
+
+                                        </select>
+
+                                    </div>
+                                </div>
+
+                                <hr>
+                            <div class="panel-body">
+                                <table class="table table-striped" id="billable_list">
                                     <thead>
                                     <tr>
                                         <th>
@@ -31,6 +63,9 @@
                                         </th>
                                         <th>
                                             DOB
+                                        </th>
+                                        <th>
+                                            Status
                                         </th>
                                         <th>
                                             CCM (Mins)
@@ -57,13 +92,16 @@
         <script>
 
             $(function () {
-                $('#enrollment_list').DataTable({
+                $('#billable_list').DataTable({
                     processing: true,
                     serverSide: false,
                     "scrollX": true,
                     ajax: {
                         "url": '{!! url('/admin/reports/monthly-billing/v2/data') !!}',
                         "type": "POST",
+                        "data": function (d) {
+                            d.practice_id = $('#practice_id').val();
+                        }
                     },
 
                     columns: [
@@ -71,6 +109,7 @@
                         {data: 'provider', name: 'provider'},
                         {data: 'practice', name: 'practice'},
                         {data: 'dob', name: 'dob'},
+                        {data: 'status', name: 'status'},
                         {data: 'ccm', name: 'ccm'},
                         {data: 'problem1', name: 'problem1'},
                         {data: 'problem2', name: 'problem2'},
@@ -86,6 +125,10 @@
 
                 });
 
+            });
+
+            $('#practice_id').on('change', function () {
+                $('#billable_list').DataTable().ajax.reload();
             });
 
 

@@ -348,24 +348,39 @@ class MonthlyBillingReportsController extends Controller
     public function make()
     {
 
-        return view('admin.reports.billing');
+        $practices = Practice::all();
+
+        return view('admin.reports.billing', compact(['practices']));
 
     }
 
-    public function data()
+    public function data(Request $request)
     {
+        $input = $request->input();
 
         $patients =
             Patient::whereHas('patientSummaries', function ($q) {
                 $q->where('ccm_time', '>', 1199)
                     ->where('month_year', Carbon::now()->subMonth()->firstOfMonth()->toDateString());
 
-            })
-                ->orderBy('updated_at', 'desc')
-                ->take(100)
-                ->pluck('user_id');
+            });
 
-        //CCM Mins	CPT Code	Problem 1	Problem 2	Status [Yellow highlight withdrawn or paused]
+        if ($input['practice_id'] != 0) {
+
+            $practice = $input['practice_id'];
+
+            $patients = $patients->whereHas('user', function ($k) use
+            (
+                $practice
+
+            ) {
+                $k->whereProgramId($practice);
+            });
+        }
+
+        $patients = $patients->orderBy('updated_at', 'desc')
+            ->take(100)
+            ->pluck('user_id');
 
         $count = 0;
         $formatted = [];
@@ -374,6 +389,8 @@ class MonthlyBillingReportsController extends Controller
 
             $u = User::find($p);
             $info = $u->patientInfo;
+
+            //@todo add problem type and code
             $problems = $u->cpmProblems()->take(2)->pluck('name');
 
             $day_start = Carbon::parse(Carbon::now()->firstOfMonth()->format('Y-m-d'));
@@ -420,16 +437,10 @@ class MonthlyBillingReportsController extends Controller
 
         $formatted = collect($formatted);
 
-
-//        $formatted->sortByDesc('date');
-
         return Datatables::of($formatted)
             ->addColumn('background_color', function ($a) {
-
-                Log::info($a);
-
-                if ($a['problem1'] == 'N/A' || $a['problem2'] == 'N/A') {
-                    return 'rgba(234, 230, 11, 0.41)';
+                if ($a['problem1'] == 'N/A' || $a['problem2'] == 'N/A' || $a['status'] == 'withdrawn' || $a['status'] == 'paused') {
+                    return 'rgba(255, 252, 96, 0.407843)';
                 } else {
                     return '';
                 }
