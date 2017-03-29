@@ -131,13 +131,6 @@
                 $('#billable_list').DataTable().ajax.reload();
             });
 
-            $('#billable_list')
-                .on('error.dt', function (e, settings, techNote, message) {
-                    console.log('An error has been reported by DataTables: ', message);
-                })
-                .DataTable();
-
-
         </script>
         <script src="//cdn.datatables.net/1.10.7/js/jquery.dataTables.min.js"></script>
 

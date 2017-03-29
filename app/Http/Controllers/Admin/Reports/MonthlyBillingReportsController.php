@@ -397,7 +397,6 @@ class MonthlyBillingReportsController extends Controller
             $report = PatientMonthlySummary::where('patient_info_id', $info->id)->where('month_year',
                 $day_start)->first();
 
-
             if ($report != null) {
                 $checked = ($report->approved == 1)
                     ? 'checked'
@@ -435,7 +434,11 @@ class MonthlyBillingReportsController extends Controller
 
         }
 
+
+        Log::message($formatted);
+
         $formatted = collect($formatted);
+
 
         return Datatables::of($formatted)
             ->addColumn('background_color', function ($a) {
@@ -444,7 +447,8 @@ class MonthlyBillingReportsController extends Controller
                 } else {
                     return '';
                 }
-            })->make(true);
+            })
+            ->make(true);
 
     }
 }
