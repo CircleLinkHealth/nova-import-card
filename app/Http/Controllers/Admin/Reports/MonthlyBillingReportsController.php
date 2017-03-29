@@ -358,10 +358,12 @@ class MonthlyBillingReportsController extends Controller
     {
         $input = $request->input();
 
+
+        //Carbon::now()->firstOfMonth()->toDateString()
         $patients =
             Patient::whereHas('patientSummaries', function ($q) {
                 $q->where('ccm_time', '>', 1199)
-                    ->where('month_year', Carbon::now()->subMonth()->firstOfMonth()->toDateString());
+                    ->where('month_year', '2017-02-01');
 
             });
 
@@ -378,12 +380,14 @@ class MonthlyBillingReportsController extends Controller
             });
         }
 
+
         $patients = $patients->orderBy('updated_at', 'desc')
             ->take(100)
             ->pluck('user_id');
 
         $count = 0;
         $formatted = [];
+
 
         foreach ($patients as $p) {
 
@@ -433,9 +437,6 @@ class MonthlyBillingReportsController extends Controller
             $count++;
 
         }
-
-
-        Log::info($formatted);
 
         $formatted = collect($formatted);
 
