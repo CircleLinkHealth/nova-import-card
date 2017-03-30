@@ -358,8 +358,6 @@ class MonthlyBillingReportsController extends Controller
     {
         $input = $request->input();
 
-
-        //Carbon::now()->firstOfMonth()->toDateString()
         $patients =
             Patient::whereHas('patientSummaries', function ($q) {
                 $q->where('ccm_time', '>', 1199)

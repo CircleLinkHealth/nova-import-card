@@ -127,6 +127,8 @@
 
             });
 
+            console.log('{!! url('/admin/reports/monthly-billing/v2/data') !!}');
+
             $('#practice_id').on('change', function () {
                 $('#billable_list').DataTable().ajax.reload();
             });
