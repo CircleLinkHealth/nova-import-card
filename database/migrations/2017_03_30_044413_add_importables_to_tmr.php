@@ -29,7 +29,10 @@ class AddImportablesToTmr extends Migration
     public function down()
     {
         Schema::table('tabular_medical_records', function (Blueprint $table) {
-            //
+            $table->dropColumn('allergies');
+            $table->dropColumn('medications');
+            $table->dropColumn('problems');
+            $table->dropColumn('tertiary_insurance');
         });
     }
 }
