@@ -171,7 +171,7 @@ class TabularMedicalRecordSectionsLogger implements MedicalRecordLogger
      */
     public function logProblemsSection() : MedicalRecordLogger
     {
-        $problems = $this->medicalRecord->problems;
+        $problems = explode(',', $this->medicalRecord->problems);
 
         foreach ($problems as $problem) {
             if (ctype_alpha($problem)) {
