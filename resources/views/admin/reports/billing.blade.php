@@ -3,10 +3,7 @@
 @section('content')
 
     <script>
-        $(document).ready(function () {
-            $(".practices").select2();
 
-        });
     </script>
 
     <style>
@@ -35,7 +32,8 @@
                                     <div class="row" style="padding-bottom: 27px;">
 
                                         <label class="col-md-1 control-label" for="practice_id">Select Practice</label>
-                                        <select class="col-md-4 practices dropdown Valid form-control" name="practice_id" id="practice_id">
+                                        <select class="col-md-4 practices dropdown Valid form-control"
+                                                name="practice_id" id="practice_id">
 
                                             <option value="0">All</option>
                                             @foreach($practices as $practice)
@@ -48,93 +46,97 @@
                                 </div>
 
                                 <hr>
-                            <div class="panel-body">
-                                <table class="table table-striped" id="billable_list">
-                                    <thead>
-                                    <tr>
-                                        <th>
-                                            Provider Name
-                                        </th>
-                                        <th>
-                                            Patient Name
-                                        </th>
-                                        <th>
-                                            Practice Name
-                                        </th>
-                                        <th>
-                                            DOB
-                                        </th>
-                                        <th>
-                                            Status
-                                        </th>
-                                        <th>
-                                            CCM (Mins)
-                                        </th>
-                                        <th>
-                                            Problem 1
-                                        </th>
-                                        <th>
-                                            Problem 2
-                                        </th>
-                                        <th>
-                                            Approve
-                                        </th>
-                                    </tr>
-                                    </thead>
-                                </table>
+                                <div class="panel-body">
+                                    <table class="table table-striped" id="billable_list">
+                                        <thead>
+                                        <tr>
+                                            <th>
+                                                Provider Name
+                                            </th>
+                                            <th>
+                                                Patient Name
+                                            </th>
+                                            <th>
+                                                Practice Name
+                                            </th>
+                                            <th>
+                                                DOB
+                                            </th>
+                                            <th>
+                                                Status
+                                            </th>
+                                            <th>
+                                                CCM (Mins)
+                                            </th>
+                                            <th>
+                                                Problem 1
+                                            </th>
+                                            <th>
+                                                Problem 2
+                                            </th>
+                                            <th>
+                                                Approve
+                                            </th>
+                                        </tr>
+                                        </thead>
+                                    </table>
+                                </div>
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
-        </div>
 
-        <script>
+            <script>
 
-            $(function () {
-                $('#billable_list').DataTable({
-                    processing: true,
-                    serverSide: false,
-                    "scrollX": true,
-                    ajax: {
-                        "url": '{!! url('/admin/reports/monthly-billing/v2/data') !!}',
-                        "type": "POST",
-                        "data": function (d) {
-                            d.practice_id = $('#practice_id').val();
-                        }
-                    },
+                $(function () {
+                    $('#billable_list').DataTable({
+                        processing: true,
+                        serverSide: false,
+                        "scrollX": true,
+                        ajax: {
+                            "url": '{!! url('/admin/reports/monthly-billing/v2/data') !!}',
+                            "type": "POST",
+                            "data": function (d) {
+                                d.practice_id = $('#practice_id').val();
+                            }
+                        },
 
-                    columns: [
-                        {data: 'name', name: 'name'},
-                        {data: 'provider', name: 'provider'},
-                        {data: 'practice', name: 'practice'},
-                        {data: 'dob', name: 'dob'},
-                        {data: 'status', name: 'status'},
-                        {data: 'ccm', name: 'ccm'},
-                        {data: 'problem1', name: 'problem1'},
-                        {data: 'problem2', name: 'problem2'},
-                        {data: 'approve', name: 'approve'},
-                    ],
-                    "iDisplayLength": 25,
-                    "aaSorting":[1,'desc'],
-                    "fnRowCallback": function (nRow, aData, iDisplayIndex, iDisplayIndexFull) {
-                        if (aData['background_color'] != '') {
-                            $('td', nRow).css('background-color', aData['background_color']);
-                        }
-                    },
+                        columns: [
+                            {data: 'name', name: 'name'},
+                            {data: 'provider', name: 'provider'},
+                            {data: 'practice', name: 'practice'},
+                            {data: 'dob', name: 'dob'},
+                            {data: 'status', name: 'status'},
+                            {data: 'ccm', name: 'ccm'},
+                            {data: 'problem1', name: 'problem1'},
+                            {data: 'problem2', name: 'problem2'},
+                            {data: 'approve', name: 'approve'},
+                        ],
+                        "iDisplayLength": 25,
+                        "aaSorting": [1, 'desc'],
+                        "fnRowCallback": function (nRow, aData, iDisplayIndex, iDisplayIndexFull) {
+                            if (aData['background_color'] != '') {
+                                $('td', nRow).css('background-color', aData['background_color']);
+                            }
+                        },
+
+                    });
 
                 });
 
-            });
+                console.log('{!! url('/admin/reports/monthly-billing/v2/data') !!}');
 
-            console.log('{!! url('/admin/reports/monthly-billing/v2/data') !!}');
+                $('#practice_id').on('change', function () {
+                    $('#billable_list').DataTable().ajax.reload();
+                });
 
-            $('#practice_id').on('change', function () {
-                $('#billable_list').DataTable().ajax.reload();
-            });
+                $(document).ready(function () {
+                    $(".practices").select2();
 
-        </script>
-        <script src="//cdn.datatables.net/1.10.7/js/jquery.dataTables.min.js"></script>
+                });
+            </script>
+            <script src="//cdn.datatables.net/1.10.7/js/jquery.dataTables.min.js"></script>
 
 
 @stop

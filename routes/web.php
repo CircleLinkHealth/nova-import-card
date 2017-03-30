@@ -680,6 +680,7 @@ Route::group(['middleware' => 'auth'], function () {
         Route::group([
             'prefix' => 'reports',
         ], function () {
+
             Route::post('monthly-billing', [
                 'uses' => 'Admin\Reports\MonthlyBillingReportsController@makeMonthlyReport',
                 'as'   => 'MonthlyBillingReportsController.makeMonthlyReport',
@@ -701,12 +702,10 @@ Route::group(['middleware' => 'auth'], function () {
 
             });
 
-
             Route::get('patients-for-insurance-check', [
                 'uses' => 'Reports\PatientsForInsuranceCheck@make',
                 'as'   => 'get.patients.for.insurance.check',
             ]);
-
 
             Route::group([
                 'prefix' => 'sales',
