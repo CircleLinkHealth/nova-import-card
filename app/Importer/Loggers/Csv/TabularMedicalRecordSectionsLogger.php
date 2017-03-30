@@ -3,6 +3,7 @@
 use App\Contracts\Importer\MedicalRecord\MedicalRecordLogger;
 use App\Importer\Models\ItemLogs\DemographicsLog;
 use App\Importer\Models\ItemLogs\InsuranceLog;
+use App\Importer\Models\ItemLogs\MedicationLog;
 use App\Models\MedicalRecords\TabularMedicalRecord;
 use Carbon\Carbon;
 
@@ -123,6 +124,17 @@ class TabularMedicalRecordSectionsLogger implements MedicalRecordLogger
      */
     public function logMedicationsSection() : MedicalRecordLogger
     {
+        $medications = $this->medicalRecord->medications;
+
+        foreach ($medications as $medication) {
+            $explodedMed = explode(',', $medication);
+
+            MedicationLog::create([
+                'reference_title' => $explodedMed[0],
+                'reference_sig'   => str_replace('Sig:', '', $explodedMed[1]),
+            ]);
+        }
+
         return $this;
     }
 
