@@ -8,6 +8,7 @@ use App\Practice;
 use App\User;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 use Yajra\Datatables\Facades\Datatables;
 
 class EnrollmentConsentController extends Controller
@@ -78,6 +79,9 @@ class EnrollmentConsentController extends Controller
 
             }
 
+            $days = ($enrollee->preferred_days == null) ? 'N/A' : $enrollee->preferred_days;
+            $times = ($enrollee->preferred_days == null) ? 'N/A' : $enrollee->preferred_window;
+
             $formatted[$count] = [
 
                 'name'                     => $enrollee->first_name . ' ' . $enrollee->last_name,
@@ -97,8 +101,11 @@ class EnrollmentConsentController extends Controller
                 'invite_opened_at'         => ucwords($enrollee->invite_opened_at),
                 'last_attempt_at'          => ucwords($enrollee->last_attempt_at),
                 'consented_at'             => ucwords($enrollee->consented_at),
+                'preferred_days'           => $days,
+                'preferred_window'         => $times
 
             ];
+
             $count++;
 
         }
