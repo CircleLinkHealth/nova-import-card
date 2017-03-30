@@ -13,7 +13,18 @@ class AllergyLog extends Model implements ItemLog
 
     protected $table = 'ccd_allergy_logs';
 
-    protected $guarded = [];
+    protected $fillable = [
+        'medical_record_type',
+        'medical_record_id',
+        'vendor_id',
+        'start',
+        'end',
+        'status',
+        'allergen_name',
+        'import',
+        'invalid',
+        'edited',
+    ];
 
     public function importedItem()
     {

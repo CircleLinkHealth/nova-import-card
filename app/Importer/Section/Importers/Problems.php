@@ -89,7 +89,7 @@ class Problems extends BaseImporter
              * Try to match keywords
              */
             foreach ($cpmProblems as $cpmProblem) {
-                $keywords = explode(',', $cpmProblem->contains);
+                $keywords = array_merge(explode(',', $cpmProblem->contains), [$cpmProblem->name]);
 
                 foreach ($keywords as $keyword) {
                     if (empty($keyword)) {
