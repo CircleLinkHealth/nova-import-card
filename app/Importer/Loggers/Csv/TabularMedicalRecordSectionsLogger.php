@@ -99,6 +99,10 @@ class TabularMedicalRecordSectionsLogger implements MedicalRecordLogger
             $insurances['secondary'] = $this->medicalRecord->secondary_insurance;
         }
 
+        if ($this->medicalRecord->tertiary_insurance) {
+            $insurances['tertiary'] = $this->medicalRecord->tertiary_insurance;
+        }
+
         foreach ($insurances as $insurance) {
             $insurance = InsuranceLog::create(array_merge([
                 'name'     => $insurance,
