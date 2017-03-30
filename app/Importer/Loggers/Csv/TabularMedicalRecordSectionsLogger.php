@@ -1,6 +1,7 @@
 <?php namespace App\Importer\Loggers\Csv;
 
 use App\Contracts\Importer\MedicalRecord\MedicalRecordLogger;
+use App\Importer\Models\ItemLogs\AllergyLog;
 use App\Importer\Models\ItemLogs\DemographicsLog;
 use App\Importer\Models\ItemLogs\InsuranceLog;
 use App\Importer\Models\ItemLogs\MedicationLog;
@@ -48,6 +49,21 @@ class TabularMedicalRecordSectionsLogger implements MedicalRecordLogger
      */
     public function logAllergiesSection() : MedicalRecordLogger
     {
+        $allergies = $this->medicalRecord->allergies;
+
+        foreach ($allergies as $allergy) {
+
+            if (strtolower($allergy) == 'no') {
+                continue;
+            }
+
+            AllergyLog::create(
+                array_merge([
+                    'allergen_name' => $allergy,
+                ], $this->foreignKeys)
+            );
+        }
+
         return $this;
     }
 
