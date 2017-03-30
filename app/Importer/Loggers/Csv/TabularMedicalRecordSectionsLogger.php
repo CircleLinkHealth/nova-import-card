@@ -146,7 +146,7 @@ class TabularMedicalRecordSectionsLogger implements MedicalRecordLogger
      */
     public function logMedicationsSection() : MedicalRecordLogger
     {
-        $medications = $this->medicalRecord->medications;
+        $medications = explode("\n", $this->medicalRecord->medications);
 
         foreach ($medications as $medication) {
             $explodedMed = explode(',', $medication);
