@@ -6,6 +6,7 @@ use App\Importer\Models\ItemLogs\DemographicsLog;
 use App\Importer\Models\ItemLogs\InsuranceLog;
 use App\Importer\Models\ItemLogs\MedicationLog;
 use App\Importer\Models\ItemLogs\ProblemLog;
+use App\Importer\Models\ItemLogs\ProviderLog;
 use App\Models\MedicalRecords\TabularMedicalRecord;
 use Carbon\Carbon;
 
@@ -188,6 +189,13 @@ class TabularMedicalRecordSectionsLogger implements MedicalRecordLogger
      */
     public function logProvidersSection() : MedicalRecordLogger
     {
+        $name = explode(',', $this->medicalRecord->provider_name);
+
+        ProviderLog::create(array_merge([
+            'first_name' => $name[1],
+            'last_name'  => $name[0],
+        ], $this->foreignKeys));
+
         return $this;
     }
 }
