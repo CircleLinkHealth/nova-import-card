@@ -700,6 +700,16 @@ Route::group(['middleware' => 'auth'], function () {
                     'as'   => 'monthly.billing.data',
                 ]);
 
+                Route::post('/markApproved', [
+                    'uses' => 'Admin\Reports\MonthlyBillingReportsController@data',
+                    'as'   => 'monthly.billing.approve',
+                ]);
+
+                Route::post('/markRejected', [
+                    'uses' => 'Admin\Reports\MonthlyBillingReportsController@data',
+                    'as'   => 'monthly.billing.reject',
+                ]);
+
             });
 
             Route::get('patients-for-insurance-check', [
