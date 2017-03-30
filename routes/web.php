@@ -88,6 +88,7 @@ if (app()->environment() != 'production') {
 
         $formatted = collect($formatted);
 
+        dd($formatted);
 
     });
 
