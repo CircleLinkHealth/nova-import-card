@@ -4,6 +4,7 @@ use App\Contracts\Importer\MedicalRecord\MedicalRecordLogger;
 use App\Importer\Models\ItemLogs\DemographicsLog;
 use App\Importer\Models\ItemLogs\InsuranceLog;
 use App\Importer\Models\ItemLogs\MedicationLog;
+use App\Importer\Models\ItemLogs\ProblemLog;
 use App\Models\MedicalRecords\TabularMedicalRecord;
 use Carbon\Carbon;
 
@@ -129,10 +130,12 @@ class TabularMedicalRecordSectionsLogger implements MedicalRecordLogger
         foreach ($medications as $medication) {
             $explodedMed = explode(',', $medication);
 
-            MedicationLog::create([
-                'reference_title' => $explodedMed[0],
-                'reference_sig'   => str_replace('Sig:', '', $explodedMed[1]),
-            ]);
+            MedicationLog::create(
+                array_merge([
+                    'reference_title' => $explodedMed[0],
+                    'reference_sig'   => str_replace('Sig:', '', $explodedMed[1]),
+                ], $this->foreignKeys)
+            );
         }
 
         return $this;
@@ -144,6 +147,18 @@ class TabularMedicalRecordSectionsLogger implements MedicalRecordLogger
      */
     public function logProblemsSection() : MedicalRecordLogger
     {
+        $problems = $this->medicalRecord->problems;
+
+        foreach ($problems as $problem) {
+            if (ctype_alpha($problem)) {
+                ProblemLog::create(
+                    array_merge([
+                        'name' => $problem,
+                    ], $this->foreignKeys)
+                );
+            }
+        }
+
         return $this;
     }
 
