@@ -60,7 +60,7 @@ class TabularMedicalRecordSectionsLogger implements MedicalRecordLogger
 
             AllergyLog::create(
                 array_merge([
-                    'allergen_name' => $allergy,
+                    'allergen_name' => trim($allergy),
                 ], $this->foreignKeys)
             );
         }
@@ -151,10 +151,10 @@ class TabularMedicalRecordSectionsLogger implements MedicalRecordLogger
         foreach ($medications as $medication) {
             $explodedMed = explode(',', $medication);
 
-            MedicationLog::create(
+            $medication = MedicationLog::create(
                 array_merge([
-                    'reference_title' => $explodedMed[0],
-                    'reference_sig'   => str_replace('Sig:', '', $explodedMed[1]),
+                    'reference_title' => trim($explodedMed[0]),
+                    'reference_sig'   => trim(str_replace('Sig:', '', $explodedMed[1])),
                 ], $this->foreignKeys)
             );
         }
