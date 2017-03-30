@@ -14,7 +14,26 @@ class MedicationLog extends Model implements ItemLog
 
     protected $table = 'ccd_medication_logs';
 
-    protected $guarded = [];
+    protected $fillable = [
+        'reference',
+        'reference_title',
+        'reference_sig',
+        'start',
+        'end',
+        'status',
+        'text',
+        'product_name',
+        'product_code',
+        'product_code_system',
+        'product_text',
+        'translation_name',
+        'translation_code',
+        'translation_code_system',
+        'translation_code_system_name',
+        'import',
+        'invalid',
+        'edited',
+    ];
 
     public function importedItem()
     {
