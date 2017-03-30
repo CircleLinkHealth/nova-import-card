@@ -50,7 +50,7 @@ class TabularMedicalRecordSectionsLogger implements MedicalRecordLogger
      */
     public function logAllergiesSection() : MedicalRecordLogger
     {
-        $allergies = $this->medicalRecord->allergies;
+        $allergies = explode(',', $this->medicalRecord->allergies);
 
         foreach ($allergies as $allergy) {
 
