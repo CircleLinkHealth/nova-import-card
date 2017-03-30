@@ -15,6 +15,9 @@ class MedicationLog extends Model implements ItemLog
     protected $table = 'ccd_medication_logs';
 
     protected $fillable = [
+        'medical_record_type',
+        'medical_record_id',
+        'vendor_id',
         'reference',
         'reference_title',
         'reference_sig',
