@@ -174,10 +174,16 @@ class TabularMedicalRecordSectionsLogger implements MedicalRecordLogger
         $problems = explode(',', $this->medicalRecord->problems);
 
         foreach ($problems as $problem) {
-            if (ctype_alpha($problem)) {
+            $problem = trim($problem);
+
+            if (ctype_alpha(str_replace([
+                "\n",
+                "\t",
+                ' ',
+            ], '', $problem))) {
                 $problem = ProblemLog::create(
                     array_merge([
-                        'name' => trim($problem),
+                        'name' => $problem,
                     ], $this->foreignKeys)
                 );
             }
