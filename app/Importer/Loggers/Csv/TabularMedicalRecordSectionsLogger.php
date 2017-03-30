@@ -80,7 +80,7 @@ class TabularMedicalRecordSectionsLogger implements MedicalRecordLogger
                 'dob'           => $this->medicalRecord->dob,
                 'provider_name' => $this->medicalRecord->provider_name,
                 'phone'         => $this->medicalRecord->phone,
-                'mrn'           => $this->medicalRecord->mrn,
+                'mrn_number'    => $this->medicalRecord->mrn,
                 'gender'        => $this->medicalRecord->gender,
                 'language'      => $this->medicalRecord->language ?? 'EN',
                 'primary_phone' => $this->medicalRecord->primary_phone,
