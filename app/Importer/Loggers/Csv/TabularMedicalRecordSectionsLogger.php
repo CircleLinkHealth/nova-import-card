@@ -58,7 +58,7 @@ class TabularMedicalRecordSectionsLogger implements MedicalRecordLogger
                 continue;
             }
 
-            AllergyLog::create(
+            $allergy = AllergyLog::create(
                 array_merge([
                     'allergen_name' => trim($allergy),
                 ], $this->foreignKeys)
@@ -153,7 +153,10 @@ class TabularMedicalRecordSectionsLogger implements MedicalRecordLogger
 
             $medication = MedicationLog::create(
                 array_merge([
-                    'reference_title' => trim($explodedMed[0]),
+                    'reference_title' => trim(str_replace([
+                        'Taking',
+                        'Continue',
+                    ], '', $explodedMed[0])),
                     'reference_sig'   => trim(str_replace('Sig:', '', $explodedMed[1])),
                 ], $this->foreignKeys)
             );
@@ -174,7 +177,7 @@ class TabularMedicalRecordSectionsLogger implements MedicalRecordLogger
             if (ctype_alpha($problem)) {
                 ProblemLog::create(
                     array_merge([
-                        'name' => $problem,
+                        'name' => trim($problem),
                     ], $this->foreignKeys)
                 );
             }
