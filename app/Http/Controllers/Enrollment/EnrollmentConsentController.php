@@ -47,21 +47,34 @@ class EnrollmentConsentController extends Controller
                 } elseif ($enrollee->status == 'consented') {
 
                     $status = 'Call: Consented';
+
                 }
 
             }
 
             if ($enrollee->status == 'call_queue') {
+
                 $status = 'Call: To Call';
+
             }
 
             if ($enrollee->status == 'sms_queue') {
 
                 if ($enrollee->invite_sent_at == null) {
+
                     $status = 'SMS: To SMS';
+
                 } else {
+
                     $status = 'SMS:' . $enrollee->attempt_count . 'x';
+
                 }
+
+            }
+
+            if ($enrollee->invite_sent_at != null && $enrollee->status == 'consented') {
+
+                $status = 'SMS: Consented';
 
             }
 
