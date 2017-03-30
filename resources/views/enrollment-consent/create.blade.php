@@ -93,7 +93,7 @@
                 <a class="waves-effect waves-light btn modal-trigger" v-on:click="saveConsent" href="#confirm">Enroll</a>
             </div>
 
-            <p class="info-list">Calls from registered nurses ~2x monthly so I can stay updated</p>
+            <p class="info-list">Calls from registered nurses ~1-2x monthly so I can stay updated</p>
             <p class="info-list">Health line for any questions (nurses call you back): (888) 729-4045</p>
             <p class="info-list">Only one doctor at a time can provide this program</p>
             <p class="info-list">Withdraw anytime. Just give us a call</p>
