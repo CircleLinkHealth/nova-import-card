@@ -175,7 +175,7 @@ class TabularMedicalRecordSectionsLogger implements MedicalRecordLogger
 
         foreach ($problems as $problem) {
             if (ctype_alpha($problem)) {
-                ProblemLog::create(
+                $problem = ProblemLog::create(
                     array_merge([
                         'name' => trim($problem),
                     ], $this->foreignKeys)
@@ -194,9 +194,9 @@ class TabularMedicalRecordSectionsLogger implements MedicalRecordLogger
     {
         $name = explode(',', $this->medicalRecord->provider_name);
 
-        ProviderLog::create(array_merge([
-            'first_name' => $name[1],
-            'last_name'  => $name[0],
+        $provider = ProviderLog::create(array_merge([
+            'first_name' => trim($name[1]),
+            'last_name'  => trim($name[0]),
         ], $this->foreignKeys));
 
         return $this;
