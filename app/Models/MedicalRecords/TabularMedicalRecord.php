@@ -24,6 +24,10 @@ class TabularMedicalRecord extends MedicalRecordEloquent
         'last_name',
         'dob',
 
+        'allergies',
+        'medications',
+        'problems',
+
         'gender',
         'language',
 
@@ -43,6 +47,7 @@ class TabularMedicalRecord extends MedicalRecordEloquent
 
         'primary_insurance',
         'secondary_insurance',
+        'tertiary_insurance',
     ];
 
     /**
