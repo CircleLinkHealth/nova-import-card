@@ -17,6 +17,7 @@ class AddImportablesToTmr extends Migration
             $table->string('allergies')->after('dob')->nullable();
             $table->string('medications')->after('dob')->nullable();
             $table->string('problems')->after('dob')->nullable();
+            $table->string('tertiary_insurance')->after('secondary_insurance')->nullable();
         });
     }
 
