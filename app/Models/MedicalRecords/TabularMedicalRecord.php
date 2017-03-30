@@ -10,6 +10,8 @@ use App\User;
 
 class TabularMedicalRecord extends MedicalRecordEloquent
 {
+    protected $dates = ['dob'];
+
     protected $fillable = [
         'practice_id',
         'location_id',
