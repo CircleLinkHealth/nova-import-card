@@ -11,7 +11,7 @@ class PatientMonthlySummary extends Model
     protected $table = 'patient_monthly_summaries';
 
     protected $fillable = [
-        'month_year, ccm_time, no_of_calls, no_of_successful_calls', 'patient_info_id', 'is_ccm_complex', 'approved'
+        'month_year, ccm_time, no_of_calls, no_of_successful_calls', 'patient_info_id', 'is_ccm_complex', 'approved', 'rejected', 'actor_id'
     ];
 
     public static function updateCallInfoForPatient(
@@ -86,6 +86,11 @@ class PatientMonthlySummary extends Model
     public function patient_info()
     {
         return $this->belongsTo(Patient::class);
+    }
+
+    public function actor()
+    {
+        return $this->hasOne(User::class, 'actor_id');
     }
 
     public function scopeGetCurrent($q)
