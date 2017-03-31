@@ -135,7 +135,8 @@
 
                     <br>
 
-                    <h5 class="white-text center">Let our registered nurse care coaches take the stress out of chronic
+                    <h5 class="white-text center" style="font-size: 2rem;">Let our registered nurse care coaches take
+                        the stress out of chronic
                         conditions for you <u>or</u> for a loved one.</h5>
 
                     <div class="center" style="margin-top: 4%;">
