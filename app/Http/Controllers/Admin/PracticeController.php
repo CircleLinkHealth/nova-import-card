@@ -5,6 +5,7 @@ use App\Location;
 use App\Practice;
 use App\User;
 use Auth;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 
 class PracticeController extends Controller
@@ -175,5 +176,18 @@ class PracticeController extends Controller
 		$program->delete();
 		return redirect()->back()->with('messages', ['successfully removed program'])->send();
 	}
+
+    public function createInvoices(){
+
+        $practices = Practice::active();
+
+        return view('billing.practice.create', compact(['practices']));
+
+
+    }
+
+	public function makeInvoices(){
+
+    }
 
 }
