@@ -22,73 +22,8 @@ if (app()->environment() != 'production') {
 
     Route::get('/rohan', function () {
 
-        $patients =
-            Patient::whereHas('patientSummaries', function ($q) {
-                $q->where('ccm_time', '>', 1199)
-                    ->where('month_year', '2017-02-01');
 
-            });
-
-        $patients = $patients->orderBy('updated_at', 'desc')
-            ->take(100)
-            ->pluck('user_id');
-
-        $count = 0;
-        $formatted = [];
-
-
-        foreach ($patients as $p) {
-
-            $u = User::find($p);
-            $info = $u->patientInfo;
-
-            //@todo add problem type and code
-            $problems = $u->cpmProblems()->take(2)->pluck('name');
-
-            $day_start = Carbon::parse(Carbon::now()->firstOfMonth()->format('Y-m-d'));
-            $report = PatientMonthlySummary::where('patient_info_id', $info->id)->where('month_year',
-                $day_start)->first();
-
-            if ($report != null) {
-                $checked = ($report->approved == 1)
-                    ? 'checked'
-                    : '';
-            } else {
-                $checked = '';
-            }
-
-            if (!isset($problems[0])) {
-                $problems[0] = 'N/A';
-                $checked = '';
-            }
-
-            if (!isset($problems[1])) {
-                $problems[1] = 'N/A';
-                $checked = '';
-            }
-
-            $name = "<a href=" . URL::route('patient.summary', ['patient' => $u->id]) . "> " . $u->fullName . "</a>";
-
-            $formatted[$count] = [
-
-                'name'     => $name,
-                'provider' => $u->billingProvider()->fullName,
-                'practice' => $u->primaryPractice->display_name,
-                'dob'      => $info->birth_date,
-                'ccm'      => round($info->cur_month_activity_time / 60, 2),
-                'problem1' => $problems[0],
-                'problem2' => $problems[1],
-                'status'   => $info->ccm_status,
-                'approve'  => "<input type=\"checkbox\" id='$u->id' $checked>",
-
-            ];
-            $count++;
-
-        }
-
-        $formatted = collect($formatted);
-
-        dd($formatted);
+        dd(\App\Practice::active());
 
     });
 
@@ -700,13 +635,13 @@ Route::group(['middleware' => 'auth'], function () {
                     'as'   => 'monthly.billing.data',
                 ]);
 
-                Route::post('/markApproved', [
-                    'uses' => 'Admin\Reports\MonthlyBillingReportsController@markApproved',
+                Route::post('/updateApproved', [
+                    'uses' => 'Admin\Reports\MonthlyBillingReportsController@updateApproved',
                     'as'   => 'monthly.billing.approve',
                 ]);
 
-                Route::post('/markRejected', [
-                    'uses' => 'Admin\Reports\MonthlyBillingReportsController@markRejected',
+                Route::post('/updateRejected', [
+                    'uses' => 'Admin\Reports\MonthlyBillingReportsController@updateRejected',
                     'as'   => 'monthly.billing.reject',
                 ]);
 
