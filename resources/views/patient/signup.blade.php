@@ -137,7 +137,21 @@
 
         </div>
 
-        <div class="section">
+        <div class="">
+            <div class="row">
+                <div class="container">
+                    <blockquote class="right">
+                        <h5>“They call it personalized care and that’s really how it feels.”</h5>
+                        <p class="right">- User in Charlotte, North Carolina</p>
+                    </blockquote>
+
+                    <blockquote class="left">
+                        <h5>“What a great service”</h5>
+                        <p class="right">- Dr. Jeffrey Hyman, Medical Director, UPG / Northwell Health (New York)</p>
+                    </blockquote>
+                </div>
+            </div>
+
             <div class="row">
                 <h5 class="center">Care protocols built with top clinician advisors</h5>
                 <div class="col s12 m4 center">
