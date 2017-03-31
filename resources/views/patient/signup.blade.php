@@ -33,6 +33,11 @@
             height: 518px;
             box-shadow: 0px 2px 23px #555;
         }
+
+        .speech-bubble {
+            border-radius: 5px;
+            padding: 10px;
+        }
     </style>
 
     <meta property="og:url" content="{{url('sign-up/')}}"/>
@@ -137,21 +142,30 @@
 
         </div>
 
-        <div class="">
-            <div class="row">
-                <div class="container">
-                    <blockquote class="right">
-                        <h5>“They call it personalized care and that’s really how it feels.”</h5>
-                        <p class="right">- User in Charlotte, North Carolina</p>
-                    </blockquote>
+        <div class="section">
+            <div class="container">
+                <div class="row">
+                    <div class="col s12">
+                        <div class="speech-bubble right blue lighten-4">
+                            <h5>“They call it personalized care and that’s really how it feels.”</h5>
+                            <p class="right">- User in Charlotte, North Carolina</p>
+                        </div>
+                    </div>
+                </div>
 
-                    <blockquote class="left">
-                        <h5>“What a great service”</h5>
-                        <p class="right">- Dr. Jeffrey Hyman, Medical Director, UPG / Northwell Health (New York)</p>
-                    </blockquote>
+                <div class="row">
+                    <div class="col s12">
+                        <div class="speech-bubble left blue lighten-4">
+                            <h5>“What a great service!”</h5>
+                            <p class="right">- Dr. Jeffrey Hyman, Medical Director, UPG / Northwell Health (New
+                                York)</p>
+                        </div>
+                    </div>
                 </div>
             </div>
+        </div>
 
+        <div class="section">
             <div class="row">
                 <h5 class="center">Care protocols built with top clinician advisors</h5>
                 <div class="col s12 m4 center">
