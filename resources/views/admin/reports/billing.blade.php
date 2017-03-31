@@ -20,7 +20,7 @@
                 <div class="row">
                     <div class="col-md-12">
                         <div class="panel panel-default">
-                            <div class="panel-heading">Billable Patients Report</div>
+                            <div class="panel-heading">Approve Billable Patients</div>
                             <div class="panel-body">
 
                                 <div class="col-md-12">
@@ -70,7 +70,13 @@
                                                 Problem 2
                                             </th>
                                             <th>
+                                                #Successful Calls
+                                            </th>
+                                            <th>
                                                 Approve
+                                            </th>
+                                            <th>
+                                                Reject
                                             </th>
                                             <th>
                                                 Report
@@ -111,13 +117,15 @@
                             {data: 'ccm', name: 'ccm'},
                             {data: 'problem1', name: 'problem1'},
                             {data: 'problem2', name: 'problem2'},
+                            {data: 'no_of_successful_calls', name: 'no_of_successful_calls'},
                             {data: 'approve', name: 'approve'},
+                            {data: 'reject', name: 'reject'},
                             {data: 'report_id', name: 'report_id'},
                         ],
 
                         "columnDefs": [
                             {
-                                "targets": [9],
+                                "targets": [11],
                                 "visible": false,
                                 "searchable": false
                             }
@@ -142,15 +150,15 @@
 
                     $('#billable_list').on('change', '.approved_checkbox', function () {
 //
+                        var url = '{!! route('monthly.billing.approve') !!}';
+                        var approved = 0;
+
                         if ($(this).is(':checked')) {
 
+                            approved = 1;
+
                             //just approved
-                            var url = '{!! route('monthly.billing.approve') !!}';
-
-                        } else {
-
-                            //just rejected
-                            var url = '{!! route('monthly.billing.reject') !!}';
+                            $('.rejected_checkbox#' + this.id).attr('checked', false);
 
                         }
 
@@ -160,6 +168,7 @@
                             data: {
                                 //send report id to mark
                                 report_id: this.id,
+                                approved: approved
                             },
 
                             success: function (data) {
@@ -170,7 +179,39 @@
                         });
 
                     });
+
+                    $('#billable_list').on('change', '.rejected_checkbox', function () {
+
+                        var url = '{!! route('monthly.billing.reject') !!}';
+                        var rejected = 0;
+
+                        if ($(this).is(':checked')) {
+
+                            rejected = 1;
+                            $('.approved_checkbox#' + this.id).attr('checked', false);
+
+                        }
+
+                        $.ajax({
+                            type: "POST",
+                            url: url,
+                            data: {
+                                //send report id to mark
+                                report_id: this.id,
+                                rejected: rejected,
+                            },
+
+                            success: function (data) {
+
+                                console.log(data);
+
+                            }
+                        });
+
+                    });
+
                 });
+
 
             </script>
 
