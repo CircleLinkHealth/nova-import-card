@@ -77,8 +77,10 @@
             <nav class="white">
                 <div class="header nav-wrapper">
                     <div class="row">
-                        <div class="center">
-                            <img class="logo" src="{{asset('/img/clh_logo.svg')}}">
+                        <div class="col s12">
+                            <div class="center">
+                                <img class="logo" src="{{asset('/img/clh_logo.svg')}}">
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -142,7 +144,7 @@
 
                         <br><br>
 
-                        <h5 class="teal-text text-accent-1 center">Just $49.99/month!</h5>
+                        <h5 class="green-text text-accent-1 center">Just $49.99/month!</h5>
                     </div>
                 </div>
             </div>
@@ -176,14 +178,14 @@
 
         <div class="section">
             <div class="row">
-                <div class="col s6">
+                <div class="col s12 m6">
                     <div class="speech-bubble right blue lighten-4">
                         <h5>“They call it personalized care and that’s really how it feels.”</h5>
                         <p class="right">- User in Charlotte, North Carolina</p>
                     </div>
                 </div>
 
-                <div class="col s6">
+                <div class="col s12 m6">
                     <div class="speech-bubble left blue lighten-4">
                         <h5>“What a great service!”</h5>
                         <p class="right">- Dr. Jeffrey Hyman, Medical Director, UPG / Northwell Health (New
@@ -194,11 +196,6 @@
         </div>
     </div>
 @endsection
-
-{{--Change green button--}}
-{{--Change black text--}}
-{{--Make button smaller--}}
-{{--Change green text--}}
 
 @section('scripts')
 
