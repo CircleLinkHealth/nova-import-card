@@ -27,7 +27,7 @@ class MonthlyBillingReportsController extends Controller
 {
     public function create()
     {
-        $programs = Practice::active()->orderBy('id', 'desc')->pluck('display_name', 'id')->all();
+        $programs = Practice::active()->pluck('display_name', 'id')->all();
 
         return view('admin.monthlyBillingReports.create', compact(['programs']));
     }
