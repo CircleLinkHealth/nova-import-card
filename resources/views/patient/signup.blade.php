@@ -32,12 +32,20 @@
         .speech-bubble {
             border-radius: 5px;
             padding: 10px;
+            width: 42rem;
+            height: 7rem;
         }
 
         h5 {
             line-height: 100%;
             font-size: 1.5rem;
             margin: .7rem 0 .6rem;
+        }
+
+        .title {
+            line-height: 165%;
+            margin: 0;
+            font-size: 2.5rem;
         }
     </style>
 
@@ -60,26 +68,27 @@
 
     <div class="content">
 
-        {{--<div class="navbar-fixed">--}}
-        {{--<nav class="white">--}}
-        {{--<div class="header nav-wrapper">--}}
-        {{--<a href="#" class="col s2"><img class="logo" src="{{asset('/img/clh_logo.svg')}}"></a>--}}
-        {{--</div>--}}
-        {{--</nav>--}}
-        {{--</div>--}}
+        <div class="navbar-fixed">
+            <nav class="white">
+                <div class="header nav-wrapper">
+                    <div class="row">
+                        <div class="col s1">
+                            <img class="logo" src="{{asset('/img/clh_logo.svg')}}">
+                        </div>
+
+                        <div class="col s10">
+                            <h1 class="center title blue-text">Wellness Manager</h1>
+                        </div>
+                    </div>
+                </div>
+            </nav>
+        </div>
 
         <div class="row blue lighten-1">
-            {{--<a href="#" class="col s2"><img class="logo" src="{{asset('/img/clh_logo.svg')}}"></a>--}}
             <div class="col s12 m9 overlay valign-wrapper"
                  style="background: url('http://www.circlelinkhealth.com/wp-content/themes/CLH_132/images/bg.png')">
 
                 <div class="valign">
-                    <h1 style="line-height: 110%;font-size: 1.64rem;margin: .82rem 0 .656rem;"
-                        class="white-text center"><b>WELLNESS
-                            MANAGER</b> <em>from CircleLink Health</em></h1>
-
-                    <br>
-
                     <h5 class="white-text center">Let our registered nurse care coaches take the stress out of chronic
                         condition for you <u>or</u> a loved one.</h5>
 
@@ -136,7 +145,7 @@
 
         </div>
 
-        <div class="container">
+        <div class="section">
             <div class="row">
                 <div class="col s6">
                     <div class="speech-bubble right blue lighten-4">
