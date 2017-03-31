@@ -701,12 +701,12 @@ Route::group(['middleware' => 'auth'], function () {
                 ]);
 
                 Route::post('/markApproved', [
-                    'uses' => 'Admin\Reports\MonthlyBillingReportsController@data',
+                    'uses' => 'Admin\Reports\MonthlyBillingReportsController@markApproved',
                     'as'   => 'monthly.billing.approve',
                 ]);
 
                 Route::post('/markRejected', [
-                    'uses' => 'Admin\Reports\MonthlyBillingReportsController@data',
+                    'uses' => 'Admin\Reports\MonthlyBillingReportsController@markRejected',
                     'as'   => 'monthly.billing.reject',
                 ]);
 
