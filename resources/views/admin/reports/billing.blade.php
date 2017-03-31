@@ -1,11 +1,6 @@
 @extends('partials.adminUI')
 
 @section('content')
-
-    <script>
-
-    </script>
-
     <style>
         .select2-container {
             width: 300px !important;
@@ -77,6 +72,9 @@
                                             <th>
                                                 Approve
                                             </th>
+                                            <th>
+                                                Report
+                                            </th>
                                         </tr>
                                         </thead>
                                     </table>
@@ -90,10 +88,13 @@
             <script>
 
                 $(function () {
+
                     $('#billable_list').DataTable({
+
                         processing: true,
                         serverSide: false,
                         "scrollX": true,
+                        select: true,
                         ajax: {
                             "url": '{!! url('/admin/reports/monthly-billing/v2/data') !!}',
                             "type": "POST",
@@ -101,7 +102,6 @@
                                 d.practice_id = $('#practice_id').val();
                             }
                         },
-
                         columns: [
                             {data: 'name', name: 'name'},
                             {data: 'provider', name: 'provider'},
@@ -112,6 +112,15 @@
                             {data: 'problem1', name: 'problem1'},
                             {data: 'problem2', name: 'problem2'},
                             {data: 'approve', name: 'approve'},
+                            {data: 'report_id', name: 'report_id'},
+                        ],
+
+                        "columnDefs": [
+                            {
+                                "targets": [9],
+                                "visible": false,
+                                "searchable": false
+                            }
                         ],
                         "iDisplayLength": 25,
                         "aaSorting": [1, 'desc'],
@@ -123,20 +132,48 @@
 
                     });
 
-                });
+                    $('#practice_id').on('change', function () {
 
-                console.log('{!! url('/admin/reports/monthly-billing/v2/data') !!}');
+                        $('#billable_list').DataTable().ajax.reload();
 
-                $('#practice_id').on('change', function () {
-                    $('#billable_list').DataTable().ajax.reload();
-                });
+                    });
 
-                $(document).ready(function () {
                     $(".practices").select2();
 
-                });
-            </script>
-            <script src="//cdn.datatables.net/1.10.7/js/jquery.dataTables.min.js"></script>
+                    $('#billable_list').on('change', '.approved_checkbox', function () {
+//
+                        if ($(this).is(':checked')) {
 
+                            //just approved
+                            var url = '{!! route('monthly.billing.approve') !!}';
+
+                        } else {
+
+                            //just rejected
+                            var url = '{!! route('monthly.billing.reject') !!}';
+
+                        }
+
+                        $.ajax({
+                            type: "POST",
+                            url: url,
+                            data: {
+                                //send report id to mark
+                                report_id: this.id,
+                            },
+
+                            success: function (data) {
+
+                                console.log(data);
+
+                            }
+                        });
+
+                    });
+                });
+
+            </script>
+
+            <script src="//cdn.datatables.net/1.10.7/js/jquery.dataTables.min.js"></script>
 
 @stop
