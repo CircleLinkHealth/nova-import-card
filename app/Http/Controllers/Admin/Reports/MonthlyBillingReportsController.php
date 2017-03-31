@@ -27,7 +27,7 @@ class MonthlyBillingReportsController extends Controller
 {
     public function create()
     {
-        $programs = Practice::orderBy('id', 'desc')->pluck('display_name', 'id')->all();
+        $programs = Practice::active()->orderBy('id', 'desc')->pluck('display_name', 'id')->all();
 
         return view('admin.monthlyBillingReports.create', compact(['programs']));
     }
@@ -348,7 +348,7 @@ class MonthlyBillingReportsController extends Controller
     public function make()
     {
 
-        $practices = Practice::all();
+        $practices = Practice::active();
 
         return view('admin.reports.billing', compact(['practices']));
 
@@ -358,10 +358,11 @@ class MonthlyBillingReportsController extends Controller
     {
         $input = $request->input();
 
-        $patients =
-            Patient::whereHas('patientSummaries', function ($q) {
+        $patients = Patient
+            ::whereHas('patientSummaries', function ($q) {
                 $q->where('ccm_time', '>', 1199)
-                    ->where('month_year', '2017-02-01');
+                    ->where('month_year', '2017-02-01')
+                    ->where('no_of_successful_calls', '>', 0);
 
             });
 
@@ -396,40 +397,65 @@ class MonthlyBillingReportsController extends Controller
             $problems = $u->cpmProblems()->take(2)->pluck('name');
 
             $day_start = Carbon::parse(Carbon::now()->firstOfMonth()->format('Y-m-d'));
+
+            //@todo make live
             $report = PatientMonthlySummary::where('patient_info_id', $info->id)->where('month_year',
-                $day_start)->first();
+                '2017-02-01')->first();
 
             if ($report != null) {
-                $checked = ($report->approved == 1)
-                    ? 'checked'
-                    : '';
+                $reportId = $report->id;
             } else {
-                $checked = '';
+                $reportId = null;
             }
 
             if (!isset($problems[0])) {
                 $problems[0] = 'N/A';
-                $checked = '';
             }
 
             if (!isset($problems[1])) {
                 $problems[1] = 'N/A';
-                $checked = '';
             }
 
-            $name = "<a href=" . URL::route('patient.summary', ['patient' => $u->id]) . "> " . $u->fullName . "</a>";
+            if ($problems[0] == 'N/A' || $problems[1] == 'N/A' || $info->ccm_status == 'withdrawn' || $info->ccm_status == 'paused') {
+                $checked = '';
+            } else {
+                $checked = 'checked';
+            }
+
+            $rejected = ($report->rejected == 1)
+                ? 'checked'
+                : '';
+
+            //only if it hasn't been touched before, add default
+            if ($report->actor_id == null) {
+
+                $report->approved = $checked == ''
+                    ? 0
+                    : 1;
+                $report->save();
+
+            }
+
+
+            $name = "<a href=" . URL::route('patient.careplan.show', [
+                    'patient' => $u->id,
+                    'page'    => 1,
+                ]) . "> " . $u->fullName . "</a>";
 
             $formatted[$count] = [
 
-                'name'     => $name,
-                'provider' => $u->billingProvider()->fullName,
-                'practice' => $u->primaryPractice->display_name,
-                'dob'      => $info->birth_date,
-                'ccm'      => round($info->cur_month_activity_time / 60, 2),
-                'problem1' => $problems[0],
-                'problem2' => $problems[1],
-                'status'   => $info->ccm_status,
-                'approve'  => "<input type=\"checkbox\" id='$u->id' $checked>",
+                'name'                   => $name,
+                'provider'               => $u->billingProvider()->fullName,
+                'practice'               => $u->primaryPractice->display_name,
+                'dob'                    => $info->birth_date,
+                'ccm'                    => round($info->cur_month_activity_time / 60, 2),
+                'problem1'               => $problems[0],
+                'problem2'               => $problems[1],
+                'no_of_successful_calls' => $report->no_of_successful_calls,
+                'status'                 => $info->ccm_status,
+                'approve'                => "<input type=\"checkbox\" class='approved_checkbox' id='$reportId' $checked>",
+                'reject'                 => "<input type=\"checkbox\" class='rejected_checkbox' id='$reportId' $rejected>",
+                'report_id'              => $reportId ?? null,
 
             ];
             $count++;
@@ -437,7 +463,6 @@ class MonthlyBillingReportsController extends Controller
         }
 
         $formatted = collect($formatted);
-
 
         return Datatables::of($formatted)
             ->addColumn('background_color', function ($a) {
@@ -448,6 +473,63 @@ class MonthlyBillingReportsController extends Controller
                 }
             })
             ->make(true);
+
+    }
+
+    public function updateApproved(Request $request)
+    {
+
+        $input = $request->input();
+
+        $report = PatientMonthlySummary::find($input['report_id']);
+
+        //if approved was checked
+        if($input['approved'] == 1){
+
+            $report->approved = 1;
+            $report->rejected = 0;
+
+        } else {
+        //approved was unchecked
+
+            $report->approved = 0;
+
+        }
+
+        //if approved was unchecked, rejected stays as is. If it was approved, rejected becomes 0
+        $report->actor_id = auth()->user()->id;
+        $report->save();
+
+        return $report;
+
+    }
+
+    public function updateRejected(Request $request)
+    {
+
+        $input = $request->input();
+
+        $report = PatientMonthlySummary::find($input['report_id']);
+
+        //if approved was checked
+        if($input['rejected'] == 1){
+
+            $report->rejected = 1;
+            $report->approved = 0;
+
+        } else {
+
+            //rejected was unchecked
+
+            $report->rejected = 0;
+
+        }
+
+        //if approved was unchecked, rejected stays as is. If it was approved, rejected becomes 0
+        $report->actor_id = auth()->user()->id;
+        $report->save();
+
+        return $report;
 
     }
 }
