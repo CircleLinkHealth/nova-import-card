@@ -156,11 +156,11 @@
                         if ($(this).is(':checked')) {
 
                             approved = 1;
-
-                            //just approved
                             $('.rejected_checkbox#' + this.id).attr('checked', false);
 
                         }
+
+                        console.log($(this).is(':checked'));
 
                         $.ajax({
                             type: "POST",
@@ -191,6 +191,8 @@
                             $('.approved_checkbox#' + this.id).attr('checked', false);
 
                         }
+
+                        console.log($(this).is(':checked'));
 
                         $.ajax({
                             type: "POST",
