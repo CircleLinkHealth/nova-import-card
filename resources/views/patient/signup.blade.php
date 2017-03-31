@@ -131,6 +131,8 @@
                 <div class="valign">
                     <h1 class="center title white-text"><b>Wellness Manager</b></h1>
 
+                    <br>
+
                     <h5 class="white-text center">Let our registered nurse care coaches take the stress out of chronic
                         conditions for you <u>or</u> for a loved one.</h5>
 
