@@ -15,8 +15,9 @@
                     <b>Ask patient:</b> Do you want us to call you directly or is there someone else we should contact?
                 @endif
                 <br>
-                Confirm the patient’s phone number(s) [format: xxx-xxx-xxxx] and select preferred number with radio button:
+                Confirm the patient’s phone number(s)select preferred number with radio button:
                 <br>
+                [<b>format</b>: xxx-xxx-xxxx]
             </blockquote>
             <div class="row">
                 <div class="col s6 m4 select-custom">
