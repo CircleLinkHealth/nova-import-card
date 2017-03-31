@@ -72,12 +72,8 @@
             <nav class="white">
                 <div class="header nav-wrapper">
                     <div class="row">
-                        <div class="col s1">
+                        <div class="center">
                             <img class="logo" src="{{asset('/img/clh_logo.svg')}}">
-                        </div>
-
-                        <div class="col s10">
-                            <h1 class="center title blue-text">Wellness Manager</h1>
                         </div>
                     </div>
                 </div>
@@ -128,6 +124,8 @@
                  style="background: url('http://www.circlelinkhealth.com/wp-content/themes/CLH_132/images/bg.png')">
 
                 <div class="valign">
+                    <h1 class="center title white-text"><b>Wellness Manager</b></h1>
+
                     <h5 class="white-text center">Let our registered nurse care coaches take the stress out of chronic
                         condition for you <u>or</u> for a loved one.</h5>
 
