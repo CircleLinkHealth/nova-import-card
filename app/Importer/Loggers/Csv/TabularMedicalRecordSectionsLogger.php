@@ -8,7 +8,6 @@ use App\Importer\Models\ItemLogs\MedicationLog;
 use App\Importer\Models\ItemLogs\ProblemLog;
 use App\Importer\Models\ItemLogs\ProviderLog;
 use App\Models\MedicalRecords\TabularMedicalRecord;
-use Carbon\Carbon;
 
 class TabularMedicalRecordSectionsLogger implements MedicalRecordLogger
 {
@@ -78,10 +77,10 @@ class TabularMedicalRecordSectionsLogger implements MedicalRecordLogger
             array_merge([
                 'first_name'    => $this->medicalRecord->first_name,
                 'last_name'     => $this->medicalRecord->last_name,
-                'dob'           => Carbon::parse($this->medicalRecord->dob),
+                'dob'           => $this->medicalRecord->dob,
                 'provider_name' => $this->medicalRecord->provider_name,
                 'phone'         => $this->medicalRecord->phone,
-                'mrn'           => $this->medicalRecord->mrn,
+                'mrn_number'    => $this->medicalRecord->mrn,
                 'gender'        => $this->medicalRecord->gender,
                 'language'      => $this->medicalRecord->language ?? 'EN',
                 'primary_phone' => $this->medicalRecord->primary_phone,

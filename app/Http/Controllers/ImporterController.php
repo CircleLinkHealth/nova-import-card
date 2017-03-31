@@ -7,6 +7,7 @@ use App\Models\MedicalRecords\Ccda;
 use App\Models\MedicalRecords\ImportedMedicalRecord;
 use App\Models\MedicalRecords\TabularMedicalRecord;
 use App\Practice;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Collection;
 use Laracasts\Utilities\JavaScript\JavaScriptFacade as JavaScript;
@@ -103,6 +104,8 @@ class ImporterController extends Controller
             $csv = parseCsvToArray($file);
 
             foreach ($csv as $row) {
+                $row['dob'] = Carbon::parse($row['dob'])->format('Y-m-d');
+
                 $mr = TabularMedicalRecord::create($row);
 
                 $importedMedicalRecords[] = $mr->import();
