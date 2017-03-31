@@ -82,7 +82,7 @@ class PracticeInvoiceGenerator
 
         return [
             'name' => $name,
-            'link' => storage_path("download/$name.pdf")
+            'link' => $name. '.pdf'
         ];
 
     }
