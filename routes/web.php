@@ -725,6 +725,21 @@ Route::group(['middleware' => 'auth'], function () {
             ]);
         });
 
+        //Practice Billing
+        Route::group(['prefix' => 'practice/billing'], function () {
+
+            Route::get('create', [
+                'uses' => 'Admin\PracticeController@createInvoices',
+                'as'   => 'practice.billing.create',
+            ]);
+
+            Route::get('make', [
+                'uses' => 'Admin\PracticeController@makeInvoices',
+                'as'   => 'practice.billing.make',
+            ]);
+
+        });
+
         //Algo Mocker
         Route::group(['prefix' => 'algo'], function () {
             Route::get('mock', [
