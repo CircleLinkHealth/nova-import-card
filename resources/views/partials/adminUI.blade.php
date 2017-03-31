@@ -279,8 +279,7 @@
                             <li><a href="{{ URL::route('MonthlyBillingReportsController.create', []) }}">Monthly
                                     Billing</a></li>
 
-                            <li><a href="{{ URL::route('monthly.billing.make', []) }}">Monthly
-                                    Billing v2</a></li>
+                            <li><a href="{{ URL::route('monthly.billing.make', []) }}">Approve Billable Patients</a></li>
 
                             <li><a href="{{ URL::route('PatientConditionsReportController.getReport', array()) }}">Patient
                                     Conditions (export)</a>
