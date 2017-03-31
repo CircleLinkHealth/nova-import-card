@@ -47,6 +47,11 @@
             margin: 0;
             font-size: 2.5rem;
         }
+
+        .harvard-logo {
+            width: 77%;
+            padding-top: 3%;
+        }
     </style>
 
     <meta property="og:url" content="{{url('sign-up/')}}"/>
@@ -130,7 +135,7 @@
                         condition for you <u>or</u> for a loved one.</h5>
 
                     <div class="center" style="margin-top: 4%;">
-                        <h5 class="teal-text text-accent-1 center">Telephone health coaching, care plan setup and
+                        <h5 class="grey-text test-lighten-4 center">Telephone health coaching, care plan setup and
                             coordination with family and doctors. <br><br>Just $49.99/month!</h5>
                     </div>
                 </div>
@@ -145,7 +150,7 @@
                 <div class="col s12 m4 center">
                     <div class="center">
                         <p>Instructor at</p>
-                        <img class="promo-picture" src="{{asset('/img/harvard-medical-school.png')}}">
+                        <img class="promo-picture harvard-logo" src="{{asset('/img/harvard-medical-school.png')}}">
                     </div>
                 </div>
                 <div class="col s12 m4 center">
