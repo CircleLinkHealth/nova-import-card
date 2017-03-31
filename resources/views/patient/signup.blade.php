@@ -132,11 +132,15 @@
                     <h1 class="center title white-text"><b>Wellness Manager</b></h1>
 
                     <h5 class="white-text center">Let our registered nurse care coaches take the stress out of chronic
-                        condition for you <u>or</u> for a loved one.</h5>
+                        conditions for you <u>or</u> for a loved one.</h5>
 
                     <div class="center" style="margin-top: 4%;">
-                        <h5 class="grey-text test-lighten-4 center">Telephone health coaching, care plan setup and
-                            coordination with family and doctors. <br><br>Just $49.99/month!</h5>
+                        <h5 class="grey-text text-lighten-4 center">Telephone health coaching, care plan setup and
+                            coordination with family and doctors.</h5>
+
+                        <br><br>
+
+                        <h5 class="teal-text text-accent-1 center">Just $49.99/month!</h5>
                     </div>
                 </div>
             </div>
