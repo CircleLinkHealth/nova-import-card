@@ -733,7 +733,7 @@ Route::group(['middleware' => 'auth'], function () {
                 'as'   => 'practice.billing.create',
             ]);
 
-            Route::get('make', [
+            Route::post('make', [
                 'uses' => 'Admin\PracticeController@makeInvoices',
                 'as'   => 'practice.billing.make',
             ]);
