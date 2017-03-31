@@ -80,7 +80,7 @@ class SalesReportsController extends Controller
     public function createPracticeReport(Request $request)
     {
 
-        $practices = Practice::all()->pluck('display_name', 'id');
+        $practices = Practice::active()->pluck('display_name', 'id');
 
         $sections = SalesByPracticeReport::SECTIONS;
 
