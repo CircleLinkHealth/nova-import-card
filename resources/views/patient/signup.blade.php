@@ -85,7 +85,7 @@
 
                     <div class="center" style="margin-top: 4%;">
                         <h5 class="teal-text text-accent-1 center">Telephone health coaching, care plan setup and
-                            coordination with family and doctors. <br>Just $49.99/month!</h5>
+                            coordination with family and doctors. <br><br>Just $49.99/month!</h5>
                     </div>
                 </div>
             </div>
@@ -96,14 +96,14 @@
 
                 <div class="row">
                     <div class="input-field col s12">
-                        <i class="material-icons prefix">account_circle</i>
+                        {{--<i class="material-icons prefix">account_circle</i>--}}
                         <input id="name" type="text" class="validate" required name="name">
                         <label for="name" id="name_label">Name</label>
                     </div>
 
 
                     <div class="input-field col s12">
-                        <i class="material-icons prefix">phone</i>
+                        {{--<i class="material-icons prefix">phone</i>--}}
                         <input id="text" type="text" class="validate"
                                pattern="\d{3}[\-]\d{3}[\-]\d{4}" required name="phone">
                         <label for="text" data-error="The phone number must match format xxx-xxx-xxxx">Phone Number
@@ -112,13 +112,13 @@
 
 
                     <div class="input-field col s12">
-                        <i class="material-icons prefix">email</i>
+                        {{--<i class="material-icons prefix">email</i>--}}
                         <input id="email" type="email" name="email" class="validate">
                         <label for="email" data-error="The email must contain an @">Email</label>
                     </div>
 
                     <div class="input-field col s12">
-                        <i class="material-icons prefix">message</i>
+                        {{--<i class="material-icons prefix">message</i>--}}
                         <textarea id="textarea1" class="materialize-textarea" name="comment"
                                   placeholder=""></textarea>
                         <label for="textarea1">Message (Optional)</label>
