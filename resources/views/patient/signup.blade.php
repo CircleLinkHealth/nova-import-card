@@ -21,7 +21,7 @@
         }
 
         .promo-picture {
-            max-height: 92px;
+            max-height: 80px;
         }
 
         .signup-form {
@@ -117,7 +117,7 @@
 
                     <div class="center">
                         <button type="submit"
-                                class="waves-effect waves-light btn-large teal accent-3">Sign me up
+                                class="waves-effect waves-light btn-large green accent-4">Sign me up
                         </button>
                     </div>
                 </div>
