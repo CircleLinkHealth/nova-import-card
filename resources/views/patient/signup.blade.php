@@ -142,54 +142,59 @@
 
         </div>
 
-        <div class="section">
-            <div class="container">
-                <div class="row">
-                    <div class="col s12">
-                        <div class="speech-bubble right blue lighten-4">
-                            <h5>“They call it personalized care and that’s really how it feels.”</h5>
-                            <p class="right">- User in Charlotte, North Carolina</p>
-                        </div>
+        <div class="container">
+            <div class="row">
+                <div class="col s12">
+                    <div class="speech-bubble right blue lighten-4">
+                        <h5>“They call it personalized care and that’s really how it feels.”</h5>
+                        <p class="right">- User in Charlotte, North Carolina</p>
                     </div>
                 </div>
+            </div>
 
-                <div class="row">
-                    <div class="col s12">
-                        <div class="speech-bubble left blue lighten-4">
-                            <h5>“What a great service!”</h5>
-                            <p class="right">- Dr. Jeffrey Hyman, Medical Director, UPG / Northwell Health (New
-                                York)</p>
-                        </div>
+            <div class="row">
+                <div class="col s12">
+                    <div class="speech-bubble left blue lighten-4">
+                        <h5>“What a great service!”</h5>
+                        <p class="right">- Dr. Jeffrey Hyman, Medical Director, UPG / Northwell Health (New
+                            York)</p>
                     </div>
                 </div>
             </div>
         </div>
 
-        <div class="section">
+        <div class="container">
             <div class="row">
                 <h5 class="center">Care protocols built with top clinician advisors</h5>
                 <div class="col s12 m4 center">
                     <div class="center">
-                        <h5>Instructor at</h5>
-                        <img class="promo-picture" src="{{asset('/img/harvard-medical-school.png')}}"
-                        >
+                        <p>Instructor at</p>
+                        <img class="promo-picture" src="{{asset('/img/harvard-medical-school.png')}}">
                     </div>
                 </div>
                 <div class="col s12 m4 center">
                     <div class="center">
-                        <h5>Medical Director at</h5>
+                        <p>Medical Director at</p>
                         <img class="promo-picture" src="{{asset('/img/keck-medical-center.jpg')}}">
                     </div>
                 </div>
                 <div class="col s12 m4 center">
                     <div class="center">
-                        <h5>Chief of Medicine at</h5>
+                        <p>Chief of Medicine at</p>
                         <img class="promo-picture" src="{{asset('/img/brickham-and-womens-hospital.jpg')}}">
                     </div>
                 </div>
             </div>
         </div>
     </div>
+
+    <footer class="page-footer teal" style="padding-top: 0;">
+        <div class="footer-copyright">
+            <div class="container">
+                © 2017 CicleLink Health
+            </div>
+        </div>
+    </footer>
 @endsection
 
 @section('scripts')
