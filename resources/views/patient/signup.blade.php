@@ -26,7 +26,12 @@
         }
 
         .promo-picture {
-            max-height: 165px;
+            max-height: 80px;
+        }
+
+        .signup-form {
+            height: 518px;
+            box-shadow: 0px 2px 23px #555;
         }
     </style>
 
@@ -59,8 +64,29 @@
 
         <div class="row blue lighten-1">
 
-            <div class="col s4 white">
-                {!! Form::open(['url' => route('sign-up.store'), 'method' => 'post', 'class' => 'col s12', 'id' => 'signup-form']) !!}
+            <div class="col s12 m9 overlay valign-wrapper"
+                 style="background: url('http://www.circlelinkhealth.com/wp-content/themes/CLH_132/images/bg.png')">
+
+                <div class="valign">
+                    <h1 style="line-height: 110%;font-size: 1.64rem;margin: .82rem 0 .656rem;"
+                        class="white-text center"><b>WELLNESS
+                            MANAGER</b> <em>from CircleLink Health</em></h1>
+
+                    <br>
+
+                    <h5 class="white-text center">Let our registered nurse care coaches take the stress out of chronic
+                        condition for you <u>or</u> a loved one.</h5>
+
+                    <div class="center" style="margin-top: 4%;">
+                        <h5 class="teal-text text-accent-1 center">Telephone health coaching, care plan setup and
+                            coordination with family and doctors. Just $49.99/month!</h5>
+                    </div>
+                </div>
+            </div>
+
+
+            <div class="col s12 m3 valign-wrapper overlay">
+                {!! Form::open(['url' => route('sign-up.store'), 'method' => 'post', 'class' => 'col s12 valign white signup-form', 'id' => 'signup-form']) !!}
 
                 <div class="row">
                     <div class="input-field col s12">
@@ -108,31 +134,12 @@
                 {!! Form::close() !!}
             </div>
 
-            <div class="col s8 overlay valign-wrapper"
-                 style="background: url('http://www.circlelinkhealth.com/wp-content/themes/CLH_132/images/bg.png')">
-
-                <div class="valign">
-                    <h1 style="line-height: 110%;font-size: 1.64rem;margin: .82rem 0 .656rem;"
-                        class="white-text center"><b>WELLNESS
-                            MANAGER</b> <em>from CircleLink Health</em></h1>
-
-                    <br>
-
-                    <h5 class="white-text center">Let our registered nurse care coaches take the stress out of chronic
-                        condition for you <u>or</u> a loved one.</h5>
-
-                    <div class="center" style="margin-top: 4%;">
-                        <h5 class="teal-text text-accent-1 center">Telephone health coaching, care plan setup and
-                            coordination with family and doctors. Just $49.99/month!</h5>
-                    </div>
-                </div>
-            </div>
 
         </div>
 
         <div class="section">
             <div class="row">
-                <h4 class="center">Care protocols built with top clinician advisors</h4>
+                <h5 class="center">Care protocols built with top clinician advisors</h5>
                 <div class="col s12 m4 center">
                     <div class="center">
                         <h5>Instructor at</h5>
