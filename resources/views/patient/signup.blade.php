@@ -131,7 +131,7 @@
                  style="background: url('http://www.circlelinkhealth.com/wp-content/themes/CLH_132/images/bg.png')">
 
                 <div class="valign">
-                    <h1 class="center title white-text"><b>Wellness Manager</b></h1>
+                    <h1 class="center title white-text"><b>WELLNESS MANAGER</b> <em>from CircleLink Health</em></h1>
 
                     <br>
 
