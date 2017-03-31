@@ -1,7 +1,9 @@
 <?php namespace App\Http\Controllers\Admin;
 
+use App\Billing\Practices\PracticeInvoiceGenerator;
 use App\Http\Controllers\Controller;
 use App\Location;
+use App\PatientMonthlySummary;
 use App\Practice;
 use App\User;
 use Auth;
@@ -186,7 +188,21 @@ class PracticeController extends Controller
 
     }
 
-	public function makeInvoices(){
+	public function makeInvoices(Request $request){
+
+        $data = [];
+
+        foreach ($request->input('practices') as $practiceId){
+
+            $practice = Practice::find($practiceId);
+
+            $data = (new PracticeInvoiceGenerator($practice, Carbon::parse('2017-03-01')))->generatePdf();
+
+            $invoices[$data['link']] = $data['name'];
+
+        }
+
+        return view('billing.practice.list', compact(['invoices']));
 
     }
 
