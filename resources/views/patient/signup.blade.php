@@ -85,20 +85,6 @@
         </div>
 
         <div class="row blue lighten-1">
-            <div class="col s12 m9 overlay valign-wrapper"
-                 style="background: url('http://www.circlelinkhealth.com/wp-content/themes/CLH_132/images/bg.png')">
-
-                <div class="valign">
-                    <h5 class="white-text center">Let our registered nurse care coaches take the stress out of chronic
-                        condition for you <u>or</u> for a loved one.</h5>
-
-                    <div class="center" style="margin-top: 4%;">
-                        <h5 class="teal-text text-accent-1 center">Telephone health coaching, care plan setup and
-                            coordination with family and doctors. <br><br>Just $49.99/month!</h5>
-                    </div>
-                </div>
-            </div>
-
 
             <div class="col s12 m3 valign-wrapper overlay">
                 {!! Form::open(['url' => route('sign-up.store'), 'method' => 'post', 'class' => 'col s12 valign white signup-form', 'id' => 'signup-form']) !!}
@@ -136,6 +122,20 @@
                     </div>
                 </div>
                 {!! Form::close() !!}
+            </div>
+
+            <div class="col s12 m9 overlay valign-wrapper"
+                 style="background: url('http://www.circlelinkhealth.com/wp-content/themes/CLH_132/images/bg.png')">
+
+                <div class="valign">
+                    <h5 class="white-text center">Let our registered nurse care coaches take the stress out of chronic
+                        condition for you <u>or</u> for a loved one.</h5>
+
+                    <div class="center" style="margin-top: 4%;">
+                        <h5 class="teal-text text-accent-1 center">Telephone health coaching, care plan setup and
+                            coordination with family and doctors. <br><br>Just $49.99/month!</h5>
+                    </div>
+                </div>
             </div>
 
 
