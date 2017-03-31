@@ -6,8 +6,8 @@
 @section('head')
     <style>
         .logo {
-            height: 50px;
-            margin-top: 6px;
+            height: 62px;
+            margin-top: 1px;
         }
 
         .overlay {
@@ -141,28 +141,9 @@
 
         </div>
 
-        <div class="section">
-            <div class="row">
-                <div class="col s6">
-                    <div class="speech-bubble right blue lighten-4">
-                        <h5>“They call it personalized care and that’s really how it feels.”</h5>
-                        <p class="right">- User in Charlotte, North Carolina</p>
-                    </div>
-                </div>
-
-                <div class="col s6">
-                    <div class="speech-bubble left blue lighten-4">
-                        <h5>“What a great service!”</h5>
-                        <p class="right">- Dr. Jeffrey Hyman, Medical Director, UPG / Northwell Health (New
-                            York)</p>
-                    </div>
-                </div>
-            </div>
-        </div>
-
         <div class="container">
             <div class="row">
-                <h5 class="center">Care protocols built with top clinician advisors</h5>
+                <h5 class="center">Program built with top clinician advisors:</h5>
                 <div class="col s12 m4 center">
                     <div class="center">
                         <p>Instructor at</p>
@@ -179,6 +160,25 @@
                     <div class="center">
                         <p>Chief of Medicine at</p>
                         <img class="promo-picture" src="{{asset('/img/brickham-and-womens-hospital.jpg')}}">
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="section">
+            <div class="row">
+                <div class="col s6">
+                    <div class="speech-bubble right blue lighten-4">
+                        <h5>“They call it personalized care and that’s really how it feels.”</h5>
+                        <p class="right">- User in Charlotte, North Carolina</p>
+                    </div>
+                </div>
+
+                <div class="col s6">
+                    <div class="speech-bubble left blue lighten-4">
+                        <h5>“What a great service!”</h5>
+                        <p class="right">- Dr. Jeffrey Hyman, Medical Director, UPG / Northwell Health (New
+                            York)</p>
                     </div>
                 </div>
             </div>
