@@ -21,7 +21,7 @@
         }
 
         .promo-picture {
-            max-height: 70px;
+            max-height: 92px;
         }
 
         .signup-form {
@@ -185,6 +185,11 @@
         </div>
     </div>
 @endsection
+
+{{--Change green button--}}
+{{--Change black text--}}
+{{--Make button smaller--}}
+{{--Change green text--}}
 
 @section('scripts')
 
