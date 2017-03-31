@@ -12,7 +12,7 @@
 
         .overlay {
             padding-top: 5%;
-            height: 535px;
+            height: 450px;
         }
 
         .header {
@@ -20,23 +20,24 @@
             max-height: 100px;
         }
 
-        .section {
-            padding-top: 3rem;
-            padding-bottom: 1rem;
-        }
-
         .promo-picture {
-            max-height: 80px;
+            max-height: 70px;
         }
 
         .signup-form {
-            height: 518px;
+            /*height: 360px;*/
             box-shadow: 0px 2px 23px #555;
         }
 
         .speech-bubble {
             border-radius: 5px;
             padding: 10px;
+        }
+
+        h5 {
+            line-height: 100%;
+            font-size: 1.5rem;
+            margin: .7rem 0 .6rem;
         }
     </style>
 
@@ -59,16 +60,16 @@
 
     <div class="content">
 
-        <div class="navbar-fixed">
-            <nav class="white">
-                <div class="header nav-wrapper">
-                    <a href="#" class="col s2"><img class="logo" src="{{asset('/img/clh_logo.svg')}}"></a>
-                </div>
-            </nav>
-        </div>
+        {{--<div class="navbar-fixed">--}}
+        {{--<nav class="white">--}}
+        {{--<div class="header nav-wrapper">--}}
+        {{--<a href="#" class="col s2"><img class="logo" src="{{asset('/img/clh_logo.svg')}}"></a>--}}
+        {{--</div>--}}
+        {{--</nav>--}}
+        {{--</div>--}}
 
         <div class="row blue lighten-1">
-
+            {{--<a href="#" class="col s2"><img class="logo" src="{{asset('/img/clh_logo.svg')}}"></a>--}}
             <div class="col s12 m9 overlay valign-wrapper"
                  style="background: url('http://www.circlelinkhealth.com/wp-content/themes/CLH_132/images/bg.png')">
 
@@ -84,7 +85,7 @@
 
                     <div class="center" style="margin-top: 4%;">
                         <h5 class="teal-text text-accent-1 center">Telephone health coaching, care plan setup and
-                            coordination with family and doctors. Just $49.99/month!</h5>
+                            coordination with family and doctors. <br>Just $49.99/month!</h5>
                     </div>
                 </div>
             </div>
@@ -99,9 +100,8 @@
                         <input id="name" type="text" class="validate" required name="name">
                         <label for="name" id="name_label">Name</label>
                     </div>
-                </div>
 
-                <div class="row">
+
                     <div class="input-field col s12">
                         <i class="material-icons prefix">phone</i>
                         <input id="text" type="text" class="validate"
@@ -109,17 +109,14 @@
                         <label for="text" data-error="The phone number must match format xxx-xxx-xxxx">Phone Number
                             xxx-xxx-xxxx</label>
                     </div>
-                </div>
 
-                <div class="row">
+
                     <div class="input-field col s12">
                         <i class="material-icons prefix">email</i>
                         <input id="email" type="email" name="email" class="validate">
                         <label for="email" data-error="The email must contain an @">Email</label>
                     </div>
-                </div>
 
-                <div class="row">
                     <div class="input-field col s12">
                         <i class="material-icons prefix">message</i>
                         <textarea id="textarea1" class="materialize-textarea" name="comment"
@@ -127,15 +124,12 @@
                         <label for="textarea1">Message (Optional)</label>
                     </div>
 
-                    <div class="row">
-                        <div class="input-field col s12 center">
-                            <button type="submit"
-                                    class="waves-effect waves-light btn-large scroll-to-form teal accent-3">Sign me up
-                            </button>
-                        </div>
+                    <div class="center">
+                        <button type="submit"
+                                class="waves-effect waves-light btn-large teal accent-3">Sign me up
+                        </button>
                     </div>
                 </div>
-
                 {!! Form::close() !!}
             </div>
 
@@ -144,16 +138,14 @@
 
         <div class="container">
             <div class="row">
-                <div class="col s12">
+                <div class="col s6">
                     <div class="speech-bubble right blue lighten-4">
                         <h5>“They call it personalized care and that’s really how it feels.”</h5>
                         <p class="right">- User in Charlotte, North Carolina</p>
                     </div>
                 </div>
-            </div>
 
-            <div class="row">
-                <div class="col s12">
+                <div class="col s6">
                     <div class="speech-bubble left blue lighten-4">
                         <h5>“What a great service!”</h5>
                         <p class="right">- Dr. Jeffrey Hyman, Medical Director, UPG / Northwell Health (New
