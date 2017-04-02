@@ -12,8 +12,15 @@ class PatientSignupController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(Request $request)
     {
+        if ($request->input('code')) {
+            $code = $request->input('code');
+
+            return view('patient.signup2');
+
+        }
+
         return view('patient.signup');
     }
 
@@ -22,8 +29,15 @@ class PatientSignupController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function create()
+    public function create(Request $request)
     {
+        if ($request->input('code')) {
+            $code = $request->input('code');
+
+            return view('patient.signup2');
+
+        }
+
         return view('patient.signup');
     }
 
