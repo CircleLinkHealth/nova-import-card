@@ -10,6 +10,7 @@ use Illuminate\Support\Facades\DB;
 
 //Patient Landing Pages
 Route::resource('sign-up', 'PatientSignupController');
+Route::get('talk-to-us', 'PatientSignupController@talkToUs');
 
 if (app()->environment() != 'production') {
 

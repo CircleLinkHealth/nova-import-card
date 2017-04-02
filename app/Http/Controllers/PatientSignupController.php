@@ -7,20 +7,19 @@ use Illuminate\Http\Request;
 
 class PatientSignupController extends Controller
 {
+    public function talkToUs()
+    {
+        return view('patient.signup2');
+
+    }
+
     /**
      * Display a listing of the resource.
      *
      * @return \Illuminate\Http\Response
      */
-    public function index(Request $request)
+    public function index()
     {
-        if ($request->input('code')) {
-            $code = $request->input('code');
-
-            return view('patient.signup2');
-
-        }
-
         return view('patient.signup');
     }
 
@@ -29,15 +28,8 @@ class PatientSignupController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function create(Request $request)
+    public function create()
     {
-        if ($request->input('code')) {
-            $code = $request->input('code');
-
-            return view('patient.signup2');
-
-        }
-
         return view('patient.signup');
     }
 
