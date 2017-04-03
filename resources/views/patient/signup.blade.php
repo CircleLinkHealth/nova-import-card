@@ -145,7 +145,7 @@
 
                         <br><br>
 
-                        <h5 class="green-text text-accent-1 center">Just $49.99/month!</h5>
+                        <h5 class="green-text text-accent-1 center">Just $39.99/month!</h5>
                     </div>
                 </div>
             </div>

@@ -83,7 +83,7 @@
 
                 <div class="center" style="margin-top: 4%;">
                     <h5 class="teal-text text-accent-1 center">Telephone health coaching, care plan setup and
-                        coordination with family and doctors for just $49.99/month!</h5>
+                        coordination with family and doctors for just $39.99/month!</h5>
                     <br>
                     <a class="waves-effect waves-light btn-large scroll-to-form teal accent-3">Talk to us</a>
                 </div>
