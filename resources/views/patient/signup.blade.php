@@ -120,7 +120,7 @@
 
                     <div class="center">
                         <button type="submit"
-                                class="waves-effect waves-light btn-large green accent-4">Sign me up
+                                class="waves-effect waves-light btn-large green accent-4">Get a free consultation
                         </button>
                     </div>
                 </div>
@@ -145,7 +145,7 @@
 
                         <br><br>
 
-                        <h5 class="green-text text-accent-1 center">Just $39.99/month!</h5>
+                        <h5 class="green-text text-accent-1 center">Just $49.99/month!</h5>
                     </div>
                 </div>
             </div>
