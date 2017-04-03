@@ -150,13 +150,19 @@ class TabularMedicalRecordSectionsLogger implements MedicalRecordLogger
         foreach ($medications as $medication) {
             $explodedMed = explode(',', $medication);
 
+            $sig = '';
+
+            if (isset($explodedMed[1])) {
+                $sig = trim(str_replace('Sig:', '', $explodedMed[1]));
+            }
+
             $medication = MedicationLog::create(
                 array_merge([
                     'reference_title' => trim(str_replace([
                         'Taking',
                         'Continue',
                     ], '', $explodedMed[0])),
-                    'reference_sig'   => trim(str_replace('Sig:', '', $explodedMed[1])),
+                    'reference_sig'   => $sig,
                 ], $this->foreignKeys)
             );
         }
