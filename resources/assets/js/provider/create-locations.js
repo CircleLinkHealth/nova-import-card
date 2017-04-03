@@ -117,6 +117,8 @@ var locationsVM = new Vue({
                 $('select').material_select();
                 $('.collapsible').collapsible();
             });
+
+            this.submitForm($('meta[name="submit-url"]').attr('content'));
         },
 
         deleteLocation: function (index) {

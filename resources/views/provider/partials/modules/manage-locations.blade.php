@@ -1,3 +1,5 @@
+<meta name="submit-url" content="{{$postUrl}}">
+
 <div id="create-locations-component" class="row">
 
     <div v-if="showErrorBanner" class="row">
