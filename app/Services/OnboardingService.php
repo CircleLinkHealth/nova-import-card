@@ -239,6 +239,11 @@ class OnboardingService
         $sameEHRLogin = $request->input('sameEHRLogin');
 
         foreach ($request->input('locations') as $index => $newLocation) {
+
+            if (!$newLocation['name']) {
+                continue;
+            }
+
             try {
                 if (isset($newLocation['id'])) {
                     $location = $this->locations
@@ -381,6 +386,10 @@ class OnboardingService
         foreach ($request->input('users') as $index => $newUser) {
             //create the user
             try {
+                if (!$newUser['first_name'] && !$newUser['last_name']) {
+                    continue;
+                }
+
                 if (isset($newUser['id'])) {
                     $user = $this->users
                         ->skipPresenter()
