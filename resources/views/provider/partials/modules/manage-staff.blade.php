@@ -1,3 +1,5 @@
+<meta name="submit-url" content="{{$postUrl}}">
+
 <div id="create-staff-component" v-on:click="isValidated(index)">
 
     <div v-if="showErrorBanner" class="row">

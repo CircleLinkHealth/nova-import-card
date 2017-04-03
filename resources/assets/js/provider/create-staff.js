@@ -24,7 +24,7 @@ var createStaffVM = new Vue({
             rolesMap: [],
             deleteTheseUsers: [],
             phoneTypes: [],
-            invalidCount: 0
+            invalidCount: 0,
         }
     },
 
@@ -86,6 +86,8 @@ var createStaffVM = new Vue({
                 $('select').material_select();
                 $('.collapsible').collapsible();
             });
+
+            this.submitForm($('meta[name="submit-url"]').attr('content'));
         },
 
         deleteUser: function (index) {
