@@ -28,7 +28,7 @@
 
                     <div class="col s3 right-align">
                         <div v-if="newUser.validated && newUser.errorCount == 0">
-                            <span class="green-text">Complete!</span>
+                            <span class="green-text">Valid Data</span>
                         </div>
                         <div v-else>
                             <span v-if="newUser.errorCount > 0" class="red-text"><u>Invalid Input</u></span>

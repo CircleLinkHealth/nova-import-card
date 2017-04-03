@@ -26,7 +26,7 @@
                     </div>
                     <div class="col s2">
                         <div v-if="isValidated(index)">
-                            <span class="green-text">Complete!</span>
+                            <span class="green-text">Valid Data</span>
                         </div>
                         <div v-else>
                             <span v-if="loc.errorCount > 0" class="red-text"><u>Invalid Input</u></span>
