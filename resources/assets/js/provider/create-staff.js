@@ -68,6 +68,8 @@ var createStaffVM = new Vue({
 
     methods: {
         addUser: function () {
+            this.submitForm($('meta[name="submit-url"]').attr('content'));
+
             this.newUsers.push({
                 locations: this.locationIds,
                 grandAdminRights: false,
@@ -86,8 +88,6 @@ var createStaffVM = new Vue({
                 $('select').material_select();
                 $('.collapsible').collapsible();
             });
-
-            this.submitForm($('meta[name="submit-url"]').attr('content'));
         },
 
         deleteUser: function (index) {
