@@ -6,7 +6,7 @@
 
     <div class="container">
         @include('provider.partials.modules.manage-staff', [
-        'submitLabel' => 'Save',
+        'submitLabel' => 'Finish/Save',
         'postUrl' => route('provider.dashboard.store.staff', ['practiceSlug' => $practiceSlug]),
     ])
     </div>
