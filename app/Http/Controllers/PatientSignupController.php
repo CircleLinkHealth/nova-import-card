@@ -7,6 +7,12 @@ use Illuminate\Http\Request;
 
 class PatientSignupController extends Controller
 {
+    public function talkToUs()
+    {
+        return view('patient.signup2');
+
+    }
+
     /**
      * Display a listing of the resource.
      *
