@@ -4,11 +4,14 @@ namespace App\Http\Controllers\Billing;
 
 use App\Billing\Practices\PracticeInvoiceGenerator;
 use App\Http\Controllers\Controller;
+use App\Patient;
 use App\PatientMonthlySummary;
 use App\Practice;
 use App\User;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\URL;
+use Yajra\Datatables\Facades\Datatables;
 
 
 class PracticeInvoiceController extends Controller

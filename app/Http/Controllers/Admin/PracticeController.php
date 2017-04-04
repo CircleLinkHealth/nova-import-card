@@ -1,13 +1,10 @@
 <?php namespace App\Http\Controllers\Admin;
 
-use App\Billing\Practices\PracticeInvoiceGenerator;
 use App\Http\Controllers\Controller;
 use App\Location;
-use App\PatientMonthlySummary;
 use App\Practice;
 use App\User;
 use Auth;
-use Carbon\Carbon;
 use Illuminate\Http\Request;
 
 class PracticeController extends Controller
