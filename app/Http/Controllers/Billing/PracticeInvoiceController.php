@@ -21,8 +21,32 @@ class PracticeInvoiceController extends Controller
     {
 
         $practices = Practice::active();
+        $currentMonth = '2017-03-01';
 
-        return view('admin.reports.billing', compact(['practices']));
+        $approved = PatientMonthlySummary
+            ::where('month_year', '2017-03-01')
+            ->where('ccm_time', '>', 1199)
+            ->where('approved', 1)->count();
+
+        $rejected = PatientMonthlySummary
+            ::where('month_year', '2017-03-01')
+            ->where('ccm_time', '>', 1199)
+            ->where('rejected', 1)->count();
+
+        $toQA = PatientMonthlySummary
+            ::where('month_year', '2017-03-01')
+            ->where('ccm_time', '>', 1199)
+            ->where('approved', 0)
+            ->where('rejected', 0)
+            ->count();
+
+
+        return view('admin.reports.billing', compact([
+            'practices',
+            'currentMonth',
+            'counts',
+            'approved','rejected','toQA'
+        ]));
 
     }
 
@@ -101,8 +125,8 @@ class PracticeInvoiceController extends Controller
             $report->approved = $checked == ''
                 ? 0
                 : 1;
-            $report->save();
 
+            $report->save();
 
             $name = "<a href=" . URL::route('patient.careplan.show', [
                     'patient' => $u->id,
@@ -200,11 +224,12 @@ class PracticeInvoiceController extends Controller
 
     }
 
-    public function makeInvoices(Request $request){
+    public function makeInvoices(Request $request)
+    {
 
         $data = [];
 
-        foreach ($request->input('practices') as $practiceId){
+        foreach ($request->input('practices') as $practiceId) {
 
             $practice = Practice::find($practiceId);
 
@@ -218,7 +243,8 @@ class PracticeInvoiceController extends Controller
 
     }
 
-    public function createInvoices(){
+    public function createInvoices()
+    {
 
         $practices = Practice::active();
 
