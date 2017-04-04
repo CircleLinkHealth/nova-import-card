@@ -179,31 +179,4 @@ class PracticeController extends Controller
 		return redirect()->back()->with('messages', ['successfully removed program'])->send();
 	}
 
-    public function createInvoices(){
-
-        $practices = Practice::active();
-
-        return view('billing.practice.create', compact(['practices']));
-
-
-    }
-
-	public function makeInvoices(Request $request){
-
-        $data = [];
-
-        foreach ($request->input('practices') as $practiceId){
-
-            $practice = Practice::find($practiceId);
-
-            $data = (new PracticeInvoiceGenerator($practice, Carbon::parse('2017-03-01')))->generatePdf();
-
-            $invoices[$data['link']] = $data['name'];
-
-        }
-
-        return view('billing.practice.list', compact(['invoices']));
-
-    }
-
 }
