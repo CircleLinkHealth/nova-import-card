@@ -361,7 +361,8 @@ class MonthlyBillingReportsController extends Controller
         $patients = Patient
             ::whereHas('patientSummaries', function ($q) {
                 $q->where('ccm_time', '>', 1199)
-                    ->where('month_year', '2017-02-01')
+//                    ->where('month_year', Carbon::now()->firstOfMonth()->toDateString())
+                    ->where('month_year', '2017-03-01')
                     ->where('no_of_successful_calls', '>', 0);
 
             });
@@ -387,26 +388,25 @@ class MonthlyBillingReportsController extends Controller
         $count = 0;
         $formatted = [];
 
-
         foreach ($patients as $p) {
 
             $u = User::find($p);
             $info = $u->patientInfo;
+
+            $report = $info->patientSummaries()
+//                    ->where('month_year', Carbon::now()->firstOfMonth()->toDateString());
+                ->where('month_year', '2017-03-01')->first();
+
+            if ($report == null) {
+                continue;
+            }
 
             //@todo add problem type and code
             $problems = $u->cpmProblems()->take(2)->pluck('name');
 
             $day_start = Carbon::parse(Carbon::now()->firstOfMonth()->format('Y-m-d'));
 
-            //@todo make live
-            $report = PatientMonthlySummary::where('patient_info_id', $info->id)->where('month_year',
-                '2017-02-01')->first();
-
-            if ($report != null) {
-                $reportId = $report->id;
-            } else {
-                $reportId = null;
-            }
+            $reportId = $report->id;
 
             if (!isset($problems[0])) {
                 $problems[0] = 'N/A';
@@ -426,15 +426,10 @@ class MonthlyBillingReportsController extends Controller
                 ? 'checked'
                 : '';
 
-            //only if it hasn't been touched before, add default
-            if ($report->actor_id == null) {
-
-                $report->approved = $checked == ''
+            $report->approved = $checked == ''
                     ? 0
                     : 1;
                 $report->save();
-
-            }
 
 
             $name = "<a href=" . URL::route('patient.careplan.show', [
@@ -484,13 +479,13 @@ class MonthlyBillingReportsController extends Controller
         $report = PatientMonthlySummary::find($input['report_id']);
 
         //if approved was checked
-        if($input['approved'] == 1){
+        if ($input['approved'] == 1) {
 
             $report->approved = 1;
             $report->rejected = 0;
 
         } else {
-        //approved was unchecked
+            //approved was unchecked
 
             $report->approved = 0;
 
@@ -512,7 +507,7 @@ class MonthlyBillingReportsController extends Controller
         $report = PatientMonthlySummary::find($input['report_id']);
 
         //if approved was checked
-        if($input['rejected'] == 1){
+        if ($input['rejected'] == 1) {
 
             $report->rejected = 1;
             $report->approved = 0;

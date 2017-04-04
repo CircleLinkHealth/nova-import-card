@@ -38,6 +38,7 @@
                                         </select>
 
                                     </div>
+
                                 </div>
 
                                 <hr>
@@ -145,6 +146,7 @@
                         $('#billable_list').DataTable().ajax.reload();
 
                     });
+
 
                     $(".practices").select2();
 
