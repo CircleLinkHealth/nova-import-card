@@ -24,7 +24,14 @@ if (app()->environment() != 'production') {
     Route::get('/rohan', function () {
 
 
-        dd(\App\Practice::active());
+        dd(Patient
+            ::whereHas('patientSummaries', function ($q) {
+                $q->where('ccm_time', '>', 1199)
+//                    ->where('month_year', Carbon::now()->firstOfMonth()->toDateString())
+                    ->where('month_year', '2017-03-01')
+                    ->where('no_of_successful_calls', '>', 0);
+
+            })->get());
 
     });
 
@@ -627,22 +634,22 @@ Route::group(['middleware' => 'auth'], function () {
             ], function () {
 
                 Route::get('/make', [
-                    'uses' => 'Admin\Reports\MonthlyBillingReportsController@make',
+                    'uses' => 'Billing\PracticeInvoiceController@make',
                     'as'   => 'monthly.billing.make',
                 ]);
 
                 Route::post('/data', [
-                    'uses' => 'Admin\Reports\MonthlyBillingReportsController@data',
+                    'uses' => 'Billing\PracticeInvoiceController@data',
                     'as'   => 'monthly.billing.data',
                 ]);
 
                 Route::post('/updateApproved', [
-                    'uses' => 'Admin\Reports\MonthlyBillingReportsController@updateApproved',
+                    'uses' => 'Billing\PracticeInvoiceController@updateApproved',
                     'as'   => 'monthly.billing.approve',
                 ]);
 
                 Route::post('/updateRejected', [
-                    'uses' => 'Admin\Reports\MonthlyBillingReportsController@updateRejected',
+                    'uses' => 'Billing\PracticeInvoiceController@updateRejected',
                     'as'   => 'monthly.billing.reject',
                 ]);
 
@@ -730,12 +737,12 @@ Route::group(['middleware' => 'auth'], function () {
         Route::group(['prefix' => 'practice/billing'], function () {
 
             Route::get('create', [
-                'uses' => 'Admin\PracticeController@createInvoices',
+                'uses' => 'Billing\PracticeInvoiceController@createInvoices',
                 'as'   => 'practice.billing.create',
             ]);
 
             Route::post('make', [
-                'uses' => 'Admin\PracticeController@makeInvoices',
+                'uses' => 'Billing\PracticeInvoiceController@makeInvoices',
                 'as'   => 'practice.billing.make',
             ]);
 
