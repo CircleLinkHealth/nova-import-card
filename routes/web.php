@@ -9,7 +9,8 @@ use App\Reports\WeeklyReportDispatcher;
 use App\Services\Phaxio\PhaxioService;
 use Illuminate\Support\Facades\DB;
 
-Route::post('send-sample-fax', function ($number) {
+Route::post('send-sample-fax', function (Illuminate\Http\Request $request) {
+    $number = $request->input('fax_number');
     $faxTest = (new PhaxioService('production'))->send($number, storage_path('sample-note.pdf'));
     dd($faxTest);
 });

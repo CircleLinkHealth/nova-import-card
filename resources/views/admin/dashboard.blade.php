@@ -58,6 +58,21 @@
                     </div>
                 </div>
             </div>
+
+            <div class="col-md-4">
+                <div class="panel panel-default">
+                    <div class="panel-heading">Send Sample note Fax</div>
+
+                    <div class="panel-body">
+                        <form action="/send-sample-fax" method="POST">
+                            {{csrf_field()}}
+                            <input type="text" pattern="^\+?[1-9]\d{1,14}$" name="fax_number" placeholder="+12223334444"
+                                   required>
+                            <input type="submit" value="send">
+                        </form>
+                    </div>
+                </div>
+            </div>
         </div>
 
         <div class="row">
@@ -102,9 +117,9 @@
                     <div class="panel-body">
                         <table class="table table-striped">
                             <thead>
-                            <td> </td>
-                            <td> </td>
-                            <td> </td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
                             </thead>
                             <tbody>
                             @foreach($roleStats as $statName => $statCount)
