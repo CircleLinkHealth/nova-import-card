@@ -78,7 +78,6 @@ class PracticeInvoiceController extends Controller
 
 
         $patients = $patients->orderBy('updated_at', 'desc')
-            ->take(100)
             ->pluck('user_id');
 
         $count = 0;
