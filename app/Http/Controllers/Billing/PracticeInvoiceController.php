@@ -21,20 +21,23 @@ class PracticeInvoiceController extends Controller
     {
 
         $practices = Practice::active();
+
+        $testDate = '2017-03-01';
+
         $currentMonth = '2017-03-01';
 
         $approved = PatientMonthlySummary
-            ::where('month_year', '2017-03-01')
+            ::where('month_year', $testDate)
             ->where('ccm_time', '>', 1199)
             ->where('approved', 1)->count();
 
         $rejected = PatientMonthlySummary
-            ::where('month_year', '2017-03-01')
+            ::where('month_year', $testDate)
             ->where('ccm_time', '>', 1199)
             ->where('rejected', 1)->count();
 
         $toQA = PatientMonthlySummary
-            ::where('month_year', '2017-03-01')
+            ::where('month_year', $testDate)
             ->where('ccm_time', '>', 1199)
             ->where('approved', 0)
             ->where('rejected', 0)
@@ -254,8 +257,29 @@ class PracticeInvoiceController extends Controller
     {
 
         $practices = Practice::active();
+        $testDate = '2017-03-01';
 
-        return view('billing.practice.create', compact(['practices']));
+        $readyToBill = [];
+        $needsQA = [];
+        foreach ($practices as $practice) {
+
+            $pending = (new PracticeInvoiceGenerator($practice,
+                Carbon::parse($testDate)))->checkForPendingQAForPractice();
+
+            if ($pending) {
+                $needsQA[] = $practice;
+            } else {
+                $readyToBill[] = $practice;
+            }
+
+        }
+
+        return view('billing.practice.create', compact(
+            [
+                'needsQA',
+                'readyToBill',
+            ]
+        ));
     }
 
 }
