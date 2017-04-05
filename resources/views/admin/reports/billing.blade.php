@@ -164,6 +164,8 @@
 
                     $(".practices").select2();
 
+
+                    //HANDLE ACCEPTANCE
                     $('#billable_list').on('change', '.approved_checkbox', function () {
 //
                         var url = '{!! route('monthly.billing.approve') !!}';
@@ -222,6 +224,7 @@
 
                     });
 
+                    //HANDLE REJECTION
                     $('#billable_list').on('change', '.rejected_checkbox', function () {
 
                         var url = '{!! route('monthly.billing.reject') !!}';
