@@ -26,70 +26,28 @@ class PracticeInvoiceGenerator
 
     }
 
-    public function getItemizedPatientData()
+    public function generatePdf($withItemized = true)
     {
 
-        $practice = $this->practice;
-        $date = $this->month->toDateString();
+        $pdfInvoice = PDF::loadView('billing.practice.invoice', $this->getInvoiceData());
 
-        $patients = Patient
-            ::whereHas('patientSummaries', function ($q) use ($date) {
-                $q->where('ccm_time', '>', 1199)
-//                    ->where('month_year', Carbon::now()->firstOfMonth()->toDateString())
-                    ->where('month_year', $date)
-                    ->where('no_of_successful_calls', '>', 0)
-                    ->where('approved', 1);
+        $invoiceName = trim($this->practice->name) . '-' . $this->month->toDateString() . '-invoice';
 
-            })
-            ->whereHas('user', function ($k) use
-            (
-                $practice
+        $pdfInvoice->save(storage_path("download/$invoiceName.pdf"), true);
 
-            ) {
-                $k->where('program_id',$practice->id);
-            })
-            ->orderBy('updated_at', 'desc')
-            ->get();
+        $data = [
+            'Invoice' => $invoiceName . '.pdf',
+        ];
 
-        //name, dob, ccm, 2 conditions
+        if ($withItemized) {
 
-        $data = [];
-        $data['name'] = $this->practice->name;
-        $data['month'] = $date;
+            $pdfItemized = PDF::loadView('billing.practice.itemized', $this->getItemizedPatientData());
 
-        foreach ($patients as $p) {
+            $itemizedName = trim($this->practice->name) . '-' . $this->month->toDateString() . '-patients';
 
-            $u = $p->user;
+            $pdfItemized->save(storage_path("download/$itemizedName.pdf"), true);
 
-            $data['patientData'][$p->user_id]['name'] = $u->fullName;
-            $data['patientData'][$p->user_id]['dob'] = $u->birth_date;
-            $data['patientData'][$p->user_id]['practice'] = $u->primaryPractice->id;
-
-            $data['patientData'][$p->user_id]['ccm_time'] = round($p->patientSummaries()
-//                    ->where('month_year', Carbon::now()->firstOfMonth()->toDateString());
-                ->where('month_year', '2017-03-01')
-                ->first()['ccm_time'] / 60, 2);
-
-            //@todo add problem type and code
-            $problems = $u->cpmProblems()->take(2)->get();
-
-            if($problems->count() > 1){
-
-                $data['patientData'][$p->user_id]['p1'] = $problems[0]->name;
-                $data['patientData'][$p->user_id]['p2'] = $problems[1]->name;
-
-            } else if($problems->count() > 0){
-
-                $data['patientData'][$p->user_id]['p1'] = $problems[0]->name;
-                $data['patientData'][$p->user_id]['p2'] = 'N/A';
-
-            } else {
-                //@todo add some more options here.
-
-                $data['patientData'][$p->user_id]['p1'] = 'N/A';
-                $data['patientData'][$p->user_id]['p2'] = 'N/A';
-
-            }
+            $data['Patient Report'] = $itemizedName . '.pdf';
 
         }
 
@@ -140,32 +98,109 @@ class PracticeInvoiceGenerator
 
     }
 
-    public function generatePdf($withItemized = true)
+    public function getItemizedPatientData()
     {
 
-        $pdfInvoice = PDF::loadView('billing.practice.invoice', $this->getInvoiceData());
+        $practice = $this->practice;
+        $date = $this->month->toDateString();
 
-        $invoiceName = trim($this->practice->name) . '-' . $this->month->toDateString() . '-invoice';
+        $patients = Patient
+            ::whereHas('patientSummaries', function ($q) use
+            (
+                $date
+            ) {
+                $q->where('ccm_time', '>', 1199)
+//                    ->where('month_year', Carbon::now()->firstOfMonth()->toDateString())
+                    ->where('month_year', $date)
+                    ->where('no_of_successful_calls', '>', 0)
+                    ->where('approved', 1);
 
-        $pdfInvoice->save(storage_path("download/$invoiceName.pdf"), true);
+            })
+            ->whereHas('user', function ($k) use
+            (
+                $practice
 
-        $data = [
-            'Invoice' => $invoiceName . '.pdf',
-        ];
+            ) {
+                $k->where('program_id', $practice->id);
+            })
+            ->orderBy('updated_at', 'desc')
+            ->get();
 
-        if($withItemized){
+        //name, dob, ccm, 2 conditions
 
-            $pdfItemized = PDF::loadView('billing.practice.itemized', $this->getItemizedPatientData());
+        $data = [];
+        $data['name'] = $this->practice->name;
+        $data['month'] = $date;
 
-            $itemizedName = trim($this->practice->name) . '-' . $this->month->toDateString() . '-patients';
+        foreach ($patients as $p) {
 
-            $pdfItemized->save(storage_path("download/$itemizedName.pdf"), true);
+            $u = $p->user;
 
-            $data['Patient Report'] = $itemizedName . '.pdf';
+            $data['patientData'][$p->user_id]['name'] = $u->fullName;
+            $data['patientData'][$p->user_id]['dob'] = $u->birth_date;
+            $data['patientData'][$p->user_id]['practice'] = $u->primaryPractice->id;
+
+            $data['patientData'][$p->user_id]['ccm_time'] = round($p->patientSummaries()
+//                    ->where('month_year', Carbon::now()->firstOfMonth()->toDateString());
+                                                                      ->where('month_year', '2017-03-01')
+                                                                      ->first()['ccm_time'] / 60, 2);
+
+            //@todo add problem type and code
+            $problems = $u->cpmProblems()->take(2)->get();
+
+            if ($problems->count() > 1) {
+
+                $data['patientData'][$p->user_id]['p1'] = $problems[0]->name;
+                $data['patientData'][$p->user_id]['p2'] = $problems[1]->name;
+
+            } else {
+                if ($problems->count() > 0) {
+
+                    $data['patientData'][$p->user_id]['p1'] = $problems[0]->name;
+                    $data['patientData'][$p->user_id]['p2'] = 'N/A';
+
+                } else {
+                    //@todo add some more options here.
+
+                    $data['patientData'][$p->user_id]['p1'] = 'N/A';
+                    $data['patientData'][$p->user_id]['p2'] = 'N/A';
+
+                }
+            }
 
         }
 
         return $data;
+
+    }
+
+    public function checkForPendingQAForPractice()
+    {
+
+        $practice = $this->practice;
+        $date = $this->month->toDateString();
+
+        $count = PatientMonthlySummary::whereHas('patient_info', function ($k) use
+        (
+            $practice
+        ) {
+
+            $k->whereHas('user', function ($q) use
+            (
+                $practice
+
+            ) {
+                $q->where('program_id', $practice->id);
+            });
+
+        })//where patient is over 20, and hasn't been accepted or rejected.
+            ->where('month_year', $date)
+            ->where('ccm_time', '>', 1199)
+            ->where('approved', 0)
+            ->where('rejected', 0)
+            ->count();
+
+        return ($count > 0) ? true : false;
 
     }
 
