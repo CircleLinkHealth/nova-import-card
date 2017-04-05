@@ -148,15 +148,17 @@ class PracticeInvoiceController extends Controller
                 'provider'               => $u->billingProvider()->fullName,
                 'practice'               => $u->primaryPractice->display_name,
                 'dob'                    => $info->birth_date,
-                'ccm'                    => round($info->cur_month_activity_time / 60, 2),
+                'ccm'                    => round($report->ccm_time / 60, 2),
                 'problem1'               => $problems[0],
                 'problem2'               => $problems[1],
                 'no_of_successful_calls' => $report->no_of_successful_calls,
                 'status'                 => $info->ccm_status,
                 'approve'                => "<input type=\"checkbox\" class='approved_checkbox' id='$reportId' $approved>",
                 'reject'                 => "<input type=\"checkbox\" class='rejected_checkbox' id='$reportId' $rejected>",
+                //used to reference cells for jQuery ops
                 'report_id'              => $reportId ?? null,
-                'qa'                     => $toQA,
+                //this is a hidden sorter
+                'qa'                     => $toQA
 
             ];
             $count++;
