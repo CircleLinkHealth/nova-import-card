@@ -235,7 +235,7 @@ class PracticeInvoiceController extends Controller
 
             $data = (new PracticeInvoiceGenerator($practice, Carbon::parse('2017-03-01')))->generatePdf();
 
-            $invoices[$data['link']] = $data['name'];
+            $invoices[$practice->display_name] = $data;
 
         }
 
