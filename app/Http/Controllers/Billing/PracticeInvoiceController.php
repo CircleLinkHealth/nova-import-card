@@ -45,7 +45,9 @@ class PracticeInvoiceController extends Controller
             'practices',
             'currentMonth',
             'counts',
-            'approved','rejected','toQA'
+            'approved',
+            'rejected',
+            'toQA',
         ]));
 
     }
@@ -112,18 +114,23 @@ class PracticeInvoiceController extends Controller
             }
 
             if ($problems[0] == 'N/A' || $problems[1] == 'N/A' || $info->ccm_status == 'withdrawn' || $info->ccm_status == 'paused') {
-                $checked = '';
+                $approved = '';
             } else {
-                $checked = 'checked';
+                $approved = 'checked';
             }
 
             $rejected = ($report->rejected == 1)
                 ? 'checked'
                 : '';
 
-            $report->approved = $checked == ''
+            $report->approved = $approved == ''
                 ? 0
                 : 1;
+
+            $toQA = 0;
+            if ($approved == '' && $rejected == '') {
+                $toQA = 1;
+            }
 
             $report->save();
 
@@ -143,9 +150,10 @@ class PracticeInvoiceController extends Controller
                 'problem2'               => $problems[1],
                 'no_of_successful_calls' => $report->no_of_successful_calls,
                 'status'                 => $info->ccm_status,
-                'approve'                => "<input type=\"checkbox\" class='approved_checkbox' id='$reportId' $checked>",
+                'approve'                => "<input type=\"checkbox\" class='approved_checkbox' id='$reportId' $approved>",
                 'reject'                 => "<input type=\"checkbox\" class='rejected_checkbox' id='$reportId' $rejected>",
                 'report_id'              => $reportId ?? null,
+                'qa'                     => $toQA,
 
             ];
             $count++;
