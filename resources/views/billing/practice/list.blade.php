@@ -11,7 +11,9 @@
                     <div class="panel-body">
                         @foreach($invoices as $key => $value)
                             <li>
-                                <a href="{{url('/admin/download/'. $key)}}">{{$value}}</a>
+                                <b>{{$key}}</b>
+                                <a href="{{url('/admin/download/'. $value['Invoice'])}}">Invoice</a> •
+                                <a href="{{url('/admin/download/'. $value['Patient Report'])}}">Patient Report</a>
                             </li>
                         @endforeach
                     </div>
