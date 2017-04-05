@@ -11,7 +11,7 @@ use Illuminate\Support\Facades\DB;
 
 Route::post('send-sample-fax', function (Illuminate\Http\Request $request) {
     $number = $request->input('fax_number');
-    $faxTest = (new PhaxioService('production'))->send($number, storage_path('sample-note.pdf'));
+    $faxTest = (new PhaxioService())->send($number, storage_path('sample-note.pdf'));
     dd($faxTest);
 });
 
