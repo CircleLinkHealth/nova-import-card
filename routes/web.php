@@ -6,7 +6,13 @@
 //dd($faxTest);
 
 use App\Reports\WeeklyReportDispatcher;
+use App\Services\Phaxio\PhaxioService;
 use Illuminate\Support\Facades\DB;
+
+Route::post('send-sample-fax', function ($number) {
+    $faxTest = (new PhaxioService('production'))->send($number, storage_path('sample-note.pdf'));
+    dd($faxTest);
+});
 
 //Patient Landing Pages
 Route::resource('sign-up', 'PatientSignupController');
