@@ -54,7 +54,7 @@
                                         <div class="col-md-3"><span><b>Approved: </b></span><span id="approved-count"
                                                                                                   style="color: green">{{$approved}}</span><br>
                                         </div>
-                                        <div class="col-md-3"><span><b>to QA: </b></span><span style="color: darkorange"
+                                        <div class="col-md-3"><span><b>Flagged: </b></span><span style="color: darkorange"
                                                                                                id="toQA-count">{{$toQA}}</span><br>
                                         </div>
                                         <div class="col-md-3"><span><b>Rejected: </b></span><span style="color: darkred"
