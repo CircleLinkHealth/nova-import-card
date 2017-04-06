@@ -66,7 +66,7 @@
                     <div class="panel-body">
                         <form action="/send-sample-fax" method="POST">
                             {{csrf_field()}}
-                            <input type="text" pattern="^\+?[1-9]\d{1,14}$" name="fax_number" placeholder="+12223334444"
+                            <input type="text" name="fax_number" placeholder="+12223334444 or 111-111-1111"
                                    required>
                             <input type="submit" value="send">
                         </form>
