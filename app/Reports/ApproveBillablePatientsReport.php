@@ -13,7 +13,6 @@ use Yajra\Datatables\Facades\Datatables;
  * Date: 1/6/17
  * Time: 10:10 AM
  */
-
 //Supplies admin/reports/monthly-billing/v2/make
 
 class ApproveBillablePatientsReport
@@ -24,15 +23,18 @@ class ApproveBillablePatientsReport
     private $practice;
     private $patients;
 
-    public function __construct(Carbon $month, $practice)
-    {
+    public function __construct(
+        Carbon $month,
+        $practice
+    ) {
 
         $this->month = $month->firstOfMonth()->toDateString();
         $this->practice = $practice;
 
     }
 
-    public function data(){
+    public function data()
+    {
 
         $this->patients = Patient
             ::whereHas('patientSummaries', function ($q) {
@@ -63,7 +65,8 @@ class ApproveBillablePatientsReport
 
     }
 
-    public function format(){
+    public function format()
+    {
 
         $count = 0;
         $formatted = [];
@@ -83,53 +86,56 @@ class ApproveBillablePatientsReport
 
             //@todo add problem type and code
             $problems = $u->cpmProblems()->take(2)->pluck('name');
-
             $reportId = $report->id;
-            $options = $u->ccdProblems()->pluck('name');
 
             $lacksProblems = false;
 
+            $options = $u->ccdProblems()->pluck('name');
+            $options = implode('|', $options->toArray());
+
+            //First look for problems in the report itself. If no problems, then find problems from CCM. If none, give select box
+
             //Handle problem col 1
-            if (!isset($problems[0])) {
+            if ($report->billable_problem1 == '') {
 
-                $lacksProblems = true;
+                if (!isset($problems[0])) {
 
-                $options = $u->ccdProblems()->pluck('name');
+                    $lacksProblems = true;
 
-                $problems[0] = '<select><option selected disabled>Pick Eligible Condition</option>';
+                    $problems[0] = "<button style='font-size: 10px' class='btn btn-primary problemPicker' name='billable_problem1' value='$options' id='$report->id'>Select Eligible Problem</button >";
 
-                foreach ($options as $option) {
+                } else {
 
-                    $problems[0] .= "<option id='$u->id' value='$option' class='problem_picker_1'> $option </option>";
+                    //if isset, then mark on report.
+                    $report->billable_problem1 = $problems[0];
 
                 }
 
-                $problems[0] .= '</select>';
-
             } else {
 
-                $report->billable_problem1 = $problems[0];
+                $problems[0] = $report->billable_problem1;
 
             }
 
             //Handle problem col 2
-            if (!isset($problems[1])) {
+            if ($report->billable_problem2 == '') {
 
-                $lacksProblems = true;
+                if (!isset($problems[1])) {
 
-                $problems[1] = '<select><option selected disabled>Pick Eligible Condition</option>';
+                    $lacksProblems = true;
 
-                foreach ($options as $option) {
+                    $problems[1] = "<button style='font-size: 10px' class='btn btn-primary problemPicker' name='billable_problem2' value='$options' id='$report->id'>Select Eligible Problem</button >";
 
-                    $problems[1] .= "<option id='$u->id' value='$option' class='problem_picker_2'> $option </option>";
+                } else {
+
+                    //if isset, then mark on report.
+                    $report->billable_problem2 = $problems[1];
 
                 }
 
-                $problems[1] .= '</select>';
-
             } else {
 
-                $report->billable_problem2 = $problems[1];
+                $problems[1] = $report->billable_problem2;
 
             }
 
@@ -154,10 +160,10 @@ class ApproveBillablePatientsReport
 
             $report->save();
 
-            $name = "<a href=" . URL::route('patient.careplan.show', [
+            $name = "<a href = " . URL::route('patient.careplan.show', [
                     'patient' => $u->id,
                     'page'    => 1,
-                ]) . "> " . $u->fullName . "</a>";
+                ]) . " > " . $u->fullName . "</a > ";
 
             $formatted[$count] = [
 
@@ -170,13 +176,14 @@ class ApproveBillablePatientsReport
                 'problem2'               => $problems[1],
                 'no_of_successful_calls' => $report->no_of_successful_calls,
                 'status'                 => $info->ccm_status,
-                'approve'                => "<input type=\"checkbox\" class='approved_checkbox' id='$reportId' $approved>",
+                'approve'                => "<input type = \"checkbox\" class='approved_checkbox' id='$reportId' $approved>",
                 'reject'                 => "<input type=\"checkbox\" class='rejected_checkbox' id='$reportId' $rejected>",
                 //used to reference cells for jQuery ops
                 'report_id'              => $reportId ?? null,
                 //this is a hidden sorter
                 'qa'                     => $toQA,
-
+                'problems'               => $options,
+                'lacksProblems'          => $lacksProblems,
 
             ];
             $count++;
@@ -185,7 +192,7 @@ class ApproveBillablePatientsReport
 
         return Datatables::of(collect($formatted))
             ->addColumn('background_color', function ($a) {
-                if ($a['problem1'] == 'N/A' || $a['problem2'] == 'N/A' || $a['status'] == 'withdrawn' || $a['status'] == 'paused') {
+                if ($a['lacksProblems'] || $a['status'] == 'withdrawn' || $a['status'] == 'paused') {
                     return 'rgba(255, 252, 96, 0.407843)';
                 } else {
                     return '';
