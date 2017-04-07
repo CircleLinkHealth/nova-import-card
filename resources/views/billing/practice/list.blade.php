@@ -7,7 +7,7 @@
             <div class="col-md-8 col-md-offset-2">
                 {{ csrf_field() }}
                 <div class="panel panel-default">
-                    <div class="panel-heading">Practice Invoices</div>
+                    <div class="panel-heading">Practice Invoices and Patient Billable Reports</div>
                     <div class="panel-body">
                         @foreach($invoices as $key => $value)
                             <li>
