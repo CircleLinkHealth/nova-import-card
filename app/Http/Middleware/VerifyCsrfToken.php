@@ -13,7 +13,8 @@ class VerifyCsrfToken extends BaseVerifier
         '/twilio/call/make',
         '/admin/reports/monthly-billing/v2/markApproved',
         '/admin/reports/monthly-billing/v2/markRejected',
-        '/admin/reports/monthly-billing/v2/data'
+        '/admin/reports/monthly-billing/v2/data',
+        '/admin/reports/monthly-billing/v2/storeProblem'
 
     ];
 
