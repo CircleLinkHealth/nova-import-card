@@ -17,16 +17,18 @@
             <th style="width: 20%">Conditions II (Code)</th>
         </tr>
 
-        @foreach($patientData as $data)
+        @if(isset($patientData))
+            @foreach($patientData as $data)
 
-            <tr>
-                <td>{{$data['name']}}</td>
-                <td>{{$data['dob']}}</td>
-                <td>{{$data['ccm_time']}}</td>
-                <td>{{$data['p1']}}</td>
-                <td>{{$data['p2']}}</td>
-            </tr>
-        @endforeach
+                <tr>
+                    <td>{{$data['name']}}</td>
+                    <td>{{$data['dob']}}</td>
+                    <td>{{$data['ccm_time']}}</td>
+                    <td>{{$data['p1']}}</td>
+                    <td>{{$data['p2']}}</td>
+                </tr>
+            @endforeach
+        @endif
 
     </table>
 </div>
