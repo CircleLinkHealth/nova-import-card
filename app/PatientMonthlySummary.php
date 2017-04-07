@@ -11,7 +11,17 @@ class PatientMonthlySummary extends Model
     protected $table = 'patient_monthly_summaries';
 
     protected $fillable = [
-        'month_year, ccm_time, no_of_calls, no_of_successful_calls', 'patient_info_id', 'is_ccm_complex', 'approved', 'rejected', 'actor_id'
+        'month_year',
+        'ccm_time',
+        'no_of_calls',
+        'no_of_successful_calls',
+        'patient_info_id',
+        'is_ccm_complex',
+        'approved',
+        'rejected',
+        'actor_id',
+        'billable_problem1',
+        'billable_problem2'
     ];
 
     public static function updateCallInfoForPatient(
