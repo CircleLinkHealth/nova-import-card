@@ -60,14 +60,11 @@ class PracticeInvoiceController extends Controller
     {
         $input = $request->input();
 
-        Log::info($input['practice_id']);
-
         $reporter = new ApproveBillablePatientsReport(Carbon::parse('2017-03-01'), $input['practice_id']);
 
         $reporter->data();
 
         return $reporter->format();
-
 
     }
 
@@ -144,6 +141,32 @@ class PracticeInvoiceController extends Controller
         }
 
         return view('billing.practice.list', compact(['invoices']));
+
+    }
+
+    public function storeProblem(Request $request)
+    {
+
+        $input = $request->input();
+
+        $report = PatientMonthlySummary::find($input['report_id']);
+
+        $key = $input['problem_no'];
+
+        if($input['select_problem'] == 'other') {
+
+            $report->$key = $input['otherProblem'];
+
+        } else {
+
+            $report->$key = $input['select_problem'];
+
+        }
+
+        $report->save();
+
+        return json_encode($key);
+
 
     }
 
