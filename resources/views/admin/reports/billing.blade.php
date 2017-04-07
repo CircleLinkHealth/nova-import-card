@@ -107,8 +107,9 @@
                                         <div class="col-md-3"><span><b>Approved: </b></span><span id="approved-count"
                                                                                                   style="color: green">{{$approved}}</span><br>
                                         </div>
-                                        <div class="col-md-3"><span><b>Flagged: </b></span><span style="color: darkorange"
-                                                                                               id="toQA-count">{{$toQA}}</span><br>
+                                        <div class="col-md-3"><span><b>Flagged: </b></span><span
+                                                    style="color: darkorange"
+                                                    id="toQA-count">{{$toQA}}</span><br>
                                         </div>
                                         <div class="col-md-3"><span><b>Rejected: </b></span><span style="color: darkred"
                                                                                                   id="rejected-count">{{$rejected}}</span><br>
@@ -231,38 +232,46 @@
 
                 $(".practices").select2();
 
-                    //HANDLE ACCEPTANCE
+                //HANDLE ACCEPTANCE
                 $('#billable_list').on('change', '.approved_checkbox', function () {
-//
+
+                    var rejectedBox = $('#'+this.id + '.rejected_checkbox');
+
                     var url = '{!! route('monthly.billing.approve') !!}';
-                    var current = $('#approved-count').html();
-                    var rejectBox = $('.rejected_checkbox#' + this.id);
+                    var currentAcc = $('#approved-count').html();
+                    var currentQA = parseInt($("#toQA-count").html());
 
-                    //if none were checked, gotta -- QA
-                    if (rejectBox.is(':checked') == false && $(this).is(':checked') == true) {
+                    //if none were checked, gotta --QA
+                    if (rejectedBox.is(':checked') == false && $(this).is(':checked') == true) {
 
-                        $("#toQA-count").text(parseInt($("#toQA-count").html()) - 1);
+                        $("#toQA-count").text(currentQA - 1);
 
                     }
 
                     if ($(this).is(':checked')) {
+                        console.log("Just checked Approved");
 
                         var approved = 1;
 
-                        current = $('#approved-count').html();
-                        $("#approved-count").text(parseInt(current) + 1);
+                        $("#approved-count").text(parseInt(currentAcc) + 1);
 
-                        rejectBox.attr('checked', false);
+                        if (rejectedBox.is(':checked') == true) {
+
+                            console.log("Just unchecked Approved")
+                            rejectedBox.attr('checked', false);
+
+                        }
 
                     } else {
 
                         var approved = 0;
-                        $("#approved-count").text(parseInt(current) - 1);
+
+                        $("#approved-count").text(parseInt(currentAcc) - 1);
 
                         //if both are unchecked, gotta ++ QA count
-                        if (rejectBox.is(':checked') == false) {
+                        if (rejectedBox.is(':checked') == false) {
 
-                            $("#toQA-count").text(parseInt($("#toQA-count").html()) + 1);
+                            $("#toQA-count").text(currentQA + 1);
 
                         }
 
@@ -274,47 +283,59 @@
                         data: {
                             //send report id to mark
                             report_id: this.id,
-                            approved: approved
+                            approved: approved,
                         },
 
                         success: function (data) {
 
-                            console.log(data);
+                            console.log(data)
 
                         }
                     });
 
                 });
 
+
                 //HANDLE REJECTION
                 $('#billable_list').on('change', '.rejected_checkbox', function () {
 
-                    var url = '{!! route('monthly.billing.reject') !!}';
-                    var current = $('#rejected-count').html();
-                    var approveBox = $('.rejected_checkbox#' + this.id);
+                    var approveBox = $('.approved_checkbox#' + this.id);
 
-                    //if none were checked, gotta -- QA
+                    var url = '{!! route('monthly.billing.reject') !!}';
+                    var currentRej = $('#rejected-count').html();
+                    var currentQA = parseInt($("#toQA-count").html());
+
+
+                    //if none were checked, gotta --QA
                     if (approveBox.is(':checked') == false && $(this).is(':checked') == true) {
 
-                        $("#toQA-count").text(parseInt($("#toQA-count").html()) - 1);
+                        $("#toQA-count").text(currentQA - 1);
 
                     }
 
                     if ($(this).is(':checked')) {
+                        console.log("Just checked Rejected");
 
                         var rejected = 1;
-                        $("#rejected-count").text(parseInt(current) + 1);
-                        $('.approved_checkbox#' + this.id).attr('checked', false);
+
+                        $("#rejected-count").text(parseInt(currentRej) + 1);
+
+                        if (approveBox.is(':checked') == true) {
+
+                            console.log("Just unchecked Approved")
+                            approveBox.attr('checked', false);
+
+                        }
 
                     } else {
 
                         var rejected = 0;
-                        $("#rejected-count").text(parseInt(current) - 1);
+                        $("#rejected-count").text(parseInt(currentRej) - 1);
 
                         //if both are unchecked, gotta ++ QA count
-                        if ($('.approved_checkbox#' + this.id).is(':checked') == false) {
+                        if (approveBox.is(':checked') == false) {
 
-                            $("#toQA-count").text(parseInt($("#toQA-count").html()) + 1);
+                            $("#toQA-count").text(currentQA + 1);
 
                         }
 
@@ -331,7 +352,7 @@
 
                         success: function (data) {
 
-                            console.log(data);
+                            console.log(data)
 
                         }
                     });
@@ -348,7 +369,7 @@
                     $('#select_problem').empty();
 
                     //the options are stored in a | delimted string
-                    $.each(this.value.split('|'), function(key, value) {
+                    $.each(this.value.split('|'), function (key, value) {
                         $('#select_problem').append('<option value="' + value + '">' + (value == '-1' ? 'select' : value) + '</option>');
                     });
 
@@ -385,5 +406,5 @@
         </script>
 
         <script src="//cdn.datatables.net/1.10.7/js/jquery.dataTables.min.js"></script>
-
+    </div>
 @stop
