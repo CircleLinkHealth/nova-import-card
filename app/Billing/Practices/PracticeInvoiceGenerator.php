@@ -140,20 +140,23 @@ class PracticeInvoiceGenerator
             $data['patientData'][$p->user_id]['dob'] = $u->birth_date;
             $data['patientData'][$p->user_id]['practice'] = $u->primaryPractice->id;
 
-            $data['patientData'][$p->user_id]['ccm_time'] = round($p->patientSummaries()
+            $report = $p->patientSummaries()
 //                    ->where('month_year', Carbon::now()->firstOfMonth()->toDateString());
-                                                                      ->where('month_year', '2017-03-01')
-                                                                      ->first()['ccm_time'] / 60, 2);
+                ->where('month_year', '2017-03-01')
+                ->first();
+
+            $data['patientData'][$p->user_id]['ccm_time'] = round($report['ccm_time'] / 60, 2);
 
             //@todo add problem type and code
             $problems = $u->cpmProblems()->take(2)->get();
 
             if ($problems->count() > 1) {
 
-                $data['patientData'][$p->user_id]['p1'] = $problems[0]->name;
-                $data['patientData'][$p->user_id]['p2'] = $problems[1]->name;
+                $data['patientData'][$p->user_id]['p1'] = $report->billable_problem1;
+                $data['patientData'][$p->user_id]['p2'] = $report->billable_problem2;
 
             } else {
+
                 if ($problems->count() > 0) {
 
                     $data['patientData'][$p->user_id]['p1'] = $problems[0]->name;
@@ -194,13 +197,15 @@ class PracticeInvoiceGenerator
             });
 
         })//where patient is over 20, and hasn't been accepted or rejected.
-            ->where('month_year', $date)
+        ->where('month_year', $date)
             ->where('ccm_time', '>', 1199)
             ->where('approved', 0)
             ->where('rejected', 0)
             ->count();
 
-        return ($count > 0) ? true : false;
+        return ($count > 0)
+            ? true
+            : false;
 
     }
 
