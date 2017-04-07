@@ -7,11 +7,12 @@ use App\Http\Controllers\Controller;
 use App\Patient;
 use App\PatientMonthlySummary;
 use App\Practice;
+use App\Reports\ApproveBillablePatientsReport;
 use App\User;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\URL;
-use Yajra\Datatables\Facades\Datatables;
 
 
 class PracticeInvoiceController extends Controller
@@ -59,123 +60,14 @@ class PracticeInvoiceController extends Controller
     {
         $input = $request->input();
 
-        $patients = Patient
-            ::whereHas('patientSummaries', function ($q) {
-                $q->where('ccm_time', '>', 1199)
-//                    ->where('month_year', Carbon::now()->firstOfMonth()->toDateString())
-                    ->where('month_year', '2017-03-01')
-                    ->where('no_of_successful_calls', '>', 0);
+        Log::info($input['practice_id']);
 
-            });
+        $reporter = new ApproveBillablePatientsReport(Carbon::parse('2017-03-01'), $input['practice_id']);
 
-        if ($input['practice_id'] != 0) {
+        $reporter->data();
 
-            $practice = $input['practice_id'];
+        return $reporter->format();
 
-            $patients = $patients->whereHas('user', function ($k) use
-            (
-                $practice
-
-            ) {
-                $k->whereProgramId($practice);
-            });
-        }
-
-
-        $patients = $patients->orderBy('updated_at', 'desc')
-            ->pluck('user_id');
-
-        $count = 0;
-        $formatted = [];
-
-        foreach ($patients as $p) {
-
-            $u = User::find($p);
-            $info = $u->patientInfo;
-
-            $report = $info->patientSummaries()
-//                    ->where('month_year', Carbon::now()->firstOfMonth()->toDateString());
-                ->where('month_year', '2017-03-01')->first();
-
-            if ($report == null) {
-                continue;
-            }
-
-            //@todo add problem type and code
-            $problems = $u->cpmProblems()->take(2)->pluck('name');
-
-            $day_start = Carbon::parse(Carbon::now()->firstOfMonth()->format('Y-m-d'));
-
-            $reportId = $report->id;
-
-            if (!isset($problems[0])) {
-                $problems[0] = 'N/A';
-            }
-
-            if (!isset($problems[1])) {
-                $problems[1] = 'N/A';
-            }
-
-            if ($problems[0] == 'N/A' || $problems[1] == 'N/A' || $info->ccm_status == 'withdrawn' || $info->ccm_status == 'paused') {
-                $approved = '';
-            } else {
-                $approved = 'checked';
-            }
-
-            $rejected = ($report->rejected == 1)
-                ? 'checked'
-                : '';
-
-            $report->approved = $approved == ''
-                ? 0
-                : 1;
-
-            $toQA = 0;
-            if ($approved == '' && $rejected == '') {
-                $toQA = 1;
-            }
-
-            $report->save();
-
-            $name = "<a href=" . URL::route('patient.careplan.show', [
-                    'patient' => $u->id,
-                    'page'    => 1,
-                ]) . "> " . $u->fullName . "</a>";
-
-            $formatted[$count] = [
-
-                'name'                   => $name,
-                'provider'               => $u->billingProvider()->fullName,
-                'practice'               => $u->primaryPractice->display_name,
-                'dob'                    => $info->birth_date,
-                'ccm'                    => round($report->ccm_time / 60, 2),
-                'problem1'               => $problems[0],
-                'problem2'               => $problems[1],
-                'no_of_successful_calls' => $report->no_of_successful_calls,
-                'status'                 => $info->ccm_status,
-                'approve'                => "<input type=\"checkbox\" class='approved_checkbox' id='$reportId' $approved>",
-                'reject'                 => "<input type=\"checkbox\" class='rejected_checkbox' id='$reportId' $rejected>",
-                //used to reference cells for jQuery ops
-                'report_id'              => $reportId ?? null,
-                //this is a hidden sorter
-                'qa'                     => $toQA
-
-            ];
-            $count++;
-
-        }
-
-        $formatted = collect($formatted);
-
-        return Datatables::of($formatted)
-            ->addColumn('background_color', function ($a) {
-                if ($a['problem1'] == 'N/A' || $a['problem2'] == 'N/A' || $a['status'] == 'withdrawn' || $a['status'] == 'paused') {
-                    return 'rgba(255, 252, 96, 0.407843)';
-                } else {
-                    return '';
-                }
-            })
-            ->make(true);
 
     }
 
