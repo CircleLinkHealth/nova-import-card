@@ -15,7 +15,7 @@
         <div class="row">
             <div class="col-md-8 col-md-offset-2">
                 <div class="panel panel-default">
-                    <div class="panel-heading">Practice Bill Generator</div>
+                    <div class="panel-heading">Practice Invoice and Patient Report Generator</div>
                     <div class="panel-body">
                         <form class="form-horizontal">
                             {{ csrf_field() }}
