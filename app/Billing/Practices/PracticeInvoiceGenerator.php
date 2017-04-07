@@ -150,26 +150,8 @@ class PracticeInvoiceGenerator
             //@todo add problem type and code
             $problems = $u->cpmProblems()->take(2)->get();
 
-            if ($problems->count() > 1) {
-
-                $data['patientData'][$p->user_id]['p1'] = $report->billable_problem1;
-                $data['patientData'][$p->user_id]['p2'] = $report->billable_problem2;
-
-            } else {
-
-                if ($problems->count() > 0) {
-
-                    $data['patientData'][$p->user_id]['p1'] = $problems[0]->name;
-                    $data['patientData'][$p->user_id]['p2'] = 'N/A';
-
-                } else {
-                    //@todo add some more options here.
-
-                    $data['patientData'][$p->user_id]['p1'] = 'N/A';
-                    $data['patientData'][$p->user_id]['p2'] = 'N/A';
-
-                }
-            }
+            $data['patientData'][$p->user_id]['p1'] = $report->billable_problem1;
+            $data['patientData'][$p->user_id]['p2'] = $report->billable_problem2;
 
         }
 
