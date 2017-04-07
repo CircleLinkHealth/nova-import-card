@@ -9,6 +9,59 @@
 
     <link rel="stylesheet" href="//cdn.datatables.net/1.10.7/css/jquery.dataTables.min.css">
 
+    <!-- Modal -->
+    <div class="modal fade" id="problemPicker" tabindex="-1" role="dialog"
+         aria-labelledby="myModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <!-- Modal Header -->
+                <div class="modal-header">
+                    <button type="button" class="close"
+                            data-dismiss="modal">
+                        <span aria-hidden="true">&times;</span>
+                        <span class="sr-only">Close</span>
+                    </button>
+                    <h4 class="modal-title" id="problem-modal-title">
+                        Select Eligible Problem
+                    </h4>
+                </div>
+
+                <!-- Modal Body -->
+                <div class="modal-body">
+                    <form name="problem_form" id="problem_form">
+                        <div class="form-group">
+                            <label for="select_problem">Eligible Problems</label>
+                            <select class="form-control"
+                                    id="select_problem" name="select_problem">
+
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="otherProblem">If other, please specify</label>
+                            <input class="form-control" name="otherProblem" id="otherProblem">
+                        </div>
+
+                        <input type="hidden" id="report_id" name="report_id">
+                        <input type="hidden" id="problem_no" name="problem_no">
+                    </form>
+                </div>
+
+                <!-- Modal Footer -->
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default"
+                            data-dismiss="modal">
+                        Close
+                    </button>
+                    <button type="button" id="confirm_problem" class="btn btn-primary">
+                        Save changes
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
     <div class="container-fluid">
         <div class="row">
             <div class="col-md-10 col-md-offset-1">
@@ -43,7 +96,7 @@
                                         <label class="col-md-2 control-label" for="date">Select Month</label>
                                         <select class="col-md-3 practices dropdown Valid form-control"
                                                 name="date" id="date">
-                                            <option value="0" selected disabled>March 2017</option>
+                                            <option value="2017-03-01" selected disabled>March 2017</option>
                                         </select>
                                     </div>
                                 </div>
@@ -169,17 +222,16 @@
 
                 });
 
+                //When a new practice is picked, update table
                 $('#practice_id').on('change', function () {
 
                     $('#billable_list').DataTable().ajax.reload();
 
                 });
 
-
                 $(".practices").select2();
 
-
-                //HANDLE ACCEPTANCE
+                    //HANDLE ACCEPTANCE
                 $('#billable_list').on('change', '.approved_checkbox', function () {
 //
                     var url = '{!! route('monthly.billing.approve') !!}';
@@ -215,9 +267,6 @@
                         }
 
                     }
-
-
-                    console.log($(this).is(':checked'));
 
                     $.ajax({
                         type: "POST",
@@ -271,9 +320,6 @@
 
                     }
 
-
-                    console.log($(this).is(':checked'));
-
                     $.ajax({
                         type: "POST",
                         url: url,
@@ -291,6 +337,47 @@
                     });
 
                 });
+
+                //BUILD MODAL FOR PROBLEM PICKER
+                $('#billable_list').on('click', '.problemPicker', function () {
+
+                    $('#report_id').val(this.id);
+                    $('#problem_no').val(this.name);
+
+                    $('#otherProblem').empty();
+                    $('#select_problem').empty();
+
+                    //the options are stored in a | delimted string
+                    $.each(this.value.split('|'), function(key, value) {
+                        $('#select_problem').append('<option value="' + value + '">' + (value == '-1' ? 'select' : value) + '</option>');
+                    });
+
+                    $('#select_problem').append('<option value="other" name="other">Other</option>');
+
+                    $('#problemPicker').modal('show');
+
+                });
+
+                //HANDLE MODAL SUBMIT
+                $('#confirm_problem').click(function () {
+
+                    let url = '{!!route('monthly.billing.store-problem')!!}'
+
+                    $.ajax({
+                        type: "POST",
+                        url: url,
+                        data: $('#problem_form').serialize(),
+
+                        success: function (data) {
+
+                            $('#billable_list').DataTable().ajax.reload();
+                            $('#problemPicker').modal('hide');
+
+                        }
+                    });
+
+
+                })
 
             });
 
