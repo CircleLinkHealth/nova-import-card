@@ -88,8 +88,9 @@ class ApproveBillablePatientsReport
             $problems = $u->cpmProblems()->take(2)->pluck('name');
             $reportId = $report->id;
 
-            $lacksProblems = false;
+            $lacksProblems = false; //;)
 
+            //for JS problem picker
             $options = $u->ccdProblems()->pluck('name');
             $options = implode('|', $options->toArray());
 
@@ -139,17 +140,24 @@ class ApproveBillablePatientsReport
 
             }
 
-            if ($lacksProblems || $info->ccm_status == 'withdrawn' || $info->ccm_status == 'paused') {
+            //if patient was paused/withdrawn and acted upon already, it's not QA no more
+            $isNotEnrolledAndApproved = ($report->actor_id == null) && ($info->ccm_status == 'withdrawn' || $info->ccm_status == 'paused');
+
+            if ($lacksProblems || $report->rejected == 1) {
+
                 $approved = '';
+
             } else {
+
                 $approved = 'checked';
+
             }
 
             $rejected = ($report->rejected == 1)
                 ? 'checked'
                 : '';
 
-            $report->approved = $approved == ''
+            $report->approved = ($approved == '')
                 ? 0
                 : 1;
 
