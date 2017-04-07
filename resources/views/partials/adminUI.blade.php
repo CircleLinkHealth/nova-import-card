@@ -321,7 +321,7 @@
                                 </li>
                                 <li><a href="{{ URL::route('admin.programs.index', []) }}">Practices</a></li>
                                 <li><a href="{{ URL::route('locations.index', []) }}">Locations</a></li>
-                                <li><a href="{{ URL::route('practice.billing.create', []) }}">Invoices</a></li>
+                                <li><a href="{{ URL::route('practice.billing.create', []) }}">Invoice/Billable Patient Report</a></li>
                             </ul>
                         </li>
                     @endif
