@@ -18,6 +18,7 @@ class Practice extends Model
         'federal_tax_id',
         'user_id',
         'same_clinical_contact',
+        'clh_pppm',
         'same_ehr_login',
         'sms_marketing_number',
         'weekly_report_recipients',

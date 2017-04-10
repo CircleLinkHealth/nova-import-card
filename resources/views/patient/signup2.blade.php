@@ -63,7 +63,7 @@
                 <div class="header nav-wrapper">
                     <a href="#" class="col s2"><img class="logo" src="{{asset('/img/clh_logo.svg')}}" alt=""></a>
                     <ul id="nav-mobile" class="right hide-on-med-and-down">
-                        <a class="waves-effect waves-light btn-large scroll-to-form blue">Talk to us</a>
+                        <a class="waves-effect waves-light btn-large scroll-to-form blue">Get a free consultation</a>
                     </ul>
                 </div>
             </nav>
@@ -85,7 +85,8 @@
                     <h5 class="teal-text text-accent-1 center">Telephone health coaching, care plan setup and
                         coordination with family and doctors for just $49.99/month!</h5>
                     <br>
-                    <a class="waves-effect waves-light btn-large scroll-to-form teal accent-3">Talk to us</a>
+                    <a class="waves-effect waves-light btn-large scroll-to-form teal accent-3">Get a free
+                        consultation</a>
                 </div>
             </div>
 

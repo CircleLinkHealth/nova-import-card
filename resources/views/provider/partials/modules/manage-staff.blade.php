@@ -1,3 +1,5 @@
+<meta name="submit-url" content="{{$postUrl}}">
+
 <div id="create-staff-component" v-on:click="isValidated(index)">
 
     <div v-if="showErrorBanner" class="row">
@@ -11,6 +13,15 @@
         'method' => 'post',
         'id' => 'create-staff',
     ]) !!}
+
+    <div class="row">
+        <div v-on:click="submitForm('{{$postUrl}}')"
+             class="btn blue waves-effect waves-light col s12"
+             v-bind:class="{disabled: !formCompleted}"
+             id="store-staff">
+            {{$submitLabel}}
+        </div>
+    </div>
 
     <div class="row">
         <ul id="users" class="collapsible" data-collapsible="accordion">
@@ -28,7 +39,7 @@
 
                     <div class="col s3 right-align">
                         <div v-if="newUser.validated && newUser.errorCount == 0">
-                            <span class="green-text">Complete!</span>
+                            <span class="green-text">Valid Data</span>
                         </div>
                         <div v-else>
                             <span v-if="newUser.errorCount > 0" class="red-text"><u>Invalid Input</u></span>
@@ -294,15 +305,6 @@
         <div v-on:click="addUser" class="btn waves-effect waves-light blue accent-1">
             Add User
             <i class="material-icons right">add</i>
-        </div>
-    </div>
-
-    <div class="row">
-        <div v-on:click="submitForm('{{$postUrl}}')"
-             class="btn blue waves-effect waves-light col s12"
-             v-bind:class="{disabled: !formCompleted}"
-             id="store-staff">
-            {{$submitLabel}}
         </div>
     </div>
 

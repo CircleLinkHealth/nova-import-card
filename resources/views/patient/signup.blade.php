@@ -120,7 +120,7 @@
 
                     <div class="center">
                         <button type="submit"
-                                class="waves-effect waves-light btn-large green accent-4">Sign me up
+                                class="waves-effect waves-light btn-large green accent-4">Get a free consultation
                         </button>
                     </div>
                 </div>
