@@ -51,22 +51,10 @@ class NoteService
         $logger = User::find($input['logger_id']);
         $logger_name = $logger->display_name;
 
+        $input['noteId'] = $note->id;
+
         //if emails are to be sent
-
-        $notifyPatientSupport = $input['notify_circlelink_support'] ?? false;
-
-        if (array_key_exists('notify_careteam', $input)) {
-
-            $this->sendNoteToCareTeam($note, $linkToNote, true, $notifyPatientSupport);
-
-        } else {
-            if ($note->isTCM) {
-
-                $user_care_team = $patient->sendAlertTo;
-
-                $this->sendNoteToCareTeam($note, $linkToNote, true, $notifyPatientSupport);
-            }
-        }
+        $this->forwardNote($input, $note->patient_id);
 
         return $note;
     }
@@ -74,6 +62,43 @@ class NoteService
     //NOTE RETRIEVALS (ranges, relations, owners)
 
     //Get all notes for patient
+
+    public function forwardNote(
+        $input,
+        $patientId
+    ) {
+        $notifyPatientSupport = $input['notify_circlelink_support'] ?? false;
+        $notifyCareteam = $input['notify_careteam'] ?? false;
+
+        if (!$notifyPatientSupport && !$notifyCareteam) {
+            return;
+        }
+
+        $note = Note::findOrFail($input['noteId']);
+
+        $author = User::find($input['logger_id']);
+
+        if (is_object($author)) {
+            $author_name = $author->fullName;
+        } else {
+            $author_name = '';
+        }
+
+        $linkToNote = route('patient.note.view', [
+            'patientId' => $patientId,
+            'noteId'    => $note->id,
+        ]);
+
+        $result = $this->sendNoteToCareTeam(
+            $note,
+            $linkToNote,
+            false,
+            $notifyPatientSupport,
+            $notifyCareteam
+        );
+    }
+
+    //Get note with mail
 
     public function sendNoteToCareTeam(
         Note $note,
@@ -156,7 +181,7 @@ class NoteService
 
     }
 
-    //Get note with mail
+    //Get data for patient note index page, w/ offline activities
 
     public function getNoteWithCommunications($note_id)
     {
@@ -165,7 +190,8 @@ class NoteService
 
     }
 
-    //Get data for patient note index page, w/ offline activities
+    //Get all notes for patients with specified date range
+
     public function getNotesAndOfflineActivitiesForPatient(User $patient)
     {
 
@@ -188,14 +214,14 @@ class NoteService
 
     }
 
-    //Get all notes for patients with specified date range
+    //Get all notes that were forwarded with specified date range
 
     public function getNotesForPatient(User $patient)
     {
         return Note::where('patient_id', $patient->id)->get();
     }
 
-    //Get all notes that were forwarded with specified date range
+    //Get all notes for a given provider with specified date range
 
     public function getAppointmentsForPatient(Patient $patient)
     {
@@ -205,7 +231,7 @@ class NoteService
 
     }
 
-    //Get all notes for a given provider with specified date range
+    //Get all notes that have been sent to anyone for a given provider with specified date range
 
     public function getNotesWithRangeForProvider(
         $provider,
@@ -228,7 +254,7 @@ class NoteService
 
     }
 
-    //Get all notes that have been sent to anyone for a given provider with specified date range
+    //Save call information for note
 
     public function getNotesWithRangeForPatients(
         $patients,
@@ -246,8 +272,6 @@ class NoteService
             ->get();
 
     }
-
-    //Save call information for note
 
     public function getForwardedNotesWithRangeForProvider(
         $provider,
@@ -318,6 +342,10 @@ class NoteService
         return false;
     }
 
+    //MAIL HELPERS
+
+    //send notes when stored
+
     public function wasReadByBillingProvider(Note $note)
     {
 
@@ -342,9 +370,7 @@ class NoteService
         return false;
     }
 
-    //MAIL HELPERS
-
-    //send notes when stored
+    //note sender
 
     public function getAllForwardedNotesWithRange(
         Carbon $start,
@@ -377,8 +403,6 @@ class NoteService
         return collect($provider_forwarded_notes);
 
     }
-
-    //note sender
 
     public function updateMailLogsForNote(
         $viewer,
@@ -472,6 +496,8 @@ class NoteService
 
     }
 
+    //return bool of whether note was sent to a provider
+
     public function storeCallForNote(
         $note,
         $status,
@@ -523,43 +549,6 @@ class NoteService
 
         ]);
 
-    }
-
-    //return bool of whether note was sent to a provider
-
-    public function forwardNote(
-        $input,
-        $patientId
-    ) {
-        $notifyPatientSupport = $input['notify_circlelink_support'] ?? false;
-        $notifyCareteam = $input['notify_careteam'] ?? false;
-
-        if (!$notifyPatientSupport && !$notifyCareteam) {
-            return;
-        }
-
-        $note = Note::findOrFail($input['noteId']);
-
-        $author = User::find($input['logger_id']);
-
-        if (is_object($author)) {
-            $author_name = $author->fullName;
-        } else {
-            $author_name = '';
-        }
-
-        $linkToNote = route('patient.note.view', [
-            'patientId' => $patientId,
-            'noteId'    => $note->id,
-        ]);
-
-        $result = $this->sendNoteToCareTeam(
-            $note,
-            $linkToNote,
-            false,
-            $notifyPatientSupport,
-            $notifyCareteam
-        );
     }
 
     public function getPatientCareTeamMembers($patientId)

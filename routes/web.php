@@ -5,11 +5,20 @@
 //$faxTest = (new PhaxioService('production'))->send('+12124910114', storage_path('pdfs/notes/2017-02-07-xsKTIK4106WdXiMNu8iMla4FPJSOcosNBXXMkAsX.pdf'));
 //dd($faxTest);
 
+use App\CLH\Helpers\StringManipulation;
 use App\Reports\WeeklyReportDispatcher;
+use App\Services\Phaxio\PhaxioService;
 use Illuminate\Support\Facades\DB;
+
+Route::post('send-sample-fax', function (Illuminate\Http\Request $request) {
+    $number = (new StringManipulation())->formatPhoneNumberE164($request->input('fax_number'));
+    $faxTest = (new PhaxioService())->send($number, public_path('assets/pdf/sample-note.pdf'));
+    dd($faxTest);
+});
 
 //Patient Landing Pages
 Route::resource('sign-up', 'PatientSignupController');
+Route::get('talk-to-us', 'PatientSignupController@talkToUs');
 
 if (app()->environment() != 'production') {
 

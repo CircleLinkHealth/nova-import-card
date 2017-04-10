@@ -111,6 +111,8 @@ var locationsVM = new Vue({
         },
 
         addLocation: function () {
+            this.submitForm($('meta[name="submit-url"]').attr('content'));
+
             this.create();
 
             this.$nextTick(function () {

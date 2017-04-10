@@ -14,7 +14,28 @@ class ProblemLog extends Model implements ItemLog
 
     protected $table = 'ccd_problem_logs';
 
-    protected $guarded = [];
+    protected $fillable = [
+        'medical_record_type',
+        'medical_record_id',
+        'vendor_id',
+        'reference',
+        'reference_title',
+        'start',
+        'end',
+        'status',
+        'name',
+        'code',
+        'code_system',
+        'code_system_name',
+        'translation_name',
+        'translation_code',
+        'translation_code_system',
+        'translation_code_system_name',
+        'import',
+        'invalid',
+        'edited',
+        'cpm_problem_id',
+    ];
 
     public function importedItem()
     {
