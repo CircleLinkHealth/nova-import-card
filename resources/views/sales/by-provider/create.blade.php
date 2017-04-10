@@ -77,19 +77,17 @@
                                 <div class="form-group">
                                     <div class="row" style="padding-left: 12px;">
                                         <label class="col-md-2 control-label" for="end_date"></label>
-                                        <div class="col-md-2">
+                                        <div class="col-md-6">
+                                            <button id="submit" name="submit" value="display" class="btn btn-success">
+                                                Generate Report
+                                            </button>
                                             <button id="submit" name="submit" value="download" class="btn btn-success">
-                                                Generate Report(s)
+                                                Download Report
                                             </button>
                                         </div>
-                                        <div class="col-md-2" style="padding-left: 40px">
-                                            <button id="submit" name="submit" value="email" class="btn btn-success"
-                                                    disabled>Email (s)
-                                            </button>
-                                        </div>
+
                                     </div>
                                 </div>
-
 
                             </fieldset>
                         </form>

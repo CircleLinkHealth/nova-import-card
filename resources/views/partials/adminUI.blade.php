@@ -161,10 +161,13 @@
                         </a>
                         <ul class="dropdown-menu" role="menu">
                             <li role="presentation" class="dropdown">
-                                <a href="{{ URL::route('patient.enroll.makeReport', array()) }}">Enrollment List</a>
+                                <a href="{{ URL::route('patient.enroll.makeReport', array()) }}">Enrollee List</a>
                             </li>
                             <li role="presentation" class="dropdown">
                                 <a href="{{ URL::route('enrollment.ambassador.stats', array()) }}">Care Ambassador KPIs</a>
+                            </li>
+                            <li role="presentation" class="dropdown">
+                                <a href="{{ URL::route('enrollment.practice.stats', array()) }}">Practice KPIs</a>
                             </li>
                         </ul>
                     </li>
@@ -275,6 +278,10 @@
                                 </a></li>
                             <li><a href="{{ URL::route('MonthlyBillingReportsController.create', []) }}">Monthly
                                     Billing</a></li>
+
+                            <li><a href="{{ URL::route('monthly.billing.make', []) }}">Monthly
+                                    Billing v2</a></li>
+
                             <li><a href="{{ URL::route('PatientConditionsReportController.getReport', array()) }}">Patient
                                     Conditions (export)</a>
                             </li>
@@ -330,17 +337,6 @@
                         <li class="dropdown">
                             <a href="{{ URL::route('patients.dashboard', array()) }}" class="btn-xs btn-primary"
                                style=""><i class="glyphicon glyphicon-eye-open"></i> Provider UI</a></li>
-                        @if(Entrust::can('app-config-view'))
-                            <li role="presentation" class="dropdown">
-                                <a class="dropdown-toggle" data-toggle="dropdown" href="#" role="button"
-                                   aria-expanded="false">
-                                    Settings<span class="caret"></span>
-                                </a>
-                                <ul class="dropdown-menu" role="menu">
-                                    <li><a href="{{ URL::route('appConfig.index', array()) }}">App Config</a></li>
-                                </ul>
-                            </li>
-                        @endif
                         <li class="dropdown">
                             <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button"
                                aria-expanded="false">{{ Auth::user()->full_name }} [ID:{{ Auth::user()->id }}]<span

@@ -24,7 +24,7 @@ var createStaffVM = new Vue({
             rolesMap: [],
             deleteTheseUsers: [],
             phoneTypes: [],
-            invalidCount: 0
+            invalidCount: 0,
         }
     },
 
@@ -68,6 +68,8 @@ var createStaffVM = new Vue({
 
     methods: {
         addUser: function () {
+            this.submitForm($('meta[name="submit-url"]').attr('content'));
+
             this.newUsers.push({
                 locations: this.locationIds,
                 grandAdminRights: false,

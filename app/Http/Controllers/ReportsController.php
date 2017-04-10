@@ -490,12 +490,23 @@ class ReportsController extends Controller
             ->whereUserId($patient->id)
             ->orderBy('type')
             ->get()
-            ->transform(function ($member) {
+            ->transform(function ($member) use
+            (
+                $patient
+            ) {
                 $member->user->firstOrNewProviderInfo();
 
-                $member->formatted_type = snakeToSentenceCase($member->type);
+                $type = $member->type;
+
+                if ($member->user->practice($patient->primaryPractice->id) && $member->type != CarePerson::BILLING_PROVIDER) {
+                    $type = $member->user->role()->display_name . " (Internal)";
+                }
+
+                $member->formatted_type = snakeToSentenceCase($type);
                 $member->specialty = $member->user->getSpecialtyAttribute();
                 $member->is_billing_provider = $member->type == CarePerson::BILLING_PROVIDER;
+
+                $member->primaryRole = $member->user->role();
 
                 if ($member->user->phoneNumbers) {
                     $member->user->phoneNumbers->push(['number' => '']);

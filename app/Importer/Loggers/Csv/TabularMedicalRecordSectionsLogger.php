@@ -1,10 +1,13 @@
 <?php namespace App\Importer\Loggers\Csv;
 
 use App\Contracts\Importer\MedicalRecord\MedicalRecordLogger;
+use App\Importer\Models\ItemLogs\AllergyLog;
 use App\Importer\Models\ItemLogs\DemographicsLog;
 use App\Importer\Models\ItemLogs\InsuranceLog;
+use App\Importer\Models\ItemLogs\MedicationLog;
+use App\Importer\Models\ItemLogs\ProblemLog;
+use App\Importer\Models\ItemLogs\ProviderLog;
 use App\Models\MedicalRecords\TabularMedicalRecord;
-use Carbon\Carbon;
 
 class TabularMedicalRecordSectionsLogger implements MedicalRecordLogger
 {
@@ -46,6 +49,21 @@ class TabularMedicalRecordSectionsLogger implements MedicalRecordLogger
      */
     public function logAllergiesSection() : MedicalRecordLogger
     {
+        $allergies = explode(',', $this->medicalRecord->allergies);
+
+        foreach ($allergies as $allergy) {
+
+            if (strtolower($allergy) == 'no') {
+                continue;
+            }
+
+            $allergy = AllergyLog::create(
+                array_merge([
+                    'allergen_name' => trim($allergy),
+                ], $this->foreignKeys)
+            );
+        }
+
         return $this;
     }
 
@@ -59,10 +77,10 @@ class TabularMedicalRecordSectionsLogger implements MedicalRecordLogger
             array_merge([
                 'first_name'    => $this->medicalRecord->first_name,
                 'last_name'     => $this->medicalRecord->last_name,
-                'dob'           => Carbon::parse($this->medicalRecord->dob),
+                'dob'           => $this->medicalRecord->dob,
                 'provider_name' => $this->medicalRecord->provider_name,
                 'phone'         => $this->medicalRecord->phone,
-                'mrn'           => $this->medicalRecord->mrn,
+                'mrn_number'    => $this->medicalRecord->mrn,
                 'gender'        => $this->medicalRecord->gender,
                 'language'      => $this->medicalRecord->language ?? 'EN',
                 'primary_phone' => $this->medicalRecord->primary_phone,
@@ -97,6 +115,10 @@ class TabularMedicalRecordSectionsLogger implements MedicalRecordLogger
             $insurances['secondary'] = $this->medicalRecord->secondary_insurance;
         }
 
+        if ($this->medicalRecord->tertiary_insurance) {
+            $insurances['tertiary'] = $this->medicalRecord->tertiary_insurance;
+        }
+
         foreach ($insurances as $insurance) {
             $insurance = InsuranceLog::create(array_merge([
                 'name'     => $insurance,
@@ -123,6 +145,28 @@ class TabularMedicalRecordSectionsLogger implements MedicalRecordLogger
      */
     public function logMedicationsSection() : MedicalRecordLogger
     {
+        $medications = explode("\n", $this->medicalRecord->medications);
+
+        foreach ($medications as $medication) {
+            $explodedMed = explode(',', $medication);
+
+            $sig = '';
+
+            if (isset($explodedMed[1])) {
+                $sig = trim(str_replace('Sig:', '', $explodedMed[1]));
+            }
+
+            $medication = MedicationLog::create(
+                array_merge([
+                    'reference_title' => trim(str_replace([
+                        'Taking',
+                        'Continue',
+                    ], '', $explodedMed[0])),
+                    'reference_sig'   => $sig,
+                ], $this->foreignKeys)
+            );
+        }
+
         return $this;
     }
 
@@ -132,6 +176,24 @@ class TabularMedicalRecordSectionsLogger implements MedicalRecordLogger
      */
     public function logProblemsSection() : MedicalRecordLogger
     {
+        $problems = explode(',', $this->medicalRecord->problems);
+
+        foreach ($problems as $problem) {
+            $problem = trim($problem);
+
+            if (ctype_alpha(str_replace([
+                "\n",
+                "\t",
+                ' ',
+            ], '', $problem))) {
+                $problem = ProblemLog::create(
+                    array_merge([
+                        'name' => $problem,
+                    ], $this->foreignKeys)
+                );
+            }
+        }
+
         return $this;
     }
 
@@ -141,6 +203,13 @@ class TabularMedicalRecordSectionsLogger implements MedicalRecordLogger
      */
     public function logProvidersSection() : MedicalRecordLogger
     {
+        $name = explode(',', $this->medicalRecord->provider_name);
+
+        $provider = ProviderLog::create(array_merge([
+            'first_name' => trim($name[1]),
+            'last_name'  => trim($name[0]),
+        ], $this->foreignKeys));
+
         return $this;
     }
 }

@@ -23,7 +23,7 @@
                     <p style="margin-left: -10px;">
                         <strong>@{{care_person.formatted_type}}
                             : </strong>@{{care_person.user.first_name}} @{{care_person.user.last_name}}
-                        <em>@{{care_person.user.provider_info.specialty}}</em>
+                        <em>@{{care_person.user.primaryRole}}</em>
                     </p>
                 </div>
 

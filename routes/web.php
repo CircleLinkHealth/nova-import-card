@@ -5,20 +5,39 @@
 //$faxTest = (new PhaxioService('production'))->send('+12124910114', storage_path('pdfs/notes/2017-02-07-xsKTIK4106WdXiMNu8iMla4FPJSOcosNBXXMkAsX.pdf'));
 //dd($faxTest);
 
-
+use App\CLH\Helpers\StringManipulation;
 use App\Reports\WeeklyReportDispatcher;
+use App\Services\Phaxio\PhaxioService;
+use Illuminate\Support\Facades\DB;
 
-//if (app()->environment() != 'production') {
+Route::post('send-sample-fax', function (Illuminate\Http\Request $request) {
+    $number = (new StringManipulation())->formatPhoneNumberE164($request->input('fax_number'));
+    $faxTest = (new PhaxioService())->send($number, public_path('assets/pdf/sample-note.pdf'));
+    dd($faxTest);
+});
 
-    Route::get('/sendEmail', function () {
+//Patient Landing Pages
+Route::resource('sign-up', 'PatientSignupController');
+Route::get('talk-to-us', 'PatientSignupController@talkToUs');
+
+Route::get('/sendEmail', function () {
+
+    (new WeeklyReportDispatcher())->exec();
+
+});
+
+if (app()->environment() != 'production') {
+
+    Route::get('/sms/test', 'TwilioController@sendTestSMS');
+
+    Route::get('/rohan', function () {
 
         (new WeeklyReportDispatcher())->exec();
 
-//        (new App\Algorithms\Enrollment\EnrollmentSMSSender())->exec();
 
     });
 
-//}
+}
 
 //Algo test routes.
 
@@ -475,6 +494,8 @@ Route::group(['middleware' => 'auth'], function () {
         'prefix'     => 'admin',
     ], function () {
 
+        Route::resource('medication-groups-maps', 'MedicationGroupsMapController');
+
         Route::post('get-athena-ccdas', [
             'uses' => 'CcdApi\Athena\AthenaApiController@getCcdas',
             'as'   => 'get.athena.ccdas',
@@ -529,24 +550,34 @@ Route::group(['middleware' => 'auth'], function () {
             'as'   => 'post.admin.store.nurse.schedules',
         ]);
 
-        Route::get('enroll/list', [
+        Route::get('enrollment/list', [
             'uses' => 'Enrollment\EnrollmentConsentController@makeEnrollmentReport',
             'as'   => 'patient.enroll.makeReport',
         ]);
 
-        Route::get('enroll/list/data', [
+        Route::get('enrollment/list/data', [
             'uses' => 'Enrollment\EnrollmentConsentController@index',
             'as'   => 'patient.enroll.index',
         ]);
 
-        Route::get('enroll/ambassador/kpis', [
+        Route::get('enrollment/ambassador/kpis', [
             'uses' => 'Enrollment\EnrollmentStatsController@makeAmbassadorStats',
             'as'   => 'enrollment.ambassador.stats',
         ]);
 
-        Route::get('enroll/ambassador/kpis/data', [
+        Route::get('enrollment/ambassador/kpis/data', [
             'uses' => 'Enrollment\EnrollmentStatsController@ambassadorStats',
             'as'   => 'enrollment.ambassador.stats.data',
+        ]);
+
+        Route::get('enrollment/practice/kpis', [
+            'uses' => 'Enrollment\EnrollmentStatsController@makePracticeStats',
+            'as'   => 'enrollment.practice.stats',
+        ]);
+
+        Route::get('enrollment/practice/kpis/data', [
+            'uses' => 'Enrollment\EnrollmentStatsController@practiceStats',
+            'as'   => 'enrollment.practice.stats.data',
         ]);
 
         Route::get('invites/create', [
@@ -598,6 +629,23 @@ Route::group(['middleware' => 'auth'], function () {
                 'uses' => 'Admin\Reports\MonthlyBillingReportsController@makeMonthlyReport',
                 'as'   => 'MonthlyBillingReportsController.makeMonthlyReport',
             ]);
+
+            Route::group([
+                'prefix' => 'monthly-billing/v2',
+            ], function () {
+
+                Route::get('/make', [
+                    'uses' => 'Admin\Reports\MonthlyBillingReportsController@make',
+                    'as'   => 'monthly.billing.make',
+                ]);
+
+                Route::post('/data', [
+                    'uses' => 'Admin\Reports\MonthlyBillingReportsController@data',
+                    'as'   => 'monthly.billing.data',
+                ]);
+
+            });
+
 
             Route::get('patients-for-insurance-check', [
                 'uses' => 'Reports\PatientsForInsuranceCheck@make',
@@ -1403,10 +1451,13 @@ Route::group([
         'as'   => 'enrollment-center.rejected',
     ]);
 
-    Route::get('/training', [
-        'uses' => 'Enrollment\EnrollmentCenterController@training',
-        'as'   => 'enrollment-center.training',
-    ]);
+    Route::get('/training', function () {
+
+        return response()->download(storage_path('training_enrollment.pdf'), 'CLHCareAmbassadorManual', [
+            'Content-Length: ' . filesize(storage_path('training_enrollment.pdf')),
+        ]);
+
+    });
 
 });
 
@@ -1499,6 +1550,23 @@ Route::group([
 });
 
 
+Route::group([
+    'prefix' => 'twilio',
+], function () {
 
+
+    Route::post('/token', [
+        'uses' => 'TwilioController@obtainToken',
+        'as'   => 'twilio.token',
+    ]);
+
+    Route::post('/call/make', [
+        'uses' => 'TwilioController@newCall',
+        'as'   => 'twilio.call',
+    ]);
+
+    Route::get('/call', 'TwilioController@makeCall');
+
+});
 
 

@@ -80,6 +80,10 @@ class OnboardingService
             'specialist',
         ];
 
+//        if (auth()->user()->hasRole('administrator')) {
+//            $relevantRoles[] = 'administrator';
+//        }
+
         $practiceUsers = User::ofType(array_merge($relevantRoles, ['practice-lead']))
             ->whereHas('practices', function ($q) use
             (
@@ -235,6 +239,11 @@ class OnboardingService
         $sameEHRLogin = $request->input('sameEHRLogin');
 
         foreach ($request->input('locations') as $index => $newLocation) {
+
+            if (!$newLocation['name']) {
+                continue;
+            }
+
             try {
                 if (isset($newLocation['id'])) {
                     $location = $this->locations
@@ -366,9 +375,6 @@ class OnboardingService
     ) {
         $implementationLead = $primaryPractice->lead;
 
-        $adminRole = Role::whereName('practice-lead')
-            ->first();
-
         foreach ($request->input('deleteTheseUsers') as $id) {
             $detachUser = User::find($id);
             $detachUser->practices()->detach($primaryPractice->id);
@@ -380,6 +386,10 @@ class OnboardingService
         foreach ($request->input('users') as $index => $newUser) {
             //create the user
             try {
+                if (!$newUser['first_name'] && !$newUser['last_name']) {
+                    continue;
+                }
+
                 if (isset($newUser['id'])) {
                     $user = $this->users
                         ->skipPresenter()
@@ -390,6 +400,8 @@ class OnboardingService
                             'last_name'    => $newUser['last_name'],
                             'display_name' => "{$newUser['first_name']} {$newUser['last_name']}",
                         ], $newUser['id']);
+                } elseif (User::whereEmail($newUser['email'])->first()) {
+                    $user = User::whereEmail($newUser['email'])->first();
                 } else {
                     $user = $this->users
                         ->skipPresenter()
@@ -402,11 +414,12 @@ class OnboardingService
                             'display_name' => "{$newUser['first_name']} {$newUser['last_name']}",
                         ]);
 
+                    $user->attachGlobalRole($newUser['role_id']);
+
                     $created[] = $i;
                 }
 
                 $user->emr_direct_address = $newUser['emr_direct_address'];
-                $user->attachRole($newUser['role_id']);
 
                 $grandAdminRights = false;
                 if ($newUser['grandAdminRights']) {
@@ -443,6 +456,7 @@ class OnboardingService
 
 //                $user->notify(new StaffInvite($implementationLead, $primaryPractice));
             } catch (\Exception $e) {
+                \Log::alert($e);
                 if ($e instanceof QueryException) {
                     $errorCode = $e->errorInfo[1];
                     if ($errorCode == 1062) {

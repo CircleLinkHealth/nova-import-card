@@ -52,10 +52,15 @@
                             </div>
 
                             <div class="row" style="margin-top:20px;">
-                                <div class="col-xs-2">{!! Form::label('weekly_report_recipients', 'Weekly Organization Summary Recipients (comma separated) ') !!}</div>
+                                <div class="col-xs-2">{!! Form::label('weekly_report_recipients', 'Weekly Organization Summary Recipients (comma separated, w/ spaces after comma) ') !!}</div>
                                 <div class="col-xs-10"><textarea name="weekly_report_recipients" style="width: 100%"> </textarea></div>
                             </div>
 
+                            <div class="row" style="margin-top:20px;">
+                                <div class="col-xs-2">{!! Form::label('clh_pppm', 'CLH PPPM') !!}</div>
+                                <div class="col-xs-10"><input class="form-control" name="clh_pppm" style="width: 100%" @if(isset($program->clh_pppm)) value="{{$program->clh_pppm}}" @endif/>
+                                </div>
+                            </div>
 
 
                         </div>

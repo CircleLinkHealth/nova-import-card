@@ -6,6 +6,13 @@
 
         <div class="modal-content">
             <h4 style="color: #47beab">Please provide some details:</h4>
+            <blockquote style="border-left: 5px solid #26a69a;">
+                <b>If Caller Reaches Machine, Leave Voice Message: </b><br>
+                Hi this is {{auth()->user()->fullName}} calling on
+                behalf of @{{ provider_name }} at @{{ practice_name }}. The doctor[s] have invited you to their new
+                personalized care management program. Please give us a call at [number Ambassador calling from on page 2] to learn more. Please note there is
+                nothing to worry about, this program just lets the Dr. take better care of you between visits. Again the number is [number Ambassador calling from]
+            </blockquote>
 
             <div class="row">
                 <div class="col s12 m12">
@@ -27,13 +34,17 @@
 
             <input type="hidden" name="status" value="utc">
             <input type="hidden" name="enrollee_id" value="{{$enrollee->id}}">
-            <input type="hidden" name="time_elapsed" v-bind:value="total_time_in_system">
-
+            <input type="hidden" name="total_time_in_system" v-bind:value="total_time_in_system">
+            <input type="hidden" name="time_elapsed" v-bind:value="time_elapsed">
 
             <div class="modal-footer" style="padding-right: 60px">
                 <button id="submit" name="submit" type="submit"
                         class="modal-action waves-effect waves-light btn">Call Next Patient
                 </button>
+                <div v-if="onCall === true" style="text-align: center">
+                    <a v-on:click="hangUp" class="waves-effect waves-light btn" style="background: red"><i
+                                class="material-icons left">call_end</i>Hang Up</a>
+                </div>
             </div>
         </div>
     </form>

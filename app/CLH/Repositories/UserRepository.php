@@ -313,6 +313,7 @@ class UserRepository implements \App\CLH\Contracts\Repositories\UserRepository
         if($user->careAmbassador != null){
 
             $user->careAmbassador->hourly_rate = $params->get('hourly_rate');
+            $user->careAmbassador->speaks_spanish = $params->get('speaks_spanish') == 'on' ? 1 : 0;
             $user->careAmbassador->save();
 
         } else {

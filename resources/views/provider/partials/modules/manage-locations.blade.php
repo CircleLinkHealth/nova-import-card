@@ -1,3 +1,5 @@
+<meta name="submit-url" content="{{$postUrl}}">
+
 <div id="create-locations-component" class="row">
 
     <div v-if="showErrorBanner" class="row">
@@ -13,6 +15,14 @@
     ]) !!}
 
     <div class="row">
+        <div v-on:click="submitForm('{{$postUrl}}')"
+             class="btn blue waves-effect waves-light col s12" id="submit"
+             v-bind:class="{disabled: !formCompleted}">
+            {{$submitLabel}}
+        </div>
+    </div>
+
+    <div class="row">
         <ul class="collapsible" data-collapsible="accordion">
             <li v-for="(index, loc) in newLocations" id="location-@{{index}}" v-on:click="isValidated(index)">
                 <div class="collapsible-header" v-bind:class="{ active: index == newLocations.length - 1 }">
@@ -26,7 +36,7 @@
                     </div>
                     <div class="col s2">
                         <div v-if="isValidated(index)">
-                            <span class="green-text">Complete!</span>
+                            <span class="green-text">Valid Data</span>
                         </div>
                         <div v-else>
                             <span v-if="loc.errorCount > 0" class="red-text"><u>Invalid Input</u></span>
@@ -350,14 +360,6 @@
         <div v-on:click="addLocation" class="btn waves-effect waves-light blue accent-1">
             Add Location
             <i class="material-icons right">add</i>
-        </div>
-    </div>
-
-    <div class="row">
-        <div v-on:click="submitForm('{{$postUrl}}')"
-             class="btn blue waves-effect waves-light col s12" id="submit"
-             v-bind:class="{disabled: !formCompleted}">
-            {{$submitLabel}}
         </div>
     </div>
 

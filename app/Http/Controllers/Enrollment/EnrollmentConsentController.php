@@ -16,29 +16,70 @@ class EnrollmentConsentController extends Controller
     /**
      * @return mixed
      */
-    public function index(){
+    public function index()
+    {
 
         //todo change to Enrollee
-        $enrollees = Enrollee::where('status', '!=', 'enrolled')->get();
+        $enrollees = Enrollee
+            ::where('status', '!=', 'enrolled')
+            ->where('attempt_count', '<', 3)
+            ->get();
 
         $formatted = [];
         $count = 0;
 
-        foreach ($enrollees as $enrollee){
+        foreach ($enrollees as $enrollee) {
+
+            $status = '';
+
+            //if the patient has a ca_id, then it's a phone call
+            if ($enrollee->care_ambassador_id != null) {
+
+                //if the patient wasn't reached, show how many attempts were made
+                if ($enrollee->status == 'utc') {
+
+                    $status = 'Call:' . $enrollee->attempt_count . 'x';
+
+                } elseif ($enrollee->status == 'rejected') {
+
+                    $status = 'Call: Declined';
+
+                } elseif ($enrollee->status == 'consented') {
+
+                    $status = 'Call: Consented';
+                }
+
+            }
+
+            if ($enrollee->status == 'call_queue') {
+                $status = 'Call: To Call';
+            }
+
+            if ($enrollee->status == 'sms_queue') {
+
+                if ($enrollee->invite_sent_at == null) {
+                    $status = 'SMS: To SMS';
+                } else {
+                    $status = 'SMS:' . $enrollee->attempt_count . 'x';
+                }
+
+            }
 
             $formatted[$count] = [
 
                 'name'                     => $enrollee->first_name . ' ' . $enrollee->last_name,
                 'program'                  => ucwords(Practice::find($enrollee->practice_id)->name),
                 'provider'                 => ucwords(User::find($enrollee->provider_id)->fullName ?? null),
-                'status'                   => ucwords($enrollee->status),
-                'care_ambassador'          => ucwords(User::find($enrollee->care_ambassador_id)->fullName ?? null),
+                'has_copay'                => $enrollee->has_copay
+                    ? 'Yes'
+                    : 'No',
+                'status'                   => $status,
+                'care_ambassador'          => ucwords($enrollee->careAmbassador->user->fullName ?? null),
                 'last_call_outcome'        => ucwords($enrollee->last_call_outcome),
                 'last_call_outcome_reason' => ucwords($enrollee->last_call_outcome_reason),
                 'mrn_number'               => ucwords($enrollee->mrn_number),
                 'dob'                      => ucwords($enrollee->dob),
                 'phone'                    => ucwords($enrollee->primary_phone),
-                'attempt_count'            => ucwords($enrollee->attempt_count),
                 'invite_sent_at'           => ucwords($enrollee->invite_sent_at),
                 'invite_opened_at'         => ucwords($enrollee->invite_opened_at),
                 'last_attempt_at'          => ucwords($enrollee->last_attempt_at),
@@ -63,13 +104,14 @@ class EnrollmentConsentController extends Controller
 
     }
 
-    public function create($invite_code){
+    public function create($invite_code)
+    {
 
         $enrollee = Enrollee::whereInviteCode($invite_code)->first();
         $enrollee->invite_opened_at = Carbon::now()->toDateTimeString();
         $enrollee->save();
 
-        if(is_null($enrollee)){
+        if (is_null($enrollee)) {
 
             return view('errors.enrollmentConsentUrlError');
 
@@ -79,7 +121,8 @@ class EnrollmentConsentController extends Controller
 
     }
 
-    public function store(Request $request){
+    public function store(Request $request)
+    {
 
         $input = $request->input();
 
@@ -93,20 +136,21 @@ class EnrollmentConsentController extends Controller
 
     }
 
-    public function update(Request $request){
+    public function update(Request $request)
+    {
 
         $input = $request->input();
 
         $enrollee = Enrollee::find($input['enrollee_id']);
 
-        if(isset($input['days'])) {
+        if (isset($input['days'])) {
             $enrollee->preferred_days = implode(', ', $input['days']);
 
         }
 
-        if(isset($input['time'])) {
+        if (isset($input['times'])) {
+            $enrollee->preferred_window = implode(', ', $input['times']);
 
-            $enrollee->preferred_window = $input['time'];
         }
 
         $enrollee->save();

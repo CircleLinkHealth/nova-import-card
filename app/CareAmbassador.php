@@ -9,12 +9,19 @@ class CareAmbassador extends Model
 
     protected $fillable = [
         'user_id',
-        'hourly_rate'
+        'hourly_rate',
+        'speaks_spanish'
     ];
 
     public function user(){
 
         return $this->belongsTo(User::class, 'user_id');
+
+    }
+
+    public function logs(){
+
+        return $this->hasMany(CareAmbassadorLog::class, 'enroller_id');
 
     }
 

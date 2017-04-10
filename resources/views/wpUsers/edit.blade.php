@@ -527,7 +527,11 @@
                                             <div class="col-xs-2">{!! Form::label('hourly_rate', 'Hourly Rate:') !!}</div>
                                             <div class="col-xs-10">{!! Form::text('hourly_rate', $patient->careAmbassador->hourly_rate, ['class' => 'form-control', 'style' => 'width:100%;']) !!}</div>
                                         </div>
-
+                                        <div class="row"></div>
+                                        <div class="row">
+                                            <div class="col-xs-2">{!! Form::label('speaks_spanish', 'Spanish Speaking:') !!}</div>
+                                            <div class="col-xs-10"><input type="checkbox" @if($patient->careAmbassador->speaks_spanish) checked @endif name="speaks_spanish" id="speaks_spanish"></div>
+                                        </div>
                                     </div>
                                 </div>
                             @endif

@@ -12,7 +12,30 @@ class ProviderLog extends Model implements ItemLog
 
     protected $table = 'ccd_provider_logs';
 
-    protected $guarded = [];
+    protected $fillable = [
+        'location_id',
+        'practice_id',
+        'billing_provider_id',
+        'medical_record_type',
+        'medical_record_id',
+        'vendor_id',
+        'npi',
+        'provider_id',
+        'first_name',
+        'last_name',
+        'organization',
+        'street',
+        'city',
+        'state',
+        'zip',
+        'cell_phone',
+        'home_phone',
+        'work_phone',
+        'import',
+        'invalid',
+        'edited',
+        'ml_ignore',
+    ];
 
     public function importedItem()
     {

@@ -10,6 +10,8 @@ use App\User;
 
 class TabularMedicalRecord extends MedicalRecordEloquent
 {
+    protected $dates = ['dob'];
+
     protected $fillable = [
         'practice_id',
         'location_id',
@@ -23,6 +25,10 @@ class TabularMedicalRecord extends MedicalRecordEloquent
         'first_name',
         'last_name',
         'dob',
+
+        'allergies',
+        'medications',
+        'problems',
 
         'gender',
         'language',
@@ -43,6 +49,7 @@ class TabularMedicalRecord extends MedicalRecordEloquent
 
         'primary_insurance',
         'secondary_insurance',
+        'tertiary_insurance',
     ];
 
     /**
@@ -80,7 +87,7 @@ class TabularMedicalRecord extends MedicalRecordEloquent
      */
     public function setBillingProviderIdPrediction($billingProvider) : MedicalRecord
     {
-        // TODO: Implement setBillingProviderIdPrediction() method.
+        return $this;
     }
 
     /**
@@ -98,7 +105,7 @@ class TabularMedicalRecord extends MedicalRecordEloquent
      */
     public function setLocationIdPrediction($location) : MedicalRecord
     {
-        // TODO: Implement setLocationIdPrediction() method.
+        return $this;
     }
 
     /**
@@ -108,7 +115,7 @@ class TabularMedicalRecord extends MedicalRecordEloquent
      */
     public function setPracticeIdPrediction($practice) : MedicalRecord
     {
-        // TODO: Implement setPracticeIdPrediction() method.
+        return $this;
     }
 
 

@@ -9,6 +9,8 @@ use App\Models\CCD\Problem;
 use App\Models\CPM\CpmInstruction;
 use App\Models\CPM\CpmMisc;
 use App\Models\CPM\CpmProblem;
+use App\Patient;
+use App\PatientMonthlySummary;
 use App\Practice;
 use App\Role;
 use App\User;
@@ -16,7 +18,10 @@ use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\URL;
 use Maatwebsite\Excel\Facades\Excel;
+use Yajra\Datatables\Facades\Datatables;
 
 class MonthlyBillingReportsController extends Controller
 {
@@ -337,6 +342,114 @@ class MonthlyBillingReportsController extends Controller
                 });
             }
         })->export('xls');
+
+    }
+
+    public function make()
+    {
+
+        $practices = Practice::all();
+
+        return view('admin.reports.billing', compact(['practices']));
+
+    }
+
+    public function data(Request $request)
+    {
+        $input = $request->input();
+
+
+        //Carbon::now()->firstOfMonth()->toDateString()
+        $patients =
+            Patient::whereHas('patientSummaries', function ($q) {
+                $q->where('ccm_time', '>', 1199)
+                    ->where('month_year', '2017-02-01');
+
+            });
+
+        if ($input['practice_id'] != 0) {
+
+            $practice = $input['practice_id'];
+
+            $patients = $patients->whereHas('user', function ($k) use
+            (
+                $practice
+
+            ) {
+                $k->whereProgramId($practice);
+            });
+        }
+
+
+        $patients = $patients->orderBy('updated_at', 'desc')
+            ->take(100)
+            ->pluck('user_id');
+
+        $count = 0;
+        $formatted = [];
+
+
+        foreach ($patients as $p) {
+
+            $u = User::find($p);
+            $info = $u->patientInfo;
+
+            //@todo add problem type and code
+            $problems = $u->cpmProblems()->take(2)->pluck('name');
+
+            $day_start = Carbon::parse(Carbon::now()->firstOfMonth()->format('Y-m-d'));
+            $report = PatientMonthlySummary::where('patient_info_id', $info->id)->where('month_year',
+                $day_start)->first();
+
+            if ($report != null) {
+                $checked = ($report->approved == 1)
+                    ? 'checked'
+                    : '';
+            } else {
+                $checked = '';
+            }
+
+            if (!isset($problems[0])) {
+                $problems[0] = 'N/A';
+                $checked = '';
+            }
+
+            if (!isset($problems[1])) {
+                $problems[1] = 'N/A';
+                $checked = '';
+            }
+
+            $name = "<a href=" . URL::route('patient.summary', ['patient' => $u->id]) . "> " . $u->fullName . "</a>";
+
+            $formatted[$count] = [
+
+                'name'     => $name,
+                'provider' => $u->billingProvider()->fullName,
+                'practice' => $u->primaryPractice->display_name,
+                'dob'      => $info->birth_date,
+                'ccm'      => round($info->cur_month_activity_time / 60, 2),
+                'problem1' => $problems[0],
+                'problem2' => $problems[1],
+                'status'   => $info->ccm_status,
+                'approve'  => "<input type=\"checkbox\" id='$u->id' $checked>",
+
+            ];
+            $count++;
+
+        }
+
+        $formatted = collect($formatted);
+
+
+        return Datatables::of($formatted)
+            ->addColumn('background_color', function ($a) {
+                if ($a['problem1'] == 'N/A' || $a['problem2'] == 'N/A' || $a['status'] == 'withdrawn' || $a['status'] == 'paused') {
+                    return 'rgba(255, 252, 96, 0.407843)';
+                } else {
+                    return '';
+                }
+            })
+            ->make(true);
 
     }
 }

@@ -66,6 +66,9 @@
                                         <th>
                                             Cost per Enrollment
                                         </th>
+                                        <th>
+                                            Earnings
+                                        </th>
                                     </tr>
                                     </thead>
                                 </table>
@@ -93,7 +96,7 @@
                     serverSide: false,
                     "scrollX": true,
                     ajax: {
-                        "url": '{!! url('/admin/enroll/ambassador/kpis/data') !!}',
+                        "url": '{!! url('/admin/enrollment/ambassador/kpis/data') !!}',
                         "type": "GET",
                         "data": function (d) {
                             d.start_date = $('#start_date').val();
@@ -112,6 +115,7 @@
                         {data: 'conversion', name: 'conversion'},
                         {data: 'hourly_rate', name: 'hourly_rate'},
                         {data: 'per_cost', name: 'per_cost'},
+                        {data: 'earnings', name: 'earnings'},
 
                     ],
                     "aaSorting": [2, 'desc'],

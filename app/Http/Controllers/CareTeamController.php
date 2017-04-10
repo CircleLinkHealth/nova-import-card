@@ -63,6 +63,8 @@ class CareTeamController extends Controller
         $input = $request->input('careTeamMember');
         $patientId = $request->input('patientId');
 
+        $patient = User::find($patientId);
+
         $providerUser = User::updateOrCreate([
             'id' => $input['user']['id'],
         ], [
@@ -86,11 +88,19 @@ class CareTeamController extends Controller
                 ->first();
 
             //then get rid of other billing providers
-            $billingProviderUpdated = CarePerson::where('user_id', '=', $patientId)
+            $oldBillingProviders = CarePerson::where('user_id', '=', $patientId)
                 ->where('type', '=', CarePerson::BILLING_PROVIDER)
-                ->update([
-                    'type' => 'external',
-                ]);
+                ->get();
+
+            foreach ($oldBillingProviders as $oldBillingProvider) {
+                $oldBillingProvider->type = 'external';
+
+                if ($oldBillingProvider->user->practice($patient->primaryPractice->id)) {
+                    $oldBillingProvider->type = $oldBillingProvider->user->role();
+                }
+
+                $oldBillingProvider->save();
+            }
 
             //If the Billing Provider has changed, we want to reflect that change on the front end.
             //If it's the same, we'll return null
@@ -105,6 +115,10 @@ class CareTeamController extends Controller
 
         if (!$providerUser->email) {
             $alert = false;
+        }
+
+        if ($providerUser->practice($patient->primaryPractice->id) && $type != CarePerson::BILLING_PROVIDER) {
+            $type = $providerUser->role()->display_name . " (Internal)";
         }
 
         if (str_contains($input['id'], 'new')) {
