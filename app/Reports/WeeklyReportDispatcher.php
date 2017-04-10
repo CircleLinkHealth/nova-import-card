@@ -62,7 +62,7 @@ class WeeklyReportDispatcher
 
             ))->data(true);
 
-            $practiceData['name'] = $practice->name;
+            $practiceData['name'] = $practice->display_name;
             $practiceData['start'] = $startRange->toDateString();
             $practiceData['end'] = $endRange->toDateString();
             $practiceData['isEmail'] = true;
