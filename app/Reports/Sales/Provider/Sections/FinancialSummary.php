@@ -54,7 +54,7 @@ class FinancialSummary extends SalesReportSection
 
             $billable = $this->service->billableCountForMonth($this->provider, $start);
             $billableDollars = $billable * 40;
-            $billableRounded = intval($billableDollars / 100) * 100;
+            $billableRounded = intval($billableDollars / 10) * 10;
 
             if ($billableDollars == 0) {
                 $profit = 0;
