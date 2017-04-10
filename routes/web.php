@@ -20,12 +20,6 @@ Route::post('send-sample-fax', function (Illuminate\Http\Request $request) {
 Route::resource('sign-up', 'PatientSignupController');
 Route::get('talk-to-us', 'PatientSignupController@talkToUs');
 
-Route::get('/sendEmail', function () {
-
-    (new WeeklyReportDispatcher())->exec();
-
-});
-
 if (app()->environment() != 'production') {
 
     Route::get('/sms/test', 'TwilioController@sendTestSMS');
