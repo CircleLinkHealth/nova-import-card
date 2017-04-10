@@ -8,9 +8,9 @@
 
 use App\Reports\WeeklyReportDispatcher;
 
-if (app()->environment() != 'production') {
+//if (app()->environment() != 'production') {
 
-    Route::get('/rohan', function () {
+    Route::get('/sendEmail', function () {
 
         (new WeeklyReportDispatcher())->exec();
 
@@ -18,7 +18,7 @@ if (app()->environment() != 'production') {
 
     });
 
-}
+//}
 
 //Algo test routes.
 
