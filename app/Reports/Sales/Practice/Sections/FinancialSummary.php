@@ -65,9 +65,6 @@ class FinancialSummary extends SalesReportSection
                 $profit =  floor($profit / 10) * 10;
             }
 
-            debug('billable: '.$billable .';profit: '. $profit .';rounded: '. $billableDollars);
-
-
             $this->data['historical']['Patients >20mins (some are not billed)'][$month]
                 = $billable;
 
