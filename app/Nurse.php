@@ -25,6 +25,8 @@ class Nurse extends Model
         'status',
         'license',
         'hourly_rate',
+        'high_rate',
+        'low_rate',
         'spanish',
         'isNLC',
     ];
