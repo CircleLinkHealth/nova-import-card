@@ -37,8 +37,8 @@ class VariablePay extends NurseInvoice
             $this->ccm_over_duration = round($this->report->accrued_after_ccm / 3600, 1);
             $this->ccm_under_duration = round($this->report->accrued_towards_ccm /3600 , 1);
 
-            $this->ccm_under_payable =  $this->ccm_under_duration * 30;
-            $this->ccm_over_payable = $this->ccm_over_duration * 10;
+            $this->ccm_under_payable =  $this->ccm_under_duration * $nurse->high_rate;
+            $this->ccm_over_payable = $this->ccm_over_duration * $nurse->low_rate;
 
             $this->data['payable'] = $this->ccm_over_payable + $this->ccm_under_payable;
 
