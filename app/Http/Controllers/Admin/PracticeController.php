@@ -64,7 +64,8 @@ class PracticeController extends Controller
 		$program->name = $params['name'];
 		$program->display_name = $params['display_name'];
 		$program->weekly_report_recipients = $params['weekly_report_recipients'];
-		$program->save();
+        $program->clh_pppm = $params['clh_pppm'];
+        $program->save();
 
 		// attach to all users who get auto attached
 		$users = User::where('auto_attach_programs', '=', '1')->get();
@@ -151,6 +152,8 @@ class PracticeController extends Controller
 		$program->name = $params['name'];
 		$program->display_name = $params['display_name'];
 		$program->weekly_report_recipients = $params['weekly_report_recipients'];
+		$program->clh_pppm = $params['clh_pppm'];
+
 		$program->save();
 		return redirect()->back()->with('messages', ['successfully updated program']);
 	}
