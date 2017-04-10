@@ -220,7 +220,10 @@ class NurseMonthlyBillGenerator
             if($payableVariable > $this->payable){
 
                 $this->payable = $payableVariable;
-                $this->rate = 'Variable Rates: $30/hr or $10/hr';
+                $high_rate = $this->nurse->high_rate;
+                $low_rate = $this->nurse->low_rate;
+
+                $this->rate = "Variable Rates: $high_rate/hr or $low_rate/hr";
 
             } else {
 
@@ -303,6 +306,9 @@ class NurseMonthlyBillGenerator
             'variable_pay' => $variable,
             'total' => $this->total,
             'others' => $others,
+
+            'high_rate' => $this->nurse->high_rate,
+            'low_rate' => $this->nurse->low_rate,
 
             //headers
             'nurse_billable_time' => $this->formattedSystemTime,

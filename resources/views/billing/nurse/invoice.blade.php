@@ -35,8 +35,8 @@
 
         <th style="width: 25%">Total Hours</th>
         @if($variable_pay)
-            <th style="width: 25%">CCM Hours ($30/Hour)</th>
-            <th style="width: 25%">CCM Hours ($10/Hour)</th>
+            <th style="width: 25%">CCM Hours (${{$high_rate}}/Hour)</th>
+            <th style="width: 25%">CCM Hours (${{$low_rate}}/Hour)</th>
         @endif
     </tr>
 
