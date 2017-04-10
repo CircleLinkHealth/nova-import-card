@@ -24,17 +24,13 @@ if (app()->environment() != 'production') {
     Route::get('/rohan', function () {
 
 
+        (new WeeklyReportDispatcher())->exec();
+
 //        dd((new \App\Billing\Practices\PracticeInvoiceGenerator(
 //            \App\Practice::find(21), Carbon::parse('2017-03-01')
 //        ))->checkForPendingQAForPractice());
 
-        dd($patients = Patient
-            ::whereHas('patientSummaries', function ($q) {
-                $q->where('ccm_time', '>', 1199)
-                    ->where('month_year', '2017-03-01')
-                    ->where('no_of_successful_calls', '>', 0);
-
-            })->pluck('id'));
+        dd(intval(80 / 100));
 
     });
 
