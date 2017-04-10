@@ -8,6 +8,7 @@ use App\Practice;
 use App\User;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 use Yajra\Datatables\Facades\Datatables;
 
 class EnrollmentConsentController extends Controller
@@ -47,23 +48,39 @@ class EnrollmentConsentController extends Controller
                 } elseif ($enrollee->status == 'consented') {
 
                     $status = 'Call: Consented';
+
                 }
 
             }
 
             if ($enrollee->status == 'call_queue') {
+
                 $status = 'Call: To Call';
+
             }
 
             if ($enrollee->status == 'sms_queue') {
 
                 if ($enrollee->invite_sent_at == null) {
+
                     $status = 'SMS: To SMS';
+
                 } else {
+
                     $status = 'SMS:' . $enrollee->attempt_count . 'x';
+
                 }
 
             }
+
+            if ($enrollee->invite_sent_at != null && $enrollee->status == 'consented') {
+
+                $status = 'SMS: Consented';
+
+            }
+
+            $days = ($enrollee->preferred_days == null) ? 'N/A' : $enrollee->preferred_days;
+            $times = ($enrollee->preferred_days == null) ? 'N/A' : $enrollee->preferred_window;
 
             $formatted[$count] = [
 
@@ -84,8 +101,11 @@ class EnrollmentConsentController extends Controller
                 'invite_opened_at'         => ucwords($enrollee->invite_opened_at),
                 'last_attempt_at'          => ucwords($enrollee->last_attempt_at),
                 'consented_at'             => ucwords($enrollee->consented_at),
+                'preferred_days'           => $days,
+                'preferred_window'         => $times
 
             ];
+
             $count++;
 
         }

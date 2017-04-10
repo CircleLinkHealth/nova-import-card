@@ -71,9 +71,11 @@ class EnrollmentStatsController extends Controller
 
             if ($base->sum('total_calls') != 0 && $base->sum('no_enrolled') != 0 && $hourCost != 'Not Set') {
 
-                $data[$ambassador->id]['earnings'] = '$' . round($hourCost * ( $base->sum('total_time_in_system') / 3600 ), 2);
+                $data[$ambassador->id]['earnings'] = '$' . round($hourCost * ($base->sum('total_time_in_system') / 3600),
+                        2);
 
-                $data[$ambassador->id]['calls_per_hour'] = round($base->sum('total_calls') / $base->sum('total_time_in_system') / 3600, 2);
+                $data[$ambassador->id]['calls_per_hour'] = round($base->sum('total_calls') / $base->sum('total_time_in_system') / 3600,
+                    2);
 
                 $data[$ambassador->id]['conversion'] = round(($base->sum('no_enrolled') / $base->sum('total_calls')) * 100,
                         2) . '%';
@@ -174,10 +176,15 @@ class EnrollmentStatsController extends Controller
 
             $data[$practice->id]['total_cost'] = 0;
 
+            Log::info($enrollers);
+
             foreach ($enrollers as $enrollerId => $time) {
 
-                $enroller = CareAmbassador::find($enrollerId);
-                $data[$practice->id]['total_cost'] += $enroller->hourly_rate * round($time / 3600, 2);
+                if ($enrollerId != null) {
+                    $enroller = CareAmbassador::find($enrollerId);
+                    $data[$practice->id]['total_cost'] += $enroller->hourly_rate * round($time / 3600, 2);
+                }
+
 
             }
 
@@ -203,8 +210,9 @@ class EnrollmentStatsController extends Controller
 
             }
 
-            if ($data[$practice->id]['total_cost'] > 0 && $total_time > 0){
-                $data[$practice->id]['labor_rate'] = round($data[$practice->id]['total_cost'] / ($total_time / 3600), 2);
+            if ($data[$practice->id]['total_cost'] > 0 && $total_time > 0) {
+                $data[$practice->id]['labor_rate'] = round($data[$practice->id]['total_cost'] / ($total_time / 3600),
+                    2);
             } else {
                 $data[$practice->id]['labor_rate'] = 'N/A';
 

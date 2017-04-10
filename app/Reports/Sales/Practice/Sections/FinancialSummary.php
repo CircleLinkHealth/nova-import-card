@@ -54,13 +54,16 @@ class FinancialSummary extends SalesReportSection
 
             $billable = $this->service->billableCountForMonth($this->practice, $start);
             $billableDollars = $billable * 40;
-            $billableRounded = intval($billableDollars / 100) * 100;
+            $billableRounded = intval($billableDollars / 10) * 10;
+
 
             if ($billableDollars == 0) {
                 $profit = 0;
             } else {
                 $profit = ($billableRounded * (1 - ($this->clhpppm / 40)));
             }
+
+            debug('billable: '.$billable .';profit: '. $profit .';rounded: '. $billableDollars);
 
 
             $this->data['historical']['Patients >20mins (some are not billed)'][$month]
@@ -69,9 +72,9 @@ class FinancialSummary extends SalesReportSection
 //            $this->data['historical']['CCM Revenue'][$month]
 //                = '~'.money_format('%.0n',$billableRounded);
 
-            $this->data['historical']['CCM Profit'][$month]
+            $this->data['historical']['CCM Profit (Approx.)'][$month]
                 = ($this->clhpppm != 0)
-                ? '~' . money_format('%.0n', round($profit, 0))
+                ? money_format('%.0n', round($profit, 0))
                 : 'N/A';
 
         }

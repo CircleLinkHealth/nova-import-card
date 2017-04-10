@@ -5,16 +5,13 @@
 //$faxTest = (new PhaxioService('production'))->send('+12124910114', storage_path('pdfs/notes/2017-02-07-xsKTIK4106WdXiMNu8iMla4FPJSOcosNBXXMkAsX.pdf'));
 //dd($faxTest);
 
-use App\CLH\Helpers\StringManipulation;
+use App\Patient;
+use App\PatientMonthlySummary;
 use App\Reports\WeeklyReportDispatcher;
-use App\Services\Phaxio\PhaxioService;
+use App\User;
+use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
-
-Route::post('send-sample-fax', function (Illuminate\Http\Request $request) {
-    $number = (new StringManipulation())->formatPhoneNumberE164($request->input('fax_number'));
-    $faxTest = (new PhaxioService())->send($number, public_path('assets/pdf/sample-note.pdf'));
-    dd($faxTest);
-});
+use Illuminate\Support\Facades\URL;
 
 //Patient Landing Pages
 Route::resource('sign-up', 'PatientSignupController');
@@ -26,8 +23,14 @@ if (app()->environment() != 'production') {
 
     Route::get('/rohan', function () {
 
+
         (new WeeklyReportDispatcher())->exec();
 
+//        dd((new \App\Billing\Practices\PracticeInvoiceGenerator(
+//            \App\Practice::find(21), Carbon::parse('2017-03-01')
+//        ))->checkForPendingQAForPractice());
+
+        dd(intval(80 / 100));
 
     });
 
@@ -619,6 +622,7 @@ Route::group(['middleware' => 'auth'], function () {
         Route::group([
             'prefix' => 'reports',
         ], function () {
+
             Route::post('monthly-billing', [
                 'uses' => 'Admin\Reports\MonthlyBillingReportsController@makeMonthlyReport',
                 'as'   => 'MonthlyBillingReportsController.makeMonthlyReport',
@@ -629,23 +633,36 @@ Route::group(['middleware' => 'auth'], function () {
             ], function () {
 
                 Route::get('/make', [
-                    'uses' => 'Admin\Reports\MonthlyBillingReportsController@make',
+                    'uses' => 'Billing\PracticeInvoiceController@make',
                     'as'   => 'monthly.billing.make',
                 ]);
 
                 Route::post('/data', [
-                    'uses' => 'Admin\Reports\MonthlyBillingReportsController@data',
+                    'uses' => 'Billing\PracticeInvoiceController@data',
                     'as'   => 'monthly.billing.data',
                 ]);
 
-            });
+                Route::post('/updateApproved', [
+                    'uses' => 'Billing\PracticeInvoiceController@updateApproved',
+                    'as'   => 'monthly.billing.approve',
+                ]);
 
+                Route::post('/storeProblem', [
+                    'uses' => 'Billing\PracticeInvoiceController@storeProblem',
+                    'as'   => 'monthly.billing.store-problem',
+                ]);
+
+                Route::post('/updateRejected', [
+                    'uses' => 'Billing\PracticeInvoiceController@updateRejected',
+                    'as'   => 'monthly.billing.reject',
+                ]);
+
+            });
 
             Route::get('patients-for-insurance-check', [
                 'uses' => 'Reports\PatientsForInsuranceCheck@make',
                 'as'   => 'get.patients.for.insurance.check',
             ]);
-
 
             Route::group([
                 'prefix' => 'sales',
@@ -718,6 +735,21 @@ Route::group(['middleware' => 'auth'], function () {
                 'uses' => 'Admin\Reports\PatientConditionsReportController@exportxls',
                 'as'   => 'PatientConditionsReportController.getReport',
             ]);
+        });
+
+        //Practice Billing
+        Route::group(['prefix' => 'practice/billing'], function () {
+
+            Route::get('create', [
+                'uses' => 'Billing\PracticeInvoiceController@createInvoices',
+                'as'   => 'practice.billing.create',
+            ]);
+
+            Route::post('make', [
+                'uses' => 'Billing\PracticeInvoiceController@makeInvoices',
+                'as'   => 'practice.billing.make',
+            ]);
+
         });
 
         //Algo Mocker

@@ -279,8 +279,7 @@
                             <li><a href="{{ URL::route('MonthlyBillingReportsController.create', []) }}">Monthly
                                     Billing</a></li>
 
-                            <li><a href="{{ URL::route('monthly.billing.make', []) }}">Monthly
-                                    Billing v2</a></li>
+                            <li><a href="{{ URL::route('monthly.billing.make', []) }}">Approve Billable Patients</a></li>
 
                             <li><a href="{{ URL::route('PatientConditionsReportController.getReport', array()) }}">Patient
                                     Conditions (export)</a>
@@ -313,7 +312,7 @@
                         <li role="presentation" class="dropdown">
                             <a class="dropdown-toggle" data-toggle="dropdown" href="#" role="button"
                                aria-expanded="false">
-                                Practice Management <span class="caret"></span>
+                                Practices <span class="caret"></span>
                             </a>
                             <ul class="dropdown-menu" role="menu">
                                 <li><a href="{{ URL::route('invite.create', []) }}">Send Onboarding Invite</a>
@@ -322,6 +321,7 @@
                                 </li>
                                 <li><a href="{{ URL::route('admin.programs.index', []) }}">Practices</a></li>
                                 <li><a href="{{ URL::route('locations.index', []) }}">Locations</a></li>
+                                <li><a href="{{ URL::route('practice.billing.create', []) }}">Invoice/Billable Patient Report</a></li>
                             </ul>
                         </li>
                     @endif

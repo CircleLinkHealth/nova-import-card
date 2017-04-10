@@ -14,6 +14,7 @@ class Practice extends Model
     protected $fillable = [
         'name',
         'display_name',
+        'active',
         'federal_tax_id',
         'user_id',
         'same_clinical_contact',
@@ -211,5 +212,17 @@ class Practice extends Model
     public function ehr()
     {
         return $this->belongsTo(Ehr::class);
+    }
+
+    public function scopeActive($q){
+
+        return $q->whereActive(1);
+
+    }
+
+    public static function active(){
+
+        return Practice::whereActive(1)->get();
+
     }
 }

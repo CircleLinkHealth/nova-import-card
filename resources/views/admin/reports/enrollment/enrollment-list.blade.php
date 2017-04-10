@@ -65,6 +65,12 @@
                                         <th>
                                             Consented At
                                         </th>
+                                        <th>
+                                            Preferred Days
+                                        </th>
+                                        <th>
+                                            Preferred Window
+                                        </th>
                                     </tr>
                                     </thead>
                                 </table>
@@ -99,6 +105,11 @@
                         {data: 'invite_opened_at', name: 'invite_opened_at'},
                         {data: 'last_attempt_at', name: 'last_attempt_at'},
                         {data: 'consented_at', name: 'consented_at'},
+                        {data: 'preferred_days', name: 'preferred_days'},
+                        {data: 'preferred_window', name: 'preferred_window'},
+
+
+
                     ],
 //                    "aaSorting":[3,'desc'],
                     "iDisplayLength": 25,

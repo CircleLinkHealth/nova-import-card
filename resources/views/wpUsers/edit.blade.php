@@ -503,6 +503,13 @@
                                             <div class="col-xs-10">{!! Form::text('hourly_rate', $patient->nurseInfo->hourly_rate, ['class' => 'form-control', 'style' => 'width:100%;']) !!}</div>
                                         </div>
 
+                                        <div class="row" style="padding: 10px 0px;">
+                                            <div class="col-xs-2">{!! Form::label('high_rate', 'Var. High Rate:') !!}</div>
+                                            <div class="col-xs-3">{!! Form::text('high_rate', $patient->nurseInfo->high_rate, ['class' => 'form-control', 'style' => 'width:100%;']) !!}</div>
+                                            <div class="col-xs-2">{!! Form::label('low_rate', 'Var. Low Rate:') !!}</div>
+                                            <div class="col-xs-3">{!! Form::text('low_rate', $patient->nurseInfo->low_rate, ['class' => 'form-control', 'style' => 'width:100%;']) !!}</div>
+                                        </div>
+
                                         <div class="row">
                                             <div class="col-xs-2">{!! Form::label('status', 'Status') !!}</div>
                                             <div class="col-xs-4">{!! Form::select('status', array('inactive' => 'Inactive', 'active' => 'Active'), $patient->nurseInfo->status, ['class' => 'form-control select-picker', 'style' => 'width:40%;']) !!}</div>
