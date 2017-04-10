@@ -54,13 +54,15 @@ class FinancialSummary extends SalesReportSection
 
             $billable = $this->service->billableCountForMonth($this->practice, $start);
             $billableDollars = $billable * 40;
-            $billableRounded = intval($billableDollars / 10) * 10;
+            $billableRounded = $billableDollars;
 
 
             if ($billableDollars == 0) {
                 $profit = 0;
             } else {
+
                 $profit = ($billableRounded * (1 - ($this->clhpppm / 40)));
+                $profit =  floor($profit / 10) * 10;
             }
 
             debug('billable: '.$billable .';profit: '. $profit .';rounded: '. $billableDollars);

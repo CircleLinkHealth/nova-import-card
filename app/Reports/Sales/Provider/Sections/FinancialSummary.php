@@ -57,9 +57,14 @@ class FinancialSummary extends SalesReportSection
             $billableRounded = intval($billableDollars / 10) * 10;
 
             if ($billableDollars == 0) {
+
                 $profit = 0;
+
             } else {
+
                 $profit = ($billableRounded * (1 - ($this->clhpppm / 40)));
+                $profit =  floor($profit / 10) * 10;
+
             }
 
 
