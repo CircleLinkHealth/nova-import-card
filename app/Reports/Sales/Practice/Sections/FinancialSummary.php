@@ -71,7 +71,7 @@ class FinancialSummary extends SalesReportSection
 
             $this->data['historical']['CCM Profit'][$month]
                 = ($this->clhpppm != 0)
-                ? '~' . money_format('%.0n', round($profit, 0))
+                ? money_format('%.0n', round($profit, 0))
                 : 'N/A';
 
         }
