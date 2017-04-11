@@ -10,6 +10,7 @@ use App\User;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Barryvdh\Snappy\Facades\SnappyPdf as PDF;
+use Illuminate\Support\Facades\Mail;
 
 class SalesReportsController extends Controller
 {
@@ -114,6 +115,27 @@ class SalesReportsController extends Controller
         $data['end'] = Carbon::parse($input['end_date'])->toDateString();
         $data['isEmail'] = false;
 
+        if ($input['submit'] == 'test') {
+
+            $subjectPractice = $practice->display_name . '\'s CCM Weekly Summary';
+
+            $practiceData['isEmail'] = true;
+
+            $email = $input['email'];
+
+            Mail::send('sales.by-practice.report', ['data' => $data], function ($message) use
+            (
+                $email,
+                $subjectPractice
+            ) {
+                $message->from('notifications@careplanmanager.com', 'CircleLink Health');
+                $message->to($email)->subject($subjectPractice);
+            });
+
+            return 'Sent to ' . $input['email'] . '!';
+
+        }
+
         //PDF download support
         if ($input['submit'] == 'download') {
 
@@ -125,9 +147,7 @@ class SalesReportsController extends Controller
 
             $pdf->save($path, true);
 
-            return response()->download($path, $name, [
-                'Content-Length: ' . filesize($path),
-            ]);
+            return response()->download($path, $name, ['Content-Length: ' . filesize($path),]);
 
         }
 
@@ -135,10 +155,12 @@ class SalesReportsController extends Controller
 
     }
 
-    //LOCATION REPORTS
+//LOCATION REPORTS
 
-    public function createLocationReport(Request $request)
-    {
+    public
+    function createLocationReport(
+        Request $request
+    ) {
 
         $programs = Practice::all()->pluck('display_name', 'id');
 
@@ -157,8 +179,10 @@ class SalesReportsController extends Controller
 
     }
 
-    public function makeLocationReport(Request $request)
-    {
+    public
+    function makeLocationReport(
+        Request $request
+    ) {
 
         $input = $request->all();
 
