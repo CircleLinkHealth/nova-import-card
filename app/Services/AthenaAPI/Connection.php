@@ -88,6 +88,10 @@ class Connection {
 
         $authorization = $this->call('POST', $url, $parameters, $headers);
 
+        if (!isset($authorization['access_token'])) {
+            \Log::alert($authorization);
+        }
+
         $this->token = $authorization['access_token'];
         $this->refresh_token = $authorization['refresh_token'];
     }
