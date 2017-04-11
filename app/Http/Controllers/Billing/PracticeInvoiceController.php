@@ -44,7 +44,6 @@ class PracticeInvoiceController extends Controller
             ->where('rejected', 0)
             ->count();
 
-
         return view('admin.reports.billing', compact([
             'practices',
             'currentMonth',
