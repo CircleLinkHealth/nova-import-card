@@ -27,7 +27,8 @@
                                         Active Program<br>
                                         Select All <kbd><kbd>cmd</kbd> + <kbd>A</kbd></kbd></label>
                                     <div class="col-md-6">
-                                        <select id="practice" name="practice" class="practices dropdown Valid form-control"
+                                        <select id="practice" name="practice"
+                                                class="practices dropdown Valid form-control"
                                                 required>
                                             @foreach($practices as $key => $value)
                                                 <option value="{{$key}}">{{$value}}</option>
@@ -86,6 +87,44 @@
                                 </div>
 
                             </fieldset>
+
+                            <div class="form-group" style="padding-left:40px;">
+                                <div class="panel-group" id="accordion">
+
+                                    <div>
+                                        <label data-toggle="collapse" data-target="#collapseOne" class="col-md-1"
+                                               style="width: 13%">
+                                            <div class="radio"><input type="checkbox" name="has_extra_time"
+                                                                      id="has_extra_time"
+                                                                      value="has_extra_time"/><label
+                                                        for="phone"><span> </span>Send As Email</label>
+                                            </div>
+                                        </label>
+                                    </div>
+
+                                    <div id="collapseOne" class="panel-collapse collapse in">
+
+                                        <div class="form-group">
+                                            <div class="col-md-3">
+                                                <input class="form-control" type="email"
+                                                       value="" placeholder="Send To..."
+                                                       name="email"
+                                                       id="email">
+                                            </div>
+                                            <div class="col-md-3">
+                                                <button id="submit" name="submit" value="test"
+                                                        class="btn btn-success">
+                                                    Forward Report To Email
+                                                </button>
+                                            </div>
+                                        </div>
+
+                                    </div>
+
+                                </div>
+
+                            </div>
+
                         </form>
 
                         <div class="row">
@@ -101,4 +140,10 @@
             </div>
         </div>
     </div>
+
+    <script>
+
+        $('.collapse').collapse();
+
+    </script>
 @stop
