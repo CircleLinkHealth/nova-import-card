@@ -3,6 +3,7 @@
 namespace App\Billing\Practices;
 
 
+use App\AppConfig;
 use App\CLH\CCD\Importer\SnomedToCpmIcdMap;
 use App\Patient;
 use App\PatientMonthlySummary;
@@ -74,6 +75,7 @@ class PracticeInvoiceGenerator
         $data['month'] = $month->toDateString();
 
         $data['rate'] = $this->practice->clh_pppm;
+        $data['invoice_num'] = $this->incrementInvoiceNo();
 
         $data['billable'] = PatientMonthlySummary
             ::whereHas('patient_info', function ($q) use
@@ -192,6 +194,19 @@ class PracticeInvoiceGenerator
         return ($count > 0)
             ? true
             : false;
+
+    }
+
+    public function incrementInvoiceNo(){
+
+        $num = AppConfig::where('config_key', 'billing_invoice_count')->first();
+
+        $current = $num['config_value'];
+
+        $num['config_value'] = $num['config_value'] + 1;
+        $num->save();
+
+        return $current;
 
     }
 
