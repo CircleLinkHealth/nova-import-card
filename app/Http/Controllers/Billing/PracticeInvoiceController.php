@@ -127,7 +127,7 @@ class PracticeInvoiceController extends Controller
     public function makeInvoices(Request $request)
     {
 
-        $data = [];
+        $invoices = [];
 
         foreach ($request->input('practices') as $practiceId) {
 
