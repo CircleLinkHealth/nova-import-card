@@ -88,7 +88,7 @@ class ApproveBillablePatientsReport
             $problems = $u->cpmProblems()->take(2)->pluck('name');
             $reportId = $report->id;
 
-            $lacksProblems = false; //;)
+            $lacksProblems = false; // ;)
 
             //for JS problem picker
             $options = $u->ccdProblems()->pluck('name');
