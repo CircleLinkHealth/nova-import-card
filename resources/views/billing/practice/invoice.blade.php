@@ -8,7 +8,7 @@
 </div>
 
 <ul>
-    <li>Invoice #:  ${{$invoice}}/patient</li>
+    <li>Invoice #:  ${{$invoice_num}}/patient</li>
     <li>Rate: ${{$rate}}/patient</li>
     <li>Billable this month: {{$billable}}</li>
     <li>Invoice Amount: ${{$invoice_amount}}.00</li>
