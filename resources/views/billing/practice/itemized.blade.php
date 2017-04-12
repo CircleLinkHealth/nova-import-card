@@ -13,8 +13,8 @@
             <th style="width: 20%">Patient Name</th>
             <th style="width: 20%">DOB</th>
             <th style="width: 20%">CCM Mins</th>
-            <th style="width: 20%">Conditions I (Code)</th>
-            <th style="width: 20%">Conditions II (Code)</th>
+            <th style="width: 20%">Condition I (Code)</th>
+            <th style="width: 20%">Condition II (Code)</th>
         </tr>
 
         @if(isset($patientData))
@@ -24,8 +24,8 @@
                     <td>{{$data['name']}}</td>
                     <td>{{$data['dob']}}</td>
                     <td>{{$data['ccm_time']}}</td>
-                    <td>{{$data['p1']}}</td>
-                    <td>{{$data['p2']}}</td>
+                    <td>{{$data['problems0']}}</td>
+                    <td>{{$data['problems1'] ?? 'N/A'}}</td>
                 </tr>
             @endforeach
         @endif

@@ -3,6 +3,7 @@
 namespace App\Billing\Practices;
 
 
+use App\CLH\CCD\Importer\SnomedToCpmIcdMap;
 use App\Patient;
 use App\PatientMonthlySummary;
 use App\Practice;
@@ -113,6 +114,7 @@ class PracticeInvoiceGenerator
 //                    ->where('month_year', Carbon::now()->firstOfMonth()->toDateString())
                     ->where('month_year', $date)
                     ->where('no_of_successful_calls', '>', 0)
+                    ->whereNotNull('actor_id')
                     ->where('approved', 1);
 
             })
@@ -150,9 +152,11 @@ class PracticeInvoiceGenerator
             //@todo add problem type and code
             $problems = $u->cpmProblems()->take(2)->get();
 
-            $data['patientData'][$p->user_id]['p1'] = $report->billable_problem1;
-            $data['patientData'][$p->user_id]['p2'] = $report->billable_problem2;
-
+            $count = 0;
+            foreach ($problems as $problem){
+                $data['patientData'][$p->user_id]['problems'. $count] = $problem->name . ' (ICD10: ' . SnomedToCpmIcdMap::find($problem->id)->icd_10_code .')';
+                $count++;
+            }
         }
 
         return $data;
