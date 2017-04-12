@@ -86,7 +86,6 @@ class WeeklyReportDispatcher
                     Slack::to('#background-tasks')
                         ->send("The CPMbot just sent the organization weekly summary for $practice->display_name to $recipient");
 
-
                 }
             }
 
@@ -95,12 +94,14 @@ class WeeklyReportDispatcher
             //handle providers
             foreach ($providers_for_practice as $provider) {
 
-                $providerData = (new SalesByProviderReport(
-                    $provider,
-                    SalesByProviderReport::SECTIONS,
-                    $startRange,
-                    $endRange
-                ))->data(true);
+                $providerData =
+                    (new SalesByProviderReport(
+                        $provider,
+                        SalesByProviderReport::SECTIONS,
+                        $startRange,
+                        $endRange
+                    ))
+                    ->data(true);
 
                 $providerData['name'] = $provider->display_name;
                 $providerData['start'] = $startRange->toDateString();
