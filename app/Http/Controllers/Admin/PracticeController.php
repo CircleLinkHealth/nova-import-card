@@ -21,7 +21,7 @@ class PracticeController extends Controller
 			abort(403);
 		}
 		// display view
-        $wpBlogs = Practice::orderBy('id', 'desc')->get();
+        $wpBlogs = Practice::orderBy('id', 'desc')->whereActive(1)->get();
 		return view('admin.wpBlogs.index', [ 'wpBlogs' => $wpBlogs ]);
 	}
 
@@ -65,6 +65,9 @@ class PracticeController extends Controller
 		$program->display_name = $params['display_name'];
 		$program->weekly_report_recipients = $params['weekly_report_recipients'];
         $program->clh_pppm = $params['clh_pppm'];
+
+        $program->active = isset($params['active']) ? 1 : 0;
+
         $program->save();
 
 		// attach to all users who get auto attached
@@ -153,6 +156,8 @@ class PracticeController extends Controller
 		$program->display_name = $params['display_name'];
 		$program->weekly_report_recipients = $params['weekly_report_recipients'];
 		$program->clh_pppm = $params['clh_pppm'];
+
+        $program->active = isset($params['active']) ? 1 : 0;
 
 		$program->save();
 		return redirect()->back()->with('messages', ['successfully updated program']);
