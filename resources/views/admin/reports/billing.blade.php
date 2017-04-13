@@ -109,14 +109,14 @@
 
                                 <div class="col-md-12 row">
                                     <h5 style="line-height: 20px;">
-                                        <div class="col-md-3"><span><b>Approved: </b></span><span id="approved-count"
+                                        <div class="col-md-3"><span><b>Total Approved: </b></span><span id="approved-count"
                                                                                                   style="color: green">{{$approved}}</span><br>
                                         </div>
-                                        <div class="col-md-3"><span><b>Flagged: </b></span><span
+                                        <div class="col-md-3"><span><b>Total Flagged: </b></span><span
                                                     style="color: darkorange"
                                                     id="toQA-count">{{$toQA}}</span><br>
                                         </div>
-                                        <div class="col-md-3"><span><b>Rejected: </b></span><span style="color: darkred"
+                                        <div class="col-md-3"><span><b>Total Rejected: </b></span><span style="color: darkred"
                                                                                                   id="rejected-count">{{$rejected}}</span><br>
                                         </div>
                                     </h5>
