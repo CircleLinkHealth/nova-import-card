@@ -136,7 +136,7 @@ class PracticeInvoiceGenerator
         //name, dob, ccm, 2 conditions
 
         $data = [];
-        $data['name'] = $this->practice->name;
+        $data['name'] = $this->practice->display_name;
         $data['month'] = $date;
 
         foreach ($patients as $p) {
