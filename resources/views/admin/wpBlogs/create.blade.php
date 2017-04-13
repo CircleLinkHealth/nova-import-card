@@ -3,7 +3,7 @@
 @section('content')
     <style>
         .form-group {
-            margin:20px;
+            margin: 20px;
         }
     </style>
     <div class="container-fluid">
@@ -53,31 +53,30 @@
 
                             <div class="row" style="margin-top:20px;">
                                 <div class="col-xs-2">{!! Form::label('weekly_report_recipients', 'Weekly Organization Summary Recipients (comma separated, w/ spaces after comma) ') !!}</div>
-                                <div class="col-xs-10"><textarea name="weekly_report_recipients" style="width: 100%"> </textarea></div>
+                                <div class="col-xs-10"><textarea name="weekly_report_recipients"
+                                                                 style="width: 100%"> </textarea></div>
                             </div>
 
                             <div class="row" style="margin-top:20px;">
                                 <div class="col-xs-2">{!! Form::label('clh_pppm', 'CPM Price') !!}</div>
-                                <div class="col-xs-10"><input class="form-control" name="clh_pppm" style="width: 100%"/>
+                                <div class="col-xs-3"><input class="form-control" name="clh_pppm" style="width: 100%"/>
+                                </div>
+
+                                <div class="col-xs-1">{!! Form::label('term_days', 'Terms (days)') !!}</div>
+                                <div class="col-xs-3"><input class="form-control" name="term_days" style="width: 100%"
+                                                             value="30"/>
                                 </div>
                             </div>
-
-                            <div class="row" style="margin-top:20px;">
-                                <div class="col-xs-2">{!! Form::label('term_days', 'Terms') !!}</div>
-                                <div class="col-xs-10"><input class="form-control" name="term_days" style="width: 100%" value="30"/>
-                                </div>
-                            </div>
-
 
                             <div class="row" style="margin-top:20px;">
                                 <div class="col-xs-2">{!! Form::label('active', 'Active') !!}</div>
-                                <div class="col-xs-10"><input type="checkbox" class="form-control" name="active" style="width: 100%" checked/>
+                                <div class="col-xs-10"><input type="checkbox" class="form-control" name="active"
+                                                              style="width: 100%" checked/>
                                 </div>
                             </div>
 
 
                         </div>
-
 
 
                         <div class="row" style="margin-top:50px;">

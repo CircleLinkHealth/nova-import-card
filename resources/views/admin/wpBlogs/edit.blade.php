@@ -67,25 +67,25 @@
 
                             <div class="row" style="margin-top:20px;">
                                 <div class="col-xs-2">{!! Form::label('clh_pppm', 'CPM Price') !!}</div>
-                                <div class="col-xs-10"><input class="form-control" name="clh_pppm" style="width: 100%"
+                                <div class="col-xs-3"><input class="form-control" name="clh_pppm" style="width: 100%"
                                                               @if(isset($program->clh_pppm)) value="{{$program->clh_pppm}}" @endif/>
                                 </div>
-                            </div>
-
-                            <div class="row" style="margin-top:20px;">
-                                <div class="col-xs-2">{!! Form::label('term_days', 'Terms') !!}</div>
-                                <div class="col-xs-10"><input class="form-control" name="term_days" style="width: 100%"
-                                                              @if(isset($program->term_days)) value="{{$program->term_days}}" @endif/>
+                                <div class="col-xs-1">{!! Form::label('term_days', 'Terms (days)') !!}</div>
+                                <div class="col-xs-3"><input class="form-control" name="term_days" style="width: 100%"
+                                                             @if(isset($program->term_days)) value="{{$program->term_days}}" @endif/>
                                 </div>
                             </div>
 
                             <div class="row" style="margin-top:20px;">
+
                                 <div class="col-xs-2">{!! Form::label('active', 'Active Practice') !!}</div>
                                 <div class="col-xs-10"><input class="form-control" type="checkbox" name="active"
                                                               style="width: 100%"
                                                               @if($program->active == 1) checked @endif/>
                                 </div>
+
                             </div>
+
 
                         </div>
 
