@@ -315,6 +315,7 @@
                                 Practices <span class="caret"></span>
                             </a>
                             <ul class="dropdown-menu" role="menu">
+                                <li><a href="{{ route('admin.programs.create') }}">Add New</a></li>
                                 <li><a href="{{ URL::route('admin.programs.index', []) }}">View Active</a></li>
 
                                 <li><a href="{{ URL::route('invite.create', []) }}">Send Onboarding Invite</a>
