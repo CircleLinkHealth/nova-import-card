@@ -65,6 +65,7 @@ class PracticeController extends Controller
 		$program->display_name = $params['display_name'];
 		$program->weekly_report_recipients = $params['weekly_report_recipients'];
         $program->clh_pppm = $params['clh_pppm'];
+        $program->term_days = $params['term_days'];
 
         $program->active = isset($params['active']) ? 1 : 0;
 
@@ -156,6 +157,7 @@ class PracticeController extends Controller
 		$program->display_name = $params['display_name'];
 		$program->weekly_report_recipients = $params['weekly_report_recipients'];
 		$program->clh_pppm = $params['clh_pppm'];
+		$program->term_days = $params['term_days'];
 
         $program->active = isset($params['active']) ? 1 : 0;
 
