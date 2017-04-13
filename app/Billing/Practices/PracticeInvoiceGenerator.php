@@ -72,10 +72,13 @@ class PracticeInvoiceGenerator
 //            www.circlelinkhealth.com<br/> ';
 
         $data['practice'] = $this->practice;
-        $data['month'] = $month->toDateString();
+        $data['month'] = $month->format('F, Y');
 
         $data['rate'] = $this->practice->clh_pppm;
         $data['invoice_num'] = $this->incrementInvoiceNo();
+
+        $data['invoice_date'] = Carbon::today()->toDateString();
+        $data['due_by'] = Carbon::today()->addDays($this->practice->term_days)->toDateString();
 
         $data['billable'] = PatientMonthlySummary
             ::whereHas('patient_info', function ($q) use
