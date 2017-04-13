@@ -11,7 +11,7 @@
             <div class="col-md-10 col-md-offset-1">
                 <div class="row">
                     <div class="col-sm-8">
-                        <h2>Edit Program</h2>
+                        <h2>Edit Practice: {{ $program->display_name }}</h2>
                     </div>
                     <div class="col-sm-4">
                         <div class="pull-right" style="margin:20px;">
@@ -20,7 +20,7 @@
                 </div>
                 <div class="panel panel-default">
                     <div class="panel-heading">
-                        Program ID: {{ $program->id }}
+                        Practice ID: {{ $program->id }}
                     </div>
                     <div class="panel-body">
                         @include('errors.errors')
@@ -37,8 +37,6 @@
                                 </div>
                             </div>
                         </div>
-
-                        <h2>Program - {{ $program->display_name }}</h2>
 
                         <div class="form-group">
 
@@ -72,13 +70,19 @@
                                 </div>
                             </div>
 
+                                <div class="row" style="margin-top:20px;">
+                                    <div class="col-xs-2">{!! Form::label('active', 'Active Practice') !!}</div>
+                                    <div class="col-xs-10"><input class="form-control" type="checkbox" name="active" style="width: 100%" @if($program->active == 1) checked @endif/>
+                                    </div>
+                                </div>
+
                         </div>
 
                         <div class="row" style="margin-top:50px;">
                             <div class="col-sm-12">
                                 <div class="pull-right">
                                     <a href="{{ URL::route('admin.programs.index', array()) }}" class="btn btn-danger">Cancel</a>
-                                    {!! Form::submit('Update Program', array('class' => 'btn btn-success')) !!}
+                                    {!! Form::submit('Update Practice', array('class' => 'btn btn-success')) !!}
                                     </form>
                                 </div>
                             </div>
