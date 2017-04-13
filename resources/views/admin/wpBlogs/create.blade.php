@@ -57,10 +57,17 @@
                             </div>
 
                             <div class="row" style="margin-top:20px;">
-                                <div class="col-xs-2">{!! Form::label('clh_pppm', 'CLH PPPM') !!}</div>
+                                <div class="col-xs-2">{!! Form::label('clh_pppm', 'CPM Price') !!}</div>
                                 <div class="col-xs-10"><input class="form-control" name="clh_pppm" style="width: 100%"/>
                                 </div>
                             </div>
+
+                            <div class="row" style="margin-top:20px;">
+                                <div class="col-xs-2">{!! Form::label('term_days', 'Terms') !!}</div>
+                                <div class="col-xs-10"><input class="form-control" name="term_days" style="width: 100%" value="30"/>
+                                </div>
+                            </div>
+
 
                             <div class="row" style="margin-top:20px;">
                                 <div class="col-xs-2">{!! Form::label('active', 'Active') !!}</div>
