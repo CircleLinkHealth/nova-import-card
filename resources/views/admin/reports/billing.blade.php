@@ -42,6 +42,11 @@
                             <input class="form-control" name="otherProblem" id="otherProblem">
                         </div>
 
+                        <div class="form-group">
+                            <label for="code">Problem ICD10 Code</label>
+                            <input class="form-control" name="code" id="code">
+                        </div>
+
                         <input type="hidden" id="report_id" name="report_id">
                         <input type="hidden" id="problem_no" name="problem_no">
                     </form>
@@ -146,7 +151,13 @@
                                             Problem 1
                                         </th>
                                         <th>
+                                            Problem 1 Code
+                                        </th>
+                                        <th>
                                             Problem 2
+                                        </th>
+                                        <th>
+                                            Problem 2 Code
                                         </th>
                                         <th>
                                             #Successful Calls
@@ -198,7 +209,9 @@
                         {data: 'status', name: 'status'},
                         {data: 'ccm', name: 'ccm'},
                         {data: 'problem1', name: 'problem1'},
+                        {data: 'problem1_code', name: 'problem1_code'},
                         {data: 'problem2', name: 'problem2'},
+                        {data: 'problem2_code', name: 'problem2_code'},
                         {data: 'no_of_successful_calls', name: 'no_of_successful_calls'},
                         {data: 'approve', name: 'approve'},
                         {data: 'reject', name: 'reject'},
@@ -294,7 +307,6 @@
                     });
 
                 });
-
 
                 //HANDLE REJECTION
                 $('#billable_list').on('change', '.rejected_checkbox', function () {
@@ -393,6 +405,12 @@
 
                             $('#billable_list').DataTable().ajax.reload();
                             $('#problemPicker').modal('hide');
+
+                            $('#select_problem').val('');
+                            $('#otherProblem').val('');
+                            $('#code').val('');
+                            $('#report_id').val('');
+                            $('#problem_no').val('');
 
                         }
                     });

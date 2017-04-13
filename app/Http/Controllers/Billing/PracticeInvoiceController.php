@@ -151,6 +151,7 @@ class PracticeInvoiceController extends Controller
         $report = PatientMonthlySummary::find($input['report_id']);
 
         $key = $input['problem_no'];
+        $codeKey = $input['problem_no'] . '_code';
 
         if($input['select_problem'] == 'other') {
 
@@ -161,6 +162,8 @@ class PracticeInvoiceController extends Controller
             $report->$key = $input['select_problem'];
 
         }
+
+        $report->$codeKey = $input['code'];
 
         $report->save();
 
