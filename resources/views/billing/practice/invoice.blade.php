@@ -4,19 +4,24 @@
 <div class="container">
     <div class="page-header">
         <h1><b>{{$practice->display_name}}</b>
-            <small><span style="color: #4fb2e2;"> CircleLink Health Invoice </span> <b>#{{$invoice_num}}</b> ({{$month}})
+            <small><span style="color: #4fb2e2;"> CircleLink Health Invoice </span><b>#{{$invoice_num}} </b>({{$month}})
             </small>
         </h1>
     </div>
-
-    <div class="col-sm-12" style="padding-bottom: 15px;">
-        <span style="font-size: 17px;">
-                <b>Invoice Date</b> {{$invoice_date}} • <b>Due By </b> {{$due_by}}
-
+    <div class="col-sm-12" style="padding-bottom: 25px;">
+        <div class="row col-sm-6">
+            <span>
+                CircleLink Health LLC <br>
+                290 Harbor Drive<br>
+                Stamford, CT 06902<br>
+                janstey@circlelinkhealth.com<br>
+                (203) 858-7206<br>
+                www.circlelinkhealth.com <br>
             </span>
+        </div>
     </div>
 
-    <div class="col-sm-12" style="padding-bottom: 25px;">
+    <div class="col-sm-12" style="padding-bottom: 10px;">
 
         <div class="row col-sm-6">
             <b>BILL TO:</b><br>
@@ -29,16 +34,14 @@
 
         </div>
 
-        <div class="row col-sm-6">
-            <span>
-                CircleLink Health LLC <br>
-                290 Harbor Drive<br>
-                Stamford, CT 06902<br>
-                janstey@circlelinkhealth.com • (203) 858-7206<br>
-                www.circlelinkhealth.com <br>
-            </span>
-        </div>
+    </div>
 
+    <div class="col-sm-12" style="padding-bottom: 15px;">
+        <span style="font-size: 17px;">
+                <b>Invoice Date</b> {{$invoice_date}} <br>
+            <b>Due By </b> {{$due_by}}
+
+            </span>
     </div>
 
     <div class="col-sm-12 row">
@@ -73,7 +76,7 @@
 
 
     <div class="col-sm-12 row">
-        Thank you for your business {{"\u{270C}"}}<br/><br/>
+        Thank you for your business<br/><br/>
 
         Stay on time and save admin time by automating payments via Electronic Funds Transfer or Credit Card
         Payment.<br/><br/>
@@ -82,4 +85,3 @@
     </div>
 
 </div>
-<?php dd(); ?>
