@@ -146,6 +146,7 @@ class PracticeInvoiceGenerator
             $data['patientData'][$p->user_id]['name'] = $u->fullName;
             $data['patientData'][$p->user_id]['dob'] = $u->birth_date;
             $data['patientData'][$p->user_id]['practice'] = $u->primaryPractice->id;
+            $data['patientData'][$p->user_id]['provider'] = $u->billingProviderName;
 
             $report = $p->patientSummaries()
 //                    ->where('month_year', Carbon::now()->firstOfMonth()->toDateString());
@@ -155,13 +156,12 @@ class PracticeInvoiceGenerator
             $data['patientData'][$p->user_id]['ccm_time'] = round($report['ccm_time'] / 60, 2);
 
             //@todo add problem type and code
-            $problems = $u->cpmProblems()->take(2)->get();
 
-            $count = 0;
-            foreach ($problems as $problem){
-                $data['patientData'][$p->user_id]['problems'. $count] = $problem->name . ' (ICD10: ' . SnomedToCpmIcdMap::find($problem->id)->icd_10_code .')';
-                $count++;
-            }
+            $data['patientData'][$p->user_id]['problem1'] = $report->billable_problem1;
+            $data['patientData'][$p->user_id]['problem1_code'] = $report->billable_problem1_code;
+            $data['patientData'][$p->user_id]['problem2'] = $report->billable_problem2;
+            $data['patientData'][$p->user_id]['problem2_code'] = $report->billable_problem2_code;
+
         }
 
         return $data;

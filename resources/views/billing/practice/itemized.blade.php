@@ -10,22 +10,29 @@
 
     <table class="table table-bordered">
         <tr>
-            <th style="width: 20%">Patient Name</th>
-            <th style="width: 20%">DOB</th>
-            <th style="width: 20%">CCM Mins</th>
-            <th style="width: 20%">Condition I (Code)</th>
-            <th style="width: 20%">Condition II (Code)</th>
+            <th>Provider Name</th>
+            <th>Patient Name</th>
+            <th>DOB</th>
+            <th>CCM Mins</th>
+            <th>Condition I</th>
+            <th>Condition I Code</th>
+            <th>Condition II</th>
+            <th>Condition II Code</th>
+
         </tr>
 
         @if(isset($patientData))
             @foreach($patientData as $data)
 
                 <tr>
+                    <td>{{$data['provider']}}</td>
                     <td>{{$data['name']}}</td>
                     <td>{{$data['dob']}}</td>
                     <td>{{$data['ccm_time']}}</td>
-                    <td>{{$data['problems0']}}</td>
-                    <td>{{$data['problems1'] ?? 'N/A'}}</td>
+                    <td>{{$data['problem1']}}</td>
+                    <td>{{$data['problem1_code']}}</td>
+                    <td>{{$data['problem2']}}</td>
+                    <td>{{$data['problem2_code']}}</td>
                 </tr>
             @endforeach
         @endif
