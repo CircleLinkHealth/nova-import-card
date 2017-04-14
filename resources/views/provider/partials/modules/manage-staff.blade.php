@@ -308,6 +308,15 @@
         </div>
     </div>
 
+    <div class="row">
+        <div v-on:click="submitForm('{{$postUrl}}')"
+             class="btn blue waves-effect waves-light col s12"
+             v-bind:class="{disabled: !formCompleted}"
+             id="store-staff">
+            {{$submitLabel}}
+        </div>
+    </div>
+
     {!! Form::close() !!}
 </div>
 
