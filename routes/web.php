@@ -488,6 +488,12 @@ Route::group(['middleware' => 'auth'], function () {
         'prefix'     => 'admin',
     ], function () {
 
+        Route::get('php-info', function() {
+           if (auth()->user()->hasRole('administrator')) {
+               dd(phpinfo());
+           }
+        });
+
         Route::resource('medication-groups-maps', 'MedicationGroupsMapController');
 
         Route::post('get-athena-ccdas', [
