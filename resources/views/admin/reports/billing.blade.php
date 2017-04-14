@@ -221,7 +221,7 @@
 
                     "columnDefs": [
                         {
-                            "targets": [11, 12],
+                            "targets": [13, 14],
                             "visible": false,
                             "searchable": false
                         }
