@@ -26,7 +26,7 @@
         <ul class="collapsible" data-collapsible="accordion">
             <li v-for="(index, loc) in newLocations" id="location-@{{index}}" v-on:click="isValidated(index)">
                 <div class="collapsible-header" v-bind:class="{ active: index == newLocations.length - 1 }">
-                    <div class="col s10">
+                    <div class="col s8">
                             <span v-if="loc.name">
                                 @{{loc.name | uppercase}}
                             </span>
@@ -34,7 +34,7 @@
                                 NEW LOCATION
                             </span>
                     </div>
-                    <div class="col s2">
+                    <div class="col s4 right-align">
                         <div v-if="isValidated(index)">
                             <span class="green-text">Valid Data</span>
                         </div>
