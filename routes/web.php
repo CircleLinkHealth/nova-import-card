@@ -22,15 +22,12 @@ if (app()->environment() != 'production') {
     Route::get('/sms/test', 'TwilioController@sendTestSMS');
 
     Route::get('/rohan', function () {
-
-
-        (new WeeklyReportDispatcher())->exec();
-
+        
 //        dd((new \App\Billing\Practices\PracticeInvoiceGenerator(
 //            \App\Practice::find(21), Carbon::parse('2017-03-01')
 //        ))->checkForPendingQAForPractice());
 
-        dd(intval(80 / 100));
+        dd(ceil(17 / 10) * 10);
 
     });
 
