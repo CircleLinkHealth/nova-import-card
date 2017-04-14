@@ -227,7 +227,7 @@
                         }
                     ],
                     "iDisplayLength": 25,
-                    "aaSorting": [12, 'desc'],
+                    "aaSorting": [14, 'desc'],
                     "fnRowCallback": function (nRow, aData, iDisplayIndex, iDisplayIndexFull) {
                         if (aData['background_color'] != '') {
                             $('td', nRow).css('background-color', aData['background_color']);
