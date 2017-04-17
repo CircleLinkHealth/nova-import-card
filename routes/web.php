@@ -655,6 +655,11 @@ Route::group(['middleware' => 'auth'], function () {
                     'as'   => 'monthly.billing.store-problem',
                 ]);
 
+                Route::post('/getBillingCount', [
+                    'uses' => 'Billing\PracticeInvoiceController@getCounts',
+                    'as'   => 'monthly.billing.counts',
+                ]);
+
                 Route::post('/updateRejected', [
                     'uses' => 'Billing\PracticeInvoiceController@updateRejected',
                     'as'   => 'monthly.billing.reject',
