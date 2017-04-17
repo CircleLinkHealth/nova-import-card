@@ -110,14 +110,15 @@
                                 <div class="col-md-12 row">
                                     <h5 style="line-height: 20px;">
                                         <div class="col-md-3"><span><b>Total Approved: </b></span><span id="approved-count"
-                                                                                                  style="color: green">Loading...</span><br>
+                                                                                                  style="color: green">{{$approved}}</span><br>
                                         </div>
                                         <div class="col-md-3"><span><b>Total Flagged: </b></span><span
                                                     style="color: darkorange"
-                                                    id="toQA-count">Loading...</span><br>
+                                                    id="toQA-count">{{$toQA}}</span><br>
                                         </div>
-                                        <div class="col-md-3"><span><b>Total Rejected: </b></span><span style="color: darkred"
-                                                                                                  id="rejected-count">Loading...</span><br>
+                                        <div class="col-md-3"><span><b>Total Rejected: </b></span><span
+                                                    style="color: darkred"
+                                                    id="rejected-count">{{$rejected}}</span><br>
                                         </div>
                                     </h5>
                                 </div>
@@ -233,31 +234,7 @@
                             $('td', nRow).css('background-color', aData['background_color']);
                         }
                     },
-                    "initComplete": function( settings, json ) {
-
-
-
-                        console.log($("#date option:selected").text());
-                        $.ajax({
-                            type: "POST",
-                            url: '{!! route('monthly.billing.counts') !!}',
-                            data: {
-                                //send report id to mark
-                                date: $("#date option:selected").text()
-                            },
-
-
-
-                            success: function (data) {
-
-                                $("#approved-count").text(data.approved);
-                                $("#toQA-count").text(data.toQA);
-                                $("#rejected-count").text(data.rejected);
-
-                                console.log(data)
-
-                            }
-                        });
+                    "initComplete": function (settings, json) {
 
                     }
 
@@ -276,47 +253,24 @@
                 //HANDLE ACCEPTANCE
                 $('#billable_list').on('change', '.approved_checkbox', function () {
 
-                    var rejectedBox = $('#'+this.id + '.rejected_checkbox');
+                    setLoadingLabels();
 
-                    var url = '{!! route('monthly.billing.approve') !!}';
-                    var currentAcc = $('#approved-count').html();
-                    var currentQA = parseInt($("#toQA-count").html());
-
-                    //if none were checked, gotta --QA
-                    if (rejectedBox.is(':checked') == false && $(this).is(':checked') == true) {
-
-                        $("#toQA-count").text(currentQA - 1);
-
-                    }
+                    var rejectedBox = $('#' + this.id + '.rejected_checkbox');
+                    let approved    = 0;
 
                     if ($(this).is(':checked')) {
-                        console.log("Just checked Approved");
-
-                        var approved = 1;
-
-                        $("#approved-count").text(parseInt(currentAcc) + 1);
+//
+                        approved = 1;
 
                         if (rejectedBox.is(':checked') == true) {
 
-                            console.log("Just unchecked Approved")
                             rejectedBox.attr('checked', false);
 
                         }
-
-                    } else {
-
-                        var approved = 0;
-
-                        $("#approved-count").text(parseInt(currentAcc) - 1);
-
-                        //if both are unchecked, gotta ++ QA count
-                        if (rejectedBox.is(':checked') == false) {
-
-                            $("#toQA-count").text(currentQA + 1);
-
-                        }
-
+//
                     }
+
+                    var url = '{!! route('monthly.billing.approve') !!}';
 
                     $.ajax({
                         type: "POST",
@@ -325,11 +279,12 @@
                             //send report id to mark
                             report_id: this.id,
                             approved: approved,
+                            date: $("#date option:selected").text()
                         },
 
                         success: function (data) {
 
-                            console.log(data)
+                            updateBillingCounts(data.counts);
 
                         }
                     });
@@ -339,47 +294,25 @@
                 //HANDLE REJECTION
                 $('#billable_list').on('change', '.rejected_checkbox', function () {
 
+                    setLoadingLabels();
+
                     var approveBox = $('.approved_checkbox#' + this.id);
-
-                    var url = '{!! route('monthly.billing.reject') !!}';
-                    var currentRej = $('#rejected-count').html();
-                    var currentQA = parseInt($("#toQA-count").html());
-
-
-                    //if none were checked, gotta --QA
-                    if (approveBox.is(':checked') == false && $(this).is(':checked') == true) {
-
-                        $("#toQA-count").text(currentQA - 1);
-
-                    }
+                    var rejected   = 0;
 
                     if ($(this).is(':checked')) {
-                        console.log("Just checked Rejected");
 
-                        var rejected = 1;
-
-                        $("#rejected-count").text(parseInt(currentRej) + 1);
+                        rejected = 1;
 
                         if (approveBox.is(':checked') == true) {
 
-                            console.log("Just unchecked Approved")
                             approveBox.attr('checked', false);
 
                         }
 
-                    } else {
-
-                        var rejected = 0;
-                        $("#rejected-count").text(parseInt(currentRej) - 1);
-
-                        //if both are unchecked, gotta ++ QA count
-                        if (approveBox.is(':checked') == false) {
-
-                            $("#toQA-count").text(currentQA + 1);
-
-                        }
-
                     }
+
+                    var url = '{!! route('monthly.billing.reject') !!}';
+
 
                     $.ajax({
                         type: "POST",
@@ -388,11 +321,13 @@
                             //send report id to mark
                             report_id: this.id,
                             rejected: rejected,
+                            date: $("#date option:selected").text()
+
                         },
 
                         success: function (data) {
 
-                            console.log(data)
+                            updateBillingCounts(data.counts);
 
                         }
                     });
@@ -447,6 +382,22 @@
                 })
 
             });
+
+            function updateBillingCounts(data) {
+
+                $("#approved-count").text(data.approved);
+                $("#toQA-count").text(data.toQA);
+                $("#rejected-count").text(data.rejected);
+
+            }
+
+            function setLoadingLabels() {
+
+                $("#approved-count").text('Loading...');
+                $("#toQA-count").text('Loading...');
+                $("#rejected-count").text('Loading...');
+
+            }
 
 
         </script>

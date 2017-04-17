@@ -81,8 +81,8 @@ class PracticeInvoiceController extends Controller
             $report->rejected = 0;
 
         } else {
-            //approved was unchecked
 
+            //approved was unchecked
             $report->approved = 0;
 
         }
@@ -91,13 +91,21 @@ class PracticeInvoiceController extends Controller
         $report->actor_id = auth()->user()->id;
         $report->save();
 
-        return $report;
+        //used for view report counts
+        $counts = $this->getCounts($input['date']);
 
+        return response()->json(
+            [
+                'report_id' => $report->id,
+                'counts' => $counts
+            ]
+        );
+        
     }
 
     public function updateRejected(Request $request)
     {
-
+        
         $input = $request->input();
 
         $report = PatientMonthlySummary::find($input['report_id']);
@@ -120,8 +128,15 @@ class PracticeInvoiceController extends Controller
         $report->actor_id = auth()->user()->id;
         $report->save();
 
-        return $report;
+        //used for view report counts
+        $counts = $this->getCounts($input['date']);
 
+        return response()->json(
+            [
+                'report_id' => $report->id,
+                'counts' => $counts
+            ]
+        );
     }
 
     public function makeInvoices(Request $request)
@@ -172,11 +187,9 @@ class PracticeInvoiceController extends Controller
 
     }
 
-    public function getCounts(Request $request){
+    public function getCounts($date){
 
-        $input = $request->input();
-
-        $date = Carbon::parse($request->input('date'))->toDateString();
+        $date = Carbon::parse($date)->toDateString();
 
         $approved = PatientMonthlySummary
             ::where('month_year', $date)
@@ -195,12 +208,13 @@ class PracticeInvoiceController extends Controller
             ->where('rejected', 0)
             ->count();
 
-        return response()->json([
+        return [
+
             'approved' => $approved,
             'rejected' => $rejected,
             'toQA' => $toQA
 
-        ]);
+        ];
 
     }
 
