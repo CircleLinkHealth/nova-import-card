@@ -121,7 +121,7 @@ class ApproveBillablePatientsReport
                         $lacksProblems = true;
 
                         $billableProblems[$i]['name'] = "<button style='font-size: 10px' class='btn btn-primary problemPicker' name=$name value='$options' id='$report->id'>Select Problem</button >";
-                        $billableProblems[$i]['code'] = "<button style='font-size: 10px' class='btn btn-primary problemPicker' name=$nameCode value='$options' id='$report->id'>Select Code</button >";
+                        $billableProblems[$i]['code'] = 'Select Problem';
 
                     }
 
