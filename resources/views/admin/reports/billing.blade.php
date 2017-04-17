@@ -110,14 +110,14 @@
                                 <div class="col-md-12 row">
                                     <h5 style="line-height: 20px;">
                                         <div class="col-md-3"><span><b>Total Approved: </b></span><span id="approved-count"
-                                                                                                  style="color: green">{{$approved}}</span><br>
+                                                                                                  style="color: green">Loading...</span><br>
                                         </div>
                                         <div class="col-md-3"><span><b>Total Flagged: </b></span><span
                                                     style="color: darkorange"
-                                                    id="toQA-count">{{$toQA}}</span><br>
+                                                    id="toQA-count">Loading...</span><br>
                                         </div>
                                         <div class="col-md-3"><span><b>Total Rejected: </b></span><span style="color: darkred"
-                                                                                                  id="rejected-count">{{$rejected}}</span><br>
+                                                                                                  id="rejected-count">Loading...</span><br>
                                         </div>
                                     </h5>
                                 </div>
@@ -233,6 +233,34 @@
                             $('td', nRow).css('background-color', aData['background_color']);
                         }
                     },
+                    "initComplete": function( settings, json ) {
+
+
+
+                        console.log($("#date option:selected").text());
+                        $.ajax({
+                            type: "POST",
+                            url: '{!! route('monthly.billing.counts') !!}',
+                            data: {
+                                //send report id to mark
+                                date: $("#date option:selected").text()
+                            },
+
+
+
+                            success: function (data) {
+
+                                $("#approved-count").text(data.approved);
+                                $("#toQA-count").text(data.toQA);
+                                $("#rejected-count").text(data.rejected);
+
+                                console.log(data)
+
+                            }
+                        });
+
+                    }
+
 
                 });
 

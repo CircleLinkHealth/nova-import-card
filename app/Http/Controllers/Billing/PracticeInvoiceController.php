@@ -55,38 +55,6 @@ class PracticeInvoiceController extends Controller
 
     }
 
-    public function getCounts(Request $request){
-
-        $input = $request->input();
-
-        $date = $request->input('date');
-
-        $approved = PatientMonthlySummary
-            ::where('month_year', $date)
-            ->where('ccm_time', '>', 1199)
-            ->where('approved', 1)->count();
-
-        $rejected = PatientMonthlySummary
-            ::where('month_year', $date)
-            ->where('ccm_time', '>', 1199)
-            ->where('rejected', 1)->count();
-
-        $toQA = PatientMonthlySummary
-            ::where('month_year', $date)
-            ->where('ccm_time', '>', 1199)
-            ->where('approved', 0)
-            ->where('rejected', 0)
-            ->count();
-
-        return response()->json([
-           'approved' => $approved,
-           'rejected' => $rejected,
-           'toQA' => $toQA
-
-        ]);
-
-    }
-
     public function data(Request $request)
     {
         $input = $request->input();
@@ -201,6 +169,38 @@ class PracticeInvoiceController extends Controller
 
         return json_encode($key);
 
+
+    }
+
+    public function getCounts(Request $request){
+
+        $input = $request->input();
+
+        $date = Carbon::parse($request->input('date'))->toDateString();
+
+        $approved = PatientMonthlySummary
+            ::where('month_year', $date)
+            ->where('ccm_time', '>', 1199)
+            ->where('approved', 1)->count();
+
+        $rejected = PatientMonthlySummary
+            ::where('month_year', $date)
+            ->where('ccm_time', '>', 1199)
+            ->where('rejected', 1)->count();
+
+        $toQA = PatientMonthlySummary
+            ::where('month_year', $date)
+            ->where('ccm_time', '>', 1199)
+            ->where('approved', 0)
+            ->where('rejected', 0)
+            ->count();
+
+        return response()->json([
+            'approved' => $approved,
+            'rejected' => $rejected,
+            'toQA' => $toQA
+
+        ]);
 
     }
 
