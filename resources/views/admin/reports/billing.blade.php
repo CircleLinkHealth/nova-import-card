@@ -191,8 +191,8 @@
                         }
                     },
                     columns: [
-                        {data: 'name', name: 'name'},
                         {data: 'provider', name: 'provider'},
+                        {data: 'name', name: 'name'},
                         {data: 'practice', name: 'practice'},
                         {data: 'dob', name: 'dob'},
                         {data: 'status', name: 'status'},
