@@ -103,7 +103,7 @@ class PatientController extends Controller
             ->where('obs_unit', '!=', "invalid")
             ->where('obs_unit', '!=', "scheduled")
             ->orderBy('obs_date', 'desc')
-            ->take(200)
+            ->take(100)
             ->get();
 
         // build array of pcp
@@ -211,7 +211,6 @@ class PatientController extends Controller
             $observation_json[$section] .= "],";
         }
 
-        //dd($observation_json);
         //return response()->json($cpFeed);
         return view('wpUsers.patient.summary', [
             'program'          => $program,
