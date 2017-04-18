@@ -55,7 +55,7 @@ $location = empty($patient->getPreferredLocationName())
                         <li class="inline-block">{{(new App\CLH\Helpers\StringManipulation())->formatPhoneNumber($patient->phone) ?? 'N/A'}} </li>
                     </b>
                     <li><span> <b>Provider</b>: {{$provider}}  </span></li>
-                    <li><span> <b>Practice</b>: {{$patient->primaryProgramName()}} <b>Location</b>: {{$location}}  </span></li>
+                    <li><span> <b>Practice</b>: {{$patient->primaryProgramName()}} </span></li>
                     @if($patient->agentName)
                         <li class="inline-block"><b>Alternate Contact</b>: <span
                                     title="{{$patient->agentEmail}}">({{$patient->agentRelationship}}
