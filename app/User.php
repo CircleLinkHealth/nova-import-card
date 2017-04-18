@@ -511,6 +511,12 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
         return $this->hasMany('App\UserMeta', 'user_id', 'id');
     }
 
+    public function primaryProgramName()
+
+    {
+        return Practice::find($this->primaryProgramId())->display_name;
+    }
+
     public function getUserConfigByKey($key)
     {
         $userConfig = $this->userConfig();
