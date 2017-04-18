@@ -103,6 +103,7 @@ class PatientController extends Controller
             ->where('obs_unit', '!=', "invalid")
             ->where('obs_unit', '!=', "scheduled")
             ->orderBy('obs_date', 'desc')
+            ->take(200)
             ->get();
 
         // build array of pcp
