@@ -1,5 +1,6 @@
 <?php namespace App\Reports;
 
+use App\Activity;
 use App\CLH\CCD\Importer\SnomedToCpmIcdMap;
 use App\Patient;
 use App\User;
@@ -19,7 +20,6 @@ use Yajra\Datatables\Facades\Datatables;
 class ApproveBillablePatientsReport
 {
 
-    private $data;
     private $month;
     private $practice;
     private $patients;
@@ -39,9 +39,9 @@ class ApproveBillablePatientsReport
 
         $this->patients = Patient
             ::whereHas('patientSummaries', function ($q) {
-                $q->where('ccm_time', '>', 1199)
-//                    ->where('month_year', Carbon::now()->firstOfMonth()->toDateString())
-                    ->where('month_year', '2017-03-01')
+                $q
+//              ->where('month_year', Carbon::now()->firstOfMonth()->toDateString())
+                    ->where('month_year', $this->month)
                     ->where('no_of_successful_calls', '>', 0);
 
             });
@@ -60,7 +60,7 @@ class ApproveBillablePatientsReport
         }
 
         $this->patients = $this->patients->orderBy('updated_at', 'desc')
-            ->pluck('user_id');
+            ->get();
 
         return $this->patients;
 
@@ -72,10 +72,15 @@ class ApproveBillablePatientsReport
         $count = 0;
         $formatted = [];
 
-        foreach ($this->patients as $p) {
+        foreach ($this->patients as $info) {
 
-            $u = User::find($p);
-            $info = $u->patientInfo;
+            $ccm = Activity::totalTimeForPatientForMonth($info, Carbon::parse($this->month));
+
+            if($ccm < 1200){
+                continue;
+            }
+
+            $u = $info->user;
 
             $report = $info->patientSummaries()
 //                    ->where('month_year', Carbon::now()->firstOfMonth()->toDateString());
@@ -116,7 +121,6 @@ class ApproveBillablePatientsReport
                     } else {
 
                         $name ='billable_problem' . ($i+1);
-                        $nameCode ='billable_problem' . ($i+1) . '_code';
 
                         $lacksProblems = true;
 
@@ -175,7 +179,7 @@ class ApproveBillablePatientsReport
                 'provider'               => $u->billingProvider()->fullName,
                 'practice'               => $u->primaryPractice->display_name,
                 'dob'                    => $info->birth_date,
-                'ccm'                    => round($report->ccm_time / 60, 2),
+                'ccm'                    => round($ccm / 60, 2),
                 'problem1'               => $billableProblems[0]['name'],
                 'problem1_code'          => $billableProblems[0]['code'],
                 'problem2'               => $billableProblems[1]['name'],
