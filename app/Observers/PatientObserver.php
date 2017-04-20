@@ -3,6 +3,8 @@
 namespace App\Observers;
 
 use App\Patient;
+use App\Services\Phaxio\PhaxioService;
+use App\Services\PhiMail\PhiMail;
 use Carbon\Carbon;
 
 class PatientObserver
@@ -18,12 +20,25 @@ class PatientObserver
             return;
         }
 
-        $patient->user->notes()->create([
-            'author_id' => 948,
-            'body' => "Patient consented on $patient->consent_date",
-            'type' => 'Patient Consented',
+        $note = $patient->user->notes()->create([
+            'author_id'    => 948,
+            'body'         => "Patient consented on $patient->consent_date",
+            'type'         => 'Patient Consented',
             'performed_at' => Carbon::now()->toDateTimeString(),
         ]);
+
+        $pdfPath = $note->toPdf();
+        $efax = $patient->user->locations->first()->fax;
+
+        if ($efax) {
+            (new PhaxioService())->send($efax, $pdfPath);
+        }
+
+        $direct = $patient->user->billingProvider()->emr_direct_address;
+
+        if ($direct) {
+            (new PhiMail())->send($direct, $pdfPath);
+        }
     }
 
 }
