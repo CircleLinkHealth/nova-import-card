@@ -87,6 +87,10 @@ class AppointmentController extends Controller
         $provider = User::find($appointment->provider_id);
         if ($provider) {
             $data['provider_name'] = $provider->fullName;
+
+            if ($provider->providerInfo->specialty) {
+                $data['provider_name'] = "{$data['provider_name']}, {$provider->providerInfo->specialty}";
+            }
         } else {
             $data['provider_name'] = '';
         }
