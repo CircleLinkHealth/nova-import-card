@@ -13,7 +13,10 @@ class PatientObserver
      */
     public function created(Patient $patient)
     {
-
+        $patient->user->notes()->create([
+            'body' => "Patient consented on $patient->consent_date",
+            'type' => 'Note',
+        ]);
     }
 
 }
