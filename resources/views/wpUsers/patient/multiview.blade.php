@@ -222,7 +222,7 @@ $today = \Carbon\Carbon::now()->toFormattedDateString();
                     <div class="row">
                         <div class="col-xs-12">
                             <h2 class="patient-summary__subtitles patient-summary--careplan-background">We Are
-                                Treating</h2>
+                                Managing</h2>
                         </div>
                     </div>
                     <div class="row gutter">
