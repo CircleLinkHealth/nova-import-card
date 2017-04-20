@@ -3,6 +3,7 @@
 namespace App\Observers;
 
 use App\Patient;
+use Carbon\Carbon;
 
 class PatientObserver
 {
@@ -13,9 +14,15 @@ class PatientObserver
      */
     public function created(Patient $patient)
     {
+        if (!$patient->consent_date || !$patient->user) {
+            return;
+        }
+
         $patient->user->notes()->create([
+            'author_id' => 948,
             'body' => "Patient consented on $patient->consent_date",
-            'type' => 'Note',
+            'type' => 'Patient Consented',
+            'performed_at' => Carbon::now()->toDateTimeString(),
         ]);
     }
 
