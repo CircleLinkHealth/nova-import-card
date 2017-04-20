@@ -16,10 +16,28 @@ class PatientObserver
      */
     public function created(Patient $patient)
     {
-        if (!$patient->consent_date || !$patient->user) {
+        if (!$patient->consent_date) {
             return;
         }
 
+        $this->sendPatientConsentedNote($patient);
+    }
+
+    /**
+     * Listen to the Patient updated event.
+     *
+     * @param Patient $patient
+     */
+    public function updated(Patient $patient)
+    {
+        if (!$patient->isDirty('consent_date')) {
+            return;
+        }
+
+        $this->sendPatientConsentedNote($patient);
+    }
+
+    public function sendPatientConsentedNote(Patient $patient) {
         $note = $patient->user->notes()->create([
             'author_id'    => 948,
             'body'         => "Patient consented on $patient->consent_date",
@@ -28,17 +46,21 @@ class PatientObserver
         ]);
 
         $pdfPath = $note->toPdf();
-        $efax = $patient->user->locations->first()->fax;
 
-        if ($efax) {
-            (new PhaxioService())->send($efax, $pdfPath);
+        if ($patient->primaryPractice->settings->efax_pdf_notes) {
+            $efax = $patient->user->locations->first()->fax;
+
+            if ($efax) {
+                (new PhaxioService())->send($efax, $pdfPath);
+            }
         }
 
-        $direct = $patient->user->billingProvider()->emr_direct_address;
+        if ($patient->primaryPractice->settings->dm_pdf_notes) {
+            $direct = $patient->user->billingProvider()->emr_direct_address;
 
-        if ($direct) {
-            (new PhiMail())->send($direct, $pdfPath);
+            if ($direct) {
+                (new PhiMail())->send($direct, $pdfPath);
+            }
         }
     }
-
 }
