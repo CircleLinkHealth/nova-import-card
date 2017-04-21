@@ -23,10 +23,11 @@ if (app()->environment() != 'production') {
 
     Route::get('/rohan', function () {
 
+        $date = Carbon::parse('2017-03-01');
+
         $patients = Patient::all();
         $compare = [];
 
-        $date = Carbon::parse('2017-03-01');
 
         foreach ($patients as $patient) {
 
