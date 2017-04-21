@@ -139,6 +139,40 @@ class PracticeInvoiceController extends Controller
         );
     }
 
+    public function createInvoices()
+    {
+
+        $practices = Practice::active();
+        $testDate = '2017-03-01';
+
+        $readyToBill = [];
+        $needsQA = [];
+
+        foreach ($practices as $practice) {
+
+            $pending = (new PracticeInvoiceGenerator($practice,
+                Carbon::parse($testDate)))->checkForPendingQAForPractice();
+
+            if ($pending) {
+
+                $needsQA[] = $practice;
+
+            } else {
+
+                $readyToBill[] = $practice;
+
+            }
+
+        }
+
+        return view('billing.practice.create', compact(
+            [
+                'needsQA',
+                'readyToBill',
+            ]
+        ));
+    }
+
     public function makeInvoices(Request $request)
     {
 
@@ -216,35 +250,6 @@ class PracticeInvoiceController extends Controller
 
         ];
 
-    }
-
-    public function createInvoices()
-    {
-
-        $practices = Practice::active();
-        $testDate = '2017-03-01';
-
-        $readyToBill = [];
-        $needsQA = [];
-        foreach ($practices as $practice) {
-
-            $pending = (new PracticeInvoiceGenerator($practice,
-                Carbon::parse($testDate)))->checkForPendingQAForPractice();
-
-            if ($pending) {
-                $needsQA[] = $practice;
-            } else {
-                $readyToBill[] = $practice;
-            }
-
-        }
-
-        return view('billing.practice.create', compact(
-            [
-                'needsQA',
-                'readyToBill',
-            ]
-        ));
     }
 
 }

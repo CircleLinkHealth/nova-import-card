@@ -3,6 +3,7 @@
 namespace App\Billing\Practices;
 
 
+use App\Activity;
 use App\AppConfig;
 use App\CLH\CCD\Importer\SnomedToCpmIcdMap;
 use App\Patient;
@@ -104,6 +105,20 @@ class PracticeInvoiceGenerator
 
     }
 
+    public function incrementInvoiceNo()
+    {
+
+        $num = AppConfig::where('config_key', 'billing_invoice_count')->first();
+
+        $current = $num['config_value'];
+
+        $num['config_value'] = $num['config_value'] + 1;
+        $num->save();
+
+        return $current;
+
+    }
+
     public function getItemizedPatientData()
     {
 
@@ -172,44 +187,40 @@ class PracticeInvoiceGenerator
     {
 
         $practice = $this->practice;
-        $date = $this->month->toDateString();
+        $count = 0;
 
-        $count = PatientMonthlySummary::whereHas('patient_info', function ($k) use
-        (
-            $practice
-        ) {
+        $users = User
+            ::where('program_id', $practice->id)
+        ->whereHas('patientActivities', function ($a) {
+            $a->where('performed_at', '>', $this->month->firstOfMonth()->toDateTimeString())
+              ->where('performed_at', '<', $this->month->endOfMonth()->toDateTimeString());
+        })
+            ->whereHas('roles', function ($r){
+                $r->whereName('participant');
+            })
+            ->get();
 
-            $k->whereHas('user', function ($q) use
-            (
-                $practice
+        foreach ($users as $user){
 
-            ) {
-                $q->where('program_id', $practice->id);
-            });
+            $sum = Activity::where('patient_id', $user->id)
+            ->where('performed_at', '>', $this->month->firstOfMonth()->toDateTimeString())
+            ->where('performed_at', '<', $this->month->endOfMonth()->toDateTimeString())
+            ->sum('duration');
 
-        })//where patient is over 20, and hasn't been accepted or rejected.
-        ->where('month_year', $date)
-            ->where('ccm_time', '>', 1199)
-            ->where('approved', 0)
-            ->where('rejected', 0)
-            ->count();
+            $summary = $user->patientInfo->patientSummaries()->where('month_year', $this->month->firstOfMonth()->toDateString())->first();
+
+            if($summary == null){
+                continue;
+            }
+
+            if($sum > 1199 && $summary->approved == 0 && $summary->rejected == 0 && $summary->no_of_successful_calls > 0){
+                $count++;
+            }
+        }
 
         return ($count > 0)
             ? true
             : false;
-
-    }
-
-    public function incrementInvoiceNo(){
-
-        $num = AppConfig::where('config_key', 'billing_invoice_count')->first();
-
-        $current = $num['config_value'];
-
-        $num['config_value'] = $num['config_value'] + 1;
-        $num->save();
-
-        return $current;
 
     }
 

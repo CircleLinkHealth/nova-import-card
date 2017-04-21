@@ -73,6 +73,7 @@ class PatientMonthlySummary extends Model
         $ccmTime
     ) {
 
+
         // get record for month
         $day_start = Carbon::parse(Carbon::now()->firstOfMonth())->format('Y-m-d');
         $record = $patient->patientSummaries()->where('month_year', $day_start)->first();
