@@ -84,7 +84,7 @@ class ApproveBillablePatientsReport
 
             $report = $info->patientSummaries()
 //                    ->where('month_year', Carbon::now()->firstOfMonth()->toDateString());
-                ->where('month_year', '2017-03-01')->first();
+                ->where('month_year', '2017-04-01')->first();
 
             if ($report == null) {
                 continue;
