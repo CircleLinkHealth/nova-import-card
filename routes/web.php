@@ -43,8 +43,8 @@ if (app()->environment() != 'production') {
 
             $activitySum = \App\Activity
                 ::where('patient_id', $patient->user_id)
-                ->where('created_at', '>', Carbon::parse($date)->firstOfMonth()->toDateTimeString())
-                ->where('created_at', '<', Carbon::parse($date)->endOfMonth()->toDateTimeString())
+                ->where('created_at', '>', Carbon::parse($date)->firstOfMonth()->startOfDay()->toDateTimeString())
+                ->where('created_at', '<', Carbon::parse($date)->endOfMonth()->endOfDay()->toDateTimeString())
                 ->sum('duration');
 
             if($activitySum != $reportTime){
