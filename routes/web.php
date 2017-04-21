@@ -46,7 +46,7 @@ if (app()->environment() != 'production') {
                 ->where('created_at', '<', Carbon::parse($date)->endOfMonth()->toDateTimeString())
                 ->sum('duration');
 
-            if($activitySum > 0 && $reportTime > 0){
+            if($activitySum != $reportTime){
                 $compare[$patient->id]['act'] = $activitySum;
                 $compare[$patient->id]['rep'] = $reportTime;
             }
