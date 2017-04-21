@@ -23,13 +23,35 @@ if (app()->environment() != 'production') {
 
     Route::get('/rohan', function () {
 
-        $computer = (new \App\Reports\ApproveBillablePatientsReport(
-            Carbon::parse('2017-03-01'), 0));
+        $patients = Patient::all();
+        $compare = [];
 
-        $computer->data();
+        $date = Carbon::parse('2017-03-01');
 
-        dd($computer->format());
+        foreach ($patients as $patient) {
 
+            $report = PatientMonthlySummary::where('month_year', Carbon::parse($date)->firstOfMonth()->toDateString())
+                ->where('patient_info_id', $patient->id)
+                ->first();
+
+            if ($report != null) {
+                $reportTime = $report->ccm_time;
+            } else {
+                $reportTime = 0;
+            }
+
+            $activitySum = \App\Activity
+                ::where('patient_id', $patient->user_id)
+                ->where('created_at', '>', Carbon::parse($date)->firstOfMonth()->toDateTimeString())
+                ->where('created_at', '<', Carbon::parse($date)->endOfMonth()->toDateTimeString())
+                ->sum('duration');
+
+            $compare[$patient->id]['act'] = $activitySum;
+            $compare[$patient->id]['rep'] = $reportTime;
+
+        }
+
+        dd($compare);
 
     });
 
