@@ -182,7 +182,7 @@ class PracticeInvoiceController extends Controller
 
             $practice = Practice::find($practiceId);
 
-            $data = (new PracticeInvoiceGenerator($practice, Carbon::parse('2017-04-01')))->generatePdf();
+            $data = (new PracticeInvoiceGenerator($practice, Carbon::parse('2017-03-01')))->generatePdf();
 
             $invoices[$practice->display_name] = $data;
 

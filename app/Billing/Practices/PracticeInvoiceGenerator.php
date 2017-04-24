@@ -113,7 +113,6 @@ class PracticeInvoiceGenerator
         $current = $num['config_value'];
 
         $num['config_value'] = $num['config_value'] + 1;
-        $num->save();
 
         return $current;
 

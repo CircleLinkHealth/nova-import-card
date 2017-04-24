@@ -7,6 +7,7 @@
 
 use App\Patient;
 use App\PatientMonthlySummary;
+use App\Reports\ApproveBillablePatientsReport;
 use App\Reports\WeeklyReportDispatcher;
 use App\User;
 use Carbon\Carbon;
@@ -21,40 +22,13 @@ if (app()->environment() != 'production') {
 
     Route::get('/sms/test', 'TwilioController@sendTestSMS');
 
-    Route::get('/rohan', function () {
+    Route::get('/rohan', function (){
 
         $date = Carbon::parse('2017-03-01');
 
-        $patients = Patient::all();
-        $compare = [];
-
-
-        foreach ($patients as $patient) {
-
-            $report = PatientMonthlySummary::where('month_year', Carbon::parse($date)->firstOfMonth()->toDateString())
-                ->where('patient_info_id', $patient->id)
-                ->first();
-
-            if ($report != null) {
-                $reportTime = $report->ccm_time;
-            } else {
-                $reportTime = 0;
-            }
-
-            $activitySum = \App\Activity
-                ::where('patient_id', $patient->user_id)
-                ->where('created_at', '>', Carbon::parse($date)->firstOfMonth()->startOfDay()->toDateTimeString())
-                ->where('created_at', '<', Carbon::parse($date)->endOfMonth()->endOfDay()->toDateTimeString())
-                ->sum('duration');
-
-            if($activitySum != $reportTime){
-                $compare[$patient->id]['act'] = $activitySum;
-                $compare[$patient->id]['rep'] = $reportTime;
-            }
-
-        }
-
-        dd($compare);
+        $reporter = new ApproveBillablePatientsReport($date, 21);
+        $reporter->dataV1();
+        dd($reporter->format());
 
     });
 
