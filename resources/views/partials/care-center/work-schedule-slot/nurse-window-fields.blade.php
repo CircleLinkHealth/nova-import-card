@@ -1,12 +1,11 @@
 <div class="form-group">
 
     <div class="col-md-4">
-        <input class="form-control" name="date"
-               type="text" data-field="date"
-               id="date"
-               placeholder="Date"
-               value="{{ isset($window) ? $window->date->format('m-d-Y') : old('date') }}"
-               required>
+        <select class="form-control" name="date" required>
+            @foreach(weekDays() as $key => $day)
+                <option value="{{carbonToClhDayOfWeek($key)}}">{{$day}}</option>
+            @endforeach
+        </select>
     </div>
 
     <div class="col-md-3">
