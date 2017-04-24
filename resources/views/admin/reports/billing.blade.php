@@ -88,8 +88,6 @@
                                         <label class="col-md-2 control-label" for="practice_id">Select Practice</label>
                                         <select class="col-md-3 practices dropdown Valid form-control"
                                                 name="practice_id" id="practice_id">
-
-                                            <option value="0">All</option>
                                             @foreach($practices as $practice)
                                                 <option value="{{$practice->id}}">{{$practice->display_name}}</option>
                                             @endforeach
@@ -235,7 +233,7 @@
                         }
                     },
                     "initComplete": function (settings, json) {
-
+                        console.log(json)
                     }
 
 
@@ -245,6 +243,8 @@
                 $('#practice_id').on('change', function () {
 
                     $('#billable_list').DataTable().ajax.reload();
+
+                    console.log($('#practice_id').val());
 
                 });
 

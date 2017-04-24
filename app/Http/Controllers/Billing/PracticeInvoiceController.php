@@ -61,7 +61,7 @@ class PracticeInvoiceController extends Controller
 
         $reporter = new ApproveBillablePatientsReport(Carbon::parse('2017-03-01'), $input['practice_id']);
 
-        $reporter->data();
+        $reporter->dataV1();
 
         return $reporter->format();
 

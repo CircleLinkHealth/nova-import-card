@@ -1,10 +1,20 @@
 <?php namespace App\Reports;
 
 use App\Activity;
+use App\Call;
 use App\CLH\CCD\Importer\SnomedToCpmIcdMap;
+use App\CLH\CCD\Importer\SnomedToICD10Map;
+use App\Models\CCD\Problem;
+use App\Models\CPM\CpmInstruction;
+use App\Models\CPM\CpmMisc;
+use App\Models\CPM\CpmProblem;
 use App\Patient;
+use App\Practice;
+use App\Role;
 use App\User;
 use Carbon\Carbon;
+use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\URL;
 use Yajra\Datatables\Facades\Datatables;
@@ -34,7 +44,26 @@ class ApproveBillablePatientsReport
 
     }
 
-    public function data()
+    public function dataV1()
+    {
+
+        return $this->patients = User::with([
+            'ccdProblems' => function ($query) {
+                $query->whereNotNull('cpm_problem_id');
+            },
+            'cpmProblems',
+            'patientInfo',
+        ])
+            ->whereHas('roles', function ($q) {
+                $q->where('name', '=', 'participant');
+            })
+            ->where('program_id', '=', $this->practice)
+            ->get();
+
+    }
+
+
+    public function dataV2()
     {
 
         $this->patients = Patient
@@ -72,19 +101,32 @@ class ApproveBillablePatientsReport
         $count = 0;
         $formatted = [];
 
-        foreach ($this->patients as $info) {
+        foreach ($this->patients as $u) {
 
-            $ccm = Activity::totalTimeForPatientForMonth($info, Carbon::parse($this->month));
+            $start = Carbon::parse($this->month)->startOfMonth()->startOfDay()->format("Y-m-d H:i:s");
+            $end = Carbon::parse($this->month)->endOfMonth()->endOfDay()->format("Y-m-d H:i:s");
+
+            $ccm = DB::table('lv_activities')
+                ->where('patient_id', $u->id)
+                ->whereBetween('performed_at', [
+                    $start,
+                    $end,
+                ])
+//                ->having('ccmTime', '>', 1200)
+                ->sum('duration');
 
             if($ccm < 1200){
                 continue;
             }
 
-            $u = $info->user;
+            $info = $u->patientInfo;
+
+            if(is_null($info)){
+                continue;
+            }
 
             $report = $info->patientSummaries()
-//                    ->where('month_year', Carbon::now()->firstOfMonth()->toDateString());
-                ->where('month_year', '2017-04-01')->first();
+                ->where('month_year', $this->month)->first();
 
             if ($report == null) {
                 continue;
@@ -105,8 +147,8 @@ class ApproveBillablePatientsReport
             //First look for problems in the report itself. If no problems, then find problems from CCM. If none, give select box
             for ($i = 0; $i < 2; $i++) {
 
-                $problemName = 'billable_problem' . ($i+1);
-                $problemCode = 'billable_problem' . ($i+1) . '_code';
+                $problemName = 'billable_problem' . ($i + 1);
+                $problemCode = 'billable_problem' . ($i + 1) . '_code';
 
                 if ($report->$problemName == '') {
 
@@ -120,7 +162,7 @@ class ApproveBillablePatientsReport
 
                     } else {
 
-                        $name ='billable_problem' . ($i+1);
+                        $name = 'billable_problem' . ($i + 1);
 
                         $lacksProblems = true;
 
@@ -212,5 +254,6 @@ class ApproveBillablePatientsReport
             ->make(true);
 
     }
+
 
 }
