@@ -85,8 +85,8 @@ if (!function_exists('parseCsvToArray')) {
 if (!function_exists('secondsToHHMM')) {
     function secondsToHHMM($seconds)
     {
-        $getHours = sprintf('%02d',floor($seconds / 3600));
-        $getMins = sprintf('%02d',floor(($seconds - ($getHours * 3600)) / 60));
+        $getHours = sprintf('%02d', floor($seconds / 3600));
+        $getMins = sprintf('%02d', floor(($seconds - ($getHours * 3600)) / 60));
 
         return $getHours . ':' . $getMins;
     }
@@ -184,9 +184,10 @@ if (!function_exists('clhDayOfWeekToDayName')) {
     /**
      * Convert CLH DayOfWeek to a day such as Monday, Tuesday
      *
-     * @param $dayOfWeek
+     * @param $clhDayOfWeek
      *
      * @return int
+     *
      */
     function clhDayOfWeekToDayName($clhDayOfWeek)
     {
@@ -202,6 +203,26 @@ if (!function_exists('clhDayOfWeekToDayName')) {
         ];
 
         return $days[$clhDayOfWeek];
+    }
+}
+
+if (!function_exists('weekDays')) {
+    /**
+     * Returns the days of the week
+     *
+     * @return array
+     */
+    function weekDays()
+    {
+        return [
+            1 => 'Monday',
+            'Tuesday',
+            'Wednesday',
+            'Thursday',
+            'Friday',
+            'Saturday',
+            'Sunday',
+        ];
     }
 }
 
@@ -342,7 +363,7 @@ if (!function_exists('timezones')) {
      * @internal param $totalTimeInSeconds
      * @internal param string $delimiter
      */
-    function timezones() : array
+    function timezones(): array
     {
         return [
             'America/New_York'    => 'Eastern Time',
@@ -364,7 +385,7 @@ if (!function_exists('defaultCarePlanTemplate')) {
      *
      * @return CarePlanTemplate
      */
-    function getDefaultCarePlanTemplate() : CarePlanTemplate
+    function getDefaultCarePlanTemplate(): CarePlanTemplate
     {
         return CarePlanTemplate::whereType(CarePlanTemplate::CLH_DEFAULT)
             ->first();
