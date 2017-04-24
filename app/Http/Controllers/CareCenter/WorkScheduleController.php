@@ -66,29 +66,12 @@ class WorkScheduleController extends Controller
 
     public function store(Request $request)
     {
-        $deadline = $this->nextWeekStart->format('m-d-Y');
-
         $validator = Validator::make($request->all(), [
-            'date'              => "required|date_format:m-d-Y|after:$deadline",
+            'date'              => "required",
             'window_time_start' => 'required|date_format:H:i',
             'window_time_end'   => 'required|date_format:H:i|after:window_time_start',
         ]);
 
-        $date = Carbon::createFromFormat('m-d-Y', $request->input('date'))->copy();
-
-        $validator->after(function ($validator) use
-        (
-            $date
-        ) {
-            if (!$this->canAddNewWindow($date)) {
-                $validator->errors()->add('date',
-                    "The window was not created because it is out of the allowed date range.");
-            }
-            if ($date->format('Y-m-d') == '0000-00-00') {
-                $validator->errors()->add('date',
-                    "The date given is invalid.");
-            }
-        });
 
         if ($validator->fails()) {
             return redirect()->back()
@@ -97,8 +80,8 @@ class WorkScheduleController extends Controller
         }
 
         $window = auth()->user()->nurseInfo->windows()->create([
-            'date'              => $date->format('Y-m-d'),
-            'day_of_week'       => carbonToClhDayOfWeek($date->dayOfWeek),
+            'date'              => Carbon::now()->format('Y-m-d'),
+            'day_of_week'       => $request->input('date'),
             'window_time_start' => $request->input('window_time_start'),
             'window_time_end'   => $request->input('window_time_end'),
         ]);
