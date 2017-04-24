@@ -202,17 +202,25 @@ class PracticeInvoiceController extends Controller
         $key = $input['problem_no'];
         $codeKey = $input['problem_no'] . '_code';
 
-        if($input['select_problem'] == 'other') {
+        if($input['has_problem'] == 1) {
 
-            $report->$key = $input['otherProblem'];
+            $report->$codeKey = $input['code'];
 
         } else {
 
-            $report->$key = $input['select_problem'];
+            if($input['select_problem'] == 'other') {
+
+                $report->$key = $input['otherProblem'];
+
+            } else {
+
+                $report->$key = $input['select_problem'];
+
+            }
+
+            $report->$codeKey = $input['code'];
 
         }
-
-        $report->$codeKey = $input['code'];
 
         $report->save();
 

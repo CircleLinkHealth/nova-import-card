@@ -62,7 +62,6 @@ class ApproveBillablePatientsReport
 
     }
 
-
     public function dataV2()
     {
 
@@ -157,7 +156,18 @@ class ApproveBillablePatientsReport
                         $report->$problemName = $problems[$i]->name;
                         $billableProblems[$i]['name'] = $report->$problemName;
 
-                        $report->$problemCode = SnomedToCpmIcdMap::whereCpmProblemId($problems[$i]->id)->first()->icd_10_code;
+                        $code = SnomedToCpmIcdMap::whereCpmProblemId($problems[$i]->id)->first()->icd_10_code;
+
+                        if($report->$problemCode = ''){
+
+                            $report->$problemCode = $code;
+
+                        } else {
+
+                            $report->$problemCode = "<button style='font-size: 10px' class='btn btn-primary codePicker' name=$problemCode value='$options' id='$report->id'>Select Code</button >";
+
+                        }
+
                         $billableProblems[$i]['code'] = $report->$problemCode;
 
                     } else {
@@ -167,14 +177,29 @@ class ApproveBillablePatientsReport
                         $lacksProblems = true;
 
                         $billableProblems[$i]['name'] = "<button style='font-size: 10px' class='btn btn-primary problemPicker' name=$name value='$options' id='$report->id'>Select Problem</button >";
-                        $billableProblems[$i]['code'] = 'Select Problem';
+                        $billableProblems[$i]['code'] = "<button style='font-size: 10px' class='btn btn-primary codePicker' name=$name value='$options' id='$report->id'>Select Code</button >";
 
                     }
 
-                } else { // none are null
+                } else { // there's a problem
+
+                    //if there is a problem but no code
+
+                    if ($report->$problemCode == ''){
+
+                        $problem = $report->$problemName;
+
+                        $name = 'billable_problem' . ($i + 1);
+
+                        $billableProblems[$i]['code'] = "<button style='font-size: 10px' class='btn btn-primary problemPicker' name=$name value='$problem' id='$report->id'>Select Code</button >";
+
+                    } else {
+
+                        $billableProblems[$i]['code'] = $report->$problemCode;
+
+                    }
 
                     $billableProblems[$i]['name'] = $report->$problemName;
-                    $billableProblems[$i]['code'] = $report->$problemCode;
 
                 }
 

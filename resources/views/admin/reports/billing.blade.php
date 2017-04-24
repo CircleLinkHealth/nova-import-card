@@ -49,6 +49,7 @@
 
                         <input type="hidden" id="report_id" name="report_id">
                         <input type="hidden" id="problem_no" name="problem_no">
+                        <input type="hidden" id="has_problem" name="has_problem">
                     </form>
                 </div>
 
@@ -107,8 +108,9 @@
 
                                 <div class="col-md-12 row">
                                     <h5 style="line-height: 20px;">
-                                        <div class="col-md-3"><span><b>Total Approved: </b></span><span id="approved-count"
-                                                                                                  style="color: green">{{$approved}}</span><br>
+                                        <div class="col-md-3"><span><b>Total Approved: </b></span><span
+                                                    id="approved-count"
+                                                    style="color: green">{{$approved}}</span><br>
                                         </div>
                                         <div class="col-md-3"><span><b>Total Flagged: </b></span><span
                                                     style="color: darkorange"
@@ -339,6 +341,7 @@
 
                     $('#report_id').val(this.id);
                     $('#problem_no').val(this.name);
+                    $('#has_problem').val(0);
 
                     $('#otherProblem').empty();
                     $('#select_problem').empty();
@@ -354,10 +357,29 @@
 
                 });
 
+                //BUILD MODAL FOR PROBLEM PICKER
+                $('#billable_list').on('click', '.codePicker', function () {
+
+                    $('#report_id').val(this.id);
+                    $('#problem_no').val(this.name);
+                    $('#has_problem').val(1);
+
+                    $('#otherProblem').empty();
+                    $('#select_problem').empty();
+
+                    //the options are stored in a | delimted string
+                    $('#select_problem').append('<option value="' + this.value + '" selected disabled>' + this.value + '</option>');
+
+                    $('#problemPicker').modal('show');
+
+                });
+
                 //HANDLE MODAL SUBMIT
                 $('#confirm_problem').click(function () {
 
                     let url = '{!!route('monthly.billing.store-problem')!!}'
+
+                    console.log($('#problem_form').serialize());
 
                     $.ajax({
                         type: "POST",
