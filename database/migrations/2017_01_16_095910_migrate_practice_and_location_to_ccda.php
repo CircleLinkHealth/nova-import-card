@@ -11,9 +11,14 @@ class MigratePracticeAndLocationToCcda extends Migration
      */
     public function up()
     {
-        Artisan::call('db:seed', [
-            '--class' => 'CcdaImporterPredictionSeeder',
-        ]);
+        try {
+            Artisan::call('db:seed', [
+                '--class' => 'CcdaImporterPredictionSeeder',
+            ]);
+        } catch (\Exception $e) {
+            Log::alert('Migration Error');
+            Log::alert($e);
+        }
     }
 
     /**
