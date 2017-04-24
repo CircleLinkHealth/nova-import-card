@@ -297,6 +297,8 @@ class OnboardingController extends Controller
                     'user_id'        => $lead->id,
                     'display_name'   => $input['name'],
                     'federal_tax_id' => $input['federal_tax_id'],
+                    'active'         => 1,
+                    'term_days'      => 30,
                 ]);
         } catch (ValidatorException $e) {
             return redirect()

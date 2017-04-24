@@ -32,6 +32,7 @@ class TabularMedicalRecord extends MedicalRecordEloquent
 
         'gender',
         'language',
+        'consent_date',
 
         'provider_name',
 
