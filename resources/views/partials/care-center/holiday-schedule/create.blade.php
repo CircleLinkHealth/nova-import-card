@@ -4,10 +4,10 @@
 
         <div class="col-md-4">
             <input class="form-control" name="holiday"
-                   type="text" data-field="date"
+                   type="date"
                    id="holiday"
                    placeholder="Date"
-                   value="{{ isset($holiday) ? $holiday->date->format('m-d-Y') : '' }}"
+                   value="{{ isset($holiday) ? $holiday->date->format('m-d-Y') : old('holiday') }}"
                    required>
         </div>
 
@@ -17,5 +17,3 @@
         </div>
     </div>
 </form>
-
-@include('partials.care-center.work-schedule-slot.datepicker')
