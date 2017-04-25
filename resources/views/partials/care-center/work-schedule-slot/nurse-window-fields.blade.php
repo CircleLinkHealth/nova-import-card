@@ -10,7 +10,7 @@
 
     <div class="col-md-3">
         <input class="form-control" name="window_time_start"
-               type="text" data-field="time"
+               type="time" data-field="time"
                id="window_time_start"
                placeholder="Window Time Start {{ empty($tzAbbr) ? '' : "($tzAbbr)" }}"
                value="{{ isset($window) ? $window->window_time_start : old('window_time_start') }}"
@@ -19,7 +19,7 @@
 
     <div class="col-md-3">
         <input class="form-control" name="window_time_end"
-               type="text" data-field="time"
+               type="time" data-field="time"
                id="window_time_end"
                placeholder="Window Time End {{ empty($tzAbbr) ? '' : "($tzAbbr)" }}"
                value="{{ isset($window) ? $window->window_time_end : old('window_time_end') }}"
