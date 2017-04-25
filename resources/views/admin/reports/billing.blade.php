@@ -286,6 +286,7 @@
 
                         success: function (data) {
 
+                            console.log(data);
                             updateBillingCounts(data.counts);
 
                         }

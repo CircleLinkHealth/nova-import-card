@@ -84,13 +84,11 @@ class PracticeInvoiceGenerator
         $data['billable'] = PatientMonthlySummary
             ::whereHas('patient_info', function ($q) use
             (
-                $practiceId,
-                $month
+                $practiceId
             ) {
                 $q->whereHas('user', function ($k) use
                 (
-                    $practiceId,
-                    $month
+                    $practiceId
                 ) {
                     $k->whereProgramId($practiceId);
                 });
@@ -114,6 +112,8 @@ class PracticeInvoiceGenerator
 
         $num['config_value'] = $num['config_value'] + 1;
 
+        $num->save();
+
         return $current;
 
     }
@@ -129,11 +129,8 @@ class PracticeInvoiceGenerator
             (
                 $date
             ) {
-                $q->where('ccm_time', '>', 1199)
-//                    ->where('month_year', Carbon::now()->firstOfMonth()->toDateString())
-                    ->where('month_year', $date)
+                $q->where('month_year', $date)
                     ->where('no_of_successful_calls', '>', 0)
-                    ->whereNotNull('actor_id')
                     ->where('approved', 1);
 
             })
