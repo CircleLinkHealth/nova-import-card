@@ -64,7 +64,6 @@ class PracticeInvoiceController extends Controller
         $reporter->dataV1();
 
         return $reporter->format();
-
     }
 
     public function updateApproved(Request $request)
