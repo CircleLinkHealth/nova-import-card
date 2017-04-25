@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\CareCenter;
 
 use App\Http\Controllers\Controller;
+use App\Models\Holiday;
 use App\NurseContactWindow;
 use App\User;
 use Carbon\Carbon;
@@ -11,19 +12,23 @@ use Validator;
 
 class WorkScheduleController extends Controller
 {
+    protected $holiday;
     protected $nextWeekEnd;
     protected $nextWeekStart;
     protected $nurseContactWindows;
     protected $today;
 
-    public function __construct(NurseContactWindow $nurseContactWindow)
-    {
+    public function __construct(
+        NurseContactWindow $nurseContactWindow,
+        Holiday $holiday
+    ) {
         $this->nextWeekStart = Carbon::parse('this sunday')->copy();
         $this->nextWeekEnd = Carbon::parse('next sunday')
             ->endOfDay()
             ->addWeek(1)
             ->copy();
         $this->nurseContactWindows = $nurseContactWindow;
+        $this->holiday = $holiday;
         $this->today = Carbon::today()->copy();
     }
 
@@ -33,14 +38,18 @@ class WorkScheduleController extends Controller
             ->where('date', '>=', $this->today->format('Y-m-d'))
             ->whereNurseInfoId(auth()->user()->nurseInfo->id)
             ->get()
-            ->map(function ($window) {
-                $window->deletable = $this->canAddNewWindow(Carbon::parse($window->date));
-
-                return $window;
-            })
             ->sortBy(function ($item) {
                 return Carbon::createFromFormat('Y-m-d H:i:s',
                     "{$item->date->format('Y-m-d')} $item->window_time_start");
+            });
+
+        $holidays = $this->holiday
+            ->where('date', '>=', $this->today->format('Y-m-d'))
+            ->whereNurseInfoId(auth()->user()->nurseInfo->id)
+            ->get()
+            ->sortBy(function ($item) {
+                return Carbon::createFromFormat('Y-m-d',
+                    "{$item->date->format('Y-m-d')}");
             });
 
         $tzAbbr = auth()->user()->timezone
@@ -53,19 +62,38 @@ class WorkScheduleController extends Controller
 
         return view('care-center.work-schedule', compact([
             'disableTimeTracking',
+            'holidays',
             'windows',
             'tzAbbr',
         ]));
     }
 
-    protected function canAddNewWindow(Carbon $date)
-    {
-        return ($date->gt($this->nextWeekStart) && $this->today->dayOfWeek < 4)
-        || $date->gt($this->nextWeekEnd);
-    }
-
     public function store(Request $request)
     {
+        if ($request->has('holiday')) {
+
+            $request->replace([
+                'holiday' => Carbon::parse($request->input('holiday'))->toDateTimeString(),
+            ]);
+
+            $validator = Validator::make($request->all(), [
+                'holiday' => "required|date|after:tomorrow",
+            ]);
+
+
+            if ($validator->fails()) {
+                return redirect()->back()
+                    ->withErrors($validator)
+                    ->withInput();
+            }
+
+            $holiday = auth()->user()->nurseInfo->holidays()->create([
+                'date' => Carbon::parse($request->input('holiday'))->format('Y-m-d'),
+            ]);
+
+            return redirect()->back();
+        }
+
         $validator = Validator::make($request->all(), [
             'date'              => "required",
             'window_time_start' => 'required|date_format:H:i',
@@ -121,6 +149,12 @@ class WorkScheduleController extends Controller
         $window->forceDelete();
 
         return redirect()->route('care.center.work.schedule.index');
+    }
+
+    protected function canAddNewWindow(Carbon $date)
+    {
+        return ($date->gt($this->nextWeekStart) && $this->today->dayOfWeek < 4)
+            || $date->gt($this->nextWeekEnd);
     }
 
     public function getAllNurseSchedules()
