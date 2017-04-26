@@ -138,6 +138,7 @@ class ApproveBillablePatientsReport
             $billableProblems = [];
 
             $lacksProblems = false; // ;)
+            $lacksCode = false; // ;)
 
             //for JS problem picker
             $options = $u->ccdProblems()->pluck('name');
@@ -164,6 +165,7 @@ class ApproveBillablePatientsReport
 
                         } else {
 
+                            $lacksCode = true;
                             $report->$problemCode = "<button style='font-size: 10px' class='btn btn-primary codePicker' name=$problemCode value='$options' id='$report->id'>Select Code</button >";
 
                         }
@@ -175,6 +177,7 @@ class ApproveBillablePatientsReport
                         $name = 'billable_problem' . ($i + 1);
 
                         $lacksProblems = true;
+                        $lacksCode = true;
 
                         $billableProblems[$i]['name'] = "<button style='font-size: 10px' class='btn btn-primary problemPicker' name=$name value='$options' id='$report->id'>Select Problem</button >";
                         $billableProblems[$i]['code'] = "<button style='font-size: 10px' class='btn btn-primary codePicker' name=$name value='$options' id='$report->id'>Select Code</button >";
@@ -190,6 +193,8 @@ class ApproveBillablePatientsReport
                         $problem = $report->$problemName;
 
                         $name = 'billable_problem' . ($i + 1);
+
+                        $lacksCode = true;
 
                         $billableProblems[$i]['code'] = "<button style='font-size: 10px' class='btn btn-primary problemPicker' name=$name value='$problem' id='$report->id'>Select Code</button >";
 
@@ -210,7 +215,7 @@ class ApproveBillablePatientsReport
             //if patient was paused/withdrawn and acted upon already, it's not QA no more
             $isNotEnrolledAndApproved = ($report->actor_id == null) && ($info->ccm_status == 'withdrawn' || $info->ccm_status == 'paused');
 
-            if ($lacksProblems || $report->rejected == 1) {
+            if ($lacksProblems || $report->rejected == 1 || $lacksCode) {
 
                 $approved = '';
 
@@ -260,7 +265,7 @@ class ApproveBillablePatientsReport
                 //this is a hidden sorter
                 'qa'                     => $toQA,
                 'problems'               => $options,
-                'lacksProblems'          => $lacksProblems,
+                'lacksProblems'          => $lacksProblems || $lacksCode
 
             ];
 

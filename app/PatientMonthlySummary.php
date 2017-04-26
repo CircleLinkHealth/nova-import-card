@@ -173,17 +173,23 @@ class PatientMonthlySummary extends Model
                 continue;
             }
 
-            if ($report->approved == 1) {
+            $emptyProblemOrCode =
+                ($report->billable_problem1_code == '')
+                || ($report->billable_problem2_code == '')
+                || ($report->billable_problem2 == '')
+                || ($report->billable_problem1 == '');
 
-                $count['approved'] += 1;
+            if (($report->rejected == 0 && $report->approved == 0) || $emptyProblemOrCode) {
+
+                $count['toQA'] += 1;
 
             } else if ($report->rejected == 1) {
 
                 $count['rejected'] += 1;
 
-            } else if ($report->rejected == 0 && $report->approved == 0) {
+            } else if ($report->approved == 1) {
 
-                $count['toQA'] += 1;
+                $count['approved'] += 1;
 
             }
         }
