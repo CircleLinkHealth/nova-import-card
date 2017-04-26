@@ -20,7 +20,6 @@
         <input class="form-control" name="window_time_end"
                type="time" data-field="time"
                id="window_time_end"
-               placeholder="Window Time End {{ empty($tzAbbr) ? '' : "($tzAbbr)" }}"
                value="{{ old('window_time_end') ?old('window_time_end') : '17:00' }}"
                required>
     </div>
