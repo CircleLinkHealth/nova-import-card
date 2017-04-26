@@ -1,4 +1,4 @@
-<form action="{{ route('care.center.work.schedule.storeHoliday') }}" method="post">
+<form action="{{ route('care.center.work.schedule.holiday.store') }}" method="post">
     {{ csrf_field() }}
     <div class="form-group">
 

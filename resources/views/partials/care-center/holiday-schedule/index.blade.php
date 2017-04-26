@@ -26,7 +26,7 @@
                         </div>
 
                         <div class="col-md-1">
-                            <a href="{{ route('care.center.work.schedule.destroy', $holiday->id) }}"
+                            <a href="{{ route('care.center.work.schedule.holiday.destroy', $holiday->id) }}"
                                onclick="return confirm('Are you sure you want to delete this slot?')"
                                id="delete-window-{{$holiday->id}}">
                                 <i class="glyphicon glyphicon-trash"></i>
