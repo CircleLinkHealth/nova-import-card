@@ -16,7 +16,7 @@
     <div class="row">
         <ul class="list-group col-md-5">
             @foreach($holidays as $holiday)
-                <li class="list-group-item">
+                <li class="list-group-item" style="padding: 20px;">
                     <div class="row">
                         <div class="col-md-11">
                             {{ clhDayOfWeekToDayName(carbonToClhDayOfWeek($holiday->date->dayOfWeek)) }},
