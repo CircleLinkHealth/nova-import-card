@@ -52,6 +52,14 @@ class WorkScheduleController extends Controller
                     "{$item->date->format('Y-m-d')}");
             });
 
+        $holidaysThisWeek = $holidays->map(function ($holiday) {
+            if ($holiday->date->lte($this->today->endOfWeek()) && $holiday->date->gte($this->today->startOfWeek())) {
+                return clhDayOfWeekToDayName(carbonToClhDayOfWeek($holiday->date->dayOfWeek));
+            }
+        });
+
+        $holidaysThisWeek = array_filter($holidaysThisWeek->all());
+
         $tzAbbr = auth()->user()->timezone
             ? Carbon::now(auth()->user()->timezone)->format('T')
             : false;
@@ -63,6 +71,7 @@ class WorkScheduleController extends Controller
         return view('care-center.work-schedule', compact([
             'disableTimeTracking',
             'holidays',
+            'holidaysThisWeek',
             'windows',
             'tzAbbr',
         ]));
