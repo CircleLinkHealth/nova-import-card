@@ -22,7 +22,7 @@
                         <span class="sr-only">Close</span>
                     </button>
                     <h4 class="modal-title" id="problem-modal-title">
-                        Select Eligible Problem
+                        Select Eligible Problem for <span id="patientName"></span>
                     </h4>
                 </div>
 
@@ -377,6 +377,10 @@
                 //BUILD MODAL FOR PROBLEM PICKER
                 $('#billable_list').on('click', '.problemPicker', function () {
 
+                    name = $(this).attr('patient');
+                    console.log(name);
+                    $("#patientName").html(name);
+
                     $('#report_id').val(this.id);
                     $('#problem_no').val(this.name);
                     $('#has_problem').val(0);
@@ -398,6 +402,10 @@
                 //BUILD MODAL FOR PROBLEM PICKER
                 $('#billable_list').on('click', '.codePicker', function () {
 
+                    name = $(this).attr('patient');
+                    console.log(name);
+                    $("#patientName").html(name);
+
                     $('#report_id').val(this.id);
                     $('#problem_no').val(this.name);
                     $('#has_problem').val(1);
@@ -418,8 +426,6 @@
                     let url = '{!!route('monthly.billing.store-problem')!!}';
 
                     $("#showOther").css('display', 'none');
-
-                    console.log($('#problem_form').serialize());
 
                     $.ajax({
                         type: "POST",
