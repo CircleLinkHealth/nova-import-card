@@ -1,5 +1,7 @@
 @extends('partials.providerUI')
 
+@section('title', 'Work Schedule')
+
 @section('content')
 
     <div class="container container--menu">
