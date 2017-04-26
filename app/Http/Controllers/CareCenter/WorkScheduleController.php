@@ -151,6 +151,32 @@ class WorkScheduleController extends Controller
         return redirect()->route('care.center.work.schedule.index');
     }
 
+    public function destroyHoliday($holidayId)
+    {
+        $holiday = $this->holiday
+            ->find($holidayId);
+
+        if (!$holiday) {
+            $errors['holiday'] = 'This holiday does not exist.';
+
+            return redirect()->route('care.center.work.schedule.index')
+                ->withErrors($errors)
+                ->withInput();
+        }
+
+        if ($holiday->nurse_info_id != auth()->user()->nurseInfo->id) {
+            $errors['holiday'] = 'This holiday does not belong to you.';
+
+            return redirect()->route('care.center.work.schedule.index')
+                ->withErrors($errors)
+                ->withInput();
+        }
+
+        $holiday->forceDelete();
+
+        return redirect()->route('care.center.work.schedule.index');
+    }
+
     protected function canAddNewWindow(Carbon $date)
     {
         return ($date->gt($this->nextWeekStart) && $this->today->dayOfWeek < 4)
