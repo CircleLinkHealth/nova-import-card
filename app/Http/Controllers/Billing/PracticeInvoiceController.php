@@ -23,26 +23,15 @@ class PracticeInvoiceController extends Controller
 
         $practices = Practice::active();
 
-        $testDate = '2017-03-01';
-
         $currentMonth = '2017-03-01';
 
-        $approved = PatientMonthlySummary
-            ::where('month_year', $testDate)
-            ->where('ccm_time', '>', 1199)
-            ->where('approved', 1)->count();
+        $counts = $this->getCounts(Carbon::parse($currentMonth), $practices[0]->id);
 
-        $rejected = PatientMonthlySummary
-            ::where('month_year', $testDate)
-            ->where('ccm_time', '>', 1199)
-            ->where('rejected', 1)->count();
+        $approved = $counts['approved'];
 
-        $toQA = PatientMonthlySummary
-            ::where('month_year', $testDate)
-            ->where('ccm_time', '>', 1199)
-            ->where('approved', 0)
-            ->where('rejected', 0)
-            ->count();
+        $rejected = $counts['rejected'];
+
+        $toQA = $counts['toQA'];
 
         return view('admin.reports.billing', compact([
             'practices',
@@ -91,20 +80,20 @@ class PracticeInvoiceController extends Controller
         $report->save();
 
         //used for view report counts
-        $counts = $this->getCounts($input['date']);
+        $counts = $this->getCounts($input['date'], $input['practice_id']);
 
         return response()->json(
             [
                 'report_id' => $report->id,
-                'counts' => $counts
+                'counts'    => $counts,
             ]
         );
-        
+
     }
 
     public function updateRejected(Request $request)
     {
-        
+
         $input = $request->input();
 
         $report = PatientMonthlySummary::find($input['report_id']);
@@ -128,12 +117,12 @@ class PracticeInvoiceController extends Controller
         $report->save();
 
         //used for view report counts
-        $counts = $this->getCounts($input['date']);
+        $counts = $this->getCounts($input['date'], $input['practice_id']);
 
         return response()->json(
             [
                 'report_id' => $report->id,
-                'counts' => $counts
+                'counts'    => $counts,
             ]
         );
     }
@@ -201,13 +190,13 @@ class PracticeInvoiceController extends Controller
         $key = $input['problem_no'];
         $codeKey = $input['problem_no'] . '_code';
 
-        if($input['has_problem'] == 1) {
+        if ($input['has_problem'] == 1) {
 
             $report->$codeKey = $input['code'];
 
         } else {
 
-            if($input['select_problem'] == 'other') {
+            if ($input['select_problem'] == 'other') {
 
                 $report->$key = $input['otherProblem'];
 
@@ -228,35 +217,28 @@ class PracticeInvoiceController extends Controller
 
     }
 
-    public function getCounts($date){
+    public function counts(Request $request)
+    {
 
-        $date = Carbon::parse($date)->toDateString();
+        $date = Carbon::parse($request['date']);
+        $practice = Practice::find($request['practice_id']);
 
-        $approved = PatientMonthlySummary
-            ::where('month_year', $date)
-            ->where('ccm_time', '>', 1199)
-            ->where('approved', 1)->count();
+        $counts = PatientMonthlySummary::getPatientQACountForPracticeForMonth($practice, $date);
 
-        $rejected = PatientMonthlySummary
-            ::where('month_year', $date)
-            ->where('ccm_time', '>', 1199)
-            ->where('rejected', 1)->count();
+        return response()->json($counts);
+    }
 
-        $toQA = PatientMonthlySummary
-            ::where('month_year', $date)
-            ->where('ccm_time', '>', 1199)
-            ->where('approved', 0)
-            ->where('rejected', 0)
-            ->count();
+    public function getCounts(
+        $date,
+        $practice
+    ) {
 
-        return [
+        $date = Carbon::parse($date);
+        $practice = Practice::find($practice);
 
-            'approved' => $approved,
-            'rejected' => $rejected,
-            'toQA' => $toQA
-
-        ];
+        return PatientMonthlySummary::getPatientQACountForPracticeForMonth($practice, $date);
 
     }
+
 
 }

@@ -23,7 +23,7 @@ class PatientMonthlySummary extends Model
         'billable_problem1',
         'billable_problem2',
         'billable_problem1_code',
-        'billable_problem2_code'
+        'billable_problem2_code',
     ];
 
     public static function updateCallInfoForPatient(
@@ -114,6 +114,83 @@ class PatientMonthlySummary extends Model
     }
 
     //Run at beginning of month
+
+    public function getPatientsOver20MinsForPracticeForMonth(
+        Practice $practice,
+        Carbon $month
+    ) {
+
+
+        $patients = User::where('program_id', $practice->id)
+            ->whereHas('roles', function ($q) {
+                $q->where('name', '=', 'participant');
+            })->get();
+
+        $count = 0;
+
+        foreach ($patients as $p) {
+
+            if (Activity::totalTimeForPatientForMonth($p->patientInfo, $month, false) > 1199) {
+                $count++;
+            }
+
+        }
+
+        return $count;
+
+    }
+
+    public static function getPatientQACountForPracticeForMonth(
+        Practice $practice,
+        Carbon $month
+    ){
+
+        $patients = User::where('program_id', $practice->id)
+            ->whereHas('roles', function ($q) {
+                $q->where('name', '=', 'participant');
+            })->get();
+
+        $count['approved'] = 0;
+        $count['toQA'] = 0;
+        $count['rejected'] = 0;
+
+        foreach ($patients as $p) {
+
+            $ccm = Activity::totalTimeForPatientForMonth($p->patientInfo, $month, false) ;
+
+            if ($ccm < 1200) {
+
+                continue;
+
+            }
+
+            $report = PatientMonthlySummary::where('month_year', $month->firstOfMonth()->toDateString())
+                ->where('patient_info_id', $p->patientInfo->id)->first();
+
+//            dd($month->toDateString());
+
+            if (!$report) {
+                continue;
+            }
+
+            if ($report->approved == 1) {
+
+                $count['approved'] += 1;
+
+            } else if ($report->rejected == 1) {
+
+                $count['rejected'] += 1;
+
+            } else if ($report->rejected == 0 && $report->approved == 0) {
+
+                $count['toQA'] += 1;
+
+            }
+        }
+
+        return $count;
+
+    }
 
     public function createCallReportsForCurrentMonth()
     {

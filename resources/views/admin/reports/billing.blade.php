@@ -108,15 +108,15 @@
 
                                 <div class="col-md-12 row">
                                     <h5 style="line-height: 20px;">
-                                        <div class="col-md-3"><span><b>Total Approved: </b></span><span
+                                        <div class="col-md-3"><span><b>Practice Approved: </b></span><span
                                                     id="approved-count"
                                                     style="color: green">{{$approved}}</span><br>
                                         </div>
-                                        <div class="col-md-3"><span><b>Total Flagged: </b></span><span
+                                        <div class="col-md-3"><span><b>Practice Flagged: </b></span><span
                                                     style="color: darkorange"
                                                     id="toQA-count">{{$toQA}}</span><br>
                                         </div>
-                                        <div class="col-md-3"><span><b>Total Rejected: </b></span><span
+                                        <div class="col-md-3"><span><b>Practice Rejected: </b></span><span
                                                     style="color: darkred"
                                                     id="rejected-count">{{$rejected}}</span><br>
                                         </div>
@@ -235,7 +235,7 @@
                         }
                     },
                     "initComplete": function (settings, json) {
-                        console.log(json)
+
                     }
 
 
@@ -246,7 +246,27 @@
 
                     $('#billable_list').DataTable().ajax.reload();
 
-                    console.log($('#practice_id').val());
+                    setLoadingLabels();
+
+                    var url = '{!! route('monthly.billing.count') !!}';
+
+                    $.ajax({
+                        type: "POST",
+                        url: url,
+                        data: {
+                            practice_id: $('#practice_id').val(),
+                            date: $("#date option:selected").text()
+                        },
+
+                        success: function (data) {
+
+                            console.log(data.approved);
+
+                            updateBillingCounts(data);
+
+                        }
+                    });
+
 
                 });
 
@@ -280,6 +300,7 @@
                         data: {
                             //send report id to mark
                             report_id: this.id,
+                            practice_id: $('#practice_id').val(),
                             approved: approved,
                             date: $("#date option:selected").text()
                         },
@@ -323,6 +344,7 @@
                         data: {
                             //send report id to mark
                             report_id: this.id,
+                            practice_id: $('#practice_id').val(),
                             rejected: rejected,
                             date: $("#date option:selected").text()
 

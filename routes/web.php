@@ -26,6 +26,8 @@ if (app()->environment() != 'production') {
 
         $date = Carbon::parse('2017-03-01');
 
+        dd((new PatientMonthlySummary())->getPatientQACountForPracticeForMonth(\App\Practice::find(21), $date));
+
         $reporter = new ApproveBillablePatientsReport($date, 21);
         $reporter->dataV1();
         dd($reporter->format());
@@ -649,6 +651,11 @@ Route::group(['middleware' => 'auth'], function () {
                 Route::post('/updateApproved', [
                     'uses' => 'Billing\PracticeInvoiceController@updateApproved',
                     'as'   => 'monthly.billing.approve',
+                ]);
+
+                Route::post('/counts', [
+                    'uses' => 'Billing\PracticeInvoiceController@counts',
+                    'as'   => 'monthly.billing.count',
                 ]);
 
                 Route::post('/storeProblem', [
