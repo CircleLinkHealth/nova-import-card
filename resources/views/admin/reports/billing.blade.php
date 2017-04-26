@@ -37,7 +37,7 @@
                             </select>
                         </div>
 
-                        <div class="form-group">
+                        <div id="showOther" class="form-group" style="display:none">
                             <label for="otherProblem">If other, please specify</label>
                             <input class="form-control" name="otherProblem" id="otherProblem">
                         </div>
@@ -270,6 +270,21 @@
 
                 });
 
+                $('#select_problem').on('change', function () {
+
+                    if($("#select_problem option:selected").text() == 'Other'){
+
+                        $("#showOther").css('display', 'block');
+
+                    } else {
+
+                        $("#showOther").css('display', 'none');
+
+                    }
+
+                });
+
+
                 $(".practices").select2();
 
                 //HANDLE ACCEPTANCE
@@ -400,7 +415,9 @@
                 //HANDLE MODAL SUBMIT
                 $('#confirm_problem').click(function () {
 
-                    let url = '{!!route('monthly.billing.store-problem')!!}'
+                    let url = '{!!route('monthly.billing.store-problem')!!}';
+
+                    $("#showOther").css('display', 'none');
 
                     console.log($('#problem_form').serialize());
 
