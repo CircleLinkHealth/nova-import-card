@@ -1331,7 +1331,12 @@ Route::group(['middleware' => 'auth'], function () {
 
         Route::post('work-schedule/holidays', [
             'uses' => 'CareCenter\WorkScheduleController@storeHoliday',
-            'as'   => 'care.center.work.schedule.storeHoliday',
+            'as'   => 'care.center.work.schedule.holiday.store',
+        ]);
+
+        Route::get('work-schedule/holidays/destroy/{id}', [
+            'uses' => 'CareCenter\WorkScheduleController@destroyHoliday',
+            'as'   => 'care.center.work.schedule.holiday.destroy',
         ]);
     });
 
