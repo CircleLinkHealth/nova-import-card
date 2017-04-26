@@ -1328,6 +1328,11 @@ Route::group(['middleware' => 'auth'], function () {
             'uses' => 'CareCenter\WorkScheduleController@destroy',
             'as'   => 'care.center.work.schedule.destroy',
         ]);
+
+        Route::post('work-schedule/holidays', [
+            'uses' => 'CareCenter\WorkScheduleController@storeHoliday',
+            'as'   => 'care.center.work.schedule.storeHoliday',
+        ]);
     });
 
 });
