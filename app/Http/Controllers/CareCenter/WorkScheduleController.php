@@ -68,32 +68,32 @@ class WorkScheduleController extends Controller
         ]));
     }
 
-    public function store(Request $request)
+    public function storeHoliday(Request $request)
     {
-        if ($request->has('holiday')) {
+        $request->replace([
+            'holiday' => Carbon::parse($request->input('holiday'))->toDateTimeString(),
+        ]);
 
-            $request->replace([
-                'holiday' => Carbon::parse($request->input('holiday'))->toDateTimeString(),
-            ]);
-
-            $validator = Validator::make($request->all(), [
-                'holiday' => "required|date|after:tomorrow",
-            ]);
+        $validator = Validator::make($request->all(), [
+            'holiday' => "required|date|after:tomorrow",
+        ]);
 
 
-            if ($validator->fails()) {
-                return redirect()->back()
-                    ->withErrors($validator)
-                    ->withInput();
-            }
-
-            $holiday = auth()->user()->nurseInfo->holidays()->create([
-                'date' => Carbon::parse($request->input('holiday'))->format('Y-m-d'),
-            ]);
-
-            return redirect()->back();
+        if ($validator->fails()) {
+            return redirect()->back()
+                ->withErrors($validator)
+                ->withInput();
         }
 
+        $holiday = auth()->user()->nurseInfo->holidays()->create([
+            'date' => Carbon::parse($request->input('holiday'))->format('Y-m-d'),
+        ]);
+
+        return redirect()->back();
+    }
+
+    public function store(Request $request)
+    {
         $validator = Validator::make($request->all(), [
             'date'              => "required",
             'window_time_start' => 'required|date_format:H:i',
