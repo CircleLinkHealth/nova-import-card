@@ -2,6 +2,7 @@
 
 namespace App;
 
+use App\Models\Holiday;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
 
@@ -68,7 +69,17 @@ class Nurse extends Model
     public function upcomingWindows()
     {
         return $this->hasMany(NurseContactWindow::class, 'nurse_info_id', 'id')->upcoming();
-    }       
+    }
+
+    /**
+     * Days the Nurse is taking off.
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
+    public function holidays()
+    {
+        return $this->hasMany(Holiday::class, 'nurse_info_id', 'id');
+    }
 
     /**
      * Contact Windows (Schedule).
