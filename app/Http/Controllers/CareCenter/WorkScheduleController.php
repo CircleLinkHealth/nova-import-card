@@ -75,7 +75,7 @@ class WorkScheduleController extends Controller
         ]);
 
         $validator = Validator::make($request->all(), [
-            'holiday' => "required|date|after:tomorrow",
+            'holiday' => "required|date|after:tomorrow|unique:holidays,date",
         ]);
 
 
