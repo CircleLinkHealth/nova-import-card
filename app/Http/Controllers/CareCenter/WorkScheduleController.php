@@ -147,14 +147,6 @@ class WorkScheduleController extends Controller
                 ->withInput();
         }
 
-        if (!$this->canAddNewWindow(Carbon::parse($window->date))) {
-            $errors['window'] = 'You cannot delete this window anymore.';
-
-            return redirect()->route('care.center.work.schedule.index')
-                ->withErrors($errors)
-                ->withInput();
-        }
-
         $window->forceDelete();
 
         return redirect()->route('care.center.work.schedule.index');
