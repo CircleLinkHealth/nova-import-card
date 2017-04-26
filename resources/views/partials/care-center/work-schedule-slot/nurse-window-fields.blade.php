@@ -12,8 +12,7 @@
         <input class="form-control" name="window_time_start"
                type="time" data-field="time"
                id="window_time_start"
-               placeholder="Window Time Start {{ empty($tzAbbr) ? '' : "($tzAbbr)" }}"
-               value="{{ isset($window) ? $window->window_time_start : old('window_time_start') }}"
+               value="{{ old('window_time_start') ? old('window_time_start') : '09:00' }}"
                required>
     </div>
 
@@ -22,7 +21,7 @@
                type="time" data-field="time"
                id="window_time_end"
                placeholder="Window Time End {{ empty($tzAbbr) ? '' : "($tzAbbr)" }}"
-               value="{{ isset($window) ? $window->window_time_end : old('window_time_end') }}"
+               value="{{ old('window_time_end') ?old('window_time_end') : '17:00' }}"
                required>
     </div>
 
