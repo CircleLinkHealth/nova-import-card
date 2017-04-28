@@ -1,9 +1,3 @@
-<style>
-    .list-group-item {
-        padding: 2px;
-    }
-</style>
-
 <div class="row">
     <h3>Your Schedule</h3>
 </div>
@@ -27,12 +21,12 @@
                     @else
                         @foreach($windows as $window)
                             @if (strcasecmp(clhDayOfWeekToDayName($window->day_of_week), $day) == 0)
-                                <div class="col-md-2 list-group-item text-center">
+                                <div class="col-md-2 list-group-item text-center" style="padding: 2px;">
                                     <b>
-                                        {{ Carbon\Carbon::parse($window->window_time_start)->format('H:i') }}
+                                        {{ Carbon\Carbon::parse($window->window_time_start)->format('h:i a') }}
                                     </b> -
                                     <b>
-                                        {{ Carbon\Carbon::parse($window->window_time_end)->format('H:i') }}
+                                        {{ Carbon\Carbon::parse($window->window_time_end)->format('h:i a') }}
                                     </b>
 
                                     &nbsp;
