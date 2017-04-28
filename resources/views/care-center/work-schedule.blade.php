@@ -20,7 +20,7 @@
                 <div class="panel-body">
                     <div class="container-fluid">
                         <div class="row">
-                            <h5>Please make your schedule by creating as many "windows" as you'd like.</h5>
+                            <h5>Please make your work schedule by creating "windows" for each day of week:</h5>
                         </div>
                         <div class="row-centered">
                             <div class="col-md-12">
@@ -31,7 +31,7 @@
                         <br><br><br><br>
 
                         <div class="row">
-                            <h5>You can also save the days you will not be working.</h5>
+                            <h5>Please enter dates you will not be working:</h5>
                         </div>
                         <div class="row-centered">
                             <div class="col-md-12">
