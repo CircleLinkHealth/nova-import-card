@@ -44,7 +44,7 @@
                                     <div class="col-md-2">
                                     <button id="submit" name="submit" value="download"
                                             class="btn btn-success">
-                                        Download Invoice (s)
+                                        Create Invoice(s) / Report(s)
                                     </button>
                                     </div>
                                 </div>
