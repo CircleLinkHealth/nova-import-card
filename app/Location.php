@@ -20,6 +20,7 @@ class Location extends Model
      */
     protected $fillable = [
         'practice_id',
+        'is_primary',
         'name',
         'phone',
         'fax',
