@@ -12,7 +12,7 @@
         </div>
 
         <div class="col-md-2">
-            <input type="submit" class="btn btn-danger" value="Save Holiday"
+            <input type="submit" class="btn btn-info" value="Save Holiday"
                    name="submit" id="store-window">
         </div>
     </div>
