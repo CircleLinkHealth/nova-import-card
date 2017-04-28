@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Billing;
 
+use App\AppConfig;
 use App\Billing\Practices\PracticeInvoiceGenerator;
 use App\Http\Controllers\Controller;
 use App\Patient;
@@ -135,6 +136,7 @@ class PracticeInvoiceController extends Controller
 
         $readyToBill = [];
         $needsQA = [];
+        $invoice_no = AppConfig::where('config_key', 'billing_invoice_count')->first()['config_value'];
 
         foreach ($practices as $practice) {
 
@@ -157,6 +159,7 @@ class PracticeInvoiceController extends Controller
             [
                 'needsQA',
                 'readyToBill',
+                'invoice_no'
             ]
         ));
     }
@@ -165,6 +168,12 @@ class PracticeInvoiceController extends Controller
     {
 
         $invoices = [];
+
+        $num = AppConfig::where('config_key', 'billing_invoice_count')->first();
+
+        $num['config_value'] = $request->input('invoice_no');
+
+        $num->save();
 
         foreach ($request->input('practices') as $practiceId) {
 
