@@ -35,6 +35,15 @@
                                 </div>
 
                                 <div class="form-group">
+
+                                    <label class="col-md-2 control-label" for="invoice_no">
+                                        Custom Invoice#<br></label>
+                                    <div class="col-md-6">
+                                        <input class="form-control" value="{{$invoice_no}}" name="invoice_no" id="invoice_no">
+                                    </div>
+                                </div>
+
+                                <div class="form-group">
                                     <label class="col-md-2 control-label" for="end_date">Month</label>
                                     <div class="col-md-4">
                                         <input class="form-control" type="date"
@@ -42,10 +51,10 @@
                                                id="end_date" disabled>
                                     </div>
                                     <div class="col-md-2">
-                                    <button id="submit" name="submit" value="download"
-                                            class="btn btn-success">
-                                        Download Invoice (s)
-                                    </button>
+                                        <button id="submit" name="submit" value="download"
+                                                class="btn btn-success">
+                                            Create Invoice(s) / Report(s)
+                                        </button>
                                     </div>
                                 </div>
                             </fieldset>
