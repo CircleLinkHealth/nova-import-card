@@ -109,8 +109,23 @@ class WorkScheduleController extends Controller
             'window_time_end'   => 'required|date_format:H:i|after:window_time_start',
         ]);
 
+        $windowExists = NurseContactWindow::whereNurseInfoId(auth()->user()->nurseInfo->id)
+            ->where([
+                [
+                    'window_time_end',
+                    '>=',
+                    $request->input('window_time_start'),
+                ],
+                [
+                    'window_time_start',
+                    '<=',
+                    $request->input('window_time_end'),
+                ],
+            ])->first();
 
-        if ($validator->fails()) {
+        if ($validator->fails() || $windowExists) {
+            $validator->getMessageBag()->add('window_time_start', 'This window is overlapping with an already existing window.');
+
             return redirect()->back()
                 ->withErrors($validator)
                 ->withInput();
