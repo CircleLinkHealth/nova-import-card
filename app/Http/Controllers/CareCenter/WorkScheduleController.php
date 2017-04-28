@@ -52,6 +52,14 @@ class WorkScheduleController extends Controller
                     "{$item->date->format('Y-m-d')}");
             });
 
+        $holidaysThisWeek = $holidays->map(function ($holiday) {
+            if ($holiday->date->lte($this->today->endOfWeek()) && $holiday->date->gte($this->today->startOfWeek())) {
+                return clhDayOfWeekToDayName(carbonToClhDayOfWeek($holiday->date->dayOfWeek));
+            }
+        });
+
+        $holidaysThisWeek = array_filter($holidaysThisWeek->all());
+
         $tzAbbr = auth()->user()->timezone
             ? Carbon::now(auth()->user()->timezone)->format('T')
             : false;
@@ -63,37 +71,38 @@ class WorkScheduleController extends Controller
         return view('care-center.work-schedule', compact([
             'disableTimeTracking',
             'holidays',
+            'holidaysThisWeek',
             'windows',
             'tzAbbr',
         ]));
     }
 
-    public function store(Request $request)
+    public function storeHoliday(Request $request)
     {
-        if ($request->has('holiday')) {
+        $request->replace([
+            'holiday' => Carbon::parse($request->input('holiday'))->toDateTimeString(),
+        ]);
 
-            $request->replace([
-                'holiday' => Carbon::parse($request->input('holiday'))->toDateTimeString(),
-            ]);
-
-            $validator = Validator::make($request->all(), [
-                'holiday' => "required|date|after:tomorrow",
-            ]);
+        $validator = Validator::make($request->all(), [
+            'holiday' => "required|date|after:tomorrow|unique:holidays,date",
+        ]);
 
 
-            if ($validator->fails()) {
-                return redirect()->back()
-                    ->withErrors($validator)
-                    ->withInput();
-            }
-
-            $holiday = auth()->user()->nurseInfo->holidays()->create([
-                'date' => Carbon::parse($request->input('holiday'))->format('Y-m-d'),
-            ]);
-
-            return redirect()->back();
+        if ($validator->fails()) {
+            return redirect()->back()
+                ->withErrors($validator)
+                ->withInput();
         }
 
+        $holiday = auth()->user()->nurseInfo->holidays()->create([
+            'date' => Carbon::parse($request->input('holiday'))->format('Y-m-d'),
+        ]);
+
+        return redirect()->back();
+    }
+
+    public function store(Request $request)
+    {
         $validator = Validator::make($request->all(), [
             'date'              => "required",
             'window_time_start' => 'required|date_format:H:i',
@@ -138,15 +147,33 @@ class WorkScheduleController extends Controller
                 ->withInput();
         }
 
-        if (!$this->canAddNewWindow(Carbon::parse($window->date))) {
-            $errors['window'] = 'You cannot delete this window anymore.';
+        $window->forceDelete();
+
+        return redirect()->route('care.center.work.schedule.index');
+    }
+
+    public function destroyHoliday($holidayId)
+    {
+        $holiday = $this->holiday
+            ->find($holidayId);
+
+        if (!$holiday) {
+            $errors['holiday'] = 'This holiday does not exist.';
 
             return redirect()->route('care.center.work.schedule.index')
                 ->withErrors($errors)
                 ->withInput();
         }
 
-        $window->forceDelete();
+        if ($holiday->nurse_info_id != auth()->user()->nurseInfo->id) {
+            $errors['holiday'] = 'This holiday does not belong to you.';
+
+            return redirect()->route('care.center.work.schedule.index')
+                ->withErrors($errors)
+                ->withInput();
+        }
+
+        $holiday->forceDelete();
 
         return redirect()->route('care.center.work.schedule.index');
     }
