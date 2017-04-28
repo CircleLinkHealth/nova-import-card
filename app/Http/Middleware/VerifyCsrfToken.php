@@ -15,7 +15,7 @@ class VerifyCsrfToken extends BaseVerifier
         '/admin/reports/monthly-billing/v2/updateRejected',
         '/admin/reports/monthly-billing/v2/data',
         '/admin/reports/monthly-billing/v2/storeProblem',
-        '/admin/reports/monthly-billing/v2//counts'
+        '/admin/reports/monthly-billing/v2/counts'
 
     ];
 
