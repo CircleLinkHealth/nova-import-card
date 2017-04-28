@@ -1,9 +1,3 @@
-<style>
-    .list-group-item {
-        padding: 2px;
-    }
-</style>
-
 <div class="row">
     <h3>Your Days Off</h3>
 </div>
