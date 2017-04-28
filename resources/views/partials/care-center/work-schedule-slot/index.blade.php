@@ -13,7 +13,7 @@
                 <dt>{{ucfirst($day)}}</dt>
                 <dd>
                     @if (in_array($day, $holidaysThisWeek))
-                        <div class="col-md-12 list-group-item text-center">
+                        <div class="col-md-12 list-group-item text-center" style="padding: 2px;">
                             <b>
                                 HOLIDAY!
                             </b>
