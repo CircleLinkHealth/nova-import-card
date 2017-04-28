@@ -104,10 +104,9 @@ class PracticeController extends Controller
         $program = Practice::find($id);
 
 		//to update...
-        $locations = null;
-            //Location::where('parent_id', '=', null)->orderBy('id', 'desc')->pluck('name', 'id')->all();
+        $locations = $program->locations->pluck('name', 'id')->all();
 
-		return view('admin.wpBlogs.show', compact([ 'program', 'locations', 'errors', 'messages' ]));
+        return view('admin.wpBlogs.show', compact([ 'program', 'locations', 'errors', 'messages' ]));
 	}
 
 	/**
@@ -126,8 +125,7 @@ class PracticeController extends Controller
 
         $program = Practice::find($id);
 
-        $locations = null;
-//      $program->locations->pluck('name', 'id')->all();
+        $locations = $program->locations->all();
 
 		return view('admin.wpBlogs.edit', compact([ 'program', 'locations', 'errors', 'messages' ]));
 	}
@@ -152,6 +150,8 @@ class PracticeController extends Controller
 		$params = $request->input();
 
 		isset($params['location_id']) ? $program->locations->attach($params['location_id']) : '';
+
+		Location::setPrimary(Location::find($params['primary_location']));
 
 		$program->name = $params['name'];
 		$program->display_name = $params['display_name'];
