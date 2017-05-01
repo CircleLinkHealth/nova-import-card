@@ -205,6 +205,23 @@ class Practice extends Model
 
     }
 
+    public function getAddress(){
+
+        $primary = $this->locations()->where('is_primary', 1)->first();
+
+        if(is_null($primary)){
+            $primary = $this->locations()->first();
+        }
+
+        return [
+
+            'line1' => $primary->address_line_1 .' '. $primary->address_line_2,
+            'line2' => $primary->city . ', ' . $primary->state . ' ' . $primary->postal_code
+
+        ];
+
+    }
+
     public function getSubdomainAttribute()
     {
         return explode('.', $this->domain)[0];
