@@ -51,6 +51,19 @@
                             </div>
 
                             <div class="row" style="margin-top:20px;">
+                                <div class="col-xs-2">{!! Form::label('bill_to_name', 'Bill To:') !!}</div>
+                                <div class="col-xs-10">{!! Form::text('bill_to_name', $program->bill_to_name, ['class' => 'form-control', 'style' => 'width:100%;']) !!}</div>
+                            </div>
+
+                            <div class="row" style="margin-top:20px;">
+                                <div class="col-xs-2">{!! Form::label('invoice_recipients', 'Invoice Recipients (comma separated, w/ spaces after comma)') !!}</div>
+                                <div class="col-xs-10"><textarea class="form-control" name="invoice_recipients"
+                                                                 style="width: 100%">@if(isset($program->invoice_recipients)){{$program->invoice_recipients}}@endif</textarea>
+                                    <small>The emails above will receive weekly summary reports.</small>
+                                </div>
+                            </div>
+
+                            <div class="row" style="margin-top:20px;">
                                 <div class="col-xs-2">{!! Form::label('weekly_report_recipients', 'Weekly Organization Summary Recipients (comma separated, w/ spaces after comma)') !!}</div>
                                 <div class="col-xs-10"><textarea class="form-control" name="weekly_report_recipients"
                                                                  style="width: 100%">@if(isset($program->weekly_report_recipients)){{$program->weekly_report_recipients}}@endif</textarea>
