@@ -26,8 +26,7 @@
         <div class="row col-sm-6">
             <b>BILL TO:</b><br>
             <span>
-                Mazhar, Salma, MD PA <br>
-                Attn: Dr. Salma Mazhar, Sima Patel<br>
+                {{$bill_to}} <br>
                 {{$clh_address['line1']}}<br>
                 {{$clh_address['line2']}}<br>
             </span><br><br>

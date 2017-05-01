@@ -66,6 +66,7 @@ class PracticeInvoiceGenerator
         $month = $this->month;
 
         $data['clh_address'] = $this->practice->getAddress();
+        $data['bill_to'] = $this->practice->bill_to_name;
 
         $data['practice'] = $this->practice;
         $data['month'] = $month->format('F, Y');
