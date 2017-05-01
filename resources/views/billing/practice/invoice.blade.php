@@ -28,8 +28,8 @@
             <span>
                 Mazhar, Salma, MD PA <br>
                 Attn: Dr. Salma Mazhar, Sima Patel<br>
-                1210 N Galloway Ave.<br>
-                Mesquite, TX 75149
+                {{$clh_address['line1']}}<br>
+                {{$clh_address['line2']}}<br>
             </span><br><br>
 
         </div>
