@@ -113,6 +113,14 @@ class PatientMonthlySummary extends Model
 
     }
 
+    public function scopeGetForMonth($q, Carbon $month)
+    {
+
+        return $q->whereMonthYear(Carbon::parse($month)->firstOfMonth()->toDateString());
+
+    }
+
+
     //Run at beginning of month
 
     public function getPatientsOver20MinsForPracticeForMonth(

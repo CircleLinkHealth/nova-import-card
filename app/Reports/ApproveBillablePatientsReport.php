@@ -111,7 +111,6 @@ class ApproveBillablePatientsReport
                     $start,
                     $end,
                 ])
-//                ->having('ccmTime', '>', 1200)
                 ->sum('duration');
 
             if($ccm < 1200){
