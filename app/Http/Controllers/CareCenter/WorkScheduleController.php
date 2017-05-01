@@ -35,7 +35,6 @@ class WorkScheduleController extends Controller
     public function index()
     {
         $windows = $this->nurseContactWindows
-            ->where('date', '>=', $this->today->format('Y-m-d'))
             ->whereNurseInfoId(auth()->user()->nurseInfo->id)
             ->get()
             ->sortBy(function ($item) {
@@ -109,8 +108,12 @@ class WorkScheduleController extends Controller
             'window_time_end'   => 'required|date_format:H:i|after:window_time_start',
         ]);
 
-        $windowExists = NurseContactWindow::whereNurseInfoId(auth()->user()->nurseInfo->id)
-            ->where([
+        $windowExists = NurseContactWindow::where([
+                [
+                    'nurse_info_id',
+                    '=',
+                    auth()->user()->nurseInfo->id
+                ],
                 [
                     'window_time_end',
                     '>=',
@@ -121,6 +124,11 @@ class WorkScheduleController extends Controller
                     '<=',
                     $request->input('window_time_end'),
                 ],
+                [
+                    'day_of_week',
+                    '=',
+                    $request->input('date')
+                ]
             ])->first();
 
         if ($validator->fails() || $windowExists) {
