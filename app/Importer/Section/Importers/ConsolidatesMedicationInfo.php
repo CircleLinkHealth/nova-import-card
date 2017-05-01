@@ -29,7 +29,7 @@ trait ConsolidatesMedicationInfo
             $consolidatedMedication->cons_code = $medicationLog->translation_code;
             $consolidatedMedication->cons_code_system = $medicationLog->translation_code_system;
             $consolidatedMedication->cons_code_system_name = $medicationLog->translation_code_system_name;
-            $consolidatedMedication->cons_name = $medicationLog->translation_name;
+            $consolidatedMedication->cons_name = $medicationLog->reference_title;
 
             $consolidatedMedication = $this->consolidateName($consolidatedMedication, $medicationLog);
             $consolidatedMedication = $this->consolidateSig($consolidatedMedication, $medicationLog);
@@ -41,7 +41,7 @@ trait ConsolidatesMedicationInfo
         $consolidatedMedication->cons_code = $medicationLog->product_code;
         $consolidatedMedication->cons_code_system = $medicationLog->product_code_system;
         $consolidatedMedication->cons_code_system_name = $medicationLog->product_code_system_name;
-        $consolidatedMedication->cons_name = $medicationLog->product_name;
+        $consolidatedMedication->cons_name = $medicationLog->reference_title;
 
         $consolidatedMedication = $this->consolidateName($consolidatedMedication, $medicationLog);
         $consolidatedMedication = $this->consolidateSig($consolidatedMedication, $medicationLog);
@@ -54,12 +54,12 @@ trait ConsolidatesMedicationInfo
         $medicationLog
     ) {
         if (empty($consolidatedMedication->cons_name)) {
-            if (!empty($medicationLog->translation_name)) {
+            if (!empty($medicationLog->reference_title)) {
+                $consolidatedMedication->cons_name = $medicationLog->reference_title;
+            } elseif (!empty($medicationLog->translation_name)) {
                 $consolidatedMedication->cons_name = $medicationLog->translation_name;
             } elseif (!empty($medicationLog->product_name)) {
                 $consolidatedMedication->cons_name = $medicationLog->product_name;
-            } elseif (!empty($medicationLog->reference_title)) {
-                $consolidatedMedication->cons_name = $medicationLog->reference_title;
             }
         }
 
