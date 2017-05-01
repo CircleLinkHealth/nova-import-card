@@ -1,7 +1,7 @@
 <div class="form-group">
 
     <div class="col-md-4">
-        <select class="form-control" name="date" required>
+        <select class="form-control" name="day_of_week" required>
             @foreach(weekDays() as $key => $day)
                 <option value="{{carbonToClhDayOfWeek($key)}}">{{$day}}</option>
             @endforeach

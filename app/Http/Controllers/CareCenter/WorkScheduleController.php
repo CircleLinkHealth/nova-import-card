@@ -35,7 +35,6 @@ class WorkScheduleController extends Controller
     public function index()
     {
         $windows = $this->nurseContactWindows
-            ->where('date', '>=', $this->today->format('Y-m-d'))
             ->whereNurseInfoId(auth()->user()->nurseInfo->id)
             ->get()
             ->sortBy(function ($item) {
@@ -104,27 +103,37 @@ class WorkScheduleController extends Controller
     public function store(Request $request)
     {
         $validator = Validator::make($request->all(), [
-            'date'              => "required",
+            'day_of_week'       => "required",
             'window_time_start' => 'required|date_format:H:i',
             'window_time_end'   => 'required|date_format:H:i|after:window_time_start',
         ]);
 
-        $windowExists = NurseContactWindow::whereNurseInfoId(auth()->user()->nurseInfo->id)
-            ->where([
-                [
-                    'window_time_end',
-                    '>=',
-                    $request->input('window_time_start'),
-                ],
-                [
-                    'window_time_start',
-                    '<=',
-                    $request->input('window_time_end'),
-                ],
-            ])->first();
+        $windowExists = NurseContactWindow::where([
+            [
+                'nurse_info_id',
+                '=',
+                auth()->user()->nurseInfo->id,
+            ],
+            [
+                'window_time_end',
+                '>=',
+                $request->input('window_time_start'),
+            ],
+            [
+                'window_time_start',
+                '<=',
+                $request->input('window_time_end'),
+            ],
+            [
+                'day_of_week',
+                '=',
+                $request->input('day_of_week'),
+            ],
+        ])->first();
 
         if ($validator->fails() || $windowExists) {
-            $validator->getMessageBag()->add('window_time_start', 'This window is overlapping with an already existing window.');
+            $validator->getMessageBag()->add('window_time_start',
+                'This window is overlapping with an already existing window.');
 
             return redirect()->back()
                 ->withErrors($validator)
@@ -133,7 +142,7 @@ class WorkScheduleController extends Controller
 
         $window = auth()->user()->nurseInfo->windows()->create([
             'date'              => Carbon::now()->format('Y-m-d'),
-            'day_of_week'       => $request->input('date'),
+            'day_of_week'       => $request->input('day_of_week'),
             'window_time_start' => $request->input('window_time_start'),
             'window_time_end'   => $request->input('window_time_end'),
         ]);
@@ -193,12 +202,6 @@ class WorkScheduleController extends Controller
         return redirect()->route('care.center.work.schedule.index');
     }
 
-    protected function canAddNewWindow(Carbon $date)
-    {
-        return ($date->gt($this->nextWeekStart) && $this->today->dayOfWeek < 4)
-            || $date->gt($this->nextWeekEnd);
-    }
-
     public function getAllNurseSchedules()
     {
         $data = User::ofType('care-center')
@@ -244,5 +247,11 @@ class WorkScheduleController extends Controller
         ]);
 
         return redirect()->back();
+    }
+
+    protected function canAddNewWindow(Carbon $date)
+    {
+        return ($date->gt($this->nextWeekStart) && $this->today->dayOfWeek < 4)
+            || $date->gt($this->nextWeekEnd);
     }
 }
