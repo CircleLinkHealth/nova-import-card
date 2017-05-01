@@ -175,7 +175,6 @@ class PatientMonthlySummary extends Model
             $report = PatientMonthlySummary::where('month_year', $month->firstOfMonth()->toDateString())
                 ->where('patient_info_id', $p->patientInfo->id)->first();
 
-//            dd($month->toDateString());
 
             if (!$report) {
                 continue;

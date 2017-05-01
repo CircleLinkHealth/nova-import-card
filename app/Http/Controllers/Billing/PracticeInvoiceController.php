@@ -189,6 +189,25 @@ class PracticeInvoiceController extends Controller
 
     }
 
+    public function sendInvoice(Request $request)
+    {
+
+        $invoices = (array) json_decode($request->input('links'));
+        $month = $request->input('month');
+
+        foreach ($invoices as $key => $value) {
+
+            $value = (array) $value;
+
+            $user = User::find($key);
+
+            Mail::to($user)->send(new NurseInvoiceMailer($key, $value['link'], $month));
+
+        }
+
+        return redirect()->route('admin.reports.nurse.invoice')->with(['success' => 'yes']);
+    }
+
     public function storeProblem(Request $request)
     {
 
@@ -219,9 +238,18 @@ class PracticeInvoiceController extends Controller
 
         }
 
+        //if report has both problems setup with codes, set approved to 1 here to they show up on the count for the view.
+        if($report->billable_problem1_code != ''
+        && ($report->billable_problem2_code != '')
+        && ($report->billable_problem2 != '')
+        && ($report->billable_problem1 != '')){
+            $report->approved = 1;
+        };
+
         $report->save();
 
         $date = Carbon::parse($input['modal_date'])->firstOfMonth()->toDateString();
+
 
         //used for view report counts
         $counts = $this->getCounts($date, $input['modal_practice_id']);

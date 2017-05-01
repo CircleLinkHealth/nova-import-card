@@ -262,8 +262,6 @@
 
                         success: function (data) {
 
-                            console.log(data.approved);
-
                             updateBillingCounts(data);
 
                         }
@@ -387,14 +385,11 @@
                     $('#problem_no').val(this.name);
                     $('#has_problem').val(0);
 
+                    //to update the billing counts
                     let practice = $('#practice_id option:selected').val();
                     $('#modal_practice_id').val(practice);
-
                     let date = $("#date option:selected").text();
                     $('#modal_date').val(date);
-
-                    console.log(practice);
-                    console.log(date);
 
                     $('#otherProblem').empty();
                     $('#select_problem').empty();
@@ -443,6 +438,8 @@
 
                 //HANDLE MODAL SUBMIT
                 $('#confirm_problem').click(function () {
+
+                    setLoadingLabels();
 
                     let url = '{!!route('monthly.billing.store-problem')!!}';
 

@@ -15,23 +15,25 @@
                                 <a href="{{url('/admin/download/'. $value['Invoice'])}}">Invoice</a> •
                                 <a href="{{url('/admin/download/'. $value['Patient Report'])}}">Patient Report</a>
                             </li>
-                        @endforeach
+
+                            <hr>
+
+                            <div class="row" style="padding-left: 30px;">
+                                {!! Form::open(array('url' => URL::route('practice.billing.make', array()),'class' => 'form-horizontal')) !!}
+                                <input type="hidden" value="{{json_encode($invoices)}}" name="links">
+                                <button id="submit" name="send" class="btn btn-success">
+                                    Send To Practices
+                                </button>
+                                {!! Form::close() !!}
+
+                            </div>
+
                     </div>
+                    @endforeach
                 </div>
             </div>
         </div>
     </div>
-
-    <div class="row">
-        <div class="col-md-8 col-md-offset-2">
-            <div class="jumbotron" style="padding-top: 0px">
-                <div class="row">
-                    {{--<input type="hidden" value="{{json_encode($invoices)}}" name="links">--}}
-                    {{--<input type="hidden" value="{{$month}}" name="month">--}}
-                    <button id="submit" name="submit" class="btn btn-success" disabled>Send To Practices</button>
-                </div>
-            </div>
-        </div>
     </div>
 
 @stop
