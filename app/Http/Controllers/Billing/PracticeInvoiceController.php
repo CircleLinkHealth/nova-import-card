@@ -221,7 +221,17 @@ class PracticeInvoiceController extends Controller
 
         $report->save();
 
-        return json_encode($key);
+        $date = Carbon::parse($input['modal_date'])->firstOfMonth()->toDateString();
+
+        //used for view report counts
+        $counts = $this->getCounts($date, $input['modal_practice_id']);
+
+        return response()->json(
+            [
+                'report_id' => $report->id,
+                'counts'    => $counts,
+            ]
+        );
 
 
     }

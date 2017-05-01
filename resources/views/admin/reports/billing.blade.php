@@ -50,6 +50,8 @@
                         <input type="hidden" id="report_id" name="report_id">
                         <input type="hidden" id="problem_no" name="problem_no">
                         <input type="hidden" id="has_problem" name="has_problem">
+                        <input type="hidden" id="modal_date" name="modal_date">
+                        <input type="hidden" id="modal_practice_id" name="modal_practice_id">
                     </form>
                 </div>
 
@@ -385,6 +387,15 @@
                     $('#problem_no').val(this.name);
                     $('#has_problem').val(0);
 
+                    let practice = $('#practice_id option:selected').val();
+                    $('#modal_practice_id').val(practice);
+
+                    let date = $("#date option:selected").text();
+                    $('#modal_date').val(date);
+
+                    console.log(practice);
+                    console.log(date);
+
                     $('#otherProblem').empty();
                     $('#select_problem').empty();
 
@@ -399,7 +410,7 @@
 
                 });
 
-                //BUILD MODAL FOR PROBLEM PICKER
+                //BUILD MODAL FOR CODE PICKER
                 $('#billable_list').on('click', '.codePicker', function () {
 
                     name = $(this).attr('patient');
@@ -409,6 +420,16 @@
                     $('#report_id').val(this.id);
                     $('#problem_no').val(this.name);
                     $('#has_problem').val(1);
+
+
+                    let practice = ('#practice_id').val();
+                    $('#modal_practice_id').val(practice);
+
+                    let date = $("#date option:selected").text();
+                    $('#modal_date').val(date);
+
+                    console.log(practice);
+                    console.log(date);
 
                     $('#otherProblem').empty();
                     $('#select_problem').empty();
@@ -434,9 +455,13 @@
 
                         success: function (data) {
 
+                            updateBillingCounts(data.counts);
+                            console.log(data.counts);
+
                             $('#billable_list').DataTable().ajax.reload();
                             $('#problemPicker').modal('hide');
 
+                            //set the modal to cleared for further use
                             $('#select_problem').val('');
                             $('#otherProblem').val('');
                             $('#code').val('');
