@@ -22,6 +22,8 @@ class Practice extends Model
         'same_ehr_login',
         'sms_marketing_number',
         'weekly_report_recipients',
+        'invoice_recipients',
+        'bill_to_name',
         'auto_approve_careplans',
         'send_alerts',
         'outgoing_phone_number',
