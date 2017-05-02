@@ -14,9 +14,7 @@ class CarePlanObserver
      */
     public function saving(CarePlan $carePlan)
     {
-        if ($carePlan->patient->primaryPractice->settings()->first()->auto_approve_careplans) {
-            $carePlan->status = 'provider_approved';
-        }
+
     }
 
 }

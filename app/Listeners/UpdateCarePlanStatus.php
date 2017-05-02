@@ -40,6 +40,12 @@ class UpdateCarePlanStatus
         } else {
             $user->carePlanStatus = 'qa_approved'; // careplan_status
             $user->carePlanQaApprover = auth()->user()->id; // careplan_qa_approver
+
+            if ($user->carePlan->patient->primaryPractice->settings()->first()->auto_approve_careplans) {
+                $user->carePlan->status = 'provider_approved';
+                $user->carePlan->save();
+            }
+
             $user->carePlanQaDate = date('Y-m-d H:i:s'); // careplan_qa_date
         }
 
