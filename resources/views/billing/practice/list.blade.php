@@ -9,27 +9,27 @@
                 <div class="panel panel-default">
                     <div class="panel-heading">Practice Invoices and Patient Billable Reports</div>
                     <div class="panel-body">
+
                         @foreach($invoices as $key => $value)
                             <li>
                                 <b>{{$key}}</b>
                                 <a href="{{url('/admin/download/'. $value['Invoice'])}}">Invoice</a> •
                                 <a href="{{url('/admin/download/'. $value['Patient Report'])}}">Patient Report</a>
                             </li>
+                        @endforeach
 
-                            <hr>
+                        <hr>
 
-                            <div class="row" style="padding-left: 30px;">
-                                {!! Form::open(array('url' => URL::route('practice.billing.make', array()),'class' => 'form-horizontal')) !!}
-                                <input type="hidden" value="{{json_encode($invoices)}}" name="links">
-                                <button id="submit" name="send" class="btn btn-success">
-                                    Send To Practices
-                                </button>
-                                {!! Form::close() !!}
-
-                            </div>
+                        <div class="row" style="padding-left: 30px;">
+                            {!! Form::open(array('url' => URL::route('monthly.billing.send', array()),'class' => 'form-horizontal')) !!}
+                            <input type="hidden" value="{{json_encode($invoices)}}" name="links">
+                            <button id="submit" name="send" class="btn btn-success">
+                                Send To Practices
+                            </button>
+                            {!! Form::close() !!}
+                        </div>
 
                     </div>
-                    @endforeach
                 </div>
             </div>
         </div>

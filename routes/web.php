@@ -678,6 +678,11 @@ Route::group(['middleware' => 'auth'], function () {
                     'as'   => 'monthly.billing.send',
                 ]);
 
+                Route::get('/downloadInvoice/{name}', [
+                    'uses' => 'Billing\PracticeInvoiceController@downloadInvoice',
+                    'as'   => 'monthly.billing.download',
+                ]);
+
             });
 
             Route::get('patients-for-insurance-check', [

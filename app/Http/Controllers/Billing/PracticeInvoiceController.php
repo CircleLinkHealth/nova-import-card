@@ -13,6 +13,7 @@ use App\User;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\URL;
 
 
@@ -189,25 +190,6 @@ class PracticeInvoiceController extends Controller
 
     }
 
-    public function sendInvoice(Request $request)
-    {
-
-        $invoices = (array) json_decode($request->input('links'));
-        $month = $request->input('month');
-
-        foreach ($invoices as $key => $value) {
-
-            $value = (array) $value;
-
-            $user = User::find($key);
-
-            Mail::to($user)->send(new NurseInvoiceMailer($key, $value['link'], $month));
-
-        }
-
-        return redirect()->route('admin.reports.nurse.invoice')->with(['success' => 'yes']);
-    }
-
     public function storeProblem(Request $request)
     {
 
@@ -261,7 +243,6 @@ class PracticeInvoiceController extends Controller
             ]
         );
 
-
     }
 
     public function counts(Request $request)
@@ -284,6 +265,56 @@ class PracticeInvoiceController extends Controller
         $practice = Practice::find($practice);
 
         return PatientMonthlySummary::getPatientQACountForPracticeForMonth($practice, $date);
+
+    }
+
+    public function downloadInvoice($name){
+
+        return response()->download(storage_path('/download/' . $name), $name, [
+            'Content-Length: ' . filesize(storage_path('/download/' . $name)),
+        ]);
+
+    }
+
+    public function send(Request $request){
+
+        $invoices = (array) json_decode($request->input('links'));
+
+        foreach ($invoices as $key => $value) {
+
+            $practice = Practice::whereDisplayName($key)->first();
+
+            $data = (array) $value;
+
+            $patientReport = $data['Patient Report'];
+            $invoice = $data['Invoice'];
+
+            $invoiceLink = route
+            (
+                'monthly.billing.download',
+                ['name' => $patientReport]
+            );
+
+            if($practice->invoice_recipients){
+
+                $recipients = explode(', ', $practice->invoice_recipients);
+
+                foreach($recipients as $recipient){
+
+                    Mail::send('billing.practice.mail', ['link' => $invoiceLink], function ($m) use ($recipient, $invoice) {
+
+                        $m->from('billing@circlelinkhealth.com', 'CircleLink Health');
+
+                        $m->to($recipient)->subject('Your Invoice for CircleLink Health');
+
+                        $m->attach(storage_path('/download/' . $invoice));
+
+                    });
+                }
+
+            }
+
+        }
 
     }
 
