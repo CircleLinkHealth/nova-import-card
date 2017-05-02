@@ -7,7 +7,7 @@ use App\CarePlan;
 class CarePlanObserver
 {
     /**
-     * Listen to the CarePlan created event.
+     * Listen to the CarePlan saving event.
      *
      * @param CarePlan $carePlan
      *
