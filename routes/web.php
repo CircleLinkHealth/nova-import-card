@@ -673,6 +673,11 @@ Route::group(['middleware' => 'auth'], function () {
                     'as'   => 'monthly.billing.reject',
                 ]);
 
+                Route::post('/send', [
+                    'uses' => 'Billing\PracticeInvoiceController@send',
+                    'as'   => 'monthly.billing.send',
+                ]);
+
             });
 
             Route::get('patients-for-insurance-check', [
