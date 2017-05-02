@@ -4,6 +4,8 @@ namespace App\Listeners;
 
 use App\Events\CarePlanWasApproved;
 use App\Events\PdfableCreated;
+use App\Observers\PatientObserver;
+use App\User;
 
 class UpdateCarePlanStatus
 {
@@ -49,10 +51,24 @@ class UpdateCarePlanStatus
                 event(new PdfableCreated($user->carePlan));
             }
 
+            $this->addPatientConsentedNote($user);
+
             $user->carePlanQaDate = date('Y-m-d H:i:s'); // careplan_qa_date
         }
 
         $user->save();
     }
 
+    /**
+     * Send patient consented note to practice only after CLH has approved CarePlan.
+     *
+     * @param User $user
+     */
+    private function addPatientConsentedNote(User $user) {
+        if (!$user->notes->isEmpty()) {
+            return;
+        }
+
+        (new PatientObserver())->sendPatientConsentedNote($user->patientInfo);
+    }
 }
