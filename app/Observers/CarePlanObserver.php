@@ -12,10 +12,11 @@ class CarePlanObserver
      * @param CarePlan $carePlan
      *
      */
-    public function creating(CarePlan $carePlan)
+    public function saved(CarePlan $carePlan)
     {
         if ($carePlan->patient->primaryPractice->settings()->first()->auto_approve_careplans) {
             $carePlan->status = 'provider_approved';
+            $carePlan->save();
         }
     }
 
