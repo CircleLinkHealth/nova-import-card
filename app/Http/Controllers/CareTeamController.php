@@ -95,7 +95,7 @@ class CareTeamController extends Controller
             foreach ($oldBillingProviders as $oldBillingProvider) {
                 $oldBillingProvider->type = 'external';
 
-                if ($oldBillingProvider->user->practice($patient->primaryPractice->id)) {
+                if ($oldBillingProvider->user && $oldBillingProvider->user->practice($patient->primaryPractice->id)) {
                     $oldBillingProvider->type = $oldBillingProvider->user->role();
                 }
 
