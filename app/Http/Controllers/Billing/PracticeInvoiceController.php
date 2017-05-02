@@ -295,6 +295,8 @@ class PracticeInvoiceController extends Controller
                 ['name' => $patientReport]
             );
 
+            $logger = '';
+
             if($practice->invoice_recipients){
 
                 $recipients = explode(', ', $practice->invoice_recipients);
@@ -310,11 +312,20 @@ class PracticeInvoiceController extends Controller
                         $m->attach(storage_path('/download/' . $invoice));
 
                     });
+
+                    $logger .= "Sent report for $practice->name to $recipient <br />";
                 }
+
+            } else {
+
+                $logger .= "No recipients setup for $practice->name...";
+
 
             }
 
         }
+
+        return $logger;
 
     }
 
