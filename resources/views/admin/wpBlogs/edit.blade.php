@@ -59,7 +59,7 @@
                                 <div class="col-xs-2">{!! Form::label('invoice_recipients', 'Invoice Recipients (comma separated, w/ spaces after comma)') !!}</div>
                                 <div class="col-xs-10"><textarea class="form-control" name="invoice_recipients"
                                                                  style="width: 100%">@if(isset($program->invoice_recipients)){{$program->invoice_recipients}}@endif</textarea>
-                                    <small>The emails above will receive weekly summary reports.</small>
+                                    <small>The emails above will receive invoices.</small>
                                 </div>
                             </div>
 
