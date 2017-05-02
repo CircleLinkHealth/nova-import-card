@@ -104,9 +104,9 @@ class Demographics extends BaseImporter
                     : $language;
             }),
             'preferred_contact_timezone' => 'America/New_York',
-            'consent_date'               => $itemLog->consent_date
+            'consent_date'               => $itemLog->consent_date > 0
                 ? Carbon::parse($itemLog->consent_date)->format('Y-m-d')
-                : date("Y-m-d"),
+                : date('Y-m-d'),
             'vendor_id'                  => 1,
             'medical_record_type'        => $medicalRecordType,
             'medical_record_id'          => $medicalRecordId,
