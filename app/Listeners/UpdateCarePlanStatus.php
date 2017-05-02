@@ -43,7 +43,10 @@ class UpdateCarePlanStatus
 
             if ($user->carePlan->patient->primaryPractice->settings()->first()->auto_approve_careplans) {
                 $user->carePlan->status = 'provider_approved';
+                $user->carePlan->provider_approver_id = $user->billingProvider()->id ?? null;
                 $user->carePlan->save();
+
+                event(new PdfableCreated($user->carePlan));
             }
 
             $user->carePlanQaDate = date('Y-m-d H:i:s'); // careplan_qa_date
