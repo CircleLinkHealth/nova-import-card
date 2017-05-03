@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\ModelNotFoundException as ModelNotFoundExceptio
 use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
 use Illuminate\Session\TokenMismatchException;
 use Illuminate\Validation\ValidationException;
+use LERN;
 use Symfony\Component\HttpKernel\Exception\HttpException;
 
 class Handler extends ExceptionHandler
@@ -45,6 +46,36 @@ class Handler extends ExceptionHandler
                 //we don't actually want to terminate the program if we detect duplicates
                 //we just don't wanna add the row again
                 \Log::alert($e);
+            }
+        }
+
+        if ($this->shouldReport($e) && !in_array(env('APP_ENV'), [
+                'local',
+                'development',
+                'dev',
+            ])
+        ) {
+            //Check to see if LERN is installed otherwise you will not get an exception.
+            if (app()->bound("lern")) {
+
+                //
+                LERN::pushHandler(
+                    new \Monolog\Handler\SlackWebhookHandler(
+                        config('lern.notify.slack.webhook'),
+                        config('lern.notify.slack.channel'),
+                        config('lern.notify.slack.username'),
+                        true,
+                        null,
+                        false)
+                );
+
+                app()->make("lern")->handle($e); //Record and Notify the Exception
+
+                /*
+                OR...
+                app()->make("lern")->record($e); //Record the Exception to the database
+                app()->make("lern")->notify($e); //Notify the Exception
+                */
             }
         }
 
