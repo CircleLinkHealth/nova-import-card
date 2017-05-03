@@ -1,6 +1,6 @@
 <?php
 
-echo $exception->getMessage() . PHP_EOL . PHP_EOL;
+echo "ERROR: {$exception->getMessage()}" . PHP_EOL . PHP_EOL;
 
 //Get the route
 if ($url) {
