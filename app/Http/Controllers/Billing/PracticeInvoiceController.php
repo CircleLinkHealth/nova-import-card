@@ -297,9 +297,11 @@ class PracticeInvoiceController extends Controller
 
             $logger = '';
 
-            if($practice->invoice_recipients){
+            $recipients = explode(', ', $practice->invoice_recipients);
 
-                $recipients = explode(', ', $practice->invoice_recipients);
+            $recipients = array_merge($recipients, Practice::getInvoiceRecipients($practice));
+
+            if($practice->invoice_recipients){
 
                 foreach($recipients as $recipient){
 

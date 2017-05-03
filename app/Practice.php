@@ -5,6 +5,7 @@ use App\Traits\HasSettings;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Support\Facades\DB;
 
 class Practice extends Model
 {
@@ -221,6 +222,14 @@ class Practice extends Model
             'line2' => $primary->city . ', ' . $primary->state . ' ' . $primary->postal_code
 
         ];
+
+    }
+
+    public static function getInvoiceRecipients(Practice $p){
+
+        $emails = $p->users()->where('send_billing_reports', '=', true)->pluck('email')->toArray();
+
+        return $emails;
 
     }
 
