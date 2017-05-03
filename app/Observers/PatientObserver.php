@@ -25,6 +25,10 @@ class PatientObserver
 
     public function sendPatientConsentedNote(Patient $patient)
     {
+        if (!$patient->user->careplan->isProviderApproved()) {
+            return;
+        }
+
         $note = $patient->user->notes()->create([
             'author_id'    => 948,
             'body'         => "Patient consented on $patient->consent_date",
