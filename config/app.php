@@ -203,7 +203,8 @@ return [
         Barryvdh\Debugbar\ServiceProvider::class,
         Modelizer\Selenium\SeleniumServiceProvider::class,
         Way\Generators\GeneratorsServiceProvider::class,
-        Xethron\MigrationsGenerator\MigrationsGeneratorServiceProvider::class
+        Xethron\MigrationsGenerator\MigrationsGeneratorServiceProvider::class,
+        Tylercd100\LERN\LERNServiceProvider::class,
 
     ],
 
@@ -263,6 +264,7 @@ return [
         'Image'          => \Barryvdh\Snappy\Facades\SnappyImage::class,
         'JWTAuth'        => \Tymon\JWTAuth\Facades\JWTAuth::class,
         'JWTFactory'     => \Tymon\JWTAuth\Facades\JWTFactory::class,
+        'LERN'           => Tylercd100\LERN\Facades\LERN::class,
         'PDF'            => \Barryvdh\Snappy\Facades\SnappyPdf::class,
         'Slack'          => Maknz\Slack\Facades\Slack::class,
         'GoogleCalendar' => Spatie\GoogleCalendar\GoogleCalendarFacade::class,
