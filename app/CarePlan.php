@@ -11,6 +11,11 @@ class CarePlan extends Model implements PdfReport
 {
     use PdfReportTrait;
 
+    // statuses
+    const DRAFT = 'draft';
+    const QA_APPROVED = 'qa_approved';
+    const PROVIDER_APPROVED = 'provider_approved';
+
     protected $fillable = [
         'user_id',
         'provider_approver_id',
@@ -117,5 +122,9 @@ class CarePlan extends Model implements PdfReport
         $pdf->save($file_name, true);
 
         return $file_name;
+    }
+
+    public function isProviderApproved() {
+        return $this->status == CarePlan::PROVIDER_APPROVED;
     }
 }

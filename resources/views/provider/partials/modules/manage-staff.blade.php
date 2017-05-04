@@ -27,7 +27,7 @@
         <ul id="users" class="collapsible" data-collapsible="accordion">
             <li v-for="(index, newUser) in newUsers" id="user-@{{index}}" v-on:click="isValidated(index)">
                 <div class="collapsible-header" v-bind:class="{ active: (index == newUsers.length - 1) }">
-                    <div class="col s9">
+                    <div class="col s8">
                             <span v-if="newUser.first_name || newUser.last_name">
                                 @{{newUser.first_name | uppercase}} @{{newUser.last_name | uppercase}}
                                 | @{{ newUser.role_id > 0 ? rolesMap[newUser.role_id].display_name : 'No role selected'}}
@@ -37,7 +37,7 @@
                             </span>
                     </div>
 
-                    <div class="col s3 right-align">
+                    <div class="col s4 right-align">
                         <div v-if="newUser.validated && newUser.errorCount == 0">
                             <span class="green-text">Valid Data</span>
                         </div>
@@ -305,6 +305,15 @@
         <div v-on:click="addUser" class="btn waves-effect waves-light blue accent-1">
             Add User
             <i class="material-icons right">add</i>
+        </div>
+    </div>
+
+    <div class="row">
+        <div v-on:click="submitForm('{{$postUrl}}')"
+             class="btn blue waves-effect waves-light col s12"
+             v-bind:class="{disabled: !formCompleted}"
+             id="store-staff">
+            {{$submitLabel}}
         </div>
     </div>
 

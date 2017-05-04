@@ -4,6 +4,8 @@ namespace App\Listeners;
 
 use App\Events\CarePlanWasApproved;
 use App\Events\PdfableCreated;
+use App\Observers\PatientObserver;
+use App\User;
 
 class UpdateCarePlanStatus
 {
@@ -40,10 +42,33 @@ class UpdateCarePlanStatus
         } else {
             $user->carePlanStatus = 'qa_approved'; // careplan_status
             $user->carePlanQaApprover = auth()->user()->id; // careplan_qa_approver
+
+            if ($user->carePlan->patient->primaryPractice->settings()->first()->auto_approve_careplans) {
+                $user->carePlan->status = 'provider_approved';
+                $user->carePlan->provider_approver_id = $user->billingProvider()->id ?? null;
+                $user->carePlan->save();
+
+                event(new PdfableCreated($user->carePlan));
+            }
+
+            $this->addPatientConsentedNote($user);
+
             $user->carePlanQaDate = date('Y-m-d H:i:s'); // careplan_qa_date
         }
 
         $user->save();
     }
 
+    /**
+     * Send patient consented note to practice only after CLH has approved CarePlan.
+     *
+     * @param User $user
+     */
+    private function addPatientConsentedNote(User $user) {
+        if (!$user->notes->isEmpty()) {
+            return;
+        }
+
+        (new PatientObserver())->sendPatientConsentedNote($user->patientInfo);
+    }
 }

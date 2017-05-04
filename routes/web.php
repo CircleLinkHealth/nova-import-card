@@ -22,12 +22,14 @@ if (app()->environment() != 'production') {
     Route::get('/sms/test', 'TwilioController@sendTestSMS');
 
     Route::get('/rohan', function () {
-        
-//        dd((new \App\Billing\Practices\PracticeInvoiceGenerator(
-//            \App\Practice::find(21), Carbon::parse('2017-03-01')
-//        ))->checkForPendingQAForPractice());
 
-        dd(ceil(17 / 10) * 10);
+        $computer = (new \App\Reports\ApproveBillablePatientsReport(
+            Carbon::parse('2017-03-01'), 0));
+
+        $computer->data();
+
+        dd($computer->format());
+
 
     });
 
@@ -488,6 +490,12 @@ Route::group(['middleware' => 'auth'], function () {
         'prefix'     => 'admin',
     ], function () {
 
+        Route::get('php-info', function () {
+            if (auth()->user()->hasRole('administrator')) {
+                dd(phpinfo());
+            }
+        });
+
         Route::resource('medication-groups-maps', 'MedicationGroupsMapController');
 
         Route::post('get-athena-ccdas', [
@@ -647,6 +655,11 @@ Route::group(['middleware' => 'auth'], function () {
                 Route::post('/storeProblem', [
                     'uses' => 'Billing\PracticeInvoiceController@storeProblem',
                     'as'   => 'monthly.billing.store-problem',
+                ]);
+
+                Route::post('/getBillingCount', [
+                    'uses' => 'Billing\PracticeInvoiceController@getCounts',
+                    'as'   => 'monthly.billing.counts',
                 ]);
 
                 Route::post('/updateRejected', [

@@ -222,13 +222,29 @@ class Activity extends Model implements Transformable
         }
     }
 
-
     public function scopeCreatedBy(
         $builder,
         User $user
     ) {
         $builder->where('provider_id', $user->id)
             ->orWhere('logger_id', $user->id);
+    }
+
+    public static function totalTimeForPatientForMonth(
+        Patient $p, Carbon $month, $format = false
+    ) {
+
+        $raw = Activity::where('patient_id', $p->user_id)
+            ->where('created_at','>', $month->firstOfMonth()->startOfMonth()->toDateTimeString())
+            ->where('created_at','<', $month->lastOfMonth()->endOfDay()->toDateTimeString())
+        ->sum('duration');
+
+        if($format){
+            return round($raw / 60, 2);
+        }
+
+        return $raw;
+
     }
 
 

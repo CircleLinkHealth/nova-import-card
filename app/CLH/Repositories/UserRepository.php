@@ -217,7 +217,7 @@ class UserRepository implements \App\CLH\Contracts\Repositories\UserRepository
         ParameterBag $params
     ) {
         // phone numbers
-        if (!empty($params->get('study_phone_number'))) { // add study as home
+        if ($params->has('study_phone_number')) { // add study as home
             $phoneNumber = $user->phoneNumbers()->where('type', 'home')->first();
             if (!$phoneNumber) {
                 $phoneNumber = new PhoneNumber;
@@ -228,7 +228,7 @@ class UserRepository implements \App\CLH\Contracts\Repositories\UserRepository
             $phoneNumber->type = 'home';
             $phoneNumber->save();
         }
-        if (!empty($params->get('home_phone_number'))) {
+        if ($params->has('home_phone_number')) {
             $phoneNumber = $user->phoneNumbers()->where('type', 'home')->first();
             if (!$phoneNumber) {
                 $phoneNumber = new PhoneNumber;
@@ -239,7 +239,7 @@ class UserRepository implements \App\CLH\Contracts\Repositories\UserRepository
             $phoneNumber->type = 'home';
             $phoneNumber->save();
         }
-        if (!empty($params->get('work_phone_number'))) {
+        if ($params->has('work_phone_number')) {
             $phoneNumber = $user->phoneNumbers()->where('type', 'work')->first();
             if (!$phoneNumber) {
                 $phoneNumber = new PhoneNumber;
@@ -249,7 +249,8 @@ class UserRepository implements \App\CLH\Contracts\Repositories\UserRepository
             $phoneNumber->type = 'work';
             $phoneNumber->save();
         }
-        if (!empty($params->get('mobile_phone_number'))) {
+
+        if ($params->has('mobile_phone_number')) {
             $phoneNumber = $user->phoneNumbers()->where('type', 'mobile')->first();
             if (!$phoneNumber) {
                 $phoneNumber = new PhoneNumber;
@@ -308,30 +309,6 @@ class UserRepository implements \App\CLH\Contracts\Repositories\UserRepository
         $user->patientInfo->save();
     }
 
-    public function saveOrUpdateCareAmbassadorInfo(User $user, ParameterBag $params){
-
-        if($user->careAmbassador != null){
-
-            $user->careAmbassador->hourly_rate = $params->get('hourly_rate');
-            $user->careAmbassador->speaks_spanish = $params->get('speaks_spanish') == 'on' ? 1 : 0;
-            $user->careAmbassador->save();
-
-        } else {
-
-            $ambassador = CareAmbassador::create([
-                'user_id' => $user->id
-            ]);
-
-            $ambassador->save();
-
-            $user->careAmbassador()->save($ambassador);
-
-
-        }
-
-
-    }
-
     public function saveOrUpdateProviderInfo(
         User $user,
         ParameterBag $params
@@ -358,6 +335,35 @@ class UserRepository implements \App\CLH\Contracts\Repositories\UserRepository
             }
         }
         $user->nurseInfo->save();
+    }
+
+    public function saveOrUpdateCareAmbassadorInfo(
+        User $user,
+        ParameterBag $params
+    ) {
+
+        if ($user->careAmbassador != null) {
+
+            $user->careAmbassador->hourly_rate = $params->get('hourly_rate');
+            $user->careAmbassador->speaks_spanish = $params->get('speaks_spanish') == 'on'
+                ? 1
+                : 0;
+            $user->careAmbassador->save();
+
+        } else {
+
+            $ambassador = CareAmbassador::create([
+                'user_id' => $user->id,
+            ]);
+
+            $ambassador->save();
+
+            $user->careAmbassador()->save($ambassador);
+
+
+        }
+
+
     }
 
     public function adminEmailNotify(

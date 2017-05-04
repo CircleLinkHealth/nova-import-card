@@ -47,7 +47,7 @@ class TabularMedicalRecordSectionsLogger implements MedicalRecordLogger
      * Log Allergies Section.
      * @return MedicalRecordLogger
      */
-    public function logAllergiesSection() : MedicalRecordLogger
+    public function logAllergiesSection(): MedicalRecordLogger
     {
         $allergies = explode(',', $this->medicalRecord->allergies);
 
@@ -71,7 +71,7 @@ class TabularMedicalRecordSectionsLogger implements MedicalRecordLogger
      * Log Demographics Section.
      * @return MedicalRecordLogger
      */
-    public function logDemographicsSection() : MedicalRecordLogger
+    public function logDemographicsSection(): MedicalRecordLogger
     {
         $saved = DemographicsLog::create(
             array_merge([
@@ -83,6 +83,7 @@ class TabularMedicalRecordSectionsLogger implements MedicalRecordLogger
                 'mrn_number'    => $this->medicalRecord->mrn,
                 'gender'        => $this->medicalRecord->gender,
                 'language'      => $this->medicalRecord->language ?? 'EN',
+                'consent_date'  => $this->medicalRecord->consent_date ?? date('Y-m-d'),
                 'primary_phone' => $this->medicalRecord->primary_phone,
                 'cell_phone'    => $this->medicalRecord->cell_phone,
                 'home_phone'    => $this->medicalRecord->home_phone,
@@ -103,7 +104,7 @@ class TabularMedicalRecordSectionsLogger implements MedicalRecordLogger
      * Log Insurance Section.
      * @return MedicalRecordLogger
      */
-    public function logInsuranceSection() : MedicalRecordLogger
+    public function logInsuranceSection(): MedicalRecordLogger
     {
         $insurances = [];
 
@@ -134,7 +135,7 @@ class TabularMedicalRecordSectionsLogger implements MedicalRecordLogger
      * Log Document Section.
      * @return MedicalRecordLogger
      */
-    public function logDocumentSection() : MedicalRecordLogger
+    public function logDocumentSection(): MedicalRecordLogger
     {
         return $this;
     }
@@ -143,7 +144,7 @@ class TabularMedicalRecordSectionsLogger implements MedicalRecordLogger
      * Log Medications Section.
      * @return MedicalRecordLogger
      */
-    public function logMedicationsSection() : MedicalRecordLogger
+    public function logMedicationsSection(): MedicalRecordLogger
     {
         $medications = explode("\n", $this->medicalRecord->medications);
 
@@ -174,7 +175,7 @@ class TabularMedicalRecordSectionsLogger implements MedicalRecordLogger
      * Log Problems Section.
      * @return MedicalRecordLogger
      */
-    public function logProblemsSection() : MedicalRecordLogger
+    public function logProblemsSection(): MedicalRecordLogger
     {
         $problems = explode(',', $this->medicalRecord->problems);
 
@@ -201,7 +202,7 @@ class TabularMedicalRecordSectionsLogger implements MedicalRecordLogger
      * Log Providers Section.
      * @return MedicalRecordLogger
      */
-    public function logProvidersSection() : MedicalRecordLogger
+    public function logProvidersSection(): MedicalRecordLogger
     {
         $name = explode(',', $this->medicalRecord->provider_name);
 

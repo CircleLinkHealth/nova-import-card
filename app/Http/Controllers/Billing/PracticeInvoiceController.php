@@ -81,8 +81,8 @@ class PracticeInvoiceController extends Controller
             $report->rejected = 0;
 
         } else {
-            //approved was unchecked
 
+            //approved was unchecked
             $report->approved = 0;
 
         }
@@ -91,13 +91,21 @@ class PracticeInvoiceController extends Controller
         $report->actor_id = auth()->user()->id;
         $report->save();
 
-        return $report;
+        //used for view report counts
+        $counts = $this->getCounts($input['date']);
 
+        return response()->json(
+            [
+                'report_id' => $report->id,
+                'counts' => $counts
+            ]
+        );
+        
     }
 
     public function updateRejected(Request $request)
     {
-
+        
         $input = $request->input();
 
         $report = PatientMonthlySummary::find($input['report_id']);
@@ -120,14 +128,21 @@ class PracticeInvoiceController extends Controller
         $report->actor_id = auth()->user()->id;
         $report->save();
 
-        return $report;
+        //used for view report counts
+        $counts = $this->getCounts($input['date']);
 
+        return response()->json(
+            [
+                'report_id' => $report->id,
+                'counts' => $counts
+            ]
+        );
     }
 
     public function makeInvoices(Request $request)
     {
 
-        $data = [];
+        $invoices = [];
 
         foreach ($request->input('practices') as $practiceId) {
 
@@ -151,6 +166,7 @@ class PracticeInvoiceController extends Controller
         $report = PatientMonthlySummary::find($input['report_id']);
 
         $key = $input['problem_no'];
+        $codeKey = $input['problem_no'] . '_code';
 
         if($input['select_problem'] == 'other') {
 
@@ -162,10 +178,43 @@ class PracticeInvoiceController extends Controller
 
         }
 
+        $report->$codeKey = $input['code'];
+
         $report->save();
 
         return json_encode($key);
 
+
+    }
+
+    public function getCounts($date){
+
+        $date = Carbon::parse($date)->toDateString();
+
+        $approved = PatientMonthlySummary
+            ::where('month_year', $date)
+            ->where('ccm_time', '>', 1199)
+            ->where('approved', 1)->count();
+
+        $rejected = PatientMonthlySummary
+            ::where('month_year', $date)
+            ->where('ccm_time', '>', 1199)
+            ->where('rejected', 1)->count();
+
+        $toQA = PatientMonthlySummary
+            ::where('month_year', $date)
+            ->where('ccm_time', '>', 1199)
+            ->where('approved', 0)
+            ->where('rejected', 0)
+            ->count();
+
+        return [
+
+            'approved' => $approved,
+            'rejected' => $rejected,
+            'toQA' => $toQA
+
+        ];
 
     }
 

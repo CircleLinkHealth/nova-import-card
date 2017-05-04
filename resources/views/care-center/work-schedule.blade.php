@@ -18,14 +18,22 @@
                 <div class="panel-body">
                     <div class="container-fluid">
                         <div class="row">
-                            <h5>Please make your schedule by creating as many "windows" as you'd like.
-                                <br><br><span class="dark-red-text"><em>Windows become locked and cannot be edited after midnight of the
-                                    preceding Wednesday.</em></span>
-                            </h5>
+                            <h5>Please make your schedule by creating as many "windows" as you'd like.</h5>
                         </div>
                         <div class="row-centered">
                             <div class="col-md-12">
                                 @include('partials.care-center.work-schedule-slot.create')
+                            </div>
+                        </div>
+
+                        <br><br><br><br>
+
+                        <div class="row">
+                            <h5>You can also save the days you will not be working.</h5>
+                        </div>
+                        <div class="row-centered">
+                            <div class="col-md-12">
+                                @include('partials.care-center.holiday-schedule.create')
                             </div>
                         </div>
 
@@ -40,6 +48,13 @@
                                 @include('partials.care-center.work-schedule-slot.index')
                             </div>
                         </div>
+
+                        <div class="row">
+                            <div class="col-md-12">
+                                @include('partials.care-center.holiday-schedule.index')
+                            </div>
+                        </div>
+
                     </div>
                 </div>
             </div>

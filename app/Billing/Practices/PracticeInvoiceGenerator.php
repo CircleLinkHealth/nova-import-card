@@ -3,6 +3,8 @@
 namespace App\Billing\Practices;
 
 
+use App\AppConfig;
+use App\CLH\CCD\Importer\SnomedToCpmIcdMap;
 use App\Patient;
 use App\PatientMonthlySummary;
 use App\Practice;
@@ -70,9 +72,13 @@ class PracticeInvoiceGenerator
 //            www.circlelinkhealth.com<br/> ';
 
         $data['practice'] = $this->practice;
-        $data['month'] = $month->toDateString();
+        $data['month'] = $month->format('F, Y');
 
         $data['rate'] = $this->practice->clh_pppm;
+        $data['invoice_num'] = $this->incrementInvoiceNo();
+
+        $data['invoice_date'] = Carbon::today()->toDateString();
+        $data['due_by'] = Carbon::today()->addDays($this->practice->term_days)->toDateString();
 
         $data['billable'] = PatientMonthlySummary
             ::whereHas('patient_info', function ($q) use
@@ -113,6 +119,7 @@ class PracticeInvoiceGenerator
 //                    ->where('month_year', Carbon::now()->firstOfMonth()->toDateString())
                     ->where('month_year', $date)
                     ->where('no_of_successful_calls', '>', 0)
+                    ->whereNotNull('actor_id')
                     ->where('approved', 1);
 
             })
@@ -129,7 +136,7 @@ class PracticeInvoiceGenerator
         //name, dob, ccm, 2 conditions
 
         $data = [];
-        $data['name'] = $this->practice->name;
+        $data['name'] = $this->practice->display_name;
         $data['month'] = $date;
 
         foreach ($patients as $p) {
@@ -139,6 +146,7 @@ class PracticeInvoiceGenerator
             $data['patientData'][$p->user_id]['name'] = $u->fullName;
             $data['patientData'][$p->user_id]['dob'] = $u->birth_date;
             $data['patientData'][$p->user_id]['practice'] = $u->primaryPractice->id;
+            $data['patientData'][$p->user_id]['provider'] = $u->billingProviderName;
 
             $report = $p->patientSummaries()
 //                    ->where('month_year', Carbon::now()->firstOfMonth()->toDateString());
@@ -148,10 +156,11 @@ class PracticeInvoiceGenerator
             $data['patientData'][$p->user_id]['ccm_time'] = round($report['ccm_time'] / 60, 2);
 
             //@todo add problem type and code
-            $problems = $u->cpmProblems()->take(2)->get();
 
-            $data['patientData'][$p->user_id]['p1'] = $report->billable_problem1;
-            $data['patientData'][$p->user_id]['p2'] = $report->billable_problem2;
+            $data['patientData'][$p->user_id]['problem1'] = $report->billable_problem1;
+            $data['patientData'][$p->user_id]['problem1_code'] = $report->billable_problem1_code;
+            $data['patientData'][$p->user_id]['problem2'] = $report->billable_problem2;
+            $data['patientData'][$p->user_id]['problem2_code'] = $report->billable_problem2_code;
 
         }
 
@@ -188,6 +197,19 @@ class PracticeInvoiceGenerator
         return ($count > 0)
             ? true
             : false;
+
+    }
+
+    public function incrementInvoiceNo(){
+
+        $num = AppConfig::where('config_key', 'billing_invoice_count')->first();
+
+        $current = $num['config_value'];
+
+        $num['config_value'] = $num['config_value'] + 1;
+        $num->save();
+
+        return $current;
 
     }
 

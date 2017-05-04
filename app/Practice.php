@@ -24,7 +24,8 @@ class Practice extends Model
         'weekly_report_recipients',
         'auto_approve_careplans',
         'send_alerts',
-        'outgoing_phone_number'
+        'outgoing_phone_number',
+        'term_days'
     ];
 
     public static function getProviders($practiceId)

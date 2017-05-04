@@ -1,5 +1,7 @@
 <?php namespace App\Reports;
 
+use App\Activity;
+use App\CLH\CCD\Importer\SnomedToCpmIcdMap;
 use App\Patient;
 use App\User;
 use Carbon\Carbon;
@@ -18,7 +20,6 @@ use Yajra\Datatables\Facades\Datatables;
 class ApproveBillablePatientsReport
 {
 
-    private $data;
     private $month;
     private $practice;
     private $patients;
@@ -38,9 +39,9 @@ class ApproveBillablePatientsReport
 
         $this->patients = Patient
             ::whereHas('patientSummaries', function ($q) {
-                $q->where('ccm_time', '>', 1199)
-//                    ->where('month_year', Carbon::now()->firstOfMonth()->toDateString())
-                    ->where('month_year', '2017-03-01')
+                $q
+//              ->where('month_year', Carbon::now()->firstOfMonth()->toDateString())
+                    ->where('month_year', $this->month)
                     ->where('no_of_successful_calls', '>', 0);
 
             });
@@ -59,7 +60,7 @@ class ApproveBillablePatientsReport
         }
 
         $this->patients = $this->patients->orderBy('updated_at', 'desc')
-            ->pluck('user_id');
+            ->get();
 
         return $this->patients;
 
@@ -71,10 +72,15 @@ class ApproveBillablePatientsReport
         $count = 0;
         $formatted = [];
 
-        foreach ($this->patients as $p) {
+        foreach ($this->patients as $info) {
 
-            $u = User::find($p);
-            $info = $u->patientInfo;
+            $ccm = Activity::totalTimeForPatientForMonth($info, Carbon::parse($this->month));
+
+            if($ccm < 1200){
+                continue;
+            }
+
+            $u = $info->user;
 
             $report = $info->patientSummaries()
 //                    ->where('month_year', Carbon::now()->firstOfMonth()->toDateString());
@@ -85,60 +91,54 @@ class ApproveBillablePatientsReport
             }
 
             //@todo add problem type and code
-            $problems = $u->cpmProblems()->take(2)->pluck('name');
+            $problems = $u->cpmProblems()->take(2)->get();
             $reportId = $report->id;
 
-            $lacksProblems = false; //;)
+            $billableProblems = [];
+
+            $lacksProblems = false; // ;)
 
             //for JS problem picker
             $options = $u->ccdProblems()->pluck('name');
             $options = implode('|', $options->toArray());
 
             //First look for problems in the report itself. If no problems, then find problems from CCM. If none, give select box
+            for ($i = 0; $i < 2; $i++) {
 
-            //Handle problem col 1
-            if ($report->billable_problem1 == '') {
+                $problemName = 'billable_problem' . ($i+1);
+                $problemCode = 'billable_problem' . ($i+1) . '_code';
 
-                if (!isset($problems[0])) {
+                if ($report->$problemName == '') {
 
-                    $lacksProblems = true;
+                    if (isset($problems[$i])) {
 
-                    $problems[0] = "<button style='font-size: 10px' class='btn btn-primary problemPicker' name='billable_problem1' value='$options' id='$report->id'>Select Eligible Problem</button >";
+                        $report->$problemName = $problems[$i]->name;
+                        $billableProblems[$i]['name'] = $report->$problemName;
 
-                } else {
+                        $report->$problemCode = SnomedToCpmIcdMap::whereCpmProblemId($problems[$i]->id)->first()->icd_10_code;
+                        $billableProblems[$i]['code'] = $report->$problemCode;
 
-                    //if isset, then mark on report.
-                    $report->billable_problem1 = $problems[0];
+                    } else {
 
-                }
+                        $name ='billable_problem' . ($i+1);
 
-            } else {
+                        $lacksProblems = true;
 
-                $problems[0] = $report->billable_problem1;
+                        $billableProblems[$i]['name'] = "<button style='font-size: 10px' class='btn btn-primary problemPicker' name=$name value='$options' id='$report->id'>Select Problem</button >";
+                        $billableProblems[$i]['code'] = 'Select Problem';
 
-            }
+                    }
 
-            //Handle problem col 2
-            if ($report->billable_problem2 == '') {
+                } else { // none are null
 
-                if (!isset($problems[1])) {
-
-                    $lacksProblems = true;
-
-                    $problems[1] = "<button style='font-size: 10px' class='btn btn-primary problemPicker' name='billable_problem2' value='$options' id='$report->id'>Select Eligible Problem</button >";
-
-                } else {
-
-                    //if isset, then mark on report.
-                    $report->billable_problem2 = $problems[1];
+                    $billableProblems[$i]['name'] = $report->$problemName;
+                    $billableProblems[$i]['code'] = $report->$problemCode;
 
                 }
 
-            } else {
-
-                $problems[1] = $report->billable_problem2;
-
             }
+
+            $report->save();
 
             //if patient was paused/withdrawn and acted upon already, it's not QA no more
             $isNotEnrolledAndApproved = ($report->actor_id == null) && ($info->ccm_status == 'withdrawn' || $info->ccm_status == 'paused');
@@ -179,9 +179,11 @@ class ApproveBillablePatientsReport
                 'provider'               => $u->billingProvider()->fullName,
                 'practice'               => $u->primaryPractice->display_name,
                 'dob'                    => $info->birth_date,
-                'ccm'                    => round($report->ccm_time / 60, 2),
-                'problem1'               => $problems[0],
-                'problem2'               => $problems[1],
+                'ccm'                    => round($ccm / 60, 2),
+                'problem1'               => $billableProblems[0]['name'],
+                'problem1_code'          => $billableProblems[0]['code'],
+                'problem2'               => $billableProblems[1]['name'],
+                'problem2_code'          => $billableProblems[1]['code'],
                 'no_of_successful_calls' => $report->no_of_successful_calls,
                 'status'                 => $info->ccm_status,
                 'approve'                => "<input type = \"checkbox\" class='approved_checkbox' id='$reportId' $approved>",
@@ -194,6 +196,7 @@ class ApproveBillablePatientsReport
                 'lacksProblems'          => $lacksProblems,
 
             ];
+
             $count++;
 
         }

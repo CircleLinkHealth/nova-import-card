@@ -385,7 +385,7 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
     /**
      * @return array
      */
-    public function viewablePatientIds() : array
+    public function viewablePatientIds(): array
     {
         return User::ofType('participant')
             ->whereHas('practices', function ($q) {
@@ -395,7 +395,7 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
             ->all();
     }
 
-    public function viewableProgramIds() : array
+    public function viewableProgramIds(): array
     {
         return $this->practices
             ->pluck('id')
@@ -509,6 +509,12 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
     public function meta()
     {
         return $this->hasMany('App\UserMeta', 'user_id', 'id');
+    }
+
+    public function primaryProgramName()
+
+    {
+        return Practice::find($this->primaryProgramId())->display_name;
     }
 
     public function getUserConfigByKey($key)
@@ -1269,6 +1275,20 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
                 if ($forwardee->pivot->name == User::FORWARD_ALERTS_INSTEAD_OF_PROVIDER) {
                     $users->push($forwardee);
                 }
+            }
+        }
+
+        foreach ($this->locations as $location) {
+            if (!$location->clinicalEmergencyContact->isEmpty()) {
+                $contact = $location->clinicalEmergencyContact->first();
+
+                if ($contact->pivot->name == CarePerson::INSTEAD_OF_BILLING_PROVIDER) {
+                    $users = new Collection();
+                    $users->push($contact);
+                    return $users;
+                }
+
+                $users->push($contact);
             }
         }
 
@@ -2119,7 +2139,7 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
      *
      * @return User
      */
-    public function billingProvider() : User
+    public function billingProvider(): User
     {
         $billingProvider = $this->careTeamMembers
             ->where('type', 'billing_provider')
@@ -2147,7 +2167,7 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
      *
      * @return User
      */
-    public function leadContact() : User
+    public function leadContact(): User
     {
         $leadContact = $this->careTeamMembers
             ->where('type', 'lead_contact')

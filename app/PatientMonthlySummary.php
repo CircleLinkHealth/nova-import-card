@@ -21,7 +21,9 @@ class PatientMonthlySummary extends Model
         'rejected',
         'actor_id',
         'billable_problem1',
-        'billable_problem2'
+        'billable_problem2',
+        'billable_problem1_code',
+        'billable_problem2_code'
     ];
 
     public static function updateCallInfoForPatient(
