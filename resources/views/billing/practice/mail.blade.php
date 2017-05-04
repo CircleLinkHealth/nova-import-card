@@ -2,7 +2,7 @@
 
 <p>A CircleLink invoice for the most recent month is attached.</p>
 
-<p>For a billing report with patient information Medicare will request, please click here {{$link}} to download. Note:
+<p>For a billing report with patient information Medicare will request, please click <a href="{{$link}}"> here </a>  to download. Note:
     login required (authorized users only).</p>
 
 <p>As a reminder, your username is your practice/health organization e-mail address and you can obtain or reset your
@@ -23,9 +23,10 @@
     <li><b>Billing Location:</b> Billing provider’s location. CMS: “where the billing practitioner would furnish a
         face-to-face
         office visit with the patient”
-    <li><b>Include a Chronic Condition:</b> The billing report {{$link}} has a
+    <li><b>Include a Chronic Condition:</b> The <a href="{{$link}}"> billing report </a> has a
         condition for
         each patient that we recommend submitting with your claim to Medicare
     <li><b>Billing Provider:</b> Primary care provider of patient. Always use an MD if possible
 </ul>
 </p>
+
