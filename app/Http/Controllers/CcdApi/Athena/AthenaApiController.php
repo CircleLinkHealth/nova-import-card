@@ -23,15 +23,9 @@ class AthenaApiController extends Controller
 
     public function getTodays()
     {
-        $vendors = CcdVendor::whereEhrName(ForeignId::ATHENA)->get();
+        \Artisan::call('athena:getCcds');
 
-        $endDate = Carbon::today()->addDay(1);
-        $startDate = $endDate->copy()->subDay(2);
-
-        foreach ($vendors as $vendor) {
-            $this->service->getAppointments(1959188, $startDate, $endDate);
-            $this->service->getCcdsFromRequestQueue(5);
-        }
+        return 'athena:getCcds command ran.';
     }
 
 
