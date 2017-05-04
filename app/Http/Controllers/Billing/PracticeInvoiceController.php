@@ -12,6 +12,7 @@ use App\Reports\ApproveBillablePatientsReport;
 use App\User;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\URL;
@@ -268,11 +269,32 @@ class PracticeInvoiceController extends Controller
 
     }
 
-    public function downloadInvoice($name){
+    public function downloadInvoice($practice, $name){
 
-        return response()->download(storage_path('/download/' . $name), $name, [
-            'Content-Length: ' . filesize(storage_path('/download/' . $name)),
-        ]);
+        if (Auth::check()) {
+
+            $practices = auth()->user()->practices->pluck('id')->toArray();
+
+            if(in_array($practice, $practices)){
+
+                return response()->download(storage_path('/download/' . $name), $name, [
+                    'Content-Length: ' . filesize(storage_path('/download/' . $name)),
+                ]);
+
+            } else {
+
+                return abort(403, 'Unauthorized action.');
+
+            }
+
+        } else {
+
+            return 'Please login and retry the link to view the invoice!';
+
+        }
+
+
+
 
     }
 
@@ -292,7 +314,10 @@ class PracticeInvoiceController extends Controller
             $invoiceLink = route
             (
                 'monthly.billing.download',
-                ['name' => $patientReport]
+                [
+                    'name' => $patientReport,
+                    'practice' => $practice->id
+                ]
             );
 
             $logger = '';
@@ -321,7 +346,6 @@ class PracticeInvoiceController extends Controller
             } else {
 
                 $logger .= "No recipients setup for $practice->name...";
-
 
             }
 

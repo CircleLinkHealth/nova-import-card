@@ -26,7 +26,7 @@ if (app()->environment() != 'production') {
 
         $date = Carbon::parse('2017-03-01');
 
-        dd((new PatientMonthlySummary())->getPatientQACountForPracticeForMonth(\App\Practice::find(21), $date));
+        dd(\App\Practice::getInvoiceRecipients(\App\Practice::find(21)));
 
         $reporter = new ApproveBillablePatientsReport($date, 21);
         $reporter->dataV1();
@@ -678,7 +678,7 @@ Route::group(['middleware' => 'auth'], function () {
                     'as'   => 'monthly.billing.send',
                 ]);
 
-                Route::get('/downloadInvoice/{name}', [
+                Route::get('/downloadInvoice/{practice}/{name}', [
                     'uses' => 'Billing\PracticeInvoiceController@downloadInvoice',
                     'as'   => 'monthly.billing.download',
                 ]);
