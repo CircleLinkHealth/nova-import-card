@@ -158,7 +158,7 @@ class PracticeInvoiceGenerator
                 ->where('month_year', $this->month->firstOfMonth()->toDateString())
                 ->first();
 
-            $data['patientData'][$p->user_id]['ccm_time'] = $ccm;
+            $data['patientData'][$p->user_id]['ccm_time'] = round($ccm / 60 , 2);
             $data['patientData'][$p->user_id]['name'] = $u->fullName;
             $data['patientData'][$p->user_id]['dob'] = $u->birth_date;
             $data['patientData'][$p->user_id]['practice'] = $u->primaryPractice->id;
