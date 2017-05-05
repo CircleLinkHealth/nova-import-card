@@ -164,8 +164,6 @@ class PracticeInvoiceGenerator
             $data['patientData'][$p->user_id]['practice'] = $u->primaryPractice->id;
             $data['patientData'][$p->user_id]['provider'] = $u->billingProviderName;
 
-
-            //@todo add problem type and code
             $data['patientData'][$p->user_id]['problem1'] = $report->billable_problem1;
             $data['patientData'][$p->user_id]['problem1_code'] = $report->billable_problem1_code;
             $data['patientData'][$p->user_id]['problem2'] = $report->billable_problem2;
