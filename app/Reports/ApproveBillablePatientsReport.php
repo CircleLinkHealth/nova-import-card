@@ -242,7 +242,7 @@ class ApproveBillablePatientsReport
             $name = "<a href = " . URL::route('patient.careplan.show', [
                     'patient' => $u->id,
                     'page'    => 1,
-                ]) . ">" . $u->fullName . "</a>";
+                ]) . "  target='_blank' >" . $u->fullName . "</a>";
 
             $formatted[$count] = [
 
