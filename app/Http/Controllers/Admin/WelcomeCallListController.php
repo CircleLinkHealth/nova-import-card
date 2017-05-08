@@ -3,10 +3,10 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Models\PatientData\Rappa\RappaData;
+use App\Models\PatientData\Rappa\RappaInsAllergy;
+use App\Models\PatientData\Rappa\RappaName;
 use App\Practice;
-use App\Rappa\RappaData;
-use App\Rappa\RappaInsAllergy;
-use App\Rappa\RappaName;
 use App\Services\WelcomeCallListGenerator;
 use Illuminate\Http\Request;
 use Illuminate\Support\Collection;

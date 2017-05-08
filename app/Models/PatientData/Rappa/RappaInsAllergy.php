@@ -1,10 +1,10 @@
 <?php
 
-namespace App\Rappa;
+namespace App\Models\PatientData\Rappa;
 
 use Illuminate\Database\Eloquent\Model;
 
-class RappaName extends Model
+class RappaInsAllergy extends Model
 {
     public $guarded = [];
 }

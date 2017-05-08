@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Rappa;
+namespace App\Models\PatientData\Rappa;
 
 use Illuminate\Database\Eloquent\Model;
 
