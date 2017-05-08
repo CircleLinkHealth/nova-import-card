@@ -6,6 +6,8 @@ use App\Http\Controllers\Controller;
 use App\Models\PatientData\Rappa\RappaData;
 use App\Models\PatientData\Rappa\RappaInsAllergy;
 use App\Models\PatientData\Rappa\RappaName;
+use App\Models\PatientData\RockyMountain\RockyData;
+use App\Models\PatientData\RockyMountain\RockyName;
 use App\Practice;
 use App\Services\WelcomeCallListGenerator;
 use Illuminate\Http\Request;
@@ -84,6 +86,37 @@ class WelcomeCallListController extends Controller
         });
 
         $list = (new WelcomeCallListGenerator($patientList, true, true, true, false));
+
+        $list->exportToCsv();
+//        $list->exportIneligibleToCsv();
+    }
+
+    /**
+     * Create Rocky Mountain Call List from rappa_* tables
+     */
+    public function makeRockyMtnCallList()
+    {
+        $names = RockyName::get()->keyBy('patient_id');
+
+        $patientList = $names->map(function ($patient) {
+            $data = RockyData::where('patient_id', '=', $patient->patient_id)->get();
+
+            $patient = collect($patient->toArray());
+
+            $patient->put('problems', collect());
+
+            foreach ($data as $d) {
+                for ($i = 1; $i < 11; $i++) {
+                    if ($d["DIAG$i"] && !$patient['problems']->contains($d["DIAG$i"])) {
+                        $patient['problems']->push($d["DIAG$i"]);
+                    }
+                }
+            }
+
+            return $patient;
+        });
+
+        $list = (new WelcomeCallListGenerator($patientList, false, true, true, false));
 
         $list->exportToCsv();
 //        $list->exportIneligibleToCsv();
