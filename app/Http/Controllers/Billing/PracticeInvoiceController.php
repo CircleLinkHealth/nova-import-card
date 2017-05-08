@@ -334,7 +334,7 @@ class PracticeInvoiceController extends Controller
 
                         $m->from('billing@circlelinkhealth.com', 'CircleLink Health');
 
-                        $m->to($recipient)->subject('Your Invoice for CircleLink Health');
+                        $m->to($recipient)->subject('Your Invoice and Billing Report from CircleLink');
 
                         $m->attach(storage_path('/download/' . $invoice));
 
