@@ -182,11 +182,17 @@ class PatientCareplanController extends Controller
 
             // build pdf
             $pdf = App::make('snappy.pdf.wrapper');
+//            leaving these here in case we need them
+//            $pdf->setOption('disable-javascript', false);
+//            $pdf->setOption('enable-javascript', true);
+//            $pdf->setOption('javascript-delay', 400);
+
             $pdf->loadView('wpUsers.patient.multiview', [
                 'careplans'    => [$user_id => $careplan],
                 'isPdf'        => true,
                 'letter'       => $letter,
                 'problemNames' => $careplan['problem'],
+                'careTeam'     => $user->careTeamMembers,
             ]);
             $pdf->setOption('footer-center', 'Page [page]');
             //$pdf->setOption('margin-top', '2');
@@ -573,8 +579,7 @@ class PatientCareplanController extends Controller
         // get providers
         $providers = [];
         $providers = User::with('phoneNumbers', 'providerInfo')
-            ->whereHas('practices', function ($q) use
-            (
+            ->whereHas('practices', function ($q) use (
                 $patient
             ) {
                 $q->whereIn('program_id', $patient->viewableProgramIds());
