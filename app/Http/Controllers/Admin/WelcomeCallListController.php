@@ -118,7 +118,7 @@ class WelcomeCallListController extends Controller
 
         $list = (new WelcomeCallListGenerator($patientList, false, true, true, false));
 
-//        $list->exportToCsv();
-        $list->exportIneligibleToCsv();
+        $list->exportToCsv();
+//        $list->exportIneligibleToCsv();
     }
 }
