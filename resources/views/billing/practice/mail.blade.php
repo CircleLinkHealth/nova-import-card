@@ -4,8 +4,6 @@
 
 <p>Finally, we have some billing tips below. Please let us know if you need anything else!</p>
 
-<p>Please let us know if you need anything else!</p>
-
 <p>
     Best,<br>
     CircleLink Team
