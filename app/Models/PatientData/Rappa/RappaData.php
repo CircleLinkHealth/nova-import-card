@@ -1,0 +1,10 @@
+<?php
+
+namespace App\Models\PatientData\Rappa;
+
+use Illuminate\Database\Eloquent\Model;
+
+class RappaData extends Model
+{
+    public $guarded = [];
+}

@@ -70,6 +70,7 @@ class WelcomeCallListGenerator
         Practice $practice = null
     ) {
         $this->patientList = $patientList;
+        $this->ineligiblePatients = new Collection();
 
         $this->filterLastEncounter = $filterLastEncounter;
         $this->filterInsurance = $filterInsurance;
@@ -89,15 +90,14 @@ class WelcomeCallListGenerator
             ->byNumberOfProblems();
     }
 
-    protected function byNumberOfProblems() : WelcomeCallListGenerator
+    protected function byNumberOfProblems(): WelcomeCallListGenerator
     {
         if (!$this->filterProblems) {
             return $this;
         }
         $cpmProblems = CpmProblem::all();
 
-        $patientList = $this->patientList->map(function ($row) use
-        (
+        $patientList = $this->patientList->map(function ($row) use (
             $cpmProblems
         ) {
             $row['ccm_condition_1'] = '';
@@ -105,7 +105,13 @@ class WelcomeCallListGenerator
             $row['cpm_problem_1'] = '';
             $row['cpm_problem_2'] = '';
 
-            $problems = new Collection(explode(',', $row['problems']));
+            if (is_string($row['problems'])) {
+                $problems = new Collection(explode(',', $row['problems']));
+            } elseif (is_a($row['problems'], Collection::class)) {
+                $problems = $row['problems'];
+            } else {
+                dd('Problems is not a string or collection.');
+            }
 
             $qualifyingProblems = [];
             //the cpm_problem_id for qualifying problems
@@ -158,12 +164,51 @@ class WelcomeCallListGenerator
 //                        continue 2;
 //                    }
 //                }
+
+            /*
+             * Try to match keywords
+             */
+                foreach ($cpmProblems as $problem) {
+                    $keywords = array_merge(explode(',', $problem->contains), [$problem->name]);
+
+                    foreach ($keywords as $keyword) {
+                        if (empty($keyword)) {
+                            continue;
+                        }
+
+                        if (str_contains(strtolower($problemCode), strtolower($keyword))
+                            && !in_array($problem->id, $qualifyingProblemsCpmIdStack)
+                        ) {
+                            $code = SnomedToCpmIcdMap::where('icd_9_code', '!=', '')
+                                ->whereCpmProblemId($problem->id)
+                                ->get()
+                                ->sortByDesc('icd_9_avg_usage')
+                                ->first();
+
+                            if ($code) {
+                                if ($code->icd_9_code) {
+                                    $code = "ICD9: $code->icd_9_code";
+                                }
+                            }
+
+                            if (!$code) {
+                                $code = SnomedToCpmIcdMap::where('icd_10_code', '!=', '')
+                                    ->whereCpmProblemId($problem->id)
+                                    ->first();
+                                $code = "ICD10: $code->icd_10_code";
+                            }
+
+                            $qualifyingProblems[] = "{$problem->name}, $code";
+                            $qualifyingProblemsCpmIdStack[] = $problem->id;
+                        }
+                    }
+                }
             }
 
             $qualifyingProblems = array_unique($qualifyingProblems);
 
             if (count($qualifyingProblems) < 2) {
-                $this->ineligiblePatients[] = $row;
+                $this->ineligiblePatients->push($row);
 
                 return false;
             }
@@ -182,7 +227,7 @@ class WelcomeCallListGenerator
         return $this;
     }
 
-    protected function byInsurance() : WelcomeCallListGenerator
+    protected function byInsurance(): WelcomeCallListGenerator
     {
         if (!$this->filterInsurance) {
             return $this;
@@ -196,7 +241,7 @@ class WelcomeCallListGenerator
             if (str_contains($primary, 'none')) {
                 $primary = '';
             }
-            if (str_contains($secondary, 'none')) {
+            if (str_contains($secondary, ['none', 'no secondary plan'])) {
                 $primary = '';
             }
 
@@ -205,7 +250,7 @@ class WelcomeCallListGenerator
 //                return false;
 //            }
 
-            //Keep the patient if they have medicate b AND a secondary insurance
+            //Keep the patient if they have medicare AND a secondary insurance
             if (str_contains($primary, [
                     'medicare b',
                     'medicare part b',
@@ -215,8 +260,19 @@ class WelcomeCallListGenerator
                 return false;
             }
 
+            //Or the reverse
+            if (str_contains($secondary, [
+                    'medicare b',
+                    'medicare part b',
+                    'medicare',
+                ]) && !empty($primary)
+            ) {
+                return false;
+            }
+
             //Otherwise, remove the patient from the list
-//            $this->ineligiblePatients[] = $row;
+            $this->ineligiblePatients->push($row);
+
             return true;
 
         });
@@ -229,7 +285,7 @@ class WelcomeCallListGenerator
      *
      * @return WelcomeCallListGenerator
      */
-    protected function byLastEncounter() : WelcomeCallListGenerator
+    protected function byLastEncounter(): WelcomeCallListGenerator
     {
         if (!$this->filterLastEncounter) {
             return $this;
@@ -240,19 +296,22 @@ class WelcomeCallListGenerator
             $minEligibleDate = Carbon::createFromDate('2016', '02', '01');
 
             if (!isset($row['last_encounter'])) {
-//                $this->ineligiblePatients[] = $row;
+                $this->ineligiblePatients->push($row);
+
                 return true;
             }
 
             if (!$row['last_encounter']) {
-//                $this->ineligiblePatients[] = $row;
+                $this->ineligiblePatients->push($row);
+
                 return true;
             }
 
             $lastEncounterDate = new Carbon($row['last_encounter']);
 
             if ($lastEncounterDate->lt($minEligibleDate)) {
-//                $this->ineligiblePatients[] = $row;
+                $this->ineligiblePatients->push($row);
+
                 return true;
             }
 
@@ -298,10 +357,52 @@ class WelcomeCallListGenerator
     {
         $now = Carbon::now()->toDateTimeString();
 
+        $this->patientList = $this->patientList->map(function ($patient) {
+            $requiredKeys = [
+                'patient_id',
+                'email',
+                'first_name',
+                'last_name',
+                'home_phone',
+                'primary_phone',
+                'work_phone',
+                'preferred_contact_method',
+                'preferred_provider',
+                'address_1',
+                'address_2',
+                'city',
+                'state',
+                'zip',
+                'patient_name',
+                'last_encounter',
+                'allergy',
+                'primary_insurance',
+                'secondary_insurance',
+                'provider',
+                'county',
+                'medications',
+                'problems',
+            ];
+
+            $keys = $patient->keys();
+
+            foreach ($requiredKeys as $k) {
+                if (!$keys->contains($k)) {
+                    $patient->put($k, '');
+                }
+            }
+
+            $patientArr = $patient->all();
+
+            ksort($patientArr);
+
+            return $patientArr;
+        });
+
         return Excel::create("Welcome Call List - $now", function ($excel) {
             $excel->sheet('Welcome Calls', function ($sheet) {
                 $sheet->fromArray(
-                    $this->patientList
+                    $this->patientList->values()->all()
                 );
             });
         })->export('xls');
@@ -314,10 +415,52 @@ class WelcomeCallListGenerator
     {
         $now = Carbon::now()->toDateTimeString();
 
+        $this->ineligiblePatients = $this->ineligiblePatients->map(function ($patient) {
+            $requiredKeys = [
+                'patient_id',
+                'email',
+                'first_name',
+                'last_name',
+                'home_phone',
+                'primary_phone',
+                'work_phone',
+                'preferred_contact_method',
+                'preferred_provider',
+                'address_1',
+                'address_2',
+                'city',
+                'state',
+                'zip',
+                'patient_name',
+                'last_encounter',
+                'allergy',
+                'primary_insurance',
+                'secondary_insurance',
+                'provider',
+                'county',
+                'medications',
+                'problems',
+            ];
+
+            $keys = $patient->keys();
+
+            foreach ($requiredKeys as $k) {
+                if (!$keys->contains($k)) {
+                    $patient->put($k, '');
+                }
+            }
+
+            $patientArr = $patient->all();
+
+            ksort($patientArr);
+
+            return $patientArr;
+        });
+
         Excel::create("Ineligible Patients Welcome Call List - $now", function ($excel) {
             $excel->sheet('Ineligible', function ($sheet) {
                 $sheet->fromArray(
-                    $this->ineligiblePatients
+                    $this->ineligiblePatients->values()->all()
                 );
             });
         })->export('xls');

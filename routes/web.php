@@ -5,14 +5,9 @@
 //$faxTest = (new PhaxioService('production'))->send('+12124910114', storage_path('pdfs/notes/2017-02-07-xsKTIK4106WdXiMNu8iMla4FPJSOcosNBXXMkAsX.pdf'));
 //dd($faxTest);
 
-use App\Patient;
-use App\PatientMonthlySummary;
 use App\Reports\ApproveBillablePatientsReport;
-use App\Reports\WeeklyReportDispatcher;
-use App\User;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\URL;
 
 //Patient Landing Pages
 Route::resource('sign-up', 'PatientSignupController');
