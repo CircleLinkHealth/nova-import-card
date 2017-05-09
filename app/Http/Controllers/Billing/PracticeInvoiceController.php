@@ -26,7 +26,17 @@ class PracticeInvoiceController extends Controller
 
         $practices = Practice::active();
 
-        $currentMonth = '2017-03-01';
+        $currentMonth = Carbon::now()->firstOfMonth()->toDateString();
+
+        $dates = [];
+
+        for($i = -6; $i < 6; $i++){
+
+            $date = Carbon::parse($currentMonth)->addMonths($i)->firstOfMonth()->toDateString();
+
+            $dates[$date] = Carbon::parse($date)->format('F, Y');
+
+        }
 
         $counts = $this->getCounts(Carbon::parse($currentMonth), $practices[0]->id);
 
@@ -43,6 +53,7 @@ class PracticeInvoiceController extends Controller
             'approved',
             'rejected',
             'toQA',
+            'dates'
         ]));
 
     }
@@ -51,7 +62,9 @@ class PracticeInvoiceController extends Controller
     {
         $input = $request->input();
 
-        $reporter = new ApproveBillablePatientsReport(Carbon::parse('2017-03-01'), $input['practice_id']);
+        $date = Carbon::parse($input['date']);
+
+        $reporter = new ApproveBillablePatientsReport($date, $input['practice_id']);
 
         $reporter->dataV1();
 
@@ -130,42 +143,57 @@ class PracticeInvoiceController extends Controller
         );
     }
 
+    //@todo add date flex
     public function createInvoices()
     {
 
         $practices = Practice::active();
-        $testDate = '2017-03-01';
+        $currentMonth = Carbon::now()->firstOfMonth()->toDateString();
+
+        $dates = [];
+
+        for($i = -6; $i < 6; $i++){
+
+            $date = Carbon::parse($currentMonth)->addMonths($i)->firstOfMonth()->toDateString();
+
+            $dates[$date] = Carbon::parse($date)->format('F, Y');
+
+        }
 
         $readyToBill = [];
         $needsQA = [];
         $invoice_no = AppConfig::where('config_key', 'billing_invoice_count')->first()['config_value'];
 
-        foreach ($practices as $practice) {
+        $readyToBill = $practices;
 
-            $pending = (new PracticeInvoiceGenerator($practice,
-                Carbon::parse($testDate)))->checkForPendingQAForPractice();
-
-            if ($pending) {
-
-                $needsQA[] = $practice;
-
-            } else {
-
-                $readyToBill[] = $practice;
-
-            }
-
-        }
+//        foreach ($practices as $practice) {
+//
+//            $pending = (new PracticeInvoiceGenerator($practice,
+//                Carbon::parse($currentMonth)))->checkForPendingQAForPractice();
+//
+//            if ($pending) {
+//
+//                $needsQA[] = $practice;
+//
+//            } else {
+//
+//                $readyToBill[] = $practice;
+//
+//            }
+//
+//        }
 
         return view('billing.practice.create', compact(
             [
                 'needsQA',
                 'readyToBill',
-                'invoice_no'
+                'invoice_no',
+                'dates'
             ]
         ));
     }
 
+    //@todo add date flex
     public function makeInvoices(Request $request)
     {
 
@@ -177,11 +205,13 @@ class PracticeInvoiceController extends Controller
 
         $num->save();
 
+        $date = Carbon::parse($request->input('date'));
+
         foreach ($request->input('practices') as $practiceId) {
 
             $practice = Practice::find($practiceId);
 
-            $data = (new PracticeInvoiceGenerator($practice, Carbon::parse('2017-03-01')))->generatePdf();
+            $data = (new PracticeInvoiceGenerator($practice, $date))->generatePdf();
 
             $invoices[$practice->display_name] = $data;
 

@@ -44,11 +44,19 @@
                                 </div>
 
                                 <div class="form-group">
-                                    <label class="col-md-2 control-label" for="end_date">Month</label>
+                                    <label class="col-md-2 control-label" for="date">Month</label>
                                     <div class="col-md-4">
-                                        <input class="form-control" type="date"
-                                               value="2017-03-01" name="start"
-                                               id="end_date" disabled>
+                                        <select class="col-md-3 practices dropdown Valid form-control reloader"
+                                                name="date" id="date">
+                                            @foreach($dates as $key => $val)
+
+                                                @if(\Carbon\Carbon::today()->firstOfMonth()->toDateString() == $key)
+                                                    <option value="{{$key}}" selected>{{$val}}</option>
+                                                @else
+                                                    <option value="{{$key}}">{{$val}}</option>
+                                                @endif
+                                            @endforeach
+                                        </select>
                                     </div>
                                     <div class="col-md-2">
                                         <button id="submit" name="submit" value="download"
