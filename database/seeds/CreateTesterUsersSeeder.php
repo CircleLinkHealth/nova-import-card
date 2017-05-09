@@ -42,8 +42,6 @@ class CreateTesterUsersSeeder extends Seeder
 
     private function createUser(Practice $practice, $email, $firstName, $lastName, Role $role)
     {
-        $password = 'password';
-
         $user = User::updateOrCreate([
             'email' => $email,
         ], [
@@ -51,7 +49,6 @@ class CreateTesterUsersSeeder extends Seeder
             'first_name'   => $firstName,
             'last_name'    => $lastName,
             'display_name' => "$firstName $lastName",
-            'password'     => bcrypt($password),
         ]);
 
         $user->attachLocation($practice->locations);
@@ -70,6 +67,16 @@ class CreateTesterUsersSeeder extends Seeder
                 'user_id' => $user->id,
             ]);
         }
+
+        $url = url('auth/password/reset');
+
+        Mail::send('emails.string-content', [
+            'content' => "A CLH Test User account was created for you. Please obtain a password from $url. After that you can login using your email and password.",
+        ], function ($message) use ($email) {
+            $message->from('tester-accounts@careplanmanager.com', 'CircleLink Health');
+            $message->to($email)->subject('A CLH Test User account was created for you.');
+            $message->cc('mantoniou@circlelinkhealth.com');
+        });
 
         return $user;
     }
