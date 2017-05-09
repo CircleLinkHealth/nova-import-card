@@ -81,7 +81,7 @@
                 <div class="row">
                     <div class="col-md-12">
                         <div class="panel panel-default">
-                            <div class="panel-heading">Approve Billable Patients (Currently supports {{$currentMonth}})
+                            <div class="panel-heading">Approve Billable Patients
                             </div>
                             <div class="panel-body">
 
@@ -89,7 +89,7 @@
                                     <div class="col-md-5">
 
                                         <label class="col-md-2 control-label" for="practice_id">Select Practice</label>
-                                        <select class="col-md-3 practices dropdown Valid form-control"
+                                        <select class="col-md-3 practices dropdown Valid form-control reloader"
                                                 name="practice_id" id="practice_id">
                                             @foreach($practices as $practice)
                                                 <option value="{{$practice->id}}">{{$practice->display_name}}</option>
@@ -100,9 +100,16 @@
                                     <div class="col-md-5">
 
                                         <label class="col-md-2 control-label" for="date">Select Month</label>
-                                        <select class="col-md-3 practices dropdown Valid form-control"
+                                        <select class="col-md-3 practices dropdown Valid form-control reloader"
                                                 name="date" id="date">
-                                            <option value="2017-03-01" selected disabled>March 2017</option>
+                                            @foreach($dates as $key => $val)
+
+                                                @if(\Carbon\Carbon::today()->firstOfMonth()->toDateString() == $key)
+                                                    <option value="{{$key}}" selected>{{$val}}</option>
+                                                @else
+                                                    <option value="{{$key}}">{{$val}}</option>
+                                                @endif
+                                            @endforeach
                                         </select>
                                     </div>
                                 </div>
@@ -202,6 +209,7 @@
                         "type": "POST",
                         "data": function (d) {
                             d.practice_id = $('#practice_id').val();
+                            d.date        = $("#date option:selected").text()
                         }
                     },
                     columns: [
@@ -244,7 +252,7 @@
                 });
 
                 //When a new practice is picked, update table
-                $('#practice_id').on('change', function () {
+                $('.reloader').on('change', function () {
 
                     $('#billable_list').DataTable().ajax.reload();
 
@@ -272,7 +280,7 @@
 
                 $('#select_problem').on('change', function () {
 
-                    if($("#select_problem option:selected").text() == 'Other'){
+                    if ($("#select_problem option:selected").text() == 'Other') {
 
                         $("#showOther").css('display', 'block');
 
@@ -417,7 +425,7 @@
                     $('#has_problem').val(1);
 
 
-                    let practice = ('#practice_id').val();
+                    let practice = $("#practice_id option:selected").text();
                     $('#modal_practice_id').val(practice);
 
                     let date = $("#date option:selected").text();
