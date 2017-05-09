@@ -158,14 +158,14 @@ class ApproveBillablePatientsReport
 
                         $code = SnomedToCpmIcdMap::whereCpmProblemId($problems[$i]->id)->first()->icd_10_code;
 
-                        if($report->$problemCode = ''){
+                        if($report->$problemCode == ''){
 
                             $report->$problemCode = $code;
 
                         } else {
 
                             $lacksCode = true;
-                            $report->$problemCode = "<button style='font-size: 10px' class='btn btn-primary codePicker' patient='$u->fullName' name=$problemCode value='$options' id='$report->id'>Select Code</button >";
+                            $billableProblems[$i]['code'] = "<button style='font-size: 10px' class='btn btn-primary codePicker' patient='$u->fullName' name=$problemCode value='$options' id='$report->id'>Select Code</button >";
 
                         }
 
