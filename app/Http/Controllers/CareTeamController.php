@@ -196,6 +196,7 @@ class CareTeamController extends Controller
 
         if (is_object($carePerson)) {
             $carePerson->load('user');
+            $carePerson->formatted_type = snakeToSentenceCase($carePerson->type);
         }
 
         return response()->json([

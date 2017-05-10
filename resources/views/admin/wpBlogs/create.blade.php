@@ -52,8 +52,19 @@
                             </div>
 
                             <div class="row" style="margin-top:20px;">
+                                <div class="col-xs-2">{!! Form::label('bill_to_name', 'Bill To:') !!}</div>
+                                <div class="col-xs-10">{!! Form::text('bill_to_name', '', ['class' => 'form-control', 'style' => 'width:100%;']) !!}</div>
+                            </div>
+
+                            <div class="row" style="margin-top:20px;">
                                 <div class="col-xs-2">{!! Form::label('weekly_report_recipients', 'Weekly Organization Summary Recipients (comma separated, w/ spaces after comma) ') !!}</div>
                                 <div class="col-xs-10"><textarea name="weekly_report_recipients"
+                                                                 style="width: 100%"> </textarea></div>
+                            </div>
+
+                            <div class="row" style="margin-top:20px;">
+                                <div class="col-xs-2">{!! Form::label('invoice_recipients', 'Invoice Recipients (comma separated, w/ spaces after comma) ') !!}</div>
+                                <div class="col-xs-10"><textarea name="invoice_recipients"
                                                                  style="width: 100%"> </textarea></div>
                             </div>
 

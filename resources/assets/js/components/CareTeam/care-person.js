@@ -27,6 +27,9 @@ var carePerson = Vue.component('carePerson', {
             addCarePersonForm: {},
             patientId: '',
             updateRoute: '',
+
+            id: '',
+            formatted_type: '',
         }
     },
 
@@ -55,7 +58,8 @@ var carePerson = Vue.component('carePerson', {
                 patientId: this.patientId,
             }).then(function (response) {
                 this.$set('care_person.id', response.data.carePerson.id);
-                this.$set('care_person.formatted_type', response.data.carePerson.type);
+                this.$set('care_person.formatted_type', response.data.carePerson.formatted_type);
+
                 $("#editCareTeamModal-" + id).modal('hide');
 
                 if (response.data.oldBillingProvider) {

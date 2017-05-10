@@ -5,8 +5,8 @@
 if (!function_exists('checkIfExists')) {
     //check if exists
     function checkIfExists(
-            $arr,
-            $val
+        $arr,
+        $val
     ) {
         if (isset($arr[$val])) {
             return $arr[$val];
@@ -427,13 +427,19 @@ $today = \Carbon\Carbon::now()->toFormattedDateString();
                             <h2 class="patient-summary__subtitles patient-summary--careplan-background">Care Team:</h2>
                         </div>
                         <div class="col-xs-12">
-                            <p>
-                                @if(!empty($billing))
-                                    <strong>Billing
-                                        Provider: </strong> {{$billing->fullName}} {{($billing->getSpecialtyAttribute() == '')? '' : ' ' .  $billing->getSpecialtyAttribute() }}
-                                    <br>
-                                @endif
-                            </p>
+                            <ul class="col-xs-12">
+                                @foreach($careTeam as $carePerson)
+                                    <li class="col-xs-12">
+                                        <div class="col-md-7">
+                                            <p style="margin-left: -10px;">
+                                                <strong>
+                                                    {{snakeToSentenceCase($carePerson->type)}}:
+                                                </strong>{{$carePerson->user->first_name}} {{$carePerson->user->last_name}}
+                                            </p>
+                                        </div>
+                                    </li>
+                                @endforeach
+                            </ul>
                         </div>
                     </div>
                 </div>

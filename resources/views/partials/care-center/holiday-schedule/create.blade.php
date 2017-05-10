@@ -1,4 +1,4 @@
-<form action="{{ route('care.center.work.schedule.store') }}" method="post">
+<form action="{{ route('care.center.work.schedule.holiday.store') }}" method="post">
     {{ csrf_field() }}
     <div class="form-group">
 
@@ -12,7 +12,7 @@
         </div>
 
         <div class="col-md-2">
-            <input type="submit" class="btn btn-danger" value="Save Holiday"
+            <input type="submit" class="btn btn-info" value="Save Holiday"
                    name="submit" id="store-window">
         </div>
     </div>
