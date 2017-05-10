@@ -6,5 +6,3 @@
 @include('partials.care-center.work-schedule-slot.nurse-window-fields', [ 'submitBtnText' => 'Add New Window'])
 
 {!! Form::close() !!}
-
-@include('partials.care-center.work-schedule-slot.datepicker')
