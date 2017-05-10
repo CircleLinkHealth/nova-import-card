@@ -65,6 +65,7 @@ class CreateTesterUsersSeeder extends Seeder
         if ($role->id == $this->nurseRole->id) {
             $nurseInfoCreated = Nurse::firstOrCreate([
                 'user_id' => $user->id,
+                'status'  => 'active',
             ]);
         }
 
