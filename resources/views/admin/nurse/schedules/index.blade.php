@@ -3,7 +3,7 @@
 @section('content')
     <div class="container">
         @foreach($data as $d)
-            <div class="row" style="padding-bottom: 5%;">
+            <div class="row" style="padding-bottom: 10%;">
                 <h3>
                     <b>{{ $d->fullName }}</b>
                     <span class="pull-right red-text">Timezone: {{ $d->timezone ? $d->timezone : 'Not set' }}</span>
