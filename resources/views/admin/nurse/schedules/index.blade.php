@@ -1,6 +1,8 @@
 @extends('partials.adminUI')
 
 @section('content')
+    @include('errors.errors')
+
     <div class="container">
         @foreach($data as $d)
             <div class="row" style="padding-bottom: 10%;">
