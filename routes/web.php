@@ -542,6 +542,11 @@ Route::group(['middleware' => 'auth'], function () {
             'as'   => 'download',
         ])->where('filename', '[A-Za-z0-9\-\_\.]+');
 
+        Route::get('nurses/windows', [
+            'uses' => 'CareCenter\WorkScheduleController@getAllNurseSchedules',
+            'as'   => 'get.admin.nurse.schedules',
+        ]);
+
         Route::get('enrollment/list', [
             'uses' => 'Enrollment\EnrollmentConsentController@makeEnrollmentReport',
             'as'   => 'patient.enroll.makeReport',
