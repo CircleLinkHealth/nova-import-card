@@ -42,22 +42,8 @@ class WorkScheduleController extends Controller
                     "{$item->date->format('Y-m-d')} $item->window_time_start");
             });
 
-        $holidays = $this->holiday
-            ->where('date', '>=', $this->today->format('Y-m-d'))
-            ->whereNurseInfoId(auth()->user()->nurseInfo->id)
-            ->get()
-            ->sortBy(function ($item) {
-                return Carbon::createFromFormat('Y-m-d',
-                    "{$item->date->format('Y-m-d')}");
-            });
-
-        $holidaysThisWeek = $holidays->map(function ($holiday) {
-            if ($holiday->date->lte($this->today->endOfWeek()) && $holiday->date->gte($this->today->startOfWeek())) {
-                return clhDayOfWeekToDayName(carbonToClhDayOfWeek($holiday->date->dayOfWeek));
-            }
-        });
-
-        $holidaysThisWeek = array_filter($holidaysThisWeek->all());
+        $holidays = auth()->user()->nurseInfo->upcoming_holiday_dates;
+        $holidaysThisWeek = auth()->user()->nurseInfo->holidays_this_week;
 
         $tzAbbr = auth()->user()->timezone
             ? Carbon::now(auth()->user()->timezone)->format('T')
@@ -180,17 +166,19 @@ class WorkScheduleController extends Controller
                 ->withInput();
         }
 
-        if ($window->nurse_info_id != auth()->user()->nurseInfo->id) {
-            $errors['window'] = 'This window does not belong to you.';
+        if (!auth()->user()->hasRole('administrator')) {
+            if ($window->nurse_info_id != auth()->user()->nurseInfo->id) {
+                $errors['window'] = 'This window does not belong to you.';
 
-            return redirect()->route('care.center.work.schedule.index')
-                ->withErrors($errors)
-                ->withInput();
+                return redirect()->route('care.center.work.schedule.index')
+                    ->withErrors($errors)
+                    ->withInput();
+            }
         }
 
         $window->forceDelete();
 
-        return redirect()->route('care.center.work.schedule.index');
+        return redirect()->back();
     }
 
     public function destroyHoliday($holidayId)
@@ -230,21 +218,6 @@ class WorkScheduleController extends Controller
             ->sortBy('first_name');
 
         return view('admin.nurse.schedules.index', compact('data'));
-    }
-
-    public function patchAdminEditWindow(
-        $id,
-        Request $request
-    ) {
-        $this->nurseContactWindows->whereId($id)
-            ->update([
-                'date'              => Carbon::now()->format('Y-m-d'),
-                'day_of_week'       => $request->input('day_of_week'),
-                'window_time_start' => $request->input('window_time_start'),
-                'window_time_end'   => $request->input('window_time_end'),
-            ]);
-
-        return redirect()->back();
     }
 
     protected function canAddNewWindow(Carbon $date)

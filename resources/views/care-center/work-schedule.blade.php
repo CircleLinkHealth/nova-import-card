@@ -47,6 +47,9 @@
 
                         <div class="row">
                             <div class="col-md-12">
+                                <div class="row">
+                                    <h3>Your Schedule</h3>
+                                </div>
                                 @include('partials.care-center.work-schedule-slot.index')
                             </div>
                         </div>
