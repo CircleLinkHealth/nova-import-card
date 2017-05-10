@@ -62,16 +62,6 @@ class Nurse extends Model
     }
 
     /**
-     * Upcoming (future) contact windows.
-     *
-     * @return mixed
-     */
-    public function upcomingWindows()
-    {
-        return $this->hasMany(NurseContactWindow::class, 'nurse_info_id', 'id')->upcoming();
-    }
-
-    /**
      * Days the Nurse is taking off.
      *
      * @return \Illuminate\Database\Eloquent\Relations\HasMany

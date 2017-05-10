@@ -119,6 +119,10 @@ class WelcomeCallListGenerator
 
             foreach ($problems as $problemCode) {
 
+                if (!$problemCode) {
+                    continue;
+                }
+
                 $problemCode = trim($problemCode);
 
                 //This was used for a list where problems where written as such: ICD-209: Diabetes,
@@ -333,7 +337,7 @@ class WelcomeCallListGenerator
 
             $args['status'] = Enrollee::TO_CALL;
 
-            if ($args['cell_phone']) {
+            if (isset($args['cell_phone'])) {
                 $args['status'] = Enrollee::TO_SMS;
             }
 

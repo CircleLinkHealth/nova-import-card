@@ -26,10 +26,9 @@
         <div class="row col-sm-6">
             <b>BILL TO:</b><br>
             <span>
-                Mazhar, Salma, MD PA <br>
-                Attn: Dr. Salma Mazhar, Sima Patel<br>
-                1210 N Galloway Ave.<br>
-                Mesquite, TX 75149
+                {{$bill_to}} <br>
+                {{$clh_address['line1']}}<br>
+                {{$clh_address['line2']}}<br>
             </span><br><br>
 
         </div>

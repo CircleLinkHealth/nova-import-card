@@ -1,9 +1,3 @@
-<style>
-    .list-group-item {
-        padding: 2px;
-    }
-</style>
-
 <div class="row">
     <h3>Your Days Off</h3>
 </div>
@@ -16,7 +10,7 @@
     <div class="row">
         <ul class="list-group col-md-5">
             @foreach($holidays as $holiday)
-                <li class="list-group-item">
+                <li class="list-group-item" style="padding: 20px;">
                     <div class="row">
                         <div class="col-md-11">
                             {{ clhDayOfWeekToDayName(carbonToClhDayOfWeek($holiday->date->dayOfWeek)) }},
@@ -26,7 +20,7 @@
                         </div>
 
                         <div class="col-md-1">
-                            <a href="{{ route('care.center.work.schedule.destroy', $holiday->id) }}"
+                            <a href="{{ route('care.center.work.schedule.holiday.destroy', $holiday->id) }}"
                                onclick="return confirm('Are you sure you want to delete this slot?')"
                                id="delete-window-{{$holiday->id}}">
                                 <i class="glyphicon glyphicon-trash"></i>

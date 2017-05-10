@@ -36,6 +36,10 @@ class UserScrambler extends Seeder
         DB::table('ccd_medication_logs')->delete();
         DB::table('ccd_problem_logs')->delete();
         DB::table('ccd_provider_logs')->delete();
+
+        Artisan::call('db:seed', [
+            '--class' => CreateTesterUsersSeeder::class,
+        ]);
     }
 
 }

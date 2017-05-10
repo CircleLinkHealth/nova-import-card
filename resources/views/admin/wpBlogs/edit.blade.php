@@ -40,13 +40,6 @@
 
                         <div class="form-group">
 
-                            @if($locations != null)
-                                <div class="row" style="margin-top:20px;">
-                                    <div class="col-xs-2">{!! Form::label('locations', 'Locations') !!}</div>
-                                    <div class="col-xs-4">{!! Form::select('location_id', $locations, $program->location_id, ['class' => 'form-control select-picker', 'style' => 'width:50%;']) !!}</div>
-                                </div>
-                            @endif
-
                             <div class="row" style="margin-top:20px;">
                                 <div class="col-xs-2">{!! Form::label('display_name', 'Display Name:') !!}</div>
                                 <div class="col-xs-10">{!! Form::text('display_name', $program->display_name, ['class' => 'form-control', 'style' => 'width:100%;']) !!}</div>
@@ -55,6 +48,19 @@
                             <div class="row" style="margin-top:20px;">
                                 <div class="col-xs-2">{!! Form::label('name', 'Unique Name:') !!}</div>
                                 <div class="col-xs-10">{!! Form::text('name', $program->name, ['class' => 'form-control', 'style' => 'width:100%;']) !!}</div>
+                            </div>
+
+                            <div class="row" style="margin-top:20px;">
+                                <div class="col-xs-2">{!! Form::label('bill_to_name', 'Bill To:') !!}</div>
+                                <div class="col-xs-10">{!! Form::text('bill_to_name', $program->bill_to_name, ['class' => 'form-control', 'style' => 'width:100%;']) !!}</div>
+                            </div>
+
+                            <div class="row" style="margin-top:20px;">
+                                <div class="col-xs-2">{!! Form::label('invoice_recipients', 'Invoice Recipients (comma separated, w/ spaces after comma)') !!}</div>
+                                <div class="col-xs-10"><textarea class="form-control" name="invoice_recipients"
+                                                                 style="width: 100%">@if(isset($program->invoice_recipients)){{$program->invoice_recipients}}@endif</textarea>
+                                    <small>The emails above will receive invoices @if($recipients), in addition to {{$recipients}}. @endif</small>
+                                </div>
                             </div>
 
                             <div class="row" style="margin-top:20px;">
@@ -68,7 +74,7 @@
                             <div class="row" style="margin-top:20px;">
                                 <div class="col-xs-2">{!! Form::label('clh_pppm', 'CPM Price') !!}</div>
                                 <div class="col-xs-3"><input class="form-control" name="clh_pppm" style="width: 100%"
-                                                              @if(isset($program->clh_pppm)) value="{{$program->clh_pppm}}" @endif/>
+                                                             @if(isset($program->clh_pppm)) value="{{$program->clh_pppm}}" @endif/>
                                 </div>
                                 <div class="col-xs-1">{!! Form::label('term_days', 'Terms (days)') !!}</div>
                                 <div class="col-xs-3"><input class="form-control" name="term_days" style="width: 100%"
@@ -84,6 +90,19 @@
                                                               @if($program->active == 1) checked @endif/>
                                 </div>
 
+                            </div>
+                            <div class="row" style="margin-top:20px;">
+
+                                <label class="col-md-2 control-label" for="primary_location">
+                                    Select Primary Location<br></label>
+                                <div class="col-md-8">
+                                    <select id="primary_location" name="primary_location"
+                                            class="primary_location dropdown Valid form-control" required>
+                                        @foreach($locations as $location)
+                                            <option value="{{$location->id}}" @if($location->is_primary) selected @endif>{{$location->name}}</option>
+                                        @endforeach
+                                    </select>
+                                </div>
                             </div>
 
 

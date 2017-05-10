@@ -22,7 +22,7 @@
                         <span class="sr-only">Close</span>
                     </button>
                     <h4 class="modal-title" id="problem-modal-title">
-                        Select Eligible Problem
+                        Select Eligible Problem for <span id="patientName"></span>
                     </h4>
                 </div>
 
@@ -37,7 +37,7 @@
                             </select>
                         </div>
 
-                        <div class="form-group">
+                        <div id="showOther" class="form-group" style="display:none">
                             <label for="otherProblem">If other, please specify</label>
                             <input class="form-control" name="otherProblem" id="otherProblem">
                         </div>
@@ -49,6 +49,9 @@
 
                         <input type="hidden" id="report_id" name="report_id">
                         <input type="hidden" id="problem_no" name="problem_no">
+                        <input type="hidden" id="has_problem" name="has_problem">
+                        <input type="hidden" id="modal_date" name="modal_date">
+                        <input type="hidden" id="modal_practice_id" name="modal_practice_id">
                     </form>
                 </div>
 
@@ -78,7 +81,7 @@
                 <div class="row">
                     <div class="col-md-12">
                         <div class="panel panel-default">
-                            <div class="panel-heading">Approve Billable Patients (Currently supports {{$currentMonth}})
+                            <div class="panel-heading">Approve Billable Patients
                             </div>
                             <div class="panel-body">
 
@@ -86,10 +89,8 @@
                                     <div class="col-md-5">
 
                                         <label class="col-md-2 control-label" for="practice_id">Select Practice</label>
-                                        <select class="col-md-3 practices dropdown Valid form-control"
+                                        <select class="col-md-3 practices dropdown Valid form-control reloader"
                                                 name="practice_id" id="practice_id">
-
-                                            <option value="0">All</option>
                                             @foreach($practices as $practice)
                                                 <option value="{{$practice->id}}">{{$practice->display_name}}</option>
                                             @endforeach
@@ -99,9 +100,16 @@
                                     <div class="col-md-5">
 
                                         <label class="col-md-2 control-label" for="date">Select Month</label>
-                                        <select class="col-md-3 practices dropdown Valid form-control"
+                                        <select class="col-md-3 practices dropdown Valid form-control reloader"
                                                 name="date" id="date">
-                                            <option value="2017-03-01" selected disabled>March 2017</option>
+                                            @foreach($dates as $key => $val)
+
+                                                @if(\Carbon\Carbon::today()->firstOfMonth()->toDateString() == $key)
+                                                    <option value="{{$key}}" selected>{{$val}}</option>
+                                                @else
+                                                    <option value="{{$key}}">{{$val}}</option>
+                                                @endif
+                                            @endforeach
                                         </select>
                                     </div>
                                 </div>
@@ -109,14 +117,15 @@
 
                                 <div class="col-md-12 row">
                                     <h5 style="line-height: 20px;">
-                                        <div class="col-md-3"><span><b>Total Approved: </b></span><span id="approved-count"
-                                                                                                  style="color: green">{{$approved}}</span><br>
+                                        <div class="col-md-3"><span><b>Practice Approved: </b></span><span
+                                                    id="approved-count"
+                                                    style="color: green">{{$approved}}</span><br>
                                         </div>
-                                        <div class="col-md-3"><span><b>Total Flagged: </b></span><span
+                                        <div class="col-md-3"><span><b>Practice Flagged: </b></span><span
                                                     style="color: darkorange"
                                                     id="toQA-count">{{$toQA}}</span><br>
                                         </div>
-                                        <div class="col-md-3"><span><b>Total Rejected: </b></span><span
+                                        <div class="col-md-3"><span><b>Practice Rejected: </b></span><span
                                                     style="color: darkred"
                                                     id="rejected-count">{{$rejected}}</span><br>
                                         </div>
@@ -200,6 +209,7 @@
                         "type": "POST",
                         "data": function (d) {
                             d.practice_id = $('#practice_id').val();
+                            d.date        = $("#date option:selected").text()
                         }
                     },
                     columns: [
@@ -242,11 +252,46 @@
                 });
 
                 //When a new practice is picked, update table
-                $('#practice_id').on('change', function () {
+                $('.reloader').on('change', function () {
 
                     $('#billable_list').DataTable().ajax.reload();
 
+                    setLoadingLabels();
+
+                    var url = '{!! route('monthly.billing.count') !!}';
+
+                    $.ajax({
+                        type: "POST",
+                        url: url,
+                        data: {
+                            practice_id: $('#practice_id').val(),
+                            date: $("#date option:selected").text()
+                        },
+
+                        success: function (data) {
+
+                            updateBillingCounts(data);
+
+                        }
+                    });
+
+
                 });
+
+                $('#select_problem').on('change', function () {
+
+                    if ($("#select_problem option:selected").text() == 'Other') {
+
+                        $("#showOther").css('display', 'block');
+
+                    } else {
+
+                        $("#showOther").css('display', 'none');
+
+                    }
+
+                });
+
 
                 $(".practices").select2();
 
@@ -278,12 +323,14 @@
                         data: {
                             //send report id to mark
                             report_id: this.id,
+                            practice_id: $('#practice_id').val(),
                             approved: approved,
                             date: $("#date option:selected").text()
                         },
 
                         success: function (data) {
 
+                            console.log(data);
                             updateBillingCounts(data.counts);
 
                         }
@@ -320,6 +367,7 @@
                         data: {
                             //send report id to mark
                             report_id: this.id,
+                            practice_id: $('#practice_id').val(),
                             rejected: rejected,
                             date: $("#date option:selected").text()
 
@@ -337,8 +385,19 @@
                 //BUILD MODAL FOR PROBLEM PICKER
                 $('#billable_list').on('click', '.problemPicker', function () {
 
+                    name = $(this).attr('patient');
+                    console.log(name);
+                    $("#patientName").html(name);
+
                     $('#report_id').val(this.id);
                     $('#problem_no').val(this.name);
+                    $('#has_problem').val(0);
+
+                    //to update the billing counts
+                    let practice = $('#practice_id option:selected').val();
+                    $('#modal_practice_id').val(practice);
+                    let date = $("#date option:selected").text();
+                    $('#modal_date').val(date);
 
                     $('#otherProblem').empty();
                     $('#select_problem').empty();
@@ -354,10 +413,45 @@
 
                 });
 
+                //BUILD MODAL FOR CODE PICKER
+                $('#billable_list').on('click', '.codePicker', function () {
+
+                    name = $(this).attr('patient');
+                    console.log(name);
+                    $("#patientName").html(name);
+
+                    $('#report_id').val(this.id);
+                    $('#problem_no').val(this.name);
+                    $('#has_problem').val(1);
+
+
+                    let practice = $("#practice_id option:selected").text();
+                    $('#modal_practice_id').val(practice);
+
+                    let date = $("#date option:selected").text();
+                    $('#modal_date').val(date);
+
+                    console.log(practice);
+                    console.log(date);
+
+                    $('#otherProblem').empty();
+                    $('#select_problem').empty();
+
+                    //the options are stored in a | delimted string
+                    $('#select_problem').append('<option value="' + this.value + '" selected disabled>' + this.value + '</option>');
+
+                    $('#problemPicker').modal('show');
+
+                });
+
                 //HANDLE MODAL SUBMIT
                 $('#confirm_problem').click(function () {
 
-                    let url = '{!!route('monthly.billing.store-problem')!!}'
+                    setLoadingLabels();
+
+                    let url = '{!!route('monthly.billing.store-problem')!!}';
+
+                    $("#showOther").css('display', 'none');
 
                     $.ajax({
                         type: "POST",
@@ -366,9 +460,13 @@
 
                         success: function (data) {
 
+                            updateBillingCounts(data.counts);
+                            console.log(data.counts);
+
                             $('#billable_list').DataTable().ajax.reload();
                             $('#problemPicker').modal('hide');
 
+                            //set the modal to cleared for further use
                             $('#select_problem').val('');
                             $('#otherProblem').val('');
                             $('#code').val('');

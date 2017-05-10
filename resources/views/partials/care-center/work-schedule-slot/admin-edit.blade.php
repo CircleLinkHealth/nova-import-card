@@ -3,8 +3,9 @@
     'method' => 'patch'
 ]) !!}
 
-@include('partials.care-center.work-schedule-slot.nurse-window-fields', [ 'submitBtnText' => 'Edit Window'])
+@include('partials.care-center.work-schedule-slot.nurse-window-fields', [
+    'submitBtnText' => 'Edit Window',
+    'window'        => $window,
+])
 
 {!! Form::close() !!}
-
-@include('partials.care-center.work-schedule-slot.datepicker')

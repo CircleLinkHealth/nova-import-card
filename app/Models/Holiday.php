@@ -13,6 +13,7 @@ class Holiday extends Model
 
     protected $fillable = [
         'date',
+        'nurse_info_id',
     ];
 
     public function nurse()

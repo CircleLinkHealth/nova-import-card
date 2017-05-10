@@ -85,8 +85,7 @@ class OnboardingService
 //        }
 
         $practiceUsers = User::ofType(array_merge($relevantRoles, ['practice-lead']))
-            ->whereHas('practices', function ($q) use
-            (
+            ->whereHas('practices', function ($q) use (
                 $primaryPractice
             ) {
                 $q->where('id', '=', $primaryPractice->id);
@@ -103,8 +102,7 @@ class OnboardingService
         }
 
         //Get the users that were as clinical emergency contacts from the locations page
-        $existingUsers = $practiceUsers->map(function ($user) use
-        (
+        $existingUsers = $practiceUsers->map(function ($user) use (
             $primaryPractice
         ) {
             $permissions = $user->practice($primaryPractice->id);
@@ -181,8 +179,7 @@ class OnboardingService
      */
     public function getExistingLocations(Practice $primaryPractice)
     {
-        $existingLocations = $primaryPractice->locations->map(function ($loc) use
-        (
+        $existingLocations = $primaryPractice->locations->map(function ($loc) use (
             $primaryPractice
         ) {
 
@@ -441,9 +438,13 @@ class OnboardingService
                 $phone = $user->clearAllPhonesAndAddNewPrimary($newUser['phone_number'], $newUser['phone_type'], true,
                     $newUser['phone_extension']);
 
-                $providerInfoCreated = ProviderInfo::firstOrCreate([
-                    'user_id' => $user->id,
-                ]);
+                $providerRole = Role::whereName('provider')->first();
+
+                if ($newUser['role_id'] == $providerRole->id) {
+                    $providerInfoCreated = ProviderInfo::firstOrCreate([
+                        'user_id' => $user->id,
+                    ]);
+                }
 
                 if ($newUser['forward_alerts_to']['who'] != 'billing_provider') {
                     //clean up other contacts before adding the new one

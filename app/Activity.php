@@ -235,8 +235,8 @@ class Activity extends Model implements Transformable
     ) {
 
         $raw = Activity::where('patient_id', $p->user_id)
-            ->where('created_at','>', $month->firstOfMonth()->startOfMonth()->toDateTimeString())
-            ->where('created_at','<', $month->lastOfMonth()->endOfDay()->toDateTimeString())
+            ->where('performed_at','>', $month->firstOfMonth()->startOfMonth()->toDateTimeString())
+            ->where('performed_at','<', $month->lastOfMonth()->endOfDay()->toDateTimeString())
         ->sum('duration');
 
         if($format){
