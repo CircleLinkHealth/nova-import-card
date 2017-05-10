@@ -102,6 +102,13 @@ class WorkScheduleController extends Controller
 
     public function store(Request $request)
     {
+        $isAdmin = auth()->user()->hasRole('administrator');
+
+        $nurseInfoId = $isAdmin
+            ? $request->input('nurse_info_id')
+            : auth()->user()->nurseInfo->id;
+
+
         $validator = Validator::make($request->all(), [
             'day_of_week'       => "required",
             'window_time_start' => 'required|date_format:H:i',
@@ -112,7 +119,7 @@ class WorkScheduleController extends Controller
             [
                 'nurse_info_id',
                 '=',
-                auth()->user()->nurseInfo->id,
+                $nurseInfoId,
             ],
             [
                 'window_time_end',
@@ -140,12 +147,22 @@ class WorkScheduleController extends Controller
                 ->withInput();
         }
 
-        $window = auth()->user()->nurseInfo->windows()->create([
-            'date'              => Carbon::now()->format('Y-m-d'),
-            'day_of_week'       => $request->input('day_of_week'),
-            'window_time_start' => $request->input('window_time_start'),
-            'window_time_end'   => $request->input('window_time_end'),
-        ]);
+        if ($isAdmin) {
+            $this->nurseContactWindows->create([
+                'nurse_info_id'     => $nurseInfoId,
+                'date'              => Carbon::now()->format('Y-m-d'),
+                'day_of_week'       => $request->input('day_of_week'),
+                'window_time_start' => $request->input('window_time_start'),
+                'window_time_end'   => $request->input('window_time_end'),
+            ]);
+        } else {
+            $window = auth()->user()->nurseInfo->windows()->create([
+                'date'              => Carbon::now()->format('Y-m-d'),
+                'day_of_week'       => $request->input('day_of_week'),
+                'window_time_start' => $request->input('window_time_start'),
+                'window_time_end'   => $request->input('window_time_end'),
+            ]);
+        }
 
         return redirect()->back();
     }
@@ -226,59 +243,6 @@ class WorkScheduleController extends Controller
                 'window_time_start' => $request->input('window_time_start'),
                 'window_time_end'   => $request->input('window_time_end'),
             ]);
-
-        return redirect()->back();
-    }
-
-    public function postAdminStoreWindow(
-        $id,
-        Request $request
-    ) {
-        $validator = Validator::make($request->all(), [
-            'day_of_week'       => "required",
-            'window_time_start' => 'required|date_format:H:i',
-            'window_time_end'   => 'required|date_format:H:i|after:window_time_start',
-        ]);
-
-        $windowExists = NurseContactWindow::where([
-            [
-                'nurse_info_id',
-                '=',
-                $id,
-            ],
-            [
-                'window_time_end',
-                '>=',
-                $request->input('window_time_start'),
-            ],
-            [
-                'window_time_start',
-                '<=',
-                $request->input('window_time_end'),
-            ],
-            [
-                'day_of_week',
-                '=',
-                $request->input('day_of_week'),
-            ],
-        ])->first();
-
-        if ($validator->fails() || $windowExists) {
-            $validator->getMessageBag()->add('window_time_start',
-                'This window is overlapping with an already existing window.');
-
-            return redirect()->back()
-                ->withErrors($validator)
-                ->withInput();
-        }
-
-        $this->nurseContactWindows->create([
-            'nurse_info_id'     => $id,
-            'date'              => Carbon::now()->format('Y-m-d'),
-            'day_of_week'       => $request->input('day_of_week'),
-            'window_time_start' => $request->input('window_time_start'),
-            'window_time_end'   => $request->input('window_time_end'),
-        ]);
 
         return redirect()->back();
     }
