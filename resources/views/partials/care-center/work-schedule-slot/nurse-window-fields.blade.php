@@ -16,7 +16,11 @@
         <input class="form-control" name="window_time_start"
                type="time" data-field="time"
                id="window_time_start"
-               value="{{ old('window_time_start') ? old('window_time_start') : isset($window) ? $window->window_time_start : '09:00' }}"
+               @if (isset($window))
+                value="{{$window->window_time_start}}"
+               @else
+                value="{{ old('window_time_start') ? old('window_time_start') :  '09:00' }}"
+               @endif
                required>
     </div>
 
@@ -24,7 +28,11 @@
         <input class="form-control" name="window_time_end"
                type="time" data-field="time"
                id="window_time_end"
-               value="{{ old('window_time_end') ? old('window_time_end') : isset($window) ? $window->window_time_end : '17:00' }}"
+               @if (isset($window))
+               value="{{$window->window_time_end}}"
+               @else
+               value="{{ old('window_time_end') ? old('window_time_end') :  '17:00' }}"
+               @endif
                required>
     </div>
 
