@@ -1,7 +1,3 @@
-<div class="row">
-    <h3>Your Schedule</h3>
-</div>
-
 @if($windows->isEmpty())
     <div class="row">
         You do not have any Windows yet. Go ahead and create some!
