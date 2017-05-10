@@ -166,17 +166,19 @@ class WorkScheduleController extends Controller
                 ->withInput();
         }
 
-        if ($window->nurse_info_id != auth()->user()->nurseInfo->id) {
-            $errors['window'] = 'This window does not belong to you.';
+        if (!auth()->user()->hasRole('administrator')) {
+            if ($window->nurse_info_id != auth()->user()->nurseInfo->id) {
+                $errors['window'] = 'This window does not belong to you.';
 
-            return redirect()->route('care.center.work.schedule.index')
-                ->withErrors($errors)
-                ->withInput();
+                return redirect()->route('care.center.work.schedule.index')
+                    ->withErrors($errors)
+                    ->withInput();
+            }
         }
 
         $window->forceDelete();
 
-        return redirect()->route('care.center.work.schedule.index');
+        return redirect()->back();
     }
 
     public function destroyHoliday($holidayId)
