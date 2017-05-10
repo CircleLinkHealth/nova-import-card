@@ -13,13 +13,13 @@
                     @include('partials.care-center.work-schedule-slot.admin-store', [ 'nurseInfo' => $d->nurseInfo ])
                 </div>
 
-                @if($d->nurseInfo->upcomingWindows->count() > 0)
+                @if($d->nurseInfo->windows->count() > 0)
                     <h4>Existing Windows</h4>
                 @else
                     <h4>This nurse does not have any windows.</h4>
                 @endif
 
-                @foreach($d->nurseInfo->upcomingWindows as $w)
+                @foreach($d->nurseInfo->windows as $w)
                     <div class="row">
                         @include('partials.care-center.work-schedule-slot.admin-edit', [ 'window' => $w ])
                     </div>
