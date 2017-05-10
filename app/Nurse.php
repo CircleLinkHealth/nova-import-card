@@ -32,15 +32,6 @@ class Nurse extends Model
         'isNLC',
     ];
 
-    public function scopeActive()
-    {
-
-        return User::whereHas('roles', function ($q) {
-            $q->where('name', '=', 'care-center');
-        })->where('user_status', 1)->get();
-
-    }
-
     public static function activeNursesForUI()
     {
 
@@ -48,6 +39,27 @@ class Nurse extends Model
             $q->where('name', '=', 'care-center');
         })->where('user_status', 1)->pluck('display_name', 'id');
 
+
+    }
+
+    public static function careGivenToPatientForCurrentMonthByNurse(Patient $patient, Nurse $nurse)
+    {
+
+        return Activity::where('provider_id', $nurse->user_id)
+            ->where('patient_id', $patient->user_id)
+            ->where(function ($q) {
+                $q->where('created_at', '>=', Carbon::now()->startOfMonth())
+                    ->where('updated_at', '<=', Carbon::now()->endOfMonth());
+            })
+            ->sum('duration');
+    }
+
+    public function scopeActive()
+    {
+
+        return User::whereHas('roles', function ($q) {
+            $q->where('name', '=', 'care-center');
+        })->where('user_status', 1)->get();
 
     }
 
@@ -80,7 +92,7 @@ class Nurse extends Model
     {
         return $this->hasMany(NurseContactWindow::class, 'nurse_info_id', 'id');
     }
-            
+
     public function calls()
     {
 
@@ -93,27 +105,49 @@ class Nurse extends Model
         return $this->belongsToMany(State::class, 'nurse_info_state');
     }
 
-    public function careRateLogs(){
+    public function careRateLogs()
+    {
 
         return $this->hasMany(NurseCareRateLog::class);
 
     }
 
-    public static function careGivenToPatientForCurrentMonthByNurse(Patient $patient, Nurse $nurse){
+    public function callStatsForRange(Carbon $start, Carbon $end)
+    {
 
-        return Activity::where('provider_id', $nurse->user_id)
-            ->where('patient_id', $patient->user_id)
-            ->where(function ($q){
-                $q->where('created_at', '>=', Carbon::now()->startOfMonth())
-                    ->where('updated_at', '<=', Carbon::now()->endOfMonth());
-            })
-            ->sum('duration');
-    }
-    
-    public function callStatsForRange(Carbon $start, Carbon $end){
-
-                            
 
     }
 
+    public function getUpcomingHolidayDatesAttribute()
+    {
+        return $this->upcomingHolidays()
+            ->get()
+            ->sortBy(function ($item) {
+                return Carbon::createFromFormat('Y-m-d',
+                    "{$item->date->format('Y-m-d')}");
+            });
+    }
+
+    /**
+     * Upcoming days the Nurse is taking off.
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
+    public function upcomingHolidays()
+    {
+        return $this->hasMany(Holiday::class, 'nurse_info_id', 'id')->where('date', '>=', Carbon::now()->format('Y-m-d'));
+    }
+
+    public function getHolidaysThisWeekAttribute()
+    {
+        $holidaysThisWeek = $this->upcomingHolidays()
+            ->get()
+            ->map(function ($holiday) {
+                if ($holiday->date->lte(Carbon::now()->endOfWeek()) && $holiday->date->gte(Carbon::now()->startOfWeek())) {
+                    return clhDayOfWeekToDayName(carbonToClhDayOfWeek($holiday->date->dayOfWeek));
+                }
+            });
+
+        return array_filter($holidaysThisWeek->all());
+    }
 }
