@@ -205,7 +205,7 @@ class WorkScheduleController extends Controller
     public function getAllNurseSchedules()
     {
         $data = User::ofType('care-center')
-            ->with('nurseInfo.upcomingWindows')
+            ->with('nurseInfo.windows')
             ->whereHas('nurseInfo', function ($q) {
                 $q->where('status', 'active');
             })
@@ -234,6 +234,44 @@ class WorkScheduleController extends Controller
         $id,
         Request $request
     ) {
+        $validator = Validator::make($request->all(), [
+            'day_of_week'       => "required",
+            'window_time_start' => 'required|date_format:H:i',
+            'window_time_end'   => 'required|date_format:H:i|after:window_time_start',
+        ]);
+
+        $windowExists = NurseContactWindow::where([
+            [
+                'nurse_info_id',
+                '=',
+                $id,
+            ],
+            [
+                'window_time_end',
+                '>=',
+                $request->input('window_time_start'),
+            ],
+            [
+                'window_time_start',
+                '<=',
+                $request->input('window_time_end'),
+            ],
+            [
+                'day_of_week',
+                '=',
+                $request->input('day_of_week'),
+            ],
+        ])->first();
+
+        if ($validator->fails() || $windowExists) {
+            $validator->getMessageBag()->add('window_time_start',
+                'This window is overlapping with an already existing window.');
+
+            return redirect()->back()
+                ->withErrors($validator)
+                ->withInput();
+        }
+
         $this->nurseContactWindows->create([
             'nurse_info_id'     => $id,
             'date'              => Carbon::now()->format('Y-m-d'),
