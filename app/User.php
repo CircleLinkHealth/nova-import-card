@@ -113,7 +113,7 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
     ];
 
     protected $hidden = [
-        'password',
+//        'password',
     ];
 
     protected $dates = ['user_registered'];
