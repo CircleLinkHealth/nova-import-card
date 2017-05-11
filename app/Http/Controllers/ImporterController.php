@@ -36,6 +36,7 @@ class ImporterController extends Controller
         }
 
         foreach ($request->file('file') as $file) {
+            \Log::info('Begin processing CCD ' . Carbon::now()->toDateTimeString());
             $xml = file_get_contents($file);
 
             $json = $this->repo->toJson($xml);
@@ -49,6 +50,7 @@ class ImporterController extends Controller
             ]);
 
             $ccda->import();
+            \Log::info('End processing CCD ' . Carbon::now()->toDateTimeString());
         }
 
         return redirect()->route('view.files.ready.to.import');
