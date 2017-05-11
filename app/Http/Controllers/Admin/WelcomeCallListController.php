@@ -131,7 +131,8 @@ class WelcomeCallListController extends Controller
      */
     public function makePhoenixHeartCallList()
     {
-        $names = PhoenixHeartName::get()->keyBy('patient_id');
+        $names = PhoenixHeartName::get()
+            ->keyBy('patient_id');
 
         $patientList = $names->map(function ($patient) {
             //format problems list
