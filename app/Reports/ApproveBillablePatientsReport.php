@@ -274,7 +274,7 @@ class ApproveBillablePatientsReport
 
         return Datatables::of(collect($formatted))
             ->addColumn('background_color', function ($a) {
-                if ($a['lacksProblems'] || $a['status'] == 'withdrawn' || $a['status'] == 'paused') {
+                if ($a['lacksProblems'] || $a['status'] == 'withdrawn' || $a['status'] == 'paused' || $a['no_of_successful_calls'] < 1) {
                     return 'rgba(255, 252, 96, 0.407843)';
                 } else {
                     return '';
