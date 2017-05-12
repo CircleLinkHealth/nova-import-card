@@ -303,17 +303,25 @@ class PracticeInvoiceController extends Controller
         $name
     ) {
 
-        $practices = auth()->user()->practices->pluck('id')->toArray();
+        if (Auth::check()) {
 
-        if (in_array($practice, $practices)) {
+            $practices = auth()->user()->practices->pluck('id')->toArray();
 
-            return response()->download(storage_path('/download/' . $name), $name, [
-                'Content-Length: ' . filesize(storage_path('/download/' . $name)),
-            ]);
+            if (in_array($practice, $practices)) {
+
+                return response()->download(storage_path('/download/' . $name), $name, [
+                    'Content-Length: ' . filesize(storage_path('/download/' . $name)),
+                ]);
+
+            } else {
+
+                return abort(403, 'Unauthorized action.');
+
+            }
 
         } else {
 
-            return abort(403, 'Unauthorized action.');
+            return redirect('/auth/login');
 
         }
 
