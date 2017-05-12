@@ -322,8 +322,6 @@ class PracticeInvoiceController extends Controller
         }
 
 
-
-
     }
 
     public function send(Request $request){
@@ -354,7 +352,7 @@ class PracticeInvoiceController extends Controller
 
             $recipients = array_merge($recipients, Practice::getInvoiceRecipients($practice));
 
-            if($practice->invoice_recipients){
+            if(count($recipients) > 0){
 
                 foreach($recipients as $recipient){
 
