@@ -322,8 +322,6 @@ class PracticeInvoiceController extends Controller
         }
 
 
-
-
     }
 
     public function send(Request $request){
