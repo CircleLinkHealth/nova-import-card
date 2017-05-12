@@ -143,7 +143,6 @@ class PracticeInvoiceController extends Controller
         );
     }
 
-    //@todo add date flex
     public function createInvoices()
     {
 
@@ -193,7 +192,6 @@ class PracticeInvoiceController extends Controller
         ));
     }
 
-    //@todo add date flex
     public function makeInvoices(Request $request)
     {
 
@@ -324,13 +322,13 @@ class PracticeInvoiceController extends Controller
         }
 
 
-
-
     }
 
     public function send(Request $request){
 
         $invoices = (array) json_decode($request->input('links'));
+
+        $logger = '';
 
         foreach ($invoices as $key => $value) {
 
@@ -350,13 +348,11 @@ class PracticeInvoiceController extends Controller
                 ]
             );
 
-            $logger = '';
-
             $recipients = explode(', ', $practice->invoice_recipients);
 
             $recipients = array_merge($recipients, Practice::getInvoiceRecipients($practice));
 
-            if($practice->invoice_recipients){
+            if(count($recipients) > 0){
 
                 foreach($recipients as $recipient){
 
