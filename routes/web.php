@@ -487,16 +487,11 @@ Route::group(['middleware' => 'auth'], function () {
     /****************************/
     Route::group([
         'middleware' => [
+            'auth',
             'permission:admin-access',
         ],
         'prefix'     => 'admin',
     ], function () {
-
-        Route::get('php-info', function () {
-            if (auth()->user()->hasRole('administrator')) {
-                dd(phpinfo());
-            }
-        });
 
         Route::resource('medication-groups-maps', 'MedicationGroupsMapController');
 
