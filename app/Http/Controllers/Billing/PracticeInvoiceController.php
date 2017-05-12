@@ -348,9 +348,19 @@ class PracticeInvoiceController extends Controller
                 ]
             );
 
-            $recipients = explode(', ', $practice->invoice_recipients);
 
-            $recipients = array_merge($recipients, Practice::getInvoiceRecipients($practice));
+            if($practice->invoice_recipients != ''){
+
+                $recipients = explode(', ', $practice->invoice_recipients);
+                $recipients = array_merge($recipients, Practice::getInvoiceRecipients($practice));
+
+            } else {
+
+                $recipients = Practice::getInvoiceRecipients($practice);
+
+            }
+
+            dd($recipients);
 
             if(count($recipients) > 0){
 
