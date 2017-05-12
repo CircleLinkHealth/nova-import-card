@@ -382,6 +382,10 @@ class WelcomeCallListGenerator
                 'county',
                 'medications',
                 'problems',
+                'ccm_condition_1',
+                'ccm_condition_2',
+                'cpm_problem_1',
+                'cpm_problem_2',
             ];
 
             $keys = $patient->keys();
@@ -440,6 +444,10 @@ class WelcomeCallListGenerator
                 'county',
                 'medications',
                 'problems',
+                'ccm_condition_1',
+                'ccm_condition_2',
+                'cpm_problem_1',
+                'cpm_problem_2',
             ];
 
             $keys = $patient->keys();
