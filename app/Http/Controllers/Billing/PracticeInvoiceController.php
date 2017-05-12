@@ -360,8 +360,6 @@ class PracticeInvoiceController extends Controller
 
             }
 
-            dd($recipients);
-
             if(count($recipients) > 0){
 
                 foreach($recipients as $recipient){
