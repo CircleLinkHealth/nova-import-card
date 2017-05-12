@@ -303,7 +303,7 @@ class PracticeInvoiceController extends Controller
         $name
     ) {
 
-        if (Auth::check()) {
+//        if (Auth::check()) {
 
             $practices = auth()->user()->practices->pluck('id')->toArray();
 
@@ -319,11 +319,11 @@ class PracticeInvoiceController extends Controller
 
             }
 
-        } else {
-
-            return redirect('/auth/login');
-
-        }
+//        } else {
+//
+//            return redirect('/auth/login');
+//
+//        }
 
     }
 
