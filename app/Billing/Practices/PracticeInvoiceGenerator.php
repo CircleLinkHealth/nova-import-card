@@ -19,6 +19,7 @@ class PracticeInvoiceGenerator
 
     private $practice;
     private $month;
+    private $patients;
 
     public function __construct(
         Practice $practice,
@@ -149,24 +150,23 @@ class PracticeInvoiceGenerator
                 ])
                 ->sum('duration');
 
-            if ($ccm < 1200) {
-                continue;
-            }
-
             $report = $p->patientSummaries()
                 ->where('month_year', $this->month->firstOfMonth()->toDateString())
                 ->first();
 
-            $data['patientData'][$p->user_id]['ccm_time'] = round($ccm / 60 , 2);
-            $data['patientData'][$p->user_id]['name'] = $u->fullName;
-            $data['patientData'][$p->user_id]['dob'] = $u->birth_date;
-            $data['patientData'][$p->user_id]['practice'] = $u->primaryPractice->id;
-            $data['patientData'][$p->user_id]['provider'] = $u->billingProviderName;
+            if($report && $report->approved == 1 && $ccm > 1199){
 
-            $data['patientData'][$p->user_id]['problem1'] = $report->billable_problem1;
-            $data['patientData'][$p->user_id]['problem1_code'] = $report->billable_problem1_code;
-            $data['patientData'][$p->user_id]['problem2'] = $report->billable_problem2;
-            $data['patientData'][$p->user_id]['problem2_code'] = $report->billable_problem2_code;
+                $data['patientData'][$p->user_id]['ccm_time'] = round($ccm / 60 , 2);
+                $data['patientData'][$p->user_id]['name'] = $u->fullName;
+                $data['patientData'][$p->user_id]['dob'] = $u->birth_date;
+                $data['patientData'][$p->user_id]['practice'] = $u->primaryPractice->id;
+                $data['patientData'][$p->user_id]['provider'] = $u->billingProviderName;
+
+                $data['patientData'][$p->user_id]['problem1'] = $report->billable_problem1;
+                $data['patientData'][$p->user_id]['problem1_code'] = $report->billable_problem1_code;
+                $data['patientData'][$p->user_id]['problem2'] = $report->billable_problem2;
+                $data['patientData'][$p->user_id]['problem2_code'] = $report->billable_problem2_code;
+            }
 
         }
 
