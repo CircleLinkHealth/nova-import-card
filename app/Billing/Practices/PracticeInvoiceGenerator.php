@@ -120,7 +120,6 @@ class PracticeInvoiceGenerator
         $patients = Patient
             ::whereHas('patientSummaries', function ($q) {
                 $q->where('month_year', $this->month->firstOfMonth()->toDateString())
-                    ->where('no_of_successful_calls', '>', 0)
                     ->where('approved', 1);
 
             })
