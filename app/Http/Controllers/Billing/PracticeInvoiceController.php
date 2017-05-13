@@ -40,19 +40,19 @@ class PracticeInvoiceController extends Controller
 
         $counts = $this->getCounts(Carbon::parse($currentMonth), $practices[0]->id);
 
-        $approved = $counts['approved'];
-
-        $rejected = $counts['rejected'];
-
-        $toQA = $counts['toQA'];
+//        $approved = $counts['approved'];
+//
+//        $rejected = $counts['rejected'];
+//
+//        $toQA = $counts['toQA'];
 
         return view('admin.reports.billing', compact([
             'practices',
             'currentMonth',
             'counts',
-            'approved',
-            'rejected',
-            'toQA',
+//            'approved',
+//            'rejected',
+//            'toQA',
             'dates',
         ]));
 

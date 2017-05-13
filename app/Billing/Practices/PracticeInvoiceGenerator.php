@@ -100,7 +100,7 @@ class PracticeInvoiceGenerator
                 ->where('month_year', $this->month->firstOfMonth()->toDateString())
                 ->first();
 
-            if($report && $report->approved == 1 && $report->no_of_successful_calls > 0 && $ccm > 1199){
+            if($report && $report->approved == 1 && $ccm > 1199){
 
                 $data['billable']++;
 
@@ -108,7 +108,7 @@ class PracticeInvoiceGenerator
 
         }
 
-        $data['invoice_amount'] = $this->practice->clh_pppm * $data['billable'];
+        $data['invoice_amount'] = round((double) $this->practice->clh_pppm * $data['billable'] , 2);
 
         return $data;
 

@@ -119,15 +119,15 @@
                                     <h5 style="line-height: 20px;">
                                         <div class="col-md-3"><span><b>Practice Approved: </b></span><span
                                                     id="approved-count"
-                                                    style="color: green">{{$approved}}</span><br>
+                                                    style="color: green"></span><br>
                                         </div>
                                         <div class="col-md-3"><span><b>Practice Flagged: </b></span><span
                                                     style="color: darkorange"
-                                                    id="toQA-count">{{$toQA}}</span><br>
+                                                    id="toQA-count"></span><br>
                                         </div>
                                         <div class="col-md-3"><span><b>Practice Rejected: </b></span><span
                                                     style="color: darkred"
-                                                    id="rejected-count">{{$rejected}}</span><br>
+                                                    id="rejected-count"></span><br>
                                         </div>
                                     </h5>
                                 </div>
@@ -198,6 +198,8 @@
 
             $(function () {
 
+                setLoadingLabels();
+
                 $('#billable_list').DataTable({
 
                     processing: true,
@@ -249,6 +251,22 @@
                     },
                     "initComplete": function (settings, json) {
 
+                        var url = '{!! route('monthly.billing.count') !!}';
+
+                        $.ajax({
+                            type: "POST",
+                            url: url,
+                            data: {
+                                practice_id: $('#practice_id').val(),
+                                date: $("#date option:selected").text()
+                            },
+
+                            success: function (data) {
+
+                                updateBillingCounts(data);
+
+                            }
+                        });
                     },
                 });
 
