@@ -97,7 +97,10 @@ class PracticeInvoiceGenerator
                 ])
                 ->sum('duration');
 
-            $report = $patient->patientInfo->patientSummaries()
+            $report = Patient::firstOrCreate([
+                'user_id' => $patient->id
+            ])
+            ->patientSummaries()
                 ->where('month_year', $this->month->firstOfMonth()->toDateString())
                 ->first();
 
@@ -170,7 +173,7 @@ class PracticeInvoiceGenerator
 
         }
 
-        $data['patientData'] = $this->array_orderby($data['patientData'], 'provider', SORT_ASC, 'name', SORT_ASC);
+        $data['patientData'] = array_key_exists('patientData', $data) ? $this->array_orderby($data['patientData'], 'provider', SORT_ASC, 'name', SORT_ASC) : null;
 
         return $data;
 
