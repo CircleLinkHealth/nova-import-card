@@ -1597,6 +1597,11 @@ Route::group([
     });
 });
 
+Route::get('/admin/reports/monthly-billing/v2/downloadInvoice/{practice}/{name}', [
+    'uses' => 'Billing\PracticeInvoiceController@downloadInvoice',
+    'middleware' => ['auth'],
+]);
+
 Route::get('/downloadInvoice/{practice}/{name}', [
     'uses' => 'Billing\PracticeInvoiceController@downloadInvoice',
     'as'   => 'monthly.billing.download',
