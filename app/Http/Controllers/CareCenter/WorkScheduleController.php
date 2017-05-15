@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\CareCenter;
 
 use App\Http\Controllers\Controller;
+use App\Models\Holiday;
 use App\NurseContactWindow;
 use App\User;
 use Carbon\Carbon;
@@ -11,37 +12,38 @@ use Validator;
 
 class WorkScheduleController extends Controller
 {
+    protected $holiday;
     protected $nextWeekEnd;
     protected $nextWeekStart;
     protected $nurseContactWindows;
     protected $today;
 
-    public function __construct(NurseContactWindow $nurseContactWindow)
-    {
+    public function __construct(
+        NurseContactWindow $nurseContactWindow,
+        Holiday $holiday
+    ) {
         $this->nextWeekStart = Carbon::parse('this sunday')->copy();
         $this->nextWeekEnd = Carbon::parse('next sunday')
             ->endOfDay()
             ->addWeek(1)
             ->copy();
         $this->nurseContactWindows = $nurseContactWindow;
+        $this->holiday = $holiday;
         $this->today = Carbon::today()->copy();
     }
 
     public function index()
     {
         $windows = $this->nurseContactWindows
-            ->where('date', '>=', $this->today->format('Y-m-d'))
             ->whereNurseInfoId(auth()->user()->nurseInfo->id)
             ->get()
-            ->map(function ($window) {
-                $window->deletable = $this->canAddNewWindow(Carbon::parse($window->date));
-
-                return $window;
-            })
             ->sortBy(function ($item) {
                 return Carbon::createFromFormat('Y-m-d H:i:s',
                     "{$item->date->format('Y-m-d')} $item->window_time_start");
             });
+
+        $holidays = auth()->user()->nurseInfo->upcoming_holiday_dates;
+        $holidaysThisWeek = auth()->user()->nurseInfo->holidays_this_week;
 
         $tzAbbr = auth()->user()->timezone
             ? Carbon::now(auth()->user()->timezone)->format('T')
@@ -53,42 +55,23 @@ class WorkScheduleController extends Controller
 
         return view('care-center.work-schedule', compact([
             'disableTimeTracking',
+            'holidays',
+            'holidaysThisWeek',
             'windows',
             'tzAbbr',
         ]));
     }
 
-    protected function canAddNewWindow(Carbon $date)
+    public function storeHoliday(Request $request)
     {
-        return ($date->gt($this->nextWeekStart) && $this->today->dayOfWeek < 4)
-        || $date->gt($this->nextWeekEnd);
-    }
-
-    public function store(Request $request)
-    {
-        $deadline = $this->nextWeekStart->format('m-d-Y');
-
-        $validator = Validator::make($request->all(), [
-            'date'              => "required|date_format:m-d-Y|after:$deadline",
-            'window_time_start' => 'required|date_format:H:i',
-            'window_time_end'   => 'required|date_format:H:i|after:window_time_start',
+        $request->replace([
+            'holiday' => Carbon::parse($request->input('holiday'))->toDateTimeString(),
         ]);
 
-        $date = Carbon::createFromFormat('m-d-Y', $request->input('date'))->copy();
+        $validator = Validator::make($request->all(), [
+            'holiday' => "required|date|after:tomorrow|unique:holidays,date",
+        ]);
 
-        $validator->after(function ($validator) use
-        (
-            $date
-        ) {
-            if (!$this->canAddNewWindow($date)) {
-                $validator->errors()->add('date',
-                    "The window was not created because it is out of the allowed date range.");
-            }
-            if ($date->format('Y-m-d') == '0000-00-00') {
-                $validator->errors()->add('date',
-                    "The date given is invalid.");
-            }
-        });
 
         if ($validator->fails()) {
             return redirect()->back()
@@ -96,12 +79,76 @@ class WorkScheduleController extends Controller
                 ->withInput();
         }
 
-        $window = auth()->user()->nurseInfo->windows()->create([
-            'date'              => $date->format('Y-m-d'),
-            'day_of_week'       => carbonToClhDayOfWeek($date->dayOfWeek),
-            'window_time_start' => $request->input('window_time_start'),
-            'window_time_end'   => $request->input('window_time_end'),
+        $holiday = auth()->user()->nurseInfo->holidays()->create([
+            'date' => Carbon::parse($request->input('holiday'))->format('Y-m-d'),
         ]);
+
+        return redirect()->back();
+    }
+
+    public function store(Request $request)
+    {
+        $isAdmin = auth()->user()->hasRole('administrator');
+
+        $nurseInfoId = $isAdmin
+            ? $request->input('nurse_info_id')
+            : auth()->user()->nurseInfo->id;
+
+
+        $validator = Validator::make($request->all(), [
+            'day_of_week'       => "required",
+            'window_time_start' => 'required|date_format:H:i',
+            'window_time_end'   => 'required|date_format:H:i|after:window_time_start',
+        ]);
+
+        $windowExists = NurseContactWindow::where([
+            [
+                'nurse_info_id',
+                '=',
+                $nurseInfoId,
+            ],
+            [
+                'window_time_end',
+                '>=',
+                $request->input('window_time_start'),
+            ],
+            [
+                'window_time_start',
+                '<=',
+                $request->input('window_time_end'),
+            ],
+            [
+                'day_of_week',
+                '=',
+                $request->input('day_of_week'),
+            ],
+        ])->first();
+
+        if ($validator->fails() || $windowExists) {
+            $validator->getMessageBag()->add('window_time_start',
+                'This window is overlapping with an already existing window.');
+
+            return redirect()->back()
+                ->withErrors($validator)
+                ->withInput();
+        }
+
+        if ($isAdmin) {
+            $this->nurseContactWindows->create([
+                'nurse_info_id'     => $nurseInfoId,
+                'date'              => Carbon::now()->format('Y-m-d'),
+                'day_of_week'       => $request->input('day_of_week'),
+                'window_time_start' => $request->input('window_time_start'),
+                'window_time_end'   => $request->input('window_time_end'),
+            ]);
+        } else {
+            $window = auth()->user()->nurseInfo->windows()->create([
+                'date'              => Carbon::now()->format('Y-m-d'),
+                'day_of_week'       => $request->input('day_of_week'),
+                'window_time_start' => $request->input('window_time_start'),
+                'window_time_end'   => $request->input('window_time_end'),
+            ]);
+        }
 
         return redirect()->back();
     }
@@ -119,23 +166,43 @@ class WorkScheduleController extends Controller
                 ->withInput();
         }
 
-        if ($window->nurse_info_id != auth()->user()->nurseInfo->id) {
-            $errors['window'] = 'This window does not belong to you.';
+        if (!auth()->user()->hasRole('administrator')) {
+            if ($window->nurse_info_id != auth()->user()->nurseInfo->id) {
+                $errors['window'] = 'This window does not belong to you.';
 
-            return redirect()->route('care.center.work.schedule.index')
-                ->withErrors($errors)
-                ->withInput();
-        }
-
-        if (!$this->canAddNewWindow(Carbon::parse($window->date))) {
-            $errors['window'] = 'You cannot delete this window anymore.';
-
-            return redirect()->route('care.center.work.schedule.index')
-                ->withErrors($errors)
-                ->withInput();
+                return redirect()->route('care.center.work.schedule.index')
+                    ->withErrors($errors)
+                    ->withInput();
+            }
         }
 
         $window->forceDelete();
+
+        return redirect()->back();
+    }
+
+    public function destroyHoliday($holidayId)
+    {
+        $holiday = $this->holiday
+            ->find($holidayId);
+
+        if (!$holiday) {
+            $errors['holiday'] = 'This holiday does not exist.';
+
+            return redirect()->route('care.center.work.schedule.index')
+                ->withErrors($errors)
+                ->withInput();
+        }
+
+        if ($holiday->nurse_info_id != auth()->user()->nurseInfo->id) {
+            $errors['holiday'] = 'This holiday does not belong to you.';
+
+            return redirect()->route('care.center.work.schedule.index')
+                ->withErrors($errors)
+                ->withInput();
+        }
+
+        $holiday->forceDelete();
 
         return redirect()->route('care.center.work.schedule.index');
     }
@@ -143,7 +210,7 @@ class WorkScheduleController extends Controller
     public function getAllNurseSchedules()
     {
         $data = User::ofType('care-center')
-            ->with('nurseInfo.upcomingWindows')
+            ->with('nurseInfo.windows')
             ->whereHas('nurseInfo', function ($q) {
                 $q->where('status', 'active');
             })
@@ -153,37 +220,9 @@ class WorkScheduleController extends Controller
         return view('admin.nurse.schedules.index', compact('data'));
     }
 
-    public function patchAdminEditWindow(
-        $id,
-        Request $request
-    ) {
-        $date = Carbon::createFromFormat('m-d-Y', $request->input('date'))->copy();
-
-        $this->nurseContactWindows->whereId($id)
-            ->update([
-                'date'              => $date->format('Y-m-d'),
-                'day_of_week'       => carbonToClhDayOfWeek($date->dayOfWeek),
-                'window_time_start' => $request->input('window_time_start'),
-                'window_time_end'   => $request->input('window_time_end'),
-            ]);
-
-        return redirect()->back();
-    }
-
-    public function postAdminStoreWindow(
-        $id,
-        Request $request
-    ) {
-        $date = Carbon::createFromFormat('m-d-Y', $request->input('date'))->copy();
-
-        $this->nurseContactWindows->create([
-            'nurse_info_id'     => $id,
-            'date'              => $date->format('Y-m-d'),
-            'day_of_week'       => carbonToClhDayOfWeek($date->dayOfWeek),
-            'window_time_start' => $request->input('window_time_start'),
-            'window_time_end'   => $request->input('window_time_end'),
-        ]);
-
-        return redirect()->back();
+    protected function canAddNewWindow(Carbon $date)
+    {
+        return ($date->gt($this->nextWeekStart) && $this->today->dayOfWeek < 4)
+            || $date->gt($this->nextWeekEnd);
     }
 }

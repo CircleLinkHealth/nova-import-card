@@ -28,6 +28,7 @@ use Illuminate\Auth\Authenticatable;
 use Illuminate\Auth\Passwords\CanResetPassword;
 use Illuminate\Contracts\Auth\Authenticatable as AuthenticatableContract;
 use Illuminate\Contracts\Auth\CanResetPassword as CanResetPasswordContract;
+use Illuminate\Database\Eloquent\Collection as EloquentCollection;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\QueryException;
@@ -112,7 +113,7 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
     ];
 
     protected $hidden = [
-        'password',
+//        'password',
     ];
 
     protected $dates = ['user_registered'];
@@ -385,7 +386,7 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
     /**
      * @return array
      */
-    public function viewablePatientIds() : array
+    public function viewablePatientIds(): array
     {
         return User::ofType('participant')
             ->whereHas('practices', function ($q) {
@@ -395,7 +396,7 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
             ->all();
     }
 
-    public function viewableProgramIds() : array
+    public function viewableProgramIds(): array
     {
         return $this->practices
             ->pluck('id')
@@ -406,8 +407,7 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
     {
         // get all patients who are in the same programs
         $programIds = $this->viewableProgramIds();
-        $patientIds = User::whereHas('practices', function ($q) use
-        (
+        $patientIds = User::whereHas('practices', function ($q) use (
             $programIds
         ) {
             $q->whereIn('program_id', $programIds);
@@ -428,8 +428,7 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
     {
         // get all patients who are in the same programs
         $programIds = $this->viewableProgramIds();
-        $patientIds = User::whereHas('practices', function ($q) use
-        (
+        $patientIds = User::whereHas('practices', function ($q) use (
             $programIds
         ) {
             $q->whereIn('program_id', $programIds);
@@ -509,6 +508,12 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
     public function meta()
     {
         return $this->hasMany('App\UserMeta', 'user_id', 'id');
+    }
+
+    public function primaryProgramName()
+
+    {
+        return Practice::find($this->primaryProgramId())->display_name;
     }
 
     public function getUserConfigByKey($key)
@@ -1272,6 +1277,21 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
             }
         }
 
+        foreach ($this->locations as $location) {
+            if (!$location->clinicalEmergencyContact->isEmpty()) {
+                $contact = $location->clinicalEmergencyContact->first();
+
+                if ($contact->pivot->name == CarePerson::INSTEAD_OF_BILLING_PROVIDER) {
+                    $users = new Collection();
+                    $users->push($contact);
+
+                    return $users;
+                }
+
+                $users->push($contact);
+            }
+        }
+
         return $users;
     }
 
@@ -1885,8 +1905,7 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
         $query,
         $type
     ) {
-        $query->whereHas('roles', function ($q) use
-        (
+        $query->whereHas('roles', function ($q) use (
             $type
         ) {
             if (is_array($type)) {
@@ -1907,8 +1926,7 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
         $query,
         $type
     ) {
-        $query->whereHas('roles', function ($q) use
-        (
+        $query->whereHas('roles', function ($q) use (
             $type
         ) {
             if (is_array($type)) {
@@ -1929,8 +1947,7 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
         $query,
         $user
     ) {
-        return $query->whereHas('locations', function ($q) use
-        (
+        return $query->whereHas('locations', function ($q) use (
             $user
         ) {
             $q->whereIn('locations.id', $user->locations->pluck('id')->all());
@@ -1947,8 +1964,7 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
         $query,
         $user
     ) {
-        return $query->whereHas('practices', function ($q) use
-        (
+        return $query->whereHas('practices', function ($q) use (
             $user
         ) {
             $q->whereIn('id', $user->viewableProgramIds());
@@ -2057,6 +2073,10 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
      */
     public function attachLocation($location)
     {
+        if (is_a($location, Collection::class) || is_a($location, EloquentCollection::class)) {
+            $id = $location->all();
+        }
+
         if (is_array($location)) {
             foreach ($location as $key => $loc) {
                 $this->attachLocation($loc);
@@ -2064,10 +2084,9 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
             }
         }
 
-        $id = is_object($location)
-            ? $location->id
-            : $location;
-
+        if (is_a($location, Location::class)) {
+            $id = $location->id;
+        }
 
         try {
             $this->locations()->attach($id);
@@ -2119,7 +2138,7 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
      *
      * @return User
      */
-    public function billingProvider() : User
+    public function billingProvider(): User
     {
         $billingProvider = $this->careTeamMembers
             ->where('type', 'billing_provider')
@@ -2132,8 +2151,7 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
         $query,
         $billing_provider_id
     ) {
-        return $query->whereHas('careTeamMembers', function ($k) use
-        (
+        return $query->whereHas('careTeamMembers', function ($k) use (
             $billing_provider_id
         ) {
             $k->whereType('billing_provider')
@@ -2147,7 +2165,7 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
      *
      * @return User
      */
-    public function leadContact() : User
+    public function leadContact(): User
     {
         $leadContact = $this->careTeamMembers
             ->where('type', 'lead_contact')
@@ -2161,8 +2179,7 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
         $type
     ) {
         $query->with([
-            'careTeamMembers' => function ($q) use
-            (
+            'careTeamMembers' => function ($q) use (
                 $type
             ) {
                 $q->where('type', $type)

@@ -2,5 +2,3 @@
     {{ csrf_field() }}
     @include('partials.care-center.work-schedule-slot.nurse-window-fields')
 </form>
-
-@include('partials.care-center.work-schedule-slot.datepicker')

@@ -5,6 +5,7 @@ use App\Traits\HasSettings;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Support\Facades\DB;
 
 class Practice extends Model
 {
@@ -22,9 +23,12 @@ class Practice extends Model
         'same_ehr_login',
         'sms_marketing_number',
         'weekly_report_recipients',
+        'invoice_recipients',
+        'bill_to_name',
         'auto_approve_careplans',
         'send_alerts',
-        'outgoing_phone_number'
+        'outgoing_phone_number',
+        'term_days'
     ];
 
     public static function getProviders($practiceId)
@@ -201,6 +205,31 @@ class Practice extends Model
         }
 
         return $data;
+
+    }
+
+    public function getAddress(){
+
+        $primary = $this->locations()->where('is_primary', 1)->first();
+
+        if(is_null($primary)){
+            $primary = $this->locations()->first();
+        }
+
+        return [
+
+            'line1' => $primary->address_line_1 .' '. $primary->address_line_2,
+            'line2' => $primary->city . ', ' . $primary->state . ' ' . $primary->postal_code
+
+        ];
+
+    }
+
+    public static function getInvoiceRecipients(Practice $p){
+
+        $emails = $p->users()->where('send_billing_reports', '=', true)->pluck('email')->toArray();
+
+        return $emails;
 
     }
 

@@ -176,26 +176,28 @@
                 </div>
             </div>
         </div>
-
-        <div class="section">
-            <div class="row">
-                <div class="col s12 m6">
-                    <div class="speech-bubble right blue lighten-4">
-                        <h5>“They call it personalized care and that’s really how it feels.”</h5>
-                        <p class="right">- User in Charlotte, North Carolina</p>
+        <div class="row">
+            <div class="col s12">
+                <div class="section">
+                    <div class="col s12 m6">
+                        <div class="speech-bubble right blue lighten-4 col s12">
+                            <h5>“They call it personalized care and that’s really how it feels.”</h5>
+                            <p class="right">- User in Charlotte, North Carolina</p>
+                        </div>
                     </div>
-                </div>
 
-                <div class="col s12 m6">
-                    <div class="speech-bubble left blue lighten-4">
-                        <h5>“What a great service!”</h5>
-                        <p class="right">- Dr. Jeffrey Hyman, Medical Director, UPG / Northwell Health (New
-                            York)</p>
+                    <div class="col s12 m6">
+                        <div class="speech-bubble left blue lighten-4 col s12">
+                            <h5>“What a great service!”</h5>
+                            <p class="right">- Dr. Jeffrey Hyman, Medical Director, UPG / Northwell Health (New
+                                York)</p>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
     </div>
+
 @endsection
 
 @section('scripts')

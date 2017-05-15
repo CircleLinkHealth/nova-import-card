@@ -11,10 +11,11 @@ class VerifyCsrfToken extends BaseVerifier
         'enrollment/sms/reply',
         '/twilio/token',
         '/twilio/call/make',
-        '/admin/reports/monthly-billing/v2/markApproved',
-        '/admin/reports/monthly-billing/v2/markRejected',
+        '/admin/reports/monthly-billing/v2/updateApproved',
+        '/admin/reports/monthly-billing/v2/updateRejected',
         '/admin/reports/monthly-billing/v2/data',
-        '/admin/reports/monthly-billing/v2/storeProblem'
+        '/admin/reports/monthly-billing/v2/storeProblem',
+        '/admin/reports/monthly-billing/v2/counts'
 
     ];
 

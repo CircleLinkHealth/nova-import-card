@@ -5,13 +5,13 @@
 //$faxTest = (new PhaxioService('production'))->send('+12124910114', storage_path('pdfs/notes/2017-02-07-xsKTIK4106WdXiMNu8iMla4FPJSOcosNBXXMkAsX.pdf'));
 //dd($faxTest);
 
-use App\Patient;
-use App\PatientMonthlySummary;
-use App\Reports\WeeklyReportDispatcher;
-use App\User;
+use App\Http\Controllers\Admin\WelcomeCallListController;
+use App\Reports\ApproveBillablePatientsReport;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\URL;
+
+//Call Lists TEMP
+//(new WelcomeCallListController(new \Illuminate\Http\Request()))->makePhoenixHeartCallList();
 
 //Patient Landing Pages
 Route::resource('sign-up', 'PatientSignupController');
@@ -21,13 +21,15 @@ if (app()->environment() != 'production') {
 
     Route::get('/sms/test', 'TwilioController@sendTestSMS');
 
-    Route::get('/rohan', function () {
-        
-//        dd((new \App\Billing\Practices\PracticeInvoiceGenerator(
-//            \App\Practice::find(21), Carbon::parse('2017-03-01')
-//        ))->checkForPendingQAForPractice());
+    Route::get('/rohan', function (){
 
-        dd(ceil(17 / 10) * 10);
+        $date = Carbon::parse('2017-03-01');
+
+        dd(\App\Practice::getInvoiceRecipients(\App\Practice::find(21)));
+
+        $reporter = new ApproveBillablePatientsReport($date, 21);
+        $reporter->dataV1();
+        dd($reporter->format());
 
     });
 
@@ -488,6 +490,12 @@ Route::group(['middleware' => 'auth'], function () {
         'prefix'     => 'admin',
     ], function () {
 
+        Route::get('php-info', function () {
+            if (auth()->user()->hasRole('administrator')) {
+                dd(phpinfo());
+            }
+        });
+
         Route::resource('medication-groups-maps', 'MedicationGroupsMapController');
 
         Route::post('get-athena-ccdas', [
@@ -537,11 +545,6 @@ Route::group(['middleware' => 'auth'], function () {
         Route::get('nurses/windows', [
             'uses' => 'CareCenter\WorkScheduleController@getAllNurseSchedules',
             'as'   => 'get.admin.nurse.schedules',
-        ]);
-
-        Route::post('nurses/{id}/windows', [
-            'uses' => 'CareCenter\WorkScheduleController@postAdminStoreWindow',
-            'as'   => 'post.admin.store.nurse.schedules',
         ]);
 
         Route::get('enrollment/list', [
@@ -644,14 +647,34 @@ Route::group(['middleware' => 'auth'], function () {
                     'as'   => 'monthly.billing.approve',
                 ]);
 
+                Route::post('/counts', [
+                    'uses' => 'Billing\PracticeInvoiceController@counts',
+                    'as'   => 'monthly.billing.count',
+                ]);
+
                 Route::post('/storeProblem', [
                     'uses' => 'Billing\PracticeInvoiceController@storeProblem',
                     'as'   => 'monthly.billing.store-problem',
                 ]);
 
+                Route::post('/getBillingCount', [
+                    'uses' => 'Billing\PracticeInvoiceController@getCounts',
+                    'as'   => 'monthly.billing.counts',
+                ]);
+
                 Route::post('/updateRejected', [
                     'uses' => 'Billing\PracticeInvoiceController@updateRejected',
                     'as'   => 'monthly.billing.reject',
+                ]);
+
+                Route::post('/send', [
+                    'uses' => 'Billing\PracticeInvoiceController@send',
+                    'as'   => 'monthly.billing.send',
+                ]);
+
+                Route::get('/downloadInvoice/{practice}/{name}', [
+                    'uses' => 'Billing\PracticeInvoiceController@downloadInvoice',
+                    'as'   => 'monthly.billing.download',
                 ]);
 
             });
@@ -1290,7 +1313,7 @@ Route::group(['middleware' => 'auth'], function () {
      *
      */
     Route::group([
-        'middleware' => ['role:care-center'],
+        'middleware' => ['role:care-center|administrator'],
         'prefix'     => 'care-center',
     ], function () {
 
@@ -1308,6 +1331,16 @@ Route::group(['middleware' => 'auth'], function () {
         Route::get('work-schedule/destroy/{id}', [
             'uses' => 'CareCenter\WorkScheduleController@destroy',
             'as'   => 'care.center.work.schedule.destroy',
+        ]);
+
+        Route::post('work-schedule/holidays', [
+            'uses' => 'CareCenter\WorkScheduleController@storeHoliday',
+            'as'   => 'care.center.work.schedule.holiday.store',
+        ]);
+
+        Route::get('work-schedule/holidays/destroy/{id}', [
+            'uses' => 'CareCenter\WorkScheduleController@destroyHoliday',
+            'as'   => 'care.center.work.schedule.holiday.destroy',
         ]);
     });
 

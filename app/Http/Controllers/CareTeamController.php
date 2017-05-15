@@ -95,7 +95,7 @@ class CareTeamController extends Controller
             foreach ($oldBillingProviders as $oldBillingProvider) {
                 $oldBillingProvider->type = 'external';
 
-                if ($oldBillingProvider->user->practice($patient->primaryPractice->id)) {
+                if ($oldBillingProvider->user && $oldBillingProvider->user->practice($patient->primaryPractice->id)) {
                     $oldBillingProvider->type = $oldBillingProvider->user->role();
                 }
 
@@ -196,6 +196,7 @@ class CareTeamController extends Controller
 
         if (is_object($carePerson)) {
             $carePerson->load('user');
+            $carePerson->formatted_type = snakeToSentenceCase($carePerson->type);
         }
 
         return response()->json([

@@ -22,7 +22,7 @@
                         <span class="sr-only">Close</span>
                     </button>
                     <h4 class="modal-title" id="problem-modal-title">
-                        Select Eligible Problem
+                        Select Eligible Problem for <span id="patientName"></span>
                     </h4>
                 </div>
 
@@ -37,13 +37,21 @@
                             </select>
                         </div>
 
-                        <div class="form-group">
+                        <div id="showOther" class="form-group" style="display:none">
                             <label for="otherProblem">If other, please specify</label>
                             <input class="form-control" name="otherProblem" id="otherProblem">
                         </div>
 
+                        <div class="form-group">
+                            <label for="code">Problem ICD10 Code</label>
+                            <input class="form-control" name="code" id="code">
+                        </div>
+
                         <input type="hidden" id="report_id" name="report_id">
                         <input type="hidden" id="problem_no" name="problem_no">
+                        <input type="hidden" id="has_problem" name="has_problem">
+                        <input type="hidden" id="modal_date" name="modal_date">
+                        <input type="hidden" id="modal_practice_id" name="modal_practice_id">
                     </form>
                 </div>
 
@@ -73,7 +81,7 @@
                 <div class="row">
                     <div class="col-md-12">
                         <div class="panel panel-default">
-                            <div class="panel-heading">Approve Billable Patients (Currently supports {{$currentMonth}})
+                            <div class="panel-heading">Approve Billable Patients
                             </div>
                             <div class="panel-body">
 
@@ -81,10 +89,8 @@
                                     <div class="col-md-5">
 
                                         <label class="col-md-2 control-label" for="practice_id">Select Practice</label>
-                                        <select class="col-md-3 practices dropdown Valid form-control"
+                                        <select class="col-md-3 practices dropdown Valid form-control reloader"
                                                 name="practice_id" id="practice_id">
-
-                                            <option value="0">All</option>
                                             @foreach($practices as $practice)
                                                 <option value="{{$practice->id}}">{{$practice->display_name}}</option>
                                             @endforeach
@@ -94,9 +100,16 @@
                                     <div class="col-md-5">
 
                                         <label class="col-md-2 control-label" for="date">Select Month</label>
-                                        <select class="col-md-3 practices dropdown Valid form-control"
+                                        <select class="col-md-3 practices dropdown Valid form-control reloader"
                                                 name="date" id="date">
-                                            <option value="2017-03-01" selected disabled>March 2017</option>
+                                            @foreach($dates as $key => $val)
+
+                                                @if(\Carbon\Carbon::today()->firstOfMonth()->toDateString() == $key)
+                                                    <option value="{{$key}}" selected>{{$val}}</option>
+                                                @else
+                                                    <option value="{{$key}}">{{$val}}</option>
+                                                @endif
+                                            @endforeach
                                         </select>
                                     </div>
                                 </div>
@@ -104,15 +117,17 @@
 
                                 <div class="col-md-12 row">
                                     <h5 style="line-height: 20px;">
-                                        <div class="col-md-3"><span><b>Approved: </b></span><span id="approved-count"
-                                                                                                  style="color: green">{{$approved}}</span><br>
+                                        <div class="col-md-3"><span><b>Practice Approved: </b></span><span
+                                                    id="approved-count"
+                                                    style="color: green">{{$approved}}</span><br>
                                         </div>
-                                        <div class="col-md-3"><span><b>Flagged: </b></span><span
+                                        <div class="col-md-3"><span><b>Practice Flagged: </b></span><span
                                                     style="color: darkorange"
                                                     id="toQA-count">{{$toQA}}</span><br>
                                         </div>
-                                        <div class="col-md-3"><span><b>Rejected: </b></span><span style="color: darkred"
-                                                                                                  id="rejected-count">{{$rejected}}</span><br>
+                                        <div class="col-md-3"><span><b>Practice Rejected: </b></span><span
+                                                    style="color: darkred"
+                                                    id="rejected-count">{{$rejected}}</span><br>
                                         </div>
                                     </h5>
                                 </div>
@@ -146,7 +161,13 @@
                                             Problem 1
                                         </th>
                                         <th>
+                                            Problem 1 Code
+                                        </th>
+                                        <th>
                                             Problem 2
+                                        </th>
+                                        <th>
+                                            Problem 2 Code
                                         </th>
                                         <th>
                                             #Successful Calls
@@ -188,17 +209,20 @@
                         "type": "POST",
                         "data": function (d) {
                             d.practice_id = $('#practice_id').val();
+                            d.date        = $("#date option:selected").text()
                         }
                     },
                     columns: [
-                        {data: 'name', name: 'name'},
                         {data: 'provider', name: 'provider'},
+                        {data: 'name', name: 'name'},
                         {data: 'practice', name: 'practice'},
                         {data: 'dob', name: 'dob'},
                         {data: 'status', name: 'status'},
                         {data: 'ccm', name: 'ccm'},
                         {data: 'problem1', name: 'problem1'},
+                        {data: 'problem1_code', name: 'problem1_code'},
                         {data: 'problem2', name: 'problem2'},
+                        {data: 'problem2_code', name: 'problem2_code'},
                         {data: 'no_of_successful_calls', name: 'no_of_successful_calls'},
                         {data: 'approve', name: 'approve'},
                         {data: 'reject', name: 'reject'},
@@ -208,74 +232,90 @@
 
                     "columnDefs": [
                         {
-                            "targets": [11, 12],
+                            "targets": [13, 14],
                             "visible": false,
                             "searchable": false
                         }
                     ],
                     "iDisplayLength": 25,
-                    "aaSorting": [12, 'desc'],
+                    "aaSorting": [14, 'desc'],
                     "fnRowCallback": function (nRow, aData, iDisplayIndex, iDisplayIndexFull) {
                         if (aData['background_color'] != '') {
                             $('td', nRow).css('background-color', aData['background_color']);
                         }
                     },
+                    "initComplete": function (settings, json) {
+
+                    }
+
 
                 });
 
                 //When a new practice is picked, update table
-                $('#practice_id').on('change', function () {
+                $('.reloader').on('change', function () {
 
                     $('#billable_list').DataTable().ajax.reload();
 
+                    setLoadingLabels();
+
+                    var url = '{!! route('monthly.billing.count') !!}';
+
+                    $.ajax({
+                        type: "POST",
+                        url: url,
+                        data: {
+                            practice_id: $('#practice_id').val(),
+                            date: $("#date option:selected").text()
+                        },
+
+                        success: function (data) {
+
+                            updateBillingCounts(data);
+
+                        }
+                    });
+
+
                 });
+
+                $('#select_problem').on('change', function () {
+
+                    if ($("#select_problem option:selected").text() == 'Other') {
+
+                        $("#showOther").css('display', 'block');
+
+                    } else {
+
+                        $("#showOther").css('display', 'none');
+
+                    }
+
+                });
+
 
                 $(".practices").select2();
 
                 //HANDLE ACCEPTANCE
                 $('#billable_list').on('change', '.approved_checkbox', function () {
 
-                    var rejectedBox = $('#'+this.id + '.rejected_checkbox');
+                    setLoadingLabels();
 
-                    var url = '{!! route('monthly.billing.approve') !!}';
-                    var currentAcc = $('#approved-count').html();
-                    var currentQA = parseInt($("#toQA-count").html());
-
-                    //if none were checked, gotta --QA
-                    if (rejectedBox.is(':checked') == false && $(this).is(':checked') == true) {
-
-                        $("#toQA-count").text(currentQA - 1);
-
-                    }
+                    var rejectedBox = $('#' + this.id + '.rejected_checkbox');
+                    let approved    = 0;
 
                     if ($(this).is(':checked')) {
-                        console.log("Just checked Approved");
-
-                        var approved = 1;
-
-                        $("#approved-count").text(parseInt(currentAcc) + 1);
+//
+                        approved = 1;
 
                         if (rejectedBox.is(':checked') == true) {
 
-                            console.log("Just unchecked Approved")
                             rejectedBox.attr('checked', false);
 
                         }
-
-                    } else {
-
-                        var approved = 0;
-
-                        $("#approved-count").text(parseInt(currentAcc) - 1);
-
-                        //if both are unchecked, gotta ++ QA count
-                        if (rejectedBox.is(':checked') == false) {
-
-                            $("#toQA-count").text(currentQA + 1);
-
-                        }
-
+//
                     }
+
+                    var url = '{!! route('monthly.billing.approve') !!}';
 
                     $.ajax({
                         type: "POST",
@@ -283,63 +323,43 @@
                         data: {
                             //send report id to mark
                             report_id: this.id,
+                            practice_id: $('#practice_id').val(),
                             approved: approved,
+                            date: $("#date option:selected").text()
                         },
 
                         success: function (data) {
 
-                            console.log(data)
+                            console.log(data);
+                            updateBillingCounts(data.counts);
 
                         }
                     });
 
                 });
 
-
                 //HANDLE REJECTION
                 $('#billable_list').on('change', '.rejected_checkbox', function () {
 
+                    setLoadingLabels();
+
                     var approveBox = $('.approved_checkbox#' + this.id);
-
-                    var url = '{!! route('monthly.billing.reject') !!}';
-                    var currentRej = $('#rejected-count').html();
-                    var currentQA = parseInt($("#toQA-count").html());
-
-
-                    //if none were checked, gotta --QA
-                    if (approveBox.is(':checked') == false && $(this).is(':checked') == true) {
-
-                        $("#toQA-count").text(currentQA - 1);
-
-                    }
+                    var rejected   = 0;
 
                     if ($(this).is(':checked')) {
-                        console.log("Just checked Rejected");
 
-                        var rejected = 1;
-
-                        $("#rejected-count").text(parseInt(currentRej) + 1);
+                        rejected = 1;
 
                         if (approveBox.is(':checked') == true) {
 
-                            console.log("Just unchecked Approved")
                             approveBox.attr('checked', false);
 
                         }
 
-                    } else {
-
-                        var rejected = 0;
-                        $("#rejected-count").text(parseInt(currentRej) - 1);
-
-                        //if both are unchecked, gotta ++ QA count
-                        if (approveBox.is(':checked') == false) {
-
-                            $("#toQA-count").text(currentQA + 1);
-
-                        }
-
                     }
+
+                    var url = '{!! route('monthly.billing.reject') !!}';
+
 
                     $.ajax({
                         type: "POST",
@@ -347,12 +367,15 @@
                         data: {
                             //send report id to mark
                             report_id: this.id,
+                            practice_id: $('#practice_id').val(),
                             rejected: rejected,
+                            date: $("#date option:selected").text()
+
                         },
 
                         success: function (data) {
 
-                            console.log(data)
+                            updateBillingCounts(data.counts);
 
                         }
                     });
@@ -362,8 +385,19 @@
                 //BUILD MODAL FOR PROBLEM PICKER
                 $('#billable_list').on('click', '.problemPicker', function () {
 
+                    name = $(this).attr('patient');
+                    console.log(name);
+                    $("#patientName").html(name);
+
                     $('#report_id').val(this.id);
                     $('#problem_no').val(this.name);
+                    $('#has_problem').val(0);
+
+                    //to update the billing counts
+                    let practice = $('#practice_id option:selected').val();
+                    $('#modal_practice_id').val(practice);
+                    let date = $("#date option:selected").text();
+                    $('#modal_date').val(date);
 
                     $('#otherProblem').empty();
                     $('#select_problem').empty();
@@ -379,10 +413,45 @@
 
                 });
 
+                //BUILD MODAL FOR CODE PICKER
+                $('#billable_list').on('click', '.codePicker', function () {
+
+                    name = $(this).attr('patient');
+                    console.log(name);
+                    $("#patientName").html(name);
+
+                    $('#report_id').val(this.id);
+                    $('#problem_no').val(this.name);
+                    $('#has_problem').val(1);
+
+
+                    let practice = $("#practice_id option:selected").text();
+                    $('#modal_practice_id').val(practice);
+
+                    let date = $("#date option:selected").text();
+                    $('#modal_date').val(date);
+
+                    console.log(practice);
+                    console.log(date);
+
+                    $('#otherProblem').empty();
+                    $('#select_problem').empty();
+
+                    //the options are stored in a | delimted string
+                    $('#select_problem').append('<option value="' + this.value + '" selected disabled>' + this.value + '</option>');
+
+                    $('#problemPicker').modal('show');
+
+                });
+
                 //HANDLE MODAL SUBMIT
                 $('#confirm_problem').click(function () {
 
-                    let url = '{!!route('monthly.billing.store-problem')!!}'
+                    setLoadingLabels();
+
+                    let url = '{!!route('monthly.billing.store-problem')!!}';
+
+                    $("#showOther").css('display', 'none');
 
                     $.ajax({
                         type: "POST",
@@ -391,8 +460,18 @@
 
                         success: function (data) {
 
+                            updateBillingCounts(data.counts);
+                            console.log(data.counts);
+
                             $('#billable_list').DataTable().ajax.reload();
                             $('#problemPicker').modal('hide');
+
+                            //set the modal to cleared for further use
+                            $('#select_problem').val('');
+                            $('#otherProblem').val('');
+                            $('#code').val('');
+                            $('#report_id').val('');
+                            $('#problem_no').val('');
 
                         }
                     });
@@ -401,6 +480,22 @@
                 })
 
             });
+
+            function updateBillingCounts(data) {
+
+                $("#approved-count").text(data.approved);
+                $("#toQA-count").text(data.toQA);
+                $("#rejected-count").text(data.rejected);
+
+            }
+
+            function setLoadingLabels() {
+
+                $("#approved-count").text('Loading...');
+                $("#toQA-count").text('Loading...');
+                $("#rejected-count").text('Loading...');
+
+            }
 
 
         </script>

@@ -7,8 +7,10 @@ use App\NurseContactWindow;
 use App\Observers\CarePlanObserver;
 use App\Observers\NurseContactWindowObserver;
 use App\Observers\PageTimerObserver;
+use App\Observers\PatientObserver;
 use App\Observers\UserObserver;
 use App\PageTimer;
+use App\Patient;
 use App\User;
 use Illuminate\Support\ServiceProvider;
 
@@ -24,6 +26,7 @@ class ObserversServiceProvider extends ServiceProvider
         CarePlan::observe(CarePlanObserver::class);
         NurseContactWindow::observe(NurseContactWindowObserver::class);
         PageTimer::observe(PageTimerObserver::class);
+        Patient::observe(PatientObserver::class);
         User::observe(UserObserver::class);
     }
 

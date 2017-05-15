@@ -114,6 +114,40 @@ class CareTeamReceivesAlertsTest extends TestCase
         $this->assertNotContains($cp2->id, $ids);
     }
 
+    public function test_it_returns_location_contacts_person_in_addition_to_bp()
+    {
+        $cp2 = $this->createUser(9);
+        $carePerson = CarePerson::create([
+            'alert'          => true,
+            'type'           => 'member',
+            'user_id'        => $this->patient->id,
+            'member_user_id' => $cp2->id,
+        ]);
+
+        $this->patient->locations[0]->clinicalEmergencyContact()->attach($this->provider->id, [
+            'name' => CarePerson::IN_ADDITION_TO_BILLING_PROVIDER,
+        ]);
+
+        $this->assertEquals(2, $this->patient->care_team_receives_alerts->count());
+    }
+
+    public function test_it_returns_only_location_contacts_person_instead_of_bp()
+    {
+        $cp2 = $this->createUser(9);
+        $carePerson = CarePerson::create([
+            'alert'          => true,
+            'type'           => 'member',
+            'user_id'        => $this->patient->id,
+            'member_user_id' => $cp2->id,
+        ]);
+
+        $this->patient->locations[0]->clinicalEmergencyContact()->attach($this->provider->id, [
+            'name' => CarePerson::INSTEAD_OF_BILLING_PROVIDER,
+        ]);
+
+        $this->assertEquals(1, $this->patient->care_team_receives_alerts->count());
+    }
+
     protected function setUp()
     {
         parent::setUp();
@@ -121,6 +155,10 @@ class CareTeamReceivesAlertsTest extends TestCase
         $this->provider = $this->createUser(9);
         auth()->login($this->provider);
         $this->patient = $this->createUser(9, 'participant');
+
+        foreach ($this->provider->locations as $location) {
+            $location->clinicalEmergencyContact()->sync([]);
+        }
     }
 
 }

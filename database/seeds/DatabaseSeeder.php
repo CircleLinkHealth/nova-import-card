@@ -40,8 +40,6 @@ class DatabaseSeeder extends Seeder {
 
 
         $this->call(SnomedToIcd9MapTableSeeder::class);
-        $this->call(PopulateWeeklyReportReciepients::class);
-        $this->call(PopulateTwilioSMSToPractices::class);
         $this->call(AddActiveStatusToPractices::class);
 
     }

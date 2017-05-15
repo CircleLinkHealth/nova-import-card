@@ -21,7 +21,7 @@ class PracticeController extends Controller
 			abort(403);
 		}
 		// display view
-        $wpBlogs = Practice::orderBy('id', 'desc')->get();
+        $wpBlogs = Practice::orderBy('id', 'desc')->whereActive(1)->get();
 		return view('admin.wpBlogs.index', [ 'wpBlogs' => $wpBlogs ]);
 	}
 
@@ -64,7 +64,13 @@ class PracticeController extends Controller
 		$program->name = $params['name'];
 		$program->display_name = $params['display_name'];
 		$program->weekly_report_recipients = $params['weekly_report_recipients'];
+		$program->invoice_recipients = $params['invoice_recipients'];
         $program->clh_pppm = $params['clh_pppm'];
+        $program->term_days = $params['term_days'];
+        $program->bill_to_name = $params['bill_to_name'];
+
+        $program->active = isset($params['active']) ? 1 : 0;
+
         $program->save();
 
 		// attach to all users who get auto attached
@@ -100,10 +106,9 @@ class PracticeController extends Controller
         $program = Practice::find($id);
 
 		//to update...
-        $locations = null;
-            //Location::where('parent_id', '=', null)->orderBy('id', 'desc')->pluck('name', 'id')->all();
+        $locations = $program->locations->pluck('name', 'id')->all();
 
-		return view('admin.wpBlogs.show', compact([ 'program', 'locations', 'errors', 'messages' ]));
+        return view('admin.wpBlogs.show', compact([ 'program', 'locations', 'errors', 'messages' ]));
 	}
 
 	/**
@@ -122,10 +127,15 @@ class PracticeController extends Controller
 
         $program = Practice::find($id);
 
-        $locations = null;
-//      $program->locations->pluck('name', 'id')->all();
+        $recipients = implode(', ', Practice::getInvoiceRecipients($program));
 
-		return view('admin.wpBlogs.edit', compact([ 'program', 'locations', 'errors', 'messages' ]));
+        if(count($recipients) > 0){
+            $recipients = implode(', ', Practice::getInvoiceRecipients($program));
+        }
+
+        $locations = $program->locations->all();
+
+		return view('admin.wpBlogs.edit', compact([ 'program', 'locations', 'errors', 'messages', 'recipients' ]));
 	}
 
 	/**
@@ -149,10 +159,17 @@ class PracticeController extends Controller
 
 		isset($params['location_id']) ? $program->locations->attach($params['location_id']) : '';
 
+		Location::setPrimary(Location::find($params['primary_location']));
+
 		$program->name = $params['name'];
 		$program->display_name = $params['display_name'];
 		$program->weekly_report_recipients = $params['weekly_report_recipients'];
+        $program->invoice_recipients = $params['invoice_recipients'];
 		$program->clh_pppm = $params['clh_pppm'];
+		$program->term_days = $params['term_days'];
+		$program->bill_to_name = $params['bill_to_name'];
+
+        $program->active = isset($params['active']) ? 1 : 0;
 
 		$program->save();
 		return redirect()->back()->with('messages', ['successfully updated program']);

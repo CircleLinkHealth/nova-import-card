@@ -95,8 +95,6 @@ class NurseFinder
     public function find()
     {
 
-//        dd($this->nursesForPatient);
-
         foreach ($this->nursesForPatient as $nurseId => $count) {
 
             $nurse = Nurse::where('user_id', $nurseId)->first();
@@ -208,6 +206,7 @@ class NurseFinder
             (
                 $dayString
             ) {
+                //@todo CHANGE THIS PART
                 //check whether any days fall in this window
                 return $value->date->toDateString() == $dayString;
 
