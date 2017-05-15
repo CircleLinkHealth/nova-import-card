@@ -46,7 +46,7 @@ return [
 	    //The directory where Practices deposit CCDAs on the Worker environment
 	    'ccdas' => [
 	        'driver' => 'local',
-            'root'   => '/cryptdata/var/sftp/sftp1/files',
+            'root'   => env('CCDA_DROPBOX_PATH') ?? null,
         ],
 
 		'local' => [
