@@ -1600,6 +1600,7 @@ Route::group([
 Route::get('/downloadInvoice/{practice}/{name}', [
     'uses' => 'Billing\PracticeInvoiceController@downloadInvoice',
     'as'   => 'monthly.billing.download',
+    'middleware' => ['auth']
 ]);
 
 Route::group([
