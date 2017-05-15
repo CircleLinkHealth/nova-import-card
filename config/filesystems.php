@@ -43,6 +43,12 @@ return [
 
 	'disks' => [
 
+	    //The directory where Practices deposit CCDAs on the Worker environment
+	    'ccdas' => [
+	        'driver' => 'local',
+            'root'   => '/cryptdata/var/sftp/sftp1/files',
+        ],
+
 		'local' => [
 			'driver' => 'local',
 			'root'   => storage_path().'/app',
