@@ -206,6 +206,31 @@ if (!function_exists('clhDayOfWeekToDayName')) {
     }
 }
 
+if (!function_exists('dayNameToClhDayOfWeek')) {
+    /**
+     * Convert a day such as Monday, Tuesday to CLH DayOfWeek (1,2,3,4,5,6,7)
+     *
+     * @param $clhDayOfWeek
+     *
+     * @return int
+     *
+     */
+    function dayNameToClhDayOfWeek($clhDayOfWeek)
+    {
+        $days = [
+            'Monday'    => 1,
+            'Tuesday'   => 2,
+            'Wednesday' => 3,
+            'Thursday'  => 4,
+            'Friday'    => 5,
+            'Saturday'  => 6,
+            'Sunday'    => 7,
+        ];
+
+        return $days[$clhDayOfWeek];
+    }
+}
+
 if (!function_exists('weekDays')) {
     /**
      * Returns the days of the week
