@@ -70,7 +70,6 @@ class CarePlanHelper
         return $this->carePlan;
     }
 
-
     /**
      * Store Vitals
      *
@@ -193,15 +192,49 @@ class CarePlanHelper
         // update timezone
         $this->user->timezone = 'America/New_York';
 
-        PatientContactWindow::sync($this->patientInfo, [
-            1,
-            2,
-            3,
-            4,
-            5,
-        ]);
+        $preferredCallDays = $this->parseCallDays($this->demographicsImport->preferred_call_days);
+        $preferredCallTimes = $this->demographicsImport->preferred_call_times;
+
+        if (!$preferredCallDays && !$preferredCallTimes) {
+            PatientContactWindow::sync($this->patientInfo, [
+                1,
+                2,
+                3,
+                4,
+                5,
+            ]);
+
+            return $this;
+        }
+
+
+//        PatientContactWindow::sync($this->patientInfo, $preferredCallDays, $windowStart, $windowEnd);
+
 
         return $this;
+    }
+
+    private function parseCallDays($preferredCallDays)
+    {
+        if (!$preferredCallDays) {
+            return false;
+        }
+
+        $days = [];
+
+        if (str_contains($preferredCallDays, [','])) {
+            foreach (explode(',', $preferredCallDays) as $dayName) {
+                $days[] = dayNameToClhDayOfWeek($dayName);
+            }
+        } elseif (str_contains($preferredCallDays, ['-'])) {
+            foreach (explode('-', $preferredCallDays) as $dayName) {
+                $days[] = dayNameToClhDayOfWeek($dayName);
+            }
+        } else {
+            $days[] = dayNameToClhDayOfWeek($preferredCallDays);
+        }
+
+        return $days;
     }
 
     /**
