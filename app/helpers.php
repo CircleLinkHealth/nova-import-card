@@ -227,7 +227,7 @@ if (!function_exists('dayNameToClhDayOfWeek')) {
             'Sunday'    => 7,
         ];
 
-        return $days[$clhDayOfWeek];
+        return $days[trim($clhDayOfWeek)];
     }
 }
 
