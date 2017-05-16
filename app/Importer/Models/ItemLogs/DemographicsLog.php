@@ -35,6 +35,8 @@ class DemographicsLog extends Model implements ItemLog
         'language',
         'race',
         'ethnicity',
+        'preferred_call_times',
+        'preferred_call_days',
     ];
 
     public function importedItem()

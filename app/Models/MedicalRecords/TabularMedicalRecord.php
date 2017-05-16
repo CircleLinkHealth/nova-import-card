@@ -51,6 +51,9 @@ class TabularMedicalRecord extends MedicalRecordEloquent
         'primary_insurance',
         'secondary_insurance',
         'tertiary_insurance',
+
+        'preferred_call_times',
+        'preferred_call_days',
     ];
 
     /**
