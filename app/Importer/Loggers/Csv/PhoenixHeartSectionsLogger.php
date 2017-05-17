@@ -8,6 +8,8 @@ use App\Importer\Models\ItemLogs\ProblemLog;
 use App\Importer\Models\ItemLogs\ProviderLog;
 use App\Models\PatientData\PhoenixHeart\PhoenixHeartAllergy;
 use App\Models\PatientData\PhoenixHeart\PhoenixHeartInsurance;
+use App\Models\PatientData\PhoenixHeart\PhoenixHeartMedication;
+use Carbon\Carbon;
 
 class PhoenixHeartSectionsLogger extends TabularMedicalRecordSectionsLogger
 {
@@ -57,27 +59,23 @@ class PhoenixHeartSectionsLogger extends TabularMedicalRecordSectionsLogger
      */
     public function logMedicationsSection(): MedicalRecordLogger
     {
-        $medications = explode("\n", $this->medicalRecord->medications_string);
-
-        $medications = array_filter($medications);
+        $medications = PhoenixHeartMedication::wherePatientId($this->medicalRecord->mrn)
+            ->get();
 
         foreach ($medications as $medication) {
-            $explodedMed = explode(',', $medication);
+            $endDate = Carbon::parse($medication->end_date);
 
-            $sig = '';
-
-            if (isset($explodedMed[1])) {
-                $sig = trim(str_replace('Sig:', '', $explodedMed[1]));
-            }
-
-            $medication = MedicationLog::create(
+            $medicationLog = MedicationLog::updateOrCreate(
                 array_merge([
-                    'reference_title' => trim(str_replace([
-                        'Taking',
-                        'Continue',
-                    ], '', $explodedMed[0])),
-                    'reference_sig'   => $sig,
-                ], $this->foreignKeys)
+                    'reference_title' => ucfirst(strtolower($medication->description)),
+                    'reference_sig'   => $medication->instructions,
+                ], $this->foreignKeys),
+                [
+                    'start' => Carbon::parse($medication->start_date)->toDateTimeString(),
+                    'end'   => $endDate->isFuture()
+                        ? null
+                        : $endDate->toDateTimeString(),
+                ]
             );
         }
 
