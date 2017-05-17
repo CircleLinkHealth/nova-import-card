@@ -17,6 +17,7 @@ use App\Importer\Section\Importers\Insurance;
 use App\Importer\Section\Importers\Medications;
 use App\Importer\Section\Importers\Problems;
 use App\Models\MedicalRecords\ImportedMedicalRecord;
+use App\Practice;
 use App\Traits\Relationships\MedicalRecordItemLoggerRelationships;
 use Illuminate\Database\Eloquent\Model;
 
@@ -288,6 +289,12 @@ abstract class MedicalRecordEloquent extends Model implements MedicalRecord
             $this->setLocationIdPrediction($historicPrediction);
 
             return $this;
+        }
+
+        if ($this->getPracticeIdPrediction()) {
+            $practice = Practice::find($this->getPracticeIdPrediction());
+
+            $this->setLocationIdPrediction($practice->primary_location_id);
         }
 
 
