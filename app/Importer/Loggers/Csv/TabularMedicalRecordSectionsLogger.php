@@ -16,7 +16,7 @@ class TabularMedicalRecordSectionsLogger implements MedicalRecordLogger
      *
      * @var TabularMedicalRecord
      */
-    private $medicalRecord;
+    protected $medicalRecord;
 
     public function __construct(TabularMedicalRecord $tmr)
     {
