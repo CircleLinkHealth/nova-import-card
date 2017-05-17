@@ -101,13 +101,13 @@ abstract class MedicalRecordEloquent extends Model implements MedicalRecord
     }
 
     /**
-     * @param mixed $billingProvider
+     * @param mixed $billingProviderId
      *
      * @return MedicalRecord
      */
-    public function setBillingProviderIdPrediction($billingProvider) : MedicalRecord
+    public function setBillingProviderIdPrediction($billingProviderId) : MedicalRecord
     {
-        $this->billingProviderIdPrediction = $billingProvider;
+        $this->billingProviderIdPrediction = $billingProviderId;
 
         return $this;
     }
@@ -121,13 +121,13 @@ abstract class MedicalRecordEloquent extends Model implements MedicalRecord
     }
 
     /**
-     * @param mixed $location
+     * @param mixed $locationId
      *
      * @return MedicalRecord
      */
-    public function setLocationIdPrediction($location) : MedicalRecord
+    public function setLocationIdPrediction($locationId) : MedicalRecord
     {
-        $this->locationIdPrediction = $location;
+        $this->locationIdPrediction = $locationId;
 
         return $this;
     }
@@ -301,6 +301,13 @@ abstract class MedicalRecordEloquent extends Model implements MedicalRecord
      */
     public function predictBillingProvider() : MedicalRecord
     {
+        if ($this->billing_provider_id) {
+            $this->setBillingProviderIdPrediction($this->billing_provider_id);
+
+            return $this;
+        }
+
+
         if ($this->getBillingProviderIdPrediction()) {
             return $this;
         }
