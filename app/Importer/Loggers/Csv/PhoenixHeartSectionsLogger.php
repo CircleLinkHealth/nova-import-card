@@ -11,7 +11,24 @@ use App\Models\PatientData\PhoenixHeart\PhoenixHeartInsurance;
 
 class PhoenixHeartSectionsLogger extends TabularMedicalRecordSectionsLogger
 {
+    /**
+     * Log Allergies Section.
+     * @return MedicalRecordLogger
+     */
+    public function logAllergiesSection(): MedicalRecordLogger
+    {
+        $allergies = PhoenixHeartAllergy::wherePatientId($this->medicalRecord->mrn)->get();
 
+        foreach ($allergies as $allergy) {
+            $allergyLog = AllergyLog::create(
+                array_merge([
+                    'allergen_name' => ucfirst(strtolower($allergy->name)),
+                ], $this->foreignKeys)
+            );
+        }
+
+        return $this;
+    }
 
     /**
      * Log Medications Section.
