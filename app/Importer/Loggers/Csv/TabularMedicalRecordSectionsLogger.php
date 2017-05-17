@@ -8,6 +8,7 @@ use App\Importer\Models\ItemLogs\MedicationLog;
 use App\Importer\Models\ItemLogs\ProblemLog;
 use App\Importer\Models\ItemLogs\ProviderLog;
 use App\Models\MedicalRecords\TabularMedicalRecord;
+use App\Practice;
 
 class TabularMedicalRecordSectionsLogger implements MedicalRecordLogger
 {
@@ -18,9 +19,17 @@ class TabularMedicalRecordSectionsLogger implements MedicalRecordLogger
      */
     protected $medicalRecord;
 
-    public function __construct(TabularMedicalRecord $tmr)
+    /**
+     * The Practice, if it was passed. Null otherwise.
+     *
+     * @var Practice
+     */
+    protected $practice;
+
+    public function __construct(TabularMedicalRecord $tmr, Practice $practice = null)
     {
         $this->medicalRecord = $tmr;
+        $this->practice = $practice;
 
         $this->foreignKeys = [
             'vendor_id'           => '1',
