@@ -95,26 +95,42 @@ abstract class MedicalRecordEloquent extends Model implements MedicalRecord
     /**
      * @return mixed
      */
-    abstract public function getBillingProviderIdPrediction();
+    public function getBillingProviderIdPrediction()
+    {
+        return $this->billingProviderIdPrediction;
+    }
 
     /**
      * @param mixed $billingProvider
      *
      * @return MedicalRecord
      */
-    abstract public function setBillingProviderIdPrediction($billingProvider) : MedicalRecord;
+    public function setBillingProviderIdPrediction($billingProvider) : MedicalRecord
+    {
+        $this->billingProviderIdPrediction = $billingProvider;
+
+        return $this;
+    }
 
     /**
      * @return mixed
      */
-    abstract public function getLocationIdPrediction();
+    public function getLocationIdPrediction()
+    {
+        return $this->locationIdPrediction;
+    }
 
     /**
      * @param mixed $location
      *
      * @return MedicalRecord
      */
-    abstract public function setLocationIdPrediction($location) : MedicalRecord;
+    public function setLocationIdPrediction($location) : MedicalRecord
+    {
+        $this->locationIdPrediction = $location;
+
+        return $this;
+    }
 
     /**
      * @return mixed
@@ -125,11 +141,16 @@ abstract class MedicalRecordEloquent extends Model implements MedicalRecord
     }
 
     /**
-     * @param mixed $practice
+     * @param mixed $practiceId
      *
      * @return MedicalRecord
      */
-    abstract public function setPracticeIdPrediction($practice) : MedicalRecord;
+    public function setPracticeIdPrediction($practiceId) : MedicalRecord
+    {
+        $this->practiceIdPrediction = $practiceId;
+
+        return $this;
+    }
 
     /**
      * Import Allergies for QA
@@ -223,6 +244,12 @@ abstract class MedicalRecordEloquent extends Model implements MedicalRecord
      */
     public function predictPractice() : MedicalRecord
     {
+        if ($this->practice_id) {
+            $this->setPracticeIdPrediction($this->practice_id);
+
+            return $this;
+        }
+
         if ($this->getPracticeIdPrediction()) {
             return $this;
         }
