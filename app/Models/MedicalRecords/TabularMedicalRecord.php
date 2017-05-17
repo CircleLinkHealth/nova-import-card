@@ -26,9 +26,9 @@ class TabularMedicalRecord extends MedicalRecordEloquent
         'last_name',
         'dob',
 
-        'allergies',
-        'medications',
-        'problems',
+        'allergies_string',
+        'medications_string',
+        'problems_string',
 
         'gender',
         'language',
