@@ -5,7 +5,6 @@ use App\Traits\HasSettings;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
-use Illuminate\Support\Facades\DB;
 
 class Practice extends Model
 {
@@ -28,13 +27,12 @@ class Practice extends Model
         'auto_approve_careplans',
         'send_alerts',
         'outgoing_phone_number',
-        'term_days'
+        'term_days',
     ];
 
     public static function getProviders($practiceId)
     {
-        $providers = User::whereHas('practices', function ($q) use
-        (
+        $providers = User::whereHas('practices', function ($q) use (
             $practiceId
         ) {
             $q->where('id', '=', $practiceId);
@@ -47,8 +45,7 @@ class Practice extends Model
 
     public static function getNonCCMCareCenterUsers($practiceId)
     {
-        $providers = User::whereHas('practices', function ($q) use
-        (
+        $providers = User::whereHas('practices', function ($q) use (
             $practiceId
         ) {
             $q->where('id', '=', $practiceId);
@@ -61,8 +58,7 @@ class Practice extends Model
 
     public static function getCareCenterUsers($practiceId)
     {
-        $providers = User::whereHas('practices', function ($q) use
-        (
+        $providers = User::whereHas('practices', function ($q) use (
             $practiceId
         ) {
             $q->where('id', '=', $practiceId);
@@ -107,6 +103,28 @@ class Practice extends Model
         }
     }
 
+    public static function getInvoiceRecipients(Practice $p)
+    {
+
+        $emails = $p->users()->where('send_billing_reports', '=', true)->pluck('email')->toArray();
+
+        return $emails;
+
+    }
+
+    public function users()
+    {
+        return $this->belongsToMany(User::class, 'practice_user', 'program_id', 'user_id')
+            ->withPivot('role_id', 'has_admin_rights', 'send_billing_reports');
+    }
+
+    public static function active()
+    {
+
+        return Practice::whereActive(1)->get();
+
+    }
+
     public function getCountOfUserTypeAtPractice($role)
     {
 
@@ -115,8 +133,7 @@ class Practice extends Model
         return User
             ::where('user_status', 1)
             ->whereProgramId($this->id)
-            ->whereHas('roles', function ($q) use
-            (
+            ->whereHas('roles', function ($q) use (
                 $role
             ) {
                 $q->whereName($role);
@@ -140,15 +157,18 @@ class Practice extends Model
         return $this->hasMany('App\CarePlanTemplate', 'patient_id');
     }
 
-    public function users()
+    public function getPrimaryLocationIdAttribute()
     {
-        return $this->belongsToMany(User::class, 'practice_user', 'program_id', 'user_id')
-            ->withPivot('role_id', 'has_admin_rights', 'send_billing_reports');
+        $loc = $this->locations->where('is_primary', '=', true)->first();
+
+        return $loc
+            ? $loc->id
+            : null;
     }
 
-    public function locations()
+    public function primaryLocation()
     {
-        return $this->hasMany(Location::class);
+        return $this->locations->where('is_primary', '=', true)->first();
     }
 
     public function locationId()
@@ -208,29 +228,27 @@ class Practice extends Model
 
     }
 
-    public function getAddress(){
+    public function getAddress()
+    {
 
         $primary = $this->locations()->where('is_primary', 1)->first();
 
-        if(is_null($primary)){
+        if (is_null($primary)) {
             $primary = $this->locations()->first();
         }
 
         return [
 
-            'line1' => $primary->address_line_1 .' '. $primary->address_line_2,
-            'line2' => $primary->city . ', ' . $primary->state . ' ' . $primary->postal_code
+            'line1' => $primary->address_line_1 . ' ' . $primary->address_line_2,
+            'line2' => $primary->city . ', ' . $primary->state . ' ' . $primary->postal_code,
 
         ];
 
     }
 
-    public static function getInvoiceRecipients(Practice $p){
-
-        $emails = $p->users()->where('send_billing_reports', '=', true)->pluck('email')->toArray();
-
-        return $emails;
-
+    public function locations()
+    {
+        return $this->hasMany(Location::class);
     }
 
     public function getSubdomainAttribute()
@@ -243,15 +261,10 @@ class Practice extends Model
         return $this->belongsTo(Ehr::class);
     }
 
-    public function scopeActive($q){
+    public function scopeActive($q)
+    {
 
         return $q->whereActive(1);
-
-    }
-
-    public static function active(){
-
-        return Practice::whereActive(1)->get();
 
     }
 }
