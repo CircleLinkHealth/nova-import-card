@@ -29,8 +29,7 @@ class Demographics extends BaseImporter
             'first_name'                 => ucwords(strtolower($itemLog->first_name)),
             'last_name'                  => ucwords(strtolower($itemLog->last_name)),
             'dob'                        => (new Carbon($itemLog->dob, 'America/New_York'))->format('Y-m-d'),
-            'gender'                     => call_user_func(function () use
-            (
+            'gender'                     => call_user_func(function () use (
                 $itemLog
             ) {
                 $maleVariations = [
@@ -73,8 +72,7 @@ class Demographics extends BaseImporter
                     ? $itemLog->work_phone
                     : $itemLog->home_phone
                 : $itemLog->cell_phone,
-            'preferred_contact_language' => call_user_func(function () use
-            (
+            'preferred_contact_language' => call_user_func(function () use (
                 $itemLog
             ) {
                 $englishVariations = [
@@ -111,6 +109,8 @@ class Demographics extends BaseImporter
             'medical_record_type'        => $medicalRecordType,
             'medical_record_id'          => $medicalRecordId,
             'imported_medical_record_id' => $importedMedicalRecord->id,
+            'preferred_call_times'       => $itemLog->preferred_call_times,
+            'preferred_call_days'        => $itemLog->preferred_call_days,
         ]);
     }
 }

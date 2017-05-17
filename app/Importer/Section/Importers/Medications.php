@@ -99,7 +99,7 @@ class Medications extends BaseImporter
             'ccd_medication_log_id'      => $itemLog->id,
             'medication_group_id'        => $medicationGroupId,
             'sig'                        => ucfirst(StringManipulation::stringDiff($consolidatedMed->cons_name,
-                $itemLog->cons_text)),
+                $consolidatedMed->cons_text)),
             'code'                       => $consolidatedMed->cons_code,
             'code_system'                => $consolidatedMed->cons_code_system,
             'code_system_name'           => $consolidatedMed->cons_code_system_name,

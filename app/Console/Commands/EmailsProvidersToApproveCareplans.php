@@ -58,8 +58,7 @@ class EmailsProvidersToApproveCareplans extends Command
 
         $bar = $this->output->createProgressBar(count($providers));
 
-        $emailsSent = $providers->map(function ($user) use
-        (
+        $emailsSent = $providers->map(function ($user) use (
             $bar,
             $pretend
         ) {
@@ -85,11 +84,11 @@ class EmailsProvidersToApproveCareplans extends Command
                 return false;
             }
 
-            if (!$user->primaryPractice->settings()->first()->email_careplan_approval_reminders) {
+            if (!$user->primaryPractice->settings()->firstOrCreate([])->email_careplan_approval_reminders) {
                 return false;
             }
 
-            if ($user->primaryPractice->settings()->first()->auto_approve_careplans) {
+            if ($user->primaryPractice->settings()->firstOrCreate([])->auto_approve_careplans) {
                 return false;
             }
 
@@ -132,8 +131,7 @@ class EmailsProvidersToApproveCareplans extends Command
 
             if (!$pretend) {
                 if ($send) {
-                    Mail::send($view, $data, function ($message) use
-                    (
+                    Mail::send($view, $data, function ($message) use (
                         $recipients,
                         $subject
                     ) {
