@@ -46,7 +46,6 @@ class PhoenixHeartSectionsLogger extends TabularMedicalRecordSectionsLogger
         foreach ($insurances as $insurance) {
             $insurance = InsuranceLog::create(array_merge([
                 'name'     => $insurance->name,
-                'approved' => false,
                 'import'   => true,
             ], $this->foreignKeys));
         }
