@@ -31,6 +31,27 @@ class PhoenixHeartSectionsLogger extends TabularMedicalRecordSectionsLogger
     }
 
     /**
+     * Log Insurance Section.
+     * @return MedicalRecordLogger
+     */
+    public function logInsuranceSection(): MedicalRecordLogger
+    {
+        $insurances = PhoenixHeartInsurance::wherePatientId($this->medicalRecord->mrn)
+            ->get()
+            ->sortBy('order');
+
+        foreach ($insurances as $insurance) {
+            $insurance = InsuranceLog::create(array_merge([
+                'name'     => $insurance->name,
+                'approved' => false,
+                'import'   => true,
+            ], $this->foreignKeys));
+        }
+
+        return $this;
+    }
+
+    /**
      * Log Medications Section.
      * @return MedicalRecordLogger
      */
