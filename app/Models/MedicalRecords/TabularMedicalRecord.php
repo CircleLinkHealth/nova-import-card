@@ -68,7 +68,7 @@ class TabularMedicalRecord extends MedicalRecordEloquent
         $phoenixHeart = Practice::whereDisplayName('Phoenix Heart')->first();
 
         if ($this->practice_id == $phoenixHeart->id) {
-            return new PhoenixHeartSectionsLogger($this);
+            return new PhoenixHeartSectionsLogger($this, $phoenixHeart);
         }
 
         return new TabularMedicalRecordSectionsLogger($this);
