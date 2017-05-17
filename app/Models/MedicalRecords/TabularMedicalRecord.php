@@ -2,7 +2,6 @@
 
 namespace App\Models\MedicalRecords;
 
-use App\Contracts\Importer\MedicalRecord\MedicalRecord;
 use App\Contracts\Importer\MedicalRecord\MedicalRecordLogger;
 use App\Importer\Loggers\Csv\PhoenixHeartSectionsLogger;
 use App\Importer\Loggers\Csv\TabularMedicalRecordSectionsLogger;
@@ -12,7 +11,10 @@ use App\User;
 
 class TabularMedicalRecord extends MedicalRecordEloquent
 {
-    protected $dates = ['dob'];
+    protected $dates = [
+        'dob',
+        'consent_date',
+    ];
 
     protected $fillable = [
         'practice_id',
@@ -63,7 +65,7 @@ class TabularMedicalRecord extends MedicalRecordEloquent
      *
      * @return MedicalRecordLogger
      */
-    public function getLogger() : MedicalRecordLogger
+    public function getLogger(): MedicalRecordLogger
     {
         $phoenixHeart = Practice::whereDisplayName('Phoenix Heart')->first();
 
@@ -79,12 +81,12 @@ class TabularMedicalRecord extends MedicalRecordEloquent
      *
      * @return User
      */
-    public function getPatient() : User
+    public function getPatient(): User
     {
         // TODO: Implement getPatient() method.
     }
 
-    public function getDocumentCustodian() : string
+    public function getDocumentCustodian(): string
     {
         return '';
     }
