@@ -4,8 +4,10 @@ namespace App\Models\MedicalRecords;
 
 use App\Contracts\Importer\MedicalRecord\MedicalRecord;
 use App\Contracts\Importer\MedicalRecord\MedicalRecordLogger;
+use App\Importer\Loggers\Csv\PhoenixHeartSectionsLogger;
 use App\Importer\Loggers\Csv\TabularMedicalRecordSectionsLogger;
 use App\Importer\MedicalRecordEloquent;
+use App\Practice;
 use App\User;
 
 class TabularMedicalRecord extends MedicalRecordEloquent
@@ -63,6 +65,12 @@ class TabularMedicalRecord extends MedicalRecordEloquent
      */
     public function getLogger() : MedicalRecordLogger
     {
+        $phoenixHeart = Practice::whereDisplayName('Phoenix Heart')->first();
+
+        if ($this->practice_id == $phoenixHeart->id) {
+            return new PhoenixHeartSectionsLogger($this);
+        }
+
         return new TabularMedicalRecordSectionsLogger($this);
     }
 
