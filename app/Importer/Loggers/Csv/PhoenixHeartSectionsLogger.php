@@ -9,6 +9,7 @@ use App\Importer\Models\ItemLogs\ProviderLog;
 use App\Models\PatientData\PhoenixHeart\PhoenixHeartAllergy;
 use App\Models\PatientData\PhoenixHeart\PhoenixHeartInsurance;
 use App\Models\PatientData\PhoenixHeart\PhoenixHeartMedication;
+use App\Models\PatientData\PhoenixHeart\PhoenixHeartProblem;
 use Carbon\Carbon;
 
 class PhoenixHeartSectionsLogger extends TabularMedicalRecordSectionsLogger
@@ -88,31 +89,33 @@ class PhoenixHeartSectionsLogger extends TabularMedicalRecordSectionsLogger
      */
     public function logProblemsSection(): MedicalRecordLogger
     {
-        $problems = json_decode($this->medicalRecord->problems_string);
-
-        if (!$problems) {
-            $problems = explode(',', $this->medicalRecord->problems_string);
-        }
+        $problems = PhoenixHeartProblem::wherePatientId($this->medicalRecord->mrn)
+            ->get();
 
         foreach ($problems as $problem) {
-            $problem = trim($problem);
-
-            if (ctype_alpha(str_replace([
-                "\n",
-                "\t",
-                ' ',
-            ], '', $problem))) {
-                $problem = ProblemLog::create(
-                    array_merge([
-                        'name' => $problem,
-                    ], $this->foreignKeys)
-                );
+            if (str_contains($problem->code, ['-'])) {
+                $pos = strpos($problem->code, '-') + 1;
+                $problemCode = mb_substr($problem->code, $pos);
+            } elseif (str_contains($problem->code, ['ICD'])) {
+                $pos = strpos($problem, 'ICD') + 3;
+                $problemCode = mb_substr($problem->code, $pos);
+            } else {
+                $problemCode = $problem->code;
             }
 
-            $problem = ProblemLog::create(
+            $endDate = Carbon::parse($problem->end_date);
+
+            $problemLog = ProblemLog::updateOrCreate(
                 array_merge([
-                    'code' => $problem,
-                ], $this->foreignKeys)
+                    'name' => $problem->description,
+                    'code' => $problemCode,
+                ], $this->foreignKeys),
+                [
+                    'start' => Carbon::parse($problem->start_date)->toDateTimeString(),
+                    'end'   => $endDate->isFuture()
+                        ? null
+                        : $endDate->toDateTimeString(),
+                ]
             );
         }
 
