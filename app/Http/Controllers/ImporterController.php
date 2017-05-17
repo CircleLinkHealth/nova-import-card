@@ -115,6 +115,10 @@ class ImporterController extends Controller
                 $row['dob'] = Carbon::parse($row['dob'])->format('Y-m-d');
                 $row['practice_id'] = $practice->id;
 
+                if (array_key_exists('consent_date', $row)) {
+                    $row['consent_date'] = Carbon::parse($row['consent_date'])->format('Y-m-d');
+                }
+
                 $mr = TabularMedicalRecord::create($row);
 
                 $importedMedicalRecords[] = $mr->import();
