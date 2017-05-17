@@ -84,53 +84,6 @@ class TabularMedicalRecord extends MedicalRecordEloquent
         // TODO: Implement getPatient() method.
     }
 
-    /**
-     * @return mixed
-     */
-    public function getBillingProviderIdPrediction()
-    {
-        // TODO: Implement getBillingProviderIdPrediction() method.
-    }
-
-    /**
-     * @param mixed $billingProvider
-     *
-     * @return MedicalRecord
-     */
-    public function setBillingProviderIdPrediction($billingProvider) : MedicalRecord
-    {
-        return $this;
-    }
-
-    /**
-     * @return mixed
-     */
-    public function getLocationIdPrediction()
-    {
-        // TODO: Implement getLocationIdPrediction() method.
-    }
-
-    /**
-     * @param mixed $location
-     *
-     * @return MedicalRecord
-     */
-    public function setLocationIdPrediction($location) : MedicalRecord
-    {
-        return $this;
-    }
-
-    /**
-     * @param mixed $practice
-     *
-     * @return MedicalRecord
-     */
-    public function setPracticeIdPrediction($practice) : MedicalRecord
-    {
-        return $this;
-    }
-
-
     public function getDocumentCustodian() : string
     {
         return '';
