@@ -9,7 +9,9 @@ use App\Importer\Models\ItemLogs\ProviderLog;
 use App\Models\PatientData\PhoenixHeart\PhoenixHeartAllergy;
 use App\Models\PatientData\PhoenixHeart\PhoenixHeartInsurance;
 use App\Models\PatientData\PhoenixHeart\PhoenixHeartMedication;
+use App\Models\PatientData\PhoenixHeart\PhoenixHeartName;
 use App\Models\PatientData\PhoenixHeart\PhoenixHeartProblem;
+use App\User;
 use Carbon\Carbon;
 
 class PhoenixHeartSectionsLogger extends TabularMedicalRecordSectionsLogger
@@ -45,8 +47,8 @@ class PhoenixHeartSectionsLogger extends TabularMedicalRecordSectionsLogger
 
         foreach ($insurances as $insurance) {
             $insurance = InsuranceLog::create(array_merge([
-                'name'     => $insurance->name,
-                'import'   => true,
+                'name'   => $insurance->name,
+                'import' => true,
             ], $this->foreignKeys));
         }
 
@@ -67,13 +69,13 @@ class PhoenixHeartSectionsLogger extends TabularMedicalRecordSectionsLogger
 
             $medicationLog = MedicationLog::updateOrCreate(
                 array_merge([
-                    'reference_title' => ucfirst(strtolower($medication->description)),
-                    'product_name' => ucfirst(strtolower($medication->description)),
+                    'reference_title'  => ucfirst(strtolower($medication->description)),
+                    'product_name'     => ucfirst(strtolower($medication->description)),
                     'translation_name' => ucfirst(strtolower($medication->description)),
 
-                    'reference_sig'   => $medication->instructions,
-                    'product_text'   => $medication->instructions,
-                    'text'   => $medication->instructions,
+                    'reference_sig' => $medication->instructions,
+                    'product_text'  => $medication->instructions,
+                    'text'          => $medication->instructions,
                 ], $this->foreignKeys),
                 [
                     'start' => Carbon::parse($medication->start_date)->toDateTimeString(),
@@ -132,11 +134,31 @@ class PhoenixHeartSectionsLogger extends TabularMedicalRecordSectionsLogger
      */
     public function logProvidersSection(): MedicalRecordLogger
     {
-        $name = explode(',', $this->medicalRecord->provider_name);
+        $name = PhoenixHeartName::wherePatientId($this->medicalRecord->mrn)
+            ->first();
+
+        $user = User::ofType('provider')
+            ->whereFirstName($name->provider_first_name)
+            ->whereLastName(explode(' ', $name->provider_last_name)[0])
+            ->first();
+
+        if ($user) {
+            $provider = ProviderLog::create(array_merge([
+                'first_name'  => $user->first_name,
+                'last_name'   => $user->last_name,
+                'user_id'     => $user->id,
+                'billing_provider_id'     => $user->id,
+                'practice_id' => $this->practice->id ?? null,
+            ], $this->foreignKeys));
+
+            return $this;
+
+        }
 
         $provider = ProviderLog::create(array_merge([
             'first_name' => trim($name[1]),
             'last_name'  => trim($name[0]),
+            'practice_id' => $this->practice->id ?? null,
         ], $this->foreignKeys));
 
         return $this;
