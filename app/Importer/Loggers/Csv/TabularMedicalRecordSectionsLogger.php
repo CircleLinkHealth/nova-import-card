@@ -49,7 +49,7 @@ class TabularMedicalRecordSectionsLogger implements MedicalRecordLogger
      */
     public function logAllergiesSection(): MedicalRecordLogger
     {
-        $allergies = explode(',', $this->medicalRecord->allergies);
+        $allergies = explode(',', $this->medicalRecord->allergies_string);
 
         foreach ($allergies as $allergy) {
 
@@ -148,7 +148,9 @@ class TabularMedicalRecordSectionsLogger implements MedicalRecordLogger
      */
     public function logMedicationsSection(): MedicalRecordLogger
     {
-        $medications = explode("\n", $this->medicalRecord->medications);
+        $medications = explode("\n", $this->medicalRecord->medications_string);
+
+        $medications = array_filter($medications);
 
         foreach ($medications as $medication) {
             $explodedMed = explode(',', $medication);
@@ -179,7 +181,11 @@ class TabularMedicalRecordSectionsLogger implements MedicalRecordLogger
      */
     public function logProblemsSection(): MedicalRecordLogger
     {
-        $problems = explode(',', $this->medicalRecord->problems);
+        $problems = json_decode($this->medicalRecord->problems_string);
+
+        if (!$problems) {
+            $problems = explode(',', $this->medicalRecord->problems_string);
+        }
 
         foreach ($problems as $problem) {
             $problem = trim($problem);
@@ -195,6 +201,12 @@ class TabularMedicalRecordSectionsLogger implements MedicalRecordLogger
                     ], $this->foreignKeys)
                 );
             }
+
+            $problem = ProblemLog::create(
+                array_merge([
+                    'code' => $problem,
+                ], $this->foreignKeys)
+            );
         }
 
         return $this;
