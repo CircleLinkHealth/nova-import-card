@@ -69,7 +69,12 @@ class PhoenixHeartSectionsLogger extends TabularMedicalRecordSectionsLogger
             $medicationLog = MedicationLog::updateOrCreate(
                 array_merge([
                     'reference_title' => ucfirst(strtolower($medication->description)),
+                    'product_name' => ucfirst(strtolower($medication->description)),
+                    'translation_name' => ucfirst(strtolower($medication->description)),
+
                     'reference_sig'   => $medication->instructions,
+                    'product_text'   => $medication->instructions,
+                    'text'   => $medication->instructions,
                 ], $this->foreignKeys),
                 [
                     'start' => Carbon::parse($medication->start_date)->toDateTimeString(),
