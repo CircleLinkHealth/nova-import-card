@@ -131,8 +131,8 @@ class Kernel extends ConsoleKernel
         $schedule->command('ccm_time:reset')
             ->cron('1 0 1 * *');
 
-        $schedule->command('ccdas:split-merged')
-            ->everyFiveMinutes();
+//        $schedule->command('ccdas:split-merged')
+//            ->everyFiveMinutes();
     }
 
     /**
