@@ -434,7 +434,7 @@ if (!function_exists('parseCallDays')) {
     function parseCallDays($preferredCallDays)
     {
         if (!$preferredCallDays) {
-            return false;
+            return [1, 2, 3, 4, 5];
         }
 
         $days = [];
@@ -444,8 +444,13 @@ if (!function_exists('parseCallDays')) {
                 $days[] = dayNameToClhDayOfWeek($dayName);
             }
         } elseif (str_contains($preferredCallDays, ['-'])) {
-            foreach (explode('-', $preferredCallDays) as $dayName) {
-                $days[] = dayNameToClhDayOfWeek($dayName);
+            $exploded = explode('-', $preferredCallDays);
+
+            $from = array_search($exploded[0], weekDays());
+            $to = array_search($exploded[1], weekDays());
+
+            for ($i = $from; $i <= $to; $i++) {
+                $days[] = $i;
             }
         } else {
             $days[] = dayNameToClhDayOfWeek($preferredCallDays);
@@ -459,7 +464,10 @@ if (!function_exists('parseCallTimes')) {
     function parseCallTimes($preferredCallTimes)
     {
         if (!$preferredCallTimes) {
-            return false;
+            return [
+                'start' => '09:00:00',
+                'end'   => '17:00:00',
+            ];
         }
 
         $times = [];
