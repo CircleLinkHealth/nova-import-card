@@ -92,7 +92,9 @@ class TabularMedicalRecordSectionsLogger implements MedicalRecordLogger
                 'mrn_number'           => $this->medicalRecord->mrn,
                 'gender'               => $this->medicalRecord->gender,
                 'language'             => $this->medicalRecord->language ?? 'EN',
-                'consent_date'         => $this->medicalRecord->consent_date ?? date('Y-m-d'),
+                'consent_date'         => $this->medicalRecord->consent_date->format('Y-m-d') > 0
+                    ? $this->medicalRecord->consent_date
+                    : date('Y-m-d'),
                 'primary_phone'        => $this->medicalRecord->primary_phone,
                 'cell_phone'           => $this->medicalRecord->cell_phone,
                 'home_phone'           => $this->medicalRecord->home_phone,

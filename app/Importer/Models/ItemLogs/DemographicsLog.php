@@ -34,6 +34,7 @@ class DemographicsLog extends Model implements ItemLog
         'email',
         'language',
         'race',
+        'consent_date',
         'ethnicity',
         'preferred_call_times',
         'preferred_call_days',
