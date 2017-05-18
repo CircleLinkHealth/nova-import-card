@@ -430,5 +430,68 @@ if (!function_exists('snakeToSentenceCase')) {
         return ucwords(str_replace('_', ' ', $string));
     }
 }
+if (!function_exists('parseCallDays')) {
+    function parseCallDays($preferredCallDays)
+    {
+        if (!$preferredCallDays) {
+            return [1, 2, 3, 4, 5];
+        }
+
+        $days = [];
+
+        if (str_contains($preferredCallDays, [','])) {
+            foreach (explode(',', $preferredCallDays) as $dayName) {
+                $days[] = dayNameToClhDayOfWeek($dayName);
+            }
+        } elseif (str_contains($preferredCallDays, ['-'])) {
+            $exploded = explode('-', $preferredCallDays);
+
+            $from = array_search($exploded[0], weekDays());
+            $to = array_search($exploded[1], weekDays());
+
+            for ($i = $from; $i <= $to; $i++) {
+                $days[] = $i;
+            }
+        } else {
+            $days[] = dayNameToClhDayOfWeek($preferredCallDays);
+        }
+
+        return $days;
+    }
+}
+
+if (!function_exists('parseCallTimes')) {
+    function parseCallTimes($preferredCallTimes)
+    {
+        if (!$preferredCallTimes) {
+            return [
+                'start' => '09:00:00',
+                'end'   => '17:00:00',
+            ];
+        }
+
+        $times = [];
+
+        if (str_contains($preferredCallTimes, ['-'])) {
+            $delimiter = '-';
+        }
+
+        if (str_contains($preferredCallTimes, ['to'])) {
+            $delimiter = 'to';
+        }
+
+        if (isset($delimiter)) {
+            $preferredTimes = explode($delimiter, $preferredCallTimes);
+            $times['start'] = Carbon::parse(trim($preferredTimes[0]))->toTimeString();
+            $times['end'] = Carbon::parse(trim($preferredTimes[1]))->toTimeString();
+        } else {
+            $startTime = Carbon::parse(trim($preferredCallTimes));
+            $times['start'] = $startTime->toTimeString();
+            $times['end'] = $startTime->addHour()->toTimeString();
+        }
+
+        return $times;
+    }
+}
 
 

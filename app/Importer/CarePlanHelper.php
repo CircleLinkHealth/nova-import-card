@@ -20,7 +20,6 @@ use App\Patient;
 use App\PatientContactWindow;
 use App\PhoneNumber;
 use App\User;
-use Carbon\Carbon;
 
 class CarePlanHelper
 {
@@ -193,8 +192,8 @@ class CarePlanHelper
         // update timezone
         $this->user->timezone = 'America/New_York';
 
-        $preferredCallDays = $this->parseCallDays($this->demographicsImport->preferred_call_days);
-        $preferredCallTimes = $this->parseCallTimes($this->demographicsImport->preferred_call_times);
+        $preferredCallDays = parseCallDays($this->demographicsImport->preferred_call_days);
+        $preferredCallTimes = parseCallTimes($this->demographicsImport->preferred_call_times);
 
         if (!$preferredCallDays && !$preferredCallTimes) {
             PatientContactWindow::sync($this->patientInfo, [
@@ -209,62 +208,11 @@ class CarePlanHelper
         }
 
 
-        PatientContactWindow::sync($this->patientInfo, $preferredCallDays, $preferredCallTimes['start'], $preferredCallTimes['end']);
+        PatientContactWindow::sync($this->patientInfo, $preferredCallDays, $preferredCallTimes['start'],
+            $preferredCallTimes['end']);
 
 
         return $this;
-    }
-
-    private function parseCallDays($preferredCallDays)
-    {
-        if (!$preferredCallDays) {
-            return false;
-        }
-
-        $days = [];
-
-        if (str_contains($preferredCallDays, [','])) {
-            foreach (explode(',', $preferredCallDays) as $dayName) {
-                $days[] = dayNameToClhDayOfWeek($dayName);
-            }
-        } elseif (str_contains($preferredCallDays, ['-'])) {
-            foreach (explode('-', $preferredCallDays) as $dayName) {
-                $days[] = dayNameToClhDayOfWeek($dayName);
-            }
-        } else {
-            $days[] = dayNameToClhDayOfWeek($preferredCallDays);
-        }
-
-        return $days;
-    }
-
-    private function parseCallTimes($preferredCallTimes)
-    {
-        if (!$preferredCallTimes) {
-            return false;
-        }
-
-        $times = [];
-
-        if (str_contains($preferredCallTimes, ['-'])) {
-            $delimiter = '-';
-        }
-
-        if (str_contains($preferredCallTimes, ['to'])) {
-            $delimiter = 'to';
-        }
-
-        if (isset($delimiter)) {
-            $preferredTimes = explode($delimiter, $preferredCallTimes);
-            $times['start'] = Carbon::parse(trim($preferredTimes[0]))->toTimeString();
-            $times['end'] = Carbon::parse(trim($preferredTimes[1]))->toTimeString();
-        } else {
-            $startTime = Carbon::parse(trim($preferredCallTimes));
-            $times['start'] = $startTime->toTimeString();
-            $times['end'] = $startTime->addHour()->toTimeString();
-        }
-
-        return $times;
     }
 
     /**
