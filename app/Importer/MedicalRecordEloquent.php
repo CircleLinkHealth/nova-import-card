@@ -17,6 +17,7 @@ use App\Importer\Section\Importers\Insurance;
 use App\Importer\Section\Importers\Medications;
 use App\Importer\Section\Importers\Problems;
 use App\Models\MedicalRecords\ImportedMedicalRecord;
+use App\Practice;
 use App\Traits\Relationships\MedicalRecordItemLoggerRelationships;
 use Illuminate\Database\Eloquent\Model;
 
@@ -95,26 +96,42 @@ abstract class MedicalRecordEloquent extends Model implements MedicalRecord
     /**
      * @return mixed
      */
-    abstract public function getBillingProviderIdPrediction();
+    public function getBillingProviderIdPrediction()
+    {
+        return $this->billingProviderIdPrediction;
+    }
 
     /**
-     * @param mixed $billingProvider
+     * @param mixed $billingProviderId
      *
      * @return MedicalRecord
      */
-    abstract public function setBillingProviderIdPrediction($billingProvider) : MedicalRecord;
+    public function setBillingProviderIdPrediction($billingProviderId) : MedicalRecord
+    {
+        $this->billingProviderIdPrediction = $billingProviderId;
+
+        return $this;
+    }
 
     /**
      * @return mixed
      */
-    abstract public function getLocationIdPrediction();
+    public function getLocationIdPrediction()
+    {
+        return $this->locationIdPrediction;
+    }
 
     /**
-     * @param mixed $location
+     * @param mixed $locationId
      *
      * @return MedicalRecord
      */
-    abstract public function setLocationIdPrediction($location) : MedicalRecord;
+    public function setLocationIdPrediction($locationId) : MedicalRecord
+    {
+        $this->locationIdPrediction = $locationId;
+
+        return $this;
+    }
 
     /**
      * @return mixed
@@ -125,11 +142,16 @@ abstract class MedicalRecordEloquent extends Model implements MedicalRecord
     }
 
     /**
-     * @param mixed $practice
+     * @param mixed $practiceId
      *
      * @return MedicalRecord
      */
-    abstract public function setPracticeIdPrediction($practice) : MedicalRecord;
+    public function setPracticeIdPrediction($practiceId) : MedicalRecord
+    {
+        $this->practiceIdPrediction = $practiceId;
+
+        return $this;
+    }
 
     /**
      * Import Allergies for QA
@@ -223,6 +245,12 @@ abstract class MedicalRecordEloquent extends Model implements MedicalRecord
      */
     public function predictPractice() : MedicalRecord
     {
+        if ($this->practice_id) {
+            $this->setPracticeIdPrediction($this->practice_id);
+
+            return $this;
+        }
+
         if ($this->getPracticeIdPrediction()) {
             return $this;
         }
@@ -263,6 +291,12 @@ abstract class MedicalRecordEloquent extends Model implements MedicalRecord
             return $this;
         }
 
+        if ($this->getPracticeIdPrediction()) {
+            $practice = Practice::find($this->getPracticeIdPrediction());
+
+            $this->setLocationIdPrediction($practice->primary_location_id);
+        }
+
 
         return $this;
     }
@@ -274,6 +308,13 @@ abstract class MedicalRecordEloquent extends Model implements MedicalRecord
      */
     public function predictBillingProvider() : MedicalRecord
     {
+        if ($this->billing_provider_id) {
+            $this->setBillingProviderIdPrediction($this->billing_provider_id);
+
+            return $this;
+        }
+
+
         if ($this->getBillingProviderIdPrediction()) {
             return $this;
         }

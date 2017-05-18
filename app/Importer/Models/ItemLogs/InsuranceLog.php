@@ -20,6 +20,7 @@ class InsuranceLog extends Model
         'policy_id',
         'relation',
         'subscriber',
+        'import'
     ];
 
     public function importedItem()

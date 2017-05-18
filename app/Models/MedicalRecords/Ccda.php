@@ -23,6 +23,7 @@ class Ccda extends MedicalRecordEloquent implements Transformable
     const API = 'api';
     const EMR_DIRECT = 'emr_direct';
     const IMPORTER = 'importer';
+    const SFTP_DROPBOX = 'sftp_dropbox';
 
     const EMAIL_DOMAIN_TO_VENDOR_MAP = [
         //Carolina Medical Associates
@@ -78,66 +79,6 @@ class Ccda extends MedicalRecordEloquent implements Transformable
     public function getPatient() : User
     {
         return $this->patient;
-    }
-
-    /**
-     * @return mixed
-     */
-    public function getBillingProviderIdPrediction()
-    {
-        return $this->billingProviderIdPrediction;
-    }
-
-    /**
-     * @param mixed $billingProvider
-     *
-     * @return MedicalRecord
-     */
-    public function setBillingProviderIdPrediction($billingProvider) : MedicalRecord
-    {
-        $this->billingProviderIdPrediction = $billingProvider;
-
-        return $this;
-    }
-
-    /**
-     * @return mixed
-     */
-    public function getLocationIdPrediction()
-    {
-        return $this->locationIdPrediction;
-    }
-
-    /**
-     * @param mixed $location
-     *
-     * @return MedicalRecord
-     */
-    public function setLocationIdPrediction($location) : MedicalRecord
-    {
-        $this->locationIdPrediction = $location;
-
-        return $this;
-    }
-
-    /**
-     * @return mixed
-     */
-    public function getPracticeIdPrediction()
-    {
-        return $this->practiceIdPrediction;
-    }
-
-    /**
-     * @param mixed $practice
-     *
-     * @return MedicalRecord
-     */
-    public function setPracticeIdPrediction($practice) : MedicalRecord
-    {
-        $this->practiceIdPrediction = $practice;
-
-        return $this;
     }
 
     /**

@@ -105,8 +105,15 @@ class ImporterController extends Controller
         if ($file->getClientOriginalExtension() == 'csv') {
             $csv = parseCsvToArray($file);
 
+            $practice = Practice::whereDisplayName(explode('-', $file->getClientOriginalName())[0])->first();
+
+            if (!$practice) {
+                dd('Please include the Practice name (as it appears on CPM) in the beginning of the csv filename as such. Demo name - Import List.');
+            }
+
             foreach ($csv as $row) {
                 $row['dob'] = Carbon::parse($row['dob'])->format('Y-m-d');
+                $row['practice_id'] = $practice->id;
 
                 $mr = TabularMedicalRecord::create($row);
 

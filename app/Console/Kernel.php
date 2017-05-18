@@ -15,6 +15,7 @@ use App\Console\Commands\MapSnomedToCpmProblems;
 use App\Console\Commands\NukeItemAndMeta;
 use App\Console\Commands\RecalculateCcmTime;
 use App\Console\Commands\ResetCcmTime;
+use App\Console\Commands\SplitMergedCcdas;
 use App\MailLog;
 use App\Practice;
 use App\Reports\Sales\Practice\SalesByPracticeReport;
@@ -52,6 +53,7 @@ class Kernel extends ConsoleKernel
         GetCcds::class,
         ResetCcmTime::class,
         RecalculateCcmTime::class,
+        SplitMergedCcdas::class,
     ];
 
     /**
