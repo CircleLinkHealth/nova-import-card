@@ -119,15 +119,15 @@
                                     <h5 style="line-height: 20px;">
                                         <div class="col-md-3"><span><b>Practice Approved: </b></span><span
                                                     id="approved-count"
-                                                    style="color: green">{{$approved}}</span><br>
+                                                    style="color: green"></span><br>
                                         </div>
                                         <div class="col-md-3"><span><b>Practice Flagged: </b></span><span
                                                     style="color: darkorange"
-                                                    id="toQA-count">{{$toQA}}</span><br>
+                                                    id="toQA-count"></span><br>
                                         </div>
                                         <div class="col-md-3"><span><b>Practice Rejected: </b></span><span
                                                     style="color: darkred"
-                                                    id="rejected-count">{{$rejected}}</span><br>
+                                                    id="rejected-count"></span><br>
                                         </div>
                                     </h5>
                                 </div>
@@ -198,6 +198,8 @@
 
             $(function () {
 
+                setLoadingLabels();
+
                 $('#billable_list').DataTable({
 
                     processing: true,
@@ -229,7 +231,10 @@
                         {data: 'report_id', name: 'report_id'},
                         {data: 'qa', name: 'qa'},
                     ],
-
+                    dom: 'Bfrtip',
+                    buttons: [
+                        'excel'
+                    ],
                     "columnDefs": [
                         {
                             "targets": [13, 14],
@@ -246,9 +251,23 @@
                     },
                     "initComplete": function (settings, json) {
 
-                    }
+                        var url = '{!! route('monthly.billing.count') !!}';
 
+                        $.ajax({
+                            type: "POST",
+                            url: url,
+                            data: {
+                                practice_id: $('#practice_id').val(),
+                                date: $("#date option:selected").text()
+                            },
 
+                            success: function (data) {
+
+                                updateBillingCounts(data);
+
+                            }
+                        });
+                    },
                 });
 
                 //When a new practice is picked, update table
@@ -500,6 +519,15 @@
 
         </script>
 
-        <script src="//cdn.datatables.net/1.10.7/js/jquery.dataTables.min.js"></script>
+        <script src="//cdn.datatables.net/1.10.15/js/jquery.dataTables.min.js"></script>
+        <script src="//cdn.datatables.net/buttons/1.3.1/js/dataTables.buttons.min.js"></script>
+        <script src="//cdnjs.cloudflare.com/ajax/libs/jszip/3.1.3/jszip.min.js"></script>
+        <script src="//cdn.rawgit.com/bpampuch/pdfmake/0.1.27/build/pdfmake.min.js"></script>
+        <script src="//cdn.rawgit.com/bpampuch/pdfmake/0.1.27/build/vfs_fonts.js"></script>
+        <script src="//cdn.datatables.net/buttons/1.3.1/js/buttons.html5.min.js"></script>
+        <script src="//cdn.datatables.net/buttons/1.3.1/js/buttons.print.min.js"></script>
+
+
+
     </div>
 @stop

@@ -8,6 +8,7 @@ use App\Importer\Models\ItemLogs\MedicationLog;
 use App\Importer\Models\ItemLogs\ProblemLog;
 use App\Importer\Models\ItemLogs\ProviderLog;
 use App\Models\MedicalRecords\TabularMedicalRecord;
+use App\Practice;
 
 class TabularMedicalRecordSectionsLogger implements MedicalRecordLogger
 {
@@ -16,11 +17,19 @@ class TabularMedicalRecordSectionsLogger implements MedicalRecordLogger
      *
      * @var TabularMedicalRecord
      */
-    private $medicalRecord;
+    protected $medicalRecord;
 
-    public function __construct(TabularMedicalRecord $tmr)
+    /**
+     * The Practice, if it was passed. Null otherwise.
+     *
+     * @var Practice
+     */
+    protected $practice;
+
+    public function __construct(TabularMedicalRecord $tmr, Practice $practice = null)
     {
         $this->medicalRecord = $tmr;
+        $this->practice = $practice;
 
         $this->foreignKeys = [
             'vendor_id'           => '1',
@@ -49,7 +58,7 @@ class TabularMedicalRecordSectionsLogger implements MedicalRecordLogger
      */
     public function logAllergiesSection(): MedicalRecordLogger
     {
-        $allergies = explode(',', $this->medicalRecord->allergies);
+        $allergies = explode(',', $this->medicalRecord->allergies_string);
 
         foreach ($allergies as $allergy) {
 
@@ -75,25 +84,27 @@ class TabularMedicalRecordSectionsLogger implements MedicalRecordLogger
     {
         $saved = DemographicsLog::create(
             array_merge([
-                'first_name'    => $this->medicalRecord->first_name,
-                'last_name'     => $this->medicalRecord->last_name,
-                'dob'           => $this->medicalRecord->dob,
-                'provider_name' => $this->medicalRecord->provider_name,
-                'phone'         => $this->medicalRecord->phone,
-                'mrn_number'    => $this->medicalRecord->mrn,
-                'gender'        => $this->medicalRecord->gender,
-                'language'      => $this->medicalRecord->language ?? 'EN',
-                'consent_date'  => $this->medicalRecord->consent_date ?? date('Y-m-d'),
-                'primary_phone' => $this->medicalRecord->primary_phone,
-                'cell_phone'    => $this->medicalRecord->cell_phone,
-                'home_phone'    => $this->medicalRecord->home_phone,
-                'work_phone'    => $this->medicalRecord->work_phone,
-                'email'         => $this->medicalRecord->email,
-                'street'        => $this->medicalRecord->address,
-                'street2'       => $this->medicalRecord->address2,
-                'city'          => $this->medicalRecord->city,
-                'state'         => $this->medicalRecord->state,
-                'zip'           => $this->medicalRecord->zip,
+                'first_name'           => $this->medicalRecord->first_name,
+                'last_name'            => $this->medicalRecord->last_name,
+                'dob'                  => $this->medicalRecord->dob,
+                'provider_name'        => $this->medicalRecord->provider_name,
+                'phone'                => $this->medicalRecord->phone,
+                'mrn_number'           => $this->medicalRecord->mrn,
+                'gender'               => $this->medicalRecord->gender,
+                'language'             => $this->medicalRecord->language ?? 'EN',
+                'consent_date'         => $this->medicalRecord->consent_date ?? date('Y-m-d'),
+                'primary_phone'        => $this->medicalRecord->primary_phone,
+                'cell_phone'           => $this->medicalRecord->cell_phone,
+                'home_phone'           => $this->medicalRecord->home_phone,
+                'work_phone'           => $this->medicalRecord->work_phone,
+                'email'                => $this->medicalRecord->email,
+                'street'               => $this->medicalRecord->address,
+                'street2'              => $this->medicalRecord->address2,
+                'city'                 => $this->medicalRecord->city,
+                'state'                => $this->medicalRecord->state,
+                'zip'                  => $this->medicalRecord->zip,
+                'preferred_call_times' => $this->medicalRecord->preferred_call_times,
+                'preferred_call_days'  => $this->medicalRecord->preferred_call_days,
             ], $this->foreignKeys)
         );
 
@@ -146,7 +157,9 @@ class TabularMedicalRecordSectionsLogger implements MedicalRecordLogger
      */
     public function logMedicationsSection(): MedicalRecordLogger
     {
-        $medications = explode("\n", $this->medicalRecord->medications);
+        $medications = explode("\n", $this->medicalRecord->medications_string);
+
+        $medications = array_filter($medications);
 
         foreach ($medications as $medication) {
             $explodedMed = explode(',', $medication);
@@ -177,7 +190,11 @@ class TabularMedicalRecordSectionsLogger implements MedicalRecordLogger
      */
     public function logProblemsSection(): MedicalRecordLogger
     {
-        $problems = explode(',', $this->medicalRecord->problems);
+        $problems = json_decode($this->medicalRecord->problems_string);
+
+        if (!$problems) {
+            $problems = explode(',', $this->medicalRecord->problems_string);
+        }
 
         foreach ($problems as $problem) {
             $problem = trim($problem);
@@ -193,6 +210,12 @@ class TabularMedicalRecordSectionsLogger implements MedicalRecordLogger
                     ], $this->foreignKeys)
                 );
             }
+
+            $problem = ProblemLog::create(
+                array_merge([
+                    'code' => $problem,
+                ], $this->foreignKeys)
+            );
         }
 
         return $this;

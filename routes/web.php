@@ -25,7 +25,9 @@ if (app()->environment() != 'production') {
 
         $date = Carbon::parse('2017-03-01');
 
-        dd(\App\Practice::getInvoiceRecipients(\App\Practice::find(21)));
+        dd(\App\User::find(3882)->practices->pluck('id')->toArray());
+
+        dd((new \App\Reports\WeeklyReportDispatcher())->exec());
 
         $reporter = new ApproveBillablePatientsReport($date, 21);
         $reporter->dataV1();
@@ -485,16 +487,11 @@ Route::group(['middleware' => 'auth'], function () {
     /****************************/
     Route::group([
         'middleware' => [
+            'auth',
             'permission:admin-access',
         ],
         'prefix'     => 'admin',
     ], function () {
-
-        Route::get('php-info', function () {
-            if (auth()->user()->hasRole('administrator')) {
-                dd(phpinfo());
-            }
-        });
 
         Route::resource('medication-groups-maps', 'MedicationGroupsMapController');
 
@@ -670,11 +667,6 @@ Route::group(['middleware' => 'auth'], function () {
                 Route::post('/send', [
                     'uses' => 'Billing\PracticeInvoiceController@send',
                     'as'   => 'monthly.billing.send',
-                ]);
-
-                Route::get('/downloadInvoice/{practice}/{name}', [
-                    'uses' => 'Billing\PracticeInvoiceController@downloadInvoice',
-                    'as'   => 'monthly.billing.download',
                 ]);
 
             });
@@ -1605,6 +1597,18 @@ Route::group([
     });
 });
 
+//This route was replaced by route with url '/downloadInvoice/{practice}/{name}', and name 'monthly.billing.download'.
+//We keep it here to support Report links mailed before 5/12/17.
+Route::get('/admin/reports/monthly-billing/v2/downloadInvoice/{practice}/{name}', [
+    'uses' => 'Billing\PracticeInvoiceController@downloadInvoice',
+    'middleware' => ['auth'],
+]);
+
+Route::get('/downloadInvoice/{practice}/{name}', [
+    'uses' => 'Billing\PracticeInvoiceController@downloadInvoice',
+    'as'   => 'monthly.billing.download',
+    'middleware' => ['auth'],
+]);
 
 Route::group([
     'prefix' => 'twilio',

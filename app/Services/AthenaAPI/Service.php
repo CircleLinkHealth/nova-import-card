@@ -131,14 +131,10 @@ class Service
             $ccda->json = $json;
             $ccda->save();
 
-            $logger = new CcdaSectionsLogger($ccda);
-            $logger->logAll();
-
-            $importer = new QAImportManager($vendor->program_id, $ccda);
-            $output = $importer->generateCarePlanFromCCD();
+            $ccda->import();
 
             if (app()->environment('worker')) {
-                $link = 'https://www.careplanmanager.com/ccd-importer/qaimport';
+                $link = route('view.files.ready.to.import');
 
                 Slack::to('#ccd-file-status')
                     ->send("We received a CCD from Athena. \n Please visit {$link} to import.");

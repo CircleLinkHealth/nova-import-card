@@ -13,16 +13,17 @@ class CcdInsurancePolicy extends Model
         SoftDeletes;
 
     protected $fillable = [
-        'ccda_id',
+        'medical_record_id',
+        'medical_record_type',
         'patient_id',
         'name', //required
         'type',
         'policy_id', //required
         'relation',
         'subscriber',
-        'approved'
+        'approved',
     ];
-    
+
     public function patient()
     {
         return $this->belongsTo(User::class, 'patient_id');

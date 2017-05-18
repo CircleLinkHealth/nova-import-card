@@ -43,6 +43,12 @@ return [
 
 	'disks' => [
 
+	    //The directory where Practices deposit CCDAs on the Worker environment
+	    'ccdas' => [
+	        'driver' => 'local',
+            'root'   => env('CCDA_DROPBOX_PATH') ?? null,
+        ],
+
 		'local' => [
 			'driver' => 'local',
 			'root'   => storage_path().'/app',

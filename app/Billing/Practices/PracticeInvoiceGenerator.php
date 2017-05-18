@@ -5,9 +5,7 @@ namespace App\Billing\Practices;
 
 use App\Activity;
 use App\AppConfig;
-use App\CLH\CCD\Importer\SnomedToCpmIcdMap;
 use App\Patient;
-use App\PatientMonthlySummary;
 use App\Practice;
 use App\User;
 use Barryvdh\Snappy\Facades\SnappyPdf as PDF;
@@ -19,6 +17,7 @@ class PracticeInvoiceGenerator
 
     private $practice;
     private $month;
+    private $patients;
 
     public function __construct(
         Practice $practice,
@@ -86,7 +85,7 @@ class PracticeInvoiceGenerator
 
         $data['billable'] = 0;
 
-        foreach ($patients as $patient){
+        foreach ($patients as $patient) {
 
             $ccm = DB::table('lv_activities')
                 ->where('patient_id', $patient->id)
@@ -96,11 +95,14 @@ class PracticeInvoiceGenerator
                 ])
                 ->sum('duration');
 
-            $report = $patient->patientInfo->patientSummaries()
+            $report = Patient::firstOrCreate([
+                'user_id' => $patient->id,
+            ])
+                ->patientSummaries()
                 ->where('month_year', $this->month->firstOfMonth()->toDateString())
                 ->first();
 
-            if($report && $report->approved == 1 && $report->no_of_successful_calls > 0 && $ccm > 1199){
+            if ($report && $report->approved == 1 && $ccm > 1199) {
 
                 $data['billable']++;
 
@@ -108,9 +110,24 @@ class PracticeInvoiceGenerator
 
         }
 
-        $data['invoice_amount'] = $this->practice->clh_pppm * $data['billable'];
+        $data['invoice_amount'] = round((double)$this->practice->clh_pppm * $data['billable'], 2);
 
         return $data;
+
+    }
+
+    public function incrementInvoiceNo()
+    {
+
+        $num = AppConfig::where('config_key', 'billing_invoice_count')->first();
+
+        $current = $num['config_value'];
+
+        $num['config_value'] = $num['config_value'] + 1;
+
+        $num->save();
+
+        return $current;
 
     }
 
@@ -120,14 +137,12 @@ class PracticeInvoiceGenerator
         $patients = Patient
             ::whereHas('patientSummaries', function ($q) {
                 $q->where('month_year', $this->month->firstOfMonth()->toDateString())
-                    ->where('no_of_successful_calls', '>', 0)
                     ->where('approved', 1);
 
             })
-                ->whereHas('user', function ($k)
-                {
-                    $k->where('program_id', $this->practice->id);
-                }
+            ->whereHas('user', function ($k) {
+                $k->where('program_id', $this->practice->id);
+            }
             )
             ->orderBy('updated_at', 'desc')
             ->get();
@@ -150,44 +165,51 @@ class PracticeInvoiceGenerator
                 ])
                 ->sum('duration');
 
-            if ($ccm < 1200) {
-                continue;
-            }
-
             $report = $p->patientSummaries()
                 ->where('month_year', $this->month->firstOfMonth()->toDateString())
                 ->first();
 
-            $data['patientData'][$p->user_id]['ccm_time'] = round($ccm / 60 , 2);
-            $data['patientData'][$p->user_id]['name'] = $u->fullName;
-            $data['patientData'][$p->user_id]['dob'] = $u->birth_date;
-            $data['patientData'][$p->user_id]['practice'] = $u->primaryPractice->id;
-            $data['patientData'][$p->user_id]['provider'] = $u->billingProviderName;
+            if ($report && $report->approved == 1 && $ccm > 1199) {
 
-            $data['patientData'][$p->user_id]['problem1'] = $report->billable_problem1;
-            $data['patientData'][$p->user_id]['problem1_code'] = $report->billable_problem1_code;
-            $data['patientData'][$p->user_id]['problem2'] = $report->billable_problem2;
-            $data['patientData'][$p->user_id]['problem2_code'] = $report->billable_problem2_code;
+                $data['patientData'][$p->user_id]['ccm_time'] = round($ccm / 60, 2);
+                $data['patientData'][$p->user_id]['name'] = $u->fullName;
+                $data['patientData'][$p->user_id]['dob'] = $u->birth_date;
+                $data['patientData'][$p->user_id]['practice'] = $u->primaryPractice->id;
+                $data['patientData'][$p->user_id]['provider'] = $u->billingProviderName;
+
+                $data['patientData'][$p->user_id]['problem1'] = $report->billable_problem1;
+                $data['patientData'][$p->user_id]['problem1_code'] = $report->billable_problem1_code;
+                $data['patientData'][$p->user_id]['problem2'] = $report->billable_problem2;
+                $data['patientData'][$p->user_id]['problem2_code'] = $report->billable_problem2_code;
+            }
 
         }
+
+        $data['patientData'] = array_key_exists('patientData', $data)
+            ? $this->array_orderby($data['patientData'], 'provider', SORT_ASC, 'name', SORT_ASC)
+            : null;
 
         return $data;
 
     }
 
-    public function incrementInvoiceNo()
+    function array_orderby()
     {
+        $args = func_get_args();
+        $data = array_shift($args);
+        foreach ($args as $n => $field) {
+            if (is_string($field)) {
+                $tmp = [];
+                foreach ($data as $key => $row) {
+                    $tmp[$key] = $row[$field];
+                }
+                $args[$n] = $tmp;
+            }
+        }
+        $args[] = &$data;
+        call_user_func_array('array_multisort', $args);
 
-        $num = AppConfig::where('config_key', 'billing_invoice_count')->first();
-
-        $current = $num['config_value'];
-
-        $num['config_value'] = $num['config_value'] + 1;
-
-        $num->save();
-
-        return $current;
-
+        return array_pop($args);
     }
 
     public function checkForPendingQAForPractice()

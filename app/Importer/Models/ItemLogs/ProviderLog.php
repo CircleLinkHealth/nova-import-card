@@ -16,6 +16,7 @@ class ProviderLog extends Model implements ItemLog
         'location_id',
         'practice_id',
         'billing_provider_id',
+        'user_id',
         'medical_record_type',
         'medical_record_id',
         'vendor_id',

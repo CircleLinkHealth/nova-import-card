@@ -4,8 +4,10 @@ namespace App\Models\MedicalRecords;
 
 use App\Contracts\Importer\MedicalRecord\MedicalRecord;
 use App\Contracts\Importer\MedicalRecord\MedicalRecordLogger;
+use App\Importer\Loggers\Csv\PhoenixHeartSectionsLogger;
 use App\Importer\Loggers\Csv\TabularMedicalRecordSectionsLogger;
 use App\Importer\MedicalRecordEloquent;
+use App\Practice;
 use App\User;
 
 class TabularMedicalRecord extends MedicalRecordEloquent
@@ -26,9 +28,9 @@ class TabularMedicalRecord extends MedicalRecordEloquent
         'last_name',
         'dob',
 
-        'allergies',
-        'medications',
-        'problems',
+        'allergies_string',
+        'medications_string',
+        'problems_string',
 
         'gender',
         'language',
@@ -51,6 +53,9 @@ class TabularMedicalRecord extends MedicalRecordEloquent
         'primary_insurance',
         'secondary_insurance',
         'tertiary_insurance',
+
+        'preferred_call_times',
+        'preferred_call_days',
     ];
 
     /**
@@ -60,6 +65,12 @@ class TabularMedicalRecord extends MedicalRecordEloquent
      */
     public function getLogger() : MedicalRecordLogger
     {
+        $phoenixHeart = Practice::whereDisplayName('Phoenix Heart')->first();
+
+        if ($this->practice_id == $phoenixHeart->id) {
+            return new PhoenixHeartSectionsLogger($this, $phoenixHeart);
+        }
+
         return new TabularMedicalRecordSectionsLogger($this);
     }
 
@@ -72,53 +83,6 @@ class TabularMedicalRecord extends MedicalRecordEloquent
     {
         // TODO: Implement getPatient() method.
     }
-
-    /**
-     * @return mixed
-     */
-    public function getBillingProviderIdPrediction()
-    {
-        // TODO: Implement getBillingProviderIdPrediction() method.
-    }
-
-    /**
-     * @param mixed $billingProvider
-     *
-     * @return MedicalRecord
-     */
-    public function setBillingProviderIdPrediction($billingProvider) : MedicalRecord
-    {
-        return $this;
-    }
-
-    /**
-     * @return mixed
-     */
-    public function getLocationIdPrediction()
-    {
-        // TODO: Implement getLocationIdPrediction() method.
-    }
-
-    /**
-     * @param mixed $location
-     *
-     * @return MedicalRecord
-     */
-    public function setLocationIdPrediction($location) : MedicalRecord
-    {
-        return $this;
-    }
-
-    /**
-     * @param mixed $practice
-     *
-     * @return MedicalRecord
-     */
-    public function setPracticeIdPrediction($practice) : MedicalRecord
-    {
-        return $this;
-    }
-
 
     public function getDocumentCustodian() : string
     {

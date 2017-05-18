@@ -24,7 +24,7 @@
     <div class="col-sm-12" style="padding-bottom: 10px;">
 
         <div class="row col-sm-6">
-            <b>BILL TO:</b><br>
+            <b>INVOICE TO:</b><br>
             <span>
                 {{$bill_to}} <br>
                 {{$clh_address['line1']}}<br>
@@ -61,7 +61,7 @@
                 <td>CCM Services (CPT99490)</td>
                 <td>{{$billable}}</td>
                 <td>{{$rate}}</td>
-                <td>${{$invoice_amount}}.00</td>
+                <td>${{$invoice_amount}}</td>
 
             </tr>
 
