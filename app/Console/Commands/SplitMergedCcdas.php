@@ -52,7 +52,7 @@ class SplitMergedCcdas extends Command
                         $ccdas[] = Ccda::create([
                             'source'   => Ccda::SFTP_DROPBOX,
                             'imported' => false,
-                            'xml'      => $ccdaString,
+                            'xml'      => trim($ccdaString),
                         ]);
                     }
                 }
