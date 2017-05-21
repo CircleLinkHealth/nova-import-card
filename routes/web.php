@@ -5,15 +5,12 @@
 //$faxTest = (new PhaxioService('production'))->send('+12124910114', storage_path('pdfs/notes/2017-02-07-xsKTIK4106WdXiMNu8iMla4FPJSOcosNBXXMkAsX.pdf'));
 //dd($faxTest);
 
-use App\AppConfig;
-use App\Jobs\SendReminderEmail;
 use App\Reports\ApproveBillablePatientsReport;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
 
 //Call Lists TEMP
 //(new WelcomeCallListController(new \Illuminate\Http\Request()))->makePhoenixHeartCallList();
-
 
 
 //Patient Landing Pages
