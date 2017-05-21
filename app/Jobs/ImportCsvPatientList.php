@@ -7,9 +7,9 @@ use App\Practice;
 use Carbon\Carbon;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
-use Illuminate\Http\UploadedFile;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
+use Maknz\Slack\Facades\Slack;
 
 class ImportCsvPatientList implements ShouldQueue
 {
@@ -104,5 +104,17 @@ class ImportCsvPatientList implements ShouldQueue
 //            'providers',
 //            'importedMedicalRecords',
 //        ]));
+    }
+
+    /**
+     * The job failed to process.
+     *
+     * @param  \Exception $exception
+     *
+     * @return void
+     */
+    public function failed(\Exception $exception)
+    {
+        Slack::to('#background-tasks')->send("Queued job failed: $exception");
     }
 }
