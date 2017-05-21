@@ -3,9 +3,9 @@
 use App\CLH\Repositories\CCDImporterRepository;
 use App\Importer\Models\ItemLogs\DocumentLog;
 use App\Importer\Models\ItemLogs\ProviderLog;
+use App\Jobs\ImportCsvPatientList;
 use App\Models\MedicalRecords\Ccda;
 use App\Models\MedicalRecords\ImportedMedicalRecord;
-use App\Models\MedicalRecords\TabularMedicalRecord;
 use App\Practice;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
@@ -103,70 +103,8 @@ class ImporterController extends Controller
         $file = $request->file('medical_record');
 
         if ($file->getClientOriginalExtension() == 'csv') {
-            $csv = parseCsvToArray($file);
-
-            $practice = Practice::whereDisplayName(explode('-', $file->getClientOriginalName())[0])->first();
-
-            if (!$practice) {
-                dd('Please include the Practice name (as it appears on CPM) in the beginning of the csv filename as such. Demo name - Import List.');
-            }
-
-            foreach ($csv as $row) {
-                $row['dob'] = Carbon::parse($row['dob'])->format('Y-m-d');
-                $row['practice_id'] = $practice->id;
-
-                if (array_key_exists('consent_date', $row)) {
-                    $row['consent_date'] = Carbon::parse($row['consent_date'])->format('Y-m-d');
-                }
-
-                $mr = TabularMedicalRecord::create($row);
-
-                $importedMedicalRecords[] = $mr->import();
-            }
-
-            //gather the features for review
-            $document = null;
-            $providers = [];
-
-            $predictedLocationId = null;
-            $predictedPracticeId = null;
-            $predictedBillingProviderId = null;
-            $practicesCollection = Practice::with('locations.providers')
-                ->get([
-                    'id',
-                    'display_name',
-                ]);
-
-            //fixing up the data for vue. basically keying locations and providers by id
-            $practices = $practicesCollection->keyBy('id')
-                ->map(function ($practice) {
-                    return [
-                        'id'           => $practice->id,
-                        'display_name' => $practice->display_name,
-                        'locations'    => $practice->locations->map(function ($loc) {
-                            //is there no better way to do this?
-                            $loc = new Collection($loc);
-
-                            $loc['providers'] = collect($loc['providers'])->keyBy('id');
-
-                            return $loc;
-                        })
-                            ->keyBy('id'),
-                    ];
-                });
-
-            \JavaScript::put([
-                'predictedLocationId'        => $predictedLocationId,
-                'predictedPracticeId'        => $predictedPracticeId,
-                'predictedBillingProviderId' => $predictedBillingProviderId,
-                'practices'                  => $practices,
-            ]);
-
-            return view('importer.show-training-findings', compact([
-                'document',
-                'providers',
-                'importedMedicalRecords',
-            ]));
+            $this->dispatch((new ImportCsvPatientList(parseCsvToArray($file),
+                $file->getClientOriginalName()))->onQueue('csv-list-importer'));
         } //assume XML CCDA
         else {
             $xml = file_get_contents($file);
