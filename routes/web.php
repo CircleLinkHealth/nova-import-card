@@ -5,23 +5,31 @@
 //$faxTest = (new PhaxioService('production'))->send('+12124910114', storage_path('pdfs/notes/2017-02-07-xsKTIK4106WdXiMNu8iMla4FPJSOcosNBXXMkAsX.pdf'));
 //dd($faxTest);
 
-use App\Http\Controllers\Admin\WelcomeCallListController;
+use App\AppConfig;
+use App\Jobs\SendReminderEmail;
 use App\Reports\ApproveBillablePatientsReport;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
 
 //Call Lists TEMP
 //(new WelcomeCallListController(new \Illuminate\Http\Request()))->makePhoenixHeartCallList();
+Log::critical('Hello there again');
 
 //Patient Landing Pages
 Route::resource('sign-up', 'PatientSignupController');
 Route::get('talk-to-us', 'PatientSignupController@talkToUs');
 
+Route::get('/asd', function () {
+    Log::critical('Hello there again');
+    dispatch(new SendReminderEmail());
+
+});
+
 if (app()->environment() != 'production') {
 
     Route::get('/sms/test', 'TwilioController@sendTestSMS');
 
-    Route::get('/rohan', function (){
+    Route::get('/rohan', function () {
 
         $date = Carbon::parse('2017-03-01');
 
@@ -1600,13 +1608,13 @@ Route::group([
 //This route was replaced by route with url '/downloadInvoice/{practice}/{name}', and name 'monthly.billing.download'.
 //We keep it here to support Report links mailed before 5/12/17.
 Route::get('/admin/reports/monthly-billing/v2/downloadInvoice/{practice}/{name}', [
-    'uses' => 'Billing\PracticeInvoiceController@downloadInvoice',
+    'uses'       => 'Billing\PracticeInvoiceController@downloadInvoice',
     'middleware' => ['auth'],
 ]);
 
 Route::get('/downloadInvoice/{practice}/{name}', [
-    'uses' => 'Billing\PracticeInvoiceController@downloadInvoice',
-    'as'   => 'monthly.billing.download',
+    'uses'       => 'Billing\PracticeInvoiceController@downloadInvoice',
+    'as'         => 'monthly.billing.download',
     'middleware' => ['auth'],
 ]);
 
