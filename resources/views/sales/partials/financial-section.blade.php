@@ -1,5 +1,9 @@
 <h3 style="text-align: center">Financial Performance</h3>
 
+<!---
+Inline CSS prevents loss of table borders in emails
+-->
+
 <?php $start = Carbon\Carbon::parse($data['start']) ?>
 {{--<h5>--}}
 {{--CCM Revenue to date: <span--}}
@@ -15,20 +19,20 @@
 {{--</h5>--}}
 
 
-<table class="table table-bordered myTable">
+<table class="table table-bordered myTable" style="border-collapse: collapse;border: 1px solid black; padding: 2px">
     <tr>
-        <td style="width: 25%"></td>
-        <th style="width: 25%">{{$start->format('F') . ' to Date'}}</th>
-        <th style="width: 25%">{{$start->subMonthNoOverflow()->format('F')}}</th>
-        <th style="width: 25%">{{$start->subMonthNoOverflow()->format('F')}}</th>
+        <td style="width: 25%; border: 1px solid black; padding: 2px"></td>
+        <th style="width: 25%; border: 1px solid black; padding: 2px">{{$start->format('F') . ' to Date'}}</th>
+        <th style="width: 25%; border: 1px solid black; padding: 2px">{{$start->subMonthNoOverflow()->format('F')}}</th>
+        <th style="width: 25%; border: 1px solid black; padding: 2px">{{$start->subMonthNoOverflow()->format('F')}}</th>
 
     </tr>
 
     @foreach($data[$financialSection]['historical'] as $key => $values)
         <tr>
-            <td style="width: 30%"><strong>{{$key}}</strong></td>
+            <td style="width: 30%; border: 1px solid black; padding: 2px; text-align: center"><strong>{{$key}}</strong></td>
             @foreach($values as $value)
-                <td>{{$value}}</td>
+                <td style="border: 1px solid black; padding: 2px; text-align: center">{{$value}}</td>
             @endforeach
         </tr>
     @endforeach
