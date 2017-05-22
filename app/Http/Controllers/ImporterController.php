@@ -103,7 +103,7 @@ class ImporterController extends Controller
         $file = $request->file('medical_record');
 
         if ($file->getClientOriginalExtension() == 'csv') {
-            $this->dispatch((new ImportCsvPatientList(parseCsvToArray($file),
+            dispatch((new ImportCsvPatientList(parseCsvToArray($file),
                 $file->getClientOriginalName()))->onQueue('csv-list-importer'));
         } //assume XML CCDA
         else {
