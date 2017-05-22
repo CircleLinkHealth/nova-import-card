@@ -1,5 +1,9 @@
 <h3 style="text-align: center">Summary</h3>
 
+<!---
+Inline CSS prevents loss of table borders in emails
+-->
+
 <?php $start = Carbon\Carbon::parse($data['start']) ?>
 
 <div class="">
@@ -10,21 +14,21 @@
         <br/>Paused<span style="color: darkorange"> {{$data[$enrollmentSection]['paused'] ?? 'N/A'}} </span>
     </span>
 
-    <table class="table table-bordered myTable">
+    <table class="table tab table-bordered myTable" style="border-collapse: collapse;border: 1px solid black; padding: 2px">
         <tr>
-            <td style="width: 12%"></td>
-            <th style="width: 12%">{{$start->format('F') . ' to Date'}}</th>
-            <th style="width: 12%">{{$start->subMonthNoOverflow()->format('F')}}</th>
-            <th style="width: 12%">{{$start->subMonthNoOverflow()->format('F')}}</th>
-            <th style="width: 12%">{{$start->subMonthNoOverflow()->format('F')}}</th>
-            <th style="width: 12%">{{$start->subMonthNoOverflow()->format('F')}}</th>
+            <td class="tab" style="width: 12%;border: 1px solid black;  padding: 2px"></td>
+            <th class="tab" style="width: 12%;border: 1px solid black; padding: 2px">{{$start->format('F') . ' to Date'}}</th>
+            <th class="tab" style="width: 12%;border: 1px solid black; padding: 2px">{{$start->subMonthNoOverflow()->format('F')}}</th>
+            <th class="tab" style="width: 12%;border: 1px solid black; padding: 2px">{{$start->subMonthNoOverflow()->format('F')}}</th>
+            <th class="tab" style="width: 12%;border: 1px solid black; padding: 2px">{{$start->subMonthNoOverflow()->format('F')}}</th>
+            <th class="tab" style="width: 12%;border: 1px solid black; padding: 2px">{{$start->subMonthNoOverflow()->format('F')}}</th>
         </tr>
 
         @foreach($data[$enrollmentSection]['historical'] as $key => $values)
             <tr>
-                <td style="width: 30%"><strong>Patients {{ucwords($key)}}</strong></td>
+                <td class="tab" style="width: 30%;border: 1px solid black; padding: 2px; text-align: center"><strong>Patients {{ucwords($key)}}</strong></td>
                 @foreach($values as $value)
-                    <td>{{$value}}</td>
+                    <td style="border: 1px solid black; padding: 2px; text-align: center">{{$value}}</td>
                 @endforeach
             </tr>
         @endforeach
