@@ -1,7 +1,7 @@
 
 <p style="font-size: 16px">
     @if($data[$practiceSection]['lead'] != 'N/A')
-        Your team's Lead is {{$data[$practiceSection]['lead']}}.
+        Your team's lead is {{$data[$practiceSection]['lead']}}.
     @endif
     In total, there
     are {{$data[$practiceSection]['total']}} member(s) on your CCM team (that’s not
