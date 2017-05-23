@@ -32,8 +32,9 @@ class PracticeDemographics extends SalesReportSection
         $disabled_users = User
             ::whereProgramId($this->practice->id)
             ->whereHas('roles', function ($q) {
-                $q->where('name', '!=', 'participant')
-                ->where('name', '!=', 'administrator');
+                $q->where('name', 'provider')
+                ->orWhere('name', 'med_assistant')
+                ->orWhere('name', 'office_admin');
             })
             ->where('user_status', 0)
             ->get();
