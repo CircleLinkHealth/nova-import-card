@@ -5,9 +5,26 @@
 //$faxTest = (new PhaxioService('production'))->send('+12124910114', storage_path('pdfs/notes/2017-02-07-xsKTIK4106WdXiMNu8iMla4FPJSOcosNBXXMkAsX.pdf'));
 //dd($faxTest);
 
+use App\CLH\Helpers\StringManipulation;
 use App\Reports\ApproveBillablePatientsReport;
+use App\Services\Phaxio\PhaxioService;
+use App\Services\PhiMail\PhiMail;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
+
+Route::post('send-sample-fax', function (Illuminate\Http\Request $request) {
+    $number = (new StringManipulation())->formatPhoneNumberE164($request->input('fax_number'));
+    $faxTest = (new PhaxioService())->send($number, public_path('assets/pdf/sample-note.pdf'));
+    dd($faxTest);
+});
+
+Route::post('/send-sample-direct-mail', function (Illuminate\Http\Request $request) {
+    $phiMail = new PhiMail();
+    $test = $phiMail->send($request->input('direct_address'), public_path('assets/pdf/sample-note.pdf'));
+    dd($test);
+});
+
+
 
 //Call Lists TEMP
 //(new WelcomeCallListController(new \Illuminate\Http\Request()))->makePhoenixHeartCallList();
