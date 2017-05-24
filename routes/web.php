@@ -8,6 +8,7 @@
 use App\CLH\Helpers\StringManipulation;
 use App\Reports\ApproveBillablePatientsReport;
 use App\Services\Phaxio\PhaxioService;
+use App\Services\PhiMail\PhiMail;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
 
@@ -16,6 +17,14 @@ Route::post('send-sample-fax', function (Illuminate\Http\Request $request) {
     $faxTest = (new PhaxioService())->send($number, public_path('assets/pdf/sample-note.pdf'));
     dd($faxTest);
 });
+
+Route::post('/send-sample-direct-mail', function (Illuminate\Http\Request $request) {
+    $phiMail = new PhiMail();
+    $test = $phiMail->send($request->input('direct_address'), public_path('assets/pdf/sample-note.pdf'));
+    dd($test);
+});
+
+
 
 //Call Lists TEMP
 //(new WelcomeCallListController(new \Illuminate\Http\Request()))->makePhoenixHeartCallList();
