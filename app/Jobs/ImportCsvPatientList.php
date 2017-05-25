@@ -61,52 +61,9 @@ class ImportCsvPatientList implements ShouldQueue
             $importedMedicalRecords[] = $mr->import();
         }
 
-        //gather the features for review
-//        $document = null;
-//        $providers = [];
-//
-//        $predictedLocationId = null;
-//        $predictedPracticeId = null;
-//        $predictedBillingProviderId = null;
-//        $this->practicesCollection = Practice::with('locations.providers')
-//            ->get([
-//                'id',
-//                'display_name',
-//            ]);
-//
-//        //fixing up the data for vue. basically keying locations and providers by id
-//        $this->practices = $this->practicesCollection->keyBy('id')
-//            ->map(function ($this->practice) {
-//                return [
-//                    'id'           => $this->practice->id,
-//                    'display_name' => $this->practice->display_name,
-//                    'locations'    => $this->practice->locations->map(function ($loc) {
-//                        //is there no better way to do this?
-//                        $loc = new Collection($loc);
-//
-//                        $loc['providers'] = collect($loc['providers'])->keyBy('id');
-//
-//                        return $loc;
-//                    })
-//                        ->keyBy('id'),
-//                ];
-//            });
-//
-//        \JavaScript::put([
-//            'predictedLocationId'        => $predictedLocationId,
-//            'predictedPracticeId'        => $predictedPracticeId,
-//            'predictedBillingProviderId' => $predictedBillingProviderId,
-//            'practices'                  => $this->practices,
-//        ]);
-//
-//        return view('importer.show-training-findings', compact([
-//            'document',
-//            'providers',
-//            'importedMedicalRecords',
-//        ]));
-        $url = url('view.files.ready.to.import');
+//        $url = url('view.files.ready.to.import');
 
-        Slack::to('#background-tasks')->send("Queued job Import CSV for {$this->practice->display_name} completed! Visit $url.");
+//        Slack::to('#background-tasks')->send("Queued job Import CSV for {$this->practice->display_name} completed! Visit $url.");
     }
 
     /**
@@ -118,6 +75,6 @@ class ImportCsvPatientList implements ShouldQueue
      */
     public function failed(\Exception $exception)
     {
-        Slack::to('#background-tasks')->send("Queued job Import CSV patient list failed: $exception");
+//        Slack::to('#background-tasks')->send("Queued job Import CSV patient list failed: $exception");
     }
 }
