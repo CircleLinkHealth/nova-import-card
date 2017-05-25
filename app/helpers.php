@@ -412,7 +412,7 @@ if (!function_exists('defaultCarePlanTemplate')) {
      */
     function getDefaultCarePlanTemplate(): CarePlanTemplate
     {
-        return CarePlanTemplate::whereType(CarePlanTemplate::CLH_DEFAULT)
+        return CarePlanTemplate::whereType(CarePlanTemplate::DEFAULT_CARE_PLAN_TEMPLATE)
             ->first();
     }
 }

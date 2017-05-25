@@ -5,10 +5,26 @@
 //$faxTest = (new PhaxioService('production'))->send('+12124910114', storage_path('pdfs/notes/2017-02-07-xsKTIK4106WdXiMNu8iMla4FPJSOcosNBXXMkAsX.pdf'));
 //dd($faxTest);
 
-use App\Http\Controllers\Admin\WelcomeCallListController;
+use App\CLH\Helpers\StringManipulation;
 use App\Reports\ApproveBillablePatientsReport;
+use App\Services\Phaxio\PhaxioService;
+use App\Services\PhiMail\PhiMail;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
+
+Route::post('send-sample-fax', function (Illuminate\Http\Request $request) {
+    $number = (new StringManipulation())->formatPhoneNumberE164($request->input('fax_number'));
+    $faxTest = (new PhaxioService())->send($number, public_path('assets/pdf/sample-note.pdf'));
+    dd($faxTest);
+});
+
+Route::post('/send-sample-direct-mail', function (Illuminate\Http\Request $request) {
+    $phiMail = new PhiMail();
+    $test = $phiMail->send($request->input('direct_address'), public_path('assets/pdf/sample-note.pdf'));
+    dd($test);
+});
+
+
 
 //Call Lists TEMP
 //(new WelcomeCallListController(new \Illuminate\Http\Request()))->makePhoenixHeartCallList();
@@ -21,7 +37,7 @@ if (app()->environment() != 'production') {
 
     Route::get('/sms/test', 'TwilioController@sendTestSMS');
 
-    Route::get('/rohan', function (){
+    Route::get('/rohan', function () {
 
         $date = Carbon::parse('2017-03-01');
 
@@ -1600,13 +1616,13 @@ Route::group([
 //This route was replaced by route with url '/downloadInvoice/{practice}/{name}', and name 'monthly.billing.download'.
 //We keep it here to support Report links mailed before 5/12/17.
 Route::get('/admin/reports/monthly-billing/v2/downloadInvoice/{practice}/{name}', [
-    'uses' => 'Billing\PracticeInvoiceController@downloadInvoice',
+    'uses'       => 'Billing\PracticeInvoiceController@downloadInvoice',
     'middleware' => ['auth'],
 ]);
 
 Route::get('/downloadInvoice/{practice}/{name}', [
-    'uses' => 'Billing\PracticeInvoiceController@downloadInvoice',
-    'as'   => 'monthly.billing.download',
+    'uses'       => 'Billing\PracticeInvoiceController@downloadInvoice',
+    'as'         => 'monthly.billing.download',
     'middleware' => ['auth'],
 ]);
 
