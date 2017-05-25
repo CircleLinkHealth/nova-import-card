@@ -205,7 +205,7 @@ return [
         Way\Generators\GeneratorsServiceProvider::class,
         Xethron\MigrationsGenerator\MigrationsGeneratorServiceProvider::class,
         Tylercd100\LERN\LERNServiceProvider::class,
-
+        Dionera\BeanstalkdUI\BeanstalkdUIServiceProvider::class,
     ],
 
     /*

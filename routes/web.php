@@ -29,6 +29,7 @@ Route::post('/send-sample-direct-mail', function (Illuminate\Http\Request $reque
 //Call Lists TEMP
 //(new WelcomeCallListController(new \Illuminate\Http\Request()))->makePhoenixHeartCallList();
 
+
 //Patient Landing Pages
 Route::resource('sign-up', 'PatientSignupController');
 Route::get('talk-to-us', 'PatientSignupController@talkToUs');

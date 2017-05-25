@@ -130,6 +130,9 @@ class Kernel extends ConsoleKernel
         //Run at 12:01am every 1st of month
         $schedule->command('ccm_time:reset')
             ->cron('1 0 1 * *');
+
+//        $schedule->command('ccdas:split-merged')
+//            ->everyFiveMinutes();
     }
 
     /**
