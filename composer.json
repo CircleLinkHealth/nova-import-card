@@ -48,7 +48,9 @@
     "modelizer/selenium": "~1.0",
     "phaxio/phaxio": "^1.0",
     "twilio/sdk": "5.7",
-    "tylercd100/lern": "^3.8"
+    "tylercd100/lern": "^3.8",
+    "pda/pheanstalk": "~3.0",
+    "dionera/laravel-beanstalkd-ui": "^0.3.4"
   },
   "require-dev": {
     "symfony/dom-crawler": "3.1.*",
