@@ -42,25 +42,7 @@ class SplitMergedCcdas extends Command
         $xmlFiles = [];
 
         foreach (\Storage::disk('ccdas')->files() as $fileName) {
-            if (stripos($fileName, '.xml') !== false) {
-                $xmlFiles[] = $fileName;
-
-                $exploded = explode('</ClinicalDocument>', \Storage::disk('ccdas')->get($fileName));
-
-                foreach ($exploded as $ccdaString) {
-                    if (stripos($ccdaString, '<ClinicalDocument') !== false) {
-                        $ccdas[] = Ccda::create([
-                            'source'   => Ccda::SFTP_DROPBOX,
-                            'imported' => false,
-                            'xml'      => trim($ccdaString),
-                        ]);
-                    }
-                }
-
-
-                $newPath = 'done/' . str_replace('.xml', '.processed', $fileName);
-                \Storage::disk('ccdas')->move($fileName, $newPath);
-            }
+            dispatch(new \App\Jobs\SplitMergedCcdas($fileName));
         }
 
         $xmlCount = count($xmlFiles);
