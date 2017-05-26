@@ -2,7 +2,6 @@
 
 namespace App\Console\Commands;
 
-use App\Models\MedicalRecords\Ccda;
 use Illuminate\Console\Command;
 
 class SplitMergedCcdas extends Command
@@ -42,12 +41,13 @@ class SplitMergedCcdas extends Command
         $xmlFiles = [];
 
         foreach (\Storage::disk('ccdas')->files() as $fileName) {
+            if (stripos($fileName, '.xml') == false) {
+                continue;
+            }
+
             dispatch(new \App\Jobs\SplitMergedCcdas($fileName));
+
+            $this->info("Queued Job to split: $fileName");
         }
-
-        $xmlCount = count($xmlFiles);
-        $ccdaCount = count($ccdas);
-
-        $this->info("$xmlCount XML files found. $ccdaCount CCDAs created.");
     }
 }
