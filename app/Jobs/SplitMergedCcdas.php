@@ -44,6 +44,8 @@ class SplitMergedCcdas implements ShouldQueue
 
         $exploded = explode('</ClinicalDocument>', \Storage::disk('ccdas')->get($this->fileName));
 
+        $count = 0;
+
         foreach ($exploded as $ccdaString) {
             if (stripos($ccdaString, '<ClinicalDocument') !== false) {
                 $ccdas[] = Ccda::create([
@@ -51,10 +53,12 @@ class SplitMergedCcdas implements ShouldQueue
                     'imported' => false,
                     'xml'      => trim($ccdaString),
                 ]);
+
+                $count++;
             }
         }
 
-        \Log::info("Finished Splitting $this->fileName!");
+        \Log::info("Finished Splitting $this->fileName! $count CCDAs created.");
 
 //        $newPath = 'done/' . str_replace('.xml', '.processed', $this->fileName);
 //        \Storage::disk('ccdas')->move($this->fileName, $newPath);
