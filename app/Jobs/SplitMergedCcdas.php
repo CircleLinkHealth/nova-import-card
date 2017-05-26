@@ -40,7 +40,7 @@ class SplitMergedCcdas implements ShouldQueue
             return;
         }
 
-        $xmlFiles[] = $this->fileName;
+        \Log::info("Started Splitting $this->fileName");
 
         $exploded = explode('</ClinicalDocument>', \Storage::disk('ccdas')->get($this->fileName));
 
@@ -53,6 +53,8 @@ class SplitMergedCcdas implements ShouldQueue
                 ]);
             }
         }
+
+        \Log::info("Finished Splitting $this->fileName!");
 
         $newPath = 'done/' . str_replace('.xml', '.processed', $this->fileName);
         \Storage::disk('ccdas')->move($this->fileName, $newPath);
