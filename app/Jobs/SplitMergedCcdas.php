@@ -56,7 +56,7 @@ class SplitMergedCcdas implements ShouldQueue
 
         \Log::info("Finished Splitting $this->fileName!");
 
-        $newPath = 'done/' . str_replace('.xml', '.processed', $this->fileName);
-        \Storage::disk('ccdas')->move($this->fileName, $newPath);
+//        $newPath = 'done/' . str_replace('.xml', '.processed', $this->fileName);
+//        \Storage::disk('ccdas')->move($this->fileName, $newPath);
     }
 }
