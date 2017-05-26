@@ -732,7 +732,7 @@ class PatientCareplanController extends Controller
             }
         }
 
-        if (auth()->user()->hasRole(['provider'])) {
+        if (auth()->user()->hasRole(['provider']) || auth()->user()->hasRole(['registered-nurse']) || auth()->user()->hasRole(['med_assistant'])) {
             if ($patient->carePlanStatus != 'provider_approved') {
                 $showApprovalButton = true;
             }
