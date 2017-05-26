@@ -43,11 +43,7 @@ class SplitMergedCcdas extends Command
 
         foreach (\Storage::disk('ccdas')->files() as $fileName) {
             dispatch(new \App\Jobs\SplitMergedCcdas($fileName));
+            $this->info("Queued Job to split: $fileName");
         }
-
-        $xmlCount = count($xmlFiles);
-        $ccdaCount = count($ccdas);
-
-        $this->info("$xmlCount XML files found. $ccdaCount CCDAs created.");
     }
 }
