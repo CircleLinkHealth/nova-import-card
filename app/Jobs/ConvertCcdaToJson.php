@@ -9,7 +9,7 @@ use Illuminate\Queue\SerializesModels;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Contracts\Queue\ShouldQueue;
 
-class ConvertCcdasToJson implements ShouldQueue
+class ConvertCcdaToJson implements ShouldQueue
 {
     use InteractsWithQueue, Queueable, SerializesModels;
     protected $ccda;
@@ -38,7 +38,7 @@ class ConvertCcdasToJson implements ShouldQueue
         }
 
         $this->ccda->update([
-            'json' => $json
+            'json' => $json,
         ]);
     }
 }
