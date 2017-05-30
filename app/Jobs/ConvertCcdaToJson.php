@@ -31,6 +31,10 @@ class ConvertCcdaToJson implements ShouldQueue
      */
     public function handle()
     {
+        if (!empty($this->ccda->json)) {
+            return;
+        }
+
         $json = (new CCDImporterRepository())->toJson($this->ccda->xml);
 
         if (!$json) {
