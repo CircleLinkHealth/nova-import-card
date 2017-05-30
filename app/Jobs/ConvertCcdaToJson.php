@@ -26,8 +26,8 @@ class ConvertCcdaToJson implements ShouldQueue
 
     /**
      * Execute the job.
-     *
      * @return void
+     * @throws \Exception
      */
     public function handle()
     {
