@@ -13,6 +13,7 @@ use App\Console\Commands\ImportNurseScheduleFromGoogleCalendar;
 use App\Console\Commands\Inspire;
 use App\Console\Commands\MapSnomedToCpmProblems;
 use App\Console\Commands\NukeItemAndMeta;
+use App\Console\Commands\QueueCcdasToConvertToJson;
 use App\Console\Commands\RecalculateCcmTime;
 use App\Console\Commands\ResetCcmTime;
 use App\Console\Commands\SplitMergedCcdas;
@@ -54,6 +55,7 @@ class Kernel extends ConsoleKernel
         ResetCcmTime::class,
         RecalculateCcmTime::class,
         SplitMergedCcdas::class,
+        QueueCcdasToConvertToJson::class,
     ];
 
     /**
@@ -130,6 +132,9 @@ class Kernel extends ConsoleKernel
         //Run at 12:01am every 1st of month
         $schedule->command('ccm_time:reset')
             ->cron('1 0 1 * *');
+
+        $schedule->command('ccda:toJson')
+            ->everyMinute();
 
 //        $schedule->command('ccdas:split-merged')
 //            ->everyFiveMinutes();
