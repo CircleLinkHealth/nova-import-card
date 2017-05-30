@@ -11,7 +11,7 @@ class SplitMergedCcdas extends Command
      *
      * @var string
      */
-    protected $signature = 'ccdas:split-merged';
+    protected $signature = 'ccda:split-merged';
 
     /**
      * The console command description.
