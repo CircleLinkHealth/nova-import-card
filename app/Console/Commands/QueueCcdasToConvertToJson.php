@@ -41,7 +41,7 @@ class QueueCcdasToConvertToJson extends Command
     {
         $ccdas = Ccda::where('json', '=', '')
             ->orWhereNull('json')
-            ->take(10)
+            ->take(100)
             ->get()
             ->map(function ($ccda) {
                 dispatch(new ConvertCcdaToJson($ccda));
