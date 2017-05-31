@@ -158,7 +158,7 @@ class WelcomeCallListGenerator
                     ->first();
 
                 if ($problem && !in_array($problem->cpm_problem_id, $qualifyingProblemsCpmIdStack)) {
-                    $qualifyingProblems[] = "{$problem->cpmProblem->name}, Snomed: $problemCode";
+                    $qualifyingProblems[] = "{$problem->cpmProblem->name}, ICD10: $problemCode";
                     $qualifyingProblemsCpmIdStack[] = $problem->cpm_problem_id;
                     continue;
                 }
@@ -333,17 +333,28 @@ class WelcomeCallListGenerator
         foreach ($this->patientList as $patient) {
             $args = $patient;
 
-            $args['status'] = Enrollee::TO_CALL;
-
-            if (isset($args['cell_phone'])) {
-                $args['status'] = Enrollee::TO_SMS;
-            }
+//            $args['status'] = Enrollee::TO_CALL;
+//
+//            if (isset($args['cell_phone'])) {
+//                $args['status'] = Enrollee::TO_SMS;
+//            }
 
             $args['practice_id'] = $this->practice->id;
             $args['provider_id'] = $this->practice->user_id;
 
+            if (is_a($args, Collection::class)) {
+                $args = $args->all();
+            }
+
+            if (empty($args['email'])) {
+                $args['email'] = 'noEmail@noEmail.com';
+            }
+
+            $args['address'] = $args['street'];
+            $args['address_2'] = $args['street2'] ?? '';
+
             $this->enrollees = Enrollee::updateOrCreate([
-                'mrn' => $args['mrn'],
+                'mrn' => $args['mrn'] ?? $args['mrn_number'],
             ], $args);
         }
     }
