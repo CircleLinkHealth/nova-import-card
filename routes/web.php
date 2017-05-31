@@ -1,16 +1,13 @@
 <?php
-
-
-//This is to send a sample PDF Note via eFax from Michalis' local
-//$faxTest = (new PhaxioService('production'))->send('+12124910114', storage_path('pdfs/notes/2017-02-07-xsKTIK4106WdXiMNu8iMla4FPJSOcosNBXXMkAsX.pdf'));
-//dd($faxTest);
-
 use App\CLH\Helpers\StringManipulation;
 use App\Reports\ApproveBillablePatientsReport;
 use App\Services\Phaxio\PhaxioService;
 use App\Services\PhiMail\PhiMail;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
+
+//Call Lists TEMP
+//(new WelcomeCallListController(new \Illuminate\Http\Request()))->makePhoenixHeartCallList();
 
 Route::post('send-sample-fax', function (Illuminate\Http\Request $request) {
     $number = (new StringManipulation())->formatPhoneNumberE164($request->input('fax_number'));
@@ -23,12 +20,6 @@ Route::post('/send-sample-direct-mail', function (Illuminate\Http\Request $reque
     $test = $phiMail->send($request->input('direct_address'), public_path('assets/pdf/sample-note.pdf'));
     dd($test);
 });
-
-
-
-//Call Lists TEMP
-//(new WelcomeCallListController(new \Illuminate\Http\Request()))->makePhoenixHeartCallList();
-
 
 //Patient Landing Pages
 Route::resource('sign-up', 'PatientSignupController');
