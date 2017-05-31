@@ -52,6 +52,7 @@ class SplitMergedCcdas implements ShouldQueue
                     'source'   => Ccda::SFTP_DROPBOX,
                     'imported' => false,
                     'xml'      => trim($ccdaString . '</ClinicalDocument>'),
+                    'status'   => Ccda::DETERMINE_ENROLLEMENT_ELIGIBILITY,
                 ]);
 
                 $count++;

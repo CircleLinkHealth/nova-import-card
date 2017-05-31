@@ -2,25 +2,25 @@
 
 namespace App\Console\Commands;
 
-use App\Jobs\ConvertCcdaToJson;
+use App\Jobs\DetermineCcdaEnrollmentEligibility;
 use App\Models\MedicalRecords\Ccda;
 use Illuminate\Console\Command;
 
-class QueueCcdasToConvertToJson extends Command
+class QueueCcdaToDetermineEnrollmentEligibility extends Command
 {
     /**
      * The name and signature of the console command.
      *
      * @var string
      */
-    protected $signature = 'ccda:toJson';
+    protected $signature = 'ccda:determineEligibility';
 
     /**
      * The console command description.
      *
      * @var string
      */
-    protected $description = 'Find CCDAs that have not yet been convert to json and convert them.';
+    protected $description = 'Determine whether a patient is eligible to receive an enrollment call using CCDAs.';
 
     /**
      * Create a new command instance.
@@ -39,13 +39,11 @@ class QueueCcdasToConvertToJson extends Command
      */
     public function handle()
     {
-        $ccdas = Ccda::where('json', '=', '')
-            ->orWhereNull('json')
-            ->inRandomOrder()
-            ->take(200)
+        $ccdas = Ccda::where('status', '=', Ccda::DETERMINE_ENROLLEMENT_ELIGIBILITY)
+            ->take(50)
             ->get()
             ->map(function ($ccda) {
-                dispatch(new ConvertCcdaToJson($ccda));
+                dispatch(new DetermineCcdaEnrollmentEligibility($ccda));
             });
     }
 }

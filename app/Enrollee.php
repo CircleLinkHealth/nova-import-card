@@ -40,16 +40,21 @@ class Enrollee extends Model
     protected $fillable = [
         'id',
 
+        'medical_record_type',
+        'medical_record_id',
+
         'user_id',
         'provider_id',
         'practice_id',
         'care_ambassador_id',
         'total_time_spent',
 
-        // patient_id in EHR Software
-        'mrn',
-        'dob',
         'invite_sent_at',
+        'invite_code',
+
+        'mrn', // patient_id in EHR Software
+        'dob',
+
         'first_name',
         'last_name',
         'address',
@@ -57,9 +62,8 @@ class Enrollee extends Model
         'city',
         'state',
         'zip',
-        'invite_code',
 
-        'lang', // 'ES' (default) or 'EN'
+        'lang', // 'EN' (default) or 'ES'
 
         'primary_phone',
         'cell_phone',
@@ -69,14 +73,17 @@ class Enrollee extends Model
         'consented_at',
         'last_attempt_at',
         'attempt_count',
-        'preferred_window',
-        'preferred_days',
         'status',
         'last_call_outcome_reason',
         'last_call_outcome',
+
+        'preferred_window',
+        'preferred_days',
+
         'primary_insurance',
         'secondary_insurance',
         'has_copay',
+
         'email',
         'last_encounter',
         'referring_provider_name',
