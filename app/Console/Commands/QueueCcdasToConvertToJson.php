@@ -20,7 +20,7 @@ class QueueCcdasToConvertToJson extends Command
      *
      * @var string
      */
-    protected $description = 'find CCDAs that have not yet been convert to json and convert them.';
+    protected $description = 'Find CCDAs that have not yet been convert to json and convert them.';
 
     /**
      * Create a new command instance.
