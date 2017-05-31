@@ -8,7 +8,7 @@ use Illuminate\Support\Facades\DB;
 
 //Call Lists TEMP
 //(new WelcomeCallListController(new \Illuminate\Http\Request()))->makePhoenixHeartCallList();
-Log::info(Carbon::now());
+
 Route::post('send-sample-fax', function (Illuminate\Http\Request $request) {
     $number = (new StringManipulation())->formatPhoneNumberE164($request->input('fax_number'));
     $faxTest = (new PhaxioService())->send($number, public_path('assets/pdf/sample-note.pdf'));
