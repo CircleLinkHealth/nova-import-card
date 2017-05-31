@@ -40,6 +40,9 @@ class Enrollee extends Model
     protected $fillable = [
         'id',
 
+        'medical_record_type',
+        'medical_record_id',
+
         'user_id',
         'provider_id',
         'practice_id',
