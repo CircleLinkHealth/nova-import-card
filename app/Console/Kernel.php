@@ -14,6 +14,7 @@ use App\Console\Commands\Inspire;
 use App\Console\Commands\MapSnomedToCpmProblems;
 use App\Console\Commands\NukeItemAndMeta;
 use App\Console\Commands\QueueCcdasToConvertToJson;
+use App\Console\Commands\QueueCcdaToDetermineEnrollmentEligibility;
 use App\Console\Commands\RecalculateCcmTime;
 use App\Console\Commands\ResetCcmTime;
 use App\Console\Commands\SplitMergedCcdas;
@@ -56,6 +57,7 @@ class Kernel extends ConsoleKernel
         RecalculateCcmTime::class,
         SplitMergedCcdas::class,
         QueueCcdasToConvertToJson::class,
+        QueueCcdaToDetermineEnrollmentEligibility::class,
     ];
 
     /**
