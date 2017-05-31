@@ -153,21 +153,19 @@ class WelcomeCallListGenerator
                     continue;
                 }
 
-                //Iffy ICD-9 test
-//                foreach ($cpmProblems as $problem) {
-//                    if ($problemCode >= $problem->icd9from
-//                        && $problemCode <= $problem->icd9to
-//                        && !in_array($problem->id, $qualifyingProblemsCpmIdStack)
-//                    ) {
-//                        $qualifyingProblems[] = "{$problem->name}, ICD9: $problemCode";
-//                        $qualifyingProblemsCpmIdStack[] = $problem->id;
-//                        continue 2;
-//                    }
-//                }
+                //try snomed
+                $problem = SnomedToCpmIcdMap::where('snomed_code', '=', $problemCode)
+                    ->first();
 
-            /*
-             * Try to match keywords
-             */
+                if ($problem && !in_array($problem->cpm_problem_id, $qualifyingProblemsCpmIdStack)) {
+                    $qualifyingProblems[] = "{$problem->cpmProblem->name}, Snomed: $problemCode";
+                    $qualifyingProblemsCpmIdStack[] = $problem->cpm_problem_id;
+                    continue;
+                }
+
+                /*
+                 * Try to match keywords
+                 */
                 foreach ($cpmProblems as $problem) {
                     $keywords = array_merge(explode(',', $problem->contains), [$problem->name]);
 
