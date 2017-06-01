@@ -56,9 +56,9 @@ class DetermineCcdaEnrollmentEligibility implements ShouldQueue
                 return $problem['name'];
             } elseif ($problem['translation_name']) {
                 return $problem['translation_name'];
-            } else {
-                return null;
             }
+
+            return '';
         });
 
         $provider = $this->transformer->provider($json->document->documentation_of[0]);
