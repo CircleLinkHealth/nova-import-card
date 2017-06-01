@@ -78,7 +78,7 @@ class PhoenixHeartSectionsLogger extends TabularMedicalRecordSectionsLogger
                     ? null
                     : $endDate->toDateTimeString();
             } catch (\Exception $e) {
-
+                //do nothing
             }
 
             $medicationLog = MedicationLog::updateOrCreate(
