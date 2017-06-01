@@ -36,6 +36,10 @@ class DetermineCcdaEnrollmentEligibility implements ShouldQueue
      */
     public function handle()
     {
+        if ($this->ccda->status != Ccda::DETERMINE_ENROLLEMENT_ELIGIBILITY) {
+            return;
+        }
+
         $json = $this->ccda->json
             ? json_decode($this->ccda->json)
             : json_decode((new CCDImporterRepository())->toJson($this->ccda->xml));
