@@ -51,7 +51,8 @@ class SplitMergedCcdas implements ShouldQueue
                 $ccdas[] = Ccda::create([
                     'source'   => Ccda::SFTP_DROPBOX,
                     'imported' => false,
-                    'xml'      => trim($ccdaString),
+                    'xml'      => trim($ccdaString . '</ClinicalDocument>'),
+                    'status'   => Ccda::DETERMINE_ENROLLEMENT_ELIGIBILITY,
                 ]);
 
                 $count++;
@@ -59,8 +60,5 @@ class SplitMergedCcdas implements ShouldQueue
         }
 
         \Log::info("Finished Splitting $this->fileName! $count CCDAs created.");
-
-//        $newPath = 'done/' . str_replace('.xml', '.processed', $this->fileName);
-//        \Storage::disk('ccdas')->move($this->fileName, $newPath);
     }
 }

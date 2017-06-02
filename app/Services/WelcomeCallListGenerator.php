@@ -17,6 +17,9 @@ use Carbon\Carbon;
 use Illuminate\Support\Collection;
 use Maatwebsite\Excel\Facades\Excel;
 
+/**
+ * @property null medicalRecordType
+ */
 class WelcomeCallListGenerator
 {
     /**
@@ -61,13 +64,27 @@ class WelcomeCallListGenerator
      */
     public $createEnrollees;
 
+    /**
+     * WelcomeCallListGenerator constructor.
+     *
+     * @param Collection $patientList
+     * @param bool $filterLastEncounter
+     * @param bool $filterInsurance
+     * @param bool $filterProblems
+     * @param bool $createEnrollees
+     * @param Practice|null $practice
+     * @param null $medicalRecordType
+     * @param null $medicalRecordId
+     */
     public function __construct(
         Collection $patientList,
         $filterLastEncounter = true,
         $filterInsurance = true,
         $filterProblems = true,
         $createEnrollees = true,
-        Practice $practice = null
+        Practice $practice = null,
+        $medicalRecordType = null,
+        $medicalRecordId = null
     ) {
         $this->patientList = $patientList;
         $this->ineligiblePatients = new Collection();
@@ -77,6 +94,8 @@ class WelcomeCallListGenerator
         $this->filterProblems = $filterProblems;
         $this->createEnrollees = $createEnrollees;
         $this->practice = $practice;
+        $this->medicalRecordType = $medicalRecordType;
+        $this->medicalRecordId = $medicalRecordId;
 
         $this->filterPatientList();
 
@@ -153,21 +172,19 @@ class WelcomeCallListGenerator
                     continue;
                 }
 
-                //Iffy ICD-9 test
-//                foreach ($cpmProblems as $problem) {
-//                    if ($problemCode >= $problem->icd9from
-//                        && $problemCode <= $problem->icd9to
-//                        && !in_array($problem->id, $qualifyingProblemsCpmIdStack)
-//                    ) {
-//                        $qualifyingProblems[] = "{$problem->name}, ICD9: $problemCode";
-//                        $qualifyingProblemsCpmIdStack[] = $problem->id;
-//                        continue 2;
-//                    }
-//                }
+                //try snomed
+                $problem = SnomedToCpmIcdMap::where('snomed_code', '=', $problemCode)
+                    ->first();
 
-            /*
-             * Try to match keywords
-             */
+                if ($problem && !in_array($problem->cpm_problem_id, $qualifyingProblemsCpmIdStack)) {
+                    $qualifyingProblems[] = "{$problem->cpmProblem->name}, ICD10: $problemCode";
+                    $qualifyingProblemsCpmIdStack[] = $problem->cpm_problem_id;
+                    continue;
+                }
+
+                /*
+                 * Try to match keywords
+                 */
                 foreach ($cpmProblems as $problem) {
                     $keywords = array_merge(explode(',', $problem->contains), [$problem->name]);
 
@@ -353,10 +370,12 @@ class WelcomeCallListGenerator
             }
 
             $args['address'] = $args['street'];
-            $args['address_2'] = $args['street2'];
+            $args['address_2'] = $args['street2'] ?? '';
 
             $this->enrollees = Enrollee::updateOrCreate([
-                'mrn' => $args['mrn'] ?? $args['mrn_number'],
+                'mrn'                 => $args['mrn'] ?? $args['mrn_number'],
+                'medical_record_type' => $this->medicalRecordType,
+                'medical_record_id'   => $this->medicalRecordId,
             ], $args);
         }
     }
