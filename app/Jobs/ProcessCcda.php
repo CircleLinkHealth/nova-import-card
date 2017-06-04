@@ -7,9 +7,9 @@ use App\Importer\Loggers\Ccda\CcdToLogTranformer;
 use App\Models\MedicalRecords\Ccda;
 use Carbon\Carbon;
 use Illuminate\Bus\Queueable;
-use Illuminate\Queue\SerializesModels;
-use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Contracts\Queue\ShouldQueue;
+use Illuminate\Queue\InteractsWithQueue;
+use Illuminate\Queue\SerializesModels;
 
 class ProcessCcda implements ShouldQueue
 {
@@ -47,7 +47,9 @@ class ProcessCcda implements ShouldQueue
             if ($decoded) {
                 $ccda->mrn = $decoded->demographics->mrn_number;
 
-                $provider = (new CcdToLogTranformer())->provider($decoded->document->documentation_of[0]);
+                if (array_key_exists(0, $decoded->document->documentation_of)) {
+                    $provider = (new CcdToLogTranformer())->provider($decoded->document->documentation_of[0]);
+                }
 
                 $ccda->referring_provider_name = "{$provider['first_name']} {$provider['last_name']}";
 
@@ -60,7 +62,8 @@ class ProcessCcda implements ShouldQueue
         $this->handleDuplicateCcdas($ccda);
     }
 
-    public function handleDuplicateCcdas(Ccda $ccda) {
+    public function handleDuplicateCcdas(Ccda $ccda)
+    {
         $duplicate = Ccda::where('mrn', '=', $ccda->mrn)->first();
 
         if ($duplicate) {
