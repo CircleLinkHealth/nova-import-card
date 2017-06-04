@@ -45,7 +45,7 @@ return [
             'driver' => 'beanstalkd',
             'host' => 'localhost',
             'queue' => 'default',
-            'retry_after' => 330,
+            'retry_after' => 1000,
         ],
 
         'sqs' => [
