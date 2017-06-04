@@ -5,6 +5,7 @@ namespace App\Jobs;
 use App\CLH\Repositories\CCDImporterRepository;
 use App\Importer\Loggers\Ccda\CcdToLogTranformer;
 use App\Models\MedicalRecords\Ccda;
+use Carbon\Carbon;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Queue\InteractsWithQueue;
@@ -72,16 +73,31 @@ class SplitMergedCcdas implements ShouldQueue
                         $provider = (new CcdToLogTranformer())->provider($decoded->document->documentation_of[0]);
 
                         $ccda->referring_provider_name = "{$provider['first_name']} {$provider['last_name']}";
+
+                        $ccda->date = Carbon::parse($decoded->document->date)->toDateTimeString();
                     }
 
                     $ccda->save();
                 }
 
+                $this->handleDuplicateCcdas($ccda);
 
                 $count++;
             }
         }
 
         \Log::info("Finished Splitting $this->fileName! $count CCDAs created.");
+    }
+
+    public function handleDuplicateCcdas(Ccda $ccda) {
+        $duplicate = Ccda::where('mrn', '=', $ccda->mrn)->first();
+
+        if ($duplicate) {
+            if ($duplicate->date->gt($ccda->date)) {
+                $ccda->delete();
+            } else {
+                $duplicate->delete();
+            }
+        }
     }
 }
