@@ -14,16 +14,16 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 class ProcessCcda implements ShouldQueue
 {
     use InteractsWithQueue, Queueable, SerializesModels;
-    public $ccdaXmlString;
+    public $ccda;
 
     /**
      * Create a new job instance.
      *
      * @return void
      */
-    public function __construct($ccdaXmlString)
+    public function __construct(Ccda $ccda)
     {
-        $this->ccdaXmlString = $ccdaXmlString;
+        $this->ccda = $ccda;
     }
 
     /**
@@ -33,12 +33,7 @@ class ProcessCcda implements ShouldQueue
      */
     public function handle()
     {
-        $ccda = Ccda::create([
-            'source'   => Ccda::SFTP_DROPBOX,
-            'imported' => false,
-            'xml'      => trim($this->ccdaXmlString . '</ClinicalDocument>'),
-            'status'   => Ccda::DETERMINE_ENROLLEMENT_ELIGIBILITY,
-        ]);
+        $ccda = $this->ccda;
 
         $ccdas[] = $ccda;
 
