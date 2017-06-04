@@ -51,7 +51,14 @@ class SplitMergedCcdas implements ShouldQueue
 
         foreach ($exploded as $ccdaString) {
             if (stripos($ccdaString, '<ClinicalDocument') !== false) {
-                dispatch(new ProcessCcda($ccdaString));
+                $ccda = Ccda::create([
+                    'source'   => Ccda::SFTP_DROPBOX,
+                    'imported' => false,
+                    'xml'      => trim($ccdaString . '</ClinicalDocument>'),
+                    'status'   => Ccda::DETERMINE_ENROLLEMENT_ELIGIBILITY,
+                ]);
+
+                dispatch(new ProcessCcda($ccda));
 
                 $count++;
             }
