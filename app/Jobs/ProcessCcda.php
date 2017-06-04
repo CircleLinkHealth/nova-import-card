@@ -49,9 +49,8 @@ class ProcessCcda implements ShouldQueue
 
                 if (array_key_exists(0, $decoded->document->documentation_of)) {
                     $provider = (new CcdToLogTranformer())->provider($decoded->document->documentation_of[0]);
+                    $ccda->referring_provider_name = "{$provider['first_name']} {$provider['last_name']}";
                 }
-
-                $ccda->referring_provider_name = "{$provider['first_name']} {$provider['last_name']}";
 
                 $ccda->date = Carbon::parse($decoded->document->date)->toDateTimeString();
             }
