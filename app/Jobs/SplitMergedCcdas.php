@@ -58,7 +58,9 @@ class SplitMergedCcdas implements ShouldQueue
                     'status'   => Ccda::DETERMINE_ENROLLEMENT_ELIGIBILITY,
                 ]);
 
-                dispatch(new ProcessCcda($ccda));
+                $job = (new ProcessCcda($ccda))->delay(Carbon::now()->addMinutes(10));
+
+                dispatch($job);
 
                 $count++;
             }
