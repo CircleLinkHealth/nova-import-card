@@ -38,6 +38,12 @@ class Ccda extends MedicalRecordEloquent implements Transformable
     ];
 
     protected $fillable = [
+        'date',
+        'mrn',
+        'referring_provider_name',
+        'location_id'.
+        'practice_id',
+        'billing_provider_id',
         'user_id',
         'patient_id',
         'vendor_id',
@@ -45,6 +51,7 @@ class Ccda extends MedicalRecordEloquent implements Transformable
         'imported',
         'xml',
         'json',
+        'status',
     ];
 
     public function qaSummary()
