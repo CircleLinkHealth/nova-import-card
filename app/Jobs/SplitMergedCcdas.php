@@ -2,6 +2,8 @@
 
 namespace App\Jobs;
 
+use App\CLH\Repositories\CCDImporterRepository;
+use App\Importer\Loggers\Ccda\CcdToLogTranformer;
 use App\Models\MedicalRecords\Ccda;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
@@ -48,12 +50,33 @@ class SplitMergedCcdas implements ShouldQueue
 
         foreach ($exploded as $ccdaString) {
             if (stripos($ccdaString, '<ClinicalDocument') !== false) {
-                $ccdas[] = Ccda::create([
+                $ccda = Ccda::create([
                     'source'   => Ccda::SFTP_DROPBOX,
                     'imported' => false,
                     'xml'      => trim($ccdaString . '</ClinicalDocument>'),
                     'status'   => Ccda::DETERMINE_ENROLLEMENT_ELIGIBILITY,
                 ]);
+
+                $ccdas[] = $ccda;
+
+                $json = (new CCDImporterRepository())->toJson($ccda->xml);
+
+                if ($json) {
+                    $ccda->json = $json;
+
+                    $decoded = json_decode($json);
+
+                    if ($decoded) {
+                        $ccda->mrn = $decoded->demographics->mrn_number;
+
+                        $provider = (new CcdToLogTranformer())->provider($decoded->document->documentation_of[0]);
+
+                        $ccda->referring_provider_name = "{$provider['first_name']} {$provider['last_name']}";
+                    }
+
+                    $ccda->save();
+                }
+
 
                 $count++;
             }
