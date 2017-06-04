@@ -90,7 +90,7 @@ class SplitMergedCcdas implements ShouldQueue
     }
 
     public function handleDuplicateCcdas(Ccda $ccda) {
-        $duplicate = Ccda::whereMrn($ccda->mrn)->first();
+        $duplicate = Ccda::where('mrn', '=', $ccda->mrn)->first();
 
         if ($duplicate) {
             if ($duplicate->date->gt($ccda->date)) {
