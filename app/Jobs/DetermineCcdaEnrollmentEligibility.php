@@ -5,6 +5,7 @@ namespace App\Jobs;
 use App\CLH\Repositories\CCDImporterRepository;
 use App\Importer\Loggers\Ccda\CcdToLogTranformer;
 use App\Models\MedicalRecords\Ccda;
+use App\Models\PatientData\LGH\LGHInsurance;
 use App\Practice;
 use App\Services\WelcomeCallListGenerator;
 use Illuminate\Bus\Queueable;
@@ -66,10 +67,22 @@ class DetermineCcdaEnrollmentEligibility implements ShouldQueue
         $patient = $demographics->put('problems', $problems);
         $patient = $patient->put('referring_provider_name', "{$provider['first_name']} {$provider['last_name']}");
 
+        $insurance = LGHInsurance::where('MRN', $this->ccda->mrn)->first();
+
+        $filterInsurance = false;
+
+        if ($insurance) {
+            $patient = $patient->put('primary_insurance', $insurance->getAttributes()['PRIMARY INSURANCE']);
+            $patient = $patient->put('secondary_insurance', $insurance->getAttributes()['SECONDARY INSURANCE']);
+
+            $filterInsurance = true;
+        }
+
+
         $lgh = Practice::whereName('lafayette-general-health')
             ->first();
 
-        $list = (new WelcomeCallListGenerator(collect([$patient]), false, false, true, true, $lgh, Ccda::class,
+        $list = (new WelcomeCallListGenerator(collect([$patient]), false, $filterInsurance, true, true, $lgh, Ccda::class,
             $this->ccda->id));
 
         $this->ccda->status = Ccda::ELIGIBLE;
