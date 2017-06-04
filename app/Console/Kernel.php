@@ -135,8 +135,8 @@ class Kernel extends ConsoleKernel
         $schedule->command('ccm_time:reset')
             ->cron('1 0 1 * *');
 
-        $schedule->command('ccda:toJson')
-            ->everyMinute();
+//        $schedule->command('ccda:toJson')
+//            ->everyMinute();
 
 //        $schedule->command('ccda:determineEligibility')
 //            ->everyMinute();
