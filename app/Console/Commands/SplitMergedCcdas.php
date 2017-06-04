@@ -40,6 +40,8 @@ class SplitMergedCcdas extends Command
         $ccdas = [];
         $xmlFiles = [];
 
+        $count = 0;
+
         foreach (\Storage::disk('ccdas')->files() as $fileName) {
             if (stripos($fileName, '.xml') == false) {
                 continue;
@@ -48,6 +50,12 @@ class SplitMergedCcdas extends Command
             dispatch(new \App\Jobs\SplitMergedCcdas($fileName));
 
             $this->info("Queued Job to split: $fileName");
+
+            $count++;
+
+            if ($count == 3) {
+                return;
+            }
         }
     }
 }
