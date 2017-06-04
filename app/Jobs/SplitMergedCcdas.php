@@ -5,6 +5,7 @@ namespace App\Jobs;
 use App\CLH\Repositories\CCDImporterRepository;
 use App\Importer\Loggers\Ccda\CcdToLogTranformer;
 use App\Models\MedicalRecords\Ccda;
+use App\ProcessedFiles;
 use Carbon\Carbon;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
@@ -43,6 +44,16 @@ class SplitMergedCcdas implements ShouldQueue
             return;
         }
 
+        $path = config('filesystems.disks.ccdas.root') . $this->fileName;
+
+        $exists = ProcessedFiles::wherePath($path)->first();
+
+        if ($exists) {
+            \Log::info("Already processed $path");
+
+            return;
+        }
+
         \Log::info("Started Splitting $this->fileName");
 
         $exploded = explode('</ClinicalDocument>', \Storage::disk('ccdas')->get($this->fileName));
@@ -65,6 +76,10 @@ class SplitMergedCcdas implements ShouldQueue
                 $count++;
             }
         }
+
+        ProcessedFiles::create([
+            'path' => $path,
+        ]);
 
         \Log::info("Finished Splitting $this->fileName! $count CCDAs found.");
     }
