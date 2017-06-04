@@ -97,7 +97,6 @@ class Kernel extends ConsoleKernel
 //            (new EnrollmentSMSSender())->exec();
 //        })->dailyAt('13:00');
 
-
         //syncs families.
         $schedule->call(function () {
             (new SchedulerService())->syncFamilialCalls();
