@@ -33,6 +33,10 @@ class Ccda extends MedicalRecordEloquent implements Transformable
         '@treatrelease.direct.aprima.com' => 1,
     ];
 
+    protected $dates = [
+        'date'
+    ];
+
     protected $fillable = [
         'user_id',
         'patient_id',
