@@ -51,53 +51,12 @@ class SplitMergedCcdas implements ShouldQueue
 
         foreach ($exploded as $ccdaString) {
             if (stripos($ccdaString, '<ClinicalDocument') !== false) {
-                $ccda = Ccda::create([
-                    'source'   => Ccda::SFTP_DROPBOX,
-                    'imported' => false,
-                    'xml'      => trim($ccdaString . '</ClinicalDocument>'),
-                    'status'   => Ccda::DETERMINE_ENROLLEMENT_ELIGIBILITY,
-                ]);
-
-                $ccdas[] = $ccda;
-
-                $json = (new CCDImporterRepository())->toJson($ccda->xml);
-
-                if ($json) {
-                    $ccda->json = $json;
-
-                    $decoded = json_decode($json);
-
-                    if ($decoded) {
-                        $ccda->mrn = $decoded->demographics->mrn_number;
-
-                        $provider = (new CcdToLogTranformer())->provider($decoded->document->documentation_of[0]);
-
-                        $ccda->referring_provider_name = "{$provider['first_name']} {$provider['last_name']}";
-
-                        $ccda->date = Carbon::parse($decoded->document->date)->toDateTimeString();
-                    }
-
-                    $ccda->save();
-                }
-
-                $this->handleDuplicateCcdas($ccda);
+                dispatch(new ProcessCcda($ccdaString));
 
                 $count++;
             }
         }
 
-        \Log::info("Finished Splitting $this->fileName! $count CCDAs created.");
-    }
-
-    public function handleDuplicateCcdas(Ccda $ccda) {
-        $duplicate = Ccda::where('mrn', '=', $ccda->mrn)->first();
-
-        if ($duplicate) {
-            if ($duplicate->date->gt($ccda->date)) {
-                $ccda->delete();
-            } else {
-                $duplicate->delete();
-            }
-        }
+        \Log::info("Finished Splitting $this->fileName! $count CCDAs found.");
     }
 }
