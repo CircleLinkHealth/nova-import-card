@@ -44,7 +44,7 @@ class SplitMergedCcdas implements ShouldQueue
             return;
         }
 
-        $path = config('filesystems.disks.ccdas.root') . $this->fileName;
+        $path = config('filesystems.disks.ccdas.root') . '/' . $this->fileName;
 
         $exists = ProcessedFiles::wherePath($path)->first();
 
