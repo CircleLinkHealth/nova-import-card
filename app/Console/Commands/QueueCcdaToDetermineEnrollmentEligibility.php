@@ -45,7 +45,7 @@ class QueueCcdaToDetermineEnrollmentEligibility extends Command
 
         $ccdas = Ccda::where([
             ['status', '=', Ccda::DETERMINE_ENROLLEMENT_ELIGIBILITY],
-        ])->whereNotNull('mrn')->take(500)->get(['id', 'referring_provider_name'])
+        ])->whereNotNull('mrn')->take(1200)->get(['id', 'referring_provider_name'])
             ->map(function ($ccda) {
 //                $job = (new DetermineCcdaEnrollmentEligibility($ccda))->onQueue('ccda-determine-eligibility');
                 dispatch(new DetermineCcdaEnrollmentEligibility($ccda));
