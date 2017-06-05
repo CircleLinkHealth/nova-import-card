@@ -11,7 +11,8 @@ use Illuminate\Database\Eloquent\Model;
 class CarePlanTemplate extends Model
 {
 
-    const CLH_DEFAULT = 'CLH Default';
+    const DEFAULT_CARE_PLAN_TEMPLATE = 'CLH Default';
+    const DEFAULT_CARE_PLAN_TEMPLATE_ID = '1';
 
     protected $fillable = ['program_id', 'display_name'];
 

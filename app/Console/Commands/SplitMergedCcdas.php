@@ -2,7 +2,6 @@
 
 namespace App\Console\Commands;
 
-use App\Models\MedicalRecords\Ccda;
 use Illuminate\Console\Command;
 
 class SplitMergedCcdas extends Command
@@ -12,7 +11,7 @@ class SplitMergedCcdas extends Command
      *
      * @var string
      */
-    protected $signature = 'ccdas:split-merged';
+    protected $signature = 'ccda:split-merged';
 
     /**
      * The console command description.
@@ -41,31 +40,22 @@ class SplitMergedCcdas extends Command
         $ccdas = [];
         $xmlFiles = [];
 
+        $count = 0;
+
         foreach (\Storage::disk('ccdas')->files() as $fileName) {
-            if (stripos($fileName, '.xml') !== false) {
-                $xmlFiles[] = $fileName;
+            if (stripos($fileName, '.xml') == false) {
+                continue;
+            }
 
-                $exploded = explode('</ClinicalDocument>', \Storage::disk('ccdas')->get($fileName));
+            dispatch(new \App\Jobs\SplitMergedCcdas($fileName));
 
-                foreach ($exploded as $ccdaString) {
-                    if (stripos($ccdaString, '<ClinicalDocument') !== false) {
-                        $ccdas[] = Ccda::create([
-                            'source'   => Ccda::SFTP_DROPBOX,
-                            'imported' => false,
-                            'xml'      => trim($ccdaString),
-                        ]);
-                    }
-                }
+            $this->info("Queued Job to split: $fileName");
 
+            $count++;
 
-                $newPath = 'done/' . str_replace('.xml', '.processed', $fileName);
-                \Storage::disk('ccdas')->move($fileName, $newPath);
+            if ($count == 4) {
+                break;
             }
         }
-
-        $xmlCount = count($xmlFiles);
-        $ccdaCount = count($ccdas);
-
-        $this->info("$xmlCount XML files found. $ccdaCount CCDAs created.");
     }
 }

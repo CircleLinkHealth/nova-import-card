@@ -40,7 +40,7 @@ class PatientProgramSecurity
         Closure $next
     ) {
         // admins can see and do all
-        if (!Auth::guest() && Auth::user()->hasRole(['administrator']) && app()->environment() != 'production') {
+        if (!Auth::guest() && Auth::user()->hasRole(['administrator'])) {
             return $next($request);
         }
 

@@ -73,15 +73,14 @@ var carePerson = Vue.component('carePerson', {
                 //HACK to replace select2 with newly added provider on appointments page
                 let carePerson = response.data.carePerson;
 
-                $('#providerBox').replaceWith("" +
-                    "<select id='provider' " +
-                    "name='provider' " +
-                    "class='provider selectpickerX dropdownValid form-control' " +
-                    "data-size='10' disabled>  " +
-                    "<option value=" + carePerson.member_user_id + ">" + carePerson.user.first_name + ' ' + carePerson.user.last_name + "</option></select>");
+                $('#providerBox').replaceWith('<select id="provider" ' +
+                    'name="provider"' +
+                    'class="provider selectpickerX dropdownValid form-control" ' +
+                    'data-size="10" disabled>  ' +
+                    '<option value="' + carePerson.user.id + '" selected>' + carePerson.user.first_name + ' ' + carePerson.user.last_name + '</option></select>');
 
                 $('#providerDiv').css('padding-bottom', '10px');
-                $("#save").append('<input type="hidden" value="' + carePerson.user_id + '" id="provider" name="provider">');
+                $("#save").append('<input type="hidden" value="' + carePerson.user.id + '" id="provider" name="provider">');
                 $("#addProviderModal").modal('hide');
 
                 $("#newProviderName").text(carePerson.name);

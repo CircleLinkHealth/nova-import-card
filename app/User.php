@@ -137,6 +137,7 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
             $user->patientInfo()->delete();
             $user->carePlan()->delete();
             $user->careTeamMembers()->delete();
+            $user->inboundCalls()->delete();
         });
 
         self::restoring(function ($user) {

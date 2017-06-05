@@ -105,9 +105,7 @@ var createStaffVM = new Vue({
             this.$set('newUsers[' + index + '].isComplete', this.newUsers[index].first_name
                 && this.newUsers[index].last_name
                 && this.newUsers[index].email
-                && this.newUsers[index].phone_number
                 && this.newUsers[index].role_id
-                && this.newUsers[index].phone_type
             );
 
             this.$set('newUsers[' + index + '].errorCount', $('#user-' + index).find('.invalid').length);

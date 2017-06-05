@@ -446,10 +446,10 @@ class OnboardingService
                     ]);
                 }
 
-                if ($newUser['forward_alerts_to']['who'] != 'billing_provider') {
-                    //clean up other contacts before adding the new one
-                    $user->forwardAlertsTo()->sync([]);
+                //clean up other contacts before adding the new one
+                $user->forwardAlertsTo()->sync([]);
 
+                if ($newUser['forward_alerts_to']['who'] != 'billing_provider') {
                     $user->forwardAlertsTo()->attach($newUser['forward_alerts_to']['user_id'], [
                         'name' => $newUser['forward_alerts_to']['who'],
                     ]);

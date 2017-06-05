@@ -13,6 +13,8 @@ use App\Console\Commands\ImportNurseScheduleFromGoogleCalendar;
 use App\Console\Commands\Inspire;
 use App\Console\Commands\MapSnomedToCpmProblems;
 use App\Console\Commands\NukeItemAndMeta;
+use App\Console\Commands\QueueCcdasToConvertToJson;
+use App\Console\Commands\QueueCcdaToDetermineEnrollmentEligibility;
 use App\Console\Commands\RecalculateCcmTime;
 use App\Console\Commands\ResetCcmTime;
 use App\Console\Commands\SplitMergedCcdas;
@@ -54,6 +56,8 @@ class Kernel extends ConsoleKernel
         ResetCcmTime::class,
         RecalculateCcmTime::class,
         SplitMergedCcdas::class,
+        QueueCcdasToConvertToJson::class,
+        QueueCcdaToDetermineEnrollmentEligibility::class,
     ];
 
     /**
@@ -93,7 +97,6 @@ class Kernel extends ConsoleKernel
 //            (new EnrollmentSMSSender())->exec();
 //        })->dailyAt('13:00');
 
-
         //syncs families.
         $schedule->call(function () {
             (new SchedulerService())->syncFamilialCalls();
@@ -131,8 +134,15 @@ class Kernel extends ConsoleKernel
         $schedule->command('ccm_time:reset')
             ->cron('1 0 1 * *');
 
-//        $schedule->command('ccdas:split-merged')
-//            ->everyFiveMinutes();
+//        $schedule->command('ccda:toJson')
+//            ->everyMinute();
+
+//        $schedule->command('ccda:determineEligibility')
+//            ->everyMinute();
+
+        //every 2 hours
+        $schedule->command('ccdas:split-merged')
+            ->cron('0 */2 * * *');
     }
 
     /**

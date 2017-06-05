@@ -8,7 +8,7 @@
     <script type="text/javascript" src="https://cdn.datatables.net/1.10.12/js/jquery.dataTables.min.js"></script>
     <link href="https://cdn.datatables.net/1.10.12/css/jquery.dataTables.min.css" rel="stylesheet">
     <script>
-        $(document).ready(function() {
+        $(document).ready(function () {
             $('#cpmEditableTable').DataTable({
                 "order": [[2, "asc"], [3, "asc"]],
                 "iDisplayLength": 100,
@@ -16,10 +16,10 @@
                 fixedHeader: true
             });
 
-            $('.patientNameLink').click(function() {
+            $('.patientNameLink').click(function () {
                 callId = $(this).attr('call-id');
-                if ( callId && $( "#attemptNoteCall" + callId ).length ) {
-                    $( "#attemptNoteCall" + callId ).modal();
+                if (callId && $("#attemptNoteCall" + callId).length) {
+                    $("#attemptNoteCall" + callId).modal();
                     return false;
                 }
                 return true;
@@ -50,14 +50,21 @@
                                                 <div id="dtBox"></div>
                                                 <label for="date" class="col-sm-1 control-label">Date: </label>
                                                 <div class="col-sm-4">
-                                                    <input id="date" class="form-control pull-right" name="date" type="input" value="{{ (old('date') ? old('date') : ($date ? $date : '')) }}"  data-field="date" data-format="yyyy-MM-dd" /><span class="help-block">{{ $errors->first('date') }}</span>
+                                                    <input id="date" class="form-control pull-right" name="date"
+                                                           type="input"
+                                                           value="{{ (old('date') ? old('date') : ($date ? $date : '')) }}"
+                                                           data-field="date" data-format="yyyy-MM-dd"/><span
+                                                            class="help-block">{{ $errors->first('date') }}</span>
                                                 </div>
-                                                <label for="filterStatus" class="col-sm-1 control-label">Status: </label>
+                                                <label for="filterStatus"
+                                                       class="col-sm-1 control-label">Status: </label>
                                                 <div class="col-sm-4">
                                                     {!! Form::select('filterStatus', array('all' => 'All', 'scheduled' => 'Scheduled', 'reached' => 'Reached'), $filterStatus, ['class' => 'form-control select-picker', 'style' => 'width:50%;']) !!}
                                                 </div>
                                                 <div class="col-sm-2">
-                                                    <button type="submit" class="btn btn-primary"><i class="glyphicon glyphicon-sort"></i> Apply Filter</button>
+                                                    <button type="submit" class="btn btn-primary"><i
+                                                                class="glyphicon glyphicon-sort"></i> Apply Filter
+                                                    </button>
                                                 </div>
                                             </div>
                                         </div>
@@ -71,15 +78,16 @@
 
                                         <h3>Scheduled Calls</h3>
                                         <style>
-                                            .table tbody>tr>td.vert-align{
+                                            .table tbody > tr > td.vert-align {
                                                 vertical-align: middle;
                                             }
 
-                                            #cpmEditableTable tbody>tr>td {
+                                            #cpmEditableTable tbody > tr > td {
                                                 white-space: nowrap;
                                             }
                                         </style>
-                                        <table style=""  id="cpmEditableTable" class="display" width="100%" cellspacing="0">
+                                        <table style="" id="cpmEditableTable" class="display" width="100%"
+                                               cellspacing="0">
                                             <thead>
                                             <tr>
                                                 <th></th>
@@ -99,19 +107,27 @@
                                             <tbody>
                                             @if (count($calls) > 0)
                                                 @foreach($calls as $call)
+                                                    @if(!$call->inboundUser)
+                                                        @continue
+                                                    @endif
                                                     <?php
                                                     $curTime = \Carbon\Carbon::now();
                                                     $curDate = $curTime->toDateString();
                                                     $curTime = $curTime->toTimeString();
                                                     $rowBg = '';
-                                                    if($call->scheduled_date == $curDate && $call->window_end < $curTime) {
+                                                    if ($call->scheduled_date == $curDate && $call->window_end < $curTime) {
                                                         $rowBg = 'background-color: rgba(255, 0, 0, 0.4);';
                                                     }
                                                     ?>
                                                     <tr style="{{ $rowBg }}">
                                                         <td class="vert-align">
                                                             @if(!empty($call->attempt_note))
-                                                                <button type="button" class="btn btn-xs btn-info glyphicon glyphicon-envelope" data-toggle="modal" data-target="#attemptNoteCall{{ $call->id }}">Note</button>
+                                                                <button type="button"
+                                                                        class="btn btn-xs btn-info glyphicon glyphicon-envelope"
+                                                                        data-toggle="modal"
+                                                                        data-target="#attemptNoteCall{{ $call->id }}">
+                                                                    Note
+                                                                </button>
                                                             @endif
                                                         </td>
                                                         <td>
@@ -148,7 +164,10 @@
                                                             @endif
                                                         </td>
                                                         <td>
-                                                            @if($call->inboundUser)                                                                             {{ \App\Call::numberOfCallsForPatientForMonth($call->inboundUser,Carbon\Carbon::now()->toDateTimeString()) }} (<span style="color:green;">{{ \App\Call::numberOfSuccessfulCallsForPatientForMonth($call->inboundUser,Carbon\Carbon::now()->toDateTimeString()) }}</span>)
+                                                            @if($call->inboundUser)                                                                             {{ \App\Call::numberOfCallsForPatientForMonth($call->inboundUser,Carbon\Carbon::now()->toDateTimeString()) }}
+                                                            (
+                                                            <span style="color:green;">{{ \App\Call::numberOfSuccessfulCallsForPatientForMonth($call->inboundUser,Carbon\Carbon::now()->toDateTimeString()) }}</span>
+                                                            )
                                                             @endif
                                                         </td>
                                                         <td>
@@ -167,13 +186,18 @@
                                                             @if($call->status == 'reached')
 
                                                             @elseif($call->status == 'scheduled')
-                                                                <a href="{{ URL::route('patientCallList.index', array('id' => $call->id, 'action' => 'unassign')) }}" class="btn btn-danger btn-xs"><i class="glyphicon glyphicon-remove"></i> Unassign</a>
+                                                                <a href="{{ URL::route('patientCallList.index', array('id' => $call->id, 'action' => 'unassign')) }}"
+                                                                   class="btn btn-danger btn-xs"><i
+                                                                            class="glyphicon glyphicon-remove"></i>
+                                                                    Unassign</a>
                                                             @endif
                                                         </td>
                                                     </tr>
                                                 @endforeach
                                             @else
-                                                <tr><td colspan="7">No calls found</td></tr>
+                                                <tr>
+                                                    <td colspan="7">No calls found</td>
+                                                </tr>
                                             @endif
                                             </tbody>
                                         </table>
@@ -187,44 +211,46 @@
                     <div>
 
 
+                    </div>
                 </div>
             </div>
         </div>
     </div>
-    </div>
 
     <!-- call attempt_note modals -->
     @if (count($calls) > 0)
-        @foreach($calls as $call)
-            @if (!empty($call->attempt_note) || ($call->inboundUser && $call->inboundUser->patientInfo && !empty($call->inboundUser->patientInfo->general_comment)) )
-            <!-- Modal -->
-            <div id="attemptNoteCall{{ $call->id }}" class="modal fade" role="dialog">
-                <div class="modal-dialog">
+    @foreach($calls as $call)
+    @if ($call->inboundUser && $call->inboundUser->patientInfo && (!empty($call->attempt_note) || !empty($call->inboundUser->patientInfo->general_comment)) )
+    <!-- Modal -->
+    <div id="attemptNoteCall{{ $call->id }}" class="modal fade" role="dialog">
+        <div class="modal-dialog">
 
-                    <!-- Modal content-->
-                    <div class="modal-content">
-                        <div class="modal-header">
-                            <button type="button" class="close" data-dismiss="modal">&times;</button>
-                            <h4 class="modal-title">Couple things about {{ $call->inboundUser->display_name }}</h4>
-                        </div>
-                        <div class="modal-body">
-                            @if($call->inboundUser && $call->inboundUser->patientInfo && !empty($call->inboundUser->patientInfo->general_comment))
-                                <p style="font-size:125%"><strong>General:</strong> {{ $call->inboundUser->patientInfo->general_comment }}</p>
-                            @endif
-                            @if(!empty($call->attempt_note))
-                                <p style="font-size:125%"><strong>This Call:</strong> {{ $call->attempt_note }}</p>
-                            @endif
-                        </div>
-                        <div class="modal-footer">
-                            <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-                            <a href="{{ URL::route('patient.careplan.print', array('patient' => $call->inboundUser->id)) }}"
-                               class="btn btn-primary">Continue to care plan</a>
-                        </div>
-                    </div>
-
+            <!-- Modal content-->
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    <h4 class="modal-title">Couple things about {{ $call->inboundUser->display_name }}</h4>
+                </div>
+                <div class="modal-body">
+                    @if($call->inboundUser && $call->inboundUser->patientInfo &&
+                    !empty($call->inboundUser->patientInfo->general_comment))
+                    <p style="font-size:125%"><strong>General:</strong> {{
+                        $call->inboundUser->patientInfo->general_comment }}</p>
+                    @endif
+                    @if(!empty($call->attempt_note))
+                    <p style="font-size:125%"><strong>This Call:</strong> {{ $call->attempt_note }}</p>
+                    @endif
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                    <a href="{{ URL::route('patient.careplan.print', array('patient' => $call->inboundUser->id)) }}"
+                       class="btn btn-primary">Continue to care plan</a>
                 </div>
             </div>
-            @endif
-        @endforeach
+
+        </div>
+    </div>
     @endif
-@stop
+    @endforeach
+    @endif
+    @stop
