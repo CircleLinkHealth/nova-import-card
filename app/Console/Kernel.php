@@ -139,8 +139,8 @@ class Kernel extends ConsoleKernel
 //        $schedule->command('ccda:toJson')
 //            ->everyMinute();
 
-//        $schedule->command('ccda:determineEligibility')
-//            ->everyFiveMinutes();
+        $schedule->command('ccda:determineEligibility')
+            ->everyFiveMinutes();
 
         //every 2 hours
 //        $schedule->command('ccdas:split-merged')
