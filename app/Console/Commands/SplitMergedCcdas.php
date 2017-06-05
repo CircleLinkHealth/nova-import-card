@@ -2,6 +2,7 @@
 
 namespace App\Console\Commands;
 
+use App\ProcessedFiles;
 use Illuminate\Console\Command;
 
 class SplitMergedCcdas extends Command
@@ -44,6 +45,16 @@ class SplitMergedCcdas extends Command
 
         foreach (\Storage::disk('ccdas')->files() as $fileName) {
             if (stripos($fileName, '.xml') == false) {
+                continue;
+            }
+
+            $path = config('filesystems.disks.ccdas.root') . '/' . $fileName;
+
+            $exists = ProcessedFiles::wherePath($path)->first();
+
+            if ($exists) {
+                \Log::info("Already processed $path");
+
                 continue;
             }
 
