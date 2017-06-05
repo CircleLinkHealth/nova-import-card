@@ -40,6 +40,13 @@ class QueueCcdaToDetermineEnrollmentEligibility extends Command
     public function handle()
     {
         $ccdas = Ccda::where('status', '=', Ccda::DETERMINE_ENROLLEMENT_ELIGIBILITY)
+            ->whereIn('referring_provider_name', [
+                'Michael Alexander',
+                'Juan Perez',
+                'Bradley Chastant MD',
+                'Bradley Chastant',
+                'Angela Snow',
+            ])
             ->whereNotNull('json')
             ->whereNotNull('mrn')
             ->take(1200)
