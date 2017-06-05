@@ -141,8 +141,8 @@ class Kernel extends ConsoleKernel
 //            ->everyMinute();
 
         //every 2 hours
-        $schedule->command('ccdas:split-merged')
-            ->cron('0 */2 * * *');
+//        $schedule->command('ccdas:split-merged')
+//            ->cron('0 */2 * * *');
     }
 
     /**
