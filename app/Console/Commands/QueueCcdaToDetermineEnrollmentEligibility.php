@@ -56,8 +56,8 @@ class QueueCcdaToDetermineEnrollmentEligibility extends Command
             ->take(100)
             ->get()
             ->map(function ($ccda) {
-                $job = (new DetermineCcdaEnrollmentEligibility($ccda));//->onQueue('ccda-determine-eligibility');
-                dispatch($job);
+//                $job = (new DetermineCcdaEnrollmentEligibility($ccda))->onQueue('ccda-determine-eligibility');
+                dispatch(new DetermineCcdaEnrollmentEligibility($ccda));
             });
     }
 }
