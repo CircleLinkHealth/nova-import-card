@@ -40,15 +40,15 @@ class QueueCcdaToDetermineEnrollmentEligibility extends Command
      */
     public function handle()
     {
-        Slack::to('#background-tasks')->send("Running ccda:determineEligibility.");
-
-
         $ccdas = Ccda::where([
             ['status', '=', Ccda::DETERMINE_ENROLLEMENT_ELIGIBILITY],
-        ])->whereNotNull('mrn')->take(1200)->get(['id', 'referring_provider_name'])
+        ])->whereNotNull('mrn')->take(5000)->get(['id', 'referring_provider_name'])
             ->map(function ($ccda) {
-//                $job = (new DetermineCcdaEnrollmentEligibility($ccda))->onQueue('ccda-determine-eligibility');
-                dispatch(new DetermineCcdaEnrollmentEligibility($ccda));
+                $job = (new DetermineCcdaEnrollmentEligibility($ccda))
+                    ->onQueue('ccda-processor')
+                    ->delay(Carbon::now()->addSeconds(20));
+
+                dispatch($job);
             });
     }
 }
