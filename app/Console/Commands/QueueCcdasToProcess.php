@@ -14,7 +14,7 @@ class QueueCcdasToProcess extends Command
      *
      * @var string
      */
-    protected $signature = 'ccdas:process';
+    protected $signature = 'ccda:process';
 
     /**
      * The console command description.
