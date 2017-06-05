@@ -2,11 +2,8 @@
 
 namespace App\Jobs;
 
-use App\CLH\Repositories\CCDImporterRepository;
-use App\Importer\Loggers\Ccda\CcdToLogTranformer;
 use App\Models\MedicalRecords\Ccda;
 use App\ProcessedFiles;
-use Carbon\Carbon;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Queue\InteractsWithQueue;
@@ -68,12 +65,6 @@ class SplitMergedCcdas implements ShouldQueue
                     'xml'      => trim($ccdaString . '</ClinicalDocument>'),
                     'status'   => Ccda::DETERMINE_ENROLLEMENT_ELIGIBILITY,
                 ]);
-
-                $job = (new ProcessCcda($ccda))
-                    ->onQueue('ccda-processor')
-                    ->delay(Carbon::now()->addMinutes(5));
-
-                dispatch($job);
 
                 $count++;
             }

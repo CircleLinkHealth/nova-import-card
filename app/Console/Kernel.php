@@ -14,6 +14,7 @@ use App\Console\Commands\Inspire;
 use App\Console\Commands\MapSnomedToCpmProblems;
 use App\Console\Commands\NukeItemAndMeta;
 use App\Console\Commands\QueueCcdasToConvertToJson;
+use App\Console\Commands\QueueCcdasToProcess;
 use App\Console\Commands\QueueCcdaToDetermineEnrollmentEligibility;
 use App\Console\Commands\RecalculateCcmTime;
 use App\Console\Commands\ResetCcmTime;
@@ -58,6 +59,7 @@ class Kernel extends ConsoleKernel
         SplitMergedCcdas::class,
         QueueCcdasToConvertToJson::class,
         QueueCcdaToDetermineEnrollmentEligibility::class,
+        QueueCcdasToProcess::class,
     ];
 
     /**
@@ -137,8 +139,8 @@ class Kernel extends ConsoleKernel
 //        $schedule->command('ccda:toJson')
 //            ->everyMinute();
 
-        $schedule->command('ccda:determineEligibility')
-            ->everyFiveMinutes();
+//        $schedule->command('ccda:determineEligibility')
+//            ->everyFiveMinutes();
 
         //every 2 hours
 //        $schedule->command('ccdas:split-merged')
