@@ -66,7 +66,7 @@ class ProcessCcda implements ShouldQueue
     public function handleDuplicateCcdas(Ccda $ccda)
     {
         $duplicates = Ccda::where('mrn', '=', $ccda->mrn)
-            ->get()
+            ->get(['id', 'date'])
             ->sortByDesc(function ($ccda) {
                 return $ccda->date;
             })->values();
