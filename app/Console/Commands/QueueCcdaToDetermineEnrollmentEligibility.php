@@ -4,6 +4,7 @@ namespace App\Console\Commands;
 
 use App\Jobs\DetermineCcdaEnrollmentEligibility;
 use App\Models\MedicalRecords\Ccda;
+use Carbon\Carbon;
 use Illuminate\Console\Command;
 use Maknz\Slack\Facades\Slack;
 
