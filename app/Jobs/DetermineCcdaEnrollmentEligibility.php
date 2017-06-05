@@ -62,10 +62,14 @@ class DetermineCcdaEnrollmentEligibility implements ShouldQueue
             return '';
         });
 
-        $provider = $this->transformer->provider($json->document->documentation_of[0]);
+        $patient = $demographics->put('referring_provider_name', '');
 
-        $patient = $demographics->put('problems', $problems);
-        $patient = $patient->put('referring_provider_name', "{$provider['first_name']} {$provider['last_name']}");
+        if (array_key_exists(0, $json->document->documentation_of)) {
+            $provider = $this->transformer->provider($json->document->documentation_of[0]);
+            $patient = $patient->put('referring_provider_name', "{$provider['first_name']} {$provider['last_name']}");
+        }
+
+        $patient = $patient->put('problems', $problems);
 
         $insurance = LGHInsurance::where('MRN', $this->ccda->mrn)->first();
 
@@ -82,7 +86,8 @@ class DetermineCcdaEnrollmentEligibility implements ShouldQueue
         $lgh = Practice::whereName('lafayette-general-health')
             ->first();
 
-        $list = (new WelcomeCallListGenerator(collect([$patient]), false, $filterInsurance, true, true, $lgh, Ccda::class,
+        $list = (new WelcomeCallListGenerator(collect([$patient]), false, $filterInsurance, true, true, $lgh,
+            Ccda::class,
             $this->ccda->id));
 
         $this->ccda->status = Ccda::ELIGIBLE;
