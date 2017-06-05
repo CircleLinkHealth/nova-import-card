@@ -40,7 +40,7 @@ class QueueCcdaToDetermineEnrollmentEligibility extends Command
     public function handle()
     {
         $ccdas = Ccda::where('status', '=', Ccda::DETERMINE_ENROLLEMENT_ELIGIBILITY)
-            ->take(400)
+            ->take(800)
             ->get()
             ->map(function ($ccda) {
                 $job = (new DetermineCcdaEnrollmentEligibility($ccda))->onQueue('ccda-determine-eligibility');
