@@ -5,6 +5,7 @@ namespace App\Console\Commands;
 use App\Jobs\DetermineCcdaEnrollmentEligibility;
 use App\Models\MedicalRecords\Ccda;
 use Illuminate\Console\Command;
+use Maknz\Slack\Facades\Slack;
 
 class QueueCcdaToDetermineEnrollmentEligibility extends Command
 {
@@ -39,20 +40,23 @@ class QueueCcdaToDetermineEnrollmentEligibility extends Command
      */
     public function handle()
     {
+        Slack::to('#background-tasks')->send("Running ccda:determineEligibility.");
+
+
         $ccdas = Ccda::where('status', '=', Ccda::DETERMINE_ENROLLEMENT_ELIGIBILITY)
-            ->whereIn('referring_provider_name', [
-                'Michael Alexander',
-                'Juan Perez',
-                'Bradley Chastant MD',
-                'Bradley Chastant',
-                'Angela Snow',
-            ])
-            ->whereNotNull('json')
+            ->where('referring_provider_name', '=', 'Michael Alexander')
+//            ->whereIn('referring_provider_name', [
+//                'Michael Alexander',
+//                'Juan Perez',
+//                'Bradley Chastant MD',
+//                'Bradley Chastant',
+//                'Angela Snow',
+//            ])
             ->whereNotNull('mrn')
-            ->take(500)
+            ->take(100)
             ->get()
             ->map(function ($ccda) {
-                $job = (new DetermineCcdaEnrollmentEligibility($ccda))->onQueue('ccda-determine-eligibility');
+                $job = (new DetermineCcdaEnrollmentEligibility($ccda));//->onQueue('ccda-determine-eligibility');
                 dispatch($job);
             });
     }

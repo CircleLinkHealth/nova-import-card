@@ -140,7 +140,7 @@ class Kernel extends ConsoleKernel
 //            ->everyMinute();
 
         $schedule->command('ccda:determineEligibility')
-            ->everyFiveMinutes();
+            ->everyMinute();
 
         //every 2 hours
 //        $schedule->command('ccdas:split-merged')
