@@ -41,9 +41,7 @@ class QueueCcdasToProcess extends Command
     public function handle()
     {
         $ccdas = Ccda::where('status', '=', Ccda::DETERMINE_ENROLLEMENT_ELIGIBILITY)
-            ->where('json', '=', '')
-            ->orWhereNull('json')
-            ->inRandomOrder()
+            ->whereNull('mrn')
             ->take(200)
             ->get()
             ->map(function ($ccda) {
