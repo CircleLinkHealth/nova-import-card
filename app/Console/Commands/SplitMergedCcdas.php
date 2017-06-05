@@ -58,7 +58,7 @@ class SplitMergedCcdas extends Command
                 continue;
             }
 
-            dispatch(new \App\Jobs\SplitMergedCcdas($fileName));
+            dispatch(new \App\Jobs\SplitMergedCcdas($fileName))->onQueue('ccda-splitter');
 
             $this->info("Queued Job to split: $fileName");
 
