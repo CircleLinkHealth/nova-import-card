@@ -37,7 +37,9 @@ class ProcessCcda implements ShouldQueue
 
         $ccdas[] = $ccda;
 
-        $json = (new CCDImporterRepository())->toJson($ccda->xml);
+        $json = !empty($ccda->json)
+            ? $ccda->json
+            : (new CCDImporterRepository())->toJson($ccda->xml);
 
         if ($json) {
             $ccda->json = $json;
@@ -66,7 +68,7 @@ class ProcessCcda implements ShouldQueue
         $duplicate = Ccda::where('mrn', '=', $ccda->mrn)->first();
 
         if ($duplicate) {
-            if ($duplicate->date->gt($ccda->date)) {
+            if ($duplicate->date->gte($ccda->date)) {
                 $ccda->delete();
             } else {
                 $duplicate->delete();
