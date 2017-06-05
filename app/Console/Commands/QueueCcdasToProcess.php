@@ -42,12 +42,12 @@ class QueueCcdasToProcess extends Command
     {
         $ccdas = Ccda::where('status', '=', Ccda::DETERMINE_ENROLLEMENT_ELIGIBILITY)
             ->whereNull('mrn')
-            ->take(100)
+            ->take(1000)
             ->get(['id'])
             ->map(function ($ccda) {
                 $job = (new ProcessCcda($ccda))
                     ->onQueue('ccda-processor')
-                    ->delay(Carbon::now()->addSeconds(30));
+                    ->delay(Carbon::now()->addSeconds(20));
 
                 dispatch($job);
             });
