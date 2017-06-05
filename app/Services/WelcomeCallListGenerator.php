@@ -372,10 +372,11 @@ class WelcomeCallListGenerator
             $args['address'] = $args['street'];
             $args['address_2'] = $args['street2'] ?? '';
 
+            $args['medical_record_type'] = $this->medicalRecordType;
+            $args['medical_record_id'] = $this->medicalRecordId;
+
             $this->enrollees = Enrollee::updateOrCreate([
-                'mrn'                 => $args['mrn'] ?? $args['mrn_number'],
-                'medical_record_type' => $this->medicalRecordType,
-                'medical_record_id'   => $this->medicalRecordId,
+                'mrn' => $args['mrn'] ?? $args['mrn_number'],
             ], $args);
         }
     }
