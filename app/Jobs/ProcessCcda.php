@@ -23,7 +23,7 @@ class ProcessCcda implements ShouldQueue
      */
     public function __construct(Ccda $ccda)
     {
-        $this->ccda = $ccda;
+        $this->ccda = Ccda::find($ccda->id);
     }
 
     /**
