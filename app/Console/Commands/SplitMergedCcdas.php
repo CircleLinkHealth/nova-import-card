@@ -53,7 +53,7 @@ class SplitMergedCcdas extends Command
 
             $count++;
 
-            if ($count == 5) {
+            if ($count == 4) {
                 break;
             }
         }
