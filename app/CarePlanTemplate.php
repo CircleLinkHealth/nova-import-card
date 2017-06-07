@@ -14,7 +14,7 @@ class CarePlanTemplate extends Model
     const DEFAULT_CARE_PLAN_TEMPLATE = 'CLH Default';
     const DEFAULT_CARE_PLAN_TEMPLATE_ID = '1';
 
-    protected $fillable = ['program_id', 'display_name'];
+    protected $fillable = ['program_id', 'display_name', 'type'];
 
     /*
      *
@@ -73,7 +73,7 @@ class CarePlanTemplate extends Model
             ->withPivot('ui_sort')
             ->withTimestamps();
     }
-    
+
     /**
      * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
      */
@@ -124,12 +124,18 @@ class CarePlanTemplate extends Model
      */
     public function loadWithInstructionsAndSort($relationship)
     {
-        if (empty($relationship)) return false;
-        if (!is_array($relationship)) $relationship = (array)$relationship;
+        if (empty($relationship)) {
+            return false;
+        }
+        if (!is_array($relationship)) {
+            $relationship = (array)$relationship;
+        }
 
         foreach ($relationship as $rel) {
 
-            if (!method_exists($this, $rel)) throw new \Exception("Relationship `$rel` does not exist.");
+            if (!method_exists($this, $rel)) {
+                throw new \Exception("Relationship `$rel` does not exist.");
+            }
 
             $attributes[$rel] = function ($query) {
                 $query->with('cpmInstructions')
