@@ -1,6 +1,7 @@
 <?php
 
 use App\CarePlanTemplate;
+use App\Models\CPM\CpmInstruction;
 use App\Models\CPM\CpmProblem;
 use Illuminate\Database\Seeder;
 
@@ -13,7 +14,26 @@ class AddNewDefaultCarePlanTemplate extends Seeder
      */
     public function run()
     {
+        $newCpt = CarePlanTemplate::create([
+            'display_name' => str_random(),
+            'type'         => str_random(),
+        ]);
 
+        foreach ($this->problems() as $problemName => $data) {
+            if ($data['instructions']) {
+                $instruction = CpmInstruction::create([
+                    'is_default' => true,
+                    'name' => $data['instructions'],
+                ]);
+
+                $cpmProblem = CpmProblem::whereName($problemName)->first();
+
+                $rel = $newCpt->cpmProblems()->updateExistingPivot($cpmProblem->id, [
+                    'has_instruction' => true,
+                    'cpm_instruction_id' => $instruction->id,
+                ]);
+            }
+        }
     }
 
     /**
