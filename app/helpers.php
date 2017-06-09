@@ -425,9 +425,9 @@ if (!function_exists('getAppConfig')) {
      *
      * @param string $key
      *
-     * @return CarePlanTemplate
+     * @return string|null
      */
-    function getAppConfig(string $key): CarePlanTemplate
+    function getAppConfig(string $key)
     {
         $conf = AppConfig::whereConfigKey($key)->first();
 
@@ -445,7 +445,7 @@ if (!function_exists('setAppConfig')) {
      *
      * @return CarePlanTemplate
      */
-    function setAppConfig(string $key, $value): CarePlanTemplate
+    function setAppConfig(string $key, $value)
     {
         $conf = AppConfig::updateOrCreate([
             'config_key' => $key,
