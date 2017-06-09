@@ -413,11 +413,30 @@ if (!function_exists('defaultCarePlanTemplate')) {
      */
     function getDefaultCarePlanTemplate(): CarePlanTemplate
     {
-        $id = AppConfig::whereConfigKey('default_care_plan_template_id')->first()->config_value;
+        $id = getAppConfig('default_care_plan_template_id');
 
         return CarePlanTemplate::find($id);
     }
 }
+
+if (!function_exists('getAppConfig')) {
+    /**
+     * Returns the AppConfig value for the given key.
+     *
+     * @param string $key
+     *
+     * @return CarePlanTemplate
+     */
+    function getAppConfig(string $key): CarePlanTemplate
+    {
+        $conf = AppConfig::whereConfigKey($key)->first();
+
+        return $conf
+            ? $conf->config_value
+            : null;
+    }
+}
+
 
 if (!function_exists('snakeToSentenceCase')) {
     /**
