@@ -35,13 +35,13 @@ class AddNewDefaultCarePlanTemplate extends Seeder
             }
         }
 
-        $default = CarePlanTemplate::whereName('CLH Default')
+        $default = CarePlanTemplate::whereType('CLH Default')
             ->update([
-                'name' => 'Old CLH Default (Deprecated)',
-                'type' => 'Old CLH Default (Deprecated)',
+                'display_name' => 'Old CLH Default (Deprecated)',
+                'type'         => 'Old CLH Default (Deprecated)',
             ]);
 
-        $newCpt->name = 'CLH Default';
+        $newCpt->display_name = 'CLH Default';
         $newCpt->type = 'CLH Default';
         $newCpt->save();
 
