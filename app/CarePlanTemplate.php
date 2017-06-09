@@ -10,10 +10,6 @@ use Illuminate\Database\Eloquent\Model;
 
 class CarePlanTemplate extends Model
 {
-
-    const DEFAULT_CARE_PLAN_TEMPLATE = 'CLH Default';
-    const DEFAULT_CARE_PLAN_TEMPLATE_ID = '2';
-
     protected $fillable = ['program_id', 'display_name', 'type'];
 
     /*
