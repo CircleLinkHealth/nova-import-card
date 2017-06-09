@@ -14,7 +14,9 @@ class CarePlanObserver
      */
     public function saving(CarePlan $carePlan)
     {
-
+        if (!array_key_exists('care_plan_template_id', $carePlan->getAttributes())) {
+            $carePlan->care_plan_template_id = getDefaultCarePlanTemplate()->id;
+        }
     }
 
 }
