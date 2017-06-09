@@ -72,11 +72,11 @@ class PhoenixHeartSectionsLogger extends TabularMedicalRecordSectionsLogger
             $startDate = null;
 
             try {
-                $startDate = Carbon::parse($medication->start_date)->toDateTimeString() ?? null;
-                $endDate = Carbon::parse($medication->end_date);
-                $end = $endDate->isFuture()
-                    ? null
-                    : $endDate->toDateTimeString();
+//                $startDate = Carbon::parse($medication->start_date)->toDateTimeString() ?? null;
+//                $endDate = Carbon::parse($medication->end_date);
+//                $end = $endDate->isFuture()
+//                    ? null
+//                    : $endDate->toDateTimeString();
             } catch (\Exception $e) {
                 //do nothing
             }
@@ -92,8 +92,8 @@ class PhoenixHeartSectionsLogger extends TabularMedicalRecordSectionsLogger
                     'text'          => $medication->instructions,
                 ], $this->foreignKeys),
                 [
-                    'start' => $startDate,
-                    'end'   => $end
+//                    'start' => $startDate,
+//                    'end'   => $end
                 ]
             );
         }
