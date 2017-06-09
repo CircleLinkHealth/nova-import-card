@@ -1,6 +1,7 @@
 <?php
 
 
+use App\AppConfig;
 use App\CarePlanTemplate;
 use Carbon\Carbon;
 use Illuminate\Support\Collection;
@@ -412,8 +413,9 @@ if (!function_exists('defaultCarePlanTemplate')) {
      */
     function getDefaultCarePlanTemplate(): CarePlanTemplate
     {
-        return CarePlanTemplate::whereType(CarePlanTemplate::DEFAULT_CARE_PLAN_TEMPLATE)
-            ->first();
+        $id = AppConfig::whereConfigKey('default_care_plan_template_id')->first()->config_value;
+
+        return CarePlanTemplate::find($id);
     }
 }
 
