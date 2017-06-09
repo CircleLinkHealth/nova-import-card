@@ -396,6 +396,7 @@ class OnboardingService
                             'first_name'   => $newUser['first_name'],
                             'last_name'    => $newUser['last_name'],
                             'display_name' => "{$newUser['first_name']} {$newUser['last_name']}",
+                            'user_status'  => 1,
                         ], $newUser['id']);
                 } elseif (User::whereEmail($newUser['email'])->first()) {
                     $user = User::whereEmail($newUser['email'])->first();
@@ -409,6 +410,7 @@ class OnboardingService
                             'last_name'    => $newUser['last_name'],
                             'password'     => 'password_not_set',
                             'display_name' => "{$newUser['first_name']} {$newUser['last_name']}",
+                            'user_status'  => 1,
                         ]);
 
                     $user->attachGlobalRole($newUser['role_id']);
