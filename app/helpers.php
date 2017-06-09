@@ -437,6 +437,28 @@ if (!function_exists('getAppConfig')) {
     }
 }
 
+if (!function_exists('setAppConfig')) {
+    /**
+     * Save an AppConfig key, value and then return it.
+     *
+     * @param string $key
+     *
+     * @return CarePlanTemplate
+     */
+    function setAppConfig(string $key, $value): CarePlanTemplate
+    {
+        $conf = AppConfig::updateOrCreate([
+            'config_key' => $key,
+        ], [
+            'config_value' => $value,
+        ]);
+
+        return $conf
+            ? $conf->config_value
+            : null;
+    }
+}
+
 
 if (!function_exists('snakeToSentenceCase')) {
     /**
