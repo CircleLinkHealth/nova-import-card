@@ -23,17 +23,29 @@ class AddNewDefaultCarePlanTemplate extends Seeder
             if ($data['instructions']) {
                 $instruction = CpmInstruction::create([
                     'is_default' => true,
-                    'name' => $data['instructions'],
+                    'name'       => $data['instructions'],
                 ]);
 
                 $cpmProblem = CpmProblem::whereName($problemName)->first();
 
                 $rel = $newCpt->cpmProblems()->updateExistingPivot($cpmProblem->id, [
-                    'has_instruction' => true,
+                    'has_instruction'    => true,
                     'cpm_instruction_id' => $instruction->id,
                 ]);
             }
         }
+
+        $default = CarePlanTemplate::whereName('CLH Default')
+            ->update([
+                'name' => 'Old CLH Default (Deprecated)',
+                'type' => 'Old CLH Default (Deprecated)',
+            ]);
+
+        $newCpt->name = 'CLH Default';
+        $newCpt->type = 'CLH Default';
+        $newCpt->save();
+
+        setAppConfig('default_care_plan_template_id', $newCpt->id);
     }
 
     /**
