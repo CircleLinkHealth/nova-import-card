@@ -78,7 +78,7 @@ class PhoenixHeartSectionsLogger extends TabularMedicalRecordSectionsLogger
 //                    ? null
 //                    : $endDate->toDateTimeString();
             } catch (\Exception $e) {
-
+                //do nothing
             }
 
             $medicationLog = MedicationLog::updateOrCreate(
@@ -121,7 +121,19 @@ class PhoenixHeartSectionsLogger extends TabularMedicalRecordSectionsLogger
                 $problemCode = $problem->code;
             }
 
-            $endDate = Carbon::parse($problem->end_date);
+            $endDate = null;
+            $end = null;
+            $startDate = null;
+
+            try {
+                $startDate = Carbon::parse($problem->start_date)->toDateTimeString() ?? null;
+                $endDate = Carbon::parse($problem->end_date);
+                $end = $endDate->isFuture()
+                    ? null
+                    : $endDate->toDateTimeString();
+            } catch (\Exception $e) {
+                //do nothing
+            }
 
             $problemLog = ProblemLog::updateOrCreate(
                 array_merge([
@@ -129,10 +141,8 @@ class PhoenixHeartSectionsLogger extends TabularMedicalRecordSectionsLogger
                     'code' => $problemCode,
                 ], $this->foreignKeys),
                 [
-                    'start' => Carbon::parse($problem->start_date)->toDateTimeString(),
-                    'end'   => $endDate->isFuture()
-                        ? null
-                        : $endDate->toDateTimeString(),
+                    'start' => $startDate,
+                    'end'   => $end,
                 ]
             );
         }
