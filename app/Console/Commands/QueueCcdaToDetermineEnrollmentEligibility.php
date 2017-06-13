@@ -46,7 +46,6 @@ class QueueCcdaToDetermineEnrollmentEligibility extends Command
         ])->whereNotNull('mrn')->take(5000)->get(['id', 'referring_provider_name'])
             ->map(function ($ccda) {
                 $job = (new DetermineCcdaEnrollmentEligibility($ccda))
-                    ->onQueue('ccda-processor')
                     ->delay(Carbon::now()->addSeconds(20));
 
                 dispatch($job);

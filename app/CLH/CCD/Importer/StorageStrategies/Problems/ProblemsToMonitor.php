@@ -14,15 +14,15 @@ class ProblemsToMonitor extends BaseStorageStrategy implements StorageStrategy
     {
         if (empty($cpmProblemIds)) return;
 
-        $cpmProblems = CpmProblem::findMany($cpmProblemIds);
+        $cpmProblems = $this->user->carePlan->carePlanTemplate->cpmProblems->whereIn('id', $cpmProblemIds);
 
         foreach ($cpmProblems as $cpmProblem) {
-            $instructions = $cpmProblem->cpmInstructions()->get();
+            $instructionsId = $cpmProblem->pivot->cpm_instruction_id;
 
             $args = [];
 
-            if (!$instructions->isEmpty()) {
-                $args['cpm_instruction_id'] = $instructions[0]->id;
+            if ($instructionsId) {
+                $args['cpm_instruction_id'] = $instructionsId;
             }
 
             $this->user->cpmProblems()->attach($cpmProblem->id, $args);
