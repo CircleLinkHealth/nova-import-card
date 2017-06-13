@@ -2,6 +2,7 @@
 
 namespace App\Console\Commands;
 
+use App\ProcessedFiles;
 use Illuminate\Console\Command;
 
 class SplitMergedCcdas extends Command
@@ -40,14 +41,34 @@ class SplitMergedCcdas extends Command
         $ccdas = [];
         $xmlFiles = [];
 
+        $count = 0;
+
         foreach (\Storage::disk('ccdas')->files() as $fileName) {
             if (stripos($fileName, '.xml') == false) {
                 continue;
             }
 
-            dispatch(new \App\Jobs\SplitMergedCcdas($fileName));
+            $path = config('filesystems.disks.ccdas.root') . '/' . $fileName;
+
+            $exists = ProcessedFiles::wherePath($path)->first();
+
+            if ($exists) {
+                \Log::info("Already processed $path");
+
+                continue;
+            }
+
+            $job = (new \App\Jobs\SplitMergedCcdas($fileName))->onQueue('ccda-splitter');
+
+            dispatch($job);
 
             $this->info("Queued Job to split: $fileName");
+
+            $count++;
+
+            if ($count == 4) {
+                break;
+            }
         }
     }
 }

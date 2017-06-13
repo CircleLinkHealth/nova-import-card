@@ -4,7 +4,9 @@ namespace App\Console\Commands;
 
 use App\Jobs\DetermineCcdaEnrollmentEligibility;
 use App\Models\MedicalRecords\Ccda;
+use Carbon\Carbon;
 use Illuminate\Console\Command;
+use Maknz\Slack\Facades\Slack;
 
 class QueueCcdaToDetermineEnrollmentEligibility extends Command
 {
@@ -39,11 +41,14 @@ class QueueCcdaToDetermineEnrollmentEligibility extends Command
      */
     public function handle()
     {
-        $ccdas = Ccda::where('status', '=', Ccda::DETERMINE_ENROLLEMENT_ELIGIBILITY)
-            ->take(400)
-            ->get()
+        $ccdas = Ccda::where([
+            ['status', '=', Ccda::DETERMINE_ENROLLEMENT_ELIGIBILITY],
+        ])->whereNotNull('mrn')->take(5000)->get(['id', 'referring_provider_name'])
             ->map(function ($ccda) {
-                dispatch(new DetermineCcdaEnrollmentEligibility($ccda));
+                $job = (new DetermineCcdaEnrollmentEligibility($ccda))
+                    ->delay(Carbon::now()->addSeconds(20));
+
+                dispatch($job);
             });
     }
 }

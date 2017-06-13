@@ -22,7 +22,7 @@ class UserService
     {
         return $user->carePlan()->firstOrCreate([
             'user_id'               => $user->id,
-            'care_plan_template_id' => CarePlanTemplate::whereType(CarePlanTemplate::DEFAULT_CARE_PLAN_TEMPLATE)->first()->id,
+            'care_plan_template_id' => getDefaultCarePlanTemplate()->id,
         ]);
     }
 }
