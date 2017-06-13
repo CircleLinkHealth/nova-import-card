@@ -103,6 +103,10 @@ trait UserHelpers
             ]);
         }
 
+        if ($roleName == 'participant') {
+            $user->carePlan()->create([]);
+        }
+
         return $user;
     }
 
