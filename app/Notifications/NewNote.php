@@ -2,10 +2,11 @@
 
 namespace App\Notifications;
 
+use App\Mail\NoteForwarded;
 use App\MailLog;
 use App\Message;
 use Illuminate\Bus\Queueable;
-use Illuminate\Notifications\Messages\MailMessage;
+use Illuminate\Mail\Mailable;
 use Illuminate\Notifications\Notification;
 
 class NewNote extends Notification
@@ -45,15 +46,11 @@ class NewNote extends Notification
      *
      * @param  mixed $notifiable
      *
-     * @return \Illuminate\Notifications\Messages\MailMessage
+     * @return mixed
      */
     public function toMail($notifiable)
     {
-        return (new MailMessage)
-            ->greeting($this->message->body)
-            ->subject($this->message->subject)
-            ->cc('raph@circlelinkhealth.com')
-            ->action('View Note', $this->url);
+        return (new NoteForwarded($this->message, $this->url));
     }
 
     /**
