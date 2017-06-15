@@ -113,7 +113,7 @@
                                         {
                                             id: "careplan_status",
                                             header: ["CP Status", {content: "selectFilter", placeholder: "Filter"}],
-                                            width: 115,
+                                            width: 200,
                                             template: function (obj) {
                                                 return "" + obj.careplan_status_link + "";
                                             }
