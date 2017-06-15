@@ -20,8 +20,20 @@ class CarePlanProviderApprovalTest extends TestCase
      */
     protected $provider;
 
+    public function test_provider_cannot_qa_approve()
+    {
+        $this->visit(route('patient.careplan.show', [
+            'patientId' => $this->patient->id,
+            'page'      => 3,
+        ]))
+            ->dontSee('Approve/Next');
+    }
+
     public function test_provider_can_approve()
     {
+        $this->patient->carePlan->status = CarePlan::QA_APPROVED;
+        $this->patient->carePlan->save();
+
         $this->visit(route('patient.careplan.show', [
             'patientId' => $this->patient->id,
             'page'      => 3,
@@ -34,6 +46,9 @@ class CarePlanProviderApprovalTest extends TestCase
         $medicalAssistant = $this->createUser(8, 'med_assistant');
         auth()->login($medicalAssistant);
 
+        $this->patient->carePlan->status = CarePlan::QA_APPROVED;
+        $this->patient->carePlan->save();
+
         $this->visit(route('patient.careplan.show', [
             'patientId' => $this->patient->id,
             'page'      => 3,
@@ -45,6 +60,9 @@ class CarePlanProviderApprovalTest extends TestCase
     {
         $rn = $this->createUser(8, 'registered-nurse');
         auth()->login($rn);
+
+        $this->patient->carePlan->status = CarePlan::QA_APPROVED;
+        $this->patient->carePlan->save();
 
         $this->visit(route('patient.careplan.show', [
             'patientId' => $this->patient->id,
@@ -66,6 +84,18 @@ class CarePlanProviderApprovalTest extends TestCase
             'page'      => 3,
         ]))
             ->dontSee('Approve/Next');
+    }
+
+    public function test_care_center_can_qa_approve()
+    {
+        $careCenter = $this->createUser(8, 'care-center');
+        auth()->login($careCenter);
+
+        $this->visit(route('patient.careplan.show', [
+            'patientId' => $this->patient->id,
+            'page'      => 3,
+        ]))
+            ->see('Approve/Next');
     }
 
     protected function setUp()
