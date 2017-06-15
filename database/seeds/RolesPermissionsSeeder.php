@@ -6,6 +6,35 @@ use Illuminate\Database\Seeder;
 
 class RolesPermissionsSeeder extends Seeder
 {
+    /**
+     * Run the database seeds.
+     *
+     * @return void
+     */
+    public function run()
+    {
+        foreach ($this->permissions() as $perm) {
+            Permission::updateOrCreate($perm);
+        }
+
+        foreach ($this->roles() as $attr) {
+            $permissionsArr = $attr['permissions'];
+
+            unset($attr['permissions']);
+
+            $role = Role::updateOrCreate($attr);
+
+            $permissionIds = Permission::whereIn('name', $permissionsArr)
+                ->pluck('id')->all();
+
+            $role->perms()->sync($permissionIds);
+        }
+
+        $this->giveAdminsAllPermissions();
+
+        $this->command->info('That\'s all folks!');
+    }
+
     public function permissions()
     {
         return [
@@ -22,12 +51,18 @@ class RolesPermissionsSeeder extends Seeder
             [
                 'name'         => 'care-plan-approve',
                 'display_name' => 'Approve Careplans',
-                'description'  => 'Can approve a CarePlan.',
+                'description'  => 'Can approve CarePlans with status qa_approved. Changes the CarePlan status to provider_approved.',
+            ],
+            [
+                'name'         => 'care-plan-qa-approve',
+                'display_name' => 'CLH Approve Careplan',
+                'description'  => 'Can approve CarePlans with status draft. Changes the CarePlan status to qa_approved.',
             ],
         ];
     }
 
-    public function roles() {
+    public function roles()
+    {
         return [
             [
                 'name'         => 'practice-lead',
@@ -87,7 +122,7 @@ class RolesPermissionsSeeder extends Seeder
                 'permissions'  => [
                     'care-plan-approve',
                     'users-view-all',
-                    'users-view-self'
+                    'users-view-self',
                 ],
             ],
             [
@@ -102,42 +137,37 @@ class RolesPermissionsSeeder extends Seeder
                     'observations-view',
                 ],
             ],
+            [
+                'name'         => 'care-center',
+                'display_name' => 'Care Center',
+                'description'  => 'CLH Nurses, the ones who make calls to patients. CCM countable.',
+                'permissions'  => [
+                    'care-plan-qa-approve',
+                    'users-view-all',
+                    'users-view-self',
+                    'activities-view',
+                    'activities-pagetimer-view',
+                    'apikeys-view',
+                    'locations-view',
+                    'observations-create',
+                    'observations-edit',
+                    'observations-view',
+                    'programs-view',
+                    'roles-view',
+                    'roles-permissions-view',
+                    'rules-engine-view',
+                    'users-create',
+                ],
+            ],
         ];
     }
 
-    /**
-     * Run the database seeds.
-     *
-     * @return void
-     */
-    public function run()
+    public function giveAdminsAllPermissions()
     {
-        foreach ($this->permissions() as $perm) {
-            Permission::updateOrCreate($perm);
-        }
-
-        foreach ($this->roles() as $attr) {
-            $permissionsArr = $attr['permissions'];
-
-            unset($attr['permissions']);
-
-            $role = Role::updateOrCreate($attr);
-
-            $permissionIds = Permission::whereIn('name', $permissionsArr)
-                ->pluck('id')->all();
-
-            $role->perms()->sync($permissionIds);
-        }
-
-        $this->giveAdminsAllPermissions();
-
-        $this->command->info('That\'s all folks!');
-    }
-
-    public function giveAdminsAllPermissions() {
         $adminRole = Role::whereName('administrator')->first();
 
-        $permissions = Permission::all();
+        $permissions = Permission::where('name', '!=', 'care-plan-approve')
+            ->get();
 
         $adminRole->perms()->sync($permissions->pluck('id')->all());
     }
