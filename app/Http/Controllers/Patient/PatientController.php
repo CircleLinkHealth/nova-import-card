@@ -266,7 +266,8 @@ class PatientController extends Controller
         $foundUsers = []; // save resources, no duplicate db calls
         $foundPrograms = []; // save resources, no duplicate db calls
 
-        $canApproveCarePlans = Auth::user()->hasRole('provider');
+        $canApproveCarePlans = auth()->user()->can('care-plan-approve');
+        $canQAApproveCarePlans = auth()->user()->can('care-plan-qa-approve');
         $isCareCenter = Auth::user()->hasRole('care-center');
         $isAdmin = Auth::user()->hasRole('administrator');
         $isProvider = Auth::user()->hasRole('provider');
@@ -307,7 +308,7 @@ class PatientController extends Controller
                         $careplanStatus = 'CLH Approve';
                         $tooltip = $careplanStatus;
                         $careplanStatusLink = 'CLH Approve';
-                        if ($isCareCenter || $isAdmin) {
+                        if ($canQAApproveCarePlans) {
                             $careplanStatusLink = '<a style="text-decoration:underline;" href="' . URL::route('patient.demographics.show',
                                     ['patient' => $patient->id]) . '"><strong>CLH Approve</strong></a>';
                         }
