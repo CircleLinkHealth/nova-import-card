@@ -22,6 +22,7 @@ class CcdaSectionsLogger implements MedicalRecordLogger
     protected $transformer;
 
     protected $foreignKeys = [];
+    protected $ccdaId;
 
 
     public function __construct(Ccda $ccd)

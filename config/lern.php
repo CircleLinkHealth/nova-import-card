@@ -95,7 +95,7 @@ return [
             'username' => env('SLACK_USERNAME', 'LERN'),
 
             'webhook'  => env('SLACK_WEBHOOK',
-                'https://hooks.slack.com/services/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'),
+                'https://hooks.slack.com/services/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'),
         ],
 
         /**
