@@ -90,6 +90,18 @@ class RolesPermissionsSeeder extends Seeder
                     'users-view-self'
                 ],
             ],
+            [
+                'name'         => 'provider',
+                'display_name' => 'Provider',
+                'description'  => 'Provider',
+                'permissions'  => [
+                    'care-plan-approve',
+                    'users-view-all',
+                    'users-view-self',
+                    'observations-create',
+                    'observations-view',
+                ],
+            ],
         ];
     }
 
