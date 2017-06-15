@@ -6,27 +6,29 @@ use Illuminate\Database\Seeder;
 
 class RolesPermissionsSeeder extends Seeder
 {
-    /**
-     * Run the database seeds.
-     *
-     * @return void
-     */
-    public function run()
+    public function permissions()
     {
-        $permissions = [
+        return [
             [
-                'name' => 'practice-manage',
+                'name'         => 'practice-manage',
                 'display_name' => 'Practice Manage',
-                'description' => 'Can Update or Delete a Practice.',
+                'description'  => 'Can Update or Delete a Practice.',
             ],
             [
                 'name'         => 'use-onboarding',
                 'display_name' => 'Use Onboarding without a code',
                 'description'  => 'Can use Onboarding to set up a Practice.',
             ],
+            [
+                'name'         => 'care-plan-approve',
+                'display_name' => 'Approve Careplans',
+                'description'  => 'Can approve a CarePlan.',
+            ],
         ];
+    }
 
-        $roles = [
+    public function roles() {
+        return [
             [
                 'name'         => 'practice-lead',
                 'display_name' => 'Program Lead',
@@ -36,14 +38,15 @@ class RolesPermissionsSeeder extends Seeder
                     'observations-view',
                     'observations-create',
                     'users-view-all',
-                    'users-view-self'
-                ]
+                    'users-view-self',
+                ],
             ],
             [
                 'name'         => 'registered-nurse',
                 'display_name' => 'Registered Nurse',
                 'description'  => 'A nurse that belongs to a practice and not our care center.',
                 'permissions'  => [
+                    'care-plan-approve',
                     'observations-view',
                     'observations-create',
                     'users-view-all',
@@ -77,13 +80,31 @@ class RolesPermissionsSeeder extends Seeder
                     'use-enrollment-center',
                 ],
             ],
+            [
+                'name'         => 'med_assistant',
+                'display_name' => 'Medical Assistant',
+                'description'  => 'CCM Countable.',
+                'permissions'  => [
+                    'care-plan-approve',
+                    'users-view-all',
+                    'users-view-self'
+                ],
+            ],
         ];
+    }
 
-        foreach ($permissions as $perm) {
+    /**
+     * Run the database seeds.
+     *
+     * @return void
+     */
+    public function run()
+    {
+        foreach ($this->permissions() as $perm) {
             Permission::updateOrCreate($perm);
         }
 
-        foreach ($roles as $attr) {
+        foreach ($this->roles() as $attr) {
             $permissionsArr = $attr['permissions'];
 
             unset($attr['permissions']);
@@ -96,6 +117,16 @@ class RolesPermissionsSeeder extends Seeder
             $role->perms()->sync($permissionIds);
         }
 
+        $this->giveAdminsAllPermissions();
+
         $this->command->info('That\'s all folks!');
+    }
+
+    public function giveAdminsAllPermissions() {
+        $adminRole = Role::whereName('administrator')->first();
+
+        $permissions = Permission::all();
+
+        $adminRole->perms()->sync($permissions->pluck('id')->all());
     }
 }
