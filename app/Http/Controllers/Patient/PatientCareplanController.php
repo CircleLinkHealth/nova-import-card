@@ -917,7 +917,16 @@ class PatientCareplanController extends Controller
             $miscService->syncWithUser($user, $cpmMiscs, $page, $instructions);
             $symptomService->syncWithUser($user, $cpmSymptoms, $page, $instructions);
 
-            event(new CarePlanWasApproved($user));
+            //use the url to see if approve careplan was pressed
+            $urlString = parse_url($direction);
+
+            if (array_key_exists('query', $urlString)) {
+                parse_str($urlString['query'], $queryString);
+
+                if ($queryString['markAsApproved']) {
+                    event(new CarePlanWasApproved($user));
+                }
+            }
         }
 
         if ($direction) {
