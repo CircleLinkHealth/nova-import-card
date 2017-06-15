@@ -733,14 +733,12 @@ class PatientCareplanController extends Controller
             }
         }
 
-        if (auth()->user()->hasRole(['provider']) || auth()->user()->hasRole(['registered-nurse']) || auth()->user()->hasRole(['med_assistant'])) {
-            if ($patient->carePlanStatus != 'provider_approved') {
-                $showApprovalButton = true;
-            }
+        if ($patient->carePlanStatus == 'qa_approved' && auth()->user()->can('care-plan-approve')) {
+            $showApprovalButton = true;
+        } elseif ($patient->carePlanStatus == 'draft' && auth()->user()->can('care-plan-qa-approve')) {
+            $showApprovalButton = true;
         } else {
-            if ($patient->carePlanStatus == 'draft') {
-                $showApprovalButton = true;
-            }
+            $showApprovalButton = false;
         }
 
         $defaultViewVars = compact([
