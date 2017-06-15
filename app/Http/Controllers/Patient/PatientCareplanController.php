@@ -72,25 +72,26 @@ class PatientCareplanController extends Controller
             $tooltip = 'NA';
 
             if ($careplanStatus == 'provider_approved') {
+                $careplanStatus = $careplanStatusLink = 'Approved';
+
                 $approver = $patient->carePlan->providerApproverUser;
                 if ($approver) {
                     $approverName = $approver->fullName;
                     $carePlanProviderDate = $patient->carePlanProviderDate;
 
-                    $careplanStatus = 'Approved';
                     $careplanStatusLink = '<span data-toggle="" title="' . $approverName . ' ' . $carePlanProviderDate . '">Approved</span>';
                     $tooltip = $approverName . ' ' . $carePlanProviderDate;
                 }
             } else {
                 if ($careplanStatus == 'qa_approved') {
-                    $careplanStatus = 'Approve Now';
+                    $careplanStatus = 'Prov. to Approve';
                     $tooltip = $careplanStatus;
-                    $careplanStatusLink = 'Approve Now';
+                    $careplanStatusLink = 'Prov. to Approve';
                 } else {
                     if ($careplanStatus == 'draft') {
-                        $careplanStatus = 'CLH Approve';
+                        $careplanStatus = 'CLH to Approve';
                         $tooltip = $careplanStatus;
-                        $careplanStatusLink = 'CLH Approve';
+                        $careplanStatusLink = 'CLH to Approve';
                     }
                 }
             }
