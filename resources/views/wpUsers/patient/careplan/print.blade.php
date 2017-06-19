@@ -46,7 +46,7 @@ if (isset($patient) && !empty($patient)) {
 
                                 <span class="btn btn-group text-right">
 
-                                    @if ( ($patient->carePlanStatus == 'qa_approved' && auth()->user()->can('care-plan-approve')) || ($user->carePlanStatus == 'draft' && auth()->user()->can('care-plan-qa-approve')) )
+                                    @if ( ($patient->carePlanStatus == 'qa_approved' && auth()->user()->can('care-plan-approve')) || ($patient->carePlanStatus == 'draft' && auth()->user()->can('care-plan-qa-approve')) )
                                         <a style="margin-right:10px;" class="btn btn-info btn-sm inline-block"
                                            aria-label="..."
                                            role="button"
