@@ -18,10 +18,6 @@ class EnrollmentCenterController extends Controller
 
         $careAmbassador = auth()->user()->careAmbassador;
 
-        if (!$careAmbassador) {
-            abort(403, "You are not a Care Ambassador");
-        }
-
         //if logged in ambassador is spanish, pick up a spanish patient
         if ($careAmbassador->speaks_spanish) {
 
