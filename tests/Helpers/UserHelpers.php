@@ -104,7 +104,9 @@ trait UserHelpers
         }
 
         if ($roleName == 'participant') {
-            $user->carePlan()->create([]);
+            $user->carePlan()->create([
+                'status' => 'draft',
+            ]);
         }
 
         return $user;

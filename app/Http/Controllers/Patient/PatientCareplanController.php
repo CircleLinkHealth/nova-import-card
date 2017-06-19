@@ -72,25 +72,26 @@ class PatientCareplanController extends Controller
             $tooltip = 'NA';
 
             if ($careplanStatus == 'provider_approved') {
+                $careplanStatus = $careplanStatusLink = 'Approved';
+
                 $approver = $patient->carePlan->providerApproverUser;
                 if ($approver) {
                     $approverName = $approver->fullName;
                     $carePlanProviderDate = $patient->carePlanProviderDate;
 
-                    $careplanStatus = 'Approved';
                     $careplanStatusLink = '<span data-toggle="" title="' . $approverName . ' ' . $carePlanProviderDate . '">Approved</span>';
                     $tooltip = $approverName . ' ' . $carePlanProviderDate;
                 }
             } else {
                 if ($careplanStatus == 'qa_approved') {
-                    $careplanStatus = 'Approve Now';
+                    $careplanStatus = 'Prov. to Approve';
                     $tooltip = $careplanStatus;
-                    $careplanStatusLink = 'Approve Now';
+                    $careplanStatusLink = 'Prov. to Approve';
                 } else {
                     if ($careplanStatus == 'draft') {
-                        $careplanStatus = 'CLH Approve';
+                        $careplanStatus = 'CLH to Approve';
                         $tooltip = $careplanStatus;
-                        $careplanStatusLink = 'CLH Approve';
+                        $careplanStatusLink = 'CLH to Approve';
                     }
                 }
             }
@@ -732,14 +733,12 @@ class PatientCareplanController extends Controller
             }
         }
 
-        if (auth()->user()->hasRole(['provider']) || auth()->user()->hasRole(['registered-nurse']) || auth()->user()->hasRole(['med_assistant'])) {
-            if ($patient->carePlanStatus != 'provider_approved') {
-                $showApprovalButton = true;
-            }
+        if ($patient->carePlanStatus == 'qa_approved' && auth()->user()->can('care-plan-approve')) {
+            $showApprovalButton = true;
+        } elseif ($patient->carePlanStatus == 'draft' && auth()->user()->can('care-plan-qa-approve')) {
+            $showApprovalButton = true;
         } else {
-            if ($patient->carePlanStatus == 'draft') {
-                $showApprovalButton = true;
-            }
+            $showApprovalButton = false;
         }
 
         $defaultViewVars = compact([
@@ -916,7 +915,16 @@ class PatientCareplanController extends Controller
             $miscService->syncWithUser($user, $cpmMiscs, $page, $instructions);
             $symptomService->syncWithUser($user, $cpmSymptoms, $page, $instructions);
 
-            event(new CarePlanWasApproved($user));
+            //use the url to see if approve careplan was pressed
+            $urlString = parse_url($direction);
+
+            if (array_key_exists('query', $urlString)) {
+                parse_str($urlString['query'], $queryString);
+
+                if ($queryString['markAsApproved']) {
+                    event(new CarePlanWasApproved($user));
+                }
+            }
         }
 
         if ($direction) {
