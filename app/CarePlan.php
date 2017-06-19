@@ -30,6 +30,11 @@ class CarePlan extends Model implements PdfReport
         'updated_at',
     ];
 
+    protected $dates = [
+        'qa_date',
+        'provider_date',
+    ];
+
     protected $attributes = [
         'care_plan_template_id' => CarePlanTemplate::DEFAULT_CARE_PLAN_TEMPLATE_ID,
     ];
