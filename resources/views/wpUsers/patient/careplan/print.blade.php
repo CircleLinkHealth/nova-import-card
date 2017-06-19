@@ -45,20 +45,22 @@ if (isset($patient) && !empty($patient)) {
                                 @endif
 
                                 <span class="btn btn-group text-right">
-        @if(auth()->user()->hasRole(['administrator', 'med_assistant', 'provider']))
+
+                                    @if ( ($patient->carePlanStatus == 'qa_approved' && auth()->user()->can('care-plan-approve')) || ($user->carePlanStatus == 'draft' && auth()->user()->can('care-plan-qa-approve')) )
                                         <a style="margin-right:10px;" class="btn btn-info btn-sm inline-block"
                                            aria-label="..."
                                            role="button"
                                            href="{{ URL::route('patients.listing', ['patient_approval_id' => $patient->id]) }}">Approve Care Plan</a>
-                                        <a class="btn btn-info btn-sm inline-block" aria-label="..." role="button"
-                                           href="{{ URL::route('patients.careplan.multi') }}?users={{ $patient->id }}">Print This Page</a>
                                     @endif
+
+                                    <a class="btn btn-info btn-sm inline-block" aria-label="..." role="button"
+                                       href="{{ URL::route('patients.careplan.multi') }}?users={{ $patient->id }}">Print This Page</a>
+
                                     <form class="lang" action="#" method="POST" id="form">
                                         {{ csrf_field() }}
                                         <input type="hidden" name="lang" value="es"/>
                                         <!-- <button type="submit" class="btn btn-info btn-sm text-right" aria-label="..." value="">Translate to Spanish</button>
-                              -->
-</form></span></div>
+                              -->   </form></span></div>
                         </div>
                     @endif
                     <div class="row gutter">
