@@ -66,7 +66,22 @@ if (isset($patient) && !empty($patient)) {
                             <h1 class="patient-summary__title patient-summary__title_9 patient-summary--careplan">Care
                                 Plan</h1>
                         </div>
+                        @if($patient->carePlan->provider_approver_id && $patient->carePlan->provider_date)
+                            <div class="col-xs-12">
+                                <div class="pull-right print-row text-right">
+                                    Approved on: {{$patient->carePlan->provider_date->format('m/d/Y')}}
+                                    at {{$patient->carePlan->provider_date->setTimezone($patient->timezone ?? 'America/New_York')->format('H:i')}} {{$patient->timezone ?? 'America/New_York'}}
+                                </div>
+                                <br><br>
+                                <div class="pull-right print-row text-right">
+                                    Approved by: {{App\User::find($patient->carePlan->provider_approver_id)->fullName}}
+                                </div>
+                            </div>
+                        @endif
                     </div>
+
+                    <br>
+
                     <div class="row gutter">
                         <div class="col-xs-4 col-md-4 print-row text-bold">{{$patient->fullName}}</div>
                         <div class="col-xs-4 col-md-4 print-row">{{$patient->phone}}</div>
@@ -248,7 +263,7 @@ if (isset($patient) && !empty($patient)) {
 
                 @include('partials.view-care-plan.followTheseInstructions')
 
-                <!-- OTHER INFORMATION -->
+            <!-- OTHER INFORMATION -->
                 <div class="row pb-before">
                     <div class="col-xs-12 print-only">
                         <h1 class="patient-summary__title patient-summary__title_9  patient-summary--careplan">Care Plan
