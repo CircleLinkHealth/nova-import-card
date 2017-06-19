@@ -1,6 +1,7 @@
 <?php
 
 
+use App\AppConfig;
 use App\CarePlanTemplate;
 use Carbon\Carbon;
 use Illuminate\Support\Collection;
@@ -412,10 +413,52 @@ if (!function_exists('defaultCarePlanTemplate')) {
      */
     function getDefaultCarePlanTemplate(): CarePlanTemplate
     {
-        return CarePlanTemplate::whereType(CarePlanTemplate::DEFAULT_CARE_PLAN_TEMPLATE)
-            ->first();
+        $id = getAppConfig('default_care_plan_template_id');
+
+        return CarePlanTemplate::find($id);
     }
 }
+
+if (!function_exists('getAppConfig')) {
+    /**
+     * Returns the AppConfig value for the given key.
+     *
+     * @param string $key
+     *
+     * @return string|null
+     */
+    function getAppConfig(string $key)
+    {
+        $conf = AppConfig::whereConfigKey($key)->first();
+
+        return $conf
+            ? $conf->config_value
+            : null;
+    }
+}
+
+if (!function_exists('setAppConfig')) {
+    /**
+     * Save an AppConfig key, value and then return it.
+     *
+     * @param string $key
+     *
+     * @return CarePlanTemplate
+     */
+    function setAppConfig(string $key, $value)
+    {
+        $conf = AppConfig::updateOrCreate([
+            'config_key' => $key,
+        ], [
+            'config_value' => $value,
+        ]);
+
+        return $conf
+            ? $conf->config_value
+            : null;
+    }
+}
+
 
 if (!function_exists('snakeToSentenceCase')) {
     /**

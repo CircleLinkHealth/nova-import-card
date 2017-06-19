@@ -14,6 +14,7 @@ use App\Console\Commands\Inspire;
 use App\Console\Commands\MapSnomedToCpmProblems;
 use App\Console\Commands\NukeItemAndMeta;
 use App\Console\Commands\QueueCcdasToConvertToJson;
+use App\Console\Commands\QueueCcdasToProcess;
 use App\Console\Commands\QueueCcdaToDetermineEnrollmentEligibility;
 use App\Console\Commands\RecalculateCcmTime;
 use App\Console\Commands\ResetCcmTime;
@@ -58,6 +59,7 @@ class Kernel extends ConsoleKernel
         SplitMergedCcdas::class,
         QueueCcdasToConvertToJson::class,
         QueueCcdaToDetermineEnrollmentEligibility::class,
+        QueueCcdasToProcess::class,
     ];
 
     /**
@@ -97,7 +99,6 @@ class Kernel extends ConsoleKernel
 //            (new EnrollmentSMSSender())->exec();
 //        })->dailyAt('13:00');
 
-
         //syncs families.
         $schedule->call(function () {
             (new SchedulerService())->syncFamilialCalls();
@@ -135,14 +136,18 @@ class Kernel extends ConsoleKernel
         $schedule->command('ccm_time:reset')
             ->cron('1 0 1 * *');
 
-        $schedule->command('ccda:toJson')
-            ->everyMinute();
+//        $schedule->command('ccda:toJson')
+//            ->everyMinute();
 
 //        $schedule->command('ccda:determineEligibility')
 //            ->everyMinute();
 
+//        $schedule->command('ccda:process')
+//            ->everyMinute();
+
+        //every 2 hours
 //        $schedule->command('ccdas:split-merged')
-//            ->everyFiveMinutes();
+//            ->cron('0 */2 * * *');
     }
 
     /**

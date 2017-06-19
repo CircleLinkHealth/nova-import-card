@@ -3,8 +3,10 @@
 namespace App\Providers;
 
 use App\CarePlan;
+use App\CarePlanTemplate;
 use App\NurseContactWindow;
 use App\Observers\CarePlanObserver;
+use App\Observers\CarePlanTemplateObserver;
 use App\Observers\NurseContactWindowObserver;
 use App\Observers\PageTimerObserver;
 use App\Observers\PatientObserver;
@@ -24,6 +26,7 @@ class ObserversServiceProvider extends ServiceProvider
     public function boot()
     {
         CarePlan::observe(CarePlanObserver::class);
+        CarePlanTemplate::observe(CarePlanTemplateObserver::class);
         NurseContactWindow::observe(NurseContactWindowObserver::class);
         PageTimer::observe(PageTimerObserver::class);
         Patient::observe(PatientObserver::class);

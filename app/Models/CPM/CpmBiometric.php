@@ -18,7 +18,11 @@ class CpmBiometric extends Model implements Serviceable
 
     protected $table = 'cpm_biometrics';
 
-    protected $guarded = [];
+    protected $fillable = [
+        'care_item_id',
+        'name',
+        'type'
+    ];
 
     /**
      * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
