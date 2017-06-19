@@ -53,9 +53,9 @@ class PatientController extends Controller
         }
 
         // security
-        if (!Auth::user()->can('observations-view')) {
-            abort(403);
-        }
+//        if (!Auth::user()->can('observations-view')) {
+//            abort(403);
+//        }
 
         // program
         $program = Practice::find($wpUser->program_id);
