@@ -921,8 +921,10 @@ class PatientCareplanController extends Controller
             if (array_key_exists('query', $urlString)) {
                 parse_str($urlString['query'], $queryString);
 
-                if ($queryString['markAsApproved']) {
-                    event(new CarePlanWasApproved($user));
+                if (array_key_exists('markAsApproved', $queryString)) {
+                    if ($queryString['markAsApproved']) {
+                        event(new CarePlanWasApproved($user));
+                    }
                 }
             }
         }
