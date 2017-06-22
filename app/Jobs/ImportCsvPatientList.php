@@ -69,7 +69,7 @@ class ImportCsvPatientList implements ShouldQueue
                 continue;
             }
 
-            $mr = TabularMedicalRecord::updateOrCreate($row);
+            $mr = TabularMedicalRecord::create($row);
 
             $importedMedicalRecords[] = $mr->import();
         }
