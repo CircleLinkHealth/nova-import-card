@@ -41,6 +41,23 @@ class RappaSectionsLogger extends TabularMedicalRecordSectionsLogger
      */
     public function logInsuranceSection(): MedicalRecordLogger
     {
+        $insurances = RappaInsAllergy::wherePatientId($this->medicalRecord->mrn)
+            ->first();
+
+        $primaryInsurance = InsuranceLog::create(array_merge([
+            'name'   => $insurances->primary_insurance,
+            'import' => true,
+        ], $this->foreignKeys));
+
+        if ($insurances->secondary_insurance == 'No Secondary Plan') {
+            return $this;
+        }
+
+        $secondaryInsurance = InsuranceLog::create(array_merge([
+            'name'   => $insurances->secondary_insurance,
+            'import' => true,
+        ], $this->foreignKeys));
+
         return $this;
     }
 
