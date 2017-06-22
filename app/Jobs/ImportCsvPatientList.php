@@ -66,7 +66,11 @@ class ImportCsvPatientList implements ShouldQueue
             ])->first();
 
             if ($exists) {
-                continue;
+                if ($exists->importedMedicalRecord()) {
+                    continue;
+                }
+
+                $exists->delete();
             }
 
             $mr = TabularMedicalRecord::create($row);
