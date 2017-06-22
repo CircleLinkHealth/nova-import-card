@@ -6,9 +6,9 @@ use App\Importer\Models\ItemLogs\InsuranceLog;
 use App\Importer\Models\ItemLogs\MedicationLog;
 use App\Importer\Models\ItemLogs\ProblemLog;
 use App\Importer\Models\ItemLogs\ProviderLog;
-use App\Models\PatientData\PhoenixHeart\PhoenixHeartMedication;
 use App\Models\PatientData\PhoenixHeart\PhoenixHeartName;
 use App\Models\PatientData\PhoenixHeart\PhoenixHeartProblem;
+use App\Models\PatientData\Rappa\RappaData;
 use App\Models\PatientData\Rappa\RappaInsAllergy;
 use App\User;
 use Carbon\Carbon;
@@ -67,40 +67,19 @@ class RappaSectionsLogger extends TabularMedicalRecordSectionsLogger
      */
     public function logMedicationsSection(): MedicalRecordLogger
     {
-        $medications = PhoenixHeartMedication::wherePatientId($this->medicalRecord->mrn)
-            ->get();
+        $medications = RappaData::wherePatientId($this->medicalRecord->mrn)
+            ->get()
+            ->pluck('medication')
+            ->unique()
+            ->values();
 
         foreach ($medications as $medication) {
-
-
-            $endDate = null;
-            $end = null;
-            $startDate = null;
-
-            try {
-//                $startDate = Carbon::parse($medication->start_date)->toDateTimeString() ?? null;
-//                $endDate = Carbon::parse($medication->end_date);
-//                $end = $endDate->isFuture()
-//                    ? null
-//                    : $endDate->toDateTimeString();
-            } catch (\Exception $e) {
-                //do nothing
-            }
-
             $medicationLog = MedicationLog::updateOrCreate(
                 array_merge([
-                    'reference_title'  => ucfirst(strtolower($medication->description)),
-                    'product_name'     => ucfirst(strtolower($medication->description)),
-                    'translation_name' => ucfirst(strtolower($medication->description)),
-
-                    'reference_sig' => $medication->instructions,
-                    'product_text'  => $medication->instructions,
-                    'text'          => $medication->instructions,
-                ], $this->foreignKeys),
-                [
-//                    'start' => $startDate,
-//                    'end'   => $end
-                ]
+                    'reference_title'  => ucfirst(strtolower($medication->medication)),
+                    'product_name'     => ucfirst(strtolower($medication->medication)),
+                    'translation_name' => ucfirst(strtolower($medication->medication)),
+                ], $this->foreignKeys)
             );
         }
 
