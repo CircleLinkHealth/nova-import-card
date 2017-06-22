@@ -128,13 +128,7 @@ class RappaSectionsLogger extends TabularMedicalRecordSectionsLogger
      */
     public function logMedicationsSection(): MedicalRecordLogger
     {
-        $medications = RappaData::wherePatientId($this->medicalRecord->mrn)
-            ->get()
-            ->pluck('medication')
-            ->unique()
-            ->values();
-
-        foreach ($medications as $medication) {
+        foreach ($this->rappaPatient->medications as $medication) {
             $medicationLog = MedicationLog::updateOrCreate(
                 array_merge([
                     'reference_title'  => ucfirst(strtolower($medication->medication)),
