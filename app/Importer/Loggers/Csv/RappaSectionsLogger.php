@@ -6,24 +6,87 @@ use App\Importer\Models\ItemLogs\InsuranceLog;
 use App\Importer\Models\ItemLogs\MedicationLog;
 use App\Importer\Models\ItemLogs\ProblemLog;
 use App\Importer\Models\ItemLogs\ProviderLog;
+use App\Models\MedicalRecords\TabularMedicalRecord;
 use App\Models\PatientData\PhoenixHeart\PhoenixHeartName;
 use App\Models\PatientData\Rappa\RappaData;
 use App\Models\PatientData\Rappa\RappaInsAllergy;
+use App\Models\PatientData\Rappa\RappaName;
+use App\Practice;
 use App\User;
 
 class RappaSectionsLogger extends TabularMedicalRecordSectionsLogger
 {
+    public function __construct(TabularMedicalRecord $tmr, Practice $practice = null)
+    {
+        parent::__construct($tmr, $practice);
+
+        $rappaNames = RappaName::wherePatientId($this->medicalRecord->mrn)
+            ->get()
+            ->keyBy('patient_id');
+
+        $rappaInsAllergies = RappaInsAllergy::wherePatientId($this->medicalRecord->mrn)
+            ->get()
+            ->keyBy('patient_id');
+
+        $difference = $rappaInsAllergies->keys()->diff($rappaNames->keys());
+        $intersection = $rappaInsAllergies->keys()->intersect($rappaNames->keys());
+
+        $merged = $rappaInsAllergies->map(function ($rappaInsAllergy) use ($rappaNames) {
+            if ($name = $rappaNames->get($rappaInsAllergy->patient_id)) {
+                return collect($name)->merge($rappaInsAllergy);
+            }
+
+            return collect($rappaInsAllergy);
+        });
+
+
+        $patientList = $merged->map(function ($patient) {
+            $data = RappaData::where('patient_id', '=', $patient->get('patient_id'))->get();
+
+            $patient->put('allergies', collect());
+            $patient->put('medications', collect());
+            $patient->put('problems', collect());
+
+            foreach ($data as $d) {
+                if ($d['allergy'] && !$patient['allergy']->contains($d['allergy'])) {
+                    $patient['allergies']->push($d['allergy']);
+                }
+
+                if ($d['medication'] && !$patient['medications']->contains($d['medication'])) {
+                    $patient['medications']->push($d['medication']);
+                }
+
+                if ($d['condition'] && !$patient['problems']->contains($d['condition'])) {
+                    $patient['problems']->push($d['condition']);
+                }
+
+                if (!$patient->contains($d['last_name'])) {
+                    $patient->put('last_name', $d['last_name']);
+                }
+
+                if (!$patient->contains($d['first_name'])) {
+                    $patient->put('first_name', $d['first_name']);
+                }
+            }
+
+            return $patient;
+        });
+
+        $this->rappaPatient = $patientList->first();
+    }
+
     /**
      * Log Allergies Section.
      * @return MedicalRecordLogger
      */
     public function logAllergiesSection(): MedicalRecordLogger
     {
-        $allergies = RappaInsAllergy::wherePatientId($this->medicalRecord->mrn)
-            ->get();
+        foreach ($this->rappaPatient->allergies as $allergy) {
+            if (empty($allergy)) {
 
-        foreach ($allergies as $allergy) {
-            $allergyLog = AllergyLog::create(
+            }
+
+            $allergyLog = AllergyLog::updateOrCreate(
                 array_merge([
                     'allergen_name' => ucfirst(strtolower($allergy->allergy)),
                 ], $this->foreignKeys)
