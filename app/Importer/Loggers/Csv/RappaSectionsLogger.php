@@ -80,7 +80,7 @@ class RappaSectionsLogger extends TabularMedicalRecordSectionsLogger
      */
     public function logAllergiesSection(): MedicalRecordLogger
     {
-        foreach ($this->rappaPatient->allergies as $allergy) {
+        foreach ($this->rappaPatient->get('allergies') as $allergy) {
             if (empty($allergy)) {
                 continue;
             }
