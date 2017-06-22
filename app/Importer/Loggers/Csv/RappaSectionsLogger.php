@@ -127,7 +127,7 @@ class RappaSectionsLogger extends TabularMedicalRecordSectionsLogger
      */
     public function logMedicationsSection(): MedicalRecordLogger
     {
-        foreach ($this->rappaPatient->medications as $medication) {
+        foreach ($this->rappaPatient->get('medications') as $medication) {
             $medicationLog = MedicationLog::updateOrCreate(
                 array_merge([
                     'reference_title'  => ucfirst(strtolower($medication->medication)),
