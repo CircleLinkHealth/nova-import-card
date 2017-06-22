@@ -7,11 +7,9 @@ use App\Importer\Models\ItemLogs\MedicationLog;
 use App\Importer\Models\ItemLogs\ProblemLog;
 use App\Importer\Models\ItemLogs\ProviderLog;
 use App\Models\PatientData\PhoenixHeart\PhoenixHeartName;
-use App\Models\PatientData\PhoenixHeart\PhoenixHeartProblem;
 use App\Models\PatientData\Rappa\RappaData;
 use App\Models\PatientData\Rappa\RappaInsAllergy;
 use App\User;
-use Carbon\Carbon;
 
 class RappaSectionsLogger extends TabularMedicalRecordSectionsLogger
 {
@@ -92,43 +90,17 @@ class RappaSectionsLogger extends TabularMedicalRecordSectionsLogger
      */
     public function logProblemsSection(): MedicalRecordLogger
     {
-        $problems = PhoenixHeartProblem::wherePatientId($this->medicalRecord->mrn)
-            ->get();
+        $problems = RappaData::wherePatientId($this->medicalRecord->mrn)
+            ->get()
+            ->pluck('condition')
+            ->unique()
+            ->values();
 
         foreach ($problems as $problem) {
-            if (str_contains($problem->code, ['-'])) {
-                $pos = strpos($problem->code, '-') + 1;
-                $problemCode = mb_substr($problem->code, $pos);
-            } elseif (str_contains($problem->code, ['ICD'])) {
-                $pos = strpos($problem, 'ICD') + 3;
-                $problemCode = mb_substr($problem->code, $pos);
-            } else {
-                $problemCode = $problem->code;
-            }
-
-            $endDate = null;
-            $end = null;
-            $startDate = null;
-
-            try {
-                $startDate = Carbon::parse($problem->start_date)->toDateTimeString() ?? null;
-                $endDate = Carbon::parse($problem->end_date);
-                $end = $endDate->isFuture()
-                    ? null
-                    : $endDate->toDateTimeString();
-            } catch (\Exception $e) {
-                //do nothing
-            }
-
             $problemLog = ProblemLog::updateOrCreate(
                 array_merge([
-                    'name' => $problem->description,
-                    'code' => $problemCode,
-                ], $this->foreignKeys),
-                [
-                    'start' => $startDate,
-                    'end'   => $end,
-                ]
+                    'name' => $problem->condition,
+                ], $this->foreignKeys)
             );
         }
 
