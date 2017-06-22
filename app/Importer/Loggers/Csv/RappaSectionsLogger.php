@@ -83,7 +83,7 @@ class RappaSectionsLogger extends TabularMedicalRecordSectionsLogger
     {
         foreach ($this->rappaPatient->allergies as $allergy) {
             if (empty($allergy)) {
-
+                continue;
             }
 
             $allergyLog = AllergyLog::updateOrCreate(
