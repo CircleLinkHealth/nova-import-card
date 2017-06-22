@@ -90,4 +90,14 @@ class TabularMedicalRecord extends MedicalRecordEloquent
     {
         return '';
     }
+
+    /**
+     * @return mixed
+     */
+    public function importedMedicalRecord()
+    {
+        return ImportedMedicalRecord::where('medical_record_type', '=', TabularMedicalRecord::class)
+            ->where('medical_record_id', '=', $this->id)
+            ->first();
+    }
 }
