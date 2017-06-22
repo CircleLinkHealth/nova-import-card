@@ -147,13 +147,7 @@ class RappaSectionsLogger extends TabularMedicalRecordSectionsLogger
      */
     public function logProblemsSection(): MedicalRecordLogger
     {
-        $problems = RappaData::wherePatientId($this->medicalRecord->mrn)
-            ->get()
-            ->pluck('condition')
-            ->unique()
-            ->values();
-
-        foreach ($problems as $problem) {
+        foreach ($this->rappaPatient->problems as $problem) {
             $problemLog = ProblemLog::updateOrCreate(
                 array_merge([
                     'name' => $problem->condition,
