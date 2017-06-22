@@ -49,6 +49,10 @@ class ImportCsvPatientList implements ShouldQueue
     public function handle()
     {
         foreach ($this->patientsArr as $row) {
+            if (in_array($row['mrn'], ['#N/A'])) {
+                continue;
+            }
+
             $row['dob'] = Carbon::parse($row['dob'])->format('Y-m-d');
             $row['practice_id'] = $this->practice->id;
 
