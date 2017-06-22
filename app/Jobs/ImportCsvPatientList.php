@@ -9,7 +9,6 @@ use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
-use Maknz\Slack\Facades\Slack;
 
 class ImportCsvPatientList implements ShouldQueue
 {
@@ -60,7 +59,10 @@ class ImportCsvPatientList implements ShouldQueue
                 $row['consent_date'] = Carbon::parse($row['consent_date'])->format('Y-m-d');
             }
 
-            $mr = TabularMedicalRecord::create($row);
+            $mr = TabularMedicalRecord::updateOrCreate([
+                'mrn' => $row['mrn'],
+                'dob' => $row['dob'],
+            ], $row);
 
             $importedMedicalRecords[] = $mr->import();
         }
