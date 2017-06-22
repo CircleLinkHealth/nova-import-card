@@ -54,15 +54,22 @@ class ImportCsvPatientList implements ShouldQueue
 
             $row['dob'] = Carbon::parse($row['dob'])->format('Y-m-d');
             $row['practice_id'] = $this->practice->id;
+            $row['location_id'] = $this->practice->primary_location_id;
 
             if (array_key_exists('consent_date', $row)) {
                 $row['consent_date'] = Carbon::parse($row['consent_date'])->format('Y-m-d');
             }
 
-            $mr = TabularMedicalRecord::updateOrCreate([
+            $exists = TabularMedicalRecord::where([
                 'mrn' => $row['mrn'],
                 'dob' => $row['dob'],
-            ], $row);
+            ])->first();
+
+            if ($exists) {
+                continue;
+            }
+
+            $mr = TabularMedicalRecord::updateOrCreate($row);
 
             $importedMedicalRecords[] = $mr->import();
         }
