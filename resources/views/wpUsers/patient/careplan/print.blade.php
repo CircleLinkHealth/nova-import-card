@@ -45,20 +45,22 @@ if (isset($patient) && !empty($patient)) {
                                 @endif
 
                                 <span class="btn btn-group text-right">
-        @if(auth()->user()->hasRole(['administrator', 'med_assistant', 'provider']))
+
+                                    @if ( ($patient->carePlanStatus == 'qa_approved' && auth()->user()->can('care-plan-approve')) || ($patient->carePlanStatus == 'draft' && auth()->user()->can('care-plan-qa-approve')) )
                                         <a style="margin-right:10px;" class="btn btn-info btn-sm inline-block"
                                            aria-label="..."
                                            role="button"
                                            href="{{ URL::route('patients.listing', ['patient_approval_id' => $patient->id]) }}">Approve Care Plan</a>
-                                        <a class="btn btn-info btn-sm inline-block" aria-label="..." role="button"
-                                           href="{{ URL::route('patients.careplan.multi') }}?users={{ $patient->id }}">Print This Page</a>
                                     @endif
+
+                                    <a class="btn btn-info btn-sm inline-block" aria-label="..." role="button"
+                                       href="{{ URL::route('patients.careplan.multi') }}?users={{ $patient->id }}">Print This Page</a>
+
                                     <form class="lang" action="#" method="POST" id="form">
                                         {{ csrf_field() }}
                                         <input type="hidden" name="lang" value="es"/>
                                         <!-- <button type="submit" class="btn btn-info btn-sm text-right" aria-label="..." value="">Translate to Spanish</button>
-                              -->
-</form></span></div>
+                              -->   </form></span></div>
                         </div>
                     @endif
                     <div class="row gutter">
@@ -66,7 +68,22 @@ if (isset($patient) && !empty($patient)) {
                             <h1 class="patient-summary__title patient-summary__title_9 patient-summary--careplan">Care
                                 Plan</h1>
                         </div>
+                        @if($patient->carePlan->provider_approver_id && $patient->carePlan->provider_date)
+                            <div class="col-xs-12">
+                                <div class="pull-right print-row text-right">
+                                    Approved on: {{$patient->carePlan->provider_date->format('m/d/Y')}}
+                                    at {{$patient->carePlan->provider_date->setTimezone($patient->timezone ?? 'America/New_York')->format('H:i')}} {{$patient->timezone ?? 'America/New_York'}}
+                                </div>
+                                <br><br>
+                                <div class="pull-right print-row text-right">
+                                    Approved by: {{App\User::find($patient->carePlan->provider_approver_id)->fullName}}
+                                </div>
+                            </div>
+                        @endif
                     </div>
+
+                    <br>
+
                     <div class="row gutter">
                         <div class="col-xs-4 col-md-4 print-row text-bold">{{$patient->fullName}}</div>
                         <div class="col-xs-4 col-md-4 print-row">{{$patient->phone}}</div>
@@ -248,7 +265,7 @@ if (isset($patient) && !empty($patient)) {
 
                 @include('partials.view-care-plan.followTheseInstructions')
 
-                <!-- OTHER INFORMATION -->
+            <!-- OTHER INFORMATION -->
                 <div class="row pb-before">
                     <div class="col-xs-12 print-only">
                         <h1 class="patient-summary__title patient-summary__title_9  patient-summary--careplan">Care Plan

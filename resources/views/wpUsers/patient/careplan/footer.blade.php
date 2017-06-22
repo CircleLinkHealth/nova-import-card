@@ -48,9 +48,9 @@
                            dtarget="{{ URL::route('patient.careplan.show', array('patientId' => $patient->id, 'page' => 2)) }}"><span
                                     class="glyphicon glyphicon-circle-arrow-left"></span></a>
                         <a id="approve-forward"
-                           href="{{ URL::route('patient.careplan.print', array('patientId' => $patient->id, 'page' => 3)) }}"
+                           href="{{ URL::route('patient.careplan.print', array('patientId' => $patient->id, 'page' => 3, 'markAsApproved' => true)) }}"
                            class="btn btn-primary btn-next inline-block submitFormBtn"
-                           dtarget="{{ URL::route('patient.careplan.print', array('patientId' => $patient->id, 'page' => 3)) }}">Approve/Next
+                           dtarget="{{ URL::route('patient.careplan.print', array('patientId' => $patient->id, 'page' => 3, 'markAsApproved' => true)) }}">Approve/Next
                             Page&nbsp; <span class="glyphicon glyphicon-circle-arrow-right"></span></a>
                     @else
                         <a id="approve-forward"

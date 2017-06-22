@@ -9,7 +9,6 @@ use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
-use Maknz\Slack\Facades\Slack;
 
 class ImportCsvPatientList implements ShouldQueue
 {
@@ -49,11 +48,25 @@ class ImportCsvPatientList implements ShouldQueue
     public function handle()
     {
         foreach ($this->patientsArr as $row) {
+            if (in_array($row['mrn'], ['#N/A'])) {
+                continue;
+            }
+
             $row['dob'] = Carbon::parse($row['dob'])->format('Y-m-d');
             $row['practice_id'] = $this->practice->id;
+            $row['location_id'] = $this->practice->primary_location_id;
 
             if (array_key_exists('consent_date', $row)) {
                 $row['consent_date'] = Carbon::parse($row['consent_date'])->format('Y-m-d');
+            }
+
+            $exists = TabularMedicalRecord::where([
+                'mrn' => $row['mrn'],
+                'dob' => $row['dob'],
+            ])->first();
+
+            if ($exists) {
+                continue;
             }
 
             $mr = TabularMedicalRecord::create($row);

@@ -54,7 +54,7 @@ if (!function_exists('parseCsvToArray')) {
      *
      * @param $file
      *
-     * @return string
+     * @return array
      */
     function parseCsvToArray($file)
     {

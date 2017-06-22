@@ -4,11 +4,9 @@ namespace App\Http\Controllers\Enrollment;
 
 use App\CareAmbassadorLog;
 use App\Enrollee;
-use App\User;
+use App\Http\Controllers\Controller;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
-use Yajra\Datatables\Facades\Datatables;
-use App\Http\Controllers\Controller;
 
 class EnrollmentCenterController extends Controller
 {
@@ -46,6 +44,17 @@ class EnrollmentCenterController extends Controller
 
         }
 
+        $engagedEnrollee = Enrollee::where([
+            'status'             => 'engaged',
+            'care_ambassador_id' => $careAmbassador->id,
+        ])
+            ->orderBy('attempt_count')
+            ->first();
+
+        if ($engagedEnrollee) {
+            $enrollee = $engagedEnrollee;
+        }
+
         if ($enrollee == null) {
 
             //no calls available
@@ -55,13 +64,13 @@ class EnrollmentCenterController extends Controller
 
         //mark as engaged to prevent double dipping
         $enrollee->status = 'engaged';
+        $enrollee->care_ambassador_id = $careAmbassador->id;
         $enrollee->save();
 
         return view('enrollment-ui.dashboard',
             [
                 'enrollee' => $enrollee,
                 'report'   => CareAmbassadorLog::createOrGetLogs($careAmbassador->id),
-
             ]
         );
 

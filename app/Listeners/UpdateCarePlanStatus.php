@@ -23,6 +23,7 @@ class UpdateCarePlanStatus
      * Handle the event.
      *
      * @param  CarePlanWasApproved $event
+     *
      * @return void
      */
     public function handle(CarePlanWasApproved $event)
@@ -30,16 +31,18 @@ class UpdateCarePlanStatus
         $user = $event->patient;
 
         //Stop the propagation to other Listeners if the CarePlan is already approved.
-        if ($user->carePlanStatus == 'provider_approved') return false;
+        if ($user->carePlanStatus == 'provider_approved') {
+            return false;
+        }
 
-        if (auth()->user()->hasRole(['provider'])) {
+        if ($user->carePlanStatus == 'qa_approved' && auth()->user()->can('care-plan-approve')) {
             $user->carePlanStatus = 'provider_approved'; // careplan_status
             $user->carePlanProviderApprover = auth()->user()->id; // careplan_provider_approver
             $user->carePlanProviderApproverDate = date('Y-m-d H:i:s'); // careplan_provider_date
 
             event(new PdfableCreated($user->carePlan));
 
-        } else {
+        } elseif ($user->carePlanStatus == 'draft' && auth()->user()->can('care-plan-qa-approve')) {
             $user->carePlanStatus = 'qa_approved'; // careplan_status
             $user->carePlanQaApprover = auth()->user()->id; // careplan_qa_approver
 
@@ -64,7 +67,8 @@ class UpdateCarePlanStatus
      *
      * @param User $user
      */
-    private function addPatientConsentedNote(User $user) {
+    private function addPatientConsentedNote(User $user)
+    {
         if (!$user->notes->isEmpty()) {
             return;
         }

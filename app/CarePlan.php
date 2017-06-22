@@ -30,6 +30,11 @@ class CarePlan extends Model implements PdfReport
         'updated_at',
     ];
 
+    protected $dates = [
+        'qa_date',
+        'provider_date',
+    ];
+
     public static function getNumberOfCareplansPendingApproval(User $user)
     {
         $pendingApprovals = 0;

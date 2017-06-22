@@ -91,7 +91,7 @@ class AddNewDefaultCarePlanTemplate extends Seeder
 
 - Limit exposure to common allergens (dust mites, pollen, mold and animal dander) and protect yourself against pollution.
 
-- Keep active to build up strength,
+- Keep active to build up strength.
 
 - Build your strength even when you are sitting, by using small weights or rubber tubing to make your arms and shoulders stronger, standing up and sit down, or holding your legs straight out in front of you, then put them down. Repeat these movements several times.
 
