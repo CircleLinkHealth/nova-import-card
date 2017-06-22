@@ -90,7 +90,7 @@ class PhiMail
 
             if ($patient) {
                 // Add the main body of the message.
-                $this->connector->addText("This is message regarding patient {$patient}.");
+                $this->connector->addText("This is message regarding patient {$patient->fullName}.");
             }
 
             if ($ccdaAttachmentPath) {
