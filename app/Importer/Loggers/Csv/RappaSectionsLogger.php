@@ -7,7 +7,6 @@ use App\Importer\Models\ItemLogs\MedicationLog;
 use App\Importer\Models\ItemLogs\ProblemLog;
 use App\Importer\Models\ItemLogs\ProviderLog;
 use App\Models\MedicalRecords\TabularMedicalRecord;
-use App\Models\PatientData\PhoenixHeart\PhoenixHeartName;
 use App\Models\PatientData\Rappa\RappaData;
 use App\Models\PatientData\Rappa\RappaInsAllergy;
 use App\Models\PatientData\Rappa\RappaName;
@@ -164,12 +163,27 @@ class RappaSectionsLogger extends TabularMedicalRecordSectionsLogger
      */
     public function logProvidersSection(): MedicalRecordLogger
     {
-        $name = PhoenixHeartName::wherePatientId($this->medicalRecord->mrn)
+        $name = RappaData::wherePatientId($this->medicalRecord->mrn)
             ->first();
 
+        if ($name) {
+            $providerLastName = $name->provider;
+        } else {
+            $name = RappaInsAllergy::wherePatientId($this->medicalRecord->mrn)
+                ->first();
+
+            if ($name) {
+                if (empty($name->provider)) {
+                    return $this;
+                }
+
+                $providerLastName = explode(',', $name->provider)[0];
+            }
+        }
+
         $user = User::ofType('provider')
-            ->whereFirstName($name->provider_first_name)
-            ->whereLastName(explode(' ', $name->provider_last_name)[0])
+            ->whereProgramId($this->practice->id)
+            ->whereLastName($providerLastName)
             ->first();
 
         if ($user) {
