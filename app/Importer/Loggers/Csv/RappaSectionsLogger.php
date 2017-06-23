@@ -27,9 +27,6 @@ class RappaSectionsLogger extends TabularMedicalRecordSectionsLogger
             ->get()
             ->keyBy('patient_id');
 
-        $difference = $rappaInsAllergies->keys()->diff($rappaNames->keys());
-        $intersection = $rappaInsAllergies->keys()->intersect($rappaNames->keys());
-
         $merged = $rappaInsAllergies->map(function ($rappaInsAllergy) use ($rappaNames) {
             if ($name = $rappaNames->get($rappaInsAllergy->patient_id)) {
                 return collect($name)->merge($rappaInsAllergy);
@@ -42,15 +39,10 @@ class RappaSectionsLogger extends TabularMedicalRecordSectionsLogger
         $patientList = $merged->map(function ($patient) {
             $data = RappaData::where('patient_id', '=', $patient->get('patient_id'))->get();
 
-            $patient->put('allergies', collect());
             $patient->put('medications', collect());
             $patient->put('problems', collect());
 
             foreach ($data as $d) {
-                if ($d['allergy'] && !$patient['allergy']->contains($d['allergy'])) {
-                    $patient['allergies']->push($d['allergy']);
-                }
-
                 if ($d['medication'] && !$patient['medications']->contains($d['medication'])) {
                     $patient['medications']->push($d['medication']);
                 }
@@ -72,6 +64,40 @@ class RappaSectionsLogger extends TabularMedicalRecordSectionsLogger
         });
 
         $this->rappaPatient = $patientList->first();
+
+        $this->updateTMR();
+    }
+
+    public function updateTMR()
+    {
+        $this->medicalRecord->update([
+            'mrn'        => $this->rappaPatient->get('patient_id'),
+            'first_name' => $this->rappaPatient->get('first_name'),
+            'last_name'  => $this->rappaPatient->get('last_name'),
+
+            'medications_string' => implode(',', $this->rappaPatient->get('medications')->all()),
+            'problems_string'    => implode(',', $this->rappaPatient->get('problems')->all()),
+
+            'dob'                => $this->rappaPatient->get('dob') ?? null,
+
+            //            'gender' => $this->rappaPatient->get(''),
+
+            'provider_name' => $this->rappaPatient->get('provider'),
+
+            'primary_phone' => $this->rappaPatient->get('primary_phone'),
+            'home_phone'    => $this->rappaPatient->get('home_phone'),
+            'work_phone'    => $this->rappaPatient->get('work_phone'),
+            'email'         => $this->rappaPatient->get('email'),
+
+            'address'  => $this->rappaPatient->get('address_1'),
+            'address2' => $this->rappaPatient->get('address_2'),
+            'city'     => $this->rappaPatient->get('city'),
+            'state'    => $this->rappaPatient->get('state'),
+            'zip'      => $this->rappaPatient->get('zip'),
+
+            'primary_insurance'   => $this->rappaPatient->get('primary_insurance'),
+            'secondary_insurance' => $this->rappaPatient->get('secondary_insurance'),
+        ]);
     }
 
     /**
@@ -80,14 +106,16 @@ class RappaSectionsLogger extends TabularMedicalRecordSectionsLogger
      */
     public function logAllergiesSection(): MedicalRecordLogger
     {
-        foreach ($this->rappaPatient->get('allergies') as $allergy) {
-            if (empty($allergy)) {
-                continue;
-            }
+        $allergies = RappaInsAllergy::wherePatientId($this->medicalRecord->mrn)
+            ->get()
+            ->pluck('allergy')
+            ->unique()
+            ->values();
 
-            $allergyLog = AllergyLog::updateOrCreate(
+        foreach ($allergies as $allergy) {
+            $allergyLog = AllergyLog::create(
                 array_merge([
-                    'allergen_name' => ucfirst(strtolower($allergy->allergy)),
+                    'allergen_name' => ucfirst(strtolower($allergy)),
                 ], $this->foreignKeys)
             );
         }
@@ -130,9 +158,9 @@ class RappaSectionsLogger extends TabularMedicalRecordSectionsLogger
         foreach ($this->rappaPatient->get('medications') as $medication) {
             $medicationLog = MedicationLog::updateOrCreate(
                 array_merge([
-                    'reference_title'  => ucfirst(strtolower($medication->medication)),
-                    'product_name'     => ucfirst(strtolower($medication->medication)),
-                    'translation_name' => ucfirst(strtolower($medication->medication)),
+                    'reference_title'  => ucfirst(strtolower($medication)),
+                    'product_name'     => ucfirst(strtolower($medication)),
+                    'translation_name' => ucfirst(strtolower($medication)),
                 ], $this->foreignKeys)
             );
         }
@@ -146,10 +174,10 @@ class RappaSectionsLogger extends TabularMedicalRecordSectionsLogger
      */
     public function logProblemsSection(): MedicalRecordLogger
     {
-        foreach ($this->rappaPatient->problems as $problem) {
+        foreach ($this->rappaPatient->get('problems') as $problem) {
             $problemLog = ProblemLog::updateOrCreate(
                 array_merge([
-                    'name' => $problem->condition,
+                    'name' => $problem,
                 ], $this->foreignKeys)
             );
         }
