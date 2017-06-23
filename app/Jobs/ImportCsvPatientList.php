@@ -52,7 +52,9 @@ class ImportCsvPatientList implements ShouldQueue
                 continue;
             }
 
-            $row['dob'] = Carbon::parse($row['dob'])->format('Y-m-d');
+            $row['dob'] = $row['dob']
+                ? Carbon::parse($row['dob'])->format('Y-m-d')
+                : null;
             $row['practice_id'] = $this->practice->id;
             $row['location_id'] = $this->practice->primary_location_id;
 
