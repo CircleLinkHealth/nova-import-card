@@ -209,7 +209,7 @@ $today = \Carbon\Carbon::now()->toFormattedDateString();
                     <div class="row gutter">
                         <div class="col-xs-4 col-md-4 print-row text-bold">
                             @if($billing)
-                                {{$billing->fullName}} {{($billing->getSpecialtyAttribute() == '')? '' :  $billing->getSpecialtyAttribute() }}
+                                {{$billing->fullName}} {!! ($billing->getSpecialtyAttribute() == '')? '' :  "<br> {$billing->getSpecialtyAttribute()}"!!}
                             @else
                                 <em>No Billing Provider Selected</em>
                             @endif
