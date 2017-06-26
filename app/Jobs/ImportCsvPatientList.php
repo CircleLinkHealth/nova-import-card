@@ -9,6 +9,7 @@ use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
+use Maknz\Slack\Facades\Slack;
 
 class ImportCsvPatientList implements ShouldQueue
 {
@@ -48,41 +49,46 @@ class ImportCsvPatientList implements ShouldQueue
     public function handle()
     {
         foreach ($this->patientsArr as $row) {
-            if (in_array($row['mrn'], ['#N/A'])) {
-                continue;
-            }
-
-            $row['dob'] = $row['dob']
-                ? Carbon::parse($row['dob'])->format('Y-m-d')
-                : null;
-            $row['practice_id'] = $this->practice->id;
-            $row['location_id'] = $this->practice->primary_location_id;
-
-            if (array_key_exists('consent_date', $row)) {
-                $row['consent_date'] = Carbon::parse($row['consent_date'])->format('Y-m-d');
-            }
-
-            $exists = TabularMedicalRecord::where([
-                'mrn' => $row['mrn'],
-                'dob' => $row['dob'],
-            ])->first();
-
-            if ($exists) {
-                if ($exists->importedMedicalRecord()) {
-                    continue;
-                }
-
-                $exists->delete();
-            }
-
-            $mr = TabularMedicalRecord::create($row);
-
-            $importedMedicalRecords[] = $mr->import();
+            $this->importUsingTabularRecord($row);
         }
 
-//        $url = url('view.files.ready.to.import');
+        $url = url('view.files.ready.to.import');
 
-//        Slack::to('#background-tasks')->send("Queued job Import CSV for {$this->practice->display_name} completed! Visit $url.");
+        Slack::to('#background-tasks')->send("Queued job Import CSV for {$this->practice->display_name} completed! Visit $url.");
+    }
+
+    public function importUsingTabularRecord($row)
+    {
+        if (in_array($row['mrn'], ['#N/A'])) {
+            return;
+        }
+
+        $row['dob'] = $row['dob']
+            ? Carbon::parse($row['dob'])->format('Y-m-d')
+            : null;
+        $row['practice_id'] = $this->practice->id;
+        $row['location_id'] = $this->practice->primary_location_id;
+
+        if (array_key_exists('consent_date', $row)) {
+            $row['consent_date'] = Carbon::parse($row['consent_date'])->format('Y-m-d');
+        }
+
+        $exists = TabularMedicalRecord::where([
+            'mrn' => $row['mrn'],
+            'dob' => $row['dob'],
+        ])->first();
+
+        if ($exists) {
+            if ($exists->importedMedicalRecord()) {
+                return;
+            }
+
+            $exists->delete();
+        }
+
+        $mr = TabularMedicalRecord::create($row);
+
+        $importedMedicalRecords[] = $mr->import();
     }
 
     /**
