@@ -2,6 +2,7 @@
 
 namespace App\Jobs;
 
+use App\Models\MedicalRecords\Ccda;
 use App\Models\MedicalRecords\TabularMedicalRecord;
 use App\Practice;
 use Carbon\Carbon;
@@ -49,7 +50,13 @@ class ImportCsvPatientList implements ShouldQueue
     public function handle()
     {
         foreach ($this->patientsArr as $row) {
-            $this->importUsingTabularRecord($row);
+            if (isset($row['medical_record_type'])) {
+                if ($row['medical_record_type'] == Ccda::class) {
+
+                }
+            }
+
+            $this->createTabularMedicalRecordAndImport($row);
         }
 
         $url = url('view.files.ready.to.import');
@@ -57,7 +64,12 @@ class ImportCsvPatientList implements ShouldQueue
         Slack::to('#background-tasks')->send("Queued job Import CSV for {$this->practice->display_name} completed! Visit $url.");
     }
 
-    public function importUsingTabularRecord($row)
+    /**
+     * Create a TabularMedicalRecord for each row, and import it.
+     *
+     * @param $row
+     */
+    public function createTabularMedicalRecordAndImport($row)
     {
         if (in_array($row['mrn'], ['#N/A'])) {
             return;
