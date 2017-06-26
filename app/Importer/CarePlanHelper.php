@@ -133,50 +133,71 @@ class CarePlanHelper
      */
     public function storePhones()
     {
+        $primaryPhone = (new StringManipulation())->extractNumbers($this->demographicsImport->primary_phone)
+            ? (new StringManipulation())->formatPhoneNumberE164($this->demographicsImport->primary_phone)
+            : $this->demographicsImport->primary_phone;
+
         if (!empty($homeNumber = $this->demographicsImport->home_phone)) {
+            $number = (new StringManipulation())->formatPhoneNumberE164($homeNumber);
+
+            $makePrimary = $primaryPhone == PhoneNumber::HOME || $primaryPhone == $number;
+
             $homePhone = PhoneNumber::create([
-                'user_id' => $this->user->id,
-                'number'  => (new StringManipulation())->formatPhoneNumberE164($homeNumber),
-                'type'    => PhoneNumber::HOME,
+                'user_id'    => $this->user->id,
+                'number'     => $number,
+                'type'       => PhoneNumber::HOME,
+                'is_primary' => $makePrimary,
             ]);
         }
 
         if (!empty($mobileNumber = $this->demographicsImport->cell_phone)) {
+            $number = (new StringManipulation())->formatPhoneNumberE164($mobileNumber);
+
+            $makePrimary = $primaryPhone == PhoneNumber::MOBILE || $primaryPhone == $number;
+
             $mobilePhone = PhoneNumber::create([
-                'user_id' => $this->user->id,
-                'number'  => (new StringManipulation())->formatPhoneNumberE164($mobileNumber),
-                'type'    => PhoneNumber::MOBILE,
+                'user_id'    => $this->user->id,
+                'number'     => $number,
+                'type'       => PhoneNumber::MOBILE,
+                'is_primary' => $makePrimary,
             ]);
         }
 
         if (!empty($workNumber = $this->demographicsImport->work_phone)) {
+            $number = (new StringManipulation())->formatPhoneNumberE164($workNumber);
+
+            $makePrimary = $primaryPhone == PhoneNumber::WORK || $primaryPhone == $number;
+
             $workPhone = PhoneNumber::create([
-                'user_id' => $this->user->id,
-                'number'  => (new StringManipulation())->formatPhoneNumberE164($workNumber),
-                'type'    => PhoneNumber::WORK,
-            ]);
-        }
-
-        $primaryPhone = empty($mobileNumber)
-            ? empty($homeNumber)
-                ? empty($workNumber)
-                    ? false
-                    : $workPhone
-                : $homePhone
-            : $mobilePhone;
-
-        if ($primaryPhone) {
-            $primaryPhone->setAttribute('is_primary', true);
-            $primaryPhone->save();
-        }
-
-        if (!$primaryPhone && $this->demographicsImport->primary_phone) {
-            PhoneNumber::create([
                 'user_id'    => $this->user->id,
-                'number'     => (new StringManipulation())->formatPhoneNumberE164($this->demographicsImport->primary_phone),
-                'type'       => PhoneNumber::HOME,
-                'is_primary' => true,
+                'number'     => $number,
+                'type'       => PhoneNumber::WORK,
+                'is_primary' => $makePrimary,
             ]);
+        }
+
+        if (!$primaryPhone) {
+            $primaryPhone = empty($mobileNumber)
+                ? empty($homeNumber)
+                    ? empty($workNumber)
+                        ? false
+                        : $workPhone
+                    : $homePhone
+                : $mobilePhone;
+
+            if ($primaryPhone) {
+                $primaryPhone->setAttribute('is_primary', true);
+                $primaryPhone->save();
+            }
+
+            if (!$primaryPhone && $this->demographicsImport->primary_phone) {
+                PhoneNumber::create([
+                    'user_id'    => $this->user->id,
+                    'number'     => (new StringManipulation())->formatPhoneNumberE164($this->demographicsImport->primary_phone),
+                    'type'       => PhoneNumber::HOME,
+                    'is_primary' => true,
+                ]);
+            }
         }
 
         return $this;

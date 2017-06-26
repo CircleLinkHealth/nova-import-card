@@ -2,6 +2,8 @@
 
 namespace App\Jobs;
 
+use App\Models\MedicalRecords\Ccda;
+use App\Models\MedicalRecords\ImportedMedicalRecord;
 use App\Models\MedicalRecords\TabularMedicalRecord;
 use App\Practice;
 use Carbon\Carbon;
@@ -9,6 +11,7 @@ use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
+use Maknz\Slack\Facades\Slack;
 
 class ImportCsvPatientList implements ShouldQueue
 {
@@ -48,41 +51,113 @@ class ImportCsvPatientList implements ShouldQueue
     public function handle()
     {
         foreach ($this->patientsArr as $row) {
-            if (in_array($row['mrn'], ['#N/A'])) {
+            if (isset($row['medical_record_type'])) {
+                if (stripslashes($row['medical_record_type']) == Ccda::class) {
+                    $imr = $this->importExistingCcda($row['medical_record_id']);
+
+                    if ($imr) {
+                        $this->replaceWithValuesFromCsv($imr, $row);
+                    }
+                    continue;
+                }
+            }
+
+            $this->createTabularMedicalRecordAndImport($row);
+        }
+
+        $url = url('view.files.ready.to.import');
+
+        Slack::to('#background-tasks')->send("Queued job Import CSV for {$this->practice->display_name} completed! Visit $url.");
+    }
+
+    /**
+     * Import a Patient whose CCDA we have already.
+     *
+     * @param $ccdaId
+     *
+     * @return ImportedMedicalRecord|bool
+     */
+    public function importExistingCcda($ccdaId)
+    {
+        $ccda = Ccda::where([
+            'id' => $ccdaId,
+            'imported' => false,
+        ])->first();
+
+        if (!$ccda) {
+            return false;
+        }
+
+        $imr = $ccda->import();
+
+        //Quick fix
+        //Importing adds an ImportedMedicalRecord to Ccda, which breaks updating
+        $ccdObject = Ccda::find($ccdaId);
+        $ccdObject->status = Ccda::QA;
+        $ccdObject->imported = true;
+        $ccdObject->save();
+
+        return $imr;
+    }
+
+    public function replaceWithValuesFromCsv(ImportedMedicalRecord $importedMedicalRecord, array $row)
+    {
+        $demographics = $importedMedicalRecord->demographics;
+
+        $demographics->primary_phone = $row['primary_phone'];
+        $demographics->preferred_call_times = $row['preferred_call_times'];
+        $demographics->preferred_call_days = $row['preferred_call_days'];
+
+        foreach (['cell_phone', 'home_phone', 'work_phone'] as $phone) {
+            if ($demographics->{$phone} == $row[$phone]) {
                 continue;
             }
 
-            $row['dob'] = $row['dob']
-                ? Carbon::parse($row['dob'])->format('Y-m-d')
-                : null;
-            $row['practice_id'] = $this->practice->id;
-            $row['location_id'] = $this->practice->primary_location_id;
-
-            if (array_key_exists('consent_date', $row)) {
-                $row['consent_date'] = Carbon::parse($row['consent_date'])->format('Y-m-d');
-            }
-
-            $exists = TabularMedicalRecord::where([
-                'mrn' => $row['mrn'],
-                'dob' => $row['dob'],
-            ])->first();
-
-            if ($exists) {
-                if ($exists->importedMedicalRecord()) {
-                    continue;
-                }
-
-                $exists->delete();
-            }
-
-            $mr = TabularMedicalRecord::create($row);
-
-            $importedMedicalRecords[] = $mr->import();
+            $demographics->{$phone} = $row[$phone];
         }
 
-//        $url = url('view.files.ready.to.import');
+        $demographics->save();
+    }
 
-//        Slack::to('#background-tasks')->send("Queued job Import CSV for {$this->practice->display_name} completed! Visit $url.");
+    /**
+     * Create a TabularMedicalRecord for each row, and import it.
+     *
+     * @param $row
+     *
+     * @return bool|null
+     */
+    public function createTabularMedicalRecordAndImport($row)
+    {
+        if (in_array($row['mrn'], ['#N/A'])) {
+            return false;
+        }
+
+        $row['dob'] = $row['dob']
+            ? Carbon::parse($row['dob'])->format('Y-m-d')
+            : null;
+        $row['practice_id'] = $this->practice->id;
+        $row['location_id'] = $this->practice->primary_location_id;
+
+        if (array_key_exists('consent_date', $row)) {
+            $row['consent_date'] = Carbon::parse($row['consent_date'])->format('Y-m-d');
+        }
+
+        $exists = TabularMedicalRecord::where([
+            'mrn' => $row['mrn'],
+            'dob' => $row['dob'],
+        ])->first();
+
+        if ($exists) {
+            if ($exists->importedMedicalRecord()) {
+                return null;
+            }
+
+            $exists->delete();
+        }
+
+        $mr = TabularMedicalRecord::create($row);
+
+        $importedMedicalRecords[] = $mr->import();
     }
 
     /**
