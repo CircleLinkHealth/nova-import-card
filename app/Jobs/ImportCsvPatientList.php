@@ -3,6 +3,7 @@
 namespace App\Jobs;
 
 use App\Models\MedicalRecords\Ccda;
+use App\Models\MedicalRecords\ImportedMedicalRecord;
 use App\Models\MedicalRecords\TabularMedicalRecord;
 use App\Practice;
 use Carbon\Carbon;
@@ -51,8 +52,13 @@ class ImportCsvPatientList implements ShouldQueue
     {
         foreach ($this->patientsArr as $row) {
             if (isset($row['medical_record_type'])) {
-                if ($row['medical_record_type'] == Ccda::class) {
-                    $this->importExistingCcda($row['medical_record_id']);
+                if (stripslashes($row['medical_record_type']) == Ccda::class) {
+                    $imr = $this->importExistingCcda($row['medical_record_id']);
+
+                    if ($imr) {
+                        $this->replaceWithValuesFromCsv($imr, $row);
+                    }
+                    continue;
                 }
             }
 
@@ -69,16 +75,45 @@ class ImportCsvPatientList implements ShouldQueue
      *
      * @param $ccdaId
      *
-     * @return bool
+     * @return ImportedMedicalRecord|bool
      */
-    public function importExistingCcda($ccdaId) {
+    public function importExistingCcda($ccdaId)
+    {
         $ccda = Ccda::find($ccdaId);
 
         if (!$ccda) {
             return false;
         }
 
-        $importedMedicalRecord = $ccda->import();
+        $imr = $ccda->import();
+
+        //Quick fix
+        //Importing adds an ImportedMedicalRecord to Ccda, which breaks updating
+        $ccdObject = Ccda::find($ccdaId);
+        $ccdObject->status = Ccda::QA;
+        $ccdObject->imported = true;
+        $ccdObject->save();
+
+        return $imr;
+    }
+
+    public function replaceWithValuesFromCsv(ImportedMedicalRecord $importedMedicalRecord, array $row)
+    {
+        $demographics = $importedMedicalRecord->demographics;
+
+        $demographics->primary_phone = $row['primary_phone'];
+        $demographics->preferred_call_times = $row['preferred_call_times'];
+        $demographics->preferred_call_days = $row['preferred_call_days'];
+
+        foreach (['cell_phone', 'home_phone', 'work_phone'] as $phone) {
+            if ($demographics->{$phone} == $row[$phone]) {
+                continue;
+            }
+
+            $demographics->{$phone} = $row[$phone];
+        }
+
+        $demographics->save();
     }
 
     /**
