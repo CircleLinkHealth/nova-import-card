@@ -52,7 +52,7 @@ class ImportCsvPatientList implements ShouldQueue
         foreach ($this->patientsArr as $row) {
             if (isset($row['medical_record_type'])) {
                 if ($row['medical_record_type'] == Ccda::class) {
-
+                    $this->importExistingCcda($row['medical_record_id']);
                 }
             }
 
@@ -65,14 +65,33 @@ class ImportCsvPatientList implements ShouldQueue
     }
 
     /**
+     * Import a Patient whose CCDA we have already.
+     *
+     * @param $ccdaId
+     *
+     * @return bool
+     */
+    public function importExistingCcda($ccdaId) {
+        $ccda = Ccda::find($ccdaId);
+
+        if (!$ccda) {
+            return false;
+        }
+
+        $importedMedicalRecord = $ccda->import();
+    }
+
+    /**
      * Create a TabularMedicalRecord for each row, and import it.
      *
      * @param $row
+     *
+     * @return bool|null
      */
     public function createTabularMedicalRecordAndImport($row)
     {
         if (in_array($row['mrn'], ['#N/A'])) {
-            return;
+            return false;
         }
 
         $row['dob'] = $row['dob']
@@ -92,7 +111,7 @@ class ImportCsvPatientList implements ShouldQueue
 
         if ($exists) {
             if ($exists->importedMedicalRecord()) {
-                return;
+                return null;
             }
 
             $exists->delete();
