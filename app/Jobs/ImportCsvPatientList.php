@@ -2,10 +2,13 @@
 
 namespace App\Jobs;
 
+use App\Importer\Models\ItemLogs\DocumentLog;
+use App\Importer\Models\ItemLogs\ProviderLog;
 use App\Models\MedicalRecords\Ccda;
 use App\Models\MedicalRecords\ImportedMedicalRecord;
 use App\Models\MedicalRecords\TabularMedicalRecord;
 use App\Practice;
+use App\User;
 use Carbon\Carbon;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
@@ -80,7 +83,7 @@ class ImportCsvPatientList implements ShouldQueue
     public function importExistingCcda($ccdaId)
     {
         $ccda = Ccda::where([
-            'id' => $ccdaId,
+            'id'       => $ccdaId,
             'imported' => false,
         ])->first();
 
@@ -90,16 +93,21 @@ class ImportCsvPatientList implements ShouldQueue
 
         $imr = $ccda->import();
 
-        //Quick fix
-        //Importing adds an ImportedMedicalRecord to Ccda, which breaks updating
-        $ccdObject = Ccda::find($ccdaId);
-        $ccdObject->status = Ccda::QA;
-        $ccdObject->imported = true;
-        $ccdObject->save();
+        $update = Ccda::whereId($ccdaId)
+            ->update([
+                'status'   => Ccda::QA,
+                'imported' => true,
+            ]);
 
         return $imr;
     }
 
+    /**
+     * Get the most updated information from the csv (phone numbers, preferred call days/times, provider and so on).
+     *
+     * @param ImportedMedicalRecord $importedMedicalRecord
+     * @param array $row
+     */
     public function replaceWithValuesFromCsv(ImportedMedicalRecord $importedMedicalRecord, array $row)
     {
         $demographics = $importedMedicalRecord->demographics;
@@ -117,6 +125,48 @@ class ImportCsvPatientList implements ShouldQueue
         }
 
         $demographics->save();
+
+        if (!$importedMedicalRecord->practice_id) {
+            $importedMedicalRecord->practice_id = $this->practice->id;
+        }
+
+        if (!$importedMedicalRecord->location_id) {
+            $importedMedicalRecord->location_id = $this->practice->primary_location_id;
+        }
+
+        if ($importedMedicalRecord->billing_provider_id) {
+            $providerName = explode(' ', $row['provider']);
+
+            if (count($providerName) >= 2) {
+                $provider = User::whereFirstName($providerName[0])
+                    ->whereLastName($providerName[1])
+                    ->first();
+            }
+
+            if (!empty($provider)) {
+                $importedMedicalRecord->billing_provider_id = $provider->id;
+                $importedMedicalRecord->location_id = $provider->locations->first()->id;
+            }
+        }
+
+        $mr = $importedMedicalRecord->medicalRecord();
+
+        DocumentLog::whereIn('id', $mr->document->pluck('id')->all())
+            ->update([
+                'location_id'         => $importedMedicalRecord->location_id,
+                'billing_provider_id' => $importedMedicalRecord->billing_provider_id,
+                'practice_id'         => $importedMedicalRecord->practice_id,
+            ]);
+
+        ProviderLog::whereIn('id', $mr->providers->pluck('id')->all())
+            ->update([
+                'location_id'         => $importedMedicalRecord->location_id,
+                'billing_provider_id' => $importedMedicalRecord->billing_provider_id,
+                'practice_id'         => $importedMedicalRecord->practice_id,
+            ]);
+
+
+        $importedMedicalRecord->save();
     }
 
     /**

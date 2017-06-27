@@ -36,7 +36,7 @@
     <div class="nav-wrapper" style="background: #4fb2e2;">
         <a href="#!" style="padding-left: 10px" class="brand-logo">CircleLink Health Enrollment Center</a>
         <ul class="right hide-on-med-and-down">
-            <li><a href="{{ url('/enrollment/training') }}">Training Materials</a></li>
+            <li><a href="https://drive.google.com/file/d/0Byt9en_0bcOpRGM3LVBQamh4WkE/view" target="_blank">Training Materials</a></li>
             <!-- Dropdown Trigger -->
             <li><a class="dropdown-button" href="#!" data-activates="dropdown1">{{ auth()->user()->fullName }}<i
                             class="material-icons right">settings</i></a></li>
