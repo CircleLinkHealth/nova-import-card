@@ -80,7 +80,7 @@ class ImportCsvPatientList implements ShouldQueue
     public function importExistingCcda($ccdaId)
     {
         $ccda = Ccda::where([
-            'id' => $ccdaId,
+            'id'       => $ccdaId,
             'imported' => false,
         ])->first();
 
@@ -90,12 +90,11 @@ class ImportCsvPatientList implements ShouldQueue
 
         $imr = $ccda->import();
 
-        //Quick fix
-        //Importing adds an ImportedMedicalRecord to Ccda, which breaks updating
-        $ccdObject = Ccda::find($ccdaId);
-        $ccdObject->status = Ccda::QA;
-        $ccdObject->imported = true;
-        $ccdObject->save();
+        $update = Ccda::whereId($ccdaId)
+            ->update([
+                'status'   => Ccda::QA,
+                'imported' => true,
+            ]);
 
         return $imr;
     }
