@@ -93,15 +93,6 @@ class PatientDailyAuditReport
         $pdf->save(storage_path("download/$name.pdf"), true);
 
         return "/$name.pdf";
-
-        if (!file_exists($path)) {
-            return "Could not locate file with name: $path";
-        }
-
-        return response()->download($path, $name, [
-            'Content-Length: ' . filesize($path),
-        ]);
-
     }
 
 }
