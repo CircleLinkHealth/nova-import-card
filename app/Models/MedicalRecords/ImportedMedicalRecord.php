@@ -9,6 +9,7 @@ use App\Importer\Models\ImportedItems\AllergyImport;
 use App\Importer\Models\ImportedItems\DemographicsImport;
 use App\Importer\Models\ImportedItems\MedicationImport;
 use App\Importer\Models\ImportedItems\ProblemImport;
+use App\Importer\Models\ItemLogs\ProviderLog;
 use App\Location;
 use App\Practice;
 use App\Scopes\Universal\MedicalRecordIdAndTypeTrait;
@@ -34,6 +35,11 @@ class ImportedMedicalRecord extends Model implements ImportedMedicalRecordInterf
         return $this->hasMany(AllergyImport::class);
     }
 
+    /**
+     * Get the Demographics that were imported for QA
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\HasOne
+     */
     public function demographics()
     {
         return $this->hasOne(DemographicsImport::class);
@@ -42,7 +48,7 @@ class ImportedMedicalRecord extends Model implements ImportedMedicalRecordInterf
     /**
      * Get the Medications that were imported for QA
      *
-     * @return \App\Importer\Models\ImportedItems\MedicationImport[]
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
      */
     public function medications()
     {
@@ -52,7 +58,7 @@ class ImportedMedicalRecord extends Model implements ImportedMedicalRecordInterf
     /**
      * Get the Problems that were imported for QA
      *
-     * @return \App\Importer\Models\ImportedItems\ProblemImport[]
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
      */
     public function problems()
     {
