@@ -1,10 +1,11 @@
 <?php namespace App\Reports;
+
 use App\Note;
 use App\Patient;
 use App\User;
+use Barryvdh\Snappy\Facades\SnappyPdf as PDF;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
-use Barryvdh\Snappy\Facades\SnappyPdf as PDF;
 
 /**
  * Created by PhpStorm.
@@ -28,7 +29,22 @@ class PatientDailyAuditReport
 
     }
 
-    public function renderData() : array {
+    public function renderPDF()
+    {
+
+        $name = $this->patient->user->last_name . '-' . Carbon::now()->timestamp;
+
+        $this->renderData();
+
+        $pdf = PDF::loadView('wpUsers.patient.audit', ['data' => $this->data]);
+
+        $pdf->save(storage_path("download/$name.pdf"), true);
+
+        return "/$name.pdf";
+    }
+
+    public function renderData(): array
+    {
 
         $this->data['name'] = $this->patient->user->fullName;
         $this->data['month'] = $this->forMonth->format('F, Y');
@@ -39,7 +55,7 @@ class PatientDailyAuditReport
             ->select(DB::raw('DATE(performed_at) as day, type, duration'))
             ->whereBetween('created_at', [
                 $this->forMonth->startOfMonth()->toDateTimeString(),
-                $this->forMonth->endOfMonth()->toDateTimeString()
+                $this->forMonth->endOfMonth()->toDateTimeString(),
             ])
             ->where('patient_id', $this->patient->user_id)
             ->orderBy('created_at', 'desc')
@@ -48,7 +64,7 @@ class PatientDailyAuditReport
         $activities = $activities->groupBy('day');
         $this->data['daily'] = [];
 
-        foreach ( $activities as $date => $value){
+        foreach ($activities as $date => $value) {
 
             $value = collect($value);
 
@@ -66,7 +82,7 @@ class PatientDailyAuditReport
 
             $this->data['daily'][$date]['notes'] = [];
 
-            foreach ($notes as $note){
+            foreach ($notes as $note) {
 
                 $time = Carbon::parse($note->created_at)->format("g:i:s A");
                 $performer = User::find($note->author_id)->fullName;
@@ -80,19 +96,6 @@ class PatientDailyAuditReport
 
         return $this->data;
 
-    }
-
-    public function renderPDF() {
-
-        $name = $this->patient->user->last_name . '-' . Carbon::now()->timestamp;
-
-        $this->renderData();
-
-        $pdf = PDF::loadView('wpUsers.patient.audit', ['data' => $this->data]);
-
-        $pdf->save(storage_path("download/$name.pdf"), true);
-
-        return "/$name.pdf";
     }
 
 }
