@@ -1449,6 +1449,16 @@ Route::group([
         'as'   => 'provider.dashboard.store.staff',
     ]);
 
+    Route::post('notifications', [
+        'uses' => 'Provider\DashboardController@postStoreNotifications',
+        'as'   => 'provider.dashboard.store.notifications',
+    ]);
+
+    Route::get('notifications', [
+        'uses' => 'Provider\DashboardController@getCreateNotifications',
+        'as'   => 'provider.dashboard.manage.notifications',
+    ]);
+
     Route::post('practice', [
         'uses' => 'Provider\DashboardController@postStorePractice',
         'as'   => 'provider.dashboard.store.practice',
