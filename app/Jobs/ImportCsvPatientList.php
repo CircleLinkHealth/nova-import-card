@@ -100,6 +100,12 @@ class ImportCsvPatientList implements ShouldQueue
         return $imr;
     }
 
+    /**
+     * Get the most updated information from the csv (phone numbers, preferred call days/times, provider and so on).
+     *
+     * @param ImportedMedicalRecord $importedMedicalRecord
+     * @param array $row
+     */
     public function replaceWithValuesFromCsv(ImportedMedicalRecord $importedMedicalRecord, array $row)
     {
         $demographics = $importedMedicalRecord->demographics;
