@@ -5,15 +5,22 @@
 {{--</a>--}}
 {{--</li>--}}
 <li>
-    <a class="" href="{{ route('provider.dashboard.manage.practice', ['practiceSlug' => $practiceSlug]) }}">
-        <i class=" material-icons">business</i>
-        Practice
-    </a>
-</li>
-<li>
     <a class="" href="{{ route('provider.dashboard.manage.locations', ['practiceSlug' => $practiceSlug]) }}">
         <i class=" material-icons">add_location</i>
         Locations
+    </a>
+</li>
+
+<li>
+    <a class="" href="{{ route('provider.dashboard.manage.notifications', ['practiceSlug' => $practiceSlug]) }}">
+        <i class=" material-icons">add_alert</i>
+        Notifications
+    </a>
+</li>
+<li>
+    <a class="" href="{{ route('provider.dashboard.manage.practice', ['practiceSlug' => $practiceSlug]) }}">
+        <i class=" material-icons">business</i>
+        Practice
     </a>
 </li>
 <li>
