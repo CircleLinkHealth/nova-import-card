@@ -67,13 +67,20 @@ class DashboardController extends Controller
     {
         $users = $this->onboardingService->getExistingStaff($this->primaryPractice);
 
+        return view('provider.practice.create', array_merge([
+            'practiceSlug'     => $this->practiceSlug,
+            'staff'            => $users['existingUsers'],
+        ], $this->returnWithAll));
+    }
+
+    public function getCreateNotifications()
+    {
         if ($this->primaryPractice->settings->isEmpty()) {
             $practiceSettings = $this->primaryPractice->syncSettings(new Settings());
         }
 
-        return view('provider.practice.create', array_merge([
+        return view('provider.notifications.create', array_merge([
             'practiceSlug'     => $this->practiceSlug,
-            'staff'            => $users['existingUsers'],
             'practiceSettings' => $practiceSettings ?? $this->primaryPractice->settings->first(),
         ], $this->returnWithAll));
     }
@@ -125,6 +132,13 @@ class DashboardController extends Controller
             ]);
     }
 
+    public function postStoreNotifications(Request $request)
+    {
+        $this->primaryPractice->syncSettings(new Settings($request->input('settings') ?? []));
+
+        return redirect()->back();
+    }
+
     public function postStoreStaff(Request $request)
     {
         $primaryPractice = $this->primaryPractice;
@@ -145,7 +159,6 @@ class DashboardController extends Controller
         }
 
         $this->primaryPractice->update($update);
-        $this->primaryPractice->syncSettings(new Settings($request->input('settings') ?? []));
 
         return redirect()->back();
     }
