@@ -72,6 +72,13 @@
                            value="1" @if($practiceSettings->dm_pdf_notes){{'checked'}}@endif>
                     <label for="dm_pdf_notes">Send PDF Notes</label>
                 </div>
+
+                <div class="input-field col s6">
+                    <input name="settings[dm_audit_reports]" type="checkbox"
+                           id="dm_audit_reports"
+                           value="1" @if($practiceSettings->dm_audit_reports){{'checked'}}@endif>
+                    <label for="dm_audit_reports">Send Audit Reports</label>
+                </div>
             </div>
 
             <div class="row">
@@ -88,6 +95,13 @@
                            id="efax_pdf_notes"
                            value="1" @if($practiceSettings->efax_pdf_notes){{'checked'}}@endif>
                     <label for="efax_pdf_notes">Send PDF Notes</label>
+                </div>
+
+                <div class="input-field col s6">
+                    <input name="settings[efax_audit_reports]" type="checkbox"
+                           id="efax_audit_reports"
+                           value="1" @if($practiceSettings->efax_audit_reports){{'checked'}}@endif>
+                    <label for="efax_audit_reports">Send Audit Reports</label>
                 </div>
             </div>
 
