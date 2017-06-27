@@ -1,6 +1,6 @@
 @extends('provider.layouts.dashboard')
 
-@section('title', 'Notification Settings')
+@section('title', 'Notifications and Settings')
 
 @section('module')
 

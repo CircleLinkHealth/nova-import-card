@@ -14,7 +14,7 @@
 <li>
     <a class="" href="{{ route('provider.dashboard.manage.notifications', ['practiceSlug' => $practiceSlug]) }}">
         <i class=" material-icons">add_alert</i>
-        Notifications
+        Notifications and Settings
     </a>
 </li>
 <li>
