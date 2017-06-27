@@ -15,7 +15,7 @@
                     <b>Ask patient:</b> Do you want us to call you directly or is there someone else we should contact?
                 @endif
                 <br>
-                Confirm the patient’s phone number(s)select preferred number with radio button:
+                <b>Use radio button to confirm patient's preferred phone number to receive care management calls.</b>
                 <br>
                 [<b>format</b>: xxx-xxx-xxxx]
             </blockquote>
