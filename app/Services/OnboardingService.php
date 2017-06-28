@@ -112,28 +112,42 @@ class OnboardingService
                 ? $permissions->pivot->role_id
                 : $user->roles->first()['id'];
 
-            $contactType = $user->forwardAlertsTo->first()->pivot->name ?? null;
-            $contactUser = $user->forwardAlertsTo->first() ?? null;
+            $forwardAlertsToContactUser = $user->forwardAlertsTo()
+                    ->having('name', '=', User::FORWARD_ALERTS_IN_ADDITION_TO_PROVIDER)
+                    ->orHaving('name', '=', User::FORWARD_ALERTS_INSTEAD_OF_PROVIDER)
+                    ->first()
+                ?? null;
+
+            $forwardCarePlanApprovalEmailsToContactUser = $user->forwardAlertsTo()
+                    ->having('name', '=', User::FORWARD_CAREPLAN_APPROVAL_EMAILS_IN_ADDITION_TO_PROVIDER)
+                    ->orHaving('name', '=', User::FORWARD_CAREPLAN_APPROVAL_EMAILS_INSTEAD_OF_PROVIDER)
+                    ->first()
+                ?? null;
 
             return [
-                'id'                 => $user->id,
-                'email'              => $user->email,
-                'last_name'          => $user->last_name,
-                'first_name'         => $user->first_name,
-                'phone_number'       => $phone->number ?? '',
-                'phone_extension'    => $phone->extension ?? '',
-                'phone_type'         => array_search($phone->type ?? '', PhoneNumber::getTypes()) ?? '',
-                'isComplete'         => false,
-                'validated'          => false,
-                'grandAdminRights'   => $permissions->pivot->has_admin_rights ?? false,
-                'sendBillingReports' => $permissions->pivot->send_billing_reports ?? false,
-                'errorCount'         => 0,
-                'role_id'            => $roleId,
-                'locations'          => $user->locations->pluck('id'),
-                'emr_direct_address' => $user->emr_direct_address,
-                'forward_alerts_to'  => [
-                    'who'     => $contactType ?? 'billing_provider',
-                    'user_id' => $contactUser->id ?? null,
+                'id'                                  => $user->id,
+                'email'                               => $user->email,
+                'last_name'                           => $user->last_name,
+                'first_name'                          => $user->first_name,
+                'phone_number'                        => $phone->number ?? '',
+                'phone_extension'                     => $phone->extension ?? '',
+                'phone_type'                          => array_search($phone->type ?? '',
+                        PhoneNumber::getTypes()) ?? '',
+                'isComplete'                          => false,
+                'validated'                           => false,
+                'grandAdminRights'                    => $permissions->pivot->has_admin_rights ?? false,
+                'sendBillingReports'                  => $permissions->pivot->send_billing_reports ?? false,
+                'errorCount'                          => 0,
+                'role_id'                             => $roleId,
+                'locations'                           => $user->locations->pluck('id'),
+                'emr_direct_address'                  => $user->emr_direct_address,
+                'forward_alerts_to'                   => [
+                    'who'     => $forwardAlertsToContactUser->pivot->name ?? 'billing_provider',
+                    'user_id' => $forwardAlertsToContactUser->id ?? null,
+                ],
+                'forward_careplan_approval_emails_to' => [
+                    'who'     => $forwardCarePlanApprovalEmailsToContactUser->pivot->name ?? 'billing_provider',
+                    'user_id' => $forwardCarePlanApprovalEmailsToContactUser->id ?? null,
                 ],
             ];
         });
@@ -453,6 +467,11 @@ class OnboardingService
 
                 if ($newUser['forward_alerts_to']['who'] != 'billing_provider') {
                     $user->forwardTo($newUser['forward_alerts_to']['user_id'], $newUser['forward_alerts_to']['who']);
+                }
+
+                if ($newUser['forward_careplan_approval_emails_to']['who'] != 'billing_provider') {
+                    $user->forwardTo($newUser['forward_careplan_approval_emails_to']['user_id'],
+                        $newUser['forward_careplan_approval_emails_to']['who']);
                 }
 
 //                $user->notify(new StaffInvite($implementationLead, $primaryPractice));
