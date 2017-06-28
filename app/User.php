@@ -2237,11 +2237,12 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
     }
 
     /**
-     * Forward Alerts to another User Inverse Relationship
+     * Get the Users that are forwarding alerts to this User.
+     * Inverse Relationship of forwardAlertsTo().
      *
      * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
      */
-    public function forwardAlertsToUser()
+    public function forwardedAlertsBy()
     {
         return $this->morphedByMany(User::class, 'contactable', 'contacts')
             ->withPivot('name')
