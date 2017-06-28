@@ -333,5 +333,8 @@ abstract class MedicalRecordEloquent extends Model implements MedicalRecord
         return $this;
     }
 
-
+    /**
+     * @return mixed
+     */
+    abstract public function importedMedicalRecord();
 }

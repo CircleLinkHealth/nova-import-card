@@ -4,6 +4,7 @@ namespace App\Models\MedicalRecords;
 
 use App\Contracts\Importer\MedicalRecord\MedicalRecordLogger;
 use App\Importer\Loggers\Csv\PhoenixHeartSectionsLogger;
+use App\Importer\Loggers\Csv\RappaSectionsLogger;
 use App\Importer\Loggers\Csv\TabularMedicalRecordSectionsLogger;
 use App\Importer\MedicalRecordEloquent;
 use App\Practice;
@@ -73,6 +74,12 @@ class TabularMedicalRecord extends MedicalRecordEloquent
             return new PhoenixHeartSectionsLogger($this, $phoenixHeart);
         }
 
+        $rappahannock = Practice::whereDisplayName('Rappahannock Family Physicians')->first();
+
+        if ($this->practice_id == $rappahannock->id) {
+            return new RappaSectionsLogger($this, $rappahannock);
+        }
+
         return new TabularMedicalRecordSectionsLogger($this);
     }
 
@@ -89,5 +96,15 @@ class TabularMedicalRecord extends MedicalRecordEloquent
     public function getDocumentCustodian(): string
     {
         return '';
+    }
+
+    /**
+     * @return mixed
+     */
+    public function importedMedicalRecord()
+    {
+        return ImportedMedicalRecord::where('medical_record_type', '=', TabularMedicalRecord::class)
+            ->where('medical_record_id', '=', $this->id)
+            ->first();
     }
 }

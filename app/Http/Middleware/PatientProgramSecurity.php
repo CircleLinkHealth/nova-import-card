@@ -40,7 +40,7 @@ class PatientProgramSecurity
         Closure $next
     ) {
         // admins can see and do all
-        if (!Auth::guest() && Auth::user()->hasRole(['administrator'])) {
+        if (auth()->user()->hasRole(['administrator'])) {
             return $next($request);
         }
 
@@ -48,7 +48,7 @@ class PatientProgramSecurity
             return redirect()->route('enrollment-center.dashboard', [])->send();
         }
 
-        if (!Auth::user()) {
+        if (auth()->guest()) {
             return redirect()->guest('login');
         }
 
@@ -79,8 +79,6 @@ class PatientProgramSecurity
                     abort(403);
                 }
             }
-        } else {
-
         }
 
         return $next($request);

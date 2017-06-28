@@ -191,11 +191,16 @@ $today = \Carbon\Carbon::now()->toFormattedDateString();
                         <!-- <div class="row pb-before" style="color:white;">This page left intentionally blank</div> -->
                     @endif
                     <div class="row gutter">
-                        <div class="col-xs-12">
+                        <div class="col-xs-7">
                             <h1 class="patient-summary__title patient-summary__title_9 patient-summary--careplan">Care
                                 Plan</h1>
                         </div>
+
+                        @include('partials.carePlans.approval-box')
                     </div>
+
+                    <br>
+
                     <div class="row gutter">
                         <div class="col-xs-4 col-md-4 print-row text-bold">{{$patient->fullName}}</div>
                         <div class="col-xs-4 col-md-4 print-row">{{$patient->phone}}</div>
@@ -204,7 +209,7 @@ $today = \Carbon\Carbon::now()->toFormattedDateString();
                     <div class="row gutter">
                         <div class="col-xs-4 col-md-4 print-row text-bold">
                             @if($billing)
-                                {{$billing->fullName}} {{($billing->getSpecialtyAttribute() == '')? '' :  $billing->getSpecialtyAttribute() }}
+                                {{$billing->fullName}} {!! ($billing->getSpecialtyAttribute() == '')? '' :  "<br> {$billing->getSpecialtyAttribute()}"!!}
                             @else
                                 <em>No Billing Provider Selected</em>
                             @endif

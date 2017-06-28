@@ -1507,15 +1507,6 @@ Route::group([
         'uses' => 'Enrollment\EnrollmentCenterController@rejected',
         'as'   => 'enrollment-center.rejected',
     ]);
-
-    Route::get('/training', function () {
-
-        return response()->download(storage_path('training_enrollment.pdf'), 'CLHCareAmbassadorManual', [
-            'Content-Length: ' . filesize(storage_path('training_enrollment.pdf')),
-        ]);
-
-    });
-
 });
 
 /*
