@@ -54,6 +54,10 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
 
     use \Venturecraft\Revisionable\RevisionableTrait;
 
+    protected $attributes = [
+        'timezone' => 'America/New_York',
+    ];
+
     public $rules = [
         'username'         => 'required',
         'email'            => 'required|email',
