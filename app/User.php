@@ -42,8 +42,8 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
     const FORWARD_ALERTS_IN_ADDITION_TO_PROVIDER = 'forward_alerts_in_addition_to_provider';
     const FORWARD_ALERTS_INSTEAD_OF_PROVIDER = 'forward_alerts_instead_of_provider';
 
-    const FORWARD_CAREPLAN_APPROVAL_EMAILS_IN_ADDITION_TO_PROVIDER = 'forward_alerts_in_addition_to_provider';
-    const FORWARD_CAREPLAN_APPROVAL_EMAILS_INSTEAD_OF_PROVIDER = 'forward_alerts_instead_of_provider';
+    const FORWARD_CAREPLAN_APPROVAL_EMAILS_IN_ADDITION_TO_PROVIDER = 'forward_careplan_approval_emails_in_addition_to_provider';
+    const FORWARD_CAREPLAN_APPROVAL_EMAILS_INSTEAD_OF_PROVIDER = 'forward_careplan_approval_emails_instead_of_provider';
 
     use Authenticatable,
         CanResetPassword,
@@ -2312,6 +2312,33 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
             ->withPivot('name')
             ->wherePivot('name', '=', User::FORWARD_ALERTS_IN_ADDITION_TO_PROVIDER)
             ->orWherePivot('name', '=', User::FORWARD_ALERTS_INSTEAD_OF_PROVIDER)
+            ->withTimestamps();
+    }
+
+    /**
+     * Forward Alerts/Notifications to another User.
+     * Attaches forwards to a user using forwardAlertsTo() relationship.
+     *
+     * @return void
+     */
+    public function forwardTo($receiverUserId, $forwardTypeName)
+    {
+        $this->forwardAlertsTo()->attach($receiverUserId, [
+            'name' => $forwardTypeName,
+        ]);
+    }
+
+    /**
+     * Get the Users that are forwarding alerts to this User.
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
+     */
+    public function forwardedCarePlanApprovalEmailsBy()
+    {
+        return $this->forwardedAlertsBy()
+            ->withPivot('name')
+            ->wherePivot('name', '=', User::FORWARD_CAREPLAN_APPROVAL_EMAILS_IN_ADDITION_TO_PROVIDER)
+            ->orWherePivot('name', '=', User::FORWARD_CAREPLAN_APPROVAL_EMAILS_INSTEAD_OF_PROVIDER)
             ->withTimestamps();
     }
 

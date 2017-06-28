@@ -452,9 +452,7 @@ class OnboardingService
                 $user->forwardAlertsTo()->sync([]);
 
                 if ($newUser['forward_alerts_to']['who'] != 'billing_provider') {
-                    $user->forwardAlertsTo()->attach($newUser['forward_alerts_to']['user_id'], [
-                        'name' => $newUser['forward_alerts_to']['who'],
-                    ]);
+                    $user->forwardTo($newUser['forward_alerts_to']['user_id'], $newUser['forward_alerts_to']['who']);
                 }
 
 //                $user->notify(new StaffInvite($implementationLead, $primaryPractice));
