@@ -2236,6 +2236,11 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
             ->withTimestamps();
     }
 
+    /**
+     * Forward Alerts to another User Inverse Relationship
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
+     */
     public function forwardAlertsToUser()
     {
         return $this->morphedByMany(User::class, 'contactable', 'contacts')
