@@ -160,7 +160,7 @@ $(function () {
             }
         });
 
-        callstable.draw();
+        callstable.draw(false);
     });
 
 
