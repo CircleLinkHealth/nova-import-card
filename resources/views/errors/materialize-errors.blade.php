@@ -4,7 +4,7 @@
             <strong>We have some concerns regarding with your input.</strong><br><br>
             <ul>
                 @foreach ($errors->all() as $error)
-                    <li style="padding-bottom: 2%;">{{ $error }}</li>
+                    <li style="padding-bottom: 2%;">{!! $error  !!} </li>
                 @endforeach
             </ul>
         </div>
