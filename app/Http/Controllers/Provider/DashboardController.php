@@ -68,8 +68,8 @@ class DashboardController extends Controller
         $users = $this->onboardingService->getExistingStaff($this->primaryPractice);
 
         return view('provider.practice.create', array_merge([
-            'practiceSlug'     => $this->practiceSlug,
-            'staff'            => $users['existingUsers'],
+            'practiceSlug' => $this->practiceSlug,
+            'staff'        => $users['existingUsers'],
         ], $this->returnWithAll));
     }
 
@@ -134,9 +134,42 @@ class DashboardController extends Controller
 
     public function postStoreNotifications(Request $request)
     {
-        $this->primaryPractice->syncSettings(new Settings($request->input('settings') ?? []));
+        $input = $request->input('settings');
+        $errors = collect();
 
-        return redirect()->back();
+        if (isset($input['dm_audit_reports'])) {
+            $locationsWithoutDM = [];
+
+            foreach ($this->primaryPractice->locations as $location) {
+                if (!$location->emr_direct_address) {
+                    $locationsWithoutDM[] = $location;
+                }
+            }
+
+            if ($this->primaryPractice->locations->count() == count($locationsWithoutDM)) {
+                unset($input['dm_audit_reports']);
+                $errors->push('Send Audit Reports via Direct Mail was not activated because none of the Locations have a DM address. Please add a Direct Address for at least one Location, and then try activating the Notification again.');
+            }
+        }
+
+        if (isset($input['efax_audit_reports'])) {
+            $locationsWithoutFax = [];
+
+            foreach ($this->primaryPractice->locations as $location) {
+                if (!$location->fax) {
+                    $locationsWithoutFax[] = $location;
+                }
+            }
+
+            if ($this->primaryPractice->locations->count() == count($locationsWithoutFax)) {
+                unset($input['efax_audit_reports']);
+                $errors->push('Send Audit Reports via eFax was not activated because none of the Locations have a fax number. Please add a Fax Number for at least one Location, and then try activating the Notification again.');
+            }
+        }
+
+        $this->primaryPractice->syncSettings(new Settings($input ?? []));
+
+        return redirect()->back()->withErrors($errors);
     }
 
     public function postStoreStaff(Request $request)
