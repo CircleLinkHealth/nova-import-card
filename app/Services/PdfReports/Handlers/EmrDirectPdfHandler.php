@@ -42,17 +42,7 @@ class EmrDirectPdfHandler implements PdfReportHandler
             return;
         }
 
-        if (!$location->contactCard) {
-            return;
-        }
-
-        $recipient = $location->contactCard->first();
-
-        if (!$recipient) {
-            return;
-        }
-
-        if (!$recipient->emr_direct) {
+        if (!$location->emr_direct_address) {
             return;
         }
 
@@ -60,6 +50,6 @@ class EmrDirectPdfHandler implements PdfReportHandler
 
         $fileName = $report->patient->fullName . ' ' . Carbon::now()->toDateTimeString();
 
-        $this->phiMail->send($recipient->emr_direct, $pathToPdf, $fileName);
+        $this->phiMail->send($location->emr_direct_address, $pathToPdf, $fileName);
     }
 }
