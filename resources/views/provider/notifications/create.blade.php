@@ -4,7 +4,9 @@
 
 @section('module')
 
-    @include('errors.errors')
+
+    @include('errors.materialize-errors')
+
 
     <div class="container">
         <div class="row">
