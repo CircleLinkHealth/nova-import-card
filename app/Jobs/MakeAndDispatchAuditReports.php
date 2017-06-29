@@ -2,7 +2,9 @@
 
 namespace App\Jobs;
 
+use App\CLH\Helpers\StringManipulation;
 use App\Reports\PatientDailyAuditReport;
+use App\Services\Phaxio\PhaxioService;
 use App\Services\PhiMail\PhiMail;
 use App\User;
 use Carbon\Carbon;
@@ -53,9 +55,12 @@ class MakeAndDispatchAuditReports implements ShouldQueue
             $test = $phiMail->send($dmAddress, $path);
         }
 
-        if ($this->patient->primaryPractice->settings->efax_audit_reports) {
-            $number = (new StringManipulation())->formatPhoneNumberE164($request->input('fax_number'));
-            $faxTest = (new PhaxioService())->send($number, public_path('assets/pdf/sample-note.pdf'));
+        //send eFax
+        $fax = $this->patient->locations->first()->fax;
+
+        if ($this->patient->primaryPractice->settings->efax_audit_reports && $fax) {
+            $number = (new StringManipulation())->formatPhoneNumberE164($fax);
+            $faxTest = (new PhaxioService())->send($number, $path);
         }
     }
 }
