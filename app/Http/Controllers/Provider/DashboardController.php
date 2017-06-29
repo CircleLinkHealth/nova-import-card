@@ -138,40 +138,40 @@ class DashboardController extends Controller
         $errors = collect();
 
         if (isset($input['dm_audit_reports'])) {
-            $locationsWithoutDM = [];
+            $locationsWithoutDM = collect();
 
             foreach ($this->primaryPractice->locations as $location) {
                 if (!$location->emr_direct_address) {
-                    $locationsWithoutDM[] = $location;
+                    $locationsWithoutDM->push($location);
                 }
             }
 
-            if ($this->primaryPractice->locations->count() == count($locationsWithoutDM)) {
+            if ($this->primaryPractice->locations->count() == $locationsWithoutDM->count()) {
                 unset($input['dm_audit_reports']);
                 $errors->push('Send Audit Reports via Direct Mail was not activated because none of the Locations have a DM address. Please add a Direct Address for at least one Location, and then try activating the Notification again.');
             } else {
-                foreach ($locationsWithoutDM as $location) {
-                    $errors->push("Location: {$location->name} does not have a Direct Address. Please add one by clicking Locations (left).");
-                }
+                $locs = implode(', ', $locationsWithoutDM->pluck('name')->all());
+
+                $errors->push("Locations: <strong>$locs</strong> are missing a <strong>Direct Address</strong>. Click Locations (left) to correct that.");
             }
         }
 
         if (isset($input['efax_audit_reports'])) {
-            $locationsWithoutFax = [];
+            $locationsWithoutFax = collect();
 
             foreach ($this->primaryPractice->locations as $location) {
                 if (!$location->fax) {
-                    $locationsWithoutFax[] = $location;
+                    $locationsWithoutFax->push($location);
                 }
             }
 
-            if ($this->primaryPractice->locations->count() == count($locationsWithoutFax)) {
+            if ($this->primaryPractice->locations->count() == $locationsWithoutFax->count()) {
                 unset($input['efax_audit_reports']);
                 $errors->push('Send Audit Reports via eFax was not activated because none of the Locations have a fax number. Please add a Fax Number for at least one Location, and then try activating the Notification again.');
             } else {
-                foreach ($locationsWithoutFax as $location) {
-                    $errors->push("Location: {$location->name} does not have a Direct Address. Please add one by clicking Locations (left).");
-                }
+                $locs = implode(', ', $locationsWithoutFax->pluck('name')->all());
+
+                $errors->push("Locations: <strong>$locs</strong> are missing a <strong>Fax Number</strong>. Go to the Locations (left) to correct that.");
             }
         }
 
