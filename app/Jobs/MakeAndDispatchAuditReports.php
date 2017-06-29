@@ -3,6 +3,7 @@
 namespace App\Jobs;
 
 use App\Reports\PatientDailyAuditReport;
+use App\Services\PhiMail\PhiMail;
 use App\User;
 use Carbon\Carbon;
 use Illuminate\Bus\Queueable;
@@ -44,8 +45,17 @@ class MakeAndDispatchAuditReports implements ShouldQueue
 
         $path = storage_path("download/$fileName");
 
-        if ($this->patient->primaryPractice->settings->dm_audit_reports) {}
+        //send DM message
+        $dmAddress = $this->patient->locations->first()->emr_direct_address;
 
-        if ($this->patient->primaryPractice->settings->efax_audit_reports) {}
+        if ($this->patient->primaryPractice->settings->dm_audit_reports && $dmAddress) {
+            $phiMail = new PhiMail();
+            $test = $phiMail->send($dmAddress, $path);
+        }
+
+        if ($this->patient->primaryPractice->settings->efax_audit_reports) {
+            $number = (new StringManipulation())->formatPhoneNumberE164($request->input('fax_number'));
+            $faxTest = (new PhaxioService())->send($number, public_path('assets/pdf/sample-note.pdf'));
+        }
     }
 }
