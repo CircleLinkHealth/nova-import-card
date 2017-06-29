@@ -16,7 +16,7 @@ $(function () {
         }
     });
 
-
+    //https://datatables.net/reference/api/
     var callstable = $('#calls-table').DataTable({
         //dom: 'Bfrtip',
         //buttons: [
@@ -160,7 +160,8 @@ $(function () {
             }
         });
 
-        callstable.draw();
+        //https://datatables.net/reference/api/draw()
+        callstable.draw(false);
     });
 
 
