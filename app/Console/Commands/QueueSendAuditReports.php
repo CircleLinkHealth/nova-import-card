@@ -3,7 +3,6 @@
 namespace App\Console\Commands;
 
 use App\Jobs\MakeAndDispatchAuditReports;
-use App\Reports\PatientDailyAuditReport;
 use App\User;
 use Illuminate\Console\Command;
 
@@ -54,7 +53,7 @@ class QueueSendAuditReports extends Command
 
         foreach ($patients as $patient) {
             (new MakeAndDispatchAuditReports($patient))
-            ->onQueue('send-audit-reports');
+                ->onQueue('send-audit-reports');
         }
     }
 }
