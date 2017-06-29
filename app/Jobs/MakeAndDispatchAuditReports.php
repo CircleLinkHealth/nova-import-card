@@ -44,6 +44,8 @@ class MakeAndDispatchAuditReports implements ShouldQueue
 
         $path = storage_path("download/$fileName");
 
+        if ($this->patient->primaryPractice->settings->dm_audit_reports) {}
 
+        if ($this->patient->primaryPractice->settings->efax_audit_reports) {}
     }
 }
