@@ -4,7 +4,9 @@
 
 @section('module')
 
-    @include('errors.errors')
+
+    @include('errors.materialize-errors')
+
 
     <div class="container">
         <div class="row">
@@ -89,8 +91,8 @@
 
         <button class="btn blue waves-effect waves-light col s12"
                 id="update-practice"
-                onclick="Materialize.toast('{{$practice->display_name}} was successfully updated.', 4000)">
-            Update Practice
+                onclick="Materialize.toast('{{$practice->display_name}} preferences was successfully updated.', 4000)">
+            Update Preferences
         </button>
 
         {!! Form::close() !!}

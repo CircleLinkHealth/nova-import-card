@@ -42,6 +42,9 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
     const FORWARD_ALERTS_IN_ADDITION_TO_PROVIDER = 'forward_alerts_in_addition_to_provider';
     const FORWARD_ALERTS_INSTEAD_OF_PROVIDER = 'forward_alerts_instead_of_provider';
 
+    const FORWARD_CAREPLAN_APPROVAL_EMAILS_IN_ADDITION_TO_PROVIDER = 'forward_careplan_approval_emails_in_addition_to_provider';
+    const FORWARD_CAREPLAN_APPROVAL_EMAILS_INSTEAD_OF_PROVIDER = 'forward_careplan_approval_emails_instead_of_provider';
+
     use Authenticatable,
         CanResetPassword,
         HasEmrDirectAddress,
@@ -53,18 +56,12 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
     }
 
     use \Venturecraft\Revisionable\RevisionableTrait;
-
-    protected $attributes = [
-        'timezone' => 'America/New_York',
-    ];
-
     public $rules = [
         'username'         => 'required',
         'email'            => 'required|email',
         'password'         => 'required|min:8',
         'password_confirm' => 'required|same:password',
     ];
-
     public $patient_rules = [
         "daily_reminder_optin"    => "required",
         "daily_reminder_time"     => "required",
@@ -82,7 +79,9 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
         "ccm_status"              => "required",
         "program_id"              => "required",
     ];
-
+    protected $attributes = [
+        'timezone' => 'America/New_York',
+    ];
     protected $revisionCreationsEnabled = true;
 
     /**
@@ -2236,15 +2235,6 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
             ->withTimestamps();
     }
 
-    public function forwardAlertsToUser()
-    {
-        return $this->morphedByMany(User::class, 'contactable', 'contacts')
-            ->withPivot('name')
-            ->wherePivot('name', '=', User::FORWARD_ALERTS_IN_ADDITION_TO_PROVIDER)
-            ->orWherePivot('name', '=', User::FORWARD_ALERTS_INSTEAD_OF_PROVIDER)
-            ->withTimestamps();
-    }
-
     public function routeNotificationForTwilio()
     {
         return $this->primaryPhone;
@@ -2307,6 +2297,48 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
     {
         return $this->morphToMany(User::class, 'contactable', 'contacts')
             ->withPivot('name')
+            ->withTimestamps();
+    }
+
+    /**
+     * Get the Users that are forwarding alerts to this User.
+     * Inverse Relationship of forwardAlertsTo().
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
+     */
+    public function forwardedAlertsBy()
+    {
+        return $this->morphedByMany(User::class, 'contactable', 'contacts')
+            ->withPivot('name')
+            ->wherePivot('name', '=', User::FORWARD_ALERTS_IN_ADDITION_TO_PROVIDER)
+            ->orWherePivot('name', '=', User::FORWARD_ALERTS_INSTEAD_OF_PROVIDER)
+            ->withTimestamps();
+    }
+
+    /**
+     * Forward Alerts/Notifications to another User.
+     * Attaches forwards to a user using forwardAlertsTo() relationship.
+     *
+     * @return void
+     */
+    public function forwardTo($receiverUserId, $forwardTypeName)
+    {
+        $this->forwardAlertsTo()->attach($receiverUserId, [
+            'name' => $forwardTypeName,
+        ]);
+    }
+
+    /**
+     * Get the Users that are forwarding alerts to this User.
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
+     */
+    public function forwardedCarePlanApprovalEmailsBy()
+    {
+        return $this->forwardedAlertsBy()
+            ->withPivot('name')
+            ->wherePivot('name', '=', User::FORWARD_CAREPLAN_APPROVAL_EMAILS_IN_ADDITION_TO_PROVIDER)
+            ->orWherePivot('name', '=', User::FORWARD_CAREPLAN_APPROVAL_EMAILS_INSTEAD_OF_PROVIDER)
             ->withTimestamps();
     }
 

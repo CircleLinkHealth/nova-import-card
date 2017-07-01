@@ -13,9 +13,11 @@ use App\Console\Commands\ImportNurseScheduleFromGoogleCalendar;
 use App\Console\Commands\Inspire;
 use App\Console\Commands\MapSnomedToCpmProblems;
 use App\Console\Commands\NukeItemAndMeta;
+use App\Console\Commands\ProcessCcdaLGHMixup;
 use App\Console\Commands\QueueCcdasToConvertToJson;
 use App\Console\Commands\QueueCcdasToProcess;
 use App\Console\Commands\QueueCcdaToDetermineEnrollmentEligibility;
+use App\Console\Commands\QueueSendAuditReports;
 use App\Console\Commands\RecalculateCcmTime;
 use App\Console\Commands\ResetCcmTime;
 use App\Console\Commands\SplitMergedCcdas;
@@ -60,6 +62,8 @@ class Kernel extends ConsoleKernel
         QueueCcdasToConvertToJson::class,
         QueueCcdaToDetermineEnrollmentEligibility::class,
         QueueCcdasToProcess::class,
+        QueueSendAuditReports::class,
+        ProcessCcdaLGHMixup::class,
     ];
 
     /**
