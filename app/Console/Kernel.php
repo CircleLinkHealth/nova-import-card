@@ -9,6 +9,7 @@ use App\Console\Commands\EmailsProvidersToApproveCareplans;
 use App\Console\Commands\ExportNurseSchedulesToGoogleCalendar;
 use App\Console\Commands\FormatLocationPhone;
 use App\Console\Commands\GeneratePatientReports;
+use App\Console\Commands\ImportLGHInsurance;
 use App\Console\Commands\ImportNurseScheduleFromGoogleCalendar;
 use App\Console\Commands\Inspire;
 use App\Console\Commands\MapSnomedToCpmProblems;
@@ -64,6 +65,7 @@ class Kernel extends ConsoleKernel
         QueueCcdasToProcess::class,
         QueueSendAuditReports::class,
         ProcessCcdaLGHMixup::class,
+        ImportLGHInsurance::class,
     ];
 
     /**
