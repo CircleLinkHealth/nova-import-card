@@ -200,10 +200,11 @@
                         </div>
                     </div>
 
+                    {{--Forward Clinical Issues Alerts--}}
                     <div v-show="newUser.role_id == 5" class="row">
                         <div class="input-field col s12">
 
-                            <h6>Who should we notify for clinical issues regarding provider’s patients?</h6>
+                            <h6>Whom should we notify for clinical issues regarding provider’s patients?</h6>
 
                             <div>
                                 @include('provider.partials.mdl.form.radio', [
@@ -268,6 +269,84 @@
                                         <br>
                                         <div class="col s12">
                                             @include('provider.partials.clinicalIssuesNotifyUser')
+                                        </div>
+                                    </div>
+                                </transition>
+                            </div>
+                        </div>
+                    </div>
+
+                    <br>
+
+                    {{--Forward CarePlan Approval reminders--}}
+                    <div v-show="newUser.role_id == 5" class="row">
+                        <div class="input-field col s12">
+
+                            <h6>Whom should we notify for approval of care plans regarding provider’s patients?</h6>
+
+                            <div>
+                                @include('provider.partials.mdl.form.radio', [
+                                    'id' => 'cp-emails-billing-provider-@{{index}}',
+                                    'label' => 'Provider',
+                                    'name' => 'users[@{{index}}][forward_careplan_approval_emails_to][who]',
+                                    'value' => 'billing_provider',
+                                    'attributes' => [
+                                        'v-model' => 'newUser.forward_careplan_approval_emails_to.who',
+                                        'required' => 'required',
+                                        'v-on:change' => 'isValidated(index)',
+                                        'v-on:invalid' => 'isValidated(index)',
+                                        'v-on:keyup' => 'isValidated(index)',
+                                        'v-on:click' => 'isValidated(index)',
+                                    ]
+                                ])
+                            </div>
+
+                            <div>
+                                @include('provider.partials.mdl.form.radio', [
+                                    'id' => 'cp-emails-instead-of-provider-@{{index}}',
+                                    'label' => 'Someone else instead of provider.',
+                                    'name' => 'users[@{{index}}][forward_careplan_approval_emails_to][who]',
+                                    'value' => App\User::FORWARD_CAREPLAN_APPROVAL_EMAILS_INSTEAD_OF_PROVIDER,
+                                    'attributes' => [
+                                        'v-model' => 'newUser.forward_careplan_approval_emails_to.who',
+                                        'required' => 'required',
+                                        'v-on:change' => 'isValidated(index)',
+                                        'v-on:invalid' => 'isValidated(index)',
+                                        'v-on:keyup' => 'isValidated(index)',
+                                        'v-on:click' => 'isValidated(index)',
+                                    ]
+                                ])
+
+                                <transition>
+                                    <div v-show="newUser.forward_careplan_approval_emails_to.who == '{{App\User::FORWARD_CAREPLAN_APPROVAL_EMAILS_INSTEAD_OF_PROVIDER}}'">
+                                        <br>
+                                        <div class="col s12">
+                                            @include('provider.partials.forwardCareplanApprovalEmails')
+                                        </div>
+                                    </div>
+                                </transition>
+                            </div>
+
+                            <div>
+                                @include('provider.partials.mdl.form.radio', [
+                                    'id' => 'cp-emails-in-addition-@{{index}}',
+                                    'label' => 'Someone else in addition to provider.',
+                                    'name' => 'users[@{{index}}][forward_careplan_approval_emails_to][who]',
+                                    'value' => App\User::FORWARD_CAREPLAN_APPROVAL_EMAILS_IN_ADDITION_TO_PROVIDER,
+                                    'attributes' => [
+                                        'v-model' => 'newUser.forward_careplan_approval_emails_to.who',
+                                        'required' => 'required',
+                                        'v-on:change' => 'isValidated(index)',
+                                        'v-on:invalid' => 'isValidated(index)',
+                                        'v-on:keyup' => 'isValidated(index)',
+                                        'v-on:click' => 'isValidated(index)',
+                                    ]
+                                ])
+                                <transition>
+                                    <div v-show="newUser.forward_careplan_approval_emails_to.who == '{{App\User::FORWARD_CAREPLAN_APPROVAL_EMAILS_IN_ADDITION_TO_PROVIDER}}'">
+                                        <br>
+                                        <div class="col s12">
+                                            @include('provider.partials.forwardCareplanApprovalEmails')
                                         </div>
                                     </div>
                                 </transition>

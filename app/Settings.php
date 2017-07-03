@@ -14,10 +14,12 @@ class Settings extends Model
         //Direct Mail Notifications
         'dm_pdf_careplan',
         'dm_pdf_notes',
+        'dm_audit_reports',
 
         //Efax Notifications
         'efax_pdf_careplan',
         'efax_pdf_notes',
+        'efax_audit_reports',
 
         //Email Notifications
         'email_careplan_approval_reminders',

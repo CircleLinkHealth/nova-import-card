@@ -67,13 +67,20 @@ class DashboardController extends Controller
     {
         $users = $this->onboardingService->getExistingStaff($this->primaryPractice);
 
+        return view('provider.practice.create', array_merge([
+            'practiceSlug' => $this->practiceSlug,
+            'staff'        => $users['existingUsers'],
+        ], $this->returnWithAll));
+    }
+
+    public function getCreateNotifications()
+    {
         if ($this->primaryPractice->settings->isEmpty()) {
             $practiceSettings = $this->primaryPractice->syncSettings(new Settings());
         }
 
-        return view('provider.practice.create', array_merge([
+        return view('provider.notifications.create', array_merge([
             'practiceSlug'     => $this->practiceSlug,
-            'staff'            => $users['existingUsers'],
             'practiceSettings' => $practiceSettings ?? $this->primaryPractice->settings->first(),
         ], $this->returnWithAll));
     }
@@ -125,6 +132,54 @@ class DashboardController extends Controller
             ]);
     }
 
+    public function postStoreNotifications(Request $request)
+    {
+        $input = $request->input('settings');
+        $errors = collect();
+
+        if (isset($input['dm_audit_reports'])) {
+            $locationsWithoutDM = collect();
+
+            foreach ($this->primaryPractice->locations as $location) {
+                if (!$location->emr_direct_address) {
+                    $locationsWithoutDM->push($location);
+                }
+            }
+
+            if ($this->primaryPractice->locations->count() == $locationsWithoutDM->count()) {
+                unset($input['dm_audit_reports']);
+                $errors->push('Send Audit Reports via Direct Mail was not activated because none of the Locations have a DM address. Please add a Direct Address for at least one Location, and then try activating the Notification again.');
+            } else {
+                $locs = implode(', ', $locationsWithoutDM->pluck('name')->all());
+
+                $errors->push("Locations: <strong>$locs</strong> are missing a <strong>Direct Address</strong>. Click Locations (left) to correct that.");
+            }
+        }
+
+        if (isset($input['efax_audit_reports'])) {
+            $locationsWithoutFax = collect();
+
+            foreach ($this->primaryPractice->locations as $location) {
+                if (!$location->fax) {
+                    $locationsWithoutFax->push($location);
+                }
+            }
+
+            if ($this->primaryPractice->locations->count() == $locationsWithoutFax->count()) {
+                unset($input['efax_audit_reports']);
+                $errors->push('Send Audit Reports via eFax was not activated because none of the Locations have a fax number. Please add a Fax Number for at least one Location, and then try activating the Notification again.');
+            } else {
+                $locs = implode(', ', $locationsWithoutFax->pluck('name')->all());
+
+                $errors->push("Locations: <strong>$locs</strong> are missing a <strong>Fax Number</strong>. Go to the Locations (left) to correct that.");
+            }
+        }
+
+        $this->primaryPractice->syncSettings(new Settings($input ?? []));
+
+        return redirect()->back()->withErrors($errors);
+    }
+
     public function postStoreStaff(Request $request)
     {
         $primaryPractice = $this->primaryPractice;
@@ -145,7 +200,6 @@ class DashboardController extends Controller
         }
 
         $this->primaryPractice->update($update);
-        $this->primaryPractice->syncSettings(new Settings($request->input('settings') ?? []));
 
         return redirect()->back();
     }

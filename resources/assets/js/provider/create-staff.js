@@ -81,7 +81,11 @@ var createStaffVM = new Vue({
                 forward_alerts_to: {
                     who: 'billing_provider',
                     user_id: ''
-                }
+                },
+                forward_careplan_approval_emails_to: {
+                    who: 'billing_provider',
+                    user_id: ''
+                },
             });
 
             this.$nextTick(function () {
