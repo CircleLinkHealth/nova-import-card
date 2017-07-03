@@ -82,6 +82,7 @@ class Enrollee extends Model
 
         'primary_insurance',
         'secondary_insurance',
+        'tertiary_insurance',
         'has_copay',
 
         'email',
