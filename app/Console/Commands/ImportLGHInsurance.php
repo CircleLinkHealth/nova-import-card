@@ -19,7 +19,7 @@ class ImportLGHInsurance extends Command
      *
      * @var string
      */
-    protected $description = 'Command description';
+    protected $description = 'Import LGH Insurance files from /cryptdata/var/sftp/sftp1/files/';
 
     /**
      * Create a new command instance.
