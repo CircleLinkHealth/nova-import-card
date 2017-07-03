@@ -44,7 +44,7 @@ class ImportLGHInsurance extends Command
         $count = 0;
 
         foreach (\Storage::disk('ccdas')->files() as $fileName) {
-            if (stripos($fileName, 'circlelink_supplement_') == false) {
+            if (stripos($fileName, 'circlelink_supplement_') === false) {
                 continue;
             }
 
