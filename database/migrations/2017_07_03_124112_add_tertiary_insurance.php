@@ -26,7 +26,7 @@ class AddTertiaryInsurance extends Migration
     public function down()
     {
         Schema::table('enrollees', function (Blueprint $table) {
-            $table->dropColumn('tertiary_insurance');«
+            $table->dropColumn('tertiary_insurance');
         });
     }
 }
