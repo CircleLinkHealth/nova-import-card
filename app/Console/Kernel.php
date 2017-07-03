@@ -152,6 +152,9 @@ class Kernel extends ConsoleKernel
         //every 2 hours
 //        $schedule->command('ccdas:split-merged')
 //            ->cron('0 */2 * * *');
+
+        $schedule->command('send:audit-reports')
+            ->monthlyOn(1, '02:00');
     }
 
     /**
