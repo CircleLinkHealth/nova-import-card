@@ -149,6 +149,8 @@ class DashboardController extends Controller
             if ($this->primaryPractice->locations->count() == $locationsWithoutDM->count()) {
                 unset($input['dm_audit_reports']);
                 $errors->push('Send Audit Reports via Direct Mail was not activated because none of the Locations have a DM address. Please add a Direct Address for at least one Location, and then try activating the Notification again.');
+            } elseif ($locationsWithoutDM->count() == 0) {
+                //
             } else {
                 $locs = implode(', ', $locationsWithoutDM->pluck('name')->all());
 
@@ -168,6 +170,8 @@ class DashboardController extends Controller
             if ($this->primaryPractice->locations->count() == $locationsWithoutFax->count()) {
                 unset($input['efax_audit_reports']);
                 $errors->push('Send Audit Reports via eFax was not activated because none of the Locations have a fax number. Please add a Fax Number for at least one Location, and then try activating the Notification again.');
+            } elseif ($locationsWithoutFax->count() == 0) {
+                //
             } else {
                 $locs = implode(', ', $locationsWithoutFax->pluck('name')->all());
 
