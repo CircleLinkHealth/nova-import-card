@@ -48,6 +48,27 @@ if (!function_exists('extractNumbers')) {
     }
 }
 
+if (!function_exists('detectDelimiter')) {
+    function detectDelimiter($fileHandle, $length)
+    {
+        $delimiters = ["\t", ";", "|", ","];
+        $data_1 = $data_2 = $delimiter = null;
+
+        foreach ($delimiters as $d) {
+            $data_1 = fgetcsv($fileHandle, $length, $d);
+            if (sizeof($data_1) > sizeof($data_2)) {
+                $delimiter = sizeof($data_1) > sizeof($data_2)
+                    ? $d
+                    : $delimiter;
+                $data_2 = $data_1;
+            }
+            rewind($fileHandle);
+        }
+
+        return $delimiter;
+    }
+}
+
 if (!function_exists('parseCsvToArray')) {
     /**
      * Parses a CSV file into an array.
@@ -56,15 +77,22 @@ if (!function_exists('parseCsvToArray')) {
      *
      * @return array
      */
-    function parseCsvToArray($file)
+    function parseCsvToArray($file, $length = 0, $delimiter = null)
     {
         $csvArray = $fields = [];
         $i = 0;
         $handle = @fopen($file, "r");
+        $delimiter = $delimiter ?? detectDelimiter($handle, $length = 0);
+
         if ($handle) {
-            while (($row = fgetcsv($handle, 4096)) !== false) {
+            while (($row = fgetcsv($handle, $length, $delimiter)) !== false) {
                 if (empty($fields)) {
                     $row = array_map('strtolower', $row);
+
+                    $row = array_map(function ($string) {
+                        return str_replace(' ', '_', $string);
+                    }, $row);
+
                     $fields = array_map('trim', $row);
                     continue;
                 }
