@@ -37,7 +37,7 @@ class ImportLGHInsurance implements ShouldQueue
      */
     public function handle()
     {
-        if (stripos($this->fileName, 'circlelink_supplement_') == false) {
+        if (stripos($this->fileName, 'circlelink_supplement_') === false) {
             return;
         }
 
