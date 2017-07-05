@@ -1,4 +1,4 @@
-var Vue = require('vue');
+let Vue = require('vue');
 
 Vue.use(require('vue-resource'));
 
@@ -9,44 +9,64 @@ Vue.http.headers.common['X-CSRF-TOKEN'] = $('meta[name="csrf-token"]').attr('con
  * VUE INSTANCE
  *
  */
-var vm = new Vue({
-        el: 'body',
+let vm = new Vue({
+    el: '#trainer-results',
 
-        data: {
-            practices: [],
-            locationsCollection: [],
-            providersCollection: [],
-            practice: '',
-            location: '',
-            billingProvider: '',
-        },
+    data: {
+        practices: [],
+        locationsCollection: [],
+        providersCollection: [],
+        practice: null,
+        location: null,
+        billingProvider: null,
+    },
 
-        mounted: function () {
-            this.$set('practices', cpm.practices);
-            this.$set('practice', cpm.predictedPracticeId);
-            this.$set('location', cpm.predictedLocationId);
-            this.$set('billingProvider', cpm.predictedBillingProviderId);
+    mounted: function () {
+        Vue.nextTick(function () {
+            vm.practices = cpm.practices;
+            vm.practice = cpm.predictedPracticeId;
+            vm.location = cpm.predictedLocationId;
+            vm.billingProvider = cpm.predictedBillingProviderId;
+        });
+    },
+
+    computed: {
+        locations: function () {
+            if (vm.practice === null) {
+                Vue.nextTick(function () {
+                    vm.location = null;
+                    vm.billingProvider = null;
+                    vm.providersCollection = [];
+                });
+
+                return [];
+            }
 
             Vue.nextTick(function () {
-                // DOM updated
+                vm.locationsCollection = vm.practices[vm.practice].locations;
             });
+
+            return vm.locationsCollection;
         },
 
-        computed: {
-            locations: function () {
-                this.$set('locationsCollection', this.practices[this.practice].locations);
+        providers: function () {
+            if (vm.location === null || !vm.practices[vm.practice].locations[vm.location]) {
+                Vue.nextTick(function () {
+                    vm.billingProvider = null;
+                    vm.providersCollection = [];
+                });
 
-                return this.locationsCollection;
-            },
-
-            providers: function () {
-                this.$set('providersCollection', this.locations[this.location].providers);
-
-                return this.providersCollection;
+                return [];
             }
+
+            Vue.nextTick(function () {
+                vm.providersCollection = vm.locations[vm.location].providers;
+            });
+
+            return vm.providersCollection;
         }
-    })
-;
+    }
+});
 
 
 
