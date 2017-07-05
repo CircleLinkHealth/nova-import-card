@@ -1,7 +1,5 @@
 var Vue = require('vue');
 
-Vue.config.debug = true;
-
 Vue.use(require('vue-resource'));
 
 Vue.http.headers.common['X-CSRF-TOKEN'] = $('meta[name="csrf-token"]').attr('content');
@@ -23,11 +21,15 @@ var vm = new Vue({
             billingProvider: '',
         },
 
-        ready: function () {
+        mounted: function () {
             this.$set('practices', cpm.practices);
             this.$set('practice', cpm.predictedPracticeId);
             this.$set('location', cpm.predictedLocationId);
             this.$set('billingProvider', cpm.predictedBillingProviderId);
+
+            Vue.nextTick(function () {
+                // DOM updated
+            });
         },
 
         computed: {
@@ -44,7 +46,7 @@ var vm = new Vue({
             }
         }
     })
-    ;
+;
 
 
 
