@@ -23,12 +23,16 @@ const vm = new Vue({
         }
     },
 
-    ready: function () {
+    mounted: function () {
         if (typeof cpm !== 'undefined') {
             for (var i = 0, len = cpm.careTeam.length; i < len; i++) {
-                this.careTeamCollection.$set(i, cpm.careTeam[i]);
+                Vue.set(this.careTeamCollection, i, cpm.careTeam[i]);
             }
         }
+
+        Vue.nextTick(function () {
+            // DOM updated
+        });
     },
 
     methods: {
