@@ -208,7 +208,7 @@ class OnboardingService
                     'lastName'  => $contactUser->last_name ?? null,
                     'type'      => $contactType ?? 'billing_provider',
                 ],
-                'timezone'                  => 'America/New_York',
+                'timezone'                  => $loc->timezone ?? 'America/New_York',
                 'ehr_password'              => $loc->ehr_password,
                 'city'                      => $loc->city,
                 'address_line_1'            => $loc->address_line_1,
