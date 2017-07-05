@@ -37,7 +37,7 @@ elixir((mix) => {
     //DO NOT RE-COMPILE THOSE UNTIL WE FULLY MIGRATE TO VUE 2
     // mix.webpack('uploader.js');
 
-    // mix.webpack('importer-training.js');
+    mix.webpack('importer-training.js');
     // mix.webpack('view-care-plan.js');
     // mix.webpack('components/CareTeam/care-person.js');
 
