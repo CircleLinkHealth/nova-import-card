@@ -13,7 +13,7 @@ Vue.http.headers.common['X-CSRF-TOKEN'] = $('meta[name="csrf-token"]').attr('con
  * VUE INSTANCE
  *
  */
-var locationsVM = new Vue({
+let locationsVM = new Vue({
     el: '#create-locations-component',
 
     data: function () {
@@ -45,28 +45,26 @@ var locationsVM = new Vue({
         },
 
         showErrorBanner: function () {
-            if (this.invalidCount > 0) {
-                return true;
-            }
+            return this.invalidCount > 0;
         }
     },
 
     mounted: function () {
-        for (var i = 0, len = cpm.existingLocations.length; i < len; i++) {
-            Vue.set(this.newLocations, i, cpm.existingLocations[i]);
-
-            if (i == 0) {
-                this.sameClinicalIssuesContact = cpm.existingLocations[i].sameClinicalIssuesContact;
-                this.sameEHRLogin = cpm.existingLocations[i].sameEHRLogin;
-            }
-        }
-
-        if (len < 1) {
-            this.create();
-        }
-
         Vue.nextTick(function () {
-            // DOM updated
+            let len = cpm.existingLocations.length;
+
+            for (let i = 0; i < len; i++) {
+                Vue.set(locationsVM.newLocations, i, cpm.existingLocations[i]);
+
+                if (i === 0) {
+                    locationsVM.sameClinicalIssuesContact = cpm.existingLocations[i].sameClinicalIssuesContact;
+                    locationsVM.sameEHRLogin = cpm.existingLocations[i].sameEHRLogin;
+                }
+            }
+
+            if (len < 1) {
+                locationsVM.create();
+            }
         });
     },
 
@@ -99,18 +97,18 @@ var locationsVM = new Vue({
 
         //Is the form for the given user filled out?
         isValidated: function (index) {
-            this.$set('invalidCount', $('.invalid').length);
+            Vue.nextTick(function () {
+                locationsVM.invalidCount = $('.invalid').length;
 
-            this.$set('newLocations[' + index + '].isComplete', this.newLocations[index].name
-                && this.newLocations[index].address_line_1
-                && this.newLocations[index].city
-                && this.newLocations[index].state
-                && this.newLocations[index].postal_code
-            );
+                locationsVM.newLocations[index].isComplete = locationsVM.newLocations[index].name
+                    && locationsVM.newLocations[index].address_line_1
+                    && locationsVM.newLocations[index].city
+                    && locationsVM.newLocations[index].state
+                    && locationsVM.newLocations[index].postal_code;
 
-            this.$set('newLocations[' + index + '].errorCount', $('#location-' + index).find('.invalid').length);
-            this.$set('newLocations[' + index + '].validated', this.newLocations[index].isComplete && this.newLocations[index].errorCount == 0);
-
+                locationsVM.newLocations[index].errorCoun = $('#location-' + index).find('.invalid').length;
+                locationsVM.newLocations[index].validated = locationsVM.newLocations[index].isComplete && locationsVM.newLocations[index].errorCount === 0;
+            });
             return this.newLocations[index].validated;
         },
 
@@ -119,7 +117,7 @@ var locationsVM = new Vue({
 
             this.create();
 
-            this.$nextTick(function () {
+            Vue.nextTick(function () {
                 $('select').material_select();
                 $('.collapsible').collapsible();
             });
