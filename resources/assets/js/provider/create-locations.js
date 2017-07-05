@@ -53,7 +53,7 @@ var locationsVM = new Vue({
 
     mounted: function () {
         for (var i = 0, len = cpm.existingLocations.length; i < len; i++) {
-            this.newLocations.$set(i, cpm.existingLocations[i]) ;
+            Vue.set(this.newLocations, i, cpm.existingLocations[i]);
 
             if (i == 0) {
                 this.sameClinicalIssuesContact = cpm.existingLocations[i].sameClinicalIssuesContact;
