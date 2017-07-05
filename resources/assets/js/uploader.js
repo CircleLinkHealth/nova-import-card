@@ -2,8 +2,6 @@ var Vue = require('vue');
 var Vmdl = require('vue-mdl');
 var MDL = require('material-design-lite');
 
-// Vue.config.debug = true;
-
 Vmdl.registerAll(Vue);
 
 Vue.use(require('vue-resource'));
@@ -30,9 +28,13 @@ var CcdUploader = Vue.extend({
         }
     },
 
-    ready: function () {
+    mounted: function () {
         this.watchForFileInput();
         this.csrfToken = $('meta[name="csrf-token"]').attr('content');
+
+        Vue.nextTick(function () {
+            // DOM updated
+        });
     },
 
     methods: {
@@ -71,7 +73,7 @@ var UploadedCcdsPanel = Vue.extend({
             }
         },
 
-        ready: function () {
+        mounted: function () {
             this.importedMedicalRecords = window.cpm.importedMedicalRecords;
         },
 
@@ -124,14 +126,18 @@ var UploadedCcdsPanel = Vue.extend({
 
                 if (itemClicked == 'delete' && this.okToDelete.indexOf(medicalRecordId) == -1 && importLabel.hasClass('is-checked')) {
                     if (this.okToImport.indexOf(medicalRecordId) !== -1) {
-                        this.okToImport.$remove(medicalRecordId);
+                        var index = this.okToImport.indexOf(medicalRecordId);
+                        this.okToImport.splice(index, 1);
+
                         importLabel.toggleClass('is-checked');
                     }
                 }
 
                 if (itemClicked == 'import' && this.okToImport.indexOf(medicalRecordId) == -1 && deleteLabel.hasClass('is-checked')) {
                     if (this.okToDelete.indexOf(medicalRecordId) !== -1) {
-                        this.okToDelete.$remove(medicalRecordId);
+                        var index = this.okToDelete.indexOf(medicalRecordId);
+                        this.okToDelete.splice(index, 1);
+
                         deleteLabel.toggleClass('is-checked');
                     }
                 }
@@ -173,7 +179,7 @@ var Demographics = Vue.extend({
         }
     },
 
-    ready: function () {
+    mounted: function () {
         this.demographics = window.cpm.demographics;
         //this.allergies = window.cpm.allergies;
         //this.medications = window.cpm.medications;
@@ -182,6 +188,10 @@ var Demographics = Vue.extend({
         this.program = window.cpm.program;
         this.providers = window.cpm.providers;
         this.vendor = window.cpm.vendor;
+
+        Vue.nextTick(function () {
+            // DOM updated
+        });
     },
 
     methods: {
