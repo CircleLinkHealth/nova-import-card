@@ -10,7 +10,7 @@ require('./search-providers.js');
 var carePerson = Vue.component('carePerson', {
     events: {
         'existing-user-selected': function (data) {
-            this.$set('care_person.user', data.user);
+            this.$set(this.care_person, 'user', data.user);
             this.selectSpecialty(data.user.provider_info.specialty);
         }
     },
@@ -33,10 +33,14 @@ var carePerson = Vue.component('carePerson', {
         }
     },
 
-    ready: function () {
+    mounted: function () {
         this.$set('updateRoute', $('meta[name="provider-update-route"]').attr('content'));
         this.$set('patientId', $('meta[name="patient_id"]').attr('content'));
         this.selectSpecialty(this.care_person.user.provider_info.specialty);
+
+        Vue.nextTick(function () {
+            // DOM updated
+        });
     },
 
     methods: {
@@ -50,15 +54,15 @@ var carePerson = Vue.component('carePerson', {
         updateCarePerson: function (id) {
 
             if (this.care_person.is_billing_provider) {
-                this.$set('care_person.formatted_type', 'Billing Provider');
+                this.$set(this.care_person, 'formatted_type', 'Billing Provider');
             }
 
             this.$http.patch(this.updateRoute + '/' + id, {
                 careTeamMember: this.care_person,
                 patientId: this.patientId,
             }).then(function (response) {
-                this.$set('care_person.id', response.data.carePerson.id);
-                this.$set('care_person.formatted_type', response.data.carePerson.formatted_type);
+                this.$set(this.care_person, 'id', response.data.carePerson.id);
+                this.$set(this.care_person, 'formatted_type', response.data.carePerson.formatted_type);
 
                 $("#editCareTeamModal-" + id).modal('hide');
 
