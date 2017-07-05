@@ -1,7 +1,7 @@
 @extends('partials.adminUI')
 
 @section('content')
-    <div class="container-fluid">
+    <div id="trainer-results" class="container-fluid">
 
         <h1>Hola, human.</h1>
         <h1>Here's what I see as feautures to help me identify future CCDs from this Practice. Please check off
