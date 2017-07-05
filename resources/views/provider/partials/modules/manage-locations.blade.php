@@ -1,6 +1,12 @@
+<style>
+    [v-cloak] {
+        display: none;
+    }
+</style>
+
 <meta name="submit-url" content="{{$postUrl}}">
 
-<div id="create-locations-component" class="row">
+<div v-cloak id="create-locations-component" class="row">
 
     <div v-if="showErrorBanner" class="row">
         <div class="card-panel red lighten-5 red-text text-darken-4">
@@ -24,7 +30,7 @@
 
     <div class="row">
         <ul class="collapsible" data-collapsible="accordion">
-            <li v-for="(index, loc) in newLocations" id="location-@{{index}}" v-on:click="isValidated(index)">
+            <li v-for="(loc, index) in newLocations" v-bind:id="index" v-on:click="isValidated(index)">
                 <div class="collapsible-header" v-bind:class="{ active: index == newLocations.length - 1 }">
                     <div class="col s8">
                             <span v-if="loc.name">
