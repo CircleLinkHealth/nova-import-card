@@ -1,25 +1,33 @@
 {
   "private": true,
+  "scripts": {
+    "prod": "gulp --production",
+    "dev": "gulp watch"
+  },
   "devDependencies": {
-    "babel-core": "^6.4.5",
-    "babel-plugin-transform-runtime": "^6.4.3",
-    "babel-runtime": "^5.8.35",
-    "gulp": "^3.9",
-    "laravel-elixir": "*",
-    "vue-hot-reload-api": "^1.3.2",
-    "vueify": "^8.3.4",
-    "vueify-insert-css": "^1.0.0"
+    "bootstrap-sass": "^3.3.7",
+    "gulp": "^3.9.1",
+    "jquery": "^3.1.0",
+    "laravel-elixir": "^6.0.0-14",
+    "laravel-elixir-vue-2": "^0.2.0",
+    "laravel-elixir-webpack-official": "^1.0.2",
+    "lodash": "^4.16.2",
+    "vue": "^2.0.1",
+    "vue-resource": "^1.0.3"
+//    "vue-hot-reload-api": "^1.3.2",
+//    "vueify": "^8.3.4",
+//    "vueify-insert-css": "^1.0.0"
   },
   "dependencies": {
     "babel-preset-es2015": "^6.3.13",
     "babel-preset-react": "^6.3.13",
     "laravel-elixir-vueify": "^1.0.2",
     "lodash": "*",
-    "material-design-lite": "^1.1.0",
-    "materialize-css": "^0.97.8",
+    "material-design-lite": "*",
+    "materialize-css": "*",
     "vue": "^1.0.8",
     "vue-form": "*",
-    "vue-mdl": "^0.3.2",
+    "vue-mdl": "*",
     "vue-resource": "^1",
     "vuejs-paginator": "^1.0.13"
   }
