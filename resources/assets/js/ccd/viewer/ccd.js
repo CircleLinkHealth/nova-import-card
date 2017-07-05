@@ -21,8 +21,12 @@ new Vue({
         smokingStatus: '',
         vitals: ''
     },
-    ready: function () {
+    mounted: function () {
         this.loadCCD();
+
+        Vue.nextTick(function () {
+            // DOM updated
+        });
     },
     methods: {
         loadCCD: function () {
