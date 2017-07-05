@@ -32,8 +32,12 @@ var careTeam = Vue.component('careTeam', {
         }
     },
 
-    ready: function () {
+    mounted: function () {
         this.$set('destroyRoute', $('meta[name="provider-destroy-route"]').attr('content'));
+
+        Vue.nextTick(function () {
+            // DOM updated
+        });
     },
 
     methods: {
