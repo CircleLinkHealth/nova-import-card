@@ -31,7 +31,7 @@ elixir((mix) => {
     //     './resources/assets/less/css/animate.min.css'
     // ], 'public/css/provider-dashboard.css');
 
-    // mix.webpack('provider/create-locations.js');
+    mix.webpack('provider/create-locations.js');
     // mix.webpack('provider/create-staff.js');
 
     //DO NOT RE-COMPILE THOSE UNTIL WE FULLY MIGRATE TO VUE 2
