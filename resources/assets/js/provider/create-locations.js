@@ -51,9 +51,9 @@ var locationsVM = new Vue({
         }
     },
 
-    ready: function () {
+    mounted: function () {
         for (var i = 0, len = cpm.existingLocations.length; i < len; i++) {
-            this.newLocations.$set(i, cpm.existingLocations[i]);
+            this.newLocations.$set(i, cpm.existingLocations[i]) ;
 
             if (i == 0) {
                 this.sameClinicalIssuesContact = cpm.existingLocations[i].sameClinicalIssuesContact;
@@ -64,6 +64,10 @@ var locationsVM = new Vue({
         if (len < 1) {
             this.create();
         }
+
+        Vue.nextTick(function () {
+            // DOM updated
+        });
     },
 
     methods: {
