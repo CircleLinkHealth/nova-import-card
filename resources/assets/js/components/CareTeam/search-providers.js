@@ -14,8 +14,12 @@ let searchProviders = Vue.component('searchProviders', {
             }
         },
 
-        ready: function () {
+        mounted: function () {
             this.getSearchUrl = $('meta[name="providers-search"]').attr('content');
+
+            Vue.nextTick(function () {
+                // DOM updated
+            });
         },
 
         computed: {
