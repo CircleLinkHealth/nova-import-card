@@ -1,10 +1,6 @@
-var gulp = require('gulp');
+const elixir = require('laravel-elixir');
 
-var elixir = require('laravel-elixir');
-
-elixir.config.js.browserify.transformers.push({
-    name: 'vueify'
-});
+require('laravel-elixir-vue-2');
 
 /*
  |--------------------------------------------------------------------------
@@ -12,12 +8,12 @@ elixir.config.js.browserify.transformers.push({
  |--------------------------------------------------------------------------
  |
  | Elixir provides a clean, fluent API for defining some basic Gulp tasks
- | for your Laravel application. By default, we are compiling the Less
- | file for our application, as well as publishing vendor resources.
+ | for your Laravel application. By default, we are compiling the Sass
+ | file for your application as well as publishing vendor resources.
  |
  */
 
-elixir(function (mix) {
+elixir((mix) => {
     // mix.phpUnit([
     //     'tests/AprimaApi/*'
     // ]);
@@ -29,34 +25,26 @@ elixir(function (mix) {
     //     '/css/animate.min.css'
     // ], 'public/css/stylesheet.css');
 
-    // mix.sass('fab.scss');
-
-    // mix.sass('./node_modules/materialize-css/dist/css/materialize.min.css', 'public/css/materialize.min.css');
-    //
-    // mix.sass([
+    // mix.sass('fab.scss')
+    // .sass([
     //     '/css/provider/dashboard.scss',
     //     './resources/assets/less/css/animate.min.css'
     // ], 'public/css/provider-dashboard.css');
-    //
-    // mix.scripts([
-    //     './node_modules/materialize-css/dist/js/materialize.min.js'
-    // ], 'public/js/materialize.min.js');
-    //
-    // mix.sass([
-    //         '/css/onboarding.scss',
-    //     ],
-    //     'public/css/onboarding.css');
-    //
-    // mix.browserify('provider/create-locations.js');
-    mix.browserify('provider/create-staff.js');
 
-    // mix.browserify('uploader.js');
-    // mix.browserify('importer-training.js');
-    // mix.browserify('view-care-plan.js');
-    // mix.browserify('components/CareTeam/care-person.js');
-    // mix.browserify('ccd-models/items/medicationItem.js');
-    // mix.browserify('ccd-models/items/allergiesItem.js');
-    // mix.browserify('ccd-models/items/problemsItem.js');
+    // mix.webpack('provider/create-locations.js');
+    // mix.webpack('provider/create-staff.js');
+
+    //DO NOT RE-COMPILE THOSE UNTIL WE FULLY MIGRATE TO VUE 2
+    // mix.webpack('uploader.js');
+
+    // mix.webpack('importer-training.js');
+    // mix.webpack('view-care-plan.js');
+    // mix.webpack('components/CareTeam/care-person.js');
+
+    // mix.webpack('ccd-models/items/medicationItem.js');
+    // mix.webpack('ccd-models/items/allergiesItem.js');
+    // mix.webpack('ccd-models/items/problemsItem.js');
+
     //mix.scripts([
     //    'resources/assets/js/material.min.js'
     //], 'public/js/scripts.js');
