@@ -5,8 +5,10 @@ Vue.use(require('vue-resource'));
 //Load components
 require('../components/CareTeam/search-providers.js');
 require('../components/src/select.js');
+require('../components/src/material-select.js');
 
 Vue.http.headers.common['X-CSRF-TOKEN'] = $('meta[name="csrf-token"]').attr('content');
+
 
 /**
  *
@@ -25,7 +27,33 @@ let locationsVM = new Vue({
             sameEHRLogin: false,
 
             patientClinicalIssuesContact: false,
-            invalidCount: 0
+            invalidCount: 0,
+
+            timezoneOptions: [{
+                name: 'Eastern Time',
+                value: 'America/New_York'
+            }, {
+                name: 'Central Time',
+                value: 'America/Chicago'
+            }, {
+                name: 'Mountain Time',
+                value: 'America/Denver'
+            }, {
+                name: 'Mountain Time (no DST)',
+                value: 'America/Phoenix'
+            }, {
+                name: 'Pacific Time',
+                value: 'America/Los_Angeles'
+            }, {
+                name: 'Alaska Time',
+                value: 'America/Anchorage'
+            }, {
+                name: 'Hawaii-Aleutian',
+                value: 'America/Adak'
+            }, {
+                name: 'Hawaii-Aleutian Time (no DST)',
+                value: 'Pacific/Honolulu'
+            }]
         }
     },
 
@@ -65,6 +93,9 @@ let locationsVM = new Vue({
             if (len < 1) {
                 locationsVM.create();
             }
+
+            $('select').material_select();
+            $('.collapsible').collapsible();
         });
     },
 
