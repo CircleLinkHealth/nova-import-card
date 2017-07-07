@@ -137,9 +137,10 @@ let locationsVM = new Vue({
                     && locationsVM.newLocations[index].state
                     && locationsVM.newLocations[index].postal_code;
 
-                locationsVM.newLocations[index].errorCoun = $('#location-' + index).find('.invalid').length;
+                locationsVM.newLocations[index].errorCount = $('#location-' + index).find('.invalid').length;
                 locationsVM.newLocations[index].validated = locationsVM.newLocations[index].isComplete && locationsVM.newLocations[index].errorCount === 0;
             });
+            
             return this.newLocations[index].validated;
         },
 
