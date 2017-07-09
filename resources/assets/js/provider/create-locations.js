@@ -4,7 +4,6 @@ Vue.use(require('vue-resource'));
 
 //Load components
 require('../components/CareTeam/search-providers.js');
-require('../components/src/select.js');
 require('../components/src/material-select.js');
 
 Vue.http.headers.common['X-CSRF-TOKEN'] = $('meta[name="csrf-token"]').attr('content');
@@ -60,7 +59,7 @@ let locationsVM = new Vue({
     computed: {
         //Is the form fully filled out?
         formCompleted: function () {
-            for (var index = 0; index < this.newLocations.length; index++) {
+            for (let index = 0; index < this.newLocations.length; index++) {
 
                 this.isValidated(index);
 
@@ -140,7 +139,7 @@ let locationsVM = new Vue({
                 locationsVM.newLocations[index].errorCount = $('#location-' + index).find('.invalid').length;
                 locationsVM.newLocations[index].validated = locationsVM.newLocations[index].isComplete && locationsVM.newLocations[index].errorCount === 0;
             });
-            
+
             return this.newLocations[index].validated;
         },
 
