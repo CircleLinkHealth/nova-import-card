@@ -25,14 +25,14 @@ elixir((mix) => {
     //     '/css/animate.min.css'
     // ], 'public/css/stylesheet.css');
 
-    // mix.sass('fab.scss')
-    // .sass([
-    //     '/css/provider/dashboard.scss',
-    //     './resources/assets/less/css/animate.min.css'
-    // ], 'public/css/provider-dashboard.css');
+    mix.sass('fab.scss')
+    .sass([
+        '/css/provider/dashboard.scss',
+        './resources/assets/less/css/animate.min.css'
+    ], 'public/css/provider-dashboard.css');
 
     mix.webpack('provider/create-locations.js');
-    // mix.webpack('provider/create-staff.js');
+    mix.webpack('provider/create-staff.js');
 
     //DO NOT RE-COMPILE THOSE UNTIL WE FULLY MIGRATE TO VUE 2
     // mix.webpack('uploader.js');
