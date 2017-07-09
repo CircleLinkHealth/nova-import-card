@@ -3,7 +3,7 @@ var Vue = require('vue');
 Vue.use(require('vue-resource'));
 
 require('../components/src/select2.js');
-require('../components/src/select.js');
+require('../components/src/material-select.js');
 
 Vue.http.headers.common['X-CSRF-TOKEN'] = $('meta[name="csrf-token"]').attr('content');
 
@@ -31,7 +31,7 @@ var createStaffVM = new Vue({
     computed: {
         //Is the form fully filled out?
         formCompleted: function () {
-            for (var index = 0; index < this.newUsers.length; index++) {
+            for (let index = 0; index < this.newUsers.length; index++) {
 
                 this.isValidated(index);
 
@@ -44,29 +44,29 @@ var createStaffVM = new Vue({
         },
 
         showErrorBanner: function () {
-            if (this.invalidCount > 0) {
-                return true;
-            }
+            return this.invalidCount > 0;
         }
     },
 
     mounted: function () {
-        for (var i = 0, len = cpm.existingUsers.length; i < len; i++) {
-            Vue.set(this.newUsers, i, cpm.existingUsers[i]);
-        }
-
-        this.$set('locations', cpm.locations);
-        this.$set('locationIds', cpm.locationIds);
-        this.$set('roles', cpm.roles);
-        this.$set('rolesMap', cpm.rolesMap);
-        this.$set('phoneTypes', cpm.phoneTypes);
-
-        if (len < 1) {
-            this.addUser();
-        }
+        let self = this;
 
         Vue.nextTick(function () {
-            // DOM updated
+            let len = cpm.existingUsers.length;
+
+            for (let i = 0; i < len; i++) {
+                Vue.set(self.newUsers, i, cpm.existingUsers[i]);
+            }
+
+            self.locations = cpm.locations;
+            self.locationIds = cpm.locationIds;
+            self.roles = cpm.roles;
+            self.rolesMap = cpm.rolesMap;
+            self.phoneTypes = cpm.phoneTypes;
+
+            if (len < 1) {
+                self.addUser();
+            }
         });
     },
 
@@ -92,7 +92,7 @@ var createStaffVM = new Vue({
                 },
             });
 
-            this.$nextTick(function () {
+            Vue.nextTick(function () {
                 $('select').material_select();
                 $('.collapsible').collapsible();
             });
@@ -108,18 +108,22 @@ var createStaffVM = new Vue({
 
         //Is the form for the given user filled out?
         isValidated: function (index) {
-            this.$set('invalidCount', $('.invalid').length);
+            let self = this;
+            Vue.nextTick(function () {
 
-            this.$set('newUsers[' + index + '].isComplete', this.newUsers[index].first_name
-                && this.newUsers[index].last_name
-                && this.newUsers[index].email
-                && this.newUsers[index].role_id
-            );
+                self.invalidCount = $('.invalid').length;
 
-            this.$set('newUsers[' + index + '].errorCount', $('#user-' + index).find('.invalid').length);
-            this.$set('newUsers[' + index + '].validated', this.newUsers[index].isComplete && this.newUsers[index].errorCount == 0);
+                self.newUsers[index].isComplete = self.newUsers[index].first_name
+                    && self.newUsers[index].last_name
+                    && self.newUsers[index].email
+                    && self.newUsers[index].role_id;
 
-            return this.newUsers[index].validated;
+                self.newUsers[index].errorCoun = $('#user-' + index).find('.invalid').length;
+                self.newUsers[index].validated = self.newUsers[index].isComplete && self.newUsers[index].errorCount === 0;
+            });
+
+
+            return self.newUsers[index].validated;
         },
 
         submitForm: function (url) {
