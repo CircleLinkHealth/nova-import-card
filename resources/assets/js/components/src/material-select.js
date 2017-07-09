@@ -8,11 +8,11 @@ Vue.component("material-select", {
     watch: {
         value: function (value) {
 
-            this.relaod(value);
+            this.reload(value);
         }
     },
     methods: {
-        relaod: function (value) {
+        reload: function (value) {
 
             var select = $(this.$el);
 
@@ -37,7 +37,7 @@ Vue.component("material-select", {
     },
     updated: function () {
 
-        this.relaod();
+        this.reload();
     },
     destroyed: function () {
 
