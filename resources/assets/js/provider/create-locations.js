@@ -1,20 +1,12 @@
-var Vue = require('vue');
+require('../bootstrap');
+require('../../../../public/js/materialize.min');
 
-Vue.use(require('vue-resource'));
+window.Vue = require('vue');
+window.Vue.use(require('vue-resource'));
 
-//Load components
-require('../components/CareTeam/search-providers.js');
-require('../components/src/material-select.js');
+Vue.component('material-select', require('../components/src/material-select.vue'));
 
-Vue.http.headers.common['X-CSRF-TOKEN'] = $('meta[name="csrf-token"]').attr('content');
-
-
-/**
- *
- * VUE INSTANCE
- *
- */
-let locationsVM = new Vue({
+const locationsVM = new Vue({
     el: '#create-locations-component',
 
     data: function () {
@@ -92,9 +84,6 @@ let locationsVM = new Vue({
             if (len < 1) {
                 locationsVM.create();
             }
-
-            $('select').material_select();
-            $('.collapsible').collapsible();
         });
     },
 
@@ -147,11 +136,6 @@ let locationsVM = new Vue({
             this.submitForm($('meta[name="submit-url"]').attr('content'));
 
             this.create();
-
-            Vue.nextTick(function () {
-                $('select').material_select();
-                $('.collapsible').collapsible();
-            });
         },
 
         deleteLocation: function (index) {
@@ -163,44 +147,54 @@ let locationsVM = new Vue({
         },
 
         submitForm: function (url) {
-            this.$http.post(url, {
+
+            window.axios.post(url, {
                 deleteTheseLocations: this.deleteTheseLocations,
                 locations: this.newLocations,
                 sameClinicalIssuesContact: this.sameClinicalIssuesContact,
                 sameEHRLogin: this.sameEHRLogin,
 
-            }).then(function (response) {
-                // success
-                if (response.data.redirect_to) {
-                    window.location.href = response.data.redirect_to;
-                }
+            })
+                .then((response) => {
+                    // success
+                    if (response.data.redirect_to) {
+                        window.location.href = response.data.redirect_to;
+                    }
 
-                if (response.data.message) {
-                    Materialize.toast(response.data.message, 4000);
-                }
-            }, function (response) {
-                //fail
+                    if (response.data.message) {
+                        Materialize.toast(response.data.message, 4000);
+                    }
+                })
+                .catch((error) => {
+                        if (error.response) {
+                            console.log(error.response);
+                        } else {
+                            console.log('Error', error.message);
+                        }
+                        console.log(error.config);
 
-                let created = response.data.created.map(function (index) {
-                    locationsVM.newLocations.splice(index, 1);
-                });
+                        let created = response.data.created.map(function (index) {
+                            locationsVM.newLocations.splice(index, 1);
+                        });
 
-                let errors = response.data.errors;
+                        let errors = response.data.errors;
 
-                locationsVM.$set('invalidCount', errors.length);
+                        locationsVM.$set('invalidCount', errors.length);
 
-                for (let i = 0; i < errors.length; i++) {
-                    $('input[name="locations[' + i + '][' + Object.keys(errors[i].messages)[0] + ']"]')
-                        .addClass('invalid');
+                        for (let i = 0; i < errors.length; i++) {
+                            $('input[name="locations[' + i + '][' + Object.keys(errors[i].messages)[0] + ']"]')
+                                .addClass('invalid');
 
-                    $('label[for="locations[' + i + '][' + Object.keys(errors[i].messages)[0] + ']"]')
-                        .attr('data-error', errors[i].messages[Object.keys(errors[i].messages)[0]][0]);
+                            $('label[for="locations[' + i + '][' + Object.keys(errors[i].messages)[0] + ']"]')
+                                .attr('data-error', errors[i].messages[Object.keys(errors[i].messages)[0]][0]);
 
-                    locationsVM.$set('newLocations[' + i + '].errorCount', errors.length);
-                }
+                            locationsVM.$set('newLocations[' + i + '].errorCount', errors.length);
+                        }
 
-                $("html, body").animate({scrollTop: 0}, {duration: 300, queue: false});
-            });
+                        $("html, body").animate({scrollTop: 0}, {duration: 300, queue: false});
+                    }
+                );
+
         }
     }
 });
