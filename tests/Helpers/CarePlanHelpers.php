@@ -173,10 +173,6 @@ trait CarePlanHelpers
             }
 
             $carePlanEntities = $carePlanEntities->random($numberOfRowsToCreate);
-
-            if (is_object($carePlanEntities)) {
-                $carePlanEntities = collect($carePlanEntities);
-            }
         }
 
         $this
