@@ -1,6 +1,4 @@
-@import url(https://fonts.googleapis.com/css?family=Roboto:200,300,400);
-@import url(https://maxcdn.bootstrapcdn.com/font-awesome/4.2.0/css/font-awesome.min.css);
-.FAB {
+@import url(https://fonts.googleapis.com/css?family=Roboto:200,300,400);@import url(https://maxcdn.bootstrapcdn.com/font-awesome/4.2.0/css/font-awesome.min.css);.FAB {
   z-index: 999;
   position: fixed;
   bottom: 30px;
@@ -8,7 +6,8 @@
   width: 56px;
 }
 
-.FAB__action-button, .FAB__mini-action-button {
+.FAB__action-button,
+.FAB__mini-action-button {
   cursor: pointer;
   position: absolute;
 }
@@ -19,7 +18,8 @@
 }
 
 .FAB__action-button:hover .action-button__icon {
-  box-shadow: 0 0 8px rgba(0, 0, 0, 0.14), 0 8px 16px rgba(0, 0, 0, 0.28);
+  -webkit-box-shadow: 0 0 8px rgba(0, 0, 0, 0.14), 0 8px 16px rgba(0, 0, 0, 0.28);
+          box-shadow: 0 0 8px rgba(0, 0, 0, 0.14), 0 8px 16px rgba(0, 0, 0, 0.28);
 }
 
 .FAB__mini-action-button {
@@ -28,7 +28,8 @@
 }
 
 .action-button__icon {
-  box-shadow: 0 0 4px rgba(0, 0, 0, 0.14), 0 4px 8px rgba(0, 0, 0, 0.28);
+  -webkit-box-shadow: 0 0 4px rgba(0, 0, 0, 0.14), 0 4px 8px rgba(0, 0, 0, 0.28);
+          box-shadow: 0 0 4px rgba(0, 0, 0, 0.14), 0 4px 8px rgba(0, 0, 0, 0.28);
   background-color: #50b2e2;
   border-radius: 50%;
   color: #fff;
@@ -54,7 +55,8 @@
 }
 
 .mini-action-button__icon {
-  box-shadow: 0 0 4px rgba(0, 0, 0, 0.14), 0 4px 8px rgba(0, 0, 0, 0.28);
+  -webkit-box-shadow: 0 0 4px rgba(0, 0, 0, 0.14), 0 4px 8px rgba(0, 0, 0, 0.28);
+          box-shadow: 0 0 4px rgba(0, 0, 0, 0.14), 0 4px 8px rgba(0, 0, 0, 0.28);
   background-color: #47beab;
   border-radius: 50%;
   color: #fff;
@@ -62,7 +64,8 @@
 }
 
 .mini-action-button__icon:hover {
-  box-shadow: 0 0 8px rgba(0, 0, 0, 0.14), 0 8px 16px rgba(0, 0, 0, 0.28);
+  -webkit-box-shadow: 0 0 8px rgba(0, 0, 0, 0.14), 0 8px 16px rgba(0, 0, 0, 0.28);
+          box-shadow: 0 0 8px rgba(0, 0, 0, 0.14), 0 8px 16px rgba(0, 0, 0, 0.28);
 }
 
 .mini-action-button__text--hide {
@@ -134,4 +137,3 @@
   bottom: 620px;
 }
 
-/*# sourceMappingURL=fab.css.map */
