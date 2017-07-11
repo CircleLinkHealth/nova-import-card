@@ -1,5 +1,13 @@
 let mix = require('laravel-mix');
 
+// mix.webpackConfig({
+//     resolve: {
+//         alias: {
+//             'jquery': path.resolve(__dirname, 'node_modules/jquery/dist/jquery.js')
+//         }
+//     }
+// });
+
 /*
  |--------------------------------------------------------------------------
  | Mix Asset Management
