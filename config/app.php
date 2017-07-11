@@ -195,7 +195,6 @@ return [
         \Maatwebsite\Excel\ExcelServiceProvider::class,
         \rigor789\AirbrakeLaravel\AirbrakeServiceProvider::class,
         Prettus\Repository\Providers\RepositoryServiceProvider::class,
-        \Maknz\Slack\SlackServiceProvider::class,
         Yajra\Datatables\DatatablesServiceProvider::class,
         App\Providers\AWSWorkerServiceProvider::class,
         Spatie\GoogleCalendar\GoogleCalendarServiceProvider::class,
@@ -266,7 +265,7 @@ return [
         'JWTFactory'     => \Tymon\JWTAuth\Facades\JWTFactory::class,
         'LERN'           => Tylercd100\LERN\Facades\LERN::class,
         'PDF'            => \Barryvdh\Snappy\Facades\SnappyPdf::class,
-        'Slack'          => Maknz\Slack\Facades\Slack::class,
+//        'Slack'          => Maknz\Slack\Facades\Slack::class,
         'GoogleCalendar' => Spatie\GoogleCalendar\GoogleCalendarFacade::class,
 
     ],
