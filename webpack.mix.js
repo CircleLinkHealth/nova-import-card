@@ -11,6 +11,19 @@ let mix = require('laravel-mix');
  |
  */
 
+/**
+ *
+ * CSS
+ *
+ */
+
+// mix.less('resources/assets/less/css/wpstyle.less', 'public/css');
+
+mix.combine([
+    '/css/app.less',
+    '/css/animate.min.css'
+], 'public/css/stylesheet.css');
+
 mix.sass('resources/assets/sass/fab.scss', 'public/css');
 
 mix.combine([
@@ -18,5 +31,11 @@ mix.combine([
     './resources/assets/less/css/animate.min.css'
 ], 'public/css/provider-dashboard.css');
 
-// mix.js('resources/assets/js/app.js', 'public/js')
-// ;
+
+/**
+ *
+ *
+ * JS
+ *
+ */
+mix.js('resources/assets/js/importer-training.js', 'public/js');
