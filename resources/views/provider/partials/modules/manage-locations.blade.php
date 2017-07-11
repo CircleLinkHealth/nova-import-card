@@ -28,7 +28,7 @@
                 <div class="collapsible-header" v-bind:class="{ active: index == newLocations.length - 1 }">
                     <div class="col s8">
                             <span v-if="loc.name">
-                                @{{loc.name | uppercase}}
+                                @{{loc.name.toUpperCase()}}
                             </span>
                         <span v-else>
                                 NEW LOCATION
@@ -44,7 +44,6 @@
                         </div>
                     </div>
                 </div>
-
 
 
                 <div class="collapsible-body" style="padding: 5%;">
@@ -65,8 +64,10 @@
                                 ]
                             ])
 
-                        <material-select v-bind="selected = loc.timezone || timezoneOptions[0].value" v-model="loc.timezone" class="col s6 input-field">
-                            <option v-for="option in timezoneOptions" :value="option.value" v-text="option.name"></option>
+
+                        <material-select v-model="loc.timezone" class="col s6 input-field">
+                            <option v-for="option in timezoneOptions" :value="option.value"
+                                    v-text="option.name"></option>
                         </material-select>
 
                     </div>
