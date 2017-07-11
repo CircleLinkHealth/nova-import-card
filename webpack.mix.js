@@ -20,15 +20,17 @@ let mix = require('laravel-mix');
 // mix.less('resources/assets/less/css/wpstyle.less', 'public/css');
 
 mix.combine([
-    '/css/app.less',
-    '/css/animate.min.css'
+    'resources/assets/less/css/app.less',
+    'resources/assets/less/css/animate.min.css'
 ], 'public/css/stylesheet.css');
 
 mix.sass('resources/assets/sass/fab.scss', 'public/css');
 
+mix.sass('resources/assets/sass/css/provider/dashboard.scss', 'public/css/compiled/dashboard.css');
+
 mix.combine([
-    '/css/provider/dashboard.scss',
-    './resources/assets/less/css/animate.min.css'
+    'public/css/compiled/dashboard.css',
+    'resources/assets/less/css/animate.min.css'
 ], 'public/css/provider-dashboard.css');
 
 
@@ -39,3 +41,4 @@ mix.combine([
  *
  */
 mix.js('resources/assets/js/importer-training.js', 'public/js');
+mix.js('resources/assets/js/provider/create-locations.js', 'public/js');
