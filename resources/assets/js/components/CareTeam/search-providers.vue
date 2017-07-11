@@ -21,10 +21,6 @@
 
         mounted: function () {
             this.getSearchUrl = $('meta[name="providers-search"]').attr('content');
-
-            Vue.nextTick(function () {
-                // DOM updated
-            });
         },
 
         computed: {
