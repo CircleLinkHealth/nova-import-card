@@ -4,8 +4,8 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "5443feb7a041ba6681ce2deb7c8adec0",
-    "content-hash": "781defbb02525914e80ed3e0f0a4de43",
+    "hash": "b14f16992985ee58618e5dd258b7d156",
+    "content-hash": "9a14f85322e29d6db8cde41071c50d56",
     "packages": [
         {
             "name": "arcturial/clickatell",
@@ -6760,6 +6760,8 @@
     },
     "prefer-stable": false,
     "prefer-lowest": false,
-    "platform": [],
+    "platform": {
+        "php": ">=5.6.4"
+    },
     "platform-dev": []
 }
