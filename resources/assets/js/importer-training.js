@@ -1,15 +1,20 @@
-let Vue = require('vue');
+/**
+ * First we will load all of this project's JavaScript dependencies which
+ * includes Vue and other libraries. It is a great starting point when
+ * building robust, powerful web applications using Vue and Laravel.
+ */
 
-Vue.use(require('vue-resource'));
+require('./bootstrap');
 
-Vue.http.headers.common['X-CSRF-TOKEN'] = $('meta[name="csrf-token"]').attr('content');
+window.Vue = require('vue');
+window.Vue.use(require('vue-resource'));
 
 /**
  *
  * VUE INSTANCE
  *
  */
-let vm = new Vue({
+const vm = new Vue({
     el: '#trainer-results',
 
     data: {
@@ -22,48 +27,50 @@ let vm = new Vue({
     },
 
     mounted: function () {
-        Vue.nextTick(function () {
-            vm.practices = cpm.practices;
-            vm.practice = cpm.predictedPracticeId;
-            vm.location = cpm.predictedLocationId;
-            vm.billingProvider = cpm.predictedBillingProviderId;
-        });
+        this.practices = cpm.practices;
+        this.practice = cpm.predictedPracticeId;
+        this.location = cpm.predictedLocationId;
+        this.billingProvider = cpm.predictedBillingProviderId;
     },
 
     computed: {
         locations: function () {
-            if (vm.practice === null) {
+            let self = this;
+            
+            if (self.practice === null) {
                 Vue.nextTick(function () {
-                    vm.location = null;
-                    vm.billingProvider = null;
-                    vm.providersCollection = [];
+                    self.location = null;
+                    self.billingProvider = null;
+                    self.providersCollection = [];
                 });
 
                 return [];
             }
 
             Vue.nextTick(function () {
-                vm.locationsCollection = vm.practices[vm.practice].locations;
+                self.locationsCollection = self.practices[self.practice].locations;
             });
 
-            return vm.locationsCollection;
+            return self.locationsCollection;
         },
 
         providers: function () {
-            if (vm.location === null || !vm.practices[vm.practice].locations[vm.location]) {
+            let self = this;
+            
+            if (self.location === null || !self.practices[self.practice].locations[self.location]) {
                 Vue.nextTick(function () {
-                    vm.billingProvider = null;
-                    vm.providersCollection = [];
+                    self.billingProvider = null;
+                    self.providersCollection = [];
                 });
 
                 return [];
             }
 
             Vue.nextTick(function () {
-                vm.providersCollection = vm.locations[vm.location].providers;
+                self.providersCollection = self.locations[self.location].providers;
             });
 
-            return vm.providersCollection;
+            return self.providersCollection;
         }
     }
 });
