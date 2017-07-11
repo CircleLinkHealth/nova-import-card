@@ -67,7 +67,7 @@ class LogSentMessage
 
             \Log::alert($message);
             \Log::alert($e);
-            Slack::to('#dev-chat')->send($message);
+//            Slack::to('#dev-chat')->send($message);
         }
 
     }

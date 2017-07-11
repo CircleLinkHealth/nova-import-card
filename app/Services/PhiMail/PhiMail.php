@@ -121,9 +121,9 @@ class PhiMail
                     ? " succeeded id={$sr->messageId}"
                     : "failed err={$sr->errorText}";
 
-                Slack::to('#background-tasks')->send(
-                    "Send to {$sr->recipient}: $status \n"
-                );
+//                Slack::to('#background-tasks')->send(
+//                    "Send to {$sr->recipient}: $status \n"
+//                );
             }
 
         } catch (\Exception $e) {
@@ -157,8 +157,8 @@ class PhiMail
                 $message = $this->connector->check();
 
                 if ($message == null) {
-                    Slack::to('#background-tasks-dev')
-                        ->send("Checked EMR Direct Mailbox. There where no messages. \n" . env('DB_DATABASE'));
+//                    Slack::to('#background-tasks-dev')
+//                        ->send("Checked EMR Direct Mailbox. There where no messages. \n" . env('DB_DATABASE'));
                     break;
                 }
 
@@ -253,7 +253,7 @@ class PhiMail
 
                     echo $message;
 
-                    Slack::to('#background-tasks')->send($message);
+//                    Slack::to('#background-tasks')->send($message);
                 }
 
                 Log::critical('***************');
@@ -310,8 +310,8 @@ class PhiMail
 
         $link = route('view.files.ready.to.import');
 
-        Slack::to('#ccd-file-status')
-            ->send("We received {$numberOfCcds} CCDs from EMR Direct. \n Please visit {$link} to import.");
+//        Slack::to('#ccd-file-status')
+//            ->send("We received {$numberOfCcds} CCDs from EMR Direct. \n Please visit {$link} to import.");
     }
 
 }

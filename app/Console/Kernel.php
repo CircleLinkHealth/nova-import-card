@@ -87,11 +87,11 @@ class Kernel extends ConsoleKernel
             $handled = (new ReschedulerHandler())->handle();
 
             if (!empty($handled)) {
-                Slack::to('#background-tasks')->send("The CPMbot just rescheduled some calls");
+//                Slack::to('#background-tasks')->send("The CPMbot just rescheduled some calls");
             }
 
             foreach ($handled as $call) {
-                Slack::to('#background-tasks')->send("We just fixed call: {$call->id}");
+//                Slack::to('#background-tasks')->send("We just fixed call: {$call->id}");
             }
 
         })->dailyAt('00:05');

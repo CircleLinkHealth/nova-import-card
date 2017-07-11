@@ -403,8 +403,8 @@ class CcdApiController extends Controller
     ) {
         $link = route('view.files.ready.to.import');
 
-        Slack::to('#ccd-file-status')
-            ->send("Aprima sent a CCD. It went {$status}. \n Please visit {$link} to import.");
+//        Slack::to('#ccd-file-status')
+//            ->send("Aprima sent a CCD. It went {$status}. \n Please visit {$link} to import.");
 
         //REPLACE EMAILS WITH SLACK
 //        $recipients = [
