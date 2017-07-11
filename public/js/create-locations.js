@@ -43193,7 +43193,8 @@ var locationsVM = new Vue({
         },
 
         submitForm: function submitForm(url) {
-            this.$http.post(url, {
+
+            window.axios.post(url, {
                 deleteTheseLocations: this.deleteTheseLocations,
                 locations: this.newLocations,
                 sameClinicalIssuesContact: this.sameClinicalIssuesContact,
@@ -43208,8 +43209,13 @@ var locationsVM = new Vue({
                 if (response.data.message) {
                     Materialize.toast(response.data.message, 4000);
                 }
-            }, function (response) {
-                //fail
+            }).catch(function (error) {
+                if (error.response) {
+                    console.log(error.response);
+                } else {
+                    console.log('Error', error.message);
+                }
+                console.log(error.config);
 
                 var created = response.data.created.map(function (index) {
                     locationsVM.newLocations.splice(index, 1);
