@@ -21,7 +21,7 @@
     }
   ],
   "require": {
-    "laravel/framework": "5.3.*",
+    "laravel/framework": "5.4.*",
     "chrisbjr/api-guard": "~2.0",
     "tymon/jwt-auth": "0.5.*",
     "laravelcollective/html": "~5.0",
@@ -40,7 +40,6 @@
     "h4cc/wkhtmltoimage-amd64": "0.12.x",
     "maatwebsite/excel": "~2.1.0",
     "prettus/laravel-validation": "*",
-    "maknz/slack": "^1.7",
     "dusterio/laravel-aws-worker": "^0.1.5",
     "yajra/laravel-datatables-oracle": "~6.0",
     "league/fractal": "0.12.*",
@@ -57,13 +56,13 @@
     "symfony/css-selector": "3.1.*",
     "fzaninotto/faker": "~1.4",
     "mockery/mockery": "0.9.*",
-    "phpunit/phpunit": "~5.0",
+    "phpunit/phpunit": "~5.7",
     "phpspec/phpspec": "~2.1",
     "doctrine/dbal": "~2.3",
     "orangehill/iseed": "dev-master",
     "phpunit/phpunit-selenium": "^3.0",
     "xethron/migrations-generator": "dev-l5",
-    "way/generators": "dev-feature/laravel-five-stable"
+    "Xethron/Laravel-4-Generators": "*"
   },
   "autoload": {
     "classmap": [
