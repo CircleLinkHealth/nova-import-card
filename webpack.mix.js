@@ -13,5 +13,10 @@ let mix = require('laravel-mix');
 
 mix.sass('resources/assets/sass/fab.scss', 'public/css');
 
+mix.combine([
+    '/css/provider/dashboard.scss',
+    './resources/assets/less/css/animate.min.css'
+], 'public/css/provider-dashboard.css');
+
 // mix.js('resources/assets/js/app.js', 'public/js')
-   // ;
+// ;
