@@ -92,8 +92,8 @@ const locationsVM = new Vue({
             this.newLocations.push({
                 clinical_contact: {
                     email: '',
-                    firstName: '',
-                    lastName: '',
+                    first_name: '',
+                    last_name: '',
                     type: 'billing_provider'
                 },
                 timezone: 'America/New_York',
@@ -148,30 +148,33 @@ const locationsVM = new Vue({
 
         submitForm: function (url) {
 
+            let self = this;
+
             window.axios.post(url, {
                 deleteTheseLocations: this.deleteTheseLocations,
                 locations: this.newLocations,
                 sameClinicalIssuesContact: this.sameClinicalIssuesContact,
                 sameEHRLogin: this.sameEHRLogin,
 
-            })
-                .then((response) => {
-                    // success
-                    if (response.data.redirect_to) {
-                        window.location.href = response.data.redirect_to;
-                    }
+            }).then((response) => {
+                // success
+                if (response.data.redirect_to) {
+                    window.location.href = response.data.redirect_to;
+                }
 
-                    if (response.data.message) {
-                        Materialize.toast(response.data.message, 4000);
-                    }
-                })
+                if (response.data.message) {
+                    Materialize.toast(response.data.message, 4000);
+                }
+            })
                 .catch((error) => {
-                        if (error.response) {
-                            console.log(error.response);
-                        } else {
-                            console.log('Error', error.message);
-                        }
-                        console.log(error.config);
+                        // if (error.response) {
+                        //     console.log(error.response);
+                        // } else {
+                        //     console.log('Error', error.message);
+                        // }
+
+
+                        let response = error.response;
 
                         let created = response.data.created.map(function (index) {
                             locationsVM.newLocations.splice(index, 1);
@@ -179,16 +182,16 @@ const locationsVM = new Vue({
 
                         let errors = response.data.errors;
 
-                        locationsVM.$set('invalidCount', errors.length);
+                        self.invalidCount = errors.length;
 
                         for (let i = 0; i < errors.length; i++) {
-                            $('input[name="locations[' + i + '][' + Object.keys(errors[i].messages)[0] + ']"]')
+                            $('input[name="locations[' + errors[i].index + '][' + Object.keys(errors[i].messages)[0] + ']"]')
                                 .addClass('invalid');
 
-                            $('label[for="locations[' + i + '][' + Object.keys(errors[i].messages)[0] + ']"]')
+                            $('label[for="locations[' + errors[i].index + '][' + Object.keys(errors[i].messages)[0] + ']"]')
                                 .attr('data-error', errors[i].messages[Object.keys(errors[i].messages)[0]][0]);
 
-                            locationsVM.$set('newLocations[' + i + '].errorCount', errors.length);
+                            self.newLocations[errors[i].index].errorCount = errors.length;
                         }
 
                         $("html, body").animate({scrollTop: 0}, {duration: 300, queue: false});
