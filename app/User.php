@@ -1968,10 +1968,14 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
         $query,
         $user
     ) {
+        $viewablePractices = $user->hasRole('administrator')
+            ? Practice::active()->pluck('id')->all()
+            : $user->viewableProgramIds();
+
         return $query->whereHas('practices', function ($q) use (
-            $user
+            $viewablePractices
         ) {
-            $q->whereIn('id', $user->viewableProgramIds());
+            $q->whereIn('id', $viewablePractices);
         });
     }
 
@@ -2289,6 +2293,19 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
     }
 
     /**
+     * Forward Alerts/Notifications to another User.
+     * Attaches forwards to a user using forwardAlertsTo() relationship.
+     *
+     * @return void
+     */
+    public function forwardTo($receiverUserId, $forwardTypeName)
+    {
+        $this->forwardAlertsTo()->attach($receiverUserId, [
+            'name' => $forwardTypeName,
+        ]);
+    }
+
+    /**
      * Forward Alerts to another User
      *
      * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
@@ -2297,6 +2314,20 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
     {
         return $this->morphToMany(User::class, 'contactable', 'contacts')
             ->withPivot('name')
+            ->withTimestamps();
+    }
+
+    /**
+     * Get the Users that are forwarding alerts to this User.
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
+     */
+    public function forwardedCarePlanApprovalEmailsBy()
+    {
+        return $this->forwardedAlertsBy()
+            ->withPivot('name')
+            ->wherePivot('name', '=', User::FORWARD_CAREPLAN_APPROVAL_EMAILS_IN_ADDITION_TO_PROVIDER)
+            ->orWherePivot('name', '=', User::FORWARD_CAREPLAN_APPROVAL_EMAILS_INSTEAD_OF_PROVIDER)
             ->withTimestamps();
     }
 
@@ -2312,33 +2343,6 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
             ->withPivot('name')
             ->wherePivot('name', '=', User::FORWARD_ALERTS_IN_ADDITION_TO_PROVIDER)
             ->orWherePivot('name', '=', User::FORWARD_ALERTS_INSTEAD_OF_PROVIDER)
-            ->withTimestamps();
-    }
-
-    /**
-     * Forward Alerts/Notifications to another User.
-     * Attaches forwards to a user using forwardAlertsTo() relationship.
-     *
-     * @return void
-     */
-    public function forwardTo($receiverUserId, $forwardTypeName)
-    {
-        $this->forwardAlertsTo()->attach($receiverUserId, [
-            'name' => $forwardTypeName,
-        ]);
-    }
-
-    /**
-     * Get the Users that are forwarding alerts to this User.
-     *
-     * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
-     */
-    public function forwardedCarePlanApprovalEmailsBy()
-    {
-        return $this->forwardedAlertsBy()
-            ->withPivot('name')
-            ->wherePivot('name', '=', User::FORWARD_CAREPLAN_APPROVAL_EMAILS_IN_ADDITION_TO_PROVIDER)
-            ->orWherePivot('name', '=', User::FORWARD_CAREPLAN_APPROVAL_EMAILS_INSTEAD_OF_PROVIDER)
             ->withTimestamps();
     }
 
