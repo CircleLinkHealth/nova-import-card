@@ -8,16 +8,6 @@
 
 <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
 
-@include('vue-templates.care-person')
-
-<ul class="col-xs-12">
-    <div v-for="care_person in careTeamCollection">
-        <li class="col-xs-12">
-            <care-person v-bind:care_person="care_person"></care-person>
-        </li>
-    </div>
-</ul>
-
 <section class="FAB hidden-print">
     <div class="FAB__mini-action-button hidden-print">
         <div class="mini-action-button--hide mini-action-button hidden-print">
@@ -50,11 +40,8 @@
             <p class="mini-action-button__text--hide">Add Appointment</p>
         </div>
 
-        <div class="mini-action-button--hide mini-action-button">
-            <p v-on:click="createCarePerson">
-                <i class="mini-action-button__icon material-icons">contact_mail</i>
-            </p>
-            <p class="mini-action-button__text--hide">Add Care Person</p>
+        <div id="showAddCarePersonModal" class="mini-action-button--hide mini-action-button">
+            <provider-ui></provider-ui>
         </div>
 
     </div>
@@ -64,5 +51,5 @@
 </section>
 
 @section('scripts')
-    <script src="/js/view-care-plan.js"></script>
+    {{--<script src="/js/view-care-plan.js"></script>--}}
 @endsection
