@@ -1,28 +1,26 @@
-<label class="searchbox-label" for="patients"></label>
 <div id="bloodhound">
-    <input style="margin-top: -9px; margin-bottom: -41px; width: auto;"
-           class="form-control typeahead form-item-spacing form-control" size="50" type="text" name="users"
-           autofocus="autofocus" @if(!empty($patient->id)) placeholder="{!!$patient->fullName!!}"> @else
-        placeholder="Enter a Patient Name, MRN or DOB (mm-dd-yyyy)">@endif
-
+    <input id="patient-search-text-box" class="form-control typeahead form-item-spacing" type="text" style="width: 100% !important;"
+           name="users" autofocus="autofocus"
+           placeholder="{{ !empty($patient->id) ? $patient->fullName : 'Enter a Patient Name, MRN or DOB (mm-dd-yyyy)' }}">
 </div>
 
 @section('scripts')
     <script>
-
         jQuery(document).ready(function ($) {
             var pat = new Bloodhound({
                 datumTokenizer: Bloodhound.tokenizers.obj.whitespace('search'),
                 queryTokenizer: Bloodhound.tokenizers.whitespace,
                 remote: {
-                    url: {!! route('patients.query') !!},
+                    url: '{{route('patients.query')}}',
                     wildcard: '%QUERY'
                 }
             });
 
             pat.initialize();
 
-            $('#bloodhound .typeahead').typeahead({
+            var searchBox = $('#patient-search-text-box');
+
+            searchBox.typeahead({
                 hint: true,
                 highlight: true,
                 minLength: 3
@@ -40,7 +38,7 @@
                 }
             });
 
-            $('#bloodhound .typeahead').on('typeahead:selected', function (e, datum) {
+            searchBox.on('typeahead:selected', function (e, datum) {
                 window.location.href = datum.link;
                 datum.val(datum.name);
             });
