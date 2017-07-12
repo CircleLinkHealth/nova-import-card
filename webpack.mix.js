@@ -41,5 +41,19 @@ mix.combine([
  *
  */
 mix.js('resources/assets/js/importer-training.js', 'public/js');
+
 mix.js('resources/assets/js/provider/create-locations.js', 'public/js');
 mix.js('resources/assets/js/provider/create-staff.js', 'public/js');
+
+
+
+// mix.js('resources/assets/js/provider/view-care-plan.js', 'public/js');
+mix.js('resources/assets/js/app-provider-ui.js', 'public/js');
+
+
+//DO NOT RECOMPILE THE FOLLOWING.
+//THEY HAVE NOT BEEN MIGRATED TO VUE2 YET
+// mix.webpack('uploader.js');
+// mix.webpack('ccd-models/items/medicationItem.js');
+// mix.webpack('ccd-models/items/allergiesItem.js');
+// mix.webpack('ccd-models/items/problemsItem.js');
