@@ -2,7 +2,6 @@ require('../bootstrap');
 require('../../../../public/js/materialize.min');
 
 window.Vue = require('vue');
-window.Vue.use(require('vue-resource'));
 
 Vue.component('material-select', require('../components/src/material-select.vue'));
 
