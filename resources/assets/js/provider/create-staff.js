@@ -1,11 +1,11 @@
-var Vue = require('vue');
+require('../bootstrap');
+require('../../../../public/js/materialize.min');
+require('select2');
 
-Vue.use(require('vue-resource'));
+window.Vue = require('vue');
 
-require('../components/src/select2.js');
-require('../components/src/material-select.js');
-
-Vue.http.headers.common['X-CSRF-TOKEN'] = $('meta[name="csrf-token"]').attr('content');
+Vue.component('material-select', require('../components/src/material-select.vue'));
+Vue.component('select2', require('../components/src/select2.vue'));
 
 /**
  *
@@ -91,11 +91,6 @@ var createStaffVM = new Vue({
                     user_id: ''
                 },
             });
-
-            Vue.nextTick(function () {
-                $('select').material_select();
-                $('.collapsible').collapsible();
-            });
         },
 
         deleteUser: function (index) {
@@ -108,22 +103,20 @@ var createStaffVM = new Vue({
 
         //Is the form for the given user filled out?
         isValidated: function (index) {
-            let self = this;
             Vue.nextTick(function () {
+                createStaffVM.invalidCount = $('.invalid').length;
 
-                self.invalidCount = $('.invalid').length;
+                createStaffVM.newUsers[index].isComplete = createStaffVM.newUsers[index].first_name
+                    && createStaffVM.newUsers[index].last_name
+                    && createStaffVM.newUsers[index].email
+                    && createStaffVM.newUsers[index].role_id;
 
-                self.newUsers[index].isComplete = self.newUsers[index].first_name
-                    && self.newUsers[index].last_name
-                    && self.newUsers[index].email
-                    && self.newUsers[index].role_id;
-
-                self.newUsers[index].errorCoun = $('#user-' + index).find('.invalid').length;
-                self.newUsers[index].validated = self.newUsers[index].isComplete && self.newUsers[index].errorCount === 0;
+                createStaffVM.newUsers[index].errorCount = $('#user-' + index).find('.invalid').length;
+                createStaffVM.newUsers[index].validated = createStaffVM.newUsers[index].isComplete && createStaffVM.newUsers[index].errorCount === 0;
             });
 
 
-            return self.newUsers[index].validated;
+            return createStaffVM.newUsers[index].validated;
         },
 
         submitForm: function (url) {
