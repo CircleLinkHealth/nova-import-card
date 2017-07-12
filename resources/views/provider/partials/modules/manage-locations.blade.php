@@ -228,7 +228,7 @@
                             'name' => 'locations[@{{index}}][ehr_password]',
                             'label' => 'EHR Password',
                             'class' => 'col s6',
-                            'type' => 'password',
+                            'type' => 'text',
                             'attributes' => [
                                 'v-model' => 'loc.ehr_password',
                                 'autocomplete' => 'new-password',
