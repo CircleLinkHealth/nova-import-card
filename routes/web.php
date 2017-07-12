@@ -143,6 +143,8 @@ Route::group(['namespace' => 'Redox'], function () {
 /****************************/
 Route::group(['middleware' => 'auth'], function () {
 
+    Route::resource('profiles', 'API\ProfileController');
+
     Route::resource('settings/email', 'EmailSettingsController');
 
     Route::get('/CCDModels/Items/MedicationListItem', 'CCDModels\Items\MedicationListItemController@index');
@@ -254,6 +256,7 @@ Route::group(['middleware' => 'auth'], function () {
         'prefix'     => 'manage-patients/',
         'middleware' => ['patientProgramSecurity'],
     ], function () {
+
         Route::get('dashboard', [
             'uses' => 'Patient\PatientController@showDashboard',
             'as'   => 'patients.dashboard',
