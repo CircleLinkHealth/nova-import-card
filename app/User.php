@@ -1951,10 +1951,14 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
         $query,
         $user
     ) {
+        $viewableLocations = $user->hasRole('administrator')
+            ? Location::all()->pluck('id')->all()
+            : $user->locations->pluck('id')->all();
+
         return $query->whereHas('locations', function ($q) use (
-            $user
+            $viewableLocations
         ) {
-            $q->whereIn('locations.id', $user->locations->pluck('id')->all());
+            $q->whereIn('locations.id', $viewableLocations);
         });
     }
 
