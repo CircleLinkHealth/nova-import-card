@@ -11,7 +11,18 @@
     <meta name="csrf-token" content="{{ csrf_token() }}">
 
     <script type="text/javascript">
-        window.heap=window.heap||[],heap.load=function(e,t){window.heap.appid=e,window.heap.config=t=t||{};var r=t.forceSSL||"https:"===document.location.protocol,a=document.createElement("script");a.type="text/javascript",a.async=!0,a.src=(r?"https:":"http:")+"//cdn.heapanalytics.com/js/heap-"+e+".js";var n=document.getElementsByTagName("script")[0];n.parentNode.insertBefore(a,n);for(var o=function(e){return function(){heap.push([e].concat(Array.prototype.slice.call(arguments,0)))}},p=["addEventProperties","addUserProperties","clearEventProperties","identify","removeEventProperty","setEventProperties","track","unsetEventProperty"],c=0;c<p.length;c++)heap[p[c]]=o(p[c])};
+        window.heap = window.heap || [], heap.load = function (e, t) {
+            window.heap.appid = e, window.heap.config = t = t || {};
+            var r = t.forceSSL || "https:" === document.location.protocol, a = document.createElement("script");
+            a.type = "text/javascript", a.async = !0, a.src = (r ? "https:" : "http:") + "//cdn.heapanalytics.com/js/heap-" + e + ".js";
+            var n = document.getElementsByTagName("script")[0];
+            n.parentNode.insertBefore(a, n);
+            for (var o = function (e) {
+                return function () {
+                    heap.push([e].concat(Array.prototype.slice.call(arguments, 0)))
+                }
+            }, p = ["addEventProperties", "addUserProperties", "clearEventProperties", "identify", "removeEventProperty", "setEventProperties", "track", "unsetEventProperty"], c = 0; c < p.length; c++)heap[p[c]] = o(p[c])
+        };
         heap.load("4070082021");
     </script>
 
@@ -42,8 +53,9 @@
     @endif
 </head>
 <body>
+<div id="app">
 
-@if(!isset($isPdf))
+    @if(!isset($isPdf))
     @include('partials.providerUI.primarynav')
 
     @if(!empty($patient->id))
@@ -56,14 +68,15 @@
 @endif
 
 <!--[if lt IE 8]>
-<p class="chromeframe">You are using an <strong>outdated</strong> browser. Please <a
-        href="http://browsehappy.com/">upgrade
-    your browser</a> or <a href="http://www.google.com/chromeframe/?redirect=true">activate Google Chrome
-    Frame</a>
-    to improve your experience.</p>
-<![endif]-->
+    <p class="chromeframe">You are using an <strong>outdated</strong> browser. Please <a
+            href="http://browsehappy.com/">upgrade
+        your browser</a> or <a href="http://www.google.com/chromeframe/?redirect=true">activate Google Chrome
+        Frame</a>
+        to improve your experience.</p>
+    <![endif]-->
 
-@yield('content')
+
+    @yield('content')
 
 @if(!isset($isPdf))
     @include('partials.footer')
@@ -80,13 +93,14 @@
     <script src="{{ asset('/js/typeahead.bundle.js') }}"></script>
     <script src="{{ asset('/js/fab.js') }}"></script>
     @include('partials.searchjs')
-@include('partials.providerUItimer')
+    @include('partials.providerUItimer')
     <script type="text/javascript"
             src="//cdn.jsdelivr.net/datetimepicker/latest/DateTimePicker.min.js"></script>
     <script src="{{ asset('/js/bootstrap-select.min.js') }}"></script>
 
     @yield('scripts')
-@endif
+    @endif
+</div>
 
 </body>
 
