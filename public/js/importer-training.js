@@ -60,7 +60,7 @@
 /******/ 	__webpack_require__.p = "";
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 36);
+/******/ 	return __webpack_require__(__webpack_require__.s = 42);
 /******/ })
 /************************************************************************/
 /******/ ([
@@ -41353,7 +41353,94 @@ module.exports = Vue$3;
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(3)))
 
 /***/ }),
-/* 34 */
+/* 34 */,
+/* 35 */,
+/* 36 */,
+/* 37 */,
+/* 38 */,
+/* 39 */,
+/* 40 */,
+/* 41 */,
+/* 42 */
+/***/ (function(module, exports, __webpack_require__) {
+
+__webpack_require__(43);
+__webpack_require__(46);
+module.exports = __webpack_require__(47);
+
+
+/***/ }),
+/* 43 */
+/***/ (function(module, exports, __webpack_require__) {
+
+__webpack_require__(10);
+
+window.Vue = __webpack_require__(33);
+window.Vue.use(__webpack_require__(44));
+
+var vm = new Vue({
+    el: '#trainer-results',
+
+    data: {
+        practices: [],
+        locationsCollection: [],
+        providersCollection: [],
+        practice: null,
+        location: null,
+        billingProvider: null
+    },
+
+    mounted: function mounted() {
+        this.practices = cpm.practices;
+        this.practice = cpm.predictedPracticeId;
+        this.location = cpm.predictedLocationId;
+        this.billingProvider = cpm.predictedBillingProviderId;
+    },
+
+    computed: {
+        locations: function locations() {
+            var self = this;
+
+            if (self.practice === null) {
+                Vue.nextTick(function () {
+                    self.location = null;
+                    self.billingProvider = null;
+                    self.providersCollection = [];
+                });
+
+                return [];
+            }
+
+            Vue.nextTick(function () {
+                self.locationsCollection = self.practices[self.practice].locations;
+            });
+
+            return self.locationsCollection;
+        },
+
+        providers: function providers() {
+            var self = this;
+
+            if (self.location === null || !self.practices[self.practice].locations[self.location]) {
+                Vue.nextTick(function () {
+                    self.billingProvider = null;
+                    self.providersCollection = [];
+                });
+
+                return [];
+            }
+
+            Vue.nextTick(function () {
+                self.providersCollection = self.locations[self.location].providers;
+            });
+
+            return self.providersCollection;
+        }
+    }
+});
+
+/***/ }),
+/* 44 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -42455,7 +42542,7 @@ var xhrClient = function (request) {
 
 var nodeClient = function (request) {
 
-    var client = __webpack_require__(35);
+    var client = __webpack_require__(45);
 
     return new PromiseObj(function (resolve) {
 
@@ -42931,98 +43018,19 @@ if (typeof window !== 'undefined' && window.Vue) {
 
 
 /***/ }),
-/* 35 */
+/* 45 */
 /***/ (function(module, exports) {
 
 /* (ignored) */
 
 /***/ }),
-/* 36 */
-/***/ (function(module, exports, __webpack_require__) {
-
-__webpack_require__(37);
-__webpack_require__(38);
-module.exports = __webpack_require__(39);
-
-
-/***/ }),
-/* 37 */
-/***/ (function(module, exports, __webpack_require__) {
-
-__webpack_require__(10);
-
-window.Vue = __webpack_require__(33);
-window.Vue.use(__webpack_require__(34));
-
-var vm = new Vue({
-    el: '#trainer-results',
-
-    data: {
-        practices: [],
-        locationsCollection: [],
-        providersCollection: [],
-        practice: null,
-        location: null,
-        billingProvider: null
-    },
-
-    mounted: function mounted() {
-        this.practices = cpm.practices;
-        this.practice = cpm.predictedPracticeId;
-        this.location = cpm.predictedLocationId;
-        this.billingProvider = cpm.predictedBillingProviderId;
-    },
-
-    computed: {
-        locations: function locations() {
-            var self = this;
-
-            if (self.practice === null) {
-                Vue.nextTick(function () {
-                    self.location = null;
-                    self.billingProvider = null;
-                    self.providersCollection = [];
-                });
-
-                return [];
-            }
-
-            Vue.nextTick(function () {
-                self.locationsCollection = self.practices[self.practice].locations;
-            });
-
-            return self.locationsCollection;
-        },
-
-        providers: function providers() {
-            var self = this;
-
-            if (self.location === null || !self.practices[self.practice].locations[self.location]) {
-                Vue.nextTick(function () {
-                    self.billingProvider = null;
-                    self.providersCollection = [];
-                });
-
-                return [];
-            }
-
-            Vue.nextTick(function () {
-                self.providersCollection = self.locations[self.location].providers;
-            });
-
-            return self.providersCollection;
-        }
-    }
-});
-
-/***/ }),
-/* 38 */
+/* 46 */
 /***/ (function(module, exports) {
 
 // removed by extract-text-webpack-plugin
 
 /***/ }),
-/* 39 */
+/* 47 */
 /***/ (function(module, exports) {
 
 // removed by extract-text-webpack-plugin
