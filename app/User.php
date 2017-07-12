@@ -116,7 +116,8 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
     ];
 
     protected $hidden = [
-//        'password',
+        //@todo: Need to fix repository package. It does not validate hidden attributes. May temporarily comment out until then
+        'password',
     ];
 
     protected $dates = ['user_registered'];
