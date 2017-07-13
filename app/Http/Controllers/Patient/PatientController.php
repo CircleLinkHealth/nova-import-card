@@ -243,6 +243,7 @@ class PatientController extends Controller
         $patientData = [];
         $patients = User::intersectPracticesWith(auth()->user())
             ->ofType('participant')
+            ->whereHas('patientInfo')
             ->with('primaryPractice')
             ->with('carePlan')
             ->with([
