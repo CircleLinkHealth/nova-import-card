@@ -1,13 +1,3 @@
-<style>
-    .select2-container {
-        z-index: 10000;
-    }
-
-    select {
-        min-width: 300px;
-    }
-</style>
-
 <template>
     <select>
         <slot></slot>
