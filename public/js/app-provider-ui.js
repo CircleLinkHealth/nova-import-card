@@ -42331,7 +42331,10 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 
 /* harmony default export */ __webpack_exports__["default"] = ({
     props: {
-        show: Boolean
+        show: {
+            type: Boolean,
+            default: false
+        }
     },
 
     components: {
@@ -42526,7 +42529,7 @@ exports = module.exports = __webpack_require__(13)(undefined);
 
 
 // module
-exports.push([module.i, "\n.close-button {\n\tfont-size: 25px;\n\tfont-weight: 100;\n\tcolor: tomato;\n\tposition: absolute;\n\ttop: 15px;\n\tleft: 25px;\n\tcursor: pointer;\n}\n.vue-modal-mask {\n  position: fixed;\n  z-index: 1050;\n  top: 0;\n  left: 0;\n  width: 100%;\n  height: 100%;\n  background-color: rgba(0, 0, 0, .5);\n  display: table;\n  transition: opacity .3s ease;\n}\n.vue-modal-wrapper {\n  display: table-cell;\n  vertical-align: middle;\n}\n@media( min-width: 768px) {\n.vue-modal-container {\n  \t\twidth: 50%;\n  \t\tmin-width: 430px;\n}\n}\n.vue-modal-container {\n  margin: 0px auto;\n  padding: 20px 30px;\n  background-color: #fff;\n  border-radius: 4px;\n  box-shadow: 0 2px 8px rgba(0, 0, 0, .33);\n  transition: all .3s ease;\n  font-family: Helvetica, Arial, sans-serif;\n  position: relative;\n  overflow-y: auto;\n  max-height: 100vh;\n}\n.vue-modal-header h3 {\n  margin: 0;\n}\n.vue-modal-header, .vue-modal-footer {\n\tborder: none;\n}\n.vue-modal-default-button {\n  float: right;\n}\n.vue-modal-body {\n\tpadding: 5px;\n}\n\n/*\n * the following styles are auto-applied to elements with\n * v-transition=\"modal\" when their visiblity is toggled\n * by Vue.js.\n *\n * You can easily play with the modal transition by editing\n * these styles.\n */\n.vue-modal-enter, .vue-modal-leave {\n  opacity: 0;\n}\n.vue-modal-enter .vue-modal-container,\n.vue-modal-leave .vue-modal-container {\n  -webkit-transform: scale(1.1);\n  transform: scale(1.1);\n}\n", ""]);
+exports.push([module.i, "\n.close-button {\n    font-size: 25px;\n    font-weight: 100;\n    color: tomato;\n    position: absolute;\n    top: 15px;\n    left: 25px;\n    cursor: pointer;\n}\n.vue-modal-mask {\n    position: fixed;\n    z-index: 1050;\n    top: 0;\n    left: 0;\n    width: 100%;\n    height: 100%;\n    background-color: rgba(0, 0, 0, .5);\n    display: table;\n    transition: opacity .3s ease;\n}\n.vue-modal-wrapper {\n    display: table-cell;\n    vertical-align: middle;\n}\n@media ( min-width: 768px) {\n.vue-modal-container {\n        width: 50%;\n        min-width: 430px;\n}\n}\n.vue-modal-container {\n    margin: 0px auto;\n    padding: 20px 30px;\n    background-color: #fff;\n    border-radius: 4px;\n    box-shadow: 0 2px 8px rgba(0, 0, 0, .33);\n    transition: all .3s ease;\n    font-family: Helvetica, Arial, sans-serif;\n    position: relative;\n    overflow-y: auto;\n    max-height: 100vh;\n}\n.vue-modal-header h3 {\n    margin: 0;\n}\n.vue-modal-header, .vue-modal-footer {\n    border: none;\n}\n.vue-modal-default-button {\n    float: right;\n}\n.vue-modal-body {\n    padding: 5px;\n}\n\n/*\n * the following styles are auto-applied to elements with\n * v-transition=\"modal\" when their visiblity is toggled\n * by Vue.js.\n *\n * You can easily play with the modal transition by editing\n * these styles.\n */\n.vue-modal-enter, .vue-modal-leave {\n    opacity: 0;\n}\n.vue-modal-enter .vue-modal-container,\n.vue-modal-leave .vue-modal-container {\n    -webkit-transform: scale(1.1);\n    transform: scale(1.1);\n}\n", ""]);
 
 // exports
 
@@ -43999,7 +44002,10 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 
 /* harmony default export */ __webpack_exports__["default"] = ({
     props: {
-        show: Boolean,
+        show: {
+            type: Boolean,
+            default: false
+        },
         carePerson: Object
     },
 
