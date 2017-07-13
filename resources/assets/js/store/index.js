@@ -1,7 +1,7 @@
 import Vue from "vue";
 import Vuex from "vuex";
-import * as actions from './actions'
-import * as getters from './getters'
+import * as actions from "./actions";
+import * as getters from "./getters";
 
 Vue.use(Vuex)
 
@@ -9,6 +9,7 @@ const debug = process.env.NODE_ENV !== 'production'
 Vue.config.debug = debug
 
 const state = {
+    patientCareTeam: [],
     currentUser: {
         email: '',
         first_name: '',
@@ -31,6 +32,12 @@ const state = {
 }
 
 const mutations = {
+    SET_CARE_TEAM(state, patientCareTeam) {
+        state.patientCareTeam = patientCareTeam
+    },
+    CLEAR_CARE_TEAM(patientCareTeam) {
+        state.patientCareTeam = {}
+    },
     LOGIN_USER (state, currentUser) {
         state.currentUser = currentUser
     },
