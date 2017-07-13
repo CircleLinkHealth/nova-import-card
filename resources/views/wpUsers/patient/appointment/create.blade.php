@@ -42,11 +42,7 @@
                                     <div class="new-observation-item">
                                         <div class="form-group">
                                             <div class="col-sm-12 provider-label" id="provider-label">
-                                                <label for="provider">
-                                                    Select Existing Provider (or, <span style="color: #4fb2e2"><a
-                                                                href="#"
-                                                                v-on:click="createCarePerson">add new</a></span>)
-                                                </label>
+                                                <create-appointments-add-care-person></create-appointments-add-care-person>
                                             </div>
                                             <div class="col-sm-12" id="providerDiv">
                                                 <div class="form-group providerBox" id="providerBox">
