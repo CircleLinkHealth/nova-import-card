@@ -16,7 +16,6 @@
             mapGetters({
                 patientCareTeam: 'patientCareTeam'
             }),
-            {}
         ),
 
         methods: Object.assign(
