@@ -8,13 +8,7 @@
 <meta name="provider-update-route" content="{{ route('care-team.update', ['id'=>'']) }}">
 <meta name="patient_id" content="{{$patient->id}}">
 
-<div id="app-fab">
-    <fab></fab>
-</div> <!-- end #app -->
+<fab></fab>
 
-@section('scripts')
-    <script src="{{ asset('/js/fab.js') }}"></script>
-    <script src="{{asset('js/manifest.js')}}"></script>
-    <script src="{{asset('js/vendor.js')}}"></script>
-    <script src="{{asset('js/app-provider-ui.js')}}"></script>
-@endsection
+
+

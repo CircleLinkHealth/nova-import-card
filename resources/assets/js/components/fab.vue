@@ -9,8 +9,6 @@
 
 <template>
     <div>
-        <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
-
         <section class="FAB hidden-print">
             <div class="FAB__mini-action-button hidden-print">
                 <div class="mini-action-button--hide mini-action-button hidden-print">
