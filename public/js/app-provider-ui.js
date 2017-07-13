@@ -49974,7 +49974,7 @@ exports = module.exports = __webpack_require__(35)(undefined);
 
 
 // module
-exports.push([module.i, "\n.modal label {\n    font-size: 14px;\n}\n.providerForm {\n    padding: 10px;\n}\n.validation-error {\n    padding: 3px;\n    margin-bottom: 10px;\n    border: 1px solid transparent;\n    border-radius: 4px;\n}\n.has-danger .form-control {\n    border-color: #ff0000;\n    box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075);\n}\n.has-errors {\n    color: #a94442;\n}\n", ""]);
+exports.push([module.i, "\n.modal label {\n    font-size: 14px;\n}\n.providerForm {\n    padding: 10px;\n}\n.validation-error {\n    padding: 3px;\n    margin-bottom: 10px;\n    border: 1px solid transparent;\n    border-radius: 4px;\n}\n.has-danger .form-control {\n    border-color: #ff0000;\n    box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075);\n}\n.has-errors {\n    color: #a94442;\n}\n.modal-body {\n    margin: -30px 5px 5px 5px;\n    padding: 7px;\n}\n", ""]);
 
 // exports
 
@@ -49990,6 +49990,132 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_vuex__ = __webpack_require__(51);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__store_actions__ = __webpack_require__(52);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__store_getters__ = __webpack_require__(53);
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 //
 //
 //
@@ -50394,7 +50520,48 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
     }), {}),
 
     methods: Object.assign(__WEBPACK_IMPORTED_MODULE_1_vuex__["b" /* mapActions */](['cancelForm']), {
-        sendForm: function sendForm() {},
+        sendForm: function sendForm() {
+            var _this = this;
+
+            var self = this;
+
+            if (this.newCarePerson.is_billing_provider) {
+                this.newCarePerson.formatted_type = 'Billing Provider';
+            }
+
+            var id = this.newCarePerson.id ? this.newCarePerson.id : 'new';
+
+            window.axios.patch(this.updateRoute + '/' + id, {
+                careTeamMember: this.newCarePerson,
+                patientId: this.patientId
+            }).then(function (response) {
+                _this.newCarePerson.id = response.data.carePerson.id;
+                _this.newCarePerson.formatted_type = response.data.carePerson.formatted_type;
+
+                $("#editCareTeamModal-" + id).modal('hide');
+
+                if (response.data.oldBillingProvider) {
+                    eventHub.$emit('existing-user-selected', {
+                        oldBillingProvider: response.data.oldBillingProvider
+                    });
+                }
+
+                $("#successModal-" + id).modal();
+
+                //HACK to replace select2 with newly added provider on appointments page
+                var carePerson = response.data.carePerson;
+
+                $('#providerBox').replaceWith('<select id="provider" ' + 'name="provider"' + 'class="provider selectpickerX dropdownValid form-control" ' + 'data-size="10" disabled>  ' + '<option value="' + carePerson.user.id + '" selected>' + carePerson.user.first_name + ' ' + carePerson.user.last_name + '</option></select>');
+
+                $('#providerDiv').css('padding-bottom', '10px');
+                $("#save").append('<input type="hidden" value="' + carePerson.user.id + '" id="provider" name="provider">');
+                $("#addProviderModal").modal('hide');
+
+                $("#newProviderName").text(carePerson.name);
+            }, function (response) {
+                console.log(response.data);
+            });
+        },
         fieldClassName: function fieldClassName(field) {
             if (!field) {
                 return '';
@@ -50410,6 +50577,8 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 
     data: function data() {
         return {
+            updateRoute: '',
+            patientId: '',
             formstate: {},
             model: {
                 first_name: '',
@@ -50428,7 +50597,7 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
             },
 
             newCarePerson: {
-                id: '',
+                id: 'new',
                 formatted_type: 'External',
                 alert: false,
                 is_billing_provider: false,
@@ -50473,6 +50642,10 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
                 text: "Pulmonary Disease & Critical Care Medicine"
             }, { id: "Radiation Oncology", text: "Radiation Oncology" }, { id: "Radiology-Diagnostic", text: "Radiology-Diagnostic" }, { id: "Rheumatology", text: "Rheumatology" }, { id: "Sleep Medicine", text: "Sleep Medicine" }, { id: "Social Worker", text: "Social Worker" }, { id: "Spinal Cord Injury Medicine", text: "Spinal Cord Injury Medicine" }, { id: "Sports Medicine", text: "Sports Medicine" }, { id: "Surgery-General", text: "Surgery-General" }, { id: "Surgical Critical Care", text: "Surgical Critical Care" }, { id: "Therapist", text: "Therapist" }, { id: "Thoracic Surgery", text: "Thoracic Surgery" }, { id: "Thoracic Surgery-Integrated", text: "Thoracic Surgery-Integrated" }, { id: "Transplant Hepatology", text: "Transplant Hepatology" }, { id: "Urology", text: "Urology" }, { id: "Vascular & Interventional Radiology", text: "Vascular & Interventional Radiology" }, { id: "Vascular Surgery", text: "Vascular Surgery" }]
         };
+    },
+    mounted: function mounted() {
+        this.updateRoute = $('meta[name="provider-update-route"]').attr('content');
+        this.patientId = $('meta[name="patient_id"]').attr('content');
     }
 });
 
@@ -50690,7 +50863,7 @@ module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c
   }, [_c('field-messages', {
     attrs: {
       "name": "first_name",
-      "show": "$touched || $submitted"
+      "show": "$untouched || $touched || $submitted"
     }
   }, [_c('div'), _vm._v(" "), _c('div', {
     staticClass: "validation-error has-errors text-right",
@@ -50733,7 +50906,7 @@ module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c
   }, [_c('field-messages', {
     attrs: {
       "name": "last_name",
-      "show": "$touched || $submitted"
+      "show": "$untouched || $touched || $submitted"
     }
   }, [_c('div'), _vm._v(" "), _c('div', {
     staticClass: "validation-error has-errors text-right",
@@ -50818,8 +50991,7 @@ module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c
       "type": "text",
       "id": "address",
       "name": "address",
-      "placeholder": "Line 1",
-      "required": ""
+      "placeholder": "Line 1"
     },
     domProps: {
       "value": (_vm.newCarePerson.user.address)
@@ -50905,8 +51077,7 @@ module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c
       "type": "text",
       "id": "city",
       "name": "city",
-      "placeholder": "City",
-      "required": ""
+      "placeholder": "City"
     },
     domProps: {
       "value": (_vm.newCarePerson.user.city)
@@ -50948,8 +51119,7 @@ module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c
       "type": "text",
       "id": "state",
       "name": "state",
-      "placeholder": "State",
-      "required": ""
+      "placeholder": "State"
     },
     domProps: {
       "value": (_vm.newCarePerson.user.state)
@@ -50991,8 +51161,7 @@ module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c
       "type": "text",
       "id": "zip",
       "name": "zip",
-      "placeholder": "Zip",
-      "required": ""
+      "placeholder": "Zip"
     },
     domProps: {
       "value": (_vm.newCarePerson.user.zip)
@@ -51008,6 +51177,369 @@ module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c
   }, [_c('field-messages', {
     attrs: {
       "name": "zip",
+      "show": "$touched || $submitted"
+    }
+  }, [_c('div'), _vm._v(" "), _c('div', {
+    staticClass: "validation-error has-errors text-right",
+    slot: "required"
+  }, [_vm._v("\n                                                *required\n                                            ")])])], 1)])], 1)])])])]), _vm._v(" "), _c('div', {
+    staticClass: "row providerForm"
+  }, [_c('div', {
+    staticClass: "form-group"
+  }, [_c('label', {
+    staticClass: "col-md-3 control-label"
+  }, [_vm._v("Phone Number")]), _vm._v(" "), _c('div', {
+    staticClass: "col-md-9"
+  }, [_c('div', {
+    staticClass: "row"
+  }, [_c('div', {
+    staticClass: "form-group required-field col-md-12"
+  }, [_c('validate', {
+    class: _vm.fieldClassName(_vm.formstate.phone),
+    attrs: {
+      "auto-label": ""
+    }
+  }, [_c('div', {
+    staticClass: "col-md-12"
+  }, [_c('input', {
+    directives: [{
+      name: "model",
+      rawName: "v-model",
+      value: (_vm.newCarePerson.user.phone_numbers[0].number),
+      expression: "newCarePerson.user.phone_numbers[0].number"
+    }],
+    staticClass: "form-control input-md",
+    attrs: {
+      "type": "text",
+      "id": "phone",
+      "name": "phone",
+      "placeholder": "xxx-xxx-xxxx"
+    },
+    domProps: {
+      "value": (_vm.newCarePerson.user.phone_numbers[0].number)
+    },
+    on: {
+      "input": function($event) {
+        if ($event.target.composing) { return; }
+        _vm.newCarePerson.user.phone_numbers[0].number = $event.target.value
+      }
+    }
+  })]), _vm._v(" "), _c('div', {
+    staticClass: "col-md-12"
+  }, [_c('field-messages', {
+    attrs: {
+      "name": "phone",
+      "show": "$touched || $submitted"
+    }
+  }, [_c('div'), _vm._v(" "), _c('div', {
+    staticClass: "validation-error has-errors text-right",
+    slot: "required"
+  }, [_vm._v("\n                                                *required\n                                            ")])])], 1)])], 1)])])])]), _vm._v(" "), _c('div', {
+    staticClass: "row providerForm"
+  }, [_c('div', {
+    staticClass: "form-group"
+  }, [_c('label', {
+    staticClass: "col-md-3 control-label"
+  }, [_vm._v("Practice Name")]), _vm._v(" "), _c('div', {
+    staticClass: "col-md-9"
+  }, [_c('div', {
+    staticClass: "row"
+  }, [_c('div', {
+    staticClass: "form-group required-field col-md-12"
+  }, [_c('validate', {
+    class: _vm.fieldClassName(_vm.formstate.practice),
+    attrs: {
+      "auto-label": ""
+    }
+  }, [_c('div', {
+    staticClass: "col-md-12"
+  }, [_c('input', {
+    directives: [{
+      name: "model",
+      rawName: "v-model",
+      value: (_vm.newCarePerson.user.primary_practice.display_name),
+      expression: "newCarePerson.user.primary_practice.display_name"
+    }],
+    staticClass: "form-control input-md",
+    attrs: {
+      "type": "text",
+      "id": "practice",
+      "name": "practice",
+      "placeholder": ""
+    },
+    domProps: {
+      "value": (_vm.newCarePerson.user.primary_practice.display_name)
+    },
+    on: {
+      "input": function($event) {
+        if ($event.target.composing) { return; }
+        _vm.newCarePerson.user.primary_practice.display_name = $event.target.value
+      }
+    }
+  })]), _vm._v(" "), _c('div', {
+    staticClass: "col-md-12"
+  }, [_c('field-messages', {
+    attrs: {
+      "name": "practice",
+      "show": "$touched || $submitted"
+    }
+  }, [_c('div'), _vm._v(" "), _c('div', {
+    staticClass: "validation-error has-errors text-right",
+    slot: "required"
+  }, [_vm._v("\n                                                *required\n                                            ")])])], 1)])], 1)])])])]), _vm._v(" "), _c('div', {
+    staticClass: "row providerForm"
+  }, [_c('div', {
+    staticClass: "form-group"
+  }, [_c('label', {
+    staticClass: "col-md-3 control-label"
+  }, [_vm._v("Email")]), _vm._v(" "), _c('div', {
+    staticClass: "col-md-9"
+  }, [_c('div', {
+    staticClass: "row"
+  }, [_c('div', {
+    staticClass: "form-group required-field col-md-12"
+  }, [_c('validate', {
+    class: _vm.fieldClassName(_vm.formstate.email),
+    attrs: {
+      "auto-label": ""
+    }
+  }, [_c('div', {
+    staticClass: "col-md-12"
+  }, [_c('input', {
+    directives: [{
+      name: "model",
+      rawName: "v-model",
+      value: (_vm.newCarePerson.user.email),
+      expression: "newCarePerson.user.email"
+    }],
+    staticClass: "form-control input-md",
+    attrs: {
+      "type": "email",
+      "id": "email",
+      "name": "email",
+      "placeholder": ""
+    },
+    domProps: {
+      "value": (_vm.newCarePerson.user.email)
+    },
+    on: {
+      "input": function($event) {
+        if ($event.target.composing) { return; }
+        _vm.newCarePerson.user.email = $event.target.value
+      }
+    }
+  })]), _vm._v(" "), _c('div', {
+    staticClass: "col-md-12"
+  }, [_c('field-messages', {
+    attrs: {
+      "name": "email",
+      "show": "$touched || $submitted"
+    }
+  }, [_c('div'), _vm._v(" "), _c('div', {
+    staticClass: "validation-error has-errors text-right",
+    slot: "required"
+  }, [_vm._v("\n                                                *required\n                                            ")]), _vm._v(" "), _c('div', {
+    staticClass: "validation-error has-errors text-right",
+    slot: "type"
+  }, [_vm._v("\n                                                Please enter a valid email\n                                            ")])])], 1)])], 1)])])])]), _vm._v(" "), _c('div', {
+    staticClass: "row providerForm"
+  }, [_c('div', {
+    staticClass: "form-group"
+  }, [_c('label', {
+    staticClass: "col-md-3 control-label"
+  }, [_vm._v("Clinical Type")]), _vm._v(" "), _c('div', {
+    staticClass: "col-md-9"
+  }, [_c('div', {
+    staticClass: "row"
+  }, [_c('div', {
+    staticClass: "form-group required-field col-md-12"
+  }, [_c('validate', {
+    class: _vm.fieldClassName(_vm.formstate.qualification),
+    attrs: {
+      "auto-label": ""
+    }
+  }, [_c('div', {
+    staticClass: "col-md-12"
+  }, [_c('select', {
+    directives: [{
+      name: "model",
+      rawName: "v-model",
+      value: (_vm.newCarePerson.user.provider_info.qualification),
+      expression: "newCarePerson.user.provider_info.qualification"
+    }],
+    staticClass: "form-control input-md",
+    attrs: {
+      "id": "qualification",
+      "name": "qualification",
+      "required": ""
+    },
+    on: {
+      "change": function($event) {
+        var $$selectedVal = Array.prototype.filter.call($event.target.options, function(o) {
+          return o.selected
+        }).map(function(o) {
+          var val = "_value" in o ? o._value : o.value;
+          return val
+        });
+        _vm.newCarePerson.user.provider_info.qualification = $event.target.multiple ? $$selectedVal : $$selectedVal[0]
+      }
+    }
+  }, [_c('option', {
+    attrs: {
+      "value": "",
+      "disabled": ""
+    }
+  }), _vm._v(" "), _c('option', {
+    attrs: {
+      "value": "clinical"
+    }
+  }, [_vm._v("Clinical (MD, RN or other)")]), _vm._v(" "), _c('option', {
+    attrs: {
+      "value": "non-clinical"
+    }
+  }, [_vm._v("Non-clinical")])])]), _vm._v(" "), _c('div', {
+    staticClass: "col-md-12"
+  }, [_c('field-messages', {
+    attrs: {
+      "name": "qualification",
+      "show": "$untouched || $touched || $submitted"
+    }
+  }, [_c('div'), _vm._v(" "), _c('div', {
+    staticClass: "validation-error has-errors text-right",
+    slot: "required"
+  }, [_vm._v("\n                                                *required\n                                            ")])])], 1)])], 1)])])])]), _vm._v(" "), _c('div', {
+    staticClass: "row providerForm"
+  }, [_c('div', {
+    staticClass: "form-group"
+  }, [_c('label', {
+    staticClass: "col-md-3 control-label"
+  }, [_vm._v("Send Alerts")]), _vm._v(" "), _c('div', {
+    staticClass: "col-md-9"
+  }, [_c('div', {
+    staticClass: "row"
+  }, [_c('div', {
+    staticClass: "form-group required-field col-md-12"
+  }, [_c('validate', {
+    class: _vm.fieldClassName(_vm.formstate.send_alerts),
+    attrs: {
+      "auto-label": ""
+    }
+  }, [_c('div', {
+    staticClass: "col-md-12"
+  }, [_c('input', {
+    directives: [{
+      name: "model",
+      rawName: "v-model",
+      value: (_vm.newCarePerson.alert),
+      expression: "newCarePerson.alert"
+    }],
+    staticClass: "form-control input-md",
+    staticStyle: {
+      "display": "inline"
+    },
+    attrs: {
+      "id": "send_alerts",
+      "name": "send_alerts",
+      "type": "checkbox",
+      "disabled": !_vm.newCarePerson.user.email
+    },
+    domProps: {
+      "checked": Array.isArray(_vm.newCarePerson.alert) ? _vm._i(_vm.newCarePerson.alert, null) > -1 : (_vm.newCarePerson.alert)
+    },
+    on: {
+      "__c": function($event) {
+        var $$a = _vm.newCarePerson.alert,
+          $$el = $event.target,
+          $$c = $$el.checked ? (true) : (false);
+        if (Array.isArray($$a)) {
+          var $$v = null,
+            $$i = _vm._i($$a, $$v);
+          if ($$c) {
+            $$i < 0 && (_vm.newCarePerson.alert = $$a.concat($$v))
+          } else {
+            $$i > -1 && (_vm.newCarePerson.alert = $$a.slice(0, $$i).concat($$a.slice($$i + 1)))
+          }
+        } else {
+          _vm.newCarePerson.alert = $$c
+        }
+      }
+    }
+  })]), _vm._v(" "), _c('div', {
+    staticClass: "col-md-12"
+  }, [_c('field-messages', {
+    attrs: {
+      "name": "send_alerts",
+      "show": "$touched || $submitted"
+    }
+  }, [_c('div'), _vm._v(" "), _c('div', {
+    staticClass: "validation-error has-errors text-right",
+    slot: "required"
+  }, [_vm._v("\n                                                *required\n                                            ")])]), _vm._v(" "), (!_vm.newCarePerson.user.email) ? _c('div', {
+    staticClass: "validation-error text-left",
+    staticStyle: {
+      "color": "green"
+    }
+  }, [_vm._v("\n                                            Email needs to be filled out.\n                                        ")]) : _vm._e()], 1)])], 1)])])])]), _vm._v(" "), _c('div', {
+    staticClass: "row providerForm"
+  }, [_c('div', {
+    staticClass: "form-group"
+  }, [_c('label', {
+    staticClass: "col-md-3 control-label"
+  }, [_vm._v("CCM Billing Provider")]), _vm._v(" "), _c('div', {
+    staticClass: "col-md-9"
+  }, [_c('div', {
+    staticClass: "row"
+  }, [_c('div', {
+    staticClass: "form-group required-field col-md-12"
+  }, [_c('validate', {
+    class: _vm.fieldClassName(_vm.formstate.is_billing_provider),
+    attrs: {
+      "auto-label": ""
+    }
+  }, [_c('div', {
+    staticClass: "col-md-12"
+  }, [_c('input', {
+    directives: [{
+      name: "model",
+      rawName: "v-model",
+      value: (_vm.newCarePerson.is_billing_provider),
+      expression: "newCarePerson.is_billing_provider"
+    }],
+    staticClass: "form-control input-md",
+    staticStyle: {
+      "display": "inline"
+    },
+    attrs: {
+      "id": "is_billing_provider",
+      "name": "is_billing_provider",
+      "type": "checkbox"
+    },
+    domProps: {
+      "checked": Array.isArray(_vm.newCarePerson.is_billing_provider) ? _vm._i(_vm.newCarePerson.is_billing_provider, null) > -1 : (_vm.newCarePerson.is_billing_provider)
+    },
+    on: {
+      "__c": function($event) {
+        var $$a = _vm.newCarePerson.is_billing_provider,
+          $$el = $event.target,
+          $$c = $$el.checked ? (true) : (false);
+        if (Array.isArray($$a)) {
+          var $$v = null,
+            $$i = _vm._i($$a, $$v);
+          if ($$c) {
+            $$i < 0 && (_vm.newCarePerson.is_billing_provider = $$a.concat($$v))
+          } else {
+            $$i > -1 && (_vm.newCarePerson.is_billing_provider = $$a.slice(0, $$i).concat($$a.slice($$i + 1)))
+          }
+        } else {
+          _vm.newCarePerson.is_billing_provider = $$c
+        }
+      }
+    }
+  })]), _vm._v(" "), _c('div', {
+    staticClass: "col-md-12"
+  }, [_c('field-messages', {
+    attrs: {
+      "name": "is_billing_provider",
       "show": "$touched || $submitted"
     }
   }, [_c('div'), _vm._v(" "), _c('div', {
