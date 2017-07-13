@@ -48,8 +48,7 @@ mix.js('resources/assets/js/provider/create-staff.js', 'public/js');
 
 
 // mix.js('resources/assets/js/provider/view-care-plan.js', 'public/js');
-mix.js('resources/assets/js/app-provider-ui.js', 'public/js')
-    .extract(['vue', 'jquery', 'select2']);
+mix.js('resources/assets/js/app-provider-ui.js', 'public/js');
 
 
 //DO NOT RECOMPILE THE FOLLOWING.
