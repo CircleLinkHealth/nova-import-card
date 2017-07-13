@@ -2,6 +2,7 @@ import Vue from "vue";
 import Vuex from "vuex";
 import * as actions from "./actions";
 import * as getters from "./getters";
+import * as mutations from "./mutations";
 
 Vue.use(Vuex)
 
@@ -30,41 +31,6 @@ const state = {
         errors: {}
     }
 }
-
-const mutations = {
-    DESTROY_CARE_PERSON(state, carePerson) {
-        state.patientCareTeam = state.patientCareTeam.filter(function (item) {
-            return item.id !== carePerson.id;
-        })
-    },
-    SET_CARE_TEAM(state, patientCareTeam) {
-        state.patientCareTeam = patientCareTeam
-    },
-    CLEAR_CARE_TEAM(patientCareTeam) {
-        state.patientCareTeam = {}
-    },
-    LOGIN_USER (state, currentUser) {
-        state.currentUser = currentUser
-    },
-    LOGOUT_USER (state) {
-        state.currentUser = {}
-    },
-    SET_ERRORS (state, errors) {
-        state.form.errors = errors
-    },
-    SET_FORM_BUSY (state, value) {
-        state.form.busy = value
-    },
-    SET_FORM_SHOW (state, value) {
-        state.form.show = value
-    },
-    CLEAR_FORM (state, value) {
-        state.form.busy = false
-        state.form.show = false
-        state.form.errors = {}
-    }
-}
-
 
 export default new Vuex.Store({
     state,
