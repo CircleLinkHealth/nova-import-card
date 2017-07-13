@@ -1,16 +1,16 @@
 <template>
-	<div class="modal-mask" transition="modal">
-	<div class="modal-wrapper">
-		<div class="modal-container">
-			<div class="modal-header">
+	<div class="vue-modal-mask" transition="modal">
+	<div class="vue-modal-wrapper">
+		<div class="vue-modal-container">
+			<div class="vue-modal-header">
 				<slot name="header">
 				</slot>
 			</div>
-			<div class="modal-body">
+			<div class="vue-modal-body">
 				<slot name="body">
 				</slot>
 			</div>
-			<div class="modal-footer">
+			<div class="vue-modal-footer">
 				<slot name="footer">
 				</slot>
 			</div>
@@ -35,9 +35,9 @@
 		cursor: pointer;
 	}
 
-	.modal-mask {
+	.vue-modal-mask {
 	  position: fixed;
-	  z-index: 9998;
+	  z-index: 1050;
 	  top: 0;
 	  left: 0;
 	  width: 100%;
@@ -47,20 +47,20 @@
 	  transition: opacity .3s ease;
 	}
 
-	.modal-wrapper {
+	.vue-modal-wrapper {
 	  display: table-cell;
 	  vertical-align: middle;
 	}
 
 	@media( min-width: 768px) { 
-		.modal-container {
+		.vue-modal-container {
 	  		width: 50%;
 	  		min-width: 430px;
 		}
 	}
 
 
-	.modal-container {
+	.vue-modal-container {
 	  margin: 0px auto;
 	  padding: 20px 30px;
 	  background-color: #fff;
@@ -73,16 +73,20 @@
 	  max-height: 100vh;
 	}
 
-	.modal-header h3 {
+	.vue-modal-header h3 {
 	  margin: 0;
 	}
 
-	.modal-header, .modal-footer {
+	.vue-modal-header, .vue-modal-footer {
 		border: none;
 	}
 
-	.modal-default-button {
+	.vue-modal-default-button {
 	  float: right;
+	}
+
+	.vue-modal-body {
+		padding: 5px;
 	}
 
 	/*
@@ -94,12 +98,12 @@
 	 * these styles.
 	 */
 
-	.modal-enter, .modal-leave {
+	.vue-modal-enter, .vue-modal-leave {
 	  opacity: 0;
 	}
 
-	.modal-enter .modal-container,
-	.modal-leave .modal-container {
+	.vue-modal-enter .vue-modal-container,
+	.vue-modal-leave .vue-modal-container {
 	  -webkit-transform: scale(1.1);
 	  transform: scale(1.1);
 	}
