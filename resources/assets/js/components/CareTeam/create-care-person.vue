@@ -18,12 +18,234 @@
 <template>
     <modal v-if="form.show">
         <template slot="header">
-            <h2>Create New User</h2>
-            {{form}}
+            <h4 class="modal-title">Provider Details</h4>
         </template>
 
         <template slot="body">
-            BODY
+
+
+            <div class="row providerForm">
+                <!--<search-providers v-if="!newCarePerson.user.id"-->
+                <!--v-bind:first_name="newCarePerson.user.first_name"-->
+                <!--v-bind:last_name="newCarePerson.user.last_name"-->
+                <!--&gt;</search-providers>-->
+            </div>
+
+            <!--<vue-form :state="formstate" @submit.prevent="onSubmit">-->
+                <!--<div class="row providerForm">-->
+                    <!--<div class="form-group">-->
+
+                        <!--<label class="col-md-3 control-label">Provider Name</label>-->
+
+                        <!--<div id="provider-name" class="col-md-9">-->
+                            <!--<validate auto-label class="form-group required-field col-md-6"-->
+                                      <!--:class="fieldClassName(formstate.name)">-->
+                                <!---->
+                                <!--<input type="text"-->
+                                       <!--id="first_name"-->
+                                       <!--name="first_name"-->
+                                       <!--class="form-control input-md"-->
+                                       <!--placeholder="First"-->
+                                       <!--required-->
+                                       <!--v-model.lazy="newCarePerson.user.first_name">-->
+
+                                <!--<field-messages name="first_name" show="$touched || $submitted"-->
+                                                <!--class="form-control-feedback">-->
+                                    <!--<div>Success!</div>-->
+                                    <!--<div class="validation-error alert-danger text-right" slot="required">*required-->
+                                    <!--</div>-->
+                                <!--</field-messages>-->
+
+                            <!--</validate>-->
+                        <!--</div>-->
+
+                    <!--</div>-->
+                <!--</div>-->
+
+            <!--</vue-form>-->
+
+
+            <!--<div class="row providerForm">-->
+            <!--<div class="form-group">-->
+            <!--<label class="col-md-3 control-label"-->
+            <!--:for="'specialty-'+newCarePerson.id">Specialty</label>-->
+            <!--<div class="col-md-9">-->
+            <!--<div class="col-md-12">-->
+
+            <!--<div :id="'select2-'+newCarePerson.id">-->
+
+            <!--<select2 :options="specialtiesOptions" :selected="newCarePerson.user.provider_info.specialty ? newCarePerson.user.provider_info.specialty : ''" v-model="newCarePerson.user.provider_info.specialty" class="col-md-12"></select2>-->
+            <!---->
+
+            <select2 :options="specialtiesOptions" v-model="newCarePerson.user.provider_info.specialty">
+                <option disabled value="0">Select one</option>
+            </select2>
+
+            <!--<p class="validation-error alert-danger text-right"-->
+            <!--v-if="addCarePersonForm.specialty.$error.required">*required-->
+            <!--</p>-->
+            <!--</div>-->
+            <!--</div>-->
+            <!--</div>-->
+            <!--</div>-->
+            <!--</div>-->
+
+
+            <!--<div class="row providerForm">-->
+            <!--<div class="form-group">-->
+            <!--<label class="col-md-3 control-label" for="address">Address</label>-->
+            <!--<div class="col-md-9">-->
+            <!--<div class="col-md-8">-->
+            <!--<input v-model="newCarePerson.user.address" id="address"-->
+            <!--name="address"-->
+            <!--type="text" placeholder="Line 1"-->
+            <!--class="form-control input-md"-->
+            <!--required="">-->
+            <!--</div>-->
+
+            <!--<div class="col-md-4">-->
+            <!--<input v-model="newCarePerson.user.address2" id="address2"-->
+            <!--name="address_2"-->
+            <!--type="text" placeholder="Line 2"-->
+            <!--class="form-control input-md"-->
+            <!--required="">-->
+            <!--</div>-->
+
+            <!--<br><br>-->
+
+            <!--<div class="col-md-6">-->
+            <!--<input v-model="newCarePerson.user.city" id="city" name="city"-->
+            <!--type="text" placeholder="City"-->
+            <!--class="form-control input-md col-md-6"-->
+            <!--required="">-->
+            <!--</div>-->
+
+            <!--<div class="col-md-3">-->
+            <!--<input v-model="newCarePerson.user.state" id="state" name="state"-->
+            <!--type="text" placeholder="State"-->
+            <!--class="form-control input-md"-->
+            <!--required="">-->
+            <!--</div>-->
+
+            <!--<div class="col-md-3">-->
+            <!--<input v-model="newCarePerson.user.zip" id="zip" name="zip"-->
+            <!--type="text" placeholder="Zip"-->
+            <!--class="form-control input-md"-->
+            <!--required="">-->
+            <!--</div>-->
+
+            <!--<br><br>-->
+
+            <!--</div>-->
+            <!--</div>-->
+            <!--</div>-->
+
+            <!--<div class="row providerForm">-->
+            <!--<div class="form-group">-->
+            <!--<label class="col-md-3 control-label" for="phone">Phone Number</label>-->
+            <!--<div class="col-md-9">-->
+            <!--<div class="col-md-12">-->
+            <!--<input v-model="newCarePerson.user.phone_numbers[0].number" id="phone"-->
+            <!--name="phone" type="text" placeholder=""-->
+            <!--class="form-control input-md"-->
+            <!--required="">-->
+            <!--</div>-->
+            <!--</div>-->
+            <!--</div>-->
+            <!--</div>-->
+
+            <!--<div class="row providerForm">-->
+            <!--<div class="form-group">-->
+            <!--<label class="col-md-3 control-label" for="practice">Practice Name</label>-->
+            <!--<div class="col-md-9">-->
+            <!--<div class="col-md-12">-->
+            <!--<input v-model="newCarePerson.user.primary_practice.display_name"-->
+            <!--id="practice"-->
+            <!--name="practice" type="text" placeholder=""-->
+            <!--class="form-control input-md"-->
+            <!--required="">-->
+            <!--</div>-->
+            <!--</div>-->
+            <!--</div>-->
+            <!--</div>-->
+
+            <!--<div class="row providerForm">-->
+            <!--<div class="form-group">-->
+            <!--<label class="col-md-3 control-label" for="email">Email</label>-->
+            <!--<div class="col-md-9">-->
+            <!--<div class="col-md-12">-->
+            <!--<input v-model="newCarePerson.user.email"-->
+            <!--id="email"-->
+            <!--name="email"-->
+            <!--type="email"-->
+            <!--placeholder=""-->
+            <!--class="form-control input-md"-->
+            <!--v-form-ctrl>-->
+            <!--<p class="validation-error alert-danger"-->
+            <!--v-if="addCarePersonForm.email.$error.email">invalid email.-->
+            <!--</p>-->
+            <!--</div>-->
+            <!--</div>-->
+            <!--</div>-->
+            <!--</div>-->
+
+
+            <!--<div class="row providerForm">-->
+            <!--<div class="form-group">-->
+            <!--<label class="col-md-3 control-label" for="qualification">Clinical Type</label>-->
+            <!--<div class="col-md-9">-->
+            <!--<div class="col-md-12">-->
+            <!--<select v-model="newCarePerson.user.provider_info.qualification"-->
+            <!--id="qualification"-->
+            <!--name="qualification" class="form-control type" required v-form-ctrl>-->
+            <!--<option value=""></option>-->
+            <!--<option value="clinical">Clinical (MD, RN or other)</option>-->
+            <!--<option value="non-clinical">Non-clinical</option>-->
+            <!--</select>-->
+            <!--<p class="validation-error alert-danger text-right"-->
+            <!--v-if="addCarePersonForm.qualification.$error.required">*required-->
+            <!--</p>-->
+            <!--</div>-->
+            <!--</div>-->
+            <!--</div>-->
+            <!--</div>-->
+
+            <!--<div class="row providerForm">-->
+            <!--<div class="form-group">-->
+            <!--<label class="col-md-3 control-label" for="send_alerts">Send Alerts</label>-->
+            <!--<div class="col-md-9">-->
+            <!--<div class="col-md-12">-->
+            <!--<input v-model="newCarePerson.alert" id="send_alerts"-->
+            <!--name="send_alerts" class="form-control type" type="checkbox"-->
+            <!--v-bind:disabled="!newCarePerson.user.email"-->
+            <!--style="display: inline;">-->
+            <!--<p class="validation-error alert-info"-->
+            <!--v-if="!newCarePerson.user.email">Email needs to be filled out.-->
+            <!--</div>-->
+            <!--</div>-->
+            <!--</div>-->
+            <!--</div>-->
+
+            <!--<div class="row providerForm">-->
+            <!--<div class="form-group">-->
+            <!--<label class="col-md-3 control-label" for="is_billing_provider">CCM Billing-->
+            <!--Provider-->
+            <!--</label>-->
+            <!--<div class="col-md-9">-->
+            <!--<div class="col-md-12">-->
+            <!--<input v-model="newCarePerson.is_billing_provider" id="is_billing_provider"-->
+            <!--name="is_billing_provider" class="form-control type" type="checkbox"-->
+            <!--style="display: inline;">-->
+            <!--</div>-->
+            <!--</div>-->
+            <!--</div>-->
+            <!--</div>-->
+
+            <!--<button v-on:click.stop.prevent="updateCarePerson(newCarePerson.id)" type="submit"-->
+            <!--id="editCarePerson" class="create btn btn-primary"-->
+            <!--v-bind:disabled="addCarePersonForm.$invalid">Save-->
+            <!--</button>-->
+            
         </template>
 
         <template slot="footer">
@@ -46,14 +268,14 @@
             modal
         },
 
-        computed: Object.assign({},
+        computed: Object.assign(
             mapGetters({
                 form: 'form'
             }),
             {}
         ),
 
-        methods: Object.assign({},
+        methods: Object.assign(
             mapActions(['cancelForm']),
             {
                 sendForm() {
@@ -65,36 +287,173 @@
         data()
         {
             return {
-                id: '',
-                formatted_type: 'External',
-                alert: false,
-                is_billing_provider: false,
-                user: {
+                newCarePerson: {
                     id: '',
-                    email: '',
-                    first_name: '',
-                    last_name: '',
-                    address: '',
-                    address2: '',
-                    city: '',
-                    state: '',
-                    zip: '',
-                    phone_numbers: {
-                        0: {
+                    formatted_type: 'External',
+                    alert: false,
+                    is_billing_provider: false,
+                    user: {
+                        id: '',
+                        email: '',
+                        first_name: '',
+                        last_name: '',
+                        address: '',
+                        address2: '',
+                        city: '',
+                        state: '',
+                        zip: '',
+                        phone_numbers: {
+                            0: {
+                                id: '',
+                                number: '',
+                            }
+                        },
+                        primary_practice: {
                             id: '',
-                            number: '',
+                            display_name: ''
+                        },
+                        provider_info: {
+                            id: '',
+                            qualification: '',
+                            specialty: '',
                         }
-                    },
-                    primary_practice: {
-                        id: '',
-                        display_name: ''
-                    },
-                    provider_info: {
-                        id: '',
-                        qualification: '',
-                        specialty: '',
                     }
                 },
+                specialtiesOptions: [
+                    {id: "Abdominal Radiology", text: "Abdominal Radiology"},
+                    {id: "Addiction Psychiatry", text: "Addiction Psychiatry"},
+                    {id: "Adolescent Medicine", text: "Adolescent Medicine"},
+                    {id: "Adult Reconstructive Orthopaedics", text: "Adult Reconstructive Orthopaedics"},
+                    {
+                        id: "Advanced Heart Failure & Transplant Cardiology",
+                        text: "Advanced Heart Failure & Transplant Cardiology"
+                    },
+                    {id: "Allergy & Immunology", text: "Allergy & Immunology"},
+                    {id: "Anesthesiology", text: "Anesthesiology"},
+                    {id: "Biochemical Genetics", text: "Biochemical Genetics"},
+                    {id: "Blood Banking - Transfusion Medicine", text: "Blood Banking -T ransfusion Medicine"},
+                    {id: "Cardiology", text: "Cardiology"},
+                    {id: "Cardiothoracic Radiology", text: "Cardiothoracic Radiology"},
+                    {id: "Cardiovascular Disease", text: "Cardiovascular Disease"},
+                    {id: "Chemical Pathology", text: "Chemical Pathology"},
+                    {id: "Child & Adolescent Psychiatry", text: "Child & Adolescent Psychiatry"},
+                    {id: "Child Abuse Pediatrics", text: "Child Abuse Pediatrics"},
+                    {id: "Child Neurology", text: "Child Neurology"},
+                    {id: "Clinical & Laboratory Immunology", text: "Clinical & Laboratory Immunology"},
+                    {id: "Clinical Cardiac Electrophysiology", text: "Clinical Cardiac Electrophysiology"},
+                    {id: "Clinical Neurophysiology", text: "Clinical Neurophysiology"},
+                    {id: "Colon & Rectal Surgery", text: "Colon & Rectal Surgery"},
+                    {id: "Congenital Cardiac Surgery", text: "Congenital Cardiac Surgery"},
+                    {id: "Craniofacial Surgery", text: "Craniofacial Surgery"},
+                    {id: "Critical Care Medicine", text: "Critical Care Medicine"},
+                    {id: "Critical Care Medicine", text: "Critical Care Medicine"},
+                    {id: "Cytopathology", text: "Cytopathology"},
+                    {id: "Dermatology", text: "Dermatology"},
+                    {id: "Dermatopathology", text: "Dermatopathology"},
+                    {id: "Developmental-Behavioral Pediatrics", text: "Developmental-Behavioral Pediatrics"},
+                    {id: "Ears, Nose, Throat (ENT)", text: "Ears, Nose, Throat (ENT)"},
+                    {id: "Emergency Medicine", text: "Emergency Medicine"},
+                    {id: "Endocrinology, Diabetes & Metabolism", text: "Endocrinology, Diabetes & Metabolism"},
+                    {id: "Endovascular Surgical Neuroradiology", text: "Endovascular Surgical Neuroradiology"},
+                    {id: "Family Medicine", text: "Family Medicine"},
+                    {id: "Family Practice", text: "Family Practice"},
+                    {
+                        id: "Female Pelvic Medicine & Reconstructive Surgery",
+                        text: "Female Pelvic Medicine & Reconstructive Surgery"
+                    },
+                    {id: "Foot & Ankle Orthopaedics", text: "Foot & Ankle Orthopaedics"},
+                    {id: "Forensic Pathology", text: "Forensic Pathology"},
+                    {id: "Forensic Psychiatry", text: "Forensic Psychiatry"},
+                    {id: "Gastroenterology", text: "Gastroenterology"},
+                    {id: "Geriatric Medicine", text: "Geriatric Medicine"},
+                    {id: "Geriatric Psychiatry", text: "Geriatric Psychiatry"},
+                    {id: "Hand Surgery", text: "Hand Surgery"},
+                    {id: "Hematology", text: "Hematology"},
+                    {id: "Hematology & Oncology", text: "Hematology & Oncology"},
+                    {id: "Homecare Nurse", text: "Homecare Nurse"},
+                    {id: "Infectious Disease", text: "Infectious Disease"},
+                    {id: "Internal Medicine", text: "Internal Medicine"},
+                    {id: "Internal Medicine-Pediatrics", text: "Internal Medicine-Pediatrics"},
+                    {id: "Interventional Cardiology", text: "Interventional Cardiology"},
+                    {id: "MD", text: "MD"},
+                    {id: "Medical Genetics", text: "Medical Genetics"},
+                    {id: "Medical Microbiology", text: "Medical Microbiology"},
+                    {id: "Medical Toxicology", text: "Medical Toxicology"},
+                    {id: "Molecular Genetic Pathology", text: "Molecular Genetic Pathology"},
+                    {id: "Muscoskeletal Radiology", text: "Muscoskeletal Radiology"},
+                    {id: "Musculoskeletal Oncology", text: "Musculoskeletal Oncology"},
+                    {id: "Neonatal-Perinatal Medicine", text: "Neonatal-Perinatal Medicine"},
+                    {id: "Nephrology", text: "Nephrology"},
+                    {id: "Neurological Surgery", text: "Neurological Surgery"},
+                    {id: "Neurology", text: "Neurology"},
+                    {id: "Neuromuscular Medicine", text: "Neuromuscular Medicine"},
+                    {id: "Neuroradiology", text: "Neuroradiology"},
+                    {id: "Nuclear Medicine", text: "Nuclear Medicine"},
+                    {id: "Nuclear Radiology", text: "Nuclear Radiology"},
+                    {id: "Obstetric Anesthesiology", text: "Obstetric Anesthesiology"},
+                    {id: "Obstetrics & Gynecology", text: "Obstetrics & Gynecology"},
+                    {id: "Oncology", text: "Oncology"},
+                    {
+                        id: "Ophthalmic Plastic & Reconstructive Surgery",
+                        text: "Ophthalmic Plastic & Reconstructive Surgery"
+                    },
+                    {id: "Ophthalmology", text: "Ophthalmology"},
+                    {id: "Orthopaedic Sports Medicine", text: "Orthopaedic Sports Medicine"},
+                    {id: "Orthopaedic Surgery", text: "Orthopaedic Surgery"},
+                    {id: "Orthopaedic Surgery of the Spine", text: "Orthopaedic Surgery of the Spine"},
+                    {id: "Orthopaedic Trauma", text: "Orthopaedic Trauma"},
+                    {id: "Otolaryngology", text: "Otolaryngology"},
+                    {id: "Otology - Neurotology", text: "Otology - Neurotology"},
+                    {id: "Pain Medicine", text: "Pain Medicine"},
+                    {id: "Pathology-Anatomic & Clinical", text: "Pathology-Anatomic & Clinical"},
+                    {id: "Pediatric Anesthesiology", text: "Pediatric Anesthesiology"},
+                    {id: "Pediatric Cardiology", text: "Pediatric Cardiology"},
+                    {id: "Pediatric Critical Care Medicine", text: "Pediatric Critical Care Medicine"},
+                    {id: "Pediatric Emergency Medicine", text: "Pediatric Emergency Medicine"},
+                    {id: "Pediatric Endocrinology", text: "Pediatric Endocrinology"},
+                    {id: "Pediatric Gastroenterology", text: "Pediatric Gastroenterology"},
+                    {id: "Pediatric Hematology-Oncology", text: "Pediatric Hematology-Oncology"},
+                    {id: "Pediatric Infectious Diseases", text: "Pediatric Infectious Diseases"},
+                    {id: "Pediatric Nephrology", text: "Pediatric Nephrology"},
+                    {id: "Pediatric Orthopaedics", text: "Pediatric Orthopaedics"},
+                    {id: "Pediatric Otolaryngology", text: "Pediatric Otolaryngology"},
+                    {id: "Pediatric Pathology", text: "Pediatric Pathology"},
+                    {id: "Pediatric Pulmonology", text: "Pediatric Pulmonology"},
+                    {id: "Pediatric Radiology", text: "Pediatric Radiology"},
+                    {id: "Pediatric Rheumatology", text: "Pediatric Rheumatology"},
+                    {id: "Pediatric Sports Medicine", text: "Pediatric Sports Medicine"},
+                    {id: "Pediatric Surgery", text: "Pediatric Surgery"},
+                    {id: "Pediatric Transplant Hepatology", text: "Pediatric Transplant Hepatology"},
+                    {id: "Pediatric Urology", text: "Pediatric Urology"},
+                    {id: "Pediatrics", text: "Pediatrics"},
+                    {id: "Physical Medicine & Rehabilitation", text: "Physical Medicine & Rehabilitation"},
+                    {id: "Physical Therapy", text: "Physical Therapy"},
+                    {id: "Plastic Surgery", text: "Plastic Surgery"},
+                    {id: "Preventive Medicine", text: "Preventive Medicine"},
+                    {id: "Procedural Dermatology", text: "Procedural Dermatology"},
+                    {id: "Psychiatry", text: "Psychiatry"},
+                    {id: "Pulmonary Disease", text: "Pulmonary Disease"},
+                    {
+                        id: "Pulmonary Disease & Critical Care Medicine",
+                        text: "Pulmonary Disease & Critical Care Medicine"
+                    },
+                    {id: "Radiation Oncology", text: "Radiation Oncology"},
+                    {id: "Radiology-Diagnostic", text: "Radiology-Diagnostic"},
+                    {id: "Rheumatology", text: "Rheumatology"},
+                    {id: "Sleep Medicine", text: "Sleep Medicine"},
+                    {id: "Social Worker", text: "Social Worker"},
+                    {id: "Spinal Cord Injury Medicine", text: "Spinal Cord Injury Medicine"},
+                    {id: "Sports Medicine", text: "Sports Medicine"},
+                    {id: "Surgery-General", text: "Surgery-General"},
+                    {id: "Surgical Critical Care", text: "Surgical Critical Care"},
+                    {id: "Therapist", text: "Therapist"},
+                    {id: "Thoracic Surgery", text: "Thoracic Surgery"},
+                    {id: "Thoracic Surgery-Integrated", text: "Thoracic Surgery-Integrated"},
+                    {id: "Transplant Hepatology", text: "Transplant Hepatology"},
+                    {id: "Urology", text: "Urology"},
+                    {id: "Vascular & Interventional Radiology", text: "Vascular & Interventional Radiology"},
+                    {id: "Vascular Surgery", text: "Vascular Surgery"},
+                ]
             }
         }
         ,
