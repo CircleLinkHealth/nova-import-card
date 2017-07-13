@@ -11,3 +11,10 @@
 <div id="app-fab">
     <fab></fab>
 </div> <!-- end #app -->
+
+@section('scripts')
+    <script src="{{ asset('/js/fab.js') }}"></script>
+    <script src="{{asset('js/manifest.js')}}"></script>
+    <script src="{{asset('js/vendor.js')}}"></script>
+    <script src="{{asset('js/app-provider-ui.js')}}"></script>
+@endsection

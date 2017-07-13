@@ -8,7 +8,6 @@
     <script>
         $(document).ready(function () {
             $(".provider").select2();
-
         });
     </script>
 

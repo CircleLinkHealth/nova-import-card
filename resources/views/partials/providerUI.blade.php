@@ -55,34 +55,32 @@
     @endif
 </head>
 <body>
-    @if(!isset($isPdf))
+<!--[if lt IE 8]>
+<p class="chromeframe">You are using an <strong>outdated</strong> browser. Please <a
+        href="http://browsehappy.com/">upgrade
+    your browser</a> or <a href="http://www.google.com/chromeframe/?redirect=true">activate Google Chrome
+    Frame</a>
+    to improve your experience.</p>
+<![endif]-->
+
+@if(!isset($isPdf))
     @include('partials.providerUI.primarynav')
 
     @if(!empty($patient->id))
         @include('partials.providerUI.patientnav')
     @endif
 
-    @if(!empty($patient->id))
+     @if(!empty($patient->id))
             @include('partials.fab')
-    @endif
+     @endif
 @endif
 
-<!--[if lt IE 8]>
-    <p class="chromeframe">You are using an <strong>outdated</strong> browser. Please <a
-            href="http://browsehappy.com/">upgrade
-        your browser</a> or <a href="http://www.google.com/chromeframe/?redirect=true">activate Google Chrome
-        Frame</a>
-        to improve your experience.</p>
-    <![endif]-->
-
-
     @yield('content')
-
 
 @if(!isset($isPdf))
     @include('partials.footer')
 
-         <!--[if lt IE 9]>
+    <!--[if lt IE 9]>
 <script src="https://oss.maxcdn.com/html5shiv/3.7.2/html5shiv.min.js"></script>
 <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
 <![endif]-->
@@ -91,7 +89,6 @@
 {{--<script src="{{ asset('/js/scripts.js') }}"></script>--}}
 <script src="{{ asset('/js/bootstrap-select.min.js') }}"></script>
 <script src="{{ asset('/js/typeahead.bundle.js') }}"></script>
-<script src="{{ asset('/js/fab.js') }}"></script>
 @include('partials.searchjs')
 @include('partials.providerUItimer')
 <script src="{{asset('/js/bootstrap.min.js')}}"></script>
@@ -99,11 +96,6 @@
 
 @yield('scripts')
 @endif
-
-
-<script src="{{asset('js/manifest.js')}}"></script>
-<script src="{{asset('js/vendor.js')}}"></script>
-<script src="{{asset('js/app-provider-ui.js')}}"></script>
 </body>
 
 </html>
