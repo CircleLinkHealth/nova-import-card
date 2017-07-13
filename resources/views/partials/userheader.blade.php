@@ -117,11 +117,13 @@ $location = empty($patient->getPreferredLocationName())
     </div>
 </div>
 
+<meta name="is_ccm_complex" content="{{$ccm_complex}}">
+
 <script>
 
     $(document).ready(function () {
 
-        if ({!! $ccm_complex !!}) {
+        if ($('meta[name="is_ccm_complex"]').attr('content')) {
             $("#complex_tag").show();
         } else {
             $("#complex_tag").hide();
