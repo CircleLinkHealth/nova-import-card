@@ -60,7 +60,7 @@
 /******/ 	__webpack_require__.p = "";
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 57);
+/******/ 	return __webpack_require__(__webpack_require__.s = 60);
 /******/ })
 /************************************************************************/
 /******/ ([
@@ -41450,15 +41450,17 @@ module.exports = function spread(callback) {
 
 
 /***/ }),
-/* 35 */
+/* 35 */,
+/* 36 */,
+/* 37 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var disposed = false
 var Component = __webpack_require__(9)(
   /* script */
-  __webpack_require__(36),
+  __webpack_require__(38),
   /* template */
-  __webpack_require__(37),
+  __webpack_require__(39),
   /* styles */
   null,
   /* scopeId */
@@ -41490,7 +41492,7 @@ module.exports = Component.exports
 
 
 /***/ }),
-/* 36 */
+/* 38 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -41541,7 +41543,7 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 });
 
 /***/ }),
-/* 37 */
+/* 39 */
 /***/ (function(module, exports, __webpack_require__) {
 
 module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;
@@ -41556,11 +41558,8 @@ if (false) {
 }
 
 /***/ }),
-/* 38 */,
-/* 39 */,
 /* 40 */,
-/* 41 */,
-/* 42 */
+/* 41 */
 /***/ (function(module, exports, __webpack_require__) {
 
 /* WEBPACK VAR INJECTION */(function(module) {var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_RESULT__;var __WEBPACK_AMD_DEFINE_RESULT__;var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_LOCAL_MODULE_0__;var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
@@ -42690,12 +42689,12 @@ if ("undefined" == typeof jQuery) {
       }
     }, destroy: function destroy() {
       this.element && rt(this, !1), this.handlers = {}, this.session = {}, this.input.destroy(), this.element = null;
-    } }, s(at, { INPUT_START: Tt, INPUT_MOVE: St, INPUT_END: Pt, INPUT_CANCEL: Ot, STATE_POSSIBLE: ae, STATE_BEGAN: oe, STATE_CHANGED: re, STATE_ENDED: se, STATE_RECOGNIZED: le, STATE_CANCELLED: ce, STATE_FAILED: ue, DIRECTION_NONE: Et, DIRECTION_LEFT: At, DIRECTION_RIGHT: It, DIRECTION_UP: qt, DIRECTION_DOWN: Mt, DIRECTION_HORIZONTAL: _t, DIRECTION_VERTICAL: jt, DIRECTION_ALL: Vt, Manager: ot, Input: T, TouchAction: X, TouchInput: F, MouseInput: L, PointerEventInput: H, TouchMouseInput: $, SingleTouchInput: Q, Recognizer: Y, AttrRecognizer: Z, Tap: nt, Pan: J, Swipe: it, Pinch: K, Rotate: et, Press: tt, on: p, off: h, each: r, merge: l, extend: s, inherit: c, bindFn: u, prefixed: x }), ( false ? "undefined" : _typeof(__webpack_require__(43))) == ut && __webpack_require__(44) ? !(__WEBPACK_AMD_DEFINE_RESULT__ = function () {
+    } }, s(at, { INPUT_START: Tt, INPUT_MOVE: St, INPUT_END: Pt, INPUT_CANCEL: Ot, STATE_POSSIBLE: ae, STATE_BEGAN: oe, STATE_CHANGED: re, STATE_ENDED: se, STATE_RECOGNIZED: le, STATE_CANCELLED: ce, STATE_FAILED: ue, DIRECTION_NONE: Et, DIRECTION_LEFT: At, DIRECTION_RIGHT: It, DIRECTION_UP: qt, DIRECTION_DOWN: Mt, DIRECTION_HORIZONTAL: _t, DIRECTION_VERTICAL: jt, DIRECTION_ALL: Vt, Manager: ot, Input: T, TouchAction: X, TouchInput: F, MouseInput: L, PointerEventInput: H, TouchMouseInput: $, SingleTouchInput: Q, Recognizer: Y, AttrRecognizer: Z, Tap: nt, Pan: J, Swipe: it, Pinch: K, Rotate: et, Press: tt, on: p, off: h, each: r, merge: l, extend: s, inherit: c, bindFn: u, prefixed: x }), ( false ? "undefined" : _typeof(__webpack_require__(42))) == ut && __webpack_require__(43) ? !(__WEBPACK_AMD_DEFINE_RESULT__ = function () {
     return at;
   }.call(exports, __webpack_require__, exports, module),
 				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__)) : "undefined" != typeof module && module.exports ? module.exports = at : t[i] = at;
 }(window, document, "Hammer"), function (t) {
-   true ? !(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__(1), __webpack_require__(45)], __WEBPACK_AMD_DEFINE_FACTORY__ = (t),
+   true ? !(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__(1), __webpack_require__(44)], __WEBPACK_AMD_DEFINE_FACTORY__ = (t),
 				__WEBPACK_AMD_DEFINE_RESULT__ = (typeof __WEBPACK_AMD_DEFINE_FACTORY__ === 'function' ?
 				(__WEBPACK_AMD_DEFINE_FACTORY__.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__)) : __WEBPACK_AMD_DEFINE_FACTORY__),
 				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__)) : "object" == (typeof exports === "undefined" ? "undefined" : _typeof(exports)) ? t(require("jquery"), require("hammerjs")) : t(jQuery, Hammer);
@@ -44232,7 +44231,7 @@ if ("undefined" == typeof jQuery) {
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(10)(module)))
 
 /***/ }),
-/* 43 */
+/* 42 */
 /***/ (function(module, exports) {
 
 module.exports = function() {
@@ -44241,7 +44240,7 @@ module.exports = function() {
 
 
 /***/ }),
-/* 44 */
+/* 43 */
 /***/ (function(module, exports) {
 
 /* WEBPACK VAR INJECTION */(function(__webpack_amd_options__) {/* globals __webpack_amd_options__ */
@@ -44250,7 +44249,7 @@ module.exports = __webpack_amd_options__;
 /* WEBPACK VAR INJECTION */}.call(exports, {}))
 
 /***/ }),
-/* 45 */
+/* 44 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var __WEBPACK_AMD_DEFINE_RESULT__;/*! Hammer.JS - v2.0.7 - 2016-04-22
@@ -46900,6 +46899,7 @@ if (true) {
 
 
 /***/ }),
+/* 45 */,
 /* 46 */,
 /* 47 */,
 /* 48 */,
@@ -46911,22 +46911,25 @@ if (true) {
 /* 54 */,
 /* 55 */,
 /* 56 */,
-/* 57 */
+/* 57 */,
+/* 58 */,
+/* 59 */,
+/* 60 */
 /***/ (function(module, exports, __webpack_require__) {
 
-module.exports = __webpack_require__(58);
+module.exports = __webpack_require__(61);
 
 
 /***/ }),
-/* 58 */
+/* 61 */
 /***/ (function(module, exports, __webpack_require__) {
 
 __webpack_require__(12);
-__webpack_require__(42);
+__webpack_require__(41);
 
 window.Vue = __webpack_require__(11);
 
-Vue.component('material-select', __webpack_require__(35));
+Vue.component('material-select', __webpack_require__(37));
 
 var locationsVM = new Vue({
     el: '#create-locations-component',
