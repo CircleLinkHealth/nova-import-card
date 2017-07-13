@@ -2,12 +2,12 @@ import userProfile from "../api/user-profile";
 import careTeam from "../api/care-team";
 import carePersonApi from "../api/care-person";
 
-export const cancelForm = ({commit}) => {
-    commit('CLEAR_FORM');
+export const clearOpenModal = ({commit}) => {
+    commit('CLEAR_OPEN_MODAL');
 }
 
-export const showForm = ({commit}) => {
-    commit('SET_FORM_SHOW', true);
+export const setOpenModal = ({commit}, openModal) => {
+    commit('SET_OPEN_MODAL', openModal);
 }
 
 export const getCurrentUser = ({commit}) => {

@@ -20,20 +20,10 @@ export const LOGOUT_USER = (state) => {
     state.currentUser = {}
 }
 
-export const SET_ERRORS = (state, errors) => {
-    state.form.errors = errors
+export const SET_OPEN_MODAL = (state, openModal) => {
+    state.openModal = openModal
 }
 
-export const SET_FORM_BUSY = (state, value) => {
-    state.form.busy = value
-}
-
-export const SET_FORM_SHOW = (state, value) => {
-    state.form.show = value
-}
-
-export const CLEAR_FORM = (state, value) => {
-    state.form.busy = false
-    state.form.show = false
-    state.form.errors = {}
+export const CLEAR_OPEN_MODAL = (state) => {
+    state.openModal = {}
 }

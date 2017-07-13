@@ -24,11 +24,9 @@ const state = {
         username: '',
     },
     debug: debug,
-    form: {
-        show: false,
-        busy: false,
-        success: false,
-        errors: {}
+    openModal: {
+        name: null,
+        props: {}
     }
 }
 

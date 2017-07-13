@@ -6,7 +6,7 @@ export const currentUser = state => {
     return state.currentUser
 }
 
-export const form = state => {
-    return state.form
+export const openModal = state => {
+    return state.openModal
 }
 
