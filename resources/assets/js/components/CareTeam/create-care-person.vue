@@ -41,6 +41,7 @@
             </div>
 
             <vue-form :state="formstate" @submit.prevent="onSubmit">
+                <!--name-->
                 <div class="row providerForm">
                     <div class="form-group">
 
@@ -98,7 +99,7 @@
                     </div>
                 </div>
 
-
+                <!--specialty-->
                 <div class="row providerForm">
                     <div class="form-group">
                         <label class="col-md-3 control-label">Specialty</label>
@@ -131,6 +132,7 @@
                     </div>
                 </div>
 
+                <!--address-->
                 <div class="row providerForm">
                     <div class="form-group">
                         <label class="col-md-3 control-label">Address</label>
@@ -144,7 +146,6 @@
                                                    name="address"
                                                    class="form-control input-md"
                                                    placeholder="Line 1"
-                                                   required
                                                    v-model="newCarePerson.user.address">
                                         </div>
 
@@ -191,8 +192,7 @@
                                                    name="city"
                                                    class="form-control input-md"
                                                    placeholder="City"
-                                                   v-model="newCarePerson.user.city"
-                                                   required>
+                                                   v-model="newCarePerson.user.city">
                                         </div>
 
                                         <div class="col-md-12">
@@ -215,8 +215,7 @@
                                                    name="state"
                                                    class="form-control input-md"
                                                    placeholder="State"
-                                                   v-model="newCarePerson.user.state"
-                                                   required>
+                                                   v-model="newCarePerson.user.state">
                                         </div>
 
                                         <div class="col-md-12">
@@ -239,8 +238,7 @@
                                                    name="zip"
                                                    class="form-control input-md"
                                                    placeholder="Zip"
-                                                   v-model="newCarePerson.user.zip"
-                                                   required>
+                                                   v-model="newCarePerson.user.zip">
                                         </div>
 
                                         <div class="col-md-12">
@@ -259,101 +257,188 @@
                     </div>
                 </div>
 
+                <!--phone-->
+                <div class="row providerForm">
+                    <div class="form-group">
 
+                        <label class="col-md-3 control-label">Phone Number</label>
+
+                        <div class="col-md-9">
+                            <div class="row">
+                                <div class="form-group required-field col-md-12">
+                                    <validate auto-label :class="fieldClassName(formstate.phone)">
+                                        <div class="col-md-12">
+                                            <input type="text"
+                                                   id="phone"
+                                                   name="phone"
+                                                   class="form-control input-md"
+                                                   placeholder="xxx-xxx-xxxx"
+                                                   v-model="newCarePerson.user.phone_numbers[0].number">
+                                        </div>
+
+                                        <div class="col-md-12">
+                                            <field-messages name="phone" show="$touched || $submitted">
+                                                <div></div>
+                                                <div class="validation-error has-errors text-right" slot="required">
+                                                    *required
+                                                </div>
+                                            </field-messages>
+                                        </div>
+                                    </validate>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!--practice-->
+                <div class="row providerForm">
+                    <div class="form-group">
+
+                        <label class="col-md-3 control-label">Practice Name</label>
+
+                        <div class="col-md-9">
+                            <div class="row">
+                                <div class="form-group required-field col-md-12">
+                                    <validate auto-label :class="fieldClassName(formstate.practice)">
+                                        <div class="col-md-12">
+                                            <input type="text"
+                                                   id="practice"
+                                                   name="practice"
+                                                   class="form-control input-md"
+                                                   placeholder=""
+                                                   v-model="newCarePerson.user.primary_practice.display_name">
+                                        </div>
+
+                                        <div class="col-md-12">
+                                            <field-messages name="practice" show="$touched || $submitted">
+                                                <div></div>
+                                                <div class="validation-error has-errors text-right" slot="required">
+                                                    *required
+                                                </div>
+                                            </field-messages>
+                                        </div>
+                                    </validate>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+
+                <!--email-->
+                <div class="row providerForm">
+                    <div class="form-group">
+
+                        <label class="col-md-3 control-label">Email</label>
+
+                        <div class="col-md-9">
+                            <div class="row">
+                                <div class="form-group required-field col-md-12">
+                                    <validate auto-label :class="fieldClassName(formstate.email)">
+                                        <div class="col-md-12">
+                                            <input type="email"
+                                                   id="email"
+                                                   name="email"
+                                                   class="form-control input-md"
+                                                   placeholder=""
+                                                   v-model="newCarePerson.user.email">
+                                        </div>
+
+                                        <div class="col-md-12">
+                                            <field-messages name="email" show="$touched || $submitted">
+                                                <div></div>
+                                                <div class="validation-error has-errors text-right" slot="required">
+                                                    *required
+                                                </div>
+                                            </field-messages>
+                                        </div>
+                                    </validate>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!--clinical type-->
+                <div class="row providerForm">
+                    <div class="form-group">
+
+                        <label class="col-md-3 control-label">Clinical Type</label>
+
+                        <div class="col-md-9">
+                            <div class="row">
+                                <div class="form-group required-field col-md-12">
+                                    <validate auto-label :class="fieldClassName(formstate.qualification)">
+                                        <div class="col-md-12">
+
+                                            <select v-model="newCarePerson.user.provider_info.qualification"
+                                                    id="qualification"
+                                                    name="qualification"
+                                                    class="form-control input-md"
+                                                    required>
+                                                <option value="" disabled></option>
+                                                <option value="clinical">Clinical (MD, RN or other)</option>
+                                                <option value="non-clinical">Non-clinical</option>
+                                            </select>
+                                        </div>
+
+                                        <div class="col-md-12">
+                                            <field-messages name="qualification" show="$touched || $submitted">
+                                                <div></div>
+                                                <div class="validation-error has-errors text-right" slot="required">
+                                                    *required
+                                                </div>
+                                            </field-messages>
+                                        </div>
+                                    </validate>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+
+
+                <!--send alerts-->
+                <div class="row providerForm">
+                    <div class="form-group">
+
+                        <label class="col-md-3 control-label">Send Alerts</label>
+
+                        <div class="col-md-9">
+                            <div class="row">
+                                <div class="form-group required-field col-md-12">
+                                    <validate auto-label :class="fieldClassName(formstate.send_alerts)">
+                                        <div class="col-md-12">
+
+                                            <input v-model="newCarePerson.alert"
+                                                   id="send_alerts"
+                                                   name="send_alerts"
+                                                   class="form-control input-md"
+                                                   type="checkbox"
+                                                   v-bind:disabled="!newCarePerson.user.email">
+                                        </div>
+
+                                        <div class="col-md-12">
+                                            <field-messages name="send_alerts" show="$touched || $submitted">
+                                                <div></div>
+                                                <div class="validation-error has-errors text-right" slot="required">
+                                                    *required
+                                                </div>
+                                                <div v-if="!newCarePerson.user.email" class="validation-error has-errors text-right">
+                                                    Email needs to be filled out.
+                                                </div>
+
+                                            </field-messages>
+                                        </div>
+                                    </validate>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </vue-form>
-
-
-            <!--<br><br>-->
-
-            <!--</div>-->
-            <!--</div>-->
-            <!--</div>-->
-
-            <!--<div class="row providerForm">-->
-            <!--<div class="form-group">-->
-            <!--<label class="col-md-3 control-label" for="phone">Phone Number</label>-->
-            <!--<div class="col-md-9">-->
-            <!--<div class="col-md-12">-->
-            <!--<input v-model="newCarePerson.user.phone_numbers[0].number" id="phone"-->
-            <!--name="phone" type="text" placeholder=""-->
-            <!--class="form-control input-md"-->
-            <!--required="">-->
-            <!--</div>-->
-            <!--</div>-->
-            <!--</div>-->
-            <!--</div>-->
-
-            <!--<div class="row providerForm">-->
-            <!--<div class="form-group">-->
-            <!--<label class="col-md-3 control-label" for="practice">Practice Name</label>-->
-            <!--<div class="col-md-9">-->
-            <!--<div class="col-md-12">-->
-            <!--<input v-model="newCarePerson.user.primary_practice.display_name"-->
-            <!--id="practice"-->
-            <!--name="practice" type="text" placeholder=""-->
-            <!--class="form-control input-md"-->
-            <!--required="">-->
-            <!--</div>-->
-            <!--</div>-->
-            <!--</div>-->
-            <!--</div>-->
-
-            <!--<div class="row providerForm">-->
-            <!--<div class="form-group">-->
-            <!--<label class="col-md-3 control-label" for="email">Email</label>-->
-            <!--<div class="col-md-9">-->
-            <!--<div class="col-md-12">-->
-            <!--<input v-model="newCarePerson.user.email"-->
-            <!--id="email"-->
-            <!--name="email"-->
-            <!--type="email"-->
-            <!--placeholder=""-->
-            <!--class="form-control input-md"-->
-            <!--v-form-ctrl>-->
-            <!--<p class="validation-error has-errors"-->
-            <!--v-if="addCarePersonForm.email.$error.email">invalid email.-->
-            <!--</p>-->
-            <!--</div>-->
-            <!--</div>-->
-            <!--</div>-->
-            <!--</div>-->
-
-
-            <!--<div class="row providerForm">-->
-            <!--<div class="form-group">-->
-            <!--<label class="col-md-3 control-label" for="qualification">Clinical Type</label>-->
-            <!--<div class="col-md-9">-->
-            <!--<div class="col-md-12">-->
-            <!--<select v-model="newCarePerson.user.provider_info.qualification"-->
-            <!--id="qualification"-->
-            <!--name="qualification" class="form-control type" required v-form-ctrl>-->
-            <!--<option value=""></option>-->
-            <!--<option value="clinical">Clinical (MD, RN or other)</option>-->
-            <!--<option value="non-clinical">Non-clinical</option>-->
-            <!--</select>-->
-            <!--<p class="validation-error has-errors text-right"-->
-            <!--v-if="addCarePersonForm.qualification.$error.required">*required-->
-            <!--</p>-->
-            <!--</div>-->
-            <!--</div>-->
-            <!--</div>-->
-            <!--</div>-->
-
-            <!--<div class="row providerForm">-->
-            <!--<div class="form-group">-->
-            <!--<label class="col-md-3 control-label" for="send_alerts">Send Alerts</label>-->
-            <!--<div class="col-md-9">-->
-            <!--<div class="col-md-12">-->
-            <!--<input v-model="newCarePerson.alert" id="send_alerts"-->
-            <!--name="send_alerts" class="form-control type" type="checkbox"-->
-            <!--v-bind:disabled="!newCarePerson.user.email"-->
-            <!--style="display: inline;">-->
-            <!--<p class="validation-error alert-info"-->
-            <!--v-if="!newCarePerson.user.email">Email needs to be filled out.-->
-            <!--</div>-->
-            <!--</div>-->
-            <!--</div>-->
-            <!--</div>-->
 
             <!--<div class="row providerForm">-->
             <!--<div class="form-group">-->
