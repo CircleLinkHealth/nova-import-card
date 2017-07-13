@@ -21,6 +21,6 @@
 
 <script>
     export default {
-
+        props: ['carePerson']
     }
 </script>
