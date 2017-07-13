@@ -48608,16 +48608,20 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__api_user_profile__ = __webpack_require__(68);
 
 
-var cancelForm = function cancelForm(context) {
-    context.commit('CLEAR_FORM');
-};
-
-var showForm = function showForm(context) {
-    context.commit('SET_FORM_SHOW', true);
-};
-
-var getCurrentUser = function getCurrentUser(_ref) {
+var cancelForm = function cancelForm(_ref) {
     var commit = _ref.commit;
+
+    commit('CLEAR_FORM');
+};
+
+var showForm = function showForm(_ref2) {
+    var commit = _ref2.commit;
+
+    commit('SET_FORM_SHOW', true);
+};
+
+var getCurrentUser = function getCurrentUser(_ref3) {
+    var commit = _ref3.commit;
 
     __WEBPACK_IMPORTED_MODULE_0__api_user_profile__["a" /* default */].getCurrentUser(function (user) {
         if (!user) {
@@ -49974,7 +49978,7 @@ exports = module.exports = __webpack_require__(35)(undefined);
 
 
 // module
-exports.push([module.i, "\n.modal label {\n    font-size: 14px;\n}\n.providerForm {\n    padding: 10px;\n}\n.validation-error {\n    padding: 3px;\n    margin-bottom: 10px;\n    border: 1px solid transparent;\n    border-radius: 4px;\n}\n.has-danger .form-control {\n    border-color: #ff0000;\n    box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075);\n}\n.has-errors {\n    color: #a94442;\n}\n.modal-body {\n    margin: -30px 5px 5px 5px;\n    padding: 7px;\n}\n", ""]);
+exports.push([module.i, "\n.modal label {\n    font-size: 14px;\n}\n.providerForm {\n    padding: 10px;\n}\n.validation-error {\n    padding: 3px;\n    margin-bottom: 10px;\n    border: 1px solid transparent;\n    border-radius: 4px;\n}\n.has-danger .form-control {\n    border-color: #ff0000;\n    box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075);\n}\n.has-errors {\n    color: #a94442;\n}\n.care-person-modal-body {\n    margin: -30px 5px 5px 5px;\n    padding: 7px;\n}\n", ""]);
 
 // exports
 
@@ -49990,20 +49994,6 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_vuex__ = __webpack_require__(51);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__store_actions__ = __webpack_require__(52);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__store_getters__ = __webpack_require__(53);
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
 //
 //
 //
@@ -50523,8 +50513,6 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
         sendForm: function sendForm() {
             var _this = this;
 
-            var self = this;
-
             if (this.newCarePerson.is_billing_provider) {
                 this.newCarePerson.formatted_type = 'Billing Provider';
             }
@@ -50538,15 +50526,18 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
                 _this.newCarePerson.id = response.data.carePerson.id;
                 _this.newCarePerson.formatted_type = response.data.carePerson.formatted_type;
 
-                $("#editCareTeamModal-" + id).modal('hide');
+                Object.assign(_this.$data, _this.$options.data.apply(_this));
+                _this.cancelForm(true);
 
-                if (response.data.oldBillingProvider) {
-                    eventHub.$emit('existing-user-selected', {
-                        oldBillingProvider: response.data.oldBillingProvider
-                    });
-                }
+                //                            $("#editCareTeamModal-" + id).modal('hide');
 
-                $("#successModal-" + id).modal();
+                //                            if (response.data.oldBillingProvider) {
+                //                                eventHub.$emit('existing-user-selected', {
+                //                                    oldBillingProvider: response.data.oldBillingProvider,
+                //                                });
+                //                            }
+
+                //                            $("#successModal-" + id).modal();
 
                 //HACK to replace select2 with newly added provider on appointments page
                 var carePerson = response.data.carePerson;
@@ -50577,8 +50568,8 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 
     data: function data() {
         return {
-            updateRoute: '',
-            patientId: '',
+            updateRoute: $('meta[name="provider-update-route"]').attr('content'),
+            patientId: $('meta[name="patient_id"]').attr('content'),
             formstate: {},
             model: {
                 first_name: '',
@@ -50643,10 +50634,7 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
             }, { id: "Radiation Oncology", text: "Radiation Oncology" }, { id: "Radiology-Diagnostic", text: "Radiology-Diagnostic" }, { id: "Rheumatology", text: "Rheumatology" }, { id: "Sleep Medicine", text: "Sleep Medicine" }, { id: "Social Worker", text: "Social Worker" }, { id: "Spinal Cord Injury Medicine", text: "Spinal Cord Injury Medicine" }, { id: "Sports Medicine", text: "Sports Medicine" }, { id: "Surgery-General", text: "Surgery-General" }, { id: "Surgical Critical Care", text: "Surgical Critical Care" }, { id: "Therapist", text: "Therapist" }, { id: "Thoracic Surgery", text: "Thoracic Surgery" }, { id: "Thoracic Surgery-Integrated", text: "Thoracic Surgery-Integrated" }, { id: "Transplant Hepatology", text: "Transplant Hepatology" }, { id: "Urology", text: "Urology" }, { id: "Vascular & Interventional Radiology", text: "Vascular & Interventional Radiology" }, { id: "Vascular Surgery", text: "Vascular Surgery" }]
         };
     },
-    mounted: function mounted() {
-        this.updateRoute = $('meta[name="provider-update-route"]').attr('content');
-        this.patientId = $('meta[name="patient_id"]').attr('content');
-    }
+    mounted: function mounted() {}
 });
 
 /***/ }),
@@ -50797,11 +50785,20 @@ if (false) {
 /***/ (function(module, exports, __webpack_require__) {
 
 module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;
-  return (_vm.form.show) ? _c('modal', [_c('template', {
+  return (_vm.form.show && _vm.newCarePerson.id === 'new') ? _c('modal', [_c('template', {
     slot: "header"
-  }, [_c('h4', {
+  }, [_c('button', {
+    staticClass: "close",
+    attrs: {
+      "type": "button"
+    },
+    on: {
+      "click": _vm.cancelForm
+    }
+  }, [_vm._v("×")]), _vm._v(" "), _c('h4', {
     staticClass: "modal-title"
   }, [_vm._v("Provider Details")])]), _vm._v(" "), _c('template', {
+    staticClass: "care-person-modal-body",
     slot: "body"
   }, [_c('div', {
     staticClass: "row providerForm"
@@ -51552,7 +51549,7 @@ module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c
     on: {
       "click": _vm.cancelForm
     }
-  }, [_vm._v("Cancel")]), _vm._v(" "), _c('button', {
+  }, [_vm._v("Close")]), _vm._v(" "), _c('button', {
     staticClass: " btn btn-info",
     attrs: {
       "disabled": _vm.form.busy
@@ -51560,7 +51557,7 @@ module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c
     on: {
       "click": _vm.sendForm
     }
-  }, [_vm._v("\n            Create User "), (_vm.form.busy) ? _c('i', {
+  }, [_vm._v("\n            Save "), (_vm.form.busy) ? _c('i', {
     staticClass: "fa fa-spinner fa-pulse fa-fw"
   }) : _vm._e()])])], 2) : _vm._e()
 },staticRenderFns: []}
