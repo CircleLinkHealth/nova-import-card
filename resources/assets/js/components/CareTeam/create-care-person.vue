@@ -490,14 +490,6 @@
         </template>
 
         <template slot="footer">
-            <div v-if="showValidationErrors" class="row providerForm">
-                <div class="error-list">
-                    <h5 class="has-errors">
-                        <u>There were some problems with your input. Please review the form.</u>
-                    </h5>
-                </div>
-            </div>
-
             <div class="row">
                 <div class="col-md-6 text-center">
                     <button style="width:50%" class="btn btn-default" @click="cancelForm">Close</button>
