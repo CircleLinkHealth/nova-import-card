@@ -24,8 +24,8 @@ if ($seconds > 1199 && !$ccm_complex) {
 $provider = App\User::find($patient->billingProviderID)->fullName ?? 'No Provider Selected';
 
 $location = empty($patient->getPreferredLocationName())
-        ? 'Not Set'
-        : $patient->getPreferredLocationName();
+    ? 'Not Set'
+    : $patient->getPreferredLocationName();
 
 ?>
 
@@ -90,8 +90,8 @@ $location = empty($patient->getPreferredLocationName())
                 @else
                     <li style="font-size: 18px" id="status"
                         class="inline-block {{$patient->ccm_status}}"><?= (empty($patient->ccm_status))
-                                ? 'N/A'
-                                : ucwords($patient->ccm_status);  ?></li>
+                            ? 'N/A'
+                            : ucwords($patient->ccm_status);  ?></li>
                 @endif
                 <br/>
                 @if(auth()->user()->hasRole(['administrator']))
@@ -119,19 +119,20 @@ $location = empty($patient->getPreferredLocationName())
 
 <meta name="is_ccm_complex" content="{{$ccm_complex}}">
 
-<script>
+@section('scripts')
+    <script>
+        $(document).ready(function () {
 
-    $(document).ready(function () {
+            if ($('meta[name="is_ccm_complex"]').attr('content')) {
+                $("#complex_tag").show();
+            } else {
+                $("#complex_tag").hide();
+            }
 
-        if ($('meta[name="is_ccm_complex"]').attr('content')) {
-            $("#complex_tag").show();
-        } else {
-            $("#complex_tag").hide();
-        }
+        });
 
-    });
-
-</script>
+    </script>
+@endsection
 
 
 

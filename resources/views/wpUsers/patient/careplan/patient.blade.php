@@ -7,8 +7,11 @@ $user_info = array();
 @section('title', 'Patient Demographics')
 @section('activity', 'Edit/Modify Care Plan')
 
-@section('content')
+@section('scripts')
     <script type="text/javascript" src="{{ asset('/js/patient/careplan.js') }}"></script>
+@endsection
+
+@section('content')
     {!! Form::open(array('url' => URL::route('patients.demographics.store', array('patientId' => $patient->id)), 'class' => 'form-horizontal', 'id' => 'ucpForm')) !!}
     <div class="row" style="margin-top:20px;">
         <div class="col-lg-10 col-lg-offset-1">
@@ -339,7 +342,7 @@ $user_info = array();
                     $('#insurance-name').focus();
 
                     $('#policies-title').css('border-left', '15px solid #47beab')
-                            .css('padding-left', '5px');
+                        .css('padding-left', '5px');
 
                     $('.glow').addClass('animated flash');
 
