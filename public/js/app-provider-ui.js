@@ -41646,26 +41646,16 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 //
 //
 //
-//
-//
 
 
 
 
 /* harmony default export */ __webpack_exports__["default"] = ({
-    data: function data() {
-        return {
-            currentModal: '',
-            editedUser: null
-        };
-    },
-
-
     methods: Object.assign(__WEBPACK_IMPORTED_MODULE_0_vuex__["b" /* mapActions */](['setOpenModal']), {
         createCarePerson: function createCarePerson() {
-            this.editedUser = {};
-            this.currentModal = 'create-care-person';
-            this.setOpenModal(true);
+            this.setOpenModal({
+                name: 'create-care-person'
+            });
         }
     })
 });
@@ -41690,12 +41680,7 @@ module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c
     on: {
       "click": _vm.createCarePerson
     }
-  }, [_vm._v("add new")])]), _vm._v(")\n    ")]), _vm._v(" "), _c(_vm.currentModal, {
-    tag: "component",
-    attrs: {
-      "model": _vm.editedUser
-    }
-  })], 1)
+  }, [_vm._v("add new")])]), _vm._v(")\n    ")])])
 },staticRenderFns: []}
 module.exports.render._withStripped = true
 if (false) {

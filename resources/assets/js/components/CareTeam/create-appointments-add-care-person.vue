@@ -5,31 +5,22 @@
                 href="#"
                 v-on:click="createCarePerson">add new</a></span>)
         </label>
-
-        <component :is="currentModal" :model="editedUser"></component>
     </div>
 </template>
 
 <script>
     import {mapActions} from 'vuex'
-    import {showForm} from "../../store/actions";
+    import {setOpenModal} from "../../store/actions";
 
 
     export default {
-        data() {
-            return {
-                currentModal: '',
-                editedUser: null
-            }
-        },
-
         methods: Object.assign(
-            mapActions(['showForm']),
+            mapActions(['setOpenModal']),
             {
                 createCarePerson() {
-                    this.editedUser = {}
-                    this.currentModal = 'create-care-person'
-                    this.showForm(true)
+                    this.setOpenModal({
+                        name: 'create-care-person'
+                    })
                 }
             }
         ),
