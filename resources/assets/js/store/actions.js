@@ -1,5 +1,6 @@
 import userProfile from "../api/user-profile";
 import careTeam from "../api/care-team";
+import carePersonApi from "../api/care-person";
 
 export const cancelForm = ({commit}) => {
     commit('CLEAR_FORM');
@@ -29,6 +30,13 @@ export const getPatientCareTeam = ({commit}, patientId) => {
             commit('CLEAR_CARE_TEAM');
             return
         }
-        commit('SET_CARE_TEAM', careTeam,);
+        commit('SET_CARE_TEAM', careTeam);
     }, null, patientId)
+}
+
+
+export const destroyCarePerson = ({commit}, carePerson) => {
+    carePersonApi.destroyCarePerson(carePerson => {
+        commit('DESTROY_CARE_PERSON', carePerson);
+    }, null, carePerson)
 }

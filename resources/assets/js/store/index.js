@@ -32,6 +32,11 @@ const state = {
 }
 
 const mutations = {
+    DESTROY_CARE_PERSON(state, carePerson) {
+        state.patientCareTeam = state.patientCareTeam.filter(function (item) {
+            return item.id !== carePerson.id;
+        })
+    },
     SET_CARE_TEAM(state, patientCareTeam) {
         state.patientCareTeam = patientCareTeam
     },

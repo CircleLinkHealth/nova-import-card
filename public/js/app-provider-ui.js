@@ -21647,8 +21647,11 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "showForm", function() { return showForm; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "getCurrentUser", function() { return getCurrentUser; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "getPatientCareTeam", function() { return getPatientCareTeam; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "destroyCarePerson", function() { return destroyCarePerson; });
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__api_user_profile__ = __webpack_require__(49);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__api_care_team__ = __webpack_require__(50);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__api_care_person__ = __webpack_require__(84);
+
 
 
 
@@ -21690,6 +21693,14 @@ var getPatientCareTeam = function getPatientCareTeam(_ref4, patientId) {
         }
         commit('SET_CARE_TEAM', careTeam);
     }, null, patientId);
+};
+
+var destroyCarePerson = function destroyCarePerson(_ref5, carePerson) {
+    var commit = _ref5.commit;
+
+    __WEBPACK_IMPORTED_MODULE_2__api_care_person__["a" /* default */].destroyCarePerson(function (carePerson) {
+        commit('DESTROY_CARE_PERSON', carePerson);
+    }, null, carePerson);
 };
 
 /***/ }),
@@ -41455,6 +41466,11 @@ var state = {
 };
 
 var mutations = {
+    DESTROY_CARE_PERSON: function DESTROY_CARE_PERSON(state, carePerson) {
+        state.patientCareTeam = state.patientCareTeam.filter(function (item) {
+            return item.id !== carePerson.id;
+        });
+    },
     SET_CARE_TEAM: function SET_CARE_TEAM(state, patientCareTeam) {
         state.patientCareTeam = patientCareTeam;
     },
@@ -43400,6 +43416,12 @@ module.exports = Component.exports
 
 "use strict";
 Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_vuex__ = __webpack_require__(11);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__store_actions__ = __webpack_require__(12);
+//
+//
+//
+//
 //
 //
 //
@@ -43419,8 +43441,26 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 //
 //
 
+
+
+
 /* harmony default export */ __webpack_exports__["default"] = ({
-    props: ['carePerson']
+    props: ['carePerson'],
+
+    data: function data() {
+        return {
+            patientId: $('meta[name="patient_id"]').attr('content')
+        };
+    },
+
+
+    methods: Object.assign(__WEBPACK_IMPORTED_MODULE_0_vuex__["b" /* mapActions */](['destroyCarePerson']), {
+        deleteCarePerson: function deleteCarePerson() {
+            this.destroyCarePerson(this.carePerson);
+        }
+    }, {
+        editCarePerson: function editCarePerson(carePerson) {}
+    })
 });
 
 /***/ }),
@@ -43441,12 +43481,38 @@ module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c
     staticStyle: {
       "margin-left": "-10px"
     }
-  }, [_c('strong', [_vm._v(_vm._s(_vm.carePerson.formatted_type) + "\n        : ")]), _vm._v(_vm._s(_vm.carePerson.user.first_name) + " " + _vm._s(_vm.carePerson.user.last_name) + "\n        "), _c('em', [_vm._v(_vm._s(_vm.carePerson.user.primaryRole))])])]), _vm._v(" "), _c('div', {
+  }, [_c('strong', [_vm._v(_vm._s(_vm.carePerson.formatted_type) + ": ")]), _vm._v(_vm._s(_vm.carePerson.user.first_name) + " " + _vm._s(_vm.carePerson.user.last_name) + " "), _c('em', [_vm._v(_vm._s(_vm.carePerson.user.primaryRole))])])]), _vm._v(" "), _c('div', {
     staticClass: "col-md-3"
   }, [(_vm.carePerson.alert) ? _c('p', [_vm._v("Receives Alerts")]) : _vm._e()]), _vm._v(" "), _c('div', {
     staticClass: "col-md-2"
+  }, [_c('button', {
+    staticClass: "btn btn-xs btn-danger problem-delete-btn",
+    on: {
+      "click": function($event) {
+        $event.stopPropagation();
+        $event.preventDefault();
+        _vm.deleteCarePerson()
+      }
+    }
+  }, [_vm._m(0)]), _vm._v(" "), _c('button', {
+    staticClass: "btn btn-xs btn-primary problem-edit-btn",
+    on: {
+      "click": function($event) {
+        $event.stopPropagation();
+        $event.preventDefault();
+        _vm.editCarePerson(_vm.carePerson)
+      }
+    }
+  }, [_vm._m(1)])])])
+},staticRenderFns: [function (){var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;
+  return _c('span', [_c('i', {
+    staticClass: "glyphicon glyphicon-remove"
   })])
-},staticRenderFns: []}
+},function (){var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;
+  return _c('span', [_c('i', {
+    staticClass: "glyphicon glyphicon-pencil"
+  })])
+}]}
 module.exports.render._withStripped = true
 if (false) {
   module.hot.accept()
@@ -49667,6 +49733,32 @@ if (false) {
      require("vue-hot-reload-api").rerender("data-v-244acbbc", module.exports)
   }
 }
+
+/***/ }),
+/* 80 */,
+/* 81 */,
+/* 82 */,
+/* 83 */,
+/* 84 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_vue__ = __webpack_require__(3);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_vue___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0_vue__);
+
+
+/* harmony default export */ __webpack_exports__["a"] = ({
+    destroyCarePerson: function destroyCarePerson(cb) {
+        var ecb = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : null;
+        var carePerson = arguments[2];
+
+        window.axios.delete('user/' + carePerson.user_id + '/care-team/' + carePerson.id).then(function (resp) {
+            return cb(carePerson);
+        }, function (resp) {
+            return ecb(resp.data);
+        });
+    }
+});
 
 /***/ })
 /******/ ]);
