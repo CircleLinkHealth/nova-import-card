@@ -67,7 +67,8 @@
                                         </div>
 
                                         <div class="col-md-12">
-                                            <field-messages name="first_name" show="$untouched || $touched || $submitted">
+                                            <field-messages name="first_name"
+                                                            show="$untouched || $touched || $submitted">
                                                 <div></div>
                                                 <div class="validation-error has-errors text-right" slot="required">
                                                     *required
@@ -90,7 +91,8 @@
                                         </div>
 
                                         <div class="col-md-12">
-                                            <field-messages name="last_name" show="$untouched || $touched || $submitted">
+                                            <field-messages name="last_name"
+                                                            show="$untouched || $touched || $submitted">
                                                 <div></div>
                                                 <div class="validation-error has-errors text-right" slot="required">
                                                     *required
@@ -392,7 +394,8 @@
                                         </div>
 
                                         <div class="col-md-12">
-                                            <field-messages name="qualification" show="$untouched || $touched || $submitted">
+                                            <field-messages name="qualification"
+                                                            show="$untouched || $touched || $submitted">
                                                 <div></div>
                                                 <div class="validation-error has-errors text-right" slot="required">
                                                     *required
@@ -405,7 +408,6 @@
                         </div>
                     </div>
                 </div>
-
 
 
                 <!--send alerts-->
@@ -436,7 +438,8 @@
                                                     *required
                                                 </div>
                                             </field-messages>
-                                            <div v-if="!newCarePerson.user.email" class="validation-error text-left" style="color: green;">
+                                            <div v-if="!newCarePerson.user.email" class="validation-error text-left"
+                                                 style="color: green;">
                                                 Email needs to be filled out.
                                             </div>
                                         </div>
@@ -484,7 +487,7 @@
                 </div>
             </vue-form>
 
-           
+
             <!--<input v-model="newCarePerson.is_billing_provider" id="is_billing_provider"-->
             <!--name="is_billing_provider" class="form-control type" type="checkbox"-->
             <!--style="display: inline;">-->
@@ -531,7 +534,50 @@
             mapActions(['cancelForm']),
             {
                 sendForm() {
+                    let self = this;
 
+                    if (this.newCarePerson.is_billing_provider) {
+                        this.newCarePerson.formatted_type = 'Billing Provider';
+                    }
+
+                    let id = this.newCarePerson.id ? this.newCarePerson.id : 'new'
+
+                    window.axios.patch(this.updateRoute + '/' + id, {
+                        careTeamMember: this.newCarePerson,
+                        patientId: this.patientId,
+                    }).then(
+                        (response) => {
+                            this.newCarePerson.id = response.data.carePerson.id;
+                            this.newCarePerson.formatted_type = response.data.carePerson.formatted_type;
+
+                            $("#editCareTeamModal-" + id).modal('hide');
+
+                            if (response.data.oldBillingProvider) {
+                                eventHub.$emit('existing-user-selected', {
+                                    oldBillingProvider: response.data.oldBillingProvider,
+                                });
+                            }
+
+                            $("#successModal-" + id).modal();
+
+                            //HACK to replace select2 with newly added provider on appointments page
+                            let carePerson = response.data.carePerson;
+
+                            $('#providerBox').replaceWith('<select id="provider" ' +
+                                'name="provider"' +
+                                'class="provider selectpickerX dropdownValid form-control" ' +
+                                'data-size="10" disabled>  ' +
+                                '<option value="' + carePerson.user.id + '" selected>' + carePerson.user.first_name + ' ' + carePerson.user.last_name + '</option></select>');
+
+                            $('#providerDiv').css('padding-bottom', '10px');
+                            $("#save").append('<input type="hidden" value="' + carePerson.user.id + '" id="provider" name="provider">');
+                            $("#addProviderModal").modal('hide');
+
+                            $("#newProviderName").text(carePerson.name);
+
+                        }, (response) => {
+                            console.log(response.data)
+                        });
                 },
 
                 fieldClassName(field) {
@@ -551,6 +597,8 @@
         data()
         {
             return {
+                updateRoute: '',
+                patientId: '',
                 formstate: {},
                 model: {
                     first_name: '',
@@ -569,7 +617,7 @@
                 },
 
                 newCarePerson: {
-                    id: '',
+                    id: 'new',
                     formatted_type: 'External',
                     alert: false,
                     is_billing_provider: false,
@@ -736,8 +784,12 @@
                     {id: "Vascular Surgery", text: "Vascular Surgery"},
                 ]
             }
-        }
-        ,
+        },
+
+        mounted() {
+            this.updateRoute = $('meta[name="provider-update-route"]').attr('content');
+            this.patientId = $('meta[name="patient_id"]').attr('content');
+        },
 
     }
 </script>
