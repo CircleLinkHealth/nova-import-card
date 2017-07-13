@@ -20,12 +20,7 @@
 </template>
 <script>
 	export default {
-		destroyed() {
-            $('.mini-action-button--show').attr('class', 'mini-action-button--hide');
-            $('.FAB').height(0);
 
-            $(this).find('.action-button__text--show').attr('class', 'action-button__text--hide');
-		}
 	}
 </script>
 
