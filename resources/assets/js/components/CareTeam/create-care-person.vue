@@ -417,7 +417,8 @@
                                                    name="send_alerts"
                                                    class="form-control input-md"
                                                    type="checkbox"
-                                                   v-bind:disabled="!newCarePerson.user.email">
+                                                   v-bind:disabled="!newCarePerson.user.email"
+                                                   style="display: inline;">
                                         </div>
 
                                         <div class="col-md-12">
@@ -426,11 +427,10 @@
                                                 <div class="validation-error has-errors text-right" slot="required">
                                                     *required
                                                 </div>
-                                                <div v-if="!newCarePerson.user.email" class="validation-error has-errors text-right">
-                                                    Email needs to be filled out.
-                                                </div>
-
                                             </field-messages>
+                                            <div v-if="!newCarePerson.user.email" class="validation-error has-errors text-right">
+                                                Email needs to be filled out.
+                                            </div>
                                         </div>
                                     </validate>
                                 </div>
