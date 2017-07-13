@@ -42303,14 +42303,17 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 
     computed: Object.assign(__WEBPACK_IMPORTED_MODULE_1_vuex__["c" /* mapGetters */]({
         form: 'form'
-    }), {}),
+    }), {
+        validationErrors: function validationErrors() {
+            return !this.formstate.$invalid;
+        }
+    }),
 
-    methods: Object.assign(__WEBPACK_IMPORTED_MODULE_1_vuex__["b" /* mapActions */](['cancelForm']), {
+    methods: Object.assign(__WEBPACK_IMPORTED_MODULE_1_vuex__["b" /* mapActions */](['cancelForm', 'getPatientCareTeam']), {
         sendForm: function sendForm() {
             var _this = this;
 
-            if (!this.formstate.$valid) {
-                this.showValidationErrors = true;
+            if (this.validationErrors) {
                 return;
             }
 
@@ -42327,6 +42330,7 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
                 _this.newCarePerson.id = response.data.carePerson.id;
                 _this.newCarePerson.formatted_type = response.data.carePerson.formatted_type;
 
+                _this.getPatientCareTeam(_this.patientId);
                 Object.assign(_this.$data, _this.$options.data.apply(_this));
 
                 //HACK to replace select2 with newly added provider on appointments page
@@ -42358,7 +42362,6 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
             updateRoute: $('meta[name="provider-update-route"]').attr('content'),
             patientId: $('meta[name="patient_id"]').attr('content'),
             formstate: {},
-            showValidationErrors: false,
 
             newCarePerson: {
                 id: 'new',
@@ -42571,7 +42574,7 @@ module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c
     staticClass: "modal-title"
   }, [_vm._v("Provider Details")])]), _vm._v(" "), _c('template', {
     slot: "body"
-  }, [(_vm.showValidationErrors) ? _c('div', {
+  }, [(_vm.validationErrors) ? _c('div', {
     staticClass: "row providerForm"
   }, [_c('div', {
     staticClass: "error-list"
@@ -43144,7 +43147,7 @@ module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c
       "id": "send_alerts",
       "name": "send_alerts",
       "type": "checkbox",
-      "disabled": !_vm.newCarePerson.user.email
+      "disabled": !_vm.newCarePerson.user.email || !_vm.formstate.email.$valid
     },
     domProps: {
       "checked": Array.isArray(_vm.newCarePerson.alert) ? _vm._i(_vm.newCarePerson.alert, null) > -1 : (_vm.newCarePerson.alert)
@@ -43177,12 +43180,12 @@ module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c
   }, [_c('div'), _vm._v(" "), _c('div', {
     staticClass: "validation-error has-errors text-right",
     slot: "required"
-  }, [_vm._v("\n                                                            *required\n                                                        ")])]), _vm._v(" "), (!_vm.newCarePerson.user.email) ? _c('div', {
+  }, [_vm._v("\n                                                            *required\n                                                        ")])]), _vm._v(" "), (!_vm.newCarePerson.user.email || !_vm.formstate.email.$valid) ? _c('div', {
     staticClass: "validation-error text-left",
     staticStyle: {
       "color": "green"
     }
-  }, [_vm._v("\n                                                        Email needs to be filled out.\n                                                    ")]) : _vm._e()], 1)])], 1)])])])])])])]), _vm._v(" "), _c('div', {
+  }, [_vm._v("\n                                                        Email needs to be filled out and valid.\n                                                    ")]) : _vm._e()], 1)])], 1)])])])])])])]), _vm._v(" "), _c('div', {
     staticClass: "row providerForm"
   }, [_c('div', {
     staticClass: "form-group"
@@ -43415,9 +43418,6 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 //
 //
 //
-//
-//
-//
 
 /* harmony default export */ __webpack_exports__["default"] = ({
     props: ['carePerson']
@@ -43428,7 +43428,24 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 /***/ (function(module, exports, __webpack_require__) {
 
 module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;
-  return _c('div', [_vm._v("\n    WORKING!\n")])
+  return _c('div', {
+    directives: [{
+      name: "show",
+      rawName: "v-show",
+      value: (_vm.carePerson.user.first_name && _vm.carePerson.user.last_name),
+      expression: "carePerson.user.first_name && carePerson.user.last_name"
+    }]
+  }, [_c('div', {
+    staticClass: "col-md-7"
+  }, [_c('p', {
+    staticStyle: {
+      "margin-left": "-10px"
+    }
+  }, [_c('strong', [_vm._v(_vm._s(_vm.carePerson.formatted_type) + "\n        : ")]), _vm._v(_vm._s(_vm.carePerson.user.first_name) + " " + _vm._s(_vm.carePerson.user.last_name) + "\n        "), _c('em', [_vm._v(_vm._s(_vm.carePerson.user.primaryRole))])])]), _vm._v(" "), _c('div', {
+    staticClass: "col-md-3"
+  }, [(_vm.carePerson.alert) ? _c('p', [_vm._v("Receives Alerts")]) : _vm._e()]), _vm._v(" "), _c('div', {
+    staticClass: "col-md-2"
+  })])
 },staticRenderFns: []}
 module.exports.render._withStripped = true
 if (false) {
@@ -43503,7 +43520,7 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 /* harmony default export */ __webpack_exports__["default"] = ({
     computed: Object.assign(__WEBPACK_IMPORTED_MODULE_0_vuex__["c" /* mapGetters */]({
         patientCareTeam: 'patientCareTeam'
-    }), {}),
+    })),
 
     methods: Object.assign(__WEBPACK_IMPORTED_MODULE_0_vuex__["b" /* mapActions */](['getPatientCareTeam'])),
 
