@@ -58,14 +58,15 @@ class CareTeamController extends Controller
 
     public function destroy(
         Request $request,
-        $id
+        $patientId,
+        $memberId
     ) {
 
         if (!$request->ajax()) {
             return abort('403', 'Care Team Members cannot be deleted using this method');
         }
 
-        $member = CarePerson::find($id);
+        $member = CarePerson::find($memberId);
         if ($member) {
             $member->delete();
         }
