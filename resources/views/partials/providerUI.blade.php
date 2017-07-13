@@ -38,6 +38,8 @@
 
     <!-- Fonts -->
     <link href='https://fonts.googleapis.com/css?family=Roboto:400,300' rel='stylesheet' type='text/css'>
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+
 
 @if(!isset($isPdf))
     <!-- http://curioussolutions.github.io/DateTimePicker/ -->
@@ -55,27 +57,30 @@
     @endif
 </head>
 <body>
-<!--[if lt IE 8]>
-<p class="chromeframe">You are using an <strong>outdated</strong> browser. Please <a
-        href="http://browsehappy.com/">upgrade
-    your browser</a> or <a href="http://www.google.com/chromeframe/?redirect=true">activate Google Chrome
-    Frame</a>
-    to improve your experience.</p>
-<![endif]-->
 
-@if(!isset($isPdf))
-    @include('partials.providerUI.primarynav')
+<div id="app">
+    <!--[if lt IE 8]>
+    <p class="chromeframe">You are using an <strong>outdated</strong> browser. Please <a
+            href="http://browsehappy.com/">upgrade
+        your browser</a> or <a href="http://www.google.com/chromeframe/?redirect=true">activate Google Chrome
+        Frame</a>
+        to improve your experience.</p>
+    <![endif]-->
 
-    @if(!empty($patient->id))
-        @include('partials.providerUI.patientnav')
+    @if(!isset($isPdf))
+        @include('partials.providerUI.primarynav')
+
+        @if(!empty($patient->id))
+            @include('partials.providerUI.patientnav')
+        @endif
+
+        @if(!empty($patient->id))
+            @include('partials.fab')
+        @endif
     @endif
 
-     @if(!empty($patient->id))
-            @include('partials.fab')
-     @endif
-@endif
-
     @yield('content')
+</div> <!-- end #app -->
 
 @if(!isset($isPdf))
     @include('partials.footer')
@@ -87,7 +92,7 @@
 
 <script src="{{ asset('/js/idle-timer.min.js') }}"></script>
 {{--<script src="{{ asset('/js/scripts.js') }}"></script>--}}
-<script src="{{ asset('/js/bootstrap-select.min.js') }}"></script>
+{{--<script src="{{ asset('/js/bootstrap-select.min.js') }}"></script>--}}
 <script src="{{ asset('/js/typeahead.bundle.js') }}"></script>
 @include('partials.searchjs')
 @include('partials.providerUItimer')
@@ -95,6 +100,9 @@
 <script src="{{asset('/js/DateTimePicker.min.js')}}"></script>
 
 @yield('scripts')
+
+<script src="{{asset('/js/fab.js') }}"></script>
+<script src="{{asset('js/app-provider-ui.js')}}"></script>
 @endif
 </body>
 
