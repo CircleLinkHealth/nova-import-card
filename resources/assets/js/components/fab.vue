@@ -54,14 +54,12 @@
                 <i class="action-button__icon material-icons hidden-print">add</i>
             </div>
         </section>
-
-        <component :is="currentModal"></component>
     </div>
 </template>
 
 <script>
     import {mapGetters, mapActions} from 'vuex'
-    import {getCurrentUser, showForm} from "../store/actions";
+    import {getCurrentUser, setOpenModal} from "../store/actions";
     import {currentUser} from '../store/getters';
 
     export default {
@@ -71,8 +69,6 @@
                 createObservationUrl: $('meta[name="route.patient.observation.create"]').attr('content'),
                 createActivityUrl: $('meta[name="route.patient.activity.create"]').attr('content'),
                 createAppointmentUrl: $('meta[name="route.patient.appointment.create"]').attr('content'),
-
-                currentModal: '',
             }
         },
 
@@ -86,16 +82,13 @@
             this.getCurrentUser()
         },
 
-        mounted() {
-
-        },
-
         methods: Object.assign(
-            mapActions(['showForm', 'getCurrentUser']),
+            mapActions(['setOpenModal', 'getCurrentUser']),
             {
                 createCarePerson() {
-                    this.currentModal = 'create-care-person'
-                    this.showForm(true)
+                    this.setOpenModal({
+                        name: 'create-care-person'
+                    })
                 }
             }
         ),

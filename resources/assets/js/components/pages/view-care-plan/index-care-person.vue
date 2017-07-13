@@ -22,15 +22,13 @@
                             class="glyphicon glyphicon-pencil"></i> </span></button>
                 </div>
             </div>
-
-            <component :is="currentModal" :carePerson="editedModel"></component>
         </div>
     </div>
 </template>
 
 <script>
     import {mapActions} from 'vuex'
-    import {destroyCarePerson, showForm} from '../../../store/actions'
+    import {destroyCarePerson, setOpenModal} from '../../../store/actions'
 
     export default {
         props: ['carePerson'],
@@ -44,11 +42,11 @@
         },
 
         methods: Object.assign(
-            mapActions(['destroyCarePerson', 'showForm']),
+            mapActions(['destroyCarePerson', 'setOpenModal']),
             {
                 deleteCarePerson()
                 {
-                    let disassociate = confirm('Are you sure you want to remove ' + this,carePerson.user.first_name
+                    let disassociate = confirm('Are you sure you want to remove ' + this.carePerson.user.first_name
                         + ' '
                         + this.carePerson.user.last_name + ' from the CareTeam?');
 
@@ -62,9 +60,13 @@
             {
                 editCarePerson()
                 {
-                    this.editedModel = this.carePerson
-                    this.currentModal = 'update-care-person'
-                    this.showForm(true)
+                    this.setOpenModal({
+                        name: 'update-care-person',
+                        props: {
+                            carePerson: this.carePerson
+                        },
+
+                    })
                 }
             }
         )
