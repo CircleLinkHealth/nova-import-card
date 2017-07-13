@@ -22,9 +22,9 @@
                             class="glyphicon glyphicon-pencil"></i> </span></button>
                 </div>
             </div>
-        </div>
 
-        <component :is="currentModal" :model="editedModel"></component>
+            <component :is="currentModal" :carePerson="editedModel"></component>
+        </div>
     </div>
 </template>
 
@@ -39,7 +39,7 @@
             return {
                 patientId: $('meta[name="patient_id"]').attr('content'),
                 currentModal: '',
-                editedModel: null
+                editedModel: {}
             }
         },
 
@@ -48,6 +48,14 @@
             {
                 deleteCarePerson()
                 {
+                    let disassociate = confirm('Are you sure you want to remove ' + this,carePerson.user.first_name
+                        + ' '
+                        + this.carePerson.user.last_name + ' from the CareTeam?');
+
+                    if (!disassociate) {
+                        return true;
+                    }
+
                     this.destroyCarePerson(this.carePerson)
                 }
             },
