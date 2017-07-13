@@ -545,7 +545,7 @@
 //                                });
 //                            }
 
-//                            $("#successModal-" + id).modal();
+//                            $("#successModal-" + id).modal({    backdrop: 'static',    keyboard: false});
 
                             //HACK to replace select2 with newly added provider on appointments page
                             let carePerson = response.data.carePerson;

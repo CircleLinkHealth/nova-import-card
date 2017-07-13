@@ -73,7 +73,7 @@
             },
 
             editCarePerson: function (carePerson) {
-                $("#editCareTeamModal-" + carePerson.id).modal();
+                $("#editCareTeamModal-" + carePerson.id).modal({    backdrop: 'static',    keyboard: false});
             },
         }
     });
