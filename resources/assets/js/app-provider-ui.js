@@ -19,12 +19,13 @@ window.Vue.use(VueForm, {
     }
 });
 
+Vue.component('createAppointmentsAddCarePerson', require('./components/CareTeam/create-appointments-add-care-person.vue'));
 Vue.component('createCarePerson', require('./components/CareTeam/create-care-person.vue'));
 Vue.component('select2', require('./components/src/select2'));
 Vue.component('fab', require('./components/fab.vue'));
 
 window.App = new Vue({
-    el: '#app-fab',
+    el: '#app',
     store
 });
 
