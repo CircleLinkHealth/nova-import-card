@@ -21,6 +21,7 @@ window.Vue.use(VueForm, {
 
 Vue.component('createAppointmentsAddCarePerson', require('./components/CareTeam/create-appointments-add-care-person.vue'));
 Vue.component('createCarePerson', require('./components/CareTeam/create-care-person.vue'));
+Vue.component('updateCarePerson', require('./components/pages/view-care-plan/update-care-person.vue'));
 Vue.component('indexCarePerson', require('./components/pages/view-care-plan/index-care-person.vue'));
 Vue.component('careTeam', require('./components/pages/view-care-plan/care-team.vue'));
 Vue.component('select2', require('./components/src/select2'));
