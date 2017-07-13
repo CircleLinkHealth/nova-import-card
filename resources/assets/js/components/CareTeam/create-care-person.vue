@@ -525,7 +525,7 @@
         computed: Object.assign(
             {
                 validationErrors() {
-                    return !this.formstate.$invalid
+                    return this.formstate && this.formstate.$invalid && this.formstate.$touched && this.submitClicked
                 },
             }
         ),
@@ -534,8 +534,10 @@
             mapActions(['getPatientCareTeam', 'clearOpenModal']),
             {
                 sendForm() {
+                    this.submitClicked = true
+
                     if (this.validationErrors) {
-                        return;
+                        return
                     }
 
                     if (this.newCarePerson.is_billing_provider) {
@@ -554,7 +556,8 @@
 
                             this.getPatientCareTeam(this.patientId)
                             Object.assign(this.$data, this.$options.data.apply(this))
-
+                            this.clearOpenModal();
+                            
                             //HACK to replace select2 with newly added provider on appointments page
                             let carePerson = response.data.carePerson;
 
@@ -590,6 +593,7 @@
         data()
         {
             return {
+                submitClicked: false,
                 updateRoute: $('meta[name="provider-update-route"]').attr('content'),
                 patientId: $('meta[name="patient_id"]').attr('content'),
                 formstate: {},

@@ -42343,13 +42343,15 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 
     computed: Object.assign({
         validationErrors: function validationErrors() {
-            return !this.formstate.$invalid;
+            return this.formstate && this.formstate.$invalid && this.formstate.$touched && this.submitClicked;
         }
     }),
 
     methods: Object.assign(__WEBPACK_IMPORTED_MODULE_1_vuex__["b" /* mapActions */](['getPatientCareTeam', 'clearOpenModal']), {
         sendForm: function sendForm() {
             var _this = this;
+
+            this.submitClicked = true;
 
             if (this.validationErrors) {
                 return;
@@ -42370,6 +42372,7 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 
                 _this.getPatientCareTeam(_this.patientId);
                 Object.assign(_this.$data, _this.$options.data.apply(_this));
+                _this.clearOpenModal();
 
                 //HACK to replace select2 with newly added provider on appointments page
                 var carePerson = response.data.carePerson;
@@ -42397,6 +42400,7 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 
     data: function data() {
         return {
+            submitClicked: false,
             updateRoute: $('meta[name="provider-update-route"]').attr('content'),
             patientId: $('meta[name="patient_id"]').attr('content'),
             formstate: {},
@@ -44015,13 +44019,15 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 
     computed: Object.assign({
         validationErrors: function validationErrors() {
-            return !this.formstate.$invalid;
+            return this.formstate && this.formstate.$invalid && this.formstate.$touched && this.submitClicked;
         }
     }),
 
     methods: Object.assign(__WEBPACK_IMPORTED_MODULE_1_vuex__["b" /* mapActions */](['getPatientCareTeam', 'clearOpenModal']), {
         sendForm: function sendForm() {
             var _this = this;
+
+            this.submitClicked = true;
 
             if (this.validationErrors) {
                 return;
@@ -44043,13 +44049,7 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
                 _this.getPatientCareTeam(_this.patientId);
                 Object.assign(_this.$data, _this.$options.data.apply(_this));
 
-                //HACK to replace select2 with newly added provider on appointments page
-                var carePerson = response.data.carePerson;
-
-                $('#providerBox').replaceWith('<select id="provider" ' + 'name="provider"' + 'class="provider selectpickerX dropdownValid form-control" ' + 'data-size="10" disabled>  ' + '<option value="' + carePerson.user.id + '" selected>' + carePerson.user.first_name + ' ' + carePerson.user.last_name + '</option></select>');
-
-                $('#providerDiv').css('padding-bottom', '10px');
-                $("#save").append('<input type="hidden" value="' + carePerson.user.id + '" id="provider" name="provider">');
+                _this.clearOpenModal();
             }, function (response) {
                 console.log(response.data);
             });
@@ -44069,6 +44069,7 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 
     data: function data() {
         return {
+            submitClicked: false,
             updateRoute: $('meta[name="provider-update-route"]').attr('content'),
             patientId: $('meta[name="patient_id"]').attr('content'),
             formstate: {},

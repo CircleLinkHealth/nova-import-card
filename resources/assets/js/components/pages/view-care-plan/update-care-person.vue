@@ -521,7 +521,7 @@
         computed: Object.assign(
             {
                 validationErrors() {
-                    return !this.formstate.$invalid
+                    return this.formstate && this.formstate.$invalid && this.formstate.$touched && this.submitClicked
                 },
             }
         ),
@@ -530,8 +530,10 @@
             mapActions(['getPatientCareTeam', 'clearOpenModal']),
             {
                 sendForm() {
+                    this.submitClicked = true
+
                     if (this.validationErrors) {
-                        return;
+                        return
                     }
 
                     if (this.carePerson.is_billing_provider) {
@@ -551,18 +553,7 @@
                             this.getPatientCareTeam(this.patientId)
                             Object.assign(this.$data, this.$options.data.apply(this))
 
-                            //HACK to replace select2 with newly added provider on appointments page
-                            let carePerson = response.data.carePerson;
-
-                            $('#providerBox').replaceWith('<select id="provider" ' +
-                                'name="provider"' +
-                                'class="provider selectpickerX dropdownValid form-control" ' +
-                                'data-size="10" disabled>  ' +
-                                '<option value="' + carePerson.user.id + '" selected>' + carePerson.user.first_name + ' ' + carePerson.user.last_name + '</option></select>');
-
-                            $('#providerDiv').css('padding-bottom', '10px');
-                            $("#save").append('<input type="hidden" value="' + carePerson.user.id + '" id="provider" name="provider">');
-
+                            this.clearOpenModal();
 
                         }, (response) => {
                             console.log(response.data)
@@ -586,6 +577,7 @@
         data()
         {
             return {
+                submitClicked : false,
                 updateRoute: $('meta[name="provider-update-route"]').attr('content'),
                 patientId: $('meta[name="patient_id"]').attr('content'),
                 formstate: {},
