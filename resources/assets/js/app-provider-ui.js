@@ -25,7 +25,7 @@ Vue.component('select2', require('./components/src/select2'));
 Vue.component('fab', require('./components/fab.vue'));
 
 window.App = new Vue({
-    el: '#app',
+    el: '#app-fab',
     store
 });
 
