@@ -9,7 +9,18 @@ const debug = process.env.NODE_ENV !== 'production'
 Vue.config.debug = debug
 
 const state = {
-    currentUser: {}, //not implemented yet
+    currentUser: {
+        email: '',
+        first_name: '',
+        id: '',
+        last_name: '',
+        program_id: '',
+        role: {
+            name: '',
+            id: ''
+        },
+        username: '',
+    },
     debug: debug,
     form: {
         show: false,
@@ -20,6 +31,12 @@ const state = {
 }
 
 const mutations = {
+    LOGIN_USER (state, currentUser) {
+        state.currentUser = currentUser
+    },
+    LOGOUT_USER (state) {
+        state.currentUser = {}
+    },
     SET_ERRORS (state, errors) {
         state.form.errors = errors
     },
