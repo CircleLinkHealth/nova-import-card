@@ -32,7 +32,7 @@
         </template>
 
         <template slot="body">
-            <div v-if="showValidationErrors" class="row providerForm">
+            <div v-if="validationErrors" class="row providerForm">
                 <div class="error-list">
                     <h5 class="has-errors">
                         <u>There were some problems with your input. Please review the form.</u>
@@ -383,7 +383,7 @@
                                                                name="send_alerts"
                                                                class="form-control input-md"
                                                                type="checkbox"
-                                                               v-bind:disabled="!newCarePerson.user.email"
+                                                               v-bind:disabled="!newCarePerson.user.email || !formstate.email.$valid"
                                                                style="display: inline;">
                                                     </div>
 
@@ -396,10 +396,10 @@
                                                                 *required
                                                             </div>
                                                         </field-messages>
-                                                        <div v-if="!newCarePerson.user.email"
+                                                        <div v-if="!newCarePerson.user.email || !formstate.email.$valid"
                                                              class="validation-error text-left"
                                                              style="color: green;">
-                                                            Email needs to be filled out.
+                                                            Email needs to be filled out and valid.
                                                         </div>
                                                     </div>
                                                 </validate>
@@ -508,7 +508,7 @@
 <script>
     import modal from '../shared/modal.vue';
     import {mapGetters, mapActions} from 'vuex'
-    import {cancelForm} from '../../store/actions'
+    import {cancelForm, getPatientCareTeam} from '../../store/actions'
     import {form} from '../../store/getters';
 
     export default {
@@ -520,16 +520,19 @@
             mapGetters({
                 form: 'form'
             }),
-            {}
+            {
+                validationErrors() {
+                    return !this.formstate.$invalid
+                },
+            }
         ),
 
         methods: Object.assign(
-            mapActions(['cancelForm']),
+            mapActions(['cancelForm', 'getPatientCareTeam']),
             {
                 sendForm() {
-                    if (!this.formstate.$valid) {
-                        this.showValidationErrors = true
-                        return
+                    if (this.validationErrors) {
+                        return;
                     }
 
                     if (this.newCarePerson.is_billing_provider) {
@@ -546,6 +549,7 @@
                             this.newCarePerson.id = response.data.carePerson.id;
                             this.newCarePerson.formatted_type = response.data.carePerson.formatted_type;
 
+                            this.getPatientCareTeam(this.patientId)
                             Object.assign(this.$data, this.$options.data.apply(this))
 
                             //HACK to replace select2 with newly added provider on appointments page
@@ -586,7 +590,6 @@
                 updateRoute: $('meta[name="provider-update-route"]').attr('content'),
                 patientId: $('meta[name="patient_id"]').attr('content'),
                 formstate: {},
-                showValidationErrors: false,
 
                 newCarePerson: {
                     id: 'new',
