@@ -55,7 +55,7 @@
             </div>
         </section>
 
-        <component :is="currentModal" :model="editedUser"></component>
+        <component :is="currentModal"></component>
     </div>
 </template>
 
@@ -73,7 +73,6 @@
                 createAppointmentUrl: $('meta[name="route.patient.appointment.create"]').attr('content'),
 
                 currentModal: '',
-                editedUser: null
             }
         },
 
@@ -95,7 +94,6 @@
             mapActions(['showForm', 'getCurrentUser']),
             {
                 createCarePerson() {
-                    this.editedUser = {}
                     this.currentModal = 'create-care-person'
                     this.showForm(true)
                 }
