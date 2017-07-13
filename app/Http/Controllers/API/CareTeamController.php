@@ -1,9 +1,10 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\API;
 
 use App\CarePerson;
 use App\CLH\Facades\StringManipulation;
+use App\Http\Controllers\Controller;
 use App\PhoneNumber;
 use App\Practice;
 use App\ProviderInfo;
@@ -12,6 +13,49 @@ use Illuminate\Http\Request;
 
 class CareTeamController extends Controller
 {
+    public function index(Request $request, $patientId){
+        $patient = User::find($patientId);
+
+        $careTeam = CarePerson::with([
+            'user.phoneNumbers',
+            'user.providerInfo',
+            'user.primaryPractice',
+        ])
+            ->whereUserId($patient->id)
+            ->orderBy('type')
+            ->get()
+            ->transform(function ($member) use
+            (
+                $patient
+            ) {
+                $member->user->firstOrNewProviderInfo();
+
+                $type = $member->type;
+
+                if ($member->user->practice($patient->primaryPractice->id) && $member->type != CarePerson::BILLING_PROVIDER) {
+                    $type = $member->user->role()->display_name . " (Internal)";
+                }
+
+                $member->formatted_type = snakeToSentenceCase($type);
+                $member->specialty = $member->user->getSpecialtyAttribute();
+                $member->is_billing_provider = $member->type == CarePerson::BILLING_PROVIDER;
+
+                $member->primaryRole = $member->user->role();
+
+                if ($member->user->phoneNumbers) {
+                    $member->user->phoneNumbers->push(['number' => '']);
+                }
+
+                if ($member->user->primaryPractice) {
+                    $member->user->primaryPractice->push(['display_name' => '']);
+                }
+
+                return $member;
+            });
+
+        return response()->json($careTeam);
+    }
+
     public function destroy(
         Request $request,
         $id
