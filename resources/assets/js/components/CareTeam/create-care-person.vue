@@ -438,15 +438,45 @@
                         </div>
                     </div>
                 </div>
+
+
+                <!--is ccm billing provider-->
+                <div class="row providerForm">
+                    <div class="form-group">
+
+                        <label class="col-md-3 control-label">CCM Billing Provider</label>
+
+                        <div class="col-md-9">
+                            <div class="row">
+                                <div class="form-group required-field col-md-12">
+                                    <validate auto-label :class="fieldClassName(formstate.is_billing_provider)">
+                                        <div class="col-md-12">
+
+                                            <input v-model="newCarePerson.is_billing_provider"
+                                                   id="is_billing_provider"
+                                                   name="is_billing_provider"
+                                                   class="form-control input-md"
+                                                   type="checkbox"
+                                                   style="display: inline;">
+                                        </div>
+
+                                        <div class="col-md-12">
+                                            <field-messages name="is_billing_provider" show="$touched || $submitted">
+                                                <div></div>
+                                                <div class="validation-error has-errors text-right" slot="required">
+                                                    *required
+                                                </div>
+                                            </field-messages>
+                                        </div>
+                                    </validate>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </vue-form>
 
-            <!--<div class="row providerForm">-->
-            <!--<div class="form-group">-->
-            <!--<label class="col-md-3 control-label" for="is_billing_provider">CCM Billing-->
-            <!--Provider-->
-            <!--</label>-->
-            <!--<div class="col-md-9">-->
-            <!--<div class="col-md-12">-->
+           
             <!--<input v-model="newCarePerson.is_billing_provider" id="is_billing_provider"-->
             <!--name="is_billing_provider" class="form-control type" type="checkbox"-->
             <!--style="display: inline;">-->
