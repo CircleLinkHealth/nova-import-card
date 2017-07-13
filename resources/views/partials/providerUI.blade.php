@@ -9,6 +9,7 @@
     <meta http-equiv="expires" content={{ Carbon\Carbon::now()->format('D M d Y H:i:s O') }}>
     <meta http-equiv="pragma" content="no-cache">
     <meta name="csrf-token" content="{{ csrf_token() }}">
+    <meta name="base-url" content="{{ url('/') }}">
 
     <script type="text/javascript">
         window.heap = window.heap || [], heap.load = function (e, t) {
@@ -53,9 +54,10 @@
     @endif
 </head>
 <body>
+
 <div id="app">
 
-    @if(!isset($isPdf))
+@if(!isset($isPdf))
     @include('partials.providerUI.primarynav')
 
     @if(!empty($patient->id))
@@ -78,6 +80,8 @@
 
     @yield('content')
 
+</div> <!-- end #app -->
+
 @if(!isset($isPdf))
     @include('partials.footer')
 
@@ -88,7 +92,7 @@
 
     <script src="//cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.1/js/bootstrap.min.js"></script>
     <script src="{{ asset('/js/idle-timer.min.js') }}"></script>
-    <script src="{{ asset('/js/scripts.js') }}"></script>
+{{--    <script src="{{ asset('/js/scripts.js') }}"></script>--}}
     <script src="{{ asset('/js/bootstrap-select.min.js') }}"></script>
     <script src="{{ asset('/js/typeahead.bundle.js') }}"></script>
     <script src="{{ asset('/js/fab.js') }}"></script>
@@ -99,9 +103,10 @@
     <script src="{{ asset('/js/bootstrap-select.min.js') }}"></script>
 
     @yield('scripts')
-    @endif
-</div>
+@endif
 
+
+<script src="{{asset('js/app-provider-ui.js')}}"></script>
 </body>
 
 </html>
