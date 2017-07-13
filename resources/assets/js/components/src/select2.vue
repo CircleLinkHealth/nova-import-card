@@ -1,24 +1,35 @@
+<style>
+    .select2-container {
+        z-index: 10000;
+    }
+
+    select {
+        min-width: 300px;
+    }
+</style>
+
 <template>
     <select>
         <slot></slot>
-        <option v-for="option in options" :value="option.id" :selected="option.id == selected">{{option.value}}</option>
     </select>
 </template>
 
 <script>
+    import select2 from 'select2'
+
     export default {
-        props: ['options', 'selected'],
-        template: '#select2-template',
+        props: ['options', 'value'],
+
         mounted: function () {
             var vm = this
             $(this.$el)
             // init select2
-                .select2({data: this.options})
-                .val(this.selected)
+                .select2({ data: this.options })
+                .val(this.value)
                 .trigger('change')
                 // emit event on change.
                 .on('change', function () {
-                    vm.$emit('input', this.selected)
+                    vm.$emit('input', this.value)
                 })
         },
         watch: {
@@ -28,7 +39,7 @@
             },
             options: function (options) {
                 // update options
-                $(this.$el).select2({data: options})
+                $(this.$el).select2({ data: options })
             }
         },
         destroyed: function () {
