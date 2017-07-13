@@ -23,19 +23,20 @@
         color: #a94442;
     }
 
-    .modal-body {
+    .care-person-modal-body {
         margin: -30px 5px 5px 5px;
         padding: 7px;
     }
 </style>
 
 <template>
-    <modal v-if="form.show">
+    <modal v-if="form.show && newCarePerson.id === 'new'">
         <template slot="header">
+            <button type="button" class="close" @click="cancelForm">×</button>
             <h4 class="modal-title">Provider Details</h4>
         </template>
 
-        <template slot="body">
+        <template slot="body" class="care-person-modal-body">
 
 
             <div class="row providerForm">
@@ -486,27 +487,12 @@
                     </div>
                 </div>
             </vue-form>
-
-
-            <!--<input v-model="newCarePerson.is_billing_provider" id="is_billing_provider"-->
-            <!--name="is_billing_provider" class="form-control type" type="checkbox"-->
-            <!--style="display: inline;">-->
-            <!--</div>-->
-            <!--</div>-->
-            <!--</div>-->
-            <!--</div>-->
-
-            <!--<button v-on:click.stop.prevent="updateCarePerson(newCarePerson.id)" type="submit"-->
-            <!--id="editCarePerson" class="create btn btn-primary"-->
-            <!--v-bind:disabled="addCarePersonForm.$invalid">Save-->
-            <!--</button>-->
-
         </template>
 
         <template slot="footer">
-            <button class=" btn btn-default" @click="cancelForm">Cancel</button>
+            <button class=" btn btn-default" @click="cancelForm">Close</button>
             <button :disabled="form.busy" @click="sendForm" class=" btn btn-info">
-                Create User <i v-if="form.busy" class="fa fa-spinner fa-pulse fa-fw"></i>
+                Save <i v-if="form.busy" class="fa fa-spinner fa-pulse fa-fw"></i>
             </button>
         </template>
     </modal>
@@ -534,8 +520,6 @@
             mapActions(['cancelForm']),
             {
                 sendForm() {
-                    let self = this;
-
                     if (this.newCarePerson.is_billing_provider) {
                         this.newCarePerson.formatted_type = 'Billing Provider';
                     }
@@ -550,15 +534,18 @@
                             this.newCarePerson.id = response.data.carePerson.id;
                             this.newCarePerson.formatted_type = response.data.carePerson.formatted_type;
 
-                            $("#editCareTeamModal-" + id).modal('hide');
+                            Object.assign(this.$data, this.$options.data.apply(this))
+                            this.cancelForm(true);
 
-                            if (response.data.oldBillingProvider) {
-                                eventHub.$emit('existing-user-selected', {
-                                    oldBillingProvider: response.data.oldBillingProvider,
-                                });
-                            }
+//                            $("#editCareTeamModal-" + id).modal('hide');
 
-                            $("#successModal-" + id).modal();
+//                            if (response.data.oldBillingProvider) {
+//                                eventHub.$emit('existing-user-selected', {
+//                                    oldBillingProvider: response.data.oldBillingProvider,
+//                                });
+//                            }
+
+//                            $("#successModal-" + id).modal();
 
                             //HACK to replace select2 with newly added provider on appointments page
                             let carePerson = response.data.carePerson;
@@ -597,8 +584,8 @@
         data()
         {
             return {
-                updateRoute: '',
-                patientId: '',
+                updateRoute: $('meta[name="provider-update-route"]').attr('content'),
+                patientId: $('meta[name="patient_id"]').attr('content'),
                 formstate: {},
                 model: {
                     first_name: '',
@@ -787,8 +774,6 @@
         },
 
         mounted() {
-            this.updateRoute = $('meta[name="provider-update-route"]').attr('content');
-            this.patientId = $('meta[name="patient_id"]').attr('content');
         },
 
     }
