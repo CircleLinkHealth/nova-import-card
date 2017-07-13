@@ -1,11 +1,34 @@
 <style>
+    .vue-modal label {
+        font-size: 14px;
+    }
+
+    .providerForm {
+        padding: 10px;
+    }
+
+    .validation-error {
+        padding: 3px;
+        margin-bottom: 10px;
+        border: 1px solid transparent;
+        border-radius: 4px;
+    }
+
+    .has-danger .form-control {
+        border-color: #ff0000;
+        box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075);
+    }
+
+    .has-errors {
+        color: #a94442;
+    }
 </style>
 
 <template>
     <div>
-        <modal v-if="form.show">
+        <modal v-show="show">
             <template slot="header">
-                <button type="button" class="close" @click="cancelForm">×</button>
+                <button type="button" class="close" @click="clearOpenModal">×</button>
                 <h4 class="modal-title">Provider Details</h4>
             </template>
 
@@ -463,11 +486,11 @@
             <template slot="footer">
                 <div class="row">
                     <div class="col-md-6 text-center">
-                        <button style="width:50%" class="btn btn-default" @click="cancelForm">Close</button>
+                        <button style="width:50%" class="btn btn-default" @click="clearOpenModal">Close</button>
                     </div>
                     <div class="col-md-6 text-center">
-                        <button style="width:50%" :disabled="form.busy" @click="sendForm" class=" btn btn-info">
-                            Save <i v-if="form.busy" class="fa fa-spinner fa-pulse fa-fw"></i>
+                        <button style="width:50%" :disabled="false" @click="sendForm" class=" btn btn-info">
+                            Save <i v-if="false" class="fa fa-spinner fa-pulse fa-fw"></i>
                         </button>
                     </div>
 
@@ -480,20 +503,19 @@
 <script>
     import modal from '../../shared/modal.vue';
     import {mapGetters, mapActions} from 'vuex'
-    import {cancelForm, getPatientCareTeam} from '../../../store/actions'
-    import {form} from '../../../store/getters';
+    import {getPatientCareTeam, clearOpenModal} from '../../../store/actions'
 
     export default {
-        props: ['carePerson'],
+        props: {
+            show: Boolean,
+            carePerson: Object
+        },
 
         components: {
             modal
         },
 
         computed: Object.assign(
-            mapGetters({
-                form: 'form'
-            }),
             {
                 validationErrors() {
                     return !this.formstate.$invalid
@@ -502,7 +524,7 @@
         ),
 
         methods: Object.assign(
-            mapActions(['cancelForm', 'getPatientCareTeam']),
+            mapActions(['getPatientCareTeam', 'clearOpenModal']),
             {
                 sendForm() {
                     if (this.validationErrors) {
@@ -700,6 +722,6 @@
                     {id: "Vascular Surgery", text: "Vascular Surgery"},
                 ]
             }
-        }
+        },
     }
 </script>
