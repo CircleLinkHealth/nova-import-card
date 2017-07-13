@@ -15,6 +15,7 @@ class ProfileController extends Controller
     public function index()
     {
         $user = auth()->user();
+        $role = $user->role();
 
         $data = [
             'user' => [
@@ -24,6 +25,10 @@ class ProfileController extends Controller
                 'first_name' => $user->first_name,
                 'last_name' => $user->last_name,
                 'email' => $user->email,
+                'role' => [
+                    'id' => $role->id,
+                    'name' => $role->name
+                ]
             ]
         ];
 
