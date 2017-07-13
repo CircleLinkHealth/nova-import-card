@@ -41432,6 +41432,8 @@ return VueForm;
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_vuex__ = __webpack_require__(11);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__actions__ = __webpack_require__(12);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__getters__ = __webpack_require__(37);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__mutations__ = __webpack_require__(85);
+
 
 
 
@@ -41465,45 +41467,11 @@ var state = {
     }
 };
 
-var mutations = {
-    DESTROY_CARE_PERSON: function DESTROY_CARE_PERSON(state, carePerson) {
-        state.patientCareTeam = state.patientCareTeam.filter(function (item) {
-            return item.id !== carePerson.id;
-        });
-    },
-    SET_CARE_TEAM: function SET_CARE_TEAM(state, patientCareTeam) {
-        state.patientCareTeam = patientCareTeam;
-    },
-    CLEAR_CARE_TEAM: function CLEAR_CARE_TEAM(patientCareTeam) {
-        state.patientCareTeam = {};
-    },
-    LOGIN_USER: function LOGIN_USER(state, currentUser) {
-        state.currentUser = currentUser;
-    },
-    LOGOUT_USER: function LOGOUT_USER(state) {
-        state.currentUser = {};
-    },
-    SET_ERRORS: function SET_ERRORS(state, errors) {
-        state.form.errors = errors;
-    },
-    SET_FORM_BUSY: function SET_FORM_BUSY(state, value) {
-        state.form.busy = value;
-    },
-    SET_FORM_SHOW: function SET_FORM_SHOW(state, value) {
-        state.form.show = value;
-    },
-    CLEAR_FORM: function CLEAR_FORM(state, value) {
-        state.form.busy = false;
-        state.form.show = false;
-        state.form.errors = {};
-    }
-};
-
 /* harmony default export */ __webpack_exports__["a"] = (new __WEBPACK_IMPORTED_MODULE_1_vuex__["a" /* default */].Store({
     state: state,
     getters: __WEBPACK_IMPORTED_MODULE_3__getters__,
     actions: __WEBPACK_IMPORTED_MODULE_2__actions__,
-    mutations: mutations,
+    mutations: __WEBPACK_IMPORTED_MODULE_4__mutations__,
     strict: debug
 }));
 
@@ -49759,6 +49727,61 @@ if (false) {
         });
     }
 });
+
+/***/ }),
+/* 85 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "DESTROY_CARE_PERSON", function() { return DESTROY_CARE_PERSON; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "SET_CARE_TEAM", function() { return SET_CARE_TEAM; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "CLEAR_CARE_TEAM", function() { return CLEAR_CARE_TEAM; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "LOGIN_USER", function() { return LOGIN_USER; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "LOGOUT_USER", function() { return LOGOUT_USER; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "SET_ERRORS", function() { return SET_ERRORS; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "SET_FORM_BUSY", function() { return SET_FORM_BUSY; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "SET_FORM_SHOW", function() { return SET_FORM_SHOW; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "CLEAR_FORM", function() { return CLEAR_FORM; });
+var DESTROY_CARE_PERSON = function DESTROY_CARE_PERSON(state, carePerson) {
+    state.patientCareTeam = state.patientCareTeam.filter(function (item) {
+        return item.id !== carePerson.id;
+    });
+};
+
+var SET_CARE_TEAM = function SET_CARE_TEAM(state, patientCareTeam) {
+    state.patientCareTeam = patientCareTeam;
+};
+
+var CLEAR_CARE_TEAM = function CLEAR_CARE_TEAM(patientCareTeam) {
+    state.patientCareTeam = {};
+};
+
+var LOGIN_USER = function LOGIN_USER(state, currentUser) {
+    state.currentUser = currentUser;
+};
+
+var LOGOUT_USER = function LOGOUT_USER(state) {
+    state.currentUser = {};
+};
+
+var SET_ERRORS = function SET_ERRORS(state, errors) {
+    state.form.errors = errors;
+};
+
+var SET_FORM_BUSY = function SET_FORM_BUSY(state, value) {
+    state.form.busy = value;
+};
+
+var SET_FORM_SHOW = function SET_FORM_SHOW(state, value) {
+    state.form.show = value;
+};
+
+var CLEAR_FORM = function CLEAR_FORM(state, value) {
+    state.form.busy = false;
+    state.form.show = false;
+    state.form.errors = {};
+};
 
 /***/ })
 /******/ ]);
