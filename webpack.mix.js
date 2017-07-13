@@ -42,8 +42,8 @@ mix.combine([
  */
 mix.js('resources/assets/js/importer-training.js', 'public/js');
 
-mix.js('resources/assets/js/provider/create-locations.js', 'public/js');
-mix.js('resources/assets/js/provider/create-staff.js', 'public/js');
+// mix.js('resources/assets/js/provider/create-locations.js', 'public/js');
+// mix.js('resources/assets/js/provider/create-staff.js', 'public/js');
 
 
 
