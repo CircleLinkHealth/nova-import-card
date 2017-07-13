@@ -293,7 +293,7 @@
             $(document).ready(function () {
                 $("#complex").click(function (e) {
                         if($(this).is(':checked')){
-                            $("#confirmButtonModal").modal();
+                            $("#confirmButtonModal").modal({    backdrop: 'static',    keyboard: false});
                         } else {
                             $("#complex").prop("checked", false);
                             $("#complexity_toggle").submit();

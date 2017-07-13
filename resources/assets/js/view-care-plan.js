@@ -88,7 +88,7 @@ const vm = new Vue({
             });
 
             Vue.nextTick(function () {
-                $("#editCareTeamModal-" + id).modal();
+                $("#editCareTeamModal-" + id).modal({    backdrop: 'static',    keyboard: false});
             });
         },
     }
