@@ -22,6 +22,11 @@
     .has-errors {
         color: #a94442;
     }
+
+    .modal-body {
+        margin: -30px 5px 5px 5px;
+        padding: 7px;
+    }
 </style>
 
 <template>
@@ -62,7 +67,7 @@
                                         </div>
 
                                         <div class="col-md-12">
-                                            <field-messages name="first_name" show="$touched || $submitted">
+                                            <field-messages name="first_name" show="$untouched || $touched || $submitted">
                                                 <div></div>
                                                 <div class="validation-error has-errors text-right" slot="required">
                                                     *required
@@ -85,7 +90,7 @@
                                         </div>
 
                                         <div class="col-md-12">
-                                            <field-messages name="last_name" show="$touched || $submitted">
+                                            <field-messages name="last_name" show="$untouched || $touched || $submitted">
                                                 <div></div>
                                                 <div class="validation-error has-errors text-right" slot="required">
                                                     *required
@@ -290,7 +295,7 @@
                         </div>
                     </div>
                 </div>
-                
+
                 <!--practice-->
                 <div class="row providerForm">
                     <div class="form-group">
@@ -351,6 +356,9 @@
                                                 <div class="validation-error has-errors text-right" slot="required">
                                                     *required
                                                 </div>
+                                                <div class="validation-error has-errors text-right" slot="type">
+                                                    Please enter a valid email
+                                                </div>
                                             </field-messages>
                                         </div>
                                     </validate>
@@ -384,7 +392,7 @@
                                         </div>
 
                                         <div class="col-md-12">
-                                            <field-messages name="qualification" show="$touched || $submitted">
+                                            <field-messages name="qualification" show="$untouched || $touched || $submitted">
                                                 <div></div>
                                                 <div class="validation-error has-errors text-right" slot="required">
                                                     *required
@@ -428,7 +436,7 @@
                                                     *required
                                                 </div>
                                             </field-messages>
-                                            <div v-if="!newCarePerson.user.email" class="validation-error has-errors text-right">
+                                            <div v-if="!newCarePerson.user.email" class="validation-error text-left" style="color: green;">
                                                 Email needs to be filled out.
                                             </div>
                                         </div>
