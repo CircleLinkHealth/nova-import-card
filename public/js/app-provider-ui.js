@@ -11088,8 +11088,8 @@ var index_esm = {
 
 "use strict";
 Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "cancelForm", function() { return cancelForm; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "showForm", function() { return showForm; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "clearOpenModal", function() { return clearOpenModal; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "setOpenModal", function() { return setOpenModal; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "getCurrentUser", function() { return getCurrentUser; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "getPatientCareTeam", function() { return getPatientCareTeam; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "destroyCarePerson", function() { return destroyCarePerson; });
@@ -11100,16 +11100,16 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 
 
 
-var cancelForm = function cancelForm(_ref) {
+var clearOpenModal = function clearOpenModal(_ref) {
     var commit = _ref.commit;
 
-    commit('CLEAR_FORM');
+    commit('CLEAR_OPEN_MODAL');
 };
 
-var showForm = function showForm(_ref2) {
+var setOpenModal = function setOpenModal(_ref2, openModal) {
     var commit = _ref2.commit;
 
-    commit('SET_FORM_SHOW', true);
+    commit('SET_OPEN_MODAL', openModal);
 };
 
 var getCurrentUser = function getCurrentUser(_ref3) {
@@ -21793,7 +21793,7 @@ function toComment(sourceMap) {
 Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "patientCareTeam", function() { return patientCareTeam; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "currentUser", function() { return currentUser; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "form", function() { return form; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "openModal", function() { return openModal; });
 var patientCareTeam = function patientCareTeam(state) {
     return state.patientCareTeam;
 };
@@ -21802,8 +21802,8 @@ var currentUser = function currentUser(state) {
     return state.currentUser;
 };
 
-var form = function form(state) {
-    return state.form;
+var openModal = function openModal(state) {
+    return state.openModal;
 };
 
 /***/ }),
@@ -40310,6 +40310,7 @@ window.Vue.use(__WEBPACK_IMPORTED_MODULE_0_vue_form___default.a, {
     }
 });
 
+Vue.component('component-proxy', __webpack_require__(94));
 Vue.component('createAppointmentsAddCarePerson', __webpack_require__(53));
 Vue.component('createCarePerson', __webpack_require__(56));
 Vue.component('updateCarePerson', __webpack_require__(67));
@@ -40317,6 +40318,7 @@ Vue.component('indexCarePerson', __webpack_require__(72));
 Vue.component('careTeam', __webpack_require__(75));
 Vue.component('select2', __webpack_require__(78));
 Vue.component('fab', __webpack_require__(82));
+Vue.component('openModal', __webpack_require__(91));
 
 window.App = new Vue({
     el: '#app',
@@ -41460,11 +41462,9 @@ var state = {
         username: ''
     },
     debug: debug,
-    form: {
-        show: false,
-        busy: false,
-        success: false,
-        errors: {}
+    openModal: {
+        name: null,
+        props: {}
     }
 };
 
@@ -41556,10 +41556,8 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "CLEAR_CARE_TEAM", function() { return CLEAR_CARE_TEAM; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "LOGIN_USER", function() { return LOGIN_USER; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "LOGOUT_USER", function() { return LOGOUT_USER; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "SET_ERRORS", function() { return SET_ERRORS; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "SET_FORM_BUSY", function() { return SET_FORM_BUSY; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "SET_FORM_SHOW", function() { return SET_FORM_SHOW; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "CLEAR_FORM", function() { return CLEAR_FORM; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "SET_OPEN_MODAL", function() { return SET_OPEN_MODAL; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "CLEAR_OPEN_MODAL", function() { return CLEAR_OPEN_MODAL; });
 var DESTROY_CARE_PERSON = function DESTROY_CARE_PERSON(state, carePerson) {
     state.patientCareTeam = state.patientCareTeam.filter(function (item) {
         return item.id !== carePerson.id;
@@ -41582,22 +41580,12 @@ var LOGOUT_USER = function LOGOUT_USER(state) {
     state.currentUser = {};
 };
 
-var SET_ERRORS = function SET_ERRORS(state, errors) {
-    state.form.errors = errors;
+var SET_OPEN_MODAL = function SET_OPEN_MODAL(state, openModal) {
+    state.openModal = openModal;
 };
 
-var SET_FORM_BUSY = function SET_FORM_BUSY(state, value) {
-    state.form.busy = value;
-};
-
-var SET_FORM_SHOW = function SET_FORM_SHOW(state, value) {
-    state.form.show = value;
-};
-
-var CLEAR_FORM = function CLEAR_FORM(state, value) {
-    state.form.busy = false;
-    state.form.show = false;
-    state.form.errors = {};
+var CLEAR_OPEN_MODAL = function CLEAR_OPEN_MODAL(state) {
+    state.openModal = {};
 };
 
 /***/ }),
@@ -41673,11 +41661,11 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
     },
 
 
-    methods: Object.assign(__WEBPACK_IMPORTED_MODULE_0_vuex__["b" /* mapActions */](['showForm']), {
+    methods: Object.assign(__WEBPACK_IMPORTED_MODULE_0_vuex__["b" /* mapActions */](['setOpenModal']), {
         createCarePerson: function createCarePerson() {
             this.editedUser = {};
             this.currentModal = 'create-care-person';
-            this.showForm(true);
+            this.setOpenModal(true);
         }
     })
 });
@@ -41844,7 +41832,6 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__shared_modal_vue___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0__shared_modal_vue__);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_vuex__ = __webpack_require__(4);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__store_actions__ = __webpack_require__(5);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__store_getters__ = __webpack_require__(14);
 //
 //
 //
@@ -42352,26 +42339,27 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 //
 //
 //
-
 
 
 
 
 
 /* harmony default export */ __webpack_exports__["default"] = ({
+    props: {
+        show: Boolean
+    },
+
     components: {
         modal: __WEBPACK_IMPORTED_MODULE_0__shared_modal_vue___default.a
     },
 
-    computed: Object.assign(__WEBPACK_IMPORTED_MODULE_1_vuex__["c" /* mapGetters */]({
-        form: 'form'
-    }), {
+    computed: Object.assign({
         validationErrors: function validationErrors() {
             return !this.formstate.$invalid;
         }
     }),
 
-    methods: Object.assign(__WEBPACK_IMPORTED_MODULE_1_vuex__["b" /* mapActions */](['cancelForm', 'getPatientCareTeam']), {
+    methods: Object.assign(__WEBPACK_IMPORTED_MODULE_1_vuex__["b" /* mapActions */](['getPatientCareTeam', 'clearOpenModal']), {
         sendForm: function sendForm() {
             var _this = this;
 
@@ -42622,7 +42610,14 @@ if (false) {
 /***/ (function(module, exports, __webpack_require__) {
 
 module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;
-  return (_vm.form.show && _vm.newCarePerson.id === 'new') ? _c('modal', [_c('template', {
+  return _c('modal', {
+    directives: [{
+      name: "show",
+      rawName: "v-show",
+      value: (_vm.show),
+      expression: "show"
+    }]
+  }, [_c('template', {
     slot: "header"
   }, [_c('button', {
     staticClass: "close",
@@ -42630,7 +42625,7 @@ module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c
       "type": "button"
     },
     on: {
-      "click": _vm.cancelForm
+      "click": _vm.clearOpenModal
     }
   }, [_vm._v("×")]), _vm._v(" "), _c('h4', {
     staticClass: "modal-title"
@@ -43389,7 +43384,7 @@ module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c
       "width": "50%"
     },
     on: {
-      "click": _vm.cancelForm
+      "click": _vm.clearOpenModal
     }
   }, [_vm._v("Close")])]), _vm._v(" "), _c('div', {
     staticClass: "col-md-6 text-center"
@@ -43399,14 +43394,14 @@ module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c
       "width": "50%"
     },
     attrs: {
-      "disabled": _vm.form.busy
+      "disabled": false
     },
     on: {
       "click": _vm.sendForm
     }
-  }, [_vm._v("\n                    Save "), (_vm.form.busy) ? _c('i', {
+  }, [_vm._v("\n                    Save "), (false) ? _c('i', {
     staticClass: "fa fa-spinner fa-pulse fa-fw"
-  }) : _vm._e()])])])])], 2) : _vm._e()
+  }) : _vm._e()])])])])], 2)
 },staticRenderFns: []}
 module.exports.render._withStripped = true
 if (false) {
@@ -43495,7 +43490,7 @@ exports = module.exports = __webpack_require__(13)(undefined);
 
 
 // module
-exports.push([module.i, "\n", ""]);
+exports.push([module.i, "\n.vue-modal label {\n    font-size: 14px;\n}\n.providerForm {\n    padding: 10px;\n}\n.validation-error {\n    padding: 3px;\n    margin-bottom: 10px;\n    border: 1px solid transparent;\n    border-radius: 4px;\n}\n.has-danger .form-control {\n    border-color: #ff0000;\n    box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075);\n}\n.has-errors {\n    color: #a94442;\n}\n", ""]);
 
 // exports
 
@@ -43510,7 +43505,6 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__shared_modal_vue___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0__shared_modal_vue__);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_vuex__ = __webpack_require__(4);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__store_actions__ = __webpack_require__(5);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__store_getters__ = __webpack_require__(14);
 //
 //
 //
@@ -43990,28 +43984,51 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 //
 //
 //
-
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 
 
 
 
 
 /* harmony default export */ __webpack_exports__["default"] = ({
-    props: ['carePerson'],
+    props: {
+        show: Boolean,
+        carePerson: Object
+    },
 
     components: {
         modal: __WEBPACK_IMPORTED_MODULE_0__shared_modal_vue___default.a
     },
 
-    computed: Object.assign(__WEBPACK_IMPORTED_MODULE_1_vuex__["c" /* mapGetters */]({
-        form: 'form'
-    }), {
+    computed: Object.assign({
         validationErrors: function validationErrors() {
             return !this.formstate.$invalid;
         }
     }),
 
-    methods: Object.assign(__WEBPACK_IMPORTED_MODULE_1_vuex__["b" /* mapActions */](['cancelForm', 'getPatientCareTeam']), {
+    methods: Object.assign(__WEBPACK_IMPORTED_MODULE_1_vuex__["b" /* mapActions */](['getPatientCareTeam', 'clearOpenModal']), {
         sendForm: function sendForm() {
             var _this = this;
 
@@ -44086,7 +44103,14 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 /***/ (function(module, exports, __webpack_require__) {
 
 module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;
-  return _c('div', [(_vm.form.show) ? _c('modal', [_c('template', {
+  return _c('div', [_c('modal', {
+    directives: [{
+      name: "show",
+      rawName: "v-show",
+      value: (_vm.show),
+      expression: "show"
+    }]
+  }, [_c('template', {
     slot: "header"
   }, [_c('button', {
     staticClass: "close",
@@ -44094,7 +44118,7 @@ module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c
       "type": "button"
     },
     on: {
-      "click": _vm.cancelForm
+      "click": _vm.clearOpenModal
     }
   }, [_vm._v("×")]), _vm._v(" "), _c('h4', {
     staticClass: "modal-title"
@@ -44853,7 +44877,7 @@ module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c
       "width": "50%"
     },
     on: {
-      "click": _vm.cancelForm
+      "click": _vm.clearOpenModal
     }
   }, [_vm._v("Close")])]), _vm._v(" "), _c('div', {
     staticClass: "col-md-6 text-center"
@@ -44863,14 +44887,14 @@ module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c
       "width": "50%"
     },
     attrs: {
-      "disabled": _vm.form.busy
+      "disabled": false
     },
     on: {
       "click": _vm.sendForm
     }
-  }, [_vm._v("\n                        Save "), (_vm.form.busy) ? _c('i', {
+  }, [_vm._v("\n                        Save "), (false) ? _c('i', {
     staticClass: "fa fa-spinner fa-pulse fa-fw"
-  }) : _vm._e()])])])])], 2) : _vm._e()], 1)
+  }) : _vm._e()])])])])], 2)], 1)
 },staticRenderFns: []}
 module.exports.render._withStripped = true
 if (false) {
@@ -44956,8 +44980,6 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 //
 //
 //
-//
-//
 
 
 
@@ -44969,20 +44991,30 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
         return {
             patientId: $('meta[name="patient_id"]').attr('content'),
             currentModal: '',
-            editedModel: null
+            editedModel: {}
         };
     },
 
 
-    methods: Object.assign(__WEBPACK_IMPORTED_MODULE_0_vuex__["b" /* mapActions */](['destroyCarePerson', 'showForm']), {
+    methods: Object.assign(__WEBPACK_IMPORTED_MODULE_0_vuex__["b" /* mapActions */](['destroyCarePerson', 'setOpenModal']), {
         deleteCarePerson: function deleteCarePerson() {
+            var disassociate = confirm('Are you sure you want to remove ' + this.carePerson.user.first_name + ' ' + this.carePerson.user.last_name + ' from the CareTeam?');
+
+            if (!disassociate) {
+                return true;
+            }
+
             this.destroyCarePerson(this.carePerson);
         }
     }, {
         editCarePerson: function editCarePerson() {
-            this.editedModel = this.carePerson;
-            this.currentModal = 'update-care-person';
-            this.showForm(true);
+            this.setOpenModal({
+                name: 'update-care-person',
+                props: {
+                    carePerson: this.carePerson
+                }
+
+            });
         }
     })
 });
@@ -45031,12 +45063,7 @@ module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c
         _vm.editCarePerson()
       }
     }
-  }, [_vm._m(1)])])])]), _vm._v(" "), _c(_vm.currentModal, {
-    tag: "component",
-    attrs: {
-      "model": _vm.editedModel
-    }
-  })], 1)
+  }, [_vm._m(1)])])])])])
 },staticRenderFns: [function (){var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;
   return _c('span', [_c('i', {
     staticClass: "glyphicon glyphicon-remove"
@@ -51145,8 +51172,6 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 //
 //
 //
-//
-//
 
 
 
@@ -51158,9 +51183,7 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
             createNoteUrl: $('meta[name="route.patient.note.create"]').attr('content'),
             createObservationUrl: $('meta[name="route.patient.observation.create"]').attr('content'),
             createActivityUrl: $('meta[name="route.patient.activity.create"]').attr('content'),
-            createAppointmentUrl: $('meta[name="route.patient.appointment.create"]').attr('content'),
-
-            currentModal: ''
+            createAppointmentUrl: $('meta[name="route.patient.appointment.create"]').attr('content')
         };
     },
 
@@ -51172,13 +51195,13 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
     created: function created() {
         this.getCurrentUser();
     },
-    mounted: function mounted() {},
 
 
-    methods: Object.assign(__WEBPACK_IMPORTED_MODULE_0_vuex__["b" /* mapActions */](['showForm', 'getCurrentUser']), {
+    methods: Object.assign(__WEBPACK_IMPORTED_MODULE_0_vuex__["b" /* mapActions */](['setOpenModal', 'getCurrentUser']), {
         createCarePerson: function createCarePerson() {
-            this.currentModal = 'create-care-person';
-            this.showForm(true);
+            this.setOpenModal({
+                name: 'create-care-person'
+            });
         }
     })
 });
@@ -51244,9 +51267,7 @@ module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c
     }
   }, [_vm._v("contact_mail")])]), _vm._v(" "), _c('p', {
     staticClass: "mini-action-button__text--hide"
-  }, [_vm._v("Add Care Person")])])]), _vm._v(" "), _vm._m(0)]), _vm._v(" "), _c(_vm.currentModal, {
-    tag: "component"
-  })], 1)
+  }, [_vm._v("Add Care Person")])])]), _vm._v(" "), _vm._m(0)])])
 },staticRenderFns: [function (){var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;
   return _c('div', {
     staticClass: "FAB__action-button hidden-print"
@@ -51261,6 +51282,164 @@ if (false) {
      require("vue-hot-reload-api").rerender("data-v-244acbbc", module.exports)
   }
 }
+
+/***/ }),
+/* 87 */,
+/* 88 */,
+/* 89 */,
+/* 90 */,
+/* 91 */
+/***/ (function(module, exports, __webpack_require__) {
+
+var disposed = false
+var Component = __webpack_require__(1)(
+  /* script */
+  __webpack_require__(92),
+  /* template */
+  __webpack_require__(93),
+  /* styles */
+  null,
+  /* scopeId */
+  null,
+  /* moduleIdentifier (server only) */
+  null
+)
+Component.options.__file = "/Users/michalis/Code/CLH/cpm-api/resources/assets/js/components/shared/open-modal.vue"
+if (Component.esModule && Object.keys(Component.esModule).some(function (key) {return key !== "default" && key.substr(0, 2) !== "__"})) {console.error("named exports are not supported in *.vue files.")}
+if (Component.options.functional) {console.error("[vue-loader] open-modal.vue: functional components are not supported with templates, they should use render functions.")}
+
+/* hot reload */
+if (false) {(function () {
+  var hotAPI = require("vue-hot-reload-api")
+  hotAPI.install(require("vue"), false)
+  if (!hotAPI.compatible) return
+  module.hot.accept()
+  if (!module.hot.data) {
+    hotAPI.createRecord("data-v-6b7518af", Component.options)
+  } else {
+    hotAPI.reload("data-v-6b7518af", Component.options)
+  }
+  module.hot.dispose(function (data) {
+    disposed = true
+  })
+})()}
+
+module.exports = Component.exports
+
+
+/***/ }),
+/* 92 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_vuex__ = __webpack_require__(4);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__store_getters__ = __webpack_require__(14);
+//
+//
+//
+//
+
+
+
+
+/* harmony default export */ __webpack_exports__["default"] = ({
+    computed: Object.assign(__WEBPACK_IMPORTED_MODULE_0_vuex__["c" /* mapGetters */]({
+        openModal: 'openModal'
+    }), {
+        name: function name() {
+            return _.isNull(this.openModal.name) ? false : this.openModal.name;
+        },
+        props: function props() {
+            return _.isNil(this.openModal.props) ? { 'show': true } : Object.assign(this.openModal.props, { 'show': true });
+        }
+    })
+});
+
+/***/ }),
+/* 93 */
+/***/ (function(module, exports, __webpack_require__) {
+
+module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;
+  return (_vm.name) ? _c('component-proxy', {
+    attrs: {
+      "name": _vm.name,
+      "props": _vm.props
+    }
+  }) : _vm._e()
+},staticRenderFns: []}
+module.exports.render._withStripped = true
+if (false) {
+  module.hot.accept()
+  if (module.hot.data) {
+     require("vue-hot-reload-api").rerender("data-v-6b7518af", module.exports)
+  }
+}
+
+/***/ }),
+/* 94 */
+/***/ (function(module, exports, __webpack_require__) {
+
+var disposed = false
+var Component = __webpack_require__(1)(
+  /* script */
+  __webpack_require__(95),
+  /* template */
+  null,
+  /* styles */
+  null,
+  /* scopeId */
+  null,
+  /* moduleIdentifier (server only) */
+  null
+)
+Component.options.__file = "/Users/michalis/Code/CLH/cpm-api/resources/assets/js/components/shared/component-proxy.vue"
+if (Component.esModule && Object.keys(Component.esModule).some(function (key) {return key !== "default" && key.substr(0, 2) !== "__"})) {console.error("named exports are not supported in *.vue files.")}
+
+/* hot reload */
+if (false) {(function () {
+  var hotAPI = require("vue-hot-reload-api")
+  hotAPI.install(require("vue"), false)
+  if (!hotAPI.compatible) return
+  module.hot.accept()
+  if (!module.hot.data) {
+    hotAPI.createRecord("data-v-20e728ae", Component.options)
+  } else {
+    hotAPI.reload("data-v-20e728ae", Component.options)
+  }
+  module.hot.dispose(function (data) {
+    disposed = true
+  })
+})()}
+
+module.exports = Component.exports
+
+
+/***/ }),
+/* 95 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
+
+/* harmony default export */ __webpack_exports__["default"] = ({
+    props: {
+        name: {
+            type: String,
+            required: true
+        },
+        props: {
+            type: Object,
+            default: function _default() {}
+        }
+    },
+
+    render: function render(createElem) {
+        return createElem(this.name, {
+            attrs: this.props
+        });
+    }
+});
 
 /***/ })
 /******/ ]);
