@@ -43147,7 +43147,7 @@ module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c
       "id": "send_alerts",
       "name": "send_alerts",
       "type": "checkbox",
-      "disabled": !_vm.newCarePerson.user.email || !_vm.formstate.email.$valid
+      "disabled": !_vm.newCarePerson.user.email || _vm.formstate.email && !_vm.formstate.email.$valid
     },
     domProps: {
       "checked": Array.isArray(_vm.newCarePerson.alert) ? _vm._i(_vm.newCarePerson.alert, null) > -1 : (_vm.newCarePerson.alert)
@@ -43180,7 +43180,7 @@ module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c
   }, [_c('div'), _vm._v(" "), _c('div', {
     staticClass: "validation-error has-errors text-right",
     slot: "required"
-  }, [_vm._v("\n                                                            *required\n                                                        ")])]), _vm._v(" "), (!_vm.newCarePerson.user.email || !_vm.formstate.email.$valid) ? _c('div', {
+  }, [_vm._v("\n                                                            *required\n                                                        ")])]), _vm._v(" "), (!_vm.newCarePerson.user.email || _vm.formstate.email && !_vm.formstate.email.$valid) ? _c('div', {
     staticClass: "validation-error text-left",
     staticStyle: {
       "color": "green"

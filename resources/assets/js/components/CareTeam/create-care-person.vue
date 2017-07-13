@@ -383,7 +383,7 @@
                                                                name="send_alerts"
                                                                class="form-control input-md"
                                                                type="checkbox"
-                                                               v-bind:disabled="!newCarePerson.user.email || !formstate.email.$valid"
+                                                               v-bind:disabled="!newCarePerson.user.email || formstate.email && !formstate.email.$valid"
                                                                style="display: inline;">
                                                     </div>
 
@@ -396,7 +396,7 @@
                                                                 *required
                                                             </div>
                                                         </field-messages>
-                                                        <div v-if="!newCarePerson.user.email || !formstate.email.$valid"
+                                                        <div v-if="!newCarePerson.user.email || formstate.email && !formstate.email.$valid"
                                                              class="validation-error text-left"
                                                              style="color: green;">
                                                             Email needs to be filled out and valid.
