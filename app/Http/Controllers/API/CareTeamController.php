@@ -13,24 +13,93 @@ use Illuminate\Http\Request;
 
 class CareTeamController extends Controller
 {
+    public function edit(Request $request, $patientId, $carePersonId)
+    {
+        $patient = User::find($patientId);
+
+        $member = CarePerson::with([
+            'user',
+            'user.phoneNumbers',
+            'user.providerInfo',
+            'user.primaryPractice',
+        ])
+            ->whereId($carePersonId)
+            ->first();
+
+        $type = $member->type;
+
+        if ($member->user->practice($patient->primaryPractice->id) && $member->type != CarePerson::BILLING_PROVIDER) {
+            $type = $member->user->role()->display_name . " (Internal)";
+        }
+
+        $formattedType = snakeToSentenceCase($type);
+
+        $phone = $member->user->phoneNumbers->where('is_primary', 1)->first();
+
+        $carePerson = [
+            'id'                  => $member->id,
+            'formatted_type'      => $formattedType,
+            'alert'               => $member->alert,
+            'is_billing_provider' => $type == CarePerson::BILLING_PROVIDER,
+            'user'                => [
+                'id'               => $member->user->id,
+                'email'            => $member->user->email,
+                'first_name'       => $member->user->first_name,
+                'last_name'        => $member->user->last_name,
+                'address'          => $member->user->address,
+                'address2'         => $member->user->address2,
+                'city'             => $member->user->city,
+                'state'            => $member->user->state,
+                'zip'              => $member->user->zip,
+                'phone_numbers'    => $phone
+                    ? [
+                        [
+                            'id'     => $phone->id,
+                            'number' => $phone->number,
+                        ],
+                    ]
+                    : [
+                        [
+                            'id'     => '',
+                            'number' => '',
+                        ],
+                    ],
+                'primary_practice' => $member->user->primaryPractice
+                    ? [
+                        'id'           => $member->user->primaryPractice->id,
+                        'display_name' => $member->user->primaryPractice->display_name,
+                    ]
+                    : [
+                        'id'           => '',
+                        'display_name' => '',
+                    ],
+                'provider_info'    => $member->user->providerInfo
+                    ? [
+                        'id'            => $member->user->providerInfo->id,
+                        'qualification' => $member->user->providerInfo->qualification,
+                        'specialty'     => $member->user->providerInfo->specialty,
+                    ]
+                    : [
+                        'id'            => '',
+                        'qualification' => '',
+                        'specialty'     => '',
+                    ]
+                ,
+            ],
+        ];
+
+
+        return response()->json($carePerson);
+    }
+
     public function index(Request $request, $patientId)
     {
         $patient = User::find($patientId);
 
-        $careTeam = CarePerson::whereHas('user', function ($q) {
-            $q->with([
-                'user',
-                'user.phoneNumbers',
-                'user.providerInfo',
-                'user.primaryPractice',
-            ]);
-        })
-            ->whereUserId($patient->id)
-            ->orderBy('type')
+        $careTeam = CarePerson::whereUserId($patientId)
+            ->with('user')
             ->get()
-            ->map(function ($member) use (
-                $patient
-            ) {
+            ->map(function ($member) use ($patient) {
                 $type = $member->type;
 
                 if ($member->user->practice($patient->primaryPractice->id) && $member->type != CarePerson::BILLING_PROVIDER) {
@@ -39,57 +108,15 @@ class CareTeamController extends Controller
 
                 $formattedType = snakeToSentenceCase($type);
 
-                $phone = $member->user->phoneNumbers->where('is_primary', 1)->first();
-
                 return [
                     'id'                  => $member->id,
+                    'user_id'             => $member->user_id,
                     'formatted_type'      => $formattedType,
                     'alert'               => $member->alert,
                     'is_billing_provider' => $type == CarePerson::BILLING_PROVIDER,
                     'user'                => [
-                        'id'               => $member->user->id,
-                        'email'            => $member->user->email,
-                        'first_name'       => $member->user->first_name,
-                        'last_name'        => $member->user->last_name,
-                        'address'          => $member->user->address,
-                        'address2'         => $member->user->address2,
-                        'city'             => $member->user->city,
-                        'state'            => $member->user->state,
-                        'zip'              => $member->user->zip,
-                        'phone_numbers'    => $phone
-                            ? [
-                                [
-                                    'id'     => $phone->id,
-                                    'number' => $phone->number,
-                                ],
-                            ]
-                            : [
-                                [
-                                    'id'     => '',
-                                    'number' => '',
-                                ],
-                            ],
-                        'primary_practice' => $member->user->primaryPractice
-                            ? [
-                                'id'           => $member->user->primaryPractice->id,
-                                'display_name' => $member->user->primaryPractice->display_name,
-                            ]
-                            : [
-                                'id'           => '',
-                                'display_name' => '',
-                            ],
-                        'provider_info'    => $member->user->providerInfo
-                            ? [
-                                'id'            => $member->user->providerInfo->id,
-                                'qualification' => $member->user->providerInfo->qualification,
-                                'specialty'     => $member->user->providerInfo->specialty,
-                            ]
-                            : [
-                                'id'            => '',
-                                'qualification' => '',
-                                'specialty'     => '',
-                            ]
-                        ,
+                        'first_name' => $member->user->first_name,
+                        'last_name'  => $member->user->last_name,
                     ],
                 ];
             });
