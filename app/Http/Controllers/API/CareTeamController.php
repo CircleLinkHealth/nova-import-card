@@ -71,32 +71,25 @@ class CareTeamController extends Controller
                             ],
                         'primary_practice' => $member->user->primaryPractice
                             ? [
-                                [
-                                    'id'           => $member->user->primaryPractice->id,
-                                    'display_name' => $member->user->primaryPractice->display_name,
-                                ],
+                                'id'           => $member->user->primaryPractice->id,
+                                'display_name' => $member->user->primaryPractice->display_name,
                             ]
                             : [
-                                [
-                                    'id'           => '',
-                                    'display_name' => '',
-                                ],
+                                'id'           => '',
+                                'display_name' => '',
                             ],
                         'provider_info'    => $member->user->providerInfo
                             ? [
-                                [
-                                    'id'            => $member->user->providerInfo->id,
-                                    'qualification' => $member->user->providerInfo->qualification,
-                                    'specialty'     => $member->user->providerInfo->specialty,
-                                ],
+                                'id'            => $member->user->providerInfo->id,
+                                'qualification' => $member->user->providerInfo->qualification,
+                                'specialty'     => $member->user->providerInfo->specialty,
                             ]
                             : [
-                                [
-                                    'id'            => '',
-                                    'qualification' => '',
-                                    'specialty'     => '',
-                                ],
-                            ],
+                                'id'            => '',
+                                'qualification' => '',
+                                'specialty'     => '',
+                            ]
+                        ,
                     ],
                 ];
             });
