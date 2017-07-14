@@ -1,5 +1,5 @@
 <template>
-    <div class="vue-modal-mask" transition="modal">
+    <div class="vue-modal-mask" transition="vue-modal">
         <div class="vue-modal-wrapper">
             <div class="vue-modal-container">
                 <div class="vue-modal-header">
@@ -19,7 +19,9 @@
     </div>
 </template>
 <script>
-    export default {}
+    export default {
+
+    }
 </script>
 
 <style>
@@ -68,6 +70,9 @@
         position: relative;
         overflow-y: auto;
         max-height: 100vh;
+
+        font-size: 14rem;
+        color: #7b7d81;
     }
 
     .vue-modal-header h3 {
