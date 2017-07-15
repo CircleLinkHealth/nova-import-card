@@ -7,7 +7,7 @@
     import {openModal} from '../../store/getters';
 
     export default {
-        computed: Object.assign(
+        computed: Object.assign({},
             mapGetters({
                 openModal: 'openModal'
             }),

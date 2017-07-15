@@ -41,7 +41,7 @@
             }
         },
 
-        methods: Object.assign(
+        methods: Object.assign({},
             mapActions(['destroyCarePerson', 'setOpenModal']),
             {
                 deleteCarePerson()

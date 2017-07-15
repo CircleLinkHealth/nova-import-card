@@ -100,13 +100,17 @@
      * these styles.
      */
 
-    .vue-modal-enter, .vue-modal-leave-active {
+    .vue-modal-enter {
+        opacity: 0;
+    }
+
+    .vue-modal-leave-active {
         opacity: 0;
     }
 
     .vue-modal-enter .vue-modal-container,
     .vue-modal-leave-active .vue-modal-container {
-        -webkit-transform: scale(1.1);
-        transform: scale(1.1);
+        -webkit-transform: scale(1.3);
+        transform: scale(1.3);
     }
 </style>

@@ -14,7 +14,7 @@
 
 
     export default {
-        methods: Object.assign(
+        methods: Object.assign({},
             mapActions(['setOpenModal']),
             {
                 createCarePerson() {
