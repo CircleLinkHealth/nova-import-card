@@ -1,27 +1,27 @@
 <template>
-    <div class="vue-modal-mask" transition="vue-modal">
-        <div class="vue-modal-wrapper">
-            <div class="vue-modal-container">
-                <div class="vue-modal-header">
-                    <slot name="header">
-                    </slot>
-                </div>
-                <div class="vue-modal-body">
-                    <slot name="body">
-                    </slot>
-                </div>
-                <div class="vue-modal-footer">
-                    <slot name="footer">
-                    </slot>
+    <transition name="vue-modal">
+        <div class="vue-modal-mask">
+            <div class="vue-modal-wrapper">
+                <div class="vue-modal-container">
+                    <div class="vue-modal-header">
+                        <slot name="header">
+                        </slot>
+                    </div>
+                    <div class="vue-modal-body">
+                        <slot name="body">
+                        </slot>
+                    </div>
+                    <div class="vue-modal-footer">
+                        <slot name="footer">
+                        </slot>
+                    </div>
                 </div>
             </div>
         </div>
-    </div>
+    </transition>
 </template>
 <script>
-    export default {
-
-    }
+    export default {}
 </script>
 
 <style>
@@ -100,12 +100,12 @@
      * these styles.
      */
 
-    .vue-modal-enter, .vue-modal-leave {
+    .vue-modal-enter, .vue-modal-leave-active {
         opacity: 0;
     }
 
     .vue-modal-enter .vue-modal-container,
-    .vue-modal-leave .vue-modal-container {
+    .vue-modal-leave-active .vue-modal-container {
         -webkit-transform: scale(1.1);
         transform: scale(1.1);
     }
