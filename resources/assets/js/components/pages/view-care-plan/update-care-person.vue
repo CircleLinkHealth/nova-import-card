@@ -59,7 +59,7 @@
                                                        class="form-control input-md"
                                                        placeholder="First"
                                                        required
-                                                       v-model="carePerson.user.first_name">
+                                                       v-model="formData.user.first_name">
                                             </div>
 
                                             <div class="col-md-12">
@@ -83,7 +83,7 @@
                                                        class="form-control input-md"
                                                        placeholder="Last"
                                                        required
-                                                       v-model="carePerson.user.last_name">
+                                                       v-model="formData.user.last_name">
                                             </div>
 
                                             <div class="col-md-12">
@@ -113,7 +113,7 @@
                                             <div class="col-md-12">
                                                 <select2 :options="specialtiesOptions"
                                                          name="specialty"
-                                                         v-model="carePerson.user.provider_info.specialty"
+                                                         v-model="formData.user.provider_info.specialty"
                                                          style="width: 100%;">
                                                     <option disabled value="0">Select one</option>
                                                 </select2>
@@ -149,7 +149,7 @@
                                                        name="address"
                                                        class="form-control input-md"
                                                        placeholder="Line 1"
-                                                       v-model="carePerson.user.address">
+                                                       v-model="formData.user.address">
                                             </div>
 
                                             <div class="col-md-12">
@@ -172,7 +172,7 @@
                                                        name="address_2"
                                                        class="form-control input-md"
                                                        placeholder="Line 2"
-                                                       v-model="carePerson.user.address2">
+                                                       v-model="formData.user.address2">
                                             </div>
 
                                             <div class="col-md-12">
@@ -195,7 +195,7 @@
                                                        name="city"
                                                        class="form-control input-md"
                                                        placeholder="City"
-                                                       v-model="carePerson.user.city">
+                                                       v-model="formData.user.city">
                                             </div>
 
                                             <div class="col-md-12">
@@ -218,7 +218,7 @@
                                                        name="state"
                                                        class="form-control input-md"
                                                        placeholder="State"
-                                                       v-model="carePerson.user.state">
+                                                       v-model="formData.user.state">
                                             </div>
 
                                             <div class="col-md-12">
@@ -241,7 +241,7 @@
                                                        name="zip"
                                                        class="form-control input-md"
                                                        placeholder="Zip"
-                                                       v-model="carePerson.user.zip">
+                                                       v-model="formData.user.zip">
                                             </div>
 
                                             <div class="col-md-12">
@@ -276,7 +276,7 @@
                                                        name="phone"
                                                        class="form-control input-md"
                                                        placeholder="xxx-xxx-xxxx"
-                                                       v-model="carePerson.user.phone_numbers[0].number">
+                                                       v-model="formData.user.phone_numbers[0].number">
                                             </div>
 
                                             <div class="col-md-12">
@@ -310,7 +310,7 @@
                                                        name="practice"
                                                        class="form-control input-md"
                                                        placeholder=""
-                                                       v-model="carePerson.user.primary_practice.display_name">
+                                                       v-model="formData.user.primary_practice.display_name">
                                             </div>
 
                                             <div class="col-md-12">
@@ -344,7 +344,7 @@
                                                        id="email"
                                                        name="email"
                                                        class="form-control input-md"
-                                                       v-model="carePerson.user.email">
+                                                       v-model="formData.user.email">
                                             </div>
 
                                             <div class="col-md-12">
@@ -372,12 +372,12 @@
                                                     <validate auto-label :class="fieldClassName(formstate.send_alerts)">
                                                         <div class="col-md-12">
 
-                                                            <input v-model="carePerson.alert"
+                                                            <input v-model="formData.alert"
                                                                    id="send_alerts"
                                                                    name="send_alerts"
                                                                    class="form-control input-md"
                                                                    type="checkbox"
-                                                                   v-bind:disabled="!carePerson.user.email || formstate.email && !formstate.email.$valid"
+                                                                   v-bind:disabled="!formData.user.email || formstate.email && !formstate.email.$valid"
                                                                    style="display: inline;">
                                                         </div>
 
@@ -390,7 +390,7 @@
                                                                     *required
                                                                 </div>
                                                             </field-messages>
-                                                            <div v-if="!carePerson.user.email || formstate.email && !formstate.email.$valid"
+                                                            <div v-if="!formData.user.email || formstate.email && !formstate.email.$valid"
                                                                  class="validation-error text-left"
                                                                  style="color: green;">
                                                                 Email needs to be filled out and valid.
@@ -418,7 +418,7 @@
                                         <validate auto-label :class="fieldClassName(formstate.qualification)">
                                             <div class="col-md-12">
 
-                                                <select v-model="carePerson.user.provider_info.qualification"
+                                                <select v-model="formData.user.provider_info.qualification"
                                                         id="qualification"
                                                         name="qualification"
                                                         class="form-control input-md"
@@ -453,7 +453,7 @@
                                                               :class="fieldClassName(formstate.is_billing_provider)">
                                                         <div class="col-md-12">
 
-                                                            <input v-model="carePerson.is_billing_provider"
+                                                            <input v-model="formData.is_billing_provider"
                                                                    id="is_billing_provider"
                                                                    name="is_billing_provider"
                                                                    class="form-control input-md"
@@ -536,19 +536,19 @@
                         return
                     }
 
-                    if (this.carePerson.is_billing_provider) {
-                        this.carePerson.formatted_type = 'Billing Provider';
+                    if (this.formData.is_billing_provider) {
+                        this.formData.formatted_type = 'Billing Provider';
                     }
 
-                    let id = this.carePerson.id ? this.carePerson.id : 'new'
+                    let id = this.formData.id ? this.formData.id : 'new'
 
                     window.axios.patch(this.updateRoute + '/' + id, {
                         careTeamMember: this.carePerson,
                         patientId: this.patientId,
                     }).then(
                         (response) => {
-                            this.carePerson.id = response.data.carePerson.id;
-                            this.carePerson.formatted_type = response.data.carePerson.formatted_type;
+                            this.formData.id = response.data.formData.id;
+                            this.formData.formatted_type = response.data.formData.formatted_type;
 
                             this.getPatientCareTeam(this.patientId)
                             Object.assign(this.$data, this.$options.data.apply(this))
@@ -573,6 +573,10 @@
                 },
             }
         ),
+
+        created() {
+            this.formData  = JSON.parse(JSON.stringify(this.carePerson))
+        },
 
         data()
         {
@@ -715,7 +719,39 @@
                     {id: "Urology", text: "Urology"},
                     {id: "Vascular & Interventional Radiology", text: "Vascular & Interventional Radiology"},
                     {id: "Vascular Surgery", text: "Vascular Surgery"},
-                ]
+                ],
+                formData: {
+                    id: '',
+                    formatted_type: 'External',
+                    alert: false,
+                    is_billing_provider: false,
+                    user: {
+                        id: '',
+                        email: '',
+                        first_name: '',
+                        last_name: '',
+                        address: '',
+                        address2: '',
+                        city: '',
+                        state: '',
+                        zip: '',
+                        phone_numbers: {
+                            0: {
+                                id: '',
+                                number: '',
+                            }
+                        },
+                        primary_practice: {
+                            id: '',
+                            display_name: ''
+                        },
+                        provider_info: {
+                            id: '',
+                            qualification: '',
+                            specialty: '',
+                        }
+                    }
+                }
             }
         },
     }

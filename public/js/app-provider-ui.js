@@ -44108,18 +44108,18 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
                 return;
             }
 
-            if (this.carePerson.is_billing_provider) {
-                this.carePerson.formatted_type = 'Billing Provider';
+            if (this.formData.is_billing_provider) {
+                this.formData.formatted_type = 'Billing Provider';
             }
 
-            var id = this.carePerson.id ? this.carePerson.id : 'new';
+            var id = this.formData.id ? this.formData.id : 'new';
 
             window.axios.patch(this.updateRoute + '/' + id, {
                 careTeamMember: this.carePerson,
                 patientId: this.patientId
             }).then(function (response) {
-                _this.carePerson.id = response.data.carePerson.id;
-                _this.carePerson.formatted_type = response.data.carePerson.formatted_type;
+                _this.formData.id = response.data.formData.id;
+                _this.formData.formatted_type = response.data.formData.formatted_type;
 
                 _this.getPatientCareTeam(_this.patientId);
                 Object.assign(_this.$data, _this.$options.data.apply(_this));
@@ -44142,6 +44142,9 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
         }
     }),
 
+    created: function created() {
+        this.formData = JSON.parse(JSON.stringify(this.carePerson));
+    },
     data: function data() {
         return {
             submitClicked: false,
@@ -44160,7 +44163,39 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
             }, { id: "Ophthalmology", text: "Ophthalmology" }, { id: "Orthopaedic Sports Medicine", text: "Orthopaedic Sports Medicine" }, { id: "Orthopaedic Surgery", text: "Orthopaedic Surgery" }, { id: "Orthopaedic Surgery of the Spine", text: "Orthopaedic Surgery of the Spine" }, { id: "Orthopaedic Trauma", text: "Orthopaedic Trauma" }, { id: "Otolaryngology", text: "Otolaryngology" }, { id: "Otology - Neurotology", text: "Otology - Neurotology" }, { id: "Pain Medicine", text: "Pain Medicine" }, { id: "Pathology-Anatomic & Clinical", text: "Pathology-Anatomic & Clinical" }, { id: "Pediatric Anesthesiology", text: "Pediatric Anesthesiology" }, { id: "Pediatric Cardiology", text: "Pediatric Cardiology" }, { id: "Pediatric Critical Care Medicine", text: "Pediatric Critical Care Medicine" }, { id: "Pediatric Emergency Medicine", text: "Pediatric Emergency Medicine" }, { id: "Pediatric Endocrinology", text: "Pediatric Endocrinology" }, { id: "Pediatric Gastroenterology", text: "Pediatric Gastroenterology" }, { id: "Pediatric Hematology-Oncology", text: "Pediatric Hematology-Oncology" }, { id: "Pediatric Infectious Diseases", text: "Pediatric Infectious Diseases" }, { id: "Pediatric Nephrology", text: "Pediatric Nephrology" }, { id: "Pediatric Orthopaedics", text: "Pediatric Orthopaedics" }, { id: "Pediatric Otolaryngology", text: "Pediatric Otolaryngology" }, { id: "Pediatric Pathology", text: "Pediatric Pathology" }, { id: "Pediatric Pulmonology", text: "Pediatric Pulmonology" }, { id: "Pediatric Radiology", text: "Pediatric Radiology" }, { id: "Pediatric Rheumatology", text: "Pediatric Rheumatology" }, { id: "Pediatric Sports Medicine", text: "Pediatric Sports Medicine" }, { id: "Pediatric Surgery", text: "Pediatric Surgery" }, { id: "Pediatric Transplant Hepatology", text: "Pediatric Transplant Hepatology" }, { id: "Pediatric Urology", text: "Pediatric Urology" }, { id: "Pediatrics", text: "Pediatrics" }, { id: "Physical Medicine & Rehabilitation", text: "Physical Medicine & Rehabilitation" }, { id: "Physical Therapy", text: "Physical Therapy" }, { id: "Plastic Surgery", text: "Plastic Surgery" }, { id: "Preventive Medicine", text: "Preventive Medicine" }, { id: "Procedural Dermatology", text: "Procedural Dermatology" }, { id: "Psychiatry", text: "Psychiatry" }, { id: "Pulmonary Disease", text: "Pulmonary Disease" }, {
                 id: "Pulmonary Disease & Critical Care Medicine",
                 text: "Pulmonary Disease & Critical Care Medicine"
-            }, { id: "Radiation Oncology", text: "Radiation Oncology" }, { id: "Radiology-Diagnostic", text: "Radiology-Diagnostic" }, { id: "Rheumatology", text: "Rheumatology" }, { id: "Sleep Medicine", text: "Sleep Medicine" }, { id: "Social Worker", text: "Social Worker" }, { id: "Spinal Cord Injury Medicine", text: "Spinal Cord Injury Medicine" }, { id: "Sports Medicine", text: "Sports Medicine" }, { id: "Surgery-General", text: "Surgery-General" }, { id: "Surgical Critical Care", text: "Surgical Critical Care" }, { id: "Therapist", text: "Therapist" }, { id: "Thoracic Surgery", text: "Thoracic Surgery" }, { id: "Thoracic Surgery-Integrated", text: "Thoracic Surgery-Integrated" }, { id: "Transplant Hepatology", text: "Transplant Hepatology" }, { id: "Urology", text: "Urology" }, { id: "Vascular & Interventional Radiology", text: "Vascular & Interventional Radiology" }, { id: "Vascular Surgery", text: "Vascular Surgery" }]
+            }, { id: "Radiation Oncology", text: "Radiation Oncology" }, { id: "Radiology-Diagnostic", text: "Radiology-Diagnostic" }, { id: "Rheumatology", text: "Rheumatology" }, { id: "Sleep Medicine", text: "Sleep Medicine" }, { id: "Social Worker", text: "Social Worker" }, { id: "Spinal Cord Injury Medicine", text: "Spinal Cord Injury Medicine" }, { id: "Sports Medicine", text: "Sports Medicine" }, { id: "Surgery-General", text: "Surgery-General" }, { id: "Surgical Critical Care", text: "Surgical Critical Care" }, { id: "Therapist", text: "Therapist" }, { id: "Thoracic Surgery", text: "Thoracic Surgery" }, { id: "Thoracic Surgery-Integrated", text: "Thoracic Surgery-Integrated" }, { id: "Transplant Hepatology", text: "Transplant Hepatology" }, { id: "Urology", text: "Urology" }, { id: "Vascular & Interventional Radiology", text: "Vascular & Interventional Radiology" }, { id: "Vascular Surgery", text: "Vascular Surgery" }],
+            formData: {
+                id: '',
+                formatted_type: 'External',
+                alert: false,
+                is_billing_provider: false,
+                user: {
+                    id: '',
+                    email: '',
+                    first_name: '',
+                    last_name: '',
+                    address: '',
+                    address2: '',
+                    city: '',
+                    state: '',
+                    zip: '',
+                    phone_numbers: {
+                        0: {
+                            id: '',
+                            number: ''
+                        }
+                    },
+                    primary_practice: {
+                        id: '',
+                        display_name: ''
+                    },
+                    provider_info: {
+                        id: '',
+                        qualification: '',
+                        specialty: ''
+                    }
+                }
+            }
         };
     }
 });
@@ -44230,8 +44265,8 @@ module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c
     directives: [{
       name: "model",
       rawName: "v-model",
-      value: (_vm.carePerson.user.first_name),
-      expression: "carePerson.user.first_name"
+      value: (_vm.formData.user.first_name),
+      expression: "formData.user.first_name"
     }],
     staticClass: "form-control input-md",
     attrs: {
@@ -44242,12 +44277,12 @@ module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c
       "required": ""
     },
     domProps: {
-      "value": (_vm.carePerson.user.first_name)
+      "value": (_vm.formData.user.first_name)
     },
     on: {
       "input": function($event) {
         if ($event.target.composing) { return; }
-        _vm.carePerson.user.first_name = $event.target.value
+        _vm.formData.user.first_name = $event.target.value
       }
     }
   })]), _vm._v(" "), _c('div', {
@@ -44273,8 +44308,8 @@ module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c
     directives: [{
       name: "model",
       rawName: "v-model",
-      value: (_vm.carePerson.user.last_name),
-      expression: "carePerson.user.last_name"
+      value: (_vm.formData.user.last_name),
+      expression: "formData.user.last_name"
     }],
     staticClass: "form-control input-md",
     attrs: {
@@ -44285,12 +44320,12 @@ module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c
       "required": ""
     },
     domProps: {
-      "value": (_vm.carePerson.user.last_name)
+      "value": (_vm.formData.user.last_name)
     },
     on: {
       "input": function($event) {
         if ($event.target.composing) { return; }
-        _vm.carePerson.user.last_name = $event.target.value
+        _vm.formData.user.last_name = $event.target.value
       }
     }
   })]), _vm._v(" "), _c('div', {
@@ -44331,11 +44366,11 @@ module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c
       "name": "specialty"
     },
     model: {
-      value: (_vm.carePerson.user.provider_info.specialty),
+      value: (_vm.formData.user.provider_info.specialty),
       callback: function($$v) {
-        _vm.carePerson.user.provider_info.specialty = $$v
+        _vm.formData.user.provider_info.specialty = $$v
       },
-      expression: "carePerson.user.provider_info.specialty"
+      expression: "formData.user.provider_info.specialty"
     }
   }, [_c('option', {
     attrs: {
@@ -44375,8 +44410,8 @@ module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c
     directives: [{
       name: "model",
       rawName: "v-model",
-      value: (_vm.carePerson.user.address),
-      expression: "carePerson.user.address"
+      value: (_vm.formData.user.address),
+      expression: "formData.user.address"
     }],
     staticClass: "form-control input-md",
     attrs: {
@@ -44386,12 +44421,12 @@ module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c
       "placeholder": "Line 1"
     },
     domProps: {
-      "value": (_vm.carePerson.user.address)
+      "value": (_vm.formData.user.address)
     },
     on: {
       "input": function($event) {
         if ($event.target.composing) { return; }
-        _vm.carePerson.user.address = $event.target.value
+        _vm.formData.user.address = $event.target.value
       }
     }
   })]), _vm._v(" "), _c('div', {
@@ -44417,8 +44452,8 @@ module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c
     directives: [{
       name: "model",
       rawName: "v-model",
-      value: (_vm.carePerson.user.address2),
-      expression: "carePerson.user.address2"
+      value: (_vm.formData.user.address2),
+      expression: "formData.user.address2"
     }],
     staticClass: "form-control input-md",
     attrs: {
@@ -44428,12 +44463,12 @@ module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c
       "placeholder": "Line 2"
     },
     domProps: {
-      "value": (_vm.carePerson.user.address2)
+      "value": (_vm.formData.user.address2)
     },
     on: {
       "input": function($event) {
         if ($event.target.composing) { return; }
-        _vm.carePerson.user.address2 = $event.target.value
+        _vm.formData.user.address2 = $event.target.value
       }
     }
   })]), _vm._v(" "), _c('div', {
@@ -44461,8 +44496,8 @@ module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c
     directives: [{
       name: "model",
       rawName: "v-model",
-      value: (_vm.carePerson.user.city),
-      expression: "carePerson.user.city"
+      value: (_vm.formData.user.city),
+      expression: "formData.user.city"
     }],
     staticClass: "form-control input-md",
     attrs: {
@@ -44472,12 +44507,12 @@ module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c
       "placeholder": "City"
     },
     domProps: {
-      "value": (_vm.carePerson.user.city)
+      "value": (_vm.formData.user.city)
     },
     on: {
       "input": function($event) {
         if ($event.target.composing) { return; }
-        _vm.carePerson.user.city = $event.target.value
+        _vm.formData.user.city = $event.target.value
       }
     }
   })]), _vm._v(" "), _c('div', {
@@ -44503,8 +44538,8 @@ module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c
     directives: [{
       name: "model",
       rawName: "v-model",
-      value: (_vm.carePerson.user.state),
-      expression: "carePerson.user.state"
+      value: (_vm.formData.user.state),
+      expression: "formData.user.state"
     }],
     staticClass: "form-control input-md",
     attrs: {
@@ -44514,12 +44549,12 @@ module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c
       "placeholder": "State"
     },
     domProps: {
-      "value": (_vm.carePerson.user.state)
+      "value": (_vm.formData.user.state)
     },
     on: {
       "input": function($event) {
         if ($event.target.composing) { return; }
-        _vm.carePerson.user.state = $event.target.value
+        _vm.formData.user.state = $event.target.value
       }
     }
   })]), _vm._v(" "), _c('div', {
@@ -44545,8 +44580,8 @@ module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c
     directives: [{
       name: "model",
       rawName: "v-model",
-      value: (_vm.carePerson.user.zip),
-      expression: "carePerson.user.zip"
+      value: (_vm.formData.user.zip),
+      expression: "formData.user.zip"
     }],
     staticClass: "form-control input-md",
     attrs: {
@@ -44556,12 +44591,12 @@ module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c
       "placeholder": "Zip"
     },
     domProps: {
-      "value": (_vm.carePerson.user.zip)
+      "value": (_vm.formData.user.zip)
     },
     on: {
       "input": function($event) {
         if ($event.target.composing) { return; }
-        _vm.carePerson.user.zip = $event.target.value
+        _vm.formData.user.zip = $event.target.value
       }
     }
   })]), _vm._v(" "), _c('div', {
@@ -44597,8 +44632,8 @@ module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c
     directives: [{
       name: "model",
       rawName: "v-model",
-      value: (_vm.carePerson.user.phone_numbers[0].number),
-      expression: "carePerson.user.phone_numbers[0].number"
+      value: (_vm.formData.user.phone_numbers[0].number),
+      expression: "formData.user.phone_numbers[0].number"
     }],
     staticClass: "form-control input-md",
     attrs: {
@@ -44608,12 +44643,12 @@ module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c
       "placeholder": "xxx-xxx-xxxx"
     },
     domProps: {
-      "value": (_vm.carePerson.user.phone_numbers[0].number)
+      "value": (_vm.formData.user.phone_numbers[0].number)
     },
     on: {
       "input": function($event) {
         if ($event.target.composing) { return; }
-        _vm.carePerson.user.phone_numbers[0].number = $event.target.value
+        _vm.formData.user.phone_numbers[0].number = $event.target.value
       }
     }
   })]), _vm._v(" "), _c('div', {
@@ -44649,8 +44684,8 @@ module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c
     directives: [{
       name: "model",
       rawName: "v-model",
-      value: (_vm.carePerson.user.primary_practice.display_name),
-      expression: "carePerson.user.primary_practice.display_name"
+      value: (_vm.formData.user.primary_practice.display_name),
+      expression: "formData.user.primary_practice.display_name"
     }],
     staticClass: "form-control input-md",
     attrs: {
@@ -44660,12 +44695,12 @@ module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c
       "placeholder": ""
     },
     domProps: {
-      "value": (_vm.carePerson.user.primary_practice.display_name)
+      "value": (_vm.formData.user.primary_practice.display_name)
     },
     on: {
       "input": function($event) {
         if ($event.target.composing) { return; }
-        _vm.carePerson.user.primary_practice.display_name = $event.target.value
+        _vm.formData.user.primary_practice.display_name = $event.target.value
       }
     }
   })]), _vm._v(" "), _c('div', {
@@ -44701,8 +44736,8 @@ module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c
     directives: [{
       name: "model",
       rawName: "v-model",
-      value: (_vm.carePerson.user.email),
-      expression: "carePerson.user.email"
+      value: (_vm.formData.user.email),
+      expression: "formData.user.email"
     }],
     staticClass: "form-control input-md",
     attrs: {
@@ -44711,12 +44746,12 @@ module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c
       "name": "email"
     },
     domProps: {
-      "value": (_vm.carePerson.user.email)
+      "value": (_vm.formData.user.email)
     },
     on: {
       "input": function($event) {
         if ($event.target.composing) { return; }
-        _vm.carePerson.user.email = $event.target.value
+        _vm.formData.user.email = $event.target.value
       }
     }
   })]), _vm._v(" "), _c('div', {
@@ -44753,8 +44788,8 @@ module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c
     directives: [{
       name: "model",
       rawName: "v-model",
-      value: (_vm.carePerson.alert),
-      expression: "carePerson.alert"
+      value: (_vm.formData.alert),
+      expression: "formData.alert"
     }],
     staticClass: "form-control input-md",
     staticStyle: {
@@ -44764,26 +44799,26 @@ module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c
       "id": "send_alerts",
       "name": "send_alerts",
       "type": "checkbox",
-      "disabled": !_vm.carePerson.user.email || _vm.formstate.email && !_vm.formstate.email.$valid
+      "disabled": !_vm.formData.user.email || _vm.formstate.email && !_vm.formstate.email.$valid
     },
     domProps: {
-      "checked": Array.isArray(_vm.carePerson.alert) ? _vm._i(_vm.carePerson.alert, null) > -1 : (_vm.carePerson.alert)
+      "checked": Array.isArray(_vm.formData.alert) ? _vm._i(_vm.formData.alert, null) > -1 : (_vm.formData.alert)
     },
     on: {
       "__c": function($event) {
-        var $$a = _vm.carePerson.alert,
+        var $$a = _vm.formData.alert,
           $$el = $event.target,
           $$c = $$el.checked ? (true) : (false);
         if (Array.isArray($$a)) {
           var $$v = null,
             $$i = _vm._i($$a, $$v);
           if ($$c) {
-            $$i < 0 && (_vm.carePerson.alert = $$a.concat($$v))
+            $$i < 0 && (_vm.formData.alert = $$a.concat($$v))
           } else {
-            $$i > -1 && (_vm.carePerson.alert = $$a.slice(0, $$i).concat($$a.slice($$i + 1)))
+            $$i > -1 && (_vm.formData.alert = $$a.slice(0, $$i).concat($$a.slice($$i + 1)))
           }
         } else {
-          _vm.carePerson.alert = $$c
+          _vm.formData.alert = $$c
         }
       }
     }
@@ -44797,7 +44832,7 @@ module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c
   }, [_c('div'), _vm._v(" "), _c('div', {
     staticClass: "validation-error has-errors text-right",
     slot: "required"
-  }, [_vm._v("\n                                                                *required\n                                                            ")])]), _vm._v(" "), (!_vm.carePerson.user.email || _vm.formstate.email && !_vm.formstate.email.$valid) ? _c('div', {
+  }, [_vm._v("\n                                                                *required\n                                                            ")])]), _vm._v(" "), (!_vm.formData.user.email || _vm.formstate.email && !_vm.formstate.email.$valid) ? _c('div', {
     staticClass: "validation-error text-left",
     staticStyle: {
       "color": "green"
@@ -44825,8 +44860,8 @@ module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c
     directives: [{
       name: "model",
       rawName: "v-model",
-      value: (_vm.carePerson.user.provider_info.qualification),
-      expression: "carePerson.user.provider_info.qualification"
+      value: (_vm.formData.user.provider_info.qualification),
+      expression: "formData.user.provider_info.qualification"
     }],
     staticClass: "form-control input-md",
     attrs: {
@@ -44842,7 +44877,7 @@ module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c
           var val = "_value" in o ? o._value : o.value;
           return val
         });
-        _vm.carePerson.user.provider_info.qualification = $event.target.multiple ? $$selectedVal : $$selectedVal[0]
+        _vm.formData.user.provider_info.qualification = $event.target.multiple ? $$selectedVal : $$selectedVal[0]
       }
     }
   }, [_c('option', {
@@ -44889,8 +44924,8 @@ module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c
     directives: [{
       name: "model",
       rawName: "v-model",
-      value: (_vm.carePerson.is_billing_provider),
-      expression: "carePerson.is_billing_provider"
+      value: (_vm.formData.is_billing_provider),
+      expression: "formData.is_billing_provider"
     }],
     staticClass: "form-control input-md",
     staticStyle: {
@@ -44902,23 +44937,23 @@ module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c
       "type": "checkbox"
     },
     domProps: {
-      "checked": Array.isArray(_vm.carePerson.is_billing_provider) ? _vm._i(_vm.carePerson.is_billing_provider, null) > -1 : (_vm.carePerson.is_billing_provider)
+      "checked": Array.isArray(_vm.formData.is_billing_provider) ? _vm._i(_vm.formData.is_billing_provider, null) > -1 : (_vm.formData.is_billing_provider)
     },
     on: {
       "__c": function($event) {
-        var $$a = _vm.carePerson.is_billing_provider,
+        var $$a = _vm.formData.is_billing_provider,
           $$el = $event.target,
           $$c = $$el.checked ? (true) : (false);
         if (Array.isArray($$a)) {
           var $$v = null,
             $$i = _vm._i($$a, $$v);
           if ($$c) {
-            $$i < 0 && (_vm.carePerson.is_billing_provider = $$a.concat($$v))
+            $$i < 0 && (_vm.formData.is_billing_provider = $$a.concat($$v))
           } else {
-            $$i > -1 && (_vm.carePerson.is_billing_provider = $$a.slice(0, $$i).concat($$a.slice($$i + 1)))
+            $$i > -1 && (_vm.formData.is_billing_provider = $$a.slice(0, $$i).concat($$a.slice($$i + 1)))
           }
         } else {
-          _vm.carePerson.is_billing_provider = $$c
+          _vm.formData.is_billing_provider = $$c
         }
       }
     }
