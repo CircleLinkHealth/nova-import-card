@@ -44104,6 +44104,8 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 
             this.submitClicked = true;
 
+            this.sending = true;
+
             if (this.validationErrors) {
                 return;
             }
@@ -44115,11 +44117,11 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
             var id = this.formData.id ? this.formData.id : 'new';
 
             window.axios.patch(this.updateRoute + '/' + id, {
-                careTeamMember: this.carePerson,
+                careTeamMember: this.formData,
                 patientId: this.patientId
             }).then(function (response) {
-                _this.formData.id = response.data.formData.id;
-                _this.formData.formatted_type = response.data.formData.formatted_type;
+                _this.formData.id = response.data.carePerson.id;
+                _this.formData.formatted_type = response.data.carePerson.formatted_type;
 
                 _this.getPatientCareTeam(_this.patientId);
                 Object.assign(_this.$data, _this.$options.data.apply(_this));
@@ -44164,6 +44166,7 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
                 id: "Pulmonary Disease & Critical Care Medicine",
                 text: "Pulmonary Disease & Critical Care Medicine"
             }, { id: "Radiation Oncology", text: "Radiation Oncology" }, { id: "Radiology-Diagnostic", text: "Radiology-Diagnostic" }, { id: "Rheumatology", text: "Rheumatology" }, { id: "Sleep Medicine", text: "Sleep Medicine" }, { id: "Social Worker", text: "Social Worker" }, { id: "Spinal Cord Injury Medicine", text: "Spinal Cord Injury Medicine" }, { id: "Sports Medicine", text: "Sports Medicine" }, { id: "Surgery-General", text: "Surgery-General" }, { id: "Surgical Critical Care", text: "Surgical Critical Care" }, { id: "Therapist", text: "Therapist" }, { id: "Thoracic Surgery", text: "Thoracic Surgery" }, { id: "Thoracic Surgery-Integrated", text: "Thoracic Surgery-Integrated" }, { id: "Transplant Hepatology", text: "Transplant Hepatology" }, { id: "Urology", text: "Urology" }, { id: "Vascular & Interventional Radiology", text: "Vascular & Interventional Radiology" }, { id: "Vascular Surgery", text: "Vascular Surgery" }],
+            sending: false,
             formData: {
                 id: '',
                 formatted_type: 'External',
@@ -44994,7 +44997,7 @@ module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c
     on: {
       "click": _vm.sendForm
     }
-  }, [_vm._v("\n                        Save "), (false) ? _c('i', {
+  }, [_vm._v("\n                        Save "), (_vm.sending) ? _c('i', {
     staticClass: "fa fa-spinner fa-pulse fa-fw"
   }) : _vm._e()])])])])], 2)], 1)
 },staticRenderFns: []}

@@ -490,7 +490,7 @@
                     </div>
                     <div class="col-md-6 text-center">
                         <button style="width:50%" :disabled="false" @click="sendForm" class=" btn btn-info">
-                            Save <i v-if="false" class="fa fa-spinner fa-pulse fa-fw"></i>
+                            Save <i v-if="sending" class="fa fa-spinner fa-pulse fa-fw"></i>
                         </button>
                     </div>
 
@@ -532,6 +532,8 @@
                 sendForm() {
                     this.submitClicked = true
 
+                    this.sending = true
+
                     if (this.validationErrors) {
                         return
                     }
@@ -543,12 +545,12 @@
                     let id = this.formData.id ? this.formData.id : 'new'
 
                     window.axios.patch(this.updateRoute + '/' + id, {
-                        careTeamMember: this.carePerson,
+                        careTeamMember: this.formData,
                         patientId: this.patientId,
                     }).then(
                         (response) => {
-                            this.formData.id = response.data.formData.id;
-                            this.formData.formatted_type = response.data.formData.formatted_type;
+                            this.formData.id = response.data.carePerson.id;
+                            this.formData.formatted_type = response.data.carePerson.formatted_type;
 
                             this.getPatientCareTeam(this.patientId)
                             Object.assign(this.$data, this.$options.data.apply(this))
@@ -720,6 +722,7 @@
                     {id: "Vascular & Interventional Radiology", text: "Vascular & Interventional Radiology"},
                     {id: "Vascular Surgery", text: "Vascular Surgery"},
                 ],
+                sending: false,
                 formData: {
                     id: '',
                     formatted_type: 'External',
