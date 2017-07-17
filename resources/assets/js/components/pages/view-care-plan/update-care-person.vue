@@ -503,7 +503,7 @@
 <script>
     import modal from '../../shared/modal.vue';
     import {mapGetters, mapActions} from 'vuex'
-    import {getPatientCareTeam, clearOpenModal} from '../../../store/actions'
+    import {getPatientCareTeam, clearOpenModal, addNotification} from '../../../store/actions'
 
     export default {
         props: {
@@ -523,11 +523,18 @@
                 validationErrors() {
                     return this.formstate && this.formstate.$invalid && this.formstate.$touched && this.submitClicked
                 },
+            },
+            {
+                name() {
+                    return this.carePerson.user.first_name
+                        + ' '
+                        + this.carePerson.user.last_name
+                }
             }
         ),
 
         methods: Object.assign(
-            mapActions(['getPatientCareTeam', 'clearOpenModal']),
+            mapActions(['getPatientCareTeam', 'clearOpenModal', 'addNotification']),
             {
                 sendForm() {
                     this.submitClicked = true
@@ -556,6 +563,13 @@
                             Object.assign(this.$data, this.$options.data.apply(this))
 
                             this.clearOpenModal();
+
+                            this.addNotification({
+                                title: "Successfully updated " + this.name,
+                                text: "",
+                                type: "success",
+                                timeout: true
+                            })
 
                         }, (response) => {
                             console.log(response.data)

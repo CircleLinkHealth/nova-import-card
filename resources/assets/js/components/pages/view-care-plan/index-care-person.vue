@@ -33,6 +33,14 @@
     export default {
         props: ['carePerson'],
 
+        computed: {
+            name() {
+                return this.carePerson.user.first_name
+                    + ' '
+                    + this.carePerson.user.last_name
+            }
+        },
+
         data() {
             return {
                 patientId: $('meta[name="patient_id"]').attr('content'),
@@ -46,9 +54,7 @@
             {
                 deleteCarePerson()
                 {
-                    let disassociate = confirm('Are you sure you want to remove ' + this.carePerson.user.first_name
-                        + ' '
-                        + this.carePerson.user.last_name + ' from the CareTeam?');
+                    let disassociate = confirm('Are you sure you want to remove ' + name +' from the CareTeam?');
 
                     if (!disassociate) {
                         return true;

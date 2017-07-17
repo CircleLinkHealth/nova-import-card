@@ -508,7 +508,7 @@
 <script>
     import modal from '../shared/modal.vue';
     import {mapGetters, mapActions} from 'vuex'
-    import {getPatientCareTeam, clearOpenModal} from '../../store/actions'
+    import {getPatientCareTeam, clearOpenModal, addNotification} from '../../store/actions'
 
     export default {
         props: {
@@ -525,13 +525,20 @@
         computed: Object.assign({},
             {
                 validationErrors() {
-                    return this.formstate && this.formstate.$invalid && this.formstate.$touched && this.submitClicked
-                },
+                    return this.formstate && this.formstate.$invalid && this.submitClicked
+                }
+            },
+            {
+                name() {
+                    return this.newCarePerson.user.first_name
+                        + ' '
+                        + this.newCarePerson.user.last_name
+                }
             }
         ),
 
         methods: Object.assign({},
-            mapActions(['getPatientCareTeam', 'clearOpenModal']),
+            mapActions(['getPatientCareTeam', 'clearOpenModal', 'addNotification']),
             {
                 sendForm() {
                     this.submitClicked = true
@@ -557,7 +564,14 @@
                             this.getPatientCareTeam(this.patientId)
                             Object.assign(this.$data, this.$options.data.apply(this))
                             this.clearOpenModal();
-                            
+
+                            this.addNotification({
+                                title: "Successfully saved Care Person",
+                                text: "",
+                                type: "success",
+                                timeout: true
+                            })
+
                             //HACK to replace select2 with newly added provider on appointments page
                             let carePerson = response.data.carePerson;
 
