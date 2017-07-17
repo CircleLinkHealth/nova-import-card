@@ -18,8 +18,12 @@ var medicationsVM = new Vue({
         medications: []
     },
 
-    ready: function() {
+    mounted: function() {
         this.loadMedications();
+
+        Vue.nextTick(function () {
+            // DOM updated
+        });
     },
 
     methods: {

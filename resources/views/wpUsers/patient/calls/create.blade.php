@@ -8,7 +8,7 @@
         $(document).ready(function () {
             /* $( ".submitFormBtn").click(function(e) { */
             $("a").click(function (e) {
-                $("#confirmButtonModal").modal();
+                $("#confirmButtonModal").modal({    backdrop: 'static',    keyboard: false});
                 e.preventDefault();
                 return false;
             });

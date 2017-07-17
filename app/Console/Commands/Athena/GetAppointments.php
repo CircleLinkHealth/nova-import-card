@@ -54,16 +54,16 @@ class GetAppointments extends Command
         foreach ($vendors as $vendor) {
 
             if (app()->environment('worker')) {
-                Slack::to('#background-tasks')
-                    ->send("Getting appointments for vendor: {$vendor->vendor_name}. \n");
+//                Slack::to('#background-tasks')
+//                    ->send("Getting appointments for vendor: {$vendor->vendor_name}. \n");
             }
 
             $this->service->getAppointments($vendor->practice_id, $startDate, $endDate);
         }
 
         if (app()->environment('worker')) {
-            Slack::to('#background-tasks')
-                ->send("Finished getting appointments from Athena API. \n");
+//            Slack::to('#background-tasks')
+//                ->send("Finished getting appointments from Athena API. \n");
         }
     }
 }

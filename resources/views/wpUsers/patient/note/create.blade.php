@@ -297,7 +297,7 @@
         $(document).ready(function () {
             $("#complex").click(function (e) {
                 if ($("#complex").is(':checked')) {
-                    $("#confirmButtonModal").modal();
+                    $("#confirmButtonModal").modal({    backdrop: 'static',    keyboard: false});
                 } else {
                     $("#complex_tag").hide();
                 }

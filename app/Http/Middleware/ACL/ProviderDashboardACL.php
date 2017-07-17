@@ -21,7 +21,7 @@ class ProviderDashboardACL
         Closure $next,
         $role
     ) {
-        $practiceSlug = Route::current()->getParameter('practiceSlug');
+        $practiceSlug = Route::current()->parameter('practiceSlug');
         $practice = Practice::whereName($practiceSlug)->first();
 
 

@@ -31,7 +31,7 @@ class NurseContactWindowObserver
         $sentence .= "$window->dayName, {$window->date->format('m-d-Y')} from $window->window_time_start to $window->window_time_end. View Schedule at ";
         $sentence .= route('get.admin.nurse.schedules');
 
-        Slack::to('#callcenter_engagement')->send($sentence);
+//        Slack::to('#callcenter_engagement')->send($sentence);
     }
 
 
@@ -58,7 +58,7 @@ class NurseContactWindowObserver
         $sentence .= "$window->dayName, {$window->date->format('m-d-Y')} from $window->window_time_start to $window->window_time_end. View Schedule at ";
         $sentence .= route('get.admin.nurse.schedules');
 
-        Slack::to('#callcenter_engagement')->send($sentence);
+//        Slack::to('#callcenter_engagement')->send($sentence);
     }
 
 

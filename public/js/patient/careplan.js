@@ -13,7 +13,7 @@ $(document).ready(function(){
         dateFormat: "yy-mm-dd"
     });
     */
-    $("#dtBox").DateTimePicker();
+    // $("#dtBox").DateTimePicker();
 });
 
 $(document).ready(function(){

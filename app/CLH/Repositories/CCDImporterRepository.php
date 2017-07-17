@@ -66,7 +66,7 @@ class CCDImporterRepository
     public function toJson($xml)
     {
         $client = new Client([
-            'base_uri' => env('CCD_PARSER_BASE_URI'),
+            'base_uri' => env('CCD_PARSER_BASE_URI', 'https://circlelink-ccd-parser.medstack.net'),
         ]);
 
         $response = $client->request('POST', '/ccda/parse', [

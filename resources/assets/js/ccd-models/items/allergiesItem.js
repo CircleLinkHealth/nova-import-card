@@ -17,8 +17,12 @@ var allergiesVM = new Vue({
         allergies: []
     },
 
-    ready: function() {
+    mounted: function() {
         this.loadAllergies();
+
+        Vue.nextTick(function () {
+            // DOM updated
+        });
     },
 
     methods: {

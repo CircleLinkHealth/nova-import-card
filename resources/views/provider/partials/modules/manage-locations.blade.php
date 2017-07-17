@@ -1,6 +1,6 @@
 <meta name="submit-url" content="{{$postUrl}}">
 
-<div id="create-locations-component" class="row">
+<div v-cloak id="create-locations-component" class="row">
 
     <div v-if="showErrorBanner" class="row">
         <div class="card-panel red lighten-5 red-text text-darken-4">
@@ -24,11 +24,11 @@
 
     <div class="row">
         <ul class="collapsible" data-collapsible="accordion">
-            <li v-for="(index, loc) in newLocations" id="location-@{{index}}" v-on:click="isValidated(index)">
+            <li v-for="(loc, index) in newLocations" v-bind:id="'location-'+index" v-on:click="isValidated(index)">
                 <div class="collapsible-header" v-bind:class="{ active: index == newLocations.length - 1 }">
                     <div class="col s8">
                             <span v-if="loc.name">
-                                @{{loc.name | uppercase}}
+                                @{{loc.name.toUpperCase()}}
                             </span>
                         <span v-else>
                                 NEW LOCATION
@@ -44,6 +44,7 @@
                         </div>
                     </div>
                 </div>
+
 
                 <div class="collapsible-body" style="padding: 5%;">
 
@@ -63,16 +64,12 @@
                                 ]
                             ])
 
-                        <select class="col s6 input-field" v-select="loc.timezone">
-                            <option value="America/New_York" selected="selected">Eastern Time</option>
-                            <option value="America/Chicago">Central Time</option>
-                            <option value="America/Denver">Mountain Time</option>
-                            <option value="America/Phoenix">Mountain Time (no DST)</option>
-                            <option value="America/Los_Angeles">Pacific Time</option>
-                            <option value="America/Anchorage">Alaska Time</option>
-                            <option value="America/Adak">Hawaii-Aleutian</option>
-                            <option value="Pacific/Honolulu">Hawaii-Aleutian Time (no DST)</option>
-                        </select>
+
+                        <material-select v-model="loc.timezone" class="col s6 input-field">
+                            <option v-for="option in timezoneOptions" :value="option.value"
+                                    v-text="option.name"></option>
+                        </material-select>
+
                     </div>
 
                     <div class="row">
@@ -231,7 +228,7 @@
                             'name' => 'locations[@{{index}}][ehr_password]',
                             'label' => 'EHR Password',
                             'class' => 'col s6',
-                            'type' => 'password',
+                            'type' => 'text',
                             'attributes' => [
                                 'v-model' => 'loc.ehr_password',
                                 'autocomplete' => 'new-password',
