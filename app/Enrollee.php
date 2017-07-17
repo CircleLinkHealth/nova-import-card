@@ -82,6 +82,7 @@ class Enrollee extends Model
 
         'primary_insurance',
         'secondary_insurance',
+        'tertiary_insurance',
         'has_copay',
 
         'email',
@@ -91,6 +92,8 @@ class Enrollee extends Model
         'cpm_problem_1',
         'cpm_problem_2',
     ];
+
+    protected $dates = ['dob'];
 
     public function user()
     {

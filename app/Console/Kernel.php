@@ -9,13 +9,16 @@ use App\Console\Commands\EmailsProvidersToApproveCareplans;
 use App\Console\Commands\ExportNurseSchedulesToGoogleCalendar;
 use App\Console\Commands\FormatLocationPhone;
 use App\Console\Commands\GeneratePatientReports;
+use App\Console\Commands\ImportLGHInsurance;
 use App\Console\Commands\ImportNurseScheduleFromGoogleCalendar;
 use App\Console\Commands\Inspire;
 use App\Console\Commands\MapSnomedToCpmProblems;
 use App\Console\Commands\NukeItemAndMeta;
+use App\Console\Commands\ProcessCcdaLGHMixup;
 use App\Console\Commands\QueueCcdasToConvertToJson;
 use App\Console\Commands\QueueCcdasToProcess;
 use App\Console\Commands\QueueCcdaToDetermineEnrollmentEligibility;
+use App\Console\Commands\QueueSendAuditReports;
 use App\Console\Commands\RecalculateCcmTime;
 use App\Console\Commands\ResetCcmTime;
 use App\Console\Commands\SplitMergedCcdas;
@@ -60,6 +63,9 @@ class Kernel extends ConsoleKernel
         QueueCcdasToConvertToJson::class,
         QueueCcdaToDetermineEnrollmentEligibility::class,
         QueueCcdasToProcess::class,
+        QueueSendAuditReports::class,
+        ProcessCcdaLGHMixup::class,
+        ImportLGHInsurance::class,
     ];
 
     /**
@@ -136,6 +142,9 @@ class Kernel extends ConsoleKernel
         $schedule->command('ccm_time:reset')
             ->cron('1 0 1 * *');
 
+        $schedule->command('lgh:importInsurance')
+            ->dailyAt('05:00');
+
 //        $schedule->command('ccda:toJson')
 //            ->everyMinute();
 
@@ -148,6 +157,9 @@ class Kernel extends ConsoleKernel
         //every 2 hours
 //        $schedule->command('ccdas:split-merged')
 //            ->cron('0 */2 * * *');
+
+        $schedule->command('send:audit-reports')
+            ->monthlyOn(1, '02:00');
     }
 
     /**

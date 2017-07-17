@@ -2,16 +2,19 @@
 
 namespace App\Jobs;
 
+use App\AppConfig;
 use App\CLH\Repositories\CCDImporterRepository;
+use App\Enrollee;
 use App\Importer\Loggers\Ccda\CcdToLogTranformer;
 use App\Models\MedicalRecords\Ccda;
+use App\Models\PatientData\LGH\LGHProvider;
 use Carbon\Carbon;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 
-class ProcessCcda implements ShouldQueue
+class ProcessCcdaLGHMixup implements ShouldQueue
 {
     use InteractsWithQueue, Queueable, SerializesModels;
     public $ccda;
@@ -23,7 +26,8 @@ class ProcessCcda implements ShouldQueue
      */
     public function __construct(Ccda $ccda)
     {
-        $this->ccda = Ccda::find($ccda->id);
+        $this->ccda = Ccda::withTrashed()
+            ->find($ccda->id);
     }
 
     /**
@@ -35,9 +39,7 @@ class ProcessCcda implements ShouldQueue
     {
         $ccda = $this->ccda;
 
-        $json = !empty($ccda->json)
-            ? $ccda->json
-            : (new CCDImporterRepository())->toJson($ccda->xml);
+        $json = (new CCDImporterRepository())->toJson($ccda->xml);
 
         if ($json) {
             $ccda->json = $json;
@@ -58,25 +60,32 @@ class ProcessCcda implements ShouldQueue
             $ccda->save();
         }
 
-        $this->handleDuplicateCcdas($ccda);
+        $this->updateEnrollee($ccda);
     }
 
-    public function handleDuplicateCcdas(Ccda $ccda)
+    public function updateEnrollee(Ccda $ccda)
     {
-        $duplicates = Ccda::where('mrn', '=', $ccda->mrn)
-            ->get(['id', 'date'])
-            ->sortByDesc(function ($ccda) {
-                return $ccda->date;
-            })->values();
+        $enrollee = Enrollee::whereMedicalRecordType(Ccda::class)
+            ->whereMedicalRecordId($ccda->id)
+            ->first();
 
-        $keep = $duplicates->first();
-
-        foreach ($duplicates as $dup) {
-            if ($dup->id == $keep->id) {
-                continue;
-            }
-
-            $dup->delete();
+        if (!$enrollee) {
+            return;
         }
+
+        $enrollee->mrn = $ccda->mrn;
+
+        $lghProvider = LGHProvider::whereMrn($ccda->mrn)
+            ->first();
+
+        if ($lghProvider) {
+            $enrollee->referring_provider_name = $lghProvider->att_phys;
+
+            $lghProvider->medical_record_type = $enrollee->medical_record_type;
+            $lghProvider->medical_record_id = $enrollee->medical_record_id;
+            $lghProvider->save();
+        }
+
+        $enrollee->save();
     }
 }

@@ -5,6 +5,7 @@ namespace App\Console\Commands;
 use App\CarePlan;
 use App\CLH\Contracts\Repositories\UserRepository;
 use App\Models\EmailSettings;
+use App\User;
 use Carbon\Carbon;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Mail;
@@ -92,11 +93,22 @@ class EmailsProvidersToApproveCareplans extends Command
                 return false;
             }
 
-            $recipients = [
-                $user->email,
-                //            'raph@circlelinkhealth.com',
-                //            'mantoniou@circlelinkhealth.com',
-            ];
+            $recipients = collect();
+
+            if ($user->forwardAlertsTo->isEmpty()) {
+                $recipients->push($user->email);
+            }
+
+            foreach ($user->forwardAlertsTo as $forwardee) {
+                if ($forwardee->pivot->name == User::FORWARD_CAREPLAN_APPROVAL_EMAILS_IN_ADDITION_TO_PROVIDER) {
+                    $recipients->push($user->email);
+                    $recipients->push($forwardee->email);
+                }
+
+                if ($forwardee->pivot->name == User::FORWARD_CAREPLAN_APPROVAL_EMAILS_INSTEAD_OF_PROVIDER) {
+                    $recipients->push($forwardee->email);
+                }
+            }
 
             $numberOfCareplans = CarePlan::getNumberOfCareplansPendingApproval($user);
 
@@ -136,7 +148,7 @@ class EmailsProvidersToApproveCareplans extends Command
                         $subject
                     ) {
                         $message->from('notifications@careplanmanager.com', 'CircleLink Health')
-                            ->to($recipients)
+                            ->to($recipients->all())
                             ->subject($subject);
                     });
                 }
