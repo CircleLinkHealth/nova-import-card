@@ -71,7 +71,7 @@ class DetermineCcdaEnrollmentEligibility implements ShouldQueue
 
         $patient = $patient->put('problems', $problems);
 
-        $insurance = LGHInsurance::where('MRN', $this->ccda->mrn)->first();
+        $insurance = LGHInsurance::where('mrn', $this->ccda->mrn)->first();
 
         $filterInsurance = false;
 

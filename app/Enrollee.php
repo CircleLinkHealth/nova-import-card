@@ -93,6 +93,8 @@ class Enrollee extends Model
         'cpm_problem_2',
     ];
 
+    protected $dates = ['dob'];
+
     public function user()
     {
 
