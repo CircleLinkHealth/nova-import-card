@@ -1,4 +1,4 @@
-<div id="bloodhound">
+<div id="bloodhound" class="col-md-12">
     <input id="patient-search-text-box" class="form-control typeahead form-item-spacing" type="text" style="width: 100% !important;"
            name="users" autofocus="autofocus"
            placeholder="{{ !empty($patient->id) ? $patient->fullName : 'Enter a Patient Name, MRN or DOB (mm-dd-yyyy)' }}">
