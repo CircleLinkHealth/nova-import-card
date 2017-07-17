@@ -42490,7 +42490,7 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 
     computed: Object.assign({}, {
         validationErrors: function validationErrors() {
-            return this.formstate && this.formstate.$invalid && this.formstate.$touched && this.submitClicked;
+            return this.formstate && this.formstate.$invalid && this.submitClicked;
         }
     }, {
         name: function name() {
@@ -42526,7 +42526,7 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
                 _this.clearOpenModal();
 
                 _this.addNotification({
-                    title: "Successfully saved" + name,
+                    title: "Successfully saved Care Person",
                     text: "",
                     type: "success",
                     timeout: true
@@ -44138,6 +44138,10 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
         validationErrors: function validationErrors() {
             return this.formstate && this.formstate.$invalid && this.formstate.$touched && this.submitClicked;
         }
+    }, {
+        name: function name() {
+            return this.carePerson.user.first_name + ' ' + this.carePerson.user.last_name;
+        }
     }),
 
     methods: Object.assign(__WEBPACK_IMPORTED_MODULE_1_vuex__["b" /* mapActions */](['getPatientCareTeam', 'clearOpenModal', 'addNotification']), {
@@ -44171,7 +44175,7 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
                 _this.clearOpenModal();
 
                 _this.addNotification({
-                    title: "Successfully updated Care Person",
+                    title: "Successfully updated " + _this.name,
                     text: "",
                     type: "success",
                     timeout: true
