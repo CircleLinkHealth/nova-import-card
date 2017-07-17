@@ -10,3 +10,7 @@ export const openModal = state => {
     return state.openModal
 }
 
+export const notifications = state => {
+    return state.notifications
+}
+

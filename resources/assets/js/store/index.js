@@ -10,7 +10,6 @@ const debug = process.env.NODE_ENV !== 'production'
 Vue.config.debug = debug
 
 const state = {
-    patientCareTeam: [],
     currentUser: {
         email: '',
         first_name: '',
@@ -24,10 +23,12 @@ const state = {
         username: '',
     },
     debug: debug,
+    notifications: [],
     openModal: {
         name: null,
         props: {}
-    }
+    },
+    patientCareTeam: [],
 }
 
 export default new Vuex.Store({

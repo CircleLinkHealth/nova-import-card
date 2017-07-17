@@ -27,3 +27,11 @@ export const SET_OPEN_MODAL = (state, openModal) => {
 export const CLEAR_OPEN_MODAL = (state) => {
     state.openModal = {}
 }
+
+export const ADD_NOTIFICATION = (state, notification) => {
+    state.notifications.push(notification)
+}
+
+export const REMOVE_NOTIFICATION = (state, notification) => {
+    state.notifications.splice(state.notifications.indexOf(notification), 1)
+}
