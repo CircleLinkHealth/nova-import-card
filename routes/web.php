@@ -142,6 +142,18 @@ Route::group(['namespace' => 'Redox'], function () {
 /****************************/
 /****************************/
 Route::group(['middleware' => 'auth'], function () {
+    /**
+     * API
+     */
+
+    Route::resource('profiles', 'API\ProfileController');
+
+    Route::resource('user.care-team', 'API\CareTeamController');
+
+    Route::get('provider/search', [
+        'uses' => 'API\CareTeamController@searchProviders',
+        'as'   => 'providers.search',
+    ]);
 
     Route::resource('settings/email', 'EmailSettingsController');
 
@@ -254,6 +266,7 @@ Route::group(['middleware' => 'auth'], function () {
         'prefix'     => 'manage-patients/',
         'middleware' => ['patientProgramSecurity'],
     ], function () {
+
         Route::get('dashboard', [
             'uses' => 'Patient\PatientController@showDashboard',
             'as'   => 'patients.dashboard',
@@ -311,13 +324,6 @@ Route::group(['middleware' => 'auth'], function () {
         Route::get('provider-notes', [
             'uses' => 'NotesController@listing',
             'as'   => 'patient.note.listing',
-        ]);
-
-        Route::resource('care-team', 'CareTeamController');
-
-        Route::get('provider/search', [
-            'uses' => 'CareTeamController@searchProviders',
-            'as'   => 'providers.search',
         ]);
 
         // nurse call list

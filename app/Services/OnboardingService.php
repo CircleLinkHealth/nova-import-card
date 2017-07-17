@@ -204,11 +204,11 @@ class OnboardingService
                 'id'                        => $loc->id,
                 'clinical_contact'          => [
                     'email'     => $contactUser->email ?? null,
-                    'firstName' => $contactUser->first_name ?? null,
-                    'lastName'  => $contactUser->last_name ?? null,
+                    'first_name' => $contactUser->first_name ?? null,
+                    'last_name'  => $contactUser->last_name ?? null,
                     'type'      => $contactType ?? 'billing_provider',
                 ],
-                'timezone'                  => 'America/New_York',
+                'timezone'                  => $loc->timezone ?? 'America/New_York',
                 'ehr_password'              => $loc->ehr_password,
                 'city'                      => $loc->city,
                 'address_line_1'            => $loc->address_line_1,
@@ -331,20 +331,42 @@ class OnboardingService
             $primaryPractice->save();
 
             if ($newLocation['clinical_contact']['type'] == CarePerson::BILLING_PROVIDER) {
-                //do nothing
+                //clean up other contacts, just in case this was just set as the billing provider
+                $location->clinicalEmergencyContact()->sync([]);
             } else {
-
-                $user = User::whereEmail($newLocation['clinical_contact']['email'])
+                $clinicalContactUser = User::whereEmail($newLocation['clinical_contact']['email'])
                     ->first();
 
-                if (!$user) {
+                if (!$newLocation['clinical_contact']['email']) {
+                    $clinicalContactUser = null;
+
+                    $errors[] = [
+                        'index'    => $index,
+                        'messages' => [
+                            'email' => ['Clinical Contact email is a required field.']
+                        ],
+                        'input'    => $newLocation,
+                    ];
+                }
+
+                if (!$clinicalContactUser) {
                     try {
-                        $user = $this->users->create([
+                        $clinicalContactUser = $this->users->create([
                             'program_id' => $primaryPractice->id,
                             'email'      => $newLocation['clinical_contact']['email'],
-                            'first_name' => $newLocation['clinical_contact']['firstName'],
-                            'last_name'  => $newLocation['clinical_contact']['lastName'],
+                            'first_name' => $newLocation['clinical_contact']['first_name'],
+                            'last_name'  => $newLocation['clinical_contact']['last_name'],
                             'password'   => 'password_not_set',
+                        ]);
+
+                        $clinicalContactUser->attachPractice($primaryPractice);
+                        $clinicalContactUser->attachLocation($location);
+
+                        //clean up other contacts before adding the new one
+                        $location->clinicalEmergencyContact()->sync([]);
+
+                        $location->clinicalEmergencyContact()->attach($clinicalContactUser->id, [
+                            'name' => $newLocation['clinical_contact']['type'],
                         ]);
                     } catch (ValidatorException $e) {
                         $errors[] = [
@@ -354,16 +376,6 @@ class OnboardingService
                         ];
                     }
                 }
-
-                $user->attachPractice($primaryPractice);
-                $user->attachLocation($location);
-
-                //clean up other contacts before adding the new one
-                $location->clinicalEmergencyContact()->sync([]);
-
-                $location->clinicalEmergencyContact()->attach($user->id, [
-                    'name' => $newLocation['clinical_contact']['type'],
-                ]);
             }
 
             if ($primaryPractice->lead) {

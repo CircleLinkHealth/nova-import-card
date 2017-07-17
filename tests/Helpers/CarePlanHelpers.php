@@ -173,10 +173,6 @@ trait CarePlanHelpers
             }
 
             $carePlanEntities = $carePlanEntities->random($numberOfRowsToCreate);
-
-            if (is_object($carePlanEntities)) {
-                $carePlanEntities = collect($carePlanEntities);
-            }
         }
 
         $this
@@ -534,11 +530,11 @@ trait CarePlanHelpers
             'cpm_testing',
             'cpm_hotfix',
         ])) {
-            Slack::to('#qualityassurance')
-                ->send($text);
+//            Slack::to('#qualityassurance')
+//                ->send($text);
         } else {
-            Slack::to('#background-tasks-dev')
-                ->send($text);
+//            Slack::to('#background-tasks-dev')
+//                ->send($text);
         }
 
         echo $text;

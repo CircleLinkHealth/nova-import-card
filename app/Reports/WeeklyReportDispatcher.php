@@ -83,8 +83,8 @@ class WeeklyReportDispatcher
                         $message->to($recipient)->subject($subjectPractice);
                     });
 
-                    Slack::to('#background-tasks')
-                        ->send("The CPMbot just sent the organization weekly summary for $practice->display_name to $recipient");
+//                    Slack::to('#background-tasks')
+//                        ->send("The CPMbot just sent the organization weekly summary for $practice->display_name to $recipient");
 
                 }
             }
@@ -120,8 +120,8 @@ class WeeklyReportDispatcher
                     $message->to($provider->email)->subject($subjectProvider);
                 });
 
-                Slack::to('#background-tasks')
-                    ->send("The CPMbot just sent the provider's summary for $practice->display_name to $provider->fullName");
+//                Slack::to('#background-tasks')
+//                    ->send("The CPMbot just sent the provider's summary for $practice->display_name to $provider->fullName");
 
             }
 

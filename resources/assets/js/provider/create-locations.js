@@ -1,19 +1,11 @@
-var Vue = require('vue');
+require('../bootstrap');
+require('../../../../public/js/materialize.min');
 
-Vue.use(require('vue-resource'));
+window.Vue = require('vue');
 
-//Load components
-require('../components/CareTeam/search-providers.js');
-require('../components/src/select.js');
+Vue.component('material-select', require('../components/src/material-select.vue'));
 
-Vue.http.headers.common['X-CSRF-TOKEN'] = $('meta[name="csrf-token"]').attr('content');
-
-/**
- *
- * VUE INSTANCE
- *
- */
-var locationsVM = new Vue({
+const locationsVM = new Vue({
     el: '#create-locations-component',
 
     data: function () {
@@ -25,14 +17,40 @@ var locationsVM = new Vue({
             sameEHRLogin: false,
 
             patientClinicalIssuesContact: false,
-            invalidCount: 0
+            invalidCount: 0,
+
+            timezoneOptions: [{
+                name: 'Eastern Time',
+                value: 'America/New_York'
+            }, {
+                name: 'Central Time',
+                value: 'America/Chicago'
+            }, {
+                name: 'Mountain Time',
+                value: 'America/Denver'
+            }, {
+                name: 'Mountain Time (no DST)',
+                value: 'America/Phoenix'
+            }, {
+                name: 'Pacific Time',
+                value: 'America/Los_Angeles'
+            }, {
+                name: 'Alaska Time',
+                value: 'America/Anchorage'
+            }, {
+                name: 'Hawaii-Aleutian',
+                value: 'America/Adak'
+            }, {
+                name: 'Hawaii-Aleutian Time (no DST)',
+                value: 'Pacific/Honolulu'
+            }]
         }
     },
 
     computed: {
         //Is the form fully filled out?
         formCompleted: function () {
-            for (var index = 0; index < this.newLocations.length; index++) {
+            for (let index = 0; index < this.newLocations.length; index++) {
 
                 this.isValidated(index);
 
@@ -45,25 +63,27 @@ var locationsVM = new Vue({
         },
 
         showErrorBanner: function () {
-            if (this.invalidCount > 0) {
-                return true;
-            }
+            return this.invalidCount > 0;
         }
     },
 
-    ready: function () {
-        for (var i = 0, len = cpm.existingLocations.length; i < len; i++) {
-            this.newLocations.$set(i, cpm.existingLocations[i]);
+    mounted: function () {
+        Vue.nextTick(function () {
+            let len = cpm.existingLocations.length;
 
-            if (i == 0) {
-                this.sameClinicalIssuesContact = cpm.existingLocations[i].sameClinicalIssuesContact;
-                this.sameEHRLogin = cpm.existingLocations[i].sameEHRLogin;
+            for (let i = 0; i < len; i++) {
+                Vue.set(locationsVM.newLocations, i, cpm.existingLocations[i]);
+
+                if (i === 0) {
+                    locationsVM.sameClinicalIssuesContact = cpm.existingLocations[i].sameClinicalIssuesContact;
+                    locationsVM.sameEHRLogin = cpm.existingLocations[i].sameEHRLogin;
+                }
             }
-        }
 
-        if (len < 1) {
-            this.create();
-        }
+            if (len < 1) {
+                locationsVM.create();
+            }
+        });
     },
 
     methods: {
@@ -71,8 +91,8 @@ var locationsVM = new Vue({
             this.newLocations.push({
                 clinical_contact: {
                     email: '',
-                    firstName: '',
-                    lastName: '',
+                    first_name: '',
+                    last_name: '',
                     type: 'billing_provider'
                 },
                 timezone: 'America/New_York',
@@ -95,17 +115,18 @@ var locationsVM = new Vue({
 
         //Is the form for the given user filled out?
         isValidated: function (index) {
-            this.$set('invalidCount', $('.invalid').length);
+            Vue.nextTick(function () {
+                locationsVM.invalidCount = $('.invalid').length;
 
-            this.$set('newLocations[' + index + '].isComplete', this.newLocations[index].name
-                && this.newLocations[index].address_line_1
-                && this.newLocations[index].city
-                && this.newLocations[index].state
-                && this.newLocations[index].postal_code
-            );
+                locationsVM.newLocations[index].isComplete = locationsVM.newLocations[index].name
+                    && locationsVM.newLocations[index].address_line_1
+                    && locationsVM.newLocations[index].city
+                    && locationsVM.newLocations[index].state
+                    && locationsVM.newLocations[index].postal_code;
 
-            this.$set('newLocations[' + index + '].errorCount', $('#location-' + index).find('.invalid').length);
-            this.$set('newLocations[' + index + '].validated', this.newLocations[index].isComplete && this.newLocations[index].errorCount == 0);
+                locationsVM.newLocations[index].errorCount = $('#location-' + index).find('.invalid').length;
+                locationsVM.newLocations[index].validated = locationsVM.newLocations[index].isComplete && locationsVM.newLocations[index].errorCount === 0;
+            });
 
             return this.newLocations[index].validated;
         },
@@ -114,11 +135,6 @@ var locationsVM = new Vue({
             this.submitForm($('meta[name="submit-url"]').attr('content'));
 
             this.create();
-
-            this.$nextTick(function () {
-                $('select').material_select();
-                $('.collapsible').collapsible();
-            });
         },
 
         deleteLocation: function (index) {
@@ -130,13 +146,16 @@ var locationsVM = new Vue({
         },
 
         submitForm: function (url) {
-            this.$http.post(url, {
+
+            let self = this;
+
+            window.axios.post(url, {
                 deleteTheseLocations: this.deleteTheseLocations,
                 locations: this.newLocations,
                 sameClinicalIssuesContact: this.sameClinicalIssuesContact,
                 sameEHRLogin: this.sameEHRLogin,
 
-            }).then(function (response) {
+            }).then((response) => {
                 // success
                 if (response.data.redirect_to) {
                     window.location.href = response.data.redirect_to;
@@ -145,29 +164,39 @@ var locationsVM = new Vue({
                 if (response.data.message) {
                     Materialize.toast(response.data.message, 4000);
                 }
-            }, function (response) {
-                //fail
+            })
+                .catch((error) => {
+                        // if (error.response) {
+                        //     console.log(error.response);
+                        // } else {
+                        //     console.log('Error', error.message);
+                        // }
 
-                let created = response.data.created.map(function (index) {
-                    locationsVM.newLocations.splice(index, 1);
-                });
 
-                let errors = response.data.errors;
+                        let response = error.response;
 
-                locationsVM.$set('invalidCount', errors.length);
+                        let created = response.data.created.map(function (index) {
+                            locationsVM.newLocations.splice(index, 1);
+                        });
 
-                for (let i = 0; i < errors.length; i++) {
-                    $('input[name="locations[' + i + '][' + Object.keys(errors[i].messages)[0] + ']"]')
-                        .addClass('invalid');
+                        let errors = response.data.errors;
 
-                    $('label[for="locations[' + i + '][' + Object.keys(errors[i].messages)[0] + ']"]')
-                        .attr('data-error', errors[i].messages[Object.keys(errors[i].messages)[0]][0]);
+                        self.invalidCount = errors.length;
 
-                    locationsVM.$set('newLocations[' + i + '].errorCount', errors.length);
-                }
+                        for (let i = 0; i < errors.length; i++) {
+                            $('input[name="locations[' + errors[i].index + '][' + Object.keys(errors[i].messages)[0] + ']"]')
+                                .addClass('invalid');
 
-                $("html, body").animate({scrollTop: 0}, {duration: 300, queue: false});
-            });
+                            $('label[for="locations[' + errors[i].index + '][' + Object.keys(errors[i].messages)[0] + ']"]')
+                                .attr('data-error', errors[i].messages[Object.keys(errors[i].messages)[0]][0]);
+
+                            self.newLocations[errors[i].index].errorCount = errors.length;
+                        }
+
+                        $("html, body").animate({scrollTop: 0}, {duration: 300, queue: false});
+                    }
+                );
+
         }
     }
 });

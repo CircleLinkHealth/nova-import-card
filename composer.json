@@ -21,7 +21,8 @@
     }
   ],
   "require": {
-    "laravel/framework": "5.3.*",
+    "php": ">=5.6.4",
+    "laravel/framework": "5.4.*",
     "chrisbjr/api-guard": "~2.0",
     "tymon/jwt-auth": "0.5.*",
     "laravelcollective/html": "~5.0",
@@ -40,7 +41,6 @@
     "h4cc/wkhtmltoimage-amd64": "0.12.x",
     "maatwebsite/excel": "~2.1.0",
     "prettus/laravel-validation": "*",
-    "maknz/slack": "^1.7",
     "dusterio/laravel-aws-worker": "^0.1.5",
     "yajra/laravel-datatables-oracle": "~6.0",
     "league/fractal": "0.12.*",
@@ -50,54 +50,58 @@
     "twilio/sdk": "5.7",
     "tylercd100/lern": "^3.8",
     "pda/pheanstalk": "~3.0",
-    "dionera/laravel-beanstalkd-ui": "^0.3.4"
+    "dionera/laravel-beanstalkd-ui": "^0.3.4",
+    "laravel/tinker": "^1.0"
   },
   "require-dev": {
     "symfony/dom-crawler": "3.1.*",
     "symfony/css-selector": "3.1.*",
     "fzaninotto/faker": "~1.4",
     "mockery/mockery": "0.9.*",
-    "phpunit/phpunit": "~5.0",
+    "phpunit/phpunit": "~5.7",
     "phpspec/phpspec": "~2.1",
     "doctrine/dbal": "~2.3",
     "orangehill/iseed": "dev-master",
     "phpunit/phpunit-selenium": "^3.0",
     "xethron/migrations-generator": "dev-l5",
-    "way/generators": "dev-feature/laravel-five-stable"
+    "Xethron/Laravel-4-Generators": "*"
   },
   "autoload": {
     "classmap": [
       "database"
     ],
     "psr-4": {
-      "App\\": "app/",
-      "Tests\\": "tests/"
+      "App\\": "app/"
     },
     "files": [
       "app/helpers.php"
     ]
   },
   "autoload-dev": {
-    "classmap": [
-      "tests/TestCase.php"
-    ]
+    "psr-4": {
+      "Tests\\": "tests/"
+    }
   },
   "scripts": {
+    "post-root-package-install": [
+      "php -r \"file_exists('.env') || copy('.env.example', '.env');\""
+    ],
+    "post-create-project-cmd": [
+      "php artisan key:generate"
+    ],
     "post-install-cmd": [
-      "php artisan clear-compiled",
+      "Illuminate\\Foundation\\ComposerScripts::postInstall",
       "php artisan optimize"
     ],
     "post-update-cmd": [
-      "php artisan clear-compiled",
+      "Illuminate\\Foundation\\ComposerScripts::postUpdate",
       "php artisan optimize"
-    ],
-    "post-create-project-cmd": [
-      "php -r \"copy('.env.example', '.env');\"",
-      "php artisan key:generate"
     ]
   },
   "config": {
     "preferred-install": "dist",
+    "sort-packages": true,
+    "optimize-autoloader": true,
     "github-oauth": {
       "github.com": "e0e31db02693e426dc2be482ecbee4daeafd8196"
     }

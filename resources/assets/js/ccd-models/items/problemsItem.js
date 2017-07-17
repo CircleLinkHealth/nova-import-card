@@ -17,8 +17,12 @@ var problemsVM = new Vue({
         problems: []
     },
 
-    ready: function () {
+    mounted: function () {
         this.loadProblems();
+
+        Vue.nextTick(function () {
+            // DOM updated
+        });
     },
 
     methods: {

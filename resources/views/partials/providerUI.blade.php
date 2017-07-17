@@ -9,9 +9,21 @@
     <meta http-equiv="expires" content={{ Carbon\Carbon::now()->format('D M d Y H:i:s O') }}>
     <meta http-equiv="pragma" content="no-cache">
     <meta name="csrf-token" content="{{ csrf_token() }}">
+    <meta name="base-url" content="{{ url('/') }}">
 
     <script type="text/javascript">
-        window.heap=window.heap||[],heap.load=function(e,t){window.heap.appid=e,window.heap.config=t=t||{};var r=t.forceSSL||"https:"===document.location.protocol,a=document.createElement("script");a.type="text/javascript",a.async=!0,a.src=(r?"https:":"http:")+"//cdn.heapanalytics.com/js/heap-"+e+".js";var n=document.getElementsByTagName("script")[0];n.parentNode.insertBefore(a,n);for(var o=function(e){return function(){heap.push([e].concat(Array.prototype.slice.call(arguments,0)))}},p=["addEventProperties","addUserProperties","clearEventProperties","identify","removeEventProperty","setEventProperties","track","unsetEventProperty"],c=0;c<p.length;c++)heap[p[c]]=o(p[c])};
+        window.heap = window.heap || [], heap.load = function (e, t) {
+            window.heap.appid = e, window.heap.config = t = t || {};
+            var r = t.forceSSL || "https:" === document.location.protocol, a = document.createElement("script");
+            a.type = "text/javascript", a.async = !0, a.src = (r ? "https:" : "http:") + "//cdn.heapanalytics.com/js/heap-" + e + ".js";
+            var n = document.getElementsByTagName("script")[0];
+            n.parentNode.insertBefore(a, n);
+            for (var o = function (e) {
+                return function () {
+                    heap.push([e].concat(Array.prototype.slice.call(arguments, 0)))
+                }
+            }, p = ["addEventProperties", "addUserProperties", "clearEventProperties", "identify", "removeEventProperty", "setEventProperties", "track", "unsetEventProperty"], c = 0; c < p.length; c++)heap[p[c]] = o(p[c])
+        };
         heap.load("4070082021");
     </script>
 
@@ -26,6 +38,8 @@
 
     <!-- Fonts -->
     <link href='https://fonts.googleapis.com/css?family=Roboto:400,300' rel='stylesheet' type='text/css'>
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+
 
 @if(!isset($isPdf))
     <!-- http://curioussolutions.github.io/DateTimePicker/ -->
@@ -38,56 +52,65 @@
         <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
         <script src="//code.jquery.com/ui/1.11.4/jquery-ui.js"></script>
         <script src="//cdnjs.cloudflare.com/ajax/libs/select2/4.0.3/js/select2.min.js"></script>
+
         <script src="{{ asset('/webix/codebase/webix.js') }}" type="text/javascript"></script>
     @endif
 </head>
 <body>
 
-@if(!isset($isPdf))
-    @include('partials.providerUI.primarynav')
+<div id="app">
+    <!--[if lt IE 8]>
+    <p class="chromeframe">You are using an <strong>outdated</strong> browser. Please <a
+            href="http://browsehappy.com/">upgrade
+        your browser</a> or <a href="http://www.google.com/chromeframe/?redirect=true">activate Google Chrome
+        Frame</a>
+        to improve your experience.</p>
+    <![endif]-->
 
-    @if(!empty($patient->id))
-        @include('partials.providerUI.patientnav')
+    @if(!isset($isPdf))
+        @include('partials.providerUI.primarynav')
+
+        @if(!empty($patient->id))
+            @include('partials.providerUI.patientnav')
+        @endif
+
+        @if(!empty($patient->id))
+            @include('partials.fab')
+        @endif
     @endif
 
-    @if(!empty($patient->id))
-        @include('partials.fab')
-    @endif
-@endif
 
-<!--[if lt IE 8]>
-<p class="chromeframe">You are using an <strong>outdated</strong> browser. Please <a
-        href="http://browsehappy.com/">upgrade
-    your browser</a> or <a href="http://www.google.com/chromeframe/?redirect=true">activate Google Chrome
-    Frame</a>
-    to improve your experience.</p>
-<![endif]-->
+    @yield('content')
 
-@yield('content')
+    {{--Any Modals opened by Vue will be mounted here--}}
+    <open-modal></open-modal>
+
+    <notifications></notifications>
+
+</div> <!-- end #app -->
 
 @if(!isset($isPdf))
     @include('partials.footer')
 
-         <!--[if lt IE 9]>
-    <script src="https://oss.maxcdn.com/html5shiv/3.7.2/html5shiv.min.js"></script>
-    <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
-    <![endif]-->
+    <!--[if lt IE 9]>
+<script src="https://oss.maxcdn.com/html5shiv/3.7.2/html5shiv.min.js"></script>
+<script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
+<![endif]-->
 
-    <script src="//cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.1/js/bootstrap.min.js"></script>
-    <script src="{{ asset('/js/idle-timer.min.js') }}"></script>
-    <script src="{{ asset('/js/scripts.js') }}"></script>
-    <script src="{{ asset('/js/bootstrap-select.min.js') }}"></script>
-    <script src="{{ asset('/js/typeahead.bundle.js') }}"></script>
-    <script src="{{ asset('/js/fab.js') }}"></script>
-    @include('partials.searchjs')
+<script src="{{ asset('/js/idle-timer.min.js') }}"></script>
+{{--<script src="{{ asset('/js/scripts.js') }}"></script>--}}
+{{--<script src="{{ asset('/js/bootstrap-select.min.js') }}"></script>--}}
+<script src="{{ asset('/js/typeahead.bundle.js') }}"></script>
+@include('partials.searchjs')
 @include('partials.providerUItimer')
-    <script type="text/javascript"
-            src="//cdn.jsdelivr.net/datetimepicker/latest/DateTimePicker.min.js"></script>
-    <script src="{{ asset('/js/bootstrap-select.min.js') }}"></script>
+<script src="{{asset('/js/bootstrap.min.js')}}"></script>
+<script src="{{asset('/js/DateTimePicker.min.js')}}"></script>
 
-    @yield('scripts')
+@yield('scripts')
+
+<script src="{{asset('/js/fab.js') }}"></script>
+<script src="{{asset('js/app-provider-ui.js')}}"></script>
 @endif
-
 </body>
 
 </html>

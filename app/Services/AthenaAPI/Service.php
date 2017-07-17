@@ -136,8 +136,8 @@ class Service
             if (app()->environment('worker')) {
                 $link = route('view.files.ready.to.import');
 
-                Slack::to('#ccd-file-status')
-                    ->send("We received a CCD from Athena. \n Please visit {$link} to import.");
+//                Slack::to('#ccd-file-status')
+//                    ->send("We received a CCD from Athena. \n Please visit {$link} to import.");
             }
 
             return $ccda;

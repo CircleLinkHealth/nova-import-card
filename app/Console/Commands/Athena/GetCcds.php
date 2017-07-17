@@ -52,8 +52,8 @@ class GetCcds extends Command
         }
 
         if (app()->environment('worker')) {
-            Slack::to('#background-tasks')
-                ->send("Grabbing CCDs from Athena CCDA request queue. \n");
+//            Slack::to('#background-tasks')
+//                ->send("Grabbing CCDs from Athena CCDA request queue. \n");
         }
 
 

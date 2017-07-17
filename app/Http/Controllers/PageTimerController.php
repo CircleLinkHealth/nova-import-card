@@ -63,8 +63,8 @@ class PageTimerController extends Controller
             $message .= " Data: " . json_encode($data);
             $message .= " Env: " . env('APP_ENV');
 
-            Slack::to('#time-tracking-issues')
-                ->send($message);
+//            Slack::to('#time-tracking-issues')
+//                ->send($message);
         }
 
         $startTime = Carbon::createFromFormat('Y-m-d H:i:s', $data['startTime']);
@@ -156,8 +156,8 @@ class PageTimerController extends Controller
             $message .= " PageTimer Object id {$newActivity->id}: " . json_encode($newActivity) . PHP_EOL . PHP_EOL;
             $message .= " Env: " . env('APP_ENV');
 
-            Slack::to('#time-tracking-issues')
-                ->send($message);
+//            Slack::to('#time-tracking-issues')
+//                ->send($message);
 
             $newActivity->delete();
 

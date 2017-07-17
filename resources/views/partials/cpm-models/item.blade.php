@@ -97,7 +97,9 @@
             <div class="checkbox text-medium-big" style="margin-top:0px;    margin-bottom: 0px;">
                 <button type="button"
                         class="btn btn-default btn-xs btn-monitor collapse {{ in_array($item->id, $section->patientItemIds) ? 'in' : '' }} text-right"
-                        id="collapseItem-{{ $section->name }}-{{$i}}{{$item->id}}" data-toggle="modal"
+                        id="collapseItem-{{ $section->name }}-{{$i}}{{$item->id}}"
+                        data-backdrop="static" data-keyboard="false"
+                        data-toggle="modal"
                         data-target="#{{ $section->name }}-{{$i}}{{$item->id}}-Detail"
                         style="margin-top:0px;    margin-bottom: 0px;"><span><i class="glyphicon glyphicon-pencil"></i></span>
                 </button>

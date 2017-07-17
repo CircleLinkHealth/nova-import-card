@@ -8,7 +8,6 @@
 
 	<link href="{{ asset('/css/wpstyle.css') }}" rel="stylesheet">
 	<link href="{{ asset('/css/stylesheet.css') }}" rel="stylesheet">
-	<link href="{{ asset('/css/wpstyle.css') }}" rel="stylesheet">
 	<link href="{{ asset('/img/favicon.png') }}" rel="icon">
 <style type="text/css">
 	  input[type=text] ,  input[type=password]  {
