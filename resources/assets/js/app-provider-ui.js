@@ -28,6 +28,7 @@ Vue.component('careTeam', require('./components/pages/view-care-plan/care-team.v
 Vue.component('select2', require('./components/src/select2'));
 Vue.component('fab', require('./components/fab.vue'));
 Vue.component('openModal', require('./components/shared/open-modal.vue'));
+Vue.component('notifications', require('./components/shared/notifications/notifications.vue'));
 
 window.App = new Vue({
     el: '#app',

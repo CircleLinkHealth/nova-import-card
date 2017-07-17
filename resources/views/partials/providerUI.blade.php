@@ -79,6 +79,8 @@
         @endif
     @endif
 
+    <notifications></notifications>
+
     @yield('content')
 
     {{--Any Modals opened by Vue will be mounted here--}}
