@@ -126,7 +126,7 @@ class NoteService
             $careteam->push(User::find(948));
         }
 
-        event(new PdfableCreated($note));
+        event(new PdfableCreated($note, $notifyCareteam));
 
         for ($i = 0; $i < count($careteam); $i++) {
 

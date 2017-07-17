@@ -26,9 +26,11 @@ class PdfableCreated extends Event
      * @param Note $note
      */
     public function __construct(
-        PdfReport $pdfable
+        PdfReport $pdfable,
+        $notifyPractice = false
     ) {
         $this->pdfReport = $pdfable;
+        $this->notifyPractice = $notifyPractice;
     }
 
     /**
