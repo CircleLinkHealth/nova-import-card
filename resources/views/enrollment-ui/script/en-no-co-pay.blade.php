@@ -1,6 +1,6 @@
 <div>
     <p><b>ENGLISH [speak clearly and cheerfully]</b>: Hi this is {{auth()->user()->fullName}} calling on behalf of
-        <b>Dr. @{{provider_name}}'s </b> office. I’m calling for {{$enrollee->first_name}} {{$enrollee->last_name}}. is
+        <b>Dr. @{{provider_name}}</b> at <b>{{$enrollee->practiceName}}</b>. I’m calling for {{$enrollee->first_name}} {{$enrollee->last_name}}. is
         this {{$enrollee->first_name}} {{$enrollee->last_name}}?</p>
 
     <p>How are you doing today?</p>
