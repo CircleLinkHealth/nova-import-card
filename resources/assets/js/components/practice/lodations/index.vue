@@ -15,7 +15,7 @@
                     <input id="search" type="search" name="query" v-model="searchQuery"
                            placeholder="search for a location">
                     <label class="label-icon" for="search"><i class="material-icons">search</i></label>
-                    <i class="material-icons">close</i></div>
+                    <i class="material-icons" @click="searchQuery = ''">close</i></div>
             </div>
         </div>
 
