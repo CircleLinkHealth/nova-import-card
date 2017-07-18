@@ -2,18 +2,21 @@
     <table>
         <thead>
         <tr>
+            <th></th>
             <th v-for="key in columns"
+                v-if="key != 'edit'"
                 @click="sortBy(key)"
                 :class="{ active: sortKey == key }">
                 {{ key | capitalize }}
-                <span class="arrow" :class="sortOrders[key] > 0 ? 'asc' : 'dsc'">
-          </span>
+                <span class="arrow" :class="sortOrders[key] > 0 ? 'asc' : 'dsc'"></span>
             </th>
         </tr>
         </thead>
         <tbody>
         <tr v-for="entry in filteredData">
-            <td v-for="key in columns" v-html="entry[key]">
+            <td v-for="key in columns">
+                <div v-if="key == 'edit'" v-html="entry[key]"></div>
+                <div v-else>{{entry[key]}}</div>
             </td>
         </tr>
         </tbody>
@@ -27,7 +30,7 @@
             columns: Array,
             filterKey: String
         },
-        
+
         data: function () {
             let sortOrders = {}
             this.columns.forEach(function (key) {
@@ -38,7 +41,7 @@
                 sortOrders: sortOrders
             }
         },
-        
+
         computed: {
             filteredData: function () {
                 let sortKey = this.sortKey
@@ -62,7 +65,7 @@
                 return data
             }
         },
-        
+
         filters: {
             capitalize: function (str) {
                 return str.charAt(0).toUpperCase() + str.slice(1)
@@ -90,7 +93,7 @@
 
     th {
         background-color: #2196f3;
-        color: rgba(255,255,255,0.66);
+        color: rgba(255, 255, 255, 0.66);
         cursor: pointer;
         -webkit-user-select: none;
         -moz-user-select: none;
@@ -103,7 +106,7 @@
     }
 
     th, td {
-        min-width: 120px;
+        min-width: 20px;
         padding: 10px 20px;
     }
 

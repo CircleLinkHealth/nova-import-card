@@ -40,7 +40,7 @@
             {
                 formattedLocations() {
                     return JSON.parse(JSON.stringify(this.gridData)).map((loc) => {
-                        loc.name = '<i class="material-icons">mode_edit</i>'+loc.name
+                        loc.edit = '<i class="material-icons">mode_edit</i>'
 
                         return loc
                     })
@@ -56,7 +56,7 @@
         data() {
             return {
                 searchQuery: '',
-                gridColumns: ['name', 'address_line_1', 'city', 'state'],
+                gridColumns: ['edit', 'name', 'address_line_1', 'city', 'state'],
                 practiceId: $('meta[name=practice-id]').attr('content'),
                 gridData: []
             }

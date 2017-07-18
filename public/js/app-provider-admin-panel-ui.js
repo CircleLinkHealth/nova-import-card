@@ -48192,7 +48192,7 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
     }), {
         formattedLocations: function formattedLocations() {
             return JSON.parse(JSON.stringify(this.gridData)).map(function (loc) {
-                loc.name = '<i class="material-icons">mode_edit</i>' + loc.name;
+                loc.edit = '<i class="material-icons">mode_edit</i>';
 
                 return loc;
             });
@@ -48206,7 +48206,7 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
     data: function data() {
         return {
             searchQuery: '',
-            gridColumns: ['name', 'address_line_1', 'city', 'state'],
+            gridColumns: ['edit', 'name', 'address_line_1', 'city', 'state'],
             practiceId: $('meta[name=practice-id]').attr('content'),
             gridData: []
         };
@@ -48369,7 +48369,7 @@ exports = module.exports = __webpack_require__(6)(undefined);
 
 
 // module
-exports.push([module.i, "\ntable {\n    display: table !important;\n    border: 2px solid #2196f3;\n    border-radius: 3px;\n    background-color: #fff;\n    border-collapse: separate !important;\n    border-spacing: 2px !important;\n}\nth {\n    background-color: #2196f3;\n    color: rgba(255,255,255,0.66);\n    cursor: pointer;\n    -webkit-user-select: none;\n    -moz-user-select: none;\n    -ms-user-select: none;\n    user-select: none;\n}\ntd {\n    background-color: #f9f9f9;\n}\nth, td {\n    min-width: 120px;\n    padding: 10px 20px;\n}\nth.active {\n    color: #fff;\n}\nth.active .arrow {\n    opacity: 1;\n}\n.arrow {\n    display: inline-block;\n    vertical-align: middle;\n    width: 0;\n    height: 0;\n    margin-left: 5px;\n    opacity: 0.66;\n}\n.arrow.asc {\n    border-left: 4px solid transparent;\n    border-right: 4px solid transparent;\n    border-bottom: 4px solid #fff;\n}\n.arrow.dsc {\n    border-left: 4px solid transparent;\n    border-right: 4px solid transparent;\n    border-top: 4px solid #fff;\n}\n\n", ""]);
+exports.push([module.i, "\ntable {\n    display: table !important;\n    border: 2px solid #2196f3;\n    border-radius: 3px;\n    background-color: #fff;\n    border-collapse: separate !important;\n    border-spacing: 2px !important;\n}\nth {\n    background-color: #2196f3;\n    color: rgba(255, 255, 255, 0.66);\n    cursor: pointer;\n    -webkit-user-select: none;\n    -moz-user-select: none;\n    -ms-user-select: none;\n    user-select: none;\n}\ntd {\n    background-color: #f9f9f9;\n}\nth, td {\n    min-width: 20px;\n    padding: 10px 20px;\n}\nth.active {\n    color: #fff;\n}\nth.active .arrow {\n    opacity: 1;\n}\n.arrow {\n    display: inline-block;\n    vertical-align: middle;\n    width: 0;\n    height: 0;\n    margin-left: 5px;\n    opacity: 0.66;\n}\n.arrow.asc {\n    border-left: 4px solid transparent;\n    border-right: 4px solid transparent;\n    border-bottom: 4px solid #fff;\n}\n.arrow.dsc {\n    border-left: 4px solid transparent;\n    border-right: 4px solid transparent;\n    border-top: 4px solid #fff;\n}\n\n", ""]);
 
 // exports
 
@@ -48380,6 +48380,9 @@ exports.push([module.i, "\ntable {\n    display: table !important;\n    border: 
 
 "use strict";
 Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
+//
+//
+//
 //
 //
 //
@@ -48464,8 +48467,8 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 /***/ (function(module, exports, __webpack_require__) {
 
 module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;
-  return _c('table', [_c('thead', [_c('tr', _vm._l((_vm.columns), function(key) {
-    return _c('th', {
+  return _c('table', [_c('thead', [_c('tr', [_c('th'), _vm._v(" "), _vm._l((_vm.columns), function(key) {
+    return (key != 'edit') ? _c('th', {
       class: {
         active: _vm.sortKey == key
       },
@@ -48477,14 +48480,14 @@ module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c
     }, [_vm._v("\n            " + _vm._s(_vm._f("capitalize")(key)) + "\n            "), _c('span', {
       staticClass: "arrow",
       class: _vm.sortOrders[key] > 0 ? 'asc' : 'dsc'
-    })])
-  }))]), _vm._v(" "), _c('tbody', _vm._l((_vm.filteredData), function(entry) {
+    })]) : _vm._e()
+  })], 2)]), _vm._v(" "), _c('tbody', _vm._l((_vm.filteredData), function(entry) {
     return _c('tr', _vm._l((_vm.columns), function(key) {
-      return _c('td', {
+      return _c('td', [(key == 'edit') ? _c('div', {
         domProps: {
           "innerHTML": _vm._s(entry[key])
         }
-      })
+      }) : _c('div', [_vm._v(_vm._s(entry[key]))])])
     }))
   }))])
 },staticRenderFns: []}
