@@ -15,11 +15,13 @@ $user_info = array();
     {!! Form::open(array('url' => URL::route('patients.demographics.store', array('patientId' => $patient->id)), 'class' => 'form-horizontal', 'id' => 'ucpForm')) !!}
     <div class="row" style="margin-top:20px;">
         <div class="col-lg-10 col-lg-offset-1">
-            <div class="icon-container col-lg-12">
-                @if(isset($patient))
-                    @include('wpUsers.patient.careplan.nav')
-                @endif
-            </div>
+            @if ($patient->primaryPractice->settings->first()->careplan_mode == 'web')
+                <div class="icon-container col-lg-12">
+                    @if(isset($patient))
+                        @include('wpUsers.patient.careplan.nav')
+                    @endif
+                </div>
+            @endif
             {{-- {!! Form::select('patient_id', array($patient), null, ['class' => 'patient2 form-control']) !!}
             @if(!isset($patient->id) )
                 <div class=" col-lg-8 col-lg-offset-2 alert alert-info">NOTE: Adding a new patient</div>
@@ -328,7 +330,9 @@ $user_info = array();
                 </div>
             </div>
         </div>
-        @include('wpUsers.patient.careplan.footer')
+        @if ($patient->primaryPractice->settings->first()->careplan_mode == 'web')
+            @include('wpUsers.patient.careplan.footer')
+        @endif
         <br/><br/>
 
         @if(isset($_GET['scrollTo']))

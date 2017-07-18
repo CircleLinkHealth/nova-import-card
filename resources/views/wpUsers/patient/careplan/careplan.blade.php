@@ -23,14 +23,16 @@ $new_user = false;
     <div id="content" class="row">
         <div class="container">
             <section class="">
-                <div class="row">
-                    <div class="icon-container col-lg-12">
-                        @if(isset($patient) && !$new_user )
-                            @include('wpUsers.patient.careplan.nav')
-                        @endif
+                @if ($patient->primaryPractice->settings->first()->careplan_mode == 'web')
+                    <div class="row">
+                        <div class="icon-container col-lg-12">
+                            @if(isset($patient) && !$new_user )
+                                @include('wpUsers.patient.careplan.nav')
+                            @endif
+                        </div>
                     </div>
-                </div>
-                <br/>
+                    <br/>
+                @endif
                 <div class="row">
                     <div class="main-form-container col-lg-8 col-lg-offset-2">
                         <div class="row">
