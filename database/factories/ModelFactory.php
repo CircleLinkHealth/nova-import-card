@@ -114,7 +114,7 @@ $factory->define(Enrollee::class, function (Faker\Generator $faker) {
 
         'first_name' => $faker->firstName,
         'last_name'  => $faker->lastName,
-        'address'    => $faker->address,
+        'address'    => $faker->streetAddress,
         'city'       => $faker->city,
         'state'      => 'NY',
         'zip'        => $faker->randomNumber(5),
