@@ -87,7 +87,7 @@ class Medications extends BaseImporter
         MedicationLog $itemLog,
         $consolidatedMed
     ) {
-        $medicationGroupId = $this->getMedicationGroup($consolidatedMed->cons_name);
+        $medicationGroupId = $this->getMedicationGroup($consolidatedMed->cons_name) ?? $this->getMedicationGroup($consolidatedMed->cons_text);
 
         $this->imported[] = MedicationImport::updateOrCreate([
             'medical_record_type'        => $this->medicalRecordType,
