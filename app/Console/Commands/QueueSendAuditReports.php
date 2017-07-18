@@ -4,6 +4,7 @@ namespace App\Console\Commands;
 
 use App\Jobs\MakeAndDispatchAuditReports;
 use App\User;
+use Carbon\Carbon;
 use Illuminate\Console\Command;
 
 class QueueSendAuditReports extends Command
@@ -41,6 +42,8 @@ class QueueSendAuditReports extends Command
     {
         $patients = User::ofType('participant')
             ->with('patientInfo')
+            ->with('patientInfo.patientSummaries')
+            ->with('primaryPractice')
             ->with('primaryPractice.settings')
             ->whereHas('primaryPractice', function ($query) {
                 $query->where('active', '=', true)
@@ -48,6 +51,10 @@ class QueueSendAuditReports extends Command
                         $query->where('dm_audit_reports', '=', true)
                             ->orWhere('efax_audit_reports', '=', true);
                     });
+            })
+            ->whereHas('patientInfo.patientSummaries', function ($query) {
+                $query->where('ccm_time', '>=', 1200)
+                    ->where('month_year', Carbon::now()->subMonth()->firstOfMonth()->toDateString());
             })
             ->get();
 

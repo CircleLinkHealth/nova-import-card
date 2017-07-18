@@ -50,7 +50,7 @@ class MakeAndDispatchAuditReports implements ShouldQueue
         //send DM message
         $dmAddress = $this->patient->locations->first()->emr_direct_address;
 
-        if ($this->patient->primaryPractice->settings->dm_audit_reports && $dmAddress) {
+        if ($this->patient->primaryPractice->settings->first()->dm_audit_reports && $dmAddress) {
             $phiMail = new PhiMail();
             $test = $phiMail->send($dmAddress, $path);
         }
@@ -58,7 +58,7 @@ class MakeAndDispatchAuditReports implements ShouldQueue
         //send eFax
         $fax = $this->patient->locations->first()->fax;
 
-        if ($this->patient->primaryPractice->settings->efax_audit_reports && $fax) {
+        if ($this->patient->primaryPractice->settings->first()->efax_audit_reports && $fax) {
             $number = (new StringManipulation())->formatPhoneNumberE164($fax);
             $faxTest = (new PhaxioService())->send($number, $path);
         }

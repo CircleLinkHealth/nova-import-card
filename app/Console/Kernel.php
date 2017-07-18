@@ -159,7 +159,7 @@ class Kernel extends ConsoleKernel
 //            ->cron('0 */2 * * *');
 
         $schedule->command('send:audit-reports')
-            ->monthlyOn(1, '02:00');
+            ->monthlyOn(1, '03:00');
     }
 
     /**
