@@ -17,7 +17,9 @@ class AddCareplanView extends Migration
             $table->enum('careplan_mode', [
                 'web',
                 'pdf',
-            ])->after('settingsable_type');
+            ])
+                ->default('web')
+                ->after('settingsable_type');
         });
     }
 
