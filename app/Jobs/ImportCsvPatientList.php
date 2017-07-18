@@ -145,7 +145,10 @@ class ImportCsvPatientList implements ShouldQueue
 
             if (!empty($provider)) {
                 $importedMedicalRecord->billing_provider_id = $provider->id;
-                $importedMedicalRecord->location_id = $provider->locations->first()->id;
+
+                if ($provider->locations->first()) {
+                    $importedMedicalRecord->location_id = $provider->locations->first()->id;
+                }
             }
         }
 
