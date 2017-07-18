@@ -11,13 +11,14 @@
 |
 */
 
+use App\Enrollee;
 use App\Entities\Invite;
 
 $factory->define(App\User::class, function (Faker\Generator $faker) {
     return [
         'display_name' => $faker->name,
-        'first_name' => $faker->firstName,
-        'last_name' => $faker->lastName,
+        'first_name'   => $faker->firstName,
+        'last_name'    => $faker->lastName,
         'email'        => $faker->safeEmail,
         'password'     => bcrypt(str_random(10)),
     ];
@@ -29,9 +30,9 @@ $factory->define(\App\Models\CPM\Biometrics\CpmWeight::class, function (Faker\Ge
 
     return [
         'monitor_changes_for_chf' => $faker->boolean(),
-//        'patient_id' => '', this has to be passed in when calling the factory
-        'starting' => $starting,
-        'target' => $starting - rand(100, 150),
+        //        'patient_id' => '', this has to be passed in when calling the factory
+        'starting'                => $starting,
+        'target'                  => $starting - rand(100, 150),
     ];
 });
 
@@ -46,8 +47,8 @@ $factory->define(\App\Models\CPM\Biometrics\CpmBloodPressure::class, function (F
 
     return [
 //        'patient_id' => '', this has to be passed in when calling the factory
-        'starting' => "$systolicStarting/$diastolicStarting",
-        'target' => "$systolicTarget/$diastolicTarget",
+'starting' => "$systolicStarting/$diastolicStarting",
+'target'   => "$systolicTarget/$diastolicTarget",
     ];
 });
 
@@ -55,8 +56,8 @@ $factory->define(\App\Models\CPM\Biometrics\CpmBloodSugar::class, function (Fake
 
     return [
 //        'patient_id' => '', this has to be passed in when calling the factory
-        'starting' => rand(140, 300),
-        'starting_a1c' => rand('6.7', '13.8'),
+'starting'     => rand(140, 300),
+'starting_a1c' => rand('6.7', '13.8'),
     ];
 });
 
@@ -64,8 +65,8 @@ $factory->define(\App\Models\CPM\Biometrics\CpmSmoking::class, function (Faker\G
 
     return [
 //        'patient_id' => '', this has to be passed in when calling the factory
-        'starting' => rand(15, 50),
-        'target' => rand(0, 8),
+'starting' => rand(15, 50),
+'target'   => rand(0, 8),
     ];
 });
 
@@ -73,24 +74,24 @@ $factory->define(\App\Models\CCD\CcdInsurancePolicy::class, function (Faker\Gene
 
     $types = [
         'Medicare',
-        'Medicaid'
+        'Medicaid',
     ];
 
     $relations = [
         'Self',
         'G8',
-        'Next Of Kin'
+        'Next Of Kin',
     ];
 
     return [
 //        'ccda_id' => '', this has to be passed in when calling the factory
 //        'patient_id' => '', this has to be passed in when calling the factory
-        'name' => $faker->company,
-        'type' => $types[array_rand($types, 1)],
-        'policy_id' => $faker->swiftBicNumber,
-        'relation' => $relations[array_rand($relations, 1)],
-        'subscriber' => $faker->name,
-        'approved' => rand(0, 1),
+'name'       => $faker->company,
+'type'       => $types[array_rand($types, 1)],
+'policy_id'  => $faker->swiftBicNumber,
+'relation'   => $relations[array_rand($relations, 1)],
+'subscriber' => $faker->name,
+'approved'   => rand(0, 1),
     ];
 });
 
@@ -101,5 +102,41 @@ $factory->define(Invite::class, function (Faker\Generator $faker) {
         'subject'    => 'subject',
         'message'    => 'message',
         'code'       => generateRandomString(20),
+    ];
+});
+
+$factory->define(Enrollee::class, function (Faker\Generator $faker) {
+    return [
+        'provider_id' => 2430,
+        'practice_id' => 8,
+        'mrn'         => $faker->randomNumber(6),
+        'dob'         => $faker->date('Y-m-d'),
+
+        'first_name' => $faker->firstName,
+        'last_name'  => $faker->lastName,
+        'address'    => $faker->address,
+        'city'       => $faker->city,
+        'state'      => 'NY',
+        'zip'        => $faker->randomNumber(5),
+
+        'lang' => 'EN',
+
+        'primary_phone' => $faker->phoneNumber,
+        'cell_phone' => $faker->phoneNumber,
+        'home_phone' => $faker->phoneNumber,
+        'other_phone' => $faker->phoneNumber,
+
+        'status' => Enrollee::TO_CALL,
+
+        'primary_insurance' => $faker->company,
+        'secondary_insurance' => $faker->company,
+        'tertiary_insurance' => $faker->company,
+        'has_copay' => $faker->boolean(),
+
+        'email' => $faker->email,
+        'referring_provider_name' => 'Dr. Demo',
+        'problems' => 'Hypertension, High Cholesterol',
+        'cpm_problem_1' => 1,
+        'cpm_problem_2' => 2,
     ];
 });
