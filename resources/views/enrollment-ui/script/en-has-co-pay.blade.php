@@ -1,52 +1,67 @@
 <div>
     <p><b>ENGLISH [speak clearly and cheerfully]</b>: Hi this is {{auth()->user()->fullName}} calling on behalf of
-        <b>Dr. @{{provider_name}}'s </b>office.
+        <b>Dr. @{{provider_name}}</b> at <b>{{$enrollee->practiceName}}</b>. I’m calling
+        for {{$enrollee->first_name}} {{$enrollee->last_name}}. is
+        this {{$enrollee->first_name}} {{$enrollee->last_name}}?</p>
 
-        How are you doing today?</p>
+    <p>How are you doing today?</p>
 
-    <p>I’m fine. The doctor[s] have invited you to their new personalized care management program. You may have received
-        a
-        letter about this. <b> Dr. @{{provider_name}}</b> think(s) that this program would be helpful to your health and
-        would like you
-        to enroll. May I tell you a little about this program?</p>
+    <p>
+        The reason I’m calling is @{{provider_name}} is starting to work with a new personalized care program.
 
-    <p><i>[Patients interested usually discuss their conditions here.. be sure to listen. If patient asks where calling from, use the practice name in left bar, e.g., CareMedica or Ferguson]</i></p>
+        @{{provider_name}} just wanted me to offer it to his or her patients in case it might be helpful.
+    </p>
 
-    <p>This is a new preventative care program from Medicare to help you and your doctor take better care of your
-        health.</p>
+    <p>
+        And so what the program is: there would be a registered nurse (RN), we call them “Care Coaches”, who
+        would call you twice a month to check on how you’re doing, or to see if you’re having any new
+        problems. And then the nurse would report back to [Doctor Name] so that s/he would have that
+        information in his/her records. This helps the doctor keep up with how you’re doing in between visits.
+    </p>
 
-    <p>Before, Medicare was reactive, often waiting until patients were already ill to provide care, which is not great
-        for
-        patients and expensive for Medicare.
+    <p>
+        The program is offered through Medicare and should only be a small ~$8 co-pay. So I was just calling
 
-        Now, Medicare is being proactive: providing care between doctor’s visits to prevent hospitalization, including
-        making sure your conditions are under control, you are taking your medications, and you don’t have any symptoms
-        that
-        might be bothering you.</p>
+        today to check if you would be interested in trying this?
 
-    <p>It’s a free program if you are on Medicaid or have Supplemental Insurance. If not, there is a ~$8 co-pay per
-        month.
-        Remember, similar concierge services are up to 5X more expensive. Here’s some details on the program:</p>
+        <br><b>[patients then usually have questions...caller may have to reassure patient that they will still see the
 
-    <li> A personal care coach— registered nurse-- will do a quick phone checkin about twice a month,to provide support,
-        personalized care, and to see how you’re doing
-    </li>
+            doctor regularly, RN calls are only a supplement to regular care - not a replacement.]</b>
+    </p>
 
-    <li> The information we collect is available to your doctor, and will be shared with your doctor immediately if you
-        request, or if the nurse judges it appropriate
-    </li>
+    <p>
+        <b>[Note: if the patient is hesitant, then stress:]</b>
+        <br>“there’s no obligation, it’s just a program from the doctor and you can always try it for a month or two.
+        If you don’t like it, just call us and you can be taken off the program.”
+    </p>
 
-    <li> You can leave a message for us 24/7 and one of our care coaches will get back to you shortly</li>
+    <p>
+        <b>[if no, “not for me”]:</b>
 
-    <li> You can withdraw at any time you want. Just give us a call</li>
+        <br>
+        That’s perfectly fine, if you don’t need that you must be doing really well. No pressure. It’s just a
+        program to help the doctor keep up with you between visits.
+        <b>[if the patient then becomes curious]</b>
+        You’re welcome to give it a try and you can cancel at any time.
+    </p>
 
-    <li> You can only be part of one doctor’s care management program at a time</li>
+    <p>
+        <b>[if patient says yes:]</b>
+        <br>
+        The only thing is you can only be a part of one doctor’s care management program at a time. I just want
+        to check and make sure that you’re not already signed up for this. If not, then we can enroll you.
+        <br>[then collect the rest of the information]:
 
-    <p>Can let your Dr. know you consented to enroll in this program today? (Remember you can always withdraw if you
-        don’t
-        like it)</p>
+        <br>[Enroller/Ambassador should fill out patient information in enrollment sheet / Confirm patient’s best
+        contact #, preferred call times, e-mail and address. Also collect any specialist data from patient]
+    </p>
 
-    <p><i> [Ambassador, Please click the appropriate button based on patient’s answer and follow instructions in
-            subsequent
-            popup forms. Thank you!]</i></p>
+    <p>
+        <b>[After info collected for “yes”]:</b>
+        <br>
+        “That’s all I need for now, just wanted to let you know that you can cancel at anytime, and that a
+        registered nurse will be reaching out to you soon. They’ll be calling from the same number I called you from today.”
+    </p>
+
+    <p>“Have a great day! Thanks!”</p>
 </div>
