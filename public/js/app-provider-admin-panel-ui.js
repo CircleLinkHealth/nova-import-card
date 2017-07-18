@@ -48264,7 +48264,12 @@ module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c
       }
     }
   }), _vm._v(" "), _vm._m(0), _vm._v(" "), _c('i', {
-    staticClass: "material-icons"
+    staticClass: "material-icons",
+    on: {
+      "click": function($event) {
+        _vm.searchQuery = ''
+      }
+    }
   }, [_vm._v("close")])])])]), _vm._v(" "), _c('grid', {
     attrs: {
       "data": _vm.formattedLocations,
