@@ -126,7 +126,13 @@ class NoteService
             $careteam->push(User::find(948));
         }
 
-        event(new PdfableCreated($note));
+        /**
+         * Only send PDF to the Practice if the CareTeam is to be notified.
+         * ie. We don't want to send Notes meant only for Patient Support to the Doctor's Office.
+         */
+        if ($notifyCareteam) {
+            event(new PdfableCreated($note, $notifyCareteam));
+        }
 
         for ($i = 0; $i < count($careteam); $i++) {
 
