@@ -38,13 +38,14 @@
         <div class="title">@if(isset($message)) {!! $message !!} @else Unauthorized. You don't have permissions to view
             this page. @endif</div>
 
-        <a class="btn btn-primary" href="{{ URL::previous() }}"
-           style="text-decoration:none;font-weight:bold;">Go back</a> or
+        @if(isset($hideLinks))
+        @else
+            <a class="btn btn-primary" href="{{ URL::previous() }}"
+               style="text-decoration:none;font-weight:bold;">Go back</a> or
 
-        <a class="btn btn-primary" href="{{ URL::route('patients.dashboard', array()) }}"
-           style="text-decoration:none;font-weight:bold;">Go to Dashboard</a>
-
-
+            <a class="btn btn-primary" href="{{ URL::route('patients.dashboard', array()) }}"
+               style="text-decoration:none;font-weight:bold;">Go to Dashboard</a>
+        @endif
     </div>
 </div>
 </body>
