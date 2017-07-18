@@ -60,7 +60,7 @@
 /******/ 	__webpack_require__.p = "";
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 46);
+/******/ 	return __webpack_require__(__webpack_require__.s = 71);
 /******/ })
 /************************************************************************/
 /******/ ([
@@ -70,7 +70,7 @@
 "use strict";
 
 
-var bind = __webpack_require__(9);
+var bind = __webpack_require__(10);
 var isBuffer = __webpack_require__(21);
 
 /*global toString:true*/
@@ -1285,186 +1285,6 @@ var index_esm = {
 
 /***/ }),
 /* 3 */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "addNotification", function() { return addNotification; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "removeNotification", function() { return removeNotification; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "clearOpenModal", function() { return clearOpenModal; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "setOpenModal", function() { return setOpenModal; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "getCurrentUser", function() { return getCurrentUser; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "getPatientCareTeam", function() { return getPatientCareTeam; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "destroyCarePerson", function() { return destroyCarePerson; });
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__api_user_profile__ = __webpack_require__(50);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__api_care_team__ = __webpack_require__(51);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__api_care_person__ = __webpack_require__(52);
-
-
-
-
-var addNotification = function addNotification(_ref, notification) {
-    var commit = _ref.commit;
-
-    commit('ADD_NOTIFICATION', notification);
-};
-
-var removeNotification = function removeNotification(_ref2, notification) {
-    var commit = _ref2.commit;
-
-    commit('REMOVE_NOTIFICATION', notification);
-};
-
-var clearOpenModal = function clearOpenModal(_ref3) {
-    var commit = _ref3.commit;
-
-    commit('CLEAR_OPEN_MODAL');
-};
-
-var setOpenModal = function setOpenModal(_ref4, openModal) {
-    var commit = _ref4.commit;
-
-    commit('SET_OPEN_MODAL', openModal);
-};
-
-var getCurrentUser = function getCurrentUser(_ref5) {
-    var commit = _ref5.commit;
-
-    __WEBPACK_IMPORTED_MODULE_0__api_user_profile__["a" /* default */].getCurrentUser(function (user) {
-        if (!user) {
-            commit('LOGOUT_USER');
-            return;
-        }
-        commit('LOGIN_USER', user);
-    });
-};
-
-var getPatientCareTeam = function getPatientCareTeam(_ref6, patientId) {
-    var commit = _ref6.commit;
-
-    if (!patientId) {
-        return;
-    }
-
-    __WEBPACK_IMPORTED_MODULE_1__api_care_team__["a" /* default */].getPatientCareTeam(function (careTeam) {
-        if (!careTeam) {
-            commit('CLEAR_CARE_TEAM');
-            return;
-        }
-        commit('SET_CARE_TEAM', careTeam);
-    }, null, patientId);
-};
-
-var destroyCarePerson = function destroyCarePerson(_ref7, carePerson) {
-    var commit = _ref7.commit;
-
-    __WEBPACK_IMPORTED_MODULE_2__api_care_person__["a" /* default */].destroyCarePerson(function (carePerson) {
-        commit('DESTROY_CARE_PERSON', carePerson);
-    }, null, carePerson);
-};
-
-/***/ }),
-/* 4 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-/* WEBPACK VAR INJECTION */(function(process) {
-
-var utils = __webpack_require__(0);
-var normalizeHeaderName = __webpack_require__(24);
-
-var DEFAULT_CONTENT_TYPE = {
-  'Content-Type': 'application/x-www-form-urlencoded'
-};
-
-function setContentTypeIfUnset(headers, value) {
-  if (!utils.isUndefined(headers) && utils.isUndefined(headers['Content-Type'])) {
-    headers['Content-Type'] = value;
-  }
-}
-
-function getDefaultAdapter() {
-  var adapter;
-  if (typeof XMLHttpRequest !== 'undefined') {
-    // For browsers use XHR adapter
-    adapter = __webpack_require__(10);
-  } else if (typeof process !== 'undefined') {
-    // For node use HTTP adapter
-    adapter = __webpack_require__(10);
-  }
-  return adapter;
-}
-
-var defaults = {
-  adapter: getDefaultAdapter(),
-
-  transformRequest: [function transformRequest(data, headers) {
-    normalizeHeaderName(headers, 'Content-Type');
-    if (utils.isFormData(data) ||
-      utils.isArrayBuffer(data) ||
-      utils.isBuffer(data) ||
-      utils.isStream(data) ||
-      utils.isFile(data) ||
-      utils.isBlob(data)
-    ) {
-      return data;
-    }
-    if (utils.isArrayBufferView(data)) {
-      return data.buffer;
-    }
-    if (utils.isURLSearchParams(data)) {
-      setContentTypeIfUnset(headers, 'application/x-www-form-urlencoded;charset=utf-8');
-      return data.toString();
-    }
-    if (utils.isObject(data)) {
-      setContentTypeIfUnset(headers, 'application/json;charset=utf-8');
-      return JSON.stringify(data);
-    }
-    return data;
-  }],
-
-  transformResponse: [function transformResponse(data) {
-    /*eslint no-param-reassign:0*/
-    if (typeof data === 'string') {
-      try {
-        data = JSON.parse(data);
-      } catch (e) { /* Ignore */ }
-    }
-    return data;
-  }],
-
-  timeout: 0,
-
-  xsrfCookieName: 'XSRF-TOKEN',
-  xsrfHeaderName: 'X-XSRF-TOKEN',
-
-  maxContentLength: -1,
-
-  validateStatus: function validateStatus(status) {
-    return status >= 200 && status < 300;
-  }
-};
-
-defaults.headers = {
-  common: {
-    'Accept': 'application/json, text/plain, */*'
-  }
-};
-
-utils.forEach(['delete', 'get', 'head'], function forEachMethodNoData(method) {
-  defaults.headers[method] = {};
-});
-
-utils.forEach(['post', 'put', 'patch'], function forEachMethodWithData(method) {
-  defaults.headers[method] = utils.merge(DEFAULT_CONTENT_TYPE);
-});
-
-module.exports = defaults;
-
-/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(23)))
-
-/***/ }),
-/* 5 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -11160,7 +10980,208 @@ Vue$3.compile = compileToFunctions;
 
 module.exports = Vue$3;
 
-/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(8)))
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(9)))
+
+/***/ }),
+/* 4 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "addNotification", function() { return addNotification; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "removeNotification", function() { return removeNotification; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "clearOpenModal", function() { return clearOpenModal; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "setOpenModal", function() { return setOpenModal; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "getCurrentUser", function() { return getCurrentUser; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "getPatientCareTeam", function() { return getPatientCareTeam; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "destroyCarePerson", function() { return destroyCarePerson; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "getPracticeLocations", function() { return getPracticeLocations; });
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__api_user_profile__ = __webpack_require__(41);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__api_care_team__ = __webpack_require__(42);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__api_practice_location__ = __webpack_require__(43);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__api_care_person__ = __webpack_require__(44);
+
+
+
+
+
+var addNotification = function addNotification(_ref, notification) {
+    var commit = _ref.commit;
+
+    commit('ADD_NOTIFICATION', notification);
+};
+
+var removeNotification = function removeNotification(_ref2, notification) {
+    var commit = _ref2.commit;
+
+    commit('REMOVE_NOTIFICATION', notification);
+};
+
+var clearOpenModal = function clearOpenModal(_ref3) {
+    var commit = _ref3.commit;
+
+    commit('CLEAR_OPEN_MODAL');
+};
+
+var setOpenModal = function setOpenModal(_ref4, openModal) {
+    var commit = _ref4.commit;
+
+    commit('SET_OPEN_MODAL', openModal);
+};
+
+var getCurrentUser = function getCurrentUser(_ref5) {
+    var commit = _ref5.commit;
+
+    __WEBPACK_IMPORTED_MODULE_0__api_user_profile__["a" /* default */].getCurrentUser(function (user) {
+        if (!user) {
+            commit('LOGOUT_USER');
+            return;
+        }
+        commit('LOGIN_USER', user);
+    });
+};
+
+var getPatientCareTeam = function getPatientCareTeam(_ref6, patientId) {
+    var commit = _ref6.commit;
+
+    if (!patientId) {
+        return;
+    }
+
+    __WEBPACK_IMPORTED_MODULE_1__api_care_team__["a" /* default */].getPatientCareTeam(function (careTeam) {
+        if (!careTeam) {
+            commit('CLEAR_CARE_TEAM');
+            return;
+        }
+        commit('SET_CARE_TEAM', careTeam);
+    }, null, patientId);
+};
+
+var destroyCarePerson = function destroyCarePerson(_ref7, carePerson) {
+    var commit = _ref7.commit;
+
+    __WEBPACK_IMPORTED_MODULE_3__api_care_person__["a" /* default */].destroyCarePerson(function (carePerson) {
+        commit('DESTROY_CARE_PERSON', carePerson);
+    }, null, carePerson);
+};
+
+var getPracticeLocations = function getPracticeLocations(_ref8, practiceId) {
+    var commit = _ref8.commit;
+
+    if (!practiceId) {
+        return;
+    }
+
+    __WEBPACK_IMPORTED_MODULE_2__api_practice_location__["a" /* default */].getPracticeLocations(function (practice) {
+        if (!practice) {
+            commit('CLEAR_PRACTICE_LOCATIONS');
+            return;
+        }
+        commit('SET_PRACTICE_LOCATIONS', practice);
+    }, function (error) {
+        console.log(error);
+    }, practiceId);
+};
+
+/***/ }),
+/* 5 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+/* WEBPACK VAR INJECTION */(function(process) {
+
+var utils = __webpack_require__(0);
+var normalizeHeaderName = __webpack_require__(24);
+
+var DEFAULT_CONTENT_TYPE = {
+  'Content-Type': 'application/x-www-form-urlencoded'
+};
+
+function setContentTypeIfUnset(headers, value) {
+  if (!utils.isUndefined(headers) && utils.isUndefined(headers['Content-Type'])) {
+    headers['Content-Type'] = value;
+  }
+}
+
+function getDefaultAdapter() {
+  var adapter;
+  if (typeof XMLHttpRequest !== 'undefined') {
+    // For browsers use XHR adapter
+    adapter = __webpack_require__(11);
+  } else if (typeof process !== 'undefined') {
+    // For node use HTTP adapter
+    adapter = __webpack_require__(11);
+  }
+  return adapter;
+}
+
+var defaults = {
+  adapter: getDefaultAdapter(),
+
+  transformRequest: [function transformRequest(data, headers) {
+    normalizeHeaderName(headers, 'Content-Type');
+    if (utils.isFormData(data) ||
+      utils.isArrayBuffer(data) ||
+      utils.isBuffer(data) ||
+      utils.isStream(data) ||
+      utils.isFile(data) ||
+      utils.isBlob(data)
+    ) {
+      return data;
+    }
+    if (utils.isArrayBufferView(data)) {
+      return data.buffer;
+    }
+    if (utils.isURLSearchParams(data)) {
+      setContentTypeIfUnset(headers, 'application/x-www-form-urlencoded;charset=utf-8');
+      return data.toString();
+    }
+    if (utils.isObject(data)) {
+      setContentTypeIfUnset(headers, 'application/json;charset=utf-8');
+      return JSON.stringify(data);
+    }
+    return data;
+  }],
+
+  transformResponse: [function transformResponse(data) {
+    /*eslint no-param-reassign:0*/
+    if (typeof data === 'string') {
+      try {
+        data = JSON.parse(data);
+      } catch (e) { /* Ignore */ }
+    }
+    return data;
+  }],
+
+  timeout: 0,
+
+  xsrfCookieName: 'XSRF-TOKEN',
+  xsrfHeaderName: 'X-XSRF-TOKEN',
+
+  maxContentLength: -1,
+
+  validateStatus: function validateStatus(status) {
+    return status >= 200 && status < 300;
+  }
+};
+
+defaults.headers = {
+  common: {
+    'Accept': 'application/json, text/plain, */*'
+  }
+};
+
+utils.forEach(['delete', 'get', 'head'], function forEachMethodNoData(method) {
+  defaults.headers[method] = {};
+});
+
+utils.forEach(['post', 'put', 'patch'], function forEachMethodWithData(method) {
+  defaults.headers[method] = utils.merge(DEFAULT_CONTENT_TYPE);
+});
+
+module.exports = defaults;
+
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(23)))
 
 /***/ }),
 /* 6 */
@@ -11246,6 +11267,37 @@ function toComment(sourceMap) {
 
 /***/ }),
 /* 7 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "patientCareTeam", function() { return patientCareTeam; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "currentUser", function() { return currentUser; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "openModal", function() { return openModal; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "notifications", function() { return notifications; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "practiceLocations", function() { return practiceLocations; });
+var patientCareTeam = function patientCareTeam(state) {
+    return state.patientCareTeam;
+};
+
+var currentUser = function currentUser(state) {
+    return state.currentUser;
+};
+
+var openModal = function openModal(state) {
+    return state.openModal;
+};
+
+var notifications = function notifications(state) {
+    return state.notifications;
+};
+
+var practiceLocations = function practiceLocations(state) {
+    return state.practiceLocations;
+};
+
+/***/ }),
+/* 8 */
 /***/ (function(module, exports, __webpack_require__) {
 
 /*
@@ -11264,7 +11316,7 @@ if (typeof DEBUG !== 'undefined' && DEBUG) {
   ) }
 }
 
-var listToStyles = __webpack_require__(62)
+var listToStyles = __webpack_require__(46)
 
 /*
 type StyleObject = {
@@ -11466,7 +11518,7 @@ function applyToTag (styleElement, obj) {
 
 
 /***/ }),
-/* 8 */
+/* 9 */
 /***/ (function(module, exports) {
 
 var g;
@@ -11493,7 +11545,7 @@ module.exports = g;
 
 
 /***/ }),
-/* 9 */
+/* 10 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -11511,7 +11563,7 @@ module.exports = function bind(fn, thisArg) {
 
 
 /***/ }),
-/* 10 */
+/* 11 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -11522,7 +11574,7 @@ var settle = __webpack_require__(25);
 var buildURL = __webpack_require__(27);
 var parseHeaders = __webpack_require__(28);
 var isURLSameOrigin = __webpack_require__(29);
-var createError = __webpack_require__(11);
+var createError = __webpack_require__(12);
 var btoa = (typeof window !== 'undefined' && window.btoa && window.btoa.bind(window)) || __webpack_require__(30);
 
 module.exports = function xhrAdapter(config) {
@@ -11698,7 +11750,7 @@ module.exports = function xhrAdapter(config) {
 
 
 /***/ }),
-/* 11 */
+/* 12 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -11723,7 +11775,7 @@ module.exports = function createError(message, config, code, request, response) 
 
 
 /***/ }),
-/* 12 */
+/* 13 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -11735,7 +11787,7 @@ module.exports = function isCancel(value) {
 
 
 /***/ }),
-/* 13 */
+/* 14 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -11759,32 +11811,6 @@ Cancel.prototype.__CANCEL__ = true;
 
 module.exports = Cancel;
 
-
-/***/ }),
-/* 14 */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "patientCareTeam", function() { return patientCareTeam; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "currentUser", function() { return currentUser; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "openModal", function() { return openModal; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "notifications", function() { return notifications; });
-var patientCareTeam = function patientCareTeam(state) {
-    return state.patientCareTeam;
-};
-
-var currentUser = function currentUser(state) {
-    return state.currentUser;
-};
-
-var openModal = function openModal(state) {
-    return state.openModal;
-};
-
-var notifications = function notifications(state) {
-    return state.notifications;
-};
 
 /***/ }),
 /* 15 */
@@ -39192,7 +39218,7 @@ if (token) {
   }
 }.call(this));
 
-/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(8), __webpack_require__(18)(module)))
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(9), __webpack_require__(18)(module)))
 
 /***/ }),
 /* 18 */
@@ -39236,9 +39262,9 @@ module.exports = __webpack_require__(20);
 
 
 var utils = __webpack_require__(0);
-var bind = __webpack_require__(9);
+var bind = __webpack_require__(10);
 var Axios = __webpack_require__(22);
-var defaults = __webpack_require__(4);
+var defaults = __webpack_require__(5);
 
 /**
  * Create an instance of Axios
@@ -39271,9 +39297,9 @@ axios.create = function create(instanceConfig) {
 };
 
 // Expose Cancel & CancelToken
-axios.Cancel = __webpack_require__(13);
+axios.Cancel = __webpack_require__(14);
 axios.CancelToken = __webpack_require__(37);
-axios.isCancel = __webpack_require__(12);
+axios.isCancel = __webpack_require__(13);
 
 // Expose all/spread
 axios.all = function all(promises) {
@@ -39321,7 +39347,7 @@ function isSlowBuffer (obj) {
 "use strict";
 
 
-var defaults = __webpack_require__(4);
+var defaults = __webpack_require__(5);
 var utils = __webpack_require__(0);
 var InterceptorManager = __webpack_require__(32);
 var dispatchRequest = __webpack_require__(33);
@@ -39623,7 +39649,7 @@ module.exports = function normalizeHeaderName(headers, normalizedName) {
 "use strict";
 
 
-var createError = __webpack_require__(11);
+var createError = __webpack_require__(12);
 
 /**
  * Resolve or reject a Promise based on response status.
@@ -40042,8 +40068,8 @@ module.exports = InterceptorManager;
 
 var utils = __webpack_require__(0);
 var transformData = __webpack_require__(34);
-var isCancel = __webpack_require__(12);
-var defaults = __webpack_require__(4);
+var isCancel = __webpack_require__(13);
+var defaults = __webpack_require__(5);
 
 /**
  * Throws a `Cancel` if cancellation has been requested.
@@ -40195,7 +40221,7 @@ module.exports = function combineURLs(baseURL, relativeURL) {
 "use strict";
 
 
-var Cancel = __webpack_require__(13);
+var Cancel = __webpack_require__(14);
 
 /**
  * A `CancelToken` is an object that can be used to request cancellation of an operation.
@@ -40288,109 +40314,6 @@ module.exports = function spread(callback) {
 
 /***/ }),
 /* 39 */
-/***/ (function(module, exports, __webpack_require__) {
-
-var disposed = false
-function injectStyle (ssrContext) {
-  if (disposed) return
-  __webpack_require__(64)
-}
-var Component = __webpack_require__(1)(
-  /* script */
-  __webpack_require__(66),
-  /* template */
-  __webpack_require__(67),
-  /* styles */
-  injectStyle,
-  /* scopeId */
-  null,
-  /* moduleIdentifier (server only) */
-  null
-)
-Component.options.__file = "/Users/michalis/Code/CLH/cpm-api/resources/assets/js/components/shared/modal.vue"
-if (Component.esModule && Object.keys(Component.esModule).some(function (key) {return key !== "default" && key.substr(0, 2) !== "__"})) {console.error("named exports are not supported in *.vue files.")}
-if (Component.options.functional) {console.error("[vue-loader] modal.vue: functional components are not supported with templates, they should use render functions.")}
-
-/* hot reload */
-if (false) {(function () {
-  var hotAPI = require("vue-hot-reload-api")
-  hotAPI.install(require("vue"), false)
-  if (!hotAPI.compatible) return
-  module.hot.accept()
-  if (!module.hot.data) {
-    hotAPI.createRecord("data-v-c554be10", Component.options)
-  } else {
-    hotAPI.reload("data-v-c554be10", Component.options)
-  }
-  module.hot.dispose(function (data) {
-    disposed = true
-  })
-})()}
-
-module.exports = Component.exports
-
-
-/***/ }),
-/* 40 */,
-/* 41 */,
-/* 42 */,
-/* 43 */,
-/* 44 */,
-/* 45 */,
-/* 46 */
-/***/ (function(module, exports, __webpack_require__) {
-
-module.exports = __webpack_require__(47);
-
-
-/***/ }),
-/* 47 */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_vue_form__ = __webpack_require__(48);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_vue_form___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0_vue_form__);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__store__ = __webpack_require__(49);
-__webpack_require__(16);
-
-window.Vue = __webpack_require__(5);
-
-var getUrl = window.location;
-var baseUrl = getUrl.protocol + "//" + getUrl.host + "/" + getUrl.pathname.split('/')[1];
-
-window.axios.defaults.baseURL = $('meta[name="base-url"]').attr('content');
-
-
-
-
-window.Vue.config.debug = __WEBPACK_IMPORTED_MODULE_1__store__["a" /* default */].state.debug;
-
-window.Vue.use(__WEBPACK_IMPORTED_MODULE_0_vue_form___default.a, {
-    inputClasses: {
-        valid: 'form-control-success',
-        invalid: 'form-control-danger'
-    }
-});
-
-Vue.component('component-proxy', __webpack_require__(54));
-Vue.component('createAppointmentsAddCarePerson', __webpack_require__(56));
-Vue.component('createCarePerson', __webpack_require__(59));
-Vue.component('updateCarePerson', __webpack_require__(69));
-Vue.component('indexCarePerson', __webpack_require__(74));
-Vue.component('careTeam', __webpack_require__(77));
-Vue.component('select2', __webpack_require__(80));
-Vue.component('fab', __webpack_require__(84));
-Vue.component('openModal', __webpack_require__(89));
-Vue.component('notifications', __webpack_require__(92));
-
-window.App = new Vue({
-    el: '#app',
-    store: __WEBPACK_IMPORTED_MODULE_1__store__["a" /* default */]
-});
-
-/***/ }),
-/* 48 */
 /***/ (function(module, exports, __webpack_require__) {
 
 (function (global, factory) {
@@ -41497,16 +41420,16 @@ return VueForm;
 
 
 /***/ }),
-/* 49 */
+/* 40 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_vue__ = __webpack_require__(5);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_vue__ = __webpack_require__(3);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_vue___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0_vue__);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_vuex__ = __webpack_require__(2);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__actions__ = __webpack_require__(3);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__getters__ = __webpack_require__(14);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__mutations__ = __webpack_require__(53);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__actions__ = __webpack_require__(4);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__getters__ = __webpack_require__(7);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__mutations__ = __webpack_require__(45);
 
 
 
@@ -41537,7 +41460,8 @@ var state = {
         name: null,
         props: {}
     },
-    patientCareTeam: []
+    patientCareTeam: [],
+    practiceLocations: {}
 };
 
 /* harmony default export */ __webpack_exports__["a"] = (new __WEBPACK_IMPORTED_MODULE_1_vuex__["a" /* default */].Store({
@@ -41549,11 +41473,11 @@ var state = {
 }));
 
 /***/ }),
-/* 50 */
+/* 41 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_vue__ = __webpack_require__(5);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_vue__ = __webpack_require__(3);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_vue___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0_vue__);
 
 
@@ -41570,11 +41494,11 @@ var state = {
 });
 
 /***/ }),
-/* 51 */
+/* 42 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_vue__ = __webpack_require__(5);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_vue__ = __webpack_require__(3);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_vue___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0_vue__);
 
 
@@ -41596,11 +41520,37 @@ var state = {
 });
 
 /***/ }),
-/* 52 */
+/* 43 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_vue__ = __webpack_require__(5);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_vue__ = __webpack_require__(3);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_vue___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0_vue__);
+
+
+/* harmony default export */ __webpack_exports__["a"] = ({
+    getPracticeLocations: function getPracticeLocations(cb) {
+        var ecb = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : null;
+        var practiceId = arguments[2];
+
+        if (!practiceId) {
+            return;
+        }
+
+        window.axios.get('practice/' + practiceId + '/locations').then(function (resp) {
+            return cb(resp.data);
+        }, function (resp) {
+            return ecb(resp.data);
+        });
+    }
+});
+
+/***/ }),
+/* 44 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_vue__ = __webpack_require__(3);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_vue___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0_vue__);
 
 
@@ -41618,7 +41568,7 @@ var state = {
 });
 
 /***/ }),
-/* 53 */
+/* 45 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -41632,6 +41582,8 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "CLEAR_OPEN_MODAL", function() { return CLEAR_OPEN_MODAL; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "ADD_NOTIFICATION", function() { return ADD_NOTIFICATION; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "REMOVE_NOTIFICATION", function() { return REMOVE_NOTIFICATION; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "CLEAR_PRACTICE_LOCATIONS", function() { return CLEAR_PRACTICE_LOCATIONS; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "SET_PRACTICE_LOCATIONS", function() { return SET_PRACTICE_LOCATIONS; });
 var DESTROY_CARE_PERSON = function DESTROY_CARE_PERSON(state, carePerson) {
     state.patientCareTeam = state.patientCareTeam.filter(function (item) {
         return item.id !== carePerson.id;
@@ -41670,259 +41622,16 @@ var REMOVE_NOTIFICATION = function REMOVE_NOTIFICATION(state, notification) {
     state.notifications.splice(state.notifications.indexOf(notification), 1);
 };
 
-/***/ }),
-/* 54 */
-/***/ (function(module, exports, __webpack_require__) {
+var CLEAR_PRACTICE_LOCATIONS = function CLEAR_PRACTICE_LOCATIONS(state) {
+    state.practiceLocations = {};
+};
 
-var disposed = false
-var Component = __webpack_require__(1)(
-  /* script */
-  __webpack_require__(55),
-  /* template */
-  null,
-  /* styles */
-  null,
-  /* scopeId */
-  null,
-  /* moduleIdentifier (server only) */
-  null
-)
-Component.options.__file = "/Users/michalis/Code/CLH/cpm-api/resources/assets/js/components/shared/component-proxy.vue"
-if (Component.esModule && Object.keys(Component.esModule).some(function (key) {return key !== "default" && key.substr(0, 2) !== "__"})) {console.error("named exports are not supported in *.vue files.")}
-
-/* hot reload */
-if (false) {(function () {
-  var hotAPI = require("vue-hot-reload-api")
-  hotAPI.install(require("vue"), false)
-  if (!hotAPI.compatible) return
-  module.hot.accept()
-  if (!module.hot.data) {
-    hotAPI.createRecord("data-v-20e728ae", Component.options)
-  } else {
-    hotAPI.reload("data-v-20e728ae", Component.options)
-  }
-  module.hot.dispose(function (data) {
-    disposed = true
-  })
-})()}
-
-module.exports = Component.exports
-
+var SET_PRACTICE_LOCATIONS = function SET_PRACTICE_LOCATIONS(state, practiceLocations) {
+    state.practiceLocations = practiceLocations;
+};
 
 /***/ }),
-/* 55 */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
-
-/* harmony default export */ __webpack_exports__["default"] = ({
-    props: {
-        name: {
-            type: String,
-            required: true
-        },
-        props: {
-            type: Object,
-            default: function _default() {}
-        }
-    },
-
-    render: function render(createElem) {
-        return createElem(this.name, {
-            attrs: this.props
-        });
-    }
-});
-
-/***/ }),
-/* 56 */
-/***/ (function(module, exports, __webpack_require__) {
-
-var disposed = false
-var Component = __webpack_require__(1)(
-  /* script */
-  __webpack_require__(57),
-  /* template */
-  __webpack_require__(58),
-  /* styles */
-  null,
-  /* scopeId */
-  null,
-  /* moduleIdentifier (server only) */
-  null
-)
-Component.options.__file = "/Users/michalis/Code/CLH/cpm-api/resources/assets/js/components/CareTeam/create-appointments-add-care-person.vue"
-if (Component.esModule && Object.keys(Component.esModule).some(function (key) {return key !== "default" && key.substr(0, 2) !== "__"})) {console.error("named exports are not supported in *.vue files.")}
-if (Component.options.functional) {console.error("[vue-loader] create-appointments-add-care-person.vue: functional components are not supported with templates, they should use render functions.")}
-
-/* hot reload */
-if (false) {(function () {
-  var hotAPI = require("vue-hot-reload-api")
-  hotAPI.install(require("vue"), false)
-  if (!hotAPI.compatible) return
-  module.hot.accept()
-  if (!module.hot.data) {
-    hotAPI.createRecord("data-v-4874c3de", Component.options)
-  } else {
-    hotAPI.reload("data-v-4874c3de", Component.options)
-  }
-  module.hot.dispose(function (data) {
-    disposed = true
-  })
-})()}
-
-module.exports = Component.exports
-
-
-/***/ }),
-/* 57 */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_vuex__ = __webpack_require__(2);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__store_actions__ = __webpack_require__(3);
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-
-
-
-
-/* harmony default export */ __webpack_exports__["default"] = ({
-    methods: Object.assign({}, __WEBPACK_IMPORTED_MODULE_0_vuex__["b" /* mapActions */](['setOpenModal']), {
-        createCarePerson: function createCarePerson() {
-            this.setOpenModal({
-                name: 'create-care-person'
-            });
-        }
-    })
-});
-
-/***/ }),
-/* 58 */
-/***/ (function(module, exports, __webpack_require__) {
-
-module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;
-  return _c('div', [_c('label', {
-    attrs: {
-      "for": "provider"
-    }
-  }, [_vm._v("\n        Select Existing Provider (or, "), _c('span', {
-    staticStyle: {
-      "color": "#4fb2e2"
-    }
-  }, [_c('a', {
-    attrs: {
-      "href": "#"
-    },
-    on: {
-      "click": _vm.createCarePerson
-    }
-  }, [_vm._v("add new")])]), _vm._v(")\n    ")])])
-},staticRenderFns: []}
-module.exports.render._withStripped = true
-if (false) {
-  module.hot.accept()
-  if (module.hot.data) {
-     require("vue-hot-reload-api").rerender("data-v-4874c3de", module.exports)
-  }
-}
-
-/***/ }),
-/* 59 */
-/***/ (function(module, exports, __webpack_require__) {
-
-var disposed = false
-function injectStyle (ssrContext) {
-  if (disposed) return
-  __webpack_require__(60)
-}
-var Component = __webpack_require__(1)(
-  /* script */
-  __webpack_require__(63),
-  /* template */
-  __webpack_require__(68),
-  /* styles */
-  injectStyle,
-  /* scopeId */
-  null,
-  /* moduleIdentifier (server only) */
-  null
-)
-Component.options.__file = "/Users/michalis/Code/CLH/cpm-api/resources/assets/js/components/CareTeam/create-care-person.vue"
-if (Component.esModule && Object.keys(Component.esModule).some(function (key) {return key !== "default" && key.substr(0, 2) !== "__"})) {console.error("named exports are not supported in *.vue files.")}
-if (Component.options.functional) {console.error("[vue-loader] create-care-person.vue: functional components are not supported with templates, they should use render functions.")}
-
-/* hot reload */
-if (false) {(function () {
-  var hotAPI = require("vue-hot-reload-api")
-  hotAPI.install(require("vue"), false)
-  if (!hotAPI.compatible) return
-  module.hot.accept()
-  if (!module.hot.data) {
-    hotAPI.createRecord("data-v-1a3d79dc", Component.options)
-  } else {
-    hotAPI.reload("data-v-1a3d79dc", Component.options)
-  }
-  module.hot.dispose(function (data) {
-    disposed = true
-  })
-})()}
-
-module.exports = Component.exports
-
-
-/***/ }),
-/* 60 */
-/***/ (function(module, exports, __webpack_require__) {
-
-// style-loader: Adds some css to the DOM by adding a <style> tag
-
-// load the styles
-var content = __webpack_require__(61);
-if(typeof content === 'string') content = [[module.i, content, '']];
-if(content.locals) module.exports = content.locals;
-// add the styles to the DOM
-var update = __webpack_require__(7)("8e425a2e", content, false);
-// Hot Module Replacement
-if(false) {
- // When the styles change, update the <style> tags
- if(!content.locals) {
-   module.hot.accept("!!../../../../../node_modules/css-loader/index.js!../../../../../node_modules/vue-loader/lib/style-compiler/index.js?{\"vue\":true,\"id\":\"data-v-1a3d79dc\",\"scoped\":false,\"hasInlineConfig\":true}!../../../../../node_modules/vue-loader/lib/selector.js?type=styles&index=0!./create-care-person.vue", function() {
-     var newContent = require("!!../../../../../node_modules/css-loader/index.js!../../../../../node_modules/vue-loader/lib/style-compiler/index.js?{\"vue\":true,\"id\":\"data-v-1a3d79dc\",\"scoped\":false,\"hasInlineConfig\":true}!../../../../../node_modules/vue-loader/lib/selector.js?type=styles&index=0!./create-care-person.vue");
-     if(typeof newContent === 'string') newContent = [[module.id, newContent, '']];
-     update(newContent);
-   });
- }
- // When the module is disposed, remove the <style> tags
- module.hot.dispose(function() { update(); });
-}
-
-/***/ }),
-/* 61 */
-/***/ (function(module, exports, __webpack_require__) {
-
-exports = module.exports = __webpack_require__(6)(undefined);
-// imports
-
-
-// module
-exports.push([module.i, "\n.vue-modal label {\n    font-size: 14px;\n}\n.providerForm {\n    padding: 10px;\n}\n.validation-error {\n    padding: 3px;\n    margin-bottom: 10px;\n    border: 1px solid transparent;\n    border-radius: 4px;\n}\n.has-danger .form-control {\n    border-color: #ff0000;\n    box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075);\n}\n.has-errors {\n    color: #a94442;\n}\n", ""]);
-
-// exports
-
-
-/***/ }),
-/* 62 */
+/* 46 */
 /***/ (function(module, exports) {
 
 /**
@@ -41955,3411 +41664,15 @@ module.exports = function listToStyles (parentId, list) {
 
 
 /***/ }),
-/* 63 */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__shared_modal_vue__ = __webpack_require__(39);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__shared_modal_vue___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0__shared_modal_vue__);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_vuex__ = __webpack_require__(2);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__store_actions__ = __webpack_require__(3);
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-
-
-
-
-
-/* harmony default export */ __webpack_exports__["default"] = ({
-    props: {
-        show: {
-            type: Boolean,
-            default: false
-        }
-    },
-
-    components: {
-        modal: __WEBPACK_IMPORTED_MODULE_0__shared_modal_vue___default.a
-    },
-
-    computed: Object.assign({}, {
-        validationErrors: function validationErrors() {
-            return this.formstate && this.formstate.$invalid && this.submitClicked;
-        }
-    }, {
-        name: function name() {
-            return this.newCarePerson.user.first_name + ' ' + this.newCarePerson.user.last_name;
-        }
-    }),
-
-    methods: Object.assign({}, __WEBPACK_IMPORTED_MODULE_1_vuex__["b" /* mapActions */](['getPatientCareTeam', 'clearOpenModal', 'addNotification']), {
-        sendForm: function sendForm() {
-            var _this = this;
-
-            this.submitClicked = true;
-
-            if (this.validationErrors) {
-                return;
-            }
-
-            if (this.newCarePerson.is_billing_provider) {
-                this.newCarePerson.formatted_type = 'Billing Provider';
-            }
-
-            var id = this.newCarePerson.id ? this.newCarePerson.id : 'new';
-
-            window.axios.patch(this.updateRoute + '/' + id, {
-                careTeamMember: this.newCarePerson,
-                patientId: this.patientId
-            }).then(function (response) {
-                _this.newCarePerson.id = response.data.carePerson.id;
-                _this.newCarePerson.formatted_type = response.data.carePerson.formatted_type;
-
-                _this.getPatientCareTeam(_this.patientId);
-                Object.assign(_this.$data, _this.$options.data.apply(_this));
-                _this.clearOpenModal();
-
-                _this.addNotification({
-                    title: "Successfully saved Care Person",
-                    text: "",
-                    type: "success",
-                    timeout: true
-                });
-
-                //HACK to replace select2 with newly added provider on appointments page
-                var carePerson = response.data.carePerson;
-
-                $('#providerBox').replaceWith('<select id="provider" ' + 'name="provider"' + 'class="provider selectpickerX dropdownValid form-control" ' + 'data-size="10" disabled>  ' + '<option value="' + carePerson.user.id + '" selected>' + carePerson.user.first_name + ' ' + carePerson.user.last_name + '</option></select>');
-
-                $('#providerDiv').css('padding-bottom', '10px');
-                $("#save").append('<input type="hidden" value="' + carePerson.user.id + '" id="provider" name="provider">');
-            }, function (response) {
-                console.log(response.data);
-            });
-        },
-        fieldClassName: function fieldClassName(field) {
-            if (!field) {
-                return '';
-            }
-            if ((field.$touched || field.$submitted) && field.$valid) {
-                return 'has-success';
-            }
-            if ((field.$touched || field.$submitted) && field.$invalid) {
-                return 'has-danger';
-            }
-        }
-    }),
-
-    data: function data() {
-        return {
-            submitClicked: false,
-            updateRoute: $('meta[name="provider-update-route"]').attr('content'),
-            patientId: $('meta[name="patient_id"]').attr('content'),
-            formstate: {},
-
-            newCarePerson: {
-                id: 'new',
-                formatted_type: 'External',
-                alert: false,
-                is_billing_provider: false,
-                user: {
-                    id: '',
-                    email: '',
-                    first_name: '',
-                    last_name: '',
-                    address: '',
-                    address2: '',
-                    city: '',
-                    state: '',
-                    zip: '',
-                    phone_numbers: {
-                        0: {
-                            id: '',
-                            number: ''
-                        }
-                    },
-                    primary_practice: {
-                        id: '',
-                        display_name: ''
-                    },
-                    provider_info: {
-                        id: '',
-                        qualification: '',
-                        specialty: ''
-                    }
-                }
-            },
-            specialtiesOptions: [{ id: "Abdominal Radiology", text: "Abdominal Radiology" }, { id: "Addiction Psychiatry", text: "Addiction Psychiatry" }, { id: "Adolescent Medicine", text: "Adolescent Medicine" }, { id: "Adult Reconstructive Orthopaedics", text: "Adult Reconstructive Orthopaedics" }, {
-                id: "Advanced Heart Failure & Transplant Cardiology",
-                text: "Advanced Heart Failure & Transplant Cardiology"
-            }, { id: "Allergy & Immunology", text: "Allergy & Immunology" }, { id: "Anesthesiology", text: "Anesthesiology" }, { id: "Biochemical Genetics", text: "Biochemical Genetics" }, { id: "Blood Banking - Transfusion Medicine", text: "Blood Banking -T ransfusion Medicine" }, { id: "Cardiology", text: "Cardiology" }, { id: "Cardiothoracic Radiology", text: "Cardiothoracic Radiology" }, { id: "Cardiovascular Disease", text: "Cardiovascular Disease" }, { id: "Chemical Pathology", text: "Chemical Pathology" }, { id: "Child & Adolescent Psychiatry", text: "Child & Adolescent Psychiatry" }, { id: "Child Abuse Pediatrics", text: "Child Abuse Pediatrics" }, { id: "Child Neurology", text: "Child Neurology" }, { id: "Clinical & Laboratory Immunology", text: "Clinical & Laboratory Immunology" }, { id: "Clinical Cardiac Electrophysiology", text: "Clinical Cardiac Electrophysiology" }, { id: "Clinical Neurophysiology", text: "Clinical Neurophysiology" }, { id: "Colon & Rectal Surgery", text: "Colon & Rectal Surgery" }, { id: "Congenital Cardiac Surgery", text: "Congenital Cardiac Surgery" }, { id: "Craniofacial Surgery", text: "Craniofacial Surgery" }, { id: "Critical Care Medicine", text: "Critical Care Medicine" }, { id: "Critical Care Medicine", text: "Critical Care Medicine" }, { id: "Cytopathology", text: "Cytopathology" }, { id: "Dermatology", text: "Dermatology" }, { id: "Dermatopathology", text: "Dermatopathology" }, { id: "Developmental-Behavioral Pediatrics", text: "Developmental-Behavioral Pediatrics" }, { id: "Ears, Nose, Throat (ENT)", text: "Ears, Nose, Throat (ENT)" }, { id: "Emergency Medicine", text: "Emergency Medicine" }, { id: "Endocrinology, Diabetes & Metabolism", text: "Endocrinology, Diabetes & Metabolism" }, { id: "Endovascular Surgical Neuroradiology", text: "Endovascular Surgical Neuroradiology" }, { id: "Family Medicine", text: "Family Medicine" }, { id: "Family Practice", text: "Family Practice" }, {
-                id: "Female Pelvic Medicine & Reconstructive Surgery",
-                text: "Female Pelvic Medicine & Reconstructive Surgery"
-            }, { id: "Foot & Ankle Orthopaedics", text: "Foot & Ankle Orthopaedics" }, { id: "Forensic Pathology", text: "Forensic Pathology" }, { id: "Forensic Psychiatry", text: "Forensic Psychiatry" }, { id: "Gastroenterology", text: "Gastroenterology" }, { id: "Geriatric Medicine", text: "Geriatric Medicine" }, { id: "Geriatric Psychiatry", text: "Geriatric Psychiatry" }, { id: "Hand Surgery", text: "Hand Surgery" }, { id: "Hematology", text: "Hematology" }, { id: "Hematology & Oncology", text: "Hematology & Oncology" }, { id: "Homecare Nurse", text: "Homecare Nurse" }, { id: "Infectious Disease", text: "Infectious Disease" }, { id: "Internal Medicine", text: "Internal Medicine" }, { id: "Internal Medicine-Pediatrics", text: "Internal Medicine-Pediatrics" }, { id: "Interventional Cardiology", text: "Interventional Cardiology" }, { id: "MD", text: "MD" }, { id: "Medical Genetics", text: "Medical Genetics" }, { id: "Medical Microbiology", text: "Medical Microbiology" }, { id: "Medical Toxicology", text: "Medical Toxicology" }, { id: "Molecular Genetic Pathology", text: "Molecular Genetic Pathology" }, { id: "Muscoskeletal Radiology", text: "Muscoskeletal Radiology" }, { id: "Musculoskeletal Oncology", text: "Musculoskeletal Oncology" }, { id: "Neonatal-Perinatal Medicine", text: "Neonatal-Perinatal Medicine" }, { id: "Nephrology", text: "Nephrology" }, { id: "Neurological Surgery", text: "Neurological Surgery" }, { id: "Neurology", text: "Neurology" }, { id: "Neuromuscular Medicine", text: "Neuromuscular Medicine" }, { id: "Neuroradiology", text: "Neuroradiology" }, { id: "Nuclear Medicine", text: "Nuclear Medicine" }, { id: "Nuclear Radiology", text: "Nuclear Radiology" }, { id: "Obstetric Anesthesiology", text: "Obstetric Anesthesiology" }, { id: "Obstetrics & Gynecology", text: "Obstetrics & Gynecology" }, { id: "Oncology", text: "Oncology" }, {
-                id: "Ophthalmic Plastic & Reconstructive Surgery",
-                text: "Ophthalmic Plastic & Reconstructive Surgery"
-            }, { id: "Ophthalmology", text: "Ophthalmology" }, { id: "Orthopaedic Sports Medicine", text: "Orthopaedic Sports Medicine" }, { id: "Orthopaedic Surgery", text: "Orthopaedic Surgery" }, { id: "Orthopaedic Surgery of the Spine", text: "Orthopaedic Surgery of the Spine" }, { id: "Orthopaedic Trauma", text: "Orthopaedic Trauma" }, { id: "Otolaryngology", text: "Otolaryngology" }, { id: "Otology - Neurotology", text: "Otology - Neurotology" }, { id: "Pain Medicine", text: "Pain Medicine" }, { id: "Pathology-Anatomic & Clinical", text: "Pathology-Anatomic & Clinical" }, { id: "Pediatric Anesthesiology", text: "Pediatric Anesthesiology" }, { id: "Pediatric Cardiology", text: "Pediatric Cardiology" }, { id: "Pediatric Critical Care Medicine", text: "Pediatric Critical Care Medicine" }, { id: "Pediatric Emergency Medicine", text: "Pediatric Emergency Medicine" }, { id: "Pediatric Endocrinology", text: "Pediatric Endocrinology" }, { id: "Pediatric Gastroenterology", text: "Pediatric Gastroenterology" }, { id: "Pediatric Hematology-Oncology", text: "Pediatric Hematology-Oncology" }, { id: "Pediatric Infectious Diseases", text: "Pediatric Infectious Diseases" }, { id: "Pediatric Nephrology", text: "Pediatric Nephrology" }, { id: "Pediatric Orthopaedics", text: "Pediatric Orthopaedics" }, { id: "Pediatric Otolaryngology", text: "Pediatric Otolaryngology" }, { id: "Pediatric Pathology", text: "Pediatric Pathology" }, { id: "Pediatric Pulmonology", text: "Pediatric Pulmonology" }, { id: "Pediatric Radiology", text: "Pediatric Radiology" }, { id: "Pediatric Rheumatology", text: "Pediatric Rheumatology" }, { id: "Pediatric Sports Medicine", text: "Pediatric Sports Medicine" }, { id: "Pediatric Surgery", text: "Pediatric Surgery" }, { id: "Pediatric Transplant Hepatology", text: "Pediatric Transplant Hepatology" }, { id: "Pediatric Urology", text: "Pediatric Urology" }, { id: "Pediatrics", text: "Pediatrics" }, { id: "Physical Medicine & Rehabilitation", text: "Physical Medicine & Rehabilitation" }, { id: "Physical Therapy", text: "Physical Therapy" }, { id: "Plastic Surgery", text: "Plastic Surgery" }, { id: "Preventive Medicine", text: "Preventive Medicine" }, { id: "Procedural Dermatology", text: "Procedural Dermatology" }, { id: "Psychiatry", text: "Psychiatry" }, { id: "Pulmonary Disease", text: "Pulmonary Disease" }, {
-                id: "Pulmonary Disease & Critical Care Medicine",
-                text: "Pulmonary Disease & Critical Care Medicine"
-            }, { id: "Radiation Oncology", text: "Radiation Oncology" }, { id: "Radiology-Diagnostic", text: "Radiology-Diagnostic" }, { id: "Rheumatology", text: "Rheumatology" }, { id: "Sleep Medicine", text: "Sleep Medicine" }, { id: "Social Worker", text: "Social Worker" }, { id: "Spinal Cord Injury Medicine", text: "Spinal Cord Injury Medicine" }, { id: "Sports Medicine", text: "Sports Medicine" }, { id: "Surgery-General", text: "Surgery-General" }, { id: "Surgical Critical Care", text: "Surgical Critical Care" }, { id: "Therapist", text: "Therapist" }, { id: "Thoracic Surgery", text: "Thoracic Surgery" }, { id: "Thoracic Surgery-Integrated", text: "Thoracic Surgery-Integrated" }, { id: "Transplant Hepatology", text: "Transplant Hepatology" }, { id: "Urology", text: "Urology" }, { id: "Vascular & Interventional Radiology", text: "Vascular & Interventional Radiology" }, { id: "Vascular Surgery", text: "Vascular Surgery" }]
-        };
-    }
-});
-
-/***/ }),
-/* 64 */
-/***/ (function(module, exports, __webpack_require__) {
-
-// style-loader: Adds some css to the DOM by adding a <style> tag
-
-// load the styles
-var content = __webpack_require__(65);
-if(typeof content === 'string') content = [[module.i, content, '']];
-if(content.locals) module.exports = content.locals;
-// add the styles to the DOM
-var update = __webpack_require__(7)("5ffea96d", content, false);
-// Hot Module Replacement
-if(false) {
- // When the styles change, update the <style> tags
- if(!content.locals) {
-   module.hot.accept("!!../../../../../node_modules/css-loader/index.js!../../../../../node_modules/vue-loader/lib/style-compiler/index.js?{\"vue\":true,\"id\":\"data-v-c554be10\",\"scoped\":false,\"hasInlineConfig\":true}!../../../../../node_modules/vue-loader/lib/selector.js?type=styles&index=0!./modal.vue", function() {
-     var newContent = require("!!../../../../../node_modules/css-loader/index.js!../../../../../node_modules/vue-loader/lib/style-compiler/index.js?{\"vue\":true,\"id\":\"data-v-c554be10\",\"scoped\":false,\"hasInlineConfig\":true}!../../../../../node_modules/vue-loader/lib/selector.js?type=styles&index=0!./modal.vue");
-     if(typeof newContent === 'string') newContent = [[module.id, newContent, '']];
-     update(newContent);
-   });
- }
- // When the module is disposed, remove the <style> tags
- module.hot.dispose(function() { update(); });
-}
-
-/***/ }),
-/* 65 */
-/***/ (function(module, exports, __webpack_require__) {
-
-exports = module.exports = __webpack_require__(6)(undefined);
-// imports
-
-
-// module
-exports.push([module.i, "\n.close-button {\n    font-size: 25px;\n    font-weight: 100;\n    color: tomato;\n    position: absolute;\n    top: 15px;\n    left: 25px;\n    cursor: pointer;\n}\n.vue-modal-mask {\n    position: fixed;\n    z-index: 1050;\n    top: 0;\n    left: 0;\n    width: 100%;\n    height: 100%;\n    background-color: rgba(0, 0, 0, .5);\n    display: table;\n    transition: opacity .3s ease;\n}\n.vue-modal-wrapper {\n    display: table-cell;\n    vertical-align: middle;\n}\n@media ( min-width: 768px) {\n.vue-modal-container {\n        width: 50%;\n        min-width: 430px;\n}\n}\n.vue-modal-container {\n    margin: 0px auto;\n    padding: 20px 30px;\n    background-color: #fff;\n    border-radius: 4px;\n    box-shadow: 0 2px 8px rgba(0, 0, 0, .33);\n    transition: all .3s ease;\n    font-family: Helvetica, Arial, sans-serif;\n    position: relative;\n    overflow-y: auto;\n    max-height: 100vh;\n\n    font-size: 14rem;\n    color: #7b7d81;\n}\n.vue-modal-header h3 {\n    margin: 0;\n}\n.vue-modal-header, .vue-modal-footer {\n    border: none;\n}\n.vue-modal-default-button {\n    float: right;\n}\n.vue-modal-body {\n    padding: 5px;\n}\n\n/*\n * the following styles are auto-applied to elements with\n * v-transition=\"modal\" when their visiblity is toggled\n * by Vue.js.\n *\n * You can easily play with the modal transition by editing\n * these styles.\n */\n.vue-modal-enter {\n    opacity: 0;\n}\n.vue-modal-leave-active {\n    opacity: 0;\n}\n.vue-modal-enter .vue-modal-container,\n.vue-modal-leave-active .vue-modal-container {\n    -webkit-transform: scale(1.3);\n    transform: scale(1.3);\n}\n", ""]);
-
-// exports
-
-
-/***/ }),
-/* 66 */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-
-/* harmony default export */ __webpack_exports__["default"] = ({});
-
-/***/ }),
-/* 67 */
-/***/ (function(module, exports, __webpack_require__) {
-
-module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;
-  return _c('transition', {
-    attrs: {
-      "name": "vue-modal"
-    }
-  }, [_c('div', {
-    staticClass: "vue-modal-mask"
-  }, [_c('div', {
-    staticClass: "vue-modal-wrapper"
-  }, [_c('div', {
-    staticClass: "vue-modal-container"
-  }, [_c('div', {
-    staticClass: "vue-modal-header"
-  }, [_vm._t("header")], 2), _vm._v(" "), _c('div', {
-    staticClass: "vue-modal-body"
-  }, [_vm._t("body")], 2), _vm._v(" "), _c('div', {
-    staticClass: "vue-modal-footer"
-  }, [_vm._t("footer")], 2)])])])])
-},staticRenderFns: []}
-module.exports.render._withStripped = true
-if (false) {
-  module.hot.accept()
-  if (module.hot.data) {
-     require("vue-hot-reload-api").rerender("data-v-c554be10", module.exports)
-  }
-}
-
-/***/ }),
-/* 68 */
-/***/ (function(module, exports, __webpack_require__) {
-
-module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;
-  return _c('modal', {
-    directives: [{
-      name: "show",
-      rawName: "v-show",
-      value: (_vm.show),
-      expression: "show"
-    }]
-  }, [_c('template', {
-    slot: "header"
-  }, [_c('button', {
-    staticClass: "close",
-    attrs: {
-      "type": "button"
-    },
-    on: {
-      "click": _vm.clearOpenModal
-    }
-  }, [_vm._v("×")]), _vm._v(" "), _c('h4', {
-    staticClass: "modal-title"
-  }, [_vm._v("Provider Details")])]), _vm._v(" "), _c('template', {
-    slot: "body"
-  }, [(_vm.validationErrors) ? _c('div', {
-    staticClass: "row providerForm"
-  }, [_c('div', {
-    staticClass: "error-list"
-  }, [_c('h5', {
-    staticClass: "has-errors"
-  }, [_c('u', [_vm._v("There were some problems with your input. Please review the form.")])])])]) : _vm._e(), _vm._v(" "), _c('vue-form', {
-    attrs: {
-      "state": _vm.formstate
-    },
-    on: {
-      "submit": function($event) {
-        $event.preventDefault();
-        _vm.onSubmit($event)
-      }
-    }
-  }, [_c('div', {
-    staticClass: "row providerForm"
-  }, [_c('div', {
-    staticClass: "form-group"
-  }, [_c('label', {
-    staticClass: "col-md-3 control-label"
-  }, [_vm._v("Provider Name")]), _vm._v(" "), _c('div', {
-    staticClass: "col-md-9"
-  }, [_c('div', {
-    staticClass: "row"
-  }, [_c('div', {
-    staticClass: "form-group required-field col-md-6"
-  }, [_c('validate', {
-    class: _vm.fieldClassName(_vm.formstate.first_name),
-    attrs: {
-      "auto-label": ""
-    }
-  }, [_c('div', {
-    staticClass: "col-md-12"
-  }, [_c('input', {
-    directives: [{
-      name: "model",
-      rawName: "v-model",
-      value: (_vm.newCarePerson.user.first_name),
-      expression: "newCarePerson.user.first_name"
-    }],
-    staticClass: "form-control input-md",
-    attrs: {
-      "type": "text",
-      "id": "first_name",
-      "name": "first_name",
-      "placeholder": "First",
-      "required": ""
-    },
-    domProps: {
-      "value": (_vm.newCarePerson.user.first_name)
-    },
-    on: {
-      "input": function($event) {
-        if ($event.target.composing) { return; }
-        _vm.newCarePerson.user.first_name = $event.target.value
-      }
-    }
-  })]), _vm._v(" "), _c('div', {
-    staticClass: "col-md-12"
-  }, [_c('field-messages', {
-    attrs: {
-      "name": "first_name",
-      "show": "$untouched || $touched || $submitted"
-    }
-  }, [_c('div'), _vm._v(" "), _c('div', {
-    staticClass: "validation-error has-errors text-right",
-    slot: "required"
-  }, [_vm._v("\n                                                *required\n                                            ")])])], 1)])], 1), _vm._v(" "), _c('div', {
-    staticClass: "form-group required-field col-md-6"
-  }, [_c('validate', {
-    class: _vm.fieldClassName(_vm.formstate.last_name),
-    attrs: {
-      "auto-label": ""
-    }
-  }, [_c('div', {
-    staticClass: "col-md-12"
-  }, [_c('input', {
-    directives: [{
-      name: "model",
-      rawName: "v-model",
-      value: (_vm.newCarePerson.user.last_name),
-      expression: "newCarePerson.user.last_name"
-    }],
-    staticClass: "form-control input-md",
-    attrs: {
-      "type": "text",
-      "id": "last_name",
-      "name": "last_name",
-      "placeholder": "Last",
-      "required": ""
-    },
-    domProps: {
-      "value": (_vm.newCarePerson.user.last_name)
-    },
-    on: {
-      "input": function($event) {
-        if ($event.target.composing) { return; }
-        _vm.newCarePerson.user.last_name = $event.target.value
-      }
-    }
-  })]), _vm._v(" "), _c('div', {
-    staticClass: "col-md-12"
-  }, [_c('field-messages', {
-    attrs: {
-      "name": "last_name",
-      "show": "$untouched || $touched || $submitted"
-    }
-  }, [_c('div'), _vm._v(" "), _c('div', {
-    staticClass: "validation-error has-errors text-right",
-    slot: "required"
-  }, [_vm._v("\n                                                *required\n                                            ")])])], 1)])], 1)])])])]), _vm._v(" "), _c('div', {
-    staticClass: "row providerForm"
-  }, [_c('div', {
-    staticClass: "form-group"
-  }, [_c('label', {
-    staticClass: "col-md-3 control-label"
-  }, [_vm._v("Specialty")]), _vm._v(" "), _c('div', {
-    staticClass: "col-md-9"
-  }, [_c('div', {
-    staticClass: "row"
-  }, [_c('div', {
-    staticClass: "col-md-12"
-  }, [_c('validate', {
-    class: _vm.fieldClassName(_vm.formstate.specialty),
-    attrs: {
-      "auto-label": ""
-    }
-  }, [_c('div', {
-    staticClass: "col-md-12"
-  }, [_c('select2', {
-    staticStyle: {
-      "width": "100%"
-    },
-    attrs: {
-      "options": _vm.specialtiesOptions,
-      "name": "specialty"
-    },
-    model: {
-      value: (_vm.newCarePerson.user.provider_info.specialty),
-      callback: function($$v) {
-        _vm.newCarePerson.user.provider_info.specialty = $$v
-      },
-      expression: "newCarePerson.user.provider_info.specialty"
-    }
-  }, [_c('option', {
-    attrs: {
-      "disabled": "",
-      "value": "0"
-    }
-  }, [_vm._v("Select one")])])], 1), _vm._v(" "), _c('div', {
-    staticClass: "col-md-12"
-  }, [_c('field-messages', {
-    attrs: {
-      "name": "specialty",
-      "show": "$touched || $submitted"
-    }
-  }, [_c('div'), _vm._v(" "), _c('div', {
-    staticClass: "validation-error has-errors text-right",
-    slot: "required"
-  }, [_vm._v("\n                                                *required\n                                            ")])])], 1)])], 1)])])])]), _vm._v(" "), _c('div', {
-    staticClass: "row providerForm"
-  }, [_c('div', {
-    staticClass: "form-group"
-  }, [_c('label', {
-    staticClass: "col-md-3 control-label"
-  }, [_vm._v("Address")]), _vm._v(" "), _c('div', {
-    staticClass: "col-md-9"
-  }, [_c('div', {
-    staticClass: "row"
-  }, [_c('div', {
-    staticClass: "col-md-8"
-  }, [_c('validate', {
-    class: _vm.fieldClassName(_vm.formstate.address),
-    attrs: {
-      "auto-label": ""
-    }
-  }, [_c('div', {
-    staticClass: "col-md-12"
-  }, [_c('input', {
-    directives: [{
-      name: "model",
-      rawName: "v-model",
-      value: (_vm.newCarePerson.user.address),
-      expression: "newCarePerson.user.address"
-    }],
-    staticClass: "form-control input-md",
-    attrs: {
-      "type": "text",
-      "id": "address",
-      "name": "address",
-      "placeholder": "Line 1"
-    },
-    domProps: {
-      "value": (_vm.newCarePerson.user.address)
-    },
-    on: {
-      "input": function($event) {
-        if ($event.target.composing) { return; }
-        _vm.newCarePerson.user.address = $event.target.value
-      }
-    }
-  })]), _vm._v(" "), _c('div', {
-    staticClass: "col-md-12"
-  }, [_c('field-messages', {
-    attrs: {
-      "name": "address",
-      "show": "$touched || $submitted"
-    }
-  }, [_c('div'), _vm._v(" "), _c('div', {
-    staticClass: "validation-error has-errors text-right",
-    slot: "required"
-  }, [_vm._v("\n                                                *required\n                                            ")])])], 1)])], 1), _vm._v(" "), _c('div', {
-    staticClass: "col-md-4"
-  }, [_c('validate', {
-    class: _vm.fieldClassName(_vm.formstate.address_2),
-    attrs: {
-      "auto-label": ""
-    }
-  }, [_c('div', {
-    staticClass: "col-md-12"
-  }, [_c('input', {
-    directives: [{
-      name: "model",
-      rawName: "v-model",
-      value: (_vm.newCarePerson.user.address2),
-      expression: "newCarePerson.user.address2"
-    }],
-    staticClass: "form-control input-md",
-    attrs: {
-      "type": "text",
-      "id": "address_2",
-      "name": "address_2",
-      "placeholder": "Line 2"
-    },
-    domProps: {
-      "value": (_vm.newCarePerson.user.address2)
-    },
-    on: {
-      "input": function($event) {
-        if ($event.target.composing) { return; }
-        _vm.newCarePerson.user.address2 = $event.target.value
-      }
-    }
-  })]), _vm._v(" "), _c('div', {
-    staticClass: "col-md-12"
-  }, [_c('field-messages', {
-    attrs: {
-      "name": "address_2",
-      "show": "$touched || $submitted"
-    }
-  }, [_c('div'), _vm._v(" "), _c('div', {
-    staticClass: "validation-error has-errors text-right",
-    slot: "required"
-  })])], 1)])], 1)]), _vm._v(" "), _c('div', {
-    staticClass: "row"
-  }, [_c('div', {
-    staticClass: "col-md-4"
-  }, [_c('validate', {
-    class: _vm.fieldClassName(_vm.formstate.city),
-    attrs: {
-      "auto-label": ""
-    }
-  }, [_c('div', {
-    staticClass: "col-md-12"
-  }, [_c('input', {
-    directives: [{
-      name: "model",
-      rawName: "v-model",
-      value: (_vm.newCarePerson.user.city),
-      expression: "newCarePerson.user.city"
-    }],
-    staticClass: "form-control input-md",
-    attrs: {
-      "type": "text",
-      "id": "city",
-      "name": "city",
-      "placeholder": "City"
-    },
-    domProps: {
-      "value": (_vm.newCarePerson.user.city)
-    },
-    on: {
-      "input": function($event) {
-        if ($event.target.composing) { return; }
-        _vm.newCarePerson.user.city = $event.target.value
-      }
-    }
-  })]), _vm._v(" "), _c('div', {
-    staticClass: "col-md-12"
-  }, [_c('field-messages', {
-    attrs: {
-      "name": "city",
-      "show": "$touched || $submitted"
-    }
-  }, [_c('div'), _vm._v(" "), _c('div', {
-    staticClass: "validation-error has-errors text-right",
-    slot: "required"
-  }, [_vm._v("\n                                                *required\n                                            ")])])], 1)])], 1), _vm._v(" "), _c('div', {
-    staticClass: "col-md-4"
-  }, [_c('validate', {
-    class: _vm.fieldClassName(_vm.formstate.state),
-    attrs: {
-      "auto-label": ""
-    }
-  }, [_c('div', {
-    staticClass: "col-md-12"
-  }, [_c('input', {
-    directives: [{
-      name: "model",
-      rawName: "v-model",
-      value: (_vm.newCarePerson.user.state),
-      expression: "newCarePerson.user.state"
-    }],
-    staticClass: "form-control input-md",
-    attrs: {
-      "type": "text",
-      "id": "state",
-      "name": "state",
-      "placeholder": "State"
-    },
-    domProps: {
-      "value": (_vm.newCarePerson.user.state)
-    },
-    on: {
-      "input": function($event) {
-        if ($event.target.composing) { return; }
-        _vm.newCarePerson.user.state = $event.target.value
-      }
-    }
-  })]), _vm._v(" "), _c('div', {
-    staticClass: "col-md-12"
-  }, [_c('field-messages', {
-    attrs: {
-      "name": "state",
-      "show": "$touched || $submitted"
-    }
-  }, [_c('div'), _vm._v(" "), _c('div', {
-    staticClass: "validation-error has-errors text-right",
-    slot: "required"
-  }, [_vm._v("\n                                                *required\n                                            ")])])], 1)])], 1), _vm._v(" "), _c('div', {
-    staticClass: "col-md-4"
-  }, [_c('validate', {
-    class: _vm.fieldClassName(_vm.formstate.zip),
-    attrs: {
-      "auto-label": ""
-    }
-  }, [_c('div', {
-    staticClass: "col-md-12"
-  }, [_c('input', {
-    directives: [{
-      name: "model",
-      rawName: "v-model",
-      value: (_vm.newCarePerson.user.zip),
-      expression: "newCarePerson.user.zip"
-    }],
-    staticClass: "form-control input-md",
-    attrs: {
-      "type": "text",
-      "id": "zip",
-      "name": "zip",
-      "placeholder": "Zip"
-    },
-    domProps: {
-      "value": (_vm.newCarePerson.user.zip)
-    },
-    on: {
-      "input": function($event) {
-        if ($event.target.composing) { return; }
-        _vm.newCarePerson.user.zip = $event.target.value
-      }
-    }
-  })]), _vm._v(" "), _c('div', {
-    staticClass: "col-md-12"
-  }, [_c('field-messages', {
-    attrs: {
-      "name": "zip",
-      "show": "$touched || $submitted"
-    }
-  }, [_c('div'), _vm._v(" "), _c('div', {
-    staticClass: "validation-error has-errors text-right",
-    slot: "required"
-  }, [_vm._v("\n                                                *required\n                                            ")])])], 1)])], 1)])])])]), _vm._v(" "), _c('div', {
-    staticClass: "row providerForm"
-  }, [_c('div', {
-    staticClass: "form-group"
-  }, [_c('label', {
-    staticClass: "col-md-3 control-label"
-  }, [_vm._v("Phone Number")]), _vm._v(" "), _c('div', {
-    staticClass: "col-md-9"
-  }, [_c('div', {
-    staticClass: "row"
-  }, [_c('div', {
-    staticClass: "form-group required-field col-md-12"
-  }, [_c('validate', {
-    class: _vm.fieldClassName(_vm.formstate.phone),
-    attrs: {
-      "auto-label": ""
-    }
-  }, [_c('div', {
-    staticClass: "col-md-12"
-  }, [_c('input', {
-    directives: [{
-      name: "model",
-      rawName: "v-model",
-      value: (_vm.newCarePerson.user.phone_numbers[0].number),
-      expression: "newCarePerson.user.phone_numbers[0].number"
-    }],
-    staticClass: "form-control input-md",
-    attrs: {
-      "type": "text",
-      "id": "phone",
-      "name": "phone",
-      "placeholder": "xxx-xxx-xxxx"
-    },
-    domProps: {
-      "value": (_vm.newCarePerson.user.phone_numbers[0].number)
-    },
-    on: {
-      "input": function($event) {
-        if ($event.target.composing) { return; }
-        _vm.newCarePerson.user.phone_numbers[0].number = $event.target.value
-      }
-    }
-  })]), _vm._v(" "), _c('div', {
-    staticClass: "col-md-12"
-  }, [_c('field-messages', {
-    attrs: {
-      "name": "phone",
-      "show": "$touched || $submitted"
-    }
-  }, [_c('div'), _vm._v(" "), _c('div', {
-    staticClass: "validation-error has-errors text-right",
-    slot: "required"
-  }, [_vm._v("\n                                                *required\n                                            ")])])], 1)])], 1)])])])]), _vm._v(" "), _c('div', {
-    staticClass: "row providerForm"
-  }, [_c('div', {
-    staticClass: "form-group"
-  }, [_c('label', {
-    staticClass: "col-md-3 control-label"
-  }, [_vm._v("Practice Name")]), _vm._v(" "), _c('div', {
-    staticClass: "col-md-9"
-  }, [_c('div', {
-    staticClass: "row"
-  }, [_c('div', {
-    staticClass: "form-group required-field col-md-12"
-  }, [_c('validate', {
-    class: _vm.fieldClassName(_vm.formstate.practice),
-    attrs: {
-      "auto-label": ""
-    }
-  }, [_c('div', {
-    staticClass: "col-md-12"
-  }, [_c('input', {
-    directives: [{
-      name: "model",
-      rawName: "v-model",
-      value: (_vm.newCarePerson.user.primary_practice.display_name),
-      expression: "newCarePerson.user.primary_practice.display_name"
-    }],
-    staticClass: "form-control input-md",
-    attrs: {
-      "type": "text",
-      "id": "practice",
-      "name": "practice",
-      "placeholder": ""
-    },
-    domProps: {
-      "value": (_vm.newCarePerson.user.primary_practice.display_name)
-    },
-    on: {
-      "input": function($event) {
-        if ($event.target.composing) { return; }
-        _vm.newCarePerson.user.primary_practice.display_name = $event.target.value
-      }
-    }
-  })]), _vm._v(" "), _c('div', {
-    staticClass: "col-md-12"
-  }, [_c('field-messages', {
-    attrs: {
-      "name": "practice",
-      "show": "$touched || $submitted"
-    }
-  }, [_c('div'), _vm._v(" "), _c('div', {
-    staticClass: "validation-error has-errors text-right",
-    slot: "required"
-  }, [_vm._v("\n                                                *required\n                                            ")])])], 1)])], 1)])])])]), _vm._v(" "), _c('div', {
-    staticClass: "row providerForm"
-  }, [_c('div', {
-    staticClass: "form-group"
-  }, [_c('label', {
-    staticClass: "col-md-3 control-label"
-  }, [_vm._v("Email")]), _vm._v(" "), _c('div', {
-    staticClass: "col-md-9"
-  }, [_c('div', {
-    staticClass: "row"
-  }, [_c('div', {
-    staticClass: "form-group required-field col-md-6"
-  }, [_c('validate', {
-    class: _vm.fieldClassName(_vm.formstate.email),
-    attrs: {
-      "auto-label": ""
-    }
-  }, [_c('div', {
-    staticClass: "col-md-12"
-  }, [_c('input', {
-    directives: [{
-      name: "model",
-      rawName: "v-model",
-      value: (_vm.newCarePerson.user.email),
-      expression: "newCarePerson.user.email"
-    }],
-    staticClass: "form-control input-md",
-    attrs: {
-      "type": "email",
-      "id": "email",
-      "name": "email"
-    },
-    domProps: {
-      "value": (_vm.newCarePerson.user.email)
-    },
-    on: {
-      "input": function($event) {
-        if ($event.target.composing) { return; }
-        _vm.newCarePerson.user.email = $event.target.value
-      }
-    }
-  })]), _vm._v(" "), _c('div', {
-    staticClass: "col-md-12"
-  }, [_c('field-messages', {
-    attrs: {
-      "name": "email",
-      "show": "$touched || $submitted"
-    }
-  }, [_c('div'), _vm._v(" "), _c('div', {
-    staticClass: "validation-error has-errors text-right",
-    slot: "required"
-  }, [_vm._v("\n                                                *required\n                                            ")]), _vm._v(" "), _c('div', {
-    staticClass: "validation-error has-errors text-right",
-    slot: "email"
-  }, [_vm._v("\n                                                Please enter a valid email\n                                            ")])])], 1)])], 1), _vm._v(" "), _c('div', {
-    staticClass: "form-group col-md-6"
-  }, [_c('label', {
-    staticClass: "col-md-3 control-label"
-  }, [_vm._v("Send Alerts")]), _vm._v(" "), _c('div', {
-    staticClass: "col-md-9"
-  }, [_c('div', {
-    staticClass: "row"
-  }, [_c('div', {
-    staticClass: "form-group required-field col-md-12"
-  }, [_c('validate', {
-    class: _vm.fieldClassName(_vm.formstate.send_alerts),
-    attrs: {
-      "auto-label": ""
-    }
-  }, [_c('div', {
-    staticClass: "col-md-12"
-  }, [_c('input', {
-    directives: [{
-      name: "model",
-      rawName: "v-model",
-      value: (_vm.newCarePerson.alert),
-      expression: "newCarePerson.alert"
-    }],
-    staticClass: "form-control input-md",
-    staticStyle: {
-      "display": "inline"
-    },
-    attrs: {
-      "id": "send_alerts",
-      "name": "send_alerts",
-      "type": "checkbox",
-      "disabled": !_vm.newCarePerson.user.email || _vm.formstate.email && !_vm.formstate.email.$valid
-    },
-    domProps: {
-      "checked": Array.isArray(_vm.newCarePerson.alert) ? _vm._i(_vm.newCarePerson.alert, null) > -1 : (_vm.newCarePerson.alert)
-    },
-    on: {
-      "__c": function($event) {
-        var $$a = _vm.newCarePerson.alert,
-          $$el = $event.target,
-          $$c = $$el.checked ? (true) : (false);
-        if (Array.isArray($$a)) {
-          var $$v = null,
-            $$i = _vm._i($$a, $$v);
-          if ($$c) {
-            $$i < 0 && (_vm.newCarePerson.alert = $$a.concat($$v))
-          } else {
-            $$i > -1 && (_vm.newCarePerson.alert = $$a.slice(0, $$i).concat($$a.slice($$i + 1)))
-          }
-        } else {
-          _vm.newCarePerson.alert = $$c
-        }
-      }
-    }
-  })]), _vm._v(" "), _c('div', {
-    staticClass: "col-md-12"
-  }, [_c('field-messages', {
-    attrs: {
-      "name": "send_alerts",
-      "show": "$touched || $submitted"
-    }
-  }, [_c('div'), _vm._v(" "), _c('div', {
-    staticClass: "validation-error has-errors text-right",
-    slot: "required"
-  }, [_vm._v("\n                                                            *required\n                                                        ")])]), _vm._v(" "), (!_vm.newCarePerson.user.email || _vm.formstate.email && !_vm.formstate.email.$valid) ? _c('div', {
-    staticClass: "validation-error text-left",
-    staticStyle: {
-      "color": "green"
-    }
-  }, [_vm._v("\n                                                        Email needs to be filled out and valid.\n                                                    ")]) : _vm._e()], 1)])], 1)])])])])])])]), _vm._v(" "), _c('div', {
-    staticClass: "row providerForm"
-  }, [_c('div', {
-    staticClass: "form-group"
-  }, [_c('label', {
-    staticClass: "col-md-3 control-label"
-  }, [_vm._v("Clinical Type")]), _vm._v(" "), _c('div', {
-    staticClass: "col-md-9"
-  }, [_c('div', {
-    staticClass: "row"
-  }, [_c('div', {
-    staticClass: "form-group required-field col-md-6"
-  }, [_c('validate', {
-    class: _vm.fieldClassName(_vm.formstate.qualification),
-    attrs: {
-      "auto-label": ""
-    }
-  }, [_c('div', {
-    staticClass: "col-md-12"
-  }, [_c('select', {
-    directives: [{
-      name: "model",
-      rawName: "v-model",
-      value: (_vm.newCarePerson.user.provider_info.qualification),
-      expression: "newCarePerson.user.provider_info.qualification"
-    }],
-    staticClass: "form-control input-md",
-    attrs: {
-      "id": "qualification",
-      "name": "qualification",
-      "required": ""
-    },
-    on: {
-      "change": function($event) {
-        var $$selectedVal = Array.prototype.filter.call($event.target.options, function(o) {
-          return o.selected
-        }).map(function(o) {
-          var val = "_value" in o ? o._value : o.value;
-          return val
-        });
-        _vm.newCarePerson.user.provider_info.qualification = $event.target.multiple ? $$selectedVal : $$selectedVal[0]
-      }
-    }
-  }, [_c('option', {
-    attrs: {
-      "value": "",
-      "disabled": ""
-    }
-  }), _vm._v(" "), _c('option', {
-    attrs: {
-      "value": "clinical"
-    }
-  }, [_vm._v("Clinical (MD, RN or other)")]), _vm._v(" "), _c('option', {
-    attrs: {
-      "value": "non-clinical"
-    }
-  }, [_vm._v("Non-clinical")])])]), _vm._v(" "), _c('div', {
-    staticClass: "col-md-12"
-  }, [_c('field-messages', {
-    attrs: {
-      "name": "qualification",
-      "show": "$untouched || $touched || $submitted"
-    }
-  }, [_c('div'), _vm._v(" "), _c('div', {
-    staticClass: "validation-error has-errors text-right",
-    slot: "required"
-  }, [_vm._v("\n                                                *required\n                                            ")])])], 1)])], 1), _vm._v(" "), _c('div', {
-    staticClass: "form-group col-md-6"
-  }, [_c('label', {
-    staticClass: "col-md-3 control-label"
-  }, [_vm._v("CCM Billing Provider")]), _vm._v(" "), _c('div', {
-    staticClass: "col-md-9"
-  }, [_c('div', {
-    staticClass: "row"
-  }, [_c('div', {
-    staticClass: "form-group required-field col-md-12"
-  }, [_c('validate', {
-    class: _vm.fieldClassName(_vm.formstate.is_billing_provider),
-    attrs: {
-      "auto-label": ""
-    }
-  }, [_c('div', {
-    staticClass: "col-md-12"
-  }, [_c('input', {
-    directives: [{
-      name: "model",
-      rawName: "v-model",
-      value: (_vm.newCarePerson.is_billing_provider),
-      expression: "newCarePerson.is_billing_provider"
-    }],
-    staticClass: "form-control input-md",
-    staticStyle: {
-      "display": "inline"
-    },
-    attrs: {
-      "id": "is_billing_provider",
-      "name": "is_billing_provider",
-      "type": "checkbox"
-    },
-    domProps: {
-      "checked": Array.isArray(_vm.newCarePerson.is_billing_provider) ? _vm._i(_vm.newCarePerson.is_billing_provider, null) > -1 : (_vm.newCarePerson.is_billing_provider)
-    },
-    on: {
-      "__c": function($event) {
-        var $$a = _vm.newCarePerson.is_billing_provider,
-          $$el = $event.target,
-          $$c = $$el.checked ? (true) : (false);
-        if (Array.isArray($$a)) {
-          var $$v = null,
-            $$i = _vm._i($$a, $$v);
-          if ($$c) {
-            $$i < 0 && (_vm.newCarePerson.is_billing_provider = $$a.concat($$v))
-          } else {
-            $$i > -1 && (_vm.newCarePerson.is_billing_provider = $$a.slice(0, $$i).concat($$a.slice($$i + 1)))
-          }
-        } else {
-          _vm.newCarePerson.is_billing_provider = $$c
-        }
-      }
-    }
-  })]), _vm._v(" "), _c('div', {
-    staticClass: "col-md-12"
-  }, [_c('field-messages', {
-    attrs: {
-      "name": "is_billing_provider",
-      "show": "$touched || $submitted"
-    }
-  }, [_c('div'), _vm._v(" "), _c('div', {
-    staticClass: "validation-error has-errors text-right",
-    slot: "required"
-  }, [_vm._v("\n                                                            *required\n                                                        ")])])], 1)])], 1)])])])])])])])])], 1), _vm._v(" "), _c('template', {
-    slot: "footer"
-  }, [_c('div', {
-    staticClass: "row"
-  }, [_c('div', {
-    staticClass: "col-md-6 text-center"
-  }, [_c('button', {
-    staticClass: "btn btn-default",
-    staticStyle: {
-      "width": "50%"
-    },
-    on: {
-      "click": _vm.clearOpenModal
-    }
-  }, [_vm._v("Close")])]), _vm._v(" "), _c('div', {
-    staticClass: "col-md-6 text-center"
-  }, [_c('button', {
-    staticClass: " btn btn-info",
-    staticStyle: {
-      "width": "50%"
-    },
-    attrs: {
-      "disabled": false
-    },
-    on: {
-      "click": _vm.sendForm
-    }
-  }, [_vm._v("\n                    Save "), (false) ? _c('i', {
-    staticClass: "fa fa-spinner fa-pulse fa-fw"
-  }) : _vm._e()])])])])], 2)
-},staticRenderFns: []}
-module.exports.render._withStripped = true
-if (false) {
-  module.hot.accept()
-  if (module.hot.data) {
-     require("vue-hot-reload-api").rerender("data-v-1a3d79dc", module.exports)
-  }
-}
-
-/***/ }),
-/* 69 */
-/***/ (function(module, exports, __webpack_require__) {
-
-var disposed = false
-function injectStyle (ssrContext) {
-  if (disposed) return
-  __webpack_require__(70)
-}
-var Component = __webpack_require__(1)(
-  /* script */
-  __webpack_require__(72),
-  /* template */
-  __webpack_require__(73),
-  /* styles */
-  injectStyle,
-  /* scopeId */
-  null,
-  /* moduleIdentifier (server only) */
-  null
-)
-Component.options.__file = "/Users/michalis/Code/CLH/cpm-api/resources/assets/js/components/pages/view-care-plan/update-care-person.vue"
-if (Component.esModule && Object.keys(Component.esModule).some(function (key) {return key !== "default" && key.substr(0, 2) !== "__"})) {console.error("named exports are not supported in *.vue files.")}
-if (Component.options.functional) {console.error("[vue-loader] update-care-person.vue: functional components are not supported with templates, they should use render functions.")}
-
-/* hot reload */
-if (false) {(function () {
-  var hotAPI = require("vue-hot-reload-api")
-  hotAPI.install(require("vue"), false)
-  if (!hotAPI.compatible) return
-  module.hot.accept()
-  if (!module.hot.data) {
-    hotAPI.createRecord("data-v-4034b3a2", Component.options)
-  } else {
-    hotAPI.reload("data-v-4034b3a2", Component.options)
-  }
-  module.hot.dispose(function (data) {
-    disposed = true
-  })
-})()}
-
-module.exports = Component.exports
-
-
-/***/ }),
-/* 70 */
-/***/ (function(module, exports, __webpack_require__) {
-
-// style-loader: Adds some css to the DOM by adding a <style> tag
-
-// load the styles
-var content = __webpack_require__(71);
-if(typeof content === 'string') content = [[module.i, content, '']];
-if(content.locals) module.exports = content.locals;
-// add the styles to the DOM
-var update = __webpack_require__(7)("71432cd4", content, false);
-// Hot Module Replacement
-if(false) {
- // When the styles change, update the <style> tags
- if(!content.locals) {
-   module.hot.accept("!!../../../../../../node_modules/css-loader/index.js!../../../../../../node_modules/vue-loader/lib/style-compiler/index.js?{\"vue\":true,\"id\":\"data-v-4034b3a2\",\"scoped\":false,\"hasInlineConfig\":true}!../../../../../../node_modules/vue-loader/lib/selector.js?type=styles&index=0!./update-care-person.vue", function() {
-     var newContent = require("!!../../../../../../node_modules/css-loader/index.js!../../../../../../node_modules/vue-loader/lib/style-compiler/index.js?{\"vue\":true,\"id\":\"data-v-4034b3a2\",\"scoped\":false,\"hasInlineConfig\":true}!../../../../../../node_modules/vue-loader/lib/selector.js?type=styles&index=0!./update-care-person.vue");
-     if(typeof newContent === 'string') newContent = [[module.id, newContent, '']];
-     update(newContent);
-   });
- }
- // When the module is disposed, remove the <style> tags
- module.hot.dispose(function() { update(); });
-}
-
-/***/ }),
-/* 71 */
-/***/ (function(module, exports, __webpack_require__) {
-
-exports = module.exports = __webpack_require__(6)(undefined);
-// imports
-
-
-// module
-exports.push([module.i, "\n.vue-modal label {\n    font-size: 14px;\n}\n.providerForm {\n    padding: 10px;\n}\n.validation-error {\n    padding: 3px;\n    margin-bottom: 10px;\n    border: 1px solid transparent;\n    border-radius: 4px;\n}\n.has-danger .form-control {\n    border-color: #ff0000;\n    box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075);\n}\n.has-errors {\n    color: #a94442;\n}\n", ""]);
-
-// exports
-
-
-/***/ }),
-/* 72 */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__shared_modal_vue__ = __webpack_require__(39);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__shared_modal_vue___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0__shared_modal_vue__);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_vuex__ = __webpack_require__(2);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__store_actions__ = __webpack_require__(3);
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-
-
-
-
-
-/* harmony default export */ __webpack_exports__["default"] = ({
-    props: {
-        show: {
-            type: Boolean,
-            default: false
-        },
-        carePerson: Object
-    },
-
-    components: {
-        modal: __WEBPACK_IMPORTED_MODULE_0__shared_modal_vue___default.a
-    },
-
-    computed: Object.assign({
-        validationErrors: function validationErrors() {
-            return this.formstate && this.formstate.$invalid && this.formstate.$touched && this.submitClicked;
-        }
-    }, {
-        name: function name() {
-            return this.carePerson.user.first_name + ' ' + this.carePerson.user.last_name;
-        }
-    }),
-
-    methods: Object.assign(__WEBPACK_IMPORTED_MODULE_1_vuex__["b" /* mapActions */](['getPatientCareTeam', 'clearOpenModal', 'addNotification']), {
-        sendForm: function sendForm() {
-            var _this = this;
-
-            this.submitClicked = true;
-
-            this.sending = true;
-
-            if (this.validationErrors) {
-                return;
-            }
-
-            if (this.formData.is_billing_provider) {
-                this.formData.formatted_type = 'Billing Provider';
-            }
-
-            var id = this.formData.id ? this.formData.id : 'new';
-
-            window.axios.patch(this.updateRoute + '/' + id, {
-                careTeamMember: this.formData,
-                patientId: this.patientId
-            }).then(function (response) {
-                _this.formData.id = response.data.carePerson.id;
-                _this.formData.formatted_type = response.data.carePerson.formatted_type;
-
-                _this.getPatientCareTeam(_this.patientId);
-                Object.assign(_this.$data, _this.$options.data.apply(_this));
-
-                _this.clearOpenModal();
-
-                _this.addNotification({
-                    title: "Successfully updated " + _this.name,
-                    text: "",
-                    type: "success",
-                    timeout: true
-                });
-            }, function (response) {
-                console.log(response.data);
-            });
-        },
-        fieldClassName: function fieldClassName(field) {
-            if (!field) {
-                return '';
-            }
-            if ((field.$touched || field.$submitted) && field.$valid) {
-                return 'has-success';
-            }
-            if ((field.$touched || field.$submitted) && field.$invalid) {
-                return 'has-danger';
-            }
-        }
-    }),
-
-    created: function created() {
-        this.formData = JSON.parse(JSON.stringify(this.carePerson));
-    },
-    data: function data() {
-        return {
-            submitClicked: false,
-            updateRoute: $('meta[name="provider-update-route"]').attr('content'),
-            patientId: $('meta[name="patient_id"]').attr('content'),
-            formstate: {},
-            specialtiesOptions: [{ id: "Abdominal Radiology", text: "Abdominal Radiology" }, { id: "Addiction Psychiatry", text: "Addiction Psychiatry" }, { id: "Adolescent Medicine", text: "Adolescent Medicine" }, { id: "Adult Reconstructive Orthopaedics", text: "Adult Reconstructive Orthopaedics" }, {
-                id: "Advanced Heart Failure & Transplant Cardiology",
-                text: "Advanced Heart Failure & Transplant Cardiology"
-            }, { id: "Allergy & Immunology", text: "Allergy & Immunology" }, { id: "Anesthesiology", text: "Anesthesiology" }, { id: "Biochemical Genetics", text: "Biochemical Genetics" }, { id: "Blood Banking - Transfusion Medicine", text: "Blood Banking -T ransfusion Medicine" }, { id: "Cardiology", text: "Cardiology" }, { id: "Cardiothoracic Radiology", text: "Cardiothoracic Radiology" }, { id: "Cardiovascular Disease", text: "Cardiovascular Disease" }, { id: "Chemical Pathology", text: "Chemical Pathology" }, { id: "Child & Adolescent Psychiatry", text: "Child & Adolescent Psychiatry" }, { id: "Child Abuse Pediatrics", text: "Child Abuse Pediatrics" }, { id: "Child Neurology", text: "Child Neurology" }, { id: "Clinical & Laboratory Immunology", text: "Clinical & Laboratory Immunology" }, { id: "Clinical Cardiac Electrophysiology", text: "Clinical Cardiac Electrophysiology" }, { id: "Clinical Neurophysiology", text: "Clinical Neurophysiology" }, { id: "Colon & Rectal Surgery", text: "Colon & Rectal Surgery" }, { id: "Congenital Cardiac Surgery", text: "Congenital Cardiac Surgery" }, { id: "Craniofacial Surgery", text: "Craniofacial Surgery" }, { id: "Critical Care Medicine", text: "Critical Care Medicine" }, { id: "Critical Care Medicine", text: "Critical Care Medicine" }, { id: "Cytopathology", text: "Cytopathology" }, { id: "Dermatology", text: "Dermatology" }, { id: "Dermatopathology", text: "Dermatopathology" }, { id: "Developmental-Behavioral Pediatrics", text: "Developmental-Behavioral Pediatrics" }, { id: "Ears, Nose, Throat (ENT)", text: "Ears, Nose, Throat (ENT)" }, { id: "Emergency Medicine", text: "Emergency Medicine" }, { id: "Endocrinology, Diabetes & Metabolism", text: "Endocrinology, Diabetes & Metabolism" }, { id: "Endovascular Surgical Neuroradiology", text: "Endovascular Surgical Neuroradiology" }, { id: "Family Medicine", text: "Family Medicine" }, { id: "Family Practice", text: "Family Practice" }, {
-                id: "Female Pelvic Medicine & Reconstructive Surgery",
-                text: "Female Pelvic Medicine & Reconstructive Surgery"
-            }, { id: "Foot & Ankle Orthopaedics", text: "Foot & Ankle Orthopaedics" }, { id: "Forensic Pathology", text: "Forensic Pathology" }, { id: "Forensic Psychiatry", text: "Forensic Psychiatry" }, { id: "Gastroenterology", text: "Gastroenterology" }, { id: "Geriatric Medicine", text: "Geriatric Medicine" }, { id: "Geriatric Psychiatry", text: "Geriatric Psychiatry" }, { id: "Hand Surgery", text: "Hand Surgery" }, { id: "Hematology", text: "Hematology" }, { id: "Hematology & Oncology", text: "Hematology & Oncology" }, { id: "Homecare Nurse", text: "Homecare Nurse" }, { id: "Infectious Disease", text: "Infectious Disease" }, { id: "Internal Medicine", text: "Internal Medicine" }, { id: "Internal Medicine-Pediatrics", text: "Internal Medicine-Pediatrics" }, { id: "Interventional Cardiology", text: "Interventional Cardiology" }, { id: "MD", text: "MD" }, { id: "Medical Genetics", text: "Medical Genetics" }, { id: "Medical Microbiology", text: "Medical Microbiology" }, { id: "Medical Toxicology", text: "Medical Toxicology" }, { id: "Molecular Genetic Pathology", text: "Molecular Genetic Pathology" }, { id: "Muscoskeletal Radiology", text: "Muscoskeletal Radiology" }, { id: "Musculoskeletal Oncology", text: "Musculoskeletal Oncology" }, { id: "Neonatal-Perinatal Medicine", text: "Neonatal-Perinatal Medicine" }, { id: "Nephrology", text: "Nephrology" }, { id: "Neurological Surgery", text: "Neurological Surgery" }, { id: "Neurology", text: "Neurology" }, { id: "Neuromuscular Medicine", text: "Neuromuscular Medicine" }, { id: "Neuroradiology", text: "Neuroradiology" }, { id: "Nuclear Medicine", text: "Nuclear Medicine" }, { id: "Nuclear Radiology", text: "Nuclear Radiology" }, { id: "Obstetric Anesthesiology", text: "Obstetric Anesthesiology" }, { id: "Obstetrics & Gynecology", text: "Obstetrics & Gynecology" }, { id: "Oncology", text: "Oncology" }, {
-                id: "Ophthalmic Plastic & Reconstructive Surgery",
-                text: "Ophthalmic Plastic & Reconstructive Surgery"
-            }, { id: "Ophthalmology", text: "Ophthalmology" }, { id: "Orthopaedic Sports Medicine", text: "Orthopaedic Sports Medicine" }, { id: "Orthopaedic Surgery", text: "Orthopaedic Surgery" }, { id: "Orthopaedic Surgery of the Spine", text: "Orthopaedic Surgery of the Spine" }, { id: "Orthopaedic Trauma", text: "Orthopaedic Trauma" }, { id: "Otolaryngology", text: "Otolaryngology" }, { id: "Otology - Neurotology", text: "Otology - Neurotology" }, { id: "Pain Medicine", text: "Pain Medicine" }, { id: "Pathology-Anatomic & Clinical", text: "Pathology-Anatomic & Clinical" }, { id: "Pediatric Anesthesiology", text: "Pediatric Anesthesiology" }, { id: "Pediatric Cardiology", text: "Pediatric Cardiology" }, { id: "Pediatric Critical Care Medicine", text: "Pediatric Critical Care Medicine" }, { id: "Pediatric Emergency Medicine", text: "Pediatric Emergency Medicine" }, { id: "Pediatric Endocrinology", text: "Pediatric Endocrinology" }, { id: "Pediatric Gastroenterology", text: "Pediatric Gastroenterology" }, { id: "Pediatric Hematology-Oncology", text: "Pediatric Hematology-Oncology" }, { id: "Pediatric Infectious Diseases", text: "Pediatric Infectious Diseases" }, { id: "Pediatric Nephrology", text: "Pediatric Nephrology" }, { id: "Pediatric Orthopaedics", text: "Pediatric Orthopaedics" }, { id: "Pediatric Otolaryngology", text: "Pediatric Otolaryngology" }, { id: "Pediatric Pathology", text: "Pediatric Pathology" }, { id: "Pediatric Pulmonology", text: "Pediatric Pulmonology" }, { id: "Pediatric Radiology", text: "Pediatric Radiology" }, { id: "Pediatric Rheumatology", text: "Pediatric Rheumatology" }, { id: "Pediatric Sports Medicine", text: "Pediatric Sports Medicine" }, { id: "Pediatric Surgery", text: "Pediatric Surgery" }, { id: "Pediatric Transplant Hepatology", text: "Pediatric Transplant Hepatology" }, { id: "Pediatric Urology", text: "Pediatric Urology" }, { id: "Pediatrics", text: "Pediatrics" }, { id: "Physical Medicine & Rehabilitation", text: "Physical Medicine & Rehabilitation" }, { id: "Physical Therapy", text: "Physical Therapy" }, { id: "Plastic Surgery", text: "Plastic Surgery" }, { id: "Preventive Medicine", text: "Preventive Medicine" }, { id: "Procedural Dermatology", text: "Procedural Dermatology" }, { id: "Psychiatry", text: "Psychiatry" }, { id: "Pulmonary Disease", text: "Pulmonary Disease" }, {
-                id: "Pulmonary Disease & Critical Care Medicine",
-                text: "Pulmonary Disease & Critical Care Medicine"
-            }, { id: "Radiation Oncology", text: "Radiation Oncology" }, { id: "Radiology-Diagnostic", text: "Radiology-Diagnostic" }, { id: "Rheumatology", text: "Rheumatology" }, { id: "Sleep Medicine", text: "Sleep Medicine" }, { id: "Social Worker", text: "Social Worker" }, { id: "Spinal Cord Injury Medicine", text: "Spinal Cord Injury Medicine" }, { id: "Sports Medicine", text: "Sports Medicine" }, { id: "Surgery-General", text: "Surgery-General" }, { id: "Surgical Critical Care", text: "Surgical Critical Care" }, { id: "Therapist", text: "Therapist" }, { id: "Thoracic Surgery", text: "Thoracic Surgery" }, { id: "Thoracic Surgery-Integrated", text: "Thoracic Surgery-Integrated" }, { id: "Transplant Hepatology", text: "Transplant Hepatology" }, { id: "Urology", text: "Urology" }, { id: "Vascular & Interventional Radiology", text: "Vascular & Interventional Radiology" }, { id: "Vascular Surgery", text: "Vascular Surgery" }],
-            sending: false,
-            formData: {
-                id: '',
-                formatted_type: 'External',
-                alert: false,
-                is_billing_provider: false,
-                user: {
-                    id: '',
-                    email: '',
-                    first_name: '',
-                    last_name: '',
-                    address: '',
-                    address2: '',
-                    city: '',
-                    state: '',
-                    zip: '',
-                    phone_numbers: {
-                        0: {
-                            id: '',
-                            number: ''
-                        }
-                    },
-                    primary_practice: {
-                        id: '',
-                        display_name: ''
-                    },
-                    provider_info: {
-                        id: '',
-                        qualification: '',
-                        specialty: ''
-                    }
-                }
-            }
-        };
-    }
-});
-
-/***/ }),
-/* 73 */
-/***/ (function(module, exports, __webpack_require__) {
-
-module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;
-  return _c('div', [_c('modal', {
-    directives: [{
-      name: "show",
-      rawName: "v-show",
-      value: (_vm.show),
-      expression: "show"
-    }]
-  }, [_c('template', {
-    slot: "header"
-  }, [_c('button', {
-    staticClass: "close",
-    attrs: {
-      "type": "button"
-    },
-    on: {
-      "click": _vm.clearOpenModal
-    }
-  }, [_vm._v("×")]), _vm._v(" "), _c('h4', {
-    staticClass: "modal-title"
-  }, [_vm._v("Provider Details")])]), _vm._v(" "), _c('template', {
-    slot: "body"
-  }, [(_vm.validationErrors) ? _c('div', {
-    staticClass: "row providerForm"
-  }, [_c('div', {
-    staticClass: "error-list"
-  }, [_c('h5', {
-    staticClass: "has-errors"
-  }, [_c('u', [_vm._v("There were some problems with your input. Please review the form.")])])])]) : _vm._e(), _vm._v(" "), _c('vue-form', {
-    attrs: {
-      "state": _vm.formstate
-    },
-    on: {
-      "submit": function($event) {
-        $event.preventDefault();
-        _vm.onSubmit($event)
-      }
-    }
-  }, [_c('div', {
-    staticClass: "row providerForm"
-  }, [_c('div', {
-    staticClass: "form-group"
-  }, [_c('label', {
-    staticClass: "col-md-3 control-label"
-  }, [_vm._v("Provider Name")]), _vm._v(" "), _c('div', {
-    staticClass: "col-md-9"
-  }, [_c('div', {
-    staticClass: "row"
-  }, [_c('div', {
-    staticClass: "form-group required-field col-md-6"
-  }, [_c('validate', {
-    class: _vm.fieldClassName(_vm.formstate.first_name),
-    attrs: {
-      "auto-label": ""
-    }
-  }, [_c('div', {
-    staticClass: "col-md-12"
-  }, [_c('input', {
-    directives: [{
-      name: "model",
-      rawName: "v-model",
-      value: (_vm.formData.user.first_name),
-      expression: "formData.user.first_name"
-    }],
-    staticClass: "form-control input-md",
-    attrs: {
-      "type": "text",
-      "id": "first_name",
-      "name": "first_name",
-      "placeholder": "First",
-      "required": ""
-    },
-    domProps: {
-      "value": (_vm.formData.user.first_name)
-    },
-    on: {
-      "input": function($event) {
-        if ($event.target.composing) { return; }
-        _vm.formData.user.first_name = $event.target.value
-      }
-    }
-  })]), _vm._v(" "), _c('div', {
-    staticClass: "col-md-12"
-  }, [_c('field-messages', {
-    attrs: {
-      "name": "first_name",
-      "show": "$untouched || $touched || $submitted"
-    }
-  }, [_c('div'), _vm._v(" "), _c('div', {
-    staticClass: "validation-error has-errors text-right",
-    slot: "required"
-  }, [_vm._v("\n                                                    *required\n                                                ")])])], 1)])], 1), _vm._v(" "), _c('div', {
-    staticClass: "form-group required-field col-md-6"
-  }, [_c('validate', {
-    class: _vm.fieldClassName(_vm.formstate.last_name),
-    attrs: {
-      "auto-label": ""
-    }
-  }, [_c('div', {
-    staticClass: "col-md-12"
-  }, [_c('input', {
-    directives: [{
-      name: "model",
-      rawName: "v-model",
-      value: (_vm.formData.user.last_name),
-      expression: "formData.user.last_name"
-    }],
-    staticClass: "form-control input-md",
-    attrs: {
-      "type": "text",
-      "id": "last_name",
-      "name": "last_name",
-      "placeholder": "Last",
-      "required": ""
-    },
-    domProps: {
-      "value": (_vm.formData.user.last_name)
-    },
-    on: {
-      "input": function($event) {
-        if ($event.target.composing) { return; }
-        _vm.formData.user.last_name = $event.target.value
-      }
-    }
-  })]), _vm._v(" "), _c('div', {
-    staticClass: "col-md-12"
-  }, [_c('field-messages', {
-    attrs: {
-      "name": "last_name",
-      "show": "$untouched || $touched || $submitted"
-    }
-  }, [_c('div'), _vm._v(" "), _c('div', {
-    staticClass: "validation-error has-errors text-right",
-    slot: "required"
-  }, [_vm._v("\n                                                    *required\n                                                ")])])], 1)])], 1)])])])]), _vm._v(" "), _c('div', {
-    staticClass: "row providerForm"
-  }, [_c('div', {
-    staticClass: "form-group"
-  }, [_c('label', {
-    staticClass: "col-md-3 control-label"
-  }, [_vm._v("Specialty")]), _vm._v(" "), _c('div', {
-    staticClass: "col-md-9"
-  }, [_c('div', {
-    staticClass: "row"
-  }, [_c('div', {
-    staticClass: "col-md-12"
-  }, [_c('validate', {
-    class: _vm.fieldClassName(_vm.formstate.specialty),
-    attrs: {
-      "auto-label": ""
-    }
-  }, [_c('div', {
-    staticClass: "col-md-12"
-  }, [_c('select2', {
-    staticStyle: {
-      "width": "100%"
-    },
-    attrs: {
-      "options": _vm.specialtiesOptions,
-      "name": "specialty"
-    },
-    model: {
-      value: (_vm.formData.user.provider_info.specialty),
-      callback: function($$v) {
-        _vm.formData.user.provider_info.specialty = $$v
-      },
-      expression: "formData.user.provider_info.specialty"
-    }
-  }, [_c('option', {
-    attrs: {
-      "disabled": "",
-      "value": "0"
-    }
-  }, [_vm._v("Select one")])])], 1), _vm._v(" "), _c('div', {
-    staticClass: "col-md-12"
-  }, [_c('field-messages', {
-    attrs: {
-      "name": "specialty",
-      "show": "$touched || $submitted"
-    }
-  }, [_c('div'), _vm._v(" "), _c('div', {
-    staticClass: "validation-error has-errors text-right",
-    slot: "required"
-  }, [_vm._v("\n                                                    *required\n                                                ")])])], 1)])], 1)])])])]), _vm._v(" "), _c('div', {
-    staticClass: "row providerForm"
-  }, [_c('div', {
-    staticClass: "form-group"
-  }, [_c('label', {
-    staticClass: "col-md-3 control-label"
-  }, [_vm._v("Address")]), _vm._v(" "), _c('div', {
-    staticClass: "col-md-9"
-  }, [_c('div', {
-    staticClass: "row"
-  }, [_c('div', {
-    staticClass: "col-md-8"
-  }, [_c('validate', {
-    class: _vm.fieldClassName(_vm.formstate.address),
-    attrs: {
-      "auto-label": ""
-    }
-  }, [_c('div', {
-    staticClass: "col-md-12"
-  }, [_c('input', {
-    directives: [{
-      name: "model",
-      rawName: "v-model",
-      value: (_vm.formData.user.address),
-      expression: "formData.user.address"
-    }],
-    staticClass: "form-control input-md",
-    attrs: {
-      "type": "text",
-      "id": "address",
-      "name": "address",
-      "placeholder": "Line 1"
-    },
-    domProps: {
-      "value": (_vm.formData.user.address)
-    },
-    on: {
-      "input": function($event) {
-        if ($event.target.composing) { return; }
-        _vm.formData.user.address = $event.target.value
-      }
-    }
-  })]), _vm._v(" "), _c('div', {
-    staticClass: "col-md-12"
-  }, [_c('field-messages', {
-    attrs: {
-      "name": "address",
-      "show": "$touched || $submitted"
-    }
-  }, [_c('div'), _vm._v(" "), _c('div', {
-    staticClass: "validation-error has-errors text-right",
-    slot: "required"
-  }, [_vm._v("\n                                                    *required\n                                                ")])])], 1)])], 1), _vm._v(" "), _c('div', {
-    staticClass: "col-md-4"
-  }, [_c('validate', {
-    class: _vm.fieldClassName(_vm.formstate.address_2),
-    attrs: {
-      "auto-label": ""
-    }
-  }, [_c('div', {
-    staticClass: "col-md-12"
-  }, [_c('input', {
-    directives: [{
-      name: "model",
-      rawName: "v-model",
-      value: (_vm.formData.user.address2),
-      expression: "formData.user.address2"
-    }],
-    staticClass: "form-control input-md",
-    attrs: {
-      "type": "text",
-      "id": "address_2",
-      "name": "address_2",
-      "placeholder": "Line 2"
-    },
-    domProps: {
-      "value": (_vm.formData.user.address2)
-    },
-    on: {
-      "input": function($event) {
-        if ($event.target.composing) { return; }
-        _vm.formData.user.address2 = $event.target.value
-      }
-    }
-  })]), _vm._v(" "), _c('div', {
-    staticClass: "col-md-12"
-  }, [_c('field-messages', {
-    attrs: {
-      "name": "address_2",
-      "show": "$touched || $submitted"
-    }
-  }, [_c('div'), _vm._v(" "), _c('div', {
-    staticClass: "validation-error has-errors text-right",
-    slot: "required"
-  })])], 1)])], 1)]), _vm._v(" "), _c('div', {
-    staticClass: "row"
-  }, [_c('div', {
-    staticClass: "col-md-4"
-  }, [_c('validate', {
-    class: _vm.fieldClassName(_vm.formstate.city),
-    attrs: {
-      "auto-label": ""
-    }
-  }, [_c('div', {
-    staticClass: "col-md-12"
-  }, [_c('input', {
-    directives: [{
-      name: "model",
-      rawName: "v-model",
-      value: (_vm.formData.user.city),
-      expression: "formData.user.city"
-    }],
-    staticClass: "form-control input-md",
-    attrs: {
-      "type": "text",
-      "id": "city",
-      "name": "city",
-      "placeholder": "City"
-    },
-    domProps: {
-      "value": (_vm.formData.user.city)
-    },
-    on: {
-      "input": function($event) {
-        if ($event.target.composing) { return; }
-        _vm.formData.user.city = $event.target.value
-      }
-    }
-  })]), _vm._v(" "), _c('div', {
-    staticClass: "col-md-12"
-  }, [_c('field-messages', {
-    attrs: {
-      "name": "city",
-      "show": "$touched || $submitted"
-    }
-  }, [_c('div'), _vm._v(" "), _c('div', {
-    staticClass: "validation-error has-errors text-right",
-    slot: "required"
-  }, [_vm._v("\n                                                    *required\n                                                ")])])], 1)])], 1), _vm._v(" "), _c('div', {
-    staticClass: "col-md-4"
-  }, [_c('validate', {
-    class: _vm.fieldClassName(_vm.formstate.state),
-    attrs: {
-      "auto-label": ""
-    }
-  }, [_c('div', {
-    staticClass: "col-md-12"
-  }, [_c('input', {
-    directives: [{
-      name: "model",
-      rawName: "v-model",
-      value: (_vm.formData.user.state),
-      expression: "formData.user.state"
-    }],
-    staticClass: "form-control input-md",
-    attrs: {
-      "type": "text",
-      "id": "state",
-      "name": "state",
-      "placeholder": "State"
-    },
-    domProps: {
-      "value": (_vm.formData.user.state)
-    },
-    on: {
-      "input": function($event) {
-        if ($event.target.composing) { return; }
-        _vm.formData.user.state = $event.target.value
-      }
-    }
-  })]), _vm._v(" "), _c('div', {
-    staticClass: "col-md-12"
-  }, [_c('field-messages', {
-    attrs: {
-      "name": "state",
-      "show": "$touched || $submitted"
-    }
-  }, [_c('div'), _vm._v(" "), _c('div', {
-    staticClass: "validation-error has-errors text-right",
-    slot: "required"
-  }, [_vm._v("\n                                                    *required\n                                                ")])])], 1)])], 1), _vm._v(" "), _c('div', {
-    staticClass: "col-md-4"
-  }, [_c('validate', {
-    class: _vm.fieldClassName(_vm.formstate.zip),
-    attrs: {
-      "auto-label": ""
-    }
-  }, [_c('div', {
-    staticClass: "col-md-12"
-  }, [_c('input', {
-    directives: [{
-      name: "model",
-      rawName: "v-model",
-      value: (_vm.formData.user.zip),
-      expression: "formData.user.zip"
-    }],
-    staticClass: "form-control input-md",
-    attrs: {
-      "type": "text",
-      "id": "zip",
-      "name": "zip",
-      "placeholder": "Zip"
-    },
-    domProps: {
-      "value": (_vm.formData.user.zip)
-    },
-    on: {
-      "input": function($event) {
-        if ($event.target.composing) { return; }
-        _vm.formData.user.zip = $event.target.value
-      }
-    }
-  })]), _vm._v(" "), _c('div', {
-    staticClass: "col-md-12"
-  }, [_c('field-messages', {
-    attrs: {
-      "name": "zip",
-      "show": "$touched || $submitted"
-    }
-  }, [_c('div'), _vm._v(" "), _c('div', {
-    staticClass: "validation-error has-errors text-right",
-    slot: "required"
-  }, [_vm._v("\n                                                    *required\n                                                ")])])], 1)])], 1)])])])]), _vm._v(" "), _c('div', {
-    staticClass: "row providerForm"
-  }, [_c('div', {
-    staticClass: "form-group"
-  }, [_c('label', {
-    staticClass: "col-md-3 control-label"
-  }, [_vm._v("Phone Number")]), _vm._v(" "), _c('div', {
-    staticClass: "col-md-9"
-  }, [_c('div', {
-    staticClass: "row"
-  }, [_c('div', {
-    staticClass: "form-group required-field col-md-12"
-  }, [_c('validate', {
-    class: _vm.fieldClassName(_vm.formstate.phone),
-    attrs: {
-      "auto-label": ""
-    }
-  }, [_c('div', {
-    staticClass: "col-md-12"
-  }, [_c('input', {
-    directives: [{
-      name: "model",
-      rawName: "v-model",
-      value: (_vm.formData.user.phone_numbers[0].number),
-      expression: "formData.user.phone_numbers[0].number"
-    }],
-    staticClass: "form-control input-md",
-    attrs: {
-      "type": "text",
-      "id": "phone",
-      "name": "phone",
-      "placeholder": "xxx-xxx-xxxx"
-    },
-    domProps: {
-      "value": (_vm.formData.user.phone_numbers[0].number)
-    },
-    on: {
-      "input": function($event) {
-        if ($event.target.composing) { return; }
-        _vm.formData.user.phone_numbers[0].number = $event.target.value
-      }
-    }
-  })]), _vm._v(" "), _c('div', {
-    staticClass: "col-md-12"
-  }, [_c('field-messages', {
-    attrs: {
-      "name": "phone",
-      "show": "$touched || $submitted"
-    }
-  }, [_c('div'), _vm._v(" "), _c('div', {
-    staticClass: "validation-error has-errors text-right",
-    slot: "required"
-  }, [_vm._v("\n                                                    *required\n                                                ")])])], 1)])], 1)])])])]), _vm._v(" "), _c('div', {
-    staticClass: "row providerForm"
-  }, [_c('div', {
-    staticClass: "form-group"
-  }, [_c('label', {
-    staticClass: "col-md-3 control-label"
-  }, [_vm._v("Practice Name")]), _vm._v(" "), _c('div', {
-    staticClass: "col-md-9"
-  }, [_c('div', {
-    staticClass: "row"
-  }, [_c('div', {
-    staticClass: "form-group required-field col-md-12"
-  }, [_c('validate', {
-    class: _vm.fieldClassName(_vm.formstate.practice),
-    attrs: {
-      "auto-label": ""
-    }
-  }, [_c('div', {
-    staticClass: "col-md-12"
-  }, [_c('input', {
-    directives: [{
-      name: "model",
-      rawName: "v-model",
-      value: (_vm.formData.user.primary_practice.display_name),
-      expression: "formData.user.primary_practice.display_name"
-    }],
-    staticClass: "form-control input-md",
-    attrs: {
-      "type": "text",
-      "id": "practice",
-      "name": "practice",
-      "placeholder": ""
-    },
-    domProps: {
-      "value": (_vm.formData.user.primary_practice.display_name)
-    },
-    on: {
-      "input": function($event) {
-        if ($event.target.composing) { return; }
-        _vm.formData.user.primary_practice.display_name = $event.target.value
-      }
-    }
-  })]), _vm._v(" "), _c('div', {
-    staticClass: "col-md-12"
-  }, [_c('field-messages', {
-    attrs: {
-      "name": "practice",
-      "show": "$touched || $submitted"
-    }
-  }, [_c('div'), _vm._v(" "), _c('div', {
-    staticClass: "validation-error has-errors text-right",
-    slot: "required"
-  }, [_vm._v("\n                                                    *required\n                                                ")])])], 1)])], 1)])])])]), _vm._v(" "), _c('div', {
-    staticClass: "row providerForm"
-  }, [_c('div', {
-    staticClass: "form-group"
-  }, [_c('label', {
-    staticClass: "col-md-3 control-label"
-  }, [_vm._v("Email")]), _vm._v(" "), _c('div', {
-    staticClass: "col-md-9"
-  }, [_c('div', {
-    staticClass: "row"
-  }, [_c('div', {
-    staticClass: "form-group required-field col-md-6"
-  }, [_c('validate', {
-    class: _vm.fieldClassName(_vm.formstate.email),
-    attrs: {
-      "auto-label": ""
-    }
-  }, [_c('div', {
-    staticClass: "col-md-12"
-  }, [_c('input', {
-    directives: [{
-      name: "model",
-      rawName: "v-model",
-      value: (_vm.formData.user.email),
-      expression: "formData.user.email"
-    }],
-    staticClass: "form-control input-md",
-    attrs: {
-      "type": "email",
-      "id": "email",
-      "name": "email"
-    },
-    domProps: {
-      "value": (_vm.formData.user.email)
-    },
-    on: {
-      "input": function($event) {
-        if ($event.target.composing) { return; }
-        _vm.formData.user.email = $event.target.value
-      }
-    }
-  })]), _vm._v(" "), _c('div', {
-    staticClass: "col-md-12"
-  }, [_c('field-messages', {
-    attrs: {
-      "name": "email",
-      "show": "$touched || $submitted"
-    }
-  }, [_c('div'), _vm._v(" "), _c('div', {
-    staticClass: "validation-error has-errors text-right",
-    slot: "required"
-  }, [_vm._v("\n                                                    *required\n                                                ")]), _vm._v(" "), _c('div', {
-    staticClass: "validation-error has-errors text-right",
-    slot: "email"
-  }, [_vm._v("\n                                                    Please enter a valid email\n                                                ")])])], 1)])], 1), _vm._v(" "), _c('div', {
-    staticClass: "form-group col-md-6"
-  }, [_c('label', {
-    staticClass: "col-md-3 control-label"
-  }, [_vm._v("Send Alerts")]), _vm._v(" "), _c('div', {
-    staticClass: "col-md-9"
-  }, [_c('div', {
-    staticClass: "row"
-  }, [_c('div', {
-    staticClass: "form-group required-field col-md-12"
-  }, [_c('validate', {
-    class: _vm.fieldClassName(_vm.formstate.send_alerts),
-    attrs: {
-      "auto-label": ""
-    }
-  }, [_c('div', {
-    staticClass: "col-md-12"
-  }, [_c('input', {
-    directives: [{
-      name: "model",
-      rawName: "v-model",
-      value: (_vm.formData.alert),
-      expression: "formData.alert"
-    }],
-    staticClass: "form-control input-md",
-    staticStyle: {
-      "display": "inline"
-    },
-    attrs: {
-      "id": "send_alerts",
-      "name": "send_alerts",
-      "type": "checkbox",
-      "disabled": !_vm.formData.user.email || _vm.formstate.email && !_vm.formstate.email.$valid
-    },
-    domProps: {
-      "checked": Array.isArray(_vm.formData.alert) ? _vm._i(_vm.formData.alert, null) > -1 : (_vm.formData.alert)
-    },
-    on: {
-      "__c": function($event) {
-        var $$a = _vm.formData.alert,
-          $$el = $event.target,
-          $$c = $$el.checked ? (true) : (false);
-        if (Array.isArray($$a)) {
-          var $$v = null,
-            $$i = _vm._i($$a, $$v);
-          if ($$c) {
-            $$i < 0 && (_vm.formData.alert = $$a.concat($$v))
-          } else {
-            $$i > -1 && (_vm.formData.alert = $$a.slice(0, $$i).concat($$a.slice($$i + 1)))
-          }
-        } else {
-          _vm.formData.alert = $$c
-        }
-      }
-    }
-  })]), _vm._v(" "), _c('div', {
-    staticClass: "col-md-12"
-  }, [_c('field-messages', {
-    attrs: {
-      "name": "send_alerts",
-      "show": "$touched || $submitted"
-    }
-  }, [_c('div'), _vm._v(" "), _c('div', {
-    staticClass: "validation-error has-errors text-right",
-    slot: "required"
-  }, [_vm._v("\n                                                                *required\n                                                            ")])]), _vm._v(" "), (!_vm.formData.user.email || _vm.formstate.email && !_vm.formstate.email.$valid) ? _c('div', {
-    staticClass: "validation-error text-left",
-    staticStyle: {
-      "color": "green"
-    }
-  }, [_vm._v("\n                                                            Email needs to be filled out and valid.\n                                                        ")]) : _vm._e()], 1)])], 1)])])])])])])]), _vm._v(" "), _c('div', {
-    staticClass: "row providerForm"
-  }, [_c('div', {
-    staticClass: "form-group"
-  }, [_c('label', {
-    staticClass: "col-md-3 control-label"
-  }, [_vm._v("Clinical Type")]), _vm._v(" "), _c('div', {
-    staticClass: "col-md-9"
-  }, [_c('div', {
-    staticClass: "row"
-  }, [_c('div', {
-    staticClass: "form-group required-field col-md-6"
-  }, [_c('validate', {
-    class: _vm.fieldClassName(_vm.formstate.qualification),
-    attrs: {
-      "auto-label": ""
-    }
-  }, [_c('div', {
-    staticClass: "col-md-12"
-  }, [_c('select', {
-    directives: [{
-      name: "model",
-      rawName: "v-model",
-      value: (_vm.formData.user.provider_info.qualification),
-      expression: "formData.user.provider_info.qualification"
-    }],
-    staticClass: "form-control input-md",
-    attrs: {
-      "id": "qualification",
-      "name": "qualification",
-      "required": ""
-    },
-    on: {
-      "change": function($event) {
-        var $$selectedVal = Array.prototype.filter.call($event.target.options, function(o) {
-          return o.selected
-        }).map(function(o) {
-          var val = "_value" in o ? o._value : o.value;
-          return val
-        });
-        _vm.formData.user.provider_info.qualification = $event.target.multiple ? $$selectedVal : $$selectedVal[0]
-      }
-    }
-  }, [_c('option', {
-    attrs: {
-      "value": "",
-      "disabled": ""
-    }
-  }), _vm._v(" "), _c('option', {
-    attrs: {
-      "value": "clinical"
-    }
-  }, [_vm._v("Clinical (MD, RN or other)")]), _vm._v(" "), _c('option', {
-    attrs: {
-      "value": "non-clinical"
-    }
-  }, [_vm._v("Non-clinical")])])]), _vm._v(" "), _c('div', {
-    staticClass: "col-md-12"
-  }, [_c('field-messages', {
-    attrs: {
-      "name": "qualification",
-      "show": "$untouched || $touched || $submitted"
-    }
-  }, [_c('div'), _vm._v(" "), _c('div', {
-    staticClass: "validation-error has-errors text-right",
-    slot: "required"
-  }, [_vm._v("\n                                                    *required\n                                                ")])])], 1)])], 1), _vm._v(" "), _c('div', {
-    staticClass: "form-group col-md-6"
-  }, [_c('label', {
-    staticClass: "col-md-3 control-label"
-  }, [_vm._v("CCM Billing Provider")]), _vm._v(" "), _c('div', {
-    staticClass: "col-md-9"
-  }, [_c('div', {
-    staticClass: "row"
-  }, [_c('div', {
-    staticClass: "form-group required-field col-md-12"
-  }, [_c('validate', {
-    class: _vm.fieldClassName(_vm.formstate.is_billing_provider),
-    attrs: {
-      "auto-label": ""
-    }
-  }, [_c('div', {
-    staticClass: "col-md-12"
-  }, [_c('input', {
-    directives: [{
-      name: "model",
-      rawName: "v-model",
-      value: (_vm.formData.is_billing_provider),
-      expression: "formData.is_billing_provider"
-    }],
-    staticClass: "form-control input-md",
-    staticStyle: {
-      "display": "inline"
-    },
-    attrs: {
-      "id": "is_billing_provider",
-      "name": "is_billing_provider",
-      "type": "checkbox"
-    },
-    domProps: {
-      "checked": Array.isArray(_vm.formData.is_billing_provider) ? _vm._i(_vm.formData.is_billing_provider, null) > -1 : (_vm.formData.is_billing_provider)
-    },
-    on: {
-      "__c": function($event) {
-        var $$a = _vm.formData.is_billing_provider,
-          $$el = $event.target,
-          $$c = $$el.checked ? (true) : (false);
-        if (Array.isArray($$a)) {
-          var $$v = null,
-            $$i = _vm._i($$a, $$v);
-          if ($$c) {
-            $$i < 0 && (_vm.formData.is_billing_provider = $$a.concat($$v))
-          } else {
-            $$i > -1 && (_vm.formData.is_billing_provider = $$a.slice(0, $$i).concat($$a.slice($$i + 1)))
-          }
-        } else {
-          _vm.formData.is_billing_provider = $$c
-        }
-      }
-    }
-  })]), _vm._v(" "), _c('div', {
-    staticClass: "col-md-12"
-  }, [_c('field-messages', {
-    attrs: {
-      "name": "is_billing_provider",
-      "show": "$touched || $submitted"
-    }
-  }, [_c('div'), _vm._v(" "), _c('div', {
-    staticClass: "validation-error has-errors text-right",
-    slot: "required"
-  }, [_vm._v("\n                                                                *required\n                                                            ")])])], 1)])], 1)])])])])])])])])], 1), _vm._v(" "), _c('template', {
-    slot: "footer"
-  }, [_c('div', {
-    staticClass: "row"
-  }, [_c('div', {
-    staticClass: "col-md-6 text-center"
-  }, [_c('button', {
-    staticClass: "btn btn-default",
-    staticStyle: {
-      "width": "50%"
-    },
-    on: {
-      "click": _vm.clearOpenModal
-    }
-  }, [_vm._v("Close")])]), _vm._v(" "), _c('div', {
-    staticClass: "col-md-6 text-center"
-  }, [_c('button', {
-    staticClass: " btn btn-info",
-    staticStyle: {
-      "width": "50%"
-    },
-    attrs: {
-      "disabled": false
-    },
-    on: {
-      "click": _vm.sendForm
-    }
-  }, [_vm._v("\n                        Save "), (_vm.sending) ? _c('i', {
-    staticClass: "fa fa-spinner fa-pulse fa-fw"
-  }) : _vm._e()])])])])], 2)], 1)
-},staticRenderFns: []}
-module.exports.render._withStripped = true
-if (false) {
-  module.hot.accept()
-  if (module.hot.data) {
-     require("vue-hot-reload-api").rerender("data-v-4034b3a2", module.exports)
-  }
-}
-
-/***/ }),
-/* 74 */
+/* 47 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var disposed = false
 var Component = __webpack_require__(1)(
   /* script */
-  __webpack_require__(75),
+  __webpack_require__(48),
   /* template */
-  __webpack_require__(76),
-  /* styles */
-  null,
-  /* scopeId */
-  null,
-  /* moduleIdentifier (server only) */
-  null
-)
-Component.options.__file = "/Users/michalis/Code/CLH/cpm-api/resources/assets/js/components/pages/view-care-plan/index-care-person.vue"
-if (Component.esModule && Object.keys(Component.esModule).some(function (key) {return key !== "default" && key.substr(0, 2) !== "__"})) {console.error("named exports are not supported in *.vue files.")}
-if (Component.options.functional) {console.error("[vue-loader] index-care-person.vue: functional components are not supported with templates, they should use render functions.")}
-
-/* hot reload */
-if (false) {(function () {
-  var hotAPI = require("vue-hot-reload-api")
-  hotAPI.install(require("vue"), false)
-  if (!hotAPI.compatible) return
-  module.hot.accept()
-  if (!module.hot.data) {
-    hotAPI.createRecord("data-v-14974838", Component.options)
-  } else {
-    hotAPI.reload("data-v-14974838", Component.options)
-  }
-  module.hot.dispose(function (data) {
-    disposed = true
-  })
-})()}
-
-module.exports = Component.exports
-
-
-/***/ }),
-/* 75 */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_vuex__ = __webpack_require__(2);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__store_actions__ = __webpack_require__(3);
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-
-
-
-
-/* harmony default export */ __webpack_exports__["default"] = ({
-    props: ['carePerson'],
-
-    computed: {
-        name: function name() {
-            return this.carePerson.user.first_name + ' ' + this.carePerson.user.last_name;
-        }
-    },
-
-    data: function data() {
-        return {
-            patientId: $('meta[name="patient_id"]').attr('content'),
-            currentModal: '',
-            editedModel: {}
-        };
-    },
-
-
-    methods: Object.assign({}, __WEBPACK_IMPORTED_MODULE_0_vuex__["b" /* mapActions */](['destroyCarePerson', 'setOpenModal']), {
-        deleteCarePerson: function deleteCarePerson() {
-            var disassociate = confirm('Are you sure you want to remove ' + name + ' from the CareTeam?');
-
-            if (!disassociate) {
-                return true;
-            }
-
-            this.destroyCarePerson(this.carePerson);
-        }
-    }, {
-        editCarePerson: function editCarePerson() {
-            this.setOpenModal({
-                name: 'update-care-person',
-                props: {
-                    carePerson: this.carePerson
-                }
-
-            });
-        }
-    })
-});
-
-/***/ }),
-/* 76 */
-/***/ (function(module, exports, __webpack_require__) {
-
-module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;
-  return _c('div', [_c('div', {
-    directives: [{
-      name: "show",
-      rawName: "v-show",
-      value: (_vm.carePerson.user.first_name && _vm.carePerson.user.last_name),
-      expression: "carePerson.user.first_name && carePerson.user.last_name"
-    }]
-  }, [_c('div', {
-    staticClass: "col-md-7"
-  }, [_c('p', {
-    staticStyle: {
-      "margin-left": "-10px"
-    }
-  }, [_c('strong', [_vm._v(_vm._s(_vm.carePerson.formatted_type) + ": ")]), _vm._v(_vm._s(_vm.carePerson.user.first_name) + " " + _vm._s(_vm.carePerson.user.last_name) + " "), _c('em', [_vm._v(_vm._s(_vm.carePerson.user.primaryRole))])])]), _vm._v(" "), _c('div', {
-    staticClass: "col-md-3"
-  }, [(_vm.carePerson.alert) ? _c('p', [_vm._v("Receives Alerts")]) : _vm._e()]), _vm._v(" "), _c('div', {
-    staticClass: "col-md-2"
-  }, [_c('div', {
-    staticClass: "col-md-6 text-right"
-  }, [_c('button', {
-    staticClass: "btn btn-xs btn-danger problem-delete-btn",
-    on: {
-      "click": function($event) {
-        $event.stopPropagation();
-        $event.preventDefault();
-        _vm.deleteCarePerson()
-      }
-    }
-  }, [_vm._m(0)])]), _vm._v(" "), _c('div', {
-    staticClass: "col-md-6 text-left"
-  }, [_c('button', {
-    staticClass: "btn btn-xs btn-primary problem-edit-btn",
-    on: {
-      "click": function($event) {
-        $event.stopPropagation();
-        $event.preventDefault();
-        _vm.editCarePerson()
-      }
-    }
-  }, [_vm._m(1)])])])])])
-},staticRenderFns: [function (){var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;
-  return _c('span', [_c('i', {
-    staticClass: "glyphicon glyphicon-remove"
-  })])
-},function (){var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;
-  return _c('span', [_c('i', {
-    staticClass: "glyphicon glyphicon-pencil"
-  })])
-}]}
-module.exports.render._withStripped = true
-if (false) {
-  module.hot.accept()
-  if (module.hot.data) {
-     require("vue-hot-reload-api").rerender("data-v-14974838", module.exports)
-  }
-}
-
-/***/ }),
-/* 77 */
-/***/ (function(module, exports, __webpack_require__) {
-
-var disposed = false
-var Component = __webpack_require__(1)(
-  /* script */
-  __webpack_require__(78),
-  /* template */
-  __webpack_require__(79),
-  /* styles */
-  null,
-  /* scopeId */
-  null,
-  /* moduleIdentifier (server only) */
-  null
-)
-Component.options.__file = "/Users/michalis/Code/CLH/cpm-api/resources/assets/js/components/pages/view-care-plan/care-team.vue"
-if (Component.esModule && Object.keys(Component.esModule).some(function (key) {return key !== "default" && key.substr(0, 2) !== "__"})) {console.error("named exports are not supported in *.vue files.")}
-if (Component.options.functional) {console.error("[vue-loader] care-team.vue: functional components are not supported with templates, they should use render functions.")}
-
-/* hot reload */
-if (false) {(function () {
-  var hotAPI = require("vue-hot-reload-api")
-  hotAPI.install(require("vue"), false)
-  if (!hotAPI.compatible) return
-  module.hot.accept()
-  if (!module.hot.data) {
-    hotAPI.createRecord("data-v-0fd86ee7", Component.options)
-  } else {
-    hotAPI.reload("data-v-0fd86ee7", Component.options)
-  }
-  module.hot.dispose(function (data) {
-    disposed = true
-  })
-})()}
-
-module.exports = Component.exports
-
-
-/***/ }),
-/* 78 */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_vuex__ = __webpack_require__(2);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__store_actions__ = __webpack_require__(3);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__store_getters__ = __webpack_require__(14);
-//
-//
-//
-//
-//
-//
-//
-//
-
-
-
-
-
-/* harmony default export */ __webpack_exports__["default"] = ({
-    computed: Object.assign(__WEBPACK_IMPORTED_MODULE_0_vuex__["c" /* mapGetters */]({
-        patientCareTeam: 'patientCareTeam'
-    })),
-
-    methods: Object.assign(__WEBPACK_IMPORTED_MODULE_0_vuex__["b" /* mapActions */](['getPatientCareTeam'])),
-
-    mounted: function mounted() {
-        this.careTeam = this.getPatientCareTeam(this.patientId);
-    },
-    data: function data() {
-        return {
-            patientId: $('meta[name=patient_id]').attr('content'),
-            careTeam: []
-        };
-    }
-});
-
-/***/ }),
-/* 79 */
-/***/ (function(module, exports, __webpack_require__) {
-
-module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;
-  return _c('ul', {
-    staticClass: "col-xs-12"
-  }, _vm._l((_vm.patientCareTeam), function(carePerson, index) {
-    return _c('li', {
-      staticClass: "col-xs-12"
-    }, [_c('index-care-person', {
-      attrs: {
-        "carePerson": carePerson
-      }
-    })], 1)
-  }))
-},staticRenderFns: []}
-module.exports.render._withStripped = true
-if (false) {
-  module.hot.accept()
-  if (module.hot.data) {
-     require("vue-hot-reload-api").rerender("data-v-0fd86ee7", module.exports)
-  }
-}
-
-/***/ }),
-/* 80 */
-/***/ (function(module, exports, __webpack_require__) {
-
-var disposed = false
-var Component = __webpack_require__(1)(
-  /* script */
-  __webpack_require__(81),
-  /* template */
-  __webpack_require__(83),
+  __webpack_require__(50),
   /* styles */
   null,
   /* scopeId */
@@ -45391,12 +41704,12 @@ module.exports = Component.exports
 
 
 /***/ }),
-/* 81 */
+/* 48 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_select2__ = __webpack_require__(82);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_select2__ = __webpack_require__(49);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_select2___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0_select2__);
 //
 //
@@ -45436,7 +41749,7 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 });
 
 /***/ }),
-/* 82 */
+/* 49 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;var require;var require;/*!
@@ -51170,7 +47483,7 @@ S2.define('jquery.select2',[
 
 
 /***/ }),
-/* 83 */
+/* 50 */
 /***/ (function(module, exports, __webpack_require__) {
 
 module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;
@@ -51185,19 +47498,4196 @@ if (false) {
 }
 
 /***/ }),
-/* 84 */
+/* 51 */
+/***/ (function(module, exports, __webpack_require__) {
+
+var disposed = false
+var Component = __webpack_require__(1)(
+  /* script */
+  __webpack_require__(52),
+  /* template */
+  __webpack_require__(53),
+  /* styles */
+  null,
+  /* scopeId */
+  null,
+  /* moduleIdentifier (server only) */
+  null
+)
+Component.options.__file = "/Users/michalis/Code/CLH/cpm-api/resources/assets/js/components/shared/open-modal.vue"
+if (Component.esModule && Object.keys(Component.esModule).some(function (key) {return key !== "default" && key.substr(0, 2) !== "__"})) {console.error("named exports are not supported in *.vue files.")}
+if (Component.options.functional) {console.error("[vue-loader] open-modal.vue: functional components are not supported with templates, they should use render functions.")}
+
+/* hot reload */
+if (false) {(function () {
+  var hotAPI = require("vue-hot-reload-api")
+  hotAPI.install(require("vue"), false)
+  if (!hotAPI.compatible) return
+  module.hot.accept()
+  if (!module.hot.data) {
+    hotAPI.createRecord("data-v-6b7518af", Component.options)
+  } else {
+    hotAPI.reload("data-v-6b7518af", Component.options)
+  }
+  module.hot.dispose(function (data) {
+    disposed = true
+  })
+})()}
+
+module.exports = Component.exports
+
+
+/***/ }),
+/* 52 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_vuex__ = __webpack_require__(2);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__store_getters__ = __webpack_require__(7);
+//
+//
+//
+//
+
+
+
+
+/* harmony default export */ __webpack_exports__["default"] = ({
+    computed: Object.assign({}, __WEBPACK_IMPORTED_MODULE_0_vuex__["c" /* mapGetters */]({
+        openModal: 'openModal'
+    }), {
+        name: function name() {
+            return _.isNull(this.openModal.name) ? false : this.openModal.name;
+        },
+        props: function props() {
+            return _.isNil(this.openModal.props) ? { 'show': true } : Object.assign(this.openModal.props, { 'show': true });
+        }
+    })
+});
+
+/***/ }),
+/* 53 */
+/***/ (function(module, exports, __webpack_require__) {
+
+module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;
+  return (_vm.name) ? _c('component-proxy', {
+    attrs: {
+      "name": _vm.name,
+      "props": _vm.props
+    }
+  }) : _vm._e()
+},staticRenderFns: []}
+module.exports.render._withStripped = true
+if (false) {
+  module.hot.accept()
+  if (module.hot.data) {
+     require("vue-hot-reload-api").rerender("data-v-6b7518af", module.exports)
+  }
+}
+
+/***/ }),
+/* 54 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var disposed = false
 function injectStyle (ssrContext) {
   if (disposed) return
-  __webpack_require__(85)
+  __webpack_require__(55)
 }
 var Component = __webpack_require__(1)(
   /* script */
-  __webpack_require__(87),
+  __webpack_require__(57),
   /* template */
-  __webpack_require__(88),
+  __webpack_require__(63),
+  /* styles */
+  injectStyle,
+  /* scopeId */
+  null,
+  /* moduleIdentifier (server only) */
+  null
+)
+Component.options.__file = "/Users/michalis/Code/CLH/cpm-api/resources/assets/js/components/shared/notifications/notifications.vue"
+if (Component.esModule && Object.keys(Component.esModule).some(function (key) {return key !== "default" && key.substr(0, 2) !== "__"})) {console.error("named exports are not supported in *.vue files.")}
+if (Component.options.functional) {console.error("[vue-loader] notifications.vue: functional components are not supported with templates, they should use render functions.")}
+
+/* hot reload */
+if (false) {(function () {
+  var hotAPI = require("vue-hot-reload-api")
+  hotAPI.install(require("vue"), false)
+  if (!hotAPI.compatible) return
+  module.hot.accept()
+  if (!module.hot.data) {
+    hotAPI.createRecord("data-v-068d5c0c", Component.options)
+  } else {
+    hotAPI.reload("data-v-068d5c0c", Component.options)
+  }
+  module.hot.dispose(function (data) {
+    disposed = true
+  })
+})()}
+
+module.exports = Component.exports
+
+
+/***/ }),
+/* 55 */
+/***/ (function(module, exports, __webpack_require__) {
+
+// style-loader: Adds some css to the DOM by adding a <style> tag
+
+// load the styles
+var content = __webpack_require__(56);
+if(typeof content === 'string') content = [[module.i, content, '']];
+if(content.locals) module.exports = content.locals;
+// add the styles to the DOM
+var update = __webpack_require__(8)("3a06649f", content, false);
+// Hot Module Replacement
+if(false) {
+ // When the styles change, update the <style> tags
+ if(!content.locals) {
+   module.hot.accept("!!../../../../../../node_modules/css-loader/index.js!../../../../../../node_modules/vue-loader/lib/style-compiler/index.js?{\"vue\":true,\"id\":\"data-v-068d5c0c\",\"scoped\":false,\"hasInlineConfig\":true}!../../../../../../node_modules/vue-loader/lib/selector.js?type=styles&index=0!./notifications.vue", function() {
+     var newContent = require("!!../../../../../../node_modules/css-loader/index.js!../../../../../../node_modules/vue-loader/lib/style-compiler/index.js?{\"vue\":true,\"id\":\"data-v-068d5c0c\",\"scoped\":false,\"hasInlineConfig\":true}!../../../../../../node_modules/vue-loader/lib/selector.js?type=styles&index=0!./notifications.vue");
+     if(typeof newContent === 'string') newContent = [[module.id, newContent, '']];
+     update(newContent);
+   });
+ }
+ // When the module is disposed, remove the <style> tags
+ module.hot.dispose(function() { update(); });
+}
+
+/***/ }),
+/* 56 */
+/***/ (function(module, exports, __webpack_require__) {
+
+exports = module.exports = __webpack_require__(6)(undefined);
+// imports
+
+
+// module
+exports.push([module.i, "\n.vue-notifications {\n    position: fixed;\n    right: 3%;\n    top: 6%;\n    width: 350px;\n    z-index: 1;\n}\n\n", ""]);
+
+// exports
+
+
+/***/ }),
+/* 57 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__notification_vue__ = __webpack_require__(58);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__notification_vue___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0__notification_vue__);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_vuex__ = __webpack_require__(2);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__store_getters__ = __webpack_require__(7);
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+
+
+
+
+
+/* harmony default export */ __webpack_exports__["default"] = ({
+    components: {
+        notification: __WEBPACK_IMPORTED_MODULE_0__notification_vue___default.a
+    },
+
+    computed: Object.assign(__WEBPACK_IMPORTED_MODULE_1_vuex__["c" /* mapGetters */]({
+        notifications: 'notifications'
+    }), {
+        getRandomId: function getRandomId() {
+            return _.random(100);
+        }
+    })
+
+});
+
+/***/ }),
+/* 58 */
+/***/ (function(module, exports, __webpack_require__) {
+
+var disposed = false
+function injectStyle (ssrContext) {
+  if (disposed) return
+  __webpack_require__(59)
+}
+var Component = __webpack_require__(1)(
+  /* script */
+  __webpack_require__(61),
+  /* template */
+  __webpack_require__(62),
+  /* styles */
+  injectStyle,
+  /* scopeId */
+  null,
+  /* moduleIdentifier (server only) */
+  null
+)
+Component.options.__file = "/Users/michalis/Code/CLH/cpm-api/resources/assets/js/components/shared/notifications/notification.vue"
+if (Component.esModule && Object.keys(Component.esModule).some(function (key) {return key !== "default" && key.substr(0, 2) !== "__"})) {console.error("named exports are not supported in *.vue files.")}
+if (Component.options.functional) {console.error("[vue-loader] notification.vue: functional components are not supported with templates, they should use render functions.")}
+
+/* hot reload */
+if (false) {(function () {
+  var hotAPI = require("vue-hot-reload-api")
+  hotAPI.install(require("vue"), false)
+  if (!hotAPI.compatible) return
+  module.hot.accept()
+  if (!module.hot.data) {
+    hotAPI.createRecord("data-v-7bf6c3f7", Component.options)
+  } else {
+    hotAPI.reload("data-v-7bf6c3f7", Component.options)
+  }
+  module.hot.dispose(function (data) {
+    disposed = true
+  })
+})()}
+
+module.exports = Component.exports
+
+
+/***/ }),
+/* 59 */
+/***/ (function(module, exports, __webpack_require__) {
+
+// style-loader: Adds some css to the DOM by adding a <style> tag
+
+// load the styles
+var content = __webpack_require__(60);
+if(typeof content === 'string') content = [[module.i, content, '']];
+if(content.locals) module.exports = content.locals;
+// add the styles to the DOM
+var update = __webpack_require__(8)("df41804e", content, false);
+// Hot Module Replacement
+if(false) {
+ // When the styles change, update the <style> tags
+ if(!content.locals) {
+   module.hot.accept("!!../../../../../../node_modules/css-loader/index.js!../../../../../../node_modules/vue-loader/lib/style-compiler/index.js?{\"vue\":true,\"id\":\"data-v-7bf6c3f7\",\"scoped\":false,\"hasInlineConfig\":true}!../../../../../../node_modules/vue-loader/lib/selector.js?type=styles&index=0!./notification.vue", function() {
+     var newContent = require("!!../../../../../../node_modules/css-loader/index.js!../../../../../../node_modules/vue-loader/lib/style-compiler/index.js?{\"vue\":true,\"id\":\"data-v-7bf6c3f7\",\"scoped\":false,\"hasInlineConfig\":true}!../../../../../../node_modules/vue-loader/lib/selector.js?type=styles&index=0!./notification.vue");
+     if(typeof newContent === 'string') newContent = [[module.id, newContent, '']];
+     update(newContent);
+   });
+ }
+ // When the module is disposed, remove the <style> tags
+ module.hot.dispose(function() { update(); });
+}
+
+/***/ }),
+/* 60 */
+/***/ (function(module, exports, __webpack_require__) {
+
+exports = module.exports = __webpack_require__(6)(undefined);
+// imports
+
+
+// module
+exports.push([module.i, "\n.vue-notification p {\nmargin-right: 20px;\n}\n.vue-notification-slide-in-out {\n    -webkit-transition: all 800ms cubic-bezier(0.680, 0, 0.265, 1); /* older webkit */\n    -webkit-transition: all 800ms cubic-bezier(0.680, -0.550, 0.265, 1.550);\n    -moz-transition: all 800ms cubic-bezier(0.680, -0.550, 0.265, 1.550);\n    -o-transition: all 800ms cubic-bezier(0.680, -0.550, 0.265, 1.550);\n    transition: all 800ms cubic-bezier(0.680, -0.550, 0.265, 1.550); /* easeInOutBack */\n}\n", ""]);
+
+// exports
+
+
+/***/ }),
+/* 61 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_vuex__ = __webpack_require__(2);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__store_actions__ = __webpack_require__(4);
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+
+
+
+
+/* harmony default export */ __webpack_exports__["default"] = ({
+    props: ['notification'],
+
+    data: function data() {
+        return { timer: null };
+    },
+    mounted: function mounted() {
+        var timeout = this.notification.hasOwnProperty('timeout') ? this.notification.timeout : true;
+        if (timeout) {
+            var delay = this.notification.delay || 3000;
+            this.timer = setTimeout(function () {
+                this.removeNotification(this.notification);
+            }.bind(this), delay);
+        }
+    },
+
+
+    methods: Object.assign({}, __WEBPACK_IMPORTED_MODULE_0_vuex__["b" /* mapActions */](['removeNotification']))
+});
+
+/***/ }),
+/* 62 */
+/***/ (function(module, exports, __webpack_require__) {
+
+module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;
+  return _c('transition', {
+    attrs: {
+      "name": "custom-classes-transition",
+      "enter-active-class": "animated slideInRight",
+      "leave-active-class": "animated slideOutRight"
+    }
+  }, [_c('div', {
+    staticClass: "alert vue-notification animated",
+    class: _vm.notification.type ? 'alert-' + _vm.notification.type : 'secondary'
+  }, [(!_vm.notification.timeout) ? _c('button', {
+    staticClass: "close",
+    attrs: {
+      "aria-label": "Close alert",
+      "type": "button"
+    },
+    on: {
+      "click": function($event) {
+        _vm.removeNotification(_vm.notification)
+      }
+    }
+  }, [_vm._v("×\n        ")]) : _vm._e(), _vm._v(" "), (_vm.notification.title) ? _c('h5', [_vm._v(_vm._s(_vm.notification.title))]) : _vm._e(), _vm._v(" "), _c('p', [_vm._v("\n            " + _vm._s(_vm.notification.text) + "\n        ")])])])
+},staticRenderFns: []}
+module.exports.render._withStripped = true
+if (false) {
+  module.hot.accept()
+  if (module.hot.data) {
+     require("vue-hot-reload-api").rerender("data-v-7bf6c3f7", module.exports)
+  }
+}
+
+/***/ }),
+/* 63 */
+/***/ (function(module, exports, __webpack_require__) {
+
+module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;
+  return _c('div', {
+    staticClass: "vue-notifications"
+  }, _vm._l((_vm.notifications), function(notification) {
+    return _c('notification', {
+      key: _vm.getRandomId,
+      attrs: {
+        "notification": notification
+      }
+    })
+  }))
+},staticRenderFns: []}
+module.exports.render._withStripped = true
+if (false) {
+  module.hot.accept()
+  if (module.hot.data) {
+     require("vue-hot-reload-api").rerender("data-v-068d5c0c", module.exports)
+  }
+}
+
+/***/ }),
+/* 64 */
+/***/ (function(module, exports, __webpack_require__) {
+
+var disposed = false
+function injectStyle (ssrContext) {
+  if (disposed) return
+  __webpack_require__(82)
+}
+var Component = __webpack_require__(1)(
+  /* script */
+  __webpack_require__(84),
+  /* template */
+  __webpack_require__(85),
+  /* styles */
+  injectStyle,
+  /* scopeId */
+  null,
+  /* moduleIdentifier (server only) */
+  null
+)
+Component.options.__file = "/Users/michalis/Code/CLH/cpm-api/resources/assets/js/components/shared/modal.vue"
+if (Component.esModule && Object.keys(Component.esModule).some(function (key) {return key !== "default" && key.substr(0, 2) !== "__"})) {console.error("named exports are not supported in *.vue files.")}
+if (Component.options.functional) {console.error("[vue-loader] modal.vue: functional components are not supported with templates, they should use render functions.")}
+
+/* hot reload */
+if (false) {(function () {
+  var hotAPI = require("vue-hot-reload-api")
+  hotAPI.install(require("vue"), false)
+  if (!hotAPI.compatible) return
+  module.hot.accept()
+  if (!module.hot.data) {
+    hotAPI.createRecord("data-v-c554be10", Component.options)
+  } else {
+    hotAPI.reload("data-v-c554be10", Component.options)
+  }
+  module.hot.dispose(function (data) {
+    disposed = true
+  })
+})()}
+
+module.exports = Component.exports
+
+
+/***/ }),
+/* 65 */,
+/* 66 */,
+/* 67 */,
+/* 68 */,
+/* 69 */,
+/* 70 */,
+/* 71 */
+/***/ (function(module, exports, __webpack_require__) {
+
+module.exports = __webpack_require__(72);
+
+
+/***/ }),
+/* 72 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_vue_form__ = __webpack_require__(39);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_vue_form___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0_vue_form__);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__store__ = __webpack_require__(40);
+__webpack_require__(16);
+
+window.Vue = __webpack_require__(3);
+
+var getUrl = window.location;
+var baseUrl = getUrl.protocol + "//" + getUrl.host + "/" + getUrl.pathname.split('/')[1];
+
+window.axios.defaults.baseURL = $('meta[name="base-url"]').attr('content');
+
+
+
+
+window.Vue.config.debug = __WEBPACK_IMPORTED_MODULE_1__store__["a" /* default */].state.debug;
+
+window.Vue.use(__WEBPACK_IMPORTED_MODULE_0_vue_form___default.a, {
+    inputClasses: {
+        valid: 'form-control-success',
+        invalid: 'form-control-danger'
+    }
+});
+
+Vue.component('component-proxy', __webpack_require__(73));
+Vue.component('createAppointmentsAddCarePerson', __webpack_require__(75));
+Vue.component('createCarePerson', __webpack_require__(78));
+Vue.component('updateCarePerson', __webpack_require__(87));
+Vue.component('indexCarePerson', __webpack_require__(92));
+Vue.component('careTeam', __webpack_require__(95));
+Vue.component('select2', __webpack_require__(47));
+Vue.component('fab', __webpack_require__(98));
+Vue.component('openModal', __webpack_require__(51));
+Vue.component('notifications', __webpack_require__(54));
+
+window.App = new Vue({
+    el: '#app',
+    store: __WEBPACK_IMPORTED_MODULE_1__store__["a" /* default */]
+});
+
+/***/ }),
+/* 73 */
+/***/ (function(module, exports, __webpack_require__) {
+
+var disposed = false
+var Component = __webpack_require__(1)(
+  /* script */
+  __webpack_require__(74),
+  /* template */
+  null,
+  /* styles */
+  null,
+  /* scopeId */
+  null,
+  /* moduleIdentifier (server only) */
+  null
+)
+Component.options.__file = "/Users/michalis/Code/CLH/cpm-api/resources/assets/js/components/shared/component-proxy.vue"
+if (Component.esModule && Object.keys(Component.esModule).some(function (key) {return key !== "default" && key.substr(0, 2) !== "__"})) {console.error("named exports are not supported in *.vue files.")}
+
+/* hot reload */
+if (false) {(function () {
+  var hotAPI = require("vue-hot-reload-api")
+  hotAPI.install(require("vue"), false)
+  if (!hotAPI.compatible) return
+  module.hot.accept()
+  if (!module.hot.data) {
+    hotAPI.createRecord("data-v-20e728ae", Component.options)
+  } else {
+    hotAPI.reload("data-v-20e728ae", Component.options)
+  }
+  module.hot.dispose(function (data) {
+    disposed = true
+  })
+})()}
+
+module.exports = Component.exports
+
+
+/***/ }),
+/* 74 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
+
+/* harmony default export */ __webpack_exports__["default"] = ({
+    props: {
+        name: {
+            type: String,
+            required: true
+        },
+        props: {
+            type: Object,
+            default: function _default() {}
+        }
+    },
+
+    render: function render(createElem) {
+        return createElem(this.name, {
+            attrs: this.props
+        });
+    }
+});
+
+/***/ }),
+/* 75 */
+/***/ (function(module, exports, __webpack_require__) {
+
+var disposed = false
+var Component = __webpack_require__(1)(
+  /* script */
+  __webpack_require__(76),
+  /* template */
+  __webpack_require__(77),
+  /* styles */
+  null,
+  /* scopeId */
+  null,
+  /* moduleIdentifier (server only) */
+  null
+)
+Component.options.__file = "/Users/michalis/Code/CLH/cpm-api/resources/assets/js/components/CareTeam/create-appointments-add-care-person.vue"
+if (Component.esModule && Object.keys(Component.esModule).some(function (key) {return key !== "default" && key.substr(0, 2) !== "__"})) {console.error("named exports are not supported in *.vue files.")}
+if (Component.options.functional) {console.error("[vue-loader] create-appointments-add-care-person.vue: functional components are not supported with templates, they should use render functions.")}
+
+/* hot reload */
+if (false) {(function () {
+  var hotAPI = require("vue-hot-reload-api")
+  hotAPI.install(require("vue"), false)
+  if (!hotAPI.compatible) return
+  module.hot.accept()
+  if (!module.hot.data) {
+    hotAPI.createRecord("data-v-4874c3de", Component.options)
+  } else {
+    hotAPI.reload("data-v-4874c3de", Component.options)
+  }
+  module.hot.dispose(function (data) {
+    disposed = true
+  })
+})()}
+
+module.exports = Component.exports
+
+
+/***/ }),
+/* 76 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_vuex__ = __webpack_require__(2);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__store_actions__ = __webpack_require__(4);
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+
+
+
+
+/* harmony default export */ __webpack_exports__["default"] = ({
+    methods: Object.assign({}, __WEBPACK_IMPORTED_MODULE_0_vuex__["b" /* mapActions */](['setOpenModal']), {
+        createCarePerson: function createCarePerson() {
+            this.setOpenModal({
+                name: 'create-care-person'
+            });
+        }
+    })
+});
+
+/***/ }),
+/* 77 */
+/***/ (function(module, exports, __webpack_require__) {
+
+module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;
+  return _c('div', [_c('label', {
+    attrs: {
+      "for": "provider"
+    }
+  }, [_vm._v("\n        Select Existing Provider (or, "), _c('span', {
+    staticStyle: {
+      "color": "#4fb2e2"
+    }
+  }, [_c('a', {
+    attrs: {
+      "href": "#"
+    },
+    on: {
+      "click": _vm.createCarePerson
+    }
+  }, [_vm._v("add new")])]), _vm._v(")\n    ")])])
+},staticRenderFns: []}
+module.exports.render._withStripped = true
+if (false) {
+  module.hot.accept()
+  if (module.hot.data) {
+     require("vue-hot-reload-api").rerender("data-v-4874c3de", module.exports)
+  }
+}
+
+/***/ }),
+/* 78 */
+/***/ (function(module, exports, __webpack_require__) {
+
+var disposed = false
+function injectStyle (ssrContext) {
+  if (disposed) return
+  __webpack_require__(79)
+}
+var Component = __webpack_require__(1)(
+  /* script */
+  __webpack_require__(81),
+  /* template */
+  __webpack_require__(86),
+  /* styles */
+  injectStyle,
+  /* scopeId */
+  null,
+  /* moduleIdentifier (server only) */
+  null
+)
+Component.options.__file = "/Users/michalis/Code/CLH/cpm-api/resources/assets/js/components/CareTeam/create-care-person.vue"
+if (Component.esModule && Object.keys(Component.esModule).some(function (key) {return key !== "default" && key.substr(0, 2) !== "__"})) {console.error("named exports are not supported in *.vue files.")}
+if (Component.options.functional) {console.error("[vue-loader] create-care-person.vue: functional components are not supported with templates, they should use render functions.")}
+
+/* hot reload */
+if (false) {(function () {
+  var hotAPI = require("vue-hot-reload-api")
+  hotAPI.install(require("vue"), false)
+  if (!hotAPI.compatible) return
+  module.hot.accept()
+  if (!module.hot.data) {
+    hotAPI.createRecord("data-v-1a3d79dc", Component.options)
+  } else {
+    hotAPI.reload("data-v-1a3d79dc", Component.options)
+  }
+  module.hot.dispose(function (data) {
+    disposed = true
+  })
+})()}
+
+module.exports = Component.exports
+
+
+/***/ }),
+/* 79 */
+/***/ (function(module, exports, __webpack_require__) {
+
+// style-loader: Adds some css to the DOM by adding a <style> tag
+
+// load the styles
+var content = __webpack_require__(80);
+if(typeof content === 'string') content = [[module.i, content, '']];
+if(content.locals) module.exports = content.locals;
+// add the styles to the DOM
+var update = __webpack_require__(8)("8e425a2e", content, false);
+// Hot Module Replacement
+if(false) {
+ // When the styles change, update the <style> tags
+ if(!content.locals) {
+   module.hot.accept("!!../../../../../node_modules/css-loader/index.js!../../../../../node_modules/vue-loader/lib/style-compiler/index.js?{\"vue\":true,\"id\":\"data-v-1a3d79dc\",\"scoped\":false,\"hasInlineConfig\":true}!../../../../../node_modules/vue-loader/lib/selector.js?type=styles&index=0!./create-care-person.vue", function() {
+     var newContent = require("!!../../../../../node_modules/css-loader/index.js!../../../../../node_modules/vue-loader/lib/style-compiler/index.js?{\"vue\":true,\"id\":\"data-v-1a3d79dc\",\"scoped\":false,\"hasInlineConfig\":true}!../../../../../node_modules/vue-loader/lib/selector.js?type=styles&index=0!./create-care-person.vue");
+     if(typeof newContent === 'string') newContent = [[module.id, newContent, '']];
+     update(newContent);
+   });
+ }
+ // When the module is disposed, remove the <style> tags
+ module.hot.dispose(function() { update(); });
+}
+
+/***/ }),
+/* 80 */
+/***/ (function(module, exports, __webpack_require__) {
+
+exports = module.exports = __webpack_require__(6)(undefined);
+// imports
+
+
+// module
+exports.push([module.i, "\n.vue-modal label {\n    font-size: 14px;\n}\n.providerForm {\n    padding: 10px;\n}\n.validation-error {\n    padding: 3px;\n    margin-bottom: 10px;\n    border: 1px solid transparent;\n    border-radius: 4px;\n}\n.has-danger .form-control {\n    border-color: #ff0000;\n    box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075);\n}\n.has-errors {\n    color: #a94442;\n}\n", ""]);
+
+// exports
+
+
+/***/ }),
+/* 81 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__shared_modal_vue__ = __webpack_require__(64);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__shared_modal_vue___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0__shared_modal_vue__);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_vuex__ = __webpack_require__(2);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__store_actions__ = __webpack_require__(4);
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+
+
+
+
+
+/* harmony default export */ __webpack_exports__["default"] = ({
+    props: {
+        show: {
+            type: Boolean,
+            default: false
+        }
+    },
+
+    components: {
+        modal: __WEBPACK_IMPORTED_MODULE_0__shared_modal_vue___default.a
+    },
+
+    computed: Object.assign({}, {
+        validationErrors: function validationErrors() {
+            return this.formstate && this.formstate.$invalid && this.submitClicked;
+        }
+    }, {
+        name: function name() {
+            return this.newCarePerson.user.first_name + ' ' + this.newCarePerson.user.last_name;
+        }
+    }),
+
+    methods: Object.assign({}, __WEBPACK_IMPORTED_MODULE_1_vuex__["b" /* mapActions */](['getPatientCareTeam', 'clearOpenModal', 'addNotification']), {
+        sendForm: function sendForm() {
+            var _this = this;
+
+            this.submitClicked = true;
+
+            if (this.validationErrors) {
+                return;
+            }
+
+            if (this.newCarePerson.is_billing_provider) {
+                this.newCarePerson.formatted_type = 'Billing Provider';
+            }
+
+            var id = this.newCarePerson.id ? this.newCarePerson.id : 'new';
+
+            window.axios.patch(this.updateRoute + '/' + id, {
+                careTeamMember: this.newCarePerson,
+                patientId: this.patientId
+            }).then(function (response) {
+                _this.newCarePerson.id = response.data.carePerson.id;
+                _this.newCarePerson.formatted_type = response.data.carePerson.formatted_type;
+
+                _this.getPatientCareTeam(_this.patientId);
+                Object.assign(_this.$data, _this.$options.data.apply(_this));
+                _this.clearOpenModal();
+
+                _this.addNotification({
+                    title: "Successfully saved Care Person",
+                    text: "",
+                    type: "success",
+                    timeout: true
+                });
+
+                //HACK to replace select2 with newly added provider on appointments page
+                var carePerson = response.data.carePerson;
+
+                $('#providerBox').replaceWith('<select id="provider" ' + 'name="provider"' + 'class="provider selectpickerX dropdownValid form-control" ' + 'data-size="10" disabled>  ' + '<option value="' + carePerson.user.id + '" selected>' + carePerson.user.first_name + ' ' + carePerson.user.last_name + '</option></select>');
+
+                $('#providerDiv').css('padding-bottom', '10px');
+                $("#save").append('<input type="hidden" value="' + carePerson.user.id + '" id="provider" name="provider">');
+            }, function (response) {
+                console.log(response.data);
+            });
+        },
+        fieldClassName: function fieldClassName(field) {
+            if (!field) {
+                return '';
+            }
+            if ((field.$touched || field.$submitted) && field.$valid) {
+                return 'has-success';
+            }
+            if ((field.$touched || field.$submitted) && field.$invalid) {
+                return 'has-danger';
+            }
+        }
+    }),
+
+    data: function data() {
+        return {
+            submitClicked: false,
+            updateRoute: $('meta[name="provider-update-route"]').attr('content'),
+            patientId: $('meta[name="patient_id"]').attr('content'),
+            formstate: {},
+
+            newCarePerson: {
+                id: 'new',
+                formatted_type: 'External',
+                alert: false,
+                is_billing_provider: false,
+                user: {
+                    id: '',
+                    email: '',
+                    first_name: '',
+                    last_name: '',
+                    address: '',
+                    address2: '',
+                    city: '',
+                    state: '',
+                    zip: '',
+                    phone_numbers: {
+                        0: {
+                            id: '',
+                            number: ''
+                        }
+                    },
+                    primary_practice: {
+                        id: '',
+                        display_name: ''
+                    },
+                    provider_info: {
+                        id: '',
+                        qualification: '',
+                        specialty: ''
+                    }
+                }
+            },
+            specialtiesOptions: [{ id: "Abdominal Radiology", text: "Abdominal Radiology" }, { id: "Addiction Psychiatry", text: "Addiction Psychiatry" }, { id: "Adolescent Medicine", text: "Adolescent Medicine" }, { id: "Adult Reconstructive Orthopaedics", text: "Adult Reconstructive Orthopaedics" }, {
+                id: "Advanced Heart Failure & Transplant Cardiology",
+                text: "Advanced Heart Failure & Transplant Cardiology"
+            }, { id: "Allergy & Immunology", text: "Allergy & Immunology" }, { id: "Anesthesiology", text: "Anesthesiology" }, { id: "Biochemical Genetics", text: "Biochemical Genetics" }, { id: "Blood Banking - Transfusion Medicine", text: "Blood Banking -T ransfusion Medicine" }, { id: "Cardiology", text: "Cardiology" }, { id: "Cardiothoracic Radiology", text: "Cardiothoracic Radiology" }, { id: "Cardiovascular Disease", text: "Cardiovascular Disease" }, { id: "Chemical Pathology", text: "Chemical Pathology" }, { id: "Child & Adolescent Psychiatry", text: "Child & Adolescent Psychiatry" }, { id: "Child Abuse Pediatrics", text: "Child Abuse Pediatrics" }, { id: "Child Neurology", text: "Child Neurology" }, { id: "Clinical & Laboratory Immunology", text: "Clinical & Laboratory Immunology" }, { id: "Clinical Cardiac Electrophysiology", text: "Clinical Cardiac Electrophysiology" }, { id: "Clinical Neurophysiology", text: "Clinical Neurophysiology" }, { id: "Colon & Rectal Surgery", text: "Colon & Rectal Surgery" }, { id: "Congenital Cardiac Surgery", text: "Congenital Cardiac Surgery" }, { id: "Craniofacial Surgery", text: "Craniofacial Surgery" }, { id: "Critical Care Medicine", text: "Critical Care Medicine" }, { id: "Critical Care Medicine", text: "Critical Care Medicine" }, { id: "Cytopathology", text: "Cytopathology" }, { id: "Dermatology", text: "Dermatology" }, { id: "Dermatopathology", text: "Dermatopathology" }, { id: "Developmental-Behavioral Pediatrics", text: "Developmental-Behavioral Pediatrics" }, { id: "Ears, Nose, Throat (ENT)", text: "Ears, Nose, Throat (ENT)" }, { id: "Emergency Medicine", text: "Emergency Medicine" }, { id: "Endocrinology, Diabetes & Metabolism", text: "Endocrinology, Diabetes & Metabolism" }, { id: "Endovascular Surgical Neuroradiology", text: "Endovascular Surgical Neuroradiology" }, { id: "Family Medicine", text: "Family Medicine" }, { id: "Family Practice", text: "Family Practice" }, {
+                id: "Female Pelvic Medicine & Reconstructive Surgery",
+                text: "Female Pelvic Medicine & Reconstructive Surgery"
+            }, { id: "Foot & Ankle Orthopaedics", text: "Foot & Ankle Orthopaedics" }, { id: "Forensic Pathology", text: "Forensic Pathology" }, { id: "Forensic Psychiatry", text: "Forensic Psychiatry" }, { id: "Gastroenterology", text: "Gastroenterology" }, { id: "Geriatric Medicine", text: "Geriatric Medicine" }, { id: "Geriatric Psychiatry", text: "Geriatric Psychiatry" }, { id: "Hand Surgery", text: "Hand Surgery" }, { id: "Hematology", text: "Hematology" }, { id: "Hematology & Oncology", text: "Hematology & Oncology" }, { id: "Homecare Nurse", text: "Homecare Nurse" }, { id: "Infectious Disease", text: "Infectious Disease" }, { id: "Internal Medicine", text: "Internal Medicine" }, { id: "Internal Medicine-Pediatrics", text: "Internal Medicine-Pediatrics" }, { id: "Interventional Cardiology", text: "Interventional Cardiology" }, { id: "MD", text: "MD" }, { id: "Medical Genetics", text: "Medical Genetics" }, { id: "Medical Microbiology", text: "Medical Microbiology" }, { id: "Medical Toxicology", text: "Medical Toxicology" }, { id: "Molecular Genetic Pathology", text: "Molecular Genetic Pathology" }, { id: "Muscoskeletal Radiology", text: "Muscoskeletal Radiology" }, { id: "Musculoskeletal Oncology", text: "Musculoskeletal Oncology" }, { id: "Neonatal-Perinatal Medicine", text: "Neonatal-Perinatal Medicine" }, { id: "Nephrology", text: "Nephrology" }, { id: "Neurological Surgery", text: "Neurological Surgery" }, { id: "Neurology", text: "Neurology" }, { id: "Neuromuscular Medicine", text: "Neuromuscular Medicine" }, { id: "Neuroradiology", text: "Neuroradiology" }, { id: "Nuclear Medicine", text: "Nuclear Medicine" }, { id: "Nuclear Radiology", text: "Nuclear Radiology" }, { id: "Obstetric Anesthesiology", text: "Obstetric Anesthesiology" }, { id: "Obstetrics & Gynecology", text: "Obstetrics & Gynecology" }, { id: "Oncology", text: "Oncology" }, {
+                id: "Ophthalmic Plastic & Reconstructive Surgery",
+                text: "Ophthalmic Plastic & Reconstructive Surgery"
+            }, { id: "Ophthalmology", text: "Ophthalmology" }, { id: "Orthopaedic Sports Medicine", text: "Orthopaedic Sports Medicine" }, { id: "Orthopaedic Surgery", text: "Orthopaedic Surgery" }, { id: "Orthopaedic Surgery of the Spine", text: "Orthopaedic Surgery of the Spine" }, { id: "Orthopaedic Trauma", text: "Orthopaedic Trauma" }, { id: "Otolaryngology", text: "Otolaryngology" }, { id: "Otology - Neurotology", text: "Otology - Neurotology" }, { id: "Pain Medicine", text: "Pain Medicine" }, { id: "Pathology-Anatomic & Clinical", text: "Pathology-Anatomic & Clinical" }, { id: "Pediatric Anesthesiology", text: "Pediatric Anesthesiology" }, { id: "Pediatric Cardiology", text: "Pediatric Cardiology" }, { id: "Pediatric Critical Care Medicine", text: "Pediatric Critical Care Medicine" }, { id: "Pediatric Emergency Medicine", text: "Pediatric Emergency Medicine" }, { id: "Pediatric Endocrinology", text: "Pediatric Endocrinology" }, { id: "Pediatric Gastroenterology", text: "Pediatric Gastroenterology" }, { id: "Pediatric Hematology-Oncology", text: "Pediatric Hematology-Oncology" }, { id: "Pediatric Infectious Diseases", text: "Pediatric Infectious Diseases" }, { id: "Pediatric Nephrology", text: "Pediatric Nephrology" }, { id: "Pediatric Orthopaedics", text: "Pediatric Orthopaedics" }, { id: "Pediatric Otolaryngology", text: "Pediatric Otolaryngology" }, { id: "Pediatric Pathology", text: "Pediatric Pathology" }, { id: "Pediatric Pulmonology", text: "Pediatric Pulmonology" }, { id: "Pediatric Radiology", text: "Pediatric Radiology" }, { id: "Pediatric Rheumatology", text: "Pediatric Rheumatology" }, { id: "Pediatric Sports Medicine", text: "Pediatric Sports Medicine" }, { id: "Pediatric Surgery", text: "Pediatric Surgery" }, { id: "Pediatric Transplant Hepatology", text: "Pediatric Transplant Hepatology" }, { id: "Pediatric Urology", text: "Pediatric Urology" }, { id: "Pediatrics", text: "Pediatrics" }, { id: "Physical Medicine & Rehabilitation", text: "Physical Medicine & Rehabilitation" }, { id: "Physical Therapy", text: "Physical Therapy" }, { id: "Plastic Surgery", text: "Plastic Surgery" }, { id: "Preventive Medicine", text: "Preventive Medicine" }, { id: "Procedural Dermatology", text: "Procedural Dermatology" }, { id: "Psychiatry", text: "Psychiatry" }, { id: "Pulmonary Disease", text: "Pulmonary Disease" }, {
+                id: "Pulmonary Disease & Critical Care Medicine",
+                text: "Pulmonary Disease & Critical Care Medicine"
+            }, { id: "Radiation Oncology", text: "Radiation Oncology" }, { id: "Radiology-Diagnostic", text: "Radiology-Diagnostic" }, { id: "Rheumatology", text: "Rheumatology" }, { id: "Sleep Medicine", text: "Sleep Medicine" }, { id: "Social Worker", text: "Social Worker" }, { id: "Spinal Cord Injury Medicine", text: "Spinal Cord Injury Medicine" }, { id: "Sports Medicine", text: "Sports Medicine" }, { id: "Surgery-General", text: "Surgery-General" }, { id: "Surgical Critical Care", text: "Surgical Critical Care" }, { id: "Therapist", text: "Therapist" }, { id: "Thoracic Surgery", text: "Thoracic Surgery" }, { id: "Thoracic Surgery-Integrated", text: "Thoracic Surgery-Integrated" }, { id: "Transplant Hepatology", text: "Transplant Hepatology" }, { id: "Urology", text: "Urology" }, { id: "Vascular & Interventional Radiology", text: "Vascular & Interventional Radiology" }, { id: "Vascular Surgery", text: "Vascular Surgery" }]
+        };
+    }
+});
+
+/***/ }),
+/* 82 */
+/***/ (function(module, exports, __webpack_require__) {
+
+// style-loader: Adds some css to the DOM by adding a <style> tag
+
+// load the styles
+var content = __webpack_require__(83);
+if(typeof content === 'string') content = [[module.i, content, '']];
+if(content.locals) module.exports = content.locals;
+// add the styles to the DOM
+var update = __webpack_require__(8)("5ffea96d", content, false);
+// Hot Module Replacement
+if(false) {
+ // When the styles change, update the <style> tags
+ if(!content.locals) {
+   module.hot.accept("!!../../../../../node_modules/css-loader/index.js!../../../../../node_modules/vue-loader/lib/style-compiler/index.js?{\"vue\":true,\"id\":\"data-v-c554be10\",\"scoped\":false,\"hasInlineConfig\":true}!../../../../../node_modules/vue-loader/lib/selector.js?type=styles&index=0!./modal.vue", function() {
+     var newContent = require("!!../../../../../node_modules/css-loader/index.js!../../../../../node_modules/vue-loader/lib/style-compiler/index.js?{\"vue\":true,\"id\":\"data-v-c554be10\",\"scoped\":false,\"hasInlineConfig\":true}!../../../../../node_modules/vue-loader/lib/selector.js?type=styles&index=0!./modal.vue");
+     if(typeof newContent === 'string') newContent = [[module.id, newContent, '']];
+     update(newContent);
+   });
+ }
+ // When the module is disposed, remove the <style> tags
+ module.hot.dispose(function() { update(); });
+}
+
+/***/ }),
+/* 83 */
+/***/ (function(module, exports, __webpack_require__) {
+
+exports = module.exports = __webpack_require__(6)(undefined);
+// imports
+
+
+// module
+exports.push([module.i, "\n.close-button {\n    font-size: 25px;\n    font-weight: 100;\n    color: tomato;\n    position: absolute;\n    top: 15px;\n    left: 25px;\n    cursor: pointer;\n}\n.vue-modal-mask {\n    position: fixed;\n    z-index: 1050;\n    top: 0;\n    left: 0;\n    width: 100%;\n    height: 100%;\n    background-color: rgba(0, 0, 0, .5);\n    display: table;\n    transition: opacity .3s ease;\n}\n.vue-modal-wrapper {\n    display: table-cell;\n    vertical-align: middle;\n}\n@media ( min-width: 768px) {\n.vue-modal-container {\n        width: 50%;\n        min-width: 430px;\n}\n}\n.vue-modal-container {\n    margin: 0px auto;\n    padding: 20px 30px;\n    background-color: #fff;\n    border-radius: 4px;\n    box-shadow: 0 2px 8px rgba(0, 0, 0, .33);\n    transition: all .3s ease;\n    font-family: Helvetica, Arial, sans-serif;\n    position: relative;\n    overflow-y: auto;\n    max-height: 100vh;\n\n    font-size: 14rem;\n    color: #7b7d81;\n}\n.vue-modal-header h3 {\n    margin: 0;\n}\n.vue-modal-header, .vue-modal-footer {\n    border: none;\n}\n.vue-modal-default-button {\n    float: right;\n}\n.vue-modal-body {\n    padding: 5px;\n}\n\n/*\n * the following styles are auto-applied to elements with\n * v-transition=\"modal\" when their visiblity is toggled\n * by Vue.js.\n *\n * You can easily play with the modal transition by editing\n * these styles.\n */\n.vue-modal-enter {\n    opacity: 0;\n}\n.vue-modal-leave-active {\n    opacity: 0;\n}\n.vue-modal-enter .vue-modal-container,\n.vue-modal-leave-active .vue-modal-container {\n    -webkit-transform: scale(1.3);\n    transform: scale(1.3);\n}\n", ""]);
+
+// exports
+
+
+/***/ }),
+/* 84 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+
+/* harmony default export */ __webpack_exports__["default"] = ({});
+
+/***/ }),
+/* 85 */
+/***/ (function(module, exports, __webpack_require__) {
+
+module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;
+  return _c('transition', {
+    attrs: {
+      "name": "vue-modal"
+    }
+  }, [_c('div', {
+    staticClass: "vue-modal-mask"
+  }, [_c('div', {
+    staticClass: "vue-modal-wrapper"
+  }, [_c('div', {
+    staticClass: "vue-modal-container"
+  }, [_c('div', {
+    staticClass: "vue-modal-header"
+  }, [_vm._t("header")], 2), _vm._v(" "), _c('div', {
+    staticClass: "vue-modal-body"
+  }, [_vm._t("body")], 2), _vm._v(" "), _c('div', {
+    staticClass: "vue-modal-footer"
+  }, [_vm._t("footer")], 2)])])])])
+},staticRenderFns: []}
+module.exports.render._withStripped = true
+if (false) {
+  module.hot.accept()
+  if (module.hot.data) {
+     require("vue-hot-reload-api").rerender("data-v-c554be10", module.exports)
+  }
+}
+
+/***/ }),
+/* 86 */
+/***/ (function(module, exports, __webpack_require__) {
+
+module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;
+  return _c('modal', {
+    directives: [{
+      name: "show",
+      rawName: "v-show",
+      value: (_vm.show),
+      expression: "show"
+    }]
+  }, [_c('template', {
+    slot: "header"
+  }, [_c('button', {
+    staticClass: "close",
+    attrs: {
+      "type": "button"
+    },
+    on: {
+      "click": _vm.clearOpenModal
+    }
+  }, [_vm._v("×")]), _vm._v(" "), _c('h4', {
+    staticClass: "modal-title"
+  }, [_vm._v("Provider Details")])]), _vm._v(" "), _c('template', {
+    slot: "body"
+  }, [(_vm.validationErrors) ? _c('div', {
+    staticClass: "row providerForm"
+  }, [_c('div', {
+    staticClass: "error-list"
+  }, [_c('h5', {
+    staticClass: "has-errors"
+  }, [_c('u', [_vm._v("There were some problems with your input. Please review the form.")])])])]) : _vm._e(), _vm._v(" "), _c('vue-form', {
+    attrs: {
+      "state": _vm.formstate
+    },
+    on: {
+      "submit": function($event) {
+        $event.preventDefault();
+        _vm.onSubmit($event)
+      }
+    }
+  }, [_c('div', {
+    staticClass: "row providerForm"
+  }, [_c('div', {
+    staticClass: "form-group"
+  }, [_c('label', {
+    staticClass: "col-md-3 control-label"
+  }, [_vm._v("Provider Name")]), _vm._v(" "), _c('div', {
+    staticClass: "col-md-9"
+  }, [_c('div', {
+    staticClass: "row"
+  }, [_c('div', {
+    staticClass: "form-group required-field col-md-6"
+  }, [_c('validate', {
+    class: _vm.fieldClassName(_vm.formstate.first_name),
+    attrs: {
+      "auto-label": ""
+    }
+  }, [_c('div', {
+    staticClass: "col-md-12"
+  }, [_c('input', {
+    directives: [{
+      name: "model",
+      rawName: "v-model",
+      value: (_vm.newCarePerson.user.first_name),
+      expression: "newCarePerson.user.first_name"
+    }],
+    staticClass: "form-control input-md",
+    attrs: {
+      "type": "text",
+      "id": "first_name",
+      "name": "first_name",
+      "placeholder": "First",
+      "required": ""
+    },
+    domProps: {
+      "value": (_vm.newCarePerson.user.first_name)
+    },
+    on: {
+      "input": function($event) {
+        if ($event.target.composing) { return; }
+        _vm.newCarePerson.user.first_name = $event.target.value
+      }
+    }
+  })]), _vm._v(" "), _c('div', {
+    staticClass: "col-md-12"
+  }, [_c('field-messages', {
+    attrs: {
+      "name": "first_name",
+      "show": "$untouched || $touched || $submitted"
+    }
+  }, [_c('div'), _vm._v(" "), _c('div', {
+    staticClass: "validation-error has-errors text-right",
+    slot: "required"
+  }, [_vm._v("\n                                                *required\n                                            ")])])], 1)])], 1), _vm._v(" "), _c('div', {
+    staticClass: "form-group required-field col-md-6"
+  }, [_c('validate', {
+    class: _vm.fieldClassName(_vm.formstate.last_name),
+    attrs: {
+      "auto-label": ""
+    }
+  }, [_c('div', {
+    staticClass: "col-md-12"
+  }, [_c('input', {
+    directives: [{
+      name: "model",
+      rawName: "v-model",
+      value: (_vm.newCarePerson.user.last_name),
+      expression: "newCarePerson.user.last_name"
+    }],
+    staticClass: "form-control input-md",
+    attrs: {
+      "type": "text",
+      "id": "last_name",
+      "name": "last_name",
+      "placeholder": "Last",
+      "required": ""
+    },
+    domProps: {
+      "value": (_vm.newCarePerson.user.last_name)
+    },
+    on: {
+      "input": function($event) {
+        if ($event.target.composing) { return; }
+        _vm.newCarePerson.user.last_name = $event.target.value
+      }
+    }
+  })]), _vm._v(" "), _c('div', {
+    staticClass: "col-md-12"
+  }, [_c('field-messages', {
+    attrs: {
+      "name": "last_name",
+      "show": "$untouched || $touched || $submitted"
+    }
+  }, [_c('div'), _vm._v(" "), _c('div', {
+    staticClass: "validation-error has-errors text-right",
+    slot: "required"
+  }, [_vm._v("\n                                                *required\n                                            ")])])], 1)])], 1)])])])]), _vm._v(" "), _c('div', {
+    staticClass: "row providerForm"
+  }, [_c('div', {
+    staticClass: "form-group"
+  }, [_c('label', {
+    staticClass: "col-md-3 control-label"
+  }, [_vm._v("Specialty")]), _vm._v(" "), _c('div', {
+    staticClass: "col-md-9"
+  }, [_c('div', {
+    staticClass: "row"
+  }, [_c('div', {
+    staticClass: "col-md-12"
+  }, [_c('validate', {
+    class: _vm.fieldClassName(_vm.formstate.specialty),
+    attrs: {
+      "auto-label": ""
+    }
+  }, [_c('div', {
+    staticClass: "col-md-12"
+  }, [_c('select2', {
+    staticStyle: {
+      "width": "100%"
+    },
+    attrs: {
+      "options": _vm.specialtiesOptions,
+      "name": "specialty"
+    },
+    model: {
+      value: (_vm.newCarePerson.user.provider_info.specialty),
+      callback: function($$v) {
+        _vm.newCarePerson.user.provider_info.specialty = $$v
+      },
+      expression: "newCarePerson.user.provider_info.specialty"
+    }
+  }, [_c('option', {
+    attrs: {
+      "disabled": "",
+      "value": "0"
+    }
+  }, [_vm._v("Select one")])])], 1), _vm._v(" "), _c('div', {
+    staticClass: "col-md-12"
+  }, [_c('field-messages', {
+    attrs: {
+      "name": "specialty",
+      "show": "$touched || $submitted"
+    }
+  }, [_c('div'), _vm._v(" "), _c('div', {
+    staticClass: "validation-error has-errors text-right",
+    slot: "required"
+  }, [_vm._v("\n                                                *required\n                                            ")])])], 1)])], 1)])])])]), _vm._v(" "), _c('div', {
+    staticClass: "row providerForm"
+  }, [_c('div', {
+    staticClass: "form-group"
+  }, [_c('label', {
+    staticClass: "col-md-3 control-label"
+  }, [_vm._v("Address")]), _vm._v(" "), _c('div', {
+    staticClass: "col-md-9"
+  }, [_c('div', {
+    staticClass: "row"
+  }, [_c('div', {
+    staticClass: "col-md-8"
+  }, [_c('validate', {
+    class: _vm.fieldClassName(_vm.formstate.address),
+    attrs: {
+      "auto-label": ""
+    }
+  }, [_c('div', {
+    staticClass: "col-md-12"
+  }, [_c('input', {
+    directives: [{
+      name: "model",
+      rawName: "v-model",
+      value: (_vm.newCarePerson.user.address),
+      expression: "newCarePerson.user.address"
+    }],
+    staticClass: "form-control input-md",
+    attrs: {
+      "type": "text",
+      "id": "address",
+      "name": "address",
+      "placeholder": "Line 1"
+    },
+    domProps: {
+      "value": (_vm.newCarePerson.user.address)
+    },
+    on: {
+      "input": function($event) {
+        if ($event.target.composing) { return; }
+        _vm.newCarePerson.user.address = $event.target.value
+      }
+    }
+  })]), _vm._v(" "), _c('div', {
+    staticClass: "col-md-12"
+  }, [_c('field-messages', {
+    attrs: {
+      "name": "address",
+      "show": "$touched || $submitted"
+    }
+  }, [_c('div'), _vm._v(" "), _c('div', {
+    staticClass: "validation-error has-errors text-right",
+    slot: "required"
+  }, [_vm._v("\n                                                *required\n                                            ")])])], 1)])], 1), _vm._v(" "), _c('div', {
+    staticClass: "col-md-4"
+  }, [_c('validate', {
+    class: _vm.fieldClassName(_vm.formstate.address_2),
+    attrs: {
+      "auto-label": ""
+    }
+  }, [_c('div', {
+    staticClass: "col-md-12"
+  }, [_c('input', {
+    directives: [{
+      name: "model",
+      rawName: "v-model",
+      value: (_vm.newCarePerson.user.address2),
+      expression: "newCarePerson.user.address2"
+    }],
+    staticClass: "form-control input-md",
+    attrs: {
+      "type": "text",
+      "id": "address_2",
+      "name": "address_2",
+      "placeholder": "Line 2"
+    },
+    domProps: {
+      "value": (_vm.newCarePerson.user.address2)
+    },
+    on: {
+      "input": function($event) {
+        if ($event.target.composing) { return; }
+        _vm.newCarePerson.user.address2 = $event.target.value
+      }
+    }
+  })]), _vm._v(" "), _c('div', {
+    staticClass: "col-md-12"
+  }, [_c('field-messages', {
+    attrs: {
+      "name": "address_2",
+      "show": "$touched || $submitted"
+    }
+  }, [_c('div'), _vm._v(" "), _c('div', {
+    staticClass: "validation-error has-errors text-right",
+    slot: "required"
+  })])], 1)])], 1)]), _vm._v(" "), _c('div', {
+    staticClass: "row"
+  }, [_c('div', {
+    staticClass: "col-md-4"
+  }, [_c('validate', {
+    class: _vm.fieldClassName(_vm.formstate.city),
+    attrs: {
+      "auto-label": ""
+    }
+  }, [_c('div', {
+    staticClass: "col-md-12"
+  }, [_c('input', {
+    directives: [{
+      name: "model",
+      rawName: "v-model",
+      value: (_vm.newCarePerson.user.city),
+      expression: "newCarePerson.user.city"
+    }],
+    staticClass: "form-control input-md",
+    attrs: {
+      "type": "text",
+      "id": "city",
+      "name": "city",
+      "placeholder": "City"
+    },
+    domProps: {
+      "value": (_vm.newCarePerson.user.city)
+    },
+    on: {
+      "input": function($event) {
+        if ($event.target.composing) { return; }
+        _vm.newCarePerson.user.city = $event.target.value
+      }
+    }
+  })]), _vm._v(" "), _c('div', {
+    staticClass: "col-md-12"
+  }, [_c('field-messages', {
+    attrs: {
+      "name": "city",
+      "show": "$touched || $submitted"
+    }
+  }, [_c('div'), _vm._v(" "), _c('div', {
+    staticClass: "validation-error has-errors text-right",
+    slot: "required"
+  }, [_vm._v("\n                                                *required\n                                            ")])])], 1)])], 1), _vm._v(" "), _c('div', {
+    staticClass: "col-md-4"
+  }, [_c('validate', {
+    class: _vm.fieldClassName(_vm.formstate.state),
+    attrs: {
+      "auto-label": ""
+    }
+  }, [_c('div', {
+    staticClass: "col-md-12"
+  }, [_c('input', {
+    directives: [{
+      name: "model",
+      rawName: "v-model",
+      value: (_vm.newCarePerson.user.state),
+      expression: "newCarePerson.user.state"
+    }],
+    staticClass: "form-control input-md",
+    attrs: {
+      "type": "text",
+      "id": "state",
+      "name": "state",
+      "placeholder": "State"
+    },
+    domProps: {
+      "value": (_vm.newCarePerson.user.state)
+    },
+    on: {
+      "input": function($event) {
+        if ($event.target.composing) { return; }
+        _vm.newCarePerson.user.state = $event.target.value
+      }
+    }
+  })]), _vm._v(" "), _c('div', {
+    staticClass: "col-md-12"
+  }, [_c('field-messages', {
+    attrs: {
+      "name": "state",
+      "show": "$touched || $submitted"
+    }
+  }, [_c('div'), _vm._v(" "), _c('div', {
+    staticClass: "validation-error has-errors text-right",
+    slot: "required"
+  }, [_vm._v("\n                                                *required\n                                            ")])])], 1)])], 1), _vm._v(" "), _c('div', {
+    staticClass: "col-md-4"
+  }, [_c('validate', {
+    class: _vm.fieldClassName(_vm.formstate.zip),
+    attrs: {
+      "auto-label": ""
+    }
+  }, [_c('div', {
+    staticClass: "col-md-12"
+  }, [_c('input', {
+    directives: [{
+      name: "model",
+      rawName: "v-model",
+      value: (_vm.newCarePerson.user.zip),
+      expression: "newCarePerson.user.zip"
+    }],
+    staticClass: "form-control input-md",
+    attrs: {
+      "type": "text",
+      "id": "zip",
+      "name": "zip",
+      "placeholder": "Zip"
+    },
+    domProps: {
+      "value": (_vm.newCarePerson.user.zip)
+    },
+    on: {
+      "input": function($event) {
+        if ($event.target.composing) { return; }
+        _vm.newCarePerson.user.zip = $event.target.value
+      }
+    }
+  })]), _vm._v(" "), _c('div', {
+    staticClass: "col-md-12"
+  }, [_c('field-messages', {
+    attrs: {
+      "name": "zip",
+      "show": "$touched || $submitted"
+    }
+  }, [_c('div'), _vm._v(" "), _c('div', {
+    staticClass: "validation-error has-errors text-right",
+    slot: "required"
+  }, [_vm._v("\n                                                *required\n                                            ")])])], 1)])], 1)])])])]), _vm._v(" "), _c('div', {
+    staticClass: "row providerForm"
+  }, [_c('div', {
+    staticClass: "form-group"
+  }, [_c('label', {
+    staticClass: "col-md-3 control-label"
+  }, [_vm._v("Phone Number")]), _vm._v(" "), _c('div', {
+    staticClass: "col-md-9"
+  }, [_c('div', {
+    staticClass: "row"
+  }, [_c('div', {
+    staticClass: "form-group required-field col-md-12"
+  }, [_c('validate', {
+    class: _vm.fieldClassName(_vm.formstate.phone),
+    attrs: {
+      "auto-label": ""
+    }
+  }, [_c('div', {
+    staticClass: "col-md-12"
+  }, [_c('input', {
+    directives: [{
+      name: "model",
+      rawName: "v-model",
+      value: (_vm.newCarePerson.user.phone_numbers[0].number),
+      expression: "newCarePerson.user.phone_numbers[0].number"
+    }],
+    staticClass: "form-control input-md",
+    attrs: {
+      "type": "text",
+      "id": "phone",
+      "name": "phone",
+      "placeholder": "xxx-xxx-xxxx"
+    },
+    domProps: {
+      "value": (_vm.newCarePerson.user.phone_numbers[0].number)
+    },
+    on: {
+      "input": function($event) {
+        if ($event.target.composing) { return; }
+        _vm.newCarePerson.user.phone_numbers[0].number = $event.target.value
+      }
+    }
+  })]), _vm._v(" "), _c('div', {
+    staticClass: "col-md-12"
+  }, [_c('field-messages', {
+    attrs: {
+      "name": "phone",
+      "show": "$touched || $submitted"
+    }
+  }, [_c('div'), _vm._v(" "), _c('div', {
+    staticClass: "validation-error has-errors text-right",
+    slot: "required"
+  }, [_vm._v("\n                                                *required\n                                            ")])])], 1)])], 1)])])])]), _vm._v(" "), _c('div', {
+    staticClass: "row providerForm"
+  }, [_c('div', {
+    staticClass: "form-group"
+  }, [_c('label', {
+    staticClass: "col-md-3 control-label"
+  }, [_vm._v("Practice Name")]), _vm._v(" "), _c('div', {
+    staticClass: "col-md-9"
+  }, [_c('div', {
+    staticClass: "row"
+  }, [_c('div', {
+    staticClass: "form-group required-field col-md-12"
+  }, [_c('validate', {
+    class: _vm.fieldClassName(_vm.formstate.practice),
+    attrs: {
+      "auto-label": ""
+    }
+  }, [_c('div', {
+    staticClass: "col-md-12"
+  }, [_c('input', {
+    directives: [{
+      name: "model",
+      rawName: "v-model",
+      value: (_vm.newCarePerson.user.primary_practice.display_name),
+      expression: "newCarePerson.user.primary_practice.display_name"
+    }],
+    staticClass: "form-control input-md",
+    attrs: {
+      "type": "text",
+      "id": "practice",
+      "name": "practice",
+      "placeholder": ""
+    },
+    domProps: {
+      "value": (_vm.newCarePerson.user.primary_practice.display_name)
+    },
+    on: {
+      "input": function($event) {
+        if ($event.target.composing) { return; }
+        _vm.newCarePerson.user.primary_practice.display_name = $event.target.value
+      }
+    }
+  })]), _vm._v(" "), _c('div', {
+    staticClass: "col-md-12"
+  }, [_c('field-messages', {
+    attrs: {
+      "name": "practice",
+      "show": "$touched || $submitted"
+    }
+  }, [_c('div'), _vm._v(" "), _c('div', {
+    staticClass: "validation-error has-errors text-right",
+    slot: "required"
+  }, [_vm._v("\n                                                *required\n                                            ")])])], 1)])], 1)])])])]), _vm._v(" "), _c('div', {
+    staticClass: "row providerForm"
+  }, [_c('div', {
+    staticClass: "form-group"
+  }, [_c('label', {
+    staticClass: "col-md-3 control-label"
+  }, [_vm._v("Email")]), _vm._v(" "), _c('div', {
+    staticClass: "col-md-9"
+  }, [_c('div', {
+    staticClass: "row"
+  }, [_c('div', {
+    staticClass: "form-group required-field col-md-6"
+  }, [_c('validate', {
+    class: _vm.fieldClassName(_vm.formstate.email),
+    attrs: {
+      "auto-label": ""
+    }
+  }, [_c('div', {
+    staticClass: "col-md-12"
+  }, [_c('input', {
+    directives: [{
+      name: "model",
+      rawName: "v-model",
+      value: (_vm.newCarePerson.user.email),
+      expression: "newCarePerson.user.email"
+    }],
+    staticClass: "form-control input-md",
+    attrs: {
+      "type": "email",
+      "id": "email",
+      "name": "email"
+    },
+    domProps: {
+      "value": (_vm.newCarePerson.user.email)
+    },
+    on: {
+      "input": function($event) {
+        if ($event.target.composing) { return; }
+        _vm.newCarePerson.user.email = $event.target.value
+      }
+    }
+  })]), _vm._v(" "), _c('div', {
+    staticClass: "col-md-12"
+  }, [_c('field-messages', {
+    attrs: {
+      "name": "email",
+      "show": "$touched || $submitted"
+    }
+  }, [_c('div'), _vm._v(" "), _c('div', {
+    staticClass: "validation-error has-errors text-right",
+    slot: "required"
+  }, [_vm._v("\n                                                *required\n                                            ")]), _vm._v(" "), _c('div', {
+    staticClass: "validation-error has-errors text-right",
+    slot: "email"
+  }, [_vm._v("\n                                                Please enter a valid email\n                                            ")])])], 1)])], 1), _vm._v(" "), _c('div', {
+    staticClass: "form-group col-md-6"
+  }, [_c('label', {
+    staticClass: "col-md-3 control-label"
+  }, [_vm._v("Send Alerts")]), _vm._v(" "), _c('div', {
+    staticClass: "col-md-9"
+  }, [_c('div', {
+    staticClass: "row"
+  }, [_c('div', {
+    staticClass: "form-group required-field col-md-12"
+  }, [_c('validate', {
+    class: _vm.fieldClassName(_vm.formstate.send_alerts),
+    attrs: {
+      "auto-label": ""
+    }
+  }, [_c('div', {
+    staticClass: "col-md-12"
+  }, [_c('input', {
+    directives: [{
+      name: "model",
+      rawName: "v-model",
+      value: (_vm.newCarePerson.alert),
+      expression: "newCarePerson.alert"
+    }],
+    staticClass: "form-control input-md",
+    staticStyle: {
+      "display": "inline"
+    },
+    attrs: {
+      "id": "send_alerts",
+      "name": "send_alerts",
+      "type": "checkbox",
+      "disabled": !_vm.newCarePerson.user.email || _vm.formstate.email && !_vm.formstate.email.$valid
+    },
+    domProps: {
+      "checked": Array.isArray(_vm.newCarePerson.alert) ? _vm._i(_vm.newCarePerson.alert, null) > -1 : (_vm.newCarePerson.alert)
+    },
+    on: {
+      "__c": function($event) {
+        var $$a = _vm.newCarePerson.alert,
+          $$el = $event.target,
+          $$c = $$el.checked ? (true) : (false);
+        if (Array.isArray($$a)) {
+          var $$v = null,
+            $$i = _vm._i($$a, $$v);
+          if ($$c) {
+            $$i < 0 && (_vm.newCarePerson.alert = $$a.concat($$v))
+          } else {
+            $$i > -1 && (_vm.newCarePerson.alert = $$a.slice(0, $$i).concat($$a.slice($$i + 1)))
+          }
+        } else {
+          _vm.newCarePerson.alert = $$c
+        }
+      }
+    }
+  })]), _vm._v(" "), _c('div', {
+    staticClass: "col-md-12"
+  }, [_c('field-messages', {
+    attrs: {
+      "name": "send_alerts",
+      "show": "$touched || $submitted"
+    }
+  }, [_c('div'), _vm._v(" "), _c('div', {
+    staticClass: "validation-error has-errors text-right",
+    slot: "required"
+  }, [_vm._v("\n                                                            *required\n                                                        ")])]), _vm._v(" "), (!_vm.newCarePerson.user.email || _vm.formstate.email && !_vm.formstate.email.$valid) ? _c('div', {
+    staticClass: "validation-error text-left",
+    staticStyle: {
+      "color": "green"
+    }
+  }, [_vm._v("\n                                                        Email needs to be filled out and valid.\n                                                    ")]) : _vm._e()], 1)])], 1)])])])])])])]), _vm._v(" "), _c('div', {
+    staticClass: "row providerForm"
+  }, [_c('div', {
+    staticClass: "form-group"
+  }, [_c('label', {
+    staticClass: "col-md-3 control-label"
+  }, [_vm._v("Clinical Type")]), _vm._v(" "), _c('div', {
+    staticClass: "col-md-9"
+  }, [_c('div', {
+    staticClass: "row"
+  }, [_c('div', {
+    staticClass: "form-group required-field col-md-6"
+  }, [_c('validate', {
+    class: _vm.fieldClassName(_vm.formstate.qualification),
+    attrs: {
+      "auto-label": ""
+    }
+  }, [_c('div', {
+    staticClass: "col-md-12"
+  }, [_c('select', {
+    directives: [{
+      name: "model",
+      rawName: "v-model",
+      value: (_vm.newCarePerson.user.provider_info.qualification),
+      expression: "newCarePerson.user.provider_info.qualification"
+    }],
+    staticClass: "form-control input-md",
+    attrs: {
+      "id": "qualification",
+      "name": "qualification",
+      "required": ""
+    },
+    on: {
+      "change": function($event) {
+        var $$selectedVal = Array.prototype.filter.call($event.target.options, function(o) {
+          return o.selected
+        }).map(function(o) {
+          var val = "_value" in o ? o._value : o.value;
+          return val
+        });
+        _vm.newCarePerson.user.provider_info.qualification = $event.target.multiple ? $$selectedVal : $$selectedVal[0]
+      }
+    }
+  }, [_c('option', {
+    attrs: {
+      "value": "",
+      "disabled": ""
+    }
+  }), _vm._v(" "), _c('option', {
+    attrs: {
+      "value": "clinical"
+    }
+  }, [_vm._v("Clinical (MD, RN or other)")]), _vm._v(" "), _c('option', {
+    attrs: {
+      "value": "non-clinical"
+    }
+  }, [_vm._v("Non-clinical")])])]), _vm._v(" "), _c('div', {
+    staticClass: "col-md-12"
+  }, [_c('field-messages', {
+    attrs: {
+      "name": "qualification",
+      "show": "$untouched || $touched || $submitted"
+    }
+  }, [_c('div'), _vm._v(" "), _c('div', {
+    staticClass: "validation-error has-errors text-right",
+    slot: "required"
+  }, [_vm._v("\n                                                *required\n                                            ")])])], 1)])], 1), _vm._v(" "), _c('div', {
+    staticClass: "form-group col-md-6"
+  }, [_c('label', {
+    staticClass: "col-md-3 control-label"
+  }, [_vm._v("CCM Billing Provider")]), _vm._v(" "), _c('div', {
+    staticClass: "col-md-9"
+  }, [_c('div', {
+    staticClass: "row"
+  }, [_c('div', {
+    staticClass: "form-group required-field col-md-12"
+  }, [_c('validate', {
+    class: _vm.fieldClassName(_vm.formstate.is_billing_provider),
+    attrs: {
+      "auto-label": ""
+    }
+  }, [_c('div', {
+    staticClass: "col-md-12"
+  }, [_c('input', {
+    directives: [{
+      name: "model",
+      rawName: "v-model",
+      value: (_vm.newCarePerson.is_billing_provider),
+      expression: "newCarePerson.is_billing_provider"
+    }],
+    staticClass: "form-control input-md",
+    staticStyle: {
+      "display": "inline"
+    },
+    attrs: {
+      "id": "is_billing_provider",
+      "name": "is_billing_provider",
+      "type": "checkbox"
+    },
+    domProps: {
+      "checked": Array.isArray(_vm.newCarePerson.is_billing_provider) ? _vm._i(_vm.newCarePerson.is_billing_provider, null) > -1 : (_vm.newCarePerson.is_billing_provider)
+    },
+    on: {
+      "__c": function($event) {
+        var $$a = _vm.newCarePerson.is_billing_provider,
+          $$el = $event.target,
+          $$c = $$el.checked ? (true) : (false);
+        if (Array.isArray($$a)) {
+          var $$v = null,
+            $$i = _vm._i($$a, $$v);
+          if ($$c) {
+            $$i < 0 && (_vm.newCarePerson.is_billing_provider = $$a.concat($$v))
+          } else {
+            $$i > -1 && (_vm.newCarePerson.is_billing_provider = $$a.slice(0, $$i).concat($$a.slice($$i + 1)))
+          }
+        } else {
+          _vm.newCarePerson.is_billing_provider = $$c
+        }
+      }
+    }
+  })]), _vm._v(" "), _c('div', {
+    staticClass: "col-md-12"
+  }, [_c('field-messages', {
+    attrs: {
+      "name": "is_billing_provider",
+      "show": "$touched || $submitted"
+    }
+  }, [_c('div'), _vm._v(" "), _c('div', {
+    staticClass: "validation-error has-errors text-right",
+    slot: "required"
+  }, [_vm._v("\n                                                            *required\n                                                        ")])])], 1)])], 1)])])])])])])])])], 1), _vm._v(" "), _c('template', {
+    slot: "footer"
+  }, [_c('div', {
+    staticClass: "row"
+  }, [_c('div', {
+    staticClass: "col-md-6 text-center"
+  }, [_c('button', {
+    staticClass: "btn btn-default",
+    staticStyle: {
+      "width": "50%"
+    },
+    on: {
+      "click": _vm.clearOpenModal
+    }
+  }, [_vm._v("Close")])]), _vm._v(" "), _c('div', {
+    staticClass: "col-md-6 text-center"
+  }, [_c('button', {
+    staticClass: " btn btn-info",
+    staticStyle: {
+      "width": "50%"
+    },
+    attrs: {
+      "disabled": false
+    },
+    on: {
+      "click": _vm.sendForm
+    }
+  }, [_vm._v("\n                    Save "), (false) ? _c('i', {
+    staticClass: "fa fa-spinner fa-pulse fa-fw"
+  }) : _vm._e()])])])])], 2)
+},staticRenderFns: []}
+module.exports.render._withStripped = true
+if (false) {
+  module.hot.accept()
+  if (module.hot.data) {
+     require("vue-hot-reload-api").rerender("data-v-1a3d79dc", module.exports)
+  }
+}
+
+/***/ }),
+/* 87 */
+/***/ (function(module, exports, __webpack_require__) {
+
+var disposed = false
+function injectStyle (ssrContext) {
+  if (disposed) return
+  __webpack_require__(88)
+}
+var Component = __webpack_require__(1)(
+  /* script */
+  __webpack_require__(90),
+  /* template */
+  __webpack_require__(91),
+  /* styles */
+  injectStyle,
+  /* scopeId */
+  null,
+  /* moduleIdentifier (server only) */
+  null
+)
+Component.options.__file = "/Users/michalis/Code/CLH/cpm-api/resources/assets/js/components/pages/view-care-plan/update-care-person.vue"
+if (Component.esModule && Object.keys(Component.esModule).some(function (key) {return key !== "default" && key.substr(0, 2) !== "__"})) {console.error("named exports are not supported in *.vue files.")}
+if (Component.options.functional) {console.error("[vue-loader] update-care-person.vue: functional components are not supported with templates, they should use render functions.")}
+
+/* hot reload */
+if (false) {(function () {
+  var hotAPI = require("vue-hot-reload-api")
+  hotAPI.install(require("vue"), false)
+  if (!hotAPI.compatible) return
+  module.hot.accept()
+  if (!module.hot.data) {
+    hotAPI.createRecord("data-v-4034b3a2", Component.options)
+  } else {
+    hotAPI.reload("data-v-4034b3a2", Component.options)
+  }
+  module.hot.dispose(function (data) {
+    disposed = true
+  })
+})()}
+
+module.exports = Component.exports
+
+
+/***/ }),
+/* 88 */
+/***/ (function(module, exports, __webpack_require__) {
+
+// style-loader: Adds some css to the DOM by adding a <style> tag
+
+// load the styles
+var content = __webpack_require__(89);
+if(typeof content === 'string') content = [[module.i, content, '']];
+if(content.locals) module.exports = content.locals;
+// add the styles to the DOM
+var update = __webpack_require__(8)("71432cd4", content, false);
+// Hot Module Replacement
+if(false) {
+ // When the styles change, update the <style> tags
+ if(!content.locals) {
+   module.hot.accept("!!../../../../../../node_modules/css-loader/index.js!../../../../../../node_modules/vue-loader/lib/style-compiler/index.js?{\"vue\":true,\"id\":\"data-v-4034b3a2\",\"scoped\":false,\"hasInlineConfig\":true}!../../../../../../node_modules/vue-loader/lib/selector.js?type=styles&index=0!./update-care-person.vue", function() {
+     var newContent = require("!!../../../../../../node_modules/css-loader/index.js!../../../../../../node_modules/vue-loader/lib/style-compiler/index.js?{\"vue\":true,\"id\":\"data-v-4034b3a2\",\"scoped\":false,\"hasInlineConfig\":true}!../../../../../../node_modules/vue-loader/lib/selector.js?type=styles&index=0!./update-care-person.vue");
+     if(typeof newContent === 'string') newContent = [[module.id, newContent, '']];
+     update(newContent);
+   });
+ }
+ // When the module is disposed, remove the <style> tags
+ module.hot.dispose(function() { update(); });
+}
+
+/***/ }),
+/* 89 */
+/***/ (function(module, exports, __webpack_require__) {
+
+exports = module.exports = __webpack_require__(6)(undefined);
+// imports
+
+
+// module
+exports.push([module.i, "\n.vue-modal label {\n    font-size: 14px;\n}\n.providerForm {\n    padding: 10px;\n}\n.validation-error {\n    padding: 3px;\n    margin-bottom: 10px;\n    border: 1px solid transparent;\n    border-radius: 4px;\n}\n.has-danger .form-control {\n    border-color: #ff0000;\n    box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075);\n}\n.has-errors {\n    color: #a94442;\n}\n", ""]);
+
+// exports
+
+
+/***/ }),
+/* 90 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__shared_modal_vue__ = __webpack_require__(64);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__shared_modal_vue___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0__shared_modal_vue__);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_vuex__ = __webpack_require__(2);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__store_actions__ = __webpack_require__(4);
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+
+
+
+
+
+/* harmony default export */ __webpack_exports__["default"] = ({
+    props: {
+        show: {
+            type: Boolean,
+            default: false
+        },
+        carePerson: Object
+    },
+
+    components: {
+        modal: __WEBPACK_IMPORTED_MODULE_0__shared_modal_vue___default.a
+    },
+
+    computed: Object.assign({
+        validationErrors: function validationErrors() {
+            return this.formstate && this.formstate.$invalid && this.formstate.$touched && this.submitClicked;
+        }
+    }, {
+        name: function name() {
+            return this.carePerson.user.first_name + ' ' + this.carePerson.user.last_name;
+        }
+    }),
+
+    methods: Object.assign(__WEBPACK_IMPORTED_MODULE_1_vuex__["b" /* mapActions */](['getPatientCareTeam', 'clearOpenModal', 'addNotification']), {
+        sendForm: function sendForm() {
+            var _this = this;
+
+            this.submitClicked = true;
+
+            this.sending = true;
+
+            if (this.validationErrors) {
+                return;
+            }
+
+            if (this.formData.is_billing_provider) {
+                this.formData.formatted_type = 'Billing Provider';
+            }
+
+            var id = this.formData.id ? this.formData.id : 'new';
+
+            window.axios.patch(this.updateRoute + '/' + id, {
+                careTeamMember: this.formData,
+                patientId: this.patientId
+            }).then(function (response) {
+                _this.formData.id = response.data.carePerson.id;
+                _this.formData.formatted_type = response.data.carePerson.formatted_type;
+
+                _this.getPatientCareTeam(_this.patientId);
+                Object.assign(_this.$data, _this.$options.data.apply(_this));
+
+                _this.clearOpenModal();
+
+                _this.addNotification({
+                    title: "Successfully updated " + _this.name,
+                    text: "",
+                    type: "success",
+                    timeout: true
+                });
+            }, function (response) {
+                console.log(response.data);
+            });
+        },
+        fieldClassName: function fieldClassName(field) {
+            if (!field) {
+                return '';
+            }
+            if ((field.$touched || field.$submitted) && field.$valid) {
+                return 'has-success';
+            }
+            if ((field.$touched || field.$submitted) && field.$invalid) {
+                return 'has-danger';
+            }
+        }
+    }),
+
+    created: function created() {
+        this.formData = JSON.parse(JSON.stringify(this.carePerson));
+    },
+    data: function data() {
+        return {
+            submitClicked: false,
+            updateRoute: $('meta[name="provider-update-route"]').attr('content'),
+            patientId: $('meta[name="patient_id"]').attr('content'),
+            formstate: {},
+            specialtiesOptions: [{ id: "Abdominal Radiology", text: "Abdominal Radiology" }, { id: "Addiction Psychiatry", text: "Addiction Psychiatry" }, { id: "Adolescent Medicine", text: "Adolescent Medicine" }, { id: "Adult Reconstructive Orthopaedics", text: "Adult Reconstructive Orthopaedics" }, {
+                id: "Advanced Heart Failure & Transplant Cardiology",
+                text: "Advanced Heart Failure & Transplant Cardiology"
+            }, { id: "Allergy & Immunology", text: "Allergy & Immunology" }, { id: "Anesthesiology", text: "Anesthesiology" }, { id: "Biochemical Genetics", text: "Biochemical Genetics" }, { id: "Blood Banking - Transfusion Medicine", text: "Blood Banking -T ransfusion Medicine" }, { id: "Cardiology", text: "Cardiology" }, { id: "Cardiothoracic Radiology", text: "Cardiothoracic Radiology" }, { id: "Cardiovascular Disease", text: "Cardiovascular Disease" }, { id: "Chemical Pathology", text: "Chemical Pathology" }, { id: "Child & Adolescent Psychiatry", text: "Child & Adolescent Psychiatry" }, { id: "Child Abuse Pediatrics", text: "Child Abuse Pediatrics" }, { id: "Child Neurology", text: "Child Neurology" }, { id: "Clinical & Laboratory Immunology", text: "Clinical & Laboratory Immunology" }, { id: "Clinical Cardiac Electrophysiology", text: "Clinical Cardiac Electrophysiology" }, { id: "Clinical Neurophysiology", text: "Clinical Neurophysiology" }, { id: "Colon & Rectal Surgery", text: "Colon & Rectal Surgery" }, { id: "Congenital Cardiac Surgery", text: "Congenital Cardiac Surgery" }, { id: "Craniofacial Surgery", text: "Craniofacial Surgery" }, { id: "Critical Care Medicine", text: "Critical Care Medicine" }, { id: "Critical Care Medicine", text: "Critical Care Medicine" }, { id: "Cytopathology", text: "Cytopathology" }, { id: "Dermatology", text: "Dermatology" }, { id: "Dermatopathology", text: "Dermatopathology" }, { id: "Developmental-Behavioral Pediatrics", text: "Developmental-Behavioral Pediatrics" }, { id: "Ears, Nose, Throat (ENT)", text: "Ears, Nose, Throat (ENT)" }, { id: "Emergency Medicine", text: "Emergency Medicine" }, { id: "Endocrinology, Diabetes & Metabolism", text: "Endocrinology, Diabetes & Metabolism" }, { id: "Endovascular Surgical Neuroradiology", text: "Endovascular Surgical Neuroradiology" }, { id: "Family Medicine", text: "Family Medicine" }, { id: "Family Practice", text: "Family Practice" }, {
+                id: "Female Pelvic Medicine & Reconstructive Surgery",
+                text: "Female Pelvic Medicine & Reconstructive Surgery"
+            }, { id: "Foot & Ankle Orthopaedics", text: "Foot & Ankle Orthopaedics" }, { id: "Forensic Pathology", text: "Forensic Pathology" }, { id: "Forensic Psychiatry", text: "Forensic Psychiatry" }, { id: "Gastroenterology", text: "Gastroenterology" }, { id: "Geriatric Medicine", text: "Geriatric Medicine" }, { id: "Geriatric Psychiatry", text: "Geriatric Psychiatry" }, { id: "Hand Surgery", text: "Hand Surgery" }, { id: "Hematology", text: "Hematology" }, { id: "Hematology & Oncology", text: "Hematology & Oncology" }, { id: "Homecare Nurse", text: "Homecare Nurse" }, { id: "Infectious Disease", text: "Infectious Disease" }, { id: "Internal Medicine", text: "Internal Medicine" }, { id: "Internal Medicine-Pediatrics", text: "Internal Medicine-Pediatrics" }, { id: "Interventional Cardiology", text: "Interventional Cardiology" }, { id: "MD", text: "MD" }, { id: "Medical Genetics", text: "Medical Genetics" }, { id: "Medical Microbiology", text: "Medical Microbiology" }, { id: "Medical Toxicology", text: "Medical Toxicology" }, { id: "Molecular Genetic Pathology", text: "Molecular Genetic Pathology" }, { id: "Muscoskeletal Radiology", text: "Muscoskeletal Radiology" }, { id: "Musculoskeletal Oncology", text: "Musculoskeletal Oncology" }, { id: "Neonatal-Perinatal Medicine", text: "Neonatal-Perinatal Medicine" }, { id: "Nephrology", text: "Nephrology" }, { id: "Neurological Surgery", text: "Neurological Surgery" }, { id: "Neurology", text: "Neurology" }, { id: "Neuromuscular Medicine", text: "Neuromuscular Medicine" }, { id: "Neuroradiology", text: "Neuroradiology" }, { id: "Nuclear Medicine", text: "Nuclear Medicine" }, { id: "Nuclear Radiology", text: "Nuclear Radiology" }, { id: "Obstetric Anesthesiology", text: "Obstetric Anesthesiology" }, { id: "Obstetrics & Gynecology", text: "Obstetrics & Gynecology" }, { id: "Oncology", text: "Oncology" }, {
+                id: "Ophthalmic Plastic & Reconstructive Surgery",
+                text: "Ophthalmic Plastic & Reconstructive Surgery"
+            }, { id: "Ophthalmology", text: "Ophthalmology" }, { id: "Orthopaedic Sports Medicine", text: "Orthopaedic Sports Medicine" }, { id: "Orthopaedic Surgery", text: "Orthopaedic Surgery" }, { id: "Orthopaedic Surgery of the Spine", text: "Orthopaedic Surgery of the Spine" }, { id: "Orthopaedic Trauma", text: "Orthopaedic Trauma" }, { id: "Otolaryngology", text: "Otolaryngology" }, { id: "Otology - Neurotology", text: "Otology - Neurotology" }, { id: "Pain Medicine", text: "Pain Medicine" }, { id: "Pathology-Anatomic & Clinical", text: "Pathology-Anatomic & Clinical" }, { id: "Pediatric Anesthesiology", text: "Pediatric Anesthesiology" }, { id: "Pediatric Cardiology", text: "Pediatric Cardiology" }, { id: "Pediatric Critical Care Medicine", text: "Pediatric Critical Care Medicine" }, { id: "Pediatric Emergency Medicine", text: "Pediatric Emergency Medicine" }, { id: "Pediatric Endocrinology", text: "Pediatric Endocrinology" }, { id: "Pediatric Gastroenterology", text: "Pediatric Gastroenterology" }, { id: "Pediatric Hematology-Oncology", text: "Pediatric Hematology-Oncology" }, { id: "Pediatric Infectious Diseases", text: "Pediatric Infectious Diseases" }, { id: "Pediatric Nephrology", text: "Pediatric Nephrology" }, { id: "Pediatric Orthopaedics", text: "Pediatric Orthopaedics" }, { id: "Pediatric Otolaryngology", text: "Pediatric Otolaryngology" }, { id: "Pediatric Pathology", text: "Pediatric Pathology" }, { id: "Pediatric Pulmonology", text: "Pediatric Pulmonology" }, { id: "Pediatric Radiology", text: "Pediatric Radiology" }, { id: "Pediatric Rheumatology", text: "Pediatric Rheumatology" }, { id: "Pediatric Sports Medicine", text: "Pediatric Sports Medicine" }, { id: "Pediatric Surgery", text: "Pediatric Surgery" }, { id: "Pediatric Transplant Hepatology", text: "Pediatric Transplant Hepatology" }, { id: "Pediatric Urology", text: "Pediatric Urology" }, { id: "Pediatrics", text: "Pediatrics" }, { id: "Physical Medicine & Rehabilitation", text: "Physical Medicine & Rehabilitation" }, { id: "Physical Therapy", text: "Physical Therapy" }, { id: "Plastic Surgery", text: "Plastic Surgery" }, { id: "Preventive Medicine", text: "Preventive Medicine" }, { id: "Procedural Dermatology", text: "Procedural Dermatology" }, { id: "Psychiatry", text: "Psychiatry" }, { id: "Pulmonary Disease", text: "Pulmonary Disease" }, {
+                id: "Pulmonary Disease & Critical Care Medicine",
+                text: "Pulmonary Disease & Critical Care Medicine"
+            }, { id: "Radiation Oncology", text: "Radiation Oncology" }, { id: "Radiology-Diagnostic", text: "Radiology-Diagnostic" }, { id: "Rheumatology", text: "Rheumatology" }, { id: "Sleep Medicine", text: "Sleep Medicine" }, { id: "Social Worker", text: "Social Worker" }, { id: "Spinal Cord Injury Medicine", text: "Spinal Cord Injury Medicine" }, { id: "Sports Medicine", text: "Sports Medicine" }, { id: "Surgery-General", text: "Surgery-General" }, { id: "Surgical Critical Care", text: "Surgical Critical Care" }, { id: "Therapist", text: "Therapist" }, { id: "Thoracic Surgery", text: "Thoracic Surgery" }, { id: "Thoracic Surgery-Integrated", text: "Thoracic Surgery-Integrated" }, { id: "Transplant Hepatology", text: "Transplant Hepatology" }, { id: "Urology", text: "Urology" }, { id: "Vascular & Interventional Radiology", text: "Vascular & Interventional Radiology" }, { id: "Vascular Surgery", text: "Vascular Surgery" }],
+            sending: false,
+            formData: {
+                id: '',
+                formatted_type: 'External',
+                alert: false,
+                is_billing_provider: false,
+                user: {
+                    id: '',
+                    email: '',
+                    first_name: '',
+                    last_name: '',
+                    address: '',
+                    address2: '',
+                    city: '',
+                    state: '',
+                    zip: '',
+                    phone_numbers: {
+                        0: {
+                            id: '',
+                            number: ''
+                        }
+                    },
+                    primary_practice: {
+                        id: '',
+                        display_name: ''
+                    },
+                    provider_info: {
+                        id: '',
+                        qualification: '',
+                        specialty: ''
+                    }
+                }
+            }
+        };
+    }
+});
+
+/***/ }),
+/* 91 */
+/***/ (function(module, exports, __webpack_require__) {
+
+module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;
+  return _c('div', [_c('modal', {
+    directives: [{
+      name: "show",
+      rawName: "v-show",
+      value: (_vm.show),
+      expression: "show"
+    }]
+  }, [_c('template', {
+    slot: "header"
+  }, [_c('button', {
+    staticClass: "close",
+    attrs: {
+      "type": "button"
+    },
+    on: {
+      "click": _vm.clearOpenModal
+    }
+  }, [_vm._v("×")]), _vm._v(" "), _c('h4', {
+    staticClass: "modal-title"
+  }, [_vm._v("Provider Details")])]), _vm._v(" "), _c('template', {
+    slot: "body"
+  }, [(_vm.validationErrors) ? _c('div', {
+    staticClass: "row providerForm"
+  }, [_c('div', {
+    staticClass: "error-list"
+  }, [_c('h5', {
+    staticClass: "has-errors"
+  }, [_c('u', [_vm._v("There were some problems with your input. Please review the form.")])])])]) : _vm._e(), _vm._v(" "), _c('vue-form', {
+    attrs: {
+      "state": _vm.formstate
+    },
+    on: {
+      "submit": function($event) {
+        $event.preventDefault();
+        _vm.onSubmit($event)
+      }
+    }
+  }, [_c('div', {
+    staticClass: "row providerForm"
+  }, [_c('div', {
+    staticClass: "form-group"
+  }, [_c('label', {
+    staticClass: "col-md-3 control-label"
+  }, [_vm._v("Provider Name")]), _vm._v(" "), _c('div', {
+    staticClass: "col-md-9"
+  }, [_c('div', {
+    staticClass: "row"
+  }, [_c('div', {
+    staticClass: "form-group required-field col-md-6"
+  }, [_c('validate', {
+    class: _vm.fieldClassName(_vm.formstate.first_name),
+    attrs: {
+      "auto-label": ""
+    }
+  }, [_c('div', {
+    staticClass: "col-md-12"
+  }, [_c('input', {
+    directives: [{
+      name: "model",
+      rawName: "v-model",
+      value: (_vm.formData.user.first_name),
+      expression: "formData.user.first_name"
+    }],
+    staticClass: "form-control input-md",
+    attrs: {
+      "type": "text",
+      "id": "first_name",
+      "name": "first_name",
+      "placeholder": "First",
+      "required": ""
+    },
+    domProps: {
+      "value": (_vm.formData.user.first_name)
+    },
+    on: {
+      "input": function($event) {
+        if ($event.target.composing) { return; }
+        _vm.formData.user.first_name = $event.target.value
+      }
+    }
+  })]), _vm._v(" "), _c('div', {
+    staticClass: "col-md-12"
+  }, [_c('field-messages', {
+    attrs: {
+      "name": "first_name",
+      "show": "$untouched || $touched || $submitted"
+    }
+  }, [_c('div'), _vm._v(" "), _c('div', {
+    staticClass: "validation-error has-errors text-right",
+    slot: "required"
+  }, [_vm._v("\n                                                    *required\n                                                ")])])], 1)])], 1), _vm._v(" "), _c('div', {
+    staticClass: "form-group required-field col-md-6"
+  }, [_c('validate', {
+    class: _vm.fieldClassName(_vm.formstate.last_name),
+    attrs: {
+      "auto-label": ""
+    }
+  }, [_c('div', {
+    staticClass: "col-md-12"
+  }, [_c('input', {
+    directives: [{
+      name: "model",
+      rawName: "v-model",
+      value: (_vm.formData.user.last_name),
+      expression: "formData.user.last_name"
+    }],
+    staticClass: "form-control input-md",
+    attrs: {
+      "type": "text",
+      "id": "last_name",
+      "name": "last_name",
+      "placeholder": "Last",
+      "required": ""
+    },
+    domProps: {
+      "value": (_vm.formData.user.last_name)
+    },
+    on: {
+      "input": function($event) {
+        if ($event.target.composing) { return; }
+        _vm.formData.user.last_name = $event.target.value
+      }
+    }
+  })]), _vm._v(" "), _c('div', {
+    staticClass: "col-md-12"
+  }, [_c('field-messages', {
+    attrs: {
+      "name": "last_name",
+      "show": "$untouched || $touched || $submitted"
+    }
+  }, [_c('div'), _vm._v(" "), _c('div', {
+    staticClass: "validation-error has-errors text-right",
+    slot: "required"
+  }, [_vm._v("\n                                                    *required\n                                                ")])])], 1)])], 1)])])])]), _vm._v(" "), _c('div', {
+    staticClass: "row providerForm"
+  }, [_c('div', {
+    staticClass: "form-group"
+  }, [_c('label', {
+    staticClass: "col-md-3 control-label"
+  }, [_vm._v("Specialty")]), _vm._v(" "), _c('div', {
+    staticClass: "col-md-9"
+  }, [_c('div', {
+    staticClass: "row"
+  }, [_c('div', {
+    staticClass: "col-md-12"
+  }, [_c('validate', {
+    class: _vm.fieldClassName(_vm.formstate.specialty),
+    attrs: {
+      "auto-label": ""
+    }
+  }, [_c('div', {
+    staticClass: "col-md-12"
+  }, [_c('select2', {
+    staticStyle: {
+      "width": "100%"
+    },
+    attrs: {
+      "options": _vm.specialtiesOptions,
+      "name": "specialty"
+    },
+    model: {
+      value: (_vm.formData.user.provider_info.specialty),
+      callback: function($$v) {
+        _vm.formData.user.provider_info.specialty = $$v
+      },
+      expression: "formData.user.provider_info.specialty"
+    }
+  }, [_c('option', {
+    attrs: {
+      "disabled": "",
+      "value": "0"
+    }
+  }, [_vm._v("Select one")])])], 1), _vm._v(" "), _c('div', {
+    staticClass: "col-md-12"
+  }, [_c('field-messages', {
+    attrs: {
+      "name": "specialty",
+      "show": "$touched || $submitted"
+    }
+  }, [_c('div'), _vm._v(" "), _c('div', {
+    staticClass: "validation-error has-errors text-right",
+    slot: "required"
+  }, [_vm._v("\n                                                    *required\n                                                ")])])], 1)])], 1)])])])]), _vm._v(" "), _c('div', {
+    staticClass: "row providerForm"
+  }, [_c('div', {
+    staticClass: "form-group"
+  }, [_c('label', {
+    staticClass: "col-md-3 control-label"
+  }, [_vm._v("Address")]), _vm._v(" "), _c('div', {
+    staticClass: "col-md-9"
+  }, [_c('div', {
+    staticClass: "row"
+  }, [_c('div', {
+    staticClass: "col-md-8"
+  }, [_c('validate', {
+    class: _vm.fieldClassName(_vm.formstate.address),
+    attrs: {
+      "auto-label": ""
+    }
+  }, [_c('div', {
+    staticClass: "col-md-12"
+  }, [_c('input', {
+    directives: [{
+      name: "model",
+      rawName: "v-model",
+      value: (_vm.formData.user.address),
+      expression: "formData.user.address"
+    }],
+    staticClass: "form-control input-md",
+    attrs: {
+      "type": "text",
+      "id": "address",
+      "name": "address",
+      "placeholder": "Line 1"
+    },
+    domProps: {
+      "value": (_vm.formData.user.address)
+    },
+    on: {
+      "input": function($event) {
+        if ($event.target.composing) { return; }
+        _vm.formData.user.address = $event.target.value
+      }
+    }
+  })]), _vm._v(" "), _c('div', {
+    staticClass: "col-md-12"
+  }, [_c('field-messages', {
+    attrs: {
+      "name": "address",
+      "show": "$touched || $submitted"
+    }
+  }, [_c('div'), _vm._v(" "), _c('div', {
+    staticClass: "validation-error has-errors text-right",
+    slot: "required"
+  }, [_vm._v("\n                                                    *required\n                                                ")])])], 1)])], 1), _vm._v(" "), _c('div', {
+    staticClass: "col-md-4"
+  }, [_c('validate', {
+    class: _vm.fieldClassName(_vm.formstate.address_2),
+    attrs: {
+      "auto-label": ""
+    }
+  }, [_c('div', {
+    staticClass: "col-md-12"
+  }, [_c('input', {
+    directives: [{
+      name: "model",
+      rawName: "v-model",
+      value: (_vm.formData.user.address2),
+      expression: "formData.user.address2"
+    }],
+    staticClass: "form-control input-md",
+    attrs: {
+      "type": "text",
+      "id": "address_2",
+      "name": "address_2",
+      "placeholder": "Line 2"
+    },
+    domProps: {
+      "value": (_vm.formData.user.address2)
+    },
+    on: {
+      "input": function($event) {
+        if ($event.target.composing) { return; }
+        _vm.formData.user.address2 = $event.target.value
+      }
+    }
+  })]), _vm._v(" "), _c('div', {
+    staticClass: "col-md-12"
+  }, [_c('field-messages', {
+    attrs: {
+      "name": "address_2",
+      "show": "$touched || $submitted"
+    }
+  }, [_c('div'), _vm._v(" "), _c('div', {
+    staticClass: "validation-error has-errors text-right",
+    slot: "required"
+  })])], 1)])], 1)]), _vm._v(" "), _c('div', {
+    staticClass: "row"
+  }, [_c('div', {
+    staticClass: "col-md-4"
+  }, [_c('validate', {
+    class: _vm.fieldClassName(_vm.formstate.city),
+    attrs: {
+      "auto-label": ""
+    }
+  }, [_c('div', {
+    staticClass: "col-md-12"
+  }, [_c('input', {
+    directives: [{
+      name: "model",
+      rawName: "v-model",
+      value: (_vm.formData.user.city),
+      expression: "formData.user.city"
+    }],
+    staticClass: "form-control input-md",
+    attrs: {
+      "type": "text",
+      "id": "city",
+      "name": "city",
+      "placeholder": "City"
+    },
+    domProps: {
+      "value": (_vm.formData.user.city)
+    },
+    on: {
+      "input": function($event) {
+        if ($event.target.composing) { return; }
+        _vm.formData.user.city = $event.target.value
+      }
+    }
+  })]), _vm._v(" "), _c('div', {
+    staticClass: "col-md-12"
+  }, [_c('field-messages', {
+    attrs: {
+      "name": "city",
+      "show": "$touched || $submitted"
+    }
+  }, [_c('div'), _vm._v(" "), _c('div', {
+    staticClass: "validation-error has-errors text-right",
+    slot: "required"
+  }, [_vm._v("\n                                                    *required\n                                                ")])])], 1)])], 1), _vm._v(" "), _c('div', {
+    staticClass: "col-md-4"
+  }, [_c('validate', {
+    class: _vm.fieldClassName(_vm.formstate.state),
+    attrs: {
+      "auto-label": ""
+    }
+  }, [_c('div', {
+    staticClass: "col-md-12"
+  }, [_c('input', {
+    directives: [{
+      name: "model",
+      rawName: "v-model",
+      value: (_vm.formData.user.state),
+      expression: "formData.user.state"
+    }],
+    staticClass: "form-control input-md",
+    attrs: {
+      "type": "text",
+      "id": "state",
+      "name": "state",
+      "placeholder": "State"
+    },
+    domProps: {
+      "value": (_vm.formData.user.state)
+    },
+    on: {
+      "input": function($event) {
+        if ($event.target.composing) { return; }
+        _vm.formData.user.state = $event.target.value
+      }
+    }
+  })]), _vm._v(" "), _c('div', {
+    staticClass: "col-md-12"
+  }, [_c('field-messages', {
+    attrs: {
+      "name": "state",
+      "show": "$touched || $submitted"
+    }
+  }, [_c('div'), _vm._v(" "), _c('div', {
+    staticClass: "validation-error has-errors text-right",
+    slot: "required"
+  }, [_vm._v("\n                                                    *required\n                                                ")])])], 1)])], 1), _vm._v(" "), _c('div', {
+    staticClass: "col-md-4"
+  }, [_c('validate', {
+    class: _vm.fieldClassName(_vm.formstate.zip),
+    attrs: {
+      "auto-label": ""
+    }
+  }, [_c('div', {
+    staticClass: "col-md-12"
+  }, [_c('input', {
+    directives: [{
+      name: "model",
+      rawName: "v-model",
+      value: (_vm.formData.user.zip),
+      expression: "formData.user.zip"
+    }],
+    staticClass: "form-control input-md",
+    attrs: {
+      "type": "text",
+      "id": "zip",
+      "name": "zip",
+      "placeholder": "Zip"
+    },
+    domProps: {
+      "value": (_vm.formData.user.zip)
+    },
+    on: {
+      "input": function($event) {
+        if ($event.target.composing) { return; }
+        _vm.formData.user.zip = $event.target.value
+      }
+    }
+  })]), _vm._v(" "), _c('div', {
+    staticClass: "col-md-12"
+  }, [_c('field-messages', {
+    attrs: {
+      "name": "zip",
+      "show": "$touched || $submitted"
+    }
+  }, [_c('div'), _vm._v(" "), _c('div', {
+    staticClass: "validation-error has-errors text-right",
+    slot: "required"
+  }, [_vm._v("\n                                                    *required\n                                                ")])])], 1)])], 1)])])])]), _vm._v(" "), _c('div', {
+    staticClass: "row providerForm"
+  }, [_c('div', {
+    staticClass: "form-group"
+  }, [_c('label', {
+    staticClass: "col-md-3 control-label"
+  }, [_vm._v("Phone Number")]), _vm._v(" "), _c('div', {
+    staticClass: "col-md-9"
+  }, [_c('div', {
+    staticClass: "row"
+  }, [_c('div', {
+    staticClass: "form-group required-field col-md-12"
+  }, [_c('validate', {
+    class: _vm.fieldClassName(_vm.formstate.phone),
+    attrs: {
+      "auto-label": ""
+    }
+  }, [_c('div', {
+    staticClass: "col-md-12"
+  }, [_c('input', {
+    directives: [{
+      name: "model",
+      rawName: "v-model",
+      value: (_vm.formData.user.phone_numbers[0].number),
+      expression: "formData.user.phone_numbers[0].number"
+    }],
+    staticClass: "form-control input-md",
+    attrs: {
+      "type": "text",
+      "id": "phone",
+      "name": "phone",
+      "placeholder": "xxx-xxx-xxxx"
+    },
+    domProps: {
+      "value": (_vm.formData.user.phone_numbers[0].number)
+    },
+    on: {
+      "input": function($event) {
+        if ($event.target.composing) { return; }
+        _vm.formData.user.phone_numbers[0].number = $event.target.value
+      }
+    }
+  })]), _vm._v(" "), _c('div', {
+    staticClass: "col-md-12"
+  }, [_c('field-messages', {
+    attrs: {
+      "name": "phone",
+      "show": "$touched || $submitted"
+    }
+  }, [_c('div'), _vm._v(" "), _c('div', {
+    staticClass: "validation-error has-errors text-right",
+    slot: "required"
+  }, [_vm._v("\n                                                    *required\n                                                ")])])], 1)])], 1)])])])]), _vm._v(" "), _c('div', {
+    staticClass: "row providerForm"
+  }, [_c('div', {
+    staticClass: "form-group"
+  }, [_c('label', {
+    staticClass: "col-md-3 control-label"
+  }, [_vm._v("Practice Name")]), _vm._v(" "), _c('div', {
+    staticClass: "col-md-9"
+  }, [_c('div', {
+    staticClass: "row"
+  }, [_c('div', {
+    staticClass: "form-group required-field col-md-12"
+  }, [_c('validate', {
+    class: _vm.fieldClassName(_vm.formstate.practice),
+    attrs: {
+      "auto-label": ""
+    }
+  }, [_c('div', {
+    staticClass: "col-md-12"
+  }, [_c('input', {
+    directives: [{
+      name: "model",
+      rawName: "v-model",
+      value: (_vm.formData.user.primary_practice.display_name),
+      expression: "formData.user.primary_practice.display_name"
+    }],
+    staticClass: "form-control input-md",
+    attrs: {
+      "type": "text",
+      "id": "practice",
+      "name": "practice",
+      "placeholder": ""
+    },
+    domProps: {
+      "value": (_vm.formData.user.primary_practice.display_name)
+    },
+    on: {
+      "input": function($event) {
+        if ($event.target.composing) { return; }
+        _vm.formData.user.primary_practice.display_name = $event.target.value
+      }
+    }
+  })]), _vm._v(" "), _c('div', {
+    staticClass: "col-md-12"
+  }, [_c('field-messages', {
+    attrs: {
+      "name": "practice",
+      "show": "$touched || $submitted"
+    }
+  }, [_c('div'), _vm._v(" "), _c('div', {
+    staticClass: "validation-error has-errors text-right",
+    slot: "required"
+  }, [_vm._v("\n                                                    *required\n                                                ")])])], 1)])], 1)])])])]), _vm._v(" "), _c('div', {
+    staticClass: "row providerForm"
+  }, [_c('div', {
+    staticClass: "form-group"
+  }, [_c('label', {
+    staticClass: "col-md-3 control-label"
+  }, [_vm._v("Email")]), _vm._v(" "), _c('div', {
+    staticClass: "col-md-9"
+  }, [_c('div', {
+    staticClass: "row"
+  }, [_c('div', {
+    staticClass: "form-group required-field col-md-6"
+  }, [_c('validate', {
+    class: _vm.fieldClassName(_vm.formstate.email),
+    attrs: {
+      "auto-label": ""
+    }
+  }, [_c('div', {
+    staticClass: "col-md-12"
+  }, [_c('input', {
+    directives: [{
+      name: "model",
+      rawName: "v-model",
+      value: (_vm.formData.user.email),
+      expression: "formData.user.email"
+    }],
+    staticClass: "form-control input-md",
+    attrs: {
+      "type": "email",
+      "id": "email",
+      "name": "email"
+    },
+    domProps: {
+      "value": (_vm.formData.user.email)
+    },
+    on: {
+      "input": function($event) {
+        if ($event.target.composing) { return; }
+        _vm.formData.user.email = $event.target.value
+      }
+    }
+  })]), _vm._v(" "), _c('div', {
+    staticClass: "col-md-12"
+  }, [_c('field-messages', {
+    attrs: {
+      "name": "email",
+      "show": "$touched || $submitted"
+    }
+  }, [_c('div'), _vm._v(" "), _c('div', {
+    staticClass: "validation-error has-errors text-right",
+    slot: "required"
+  }, [_vm._v("\n                                                    *required\n                                                ")]), _vm._v(" "), _c('div', {
+    staticClass: "validation-error has-errors text-right",
+    slot: "email"
+  }, [_vm._v("\n                                                    Please enter a valid email\n                                                ")])])], 1)])], 1), _vm._v(" "), _c('div', {
+    staticClass: "form-group col-md-6"
+  }, [_c('label', {
+    staticClass: "col-md-3 control-label"
+  }, [_vm._v("Send Alerts")]), _vm._v(" "), _c('div', {
+    staticClass: "col-md-9"
+  }, [_c('div', {
+    staticClass: "row"
+  }, [_c('div', {
+    staticClass: "form-group required-field col-md-12"
+  }, [_c('validate', {
+    class: _vm.fieldClassName(_vm.formstate.send_alerts),
+    attrs: {
+      "auto-label": ""
+    }
+  }, [_c('div', {
+    staticClass: "col-md-12"
+  }, [_c('input', {
+    directives: [{
+      name: "model",
+      rawName: "v-model",
+      value: (_vm.formData.alert),
+      expression: "formData.alert"
+    }],
+    staticClass: "form-control input-md",
+    staticStyle: {
+      "display": "inline"
+    },
+    attrs: {
+      "id": "send_alerts",
+      "name": "send_alerts",
+      "type": "checkbox",
+      "disabled": !_vm.formData.user.email || _vm.formstate.email && !_vm.formstate.email.$valid
+    },
+    domProps: {
+      "checked": Array.isArray(_vm.formData.alert) ? _vm._i(_vm.formData.alert, null) > -1 : (_vm.formData.alert)
+    },
+    on: {
+      "__c": function($event) {
+        var $$a = _vm.formData.alert,
+          $$el = $event.target,
+          $$c = $$el.checked ? (true) : (false);
+        if (Array.isArray($$a)) {
+          var $$v = null,
+            $$i = _vm._i($$a, $$v);
+          if ($$c) {
+            $$i < 0 && (_vm.formData.alert = $$a.concat($$v))
+          } else {
+            $$i > -1 && (_vm.formData.alert = $$a.slice(0, $$i).concat($$a.slice($$i + 1)))
+          }
+        } else {
+          _vm.formData.alert = $$c
+        }
+      }
+    }
+  })]), _vm._v(" "), _c('div', {
+    staticClass: "col-md-12"
+  }, [_c('field-messages', {
+    attrs: {
+      "name": "send_alerts",
+      "show": "$touched || $submitted"
+    }
+  }, [_c('div'), _vm._v(" "), _c('div', {
+    staticClass: "validation-error has-errors text-right",
+    slot: "required"
+  }, [_vm._v("\n                                                                *required\n                                                            ")])]), _vm._v(" "), (!_vm.formData.user.email || _vm.formstate.email && !_vm.formstate.email.$valid) ? _c('div', {
+    staticClass: "validation-error text-left",
+    staticStyle: {
+      "color": "green"
+    }
+  }, [_vm._v("\n                                                            Email needs to be filled out and valid.\n                                                        ")]) : _vm._e()], 1)])], 1)])])])])])])]), _vm._v(" "), _c('div', {
+    staticClass: "row providerForm"
+  }, [_c('div', {
+    staticClass: "form-group"
+  }, [_c('label', {
+    staticClass: "col-md-3 control-label"
+  }, [_vm._v("Clinical Type")]), _vm._v(" "), _c('div', {
+    staticClass: "col-md-9"
+  }, [_c('div', {
+    staticClass: "row"
+  }, [_c('div', {
+    staticClass: "form-group required-field col-md-6"
+  }, [_c('validate', {
+    class: _vm.fieldClassName(_vm.formstate.qualification),
+    attrs: {
+      "auto-label": ""
+    }
+  }, [_c('div', {
+    staticClass: "col-md-12"
+  }, [_c('select', {
+    directives: [{
+      name: "model",
+      rawName: "v-model",
+      value: (_vm.formData.user.provider_info.qualification),
+      expression: "formData.user.provider_info.qualification"
+    }],
+    staticClass: "form-control input-md",
+    attrs: {
+      "id": "qualification",
+      "name": "qualification",
+      "required": ""
+    },
+    on: {
+      "change": function($event) {
+        var $$selectedVal = Array.prototype.filter.call($event.target.options, function(o) {
+          return o.selected
+        }).map(function(o) {
+          var val = "_value" in o ? o._value : o.value;
+          return val
+        });
+        _vm.formData.user.provider_info.qualification = $event.target.multiple ? $$selectedVal : $$selectedVal[0]
+      }
+    }
+  }, [_c('option', {
+    attrs: {
+      "value": "",
+      "disabled": ""
+    }
+  }), _vm._v(" "), _c('option', {
+    attrs: {
+      "value": "clinical"
+    }
+  }, [_vm._v("Clinical (MD, RN or other)")]), _vm._v(" "), _c('option', {
+    attrs: {
+      "value": "non-clinical"
+    }
+  }, [_vm._v("Non-clinical")])])]), _vm._v(" "), _c('div', {
+    staticClass: "col-md-12"
+  }, [_c('field-messages', {
+    attrs: {
+      "name": "qualification",
+      "show": "$untouched || $touched || $submitted"
+    }
+  }, [_c('div'), _vm._v(" "), _c('div', {
+    staticClass: "validation-error has-errors text-right",
+    slot: "required"
+  }, [_vm._v("\n                                                    *required\n                                                ")])])], 1)])], 1), _vm._v(" "), _c('div', {
+    staticClass: "form-group col-md-6"
+  }, [_c('label', {
+    staticClass: "col-md-3 control-label"
+  }, [_vm._v("CCM Billing Provider")]), _vm._v(" "), _c('div', {
+    staticClass: "col-md-9"
+  }, [_c('div', {
+    staticClass: "row"
+  }, [_c('div', {
+    staticClass: "form-group required-field col-md-12"
+  }, [_c('validate', {
+    class: _vm.fieldClassName(_vm.formstate.is_billing_provider),
+    attrs: {
+      "auto-label": ""
+    }
+  }, [_c('div', {
+    staticClass: "col-md-12"
+  }, [_c('input', {
+    directives: [{
+      name: "model",
+      rawName: "v-model",
+      value: (_vm.formData.is_billing_provider),
+      expression: "formData.is_billing_provider"
+    }],
+    staticClass: "form-control input-md",
+    staticStyle: {
+      "display": "inline"
+    },
+    attrs: {
+      "id": "is_billing_provider",
+      "name": "is_billing_provider",
+      "type": "checkbox"
+    },
+    domProps: {
+      "checked": Array.isArray(_vm.formData.is_billing_provider) ? _vm._i(_vm.formData.is_billing_provider, null) > -1 : (_vm.formData.is_billing_provider)
+    },
+    on: {
+      "__c": function($event) {
+        var $$a = _vm.formData.is_billing_provider,
+          $$el = $event.target,
+          $$c = $$el.checked ? (true) : (false);
+        if (Array.isArray($$a)) {
+          var $$v = null,
+            $$i = _vm._i($$a, $$v);
+          if ($$c) {
+            $$i < 0 && (_vm.formData.is_billing_provider = $$a.concat($$v))
+          } else {
+            $$i > -1 && (_vm.formData.is_billing_provider = $$a.slice(0, $$i).concat($$a.slice($$i + 1)))
+          }
+        } else {
+          _vm.formData.is_billing_provider = $$c
+        }
+      }
+    }
+  })]), _vm._v(" "), _c('div', {
+    staticClass: "col-md-12"
+  }, [_c('field-messages', {
+    attrs: {
+      "name": "is_billing_provider",
+      "show": "$touched || $submitted"
+    }
+  }, [_c('div'), _vm._v(" "), _c('div', {
+    staticClass: "validation-error has-errors text-right",
+    slot: "required"
+  }, [_vm._v("\n                                                                *required\n                                                            ")])])], 1)])], 1)])])])])])])])])], 1), _vm._v(" "), _c('template', {
+    slot: "footer"
+  }, [_c('div', {
+    staticClass: "row"
+  }, [_c('div', {
+    staticClass: "col-md-6 text-center"
+  }, [_c('button', {
+    staticClass: "btn btn-default",
+    staticStyle: {
+      "width": "50%"
+    },
+    on: {
+      "click": _vm.clearOpenModal
+    }
+  }, [_vm._v("Close")])]), _vm._v(" "), _c('div', {
+    staticClass: "col-md-6 text-center"
+  }, [_c('button', {
+    staticClass: " btn btn-info",
+    staticStyle: {
+      "width": "50%"
+    },
+    attrs: {
+      "disabled": false
+    },
+    on: {
+      "click": _vm.sendForm
+    }
+  }, [_vm._v("\n                        Save "), (_vm.sending) ? _c('i', {
+    staticClass: "fa fa-spinner fa-pulse fa-fw"
+  }) : _vm._e()])])])])], 2)], 1)
+},staticRenderFns: []}
+module.exports.render._withStripped = true
+if (false) {
+  module.hot.accept()
+  if (module.hot.data) {
+     require("vue-hot-reload-api").rerender("data-v-4034b3a2", module.exports)
+  }
+}
+
+/***/ }),
+/* 92 */
+/***/ (function(module, exports, __webpack_require__) {
+
+var disposed = false
+var Component = __webpack_require__(1)(
+  /* script */
+  __webpack_require__(93),
+  /* template */
+  __webpack_require__(94),
+  /* styles */
+  null,
+  /* scopeId */
+  null,
+  /* moduleIdentifier (server only) */
+  null
+)
+Component.options.__file = "/Users/michalis/Code/CLH/cpm-api/resources/assets/js/components/pages/view-care-plan/index-care-person.vue"
+if (Component.esModule && Object.keys(Component.esModule).some(function (key) {return key !== "default" && key.substr(0, 2) !== "__"})) {console.error("named exports are not supported in *.vue files.")}
+if (Component.options.functional) {console.error("[vue-loader] index-care-person.vue: functional components are not supported with templates, they should use render functions.")}
+
+/* hot reload */
+if (false) {(function () {
+  var hotAPI = require("vue-hot-reload-api")
+  hotAPI.install(require("vue"), false)
+  if (!hotAPI.compatible) return
+  module.hot.accept()
+  if (!module.hot.data) {
+    hotAPI.createRecord("data-v-14974838", Component.options)
+  } else {
+    hotAPI.reload("data-v-14974838", Component.options)
+  }
+  module.hot.dispose(function (data) {
+    disposed = true
+  })
+})()}
+
+module.exports = Component.exports
+
+
+/***/ }),
+/* 93 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_vuex__ = __webpack_require__(2);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__store_actions__ = __webpack_require__(4);
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+
+
+
+
+/* harmony default export */ __webpack_exports__["default"] = ({
+    props: ['carePerson'],
+
+    computed: {
+        name: function name() {
+            return this.carePerson.user.first_name + ' ' + this.carePerson.user.last_name;
+        }
+    },
+
+    data: function data() {
+        return {
+            patientId: $('meta[name="patient_id"]').attr('content'),
+            currentModal: '',
+            editedModel: {}
+        };
+    },
+
+
+    methods: Object.assign({}, __WEBPACK_IMPORTED_MODULE_0_vuex__["b" /* mapActions */](['destroyCarePerson', 'setOpenModal']), {
+        deleteCarePerson: function deleteCarePerson() {
+            var disassociate = confirm('Are you sure you want to remove ' + name + ' from the CareTeam?');
+
+            if (!disassociate) {
+                return true;
+            }
+
+            this.destroyCarePerson(this.carePerson);
+        }
+    }, {
+        editCarePerson: function editCarePerson() {
+            this.setOpenModal({
+                name: 'update-care-person',
+                props: {
+                    carePerson: this.carePerson
+                }
+
+            });
+        }
+    })
+});
+
+/***/ }),
+/* 94 */
+/***/ (function(module, exports, __webpack_require__) {
+
+module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;
+  return _c('div', [_c('div', {
+    directives: [{
+      name: "show",
+      rawName: "v-show",
+      value: (_vm.carePerson.user.first_name && _vm.carePerson.user.last_name),
+      expression: "carePerson.user.first_name && carePerson.user.last_name"
+    }]
+  }, [_c('div', {
+    staticClass: "col-md-7"
+  }, [_c('p', {
+    staticStyle: {
+      "margin-left": "-10px"
+    }
+  }, [_c('strong', [_vm._v(_vm._s(_vm.carePerson.formatted_type) + ": ")]), _vm._v(_vm._s(_vm.carePerson.user.first_name) + " " + _vm._s(_vm.carePerson.user.last_name) + " "), _c('em', [_vm._v(_vm._s(_vm.carePerson.user.primaryRole))])])]), _vm._v(" "), _c('div', {
+    staticClass: "col-md-3"
+  }, [(_vm.carePerson.alert) ? _c('p', [_vm._v("Receives Alerts")]) : _vm._e()]), _vm._v(" "), _c('div', {
+    staticClass: "col-md-2"
+  }, [_c('div', {
+    staticClass: "col-md-6 text-right"
+  }, [_c('button', {
+    staticClass: "btn btn-xs btn-danger problem-delete-btn",
+    on: {
+      "click": function($event) {
+        $event.stopPropagation();
+        $event.preventDefault();
+        _vm.deleteCarePerson()
+      }
+    }
+  }, [_vm._m(0)])]), _vm._v(" "), _c('div', {
+    staticClass: "col-md-6 text-left"
+  }, [_c('button', {
+    staticClass: "btn btn-xs btn-primary problem-edit-btn",
+    on: {
+      "click": function($event) {
+        $event.stopPropagation();
+        $event.preventDefault();
+        _vm.editCarePerson()
+      }
+    }
+  }, [_vm._m(1)])])])])])
+},staticRenderFns: [function (){var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;
+  return _c('span', [_c('i', {
+    staticClass: "glyphicon glyphicon-remove"
+  })])
+},function (){var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;
+  return _c('span', [_c('i', {
+    staticClass: "glyphicon glyphicon-pencil"
+  })])
+}]}
+module.exports.render._withStripped = true
+if (false) {
+  module.hot.accept()
+  if (module.hot.data) {
+     require("vue-hot-reload-api").rerender("data-v-14974838", module.exports)
+  }
+}
+
+/***/ }),
+/* 95 */
+/***/ (function(module, exports, __webpack_require__) {
+
+var disposed = false
+var Component = __webpack_require__(1)(
+  /* script */
+  __webpack_require__(96),
+  /* template */
+  __webpack_require__(97),
+  /* styles */
+  null,
+  /* scopeId */
+  null,
+  /* moduleIdentifier (server only) */
+  null
+)
+Component.options.__file = "/Users/michalis/Code/CLH/cpm-api/resources/assets/js/components/pages/view-care-plan/care-team.vue"
+if (Component.esModule && Object.keys(Component.esModule).some(function (key) {return key !== "default" && key.substr(0, 2) !== "__"})) {console.error("named exports are not supported in *.vue files.")}
+if (Component.options.functional) {console.error("[vue-loader] care-team.vue: functional components are not supported with templates, they should use render functions.")}
+
+/* hot reload */
+if (false) {(function () {
+  var hotAPI = require("vue-hot-reload-api")
+  hotAPI.install(require("vue"), false)
+  if (!hotAPI.compatible) return
+  module.hot.accept()
+  if (!module.hot.data) {
+    hotAPI.createRecord("data-v-0fd86ee7", Component.options)
+  } else {
+    hotAPI.reload("data-v-0fd86ee7", Component.options)
+  }
+  module.hot.dispose(function (data) {
+    disposed = true
+  })
+})()}
+
+module.exports = Component.exports
+
+
+/***/ }),
+/* 96 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_vuex__ = __webpack_require__(2);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__store_actions__ = __webpack_require__(4);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__store_getters__ = __webpack_require__(7);
+//
+//
+//
+//
+//
+//
+//
+//
+
+
+
+
+
+/* harmony default export */ __webpack_exports__["default"] = ({
+    computed: Object.assign({}, __WEBPACK_IMPORTED_MODULE_0_vuex__["c" /* mapGetters */]({
+        patientCareTeam: 'patientCareTeam'
+    })),
+
+    methods: Object.assign(__WEBPACK_IMPORTED_MODULE_0_vuex__["b" /* mapActions */](['getPatientCareTeam'])),
+
+    mounted: function mounted() {
+        this.careTeam = this.getPatientCareTeam(this.patientId);
+    },
+    data: function data() {
+        return {
+            patientId: $('meta[name=patient_id]').attr('content'),
+            careTeam: []
+        };
+    }
+});
+
+/***/ }),
+/* 97 */
+/***/ (function(module, exports, __webpack_require__) {
+
+module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;
+  return _c('ul', {
+    staticClass: "col-xs-12"
+  }, _vm._l((_vm.patientCareTeam), function(carePerson, index) {
+    return _c('li', {
+      staticClass: "col-xs-12"
+    }, [_c('index-care-person', {
+      attrs: {
+        "carePerson": carePerson
+      }
+    })], 1)
+  }))
+},staticRenderFns: []}
+module.exports.render._withStripped = true
+if (false) {
+  module.hot.accept()
+  if (module.hot.data) {
+     require("vue-hot-reload-api").rerender("data-v-0fd86ee7", module.exports)
+  }
+}
+
+/***/ }),
+/* 98 */
+/***/ (function(module, exports, __webpack_require__) {
+
+var disposed = false
+function injectStyle (ssrContext) {
+  if (disposed) return
+  __webpack_require__(99)
+}
+var Component = __webpack_require__(1)(
+  /* script */
+  __webpack_require__(101),
+  /* template */
+  __webpack_require__(102),
   /* styles */
   injectStyle,
   /* scopeId */
@@ -51229,17 +51719,17 @@ module.exports = Component.exports
 
 
 /***/ }),
-/* 85 */
+/* 99 */
 /***/ (function(module, exports, __webpack_require__) {
 
 // style-loader: Adds some css to the DOM by adding a <style> tag
 
 // load the styles
-var content = __webpack_require__(86);
+var content = __webpack_require__(100);
 if(typeof content === 'string') content = [[module.i, content, '']];
 if(content.locals) module.exports = content.locals;
 // add the styles to the DOM
-var update = __webpack_require__(7)("2adef1dc", content, false);
+var update = __webpack_require__(8)("2adef1dc", content, false);
 // Hot Module Replacement
 if(false) {
  // When the styles change, update the <style> tags
@@ -51255,7 +51745,7 @@ if(false) {
 }
 
 /***/ }),
-/* 86 */
+/* 100 */
 /***/ (function(module, exports, __webpack_require__) {
 
 exports = module.exports = __webpack_require__(6)(undefined);
@@ -51269,14 +51759,14 @@ exports.push([module.i, "\n@media print {\n.hidden-print, .hidden-print * {\n   
 
 
 /***/ }),
-/* 87 */
+/* 101 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_vuex__ = __webpack_require__(2);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__store_actions__ = __webpack_require__(3);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__store_getters__ = __webpack_require__(14);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__store_actions__ = __webpack_require__(4);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__store_getters__ = __webpack_require__(7);
 //
 //
 //
@@ -51371,7 +51861,7 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 });
 
 /***/ }),
-/* 88 */
+/* 102 */
 /***/ (function(module, exports, __webpack_require__) {
 
 module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;
@@ -51444,433 +51934,6 @@ if (false) {
   module.hot.accept()
   if (module.hot.data) {
      require("vue-hot-reload-api").rerender("data-v-244acbbc", module.exports)
-  }
-}
-
-/***/ }),
-/* 89 */
-/***/ (function(module, exports, __webpack_require__) {
-
-var disposed = false
-var Component = __webpack_require__(1)(
-  /* script */
-  __webpack_require__(90),
-  /* template */
-  __webpack_require__(91),
-  /* styles */
-  null,
-  /* scopeId */
-  null,
-  /* moduleIdentifier (server only) */
-  null
-)
-Component.options.__file = "/Users/michalis/Code/CLH/cpm-api/resources/assets/js/components/shared/open-modal.vue"
-if (Component.esModule && Object.keys(Component.esModule).some(function (key) {return key !== "default" && key.substr(0, 2) !== "__"})) {console.error("named exports are not supported in *.vue files.")}
-if (Component.options.functional) {console.error("[vue-loader] open-modal.vue: functional components are not supported with templates, they should use render functions.")}
-
-/* hot reload */
-if (false) {(function () {
-  var hotAPI = require("vue-hot-reload-api")
-  hotAPI.install(require("vue"), false)
-  if (!hotAPI.compatible) return
-  module.hot.accept()
-  if (!module.hot.data) {
-    hotAPI.createRecord("data-v-6b7518af", Component.options)
-  } else {
-    hotAPI.reload("data-v-6b7518af", Component.options)
-  }
-  module.hot.dispose(function (data) {
-    disposed = true
-  })
-})()}
-
-module.exports = Component.exports
-
-
-/***/ }),
-/* 90 */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_vuex__ = __webpack_require__(2);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__store_getters__ = __webpack_require__(14);
-//
-//
-//
-//
-
-
-
-
-/* harmony default export */ __webpack_exports__["default"] = ({
-    computed: Object.assign({}, __WEBPACK_IMPORTED_MODULE_0_vuex__["c" /* mapGetters */]({
-        openModal: 'openModal'
-    }), {
-        name: function name() {
-            return _.isNull(this.openModal.name) ? false : this.openModal.name;
-        },
-        props: function props() {
-            return _.isNil(this.openModal.props) ? { 'show': true } : Object.assign(this.openModal.props, { 'show': true });
-        }
-    })
-});
-
-/***/ }),
-/* 91 */
-/***/ (function(module, exports, __webpack_require__) {
-
-module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;
-  return (_vm.name) ? _c('component-proxy', {
-    attrs: {
-      "name": _vm.name,
-      "props": _vm.props
-    }
-  }) : _vm._e()
-},staticRenderFns: []}
-module.exports.render._withStripped = true
-if (false) {
-  module.hot.accept()
-  if (module.hot.data) {
-     require("vue-hot-reload-api").rerender("data-v-6b7518af", module.exports)
-  }
-}
-
-/***/ }),
-/* 92 */
-/***/ (function(module, exports, __webpack_require__) {
-
-var disposed = false
-function injectStyle (ssrContext) {
-  if (disposed) return
-  __webpack_require__(93)
-}
-var Component = __webpack_require__(1)(
-  /* script */
-  __webpack_require__(95),
-  /* template */
-  __webpack_require__(101),
-  /* styles */
-  injectStyle,
-  /* scopeId */
-  null,
-  /* moduleIdentifier (server only) */
-  null
-)
-Component.options.__file = "/Users/michalis/Code/CLH/cpm-api/resources/assets/js/components/shared/notifications/notifications.vue"
-if (Component.esModule && Object.keys(Component.esModule).some(function (key) {return key !== "default" && key.substr(0, 2) !== "__"})) {console.error("named exports are not supported in *.vue files.")}
-if (Component.options.functional) {console.error("[vue-loader] notifications.vue: functional components are not supported with templates, they should use render functions.")}
-
-/* hot reload */
-if (false) {(function () {
-  var hotAPI = require("vue-hot-reload-api")
-  hotAPI.install(require("vue"), false)
-  if (!hotAPI.compatible) return
-  module.hot.accept()
-  if (!module.hot.data) {
-    hotAPI.createRecord("data-v-068d5c0c", Component.options)
-  } else {
-    hotAPI.reload("data-v-068d5c0c", Component.options)
-  }
-  module.hot.dispose(function (data) {
-    disposed = true
-  })
-})()}
-
-module.exports = Component.exports
-
-
-/***/ }),
-/* 93 */
-/***/ (function(module, exports, __webpack_require__) {
-
-// style-loader: Adds some css to the DOM by adding a <style> tag
-
-// load the styles
-var content = __webpack_require__(94);
-if(typeof content === 'string') content = [[module.i, content, '']];
-if(content.locals) module.exports = content.locals;
-// add the styles to the DOM
-var update = __webpack_require__(7)("3a06649f", content, false);
-// Hot Module Replacement
-if(false) {
- // When the styles change, update the <style> tags
- if(!content.locals) {
-   module.hot.accept("!!../../../../../../node_modules/css-loader/index.js!../../../../../../node_modules/vue-loader/lib/style-compiler/index.js?{\"vue\":true,\"id\":\"data-v-068d5c0c\",\"scoped\":false,\"hasInlineConfig\":true}!../../../../../../node_modules/vue-loader/lib/selector.js?type=styles&index=0!./notifications.vue", function() {
-     var newContent = require("!!../../../../../../node_modules/css-loader/index.js!../../../../../../node_modules/vue-loader/lib/style-compiler/index.js?{\"vue\":true,\"id\":\"data-v-068d5c0c\",\"scoped\":false,\"hasInlineConfig\":true}!../../../../../../node_modules/vue-loader/lib/selector.js?type=styles&index=0!./notifications.vue");
-     if(typeof newContent === 'string') newContent = [[module.id, newContent, '']];
-     update(newContent);
-   });
- }
- // When the module is disposed, remove the <style> tags
- module.hot.dispose(function() { update(); });
-}
-
-/***/ }),
-/* 94 */
-/***/ (function(module, exports, __webpack_require__) {
-
-exports = module.exports = __webpack_require__(6)(undefined);
-// imports
-
-
-// module
-exports.push([module.i, "\n.vue-notifications {\n    position: fixed;\n    right: 3%;\n    top: 6%;\n    width: 350px;\n    z-index: 1;\n}\n\n", ""]);
-
-// exports
-
-
-/***/ }),
-/* 95 */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__notification_vue__ = __webpack_require__(96);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__notification_vue___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0__notification_vue__);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_vuex__ = __webpack_require__(2);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__store_getters__ = __webpack_require__(14);
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-
-
-
-
-
-/* harmony default export */ __webpack_exports__["default"] = ({
-    components: {
-        notification: __WEBPACK_IMPORTED_MODULE_0__notification_vue___default.a
-    },
-
-    computed: Object.assign(__WEBPACK_IMPORTED_MODULE_1_vuex__["c" /* mapGetters */]({
-        notifications: 'notifications'
-    }), {
-        getRandomId: function getRandomId() {
-            return _.random(100);
-        }
-    })
-
-});
-
-/***/ }),
-/* 96 */
-/***/ (function(module, exports, __webpack_require__) {
-
-var disposed = false
-function injectStyle (ssrContext) {
-  if (disposed) return
-  __webpack_require__(97)
-}
-var Component = __webpack_require__(1)(
-  /* script */
-  __webpack_require__(99),
-  /* template */
-  __webpack_require__(100),
-  /* styles */
-  injectStyle,
-  /* scopeId */
-  null,
-  /* moduleIdentifier (server only) */
-  null
-)
-Component.options.__file = "/Users/michalis/Code/CLH/cpm-api/resources/assets/js/components/shared/notifications/notification.vue"
-if (Component.esModule && Object.keys(Component.esModule).some(function (key) {return key !== "default" && key.substr(0, 2) !== "__"})) {console.error("named exports are not supported in *.vue files.")}
-if (Component.options.functional) {console.error("[vue-loader] notification.vue: functional components are not supported with templates, they should use render functions.")}
-
-/* hot reload */
-if (false) {(function () {
-  var hotAPI = require("vue-hot-reload-api")
-  hotAPI.install(require("vue"), false)
-  if (!hotAPI.compatible) return
-  module.hot.accept()
-  if (!module.hot.data) {
-    hotAPI.createRecord("data-v-7bf6c3f7", Component.options)
-  } else {
-    hotAPI.reload("data-v-7bf6c3f7", Component.options)
-  }
-  module.hot.dispose(function (data) {
-    disposed = true
-  })
-})()}
-
-module.exports = Component.exports
-
-
-/***/ }),
-/* 97 */
-/***/ (function(module, exports, __webpack_require__) {
-
-// style-loader: Adds some css to the DOM by adding a <style> tag
-
-// load the styles
-var content = __webpack_require__(98);
-if(typeof content === 'string') content = [[module.i, content, '']];
-if(content.locals) module.exports = content.locals;
-// add the styles to the DOM
-var update = __webpack_require__(7)("df41804e", content, false);
-// Hot Module Replacement
-if(false) {
- // When the styles change, update the <style> tags
- if(!content.locals) {
-   module.hot.accept("!!../../../../../../node_modules/css-loader/index.js!../../../../../../node_modules/vue-loader/lib/style-compiler/index.js?{\"vue\":true,\"id\":\"data-v-7bf6c3f7\",\"scoped\":false,\"hasInlineConfig\":true}!../../../../../../node_modules/vue-loader/lib/selector.js?type=styles&index=0!./notification.vue", function() {
-     var newContent = require("!!../../../../../../node_modules/css-loader/index.js!../../../../../../node_modules/vue-loader/lib/style-compiler/index.js?{\"vue\":true,\"id\":\"data-v-7bf6c3f7\",\"scoped\":false,\"hasInlineConfig\":true}!../../../../../../node_modules/vue-loader/lib/selector.js?type=styles&index=0!./notification.vue");
-     if(typeof newContent === 'string') newContent = [[module.id, newContent, '']];
-     update(newContent);
-   });
- }
- // When the module is disposed, remove the <style> tags
- module.hot.dispose(function() { update(); });
-}
-
-/***/ }),
-/* 98 */
-/***/ (function(module, exports, __webpack_require__) {
-
-exports = module.exports = __webpack_require__(6)(undefined);
-// imports
-
-
-// module
-exports.push([module.i, "\n.vue-notification p {\nmargin-right: 20px;\n}\n.vue-notification-slide-in-out {\n    -webkit-transition: all 800ms cubic-bezier(0.680, 0, 0.265, 1); /* older webkit */\n    -webkit-transition: all 800ms cubic-bezier(0.680, -0.550, 0.265, 1.550);\n    -moz-transition: all 800ms cubic-bezier(0.680, -0.550, 0.265, 1.550);\n    -o-transition: all 800ms cubic-bezier(0.680, -0.550, 0.265, 1.550);\n    transition: all 800ms cubic-bezier(0.680, -0.550, 0.265, 1.550); /* easeInOutBack */\n}\n", ""]);
-
-// exports
-
-
-/***/ }),
-/* 99 */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_vuex__ = __webpack_require__(2);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__store_actions__ = __webpack_require__(3);
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-
-
-
-
-/* harmony default export */ __webpack_exports__["default"] = ({
-    props: ['notification'],
-
-    data: function data() {
-        return { timer: null };
-    },
-    mounted: function mounted() {
-        var timeout = this.notification.hasOwnProperty('timeout') ? this.notification.timeout : true;
-        if (timeout) {
-            var delay = this.notification.delay || 3000;
-            this.timer = setTimeout(function () {
-                this.removeNotification(this.notification);
-            }.bind(this), delay);
-        }
-    },
-
-
-    methods: Object.assign({}, __WEBPACK_IMPORTED_MODULE_0_vuex__["b" /* mapActions */](['removeNotification']))
-});
-
-/***/ }),
-/* 100 */
-/***/ (function(module, exports, __webpack_require__) {
-
-module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;
-  return _c('transition', {
-    attrs: {
-      "name": "custom-classes-transition",
-      "enter-active-class": "animated slideInRight",
-      "leave-active-class": "animated slideOutRight"
-    }
-  }, [_c('div', {
-    staticClass: "alert vue-notification animated",
-    class: _vm.notification.type ? 'alert-' + _vm.notification.type : 'secondary'
-  }, [(!_vm.notification.timeout) ? _c('button', {
-    staticClass: "close",
-    attrs: {
-      "aria-label": "Close alert",
-      "type": "button"
-    },
-    on: {
-      "click": function($event) {
-        _vm.removeNotification(_vm.notification)
-      }
-    }
-  }, [_vm._v("×\n        ")]) : _vm._e(), _vm._v(" "), (_vm.notification.title) ? _c('h5', [_vm._v(_vm._s(_vm.notification.title))]) : _vm._e(), _vm._v(" "), _c('p', [_vm._v("\n            " + _vm._s(_vm.notification.text) + "\n        ")])])])
-},staticRenderFns: []}
-module.exports.render._withStripped = true
-if (false) {
-  module.hot.accept()
-  if (module.hot.data) {
-     require("vue-hot-reload-api").rerender("data-v-7bf6c3f7", module.exports)
-  }
-}
-
-/***/ }),
-/* 101 */
-/***/ (function(module, exports, __webpack_require__) {
-
-module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;
-  return _c('div', {
-    staticClass: "vue-notifications"
-  }, _vm._l((_vm.notifications), function(notification) {
-    return _c('notification', {
-      key: _vm.getRandomId,
-      attrs: {
-        "notification": notification
-      }
-    })
-  }))
-},staticRenderFns: []}
-module.exports.render._withStripped = true
-if (false) {
-  module.hot.accept()
-  if (module.hot.data) {
-     require("vue-hot-reload-api").rerender("data-v-068d5c0c", module.exports)
   }
 }
 
