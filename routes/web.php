@@ -1505,25 +1505,27 @@ Route::group([
         'as'   => 'enrollment.sms.reply',
     ]);
 
-    Route::get('/', [
-        'uses' => 'Enrollment\EnrollmentCenterController@dashboard',
-        'as'   => 'enrollment-center.dashboard',
-    ]);
+    Route::group(['middleware' => 'auth'], function () {
+        Route::get('/', [
+            'uses' => 'Enrollment\EnrollmentCenterController@dashboard',
+            'as'   => 'enrollment-center.dashboard',
+        ]);
 
-    Route::post('/consented', [
-        'uses' => 'Enrollment\EnrollmentCenterController@consented',
-        'as'   => 'enrollment-center.consented',
-    ]);
+        Route::post('/consented', [
+            'uses' => 'Enrollment\EnrollmentCenterController@consented',
+            'as'   => 'enrollment-center.consented',
+        ]);
 
-    Route::post('/utc', [
-        'uses' => 'Enrollment\EnrollmentCenterController@unableToContact',
-        'as'   => 'enrollment-center.utc',
-    ]);
+        Route::post('/utc', [
+            'uses' => 'Enrollment\EnrollmentCenterController@unableToContact',
+            'as'   => 'enrollment-center.utc',
+        ]);
 
-    Route::post('/rejected', [
-        'uses' => 'Enrollment\EnrollmentCenterController@rejected',
-        'as'   => 'enrollment-center.rejected',
-    ]);
+        Route::post('/rejected', [
+            'uses' => 'Enrollment\EnrollmentCenterController@rejected',
+            'as'   => 'enrollment-center.rejected',
+        ]);
+    });
 });
 
 /*
