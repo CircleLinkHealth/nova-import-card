@@ -53,7 +53,7 @@ class QueueSendAuditReports extends Command
                     });
             })
             ->whereHas('patientInfo.patientSummaries', function ($query) {
-                $query->where('ccm_time', '>=', 1200)
+                $query->where('ccm_time', '>', 0)
                     ->where('month_year', Carbon::now()->subMonth()->firstOfMonth()->toDateString());
             })
             ->get();
