@@ -29,6 +29,7 @@ const state = {
         props: {}
     },
     patientCareTeam: [],
+    practiceLocations: {},
 }
 
 export default new Vuex.Store({

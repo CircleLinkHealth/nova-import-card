@@ -35,3 +35,11 @@ export const ADD_NOTIFICATION = (state, notification) => {
 export const REMOVE_NOTIFICATION = (state, notification) => {
     state.notifications.splice(state.notifications.indexOf(notification), 1)
 }
+
+export const CLEAR_PRACTICE_LOCATIONS = (state) => {
+    state.practiceLocations = {}
+}
+
+export const SET_PRACTICE_LOCATIONS = (state, practiceLocations) => {
+    state.practiceLocations = practiceLocations
+}

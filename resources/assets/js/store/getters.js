@@ -14,3 +14,6 @@ export const notifications = state => {
     return state.notifications
 }
 
+export const practiceLocations = state => {
+    return state.practiceLocations
+}
