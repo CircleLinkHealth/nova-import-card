@@ -55,30 +55,30 @@
 
 @include('partials.footer')
 <script>
-    $(document).ready(function () {
-        $('.collapsible').collapsible();
-        syncSelectElements();
-    });
-
-    //Syncronize MDL's select with HTML select on the DOM
-    function syncSelectElements() {
-        var suspend = false;
-
-        var selectElements = $('select');
-        selectElements.material_select();
-
-        selectElements.on('change', function () {
-            if (!suspend) {
-                suspend = true;
-                var event = new CustomEvent('change', {
-                    detail: 'change',
-                    bubbles: true
-                });
-                $(this).get(0).dispatchEvent(event);
-                suspend = false;
-            }
-        });
-    }
+//    $(document).ready(function () {
+//        $('.collapsible').collapsible();
+//        syncSelectElements();
+//    });
+//
+//    //Syncronize MDL's select with HTML select on the DOM
+//    function syncSelectElements() {
+//        var suspend = false;
+//
+//        var selectElements = $('select');
+//        selectElements.material_select();
+//
+//        selectElements.on('change', function () {
+//            if (!suspend) {
+//                suspend = true;
+//                var event = new CustomEvent('change', {
+//                    detail: 'change',
+//                    bubbles: true
+//                });
+//                $(this).get(0).dispatchEvent(event);
+//                suspend = false;
+//            }
+//        });
+//    }
 </script>
 
 @yield('scripts')

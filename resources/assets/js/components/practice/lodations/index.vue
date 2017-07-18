@@ -20,7 +20,7 @@
         </div>
 
         <grid
-                :data="locations"
+                :data="formattedLocations"
                 :columns="gridColumns"
                 :filter-key="searchQuery">
         </grid>
@@ -33,19 +33,32 @@
     import {getPracticeLocations} from '../../../store/actions'
 
     export default {
-        computed: Object.assign({}, mapGetters({
-            locations: 'practiceLocations'
-        })),
+        computed: Object.assign({},
+            mapGetters({
+                locations: 'practiceLocations'
+            }),
+            {
+                formattedLocations() {
+                    return JSON.parse(JSON.stringify(this.gridData)).map((loc) => {
+                        loc.name = '<i class="material-icons">mode_edit</i>'+loc.name
 
-        mounted() {
+                        return loc
+                    })
+                }
+            }
+        ),
+
+        created() {
             this.getPracticeLocations(this.practiceId)
+            this.gridData = this.locations
         },
 
         data() {
             return {
                 searchQuery: '',
                 gridColumns: ['name', 'address_line_1', 'city', 'state'],
-                practiceId: $('meta[name=practice-id]').attr('content')
+                practiceId: $('meta[name=practice-id]').attr('content'),
+                gridData: []
             }
         },
 

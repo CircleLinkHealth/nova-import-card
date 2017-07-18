@@ -37,9 +37,11 @@ export const REMOVE_NOTIFICATION = (state, notification) => {
 }
 
 export const CLEAR_PRACTICE_LOCATIONS = (state) => {
-    state.practiceLocations = {}
+    state.practiceLocations = []
 }
 
 export const SET_PRACTICE_LOCATIONS = (state, practiceLocations) => {
-    state.practiceLocations = practiceLocations
+    practiceLocations.forEach(loc => {
+        state.practiceLocations.push(loc)
+    })
 }

@@ -41461,7 +41461,7 @@ var state = {
         props: {}
     },
     patientCareTeam: [],
-    practiceLocations: {}
+    practiceLocations: []
 };
 
 /* harmony default export */ __webpack_exports__["a"] = (new __WEBPACK_IMPORTED_MODULE_1_vuex__["a" /* default */].Store({
@@ -41623,11 +41623,13 @@ var REMOVE_NOTIFICATION = function REMOVE_NOTIFICATION(state, notification) {
 };
 
 var CLEAR_PRACTICE_LOCATIONS = function CLEAR_PRACTICE_LOCATIONS(state) {
-    state.practiceLocations = {};
+    state.practiceLocations = [];
 };
 
 var SET_PRACTICE_LOCATIONS = function SET_PRACTICE_LOCATIONS(state, practiceLocations) {
-    state.practiceLocations = practiceLocations;
+    practiceLocations.forEach(function (loc) {
+        state.practiceLocations.push(loc);
+    });
 };
 
 /***/ }),
@@ -50458,7 +50460,7 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
         modal: __WEBPACK_IMPORTED_MODULE_0__shared_modal_vue___default.a
     },
 
-    computed: Object.assign({
+    computed: Object.assign({}, {
         validationErrors: function validationErrors() {
             return this.formstate && this.formstate.$invalid && this.formstate.$touched && this.submitClicked;
         }

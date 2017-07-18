@@ -518,7 +518,7 @@
             modal
         },
 
-        computed: Object.assign(
+        computed: Object.assign({},
             {
                 validationErrors() {
                     return this.formstate && this.formstate.$invalid && this.formstate.$touched && this.submitClicked

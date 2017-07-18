@@ -13,8 +13,7 @@
         </thead>
         <tbody>
         <tr v-for="entry in filteredData">
-            <td v-for="key in columns">
-                {{entry[key]}}
+            <td v-for="key in columns" v-html="entry[key]">
             </td>
         </tr>
         </tbody>

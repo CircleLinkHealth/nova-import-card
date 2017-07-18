@@ -41461,7 +41461,7 @@ var state = {
         props: {}
     },
     patientCareTeam: [],
-    practiceLocations: {}
+    practiceLocations: []
 };
 
 /* harmony default export */ __webpack_exports__["a"] = (new __WEBPACK_IMPORTED_MODULE_1_vuex__["a" /* default */].Store({
@@ -41623,11 +41623,13 @@ var REMOVE_NOTIFICATION = function REMOVE_NOTIFICATION(state, notification) {
 };
 
 var CLEAR_PRACTICE_LOCATIONS = function CLEAR_PRACTICE_LOCATIONS(state) {
-    state.practiceLocations = {};
+    state.practiceLocations = [];
 };
 
 var SET_PRACTICE_LOCATIONS = function SET_PRACTICE_LOCATIONS(state, practiceLocations) {
-    state.practiceLocations = practiceLocations;
+    practiceLocations.forEach(function (loc) {
+        state.practiceLocations.push(loc);
+    });
 };
 
 /***/ }),
@@ -48147,16 +48149,26 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 /* harmony default export */ __webpack_exports__["default"] = ({
     computed: Object.assign({}, __WEBPACK_IMPORTED_MODULE_0_vuex__["c" /* mapGetters */]({
         locations: 'practiceLocations'
-    })),
+    }), {
+        formattedLocations: function formattedLocations() {
+            return JSON.parse(JSON.stringify(this.gridData)).map(function (loc) {
+                loc.name = '<i class="material-icons">mode_edit</i>' + loc.name;
 
-    mounted: function mounted() {
+                return loc;
+            });
+        }
+    }),
+
+    created: function created() {
         this.getPracticeLocations(this.practiceId);
+        this.gridData = this.locations;
     },
     data: function data() {
         return {
             searchQuery: '',
             gridColumns: ['name', 'address_line_1', 'city', 'state'],
-            practiceId: $('meta[name=practice-id]').attr('content')
+            practiceId: $('meta[name=practice-id]').attr('content'),
+            gridData: []
         };
     },
 
@@ -48215,7 +48227,7 @@ module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c
     staticClass: "material-icons"
   }, [_vm._v("close")])])])]), _vm._v(" "), _c('grid', {
     attrs: {
-      "data": _vm.locations,
+      "data": _vm.formattedLocations,
       "columns": _vm.gridColumns,
       "filter-key": _vm.searchQuery
     }
@@ -48350,7 +48362,6 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 //
 //
 //
-//
 
 /* harmony default export */ __webpack_exports__["default"] = ({
     props: {
@@ -48429,7 +48440,11 @@ module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c
     })])
   }))]), _vm._v(" "), _c('tbody', _vm._l((_vm.filteredData), function(entry) {
     return _c('tr', _vm._l((_vm.columns), function(key) {
-      return _c('td', [_vm._v("\n            " + _vm._s(entry[key]) + "\n        ")])
+      return _c('td', {
+        domProps: {
+          "innerHTML": _vm._s(entry[key])
+        }
+      })
     }))
   }))])
 },staticRenderFns: []}
