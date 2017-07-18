@@ -68,7 +68,7 @@
                 return str.charAt(0).toUpperCase() + str.slice(1)
             }
         },
-        
+
         methods: {
             sortBy: function (key) {
                 this.sortKey = key
@@ -80,9 +80,12 @@
 
 <style>
     table {
-        border: 3px solid #2196f3;
+        display: table !important;
+        border: 2px solid #2196f3;
         border-radius: 3px;
         background-color: #fff;
+        border-collapse: separate !important;
+        border-spacing: 2px !important;
     }
 
     th {
@@ -102,7 +105,6 @@
     th, td {
         min-width: 120px;
         padding: 10px 20px;
-        border: 2px solid white;
     }
 
     th.active {
