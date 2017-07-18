@@ -149,6 +149,7 @@ Route::group(['middleware' => 'auth'], function () {
     Route::resource('profiles', 'API\ProfileController');
 
     Route::resource('user.care-team', 'API\CareTeamController');
+    Route::resource('practice.locations', 'API\PracticeLocationsController');
 
     Route::get('provider/search', [
         'uses' => 'API\CareTeamController@searchProviders',

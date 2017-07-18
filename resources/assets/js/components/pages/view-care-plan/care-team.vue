@@ -12,7 +12,7 @@
     import {patientCareTeam} from '../../../store/getters';
 
     export default {
-        computed: Object.assign(
+        computed: Object.assign({},
             mapGetters({
                 patientCareTeam: 'patientCareTeam'
             }),

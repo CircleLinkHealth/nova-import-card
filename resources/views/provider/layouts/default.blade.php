@@ -6,6 +6,8 @@
     <meta name="description" content="Circle Link Health - CarePlan Manager Provider Dashboard.">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="csrf-token" content="{{ csrf_token() }}">
+    <meta name="base-url" content="{{ url('/') }}">
+    <meta name="practice-id" content="{{ $practice->id }}">
 
     <title>CarePlan Manager | @yield('title')</title>
 
@@ -44,13 +46,14 @@
 
     @yield('head')
 </head>
+
 <body class="main-container">
 
-{{--This is for JS variables. Purposefully included before content.--}}
+<div id="app">
+    @yield('content')
+</div>
+
 @include('partials.footer')
-
-@yield('content')
-
 <script>
     $(document).ready(function () {
         $('.collapsible').collapsible();
@@ -79,6 +82,8 @@
 </script>
 
 @yield('scripts')
+
+<script src="{{asset('js/app-provider-admin-panel-ui.js')}}"></script>
 
 </body>
 </html>

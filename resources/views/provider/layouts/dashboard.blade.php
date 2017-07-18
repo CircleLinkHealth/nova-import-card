@@ -37,10 +37,8 @@
     </header>
 
     <main>
-        <div class="container">
-            <div class="row">
-                @yield('module')
-            </div>
+        <div style="padding: 2%;">
+            @yield('module')
         </div>
     </main>
 @endsection

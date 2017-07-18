@@ -60,6 +60,7 @@ class DashboardController extends Controller
         return view('provider.location.create', array_merge([
             'leadId'       => auth()->user()->id,
             'practiceSlug' => $this->practiceSlug,
+            'practice'     => $this->primaryPractice,
         ], $this->returnWithAll));
     }
 
