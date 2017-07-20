@@ -14,7 +14,7 @@ class AddModeToCareplan extends Migration
     public function up()
     {
         Schema::table('care_plans', function (Blueprint $table) {
-            $table->enum('careplan_mode', [
+            $table->enum('mode', [
                 'web',
                 'pdf',
             ])
@@ -31,7 +31,7 @@ class AddModeToCareplan extends Migration
     public function down()
     {
         Schema::table('care_plans', function (Blueprint $table) {
-            $table->dropColumn('careplan_mode');
+            $table->dropColumn('mode');
         });
     }
 }
