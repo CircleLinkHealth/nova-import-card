@@ -1,6 +1,7 @@
 <?php namespace App\Providers;
 
 use App\AppConfig;
+use App\CarePlan;
 use App\Contracts\Efax;
 use App\Contracts\ReportFormatter;
 use App\Contracts\Repositories\ActivityRepository;
@@ -24,6 +25,7 @@ use App\Repositories\PracticeRepositoryEloquent;
 use App\Repositories\UserRepositoryEloquent;
 use App\Services\Phaxio\PhaxioService;
 use Illuminate\Support\ServiceProvider;
+use View;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -43,6 +45,27 @@ class AppServiceProvider extends ServiceProvider
                 view()->share('app_config_admin_stylesheet', $adminStylesheet->config_value);
             }
         }
+
+        View::composer('wpUsers.patient.*', function ($view) {
+            $data = $view->getData();
+
+            if (!array_key_exists('patient', $data)) {
+                return;
+            }
+
+            $careplanMode = $data['patient']->carePlan->mode;
+
+            if (!$careplanMode) {
+                $careplanMode = $data['patient']->primaryPractice->settings->first()->careplan_mode == 'web';
+            }
+
+            if (!$careplanMode) {
+                $careplanMode = CarePlan::WEB;
+            }
+
+
+            $view->with(compact(['careplanMode']));
+        });
     }
 
     /**
