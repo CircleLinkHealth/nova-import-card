@@ -94,6 +94,9 @@ class WorkScheduleController extends Controller
             ? $request->input('nurse_info_id')
             : auth()->user()->nurseInfo->id;
 
+        if (!$nurseInfoId) {
+            $nurseInfoId = auth()->user()->nurseInfo->id;
+        }
 
         $validator = Validator::make($request->all(), [
             'day_of_week'       => "required",
