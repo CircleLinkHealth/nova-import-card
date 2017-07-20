@@ -3,6 +3,7 @@
 namespace App\Observers;
 
 
+use App\Jobs\SendSlackMessage;
 use App\NurseContactWindow;
 use Maknz\Slack\Facades\Slack;
 
@@ -31,7 +32,9 @@ class NurseContactWindowObserver
         $sentence .= "$window->dayName, {$window->date->format('m-d-Y')} from $window->window_time_start to $window->window_time_end. View Schedule at ";
         $sentence .= route('get.admin.nurse.schedules');
 
-        Slack::to('#callcenter_engagement')->send($sentence);
+        $job = new SendSlackMessage('#callcenter_ops', $sentence);
+
+        dispatch($job);
     }
 
 
@@ -58,7 +61,9 @@ class NurseContactWindowObserver
         $sentence .= "$window->dayName, {$window->date->format('m-d-Y')} from $window->window_time_start to $window->window_time_end. View Schedule at ";
         $sentence .= route('get.admin.nurse.schedules');
 
-        Slack::to('#callcenter_engagement')->send($sentence);
+        $job = new SendSlackMessage('#callcenter_ops', $sentence);
+
+        dispatch($job);
     }
 
 
