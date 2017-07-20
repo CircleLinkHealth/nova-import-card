@@ -473,6 +473,8 @@ class ReportsController extends Controller
 
         $patient = User::find($patientId);
 
+
+
         $careplan = $this->formatter->formatDataForViewPrintCareplanReport([$patient]);
 
         if (!$careplan) {

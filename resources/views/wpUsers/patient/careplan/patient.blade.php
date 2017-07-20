@@ -15,7 +15,7 @@ $user_info = array();
     {!! Form::open(array('url' => URL::route('patients.demographics.store', array('patientId' => $patient->id)), 'class' => 'form-horizontal', 'id' => 'ucpForm')) !!}
     <div class="row" style="margin-top:20px;">
         <div class="col-lg-10 col-lg-offset-1">
-            @if ($careplanMode == 'web')
+            @if ($patient->careplan_mode == 'web')
                 <div class="icon-container col-lg-12">
                     @if(isset($patient))
                         @include('wpUsers.patient.careplan.nav')
@@ -330,7 +330,7 @@ $user_info = array();
                 </div>
             </div>
         </div>
-        @if ($careplanMode == 'web')
+        @if ($patient->careplan_mode == 'web')
             @include('wpUsers.patient.careplan.footer')
         @endif
         <br/><br/>

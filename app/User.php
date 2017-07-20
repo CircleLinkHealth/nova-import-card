@@ -2368,4 +2368,18 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
 
         return $this->roles->first();
     }
+    
+    public function getCareplanModeAttribute() {
+        $careplanMode = $this->carePlan->mode;
+
+        if (!$careplanMode) {
+            $careplanMode = $this->primaryPractice->settings->first()->careplan_mode == 'web';
+        }
+
+        if (!$careplanMode) {
+            $careplanMode = CarePlan::WEB;
+        }
+
+        return $careplanMode;
+    }
 }

@@ -12,14 +12,14 @@
                    role="button">Patient Overview</a>
             </li>
 
-            @if ($careplanMode == 'web')
+            @if ($patient->careplan_mode == 'web')
                 <li class="inline-block">
                     <a href="{{ empty($patient->id) ? URL::route('patients.search') : URL::route('patient.careplan.show', array('patient' => $patient->id, 'page' => '1')) }}"
                        role="button">Edit Care Plan</a>
                 </li>
             @endif
 
-            @if ($careplanMode == 'pdf')
+            @if ($patient->careplan_mode == 'pdf')
                 <li class="inline-block">
                     <a href="{{ URL::route('patient.demographics.show', array('patientId' => $patient->id)) }}"
                        role="button">Patient Profile</a>
