@@ -2,6 +2,7 @@
 
 use App\CareItem;
 use App\CareItemUserValue;
+use App\CarePlan;
 use App\Formatters\WebixFormatter;
 use App\Location;
 use App\Models\CPM\CpmProblem;
@@ -473,7 +474,9 @@ class ReportsController extends Controller
 
         $patient = User::find($patientId);
 
-
+        if ($patient->careplan_mode == CarePlan::PDF) {
+            return view('patient.careplan.view-pdf-careplan', compact(['patient']));
+        }
 
         $careplan = $this->formatter->formatDataForViewPrintCareplanReport([$patient]);
 
