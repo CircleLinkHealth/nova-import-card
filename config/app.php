@@ -1,5 +1,6 @@
 <?php
 
+use App\Providers\ViewComposerServiceProvider;
 use App\Providers\ObserversServiceProvider;
 
 return [
@@ -206,6 +207,7 @@ return [
         Tylercd100\LERN\LERNServiceProvider::class,
         Dionera\BeanstalkdUI\BeanstalkdUIServiceProvider::class,
         Laravel\Tinker\TinkerServiceProvider::class,
+        ViewComposerServiceProvider::class,
     ],
 
     /*

@@ -4,8 +4,8 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "b14f16992985ee58618e5dd258b7d156",
-    "content-hash": "9a14f85322e29d6db8cde41071c50d56",
+    "hash": "b337700d0d89fcf33e3c4cdcfe6d9b64",
+    "content-hash": "923ec970abb27083480316ea35d3d0e0",
     "packages": [
         {
             "name": "arcturial/clickatell",
@@ -51,16 +51,16 @@
         },
         {
             "name": "aws/aws-sdk-php",
-            "version": "3.31.7",
+            "version": "3.31.8",
             "source": {
                 "type": "git",
                 "url": "https://github.com/aws/aws-sdk-php.git",
-                "reference": "74b1cc16d44dc4a90b5ff93fd33e97cf38a5331a"
+                "reference": "9829a8183016df800110148b467179d67c434f90"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/aws/aws-sdk-php/zipball/74b1cc16d44dc4a90b5ff93fd33e97cf38a5331a",
-                "reference": "74b1cc16d44dc4a90b5ff93fd33e97cf38a5331a",
+                "url": "https://api.github.com/repos/aws/aws-sdk-php/zipball/9829a8183016df800110148b467179d67c434f90",
+                "reference": "9829a8183016df800110148b467179d67c434f90",
                 "shasum": ""
             },
             "require": {
@@ -127,7 +127,7 @@
                 "s3",
                 "sdk"
             ],
-            "time": "2017-07-19 18:07:19"
+            "time": "2017-07-20 22:22:05"
         },
         {
             "name": "barryvdh/laravel-debugbar",
@@ -4266,6 +4266,57 @@
             "time": "2017-04-26 13:05:38"
         },
         {
+            "name": "spatie/laravel-tinker-tools",
+            "version": "1.0.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/spatie/laravel-tinker-tools.git",
+                "reference": "4674f9a3d874c8ad488e25ffb7cd936bb7348e43"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/spatie/laravel-tinker-tools/zipball/4674f9a3d874c8ad488e25ffb7cd936bb7348e43",
+                "reference": "4674f9a3d874c8ad488e25ffb7cd936bb7348e43",
+                "shasum": ""
+            },
+            "require": {
+                "illuminate/support": "5.3.*|5.4.*",
+                "php": "^7.0"
+            },
+            "require-dev": {
+                "phpunit/phpunit": "^6.0"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "Spatie\\TinkerTools\\": "src"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Freek Van der Herten",
+                    "email": "freek@spatie.be",
+                    "homepage": "https://spatie.be",
+                    "role": "Developer"
+                }
+            ],
+            "description": "Flysystem Adapter for the Dropbox v2 API",
+            "homepage": "https://github.com/spatie/laravel-tinker-tools",
+            "keywords": [
+                "Flysystem",
+                "api",
+                "dropbox",
+                "laravel-tinker-tools",
+                "spatie",
+                "v2"
+            ],
+            "time": "2017-05-22 11:30:34"
+        },
+        {
             "name": "swiftmailer/swiftmailer",
             "version": "v5.4.8",
             "source": {
@@ -6753,8 +6804,8 @@
     "aliases": [],
     "minimum-stability": "stable",
     "stability-flags": {
-        "zizaco/entrust": 20,
         "prettus/l5-repository": 20,
+        "zizaco/entrust": 20,
         "orangehill/iseed": 20,
         "xethron/migrations-generator": 20
     },
