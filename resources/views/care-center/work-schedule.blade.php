@@ -11,10 +11,6 @@
 
             <div class="panel panel-info">
                 <div class="panel-heading">
-                    <h4>
-                        When would you like to work?
-                        <span class="pull-right enrolled">Timezone: {{ auth()->user()->timezone ? auth()->user()->timezone : 'Not set' }}</span>
-                    </h4>
                 </div>
 
                 <div class="panel-body">
