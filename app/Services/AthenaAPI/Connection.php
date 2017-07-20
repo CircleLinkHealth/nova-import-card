@@ -59,6 +59,11 @@ class Connection {
      * @param string|int $practiceid |null the practice id to be used in requests (optional)
      */
     public function __construct($version, $key, $secret, $practiceid=null) {
+
+        if (!$version || !$key || !$secret) {
+            return 'Required parameters missing.';
+        }
+
         $this->version = $version;
         $this->key = $key;
         $this->secret = $secret;
