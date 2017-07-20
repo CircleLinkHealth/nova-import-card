@@ -48,7 +48,7 @@
                         <div class="row">
                             <div class="col-md-12">
                                 <div class="row">
-                                    <h3>Your Schedule ({{ Carbon\Carbon::parse('')->setTimezone(auth()->user()->timezone ?? 'America/New_York')->format('T')}})</h3>
+                                    <h3>Your Schedule ({{$tzAbbr}})</h3>
                                 </div>
                                 @include('partials.care-center.work-schedule-slot.index')
                             </div>
