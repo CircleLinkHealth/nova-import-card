@@ -62,7 +62,7 @@ class TwilioController extends Controller
         $practiceId = $enrollee['practice_id'];
 
         if (!$practiceId) {
-            Log::alert($enrollee);
+            Log::alert($request->input());
         }
 
         $callerIdNumber = Practice::find($practiceId)->outgoing_phone_number;
