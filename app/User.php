@@ -22,6 +22,7 @@ use App\Models\MedicalRecords\Ccda;
 use App\Notifications\ResetPassword;
 use App\Services\UserService;
 use App\Traits\HasEmrDirectAddress;
+use Carbon\Carbon;
 use DateTime;
 use Faker\Factory;
 use Illuminate\Auth\Authenticatable;
@@ -2358,5 +2359,11 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
         }
 
         return $this->roles->first();
+    }
+
+    public function getTimezoneAbbrAttribute() {
+        return $this->timezone
+            ? Carbon::now($this->timezone)->format('T')
+            : false;
     }
 }
