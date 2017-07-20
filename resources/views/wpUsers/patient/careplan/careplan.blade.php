@@ -23,7 +23,7 @@ $new_user = false;
     <div id="content" class="row">
         <div class="container">
             <section class="">
-                @if ($patient->careplan_mode == 'web')
+                @if ($patient->careplan_mode == App\CarePlan::WEB)
                     <div class="row">
                         <div class="icon-container col-lg-12">
                             @if(isset($patient) && !$new_user )
