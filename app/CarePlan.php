@@ -16,8 +16,13 @@ class CarePlan extends Model implements PdfReport
     const QA_APPROVED = 'qa_approved';
     const PROVIDER_APPROVED = 'provider_approved';
 
+    // modes
+    const WEB = 'web';
+    const PDF = 'pdf';
+
     protected $fillable = [
         'user_id',
+        'mode',
         'provider_approver_id',
         'qa_approver_id',
         'care_plan_template_id',
