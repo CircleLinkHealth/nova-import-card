@@ -45,9 +45,7 @@ class WorkScheduleController extends Controller
         $holidays = auth()->user()->nurseInfo->upcoming_holiday_dates;
         $holidaysThisWeek = auth()->user()->nurseInfo->holidays_this_week;
 
-        $tzAbbr = auth()->user()->timezone
-            ? Carbon::now(auth()->user()->timezone)->format('T')
-            : false;
+        $tzAbbr = auth()->user()->timezone_abbr;
 
         //I think time tracking submits along with the form, thus messing up sessions.
         //Temporary fix
@@ -222,7 +220,9 @@ class WorkScheduleController extends Controller
             ->get()
             ->sortBy('first_name');
 
-        return view('admin.nurse.schedules.index', compact('data'));
+        $tzAbbr = auth()->user()->timezone_abbr;
+
+        return view('admin.nurse.schedules.index', compact(['data', 'tzAbbr']));
     }
 
     protected function canAddNewWindow(Carbon $date)
