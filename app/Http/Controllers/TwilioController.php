@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\CLH\Helpers\StringManipulation;
 use App\Enrollee;
 use App\Practice;
 use App\User;
@@ -51,7 +52,7 @@ class TwilioController extends Controller
 
         $response = new Twiml();
 
-        $phoneNumberToDial = $request->input('phoneNumber');
+        $phoneNumberToDial = (new StringManipulation())->formatPhoneNumberE164($request->input('phoneNumber'));
 
         $enrollee = Enrollee::where(function ($q) use ($phoneNumberToDial){
             $q->where('cell_phone', $phoneNumberToDial)
@@ -60,10 +61,6 @@ class TwilioController extends Controller
         })->first();
 
         $practiceId = $enrollee['practice_id'];
-
-        if (!$practiceId) {
-            Log::alert($request->input());
-        }
 
         $callerIdNumber = Practice::find($practiceId)->outgoing_phone_number;
 
