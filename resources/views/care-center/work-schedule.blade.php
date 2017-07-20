@@ -13,7 +13,6 @@
                 <div class="panel-heading">
                     <h4>
                         When would you like to work?
-                        <span class="pull-right enrolled">Timezone: {{ auth()->user()->timezone ? auth()->user()->timezone : 'Not set' }}</span>
                     </h4>
                 </div>
 
@@ -48,7 +47,7 @@
                         <div class="row">
                             <div class="col-md-12">
                                 <div class="row">
-                                    <h3>Your Schedule</h3>
+                                    <h3>Your Schedule ({{$tzAbbr}})</h3>
                                 </div>
                                 @include('partials.care-center.work-schedule-slot.index')
                             </div>

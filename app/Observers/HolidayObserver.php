@@ -4,19 +4,19 @@ namespace App\Observers;
 
 
 use App\Jobs\SendSlackMessage;
+use App\Models\Holiday;
 use App\NurseContactWindow;
-use Maknz\Slack\Facades\Slack;
 
-class NurseContactWindowObserver
+class HolidayObserver
 {
     /**
      * Listen for the NurseContactWindow created event.
      *
-     * @param NurseContactWindow $window
+     * @param NurseContactWindow $holiday
      *
      * @internal param User $user
      */
-    public function created(NurseContactWindow $window)
+    public function created(Holiday $holiday)
     {
         if (!app()->environment('production')) {
             return;
@@ -24,12 +24,12 @@ class NurseContactWindowObserver
 
         $auth = auth()->user();
 
-        if ($auth->id != $window->nurse->user->id) {
+        if ($auth->id != $holiday->nurse->user->id) {
             return;
         }
 
-        $sentence = "Nurse $auth->fullName has just created a new Window for ";
-        $sentence .= "$window->dayName, {$window->date->format('m-d-Y')} from $window->window_time_start to $window->window_time_end. View Schedule at ";
+        $sentence = "Nurse $auth->fullName will take the day off on {$holiday->date->format('m-d-Y')}";
+        $sentence .= "View Schedule at ";
         $sentence .= route('get.admin.nurse.schedules');
 
         $job = new SendSlackMessage('#callcenter_ops', $sentence);
@@ -41,11 +41,11 @@ class NurseContactWindowObserver
     /**
      * Listen for the NurseContactWindow deleted event.
      *
-     * @param NurseContactWindow $window
+     * @param NurseContactWindow $holiday
      *
      * @internal param User $user
      */
-    public function deleted(NurseContactWindow $window)
+    public function deleted(Holiday $holiday)
     {
         if (!app()->environment('production')) {
             return;
@@ -53,12 +53,12 @@ class NurseContactWindowObserver
 
         $auth = auth()->user();
 
-        if ($auth->id != $window->nurse->user->id) {
+        if ($auth->id != $holiday->nurse->user->id) {
             return;
         }
 
-        $sentence = "Nurse $auth->fullName has just deleted the Window for ";
-        $sentence .= "$window->dayName, {$window->date->format('m-d-Y')} from $window->window_time_start to $window->window_time_end. View Schedule at ";
+        $sentence = "Nurse $auth->fullName will take the day off on {$holiday->date->format('m-d-Y')}";
+        $sentence .= "View Schedule at ";
         $sentence .= route('get.admin.nurse.schedules');
 
         $job = new SendSlackMessage('#callcenter_ops', $sentence);
