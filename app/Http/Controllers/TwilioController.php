@@ -53,11 +53,17 @@ class TwilioController extends Controller
 
         $phoneNumberToDial = $request->input('phoneNumber');
 
-        $practiceId = Enrollee::where(function ($q) use ($phoneNumberToDial){
+        $enrollee = Enrollee::where(function ($q) use ($phoneNumberToDial){
             $q->where('cell_phone', $phoneNumberToDial)
                 ->orWhere('home_phone', $phoneNumberToDial)
                 ->orWhere('other_phone', $phoneNumberToDial);
-        })->first()['practice_id'];
+        })->first();
+
+        $practiceId = $enrollee['practice_id'];
+
+        if (!$practiceId) {
+            Log::alert($enrollee);
+        }
 
         $callerIdNumber = Practice::find($practiceId)->outgoing_phone_number;
 
