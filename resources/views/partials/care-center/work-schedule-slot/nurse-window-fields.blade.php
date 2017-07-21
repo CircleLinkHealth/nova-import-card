@@ -1,6 +1,6 @@
 <style>
     .work-schedule-label {
-        line-height: 33rem;
+        line-height: 4rem;
         font-weight: bold !important;
     }
 
