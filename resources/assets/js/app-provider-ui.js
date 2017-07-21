@@ -29,6 +29,7 @@ Vue.component('select2', require('./components/src/select2'));
 Vue.component('fab', require('./components/fab.vue'));
 Vue.component('openModal', require('./components/shared/open-modal.vue'));
 Vue.component('notifications', require('./components/shared/notifications/notifications.vue'));
+Vue.component('pdfCareplans', require('./components/pages/view-care-plan/pdf-careplans.vue'));
 
 window.App = new Vue({
     el: '#app',
