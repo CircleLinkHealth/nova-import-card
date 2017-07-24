@@ -1,6 +1,28 @@
 <script>
-    export default {
+    import {mapActions, mapGetters} from 'vuex'
+    import {getPatientCarePlan} from '../../../store/actions'
+    import {patientCarePlan} from '../../../store/getters'
 
+    export default {
+        computed: Object.assign(
+            mapGetters({
+                patientCarePlan: 'patientCarePlan'
+            })
+        ),
+
+        created() {
+            this.getPatientCarePlan(this.patientId)
+        },
+
+        data() {
+            return {
+                patientId: $('meta[name="patient_id"]').attr('content')
+            }
+        },
+
+        methods: Object.assign({},
+            mapActions(['getPatientCarePlan'])
+        ),
     }
 </script>
 
