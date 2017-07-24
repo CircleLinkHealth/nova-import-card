@@ -2387,6 +2387,6 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
     public function getTimezoneAbbrAttribute() {
         return $this->timezone
             ? Carbon::now($this->timezone)->format('T')
-            : false;
+            : Carbon::now()->setTimezone('America/New_York')->format('T');
     }
 }
