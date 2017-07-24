@@ -10997,6 +10997,7 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "destroyCarePerson", function() { return destroyCarePerson; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "getPracticeLocations", function() { return getPracticeLocations; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "getPatientCarePlan", function() { return getPatientCarePlan; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "destroyPdf", function() { return destroyPdf; });
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__api_user_profile__ = __webpack_require__(41);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__api_care_team__ = __webpack_require__(42);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__api_practice_location__ = __webpack_require__(43);
@@ -11100,6 +11101,16 @@ var getPatientCarePlan = function getPatientCarePlan(_ref9, patientId) {
         }
         commit('SET_PATIENT_CARE_PLAN', carePlan);
     }, null, patientId);
+};
+
+var destroyPdf = function destroyPdf(_ref10, pdfId) {
+    var commit = _ref10.commit;
+
+    if (!pdfId) {
+        return;
+    }
+
+    __WEBPACK_IMPORTED_MODULE_4__api_patient_care_plan__["a" /* default */].deletePdf(function (pdf) {}, null, pdfId);
 };
 
 /***/ }),
@@ -41611,6 +41622,16 @@ var state = {
         }, function (resp) {
             return ecb(resp.data);
         });
+    },
+    deletePdf: function deletePdf(cb) {
+        var ecb = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : null;
+        var pdfId = arguments[2];
+
+        window.axios.delete('pdf/' + pdfId).then(function (resp) {
+            return cb(resp.data);
+        }, function (resp) {
+            return ecb(resp.data);
+        });
     }
 });
 
@@ -52076,7 +52097,7 @@ exports = module.exports = __webpack_require__(5)(undefined);
 
 
 // module
-exports.push([module.i, "\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n", ""]);
+exports.push([module.i, "\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n", ""]);
 
 // exports
 
@@ -52110,7 +52131,18 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
     },
 
 
-    methods: Object.assign({}, __WEBPACK_IMPORTED_MODULE_0_vuex__["b" /* mapActions */](['getPatientCarePlan']))
+    methods: Object.assign({}, __WEBPACK_IMPORTED_MODULE_0_vuex__["b" /* mapActions */](['getPatientCarePlan', 'destroyPdf']), {
+        deletePdf: function deletePdf(pdf) {
+            var disassociate = confirm('Are you sure you want to delete this CarePlan?');
+
+            if (!disassociate) {
+                return true;
+            }
+
+            this.destroyPdf(pdf.id);
+            this.getPatientCarePlan(this.patientId);
+        }
+    })
 });
 
 /***/ }),
@@ -52118,9 +52150,36 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 /***/ (function(module, exports, __webpack_require__) {
 
 module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;
-  return _vm._m(0)
+  return _c('div', {
+    staticClass: "col-md-8 col-md-offset-2",
+    staticStyle: {
+      "padding-top": "2%"
+    }
+  }, [_vm._m(0), _vm._v(" "), _c('div', {
+    staticClass: "row"
+  }, [_c('div', {
+    staticClass: "col-md-8"
+  }, [_c('ul', {
+    staticClass: "list-group"
+  }, _vm._l((_vm.patientCarePlan.pdfs), function(pdf, index) {
+    return _c('li', {
+      staticClass: "list-group-item"
+    }, [_c('a', {
+      attrs: {
+        "href": pdf.url,
+        "target": "_blank"
+      }
+    }, [_vm._v(_vm._s(pdf.label) + " ")]), _vm._v(" "), _c('button', {
+      staticClass: "btn btn-xs btn-danger problem-delete-btn",
+      on: {
+        "click": function($event) {
+          _vm.deletePdf(pdf)
+        }
+      }
+    }, [_vm._m(1, true)])])
+  }))])])])
 },staticRenderFns: [function (){var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;
-  return _c('div', [_c('div', {
+  return _c('div', {
     staticClass: "row"
   }, [_c('div', {
     staticClass: "col-md-12 text-right"
@@ -52129,7 +52188,11 @@ module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c
     attrs: {
       "href": "#"
     }
-  }, [_vm._v("Upload PDF")])])])])
+  }, [_vm._v("Upload PDF")])])])
+},function (){var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;
+  return _c('span', [_c('i', {
+    staticClass: "glyphicon glyphicon-remove"
+  })])
 }]}
 module.exports.render._withStripped = true
 if (false) {

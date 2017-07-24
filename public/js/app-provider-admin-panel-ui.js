@@ -10997,6 +10997,7 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "destroyCarePerson", function() { return destroyCarePerson; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "getPracticeLocations", function() { return getPracticeLocations; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "getPatientCarePlan", function() { return getPatientCarePlan; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "destroyPdf", function() { return destroyPdf; });
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__api_user_profile__ = __webpack_require__(41);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__api_care_team__ = __webpack_require__(42);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__api_practice_location__ = __webpack_require__(43);
@@ -11100,6 +11101,16 @@ var getPatientCarePlan = function getPatientCarePlan(_ref9, patientId) {
         }
         commit('SET_PATIENT_CARE_PLAN', carePlan);
     }, null, patientId);
+};
+
+var destroyPdf = function destroyPdf(_ref10, pdfId) {
+    var commit = _ref10.commit;
+
+    if (!pdfId) {
+        return;
+    }
+
+    __WEBPACK_IMPORTED_MODULE_4__api_patient_care_plan__["a" /* default */].deletePdf(function (pdf) {}, null, pdfId);
 };
 
 /***/ }),
@@ -41607,6 +41618,16 @@ var state = {
         }
 
         window.axios.get('user/' + patientId + '/care-plan').then(function (resp) {
+            return cb(resp.data);
+        }, function (resp) {
+            return ecb(resp.data);
+        });
+    },
+    deletePdf: function deletePdf(cb) {
+        var ecb = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : null;
+        var pdfId = arguments[2];
+
+        window.axios.delete('pdf/' + pdfId).then(function (resp) {
             return cb(resp.data);
         }, function (resp) {
             return ecb(resp.data);

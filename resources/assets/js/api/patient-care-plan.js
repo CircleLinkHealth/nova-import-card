@@ -9,4 +9,11 @@ export default {
             (resp) => ecb(resp.data)
         );
     },
+
+    deletePdf (cb, ecb = null, pdfId) {
+        window.axios.delete('pdf/' + pdfId).then(
+            (resp) => cb(resp.data),
+            (resp) => ecb(resp.data)
+        );
+    },
 }
