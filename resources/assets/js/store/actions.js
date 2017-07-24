@@ -2,6 +2,7 @@ import userProfile from "../api/user-profile";
 import careTeam from "../api/care-team";
 import practiceLocationsApi from "../api/practice-location";
 import carePersonApi from "../api/care-person";
+import carePlanApi from "../api/patient-care-plan";
 
 export const addNotification = ({commit}, notification) => {
     commit('ADD_NOTIFICATION', notification);
@@ -65,3 +66,16 @@ export const getPracticeLocations = ({commit}, practiceId) => {
     }, practiceId)
 }
 
+export const getPatientCarePlan = ({commit}, patientId) => {
+    if (!patientId) {
+        return
+    }
+
+    carePlanApi.getPatientCareplan(carePlan => {
+        if (!carePlan) {
+            commit('CLEAR_PATIENT_CARE_PLAN');
+            return
+        }
+        commit('SET_PATIENT_CARE_PLAN', carePlan);
+    }, null, patientId)
+}

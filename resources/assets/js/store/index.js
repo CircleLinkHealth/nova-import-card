@@ -29,6 +29,7 @@ const state = {
         props: {}
     },
     patientCareTeam: [],
+    patientCarePlan: {},
     practiceLocations: [],
 }
 
