@@ -29,7 +29,9 @@ const state = {
         props: {}
     },
     patientCareTeam: [],
-    patientCarePlan: {},
+    patientCarePlan: {
+        pdfs: []
+    },
     practiceLocations: [],
 }
 

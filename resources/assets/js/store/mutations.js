@@ -20,6 +20,12 @@ export const CLEAR_PATIENT_CARE_PLAN = () => {
     state.patientCarePlan = {}
 }
 
+export const DELETE_PDF_CARE_PLAN = (state, deletedPdfId) => {
+    state.patientCarePlan.pdfs.map((pdf) => {
+        return deletedPdfId === pdf.id
+    })
+}
+
 export const LOGIN_USER = (state, currentUser) => {
     state.currentUser = currentUser
 }

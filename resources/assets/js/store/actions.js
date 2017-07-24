@@ -86,6 +86,6 @@ export const destroyPdf = ({commit}, pdfId) => {
     }
 
     carePlanApi.deletePdf(pdf => {
-
+        commit('DELETE_PDF_CARE_PLAN', pdf)
     }, null, pdfId)
 }
