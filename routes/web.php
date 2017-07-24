@@ -142,12 +142,19 @@ Route::group(['namespace' => 'Redox'], function () {
 /****************************/
 /****************************/
 Route::group(['middleware' => 'auth'], function () {
+
+    Route::get('download/{filePath}', [
+        'uses' => 'DownloadController@file',
+        'as'   => 'download',
+    ])->where('filePath', '[A-Za-z0-9\-\_\.]+');
+
     /**
      * API
      */
 
     Route::resource('profiles', 'API\ProfileController');
 
+    Route::resource('user.care-plan', 'API\PatientCarePlanController');
     Route::resource('user.care-team', 'API\CareTeamController');
     Route::resource('practice.locations', 'API\PracticeLocationsController');
 
@@ -272,11 +279,6 @@ Route::group(['middleware' => 'auth'], function () {
             'uses' => 'Patient\PatientController@showDashboard',
             'as'   => 'patients.dashboard',
         ]);
-
-        Route::get('download/{fileName}', [
-            'uses' => 'DownloadController@file',
-            'as'   => 'download',
-        ])->where('filename', '[A-Za-z0-9\-\_\.]+');
 
         Route::get('listing', [
             'uses' => 'Patient\PatientController@showPatientListing',
@@ -549,11 +551,6 @@ Route::group(['middleware' => 'auth'], function () {
          * LOGGER
          */
         Route::get('logs', '\Rap2hpoutre\LaravelLogViewer\LogViewerController@index');
-
-        Route::get('download/{fileName}', [
-            'uses' => 'DownloadController@file',
-            'as'   => 'download',
-        ])->where('filename', '[A-Za-z0-9\-\_\.]+');
 
         Route::get('nurses/windows', [
             'uses' => 'CareCenter\WorkScheduleController@getAllNurseSchedules',
