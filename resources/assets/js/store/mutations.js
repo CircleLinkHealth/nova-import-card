@@ -20,10 +20,21 @@ export const CLEAR_PATIENT_CARE_PLAN = () => {
     state.patientCarePlan = {}
 }
 
-export const DELETE_PDF_CARE_PLAN = (state, deletedPdfId) => {
-    state.patientCarePlan.pdfs.map((pdf) => {
-        return deletedPdfId === pdf.id
+export const ADD_PDF_CARE_PLAN = (state, pdfCareplan) => {
+    pdfCareplan.forEach((cp) => {
+        state.patientCarePlan.pdfs.push(cp)
     })
+}
+
+export const DELETE_PDF_CARE_PLAN = (state, deletedPdfId) => {
+    let removeThis = null;
+    for (let i = 0; i < state.patientCarePlan.pdfs.length; i++) {
+        if (state.patientCarePlan.pdfs[i].id === deletedPdfId) {
+            removeThis = i;
+            break;
+        }
+    }
+    state.patientCarePlan.pdfs.splice(removeThis, 1)
 }
 
 export const LOGIN_USER = (state, currentUser) => {

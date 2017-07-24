@@ -10998,6 +10998,7 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "getPracticeLocations", function() { return getPracticeLocations; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "getPatientCarePlan", function() { return getPatientCarePlan; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "destroyPdf", function() { return destroyPdf; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "uploadPdfCarePlan", function() { return uploadPdfCarePlan; });
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__api_user_profile__ = __webpack_require__(41);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__api_care_team__ = __webpack_require__(42);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__api_practice_location__ = __webpack_require__(43);
@@ -11113,6 +11114,18 @@ var destroyPdf = function destroyPdf(_ref10, pdfId) {
     __WEBPACK_IMPORTED_MODULE_4__api_patient_care_plan__["a" /* default */].deletePdf(function (pdf) {
         commit('DELETE_PDF_CARE_PLAN', pdf);
     }, null, pdfId);
+};
+
+var uploadPdfCarePlan = function uploadPdfCarePlan(_ref11, formData) {
+    var commit = _ref11.commit;
+
+    if (!formData) {
+        return;
+    }
+
+    __WEBPACK_IMPORTED_MODULE_4__api_patient_care_plan__["a" /* default */].uploadPdfCareplan(function (pdf) {
+        commit('ADD_PDF_CARE_PLAN', pdf);
+    }, null, formData);
 };
 
 /***/ }),
@@ -41636,6 +41649,19 @@ var state = {
         }, function (resp) {
             return ecb(resp.data);
         });
+    },
+    uploadPdfCareplan: function uploadPdfCareplan(cb) {
+        var ecb = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : null;
+        var formData = arguments[2];
+
+        // formdata needs to contain
+        // formData.set('files[' + i + ']', this.files[i].file)
+        // formData.set('carePlanId', this.patientCarePlan.id)
+        window.axios.post('care-plans/' + formData.get('carePlanId') + '/pdfs', formData).then(function (resp) {
+            return cb(resp.data);
+        }, function (resp) {
+            return ecb(resp.data);
+        });
     }
 });
 
@@ -41650,6 +41676,7 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "CLEAR_CARE_TEAM", function() { return CLEAR_CARE_TEAM; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "SET_PATIENT_CARE_PLAN", function() { return SET_PATIENT_CARE_PLAN; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "CLEAR_PATIENT_CARE_PLAN", function() { return CLEAR_PATIENT_CARE_PLAN; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "ADD_PDF_CARE_PLAN", function() { return ADD_PDF_CARE_PLAN; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "DELETE_PDF_CARE_PLAN", function() { return DELETE_PDF_CARE_PLAN; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "LOGIN_USER", function() { return LOGIN_USER; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "LOGOUT_USER", function() { return LOGOUT_USER; });
@@ -41681,10 +41708,21 @@ var CLEAR_PATIENT_CARE_PLAN = function CLEAR_PATIENT_CARE_PLAN() {
     state.patientCarePlan = {};
 };
 
-var DELETE_PDF_CARE_PLAN = function DELETE_PDF_CARE_PLAN(state, deletedPdfId) {
-    state.patientCarePlan.pdfs.map(function (pdf) {
-        return deletedPdfId === pdf.id;
+var ADD_PDF_CARE_PLAN = function ADD_PDF_CARE_PLAN(state, pdfCareplan) {
+    pdfCareplan.forEach(function (cp) {
+        state.patientCarePlan.pdfs.push(cp);
     });
+};
+
+var DELETE_PDF_CARE_PLAN = function DELETE_PDF_CARE_PLAN(state, deletedPdfId) {
+    var removeThis = null;
+    for (var i = 0; i < state.patientCarePlan.pdfs.length; i++) {
+        if (state.patientCarePlan.pdfs[i].id === deletedPdfId) {
+            removeThis = i;
+            break;
+        }
+    }
+    state.patientCarePlan.pdfs.splice(removeThis, 1);
 };
 
 var LOGIN_USER = function LOGIN_USER(state, currentUser) {
@@ -52108,7 +52146,7 @@ exports = module.exports = __webpack_require__(5)(undefined);
 
 
 // module
-exports.push([module.i, "\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n", ""]);
+exports.push([module.i, "\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n", ""]);
 
 // exports
 
@@ -52155,10 +52193,8 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
     },
 
 
-    methods: Object.assign({}, __WEBPACK_IMPORTED_MODULE_0_vuex__["b" /* mapActions */](['getPatientCarePlan', 'destroyPdf']), {
+    methods: Object.assign({}, __WEBPACK_IMPORTED_MODULE_0_vuex__["b" /* mapActions */](['getPatientCarePlan', 'destroyPdf', 'uploadPdfCarePlan']), {
         deletePdf: function deletePdf(pdf) {
-            var _this = this;
-
             var disassociate = confirm('Are you sure you want to delete this CarePlan?');
 
             if (!disassociate) {
@@ -52166,9 +52202,6 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
             }
 
             this.destroyPdf(pdf.id);
-            Vue.nextTick(function () {
-                _this.getPatientCarePlan(_this.patientId);
-            });
         },
         uploadPdf: function uploadPdf() {
             this.showUploadModal = false;
@@ -52182,11 +52215,7 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 
             formData.set('carePlanId', this.patientCarePlan.id); // set the filename with php
 
-            window.axios.post('care-plans/' + this.patientCarePlan.id + '/pdfs', formData).then(function (response) {}).catch(function (error) {
-                console.log(error);
-            });
-
-            this.getPatientCarePlan(this.patientId);
+            this.uploadPdfCarePlan(formData);
         }
     })
 });
@@ -55714,7 +55743,7 @@ module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c
     staticClass: "dropzone",
     attrs: {
       "accept": "application/pdf",
-      "multiple": "true"
+      "multiple": "multiple"
     },
     on: {
       "input": function($event) {

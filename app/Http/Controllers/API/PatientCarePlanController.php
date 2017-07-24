@@ -29,34 +29,43 @@ class PatientCarePlanController extends Controller
         return response()->json($cp);
     }
 
-    public function deletePdf($pdfId) {
+    public function deletePdf($pdfId)
+    {
         Pdf::destroy($pdfId);
 
         return response()->json($pdfId);
     }
 
-    public function uploadPdfs(Request $request, $careplanId) {
+    public function uploadPdfs(Request $request, $careplanId)
+    {
         $carePlan = CarePlan::with('patient')->whereId($careplanId)->first();
 
         if (!$carePlan) {
             return 'careplan not found';
         }
 
+        $created = [];
+
         foreach ($request->file()['files'] as $file) {
             $now = Carbon::now()->toDateTimeString();
             $filename = "{$carePlan->patient->first_name}_{$carePlan->patient->last_name}-{$now}-CarePlan.pdf";
             file_put_contents(storage_path("patient/pdf-careplans/$filename"), file_get_contents($file));
 
-            $created = Pdf::create([
-                'uploaded_by' => auth()->user()->id,
+            $pdf = Pdf::create([
+                'uploaded_by'  => auth()->user()->id,
                 'pdfable_type' => CarePlan::class,
-                'pdfable_id' => $careplanId,
-                'filename' => $filename,
-                'file' => file_get_contents($file),
+                'pdfable_id'   => $careplanId,
+                'filename'     => $filename,
+                'file'         => file_get_contents($file),
             ]);
+
+            $pdf->url = route('download.pdf.careplan', ['fileName' => $pdf->filename]);
+            $pdf->label = "CarePlan uploaded on {$pdf->created_at->format('m/d/Y')} at {$pdf->created_at->format('g:i A T')}";
+
+            $created[] = $pdf;
         }
 
-        return response()->json();
+        return response()->json($created);
     }
 
     public function downloadPdf($filePath)

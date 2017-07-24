@@ -89,3 +89,13 @@ export const destroyPdf = ({commit}, pdfId) => {
         commit('DELETE_PDF_CARE_PLAN', pdf)
     }, null, pdfId)
 }
+
+export const uploadPdfCarePlan = ({commit}, formData) => {
+    if (!formData) {
+        return
+    }
+
+    carePlanApi.uploadPdfCareplan(pdf => {
+        commit('ADD_PDF_CARE_PLAN', pdf)
+    }, null, formData)
+}

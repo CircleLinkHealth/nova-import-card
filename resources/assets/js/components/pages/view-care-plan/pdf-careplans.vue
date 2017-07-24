@@ -1,6 +1,6 @@
 <script>
     import {mapActions, mapGetters} from 'vuex'
-    import {getPatientCarePlan, destroyPdf} from '../../../store/actions'
+    import {getPatientCarePlan, destroyPdf, uploadPdfCarePlan} from '../../../store/actions'
     import {patientCarePlan} from '../../../store/getters'
     import modal from '../../shared/modal.vue';
     import FileUpload from 'vue-upload-component'
@@ -30,7 +30,7 @@
         },
 
         methods: Object.assign({},
-            mapActions(['getPatientCarePlan', 'destroyPdf']),
+            mapActions(['getPatientCarePlan', 'destroyPdf', 'uploadPdfCarePlan']),
             {
                 deletePdf(pdf){
                     let disassociate = confirm('Are you sure you want to delete this CarePlan?');
@@ -40,9 +40,6 @@
                     }
 
                     this.destroyPdf(pdf.id)
-                    Vue.nextTick(() => {
-                        this.getPatientCarePlan(this.patientId)
-                    })
                 },
                 uploadPdf() {
                     this.showUploadModal = false;
@@ -56,13 +53,7 @@
 
                     formData.set('carePlanId', this.patientCarePlan.id) // set the filename with php
 
-                    window.axios.post('care-plans/' + this.patientCarePlan.id + '/pdfs', formData).then(function (response) {
-
-                    }).catch(function (error) {
-                        console.log(error);
-                    })
-
-                    this.getPatientCarePlan(this.patientId)
+                    this.uploadPdfCarePlan(formData)
                 }
             }
         ),
@@ -96,7 +87,7 @@
                 <h4 class="modal-title">Upload PDF CarePlan</h4>
             </template>
             <template slot="body">
-                <file-upload @input="uploadPdf()" v-model="files" accept="application/pdf" class="dropzone" multiple="true">
+                <file-upload @input="uploadPdf()" v-model="files" accept="application/pdf" class="dropzone" multiple="multiple">
                     Drop a PDF here, or click to choose a file to upload.
                 </file-upload>
             </template>
