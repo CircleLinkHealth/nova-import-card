@@ -163,6 +163,10 @@ Route::group(['middleware' => 'auth'], function () {
         'as'   => 'providers.search',
     ]);
 
+    Route::delete('pdf/{id}', 'API\PatientCarePlanController@deletePdf');
+
+// end API
+
     Route::resource('settings/email', 'EmailSettingsController');
 
     Route::get('/CCDModels/Items/MedicationListItem', 'CCDModels\Items\MedicationListItemController@index');

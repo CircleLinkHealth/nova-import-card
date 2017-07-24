@@ -4,6 +4,7 @@ namespace App\Http\Controllers\API;
 
 use App\CarePlan;
 use App\Http\Controllers\Controller;
+use App\Models\Pdf;
 use Illuminate\Http\Request;
 
 class PatientCarePlanController extends Controller
@@ -21,9 +22,14 @@ class PatientCarePlanController extends Controller
 
         foreach ($cp->pdfs as $pdf) {
             $pdf->url = route('download', ['fileName' => $pdf->file]);
+            $pdf->label = "CarePlan uploaded on {$pdf->created_at->format('m/d/Y')} at {$pdf->created_at->format('g:i A T')}";
         }
 
         return $cp;
+    }
+
+    public function deletePdf($pdfId) {
+        return Pdf::destroy($pdfId);
     }
 
     /**

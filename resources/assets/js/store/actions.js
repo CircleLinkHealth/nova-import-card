@@ -79,3 +79,13 @@ export const getPatientCarePlan = ({commit}, patientId) => {
         commit('SET_PATIENT_CARE_PLAN', carePlan);
     }, null, patientId)
 }
+
+export const destroyPdf = ({commit}, pdfId) => {
+    if (!pdfId) {
+        return
+    }
+
+    carePlanApi.deletePdf(pdf => {
+
+    }, null, pdfId)
+}
