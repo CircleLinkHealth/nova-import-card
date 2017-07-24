@@ -165,6 +165,13 @@ Route::group(['middleware' => 'auth'], function () {
 
     Route::delete('pdf/{id}', 'API\PatientCarePlanController@deletePdf');
 
+    Route::post('care-plans/{careplan_id}/pdfs', 'API\PatientCarePlanController@uploadPdfs');
+
+    Route::get('download-pdf-careplan/{filePath}', [
+        'uses' => 'API\PatientCarePlanController@downloadPdf',
+        'as'   => 'download.pdf.careplan',
+    ]);
+
 // end API
 
     Route::resource('settings/email', 'EmailSettingsController');

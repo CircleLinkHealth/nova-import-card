@@ -10,6 +10,16 @@ class Pdf extends Model
 {
     use SoftDeletes;
 
+    protected $fillable = [
+        'uploaded_by',
+        'pdfable_type',
+        'pdfable_id',
+        'filename',
+        'file',
+    ];
+
+    protected $hidden = ['file'];
+
     /**
      * Get all of the owning pdfable models.
      */
