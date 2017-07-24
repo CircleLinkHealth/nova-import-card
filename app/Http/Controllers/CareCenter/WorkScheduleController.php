@@ -220,7 +220,7 @@ class WorkScheduleController extends Controller
             ->get()
             ->sortBy('first_name');
 
-        $tzAbbr = auth()->user()->timezone_abbr;
+        $tzAbbr = auth()->user()->timezone_abbr ?? 'EDT';
 
         return view('admin.nurse.schedules.index', compact(['data', 'tzAbbr']));
     }
