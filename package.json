@@ -28,6 +28,7 @@
     "vuex": "^2.3.1"
   },
   "dependencies": {
-    "select2": "^4.0.3"
+    "select2": "^4.0.3",
+    "vue-upload-component": "^2.4.0-beta.3"
   }
 }
