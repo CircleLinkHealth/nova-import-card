@@ -55,17 +55,18 @@
     "zizaco/entrust": "5.2.x-dev"
   },
   "require-dev": {
-    "symfony/dom-crawler": "3.1.*",
-    "symfony/css-selector": "3.1.*",
-    "fzaninotto/faker": "~1.4",
-    "mockery/mockery": "0.9.*",
-    "phpunit/phpunit": "~5.7",
-    "phpspec/phpspec": "~2.1",
+    "Xethron/Laravel-4-Generators": "*",
     "doctrine/dbal": "~2.3",
+    "fzaninotto/faker": "~1.4",
+    "laravel/browser-kit-testing": "1.*",
+    "mockery/mockery": "0.9.*",
     "orangehill/iseed": "dev-master",
+    "phpspec/phpspec": "~2.1",
+    "phpunit/phpunit": "~5.7",
     "phpunit/phpunit-selenium": "^3.0",
-    "xethron/migrations-generator": "dev-l5",
-    "Xethron/Laravel-4-Generators": "*"
+    "symfony/css-selector": "3.1.*",
+    "symfony/dom-crawler": "3.1.*",
+    "xethron/migrations-generator": "dev-l5"
   },
   "autoload": {
     "classmap": [
@@ -79,6 +80,10 @@
     ]
   },
   "autoload-dev": {
+    "classmap": [
+      "tests/TestCase.php",
+      "tests/BrowserKitTestCase.php"
+    ],
     "psr-4": {
       "Tests\\": "tests/"
     }
