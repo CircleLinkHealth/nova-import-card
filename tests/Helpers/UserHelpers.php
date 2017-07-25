@@ -122,7 +122,7 @@ trait UserHelpers
 
         //By default PHPUnit fails the test if the output buffer wasn't closed.
         //So we're adding this to make the test work.
-        ob_end_clean();
+//        ob_end_clean();
     }
 
     public function createLastCallForPatient(
