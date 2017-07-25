@@ -3,6 +3,7 @@
 namespace App;
 
 use App\Models\Holiday;
+use App\Models\WorkHours;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
 
@@ -149,5 +150,13 @@ class Nurse extends Model
             });
 
         return array_filter($holidaysThisWeek->all());
+    }
+
+    /**
+     * Get all the App\Models\WorkHours attached to this CarePlan.
+     */
+    public function workhourables()
+    {
+        return $this->morphMany(WorkHours::class, 'workhourable');
     }
 }
