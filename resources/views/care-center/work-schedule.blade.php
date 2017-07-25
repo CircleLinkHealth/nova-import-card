@@ -19,7 +19,7 @@
                 <div class="panel-body">
                     <div class="container-fluid">
                         <div class="row">
-                            <h5>Please make your work schedule by creating "windows" for each day of week:</h5>
+                            <h5>Please input the actual hours you will work for each day of the week, AND the time range during which you will work.</h5>
                         </div>
                         <div class="row-centered">
                             <div class="col-md-12">
