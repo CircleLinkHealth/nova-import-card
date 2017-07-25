@@ -256,34 +256,56 @@ class NurseController extends Controller
 
             foreach ($nurses as $nurse){
 
-                $count =
+                $countScheduled =
                     Call::where('outbound_cpm_id', $nurse->id)
                         ->where(function ($q) use ($dayCounter){
                             $q->where('scheduled_date', '>=', Carbon::parse($dayCounter)->startOfDay())
                                 ->where('scheduled_date', '<=', Carbon::parse($dayCounter)->endOfDay());
                         })
-                        ->where('status', 'scheduled')
+                        ->where('scheduled_date', '!=' ,'')
+
+                        ->count();
+
+                $countMade =
+                    Call::where('outbound_cpm_id', $nurse->id)
+                        ->where(function ($q) use ($dayCounter){
+                            $q->where('called_date', '>=', Carbon::parse($dayCounter)->startOfDay())
+                                ->where('called_date', '<=', Carbon::parse($dayCounter)->endOfDay());
+                        })
+                        ->where('status', '!=' ,'scheduled')
                         ->count();
 
                 $formattedDate = Carbon::parse($dayCounter)->format('m/d D');
 
                 $name = $nurse->first_name[0] . '. ' . $nurse->last_name;
 
-                 if($count > 0){
+                 if($countScheduled > 0){
 
-                     $data[$formattedDate][$name] = $count;
+                     $data[$formattedDate][$name]['Scheduled'] = $countScheduled;
 
                  } else {
 
-                     $data[$formattedDate][$name] = null;
+                     $data[$formattedDate][$name]['Scheduled'] = null;
 
                  }
+
+                if($countMade > 0){
+
+                    $data[$formattedDate][$name]['Actual Made'] = $countMade;
+
+                } else {
+
+                    $data[$formattedDate][$name]['Actual Made'] = null;
+
+                }
 
             }
 
             $dayCounter = Carbon::parse($dayCounter)->addDays(1)->toDateTimeString();
 
         }
+
+//        dd($data);
         
         return view('admin.reports.allocation', [
             'data' => $data,
