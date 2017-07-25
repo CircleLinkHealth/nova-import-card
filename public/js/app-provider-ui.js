@@ -48152,6 +48152,7 @@ Vue.component('fab', __webpack_require__(99));
 Vue.component('openModal', __webpack_require__(53));
 Vue.component('notifications', __webpack_require__(56));
 Vue.component('pdfCareplans', __webpack_require__(104));
+Vue.component('medicationsList', __webpack_require__(128));
 
 window.App = new Vue({
     el: '#app',
@@ -55778,6 +55779,440 @@ if (false) {
   module.hot.accept()
   if (module.hot.data) {
      require("vue-hot-reload-api").rerender("data-v-3ec5bcac", module.exports)
+  }
+}
+
+/***/ }),
+/* 110 */,
+/* 111 */,
+/* 112 */,
+/* 113 */,
+/* 114 */,
+/* 115 */,
+/* 116 */,
+/* 117 */,
+/* 118 */,
+/* 119 */,
+/* 120 */,
+/* 121 */,
+/* 122 */,
+/* 123 */,
+/* 124 */,
+/* 125 */,
+/* 126 */,
+/* 127 */,
+/* 128 */
+/***/ (function(module, exports, __webpack_require__) {
+
+var disposed = false
+var Component = __webpack_require__(1)(
+  /* script */
+  __webpack_require__(129),
+  /* template */
+  __webpack_require__(130),
+  /* styles */
+  null,
+  /* scopeId */
+  null,
+  /* moduleIdentifier (server only) */
+  null
+)
+Component.options.__file = "/Users/michalis/Code/CLH/cpm-api/resources/assets/js/ccd-models/medications.vue"
+if (Component.esModule && Object.keys(Component.esModule).some(function (key) {return key !== "default" && key.substr(0, 2) !== "__"})) {console.error("named exports are not supported in *.vue files.")}
+if (Component.options.functional) {console.error("[vue-loader] medications.vue: functional components are not supported with templates, they should use render functions.")}
+
+/* hot reload */
+if (false) {(function () {
+  var hotAPI = require("vue-hot-reload-api")
+  hotAPI.install(require("vue"), false)
+  if (!hotAPI.compatible) return
+  module.hot.accept()
+  if (!module.hot.data) {
+    hotAPI.createRecord("data-v-08d3d05c", Component.options)
+  } else {
+    hotAPI.reload("data-v-08d3d05c", Component.options)
+  }
+  module.hot.dispose(function (data) {
+    disposed = true
+  })
+})()}
+
+module.exports = Component.exports
+
+
+/***/ }),
+/* 129 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
+
+/* harmony default export */ __webpack_exports__["default"] = ({
+    data: function data() {
+        return {
+            medication: {
+                id: '',
+                patient_id: $('meta[name="patient_id"]').attr('content'),
+                name: '',
+                sig: ''
+            },
+            medications: [],
+            patientId: $('meta[name="patient_id"]').attr('content')
+        };
+    },
+
+
+    mounted: function mounted() {
+        this.loadMedications();
+
+        Vue.nextTick(function () {
+            // DOM updated
+        });
+    },
+
+    methods: {
+        loadMedications: function loadMedications() {
+            var self = this;
+            var params = {
+                params: {
+                    patient_id: this.patientId
+                }
+            };
+
+            window.axios.get('/CCDModels/Items/MedicationListItem', params).then(function (response) {
+                self.medications = response.data;
+            }, function (response) {
+                console.log(response);
+            });
+        },
+
+        addMedication: function addMedication() {
+            if (this.medication.name) {
+                var self = this;
+
+                var payload = {
+                    'medication': this.medication
+                };
+
+                window.axios.post('/CCDModels/Items/MedicationListItem/store', payload).then(function (response) {
+                    var id = response.data.id.id;
+
+                    self.medications.push({
+                        id: id,
+                        patient_id: self.patientId,
+                        name: response.data.id.name,
+                        sig: response.data.id.sig
+                    });
+                    self.medication = { id: '', patient_id: self.patientId, name: '', sig: '' };
+                }, function (response) {
+                    console.log(response);
+                });
+            }
+        },
+
+        editMedication: function editMedication(index) {
+            // hide text
+            $('#medication-name-' + index).toggle();
+            $('#medication-sig-' + index).toggle();
+
+            // show textarea for editing
+            $('#medication-edit-' + index).toggle();
+            $('#medication-edit-sig-' + index).toggle();
+
+            // hide edit/delete buttons
+            $('.medication-edit-btn').hide();
+            $('.medication-delete-btn').hide();
+
+            // show save button
+            $('#medication-save-btn-' + index).toggle();
+        },
+
+        updateMedication: function updateMedication(index) {
+            var payload = {
+                'medication': this.medications[index]
+            };
+
+            window.axios.post('/CCDModels/Items/MedicationListItem/update', payload).then(function (response) {
+                // show text
+                $('#medication-name-' + index).toggle();
+                $('#medication-sig-' + index).toggle();
+
+                // hide textarea
+                $('#medication-edit-' + index).toggle();
+                $('#medication-edit-sig-' + index).toggle();
+
+                // show all edit buttons
+                $('.medication-edit-btn').show();
+                $('.medication-delete-btn').show();
+
+                // hide save button
+                $('#medication-save-btn-' + index).toggle();
+            }, function (response) {
+                console.log(response);
+            });
+        },
+
+        deleteMedication: function deleteMedication(index, e) {
+            if (confirm("Are you sure you want to delete this medication?")) {
+                var self = this;
+                var payload = {
+                    'medication': this.medications[index]
+                };
+
+                window.axios.post('/CCDModels/Items/MedicationListItem/destroy', payload).then(function (response) {
+                    self.medications.splice(index);
+                }, function (response) {
+                    console.log(response);
+                });
+            }
+        },
+
+        postEvents: function postEvents(index, e) {
+            window.axios.post('/CCDModels/Items/MedicationListItem/store', this.medications).then(function (response) {}, function (response) {
+                console.log(response);
+            });
+        }
+    }
+
+});
+
+/***/ }),
+/* 130 */
+/***/ (function(module, exports, __webpack_require__) {
+
+module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;
+  return _c('div', {
+    staticClass: "row",
+    attrs: {
+      "id": "medications"
+    }
+  }, [_c('div', {
+    staticClass: "col-sm-12"
+  }, [_c('div', {
+    staticClass: "list-group"
+  }, [_vm._l((_vm.medications), function(medicationitem, index) {
+    return [(medicationitem.name || medicationitem.sig) ? _c('div', {
+      staticClass: "list-group-item",
+      staticStyle: {
+        "padding": "5px",
+        "font-size": "12px"
+      },
+      on: {
+        "submit": function($event) {
+          $event.preventDefault();
+        }
+      }
+    }, [_c('div', {
+      staticClass: "row"
+    }, [_c('div', {
+      staticClass: "col-sm-10"
+    }, [_c('div', {
+      staticClass: "list-group-item-heading"
+    }, [_c('span', {
+      attrs: {
+        "id": 'medication-name-' + index
+      }
+    }, [_c('strong', [_vm._v(_vm._s(medicationitem.name))])]), _vm._v(" "), _c('span', {
+      attrs: {
+        "id": 'medication-sig-' + index
+      }
+    }, [_c('br'), _vm._v(_vm._s(medicationitem.sig))]), _vm._v(" "), _c('textarea', {
+      directives: [{
+        name: "model",
+        rawName: "v-model",
+        value: (medicationitem.name),
+        expression: "medicationitem.name"
+      }],
+      staticStyle: {
+        "display": "none"
+      },
+      attrs: {
+        "id": 'medication-edit-' + index,
+        "rows": "5"
+      },
+      domProps: {
+        "value": (medicationitem.name)
+      },
+      on: {
+        "input": function($event) {
+          if ($event.target.composing) { return; }
+          medicationitem.name = $event.target.value
+        }
+      }
+    }, [_vm._v(_vm._s(medicationitem.name))]), _vm._v(" "), _c('textarea', {
+      directives: [{
+        name: "model",
+        rawName: "v-model",
+        value: (medicationitem.sig),
+        expression: "medicationitem.sig"
+      }],
+      staticStyle: {
+        "display": "none"
+      },
+      attrs: {
+        "id": 'medication-edit-sig-' + index,
+        "rows": "5"
+      },
+      domProps: {
+        "value": (medicationitem.sig)
+      },
+      on: {
+        "input": function($event) {
+          if ($event.target.composing) { return; }
+          medicationitem.sig = $event.target.value
+        }
+      }
+    }, [_vm._v(_vm._s(medicationitem.sig))]), _vm._v(" "), _c('input', {
+      attrs: {
+        "type": "hidden",
+        "name": "id"
+      },
+      domProps: {
+        "value": 'medicationitem.id'
+      }
+    }), _vm._v(" "), _c('input', {
+      attrs: {
+        "type": "hidden",
+        "name": "patient_id"
+      },
+      domProps: {
+        "value": medicationitem.patient_id
+      }
+    })])]), _vm._v(" "), _c('div', {
+      staticClass: "col-sm-2 text-right"
+    }, [_c('p', {
+      staticClass: "list-group-item-text"
+    }, [_vm._v(_vm._s(medicationitem.description))]), _vm._v(" "), _c('button', {
+      staticClass: "btn btn-xs btn-danger medication-delete-btn",
+      on: {
+        "click": function($event) {
+          $event.stopPropagation();
+          $event.preventDefault();
+          _vm.deleteMedication(index, _vm.medication)
+        }
+      }
+    }, [_vm._m(0, true)]), _vm._v(" "), _c('button', {
+      staticClass: "btn btn-xs btn-primary medication-edit-btn",
+      on: {
+        "click": function($event) {
+          $event.stopPropagation();
+          $event.preventDefault();
+          _vm.editMedication(index, _vm.medication)
+        }
+      }
+    }, [_vm._m(1, true)]), _vm._v(" "), _c('button', {
+      staticClass: "btn btn-xs btn-success medication-save-btn",
+      staticStyle: {
+        "display": "none"
+      },
+      attrs: {
+        "id": 'medication-save-btn-' + index
+      },
+      on: {
+        "click": function($event) {
+          $event.stopPropagation();
+          $event.preventDefault();
+          _vm.updateMedication(index, _vm.medication)
+        }
+      }
+    }, [_vm._m(2, true)])])])]) : _vm._e()]
+  })], 2)]), _vm._v(" "), _c('div', {
+    staticClass: "col-sm-12"
+  }, [_c('div', {
+    staticClass: "panel panel-default"
+  }, [_c('div', {
+    staticClass: "panel-heading"
+  }, [_vm._v("\n                Add a Medication\n            ")]), _vm._v(" "), _c('div', {
+    staticClass: "panel-body"
+  }, [_c('div', {
+    staticClass: "row"
+  }, [_c('div', {
+    staticClass: "col-sm-9"
+  }, [_c('input', {
+    attrs: {
+      "type": "hidden",
+      "id": "patient_id",
+      "name": "patient_id"
+    },
+    domProps: {
+      "value": _vm.patientId
+    }
+  }), _vm._v(" "), _c('div', {
+    staticClass: "form-group"
+  }, [_c('input', {
+    directives: [{
+      name: "model",
+      rawName: "v-model",
+      value: (_vm.medication.name),
+      expression: "medication.name"
+    }],
+    staticClass: "form-control",
+    attrs: {
+      "placeholder": "Medication Name"
+    },
+    domProps: {
+      "value": (_vm.medication.name)
+    },
+    on: {
+      "input": function($event) {
+        if ($event.target.composing) { return; }
+        _vm.medication.name = $event.target.value
+      }
+    }
+  }), _vm._v(" "), _c('input', {
+    directives: [{
+      name: "model",
+      rawName: "v-model",
+      value: (_vm.medication.sig),
+      expression: "medication.sig"
+    }],
+    staticClass: "form-control",
+    attrs: {
+      "placeholder": "Instructions"
+    },
+    domProps: {
+      "value": (_vm.medication.sig)
+    },
+    on: {
+      "input": function($event) {
+        if ($event.target.composing) { return; }
+        _vm.medication.sig = $event.target.value
+      }
+    }
+  })])]), _vm._v(" "), _c('div', {
+    staticClass: "col-sm-3 text-right"
+  }, [_c('button', {
+    staticClass: "btn btn-success",
+    on: {
+      "click": function($event) {
+        $event.stopPropagation();
+        $event.preventDefault();
+        _vm.addMedication()
+      }
+    }
+  }, [_vm._m(3)])])])])])])])
+},staticRenderFns: [function (){var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;
+  return _c('span', [_c('i', {
+    staticClass: "glyphicon glyphicon-remove"
+  })])
+},function (){var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;
+  return _c('span', [_c('i', {
+    staticClass: "glyphicon glyphicon-pencil"
+  })])
+},function (){var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;
+  return _c('span', [_c('i', {
+    staticClass: "glyphicon glyphicon-ok"
+  })])
+},function (){var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;
+  return _c('span', [_c('i', {
+    staticClass: "glyphicon glyphicon-plus"
+  }), _vm._v(" Add")])
+}]}
+module.exports.render._withStripped = true
+if (false) {
+  module.hot.accept()
+  if (module.hot.data) {
+     require("vue-hot-reload-api").rerender("data-v-08d3d05c", module.exports)
   }
 }
 

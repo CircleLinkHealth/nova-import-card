@@ -7,10 +7,10 @@ $new_user = false;
 
 @if($patient->careplanStatus == 'provider_approved')
     @section('title', 'Edit/Modify Care Plan')
-@section('activity', 'Edit/Modify Care Plan')
+    @section('activity', 'Edit/Modify Care Plan')
 @else
     @section('title', 'Initial Care Plan Setup')
-@section('activity', 'Initial Care Plan Setup')
+    @section('activity', 'Initial Care Plan Setup')
 @endif
 
 @section('scripts')
