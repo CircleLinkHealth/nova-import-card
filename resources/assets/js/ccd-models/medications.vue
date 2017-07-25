@@ -15,10 +15,6 @@
 
         mounted: function () {
             this.loadMedications();
-
-            Vue.nextTick(function () {
-                // DOM updated
-            });
         },
 
         methods: {
