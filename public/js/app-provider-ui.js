@@ -56320,12 +56320,16 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 
     methods: {
         loadAllergies: function loadAllergies() {
+            var self = this;
+
             var params = {
-                'patient_id': $('#patient_id').val()
+                params: {
+                    patient_id: self.allergy.patient_id
+                }
             };
 
             window.axios.get('/CCDModels/Items/AllergiesItem', params).then(function (response) {
-                allergiesVM.allergies = response.data;
+                self.allergies = response.data;
             }, function (response) {
                 console.log(response);
             });
@@ -56334,24 +56338,25 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
         addAllergy: function addAllergy() {
 
             if (this.allergy.name) {
+                var self = this;
+
                 var payload = {
                     'allergy': this.allergy
                 };
 
                 window.axios.post('/CCDModels/Items/AllergiesItem/store', payload).then(function (response) {
                     var id = response.data.id.id;
-                    var patient_id = $('#patient_id').val();
 
-                    allergiesVM.allergies.push({
+                    self.allergies.push({
                         id: id,
-                        patient_id: patient_id,
+                        patient_id: self.allergy.patient_id,
                         name: response.data.id.allergen_name
                     });
 
                     //reset new allergy
-                    allergiesVM.allergy = {
+                    self.allergy = {
                         id: '',
-                        patient_id: patient_id,
+                        patient_id: self.allergy.patient_id,
                         name: ''
                     };
                 }, function (response) {
@@ -56377,7 +56382,7 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 
         updateAllergy: function updateAllergy(index) {
             var payload = {
-                'allergy': this.allergies[index]
+                allergy: this.allergies[index]
             };
 
             window.axios.post('/CCDModels/Items/AllergiesItem/update', payload).then(function (response) {
@@ -56400,12 +56405,14 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 
         deleteAllergy: function deleteAllergy(index, e) {
             if (confirm("Are you sure you want to delete this allergy?")) {
+                var self = this;
+
                 var payload = {
-                    'allergy': allergiesVM.allergies[index]
+                    'allergy': self.allergies[index]
                 };
 
                 window.axios.post('/CCDModels/Items/AllergiesItem/destroy', payload).then(function (response) {
-                    Vue.delete(allergiesVM.allergies, index);
+                    self.allergies.splice(index, 1);
                 }, function (response) {
                     console.log(response);
                 });
