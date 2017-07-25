@@ -1,6 +1,6 @@
 <script>
     import {mapActions, mapGetters} from 'vuex'
-    import {getPatientCarePlan, destroyPdf, uploadPdfCarePlan} from '../../../store/actions'
+    import {getPatientCarePlan, destroyPdf, uploadPdfCarePlan, addNotification} from '../../../store/actions'
     import {patientCarePlan} from '../../../store/getters'
     import modal from '../../shared/modal.vue';
     import FileUpload from 'vue-upload-component'
@@ -30,7 +30,7 @@
         },
 
         methods: Object.assign({},
-            mapActions(['getPatientCarePlan', 'destroyPdf', 'uploadPdfCarePlan']),
+            mapActions(['getPatientCarePlan', 'destroyPdf', 'uploadPdfCarePlan', 'addNotification']),
             {
                 deletePdf(pdf){
                     let disassociate = confirm('Are you sure you want to delete this CarePlan?');
@@ -43,6 +43,13 @@
                 },
                 uploadPdf() {
                     this.showUploadModal = false;
+
+                    this.addNotification({
+                        title: "Uploading PDF Careplan(s)",
+                        text: "",
+                        type: "success",
+                        timeout: true
+                    })
 
                     let formData = new FormData()
                     let filesArr = []

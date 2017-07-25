@@ -52147,7 +52147,7 @@ exports = module.exports = __webpack_require__(5)(undefined);
 
 
 // module
-exports.push([module.i, "\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n", ""]);
+exports.push([module.i, "\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n", ""]);
 
 // exports
 
@@ -52194,7 +52194,7 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
     },
 
 
-    methods: Object.assign({}, __WEBPACK_IMPORTED_MODULE_0_vuex__["b" /* mapActions */](['getPatientCarePlan', 'destroyPdf', 'uploadPdfCarePlan']), {
+    methods: Object.assign({}, __WEBPACK_IMPORTED_MODULE_0_vuex__["b" /* mapActions */](['getPatientCarePlan', 'destroyPdf', 'uploadPdfCarePlan', 'addNotification']), {
         deletePdf: function deletePdf(pdf) {
             var disassociate = confirm('Are you sure you want to delete this CarePlan?');
 
@@ -52206,6 +52206,13 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
         },
         uploadPdf: function uploadPdf() {
             this.showUploadModal = false;
+
+            this.addNotification({
+                title: "Uploading PDF Careplan(s)",
+                text: "",
+                type: "success",
+                timeout: true
+            });
 
             var formData = new FormData();
             var filesArr = [];
