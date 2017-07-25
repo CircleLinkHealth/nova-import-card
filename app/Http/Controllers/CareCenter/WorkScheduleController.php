@@ -4,6 +4,8 @@ namespace App\Http\Controllers\CareCenter;
 
 use App\Http\Controllers\Controller;
 use App\Models\Holiday;
+use App\Models\WorkHours;
+use App\Nurse;
 use App\NurseContactWindow;
 use App\User;
 use Carbon\Carbon;
@@ -17,10 +19,12 @@ class WorkScheduleController extends Controller
     protected $nextWeekStart;
     protected $nurseContactWindows;
     protected $today;
+    protected $workHours;
 
     public function __construct(
         NurseContactWindow $nurseContactWindow,
-        Holiday $holiday
+        Holiday $holiday,
+        WorkHours $workHours
     ) {
         $this->nextWeekStart = Carbon::parse('this sunday')->copy();
         $this->nextWeekEnd = Carbon::parse('next sunday')
@@ -28,6 +32,7 @@ class WorkScheduleController extends Controller
             ->addWeek(1)
             ->copy();
         $this->nurseContactWindows = $nurseContactWindow;
+        $this->workHours = $workHours;
         $this->holiday = $holiday;
         $this->today = Carbon::today()->copy();
     }
@@ -129,15 +134,15 @@ class WorkScheduleController extends Controller
         ])->first();
 
         $hoursSum = NurseContactWindow::where([
-            ['nurse_info_id', '=', $nurseInfoId],
-            ['day_of_week', '=', $request->input('day_of_week')],
-        ])
-            ->get()
-            ->sum(function ($window) {
-                return Carbon::createFromFormat('H:i:s',
-                    $window->window_time_end)->diffInHours(Carbon::createFromFormat('H:i:s',
-                    $window->window_time_start));
-            }) + Carbon::createFromFormat('H:i',
+                ['nurse_info_id', '=', $nurseInfoId],
+                ['day_of_week', '=', $request->input('day_of_week')],
+            ])
+                ->get()
+                ->sum(function ($window) {
+                    return Carbon::createFromFormat('H:i:s',
+                        $window->window_time_end)->diffInHours(Carbon::createFromFormat('H:i:s',
+                        $window->window_time_start));
+                }) + Carbon::createFromFormat('H:i',
                 $request->input('window_time_end'))->diffInHours(Carbon::createFromFormat('H:i',
                 $request->input('window_time_start')));
 
@@ -180,6 +185,12 @@ class WorkScheduleController extends Controller
             ]);
         }
 
+        $workHours = $this->workHours->updateOrCreate([
+            'workhourable_type' => Nurse::class,
+            'workhourable_id' => $nurseInfoId,
+        ], [
+            strtolower(clhDayOfWeekToDayName($request->input('day_of_week'))) => $request->input('work_hours'),
+        ]);
 
         return redirect()->back();
     }
