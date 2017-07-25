@@ -11548,6 +11548,7 @@ var patientCareTeam = function patientCareTeam(state) {
 };
 
 var patientCarePlan = function patientCarePlan(state) {
+    state.patientCarePlan.pdfs = _.orderBy(state.patientCarePlan.pdfs, 'label', 'desc');
     return state.patientCarePlan;
 };
 
