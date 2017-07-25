@@ -52207,13 +52207,6 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
         uploadPdf: function uploadPdf() {
             this.showUploadModal = false;
 
-            this.addNotification({
-                title: "Uploading PDF Careplan(s)",
-                text: "",
-                type: "success",
-                timeout: true
-            });
-
             var formData = new FormData();
             var filesArr = [];
 
@@ -52224,6 +52217,13 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
             formData.set('carePlanId', this.patientCarePlan.id); // set the filename with php
 
             this.uploadPdfCarePlan(formData);
+
+            this.addNotification({
+                title: "Successfully uploaded PDF Careplan(s)",
+                text: "",
+                type: "success",
+                timeout: true
+            });
         }
     })
 });

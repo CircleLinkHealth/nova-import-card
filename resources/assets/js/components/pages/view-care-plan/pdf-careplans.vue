@@ -44,13 +44,6 @@
                 uploadPdf() {
                     this.showUploadModal = false;
 
-                    this.addNotification({
-                        title: "Uploading PDF Careplan(s)",
-                        text: "",
-                        type: "success",
-                        timeout: true
-                    })
-
                     let formData = new FormData()
                     let filesArr = []
 
@@ -61,6 +54,13 @@
                     formData.set('carePlanId', this.patientCarePlan.id) // set the filename with php
 
                     this.uploadPdfCarePlan(formData)
+
+                    this.addNotification({
+                        title: "Successfully uploaded PDF Careplan(s)",
+                        text: "",
+                        type: "success",
+                        timeout: true
+                    })
                 }
             }
         ),
