@@ -48153,6 +48153,8 @@ Vue.component('openModal', __webpack_require__(53));
 Vue.component('notifications', __webpack_require__(56));
 Vue.component('pdfCareplans', __webpack_require__(104));
 Vue.component('medicationsList', __webpack_require__(128));
+Vue.component('problemsList', __webpack_require__(131));
+Vue.component('allergiesList', __webpack_require__(132));
 
 window.App = new Vue({
     el: '#app',
@@ -55864,10 +55866,6 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 
     mounted: function mounted() {
         this.loadMedications();
-
-        Vue.nextTick(function () {
-            // DOM updated
-        });
     },
 
     methods: {
@@ -56213,6 +56211,709 @@ if (false) {
   module.hot.accept()
   if (module.hot.data) {
      require("vue-hot-reload-api").rerender("data-v-08d3d05c", module.exports)
+  }
+}
+
+/***/ }),
+/* 131 */
+/***/ (function(module, exports, __webpack_require__) {
+
+var disposed = false
+var Component = __webpack_require__(1)(
+  /* script */
+  __webpack_require__(134),
+  /* template */
+  __webpack_require__(135),
+  /* styles */
+  null,
+  /* scopeId */
+  null,
+  /* moduleIdentifier (server only) */
+  null
+)
+Component.options.__file = "/Users/michalis/Code/CLH/cpm-api/resources/assets/js/ccd-models/problems.vue"
+if (Component.esModule && Object.keys(Component.esModule).some(function (key) {return key !== "default" && key.substr(0, 2) !== "__"})) {console.error("named exports are not supported in *.vue files.")}
+if (Component.options.functional) {console.error("[vue-loader] problems.vue: functional components are not supported with templates, they should use render functions.")}
+
+/* hot reload */
+if (false) {(function () {
+  var hotAPI = require("vue-hot-reload-api")
+  hotAPI.install(require("vue"), false)
+  if (!hotAPI.compatible) return
+  module.hot.accept()
+  if (!module.hot.data) {
+    hotAPI.createRecord("data-v-50157be8", Component.options)
+  } else {
+    hotAPI.reload("data-v-50157be8", Component.options)
+  }
+  module.hot.dispose(function (data) {
+    disposed = true
+  })
+})()}
+
+module.exports = Component.exports
+
+
+/***/ }),
+/* 132 */
+/***/ (function(module, exports, __webpack_require__) {
+
+var disposed = false
+var Component = __webpack_require__(1)(
+  /* script */
+  __webpack_require__(133),
+  /* template */
+  __webpack_require__(136),
+  /* styles */
+  null,
+  /* scopeId */
+  null,
+  /* moduleIdentifier (server only) */
+  null
+)
+Component.options.__file = "/Users/michalis/Code/CLH/cpm-api/resources/assets/js/ccd-models/allergies.vue"
+if (Component.esModule && Object.keys(Component.esModule).some(function (key) {return key !== "default" && key.substr(0, 2) !== "__"})) {console.error("named exports are not supported in *.vue files.")}
+if (Component.options.functional) {console.error("[vue-loader] allergies.vue: functional components are not supported with templates, they should use render functions.")}
+
+/* hot reload */
+if (false) {(function () {
+  var hotAPI = require("vue-hot-reload-api")
+  hotAPI.install(require("vue"), false)
+  if (!hotAPI.compatible) return
+  module.hot.accept()
+  if (!module.hot.data) {
+    hotAPI.createRecord("data-v-7e95c7f6", Component.options)
+  } else {
+    hotAPI.reload("data-v-7e95c7f6", Component.options)
+  }
+  module.hot.dispose(function (data) {
+    disposed = true
+  })
+})()}
+
+module.exports = Component.exports
+
+
+/***/ }),
+/* 133 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
+
+/* harmony default export */ __webpack_exports__["default"] = ({
+    data: function data() {
+        return {
+            allergy: {
+                id: '',
+                patient_id: $('meta[name="patient_id"]').attr('content'),
+                name: ''
+            },
+            allergies: []
+        };
+    },
+
+
+    mounted: function mounted() {
+        this.loadAllergies();
+    },
+
+    methods: {
+        loadAllergies: function loadAllergies() {
+            var params = {
+                'patient_id': $('#patient_id').val()
+            };
+
+            window.axios.get('/CCDModels/Items/AllergiesItem', params).then(function (response) {
+                allergiesVM.allergies = response.data;
+            }, function (response) {
+                console.log(response);
+            });
+        },
+
+        addAllergy: function addAllergy() {
+
+            if (this.allergy.name) {
+                var payload = {
+                    'allergy': this.allergy
+                };
+
+                window.axios.post('/CCDModels/Items/AllergiesItem/store', payload).then(function (response) {
+                    var id = response.data.id.id;
+                    var patient_id = $('#patient_id').val();
+
+                    allergiesVM.allergies.push({
+                        id: id,
+                        patient_id: patient_id,
+                        name: response.data.id.allergen_name
+                    });
+
+                    //reset new allergy
+                    allergiesVM.allergy = {
+                        id: '',
+                        patient_id: patient_id,
+                        name: ''
+                    };
+                }, function (response) {
+                    console.log(response);
+                });
+            }
+        },
+
+        editAllergy: function editAllergy(index) {
+            // hide text
+            $('#allergy-name-' + index).toggle();
+
+            // show textarea
+            $('#allergy-edit-' + index).toggle();
+
+            // hide all edit buttons
+            $('.allergy-edit-btn').hide();
+            $('.allergy-delete-btn').hide();
+
+            // show save button
+            $('#allergy-save-btn-' + index).toggle();
+        },
+
+        updateAllergy: function updateAllergy(index) {
+            var payload = {
+                'allergy': this.allergies[index]
+            };
+
+            window.axios.post('/CCDModels/Items/AllergiesItem/update', payload).then(function (response) {
+                // show text
+                $('#allergy-name-' + index).toggle();
+
+                // hide textarea
+                $('#allergy-edit-' + index).toggle();
+
+                // show all edit buttons
+                $('.allergy-edit-btn').show();
+                $('.allergy-delete-btn').show();
+
+                // hide save button
+                $('#allergy-save-btn-' + index).toggle();
+            }, function (response) {
+                console.log(response);
+            });
+        },
+
+        deleteAllergy: function deleteAllergy(index, e) {
+            if (confirm("Are you sure you want to delete this allergy?")) {
+                var payload = {
+                    'allergy': allergiesVM.allergies[index]
+                };
+
+                window.axios.post('/CCDModels/Items/AllergiesItem/destroy', payload).then(function (response) {
+                    Vue.delete(allergiesVM.allergies, index);
+                }, function (response) {
+                    console.log(response);
+                });
+            }
+        },
+
+        postEvents: function postEvents(index, e) {
+            window.axios.post('/CCDModels/Items/AllergiesItem/store', this.allergies).then(function (response) {}, function (response) {
+                console.log(response);
+            });
+        }
+    }
+});
+
+/***/ }),
+/* 134 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
+
+/* harmony default export */ __webpack_exports__["default"] = ({
+    data: function data() {
+        return {
+            problem: {
+                id: '',
+                patient_id: $('meta[name="patient_id"]').attr('content'),
+                name: ''
+            },
+            problems: []
+        };
+    },
+
+
+    mounted: function mounted() {
+        this.loadProblems();
+    },
+
+    methods: {
+        loadProblems: function loadProblems() {
+            var self = this;
+
+            var params = {
+                params: {
+                    patient_id: self.problem.patient_id
+                }
+            };
+
+            window.axios.get('/CCDModels/Items/ProblemsItem', params).then(function (response) {
+                self.problems = response.data;
+            }, function (response) {
+                console.log(response);
+            });
+        },
+
+        addProblem: function addProblem() {
+            if (this.problem.name) {
+                var self = this;
+
+                var payload = {
+                    'problem': this.problem
+                };
+
+                window.axios.post('/CCDModels/Items/ProblemsItem/store', payload).then(function (response) {
+                    var id = response.data.id.id;
+
+                    self.problems.push({ id: id, patient_id: self.problem.patient_id, name: response.data.id.name });
+                    self.problem = { id: '', patient_id: self.problem.patient_id, name: '' };
+                }, function (response) {
+                    console.log(response);
+                });
+            }
+        },
+
+        editProblem: function editProblem(index) {
+            $('#problem-name-' + index).toggle();
+            $('#problem-edit-' + index).toggle();
+            $('.problem-edit-btn').hide();
+            $('.problem-delete-btn').hide();
+            $('#problem-save-btn-' + index).toggle();
+        },
+
+        updateProblem: function updateProblem(index) {
+            var payload = {
+                'problem': this.problems[index]
+            };
+
+            window.axios.post('/CCDModels/Items/ProblemsItem/update', payload).then(function (response) {
+                $('#problem-name-' + index).toggle();
+                $('#problem-edit-' + index).toggle();
+                $('.problem-edit-btn').show();
+                $('.problem-delete-btn').show();
+                $('#problem-save-btn-' + index).toggle();
+            }, function (response) {
+                console.log(response);
+            });
+        },
+
+        deleteProblem: function deleteProblem(index, e) {
+            if (confirm("Are you sure you want to delete this problem?")) {
+                var self = this;
+
+                var payload = {
+                    'problem': this.problems[index]
+                };
+
+                window.axios.post('/CCDModels/Items/ProblemsItem/destroy', payload).then(function (response) {
+                    self.problems.splice(index, 1);
+                }, function (response) {
+                    console.log(response);
+                });
+            }
+        },
+
+        postEvents: function postEvents(index, e) {
+            window.axios.post('/CCDModels/Items/ProblemsItem/store', this.problems).then(function (response) {}, function (response) {
+                console.log(response);
+            });
+        }
+    }
+});
+
+/***/ }),
+/* 135 */
+/***/ (function(module, exports, __webpack_require__) {
+
+module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;
+  return _c('div', {
+    staticClass: "row",
+    attrs: {
+      "id": "problems"
+    }
+  }, [_c('div', {
+    staticClass: "col-sm-12"
+  }, [_c('div', {
+    staticClass: "list-group"
+  }, [_vm._l((_vm.problems), function(problemitem, index) {
+    return [(problemitem.name) ? _c('div', {
+      staticClass: "list-group-item",
+      staticStyle: {
+        "padding": "5px",
+        "font-size": "12px"
+      },
+      on: {
+        "submit": function($event) {
+          $event.preventDefault();
+        }
+      }
+    }, [_c('div', {
+      staticClass: "row"
+    }, [_c('div', {
+      staticClass: "col-sm-10"
+    }, [_c('div', {
+      staticClass: "list-group-item-heading"
+    }, [_c('span', {
+      attrs: {
+        "id": 'problem-name-' + index
+      }
+    }, [_vm._v(_vm._s(problemitem.name))]), _vm._v(" "), _c('textarea', {
+      directives: [{
+        name: "model",
+        rawName: "v-model",
+        value: (problemitem.name),
+        expression: "problemitem.name"
+      }],
+      staticStyle: {
+        "display": "none"
+      },
+      attrs: {
+        "id": 'problem-edit-' + index,
+        "rows": "10"
+      },
+      domProps: {
+        "value": (problemitem.name)
+      },
+      on: {
+        "input": function($event) {
+          if ($event.target.composing) { return; }
+          problemitem.name = $event.target.value
+        }
+      }
+    }, [_vm._v(_vm._s(problemitem.name))]), _vm._v(" "), _c('input', {
+      attrs: {
+        "type": "hidden",
+        "name": "id"
+      },
+      domProps: {
+        "value": problemitem.id
+      }
+    }), _vm._v(" "), _c('input', {
+      attrs: {
+        "type": "hidden",
+        "name": "patient_id"
+      },
+      domProps: {
+        "value": problemitem.patient_id
+      }
+    })])]), _vm._v(" "), _c('div', {
+      staticClass: "col-sm-2 text-right"
+    }, [(problemitem.name) ? _c('p', {
+      staticClass: "list-group-item-text"
+    }, [_vm._v(_vm._s(problemitem.description))]) : _vm._e(), _vm._v(" "), (problemitem.name) ? _c('button', {
+      staticClass: "btn btn-xs btn-danger problem-delete-btn",
+      on: {
+        "click": function($event) {
+          $event.stopPropagation();
+          $event.preventDefault();
+          _vm.deleteProblem(index, _vm.problem)
+        }
+      }
+    }, [_vm._m(0, true)]) : _vm._e(), _vm._v(" "), (problemitem.name) ? _c('button', {
+      staticClass: "btn btn-xs btn-primary problem-edit-btn",
+      on: {
+        "click": function($event) {
+          $event.stopPropagation();
+          $event.preventDefault();
+          _vm.editProblem(index, _vm.problem)
+        }
+      }
+    }, [_vm._m(1, true)]) : _vm._e(), _vm._v(" "), (problemitem.name) ? _c('button', {
+      staticClass: "btn btn-xs btn-success problem-save-btn",
+      staticStyle: {
+        "display": "none"
+      },
+      attrs: {
+        "id": 'problem-save-btn-' + index
+      },
+      on: {
+        "click": function($event) {
+          $event.stopPropagation();
+          $event.preventDefault();
+          _vm.updateProblem(index, _vm.problem)
+        }
+      }
+    }, [_vm._m(2, true)]) : _vm._e()])])]) : _vm._e()]
+  })], 2)]), _vm._v(" "), _c('div', {
+    staticClass: "col-sm-12"
+  }, [_c('div', {
+    staticClass: "panel panel-default"
+  }, [_c('div', {
+    staticClass: "panel-heading"
+  }, [_vm._v("\n                Add a Problem\n            ")]), _vm._v(" "), _c('div', {
+    staticClass: "panel-body"
+  }, [_c('div', {
+    staticClass: "row"
+  }, [_c('div', {
+    staticClass: "col-sm-9"
+  }, [_c('input', {
+    attrs: {
+      "type": "hidden",
+      "id": "patient_id",
+      "name": "patient_id"
+    },
+    domProps: {
+      "value": _vm.problem.patient_id
+    }
+  }), _vm._v(" "), _c('div', {
+    staticClass: "form-group"
+  }, [_c('input', {
+    directives: [{
+      name: "model",
+      rawName: "v-model",
+      value: (_vm.problem.name),
+      expression: "problem.name"
+    }],
+    staticClass: "form-control",
+    attrs: {
+      "placeholder": "Problem Name"
+    },
+    domProps: {
+      "value": (_vm.problem.name)
+    },
+    on: {
+      "input": function($event) {
+        if ($event.target.composing) { return; }
+        _vm.problem.name = $event.target.value
+      }
+    }
+  })])]), _vm._v(" "), _c('div', {
+    staticClass: "col-sm-3 text-right"
+  }, [_c('button', {
+    staticClass: "btn btn-success",
+    on: {
+      "click": function($event) {
+        $event.stopPropagation();
+        $event.preventDefault();
+        _vm.addProblem()
+      }
+    }
+  }, [_vm._m(3)])])])])])])])
+},staticRenderFns: [function (){var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;
+  return _c('span', [_c('i', {
+    staticClass: "glyphicon glyphicon-remove"
+  })])
+},function (){var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;
+  return _c('span', [_c('i', {
+    staticClass: "glyphicon glyphicon-pencil"
+  })])
+},function (){var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;
+  return _c('span', [_c('i', {
+    staticClass: "glyphicon glyphicon-ok"
+  })])
+},function (){var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;
+  return _c('span', [_c('i', {
+    staticClass: "glyphicon glyphicon-plus"
+  }), _vm._v(" Add")])
+}]}
+module.exports.render._withStripped = true
+if (false) {
+  module.hot.accept()
+  if (module.hot.data) {
+     require("vue-hot-reload-api").rerender("data-v-50157be8", module.exports)
+  }
+}
+
+/***/ }),
+/* 136 */
+/***/ (function(module, exports, __webpack_require__) {
+
+module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;
+  return _c('div', {
+    staticClass: "row",
+    attrs: {
+      "id": "allergies"
+    }
+  }, [_c('div', {
+    staticClass: "col-sm-12"
+  }, [_c('div', {
+    staticClass: "list-group"
+  }, [_vm._l((_vm.allergies), function(allergyitem, index) {
+    return [(allergyitem.name) ? _c('div', {
+      staticClass: "list-group-item",
+      staticStyle: {
+        "padding": "5px",
+        "font-size": "12px"
+      },
+      attrs: {
+        "href": "#"
+      },
+      on: {
+        "submit": function($event) {
+          $event.preventDefault();
+        }
+      }
+    }, [_c('div', {
+      staticClass: "row"
+    }, [_c('div', {
+      staticClass: "col-sm-9"
+    }, [(allergyitem.name) ? _c('div', {
+      staticClass: "list-group-item-heading"
+    }, [_c('span', {
+      attrs: {
+        "id": 'allergy-name-' + index
+      }
+    }, [_vm._v(_vm._s(allergyitem.name))]), _vm._v(" "), _c('textarea', {
+      directives: [{
+        name: "model",
+        rawName: "v-model",
+        value: (allergyitem.name),
+        expression: "allergyitem.name"
+      }],
+      staticStyle: {
+        "display": "none"
+      },
+      attrs: {
+        "id": 'allergy-edit-' + index,
+        "rows": "10"
+      },
+      domProps: {
+        "value": (allergyitem.name)
+      },
+      on: {
+        "input": function($event) {
+          if ($event.target.composing) { return; }
+          allergyitem.name = $event.target.value
+        }
+      }
+    }, [_vm._v(_vm._s(allergyitem.name))]), _vm._v(" "), _c('input', {
+      attrs: {
+        "type": "hidden",
+        "name": "id"
+      },
+      domProps: {
+        "value": allergyitem.id
+      }
+    }), _vm._v(" "), _c('input', {
+      attrs: {
+        "type": "hidden",
+        "name": "patient_id"
+      },
+      domProps: {
+        "value": allergyitem.patient_id
+      }
+    })]) : _vm._e()]), _vm._v(" "), _c('div', {
+      staticClass: "col-sm-3 text-right"
+    }, [(allergyitem.name) ? _c('p', {
+      staticClass: "list-group-item-text"
+    }, [_vm._v("\n                                " + _vm._s(allergyitem.description) + "\n                            ")]) : _vm._e(), _vm._v(" "), (allergyitem.name) ? _c('button', {
+      staticClass: "btn btn-xs btn-danger allergy-delete-btn",
+      on: {
+        "click": function($event) {
+          $event.stopPropagation();
+          $event.preventDefault();
+          _vm.deleteAllergy(index, _vm.allergy)
+        }
+      }
+    }, [_vm._m(0, true)]) : _vm._e(), _vm._v(" "), (allergyitem.name) ? _c('button', {
+      staticClass: "btn btn-xs btn-primary allergy-edit-btn",
+      on: {
+        "click": function($event) {
+          $event.stopPropagation();
+          $event.preventDefault();
+          _vm.editAllergy(index, _vm.allergy)
+        }
+      }
+    }, [_vm._m(1, true)]) : _vm._e(), _vm._v(" "), (allergyitem.name) ? _c('button', {
+      staticClass: "btn btn-xs btn-success allergy-save-btn",
+      staticStyle: {
+        "display": "none"
+      },
+      attrs: {
+        "id": 'allergy-save-btn-' + index
+      },
+      on: {
+        "click": function($event) {
+          $event.stopPropagation();
+          $event.preventDefault();
+          _vm.updateAllergy(index, _vm.allergy)
+        }
+      }
+    }, [_vm._m(2, true)]) : _vm._e()])])]) : _vm._e()]
+  })], 2)]), _vm._v(" "), _c('div', {
+    staticClass: "col-sm-12"
+  }, [_c('div', {
+    staticClass: "panel panel-default"
+  }, [_c('div', {
+    staticClass: "panel-heading"
+  }, [_vm._v("\n                Add an Allergy\n            ")]), _vm._v(" "), _c('div', {
+    staticClass: "panel-body"
+  }, [_c('div', {
+    staticClass: "row"
+  }, [_c('div', {
+    staticClass: "col-sm-10"
+  }, [_c('input', {
+    attrs: {
+      "type": "hidden",
+      "id": "patient_id",
+      "name": "patient_id"
+    },
+    domProps: {
+      "value": _vm.allergy.patient_id
+    }
+  }), _vm._v(" "), _c('div', {
+    staticClass: "form-group"
+  }, [_c('input', {
+    directives: [{
+      name: "model",
+      rawName: "v-model",
+      value: (_vm.allergy.name),
+      expression: "allergy.name"
+    }],
+    staticClass: "form-control",
+    attrs: {
+      "placeholder": "Allergy Name"
+    },
+    domProps: {
+      "value": (_vm.allergy.name)
+    },
+    on: {
+      "input": function($event) {
+        if ($event.target.composing) { return; }
+        _vm.allergy.name = $event.target.value
+      }
+    }
+  })])]), _vm._v(" "), _c('div', {
+    staticClass: "col-sm-2 text-right"
+  }, [_c('button', {
+    staticClass: "btn btn-success",
+    on: {
+      "click": function($event) {
+        $event.stopPropagation();
+        $event.preventDefault();
+        _vm.addAllergy()
+      }
+    }
+  }, [_vm._m(3)])])])])])])])
+},staticRenderFns: [function (){var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;
+  return _c('span', [_c('i', {
+    staticClass: "glyphicon glyphicon-remove"
+  })])
+},function (){var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;
+  return _c('span', [_c('i', {
+    staticClass: "glyphicon glyphicon-pencil"
+  })])
+},function (){var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;
+  return _c('span', [_c('i', {
+    staticClass: "glyphicon glyphicon-ok"
+  })])
+},function (){var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;
+  return _c('span', [_c('i', {
+    staticClass: "glyphicon glyphicon-plus"
+  }), _vm._v(" Add")])
+}]}
+module.exports.render._withStripped = true
+if (false) {
+  module.hot.accept()
+  if (module.hot.data) {
+     require("vue-hot-reload-api").rerender("data-v-7e95c7f6", module.exports)
   }
 }
 

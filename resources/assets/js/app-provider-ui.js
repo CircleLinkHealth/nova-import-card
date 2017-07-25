@@ -31,6 +31,8 @@ Vue.component('openModal', require('./components/shared/open-modal.vue'));
 Vue.component('notifications', require('./components/shared/notifications/notifications.vue'));
 Vue.component('pdfCareplans', require('./components/pages/view-care-plan/pdf-careplans.vue'));
 Vue.component('medicationsList', require('./ccd-models/medications.vue'));
+Vue.component('problemsList', require('./ccd-models/problems.vue'));
+Vue.component('allergiesList', require('./ccd-models/allergies.vue'));
 
 window.App = new Vue({
     el: '#app',
