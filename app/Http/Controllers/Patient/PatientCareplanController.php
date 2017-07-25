@@ -1,5 +1,6 @@
 <?php namespace App\Http\Controllers\Patient;
 
+use App\CarePlan;
 use App\CLH\Repositories\UserRepository;
 use App\Events\CarePlanWasApproved;
 use App\Formatters\WebixFormatter;
@@ -934,5 +935,14 @@ class PatientCareplanController extends Controller
         }
 
         return redirect()->back()->with('messages', ['successfully updated patient care plan']);
+    }
+
+    public function switchToWebMode($carePlanId) {
+        $cp = CarePlan::find($carePlanId);
+
+        $cp->mode = CarePlan::WEB;
+        $cp->save();
+
+        return redirect()->route('patient.careplan.print', ['patientId' => $cp->user_id]);
     }
 }

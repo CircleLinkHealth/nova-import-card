@@ -70,14 +70,13 @@
 
         <div class="row">
             <div class="col-md-8">
-                <ul v-if="patientCarePlan.pdfs.length > 0" class="list-group">
+                <ul class="list-group">
                     <li v-for="(pdf, index) in patientCarePlan.pdfs" class="list-group-item">
                         <a :href="pdf.url" target="_blank">{{pdf.label}} </a>
                         <button @click="deletePdf(pdf)" class="btn btn-xs btn-danger problem-delete-btn"><span><i
                                 class="glyphicon glyphicon-remove"></i></span></button>
                     </li>
                 </ul>
-                <p v-else>No PDF CarePlans uploaded yet.</p>
             </div>
         </div>
 

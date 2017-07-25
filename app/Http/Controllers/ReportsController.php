@@ -475,8 +475,6 @@ class ReportsController extends Controller
         $patient = User::find($patientId);
 
         if ($patient->careplan_mode == CarePlan::PDF) {
-
-
             return view('patient.careplan.view-pdf-careplan', compact(['patient']));
         }
 

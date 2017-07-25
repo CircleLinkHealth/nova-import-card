@@ -291,10 +291,16 @@ Route::group(['middleware' => 'auth'], function () {
             'as'   => 'patients.dashboard',
         ]);
 
+        Route::get('switch-to-web-careplan/{carePlanId}', [
+            'uses' => 'Patient\PatientCareplanController@switchToWebMode',
+            'as'   => 'switch.to.web.careplan',
+        ]);
+
         Route::get('listing', [
             'uses' => 'Patient\PatientController@showPatientListing',
             'as'   => 'patients.listing',
         ]);
+
         Route::get('careplan-print-multi', [
             'uses' => 'Patient\PatientCareplanController@printMultiCareplan',
             'as'   => 'patients.careplan.multi',
