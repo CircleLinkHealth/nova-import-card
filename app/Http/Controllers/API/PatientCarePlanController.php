@@ -23,7 +23,7 @@ class PatientCarePlanController extends Controller
 
         foreach ($cp->pdfs as $pdf) {
             $pdf->url = route('download.pdf.careplan', ['fileName' => $pdf->filename]);
-            $pdf->label = "CarePlan uploaded on {$pdf->created_at->format('m/d/Y')} at {$pdf->created_at->format('g:i A T')}";
+            $pdf->label = "CarePlan uploaded on {$pdf->created_at->format('m/d/Y')} at {$pdf->created_at->format('g:i:s A T')}";
         }
 
         return response()->json($cp);
@@ -56,11 +56,11 @@ class PatientCarePlanController extends Controller
                 'pdfable_type' => CarePlan::class,
                 'pdfable_id'   => $careplanId,
                 'filename'     => $filename,
-                'file'         => file_get_contents($file),
+                'file'         => base64_encode(file_get_contents($file)),
             ]);
 
             $pdf->url = route('download.pdf.careplan', ['fileName' => $pdf->filename]);
-            $pdf->label = "CarePlan uploaded on {$pdf->created_at->format('m/d/Y')} at {$pdf->created_at->format('g:i A T')}";
+            $pdf->label = "CarePlan uploaded on {$pdf->created_at->format('m/d/Y')} at {$pdf->created_at->format('g:i:s A T')}";
 
             $created[] = $pdf;
         }
@@ -71,6 +71,12 @@ class PatientCarePlanController extends Controller
     public function downloadPdf($filePath)
     {
         $path = storage_path("patient/pdf-careplans/$filePath");
+
+        if (!file_exists($path)) {
+            $pdf = Pdf::whereFilename($filePath)->first();
+
+            file_put_contents($path, base64_decode($pdf->file));
+        }
 
         if (!file_exists($path)) {
             return "Could not locate file with name: $filePath";
