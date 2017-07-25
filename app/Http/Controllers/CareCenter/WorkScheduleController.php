@@ -59,7 +59,7 @@ class WorkScheduleController extends Controller
             'holidaysThisWeek',
             'windows',
             'tzAbbr',
-            'workHours'
+            'workHours',
         ]));
     }
 
@@ -128,9 +128,33 @@ class WorkScheduleController extends Controller
             ],
         ])->first();
 
-        if ($validator->fails() || $windowExists) {
-            $validator->getMessageBag()->add('window_time_start',
-                'This window is overlapping with an already existing window.');
+        $hoursSum = NurseContactWindow::where([
+            ['nurse_info_id', '=', $nurseInfoId],
+            ['day_of_week', '=', $request->input('day_of_week')],
+        ])
+            ->get()
+            ->sum(function ($window) {
+                return Carbon::createFromFormat('H:i:s',
+                    $window->window_time_end)->diffInHours(Carbon::createFromFormat('H:i:s',
+                    $window->window_time_start));
+            });
+
+        $invalidWorkHoursNumber = false;
+
+        if ($hoursSum < $request->input('work_hours')) {
+            $invalidWorkHoursNumber = true;
+        }
+
+        if ($validator->fails() || $windowExists || $invalidWorkHoursNumber) {
+            if ($windowExists) {
+                $validator->getMessageBag()->add('window_time_start',
+                    'This window is overlapping with an already existing window.');
+            }
+
+            if ($invalidWorkHoursNumber) {
+                $validator->getMessageBag()->add('work_hours',
+                    'Daily work hours cannot be more than total window hours.');
+            }
 
             return redirect()->back()
                 ->withErrors($validator)
@@ -153,7 +177,6 @@ class WorkScheduleController extends Controller
                 'window_time_end'   => $request->input('window_time_end'),
             ]);
         }
-
 
 
         return redirect()->back();

@@ -20,7 +20,7 @@
             </div>
 
             <div class="minimum-padding">
-                <input class="form-control" name="window_time_start"
+                <input class="form-control" name="work_hours"
                        type="number" data-field="time" min="1"
                        id="work_hours" style="max-width: 60px;"
                        value="5"
