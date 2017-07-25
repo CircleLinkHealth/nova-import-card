@@ -39,18 +39,18 @@ class WorkScheduleController extends Controller
 
     public function index()
     {
+        $nurse = auth()->user()->nurseInfo;
+
         $windows = $this->nurseContactWindows
-            ->whereNurseInfoId(auth()->user()->nurseInfo->id)
+            ->whereNurseInfoId($nurse->id)
             ->get()
             ->sortBy(function ($item) {
                 return Carbon::createFromFormat('H:i:s',
                     "$item->window_time_start");
             });
 
-        $holidays = auth()->user()->nurseInfo->upcoming_holiday_dates;
-        $holidaysThisWeek = auth()->user()->nurseInfo->holidays_this_week;
-
-        $workHours = auth()->user()->nurseInfo->workhourables->first();
+        $holidays = $nurse->upcoming_holiday_dates;
+        $holidaysThisWeek = $nurse->holidays_this_week;
 
         $tzAbbr = auth()->user()->timezone_abbr;
 
@@ -64,7 +64,7 @@ class WorkScheduleController extends Controller
             'holidaysThisWeek',
             'windows',
             'tzAbbr',
-            'workHours',
+            'nurse'
         ]));
     }
 
@@ -246,7 +246,7 @@ class WorkScheduleController extends Controller
 
         $holiday->forceDelete();
 
-        return redirect()->route('care.center.work.schedule.index');
+        return redirect()->back();
     }
 
     public function getAllNurseSchedules()
@@ -261,7 +261,7 @@ class WorkScheduleController extends Controller
 
         $tzAbbr = auth()->user()->timezone_abbr ?? 'EDT';
 
-        return view('admin.nurse.schedules.index', compact(['data', 'tzAbbr']));
+        return view('admin.nurse.schedules.index', compact(['data', 'tzAbbr', 'workHours']));
     }
 
     protected function canAddNewWindow(Carbon $date)

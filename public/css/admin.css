@@ -38,3 +38,12 @@ a {
   text-decoration:underline;
 }
 */
+
+.work-schedule-label {
+    font-weight: bold !important;
+}
+
+.minimum-padding {
+    padding: 0 5px 0 5px;
+    display: inline-block;
+}

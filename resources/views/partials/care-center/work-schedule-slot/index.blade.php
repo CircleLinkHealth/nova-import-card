@@ -9,7 +9,7 @@
                 <dt>
                 <div class="col-md-6 text-left">{{ucfirst($day)}}</div>
                 <div class="col-md-6 text-right"
-                     style="color: #5bc0de;">@if($workHours->{strtolower($day)}) {{$workHours->{strtolower($day)} }}
+                     style="color: #5bc0de;">@if($nurse->workhourables->first() && $nurse->workhourables->first()->{strtolower($day)}) {{$nurse->workhourables->first()->{strtolower($day)} }}
                     hrs @endif</div>
                 </dt>
                 <dd>

@@ -29,15 +29,21 @@
                         @include('partials.care-center.work-schedule-slot.index', [
                             'windows' => $d->nurseInfo->windows,
                             'holidaysThisWeek' => $d->nurseInfo->holidays_this_week,
+                            'nurse' => $d->nurseInfo
                         ])
                     </div>
                 </div>
 
-                {{--<div class="row">--}}
-                {{--<div class="col-md-12">--}}
-                {{--@include('partials.care-center.holiday-schedule.index')--}}
-                {{--</div>--}}
-                {{--</div>--}}
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="row">
+                            <h3>{{$d->fullName}}'s Days Off</h3>
+                        </div>
+                        @include('partials.care-center.holiday-schedule.index', [
+                            'holidays' => $d->nurseInfo->upcoming_holiday_dates
+                        ])
+                    </div>
+                </div>
             </div>
         @endforeach
     </div>

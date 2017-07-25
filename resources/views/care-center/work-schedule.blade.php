@@ -55,6 +55,9 @@
 
                         <div class="row">
                             <div class="col-md-12">
+                                <div class="row">
+                                    <h3>Your Days Off</h3>
+                                </div>
                                 @include('partials.care-center.holiday-schedule.index')
                             </div>
                         </div>
