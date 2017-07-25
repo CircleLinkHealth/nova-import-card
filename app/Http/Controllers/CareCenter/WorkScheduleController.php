@@ -45,6 +45,8 @@ class WorkScheduleController extends Controller
         $holidays = auth()->user()->nurseInfo->upcoming_holiday_dates;
         $holidaysThisWeek = auth()->user()->nurseInfo->holidays_this_week;
 
+        $workHours = auth()->user()->nurseInfo->workhourables;
+
         $tzAbbr = auth()->user()->timezone_abbr;
 
         //I think time tracking submits along with the form, thus messing up sessions.
@@ -57,6 +59,7 @@ class WorkScheduleController extends Controller
             'holidaysThisWeek',
             'windows',
             'tzAbbr',
+            'workHours'
         ]));
     }
 
