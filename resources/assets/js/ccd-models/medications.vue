@@ -111,7 +111,7 @@
                     };
 
                     window.axios.post('/CCDModels/Items/MedicationListItem/destroy', payload).then(function (response) {
-                        self.medications.splice(index);
+                        self.medications.splice(index, 1);
                     }, function (response) {
                         console.log(response);
                     });
