@@ -6,7 +6,12 @@
     @foreach(weekDays() as $day)
         <div class="row">
             <dl class="dl-horizontal">
-                <dt>{{ucfirst($day)}}</dt>
+                <dt>
+                <div class="col-md-6 text-left">{{ucfirst($day)}}</div>
+                <div class="col-md-6 text-right"
+                     style="color: #5bc0de;">@if($workHours->{strtolower($day)}) {{$workHours->{strtolower($day)} }}
+                    hrs @endif</div>
+                </dt>
                 <dd>
                     @if (in_array($day, $holidaysThisWeek))
                         <div class="col-md-12 list-group-item text-center" style="padding: 2px;">

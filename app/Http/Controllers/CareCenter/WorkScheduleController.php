@@ -50,7 +50,7 @@ class WorkScheduleController extends Controller
         $holidays = auth()->user()->nurseInfo->upcoming_holiday_dates;
         $holidaysThisWeek = auth()->user()->nurseInfo->holidays_this_week;
 
-        $workHours = auth()->user()->nurseInfo->workhourables;
+        $workHours = auth()->user()->nurseInfo->workhourables->first();
 
         $tzAbbr = auth()->user()->timezone_abbr;
 
