@@ -38,8 +38,8 @@ class WorkScheduleController extends Controller
             ->whereNurseInfoId(auth()->user()->nurseInfo->id)
             ->get()
             ->sortBy(function ($item) {
-                return Carbon::createFromFormat('Y-m-d H:i:s',
-                    "{$item->date->format('Y-m-d')} $item->window_time_start");
+                return Carbon::createFromFormat('H:i:s',
+                    "$item->window_time_start");
             });
 
         $holidays = auth()->user()->nurseInfo->upcoming_holiday_dates;
@@ -137,7 +137,9 @@ class WorkScheduleController extends Controller
                 return Carbon::createFromFormat('H:i:s',
                     $window->window_time_end)->diffInHours(Carbon::createFromFormat('H:i:s',
                     $window->window_time_start));
-            });
+            }) + Carbon::createFromFormat('H:i',
+                $request->input('window_time_end'))->diffInHours(Carbon::createFromFormat('H:i',
+                $request->input('window_time_start')));
 
         $invalidWorkHoursNumber = false;
 
