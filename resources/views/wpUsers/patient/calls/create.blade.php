@@ -47,7 +47,7 @@
                     @endif
                 </div>
                 {!!
-                Form::open(array('url' => URL::route('call.schedule', array('patientId' => $patient->user_id)), 'method' => 'POST'))
+                Form::open(['url' => URL::route('call.schedule', ['patientId' => $patient->user_id]), 'method' => 'POST', 'id' => 'sched-call-form'])
                 !!}
 
                 <div class="form-block col-md-4" style="padding-top: 0px">
@@ -125,7 +125,7 @@
                                     <div class="form-item form-item-spacing text-center">
                                         <div class="col-sm-12">
                                             <input type="hidden" value="new_activity"/>
-                                            <button id="update" name="submitAction" type="submit"
+                                            <button id="update" name="submitAction" type="submit" form="sched-call-form"
                                                     value="new_activity"
                                                     class="btn btn-primary btn-lg form-item--button form-item-spacing">
                                                 Confirm
@@ -138,5 +138,6 @@
                     </div>
                 </div>
             </div>
-            </form>
-@stop
+    {!! Form::close() !!}
+
+@endsection

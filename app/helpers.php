@@ -191,6 +191,24 @@ if (!function_exists('validateBloodPressureString')) {
     }
 }
 
+if (!function_exists('clhToCarbonDayOfWeek')) {
+    /**
+     * Convert CLH DayOfWeek to Carbon DayOfWeek.
+     * Carbon does 0-6 for Sun-Sat.
+     * We do 1-7 for Mon-Sun.
+     *
+     * @param $dayOfWeek
+     *
+     * @return int
+     */
+    function clhToCarbonDayOfWeek($dayOfWeek)
+    {
+        return $dayOfWeek == 7
+            ? 0
+            : $dayOfWeek;
+    }
+}
+
 if (!function_exists('carbonToClhDayOfWeek')) {
     /**
      * Convert Carbon DayOfWeek to CLH DayOfWeek.
