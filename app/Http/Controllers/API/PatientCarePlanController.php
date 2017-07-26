@@ -7,6 +7,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Pdf;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
+use Response;
 
 class PatientCarePlanController extends Controller
 {
@@ -68,22 +69,23 @@ class PatientCarePlanController extends Controller
         return response()->json($created);
     }
 
-    public function downloadPdf($filePath)
+    public function downloadPdf($fileName)
     {
-        $path = storage_path("patient/pdf-careplans/$filePath");
+        $path = storage_path("patient/pdf-careplans/$fileName");
 
         if (!file_exists($path)) {
-            $pdf = Pdf::whereFilename($filePath)->first();
+            $pdf = Pdf::whereFilename($fileName)->first();
 
             file_put_contents($path, base64_decode($pdf->file));
         }
 
         if (!file_exists($path)) {
-            return "Could not locate file with name: $filePath";
+            return "Could not locate file with name: $fileName";
         }
 
-        return response()->download($path, $filePath, [
-            'Content-Length: ' . filesize($path),
+        return Response::make(file_get_contents($path), 200, [
+            'Content-Type'        => 'application/pdf',
+            'Content-Disposition' => 'inline; filename="' . $fileName . '"',
         ]);
     }
 
