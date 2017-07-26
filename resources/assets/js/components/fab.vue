@@ -25,13 +25,11 @@
                     <p class="mini-action-button__text--hide">Add Observation</p>
                 </div>
 
-                <div v-if="theCurrentUser.role.name == 'care-center'">
-                    <div class="mini-action-button--hide mini-action-button">
-                        <a :href="createActivityUrl">
-                            <i class="mini-action-button__icon material-icons">local_hospital</i>
-                        </a>
-                        <p class="mini-action-button__text--hide">Add Offline Activity</p>
-                    </div>
+                <div class="mini-action-button--hide mini-action-button">
+                    <a :href="createActivityUrl">
+                        <i class="mini-action-button__icon material-icons">local_hospital</i>
+                    </a>
+                    <p class="mini-action-button__text--hide">Add Offline Activity</p>
                 </div>
 
                 <div class="mini-action-button--hide mini-action-button">

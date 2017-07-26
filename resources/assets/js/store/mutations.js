@@ -22,7 +22,7 @@ export const CLEAR_PATIENT_CARE_PLAN = () => {
 
 export const ADD_PDF_CARE_PLAN = (state, pdfCareplan) => {
     pdfCareplan.forEach((cp) => {
-        state.patientCarePlan.pdfs.push(cp)
+        state.patientCarePlan.pdfs.unshift(cp)
     })
 }
 
