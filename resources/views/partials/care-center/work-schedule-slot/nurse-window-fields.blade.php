@@ -55,8 +55,8 @@
                    required>
         </div>
 
-        <div class="minimum-padding tooltip-bottom">
-            <label class="info"
+        <div class="minimum-padding">
+            <label class="info tooltip-bottom"
                    data-tooltip="Having a separate input for total hours and time range allows you to work on and off during a time range. E.g., you can input 4 hours but work those 4 hours at some point between 10am and 5pm, depending on when patients have requested to be called.">
                 <span class="glyphicon glyphicon-question-sign" aria-hidden="true" style="font-size: 20px;"></span>
             </label>

@@ -47,7 +47,13 @@
                         <div class="row">
                             <div class="col-md-12">
                                 <div class="row">
-                                    <h3>Your Schedule ({{$tzAbbr}})</h3>
+                                    <h3 class="minimum-padding">Your Schedule ({{$tzAbbr}})</h3>
+
+                                        <span class="info minimum-padding"
+                                               data-tooltip="You may edit your total hours by double clicking in any of the hours boxes (next to the days) below. Press enter to save your changes.">
+                                            <span class="glyphicon glyphicon-question-sign" aria-hidden="true"></span>
+                                        </span>
+
                                 </div>
                                 @include('partials.care-center.work-schedule-slot.index')
                             </div>
