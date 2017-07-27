@@ -84,11 +84,16 @@
         </div>
 
         @if(auth()->user()->nurseInfo)
-            <div class="row-centered" style="background-color: #fafafa;border: 1px solid #ccc;border-radius: 10px;   box-shadow: 0px 1px 2px grey;padding: 0 15px 15px 15px;">
+            <div class="row-centered"
+                 style="background-color: #fafafa;border: 1px solid #ccc;border-radius: 10px;   box-shadow: 0px 1px 2px grey;padding: 0 15px 15px 15px;">
                 <div class="row">
                     <div class="col-md-12">
                         <div class="row">
-                            <h3>Your Schedule ({{auth()->user()->timezone_abbr}})</h3>
+                            <h3>
+                                <a href="{{ route('care.center.work.schedule.index') }}" id="work-schedule-link">
+                                    Your Schedule ({{auth()->user()->timezone_abbr}})
+                                </a>
+                            </h3>
                         </div>
                         @include('partials.care-center.work-schedule-slot.index', [
                                    'windows' => auth()->user()->nurseInfo->windows,
@@ -101,7 +106,11 @@
                 <div class="row">
                     <div class="col-md-12">
                         <div class="row">
-                            <h3>Your Days Off</h3>
+                            <h3>
+                                <a href="{{ route('care.center.work.schedule.index') }}" id="work-schedule-link">
+                                    Your Days Off
+                                </a>
+                            </h3>
                         </div>
                         @include('partials.care-center.holiday-schedule.index', [
                                     'holidays' => auth()->user()->nurseInfo->upcoming_holiday_dates
