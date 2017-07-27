@@ -56969,6 +56969,10 @@ module.exports = Component.exports
 
 "use strict";
 Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_vuex__ = __webpack_require__(2);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__store_actions__ = __webpack_require__(4);
+
+
 
 /* harmony default export */ __webpack_exports__["default"] = ({
     props: ['day', 'hours'],
@@ -56980,9 +56984,39 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
     },
     data: function data() {
         return {
-            workHours: {}
+            workHours: {},
+            edited: false,
+            beforeEditCache: null,
+            min: 1,
+            max: 12
         };
-    }
+    },
+
+
+    methods: Object.assign(__WEBPACK_IMPORTED_MODULE_0_vuex__["b" /* mapActions */](['addNotification']), {
+        edit: function edit() {
+            this.beforeEditCache = this.workHours[this.day];
+            this.edited = true;
+        },
+        doneEdit: function doneEdit() {
+            this.edited = false;
+
+            if (this.workHours[this.day] > 12 || this.workHours[this.day] < 1) {
+                this.workHours[this.day] = this.beforeEditCache;
+
+                this.addNotification({
+                    title: "Invalid number of work hours.",
+                    text: "Enter a number between 1 and 12.",
+                    type: "danger",
+                    timeout: true
+                });
+            }x;
+        },
+        cancelEdit: function cancelEdit() {
+            this.workHours[this.day] = this.beforeEditCache;
+            this.edited = false;
+        }
+    })
 });
 
 /***/ }),
@@ -56990,7 +57024,59 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 /***/ (function(module, exports, __webpack_require__) {
 
 module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;
-  return _c('div', [_vm._v("\n    " + _vm._s(_vm.workHours[_vm.day]) + "\n")])
+  return _c('div', [_c('div', [_c('div', {
+    staticClass: "view"
+  }, [(!_vm.edited) ? _c('label', {
+    on: {
+      "dblclick": function($event) {
+        _vm.edit()
+      }
+    }
+  }, [_vm._v(_vm._s(_vm.workHours[_vm.day]))]) : _vm._e()]), _vm._v(" "), (_vm.edited) ? _c('input', {
+    directives: [{
+      name: "model",
+      rawName: "v-model",
+      value: (_vm.workHours[_vm.day]),
+      expression: "workHours[day]"
+    }, {
+      name: "todo-focus",
+      rawName: "v-todo-focus",
+      value: (_vm.todo == _vm.edited),
+      expression: "todo == edited"
+    }],
+    attrs: {
+      "type": "number",
+      "min": _vm.min,
+      "max": _vm.max
+    },
+    domProps: {
+      "value": (_vm.workHours[_vm.day])
+    },
+    on: {
+      "blur": [function($event) {
+        _vm.doneEdit()
+      }, function($event) {
+        _vm.$forceUpdate()
+      }],
+      "keyup": [function($event) {
+        if (!('button' in $event) && _vm._k($event.keyCode, "enter", 13)) { return null; }
+        _vm.doneEdit()
+      }, function($event) {
+        if (!('button' in $event) && _vm._k($event.keyCode, "esc", 27)) { return null; }
+        _vm.cancelEdit()
+      }],
+      "input": function($event) {
+        if ($event.target.composing) { return; }
+        var $$exp = _vm.workHours,
+          $$idx = _vm.day;
+        if (!Array.isArray($$exp)) {
+          _vm.workHours[_vm.day] = $event.target.value
+        } else {
+          $$exp.splice($$idx, 1, $event.target.value)
+        }
+      }
+    }
+  }) : _vm._e()])])
 },staticRenderFns: []}
 module.exports.render._withStripped = true
 if (false) {
