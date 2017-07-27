@@ -2,17 +2,22 @@
     import {mapActions} from 'vuex'
     import {addNotification} from '../../../store/actions'
     export default {
-        props: ['day', 'hours'],
+        props: ['day', 'hours', 'windows'],
 
         mounted() {
             if (this.hours) {
                 this.workHours = JSON.parse(this.hours)
+            }
+
+            if (this.windows) {
+                this.dayWindows = JSON.parse(this.windows)
             }
         },
 
         data() {
             return {
                 workHours: {},
+                dayWindows: {},
                 edited: false,
                 beforeEditCache: null,
                 min: 1,
@@ -20,10 +25,24 @@
             }
         },
 
+        computed: {
+            totalHours() {
+                let total = 0
+                for (let i = 0; i < this.dayWindows.length; i++) {
+                    total += this.hoursDifference(this.dayWindows[i].window_time_start, this.dayWindows[i].window_time_end)
+                }
+                return total
+            }
+        },
+
         methods: Object.assign(mapActions(['addNotification']), {
             edit() {
                 this.beforeEditCache = this.workHours[this.day]
                 this.edited = true
+            },
+
+            enterPressed() {
+                this.edited = false
             },
 
             doneEdit() {
@@ -38,13 +57,36 @@
                         type: "danger",
                         timeout: true
                     })
-                }
+                } else if (this.workHours[this.day] > this.totalHours) {
+                    this.workHours[this.day] = this.beforeEditCache
 
+                    this.addNotification({
+                        title: "Invalid number of work hours.",
+                        text: "Daily work hours cannot be more than total window hours.",
+                        type: "danger",
+                        timeout: true
+                    })
+                } else {
+                    this.addNotification({
+                        title: "Successfully updated hours.",
+                        text: "",
+                        type: "success",
+                        timeout: true
+                    })
+                }
             },
 
             cancelEdit() {
                 this.workHours[this.day] = this.beforeEditCache
                 this.edited = false
+            },
+
+            hoursDifference(startTime, endTime) {
+                //hack, since we only have time and no date
+                let start = new Date('2017-01-01 ' + startTime)
+                let end = new Date('2017-01-01 ' + endTime)
+
+                return Math.floor((end - start) / 1000 / 60 / 60);
             },
         })
     }
@@ -57,7 +99,7 @@
         <input v-if="edited" type="number" :min="min" :max="max"
                v-model="workHours[day]"
                @blur="doneEdit()"
-               @keyup.enter="doneEdit()"
+               @keyup.enter="enterPressed()"
                @keyup.esc="cancelEdit()">
     </div>
 </template>
@@ -65,6 +107,6 @@
 <style>
     .inline-edit-label {
         border: 1px solid #ccc;
-        padding: 1px;
+        margin: 0 1px 0 1px ;
     }
 </style>

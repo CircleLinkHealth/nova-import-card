@@ -3,14 +3,16 @@
         You do not have any Windows yet. Go ahead and create some!
     </div>
 @else
-    @foreach(weekDays() as $day)
+    @foreach(weekDays() as $index => $day)
         <div class="row">
             <dl class="dl-horizontal">
                 <dt>
                     <span class="col-md-6 text-left">{{ucfirst($day)}}</span>
                     <span class="col-md-6 text-right" style="color: #5bc0de;">
                     <nurse-daily-hours day="{{strtolower($day)}}"
-                                       hours="@if($nurse->workhourables->first() && $nurse->workhourables->first()->{strtolower($day)}) {{$nurse->workhourables->first()->toJson()}} @endif"></nurse-daily-hours>
+                                       hours="@if($nurse->workhourables->first() && $nurse->workhourables->first()->{strtolower($day)}) {{$nurse->workhourables->first()->toJson()}} @endif"
+                                       windows="{{ $windows->where('day_of_week', $index)->values()->toJson() }}"
+                    ></nurse-daily-hours>
                 </span>
                 </dt>
                 <dd>

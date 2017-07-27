@@ -41890,7 +41890,7 @@ exports = module.exports = __webpack_require__(6)(undefined);
 
 
 // module
-exports.push([module.i, "\n.inline-edit-label {\n    border: 1px solid #ccc;\n    padding: 1px;\n}\n", ""]);
+exports.push([module.i, "\n.inline-edit-label {\n    border: 1px solid #ccc;\n    margin: 0 1px 0 1px ;\n}\n", ""]);
 
 // exports
 
@@ -41907,16 +41907,21 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 
 
 /* harmony default export */ __webpack_exports__["default"] = ({
-    props: ['day', 'hours'],
+    props: ['day', 'hours', 'windows'],
 
     mounted: function mounted() {
         if (this.hours) {
             this.workHours = JSON.parse(this.hours);
         }
+
+        if (this.windows) {
+            this.dayWindows = JSON.parse(this.windows);
+        }
     },
     data: function data() {
         return {
             workHours: {},
+            dayWindows: {},
             edited: false,
             beforeEditCache: null,
             min: 1,
@@ -41925,10 +41930,23 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
     },
 
 
+    computed: {
+        totalHours: function totalHours() {
+            var total = 0;
+            for (var i = 0; i < this.dayWindows.length; i++) {
+                total += this.hoursDifference(this.dayWindows[i].window_time_start, this.dayWindows[i].window_time_end);
+            }
+            return total;
+        }
+    },
+
     methods: Object.assign(__WEBPACK_IMPORTED_MODULE_0_vuex__["b" /* mapActions */](['addNotification']), {
         edit: function edit() {
             this.beforeEditCache = this.workHours[this.day];
             this.edited = true;
+        },
+        enterPressed: function enterPressed() {
+            this.edited = false;
         },
         doneEdit: function doneEdit() {
             this.edited = false;
@@ -41942,11 +41960,34 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
                     type: "danger",
                     timeout: true
                 });
+            } else if (this.workHours[this.day] > this.totalHours) {
+                this.workHours[this.day] = this.beforeEditCache;
+
+                this.addNotification({
+                    title: "Invalid number of work hours.",
+                    text: "Daily work hours cannot be more than total window hours.",
+                    type: "danger",
+                    timeout: true
+                });
+            } else {
+                this.addNotification({
+                    title: "Successfully updated hours.",
+                    text: "",
+                    type: "success",
+                    timeout: true
+                });
             }
         },
         cancelEdit: function cancelEdit() {
             this.workHours[this.day] = this.beforeEditCache;
             this.edited = false;
+        },
+        hoursDifference: function hoursDifference(startTime, endTime) {
+            //hack, since we only have time and no date
+            var start = new Date('2017-01-01 ' + startTime);
+            var end = new Date('2017-01-01 ' + endTime);
+
+            return Math.floor((end - start) / 1000 / 60 / 60);
         }
     })
 });
@@ -41986,7 +42027,7 @@ module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c
       }],
       "keyup": [function($event) {
         if (!('button' in $event) && _vm._k($event.keyCode, "enter", 13)) { return null; }
-        _vm.doneEdit()
+        _vm.enterPressed()
       }, function($event) {
         if (!('button' in $event) && _vm._k($event.keyCode, "esc", 27)) { return null; }
         _vm.cancelEdit()
