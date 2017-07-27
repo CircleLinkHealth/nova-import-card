@@ -7,10 +7,11 @@
         <div class="row">
             <dl class="dl-horizontal">
                 <dt>
-                <div class="col-md-6 text-left">{{ucfirst($day)}}</div>
-                <div class="col-md-6 text-right"
-                     style="color: #5bc0de;">@if($nurse->workhourables->first() && $nurse->workhourables->first()->{strtolower($day)}) {{$nurse->workhourables->first()->{strtolower($day)} }}
-                    hrs @endif</div>
+                    <span class="col-md-6 text-left">{{ucfirst($day)}}</span>
+                    <span class="col-md-6 text-right" style="color: #5bc0de;">
+                    <nurse-daily-hours day="{{strtolower($day)}}"
+                                       hours="@if($nurse->workhourables->first() && $nurse->workhourables->first()->{strtolower($day)}) {{$nurse->workhourables->first()->toJson()}} @endif"></nurse-daily-hours>
+                </span>
                 </dt>
                 <dd>
                     @if (in_array($day, $holidaysThisWeek))

@@ -19,6 +19,7 @@ window.Vue.use(VueForm, {
         invalid: 'form-control-danger'
     }
 });
+
 Vue.component('createPracticeLocation', require('./components/practice/lodations/create.vue'));
 Vue.component('updatePracticeLocation', require('./components/practice/lodations/update.vue'));
 Vue.component('indexPracticeLocations', require('./components/practice/lodations/index.vue'));
@@ -27,8 +28,12 @@ Vue.component('openModal', require('./components/shared/open-modal.vue'));
 Vue.component('notifications', require('./components/shared/notifications/notifications.vue'));
 Vue.component('grid', require('./components/shared/grid.vue'));
 
+
 window.App = new Vue({
     el: '#app',
-    store
+    store,
+    components: {
+
+    }
 });
 

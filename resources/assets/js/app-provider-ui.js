@@ -33,6 +33,7 @@ Vue.component('pdfCareplans', require('./components/pages/view-care-plan/pdf-car
 Vue.component('medicationsList', require('./ccd-models/medications.vue'));
 Vue.component('problemsList', require('./ccd-models/problems.vue'));
 Vue.component('allergiesList', require('./ccd-models/allergies.vue'));
+Vue.component('nurseDailyHours', require('./components/pages/work-schedule/daily-hours.vue'));
 
 window.App = new Vue({
     el: '#app',
