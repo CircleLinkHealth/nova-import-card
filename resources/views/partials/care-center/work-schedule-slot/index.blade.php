@@ -8,7 +8,7 @@
             <dl class="dl-horizontal">
                 <dt>
                     <span class="col-md-6 text-left">{{ucfirst($day)}}</span>
-                    <span class="col-md-6 text-right" style="color: #5bc0de;">
+                    <span class="col-md-6" style="padding: 0 8px">
                     <nurse-daily-hours day="{{strtolower($day)}}"
                                        hours="@if($nurse->workhourables->first() && $nurse->workhourables->first()->{strtolower($day)}) {{$nurse->workhourables->first()->toJson()}} @endif"
                                        windows="{{ $windows->where('day_of_week', $index)->values()->toJson() }}"

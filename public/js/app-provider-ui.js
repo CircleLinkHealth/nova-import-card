@@ -48177,7 +48177,7 @@ exports = module.exports = __webpack_require__(6)(undefined);
 
 
 // module
-exports.push([module.i, "\n.inline-edit-label {\n    border: 1px solid #ccc;\n    margin: 0 1px 0 1px;\n}\n", ""]);
+exports.push([module.i, "\n.edit-daily-work-hours {\n    height: 25px;\n    color: blue;\n}\n.edit-daily-work-hours:hover {\n    cursor: pointer;\n}\n", ""]);
 
 // exports
 
@@ -48279,6 +48279,10 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 
             var hideNotification = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : false;
 
+            if (_.isUndefined(this.workHours.id)) {
+                return;
+            }
+
             window.axios.patch('work-hours/' + this.workHours.id, {
                 workHours: this.workHours[this.day],
                 day: this.day
@@ -48310,20 +48314,35 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 /***/ (function(module, exports, __webpack_require__) {
 
 module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;
-  return (_vm.workHours[_vm.day]) ? _c('div', [(!_vm.edited) ? _c('label', {
-    staticClass: "inline-edit-label",
+  return (_vm.workHours[_vm.day]) ? _c('div', [_c('label', {
+    directives: [{
+      name: "show",
+      rawName: "v-show",
+      value: (!_vm.edited),
+      expression: "!edited"
+    }],
+    staticClass: "form-control edit-daily-work-hours text-center",
+    staticStyle: {
+      "padding": "2px 0"
+    },
     on: {
       "click": function($event) {
         _vm.edit()
       }
     }
-  }, [_vm._v(_vm._s(_vm.workHours[_vm.day]) + " hrs")]) : _vm._e(), _vm._v(" "), (_vm.edited) ? _c('input', {
+  }, [_vm._v(_vm._s(_vm.workHours[_vm.day]) + " hrs")]), _vm._v(" "), _c('input', {
     directives: [{
+      name: "show",
+      rawName: "v-show",
+      value: (_vm.edited),
+      expression: "edited"
+    }, {
       name: "model",
       rawName: "v-model",
       value: (_vm.workHours[_vm.day]),
       expression: "workHours[day]"
     }],
+    staticClass: "form-control edit-daily-work-hours",
     attrs: {
       "type": "number",
       "min": _vm.min,
@@ -48356,7 +48375,7 @@ module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c
         }
       }
     }
-  }) : _vm._e()]) : _vm._e()
+  })]) : _vm._e()
 },staticRenderFns: []}
 module.exports.render._withStripped = true
 if (false) {

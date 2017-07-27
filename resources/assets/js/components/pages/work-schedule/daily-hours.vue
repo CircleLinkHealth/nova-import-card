@@ -87,6 +87,10 @@
             },
 
             saveHours(hideNotification = false) {
+                if (_.isUndefined(this.workHours.id)) {
+                    return
+                }
+
                 window.axios.patch('work-hours/' + this.workHours.id, {
                     workHours: this.workHours[this.day],
                     day: this.day
@@ -117,9 +121,9 @@
 
 <template>
     <div v-if="workHours[day]">
-        <label v-if="!edited" @click="edit()" class="inline-edit-label">{{workHours[day]}} hrs</label>
+        <label v-show="!edited" @click="edit()" class="form-control edit-daily-work-hours text-center" style="padding: 2px 0;">{{workHours[day]}} hrs</label>
 
-        <input v-if="edited" type="number" :min="min" :max="max"
+        <input v-show="edited" type="number" :min="min" :max="max" class="form-control edit-daily-work-hours"
                v-model="workHours[day]"
                @blur="doneEdit()"
                @keyup.enter="hideEdited()"
@@ -128,8 +132,12 @@
 </template>
 
 <style>
-    .inline-edit-label {
-        border: 1px solid #ccc;
-        margin: 0 1px 0 1px;
+    .edit-daily-work-hours {
+        height: 25px;
+        color: blue;
+    }
+
+    .edit-daily-work-hours:hover {
+        cursor: pointer;
     }
 </style>
