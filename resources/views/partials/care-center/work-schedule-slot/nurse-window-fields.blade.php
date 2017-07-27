@@ -19,9 +19,9 @@
 
         <div class="minimum-padding">
             <input class="form-control" name="work_hours"
-                   type="number" data-field="time" min="1"
+                   type="number" data-field="time" min="1" max="12"
                    id="work_hours" style="max-width: 60px;"
-                   value="5"
+                   value="{{ old('work_hours') ? old('work_hours') :  '5' }}"
                    required>
         </div>
 
