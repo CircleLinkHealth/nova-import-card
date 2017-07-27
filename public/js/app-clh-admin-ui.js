@@ -41909,13 +41909,23 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 /* harmony default export */ __webpack_exports__["default"] = ({
     props: ['day', 'hours', 'windows'],
 
-    mounted: function mounted() {
+    created: function created() {
         if (this.hours) {
             this.workHours = JSON.parse(this.hours);
         }
 
         if (this.windows) {
             this.dayWindows = JSON.parse(this.windows);
+        }
+
+        if (this.totalHours === 0) {
+            this.workHours[this.day] = null;
+            this.saveHours(true);
+        }
+
+        if (this.workHours[this.day] > this.totalHours) {
+            this.workHours[this.day] = this.totalHours;
+            this.saveHours(true);
         }
     },
     data: function data() {
@@ -41980,18 +41990,20 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
         saveHours: function saveHours() {
             var _this = this;
 
-            var self = this;
+            var hideNotification = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : false;
 
             window.axios.patch('work-hours/' + this.workHours.id, {
                 workHours: this.workHours[this.day],
-                day: self.day
+                day: this.day
             }).then(function (response) {
-                _this.addNotification({
-                    title: "Successfully updated hours.",
-                    text: "",
-                    type: "success",
-                    timeout: true
-                });
+                if (!hideNotification) {
+                    _this.addNotification({
+                        title: "Successfully updated hours.",
+                        text: "",
+                        type: "success",
+                        timeout: true
+                    });
+                }
             }).catch(function (error) {
                 console.log(error);
             });

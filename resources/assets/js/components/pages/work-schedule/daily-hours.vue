@@ -4,13 +4,23 @@
     export default {
         props: ['day', 'hours', 'windows'],
 
-        mounted() {
+        created() {
             if (this.hours) {
                 this.workHours = JSON.parse(this.hours)
             }
 
             if (this.windows) {
                 this.dayWindows = JSON.parse(this.windows)
+            }
+
+            if (this.totalHours === 0) {
+                this.workHours[this.day] = null
+                this.saveHours(true)
+            }
+
+            if (this.workHours[this.day] > this.totalHours) {
+                this.workHours[this.day] = this.totalHours
+                this.saveHours(true)
             }
         },
 
@@ -76,19 +86,19 @@
                 this.edited = false
             },
 
-            saveHours() {
-                let self = this
-
+            saveHours(hideNotification = false) {
                 window.axios.patch('work-hours/' + this.workHours.id, {
                     workHours: this.workHours[this.day],
-                    day: self.day
+                    day: this.day
                 }).then((response) => {
-                    this.addNotification({
-                        title: "Successfully updated hours.",
-                        text: "",
-                        type: "success",
-                        timeout: true
-                    })
+                    if (!hideNotification) {
+                        this.addNotification({
+                            title: "Successfully updated hours.",
+                            text: "",
+                            type: "success",
+                            timeout: true
+                        })
+                    }
                 }).catch((error) => {
                     console.log(error);
                 })
