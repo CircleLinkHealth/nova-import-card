@@ -21,6 +21,7 @@ let mix = require('laravel-mix');
 
 mix.combine([
     'resources/assets/less/css/app.less',
+    'resources/assets/less/css/tooltip.less',
     'resources/assets/less/css/animate.min.css'
 ], 'public/css/stylesheet.css');
 
