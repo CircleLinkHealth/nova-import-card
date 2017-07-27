@@ -97,7 +97,7 @@
             <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
                 <ul class="nav navbar-nav">
                     @if ( ! Auth::guest())
-                        <li role="presentation" 0lass="dropdown">
+                        <li role="presentation" class="dropdown">
                             <a class="dropdown-toggle" data-toggle="dropdown" href="#" role="button"
                                aria-expanded="false">
                                 Users <span class="caret"></span>
@@ -114,7 +114,7 @@
                     @endif
 
                     @if ( ! Auth::guest())
-                        <li role="presentation" 0lass="dropdown">
+                        <li role="presentation" class="dropdown">
                             <a class="dropdown-toggle" data-toggle="dropdown" href="#" role="button"
                                aria-expanded="false">
                                 Calls <span class="caret"></span>
