@@ -84,8 +84,7 @@
         </div>
 
         @if(auth()->user()->nurseInfo)
-            <div class="row-centered"
-                 style="background-color: #fafafa;border: 1px solid #ccc;border-radius: 10px;   box-shadow: 0px 1px 2px grey;padding: 0 15px 15px 15px;">
+            <div class="row-centered nurse-dashboard-schedule">
                 <div class="row">
                     <div class="col-md-12">
                         <div class="row">
