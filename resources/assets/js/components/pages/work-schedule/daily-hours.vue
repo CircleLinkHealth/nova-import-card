@@ -38,7 +38,8 @@
                         type: "danger",
                         timeout: true
                     })
-                }x
+                }
+
             },
 
             cancelEdit() {
@@ -50,17 +51,20 @@
 </script>
 
 <template>
-    <div>
-        <div>
-            <div class="view">
-                <label v-if="!edited" @dblclick="edit()">{{workHours[day]}}</label>
-            </div>
-            <input v-if="edited" type="number" :min="min" :max="max"
-                   v-model="workHours[day]"
-                   v-todo-focus="todo == edited"
-                   @blur="doneEdit()"
-                   @keyup.enter="doneEdit()"
-                   @keyup.esc="cancelEdit()">
-        </div>
+    <div v-if="workHours[day]">
+        <label v-if="!edited" @click="edit()" class="inline-edit-label">{{workHours[day]}} hrs</label>
+
+        <input v-if="edited" type="number" :min="min" :max="max"
+               v-model="workHours[day]"
+               @blur="doneEdit()"
+               @keyup.enter="doneEdit()"
+               @keyup.esc="cancelEdit()">
     </div>
 </template>
+
+<style>
+    .inline-edit-label {
+        border: 1px solid #ccc;
+        padding: 1px;
+    }
+</style>
