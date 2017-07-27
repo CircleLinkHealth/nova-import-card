@@ -2371,6 +2371,10 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
     }
 
     public function getCareplanModeAttribute() {
+        if (!$this->carePlan) {
+            return false;
+        }
+
         $careplanMode = $this->carePlan->mode;
 
         if (!$careplanMode) {
