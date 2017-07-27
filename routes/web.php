@@ -172,6 +172,7 @@ Route::group(['middleware' => 'auth'], function () {
         'as'   => 'download.pdf.careplan',
     ]);
 
+    Route::patch('work-hours/{id}', 'CareCenter\WorkScheduleController@updateDailyHours');
 // end API
 
     Route::resource('settings/email', 'EmailSettingsController');

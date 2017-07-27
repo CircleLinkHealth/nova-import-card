@@ -41,7 +41,7 @@
                 this.edited = true
             },
 
-            enterPressed() {
+            hideEdited() {
                 this.edited = false
             },
 
@@ -67,18 +67,31 @@
                         timeout: true
                     })
                 } else {
-                    this.addNotification({
-                        title: "Successfully updated hours.",
-                        text: "",
-                        type: "success",
-                        timeout: true
-                    })
+                    this.saveHours()
                 }
             },
 
             cancelEdit() {
                 this.workHours[this.day] = this.beforeEditCache
                 this.edited = false
+            },
+
+            saveHours() {
+                let self = this
+
+                window.axios.patch('work-hours/' + this.workHours.id, {
+                    workHours: this.workHours[this.day],
+                    day: self.day
+                }).then((response) => {
+                    this.addNotification({
+                        title: "Successfully updated hours.",
+                        text: "",
+                        type: "success",
+                        timeout: true
+                    })
+                }).catch((error) => {
+                    console.log(error);
+                })
             },
 
             hoursDifference(startTime, endTime) {
@@ -99,7 +112,7 @@
         <input v-if="edited" type="number" :min="min" :max="max"
                v-model="workHours[day]"
                @blur="doneEdit()"
-               @keyup.enter="enterPressed()"
+               @keyup.enter="hideEdited()"
                @keyup.esc="cancelEdit()">
     </div>
 </template>
@@ -107,6 +120,6 @@
 <style>
     .inline-edit-label {
         border: 1px solid #ccc;
-        margin: 0 1px 0 1px ;
+        margin: 0 1px 0 1px;
     }
 </style>

@@ -269,4 +269,12 @@ class WorkScheduleController extends Controller
         return ($date->gt($this->nextWeekStart) && $this->today->dayOfWeek < 4)
             || $date->gt($this->nextWeekEnd);
     }
+
+    public function updateDailyHours(Request $request, $id) {
+        $workHours = WorkHours::find($id);
+        $workHours->{$request->input('day')} = $request->input('workHours');
+        $workHours->save();
+
+        return response()->json();
+    }
 }

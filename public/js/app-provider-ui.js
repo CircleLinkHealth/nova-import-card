@@ -48177,7 +48177,7 @@ exports = module.exports = __webpack_require__(6)(undefined);
 
 
 // module
-exports.push([module.i, "\n.inline-edit-label {\n    border: 1px solid #ccc;\n    margin: 0 1px 0 1px ;\n}\n", ""]);
+exports.push([module.i, "\n.inline-edit-label {\n    border: 1px solid #ccc;\n    margin: 0 1px 0 1px;\n}\n", ""]);
 
 // exports
 
@@ -48232,7 +48232,7 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
             this.beforeEditCache = this.workHours[this.day];
             this.edited = true;
         },
-        enterPressed: function enterPressed() {
+        hideEdited: function hideEdited() {
             this.edited = false;
         },
         doneEdit: function doneEdit() {
@@ -48257,17 +48257,31 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
                     timeout: true
                 });
             } else {
-                this.addNotification({
-                    title: "Successfully updated hours.",
-                    text: "",
-                    type: "success",
-                    timeout: true
-                });
+                this.saveHours();
             }
         },
         cancelEdit: function cancelEdit() {
             this.workHours[this.day] = this.beforeEditCache;
             this.edited = false;
+        },
+        saveHours: function saveHours() {
+            var _this = this;
+
+            var self = this;
+
+            window.axios.patch('work-hours/' + this.workHours.id, {
+                workHours: this.workHours[this.day],
+                day: self.day
+            }).then(function (response) {
+                _this.addNotification({
+                    title: "Successfully updated hours.",
+                    text: "",
+                    type: "success",
+                    timeout: true
+                });
+            }).catch(function (error) {
+                console.log(error);
+            });
         },
         hoursDifference: function hoursDifference(startTime, endTime) {
             //hack, since we only have time and no date
@@ -48314,7 +48328,7 @@ module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c
       }],
       "keyup": [function($event) {
         if (!('button' in $event) && _vm._k($event.keyCode, "enter", 13)) { return null; }
-        _vm.enterPressed()
+        _vm.hideEdited()
       }, function($event) {
         if (!('button' in $event) && _vm._k($event.keyCode, "esc", 27)) { return null; }
         _vm.cancelEdit()
