@@ -49,8 +49,8 @@ mix.js('resources/assets/js/importer-training.js', 'public/js');
 
 // mix.js('resources/assets/js/provider/view-care-plan.js', 'public/js');
 mix.js('resources/assets/js/app-provider-ui.js', 'public/js');
-
 mix.js('resources/assets/js/app-provider-admin-panel-ui.js', 'public/js');
+mix.js('resources/assets/js/app-clh-admin-ui.js', 'public/js');
 
 
 //DO NOT RECOMPILE THE FOLLOWING.
