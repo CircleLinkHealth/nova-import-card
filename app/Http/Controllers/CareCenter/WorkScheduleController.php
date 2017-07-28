@@ -236,12 +236,14 @@ class WorkScheduleController extends Controller
                 ->withInput();
         }
 
-        if ($holiday->nurse_info_id != auth()->user()->nurseInfo->id) {
-            $errors['holiday'] = 'This holiday does not belong to you.';
+        if (auth()->user()->nurseInfo) {
+            if ($holiday->nurse_info_id != auth()->user()->nurseInfo->id) {
+                $errors['holiday'] = 'This holiday does not belong to you.';
 
-            return redirect()->route('care.center.work.schedule.index')
-                ->withErrors($errors)
-                ->withInput();
+                return redirect()->route('care.center.work.schedule.index')
+                    ->withErrors($errors)
+                    ->withInput();
+            }
         }
 
         $holiday->forceDelete();
