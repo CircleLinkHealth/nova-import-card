@@ -68,7 +68,7 @@
 </script>
 
 <template>
-    <div class="col-md-8 col-md-offset-2" style="padding-top: 2%;" v-cloak>
+    <div class="col-md-12" style="padding-top: 2%;" v-cloak>
         <div class="row">
             <div class="col-md-12 text-right">
                 <a @click="showUploadModal = true" class="btn btn-info btn-sm inline-block">Upload PDF</a>
@@ -76,9 +76,9 @@
         </div>
 
         <div class="row">
-            <div class="col-md-8">
+            <div class="col-md-6">
                 <ul class="list-group">
-                    <li v-for="(pdf, index) in patientCarePlan.pdfs" class="list-group-item">
+                    <li v-for="(pdf, index) in patientCarePlan.pdfs" class="list-group-item pdf-careplan">
                         <a :href="pdf.url" target="_blank">{{pdf.label}} </a>
                         <button @click="deletePdf(pdf)" class="btn btn-xs btn-danger problem-delete-btn"><span><i
                                 class="glyphicon glyphicon-remove"></i></span></button>
@@ -104,5 +104,7 @@
 </template>
 
 <style>
-
+    li.pdf-careplan {
+        font-size: 16px;
+    }
 </style>
