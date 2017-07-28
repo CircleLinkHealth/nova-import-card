@@ -90,7 +90,7 @@
                         <div class="row">
                             <h3>
                                 <a href="{{ route('care.center.work.schedule.index') }}" id="work-schedule-link">
-                                    Your Schedule ({{auth()->user()->timezone_abbr}})
+                                    Create/Edit Your Schedule ({{auth()->user()->timezone_abbr}})
                                 </a>
                             </h3>
                         </div>
