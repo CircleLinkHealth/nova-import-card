@@ -258,12 +258,7 @@ class NurseController extends Controller
 
                 $countScheduled =
                     Call::where('outbound_cpm_id', $nurse->id)
-                        ->where(function ($q) use ($dayCounter){
-                            $q->where('scheduled_date', '>=', Carbon::parse($dayCounter)->startOfDay())
-                                ->where('scheduled_date', '<=', Carbon::parse($dayCounter)->endOfDay());
-                        })
-                        ->where('scheduled_date', '!=' ,'')
-
+                        ->where('scheduled_date', Carbon::parse($dayCounter)->format('Y-m-d'))
                         ->count();
 
                 $countMade =
@@ -272,10 +267,9 @@ class NurseController extends Controller
                             $q->where('called_date', '>=', Carbon::parse($dayCounter)->startOfDay())
                                 ->where('called_date', '<=', Carbon::parse($dayCounter)->endOfDay());
                         })
-                        ->where('status', '!=' ,'scheduled')
                         ->count();
 
-                $formattedDate = Carbon::parse($dayCounter)->format('m/d D');
+                $formattedDate = Carbon::parse($dayCounter)->format('m/d Y');
 
                 $name = $nurse->first_name[0] . '. ' . $nurse->last_name;
 
@@ -285,7 +279,7 @@ class NurseController extends Controller
 
                  } else {
 
-                     $data[$formattedDate][$name]['Scheduled'] = null;
+                     $data[$formattedDate][$name]['Scheduled'] = 0;
 
                  }
 
@@ -295,7 +289,7 @@ class NurseController extends Controller
 
                 } else {
 
-                    $data[$formattedDate][$name]['Actual Made'] = null;
+                    $data[$formattedDate][$name]['Actual Made'] = 0;
 
                 }
 
@@ -305,8 +299,6 @@ class NurseController extends Controller
 
         }
 
-//        dd($data);
-        
         return view('admin.reports.allocation', [
             'data' => $data,
             'month' => Carbon::parse($last)

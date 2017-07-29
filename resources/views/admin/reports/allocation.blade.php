@@ -45,14 +45,10 @@
                                     <h4 style="font-size: 17px;"><b>{{$date}}</b></h4>
                                     <div class="">
                                         @foreach($nurses as $nurse => $count)
-                                            @if($count['Scheduled'] != null && $count['Actual Made'] != null)
+                                            @if($count['Scheduled'] != 0 && $count['Actual Made'] != 0)
                                                 <div class=""><h5>{{$nurse}}</h5>
-                                                    @if($count['Scheduled'] != null)
                                                     <span>Sch: {{$count['Scheduled']}}</span><br/>
-                                                    @endif
-                                                        @if($count['Actual Made'] != null)
-                                                        <span>Made: {{$count['Actual Made']}}</span>
-                                                    @endif
+                                                    <span>Made: {{$count['Actual Made']}}</span>
                                                 </div>
                                             @endif
                                         @endforeach
