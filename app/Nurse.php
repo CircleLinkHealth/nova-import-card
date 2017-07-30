@@ -159,4 +159,16 @@ class Nurse extends Model
     {
         return $this->morphMany(WorkHours::class, 'workhourable');
     }
+
+    public function weeklySchedule() {
+        $schedule = [];
+
+        foreach ($this->windows->sortBy('window_time_start') as $window) {
+            $schedule[$window->day_of_week][] = $window;
+        }
+
+        ksort($schedule);
+
+        return collect($schedule);
+    }
 }
