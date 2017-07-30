@@ -48,7 +48,9 @@
                                             @if(!($count['Scheduled'] == 0 && $count['Actual Made'] == 0))
                                                 <div class=""><h5>{{$nurse}}</h5>
                                                     <span>Sch: {{$count['Scheduled']}}</span><br/>
+                                                    @if(Carbon\Carbon::parse($date)->toDateString() < \Carbon\Carbon::today()->toDateString())
                                                     <span>Made: {{$count['Actual Made']}}</span>
+                                                    @endif
                                                 </div>
                                             @endif
                                         @endforeach
