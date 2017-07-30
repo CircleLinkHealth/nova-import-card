@@ -13,6 +13,7 @@
 
 use App\Enrollee;
 use App\Entities\Invite;
+use App\Nurse;
 
 $factory->define(App\User::class, function (Faker\Generator $faker) {
     return [
@@ -21,6 +22,13 @@ $factory->define(App\User::class, function (Faker\Generator $faker) {
         'last_name'    => $faker->lastName,
         'email'        => $faker->safeEmail,
         'password'     => bcrypt(str_random(10)),
+        'timezone'     => 'America/Chicago',
+        'username'     => $faker->userName,
+        'address'      => $faker->streetAddress,
+        'city'         => 'Chicago',
+        'state'        => 'IL',
+        'zip'          => '12345',
+        'program_id'   => 8,
     ];
 });
 
@@ -122,21 +130,25 @@ $factory->define(Enrollee::class, function (Faker\Generator $faker) {
         'lang' => 'EN',
 
         'primary_phone' => $faker->phoneNumber,
-        'cell_phone' => $faker->phoneNumber,
-        'home_phone' => $faker->phoneNumber,
-        'other_phone' => $faker->phoneNumber,
+        'cell_phone'    => $faker->phoneNumber,
+        'home_phone'    => $faker->phoneNumber,
+        'other_phone'   => $faker->phoneNumber,
 
         'status' => Enrollee::TO_CALL,
 
-        'primary_insurance' => $faker->company,
+        'primary_insurance'   => $faker->company,
         'secondary_insurance' => $faker->company,
-        'tertiary_insurance' => $faker->company,
-        'has_copay' => $faker->boolean(),
+        'tertiary_insurance'  => $faker->company,
+        'has_copay'           => $faker->boolean(),
 
-        'email' => $faker->email,
+        'email'                   => $faker->email,
         'referring_provider_name' => 'Dr. Demo',
-        'problems' => 'Hypertension, High Cholesterol',
-        'cpm_problem_1' => 1,
-        'cpm_problem_2' => 2,
+        'problems'                => 'Hypertension, High Cholesterol',
+        'cpm_problem_1'           => 1,
+        'cpm_problem_2'           => 2,
     ];
+});
+
+$factory->define(Nurse::class, function (Faker\Generator $faker) {
+
 });
