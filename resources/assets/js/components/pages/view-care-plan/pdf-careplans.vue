@@ -61,6 +61,10 @@
                         type: "success",
                         timeout: true
                     })
+
+                    if (this.patientCarePlan.pdfs.length < 1) {
+                        window.location.replace(window.location.href)
+                    }
                 }
             }
         ),
@@ -72,6 +76,7 @@
         <div class="row">
             <div class="col-md-12 text-right">
                 <a @click="showUploadModal = true" class="btn btn-info btn-sm inline-block">Upload PDF</a>
+                <slot></slot>
             </div>
         </div>
 
@@ -93,7 +98,8 @@
                 <h4 class="modal-title">Upload PDF CarePlan</h4>
             </template>
             <template slot="body">
-                <file-upload id="drop-pdf-cp" @input="uploadPdf()" v-model="files" accept="application/pdf" class="dropzone" multiple="multiple" drop="#drop-pdf-cp">
+                <file-upload id="drop-pdf-cp" @input="uploadPdf()" v-model="files" accept="application/pdf"
+                             class="dropzone" multiple="multiple" drop="#drop-pdf-cp">
                     Drop a PDF here, or click to choose a file to upload.
                 </file-upload>
             </template>

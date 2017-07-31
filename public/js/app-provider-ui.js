@@ -52513,6 +52513,10 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
                 type: "success",
                 timeout: true
             });
+
+            if (this.patientCarePlan.pdfs.length < 1) {
+                window.location.replace(window.location.href);
+            }
         }
     })
 });
@@ -55991,7 +55995,7 @@ module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c
         _vm.showUploadModal = true
       }
     }
-  }, [_vm._v("Upload PDF")])])]), _vm._v(" "), _c('div', {
+  }, [_vm._v("Upload PDF")]), _vm._v(" "), _vm._t("default")], 2)]), _vm._v(" "), _c('div', {
     staticClass: "row"
   }, [_c('div', {
     staticClass: "col-md-6"

@@ -130,6 +130,10 @@ body, label, .checkbox label {
   box-shadow: rgba(128, 128, 128, 0.1) 0px 1px 2px;
   padding: 0px 15px 15px;
 }
+
+[v-cloak] {
+  display: none;
+}
 /**
  * Tooltip Styles
  */
