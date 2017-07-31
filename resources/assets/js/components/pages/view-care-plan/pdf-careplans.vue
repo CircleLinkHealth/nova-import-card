@@ -93,7 +93,7 @@
                 <h4 class="modal-title">Upload PDF CarePlan</h4>
             </template>
             <template slot="body">
-                <file-upload @input="uploadPdf()" v-model="files" accept="application/pdf" class="dropzone" multiple="multiple">
+                <file-upload id="drop-pdf-cp" @input="uploadPdf()" v-model="files" accept="application/pdf" class="dropzone" multiple="multiple" drop="#drop-pdf-cp">
                     Drop a PDF here, or click to choose a file to upload.
                 </file-upload>
             </template>
