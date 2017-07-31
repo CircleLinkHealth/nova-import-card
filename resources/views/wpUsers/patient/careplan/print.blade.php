@@ -47,20 +47,17 @@ if (isset($patient) && !empty($patient)) {
 
 
                                 <div class="col-xs-12 text-left">
-                                    <pdf-careplans></pdf-careplans>
-                                </div>
-
-
-                                <span class="btn btn-group text-right">
+                                    <pdf-careplans v-cloak>
+                                        <span class="btn btn-group text-right">
                                         @if ( ($patient->carePlanStatus == 'qa_approved' && auth()->user()->can('care-plan-approve')) || ($patient->carePlanStatus == 'draft' && auth()->user()->can('care-plan-qa-approve')) )
-                                        <a style="margin-right:10px;" class="btn btn-info btn-sm inline-block"
-                                           aria-label="..."
-                                           role="button"
-                                           href="{{ URL::route('patients.listing', ['patient_approval_id' => $patient->id]) }}">Approve Care Plan</a>
-                                    @endif
+                                                <a style="margin-right:10px;" class="btn btn-info btn-sm inline-block"
+                                                   aria-label="..."
+                                                   role="button"
+                                                   href="{{ URL::route('patients.listing', ['patient_approval_id' => $patient->id]) }}">Approve Care Plan</a>
+                                            @endif
 
-                                    <a class="btn btn-info btn-sm inline-block" aria-label="..." role="button"
-                                       href="{{ URL::route('patients.careplan.multi') }}?users={{ $patient->id }}">Print This Page</a>
+                                            <a class="btn btn-info btn-sm inline-block" aria-label="..." role="button"
+                                               href="{{ URL::route('patients.careplan.multi') }}?users={{ $patient->id }}">Print This Page</a>
 
                                         <form class="lang" action="#" method="POST" id="form">
                                         {{ csrf_field() }}
@@ -68,7 +65,8 @@ if (isset($patient) && !empty($patient)) {
                                             <!-- <button type="submit" class="btn btn-info btn-sm text-right" aria-label="..." value="">Translate to Spanish</button>
                                   -->       </form>
                                     </span>
-
+                                    </pdf-careplans>
+                                </div>
                             </div>
 
                         </div>
