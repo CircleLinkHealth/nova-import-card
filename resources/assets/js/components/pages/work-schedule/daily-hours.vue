@@ -121,7 +121,7 @@
 
 <template>
     <div v-if="workHours[day]">
-        <label v-show="!edited" @click="edit()" class="form-control edit-daily-work-hours text-center" style="padding: 2px 0;">{{workHours[day]}} hrs</label>
+        <label v-show="!edited" @click="edit()" class="edit-daily-work-hours text-center" style="padding: 2px 0;">{{workHours[day]}} hrs</label>
 
         <input v-show="edited" type="number" :min="min" :max="max" class="form-control edit-daily-work-hours"
                v-model="workHours[day]"
