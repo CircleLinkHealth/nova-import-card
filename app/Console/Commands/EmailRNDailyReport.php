@@ -50,36 +50,36 @@ class EmailRNDailyReport extends Command
             if (!$nurse->nurseInfo) {
                 continue;
             }
-//            $activityTime = Activity::createdBy($nurse)
-//                ->createdToday()
-//                ->sum('duration');
-//
-//            $systemTime = PageTimer::where('provider_id', $nurse->id)
-//                ->createdToday()
-//                ->sum('billable_duration');
-//
-//            $totalMonthSystemTimeSeconds = PageTimer::where('provider_id', $nurse->id)
-//                ->createdThisMonth()
-//                ->sum('billable_duration');
-//
-//            if ($systemTime == 0) {
-//                continue;
-//            }
-//
-//            if ($nurse->nurseInfo->hourly_rate < 1
-//                && $nurse->nurseInfo != 'active'
-//            ) {
-//                continue;
-//            }
-//
-//            $performance = round((float)($activityTime / $systemTime) * 100);
-//
-//            $totalTimeInSystemToday = secondsToHMS($systemTime);
-//
-//            $totalTimeInSystemThisMonth = secondsToHMS($totalMonthSystemTimeSeconds);
-//
-//            $totalEarningsThisMonth = round((float)($totalMonthSystemTimeSeconds * $nurse->nurseInfo->hourly_rate / 60 / 60),
-//                2);
+            $activityTime = Activity::createdBy($nurse)
+                ->createdToday()
+                ->sum('duration');
+
+            $systemTime = PageTimer::where('provider_id', $nurse->id)
+                ->createdToday()
+                ->sum('billable_duration');
+
+            $totalMonthSystemTimeSeconds = PageTimer::where('provider_id', $nurse->id)
+                ->createdThisMonth()
+                ->sum('billable_duration');
+
+            if ($systemTime == 0) {
+                continue;
+            }
+
+            if ($nurse->nurseInfo->hourly_rate < 1
+                && $nurse->nurseInfo != 'active'
+            ) {
+                continue;
+            }
+
+            $performance = round((float)($activityTime / $systemTime) * 100);
+
+            $totalTimeInSystemToday = secondsToHMS($systemTime);
+
+            $totalTimeInSystemThisMonth = secondsToHMS($totalMonthSystemTimeSeconds);
+
+            $totalEarningsThisMonth = round((float)($totalMonthSystemTimeSeconds * $nurse->nurseInfo->hourly_rate / 60 / 60),
+                2);
 
             $nextUpcomingWindow = $nurse->nurseInfo->firstWindowAfter(Carbon::now());
 
@@ -98,10 +98,10 @@ class EmailRNDailyReport extends Command
 
             $data = [
                 'name'                       => $nurse->fullName,
-                'performance'                => '11',
-                'totalEarningsThisMonth'     => '11',
-                'totalTimeInSystemToday'     => '11',
-                'totalTimeInSystemThisMonth' => '11',
+                'performance'                => $performance,
+                'totalEarningsThisMonth'     => $totalEarningsThisMonth,
+                'totalTimeInSystemToday'     => $totalTimeInSystemToday,
+                'totalTimeInSystemThisMonth' => $totalTimeInSystemThisMonth,
                 'nextUpcomingWindow'         => $nextUpcomingWindow,
                 'nextWindowCarbonDate'       => $carbonDate ?? null,
                 'hours'                      => $hours,
