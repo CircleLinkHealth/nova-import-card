@@ -66,6 +66,11 @@ class PatientCarePlanController extends Controller
             $created[] = $pdf;
         }
 
+        if (count($created) > 0) {
+            $carePlan->mode = CarePlan::PDF;
+            $carePlan->save();
+        }
+
         return response()->json($created);
     }
 
