@@ -171,4 +171,31 @@ class Nurse extends Model
 
         return collect($schedule);
     }
+
+    public function firstWindowAfter(Carbon $date) {
+        $dayOfWeek = carbonToClhDayOfWeek($date->dayOfWeek);
+
+        $weeklySchedule = $this->weeklySchedule();
+
+        $result = null;
+
+        foreach ($weeklySchedule as $day => $windows) {
+            if ($day > $dayOfWeek) {
+                $result = $windows[0];
+                break;
+            }
+        }
+
+        if (!$result) {
+            $result = $weeklySchedule->first()[0];
+        }
+
+        if (!$result) {
+            return false;
+        }
+
+        $result->date = $date->next(clhToCarbonDayOfWeek($result->day_of_week));
+
+        return $result;
+    }
 }

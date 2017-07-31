@@ -2,9 +2,8 @@
 
 namespace App\Console\Commands;
 
-use App\Activity;
-use App\PageTimer;
 use App\User;
+use Carbon\Carbon;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Mail;
 
@@ -47,43 +46,69 @@ class EmailRNDailyReport extends Command
         $emailsSent = [];
 
         foreach ($nurses as $nurse) {
-            $activityTime = Activity::createdBy($nurse)
-                ->createdToday()
-                ->sum('duration');
 
-            $systemTime = PageTimer::where('provider_id', $nurse->id)
-                ->createdToday()
-                ->sum('billable_duration');
-
-            $totalMonthSystemTimeSeconds = PageTimer::where('provider_id', $nurse->id)
-                ->createdThisMonth()
-                ->sum('billable_duration');
-
-            if ($systemTime == 0) {
+            if (!$nurse->nurseInfo) {
                 continue;
             }
+//            $activityTime = Activity::createdBy($nurse)
+//                ->createdToday()
+//                ->sum('duration');
+//
+//            $systemTime = PageTimer::where('provider_id', $nurse->id)
+//                ->createdToday()
+//                ->sum('billable_duration');
+//
+//            $totalMonthSystemTimeSeconds = PageTimer::where('provider_id', $nurse->id)
+//                ->createdThisMonth()
+//                ->sum('billable_duration');
+//
+//            if ($systemTime == 0) {
+//                continue;
+//            }
+//
+//            if ($nurse->nurseInfo->hourly_rate < 1
+//                && $nurse->nurseInfo != 'active'
+//            ) {
+//                continue;
+//            }
+//
+//            $performance = round((float)($activityTime / $systemTime) * 100);
+//
+//            $totalTimeInSystemToday = secondsToHMS($systemTime);
+//
+//            $totalTimeInSystemThisMonth = secondsToHMS($totalMonthSystemTimeSeconds);
+//
+//            $totalEarningsThisMonth = round((float)($totalMonthSystemTimeSeconds * $nurse->nurseInfo->hourly_rate / 60 / 60),
+//                2);
 
-            if ($nurse->nurseInfo->hourly_rate < 1
-                && $nurse->nurseInfo != 'active'
-            ) {
-                continue;
+            $nextUpcomingWindow = $nurse->nurseInfo->firstWindowAfter(Carbon::now());
+
+            if ($nextUpcomingWindow) {
+                $carbonDate = Carbon::parse($nextUpcomingWindow->date);
+                $nextUpcomingWindowLabel = clhDayOfWeekToDayName($nextUpcomingWindow->day_of_week) . " {$carbonDate->format('m/d/Y')}";
             }
 
-            $performance = round((float)($activityTime / $systemTime) * 100);
+            $hours = $nurse->nurseInfo->workhourables
+                ? $nurse->nurseInfo->workhourables->first()
+                : null;
 
-            $totalTimeInSystemToday = secondsToHMS($systemTime);
-
-            $totalTimeInSystemThisMonth = secondsToHMS($totalMonthSystemTimeSeconds);
-
-            $totalEarningsThisMonth = round((float)($totalMonthSystemTimeSeconds * $nurse->nurseInfo->hourly_rate / 60 / 60),
-                2);
+            $totalHours = $hours && $nextUpcomingWindow
+                ? (string) $hours->{strtolower(clhDayOfWeekToDayName($nextUpcomingWindow->day_of_week))}
+                : null;
 
             $data = [
                 'name'                       => $nurse->fullName,
-                'performance'                => $performance,
-                'totalEarningsThisMonth'     => $totalEarningsThisMonth,
-                'totalTimeInSystemToday'     => $totalTimeInSystemToday,
-                'totalTimeInSystemThisMonth' => $totalTimeInSystemThisMonth,
+                'performance'                => '11',
+                'totalEarningsThisMonth'     => '11',
+                'totalTimeInSystemToday'     => '11',
+                'totalTimeInSystemThisMonth' => '11',
+                'nextUpcomingWindow'         => $nextUpcomingWindow,
+                'nextWindowCarbonDate'       => $carbonDate ?? null,
+                'hours'                      => $hours,
+                'nextUpcomingWindowLabel'    => $nextUpcomingWindowLabel ?? null,
+                'totalHours'                 => $totalHours,
+                'windowStart'                => $nextUpcomingWindow ? Carbon::parse($nextUpcomingWindow->window_time_start)->format('g:i A T') : null,
+                'windowEnd'                  => $nextUpcomingWindow ? Carbon::parse($nextUpcomingWindow->window_time_end)->format('g:i A T') : null,
             ];
 
             $recipients = [
@@ -94,8 +119,7 @@ class EmailRNDailyReport extends Command
 
             $subject = 'CircleLink Daily Time Report';
 
-            Mail::send('emails.nurseDailyReport', $data, function ($message) use
-            (
+            Mail::send('emails.nurseDailyReport', $data, function ($message) use (
                 $recipients,
                 $subject
             ) {

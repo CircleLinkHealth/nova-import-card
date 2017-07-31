@@ -21,8 +21,19 @@
     <b>Total time in system this month:</b> {{ $totalTimeInSystemThisMonth }}
 </p>
 
+@if ($nextUpcomingWindowLabel)
+    <p>
+        <b><u>Reminder:</u> {{ $nextUpcomingWindowLabel }}
+            you are scheduled for {{ $totalHours }} total hours
+            between {{$windowStart}}
+            and {{$windowEnd}}
+
+
+            <br>(Remember to provide 3 week’s notice if you need to cut your hours, thanks!)</b>
+    </p>
+@endif
 <p>
-    <b>Total earnings this month:</b> ${{ $totalEarningsThisMonth }}
+
 </p>
 
 <p>

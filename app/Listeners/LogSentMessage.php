@@ -38,15 +38,15 @@ class LogSentMessage
             $sender = User::whereEmail($sender_email)->first();
             $receiver = User::whereEmail($receiver_email)->first();
 
-            if ($receiver && $receiver->primaryPractice) {
-                if ($receiver->primaryPractice->settings()->first()->auto_approve_careplans) {
-                    return false;
-                }
-
-                if (!$receiver->primaryPractice->settings()->first()->email_careplan_approval_reminders) {
-                    return false;
-                }
-            }
+//            if ($receiver && $receiver->primaryPractice && !$receiver->primaryPractice->settings->isEmpty()) {
+//                if ($receiver->primaryPractice->settings->first()->auto_approve_careplans) {
+//                    return false;
+//                }
+//
+//                if (!$receiver->primaryPractice->settings->first()->email_careplan_approval_reminders) {
+//                    return false;
+//                }
+//            }
 
             $sender_cpm_id = $sender->id ?? 357;
             $receiver_cpm_id = $receiver->id ?? 357;
