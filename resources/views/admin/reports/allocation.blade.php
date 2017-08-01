@@ -45,9 +45,12 @@
                                     <h4 style="font-size: 17px;"><b>{{$date}}</b></h4>
                                     <div class="">
                                         @foreach($nurses as $nurse => $count)
-                                            @if($count != null)
-                                                <div class="">
-                                                    <h5>{{$nurse}}: {{$count}}</h5>
+                                            @if(!($count['Scheduled'] == 0 && $count['Actual Made'] == 0))
+                                                <div class=""><h5 style="font-size: 17px; font-weight: 500;">{{$nurse}}</h5>
+                                                    <span style="color: gray;">Sch: {{$count['Scheduled']}}</span><br/>
+                                                    @if(Carbon\Carbon::parse($date)->toDateString() < \Carbon\Carbon::today()->toDateString())
+                                                    <span style="color: gray;">Made: {{$count['Actual Made']}}</span>
+                                                    @endif
                                                 </div>
                                             @endif
                                         @endforeach
