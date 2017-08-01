@@ -29,24 +29,17 @@ class LogSentMessage
     public function handle(MessageSending $event)
     {
         try {
-            $sender_email = array_keys($event->message->getFrom())[0];
-            $receiver_email = array_keys($event->message->getTo())[0];
+            $from = array_keys($event->message->getFrom());
+            $to = array_keys($event->message->getTo());
+
+            $sender_email = array_key_exists(0, $from) ? $from[0] : null;
+            $receiver_email = array_key_exists(0, $to) ? $to[0] : null;
             $body = $event->message->getBody();
             $subject = $event->message->getSubject();
             $type = 'email';
 
             $sender = User::whereEmail($sender_email)->first();
             $receiver = User::whereEmail($receiver_email)->first();
-
-            if ($receiver && $receiver->primaryPractice) {
-                if ($receiver->primaryPractice->settings()->first()->auto_approve_careplans) {
-                    return false;
-                }
-
-                if (!$receiver->primaryPractice->settings()->first()->email_careplan_approval_reminders) {
-                    return false;
-                }
-            }
 
             $sender_cpm_id = $sender->id ?? 357;
             $receiver_cpm_id = $receiver->id ?? 357;
