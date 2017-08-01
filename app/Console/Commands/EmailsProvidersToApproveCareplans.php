@@ -161,7 +161,9 @@ class EmailsProvidersToApproveCareplans extends Command
 
             return [
                 'practice'         => $user->primaryPractice->display_name,
-                'provider'         => $user->fullName,
+                'provider'         => $recipients->reduce(function ($receivers, $recipient) {
+                    return $receivers . " {$recipient->fullName},";
+                }),
                 'pendingApprovals' => $numberOfCareplans,
             ];
         });
