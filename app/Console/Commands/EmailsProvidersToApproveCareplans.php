@@ -110,6 +110,10 @@ class EmailsProvidersToApproveCareplans extends Command
                 }
             }
 
+            if ($recipients->isEmpty()) {
+                return false;
+            }
+
             $numberOfCareplans = CarePlan::getNumberOfCareplansPendingApproval($user);
 
             if ($numberOfCareplans < 1) {
