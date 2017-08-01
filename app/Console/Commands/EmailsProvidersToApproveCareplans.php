@@ -161,7 +161,7 @@ class EmailsProvidersToApproveCareplans extends Command
 
             return [
                 'practice'         => $user->primaryPractice->display_name,
-                'provider'         => implode(', ', $recipients->all()),
+                'receivers'         => implode(', ', $recipients->all()),
                 'pendingApprovals' => $numberOfCareplans,
             ];
         });
@@ -171,7 +171,8 @@ class EmailsProvidersToApproveCareplans extends Command
         $bar->finish();
 
         $this->table([
-            'provider',
+            'practice',
+            'receivers',
             'pendingApprovals',
         ], $emailsSent);
 
