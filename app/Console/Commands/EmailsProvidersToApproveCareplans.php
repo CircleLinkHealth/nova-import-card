@@ -97,16 +97,16 @@ class EmailsProvidersToApproveCareplans extends Command
 
             if ($user->forwardAlertsTo->isEmpty()) {
                 $recipients->push($user->email);
-            }
+            } else {
+                foreach ($user->forwardAlertsTo as $forwardee) {
+                    if ($forwardee->pivot->name == User::FORWARD_CAREPLAN_APPROVAL_EMAILS_IN_ADDITION_TO_PROVIDER) {
+                        $recipients->push($user->email);
+                        $recipients->push($forwardee->email);
+                    }
 
-            foreach ($user->forwardAlertsTo as $forwardee) {
-                if ($forwardee->pivot->name == User::FORWARD_CAREPLAN_APPROVAL_EMAILS_IN_ADDITION_TO_PROVIDER) {
-                    $recipients->push($user->email);
-                    $recipients->push($forwardee->email);
-                }
-
-                if ($forwardee->pivot->name == User::FORWARD_CAREPLAN_APPROVAL_EMAILS_INSTEAD_OF_PROVIDER) {
-                    $recipients->push($forwardee->email);
+                    if ($forwardee->pivot->name == User::FORWARD_CAREPLAN_APPROVAL_EMAILS_INSTEAD_OF_PROVIDER) {
+                        $recipients->push($forwardee->email);
+                    }
                 }
             }
 
