@@ -86,7 +86,7 @@ class EmailsProvidersToApproveCareplans extends Command
 
             return [
                 'practice'         => $providerUser->primaryPractice->display_name,
-                'provider'         => $providerUser->fullName,
+                'receivers'         => implode(', ', $recipients->all()),
                 'pendingApprovals' => $numberOfCareplans,
             ];
         });
@@ -96,13 +96,14 @@ class EmailsProvidersToApproveCareplans extends Command
         $bar->finish();
 
         $this->table([
-            'provider',
+            'practice',
+            'receivers',
             'pendingApprovals',
         ], $emailsSent);
 
         $count = count($emailsSent);
 
-        $this->info("Sent $count emails.");
+        $this->info("$count emails.");
     }
 
     public function shouldSend(User $providerUser)
@@ -129,11 +130,11 @@ class EmailsProvidersToApproveCareplans extends Command
             return false;
         }
 
-        if (!$providerUser->primaryPractice->settings()->firstOrCreate([])->email_careplan_approval_reminders) {
+        if ($providerUser->primaryPractice->settings && !$providerUser->primaryPractice->settings->isEmpty() && $providerUser->primaryPractice->settings->first()->email_careplan_approval_reminders) {
             return false;
         }
 
-        if ($providerUser->primaryPractice->settings()->firstOrCreate([])->auto_approve_careplans) {
+        if ($providerUser->primaryPractice->settings && !$providerUser->primaryPractice->settings->isEmpty() && $providerUser->primaryPractice->settings->first()->auto_approve_careplans) {
             return false;
         }
 
@@ -201,8 +202,12 @@ class EmailsProvidersToApproveCareplans extends Command
                 });
             }
 
-//                Slack::to('#background-tasks')
-//                    ->send("Sent pending approvals email to {$user->fullName}.");
+            try {
+                Slack::to('#background-tasks')
+                    ->send("Sent pending approvals email to {$recipient->fullName}.");
+            } catch (\Exception $e) {
+
+            }
         }
     }
 }
