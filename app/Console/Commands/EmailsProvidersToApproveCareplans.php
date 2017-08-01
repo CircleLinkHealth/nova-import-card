@@ -3,7 +3,6 @@
 namespace App\Console\Commands;
 
 use App\CarePlan;
-use App\CLH\Contracts\Repositories\UserRepository;
 use App\Models\EmailSettings;
 use App\User;
 use Carbon\Carbon;
@@ -28,25 +27,6 @@ class EmailsProvidersToApproveCareplans extends Command
     protected $description = 'Send a reminder email to all Providers telling them how many Careplans are awaiting approval.';
 
     /**
-     * An instance of UserRepository.
-     *
-     * @var UserRepository
-     */
-    protected $users;
-
-    /**
-     * Create a new command instance.
-     *
-     * @param UserRepository $users
-     */
-    public function __construct(UserRepository $users)
-    {
-        parent::__construct();
-
-        $this->users = $users;
-    }
-
-    /**
      * Execute the console command.
      *
      * @return mixed
@@ -55,7 +35,7 @@ class EmailsProvidersToApproveCareplans extends Command
     {
         $pretend = $this->option('pretend');
 
-        $providers = $this->users->findByRole('provider');
+        $providers = User::ofType('provider')->get();
 
         $bar = $this->output->createProgressBar(count($providers));
 
@@ -86,7 +66,7 @@ class EmailsProvidersToApproveCareplans extends Command
 
             return [
                 'practice'         => $providerUser->primaryPractice->display_name,
-                'receivers'         => implode(', ', $recipients->all()),
+                'receivers'        => implode(', ', $recipients->all()),
                 'pendingApprovals' => $numberOfCareplans,
             ];
         });
@@ -147,16 +127,16 @@ class EmailsProvidersToApproveCareplans extends Command
 
         if ($providerUser->forwardAlertsTo->isEmpty()) {
             $recipients->push($providerUser);
-        }
+        } else {
+            foreach ($providerUser->forwardAlertsTo as $forwardee) {
+                if ($forwardee->pivot->name == User::FORWARD_CAREPLAN_APPROVAL_EMAILS_IN_ADDITION_TO_PROVIDER) {
+                    $recipients->push($providerUser);
+                    $recipients->push($forwardee);
+                }
 
-        foreach ($providerUser->forwardAlertsTo as $forwardee) {
-            if ($forwardee->pivot->name == User::FORWARD_CAREPLAN_APPROVAL_EMAILS_IN_ADDITION_TO_PROVIDER) {
-                $recipients->push($providerUser);
-                $recipients->push($forwardee);
-            }
-
-            if ($forwardee->pivot->name == User::FORWARD_CAREPLAN_APPROVAL_EMAILS_INSTEAD_OF_PROVIDER) {
-                $recipients->push($forwardee);
+                if ($forwardee->pivot->name == User::FORWARD_CAREPLAN_APPROVAL_EMAILS_INSTEAD_OF_PROVIDER) {
+                    $recipients->push($forwardee);
+                }
             }
         }
 
