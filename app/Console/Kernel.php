@@ -1,9 +1,9 @@
 <?php namespace App\Console;
 
 use App\Algorithms\Calls\ReschedulerHandler;
-use App\Algorithms\Enrollment\EnrollmentSMSSender;
 use App\Console\Commands\Athena\GetAppointments;
 use App\Console\Commands\Athena\GetCcds;
+use App\Console\Commands\CheckEmrDirectInbox;
 use App\Console\Commands\EmailRNDailyReport;
 use App\Console\Commands\EmailsProvidersToApproveCareplans;
 use App\Console\Commands\ExportNurseSchedulesToGoogleCalendar;
@@ -22,20 +22,13 @@ use App\Console\Commands\QueueSendAuditReports;
 use App\Console\Commands\RecalculateCcmTime;
 use App\Console\Commands\ResetCcmTime;
 use App\Console\Commands\SplitMergedCcdas;
-use App\MailLog;
-use App\Practice;
-use App\Reports\Sales\Practice\SalesByPracticeReport;
-use App\Reports\Sales\Provider\SalesByProviderReport;
 use App\Reports\WeeklyReportDispatcher;
 use App\Services\Calls\SchedulerService;
-use App\Services\PhiMail\PhiMail;
-use App\User;
-use Carbon\Carbon;
-//use EnrollmentSMSSender;
 use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Foundation\Console\Kernel as ConsoleKernel;
-use Illuminate\Support\Facades\Mail;
 use Maknz\Slack\Facades\Slack;
+
+//use EnrollmentSMSSender;
 
 
 class Kernel extends ConsoleKernel
@@ -66,6 +59,7 @@ class Kernel extends ConsoleKernel
         QueueSendAuditReports::class,
         ProcessCcdaLGHMixup::class,
         ImportLGHInsurance::class,
+        CheckEmrDirectInbox::class,
     ];
 
     /**
@@ -77,21 +71,17 @@ class Kernel extends ConsoleKernel
      */
     protected function schedule(Schedule $schedule)
     {
-        $schedule->call(function () {
-            (new PhiMail)->receive();
-        })->everyMinute();
-
         //Reconciles missed calls and creates a new call for patient using algo
         $schedule->call(function () {
 
             $handled = (new ReschedulerHandler())->handle();
 
             if (!empty($handled)) {
-//                Slack::to('#background-tasks')->send("The CPMbot just rescheduled some calls");
+                Slack::to('#background-tasks')->send("The CPMbot just rescheduled some calls");
             }
 
             foreach ($handled as $call) {
-//                Slack::to('#background-tasks')->send("We just fixed call: {$call->id}");
+                Slack::to('#background-tasks')->send("We just fixed call: {$call->id}");
             }
 
         })->dailyAt('00:05');
@@ -159,7 +149,9 @@ class Kernel extends ConsoleKernel
 //            ->cron('0 */2 * * *');
 
         $schedule->command('send:audit-reports')
-            ->monthlyOn(1, '03:00');
+            ->monthlyOn(1, '02:00');
+
+        $schedule->command('dm:check')->everyMinute();
     }
 
     /**
