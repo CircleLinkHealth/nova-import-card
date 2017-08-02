@@ -21,9 +21,13 @@
 
         <grid
                 :data="formattedLocations"
-                :columns="gridColumns"
-                :filter-key="searchQuery">
+                :options="gridOptions"
+                :filter-key="searchQuery"
+                @click="cellClicked">
         </grid>
+
+        <component :is="compName" :show="showModal" :location="editedLocation" @close-modal="closeModal()"></component>
+
     </div>
 </template>
 
@@ -31,19 +35,20 @@
     import {mapGetters, mapActions} from 'vuex'
     import {practiceLocations} from '../../../store/getters'
     import {getPracticeLocations} from '../../../store/actions'
+    import UpdateLocation from './update.vue'
 
     export default {
+        components: {
+            UpdateLocation
+        },
+
         computed: Object.assign({},
             mapGetters({
                 locations: 'practiceLocations'
             }),
             {
                 formattedLocations() {
-                    return JSON.parse(JSON.stringify(this.gridData)).map((loc) => {
-                        loc.edit = '<i class="material-icons">mode_edit</i>'
-
-                        return loc
-                    })
+                    return JSON.parse(JSON.stringify(this.gridData))
                 }
             }
         ),
@@ -53,23 +58,91 @@
             this.gridData = this.locations
         },
 
+        methods: Object.assign({},
+            mapActions(['getPracticeLocations']),
+            {
+                cellClicked(index, entry, entryIndex) {
+                    switch (index) {
+                        case 'trash':
+                            this.deleteRow(entryIndex)
+                            break;
+                        case 'edit':
+                            this.editRow(entryIndex)
+                            break;
+                        default:
+                            break;
+                    }
+                },
+
+                deleteRow(index) {
+                    let disassociate = confirm('Are you sure you want to delete ' + this.gridData[index].name + '?');
+
+                    if (!disassociate) {
+                        return true;
+                    }
+
+                    this.gridData.splice(index, 1)
+                },
+
+                editRow(index) {
+                    this.compName = 'update-location'
+                    this.editedLocation = this.gridData[index]
+                    this.showModal = true
+                },
+
+                closeModal() {
+                    this.compName = ''
+                    this.editedLocation = {}
+                    this.showModal = false
+                }
+            }),
+
         data() {
             return {
+                compName: '',
+                showModal: false,
+                editedLocation: {},
                 searchQuery: '',
-                gridColumns: ['edit', 'name', 'address_line_1', 'city', 'state'],
+                gridOptions: {
+                    columns: {
+                        name: {
+                            name: 'Name'
+                        },
+                        address_line_1: {
+                            name: 'Address Line 1'
+                        },
+                        city: {
+                            name: 'City'
+                        },
+                        state: {
+                            name: 'State'
+                        },
+                        trash: {
+                            name: '',
+                            content: '<a class="red waves-effect waves-light btn" style="padding: 0 .4rem;"><i class="material-icons center text-white">clear</i></a>',
+                        },
+                        edit: {
+                            name: '',
+                            content: '<a class="green waves-effect waves-light btn" style="padding: 0 .4rem;"><i class="material-icons center">mode_edit</i></a>'
+                        },
+                    }
+                },
                 practiceId: $('meta[name=practice-id]').attr('content'),
                 gridData: []
             }
         },
-
-        methods: Object.assign({},
-            mapActions(['getPracticeLocations'])
-        ),
     }
 </script>
 
 <style>
     .admin-panel-locations-container .input-field {
         margin-top: 0;
+    }
+
+    th.th-trash, td.td-trash, th.th-edit, td.td-edit {
+        background: none;
+        width: 10px;
+        min-width: 5px;
+        padding: 10px 0;
     }
 </style>
