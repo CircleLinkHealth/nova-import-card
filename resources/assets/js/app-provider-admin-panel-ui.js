@@ -1,5 +1,7 @@
 require('./bootstrap');
 
+require('../../../public/js/materialize.min')
+
 window.Vue = require('vue');
 
 window.axios.defaults.baseURL = $('meta[name="base-url"]').attr('content');
