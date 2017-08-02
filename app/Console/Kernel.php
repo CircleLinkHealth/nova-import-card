@@ -77,6 +77,10 @@ class Kernel extends ConsoleKernel
      */
     protected function schedule(Schedule $schedule)
     {
+        $schedule->call(function(){
+            \Log::info('Cron Health Check');
+        });
+
         $schedule->call(function () {
             (new PhiMail)->receive();
         })->everyMinute();
