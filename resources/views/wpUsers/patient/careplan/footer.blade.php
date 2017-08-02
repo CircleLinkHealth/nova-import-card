@@ -3,7 +3,8 @@
 ?>
 <div class="main-form-progress">
     <div class="row row-centered">
-        @if(isset($patient->id) )
+        @if(isset($patient->id) && $patient->careplan_mode == App\CarePlan::WEB)
+)
             <div class="progress-buttons col-sm-12 col-centered text-center">
 
                 @if(Route::is('patient.demographics.show'))

@@ -330,9 +330,7 @@ $user_info = array();
                 </div>
             </div>
         </div>
-        @if ($patient->careplan_mode == App\CarePlan::WEB)
             @include('wpUsers.patient.careplan.footer')
-        @endif
         <br/><br/>
 
         @if(isset($_GET['scrollTo']))

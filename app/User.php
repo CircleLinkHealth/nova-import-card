@@ -404,9 +404,11 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
 
     public function viewableProgramIds(): array
     {
-        return $this->practices
-            ->pluck('id')
-            ->all();
+        return $this->hasRole('administrator')
+            ? Practice::active()->pluck('id')->all()
+            : $this->practices
+                ->pluck('id')
+                ->all();
     }
 
     public function viewableProviderIds()
@@ -2370,7 +2372,8 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
         return $this->roles->first();
     }
 
-    public function getCareplanModeAttribute() {
+    public function getCareplanModeAttribute()
+    {
         if (!$this->carePlan) {
             return false;
         }
@@ -2388,7 +2391,8 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
         return $careplanMode;
     }
 
-    public function getTimezoneAbbrAttribute() {
+    public function getTimezoneAbbrAttribute()
+    {
         return $this->timezone
             ? Carbon::now($this->timezone)->format('T')
             : Carbon::now()->setTimezone('America/New_York')->format('T');
