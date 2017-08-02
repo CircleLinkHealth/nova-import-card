@@ -72,7 +72,7 @@ class ImportCsvPatientList implements ShouldQueue
 
         $url = url('view.files.ready.to.import');
 
-        Slack::to('#background-tasks')->send("Queued job Import CSV for {$this->practice->display_name} completed! Visit $url.");
+//        Slack::to('#background-tasks')->send("Queued job Import CSV for {$this->practice->display_name} completed! Visit $url.");
     }
 
     /**
