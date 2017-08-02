@@ -72,8 +72,6 @@ class Kernel extends ConsoleKernel
      */
     protected function schedule(Schedule $schedule)
     {
-        $schedule->command('dm:check')->everyMinute();
-
         //Reconciles missed calls and creates a new call for patient using algo
         $schedule->call(function () {
 
@@ -153,6 +151,8 @@ class Kernel extends ConsoleKernel
 
         $schedule->command('send:audit-reports')
             ->monthlyOn(1, '02:00');
+
+        $schedule->command('dm:check')->everyMinute();
     }
 
     /**
