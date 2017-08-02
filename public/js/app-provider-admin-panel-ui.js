@@ -53636,6 +53636,145 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 
 
 
@@ -53661,6 +53800,7 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
     },
     data: function data() {
         return {
+            sameEHRLogin: false,
             formData: {
                 clinical_contact: {
                     email: '',
@@ -53685,6 +53825,16 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
                 validated: false
             },
             formState: {},
+            ehrLoginOptions: [{
+                name: 'Patient\'s Billing / Main provider.',
+                value: 'billing_provider'
+            }, {
+                name: 'Someone else instead of the billing provider.',
+                value: 'instead_of_billing_provider'
+            }, {
+                name: 'Someone else in addition to the billing provider.',
+                value: 'in_addition_to_billing_provider'
+            }],
             timezoneOptions: [{
                 name: 'Eastern Time',
                 value: 'America/New_York'
@@ -54035,7 +54185,6 @@ module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c
       "type": "text",
       "id": "name",
       "name": "name",
-      "placeholder": "Name",
       "required": ""
     },
     domProps: {
@@ -54048,7 +54197,9 @@ module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c
       }
     }
   }), _vm._v(" "), _c('label', {
-    class: _vm.fieldClassName(_vm.formState.name),
+    class: {
+      active: _vm.formData.name
+    },
     attrs: {
       "for": "name",
       "data-error": "",
@@ -54060,10 +54211,10 @@ module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c
       "show": "$untouched || $touched || $submitted"
     }
   }, [_c('div'), _vm._v(" "), _c('div', {
-    staticClass: "validation-error has-errors text-right",
+    staticClass: "validation-error has-errors ",
     slot: "required"
   }, [_vm._v("*required")])])], 1)]), _vm._v(" "), _c('validate', {
-    class: _vm.fieldClassName(_vm.formState.name),
+    class: _vm.fieldClassName(_vm.formState.timezone),
     attrs: {
       "auto-label": ""
     }
@@ -54094,9 +54245,404 @@ module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c
       "show": "$untouched || $touched || $submitted"
     }
   }, [_c('div'), _vm._v(" "), _c('div', {
-    staticClass: "validation-error has-errors text-right",
+    staticClass: "validation-error has-errors ",
     slot: "required"
-  }, [_vm._v("*required")])])], 1)])], 1)])], 1), _vm._v(" "), _c('template', {
+  }, [_vm._v("*required")])])], 1)])], 1), _vm._v(" "), _c('div', {
+    staticClass: "row"
+  }, [_c('validate', {
+    class: _vm.fieldClassName(_vm.formState.address_line_1),
+    attrs: {
+      "auto-label": ""
+    }
+  }, [_c('div', {
+    staticClass: "input-field col s6"
+  }, [_c('input', {
+    directives: [{
+      name: "model",
+      rawName: "v-model",
+      value: (_vm.formData.address_line_1),
+      expression: "formData.address_line_1"
+    }],
+    staticClass: "form-control input-md",
+    attrs: {
+      "type": "text",
+      "id": "address_line_1",
+      "name": "address_line_1",
+      "required": ""
+    },
+    domProps: {
+      "value": (_vm.formData.address_line_1)
+    },
+    on: {
+      "input": function($event) {
+        if ($event.target.composing) { return; }
+        _vm.formData.address_line_1 = $event.target.value
+      }
+    }
+  }), _vm._v(" "), _c('label', {
+    class: _vm.fieldClassName(_vm.formState.address_line_1),
+    attrs: {
+      "for": "address_line_1",
+      "data-error": "",
+      "data-success": ""
+    }
+  }, [_vm._v("Address Line 1")]), _vm._v(" "), _c('field-messages', {
+    attrs: {
+      "name": "address_line_1",
+      "show": "$untouched || $touched || $submitted"
+    }
+  }, [_c('div'), _vm._v(" "), _c('div', {
+    staticClass: "validation-error has-errors ",
+    slot: "required"
+  }, [_vm._v("*required")])])], 1)]), _vm._v(" "), _c('validate', {
+    class: _vm.fieldClassName(_vm.formState.address_line_2),
+    attrs: {
+      "auto-label": ""
+    }
+  }, [_c('div', {
+    staticClass: "input-field col s6"
+  }, [_c('input', {
+    directives: [{
+      name: "model",
+      rawName: "v-model",
+      value: (_vm.formData.address_line_2),
+      expression: "formData.address_line_2"
+    }],
+    staticClass: "form-control input-md",
+    attrs: {
+      "type": "text",
+      "id": "address_line_2",
+      "name": "address_line_2"
+    },
+    domProps: {
+      "value": (_vm.formData.address_line_2)
+    },
+    on: {
+      "input": function($event) {
+        if ($event.target.composing) { return; }
+        _vm.formData.address_line_2 = $event.target.value
+      }
+    }
+  }), _vm._v(" "), _c('label', {
+    class: _vm.fieldClassName(_vm.formState.address_line_2),
+    attrs: {
+      "for": "address_line_2",
+      "data-error": "",
+      "data-success": ""
+    }
+  }, [_vm._v("Address Line 2")]), _vm._v(" "), _c('field-messages', {
+    attrs: {
+      "name": "address_line_2",
+      "show": "$untouched || $touched || $submitted"
+    }
+  }, [_c('div', {
+    staticClass: "validation-error has-errors ",
+    slot: "required"
+  }, [_vm._v("*required")])])], 1)])], 1), _vm._v(" "), _c('div', {
+    staticClass: "row"
+  }, [_c('validate', {
+    class: _vm.fieldClassName(_vm.formState.city),
+    attrs: {
+      "auto-label": ""
+    }
+  }, [_c('div', {
+    staticClass: "input-field col s6"
+  }, [_c('input', {
+    directives: [{
+      name: "model",
+      rawName: "v-model",
+      value: (_vm.formData.city),
+      expression: "formData.city"
+    }],
+    staticClass: "form-control input-md",
+    attrs: {
+      "type": "text",
+      "id": "city",
+      "name": "city",
+      "required": ""
+    },
+    domProps: {
+      "value": (_vm.formData.city)
+    },
+    on: {
+      "input": function($event) {
+        if ($event.target.composing) { return; }
+        _vm.formData.city = $event.target.value
+      }
+    }
+  }), _vm._v(" "), _c('label', {
+    class: _vm.fieldClassName(_vm.formState.city),
+    attrs: {
+      "for": "city",
+      "data-error": "",
+      "data-success": ""
+    }
+  }, [_vm._v("City")]), _vm._v(" "), _c('field-messages', {
+    attrs: {
+      "name": "city",
+      "show": "$untouched || $touched || $submitted"
+    }
+  }, [_c('div'), _vm._v(" "), _c('div', {
+    staticClass: "validation-error has-errors ",
+    slot: "required"
+  }, [_vm._v("*required")])])], 1)]), _vm._v(" "), _c('validate', {
+    class: _vm.fieldClassName(_vm.formState.state),
+    attrs: {
+      "auto-label": ""
+    }
+  }, [_c('div', {
+    staticClass: "input-field col s6"
+  }, [_c('input', {
+    directives: [{
+      name: "model",
+      rawName: "v-model",
+      value: (_vm.formData.state),
+      expression: "formData.state"
+    }],
+    staticClass: "form-control input-md",
+    attrs: {
+      "type": "text",
+      "id": "state",
+      "name": "state"
+    },
+    domProps: {
+      "value": (_vm.formData.state)
+    },
+    on: {
+      "input": function($event) {
+        if ($event.target.composing) { return; }
+        _vm.formData.state = $event.target.value
+      }
+    }
+  }), _vm._v(" "), _c('label', {
+    class: _vm.fieldClassName(_vm.formState.state),
+    attrs: {
+      "for": "state",
+      "data-error": "",
+      "data-success": ""
+    }
+  }, [_vm._v("State")]), _vm._v(" "), _c('field-messages', {
+    attrs: {
+      "name": "state",
+      "show": "$untouched || $touched || $submitted"
+    }
+  }, [_c('div', {
+    staticClass: "validation-error has-errors ",
+    slot: "required"
+  }, [_vm._v("*required")])])], 1)])], 1), _vm._v(" "), _c('div', {
+    staticClass: "row"
+  }, [_c('validate', {
+    class: _vm.fieldClassName(_vm.formState.postal_code),
+    attrs: {
+      "auto-label": ""
+    }
+  }, [_c('div', {
+    staticClass: "input-field col s6"
+  }, [_c('input', {
+    directives: [{
+      name: "model",
+      rawName: "v-model",
+      value: (_vm.formData.postal_code),
+      expression: "formData.postal_code"
+    }],
+    staticClass: "form-control input-md",
+    attrs: {
+      "type": "text",
+      "id": "postal_code",
+      "name": "postal_code",
+      "required": ""
+    },
+    domProps: {
+      "value": (_vm.formData.postal_code)
+    },
+    on: {
+      "input": function($event) {
+        if ($event.target.composing) { return; }
+        _vm.formData.postal_code = $event.target.value
+      }
+    }
+  }), _vm._v(" "), _c('label', {
+    class: _vm.fieldClassName(_vm.formState.postal_code),
+    attrs: {
+      "for": "postal_code",
+      "data-error": "",
+      "data-success": ""
+    }
+  }, [_vm._v("Postal Code")]), _vm._v(" "), _c('field-messages', {
+    attrs: {
+      "name": "postal_code",
+      "show": "$untouched || $touched || $submitted"
+    }
+  }, [_c('div'), _vm._v(" "), _c('div', {
+    staticClass: "validation-error has-errors ",
+    slot: "required"
+  }, [_vm._v("*required")])])], 1)]), _vm._v(" "), _c('validate', {
+    class: _vm.fieldClassName(_vm.formState.phone),
+    attrs: {
+      "auto-label": ""
+    }
+  }, [_c('div', {
+    staticClass: "input-field col s6"
+  }, [_c('input', {
+    directives: [{
+      name: "model",
+      rawName: "v-model",
+      value: (_vm.formData.phone),
+      expression: "formData.phone"
+    }],
+    staticClass: "form-control input-md",
+    attrs: {
+      "type": "text",
+      "id": "phone",
+      "name": "phone"
+    },
+    domProps: {
+      "value": (_vm.formData.phone)
+    },
+    on: {
+      "input": function($event) {
+        if ($event.target.composing) { return; }
+        _vm.formData.phone = $event.target.value
+      }
+    }
+  }), _vm._v(" "), _c('label', {
+    class: _vm.fieldClassName(_vm.formState.phone),
+    attrs: {
+      "for": "phone",
+      "data-error": "",
+      "data-success": ""
+    }
+  }, [_vm._v("Phone")]), _vm._v(" "), _c('field-messages', {
+    attrs: {
+      "name": "phone",
+      "show": "$untouched || $touched || $submitted"
+    }
+  }, [_c('div', {
+    staticClass: "validation-error has-errors ",
+    slot: "required"
+  }, [_vm._v("*required")])])], 1)])], 1), _vm._v(" "), _c('div', {
+    staticClass: "row"
+  }, [_c('validate', {
+    class: _vm.fieldClassName(_vm.formState.fax),
+    attrs: {
+      "auto-label": ""
+    }
+  }, [_c('div', {
+    staticClass: "input-field col s6"
+  }, [_c('input', {
+    directives: [{
+      name: "model",
+      rawName: "v-model",
+      value: (_vm.formData.fax),
+      expression: "formData.fax"
+    }],
+    staticClass: "form-control input-md",
+    attrs: {
+      "type": "text",
+      "id": "fax",
+      "name": "fax",
+      "required": ""
+    },
+    domProps: {
+      "value": (_vm.formData.fax)
+    },
+    on: {
+      "input": function($event) {
+        if ($event.target.composing) { return; }
+        _vm.formData.fax = $event.target.value
+      }
+    }
+  }), _vm._v(" "), _c('label', {
+    class: _vm.fieldClassName(_vm.formState.fax),
+    attrs: {
+      "for": "fax",
+      "data-error": "",
+      "data-success": ""
+    }
+  }, [_vm._v("Fax")]), _vm._v(" "), _c('field-messages', {
+    attrs: {
+      "name": "fax",
+      "show": "$untouched || $touched || $submitted"
+    }
+  }, [_c('div'), _vm._v(" "), _c('div', {
+    staticClass: "validation-error has-errors ",
+    slot: "required"
+  }, [_vm._v("*required")])])], 1)]), _vm._v(" "), _c('validate', {
+    class: _vm.fieldClassName(_vm.formState.emr_direct_address),
+    attrs: {
+      "auto-label": ""
+    }
+  }, [_c('div', {
+    staticClass: "input-field col s6"
+  }, [_c('input', {
+    directives: [{
+      name: "model",
+      rawName: "v-model",
+      value: (_vm.formData.emr_direct_address),
+      expression: "formData.emr_direct_address"
+    }],
+    staticClass: "form-control input-md",
+    attrs: {
+      "type": "text",
+      "id": "emr_direct_address",
+      "name": "emr_direct_address"
+    },
+    domProps: {
+      "value": (_vm.formData.emr_direct_address)
+    },
+    on: {
+      "input": function($event) {
+        if ($event.target.composing) { return; }
+        _vm.formData.emr_direct_address = $event.target.value
+      }
+    }
+  }), _vm._v(" "), _c('label', {
+    class: _vm.fieldClassName(_vm.formState.emr_direct_address),
+    attrs: {
+      "for": "emr_direct_address",
+      "data-error": "",
+      "data-success": ""
+    }
+  }, [_vm._v("EMR Direct Address")]), _vm._v(" "), _c('field-messages', {
+    attrs: {
+      "name": "emr_direct_address",
+      "show": "$untouched || $touched || $submitted"
+    }
+  }, [_c('div', {
+    staticClass: "validation-error has-errors ",
+    slot: "required"
+  }, [_vm._v("*required")])])], 1)])], 1), _vm._v(" "), (!_vm.sameEHRLogin) ? _c('div', {
+    staticClass: "row"
+  }, [_c('h6', [_vm._v("\n                        Please provide login information for your EHR system.\n                    ")]), _vm._v(" "), _c('div', {
+    staticClass: "col s6"
+  }, [_c('material-select', {
+    staticClass: "input-field",
+    attrs: {
+      "name": "ehr_login"
+    },
+    model: {
+      value: (_vm.formData.ehr_login),
+      callback: function($$v) {
+        _vm.formData.ehr_login = $$v
+      },
+      expression: "formData.ehr_login"
+    }
+  }, _vm._l((_vm.ehrLoginOptions), function(option) {
+    return _c('option', {
+      domProps: {
+        "value": option.value,
+        "textContent": _vm._s(option.name)
+      }
+    })
+  })), _vm._v(" "), _c('field-messages', {
+    attrs: {
+      "name": "ehr_login",
+      "show": "$untouched || $touched || $submitted"
+    }
+  }, [_c('div'), _vm._v(" "), _c('div', {
+    staticClass: "validation-error has-errors ",
+    slot: "required"
+  }, [_vm._v("*required")])])], 1)]) : _vm._e()])], 1), _vm._v(" "), _c('template', {
     slot: "footer"
   })], 2) : _vm._e()], 1)
 },staticRenderFns: []}
@@ -54341,7 +54887,7 @@ module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c
   }, [_c('div', {
     staticClass: "row"
   }, [_c('div', {
-    staticClass: "col s8"
+    staticClass: "col s6"
   }, [_c('div', {
     staticClass: "input-field"
   }, [_c('div', {
@@ -54353,7 +54899,7 @@ module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c
       "click": function($event) {}
     }
   }, [_vm._v("\n                    Add New Location\n                ")])])]), _vm._v(" "), _c('div', {
-    staticClass: "col s4"
+    staticClass: "col s6"
   }, [_c('div', {
     staticClass: "input-field"
   }, [_c('input', {

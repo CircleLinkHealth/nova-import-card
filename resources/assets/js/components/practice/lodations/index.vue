@@ -1,7 +1,7 @@
 <template>
     <div class="admin-panel-locations-container">
         <div class="row">
-            <div class="col s8">
+            <div class="col s6">
                 <div class="input-field">
                     <div v-on:click=""
                          class="btn blue waves-effect waves-light" id="submit">
@@ -10,7 +10,7 @@
                 </div>
             </div>
 
-            <div class="col s4">
+            <div class="col s6">
                 <div class="input-field">
                     <input id="search" type="search" name="query" v-model="searchQuery"
                            placeholder="search for a location">
