@@ -1,5 +1,5 @@
 <template>
-    <div class="admin-panel-locations-container">
+    <div class="admin-panel-locations-container" v-cloak>
         <div class="row">
             <div class="col s6">
                 <div class="input-field">
