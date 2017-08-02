@@ -3,6 +3,7 @@
 use App\Algorithms\Calls\ReschedulerHandler;
 use App\Console\Commands\Athena\GetAppointments;
 use App\Console\Commands\Athena\GetCcds;
+use App\Console\Commands\CheckEmrDirectInbox;
 use App\Console\Commands\EmailRNDailyReport;
 use App\Console\Commands\EmailsProvidersToApproveCareplans;
 use App\Console\Commands\ExportNurseSchedulesToGoogleCalendar;
@@ -59,6 +60,7 @@ class Kernel extends ConsoleKernel
         QueueSendAuditReports::class,
         ProcessCcdaLGHMixup::class,
         ImportLGHInsurance::class,
+        CheckEmrDirectInbox::class,
     ];
 
     /**
@@ -70,18 +72,7 @@ class Kernel extends ConsoleKernel
      */
     protected function schedule(Schedule $schedule)
     {
-        $schedule->call(function () {
-            \Log::info('Cron Health Check');
-        })->everyMinute();
-
-//        $schedule->call(function () {
-//            try {
-//                (new PhiMail())->receive();
-//            } catch (\Exception $e) {
-//                \Log::critical('PhiMail Down!');
-//                \Log::critical($e);
-//            }
-//        })->everyMinute();
+        $schedule->command('dm:check')->everyMinute();
 
         //Reconciles missed calls and creates a new call for patient using algo
         $schedule->call(function () {
