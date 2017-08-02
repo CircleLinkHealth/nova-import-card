@@ -24,7 +24,6 @@ use App\Console\Commands\ResetCcmTime;
 use App\Console\Commands\SplitMergedCcdas;
 use App\Reports\WeeklyReportDispatcher;
 use App\Services\Calls\SchedulerService;
-use App\Services\PhiMail\PhiMail;
 use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Foundation\Console\Kernel as ConsoleKernel;
 use Maknz\Slack\Facades\Slack;
