@@ -39,7 +39,9 @@ class WeeklyReportDispatcher
             'urgent-medical-care-pc',
             'quest-medical-care-pc',
             'premier-heart-and-vein-care',
-//            'river-city'
+            'river-city',
+            'ferguson-medical',
+            'phoenix-heart',
         ];
     }
 
