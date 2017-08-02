@@ -74,14 +74,14 @@ class Kernel extends ConsoleKernel
             \Log::info('Cron Health Check');
         })->everyMinute();
 
-        $schedule->call(function () {
-            try {
-                (new PhiMail())->receive();
-            } catch (\Exception $e) {
-                \Log::critical('PhiMail Down!');
-                \Log::critical($e);
-            }
-        })->everyMinute();
+//        $schedule->call(function () {
+//            try {
+//                (new PhiMail())->receive();
+//            } catch (\Exception $e) {
+//                \Log::critical('PhiMail Down!');
+//                \Log::critical($e);
+//            }
+//        })->everyMinute();
 
         //Reconciles missed calls and creates a new call for patient using algo
         $schedule->call(function () {
