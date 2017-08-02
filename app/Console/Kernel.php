@@ -1,7 +1,6 @@
 <?php namespace App\Console;
 
 use App\Algorithms\Calls\ReschedulerHandler;
-use App\Algorithms\Enrollment\EnrollmentSMSSender;
 use App\Console\Commands\Athena\GetAppointments;
 use App\Console\Commands\Athena\GetCcds;
 use App\Console\Commands\EmailRNDailyReport;
@@ -22,20 +21,14 @@ use App\Console\Commands\QueueSendAuditReports;
 use App\Console\Commands\RecalculateCcmTime;
 use App\Console\Commands\ResetCcmTime;
 use App\Console\Commands\SplitMergedCcdas;
-use App\MailLog;
-use App\Practice;
-use App\Reports\Sales\Practice\SalesByPracticeReport;
-use App\Reports\Sales\Provider\SalesByProviderReport;
 use App\Reports\WeeklyReportDispatcher;
 use App\Services\Calls\SchedulerService;
 use App\Services\PhiMail\PhiMail;
-use App\User;
-use Carbon\Carbon;
-//use EnrollmentSMSSender;
 use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Foundation\Console\Kernel as ConsoleKernel;
-use Illuminate\Support\Facades\Mail;
 use Maknz\Slack\Facades\Slack;
+
+//use EnrollmentSMSSender;
 
 
 class Kernel extends ConsoleKernel
@@ -77,12 +70,17 @@ class Kernel extends ConsoleKernel
      */
     protected function schedule(Schedule $schedule)
     {
-        $schedule->call(function(){
+        $schedule->call(function () {
             \Log::info('Cron Health Check');
-        });
+        })->everyMinute();
 
         $schedule->call(function () {
-            (new PhiMail)->receive();
+            try {
+                (new PhiMail())->receive();
+            } catch (\Exception $e) {
+                \Log::critical('PhiMail Down!');
+                \Log::critical($e);
+            }
         })->everyMinute();
 
         //Reconciles missed calls and creates a new call for patient using algo
