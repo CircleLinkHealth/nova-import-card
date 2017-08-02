@@ -182,8 +182,8 @@ class PhoenixHeartSectionsLogger extends TabularMedicalRecordSectionsLogger
         }
 
         $provider = ProviderLog::create(array_merge([
-            'first_name'  => trim($name[1]),
-            'last_name'   => trim($name[0]),
+            'first_name'  => trim($name->provider_first_name),
+            'last_name'   => trim($name->provider_last_name),
             'practice_id' => $this->practice->id ?? null,
         ], $this->foreignKeys));
 
