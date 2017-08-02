@@ -65,7 +65,9 @@ class ImportCsvPatientList implements ShouldQueue
                 }
             }
 
-            $this->createTabularMedicalRecordAndImport($row);
+            if (isset($row['mrn'])) {
+                $this->createTabularMedicalRecordAndImport($row);
+            }
         }
 
         $url = url('view.files.ready.to.import');

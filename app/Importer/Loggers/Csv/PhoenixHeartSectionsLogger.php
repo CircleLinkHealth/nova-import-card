@@ -159,6 +159,10 @@ class PhoenixHeartSectionsLogger extends TabularMedicalRecordSectionsLogger
         $name = PhoenixHeartName::wherePatientId($this->medicalRecord->mrn)
             ->first();
 
+        if (!$name) {
+            return $this;
+        }
+
         $user = User::ofType('provider')
             ->whereFirstName($name->provider_first_name)
             ->whereLastName(explode(' ', $name->provider_last_name)[0])
@@ -166,11 +170,11 @@ class PhoenixHeartSectionsLogger extends TabularMedicalRecordSectionsLogger
 
         if ($user) {
             $provider = ProviderLog::create(array_merge([
-                'first_name'  => $user->first_name,
-                'last_name'   => $user->last_name,
-                'user_id'     => $user->id,
-                'billing_provider_id'     => $user->id,
-                'practice_id' => $this->practice->id ?? null,
+                'first_name'          => $user->first_name,
+                'last_name'           => $user->last_name,
+                'user_id'             => $user->id,
+                'billing_provider_id' => $user->id,
+                'practice_id'         => $this->practice->id ?? null,
             ], $this->foreignKeys));
 
             return $this;
@@ -178,8 +182,8 @@ class PhoenixHeartSectionsLogger extends TabularMedicalRecordSectionsLogger
         }
 
         $provider = ProviderLog::create(array_merge([
-            'first_name' => trim($name[1]),
-            'last_name'  => trim($name[0]),
+            'first_name'  => trim($name[1]),
+            'last_name'   => trim($name[0]),
             'practice_id' => $this->practice->id ?? null,
         ], $this->foreignKeys));
 
