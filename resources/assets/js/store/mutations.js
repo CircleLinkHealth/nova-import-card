@@ -31,12 +31,15 @@ export const ADD_PDF_CARE_PLAN = (state, pdfCareplan) => {
 export const DELETE_PDF_CARE_PLAN = (state, deletedPdfId) => {
     let removeThis = null;
     for (let i = 0; i < state.patientCarePlan.pdfs.length; i++) {
-        if (state.patientCarePlan.pdfs[i].id === deletedPdfId) {
+        if (state.patientCarePlan.pdfs[i].id == deletedPdfId) {
             removeThis = i;
             break;
         }
     }
-    state.patientCarePlan.pdfs.splice(removeThis, 1)
+
+    if (!_.isNull(removeThis)) {
+        state.patientCarePlan.pdfs.splice(removeThis, 1)
+    }
 }
 
 export const LOGIN_USER = (state, currentUser) => {
