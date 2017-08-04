@@ -41720,12 +41720,15 @@ var ADD_PDF_CARE_PLAN = function ADD_PDF_CARE_PLAN(state, pdfCareplan) {
 var DELETE_PDF_CARE_PLAN = function DELETE_PDF_CARE_PLAN(state, deletedPdfId) {
     var removeThis = null;
     for (var i = 0; i < state.patientCarePlan.pdfs.length; i++) {
-        if (state.patientCarePlan.pdfs[i].id === deletedPdfId) {
+        if (state.patientCarePlan.pdfs[i].id == deletedPdfId) {
             removeThis = i;
             break;
         }
     }
-    state.patientCarePlan.pdfs.splice(removeThis, 1);
+
+    if (!_.isNull(removeThis)) {
+        state.patientCarePlan.pdfs.splice(removeThis, 1);
+    }
 };
 
 var LOGIN_USER = function LOGIN_USER(state, currentUser) {
