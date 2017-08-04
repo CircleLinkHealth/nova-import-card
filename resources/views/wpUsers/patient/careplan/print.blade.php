@@ -22,7 +22,6 @@ if (isset($patient) && !empty($patient)) {
 
 @section('content')
     @if(isset($patient) && !empty($patient))
-        <meta name="careplan-mode" content="{{ $patient->careplan_mode }}">
         <div class="container">
             <section class="patient-summary">
                 <div class="patient-info__main">

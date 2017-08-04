@@ -24,7 +24,6 @@
         data() {
             return {
                 patientId: $('meta[name="patient_id"]').attr('content'),
-                careplanMode: $('meta[name="careplan-mode"]').attr('content'),
                 showUploadModal: false,
                 files: [],
                 indexOfLastUploadedFile: -1
@@ -68,7 +67,7 @@
                         timeout: true
                     })
 
-                    if (this.patientCarePlan.pdfs.length < 1) {
+                    if (this.patientCarePlan.mode == 'web') {
                         window.location.replace(window.location.href)
                     }
                 }
@@ -86,7 +85,7 @@
             </div>
         </div>
 
-        <div class="row" v-if="careplanMode == 'pdf'">
+        <div class="row" v-if="patientCarePlan.mode == 'pdf'">
             <div class="col-md-6">
                 <ul class="list-group">
                     <li v-for="(pdf, index) in patientCarePlan.pdfs" class="list-group-item pdf-careplan">

@@ -13,7 +13,6 @@
 
 @section('content')
     <div class="container">
-        <meta name="careplan-mode" content="{{ $patient->careplan_mode }}">
         <pdf-careplans></pdf-careplans>
 
         <div class="row" style="padding-top: 20%;">

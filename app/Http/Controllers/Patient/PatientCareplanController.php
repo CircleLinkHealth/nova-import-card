@@ -944,11 +944,6 @@ class PatientCareplanController extends Controller
         $cp->mode = CarePlan::WEB;
         $cp->save();
 
-        Pdf::where([
-            ['pdfable_type', '=', CarePlan::class],
-            ['pdfable_id', '=', $cp->id],
-        ])->delete();
-
         return redirect()->route('patient.careplan.print', ['patientId' => $cp->user_id]);
     }
 }
