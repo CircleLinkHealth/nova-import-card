@@ -9,6 +9,7 @@ class Settings extends Model
     protected $table = 'settings';
 
     protected $fillable = [
+        'careplan_mode',
         'auto_approve_careplans',
 
         //Direct Mail Notifications

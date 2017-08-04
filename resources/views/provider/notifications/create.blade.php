@@ -20,6 +20,11 @@
                            value="1" @if($practiceSettings->auto_approve_careplans){{'checked'}}@endif>
                     <label for="auto_approve_careplans">Auto Approve Care Plans</label>
                 </div>
+
+                <div class="input-field col s6">
+                    {{ Form::select('careplan_mode', ['web'=>'Web','pdf'=>'PDF'], $practiceSettings->careplan_mode) }}
+                    <label>Default CarePlan Mode</label>
+                </div>
             </div>
 
             <div class="row">
@@ -101,7 +106,9 @@
 @endsection
 
 @section('scripts')
-    <script type="text/javascript">
-        $('select').select2();
+    <script>
+        $(document).ready(function() {
+            $('select').material_select();
+        });
     </script>
 @endsection
