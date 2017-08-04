@@ -52483,6 +52483,7 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
     data: function data() {
         return {
             patientId: $('meta[name="patient_id"]').attr('content'),
+            careplanMode: $('meta[name="careplan-mode"]').attr('content'),
             showUploadModal: false,
             files: [],
             indexOfLastUploadedFile: -1
@@ -56005,7 +56006,7 @@ module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c
         _vm.openModal()
       }
     }
-  }, [_vm._v("Upload PDF")]), _vm._v(" "), _vm._t("default")], 2)]), _vm._v(" "), _c('div', {
+  }, [_vm._v("Upload PDF")]), _vm._v(" "), _vm._t("default")], 2)]), _vm._v(" "), (_vm.careplanMode == 'pdf') ? _c('div', {
     staticClass: "row"
   }, [_c('div', {
     staticClass: "col-md-6"
@@ -56027,7 +56028,7 @@ module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c
         }
       }
     }, [_vm._m(0, true)])])
-  }))])]), _vm._v(" "), _c('modal', {
+  }))])]) : _vm._e(), _vm._v(" "), _c('modal', {
     directives: [{
       name: "show",
       rawName: "v-show",

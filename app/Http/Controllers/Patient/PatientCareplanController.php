@@ -10,6 +10,7 @@ use App\Models\CPM\Biometrics\CpmBloodPressure;
 use App\Models\CPM\Biometrics\CpmBloodSugar;
 use App\Models\CPM\Biometrics\CpmSmoking;
 use App\Models\CPM\Biometrics\CpmWeight;
+use App\Models\Pdf;
 use App\Patient;
 use App\PatientContactWindow;
 use App\Practice;
@@ -942,6 +943,11 @@ class PatientCareplanController extends Controller
 
         $cp->mode = CarePlan::WEB;
         $cp->save();
+
+        Pdf::where([
+            ['pdfable_type', '=', CarePlan::class],
+            ['pdfable_id', '=', $cp->id],
+        ])->delete();
 
         return redirect()->route('patient.careplan.print', ['patientId' => $cp->user_id]);
     }
