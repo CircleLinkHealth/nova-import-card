@@ -10,7 +10,6 @@ use App\Models\CPM\Biometrics\CpmBloodPressure;
 use App\Models\CPM\Biometrics\CpmBloodSugar;
 use App\Models\CPM\Biometrics\CpmSmoking;
 use App\Models\CPM\Biometrics\CpmWeight;
-use App\Models\Pdf;
 use App\Patient;
 use App\PatientContactWindow;
 use App\Practice;
@@ -507,6 +506,7 @@ class PatientCareplanController extends Controller
                 'careplan_status' => 'draft',
             ]);
             $newUser = $userRepo->createNewUser($user, $params);
+
             if ($newUser) {
                 //Update patient info changes
                 $info = $newUser->patientInfo;
@@ -516,6 +516,11 @@ class PatientCareplanController extends Controller
                         $params->get('window_end'));
                 }
                 $info->save();
+
+                if ($newUser->carePlan && !$newUser->primaryPractice->settings->isEmpty()) {
+                    $newUser->carePlan->mode = $newUser->primaryPractice->settings->first()->careplan_mode;
+                    $newUser->carePlan->save();
+                }
             }
 
             return redirect(\URL::route('patient.demographics.show', ['patientId' => $newUser->id]))->with('messages',
@@ -938,7 +943,8 @@ class PatientCareplanController extends Controller
         return redirect()->back()->with('messages', ['successfully updated patient care plan']);
     }
 
-    public function switchToWebMode($carePlanId) {
+    public function switchToWebMode($carePlanId)
+    {
         $cp = CarePlan::find($carePlanId);
 
         $cp->mode = CarePlan::WEB;
