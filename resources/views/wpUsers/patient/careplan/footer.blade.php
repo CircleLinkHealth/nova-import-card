@@ -87,6 +87,7 @@
                         <p class="">PROGRESS: 1 of 4</p>
                     </div>
                     @endif
+
                     @if(Route::is('patient.careplan.show') && isset($page) && $page == 1)
                         <ul class="progress-list col-lg-12">
                             <li class="progress-item progress-first progress-active"></li>
@@ -127,13 +128,15 @@
                     <p class="">&nbsp;</p>
                 @endif
     </div>
-    @else
+    @endif
+    @endif
+
+    @if(!isset($patient->id))
         <div class="progress-buttons col-sm-12 col-centered text-center">
             <a href="{{ URL::route('patients.dashboard', array()) }}" omitsubmit="yes"
                class="btn btn-danger btn-next inline-block omitsubmit">Cancel</a>
             <button type="submit" class="btn btn-primary btn-next inline-block">Add Patient</button>
         </div>
-    @endif
-    @endif
+        @endif
 </div>
 </div><!-- /main-form-progress -->
