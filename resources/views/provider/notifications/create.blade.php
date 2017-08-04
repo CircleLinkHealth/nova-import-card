@@ -10,7 +10,7 @@
 
     <div class="container">
         <div class="row">
-            {!! Form::open(['url' => route('provider.dashboard.store.notifications', ['practiceSlug' => $practiceSlug]), 'method' => 'post', 'class' => 'col s12']) !!}
+            {!! Form::open(['url' => route('provider.dashboard.store.notifications', ['practiceSlug' => $practiceSlug]), 'method' => 'post', 'class' => 'col s12', 'id'=>'practice-settings-form']) !!}
 
             <div class="row">
                 <div class="input-field col s12">Settings</div>
@@ -22,7 +22,7 @@
                 </div>
 
                 <div class="input-field col s6">
-                    {{ Form::select('careplan_mode', ['web'=>'Web','pdf'=>'PDF'], $practiceSettings->careplan_mode) }}
+                    {{ Form::select('settings[careplan_mode]', ['web'=>'Web','pdf'=>'PDF'], $practiceSettings->careplan_mode) }}
                     <label>Default CarePlan Mode</label>
                 </div>
             </div>
@@ -94,7 +94,9 @@
         </div>
 
 
-        <button class="btn blue waves-effect waves-light col s12"
+        <button type="submit"
+                form="practice-settings-form"
+                class="btn blue waves-effect waves-light col s12"
                 id="update-practice"
                 onclick="Materialize.toast('{{$practice->display_name}} preferences was successfully updated.', 4000)">
             Update Preferences
