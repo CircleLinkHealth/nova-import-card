@@ -67,7 +67,7 @@
                         timeout: true
                     })
 
-                    if (this.patientCarePlan.mode == 'web') {
+                    if (this.patientCarePlan.mode === 'web') {
                         window.location.replace(window.location.href)
                     }
                 }
