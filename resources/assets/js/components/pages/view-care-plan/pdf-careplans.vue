@@ -45,7 +45,6 @@
                     this.showUploadModal = false;
 
                     let formData = new FormData()
-                    let filesArr = []
 
                     for (var i = 0; i < this.files.length; i++) {
                         formData.set('files[' + i + ']', this.files[i].file) // set the filename with php

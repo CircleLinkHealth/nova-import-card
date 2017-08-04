@@ -52498,7 +52498,6 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
             this.showUploadModal = false;
 
             var formData = new FormData();
-            var filesArr = [];
 
             for (var i = 0; i < this.files.length; i++) {
                 formData.set('files[' + i + ']', this.files[i].file); // set the filename with php

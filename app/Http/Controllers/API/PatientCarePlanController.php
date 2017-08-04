@@ -49,7 +49,7 @@ class PatientCarePlanController extends Controller
 
         foreach ($request->file()['files'] as $file) {
             $now = Carbon::now()->toDateTimeString();
-            $filename = "{$carePlan->patient->first_name}_{$carePlan->patient->last_name}-{$now}-CarePlan.pdf";
+            $filename = "{$carePlan->patient->first_name}_{$carePlan->patient->last_name}-{$file->getClientOriginalName()}-{$now}-CarePlan.pdf";
             file_put_contents(storage_path("patient/pdf-careplans/$filename"), file_get_contents($file));
 
             $pdf = Pdf::create([
