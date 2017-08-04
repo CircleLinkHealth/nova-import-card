@@ -50,7 +50,7 @@
                                     <h3 class="minimum-padding">Your Schedule ({{$tzAbbr}})</h3>
 
                                         <span class="info minimum-padding"
-                                               data-tooltip="You may edit your total hours by double clicking in any of the hours boxes (next to the days) below. Press enter to save your changes.">
+                                               data-tooltip="You may edit your total hours by double clicking on any of the hours boxes (below the days of week) below. Press enter to save your changes.">
                                             <span class="glyphicon glyphicon-question-sign" aria-hidden="true"></span>
                                         </span>
 

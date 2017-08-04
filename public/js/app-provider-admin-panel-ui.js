@@ -53826,13 +53826,13 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
             },
             formState: {},
             ehrLoginOptions: [{
-                name: 'Patient\'s Billing / Main provider.',
+                name: 'Patient\'s Billing / Main provider',
                 value: 'billing_provider'
             }, {
-                name: 'Someone else instead of the billing provider.',
+                name: 'Someone else instead of the billing provider',
                 value: 'instead_of_billing_provider'
             }, {
-                name: 'Someone else in addition to the billing provider.',
+                name: 'Someone else in addition to the billing provider',
                 value: 'in_addition_to_billing_provider'
             }],
             timezoneOptions: [{

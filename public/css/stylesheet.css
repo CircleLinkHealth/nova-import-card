@@ -134,6 +134,12 @@ body, label, .checkbox label {
 [v-cloak] {
   display: none;
 }
+
+.edit-work-schedule {
+  position: absolute;
+  top: 18px;
+  right: 10px;
+}
 /**
  * Tooltip Styles
  */

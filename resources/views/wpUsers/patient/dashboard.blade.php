@@ -89,10 +89,12 @@
                     <div class="col-md-12">
                         <div class="row">
                             <h3>
-                                <a href="{{ route('care.center.work.schedule.index') }}" id="work-schedule-link">
-                                    Create/Edit Your Schedule ({{auth()->user()->timezone_abbr}})
-                                </a>
+                                Your Schedule ({{auth()->user()->timezone_abbr}})
                             </h3>
+                            <a href="{{ route('care.center.work.schedule.index') }}" id="work-schedule-link"
+                               class="edit-work-schedule btn btn-primary">
+                                Create/Edit Schedule
+                            </a>
                         </div>
                         @include('partials.care-center.work-schedule-slot.index', [
                                    'windows' => auth()->user()->nurseInfo->windows,
@@ -106,9 +108,7 @@
                     <div class="col-md-12">
                         <div class="row">
                             <h3>
-                                <a href="{{ route('care.center.work.schedule.index') }}" id="work-schedule-link">
-                                    Your Days Off
-                                </a>
+                                Your Days Off
                             </h3>
                         </div>
                         @include('partials.care-center.holiday-schedule.index', [
