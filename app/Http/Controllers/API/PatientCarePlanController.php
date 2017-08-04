@@ -76,7 +76,9 @@ class PatientCarePlanController extends Controller
             $carePlan->mode = CarePlan::PDF;
             $carePlan->save();
 
-            return redirect()->route('patient.careplan.print', ['patientId' => $carePlan->user_id]);
+            $patient = $carePlan->patient;
+
+            return view('patient.careplan.view-pdf-careplan', compact(['patient']));
         }
 
         return response()->json($created);
