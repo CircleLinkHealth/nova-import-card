@@ -22,10 +22,6 @@
 </p>
 
 <p>
-    <b>Total earnings this month:</b> ${{ $totalEarningsThisMonth }}
-</p>
-
-<p>
     If you have any questions please reach out to your day-to-day contact at CircleLink Health via direct messaging
     Slack,
     e-mail or phone.
