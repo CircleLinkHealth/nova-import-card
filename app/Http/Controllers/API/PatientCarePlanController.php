@@ -75,10 +75,6 @@ class PatientCarePlanController extends Controller
         if ($carePlan->mode == CarePlan::WEB) {
             $carePlan->mode = CarePlan::PDF;
             $carePlan->save();
-
-            $patient = $carePlan->patient;
-
-            return view('patient.careplan.view-pdf-careplan', compact(['patient']));
         }
 
         return response()->json($created);
