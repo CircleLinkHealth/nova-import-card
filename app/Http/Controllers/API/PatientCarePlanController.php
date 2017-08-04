@@ -72,9 +72,11 @@ class PatientCarePlanController extends Controller
             $created[] = $pdf;
         }
 
-        if (count($created) > 0) {
+        if ($carePlan->mode == CarePlan::WEB) {
             $carePlan->mode = CarePlan::PDF;
             $carePlan->save();
+
+            return redirect()->route('patient.careplan.print', ['patientId' => $carePlan->user_id]);
         }
 
         return response()->json($created);

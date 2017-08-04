@@ -56,7 +56,7 @@
                         this.indexOfLastUploadedFile = i
                     }
 
-                    formData.set('carePlanId', this.patientCarePlan.id) // set the filename with php
+                    formData.set('carePlanId', this.patientCarePlan.id)
 
                     this.uploadPdfCarePlan(formData)
 
