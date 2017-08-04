@@ -21,9 +21,11 @@ export const CLEAR_PATIENT_CARE_PLAN = () => {
 }
 
 export const ADD_PDF_CARE_PLAN = (state, pdfCareplan) => {
-    pdfCareplan.forEach((cp) => {
-        state.patientCarePlan.pdfs.unshift(cp)
-    })
+    if (_.isArray(pdfCareplan)) {
+        pdfCareplan.forEach((cp) => {
+            state.patientCarePlan.pdfs.unshift(cp)
+        })
+    }
 }
 
 export const DELETE_PDF_CARE_PLAN = (state, deletedPdfId) => {

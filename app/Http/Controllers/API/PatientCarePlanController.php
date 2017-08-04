@@ -7,6 +7,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Pdf;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
+use Illuminate\Support\Str;
 use Response;
 
 class PatientCarePlanController extends Controller
@@ -47,9 +48,14 @@ class PatientCarePlanController extends Controller
 
         $created = [];
 
+        if (!array_key_exists('files', $request->file())) {
+            return 'Files not found in input.';
+        }
+
         foreach ($request->file()['files'] as $file) {
             $now = Carbon::now()->toDateTimeString();
-            $filename = "{$carePlan->patient->first_name}_{$carePlan->patient->last_name}-{$file->getClientOriginalName()}-{$now}-CarePlan.pdf";
+            $hash = Str::random();
+            $filename = "{$carePlan->patient->first_name}_{$carePlan->patient->last_name}-{$hash}-{$now}-CarePlan.pdf";
             file_put_contents(storage_path("patient/pdf-careplans/$filename"), file_get_contents($file));
 
             $pdf = Pdf::create([
@@ -80,6 +86,10 @@ class PatientCarePlanController extends Controller
 
         if (!file_exists($path)) {
             $pdf = Pdf::whereFilename($fileName)->first();
+
+            if (!$pdf) {
+                return "Could not find PDF with filename: $fileName";
+            }
 
             file_put_contents($path, base64_decode($pdf->file));
         }

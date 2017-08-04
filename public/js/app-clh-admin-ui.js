@@ -41710,9 +41710,11 @@ var CLEAR_PATIENT_CARE_PLAN = function CLEAR_PATIENT_CARE_PLAN() {
 };
 
 var ADD_PDF_CARE_PLAN = function ADD_PDF_CARE_PLAN(state, pdfCareplan) {
-    pdfCareplan.forEach(function (cp) {
-        state.patientCarePlan.pdfs.unshift(cp);
-    });
+    if (_.isArray(pdfCareplan)) {
+        pdfCareplan.forEach(function (cp) {
+            state.patientCarePlan.pdfs.unshift(cp);
+        });
+    }
 };
 
 var DELETE_PDF_CARE_PLAN = function DELETE_PDF_CARE_PLAN(state, deletedPdfId) {

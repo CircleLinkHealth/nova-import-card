@@ -25,13 +25,18 @@
             return {
                 patientId: $('meta[name="patient_id"]').attr('content'),
                 showUploadModal: false,
-                files: []
+                files: [],
+                indexOfLastUploadedFile: -1
             }
         },
 
         methods: Object.assign({},
             mapActions(['getPatientCarePlan', 'destroyPdf', 'uploadPdfCarePlan', 'addNotification']),
             {
+                openModal() {
+                    this.showUploadModal = true
+                },
+
                 deletePdf(pdf){
                     let disassociate = confirm('Are you sure you want to delete this CarePlan?');
 
@@ -46,8 +51,9 @@
 
                     let formData = new FormData()
 
-                    for (var i = 0; i < this.files.length; i++) {
+                    for (var i = this.indexOfLastUploadedFile+1; i < this.files.length; i++) {
                         formData.set('files[' + i + ']', this.files[i].file) // set the filename with php
+                        this.indexOfLastUploadedFile = i
                     }
 
                     formData.set('carePlanId', this.patientCarePlan.id) // set the filename with php
@@ -74,7 +80,7 @@
     <div class="col-md-12" style="padding-top: 2%;" v-cloak>
         <div class="row">
             <div class="col-md-12 text-right">
-                <a @click="showUploadModal = true" class="btn btn-info btn-sm inline-block">Upload PDF</a>
+                <a @click="openModal()" class="btn btn-info btn-sm inline-block">Upload PDF</a>
                 <slot></slot>
             </div>
         </div>

@@ -41710,9 +41710,11 @@ var CLEAR_PATIENT_CARE_PLAN = function CLEAR_PATIENT_CARE_PLAN() {
 };
 
 var ADD_PDF_CARE_PLAN = function ADD_PDF_CARE_PLAN(state, pdfCareplan) {
-    pdfCareplan.forEach(function (cp) {
-        state.patientCarePlan.pdfs.unshift(cp);
-    });
+    if (_.isArray(pdfCareplan)) {
+        pdfCareplan.forEach(function (cp) {
+            state.patientCarePlan.pdfs.unshift(cp);
+        });
+    }
 };
 
 var DELETE_PDF_CARE_PLAN = function DELETE_PDF_CARE_PLAN(state, deletedPdfId) {
@@ -52479,12 +52481,16 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
         return {
             patientId: $('meta[name="patient_id"]').attr('content'),
             showUploadModal: false,
-            files: []
+            files: [],
+            indexOfLastUploadedFile: -1
         };
     },
 
 
     methods: Object.assign({}, __WEBPACK_IMPORTED_MODULE_0_vuex__["b" /* mapActions */](['getPatientCarePlan', 'destroyPdf', 'uploadPdfCarePlan', 'addNotification']), {
+        openModal: function openModal() {
+            this.showUploadModal = true;
+        },
         deletePdf: function deletePdf(pdf) {
             var disassociate = confirm('Are you sure you want to delete this CarePlan?');
 
@@ -52499,8 +52505,9 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 
             var formData = new FormData();
 
-            for (var i = 0; i < this.files.length; i++) {
+            for (var i = this.indexOfLastUploadedFile + 1; i < this.files.length; i++) {
                 formData.set('files[' + i + ']', this.files[i].file); // set the filename with php
+                this.indexOfLastUploadedFile = i;
             }
 
             formData.set('carePlanId', this.patientCarePlan.id); // set the filename with php
@@ -55992,7 +55999,7 @@ module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c
     staticClass: "btn btn-info btn-sm inline-block",
     on: {
       "click": function($event) {
-        _vm.showUploadModal = true
+        _vm.openModal()
       }
     }
   }, [_vm._v("Upload PDF")]), _vm._v(" "), _vm._t("default")], 2)]), _vm._v(" "), _c('div', {
