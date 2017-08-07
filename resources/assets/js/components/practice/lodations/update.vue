@@ -177,7 +177,7 @@
 
                                 <field-messages name="ehr_login" show="$untouched || $touched || $submitted">
                                     <div></div>
-                                    <div class="validation-error has-errors " slot="required">*required</div>
+                                    <div class="validation-error has-errors " slot="required"></div>
                                 </field-messages>
                             </div>
                         </validate>
@@ -254,6 +254,11 @@
                                 </div>
                             </validate>
                         </div>
+                    </div>
+
+                    <div @click="submitForm()"
+                         class="btn blue waves-effect waves-light right">
+                        Save
                     </div>
                 </vue-form>
             </template>
@@ -357,7 +362,7 @@
         methods: Object.assign(
             mapActions(['clearOpenModal', 'addNotification']),
             {
-                sendForm() {
+                submitForm() {
 
                 },
 

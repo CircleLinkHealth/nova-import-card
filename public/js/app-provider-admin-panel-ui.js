@@ -53857,6 +53857,11 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 //
 //
 //
+//
+//
+//
+//
+//
 
 
 
@@ -53947,7 +53952,7 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 
 
     methods: Object.assign(__WEBPACK_IMPORTED_MODULE_1_vuex__["b" /* mapActions */](['clearOpenModal', 'addNotification']), {
-        sendForm: function sendForm() {},
+        submitForm: function submitForm() {},
         fieldClassName: function fieldClassName(field) {
             if (!field) {
                 return '';
@@ -54738,7 +54743,7 @@ module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c
   }, [_c('div'), _vm._v(" "), _c('div', {
     staticClass: "validation-error has-errors ",
     slot: "required"
-  }, [_vm._v("*required")])])], 1)]), _vm._v(" "), _c('validate', {
+  })])], 1)]), _vm._v(" "), _c('validate', {
     class: _vm.fieldClassName(_vm.formState.ehr_password),
     attrs: {
       "auto-label": ""
@@ -54949,7 +54954,14 @@ module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c
   }, [_c('div', {
     staticClass: "validation-error has-errors ",
     slot: "required"
-  }, [_vm._v("*required")])])], 1)])], 1)])])], 1), _vm._v(" "), _c('template', {
+  }, [_vm._v("*required")])])], 1)])], 1)]), _vm._v(" "), _c('div', {
+    staticClass: "btn blue waves-effect waves-light right",
+    on: {
+      "click": function($event) {
+        _vm.submitForm()
+      }
+    }
+  }, [_vm._v("\n                    Save\n                ")])])], 1), _vm._v(" "), _c('template', {
     slot: "footer"
   })], 2) : _vm._e()], 1)
 },staticRenderFns: []}
