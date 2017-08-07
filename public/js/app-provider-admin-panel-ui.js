@@ -53843,6 +53843,20 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 
 
 
@@ -54891,7 +54905,51 @@ module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c
   }, [_c('div', {
     staticClass: "validation-error has-errors ",
     slot: "required"
-  }, [_vm._v("*required")])])], 1)])], 1)])])])], 1), _vm._v(" "), _c('template', {
+  }, [_vm._v("*required")])])], 1)])], 1), _vm._v(" "), _c('validate', {
+    class: _vm.fieldClassName(),
+    attrs: {
+      "auto-label": ""
+    }
+  }, [_c('div', {
+    staticClass: "input-field col s12"
+  }, [_c('input', {
+    directives: [{
+      name: "model",
+      rawName: "v-model",
+      value: (_vm.formData.clinical_contact.email),
+      expression: "formData.clinical_contact.email"
+    }],
+    staticClass: "form-control input-md",
+    attrs: {
+      "type": "text",
+      "id": "clinical_contact.email",
+      "name": "clinical_contact.email"
+    },
+    domProps: {
+      "value": (_vm.formData.clinical_contact.email)
+    },
+    on: {
+      "input": function($event) {
+        if ($event.target.composing) { return; }
+        _vm.formData.clinical_contact.email = $event.target.value
+      }
+    }
+  }), _vm._v(" "), _c('label', {
+    class: _vm.fieldClassName(),
+    attrs: {
+      "for": "clinical_contact.last_name",
+      "data-error": "",
+      "data-success": ""
+    }
+  }, [_vm._v("Email")]), _vm._v(" "), _c('field-messages', {
+    attrs: {
+      "name": "clinical_contact.email",
+      "show": "$untouched || $touched || $submitted"
+    }
+  }, [_c('div', {
+    staticClass: "validation-error has-errors ",
+    slot: "required"
+  }, [_vm._v("*required")])])], 1)])], 1)])])], 1), _vm._v(" "), _c('template', {
     slot: "footer"
   })], 2) : _vm._e()], 1)
 },staticRenderFns: []}

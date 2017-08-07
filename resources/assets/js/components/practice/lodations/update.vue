@@ -239,6 +239,20 @@
                                     </div>
                                 </validate>
                             </div>
+
+                            <validate auto-label :class="fieldClassName()">
+                                <div class="input-field col s12">
+                                    <input type="text" id="clinical_contact.email" name="clinical_contact.email"
+                                           class="form-control input-md" v-model="formData.clinical_contact.email">
+
+                                    <label :class="fieldClassName()" for="clinical_contact.last_name"
+                                           data-error="" data-success="">Email</label>
+
+                                    <field-messages name="clinical_contact.email" show="$untouched || $touched || $submitted">
+                                        <div class="validation-error has-errors " slot="required">*required</div>
+                                    </field-messages>
+                                </div>
+                            </validate>
                         </div>
                     </div>
                 </vue-form>
