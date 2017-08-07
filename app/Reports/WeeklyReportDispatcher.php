@@ -23,24 +23,7 @@ class WeeklyReportDispatcher
 
     public function __construct()
     {
-        $this->practiceList = [
-            'demo',
-            'carolina-medical-associates',
-            'clinicalosangeles',
-            'elmwood',
-            'tabernacle',
-            'envision',
-            'mazhar',
-            'middletownmedical',
-            'montgomery',
-            'nestor',
-            'rocky-mountain-health-centers-south',
-            'upg',
-            'urgent-medical-care-pc',
-            'quest-medical-care-pc',
-            'premier-heart-and-vein-care',
-//            'river-city'
-        ];
+        $this->practiceList = Practice::active();
     }
 
     public function exec(){
@@ -48,10 +31,7 @@ class WeeklyReportDispatcher
         $startRange = Carbon::now()->setTime(0, 0, 0)->subWeek();
         $endRange = Carbon::now()->setTime(0, 0, 0);
 
-        foreach ($this->practiceList as $name) {
-
-            $practice = Practice::whereName($name)->first();
-
+        foreach ($this->practiceList as $practice) {
             $subjectPractice = $practice->display_name . '\'s CCM Weekly Summary';
 
             $practiceData = (new SalesByPracticeReport(
