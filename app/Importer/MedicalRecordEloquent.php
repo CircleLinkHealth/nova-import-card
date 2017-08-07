@@ -70,7 +70,7 @@ abstract class MedicalRecordEloquent extends Model implements MedicalRecord
      *
      * @return MedicalRecord
      */
-    public function createLogs() : MedicalRecord
+    public function createLogs(): MedicalRecord
     {
         $this->getLogger()->logAllSections();
 
@@ -80,7 +80,7 @@ abstract class MedicalRecordEloquent extends Model implements MedicalRecord
     /**
      * @return MedicalRecord
      */
-    public function createImportedMedicalRecord() : MedicalRecord
+    public function createImportedMedicalRecord(): MedicalRecord
     {
         $this->importedMedicalRecord = ImportedMedicalRecord::create([
             'medical_record_type' => get_class($this),
@@ -106,7 +106,7 @@ abstract class MedicalRecordEloquent extends Model implements MedicalRecord
      *
      * @return MedicalRecord
      */
-    public function setBillingProviderIdPrediction($billingProviderId) : MedicalRecord
+    public function setBillingProviderIdPrediction($billingProviderId): MedicalRecord
     {
         $this->billingProviderIdPrediction = $billingProviderId;
 
@@ -126,7 +126,7 @@ abstract class MedicalRecordEloquent extends Model implements MedicalRecord
      *
      * @return MedicalRecord
      */
-    public function setLocationIdPrediction($locationId) : MedicalRecord
+    public function setLocationIdPrediction($locationId): MedicalRecord
     {
         $this->locationIdPrediction = $locationId;
 
@@ -146,7 +146,7 @@ abstract class MedicalRecordEloquent extends Model implements MedicalRecord
      *
      * @return MedicalRecord
      */
-    public function setPracticeIdPrediction($practiceId) : MedicalRecord
+    public function setPracticeIdPrediction($practiceId): MedicalRecord
     {
         $this->practiceIdPrediction = $practiceId;
 
@@ -158,7 +158,7 @@ abstract class MedicalRecordEloquent extends Model implements MedicalRecord
      *
      * @return MedicalRecord
      */
-    public function importAllergies() : MedicalRecord
+    public function importAllergies(): MedicalRecord
     {
         $importer = new Allergies();
         $importer->import($this->id, get_class($this), $this->importedMedicalRecord);
@@ -171,7 +171,7 @@ abstract class MedicalRecordEloquent extends Model implements MedicalRecord
      *
      * @return \App\Contracts\Importer\MedicalRecord\MedicalRecord
      */
-    public function importDemographics() : MedicalRecord
+    public function importDemographics(): MedicalRecord
     {
         $importer = new Demographics();
         $importer->import($this->id, get_class($this), $this->importedMedicalRecord);
@@ -184,7 +184,7 @@ abstract class MedicalRecordEloquent extends Model implements MedicalRecord
      *
      * @return \App\Contracts\Importer\MedicalRecord\MedicalRecord
      */
-    public function importDocument() : MedicalRecord
+    public function importDocument(): MedicalRecord
     {
         return $this;
     }
@@ -194,7 +194,7 @@ abstract class MedicalRecordEloquent extends Model implements MedicalRecord
      *
      * @return \App\Contracts\Importer\MedicalRecord\MedicalRecord
      */
-    public function importMedications() : MedicalRecord
+    public function importMedications(): MedicalRecord
     {
         $importer = new Medications($this->id, get_class($this), $this->importedMedicalRecord);
         $importer->import($this->id, get_class($this), $this->importedMedicalRecord);
@@ -207,7 +207,7 @@ abstract class MedicalRecordEloquent extends Model implements MedicalRecord
      *
      * @return \App\Contracts\Importer\MedicalRecord\MedicalRecord
      */
-    public function importProblems() : MedicalRecord
+    public function importProblems(): MedicalRecord
     {
         $importer = new Problems();
         $importer->import($this->id, get_class($this), $this->importedMedicalRecord);
@@ -220,7 +220,7 @@ abstract class MedicalRecordEloquent extends Model implements MedicalRecord
      *
      * @return \App\Contracts\Importer\MedicalRecord\MedicalRecord
      */
-    public function importProviders() : MedicalRecord
+    public function importProviders(): MedicalRecord
     {
         return $this;
     }
@@ -230,7 +230,7 @@ abstract class MedicalRecordEloquent extends Model implements MedicalRecord
      *
      * @return MedicalRecord
      */
-    public function importInsurance() : MedicalRecord
+    public function importInsurance(): MedicalRecord
     {
         $importer = new Insurance();
         $importer->import($this->id, get_class($this), $this->importedMedicalRecord);
@@ -243,7 +243,7 @@ abstract class MedicalRecordEloquent extends Model implements MedicalRecord
      *
      * @return MedicalRecord
      */
-    public function predictPractice() : MedicalRecord
+    public function predictPractice(): MedicalRecord
     {
         if ($this->practice_id) {
             $this->setPracticeIdPrediction($this->practice_id);
@@ -274,7 +274,7 @@ abstract class MedicalRecordEloquent extends Model implements MedicalRecord
      *
      * @return MedicalRecord
      */
-    public function predictLocation() : MedicalRecord
+    public function predictLocation(): MedicalRecord
     {
         if ($this->getLocationIdPrediction()) {
             return $this;
@@ -285,16 +285,20 @@ abstract class MedicalRecordEloquent extends Model implements MedicalRecord
         $historicPredictor = new HistoricLocationPredictor($this->getDocumentCustodian(), $this->providers);
         $historicPrediction = $historicPredictor->predict();
 
-        if ($historicPrediction) {
-            $this->setLocationIdPrediction($historicPrediction);
-
-            return $this;
-        }
-
         if ($this->getPracticeIdPrediction()) {
             $practice = Practice::find($this->getPracticeIdPrediction());
 
             $this->setLocationIdPrediction($practice->primary_location_id);
+        }
+
+        if ($historicPrediction) {
+            if (isset($practice) && !$practice->locations->pluck('id')->contains($historicPrediction)) {
+                !$practice->primary_location_id
+                    ?: $this->setLocationIdPrediction($practice->primary_location_id);
+
+                return $this;
+            }
+            $this->setLocationIdPrediction($historicPrediction);
         }
 
 
@@ -306,7 +310,7 @@ abstract class MedicalRecordEloquent extends Model implements MedicalRecord
      *
      * @return MedicalRecord
      */
-    public function predictBillingProvider() : MedicalRecord
+    public function predictBillingProvider(): MedicalRecord
     {
         if ($this->billing_provider_id) {
             $this->setBillingProviderIdPrediction($this->billing_provider_id);
