@@ -13,17 +13,15 @@
             <template slot="body">
                 <vue-form :state="formState" @submit.prevent="onSubmit">
                     <div class="row">
-                        <validate auto-label :class="fieldClassName(formState.name)">
+                        <validate auto-label>
                             <div class="input-field col s6">
-                                <input type="text" id="name" name="name" class="form-control input-md" required
+                                <input type="text" id="name" name="name" :class="fieldClassName(formState.name)" required
                                        v-model="formData.name">
 
-                                <label :class="{active: formData.name}" for="name" data-error=""
+                                <label :class="{active: formData.name}" for="name" data-error="*required"
                                        data-success="">Name</label>
 
                                 <field-messages name="name" show="$untouched || $touched || $submitted">
-                                    <div></div>
-                                    <div class="validation-error has-errors " slot="required">*required</div>
                                 </field-messages>
                             </div>
                         </validate>
@@ -166,20 +164,81 @@
                     </div>
 
                     <div class="row" v-if="!sameEHRLogin">
-                        <h6>
+                        <h6 class="col s12">
                             Please provide login information for your EHR system.
                         </h6>
 
-                        <div class="col s6">
-                            <material-select v-model="formData.ehr_login" class="input-field" name="ehr_login">
-                                <option v-for="option in ehrLoginOptions" :value="option.value"
+                        <validate auto-label :class="fieldClassName(formState.ehr_login)">
+                            <div class="input-field col s6">
+                                <input type="text" id="ehr_login" name="ehr_login" class="form-control input-md" required
+                                       v-model="formData.ehr_login">
+
+                                <label :class="fieldClassName(formState.ehr_login)" for="ehr_login" data-error="" data-success="">EHR Login</label>
+
+                                <field-messages name="ehr_login" show="$untouched || $touched || $submitted">
+                                    <div></div>
+                                    <div class="validation-error has-errors " slot="required">*required</div>
+                                </field-messages>
+                            </div>
+                        </validate>
+
+                        <validate auto-label :class="fieldClassName(formState.ehr_password)">
+                            <div class="input-field col s6">
+                                <input type="text" id="ehr_password" name="ehr_password"
+                                       class="form-control input-md" v-model="formData.ehr_password">
+
+                                <label :class="fieldClassName(formState.ehr_password)" for="ehr_password"
+                                       data-error="" data-success="">EHR Password</label>
+
+                                <field-messages name="ehr_password" show="$untouched || $touched || $submitted">
+                                    <div class="validation-error has-errors " slot="required">*required</div>
+                                </field-messages>
+                            </div>
+                        </validate>
+                    </div>
+
+                    <div class="row">
+                        <h6 class="col s12">
+                            Who should be notified for patient clinical issues?
+                        </h6>
+
+                        <div class="col s12">
+                            <material-select v-model="formData.clinical_contact.type" class="input-field" name="ehr_login">
+                                <option v-for="option in clinicalContactOptions" :value="option.value"
                                         v-text="option.name"></option>
                             </material-select>
+                        </div>
 
-                            <field-messages name="ehr_login" show="$untouched || $touched || $submitted">
-                                <div></div>
-                                <div class="validation-error has-errors " slot="required">*required</div>
-                            </field-messages>
+                        <div v-show="formData.clinical_contact.type !== 'billing_provider'">
+                            <div class="col s12">
+                                <validate auto-label :class="fieldClassName()">
+                                    <div class="input-field col s6">
+                                        <input type="text" id="clinical-contact-first-name" name="clinical-contact-first-name" class="form-control input-md" required
+                                               v-model="formData.clinical_contact.first_name">
+
+                                        <label :class="fieldClassName()" for="clinical-contact-first-name" data-error="" data-success="">First Name</label>
+
+                                        <field-messages name="clinical-contact-first-name" show="$untouched || $touched || $submitted">
+                                            <div></div>
+                                            <div class="validation-error has-errors " slot="required">*required</div>
+                                        </field-messages>
+                                    </div>
+                                </validate>
+
+                                <validate auto-label :class="fieldClassName()">
+                                    <div class="input-field col s6">
+                                        <input type="text" id="clinical_contact.last_name" name="clinical_contact.last_name"
+                                               class="form-control input-md" v-model="formData.clinical_contact.last_name">
+
+                                        <label :class="fieldClassName()" for="clinical_contact.last_name"
+                                               data-error="" data-success="">Last Name</label>
+
+                                        <field-messages name="clinical_contact.last_name" show="$untouched || $touched || $submitted">
+                                            <div class="validation-error has-errors " slot="required">*required</div>
+                                        </field-messages>
+                                    </div>
+                                </validate>
+                            </div>
                         </div>
                     </div>
                 </vue-form>
@@ -212,7 +271,7 @@
             MaterialSelect
         },
 
-        mounted() {
+        created() {
             this.formData = JSON.parse(JSON.stringify(this.location))
         },
 
@@ -243,7 +302,7 @@
                     validated: false
                 },
                 formState: {},
-                ehrLoginOptions: [{
+                clinicalContactOptions: [{
                     name: 'Patient\'s Billing / Main provider',
                     value: 'billing_provider'
                 }, {
@@ -293,13 +352,24 @@
                         return '';
                     }
                     if ((field.$touched || field.$submitted) && field.$valid) {
-                        return 'has-success';
+                        return 'valid';
                     }
                     if ((field.$touched || field.$submitted) && field.$invalid) {
-                        return 'has-danger';
+                        return 'invalid';
                     }
                 },
             }
         ),
     }
 </script>
+
+<style>
+    .valid {
+
+    }
+
+    .invalid {
+        border-bottom: 1px solid #f44336;
+        box-shadow: 0 1px 0 0 #f44336;
+    }
+</style>

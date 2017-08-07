@@ -105,6 +105,14 @@
                 searchQuery: '',
                 gridOptions: {
                     columns: {
+                        edit: {
+                            name: '',
+                            content: '<a class="green waves-effect waves-light btn" style="padding: 0 .4rem;"><i class="material-icons center">mode_edit</i></a>'
+                        },
+                        trash: {
+                            name: '',
+                            content: '<a class="red waves-effect waves-light btn" style="padding: 0 .4rem;"><i class="material-icons center text-white">clear</i></a>',
+                        },
                         name: {
                             name: 'Name'
                         },
@@ -116,14 +124,6 @@
                         },
                         state: {
                             name: 'State'
-                        },
-                        trash: {
-                            name: '',
-                            content: '<a class="red waves-effect waves-light btn" style="padding: 0 .4rem;"><i class="material-icons center text-white">clear</i></a>',
-                        },
-                        edit: {
-                            name: '',
-                            content: '<a class="green waves-effect waves-light btn" style="padding: 0 .4rem;"><i class="material-icons center">mode_edit</i></a>'
                         },
                     }
                 },
@@ -140,7 +140,7 @@
     }
 
     th.th-trash, td.td-trash, th.th-edit, td.td-edit {
-        background: none;
+        /*background: none;*/
         width: 10px;
         min-width: 5px;
         padding: 10px 0;
