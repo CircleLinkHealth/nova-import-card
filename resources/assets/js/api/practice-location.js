@@ -11,4 +11,15 @@ export default {
             (resp) => ecb(resp.data)
         );
     },
+
+    update (cb, ecb = null, practiceId, location) {
+        if (!practiceId) {
+            return;
+        }
+
+        window.axios.patch('practice/' + practiceId + '/locations/' + location.id, location).then(
+            (resp) => cb(resp.data),
+            (resp) => ecb(resp.data)
+        );
+    },
 }

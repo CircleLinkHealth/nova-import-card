@@ -1,5 +1,9 @@
 let mix = require('laravel-mix');
 
+mix.webpackConfig({
+    devtool: "#cheap-module-source-map"
+});
+
 /*
  |--------------------------------------------------------------------------
  | Mix Asset Management
@@ -48,5 +52,5 @@ mix.js('resources/assets/js/importer-training.js', 'public/js');
 
 
 mix.js('resources/assets/js/app-provider-ui.js', 'public/js');
-mix.js('resources/assets/js/app-provider-admin-panel-ui.js', 'public/js');
+mix.js('resources/assets/js/app-provider-admin-panel-ui.js', 'public/js').sourceMaps();
 mix.js('resources/assets/js/app-clh-admin-ui.js', 'public/js');

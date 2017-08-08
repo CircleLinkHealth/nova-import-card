@@ -66,6 +66,20 @@ export const getPracticeLocations = ({commit}, practiceId) => {
     }, practiceId)
 }
 
+export const updatePracticeLocation = ({commit}, location) => {
+    let practiceId = location.practice.id
+
+    if (!practiceId) {
+        return
+    }
+
+    practiceLocationsApi.update(location => {
+        commit('UPDATE_PRACTICE_LOCATION', location);
+    }, (error) => {
+        console.log(error)
+    }, practiceId, location)
+}
+
 export const getPatientCarePlan = ({commit}, patientId) => {
     if (!patientId) {
         return

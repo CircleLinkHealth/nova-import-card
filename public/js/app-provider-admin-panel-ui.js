@@ -10996,6 +10996,7 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "getPatientCareTeam", function() { return getPatientCareTeam; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "destroyCarePerson", function() { return destroyCarePerson; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "getPracticeLocations", function() { return getPracticeLocations; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "updatePracticeLocation", function() { return updatePracticeLocation; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "getPatientCarePlan", function() { return getPatientCarePlan; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "destroyPdf", function() { return destroyPdf; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "uploadPdfCarePlan", function() { return uploadPdfCarePlan; });
@@ -11088,8 +11089,24 @@ var getPracticeLocations = function getPracticeLocations(_ref8, practiceId) {
     }, practiceId);
 };
 
-var getPatientCarePlan = function getPatientCarePlan(_ref9, patientId) {
+var updatePracticeLocation = function updatePracticeLocation(_ref9, location) {
     var commit = _ref9.commit;
+
+    var practiceId = location.practice.id;
+
+    if (!practiceId) {
+        return;
+    }
+
+    __WEBPACK_IMPORTED_MODULE_2__api_practice_location__["a" /* default */].update(function (location) {
+        commit('UPDATE_PRACTICE_LOCATION', location);
+    }, function (error) {
+        console.log(error);
+    }, practiceId, location);
+};
+
+var getPatientCarePlan = function getPatientCarePlan(_ref10, patientId) {
+    var commit = _ref10.commit;
 
     if (!patientId) {
         return;
@@ -11104,8 +11121,8 @@ var getPatientCarePlan = function getPatientCarePlan(_ref9, patientId) {
     }, null, patientId);
 };
 
-var destroyPdf = function destroyPdf(_ref10, pdfId) {
-    var commit = _ref10.commit;
+var destroyPdf = function destroyPdf(_ref11, pdfId) {
+    var commit = _ref11.commit;
 
     if (!pdfId) {
         return;
@@ -11116,8 +11133,8 @@ var destroyPdf = function destroyPdf(_ref10, pdfId) {
     }, null, pdfId);
 };
 
-var uploadPdfCarePlan = function uploadPdfCarePlan(_ref11, formData) {
-    var commit = _ref11.commit;
+var uploadPdfCarePlan = function uploadPdfCarePlan(_ref12, formData) {
+    var commit = _ref12.commit;
 
     if (!formData) {
         return;
@@ -41596,6 +41613,21 @@ var state = {
         }, function (resp) {
             return ecb(resp.data);
         });
+    },
+    update: function update(cb) {
+        var ecb = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : null;
+        var practiceId = arguments[2];
+        var location = arguments[3];
+
+        if (!practiceId) {
+            return;
+        }
+
+        window.axios.patch('practice/' + practiceId + '/locations/' + location.id, location).then(function (resp) {
+            return cb(resp.data);
+        }, function (resp) {
+            return ecb(resp.data);
+        });
     }
 });
 
@@ -41687,6 +41719,7 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "REMOVE_NOTIFICATION", function() { return REMOVE_NOTIFICATION; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "CLEAR_PRACTICE_LOCATIONS", function() { return CLEAR_PRACTICE_LOCATIONS; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "SET_PRACTICE_LOCATIONS", function() { return SET_PRACTICE_LOCATIONS; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "UPDATE_PRACTICE_LOCATION", function() { return UPDATE_PRACTICE_LOCATION; });
 var DESTROY_CARE_PERSON = function DESTROY_CARE_PERSON(state, carePerson) {
     state.patientCareTeam = state.patientCareTeam.filter(function (item) {
         return item.id !== carePerson.id;
@@ -41762,6 +41795,14 @@ var CLEAR_PRACTICE_LOCATIONS = function CLEAR_PRACTICE_LOCATIONS(state) {
 var SET_PRACTICE_LOCATIONS = function SET_PRACTICE_LOCATIONS(state, practiceLocations) {
     practiceLocations.forEach(function (loc) {
         state.practiceLocations.push(loc);
+    });
+};
+
+var UPDATE_PRACTICE_LOCATION = function UPDATE_PRACTICE_LOCATION(state, location) {
+    state.practiceLocations.forEach(function (pracLoc, index) {
+        if (pracLoc.id === location.id) {
+            state.practiceLocations[index] = location;
+        }
     });
 };
 
@@ -47777,13 +47818,13 @@ var content = __webpack_require__(58);
 if(typeof content === 'string') content = [[module.i, content, '']];
 if(content.locals) module.exports = content.locals;
 // add the styles to the DOM
-var update = __webpack_require__(6)("3a06649f", content, false);
+var update = __webpack_require__(6)("7891e37d", content, false);
 // Hot Module Replacement
 if(false) {
  // When the styles change, update the <style> tags
  if(!content.locals) {
-   module.hot.accept("!!../../../../../../node_modules/css-loader/index.js!../../../../../../node_modules/vue-loader/lib/style-compiler/index.js?{\"vue\":true,\"id\":\"data-v-068d5c0c\",\"scoped\":false,\"hasInlineConfig\":true}!../../../../../../node_modules/vue-loader/lib/selector.js?type=styles&index=0!./notifications.vue", function() {
-     var newContent = require("!!../../../../../../node_modules/css-loader/index.js!../../../../../../node_modules/vue-loader/lib/style-compiler/index.js?{\"vue\":true,\"id\":\"data-v-068d5c0c\",\"scoped\":false,\"hasInlineConfig\":true}!../../../../../../node_modules/vue-loader/lib/selector.js?type=styles&index=0!./notifications.vue");
+   module.hot.accept("!!../../../../../../node_modules/css-loader/index.js?sourceMap!../../../../../../node_modules/vue-loader/lib/style-compiler/index.js?{\"vue\":true,\"id\":\"data-v-068d5c0c\",\"scoped\":false,\"hasInlineConfig\":true}!../../../../../../node_modules/vue-loader/lib/selector.js?type=styles&index=0!./notifications.vue", function() {
+     var newContent = require("!!../../../../../../node_modules/css-loader/index.js?sourceMap!../../../../../../node_modules/vue-loader/lib/style-compiler/index.js?{\"vue\":true,\"id\":\"data-v-068d5c0c\",\"scoped\":false,\"hasInlineConfig\":true}!../../../../../../node_modules/vue-loader/lib/selector.js?type=styles&index=0!./notifications.vue");
      if(typeof newContent === 'string') newContent = [[module.id, newContent, '']];
      update(newContent);
    });
@@ -47796,12 +47837,12 @@ if(false) {
 /* 58 */
 /***/ (function(module, exports, __webpack_require__) {
 
-exports = module.exports = __webpack_require__(5)(undefined);
+exports = module.exports = __webpack_require__(5)(true);
 // imports
 
 
 // module
-exports.push([module.i, "\n.vue-notifications {\n    position: fixed;\n    right: 3%;\n    top: 6%;\n    width: 350px;\n    z-index: 1;\n}\n\n", ""]);
+exports.push([module.i, "\n.vue-notifications {\n    position: fixed;\n    right: 3%;\n    top: 6%;\n    width: 350px;\n    z-index: 1;\n}\n\n", "", {"version":3,"sources":["/Users/michalis/Code/CLH/cpm-api/resources/assets/js/components/shared/notifications/notifications.vue?8e971af0"],"names":[],"mappings":";AACA;IACA,gBAAA;IACA,UAAA;IACA,QAAA;IACA,aAAA;IACA,WAAA;CACA","file":"notifications.vue","sourcesContent":["<style>\n    .vue-notifications {\n        position: fixed;\n        right: 3%;\n        top: 6%;\n        width: 350px;\n        z-index: 1;\n    }\n\n</style>\n\n<template>\n    <div class=\"vue-notifications\">\n        <notification v-for=\"notification in notifications\" :notification=\"notification\" :key=\"getRandomId\">\n        </notification>\n    </div>\n</template>\n\n<script>\n    import Notification from './notification.vue'\n    import {mapGetters} from 'vuex'\n    import {notifications} from '../../../store/getters'\n\n    export default {\n        components: {\n            notification: Notification\n        },\n\n        computed: Object.assign(\n            mapGetters({\n                notifications: 'notifications'\n            }),\n            {\n                getRandomId() {\n                    return _.random(100)\n                }\n            }\n        ),\n\n\n    }\n</script>"],"sourceRoot":""}]);
 
 // exports
 
@@ -47909,13 +47950,13 @@ var content = __webpack_require__(62);
 if(typeof content === 'string') content = [[module.i, content, '']];
 if(content.locals) module.exports = content.locals;
 // add the styles to the DOM
-var update = __webpack_require__(6)("df41804e", content, false);
+var update = __webpack_require__(6)("69196d3b", content, false);
 // Hot Module Replacement
 if(false) {
  // When the styles change, update the <style> tags
  if(!content.locals) {
-   module.hot.accept("!!../../../../../../node_modules/css-loader/index.js!../../../../../../node_modules/vue-loader/lib/style-compiler/index.js?{\"vue\":true,\"id\":\"data-v-7bf6c3f7\",\"scoped\":false,\"hasInlineConfig\":true}!../../../../../../node_modules/vue-loader/lib/selector.js?type=styles&index=0!./notification.vue", function() {
-     var newContent = require("!!../../../../../../node_modules/css-loader/index.js!../../../../../../node_modules/vue-loader/lib/style-compiler/index.js?{\"vue\":true,\"id\":\"data-v-7bf6c3f7\",\"scoped\":false,\"hasInlineConfig\":true}!../../../../../../node_modules/vue-loader/lib/selector.js?type=styles&index=0!./notification.vue");
+   module.hot.accept("!!../../../../../../node_modules/css-loader/index.js?sourceMap!../../../../../../node_modules/vue-loader/lib/style-compiler/index.js?{\"vue\":true,\"id\":\"data-v-7bf6c3f7\",\"scoped\":false,\"hasInlineConfig\":true}!../../../../../../node_modules/vue-loader/lib/selector.js?type=styles&index=0!./notification.vue", function() {
+     var newContent = require("!!../../../../../../node_modules/css-loader/index.js?sourceMap!../../../../../../node_modules/vue-loader/lib/style-compiler/index.js?{\"vue\":true,\"id\":\"data-v-7bf6c3f7\",\"scoped\":false,\"hasInlineConfig\":true}!../../../../../../node_modules/vue-loader/lib/selector.js?type=styles&index=0!./notification.vue");
      if(typeof newContent === 'string') newContent = [[module.id, newContent, '']];
      update(newContent);
    });
@@ -47928,12 +47969,12 @@ if(false) {
 /* 62 */
 /***/ (function(module, exports, __webpack_require__) {
 
-exports = module.exports = __webpack_require__(5)(undefined);
+exports = module.exports = __webpack_require__(5)(true);
 // imports
 
 
 // module
-exports.push([module.i, "\n.vue-notification p {\nmargin-right: 20px;\n}\n.vue-notification-slide-in-out {\n    -webkit-transition: all 800ms cubic-bezier(0.680, 0, 0.265, 1); /* older webkit */\n    -webkit-transition: all 800ms cubic-bezier(0.680, -0.550, 0.265, 1.550);\n    -moz-transition: all 800ms cubic-bezier(0.680, -0.550, 0.265, 1.550);\n    -o-transition: all 800ms cubic-bezier(0.680, -0.550, 0.265, 1.550);\n    transition: all 800ms cubic-bezier(0.680, -0.550, 0.265, 1.550); /* easeInOutBack */\n}\n", ""]);
+exports.push([module.i, "\n.vue-notification p {\nmargin-right: 20px;\n}\n.vue-notification-slide-in-out {\n    -webkit-transition: all 800ms cubic-bezier(0.680, 0, 0.265, 1); /* older webkit */\n    -webkit-transition: all 800ms cubic-bezier(0.680, -0.550, 0.265, 1.550);\n    -moz-transition: all 800ms cubic-bezier(0.680, -0.550, 0.265, 1.550);\n    -o-transition: all 800ms cubic-bezier(0.680, -0.550, 0.265, 1.550);\n    transition: all 800ms cubic-bezier(0.680, -0.550, 0.265, 1.550); /* easeInOutBack */\n}\n", "", {"version":3,"sources":["/Users/michalis/Code/CLH/cpm-api/resources/assets/js/components/shared/notifications/notification.vue?fe1eabec"],"names":[],"mappings":";AACA;AACA,mBAAA;CACA;AAEA;IACA,+DAAA,CAAA,kBAAA;IACA,wEAAA;IACA,qEAAA;IACA,mEAAA;IACA,gEAAA,CAAA,mBAAA;CACA","file":"notification.vue","sourcesContent":["<style>\n    .vue-notification p {\n    margin-right: 20px;\n    }\n\n    .vue-notification-slide-in-out {\n        -webkit-transition: all 800ms cubic-bezier(0.680, 0, 0.265, 1); /* older webkit */\n        -webkit-transition: all 800ms cubic-bezier(0.680, -0.550, 0.265, 1.550);\n        -moz-transition: all 800ms cubic-bezier(0.680, -0.550, 0.265, 1.550);\n        -o-transition: all 800ms cubic-bezier(0.680, -0.550, 0.265, 1.550);\n        transition: all 800ms cubic-bezier(0.680, -0.550, 0.265, 1.550); /* easeInOutBack */\n    }\n</style>\n\n<template>\n    <transition\n            name=\"custom-classes-transition\"\n            enter-active-class=\"animated slideInRight\"\n            leave-active-class=\"animated slideOutRight\"\n    >\n        <div class=\"alert vue-notification animated\" :class=\"notification.type ? 'alert-' + notification.type : 'secondary'\">\n            <button v-if=\"!notification.timeout\" @click=\"removeNotification(notification)\" class=\"close\" aria-label=\"Close alert\" type=\"button\">×\n            </button>\n            <h5 v-if=\"notification.title\">{{notification.title}}</h5>\n            <p>\n                {{notification.text}}\n            </p>\n        </div>\n    </transition>\n</template>\n\n<script>\n    import {mapActions} from 'vuex'\n    import {removeNotification} from '../../../store/actions'\n\n    export default {\n        props: ['notification'],\n\n        data () {\n            return {timer: null}\n        },\n\n        mounted () {\n            let timeout = this.notification.hasOwnProperty('timeout') ? this.notification.timeout : true\n            if (timeout) {\n                let delay = this.notification.delay || 3000\n                this.timer = setTimeout(function () {\n                    this.removeNotification(this.notification)\n                }.bind(this), delay)\n            }\n        },\n\n        methods: Object.assign({},\n            mapActions(['removeNotification'])\n        )\n    }\n</script>"],"sourceRoot":""}]);
 
 // exports
 
@@ -48072,13 +48113,13 @@ if (false) {
 var disposed = false
 function injectStyle (ssrContext) {
   if (disposed) return
-  __webpack_require__(158)
+  __webpack_require__(132)
 }
 var Component = __webpack_require__(1)(
   /* script */
-  __webpack_require__(132),
+  __webpack_require__(134),
   /* template */
-  __webpack_require__(141),
+  __webpack_require__(143),
   /* styles */
   injectStyle,
   /* scopeId */
@@ -48204,11 +48245,11 @@ window.Vue.use(__WEBPACK_IMPORTED_MODULE_0_vue_form___default.a, {
 
 Vue.component('createPracticeLocation', __webpack_require__(131));
 Vue.component('updatePracticeLocation', __webpack_require__(71));
-Vue.component('indexPracticeLocations', __webpack_require__(142));
+Vue.component('indexPracticeLocations', __webpack_require__(144));
 Vue.component('select2', __webpack_require__(49));
 Vue.component('openModal', __webpack_require__(53));
 Vue.component('notifications', __webpack_require__(56));
-Vue.component('grid', __webpack_require__(147));
+Vue.component('grid', __webpack_require__(149));
 
 window.App = new Vue({
     el: '#app',
@@ -53580,16 +53621,66 @@ module.exports = Component.exports
 
 /***/ }),
 /* 132 */
+/***/ (function(module, exports, __webpack_require__) {
+
+// style-loader: Adds some css to the DOM by adding a <style> tag
+
+// load the styles
+var content = __webpack_require__(133);
+if(typeof content === 'string') content = [[module.i, content, '']];
+if(content.locals) module.exports = content.locals;
+// add the styles to the DOM
+var update = __webpack_require__(6)("47908da4", content, false);
+// Hot Module Replacement
+if(false) {
+ // When the styles change, update the <style> tags
+ if(!content.locals) {
+   module.hot.accept("!!../../../../../../node_modules/css-loader/index.js?sourceMap!../../../../../../node_modules/vue-loader/lib/style-compiler/index.js?{\"vue\":true,\"id\":\"data-v-e6176730\",\"scoped\":false,\"hasInlineConfig\":true}!../../../../../../node_modules/vue-loader/lib/selector.js?type=styles&index=0!./update.vue", function() {
+     var newContent = require("!!../../../../../../node_modules/css-loader/index.js?sourceMap!../../../../../../node_modules/vue-loader/lib/style-compiler/index.js?{\"vue\":true,\"id\":\"data-v-e6176730\",\"scoped\":false,\"hasInlineConfig\":true}!../../../../../../node_modules/vue-loader/lib/selector.js?type=styles&index=0!./update.vue");
+     if(typeof newContent === 'string') newContent = [[module.id, newContent, '']];
+     update(newContent);
+   });
+ }
+ // When the module is disposed, remove the <style> tags
+ module.hot.dispose(function() { update(); });
+}
+
+/***/ }),
+/* 133 */
+/***/ (function(module, exports, __webpack_require__) {
+
+exports = module.exports = __webpack_require__(5)(true);
+// imports
+
+
+// module
+exports.push([module.i, "\n.valid {\n}\n.invalid {\n    border-bottom: 1px solid #f44336;\n    box-shadow: 0 1px 0 0 #f44336;\n}\n", "", {"version":3,"sources":["/Users/michalis/Code/CLH/cpm-api/resources/assets/js/components/practice/lodations/update.vue?e7dc95d6"],"names":[],"mappings":";AA+YA;CAEA;AAEA;IACA,iCAAA;IACA,8BAAA;CACA","file":"update.vue","sourcesContent":["<template>\n    <div>\n        <modal v-if=\"show\">\n            <template slot=\"header\">\n                <div class=\"row\">\n                    <div class=\"col s12\">\n                        <p class=\"modal-title\">Edit Location</p>\n                        <a class=\"close-button\" @click=\"$emit('close-modal')\">×</a>\n                    </div>\n                </div>\n            </template>\n\n            <template slot=\"body\">\n                <vue-form :state=\"formState\" @submit.prevent=\"onSubmit\">\n                    <div class=\"row\">\n                        <validate auto-label>\n                            <div class=\"input-field col s6\">\n                                <input type=\"text\" id=\"name\" name=\"name\" :class=\"fieldClassName(formState.name)\" required\n                                       v-model=\"formData.name\">\n\n                                <label :class=\"{active: formData.name}\" for=\"name\" data-error=\"*required\"\n                                       data-success=\"\">Name</label>\n\n                                <field-messages name=\"name\" show=\"$untouched || $touched || $submitted\">\n                                </field-messages>\n                            </div>\n                        </validate>\n\n                        <validate auto-label :class=\"fieldClassName(formState.timezone)\">\n                            <div class=\"input-field col s6\">\n                                <material-select v-model=\"formData.timezone\" class=\"input-field\" name=\"timezone\">\n                                    <option v-for=\"option in timezoneOptions\" :value=\"option.value\"\n                                            v-text=\"option.name\"></option>\n                                </material-select>\n\n                                <field-messages name=\"timezone\" show=\"$untouched || $touched || $submitted\">\n                                    <div></div>\n                                    <div class=\"validation-error has-errors \" slot=\"required\">*required</div>\n                                </field-messages>\n                            </div>\n                        </validate>\n                    </div>\n\n                    <div class=\"row\">\n                        <validate auto-label :class=\"fieldClassName(formState.address_line_1)\">\n                            <div class=\"input-field col s6\">\n                                <input type=\"text\" id=\"address_line_1\" name=\"address_line_1\"\n                                       class=\"form-control input-md\" required v-model=\"formData.address_line_1\">\n\n                                <label :class=\"fieldClassName(formState.address_line_1)\" for=\"address_line_1\"\n                                       data-error=\"\" data-success=\"\">Address Line 1</label>\n\n                                <field-messages name=\"address_line_1\" show=\"$untouched || $touched || $submitted\">\n                                    <div></div>\n                                    <div class=\"validation-error has-errors \" slot=\"required\">*required</div>\n                                </field-messages>\n                            </div>\n                        </validate>\n\n                        <validate auto-label :class=\"fieldClassName(formState.address_line_2)\">\n                            <div class=\"input-field col s6\">\n                                <input type=\"text\" id=\"address_line_2\" name=\"address_line_2\"\n                                       class=\"form-control input-md\" v-model=\"formData.address_line_2\">\n\n                                <label :class=\"fieldClassName(formState.address_line_2)\" for=\"address_line_2\"\n                                       data-error=\"\" data-success=\"\">Address Line 2</label>\n\n                                <field-messages name=\"address_line_2\" show=\"$untouched || $touched || $submitted\">\n                                    <div class=\"validation-error has-errors \" slot=\"required\">*required</div>\n                                </field-messages>\n                            </div>\n                        </validate>\n                    </div>\n\n                    <div class=\"row\">\n                        <validate auto-label :class=\"fieldClassName(formState.city)\">\n                            <div class=\"input-field col s6\">\n                                <input type=\"text\" id=\"city\" name=\"city\" class=\"form-control input-md\" required\n                                       v-model=\"formData.city\">\n\n                                <label :class=\"fieldClassName(formState.city)\" for=\"city\" data-error=\"\" data-success=\"\">City</label>\n\n                                <field-messages name=\"city\" show=\"$untouched || $touched || $submitted\">\n                                    <div></div>\n                                    <div class=\"validation-error has-errors \" slot=\"required\">*required</div>\n                                </field-messages>\n                            </div>\n                        </validate>\n\n                        <validate auto-label :class=\"fieldClassName(formState.state)\">\n                            <div class=\"input-field col s6\">\n                                <input type=\"text\" id=\"state\" name=\"state\" class=\"form-control input-md\"\n                                       v-model=\"formData.state\">\n\n                                <label :class=\"fieldClassName(formState.state)\" for=\"state\" data-error=\"\"\n                                       data-success=\"\">State</label>\n\n                                <field-messages name=\"state\" show=\"$untouched || $touched || $submitted\">\n                                    <div class=\"validation-error has-errors \" slot=\"required\">*required</div>\n                                </field-messages>\n                            </div>\n                        </validate>\n                    </div>\n\n                    <div class=\"row\">\n                        <validate auto-label :class=\"fieldClassName(formState.postal_code)\">\n                            <div class=\"input-field col s6\">\n                                <input type=\"text\" id=\"postal_code\" name=\"postal_code\" class=\"form-control input-md\"\n                                       required v-model=\"formData.postal_code\">\n\n                                <label :class=\"fieldClassName(formState.postal_code)\" for=\"postal_code\" data-error=\"\"\n                                       data-success=\"\">Postal Code</label>\n\n                                <field-messages name=\"postal_code\" show=\"$untouched || $touched || $submitted\">\n                                    <div></div>\n                                    <div class=\"validation-error has-errors \" slot=\"required\">*required</div>\n                                </field-messages>\n                            </div>\n                        </validate>\n\n                        <validate auto-label :class=\"fieldClassName(formState.phone)\">\n                            <div class=\"input-field col s6\">\n                                <input type=\"text\" id=\"phone\" name=\"phone\" class=\"form-control input-md\"\n                                       v-model=\"formData.phone\">\n\n                                <label :class=\"fieldClassName(formState.phone)\" for=\"phone\" data-error=\"\"\n                                       data-success=\"\">Phone</label>\n\n                                <field-messages name=\"phone\" show=\"$untouched || $touched || $submitted\">\n                                    <div class=\"validation-error has-errors \" slot=\"required\">*required</div>\n                                </field-messages>\n                            </div>\n                        </validate>\n                    </div>\n\n                    <div class=\"row\">\n                        <validate auto-label :class=\"fieldClassName(formState.fax)\">\n                            <div class=\"input-field col s6\">\n                                <input type=\"text\" id=\"fax\" name=\"fax\" class=\"form-control input-md\" required\n                                       v-model=\"formData.fax\">\n\n                                <label :class=\"fieldClassName(formState.fax)\" for=\"fax\" data-error=\"\" data-success=\"\">Fax</label>\n\n                                <field-messages name=\"fax\" show=\"$untouched || $touched || $submitted\">\n                                    <div></div>\n                                    <div class=\"validation-error has-errors \" slot=\"required\">*required</div>\n                                </field-messages>\n                            </div>\n                        </validate>\n\n                        <validate auto-label :class=\"fieldClassName(formState.emr_direct_address)\">\n                            <div class=\"input-field col s6\">\n                                <input type=\"text\" id=\"emr_direct_address\" name=\"emr_direct_address\"\n                                       class=\"form-control input-md\" v-model=\"formData.emr_direct_address\">\n\n                                <label :class=\"fieldClassName(formState.emr_direct_address)\" for=\"emr_direct_address\"\n                                       data-error=\"\" data-success=\"\">EMR Direct Address</label>\n\n                                <field-messages name=\"emr_direct_address\" show=\"$untouched || $touched || $submitted\">\n                                    <div class=\"validation-error has-errors \" slot=\"required\">*required</div>\n                                </field-messages>\n                            </div>\n                        </validate>\n                    </div>\n\n                    <div class=\"row\" v-if=\"!sameEHRLogin\">\n                        <h6 class=\"col s12\">\n                            Please provide login information for your EHR system.\n                        </h6>\n\n                        <validate auto-label :class=\"fieldClassName(formState.ehr_login)\">\n                            <div class=\"input-field col s6\">\n                                <input type=\"text\" id=\"ehr_login\" name=\"ehr_login\" class=\"form-control input-md\" required\n                                       v-model=\"formData.ehr_login\">\n\n                                <label :class=\"fieldClassName(formState.ehr_login)\" for=\"ehr_login\" data-error=\"\" data-success=\"\">EHR Login</label>\n\n                                <field-messages name=\"ehr_login\" show=\"$untouched || $touched || $submitted\">\n                                    <div></div>\n                                    <div class=\"validation-error has-errors \" slot=\"required\"></div>\n                                </field-messages>\n                            </div>\n                        </validate>\n\n                        <validate auto-label :class=\"fieldClassName(formState.ehr_password)\">\n                            <div class=\"input-field col s6\">\n                                <input type=\"text\" id=\"ehr_password\" name=\"ehr_password\"\n                                       class=\"form-control input-md\" v-model=\"formData.ehr_password\">\n\n                                <label :class=\"fieldClassName(formState.ehr_password)\" for=\"ehr_password\"\n                                       data-error=\"\" data-success=\"\">EHR Password</label>\n\n                                <field-messages name=\"ehr_password\" show=\"$untouched || $touched || $submitted\">\n                                    <div class=\"validation-error has-errors \" slot=\"required\">*required</div>\n                                </field-messages>\n                            </div>\n                        </validate>\n\n                        <p class=\"right\">\n                            <input type=\"checkbox\" class=\"filled-in\" id=\"sameEHRLogin-box\" v-model=\"formData.sameEHRLogin\" checked=\"checked\" />\n                            <label for=\"sameEHRLogin-box\">Same for all locations?</label>\n                        </p>\n                    </div>\n\n                    <div class=\"row\">\n                        <h6 class=\"col s12\">\n                            Who should be notified for patient clinical issues?\n                        </h6>\n\n                        <div class=\"col s12\">\n                            <material-select v-model=\"formData.clinical_contact.type\" class=\"input-field\" name=\"ehr_login\">\n                                <option v-for=\"option in clinicalContactOptions\" :value=\"option.value\"\n                                        v-text=\"option.name\"></option>\n                            </material-select>\n                        </div>\n\n                        <div v-show=\"formData.clinical_contact.type !== 'billing_provider'\">\n                            <div class=\"col s12\">\n                                <validate auto-label :class=\"fieldClassName()\">\n                                    <div class=\"input-field col s6\">\n                                        <input type=\"text\" id=\"clinical-contact-first-name\" name=\"clinical-contact-first-name\" class=\"form-control input-md\" required\n                                               v-model=\"formData.clinical_contact.first_name\">\n\n                                        <label :class=\"fieldClassName()\" for=\"clinical-contact-first-name\" data-error=\"\" data-success=\"\">First Name</label>\n\n                                        <field-messages name=\"clinical-contact-first-name\" show=\"$untouched || $touched || $submitted\">\n                                            <div></div>\n                                            <div class=\"validation-error has-errors \" slot=\"required\">*required</div>\n                                        </field-messages>\n                                    </div>\n                                </validate>\n\n                                <validate auto-label :class=\"fieldClassName()\">\n                                    <div class=\"input-field col s6\">\n                                        <input type=\"text\" id=\"clinical_contact.last_name\" name=\"clinical_contact.last_name\"\n                                               class=\"form-control input-md\" v-model=\"formData.clinical_contact.last_name\">\n\n                                        <label :class=\"fieldClassName()\" for=\"clinical_contact.last_name\"\n                                               data-error=\"\" data-success=\"\">Last Name</label>\n\n                                        <field-messages name=\"clinical_contact.last_name\" show=\"$untouched || $touched || $submitted\">\n                                            <div class=\"validation-error has-errors \" slot=\"required\">*required</div>\n                                        </field-messages>\n                                    </div>\n                                </validate>\n                            </div>\n\n                            <validate auto-label :class=\"fieldClassName()\">\n                                <div class=\"input-field col s12\">\n                                    <input type=\"text\" id=\"clinical_contact.email\" name=\"clinical_contact.email\"\n                                           class=\"form-control input-md\" v-model=\"formData.clinical_contact.email\">\n\n                                    <label :class=\"fieldClassName()\" for=\"clinical_contact.last_name\"\n                                           data-error=\"\" data-success=\"\">Email</label>\n\n                                    <field-messages name=\"clinical_contact.email\" show=\"$untouched || $touched || $submitted\">\n                                        <div class=\"validation-error has-errors \" slot=\"required\">*required</div>\n                                    </field-messages>\n                                </div>\n                            </validate>\n                        </div>\n\n                        <p class=\"right\">\n                            <input type=\"checkbox\" class=\"filled-in\" id=\"sameClinicalIssuesContact-box\" v-model=\"formData.sameClinicalIssuesContact\" checked=\"checked\" />\n                            <label for=\"sameClinicalIssuesContact-box\">Same for all locations?</label>\n                        </p>\n                    </div>\n\n                    <div @click=\"submitForm()\"\n                         class=\"btn blue waves-effect waves-light right\">\n                        Save\n                    </div>\n                </vue-form>\n            </template>\n\n            <template slot=\"footer\">\n\n            </template>\n        </modal>\n    </div>\n</template>\n\n<script>\n    import modal from '../../shared/materialize/modal.vue';\n    import {mapGetters, mapActions} from 'vuex'\n    import {clearOpenModal, addNotification, updatePracticeLocation} from '../../../store/actions'\n    import MaterialSelect from '../../src/material-select.vue'\n\n    export default {\n        props: {\n            show: {\n                type: Boolean,\n                default: false\n            },\n            location: Object\n        },\n\n        components: {\n            modal,\n            MaterialSelect\n        },\n\n        created() {\n            this.formData = JSON.parse(JSON.stringify(this.location))\n        },\n\n        data() {\n            return {\n                sameEHRLogin: false,\n                formData: {\n                    clinical_contact: {\n                        email: '',\n                        first_name: '',\n                        last_name: '',\n                        type: 'billing_provider'\n                    },\n                    timezone: 'America/New_York',\n                    ehr_password: '',\n                    city: '',\n                    address_line_1: '',\n                    address_line_2: '',\n                    ehr_login: '',\n                    errorCount: 0,\n                    isComplete: false,\n                    name: '',\n                    phone: '',\n                    fax: '',\n                    emr_direct_address: '',\n                    postal_code: '',\n                    state: '',\n                    validated: false,\n                    practice: {},\n                    practice_id: '',\n                    sameClinicalIssuesContact: false,\n                    sameEHRLogin: false,\n                },\n                formState: {},\n                clinicalContactOptions: [{\n                    name: 'Patient\\'s Billing / Main provider',\n                    value: 'billing_provider'\n                }, {\n                    name: 'Someone else instead of the billing provider',\n                    value: 'instead_of_billing_provider'\n                }, {\n                    name: 'Someone else in addition to the billing provider',\n                    value: 'in_addition_to_billing_provider'\n                }],\n                timezoneOptions: [{\n                    name: 'Eastern Time',\n                    value: 'America/New_York'\n                }, {\n                    name: 'Central Time',\n                    value: 'America/Chicago'\n                }, {\n                    name: 'Mountain Time',\n                    value: 'America/Denver'\n                }, {\n                    name: 'Mountain Time (no DST)',\n                    value: 'America/Phoenix'\n                }, {\n                    name: 'Pacific Time',\n                    value: 'America/Los_Angeles'\n                }, {\n                    name: 'Alaska Time',\n                    value: 'America/Anchorage'\n                }, {\n                    name: 'Hawaii-Aleutian',\n                    value: 'America/Adak'\n                }, {\n                    name: 'Hawaii-Aleutian Time (no DST)',\n                    value: 'Pacific/Honolulu'\n                }]\n            }\n        },\n\n        methods: Object.assign(\n            mapActions(['clearOpenModal', 'addNotification', 'updatePracticeLocation']),\n            {\n                submitForm() {\n                    this.updatePracticeLocation(this.formData)\n                },\n\n                fieldClassName(field) {\n                    if (!field) {\n                        return '';\n                    }\n                    if ((field.$touched || field.$submitted) && field.$valid) {\n                        return 'valid';\n                    }\n                    if ((field.$touched || field.$submitted) && field.$invalid) {\n                        return 'invalid';\n                    }\n                },\n            }\n        ),\n    }\n</script>\n\n<style>\n    .valid {\n\n    }\n\n    .invalid {\n        border-bottom: 1px solid #f44336;\n        box-shadow: 0 1px 0 0 #f44336;\n    }\n</style>"],"sourceRoot":""}]);
+
+// exports
+
+
+/***/ }),
+/* 134 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__shared_materialize_modal_vue__ = __webpack_require__(133);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__shared_materialize_modal_vue__ = __webpack_require__(135);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__shared_materialize_modal_vue___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0__shared_materialize_modal_vue__);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_vuex__ = __webpack_require__(3);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__store_actions__ = __webpack_require__(4);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__src_material_select_vue__ = __webpack_require__(138);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__src_material_select_vue__ = __webpack_require__(140);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__src_material_select_vue___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_3__src_material_select_vue__);
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 //
 //
 //
@@ -53909,7 +54000,11 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
                 emr_direct_address: '',
                 postal_code: '',
                 state: '',
-                validated: false
+                validated: false,
+                practice: {},
+                practice_id: '',
+                sameClinicalIssuesContact: false,
+                sameEHRLogin: false
             },
             formState: {},
             clinicalContactOptions: [{
@@ -53951,8 +54046,10 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
     },
 
 
-    methods: Object.assign(__WEBPACK_IMPORTED_MODULE_1_vuex__["b" /* mapActions */](['clearOpenModal', 'addNotification']), {
-        submitForm: function submitForm() {},
+    methods: Object.assign(__WEBPACK_IMPORTED_MODULE_1_vuex__["b" /* mapActions */](['clearOpenModal', 'addNotification', 'updatePracticeLocation']), {
+        submitForm: function submitForm() {
+            this.updatePracticeLocation(this.formData);
+        },
         fieldClassName: function fieldClassName(field) {
             if (!field) {
                 return '';
@@ -53968,19 +54065,19 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 });
 
 /***/ }),
-/* 133 */
+/* 135 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var disposed = false
 function injectStyle (ssrContext) {
   if (disposed) return
-  __webpack_require__(134)
+  __webpack_require__(136)
 }
 var Component = __webpack_require__(1)(
   /* script */
-  __webpack_require__(136),
+  __webpack_require__(138),
   /* template */
-  __webpack_require__(137),
+  __webpack_require__(139),
   /* styles */
   injectStyle,
   /* scopeId */
@@ -54012,23 +54109,23 @@ module.exports = Component.exports
 
 
 /***/ }),
-/* 134 */
+/* 136 */
 /***/ (function(module, exports, __webpack_require__) {
 
 // style-loader: Adds some css to the DOM by adding a <style> tag
 
 // load the styles
-var content = __webpack_require__(135);
+var content = __webpack_require__(137);
 if(typeof content === 'string') content = [[module.i, content, '']];
 if(content.locals) module.exports = content.locals;
 // add the styles to the DOM
-var update = __webpack_require__(6)("1be0b58a", content, false);
+var update = __webpack_require__(6)("323ee219", content, false);
 // Hot Module Replacement
 if(false) {
  // When the styles change, update the <style> tags
  if(!content.locals) {
-   module.hot.accept("!!../../../../../../node_modules/css-loader/index.js!../../../../../../node_modules/vue-loader/lib/style-compiler/index.js?{\"vue\":true,\"id\":\"data-v-ed37b894\",\"scoped\":false,\"hasInlineConfig\":true}!../../../../../../node_modules/vue-loader/lib/selector.js?type=styles&index=0!./modal.vue", function() {
-     var newContent = require("!!../../../../../../node_modules/css-loader/index.js!../../../../../../node_modules/vue-loader/lib/style-compiler/index.js?{\"vue\":true,\"id\":\"data-v-ed37b894\",\"scoped\":false,\"hasInlineConfig\":true}!../../../../../../node_modules/vue-loader/lib/selector.js?type=styles&index=0!./modal.vue");
+   module.hot.accept("!!../../../../../../node_modules/css-loader/index.js?sourceMap!../../../../../../node_modules/vue-loader/lib/style-compiler/index.js?{\"vue\":true,\"id\":\"data-v-ed37b894\",\"scoped\":false,\"hasInlineConfig\":true}!../../../../../../node_modules/vue-loader/lib/selector.js?type=styles&index=0!./modal.vue", function() {
+     var newContent = require("!!../../../../../../node_modules/css-loader/index.js?sourceMap!../../../../../../node_modules/vue-loader/lib/style-compiler/index.js?{\"vue\":true,\"id\":\"data-v-ed37b894\",\"scoped\":false,\"hasInlineConfig\":true}!../../../../../../node_modules/vue-loader/lib/selector.js?type=styles&index=0!./modal.vue");
      if(typeof newContent === 'string') newContent = [[module.id, newContent, '']];
      update(newContent);
    });
@@ -54038,21 +54135,21 @@ if(false) {
 }
 
 /***/ }),
-/* 135 */
+/* 137 */
 /***/ (function(module, exports, __webpack_require__) {
 
-exports = module.exports = __webpack_require__(5)(undefined);
+exports = module.exports = __webpack_require__(5)(true);
 // imports
 
 
 // module
-exports.push([module.i, "\n.close-button {\n    font-size: 25px;\n    font-weight: 100;\n    color: tomato;\n    position: absolute;\n    top: 15px;\n    right: 25px;\n    cursor: pointer;\n}\n.vue-modal-mask {\n    position: fixed;\n    z-index: 1050;\n    top: 0;\n    left: 0;\n    width: 100%;\n    height: 100%;\n    background-color: rgba(0, 0, 0, .5);\n    display: table;\n    transition: opacity .3s ease;\n}\n.vue-modal-wrapper {\n    display: table-cell;\n    vertical-align: middle;\n}\n@media ( min-width: 768px) {\n.vue-modal-container {\n        width: 50%;\n        min-width: 430px;\n}\n}\n.vue-modal-container {\n    margin: 0 auto;\n    padding: 20px 30px;\n    background-color: #fff;\n    border-radius: 4px;\n    box-shadow: 0 2px 8px rgba(0, 0, 0, .33);\n    transition: all .3s ease;\n    position: relative;\n    overflow-y: auto;\n    max-height: 100vh;\n}\n.vue-modal-header h3 {\n    margin: 0;\n}\n.vue-modal-header, .vue-modal-footer {\n    border: none;\n}\n.vue-modal-default-button {\n    float: right;\n}\n.vue-modal-body {\n    padding: 5px;\n}\n\n/*\n * the following styles are auto-applied to elements with\n * v-transition=\"modal\" when their visiblity is toggled\n * by Vue.js.\n *\n * You can easily play with the modal transition by editing\n * these styles.\n */\n.vue-modal-enter {\n    opacity: 0;\n}\n.vue-modal-leave-active {\n    opacity: 0;\n}\n.vue-modal-enter .vue-modal-container,\n.vue-modal-leave-active .vue-modal-container {\n    -webkit-transform: scale(1.3);\n    transform: scale(1.3);\n}\n", ""]);
+exports.push([module.i, "\n.close-button {\n    font-size: 25px;\n    font-weight: 100;\n    color: tomato;\n    position: absolute;\n    top: 15px;\n    right: 25px;\n    cursor: pointer;\n}\n.vue-modal-mask {\n    position: fixed;\n    z-index: 1050;\n    top: 0;\n    left: 0;\n    width: 100%;\n    height: 100%;\n    background-color: rgba(0, 0, 0, .5);\n    display: table;\n    transition: opacity .3s ease;\n}\n.vue-modal-wrapper {\n    display: table-cell;\n    vertical-align: middle;\n}\n@media ( min-width: 768px) {\n.vue-modal-container {\n        width: 50%;\n        min-width: 430px;\n}\n}\n.vue-modal-container {\n    margin: 0 auto;\n    padding: 20px 30px;\n    background-color: #fff;\n    border-radius: 4px;\n    box-shadow: 0 2px 8px rgba(0, 0, 0, .33);\n    transition: all .3s ease;\n    position: relative;\n    overflow-y: auto;\n    max-height: 100vh;\n}\n.vue-modal-header h3 {\n    margin: 0;\n}\n.vue-modal-header, .vue-modal-footer {\n    border: none;\n}\n.vue-modal-default-button {\n    float: right;\n}\n.vue-modal-body {\n    padding: 5px;\n}\n\n/*\n * the following styles are auto-applied to elements with\n * v-transition=\"modal\" when their visiblity is toggled\n * by Vue.js.\n *\n * You can easily play with the modal transition by editing\n * these styles.\n */\n.vue-modal-enter {\n    opacity: 0;\n}\n.vue-modal-leave-active {\n    opacity: 0;\n}\n.vue-modal-enter .vue-modal-container,\n.vue-modal-leave-active .vue-modal-container {\n    -webkit-transform: scale(1.3);\n    transform: scale(1.3);\n}\n", "", {"version":3,"sources":["/Users/michalis/Code/CLH/cpm-api/resources/assets/js/components/shared/materialize/modal.vue?d1285480"],"names":[],"mappings":";AA2BA;IACA,gBAAA;IACA,iBAAA;IACA,cAAA;IACA,mBAAA;IACA,UAAA;IACA,YAAA;IACA,gBAAA;CACA;AAEA;IACA,gBAAA;IACA,cAAA;IACA,OAAA;IACA,QAAA;IACA,YAAA;IACA,aAAA;IACA,oCAAA;IACA,eAAA;IACA,6BAAA;CACA;AAEA;IACA,oBAAA;IACA,uBAAA;CACA;AAEA;AACA;QACA,WAAA;QACA,iBAAA;CACA;CACA;AAEA;IACA,eAAA;IACA,mBAAA;IACA,uBAAA;IACA,mBAAA;IACA,yCAAA;IACA,yBAAA;IACA,mBAAA;IACA,iBAAA;IACA,kBAAA;CACA;AAEA;IACA,UAAA;CACA;AAEA;IACA,aAAA;CACA;AAEA;IACA,aAAA;CACA;AAEA;IACA,aAAA;CACA;;AAEA;;;;;;;GAOA;AAEA;IACA,WAAA;CACA;AAEA;IACA,WAAA;CACA;AAEA;;IAEA,8BAAA;IACA,sBAAA;CACA","file":"modal.vue","sourcesContent":["<template>\n    <transition name=\"vue-modal\">\n        <div class=\"vue-modal-mask\">\n            <div class=\"vue-modal-wrapper\">\n                <div class=\"vue-modal-container\">\n                    <div class=\"vue-modal-header\">\n                        <slot name=\"header\">\n                        </slot>\n                    </div>\n                    <div class=\"vue-modal-body\">\n                        <slot name=\"body\">\n                        </slot>\n                    </div>\n                    <div class=\"vue-modal-footer\">\n                        <slot name=\"footer\">\n                        </slot>\n                    </div>\n                </div>\n            </div>\n        </div>\n    </transition>\n</template>\n<script>\n    export default {}\n</script>\n\n<style>\n    .close-button {\n        font-size: 25px;\n        font-weight: 100;\n        color: tomato;\n        position: absolute;\n        top: 15px;\n        right: 25px;\n        cursor: pointer;\n    }\n\n    .vue-modal-mask {\n        position: fixed;\n        z-index: 1050;\n        top: 0;\n        left: 0;\n        width: 100%;\n        height: 100%;\n        background-color: rgba(0, 0, 0, .5);\n        display: table;\n        transition: opacity .3s ease;\n    }\n\n    .vue-modal-wrapper {\n        display: table-cell;\n        vertical-align: middle;\n    }\n\n    @media ( min-width: 768px) {\n        .vue-modal-container {\n            width: 50%;\n            min-width: 430px;\n        }\n    }\n\n    .vue-modal-container {\n        margin: 0 auto;\n        padding: 20px 30px;\n        background-color: #fff;\n        border-radius: 4px;\n        box-shadow: 0 2px 8px rgba(0, 0, 0, .33);\n        transition: all .3s ease;\n        position: relative;\n        overflow-y: auto;\n        max-height: 100vh;\n    }\n\n    .vue-modal-header h3 {\n        margin: 0;\n    }\n\n    .vue-modal-header, .vue-modal-footer {\n        border: none;\n    }\n\n    .vue-modal-default-button {\n        float: right;\n    }\n\n    .vue-modal-body {\n        padding: 5px;\n    }\n\n    /*\n     * the following styles are auto-applied to elements with\n     * v-transition=\"modal\" when their visiblity is toggled\n     * by Vue.js.\n     *\n     * You can easily play with the modal transition by editing\n     * these styles.\n     */\n\n    .vue-modal-enter {\n        opacity: 0;\n    }\n\n    .vue-modal-leave-active {\n        opacity: 0;\n    }\n\n    .vue-modal-enter .vue-modal-container,\n    .vue-modal-leave-active .vue-modal-container {\n        -webkit-transform: scale(1.3);\n        transform: scale(1.3);\n    }\n</style>"],"sourceRoot":""}]);
 
 // exports
 
 
 /***/ }),
-/* 136 */
+/* 138 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -54083,7 +54180,7 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 /* harmony default export */ __webpack_exports__["default"] = ({});
 
 /***/ }),
-/* 137 */
+/* 139 */
 /***/ (function(module, exports, __webpack_require__) {
 
 module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;
@@ -54114,15 +54211,15 @@ if (false) {
 }
 
 /***/ }),
-/* 138 */
+/* 140 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var disposed = false
 var Component = __webpack_require__(1)(
   /* script */
-  __webpack_require__(139),
+  __webpack_require__(141),
   /* template */
-  __webpack_require__(140),
+  __webpack_require__(142),
   /* styles */
   null,
   /* scopeId */
@@ -54154,7 +54251,7 @@ module.exports = Component.exports
 
 
 /***/ }),
-/* 139 */
+/* 141 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -54205,7 +54302,7 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 });
 
 /***/ }),
-/* 140 */
+/* 142 */
 /***/ (function(module, exports, __webpack_require__) {
 
 module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;
@@ -54220,7 +54317,7 @@ if (false) {
 }
 
 /***/ }),
-/* 141 */
+/* 143 */
 /***/ (function(module, exports, __webpack_require__) {
 
 module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;
@@ -54787,7 +54884,47 @@ module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c
   }, [_c('div', {
     staticClass: "validation-error has-errors ",
     slot: "required"
-  }, [_vm._v("*required")])])], 1)])], 1) : _vm._e(), _vm._v(" "), _c('div', {
+  }, [_vm._v("*required")])])], 1)]), _vm._v(" "), _c('p', {
+    staticClass: "right"
+  }, [_c('input', {
+    directives: [{
+      name: "model",
+      rawName: "v-model",
+      value: (_vm.formData.sameEHRLogin),
+      expression: "formData.sameEHRLogin"
+    }],
+    staticClass: "filled-in",
+    attrs: {
+      "type": "checkbox",
+      "id": "sameEHRLogin-box",
+      "checked": "checked"
+    },
+    domProps: {
+      "checked": Array.isArray(_vm.formData.sameEHRLogin) ? _vm._i(_vm.formData.sameEHRLogin, null) > -1 : (_vm.formData.sameEHRLogin)
+    },
+    on: {
+      "__c": function($event) {
+        var $$a = _vm.formData.sameEHRLogin,
+          $$el = $event.target,
+          $$c = $$el.checked ? (true) : (false);
+        if (Array.isArray($$a)) {
+          var $$v = null,
+            $$i = _vm._i($$a, $$v);
+          if ($$c) {
+            $$i < 0 && (_vm.formData.sameEHRLogin = $$a.concat($$v))
+          } else {
+            $$i > -1 && (_vm.formData.sameEHRLogin = $$a.slice(0, $$i).concat($$a.slice($$i + 1)))
+          }
+        } else {
+          _vm.formData.sameEHRLogin = $$c
+        }
+      }
+    }
+  }), _vm._v(" "), _c('label', {
+    attrs: {
+      "for": "sameEHRLogin-box"
+    }
+  }, [_vm._v("Same for all locations?")])])], 1) : _vm._e(), _vm._v(" "), _c('div', {
     staticClass: "row"
   }, [_c('h6', {
     staticClass: "col s12"
@@ -54954,7 +55091,47 @@ module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c
   }, [_c('div', {
     staticClass: "validation-error has-errors ",
     slot: "required"
-  }, [_vm._v("*required")])])], 1)])], 1)]), _vm._v(" "), _c('div', {
+  }, [_vm._v("*required")])])], 1)])], 1), _vm._v(" "), _c('p', {
+    staticClass: "right"
+  }, [_c('input', {
+    directives: [{
+      name: "model",
+      rawName: "v-model",
+      value: (_vm.formData.sameClinicalIssuesContact),
+      expression: "formData.sameClinicalIssuesContact"
+    }],
+    staticClass: "filled-in",
+    attrs: {
+      "type": "checkbox",
+      "id": "sameClinicalIssuesContact-box",
+      "checked": "checked"
+    },
+    domProps: {
+      "checked": Array.isArray(_vm.formData.sameClinicalIssuesContact) ? _vm._i(_vm.formData.sameClinicalIssuesContact, null) > -1 : (_vm.formData.sameClinicalIssuesContact)
+    },
+    on: {
+      "__c": function($event) {
+        var $$a = _vm.formData.sameClinicalIssuesContact,
+          $$el = $event.target,
+          $$c = $$el.checked ? (true) : (false);
+        if (Array.isArray($$a)) {
+          var $$v = null,
+            $$i = _vm._i($$a, $$v);
+          if ($$c) {
+            $$i < 0 && (_vm.formData.sameClinicalIssuesContact = $$a.concat($$v))
+          } else {
+            $$i > -1 && (_vm.formData.sameClinicalIssuesContact = $$a.slice(0, $$i).concat($$a.slice($$i + 1)))
+          }
+        } else {
+          _vm.formData.sameClinicalIssuesContact = $$c
+        }
+      }
+    }
+  }), _vm._v(" "), _c('label', {
+    attrs: {
+      "for": "sameClinicalIssuesContact-box"
+    }
+  }, [_vm._v("Same for all locations?")])])]), _vm._v(" "), _c('div', {
     staticClass: "btn blue waves-effect waves-light right",
     on: {
       "click": function($event) {
@@ -54974,19 +55151,19 @@ if (false) {
 }
 
 /***/ }),
-/* 142 */
+/* 144 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var disposed = false
 function injectStyle (ssrContext) {
   if (disposed) return
-  __webpack_require__(143)
+  __webpack_require__(145)
 }
 var Component = __webpack_require__(1)(
   /* script */
-  __webpack_require__(145),
+  __webpack_require__(147),
   /* template */
-  __webpack_require__(146),
+  __webpack_require__(148),
   /* styles */
   injectStyle,
   /* scopeId */
@@ -55018,23 +55195,23 @@ module.exports = Component.exports
 
 
 /***/ }),
-/* 143 */
+/* 145 */
 /***/ (function(module, exports, __webpack_require__) {
 
 // style-loader: Adds some css to the DOM by adding a <style> tag
 
 // load the styles
-var content = __webpack_require__(144);
+var content = __webpack_require__(146);
 if(typeof content === 'string') content = [[module.i, content, '']];
 if(content.locals) module.exports = content.locals;
 // add the styles to the DOM
-var update = __webpack_require__(6)("e7e0094c", content, false);
+var update = __webpack_require__(6)("67818f90", content, false);
 // Hot Module Replacement
 if(false) {
  // When the styles change, update the <style> tags
  if(!content.locals) {
-   module.hot.accept("!!../../../../../../node_modules/css-loader/index.js!../../../../../../node_modules/vue-loader/lib/style-compiler/index.js?{\"vue\":true,\"id\":\"data-v-c9c62ffa\",\"scoped\":false,\"hasInlineConfig\":true}!../../../../../../node_modules/vue-loader/lib/selector.js?type=styles&index=0!./index.vue", function() {
-     var newContent = require("!!../../../../../../node_modules/css-loader/index.js!../../../../../../node_modules/vue-loader/lib/style-compiler/index.js?{\"vue\":true,\"id\":\"data-v-c9c62ffa\",\"scoped\":false,\"hasInlineConfig\":true}!../../../../../../node_modules/vue-loader/lib/selector.js?type=styles&index=0!./index.vue");
+   module.hot.accept("!!../../../../../../node_modules/css-loader/index.js?sourceMap!../../../../../../node_modules/vue-loader/lib/style-compiler/index.js?{\"vue\":true,\"id\":\"data-v-c9c62ffa\",\"scoped\":false,\"hasInlineConfig\":true}!../../../../../../node_modules/vue-loader/lib/selector.js?type=styles&index=0!./index.vue", function() {
+     var newContent = require("!!../../../../../../node_modules/css-loader/index.js?sourceMap!../../../../../../node_modules/vue-loader/lib/style-compiler/index.js?{\"vue\":true,\"id\":\"data-v-c9c62ffa\",\"scoped\":false,\"hasInlineConfig\":true}!../../../../../../node_modules/vue-loader/lib/selector.js?type=styles&index=0!./index.vue");
      if(typeof newContent === 'string') newContent = [[module.id, newContent, '']];
      update(newContent);
    });
@@ -55044,21 +55221,21 @@ if(false) {
 }
 
 /***/ }),
-/* 144 */
+/* 146 */
 /***/ (function(module, exports, __webpack_require__) {
 
-exports = module.exports = __webpack_require__(5)(undefined);
+exports = module.exports = __webpack_require__(5)(true);
 // imports
 
 
 // module
-exports.push([module.i, "\n.admin-panel-locations-container .input-field {\n    margin-top: 0;\n}\nth.th-trash, td.td-trash, th.th-edit, td.td-edit {\n    /*background: none;*/\n    width: 10px;\n    min-width: 5px;\n    padding: 10px 0;\n}\n", ""]);
+exports.push([module.i, "\n.admin-panel-locations-container .input-field {\n    margin-top: 0;\n}\nth.th-trash, td.td-trash, th.th-edit, td.td-edit {\n    /*background: none;*/\n    width: 10px;\n    min-width: 5px;\n    padding: 10px 0;\n}\n", "", {"version":3,"sources":["/Users/michalis/Code/CLH/cpm-api/resources/assets/js/components/practice/lodations/index.vue?99556292"],"names":[],"mappings":";AAyIA;IACA,cAAA;CACA;AAEA;IACA,qBAAA;IACA,YAAA;IACA,eAAA;IACA,gBAAA;CACA","file":"index.vue","sourcesContent":["<template>\n    <div class=\"admin-panel-locations-container\" v-cloak>\n        <div class=\"row\">\n            <div class=\"col s6\">\n                <div class=\"input-field\">\n                    <div v-on:click=\"\"\n                         class=\"btn blue waves-effect waves-light\" id=\"submit\">\n                        Add New Location\n                    </div>\n                </div>\n            </div>\n\n            <div class=\"col s6\">\n                <div class=\"input-field\">\n                    <input id=\"search\" type=\"search\" name=\"query\" v-model=\"searchQuery\"\n                           placeholder=\"search for a location\">\n                    <label class=\"label-icon\" for=\"search\"><i class=\"material-icons\">search</i></label>\n                    <i class=\"material-icons\" @click=\"searchQuery = ''\">close</i></div>\n            </div>\n        </div>\n\n        <grid\n                :data=\"formattedLocations\"\n                :options=\"gridOptions\"\n                :filter-key=\"searchQuery\"\n                @click=\"cellClicked\">\n        </grid>\n\n        <component :is=\"compName\" :show=\"showModal\" :location=\"editedLocation\" @close-modal=\"closeModal()\"></component>\n\n    </div>\n</template>\n\n<script>\n    import {mapGetters, mapActions} from 'vuex'\n    import {practiceLocations} from '../../../store/getters'\n    import {getPracticeLocations} from '../../../store/actions'\n    import UpdateLocation from './update.vue'\n\n    export default {\n        components: {\n            UpdateLocation\n        },\n\n        computed: Object.assign({},\n            mapGetters({\n                locations: 'practiceLocations'\n            }),\n            {\n                formattedLocations() {\n                    return JSON.parse(JSON.stringify(this.gridData))\n                }\n            }\n        ),\n\n        created() {\n            this.getPracticeLocations(this.practiceId)\n            this.gridData = this.locations\n        },\n\n        methods: Object.assign({},\n            mapActions(['getPracticeLocations']),\n            {\n                cellClicked(index, entry, entryIndex) {\n                    switch (index) {\n                        case 'trash':\n                            this.deleteRow(entryIndex)\n                            break;\n                        case 'edit':\n                            this.editRow(entryIndex)\n                            break;\n                        default:\n                            break;\n                    }\n                },\n\n                deleteRow(index) {\n                    let disassociate = confirm('Are you sure you want to delete ' + this.gridData[index].name + '?');\n\n                    if (!disassociate) {\n                        return true;\n                    }\n\n                    this.gridData.splice(index, 1)\n                },\n\n                editRow(index) {\n                    this.compName = 'update-location'\n                    this.editedLocation = this.gridData[index]\n                    this.showModal = true\n                },\n\n                closeModal() {\n                    this.compName = ''\n                    this.editedLocation = {}\n                    this.showModal = false\n                }\n            }),\n\n        data() {\n            return {\n                compName: '',\n                showModal: false,\n                editedLocation: {},\n                searchQuery: '',\n                gridOptions: {\n                    columns: {\n                        edit: {\n                            name: '',\n                            content: '<a class=\"green waves-effect waves-light btn\" style=\"padding: 0 .4rem;\"><i class=\"material-icons center\">mode_edit</i></a>'\n                        },\n                        trash: {\n                            name: '',\n                            content: '<a class=\"red waves-effect waves-light btn\" style=\"padding: 0 .4rem;\"><i class=\"material-icons center text-white\">clear</i></a>',\n                        },\n                        name: {\n                            name: 'Name'\n                        },\n                        address_line_1: {\n                            name: 'Address Line 1'\n                        },\n                        city: {\n                            name: 'City'\n                        },\n                        state: {\n                            name: 'State'\n                        },\n                    }\n                },\n                practiceId: $('meta[name=practice-id]').attr('content'),\n                gridData: []\n            }\n        },\n    }\n</script>\n\n<style>\n    .admin-panel-locations-container .input-field {\n        margin-top: 0;\n    }\n\n    th.th-trash, td.td-trash, th.th-edit, td.td-edit {\n        /*background: none;*/\n        width: 10px;\n        min-width: 5px;\n        padding: 10px 0;\n    }\n</style>"],"sourceRoot":""}]);
 
 // exports
 
 
 /***/ }),
-/* 145 */
+/* 147 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -55197,7 +55374,7 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 });
 
 /***/ }),
-/* 146 */
+/* 148 */
 /***/ (function(module, exports, __webpack_require__) {
 
 module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;
@@ -55290,19 +55467,19 @@ if (false) {
 }
 
 /***/ }),
-/* 147 */
+/* 149 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var disposed = false
 function injectStyle (ssrContext) {
   if (disposed) return
-  __webpack_require__(148)
+  __webpack_require__(150)
 }
 var Component = __webpack_require__(1)(
   /* script */
-  __webpack_require__(150),
+  __webpack_require__(152),
   /* template */
-  __webpack_require__(151),
+  __webpack_require__(153),
   /* styles */
   injectStyle,
   /* scopeId */
@@ -55334,23 +55511,23 @@ module.exports = Component.exports
 
 
 /***/ }),
-/* 148 */
+/* 150 */
 /***/ (function(module, exports, __webpack_require__) {
 
 // style-loader: Adds some css to the DOM by adding a <style> tag
 
 // load the styles
-var content = __webpack_require__(149);
+var content = __webpack_require__(151);
 if(typeof content === 'string') content = [[module.i, content, '']];
 if(content.locals) module.exports = content.locals;
 // add the styles to the DOM
-var update = __webpack_require__(6)("49a70bcc", content, false);
+var update = __webpack_require__(6)("32da7824", content, false);
 // Hot Module Replacement
 if(false) {
  // When the styles change, update the <style> tags
  if(!content.locals) {
-   module.hot.accept("!!../../../../../node_modules/css-loader/index.js!../../../../../node_modules/vue-loader/lib/style-compiler/index.js?{\"vue\":true,\"id\":\"data-v-4c04f36a\",\"scoped\":false,\"hasInlineConfig\":true}!../../../../../node_modules/vue-loader/lib/selector.js?type=styles&index=0!./grid.vue", function() {
-     var newContent = require("!!../../../../../node_modules/css-loader/index.js!../../../../../node_modules/vue-loader/lib/style-compiler/index.js?{\"vue\":true,\"id\":\"data-v-4c04f36a\",\"scoped\":false,\"hasInlineConfig\":true}!../../../../../node_modules/vue-loader/lib/selector.js?type=styles&index=0!./grid.vue");
+   module.hot.accept("!!../../../../../node_modules/css-loader/index.js?sourceMap!../../../../../node_modules/vue-loader/lib/style-compiler/index.js?{\"vue\":true,\"id\":\"data-v-4c04f36a\",\"scoped\":false,\"hasInlineConfig\":true}!../../../../../node_modules/vue-loader/lib/selector.js?type=styles&index=0!./grid.vue", function() {
+     var newContent = require("!!../../../../../node_modules/css-loader/index.js?sourceMap!../../../../../node_modules/vue-loader/lib/style-compiler/index.js?{\"vue\":true,\"id\":\"data-v-4c04f36a\",\"scoped\":false,\"hasInlineConfig\":true}!../../../../../node_modules/vue-loader/lib/selector.js?type=styles&index=0!./grid.vue");
      if(typeof newContent === 'string') newContent = [[module.id, newContent, '']];
      update(newContent);
    });
@@ -55360,21 +55537,21 @@ if(false) {
 }
 
 /***/ }),
-/* 149 */
+/* 151 */
 /***/ (function(module, exports, __webpack_require__) {
 
-exports = module.exports = __webpack_require__(5)(undefined);
+exports = module.exports = __webpack_require__(5)(true);
 // imports
 
 
 // module
-exports.push([module.i, "\ntable {\n    display: table !important;\n    /*border: 2px solid #2196f3;*/\n    /*border-radius: 3px;*/\n    background-color: #fff;\n    border-collapse: separate !important;\n    border-spacing: 2px !important;\n}\nth {\n    background-color: #2196f3;\n    color: rgba(255, 255, 255, 0.66);\n    cursor: pointer;\n    -webkit-user-select: none;\n    -moz-user-select: none;\n    -ms-user-select: none;\n    user-select: none;\n}\ntd {\n    background-color: #f9f9f9;\n}\nth, td {\n    min-width: 20px;\n    padding: 5px 15px;\n}\nth.active {\n    color: #fff;\n}\nth.active .arrow {\n    opacity: 1;\n}\n.arrow {\n    display: inline-block;\n    vertical-align: middle;\n    width: 0;\n    height: 0;\n    margin-left: 5px;\n    opacity: 0.66;\n}\n.arrow.asc {\n    border-left: 4px solid transparent;\n    border-right: 4px solid transparent;\n    border-bottom: 4px solid #fff;\n}\n.arrow.dsc {\n    border-left: 4px solid transparent;\n    border-right: 4px solid transparent;\n    border-top: 4px solid #fff;\n}\n\n", ""]);
+exports.push([module.i, "\ntable {\n    display: table !important;\n    /*border: 2px solid #2196f3;*/\n    /*border-radius: 3px;*/\n    background-color: #fff;\n    border-collapse: separate !important;\n    border-spacing: 2px !important;\n}\nth {\n    background-color: #2196f3;\n    color: rgba(255, 255, 255, 0.66);\n    cursor: pointer;\n    -webkit-user-select: none;\n    -moz-user-select: none;\n    -ms-user-select: none;\n    user-select: none;\n}\ntd {\n    background-color: #f9f9f9;\n}\nth, td {\n    min-width: 20px;\n    padding: 5px 15px;\n}\nth.active {\n    color: #fff;\n}\nth.active .arrow {\n    opacity: 1;\n}\n.arrow {\n    display: inline-block;\n    vertical-align: middle;\n    width: 0;\n    height: 0;\n    margin-left: 5px;\n    opacity: 0.66;\n}\n.arrow.asc {\n    border-left: 4px solid transparent;\n    border-right: 4px solid transparent;\n    border-bottom: 4px solid #fff;\n}\n.arrow.dsc {\n    border-left: 4px solid transparent;\n    border-right: 4px solid transparent;\n    border-top: 4px solid #fff;\n}\n\n", "", {"version":3,"sources":["/Users/michalis/Code/CLH/cpm-api/resources/assets/js/components/shared/grid.vue?3547f3f0"],"names":[],"mappings":";AAmHA;IACA,0BAAA;IACA,8BAAA;IACA,uBAAA;IACA,uBAAA;IACA,qCAAA;IACA,+BAAA;CACA;AAEA;IACA,0BAAA;IACA,iCAAA;IACA,gBAAA;IACA,0BAAA;IACA,uBAAA;IACA,sBAAA;IACA,kBAAA;CACA;AAEA;IACA,0BAAA;CACA;AAEA;IACA,gBAAA;IACA,kBAAA;CACA;AAEA;IACA,YAAA;CACA;AAEA;IACA,WAAA;CACA;AAEA;IACA,sBAAA;IACA,uBAAA;IACA,SAAA;IACA,UAAA;IACA,iBAAA;IACA,cAAA;CACA;AAEA;IACA,mCAAA;IACA,oCAAA;IACA,8BAAA;CACA;AAEA;IACA,mCAAA;IACA,oCAAA;IACA,2BAAA;CACA","file":"grid.vue","sourcesContent":["<template>\n    <table>\n        <thead>\n        <tr>\n            <th v-for=\"(col, index) in columns\"\n                v-if=\"col.name\"\n                @click=\"sortBy(index)\"\n                :class=\"sortKey == index ? 'active th-' + index : 'th-' + index\">\n                {{ col.name | capitalize }}\n                <span class=\"arrow\" :class=\"sortOrders[index] > 0 ? 'asc' : 'dsc'\"></span>\n            </th>\n            <th v-else :class=\"'th-' + index\"></th>\n        </tr>\n        </thead>\n        <tbody>\n        <tr v-for=\"(entry, entryIndex) in filteredData\">\n            <td v-for=\"(col, index) in columns\" @click=\"$emit('click', index, entry, entryIndex)\" :class=\"'td-' + index\">\n                <div v-if=\"col.content\" v-html=\"col.content\"></div>\n                <div v-else>{{entry[index]}}</div>\n            </td>\n        </tr>\n        </tbody>\n    </table>\n</template>\n\n<script>\n    export default {\n        props: {\n            data: Array,\n            options: Object,\n            filterKey: String\n        },\n\n        mounted() {\n\n        },\n\n        data: function () {\n            let sortOrders = {}\n            _.mapValues(this.columns, (column, index) => {\n                sortOrders[index] = 1\n            })\n            return {\n                sortKey: '',\n                sortOrders: sortOrders,\n            }\n        },\n\n        computed: {\n            columns: function () {\n                let options = this.options\n                if (_.isUndefined(options)) {\n                    return []\n                }\n\n                let columns = {}\n                _.mapValues(options.columns, (column, index) => {\n                    if (!_.isUndefined(column)) {\n                        if (_.isUndefined(column.name)) {\n                            column.name = index\n                        }\n                        if (_.isUndefined(column.content) || column.content === '') {\n                            column.content = null\n                        }\n\n                        columns[index] = column\n                    }\n                })\n\n                return columns\n            },\n            filteredData: function () {\n                let sortKey = this.sortKey\n                let filterKey = this.filterKey && this.filterKey.toLowerCase()\n                let order = this.sortOrders[sortKey] || 1\n                let data = this.data\n                if (filterKey) {\n                    data = data.filter(function (row) {\n                        return Object.keys(row).some(function (key) {\n                            return String(row[key]).toLowerCase().indexOf(filterKey) > -1\n                        })\n                    })\n                }\n                if (sortKey) {\n                    data = data.slice().sort(function (a, b) {\n                        a = a[sortKey]\n                        b = b[sortKey]\n                        return (a === b ? 0 : a > b ? 1 : -1) * order\n                    })\n                }\n                return data\n            }\n        },\n\n        filters: {\n            capitalize: function (str) {\n                return str.charAt(0).toUpperCase() + str.slice(1)\n            }\n        }\n        ,\n\n        methods: {\n            className (index) {\n                return\n            },\n\n            sortBy: function (key) {\n                this.sortKey = key\n                this.sortOrders[key] = this.sortOrders[key] * -1\n            }\n        }\n    }\n</script>\n\n<style>\n    table {\n        display: table !important;\n        /*border: 2px solid #2196f3;*/\n        /*border-radius: 3px;*/\n        background-color: #fff;\n        border-collapse: separate !important;\n        border-spacing: 2px !important;\n    }\n\n    th {\n        background-color: #2196f3;\n        color: rgba(255, 255, 255, 0.66);\n        cursor: pointer;\n        -webkit-user-select: none;\n        -moz-user-select: none;\n        -ms-user-select: none;\n        user-select: none;\n    }\n\n    td {\n        background-color: #f9f9f9;\n    }\n\n    th, td {\n        min-width: 20px;\n        padding: 5px 15px;\n    }\n\n    th.active {\n        color: #fff;\n    }\n\n    th.active .arrow {\n        opacity: 1;\n    }\n\n    .arrow {\n        display: inline-block;\n        vertical-align: middle;\n        width: 0;\n        height: 0;\n        margin-left: 5px;\n        opacity: 0.66;\n    }\n\n    .arrow.asc {\n        border-left: 4px solid transparent;\n        border-right: 4px solid transparent;\n        border-bottom: 4px solid #fff;\n    }\n\n    .arrow.dsc {\n        border-left: 4px solid transparent;\n        border-right: 4px solid transparent;\n        border-top: 4px solid #fff;\n    }\n\n</style>"],"sourceRoot":""}]);
 
 // exports
 
 
 /***/ }),
-/* 150 */
+/* 152 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -55492,7 +55669,7 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 });
 
 /***/ }),
-/* 151 */
+/* 153 */
 /***/ (function(module, exports, __webpack_require__) {
 
 module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;
@@ -55535,51 +55712,6 @@ if (false) {
   }
 }
 
-/***/ }),
-/* 152 */,
-/* 153 */,
-/* 154 */,
-/* 155 */,
-/* 156 */,
-/* 157 */,
-/* 158 */
-/***/ (function(module, exports, __webpack_require__) {
-
-// style-loader: Adds some css to the DOM by adding a <style> tag
-
-// load the styles
-var content = __webpack_require__(159);
-if(typeof content === 'string') content = [[module.i, content, '']];
-if(content.locals) module.exports = content.locals;
-// add the styles to the DOM
-var update = __webpack_require__(6)("fc4fa27c", content, false);
-// Hot Module Replacement
-if(false) {
- // When the styles change, update the <style> tags
- if(!content.locals) {
-   module.hot.accept("!!../../../../../../node_modules/css-loader/index.js!../../../../../../node_modules/vue-loader/lib/style-compiler/index.js?{\"vue\":true,\"id\":\"data-v-e6176730\",\"scoped\":false,\"hasInlineConfig\":true}!../../../../../../node_modules/vue-loader/lib/selector.js?type=styles&index=0!./update.vue", function() {
-     var newContent = require("!!../../../../../../node_modules/css-loader/index.js!../../../../../../node_modules/vue-loader/lib/style-compiler/index.js?{\"vue\":true,\"id\":\"data-v-e6176730\",\"scoped\":false,\"hasInlineConfig\":true}!../../../../../../node_modules/vue-loader/lib/selector.js?type=styles&index=0!./update.vue");
-     if(typeof newContent === 'string') newContent = [[module.id, newContent, '']];
-     update(newContent);
-   });
- }
- // When the module is disposed, remove the <style> tags
- module.hot.dispose(function() { update(); });
-}
-
-/***/ }),
-/* 159 */
-/***/ (function(module, exports, __webpack_require__) {
-
-exports = module.exports = __webpack_require__(5)(undefined);
-// imports
-
-
-// module
-exports.push([module.i, "\n.valid {\n}\n.invalid {\n    border-bottom: 1px solid #f44336;\n    box-shadow: 0 1px 0 0 #f44336;\n}\n", ""]);
-
-// exports
-
-
 /***/ })
 /******/ ]);
+//# sourceMappingURL=app-provider-admin-panel-ui.js.map

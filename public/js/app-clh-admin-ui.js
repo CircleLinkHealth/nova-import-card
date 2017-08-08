@@ -60,7 +60,7 @@
 /******/ 	__webpack_require__.p = "";
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 152);
+/******/ 	return __webpack_require__(__webpack_require__.s = 154);
 /******/ })
 /************************************************************************/
 /******/ ([
@@ -10996,6 +10996,7 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "getPatientCareTeam", function() { return getPatientCareTeam; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "destroyCarePerson", function() { return destroyCarePerson; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "getPracticeLocations", function() { return getPracticeLocations; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "updatePracticeLocation", function() { return updatePracticeLocation; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "getPatientCarePlan", function() { return getPatientCarePlan; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "destroyPdf", function() { return destroyPdf; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "uploadPdfCarePlan", function() { return uploadPdfCarePlan; });
@@ -11088,8 +11089,24 @@ var getPracticeLocations = function getPracticeLocations(_ref8, practiceId) {
     }, practiceId);
 };
 
-var getPatientCarePlan = function getPatientCarePlan(_ref9, patientId) {
+var updatePracticeLocation = function updatePracticeLocation(_ref9, location) {
     var commit = _ref9.commit;
+
+    var practiceId = location.practice.id;
+
+    if (!practiceId) {
+        return;
+    }
+
+    __WEBPACK_IMPORTED_MODULE_2__api_practice_location__["a" /* default */].update(function (location) {
+        commit('UPDATE_PRACTICE_LOCATION', location);
+    }, function (error) {
+        console.log(error);
+    }, practiceId, location);
+};
+
+var getPatientCarePlan = function getPatientCarePlan(_ref10, patientId) {
+    var commit = _ref10.commit;
 
     if (!patientId) {
         return;
@@ -11104,8 +11121,8 @@ var getPatientCarePlan = function getPatientCarePlan(_ref9, patientId) {
     }, null, patientId);
 };
 
-var destroyPdf = function destroyPdf(_ref10, pdfId) {
-    var commit = _ref10.commit;
+var destroyPdf = function destroyPdf(_ref11, pdfId) {
+    var commit = _ref11.commit;
 
     if (!pdfId) {
         return;
@@ -11116,8 +11133,8 @@ var destroyPdf = function destroyPdf(_ref10, pdfId) {
     }, null, pdfId);
 };
 
-var uploadPdfCarePlan = function uploadPdfCarePlan(_ref11, formData) {
-    var commit = _ref11.commit;
+var uploadPdfCarePlan = function uploadPdfCarePlan(_ref12, formData) {
+    var commit = _ref12.commit;
 
     if (!formData) {
         return;
@@ -41596,6 +41613,21 @@ var state = {
         }, function (resp) {
             return ecb(resp.data);
         });
+    },
+    update: function update(cb) {
+        var ecb = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : null;
+        var practiceId = arguments[2];
+        var location = arguments[3];
+
+        if (!practiceId) {
+            return;
+        }
+
+        window.axios.patch('practice/' + practiceId + '/locations/' + location.id, location).then(function (resp) {
+            return cb(resp.data);
+        }, function (resp) {
+            return ecb(resp.data);
+        });
     }
 });
 
@@ -41687,6 +41719,7 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "REMOVE_NOTIFICATION", function() { return REMOVE_NOTIFICATION; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "CLEAR_PRACTICE_LOCATIONS", function() { return CLEAR_PRACTICE_LOCATIONS; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "SET_PRACTICE_LOCATIONS", function() { return SET_PRACTICE_LOCATIONS; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "UPDATE_PRACTICE_LOCATION", function() { return UPDATE_PRACTICE_LOCATION; });
 var DESTROY_CARE_PERSON = function DESTROY_CARE_PERSON(state, carePerson) {
     state.patientCareTeam = state.patientCareTeam.filter(function (item) {
         return item.id !== carePerson.id;
@@ -41762,6 +41795,14 @@ var CLEAR_PRACTICE_LOCATIONS = function CLEAR_PRACTICE_LOCATIONS(state) {
 var SET_PRACTICE_LOCATIONS = function SET_PRACTICE_LOCATIONS(state, practiceLocations) {
     practiceLocations.forEach(function (loc) {
         state.practiceLocations.push(loc);
+    });
+};
+
+var UPDATE_PRACTICE_LOCATION = function UPDATE_PRACTICE_LOCATION(state, location) {
+    state.practiceLocations.forEach(function (pracLoc, index) {
+        if (pracLoc.id === location.id) {
+            state.practiceLocations[index] = location;
+        }
     });
 };
 
@@ -41871,13 +41912,13 @@ var content = __webpack_require__(68);
 if(typeof content === 'string') content = [[module.i, content, '']];
 if(content.locals) module.exports = content.locals;
 // add the styles to the DOM
-var update = __webpack_require__(6)("4a317bf4", content, false);
+var update = __webpack_require__(6)("40ab1a52", content, false);
 // Hot Module Replacement
 if(false) {
  // When the styles change, update the <style> tags
  if(!content.locals) {
-   module.hot.accept("!!../../../../../../node_modules/css-loader/index.js!../../../../../../node_modules/vue-loader/lib/style-compiler/index.js?{\"vue\":true,\"id\":\"data-v-2fbbdfaf\",\"scoped\":false,\"hasInlineConfig\":true}!../../../../../../node_modules/vue-loader/lib/selector.js?type=styles&index=0!./daily-hours.vue", function() {
-     var newContent = require("!!../../../../../../node_modules/css-loader/index.js!../../../../../../node_modules/vue-loader/lib/style-compiler/index.js?{\"vue\":true,\"id\":\"data-v-2fbbdfaf\",\"scoped\":false,\"hasInlineConfig\":true}!../../../../../../node_modules/vue-loader/lib/selector.js?type=styles&index=0!./daily-hours.vue");
+   module.hot.accept("!!../../../../../../node_modules/css-loader/index.js?sourceMap!../../../../../../node_modules/vue-loader/lib/style-compiler/index.js?{\"vue\":true,\"id\":\"data-v-2fbbdfaf\",\"scoped\":false,\"hasInlineConfig\":true}!../../../../../../node_modules/vue-loader/lib/selector.js?type=styles&index=0!./daily-hours.vue", function() {
+     var newContent = require("!!../../../../../../node_modules/css-loader/index.js?sourceMap!../../../../../../node_modules/vue-loader/lib/style-compiler/index.js?{\"vue\":true,\"id\":\"data-v-2fbbdfaf\",\"scoped\":false,\"hasInlineConfig\":true}!../../../../../../node_modules/vue-loader/lib/selector.js?type=styles&index=0!./daily-hours.vue");
      if(typeof newContent === 'string') newContent = [[module.id, newContent, '']];
      update(newContent);
    });
@@ -41890,12 +41931,12 @@ if(false) {
 /* 68 */
 /***/ (function(module, exports, __webpack_require__) {
 
-exports = module.exports = __webpack_require__(5)(undefined);
+exports = module.exports = __webpack_require__(5)(true);
 // imports
 
 
 // module
-exports.push([module.i, "\n.edit-daily-work-hours {\n    height: 25px;\n    color: blue;\n}\n.edit-daily-work-hours:hover {\n    cursor: pointer;\n}\n", ""]);
+exports.push([module.i, "\n.edit-daily-work-hours {\n    height: 25px;\n    color: blue;\n}\n.edit-daily-work-hours:hover {\n    cursor: pointer;\n}\n", "", {"version":3,"sources":["/Users/michalis/Code/CLH/cpm-api/resources/assets/js/components/pages/work-schedule/daily-hours.vue?e4f3e5b6"],"names":[],"mappings":";AAsIA;IACA,aAAA;IACA,YAAA;CACA;AAEA;IACA,gBAAA;CACA","file":"daily-hours.vue","sourcesContent":["<script>\n    import {mapActions} from 'vuex'\n    import {addNotification} from '../../../store/actions'\n    export default {\n        props: ['day', 'hours', 'windows'],\n\n        created() {\n            if (this.hours) {\n                this.workHours = JSON.parse(this.hours)\n            }\n\n            if (this.windows) {\n                this.dayWindows = JSON.parse(this.windows)\n            }\n\n            if (this.totalHours === 0) {\n                this.workHours[this.day] = null\n                this.saveHours(true)\n            }\n\n            if (this.workHours[this.day] > this.totalHours) {\n                this.workHours[this.day] = this.totalHours\n                this.saveHours(true)\n            }\n        },\n\n        data() {\n            return {\n                workHours: {},\n                dayWindows: {},\n                edited: false,\n                beforeEditCache: null,\n                min: 1,\n                max: 12\n            }\n        },\n\n        computed: {\n            totalHours() {\n                let total = 0\n                for (let i = 0; i < this.dayWindows.length; i++) {\n                    total += this.hoursDifference(this.dayWindows[i].window_time_start, this.dayWindows[i].window_time_end)\n                }\n                return total\n            }\n        },\n\n        methods: Object.assign(mapActions(['addNotification']), {\n            edit() {\n                this.beforeEditCache = this.workHours[this.day]\n                this.edited = true\n            },\n\n            hideEdited() {\n                this.edited = false\n            },\n\n            doneEdit() {\n                this.edited = false\n\n                if (this.workHours[this.day] > 12 || this.workHours[this.day] < 1) {\n                    this.workHours[this.day] = this.beforeEditCache\n\n                    this.addNotification({\n                        title: \"Invalid number of work hours.\",\n                        text: \"Enter a number between 1 and 12.\",\n                        type: \"danger\",\n                        timeout: true\n                    })\n                } else if (this.workHours[this.day] > this.totalHours) {\n                    this.workHours[this.day] = this.beforeEditCache\n\n                    this.addNotification({\n                        title: \"Invalid number of work hours.\",\n                        text: \"Daily work hours cannot be more than total window hours.\",\n                        type: \"danger\",\n                        timeout: true\n                    })\n                } else {\n                    this.saveHours()\n                }\n            },\n\n            cancelEdit() {\n                this.workHours[this.day] = this.beforeEditCache\n                this.edited = false\n            },\n\n            saveHours(hideNotification = false) {\n                if (_.isUndefined(this.workHours.id)) {\n                    return\n                }\n\n                window.axios.patch('work-hours/' + this.workHours.id, {\n                    workHours: this.workHours[this.day],\n                    day: this.day\n                }).then((response) => {\n                    if (!hideNotification) {\n                        this.addNotification({\n                            title: \"Successfully updated hours.\",\n                            text: \"\",\n                            type: \"success\",\n                            timeout: true\n                        })\n                    }\n                }).catch((error) => {\n                    console.log(error);\n                })\n            },\n\n            hoursDifference(startTime, endTime) {\n                //hack, since we only have time and no date\n                let start = new Date('2017-01-01 ' + startTime)\n                let end = new Date('2017-01-01 ' + endTime)\n\n                return Math.floor((end - start) / 1000 / 60 / 60);\n            },\n        })\n    }\n</script>\n\n<template>\n    <div v-if=\"workHours[day]\">\n        <label v-show=\"!edited\" @click=\"edit()\" class=\"edit-daily-work-hours text-center\" style=\"padding: 2px 0;\">{{workHours[day]}} hrs</label>\n\n        <input v-show=\"edited\" type=\"number\" :min=\"min\" :max=\"max\" class=\"form-control edit-daily-work-hours\"\n               v-model=\"workHours[day]\"\n               @blur=\"doneEdit()\"\n               @keyup.enter=\"hideEdited()\"\n               @keyup.esc=\"cancelEdit()\">\n    </div>\n</template>\n\n<style>\n    .edit-daily-work-hours {\n        height: 25px;\n        color: blue;\n    }\n\n    .edit-daily-work-hours:hover {\n        cursor: pointer;\n    }\n</style>"],"sourceRoot":""}]);
 
 // exports
 
@@ -42185,14 +42226,16 @@ if (false) {
 /* 149 */,
 /* 150 */,
 /* 151 */,
-/* 152 */
+/* 152 */,
+/* 153 */,
+/* 154 */
 /***/ (function(module, exports, __webpack_require__) {
 
-module.exports = __webpack_require__(153);
+module.exports = __webpack_require__(155);
 
 
 /***/ }),
-/* 153 */
+/* 155 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -42230,3 +42273,4 @@ window.App = new Vue({
 
 /***/ })
 /******/ ]);
+//# sourceMappingURL=app-clh-admin-ui.js.map

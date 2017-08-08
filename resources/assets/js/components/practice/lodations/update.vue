@@ -195,6 +195,11 @@
                                 </field-messages>
                             </div>
                         </validate>
+
+                        <p class="right">
+                            <input type="checkbox" class="filled-in" id="sameEHRLogin-box" v-model="formData.sameEHRLogin" checked="checked" />
+                            <label for="sameEHRLogin-box">Same for all locations?</label>
+                        </p>
                     </div>
 
                     <div class="row">
@@ -254,6 +259,11 @@
                                 </div>
                             </validate>
                         </div>
+
+                        <p class="right">
+                            <input type="checkbox" class="filled-in" id="sameClinicalIssuesContact-box" v-model="formData.sameClinicalIssuesContact" checked="checked" />
+                            <label for="sameClinicalIssuesContact-box">Same for all locations?</label>
+                        </p>
                     </div>
 
                     <div @click="submitForm()"
@@ -273,7 +283,7 @@
 <script>
     import modal from '../../shared/materialize/modal.vue';
     import {mapGetters, mapActions} from 'vuex'
-    import {clearOpenModal, addNotification} from '../../../store/actions'
+    import {clearOpenModal, addNotification, updatePracticeLocation} from '../../../store/actions'
     import MaterialSelect from '../../src/material-select.vue'
 
     export default {
@@ -318,7 +328,11 @@
                     emr_direct_address: '',
                     postal_code: '',
                     state: '',
-                    validated: false
+                    validated: false,
+                    practice: {},
+                    practice_id: '',
+                    sameClinicalIssuesContact: false,
+                    sameEHRLogin: false,
                 },
                 formState: {},
                 clinicalContactOptions: [{
@@ -360,10 +374,10 @@
         },
 
         methods: Object.assign(
-            mapActions(['clearOpenModal', 'addNotification']),
+            mapActions(['clearOpenModal', 'addNotification', 'updatePracticeLocation']),
             {
                 submitForm() {
-
+                    this.updatePracticeLocation(this.formData)
                 },
 
                 fieldClassName(field) {

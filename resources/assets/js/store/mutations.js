@@ -75,3 +75,11 @@ export const SET_PRACTICE_LOCATIONS = (state, practiceLocations) => {
         state.practiceLocations.push(loc)
     })
 }
+
+export const UPDATE_PRACTICE_LOCATION = (state, location) => {
+    state.practiceLocations.forEach((pracLoc, index) => {
+        if (pracLoc.id === location.id) {
+            state.practiceLocations[index] = location;
+        }
+    })
+}
