@@ -2,11 +2,13 @@
 
 namespace App\Http\Controllers\API;
 
+use App\CarePerson;
 use App\CLH\Facades\StringManipulation;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\UpdatePracticeLocation;
 use App\Location;
 use App\Practice;
+use App\User;
 use Illuminate\Http\Request;
 
 class PracticeLocationsController extends Controller
@@ -173,58 +175,32 @@ class PracticeLocationsController extends Controller
             $clinicalContactUser = User::whereEmail($formData['clinical_contact']['email'])
                 ->first();
 
-            if (!$formData['clinical_contact']['email']) {
-                $clinicalContactUser = null;
-
-                $errors[] = [
-                    'index'    => $index,
-                    'messages' => [
-                        'email' => ['Clinical Contact email is a required field.'],
-                    ],
-                    'input'    => $formData,
-                ];
-            }
-
             if (!$clinicalContactUser) {
-                try {
-                    $clinicalContactUser = $this->users->create([
-                        'program_id' => $primaryPractice->id,
-                        'email'      => $formData['clinical_contact']['email'],
-                        'first_name' => $formData['clinical_contact']['first_name'],
-                        'last_name'  => $formData['clinical_contact']['last_name'],
-                        'password'   => 'password_not_set',
-                    ]);
+                $clinicalContactUser = User::create([
+                    'program_id' => $primaryPractice->id,
+                    'email'      => $formData['clinical_contact']['email'],
+                    'first_name' => $formData['clinical_contact']['first_name'],
+                    'last_name'  => $formData['clinical_contact']['last_name'],
+                    'password'   => 'password_not_set',
+                ]);
 
-                    $clinicalContactUser->attachPractice($primaryPractice);
-                    $clinicalContactUser->attachLocation($location);
+                $clinicalContactUser->attachPractice($primaryPractice);
+                $clinicalContactUser->attachLocation($location);
 
-                    //clean up other contacts before adding the new one
-                    $location->clinicalEmergencyContact()->sync([]);
+                //clean up other contacts before adding the new one
+                $location->clinicalEmergencyContact()->sync([]);
 
-                    $location->clinicalEmergencyContact()->attach($clinicalContactUser->id, [
-                        'name' => $formData['clinical_contact']['type'],
-                    ]);
-                } catch (ValidatorException $e) {
-                    $errors[] = [
-                        'index'    => $index,
-                        'messages' => $e->getMessageBag()->getMessages(),
-                        'input'    => $formData,
-                    ];
-                }
+                $location->clinicalEmergencyContact()->attach($clinicalContactUser->id, [
+                    'name' => $formData['clinical_contact']['type'],
+                ]);
             }
         }
 
         if ($primaryPractice->lead) {
             $primaryPractice->lead->attachLocation($location);
         }
-        $i++;
 
-        if (isset($errors)) {
-            return response()->json([
-                'errors'  => $errors,
-                'created' => $created,
-            ], 400);
-        }
+
     }
 
     /**
