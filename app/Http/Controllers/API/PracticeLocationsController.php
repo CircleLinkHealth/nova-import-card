@@ -3,9 +3,11 @@
 namespace App\Http\Controllers\API;
 
 use App\CLH\Facades\StringManipulation;
+use App\Http\Controllers\Controller;
+use App\Http\Requests\UpdatePracticeLocation;
+use App\Location;
 use App\Practice;
 use Illuminate\Http\Request;
-use App\Http\Controllers\Controller;
 
 class PracticeLocationsController extends Controller
 {
@@ -16,7 +18,7 @@ class PracticeLocationsController extends Controller
      */
     public function index($primaryPracticeId)
     {
-        $primaryPractice = Practice::find($primaryPracticeId);
+        $primaryPractice = Practice::select(['id'])->whereId($primaryPracticeId)->first();
 
         $existingLocations = $primaryPractice->locations->map(function ($loc) use (
             $primaryPractice
@@ -28,10 +30,10 @@ class PracticeLocationsController extends Controller
             return [
                 'id'                        => $loc->id,
                 'clinical_contact'          => [
-                    'email'     => $contactUser->email ?? null,
+                    'email'      => $contactUser->email ?? null,
                     'first_name' => $contactUser->first_name ?? null,
                     'last_name'  => $contactUser->last_name ?? null,
-                    'type'      => $contactType ?? 'billing_provider',
+                    'type'       => $contactType ?? 'billing_provider',
                 ],
                 'timezone'                  => $loc->timezone ?? 'America/New_York',
                 'ehr_password'              => $loc->ehr_password,
@@ -50,6 +52,8 @@ class PracticeLocationsController extends Controller
                 'emr_direct_address'        => $loc->emr_direct_address,
                 'sameClinicalIssuesContact' => $primaryPractice->same_clinical_contact,
                 'sameEHRLogin'              => $primaryPractice->same_ehr_login,
+                'practice'                  => $primaryPractice,
+                'practice_id'               => $primaryPractice->id,
             ];
         });
 
@@ -69,7 +73,8 @@ class PracticeLocationsController extends Controller
     /**
      * Store a newly created resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
+     * @param  \Illuminate\Http\Request $request
+     *
      * @return \Illuminate\Http\Response
      */
     public function store(Request $request)
@@ -80,7 +85,8 @@ class PracticeLocationsController extends Controller
     /**
      * Display the specified resource.
      *
-     * @param  int  $id
+     * @param  int $id
+     *
      * @return \Illuminate\Http\Response
      */
     public function show($id)
@@ -91,7 +97,8 @@ class PracticeLocationsController extends Controller
     /**
      * Show the form for editing the specified resource.
      *
-     * @param  int  $id
+     * @param  int $id
+     *
      * @return \Illuminate\Http\Response
      */
     public function edit($id)
@@ -102,19 +109,129 @@ class PracticeLocationsController extends Controller
     /**
      * Update the specified resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  int  $id
+     * @param  \Illuminate\Http\Request $request
+     * @param  int $id
+     *
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, $id)
+    public function update(UpdatePracticeLocation $request, $primaryPracticeId, $locationId)
     {
-        //
+        $primaryPractice = Practice::find($primaryPracticeId);
+
+        $formData = $request->input();
+
+        $sameClinicalContact = $request->input('sameClinicalIssuesContact');
+        $sameEHRLogin = $request->input('sameEHRLogin');
+
+        $location = Location::updateOrCreate([
+            'id' => $formData['id'],
+        ], [
+            'practice_id'    => $primaryPractice['id'],
+            'name'           => $formData['name'],
+            'phone'          => StringManipulation::formatPhoneNumberE164($formData['phone']),
+            'fax'            => StringManipulation::formatPhoneNumberE164($formData['fax']),
+            'address_line_1' => $formData['address_line_1'],
+            'address_line_2' => $formData['address_line_2'] ?? null,
+            'city'           => $formData['city'],
+            'state'          => $formData['state'],
+            'timezone'       => $formData['timezone'],
+            'postal_code'    => $formData['postal_code'],
+            'ehr_login'      => $sameEHRLogin
+                ? $request->input('locations')[0]['ehr_login']
+                : $formData['ehr_login'] ?? null,
+            'ehr_password'   => $sameEHRLogin
+                ? $request->input('locations')[0]['ehr_password']
+                : $formData['ehr_password'] ?? null,
+        ]);
+
+
+        $location->emr_direct_address = $formData['emr_direct_address'];
+        $primaryPractice->same_clinical_contact = false;
+
+        //If clinical contact is same for all, then get the data from the first location.
+        if ($sameClinicalContact) {
+            $formData['clinical_contact']['type'] = $request->input('locations')[0]['clinical_contact']['type'];
+            $formData['clinical_contact']['email'] = $request->input('locations')[0]['clinical_contact']['email'];
+            $formData['clinical_contact']['firstName'] = $request->input('locations')[0]['clinical_contact']['firstName'];
+            $formData['clinical_contact']['lastName'] = $request->input('locations')[0]['clinical_contact']['lastName'];
+
+            $primaryPractice->same_clinical_contact = true;
+        }
+
+        $primaryPractice->same_ehr_login = false;
+
+        if ($sameEHRLogin) {
+            $primaryPractice->same_ehr_login = true;
+        }
+
+        $primaryPractice->save();
+
+        if ($formData['clinical_contact']['type'] == CarePerson::BILLING_PROVIDER) {
+            //clean up other contacts, just in case this was just set as the billing provider
+            $location->clinicalEmergencyContact()->sync([]);
+        } else {
+            $clinicalContactUser = User::whereEmail($formData['clinical_contact']['email'])
+                ->first();
+
+            if (!$formData['clinical_contact']['email']) {
+                $clinicalContactUser = null;
+
+                $errors[] = [
+                    'index'    => $index,
+                    'messages' => [
+                        'email' => ['Clinical Contact email is a required field.'],
+                    ],
+                    'input'    => $formData,
+                ];
+            }
+
+            if (!$clinicalContactUser) {
+                try {
+                    $clinicalContactUser = $this->users->create([
+                        'program_id' => $primaryPractice->id,
+                        'email'      => $formData['clinical_contact']['email'],
+                        'first_name' => $formData['clinical_contact']['first_name'],
+                        'last_name'  => $formData['clinical_contact']['last_name'],
+                        'password'   => 'password_not_set',
+                    ]);
+
+                    $clinicalContactUser->attachPractice($primaryPractice);
+                    $clinicalContactUser->attachLocation($location);
+
+                    //clean up other contacts before adding the new one
+                    $location->clinicalEmergencyContact()->sync([]);
+
+                    $location->clinicalEmergencyContact()->attach($clinicalContactUser->id, [
+                        'name' => $formData['clinical_contact']['type'],
+                    ]);
+                } catch (ValidatorException $e) {
+                    $errors[] = [
+                        'index'    => $index,
+                        'messages' => $e->getMessageBag()->getMessages(),
+                        'input'    => $formData,
+                    ];
+                }
+            }
+        }
+
+        if ($primaryPractice->lead) {
+            $primaryPractice->lead->attachLocation($location);
+        }
+        $i++;
+
+        if (isset($errors)) {
+            return response()->json([
+                'errors'  => $errors,
+                'created' => $created,
+            ], 400);
+        }
     }
 
     /**
      * Remove the specified resource from storage.
      *
-     * @param  int  $id
+     * @param  int $id
+     *
      * @return \Illuminate\Http\Response
      */
     public function destroy($id)
