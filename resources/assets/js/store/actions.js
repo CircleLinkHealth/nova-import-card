@@ -74,10 +74,10 @@ export const updatePracticeLocation = ({commit}, location) => {
     }
 
     practiceLocationsApi.update(location => {
-        commit('UPDATE_PRACTICE_LOCATION', location);
-    }, (error) => {
-        console.log(error)
-    }, practiceId, location)
+            commit('UPDATE_PRACTICE_LOCATION', location);
+        }, errors => {
+            commit('SET_ERRORS', errors)
+        }, practiceId, location)
 }
 
 export const getPatientCarePlan = ({commit}, patientId) => {

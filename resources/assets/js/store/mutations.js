@@ -83,3 +83,15 @@ export const UPDATE_PRACTICE_LOCATION = (state, location) => {
         }
     })
 }
+
+export const CLEAR_ERROR = (state, field) => {
+    state.errors.clear(field)
+}
+
+export const CLEAR_ALL_ERRORS = (state, field) => {
+    state.errors.setErrors({})
+}
+
+export const SET_ERRORS = (state, errors) => {
+    state.errors.setErrors(errors)
+}

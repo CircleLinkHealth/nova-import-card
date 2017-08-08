@@ -22,3 +22,7 @@ export const notifications = state => {
 export const practiceLocations = state => {
     return state.practiceLocations
 }
+
+export const errors = state => {
+    return state.errors
+}
