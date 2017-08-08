@@ -25,38 +25,7 @@ class PracticeLocationsController extends Controller
         $existingLocations = $primaryPractice->locations->map(function ($loc) use (
             $primaryPractice
         ) {
-
-            $contactType = $loc->clinicalEmergencyContact->first()->pivot->name ?? null;
-            $contactUser = $loc->clinicalEmergencyContact->first() ?? null;
-
-            return [
-                'id'                        => $loc->id,
-                'clinical_contact'          => [
-                    'email'      => $contactUser->email ?? null,
-                    'first_name' => $contactUser->first_name ?? null,
-                    'last_name'  => $contactUser->last_name ?? null,
-                    'type'       => $contactType ?? 'billing_provider',
-                ],
-                'timezone'                  => $loc->timezone ?? 'America/New_York',
-                'ehr_password'              => $loc->ehr_password,
-                'city'                      => $loc->city,
-                'address_line_1'            => $loc->address_line_1,
-                'address_line_2'            => $loc->address_line_2,
-                'ehr_login'                 => $loc->ehr_login,
-                'errorCount'                => 0,
-                'isComplete'                => true,
-                'name'                      => $loc->name,
-                'postal_code'               => $loc->postal_code,
-                'state'                     => $loc->state,
-                'validated'                 => true,
-                'phone'                     => StringManipulation::formatPhoneNumber($loc->phone),
-                'fax'                       => StringManipulation::formatPhoneNumber($loc->fax),
-                'emr_direct_address'        => $loc->emr_direct_address,
-                'sameClinicalIssuesContact' => $primaryPractice->same_clinical_contact,
-                'sameEHRLogin'              => $primaryPractice->same_ehr_login,
-                'practice'                  => $primaryPractice,
-                'practice_id'               => $primaryPractice->id,
-            ];
+            return $this->present($loc, $primaryPractice);
         });
 
         return response()->json($existingLocations);
@@ -200,7 +169,7 @@ class PracticeLocationsController extends Controller
             $primaryPractice->lead->attachLocation($location);
         }
 
-
+        return response()->json($this->present($location, $primaryPractice));
     }
 
     /**
@@ -213,5 +182,39 @@ class PracticeLocationsController extends Controller
     public function destroy($id)
     {
         //
+    }
+
+    public function present(Location $loc, Practice $primaryPractice) {
+        $contactType = $loc->clinicalEmergencyContact->first()->pivot->name ?? null;
+        $contactUser = $loc->clinicalEmergencyContact->first() ?? null;
+
+        return [
+            'id'                        => $loc->id,
+            'clinical_contact'          => [
+                'email'      => $contactUser->email ?? null,
+                'first_name' => $contactUser->first_name ?? null,
+                'last_name'  => $contactUser->last_name ?? null,
+                'type'       => $contactType ?? 'billing_provider',
+            ],
+            'timezone'                  => $loc->timezone ?? 'America/New_York',
+            'ehr_password'              => $loc->ehr_password,
+            'city'                      => $loc->city,
+            'address_line_1'            => $loc->address_line_1,
+            'address_line_2'            => $loc->address_line_2,
+            'ehr_login'                 => $loc->ehr_login,
+            'errorCount'                => 0,
+            'isComplete'                => true,
+            'name'                      => $loc->name,
+            'postal_code'               => $loc->postal_code,
+            'state'                     => $loc->state,
+            'validated'                 => true,
+            'phone'                     => StringManipulation::formatPhoneNumber($loc->phone),
+            'fax'                       => StringManipulation::formatPhoneNumber($loc->fax),
+            'emr_direct_address'        => $loc->emr_direct_address,
+            'sameClinicalIssuesContact' => $primaryPractice->same_clinical_contact,
+            'sameEHRLogin'              => $primaryPractice->same_ehr_login,
+            'practice'                  => $primaryPractice,
+            'practice_id'               => $primaryPractice->id,
+        ];
     }
 }
