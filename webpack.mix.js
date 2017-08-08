@@ -31,10 +31,10 @@ mix.combine([
 
 mix.sass('resources/assets/sass/fab.scss', 'public/css');
 
-mix.sass('resources/assets/sass/css/provider/dashboard.scss', 'public/css/compiled/dashboard.css');
+mix.sass('resources/assets/sass/css/provider/dashboard.scss', 'public/css/compiled/provider-dashboard.css');
 
 mix.combine([
-    'public/css/compiled/dashboard.css',
+    'public/css/compiled/provider-dashboard.css',
     'resources/assets/less/css/animate.min.css'
 ], 'public/css/provider-dashboard.css');
 

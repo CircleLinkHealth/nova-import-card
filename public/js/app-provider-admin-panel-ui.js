@@ -11100,8 +11100,8 @@ var updatePracticeLocation = function updatePracticeLocation(_ref9, location) {
 
     __WEBPACK_IMPORTED_MODULE_2__api_practice_location__["a" /* default */].update(function (location) {
         commit('UPDATE_PRACTICE_LOCATION', location);
-    }, function (error) {
-        console.log(error);
+    }, function (errors) {
+        commit('SET_ERRORS', errors);
     }, practiceId, location);
 };
 
@@ -11550,6 +11550,48 @@ module.exports = defaults;
 
 /***/ }),
 /* 8 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "patientCareTeam", function() { return patientCareTeam; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "patientCarePlan", function() { return patientCarePlan; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "currentUser", function() { return currentUser; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "openModal", function() { return openModal; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "notifications", function() { return notifications; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "practiceLocations", function() { return practiceLocations; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "errors", function() { return errors; });
+var patientCareTeam = function patientCareTeam(state) {
+    return state.patientCareTeam;
+};
+
+var patientCarePlan = function patientCarePlan(state) {
+    state.patientCarePlan.pdfs = _.orderBy(state.patientCarePlan.pdfs, 'label', 'desc');
+    return state.patientCarePlan;
+};
+
+var currentUser = function currentUser(state) {
+    return state.currentUser;
+};
+
+var openModal = function openModal(state) {
+    return state.openModal;
+};
+
+var notifications = function notifications(state) {
+    return state.notifications;
+};
+
+var practiceLocations = function practiceLocations(state) {
+    return state.practiceLocations;
+};
+
+var errors = function errors(state) {
+    return state.errors;
+};
+
+/***/ }),
+/* 9 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/*!
@@ -21809,43 +21851,6 @@ return jQuery;
 
 
 /***/ }),
-/* 9 */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "patientCareTeam", function() { return patientCareTeam; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "patientCarePlan", function() { return patientCarePlan; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "currentUser", function() { return currentUser; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "openModal", function() { return openModal; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "notifications", function() { return notifications; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "practiceLocations", function() { return practiceLocations; });
-var patientCareTeam = function patientCareTeam(state) {
-    return state.patientCareTeam;
-};
-
-var patientCarePlan = function patientCarePlan(state) {
-    state.patientCarePlan.pdfs = _.orderBy(state.patientCarePlan.pdfs, 'label', 'desc');
-    return state.patientCarePlan;
-};
-
-var currentUser = function currentUser(state) {
-    return state.currentUser;
-};
-
-var openModal = function openModal(state) {
-    return state.openModal;
-};
-
-var notifications = function notifications(state) {
-    return state.notifications;
-};
-
-var practiceLocations = function practiceLocations(state) {
-    return state.practiceLocations;
-};
-
-/***/ }),
 /* 10 */
 /***/ (function(module, exports) {
 
@@ -22182,7 +22187,7 @@ window._ = __webpack_require__(18);
  */
 
 try {
-  window.$ = window.jQuery = __webpack_require__(8);
+  window.$ = window.jQuery = __webpack_require__(9);
 } catch (e) {}
 
 /**
@@ -41496,13 +41501,48 @@ return VueForm;
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_vue___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0_vue__);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_vuex__ = __webpack_require__(3);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__actions__ = __webpack_require__(4);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__getters__ = __webpack_require__(9);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__getters__ = __webpack_require__(8);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__mutations__ = __webpack_require__(46);
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
 
 
 
 
+
+
+//temporarily here till I figure out how to export a js class
+
+var Errors = function () {
+    function Errors() {
+        _classCallCheck(this, Errors);
+
+        this.errors = {};
+    }
+
+    _createClass(Errors, [{
+        key: "get",
+        value: function get(field) {
+            if (this.errors[field]) {
+                return this.errors[field][0];
+            }
+        }
+    }, {
+        key: "setErrors",
+        value: function setErrors(errors) {
+            this.errors = errors;
+        }
+    }, {
+        key: "clear",
+        value: function clear(field) {
+            delete this.errors[field];
+        }
+    }]);
+
+    return Errors;
+}();
 
 __WEBPACK_IMPORTED_MODULE_0_vue___default.a.use(__WEBPACK_IMPORTED_MODULE_1_vuex__["a" /* default */]);
 
@@ -41510,6 +41550,7 @@ var debug = "development" !== 'production';
 __WEBPACK_IMPORTED_MODULE_0_vue___default.a.config.debug = debug;
 
 var state = {
+    errors: new Errors(),
     currentUser: {
         email: '',
         first_name: '',
@@ -41625,8 +41666,8 @@ var state = {
 
         window.axios.patch('practice/' + practiceId + '/locations/' + location.id, location).then(function (resp) {
             return cb(resp.data);
-        }, function (resp) {
-            return ecb(resp.data);
+        }, function (error) {
+            return ecb(error.response.data);
         });
     }
 });
@@ -41720,6 +41761,9 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "CLEAR_PRACTICE_LOCATIONS", function() { return CLEAR_PRACTICE_LOCATIONS; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "SET_PRACTICE_LOCATIONS", function() { return SET_PRACTICE_LOCATIONS; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "UPDATE_PRACTICE_LOCATION", function() { return UPDATE_PRACTICE_LOCATION; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "CLEAR_ERROR", function() { return CLEAR_ERROR; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "CLEAR_ALL_ERRORS", function() { return CLEAR_ALL_ERRORS; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "SET_ERRORS", function() { return SET_ERRORS; });
 var DESTROY_CARE_PERSON = function DESTROY_CARE_PERSON(state, carePerson) {
     state.patientCareTeam = state.patientCareTeam.filter(function (item) {
         return item.id !== carePerson.id;
@@ -41804,6 +41848,18 @@ var UPDATE_PRACTICE_LOCATION = function UPDATE_PRACTICE_LOCATION(state, location
             state.practiceLocations[index] = location;
         }
     });
+};
+
+var CLEAR_ERROR = function CLEAR_ERROR(state, field) {
+    state.errors.clear(field);
+};
+
+var CLEAR_ALL_ERRORS = function CLEAR_ALL_ERRORS(state, field) {
+    state.errors.setErrors({});
+};
+
+var SET_ERRORS = function SET_ERRORS(state, errors) {
+    state.errors.setErrors(errors);
 };
 
 /***/ }),
@@ -41939,7 +41995,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
 (function (factory) {
   if (true) {
     // AMD. Register as an anonymous module.
-    !(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__(8)], __WEBPACK_AMD_DEFINE_FACTORY__ = (factory),
+    !(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__(9)], __WEBPACK_AMD_DEFINE_FACTORY__ = (factory),
 				__WEBPACK_AMD_DEFINE_RESULT__ = (typeof __WEBPACK_AMD_DEFINE_FACTORY__ === 'function' ?
 				(__WEBPACK_AMD_DEFINE_FACTORY__.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__)) : __WEBPACK_AMD_DEFINE_FACTORY__),
 				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
@@ -47721,7 +47777,7 @@ module.exports = Component.exports
 "use strict";
 Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_vuex__ = __webpack_require__(3);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__store_getters__ = __webpack_require__(9);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__store_getters__ = __webpack_require__(8);
 //
 //
 //
@@ -47856,7 +47912,7 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__notification_vue__ = __webpack_require__(60);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__notification_vue___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0__notification_vue__);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_vuex__ = __webpack_require__(3);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__store_getters__ = __webpack_require__(9);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__store_getters__ = __webpack_require__(8);
 //
 //
 //
@@ -48264,7 +48320,7 @@ window.App = new Vue({
 /* WEBPACK VAR INJECTION */(function(module) {var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_RESULT__;var __WEBPACK_AMD_DEFINE_RESULT__;var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_LOCAL_MODULE_0__;var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
 
 if ("undefined" == typeof jQuery) {
-  var jQuery;jQuery =  true ? $ = __webpack_require__(8) : $;
+  var jQuery;jQuery =  true ? $ = __webpack_require__(9) : $;
 }jQuery.easing.jswing = jQuery.easing.swing, jQuery.extend(jQuery.easing, { def: "easeOutQuad", swing: function swing(t, e, i, n, a) {
     return jQuery.easing[jQuery.easing.def](t, e, i, n, a);
   }, easeInQuad: function easeInQuad(t, e, i, n, a) {
@@ -49393,7 +49449,7 @@ if ("undefined" == typeof jQuery) {
   }.call(exports, __webpack_require__, exports, module),
 				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__)) : "undefined" != typeof module && module.exports ? module.exports = at : t[i] = at;
 }(window, document, "Hammer"), function (t) {
-   true ? !(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__(8), __webpack_require__(130)], __WEBPACK_AMD_DEFINE_FACTORY__ = (t),
+   true ? !(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__(9), __webpack_require__(130)], __WEBPACK_AMD_DEFINE_FACTORY__ = (t),
 				__WEBPACK_AMD_DEFINE_RESULT__ = (typeof __WEBPACK_AMD_DEFINE_FACTORY__ === 'function' ?
 				(__WEBPACK_AMD_DEFINE_FACTORY__.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__)) : __WEBPACK_AMD_DEFINE_FACTORY__),
 				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__)) : "object" == (typeof exports === "undefined" ? "undefined" : _typeof(exports)) ? t(require("jquery"), require("hammerjs")) : t(jQuery, Hammer);
@@ -50429,7 +50485,7 @@ if ("undefined" == typeof jQuery) {
     }, 100);
   };
 }(jQuery), function (t) {
-   true ? !(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__(8)], __WEBPACK_AMD_DEFINE_FACTORY__ = (t),
+   true ? !(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__(9)], __WEBPACK_AMD_DEFINE_FACTORY__ = (t),
 				__WEBPACK_LOCAL_MODULE_0__ = (typeof __WEBPACK_AMD_DEFINE_FACTORY__ === 'function' ?
 				(__WEBPACK_AMD_DEFINE_FACTORY__.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__)) : __WEBPACK_AMD_DEFINE_FACTORY__)) : "object" == (typeof exports === "undefined" ? "undefined" : _typeof(exports)) ? module.exports = t(require("jquery")) : this.Picker = t(jQuery);
 }(function (t) {
@@ -50588,7 +50644,7 @@ if ("undefined" == typeof jQuery) {
     }, t.fn[i].defaults = n.defaults;
   }, e;
 }), function (t) {
-   true ? !(__WEBPACK_AMD_DEFINE_ARRAY__ = [__WEBPACK_LOCAL_MODULE_0__, __webpack_require__(8)], __WEBPACK_AMD_DEFINE_FACTORY__ = (t),
+   true ? !(__WEBPACK_AMD_DEFINE_ARRAY__ = [__WEBPACK_LOCAL_MODULE_0__, __webpack_require__(9)], __WEBPACK_AMD_DEFINE_FACTORY__ = (t),
 				__WEBPACK_AMD_DEFINE_RESULT__ = (typeof __WEBPACK_AMD_DEFINE_FACTORY__ === 'function' ?
 				(__WEBPACK_AMD_DEFINE_FACTORY__.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__)) : __WEBPACK_AMD_DEFINE_FACTORY__),
 				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__)) : "object" == (typeof exports === "undefined" ? "undefined" : _typeof(exports)) ? module.exports = t(require("./picker.js"), require("jquery")) : t(Picker, jQuery);
@@ -53654,7 +53710,7 @@ exports = module.exports = __webpack_require__(5)(true);
 
 
 // module
-exports.push([module.i, "\n.valid {\n}\n.invalid {\n    border-bottom: 1px solid #f44336;\n    box-shadow: 0 1px 0 0 #f44336;\n}\n", "", {"version":3,"sources":["/Users/michalis/Code/CLH/cpm-api/resources/assets/js/components/practice/lodations/update.vue?e7dc95d6"],"names":[],"mappings":";AA+YA;CAEA;AAEA;IACA,iCAAA;IACA,8BAAA;CACA","file":"update.vue","sourcesContent":["<template>\n    <div>\n        <modal v-if=\"show\">\n            <template slot=\"header\">\n                <div class=\"row\">\n                    <div class=\"col s12\">\n                        <p class=\"modal-title\">Edit Location</p>\n                        <a class=\"close-button\" @click=\"$emit('close-modal')\">×</a>\n                    </div>\n                </div>\n            </template>\n\n            <template slot=\"body\">\n                <vue-form :state=\"formState\" @submit.prevent=\"onSubmit\">\n                    <div class=\"row\">\n                        <validate auto-label>\n                            <div class=\"input-field col s6\">\n                                <input type=\"text\" id=\"name\" name=\"name\" :class=\"fieldClassName(formState.name)\" required\n                                       v-model=\"formData.name\">\n\n                                <label :class=\"{active: formData.name}\" for=\"name\" data-error=\"*required\"\n                                       data-success=\"\">Name</label>\n\n                                <field-messages name=\"name\" show=\"$untouched || $touched || $submitted\">\n                                </field-messages>\n                            </div>\n                        </validate>\n\n                        <validate auto-label :class=\"fieldClassName(formState.timezone)\">\n                            <div class=\"input-field col s6\">\n                                <material-select v-model=\"formData.timezone\" class=\"input-field\" name=\"timezone\">\n                                    <option v-for=\"option in timezoneOptions\" :value=\"option.value\"\n                                            v-text=\"option.name\"></option>\n                                </material-select>\n\n                                <field-messages name=\"timezone\" show=\"$untouched || $touched || $submitted\">\n                                    <div></div>\n                                    <div class=\"validation-error has-errors \" slot=\"required\">*required</div>\n                                </field-messages>\n                            </div>\n                        </validate>\n                    </div>\n\n                    <div class=\"row\">\n                        <validate auto-label :class=\"fieldClassName(formState.address_line_1)\">\n                            <div class=\"input-field col s6\">\n                                <input type=\"text\" id=\"address_line_1\" name=\"address_line_1\"\n                                       class=\"form-control input-md\" required v-model=\"formData.address_line_1\">\n\n                                <label :class=\"fieldClassName(formState.address_line_1)\" for=\"address_line_1\"\n                                       data-error=\"\" data-success=\"\">Address Line 1</label>\n\n                                <field-messages name=\"address_line_1\" show=\"$untouched || $touched || $submitted\">\n                                    <div></div>\n                                    <div class=\"validation-error has-errors \" slot=\"required\">*required</div>\n                                </field-messages>\n                            </div>\n                        </validate>\n\n                        <validate auto-label :class=\"fieldClassName(formState.address_line_2)\">\n                            <div class=\"input-field col s6\">\n                                <input type=\"text\" id=\"address_line_2\" name=\"address_line_2\"\n                                       class=\"form-control input-md\" v-model=\"formData.address_line_2\">\n\n                                <label :class=\"fieldClassName(formState.address_line_2)\" for=\"address_line_2\"\n                                       data-error=\"\" data-success=\"\">Address Line 2</label>\n\n                                <field-messages name=\"address_line_2\" show=\"$untouched || $touched || $submitted\">\n                                    <div class=\"validation-error has-errors \" slot=\"required\">*required</div>\n                                </field-messages>\n                            </div>\n                        </validate>\n                    </div>\n\n                    <div class=\"row\">\n                        <validate auto-label :class=\"fieldClassName(formState.city)\">\n                            <div class=\"input-field col s6\">\n                                <input type=\"text\" id=\"city\" name=\"city\" class=\"form-control input-md\" required\n                                       v-model=\"formData.city\">\n\n                                <label :class=\"fieldClassName(formState.city)\" for=\"city\" data-error=\"\" data-success=\"\">City</label>\n\n                                <field-messages name=\"city\" show=\"$untouched || $touched || $submitted\">\n                                    <div></div>\n                                    <div class=\"validation-error has-errors \" slot=\"required\">*required</div>\n                                </field-messages>\n                            </div>\n                        </validate>\n\n                        <validate auto-label :class=\"fieldClassName(formState.state)\">\n                            <div class=\"input-field col s6\">\n                                <input type=\"text\" id=\"state\" name=\"state\" class=\"form-control input-md\"\n                                       v-model=\"formData.state\">\n\n                                <label :class=\"fieldClassName(formState.state)\" for=\"state\" data-error=\"\"\n                                       data-success=\"\">State</label>\n\n                                <field-messages name=\"state\" show=\"$untouched || $touched || $submitted\">\n                                    <div class=\"validation-error has-errors \" slot=\"required\">*required</div>\n                                </field-messages>\n                            </div>\n                        </validate>\n                    </div>\n\n                    <div class=\"row\">\n                        <validate auto-label :class=\"fieldClassName(formState.postal_code)\">\n                            <div class=\"input-field col s6\">\n                                <input type=\"text\" id=\"postal_code\" name=\"postal_code\" class=\"form-control input-md\"\n                                       required v-model=\"formData.postal_code\">\n\n                                <label :class=\"fieldClassName(formState.postal_code)\" for=\"postal_code\" data-error=\"\"\n                                       data-success=\"\">Postal Code</label>\n\n                                <field-messages name=\"postal_code\" show=\"$untouched || $touched || $submitted\">\n                                    <div></div>\n                                    <div class=\"validation-error has-errors \" slot=\"required\">*required</div>\n                                </field-messages>\n                            </div>\n                        </validate>\n\n                        <validate auto-label :class=\"fieldClassName(formState.phone)\">\n                            <div class=\"input-field col s6\">\n                                <input type=\"text\" id=\"phone\" name=\"phone\" class=\"form-control input-md\"\n                                       v-model=\"formData.phone\">\n\n                                <label :class=\"fieldClassName(formState.phone)\" for=\"phone\" data-error=\"\"\n                                       data-success=\"\">Phone</label>\n\n                                <field-messages name=\"phone\" show=\"$untouched || $touched || $submitted\">\n                                    <div class=\"validation-error has-errors \" slot=\"required\">*required</div>\n                                </field-messages>\n                            </div>\n                        </validate>\n                    </div>\n\n                    <div class=\"row\">\n                        <validate auto-label :class=\"fieldClassName(formState.fax)\">\n                            <div class=\"input-field col s6\">\n                                <input type=\"text\" id=\"fax\" name=\"fax\" class=\"form-control input-md\" required\n                                       v-model=\"formData.fax\">\n\n                                <label :class=\"fieldClassName(formState.fax)\" for=\"fax\" data-error=\"\" data-success=\"\">Fax</label>\n\n                                <field-messages name=\"fax\" show=\"$untouched || $touched || $submitted\">\n                                    <div></div>\n                                    <div class=\"validation-error has-errors \" slot=\"required\">*required</div>\n                                </field-messages>\n                            </div>\n                        </validate>\n\n                        <validate auto-label :class=\"fieldClassName(formState.emr_direct_address)\">\n                            <div class=\"input-field col s6\">\n                                <input type=\"text\" id=\"emr_direct_address\" name=\"emr_direct_address\"\n                                       class=\"form-control input-md\" v-model=\"formData.emr_direct_address\">\n\n                                <label :class=\"fieldClassName(formState.emr_direct_address)\" for=\"emr_direct_address\"\n                                       data-error=\"\" data-success=\"\">EMR Direct Address</label>\n\n                                <field-messages name=\"emr_direct_address\" show=\"$untouched || $touched || $submitted\">\n                                    <div class=\"validation-error has-errors \" slot=\"required\">*required</div>\n                                </field-messages>\n                            </div>\n                        </validate>\n                    </div>\n\n                    <div class=\"row\" v-if=\"!sameEHRLogin\">\n                        <h6 class=\"col s12\">\n                            Please provide login information for your EHR system.\n                        </h6>\n\n                        <validate auto-label :class=\"fieldClassName(formState.ehr_login)\">\n                            <div class=\"input-field col s6\">\n                                <input type=\"text\" id=\"ehr_login\" name=\"ehr_login\" class=\"form-control input-md\" required\n                                       v-model=\"formData.ehr_login\">\n\n                                <label :class=\"fieldClassName(formState.ehr_login)\" for=\"ehr_login\" data-error=\"\" data-success=\"\">EHR Login</label>\n\n                                <field-messages name=\"ehr_login\" show=\"$untouched || $touched || $submitted\">\n                                    <div></div>\n                                    <div class=\"validation-error has-errors \" slot=\"required\"></div>\n                                </field-messages>\n                            </div>\n                        </validate>\n\n                        <validate auto-label :class=\"fieldClassName(formState.ehr_password)\">\n                            <div class=\"input-field col s6\">\n                                <input type=\"text\" id=\"ehr_password\" name=\"ehr_password\"\n                                       class=\"form-control input-md\" v-model=\"formData.ehr_password\">\n\n                                <label :class=\"fieldClassName(formState.ehr_password)\" for=\"ehr_password\"\n                                       data-error=\"\" data-success=\"\">EHR Password</label>\n\n                                <field-messages name=\"ehr_password\" show=\"$untouched || $touched || $submitted\">\n                                    <div class=\"validation-error has-errors \" slot=\"required\">*required</div>\n                                </field-messages>\n                            </div>\n                        </validate>\n\n                        <p class=\"right\">\n                            <input type=\"checkbox\" class=\"filled-in\" id=\"sameEHRLogin-box\" v-model=\"formData.sameEHRLogin\" checked=\"checked\" />\n                            <label for=\"sameEHRLogin-box\">Same for all locations?</label>\n                        </p>\n                    </div>\n\n                    <div class=\"row\">\n                        <h6 class=\"col s12\">\n                            Who should be notified for patient clinical issues?\n                        </h6>\n\n                        <div class=\"col s12\">\n                            <material-select v-model=\"formData.clinical_contact.type\" class=\"input-field\" name=\"ehr_login\">\n                                <option v-for=\"option in clinicalContactOptions\" :value=\"option.value\"\n                                        v-text=\"option.name\"></option>\n                            </material-select>\n                        </div>\n\n                        <div v-show=\"formData.clinical_contact.type !== 'billing_provider'\">\n                            <div class=\"col s12\">\n                                <validate auto-label :class=\"fieldClassName()\">\n                                    <div class=\"input-field col s6\">\n                                        <input type=\"text\" id=\"clinical-contact-first-name\" name=\"clinical-contact-first-name\" class=\"form-control input-md\" required\n                                               v-model=\"formData.clinical_contact.first_name\">\n\n                                        <label :class=\"fieldClassName()\" for=\"clinical-contact-first-name\" data-error=\"\" data-success=\"\">First Name</label>\n\n                                        <field-messages name=\"clinical-contact-first-name\" show=\"$untouched || $touched || $submitted\">\n                                            <div></div>\n                                            <div class=\"validation-error has-errors \" slot=\"required\">*required</div>\n                                        </field-messages>\n                                    </div>\n                                </validate>\n\n                                <validate auto-label :class=\"fieldClassName()\">\n                                    <div class=\"input-field col s6\">\n                                        <input type=\"text\" id=\"clinical_contact.last_name\" name=\"clinical_contact.last_name\"\n                                               class=\"form-control input-md\" v-model=\"formData.clinical_contact.last_name\">\n\n                                        <label :class=\"fieldClassName()\" for=\"clinical_contact.last_name\"\n                                               data-error=\"\" data-success=\"\">Last Name</label>\n\n                                        <field-messages name=\"clinical_contact.last_name\" show=\"$untouched || $touched || $submitted\">\n                                            <div class=\"validation-error has-errors \" slot=\"required\">*required</div>\n                                        </field-messages>\n                                    </div>\n                                </validate>\n                            </div>\n\n                            <validate auto-label :class=\"fieldClassName()\">\n                                <div class=\"input-field col s12\">\n                                    <input type=\"text\" id=\"clinical_contact.email\" name=\"clinical_contact.email\"\n                                           class=\"form-control input-md\" v-model=\"formData.clinical_contact.email\">\n\n                                    <label :class=\"fieldClassName()\" for=\"clinical_contact.last_name\"\n                                           data-error=\"\" data-success=\"\">Email</label>\n\n                                    <field-messages name=\"clinical_contact.email\" show=\"$untouched || $touched || $submitted\">\n                                        <div class=\"validation-error has-errors \" slot=\"required\">*required</div>\n                                    </field-messages>\n                                </div>\n                            </validate>\n                        </div>\n\n                        <p class=\"right\">\n                            <input type=\"checkbox\" class=\"filled-in\" id=\"sameClinicalIssuesContact-box\" v-model=\"formData.sameClinicalIssuesContact\" checked=\"checked\" />\n                            <label for=\"sameClinicalIssuesContact-box\">Same for all locations?</label>\n                        </p>\n                    </div>\n\n                    <div @click=\"submitForm()\"\n                         class=\"btn blue waves-effect waves-light right\">\n                        Save\n                    </div>\n                </vue-form>\n            </template>\n\n            <template slot=\"footer\">\n\n            </template>\n        </modal>\n    </div>\n</template>\n\n<script>\n    import modal from '../../shared/materialize/modal.vue';\n    import {mapGetters, mapActions} from 'vuex'\n    import {clearOpenModal, addNotification, updatePracticeLocation} from '../../../store/actions'\n    import MaterialSelect from '../../src/material-select.vue'\n\n    export default {\n        props: {\n            show: {\n                type: Boolean,\n                default: false\n            },\n            location: Object\n        },\n\n        components: {\n            modal,\n            MaterialSelect\n        },\n\n        created() {\n            this.formData = JSON.parse(JSON.stringify(this.location))\n        },\n\n        data() {\n            return {\n                sameEHRLogin: false,\n                formData: {\n                    clinical_contact: {\n                        email: '',\n                        first_name: '',\n                        last_name: '',\n                        type: 'billing_provider'\n                    },\n                    timezone: 'America/New_York',\n                    ehr_password: '',\n                    city: '',\n                    address_line_1: '',\n                    address_line_2: '',\n                    ehr_login: '',\n                    errorCount: 0,\n                    isComplete: false,\n                    name: '',\n                    phone: '',\n                    fax: '',\n                    emr_direct_address: '',\n                    postal_code: '',\n                    state: '',\n                    validated: false,\n                    practice: {},\n                    practice_id: '',\n                    sameClinicalIssuesContact: false,\n                    sameEHRLogin: false,\n                },\n                formState: {},\n                clinicalContactOptions: [{\n                    name: 'Patient\\'s Billing / Main provider',\n                    value: 'billing_provider'\n                }, {\n                    name: 'Someone else instead of the billing provider',\n                    value: 'instead_of_billing_provider'\n                }, {\n                    name: 'Someone else in addition to the billing provider',\n                    value: 'in_addition_to_billing_provider'\n                }],\n                timezoneOptions: [{\n                    name: 'Eastern Time',\n                    value: 'America/New_York'\n                }, {\n                    name: 'Central Time',\n                    value: 'America/Chicago'\n                }, {\n                    name: 'Mountain Time',\n                    value: 'America/Denver'\n                }, {\n                    name: 'Mountain Time (no DST)',\n                    value: 'America/Phoenix'\n                }, {\n                    name: 'Pacific Time',\n                    value: 'America/Los_Angeles'\n                }, {\n                    name: 'Alaska Time',\n                    value: 'America/Anchorage'\n                }, {\n                    name: 'Hawaii-Aleutian',\n                    value: 'America/Adak'\n                }, {\n                    name: 'Hawaii-Aleutian Time (no DST)',\n                    value: 'Pacific/Honolulu'\n                }]\n            }\n        },\n\n        methods: Object.assign(\n            mapActions(['clearOpenModal', 'addNotification', 'updatePracticeLocation']),\n            {\n                submitForm() {\n                    this.updatePracticeLocation(this.formData)\n                },\n\n                fieldClassName(field) {\n                    if (!field) {\n                        return '';\n                    }\n                    if ((field.$touched || field.$submitted) && field.$valid) {\n                        return 'valid';\n                    }\n                    if ((field.$touched || field.$submitted) && field.$invalid) {\n                        return 'invalid';\n                    }\n                },\n            }\n        ),\n    }\n</script>\n\n<style>\n    .valid {\n\n    }\n\n    .invalid {\n        border-bottom: 1px solid #f44336;\n        box-shadow: 0 1px 0 0 #f44336;\n    }\n</style>"],"sourceRoot":""}]);
+exports.push([module.i, "\n.valid {\n}\n.invalid {\n    border-bottom: 1px solid #f44336;\n    box-shadow: 0 1px 0 0 #f44336;\n}\n", "", {"version":3,"sources":["/Users/michalis/Code/CLH/cpm-api/resources/assets/js/components/practice/lodations/update.vue?ecb89ba2"],"names":[],"mappings":";AAmaA;CAEA;AAEA;IACA,iCAAA;IACA,8BAAA;CACA","file":"update.vue","sourcesContent":["<template>\n    <div>\n        <modal v-if=\"show\">\n            <template slot=\"header\">\n                <div class=\"row\">\n                    <div class=\"col s12\">\n                        <p class=\"modal-title\">Edit Location</p>\n                        <a class=\"close-button\" @click=\"$emit('close-modal')\">×</a>\n                    </div>\n                </div>\n            </template>\n\n            <template slot=\"body\">\n                <vue-form :state=\"formState\" @submit.prevent=\"onSubmit\">\n                    <div class=\"row\">\n                        <validate auto-label>\n                            <div class=\"input-field col s6\">\n                                <input type=\"text\" id=\"name\" name=\"name\" :class=\"fieldClassName(formState.name)\"\n                                       required\n                                       v-model=\"formData.name\">\n\n                                <label :class=\"{active: formData.name}\" for=\"name\" :data-error=\"errors.get('name')\"\n                                       data-success=\" \">Name</label>\n\n                                <field-messages name=\"name\" show=\"$untouched || $touched || $submitted\">\n                                </field-messages>\n                            </div>\n                        </validate>\n\n                        <validate auto-label :class=\"fieldClassName(formState.timezone)\">\n                            <div class=\"input-field col s6\">\n                                <material-select v-model=\"formData.timezone\" class=\"input-field\" name=\"timezone\">\n                                    <option v-for=\"option in timezoneOptions\" :value=\"option.value\"\n                                            v-text=\"option.name\"></option>\n                                </material-select>\n\n                                <field-messages name=\"timezone\" show=\"$untouched || $touched || $submitted\">\n                                    <div></div>\n                                    <div class=\"validation-error has-errors \" slot=\"required\">*required</div>\n                                </field-messages>\n                            </div>\n                        </validate>\n                    </div>\n\n                    <div class=\"row\">\n                        <validate auto-label :class=\"fieldClassName(formState.address_line_1)\">\n                            <div class=\"input-field col s6\">\n                                <input type=\"text\" id=\"address_line_1\" name=\"address_line_1\"\n                                       class=\"form-control input-md\" required v-model=\"formData.address_line_1\">\n\n                                <label :class=\"fieldClassName(formState.address_line_1)\" for=\"address_line_1\"\n                                       data-error=\"\" data-success=\"\">Address Line 1</label>\n\n                                <field-messages name=\"address_line_1\" show=\"$untouched || $touched || $submitted\">\n                                    <div></div>\n                                    <div class=\"validation-error has-errors \" slot=\"required\">*required</div>\n                                </field-messages>\n                            </div>\n                        </validate>\n\n                        <validate auto-label :class=\"fieldClassName(formState.address_line_2)\">\n                            <div class=\"input-field col s6\">\n                                <input type=\"text\" id=\"address_line_2\" name=\"address_line_2\"\n                                       class=\"form-control input-md\" v-model=\"formData.address_line_2\">\n\n                                <label :class=\"fieldClassName(formState.address_line_2)\" for=\"address_line_2\"\n                                       data-error=\"\" data-success=\"\">Address Line 2</label>\n\n                                <field-messages name=\"address_line_2\" show=\"$untouched || $touched || $submitted\">\n                                    <div class=\"validation-error has-errors \" slot=\"required\">*required</div>\n                                </field-messages>\n                            </div>\n                        </validate>\n                    </div>\n\n                    <div class=\"row\">\n                        <validate auto-label :class=\"fieldClassName(formState.city)\">\n                            <div class=\"input-field col s6\">\n                                <input type=\"text\" id=\"city\" name=\"city\" class=\"form-control input-md\" required\n                                       v-model=\"formData.city\">\n\n                                <label :class=\"fieldClassName(formState.city)\" for=\"city\" data-error=\"\" data-success=\"\">City</label>\n\n                                <field-messages name=\"city\" show=\"$untouched || $touched || $submitted\">\n                                    <div></div>\n                                    <div class=\"validation-error has-errors \" slot=\"required\">*required</div>\n                                </field-messages>\n                            </div>\n                        </validate>\n\n                        <validate auto-label :class=\"fieldClassName(formState.state)\">\n                            <div class=\"input-field col s6\">\n                                <input type=\"text\" id=\"state\" name=\"state\" class=\"form-control input-md\"\n                                       v-model=\"formData.state\">\n\n                                <label :class=\"fieldClassName(formState.state)\" for=\"state\" data-error=\"\"\n                                       data-success=\"\">State</label>\n\n                                <field-messages name=\"state\" show=\"$untouched || $touched || $submitted\">\n                                    <div class=\"validation-error has-errors \" slot=\"required\">*required</div>\n                                </field-messages>\n                            </div>\n                        </validate>\n                    </div>\n\n                    <div class=\"row\">\n                        <validate auto-label :class=\"fieldClassName(formState.postal_code)\">\n                            <div class=\"input-field col s6\">\n                                <input type=\"text\" id=\"postal_code\" name=\"postal_code\" class=\"form-control input-md\"\n                                       required v-model=\"formData.postal_code\">\n\n                                <label :class=\"fieldClassName(formState.postal_code)\" for=\"postal_code\" data-error=\"\"\n                                       data-success=\"\">Postal Code</label>\n\n                                <field-messages name=\"postal_code\" show=\"$untouched || $touched || $submitted\">\n                                    <div></div>\n                                    <div class=\"validation-error has-errors \" slot=\"required\">*required</div>\n                                </field-messages>\n                            </div>\n                        </validate>\n\n                        <validate auto-label :class=\"fieldClassName(formState.phone)\">\n                            <div class=\"input-field col s6\">\n                                <input type=\"text\" id=\"phone\" name=\"phone\" class=\"form-control input-md\"\n                                       v-model=\"formData.phone\">\n\n                                <label :class=\"fieldClassName(formState.phone)\" for=\"phone\" data-error=\"\"\n                                       data-success=\"\">Phone</label>\n\n                                <field-messages name=\"phone\" show=\"$untouched || $touched || $submitted\">\n                                    <div class=\"validation-error has-errors \" slot=\"required\">*required</div>\n                                </field-messages>\n                            </div>\n                        </validate>\n                    </div>\n\n                    <div class=\"row\">\n                        <validate auto-label :class=\"fieldClassName(formState.fax)\">\n                            <div class=\"input-field col s6\">\n                                <input type=\"text\" id=\"fax\" name=\"fax\" class=\"form-control input-md\" required\n                                       v-model=\"formData.fax\">\n\n                                <label :class=\"fieldClassName(formState.fax)\" for=\"fax\" data-error=\"\" data-success=\"\">Fax</label>\n\n                                <field-messages name=\"fax\" show=\"$untouched || $touched || $submitted\">\n                                    <div></div>\n                                    <div class=\"validation-error has-errors \" slot=\"required\">*required</div>\n                                </field-messages>\n                            </div>\n                        </validate>\n\n                        <validate auto-label :class=\"fieldClassName(formState.emr_direct_address)\">\n                            <div class=\"input-field col s6\">\n                                <input type=\"text\" id=\"emr_direct_address\" name=\"emr_direct_address\"\n                                       class=\"form-control input-md\" v-model=\"formData.emr_direct_address\">\n\n                                <label :class=\"fieldClassName(formState.emr_direct_address)\" for=\"emr_direct_address\"\n                                       data-error=\"\" data-success=\"\">EMR Direct Address</label>\n\n                                <field-messages name=\"emr_direct_address\" show=\"$untouched || $touched || $submitted\">\n                                    <div class=\"validation-error has-errors \" slot=\"required\">*required</div>\n                                </field-messages>\n                            </div>\n                        </validate>\n                    </div>\n\n                    <div class=\"row\" v-if=\"!formData.sameEHRLogin\">\n                        <h6 class=\"col s12\">\n                            Please provide login information for your EHR system.\n                        </h6>\n\n                        <validate auto-label :class=\"fieldClassName(formState.ehr_login)\">\n                            <div class=\"input-field col s6\">\n                                <input type=\"text\" id=\"ehr_login\" name=\"ehr_login\" class=\"form-control input-md\"\n                                       required\n                                       v-model=\"formData.ehr_login\">\n\n                                <label :class=\"fieldClassName(formState.ehr_login)\" for=\"ehr_login\" data-error=\"\"\n                                       data-success=\"\">EHR Login</label>\n\n                                <field-messages name=\"ehr_login\" show=\"$untouched || $touched || $submitted\">\n                                    <div></div>\n                                    <div class=\"validation-error has-errors \" slot=\"required\"></div>\n                                </field-messages>\n                            </div>\n                        </validate>\n\n                        <validate auto-label :class=\"fieldClassName(formState.ehr_password)\">\n                            <div class=\"input-field col s6\">\n                                <input type=\"text\" id=\"ehr_password\" name=\"ehr_password\"\n                                       class=\"form-control input-md\" v-model=\"formData.ehr_password\">\n\n                                <label :class=\"fieldClassName(formState.ehr_password)\" for=\"ehr_password\"\n                                       data-error=\"\" data-success=\"\">EHR Password</label>\n\n                                <field-messages name=\"ehr_password\" show=\"$untouched || $touched || $submitted\">\n                                    <div class=\"validation-error has-errors \" slot=\"required\">*required</div>\n                                </field-messages>\n                            </div>\n                        </validate>\n\n                        <p class=\"right\">\n                            <input type=\"checkbox\" class=\"filled-in\" id=\"sameEHRLogin-box\"\n                                   v-model=\"formData.sameEHRLogin\" checked=\"checked\"/>\n                            <label for=\"sameEHRLogin-box\">Same for all locations?</label>\n                        </p>\n                    </div>\n\n                    <div class=\"row\" v-if=\"!formData.sameClinicalIssuesContact\">\n                        <h6 class=\"col s12\">\n                            Who should be notified for patient clinical issues?\n                        </h6>\n\n                        <div class=\"col s12\">\n                            <material-select v-model=\"formData.clinical_contact.type\" class=\"input-field\"\n                                             name=\"ehr_login\">\n                                <option v-for=\"option in clinicalContactOptions\" :value=\"option.value\"\n                                        v-text=\"option.name\"></option>\n                            </material-select>\n                        </div>\n\n                        <div v-show=\"formData.clinical_contact.type !== 'billing_provider'\">\n                            <div class=\"col s12\">\n                                <validate auto-label :class=\"fieldClassName()\">\n                                    <div class=\"input-field col s6\">\n                                        <input type=\"text\" id=\"clinical-contact-first-name\"\n                                               name=\"clinical-contact-first-name\" class=\"form-control input-md\" required\n                                               v-model=\"formData.clinical_contact.first_name\">\n\n                                        <label :class=\"fieldClassName()\" for=\"clinical-contact-first-name\" data-error=\"\"\n                                               data-success=\"\">First Name</label>\n\n                                        <field-messages name=\"clinical-contact-first-name\"\n                                                        show=\"$untouched || $touched || $submitted\">\n                                            <div></div>\n                                            <div class=\"validation-error has-errors \" slot=\"required\">*required</div>\n                                        </field-messages>\n                                    </div>\n                                </validate>\n\n                                <validate auto-label :class=\"fieldClassName()\">\n                                    <div class=\"input-field col s6\">\n                                        <input type=\"text\" id=\"clinical_contact.last_name\"\n                                               name=\"clinical_contact.last_name\"\n                                               class=\"form-control input-md\"\n                                               v-model=\"formData.clinical_contact.last_name\">\n\n                                        <label :class=\"fieldClassName()\" for=\"clinical_contact.last_name\"\n                                               data-error=\"\" data-success=\"\">Last Name</label>\n\n                                        <field-messages name=\"clinical_contact.last_name\"\n                                                        show=\"$untouched || $touched || $submitted\">\n                                            <div class=\"validation-error has-errors \" slot=\"required\">*required</div>\n                                        </field-messages>\n                                    </div>\n                                </validate>\n                            </div>\n\n                            <validate auto-label :class=\"fieldClassName()\">\n                                <div class=\"input-field col s12\">\n                                    <input type=\"text\" id=\"clinical_contact.email\" name=\"clinical_contact.email\"\n                                           class=\"form-control input-md\" v-model=\"formData.clinical_contact.email\">\n\n                                    <label :class=\"fieldClassName()\" for=\"clinical_contact.last_name\"\n                                           data-error=\"\" data-success=\"\">Email</label>\n\n                                    <field-messages name=\"clinical_contact.email\"\n                                                    show=\"$untouched || $touched || $submitted\">\n                                        <div class=\"validation-error has-errors \" slot=\"required\">*required</div>\n                                    </field-messages>\n                                </div>\n                            </validate>\n                        </div>\n\n                        <p class=\"right\">\n                            <input type=\"checkbox\" class=\"filled-in\" id=\"sameClinicalIssuesContact-box\"\n                                   v-model=\"formData.sameClinicalIssuesContact\" checked=\"checked\"/>\n                            <label for=\"sameClinicalIssuesContact-box\">Same for all locations?</label>\n                        </p>\n                    </div>\n\n                    <div @click=\"submitForm()\"\n                         class=\"btn blue waves-effect waves-light right\">\n                        Save\n                    </div>\n                </vue-form>\n            </template>\n\n            <template slot=\"footer\">\n\n            </template>\n        </modal>\n    </div>\n</template>\n\n<script>\n    import modal from '../../shared/materialize/modal.vue';\n    import {mapGetters, mapActions} from 'vuex'\n    import {clearOpenModal, addNotification, updatePracticeLocation} from '../../../store/actions'\n    import {errors} from '../../../store/getters'\n    import MaterialSelect from '../../src/material-select.vue'\n\n    export default {\n        props: {\n            show: {\n                type: Boolean,\n                default: false\n            },\n            location: Object\n        },\n\n        components: {\n            modal,\n            MaterialSelect\n        },\n\n        created() {\n            this.formData = JSON.parse(JSON.stringify(this.location))\n        },\n\n        data() {\n            return {\n                resp: {},\n                formData: {\n                    clinical_contact: {\n                        email: '',\n                        first_name: '',\n                        last_name: '',\n                        type: 'billing_provider'\n                    },\n                    timezone: 'America/New_York',\n                    ehr_password: '',\n                    city: '',\n                    address_line_1: '',\n                    address_line_2: '',\n                    ehr_login: '',\n                    errorCount: 0,\n                    isComplete: false,\n                    name: '',\n                    phone: '',\n                    fax: '',\n                    emr_direct_address: '',\n                    postal_code: '',\n                    state: '',\n                    validated: false,\n                    practice: {},\n                    practice_id: '',\n                    sameClinicalIssuesContact: false,\n                    sameEHRLogin: false,\n                },\n                formState: {},\n                clinicalContactOptions: [{\n                    name: 'Patient\\'s Billing / Main provider',\n                    value: 'billing_provider'\n                }, {\n                    name: 'Someone else instead of the billing provider',\n                    value: 'instead_of_billing_provider'\n                }, {\n                    name: 'Someone else in addition to the billing provider',\n                    value: 'in_addition_to_billing_provider'\n                }],\n                timezoneOptions: [{\n                    name: 'Eastern Time',\n                    value: 'America/New_York'\n                }, {\n                    name: 'Central Time',\n                    value: 'America/Chicago'\n                }, {\n                    name: 'Mountain Time',\n                    value: 'America/Denver'\n                }, {\n                    name: 'Mountain Time (no DST)',\n                    value: 'America/Phoenix'\n                }, {\n                    name: 'Pacific Time',\n                    value: 'America/Los_Angeles'\n                }, {\n                    name: 'Alaska Time',\n                    value: 'America/Anchorage'\n                }, {\n                    name: 'Hawaii-Aleutian',\n                    value: 'America/Adak'\n                }, {\n                    name: 'Hawaii-Aleutian Time (no DST)',\n                    value: 'Pacific/Honolulu'\n                }]\n            }\n        },\n\n        computed: Object.assign(\n            mapGetters({\n                errors: 'errors'\n            })\n        ),\n\n        methods: Object.assign(\n            mapActions(['clearOpenModal', 'addNotification', 'updatePracticeLocation']),\n            {\n                submitForm() {\n                    this.updatePracticeLocation(this.formData)\n                },\n\n                fieldClassName(field) {\n                    if (!field) {\n                        return '';\n                    }\n                    if ((field.$touched || field.$submitted) && field.$valid) {\n                        return 'valid';\n                    }\n                    if ((field.$touched || field.$submitted) && field.$invalid) {\n                        return 'invalid';\n                    }\n                },\n            }\n        ),\n    }\n</script>\n\n<style>\n    .valid {\n\n    }\n\n    .invalid {\n        border-bottom: 1px solid #f44336;\n        box-shadow: 0 1px 0 0 #f44336;\n    }\n</style>"],"sourceRoot":""}]);
 
 // exports
 
@@ -53669,8 +53725,9 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__shared_materialize_modal_vue___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0__shared_materialize_modal_vue__);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_vuex__ = __webpack_require__(3);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__store_actions__ = __webpack_require__(4);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__src_material_select_vue__ = __webpack_require__(140);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__src_material_select_vue___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_3__src_material_select_vue__);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__store_getters__ = __webpack_require__(8);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__src_material_select_vue__ = __webpack_require__(140);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__src_material_select_vue___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_4__src_material_select_vue__);
 //
 //
 //
@@ -53953,6 +54010,20 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+
 
 
 
@@ -53970,7 +54041,7 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 
     components: {
         modal: __WEBPACK_IMPORTED_MODULE_0__shared_materialize_modal_vue___default.a,
-        MaterialSelect: __WEBPACK_IMPORTED_MODULE_3__src_material_select_vue___default.a
+        MaterialSelect: __WEBPACK_IMPORTED_MODULE_4__src_material_select_vue___default.a
     },
 
     created: function created() {
@@ -53978,7 +54049,7 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
     },
     data: function data() {
         return {
-            sameEHRLogin: false,
+            resp: {},
             formData: {
                 clinical_contact: {
                     email: '',
@@ -54045,6 +54116,10 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
         };
     },
 
+
+    computed: Object.assign(__WEBPACK_IMPORTED_MODULE_1_vuex__["c" /* mapGetters */]({
+        errors: 'errors'
+    })),
 
     methods: Object.assign(__WEBPACK_IMPORTED_MODULE_1_vuex__["b" /* mapActions */](['clearOpenModal', 'addNotification', 'updatePracticeLocation']), {
         submitForm: function submitForm() {
@@ -54385,8 +54460,8 @@ module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c
     },
     attrs: {
       "for": "name",
-      "data-error": "*required",
-      "data-success": ""
+      "data-error": _vm.errors.get('name'),
+      "data-success": " "
     }
   }, [_vm._v("Name")]), _vm._v(" "), _c('field-messages', {
     attrs: {
@@ -54791,7 +54866,7 @@ module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c
   }, [_c('div', {
     staticClass: "validation-error has-errors ",
     slot: "required"
-  }, [_vm._v("*required")])])], 1)])], 1), _vm._v(" "), (!_vm.sameEHRLogin) ? _c('div', {
+  }, [_vm._v("*required")])])], 1)])], 1), _vm._v(" "), (!_vm.formData.sameEHRLogin) ? _c('div', {
     staticClass: "row"
   }, [_c('h6', {
     staticClass: "col s12"
@@ -54924,7 +54999,7 @@ module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c
     attrs: {
       "for": "sameEHRLogin-box"
     }
-  }, [_vm._v("Same for all locations?")])])], 1) : _vm._e(), _vm._v(" "), _c('div', {
+  }, [_vm._v("Same for all locations?")])])], 1) : _vm._e(), _vm._v(" "), (!_vm.formData.sameClinicalIssuesContact) ? _c('div', {
     staticClass: "row"
   }, [_c('h6', {
     staticClass: "col s12"
@@ -55131,7 +55206,7 @@ module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c
     attrs: {
       "for": "sameClinicalIssuesContact-box"
     }
-  }, [_vm._v("Same for all locations?")])])]), _vm._v(" "), _c('div', {
+  }, [_vm._v("Same for all locations?")])])]) : _vm._e(), _vm._v(" "), _c('div', {
     staticClass: "btn blue waves-effect waves-light right",
     on: {
       "click": function($event) {
@@ -55241,7 +55316,7 @@ exports.push([module.i, "\n.admin-panel-locations-container .input-field {\n    
 "use strict";
 Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_vuex__ = __webpack_require__(3);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__store_getters__ = __webpack_require__(9);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__store_getters__ = __webpack_require__(8);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__store_actions__ = __webpack_require__(4);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__update_vue__ = __webpack_require__(71);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__update_vue___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_3__update_vue__);
