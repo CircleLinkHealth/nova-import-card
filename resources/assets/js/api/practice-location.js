@@ -19,7 +19,7 @@ export default {
 
         window.axios.patch('practice/' + practiceId + '/locations/' + location.id, location).then(
             (resp) => cb(resp.data),
-            (resp) => ecb(resp.data)
+            (error) => ecb(error.response.data)
         );
     },
 }

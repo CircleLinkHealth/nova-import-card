@@ -15,11 +15,12 @@
                     <div class="row">
                         <validate auto-label>
                             <div class="input-field col s6">
-                                <input type="text" id="name" name="name" :class="fieldClassName(formState.name)" required
+                                <input type="text" id="name" name="name" :class="fieldClassName(formState.name)"
+                                       required
                                        v-model="formData.name">
 
-                                <label :class="{active: formData.name}" for="name" data-error="*required"
-                                       data-success="">Name</label>
+                                <label :class="{active: formData.name}" for="name" :data-error="errors.get('name')"
+                                       data-success=" ">Name</label>
 
                                 <field-messages name="name" show="$untouched || $touched || $submitted">
                                 </field-messages>
@@ -163,17 +164,19 @@
                         </validate>
                     </div>
 
-                    <div class="row" v-if="!sameEHRLogin">
+                    <div class="row" v-if="!formData.sameEHRLogin">
                         <h6 class="col s12">
                             Please provide login information for your EHR system.
                         </h6>
 
                         <validate auto-label :class="fieldClassName(formState.ehr_login)">
                             <div class="input-field col s6">
-                                <input type="text" id="ehr_login" name="ehr_login" class="form-control input-md" required
+                                <input type="text" id="ehr_login" name="ehr_login" class="form-control input-md"
+                                       required
                                        v-model="formData.ehr_login">
 
-                                <label :class="fieldClassName(formState.ehr_login)" for="ehr_login" data-error="" data-success="">EHR Login</label>
+                                <label :class="fieldClassName(formState.ehr_login)" for="ehr_login" data-error=""
+                                       data-success="">EHR Login</label>
 
                                 <field-messages name="ehr_login" show="$untouched || $touched || $submitted">
                                     <div></div>
@@ -197,18 +200,20 @@
                         </validate>
 
                         <p class="right">
-                            <input type="checkbox" class="filled-in" id="sameEHRLogin-box" v-model="formData.sameEHRLogin" checked="checked" />
+                            <input type="checkbox" class="filled-in" id="sameEHRLogin-box"
+                                   v-model="formData.sameEHRLogin" checked="checked"/>
                             <label for="sameEHRLogin-box">Same for all locations?</label>
                         </p>
                     </div>
 
-                    <div class="row">
+                    <div class="row" v-if="!formData.sameClinicalIssuesContact">
                         <h6 class="col s12">
                             Who should be notified for patient clinical issues?
                         </h6>
 
                         <div class="col s12">
-                            <material-select v-model="formData.clinical_contact.type" class="input-field" name="ehr_login">
+                            <material-select v-model="formData.clinical_contact.type" class="input-field"
+                                             name="ehr_login">
                                 <option v-for="option in clinicalContactOptions" :value="option.value"
                                         v-text="option.name"></option>
                             </material-select>
@@ -218,12 +223,15 @@
                             <div class="col s12">
                                 <validate auto-label :class="fieldClassName()">
                                     <div class="input-field col s6">
-                                        <input type="text" id="clinical-contact-first-name" name="clinical-contact-first-name" class="form-control input-md" required
+                                        <input type="text" id="clinical-contact-first-name"
+                                               name="clinical-contact-first-name" class="form-control input-md" required
                                                v-model="formData.clinical_contact.first_name">
 
-                                        <label :class="fieldClassName()" for="clinical-contact-first-name" data-error="" data-success="">First Name</label>
+                                        <label :class="fieldClassName()" for="clinical-contact-first-name" data-error=""
+                                               data-success="">First Name</label>
 
-                                        <field-messages name="clinical-contact-first-name" show="$untouched || $touched || $submitted">
+                                        <field-messages name="clinical-contact-first-name"
+                                                        show="$untouched || $touched || $submitted">
                                             <div></div>
                                             <div class="validation-error has-errors " slot="required">*required</div>
                                         </field-messages>
@@ -232,13 +240,16 @@
 
                                 <validate auto-label :class="fieldClassName()">
                                     <div class="input-field col s6">
-                                        <input type="text" id="clinical_contact.last_name" name="clinical_contact.last_name"
-                                               class="form-control input-md" v-model="formData.clinical_contact.last_name">
+                                        <input type="text" id="clinical_contact.last_name"
+                                               name="clinical_contact.last_name"
+                                               class="form-control input-md"
+                                               v-model="formData.clinical_contact.last_name">
 
                                         <label :class="fieldClassName()" for="clinical_contact.last_name"
                                                data-error="" data-success="">Last Name</label>
 
-                                        <field-messages name="clinical_contact.last_name" show="$untouched || $touched || $submitted">
+                                        <field-messages name="clinical_contact.last_name"
+                                                        show="$untouched || $touched || $submitted">
                                             <div class="validation-error has-errors " slot="required">*required</div>
                                         </field-messages>
                                     </div>
@@ -253,7 +264,8 @@
                                     <label :class="fieldClassName()" for="clinical_contact.last_name"
                                            data-error="" data-success="">Email</label>
 
-                                    <field-messages name="clinical_contact.email" show="$untouched || $touched || $submitted">
+                                    <field-messages name="clinical_contact.email"
+                                                    show="$untouched || $touched || $submitted">
                                         <div class="validation-error has-errors " slot="required">*required</div>
                                     </field-messages>
                                 </div>
@@ -261,7 +273,8 @@
                         </div>
 
                         <p class="right">
-                            <input type="checkbox" class="filled-in" id="sameClinicalIssuesContact-box" v-model="formData.sameClinicalIssuesContact" checked="checked" />
+                            <input type="checkbox" class="filled-in" id="sameClinicalIssuesContact-box"
+                                   v-model="formData.sameClinicalIssuesContact" checked="checked"/>
                             <label for="sameClinicalIssuesContact-box">Same for all locations?</label>
                         </p>
                     </div>
@@ -284,6 +297,7 @@
     import modal from '../../shared/materialize/modal.vue';
     import {mapGetters, mapActions} from 'vuex'
     import {clearOpenModal, addNotification, updatePracticeLocation} from '../../../store/actions'
+    import {errors} from '../../../store/getters'
     import MaterialSelect from '../../src/material-select.vue'
 
     export default {
@@ -306,7 +320,7 @@
 
         data() {
             return {
-                sameEHRLogin: false,
+                resp: {},
                 formData: {
                     clinical_contact: {
                         email: '',
@@ -372,6 +386,12 @@
                 }]
             }
         },
+
+        computed: Object.assign(
+            mapGetters({
+                errors: 'errors'
+            })
+        ),
 
         methods: Object.assign(
             mapActions(['clearOpenModal', 'addNotification', 'updatePracticeLocation']),
