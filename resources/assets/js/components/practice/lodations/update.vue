@@ -15,11 +15,11 @@
                     <div class="row">
                         <validate auto-label>
                             <div class="input-field col s6">
-                                <input type="text" id="name" name="name" :class="fieldClassName(formState.name)"
+                                <input type="text" id="name" name="name" :class="fieldClassName(formData.name)"
                                        required
                                        v-model="formData.name">
 
-                                <label :class="{active: formData.name}" for="name" :data-error="errors.get('name')"
+                                <label :class="fieldClassName(formData.name)" for="name" :data-error="errors.get('name')"
                                        data-success=" ">Name</label>
 
                                 <field-messages name="name" show="$untouched || $touched || $submitted">
@@ -27,16 +27,14 @@
                             </div>
                         </validate>
 
-                        <validate auto-label :class="fieldClassName(formState.timezone)">
+                        <validate auto-label>
                             <div class="input-field col s6">
-                                <material-select v-model="formData.timezone" class="input-field" name="timezone">
+                                <material-select v-model="formData.timezone" name="timezone" :class="fieldClassName(formData.timezone)">
                                     <option v-for="option in timezoneOptions" :value="option.value"
                                             v-text="option.name"></option>
                                 </material-select>
 
                                 <field-messages name="timezone" show="$untouched || $touched || $submitted">
-
-
                                 </field-messages>
                             </div>
                         </validate>
@@ -46,10 +44,10 @@
                         <validate auto-label>
                             <div class="input-field col s6">
                                 <input type="text" id="address_line_1" name="address_line_1"
-                                       :class="{invalid: errors.get('address_line_1'), active: formData.address_line_1}"
+                                       :class="fieldClassName(formData.address_line_1)"
                                        v-model="formData.address_line_1">
 
-                                <label :class="fieldClassName(formState.address_line_1)" for="address_line_1"
+                                <label :class="fieldClassName(formData.address_line_1)" for="address_line_1"
                                        :data-error="errors.get('address_line_1')" data-success="">Address Line 1</label>
 
                                 <field-messages name="address_line_1" show="$untouched || $touched || $submitted">
@@ -57,12 +55,12 @@
                             </div>
                         </validate>
 
-                        <validate auto-label :class="fieldClassName(formState.address_line_2)">
+                        <validate auto-label>
                             <div class="input-field col s6">
-                                <input type="text" id="address_line_2" name="address_line_2"
+                                <input type="text" id="address_line_2" name="address_line_2" :class="fieldClassName(formData.address_line_2)"
                                        v-model="formData.address_line_2">
 
-                                <label :class="fieldClassName(formState.address_line_2)" for="address_line_2"
+                                <label :class="fieldClassName(formData.address_line_2)" for="address_line_2"
                                        data-error="" data-success="">Address Line 2</label>
 
                                 <field-messages name="address_line_2" show="$untouched || $touched || $submitted">
@@ -73,12 +71,12 @@
                     </div>
 
                     <div class="row">
-                        <validate auto-label :class="fieldClassName(formState.city)">
+                        <validate auto-label>
                             <div class="input-field col s6">
-                                <input type="text" id="city" name="city" required
+                                <input type="text" id="city" name="city" required :class="fieldClassName(formData.city)"
                                        v-model="formData.city">
 
-                                <label :class="fieldClassName(formState.city)" for="city" data-error="" data-success="">City</label>
+                                <label :class="fieldClassName(formData.city)" for="city" data-error="" data-success="">City</label>
 
                                 <field-messages name="city" show="$untouched || $touched || $submitted">
 
@@ -86,12 +84,12 @@
                             </div>
                         </validate>
 
-                        <validate auto-label :class="fieldClassName(formState.state)">
+                        <validate auto-label>
                             <div class="input-field col s6">
-                                <input type="text" id="state" name="state"
+                                <input type="text" id="state" name="state" :class="fieldClassName(formData.state)"
                                        v-model="formData.state">
 
-                                <label :class="fieldClassName(formState.state)" for="state" data-error=""
+                                <label :class="fieldClassName(formData.state)" for="state" data-error=""
                                        data-success="">State</label>
 
                                 <field-messages name="state" show="$untouched || $touched || $submitted">
@@ -102,12 +100,12 @@
                     </div>
 
                     <div class="row">
-                        <validate auto-label :class="fieldClassName(formState.postal_code)">
+                        <validate auto-label>
                             <div class="input-field col s6">
-                                <input type="text" id="postal_code" name="postal_code"
+                                <input type="text" id="postal_code" name="postal_code" :class="fieldClassName(formData.postal_code)"
                                        required v-model="formData.postal_code">
 
-                                <label :class="fieldClassName(formState.postal_code)" for="postal_code" data-error=""
+                                <label :class="fieldClassName(formData.postal_code)" for="postal_code" data-error=""
                                        data-success="">Postal Code</label>
 
                                 <field-messages name="postal_code" show="$untouched || $touched || $submitted">
@@ -117,9 +115,9 @@
                             </div>
                         </validate>
 
-                        <validate auto-label :class="fieldClassName(formState.phone)">
+                        <validate auto-label>
                             <div class="input-field col s6">
-                                <input type="text" id="phone" name="phone"
+                                <input type="text" id="phone" name="phone" :class="fieldClassName(formData.phone)"
                                        v-model="formData.phone">
 
                                 <label :class="fieldClassName(formState.phone)" for="phone" data-error=""
@@ -133,12 +131,12 @@
                     </div>
 
                     <div class="row">
-                        <validate auto-label :class="fieldClassName(formState.fax)">
+                        <validate auto-label>
                             <div class="input-field col s6">
-                                <input type="text" id="fax" name="fax" required
+                                <input type="text" id="fax" name="fax" required :class="fieldClassName(formData.fax)"
                                        v-model="formData.fax">
 
-                                <label :class="fieldClassName(formState.fax)" for="fax" data-error="" data-success="">Fax</label>
+                                <label :class="fieldClassName(formData.fax)" for="fax" data-error="" data-success="">Fax</label>
 
                                 <field-messages name="fax" show="$untouched || $touched || $submitted">
 
@@ -147,12 +145,12 @@
                             </div>
                         </validate>
 
-                        <validate auto-label :class="fieldClassName(formState.emr_direct_address)">
+                        <validate auto-label>
                             <div class="input-field col s6">
-                                <input type="text" id="emr_direct_address" name="emr_direct_address"
+                                <input type="text" id="emr_direct_address" name="emr_direct_address" :class="fieldClassName(formData.emr_direct_address)"
                                        v-model="formData.emr_direct_address">
 
-                                <label :class="fieldClassName(formState.emr_direct_address)" for="emr_direct_address"
+                                <label :class="fieldClassName(formData.emr_direct_address)" for="emr_direct_address"
                                        data-error="" data-success="">EMR Direct Address</label>
 
                                 <field-messages name="emr_direct_address" show="$untouched || $touched || $submitted">
@@ -167,13 +165,13 @@
                             Please provide login information for your EHR system.
                         </h6>
 
-                        <validate auto-label :class="fieldClassName(formState.ehr_login)">
+                        <validate auto-label>
                             <div class="input-field col s6">
-                                <input type="text" id="ehr_login" name="ehr_login"
+                                <input type="text" id="ehr_login" name="ehr_login" :class="fieldClassName(formData.ehr_login)"
                                        required
                                        v-model="formData.ehr_login">
 
-                                <label :class="fieldClassName(formState.ehr_login)" for="ehr_login" data-error=""
+                                <label :class="fieldClassName(formData.ehr_login)" for="ehr_login" data-error=""
                                        data-success="">EHR Login</label>
 
                                 <field-messages name="ehr_login" show="$untouched || $touched || $submitted">
@@ -183,12 +181,12 @@
                             </div>
                         </validate>
 
-                        <validate auto-label :class="fieldClassName(formState.ehr_password)">
+                        <validate auto-label>
                             <div class="input-field col s6">
-                                <input type="text" id="ehr_password" name="ehr_password"
+                                <input type="text" id="ehr_password" name="ehr_password" :class="fieldClassName(formData.ehr_password)"
                                        v-model="formData.ehr_password">
 
-                                <label :class="fieldClassName(formState.ehr_password)" for="ehr_password"
+                                <label :class="fieldClassName(formData.ehr_password)" for="ehr_password"
                                        data-error="" data-success="">EHR Password</label>
 
                                 <field-messages name="ehr_password" show="$untouched || $touched || $submitted">
@@ -311,9 +309,30 @@
             this.formData = JSON.parse(JSON.stringify(this.location))
         },
 
+        computed: Object.assign(
+            mapGetters({
+                errors: 'errors'
+            })
+        ),
+
+        methods: Object.assign(
+            mapActions(['clearOpenModal', 'addNotification', 'updatePracticeLocation']),
+            {
+                submitForm() {
+                    this.updatePracticeLocation(this.formData)
+                },
+
+                fieldClassName(field) {
+                    return {
+                        active: field !== '' && field !== null,
+                        invalid: this.errors.get(field)
+                    }
+                },
+            }
+        ),
+
         data() {
             return {
-                resp: {},
                 formData: {
                     clinical_contact: {
                         email: '',
@@ -379,33 +398,6 @@
                 }]
             }
         },
-
-        computed: Object.assign(
-            mapGetters({
-                errors: 'errors'
-            })
-        ),
-
-        methods: Object.assign(
-            mapActions(['clearOpenModal', 'addNotification', 'updatePracticeLocation']),
-            {
-                submitForm() {
-                    this.updatePracticeLocation(this.formData)
-                },
-
-                fieldClassName(field) {
-                    if (!field) {
-                        return '';
-                    }
-                    if ((field.$touched || field.$submitted) && field.$valid) {
-                        return 'valid';
-                    }
-                    if ((field.$touched || field.$submitted) && field.$invalid) {
-                        return 'invalid';
-                    }
-                },
-            }
-        ),
     }
 </script>
 

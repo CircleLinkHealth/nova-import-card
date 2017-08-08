@@ -20,7 +20,7 @@
         </div>
 
         <grid
-                :data="formattedLocations"
+                :data="locations"
                 :options="gridOptions"
                 :filter-key="searchQuery"
                 @click="cellClicked">
@@ -45,17 +45,11 @@
         computed: Object.assign({},
             mapGetters({
                 locations: 'practiceLocations'
-            }),
-            {
-                formattedLocations() {
-                    return JSON.parse(JSON.stringify(this.gridData))
-                }
-            }
+            })
         ),
 
         created() {
             this.getPracticeLocations(this.practiceId)
-            this.gridData = this.locations
         },
 
         methods: Object.assign({},
@@ -75,18 +69,18 @@
                 },
 
                 deleteRow(index) {
-                    let disassociate = confirm('Are you sure you want to delete ' + this.gridData[index].name + '?');
+                    let disassociate = confirm('Are you sure you want to delete ' + this.locations[index].name + '?');
 
                     if (!disassociate) {
                         return true;
                     }
 
-                    this.gridData.splice(index, 1)
+                    this.locations.splice(index, 1)
                 },
 
                 editRow(index) {
                     this.compName = 'update-location'
-                    this.editedLocation = this.gridData[index]
+                    this.editedLocation = this.locations[index]
                     this.showModal = true
                 },
 
@@ -128,7 +122,6 @@
                     }
                 },
                 practiceId: $('meta[name=practice-id]').attr('content'),
-                gridData: []
             }
         },
     }

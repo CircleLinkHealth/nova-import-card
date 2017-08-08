@@ -31,10 +31,6 @@
             filterKey: String
         },
 
-        mounted() {
-
-        },
-
         data: function () {
             let sortOrders = {}
             _.mapValues(this.columns, (column, index) => {
