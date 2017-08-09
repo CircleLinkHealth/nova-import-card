@@ -149,6 +149,7 @@ class PracticeLocationsController extends Controller
 
         $location->emr_direct_address = $formData['emr_direct_address'];
 
+        //handle ehr login credentials
         $primaryPractice->same_ehr_login = false;
 
         if ($sameEHRLogin) {
@@ -161,47 +162,59 @@ class PracticeLocationsController extends Controller
             });
         }
 
+        //handle clinical contact
+        $this->handleClinicalContact($formData['clinical_contact'], $primaryPractice, $location);
+
         $primaryPractice->same_clinical_contact = false;
 
         if ($sameClinicalContact) {
             $primaryPractice->same_clinical_contact = true;
+
+            $primaryPractice->locations->map(function ($loc) use ($formData, $primaryPractice) {
+                $this->handleClinicalContact($formData['clinical_contact'], $primaryPractice, $loc);
+            });
         }
 
         $primaryPractice->save();
 
-        if ($formData['clinical_contact']['type'] == CarePerson::BILLING_PROVIDER) {
-            //clean up other contacts, just in case this was just set as the billing provider
-            $location->clinicalEmergencyContact()->sync([]);
-        } else {
-            $clinicalContactUser = User::whereEmail($formData['clinical_contact']['email'])
-                ->first();
-
-            if (!$clinicalContactUser) {
-                $clinicalContactUser = User::create([
-                    'program_id' => $primaryPractice->id,
-                    'email'      => $formData['clinical_contact']['email'],
-                    'first_name' => $formData['clinical_contact']['first_name'],
-                    'last_name'  => $formData['clinical_contact']['last_name'],
-                    'password'   => 'password_not_set',
-                ]);
-
-                $clinicalContactUser->attachPractice($primaryPractice);
-                $clinicalContactUser->attachLocation($location);
-
-                //clean up other contacts before adding the new one
-                $location->clinicalEmergencyContact()->sync([]);
-
-                $location->clinicalEmergencyContact()->attach($clinicalContactUser->id, [
-                    'name' => $formData['clinical_contact']['type'],
-                ]);
-            }
-        }
 
         if ($primaryPractice->lead) {
             $primaryPractice->lead->attachLocation($location);
         }
 
         return response()->json($this->present($location, $primaryPractice));
+    }
+
+    public function handleClinicalContact(array $clinicalContact, Practice $primaryPractice, Location $location)
+    {
+        //clean up other contacts
+        $location->clinicalEmergencyContact()->sync([]);
+
+        if ($clinicalContact['type'] == CarePerson::BILLING_PROVIDER) {
+            return;
+        }
+
+        $clinicalContactUser = User::whereEmail($clinicalContact['email'])->first();
+
+        if (!$clinicalContactUser) {
+            $clinicalContactUser = User::create([
+                'program_id' => $primaryPractice->id,
+                'email'      => $clinicalContact['email'],
+                'first_name' => $clinicalContact['first_name'],
+                'last_name'  => $clinicalContact['last_name'],
+                'password'   => 'password_not_set',
+            ]);
+        }
+
+        $clinicalContactUser->attachPractice($primaryPractice);
+        $clinicalContactUser->attachLocation($location);
+
+        //clean up other contacts before adding the new one
+        $location->clinicalEmergencyContact()->sync([]);
+
+        $location->clinicalEmergencyContact()->attach($clinicalContactUser->id, [
+            'name' => $clinicalContact['type'],
+        ]);
     }
 
     /**

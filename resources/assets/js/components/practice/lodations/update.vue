@@ -173,7 +173,7 @@
 
                 <p class="input-field col s4">
                     <input type="checkbox" class="filled-in" id="sameClinicalIssuesContact-box"
-                           v-model="formData.sameClinicalIssuesContact" checked="checked"/>
+                           v-model="formData.sameClinicalIssuesContact" :checked="formData.sameClinicalIssuesContact"/>
                     <label for="sameClinicalIssuesContact-box">Same for all locations?</label>
                 </p>
 
