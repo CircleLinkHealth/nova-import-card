@@ -20,11 +20,13 @@
 
                 <validate auto-label>
                     <div class="input-field col s6">
-                        <material-select v-model="formData.timezone" name="timezone"
+                        <material-select v-model="formData.timezone" name="timezone" id="timezone"
                                          :class="isValid(formData.timezone)">
                             <option v-for="option in timezoneOptions" :value="option.value"
                                     v-text="option.name"></option>
                         </material-select>
+
+                        <label for="timezone">Timezone</label>
 
                         <field-messages name="timezone" show="$untouched || $touched || $submitted">
                         </field-messages>
