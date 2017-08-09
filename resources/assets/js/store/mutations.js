@@ -84,6 +84,14 @@ export const UPDATE_PRACTICE_LOCATION = (state, location) => {
     })
 }
 
+export const DELETE_PRACTICE_LOCATION = (state, location) => {
+    state.practiceLocations.forEach((pracLoc, index) => {
+        if (pracLoc.id === location.id) {
+            state.practiceLocations.splice(index, 1);
+        }
+    })
+}
+
 export const CLEAR_ERROR = (state, field) => {
     state.errors.clear(field)
 }

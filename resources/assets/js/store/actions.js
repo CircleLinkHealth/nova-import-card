@@ -79,6 +79,21 @@ export const updatePracticeLocation = ({commit}, location) => {
     }, practiceId, location)
 }
 
+export const deletePracticeLocation = ({commit}, location) => {
+    let practiceId = location.practice_id
+
+    if (!practiceId) {
+        console.log('invalid practiceId')
+        return
+    }
+
+    practiceLocationsApi.delete(location => {
+        commit('DELETE_PRACTICE_LOCATION', location);
+    }, errors => {
+        commit('SET_ERRORS', errors)
+    }, practiceId, location)
+}
+
 export const getPatientCarePlan = ({commit}, patientId) => {
     if (!patientId) {
         return

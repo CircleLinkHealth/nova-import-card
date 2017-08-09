@@ -22,4 +22,15 @@ export default {
             (error) => ecb(error.response.data)
         );
     },
+
+    delete (cb, ecb = null, practiceId, location) {
+        if (!practiceId) {
+            return;
+        }
+
+        window.axios.delete('practice/' + practiceId + '/locations/' + location.id).then(
+            (resp) => cb(resp.data),
+            (error) => ecb(error.response.data)
+        );
+    },
 }
