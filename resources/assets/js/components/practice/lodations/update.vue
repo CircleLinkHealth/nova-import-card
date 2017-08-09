@@ -8,7 +8,7 @@
 
                 <div @click="submitForm()"
                      class="btn green waves-effect waves-light right">
-                    Save & Close
+                    Save
                 </div>
 
                 <div @click="close()"
@@ -263,6 +263,15 @@
             {
                 submitForm() {
                     this.updatePracticeLocation(this.formData)
+
+                    setTimeout(() => {
+                        if (!this.errors.any()) {
+                            Materialize.toast(this.formData.name + ' was successfully updated.', 3000)
+                            this.close()
+                        }
+                    }, 500);
+
+
                 },
 
                 isValid(field) {
@@ -278,6 +287,7 @@
                 },
 
                 close() {
+                    this.errors.clear()
                     this.$emit('update-view', 'index-locations', {})
                 }
             }
