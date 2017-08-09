@@ -56,10 +56,8 @@ export const getPracticeLocations = ({commit}, practiceId) => {
     }
 
     practiceLocationsApi.getPracticeLocations(practice => {
-        if (!practice) {
-            commit('CLEAR_PRACTICE_LOCATIONS');
-            return
-        }
+        commit('CLEAR_PRACTICE_LOCATIONS');
+
         commit('SET_PRACTICE_LOCATIONS', practice);
     }, (error) => {
         console.log(error)
