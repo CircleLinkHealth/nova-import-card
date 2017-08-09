@@ -224,8 +224,14 @@ class PracticeLocationsController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function destroy($id)
+    public function destroy($practiceId, $locationId)
     {
-        //
+        $loc = Location::find($locationId);
+
+        if ($loc) {
+            $loc->delete();
+        }
+
+        return response()->json($loc);
     }
 }

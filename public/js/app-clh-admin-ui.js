@@ -10997,6 +10997,7 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "destroyCarePerson", function() { return destroyCarePerson; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "getPracticeLocations", function() { return getPracticeLocations; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "updatePracticeLocation", function() { return updatePracticeLocation; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "deletePracticeLocation", function() { return deletePracticeLocation; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "getPatientCarePlan", function() { return getPatientCarePlan; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "destroyPdf", function() { return destroyPdf; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "uploadPdfCarePlan", function() { return uploadPdfCarePlan; });
@@ -11105,8 +11106,25 @@ var updatePracticeLocation = function updatePracticeLocation(_ref9, location) {
     }, practiceId, location);
 };
 
-var getPatientCarePlan = function getPatientCarePlan(_ref10, patientId) {
+var deletePracticeLocation = function deletePracticeLocation(_ref10, location) {
     var commit = _ref10.commit;
+
+    var practiceId = location.practice_id;
+
+    if (!practiceId) {
+        console.log('invalid practiceId');
+        return;
+    }
+
+    __WEBPACK_IMPORTED_MODULE_2__api_practice_location__["a" /* default */].delete(function (location) {
+        commit('DELETE_PRACTICE_LOCATION', location);
+    }, function (errors) {
+        commit('SET_ERRORS', errors);
+    }, practiceId, location);
+};
+
+var getPatientCarePlan = function getPatientCarePlan(_ref11, patientId) {
+    var commit = _ref11.commit;
 
     if (!patientId) {
         return;
@@ -11121,8 +11139,8 @@ var getPatientCarePlan = function getPatientCarePlan(_ref10, patientId) {
     }, null, patientId);
 };
 
-var destroyPdf = function destroyPdf(_ref11, pdfId) {
-    var commit = _ref11.commit;
+var destroyPdf = function destroyPdf(_ref12, pdfId) {
+    var commit = _ref12.commit;
 
     if (!pdfId) {
         return;
@@ -11133,8 +11151,8 @@ var destroyPdf = function destroyPdf(_ref11, pdfId) {
     }, null, pdfId);
 };
 
-var uploadPdfCarePlan = function uploadPdfCarePlan(_ref12, formData) {
-    var commit = _ref12.commit;
+var uploadPdfCarePlan = function uploadPdfCarePlan(_ref13, formData) {
+    var commit = _ref13.commit;
 
     if (!formData) {
         return;
@@ -11145,8 +11163,8 @@ var uploadPdfCarePlan = function uploadPdfCarePlan(_ref12, formData) {
     }, null, formData);
 };
 
-var clearErrors = function clearErrors(_ref13, field) {
-    var commit = _ref13.commit;
+var clearErrors = function clearErrors(_ref14, field) {
+    var commit = _ref14.commit;
 
     commit('CLEAR_ERROR', field);
 };
@@ -41642,6 +41660,21 @@ var state = {
         }, function (error) {
             return ecb(error.response.data);
         });
+    },
+    delete: function _delete(cb) {
+        var ecb = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : null;
+        var practiceId = arguments[2];
+        var location = arguments[3];
+
+        if (!practiceId) {
+            return;
+        }
+
+        window.axios.delete('practice/' + practiceId + '/locations/' + location.id).then(function (resp) {
+            return cb(resp.data);
+        }, function (error) {
+            return ecb(error.response.data);
+        });
     }
 });
 
@@ -41734,6 +41767,7 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "CLEAR_PRACTICE_LOCATIONS", function() { return CLEAR_PRACTICE_LOCATIONS; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "SET_PRACTICE_LOCATIONS", function() { return SET_PRACTICE_LOCATIONS; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "UPDATE_PRACTICE_LOCATION", function() { return UPDATE_PRACTICE_LOCATION; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "DELETE_PRACTICE_LOCATION", function() { return DELETE_PRACTICE_LOCATION; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "CLEAR_ERROR", function() { return CLEAR_ERROR; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "SET_ERRORS", function() { return SET_ERRORS; });
 var DESTROY_CARE_PERSON = function DESTROY_CARE_PERSON(state, carePerson) {
@@ -41818,6 +41852,14 @@ var UPDATE_PRACTICE_LOCATION = function UPDATE_PRACTICE_LOCATION(state, location
     state.practiceLocations.forEach(function (pracLoc, index) {
         if (pracLoc.id === location.id) {
             state.practiceLocations[index] = location;
+        }
+    });
+};
+
+var DELETE_PRACTICE_LOCATION = function DELETE_PRACTICE_LOCATION(state, location) {
+    state.practiceLocations.forEach(function (pracLoc, index) {
+        if (pracLoc.id === location.id) {
+            state.practiceLocations.splice(index, 1);
         }
     });
 };

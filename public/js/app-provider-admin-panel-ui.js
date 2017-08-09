@@ -10997,6 +10997,7 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "destroyCarePerson", function() { return destroyCarePerson; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "getPracticeLocations", function() { return getPracticeLocations; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "updatePracticeLocation", function() { return updatePracticeLocation; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "deletePracticeLocation", function() { return deletePracticeLocation; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "getPatientCarePlan", function() { return getPatientCarePlan; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "destroyPdf", function() { return destroyPdf; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "uploadPdfCarePlan", function() { return uploadPdfCarePlan; });
@@ -11105,8 +11106,25 @@ var updatePracticeLocation = function updatePracticeLocation(_ref9, location) {
     }, practiceId, location);
 };
 
-var getPatientCarePlan = function getPatientCarePlan(_ref10, patientId) {
+var deletePracticeLocation = function deletePracticeLocation(_ref10, location) {
     var commit = _ref10.commit;
+
+    var practiceId = location.practice_id;
+
+    if (!practiceId) {
+        console.log('invalid practiceId');
+        return;
+    }
+
+    __WEBPACK_IMPORTED_MODULE_2__api_practice_location__["a" /* default */].delete(function (location) {
+        commit('DELETE_PRACTICE_LOCATION', location);
+    }, function (errors) {
+        commit('SET_ERRORS', errors);
+    }, practiceId, location);
+};
+
+var getPatientCarePlan = function getPatientCarePlan(_ref11, patientId) {
+    var commit = _ref11.commit;
 
     if (!patientId) {
         return;
@@ -11121,8 +11139,8 @@ var getPatientCarePlan = function getPatientCarePlan(_ref10, patientId) {
     }, null, patientId);
 };
 
-var destroyPdf = function destroyPdf(_ref11, pdfId) {
-    var commit = _ref11.commit;
+var destroyPdf = function destroyPdf(_ref12, pdfId) {
+    var commit = _ref12.commit;
 
     if (!pdfId) {
         return;
@@ -11133,8 +11151,8 @@ var destroyPdf = function destroyPdf(_ref11, pdfId) {
     }, null, pdfId);
 };
 
-var uploadPdfCarePlan = function uploadPdfCarePlan(_ref12, formData) {
-    var commit = _ref12.commit;
+var uploadPdfCarePlan = function uploadPdfCarePlan(_ref13, formData) {
+    var commit = _ref13.commit;
 
     if (!formData) {
         return;
@@ -11145,8 +11163,8 @@ var uploadPdfCarePlan = function uploadPdfCarePlan(_ref12, formData) {
     }, null, formData);
 };
 
-var clearErrors = function clearErrors(_ref13, field) {
-    var commit = _ref13.commit;
+var clearErrors = function clearErrors(_ref14, field) {
+    var commit = _ref14.commit;
 
     commit('CLEAR_ERROR', field);
 };
@@ -41642,6 +41660,21 @@ var state = {
         }, function (error) {
             return ecb(error.response.data);
         });
+    },
+    delete: function _delete(cb) {
+        var ecb = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : null;
+        var practiceId = arguments[2];
+        var location = arguments[3];
+
+        if (!practiceId) {
+            return;
+        }
+
+        window.axios.delete('practice/' + practiceId + '/locations/' + location.id).then(function (resp) {
+            return cb(resp.data);
+        }, function (error) {
+            return ecb(error.response.data);
+        });
     }
 });
 
@@ -41734,6 +41767,7 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "CLEAR_PRACTICE_LOCATIONS", function() { return CLEAR_PRACTICE_LOCATIONS; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "SET_PRACTICE_LOCATIONS", function() { return SET_PRACTICE_LOCATIONS; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "UPDATE_PRACTICE_LOCATION", function() { return UPDATE_PRACTICE_LOCATION; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "DELETE_PRACTICE_LOCATION", function() { return DELETE_PRACTICE_LOCATION; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "CLEAR_ERROR", function() { return CLEAR_ERROR; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "SET_ERRORS", function() { return SET_ERRORS; });
 var DESTROY_CARE_PERSON = function DESTROY_CARE_PERSON(state, carePerson) {
@@ -41818,6 +41852,14 @@ var UPDATE_PRACTICE_LOCATION = function UPDATE_PRACTICE_LOCATION(state, location
     state.practiceLocations.forEach(function (pracLoc, index) {
         if (pracLoc.id === location.id) {
             state.practiceLocations[index] = location;
+        }
+    });
+};
+
+var DELETE_PRACTICE_LOCATION = function DELETE_PRACTICE_LOCATION(state, location) {
+    state.practiceLocations.forEach(function (pracLoc, index) {
+        if (pracLoc.id === location.id) {
+            state.practiceLocations.splice(index, 1);
         }
     });
 };
@@ -55392,7 +55434,7 @@ exports = module.exports = __webpack_require__(5)(true);
 
 
 // module
-exports.push([module.i, "\n.admin-panel-locations-container .input-field {\n    margin-top: 0;\n}\nth.th-trash, td.td-trash, th.th-edit, td.td-edit {\n    /*background: none;*/\n    width: 10px;\n    min-width: 5px;\n    padding: 10px 0;\n}\n", "", {"version":3,"sources":["/Users/michalis/Code/CLH/cpm-api/resources/assets/js/components/practice/lodations/index.vue?a350779e"],"names":[],"mappings":";AAsHA;IACA,cAAA;CACA;AAEA;IACA,qBAAA;IACA,YAAA;IACA,eAAA;IACA,gBAAA;CACA","file":"index.vue","sourcesContent":["<template>\n    <div class=\"admin-panel-locations-container\" v-cloak>\n        <div class=\"row\">\n            <div class=\"col s6\">\n                <div class=\"input-field\">\n                    <div @click=\"addLocation()\"\n                         class=\"btn blue waves-effect waves-light\" id=\"submit\">\n                        Add New Location\n                    </div>\n                </div>\n            </div>\n\n            <div class=\"col s6\">\n                <div class=\"input-field\">\n                    <i class=\"material-icons\" style=\"position: absolute;top: 0.7rem;\">search</i>\n                    <input id=\"search\" type=\"search\" name=\"query\" v-model=\"searchQuery\"\n                           placeholder=\"search for a location\">\n                    <i class=\"material-icons\" @click=\"searchQuery = ''\">close</i></div>\n            </div>\n        </div>\n\n        <grid\n                :data=\"locations\"\n                :options=\"gridOptions\"\n                :filter-key=\"searchQuery\"\n                @click=\"cellClicked\">\n        </grid>\n    </div>\n</template>\n\n<script>\n    import {mapGetters, mapActions} from 'vuex'\n    import {practiceLocations} from '../../../store/getters'\n    import {getPracticeLocations} from '../../../store/actions'\n\n    export default {\n        computed: Object.assign({},\n            mapGetters({\n                locations: 'practiceLocations'\n            })\n        ),\n\n        mounted() {\n            this.getPracticeLocations(this.practiceId)\n        },\n\n        methods: Object.assign({},\n            mapActions(['getPracticeLocations']),\n            {\n                cellClicked(index, entry, entryIndex) {\n                    switch (index) {\n                        case 'trash':\n                            this.deleteRow(entryIndex)\n                            break;\n                        case 'edit':\n                            this.editRow(entryIndex)\n                            break;\n                        default:\n                            break;\n                    }\n                },\n\n                deleteRow(index) {\n                    let disassociate = confirm('Are you sure you want to delete ' + this.locations[index].name + '?');\n\n                    if (!disassociate) {\n                        return true;\n                    }\n\n                    this.locations.splice(index, 1)\n                },\n\n                editRow(index) {\n                    this.$emit('update-view', 'update-location', this.locations[index])\n                },\n\n                addLocation() {\n                    this.$emit('update-view', 'update-location')\n                }\n            }),\n\n        data() {\n            return {\n                compName: '',\n                showModal: false,\n                editedLocation: {},\n                searchQuery: '',\n                gridOptions: {\n                    columns: {\n                        edit: {\n                            name: '',\n                            content: '<a class=\"green waves-effect waves-light btn\" style=\"padding: 0 .4rem;\"><i class=\"material-icons center\">mode_edit</i></a>'\n                        },\n                        trash: {\n                            name: '',\n                            content: '<a class=\"red waves-effect waves-light btn\" style=\"padding: 0 .4rem;\"><i class=\"material-icons center text-white\">clear</i></a>',\n                        },\n                        name: {\n                            name: 'Name'\n                        },\n                        address_line_1: {\n                            name: 'Address Line 1'\n                        },\n                        city: {\n                            name: 'City'\n                        },\n                        state: {\n                            name: 'State'\n                        },\n                    }\n                },\n                practiceId: $('meta[name=practice-id]').attr('content'),\n            }\n        },\n    }\n</script>\n\n<style>\n    .admin-panel-locations-container .input-field {\n        margin-top: 0;\n    }\n\n    th.th-trash, td.td-trash, th.th-edit, td.td-edit {\n        /*background: none;*/\n        width: 10px;\n        min-width: 5px;\n        padding: 10px 0;\n    }\n</style>"],"sourceRoot":""}]);
+exports.push([module.i, "\n.admin-panel-locations-container .input-field {\n    margin-top: 0;\n}\nth.th-trash, td.td-trash, th.th-edit, td.td-edit {\n    /*background: none;*/\n    width: 10px;\n    min-width: 5px;\n    padding: 10px 0;\n}\n", "", {"version":3,"sources":["/Users/michalis/Code/CLH/cpm-api/resources/assets/js/components/practice/lodations/index.vue?2e4856b1"],"names":[],"mappings":";AAsHA;IACA,cAAA;CACA;AAEA;IACA,qBAAA;IACA,YAAA;IACA,eAAA;IACA,gBAAA;CACA","file":"index.vue","sourcesContent":["<template>\n    <div class=\"admin-panel-locations-container\" v-cloak>\n        <div class=\"row\">\n            <div class=\"col s6\">\n                <div class=\"input-field\">\n                    <div @click=\"addLocation()\"\n                         class=\"btn blue waves-effect waves-light\" id=\"submit\">\n                        Add New Location\n                    </div>\n                </div>\n            </div>\n\n            <div class=\"col s6\">\n                <div class=\"input-field\">\n                    <i class=\"material-icons\" style=\"position: absolute;top: 0.7rem;\">search</i>\n                    <input id=\"search\" type=\"search\" name=\"query\" v-model=\"searchQuery\"\n                           placeholder=\"search for a location\">\n                    <i class=\"material-icons\" @click=\"searchQuery = ''\">close</i></div>\n            </div>\n        </div>\n\n        <grid\n                :data=\"locations\"\n                :options=\"gridOptions\"\n                :filter-key=\"searchQuery\"\n                @click=\"cellClicked\">\n        </grid>\n    </div>\n</template>\n\n<script>\n    import {mapGetters, mapActions} from 'vuex'\n    import {practiceLocations} from '../../../store/getters'\n    import {getPracticeLocations, deletePracticeLocation} from '../../../store/actions'\n\n    export default {\n        computed: Object.assign({},\n            mapGetters({\n                locations: 'practiceLocations'\n            })\n        ),\n\n        mounted() {\n            this.getPracticeLocations(this.practiceId)\n        },\n\n        methods: Object.assign({},\n            mapActions(['getPracticeLocations', 'deletePracticeLocation']),\n            {\n                cellClicked(index, entry, entryIndex) {\n                    switch (index) {\n                        case 'trash':\n                            this.deleteRow(entryIndex)\n                            break;\n                        case 'edit':\n                            this.editRow(entryIndex)\n                            break;\n                        default:\n                            break;\n                    }\n                },\n\n                deleteRow(index) {\n                    let disassociate = confirm('Are you sure you want to delete ' + this.locations[index].name + '?');\n\n                    if (!disassociate) {\n                        return true;\n                    }\n\n                    this.deletePracticeLocation(this.locations[index])\n                },\n\n                editRow(index) {\n                    this.$emit('update-view', 'update-location', this.locations[index])\n                },\n\n                addLocation() {\n                    this.$emit('update-view', 'update-location')\n                }\n            }),\n\n        data() {\n            return {\n                compName: '',\n                showModal: false,\n                editedLocation: {},\n                searchQuery: '',\n                gridOptions: {\n                    columns: {\n                        edit: {\n                            name: '',\n                            content: '<a class=\"green waves-effect waves-light btn\" style=\"padding: 0 .4rem;\"><i class=\"material-icons center\">mode_edit</i></a>'\n                        },\n                        trash: {\n                            name: '',\n                            content: '<a class=\"red waves-effect waves-light btn\" style=\"padding: 0 .4rem;\"><i class=\"material-icons center text-white\">clear</i></a>',\n                        },\n                        name: {\n                            name: 'Name'\n                        },\n                        address_line_1: {\n                            name: 'Address Line 1'\n                        },\n                        city: {\n                            name: 'City'\n                        },\n                        state: {\n                            name: 'State'\n                        },\n                    }\n                },\n                practiceId: $('meta[name=practice-id]').attr('content'),\n            }\n        },\n    }\n</script>\n\n<style>\n    .admin-panel-locations-container .input-field {\n        margin-top: 0;\n    }\n\n    th.th-trash, td.td-trash, th.th-edit, td.td-edit {\n        /*background: none;*/\n        width: 10px;\n        min-width: 5px;\n        padding: 10px 0;\n    }\n</style>"],"sourceRoot":""}]);
 
 // exports
 
@@ -55451,7 +55493,7 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
     },
 
 
-    methods: Object.assign({}, __WEBPACK_IMPORTED_MODULE_0_vuex__["b" /* mapActions */](['getPracticeLocations']), {
+    methods: Object.assign({}, __WEBPACK_IMPORTED_MODULE_0_vuex__["b" /* mapActions */](['getPracticeLocations', 'deletePracticeLocation']), {
         cellClicked: function cellClicked(index, entry, entryIndex) {
             switch (index) {
                 case 'trash':
@@ -55471,7 +55513,7 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
                 return true;
             }
 
-            this.locations.splice(index, 1);
+            this.deletePracticeLocation(this.locations[index]);
         },
         editRow: function editRow(index) {
             this.$emit('update-view', 'update-location', this.locations[index]);
