@@ -22,9 +22,9 @@ window.Vue.use(VueForm, {
     }
 });
 
-Vue.component('createPracticeLocation', require('./components/practice/lodations/create.vue'));
-Vue.component('updatePracticeLocation', require('./components/practice/lodations/update.vue'));
-Vue.component('indexPracticeLocations', require('./components/practice/lodations/index.vue'));
+Vue.component('v-input', require('./components/shared/materialize/input.vue'))
+
+Vue.component('managePracticeLocations', require('./components/pages/provider-admin-panel/manage-practice-locations.vue'));
 Vue.component('select2', require('./components/src/select2'));
 Vue.component('openModal', require('./components/shared/open-modal.vue'));
 Vue.component('notifications', require('./components/shared/notifications/notifications.vue'));

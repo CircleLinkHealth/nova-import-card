@@ -48215,8 +48215,71 @@ module.exports = Component.exports
 /* 77 */,
 /* 78 */,
 /* 79 */,
-/* 80 */,
-/* 81 */,
+/* 80 */
+/***/ (function(module, exports, __webpack_require__) {
+
+var disposed = false
+var Component = __webpack_require__(1)(
+  /* script */
+  __webpack_require__(81),
+  /* template */
+  null,
+  /* styles */
+  null,
+  /* scopeId */
+  null,
+  /* moduleIdentifier (server only) */
+  null
+)
+Component.options.__file = "/Users/michalis/Code/CLH/cpm-api/resources/assets/js/components/shared/component-proxy.vue"
+if (Component.esModule && Object.keys(Component.esModule).some(function (key) {return key !== "default" && key.substr(0, 2) !== "__"})) {console.error("named exports are not supported in *.vue files.")}
+
+/* hot reload */
+if (false) {(function () {
+  var hotAPI = require("vue-hot-reload-api")
+  hotAPI.install(require("vue"), false)
+  if (!hotAPI.compatible) return
+  module.hot.accept()
+  if (!module.hot.data) {
+    hotAPI.createRecord("data-v-20e728ae", Component.options)
+  } else {
+    hotAPI.reload("data-v-20e728ae", Component.options)
+  }
+  module.hot.dispose(function (data) {
+    disposed = true
+  })
+})()}
+
+module.exports = Component.exports
+
+
+/***/ }),
+/* 81 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
+
+/* harmony default export */ __webpack_exports__["default"] = ({
+    props: {
+        name: {
+            type: String,
+            required: true
+        },
+        props: {
+            type: Object,
+            default: function _default() {}
+        }
+    },
+
+    render: function render(createElem) {
+        return createElem(this.name, {
+            attrs: this.props
+        });
+    }
+});
+
+/***/ }),
 /* 82 */,
 /* 83 */,
 /* 84 */,
@@ -48299,9 +48362,9 @@ window.Vue.use(__WEBPACK_IMPORTED_MODULE_0_vue_form___default.a, {
     }
 });
 
-Vue.component('createPracticeLocation', __webpack_require__(131));
-Vue.component('updatePracticeLocation', __webpack_require__(71));
-Vue.component('indexPracticeLocations', __webpack_require__(144));
+Vue.component('v-input', __webpack_require__(163));
+
+Vue.component('managePracticeLocations', __webpack_require__(160));
 Vue.component('select2', __webpack_require__(49));
 Vue.component('openModal', __webpack_require__(53));
 Vue.component('notifications', __webpack_require__(56));
@@ -53710,7 +53773,7 @@ exports = module.exports = __webpack_require__(5)(true);
 
 
 // module
-exports.push([module.i, "\n.valid {\n}\n.invalid {\n    border-bottom: 1px solid #f44336;\n    box-shadow: 0 1px 0 0 #f44336;\n}\n", "", {"version":3,"sources":["/Users/michalis/Code/CLH/cpm-api/resources/assets/js/components/practice/lodations/update.vue?27841802"],"names":[],"mappings":";AAoZA;CAEA;AAEA;IACA,iCAAA;IACA,8BAAA;CACA","file":"update.vue","sourcesContent":["<template>\n    <div>\n        <modal v-if=\"show\">\n            <template slot=\"header\">\n                <div class=\"row\">\n                    <div class=\"col s12\">\n                        <p class=\"modal-title\">Edit Location</p>\n                        <a class=\"close-button\" @click=\"$emit('close-modal')\">×</a>\n                    </div>\n                </div>\n            </template>\n\n            <template slot=\"body\">\n                <vue-form :state=\"formState\" @submit.prevent=\"onSubmit\">\n                    <div class=\"row\">\n                        <validate auto-label>\n                            <div class=\"input-field col s6\">\n                                <input type=\"text\" id=\"name\" name=\"name\" :class=\"fieldClassName(formData.name)\"\n                                       required\n                                       v-model=\"formData.name\">\n\n                                <label :class=\"fieldClassName(formData.name)\" for=\"name\" :data-error=\"errors.get('name')\"\n                                       data-success=\" \">Name</label>\n\n                                <field-messages name=\"name\" show=\"$untouched || $touched || $submitted\">\n                                </field-messages>\n                            </div>\n                        </validate>\n\n                        <validate auto-label>\n                            <div class=\"input-field col s6\">\n                                <material-select v-model=\"formData.timezone\" name=\"timezone\" :class=\"fieldClassName(formData.timezone)\">\n                                    <option v-for=\"option in timezoneOptions\" :value=\"option.value\"\n                                            v-text=\"option.name\"></option>\n                                </material-select>\n\n                                <field-messages name=\"timezone\" show=\"$untouched || $touched || $submitted\">\n                                </field-messages>\n                            </div>\n                        </validate>\n                    </div>\n\n                    <div class=\"row\">\n                        <validate auto-label>\n                            <div class=\"input-field col s6\">\n                                <input type=\"text\" id=\"address_line_1\" name=\"address_line_1\"\n                                       :class=\"fieldClassName(formData.address_line_1)\"\n                                       v-model=\"formData.address_line_1\">\n\n                                <label :class=\"fieldClassName(formData.address_line_1)\" for=\"address_line_1\"\n                                       :data-error=\"errors.get('address_line_1')\" data-success=\"\">Address Line 1</label>\n\n                                <field-messages name=\"address_line_1\" show=\"$untouched || $touched || $submitted\">\n                                </field-messages>\n                            </div>\n                        </validate>\n\n                        <validate auto-label>\n                            <div class=\"input-field col s6\">\n                                <input type=\"text\" id=\"address_line_2\" name=\"address_line_2\" :class=\"fieldClassName(formData.address_line_2)\"\n                                       v-model=\"formData.address_line_2\">\n\n                                <label :class=\"fieldClassName(formData.address_line_2)\" for=\"address_line_2\"\n                                       data-error=\"\" data-success=\"\">Address Line 2</label>\n\n                                <field-messages name=\"address_line_2\" show=\"$untouched || $touched || $submitted\">\n\n                                </field-messages>\n                            </div>\n                        </validate>\n                    </div>\n\n                    <div class=\"row\">\n                        <validate auto-label>\n                            <div class=\"input-field col s6\">\n                                <input type=\"text\" id=\"city\" name=\"city\" required :class=\"fieldClassName(formData.city)\"\n                                       v-model=\"formData.city\">\n\n                                <label :class=\"fieldClassName(formData.city)\" for=\"city\" data-error=\"\" data-success=\"\">City</label>\n\n                                <field-messages name=\"city\" show=\"$untouched || $touched || $submitted\">\n\n                                </field-messages>\n                            </div>\n                        </validate>\n\n                        <validate auto-label>\n                            <div class=\"input-field col s6\">\n                                <input type=\"text\" id=\"state\" name=\"state\" :class=\"fieldClassName(formData.state)\"\n                                       v-model=\"formData.state\">\n\n                                <label :class=\"fieldClassName(formData.state)\" for=\"state\" data-error=\"\"\n                                       data-success=\"\">State</label>\n\n                                <field-messages name=\"state\" show=\"$untouched || $touched || $submitted\">\n\n                                </field-messages>\n                            </div>\n                        </validate>\n                    </div>\n\n                    <div class=\"row\">\n                        <validate auto-label>\n                            <div class=\"input-field col s6\">\n                                <input type=\"text\" id=\"postal_code\" name=\"postal_code\" :class=\"fieldClassName(formData.postal_code)\"\n                                       required v-model=\"formData.postal_code\">\n\n                                <label :class=\"fieldClassName(formData.postal_code)\" for=\"postal_code\" data-error=\"\"\n                                       data-success=\"\">Postal Code</label>\n\n                                <field-messages name=\"postal_code\" show=\"$untouched || $touched || $submitted\">\n\n\n                                </field-messages>\n                            </div>\n                        </validate>\n\n                        <validate auto-label>\n                            <div class=\"input-field col s6\">\n                                <input type=\"text\" id=\"phone\" name=\"phone\" :class=\"fieldClassName(formData.phone)\"\n                                       v-model=\"formData.phone\">\n\n                                <label :class=\"fieldClassName(formState.phone)\" for=\"phone\" data-error=\"\"\n                                       data-success=\"\">Phone</label>\n\n                                <field-messages name=\"phone\" show=\"$untouched || $touched || $submitted\">\n\n                                </field-messages>\n                            </div>\n                        </validate>\n                    </div>\n\n                    <div class=\"row\">\n                        <validate auto-label>\n                            <div class=\"input-field col s6\">\n                                <input type=\"text\" id=\"fax\" name=\"fax\" required :class=\"fieldClassName(formData.fax)\"\n                                       v-model=\"formData.fax\">\n\n                                <label :class=\"fieldClassName(formData.fax)\" for=\"fax\" data-error=\"\" data-success=\"\">Fax</label>\n\n                                <field-messages name=\"fax\" show=\"$untouched || $touched || $submitted\">\n\n\n                                </field-messages>\n                            </div>\n                        </validate>\n\n                        <validate auto-label>\n                            <div class=\"input-field col s6\">\n                                <input type=\"text\" id=\"emr_direct_address\" name=\"emr_direct_address\" :class=\"fieldClassName(formData.emr_direct_address)\"\n                                       v-model=\"formData.emr_direct_address\">\n\n                                <label :class=\"fieldClassName(formData.emr_direct_address)\" for=\"emr_direct_address\"\n                                       data-error=\"\" data-success=\"\">EMR Direct Address</label>\n\n                                <field-messages name=\"emr_direct_address\" show=\"$untouched || $touched || $submitted\">\n\n                                </field-messages>\n                            </div>\n                        </validate>\n                    </div>\n\n                    <div class=\"row\" v-if=\"!formData.sameEHRLogin\">\n                        <h6 class=\"col s12\">\n                            Please provide login information for your EHR system.\n                        </h6>\n\n                        <validate auto-label>\n                            <div class=\"input-field col s6\">\n                                <input type=\"text\" id=\"ehr_login\" name=\"ehr_login\" :class=\"fieldClassName(formData.ehr_login)\"\n                                       required\n                                       v-model=\"formData.ehr_login\">\n\n                                <label :class=\"fieldClassName(formData.ehr_login)\" for=\"ehr_login\" data-error=\"\"\n                                       data-success=\"\">EHR Login</label>\n\n                                <field-messages name=\"ehr_login\" show=\"$untouched || $touched || $submitted\">\n\n                                    <div class=\"validation-error has-errors \" slot=\"required\"></div>\n                                </field-messages>\n                            </div>\n                        </validate>\n\n                        <validate auto-label>\n                            <div class=\"input-field col s6\">\n                                <input type=\"text\" id=\"ehr_password\" name=\"ehr_password\" :class=\"fieldClassName(formData.ehr_password)\"\n                                       v-model=\"formData.ehr_password\">\n\n                                <label :class=\"fieldClassName(formData.ehr_password)\" for=\"ehr_password\"\n                                       data-error=\"\" data-success=\"\">EHR Password</label>\n\n                                <field-messages name=\"ehr_password\" show=\"$untouched || $touched || $submitted\">\n                                </field-messages>\n                            </div>\n                        </validate>\n\n                        <p class=\"right\">\n                            <input type=\"checkbox\" class=\"filled-in\" id=\"sameEHRLogin-box\"\n                                   v-model=\"formData.sameEHRLogin\" checked=\"checked\"/>\n                            <label for=\"sameEHRLogin-box\">Same for all locations?</label>\n                        </p>\n                    </div>\n\n                    <div class=\"row\" v-if=\"!formData.sameClinicalIssuesContact\">\n                        <h6 class=\"col s12\">\n                            Who should be notified for patient clinical issues?\n                        </h6>\n\n                        <div class=\"col s12\">\n                            <material-select v-model=\"formData.clinical_contact.type\" class=\"input-field\"\n                                             name=\"ehr_login\">\n                                <option v-for=\"option in clinicalContactOptions\" :value=\"option.value\"\n                                        v-text=\"option.name\"></option>\n                            </material-select>\n                        </div>\n\n                        <div v-show=\"formData.clinical_contact.type !== 'billing_provider'\">\n\n                                <validate auto-label :class=\"fieldClassName()\">\n                                    <div class=\"input-field col s6\">\n                                        <input type=\"text\" id=\"clinical-contact-first-name\"\n                                               name=\"clinical-contact-first-name\" required\n                                               v-model=\"formData.clinical_contact.first_name\">\n\n                                        <label :class=\"fieldClassName()\" for=\"clinical-contact-first-name\" data-error=\"\"\n                                               data-success=\"\">First Name</label>\n\n                                        <field-messages name=\"clinical-contact-first-name\"\n                                                        show=\"$untouched || $touched || $submitted\">\n                                        </field-messages>\n                                    </div>\n                                </validate>\n\n                                <validate auto-label :class=\"fieldClassName()\">\n                                    <div class=\"input-field col s6\">\n                                        <input type=\"text\" id=\"clinical_contact.last_name\"\n                                               name=\"clinical_contact.last_name\"\n\n                                               v-model=\"formData.clinical_contact.last_name\">\n\n                                        <label :class=\"fieldClassName()\" for=\"clinical_contact.last_name\"\n                                               data-error=\"\" data-success=\"\">Last Name</label>\n\n                                        <field-messages name=\"clinical_contact.last_name\"\n                                                        show=\"$untouched || $touched || $submitted\">\n                                        </field-messages>\n                                    </div>\n                                </validate>\n\n                            <validate auto-label>\n                                <div class=\"input-field col s12\">\n                                    <input type=\"text\" id=\"clinical_contact_email\" name=\"clinical_contact.email\"\n                                           :class=\"{active: formData.clinical_contact.email, invalid: errors.get('clinical_contact.email')}\"\n                                           v-model=\"formData.clinical_contact.email\">\n\n                                    <label for=\"clinical_contact_email\"\n                                           :data-error=\"errors.get('clinical_contact.email')\"\n                                           data-success=\"\">Email</label>\n\n                                    <field-messages name=\"name\" show=\"$untouched || $touched || $submitted\">\n                                    </field-messages>\n                                </div>\n                            </validate>\n                        </div>\n\n                        <p class=\"right\">\n                            <input type=\"checkbox\" class=\"filled-in\" id=\"sameClinicalIssuesContact-box\"\n                                   v-model=\"formData.sameClinicalIssuesContact\" checked=\"checked\"/>\n                            <label for=\"sameClinicalIssuesContact-box\">Same for all locations?</label>\n                        </p>\n                    </div>\n\n                    <div @click=\"submitForm()\"\n                         class=\"btn blue waves-effect waves-light right\">\n                        Save\n                    </div>\n                </vue-form>\n            </template>\n\n            <template slot=\"footer\">\n\n            </template>\n        </modal>\n    </div>\n</template>\n\n<script>\n    import modal from '../../shared/materialize/modal.vue';\n    import {mapGetters, mapActions} from 'vuex'\n    import {clearOpenModal, addNotification, updatePracticeLocation} from '../../../store/actions'\n    import {errors} from '../../../store/getters'\n    import MaterialSelect from '../../src/material-select.vue'\n\n    export default {\n        props: {\n            show: {\n                type: Boolean,\n                default: false\n            },\n            location: Object\n        },\n\n        components: {\n            modal,\n            MaterialSelect\n        },\n\n        created() {\n            this.formData = JSON.parse(JSON.stringify(this.location))\n        },\n\n        computed: Object.assign(\n            mapGetters({\n                errors: 'errors'\n            })\n        ),\n\n        methods: Object.assign(\n            mapActions(['clearOpenModal', 'addNotification', 'updatePracticeLocation']),\n            {\n                submitForm() {\n                    this.updatePracticeLocation(this.formData)\n                },\n\n                fieldClassName(field) {\n                    return {\n                        active: field !== '' && field !== null,\n                        invalid: this.errors.get(field)\n                    }\n                },\n            }\n        ),\n\n        data() {\n            return {\n                formData: {\n                    clinical_contact: {\n                        email: '',\n                        first_name: '',\n                        last_name: '',\n                        type: 'billing_provider'\n                    },\n                    timezone: 'America/New_York',\n                    ehr_password: '',\n                    city: '',\n                    address_line_1: '',\n                    address_line_2: '',\n                    ehr_login: '',\n                    errorCount: 0,\n                    isComplete: false,\n                    name: '',\n                    phone: '',\n                    fax: '',\n                    emr_direct_address: '',\n                    postal_code: '',\n                    state: '',\n                    validated: false,\n                    practice: {},\n                    practice_id: '',\n                    sameClinicalIssuesContact: false,\n                    sameEHRLogin: false,\n                },\n                formState: {},\n                clinicalContactOptions: [{\n                    name: 'Patient\\'s Billing / Main provider',\n                    value: 'billing_provider'\n                }, {\n                    name: 'Someone else instead of the billing provider',\n                    value: 'instead_of_billing_provider'\n                }, {\n                    name: 'Someone else in addition to the billing provider',\n                    value: 'in_addition_to_billing_provider'\n                }],\n                timezoneOptions: [{\n                    name: 'Eastern Time',\n                    value: 'America/New_York'\n                }, {\n                    name: 'Central Time',\n                    value: 'America/Chicago'\n                }, {\n                    name: 'Mountain Time',\n                    value: 'America/Denver'\n                }, {\n                    name: 'Mountain Time (no DST)',\n                    value: 'America/Phoenix'\n                }, {\n                    name: 'Pacific Time',\n                    value: 'America/Los_Angeles'\n                }, {\n                    name: 'Alaska Time',\n                    value: 'America/Anchorage'\n                }, {\n                    name: 'Hawaii-Aleutian',\n                    value: 'America/Adak'\n                }, {\n                    name: 'Hawaii-Aleutian Time (no DST)',\n                    value: 'Pacific/Honolulu'\n                }]\n            }\n        },\n    }\n</script>\n\n<style>\n    .valid {\n\n    }\n\n    .invalid {\n        border-bottom: 1px solid #f44336;\n        box-shadow: 0 1px 0 0 #f44336;\n    }\n</style>"],"sourceRoot":""}]);
+exports.push([module.i, "\n.valid {\n}\n.invalid {\n    border-bottom: 1px solid #f44336;\n    box-shadow: 0 1px 0 0 #f44336;\n}\n", "", {"version":3,"sources":["/Users/michalis/Code/CLH/cpm-api/resources/assets/js/components/practice/lodations/update.vue?1080493a"],"names":[],"mappings":";AAoUA;CAEA;AAEA;IACA,iCAAA;IACA,8BAAA;CACA","file":"update.vue","sourcesContent":["<template>\n    <div>\n        <div class=\"row\">\n            <div class=\"col s12\">\n                <p class=\"modal-title\">Edit Location</p>\n                <a class=\"close-button\" @click=\"closeModal()\">×</a>\n            </div>\n        </div>\n\n        <vue-form :state=\"formState\" @submit.prevent=\"onSubmit\">\n            <div class=\"row\">\n                <validate auto-label>\n                    <div class=\"input-field col s6\">\n\n                        <v-input type=\"text\" label=\"Name\" v-model=\"formData.name\" name=\"name\"></v-input>\n\n                        <field-messages name=\"name\" show=\"$untouched || $touched || $submitted\"></field-messages>\n                    </div>\n                </validate>\n\n                <validate auto-label>\n                    <div class=\"input-field col s6\">\n                        <material-select v-model=\"formData.timezone\" name=\"timezone\"\n                                         :class=\"isValid(formData.timezone)\">\n                            <option v-for=\"option in timezoneOptions\" :value=\"option.value\"\n                                    v-text=\"option.name\"></option>\n                        </material-select>\n\n                        <field-messages name=\"timezone\" show=\"$untouched || $touched || $submitted\">\n                        </field-messages>\n                    </div>\n                </validate>\n            </div>\n\n            <div class=\"row\">\n                <validate auto-label>\n                    <div class=\"input-field col s6\">\n                        <v-input type=\"text\" label=\"Address Line 1\" v-model=\"formData.address_line_1\" name=\"address_line_1\"></v-input>\n\n                        <field-messages name=\"address_line_1\" show=\"$untouched || $touched || $submitted\">\n                        </field-messages>\n                    </div>\n                </validate>\n\n                <validate auto-label>\n                    <div class=\"input-field col s6\">\n                        <v-input type=\"text\" label=\"Address Line 2\" v-model=\"formData.address_line_2\" name=\"address_line_2\"></v-input>\n\n                        <field-messages name=\"address_line_2\" show=\"$untouched || $touched || $submitted\">\n                        </field-messages>\n                    </div>\n                </validate>\n            </div>\n\n            <div class=\"row\">\n                <validate auto-label>\n                    <div class=\"input-field col s6\">\n                        <v-input type=\"text\" label=\"City\" v-model=\"formData.city\" name=\"city\"></v-input>\n\n                        <field-messages name=\"city\" show=\"$untouched || $touched || $submitted\"></field-messages>\n                    </div>\n                </validate>\n\n                <validate auto-label>\n                    <div class=\"input-field col s6\">\n                        <v-input type=\"text\" label=\"State\" v-model=\"formData.state\" name=\"state\"></v-input>\n\n                        <field-messages name=\"state\" show=\"$untouched || $touched || $submitted\">\n                        </field-messages>\n                    </div>\n                </validate>\n            </div>\n\n            <div class=\"row\">\n                <validate auto-label>\n                    <div class=\"input-field col s6\">\n                        <v-input type=\"number\" label=\"Postal Code\" v-model=\"formData.postal_code\" name=\"postal_code\"></v-input>\n\n                        <field-messages name=\"postal_code\" show=\"$untouched || $touched || $submitted\">\n                        </field-messages>\n                    </div>\n                </validate>\n\n                <validate auto-label>\n                    <div class=\"input-field col s6\">\n                        <v-input type=\"text\" label=\"Phone\" v-model=\"formData.phone\" name=\"phone\"></v-input>\n\n                        <field-messages name=\"phone\" show=\"$untouched || $touched || $submitted\">\n                        </field-messages>\n                    </div>\n                </validate>\n            </div>\n\n            <div class=\"row\">\n                <validate auto-label>\n                    <div class=\"input-field col s6\">\n                        <v-input type=\"text\" label=\"Fax\" v-model=\"formData.fax\" name=\"fax\"></v-input>\n\n                        <field-messages name=\"fax\" show=\"$untouched || $touched || $submitted\">\n                        </field-messages>\n                    </div>\n                </validate>\n\n                <validate auto-label>\n                    <div class=\"input-field col s6\">\n                        <v-input type=\"text\" label=\"EMR Direct Address\" v-model=\"formData.emr_direct_address\" name=\"emr_direct_address\"></v-input>\n\n                        <field-messages name=\"emr_direct_address\" show=\"$untouched || $touched || $submitted\">\n                        </field-messages>\n                    </div>\n                </validate>\n            </div>\n\n            <div class=\"row\" v-if=\"!formData.sameEHRLogin\">\n                <h6 class=\"col s12\">\n                    Please provide login information for your EHR system.\n                </h6>\n\n                <validate auto-label>\n                    <div class=\"input-field col s6\">\n                        <v-input type=\"text\" label=\"EHR Login\" v-model=\"formData.ehr_login\" name=\"ehr_login\"></v-input>\n\n                        <field-messages name=\"ehr_login\" show=\"$untouched || $touched || $submitted\">\n                        </field-messages>\n                    </div>\n                </validate>\n\n                <validate auto-label>\n                    <div class=\"input-field col s6\">\n                        <v-input type=\"text\" label=\"EHR Password\" v-model=\"formData.ehr_password\" name=\"ehr_password\"></v-input>\n\n                        <field-messages name=\"ehr_password\" show=\"$untouched || $touched || $submitted\">\n                        </field-messages>\n                    </div>\n                </validate>\n\n                <p class=\"right\">\n                    <input type=\"checkbox\" class=\"filled-in\" id=\"sameEHRLogin-box\"\n                           v-model=\"formData.sameEHRLogin\" checked=\"checked\"/>\n                    <label for=\"sameEHRLogin-box\">Same for all locations?</label>\n                </p>\n            </div>\n\n            <div class=\"row\" v-if=\"!formData.sameClinicalIssuesContact\">\n                <h6 class=\"col s12\">\n                    Who should be notified for patient clinical issues?\n                </h6>\n\n                <div class=\"col s12\">\n                    <material-select v-model=\"formData.clinical_contact.type\" class=\"input-field\"\n                                     name=\"clinical_contact\">\n                        <option v-for=\"option in clinicalContactOptions\" :value=\"option.value\"\n                                v-text=\"option.name\"></option>\n                    </material-select>\n                </div>\n\n                <div v-show=\"formData.clinical_contact.type !== 'billing_provider'\">\n\n                    <validate auto-label :class=\"isValid()\">\n                        <div class=\"input-field col s6\">\n                            <v-input type=\"text\" label=\"First Name\" v-model=\"formData.clinical_contact.first_name\" name=\"clinical_contact.first_name\"></v-input>\n\n                            <field-messages name=\"clinical-contact-first-name\" show=\"$untouched || $touched || $submitted\">\n                            </field-messages>\n                        </div>\n                    </validate>\n\n                    <validate auto-label :class=\"isValid()\">\n                        <div class=\"input-field col s6\">\n                            <v-input type=\"text\" label=\"Last Name\" v-model=\"formData.clinical_contact.last_name\" name=\"clinical_contact.last_name\"></v-input>\n\n                            <field-messages name=\"clinical_contact.last_name\" show=\"$untouched || $touched || $submitted\">\n                            </field-messages>\n                        </div>\n                    </validate>\n\n                    <validate auto-label>\n                        <div class=\"input-field col s12\">\n                            <v-input type=\"text\" label=\"Email\" v-model=\"formData.clinical_contact.email\" name=\"clinical_contact.email\"></v-input>\n\n                            <field-messages name=\"name\" show=\"$untouched || $touched || $submitted\">\n                            </field-messages>\n                        </div>\n                    </validate>\n                </div>\n\n                <p class=\"right\">\n                    <input type=\"checkbox\" class=\"filled-in\" id=\"sameClinicalIssuesContact-box\"\n                           v-model=\"formData.sameClinicalIssuesContact\" checked=\"checked\"/>\n                    <label for=\"sameClinicalIssuesContact-box\">Same for all locations?</label>\n                </p>\n            </div>\n\n            <div @click=\"submitForm()\"\n                 class=\"btn blue waves-effect waves-light right\">\n                Save\n            </div>\n        </vue-form>\n    </div>\n</template>\n\n<script>\n    import modal from '../../shared/materialize/modal.vue';\n    import {mapGetters, mapActions} from 'vuex'\n    import {clearOpenModal, addNotification, updatePracticeLocation} from '../../../store/actions'\n    import {errors} from '../../../store/getters'\n    import MaterialSelect from '../../src/material-select.vue'\n\n    export default {\n        props: {\n            location: Object\n        },\n\n        components: {\n            modal,\n            MaterialSelect\n        },\n\n        created() {\n            this.formData = JSON.parse(JSON.stringify(this.location))\n        },\n\n        computed: Object.assign(\n            mapGetters({\n                errors: 'errors'\n            })\n        ),\n\n        methods: Object.assign(\n            mapActions(['clearOpenModal', 'addNotification', 'updatePracticeLocation']),\n            {\n                submitForm() {\n                    this.updatePracticeLocation(this.formData)\n                },\n\n                isValid(field) {\n                    return {\n                        invalid: this.errors.get(field)\n                    }\n                },\n\n                isActive(field) {\n                    return {\n                        active: this.formData[field],\n                    }\n                },\n\n                closeModal() {\n                    this.$emit('update-view', 'index-locations', {})\n                }\n            }\n        ),\n\n        data() {\n            return {\n                formData: {\n                    clinical_contact: {\n                        email: '',\n                        first_name: '',\n                        last_name: '',\n                        type: 'billing_provider'\n                    },\n                    timezone: 'America/New_York',\n                    ehr_password: '',\n                    city: '',\n                    address_line_1: '',\n                    address_line_2: '',\n                    ehr_login: '',\n                    errorCount: 0,\n                    isComplete: false,\n                    name: '',\n                    phone: '',\n                    fax: '',\n                    emr_direct_address: '',\n                    postal_code: '',\n                    state: '',\n                    validated: false,\n                    practice: {},\n                    practice_id: '',\n                    sameClinicalIssuesContact: false,\n                    sameEHRLogin: false,\n                },\n                formState: {},\n                clinicalContactOptions: [{\n                    name: 'Patient\\'s Billing / Main provider',\n                    value: 'billing_provider'\n                }, {\n                    name: 'Someone else instead of the billing provider',\n                    value: 'instead_of_billing_provider'\n                }, {\n                    name: 'Someone else in addition to the billing provider',\n                    value: 'in_addition_to_billing_provider'\n                }],\n                timezoneOptions: [{\n                    name: 'Eastern Time',\n                    value: 'America/New_York'\n                }, {\n                    name: 'Central Time',\n                    value: 'America/Chicago'\n                }, {\n                    name: 'Mountain Time',\n                    value: 'America/Denver'\n                }, {\n                    name: 'Mountain Time (no DST)',\n                    value: 'America/Phoenix'\n                }, {\n                    name: 'Pacific Time',\n                    value: 'America/Los_Angeles'\n                }, {\n                    name: 'Alaska Time',\n                    value: 'America/Anchorage'\n                }, {\n                    name: 'Hawaii-Aleutian',\n                    value: 'America/Adak'\n                }, {\n                    name: 'Hawaii-Aleutian Time (no DST)',\n                    value: 'Pacific/Honolulu'\n                }]\n            }\n        },\n    }\n</script>\n\n<style>\n    .valid {\n\n    }\n\n    .invalid {\n        border-bottom: 1px solid #f44336;\n        box-shadow: 0 1px 0 0 #f44336;\n    }\n</style>"],"sourceRoot":""}]);
 
 // exports
 
@@ -53929,91 +53992,6 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 //
 //
 //
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
 
 
 
@@ -54023,10 +54001,6 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 
 /* harmony default export */ __webpack_exports__["default"] = ({
     props: {
-        show: {
-            type: Boolean,
-            default: false
-        },
         location: Object
     },
 
@@ -54048,11 +54022,18 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
         submitForm: function submitForm() {
             this.updatePracticeLocation(this.formData);
         },
-        fieldClassName: function fieldClassName(field) {
+        isValid: function isValid(field) {
             return {
-                active: field !== '' && field !== null,
                 invalid: this.errors.get(field)
             };
+        },
+        isActive: function isActive(field) {
+            return {
+                active: this.formData[field]
+            };
+        },
+        closeModal: function closeModal() {
+            this.$emit('update-view', 'index-locations', {});
         }
     }),
 
@@ -54382,9 +54363,7 @@ if (false) {
 /***/ (function(module, exports, __webpack_require__) {
 
 module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;
-  return _c('div', [(_vm.show) ? _c('modal', [_c('template', {
-    slot: "header"
-  }, [_c('div', {
+  return _c('div', [_c('div', {
     staticClass: "row"
   }, [_c('div', {
     staticClass: "col s12"
@@ -54394,12 +54373,10 @@ module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c
     staticClass: "close-button",
     on: {
       "click": function($event) {
-        _vm.$emit('close-modal')
+        _vm.closeModal()
       }
     }
-  }, [_vm._v("×")])])])]), _vm._v(" "), _c('template', {
-    slot: "body"
-  }, [_c('vue-form', {
+  }, [_vm._v("×")])])]), _vm._v(" "), _c('vue-form', {
     attrs: {
       "state": _vm.formState
     },
@@ -54417,37 +54394,20 @@ module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c
     }
   }, [_c('div', {
     staticClass: "input-field col s6"
-  }, [_c('input', {
-    directives: [{
-      name: "model",
-      rawName: "v-model",
-      value: (_vm.formData.name),
-      expression: "formData.name"
-    }],
-    class: _vm.fieldClassName(_vm.formData.name),
+  }, [_c('v-input', {
     attrs: {
       "type": "text",
-      "id": "name",
-      "name": "name",
-      "required": ""
+      "label": "Name",
+      "name": "name"
     },
-    domProps: {
-      "value": (_vm.formData.name)
-    },
-    on: {
-      "input": function($event) {
-        if ($event.target.composing) { return; }
-        _vm.formData.name = $event.target.value
-      }
+    model: {
+      value: (_vm.formData.name),
+      callback: function($$v) {
+        _vm.formData.name = $$v
+      },
+      expression: "formData.name"
     }
-  }), _vm._v(" "), _c('label', {
-    class: _vm.fieldClassName(_vm.formData.name),
-    attrs: {
-      "for": "name",
-      "data-error": _vm.errors.get('name'),
-      "data-success": " "
-    }
-  }, [_vm._v("Name")]), _vm._v(" "), _c('field-messages', {
+  }), _vm._v(" "), _c('field-messages', {
     attrs: {
       "name": "name",
       "show": "$untouched || $touched || $submitted"
@@ -54459,7 +54419,7 @@ module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c
   }, [_c('div', {
     staticClass: "input-field col s6"
   }, [_c('material-select', {
-    class: _vm.fieldClassName(_vm.formData.timezone),
+    class: _vm.isValid(_vm.formData.timezone),
     attrs: {
       "name": "timezone"
     },
@@ -54490,36 +54450,20 @@ module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c
     }
   }, [_c('div', {
     staticClass: "input-field col s6"
-  }, [_c('input', {
-    directives: [{
-      name: "model",
-      rawName: "v-model",
-      value: (_vm.formData.address_line_1),
-      expression: "formData.address_line_1"
-    }],
-    class: _vm.fieldClassName(_vm.formData.address_line_1),
+  }, [_c('v-input', {
     attrs: {
       "type": "text",
-      "id": "address_line_1",
+      "label": "Address Line 1",
       "name": "address_line_1"
     },
-    domProps: {
-      "value": (_vm.formData.address_line_1)
-    },
-    on: {
-      "input": function($event) {
-        if ($event.target.composing) { return; }
-        _vm.formData.address_line_1 = $event.target.value
-      }
+    model: {
+      value: (_vm.formData.address_line_1),
+      callback: function($$v) {
+        _vm.formData.address_line_1 = $$v
+      },
+      expression: "formData.address_line_1"
     }
-  }), _vm._v(" "), _c('label', {
-    class: _vm.fieldClassName(_vm.formData.address_line_1),
-    attrs: {
-      "for": "address_line_1",
-      "data-error": _vm.errors.get('address_line_1'),
-      "data-success": ""
-    }
-  }, [_vm._v("Address Line 1")]), _vm._v(" "), _c('field-messages', {
+  }), _vm._v(" "), _c('field-messages', {
     attrs: {
       "name": "address_line_1",
       "show": "$untouched || $touched || $submitted"
@@ -54530,36 +54474,20 @@ module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c
     }
   }, [_c('div', {
     staticClass: "input-field col s6"
-  }, [_c('input', {
-    directives: [{
-      name: "model",
-      rawName: "v-model",
-      value: (_vm.formData.address_line_2),
-      expression: "formData.address_line_2"
-    }],
-    class: _vm.fieldClassName(_vm.formData.address_line_2),
+  }, [_c('v-input', {
     attrs: {
       "type": "text",
-      "id": "address_line_2",
+      "label": "Address Line 2",
       "name": "address_line_2"
     },
-    domProps: {
-      "value": (_vm.formData.address_line_2)
-    },
-    on: {
-      "input": function($event) {
-        if ($event.target.composing) { return; }
-        _vm.formData.address_line_2 = $event.target.value
-      }
+    model: {
+      value: (_vm.formData.address_line_2),
+      callback: function($$v) {
+        _vm.formData.address_line_2 = $$v
+      },
+      expression: "formData.address_line_2"
     }
-  }), _vm._v(" "), _c('label', {
-    class: _vm.fieldClassName(_vm.formData.address_line_2),
-    attrs: {
-      "for": "address_line_2",
-      "data-error": "",
-      "data-success": ""
-    }
-  }, [_vm._v("Address Line 2")]), _vm._v(" "), _c('field-messages', {
+  }), _vm._v(" "), _c('field-messages', {
     attrs: {
       "name": "address_line_2",
       "show": "$untouched || $touched || $submitted"
@@ -54572,37 +54500,20 @@ module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c
     }
   }, [_c('div', {
     staticClass: "input-field col s6"
-  }, [_c('input', {
-    directives: [{
-      name: "model",
-      rawName: "v-model",
-      value: (_vm.formData.city),
-      expression: "formData.city"
-    }],
-    class: _vm.fieldClassName(_vm.formData.city),
+  }, [_c('v-input', {
     attrs: {
       "type": "text",
-      "id": "city",
-      "name": "city",
-      "required": ""
+      "label": "City",
+      "name": "city"
     },
-    domProps: {
-      "value": (_vm.formData.city)
-    },
-    on: {
-      "input": function($event) {
-        if ($event.target.composing) { return; }
-        _vm.formData.city = $event.target.value
-      }
+    model: {
+      value: (_vm.formData.city),
+      callback: function($$v) {
+        _vm.formData.city = $$v
+      },
+      expression: "formData.city"
     }
-  }), _vm._v(" "), _c('label', {
-    class: _vm.fieldClassName(_vm.formData.city),
-    attrs: {
-      "for": "city",
-      "data-error": "",
-      "data-success": ""
-    }
-  }, [_vm._v("City")]), _vm._v(" "), _c('field-messages', {
+  }), _vm._v(" "), _c('field-messages', {
     attrs: {
       "name": "city",
       "show": "$untouched || $touched || $submitted"
@@ -54613,36 +54524,20 @@ module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c
     }
   }, [_c('div', {
     staticClass: "input-field col s6"
-  }, [_c('input', {
-    directives: [{
-      name: "model",
-      rawName: "v-model",
-      value: (_vm.formData.state),
-      expression: "formData.state"
-    }],
-    class: _vm.fieldClassName(_vm.formData.state),
+  }, [_c('v-input', {
     attrs: {
       "type": "text",
-      "id": "state",
+      "label": "State",
       "name": "state"
     },
-    domProps: {
-      "value": (_vm.formData.state)
-    },
-    on: {
-      "input": function($event) {
-        if ($event.target.composing) { return; }
-        _vm.formData.state = $event.target.value
-      }
+    model: {
+      value: (_vm.formData.state),
+      callback: function($$v) {
+        _vm.formData.state = $$v
+      },
+      expression: "formData.state"
     }
-  }), _vm._v(" "), _c('label', {
-    class: _vm.fieldClassName(_vm.formData.state),
-    attrs: {
-      "for": "state",
-      "data-error": "",
-      "data-success": ""
-    }
-  }, [_vm._v("State")]), _vm._v(" "), _c('field-messages', {
+  }), _vm._v(" "), _c('field-messages', {
     attrs: {
       "name": "state",
       "show": "$untouched || $touched || $submitted"
@@ -54655,37 +54550,20 @@ module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c
     }
   }, [_c('div', {
     staticClass: "input-field col s6"
-  }, [_c('input', {
-    directives: [{
-      name: "model",
-      rawName: "v-model",
+  }, [_c('v-input', {
+    attrs: {
+      "type": "number",
+      "label": "Postal Code",
+      "name": "postal_code"
+    },
+    model: {
       value: (_vm.formData.postal_code),
+      callback: function($$v) {
+        _vm.formData.postal_code = $$v
+      },
       expression: "formData.postal_code"
-    }],
-    class: _vm.fieldClassName(_vm.formData.postal_code),
-    attrs: {
-      "type": "text",
-      "id": "postal_code",
-      "name": "postal_code",
-      "required": ""
-    },
-    domProps: {
-      "value": (_vm.formData.postal_code)
-    },
-    on: {
-      "input": function($event) {
-        if ($event.target.composing) { return; }
-        _vm.formData.postal_code = $event.target.value
-      }
     }
-  }), _vm._v(" "), _c('label', {
-    class: _vm.fieldClassName(_vm.formData.postal_code),
-    attrs: {
-      "for": "postal_code",
-      "data-error": "",
-      "data-success": ""
-    }
-  }, [_vm._v("Postal Code")]), _vm._v(" "), _c('field-messages', {
+  }), _vm._v(" "), _c('field-messages', {
     attrs: {
       "name": "postal_code",
       "show": "$untouched || $touched || $submitted"
@@ -54696,36 +54574,20 @@ module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c
     }
   }, [_c('div', {
     staticClass: "input-field col s6"
-  }, [_c('input', {
-    directives: [{
-      name: "model",
-      rawName: "v-model",
-      value: (_vm.formData.phone),
-      expression: "formData.phone"
-    }],
-    class: _vm.fieldClassName(_vm.formData.phone),
+  }, [_c('v-input', {
     attrs: {
       "type": "text",
-      "id": "phone",
+      "label": "Phone",
       "name": "phone"
     },
-    domProps: {
-      "value": (_vm.formData.phone)
-    },
-    on: {
-      "input": function($event) {
-        if ($event.target.composing) { return; }
-        _vm.formData.phone = $event.target.value
-      }
+    model: {
+      value: (_vm.formData.phone),
+      callback: function($$v) {
+        _vm.formData.phone = $$v
+      },
+      expression: "formData.phone"
     }
-  }), _vm._v(" "), _c('label', {
-    class: _vm.fieldClassName(_vm.formState.phone),
-    attrs: {
-      "for": "phone",
-      "data-error": "",
-      "data-success": ""
-    }
-  }, [_vm._v("Phone")]), _vm._v(" "), _c('field-messages', {
+  }), _vm._v(" "), _c('field-messages', {
     attrs: {
       "name": "phone",
       "show": "$untouched || $touched || $submitted"
@@ -54738,37 +54600,20 @@ module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c
     }
   }, [_c('div', {
     staticClass: "input-field col s6"
-  }, [_c('input', {
-    directives: [{
-      name: "model",
-      rawName: "v-model",
-      value: (_vm.formData.fax),
-      expression: "formData.fax"
-    }],
-    class: _vm.fieldClassName(_vm.formData.fax),
+  }, [_c('v-input', {
     attrs: {
       "type": "text",
-      "id": "fax",
-      "name": "fax",
-      "required": ""
+      "label": "Fax",
+      "name": "fax"
     },
-    domProps: {
-      "value": (_vm.formData.fax)
-    },
-    on: {
-      "input": function($event) {
-        if ($event.target.composing) { return; }
-        _vm.formData.fax = $event.target.value
-      }
+    model: {
+      value: (_vm.formData.fax),
+      callback: function($$v) {
+        _vm.formData.fax = $$v
+      },
+      expression: "formData.fax"
     }
-  }), _vm._v(" "), _c('label', {
-    class: _vm.fieldClassName(_vm.formData.fax),
-    attrs: {
-      "for": "fax",
-      "data-error": "",
-      "data-success": ""
-    }
-  }, [_vm._v("Fax")]), _vm._v(" "), _c('field-messages', {
+  }), _vm._v(" "), _c('field-messages', {
     attrs: {
       "name": "fax",
       "show": "$untouched || $touched || $submitted"
@@ -54779,36 +54624,20 @@ module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c
     }
   }, [_c('div', {
     staticClass: "input-field col s6"
-  }, [_c('input', {
-    directives: [{
-      name: "model",
-      rawName: "v-model",
-      value: (_vm.formData.emr_direct_address),
-      expression: "formData.emr_direct_address"
-    }],
-    class: _vm.fieldClassName(_vm.formData.emr_direct_address),
+  }, [_c('v-input', {
     attrs: {
       "type": "text",
-      "id": "emr_direct_address",
+      "label": "EMR Direct Address",
       "name": "emr_direct_address"
     },
-    domProps: {
-      "value": (_vm.formData.emr_direct_address)
-    },
-    on: {
-      "input": function($event) {
-        if ($event.target.composing) { return; }
-        _vm.formData.emr_direct_address = $event.target.value
-      }
+    model: {
+      value: (_vm.formData.emr_direct_address),
+      callback: function($$v) {
+        _vm.formData.emr_direct_address = $$v
+      },
+      expression: "formData.emr_direct_address"
     }
-  }), _vm._v(" "), _c('label', {
-    class: _vm.fieldClassName(_vm.formData.emr_direct_address),
-    attrs: {
-      "for": "emr_direct_address",
-      "data-error": "",
-      "data-success": ""
-    }
-  }, [_vm._v("EMR Direct Address")]), _vm._v(" "), _c('field-messages', {
+  }), _vm._v(" "), _c('field-messages', {
     attrs: {
       "name": "emr_direct_address",
       "show": "$untouched || $touched || $submitted"
@@ -54817,86 +54646,50 @@ module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c
     staticClass: "row"
   }, [_c('h6', {
     staticClass: "col s12"
-  }, [_vm._v("\n                        Please provide login information for your EHR system.\n                    ")]), _vm._v(" "), _c('validate', {
+  }, [_vm._v("\n                Please provide login information for your EHR system.\n            ")]), _vm._v(" "), _c('validate', {
     attrs: {
       "auto-label": ""
     }
   }, [_c('div', {
     staticClass: "input-field col s6"
-  }, [_c('input', {
-    directives: [{
-      name: "model",
-      rawName: "v-model",
-      value: (_vm.formData.ehr_login),
-      expression: "formData.ehr_login"
-    }],
-    class: _vm.fieldClassName(_vm.formData.ehr_login),
+  }, [_c('v-input', {
     attrs: {
       "type": "text",
-      "id": "ehr_login",
-      "name": "ehr_login",
-      "required": ""
+      "label": "EHR Login",
+      "name": "ehr_login"
     },
-    domProps: {
-      "value": (_vm.formData.ehr_login)
-    },
-    on: {
-      "input": function($event) {
-        if ($event.target.composing) { return; }
-        _vm.formData.ehr_login = $event.target.value
-      }
+    model: {
+      value: (_vm.formData.ehr_login),
+      callback: function($$v) {
+        _vm.formData.ehr_login = $$v
+      },
+      expression: "formData.ehr_login"
     }
-  }), _vm._v(" "), _c('label', {
-    class: _vm.fieldClassName(_vm.formData.ehr_login),
-    attrs: {
-      "for": "ehr_login",
-      "data-error": "",
-      "data-success": ""
-    }
-  }, [_vm._v("EHR Login")]), _vm._v(" "), _c('field-messages', {
+  }), _vm._v(" "), _c('field-messages', {
     attrs: {
       "name": "ehr_login",
       "show": "$untouched || $touched || $submitted"
     }
-  }, [_c('div', {
-    staticClass: "validation-error has-errors ",
-    slot: "required"
-  })])], 1)]), _vm._v(" "), _c('validate', {
+  })], 1)]), _vm._v(" "), _c('validate', {
     attrs: {
       "auto-label": ""
     }
   }, [_c('div', {
     staticClass: "input-field col s6"
-  }, [_c('input', {
-    directives: [{
-      name: "model",
-      rawName: "v-model",
-      value: (_vm.formData.ehr_password),
-      expression: "formData.ehr_password"
-    }],
-    class: _vm.fieldClassName(_vm.formData.ehr_password),
+  }, [_c('v-input', {
     attrs: {
       "type": "text",
-      "id": "ehr_password",
+      "label": "EHR Password",
       "name": "ehr_password"
     },
-    domProps: {
-      "value": (_vm.formData.ehr_password)
-    },
-    on: {
-      "input": function($event) {
-        if ($event.target.composing) { return; }
-        _vm.formData.ehr_password = $event.target.value
-      }
+    model: {
+      value: (_vm.formData.ehr_password),
+      callback: function($$v) {
+        _vm.formData.ehr_password = $$v
+      },
+      expression: "formData.ehr_password"
     }
-  }), _vm._v(" "), _c('label', {
-    class: _vm.fieldClassName(_vm.formData.ehr_password),
-    attrs: {
-      "for": "ehr_password",
-      "data-error": "",
-      "data-success": ""
-    }
-  }, [_vm._v("EHR Password")]), _vm._v(" "), _c('field-messages', {
+  }), _vm._v(" "), _c('field-messages', {
     attrs: {
       "name": "ehr_password",
       "show": "$untouched || $touched || $submitted"
@@ -54945,12 +54738,12 @@ module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c
     staticClass: "row"
   }, [_c('h6', {
     staticClass: "col s12"
-  }, [_vm._v("\n                        Who should be notified for patient clinical issues?\n                    ")]), _vm._v(" "), _c('div', {
+  }, [_vm._v("\n                Who should be notified for patient clinical issues?\n            ")]), _vm._v(" "), _c('div', {
     staticClass: "col s12"
   }, [_c('material-select', {
     staticClass: "input-field",
     attrs: {
-      "name": "ehr_login"
+      "name": "clinical_contact"
     },
     model: {
       value: (_vm.formData.clinical_contact.type),
@@ -54974,82 +54767,51 @@ module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c
       expression: "formData.clinical_contact.type !== 'billing_provider'"
     }]
   }, [_c('validate', {
-    class: _vm.fieldClassName(),
+    class: _vm.isValid(),
     attrs: {
       "auto-label": ""
     }
   }, [_c('div', {
     staticClass: "input-field col s6"
-  }, [_c('input', {
-    directives: [{
-      name: "model",
-      rawName: "v-model",
-      value: (_vm.formData.clinical_contact.first_name),
-      expression: "formData.clinical_contact.first_name"
-    }],
+  }, [_c('v-input', {
     attrs: {
       "type": "text",
-      "id": "clinical-contact-first-name",
-      "name": "clinical-contact-first-name",
-      "required": ""
+      "label": "First Name",
+      "name": "clinical_contact.first_name"
     },
-    domProps: {
-      "value": (_vm.formData.clinical_contact.first_name)
-    },
-    on: {
-      "input": function($event) {
-        if ($event.target.composing) { return; }
-        _vm.formData.clinical_contact.first_name = $event.target.value
-      }
+    model: {
+      value: (_vm.formData.clinical_contact.first_name),
+      callback: function($$v) {
+        _vm.formData.clinical_contact.first_name = $$v
+      },
+      expression: "formData.clinical_contact.first_name"
     }
-  }), _vm._v(" "), _c('label', {
-    class: _vm.fieldClassName(),
-    attrs: {
-      "for": "clinical-contact-first-name",
-      "data-error": "",
-      "data-success": ""
-    }
-  }, [_vm._v("First Name")]), _vm._v(" "), _c('field-messages', {
+  }), _vm._v(" "), _c('field-messages', {
     attrs: {
       "name": "clinical-contact-first-name",
       "show": "$untouched || $touched || $submitted"
     }
   })], 1)]), _vm._v(" "), _c('validate', {
-    class: _vm.fieldClassName(),
+    class: _vm.isValid(),
     attrs: {
       "auto-label": ""
     }
   }, [_c('div', {
     staticClass: "input-field col s6"
-  }, [_c('input', {
-    directives: [{
-      name: "model",
-      rawName: "v-model",
-      value: (_vm.formData.clinical_contact.last_name),
-      expression: "formData.clinical_contact.last_name"
-    }],
+  }, [_c('v-input', {
     attrs: {
       "type": "text",
-      "id": "clinical_contact.last_name",
+      "label": "Last Name",
       "name": "clinical_contact.last_name"
     },
-    domProps: {
-      "value": (_vm.formData.clinical_contact.last_name)
-    },
-    on: {
-      "input": function($event) {
-        if ($event.target.composing) { return; }
-        _vm.formData.clinical_contact.last_name = $event.target.value
-      }
+    model: {
+      value: (_vm.formData.clinical_contact.last_name),
+      callback: function($$v) {
+        _vm.formData.clinical_contact.last_name = $$v
+      },
+      expression: "formData.clinical_contact.last_name"
     }
-  }), _vm._v(" "), _c('label', {
-    class: _vm.fieldClassName(),
-    attrs: {
-      "for": "clinical_contact.last_name",
-      "data-error": "",
-      "data-success": ""
-    }
-  }, [_vm._v("Last Name")]), _vm._v(" "), _c('field-messages', {
+  }), _vm._v(" "), _c('field-messages', {
     attrs: {
       "name": "clinical_contact.last_name",
       "show": "$untouched || $touched || $submitted"
@@ -55060,37 +54822,20 @@ module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c
     }
   }, [_c('div', {
     staticClass: "input-field col s12"
-  }, [_c('input', {
-    directives: [{
-      name: "model",
-      rawName: "v-model",
-      value: (_vm.formData.clinical_contact.email),
-      expression: "formData.clinical_contact.email"
-    }],
-    class: {
-      active: _vm.formData.clinical_contact.email, invalid: _vm.errors.get('clinical_contact.email')
-    },
+  }, [_c('v-input', {
     attrs: {
       "type": "text",
-      "id": "clinical_contact_email",
+      "label": "Email",
       "name": "clinical_contact.email"
     },
-    domProps: {
-      "value": (_vm.formData.clinical_contact.email)
-    },
-    on: {
-      "input": function($event) {
-        if ($event.target.composing) { return; }
-        _vm.formData.clinical_contact.email = $event.target.value
-      }
+    model: {
+      value: (_vm.formData.clinical_contact.email),
+      callback: function($$v) {
+        _vm.formData.clinical_contact.email = $$v
+      },
+      expression: "formData.clinical_contact.email"
     }
-  }), _vm._v(" "), _c('label', {
-    attrs: {
-      "for": "clinical_contact_email",
-      "data-error": _vm.errors.get('clinical_contact.email'),
-      "data-success": ""
-    }
-  }, [_vm._v("Email")]), _vm._v(" "), _c('field-messages', {
+  }), _vm._v(" "), _c('field-messages', {
     attrs: {
       "name": "name",
       "show": "$untouched || $touched || $submitted"
@@ -55142,9 +54887,7 @@ module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c
         _vm.submitForm()
       }
     }
-  }, [_vm._v("\n                    Save\n                ")])])], 1), _vm._v(" "), _c('template', {
-    slot: "footer"
-  })], 2) : _vm._e()], 1)
+  }, [_vm._v("\n            Save\n        ")])])], 1)
 },staticRenderFns: []}
 module.exports.render._withStripped = true
 if (false) {
@@ -55233,7 +54976,7 @@ exports = module.exports = __webpack_require__(5)(true);
 
 
 // module
-exports.push([module.i, "\n.admin-panel-locations-container .input-field {\n    margin-top: 0;\n}\nth.th-trash, td.td-trash, th.th-edit, td.td-edit {\n    /*background: none;*/\n    width: 10px;\n    min-width: 5px;\n    padding: 10px 0;\n}\n", "", {"version":3,"sources":["/Users/michalis/Code/CLH/cpm-api/resources/assets/js/components/practice/lodations/index.vue?0740a15d"],"names":[],"mappings":";AAkIA;IACA,cAAA;CACA;AAEA;IACA,qBAAA;IACA,YAAA;IACA,eAAA;IACA,gBAAA;CACA","file":"index.vue","sourcesContent":["<template>\n    <div class=\"admin-panel-locations-container\" v-cloak>\n        <div class=\"row\">\n            <div class=\"col s6\">\n                <div class=\"input-field\">\n                    <div v-on:click=\"\"\n                         class=\"btn blue waves-effect waves-light\" id=\"submit\">\n                        Add New Location\n                    </div>\n                </div>\n            </div>\n\n            <div class=\"col s6\">\n                <div class=\"input-field\">\n                    <input id=\"search\" type=\"search\" name=\"query\" v-model=\"searchQuery\"\n                           placeholder=\"search for a location\">\n                    <label class=\"label-icon\" for=\"search\"><i class=\"material-icons\">search</i></label>\n                    <i class=\"material-icons\" @click=\"searchQuery = ''\">close</i></div>\n            </div>\n        </div>\n\n        <grid\n                :data=\"locations\"\n                :options=\"gridOptions\"\n                :filter-key=\"searchQuery\"\n                @click=\"cellClicked\">\n        </grid>\n\n        <component :is=\"compName\" :show=\"showModal\" :location=\"editedLocation\" @close-modal=\"closeModal()\"></component>\n\n    </div>\n</template>\n\n<script>\n    import {mapGetters, mapActions} from 'vuex'\n    import {practiceLocations} from '../../../store/getters'\n    import {getPracticeLocations} from '../../../store/actions'\n    import UpdateLocation from './update.vue'\n\n    export default {\n        components: {\n            UpdateLocation\n        },\n\n        computed: Object.assign({},\n            mapGetters({\n                locations: 'practiceLocations'\n            })\n        ),\n\n        created() {\n            this.getPracticeLocations(this.practiceId)\n        },\n\n        methods: Object.assign({},\n            mapActions(['getPracticeLocations']),\n            {\n                cellClicked(index, entry, entryIndex) {\n                    switch (index) {\n                        case 'trash':\n                            this.deleteRow(entryIndex)\n                            break;\n                        case 'edit':\n                            this.editRow(entryIndex)\n                            break;\n                        default:\n                            break;\n                    }\n                },\n\n                deleteRow(index) {\n                    let disassociate = confirm('Are you sure you want to delete ' + this.locations[index].name + '?');\n\n                    if (!disassociate) {\n                        return true;\n                    }\n\n                    this.locations.splice(index, 1)\n                },\n\n                editRow(index) {\n                    this.compName = 'update-location'\n                    this.editedLocation = this.locations[index]\n                    this.showModal = true\n                },\n\n                closeModal() {\n                    this.compName = ''\n                    this.editedLocation = {}\n                    this.showModal = false\n                }\n            }),\n\n        data() {\n            return {\n                compName: '',\n                showModal: false,\n                editedLocation: {},\n                searchQuery: '',\n                gridOptions: {\n                    columns: {\n                        edit: {\n                            name: '',\n                            content: '<a class=\"green waves-effect waves-light btn\" style=\"padding: 0 .4rem;\"><i class=\"material-icons center\">mode_edit</i></a>'\n                        },\n                        trash: {\n                            name: '',\n                            content: '<a class=\"red waves-effect waves-light btn\" style=\"padding: 0 .4rem;\"><i class=\"material-icons center text-white\">clear</i></a>',\n                        },\n                        name: {\n                            name: 'Name'\n                        },\n                        address_line_1: {\n                            name: 'Address Line 1'\n                        },\n                        city: {\n                            name: 'City'\n                        },\n                        state: {\n                            name: 'State'\n                        },\n                    }\n                },\n                practiceId: $('meta[name=practice-id]').attr('content'),\n            }\n        },\n    }\n</script>\n\n<style>\n    .admin-panel-locations-container .input-field {\n        margin-top: 0;\n    }\n\n    th.th-trash, td.td-trash, th.th-edit, td.td-edit {\n        /*background: none;*/\n        width: 10px;\n        min-width: 5px;\n        padding: 10px 0;\n    }\n</style>"],"sourceRoot":""}]);
+exports.push([module.i, "\n.admin-panel-locations-container .input-field {\n    margin-top: 0;\n}\nth.th-trash, td.td-trash, th.th-edit, td.td-edit {\n    /*background: none;*/\n    width: 10px;\n    min-width: 5px;\n    padding: 10px 0;\n}\n", "", {"version":3,"sources":["/Users/michalis/Code/CLH/cpm-api/resources/assets/js/components/practice/lodations/index.vue?902f4012"],"names":[],"mappings":";AAkHA;IACA,cAAA;CACA;AAEA;IACA,qBAAA;IACA,YAAA;IACA,eAAA;IACA,gBAAA;CACA","file":"index.vue","sourcesContent":["<template>\n    <div class=\"admin-panel-locations-container\" v-cloak>\n        <div class=\"row\">\n            <div class=\"col s6\">\n                <div class=\"input-field\">\n                    <div v-on:click=\"\"\n                         class=\"btn blue waves-effect waves-light\" id=\"submit\">\n                        Add New Location\n                    </div>\n                </div>\n            </div>\n\n            <div class=\"col s6\">\n                <div class=\"input-field\">\n                    <input id=\"search\" type=\"search\" name=\"query\" v-model=\"searchQuery\"\n                           placeholder=\"search for a location\">\n                    <label class=\"label-icon\" for=\"search\"><i class=\"material-icons\">search</i></label>\n                    <i class=\"material-icons\" @click=\"searchQuery = ''\">close</i></div>\n            </div>\n        </div>\n\n        <grid\n                :data=\"locations\"\n                :options=\"gridOptions\"\n                :filter-key=\"searchQuery\"\n                @click=\"cellClicked\">\n        </grid>\n    </div>\n</template>\n\n<script>\n    import {mapGetters, mapActions} from 'vuex'\n    import {practiceLocations} from '../../../store/getters'\n    import {getPracticeLocations} from '../../../store/actions'\n\n    export default {\n        computed: Object.assign({},\n            mapGetters({\n                locations: 'practiceLocations'\n            })\n        ),\n\n        created() {\n            this.getPracticeLocations(this.practiceId)\n        },\n\n        methods: Object.assign({},\n            mapActions(['getPracticeLocations']),\n            {\n                cellClicked(index, entry, entryIndex) {\n                    switch (index) {\n                        case 'trash':\n                            this.deleteRow(entryIndex)\n                            break;\n                        case 'edit':\n                            this.editRow(entryIndex)\n                            break;\n                        default:\n                            break;\n                    }\n                },\n\n                deleteRow(index) {\n                    let disassociate = confirm('Are you sure you want to delete ' + this.locations[index].name + '?');\n\n                    if (!disassociate) {\n                        return true;\n                    }\n\n                    this.locations.splice(index, 1)\n                },\n\n                editRow(index) {\n                    this.$emit('update-view', 'update-location', this.locations[index])\n                }\n            }),\n\n        data() {\n            return {\n                compName: '',\n                showModal: false,\n                editedLocation: {},\n                searchQuery: '',\n                gridOptions: {\n                    columns: {\n                        edit: {\n                            name: '',\n                            content: '<a class=\"green waves-effect waves-light btn\" style=\"padding: 0 .4rem;\"><i class=\"material-icons center\">mode_edit</i></a>'\n                        },\n                        trash: {\n                            name: '',\n                            content: '<a class=\"red waves-effect waves-light btn\" style=\"padding: 0 .4rem;\"><i class=\"material-icons center text-white\">clear</i></a>',\n                        },\n                        name: {\n                            name: 'Name'\n                        },\n                        address_line_1: {\n                            name: 'Address Line 1'\n                        },\n                        city: {\n                            name: 'City'\n                        },\n                        state: {\n                            name: 'State'\n                        },\n                    }\n                },\n                practiceId: $('meta[name=practice-id]').attr('content'),\n            }\n        },\n    }\n</script>\n\n<style>\n    .admin-panel-locations-container .input-field {\n        margin-top: 0;\n    }\n\n    th.th-trash, td.td-trash, th.th-edit, td.td-edit {\n        /*background: none;*/\n        width: 10px;\n        min-width: 5px;\n        padding: 10px 0;\n    }\n</style>"],"sourceRoot":""}]);
 
 // exports
 
@@ -55247,8 +54990,6 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_vuex__ = __webpack_require__(3);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__store_getters__ = __webpack_require__(8);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__store_actions__ = __webpack_require__(4);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__update_vue__ = __webpack_require__(71);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__update_vue___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_3__update_vue__);
 //
 //
 //
@@ -55279,20 +55020,12 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 //
 //
 //
-//
-//
-//
-
 
 
 
 
 
 /* harmony default export */ __webpack_exports__["default"] = ({
-    components: {
-        UpdateLocation: __WEBPACK_IMPORTED_MODULE_3__update_vue___default.a
-    },
-
     computed: Object.assign({}, __WEBPACK_IMPORTED_MODULE_0_vuex__["c" /* mapGetters */]({
         locations: 'practiceLocations'
     })),
@@ -55325,14 +55058,7 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
             this.locations.splice(index, 1);
         },
         editRow: function editRow(index) {
-            this.compName = 'update-location';
-            this.editedLocation = this.locations[index];
-            this.showModal = true;
-        },
-        closeModal: function closeModal() {
-            this.compName = '';
-            this.editedLocation = {};
-            this.showModal = false;
+            this.$emit('update-view', 'update-location', this.locations[index]);
         }
     }),
 
@@ -55433,17 +55159,6 @@ module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c
     },
     on: {
       "click": _vm.cellClicked
-    }
-  }), _vm._v(" "), _c(_vm.compName, {
-    tag: "component",
-    attrs: {
-      "show": _vm.showModal,
-      "location": _vm.editedLocation
-    },
-    on: {
-      "close-modal": function($event) {
-        _vm.closeModal()
-      }
     }
   })], 1)
 },staticRenderFns: [function (){var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;
@@ -55704,6 +55419,233 @@ if (false) {
   module.hot.accept()
   if (module.hot.data) {
      require("vue-hot-reload-api").rerender("data-v-4c04f36a", module.exports)
+  }
+}
+
+/***/ }),
+/* 154 */,
+/* 155 */,
+/* 156 */,
+/* 157 */,
+/* 158 */,
+/* 159 */,
+/* 160 */
+/***/ (function(module, exports, __webpack_require__) {
+
+var disposed = false
+var Component = __webpack_require__(1)(
+  /* script */
+  __webpack_require__(161),
+  /* template */
+  __webpack_require__(162),
+  /* styles */
+  null,
+  /* scopeId */
+  null,
+  /* moduleIdentifier (server only) */
+  null
+)
+Component.options.__file = "/Users/michalis/Code/CLH/cpm-api/resources/assets/js/components/pages/provider-admin-panel/manage-practice-locations.vue"
+if (Component.esModule && Object.keys(Component.esModule).some(function (key) {return key !== "default" && key.substr(0, 2) !== "__"})) {console.error("named exports are not supported in *.vue files.")}
+if (Component.options.functional) {console.error("[vue-loader] manage-practice-locations.vue: functional components are not supported with templates, they should use render functions.")}
+
+/* hot reload */
+if (false) {(function () {
+  var hotAPI = require("vue-hot-reload-api")
+  hotAPI.install(require("vue"), false)
+  if (!hotAPI.compatible) return
+  module.hot.accept()
+  if (!module.hot.data) {
+    hotAPI.createRecord("data-v-ab4d8aa2", Component.options)
+  } else {
+    hotAPI.reload("data-v-ab4d8aa2", Component.options)
+  }
+  module.hot.dispose(function (data) {
+    disposed = true
+  })
+})()}
+
+module.exports = Component.exports
+
+
+/***/ }),
+/* 161 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__shared_component_proxy_vue__ = __webpack_require__(80);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__shared_component_proxy_vue___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0__shared_component_proxy_vue__);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__practice_lodations_update_vue__ = __webpack_require__(71);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__practice_lodations_update_vue___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_1__practice_lodations_update_vue__);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__practice_lodations_create_vue__ = __webpack_require__(131);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__practice_lodations_create_vue___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_2__practice_lodations_create_vue__);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__practice_lodations_index_vue__ = __webpack_require__(144);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__practice_lodations_index_vue___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_3__practice_lodations_index_vue__);
+//
+//
+//
+//
+//
+
+
+
+
+
+
+/* harmony default export */ __webpack_exports__["default"] = ({
+    components: {
+        UpdateLocation: __WEBPACK_IMPORTED_MODULE_1__practice_lodations_update_vue___default.a,
+        IndexLocations: __WEBPACK_IMPORTED_MODULE_3__practice_lodations_index_vue___default.a,
+        CreateLocations: __WEBPACK_IMPORTED_MODULE_2__practice_lodations_create_vue___default.a,
+        ComponentProxy: __WEBPACK_IMPORTED_MODULE_0__shared_component_proxy_vue___default.a
+    },
+
+    data: function data() {
+        return {
+            componentName: 'index-locations',
+            props: {}
+        };
+    },
+
+
+    methods: {
+        updateView: function updateView(componentName, props) {
+            this.componentName = componentName;
+            this.props = props;
+        }
+    }
+});
+
+/***/ }),
+/* 162 */
+/***/ (function(module, exports, __webpack_require__) {
+
+module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;
+  return _c(_vm.componentName, {
+    tag: "component",
+    attrs: {
+      "location": _vm.props
+    },
+    on: {
+      "update-view": _vm.updateView
+    }
+  })
+},staticRenderFns: []}
+module.exports.render._withStripped = true
+if (false) {
+  module.hot.accept()
+  if (module.hot.data) {
+     require("vue-hot-reload-api").rerender("data-v-ab4d8aa2", module.exports)
+  }
+}
+
+/***/ }),
+/* 163 */
+/***/ (function(module, exports, __webpack_require__) {
+
+var disposed = false
+var Component = __webpack_require__(1)(
+  /* script */
+  __webpack_require__(164),
+  /* template */
+  __webpack_require__(165),
+  /* styles */
+  null,
+  /* scopeId */
+  null,
+  /* moduleIdentifier (server only) */
+  null
+)
+Component.options.__file = "/Users/michalis/Code/CLH/cpm-api/resources/assets/js/components/shared/materialize/input.vue"
+if (Component.esModule && Object.keys(Component.esModule).some(function (key) {return key !== "default" && key.substr(0, 2) !== "__"})) {console.error("named exports are not supported in *.vue files.")}
+if (Component.options.functional) {console.error("[vue-loader] input.vue: functional components are not supported with templates, they should use render functions.")}
+
+/* hot reload */
+if (false) {(function () {
+  var hotAPI = require("vue-hot-reload-api")
+  hotAPI.install(require("vue"), false)
+  if (!hotAPI.compatible) return
+  module.hot.accept()
+  if (!module.hot.data) {
+    hotAPI.createRecord("data-v-6dcdaa53", Component.options)
+  } else {
+    hotAPI.reload("data-v-6dcdaa53", Component.options)
+  }
+  module.hot.dispose(function (data) {
+    disposed = true
+  })
+})()}
+
+module.exports = Component.exports
+
+
+/***/ }),
+/* 164 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_vuex__ = __webpack_require__(3);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__store_getters__ = __webpack_require__(8);
+
+
+
+
+/* harmony default export */ __webpack_exports__["default"] = ({
+    props: {
+        name: String,
+        value: String,
+        label: String
+    },
+    computed: Object.assign(__WEBPACK_IMPORTED_MODULE_0_vuex__["c" /* mapGetters */]({
+        errors: 'errors'
+    })),
+
+    methods: {
+        updateValue: function updateValue(value) {
+            this.$emit('input', value);
+        }
+    }
+});
+
+/***/ }),
+/* 165 */
+/***/ (function(module, exports, __webpack_require__) {
+
+module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;
+  return _c('div', [_c('input', {
+    class: {
+      invalid: _vm.errors.get(_vm.name)
+    },
+    attrs: {
+      "id": _vm.name,
+      "name": "name"
+    },
+    domProps: {
+      "value": _vm.value
+    },
+    on: {
+      "input": function($event) {
+        _vm.updateValue($event.target.value)
+      }
+    }
+  }), _vm._v(" "), _c('label', {
+    class: {
+      active: _vm.value
+    },
+    attrs: {
+      "for": _vm.name,
+      "data-error": _vm.errors.get(_vm.name),
+      "data-success": ""
+    }
+  }, [_vm._v("\n        " + _vm._s(_vm.label) + "\n    ")])])
+},staticRenderFns: []}
+module.exports.render._withStripped = true
+if (false) {
+  module.hot.accept()
+  if (module.hot.data) {
+     require("vue-hot-reload-api").rerender("data-v-6dcdaa53", module.exports)
   }
 }
 

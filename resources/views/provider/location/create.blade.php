@@ -3,5 +3,5 @@
 @section('title', 'Manage Locations')
 
 @section('module')
-    <index-practice-locations></index-practice-locations>
+    <manage-practice-locations></manage-practice-locations>
 @endsection
