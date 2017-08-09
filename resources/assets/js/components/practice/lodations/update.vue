@@ -153,7 +153,7 @@
 
                 <div class="input-field col s4">
                     <input type="checkbox" class="filled-in" id="sameEHRLogin-box"
-                           v-model="formData.sameEHRLogin" checked="checked"/>
+                           v-model="formData.sameEHRLogin" :checked="formData.sameEHRLogin"/>
                     <label for="sameEHRLogin-box">Same for all locations?</label>
                 </div>
             </div>

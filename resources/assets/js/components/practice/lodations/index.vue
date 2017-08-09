@@ -40,7 +40,7 @@
             })
         ),
 
-        created() {
+        mounted() {
             this.getPracticeLocations(this.practiceId)
         },
 
