@@ -48,6 +48,7 @@ mix.combine([
 mix.js('resources/assets/js/importer-training.js', 'public/js');
 
 mix.js('resources/assets/js/nurse-work-schedule.js', 'public/js');
+mix.js('resources/assets/js/fab.js', 'public/js/v-fab.js');
 
 mix.js('resources/assets/js/app-provider-ui.js', 'public/js');
 mix.js('resources/assets/js/app-provider-admin-panel-ui.js', 'public/js').sourceMaps();

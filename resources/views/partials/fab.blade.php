@@ -8,7 +8,15 @@
 <meta name="provider-update-route" content="{{ route('user.care-team.update', ['userId' => $patient->id, 'id'=>'']) }}">
 <meta name="patient_id" content="{{$patient->id}}">
 
-<fab></fab>
+<div id="v-fab">
+    <open-modal></open-modal>
+    <notifications></notifications>
+    <fab></fab>
+</div>
+
+
+<script src="{{asset('js/v-fab.js')}}"></script>
+
 
 
 

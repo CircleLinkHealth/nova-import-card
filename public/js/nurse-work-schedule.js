@@ -60,7 +60,7 @@
 /******/ 	__webpack_require__.p = "";
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 85);
+/******/ 	return __webpack_require__(__webpack_require__.s = 97);
 /******/ })
 /************************************************************************/
 /******/ ([
@@ -48350,6 +48350,268 @@ var Component = __webpack_require__(1)(
   /* moduleIdentifier (server only) */
   null
 )
+Component.options.__file = "/Users/michalis/Code/CLH/cpm-api/resources/assets/js/components/fab.vue"
+if (Component.esModule && Object.keys(Component.esModule).some(function (key) {return key !== "default" && key.substr(0, 2) !== "__"})) {console.error("named exports are not supported in *.vue files.")}
+if (Component.options.functional) {console.error("[vue-loader] fab.vue: functional components are not supported with templates, they should use render functions.")}
+
+/* hot reload */
+if (false) {(function () {
+  var hotAPI = require("vue-hot-reload-api")
+  hotAPI.install(require("vue"), false)
+  if (!hotAPI.compatible) return
+  module.hot.accept()
+  if (!module.hot.data) {
+    hotAPI.createRecord("data-v-244acbbc", Component.options)
+  } else {
+    hotAPI.reload("data-v-244acbbc", Component.options)
+  }
+  module.hot.dispose(function (data) {
+    disposed = true
+  })
+})()}
+
+module.exports = Component.exports
+
+
+/***/ }),
+/* 69 */
+/***/ (function(module, exports, __webpack_require__) {
+
+// style-loader: Adds some css to the DOM by adding a <style> tag
+
+// load the styles
+var content = __webpack_require__(70);
+if(typeof content === 'string') content = [[module.i, content, '']];
+if(content.locals) module.exports = content.locals;
+// add the styles to the DOM
+var update = __webpack_require__(6)("f096b98c", content, false);
+// Hot Module Replacement
+if(false) {
+ // When the styles change, update the <style> tags
+ if(!content.locals) {
+   module.hot.accept("!!../../../../node_modules/css-loader/index.js?sourceMap!../../../../node_modules/vue-loader/lib/style-compiler/index.js?{\"vue\":true,\"id\":\"data-v-244acbbc\",\"scoped\":false,\"hasInlineConfig\":true}!../../../../node_modules/vue-loader/lib/selector.js?type=styles&index=0!./fab.vue", function() {
+     var newContent = require("!!../../../../node_modules/css-loader/index.js?sourceMap!../../../../node_modules/vue-loader/lib/style-compiler/index.js?{\"vue\":true,\"id\":\"data-v-244acbbc\",\"scoped\":false,\"hasInlineConfig\":true}!../../../../node_modules/vue-loader/lib/selector.js?type=styles&index=0!./fab.vue");
+     if(typeof newContent === 'string') newContent = [[module.id, newContent, '']];
+     update(newContent);
+   });
+ }
+ // When the module is disposed, remove the <style> tags
+ module.hot.dispose(function() { update(); });
+}
+
+/***/ }),
+/* 70 */
+/***/ (function(module, exports, __webpack_require__) {
+
+exports = module.exports = __webpack_require__(5)(true);
+// imports
+
+
+// module
+exports.push([module.i, "\n@media print {\n.hidden-print, .hidden-print * {\n        display: none !important;\n}\n}\n", "", {"version":3,"sources":["/Users/michalis/Code/CLH/cpm-api/resources/assets/js/components/fab.vue?2b26b0c3"],"names":[],"mappings":";AAEA;AACA;QACA,yBAAA;CACA;CACA","file":"fab.vue","sourcesContent":["<!--Don't know how to add compiled fab.css to style tag. Make sure 'public/css/fab.css' is included on the page-->\n<style>\n    @media print {\n        .hidden-print, .hidden-print * {\n            display: none !important;\n        }\n    }\n</style>\n\n<template>\n    <div>\n        <section class=\"FAB hidden-print\">\n            <div class=\"FAB__mini-action-button hidden-print\">\n                <div class=\"mini-action-button--hide mini-action-button hidden-print\">\n                    <a :href=\"createNoteUrl\">\n                        <i class=\"mini-action-button__icon material-icons\">speaker_notes</i>\n                    </a>\n                    <p class=\"mini-action-button__text--hide\">Add Note</p>\n                </div>\n\n                <div class=\"mini-action-button--hide mini-action-button\">\n                    <a :href=\"createObservationUrl\">\n                        <i class=\"mini-action-button__icon material-icons\">timeline</i>\n                    </a>\n                    <p class=\"mini-action-button__text--hide\">Add Observation</p>\n                </div>\n\n                <div class=\"mini-action-button--hide mini-action-button\">\n                    <a :href=\"createActivityUrl\">\n                        <i class=\"mini-action-button__icon material-icons\">local_hospital</i>\n                    </a>\n                    <p class=\"mini-action-button__text--hide\">Add Offline Activity</p>\n                </div>\n\n                <div class=\"mini-action-button--hide mini-action-button\">\n                    <a :href=\"createAppointmentUrl\">\n                        <i class=\"mini-action-button__icon material-icons\">today</i>\n                    </a>\n                    <p class=\"mini-action-button__text--hide\">Add Appointment</p>\n                </div>\n\n                <div id=\"showAddCarePersonModal\" class=\"mini-action-button--hide mini-action-button\">\n                    <p>\n                        <i v-on:click=\"createCarePerson\"\n                           class=\"mini-action-button__icon material-icons\">contact_mail</i>\n                    </p>\n                    <p class=\"mini-action-button__text--hide\">Add Care Person</p>\n                </div>\n\n            </div>\n            <div class=\"FAB__action-button hidden-print\">\n                <i class=\"action-button__icon material-icons hidden-print\">add</i>\n            </div>\n        </section>\n    </div>\n</template>\n\n<script>\n    import {mapGetters, mapActions} from 'vuex'\n    import {getCurrentUser, setOpenModal} from \"../store/actions\";\n    import {currentUser} from '../store/getters';\n\n    export default {\n        data() {\n            return {\n                createNoteUrl: $('meta[name=\"route.patient.note.create\"]').attr('content'),\n                createObservationUrl: $('meta[name=\"route.patient.observation.create\"]').attr('content'),\n                createActivityUrl: $('meta[name=\"route.patient.activity.create\"]').attr('content'),\n                createAppointmentUrl: $('meta[name=\"route.patient.appointment.create\"]').attr('content'),\n            }\n        },\n\n        computed: Object.assign(\n            mapGetters({\n                theCurrentUser: 'currentUser'\n            })\n        ),\n\n        created() {\n            this.getCurrentUser()\n        },\n\n        methods: Object.assign(\n            mapActions(['setOpenModal', 'getCurrentUser']),\n            {\n                createCarePerson() {\n                    this.setOpenModal({\n                        name: 'create-care-person'\n                    })\n                }\n            }\n        ),\n    }\n</script>"],"sourceRoot":""}]);
+
+// exports
+
+
+/***/ }),
+/* 71 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_vuex__ = __webpack_require__(2);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__store_actions__ = __webpack_require__(4);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__store_getters__ = __webpack_require__(7);
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+
+
+
+
+
+/* harmony default export */ __webpack_exports__["default"] = ({
+    data: function data() {
+        return {
+            createNoteUrl: $('meta[name="route.patient.note.create"]').attr('content'),
+            createObservationUrl: $('meta[name="route.patient.observation.create"]').attr('content'),
+            createActivityUrl: $('meta[name="route.patient.activity.create"]').attr('content'),
+            createAppointmentUrl: $('meta[name="route.patient.appointment.create"]').attr('content')
+        };
+    },
+
+
+    computed: Object.assign(__WEBPACK_IMPORTED_MODULE_0_vuex__["c" /* mapGetters */]({
+        theCurrentUser: 'currentUser'
+    })),
+
+    created: function created() {
+        this.getCurrentUser();
+    },
+
+
+    methods: Object.assign(__WEBPACK_IMPORTED_MODULE_0_vuex__["b" /* mapActions */](['setOpenModal', 'getCurrentUser']), {
+        createCarePerson: function createCarePerson() {
+            this.setOpenModal({
+                name: 'create-care-person'
+            });
+        }
+    })
+});
+
+/***/ }),
+/* 72 */
+/***/ (function(module, exports, __webpack_require__) {
+
+module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;
+  return _c('div', [_c('section', {
+    staticClass: "FAB hidden-print"
+  }, [_c('div', {
+    staticClass: "FAB__mini-action-button hidden-print"
+  }, [_c('div', {
+    staticClass: "mini-action-button--hide mini-action-button hidden-print"
+  }, [_c('a', {
+    attrs: {
+      "href": _vm.createNoteUrl
+    }
+  }, [_c('i', {
+    staticClass: "mini-action-button__icon material-icons"
+  }, [_vm._v("speaker_notes")])]), _vm._v(" "), _c('p', {
+    staticClass: "mini-action-button__text--hide"
+  }, [_vm._v("Add Note")])]), _vm._v(" "), _c('div', {
+    staticClass: "mini-action-button--hide mini-action-button"
+  }, [_c('a', {
+    attrs: {
+      "href": _vm.createObservationUrl
+    }
+  }, [_c('i', {
+    staticClass: "mini-action-button__icon material-icons"
+  }, [_vm._v("timeline")])]), _vm._v(" "), _c('p', {
+    staticClass: "mini-action-button__text--hide"
+  }, [_vm._v("Add Observation")])]), _vm._v(" "), _c('div', {
+    staticClass: "mini-action-button--hide mini-action-button"
+  }, [_c('a', {
+    attrs: {
+      "href": _vm.createActivityUrl
+    }
+  }, [_c('i', {
+    staticClass: "mini-action-button__icon material-icons"
+  }, [_vm._v("local_hospital")])]), _vm._v(" "), _c('p', {
+    staticClass: "mini-action-button__text--hide"
+  }, [_vm._v("Add Offline Activity")])]), _vm._v(" "), _c('div', {
+    staticClass: "mini-action-button--hide mini-action-button"
+  }, [_c('a', {
+    attrs: {
+      "href": _vm.createAppointmentUrl
+    }
+  }, [_c('i', {
+    staticClass: "mini-action-button__icon material-icons"
+  }, [_vm._v("today")])]), _vm._v(" "), _c('p', {
+    staticClass: "mini-action-button__text--hide"
+  }, [_vm._v("Add Appointment")])]), _vm._v(" "), _c('div', {
+    staticClass: "mini-action-button--hide mini-action-button",
+    attrs: {
+      "id": "showAddCarePersonModal"
+    }
+  }, [_c('p', [_c('i', {
+    staticClass: "mini-action-button__icon material-icons",
+    on: {
+      "click": _vm.createCarePerson
+    }
+  }, [_vm._v("contact_mail")])]), _vm._v(" "), _c('p', {
+    staticClass: "mini-action-button__text--hide"
+  }, [_vm._v("Add Care Person")])])]), _vm._v(" "), _vm._m(0)])])
+},staticRenderFns: [function (){var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;
+  return _c('div', {
+    staticClass: "FAB__action-button hidden-print"
+  }, [_c('i', {
+    staticClass: "action-button__icon material-icons hidden-print"
+  }, [_vm._v("add")])])
+}]}
+module.exports.render._withStripped = true
+if (false) {
+  module.hot.accept()
+  if (module.hot.data) {
+     require("vue-hot-reload-api").rerender("data-v-244acbbc", module.exports)
+  }
+}
+
+/***/ }),
+/* 73 */,
+/* 74 */
+/***/ (function(module, exports, __webpack_require__) {
+
+var disposed = false
+function injectStyle (ssrContext) {
+  if (disposed) return
+  __webpack_require__(75)
+}
+var Component = __webpack_require__(1)(
+  /* script */
+  __webpack_require__(77),
+  /* template */
+  __webpack_require__(78),
+  /* styles */
+  injectStyle,
+  /* scopeId */
+  null,
+  /* moduleIdentifier (server only) */
+  null
+)
 Component.options.__file = "/Users/michalis/Code/CLH/cpm-api/resources/assets/js/components/pages/work-schedule/daily-hours.vue"
 if (Component.esModule && Object.keys(Component.esModule).some(function (key) {return key !== "default" && key.substr(0, 2) !== "__"})) {console.error("named exports are not supported in *.vue files.")}
 if (Component.options.functional) {console.error("[vue-loader] daily-hours.vue: functional components are not supported with templates, they should use render functions.")}
@@ -48374,13 +48636,13 @@ module.exports = Component.exports
 
 
 /***/ }),
-/* 69 */
+/* 75 */
 /***/ (function(module, exports, __webpack_require__) {
 
 // style-loader: Adds some css to the DOM by adding a <style> tag
 
 // load the styles
-var content = __webpack_require__(70);
+var content = __webpack_require__(76);
 if(typeof content === 'string') content = [[module.i, content, '']];
 if(content.locals) module.exports = content.locals;
 // add the styles to the DOM
@@ -48400,7 +48662,7 @@ if(false) {
 }
 
 /***/ }),
-/* 70 */
+/* 76 */
 /***/ (function(module, exports, __webpack_require__) {
 
 exports = module.exports = __webpack_require__(5)(true);
@@ -48414,7 +48676,7 @@ exports.push([module.i, "\n.edit-daily-work-hours {\n    height: 25px;\n    colo
 
 
 /***/ }),
-/* 71 */
+/* 77 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -48541,7 +48803,7 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 });
 
 /***/ }),
-/* 72 */
+/* 78 */
 /***/ (function(module, exports, __webpack_require__) {
 
 module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;
@@ -48617,282 +48879,32 @@ if (false) {
 }
 
 /***/ }),
-/* 73 */
-/***/ (function(module, exports, __webpack_require__) {
-
-var disposed = false
-function injectStyle (ssrContext) {
-  if (disposed) return
-  __webpack_require__(74)
-}
-var Component = __webpack_require__(1)(
-  /* script */
-  __webpack_require__(76),
-  /* template */
-  __webpack_require__(77),
-  /* styles */
-  injectStyle,
-  /* scopeId */
-  null,
-  /* moduleIdentifier (server only) */
-  null
-)
-Component.options.__file = "/Users/michalis/Code/CLH/cpm-api/resources/assets/js/components/fab.vue"
-if (Component.esModule && Object.keys(Component.esModule).some(function (key) {return key !== "default" && key.substr(0, 2) !== "__"})) {console.error("named exports are not supported in *.vue files.")}
-if (Component.options.functional) {console.error("[vue-loader] fab.vue: functional components are not supported with templates, they should use render functions.")}
-
-/* hot reload */
-if (false) {(function () {
-  var hotAPI = require("vue-hot-reload-api")
-  hotAPI.install(require("vue"), false)
-  if (!hotAPI.compatible) return
-  module.hot.accept()
-  if (!module.hot.data) {
-    hotAPI.createRecord("data-v-244acbbc", Component.options)
-  } else {
-    hotAPI.reload("data-v-244acbbc", Component.options)
-  }
-  module.hot.dispose(function (data) {
-    disposed = true
-  })
-})()}
-
-module.exports = Component.exports
-
-
-/***/ }),
-/* 74 */
-/***/ (function(module, exports, __webpack_require__) {
-
-// style-loader: Adds some css to the DOM by adding a <style> tag
-
-// load the styles
-var content = __webpack_require__(75);
-if(typeof content === 'string') content = [[module.i, content, '']];
-if(content.locals) module.exports = content.locals;
-// add the styles to the DOM
-var update = __webpack_require__(6)("f096b98c", content, false);
-// Hot Module Replacement
-if(false) {
- // When the styles change, update the <style> tags
- if(!content.locals) {
-   module.hot.accept("!!../../../../node_modules/css-loader/index.js?sourceMap!../../../../node_modules/vue-loader/lib/style-compiler/index.js?{\"vue\":true,\"id\":\"data-v-244acbbc\",\"scoped\":false,\"hasInlineConfig\":true}!../../../../node_modules/vue-loader/lib/selector.js?type=styles&index=0!./fab.vue", function() {
-     var newContent = require("!!../../../../node_modules/css-loader/index.js?sourceMap!../../../../node_modules/vue-loader/lib/style-compiler/index.js?{\"vue\":true,\"id\":\"data-v-244acbbc\",\"scoped\":false,\"hasInlineConfig\":true}!../../../../node_modules/vue-loader/lib/selector.js?type=styles&index=0!./fab.vue");
-     if(typeof newContent === 'string') newContent = [[module.id, newContent, '']];
-     update(newContent);
-   });
- }
- // When the module is disposed, remove the <style> tags
- module.hot.dispose(function() { update(); });
-}
-
-/***/ }),
-/* 75 */
-/***/ (function(module, exports, __webpack_require__) {
-
-exports = module.exports = __webpack_require__(5)(true);
-// imports
-
-
-// module
-exports.push([module.i, "\n@media print {\n.hidden-print, .hidden-print * {\n        display: none !important;\n}\n}\n", "", {"version":3,"sources":["/Users/michalis/Code/CLH/cpm-api/resources/assets/js/components/fab.vue?2b26b0c3"],"names":[],"mappings":";AAEA;AACA;QACA,yBAAA;CACA;CACA","file":"fab.vue","sourcesContent":["<!--Don't know how to add compiled fab.css to style tag. Make sure 'public/css/fab.css' is included on the page-->\n<style>\n    @media print {\n        .hidden-print, .hidden-print * {\n            display: none !important;\n        }\n    }\n</style>\n\n<template>\n    <div>\n        <section class=\"FAB hidden-print\">\n            <div class=\"FAB__mini-action-button hidden-print\">\n                <div class=\"mini-action-button--hide mini-action-button hidden-print\">\n                    <a :href=\"createNoteUrl\">\n                        <i class=\"mini-action-button__icon material-icons\">speaker_notes</i>\n                    </a>\n                    <p class=\"mini-action-button__text--hide\">Add Note</p>\n                </div>\n\n                <div class=\"mini-action-button--hide mini-action-button\">\n                    <a :href=\"createObservationUrl\">\n                        <i class=\"mini-action-button__icon material-icons\">timeline</i>\n                    </a>\n                    <p class=\"mini-action-button__text--hide\">Add Observation</p>\n                </div>\n\n                <div class=\"mini-action-button--hide mini-action-button\">\n                    <a :href=\"createActivityUrl\">\n                        <i class=\"mini-action-button__icon material-icons\">local_hospital</i>\n                    </a>\n                    <p class=\"mini-action-button__text--hide\">Add Offline Activity</p>\n                </div>\n\n                <div class=\"mini-action-button--hide mini-action-button\">\n                    <a :href=\"createAppointmentUrl\">\n                        <i class=\"mini-action-button__icon material-icons\">today</i>\n                    </a>\n                    <p class=\"mini-action-button__text--hide\">Add Appointment</p>\n                </div>\n\n                <div id=\"showAddCarePersonModal\" class=\"mini-action-button--hide mini-action-button\">\n                    <p>\n                        <i v-on:click=\"createCarePerson\"\n                           class=\"mini-action-button__icon material-icons\">contact_mail</i>\n                    </p>\n                    <p class=\"mini-action-button__text--hide\">Add Care Person</p>\n                </div>\n\n            </div>\n            <div class=\"FAB__action-button hidden-print\">\n                <i class=\"action-button__icon material-icons hidden-print\">add</i>\n            </div>\n        </section>\n    </div>\n</template>\n\n<script>\n    import {mapGetters, mapActions} from 'vuex'\n    import {getCurrentUser, setOpenModal} from \"../store/actions\";\n    import {currentUser} from '../store/getters';\n\n    export default {\n        data() {\n            return {\n                createNoteUrl: $('meta[name=\"route.patient.note.create\"]').attr('content'),\n                createObservationUrl: $('meta[name=\"route.patient.observation.create\"]').attr('content'),\n                createActivityUrl: $('meta[name=\"route.patient.activity.create\"]').attr('content'),\n                createAppointmentUrl: $('meta[name=\"route.patient.appointment.create\"]').attr('content'),\n            }\n        },\n\n        computed: Object.assign(\n            mapGetters({\n                theCurrentUser: 'currentUser'\n            })\n        ),\n\n        created() {\n            this.getCurrentUser()\n        },\n\n        methods: Object.assign(\n            mapActions(['setOpenModal', 'getCurrentUser']),\n            {\n                createCarePerson() {\n                    this.setOpenModal({\n                        name: 'create-care-person'\n                    })\n                }\n            }\n        ),\n    }\n</script>"],"sourceRoot":""}]);
-
-// exports
-
-
-/***/ }),
-/* 76 */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_vuex__ = __webpack_require__(2);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__store_actions__ = __webpack_require__(4);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__store_getters__ = __webpack_require__(7);
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-
-
-
-
-
-/* harmony default export */ __webpack_exports__["default"] = ({
-    data: function data() {
-        return {
-            createNoteUrl: $('meta[name="route.patient.note.create"]').attr('content'),
-            createObservationUrl: $('meta[name="route.patient.observation.create"]').attr('content'),
-            createActivityUrl: $('meta[name="route.patient.activity.create"]').attr('content'),
-            createAppointmentUrl: $('meta[name="route.patient.appointment.create"]').attr('content')
-        };
-    },
-
-
-    computed: Object.assign(__WEBPACK_IMPORTED_MODULE_0_vuex__["c" /* mapGetters */]({
-        theCurrentUser: 'currentUser'
-    })),
-
-    created: function created() {
-        this.getCurrentUser();
-    },
-
-
-    methods: Object.assign(__WEBPACK_IMPORTED_MODULE_0_vuex__["b" /* mapActions */](['setOpenModal', 'getCurrentUser']), {
-        createCarePerson: function createCarePerson() {
-            this.setOpenModal({
-                name: 'create-care-person'
-            });
-        }
-    })
-});
-
-/***/ }),
-/* 77 */
-/***/ (function(module, exports, __webpack_require__) {
-
-module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;
-  return _c('div', [_c('section', {
-    staticClass: "FAB hidden-print"
-  }, [_c('div', {
-    staticClass: "FAB__mini-action-button hidden-print"
-  }, [_c('div', {
-    staticClass: "mini-action-button--hide mini-action-button hidden-print"
-  }, [_c('a', {
-    attrs: {
-      "href": _vm.createNoteUrl
-    }
-  }, [_c('i', {
-    staticClass: "mini-action-button__icon material-icons"
-  }, [_vm._v("speaker_notes")])]), _vm._v(" "), _c('p', {
-    staticClass: "mini-action-button__text--hide"
-  }, [_vm._v("Add Note")])]), _vm._v(" "), _c('div', {
-    staticClass: "mini-action-button--hide mini-action-button"
-  }, [_c('a', {
-    attrs: {
-      "href": _vm.createObservationUrl
-    }
-  }, [_c('i', {
-    staticClass: "mini-action-button__icon material-icons"
-  }, [_vm._v("timeline")])]), _vm._v(" "), _c('p', {
-    staticClass: "mini-action-button__text--hide"
-  }, [_vm._v("Add Observation")])]), _vm._v(" "), _c('div', {
-    staticClass: "mini-action-button--hide mini-action-button"
-  }, [_c('a', {
-    attrs: {
-      "href": _vm.createActivityUrl
-    }
-  }, [_c('i', {
-    staticClass: "mini-action-button__icon material-icons"
-  }, [_vm._v("local_hospital")])]), _vm._v(" "), _c('p', {
-    staticClass: "mini-action-button__text--hide"
-  }, [_vm._v("Add Offline Activity")])]), _vm._v(" "), _c('div', {
-    staticClass: "mini-action-button--hide mini-action-button"
-  }, [_c('a', {
-    attrs: {
-      "href": _vm.createAppointmentUrl
-    }
-  }, [_c('i', {
-    staticClass: "mini-action-button__icon material-icons"
-  }, [_vm._v("today")])]), _vm._v(" "), _c('p', {
-    staticClass: "mini-action-button__text--hide"
-  }, [_vm._v("Add Appointment")])]), _vm._v(" "), _c('div', {
-    staticClass: "mini-action-button--hide mini-action-button",
-    attrs: {
-      "id": "showAddCarePersonModal"
-    }
-  }, [_c('p', [_c('i', {
-    staticClass: "mini-action-button__icon material-icons",
-    on: {
-      "click": _vm.createCarePerson
-    }
-  }, [_vm._v("contact_mail")])]), _vm._v(" "), _c('p', {
-    staticClass: "mini-action-button__text--hide"
-  }, [_vm._v("Add Care Person")])])]), _vm._v(" "), _vm._m(0)])])
-},staticRenderFns: [function (){var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;
-  return _c('div', {
-    staticClass: "FAB__action-button hidden-print"
-  }, [_c('i', {
-    staticClass: "action-button__icon material-icons hidden-print"
-  }, [_vm._v("add")])])
-}]}
-module.exports.render._withStripped = true
-if (false) {
-  module.hot.accept()
-  if (module.hot.data) {
-     require("vue-hot-reload-api").rerender("data-v-244acbbc", module.exports)
-  }
-}
-
-/***/ }),
-/* 78 */,
 /* 79 */,
 /* 80 */,
 /* 81 */,
 /* 82 */,
 /* 83 */,
 /* 84 */,
-/* 85 */
+/* 85 */,
+/* 86 */,
+/* 87 */,
+/* 88 */,
+/* 89 */,
+/* 90 */,
+/* 91 */,
+/* 92 */,
+/* 93 */,
+/* 94 */,
+/* 95 */,
+/* 96 */,
+/* 97 */
 /***/ (function(module, exports, __webpack_require__) {
 
-module.exports = __webpack_require__(86);
+module.exports = __webpack_require__(98);
 
 
 /***/ }),
-/* 86 */
+/* 98 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -48920,10 +48932,10 @@ window.Vue.use(__WEBPACK_IMPORTED_MODULE_0_vue_form___default.a, {
 
 Vue.component('component-proxy', __webpack_require__(49));
 Vue.component('select2', __webpack_require__(51));
-Vue.component('fab', __webpack_require__(73));
+Vue.component('fab', __webpack_require__(68));
 Vue.component('openModal', __webpack_require__(55));
 Vue.component('notifications', __webpack_require__(58));
-Vue.component('nurseDailyHours', __webpack_require__(68));
+Vue.component('nurseDailyHours', __webpack_require__(74));
 
 window.App = new Vue({
     el: '#v-show-nurse-work-schedule',
