@@ -127,7 +127,7 @@
                 </validate>
             </div>
 
-            <div class="row" v-if="!formData.sameEHRLogin">
+            <div class="row">
                 <h6 class="col s12">
                     Please provide login information for your EHR system.
                 </h6>
@@ -158,7 +158,7 @@
                 </div>
             </div>
 
-            <div class="row" v-if="!formData.sameClinicalIssuesContact">
+            <div class="row">
                 <h6 class="col s12">
                     Who should be notified for patient clinical issues?
                 </h6>
