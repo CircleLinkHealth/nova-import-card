@@ -84,7 +84,8 @@
         </div>
 
         @if(auth()->user()->nurseInfo)
-            <div class="row-centered nurse-dashboard-schedule">
+            <div id="show-nurse-work-schedule" class="row-centered nurse-dashboard-schedule">
+                <notifications class="text-left"></notifications>
                 <div class="row">
                     <div class="col-md-12">
                         <div class="row">
@@ -120,3 +121,7 @@
         @endif
     </div>
 @stop
+
+@section('scripts')
+    <script src="{{asset('js/nurse-work-schedule.js')}}"></script>
+@endsection

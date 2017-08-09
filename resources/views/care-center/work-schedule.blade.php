@@ -3,8 +3,10 @@
 @section('title', 'Work Schedule')
 
 @section('content')
+    <div class="container container--menu" id="show-nurse-work-schedule">
 
-    <div class="container container--menu">
+        <notifications></notifications>
+
         <div class="row">
 
             @include('errors.errors')
@@ -76,3 +78,6 @@
     </div>
 @stop
 
+@section('scripts')
+    <script src="{{asset('js/nurse-work-schedule.js')}}"></script>
+@endsection

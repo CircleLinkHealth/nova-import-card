@@ -109,7 +109,7 @@
 @yield('scripts')
 
 <script src="{{asset('/js/fab.js') }}"></script>
-<script src="{{asset('js/app-provider-ui.js')}}"></script>
+{{--<script src="{{asset('js/app-provider-ui.js')}}"></script>--}}
 @endif
 </body>
 
