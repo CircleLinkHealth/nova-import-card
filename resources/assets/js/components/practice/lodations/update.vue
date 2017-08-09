@@ -240,14 +240,16 @@
     import modal from '../../shared/materialize/modal.vue';
     import {mapGetters, mapActions} from 'vuex'
     import {clearOpenModal, addNotification, updatePracticeLocation, clearErrors} from '../../../store/actions'
-    import {errors} from '../../../store/getters'
+    import {errors, practiceLocations} from '../../../store/getters'
     import MaterialSelect from '../../src/material-select.vue'
 
     export default {
         props: {
             location: {
                 type: Object,
-                default: () => {return {}}
+                default: () => {
+                    return {}
+                }
             }
         },
 
@@ -260,11 +262,22 @@
             if (!_.isEmpty(this.location)) {
                 this.formData = JSON.parse(JSON.stringify(this.location))
             }
+
+            if (!_.isEmpty(this.locations)) {
+                this.formData.sameClinicalIssuesContact = this.locations[0].sameClinicalIssuesContact
+                this.formData.clinical_contact = this.locations[0].clinical_contact
+
+                this.formData.sameEHRLogin = this.locations[0].sameEHRLogin
+                this.formData.ehr_login = this.locations[0].ehr_login
+                this.formData.ehr_password = this.locations[0].ehr_password
+
+            }
         },
 
         computed: Object.assign(
             mapGetters({
-                errors: 'errors'
+                errors: 'errors',
+                locations: 'practiceLocations'
             })
         ),
 
