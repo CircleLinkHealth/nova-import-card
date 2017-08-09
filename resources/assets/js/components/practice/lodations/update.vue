@@ -3,7 +3,12 @@
         <div class="row">
             <div class="col s12">
                 <h5 class="left">
-                    Edit Location
+                    <div v-if="formData.id === 'new'">
+                        Add Location
+                    </div>
+                    <div v-else>
+                        Edit Location
+                    </div>
                 </h5>
 
                 <div @click="submitForm()"
