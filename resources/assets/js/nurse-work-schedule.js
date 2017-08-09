@@ -24,7 +24,7 @@ Vue.component('notifications', require('./components/shared/notifications/notifi
 Vue.component('nurseDailyHours', require('./components/pages/work-schedule/daily-hours.vue'));
 
 window.App = new Vue({
-    el: '#show-nurse-work-schedule',
+    el: '#v-show-nurse-work-schedule',
     store
 });
 

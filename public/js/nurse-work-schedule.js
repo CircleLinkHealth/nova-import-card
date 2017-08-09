@@ -48926,7 +48926,7 @@ Vue.component('notifications', __webpack_require__(58));
 Vue.component('nurseDailyHours', __webpack_require__(68));
 
 window.App = new Vue({
-    el: '#show-nurse-work-schedule',
+    el: '#v-show-nurse-work-schedule',
     store: __WEBPACK_IMPORTED_MODULE_1__store__["a" /* default */]
 });
 

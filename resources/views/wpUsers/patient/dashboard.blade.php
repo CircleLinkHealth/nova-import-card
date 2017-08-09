@@ -84,7 +84,7 @@
         </div>
 
         @if(auth()->user()->nurseInfo)
-            <div id="show-nurse-work-schedule" class="row-centered nurse-dashboard-schedule">
+            <div id="v-show-nurse-work-schedule" class="row-centered nurse-dashboard-schedule">
                 <notifications class="text-left"></notifications>
                 <div class="row">
                     <div class="col-md-12">

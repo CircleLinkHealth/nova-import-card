@@ -3,7 +3,7 @@
 @section('title', 'Work Schedule')
 
 @section('content')
-    <div class="container container--menu" id="show-nurse-work-schedule">
+    <div class="container container--menu" id="v-show-nurse-work-schedule">
 
         <notifications></notifications>
 
