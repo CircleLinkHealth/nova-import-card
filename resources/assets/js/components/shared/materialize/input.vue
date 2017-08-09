@@ -6,7 +6,8 @@
         props: {
             name: String,
             value: String,
-            label: String
+            label: String,
+            required: Boolean
         },
         computed: Object.assign(
             mapGetters({
@@ -29,7 +30,7 @@
 
         <label :class="{active: value}" :for="name" :data-error="errors.get(name)"
                data-success="">
-            {{label}}
+            {{label}} <span v-if="required" class="red-text text-lighten-1">*</span>
         </label>
     </div>
 </template>

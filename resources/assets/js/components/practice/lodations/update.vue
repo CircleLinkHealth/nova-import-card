@@ -50,7 +50,7 @@
                 <validate auto-label>
                     <div class="input-field col s6">
                         <v-input type="text" label="Address Line 1" v-model="formData.address_line_1"
-                                 name="address_line_1"></v-input>
+                                 name="address_line_1" required></v-input>
 
                         <field-messages name="address_line_1" show="$untouched || $touched || $submitted">
                         </field-messages>
@@ -71,7 +71,7 @@
             <div class="row">
                 <validate auto-label>
                     <div class="input-field col s4">
-                        <v-input type="text" label="City" v-model="formData.city" name="city"></v-input>
+                        <v-input type="text" label="City" v-model="formData.city" name="city" required></v-input>
 
                         <field-messages name="city" show="$untouched || $touched || $submitted"></field-messages>
                     </div>
@@ -79,7 +79,7 @@
 
                 <validate auto-label>
                     <div class="input-field col s4">
-                        <v-input type="text" label="State" v-model="formData.state" name="state"></v-input>
+                        <v-input type="text" label="State" v-model="formData.state" name="state" required></v-input>
 
                         <field-messages name="state" show="$untouched || $touched || $submitted">
                         </field-messages>
@@ -89,7 +89,7 @@
                 <validate auto-label>
                     <div class="input-field col s4">
                         <v-input type="number" label="Postal Code" v-model="formData.postal_code"
-                                 name="postal_code"></v-input>
+                                 name="postal_code" required></v-input>
 
                         <field-messages name="postal_code" show="$untouched || $touched || $submitted">
                         </field-messages>
@@ -100,7 +100,7 @@
             <div class="row">
                 <validate auto-label>
                     <div class="input-field col s4">
-                        <v-input type="text" label="Phone" v-model="formData.phone" name="phone"></v-input>
+                        <v-input type="text" label="Phone" v-model="formData.phone" name="phone" required></v-input>
 
                         <field-messages name="phone" show="$untouched || $touched || $submitted">
                         </field-messages>
