@@ -44,20 +44,3 @@ html, body {
 [v-cloak] {
   display: none;
 }
-
-input:not([type]) + label:after, input[type=date] + label:after, input[type=datetime-local] + label:after, input[type=datetime] + label:after, input[type=email] + label:after, input[type=number] + label:after, input[type=password] + label:after, input[type=search] + label:after, input[type=tel] + label:after, input[type=text] + label:after, input[type=time] + label:after, input[type=url] + label:after, textarea.materialize-textarea + label:after {
-  display: block;
-  content: "";
-  position: absolute;
-  top: 2.5rem;
-  opacity: 0;
-  transition: opacity .2s ease-out, color .2s ease-out;
-}
-
-.input-field input:not([type]) + label:after, input[type=date] + label:after, input[type=datetime-local] + label:after, input[type=datetime] + label:after, input[type=email] + label:after, input[type=number] + label:after, input[type=password] + label:after, input[type=search] + label:after, input[type=tel] + label:after, input[type=text] + label:after, input[type=time] + label:after, input[type=url] + label:after, textarea.materialize-textarea + label:after {
-  font-size: .75rem;
-}
-
-.input-field label {
-  width: 100%;
-}
