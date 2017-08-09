@@ -25,9 +25,6 @@
                 :filter-key="searchQuery"
                 @click="cellClicked">
         </grid>
-
-        <component :is="compName" :show="showModal" :location="editedLocation" @close-modal="closeModal()"></component>
-
     </div>
 </template>
 
@@ -35,13 +32,8 @@
     import {mapGetters, mapActions} from 'vuex'
     import {practiceLocations} from '../../../store/getters'
     import {getPracticeLocations} from '../../../store/actions'
-    import UpdateLocation from './update.vue'
 
     export default {
-        components: {
-            UpdateLocation
-        },
-
         computed: Object.assign({},
             mapGetters({
                 locations: 'practiceLocations'
@@ -79,15 +71,7 @@
                 },
 
                 editRow(index) {
-                    this.compName = 'update-location'
-                    this.editedLocation = this.locations[index]
-                    this.showModal = true
-                },
-
-                closeModal() {
-                    this.compName = ''
-                    this.editedLocation = {}
-                    this.showModal = false
+                    this.$emit('update-view', 'update-location', this.locations[index])
                 }
             }),
 
