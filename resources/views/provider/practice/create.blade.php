@@ -8,7 +8,7 @@
 
     <div class="container">
         <div class="row">
-            {!! Form::open(['url' => route('provider.dashboard.store.practice', ['practiceSlug' => $practiceSlug]), 'method' => 'post', 'class' => 'col s12']) !!}
+            {!! Form::open(['url' => route('provider.dashboard.store.practice', ['practiceSlug' => $practiceSlug]), 'method' => 'post', 'class' => 'col s12', 'id' => 'edit-practice-form']) !!}
 
 
             <div class="row">
@@ -49,6 +49,7 @@
 
         <button class="btn blue waves-effect waves-light col s12"
                 id="update-practice"
+                form="edit-practice-form"
                 onclick="Materialize.toast('{{$practice->display_name}} was successfully updated.', 4000)">
             Update Practice
         </button>
