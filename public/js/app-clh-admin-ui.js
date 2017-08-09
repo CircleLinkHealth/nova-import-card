@@ -11000,6 +11000,7 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "getPatientCarePlan", function() { return getPatientCarePlan; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "destroyPdf", function() { return destroyPdf; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "uploadPdfCarePlan", function() { return uploadPdfCarePlan; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "clearErrors", function() { return clearErrors; });
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__api_user_profile__ = __webpack_require__(41);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__api_care_team__ = __webpack_require__(42);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__api_practice_location__ = __webpack_require__(43);
@@ -11142,6 +11143,12 @@ var uploadPdfCarePlan = function uploadPdfCarePlan(_ref12, formData) {
     __WEBPACK_IMPORTED_MODULE_4__api_patient_care_plan__["a" /* default */].uploadPdfCareplan(function (pdf) {
         commit('ADD_PDF_CARE_PLAN', pdf);
     }, null, formData);
+};
+
+var clearErrors = function clearErrors(_ref13, field) {
+    var commit = _ref13.commit;
+
+    commit('CLEAR_ERROR', field);
 };
 
 /***/ }),
@@ -41728,7 +41735,6 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "SET_PRACTICE_LOCATIONS", function() { return SET_PRACTICE_LOCATIONS; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "UPDATE_PRACTICE_LOCATION", function() { return UPDATE_PRACTICE_LOCATION; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "CLEAR_ERROR", function() { return CLEAR_ERROR; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "CLEAR_ALL_ERRORS", function() { return CLEAR_ALL_ERRORS; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "SET_ERRORS", function() { return SET_ERRORS; });
 var DESTROY_CARE_PERSON = function DESTROY_CARE_PERSON(state, carePerson) {
     state.patientCareTeam = state.patientCareTeam.filter(function (item) {
@@ -41818,10 +41824,6 @@ var UPDATE_PRACTICE_LOCATION = function UPDATE_PRACTICE_LOCATION(state, location
 
 var CLEAR_ERROR = function CLEAR_ERROR(state, field) {
     state.errors.clear(field);
-};
-
-var CLEAR_ALL_ERRORS = function CLEAR_ALL_ERRORS(state, field) {
-    state.errors.setErrors({});
 };
 
 var SET_ERRORS = function SET_ERRORS(state, errors) {

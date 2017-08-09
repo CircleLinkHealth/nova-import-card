@@ -239,7 +239,7 @@
 <script>
     import modal from '../../shared/materialize/modal.vue';
     import {mapGetters, mapActions} from 'vuex'
-    import {clearOpenModal, addNotification, updatePracticeLocation} from '../../../store/actions'
+    import {clearOpenModal, addNotification, updatePracticeLocation, clearErrors} from '../../../store/actions'
     import {errors} from '../../../store/getters'
     import MaterialSelect from '../../src/material-select.vue'
 
@@ -269,7 +269,7 @@
         ),
 
         methods: Object.assign(
-            mapActions(['clearOpenModal', 'addNotification', 'updatePracticeLocation']),
+            mapActions(['clearOpenModal', 'addNotification', 'updatePracticeLocation', 'clearErrors']),
             {
                 submitForm() {
                     this.updatePracticeLocation(this.formData)
@@ -299,7 +299,7 @@
                 },
 
                 close() {
-                    this.errors.clear()
+                    this.clearErrors()
                     this.$emit('update-view', 'index-locations', {})
                 }
             }

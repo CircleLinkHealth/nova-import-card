@@ -73,10 +73,10 @@ export const updatePracticeLocation = ({commit}, location) => {
     }
 
     practiceLocationsApi.update(location => {
-            commit('UPDATE_PRACTICE_LOCATION', location);
-        }, errors => {
-            commit('SET_ERRORS', errors)
-        }, practiceId, location)
+        commit('UPDATE_PRACTICE_LOCATION', location);
+    }, errors => {
+        commit('SET_ERRORS', errors)
+    }, practiceId, location)
 }
 
 export const getPatientCarePlan = ({commit}, patientId) => {
@@ -111,4 +111,8 @@ export const uploadPdfCarePlan = ({commit}, formData) => {
     carePlanApi.uploadPdfCareplan(pdf => {
         commit('ADD_PDF_CARE_PLAN', pdf)
     }, null, formData)
+}
+
+export const clearErrors = ({commit}, field) => {
+    commit('CLEAR_ERROR', field)
 }

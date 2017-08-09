@@ -1,6 +1,7 @@
 <script>
     import {mapGetters, mapActions} from 'vuex'
     import {errors} from '../../../store/getters'
+    import {clearErrors} from '../../../store/actions'
 
     export default {
         props: {
@@ -15,17 +16,20 @@
             }),
         ),
 
-        methods: {
-            updateValue(value) {
-                this.$emit('input', value)
-            }
-        }
+        methods: Object.assign(
+            mapActions(['clearErrors']),
+            {
+                updateValue(value) {
+                    this.$emit('input', value)
+                }
+            }),
     }
 </script>
 
 <template>
     <div>
-        <input :id="name" name="name" :class="{invalid: errors.get(name)}" @input="updateValue($event.target.value)" @keydown="errors.clear(name)"
+        <input :id="name" name="name" :class="{invalid: errors.get(name)}" @input="updateValue($event.target.value)"
+               @keydown="clearErrors(name)"
                :value="value">
 
         <label :class="{active: value}" :for="name" :data-error="errors.get(name)"
