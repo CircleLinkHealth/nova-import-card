@@ -24,7 +24,7 @@
 
 <template>
     <div>
-        <input :id="name" name="name" :class="{invalid: errors.get(name)}" @input="updateValue($event.target.value)"
+        <input :id="name" name="name" :class="{invalid: errors.get(name)}" @input="updateValue($event.target.value)" @keydown="errors.clear(name)"
                :value="value">
 
         <label :class="{active: value}" :for="name" :data-error="errors.get(name)"
