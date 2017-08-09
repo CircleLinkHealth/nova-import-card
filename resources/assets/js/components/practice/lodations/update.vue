@@ -2,8 +2,20 @@
     <div>
         <div class="row">
             <div class="col s12">
-                <p class="modal-title">Edit Location</p>
-                <a class="close-button" @click="closeModal()">×</a>
+                <h5 class="left">
+                    Edit Location
+                </h5>
+
+                <div @click="submitForm()"
+                     class="btn green waves-effect waves-light right">
+                    Save & Close
+                </div>
+
+                <div @click="close()"
+                     class="btn red waves-effect waves-light right"
+                     style="margin-right: 2rem;">
+                    Close
+                </div>
             </div>
         </div>
 
@@ -12,7 +24,7 @@
                 <validate auto-label>
                     <div class="input-field col s6">
 
-                        <v-input type="text" label="Name" v-model="formData.name" name="name"></v-input>
+                        <v-input type="text" label="Name" v-model="formData.name" name="name" required></v-input>
 
                         <field-messages name="name" show="$untouched || $touched || $submitted"></field-messages>
                     </div>
@@ -37,7 +49,8 @@
             <div class="row">
                 <validate auto-label>
                     <div class="input-field col s6">
-                        <v-input type="text" label="Address Line 1" v-model="formData.address_line_1" name="address_line_1"></v-input>
+                        <v-input type="text" label="Address Line 1" v-model="formData.address_line_1"
+                                 name="address_line_1"></v-input>
 
                         <field-messages name="address_line_1" show="$untouched || $touched || $submitted">
                         </field-messages>
@@ -46,7 +59,8 @@
 
                 <validate auto-label>
                     <div class="input-field col s6">
-                        <v-input type="text" label="Address Line 2" v-model="formData.address_line_2" name="address_line_2"></v-input>
+                        <v-input type="text" label="Address Line 2" v-model="formData.address_line_2"
+                                 name="address_line_2"></v-input>
 
                         <field-messages name="address_line_2" show="$untouched || $touched || $submitted">
                         </field-messages>
@@ -56,7 +70,7 @@
 
             <div class="row">
                 <validate auto-label>
-                    <div class="input-field col s6">
+                    <div class="input-field col s4">
                         <v-input type="text" label="City" v-model="formData.city" name="city"></v-input>
 
                         <field-messages name="city" show="$untouched || $touched || $submitted"></field-messages>
@@ -64,38 +78,37 @@
                 </validate>
 
                 <validate auto-label>
-                    <div class="input-field col s6">
+                    <div class="input-field col s4">
                         <v-input type="text" label="State" v-model="formData.state" name="state"></v-input>
 
                         <field-messages name="state" show="$untouched || $touched || $submitted">
                         </field-messages>
                     </div>
                 </validate>
-            </div>
 
-            <div class="row">
                 <validate auto-label>
-                    <div class="input-field col s6">
-                        <v-input type="number" label="Postal Code" v-model="formData.postal_code" name="postal_code"></v-input>
+                    <div class="input-field col s4">
+                        <v-input type="number" label="Postal Code" v-model="formData.postal_code"
+                                 name="postal_code"></v-input>
 
                         <field-messages name="postal_code" show="$untouched || $touched || $submitted">
                         </field-messages>
                     </div>
                 </validate>
+            </div>
 
+            <div class="row">
                 <validate auto-label>
-                    <div class="input-field col s6">
+                    <div class="input-field col s4">
                         <v-input type="text" label="Phone" v-model="formData.phone" name="phone"></v-input>
 
                         <field-messages name="phone" show="$untouched || $touched || $submitted">
                         </field-messages>
                     </div>
                 </validate>
-            </div>
 
-            <div class="row">
                 <validate auto-label>
-                    <div class="input-field col s6">
+                    <div class="input-field col s4">
                         <v-input type="text" label="Fax" v-model="formData.fax" name="fax"></v-input>
 
                         <field-messages name="fax" show="$untouched || $touched || $submitted">
@@ -104,8 +117,9 @@
                 </validate>
 
                 <validate auto-label>
-                    <div class="input-field col s6">
-                        <v-input type="text" label="EMR Direct Address" v-model="formData.emr_direct_address" name="emr_direct_address"></v-input>
+                    <div class="input-field col s4">
+                        <v-input type="text" label="EMR Direct Address" v-model="formData.emr_direct_address"
+                                 name="emr_direct_address"></v-input>
 
                         <field-messages name="emr_direct_address" show="$untouched || $touched || $submitted">
                         </field-messages>
@@ -119,7 +133,7 @@
                 </h6>
 
                 <validate auto-label>
-                    <div class="input-field col s6">
+                    <div class="input-field col s4">
                         <v-input type="text" label="EHR Login" v-model="formData.ehr_login" name="ehr_login"></v-input>
 
                         <field-messages name="ehr_login" show="$untouched || $touched || $submitted">
@@ -128,19 +142,20 @@
                 </validate>
 
                 <validate auto-label>
-                    <div class="input-field col s6">
-                        <v-input type="text" label="EHR Password" v-model="formData.ehr_password" name="ehr_password"></v-input>
+                    <div class="input-field col s4">
+                        <v-input type="text" label="EHR Password" v-model="formData.ehr_password"
+                                 name="ehr_password"></v-input>
 
                         <field-messages name="ehr_password" show="$untouched || $touched || $submitted">
                         </field-messages>
                     </div>
                 </validate>
 
-                <p class="right">
+                <div class="input-field col s4">
                     <input type="checkbox" class="filled-in" id="sameEHRLogin-box"
                            v-model="formData.sameEHRLogin" checked="checked"/>
                     <label for="sameEHRLogin-box">Same for all locations?</label>
-                </p>
+                </div>
             </div>
 
             <div class="row" v-if="!formData.sameClinicalIssuesContact">
@@ -148,7 +163,7 @@
                     Who should be notified for patient clinical issues?
                 </h6>
 
-                <div class="col s12">
+                <div class="input-field col s8">
                     <material-select v-model="formData.clinical_contact.type" class="input-field"
                                      name="clinical_contact">
                         <option v-for="option in clinicalContactOptions" :value="option.value"
@@ -156,46 +171,61 @@
                     </material-select>
                 </div>
 
+                <p class="input-field col s4">
+                    <input type="checkbox" class="filled-in" id="sameClinicalIssuesContact-box"
+                           v-model="formData.sameClinicalIssuesContact" checked="checked"/>
+                    <label for="sameClinicalIssuesContact-box">Same for all locations?</label>
+                </p>
+
                 <div v-show="formData.clinical_contact.type !== 'billing_provider'">
 
                     <validate auto-label :class="isValid()">
                         <div class="input-field col s6">
-                            <v-input type="text" label="First Name" v-model="formData.clinical_contact.first_name" name="clinical_contact.first_name"></v-input>
+                            <v-input type="text" label="First Name" v-model="formData.clinical_contact.first_name"
+                                     name="clinical_contact.first_name"></v-input>
 
-                            <field-messages name="clinical-contact-first-name" show="$untouched || $touched || $submitted">
+                            <field-messages name="clinical-contact-first-name"
+                                            show="$untouched || $touched || $submitted">
                             </field-messages>
                         </div>
                     </validate>
 
                     <validate auto-label :class="isValid()">
                         <div class="input-field col s6">
-                            <v-input type="text" label="Last Name" v-model="formData.clinical_contact.last_name" name="clinical_contact.last_name"></v-input>
+                            <v-input type="text" label="Last Name" v-model="formData.clinical_contact.last_name"
+                                     name="clinical_contact.last_name"></v-input>
 
-                            <field-messages name="clinical_contact.last_name" show="$untouched || $touched || $submitted">
+                            <field-messages name="clinical_contact.last_name"
+                                            show="$untouched || $touched || $submitted">
                             </field-messages>
                         </div>
                     </validate>
 
                     <validate auto-label>
                         <div class="input-field col s12">
-                            <v-input type="text" label="Email" v-model="formData.clinical_contact.email" name="clinical_contact.email"></v-input>
+                            <v-input type="text" label="Email" v-model="formData.clinical_contact.email"
+                                     name="clinical_contact.email"></v-input>
 
                             <field-messages name="name" show="$untouched || $touched || $submitted">
                             </field-messages>
                         </div>
                     </validate>
                 </div>
-
-                <p class="right">
-                    <input type="checkbox" class="filled-in" id="sameClinicalIssuesContact-box"
-                           v-model="formData.sameClinicalIssuesContact" checked="checked"/>
-                    <label for="sameClinicalIssuesContact-box">Same for all locations?</label>
-                </p>
             </div>
 
-            <div @click="submitForm()"
-                 class="btn blue waves-effect waves-light right">
-                Save
+            <div class="row">
+                <div class="col s12">
+                    <div @click="submitForm()"
+                         class="btn green waves-effect waves-light right">
+                        Save & Close
+                    </div>
+
+                    <div @click="close()"
+                         class="btn red waves-effect waves-light right"
+                         style="margin-right: 2rem;">
+                        Close
+                    </div>
+                </div>
             </div>
         </vue-form>
     </div>
@@ -247,7 +277,7 @@
                     }
                 },
 
-                closeModal() {
+                close() {
                     this.$emit('update-view', 'index-locations', {})
                 }
             }
@@ -324,10 +354,6 @@
 </script>
 
 <style>
-    .valid {
-
-    }
-
     .invalid {
         border-bottom: 1px solid #f44336;
         box-shadow: 0 1px 0 0 #f44336;
