@@ -32,7 +32,7 @@ class UpdatePracticeLocation extends FormRequest
             'city'                        => 'required',
             'state'                       => 'required',
             'timezone'                    => 'required',
-            'postal_code'                 => 'required',
+            'postal_code'                 => 'required|integer|digits:5',
             'clinical_contact.email'      => 'nullable|email'
         ];
     }
