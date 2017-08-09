@@ -11092,9 +11092,10 @@ var getPracticeLocations = function getPracticeLocations(_ref8, practiceId) {
 var updatePracticeLocation = function updatePracticeLocation(_ref9, location) {
     var commit = _ref9.commit;
 
-    var practiceId = location.practice.id;
+    var practiceId = location.practice_id;
 
     if (!practiceId) {
+        console.log('invalid practiceId');
         return;
     }
 

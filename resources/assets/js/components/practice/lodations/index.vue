@@ -3,7 +3,7 @@
         <div class="row">
             <div class="col s6">
                 <div class="input-field">
-                    <div v-on:click=""
+                    <div @click="addLocation()"
                          class="btn blue waves-effect waves-light" id="submit">
                         Add New Location
                     </div>
@@ -72,6 +72,10 @@
 
                 editRow(index) {
                     this.$emit('update-view', 'update-location', this.locations[index])
+                },
+
+                addLocation() {
+                    this.$emit('update-view', 'update-location')
                 }
             }),
 

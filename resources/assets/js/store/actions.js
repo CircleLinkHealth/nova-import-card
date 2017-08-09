@@ -67,9 +67,10 @@ export const getPracticeLocations = ({commit}, practiceId) => {
 }
 
 export const updatePracticeLocation = ({commit}, location) => {
-    let practiceId = location.practice.id
+    let practiceId = location.practice_id
 
     if (!practiceId) {
+        console.log('invalid practiceId')
         return
     }
 

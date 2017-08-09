@@ -240,7 +240,10 @@
 
     export default {
         props: {
-            location: Object
+            location: {
+                type: Object,
+                default: () => {return {}}
+            }
         },
 
         components: {
@@ -249,7 +252,9 @@
         },
 
         created() {
-            this.formData = JSON.parse(JSON.stringify(this.location))
+            if (!_.isEmpty(this.location)) {
+                this.formData = JSON.parse(JSON.stringify(this.location))
+            }
         },
 
         computed: Object.assign(
@@ -264,12 +269,14 @@
                 submitForm() {
                     this.updatePracticeLocation(this.formData)
 
-                    setTimeout(() => {
-                        if (!this.errors.any()) {
-                            Materialize.toast(this.formData.name + ' was successfully updated.', 3000)
-                            this.close()
-                        }
-                    }, 500);
+                    Vue.nextTick(() => {
+                        setTimeout(() => {
+                            if (!this.errors.any()) {
+                                Materialize.toast(this.formData.name + ' was successfully updated.', 3000)
+                                this.close()
+                            }
+                        }, 500);
+                    })
 
 
                 },
@@ -296,6 +303,7 @@
         data() {
             return {
                 formData: {
+                    id: 'new',
                     clinical_contact: {
                         email: '',
                         first_name: '',
@@ -318,7 +326,7 @@
                     state: '',
                     validated: false,
                     practice: {},
-                    practice_id: '',
+                    practice_id: $('meta[name=practice-id]').attr('content'),
                     sameClinicalIssuesContact: false,
                     sameEHRLogin: false,
                 },
