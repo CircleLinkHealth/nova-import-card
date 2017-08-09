@@ -22,7 +22,7 @@ class PracticeLocationsController extends Controller
     {
         $primaryPractice = Practice::find($primaryPracticeId);
 
-        $existingLocations = $primaryPractice->locations->map(function ($loc) use (
+        $existingLocations = $primaryPractice->locations->sortBy('name')->values()->map(function ($loc) use (
             $primaryPractice
         ) {
             return $this->present($loc, $primaryPractice);
