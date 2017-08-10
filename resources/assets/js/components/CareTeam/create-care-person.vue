@@ -567,17 +567,11 @@
                         timeout: true
                     })
 
-                    //HACK to replace select2 with newly added provider on appointments page
-//                    let carePerson = response.data.carePerson;
-//
-//                    $('#providerBox').replaceWith('<select id="provider" ' +
-//                        'name="provider"' +
-//                        'class="provider selectpickerX dropdownValid form-control" ' +
-//                        'data-size="10" disabled>  ' +
-//                        '<option value="' + carePerson.user.id + '" selected>' + carePerson.user.first_name + ' ' + carePerson.user.last_name + '</option></select>');
-//
-//                    $('#providerDiv').css('padding-bottom', '10px');
-//                    $("#save").append('<input type="hidden" value="' + carePerson.user.id + '" id="provider" name="provider">');
+                    let url = window.location.href
+
+                    if(url.includes('view-careplan')) {
+                        window.location.replace(url)
+                    }
                 },
 
                 fieldClassName(field) {

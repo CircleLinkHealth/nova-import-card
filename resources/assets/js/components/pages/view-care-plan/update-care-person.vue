@@ -563,6 +563,12 @@
                         type: "success",
                         timeout: true
                     })
+
+                    let url = window.location.href
+
+                    if(url.includes('view-careplan')) {
+                        window.location.replace(url)
+                    }
                 },
 
                 fieldClassName(field) {
