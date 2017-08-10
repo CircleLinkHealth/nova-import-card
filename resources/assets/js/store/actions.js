@@ -105,7 +105,9 @@ export const getPatientCarePlan = ({commit}, patientId) => {
             return
         }
         commit('SET_PATIENT_CARE_PLAN', carePlan);
-    }, null, patientId)
+    }, error => {
+        console.log(error)
+    }, patientId)
 }
 
 export const destroyPdf = ({commit}, pdfId) => {
@@ -125,7 +127,9 @@ export const uploadPdfCarePlan = ({commit}, formData) => {
 
     carePlanApi.uploadPdfCareplan(pdf => {
         commit('ADD_PDF_CARE_PLAN', pdf)
-    }, null, formData)
+    }, error => {
+        console.log(error)
+    }, formData)
 }
 
 export const clearErrors = ({commit}, field) => {

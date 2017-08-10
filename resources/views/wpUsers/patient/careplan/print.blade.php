@@ -20,6 +20,10 @@ if (isset($patient) && !empty($patient)) {
 @section('activity', 'Care Plan View/Print')
 @endif
 
+@section('scripts')
+    <script src="{{asset('js/v-pdf-careplans.js')}}"></script>
+@endsection
+
 @section('content')
     @if(isset($patient) && !empty($patient))
         <div class="container">
@@ -46,7 +50,7 @@ if (isset($patient) && !empty($patient)) {
                                 @endif
 
 
-                                <div class="col-xs-12 text-left">
+                                <div id="v-pdf-careplans" class="col-xs-12 text-left">
                                     <pdf-careplans v-cloak>
                                         <span class="btn btn-group text-right">
                                         @if ( ($patient->carePlanStatus == 'qa_approved' && auth()->user()->can('care-plan-approve')) || ($patient->carePlanStatus == 'draft' && auth()->user()->can('care-plan-qa-approve')) )

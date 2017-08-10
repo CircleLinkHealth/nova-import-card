@@ -463,6 +463,17 @@ class ReportsController extends Controller
         return json_encode($feed);
     }
 
+    public function viewPdfCarePlan(Request $request,
+                                    $patientId = false) {
+        if (!$patientId) {
+            return "Patient Not Found..";
+        }
+
+        $patient = User::find($patientId);
+
+        return view('patient.careplan.view-pdf-careplan', compact(['patient']));
+    }
+
     public function viewPrintCareplan(
         Request $request,
         $patientId = false,
@@ -475,7 +486,7 @@ class ReportsController extends Controller
         $patient = User::find($patientId);
 
         if ($patient->careplan_mode == CarePlan::PDF) {
-            return view('patient.careplan.view-pdf-careplan', compact(['patient']));
+            return redirect()->route('patient.pdf.careplan.print', ['patientId' => $patientId]);
         }
 
         $careplan = $this->formatter->formatDataForViewPrintCareplanReport([$patient]);

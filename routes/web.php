@@ -384,6 +384,12 @@ Route::group(['middleware' => 'auth'], function () {
             'uses' => 'ReportsController@viewPrintCareplan',
             'as'   => 'patient.careplan.print',
         ]);
+
+        Route::get('view-careplan/pdf', [
+            'uses' => 'ReportsController@viewPdfCarePlan',
+            'as'   => 'patient.pdf.careplan.print',
+        ]);
+
         Route::post('input/observation/create', [
             'uses' => 'ObservationController@store',
             'as'   => 'patient.observation.store',

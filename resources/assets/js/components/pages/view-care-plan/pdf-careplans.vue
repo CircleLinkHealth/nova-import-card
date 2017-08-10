@@ -26,7 +26,8 @@
                 patientId: $('meta[name="patient_id"]').attr('content'),
                 showUploadModal: false,
                 files: [],
-                indexOfLastUploadedFile: -1
+                indexOfLastUploadedFile: -1,
+                modeBeforeUpload: ''
             }
         },
 
@@ -58,6 +59,8 @@
 
                     formData.set('carePlanId', this.patientCarePlan.id)
 
+                    this.modeBeforeUpload = this.patientCarePlan.mode
+
                     this.uploadPdfCarePlan(formData)
 
                     this.addNotification({
@@ -67,8 +70,8 @@
                         timeout: true
                     })
 
-                    if (this.patientCarePlan.mode === 'web') {
-                        window.location.replace(window.location.href)
+                    if (this.modeBeforeUpload === 'web') {
+                        window.location.replace(window.location.href + '/pdf')
                     }
                 }
             }

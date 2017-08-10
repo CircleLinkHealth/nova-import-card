@@ -11136,7 +11136,9 @@ var getPatientCarePlan = function getPatientCarePlan(_ref11, patientId) {
             return;
         }
         commit('SET_PATIENT_CARE_PLAN', carePlan);
-    }, null, patientId);
+    }, function (error) {
+        console.log(error);
+    }, patientId);
 };
 
 var destroyPdf = function destroyPdf(_ref12, pdfId) {
@@ -11160,7 +11162,9 @@ var uploadPdfCarePlan = function uploadPdfCarePlan(_ref13, formData) {
 
     __WEBPACK_IMPORTED_MODULE_4__api_patient_care_plan__["a" /* default */].uploadPdfCareplan(function (pdf) {
         commit('ADD_PDF_CARE_PLAN', pdf);
-    }, null, formData);
+    }, function (error) {
+        console.log(error);
+    }, formData);
 };
 
 var clearErrors = function clearErrors(_ref14, field) {
@@ -52198,7 +52202,7 @@ exports = module.exports = __webpack_require__(5)(true);
 
 
 // module
-exports.push([module.i, "\nli.pdf-careplan {\n    font-size: 16px;\n}\n", "", {"version":3,"sources":["/Users/michalis/Code/CLH/cpm-api/resources/assets/js/components/pages/view-care-plan/pdf-careplans.vue?658f04e5"],"names":[],"mappings":";AAqHA;IACA,gBAAA;CACA","file":"pdf-careplans.vue","sourcesContent":["<script>\n    import {mapActions, mapGetters} from 'vuex'\n    import {getPatientCarePlan, destroyPdf, uploadPdfCarePlan, addNotification} from '../../../store/actions'\n    import {patientCarePlan} from '../../../store/getters'\n    import modal from '../../shared/modal.vue';\n    import FileUpload from 'vue-upload-component'\n\n    export default {\n        computed: Object.assign(\n            mapGetters({\n                patientCarePlan: 'patientCarePlan'\n            })\n        ),\n\n        components: {\n            modal,\n            FileUpload\n        },\n\n        created() {\n            this.getPatientCarePlan(this.patientId)\n        },\n\n        data() {\n            return {\n                patientId: $('meta[name=\"patient_id\"]').attr('content'),\n                showUploadModal: false,\n                files: [],\n                indexOfLastUploadedFile: -1\n            }\n        },\n\n        methods: Object.assign({},\n            mapActions(['getPatientCarePlan', 'destroyPdf', 'uploadPdfCarePlan', 'addNotification']),\n            {\n                openModal() {\n                    this.showUploadModal = true\n                },\n\n                deletePdf(pdf){\n                    let disassociate = confirm('Are you sure you want to delete this CarePlan?');\n\n                    if (!disassociate) {\n                        return true;\n                    }\n\n                    this.destroyPdf(pdf.id)\n                },\n                uploadPdf() {\n                    this.showUploadModal = false;\n\n                    let formData = new FormData()\n\n                    for (var i = this.indexOfLastUploadedFile+1; i < this.files.length; i++) {\n                        formData.set('files[' + i + ']', this.files[i].file) // set the filename with php\n                        this.indexOfLastUploadedFile = i\n                    }\n\n                    formData.set('carePlanId', this.patientCarePlan.id)\n\n                    this.uploadPdfCarePlan(formData)\n\n                    this.addNotification({\n                        title: \"Successfully uploaded PDF Careplan(s)\",\n                        text: \"\",\n                        type: \"success\",\n                        timeout: true\n                    })\n\n                    if (this.patientCarePlan.mode === 'web') {\n                        window.location.replace(window.location.href)\n                    }\n                }\n            }\n        ),\n    }\n</script>\n\n<template>\n    <div class=\"col-md-12\" style=\"padding-top: 2%;\" v-cloak>\n        <div class=\"row\">\n            <div class=\"col-md-12 text-right\">\n                <a @click=\"openModal()\" class=\"btn btn-info btn-sm inline-block\">Upload PDF</a>\n                <slot></slot>\n            </div>\n        </div>\n\n        <div class=\"row\" v-if=\"patientCarePlan.mode == 'pdf'\">\n            <div class=\"col-md-6\">\n                <ul class=\"list-group\">\n                    <li v-for=\"(pdf, index) in patientCarePlan.pdfs\" class=\"list-group-item pdf-careplan\">\n                        <a :href=\"pdf.url\" target=\"_blank\">{{pdf.label}} </a>\n                        <button @click=\"deletePdf(pdf)\" class=\"btn btn-xs btn-danger problem-delete-btn\"><span><i\n                                class=\"glyphicon glyphicon-remove\"></i></span></button>\n                    </li>\n                </ul>\n            </div>\n        </div>\n\n        <modal v-show=\"showUploadModal\">\n            <template slot=\"header\">\n                <button type=\"button\" class=\"close\" @click=\"showUploadModal = false\">×</button>\n                <h4 class=\"modal-title\">Upload PDF CarePlan</h4>\n            </template>\n            <template slot=\"body\">\n                <file-upload id=\"drop-pdf-cp\" @input=\"uploadPdf()\" v-model=\"files\" accept=\"application/pdf\"\n                             class=\"dropzone\" multiple=\"multiple\" drop=\"#drop-pdf-cp\">\n                    Drop a PDF here, or click to choose a file to upload.\n                </file-upload>\n            </template>\n            <template slot=\"footer\">\n            </template>\n        </modal>\n    </div>\n</template>\n\n<style>\n    li.pdf-careplan {\n        font-size: 16px;\n    }\n</style>"],"sourceRoot":""}]);
+exports.push([module.i, "\nli.pdf-careplan {\n    font-size: 16px;\n}\n", "", {"version":3,"sources":["/Users/michalis/Code/CLH/cpm-api/resources/assets/js/components/pages/view-care-plan/pdf-careplans.vue?1654d92f"],"names":[],"mappings":";AAwHA;IACA,gBAAA;CACA","file":"pdf-careplans.vue","sourcesContent":["<script>\n    import {mapActions, mapGetters} from 'vuex'\n    import {getPatientCarePlan, destroyPdf, uploadPdfCarePlan, addNotification} from '../../../store/actions'\n    import {patientCarePlan} from '../../../store/getters'\n    import modal from '../../shared/modal.vue';\n    import FileUpload from 'vue-upload-component'\n\n    export default {\n        computed: Object.assign(\n            mapGetters({\n                patientCarePlan: 'patientCarePlan'\n            })\n        ),\n\n        components: {\n            modal,\n            FileUpload\n        },\n\n        created() {\n            this.getPatientCarePlan(this.patientId)\n        },\n\n        data() {\n            return {\n                patientId: $('meta[name=\"patient_id\"]').attr('content'),\n                showUploadModal: false,\n                files: [],\n                indexOfLastUploadedFile: -1,\n                modeBeforeUpload: ''\n            }\n        },\n\n        methods: Object.assign({},\n            mapActions(['getPatientCarePlan', 'destroyPdf', 'uploadPdfCarePlan', 'addNotification']),\n            {\n                openModal() {\n                    this.showUploadModal = true\n                },\n\n                deletePdf(pdf){\n                    let disassociate = confirm('Are you sure you want to delete this CarePlan?');\n\n                    if (!disassociate) {\n                        return true;\n                    }\n\n                    this.destroyPdf(pdf.id)\n                },\n                uploadPdf() {\n                    this.showUploadModal = false;\n\n                    let formData = new FormData()\n\n                    for (var i = this.indexOfLastUploadedFile+1; i < this.files.length; i++) {\n                        formData.set('files[' + i + ']', this.files[i].file) // set the filename with php\n                        this.indexOfLastUploadedFile = i\n                    }\n\n                    formData.set('carePlanId', this.patientCarePlan.id)\n\n                    this.modeBeforeUpload = this.patientCarePlan.mode\n\n                    this.uploadPdfCarePlan(formData)\n\n                    this.addNotification({\n                        title: \"Successfully uploaded PDF Careplan(s)\",\n                        text: \"\",\n                        type: \"success\",\n                        timeout: true\n                    })\n\n                    if (this.modeBeforeUpload === 'web') {\n                        window.location.replace(window.location.href + '/pdf')\n                    }\n                }\n            }\n        ),\n    }\n</script>\n\n<template>\n    <div class=\"col-md-12\" style=\"padding-top: 2%;\" v-cloak>\n        <div class=\"row\">\n            <div class=\"col-md-12 text-right\">\n                <a @click=\"openModal()\" class=\"btn btn-info btn-sm inline-block\">Upload PDF</a>\n                <slot></slot>\n            </div>\n        </div>\n\n        <div class=\"row\" v-if=\"patientCarePlan.mode == 'pdf'\">\n            <div class=\"col-md-6\">\n                <ul class=\"list-group\">\n                    <li v-for=\"(pdf, index) in patientCarePlan.pdfs\" class=\"list-group-item pdf-careplan\">\n                        <a :href=\"pdf.url\" target=\"_blank\">{{pdf.label}} </a>\n                        <button @click=\"deletePdf(pdf)\" class=\"btn btn-xs btn-danger problem-delete-btn\"><span><i\n                                class=\"glyphicon glyphicon-remove\"></i></span></button>\n                    </li>\n                </ul>\n            </div>\n        </div>\n\n        <modal v-show=\"showUploadModal\">\n            <template slot=\"header\">\n                <button type=\"button\" class=\"close\" @click=\"showUploadModal = false\">×</button>\n                <h4 class=\"modal-title\">Upload PDF CarePlan</h4>\n            </template>\n            <template slot=\"body\">\n                <file-upload id=\"drop-pdf-cp\" @input=\"uploadPdf()\" v-model=\"files\" accept=\"application/pdf\"\n                             class=\"dropzone\" multiple=\"multiple\" drop=\"#drop-pdf-cp\">\n                    Drop a PDF here, or click to choose a file to upload.\n                </file-upload>\n            </template>\n            <template slot=\"footer\">\n            </template>\n        </modal>\n    </div>\n</template>\n\n<style>\n    li.pdf-careplan {\n        font-size: 16px;\n    }\n</style>"],"sourceRoot":""}]);
 
 // exports
 
@@ -52241,7 +52245,8 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
             patientId: $('meta[name="patient_id"]').attr('content'),
             showUploadModal: false,
             files: [],
-            indexOfLastUploadedFile: -1
+            indexOfLastUploadedFile: -1,
+            modeBeforeUpload: ''
         };
     },
 
@@ -52271,6 +52276,8 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 
             formData.set('carePlanId', this.patientCarePlan.id);
 
+            this.modeBeforeUpload = this.patientCarePlan.mode;
+
             this.uploadPdfCarePlan(formData);
 
             this.addNotification({
@@ -52280,8 +52287,8 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
                 timeout: true
             });
 
-            if (this.patientCarePlan.mode === 'web') {
-                window.location.replace(window.location.href);
+            if (this.modeBeforeUpload === 'web') {
+                window.location.replace(window.location.href + '/pdf');
             }
         }
     })

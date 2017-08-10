@@ -11136,7 +11136,9 @@ var getPatientCarePlan = function getPatientCarePlan(_ref11, patientId) {
             return;
         }
         commit('SET_PATIENT_CARE_PLAN', carePlan);
-    }, null, patientId);
+    }, function (error) {
+        console.log(error);
+    }, patientId);
 };
 
 var destroyPdf = function destroyPdf(_ref12, pdfId) {
@@ -11160,7 +11162,9 @@ var uploadPdfCarePlan = function uploadPdfCarePlan(_ref13, formData) {
 
     __WEBPACK_IMPORTED_MODULE_4__api_patient_care_plan__["a" /* default */].uploadPdfCareplan(function (pdf) {
         commit('ADD_PDF_CARE_PLAN', pdf);
-    }, null, formData);
+    }, function (error) {
+        console.log(error);
+    }, formData);
 };
 
 var clearErrors = function clearErrors(_ref14, field) {
