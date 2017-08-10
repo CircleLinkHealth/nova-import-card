@@ -8,4 +8,6 @@
 <meta name="created_by" content="{{auth()->user()->id}}">
 <meta name="patient_id" content="{{$patient->id}}">
 
-<care-team></care-team>
+<div class="v-pdf-careplans">
+    <care-team></care-team>
+</div>

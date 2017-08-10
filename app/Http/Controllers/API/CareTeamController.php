@@ -125,6 +125,7 @@ class CareTeamController extends Controller
                     'formatted_type'      => $formattedType,
                     'alert'               => $member->alert,
                     'is_billing_provider' => $type == CarePerson::BILLING_PROVIDER,
+                    'user_id'             => $member->user_id,
                     'user'                => [
                         'id'               => $member->user->id,
                         'email'            => $member->user->email,
@@ -176,38 +177,6 @@ class CareTeamController extends Controller
         return response()->json($careTeam);
     }
 
-//    public function TEMPindex(Request $request, $patientId)
-//    {
-//        $patient = User::find($patientId);
-//
-//        $careTeam = CarePerson::whereUserId($patientId)
-//            ->with('user')
-//            ->get()
-//            ->map(function ($member) use ($patient) {
-//                $type = $member->type;
-//
-//                if ($member->user->practice($patient->primaryPractice->id) && $member->type != CarePerson::BILLING_PROVIDER) {
-//                    $type = $member->user->role()->display_name . " (Internal)";
-//                }
-//
-//                $formattedType = snakeToSentenceCase($type);
-//
-//                return [
-//                    'id'                  => $member->id,
-//                    'user_id'             => $member->user_id,
-//                    'formatted_type'      => $formattedType,
-//                    'alert'               => $member->alert,
-//                    'is_billing_provider' => $type == CarePerson::BILLING_PROVIDER,
-//                    'user'                => [
-//                        'first_name' => $member->user->first_name,
-//                        'last_name'  => $member->user->last_name,
-//                    ],
-//                ];
-//            });
-//
-//        return response()->json($careTeam);
-//    }
-
     public function destroy(
         Request $request,
         $patientId,
@@ -257,8 +226,8 @@ class CareTeamController extends Controller
             return abort('403', 'Care Team Members cannot be deleted using this method');
         }
 
-        $input = $request->input('careTeamMember');
-        $patientId = $request->input('patientId');
+        $input = $request->input();
+        $patientId = $request->input('user_id');
 
         $patient = User::find($patientId);
 

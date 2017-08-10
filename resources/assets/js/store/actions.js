@@ -36,12 +36,15 @@ export const getPatientCareTeam = ({commit}, patientId) => {
     }
 
     careTeam.getPatientCareTeam(careTeam => {
-        if (!careTeam) {
-            commit('CLEAR_CARE_TEAM');
-            return
-        }
+        commit('CLEAR_CARE_TEAM');
         commit('SET_CARE_TEAM', careTeam);
     }, null, patientId)
+}
+
+export const updateCarePerson = ({commit}, carePerson) => {
+    carePersonApi.updateCarePerson(carePerson => {
+        commit('UPDATE_CARE_PERSON', carePerson);
+    }, null, carePerson)
 }
 
 export const destroyCarePerson = ({commit}, carePerson) => {

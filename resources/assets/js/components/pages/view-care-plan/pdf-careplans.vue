@@ -5,6 +5,11 @@
     import modal from '../../shared/modal.vue';
     import FileUpload from 'vue-upload-component'
 
+    import CreateCarePerson from '../../CareTeam/create-care-person.vue'
+    import UpdateCarePerson from '../../pages/view-care-plan/update-care-person.vue'
+    import IndexCarePerson from '../../pages/view-care-plan/index-care-person.vue'
+    import CareTeam from '../../pages/view-care-plan/care-team.vue'
+
     export default {
         computed: Object.assign(
             mapGetters({
@@ -14,7 +19,11 @@
 
         components: {
             modal,
-            FileUpload
+            FileUpload,
+            CreateCarePerson,
+            UpdateCarePerson,
+            IndexCarePerson,
+            CareTeam,
         },
 
         created() {
@@ -52,7 +61,7 @@
 
                     let formData = new FormData()
 
-                    for (var i = this.indexOfLastUploadedFile+1; i < this.files.length; i++) {
+                    for (var i = this.indexOfLastUploadedFile + 1; i < this.files.length; i++) {
                         formData.set('files[' + i + ']', this.files[i].file) // set the filename with php
                         this.indexOfLastUploadedFile = i
                     }

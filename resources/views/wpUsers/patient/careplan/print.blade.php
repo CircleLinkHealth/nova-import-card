@@ -26,7 +26,9 @@ if (isset($patient) && !empty($patient)) {
 
 @section('content')
     @if(isset($patient) && !empty($patient))
-        <div class="container">
+        <div id="v-pdf-careplans" class="container">
+            <open-modal></open-modal>
+            <notifications></notifications>
             <section class="patient-summary">
                 <div class="patient-info__main">
                     @if(!isset($isPdf))
@@ -50,7 +52,7 @@ if (isset($patient) && !empty($patient)) {
                                 @endif
 
 
-                                <div id="v-pdf-careplans" class="col-xs-12 text-left">
+                                <div class="col-xs-12 text-left">
                                     <pdf-careplans v-cloak>
                                         <span class="btn btn-group text-right">
                                         @if ( ($patient->carePlanStatus == 'qa_approved' && auth()->user()->can('care-plan-approve')) || ($patient->carePlanStatus == 'draft' && auth()->user()->can('care-plan-qa-approve')) )

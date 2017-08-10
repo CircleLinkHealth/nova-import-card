@@ -3,7 +3,6 @@ export const patientCareTeam = state => {
 }
 
 export const patientCarePlan = state => {
-    state.patientCarePlan.pdfs = _.orderBy(state.patientCarePlan.pdfs, 'label', 'desc');
     return state.patientCarePlan
 }
 

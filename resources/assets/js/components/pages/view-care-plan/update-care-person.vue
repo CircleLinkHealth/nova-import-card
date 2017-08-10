@@ -503,7 +503,7 @@
 <script>
     import modal from '../../shared/modal.vue';
     import {mapGetters, mapActions} from 'vuex'
-    import {getPatientCareTeam, clearOpenModal, addNotification} from '../../../store/actions'
+    import {getPatientCareTeam, clearOpenModal, addNotification, updateCarePerson} from '../../../store/actions'
 
     export default {
         props: {
@@ -534,7 +534,7 @@
         ),
 
         methods: Object.assign(
-            mapActions(['getPatientCareTeam', 'clearOpenModal', 'addNotification']),
+            mapActions(['getPatientCareTeam', 'clearOpenModal', 'addNotification', 'updateCarePerson']),
             {
                 sendForm() {
                     this.submitClicked = true
@@ -551,29 +551,18 @@
 
                     let id = this.formData.id ? this.formData.id : 'new'
 
-                    window.axios.patch(this.updateRoute + '/' + id, {
-                        careTeamMember: this.formData,
-                        patientId: this.patientId,
-                    }).then(
-                        (response) => {
-                            this.formData.id = response.data.carePerson.id;
-                            this.formData.formatted_type = response.data.carePerson.formatted_type;
+                    this.updateCarePerson(this.formData)
 
-                            this.getPatientCareTeam(this.patientId)
-                            Object.assign(this.$data, this.$options.data.apply(this))
+                    this.getPatientCareTeam(this.patientId)
 
-                            this.clearOpenModal();
+                    this.clearOpenModal();
 
-                            this.addNotification({
-                                title: "Successfully updated " + this.name,
-                                text: "",
-                                type: "success",
-                                timeout: true
-                            })
-
-                        }, (response) => {
-                            console.log(response.data)
-                        });
+                    this.addNotification({
+                        title: "Successfully saved Care Person",
+                        text: "",
+                        type: "success",
+                        timeout: true
+                    })
                 },
 
                 fieldClassName(field) {
@@ -742,6 +731,7 @@
                     formatted_type: 'External',
                     alert: false,
                     is_billing_provider: false,
+                    user_id: $('meta[name="patient_id"]').attr('content'),
                     user: {
                         id: '',
                         email: '',

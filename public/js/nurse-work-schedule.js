@@ -10994,6 +10994,7 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "setOpenModal", function() { return setOpenModal; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "getCurrentUser", function() { return getCurrentUser; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "getPatientCareTeam", function() { return getPatientCareTeam; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "updateCarePerson", function() { return updateCarePerson; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "destroyCarePerson", function() { return destroyCarePerson; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "getPracticeLocations", function() { return getPracticeLocations; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "updatePracticeLocation", function() { return updatePracticeLocation; });
@@ -11057,24 +11058,29 @@ var getPatientCareTeam = function getPatientCareTeam(_ref6, patientId) {
     }
 
     __WEBPACK_IMPORTED_MODULE_1__api_care_team__["a" /* default */].getPatientCareTeam(function (careTeam) {
-        if (!careTeam) {
-            commit('CLEAR_CARE_TEAM');
-            return;
-        }
+        commit('CLEAR_CARE_TEAM');
         commit('SET_CARE_TEAM', careTeam);
     }, null, patientId);
 };
 
-var destroyCarePerson = function destroyCarePerson(_ref7, carePerson) {
+var updateCarePerson = function updateCarePerson(_ref7, carePerson) {
     var commit = _ref7.commit;
+
+    __WEBPACK_IMPORTED_MODULE_3__api_care_person__["a" /* default */].updateCarePerson(function (carePerson) {
+        commit('UPDATE_CARE_PERSON', carePerson);
+    }, null, carePerson);
+};
+
+var destroyCarePerson = function destroyCarePerson(_ref8, carePerson) {
+    var commit = _ref8.commit;
 
     __WEBPACK_IMPORTED_MODULE_3__api_care_person__["a" /* default */].destroyCarePerson(function (carePerson) {
         commit('DESTROY_CARE_PERSON', carePerson);
     }, null, carePerson);
 };
 
-var getPracticeLocations = function getPracticeLocations(_ref8, practiceId) {
-    var commit = _ref8.commit;
+var getPracticeLocations = function getPracticeLocations(_ref9, practiceId) {
+    var commit = _ref9.commit;
 
     if (!practiceId) {
         return;
@@ -11089,8 +11095,8 @@ var getPracticeLocations = function getPracticeLocations(_ref8, practiceId) {
     }, practiceId);
 };
 
-var updatePracticeLocation = function updatePracticeLocation(_ref9, location) {
-    var commit = _ref9.commit;
+var updatePracticeLocation = function updatePracticeLocation(_ref10, location) {
+    var commit = _ref10.commit;
 
     var practiceId = location.practice_id;
 
@@ -11106,8 +11112,8 @@ var updatePracticeLocation = function updatePracticeLocation(_ref9, location) {
     }, practiceId, location);
 };
 
-var deletePracticeLocation = function deletePracticeLocation(_ref10, location) {
-    var commit = _ref10.commit;
+var deletePracticeLocation = function deletePracticeLocation(_ref11, location) {
+    var commit = _ref11.commit;
 
     var practiceId = location.practice_id;
 
@@ -11123,8 +11129,8 @@ var deletePracticeLocation = function deletePracticeLocation(_ref10, location) {
     }, practiceId, location);
 };
 
-var getPatientCarePlan = function getPatientCarePlan(_ref11, patientId) {
-    var commit = _ref11.commit;
+var getPatientCarePlan = function getPatientCarePlan(_ref12, patientId) {
+    var commit = _ref12.commit;
 
     if (!patientId) {
         return;
@@ -11141,8 +11147,8 @@ var getPatientCarePlan = function getPatientCarePlan(_ref11, patientId) {
     }, patientId);
 };
 
-var destroyPdf = function destroyPdf(_ref12, pdfId) {
-    var commit = _ref12.commit;
+var destroyPdf = function destroyPdf(_ref13, pdfId) {
+    var commit = _ref13.commit;
 
     if (!pdfId) {
         return;
@@ -11153,8 +11159,8 @@ var destroyPdf = function destroyPdf(_ref12, pdfId) {
     }, null, pdfId);
 };
 
-var uploadPdfCarePlan = function uploadPdfCarePlan(_ref13, formData) {
-    var commit = _ref13.commit;
+var uploadPdfCarePlan = function uploadPdfCarePlan(_ref14, formData) {
+    var commit = _ref14.commit;
 
     if (!formData) {
         return;
@@ -11167,8 +11173,8 @@ var uploadPdfCarePlan = function uploadPdfCarePlan(_ref13, formData) {
     }, formData);
 };
 
-var clearErrors = function clearErrors(_ref14, field) {
-    var commit = _ref14.commit;
+var clearErrors = function clearErrors(_ref15, field) {
+    var commit = _ref15.commit;
 
     commit('CLEAR_ERROR', field);
 };
@@ -11494,7 +11500,6 @@ var patientCareTeam = function patientCareTeam(state) {
 };
 
 var patientCarePlan = function patientCarePlan(state) {
-    state.patientCarePlan.pdfs = _.orderBy(state.patientCarePlan.pdfs, 'label', 'desc');
     return state.patientCarePlan;
 };
 
@@ -41687,16 +41692,22 @@ var state = {
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_vue__ = __webpack_require__(3);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_vue___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0_vue__);
-
-
 /* harmony default export */ __webpack_exports__["a"] = ({
     destroyCarePerson: function destroyCarePerson(cb) {
         var ecb = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : null;
         var carePerson = arguments[2];
 
         window.axios.delete('user/' + carePerson.user_id + '/care-team/' + carePerson.id).then(function (resp) {
+            return cb(carePerson);
+        }, function (resp) {
+            return ecb(resp.data);
+        });
+    },
+    updateCarePerson: function updateCarePerson(cb) {
+        var ecb = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : null;
+        var carePerson = arguments[2];
+
+        window.axios.patch('user/' + carePerson.user_id + '/care-team/' + carePerson.id, carePerson).then(function (resp) {
             return cb(carePerson);
         }, function (resp) {
             return ecb(resp.data);
@@ -41756,6 +41767,7 @@ var state = {
 "use strict";
 Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "DESTROY_CARE_PERSON", function() { return DESTROY_CARE_PERSON; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "UPDATE_CARE_PERSON", function() { return UPDATE_CARE_PERSON; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "SET_CARE_TEAM", function() { return SET_CARE_TEAM; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "CLEAR_CARE_TEAM", function() { return CLEAR_CARE_TEAM; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "SET_PATIENT_CARE_PLAN", function() { return SET_PATIENT_CARE_PLAN; });
@@ -41780,19 +41792,35 @@ var DESTROY_CARE_PERSON = function DESTROY_CARE_PERSON(state, carePerson) {
     });
 };
 
+var UPDATE_CARE_PERSON = function UPDATE_CARE_PERSON(state, newCarePerson) {
+    var matched = false;
+
+    state.patientCareTeam.forEach(function (carePerson, index) {
+        if (carePerson.id === newCarePerson.id) {
+            state.patientCareTeam[index] = newCarePerson;
+            matched = true;
+        }
+    });
+
+    if (!matched) {
+        state.patientCareTeam.unshift(newCarePerson);
+    }
+};
+
 var SET_CARE_TEAM = function SET_CARE_TEAM(state, patientCareTeam) {
     state.patientCareTeam = patientCareTeam;
 };
 
-var CLEAR_CARE_TEAM = function CLEAR_CARE_TEAM() {
-    state.patientCareTeam = {};
+var CLEAR_CARE_TEAM = function CLEAR_CARE_TEAM(state) {
+    state.patientCareTeam = [];
 };
 
 var SET_PATIENT_CARE_PLAN = function SET_PATIENT_CARE_PLAN(state, patientCarePlan) {
     state.patientCarePlan = patientCarePlan;
+    state.patientCarePlan.pdfs = _.orderBy(state.patientCarePlan.pdfs, 'label', 'desc');
 };
 
-var CLEAR_PATIENT_CARE_PLAN = function CLEAR_PATIENT_CARE_PLAN() {
+var CLEAR_PATIENT_CARE_PLAN = function CLEAR_PATIENT_CARE_PLAN(state) {
     state.patientCarePlan = {};
 };
 
@@ -48335,19 +48363,20 @@ if (false) {
 
 /***/ }),
 /* 68 */,
-/* 69 */
+/* 69 */,
+/* 70 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var disposed = false
 function injectStyle (ssrContext) {
   if (disposed) return
-  __webpack_require__(70)
+  __webpack_require__(71)
 }
 var Component = __webpack_require__(1)(
   /* script */
-  __webpack_require__(72),
-  /* template */
   __webpack_require__(73),
+  /* template */
+  __webpack_require__(74),
   /* styles */
   injectStyle,
   /* scopeId */
@@ -48379,13 +48408,13 @@ module.exports = Component.exports
 
 
 /***/ }),
-/* 70 */
+/* 71 */
 /***/ (function(module, exports, __webpack_require__) {
 
 // style-loader: Adds some css to the DOM by adding a <style> tag
 
 // load the styles
-var content = __webpack_require__(71);
+var content = __webpack_require__(72);
 if(typeof content === 'string') content = [[module.i, content, '']];
 if(content.locals) module.exports = content.locals;
 // add the styles to the DOM
@@ -48405,7 +48434,7 @@ if(false) {
 }
 
 /***/ }),
-/* 71 */
+/* 72 */
 /***/ (function(module, exports, __webpack_require__) {
 
 exports = module.exports = __webpack_require__(5)(true);
@@ -48419,7 +48448,7 @@ exports.push([module.i, "\n@media print {\n.hidden-print, .hidden-print * {\n   
 
 
 /***/ }),
-/* 72 */
+/* 73 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -48519,7 +48548,7 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 });
 
 /***/ }),
-/* 73 */
+/* 74 */
 /***/ (function(module, exports, __webpack_require__) {
 
 module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;
@@ -48596,7 +48625,6 @@ if (false) {
 }
 
 /***/ }),
-/* 74 */,
 /* 75 */,
 /* 76 */,
 /* 77 */,
@@ -48605,19 +48633,22 @@ if (false) {
 /* 80 */,
 /* 81 */,
 /* 82 */,
-/* 83 */
+/* 83 */,
+/* 84 */,
+/* 85 */,
+/* 86 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var disposed = false
 function injectStyle (ssrContext) {
   if (disposed) return
-  __webpack_require__(84)
+  __webpack_require__(87)
 }
 var Component = __webpack_require__(1)(
   /* script */
-  __webpack_require__(86),
+  __webpack_require__(89),
   /* template */
-  __webpack_require__(87),
+  __webpack_require__(90),
   /* styles */
   injectStyle,
   /* scopeId */
@@ -48649,13 +48680,13 @@ module.exports = Component.exports
 
 
 /***/ }),
-/* 84 */
+/* 87 */
 /***/ (function(module, exports, __webpack_require__) {
 
 // style-loader: Adds some css to the DOM by adding a <style> tag
 
 // load the styles
-var content = __webpack_require__(85);
+var content = __webpack_require__(88);
 if(typeof content === 'string') content = [[module.i, content, '']];
 if(content.locals) module.exports = content.locals;
 // add the styles to the DOM
@@ -48675,7 +48706,7 @@ if(false) {
 }
 
 /***/ }),
-/* 85 */
+/* 88 */
 /***/ (function(module, exports, __webpack_require__) {
 
 exports = module.exports = __webpack_require__(5)(true);
@@ -48689,7 +48720,7 @@ exports.push([module.i, "\n.edit-daily-work-hours {\n    height: 25px;\n    colo
 
 
 /***/ }),
-/* 86 */
+/* 89 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -48816,7 +48847,7 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 });
 
 /***/ }),
-/* 87 */
+/* 90 */
 /***/ (function(module, exports, __webpack_require__) {
 
 module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;
@@ -48892,9 +48923,6 @@ if (false) {
 }
 
 /***/ }),
-/* 88 */,
-/* 89 */,
-/* 90 */,
 /* 91 */,
 /* 92 */,
 /* 93 */,
@@ -48950,10 +48978,10 @@ window.Vue.use(__WEBPACK_IMPORTED_MODULE_0_vue_form___default.a, {
 
 Vue.component('component-proxy', __webpack_require__(49));
 Vue.component('select2', __webpack_require__(51));
-Vue.component('fab', __webpack_require__(69));
+Vue.component('fab', __webpack_require__(70));
 Vue.component('openModal', __webpack_require__(55));
 Vue.component('notifications', __webpack_require__(58));
-Vue.component('nurseDailyHours', __webpack_require__(83));
+Vue.component('nurseDailyHours', __webpack_require__(86));
 
 window.App = new Vue({
     el: '#v-show-nurse-work-schedule',

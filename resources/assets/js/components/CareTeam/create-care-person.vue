@@ -508,7 +508,7 @@
 <script>
     import modal from '../shared/modal.vue';
     import {mapGetters, mapActions} from 'vuex'
-    import {getPatientCareTeam, clearOpenModal, addNotification} from '../../store/actions'
+    import {getPatientCareTeam, clearOpenModal, addNotification, updateCarePerson} from '../../store/actions'
 
     export default {
         props: {
@@ -538,7 +538,7 @@
         ),
 
         methods: Object.assign({},
-            mapActions(['getPatientCareTeam', 'clearOpenModal', 'addNotification']),
+            mapActions(['getPatientCareTeam', 'clearOpenModal', 'addNotification', 'updateCarePerson']),
             {
                 sendForm() {
                     this.submitClicked = true
@@ -553,41 +553,31 @@
 
                     let id = this.newCarePerson.id ? this.newCarePerson.id : 'new'
 
-                    window.axios.patch(this.updateRoute + '/' + id, {
-                        careTeamMember: this.newCarePerson,
-                        patientId: this.patientId,
-                    }).then(
-                        (response) => {
-                            this.newCarePerson.id = response.data.carePerson.id;
-                            this.newCarePerson.formatted_type = response.data.carePerson.formatted_type;
+                    this.updateCarePerson(this.newCarePerson)
 
-                            this.getPatientCareTeam(this.patientId)
-                            Object.assign(this.$data, this.$options.data.apply(this))
-                            this.clearOpenModal();
+                    this.getPatientCareTeam(this.patientId)
 
-                            this.addNotification({
-                                title: "Successfully saved Care Person",
-                                text: "",
-                                type: "success",
-                                timeout: true
-                            })
+                    Object.assign(this.$data, this.$options.data.apply(this))
+                    this.clearOpenModal();
 
-                            //HACK to replace select2 with newly added provider on appointments page
-                            let carePerson = response.data.carePerson;
+                    this.addNotification({
+                        title: "Successfully saved Care Person",
+                        text: "",
+                        type: "success",
+                        timeout: true
+                    })
 
-                            $('#providerBox').replaceWith('<select id="provider" ' +
-                                'name="provider"' +
-                                'class="provider selectpickerX dropdownValid form-control" ' +
-                                'data-size="10" disabled>  ' +
-                                '<option value="' + carePerson.user.id + '" selected>' + carePerson.user.first_name + ' ' + carePerson.user.last_name + '</option></select>');
-
-                            $('#providerDiv').css('padding-bottom', '10px');
-                            $("#save").append('<input type="hidden" value="' + carePerson.user.id + '" id="provider" name="provider">');
-
-
-                        }, (response) => {
-                            console.log(response.data)
-                        });
+                    //HACK to replace select2 with newly added provider on appointments page
+//                    let carePerson = response.data.carePerson;
+//
+//                    $('#providerBox').replaceWith('<select id="provider" ' +
+//                        'name="provider"' +
+//                        'class="provider selectpickerX dropdownValid form-control" ' +
+//                        'data-size="10" disabled>  ' +
+//                        '<option value="' + carePerson.user.id + '" selected>' + carePerson.user.first_name + ' ' + carePerson.user.last_name + '</option></select>');
+//
+//                    $('#providerDiv').css('padding-bottom', '10px');
+//                    $("#save").append('<input type="hidden" value="' + carePerson.user.id + '" id="provider" name="provider">');
                 },
 
                 fieldClassName(field) {
@@ -617,6 +607,7 @@
                     formatted_type: 'External',
                     alert: false,
                     is_billing_provider: false,
+                    user_id: $('meta[name="patient_id"]').attr('content'),
                     user: {
                         id: '',
                         email: '',

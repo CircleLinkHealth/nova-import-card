@@ -4,19 +4,36 @@ export const DESTROY_CARE_PERSON = (state, carePerson) => {
     })
 }
 
+export const UPDATE_CARE_PERSON = (state, newCarePerson) => {
+    let matched = false
+
+    state.patientCareTeam.forEach((carePerson, index) => {
+        if (carePerson.id === newCarePerson.id) {
+            state.patientCareTeam[index] = newCarePerson;
+            matched = true
+        }
+    })
+
+    if (!matched) {
+        state.patientCareTeam.unshift(newCarePerson)
+    }
+}
+
+
 export const SET_CARE_TEAM = (state, patientCareTeam) => {
     state.patientCareTeam = patientCareTeam
 }
 
-export const CLEAR_CARE_TEAM = () => {
-    state.patientCareTeam = {}
+export const CLEAR_CARE_TEAM = (state) => {
+    state.patientCareTeam = []
 }
 
 export const SET_PATIENT_CARE_PLAN = (state, patientCarePlan) => {
     state.patientCarePlan = patientCarePlan
+    state.patientCarePlan.pdfs = _.orderBy(state.patientCarePlan.pdfs, 'label', 'desc');
 }
 
-export const CLEAR_PATIENT_CARE_PLAN = () => {
+export const CLEAR_PATIENT_CARE_PLAN = (state) => {
     state.patientCarePlan = {}
 }
 
