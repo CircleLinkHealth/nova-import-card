@@ -59,4 +59,6 @@ mix.js('resources/assets/js/app-clh-admin-ui.js', 'public/js');
 mix.js('resources/assets/js/nurse-work-schedule.js', 'public/js');
 mix.js('resources/assets/js/fab.js', 'public/js/v-fab.js');
 mix.js('resources/assets/js/pdf-careplans.js', 'public/js/v-pdf-careplans.js');
-mix.js('resources/assets/js/careplan-problems.js', 'public/js/v-careplan-problems.js');
+mix.js('resources/assets/js/careplan-problems-list.js', 'public/js/v-careplan-problems-list.js');
+mix.js('resources/assets/js/careplan-medications-list.js', 'public/js/v-careplan-medications-list.js');
+mix.js('resources/assets/js/careplan-allergies-list.js', 'public/js/v-careplan-allergies-list.js');
