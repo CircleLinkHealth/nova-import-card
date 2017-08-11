@@ -47,10 +47,16 @@ mix.combine([
  */
 mix.js('resources/assets/js/importer-training.js', 'public/js');
 
+//apps
+mix.js('resources/assets/js/app-provider-ui.js', 'public/js');
+mix.js('resources/assets/js/app-provider-admin-panel-ui.js', 'public/js');
+mix.js('resources/assets/js/app-clh-admin-ui.js', 'public/js');
+
+
+/*
+ * The following is resources/assets/js/app-provider-ui.js broken up into separate parts, because Vue does not get along with webix and the previous UI
+ */
 mix.js('resources/assets/js/nurse-work-schedule.js', 'public/js');
 mix.js('resources/assets/js/fab.js', 'public/js/v-fab.js');
-mix.js('resources/assets/js/pdf-careplans.js', 'public/js/v-pdf-careplans.js').sourceMaps();
-
-mix.js('resources/assets/js/app-provider-ui.js', 'public/js');
-mix.js('resources/assets/js/app-provider-admin-panel-ui.js', 'public/js').sourceMaps();
-mix.js('resources/assets/js/app-clh-admin-ui.js', 'public/js');
+mix.js('resources/assets/js/pdf-careplans.js', 'public/js/v-pdf-careplans.js');
+mix.js('resources/assets/js/careplan-problems.js', 'public/js/v-careplan-problems.js');
