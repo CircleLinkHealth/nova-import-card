@@ -72,7 +72,7 @@
     <script src="//cdnjs.cloudflare.com/ajax/libs/select2/4.0.0/js/select2.min.js"></script>
 
     <!-- misc scripts -->
-    <script src="{{ asset('/js/scripts.js') }}"></script>
+    <script src="{{ asset('/js/compiled/scripts.js') }}"></script>
 
 </head>
 <body>

@@ -21,7 +21,7 @@ if (isset($patient) && !empty($patient)) {
 @endif
 
 @section('scripts')
-    <script src="{{asset('js/v-pdf-careplans.js')}}"></script>
+    <script src="{{asset('js/compiled/v-pdf-careplans.js')}}"></script>
 @endsection
 
 @section('content')
@@ -317,7 +317,7 @@ if (isset($patient) && !empty($patient)) {
                 <!-- /SOCIAL AND OTHER SERVICES -->
 
                 <!-- CARE TEAM -->
-                <div class="patient-info__subareas">
+                <div id="care-team" class="patient-info__subareas">
                     <div class="row">
                         <div class="col-xs-12">
                             <h2 class="patient-summary__subtitles patient-summary--careplan-background">Care Team:</h2>

@@ -79,5 +79,5 @@
 @stop
 
 @section('scripts')
-    <script src="{{asset('js/nurse-work-schedule.js')}}"></script>
+    <script src="{{asset('js/compiled/nurse-work-schedule.js')}}"></script>
 @endsection

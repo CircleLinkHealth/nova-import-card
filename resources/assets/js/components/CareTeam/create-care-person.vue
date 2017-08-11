@@ -570,7 +570,7 @@
                     let url = window.location.href
 
                     if(url.includes('view-careplan')) {
-                        window.location.replace(url)
+                        window.location.replace(url+'/#care-team')
                     }
                 },
 

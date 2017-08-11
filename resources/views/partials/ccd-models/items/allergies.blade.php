@@ -2,4 +2,4 @@
     <allergies-list></allergies-list>
 </div>
 
-<script src="{{asset('/js/v-careplan-allergies-list.js')}}"></script>
+<script src="{{asset('/js/compiled/v-careplan-allergies-list.js')}}"></script>

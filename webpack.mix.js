@@ -45,21 +45,21 @@ mix.combine([
  * JS
  *
  */
-mix.js('resources/assets/js/importer-training.js', 'public/js');
+mix.js('resources/assets/js/importer-training.js', 'public/js/compiled');
 
 //apps
-mix.js('resources/assets/js/app-provider-ui.js', 'public/js');
-mix.js('resources/assets/js/app-provider-admin-panel-ui.js', 'public/js');
-mix.js('resources/assets/js/app-clh-admin-ui.js', 'public/js');
+mix.js('resources/assets/js/app-provider-ui.js', 'public/js/compiled');
+mix.js('resources/assets/js/app-provider-admin-panel-ui.js', 'public/js/compiled');
+mix.js('resources/assets/js/app-clh-admin-ui.js', 'public/js/compiled');
 
 
 /*
  * The following is resources/assets/js/app-provider-ui.js broken up into separate parts, because Vue does not get along with webix and the previous UI
  */
-mix.js('resources/assets/js/nurse-work-schedule.js', 'public/js');
-mix.js('resources/assets/js/fab.js', 'public/js/v-fab.js');
-mix.js('resources/assets/js/pdf-careplans.js', 'public/js/v-pdf-careplans.js');
-mix.js('resources/assets/js/careplan-problems-list.js', 'public/js/v-careplan-problems-list.js');
-mix.js('resources/assets/js/careplan-medications-list.js', 'public/js/v-careplan-medications-list.js');
-mix.js('resources/assets/js/careplan-allergies-list.js', 'public/js/v-careplan-allergies-list.js');
+mix.js('resources/assets/js/nurse-work-schedule.js', 'public/js/compiled');
+mix.js('resources/assets/js/fab.js', 'public/js/compiled/v-fab.js');
+mix.js('resources/assets/js/pdf-careplans.js', 'public/js/compiled/v-pdf-careplans.js');
+mix.js('resources/assets/js/careplan-problems-list.js', 'public/js/compiled/v-careplan-problems-list.js');
+mix.js('resources/assets/js/careplan-medications-list.js', 'public/js/compiled/v-careplan-medications-list.js');
+mix.js('resources/assets/js/careplan-allergies-list.js', 'public/js/compiled/v-careplan-allergies-list.js');
 mix.js('resources/assets/js/create-appointments-add-care-person.js', 'public/js/compiled/v-create-appointments-add-care-person.js');
