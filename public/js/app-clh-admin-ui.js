@@ -71,7 +71,7 @@
 
 
 var bind = __webpack_require__(11);
-var isBuffer = __webpack_require__(21);
+var isBuffer = __webpack_require__(30);
 
 /*global toString:true*/
 
@@ -10980,7 +10980,7 @@ Vue$3.compile = compileToFunctions;
 
 module.exports = Vue$3;
 
-/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(10)))
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(9)))
 
 /***/ }),
 /* 4 */
@@ -11003,11 +11003,11 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "destroyPdf", function() { return destroyPdf; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "uploadPdfCarePlan", function() { return uploadPdfCarePlan; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "clearErrors", function() { return clearErrors; });
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__api_user_profile__ = __webpack_require__(41);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__api_care_team__ = __webpack_require__(42);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__api_practice_location__ = __webpack_require__(43);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__api_care_person__ = __webpack_require__(44);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__api_patient_care_plan__ = __webpack_require__(45);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__api_user_profile__ = __webpack_require__(18);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__api_care_team__ = __webpack_require__(19);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__api_practice_location__ = __webpack_require__(20);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__api_care_person__ = __webpack_require__(21);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__api_patient_care_plan__ = __webpack_require__(22);
 
 
 
@@ -11531,7 +11531,7 @@ var errors = function errors(state) {
 /* WEBPACK VAR INJECTION */(function(process) {
 
 var utils = __webpack_require__(0);
-var normalizeHeaderName = __webpack_require__(24);
+var normalizeHeaderName = __webpack_require__(33);
 
 var DEFAULT_CONTENT_TYPE = {
   'Content-Type': 'application/x-www-form-urlencoded'
@@ -11621,10 +11621,37 @@ utils.forEach(['post', 'put', 'patch'], function forEachMethodWithData(method) {
 
 module.exports = defaults;
 
-/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(23)))
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(32)))
 
 /***/ }),
 /* 9 */
+/***/ (function(module, exports) {
+
+var g;
+
+// This works in non-strict mode
+g = (function() {
+	return this;
+})();
+
+try {
+	// This works if eval is allowed (see CSP)
+	g = g || Function("return this")() || (1,eval)("this");
+} catch(e) {
+	// This works if the window reference is available
+	if(typeof window === "object")
+		g = window;
+}
+
+// g can still be undefined, but nothing to do about it...
+// We return undefined, instead of nothing here, so it's
+// easier to handle this case. if(!global) { ...}
+
+module.exports = g;
+
+
+/***/ }),
+/* 10 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/*!
@@ -21884,33 +21911,6 @@ return jQuery;
 
 
 /***/ }),
-/* 10 */
-/***/ (function(module, exports) {
-
-var g;
-
-// This works in non-strict mode
-g = (function() {
-	return this;
-})();
-
-try {
-	// This works if eval is allowed (see CSP)
-	g = g || Function("return this")() || (1,eval)("this");
-} catch(e) {
-	// This works if the window reference is available
-	if(typeof window === "object")
-		g = window;
-}
-
-// g can still be undefined, but nothing to do about it...
-// We return undefined, instead of nothing here, so it's
-// easier to handle this case. if(!global) { ...}
-
-module.exports = g;
-
-
-/***/ }),
 /* 11 */
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -21936,12 +21936,12 @@ module.exports = function bind(fn, thisArg) {
 
 
 var utils = __webpack_require__(0);
-var settle = __webpack_require__(25);
-var buildURL = __webpack_require__(27);
-var parseHeaders = __webpack_require__(28);
-var isURLSameOrigin = __webpack_require__(29);
+var settle = __webpack_require__(34);
+var buildURL = __webpack_require__(36);
+var parseHeaders = __webpack_require__(37);
+var isURLSameOrigin = __webpack_require__(38);
 var createError = __webpack_require__(13);
-var btoa = (typeof window !== 'undefined' && window.btoa && window.btoa.bind(window)) || __webpack_require__(30);
+var btoa = (typeof window !== 'undefined' && window.btoa && window.btoa.bind(window)) || __webpack_require__(39);
 
 module.exports = function xhrAdapter(config) {
   return new Promise(function dispatchXhrRequest(resolve, reject) {
@@ -22038,7 +22038,7 @@ module.exports = function xhrAdapter(config) {
     // This is only done if running in a standard browser environment.
     // Specifically not if we're in a web worker, or react-native.
     if (utils.isStandardBrowserEnv()) {
-      var cookies = __webpack_require__(31);
+      var cookies = __webpack_require__(40);
 
       // Add xsrf header
       var xsrfValue = (config.withCredentials || isURLSameOrigin(config.url)) && config.xsrfCookieName ?
@@ -22122,7 +22122,7 @@ module.exports = function xhrAdapter(config) {
 "use strict";
 
 
-var enhanceError = __webpack_require__(26);
+var enhanceError = __webpack_require__(35);
 
 /**
  * Create an Error with the specified message, config, error code, request and response.
@@ -22180,6 +22180,1590 @@ module.exports = Cancel;
 
 /***/ }),
 /* 16 */
+/***/ (function(module, exports, __webpack_require__) {
+
+(function (global, factory) {
+	 true ? module.exports = factory() :
+	typeof define === 'function' && define.amd ? define(factory) :
+	(global.VueForm = factory());
+}(this, (function () { 'use strict';
+
+var emailRegExp = /^[a-z0-9!#$%&'*+\/=?^_`{|}~.-]+@[a-z0-9]([a-z0-9-]*[a-z0-9])?(\.[a-z0-9]([a-z0-9-]*[a-z0-9])?)*$/i; // from angular
+var urlRegExp = /^(http\:\/\/|https\:\/\/)(.{4,})$/;
+
+var validators = {
+  email: function email(value, attrValue, vnode) {
+    return emailRegExp.test(value);
+  },
+  number: function number(value) {
+    return !isNaN(value);
+  },
+  url: function url(value) {
+    return urlRegExp.test(value);
+  },
+  required: function required(value, attrValue, vnode) {
+    if (attrValue === false) {
+      return true;
+    }
+
+    if (value === 0) {
+      return true;
+    }
+
+    if (vnode.data.attrs && typeof vnode.data.attrs.bool !== 'undefined' || vnode.componentOptions && vnode.componentOptions.propsData && typeof vnode.componentOptions.propsData.bool !== 'undefined') {
+      // bool attribute is present, allow false pass validation
+      if (value === false) {
+        return true;
+      }
+    }
+
+    if (Array.isArray(value)) {
+      return !!value.length;
+    }
+    return !!value;
+  },
+  minlength: function minlength(value, length) {
+    return value.length >= length;
+  },
+  maxlength: function maxlength(value, length) {
+    return length >= value.length;
+  },
+  pattern: function pattern(value, _pattern) {
+    var patternRegExp = new RegExp('^' + _pattern + '$');
+    return patternRegExp.test(value);
+  },
+  min: function min(value, _min, vnode) {
+    if ((vnode.data.attrs.type || '').toLowerCase() == 'number') {
+      return +value >= +_min;
+    }
+    return value >= _min;
+  },
+  max: function max(value, _max, vnode) {
+    if ((vnode.data.attrs.type || '').toLowerCase() == 'number') {
+      return +_max >= +value;
+    }
+    return _max >= value;
+  }
+};
+
+var config = {
+  validators: validators,
+  formComponent: 'vueForm',
+  formTag: 'form',
+  messagesComponent: 'fieldMessages',
+  messagesTag: 'div',
+  validateComponent: 'validate',
+  validateTag: 'div',
+  fieldComponent: 'field',
+  fieldTag: 'div',
+  formClasses: {
+    dirty: 'vf-form-dirty',
+    pristine: 'vf-form-pristine',
+    valid: 'vf-form-valid',
+    invalid: 'vf-form-invalid',
+    touched: 'vf-form-touched',
+    untouched: 'vf-form-untouched',
+    submitted: 'vf-form-submitted',
+    pending: 'vf-form-pending'
+  },
+  validateClasses: {
+    dirty: 'vf-field-dirty',
+    pristine: 'vf-field-pristine',
+    valid: 'vf-field-valid',
+    invalid: 'vf-field-invalid',
+    touched: 'vf-field-touched',
+    untouched: 'vf-field-untouched',
+    submitted: 'vf-field-submitted',
+    pending: 'vf-field-pending'
+  },
+  inputClasses: {
+    dirty: 'vf-dirty',
+    pristine: 'vf-pristine',
+    valid: 'vf-valid',
+    invalid: 'vf-invalid',
+    touched: 'vf-touched',
+    untouched: 'vf-untouched',
+    submitted: 'vf-submitted',
+    pending: 'vf-pending'
+  },
+  Promise: typeof Promise === 'function' ? Promise : null
+};
+
+var classCallCheck = function (instance, Constructor) {
+  if (!(instance instanceof Constructor)) {
+    throw new TypeError("Cannot call a class as a function");
+  }
+};
+
+var createClass = function () {
+  function defineProperties(target, props) {
+    for (var i = 0; i < props.length; i++) {
+      var descriptor = props[i];
+      descriptor.enumerable = descriptor.enumerable || false;
+      descriptor.configurable = true;
+      if ("value" in descriptor) descriptor.writable = true;
+      Object.defineProperty(target, descriptor.key, descriptor);
+    }
+  }
+
+  return function (Constructor, protoProps, staticProps) {
+    if (protoProps) defineProperties(Constructor.prototype, protoProps);
+    if (staticProps) defineProperties(Constructor, staticProps);
+    return Constructor;
+  };
+}();
+
+
+
+
+
+var defineProperty = function (obj, key, value) {
+  if (key in obj) {
+    Object.defineProperty(obj, key, {
+      value: value,
+      enumerable: true,
+      configurable: true,
+      writable: true
+    });
+  } else {
+    obj[key] = value;
+  }
+
+  return obj;
+};
+
+
+
+var inherits = function (subClass, superClass) {
+  if (typeof superClass !== "function" && superClass !== null) {
+    throw new TypeError("Super expression must either be null or a function, not " + typeof superClass);
+  }
+
+  subClass.prototype = Object.create(superClass && superClass.prototype, {
+    constructor: {
+      value: subClass,
+      enumerable: false,
+      writable: true,
+      configurable: true
+    }
+  });
+  if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass;
+};
+
+
+
+
+
+
+
+
+
+
+
+var possibleConstructorReturn = function (self, call) {
+  if (!self) {
+    throw new ReferenceError("this hasn't been initialised - super() hasn't been called");
+  }
+
+  return call && (typeof call === "object" || typeof call === "function") ? call : self;
+};
+
+function getClasses(classConfig, state) {
+  var _ref;
+
+  return _ref = {}, defineProperty(_ref, classConfig.dirty, state.$dirty), defineProperty(_ref, classConfig.pristine, state.$pristine), defineProperty(_ref, classConfig.valid, state.$valid), defineProperty(_ref, classConfig.invalid, state.$invalid), defineProperty(_ref, classConfig.touched, state.$touched), defineProperty(_ref, classConfig.untouched, state.$untouched), defineProperty(_ref, classConfig.pending, state.$pending), _ref;
+}
+
+function addClass(el, className) {
+  if (el.classList) {
+    el.classList.add(className);
+  } else {
+    el.className += ' ' + className;
+  }
+}
+
+function removeClass(el, className) {
+  if (el.classList) {
+    el.classList.remove(className);
+  } else {
+    el.className = el.className.replace(new RegExp('(^|\\b)' + className.split(' ').join('|') + '(\\b|$)', 'gi'), ' ');
+  }
+}
+
+function vModelValue(data) {
+  if (data.model) {
+    return data.model.value;
+  }
+  return data.directives.filter(function (v) {
+    return v.name === 'model';
+  })[0].value;
+}
+
+function getVModelAndLabel(nodes) {
+  var foundVnodes = {
+    vModel: [],
+    label: null
+  };
+
+  if (!nodes) {
+    return foundVnodes;
+  }
+
+  function traverse(nodes) {
+    for (var i = 0; i < nodes.length; i++) {
+      var node = nodes[i];
+      if (node.tag === 'label' && !foundVnodes.label) {
+        foundVnodes.label = node;
+      }
+      if (node.data) {
+        if (node.data.directives) {
+          var match = node.data.directives.filter(function (v) {
+            return v.name === 'model';
+          });
+          if (match.length) {
+            foundVnodes.vModel.push(node);
+          }
+        } else if (node.data.model) {
+          foundVnodes.vModel.push(node);
+        }
+      }
+      if (node.children) {
+        traverse(node.children);
+      }
+    }
+  }
+
+  traverse(nodes);
+
+  return foundVnodes;
+}
+
+function getName(vnode) {
+  if (vnode.data && vnode.data.attrs && vnode.data.attrs.name) {
+    return vnode.data.attrs.name;
+  } else if (vnode.componentOptions && vnode.componentOptions.propsData && vnode.componentOptions.propsData.name) {
+    return vnode.componentOptions.propsData.name;
+  }
+}
+
+var hyphenateRE = /([^-])([A-Z])/g;
+function hyphenate(str) {
+  return str.replace(hyphenateRE, '$1-$2').replace(hyphenateRE, '$1-$2').toLowerCase();
+}
+
+function randomId() {
+  return Math.random().toString(36).substr(2, 10);
+}
+
+// https://davidwalsh.name/javascript-debounce-function
+function debounce(func, wait, immediate) {
+  var timeout;
+  return function () {
+    var context = this,
+        args = arguments;
+    var later = function later() {
+      timeout = null;
+      if (!immediate) func.apply(context, args);
+    };
+    var callNow = immediate && !timeout;
+    clearTimeout(timeout);
+    timeout = setTimeout(later, wait);
+    if (callNow) func.apply(context, args);
+  };
+}
+
+var vueFormConfig = 'VueFormProviderConfig' + randomId();
+var vueFormState = 'VueFormProviderState' + randomId();
+
+var hasOwn = Object.prototype.hasOwnProperty;
+var toStr = Object.prototype.toString;
+
+var isArray = function isArray(arr) {
+	if (typeof Array.isArray === 'function') {
+		return Array.isArray(arr);
+	}
+
+	return toStr.call(arr) === '[object Array]';
+};
+
+var isPlainObject = function isPlainObject(obj) {
+	if (!obj || toStr.call(obj) !== '[object Object]') {
+		return false;
+	}
+
+	var hasOwnConstructor = hasOwn.call(obj, 'constructor');
+	var hasIsPrototypeOf = obj.constructor && obj.constructor.prototype && hasOwn.call(obj.constructor.prototype, 'isPrototypeOf');
+	// Not own constructor property must be Object
+	if (obj.constructor && !hasOwnConstructor && !hasIsPrototypeOf) {
+		return false;
+	}
+
+	// Own properties are enumerated firstly, so to speed up,
+	// if last one is own, then all properties are own.
+	var key;
+	for (key in obj) {/**/}
+
+	return typeof key === 'undefined' || hasOwn.call(obj, key);
+};
+
+var index = function extend() {
+	var options, name, src, copy, copyIsArray, clone,
+		target = arguments[0],
+		i = 1,
+		length = arguments.length,
+		deep = false;
+
+	// Handle a deep copy situation
+	if (typeof target === 'boolean') {
+		deep = target;
+		target = arguments[1] || {};
+		// skip the boolean and the target
+		i = 2;
+	} else if ((typeof target !== 'object' && typeof target !== 'function') || target == null) {
+		target = {};
+	}
+
+	for (; i < length; ++i) {
+		options = arguments[i];
+		// Only deal with non-null/undefined values
+		if (options != null) {
+			// Extend the base object
+			for (name in options) {
+				src = target[name];
+				copy = options[name];
+
+				// Prevent never-ending loop
+				if (target !== copy) {
+					// Recurse if we're merging plain objects or arrays
+					if (deep && copy && (isPlainObject(copy) || (copyIsArray = isArray(copy)))) {
+						if (copyIsArray) {
+							copyIsArray = false;
+							clone = src && isArray(src) ? src : [];
+						} else {
+							clone = src && isPlainObject(src) ? src : {};
+						}
+
+						// Never move original objects, clone them
+						target[name] = extend(deep, clone, copy);
+
+					// Don't bring in undefined values
+					} else if (typeof copy !== 'undefined') {
+						target[name] = copy;
+					}
+				}
+			}
+		}
+	}
+
+	// Return the modified object
+	return target;
+};
+
+var vueForm = {
+  render: function render(h) {
+    var _this = this;
+
+    return h(this.tag || this.vueFormConfig.formTag, {
+      on: {
+        submit: function submit(event) {
+          _this.state._submit();
+          _this.$emit('submit', event);
+        },
+        reset: function reset(event) {
+          _this.state._reset();
+          _this.$emit('reset', event);
+        }
+      },
+      class: this.className,
+      attrs: {
+        'novalidate': ''
+      }
+    }, [this.$slots.default]);
+  },
+
+  props: {
+    state: Object,
+    tag: String
+  },
+  inject: { vueFormConfig: vueFormConfig },
+  provide: function provide() {
+    return defineProperty({}, vueFormState, this.state);
+  },
+  created: function created() {
+    var _this2 = this;
+
+    var controls = {};
+    var state = this.state;
+    var formstate = {
+      $dirty: false,
+      $pristine: true,
+      $valid: true,
+      $invalid: false,
+      $submitted: false,
+      $touched: false,
+      $untouched: true,
+      $pending: false,
+      $error: {},
+      $submittedState: {},
+      _id: '',
+      _submit: function _submit() {
+        _this2.state.$submitted = true;
+        _this2.state._cloneState();
+      },
+      _cloneState: function _cloneState() {
+        var cloned = JSON.parse(JSON.stringify(state));
+        delete cloned.$submittedState;
+        Object.keys(cloned).forEach(function (key) {
+          _this2.$set(_this2.state.$submittedState, key, cloned[key]);
+        });
+      },
+      _addControl: function _addControl(ctrl) {
+        controls[ctrl.$name] = ctrl;
+        _this2.$set(state, ctrl.$name, ctrl);
+      },
+      _removeControl: function _removeControl(ctrl) {
+        delete controls[ctrl.$name];
+        _this2.$delete(_this2.state, ctrl.$name);
+        _this2.$delete(_this2.state.$error, ctrl.$name);
+      },
+      _reset: function _reset() {
+        state.$submitted = false;
+        state.$pending = false;
+        state.$submittedState = {};
+        Object.keys(controls).forEach(function (key) {
+          var control = controls[key];
+          control._hasFocused = false;
+          control._setUntouched();
+          control._setPristine();
+          control.$submitted = false;
+          control.$pending = false;
+        });
+      }
+    };
+
+    Object.keys(formstate).forEach(function (key) {
+      _this2.$set(_this2.state, key, formstate[key]);
+    });
+
+    this.$watch('state', function () {
+      var isDirty = false;
+      var isValid = true;
+      var isTouched = false;
+      var isPending = false;
+      Object.keys(controls).forEach(function (key) {
+        var control = controls[key];
+
+        control.$submitted = state.$submitted;
+
+        if (control.$dirty) {
+          isDirty = true;
+        }
+        if (control.$touched) {
+          isTouched = true;
+        }
+        if (control.$pending) {
+          isPending = true;
+        }
+        if (!control.$valid) {
+          isValid = false;
+          // add control to errors
+          _this2.$set(state.$error, control.$name, control);
+        } else {
+          _this2.$delete(state.$error, control.$name);
+        }
+      });
+
+      state.$dirty = isDirty;
+      state.$pristine = !isDirty;
+      state.$touched = isTouched;
+      state.$untouched = !isTouched;
+      state.$valid = isValid;
+      state.$invalid = !isValid;
+      state.$pending = isPending;
+    }, {
+      deep: true,
+      immediate: true
+    });
+
+    /* watch pristine? if set to true, set all children to pristine
+    Object.keys(controls).forEach((ctrl) => {
+      controls[ctrl].setPristine();
+    });*/
+  },
+
+  computed: {
+    className: function className() {
+      var c = this.vueFormConfig.formClasses;
+      var s = this.state;
+      var classes = getClasses(c, s);
+      classes[c.submitted] = s.$submitted;
+      return classes;
+    }
+  },
+  methods: {
+    reset: function reset() {
+      this.state._reset();
+    }
+  }
+};
+
+function findLabel(nodes) {
+  if (!nodes) {
+    return;
+  }
+  for (var i = 0; i < nodes.length; i++) {
+    var vnode = nodes[i];
+    if (vnode.tag === 'label') {
+      return nodes[i];
+    } else if (nodes[i].children) {
+      return findLabel(nodes[i].children);
+    }
+  }
+}
+
+var messages = {
+  inject: { vueFormConfig: vueFormConfig, vueFormState: vueFormState },
+  render: function render(h) {
+    var _this = this;
+
+    var children = [];
+    var field = this.formstate[this.name];
+    if (field && field.$error && this.isShown) {
+      Object.keys(field.$error).forEach(function (key) {
+        if (_this.$slots[key] || _this.$scopedSlots[key]) {
+          var out = _this.$slots[key] || _this.$scopedSlots[key](field);
+          if (_this.autoLabel) {
+            var label = findLabel(out);
+            if (label) {
+              label.data = label.data || {};
+              label.data.attrs = label.data.attrs || {};
+              label.data.attrs.for = field._id;
+            }
+          }
+          children.push(out);
+        }
+      });
+      if (!children.length && field.$valid) {
+        if (this.$slots.default || this.$scopedSlots.default) {
+          var out = this.$slots.default || this.$scopedSlots.default(field);
+          if (this.autoLabel) {
+            var label = findLabel(out);
+            if (label) {
+              label.data = label.data || {};
+              label.data.attrs = label.data.attrs || {};
+              label.data.attrs.for = field._id;
+            }
+          }
+          children.push(out);
+        }
+      }
+    }
+    return h(this.tag || this.vueFormConfig.messagesTag, children);
+  },
+
+  props: {
+    state: Object,
+    name: String,
+    show: {
+      type: String,
+      default: ''
+    },
+    tag: {
+      type: String
+    },
+    autoLabel: Boolean
+  },
+  data: function data() {
+    return {
+      formstate: null
+    };
+  },
+  created: function created() {
+    this.formstate = this.state || this.vueFormState;
+  },
+
+  computed: {
+    isShown: function isShown() {
+      var field = this.formstate[this.name];
+
+      if (!this.show || !field) {
+        return true;
+      }
+
+      var compare = function compare(v) {
+        return field[v.trim()];
+      };
+
+      if (this.show.indexOf('&&') > -1) {
+        // and logic - every
+        var split = this.show.split('&&');
+        return split.every(compare);
+      } else if (this.show.indexOf('||') > -1) {
+        // or logic - some
+        var _split = this.show.split('||');
+        return _split.some(compare);
+      } else {
+        // single
+        return field[this.show];
+      }
+    }
+  }
+};
+
+var validate = {
+  render: function render(h) {
+    var _this = this;
+
+    var foundVnodes = getVModelAndLabel(this.$slots.default);
+    var vModelnodes = foundVnodes.vModel;
+    var attrs = {
+      for: null
+    };
+    if (vModelnodes.length) {
+      this.name = getName(vModelnodes[0]);
+      if (this.autoLabel) {
+        var id = vModelnodes[0].data.attrs.id || this.fieldstate._id;
+        this.fieldstate._id = id;
+        vModelnodes[0].data.attrs.id = id;
+        if (foundVnodes.label) {
+          foundVnodes.label.data = foundVnodes.label.data || {};
+          foundVnodes.label.data.attrs = foundVnodes.label.data.attrs || {};
+          foundVnodes.label.data.attrs.for = id;
+        } else if (this.tag === 'label') {
+          attrs.for = id;
+        }
+      }
+      vModelnodes.forEach(function (vnode) {
+        if (!vnode.data.directives) {
+          vnode.data.directives = [];
+        }
+        vnode.data.directives.push({ name: 'vue-form-validator', value: { fieldstate: _this.fieldstate, config: _this.vueFormConfig } });
+        vnode.data.attrs['vue-form-validator'] = '';
+        vnode.data.attrs['debounce'] = _this.debounce;
+      });
+    } else {
+      //console.warn('Element with v-model not found');
+    }
+    return h(this.tag || this.vueFormConfig.validateTag, { 'class': this.className, attrs: attrs }, this.$slots.default);
+  },
+
+  props: {
+    state: Object,
+    custom: null,
+    autoLabel: Boolean,
+    tag: {
+      type: String
+    },
+    debounce: Number
+  },
+  inject: { vueFormConfig: vueFormConfig, vueFormState: vueFormState },
+  data: function data() {
+    return {
+      name: '',
+      formstate: null,
+      fieldstate: {}
+    };
+  },
+
+  methods: {
+    getClasses: function getClasses$$1(classConfig) {
+      var s = this.fieldstate;
+      return Object.keys(s.$error).reduce(function (classes, error) {
+        classes[classConfig.invalid + '-' + hyphenate(error)] = true;
+        return classes;
+      }, getClasses(classConfig, s));
+    }
+  },
+  computed: {
+    className: function className() {
+      return this.getClasses(this.vueFormConfig.validateClasses);
+    },
+    inputClassName: function inputClassName() {
+      return this.getClasses(this.vueFormConfig.inputClasses);
+    }
+  },
+  mounted: function mounted() {
+    var _this2 = this;
+
+    this.fieldstate.$name = this.name;
+    this.formstate._addControl(this.fieldstate);
+
+    var vModelEls = this.$el.querySelectorAll('[vue-form-validator]');
+
+    // add classes to the input element
+    this.$watch('inputClassName', function (value, oldValue) {
+      var out = void 0;
+
+      var _loop = function _loop(i, el) {
+        if (oldValue) {
+          Object.keys(oldValue).filter(function (k) {
+            return oldValue[k];
+          }).forEach(function (k) {
+            return removeClass(el, k);
+          });
+        }
+        out = [];
+        Object.keys(value).filter(function (k) {
+          return value[k];
+        }).forEach(function (k) {
+          out.push(k);
+          addClass(el, k);
+        });
+      };
+
+      for (var i = 0, el; el = vModelEls[i++];) {
+        _loop(i, el);
+      }
+      _this2.fieldstate._className = out;
+    }, {
+      deep: true,
+      immediate: true
+    });
+  },
+  created: function created() {
+    var _this4 = this;
+
+    this.formstate = this.state || this.vueFormState;
+    var vm = this;
+    var pendingValidators = [];
+    var _val = void 0;
+    this.fieldstate = {
+      $name: '',
+      $dirty: false,
+      $pristine: true,
+      $valid: true,
+      $invalid: false,
+      $touched: false,
+      $untouched: true,
+      $pending: false,
+      $submitted: false,
+      $error: {},
+      _className: null,
+      _id: 'vf' + randomId(),
+      _setValidatorVadility: function _setValidatorVadility(validator, isValid) {
+        if (isValid) {
+          vm.$delete(this.$error, validator);
+        } else {
+          vm.$set(this.$error, validator, true);
+        }
+      },
+      _setValidity: function _setValidity(isValid) {
+        this.$valid = isValid;
+        this.$invalid = !isValid;
+      },
+      _setDirty: function _setDirty() {
+        this.$dirty = true;
+        this.$pristine = false;
+      },
+      _setPristine: function _setPristine() {
+        this.$dirty = false;
+        this.$pristine = true;
+      },
+      _setTouched: function _setTouched() {
+        this.$touched = true;
+        this.$untouched = false;
+      },
+      _setUntouched: function _setUntouched() {
+        this.$touched = false;
+        this.$untouched = true;
+      },
+      _setFocused: function _setFocused() {
+        this._hasFocused = true;
+      },
+
+      _hasFocused: false,
+      _validators: {},
+      _validate: function _validate(vnode) {
+        var _this3 = this;
+
+        this.$pending = true;
+        var isValid = true;
+        var emptyAndRequired = false;
+        var value = vModelValue(vnode.data);
+        _val = value;
+
+        var pending = {
+          promises: [],
+          names: []
+        };
+
+        pendingValidators.push(pending);
+
+        var attrs = vnode.data.attrs || {};
+        var propsData = vnode.componentOptions && vnode.componentOptions.propsData ? vnode.componentOptions.propsData : {};
+
+        Object.keys(this._validators).forEach(function (validator) {
+          // when value is empty and not the required validator, the field is valid
+          if ((value === '' || value === undefined || value === null) && validator !== 'required') {
+            _this3._setValidatorVadility(validator, true);
+            emptyAndRequired = true;
+            // return early, required validator will
+            // fall through if it is present
+            return;
+          }
+          var attrValue = typeof attrs[validator] !== 'undefined' ? attrs[validator] : propsData[validator];
+          var result = _this3._validators[validator](value, attrValue, vnode);
+          if (typeof result === 'boolean') {
+            if (result) {
+              _this3._setValidatorVadility(validator, true);
+            } else {
+              isValid = false;
+              _this3._setValidatorVadility(validator, false);
+            }
+          } else {
+            pending.promises.push(result);
+            pending.names.push(validator);
+          }
+        });
+
+        if (pending.promises.length) {
+          vm.vueFormConfig.Promise.all(pending.promises).then(function (results) {
+
+            // only concerned with the last promise results, in case
+            // async responses return out of order
+            if (pending !== pendingValidators[pendingValidators.length - 1]) {
+              //console.log('ignoring old promise', pending.promises);
+              return;
+            }
+
+            pendingValidators = [];
+
+            results.forEach(function (result, i) {
+              var name = pending.names[i];
+              if (result) {
+                _this3._setValidatorVadility(name, true);
+              } else {
+                isValid = false;
+                _this3._setValidatorVadility(name, false);
+              }
+            });
+            _this3._setValidity(isValid);
+            _this3.$pending = false;
+          });
+        } else {
+          this._setValidity(isValid);
+          this.$pending = false;
+        }
+      }
+    };
+
+    // add custom validators
+    if (this.custom) {
+      Object.keys(this.custom).forEach(function (prop) {
+        _this4.fieldstate._validators[prop] = _this4.custom[prop];
+      });
+    }
+  },
+  destroyed: function destroyed() {
+    this.formstate._removeControl(this.fieldstate);
+  }
+};
+
+var field = {
+  inject: { vueFormConfig: vueFormConfig },
+  render: function render(h) {
+    var foundVnodes = getVModelAndLabel(this.$slots.default);
+    var vModelnodes = foundVnodes.vModel;
+    var attrs = {
+      for: null
+    };
+    if (vModelnodes.length) {
+      if (this.autoLabel) {
+        var id = vModelnodes[0].data.attrs && vModelnodes[0].data.attrs.id || 'vf' + randomId();
+        vModelnodes[0].data.attrs.id = id;
+        if (foundVnodes.label) {
+          foundVnodes.label.data = foundVnodes.label.data || {};
+          foundVnodes.label.data.attrs = foundVnodes.label.data.attrs = {};
+          foundVnodes.label.data.attrs.for = id;
+        } else if (this.tag === 'label') {
+          attrs.for = id;
+        }
+      }
+    }
+    return h(this.tag || this.vueFormConfig.fieldTag, { attrs: attrs }, this.$slots.default);
+  },
+
+  props: {
+    tag: {
+      type: String
+    },
+    autoLabel: {
+      type: Boolean,
+      default: true
+    }
+  }
+};
+
+var debouncedValidators = {};
+
+function compareChanges(vnode, oldvnode, validators) {
+
+  var hasChanged = false;
+  var attrs = vnode.data.attrs || {};
+  var oldAttrs = oldvnode.data.attrs || {};
+  var out = {};
+
+  if (vModelValue(vnode.data) !== vModelValue(oldvnode.data)) {
+    out.vModel = true;
+    hasChanged = true;
+  }
+
+  Object.keys(validators).forEach(function (validator) {
+    if (attrs[validator] !== oldAttrs[validator]) {
+      out[validator] = true;
+      hasChanged = true;
+    }
+  });
+
+  // if is a component
+  if (vnode.componentOptions && vnode.componentOptions.propsData) {
+    var _attrs = vnode.componentOptions.propsData;
+    var _oldAttrs = oldvnode.componentOptions.propsData;
+    Object.keys(validators).forEach(function (validator) {
+      if (_attrs[validator] !== _oldAttrs[validator]) {
+        out[validator] = true;
+        hasChanged = true;
+      }
+    });
+  }
+
+  if (hasChanged) {
+    return out;
+  }
+}
+
+var vueFormValidator = {
+  name: 'vue-form-validator',
+  bind: function bind(el, binding, vnode) {
+    var fieldstate = binding.value.fieldstate;
+    var validators = binding.value.config.validators;
+
+    var attrs = vnode.data.attrs || {};
+    var inputName = getName(vnode);
+
+    if (!inputName) {
+      console.warn('vue-form: name attribute missing');
+      return;
+    }
+
+    if (attrs.debounce) {
+      debouncedValidators[fieldstate._id] = debounce(function (fieldstate, vnode) {
+        if (fieldstate._hasFocused) {
+          fieldstate._setDirty();
+        }
+        fieldstate._validate(vnode);
+      }, attrs.debounce);
+    }
+
+    // add validators
+    Object.keys(attrs).forEach(function (attr) {
+      var prop = void 0;
+      if (attr === 'type') {
+        prop = attrs[attr].toLowerCase();
+      } else {
+        prop = attr.toLowerCase();
+      }
+      if (validators[prop] && !fieldstate._validators[prop]) {
+        fieldstate._validators[prop] = validators[prop];
+      }
+    });
+
+    // if is a component, a validator attribute by be
+    // a prop this component uses
+    if (vnode.componentOptions && vnode.componentOptions.propsData) {
+      Object.keys(vnode.componentOptions.propsData).forEach(function (prop) {
+        if (validators[prop] && !fieldstate._validators[prop]) {
+          fieldstate._validators[prop] = validators[prop];
+        }
+      });
+    }
+
+    fieldstate._validate(vnode);
+
+    // native listeners
+    el.addEventListener('blur', function () {
+      fieldstate._setTouched();
+    }, false);
+    el.addEventListener('focus', function () {
+      fieldstate._setFocused();
+    }, false);
+
+    // component listeners
+    if (vnode.componentInstance) {
+      vnode.componentInstance.$on('blur', function () {
+        fieldstate._setTouched();
+      });
+      vnode.componentInstance.$on('focus', function () {
+        fieldstate._setFocused();
+      });
+      el.addEventListener('focusout', function () {
+        fieldstate._setTouched();
+      }, false);
+      el.addEventListener('focusin', function () {
+        fieldstate._setFocused();
+      }, false);
+    }
+  },
+  update: function update(el, binding, vnode, oldVNode) {
+    var validators = binding.value.config.validators;
+
+    var changes = compareChanges(vnode, oldVNode, validators);
+    var fieldstate = binding.value.fieldstate;
+
+    var attrs = vnode.data.attrs || {};
+    if (vnode.elm.className.indexOf(fieldstate._className[0]) === -1) {
+      vnode.elm.className = vnode.elm.className + ' ' + fieldstate._className.join(' ');
+    }
+
+    if (!changes) {
+      return;
+    }
+
+    if (changes.vModel) {
+      // re-validate all
+      if (attrs.debounce) {
+        fieldstate.$pending = true;
+        debouncedValidators[fieldstate._id](fieldstate, vnode);
+      } else {
+        if (fieldstate._hasFocused) {
+          fieldstate._setDirty();
+        }
+        fieldstate._validate(vnode);
+      }
+    } else {
+      // attributes have changed
+      // to do: loop through them and re-validate changed ones
+      //for(let prop in changes) {
+      //  fieldstate._validate(vnode, validator);
+      //}
+      // for now
+      fieldstate._validate(vnode);
+    }
+  }
+};
+
+function VueFormBase(options) {
+  var _components;
+
+  var c = index(true, {}, config, options);
+  this.provide = defineProperty({}, vueFormConfig, c);
+  this.components = (_components = {}, defineProperty(_components, c.formComponent, vueForm), defineProperty(_components, c.messagesComponent, messages), defineProperty(_components, c.validateComponent, validate), defineProperty(_components, c.fieldComponent, field), _components);
+  this.directives = { vueFormValidator: vueFormValidator };
+}
+
+var VueForm = function (_VueFormBase) {
+  inherits(VueForm, _VueFormBase);
+
+  function VueForm() {
+    classCallCheck(this, VueForm);
+    return possibleConstructorReturn(this, (VueForm.__proto__ || Object.getPrototypeOf(VueForm)).apply(this, arguments));
+  }
+
+  createClass(VueForm, null, [{
+    key: 'install',
+    value: function install(Vue, options) {
+      Vue.mixin(new this(options));
+    }
+  }, {
+    key: 'installed',
+    get: function get$$1() {
+      return !!this.install.done;
+    },
+    set: function set$$1(val) {
+      this.install.done = val;
+    }
+  }]);
+  return VueForm;
+}(VueFormBase);
+
+VueFormBase.call(VueForm);
+// temp fix for vue 2.3.0
+VueForm.options = new VueForm();
+
+return VueForm;
+
+})));
+
+
+/***/ }),
+/* 17 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_vue__ = __webpack_require__(3);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_vue___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0_vue__);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_vuex__ = __webpack_require__(2);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__actions__ = __webpack_require__(4);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__getters__ = __webpack_require__(7);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__mutations__ = __webpack_require__(23);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__components_src_Errors__ = __webpack_require__(24);
+
+
+
+
+
+
+
+__WEBPACK_IMPORTED_MODULE_0_vue___default.a.use(__WEBPACK_IMPORTED_MODULE_1_vuex__["a" /* default */]);
+
+var debug = "development" !== 'production';
+__WEBPACK_IMPORTED_MODULE_0_vue___default.a.config.debug = debug;
+
+var state = {
+    errors: new __WEBPACK_IMPORTED_MODULE_5__components_src_Errors__["a" /* default */](),
+    currentUser: {
+        email: '',
+        first_name: '',
+        id: '',
+        last_name: '',
+        program_id: '',
+        role: {
+            name: '',
+            id: ''
+        },
+        username: ''
+    },
+    debug: debug,
+    notifications: [],
+    openModal: {
+        name: null,
+        props: {}
+    },
+    patientCareTeam: [],
+    patientCarePlan: {
+        pdfs: []
+    },
+    practiceLocations: []
+};
+
+/* harmony default export */ __webpack_exports__["a"] = (new __WEBPACK_IMPORTED_MODULE_1_vuex__["a" /* default */].Store({
+    state: state,
+    getters: __WEBPACK_IMPORTED_MODULE_3__getters__,
+    actions: __WEBPACK_IMPORTED_MODULE_2__actions__,
+    mutations: __WEBPACK_IMPORTED_MODULE_4__mutations__,
+    strict: debug
+}));
+
+/***/ }),
+/* 18 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_vue__ = __webpack_require__(3);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_vue___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0_vue__);
+
+
+/* harmony default export */ __webpack_exports__["a"] = ({
+    getCurrentUser: function getCurrentUser(cb) {
+        var ecb = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : null;
+
+        window.axios.get('profiles').then(function (resp) {
+            return cb(resp.data.user);
+        }, function (resp) {
+            return ecb(resp.data);
+        });
+    }
+});
+
+/***/ }),
+/* 19 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_vue__ = __webpack_require__(3);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_vue___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0_vue__);
+
+
+/* harmony default export */ __webpack_exports__["a"] = ({
+    getPatientCareTeam: function getPatientCareTeam(cb) {
+        var ecb = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : null;
+        var patientId = arguments[2];
+
+        if (!patientId) {
+            return;
+        }
+
+        window.axios.get('user/' + patientId + '/care-team').then(function (resp) {
+            return cb(resp.data);
+        }, function (resp) {
+            return ecb(resp.data);
+        });
+    }
+});
+
+/***/ }),
+/* 20 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_vue__ = __webpack_require__(3);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_vue___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0_vue__);
+
+
+/* harmony default export */ __webpack_exports__["a"] = ({
+    getPracticeLocations: function getPracticeLocations(cb) {
+        var ecb = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : null;
+        var practiceId = arguments[2];
+
+        if (!practiceId) {
+            return;
+        }
+
+        window.axios.get('practice/' + practiceId + '/locations').then(function (resp) {
+            return cb(resp.data);
+        }, function (resp) {
+            return ecb(resp.data);
+        });
+    },
+    update: function update(cb) {
+        var ecb = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : null;
+        var practiceId = arguments[2];
+        var location = arguments[3];
+
+        if (!practiceId) {
+            return;
+        }
+
+        window.axios.patch('practice/' + practiceId + '/locations/' + location.id, location).then(function (resp) {
+            return cb(resp.data);
+        }, function (error) {
+            return ecb(error.response.data);
+        });
+    },
+    delete: function _delete(cb) {
+        var ecb = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : null;
+        var practiceId = arguments[2];
+        var location = arguments[3];
+
+        if (!practiceId) {
+            return;
+        }
+
+        window.axios.delete('practice/' + practiceId + '/locations/' + location.id).then(function (resp) {
+            return cb(resp.data);
+        }, function (error) {
+            return ecb(error.response.data);
+        });
+    }
+});
+
+/***/ }),
+/* 21 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+/* harmony default export */ __webpack_exports__["a"] = ({
+    destroyCarePerson: function destroyCarePerson(cb) {
+        var ecb = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : null;
+        var carePerson = arguments[2];
+
+        window.axios.delete('user/' + carePerson.user_id + '/care-team/' + carePerson.id).then(function (resp) {
+            return cb(carePerson);
+        }, function (resp) {
+            return ecb(resp.data);
+        });
+    },
+    updateCarePerson: function updateCarePerson(cb) {
+        var ecb = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : null;
+        var carePerson = arguments[2];
+
+        window.axios.patch('user/' + carePerson.user_id + '/care-team/' + carePerson.id, carePerson).then(function (resp) {
+            return cb(carePerson);
+        }, function (resp) {
+            return ecb(resp.data);
+        });
+    }
+});
+
+/***/ }),
+/* 22 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+/* harmony default export */ __webpack_exports__["a"] = ({
+    getPatientCareplan: function getPatientCareplan(cb) {
+        var ecb = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : null;
+        var patientId = arguments[2];
+
+        if (!patientId) {
+            return;
+        }
+
+        window.axios.get('user/' + patientId + '/care-plan').then(function (resp) {
+            return cb(resp.data);
+        }, function (resp) {
+            return ecb(resp.data);
+        });
+    },
+    deletePdf: function deletePdf(cb) {
+        var ecb = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : null;
+        var pdfId = arguments[2];
+
+        window.axios.delete('pdf/' + pdfId).then(function (resp) {
+            return cb(resp.data);
+        }, function (resp) {
+            return ecb(resp.data);
+        });
+    },
+    uploadPdfCareplan: function uploadPdfCareplan(cb) {
+        var ecb = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : null;
+        var formData = arguments[2];
+
+        // formdata needs to contain
+        // formData.set('files[' + i + ']', this.files[i].file)
+        // formData.set('carePlanId', this.patientCarePlan.id)
+        window.axios.post('care-plans/' + formData.get('carePlanId') + '/pdfs', formData).then(function (resp) {
+            return cb(resp.data);
+        }, function (resp) {
+            return ecb(resp.data);
+        });
+    }
+});
+
+/***/ }),
+/* 23 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "DESTROY_CARE_PERSON", function() { return DESTROY_CARE_PERSON; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "UPDATE_CARE_PERSON", function() { return UPDATE_CARE_PERSON; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "SET_CARE_TEAM", function() { return SET_CARE_TEAM; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "CLEAR_CARE_TEAM", function() { return CLEAR_CARE_TEAM; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "SET_PATIENT_CARE_PLAN", function() { return SET_PATIENT_CARE_PLAN; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "CLEAR_PATIENT_CARE_PLAN", function() { return CLEAR_PATIENT_CARE_PLAN; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "ADD_PDF_CARE_PLAN", function() { return ADD_PDF_CARE_PLAN; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "DELETE_PDF_CARE_PLAN", function() { return DELETE_PDF_CARE_PLAN; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "LOGIN_USER", function() { return LOGIN_USER; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "LOGOUT_USER", function() { return LOGOUT_USER; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "SET_OPEN_MODAL", function() { return SET_OPEN_MODAL; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "CLEAR_OPEN_MODAL", function() { return CLEAR_OPEN_MODAL; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "ADD_NOTIFICATION", function() { return ADD_NOTIFICATION; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "REMOVE_NOTIFICATION", function() { return REMOVE_NOTIFICATION; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "CLEAR_PRACTICE_LOCATIONS", function() { return CLEAR_PRACTICE_LOCATIONS; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "SET_PRACTICE_LOCATIONS", function() { return SET_PRACTICE_LOCATIONS; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "UPDATE_PRACTICE_LOCATION", function() { return UPDATE_PRACTICE_LOCATION; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "DELETE_PRACTICE_LOCATION", function() { return DELETE_PRACTICE_LOCATION; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "CLEAR_ERROR", function() { return CLEAR_ERROR; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "SET_ERRORS", function() { return SET_ERRORS; });
+var DESTROY_CARE_PERSON = function DESTROY_CARE_PERSON(state, carePerson) {
+    state.patientCareTeam = state.patientCareTeam.filter(function (item) {
+        return item.id !== carePerson.id;
+    });
+};
+
+var UPDATE_CARE_PERSON = function UPDATE_CARE_PERSON(state, newCarePerson) {
+    var matched = false;
+
+    state.patientCareTeam.forEach(function (carePerson, index) {
+        if (carePerson.id === newCarePerson.id) {
+            state.patientCareTeam[index] = newCarePerson;
+            matched = true;
+        }
+    });
+
+    if (!matched) {
+        state.patientCareTeam.unshift(newCarePerson);
+    }
+};
+
+var SET_CARE_TEAM = function SET_CARE_TEAM(state, patientCareTeam) {
+    state.patientCareTeam = patientCareTeam;
+};
+
+var CLEAR_CARE_TEAM = function CLEAR_CARE_TEAM(state) {
+    state.patientCareTeam = [];
+};
+
+var SET_PATIENT_CARE_PLAN = function SET_PATIENT_CARE_PLAN(state, patientCarePlan) {
+    state.patientCarePlan = patientCarePlan;
+    state.patientCarePlan.pdfs = _.orderBy(state.patientCarePlan.pdfs, 'label', 'desc');
+};
+
+var CLEAR_PATIENT_CARE_PLAN = function CLEAR_PATIENT_CARE_PLAN(state) {
+    state.patientCarePlan = {};
+};
+
+var ADD_PDF_CARE_PLAN = function ADD_PDF_CARE_PLAN(state, pdfCareplan) {
+    if (_.isArray(pdfCareplan)) {
+        pdfCareplan.forEach(function (cp) {
+            state.patientCarePlan.pdfs.unshift(cp);
+        });
+    }
+};
+
+var DELETE_PDF_CARE_PLAN = function DELETE_PDF_CARE_PLAN(state, deletedPdfId) {
+    var removeThis = null;
+    for (var i = 0; i < state.patientCarePlan.pdfs.length; i++) {
+        if (state.patientCarePlan.pdfs[i].id == deletedPdfId) {
+            removeThis = i;
+            break;
+        }
+    }
+
+    if (!_.isNull(removeThis)) {
+        state.patientCarePlan.pdfs.splice(removeThis, 1);
+    }
+};
+
+var LOGIN_USER = function LOGIN_USER(state, currentUser) {
+    state.currentUser = currentUser;
+};
+
+var LOGOUT_USER = function LOGOUT_USER(state) {
+    state.currentUser = {};
+};
+
+var SET_OPEN_MODAL = function SET_OPEN_MODAL(state, openModal) {
+    state.openModal = openModal;
+};
+
+var CLEAR_OPEN_MODAL = function CLEAR_OPEN_MODAL(state) {
+    state.openModal = {};
+};
+
+var ADD_NOTIFICATION = function ADD_NOTIFICATION(state, notification) {
+    state.notifications.push(notification);
+};
+
+var REMOVE_NOTIFICATION = function REMOVE_NOTIFICATION(state, notification) {
+    state.notifications.splice(state.notifications.indexOf(notification), 1);
+};
+
+var CLEAR_PRACTICE_LOCATIONS = function CLEAR_PRACTICE_LOCATIONS(state) {
+    state.practiceLocations = [];
+};
+
+var SET_PRACTICE_LOCATIONS = function SET_PRACTICE_LOCATIONS(state, practiceLocations) {
+    practiceLocations.forEach(function (loc) {
+        state.practiceLocations.push(loc);
+    });
+};
+
+var UPDATE_PRACTICE_LOCATION = function UPDATE_PRACTICE_LOCATION(state, location) {
+    state.practiceLocations.forEach(function (pracLoc, index) {
+        if (pracLoc.id === location.id) {
+            state.practiceLocations[index] = location;
+        }
+    });
+};
+
+var DELETE_PRACTICE_LOCATION = function DELETE_PRACTICE_LOCATION(state, location) {
+    state.practiceLocations.forEach(function (pracLoc, index) {
+        if (pracLoc.id === location.id) {
+            state.practiceLocations.splice(index, 1);
+        }
+    });
+};
+
+var CLEAR_ERROR = function CLEAR_ERROR(state, field) {
+    state.errors.clear(field);
+};
+
+var SET_ERRORS = function SET_ERRORS(state, errors) {
+    state.errors.setErrors(errors);
+};
+
+/***/ }),
+/* 24 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+var Errors = function () {
+    /**
+     * Create a new Errors instance.
+     */
+    function Errors() {
+        var errors = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : null;
+
+        _classCallCheck(this, Errors);
+
+        this.errors = {};
+
+        if (errors) {
+            this.errors = errors;
+        }
+    }
+
+    /**
+     * Determine if an errors exists for the given field.
+     *
+     * @param {string} field
+     */
+
+
+    _createClass(Errors, [{
+        key: "has",
+        value: function has(field) {
+            return this.errors.hasOwnProperty(field);
+        }
+
+        /**
+         * Determine if we have any errors.
+         */
+
+    }, {
+        key: "any",
+        value: function any() {
+            return Object.keys(this.errors).length > 0;
+        }
+
+        /**
+         * Retrieve the error message for a field.
+         *
+         * @param {string} field
+         */
+
+    }, {
+        key: "get",
+        value: function get(field) {
+            if (this.errors[field]) {
+                return this.errors[field][0];
+            }
+        }
+
+        /**
+         * Record the new errors.
+         *
+         * @param {object} errors
+         */
+
+    }, {
+        key: "setErrors",
+        value: function setErrors(errors) {
+            this.errors = errors;
+        }
+
+        /**
+         * Clear one or all error fields.
+         *
+         * @param {string|null} field
+         */
+
+    }, {
+        key: "clear",
+        value: function clear(field) {
+            if (field) {
+                delete this.errors[field];
+
+                return;
+            }
+
+            this.errors = {};
+        }
+    }]);
+
+    return Errors;
+}();
+
+/* harmony default export */ __webpack_exports__["a"] = (Errors);
+
+/***/ }),
+/* 25 */
 /***/ (function(module, exports) {
 
 module.exports = function(module) {
@@ -22207,11 +23791,11 @@ module.exports = function(module) {
 
 
 /***/ }),
-/* 17 */
+/* 26 */
 /***/ (function(module, exports, __webpack_require__) {
 
 
-window._ = __webpack_require__(18);
+window._ = __webpack_require__(27);
 
 /**
  * We'll load jQuery and the Bootstrap jQuery plugin which provides support
@@ -22220,7 +23804,7 @@ window._ = __webpack_require__(18);
  */
 
 try {
-  window.$ = window.jQuery = __webpack_require__(9);
+  window.$ = window.jQuery = __webpack_require__(10);
 } catch (e) {}
 
 /**
@@ -22229,7 +23813,7 @@ try {
  * CSRF token as a header based on the value of the "XSRF" token cookie.
  */
 
-window.axios = __webpack_require__(19);
+window.axios = __webpack_require__(28);
 
 window.axios.defaults.headers.common['X-Requested-With'] = 'XMLHttpRequest';
 
@@ -22263,7 +23847,7 @@ if (token) {
 // });
 
 /***/ }),
-/* 18 */
+/* 27 */
 /***/ (function(module, exports, __webpack_require__) {
 
 /* WEBPACK VAR INJECTION */(function(global, module) {var __WEBPACK_AMD_DEFINE_RESULT__;/**
@@ -39352,16 +40936,16 @@ if (token) {
   }
 }.call(this));
 
-/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(10), __webpack_require__(16)(module)))
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(9), __webpack_require__(25)(module)))
 
 /***/ }),
-/* 19 */
+/* 28 */
 /***/ (function(module, exports, __webpack_require__) {
 
-module.exports = __webpack_require__(20);
+module.exports = __webpack_require__(29);
 
 /***/ }),
-/* 20 */
+/* 29 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -39369,7 +40953,7 @@ module.exports = __webpack_require__(20);
 
 var utils = __webpack_require__(0);
 var bind = __webpack_require__(11);
-var Axios = __webpack_require__(22);
+var Axios = __webpack_require__(31);
 var defaults = __webpack_require__(8);
 
 /**
@@ -39404,14 +40988,14 @@ axios.create = function create(instanceConfig) {
 
 // Expose Cancel & CancelToken
 axios.Cancel = __webpack_require__(15);
-axios.CancelToken = __webpack_require__(37);
+axios.CancelToken = __webpack_require__(46);
 axios.isCancel = __webpack_require__(14);
 
 // Expose all/spread
 axios.all = function all(promises) {
   return Promise.all(promises);
 };
-axios.spread = __webpack_require__(38);
+axios.spread = __webpack_require__(47);
 
 module.exports = axios;
 
@@ -39420,7 +41004,7 @@ module.exports.default = axios;
 
 
 /***/ }),
-/* 21 */
+/* 30 */
 /***/ (function(module, exports) {
 
 /*!
@@ -39447,7 +41031,7 @@ function isSlowBuffer (obj) {
 
 
 /***/ }),
-/* 22 */
+/* 31 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -39455,10 +41039,10 @@ function isSlowBuffer (obj) {
 
 var defaults = __webpack_require__(8);
 var utils = __webpack_require__(0);
-var InterceptorManager = __webpack_require__(32);
-var dispatchRequest = __webpack_require__(33);
-var isAbsoluteURL = __webpack_require__(35);
-var combineURLs = __webpack_require__(36);
+var InterceptorManager = __webpack_require__(41);
+var dispatchRequest = __webpack_require__(42);
+var isAbsoluteURL = __webpack_require__(44);
+var combineURLs = __webpack_require__(45);
 
 /**
  * Create a new instance of Axios
@@ -39540,7 +41124,7 @@ module.exports = Axios;
 
 
 /***/ }),
-/* 23 */
+/* 32 */
 /***/ (function(module, exports) {
 
 // shim for using process in browser
@@ -39730,7 +41314,7 @@ process.umask = function() { return 0; };
 
 
 /***/ }),
-/* 24 */
+/* 33 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -39749,7 +41333,7 @@ module.exports = function normalizeHeaderName(headers, normalizedName) {
 
 
 /***/ }),
-/* 25 */
+/* 34 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -39782,7 +41366,7 @@ module.exports = function settle(resolve, reject, response) {
 
 
 /***/ }),
-/* 26 */
+/* 35 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -39810,7 +41394,7 @@ module.exports = function enhanceError(error, config, code, request, response) {
 
 
 /***/ }),
-/* 27 */
+/* 36 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -39885,7 +41469,7 @@ module.exports = function buildURL(url, params, paramsSerializer) {
 
 
 /***/ }),
-/* 28 */
+/* 37 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -39929,7 +41513,7 @@ module.exports = function parseHeaders(headers) {
 
 
 /***/ }),
-/* 29 */
+/* 38 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -40004,7 +41588,7 @@ module.exports = (
 
 
 /***/ }),
-/* 30 */
+/* 39 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -40047,7 +41631,7 @@ module.exports = btoa;
 
 
 /***/ }),
-/* 31 */
+/* 40 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -40107,7 +41691,7 @@ module.exports = (
 
 
 /***/ }),
-/* 32 */
+/* 41 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -40166,14 +41750,14 @@ module.exports = InterceptorManager;
 
 
 /***/ }),
-/* 33 */
+/* 42 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
 var utils = __webpack_require__(0);
-var transformData = __webpack_require__(34);
+var transformData = __webpack_require__(43);
 var isCancel = __webpack_require__(14);
 var defaults = __webpack_require__(8);
 
@@ -40252,7 +41836,7 @@ module.exports = function dispatchRequest(config) {
 
 
 /***/ }),
-/* 34 */
+/* 43 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -40279,7 +41863,7 @@ module.exports = function transformData(data, headers, fns) {
 
 
 /***/ }),
-/* 35 */
+/* 44 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -40300,7 +41884,7 @@ module.exports = function isAbsoluteURL(url) {
 
 
 /***/ }),
-/* 36 */
+/* 45 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -40321,7 +41905,7 @@ module.exports = function combineURLs(baseURL, relativeURL) {
 
 
 /***/ }),
-/* 37 */
+/* 46 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -40385,7 +41969,7 @@ module.exports = CancelToken;
 
 
 /***/ }),
-/* 38 */
+/* 47 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -40417,1590 +42001,6 @@ module.exports = function spread(callback) {
   };
 };
 
-
-/***/ }),
-/* 39 */
-/***/ (function(module, exports, __webpack_require__) {
-
-(function (global, factory) {
-	 true ? module.exports = factory() :
-	typeof define === 'function' && define.amd ? define(factory) :
-	(global.VueForm = factory());
-}(this, (function () { 'use strict';
-
-var emailRegExp = /^[a-z0-9!#$%&'*+\/=?^_`{|}~.-]+@[a-z0-9]([a-z0-9-]*[a-z0-9])?(\.[a-z0-9]([a-z0-9-]*[a-z0-9])?)*$/i; // from angular
-var urlRegExp = /^(http\:\/\/|https\:\/\/)(.{4,})$/;
-
-var validators = {
-  email: function email(value, attrValue, vnode) {
-    return emailRegExp.test(value);
-  },
-  number: function number(value) {
-    return !isNaN(value);
-  },
-  url: function url(value) {
-    return urlRegExp.test(value);
-  },
-  required: function required(value, attrValue, vnode) {
-    if (attrValue === false) {
-      return true;
-    }
-
-    if (value === 0) {
-      return true;
-    }
-
-    if (vnode.data.attrs && typeof vnode.data.attrs.bool !== 'undefined' || vnode.componentOptions && vnode.componentOptions.propsData && typeof vnode.componentOptions.propsData.bool !== 'undefined') {
-      // bool attribute is present, allow false pass validation
-      if (value === false) {
-        return true;
-      }
-    }
-
-    if (Array.isArray(value)) {
-      return !!value.length;
-    }
-    return !!value;
-  },
-  minlength: function minlength(value, length) {
-    return value.length >= length;
-  },
-  maxlength: function maxlength(value, length) {
-    return length >= value.length;
-  },
-  pattern: function pattern(value, _pattern) {
-    var patternRegExp = new RegExp('^' + _pattern + '$');
-    return patternRegExp.test(value);
-  },
-  min: function min(value, _min, vnode) {
-    if ((vnode.data.attrs.type || '').toLowerCase() == 'number') {
-      return +value >= +_min;
-    }
-    return value >= _min;
-  },
-  max: function max(value, _max, vnode) {
-    if ((vnode.data.attrs.type || '').toLowerCase() == 'number') {
-      return +_max >= +value;
-    }
-    return _max >= value;
-  }
-};
-
-var config = {
-  validators: validators,
-  formComponent: 'vueForm',
-  formTag: 'form',
-  messagesComponent: 'fieldMessages',
-  messagesTag: 'div',
-  validateComponent: 'validate',
-  validateTag: 'div',
-  fieldComponent: 'field',
-  fieldTag: 'div',
-  formClasses: {
-    dirty: 'vf-form-dirty',
-    pristine: 'vf-form-pristine',
-    valid: 'vf-form-valid',
-    invalid: 'vf-form-invalid',
-    touched: 'vf-form-touched',
-    untouched: 'vf-form-untouched',
-    submitted: 'vf-form-submitted',
-    pending: 'vf-form-pending'
-  },
-  validateClasses: {
-    dirty: 'vf-field-dirty',
-    pristine: 'vf-field-pristine',
-    valid: 'vf-field-valid',
-    invalid: 'vf-field-invalid',
-    touched: 'vf-field-touched',
-    untouched: 'vf-field-untouched',
-    submitted: 'vf-field-submitted',
-    pending: 'vf-field-pending'
-  },
-  inputClasses: {
-    dirty: 'vf-dirty',
-    pristine: 'vf-pristine',
-    valid: 'vf-valid',
-    invalid: 'vf-invalid',
-    touched: 'vf-touched',
-    untouched: 'vf-untouched',
-    submitted: 'vf-submitted',
-    pending: 'vf-pending'
-  },
-  Promise: typeof Promise === 'function' ? Promise : null
-};
-
-var classCallCheck = function (instance, Constructor) {
-  if (!(instance instanceof Constructor)) {
-    throw new TypeError("Cannot call a class as a function");
-  }
-};
-
-var createClass = function () {
-  function defineProperties(target, props) {
-    for (var i = 0; i < props.length; i++) {
-      var descriptor = props[i];
-      descriptor.enumerable = descriptor.enumerable || false;
-      descriptor.configurable = true;
-      if ("value" in descriptor) descriptor.writable = true;
-      Object.defineProperty(target, descriptor.key, descriptor);
-    }
-  }
-
-  return function (Constructor, protoProps, staticProps) {
-    if (protoProps) defineProperties(Constructor.prototype, protoProps);
-    if (staticProps) defineProperties(Constructor, staticProps);
-    return Constructor;
-  };
-}();
-
-
-
-
-
-var defineProperty = function (obj, key, value) {
-  if (key in obj) {
-    Object.defineProperty(obj, key, {
-      value: value,
-      enumerable: true,
-      configurable: true,
-      writable: true
-    });
-  } else {
-    obj[key] = value;
-  }
-
-  return obj;
-};
-
-
-
-var inherits = function (subClass, superClass) {
-  if (typeof superClass !== "function" && superClass !== null) {
-    throw new TypeError("Super expression must either be null or a function, not " + typeof superClass);
-  }
-
-  subClass.prototype = Object.create(superClass && superClass.prototype, {
-    constructor: {
-      value: subClass,
-      enumerable: false,
-      writable: true,
-      configurable: true
-    }
-  });
-  if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass;
-};
-
-
-
-
-
-
-
-
-
-
-
-var possibleConstructorReturn = function (self, call) {
-  if (!self) {
-    throw new ReferenceError("this hasn't been initialised - super() hasn't been called");
-  }
-
-  return call && (typeof call === "object" || typeof call === "function") ? call : self;
-};
-
-function getClasses(classConfig, state) {
-  var _ref;
-
-  return _ref = {}, defineProperty(_ref, classConfig.dirty, state.$dirty), defineProperty(_ref, classConfig.pristine, state.$pristine), defineProperty(_ref, classConfig.valid, state.$valid), defineProperty(_ref, classConfig.invalid, state.$invalid), defineProperty(_ref, classConfig.touched, state.$touched), defineProperty(_ref, classConfig.untouched, state.$untouched), defineProperty(_ref, classConfig.pending, state.$pending), _ref;
-}
-
-function addClass(el, className) {
-  if (el.classList) {
-    el.classList.add(className);
-  } else {
-    el.className += ' ' + className;
-  }
-}
-
-function removeClass(el, className) {
-  if (el.classList) {
-    el.classList.remove(className);
-  } else {
-    el.className = el.className.replace(new RegExp('(^|\\b)' + className.split(' ').join('|') + '(\\b|$)', 'gi'), ' ');
-  }
-}
-
-function vModelValue(data) {
-  if (data.model) {
-    return data.model.value;
-  }
-  return data.directives.filter(function (v) {
-    return v.name === 'model';
-  })[0].value;
-}
-
-function getVModelAndLabel(nodes) {
-  var foundVnodes = {
-    vModel: [],
-    label: null
-  };
-
-  if (!nodes) {
-    return foundVnodes;
-  }
-
-  function traverse(nodes) {
-    for (var i = 0; i < nodes.length; i++) {
-      var node = nodes[i];
-      if (node.tag === 'label' && !foundVnodes.label) {
-        foundVnodes.label = node;
-      }
-      if (node.data) {
-        if (node.data.directives) {
-          var match = node.data.directives.filter(function (v) {
-            return v.name === 'model';
-          });
-          if (match.length) {
-            foundVnodes.vModel.push(node);
-          }
-        } else if (node.data.model) {
-          foundVnodes.vModel.push(node);
-        }
-      }
-      if (node.children) {
-        traverse(node.children);
-      }
-    }
-  }
-
-  traverse(nodes);
-
-  return foundVnodes;
-}
-
-function getName(vnode) {
-  if (vnode.data && vnode.data.attrs && vnode.data.attrs.name) {
-    return vnode.data.attrs.name;
-  } else if (vnode.componentOptions && vnode.componentOptions.propsData && vnode.componentOptions.propsData.name) {
-    return vnode.componentOptions.propsData.name;
-  }
-}
-
-var hyphenateRE = /([^-])([A-Z])/g;
-function hyphenate(str) {
-  return str.replace(hyphenateRE, '$1-$2').replace(hyphenateRE, '$1-$2').toLowerCase();
-}
-
-function randomId() {
-  return Math.random().toString(36).substr(2, 10);
-}
-
-// https://davidwalsh.name/javascript-debounce-function
-function debounce(func, wait, immediate) {
-  var timeout;
-  return function () {
-    var context = this,
-        args = arguments;
-    var later = function later() {
-      timeout = null;
-      if (!immediate) func.apply(context, args);
-    };
-    var callNow = immediate && !timeout;
-    clearTimeout(timeout);
-    timeout = setTimeout(later, wait);
-    if (callNow) func.apply(context, args);
-  };
-}
-
-var vueFormConfig = 'VueFormProviderConfig' + randomId();
-var vueFormState = 'VueFormProviderState' + randomId();
-
-var hasOwn = Object.prototype.hasOwnProperty;
-var toStr = Object.prototype.toString;
-
-var isArray = function isArray(arr) {
-	if (typeof Array.isArray === 'function') {
-		return Array.isArray(arr);
-	}
-
-	return toStr.call(arr) === '[object Array]';
-};
-
-var isPlainObject = function isPlainObject(obj) {
-	if (!obj || toStr.call(obj) !== '[object Object]') {
-		return false;
-	}
-
-	var hasOwnConstructor = hasOwn.call(obj, 'constructor');
-	var hasIsPrototypeOf = obj.constructor && obj.constructor.prototype && hasOwn.call(obj.constructor.prototype, 'isPrototypeOf');
-	// Not own constructor property must be Object
-	if (obj.constructor && !hasOwnConstructor && !hasIsPrototypeOf) {
-		return false;
-	}
-
-	// Own properties are enumerated firstly, so to speed up,
-	// if last one is own, then all properties are own.
-	var key;
-	for (key in obj) {/**/}
-
-	return typeof key === 'undefined' || hasOwn.call(obj, key);
-};
-
-var index = function extend() {
-	var options, name, src, copy, copyIsArray, clone,
-		target = arguments[0],
-		i = 1,
-		length = arguments.length,
-		deep = false;
-
-	// Handle a deep copy situation
-	if (typeof target === 'boolean') {
-		deep = target;
-		target = arguments[1] || {};
-		// skip the boolean and the target
-		i = 2;
-	} else if ((typeof target !== 'object' && typeof target !== 'function') || target == null) {
-		target = {};
-	}
-
-	for (; i < length; ++i) {
-		options = arguments[i];
-		// Only deal with non-null/undefined values
-		if (options != null) {
-			// Extend the base object
-			for (name in options) {
-				src = target[name];
-				copy = options[name];
-
-				// Prevent never-ending loop
-				if (target !== copy) {
-					// Recurse if we're merging plain objects or arrays
-					if (deep && copy && (isPlainObject(copy) || (copyIsArray = isArray(copy)))) {
-						if (copyIsArray) {
-							copyIsArray = false;
-							clone = src && isArray(src) ? src : [];
-						} else {
-							clone = src && isPlainObject(src) ? src : {};
-						}
-
-						// Never move original objects, clone them
-						target[name] = extend(deep, clone, copy);
-
-					// Don't bring in undefined values
-					} else if (typeof copy !== 'undefined') {
-						target[name] = copy;
-					}
-				}
-			}
-		}
-	}
-
-	// Return the modified object
-	return target;
-};
-
-var vueForm = {
-  render: function render(h) {
-    var _this = this;
-
-    return h(this.tag || this.vueFormConfig.formTag, {
-      on: {
-        submit: function submit(event) {
-          _this.state._submit();
-          _this.$emit('submit', event);
-        },
-        reset: function reset(event) {
-          _this.state._reset();
-          _this.$emit('reset', event);
-        }
-      },
-      class: this.className,
-      attrs: {
-        'novalidate': ''
-      }
-    }, [this.$slots.default]);
-  },
-
-  props: {
-    state: Object,
-    tag: String
-  },
-  inject: { vueFormConfig: vueFormConfig },
-  provide: function provide() {
-    return defineProperty({}, vueFormState, this.state);
-  },
-  created: function created() {
-    var _this2 = this;
-
-    var controls = {};
-    var state = this.state;
-    var formstate = {
-      $dirty: false,
-      $pristine: true,
-      $valid: true,
-      $invalid: false,
-      $submitted: false,
-      $touched: false,
-      $untouched: true,
-      $pending: false,
-      $error: {},
-      $submittedState: {},
-      _id: '',
-      _submit: function _submit() {
-        _this2.state.$submitted = true;
-        _this2.state._cloneState();
-      },
-      _cloneState: function _cloneState() {
-        var cloned = JSON.parse(JSON.stringify(state));
-        delete cloned.$submittedState;
-        Object.keys(cloned).forEach(function (key) {
-          _this2.$set(_this2.state.$submittedState, key, cloned[key]);
-        });
-      },
-      _addControl: function _addControl(ctrl) {
-        controls[ctrl.$name] = ctrl;
-        _this2.$set(state, ctrl.$name, ctrl);
-      },
-      _removeControl: function _removeControl(ctrl) {
-        delete controls[ctrl.$name];
-        _this2.$delete(_this2.state, ctrl.$name);
-        _this2.$delete(_this2.state.$error, ctrl.$name);
-      },
-      _reset: function _reset() {
-        state.$submitted = false;
-        state.$pending = false;
-        state.$submittedState = {};
-        Object.keys(controls).forEach(function (key) {
-          var control = controls[key];
-          control._hasFocused = false;
-          control._setUntouched();
-          control._setPristine();
-          control.$submitted = false;
-          control.$pending = false;
-        });
-      }
-    };
-
-    Object.keys(formstate).forEach(function (key) {
-      _this2.$set(_this2.state, key, formstate[key]);
-    });
-
-    this.$watch('state', function () {
-      var isDirty = false;
-      var isValid = true;
-      var isTouched = false;
-      var isPending = false;
-      Object.keys(controls).forEach(function (key) {
-        var control = controls[key];
-
-        control.$submitted = state.$submitted;
-
-        if (control.$dirty) {
-          isDirty = true;
-        }
-        if (control.$touched) {
-          isTouched = true;
-        }
-        if (control.$pending) {
-          isPending = true;
-        }
-        if (!control.$valid) {
-          isValid = false;
-          // add control to errors
-          _this2.$set(state.$error, control.$name, control);
-        } else {
-          _this2.$delete(state.$error, control.$name);
-        }
-      });
-
-      state.$dirty = isDirty;
-      state.$pristine = !isDirty;
-      state.$touched = isTouched;
-      state.$untouched = !isTouched;
-      state.$valid = isValid;
-      state.$invalid = !isValid;
-      state.$pending = isPending;
-    }, {
-      deep: true,
-      immediate: true
-    });
-
-    /* watch pristine? if set to true, set all children to pristine
-    Object.keys(controls).forEach((ctrl) => {
-      controls[ctrl].setPristine();
-    });*/
-  },
-
-  computed: {
-    className: function className() {
-      var c = this.vueFormConfig.formClasses;
-      var s = this.state;
-      var classes = getClasses(c, s);
-      classes[c.submitted] = s.$submitted;
-      return classes;
-    }
-  },
-  methods: {
-    reset: function reset() {
-      this.state._reset();
-    }
-  }
-};
-
-function findLabel(nodes) {
-  if (!nodes) {
-    return;
-  }
-  for (var i = 0; i < nodes.length; i++) {
-    var vnode = nodes[i];
-    if (vnode.tag === 'label') {
-      return nodes[i];
-    } else if (nodes[i].children) {
-      return findLabel(nodes[i].children);
-    }
-  }
-}
-
-var messages = {
-  inject: { vueFormConfig: vueFormConfig, vueFormState: vueFormState },
-  render: function render(h) {
-    var _this = this;
-
-    var children = [];
-    var field = this.formstate[this.name];
-    if (field && field.$error && this.isShown) {
-      Object.keys(field.$error).forEach(function (key) {
-        if (_this.$slots[key] || _this.$scopedSlots[key]) {
-          var out = _this.$slots[key] || _this.$scopedSlots[key](field);
-          if (_this.autoLabel) {
-            var label = findLabel(out);
-            if (label) {
-              label.data = label.data || {};
-              label.data.attrs = label.data.attrs || {};
-              label.data.attrs.for = field._id;
-            }
-          }
-          children.push(out);
-        }
-      });
-      if (!children.length && field.$valid) {
-        if (this.$slots.default || this.$scopedSlots.default) {
-          var out = this.$slots.default || this.$scopedSlots.default(field);
-          if (this.autoLabel) {
-            var label = findLabel(out);
-            if (label) {
-              label.data = label.data || {};
-              label.data.attrs = label.data.attrs || {};
-              label.data.attrs.for = field._id;
-            }
-          }
-          children.push(out);
-        }
-      }
-    }
-    return h(this.tag || this.vueFormConfig.messagesTag, children);
-  },
-
-  props: {
-    state: Object,
-    name: String,
-    show: {
-      type: String,
-      default: ''
-    },
-    tag: {
-      type: String
-    },
-    autoLabel: Boolean
-  },
-  data: function data() {
-    return {
-      formstate: null
-    };
-  },
-  created: function created() {
-    this.formstate = this.state || this.vueFormState;
-  },
-
-  computed: {
-    isShown: function isShown() {
-      var field = this.formstate[this.name];
-
-      if (!this.show || !field) {
-        return true;
-      }
-
-      var compare = function compare(v) {
-        return field[v.trim()];
-      };
-
-      if (this.show.indexOf('&&') > -1) {
-        // and logic - every
-        var split = this.show.split('&&');
-        return split.every(compare);
-      } else if (this.show.indexOf('||') > -1) {
-        // or logic - some
-        var _split = this.show.split('||');
-        return _split.some(compare);
-      } else {
-        // single
-        return field[this.show];
-      }
-    }
-  }
-};
-
-var validate = {
-  render: function render(h) {
-    var _this = this;
-
-    var foundVnodes = getVModelAndLabel(this.$slots.default);
-    var vModelnodes = foundVnodes.vModel;
-    var attrs = {
-      for: null
-    };
-    if (vModelnodes.length) {
-      this.name = getName(vModelnodes[0]);
-      if (this.autoLabel) {
-        var id = vModelnodes[0].data.attrs.id || this.fieldstate._id;
-        this.fieldstate._id = id;
-        vModelnodes[0].data.attrs.id = id;
-        if (foundVnodes.label) {
-          foundVnodes.label.data = foundVnodes.label.data || {};
-          foundVnodes.label.data.attrs = foundVnodes.label.data.attrs || {};
-          foundVnodes.label.data.attrs.for = id;
-        } else if (this.tag === 'label') {
-          attrs.for = id;
-        }
-      }
-      vModelnodes.forEach(function (vnode) {
-        if (!vnode.data.directives) {
-          vnode.data.directives = [];
-        }
-        vnode.data.directives.push({ name: 'vue-form-validator', value: { fieldstate: _this.fieldstate, config: _this.vueFormConfig } });
-        vnode.data.attrs['vue-form-validator'] = '';
-        vnode.data.attrs['debounce'] = _this.debounce;
-      });
-    } else {
-      //console.warn('Element with v-model not found');
-    }
-    return h(this.tag || this.vueFormConfig.validateTag, { 'class': this.className, attrs: attrs }, this.$slots.default);
-  },
-
-  props: {
-    state: Object,
-    custom: null,
-    autoLabel: Boolean,
-    tag: {
-      type: String
-    },
-    debounce: Number
-  },
-  inject: { vueFormConfig: vueFormConfig, vueFormState: vueFormState },
-  data: function data() {
-    return {
-      name: '',
-      formstate: null,
-      fieldstate: {}
-    };
-  },
-
-  methods: {
-    getClasses: function getClasses$$1(classConfig) {
-      var s = this.fieldstate;
-      return Object.keys(s.$error).reduce(function (classes, error) {
-        classes[classConfig.invalid + '-' + hyphenate(error)] = true;
-        return classes;
-      }, getClasses(classConfig, s));
-    }
-  },
-  computed: {
-    className: function className() {
-      return this.getClasses(this.vueFormConfig.validateClasses);
-    },
-    inputClassName: function inputClassName() {
-      return this.getClasses(this.vueFormConfig.inputClasses);
-    }
-  },
-  mounted: function mounted() {
-    var _this2 = this;
-
-    this.fieldstate.$name = this.name;
-    this.formstate._addControl(this.fieldstate);
-
-    var vModelEls = this.$el.querySelectorAll('[vue-form-validator]');
-
-    // add classes to the input element
-    this.$watch('inputClassName', function (value, oldValue) {
-      var out = void 0;
-
-      var _loop = function _loop(i, el) {
-        if (oldValue) {
-          Object.keys(oldValue).filter(function (k) {
-            return oldValue[k];
-          }).forEach(function (k) {
-            return removeClass(el, k);
-          });
-        }
-        out = [];
-        Object.keys(value).filter(function (k) {
-          return value[k];
-        }).forEach(function (k) {
-          out.push(k);
-          addClass(el, k);
-        });
-      };
-
-      for (var i = 0, el; el = vModelEls[i++];) {
-        _loop(i, el);
-      }
-      _this2.fieldstate._className = out;
-    }, {
-      deep: true,
-      immediate: true
-    });
-  },
-  created: function created() {
-    var _this4 = this;
-
-    this.formstate = this.state || this.vueFormState;
-    var vm = this;
-    var pendingValidators = [];
-    var _val = void 0;
-    this.fieldstate = {
-      $name: '',
-      $dirty: false,
-      $pristine: true,
-      $valid: true,
-      $invalid: false,
-      $touched: false,
-      $untouched: true,
-      $pending: false,
-      $submitted: false,
-      $error: {},
-      _className: null,
-      _id: 'vf' + randomId(),
-      _setValidatorVadility: function _setValidatorVadility(validator, isValid) {
-        if (isValid) {
-          vm.$delete(this.$error, validator);
-        } else {
-          vm.$set(this.$error, validator, true);
-        }
-      },
-      _setValidity: function _setValidity(isValid) {
-        this.$valid = isValid;
-        this.$invalid = !isValid;
-      },
-      _setDirty: function _setDirty() {
-        this.$dirty = true;
-        this.$pristine = false;
-      },
-      _setPristine: function _setPristine() {
-        this.$dirty = false;
-        this.$pristine = true;
-      },
-      _setTouched: function _setTouched() {
-        this.$touched = true;
-        this.$untouched = false;
-      },
-      _setUntouched: function _setUntouched() {
-        this.$touched = false;
-        this.$untouched = true;
-      },
-      _setFocused: function _setFocused() {
-        this._hasFocused = true;
-      },
-
-      _hasFocused: false,
-      _validators: {},
-      _validate: function _validate(vnode) {
-        var _this3 = this;
-
-        this.$pending = true;
-        var isValid = true;
-        var emptyAndRequired = false;
-        var value = vModelValue(vnode.data);
-        _val = value;
-
-        var pending = {
-          promises: [],
-          names: []
-        };
-
-        pendingValidators.push(pending);
-
-        var attrs = vnode.data.attrs || {};
-        var propsData = vnode.componentOptions && vnode.componentOptions.propsData ? vnode.componentOptions.propsData : {};
-
-        Object.keys(this._validators).forEach(function (validator) {
-          // when value is empty and not the required validator, the field is valid
-          if ((value === '' || value === undefined || value === null) && validator !== 'required') {
-            _this3._setValidatorVadility(validator, true);
-            emptyAndRequired = true;
-            // return early, required validator will
-            // fall through if it is present
-            return;
-          }
-          var attrValue = typeof attrs[validator] !== 'undefined' ? attrs[validator] : propsData[validator];
-          var result = _this3._validators[validator](value, attrValue, vnode);
-          if (typeof result === 'boolean') {
-            if (result) {
-              _this3._setValidatorVadility(validator, true);
-            } else {
-              isValid = false;
-              _this3._setValidatorVadility(validator, false);
-            }
-          } else {
-            pending.promises.push(result);
-            pending.names.push(validator);
-          }
-        });
-
-        if (pending.promises.length) {
-          vm.vueFormConfig.Promise.all(pending.promises).then(function (results) {
-
-            // only concerned with the last promise results, in case
-            // async responses return out of order
-            if (pending !== pendingValidators[pendingValidators.length - 1]) {
-              //console.log('ignoring old promise', pending.promises);
-              return;
-            }
-
-            pendingValidators = [];
-
-            results.forEach(function (result, i) {
-              var name = pending.names[i];
-              if (result) {
-                _this3._setValidatorVadility(name, true);
-              } else {
-                isValid = false;
-                _this3._setValidatorVadility(name, false);
-              }
-            });
-            _this3._setValidity(isValid);
-            _this3.$pending = false;
-          });
-        } else {
-          this._setValidity(isValid);
-          this.$pending = false;
-        }
-      }
-    };
-
-    // add custom validators
-    if (this.custom) {
-      Object.keys(this.custom).forEach(function (prop) {
-        _this4.fieldstate._validators[prop] = _this4.custom[prop];
-      });
-    }
-  },
-  destroyed: function destroyed() {
-    this.formstate._removeControl(this.fieldstate);
-  }
-};
-
-var field = {
-  inject: { vueFormConfig: vueFormConfig },
-  render: function render(h) {
-    var foundVnodes = getVModelAndLabel(this.$slots.default);
-    var vModelnodes = foundVnodes.vModel;
-    var attrs = {
-      for: null
-    };
-    if (vModelnodes.length) {
-      if (this.autoLabel) {
-        var id = vModelnodes[0].data.attrs && vModelnodes[0].data.attrs.id || 'vf' + randomId();
-        vModelnodes[0].data.attrs.id = id;
-        if (foundVnodes.label) {
-          foundVnodes.label.data = foundVnodes.label.data || {};
-          foundVnodes.label.data.attrs = foundVnodes.label.data.attrs = {};
-          foundVnodes.label.data.attrs.for = id;
-        } else if (this.tag === 'label') {
-          attrs.for = id;
-        }
-      }
-    }
-    return h(this.tag || this.vueFormConfig.fieldTag, { attrs: attrs }, this.$slots.default);
-  },
-
-  props: {
-    tag: {
-      type: String
-    },
-    autoLabel: {
-      type: Boolean,
-      default: true
-    }
-  }
-};
-
-var debouncedValidators = {};
-
-function compareChanges(vnode, oldvnode, validators) {
-
-  var hasChanged = false;
-  var attrs = vnode.data.attrs || {};
-  var oldAttrs = oldvnode.data.attrs || {};
-  var out = {};
-
-  if (vModelValue(vnode.data) !== vModelValue(oldvnode.data)) {
-    out.vModel = true;
-    hasChanged = true;
-  }
-
-  Object.keys(validators).forEach(function (validator) {
-    if (attrs[validator] !== oldAttrs[validator]) {
-      out[validator] = true;
-      hasChanged = true;
-    }
-  });
-
-  // if is a component
-  if (vnode.componentOptions && vnode.componentOptions.propsData) {
-    var _attrs = vnode.componentOptions.propsData;
-    var _oldAttrs = oldvnode.componentOptions.propsData;
-    Object.keys(validators).forEach(function (validator) {
-      if (_attrs[validator] !== _oldAttrs[validator]) {
-        out[validator] = true;
-        hasChanged = true;
-      }
-    });
-  }
-
-  if (hasChanged) {
-    return out;
-  }
-}
-
-var vueFormValidator = {
-  name: 'vue-form-validator',
-  bind: function bind(el, binding, vnode) {
-    var fieldstate = binding.value.fieldstate;
-    var validators = binding.value.config.validators;
-
-    var attrs = vnode.data.attrs || {};
-    var inputName = getName(vnode);
-
-    if (!inputName) {
-      console.warn('vue-form: name attribute missing');
-      return;
-    }
-
-    if (attrs.debounce) {
-      debouncedValidators[fieldstate._id] = debounce(function (fieldstate, vnode) {
-        if (fieldstate._hasFocused) {
-          fieldstate._setDirty();
-        }
-        fieldstate._validate(vnode);
-      }, attrs.debounce);
-    }
-
-    // add validators
-    Object.keys(attrs).forEach(function (attr) {
-      var prop = void 0;
-      if (attr === 'type') {
-        prop = attrs[attr].toLowerCase();
-      } else {
-        prop = attr.toLowerCase();
-      }
-      if (validators[prop] && !fieldstate._validators[prop]) {
-        fieldstate._validators[prop] = validators[prop];
-      }
-    });
-
-    // if is a component, a validator attribute by be
-    // a prop this component uses
-    if (vnode.componentOptions && vnode.componentOptions.propsData) {
-      Object.keys(vnode.componentOptions.propsData).forEach(function (prop) {
-        if (validators[prop] && !fieldstate._validators[prop]) {
-          fieldstate._validators[prop] = validators[prop];
-        }
-      });
-    }
-
-    fieldstate._validate(vnode);
-
-    // native listeners
-    el.addEventListener('blur', function () {
-      fieldstate._setTouched();
-    }, false);
-    el.addEventListener('focus', function () {
-      fieldstate._setFocused();
-    }, false);
-
-    // component listeners
-    if (vnode.componentInstance) {
-      vnode.componentInstance.$on('blur', function () {
-        fieldstate._setTouched();
-      });
-      vnode.componentInstance.$on('focus', function () {
-        fieldstate._setFocused();
-      });
-      el.addEventListener('focusout', function () {
-        fieldstate._setTouched();
-      }, false);
-      el.addEventListener('focusin', function () {
-        fieldstate._setFocused();
-      }, false);
-    }
-  },
-  update: function update(el, binding, vnode, oldVNode) {
-    var validators = binding.value.config.validators;
-
-    var changes = compareChanges(vnode, oldVNode, validators);
-    var fieldstate = binding.value.fieldstate;
-
-    var attrs = vnode.data.attrs || {};
-    if (vnode.elm.className.indexOf(fieldstate._className[0]) === -1) {
-      vnode.elm.className = vnode.elm.className + ' ' + fieldstate._className.join(' ');
-    }
-
-    if (!changes) {
-      return;
-    }
-
-    if (changes.vModel) {
-      // re-validate all
-      if (attrs.debounce) {
-        fieldstate.$pending = true;
-        debouncedValidators[fieldstate._id](fieldstate, vnode);
-      } else {
-        if (fieldstate._hasFocused) {
-          fieldstate._setDirty();
-        }
-        fieldstate._validate(vnode);
-      }
-    } else {
-      // attributes have changed
-      // to do: loop through them and re-validate changed ones
-      //for(let prop in changes) {
-      //  fieldstate._validate(vnode, validator);
-      //}
-      // for now
-      fieldstate._validate(vnode);
-    }
-  }
-};
-
-function VueFormBase(options) {
-  var _components;
-
-  var c = index(true, {}, config, options);
-  this.provide = defineProperty({}, vueFormConfig, c);
-  this.components = (_components = {}, defineProperty(_components, c.formComponent, vueForm), defineProperty(_components, c.messagesComponent, messages), defineProperty(_components, c.validateComponent, validate), defineProperty(_components, c.fieldComponent, field), _components);
-  this.directives = { vueFormValidator: vueFormValidator };
-}
-
-var VueForm = function (_VueFormBase) {
-  inherits(VueForm, _VueFormBase);
-
-  function VueForm() {
-    classCallCheck(this, VueForm);
-    return possibleConstructorReturn(this, (VueForm.__proto__ || Object.getPrototypeOf(VueForm)).apply(this, arguments));
-  }
-
-  createClass(VueForm, null, [{
-    key: 'install',
-    value: function install(Vue, options) {
-      Vue.mixin(new this(options));
-    }
-  }, {
-    key: 'installed',
-    get: function get$$1() {
-      return !!this.install.done;
-    },
-    set: function set$$1(val) {
-      this.install.done = val;
-    }
-  }]);
-  return VueForm;
-}(VueFormBase);
-
-VueFormBase.call(VueForm);
-// temp fix for vue 2.3.0
-VueForm.options = new VueForm();
-
-return VueForm;
-
-})));
-
-
-/***/ }),
-/* 40 */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_vue__ = __webpack_require__(3);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_vue___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0_vue__);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_vuex__ = __webpack_require__(2);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__actions__ = __webpack_require__(4);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__getters__ = __webpack_require__(7);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__mutations__ = __webpack_require__(46);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__components_src_Errors__ = __webpack_require__(47);
-
-
-
-
-
-
-
-__WEBPACK_IMPORTED_MODULE_0_vue___default.a.use(__WEBPACK_IMPORTED_MODULE_1_vuex__["a" /* default */]);
-
-var debug = "development" !== 'production';
-__WEBPACK_IMPORTED_MODULE_0_vue___default.a.config.debug = debug;
-
-var state = {
-    errors: new __WEBPACK_IMPORTED_MODULE_5__components_src_Errors__["a" /* default */](),
-    currentUser: {
-        email: '',
-        first_name: '',
-        id: '',
-        last_name: '',
-        program_id: '',
-        role: {
-            name: '',
-            id: ''
-        },
-        username: ''
-    },
-    debug: debug,
-    notifications: [],
-    openModal: {
-        name: null,
-        props: {}
-    },
-    patientCareTeam: [],
-    patientCarePlan: {
-        pdfs: []
-    },
-    practiceLocations: []
-};
-
-/* harmony default export */ __webpack_exports__["a"] = (new __WEBPACK_IMPORTED_MODULE_1_vuex__["a" /* default */].Store({
-    state: state,
-    getters: __WEBPACK_IMPORTED_MODULE_3__getters__,
-    actions: __WEBPACK_IMPORTED_MODULE_2__actions__,
-    mutations: __WEBPACK_IMPORTED_MODULE_4__mutations__,
-    strict: debug
-}));
-
-/***/ }),
-/* 41 */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_vue__ = __webpack_require__(3);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_vue___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0_vue__);
-
-
-/* harmony default export */ __webpack_exports__["a"] = ({
-    getCurrentUser: function getCurrentUser(cb) {
-        var ecb = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : null;
-
-        window.axios.get('profiles').then(function (resp) {
-            return cb(resp.data.user);
-        }, function (resp) {
-            return ecb(resp.data);
-        });
-    }
-});
-
-/***/ }),
-/* 42 */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_vue__ = __webpack_require__(3);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_vue___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0_vue__);
-
-
-/* harmony default export */ __webpack_exports__["a"] = ({
-    getPatientCareTeam: function getPatientCareTeam(cb) {
-        var ecb = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : null;
-        var patientId = arguments[2];
-
-        if (!patientId) {
-            return;
-        }
-
-        window.axios.get('user/' + patientId + '/care-team').then(function (resp) {
-            return cb(resp.data);
-        }, function (resp) {
-            return ecb(resp.data);
-        });
-    }
-});
-
-/***/ }),
-/* 43 */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_vue__ = __webpack_require__(3);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_vue___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0_vue__);
-
-
-/* harmony default export */ __webpack_exports__["a"] = ({
-    getPracticeLocations: function getPracticeLocations(cb) {
-        var ecb = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : null;
-        var practiceId = arguments[2];
-
-        if (!practiceId) {
-            return;
-        }
-
-        window.axios.get('practice/' + practiceId + '/locations').then(function (resp) {
-            return cb(resp.data);
-        }, function (resp) {
-            return ecb(resp.data);
-        });
-    },
-    update: function update(cb) {
-        var ecb = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : null;
-        var practiceId = arguments[2];
-        var location = arguments[3];
-
-        if (!practiceId) {
-            return;
-        }
-
-        window.axios.patch('practice/' + practiceId + '/locations/' + location.id, location).then(function (resp) {
-            return cb(resp.data);
-        }, function (error) {
-            return ecb(error.response.data);
-        });
-    },
-    delete: function _delete(cb) {
-        var ecb = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : null;
-        var practiceId = arguments[2];
-        var location = arguments[3];
-
-        if (!practiceId) {
-            return;
-        }
-
-        window.axios.delete('practice/' + practiceId + '/locations/' + location.id).then(function (resp) {
-            return cb(resp.data);
-        }, function (error) {
-            return ecb(error.response.data);
-        });
-    }
-});
-
-/***/ }),
-/* 44 */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-/* harmony default export */ __webpack_exports__["a"] = ({
-    destroyCarePerson: function destroyCarePerson(cb) {
-        var ecb = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : null;
-        var carePerson = arguments[2];
-
-        window.axios.delete('user/' + carePerson.user_id + '/care-team/' + carePerson.id).then(function (resp) {
-            return cb(carePerson);
-        }, function (resp) {
-            return ecb(resp.data);
-        });
-    },
-    updateCarePerson: function updateCarePerson(cb) {
-        var ecb = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : null;
-        var carePerson = arguments[2];
-
-        window.axios.patch('user/' + carePerson.user_id + '/care-team/' + carePerson.id, carePerson).then(function (resp) {
-            return cb(carePerson);
-        }, function (resp) {
-            return ecb(resp.data);
-        });
-    }
-});
-
-/***/ }),
-/* 45 */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-/* harmony default export */ __webpack_exports__["a"] = ({
-    getPatientCareplan: function getPatientCareplan(cb) {
-        var ecb = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : null;
-        var patientId = arguments[2];
-
-        if (!patientId) {
-            return;
-        }
-
-        window.axios.get('user/' + patientId + '/care-plan').then(function (resp) {
-            return cb(resp.data);
-        }, function (resp) {
-            return ecb(resp.data);
-        });
-    },
-    deletePdf: function deletePdf(cb) {
-        var ecb = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : null;
-        var pdfId = arguments[2];
-
-        window.axios.delete('pdf/' + pdfId).then(function (resp) {
-            return cb(resp.data);
-        }, function (resp) {
-            return ecb(resp.data);
-        });
-    },
-    uploadPdfCareplan: function uploadPdfCareplan(cb) {
-        var ecb = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : null;
-        var formData = arguments[2];
-
-        // formdata needs to contain
-        // formData.set('files[' + i + ']', this.files[i].file)
-        // formData.set('carePlanId', this.patientCarePlan.id)
-        window.axios.post('care-plans/' + formData.get('carePlanId') + '/pdfs', formData).then(function (resp) {
-            return cb(resp.data);
-        }, function (resp) {
-            return ecb(resp.data);
-        });
-    }
-});
-
-/***/ }),
-/* 46 */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "DESTROY_CARE_PERSON", function() { return DESTROY_CARE_PERSON; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "UPDATE_CARE_PERSON", function() { return UPDATE_CARE_PERSON; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "SET_CARE_TEAM", function() { return SET_CARE_TEAM; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "CLEAR_CARE_TEAM", function() { return CLEAR_CARE_TEAM; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "SET_PATIENT_CARE_PLAN", function() { return SET_PATIENT_CARE_PLAN; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "CLEAR_PATIENT_CARE_PLAN", function() { return CLEAR_PATIENT_CARE_PLAN; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "ADD_PDF_CARE_PLAN", function() { return ADD_PDF_CARE_PLAN; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "DELETE_PDF_CARE_PLAN", function() { return DELETE_PDF_CARE_PLAN; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "LOGIN_USER", function() { return LOGIN_USER; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "LOGOUT_USER", function() { return LOGOUT_USER; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "SET_OPEN_MODAL", function() { return SET_OPEN_MODAL; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "CLEAR_OPEN_MODAL", function() { return CLEAR_OPEN_MODAL; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "ADD_NOTIFICATION", function() { return ADD_NOTIFICATION; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "REMOVE_NOTIFICATION", function() { return REMOVE_NOTIFICATION; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "CLEAR_PRACTICE_LOCATIONS", function() { return CLEAR_PRACTICE_LOCATIONS; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "SET_PRACTICE_LOCATIONS", function() { return SET_PRACTICE_LOCATIONS; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "UPDATE_PRACTICE_LOCATION", function() { return UPDATE_PRACTICE_LOCATION; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "DELETE_PRACTICE_LOCATION", function() { return DELETE_PRACTICE_LOCATION; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "CLEAR_ERROR", function() { return CLEAR_ERROR; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "SET_ERRORS", function() { return SET_ERRORS; });
-var DESTROY_CARE_PERSON = function DESTROY_CARE_PERSON(state, carePerson) {
-    state.patientCareTeam = state.patientCareTeam.filter(function (item) {
-        return item.id !== carePerson.id;
-    });
-};
-
-var UPDATE_CARE_PERSON = function UPDATE_CARE_PERSON(state, newCarePerson) {
-    var matched = false;
-
-    state.patientCareTeam.forEach(function (carePerson, index) {
-        if (carePerson.id === newCarePerson.id) {
-            state.patientCareTeam[index] = newCarePerson;
-            matched = true;
-        }
-    });
-
-    if (!matched) {
-        state.patientCareTeam.unshift(newCarePerson);
-    }
-};
-
-var SET_CARE_TEAM = function SET_CARE_TEAM(state, patientCareTeam) {
-    state.patientCareTeam = patientCareTeam;
-};
-
-var CLEAR_CARE_TEAM = function CLEAR_CARE_TEAM(state) {
-    state.patientCareTeam = [];
-};
-
-var SET_PATIENT_CARE_PLAN = function SET_PATIENT_CARE_PLAN(state, patientCarePlan) {
-    state.patientCarePlan = patientCarePlan;
-    state.patientCarePlan.pdfs = _.orderBy(state.patientCarePlan.pdfs, 'label', 'desc');
-};
-
-var CLEAR_PATIENT_CARE_PLAN = function CLEAR_PATIENT_CARE_PLAN(state) {
-    state.patientCarePlan = {};
-};
-
-var ADD_PDF_CARE_PLAN = function ADD_PDF_CARE_PLAN(state, pdfCareplan) {
-    if (_.isArray(pdfCareplan)) {
-        pdfCareplan.forEach(function (cp) {
-            state.patientCarePlan.pdfs.unshift(cp);
-        });
-    }
-};
-
-var DELETE_PDF_CARE_PLAN = function DELETE_PDF_CARE_PLAN(state, deletedPdfId) {
-    var removeThis = null;
-    for (var i = 0; i < state.patientCarePlan.pdfs.length; i++) {
-        if (state.patientCarePlan.pdfs[i].id == deletedPdfId) {
-            removeThis = i;
-            break;
-        }
-    }
-
-    if (!_.isNull(removeThis)) {
-        state.patientCarePlan.pdfs.splice(removeThis, 1);
-    }
-};
-
-var LOGIN_USER = function LOGIN_USER(state, currentUser) {
-    state.currentUser = currentUser;
-};
-
-var LOGOUT_USER = function LOGOUT_USER(state) {
-    state.currentUser = {};
-};
-
-var SET_OPEN_MODAL = function SET_OPEN_MODAL(state, openModal) {
-    state.openModal = openModal;
-};
-
-var CLEAR_OPEN_MODAL = function CLEAR_OPEN_MODAL(state) {
-    state.openModal = {};
-};
-
-var ADD_NOTIFICATION = function ADD_NOTIFICATION(state, notification) {
-    state.notifications.push(notification);
-};
-
-var REMOVE_NOTIFICATION = function REMOVE_NOTIFICATION(state, notification) {
-    state.notifications.splice(state.notifications.indexOf(notification), 1);
-};
-
-var CLEAR_PRACTICE_LOCATIONS = function CLEAR_PRACTICE_LOCATIONS(state) {
-    state.practiceLocations = [];
-};
-
-var SET_PRACTICE_LOCATIONS = function SET_PRACTICE_LOCATIONS(state, practiceLocations) {
-    practiceLocations.forEach(function (loc) {
-        state.practiceLocations.push(loc);
-    });
-};
-
-var UPDATE_PRACTICE_LOCATION = function UPDATE_PRACTICE_LOCATION(state, location) {
-    state.practiceLocations.forEach(function (pracLoc, index) {
-        if (pracLoc.id === location.id) {
-            state.practiceLocations[index] = location;
-        }
-    });
-};
-
-var DELETE_PRACTICE_LOCATION = function DELETE_PRACTICE_LOCATION(state, location) {
-    state.practiceLocations.forEach(function (pracLoc, index) {
-        if (pracLoc.id === location.id) {
-            state.practiceLocations.splice(index, 1);
-        }
-    });
-};
-
-var CLEAR_ERROR = function CLEAR_ERROR(state, field) {
-    state.errors.clear(field);
-};
-
-var SET_ERRORS = function SET_ERRORS(state, errors) {
-    state.errors.setErrors(errors);
-};
-
-/***/ }),
-/* 47 */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
-
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-var Errors = function () {
-    /**
-     * Create a new Errors instance.
-     */
-    function Errors() {
-        var errors = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : null;
-
-        _classCallCheck(this, Errors);
-
-        this.errors = {};
-
-        if (errors) {
-            this.errors = errors;
-        }
-    }
-
-    /**
-     * Determine if an errors exists for the given field.
-     *
-     * @param {string} field
-     */
-
-
-    _createClass(Errors, [{
-        key: "has",
-        value: function has(field) {
-            return this.errors.hasOwnProperty(field);
-        }
-
-        /**
-         * Determine if we have any errors.
-         */
-
-    }, {
-        key: "any",
-        value: function any() {
-            return Object.keys(this.errors).length > 0;
-        }
-
-        /**
-         * Retrieve the error message for a field.
-         *
-         * @param {string} field
-         */
-
-    }, {
-        key: "get",
-        value: function get(field) {
-            if (this.errors[field]) {
-                return this.errors[field][0];
-            }
-        }
-
-        /**
-         * Record the new errors.
-         *
-         * @param {object} errors
-         */
-
-    }, {
-        key: "setErrors",
-        value: function setErrors(errors) {
-            this.errors = errors;
-        }
-
-        /**
-         * Clear one or all error fields.
-         *
-         * @param {string|null} field
-         */
-
-    }, {
-        key: "clear",
-        value: function clear(field) {
-            if (field) {
-                delete this.errors[field];
-
-                return;
-            }
-
-            this.errors = {};
-        }
-    }]);
-
-    return Errors;
-}();
-
-/* harmony default export */ __webpack_exports__["a"] = (Errors);
 
 /***/ }),
 /* 48 */
@@ -42073,36 +42073,19 @@ module.exports = function listToStyles (parentId, list) {
 /* 83 */,
 /* 84 */,
 /* 85 */,
-/* 86 */,
-/* 87 */,
-/* 88 */,
-/* 89 */,
-/* 90 */,
-/* 91 */,
-/* 92 */,
-/* 93 */,
-/* 94 */,
-/* 95 */,
-/* 96 */,
-/* 97 */,
-/* 98 */,
-/* 99 */,
-/* 100 */,
-/* 101 */,
-/* 102 */,
-/* 103 */
+/* 86 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var disposed = false
 function injectStyle (ssrContext) {
   if (disposed) return
-  __webpack_require__(104)
+  __webpack_require__(87)
 }
 var Component = __webpack_require__(1)(
   /* script */
-  __webpack_require__(106),
+  __webpack_require__(89),
   /* template */
-  __webpack_require__(107),
+  __webpack_require__(90),
   /* styles */
   injectStyle,
   /* scopeId */
@@ -42134,13 +42117,13 @@ module.exports = Component.exports
 
 
 /***/ }),
-/* 104 */
+/* 87 */
 /***/ (function(module, exports, __webpack_require__) {
 
 // style-loader: Adds some css to the DOM by adding a <style> tag
 
 // load the styles
-var content = __webpack_require__(105);
+var content = __webpack_require__(88);
 if(typeof content === 'string') content = [[module.i, content, '']];
 if(content.locals) module.exports = content.locals;
 // add the styles to the DOM
@@ -42160,7 +42143,7 @@ if(false) {
 }
 
 /***/ }),
-/* 105 */
+/* 88 */
 /***/ (function(module, exports, __webpack_require__) {
 
 exports = module.exports = __webpack_require__(5)(true);
@@ -42174,7 +42157,7 @@ exports.push([module.i, "\n.edit-daily-work-hours {\n    height: 25px;\n    colo
 
 
 /***/ }),
-/* 106 */
+/* 89 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -42301,7 +42284,7 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 });
 
 /***/ }),
-/* 107 */
+/* 90 */
 /***/ (function(module, exports, __webpack_require__) {
 
 module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;
@@ -42377,6 +42360,23 @@ if (false) {
 }
 
 /***/ }),
+/* 91 */,
+/* 92 */,
+/* 93 */,
+/* 94 */,
+/* 95 */,
+/* 96 */,
+/* 97 */,
+/* 98 */,
+/* 99 */,
+/* 100 */,
+/* 101 */,
+/* 102 */,
+/* 103 */,
+/* 104 */,
+/* 105 */,
+/* 106 */,
+/* 107 */,
 /* 108 */,
 /* 109 */,
 /* 110 */,
@@ -42444,10 +42444,10 @@ module.exports = __webpack_require__(164);
 
 "use strict";
 Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_vue_form__ = __webpack_require__(39);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_vue_form__ = __webpack_require__(16);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_vue_form___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0_vue_form__);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__store__ = __webpack_require__(40);
-__webpack_require__(17);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__store__ = __webpack_require__(17);
+__webpack_require__(26);
 
 window.Vue = __webpack_require__(3);
 
@@ -42468,7 +42468,7 @@ window.Vue.use(__WEBPACK_IMPORTED_MODULE_0_vue_form___default.a, {
     }
 });
 
-Vue.component('nurseDailyHours', __webpack_require__(103));
+Vue.component('nurseDailyHours', __webpack_require__(86));
 
 window.App = new Vue({
     el: '#app',

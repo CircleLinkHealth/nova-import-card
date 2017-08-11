@@ -17,6 +17,8 @@
     "/js/importer-training.js.map": "/js/importer-training.js.map",
     "/css/fab.css.map": "/css/fab.css.map",
     "/css/compiled/provider-dashboard.css.map": "/css/compiled/provider-dashboard.css.map",
+    "/js/compiled/v-create-appointments-add-care-person.js": "/js/compiled/v-create-appointments-add-care-person.js",
+    "/js/compiled/v-create-appointments-add-care-person.js.map": "/js/compiled/v-create-appointments-add-care-person.js.map",
     "/js/v-careplan-problems-list.js": "/js/v-careplan-problems-list.js",
     "/js/v-careplan-problems-list.js.map": "/js/v-careplan-problems-list.js.map",
     "/js/v-careplan-medications-list.js": "/js/v-careplan-medications-list.js",

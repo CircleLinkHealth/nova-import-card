@@ -82,11 +82,6 @@
 
     @yield('content')
 
-    {{--Any Modals opened by Vue will be mounted here--}}
-    <open-modal></open-modal>
-
-    <notifications></notifications>
-
 </div> <!-- end #app -->
 
 @if(!isset($isPdf))

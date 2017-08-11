@@ -60,7 +60,7 @@
 /******/ 	__webpack_require__.p = "";
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 114);
+/******/ 	return __webpack_require__(__webpack_require__.s = 123);
 /******/ })
 /************************************************************************/
 /******/ ([
@@ -71,7 +71,7 @@
 
 
 var bind = __webpack_require__(11);
-var isBuffer = __webpack_require__(21);
+var isBuffer = __webpack_require__(30);
 
 /*global toString:true*/
 
@@ -10980,7 +10980,7 @@ Vue$3.compile = compileToFunctions;
 
 module.exports = Vue$3;
 
-/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(10)))
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(9)))
 
 /***/ }),
 /* 4 */
@@ -11003,11 +11003,11 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "destroyPdf", function() { return destroyPdf; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "uploadPdfCarePlan", function() { return uploadPdfCarePlan; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "clearErrors", function() { return clearErrors; });
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__api_user_profile__ = __webpack_require__(41);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__api_care_team__ = __webpack_require__(42);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__api_practice_location__ = __webpack_require__(43);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__api_care_person__ = __webpack_require__(44);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__api_patient_care_plan__ = __webpack_require__(45);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__api_user_profile__ = __webpack_require__(18);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__api_care_team__ = __webpack_require__(19);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__api_practice_location__ = __webpack_require__(20);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__api_care_person__ = __webpack_require__(21);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__api_patient_care_plan__ = __webpack_require__(22);
 
 
 
@@ -11531,7 +11531,7 @@ var errors = function errors(state) {
 /* WEBPACK VAR INJECTION */(function(process) {
 
 var utils = __webpack_require__(0);
-var normalizeHeaderName = __webpack_require__(24);
+var normalizeHeaderName = __webpack_require__(33);
 
 var DEFAULT_CONTENT_TYPE = {
   'Content-Type': 'application/x-www-form-urlencoded'
@@ -11621,10 +11621,37 @@ utils.forEach(['post', 'put', 'patch'], function forEachMethodWithData(method) {
 
 module.exports = defaults;
 
-/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(23)))
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(32)))
 
 /***/ }),
 /* 9 */
+/***/ (function(module, exports) {
+
+var g;
+
+// This works in non-strict mode
+g = (function() {
+	return this;
+})();
+
+try {
+	// This works if eval is allowed (see CSP)
+	g = g || Function("return this")() || (1,eval)("this");
+} catch(e) {
+	// This works if the window reference is available
+	if(typeof window === "object")
+		g = window;
+}
+
+// g can still be undefined, but nothing to do about it...
+// We return undefined, instead of nothing here, so it's
+// easier to handle this case. if(!global) { ...}
+
+module.exports = g;
+
+
+/***/ }),
+/* 10 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/*!
@@ -21884,33 +21911,6 @@ return jQuery;
 
 
 /***/ }),
-/* 10 */
-/***/ (function(module, exports) {
-
-var g;
-
-// This works in non-strict mode
-g = (function() {
-	return this;
-})();
-
-try {
-	// This works if eval is allowed (see CSP)
-	g = g || Function("return this")() || (1,eval)("this");
-} catch(e) {
-	// This works if the window reference is available
-	if(typeof window === "object")
-		g = window;
-}
-
-// g can still be undefined, but nothing to do about it...
-// We return undefined, instead of nothing here, so it's
-// easier to handle this case. if(!global) { ...}
-
-module.exports = g;
-
-
-/***/ }),
 /* 11 */
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -21936,12 +21936,12 @@ module.exports = function bind(fn, thisArg) {
 
 
 var utils = __webpack_require__(0);
-var settle = __webpack_require__(25);
-var buildURL = __webpack_require__(27);
-var parseHeaders = __webpack_require__(28);
-var isURLSameOrigin = __webpack_require__(29);
+var settle = __webpack_require__(34);
+var buildURL = __webpack_require__(36);
+var parseHeaders = __webpack_require__(37);
+var isURLSameOrigin = __webpack_require__(38);
 var createError = __webpack_require__(13);
-var btoa = (typeof window !== 'undefined' && window.btoa && window.btoa.bind(window)) || __webpack_require__(30);
+var btoa = (typeof window !== 'undefined' && window.btoa && window.btoa.bind(window)) || __webpack_require__(39);
 
 module.exports = function xhrAdapter(config) {
   return new Promise(function dispatchXhrRequest(resolve, reject) {
@@ -22038,7 +22038,7 @@ module.exports = function xhrAdapter(config) {
     // This is only done if running in a standard browser environment.
     // Specifically not if we're in a web worker, or react-native.
     if (utils.isStandardBrowserEnv()) {
-      var cookies = __webpack_require__(31);
+      var cookies = __webpack_require__(40);
 
       // Add xsrf header
       var xsrfValue = (config.withCredentials || isURLSameOrigin(config.url)) && config.xsrfCookieName ?
@@ -22122,7 +22122,7 @@ module.exports = function xhrAdapter(config) {
 "use strict";
 
 
-var enhanceError = __webpack_require__(26);
+var enhanceError = __webpack_require__(35);
 
 /**
  * Create an Error with the specified message, config, error code, request and response.
@@ -22180,6 +22180,1590 @@ module.exports = Cancel;
 
 /***/ }),
 /* 16 */
+/***/ (function(module, exports, __webpack_require__) {
+
+(function (global, factory) {
+	 true ? module.exports = factory() :
+	typeof define === 'function' && define.amd ? define(factory) :
+	(global.VueForm = factory());
+}(this, (function () { 'use strict';
+
+var emailRegExp = /^[a-z0-9!#$%&'*+\/=?^_`{|}~.-]+@[a-z0-9]([a-z0-9-]*[a-z0-9])?(\.[a-z0-9]([a-z0-9-]*[a-z0-9])?)*$/i; // from angular
+var urlRegExp = /^(http\:\/\/|https\:\/\/)(.{4,})$/;
+
+var validators = {
+  email: function email(value, attrValue, vnode) {
+    return emailRegExp.test(value);
+  },
+  number: function number(value) {
+    return !isNaN(value);
+  },
+  url: function url(value) {
+    return urlRegExp.test(value);
+  },
+  required: function required(value, attrValue, vnode) {
+    if (attrValue === false) {
+      return true;
+    }
+
+    if (value === 0) {
+      return true;
+    }
+
+    if (vnode.data.attrs && typeof vnode.data.attrs.bool !== 'undefined' || vnode.componentOptions && vnode.componentOptions.propsData && typeof vnode.componentOptions.propsData.bool !== 'undefined') {
+      // bool attribute is present, allow false pass validation
+      if (value === false) {
+        return true;
+      }
+    }
+
+    if (Array.isArray(value)) {
+      return !!value.length;
+    }
+    return !!value;
+  },
+  minlength: function minlength(value, length) {
+    return value.length >= length;
+  },
+  maxlength: function maxlength(value, length) {
+    return length >= value.length;
+  },
+  pattern: function pattern(value, _pattern) {
+    var patternRegExp = new RegExp('^' + _pattern + '$');
+    return patternRegExp.test(value);
+  },
+  min: function min(value, _min, vnode) {
+    if ((vnode.data.attrs.type || '').toLowerCase() == 'number') {
+      return +value >= +_min;
+    }
+    return value >= _min;
+  },
+  max: function max(value, _max, vnode) {
+    if ((vnode.data.attrs.type || '').toLowerCase() == 'number') {
+      return +_max >= +value;
+    }
+    return _max >= value;
+  }
+};
+
+var config = {
+  validators: validators,
+  formComponent: 'vueForm',
+  formTag: 'form',
+  messagesComponent: 'fieldMessages',
+  messagesTag: 'div',
+  validateComponent: 'validate',
+  validateTag: 'div',
+  fieldComponent: 'field',
+  fieldTag: 'div',
+  formClasses: {
+    dirty: 'vf-form-dirty',
+    pristine: 'vf-form-pristine',
+    valid: 'vf-form-valid',
+    invalid: 'vf-form-invalid',
+    touched: 'vf-form-touched',
+    untouched: 'vf-form-untouched',
+    submitted: 'vf-form-submitted',
+    pending: 'vf-form-pending'
+  },
+  validateClasses: {
+    dirty: 'vf-field-dirty',
+    pristine: 'vf-field-pristine',
+    valid: 'vf-field-valid',
+    invalid: 'vf-field-invalid',
+    touched: 'vf-field-touched',
+    untouched: 'vf-field-untouched',
+    submitted: 'vf-field-submitted',
+    pending: 'vf-field-pending'
+  },
+  inputClasses: {
+    dirty: 'vf-dirty',
+    pristine: 'vf-pristine',
+    valid: 'vf-valid',
+    invalid: 'vf-invalid',
+    touched: 'vf-touched',
+    untouched: 'vf-untouched',
+    submitted: 'vf-submitted',
+    pending: 'vf-pending'
+  },
+  Promise: typeof Promise === 'function' ? Promise : null
+};
+
+var classCallCheck = function (instance, Constructor) {
+  if (!(instance instanceof Constructor)) {
+    throw new TypeError("Cannot call a class as a function");
+  }
+};
+
+var createClass = function () {
+  function defineProperties(target, props) {
+    for (var i = 0; i < props.length; i++) {
+      var descriptor = props[i];
+      descriptor.enumerable = descriptor.enumerable || false;
+      descriptor.configurable = true;
+      if ("value" in descriptor) descriptor.writable = true;
+      Object.defineProperty(target, descriptor.key, descriptor);
+    }
+  }
+
+  return function (Constructor, protoProps, staticProps) {
+    if (protoProps) defineProperties(Constructor.prototype, protoProps);
+    if (staticProps) defineProperties(Constructor, staticProps);
+    return Constructor;
+  };
+}();
+
+
+
+
+
+var defineProperty = function (obj, key, value) {
+  if (key in obj) {
+    Object.defineProperty(obj, key, {
+      value: value,
+      enumerable: true,
+      configurable: true,
+      writable: true
+    });
+  } else {
+    obj[key] = value;
+  }
+
+  return obj;
+};
+
+
+
+var inherits = function (subClass, superClass) {
+  if (typeof superClass !== "function" && superClass !== null) {
+    throw new TypeError("Super expression must either be null or a function, not " + typeof superClass);
+  }
+
+  subClass.prototype = Object.create(superClass && superClass.prototype, {
+    constructor: {
+      value: subClass,
+      enumerable: false,
+      writable: true,
+      configurable: true
+    }
+  });
+  if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass;
+};
+
+
+
+
+
+
+
+
+
+
+
+var possibleConstructorReturn = function (self, call) {
+  if (!self) {
+    throw new ReferenceError("this hasn't been initialised - super() hasn't been called");
+  }
+
+  return call && (typeof call === "object" || typeof call === "function") ? call : self;
+};
+
+function getClasses(classConfig, state) {
+  var _ref;
+
+  return _ref = {}, defineProperty(_ref, classConfig.dirty, state.$dirty), defineProperty(_ref, classConfig.pristine, state.$pristine), defineProperty(_ref, classConfig.valid, state.$valid), defineProperty(_ref, classConfig.invalid, state.$invalid), defineProperty(_ref, classConfig.touched, state.$touched), defineProperty(_ref, classConfig.untouched, state.$untouched), defineProperty(_ref, classConfig.pending, state.$pending), _ref;
+}
+
+function addClass(el, className) {
+  if (el.classList) {
+    el.classList.add(className);
+  } else {
+    el.className += ' ' + className;
+  }
+}
+
+function removeClass(el, className) {
+  if (el.classList) {
+    el.classList.remove(className);
+  } else {
+    el.className = el.className.replace(new RegExp('(^|\\b)' + className.split(' ').join('|') + '(\\b|$)', 'gi'), ' ');
+  }
+}
+
+function vModelValue(data) {
+  if (data.model) {
+    return data.model.value;
+  }
+  return data.directives.filter(function (v) {
+    return v.name === 'model';
+  })[0].value;
+}
+
+function getVModelAndLabel(nodes) {
+  var foundVnodes = {
+    vModel: [],
+    label: null
+  };
+
+  if (!nodes) {
+    return foundVnodes;
+  }
+
+  function traverse(nodes) {
+    for (var i = 0; i < nodes.length; i++) {
+      var node = nodes[i];
+      if (node.tag === 'label' && !foundVnodes.label) {
+        foundVnodes.label = node;
+      }
+      if (node.data) {
+        if (node.data.directives) {
+          var match = node.data.directives.filter(function (v) {
+            return v.name === 'model';
+          });
+          if (match.length) {
+            foundVnodes.vModel.push(node);
+          }
+        } else if (node.data.model) {
+          foundVnodes.vModel.push(node);
+        }
+      }
+      if (node.children) {
+        traverse(node.children);
+      }
+    }
+  }
+
+  traverse(nodes);
+
+  return foundVnodes;
+}
+
+function getName(vnode) {
+  if (vnode.data && vnode.data.attrs && vnode.data.attrs.name) {
+    return vnode.data.attrs.name;
+  } else if (vnode.componentOptions && vnode.componentOptions.propsData && vnode.componentOptions.propsData.name) {
+    return vnode.componentOptions.propsData.name;
+  }
+}
+
+var hyphenateRE = /([^-])([A-Z])/g;
+function hyphenate(str) {
+  return str.replace(hyphenateRE, '$1-$2').replace(hyphenateRE, '$1-$2').toLowerCase();
+}
+
+function randomId() {
+  return Math.random().toString(36).substr(2, 10);
+}
+
+// https://davidwalsh.name/javascript-debounce-function
+function debounce(func, wait, immediate) {
+  var timeout;
+  return function () {
+    var context = this,
+        args = arguments;
+    var later = function later() {
+      timeout = null;
+      if (!immediate) func.apply(context, args);
+    };
+    var callNow = immediate && !timeout;
+    clearTimeout(timeout);
+    timeout = setTimeout(later, wait);
+    if (callNow) func.apply(context, args);
+  };
+}
+
+var vueFormConfig = 'VueFormProviderConfig' + randomId();
+var vueFormState = 'VueFormProviderState' + randomId();
+
+var hasOwn = Object.prototype.hasOwnProperty;
+var toStr = Object.prototype.toString;
+
+var isArray = function isArray(arr) {
+	if (typeof Array.isArray === 'function') {
+		return Array.isArray(arr);
+	}
+
+	return toStr.call(arr) === '[object Array]';
+};
+
+var isPlainObject = function isPlainObject(obj) {
+	if (!obj || toStr.call(obj) !== '[object Object]') {
+		return false;
+	}
+
+	var hasOwnConstructor = hasOwn.call(obj, 'constructor');
+	var hasIsPrototypeOf = obj.constructor && obj.constructor.prototype && hasOwn.call(obj.constructor.prototype, 'isPrototypeOf');
+	// Not own constructor property must be Object
+	if (obj.constructor && !hasOwnConstructor && !hasIsPrototypeOf) {
+		return false;
+	}
+
+	// Own properties are enumerated firstly, so to speed up,
+	// if last one is own, then all properties are own.
+	var key;
+	for (key in obj) {/**/}
+
+	return typeof key === 'undefined' || hasOwn.call(obj, key);
+};
+
+var index = function extend() {
+	var options, name, src, copy, copyIsArray, clone,
+		target = arguments[0],
+		i = 1,
+		length = arguments.length,
+		deep = false;
+
+	// Handle a deep copy situation
+	if (typeof target === 'boolean') {
+		deep = target;
+		target = arguments[1] || {};
+		// skip the boolean and the target
+		i = 2;
+	} else if ((typeof target !== 'object' && typeof target !== 'function') || target == null) {
+		target = {};
+	}
+
+	for (; i < length; ++i) {
+		options = arguments[i];
+		// Only deal with non-null/undefined values
+		if (options != null) {
+			// Extend the base object
+			for (name in options) {
+				src = target[name];
+				copy = options[name];
+
+				// Prevent never-ending loop
+				if (target !== copy) {
+					// Recurse if we're merging plain objects or arrays
+					if (deep && copy && (isPlainObject(copy) || (copyIsArray = isArray(copy)))) {
+						if (copyIsArray) {
+							copyIsArray = false;
+							clone = src && isArray(src) ? src : [];
+						} else {
+							clone = src && isPlainObject(src) ? src : {};
+						}
+
+						// Never move original objects, clone them
+						target[name] = extend(deep, clone, copy);
+
+					// Don't bring in undefined values
+					} else if (typeof copy !== 'undefined') {
+						target[name] = copy;
+					}
+				}
+			}
+		}
+	}
+
+	// Return the modified object
+	return target;
+};
+
+var vueForm = {
+  render: function render(h) {
+    var _this = this;
+
+    return h(this.tag || this.vueFormConfig.formTag, {
+      on: {
+        submit: function submit(event) {
+          _this.state._submit();
+          _this.$emit('submit', event);
+        },
+        reset: function reset(event) {
+          _this.state._reset();
+          _this.$emit('reset', event);
+        }
+      },
+      class: this.className,
+      attrs: {
+        'novalidate': ''
+      }
+    }, [this.$slots.default]);
+  },
+
+  props: {
+    state: Object,
+    tag: String
+  },
+  inject: { vueFormConfig: vueFormConfig },
+  provide: function provide() {
+    return defineProperty({}, vueFormState, this.state);
+  },
+  created: function created() {
+    var _this2 = this;
+
+    var controls = {};
+    var state = this.state;
+    var formstate = {
+      $dirty: false,
+      $pristine: true,
+      $valid: true,
+      $invalid: false,
+      $submitted: false,
+      $touched: false,
+      $untouched: true,
+      $pending: false,
+      $error: {},
+      $submittedState: {},
+      _id: '',
+      _submit: function _submit() {
+        _this2.state.$submitted = true;
+        _this2.state._cloneState();
+      },
+      _cloneState: function _cloneState() {
+        var cloned = JSON.parse(JSON.stringify(state));
+        delete cloned.$submittedState;
+        Object.keys(cloned).forEach(function (key) {
+          _this2.$set(_this2.state.$submittedState, key, cloned[key]);
+        });
+      },
+      _addControl: function _addControl(ctrl) {
+        controls[ctrl.$name] = ctrl;
+        _this2.$set(state, ctrl.$name, ctrl);
+      },
+      _removeControl: function _removeControl(ctrl) {
+        delete controls[ctrl.$name];
+        _this2.$delete(_this2.state, ctrl.$name);
+        _this2.$delete(_this2.state.$error, ctrl.$name);
+      },
+      _reset: function _reset() {
+        state.$submitted = false;
+        state.$pending = false;
+        state.$submittedState = {};
+        Object.keys(controls).forEach(function (key) {
+          var control = controls[key];
+          control._hasFocused = false;
+          control._setUntouched();
+          control._setPristine();
+          control.$submitted = false;
+          control.$pending = false;
+        });
+      }
+    };
+
+    Object.keys(formstate).forEach(function (key) {
+      _this2.$set(_this2.state, key, formstate[key]);
+    });
+
+    this.$watch('state', function () {
+      var isDirty = false;
+      var isValid = true;
+      var isTouched = false;
+      var isPending = false;
+      Object.keys(controls).forEach(function (key) {
+        var control = controls[key];
+
+        control.$submitted = state.$submitted;
+
+        if (control.$dirty) {
+          isDirty = true;
+        }
+        if (control.$touched) {
+          isTouched = true;
+        }
+        if (control.$pending) {
+          isPending = true;
+        }
+        if (!control.$valid) {
+          isValid = false;
+          // add control to errors
+          _this2.$set(state.$error, control.$name, control);
+        } else {
+          _this2.$delete(state.$error, control.$name);
+        }
+      });
+
+      state.$dirty = isDirty;
+      state.$pristine = !isDirty;
+      state.$touched = isTouched;
+      state.$untouched = !isTouched;
+      state.$valid = isValid;
+      state.$invalid = !isValid;
+      state.$pending = isPending;
+    }, {
+      deep: true,
+      immediate: true
+    });
+
+    /* watch pristine? if set to true, set all children to pristine
+    Object.keys(controls).forEach((ctrl) => {
+      controls[ctrl].setPristine();
+    });*/
+  },
+
+  computed: {
+    className: function className() {
+      var c = this.vueFormConfig.formClasses;
+      var s = this.state;
+      var classes = getClasses(c, s);
+      classes[c.submitted] = s.$submitted;
+      return classes;
+    }
+  },
+  methods: {
+    reset: function reset() {
+      this.state._reset();
+    }
+  }
+};
+
+function findLabel(nodes) {
+  if (!nodes) {
+    return;
+  }
+  for (var i = 0; i < nodes.length; i++) {
+    var vnode = nodes[i];
+    if (vnode.tag === 'label') {
+      return nodes[i];
+    } else if (nodes[i].children) {
+      return findLabel(nodes[i].children);
+    }
+  }
+}
+
+var messages = {
+  inject: { vueFormConfig: vueFormConfig, vueFormState: vueFormState },
+  render: function render(h) {
+    var _this = this;
+
+    var children = [];
+    var field = this.formstate[this.name];
+    if (field && field.$error && this.isShown) {
+      Object.keys(field.$error).forEach(function (key) {
+        if (_this.$slots[key] || _this.$scopedSlots[key]) {
+          var out = _this.$slots[key] || _this.$scopedSlots[key](field);
+          if (_this.autoLabel) {
+            var label = findLabel(out);
+            if (label) {
+              label.data = label.data || {};
+              label.data.attrs = label.data.attrs || {};
+              label.data.attrs.for = field._id;
+            }
+          }
+          children.push(out);
+        }
+      });
+      if (!children.length && field.$valid) {
+        if (this.$slots.default || this.$scopedSlots.default) {
+          var out = this.$slots.default || this.$scopedSlots.default(field);
+          if (this.autoLabel) {
+            var label = findLabel(out);
+            if (label) {
+              label.data = label.data || {};
+              label.data.attrs = label.data.attrs || {};
+              label.data.attrs.for = field._id;
+            }
+          }
+          children.push(out);
+        }
+      }
+    }
+    return h(this.tag || this.vueFormConfig.messagesTag, children);
+  },
+
+  props: {
+    state: Object,
+    name: String,
+    show: {
+      type: String,
+      default: ''
+    },
+    tag: {
+      type: String
+    },
+    autoLabel: Boolean
+  },
+  data: function data() {
+    return {
+      formstate: null
+    };
+  },
+  created: function created() {
+    this.formstate = this.state || this.vueFormState;
+  },
+
+  computed: {
+    isShown: function isShown() {
+      var field = this.formstate[this.name];
+
+      if (!this.show || !field) {
+        return true;
+      }
+
+      var compare = function compare(v) {
+        return field[v.trim()];
+      };
+
+      if (this.show.indexOf('&&') > -1) {
+        // and logic - every
+        var split = this.show.split('&&');
+        return split.every(compare);
+      } else if (this.show.indexOf('||') > -1) {
+        // or logic - some
+        var _split = this.show.split('||');
+        return _split.some(compare);
+      } else {
+        // single
+        return field[this.show];
+      }
+    }
+  }
+};
+
+var validate = {
+  render: function render(h) {
+    var _this = this;
+
+    var foundVnodes = getVModelAndLabel(this.$slots.default);
+    var vModelnodes = foundVnodes.vModel;
+    var attrs = {
+      for: null
+    };
+    if (vModelnodes.length) {
+      this.name = getName(vModelnodes[0]);
+      if (this.autoLabel) {
+        var id = vModelnodes[0].data.attrs.id || this.fieldstate._id;
+        this.fieldstate._id = id;
+        vModelnodes[0].data.attrs.id = id;
+        if (foundVnodes.label) {
+          foundVnodes.label.data = foundVnodes.label.data || {};
+          foundVnodes.label.data.attrs = foundVnodes.label.data.attrs || {};
+          foundVnodes.label.data.attrs.for = id;
+        } else if (this.tag === 'label') {
+          attrs.for = id;
+        }
+      }
+      vModelnodes.forEach(function (vnode) {
+        if (!vnode.data.directives) {
+          vnode.data.directives = [];
+        }
+        vnode.data.directives.push({ name: 'vue-form-validator', value: { fieldstate: _this.fieldstate, config: _this.vueFormConfig } });
+        vnode.data.attrs['vue-form-validator'] = '';
+        vnode.data.attrs['debounce'] = _this.debounce;
+      });
+    } else {
+      //console.warn('Element with v-model not found');
+    }
+    return h(this.tag || this.vueFormConfig.validateTag, { 'class': this.className, attrs: attrs }, this.$slots.default);
+  },
+
+  props: {
+    state: Object,
+    custom: null,
+    autoLabel: Boolean,
+    tag: {
+      type: String
+    },
+    debounce: Number
+  },
+  inject: { vueFormConfig: vueFormConfig, vueFormState: vueFormState },
+  data: function data() {
+    return {
+      name: '',
+      formstate: null,
+      fieldstate: {}
+    };
+  },
+
+  methods: {
+    getClasses: function getClasses$$1(classConfig) {
+      var s = this.fieldstate;
+      return Object.keys(s.$error).reduce(function (classes, error) {
+        classes[classConfig.invalid + '-' + hyphenate(error)] = true;
+        return classes;
+      }, getClasses(classConfig, s));
+    }
+  },
+  computed: {
+    className: function className() {
+      return this.getClasses(this.vueFormConfig.validateClasses);
+    },
+    inputClassName: function inputClassName() {
+      return this.getClasses(this.vueFormConfig.inputClasses);
+    }
+  },
+  mounted: function mounted() {
+    var _this2 = this;
+
+    this.fieldstate.$name = this.name;
+    this.formstate._addControl(this.fieldstate);
+
+    var vModelEls = this.$el.querySelectorAll('[vue-form-validator]');
+
+    // add classes to the input element
+    this.$watch('inputClassName', function (value, oldValue) {
+      var out = void 0;
+
+      var _loop = function _loop(i, el) {
+        if (oldValue) {
+          Object.keys(oldValue).filter(function (k) {
+            return oldValue[k];
+          }).forEach(function (k) {
+            return removeClass(el, k);
+          });
+        }
+        out = [];
+        Object.keys(value).filter(function (k) {
+          return value[k];
+        }).forEach(function (k) {
+          out.push(k);
+          addClass(el, k);
+        });
+      };
+
+      for (var i = 0, el; el = vModelEls[i++];) {
+        _loop(i, el);
+      }
+      _this2.fieldstate._className = out;
+    }, {
+      deep: true,
+      immediate: true
+    });
+  },
+  created: function created() {
+    var _this4 = this;
+
+    this.formstate = this.state || this.vueFormState;
+    var vm = this;
+    var pendingValidators = [];
+    var _val = void 0;
+    this.fieldstate = {
+      $name: '',
+      $dirty: false,
+      $pristine: true,
+      $valid: true,
+      $invalid: false,
+      $touched: false,
+      $untouched: true,
+      $pending: false,
+      $submitted: false,
+      $error: {},
+      _className: null,
+      _id: 'vf' + randomId(),
+      _setValidatorVadility: function _setValidatorVadility(validator, isValid) {
+        if (isValid) {
+          vm.$delete(this.$error, validator);
+        } else {
+          vm.$set(this.$error, validator, true);
+        }
+      },
+      _setValidity: function _setValidity(isValid) {
+        this.$valid = isValid;
+        this.$invalid = !isValid;
+      },
+      _setDirty: function _setDirty() {
+        this.$dirty = true;
+        this.$pristine = false;
+      },
+      _setPristine: function _setPristine() {
+        this.$dirty = false;
+        this.$pristine = true;
+      },
+      _setTouched: function _setTouched() {
+        this.$touched = true;
+        this.$untouched = false;
+      },
+      _setUntouched: function _setUntouched() {
+        this.$touched = false;
+        this.$untouched = true;
+      },
+      _setFocused: function _setFocused() {
+        this._hasFocused = true;
+      },
+
+      _hasFocused: false,
+      _validators: {},
+      _validate: function _validate(vnode) {
+        var _this3 = this;
+
+        this.$pending = true;
+        var isValid = true;
+        var emptyAndRequired = false;
+        var value = vModelValue(vnode.data);
+        _val = value;
+
+        var pending = {
+          promises: [],
+          names: []
+        };
+
+        pendingValidators.push(pending);
+
+        var attrs = vnode.data.attrs || {};
+        var propsData = vnode.componentOptions && vnode.componentOptions.propsData ? vnode.componentOptions.propsData : {};
+
+        Object.keys(this._validators).forEach(function (validator) {
+          // when value is empty and not the required validator, the field is valid
+          if ((value === '' || value === undefined || value === null) && validator !== 'required') {
+            _this3._setValidatorVadility(validator, true);
+            emptyAndRequired = true;
+            // return early, required validator will
+            // fall through if it is present
+            return;
+          }
+          var attrValue = typeof attrs[validator] !== 'undefined' ? attrs[validator] : propsData[validator];
+          var result = _this3._validators[validator](value, attrValue, vnode);
+          if (typeof result === 'boolean') {
+            if (result) {
+              _this3._setValidatorVadility(validator, true);
+            } else {
+              isValid = false;
+              _this3._setValidatorVadility(validator, false);
+            }
+          } else {
+            pending.promises.push(result);
+            pending.names.push(validator);
+          }
+        });
+
+        if (pending.promises.length) {
+          vm.vueFormConfig.Promise.all(pending.promises).then(function (results) {
+
+            // only concerned with the last promise results, in case
+            // async responses return out of order
+            if (pending !== pendingValidators[pendingValidators.length - 1]) {
+              //console.log('ignoring old promise', pending.promises);
+              return;
+            }
+
+            pendingValidators = [];
+
+            results.forEach(function (result, i) {
+              var name = pending.names[i];
+              if (result) {
+                _this3._setValidatorVadility(name, true);
+              } else {
+                isValid = false;
+                _this3._setValidatorVadility(name, false);
+              }
+            });
+            _this3._setValidity(isValid);
+            _this3.$pending = false;
+          });
+        } else {
+          this._setValidity(isValid);
+          this.$pending = false;
+        }
+      }
+    };
+
+    // add custom validators
+    if (this.custom) {
+      Object.keys(this.custom).forEach(function (prop) {
+        _this4.fieldstate._validators[prop] = _this4.custom[prop];
+      });
+    }
+  },
+  destroyed: function destroyed() {
+    this.formstate._removeControl(this.fieldstate);
+  }
+};
+
+var field = {
+  inject: { vueFormConfig: vueFormConfig },
+  render: function render(h) {
+    var foundVnodes = getVModelAndLabel(this.$slots.default);
+    var vModelnodes = foundVnodes.vModel;
+    var attrs = {
+      for: null
+    };
+    if (vModelnodes.length) {
+      if (this.autoLabel) {
+        var id = vModelnodes[0].data.attrs && vModelnodes[0].data.attrs.id || 'vf' + randomId();
+        vModelnodes[0].data.attrs.id = id;
+        if (foundVnodes.label) {
+          foundVnodes.label.data = foundVnodes.label.data || {};
+          foundVnodes.label.data.attrs = foundVnodes.label.data.attrs = {};
+          foundVnodes.label.data.attrs.for = id;
+        } else if (this.tag === 'label') {
+          attrs.for = id;
+        }
+      }
+    }
+    return h(this.tag || this.vueFormConfig.fieldTag, { attrs: attrs }, this.$slots.default);
+  },
+
+  props: {
+    tag: {
+      type: String
+    },
+    autoLabel: {
+      type: Boolean,
+      default: true
+    }
+  }
+};
+
+var debouncedValidators = {};
+
+function compareChanges(vnode, oldvnode, validators) {
+
+  var hasChanged = false;
+  var attrs = vnode.data.attrs || {};
+  var oldAttrs = oldvnode.data.attrs || {};
+  var out = {};
+
+  if (vModelValue(vnode.data) !== vModelValue(oldvnode.data)) {
+    out.vModel = true;
+    hasChanged = true;
+  }
+
+  Object.keys(validators).forEach(function (validator) {
+    if (attrs[validator] !== oldAttrs[validator]) {
+      out[validator] = true;
+      hasChanged = true;
+    }
+  });
+
+  // if is a component
+  if (vnode.componentOptions && vnode.componentOptions.propsData) {
+    var _attrs = vnode.componentOptions.propsData;
+    var _oldAttrs = oldvnode.componentOptions.propsData;
+    Object.keys(validators).forEach(function (validator) {
+      if (_attrs[validator] !== _oldAttrs[validator]) {
+        out[validator] = true;
+        hasChanged = true;
+      }
+    });
+  }
+
+  if (hasChanged) {
+    return out;
+  }
+}
+
+var vueFormValidator = {
+  name: 'vue-form-validator',
+  bind: function bind(el, binding, vnode) {
+    var fieldstate = binding.value.fieldstate;
+    var validators = binding.value.config.validators;
+
+    var attrs = vnode.data.attrs || {};
+    var inputName = getName(vnode);
+
+    if (!inputName) {
+      console.warn('vue-form: name attribute missing');
+      return;
+    }
+
+    if (attrs.debounce) {
+      debouncedValidators[fieldstate._id] = debounce(function (fieldstate, vnode) {
+        if (fieldstate._hasFocused) {
+          fieldstate._setDirty();
+        }
+        fieldstate._validate(vnode);
+      }, attrs.debounce);
+    }
+
+    // add validators
+    Object.keys(attrs).forEach(function (attr) {
+      var prop = void 0;
+      if (attr === 'type') {
+        prop = attrs[attr].toLowerCase();
+      } else {
+        prop = attr.toLowerCase();
+      }
+      if (validators[prop] && !fieldstate._validators[prop]) {
+        fieldstate._validators[prop] = validators[prop];
+      }
+    });
+
+    // if is a component, a validator attribute by be
+    // a prop this component uses
+    if (vnode.componentOptions && vnode.componentOptions.propsData) {
+      Object.keys(vnode.componentOptions.propsData).forEach(function (prop) {
+        if (validators[prop] && !fieldstate._validators[prop]) {
+          fieldstate._validators[prop] = validators[prop];
+        }
+      });
+    }
+
+    fieldstate._validate(vnode);
+
+    // native listeners
+    el.addEventListener('blur', function () {
+      fieldstate._setTouched();
+    }, false);
+    el.addEventListener('focus', function () {
+      fieldstate._setFocused();
+    }, false);
+
+    // component listeners
+    if (vnode.componentInstance) {
+      vnode.componentInstance.$on('blur', function () {
+        fieldstate._setTouched();
+      });
+      vnode.componentInstance.$on('focus', function () {
+        fieldstate._setFocused();
+      });
+      el.addEventListener('focusout', function () {
+        fieldstate._setTouched();
+      }, false);
+      el.addEventListener('focusin', function () {
+        fieldstate._setFocused();
+      }, false);
+    }
+  },
+  update: function update(el, binding, vnode, oldVNode) {
+    var validators = binding.value.config.validators;
+
+    var changes = compareChanges(vnode, oldVNode, validators);
+    var fieldstate = binding.value.fieldstate;
+
+    var attrs = vnode.data.attrs || {};
+    if (vnode.elm.className.indexOf(fieldstate._className[0]) === -1) {
+      vnode.elm.className = vnode.elm.className + ' ' + fieldstate._className.join(' ');
+    }
+
+    if (!changes) {
+      return;
+    }
+
+    if (changes.vModel) {
+      // re-validate all
+      if (attrs.debounce) {
+        fieldstate.$pending = true;
+        debouncedValidators[fieldstate._id](fieldstate, vnode);
+      } else {
+        if (fieldstate._hasFocused) {
+          fieldstate._setDirty();
+        }
+        fieldstate._validate(vnode);
+      }
+    } else {
+      // attributes have changed
+      // to do: loop through them and re-validate changed ones
+      //for(let prop in changes) {
+      //  fieldstate._validate(vnode, validator);
+      //}
+      // for now
+      fieldstate._validate(vnode);
+    }
+  }
+};
+
+function VueFormBase(options) {
+  var _components;
+
+  var c = index(true, {}, config, options);
+  this.provide = defineProperty({}, vueFormConfig, c);
+  this.components = (_components = {}, defineProperty(_components, c.formComponent, vueForm), defineProperty(_components, c.messagesComponent, messages), defineProperty(_components, c.validateComponent, validate), defineProperty(_components, c.fieldComponent, field), _components);
+  this.directives = { vueFormValidator: vueFormValidator };
+}
+
+var VueForm = function (_VueFormBase) {
+  inherits(VueForm, _VueFormBase);
+
+  function VueForm() {
+    classCallCheck(this, VueForm);
+    return possibleConstructorReturn(this, (VueForm.__proto__ || Object.getPrototypeOf(VueForm)).apply(this, arguments));
+  }
+
+  createClass(VueForm, null, [{
+    key: 'install',
+    value: function install(Vue, options) {
+      Vue.mixin(new this(options));
+    }
+  }, {
+    key: 'installed',
+    get: function get$$1() {
+      return !!this.install.done;
+    },
+    set: function set$$1(val) {
+      this.install.done = val;
+    }
+  }]);
+  return VueForm;
+}(VueFormBase);
+
+VueFormBase.call(VueForm);
+// temp fix for vue 2.3.0
+VueForm.options = new VueForm();
+
+return VueForm;
+
+})));
+
+
+/***/ }),
+/* 17 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_vue__ = __webpack_require__(3);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_vue___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0_vue__);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_vuex__ = __webpack_require__(2);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__actions__ = __webpack_require__(4);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__getters__ = __webpack_require__(7);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__mutations__ = __webpack_require__(23);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__components_src_Errors__ = __webpack_require__(24);
+
+
+
+
+
+
+
+__WEBPACK_IMPORTED_MODULE_0_vue___default.a.use(__WEBPACK_IMPORTED_MODULE_1_vuex__["a" /* default */]);
+
+var debug = "development" !== 'production';
+__WEBPACK_IMPORTED_MODULE_0_vue___default.a.config.debug = debug;
+
+var state = {
+    errors: new __WEBPACK_IMPORTED_MODULE_5__components_src_Errors__["a" /* default */](),
+    currentUser: {
+        email: '',
+        first_name: '',
+        id: '',
+        last_name: '',
+        program_id: '',
+        role: {
+            name: '',
+            id: ''
+        },
+        username: ''
+    },
+    debug: debug,
+    notifications: [],
+    openModal: {
+        name: null,
+        props: {}
+    },
+    patientCareTeam: [],
+    patientCarePlan: {
+        pdfs: []
+    },
+    practiceLocations: []
+};
+
+/* harmony default export */ __webpack_exports__["a"] = (new __WEBPACK_IMPORTED_MODULE_1_vuex__["a" /* default */].Store({
+    state: state,
+    getters: __WEBPACK_IMPORTED_MODULE_3__getters__,
+    actions: __WEBPACK_IMPORTED_MODULE_2__actions__,
+    mutations: __WEBPACK_IMPORTED_MODULE_4__mutations__,
+    strict: debug
+}));
+
+/***/ }),
+/* 18 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_vue__ = __webpack_require__(3);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_vue___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0_vue__);
+
+
+/* harmony default export */ __webpack_exports__["a"] = ({
+    getCurrentUser: function getCurrentUser(cb) {
+        var ecb = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : null;
+
+        window.axios.get('profiles').then(function (resp) {
+            return cb(resp.data.user);
+        }, function (resp) {
+            return ecb(resp.data);
+        });
+    }
+});
+
+/***/ }),
+/* 19 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_vue__ = __webpack_require__(3);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_vue___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0_vue__);
+
+
+/* harmony default export */ __webpack_exports__["a"] = ({
+    getPatientCareTeam: function getPatientCareTeam(cb) {
+        var ecb = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : null;
+        var patientId = arguments[2];
+
+        if (!patientId) {
+            return;
+        }
+
+        window.axios.get('user/' + patientId + '/care-team').then(function (resp) {
+            return cb(resp.data);
+        }, function (resp) {
+            return ecb(resp.data);
+        });
+    }
+});
+
+/***/ }),
+/* 20 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_vue__ = __webpack_require__(3);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_vue___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0_vue__);
+
+
+/* harmony default export */ __webpack_exports__["a"] = ({
+    getPracticeLocations: function getPracticeLocations(cb) {
+        var ecb = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : null;
+        var practiceId = arguments[2];
+
+        if (!practiceId) {
+            return;
+        }
+
+        window.axios.get('practice/' + practiceId + '/locations').then(function (resp) {
+            return cb(resp.data);
+        }, function (resp) {
+            return ecb(resp.data);
+        });
+    },
+    update: function update(cb) {
+        var ecb = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : null;
+        var practiceId = arguments[2];
+        var location = arguments[3];
+
+        if (!practiceId) {
+            return;
+        }
+
+        window.axios.patch('practice/' + practiceId + '/locations/' + location.id, location).then(function (resp) {
+            return cb(resp.data);
+        }, function (error) {
+            return ecb(error.response.data);
+        });
+    },
+    delete: function _delete(cb) {
+        var ecb = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : null;
+        var practiceId = arguments[2];
+        var location = arguments[3];
+
+        if (!practiceId) {
+            return;
+        }
+
+        window.axios.delete('practice/' + practiceId + '/locations/' + location.id).then(function (resp) {
+            return cb(resp.data);
+        }, function (error) {
+            return ecb(error.response.data);
+        });
+    }
+});
+
+/***/ }),
+/* 21 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+/* harmony default export */ __webpack_exports__["a"] = ({
+    destroyCarePerson: function destroyCarePerson(cb) {
+        var ecb = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : null;
+        var carePerson = arguments[2];
+
+        window.axios.delete('user/' + carePerson.user_id + '/care-team/' + carePerson.id).then(function (resp) {
+            return cb(carePerson);
+        }, function (resp) {
+            return ecb(resp.data);
+        });
+    },
+    updateCarePerson: function updateCarePerson(cb) {
+        var ecb = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : null;
+        var carePerson = arguments[2];
+
+        window.axios.patch('user/' + carePerson.user_id + '/care-team/' + carePerson.id, carePerson).then(function (resp) {
+            return cb(carePerson);
+        }, function (resp) {
+            return ecb(resp.data);
+        });
+    }
+});
+
+/***/ }),
+/* 22 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+/* harmony default export */ __webpack_exports__["a"] = ({
+    getPatientCareplan: function getPatientCareplan(cb) {
+        var ecb = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : null;
+        var patientId = arguments[2];
+
+        if (!patientId) {
+            return;
+        }
+
+        window.axios.get('user/' + patientId + '/care-plan').then(function (resp) {
+            return cb(resp.data);
+        }, function (resp) {
+            return ecb(resp.data);
+        });
+    },
+    deletePdf: function deletePdf(cb) {
+        var ecb = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : null;
+        var pdfId = arguments[2];
+
+        window.axios.delete('pdf/' + pdfId).then(function (resp) {
+            return cb(resp.data);
+        }, function (resp) {
+            return ecb(resp.data);
+        });
+    },
+    uploadPdfCareplan: function uploadPdfCareplan(cb) {
+        var ecb = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : null;
+        var formData = arguments[2];
+
+        // formdata needs to contain
+        // formData.set('files[' + i + ']', this.files[i].file)
+        // formData.set('carePlanId', this.patientCarePlan.id)
+        window.axios.post('care-plans/' + formData.get('carePlanId') + '/pdfs', formData).then(function (resp) {
+            return cb(resp.data);
+        }, function (resp) {
+            return ecb(resp.data);
+        });
+    }
+});
+
+/***/ }),
+/* 23 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "DESTROY_CARE_PERSON", function() { return DESTROY_CARE_PERSON; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "UPDATE_CARE_PERSON", function() { return UPDATE_CARE_PERSON; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "SET_CARE_TEAM", function() { return SET_CARE_TEAM; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "CLEAR_CARE_TEAM", function() { return CLEAR_CARE_TEAM; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "SET_PATIENT_CARE_PLAN", function() { return SET_PATIENT_CARE_PLAN; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "CLEAR_PATIENT_CARE_PLAN", function() { return CLEAR_PATIENT_CARE_PLAN; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "ADD_PDF_CARE_PLAN", function() { return ADD_PDF_CARE_PLAN; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "DELETE_PDF_CARE_PLAN", function() { return DELETE_PDF_CARE_PLAN; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "LOGIN_USER", function() { return LOGIN_USER; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "LOGOUT_USER", function() { return LOGOUT_USER; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "SET_OPEN_MODAL", function() { return SET_OPEN_MODAL; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "CLEAR_OPEN_MODAL", function() { return CLEAR_OPEN_MODAL; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "ADD_NOTIFICATION", function() { return ADD_NOTIFICATION; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "REMOVE_NOTIFICATION", function() { return REMOVE_NOTIFICATION; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "CLEAR_PRACTICE_LOCATIONS", function() { return CLEAR_PRACTICE_LOCATIONS; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "SET_PRACTICE_LOCATIONS", function() { return SET_PRACTICE_LOCATIONS; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "UPDATE_PRACTICE_LOCATION", function() { return UPDATE_PRACTICE_LOCATION; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "DELETE_PRACTICE_LOCATION", function() { return DELETE_PRACTICE_LOCATION; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "CLEAR_ERROR", function() { return CLEAR_ERROR; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "SET_ERRORS", function() { return SET_ERRORS; });
+var DESTROY_CARE_PERSON = function DESTROY_CARE_PERSON(state, carePerson) {
+    state.patientCareTeam = state.patientCareTeam.filter(function (item) {
+        return item.id !== carePerson.id;
+    });
+};
+
+var UPDATE_CARE_PERSON = function UPDATE_CARE_PERSON(state, newCarePerson) {
+    var matched = false;
+
+    state.patientCareTeam.forEach(function (carePerson, index) {
+        if (carePerson.id === newCarePerson.id) {
+            state.patientCareTeam[index] = newCarePerson;
+            matched = true;
+        }
+    });
+
+    if (!matched) {
+        state.patientCareTeam.unshift(newCarePerson);
+    }
+};
+
+var SET_CARE_TEAM = function SET_CARE_TEAM(state, patientCareTeam) {
+    state.patientCareTeam = patientCareTeam;
+};
+
+var CLEAR_CARE_TEAM = function CLEAR_CARE_TEAM(state) {
+    state.patientCareTeam = [];
+};
+
+var SET_PATIENT_CARE_PLAN = function SET_PATIENT_CARE_PLAN(state, patientCarePlan) {
+    state.patientCarePlan = patientCarePlan;
+    state.patientCarePlan.pdfs = _.orderBy(state.patientCarePlan.pdfs, 'label', 'desc');
+};
+
+var CLEAR_PATIENT_CARE_PLAN = function CLEAR_PATIENT_CARE_PLAN(state) {
+    state.patientCarePlan = {};
+};
+
+var ADD_PDF_CARE_PLAN = function ADD_PDF_CARE_PLAN(state, pdfCareplan) {
+    if (_.isArray(pdfCareplan)) {
+        pdfCareplan.forEach(function (cp) {
+            state.patientCarePlan.pdfs.unshift(cp);
+        });
+    }
+};
+
+var DELETE_PDF_CARE_PLAN = function DELETE_PDF_CARE_PLAN(state, deletedPdfId) {
+    var removeThis = null;
+    for (var i = 0; i < state.patientCarePlan.pdfs.length; i++) {
+        if (state.patientCarePlan.pdfs[i].id == deletedPdfId) {
+            removeThis = i;
+            break;
+        }
+    }
+
+    if (!_.isNull(removeThis)) {
+        state.patientCarePlan.pdfs.splice(removeThis, 1);
+    }
+};
+
+var LOGIN_USER = function LOGIN_USER(state, currentUser) {
+    state.currentUser = currentUser;
+};
+
+var LOGOUT_USER = function LOGOUT_USER(state) {
+    state.currentUser = {};
+};
+
+var SET_OPEN_MODAL = function SET_OPEN_MODAL(state, openModal) {
+    state.openModal = openModal;
+};
+
+var CLEAR_OPEN_MODAL = function CLEAR_OPEN_MODAL(state) {
+    state.openModal = {};
+};
+
+var ADD_NOTIFICATION = function ADD_NOTIFICATION(state, notification) {
+    state.notifications.push(notification);
+};
+
+var REMOVE_NOTIFICATION = function REMOVE_NOTIFICATION(state, notification) {
+    state.notifications.splice(state.notifications.indexOf(notification), 1);
+};
+
+var CLEAR_PRACTICE_LOCATIONS = function CLEAR_PRACTICE_LOCATIONS(state) {
+    state.practiceLocations = [];
+};
+
+var SET_PRACTICE_LOCATIONS = function SET_PRACTICE_LOCATIONS(state, practiceLocations) {
+    practiceLocations.forEach(function (loc) {
+        state.practiceLocations.push(loc);
+    });
+};
+
+var UPDATE_PRACTICE_LOCATION = function UPDATE_PRACTICE_LOCATION(state, location) {
+    state.practiceLocations.forEach(function (pracLoc, index) {
+        if (pracLoc.id === location.id) {
+            state.practiceLocations[index] = location;
+        }
+    });
+};
+
+var DELETE_PRACTICE_LOCATION = function DELETE_PRACTICE_LOCATION(state, location) {
+    state.practiceLocations.forEach(function (pracLoc, index) {
+        if (pracLoc.id === location.id) {
+            state.practiceLocations.splice(index, 1);
+        }
+    });
+};
+
+var CLEAR_ERROR = function CLEAR_ERROR(state, field) {
+    state.errors.clear(field);
+};
+
+var SET_ERRORS = function SET_ERRORS(state, errors) {
+    state.errors.setErrors(errors);
+};
+
+/***/ }),
+/* 24 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+var Errors = function () {
+    /**
+     * Create a new Errors instance.
+     */
+    function Errors() {
+        var errors = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : null;
+
+        _classCallCheck(this, Errors);
+
+        this.errors = {};
+
+        if (errors) {
+            this.errors = errors;
+        }
+    }
+
+    /**
+     * Determine if an errors exists for the given field.
+     *
+     * @param {string} field
+     */
+
+
+    _createClass(Errors, [{
+        key: "has",
+        value: function has(field) {
+            return this.errors.hasOwnProperty(field);
+        }
+
+        /**
+         * Determine if we have any errors.
+         */
+
+    }, {
+        key: "any",
+        value: function any() {
+            return Object.keys(this.errors).length > 0;
+        }
+
+        /**
+         * Retrieve the error message for a field.
+         *
+         * @param {string} field
+         */
+
+    }, {
+        key: "get",
+        value: function get(field) {
+            if (this.errors[field]) {
+                return this.errors[field][0];
+            }
+        }
+
+        /**
+         * Record the new errors.
+         *
+         * @param {object} errors
+         */
+
+    }, {
+        key: "setErrors",
+        value: function setErrors(errors) {
+            this.errors = errors;
+        }
+
+        /**
+         * Clear one or all error fields.
+         *
+         * @param {string|null} field
+         */
+
+    }, {
+        key: "clear",
+        value: function clear(field) {
+            if (field) {
+                delete this.errors[field];
+
+                return;
+            }
+
+            this.errors = {};
+        }
+    }]);
+
+    return Errors;
+}();
+
+/* harmony default export */ __webpack_exports__["a"] = (Errors);
+
+/***/ }),
+/* 25 */
 /***/ (function(module, exports) {
 
 module.exports = function(module) {
@@ -22207,11 +23791,11 @@ module.exports = function(module) {
 
 
 /***/ }),
-/* 17 */
+/* 26 */
 /***/ (function(module, exports, __webpack_require__) {
 
 
-window._ = __webpack_require__(18);
+window._ = __webpack_require__(27);
 
 /**
  * We'll load jQuery and the Bootstrap jQuery plugin which provides support
@@ -22220,7 +23804,7 @@ window._ = __webpack_require__(18);
  */
 
 try {
-  window.$ = window.jQuery = __webpack_require__(9);
+  window.$ = window.jQuery = __webpack_require__(10);
 } catch (e) {}
 
 /**
@@ -22229,7 +23813,7 @@ try {
  * CSRF token as a header based on the value of the "XSRF" token cookie.
  */
 
-window.axios = __webpack_require__(19);
+window.axios = __webpack_require__(28);
 
 window.axios.defaults.headers.common['X-Requested-With'] = 'XMLHttpRequest';
 
@@ -22263,7 +23847,7 @@ if (token) {
 // });
 
 /***/ }),
-/* 18 */
+/* 27 */
 /***/ (function(module, exports, __webpack_require__) {
 
 /* WEBPACK VAR INJECTION */(function(global, module) {var __WEBPACK_AMD_DEFINE_RESULT__;/**
@@ -39352,16 +40936,16 @@ if (token) {
   }
 }.call(this));
 
-/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(10), __webpack_require__(16)(module)))
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(9), __webpack_require__(25)(module)))
 
 /***/ }),
-/* 19 */
+/* 28 */
 /***/ (function(module, exports, __webpack_require__) {
 
-module.exports = __webpack_require__(20);
+module.exports = __webpack_require__(29);
 
 /***/ }),
-/* 20 */
+/* 29 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -39369,7 +40953,7 @@ module.exports = __webpack_require__(20);
 
 var utils = __webpack_require__(0);
 var bind = __webpack_require__(11);
-var Axios = __webpack_require__(22);
+var Axios = __webpack_require__(31);
 var defaults = __webpack_require__(8);
 
 /**
@@ -39404,14 +40988,14 @@ axios.create = function create(instanceConfig) {
 
 // Expose Cancel & CancelToken
 axios.Cancel = __webpack_require__(15);
-axios.CancelToken = __webpack_require__(37);
+axios.CancelToken = __webpack_require__(46);
 axios.isCancel = __webpack_require__(14);
 
 // Expose all/spread
 axios.all = function all(promises) {
   return Promise.all(promises);
 };
-axios.spread = __webpack_require__(38);
+axios.spread = __webpack_require__(47);
 
 module.exports = axios;
 
@@ -39420,7 +41004,7 @@ module.exports.default = axios;
 
 
 /***/ }),
-/* 21 */
+/* 30 */
 /***/ (function(module, exports) {
 
 /*!
@@ -39447,7 +41031,7 @@ function isSlowBuffer (obj) {
 
 
 /***/ }),
-/* 22 */
+/* 31 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -39455,10 +41039,10 @@ function isSlowBuffer (obj) {
 
 var defaults = __webpack_require__(8);
 var utils = __webpack_require__(0);
-var InterceptorManager = __webpack_require__(32);
-var dispatchRequest = __webpack_require__(33);
-var isAbsoluteURL = __webpack_require__(35);
-var combineURLs = __webpack_require__(36);
+var InterceptorManager = __webpack_require__(41);
+var dispatchRequest = __webpack_require__(42);
+var isAbsoluteURL = __webpack_require__(44);
+var combineURLs = __webpack_require__(45);
 
 /**
  * Create a new instance of Axios
@@ -39540,7 +41124,7 @@ module.exports = Axios;
 
 
 /***/ }),
-/* 23 */
+/* 32 */
 /***/ (function(module, exports) {
 
 // shim for using process in browser
@@ -39730,7 +41314,7 @@ process.umask = function() { return 0; };
 
 
 /***/ }),
-/* 24 */
+/* 33 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -39749,7 +41333,7 @@ module.exports = function normalizeHeaderName(headers, normalizedName) {
 
 
 /***/ }),
-/* 25 */
+/* 34 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -39782,7 +41366,7 @@ module.exports = function settle(resolve, reject, response) {
 
 
 /***/ }),
-/* 26 */
+/* 35 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -39810,7 +41394,7 @@ module.exports = function enhanceError(error, config, code, request, response) {
 
 
 /***/ }),
-/* 27 */
+/* 36 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -39885,7 +41469,7 @@ module.exports = function buildURL(url, params, paramsSerializer) {
 
 
 /***/ }),
-/* 28 */
+/* 37 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -39929,7 +41513,7 @@ module.exports = function parseHeaders(headers) {
 
 
 /***/ }),
-/* 29 */
+/* 38 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -40004,7 +41588,7 @@ module.exports = (
 
 
 /***/ }),
-/* 30 */
+/* 39 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -40047,7 +41631,7 @@ module.exports = btoa;
 
 
 /***/ }),
-/* 31 */
+/* 40 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -40107,7 +41691,7 @@ module.exports = (
 
 
 /***/ }),
-/* 32 */
+/* 41 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -40166,14 +41750,14 @@ module.exports = InterceptorManager;
 
 
 /***/ }),
-/* 33 */
+/* 42 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
 var utils = __webpack_require__(0);
-var transformData = __webpack_require__(34);
+var transformData = __webpack_require__(43);
 var isCancel = __webpack_require__(14);
 var defaults = __webpack_require__(8);
 
@@ -40252,7 +41836,7 @@ module.exports = function dispatchRequest(config) {
 
 
 /***/ }),
-/* 34 */
+/* 43 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -40279,7 +41863,7 @@ module.exports = function transformData(data, headers, fns) {
 
 
 /***/ }),
-/* 35 */
+/* 44 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -40300,7 +41884,7 @@ module.exports = function isAbsoluteURL(url) {
 
 
 /***/ }),
-/* 36 */
+/* 45 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -40321,7 +41905,7 @@ module.exports = function combineURLs(baseURL, relativeURL) {
 
 
 /***/ }),
-/* 37 */
+/* 46 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -40385,7 +41969,7 @@ module.exports = CancelToken;
 
 
 /***/ }),
-/* 38 */
+/* 47 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -40417,1590 +42001,6 @@ module.exports = function spread(callback) {
   };
 };
 
-
-/***/ }),
-/* 39 */
-/***/ (function(module, exports, __webpack_require__) {
-
-(function (global, factory) {
-	 true ? module.exports = factory() :
-	typeof define === 'function' && define.amd ? define(factory) :
-	(global.VueForm = factory());
-}(this, (function () { 'use strict';
-
-var emailRegExp = /^[a-z0-9!#$%&'*+\/=?^_`{|}~.-]+@[a-z0-9]([a-z0-9-]*[a-z0-9])?(\.[a-z0-9]([a-z0-9-]*[a-z0-9])?)*$/i; // from angular
-var urlRegExp = /^(http\:\/\/|https\:\/\/)(.{4,})$/;
-
-var validators = {
-  email: function email(value, attrValue, vnode) {
-    return emailRegExp.test(value);
-  },
-  number: function number(value) {
-    return !isNaN(value);
-  },
-  url: function url(value) {
-    return urlRegExp.test(value);
-  },
-  required: function required(value, attrValue, vnode) {
-    if (attrValue === false) {
-      return true;
-    }
-
-    if (value === 0) {
-      return true;
-    }
-
-    if (vnode.data.attrs && typeof vnode.data.attrs.bool !== 'undefined' || vnode.componentOptions && vnode.componentOptions.propsData && typeof vnode.componentOptions.propsData.bool !== 'undefined') {
-      // bool attribute is present, allow false pass validation
-      if (value === false) {
-        return true;
-      }
-    }
-
-    if (Array.isArray(value)) {
-      return !!value.length;
-    }
-    return !!value;
-  },
-  minlength: function minlength(value, length) {
-    return value.length >= length;
-  },
-  maxlength: function maxlength(value, length) {
-    return length >= value.length;
-  },
-  pattern: function pattern(value, _pattern) {
-    var patternRegExp = new RegExp('^' + _pattern + '$');
-    return patternRegExp.test(value);
-  },
-  min: function min(value, _min, vnode) {
-    if ((vnode.data.attrs.type || '').toLowerCase() == 'number') {
-      return +value >= +_min;
-    }
-    return value >= _min;
-  },
-  max: function max(value, _max, vnode) {
-    if ((vnode.data.attrs.type || '').toLowerCase() == 'number') {
-      return +_max >= +value;
-    }
-    return _max >= value;
-  }
-};
-
-var config = {
-  validators: validators,
-  formComponent: 'vueForm',
-  formTag: 'form',
-  messagesComponent: 'fieldMessages',
-  messagesTag: 'div',
-  validateComponent: 'validate',
-  validateTag: 'div',
-  fieldComponent: 'field',
-  fieldTag: 'div',
-  formClasses: {
-    dirty: 'vf-form-dirty',
-    pristine: 'vf-form-pristine',
-    valid: 'vf-form-valid',
-    invalid: 'vf-form-invalid',
-    touched: 'vf-form-touched',
-    untouched: 'vf-form-untouched',
-    submitted: 'vf-form-submitted',
-    pending: 'vf-form-pending'
-  },
-  validateClasses: {
-    dirty: 'vf-field-dirty',
-    pristine: 'vf-field-pristine',
-    valid: 'vf-field-valid',
-    invalid: 'vf-field-invalid',
-    touched: 'vf-field-touched',
-    untouched: 'vf-field-untouched',
-    submitted: 'vf-field-submitted',
-    pending: 'vf-field-pending'
-  },
-  inputClasses: {
-    dirty: 'vf-dirty',
-    pristine: 'vf-pristine',
-    valid: 'vf-valid',
-    invalid: 'vf-invalid',
-    touched: 'vf-touched',
-    untouched: 'vf-untouched',
-    submitted: 'vf-submitted',
-    pending: 'vf-pending'
-  },
-  Promise: typeof Promise === 'function' ? Promise : null
-};
-
-var classCallCheck = function (instance, Constructor) {
-  if (!(instance instanceof Constructor)) {
-    throw new TypeError("Cannot call a class as a function");
-  }
-};
-
-var createClass = function () {
-  function defineProperties(target, props) {
-    for (var i = 0; i < props.length; i++) {
-      var descriptor = props[i];
-      descriptor.enumerable = descriptor.enumerable || false;
-      descriptor.configurable = true;
-      if ("value" in descriptor) descriptor.writable = true;
-      Object.defineProperty(target, descriptor.key, descriptor);
-    }
-  }
-
-  return function (Constructor, protoProps, staticProps) {
-    if (protoProps) defineProperties(Constructor.prototype, protoProps);
-    if (staticProps) defineProperties(Constructor, staticProps);
-    return Constructor;
-  };
-}();
-
-
-
-
-
-var defineProperty = function (obj, key, value) {
-  if (key in obj) {
-    Object.defineProperty(obj, key, {
-      value: value,
-      enumerable: true,
-      configurable: true,
-      writable: true
-    });
-  } else {
-    obj[key] = value;
-  }
-
-  return obj;
-};
-
-
-
-var inherits = function (subClass, superClass) {
-  if (typeof superClass !== "function" && superClass !== null) {
-    throw new TypeError("Super expression must either be null or a function, not " + typeof superClass);
-  }
-
-  subClass.prototype = Object.create(superClass && superClass.prototype, {
-    constructor: {
-      value: subClass,
-      enumerable: false,
-      writable: true,
-      configurable: true
-    }
-  });
-  if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass;
-};
-
-
-
-
-
-
-
-
-
-
-
-var possibleConstructorReturn = function (self, call) {
-  if (!self) {
-    throw new ReferenceError("this hasn't been initialised - super() hasn't been called");
-  }
-
-  return call && (typeof call === "object" || typeof call === "function") ? call : self;
-};
-
-function getClasses(classConfig, state) {
-  var _ref;
-
-  return _ref = {}, defineProperty(_ref, classConfig.dirty, state.$dirty), defineProperty(_ref, classConfig.pristine, state.$pristine), defineProperty(_ref, classConfig.valid, state.$valid), defineProperty(_ref, classConfig.invalid, state.$invalid), defineProperty(_ref, classConfig.touched, state.$touched), defineProperty(_ref, classConfig.untouched, state.$untouched), defineProperty(_ref, classConfig.pending, state.$pending), _ref;
-}
-
-function addClass(el, className) {
-  if (el.classList) {
-    el.classList.add(className);
-  } else {
-    el.className += ' ' + className;
-  }
-}
-
-function removeClass(el, className) {
-  if (el.classList) {
-    el.classList.remove(className);
-  } else {
-    el.className = el.className.replace(new RegExp('(^|\\b)' + className.split(' ').join('|') + '(\\b|$)', 'gi'), ' ');
-  }
-}
-
-function vModelValue(data) {
-  if (data.model) {
-    return data.model.value;
-  }
-  return data.directives.filter(function (v) {
-    return v.name === 'model';
-  })[0].value;
-}
-
-function getVModelAndLabel(nodes) {
-  var foundVnodes = {
-    vModel: [],
-    label: null
-  };
-
-  if (!nodes) {
-    return foundVnodes;
-  }
-
-  function traverse(nodes) {
-    for (var i = 0; i < nodes.length; i++) {
-      var node = nodes[i];
-      if (node.tag === 'label' && !foundVnodes.label) {
-        foundVnodes.label = node;
-      }
-      if (node.data) {
-        if (node.data.directives) {
-          var match = node.data.directives.filter(function (v) {
-            return v.name === 'model';
-          });
-          if (match.length) {
-            foundVnodes.vModel.push(node);
-          }
-        } else if (node.data.model) {
-          foundVnodes.vModel.push(node);
-        }
-      }
-      if (node.children) {
-        traverse(node.children);
-      }
-    }
-  }
-
-  traverse(nodes);
-
-  return foundVnodes;
-}
-
-function getName(vnode) {
-  if (vnode.data && vnode.data.attrs && vnode.data.attrs.name) {
-    return vnode.data.attrs.name;
-  } else if (vnode.componentOptions && vnode.componentOptions.propsData && vnode.componentOptions.propsData.name) {
-    return vnode.componentOptions.propsData.name;
-  }
-}
-
-var hyphenateRE = /([^-])([A-Z])/g;
-function hyphenate(str) {
-  return str.replace(hyphenateRE, '$1-$2').replace(hyphenateRE, '$1-$2').toLowerCase();
-}
-
-function randomId() {
-  return Math.random().toString(36).substr(2, 10);
-}
-
-// https://davidwalsh.name/javascript-debounce-function
-function debounce(func, wait, immediate) {
-  var timeout;
-  return function () {
-    var context = this,
-        args = arguments;
-    var later = function later() {
-      timeout = null;
-      if (!immediate) func.apply(context, args);
-    };
-    var callNow = immediate && !timeout;
-    clearTimeout(timeout);
-    timeout = setTimeout(later, wait);
-    if (callNow) func.apply(context, args);
-  };
-}
-
-var vueFormConfig = 'VueFormProviderConfig' + randomId();
-var vueFormState = 'VueFormProviderState' + randomId();
-
-var hasOwn = Object.prototype.hasOwnProperty;
-var toStr = Object.prototype.toString;
-
-var isArray = function isArray(arr) {
-	if (typeof Array.isArray === 'function') {
-		return Array.isArray(arr);
-	}
-
-	return toStr.call(arr) === '[object Array]';
-};
-
-var isPlainObject = function isPlainObject(obj) {
-	if (!obj || toStr.call(obj) !== '[object Object]') {
-		return false;
-	}
-
-	var hasOwnConstructor = hasOwn.call(obj, 'constructor');
-	var hasIsPrototypeOf = obj.constructor && obj.constructor.prototype && hasOwn.call(obj.constructor.prototype, 'isPrototypeOf');
-	// Not own constructor property must be Object
-	if (obj.constructor && !hasOwnConstructor && !hasIsPrototypeOf) {
-		return false;
-	}
-
-	// Own properties are enumerated firstly, so to speed up,
-	// if last one is own, then all properties are own.
-	var key;
-	for (key in obj) {/**/}
-
-	return typeof key === 'undefined' || hasOwn.call(obj, key);
-};
-
-var index = function extend() {
-	var options, name, src, copy, copyIsArray, clone,
-		target = arguments[0],
-		i = 1,
-		length = arguments.length,
-		deep = false;
-
-	// Handle a deep copy situation
-	if (typeof target === 'boolean') {
-		deep = target;
-		target = arguments[1] || {};
-		// skip the boolean and the target
-		i = 2;
-	} else if ((typeof target !== 'object' && typeof target !== 'function') || target == null) {
-		target = {};
-	}
-
-	for (; i < length; ++i) {
-		options = arguments[i];
-		// Only deal with non-null/undefined values
-		if (options != null) {
-			// Extend the base object
-			for (name in options) {
-				src = target[name];
-				copy = options[name];
-
-				// Prevent never-ending loop
-				if (target !== copy) {
-					// Recurse if we're merging plain objects or arrays
-					if (deep && copy && (isPlainObject(copy) || (copyIsArray = isArray(copy)))) {
-						if (copyIsArray) {
-							copyIsArray = false;
-							clone = src && isArray(src) ? src : [];
-						} else {
-							clone = src && isPlainObject(src) ? src : {};
-						}
-
-						// Never move original objects, clone them
-						target[name] = extend(deep, clone, copy);
-
-					// Don't bring in undefined values
-					} else if (typeof copy !== 'undefined') {
-						target[name] = copy;
-					}
-				}
-			}
-		}
-	}
-
-	// Return the modified object
-	return target;
-};
-
-var vueForm = {
-  render: function render(h) {
-    var _this = this;
-
-    return h(this.tag || this.vueFormConfig.formTag, {
-      on: {
-        submit: function submit(event) {
-          _this.state._submit();
-          _this.$emit('submit', event);
-        },
-        reset: function reset(event) {
-          _this.state._reset();
-          _this.$emit('reset', event);
-        }
-      },
-      class: this.className,
-      attrs: {
-        'novalidate': ''
-      }
-    }, [this.$slots.default]);
-  },
-
-  props: {
-    state: Object,
-    tag: String
-  },
-  inject: { vueFormConfig: vueFormConfig },
-  provide: function provide() {
-    return defineProperty({}, vueFormState, this.state);
-  },
-  created: function created() {
-    var _this2 = this;
-
-    var controls = {};
-    var state = this.state;
-    var formstate = {
-      $dirty: false,
-      $pristine: true,
-      $valid: true,
-      $invalid: false,
-      $submitted: false,
-      $touched: false,
-      $untouched: true,
-      $pending: false,
-      $error: {},
-      $submittedState: {},
-      _id: '',
-      _submit: function _submit() {
-        _this2.state.$submitted = true;
-        _this2.state._cloneState();
-      },
-      _cloneState: function _cloneState() {
-        var cloned = JSON.parse(JSON.stringify(state));
-        delete cloned.$submittedState;
-        Object.keys(cloned).forEach(function (key) {
-          _this2.$set(_this2.state.$submittedState, key, cloned[key]);
-        });
-      },
-      _addControl: function _addControl(ctrl) {
-        controls[ctrl.$name] = ctrl;
-        _this2.$set(state, ctrl.$name, ctrl);
-      },
-      _removeControl: function _removeControl(ctrl) {
-        delete controls[ctrl.$name];
-        _this2.$delete(_this2.state, ctrl.$name);
-        _this2.$delete(_this2.state.$error, ctrl.$name);
-      },
-      _reset: function _reset() {
-        state.$submitted = false;
-        state.$pending = false;
-        state.$submittedState = {};
-        Object.keys(controls).forEach(function (key) {
-          var control = controls[key];
-          control._hasFocused = false;
-          control._setUntouched();
-          control._setPristine();
-          control.$submitted = false;
-          control.$pending = false;
-        });
-      }
-    };
-
-    Object.keys(formstate).forEach(function (key) {
-      _this2.$set(_this2.state, key, formstate[key]);
-    });
-
-    this.$watch('state', function () {
-      var isDirty = false;
-      var isValid = true;
-      var isTouched = false;
-      var isPending = false;
-      Object.keys(controls).forEach(function (key) {
-        var control = controls[key];
-
-        control.$submitted = state.$submitted;
-
-        if (control.$dirty) {
-          isDirty = true;
-        }
-        if (control.$touched) {
-          isTouched = true;
-        }
-        if (control.$pending) {
-          isPending = true;
-        }
-        if (!control.$valid) {
-          isValid = false;
-          // add control to errors
-          _this2.$set(state.$error, control.$name, control);
-        } else {
-          _this2.$delete(state.$error, control.$name);
-        }
-      });
-
-      state.$dirty = isDirty;
-      state.$pristine = !isDirty;
-      state.$touched = isTouched;
-      state.$untouched = !isTouched;
-      state.$valid = isValid;
-      state.$invalid = !isValid;
-      state.$pending = isPending;
-    }, {
-      deep: true,
-      immediate: true
-    });
-
-    /* watch pristine? if set to true, set all children to pristine
-    Object.keys(controls).forEach((ctrl) => {
-      controls[ctrl].setPristine();
-    });*/
-  },
-
-  computed: {
-    className: function className() {
-      var c = this.vueFormConfig.formClasses;
-      var s = this.state;
-      var classes = getClasses(c, s);
-      classes[c.submitted] = s.$submitted;
-      return classes;
-    }
-  },
-  methods: {
-    reset: function reset() {
-      this.state._reset();
-    }
-  }
-};
-
-function findLabel(nodes) {
-  if (!nodes) {
-    return;
-  }
-  for (var i = 0; i < nodes.length; i++) {
-    var vnode = nodes[i];
-    if (vnode.tag === 'label') {
-      return nodes[i];
-    } else if (nodes[i].children) {
-      return findLabel(nodes[i].children);
-    }
-  }
-}
-
-var messages = {
-  inject: { vueFormConfig: vueFormConfig, vueFormState: vueFormState },
-  render: function render(h) {
-    var _this = this;
-
-    var children = [];
-    var field = this.formstate[this.name];
-    if (field && field.$error && this.isShown) {
-      Object.keys(field.$error).forEach(function (key) {
-        if (_this.$slots[key] || _this.$scopedSlots[key]) {
-          var out = _this.$slots[key] || _this.$scopedSlots[key](field);
-          if (_this.autoLabel) {
-            var label = findLabel(out);
-            if (label) {
-              label.data = label.data || {};
-              label.data.attrs = label.data.attrs || {};
-              label.data.attrs.for = field._id;
-            }
-          }
-          children.push(out);
-        }
-      });
-      if (!children.length && field.$valid) {
-        if (this.$slots.default || this.$scopedSlots.default) {
-          var out = this.$slots.default || this.$scopedSlots.default(field);
-          if (this.autoLabel) {
-            var label = findLabel(out);
-            if (label) {
-              label.data = label.data || {};
-              label.data.attrs = label.data.attrs || {};
-              label.data.attrs.for = field._id;
-            }
-          }
-          children.push(out);
-        }
-      }
-    }
-    return h(this.tag || this.vueFormConfig.messagesTag, children);
-  },
-
-  props: {
-    state: Object,
-    name: String,
-    show: {
-      type: String,
-      default: ''
-    },
-    tag: {
-      type: String
-    },
-    autoLabel: Boolean
-  },
-  data: function data() {
-    return {
-      formstate: null
-    };
-  },
-  created: function created() {
-    this.formstate = this.state || this.vueFormState;
-  },
-
-  computed: {
-    isShown: function isShown() {
-      var field = this.formstate[this.name];
-
-      if (!this.show || !field) {
-        return true;
-      }
-
-      var compare = function compare(v) {
-        return field[v.trim()];
-      };
-
-      if (this.show.indexOf('&&') > -1) {
-        // and logic - every
-        var split = this.show.split('&&');
-        return split.every(compare);
-      } else if (this.show.indexOf('||') > -1) {
-        // or logic - some
-        var _split = this.show.split('||');
-        return _split.some(compare);
-      } else {
-        // single
-        return field[this.show];
-      }
-    }
-  }
-};
-
-var validate = {
-  render: function render(h) {
-    var _this = this;
-
-    var foundVnodes = getVModelAndLabel(this.$slots.default);
-    var vModelnodes = foundVnodes.vModel;
-    var attrs = {
-      for: null
-    };
-    if (vModelnodes.length) {
-      this.name = getName(vModelnodes[0]);
-      if (this.autoLabel) {
-        var id = vModelnodes[0].data.attrs.id || this.fieldstate._id;
-        this.fieldstate._id = id;
-        vModelnodes[0].data.attrs.id = id;
-        if (foundVnodes.label) {
-          foundVnodes.label.data = foundVnodes.label.data || {};
-          foundVnodes.label.data.attrs = foundVnodes.label.data.attrs || {};
-          foundVnodes.label.data.attrs.for = id;
-        } else if (this.tag === 'label') {
-          attrs.for = id;
-        }
-      }
-      vModelnodes.forEach(function (vnode) {
-        if (!vnode.data.directives) {
-          vnode.data.directives = [];
-        }
-        vnode.data.directives.push({ name: 'vue-form-validator', value: { fieldstate: _this.fieldstate, config: _this.vueFormConfig } });
-        vnode.data.attrs['vue-form-validator'] = '';
-        vnode.data.attrs['debounce'] = _this.debounce;
-      });
-    } else {
-      //console.warn('Element with v-model not found');
-    }
-    return h(this.tag || this.vueFormConfig.validateTag, { 'class': this.className, attrs: attrs }, this.$slots.default);
-  },
-
-  props: {
-    state: Object,
-    custom: null,
-    autoLabel: Boolean,
-    tag: {
-      type: String
-    },
-    debounce: Number
-  },
-  inject: { vueFormConfig: vueFormConfig, vueFormState: vueFormState },
-  data: function data() {
-    return {
-      name: '',
-      formstate: null,
-      fieldstate: {}
-    };
-  },
-
-  methods: {
-    getClasses: function getClasses$$1(classConfig) {
-      var s = this.fieldstate;
-      return Object.keys(s.$error).reduce(function (classes, error) {
-        classes[classConfig.invalid + '-' + hyphenate(error)] = true;
-        return classes;
-      }, getClasses(classConfig, s));
-    }
-  },
-  computed: {
-    className: function className() {
-      return this.getClasses(this.vueFormConfig.validateClasses);
-    },
-    inputClassName: function inputClassName() {
-      return this.getClasses(this.vueFormConfig.inputClasses);
-    }
-  },
-  mounted: function mounted() {
-    var _this2 = this;
-
-    this.fieldstate.$name = this.name;
-    this.formstate._addControl(this.fieldstate);
-
-    var vModelEls = this.$el.querySelectorAll('[vue-form-validator]');
-
-    // add classes to the input element
-    this.$watch('inputClassName', function (value, oldValue) {
-      var out = void 0;
-
-      var _loop = function _loop(i, el) {
-        if (oldValue) {
-          Object.keys(oldValue).filter(function (k) {
-            return oldValue[k];
-          }).forEach(function (k) {
-            return removeClass(el, k);
-          });
-        }
-        out = [];
-        Object.keys(value).filter(function (k) {
-          return value[k];
-        }).forEach(function (k) {
-          out.push(k);
-          addClass(el, k);
-        });
-      };
-
-      for (var i = 0, el; el = vModelEls[i++];) {
-        _loop(i, el);
-      }
-      _this2.fieldstate._className = out;
-    }, {
-      deep: true,
-      immediate: true
-    });
-  },
-  created: function created() {
-    var _this4 = this;
-
-    this.formstate = this.state || this.vueFormState;
-    var vm = this;
-    var pendingValidators = [];
-    var _val = void 0;
-    this.fieldstate = {
-      $name: '',
-      $dirty: false,
-      $pristine: true,
-      $valid: true,
-      $invalid: false,
-      $touched: false,
-      $untouched: true,
-      $pending: false,
-      $submitted: false,
-      $error: {},
-      _className: null,
-      _id: 'vf' + randomId(),
-      _setValidatorVadility: function _setValidatorVadility(validator, isValid) {
-        if (isValid) {
-          vm.$delete(this.$error, validator);
-        } else {
-          vm.$set(this.$error, validator, true);
-        }
-      },
-      _setValidity: function _setValidity(isValid) {
-        this.$valid = isValid;
-        this.$invalid = !isValid;
-      },
-      _setDirty: function _setDirty() {
-        this.$dirty = true;
-        this.$pristine = false;
-      },
-      _setPristine: function _setPristine() {
-        this.$dirty = false;
-        this.$pristine = true;
-      },
-      _setTouched: function _setTouched() {
-        this.$touched = true;
-        this.$untouched = false;
-      },
-      _setUntouched: function _setUntouched() {
-        this.$touched = false;
-        this.$untouched = true;
-      },
-      _setFocused: function _setFocused() {
-        this._hasFocused = true;
-      },
-
-      _hasFocused: false,
-      _validators: {},
-      _validate: function _validate(vnode) {
-        var _this3 = this;
-
-        this.$pending = true;
-        var isValid = true;
-        var emptyAndRequired = false;
-        var value = vModelValue(vnode.data);
-        _val = value;
-
-        var pending = {
-          promises: [],
-          names: []
-        };
-
-        pendingValidators.push(pending);
-
-        var attrs = vnode.data.attrs || {};
-        var propsData = vnode.componentOptions && vnode.componentOptions.propsData ? vnode.componentOptions.propsData : {};
-
-        Object.keys(this._validators).forEach(function (validator) {
-          // when value is empty and not the required validator, the field is valid
-          if ((value === '' || value === undefined || value === null) && validator !== 'required') {
-            _this3._setValidatorVadility(validator, true);
-            emptyAndRequired = true;
-            // return early, required validator will
-            // fall through if it is present
-            return;
-          }
-          var attrValue = typeof attrs[validator] !== 'undefined' ? attrs[validator] : propsData[validator];
-          var result = _this3._validators[validator](value, attrValue, vnode);
-          if (typeof result === 'boolean') {
-            if (result) {
-              _this3._setValidatorVadility(validator, true);
-            } else {
-              isValid = false;
-              _this3._setValidatorVadility(validator, false);
-            }
-          } else {
-            pending.promises.push(result);
-            pending.names.push(validator);
-          }
-        });
-
-        if (pending.promises.length) {
-          vm.vueFormConfig.Promise.all(pending.promises).then(function (results) {
-
-            // only concerned with the last promise results, in case
-            // async responses return out of order
-            if (pending !== pendingValidators[pendingValidators.length - 1]) {
-              //console.log('ignoring old promise', pending.promises);
-              return;
-            }
-
-            pendingValidators = [];
-
-            results.forEach(function (result, i) {
-              var name = pending.names[i];
-              if (result) {
-                _this3._setValidatorVadility(name, true);
-              } else {
-                isValid = false;
-                _this3._setValidatorVadility(name, false);
-              }
-            });
-            _this3._setValidity(isValid);
-            _this3.$pending = false;
-          });
-        } else {
-          this._setValidity(isValid);
-          this.$pending = false;
-        }
-      }
-    };
-
-    // add custom validators
-    if (this.custom) {
-      Object.keys(this.custom).forEach(function (prop) {
-        _this4.fieldstate._validators[prop] = _this4.custom[prop];
-      });
-    }
-  },
-  destroyed: function destroyed() {
-    this.formstate._removeControl(this.fieldstate);
-  }
-};
-
-var field = {
-  inject: { vueFormConfig: vueFormConfig },
-  render: function render(h) {
-    var foundVnodes = getVModelAndLabel(this.$slots.default);
-    var vModelnodes = foundVnodes.vModel;
-    var attrs = {
-      for: null
-    };
-    if (vModelnodes.length) {
-      if (this.autoLabel) {
-        var id = vModelnodes[0].data.attrs && vModelnodes[0].data.attrs.id || 'vf' + randomId();
-        vModelnodes[0].data.attrs.id = id;
-        if (foundVnodes.label) {
-          foundVnodes.label.data = foundVnodes.label.data || {};
-          foundVnodes.label.data.attrs = foundVnodes.label.data.attrs = {};
-          foundVnodes.label.data.attrs.for = id;
-        } else if (this.tag === 'label') {
-          attrs.for = id;
-        }
-      }
-    }
-    return h(this.tag || this.vueFormConfig.fieldTag, { attrs: attrs }, this.$slots.default);
-  },
-
-  props: {
-    tag: {
-      type: String
-    },
-    autoLabel: {
-      type: Boolean,
-      default: true
-    }
-  }
-};
-
-var debouncedValidators = {};
-
-function compareChanges(vnode, oldvnode, validators) {
-
-  var hasChanged = false;
-  var attrs = vnode.data.attrs || {};
-  var oldAttrs = oldvnode.data.attrs || {};
-  var out = {};
-
-  if (vModelValue(vnode.data) !== vModelValue(oldvnode.data)) {
-    out.vModel = true;
-    hasChanged = true;
-  }
-
-  Object.keys(validators).forEach(function (validator) {
-    if (attrs[validator] !== oldAttrs[validator]) {
-      out[validator] = true;
-      hasChanged = true;
-    }
-  });
-
-  // if is a component
-  if (vnode.componentOptions && vnode.componentOptions.propsData) {
-    var _attrs = vnode.componentOptions.propsData;
-    var _oldAttrs = oldvnode.componentOptions.propsData;
-    Object.keys(validators).forEach(function (validator) {
-      if (_attrs[validator] !== _oldAttrs[validator]) {
-        out[validator] = true;
-        hasChanged = true;
-      }
-    });
-  }
-
-  if (hasChanged) {
-    return out;
-  }
-}
-
-var vueFormValidator = {
-  name: 'vue-form-validator',
-  bind: function bind(el, binding, vnode) {
-    var fieldstate = binding.value.fieldstate;
-    var validators = binding.value.config.validators;
-
-    var attrs = vnode.data.attrs || {};
-    var inputName = getName(vnode);
-
-    if (!inputName) {
-      console.warn('vue-form: name attribute missing');
-      return;
-    }
-
-    if (attrs.debounce) {
-      debouncedValidators[fieldstate._id] = debounce(function (fieldstate, vnode) {
-        if (fieldstate._hasFocused) {
-          fieldstate._setDirty();
-        }
-        fieldstate._validate(vnode);
-      }, attrs.debounce);
-    }
-
-    // add validators
-    Object.keys(attrs).forEach(function (attr) {
-      var prop = void 0;
-      if (attr === 'type') {
-        prop = attrs[attr].toLowerCase();
-      } else {
-        prop = attr.toLowerCase();
-      }
-      if (validators[prop] && !fieldstate._validators[prop]) {
-        fieldstate._validators[prop] = validators[prop];
-      }
-    });
-
-    // if is a component, a validator attribute by be
-    // a prop this component uses
-    if (vnode.componentOptions && vnode.componentOptions.propsData) {
-      Object.keys(vnode.componentOptions.propsData).forEach(function (prop) {
-        if (validators[prop] && !fieldstate._validators[prop]) {
-          fieldstate._validators[prop] = validators[prop];
-        }
-      });
-    }
-
-    fieldstate._validate(vnode);
-
-    // native listeners
-    el.addEventListener('blur', function () {
-      fieldstate._setTouched();
-    }, false);
-    el.addEventListener('focus', function () {
-      fieldstate._setFocused();
-    }, false);
-
-    // component listeners
-    if (vnode.componentInstance) {
-      vnode.componentInstance.$on('blur', function () {
-        fieldstate._setTouched();
-      });
-      vnode.componentInstance.$on('focus', function () {
-        fieldstate._setFocused();
-      });
-      el.addEventListener('focusout', function () {
-        fieldstate._setTouched();
-      }, false);
-      el.addEventListener('focusin', function () {
-        fieldstate._setFocused();
-      }, false);
-    }
-  },
-  update: function update(el, binding, vnode, oldVNode) {
-    var validators = binding.value.config.validators;
-
-    var changes = compareChanges(vnode, oldVNode, validators);
-    var fieldstate = binding.value.fieldstate;
-
-    var attrs = vnode.data.attrs || {};
-    if (vnode.elm.className.indexOf(fieldstate._className[0]) === -1) {
-      vnode.elm.className = vnode.elm.className + ' ' + fieldstate._className.join(' ');
-    }
-
-    if (!changes) {
-      return;
-    }
-
-    if (changes.vModel) {
-      // re-validate all
-      if (attrs.debounce) {
-        fieldstate.$pending = true;
-        debouncedValidators[fieldstate._id](fieldstate, vnode);
-      } else {
-        if (fieldstate._hasFocused) {
-          fieldstate._setDirty();
-        }
-        fieldstate._validate(vnode);
-      }
-    } else {
-      // attributes have changed
-      // to do: loop through them and re-validate changed ones
-      //for(let prop in changes) {
-      //  fieldstate._validate(vnode, validator);
-      //}
-      // for now
-      fieldstate._validate(vnode);
-    }
-  }
-};
-
-function VueFormBase(options) {
-  var _components;
-
-  var c = index(true, {}, config, options);
-  this.provide = defineProperty({}, vueFormConfig, c);
-  this.components = (_components = {}, defineProperty(_components, c.formComponent, vueForm), defineProperty(_components, c.messagesComponent, messages), defineProperty(_components, c.validateComponent, validate), defineProperty(_components, c.fieldComponent, field), _components);
-  this.directives = { vueFormValidator: vueFormValidator };
-}
-
-var VueForm = function (_VueFormBase) {
-  inherits(VueForm, _VueFormBase);
-
-  function VueForm() {
-    classCallCheck(this, VueForm);
-    return possibleConstructorReturn(this, (VueForm.__proto__ || Object.getPrototypeOf(VueForm)).apply(this, arguments));
-  }
-
-  createClass(VueForm, null, [{
-    key: 'install',
-    value: function install(Vue, options) {
-      Vue.mixin(new this(options));
-    }
-  }, {
-    key: 'installed',
-    get: function get$$1() {
-      return !!this.install.done;
-    },
-    set: function set$$1(val) {
-      this.install.done = val;
-    }
-  }]);
-  return VueForm;
-}(VueFormBase);
-
-VueFormBase.call(VueForm);
-// temp fix for vue 2.3.0
-VueForm.options = new VueForm();
-
-return VueForm;
-
-})));
-
-
-/***/ }),
-/* 40 */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_vue__ = __webpack_require__(3);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_vue___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0_vue__);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_vuex__ = __webpack_require__(2);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__actions__ = __webpack_require__(4);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__getters__ = __webpack_require__(7);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__mutations__ = __webpack_require__(46);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__components_src_Errors__ = __webpack_require__(47);
-
-
-
-
-
-
-
-__WEBPACK_IMPORTED_MODULE_0_vue___default.a.use(__WEBPACK_IMPORTED_MODULE_1_vuex__["a" /* default */]);
-
-var debug = "development" !== 'production';
-__WEBPACK_IMPORTED_MODULE_0_vue___default.a.config.debug = debug;
-
-var state = {
-    errors: new __WEBPACK_IMPORTED_MODULE_5__components_src_Errors__["a" /* default */](),
-    currentUser: {
-        email: '',
-        first_name: '',
-        id: '',
-        last_name: '',
-        program_id: '',
-        role: {
-            name: '',
-            id: ''
-        },
-        username: ''
-    },
-    debug: debug,
-    notifications: [],
-    openModal: {
-        name: null,
-        props: {}
-    },
-    patientCareTeam: [],
-    patientCarePlan: {
-        pdfs: []
-    },
-    practiceLocations: []
-};
-
-/* harmony default export */ __webpack_exports__["a"] = (new __WEBPACK_IMPORTED_MODULE_1_vuex__["a" /* default */].Store({
-    state: state,
-    getters: __WEBPACK_IMPORTED_MODULE_3__getters__,
-    actions: __WEBPACK_IMPORTED_MODULE_2__actions__,
-    mutations: __WEBPACK_IMPORTED_MODULE_4__mutations__,
-    strict: debug
-}));
-
-/***/ }),
-/* 41 */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_vue__ = __webpack_require__(3);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_vue___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0_vue__);
-
-
-/* harmony default export */ __webpack_exports__["a"] = ({
-    getCurrentUser: function getCurrentUser(cb) {
-        var ecb = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : null;
-
-        window.axios.get('profiles').then(function (resp) {
-            return cb(resp.data.user);
-        }, function (resp) {
-            return ecb(resp.data);
-        });
-    }
-});
-
-/***/ }),
-/* 42 */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_vue__ = __webpack_require__(3);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_vue___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0_vue__);
-
-
-/* harmony default export */ __webpack_exports__["a"] = ({
-    getPatientCareTeam: function getPatientCareTeam(cb) {
-        var ecb = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : null;
-        var patientId = arguments[2];
-
-        if (!patientId) {
-            return;
-        }
-
-        window.axios.get('user/' + patientId + '/care-team').then(function (resp) {
-            return cb(resp.data);
-        }, function (resp) {
-            return ecb(resp.data);
-        });
-    }
-});
-
-/***/ }),
-/* 43 */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_vue__ = __webpack_require__(3);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_vue___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0_vue__);
-
-
-/* harmony default export */ __webpack_exports__["a"] = ({
-    getPracticeLocations: function getPracticeLocations(cb) {
-        var ecb = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : null;
-        var practiceId = arguments[2];
-
-        if (!practiceId) {
-            return;
-        }
-
-        window.axios.get('practice/' + practiceId + '/locations').then(function (resp) {
-            return cb(resp.data);
-        }, function (resp) {
-            return ecb(resp.data);
-        });
-    },
-    update: function update(cb) {
-        var ecb = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : null;
-        var practiceId = arguments[2];
-        var location = arguments[3];
-
-        if (!practiceId) {
-            return;
-        }
-
-        window.axios.patch('practice/' + practiceId + '/locations/' + location.id, location).then(function (resp) {
-            return cb(resp.data);
-        }, function (error) {
-            return ecb(error.response.data);
-        });
-    },
-    delete: function _delete(cb) {
-        var ecb = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : null;
-        var practiceId = arguments[2];
-        var location = arguments[3];
-
-        if (!practiceId) {
-            return;
-        }
-
-        window.axios.delete('practice/' + practiceId + '/locations/' + location.id).then(function (resp) {
-            return cb(resp.data);
-        }, function (error) {
-            return ecb(error.response.data);
-        });
-    }
-});
-
-/***/ }),
-/* 44 */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-/* harmony default export */ __webpack_exports__["a"] = ({
-    destroyCarePerson: function destroyCarePerson(cb) {
-        var ecb = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : null;
-        var carePerson = arguments[2];
-
-        window.axios.delete('user/' + carePerson.user_id + '/care-team/' + carePerson.id).then(function (resp) {
-            return cb(carePerson);
-        }, function (resp) {
-            return ecb(resp.data);
-        });
-    },
-    updateCarePerson: function updateCarePerson(cb) {
-        var ecb = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : null;
-        var carePerson = arguments[2];
-
-        window.axios.patch('user/' + carePerson.user_id + '/care-team/' + carePerson.id, carePerson).then(function (resp) {
-            return cb(carePerson);
-        }, function (resp) {
-            return ecb(resp.data);
-        });
-    }
-});
-
-/***/ }),
-/* 45 */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-/* harmony default export */ __webpack_exports__["a"] = ({
-    getPatientCareplan: function getPatientCareplan(cb) {
-        var ecb = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : null;
-        var patientId = arguments[2];
-
-        if (!patientId) {
-            return;
-        }
-
-        window.axios.get('user/' + patientId + '/care-plan').then(function (resp) {
-            return cb(resp.data);
-        }, function (resp) {
-            return ecb(resp.data);
-        });
-    },
-    deletePdf: function deletePdf(cb) {
-        var ecb = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : null;
-        var pdfId = arguments[2];
-
-        window.axios.delete('pdf/' + pdfId).then(function (resp) {
-            return cb(resp.data);
-        }, function (resp) {
-            return ecb(resp.data);
-        });
-    },
-    uploadPdfCareplan: function uploadPdfCareplan(cb) {
-        var ecb = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : null;
-        var formData = arguments[2];
-
-        // formdata needs to contain
-        // formData.set('files[' + i + ']', this.files[i].file)
-        // formData.set('carePlanId', this.patientCarePlan.id)
-        window.axios.post('care-plans/' + formData.get('carePlanId') + '/pdfs', formData).then(function (resp) {
-            return cb(resp.data);
-        }, function (resp) {
-            return ecb(resp.data);
-        });
-    }
-});
-
-/***/ }),
-/* 46 */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "DESTROY_CARE_PERSON", function() { return DESTROY_CARE_PERSON; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "UPDATE_CARE_PERSON", function() { return UPDATE_CARE_PERSON; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "SET_CARE_TEAM", function() { return SET_CARE_TEAM; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "CLEAR_CARE_TEAM", function() { return CLEAR_CARE_TEAM; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "SET_PATIENT_CARE_PLAN", function() { return SET_PATIENT_CARE_PLAN; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "CLEAR_PATIENT_CARE_PLAN", function() { return CLEAR_PATIENT_CARE_PLAN; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "ADD_PDF_CARE_PLAN", function() { return ADD_PDF_CARE_PLAN; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "DELETE_PDF_CARE_PLAN", function() { return DELETE_PDF_CARE_PLAN; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "LOGIN_USER", function() { return LOGIN_USER; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "LOGOUT_USER", function() { return LOGOUT_USER; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "SET_OPEN_MODAL", function() { return SET_OPEN_MODAL; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "CLEAR_OPEN_MODAL", function() { return CLEAR_OPEN_MODAL; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "ADD_NOTIFICATION", function() { return ADD_NOTIFICATION; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "REMOVE_NOTIFICATION", function() { return REMOVE_NOTIFICATION; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "CLEAR_PRACTICE_LOCATIONS", function() { return CLEAR_PRACTICE_LOCATIONS; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "SET_PRACTICE_LOCATIONS", function() { return SET_PRACTICE_LOCATIONS; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "UPDATE_PRACTICE_LOCATION", function() { return UPDATE_PRACTICE_LOCATION; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "DELETE_PRACTICE_LOCATION", function() { return DELETE_PRACTICE_LOCATION; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "CLEAR_ERROR", function() { return CLEAR_ERROR; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "SET_ERRORS", function() { return SET_ERRORS; });
-var DESTROY_CARE_PERSON = function DESTROY_CARE_PERSON(state, carePerson) {
-    state.patientCareTeam = state.patientCareTeam.filter(function (item) {
-        return item.id !== carePerson.id;
-    });
-};
-
-var UPDATE_CARE_PERSON = function UPDATE_CARE_PERSON(state, newCarePerson) {
-    var matched = false;
-
-    state.patientCareTeam.forEach(function (carePerson, index) {
-        if (carePerson.id === newCarePerson.id) {
-            state.patientCareTeam[index] = newCarePerson;
-            matched = true;
-        }
-    });
-
-    if (!matched) {
-        state.patientCareTeam.unshift(newCarePerson);
-    }
-};
-
-var SET_CARE_TEAM = function SET_CARE_TEAM(state, patientCareTeam) {
-    state.patientCareTeam = patientCareTeam;
-};
-
-var CLEAR_CARE_TEAM = function CLEAR_CARE_TEAM(state) {
-    state.patientCareTeam = [];
-};
-
-var SET_PATIENT_CARE_PLAN = function SET_PATIENT_CARE_PLAN(state, patientCarePlan) {
-    state.patientCarePlan = patientCarePlan;
-    state.patientCarePlan.pdfs = _.orderBy(state.patientCarePlan.pdfs, 'label', 'desc');
-};
-
-var CLEAR_PATIENT_CARE_PLAN = function CLEAR_PATIENT_CARE_PLAN(state) {
-    state.patientCarePlan = {};
-};
-
-var ADD_PDF_CARE_PLAN = function ADD_PDF_CARE_PLAN(state, pdfCareplan) {
-    if (_.isArray(pdfCareplan)) {
-        pdfCareplan.forEach(function (cp) {
-            state.patientCarePlan.pdfs.unshift(cp);
-        });
-    }
-};
-
-var DELETE_PDF_CARE_PLAN = function DELETE_PDF_CARE_PLAN(state, deletedPdfId) {
-    var removeThis = null;
-    for (var i = 0; i < state.patientCarePlan.pdfs.length; i++) {
-        if (state.patientCarePlan.pdfs[i].id == deletedPdfId) {
-            removeThis = i;
-            break;
-        }
-    }
-
-    if (!_.isNull(removeThis)) {
-        state.patientCarePlan.pdfs.splice(removeThis, 1);
-    }
-};
-
-var LOGIN_USER = function LOGIN_USER(state, currentUser) {
-    state.currentUser = currentUser;
-};
-
-var LOGOUT_USER = function LOGOUT_USER(state) {
-    state.currentUser = {};
-};
-
-var SET_OPEN_MODAL = function SET_OPEN_MODAL(state, openModal) {
-    state.openModal = openModal;
-};
-
-var CLEAR_OPEN_MODAL = function CLEAR_OPEN_MODAL(state) {
-    state.openModal = {};
-};
-
-var ADD_NOTIFICATION = function ADD_NOTIFICATION(state, notification) {
-    state.notifications.push(notification);
-};
-
-var REMOVE_NOTIFICATION = function REMOVE_NOTIFICATION(state, notification) {
-    state.notifications.splice(state.notifications.indexOf(notification), 1);
-};
-
-var CLEAR_PRACTICE_LOCATIONS = function CLEAR_PRACTICE_LOCATIONS(state) {
-    state.practiceLocations = [];
-};
-
-var SET_PRACTICE_LOCATIONS = function SET_PRACTICE_LOCATIONS(state, practiceLocations) {
-    practiceLocations.forEach(function (loc) {
-        state.practiceLocations.push(loc);
-    });
-};
-
-var UPDATE_PRACTICE_LOCATION = function UPDATE_PRACTICE_LOCATION(state, location) {
-    state.practiceLocations.forEach(function (pracLoc, index) {
-        if (pracLoc.id === location.id) {
-            state.practiceLocations[index] = location;
-        }
-    });
-};
-
-var DELETE_PRACTICE_LOCATION = function DELETE_PRACTICE_LOCATION(state, location) {
-    state.practiceLocations.forEach(function (pracLoc, index) {
-        if (pracLoc.id === location.id) {
-            state.practiceLocations.splice(index, 1);
-        }
-    });
-};
-
-var CLEAR_ERROR = function CLEAR_ERROR(state, field) {
-    state.errors.clear(field);
-};
-
-var SET_ERRORS = function SET_ERRORS(state, errors) {
-    state.errors.setErrors(errors);
-};
-
-/***/ }),
-/* 47 */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
-
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-var Errors = function () {
-    /**
-     * Create a new Errors instance.
-     */
-    function Errors() {
-        var errors = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : null;
-
-        _classCallCheck(this, Errors);
-
-        this.errors = {};
-
-        if (errors) {
-            this.errors = errors;
-        }
-    }
-
-    /**
-     * Determine if an errors exists for the given field.
-     *
-     * @param {string} field
-     */
-
-
-    _createClass(Errors, [{
-        key: "has",
-        value: function has(field) {
-            return this.errors.hasOwnProperty(field);
-        }
-
-        /**
-         * Determine if we have any errors.
-         */
-
-    }, {
-        key: "any",
-        value: function any() {
-            return Object.keys(this.errors).length > 0;
-        }
-
-        /**
-         * Retrieve the error message for a field.
-         *
-         * @param {string} field
-         */
-
-    }, {
-        key: "get",
-        value: function get(field) {
-            if (this.errors[field]) {
-                return this.errors[field][0];
-            }
-        }
-
-        /**
-         * Record the new errors.
-         *
-         * @param {object} errors
-         */
-
-    }, {
-        key: "setErrors",
-        value: function setErrors(errors) {
-            this.errors = errors;
-        }
-
-        /**
-         * Clear one or all error fields.
-         *
-         * @param {string|null} field
-         */
-
-    }, {
-        key: "clear",
-        value: function clear(field) {
-            if (field) {
-                delete this.errors[field];
-
-                return;
-            }
-
-            this.errors = {};
-        }
-    }]);
-
-    return Errors;
-}();
-
-/* harmony default export */ __webpack_exports__["a"] = (Errors);
 
 /***/ }),
 /* 48 */
@@ -42243,7 +42243,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
 (function (factory) {
   if (true) {
     // AMD. Register as an anonymous module.
-    !(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__(9)], __WEBPACK_AMD_DEFINE_FACTORY__ = (factory),
+    !(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__(10)], __WEBPACK_AMD_DEFINE_FACTORY__ = (factory),
 				__WEBPACK_AMD_DEFINE_RESULT__ = (typeof __WEBPACK_AMD_DEFINE_FACTORY__ === 'function' ?
 				(__WEBPACK_AMD_DEFINE_FACTORY__.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__)) : __WEBPACK_AMD_DEFINE_FACTORY__),
 				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
@@ -50052,13 +50052,13 @@ if (false) {
 var disposed = false
 function injectStyle (ssrContext) {
   if (disposed) return
-  __webpack_require__(86)
+  __webpack_require__(94)
 }
 var Component = __webpack_require__(1)(
   /* script */
-  __webpack_require__(88),
+  __webpack_require__(96),
   /* template */
-  __webpack_require__(89),
+  __webpack_require__(97),
   /* styles */
   injectStyle,
   /* scopeId */
@@ -50096,9 +50096,9 @@ module.exports = Component.exports
 var disposed = false
 var Component = __webpack_require__(1)(
   /* script */
-  __webpack_require__(90),
+  __webpack_require__(98),
   /* template */
-  __webpack_require__(91),
+  __webpack_require__(99),
   /* styles */
   null,
   /* scopeId */
@@ -50136,9 +50136,9 @@ module.exports = Component.exports
 var disposed = false
 var Component = __webpack_require__(1)(
   /* script */
-  __webpack_require__(92),
+  __webpack_require__(100),
   /* template */
-  __webpack_require__(93),
+  __webpack_require__(101),
   /* styles */
   null,
   /* scopeId */
@@ -50434,10 +50434,1825 @@ if (false) {
 /* 86 */
 /***/ (function(module, exports, __webpack_require__) {
 
+var disposed = false
+function injectStyle (ssrContext) {
+  if (disposed) return
+  __webpack_require__(87)
+}
+var Component = __webpack_require__(1)(
+  /* script */
+  __webpack_require__(89),
+  /* template */
+  __webpack_require__(90),
+  /* styles */
+  injectStyle,
+  /* scopeId */
+  null,
+  /* moduleIdentifier (server only) */
+  null
+)
+Component.options.__file = "/Users/michalis/Code/CLH/cpm-api/resources/assets/js/components/pages/work-schedule/daily-hours.vue"
+if (Component.esModule && Object.keys(Component.esModule).some(function (key) {return key !== "default" && key.substr(0, 2) !== "__"})) {console.error("named exports are not supported in *.vue files.")}
+if (Component.options.functional) {console.error("[vue-loader] daily-hours.vue: functional components are not supported with templates, they should use render functions.")}
+
+/* hot reload */
+if (false) {(function () {
+  var hotAPI = require("vue-hot-reload-api")
+  hotAPI.install(require("vue"), false)
+  if (!hotAPI.compatible) return
+  module.hot.accept()
+  if (!module.hot.data) {
+    hotAPI.createRecord("data-v-2fbbdfaf", Component.options)
+  } else {
+    hotAPI.reload("data-v-2fbbdfaf", Component.options)
+  }
+  module.hot.dispose(function (data) {
+    disposed = true
+  })
+})()}
+
+module.exports = Component.exports
+
+
+/***/ }),
+/* 87 */
+/***/ (function(module, exports, __webpack_require__) {
+
 // style-loader: Adds some css to the DOM by adding a <style> tag
 
 // load the styles
-var content = __webpack_require__(87);
+var content = __webpack_require__(88);
+if(typeof content === 'string') content = [[module.i, content, '']];
+if(content.locals) module.exports = content.locals;
+// add the styles to the DOM
+var update = __webpack_require__(6)("40ab1a52", content, false);
+// Hot Module Replacement
+if(false) {
+ // When the styles change, update the <style> tags
+ if(!content.locals) {
+   module.hot.accept("!!../../../../../../node_modules/css-loader/index.js?sourceMap!../../../../../../node_modules/vue-loader/lib/style-compiler/index.js?{\"vue\":true,\"id\":\"data-v-2fbbdfaf\",\"scoped\":false,\"hasInlineConfig\":true}!../../../../../../node_modules/vue-loader/lib/selector.js?type=styles&index=0!./daily-hours.vue", function() {
+     var newContent = require("!!../../../../../../node_modules/css-loader/index.js?sourceMap!../../../../../../node_modules/vue-loader/lib/style-compiler/index.js?{\"vue\":true,\"id\":\"data-v-2fbbdfaf\",\"scoped\":false,\"hasInlineConfig\":true}!../../../../../../node_modules/vue-loader/lib/selector.js?type=styles&index=0!./daily-hours.vue");
+     if(typeof newContent === 'string') newContent = [[module.id, newContent, '']];
+     update(newContent);
+   });
+ }
+ // When the module is disposed, remove the <style> tags
+ module.hot.dispose(function() { update(); });
+}
+
+/***/ }),
+/* 88 */
+/***/ (function(module, exports, __webpack_require__) {
+
+exports = module.exports = __webpack_require__(5)(true);
+// imports
+
+
+// module
+exports.push([module.i, "\n.edit-daily-work-hours {\n    height: 25px;\n    color: blue;\n}\n.edit-daily-work-hours:hover {\n    cursor: pointer;\n}\n", "", {"version":3,"sources":["/Users/michalis/Code/CLH/cpm-api/resources/assets/js/components/pages/work-schedule/daily-hours.vue?e4f3e5b6"],"names":[],"mappings":";AAsIA;IACA,aAAA;IACA,YAAA;CACA;AAEA;IACA,gBAAA;CACA","file":"daily-hours.vue","sourcesContent":["<script>\n    import {mapActions} from 'vuex'\n    import {addNotification} from '../../../store/actions'\n    export default {\n        props: ['day', 'hours', 'windows'],\n\n        created() {\n            if (this.hours) {\n                this.workHours = JSON.parse(this.hours)\n            }\n\n            if (this.windows) {\n                this.dayWindows = JSON.parse(this.windows)\n            }\n\n            if (this.totalHours === 0) {\n                this.workHours[this.day] = null\n                this.saveHours(true)\n            }\n\n            if (this.workHours[this.day] > this.totalHours) {\n                this.workHours[this.day] = this.totalHours\n                this.saveHours(true)\n            }\n        },\n\n        data() {\n            return {\n                workHours: {},\n                dayWindows: {},\n                edited: false,\n                beforeEditCache: null,\n                min: 1,\n                max: 12\n            }\n        },\n\n        computed: {\n            totalHours() {\n                let total = 0\n                for (let i = 0; i < this.dayWindows.length; i++) {\n                    total += this.hoursDifference(this.dayWindows[i].window_time_start, this.dayWindows[i].window_time_end)\n                }\n                return total\n            }\n        },\n\n        methods: Object.assign(mapActions(['addNotification']), {\n            edit() {\n                this.beforeEditCache = this.workHours[this.day]\n                this.edited = true\n            },\n\n            hideEdited() {\n                this.edited = false\n            },\n\n            doneEdit() {\n                this.edited = false\n\n                if (this.workHours[this.day] > 12 || this.workHours[this.day] < 1) {\n                    this.workHours[this.day] = this.beforeEditCache\n\n                    this.addNotification({\n                        title: \"Invalid number of work hours.\",\n                        text: \"Enter a number between 1 and 12.\",\n                        type: \"danger\",\n                        timeout: true\n                    })\n                } else if (this.workHours[this.day] > this.totalHours) {\n                    this.workHours[this.day] = this.beforeEditCache\n\n                    this.addNotification({\n                        title: \"Invalid number of work hours.\",\n                        text: \"Daily work hours cannot be more than total window hours.\",\n                        type: \"danger\",\n                        timeout: true\n                    })\n                } else {\n                    this.saveHours()\n                }\n            },\n\n            cancelEdit() {\n                this.workHours[this.day] = this.beforeEditCache\n                this.edited = false\n            },\n\n            saveHours(hideNotification = false) {\n                if (_.isUndefined(this.workHours.id)) {\n                    return\n                }\n\n                window.axios.patch('work-hours/' + this.workHours.id, {\n                    workHours: this.workHours[this.day],\n                    day: this.day\n                }).then((response) => {\n                    if (!hideNotification) {\n                        this.addNotification({\n                            title: \"Successfully updated hours.\",\n                            text: \"\",\n                            type: \"success\",\n                            timeout: true\n                        })\n                    }\n                }).catch((error) => {\n                    console.log(error);\n                })\n            },\n\n            hoursDifference(startTime, endTime) {\n                //hack, since we only have time and no date\n                let start = new Date('2017-01-01 ' + startTime)\n                let end = new Date('2017-01-01 ' + endTime)\n\n                return Math.floor((end - start) / 1000 / 60 / 60);\n            },\n        })\n    }\n</script>\n\n<template>\n    <div v-if=\"workHours[day]\">\n        <label v-show=\"!edited\" @click=\"edit()\" class=\"edit-daily-work-hours text-center\" style=\"padding: 2px 0;\">{{workHours[day]}} hrs</label>\n\n        <input v-show=\"edited\" type=\"number\" :min=\"min\" :max=\"max\" class=\"form-control edit-daily-work-hours\"\n               v-model=\"workHours[day]\"\n               @blur=\"doneEdit()\"\n               @keyup.enter=\"hideEdited()\"\n               @keyup.esc=\"cancelEdit()\">\n    </div>\n</template>\n\n<style>\n    .edit-daily-work-hours {\n        height: 25px;\n        color: blue;\n    }\n\n    .edit-daily-work-hours:hover {\n        cursor: pointer;\n    }\n</style>"],"sourceRoot":""}]);
+
+// exports
+
+
+/***/ }),
+/* 89 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_vuex__ = __webpack_require__(2);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__store_actions__ = __webpack_require__(4);
+
+
+
+/* harmony default export */ __webpack_exports__["default"] = ({
+    props: ['day', 'hours', 'windows'],
+
+    created: function created() {
+        if (this.hours) {
+            this.workHours = JSON.parse(this.hours);
+        }
+
+        if (this.windows) {
+            this.dayWindows = JSON.parse(this.windows);
+        }
+
+        if (this.totalHours === 0) {
+            this.workHours[this.day] = null;
+            this.saveHours(true);
+        }
+
+        if (this.workHours[this.day] > this.totalHours) {
+            this.workHours[this.day] = this.totalHours;
+            this.saveHours(true);
+        }
+    },
+    data: function data() {
+        return {
+            workHours: {},
+            dayWindows: {},
+            edited: false,
+            beforeEditCache: null,
+            min: 1,
+            max: 12
+        };
+    },
+
+
+    computed: {
+        totalHours: function totalHours() {
+            var total = 0;
+            for (var i = 0; i < this.dayWindows.length; i++) {
+                total += this.hoursDifference(this.dayWindows[i].window_time_start, this.dayWindows[i].window_time_end);
+            }
+            return total;
+        }
+    },
+
+    methods: Object.assign(__WEBPACK_IMPORTED_MODULE_0_vuex__["b" /* mapActions */](['addNotification']), {
+        edit: function edit() {
+            this.beforeEditCache = this.workHours[this.day];
+            this.edited = true;
+        },
+        hideEdited: function hideEdited() {
+            this.edited = false;
+        },
+        doneEdit: function doneEdit() {
+            this.edited = false;
+
+            if (this.workHours[this.day] > 12 || this.workHours[this.day] < 1) {
+                this.workHours[this.day] = this.beforeEditCache;
+
+                this.addNotification({
+                    title: "Invalid number of work hours.",
+                    text: "Enter a number between 1 and 12.",
+                    type: "danger",
+                    timeout: true
+                });
+            } else if (this.workHours[this.day] > this.totalHours) {
+                this.workHours[this.day] = this.beforeEditCache;
+
+                this.addNotification({
+                    title: "Invalid number of work hours.",
+                    text: "Daily work hours cannot be more than total window hours.",
+                    type: "danger",
+                    timeout: true
+                });
+            } else {
+                this.saveHours();
+            }
+        },
+        cancelEdit: function cancelEdit() {
+            this.workHours[this.day] = this.beforeEditCache;
+            this.edited = false;
+        },
+        saveHours: function saveHours() {
+            var _this = this;
+
+            var hideNotification = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : false;
+
+            if (_.isUndefined(this.workHours.id)) {
+                return;
+            }
+
+            window.axios.patch('work-hours/' + this.workHours.id, {
+                workHours: this.workHours[this.day],
+                day: this.day
+            }).then(function (response) {
+                if (!hideNotification) {
+                    _this.addNotification({
+                        title: "Successfully updated hours.",
+                        text: "",
+                        type: "success",
+                        timeout: true
+                    });
+                }
+            }).catch(function (error) {
+                console.log(error);
+            });
+        },
+        hoursDifference: function hoursDifference(startTime, endTime) {
+            //hack, since we only have time and no date
+            var start = new Date('2017-01-01 ' + startTime);
+            var end = new Date('2017-01-01 ' + endTime);
+
+            return Math.floor((end - start) / 1000 / 60 / 60);
+        }
+    })
+});
+
+/***/ }),
+/* 90 */
+/***/ (function(module, exports, __webpack_require__) {
+
+module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;
+  return (_vm.workHours[_vm.day]) ? _c('div', [_c('label', {
+    directives: [{
+      name: "show",
+      rawName: "v-show",
+      value: (!_vm.edited),
+      expression: "!edited"
+    }],
+    staticClass: "edit-daily-work-hours text-center",
+    staticStyle: {
+      "padding": "2px 0"
+    },
+    on: {
+      "click": function($event) {
+        _vm.edit()
+      }
+    }
+  }, [_vm._v(_vm._s(_vm.workHours[_vm.day]) + " hrs")]), _vm._v(" "), _c('input', {
+    directives: [{
+      name: "show",
+      rawName: "v-show",
+      value: (_vm.edited),
+      expression: "edited"
+    }, {
+      name: "model",
+      rawName: "v-model",
+      value: (_vm.workHours[_vm.day]),
+      expression: "workHours[day]"
+    }],
+    staticClass: "form-control edit-daily-work-hours",
+    attrs: {
+      "type": "number",
+      "min": _vm.min,
+      "max": _vm.max
+    },
+    domProps: {
+      "value": (_vm.workHours[_vm.day])
+    },
+    on: {
+      "blur": [function($event) {
+        _vm.doneEdit()
+      }, function($event) {
+        _vm.$forceUpdate()
+      }],
+      "keyup": [function($event) {
+        if (!('button' in $event) && _vm._k($event.keyCode, "enter", 13)) { return null; }
+        _vm.hideEdited()
+      }, function($event) {
+        if (!('button' in $event) && _vm._k($event.keyCode, "esc", 27)) { return null; }
+        _vm.cancelEdit()
+      }],
+      "input": function($event) {
+        if ($event.target.composing) { return; }
+        var $$exp = _vm.workHours,
+          $$idx = _vm.day;
+        if (!Array.isArray($$exp)) {
+          _vm.workHours[_vm.day] = $event.target.value
+        } else {
+          $$exp.splice($$idx, 1, $event.target.value)
+        }
+      }
+    }
+  })]) : _vm._e()
+},staticRenderFns: []}
+module.exports.render._withStripped = true
+if (false) {
+  module.hot.accept()
+  if (module.hot.data) {
+     require("vue-hot-reload-api").rerender("data-v-2fbbdfaf", module.exports)
+  }
+}
+
+/***/ }),
+/* 91 */
+/***/ (function(module, exports, __webpack_require__) {
+
+var disposed = false
+function injectStyle (ssrContext) {
+  if (disposed) return
+  __webpack_require__(183)
+}
+var Component = __webpack_require__(1)(
+  /* script */
+  __webpack_require__(92),
+  /* template */
+  __webpack_require__(93),
+  /* styles */
+  injectStyle,
+  /* scopeId */
+  null,
+  /* moduleIdentifier (server only) */
+  null
+)
+Component.options.__file = "/Users/michalis/Code/CLH/cpm-api/resources/assets/js/components/CareTeam/create-appointments-add-care-person.vue"
+if (Component.esModule && Object.keys(Component.esModule).some(function (key) {return key !== "default" && key.substr(0, 2) !== "__"})) {console.error("named exports are not supported in *.vue files.")}
+if (Component.options.functional) {console.error("[vue-loader] create-appointments-add-care-person.vue: functional components are not supported with templates, they should use render functions.")}
+
+/* hot reload */
+if (false) {(function () {
+  var hotAPI = require("vue-hot-reload-api")
+  hotAPI.install(require("vue"), false)
+  if (!hotAPI.compatible) return
+  module.hot.accept()
+  if (!module.hot.data) {
+    hotAPI.createRecord("data-v-4874c3de", Component.options)
+  } else {
+    hotAPI.reload("data-v-4874c3de", Component.options)
+  }
+  module.hot.dispose(function (data) {
+    disposed = true
+  })
+})()}
+
+module.exports = Component.exports
+
+
+/***/ }),
+/* 92 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__shared_modal_vue__ = __webpack_require__(51);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__shared_modal_vue___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0__shared_modal_vue__);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_vuex__ = __webpack_require__(2);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__store_actions__ = __webpack_require__(4);
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+
+
+
+
+
+/* harmony default export */ __webpack_exports__["default"] = ({
+    components: {
+        modal: __WEBPACK_IMPORTED_MODULE_0__shared_modal_vue___default.a
+    },
+
+    computed: Object.assign({}, {
+        validationErrors: function validationErrors() {
+            return this.formstate && this.formstate.$invalid && this.submitClicked;
+        }
+    }, {
+        name: function name() {
+            return this.newCarePerson.user.first_name + ' ' + this.newCarePerson.user.last_name;
+        }
+    }),
+
+    methods: Object.assign({}, __WEBPACK_IMPORTED_MODULE_1_vuex__["b" /* mapActions */](['getPatientCareTeam', 'addNotification']), {
+        clearOpenModal: function clearOpenModal() {
+            Object.assign(this.$data, this.$options.data.apply(this));
+            this.show = false;
+        },
+        sendForm: function sendForm() {
+            var _this = this;
+
+            this.submitClicked = true;
+
+            if (this.validationErrors) {
+                return;
+            }
+
+            if (this.newCarePerson.is_billing_provider) {
+                this.newCarePerson.formatted_type = 'Billing Provider';
+            }
+
+            var id = this.newCarePerson.id ? this.newCarePerson.id : 'new';
+
+            window.axios.patch(this.updateRoute + '/' + id, this.newCarePerson).then(function (response) {
+                _this.newCarePerson.id = response.data.carePerson.id;
+                _this.newCarePerson.formatted_type = response.data.carePerson.formatted_type;
+
+                _this.clearOpenModal();
+
+                _this.addNotification({
+                    title: "Successfully saved Care Person",
+                    text: "",
+                    type: "success",
+                    timeout: true
+                });
+
+                //HACK to replace select2 with newly added provider on appointments page
+                var carePerson = response.data.carePerson;
+
+                $('#providerBox').replaceWith('<select id="provider" ' + 'name="provider"' + 'class="provider selectpickerX dropdownValid form-control" ' + 'data-size="10" disabled>  ' + '<option value="' + carePerson.user.id + '" selected>' + carePerson.user.first_name + ' ' + carePerson.user.last_name + '</option></select>');
+
+                $('#providerDiv').css('padding-bottom', '10px');
+                $("#save").append('<input type="hidden" value="' + carePerson.user.id + '" id="provider" name="provider">');
+            }, function (response) {
+                console.log(response.data);
+            });
+        },
+        fieldClassName: function fieldClassName(field) {
+            if (!field) {
+                return '';
+            }
+            if ((field.$touched || field.$submitted) && field.$valid) {
+                return 'has-success';
+            }
+            if ((field.$touched || field.$submitted) && field.$invalid) {
+                return 'has-danger';
+            }
+        }
+    }),
+
+    data: function data() {
+        return {
+            show: false,
+            submitClicked: false,
+            updateRoute: $('meta[name="provider-update-route"]').attr('content'),
+            patientId: $('meta[name="patient_id"]').attr('content'),
+            formstate: {},
+
+            newCarePerson: {
+                id: 'new',
+                formatted_type: 'External',
+                alert: false,
+                is_billing_provider: false,
+                user_id: $('meta[name="patient_id"]').attr('content'),
+                user: {
+                    id: '',
+                    email: '',
+                    first_name: '',
+                    last_name: '',
+                    address: '',
+                    address2: '',
+                    city: '',
+                    state: '',
+                    zip: '',
+                    phone_numbers: {
+                        0: {
+                            id: '',
+                            number: ''
+                        }
+                    },
+                    primary_practice: {
+                        id: '',
+                        display_name: ''
+                    },
+                    provider_info: {
+                        id: '',
+                        qualification: '',
+                        specialty: ''
+                    }
+                }
+            },
+            specialtiesOptions: [{ id: "Abdominal Radiology", text: "Abdominal Radiology" }, { id: "Addiction Psychiatry", text: "Addiction Psychiatry" }, { id: "Adolescent Medicine", text: "Adolescent Medicine" }, { id: "Adult Reconstructive Orthopaedics", text: "Adult Reconstructive Orthopaedics" }, {
+                id: "Advanced Heart Failure & Transplant Cardiology",
+                text: "Advanced Heart Failure & Transplant Cardiology"
+            }, { id: "Allergy & Immunology", text: "Allergy & Immunology" }, { id: "Anesthesiology", text: "Anesthesiology" }, { id: "Biochemical Genetics", text: "Biochemical Genetics" }, { id: "Blood Banking - Transfusion Medicine", text: "Blood Banking -T ransfusion Medicine" }, { id: "Cardiology", text: "Cardiology" }, { id: "Cardiothoracic Radiology", text: "Cardiothoracic Radiology" }, { id: "Cardiovascular Disease", text: "Cardiovascular Disease" }, { id: "Chemical Pathology", text: "Chemical Pathology" }, { id: "Child & Adolescent Psychiatry", text: "Child & Adolescent Psychiatry" }, { id: "Child Abuse Pediatrics", text: "Child Abuse Pediatrics" }, { id: "Child Neurology", text: "Child Neurology" }, { id: "Clinical & Laboratory Immunology", text: "Clinical & Laboratory Immunology" }, { id: "Clinical Cardiac Electrophysiology", text: "Clinical Cardiac Electrophysiology" }, { id: "Clinical Neurophysiology", text: "Clinical Neurophysiology" }, { id: "Colon & Rectal Surgery", text: "Colon & Rectal Surgery" }, { id: "Congenital Cardiac Surgery", text: "Congenital Cardiac Surgery" }, { id: "Craniofacial Surgery", text: "Craniofacial Surgery" }, { id: "Critical Care Medicine", text: "Critical Care Medicine" }, { id: "Critical Care Medicine", text: "Critical Care Medicine" }, { id: "Cytopathology", text: "Cytopathology" }, { id: "Dermatology", text: "Dermatology" }, { id: "Dermatopathology", text: "Dermatopathology" }, { id: "Developmental-Behavioral Pediatrics", text: "Developmental-Behavioral Pediatrics" }, { id: "Ears, Nose, Throat (ENT)", text: "Ears, Nose, Throat (ENT)" }, { id: "Emergency Medicine", text: "Emergency Medicine" }, { id: "Endocrinology, Diabetes & Metabolism", text: "Endocrinology, Diabetes & Metabolism" }, { id: "Endovascular Surgical Neuroradiology", text: "Endovascular Surgical Neuroradiology" }, { id: "Family Medicine", text: "Family Medicine" }, { id: "Family Practice", text: "Family Practice" }, {
+                id: "Female Pelvic Medicine & Reconstructive Surgery",
+                text: "Female Pelvic Medicine & Reconstructive Surgery"
+            }, { id: "Foot & Ankle Orthopaedics", text: "Foot & Ankle Orthopaedics" }, { id: "Forensic Pathology", text: "Forensic Pathology" }, { id: "Forensic Psychiatry", text: "Forensic Psychiatry" }, { id: "Gastroenterology", text: "Gastroenterology" }, { id: "Geriatric Medicine", text: "Geriatric Medicine" }, { id: "Geriatric Psychiatry", text: "Geriatric Psychiatry" }, { id: "Hand Surgery", text: "Hand Surgery" }, { id: "Hematology", text: "Hematology" }, { id: "Hematology & Oncology", text: "Hematology & Oncology" }, { id: "Homecare Nurse", text: "Homecare Nurse" }, { id: "Infectious Disease", text: "Infectious Disease" }, { id: "Internal Medicine", text: "Internal Medicine" }, { id: "Internal Medicine-Pediatrics", text: "Internal Medicine-Pediatrics" }, { id: "Interventional Cardiology", text: "Interventional Cardiology" }, { id: "MD", text: "MD" }, { id: "Medical Genetics", text: "Medical Genetics" }, { id: "Medical Microbiology", text: "Medical Microbiology" }, { id: "Medical Toxicology", text: "Medical Toxicology" }, { id: "Molecular Genetic Pathology", text: "Molecular Genetic Pathology" }, { id: "Muscoskeletal Radiology", text: "Muscoskeletal Radiology" }, { id: "Musculoskeletal Oncology", text: "Musculoskeletal Oncology" }, { id: "Neonatal-Perinatal Medicine", text: "Neonatal-Perinatal Medicine" }, { id: "Nephrology", text: "Nephrology" }, { id: "Neurological Surgery", text: "Neurological Surgery" }, { id: "Neurology", text: "Neurology" }, { id: "Neuromuscular Medicine", text: "Neuromuscular Medicine" }, { id: "Neuroradiology", text: "Neuroradiology" }, { id: "Nuclear Medicine", text: "Nuclear Medicine" }, { id: "Nuclear Radiology", text: "Nuclear Radiology" }, { id: "Obstetric Anesthesiology", text: "Obstetric Anesthesiology" }, { id: "Obstetrics & Gynecology", text: "Obstetrics & Gynecology" }, { id: "Oncology", text: "Oncology" }, {
+                id: "Ophthalmic Plastic & Reconstructive Surgery",
+                text: "Ophthalmic Plastic & Reconstructive Surgery"
+            }, { id: "Ophthalmology", text: "Ophthalmology" }, { id: "Orthopaedic Sports Medicine", text: "Orthopaedic Sports Medicine" }, { id: "Orthopaedic Surgery", text: "Orthopaedic Surgery" }, { id: "Orthopaedic Surgery of the Spine", text: "Orthopaedic Surgery of the Spine" }, { id: "Orthopaedic Trauma", text: "Orthopaedic Trauma" }, { id: "Otolaryngology", text: "Otolaryngology" }, { id: "Otology - Neurotology", text: "Otology - Neurotology" }, { id: "Pain Medicine", text: "Pain Medicine" }, { id: "Pathology-Anatomic & Clinical", text: "Pathology-Anatomic & Clinical" }, { id: "Pediatric Anesthesiology", text: "Pediatric Anesthesiology" }, { id: "Pediatric Cardiology", text: "Pediatric Cardiology" }, { id: "Pediatric Critical Care Medicine", text: "Pediatric Critical Care Medicine" }, { id: "Pediatric Emergency Medicine", text: "Pediatric Emergency Medicine" }, { id: "Pediatric Endocrinology", text: "Pediatric Endocrinology" }, { id: "Pediatric Gastroenterology", text: "Pediatric Gastroenterology" }, { id: "Pediatric Hematology-Oncology", text: "Pediatric Hematology-Oncology" }, { id: "Pediatric Infectious Diseases", text: "Pediatric Infectious Diseases" }, { id: "Pediatric Nephrology", text: "Pediatric Nephrology" }, { id: "Pediatric Orthopaedics", text: "Pediatric Orthopaedics" }, { id: "Pediatric Otolaryngology", text: "Pediatric Otolaryngology" }, { id: "Pediatric Pathology", text: "Pediatric Pathology" }, { id: "Pediatric Pulmonology", text: "Pediatric Pulmonology" }, { id: "Pediatric Radiology", text: "Pediatric Radiology" }, { id: "Pediatric Rheumatology", text: "Pediatric Rheumatology" }, { id: "Pediatric Sports Medicine", text: "Pediatric Sports Medicine" }, { id: "Pediatric Surgery", text: "Pediatric Surgery" }, { id: "Pediatric Transplant Hepatology", text: "Pediatric Transplant Hepatology" }, { id: "Pediatric Urology", text: "Pediatric Urology" }, { id: "Pediatrics", text: "Pediatrics" }, { id: "Physical Medicine & Rehabilitation", text: "Physical Medicine & Rehabilitation" }, { id: "Physical Therapy", text: "Physical Therapy" }, { id: "Plastic Surgery", text: "Plastic Surgery" }, { id: "Preventive Medicine", text: "Preventive Medicine" }, { id: "Procedural Dermatology", text: "Procedural Dermatology" }, { id: "Psychiatry", text: "Psychiatry" }, { id: "Pulmonary Disease", text: "Pulmonary Disease" }, {
+                id: "Pulmonary Disease & Critical Care Medicine",
+                text: "Pulmonary Disease & Critical Care Medicine"
+            }, { id: "Radiation Oncology", text: "Radiation Oncology" }, { id: "Radiology-Diagnostic", text: "Radiology-Diagnostic" }, { id: "Rheumatology", text: "Rheumatology" }, { id: "Sleep Medicine", text: "Sleep Medicine" }, { id: "Social Worker", text: "Social Worker" }, { id: "Spinal Cord Injury Medicine", text: "Spinal Cord Injury Medicine" }, { id: "Sports Medicine", text: "Sports Medicine" }, { id: "Surgery-General", text: "Surgery-General" }, { id: "Surgical Critical Care", text: "Surgical Critical Care" }, { id: "Therapist", text: "Therapist" }, { id: "Thoracic Surgery", text: "Thoracic Surgery" }, { id: "Thoracic Surgery-Integrated", text: "Thoracic Surgery-Integrated" }, { id: "Transplant Hepatology", text: "Transplant Hepatology" }, { id: "Urology", text: "Urology" }, { id: "Vascular & Interventional Radiology", text: "Vascular & Interventional Radiology" }, { id: "Vascular Surgery", text: "Vascular Surgery" }]
+        };
+    }
+});
+
+/***/ }),
+/* 93 */
+/***/ (function(module, exports, __webpack_require__) {
+
+module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;
+  return _c('div', [_c('label', [_vm._v("\n        Select Existing Provider (or, "), _c('span', {
+    staticStyle: {
+      "color": "#4fb2e2"
+    }
+  }, [_c('a', {
+    attrs: {
+      "href": "#"
+    },
+    on: {
+      "click": function($event) {
+        _vm.show = true
+      }
+    }
+  }, [_vm._v("add new")])]), _vm._v(")\n    ")]), _vm._v(" "), _c('modal', {
+    directives: [{
+      name: "show",
+      rawName: "v-show",
+      value: (_vm.show),
+      expression: "show"
+    }]
+  }, [_c('template', {
+    slot: "header"
+  }, [_c('button', {
+    staticClass: "close",
+    attrs: {
+      "type": "button"
+    },
+    on: {
+      "click": _vm.clearOpenModal
+    }
+  }, [_vm._v("×")]), _vm._v(" "), _c('h4', {
+    staticClass: "modal-title"
+  }, [_vm._v("Provider Details")])]), _vm._v(" "), _c('template', {
+    slot: "body"
+  }, [(_vm.validationErrors) ? _c('div', {
+    staticClass: "row providerForm"
+  }, [_c('div', {
+    staticClass: "error-list"
+  }, [_c('h5', {
+    staticClass: "has-errors"
+  }, [_c('u', [_vm._v("There were some problems with your input. Please review the form.")])])])]) : _vm._e(), _vm._v(" "), _c('vue-form', {
+    attrs: {
+      "state": _vm.formstate
+    },
+    on: {
+      "submit": function($event) {
+        $event.preventDefault();
+        _vm.onSubmit($event)
+      }
+    }
+  }, [_c('div', {
+    staticClass: "row providerForm"
+  }, [_c('div', {
+    staticClass: "form-group"
+  }, [_c('label', {
+    staticClass: "col-md-3 control-label"
+  }, [_vm._v("Provider Name")]), _vm._v(" "), _c('div', {
+    staticClass: "col-md-9"
+  }, [_c('div', {
+    staticClass: "row"
+  }, [_c('div', {
+    staticClass: "form-group required-field col-md-6"
+  }, [_c('validate', {
+    class: _vm.fieldClassName(_vm.formstate.first_name),
+    attrs: {
+      "auto-label": ""
+    }
+  }, [_c('div', {
+    staticClass: "col-md-12"
+  }, [_c('input', {
+    directives: [{
+      name: "model",
+      rawName: "v-model",
+      value: (_vm.newCarePerson.user.first_name),
+      expression: "newCarePerson.user.first_name"
+    }],
+    staticClass: "form-control input-md",
+    attrs: {
+      "type": "text",
+      "id": "first_name",
+      "name": "first_name",
+      "placeholder": "First",
+      "required": ""
+    },
+    domProps: {
+      "value": (_vm.newCarePerson.user.first_name)
+    },
+    on: {
+      "input": function($event) {
+        if ($event.target.composing) { return; }
+        _vm.newCarePerson.user.first_name = $event.target.value
+      }
+    }
+  })]), _vm._v(" "), _c('div', {
+    staticClass: "col-md-12"
+  }, [_c('field-messages', {
+    attrs: {
+      "name": "first_name",
+      "show": "$untouched || $touched || $submitted"
+    }
+  }, [_c('div'), _vm._v(" "), _c('div', {
+    staticClass: "validation-error has-errors text-right",
+    slot: "required"
+  }, [_vm._v("\n                                                    *required\n                                                ")])])], 1)])], 1), _vm._v(" "), _c('div', {
+    staticClass: "form-group required-field col-md-6"
+  }, [_c('validate', {
+    class: _vm.fieldClassName(_vm.formstate.last_name),
+    attrs: {
+      "auto-label": ""
+    }
+  }, [_c('div', {
+    staticClass: "col-md-12"
+  }, [_c('input', {
+    directives: [{
+      name: "model",
+      rawName: "v-model",
+      value: (_vm.newCarePerson.user.last_name),
+      expression: "newCarePerson.user.last_name"
+    }],
+    staticClass: "form-control input-md",
+    attrs: {
+      "type": "text",
+      "id": "last_name",
+      "name": "last_name",
+      "placeholder": "Last",
+      "required": ""
+    },
+    domProps: {
+      "value": (_vm.newCarePerson.user.last_name)
+    },
+    on: {
+      "input": function($event) {
+        if ($event.target.composing) { return; }
+        _vm.newCarePerson.user.last_name = $event.target.value
+      }
+    }
+  })]), _vm._v(" "), _c('div', {
+    staticClass: "col-md-12"
+  }, [_c('field-messages', {
+    attrs: {
+      "name": "last_name",
+      "show": "$untouched || $touched || $submitted"
+    }
+  }, [_c('div'), _vm._v(" "), _c('div', {
+    staticClass: "validation-error has-errors text-right",
+    slot: "required"
+  }, [_vm._v("\n                                                    *required\n                                                ")])])], 1)])], 1)])])])]), _vm._v(" "), _c('div', {
+    staticClass: "row providerForm"
+  }, [_c('div', {
+    staticClass: "form-group"
+  }, [_c('label', {
+    staticClass: "col-md-3 control-label"
+  }, [_vm._v("Specialty")]), _vm._v(" "), _c('div', {
+    staticClass: "col-md-9"
+  }, [_c('div', {
+    staticClass: "row"
+  }, [_c('div', {
+    staticClass: "col-md-12"
+  }, [_c('validate', {
+    class: _vm.fieldClassName(_vm.formstate.specialty),
+    attrs: {
+      "auto-label": ""
+    }
+  }, [_c('div', {
+    staticClass: "col-md-12"
+  }, [_c('select2', {
+    staticStyle: {
+      "width": "100%"
+    },
+    attrs: {
+      "options": _vm.specialtiesOptions,
+      "name": "specialty"
+    },
+    model: {
+      value: (_vm.newCarePerson.user.provider_info.specialty),
+      callback: function($$v) {
+        _vm.newCarePerson.user.provider_info.specialty = $$v
+      },
+      expression: "newCarePerson.user.provider_info.specialty"
+    }
+  }, [_c('option', {
+    attrs: {
+      "disabled": "",
+      "value": "0"
+    }
+  }, [_vm._v("Select one")])])], 1), _vm._v(" "), _c('div', {
+    staticClass: "col-md-12"
+  }, [_c('field-messages', {
+    attrs: {
+      "name": "specialty",
+      "show": "$touched || $submitted"
+    }
+  }, [_c('div'), _vm._v(" "), _c('div', {
+    staticClass: "validation-error has-errors text-right",
+    slot: "required"
+  }, [_vm._v("\n                                                    *required\n                                                ")])])], 1)])], 1)])])])]), _vm._v(" "), _c('div', {
+    staticClass: "row providerForm"
+  }, [_c('div', {
+    staticClass: "form-group"
+  }, [_c('label', {
+    staticClass: "col-md-3 control-label"
+  }, [_vm._v("Address")]), _vm._v(" "), _c('div', {
+    staticClass: "col-md-9"
+  }, [_c('div', {
+    staticClass: "row"
+  }, [_c('div', {
+    staticClass: "col-md-8"
+  }, [_c('validate', {
+    class: _vm.fieldClassName(_vm.formstate.address),
+    attrs: {
+      "auto-label": ""
+    }
+  }, [_c('div', {
+    staticClass: "col-md-12"
+  }, [_c('input', {
+    directives: [{
+      name: "model",
+      rawName: "v-model",
+      value: (_vm.newCarePerson.user.address),
+      expression: "newCarePerson.user.address"
+    }],
+    staticClass: "form-control input-md",
+    attrs: {
+      "type": "text",
+      "id": "address",
+      "name": "address",
+      "placeholder": "Line 1"
+    },
+    domProps: {
+      "value": (_vm.newCarePerson.user.address)
+    },
+    on: {
+      "input": function($event) {
+        if ($event.target.composing) { return; }
+        _vm.newCarePerson.user.address = $event.target.value
+      }
+    }
+  })]), _vm._v(" "), _c('div', {
+    staticClass: "col-md-12"
+  }, [_c('field-messages', {
+    attrs: {
+      "name": "address",
+      "show": "$touched || $submitted"
+    }
+  }, [_c('div'), _vm._v(" "), _c('div', {
+    staticClass: "validation-error has-errors text-right",
+    slot: "required"
+  }, [_vm._v("\n                                                    *required\n                                                ")])])], 1)])], 1), _vm._v(" "), _c('div', {
+    staticClass: "col-md-4"
+  }, [_c('validate', {
+    class: _vm.fieldClassName(_vm.formstate.address_2),
+    attrs: {
+      "auto-label": ""
+    }
+  }, [_c('div', {
+    staticClass: "col-md-12"
+  }, [_c('input', {
+    directives: [{
+      name: "model",
+      rawName: "v-model",
+      value: (_vm.newCarePerson.user.address2),
+      expression: "newCarePerson.user.address2"
+    }],
+    staticClass: "form-control input-md",
+    attrs: {
+      "type": "text",
+      "id": "address_2",
+      "name": "address_2",
+      "placeholder": "Line 2"
+    },
+    domProps: {
+      "value": (_vm.newCarePerson.user.address2)
+    },
+    on: {
+      "input": function($event) {
+        if ($event.target.composing) { return; }
+        _vm.newCarePerson.user.address2 = $event.target.value
+      }
+    }
+  })]), _vm._v(" "), _c('div', {
+    staticClass: "col-md-12"
+  }, [_c('field-messages', {
+    attrs: {
+      "name": "address_2",
+      "show": "$touched || $submitted"
+    }
+  }, [_c('div'), _vm._v(" "), _c('div', {
+    staticClass: "validation-error has-errors text-right",
+    slot: "required"
+  })])], 1)])], 1)]), _vm._v(" "), _c('div', {
+    staticClass: "row"
+  }, [_c('div', {
+    staticClass: "col-md-4"
+  }, [_c('validate', {
+    class: _vm.fieldClassName(_vm.formstate.city),
+    attrs: {
+      "auto-label": ""
+    }
+  }, [_c('div', {
+    staticClass: "col-md-12"
+  }, [_c('input', {
+    directives: [{
+      name: "model",
+      rawName: "v-model",
+      value: (_vm.newCarePerson.user.city),
+      expression: "newCarePerson.user.city"
+    }],
+    staticClass: "form-control input-md",
+    attrs: {
+      "type": "text",
+      "id": "city",
+      "name": "city",
+      "placeholder": "City"
+    },
+    domProps: {
+      "value": (_vm.newCarePerson.user.city)
+    },
+    on: {
+      "input": function($event) {
+        if ($event.target.composing) { return; }
+        _vm.newCarePerson.user.city = $event.target.value
+      }
+    }
+  })]), _vm._v(" "), _c('div', {
+    staticClass: "col-md-12"
+  }, [_c('field-messages', {
+    attrs: {
+      "name": "city",
+      "show": "$touched || $submitted"
+    }
+  }, [_c('div'), _vm._v(" "), _c('div', {
+    staticClass: "validation-error has-errors text-right",
+    slot: "required"
+  }, [_vm._v("\n                                                    *required\n                                                ")])])], 1)])], 1), _vm._v(" "), _c('div', {
+    staticClass: "col-md-4"
+  }, [_c('validate', {
+    class: _vm.fieldClassName(_vm.formstate.state),
+    attrs: {
+      "auto-label": ""
+    }
+  }, [_c('div', {
+    staticClass: "col-md-12"
+  }, [_c('input', {
+    directives: [{
+      name: "model",
+      rawName: "v-model",
+      value: (_vm.newCarePerson.user.state),
+      expression: "newCarePerson.user.state"
+    }],
+    staticClass: "form-control input-md",
+    attrs: {
+      "type": "text",
+      "id": "state",
+      "name": "state",
+      "placeholder": "State"
+    },
+    domProps: {
+      "value": (_vm.newCarePerson.user.state)
+    },
+    on: {
+      "input": function($event) {
+        if ($event.target.composing) { return; }
+        _vm.newCarePerson.user.state = $event.target.value
+      }
+    }
+  })]), _vm._v(" "), _c('div', {
+    staticClass: "col-md-12"
+  }, [_c('field-messages', {
+    attrs: {
+      "name": "state",
+      "show": "$touched || $submitted"
+    }
+  }, [_c('div'), _vm._v(" "), _c('div', {
+    staticClass: "validation-error has-errors text-right",
+    slot: "required"
+  }, [_vm._v("\n                                                    *required\n                                                ")])])], 1)])], 1), _vm._v(" "), _c('div', {
+    staticClass: "col-md-4"
+  }, [_c('validate', {
+    class: _vm.fieldClassName(_vm.formstate.zip),
+    attrs: {
+      "auto-label": ""
+    }
+  }, [_c('div', {
+    staticClass: "col-md-12"
+  }, [_c('input', {
+    directives: [{
+      name: "model",
+      rawName: "v-model",
+      value: (_vm.newCarePerson.user.zip),
+      expression: "newCarePerson.user.zip"
+    }],
+    staticClass: "form-control input-md",
+    attrs: {
+      "type": "text",
+      "id": "zip",
+      "name": "zip",
+      "placeholder": "Zip"
+    },
+    domProps: {
+      "value": (_vm.newCarePerson.user.zip)
+    },
+    on: {
+      "input": function($event) {
+        if ($event.target.composing) { return; }
+        _vm.newCarePerson.user.zip = $event.target.value
+      }
+    }
+  })]), _vm._v(" "), _c('div', {
+    staticClass: "col-md-12"
+  }, [_c('field-messages', {
+    attrs: {
+      "name": "zip",
+      "show": "$touched || $submitted"
+    }
+  }, [_c('div'), _vm._v(" "), _c('div', {
+    staticClass: "validation-error has-errors text-right",
+    slot: "required"
+  }, [_vm._v("\n                                                    *required\n                                                ")])])], 1)])], 1)])])])]), _vm._v(" "), _c('div', {
+    staticClass: "row providerForm"
+  }, [_c('div', {
+    staticClass: "form-group"
+  }, [_c('label', {
+    staticClass: "col-md-3 control-label"
+  }, [_vm._v("Phone Number")]), _vm._v(" "), _c('div', {
+    staticClass: "col-md-9"
+  }, [_c('div', {
+    staticClass: "row"
+  }, [_c('div', {
+    staticClass: "form-group required-field col-md-12"
+  }, [_c('validate', {
+    class: _vm.fieldClassName(_vm.formstate.phone),
+    attrs: {
+      "auto-label": ""
+    }
+  }, [_c('div', {
+    staticClass: "col-md-12"
+  }, [_c('input', {
+    directives: [{
+      name: "model",
+      rawName: "v-model",
+      value: (_vm.newCarePerson.user.phone_numbers[0].number),
+      expression: "newCarePerson.user.phone_numbers[0].number"
+    }],
+    staticClass: "form-control input-md",
+    attrs: {
+      "type": "text",
+      "id": "phone",
+      "name": "phone",
+      "placeholder": "xxx-xxx-xxxx"
+    },
+    domProps: {
+      "value": (_vm.newCarePerson.user.phone_numbers[0].number)
+    },
+    on: {
+      "input": function($event) {
+        if ($event.target.composing) { return; }
+        _vm.newCarePerson.user.phone_numbers[0].number = $event.target.value
+      }
+    }
+  })]), _vm._v(" "), _c('div', {
+    staticClass: "col-md-12"
+  }, [_c('field-messages', {
+    attrs: {
+      "name": "phone",
+      "show": "$touched || $submitted"
+    }
+  }, [_c('div'), _vm._v(" "), _c('div', {
+    staticClass: "validation-error has-errors text-right",
+    slot: "required"
+  }, [_vm._v("\n                                                    *required\n                                                ")])])], 1)])], 1)])])])]), _vm._v(" "), _c('div', {
+    staticClass: "row providerForm"
+  }, [_c('div', {
+    staticClass: "form-group"
+  }, [_c('label', {
+    staticClass: "col-md-3 control-label"
+  }, [_vm._v("Practice Name")]), _vm._v(" "), _c('div', {
+    staticClass: "col-md-9"
+  }, [_c('div', {
+    staticClass: "row"
+  }, [_c('div', {
+    staticClass: "form-group required-field col-md-12"
+  }, [_c('validate', {
+    class: _vm.fieldClassName(_vm.formstate.practice),
+    attrs: {
+      "auto-label": ""
+    }
+  }, [_c('div', {
+    staticClass: "col-md-12"
+  }, [_c('input', {
+    directives: [{
+      name: "model",
+      rawName: "v-model",
+      value: (_vm.newCarePerson.user.primary_practice.display_name),
+      expression: "newCarePerson.user.primary_practice.display_name"
+    }],
+    staticClass: "form-control input-md",
+    attrs: {
+      "type": "text",
+      "id": "practice",
+      "name": "practice",
+      "placeholder": ""
+    },
+    domProps: {
+      "value": (_vm.newCarePerson.user.primary_practice.display_name)
+    },
+    on: {
+      "input": function($event) {
+        if ($event.target.composing) { return; }
+        _vm.newCarePerson.user.primary_practice.display_name = $event.target.value
+      }
+    }
+  })]), _vm._v(" "), _c('div', {
+    staticClass: "col-md-12"
+  }, [_c('field-messages', {
+    attrs: {
+      "name": "practice",
+      "show": "$touched || $submitted"
+    }
+  }, [_c('div'), _vm._v(" "), _c('div', {
+    staticClass: "validation-error has-errors text-right",
+    slot: "required"
+  }, [_vm._v("\n                                                    *required\n                                                ")])])], 1)])], 1)])])])]), _vm._v(" "), _c('div', {
+    staticClass: "row providerForm"
+  }, [_c('div', {
+    staticClass: "form-group"
+  }, [_c('label', {
+    staticClass: "col-md-3 control-label"
+  }, [_vm._v("Email")]), _vm._v(" "), _c('div', {
+    staticClass: "col-md-9"
+  }, [_c('div', {
+    staticClass: "row"
+  }, [_c('div', {
+    staticClass: "form-group required-field col-md-6"
+  }, [_c('validate', {
+    class: _vm.fieldClassName(_vm.formstate.email),
+    attrs: {
+      "auto-label": ""
+    }
+  }, [_c('div', {
+    staticClass: "col-md-12"
+  }, [_c('input', {
+    directives: [{
+      name: "model",
+      rawName: "v-model",
+      value: (_vm.newCarePerson.user.email),
+      expression: "newCarePerson.user.email"
+    }],
+    staticClass: "form-control input-md",
+    attrs: {
+      "type": "email",
+      "id": "email",
+      "name": "email"
+    },
+    domProps: {
+      "value": (_vm.newCarePerson.user.email)
+    },
+    on: {
+      "input": function($event) {
+        if ($event.target.composing) { return; }
+        _vm.newCarePerson.user.email = $event.target.value
+      }
+    }
+  })]), _vm._v(" "), _c('div', {
+    staticClass: "col-md-12"
+  }, [_c('field-messages', {
+    attrs: {
+      "name": "email",
+      "show": "$touched || $submitted"
+    }
+  }, [_c('div'), _vm._v(" "), _c('div', {
+    staticClass: "validation-error has-errors text-right",
+    slot: "required"
+  }, [_vm._v("\n                                                    *required\n                                                ")]), _vm._v(" "), _c('div', {
+    staticClass: "validation-error has-errors text-right",
+    slot: "email"
+  }, [_vm._v("\n                                                    Please enter a valid email\n                                                ")])])], 1)])], 1), _vm._v(" "), _c('div', {
+    staticClass: "form-group col-md-6"
+  }, [_c('label', {
+    staticClass: "col-md-3 control-label"
+  }, [_vm._v("Send Alerts")]), _vm._v(" "), _c('div', {
+    staticClass: "col-md-9"
+  }, [_c('div', {
+    staticClass: "row"
+  }, [_c('div', {
+    staticClass: "form-group required-field col-md-12"
+  }, [_c('validate', {
+    class: _vm.fieldClassName(_vm.formstate.send_alerts),
+    attrs: {
+      "auto-label": ""
+    }
+  }, [_c('div', {
+    staticClass: "col-md-12"
+  }, [_c('input', {
+    directives: [{
+      name: "model",
+      rawName: "v-model",
+      value: (_vm.newCarePerson.alert),
+      expression: "newCarePerson.alert"
+    }],
+    staticClass: "form-control input-md",
+    staticStyle: {
+      "display": "inline"
+    },
+    attrs: {
+      "id": "send_alerts",
+      "name": "send_alerts",
+      "type": "checkbox",
+      "disabled": !_vm.newCarePerson.user.email || _vm.formstate.email && !_vm.formstate.email.$valid
+    },
+    domProps: {
+      "checked": Array.isArray(_vm.newCarePerson.alert) ? _vm._i(_vm.newCarePerson.alert, null) > -1 : (_vm.newCarePerson.alert)
+    },
+    on: {
+      "__c": function($event) {
+        var $$a = _vm.newCarePerson.alert,
+          $$el = $event.target,
+          $$c = $$el.checked ? (true) : (false);
+        if (Array.isArray($$a)) {
+          var $$v = null,
+            $$i = _vm._i($$a, $$v);
+          if ($$c) {
+            $$i < 0 && (_vm.newCarePerson.alert = $$a.concat($$v))
+          } else {
+            $$i > -1 && (_vm.newCarePerson.alert = $$a.slice(0, $$i).concat($$a.slice($$i + 1)))
+          }
+        } else {
+          _vm.newCarePerson.alert = $$c
+        }
+      }
+    }
+  })]), _vm._v(" "), _c('div', {
+    staticClass: "col-md-12"
+  }, [_c('field-messages', {
+    attrs: {
+      "name": "send_alerts",
+      "show": "$touched || $submitted"
+    }
+  }, [_c('div'), _vm._v(" "), _c('div', {
+    staticClass: "validation-error has-errors text-right",
+    slot: "required"
+  }, [_vm._v("\n                                                                *required\n                                                            ")])]), _vm._v(" "), (!_vm.newCarePerson.user.email || _vm.formstate.email && !_vm.formstate.email.$valid) ? _c('div', {
+    staticClass: "validation-error text-left",
+    staticStyle: {
+      "color": "green"
+    }
+  }, [_vm._v("\n                                                            Email needs to be filled out and valid.\n                                                        ")]) : _vm._e()], 1)])], 1)])])])])])])]), _vm._v(" "), _c('div', {
+    staticClass: "row providerForm"
+  }, [_c('div', {
+    staticClass: "form-group"
+  }, [_c('label', {
+    staticClass: "col-md-3 control-label"
+  }, [_vm._v("Clinical Type")]), _vm._v(" "), _c('div', {
+    staticClass: "col-md-9"
+  }, [_c('div', {
+    staticClass: "row"
+  }, [_c('div', {
+    staticClass: "form-group required-field col-md-6"
+  }, [_c('validate', {
+    class: _vm.fieldClassName(_vm.formstate.qualification),
+    attrs: {
+      "auto-label": ""
+    }
+  }, [_c('div', {
+    staticClass: "col-md-12"
+  }, [_c('select', {
+    directives: [{
+      name: "model",
+      rawName: "v-model",
+      value: (_vm.newCarePerson.user.provider_info.qualification),
+      expression: "newCarePerson.user.provider_info.qualification"
+    }],
+    staticClass: "form-control input-md",
+    attrs: {
+      "id": "qualification",
+      "name": "qualification",
+      "required": ""
+    },
+    on: {
+      "change": function($event) {
+        var $$selectedVal = Array.prototype.filter.call($event.target.options, function(o) {
+          return o.selected
+        }).map(function(o) {
+          var val = "_value" in o ? o._value : o.value;
+          return val
+        });
+        _vm.newCarePerson.user.provider_info.qualification = $event.target.multiple ? $$selectedVal : $$selectedVal[0]
+      }
+    }
+  }, [_c('option', {
+    attrs: {
+      "value": "",
+      "disabled": ""
+    }
+  }), _vm._v(" "), _c('option', {
+    attrs: {
+      "value": "clinical"
+    }
+  }, [_vm._v("Clinical (MD, RN or other)")]), _vm._v(" "), _c('option', {
+    attrs: {
+      "value": "non-clinical"
+    }
+  }, [_vm._v("Non-clinical")])])]), _vm._v(" "), _c('div', {
+    staticClass: "col-md-12"
+  }, [_c('field-messages', {
+    attrs: {
+      "name": "qualification",
+      "show": "$untouched || $touched || $submitted"
+    }
+  }, [_c('div'), _vm._v(" "), _c('div', {
+    staticClass: "validation-error has-errors text-right",
+    slot: "required"
+  }, [_vm._v("\n                                                    *required\n                                                ")])])], 1)])], 1), _vm._v(" "), _c('div', {
+    staticClass: "form-group col-md-6"
+  }, [_c('label', {
+    staticClass: "col-md-3 control-label"
+  }, [_vm._v("CCM Billing Provider")]), _vm._v(" "), _c('div', {
+    staticClass: "col-md-9"
+  }, [_c('div', {
+    staticClass: "row"
+  }, [_c('div', {
+    staticClass: "form-group required-field col-md-12"
+  }, [_c('validate', {
+    class: _vm.fieldClassName(_vm.formstate.is_billing_provider),
+    attrs: {
+      "auto-label": ""
+    }
+  }, [_c('div', {
+    staticClass: "col-md-12"
+  }, [_c('input', {
+    directives: [{
+      name: "model",
+      rawName: "v-model",
+      value: (_vm.newCarePerson.is_billing_provider),
+      expression: "newCarePerson.is_billing_provider"
+    }],
+    staticClass: "form-control input-md",
+    staticStyle: {
+      "display": "inline"
+    },
+    attrs: {
+      "id": "is_billing_provider",
+      "name": "is_billing_provider",
+      "type": "checkbox"
+    },
+    domProps: {
+      "checked": Array.isArray(_vm.newCarePerson.is_billing_provider) ? _vm._i(_vm.newCarePerson.is_billing_provider, null) > -1 : (_vm.newCarePerson.is_billing_provider)
+    },
+    on: {
+      "__c": function($event) {
+        var $$a = _vm.newCarePerson.is_billing_provider,
+          $$el = $event.target,
+          $$c = $$el.checked ? (true) : (false);
+        if (Array.isArray($$a)) {
+          var $$v = null,
+            $$i = _vm._i($$a, $$v);
+          if ($$c) {
+            $$i < 0 && (_vm.newCarePerson.is_billing_provider = $$a.concat($$v))
+          } else {
+            $$i > -1 && (_vm.newCarePerson.is_billing_provider = $$a.slice(0, $$i).concat($$a.slice($$i + 1)))
+          }
+        } else {
+          _vm.newCarePerson.is_billing_provider = $$c
+        }
+      }
+    }
+  })]), _vm._v(" "), _c('div', {
+    staticClass: "col-md-12"
+  }, [_c('field-messages', {
+    attrs: {
+      "name": "is_billing_provider",
+      "show": "$touched || $submitted"
+    }
+  }, [_c('div'), _vm._v(" "), _c('div', {
+    staticClass: "validation-error has-errors text-right",
+    slot: "required"
+  }, [_vm._v("\n                                                                *required\n                                                            ")])])], 1)])], 1)])])])])])])])])], 1), _vm._v(" "), _c('template', {
+    slot: "footer"
+  }, [_c('div', {
+    staticClass: "row"
+  }, [_c('div', {
+    staticClass: "col-md-6 text-center"
+  }, [_c('button', {
+    staticClass: "btn btn-default",
+    staticStyle: {
+      "width": "50%"
+    },
+    on: {
+      "click": _vm.clearOpenModal
+    }
+  }, [_vm._v("Close")])]), _vm._v(" "), _c('div', {
+    staticClass: "col-md-6 text-center"
+  }, [_c('button', {
+    staticClass: " btn btn-info",
+    staticStyle: {
+      "width": "50%"
+    },
+    attrs: {
+      "disabled": false
+    },
+    on: {
+      "click": function($event) {
+        if (!('button' in $event) && _vm._k($event.keyCode, "default")) { return null; }
+        $event.preventDefault();
+        _vm.sendForm($event)
+      }
+    }
+  }, [_vm._v("\n                        Save "), (false) ? _c('i', {
+    staticClass: "fa fa-spinner fa-pulse fa-fw"
+  }) : _vm._e()])])])])], 2)], 1)
+},staticRenderFns: []}
+module.exports.render._withStripped = true
+if (false) {
+  module.hot.accept()
+  if (module.hot.data) {
+     require("vue-hot-reload-api").rerender("data-v-4874c3de", module.exports)
+  }
+}
+
+/***/ }),
+/* 94 */
+/***/ (function(module, exports, __webpack_require__) {
+
+// style-loader: Adds some css to the DOM by adding a <style> tag
+
+// load the styles
+var content = __webpack_require__(95);
 if(typeof content === 'string') content = [[module.i, content, '']];
 if(content.locals) module.exports = content.locals;
 // add the styles to the DOM
@@ -50457,7 +52272,7 @@ if(false) {
 }
 
 /***/ }),
-/* 87 */
+/* 95 */
 /***/ (function(module, exports, __webpack_require__) {
 
 exports = module.exports = __webpack_require__(5)(true);
@@ -50471,7 +52286,7 @@ exports.push([module.i, "\n.vue-modal label {\n    font-size: 14px;\n}\n.provide
 
 
 /***/ }),
-/* 88 */
+/* 96 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -51119,7 +52934,7 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 });
 
 /***/ }),
-/* 89 */
+/* 97 */
 /***/ (function(module, exports, __webpack_require__) {
 
 module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;
@@ -51925,7 +53740,7 @@ if (false) {
 }
 
 /***/ }),
-/* 90 */
+/* 98 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -52006,7 +53821,7 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 });
 
 /***/ }),
-/* 91 */
+/* 99 */
 /***/ (function(module, exports, __webpack_require__) {
 
 module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;
@@ -52068,7 +53883,7 @@ if (false) {
 }
 
 /***/ }),
-/* 92 */
+/* 100 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -52108,7 +53923,7 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 });
 
 /***/ }),
-/* 93 */
+/* 101 */
 /***/ (function(module, exports, __webpack_require__) {
 
 module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;
@@ -52133,19 +53948,19 @@ if (false) {
 }
 
 /***/ }),
-/* 94 */
+/* 102 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var disposed = false
 function injectStyle (ssrContext) {
   if (disposed) return
-  __webpack_require__(95)
+  __webpack_require__(103)
 }
 var Component = __webpack_require__(1)(
   /* script */
-  __webpack_require__(97),
+  __webpack_require__(105),
   /* template */
-  __webpack_require__(99),
+  __webpack_require__(107),
   /* styles */
   injectStyle,
   /* scopeId */
@@ -52177,13 +53992,13 @@ module.exports = Component.exports
 
 
 /***/ }),
-/* 95 */
+/* 103 */
 /***/ (function(module, exports, __webpack_require__) {
 
 // style-loader: Adds some css to the DOM by adding a <style> tag
 
 // load the styles
-var content = __webpack_require__(96);
+var content = __webpack_require__(104);
 if(typeof content === 'string') content = [[module.i, content, '']];
 if(content.locals) module.exports = content.locals;
 // add the styles to the DOM
@@ -52203,7 +54018,7 @@ if(false) {
 }
 
 /***/ }),
-/* 96 */
+/* 104 */
 /***/ (function(module, exports, __webpack_require__) {
 
 exports = module.exports = __webpack_require__(5)(true);
@@ -52217,7 +54032,7 @@ exports.push([module.i, "\nli.pdf-careplan {\n    font-size: 16px;\n}\n", "", {"
 
 
 /***/ }),
-/* 97 */
+/* 105 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -52227,7 +54042,7 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__store_getters__ = __webpack_require__(7);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__shared_modal_vue__ = __webpack_require__(51);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__shared_modal_vue___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_3__shared_modal_vue__);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4_vue_upload_component__ = __webpack_require__(98);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4_vue_upload_component__ = __webpack_require__(106);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_4_vue_upload_component___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_4_vue_upload_component__);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__CareTeam_create_care_person_vue__ = __webpack_require__(69);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__CareTeam_create_care_person_vue___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_5__CareTeam_create_care_person_vue__);
@@ -52321,7 +54136,7 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 });
 
 /***/ }),
-/* 98 */
+/* 106 */
 /***/ (function(module, exports) {
 
 module.exports =
@@ -55774,7 +57589,7 @@ module.exports =
 //# sourceMappingURL=vue-upload-component.js.map
 
 /***/ }),
-/* 99 */
+/* 107 */
 /***/ (function(module, exports, __webpack_require__) {
 
 module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;
@@ -55876,523 +57691,15 @@ if (false) {
 }
 
 /***/ }),
-/* 100 */
+/* 108 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var disposed = false
 var Component = __webpack_require__(1)(
   /* script */
-  __webpack_require__(101),
+  __webpack_require__(109),
   /* template */
-  __webpack_require__(102),
-  /* styles */
-  null,
-  /* scopeId */
-  null,
-  /* moduleIdentifier (server only) */
-  null
-)
-Component.options.__file = "/Users/michalis/Code/CLH/cpm-api/resources/assets/js/ccd-models/problems.vue"
-if (Component.esModule && Object.keys(Component.esModule).some(function (key) {return key !== "default" && key.substr(0, 2) !== "__"})) {console.error("named exports are not supported in *.vue files.")}
-if (Component.options.functional) {console.error("[vue-loader] problems.vue: functional components are not supported with templates, they should use render functions.")}
-
-/* hot reload */
-if (false) {(function () {
-  var hotAPI = require("vue-hot-reload-api")
-  hotAPI.install(require("vue"), false)
-  if (!hotAPI.compatible) return
-  module.hot.accept()
-  if (!module.hot.data) {
-    hotAPI.createRecord("data-v-50157be8", Component.options)
-  } else {
-    hotAPI.reload("data-v-50157be8", Component.options)
-  }
-  module.hot.dispose(function (data) {
-    disposed = true
-  })
-})()}
-
-module.exports = Component.exports
-
-
-/***/ }),
-/* 101 */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
-
-/* harmony default export */ __webpack_exports__["default"] = ({
-    data: function data() {
-        return {
-            problem: {
-                id: '',
-                patient_id: $('meta[name="patient_id"]').attr('content'),
-                name: ''
-            },
-            problems: []
-        };
-    },
-
-
-    mounted: function mounted() {
-        this.loadProblems();
-    },
-
-    methods: {
-        loadProblems: function loadProblems() {
-            var self = this;
-
-            var params = {
-                params: {
-                    patient_id: self.problem.patient_id
-                }
-            };
-
-            window.axios.get('/CCDModels/Items/ProblemsItem', params).then(function (response) {
-                self.problems = response.data;
-            }, function (response) {
-                console.log(response);
-            });
-        },
-
-        addProblem: function addProblem() {
-            if (this.problem.name) {
-                var self = this;
-
-                var payload = {
-                    'problem': this.problem
-                };
-
-                window.axios.post('/CCDModels/Items/ProblemsItem/store', payload).then(function (response) {
-                    var id = response.data.id.id;
-
-                    self.problems.push({ id: id, patient_id: self.problem.patient_id, name: response.data.id.name });
-                    self.problem = { id: '', patient_id: self.problem.patient_id, name: '' };
-                }, function (response) {
-                    console.log(response);
-                });
-            }
-        },
-
-        editProblem: function editProblem(index) {
-            $('#problem-name-' + index).toggle();
-            $('#problem-edit-' + index).toggle();
-            $('.problem-edit-btn').hide();
-            $('.problem-delete-btn').hide();
-            $('#problem-save-btn-' + index).toggle();
-        },
-
-        updateProblem: function updateProblem(index) {
-            var payload = {
-                'problem': this.problems[index]
-            };
-
-            window.axios.post('/CCDModels/Items/ProblemsItem/update', payload).then(function (response) {
-                $('#problem-name-' + index).toggle();
-                $('#problem-edit-' + index).toggle();
-                $('.problem-edit-btn').show();
-                $('.problem-delete-btn').show();
-                $('#problem-save-btn-' + index).toggle();
-            }, function (response) {
-                console.log(response);
-            });
-        },
-
-        deleteProblem: function deleteProblem(index, e) {
-            if (confirm("Are you sure you want to delete this problem?")) {
-                var self = this;
-
-                var payload = {
-                    'problem': this.problems[index]
-                };
-
-                window.axios.post('/CCDModels/Items/ProblemsItem/destroy', payload).then(function (response) {
-                    self.problems.splice(index, 1);
-                }, function (response) {
-                    console.log(response);
-                });
-            }
-        },
-
-        postEvents: function postEvents(index, e) {
-            window.axios.post('/CCDModels/Items/ProblemsItem/store', this.problems).then(function (response) {}, function (response) {
-                console.log(response);
-            });
-        }
-    }
-});
-
-/***/ }),
-/* 102 */
-/***/ (function(module, exports, __webpack_require__) {
-
-module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;
-  return _c('div', {
-    staticClass: "row",
-    attrs: {
-      "id": "problems"
-    }
-  }, [_c('div', {
-    staticClass: "col-sm-12"
-  }, [_c('div', {
-    staticClass: "list-group"
-  }, [_vm._l((_vm.problems), function(problemitem, index) {
-    return [(problemitem.name) ? _c('div', {
-      staticClass: "list-group-item",
-      staticStyle: {
-        "padding": "5px",
-        "font-size": "12px"
-      },
-      on: {
-        "submit": function($event) {
-          $event.preventDefault();
-        }
-      }
-    }, [_c('div', {
-      staticClass: "row"
-    }, [_c('div', {
-      staticClass: "col-sm-10"
-    }, [_c('div', {
-      staticClass: "list-group-item-heading"
-    }, [_c('span', {
-      attrs: {
-        "id": 'problem-name-' + index
-      }
-    }, [_vm._v(_vm._s(problemitem.name))]), _vm._v(" "), _c('textarea', {
-      directives: [{
-        name: "model",
-        rawName: "v-model",
-        value: (problemitem.name),
-        expression: "problemitem.name"
-      }],
-      staticStyle: {
-        "display": "none"
-      },
-      attrs: {
-        "id": 'problem-edit-' + index,
-        "rows": "10"
-      },
-      domProps: {
-        "value": (problemitem.name)
-      },
-      on: {
-        "input": function($event) {
-          if ($event.target.composing) { return; }
-          problemitem.name = $event.target.value
-        }
-      }
-    }, [_vm._v(_vm._s(problemitem.name))]), _vm._v(" "), _c('input', {
-      attrs: {
-        "type": "hidden",
-        "name": "id"
-      },
-      domProps: {
-        "value": problemitem.id
-      }
-    }), _vm._v(" "), _c('input', {
-      attrs: {
-        "type": "hidden",
-        "name": "patient_id"
-      },
-      domProps: {
-        "value": problemitem.patient_id
-      }
-    })])]), _vm._v(" "), _c('div', {
-      staticClass: "col-sm-2 text-right"
-    }, [(problemitem.name) ? _c('p', {
-      staticClass: "list-group-item-text"
-    }, [_vm._v(_vm._s(problemitem.description))]) : _vm._e(), _vm._v(" "), (problemitem.name) ? _c('button', {
-      staticClass: "btn btn-xs btn-danger problem-delete-btn",
-      on: {
-        "click": function($event) {
-          $event.stopPropagation();
-          $event.preventDefault();
-          _vm.deleteProblem(index, _vm.problem)
-        }
-      }
-    }, [_vm._m(0, true)]) : _vm._e(), _vm._v(" "), (problemitem.name) ? _c('button', {
-      staticClass: "btn btn-xs btn-primary problem-edit-btn",
-      on: {
-        "click": function($event) {
-          $event.stopPropagation();
-          $event.preventDefault();
-          _vm.editProblem(index, _vm.problem)
-        }
-      }
-    }, [_vm._m(1, true)]) : _vm._e(), _vm._v(" "), (problemitem.name) ? _c('button', {
-      staticClass: "btn btn-xs btn-success problem-save-btn",
-      staticStyle: {
-        "display": "none"
-      },
-      attrs: {
-        "id": 'problem-save-btn-' + index
-      },
-      on: {
-        "click": function($event) {
-          $event.stopPropagation();
-          $event.preventDefault();
-          _vm.updateProblem(index, _vm.problem)
-        }
-      }
-    }, [_vm._m(2, true)]) : _vm._e()])])]) : _vm._e()]
-  })], 2)]), _vm._v(" "), _c('div', {
-    staticClass: "col-sm-12"
-  }, [_c('div', {
-    staticClass: "panel panel-default"
-  }, [_c('div', {
-    staticClass: "panel-heading"
-  }, [_vm._v("\n                Add a Problem\n            ")]), _vm._v(" "), _c('div', {
-    staticClass: "panel-body"
-  }, [_c('div', {
-    staticClass: "row"
-  }, [_c('div', {
-    staticClass: "col-sm-9"
-  }, [_c('input', {
-    attrs: {
-      "type": "hidden",
-      "id": "patient_id",
-      "name": "patient_id"
-    },
-    domProps: {
-      "value": _vm.problem.patient_id
-    }
-  }), _vm._v(" "), _c('div', {
-    staticClass: "form-group"
-  }, [_c('input', {
-    directives: [{
-      name: "model",
-      rawName: "v-model",
-      value: (_vm.problem.name),
-      expression: "problem.name"
-    }],
-    staticClass: "form-control",
-    attrs: {
-      "placeholder": "Problem Name"
-    },
-    domProps: {
-      "value": (_vm.problem.name)
-    },
-    on: {
-      "input": function($event) {
-        if ($event.target.composing) { return; }
-        _vm.problem.name = $event.target.value
-      }
-    }
-  })])]), _vm._v(" "), _c('div', {
-    staticClass: "col-sm-3 text-right"
-  }, [_c('button', {
-    staticClass: "btn btn-success",
-    on: {
-      "click": function($event) {
-        $event.stopPropagation();
-        $event.preventDefault();
-        _vm.addProblem()
-      }
-    }
-  }, [_vm._m(3)])])])])])])])
-},staticRenderFns: [function (){var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;
-  return _c('span', [_c('i', {
-    staticClass: "glyphicon glyphicon-remove"
-  })])
-},function (){var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;
-  return _c('span', [_c('i', {
-    staticClass: "glyphicon glyphicon-pencil"
-  })])
-},function (){var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;
-  return _c('span', [_c('i', {
-    staticClass: "glyphicon glyphicon-ok"
-  })])
-},function (){var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;
-  return _c('span', [_c('i', {
-    staticClass: "glyphicon glyphicon-plus"
-  }), _vm._v(" Add")])
-}]}
-module.exports.render._withStripped = true
-if (false) {
-  module.hot.accept()
-  if (module.hot.data) {
-     require("vue-hot-reload-api").rerender("data-v-50157be8", module.exports)
-  }
-}
-
-/***/ }),
-/* 103 */,
-/* 104 */,
-/* 105 */,
-/* 106 */,
-/* 107 */,
-/* 108 */,
-/* 109 */,
-/* 110 */,
-/* 111 */,
-/* 112 */,
-/* 113 */,
-/* 114 */
-/***/ (function(module, exports, __webpack_require__) {
-
-module.exports = __webpack_require__(115);
-
-
-/***/ }),
-/* 115 */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_vue_form__ = __webpack_require__(39);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_vue_form___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0_vue_form__);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__store__ = __webpack_require__(40);
-__webpack_require__(17);
-
-window.Vue = __webpack_require__(3);
-
-window.axios.defaults.baseURL = $('meta[name="base-url"]').attr('content');
-
-
-
-
-window.Vue.config.debug = __WEBPACK_IMPORTED_MODULE_1__store__["a" /* default */].state.debug;
-
-window.Vue.use(__WEBPACK_IMPORTED_MODULE_0_vue_form___default.a, {
-    inputClasses: {
-        valid: 'form-control-success',
-        invalid: 'form-control-danger'
-    }
-});
-
-Vue.component('component-proxy', __webpack_require__(49));
-Vue.component('createAppointmentsAddCarePerson', __webpack_require__(116));
-Vue.component('createCarePerson', __webpack_require__(69));
-Vue.component('updateCarePerson', __webpack_require__(78));
-Vue.component('indexCarePerson', __webpack_require__(79));
-Vue.component('careTeam', __webpack_require__(80));
-Vue.component('select2', __webpack_require__(52));
-Vue.component('fab', __webpack_require__(81));
-Vue.component('openModal', __webpack_require__(56));
-Vue.component('notifications', __webpack_require__(59));
-Vue.component('pdfCareplans', __webpack_require__(94));
-Vue.component('medicationsList', __webpack_require__(119));
-Vue.component('problemsList', __webpack_require__(100));
-Vue.component('allergiesList', __webpack_require__(122));
-
-window.App = new Vue({
-    el: '#app',
-    store: __WEBPACK_IMPORTED_MODULE_1__store__["a" /* default */]
-});
-
-/***/ }),
-/* 116 */
-/***/ (function(module, exports, __webpack_require__) {
-
-var disposed = false
-var Component = __webpack_require__(1)(
-  /* script */
-  __webpack_require__(117),
-  /* template */
-  __webpack_require__(118),
-  /* styles */
-  null,
-  /* scopeId */
-  null,
-  /* moduleIdentifier (server only) */
-  null
-)
-Component.options.__file = "/Users/michalis/Code/CLH/cpm-api/resources/assets/js/components/CareTeam/create-appointments-add-care-person.vue"
-if (Component.esModule && Object.keys(Component.esModule).some(function (key) {return key !== "default" && key.substr(0, 2) !== "__"})) {console.error("named exports are not supported in *.vue files.")}
-if (Component.options.functional) {console.error("[vue-loader] create-appointments-add-care-person.vue: functional components are not supported with templates, they should use render functions.")}
-
-/* hot reload */
-if (false) {(function () {
-  var hotAPI = require("vue-hot-reload-api")
-  hotAPI.install(require("vue"), false)
-  if (!hotAPI.compatible) return
-  module.hot.accept()
-  if (!module.hot.data) {
-    hotAPI.createRecord("data-v-4874c3de", Component.options)
-  } else {
-    hotAPI.reload("data-v-4874c3de", Component.options)
-  }
-  module.hot.dispose(function (data) {
-    disposed = true
-  })
-})()}
-
-module.exports = Component.exports
-
-
-/***/ }),
-/* 117 */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_vuex__ = __webpack_require__(2);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__store_actions__ = __webpack_require__(4);
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-
-
-
-
-/* harmony default export */ __webpack_exports__["default"] = ({
-    methods: Object.assign({}, __WEBPACK_IMPORTED_MODULE_0_vuex__["b" /* mapActions */](['setOpenModal']), {
-        createCarePerson: function createCarePerson() {
-            this.setOpenModal({
-                name: 'create-care-person'
-            });
-        }
-    })
-});
-
-/***/ }),
-/* 118 */
-/***/ (function(module, exports, __webpack_require__) {
-
-module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;
-  return _c('div', [_c('label', {
-    attrs: {
-      "for": "provider"
-    }
-  }, [_vm._v("\n        Select Existing Provider (or, "), _c('span', {
-    staticStyle: {
-      "color": "#4fb2e2"
-    }
-  }, [_c('a', {
-    attrs: {
-      "href": "#"
-    },
-    on: {
-      "click": _vm.createCarePerson
-    }
-  }, [_vm._v("add new")])]), _vm._v(")\n    ")])])
-},staticRenderFns: []}
-module.exports.render._withStripped = true
-if (false) {
-  module.hot.accept()
-  if (module.hot.data) {
-     require("vue-hot-reload-api").rerender("data-v-4874c3de", module.exports)
-  }
-}
-
-/***/ }),
-/* 119 */
-/***/ (function(module, exports, __webpack_require__) {
-
-var disposed = false
-var Component = __webpack_require__(1)(
-  /* script */
-  __webpack_require__(120),
-  /* template */
-  __webpack_require__(121),
+  __webpack_require__(110),
   /* styles */
   null,
   /* scopeId */
@@ -56424,7 +57731,7 @@ module.exports = Component.exports
 
 
 /***/ }),
-/* 120 */
+/* 109 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -56556,7 +57863,7 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 });
 
 /***/ }),
-/* 121 */
+/* 110 */
 /***/ (function(module, exports, __webpack_require__) {
 
 module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;
@@ -56796,15 +58103,356 @@ if (false) {
 }
 
 /***/ }),
-/* 122 */
+/* 111 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var disposed = false
 var Component = __webpack_require__(1)(
   /* script */
-  __webpack_require__(123),
+  __webpack_require__(112),
   /* template */
-  __webpack_require__(124),
+  __webpack_require__(113),
+  /* styles */
+  null,
+  /* scopeId */
+  null,
+  /* moduleIdentifier (server only) */
+  null
+)
+Component.options.__file = "/Users/michalis/Code/CLH/cpm-api/resources/assets/js/ccd-models/problems.vue"
+if (Component.esModule && Object.keys(Component.esModule).some(function (key) {return key !== "default" && key.substr(0, 2) !== "__"})) {console.error("named exports are not supported in *.vue files.")}
+if (Component.options.functional) {console.error("[vue-loader] problems.vue: functional components are not supported with templates, they should use render functions.")}
+
+/* hot reload */
+if (false) {(function () {
+  var hotAPI = require("vue-hot-reload-api")
+  hotAPI.install(require("vue"), false)
+  if (!hotAPI.compatible) return
+  module.hot.accept()
+  if (!module.hot.data) {
+    hotAPI.createRecord("data-v-50157be8", Component.options)
+  } else {
+    hotAPI.reload("data-v-50157be8", Component.options)
+  }
+  module.hot.dispose(function (data) {
+    disposed = true
+  })
+})()}
+
+module.exports = Component.exports
+
+
+/***/ }),
+/* 112 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
+
+/* harmony default export */ __webpack_exports__["default"] = ({
+    data: function data() {
+        return {
+            problem: {
+                id: '',
+                patient_id: $('meta[name="patient_id"]').attr('content'),
+                name: ''
+            },
+            problems: []
+        };
+    },
+
+
+    mounted: function mounted() {
+        this.loadProblems();
+    },
+
+    methods: {
+        loadProblems: function loadProblems() {
+            var self = this;
+
+            var params = {
+                params: {
+                    patient_id: self.problem.patient_id
+                }
+            };
+
+            window.axios.get('/CCDModels/Items/ProblemsItem', params).then(function (response) {
+                self.problems = response.data;
+            }, function (response) {
+                console.log(response);
+            });
+        },
+
+        addProblem: function addProblem() {
+            if (this.problem.name) {
+                var self = this;
+
+                var payload = {
+                    'problem': this.problem
+                };
+
+                window.axios.post('/CCDModels/Items/ProblemsItem/store', payload).then(function (response) {
+                    var id = response.data.id.id;
+
+                    self.problems.push({ id: id, patient_id: self.problem.patient_id, name: response.data.id.name });
+                    self.problem = { id: '', patient_id: self.problem.patient_id, name: '' };
+                }, function (response) {
+                    console.log(response);
+                });
+            }
+        },
+
+        editProblem: function editProblem(index) {
+            $('#problem-name-' + index).toggle();
+            $('#problem-edit-' + index).toggle();
+            $('.problem-edit-btn').hide();
+            $('.problem-delete-btn').hide();
+            $('#problem-save-btn-' + index).toggle();
+        },
+
+        updateProblem: function updateProblem(index) {
+            var payload = {
+                'problem': this.problems[index]
+            };
+
+            window.axios.post('/CCDModels/Items/ProblemsItem/update', payload).then(function (response) {
+                $('#problem-name-' + index).toggle();
+                $('#problem-edit-' + index).toggle();
+                $('.problem-edit-btn').show();
+                $('.problem-delete-btn').show();
+                $('#problem-save-btn-' + index).toggle();
+            }, function (response) {
+                console.log(response);
+            });
+        },
+
+        deleteProblem: function deleteProblem(index, e) {
+            if (confirm("Are you sure you want to delete this problem?")) {
+                var self = this;
+
+                var payload = {
+                    'problem': this.problems[index]
+                };
+
+                window.axios.post('/CCDModels/Items/ProblemsItem/destroy', payload).then(function (response) {
+                    self.problems.splice(index, 1);
+                }, function (response) {
+                    console.log(response);
+                });
+            }
+        },
+
+        postEvents: function postEvents(index, e) {
+            window.axios.post('/CCDModels/Items/ProblemsItem/store', this.problems).then(function (response) {}, function (response) {
+                console.log(response);
+            });
+        }
+    }
+});
+
+/***/ }),
+/* 113 */
+/***/ (function(module, exports, __webpack_require__) {
+
+module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;
+  return _c('div', {
+    staticClass: "row",
+    attrs: {
+      "id": "problems"
+    }
+  }, [_c('div', {
+    staticClass: "col-sm-12"
+  }, [_c('div', {
+    staticClass: "list-group"
+  }, [_vm._l((_vm.problems), function(problemitem, index) {
+    return [(problemitem.name) ? _c('div', {
+      staticClass: "list-group-item",
+      staticStyle: {
+        "padding": "5px",
+        "font-size": "12px"
+      },
+      on: {
+        "submit": function($event) {
+          $event.preventDefault();
+        }
+      }
+    }, [_c('div', {
+      staticClass: "row"
+    }, [_c('div', {
+      staticClass: "col-sm-10"
+    }, [_c('div', {
+      staticClass: "list-group-item-heading"
+    }, [_c('span', {
+      attrs: {
+        "id": 'problem-name-' + index
+      }
+    }, [_vm._v(_vm._s(problemitem.name))]), _vm._v(" "), _c('textarea', {
+      directives: [{
+        name: "model",
+        rawName: "v-model",
+        value: (problemitem.name),
+        expression: "problemitem.name"
+      }],
+      staticStyle: {
+        "display": "none"
+      },
+      attrs: {
+        "id": 'problem-edit-' + index,
+        "rows": "10"
+      },
+      domProps: {
+        "value": (problemitem.name)
+      },
+      on: {
+        "input": function($event) {
+          if ($event.target.composing) { return; }
+          problemitem.name = $event.target.value
+        }
+      }
+    }, [_vm._v(_vm._s(problemitem.name))]), _vm._v(" "), _c('input', {
+      attrs: {
+        "type": "hidden",
+        "name": "id"
+      },
+      domProps: {
+        "value": problemitem.id
+      }
+    }), _vm._v(" "), _c('input', {
+      attrs: {
+        "type": "hidden",
+        "name": "patient_id"
+      },
+      domProps: {
+        "value": problemitem.patient_id
+      }
+    })])]), _vm._v(" "), _c('div', {
+      staticClass: "col-sm-2 text-right"
+    }, [(problemitem.name) ? _c('p', {
+      staticClass: "list-group-item-text"
+    }, [_vm._v(_vm._s(problemitem.description))]) : _vm._e(), _vm._v(" "), (problemitem.name) ? _c('button', {
+      staticClass: "btn btn-xs btn-danger problem-delete-btn",
+      on: {
+        "click": function($event) {
+          $event.stopPropagation();
+          $event.preventDefault();
+          _vm.deleteProblem(index, _vm.problem)
+        }
+      }
+    }, [_vm._m(0, true)]) : _vm._e(), _vm._v(" "), (problemitem.name) ? _c('button', {
+      staticClass: "btn btn-xs btn-primary problem-edit-btn",
+      on: {
+        "click": function($event) {
+          $event.stopPropagation();
+          $event.preventDefault();
+          _vm.editProblem(index, _vm.problem)
+        }
+      }
+    }, [_vm._m(1, true)]) : _vm._e(), _vm._v(" "), (problemitem.name) ? _c('button', {
+      staticClass: "btn btn-xs btn-success problem-save-btn",
+      staticStyle: {
+        "display": "none"
+      },
+      attrs: {
+        "id": 'problem-save-btn-' + index
+      },
+      on: {
+        "click": function($event) {
+          $event.stopPropagation();
+          $event.preventDefault();
+          _vm.updateProblem(index, _vm.problem)
+        }
+      }
+    }, [_vm._m(2, true)]) : _vm._e()])])]) : _vm._e()]
+  })], 2)]), _vm._v(" "), _c('div', {
+    staticClass: "col-sm-12"
+  }, [_c('div', {
+    staticClass: "panel panel-default"
+  }, [_c('div', {
+    staticClass: "panel-heading"
+  }, [_vm._v("\n                Add a Problem\n            ")]), _vm._v(" "), _c('div', {
+    staticClass: "panel-body"
+  }, [_c('div', {
+    staticClass: "row"
+  }, [_c('div', {
+    staticClass: "col-sm-9"
+  }, [_c('input', {
+    attrs: {
+      "type": "hidden",
+      "id": "patient_id",
+      "name": "patient_id"
+    },
+    domProps: {
+      "value": _vm.problem.patient_id
+    }
+  }), _vm._v(" "), _c('div', {
+    staticClass: "form-group"
+  }, [_c('input', {
+    directives: [{
+      name: "model",
+      rawName: "v-model",
+      value: (_vm.problem.name),
+      expression: "problem.name"
+    }],
+    staticClass: "form-control",
+    attrs: {
+      "placeholder": "Problem Name"
+    },
+    domProps: {
+      "value": (_vm.problem.name)
+    },
+    on: {
+      "input": function($event) {
+        if ($event.target.composing) { return; }
+        _vm.problem.name = $event.target.value
+      }
+    }
+  })])]), _vm._v(" "), _c('div', {
+    staticClass: "col-sm-3 text-right"
+  }, [_c('button', {
+    staticClass: "btn btn-success",
+    on: {
+      "click": function($event) {
+        $event.stopPropagation();
+        $event.preventDefault();
+        _vm.addProblem()
+      }
+    }
+  }, [_vm._m(3)])])])])])])])
+},staticRenderFns: [function (){var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;
+  return _c('span', [_c('i', {
+    staticClass: "glyphicon glyphicon-remove"
+  })])
+},function (){var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;
+  return _c('span', [_c('i', {
+    staticClass: "glyphicon glyphicon-pencil"
+  })])
+},function (){var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;
+  return _c('span', [_c('i', {
+    staticClass: "glyphicon glyphicon-ok"
+  })])
+},function (){var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;
+  return _c('span', [_c('i', {
+    staticClass: "glyphicon glyphicon-plus"
+  }), _vm._v(" Add")])
+}]}
+module.exports.render._withStripped = true
+if (false) {
+  module.hot.accept()
+  if (module.hot.data) {
+     require("vue-hot-reload-api").rerender("data-v-50157be8", module.exports)
+  }
+}
+
+/***/ }),
+/* 114 */
+/***/ (function(module, exports, __webpack_require__) {
+
+var disposed = false
+var Component = __webpack_require__(1)(
+  /* script */
+  __webpack_require__(115),
+  /* template */
+  __webpack_require__(116),
   /* styles */
   null,
   /* scopeId */
@@ -56836,7 +58484,7 @@ module.exports = Component.exports
 
 
 /***/ }),
-/* 123 */
+/* 115 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -56969,7 +58617,7 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 });
 
 /***/ }),
-/* 124 */
+/* 116 */
 /***/ (function(module, exports, __webpack_require__) {
 
 module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;
@@ -57163,6 +58811,165 @@ if (false) {
      require("vue-hot-reload-api").rerender("data-v-7e95c7f6", module.exports)
   }
 }
+
+/***/ }),
+/* 117 */,
+/* 118 */,
+/* 119 */,
+/* 120 */,
+/* 121 */,
+/* 122 */,
+/* 123 */
+/***/ (function(module, exports, __webpack_require__) {
+
+module.exports = __webpack_require__(124);
+
+
+/***/ }),
+/* 124 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_vue_form__ = __webpack_require__(16);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_vue_form___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0_vue_form__);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__store__ = __webpack_require__(17);
+__webpack_require__(26);
+
+window.Vue = __webpack_require__(3);
+
+window.axios.defaults.baseURL = $('meta[name="base-url"]').attr('content');
+
+
+
+
+window.Vue.config.debug = __WEBPACK_IMPORTED_MODULE_1__store__["a" /* default */].state.debug;
+
+window.Vue.use(__WEBPACK_IMPORTED_MODULE_0_vue_form___default.a, {
+    inputClasses: {
+        valid: 'form-control-success',
+        invalid: 'form-control-danger'
+    }
+});
+
+Vue.component('component-proxy', __webpack_require__(49));
+Vue.component('createAppointmentsAddCarePerson', __webpack_require__(91));
+Vue.component('createCarePerson', __webpack_require__(69));
+Vue.component('updateCarePerson', __webpack_require__(78));
+Vue.component('indexCarePerson', __webpack_require__(79));
+Vue.component('careTeam', __webpack_require__(80));
+Vue.component('select2', __webpack_require__(52));
+Vue.component('fab', __webpack_require__(81));
+Vue.component('openModal', __webpack_require__(56));
+Vue.component('notifications', __webpack_require__(59));
+Vue.component('pdfCareplans', __webpack_require__(102));
+Vue.component('medicationsList', __webpack_require__(108));
+Vue.component('problemsList', __webpack_require__(111));
+Vue.component('allergiesList', __webpack_require__(114));
+Vue.component('nurseDailyHours', __webpack_require__(86));
+
+window.App = new Vue({
+    el: '#app',
+    store: __WEBPACK_IMPORTED_MODULE_1__store__["a" /* default */]
+});
+
+/***/ }),
+/* 125 */,
+/* 126 */,
+/* 127 */,
+/* 128 */,
+/* 129 */,
+/* 130 */,
+/* 131 */,
+/* 132 */,
+/* 133 */,
+/* 134 */,
+/* 135 */,
+/* 136 */,
+/* 137 */,
+/* 138 */,
+/* 139 */,
+/* 140 */,
+/* 141 */,
+/* 142 */,
+/* 143 */,
+/* 144 */,
+/* 145 */,
+/* 146 */,
+/* 147 */,
+/* 148 */,
+/* 149 */,
+/* 150 */,
+/* 151 */,
+/* 152 */,
+/* 153 */,
+/* 154 */,
+/* 155 */,
+/* 156 */,
+/* 157 */,
+/* 158 */,
+/* 159 */,
+/* 160 */,
+/* 161 */,
+/* 162 */,
+/* 163 */,
+/* 164 */,
+/* 165 */,
+/* 166 */,
+/* 167 */,
+/* 168 */,
+/* 169 */,
+/* 170 */,
+/* 171 */,
+/* 172 */,
+/* 173 */,
+/* 174 */,
+/* 175 */,
+/* 176 */,
+/* 177 */,
+/* 178 */,
+/* 179 */,
+/* 180 */,
+/* 181 */,
+/* 182 */,
+/* 183 */
+/***/ (function(module, exports, __webpack_require__) {
+
+// style-loader: Adds some css to the DOM by adding a <style> tag
+
+// load the styles
+var content = __webpack_require__(184);
+if(typeof content === 'string') content = [[module.i, content, '']];
+if(content.locals) module.exports = content.locals;
+// add the styles to the DOM
+var update = __webpack_require__(6)("678d71bc", content, false);
+// Hot Module Replacement
+if(false) {
+ // When the styles change, update the <style> tags
+ if(!content.locals) {
+   module.hot.accept("!!../../../../../node_modules/css-loader/index.js?sourceMap!../../../../../node_modules/vue-loader/lib/style-compiler/index.js?{\"vue\":true,\"id\":\"data-v-4874c3de\",\"scoped\":false,\"hasInlineConfig\":true}!../../../../../node_modules/vue-loader/lib/selector.js?type=styles&index=0!./create-appointments-add-care-person.vue", function() {
+     var newContent = require("!!../../../../../node_modules/css-loader/index.js?sourceMap!../../../../../node_modules/vue-loader/lib/style-compiler/index.js?{\"vue\":true,\"id\":\"data-v-4874c3de\",\"scoped\":false,\"hasInlineConfig\":true}!../../../../../node_modules/vue-loader/lib/selector.js?type=styles&index=0!./create-appointments-add-care-person.vue");
+     if(typeof newContent === 'string') newContent = [[module.id, newContent, '']];
+     update(newContent);
+   });
+ }
+ // When the module is disposed, remove the <style> tags
+ module.hot.dispose(function() { update(); });
+}
+
+/***/ }),
+/* 184 */
+/***/ (function(module, exports, __webpack_require__) {
+
+exports = module.exports = __webpack_require__(5)(true);
+// imports
+
+
+// module
+exports.push([module.i, "\n.vue-modal label {\n    font-size: 14px;\n}\n.providerForm {\n    padding: 10px;\n}\n.validation-error {\n    padding: 3px;\n    margin-bottom: 10px;\n    border: 1px solid transparent;\n    border-radius: 4px;\n}\n.has-danger .form-control {\n    border-color: #ff0000;\n    box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075);\n}\n.has-errors {\n    color: #a94442;\n}\n", "", {"version":3,"sources":["/Users/michalis/Code/CLH/cpm-api/resources/assets/js/components/CareTeam/create-appointments-add-care-person.vue?625eb57f"],"names":[],"mappings":";AACA;IACA,gBAAA;CACA;AAEA;IACA,cAAA;CACA;AAEA;IACA,aAAA;IACA,oBAAA;IACA,8BAAA;IACA,mBAAA;CACA;AAEA;IACA,sBAAA;IACA,iDAAA;CACA;AAEA;IACA,eAAA;CACA","file":"create-appointments-add-care-person.vue","sourcesContent":["<style>\n    .vue-modal label {\n        font-size: 14px;\n    }\n\n    .providerForm {\n        padding: 10px;\n    }\n\n    .validation-error {\n        padding: 3px;\n        margin-bottom: 10px;\n        border: 1px solid transparent;\n        border-radius: 4px;\n    }\n\n    .has-danger .form-control {\n        border-color: #ff0000;\n        box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075);\n    }\n\n    .has-errors {\n        color: #a94442;\n    }\n</style>\n\n<template>\n    <div>\n        <label>\n            Select Existing Provider (or, <span style=\"color: #4fb2e2\"><a\n                href=\"#\"\n                @click=\"show = true\">add new</a></span>)\n        </label>\n\n\n        <modal v-show=\"show\">\n            <template slot=\"header\">\n                <button type=\"button\" class=\"close\" @click=\"clearOpenModal\">×</button>\n                <h4 class=\"modal-title\">Provider Details</h4>\n            </template>\n\n            <template slot=\"body\">\n                <div v-if=\"validationErrors\" class=\"row providerForm\">\n                    <div class=\"error-list\">\n                        <h5 class=\"has-errors\">\n                            <u>There were some problems with your input. Please review the form.</u>\n                        </h5>\n                    </div>\n                </div>\n                <!--<div class=\"row providerForm\">-->\n                <!--<search-providers v-if=\"!newCarePerson.user.id\"-->\n                <!--v-bind:first_name=\"newCarePerson.user.first_name\"-->\n                <!--v-bind:last_name=\"newCarePerson.user.last_name\"-->\n                <!--&gt;</search-providers>-->\n                <!--</div>-->\n\n\n                <vue-form :state=\"formstate\" @submit.prevent=\"onSubmit\">\n                    <div class=\"row providerForm\">\n\n                        <div class=\"form-group\">\n                            <!--name-->\n                            <label class=\"col-md-3 control-label\">Provider Name</label>\n\n                            <div class=\"col-md-9\">\n                                <div class=\"row\">\n                                    <div class=\"form-group required-field col-md-6\">\n                                        <validate auto-label :class=\"fieldClassName(formstate.first_name)\">\n                                            <div class=\"col-md-12\">\n                                                <input type=\"text\"\n                                                       id=\"first_name\"\n                                                       name=\"first_name\"\n                                                       class=\"form-control input-md\"\n                                                       placeholder=\"First\"\n                                                       required\n                                                       v-model=\"newCarePerson.user.first_name\">\n                                            </div>\n\n                                            <div class=\"col-md-12\">\n                                                <field-messages name=\"first_name\"\n                                                                show=\"$untouched || $touched || $submitted\">\n                                                    <div></div>\n                                                    <div class=\"validation-error has-errors text-right\" slot=\"required\">\n                                                        *required\n                                                    </div>\n                                                </field-messages>\n                                            </div>\n                                        </validate>\n                                    </div>\n\n                                    <div class=\"form-group required-field col-md-6\">\n                                        <validate auto-label :class=\"fieldClassName(formstate.last_name)\">\n                                            <div class=\"col-md-12\">\n                                                <input type=\"text\"\n                                                       id=\"last_name\"\n                                                       name=\"last_name\"\n                                                       class=\"form-control input-md\"\n                                                       placeholder=\"Last\"\n                                                       required\n                                                       v-model=\"newCarePerson.user.last_name\">\n                                            </div>\n\n                                            <div class=\"col-md-12\">\n                                                <field-messages name=\"last_name\"\n                                                                show=\"$untouched || $touched || $submitted\">\n                                                    <div></div>\n                                                    <div class=\"validation-error has-errors text-right\" slot=\"required\">\n                                                        *required\n                                                    </div>\n                                                </field-messages>\n                                            </div>\n                                        </validate>\n                                    </div>\n                                </div>\n                            </div>\n                        </div>\n                    </div>\n\n                    <!--specialty-->\n                    <div class=\"row providerForm\">\n                        <div class=\"form-group\">\n                            <label class=\"col-md-3 control-label\">Specialty</label>\n                            <div class=\"col-md-9\">\n                                <div class=\"row\">\n                                    <div class=\"col-md-12\">\n                                        <validate auto-label :class=\"fieldClassName(formstate.specialty)\">\n                                            <div class=\"col-md-12\">\n                                                <select2 :options=\"specialtiesOptions\"\n                                                         name=\"specialty\"\n                                                         v-model=\"newCarePerson.user.provider_info.specialty\"\n                                                         style=\"width: 100%;\">\n                                                    <option disabled value=\"0\">Select one</option>\n                                                </select2>\n                                            </div>\n\n                                            <div class=\"col-md-12\">\n                                                <field-messages name=\"specialty\" show=\"$touched || $submitted\">\n                                                    <div></div>\n                                                    <div class=\"validation-error has-errors text-right\" slot=\"required\">\n                                                        *required\n                                                    </div>\n                                                </field-messages>\n                                            </div>\n\n                                        </validate>\n                                    </div>\n                                </div>\n                            </div>\n                        </div>\n                    </div>\n\n                    <!--address-->\n                    <div class=\"row providerForm\">\n                        <div class=\"form-group\">\n                            <label class=\"col-md-3 control-label\">Address</label>\n                            <div class=\"col-md-9\">\n                                <div class=\"row\">\n                                    <div class=\"col-md-8\">\n                                        <validate auto-label :class=\"fieldClassName(formstate.address)\">\n                                            <div class=\"col-md-12\">\n                                                <input type=\"text\"\n                                                       id=\"address\"\n                                                       name=\"address\"\n                                                       class=\"form-control input-md\"\n                                                       placeholder=\"Line 1\"\n                                                       v-model=\"newCarePerson.user.address\">\n                                            </div>\n\n                                            <div class=\"col-md-12\">\n                                                <field-messages name=\"address\" show=\"$touched || $submitted\">\n                                                    <div></div>\n                                                    <div class=\"validation-error has-errors text-right\" slot=\"required\">\n                                                        *required\n                                                    </div>\n                                                </field-messages>\n                                            </div>\n\n                                        </validate>\n                                    </div>\n\n                                    <div class=\"col-md-4\">\n                                        <validate auto-label :class=\"fieldClassName(formstate.address_2)\">\n                                            <div class=\"col-md-12\">\n                                                <input type=\"text\"\n                                                       id=\"address_2\"\n                                                       name=\"address_2\"\n                                                       class=\"form-control input-md\"\n                                                       placeholder=\"Line 2\"\n                                                       v-model=\"newCarePerson.user.address2\">\n                                            </div>\n\n                                            <div class=\"col-md-12\">\n                                                <field-messages name=\"address_2\" show=\"$touched || $submitted\">\n                                                    <div></div>\n                                                    <div class=\"validation-error has-errors text-right\"\n                                                         slot=\"required\"></div>\n                                                </field-messages>\n                                            </div>\n\n                                        </validate>\n                                    </div>\n                                </div>\n                                <div class=\"row\">\n                                    <div class=\"col-md-4\">\n                                        <validate auto-label :class=\"fieldClassName(formstate.city)\">\n                                            <div class=\"col-md-12\">\n                                                <input type=\"text\"\n                                                       id=\"city\"\n                                                       name=\"city\"\n                                                       class=\"form-control input-md\"\n                                                       placeholder=\"City\"\n                                                       v-model=\"newCarePerson.user.city\">\n                                            </div>\n\n                                            <div class=\"col-md-12\">\n                                                <field-messages name=\"city\" show=\"$touched || $submitted\">\n                                                    <div></div>\n                                                    <div class=\"validation-error has-errors text-right\" slot=\"required\">\n                                                        *required\n                                                    </div>\n                                                </field-messages>\n                                            </div>\n\n                                        </validate>\n                                    </div>\n\n                                    <div class=\"col-md-4\">\n                                        <validate auto-label :class=\"fieldClassName(formstate.state)\">\n                                            <div class=\"col-md-12\">\n                                                <input type=\"text\"\n                                                       id=\"state\"\n                                                       name=\"state\"\n                                                       class=\"form-control input-md\"\n                                                       placeholder=\"State\"\n                                                       v-model=\"newCarePerson.user.state\">\n                                            </div>\n\n                                            <div class=\"col-md-12\">\n                                                <field-messages name=\"state\" show=\"$touched || $submitted\">\n                                                    <div></div>\n                                                    <div class=\"validation-error has-errors text-right\" slot=\"required\">\n                                                        *required\n                                                    </div>\n                                                </field-messages>\n                                            </div>\n\n                                        </validate>\n                                    </div>\n\n                                    <div class=\"col-md-4\">\n                                        <validate auto-label :class=\"fieldClassName(formstate.zip)\">\n                                            <div class=\"col-md-12\">\n                                                <input type=\"text\"\n                                                       id=\"zip\"\n                                                       name=\"zip\"\n                                                       class=\"form-control input-md\"\n                                                       placeholder=\"Zip\"\n                                                       v-model=\"newCarePerson.user.zip\">\n                                            </div>\n\n                                            <div class=\"col-md-12\">\n                                                <field-messages name=\"zip\" show=\"$touched || $submitted\">\n                                                    <div></div>\n                                                    <div class=\"validation-error has-errors text-right\" slot=\"required\">\n                                                        *required\n                                                    </div>\n                                                </field-messages>\n                                            </div>\n\n                                        </validate>\n                                    </div>\n                                </div>\n                            </div>\n                        </div>\n                    </div>\n\n                    <!--phone-->\n                    <div class=\"row providerForm\">\n                        <div class=\"form-group\">\n\n                            <label class=\"col-md-3 control-label\">Phone Number</label>\n\n                            <div class=\"col-md-9\">\n                                <div class=\"row\">\n                                    <div class=\"form-group required-field col-md-12\">\n                                        <validate auto-label :class=\"fieldClassName(formstate.phone)\">\n                                            <div class=\"col-md-12\">\n                                                <input type=\"text\"\n                                                       id=\"phone\"\n                                                       name=\"phone\"\n                                                       class=\"form-control input-md\"\n                                                       placeholder=\"xxx-xxx-xxxx\"\n                                                       v-model=\"newCarePerson.user.phone_numbers[0].number\">\n                                            </div>\n\n                                            <div class=\"col-md-12\">\n                                                <field-messages name=\"phone\" show=\"$touched || $submitted\">\n                                                    <div></div>\n                                                    <div class=\"validation-error has-errors text-right\" slot=\"required\">\n                                                        *required\n                                                    </div>\n                                                </field-messages>\n                                            </div>\n                                        </validate>\n                                    </div>\n                                </div>\n                            </div>\n                        </div>\n                    </div>\n\n                    <!--practice-->\n                    <div class=\"row providerForm\">\n                        <div class=\"form-group\">\n\n                            <label class=\"col-md-3 control-label\">Practice Name</label>\n\n                            <div class=\"col-md-9\">\n                                <div class=\"row\">\n                                    <div class=\"form-group required-field col-md-12\">\n                                        <validate auto-label :class=\"fieldClassName(formstate.practice)\">\n                                            <div class=\"col-md-12\">\n                                                <input type=\"text\"\n                                                       id=\"practice\"\n                                                       name=\"practice\"\n                                                       class=\"form-control input-md\"\n                                                       placeholder=\"\"\n                                                       v-model=\"newCarePerson.user.primary_practice.display_name\">\n                                            </div>\n\n                                            <div class=\"col-md-12\">\n                                                <field-messages name=\"practice\" show=\"$touched || $submitted\">\n                                                    <div></div>\n                                                    <div class=\"validation-error has-errors text-right\" slot=\"required\">\n                                                        *required\n                                                    </div>\n                                                </field-messages>\n                                            </div>\n                                        </validate>\n                                    </div>\n                                </div>\n                            </div>\n                        </div>\n                    </div>\n\n\n                    <!--email-->\n                    <div class=\"row providerForm\">\n                        <div class=\"form-group\">\n\n                            <label class=\"col-md-3 control-label\">Email</label>\n\n                            <div class=\"col-md-9\">\n                                <div class=\"row\">\n                                    <div class=\"form-group required-field col-md-6\">\n                                        <validate auto-label :class=\"fieldClassName(formstate.email)\">\n                                            <div class=\"col-md-12\">\n                                                <input type=\"email\"\n                                                       id=\"email\"\n                                                       name=\"email\"\n                                                       class=\"form-control input-md\"\n                                                       v-model=\"newCarePerson.user.email\">\n                                            </div>\n\n                                            <div class=\"col-md-12\">\n                                                <field-messages name=\"email\" show=\"$touched || $submitted\">\n                                                    <div></div>\n                                                    <div class=\"validation-error has-errors text-right\" slot=\"required\">\n                                                        *required\n                                                    </div>\n                                                    <div class=\"validation-error has-errors text-right\" slot=\"email\">\n                                                        Please enter a valid email\n                                                    </div>\n                                                </field-messages>\n                                            </div>\n                                        </validate>\n                                    </div>\n\n                                    <!--send alerts-->\n                                    <div class=\"form-group col-md-6\">\n\n                                        <label class=\"col-md-3 control-label\">Send Alerts</label>\n\n                                        <div class=\"col-md-9\">\n                                            <div class=\"row\">\n                                                <div class=\"form-group required-field col-md-12\">\n                                                    <validate auto-label :class=\"fieldClassName(formstate.send_alerts)\">\n                                                        <div class=\"col-md-12\">\n\n                                                            <input v-model=\"newCarePerson.alert\"\n                                                                   id=\"send_alerts\"\n                                                                   name=\"send_alerts\"\n                                                                   class=\"form-control input-md\"\n                                                                   type=\"checkbox\"\n                                                                   v-bind:disabled=\"!newCarePerson.user.email || formstate.email && !formstate.email.$valid\"\n                                                                   style=\"display: inline;\">\n                                                        </div>\n\n                                                        <div class=\"col-md-12\">\n                                                            <field-messages name=\"send_alerts\"\n                                                                            show=\"$touched || $submitted\">\n                                                                <div></div>\n                                                                <div class=\"validation-error has-errors text-right\"\n                                                                     slot=\"required\">\n                                                                    *required\n                                                                </div>\n                                                            </field-messages>\n                                                            <div v-if=\"!newCarePerson.user.email || formstate.email && !formstate.email.$valid\"\n                                                                 class=\"validation-error text-left\"\n                                                                 style=\"color: green;\">\n                                                                Email needs to be filled out and valid.\n                                                            </div>\n                                                        </div>\n                                                    </validate>\n                                                </div>\n                                            </div>\n                                        </div>\n                                    </div>\n                                </div>\n                            </div>\n                        </div>\n                    </div>\n\n                    <div class=\"row providerForm\">\n                        <div class=\"form-group\">\n\n                            <label class=\"col-md-3 control-label\">Clinical Type</label>\n\n                            <div class=\"col-md-9\">\n                                <div class=\"row\">\n                                    <!--clinical type-->\n                                    <div class=\"form-group required-field col-md-6\">\n                                        <validate auto-label :class=\"fieldClassName(formstate.qualification)\">\n                                            <div class=\"col-md-12\">\n\n                                                <select v-model=\"newCarePerson.user.provider_info.qualification\"\n                                                        id=\"qualification\"\n                                                        name=\"qualification\"\n                                                        class=\"form-control input-md\"\n                                                        required>\n                                                    <option value=\"\" disabled></option>\n                                                    <option value=\"clinical\">Clinical (MD, RN or other)</option>\n                                                    <option value=\"non-clinical\">Non-clinical</option>\n                                                </select>\n                                            </div>\n\n                                            <div class=\"col-md-12\">\n                                                <field-messages name=\"qualification\"\n                                                                show=\"$untouched || $touched || $submitted\">\n                                                    <div></div>\n                                                    <div class=\"validation-error has-errors text-right\" slot=\"required\">\n                                                        *required\n                                                    </div>\n                                                </field-messages>\n                                            </div>\n                                        </validate>\n                                    </div>\n\n                                    <!--is ccm billing provider-->\n                                    <div class=\"form-group col-md-6\">\n\n                                        <label class=\"col-md-3 control-label\">CCM Billing Provider</label>\n\n                                        <div class=\"col-md-9\">\n                                            <div class=\"row\">\n                                                <div class=\"form-group required-field col-md-12\">\n                                                    <validate auto-label\n                                                              :class=\"fieldClassName(formstate.is_billing_provider)\">\n                                                        <div class=\"col-md-12\">\n\n                                                            <input v-model=\"newCarePerson.is_billing_provider\"\n                                                                   id=\"is_billing_provider\"\n                                                                   name=\"is_billing_provider\"\n                                                                   class=\"form-control input-md\"\n                                                                   type=\"checkbox\"\n                                                                   style=\"display: inline;\">\n                                                        </div>\n\n                                                        <div class=\"col-md-12\">\n                                                            <field-messages name=\"is_billing_provider\"\n                                                                            show=\"$touched || $submitted\">\n                                                                <div></div>\n                                                                <div class=\"validation-error has-errors text-right\"\n                                                                     slot=\"required\">\n                                                                    *required\n                                                                </div>\n                                                            </field-messages>\n                                                        </div>\n                                                    </validate>\n                                                </div>\n                                            </div>\n                                        </div>\n                                    </div>\n                                </div>\n                            </div>\n                        </div>\n                    </div>\n                </vue-form>\n            </template>\n\n            <template slot=\"footer\">\n                <div class=\"row\">\n                    <div class=\"col-md-6 text-center\">\n                        <button style=\"width:50%\" class=\"btn btn-default\" @click=\"clearOpenModal\">Close</button>\n                    </div>\n                    <div class=\"col-md-6 text-center\">\n                        <button style=\"width:50%\" :disabled=\"false\" @click.prevent.default=\"sendForm\" class=\" btn btn-info\">\n                            Save <i v-if=\"false\" class=\"fa fa-spinner fa-pulse fa-fw\"></i>\n                        </button>\n                    </div>\n\n                </div>\n            </template>\n        </modal>\n    </div>\n</template>\n\n<script>\n    import modal from '../shared/modal.vue';\n    import {mapGetters, mapActions} from 'vuex'\n    import {getPatientCareTeam, addNotification} from '../../store/actions'\n\n    export default {\n        components: {\n            modal\n        },\n\n        computed: Object.assign({},\n            {\n                validationErrors() {\n                    return this.formstate && this.formstate.$invalid && this.submitClicked\n                }\n            },\n            {\n                name() {\n                    return this.newCarePerson.user.first_name\n                        + ' '\n                        + this.newCarePerson.user.last_name\n                }\n            }\n        ),\n\n        methods: Object.assign({},\n            mapActions(['getPatientCareTeam', 'addNotification']),\n            {\n                clearOpenModal() {\n                    Object.assign(this.$data, this.$options.data.apply(this))\n                    this.show = false\n                },\n                sendForm() {\n                    this.submitClicked = true\n\n                    if (this.validationErrors) {\n                        return\n                    }\n\n                    if (this.newCarePerson.is_billing_provider) {\n                        this.newCarePerson.formatted_type = 'Billing Provider';\n                    }\n\n                    let id = this.newCarePerson.id ? this.newCarePerson.id : 'new'\n\n                    window.axios.patch(this.updateRoute + '/' + id, this.newCarePerson).then(\n                        (response) => {\n                            this.newCarePerson.id = response.data.carePerson.id;\n                            this.newCarePerson.formatted_type = response.data.carePerson.formatted_type;\n\n                            this.clearOpenModal();\n\n                            this.addNotification({\n                                title: \"Successfully saved Care Person\",\n                                text: \"\",\n                                type: \"success\",\n                                timeout: true\n                            })\n\n                            //HACK to replace select2 with newly added provider on appointments page\n                            let carePerson = response.data.carePerson;\n\n                            $('#providerBox').replaceWith('<select id=\"provider\" ' +\n                                'name=\"provider\"' +\n                                'class=\"provider selectpickerX dropdownValid form-control\" ' +\n                                'data-size=\"10\" disabled>  ' +\n                                '<option value=\"' + carePerson.user.id + '\" selected>' + carePerson.user.first_name + ' ' + carePerson.user.last_name + '</option></select>');\n\n                            $('#providerDiv').css('padding-bottom', '10px');\n                            $(\"#save\").append('<input type=\"hidden\" value=\"' + carePerson.user.id + '\" id=\"provider\" name=\"provider\">');\n\n\n                        }, (response) => {\n                            console.log(response.data)\n                        });\n                },\n\n                fieldClassName(field) {\n                    if (!field) {\n                        return '';\n                    }\n                    if ((field.$touched || field.$submitted) && field.$valid) {\n                        return 'has-success';\n                    }\n                    if ((field.$touched || field.$submitted) && field.$invalid) {\n                        return 'has-danger';\n                    }\n                },\n            }\n        ),\n\n        data()\n        {\n            return {\n                show: false,\n                submitClicked: false,\n                updateRoute: $('meta[name=\"provider-update-route\"]').attr('content'),\n                patientId: $('meta[name=\"patient_id\"]').attr('content'),\n                formstate: {},\n\n                newCarePerson: {\n                    id: 'new',\n                    formatted_type: 'External',\n                    alert: false,\n                    is_billing_provider: false,\n                    user_id: $('meta[name=\"patient_id\"]').attr('content'),\n                    user: {\n                        id: '',\n                        email: '',\n                        first_name: '',\n                        last_name: '',\n                        address: '',\n                        address2: '',\n                        city: '',\n                        state: '',\n                        zip: '',\n                        phone_numbers: {\n                            0: {\n                                id: '',\n                                number: '',\n                            }\n                        },\n                        primary_practice: {\n                            id: '',\n                            display_name: ''\n                        },\n                        provider_info: {\n                            id: '',\n                            qualification: '',\n                            specialty: '',\n                        }\n                    }\n                },\n                specialtiesOptions: [\n                    {id: \"Abdominal Radiology\", text: \"Abdominal Radiology\"},\n                    {id: \"Addiction Psychiatry\", text: \"Addiction Psychiatry\"},\n                    {id: \"Adolescent Medicine\", text: \"Adolescent Medicine\"},\n                    {id: \"Adult Reconstructive Orthopaedics\", text: \"Adult Reconstructive Orthopaedics\"},\n                    {\n                        id: \"Advanced Heart Failure & Transplant Cardiology\",\n                        text: \"Advanced Heart Failure & Transplant Cardiology\"\n                    },\n                    {id: \"Allergy & Immunology\", text: \"Allergy & Immunology\"},\n                    {id: \"Anesthesiology\", text: \"Anesthesiology\"},\n                    {id: \"Biochemical Genetics\", text: \"Biochemical Genetics\"},\n                    {id: \"Blood Banking - Transfusion Medicine\", text: \"Blood Banking -T ransfusion Medicine\"},\n                    {id: \"Cardiology\", text: \"Cardiology\"},\n                    {id: \"Cardiothoracic Radiology\", text: \"Cardiothoracic Radiology\"},\n                    {id: \"Cardiovascular Disease\", text: \"Cardiovascular Disease\"},\n                    {id: \"Chemical Pathology\", text: \"Chemical Pathology\"},\n                    {id: \"Child & Adolescent Psychiatry\", text: \"Child & Adolescent Psychiatry\"},\n                    {id: \"Child Abuse Pediatrics\", text: \"Child Abuse Pediatrics\"},\n                    {id: \"Child Neurology\", text: \"Child Neurology\"},\n                    {id: \"Clinical & Laboratory Immunology\", text: \"Clinical & Laboratory Immunology\"},\n                    {id: \"Clinical Cardiac Electrophysiology\", text: \"Clinical Cardiac Electrophysiology\"},\n                    {id: \"Clinical Neurophysiology\", text: \"Clinical Neurophysiology\"},\n                    {id: \"Colon & Rectal Surgery\", text: \"Colon & Rectal Surgery\"},\n                    {id: \"Congenital Cardiac Surgery\", text: \"Congenital Cardiac Surgery\"},\n                    {id: \"Craniofacial Surgery\", text: \"Craniofacial Surgery\"},\n                    {id: \"Critical Care Medicine\", text: \"Critical Care Medicine\"},\n                    {id: \"Critical Care Medicine\", text: \"Critical Care Medicine\"},\n                    {id: \"Cytopathology\", text: \"Cytopathology\"},\n                    {id: \"Dermatology\", text: \"Dermatology\"},\n                    {id: \"Dermatopathology\", text: \"Dermatopathology\"},\n                    {id: \"Developmental-Behavioral Pediatrics\", text: \"Developmental-Behavioral Pediatrics\"},\n                    {id: \"Ears, Nose, Throat (ENT)\", text: \"Ears, Nose, Throat (ENT)\"},\n                    {id: \"Emergency Medicine\", text: \"Emergency Medicine\"},\n                    {id: \"Endocrinology, Diabetes & Metabolism\", text: \"Endocrinology, Diabetes & Metabolism\"},\n                    {id: \"Endovascular Surgical Neuroradiology\", text: \"Endovascular Surgical Neuroradiology\"},\n                    {id: \"Family Medicine\", text: \"Family Medicine\"},\n                    {id: \"Family Practice\", text: \"Family Practice\"},\n                    {\n                        id: \"Female Pelvic Medicine & Reconstructive Surgery\",\n                        text: \"Female Pelvic Medicine & Reconstructive Surgery\"\n                    },\n                    {id: \"Foot & Ankle Orthopaedics\", text: \"Foot & Ankle Orthopaedics\"},\n                    {id: \"Forensic Pathology\", text: \"Forensic Pathology\"},\n                    {id: \"Forensic Psychiatry\", text: \"Forensic Psychiatry\"},\n                    {id: \"Gastroenterology\", text: \"Gastroenterology\"},\n                    {id: \"Geriatric Medicine\", text: \"Geriatric Medicine\"},\n                    {id: \"Geriatric Psychiatry\", text: \"Geriatric Psychiatry\"},\n                    {id: \"Hand Surgery\", text: \"Hand Surgery\"},\n                    {id: \"Hematology\", text: \"Hematology\"},\n                    {id: \"Hematology & Oncology\", text: \"Hematology & Oncology\"},\n                    {id: \"Homecare Nurse\", text: \"Homecare Nurse\"},\n                    {id: \"Infectious Disease\", text: \"Infectious Disease\"},\n                    {id: \"Internal Medicine\", text: \"Internal Medicine\"},\n                    {id: \"Internal Medicine-Pediatrics\", text: \"Internal Medicine-Pediatrics\"},\n                    {id: \"Interventional Cardiology\", text: \"Interventional Cardiology\"},\n                    {id: \"MD\", text: \"MD\"},\n                    {id: \"Medical Genetics\", text: \"Medical Genetics\"},\n                    {id: \"Medical Microbiology\", text: \"Medical Microbiology\"},\n                    {id: \"Medical Toxicology\", text: \"Medical Toxicology\"},\n                    {id: \"Molecular Genetic Pathology\", text: \"Molecular Genetic Pathology\"},\n                    {id: \"Muscoskeletal Radiology\", text: \"Muscoskeletal Radiology\"},\n                    {id: \"Musculoskeletal Oncology\", text: \"Musculoskeletal Oncology\"},\n                    {id: \"Neonatal-Perinatal Medicine\", text: \"Neonatal-Perinatal Medicine\"},\n                    {id: \"Nephrology\", text: \"Nephrology\"},\n                    {id: \"Neurological Surgery\", text: \"Neurological Surgery\"},\n                    {id: \"Neurology\", text: \"Neurology\"},\n                    {id: \"Neuromuscular Medicine\", text: \"Neuromuscular Medicine\"},\n                    {id: \"Neuroradiology\", text: \"Neuroradiology\"},\n                    {id: \"Nuclear Medicine\", text: \"Nuclear Medicine\"},\n                    {id: \"Nuclear Radiology\", text: \"Nuclear Radiology\"},\n                    {id: \"Obstetric Anesthesiology\", text: \"Obstetric Anesthesiology\"},\n                    {id: \"Obstetrics & Gynecology\", text: \"Obstetrics & Gynecology\"},\n                    {id: \"Oncology\", text: \"Oncology\"},\n                    {\n                        id: \"Ophthalmic Plastic & Reconstructive Surgery\",\n                        text: \"Ophthalmic Plastic & Reconstructive Surgery\"\n                    },\n                    {id: \"Ophthalmology\", text: \"Ophthalmology\"},\n                    {id: \"Orthopaedic Sports Medicine\", text: \"Orthopaedic Sports Medicine\"},\n                    {id: \"Orthopaedic Surgery\", text: \"Orthopaedic Surgery\"},\n                    {id: \"Orthopaedic Surgery of the Spine\", text: \"Orthopaedic Surgery of the Spine\"},\n                    {id: \"Orthopaedic Trauma\", text: \"Orthopaedic Trauma\"},\n                    {id: \"Otolaryngology\", text: \"Otolaryngology\"},\n                    {id: \"Otology - Neurotology\", text: \"Otology - Neurotology\"},\n                    {id: \"Pain Medicine\", text: \"Pain Medicine\"},\n                    {id: \"Pathology-Anatomic & Clinical\", text: \"Pathology-Anatomic & Clinical\"},\n                    {id: \"Pediatric Anesthesiology\", text: \"Pediatric Anesthesiology\"},\n                    {id: \"Pediatric Cardiology\", text: \"Pediatric Cardiology\"},\n                    {id: \"Pediatric Critical Care Medicine\", text: \"Pediatric Critical Care Medicine\"},\n                    {id: \"Pediatric Emergency Medicine\", text: \"Pediatric Emergency Medicine\"},\n                    {id: \"Pediatric Endocrinology\", text: \"Pediatric Endocrinology\"},\n                    {id: \"Pediatric Gastroenterology\", text: \"Pediatric Gastroenterology\"},\n                    {id: \"Pediatric Hematology-Oncology\", text: \"Pediatric Hematology-Oncology\"},\n                    {id: \"Pediatric Infectious Diseases\", text: \"Pediatric Infectious Diseases\"},\n                    {id: \"Pediatric Nephrology\", text: \"Pediatric Nephrology\"},\n                    {id: \"Pediatric Orthopaedics\", text: \"Pediatric Orthopaedics\"},\n                    {id: \"Pediatric Otolaryngology\", text: \"Pediatric Otolaryngology\"},\n                    {id: \"Pediatric Pathology\", text: \"Pediatric Pathology\"},\n                    {id: \"Pediatric Pulmonology\", text: \"Pediatric Pulmonology\"},\n                    {id: \"Pediatric Radiology\", text: \"Pediatric Radiology\"},\n                    {id: \"Pediatric Rheumatology\", text: \"Pediatric Rheumatology\"},\n                    {id: \"Pediatric Sports Medicine\", text: \"Pediatric Sports Medicine\"},\n                    {id: \"Pediatric Surgery\", text: \"Pediatric Surgery\"},\n                    {id: \"Pediatric Transplant Hepatology\", text: \"Pediatric Transplant Hepatology\"},\n                    {id: \"Pediatric Urology\", text: \"Pediatric Urology\"},\n                    {id: \"Pediatrics\", text: \"Pediatrics\"},\n                    {id: \"Physical Medicine & Rehabilitation\", text: \"Physical Medicine & Rehabilitation\"},\n                    {id: \"Physical Therapy\", text: \"Physical Therapy\"},\n                    {id: \"Plastic Surgery\", text: \"Plastic Surgery\"},\n                    {id: \"Preventive Medicine\", text: \"Preventive Medicine\"},\n                    {id: \"Procedural Dermatology\", text: \"Procedural Dermatology\"},\n                    {id: \"Psychiatry\", text: \"Psychiatry\"},\n                    {id: \"Pulmonary Disease\", text: \"Pulmonary Disease\"},\n                    {\n                        id: \"Pulmonary Disease & Critical Care Medicine\",\n                        text: \"Pulmonary Disease & Critical Care Medicine\"\n                    },\n                    {id: \"Radiation Oncology\", text: \"Radiation Oncology\"},\n                    {id: \"Radiology-Diagnostic\", text: \"Radiology-Diagnostic\"},\n                    {id: \"Rheumatology\", text: \"Rheumatology\"},\n                    {id: \"Sleep Medicine\", text: \"Sleep Medicine\"},\n                    {id: \"Social Worker\", text: \"Social Worker\"},\n                    {id: \"Spinal Cord Injury Medicine\", text: \"Spinal Cord Injury Medicine\"},\n                    {id: \"Sports Medicine\", text: \"Sports Medicine\"},\n                    {id: \"Surgery-General\", text: \"Surgery-General\"},\n                    {id: \"Surgical Critical Care\", text: \"Surgical Critical Care\"},\n                    {id: \"Therapist\", text: \"Therapist\"},\n                    {id: \"Thoracic Surgery\", text: \"Thoracic Surgery\"},\n                    {id: \"Thoracic Surgery-Integrated\", text: \"Thoracic Surgery-Integrated\"},\n                    {id: \"Transplant Hepatology\", text: \"Transplant Hepatology\"},\n                    {id: \"Urology\", text: \"Urology\"},\n                    {id: \"Vascular & Interventional Radiology\", text: \"Vascular & Interventional Radiology\"},\n                    {id: \"Vascular Surgery\", text: \"Vascular Surgery\"},\n                ]\n            }\n        }\n    }\n</script>"],"sourceRoot":""}]);
+
+// exports
+
 
 /***/ })
 /******/ ]);

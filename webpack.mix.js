@@ -62,3 +62,4 @@ mix.js('resources/assets/js/pdf-careplans.js', 'public/js/v-pdf-careplans.js');
 mix.js('resources/assets/js/careplan-problems-list.js', 'public/js/v-careplan-problems-list.js');
 mix.js('resources/assets/js/careplan-medications-list.js', 'public/js/v-careplan-medications-list.js');
 mix.js('resources/assets/js/careplan-allergies-list.js', 'public/js/v-careplan-allergies-list.js');
+mix.js('resources/assets/js/create-appointments-add-care-person.js', 'public/js/compiled/v-create-appointments-add-care-person.js');
