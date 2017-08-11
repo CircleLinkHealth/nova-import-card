@@ -17,8 +17,12 @@
     "/js/importer-training.js.map": "/js/importer-training.js.map",
     "/css/fab.css.map": "/css/fab.css.map",
     "/css/compiled/provider-dashboard.css.map": "/css/compiled/provider-dashboard.css.map",
-    "/js/v-careplan-problems.js": "/js/v-careplan-problems.js",
-    "/js/v-careplan-problems.js.map": "/js/v-careplan-problems.js.map",
+    "/js/v-careplan-problems-list.js": "/js/v-careplan-problems-list.js",
+    "/js/v-careplan-problems-list.js.map": "/js/v-careplan-problems-list.js.map",
+    "/js/v-careplan-medications-list.js": "/js/v-careplan-medications-list.js",
+    "/js/v-careplan-medications-list.js.map": "/js/v-careplan-medications-list.js.map",
+    "/js/v-careplan-allergies-list.js": "/js/v-careplan-allergies-list.js",
+    "/js/v-careplan-allergies-list.js.map": "/js/v-careplan-allergies-list.js.map",
     "/css/stylesheet.css": "/css/stylesheet.css",
     "/css/provider-dashboard.css": "/css/provider-dashboard.css"
 }
