@@ -60,7 +60,7 @@
 /******/ 	__webpack_require__.p = "";
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 105);
+/******/ 	return __webpack_require__(__webpack_require__.s = 108);
 /******/ })
 /************************************************************************/
 /******/ ([
@@ -39040,22 +39040,25 @@ module.exports = function spread(callback) {
 /* 102 */,
 /* 103 */,
 /* 104 */,
-/* 105 */
+/* 105 */,
+/* 106 */,
+/* 107 */,
+/* 108 */
 /***/ (function(module, exports, __webpack_require__) {
 
-__webpack_require__(106);
 __webpack_require__(109);
-module.exports = __webpack_require__(110);
+__webpack_require__(112);
+module.exports = __webpack_require__(113);
 
 
 /***/ }),
-/* 106 */
+/* 109 */
 /***/ (function(module, exports, __webpack_require__) {
 
 __webpack_require__(17);
 
 window.Vue = __webpack_require__(3);
-window.Vue.use(__webpack_require__(107));
+window.Vue.use(__webpack_require__(110));
 
 var vm = new Vue({
     el: '#trainer-results',
@@ -39119,7 +39122,7 @@ var vm = new Vue({
 });
 
 /***/ }),
-/* 107 */
+/* 110 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -40221,7 +40224,7 @@ var xhrClient = function (request) {
 
 var nodeClient = function (request) {
 
-    var client = __webpack_require__(108);
+    var client = __webpack_require__(111);
 
     return new PromiseObj(function (resolve) {
 
@@ -40697,19 +40700,19 @@ if (typeof window !== 'undefined' && window.Vue) {
 
 
 /***/ }),
-/* 108 */
+/* 111 */
 /***/ (function(module, exports) {
 
 /* (ignored) */
 
 /***/ }),
-/* 109 */
+/* 112 */
 /***/ (function(module, exports) {
 
 // removed by extract-text-webpack-plugin
 
 /***/ }),
-/* 110 */
+/* 113 */
 /***/ (function(module, exports) {
 
 // removed by extract-text-webpack-plugin

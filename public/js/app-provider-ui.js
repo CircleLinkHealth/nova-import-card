@@ -60,7 +60,7 @@
 /******/ 	__webpack_require__.p = "";
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 117);
+/******/ 	return __webpack_require__(__webpack_require__.s = 114);
 /******/ })
 /************************************************************************/
 /******/ ([
@@ -42105,11 +42105,55 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 /***/ (function(module, exports, __webpack_require__) {
 
 var disposed = false
+function injectStyle (ssrContext) {
+  if (disposed) return
+  __webpack_require__(73)
+}
 var Component = __webpack_require__(1)(
   /* script */
-  __webpack_require__(52),
+  __webpack_require__(75),
   /* template */
-  __webpack_require__(54),
+  __webpack_require__(76),
+  /* styles */
+  injectStyle,
+  /* scopeId */
+  null,
+  /* moduleIdentifier (server only) */
+  null
+)
+Component.options.__file = "/Users/michalis/Code/CLH/cpm-api/resources/assets/js/components/shared/modal.vue"
+if (Component.esModule && Object.keys(Component.esModule).some(function (key) {return key !== "default" && key.substr(0, 2) !== "__"})) {console.error("named exports are not supported in *.vue files.")}
+if (Component.options.functional) {console.error("[vue-loader] modal.vue: functional components are not supported with templates, they should use render functions.")}
+
+/* hot reload */
+if (false) {(function () {
+  var hotAPI = require("vue-hot-reload-api")
+  hotAPI.install(require("vue"), false)
+  if (!hotAPI.compatible) return
+  module.hot.accept()
+  if (!module.hot.data) {
+    hotAPI.createRecord("data-v-c554be10", Component.options)
+  } else {
+    hotAPI.reload("data-v-c554be10", Component.options)
+  }
+  module.hot.dispose(function (data) {
+    disposed = true
+  })
+})()}
+
+module.exports = Component.exports
+
+
+/***/ }),
+/* 52 */
+/***/ (function(module, exports, __webpack_require__) {
+
+var disposed = false
+var Component = __webpack_require__(1)(
+  /* script */
+  __webpack_require__(53),
+  /* template */
+  __webpack_require__(55),
   /* styles */
   null,
   /* scopeId */
@@ -42141,12 +42185,12 @@ module.exports = Component.exports
 
 
 /***/ }),
-/* 52 */
+/* 53 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_select2__ = __webpack_require__(53);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_select2__ = __webpack_require__(54);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_select2___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0_select2__);
 //
 //
@@ -42186,7 +42230,7 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 });
 
 /***/ }),
-/* 53 */
+/* 54 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;var require;var require;/*!
@@ -47920,7 +47964,7 @@ S2.define('jquery.select2',[
 
 
 /***/ }),
-/* 54 */
+/* 55 */
 /***/ (function(module, exports, __webpack_require__) {
 
 module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;
@@ -47935,15 +47979,15 @@ if (false) {
 }
 
 /***/ }),
-/* 55 */
+/* 56 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var disposed = false
 var Component = __webpack_require__(1)(
   /* script */
-  __webpack_require__(56),
-  /* template */
   __webpack_require__(57),
+  /* template */
+  __webpack_require__(58),
   /* styles */
   null,
   /* scopeId */
@@ -47975,7 +48019,7 @@ module.exports = Component.exports
 
 
 /***/ }),
-/* 56 */
+/* 57 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -48004,7 +48048,7 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 });
 
 /***/ }),
-/* 57 */
+/* 58 */
 /***/ (function(module, exports, __webpack_require__) {
 
 module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;
@@ -48024,19 +48068,19 @@ if (false) {
 }
 
 /***/ }),
-/* 58 */
+/* 59 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var disposed = false
 function injectStyle (ssrContext) {
   if (disposed) return
-  __webpack_require__(59)
+  __webpack_require__(60)
 }
 var Component = __webpack_require__(1)(
   /* script */
-  __webpack_require__(61),
+  __webpack_require__(62),
   /* template */
-  __webpack_require__(67),
+  __webpack_require__(68),
   /* styles */
   injectStyle,
   /* scopeId */
@@ -48068,13 +48112,13 @@ module.exports = Component.exports
 
 
 /***/ }),
-/* 59 */
+/* 60 */
 /***/ (function(module, exports, __webpack_require__) {
 
 // style-loader: Adds some css to the DOM by adding a <style> tag
 
 // load the styles
-var content = __webpack_require__(60);
+var content = __webpack_require__(61);
 if(typeof content === 'string') content = [[module.i, content, '']];
 if(content.locals) module.exports = content.locals;
 // add the styles to the DOM
@@ -48094,7 +48138,7 @@ if(false) {
 }
 
 /***/ }),
-/* 60 */
+/* 61 */
 /***/ (function(module, exports, __webpack_require__) {
 
 exports = module.exports = __webpack_require__(5)(true);
@@ -48108,12 +48152,12 @@ exports.push([module.i, "\n.vue-notifications {\n    position: fixed;\n    right
 
 
 /***/ }),
-/* 61 */
+/* 62 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__notification_vue__ = __webpack_require__(62);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__notification_vue__ = __webpack_require__(63);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__notification_vue___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0__notification_vue__);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_vuex__ = __webpack_require__(2);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__store_getters__ = __webpack_require__(7);
@@ -48156,19 +48200,19 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 });
 
 /***/ }),
-/* 62 */
+/* 63 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var disposed = false
 function injectStyle (ssrContext) {
   if (disposed) return
-  __webpack_require__(63)
+  __webpack_require__(64)
 }
 var Component = __webpack_require__(1)(
   /* script */
-  __webpack_require__(65),
-  /* template */
   __webpack_require__(66),
+  /* template */
+  __webpack_require__(67),
   /* styles */
   injectStyle,
   /* scopeId */
@@ -48200,13 +48244,13 @@ module.exports = Component.exports
 
 
 /***/ }),
-/* 63 */
+/* 64 */
 /***/ (function(module, exports, __webpack_require__) {
 
 // style-loader: Adds some css to the DOM by adding a <style> tag
 
 // load the styles
-var content = __webpack_require__(64);
+var content = __webpack_require__(65);
 if(typeof content === 'string') content = [[module.i, content, '']];
 if(content.locals) module.exports = content.locals;
 // add the styles to the DOM
@@ -48226,7 +48270,7 @@ if(false) {
 }
 
 /***/ }),
-/* 64 */
+/* 65 */
 /***/ (function(module, exports, __webpack_require__) {
 
 exports = module.exports = __webpack_require__(5)(true);
@@ -48240,7 +48284,7 @@ exports.push([module.i, "\n.vue-notification p {\nmargin-right: 20px;\n}\n.vue-n
 
 
 /***/ }),
-/* 65 */
+/* 66 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -48303,7 +48347,7 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 });
 
 /***/ }),
-/* 66 */
+/* 67 */
 /***/ (function(module, exports, __webpack_require__) {
 
 module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;
@@ -48338,7 +48382,7 @@ if (false) {
 }
 
 /***/ }),
-/* 67 */
+/* 68 */
 /***/ (function(module, exports, __webpack_require__) {
 
 module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;
@@ -48362,63 +48406,19 @@ if (false) {
 }
 
 /***/ }),
-/* 68 */
-/***/ (function(module, exports, __webpack_require__) {
-
-var disposed = false
-function injectStyle (ssrContext) {
-  if (disposed) return
-  __webpack_require__(78)
-}
-var Component = __webpack_require__(1)(
-  /* script */
-  __webpack_require__(80),
-  /* template */
-  __webpack_require__(81),
-  /* styles */
-  injectStyle,
-  /* scopeId */
-  null,
-  /* moduleIdentifier (server only) */
-  null
-)
-Component.options.__file = "/Users/michalis/Code/CLH/cpm-api/resources/assets/js/components/shared/modal.vue"
-if (Component.esModule && Object.keys(Component.esModule).some(function (key) {return key !== "default" && key.substr(0, 2) !== "__"})) {console.error("named exports are not supported in *.vue files.")}
-if (Component.options.functional) {console.error("[vue-loader] modal.vue: functional components are not supported with templates, they should use render functions.")}
-
-/* hot reload */
-if (false) {(function () {
-  var hotAPI = require("vue-hot-reload-api")
-  hotAPI.install(require("vue"), false)
-  if (!hotAPI.compatible) return
-  module.hot.accept()
-  if (!module.hot.data) {
-    hotAPI.createRecord("data-v-c554be10", Component.options)
-  } else {
-    hotAPI.reload("data-v-c554be10", Component.options)
-  }
-  module.hot.dispose(function (data) {
-    disposed = true
-  })
-})()}
-
-module.exports = Component.exports
-
-
-/***/ }),
 /* 69 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var disposed = false
 function injectStyle (ssrContext) {
   if (disposed) return
-  __webpack_require__(75)
+  __webpack_require__(70)
 }
 var Component = __webpack_require__(1)(
   /* script */
-  __webpack_require__(77),
+  __webpack_require__(72),
   /* template */
-  __webpack_require__(82),
+  __webpack_require__(77),
   /* styles */
   injectStyle,
   /* scopeId */
@@ -48453,271 +48453,10 @@ module.exports = Component.exports
 /* 70 */
 /***/ (function(module, exports, __webpack_require__) {
 
-var disposed = false
-function injectStyle (ssrContext) {
-  if (disposed) return
-  __webpack_require__(71)
-}
-var Component = __webpack_require__(1)(
-  /* script */
-  __webpack_require__(73),
-  /* template */
-  __webpack_require__(74),
-  /* styles */
-  injectStyle,
-  /* scopeId */
-  null,
-  /* moduleIdentifier (server only) */
-  null
-)
-Component.options.__file = "/Users/michalis/Code/CLH/cpm-api/resources/assets/js/components/fab.vue"
-if (Component.esModule && Object.keys(Component.esModule).some(function (key) {return key !== "default" && key.substr(0, 2) !== "__"})) {console.error("named exports are not supported in *.vue files.")}
-if (Component.options.functional) {console.error("[vue-loader] fab.vue: functional components are not supported with templates, they should use render functions.")}
-
-/* hot reload */
-if (false) {(function () {
-  var hotAPI = require("vue-hot-reload-api")
-  hotAPI.install(require("vue"), false)
-  if (!hotAPI.compatible) return
-  module.hot.accept()
-  if (!module.hot.data) {
-    hotAPI.createRecord("data-v-244acbbc", Component.options)
-  } else {
-    hotAPI.reload("data-v-244acbbc", Component.options)
-  }
-  module.hot.dispose(function (data) {
-    disposed = true
-  })
-})()}
-
-module.exports = Component.exports
-
-
-/***/ }),
-/* 71 */
-/***/ (function(module, exports, __webpack_require__) {
-
 // style-loader: Adds some css to the DOM by adding a <style> tag
 
 // load the styles
-var content = __webpack_require__(72);
-if(typeof content === 'string') content = [[module.i, content, '']];
-if(content.locals) module.exports = content.locals;
-// add the styles to the DOM
-var update = __webpack_require__(6)("f096b98c", content, false);
-// Hot Module Replacement
-if(false) {
- // When the styles change, update the <style> tags
- if(!content.locals) {
-   module.hot.accept("!!../../../../node_modules/css-loader/index.js?sourceMap!../../../../node_modules/vue-loader/lib/style-compiler/index.js?{\"vue\":true,\"id\":\"data-v-244acbbc\",\"scoped\":false,\"hasInlineConfig\":true}!../../../../node_modules/vue-loader/lib/selector.js?type=styles&index=0!./fab.vue", function() {
-     var newContent = require("!!../../../../node_modules/css-loader/index.js?sourceMap!../../../../node_modules/vue-loader/lib/style-compiler/index.js?{\"vue\":true,\"id\":\"data-v-244acbbc\",\"scoped\":false,\"hasInlineConfig\":true}!../../../../node_modules/vue-loader/lib/selector.js?type=styles&index=0!./fab.vue");
-     if(typeof newContent === 'string') newContent = [[module.id, newContent, '']];
-     update(newContent);
-   });
- }
- // When the module is disposed, remove the <style> tags
- module.hot.dispose(function() { update(); });
-}
-
-/***/ }),
-/* 72 */
-/***/ (function(module, exports, __webpack_require__) {
-
-exports = module.exports = __webpack_require__(5)(true);
-// imports
-
-
-// module
-exports.push([module.i, "\n@media print {\n.hidden-print, .hidden-print * {\n        display: none !important;\n}\n}\n", "", {"version":3,"sources":["/Users/michalis/Code/CLH/cpm-api/resources/assets/js/components/fab.vue?2b26b0c3"],"names":[],"mappings":";AAEA;AACA;QACA,yBAAA;CACA;CACA","file":"fab.vue","sourcesContent":["<!--Don't know how to add compiled fab.css to style tag. Make sure 'public/css/fab.css' is included on the page-->\n<style>\n    @media print {\n        .hidden-print, .hidden-print * {\n            display: none !important;\n        }\n    }\n</style>\n\n<template>\n    <div>\n        <section class=\"FAB hidden-print\">\n            <div class=\"FAB__mini-action-button hidden-print\">\n                <div class=\"mini-action-button--hide mini-action-button hidden-print\">\n                    <a :href=\"createNoteUrl\">\n                        <i class=\"mini-action-button__icon material-icons\">speaker_notes</i>\n                    </a>\n                    <p class=\"mini-action-button__text--hide\">Add Note</p>\n                </div>\n\n                <div class=\"mini-action-button--hide mini-action-button\">\n                    <a :href=\"createObservationUrl\">\n                        <i class=\"mini-action-button__icon material-icons\">timeline</i>\n                    </a>\n                    <p class=\"mini-action-button__text--hide\">Add Observation</p>\n                </div>\n\n                <div class=\"mini-action-button--hide mini-action-button\">\n                    <a :href=\"createActivityUrl\">\n                        <i class=\"mini-action-button__icon material-icons\">local_hospital</i>\n                    </a>\n                    <p class=\"mini-action-button__text--hide\">Add Offline Activity</p>\n                </div>\n\n                <div class=\"mini-action-button--hide mini-action-button\">\n                    <a :href=\"createAppointmentUrl\">\n                        <i class=\"mini-action-button__icon material-icons\">today</i>\n                    </a>\n                    <p class=\"mini-action-button__text--hide\">Add Appointment</p>\n                </div>\n\n                <div id=\"showAddCarePersonModal\" class=\"mini-action-button--hide mini-action-button\">\n                    <p>\n                        <i v-on:click=\"createCarePerson\"\n                           class=\"mini-action-button__icon material-icons\">contact_mail</i>\n                    </p>\n                    <p class=\"mini-action-button__text--hide\">Add Care Person</p>\n                </div>\n\n            </div>\n            <div class=\"FAB__action-button hidden-print\">\n                <i class=\"action-button__icon material-icons hidden-print\">add</i>\n            </div>\n        </section>\n    </div>\n</template>\n\n<script>\n    import {mapGetters, mapActions} from 'vuex'\n    import {getCurrentUser, setOpenModal} from \"../store/actions\";\n    import {currentUser} from '../store/getters';\n\n    export default {\n        data() {\n            return {\n                createNoteUrl: $('meta[name=\"route.patient.note.create\"]').attr('content'),\n                createObservationUrl: $('meta[name=\"route.patient.observation.create\"]').attr('content'),\n                createActivityUrl: $('meta[name=\"route.patient.activity.create\"]').attr('content'),\n                createAppointmentUrl: $('meta[name=\"route.patient.appointment.create\"]').attr('content'),\n            }\n        },\n\n        computed: Object.assign(\n            mapGetters({\n                theCurrentUser: 'currentUser'\n            })\n        ),\n\n        created() {\n            this.getCurrentUser()\n        },\n\n        methods: Object.assign(\n            mapActions(['setOpenModal', 'getCurrentUser']),\n            {\n                createCarePerson() {\n                    this.setOpenModal({\n                        name: 'create-care-person'\n                    })\n                }\n            }\n        ),\n    }\n</script>"],"sourceRoot":""}]);
-
-// exports
-
-
-/***/ }),
-/* 73 */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_vuex__ = __webpack_require__(2);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__store_actions__ = __webpack_require__(4);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__store_getters__ = __webpack_require__(7);
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-
-
-
-
-
-/* harmony default export */ __webpack_exports__["default"] = ({
-    data: function data() {
-        return {
-            createNoteUrl: $('meta[name="route.patient.note.create"]').attr('content'),
-            createObservationUrl: $('meta[name="route.patient.observation.create"]').attr('content'),
-            createActivityUrl: $('meta[name="route.patient.activity.create"]').attr('content'),
-            createAppointmentUrl: $('meta[name="route.patient.appointment.create"]').attr('content')
-        };
-    },
-
-
-    computed: Object.assign(__WEBPACK_IMPORTED_MODULE_0_vuex__["c" /* mapGetters */]({
-        theCurrentUser: 'currentUser'
-    })),
-
-    created: function created() {
-        this.getCurrentUser();
-    },
-
-
-    methods: Object.assign(__WEBPACK_IMPORTED_MODULE_0_vuex__["b" /* mapActions */](['setOpenModal', 'getCurrentUser']), {
-        createCarePerson: function createCarePerson() {
-            this.setOpenModal({
-                name: 'create-care-person'
-            });
-        }
-    })
-});
-
-/***/ }),
-/* 74 */
-/***/ (function(module, exports, __webpack_require__) {
-
-module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;
-  return _c('div', [_c('section', {
-    staticClass: "FAB hidden-print"
-  }, [_c('div', {
-    staticClass: "FAB__mini-action-button hidden-print"
-  }, [_c('div', {
-    staticClass: "mini-action-button--hide mini-action-button hidden-print"
-  }, [_c('a', {
-    attrs: {
-      "href": _vm.createNoteUrl
-    }
-  }, [_c('i', {
-    staticClass: "mini-action-button__icon material-icons"
-  }, [_vm._v("speaker_notes")])]), _vm._v(" "), _c('p', {
-    staticClass: "mini-action-button__text--hide"
-  }, [_vm._v("Add Note")])]), _vm._v(" "), _c('div', {
-    staticClass: "mini-action-button--hide mini-action-button"
-  }, [_c('a', {
-    attrs: {
-      "href": _vm.createObservationUrl
-    }
-  }, [_c('i', {
-    staticClass: "mini-action-button__icon material-icons"
-  }, [_vm._v("timeline")])]), _vm._v(" "), _c('p', {
-    staticClass: "mini-action-button__text--hide"
-  }, [_vm._v("Add Observation")])]), _vm._v(" "), _c('div', {
-    staticClass: "mini-action-button--hide mini-action-button"
-  }, [_c('a', {
-    attrs: {
-      "href": _vm.createActivityUrl
-    }
-  }, [_c('i', {
-    staticClass: "mini-action-button__icon material-icons"
-  }, [_vm._v("local_hospital")])]), _vm._v(" "), _c('p', {
-    staticClass: "mini-action-button__text--hide"
-  }, [_vm._v("Add Offline Activity")])]), _vm._v(" "), _c('div', {
-    staticClass: "mini-action-button--hide mini-action-button"
-  }, [_c('a', {
-    attrs: {
-      "href": _vm.createAppointmentUrl
-    }
-  }, [_c('i', {
-    staticClass: "mini-action-button__icon material-icons"
-  }, [_vm._v("today")])]), _vm._v(" "), _c('p', {
-    staticClass: "mini-action-button__text--hide"
-  }, [_vm._v("Add Appointment")])]), _vm._v(" "), _c('div', {
-    staticClass: "mini-action-button--hide mini-action-button",
-    attrs: {
-      "id": "showAddCarePersonModal"
-    }
-  }, [_c('p', [_c('i', {
-    staticClass: "mini-action-button__icon material-icons",
-    on: {
-      "click": _vm.createCarePerson
-    }
-  }, [_vm._v("contact_mail")])]), _vm._v(" "), _c('p', {
-    staticClass: "mini-action-button__text--hide"
-  }, [_vm._v("Add Care Person")])])]), _vm._v(" "), _vm._m(0)])])
-},staticRenderFns: [function (){var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;
-  return _c('div', {
-    staticClass: "FAB__action-button hidden-print"
-  }, [_c('i', {
-    staticClass: "action-button__icon material-icons hidden-print"
-  }, [_vm._v("add")])])
-}]}
-module.exports.render._withStripped = true
-if (false) {
-  module.hot.accept()
-  if (module.hot.data) {
-     require("vue-hot-reload-api").rerender("data-v-244acbbc", module.exports)
-  }
-}
-
-/***/ }),
-/* 75 */
-/***/ (function(module, exports, __webpack_require__) {
-
-// style-loader: Adds some css to the DOM by adding a <style> tag
-
-// load the styles
-var content = __webpack_require__(76);
+var content = __webpack_require__(71);
 if(typeof content === 'string') content = [[module.i, content, '']];
 if(content.locals) module.exports = content.locals;
 // add the styles to the DOM
@@ -48737,7 +48476,7 @@ if(false) {
 }
 
 /***/ }),
-/* 76 */
+/* 71 */
 /***/ (function(module, exports, __webpack_require__) {
 
 exports = module.exports = __webpack_require__(5)(true);
@@ -48751,12 +48490,12 @@ exports.push([module.i, "\n.vue-modal label {\n    font-size: 14px;\n}\n.provide
 
 
 /***/ }),
-/* 77 */
+/* 72 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__shared_modal_vue__ = __webpack_require__(68);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__shared_modal_vue__ = __webpack_require__(51);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__shared_modal_vue___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0__shared_modal_vue__);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_vuex__ = __webpack_require__(2);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__store_actions__ = __webpack_require__(4);
@@ -49399,13 +49138,13 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 });
 
 /***/ }),
-/* 78 */
+/* 73 */
 /***/ (function(module, exports, __webpack_require__) {
 
 // style-loader: Adds some css to the DOM by adding a <style> tag
 
 // load the styles
-var content = __webpack_require__(79);
+var content = __webpack_require__(74);
 if(typeof content === 'string') content = [[module.i, content, '']];
 if(content.locals) module.exports = content.locals;
 // add the styles to the DOM
@@ -49425,7 +49164,7 @@ if(false) {
 }
 
 /***/ }),
-/* 79 */
+/* 74 */
 /***/ (function(module, exports, __webpack_require__) {
 
 exports = module.exports = __webpack_require__(5)(true);
@@ -49439,7 +49178,7 @@ exports.push([module.i, "\n.close-button {\n    font-size: 25px;\n    font-weigh
 
 
 /***/ }),
-/* 80 */
+/* 75 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -49470,7 +49209,7 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 /* harmony default export */ __webpack_exports__["default"] = ({});
 
 /***/ }),
-/* 81 */
+/* 76 */
 /***/ (function(module, exports, __webpack_require__) {
 
 module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;
@@ -49501,7 +49240,7 @@ if (false) {
 }
 
 /***/ }),
-/* 82 */
+/* 77 */
 /***/ (function(module, exports, __webpack_require__) {
 
 module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;
@@ -50307,19 +50046,19 @@ if (false) {
 }
 
 /***/ }),
-/* 83 */
+/* 78 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var disposed = false
 function injectStyle (ssrContext) {
   if (disposed) return
-  __webpack_require__(91)
+  __webpack_require__(86)
 }
 var Component = __webpack_require__(1)(
   /* script */
-  __webpack_require__(93),
+  __webpack_require__(88),
   /* template */
-  __webpack_require__(94),
+  __webpack_require__(89),
   /* styles */
   injectStyle,
   /* scopeId */
@@ -50351,15 +50090,15 @@ module.exports = Component.exports
 
 
 /***/ }),
-/* 84 */
+/* 79 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var disposed = false
 var Component = __webpack_require__(1)(
   /* script */
-  __webpack_require__(95),
+  __webpack_require__(90),
   /* template */
-  __webpack_require__(96),
+  __webpack_require__(91),
   /* styles */
   null,
   /* scopeId */
@@ -50391,15 +50130,15 @@ module.exports = Component.exports
 
 
 /***/ }),
-/* 85 */
+/* 80 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var disposed = false
 var Component = __webpack_require__(1)(
   /* script */
-  __webpack_require__(97),
+  __webpack_require__(92),
   /* template */
-  __webpack_require__(98),
+  __webpack_require__(93),
   /* styles */
   null,
   /* scopeId */
@@ -50431,18 +50170,274 @@ module.exports = Component.exports
 
 
 /***/ }),
-/* 86 */,
-/* 87 */,
-/* 88 */,
-/* 89 */,
-/* 90 */,
-/* 91 */
+/* 81 */
+/***/ (function(module, exports, __webpack_require__) {
+
+var disposed = false
+function injectStyle (ssrContext) {
+  if (disposed) return
+  __webpack_require__(82)
+}
+var Component = __webpack_require__(1)(
+  /* script */
+  __webpack_require__(84),
+  /* template */
+  __webpack_require__(85),
+  /* styles */
+  injectStyle,
+  /* scopeId */
+  null,
+  /* moduleIdentifier (server only) */
+  null
+)
+Component.options.__file = "/Users/michalis/Code/CLH/cpm-api/resources/assets/js/components/fab.vue"
+if (Component.esModule && Object.keys(Component.esModule).some(function (key) {return key !== "default" && key.substr(0, 2) !== "__"})) {console.error("named exports are not supported in *.vue files.")}
+if (Component.options.functional) {console.error("[vue-loader] fab.vue: functional components are not supported with templates, they should use render functions.")}
+
+/* hot reload */
+if (false) {(function () {
+  var hotAPI = require("vue-hot-reload-api")
+  hotAPI.install(require("vue"), false)
+  if (!hotAPI.compatible) return
+  module.hot.accept()
+  if (!module.hot.data) {
+    hotAPI.createRecord("data-v-244acbbc", Component.options)
+  } else {
+    hotAPI.reload("data-v-244acbbc", Component.options)
+  }
+  module.hot.dispose(function (data) {
+    disposed = true
+  })
+})()}
+
+module.exports = Component.exports
+
+
+/***/ }),
+/* 82 */
 /***/ (function(module, exports, __webpack_require__) {
 
 // style-loader: Adds some css to the DOM by adding a <style> tag
 
 // load the styles
-var content = __webpack_require__(92);
+var content = __webpack_require__(83);
+if(typeof content === 'string') content = [[module.i, content, '']];
+if(content.locals) module.exports = content.locals;
+// add the styles to the DOM
+var update = __webpack_require__(6)("f096b98c", content, false);
+// Hot Module Replacement
+if(false) {
+ // When the styles change, update the <style> tags
+ if(!content.locals) {
+   module.hot.accept("!!../../../../node_modules/css-loader/index.js?sourceMap!../../../../node_modules/vue-loader/lib/style-compiler/index.js?{\"vue\":true,\"id\":\"data-v-244acbbc\",\"scoped\":false,\"hasInlineConfig\":true}!../../../../node_modules/vue-loader/lib/selector.js?type=styles&index=0!./fab.vue", function() {
+     var newContent = require("!!../../../../node_modules/css-loader/index.js?sourceMap!../../../../node_modules/vue-loader/lib/style-compiler/index.js?{\"vue\":true,\"id\":\"data-v-244acbbc\",\"scoped\":false,\"hasInlineConfig\":true}!../../../../node_modules/vue-loader/lib/selector.js?type=styles&index=0!./fab.vue");
+     if(typeof newContent === 'string') newContent = [[module.id, newContent, '']];
+     update(newContent);
+   });
+ }
+ // When the module is disposed, remove the <style> tags
+ module.hot.dispose(function() { update(); });
+}
+
+/***/ }),
+/* 83 */
+/***/ (function(module, exports, __webpack_require__) {
+
+exports = module.exports = __webpack_require__(5)(true);
+// imports
+
+
+// module
+exports.push([module.i, "\n@media print {\n.hidden-print, .hidden-print * {\n        display: none !important;\n}\n}\n", "", {"version":3,"sources":["/Users/michalis/Code/CLH/cpm-api/resources/assets/js/components/fab.vue?2b26b0c3"],"names":[],"mappings":";AAEA;AACA;QACA,yBAAA;CACA;CACA","file":"fab.vue","sourcesContent":["<!--Don't know how to add compiled fab.css to style tag. Make sure 'public/css/fab.css' is included on the page-->\n<style>\n    @media print {\n        .hidden-print, .hidden-print * {\n            display: none !important;\n        }\n    }\n</style>\n\n<template>\n    <div>\n        <section class=\"FAB hidden-print\">\n            <div class=\"FAB__mini-action-button hidden-print\">\n                <div class=\"mini-action-button--hide mini-action-button hidden-print\">\n                    <a :href=\"createNoteUrl\">\n                        <i class=\"mini-action-button__icon material-icons\">speaker_notes</i>\n                    </a>\n                    <p class=\"mini-action-button__text--hide\">Add Note</p>\n                </div>\n\n                <div class=\"mini-action-button--hide mini-action-button\">\n                    <a :href=\"createObservationUrl\">\n                        <i class=\"mini-action-button__icon material-icons\">timeline</i>\n                    </a>\n                    <p class=\"mini-action-button__text--hide\">Add Observation</p>\n                </div>\n\n                <div class=\"mini-action-button--hide mini-action-button\">\n                    <a :href=\"createActivityUrl\">\n                        <i class=\"mini-action-button__icon material-icons\">local_hospital</i>\n                    </a>\n                    <p class=\"mini-action-button__text--hide\">Add Offline Activity</p>\n                </div>\n\n                <div class=\"mini-action-button--hide mini-action-button\">\n                    <a :href=\"createAppointmentUrl\">\n                        <i class=\"mini-action-button__icon material-icons\">today</i>\n                    </a>\n                    <p class=\"mini-action-button__text--hide\">Add Appointment</p>\n                </div>\n\n                <div id=\"showAddCarePersonModal\" class=\"mini-action-button--hide mini-action-button\">\n                    <p>\n                        <i v-on:click=\"createCarePerson\"\n                           class=\"mini-action-button__icon material-icons\">contact_mail</i>\n                    </p>\n                    <p class=\"mini-action-button__text--hide\">Add Care Person</p>\n                </div>\n\n            </div>\n            <div class=\"FAB__action-button hidden-print\">\n                <i class=\"action-button__icon material-icons hidden-print\">add</i>\n            </div>\n        </section>\n    </div>\n</template>\n\n<script>\n    import {mapGetters, mapActions} from 'vuex'\n    import {getCurrentUser, setOpenModal} from \"../store/actions\";\n    import {currentUser} from '../store/getters';\n\n    export default {\n        data() {\n            return {\n                createNoteUrl: $('meta[name=\"route.patient.note.create\"]').attr('content'),\n                createObservationUrl: $('meta[name=\"route.patient.observation.create\"]').attr('content'),\n                createActivityUrl: $('meta[name=\"route.patient.activity.create\"]').attr('content'),\n                createAppointmentUrl: $('meta[name=\"route.patient.appointment.create\"]').attr('content'),\n            }\n        },\n\n        computed: Object.assign(\n            mapGetters({\n                theCurrentUser: 'currentUser'\n            })\n        ),\n\n        created() {\n            this.getCurrentUser()\n        },\n\n        methods: Object.assign(\n            mapActions(['setOpenModal', 'getCurrentUser']),\n            {\n                createCarePerson() {\n                    this.setOpenModal({\n                        name: 'create-care-person'\n                    })\n                }\n            }\n        ),\n    }\n</script>"],"sourceRoot":""}]);
+
+// exports
+
+
+/***/ }),
+/* 84 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_vuex__ = __webpack_require__(2);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__store_actions__ = __webpack_require__(4);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__store_getters__ = __webpack_require__(7);
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+
+
+
+
+
+/* harmony default export */ __webpack_exports__["default"] = ({
+    data: function data() {
+        return {
+            createNoteUrl: $('meta[name="route.patient.note.create"]').attr('content'),
+            createObservationUrl: $('meta[name="route.patient.observation.create"]').attr('content'),
+            createActivityUrl: $('meta[name="route.patient.activity.create"]').attr('content'),
+            createAppointmentUrl: $('meta[name="route.patient.appointment.create"]').attr('content')
+        };
+    },
+
+
+    computed: Object.assign(__WEBPACK_IMPORTED_MODULE_0_vuex__["c" /* mapGetters */]({
+        theCurrentUser: 'currentUser'
+    })),
+
+    created: function created() {
+        this.getCurrentUser();
+    },
+
+
+    methods: Object.assign(__WEBPACK_IMPORTED_MODULE_0_vuex__["b" /* mapActions */](['setOpenModal', 'getCurrentUser']), {
+        createCarePerson: function createCarePerson() {
+            this.setOpenModal({
+                name: 'create-care-person'
+            });
+        }
+    })
+});
+
+/***/ }),
+/* 85 */
+/***/ (function(module, exports, __webpack_require__) {
+
+module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;
+  return _c('div', [_c('section', {
+    staticClass: "FAB hidden-print"
+  }, [_c('div', {
+    staticClass: "FAB__mini-action-button hidden-print"
+  }, [_c('div', {
+    staticClass: "mini-action-button--hide mini-action-button hidden-print"
+  }, [_c('a', {
+    attrs: {
+      "href": _vm.createNoteUrl
+    }
+  }, [_c('i', {
+    staticClass: "mini-action-button__icon material-icons"
+  }, [_vm._v("speaker_notes")])]), _vm._v(" "), _c('p', {
+    staticClass: "mini-action-button__text--hide"
+  }, [_vm._v("Add Note")])]), _vm._v(" "), _c('div', {
+    staticClass: "mini-action-button--hide mini-action-button"
+  }, [_c('a', {
+    attrs: {
+      "href": _vm.createObservationUrl
+    }
+  }, [_c('i', {
+    staticClass: "mini-action-button__icon material-icons"
+  }, [_vm._v("timeline")])]), _vm._v(" "), _c('p', {
+    staticClass: "mini-action-button__text--hide"
+  }, [_vm._v("Add Observation")])]), _vm._v(" "), _c('div', {
+    staticClass: "mini-action-button--hide mini-action-button"
+  }, [_c('a', {
+    attrs: {
+      "href": _vm.createActivityUrl
+    }
+  }, [_c('i', {
+    staticClass: "mini-action-button__icon material-icons"
+  }, [_vm._v("local_hospital")])]), _vm._v(" "), _c('p', {
+    staticClass: "mini-action-button__text--hide"
+  }, [_vm._v("Add Offline Activity")])]), _vm._v(" "), _c('div', {
+    staticClass: "mini-action-button--hide mini-action-button"
+  }, [_c('a', {
+    attrs: {
+      "href": _vm.createAppointmentUrl
+    }
+  }, [_c('i', {
+    staticClass: "mini-action-button__icon material-icons"
+  }, [_vm._v("today")])]), _vm._v(" "), _c('p', {
+    staticClass: "mini-action-button__text--hide"
+  }, [_vm._v("Add Appointment")])]), _vm._v(" "), _c('div', {
+    staticClass: "mini-action-button--hide mini-action-button",
+    attrs: {
+      "id": "showAddCarePersonModal"
+    }
+  }, [_c('p', [_c('i', {
+    staticClass: "mini-action-button__icon material-icons",
+    on: {
+      "click": _vm.createCarePerson
+    }
+  }, [_vm._v("contact_mail")])]), _vm._v(" "), _c('p', {
+    staticClass: "mini-action-button__text--hide"
+  }, [_vm._v("Add Care Person")])])]), _vm._v(" "), _vm._m(0)])])
+},staticRenderFns: [function (){var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;
+  return _c('div', {
+    staticClass: "FAB__action-button hidden-print"
+  }, [_c('i', {
+    staticClass: "action-button__icon material-icons hidden-print"
+  }, [_vm._v("add")])])
+}]}
+module.exports.render._withStripped = true
+if (false) {
+  module.hot.accept()
+  if (module.hot.data) {
+     require("vue-hot-reload-api").rerender("data-v-244acbbc", module.exports)
+  }
+}
+
+/***/ }),
+/* 86 */
+/***/ (function(module, exports, __webpack_require__) {
+
+// style-loader: Adds some css to the DOM by adding a <style> tag
+
+// load the styles
+var content = __webpack_require__(87);
 if(typeof content === 'string') content = [[module.i, content, '']];
 if(content.locals) module.exports = content.locals;
 // add the styles to the DOM
@@ -50462,7 +50457,7 @@ if(false) {
 }
 
 /***/ }),
-/* 92 */
+/* 87 */
 /***/ (function(module, exports, __webpack_require__) {
 
 exports = module.exports = __webpack_require__(5)(true);
@@ -50476,12 +50471,12 @@ exports.push([module.i, "\n.vue-modal label {\n    font-size: 14px;\n}\n.provide
 
 
 /***/ }),
-/* 93 */
+/* 88 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__shared_modal_vue__ = __webpack_require__(68);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__shared_modal_vue__ = __webpack_require__(51);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__shared_modal_vue___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0__shared_modal_vue__);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_vuex__ = __webpack_require__(2);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__store_actions__ = __webpack_require__(4);
@@ -51124,7 +51119,7 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 });
 
 /***/ }),
-/* 94 */
+/* 89 */
 /***/ (function(module, exports, __webpack_require__) {
 
 module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;
@@ -51930,7 +51925,7 @@ if (false) {
 }
 
 /***/ }),
-/* 95 */
+/* 90 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -52011,7 +52006,7 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 });
 
 /***/ }),
-/* 96 */
+/* 91 */
 /***/ (function(module, exports, __webpack_require__) {
 
 module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;
@@ -52073,7 +52068,7 @@ if (false) {
 }
 
 /***/ }),
-/* 97 */
+/* 92 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -52113,7 +52108,7 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 });
 
 /***/ }),
-/* 98 */
+/* 93 */
 /***/ (function(module, exports, __webpack_require__) {
 
 module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;
@@ -52138,19 +52133,19 @@ if (false) {
 }
 
 /***/ }),
-/* 99 */
+/* 94 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var disposed = false
 function injectStyle (ssrContext) {
   if (disposed) return
-  __webpack_require__(100)
+  __webpack_require__(95)
 }
 var Component = __webpack_require__(1)(
   /* script */
-  __webpack_require__(102),
+  __webpack_require__(97),
   /* template */
-  __webpack_require__(104),
+  __webpack_require__(99),
   /* styles */
   injectStyle,
   /* scopeId */
@@ -52182,13 +52177,13 @@ module.exports = Component.exports
 
 
 /***/ }),
-/* 100 */
+/* 95 */
 /***/ (function(module, exports, __webpack_require__) {
 
 // style-loader: Adds some css to the DOM by adding a <style> tag
 
 // load the styles
-var content = __webpack_require__(101);
+var content = __webpack_require__(96);
 if(typeof content === 'string') content = [[module.i, content, '']];
 if(content.locals) module.exports = content.locals;
 // add the styles to the DOM
@@ -52208,7 +52203,7 @@ if(false) {
 }
 
 /***/ }),
-/* 101 */
+/* 96 */
 /***/ (function(module, exports, __webpack_require__) {
 
 exports = module.exports = __webpack_require__(5)(true);
@@ -52222,7 +52217,7 @@ exports.push([module.i, "\nli.pdf-careplan {\n    font-size: 16px;\n}\n", "", {"
 
 
 /***/ }),
-/* 102 */
+/* 97 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -52230,17 +52225,17 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_vuex__ = __webpack_require__(2);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__store_actions__ = __webpack_require__(4);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__store_getters__ = __webpack_require__(7);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__shared_modal_vue__ = __webpack_require__(68);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__shared_modal_vue__ = __webpack_require__(51);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__shared_modal_vue___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_3__shared_modal_vue__);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4_vue_upload_component__ = __webpack_require__(103);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4_vue_upload_component__ = __webpack_require__(98);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_4_vue_upload_component___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_4_vue_upload_component__);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__CareTeam_create_care_person_vue__ = __webpack_require__(69);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__CareTeam_create_care_person_vue___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_5__CareTeam_create_care_person_vue__);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_6__pages_view_care_plan_update_care_person_vue__ = __webpack_require__(83);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_6__pages_view_care_plan_update_care_person_vue__ = __webpack_require__(78);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_6__pages_view_care_plan_update_care_person_vue___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_6__pages_view_care_plan_update_care_person_vue__);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_7__pages_view_care_plan_index_care_person_vue__ = __webpack_require__(84);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_7__pages_view_care_plan_index_care_person_vue__ = __webpack_require__(79);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_7__pages_view_care_plan_index_care_person_vue___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_7__pages_view_care_plan_index_care_person_vue__);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_8__pages_view_care_plan_care_team_vue__ = __webpack_require__(85);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_8__pages_view_care_plan_care_team_vue__ = __webpack_require__(80);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_8__pages_view_care_plan_care_team_vue___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_8__pages_view_care_plan_care_team_vue__);
 
 
@@ -52326,7 +52321,7 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 });
 
 /***/ }),
-/* 103 */
+/* 98 */
 /***/ (function(module, exports) {
 
 module.exports =
@@ -55779,7 +55774,7 @@ module.exports =
 //# sourceMappingURL=vue-upload-component.js.map
 
 /***/ }),
-/* 104 */
+/* 99 */
 /***/ (function(module, exports, __webpack_require__) {
 
 module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;
@@ -55881,6 +55876,349 @@ if (false) {
 }
 
 /***/ }),
+/* 100 */
+/***/ (function(module, exports, __webpack_require__) {
+
+var disposed = false
+var Component = __webpack_require__(1)(
+  /* script */
+  __webpack_require__(101),
+  /* template */
+  __webpack_require__(102),
+  /* styles */
+  null,
+  /* scopeId */
+  null,
+  /* moduleIdentifier (server only) */
+  null
+)
+Component.options.__file = "/Users/michalis/Code/CLH/cpm-api/resources/assets/js/ccd-models/problems.vue"
+if (Component.esModule && Object.keys(Component.esModule).some(function (key) {return key !== "default" && key.substr(0, 2) !== "__"})) {console.error("named exports are not supported in *.vue files.")}
+if (Component.options.functional) {console.error("[vue-loader] problems.vue: functional components are not supported with templates, they should use render functions.")}
+
+/* hot reload */
+if (false) {(function () {
+  var hotAPI = require("vue-hot-reload-api")
+  hotAPI.install(require("vue"), false)
+  if (!hotAPI.compatible) return
+  module.hot.accept()
+  if (!module.hot.data) {
+    hotAPI.createRecord("data-v-50157be8", Component.options)
+  } else {
+    hotAPI.reload("data-v-50157be8", Component.options)
+  }
+  module.hot.dispose(function (data) {
+    disposed = true
+  })
+})()}
+
+module.exports = Component.exports
+
+
+/***/ }),
+/* 101 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
+
+/* harmony default export */ __webpack_exports__["default"] = ({
+    data: function data() {
+        return {
+            problem: {
+                id: '',
+                patient_id: $('meta[name="patient_id"]').attr('content'),
+                name: ''
+            },
+            problems: []
+        };
+    },
+
+
+    mounted: function mounted() {
+        this.loadProblems();
+    },
+
+    methods: {
+        loadProblems: function loadProblems() {
+            var self = this;
+
+            var params = {
+                params: {
+                    patient_id: self.problem.patient_id
+                }
+            };
+
+            window.axios.get('/CCDModels/Items/ProblemsItem', params).then(function (response) {
+                self.problems = response.data;
+            }, function (response) {
+                console.log(response);
+            });
+        },
+
+        addProblem: function addProblem() {
+            if (this.problem.name) {
+                var self = this;
+
+                var payload = {
+                    'problem': this.problem
+                };
+
+                window.axios.post('/CCDModels/Items/ProblemsItem/store', payload).then(function (response) {
+                    var id = response.data.id.id;
+
+                    self.problems.push({ id: id, patient_id: self.problem.patient_id, name: response.data.id.name });
+                    self.problem = { id: '', patient_id: self.problem.patient_id, name: '' };
+                }, function (response) {
+                    console.log(response);
+                });
+            }
+        },
+
+        editProblem: function editProblem(index) {
+            $('#problem-name-' + index).toggle();
+            $('#problem-edit-' + index).toggle();
+            $('.problem-edit-btn').hide();
+            $('.problem-delete-btn').hide();
+            $('#problem-save-btn-' + index).toggle();
+        },
+
+        updateProblem: function updateProblem(index) {
+            var payload = {
+                'problem': this.problems[index]
+            };
+
+            window.axios.post('/CCDModels/Items/ProblemsItem/update', payload).then(function (response) {
+                $('#problem-name-' + index).toggle();
+                $('#problem-edit-' + index).toggle();
+                $('.problem-edit-btn').show();
+                $('.problem-delete-btn').show();
+                $('#problem-save-btn-' + index).toggle();
+            }, function (response) {
+                console.log(response);
+            });
+        },
+
+        deleteProblem: function deleteProblem(index, e) {
+            if (confirm("Are you sure you want to delete this problem?")) {
+                var self = this;
+
+                var payload = {
+                    'problem': this.problems[index]
+                };
+
+                window.axios.post('/CCDModels/Items/ProblemsItem/destroy', payload).then(function (response) {
+                    self.problems.splice(index, 1);
+                }, function (response) {
+                    console.log(response);
+                });
+            }
+        },
+
+        postEvents: function postEvents(index, e) {
+            window.axios.post('/CCDModels/Items/ProblemsItem/store', this.problems).then(function (response) {}, function (response) {
+                console.log(response);
+            });
+        }
+    }
+});
+
+/***/ }),
+/* 102 */
+/***/ (function(module, exports, __webpack_require__) {
+
+module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;
+  return _c('div', {
+    staticClass: "row",
+    attrs: {
+      "id": "problems"
+    }
+  }, [_c('div', {
+    staticClass: "col-sm-12"
+  }, [_c('div', {
+    staticClass: "list-group"
+  }, [_vm._l((_vm.problems), function(problemitem, index) {
+    return [(problemitem.name) ? _c('div', {
+      staticClass: "list-group-item",
+      staticStyle: {
+        "padding": "5px",
+        "font-size": "12px"
+      },
+      on: {
+        "submit": function($event) {
+          $event.preventDefault();
+        }
+      }
+    }, [_c('div', {
+      staticClass: "row"
+    }, [_c('div', {
+      staticClass: "col-sm-10"
+    }, [_c('div', {
+      staticClass: "list-group-item-heading"
+    }, [_c('span', {
+      attrs: {
+        "id": 'problem-name-' + index
+      }
+    }, [_vm._v(_vm._s(problemitem.name))]), _vm._v(" "), _c('textarea', {
+      directives: [{
+        name: "model",
+        rawName: "v-model",
+        value: (problemitem.name),
+        expression: "problemitem.name"
+      }],
+      staticStyle: {
+        "display": "none"
+      },
+      attrs: {
+        "id": 'problem-edit-' + index,
+        "rows": "10"
+      },
+      domProps: {
+        "value": (problemitem.name)
+      },
+      on: {
+        "input": function($event) {
+          if ($event.target.composing) { return; }
+          problemitem.name = $event.target.value
+        }
+      }
+    }, [_vm._v(_vm._s(problemitem.name))]), _vm._v(" "), _c('input', {
+      attrs: {
+        "type": "hidden",
+        "name": "id"
+      },
+      domProps: {
+        "value": problemitem.id
+      }
+    }), _vm._v(" "), _c('input', {
+      attrs: {
+        "type": "hidden",
+        "name": "patient_id"
+      },
+      domProps: {
+        "value": problemitem.patient_id
+      }
+    })])]), _vm._v(" "), _c('div', {
+      staticClass: "col-sm-2 text-right"
+    }, [(problemitem.name) ? _c('p', {
+      staticClass: "list-group-item-text"
+    }, [_vm._v(_vm._s(problemitem.description))]) : _vm._e(), _vm._v(" "), (problemitem.name) ? _c('button', {
+      staticClass: "btn btn-xs btn-danger problem-delete-btn",
+      on: {
+        "click": function($event) {
+          $event.stopPropagation();
+          $event.preventDefault();
+          _vm.deleteProblem(index, _vm.problem)
+        }
+      }
+    }, [_vm._m(0, true)]) : _vm._e(), _vm._v(" "), (problemitem.name) ? _c('button', {
+      staticClass: "btn btn-xs btn-primary problem-edit-btn",
+      on: {
+        "click": function($event) {
+          $event.stopPropagation();
+          $event.preventDefault();
+          _vm.editProblem(index, _vm.problem)
+        }
+      }
+    }, [_vm._m(1, true)]) : _vm._e(), _vm._v(" "), (problemitem.name) ? _c('button', {
+      staticClass: "btn btn-xs btn-success problem-save-btn",
+      staticStyle: {
+        "display": "none"
+      },
+      attrs: {
+        "id": 'problem-save-btn-' + index
+      },
+      on: {
+        "click": function($event) {
+          $event.stopPropagation();
+          $event.preventDefault();
+          _vm.updateProblem(index, _vm.problem)
+        }
+      }
+    }, [_vm._m(2, true)]) : _vm._e()])])]) : _vm._e()]
+  })], 2)]), _vm._v(" "), _c('div', {
+    staticClass: "col-sm-12"
+  }, [_c('div', {
+    staticClass: "panel panel-default"
+  }, [_c('div', {
+    staticClass: "panel-heading"
+  }, [_vm._v("\n                Add a Problem\n            ")]), _vm._v(" "), _c('div', {
+    staticClass: "panel-body"
+  }, [_c('div', {
+    staticClass: "row"
+  }, [_c('div', {
+    staticClass: "col-sm-9"
+  }, [_c('input', {
+    attrs: {
+      "type": "hidden",
+      "id": "patient_id",
+      "name": "patient_id"
+    },
+    domProps: {
+      "value": _vm.problem.patient_id
+    }
+  }), _vm._v(" "), _c('div', {
+    staticClass: "form-group"
+  }, [_c('input', {
+    directives: [{
+      name: "model",
+      rawName: "v-model",
+      value: (_vm.problem.name),
+      expression: "problem.name"
+    }],
+    staticClass: "form-control",
+    attrs: {
+      "placeholder": "Problem Name"
+    },
+    domProps: {
+      "value": (_vm.problem.name)
+    },
+    on: {
+      "input": function($event) {
+        if ($event.target.composing) { return; }
+        _vm.problem.name = $event.target.value
+      }
+    }
+  })])]), _vm._v(" "), _c('div', {
+    staticClass: "col-sm-3 text-right"
+  }, [_c('button', {
+    staticClass: "btn btn-success",
+    on: {
+      "click": function($event) {
+        $event.stopPropagation();
+        $event.preventDefault();
+        _vm.addProblem()
+      }
+    }
+  }, [_vm._m(3)])])])])])])])
+},staticRenderFns: [function (){var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;
+  return _c('span', [_c('i', {
+    staticClass: "glyphicon glyphicon-remove"
+  })])
+},function (){var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;
+  return _c('span', [_c('i', {
+    staticClass: "glyphicon glyphicon-pencil"
+  })])
+},function (){var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;
+  return _c('span', [_c('i', {
+    staticClass: "glyphicon glyphicon-ok"
+  })])
+},function (){var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;
+  return _c('span', [_c('i', {
+    staticClass: "glyphicon glyphicon-plus"
+  }), _vm._v(" Add")])
+}]}
+module.exports.render._withStripped = true
+if (false) {
+  module.hot.accept()
+  if (module.hot.data) {
+     require("vue-hot-reload-api").rerender("data-v-50157be8", module.exports)
+  }
+}
+
+/***/ }),
+/* 103 */,
+/* 104 */,
 /* 105 */,
 /* 106 */,
 /* 107 */,
@@ -55890,17 +56228,14 @@ if (false) {
 /* 111 */,
 /* 112 */,
 /* 113 */,
-/* 114 */,
-/* 115 */,
-/* 116 */,
-/* 117 */
+/* 114 */
 /***/ (function(module, exports, __webpack_require__) {
 
-module.exports = __webpack_require__(118);
+module.exports = __webpack_require__(115);
 
 
 /***/ }),
-/* 118 */
+/* 115 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -55927,19 +56262,19 @@ window.Vue.use(__WEBPACK_IMPORTED_MODULE_0_vue_form___default.a, {
 });
 
 Vue.component('component-proxy', __webpack_require__(49));
-Vue.component('createAppointmentsAddCarePerson', __webpack_require__(119));
+Vue.component('createAppointmentsAddCarePerson', __webpack_require__(116));
 Vue.component('createCarePerson', __webpack_require__(69));
-Vue.component('updateCarePerson', __webpack_require__(83));
-Vue.component('indexCarePerson', __webpack_require__(84));
-Vue.component('careTeam', __webpack_require__(85));
-Vue.component('select2', __webpack_require__(51));
-Vue.component('fab', __webpack_require__(70));
-Vue.component('openModal', __webpack_require__(55));
-Vue.component('notifications', __webpack_require__(58));
-Vue.component('pdfCareplans', __webpack_require__(99));
-Vue.component('medicationsList', __webpack_require__(122));
-Vue.component('problemsList', __webpack_require__(125));
-Vue.component('allergiesList', __webpack_require__(128));
+Vue.component('updateCarePerson', __webpack_require__(78));
+Vue.component('indexCarePerson', __webpack_require__(79));
+Vue.component('careTeam', __webpack_require__(80));
+Vue.component('select2', __webpack_require__(52));
+Vue.component('fab', __webpack_require__(81));
+Vue.component('openModal', __webpack_require__(56));
+Vue.component('notifications', __webpack_require__(59));
+Vue.component('pdfCareplans', __webpack_require__(94));
+Vue.component('medicationsList', __webpack_require__(119));
+Vue.component('problemsList', __webpack_require__(100));
+Vue.component('allergiesList', __webpack_require__(122));
 
 window.App = new Vue({
     el: '#app',
@@ -55947,15 +56282,15 @@ window.App = new Vue({
 });
 
 /***/ }),
-/* 119 */
+/* 116 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var disposed = false
 var Component = __webpack_require__(1)(
   /* script */
-  __webpack_require__(120),
+  __webpack_require__(117),
   /* template */
-  __webpack_require__(121),
+  __webpack_require__(118),
   /* styles */
   null,
   /* scopeId */
@@ -55987,7 +56322,7 @@ module.exports = Component.exports
 
 
 /***/ }),
-/* 120 */
+/* 117 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -56019,7 +56354,7 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 });
 
 /***/ }),
-/* 121 */
+/* 118 */
 /***/ (function(module, exports, __webpack_require__) {
 
 module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;
@@ -56049,15 +56384,15 @@ if (false) {
 }
 
 /***/ }),
-/* 122 */
+/* 119 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var disposed = false
 var Component = __webpack_require__(1)(
   /* script */
-  __webpack_require__(123),
+  __webpack_require__(120),
   /* template */
-  __webpack_require__(124),
+  __webpack_require__(121),
   /* styles */
   null,
   /* scopeId */
@@ -56089,7 +56424,7 @@ module.exports = Component.exports
 
 
 /***/ }),
-/* 123 */
+/* 120 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -56221,7 +56556,7 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 });
 
 /***/ }),
-/* 124 */
+/* 121 */
 /***/ (function(module, exports, __webpack_require__) {
 
 module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;
@@ -56461,356 +56796,15 @@ if (false) {
 }
 
 /***/ }),
-/* 125 */
+/* 122 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var disposed = false
 var Component = __webpack_require__(1)(
   /* script */
-  __webpack_require__(126),
+  __webpack_require__(123),
   /* template */
-  __webpack_require__(127),
-  /* styles */
-  null,
-  /* scopeId */
-  null,
-  /* moduleIdentifier (server only) */
-  null
-)
-Component.options.__file = "/Users/michalis/Code/CLH/cpm-api/resources/assets/js/ccd-models/problems.vue"
-if (Component.esModule && Object.keys(Component.esModule).some(function (key) {return key !== "default" && key.substr(0, 2) !== "__"})) {console.error("named exports are not supported in *.vue files.")}
-if (Component.options.functional) {console.error("[vue-loader] problems.vue: functional components are not supported with templates, they should use render functions.")}
-
-/* hot reload */
-if (false) {(function () {
-  var hotAPI = require("vue-hot-reload-api")
-  hotAPI.install(require("vue"), false)
-  if (!hotAPI.compatible) return
-  module.hot.accept()
-  if (!module.hot.data) {
-    hotAPI.createRecord("data-v-50157be8", Component.options)
-  } else {
-    hotAPI.reload("data-v-50157be8", Component.options)
-  }
-  module.hot.dispose(function (data) {
-    disposed = true
-  })
-})()}
-
-module.exports = Component.exports
-
-
-/***/ }),
-/* 126 */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
-
-/* harmony default export */ __webpack_exports__["default"] = ({
-    data: function data() {
-        return {
-            problem: {
-                id: '',
-                patient_id: $('meta[name="patient_id"]').attr('content'),
-                name: ''
-            },
-            problems: []
-        };
-    },
-
-
-    mounted: function mounted() {
-        this.loadProblems();
-    },
-
-    methods: {
-        loadProblems: function loadProblems() {
-            var self = this;
-
-            var params = {
-                params: {
-                    patient_id: self.problem.patient_id
-                }
-            };
-
-            window.axios.get('/CCDModels/Items/ProblemsItem', params).then(function (response) {
-                self.problems = response.data;
-            }, function (response) {
-                console.log(response);
-            });
-        },
-
-        addProblem: function addProblem() {
-            if (this.problem.name) {
-                var self = this;
-
-                var payload = {
-                    'problem': this.problem
-                };
-
-                window.axios.post('/CCDModels/Items/ProblemsItem/store', payload).then(function (response) {
-                    var id = response.data.id.id;
-
-                    self.problems.push({ id: id, patient_id: self.problem.patient_id, name: response.data.id.name });
-                    self.problem = { id: '', patient_id: self.problem.patient_id, name: '' };
-                }, function (response) {
-                    console.log(response);
-                });
-            }
-        },
-
-        editProblem: function editProblem(index) {
-            $('#problem-name-' + index).toggle();
-            $('#problem-edit-' + index).toggle();
-            $('.problem-edit-btn').hide();
-            $('.problem-delete-btn').hide();
-            $('#problem-save-btn-' + index).toggle();
-        },
-
-        updateProblem: function updateProblem(index) {
-            var payload = {
-                'problem': this.problems[index]
-            };
-
-            window.axios.post('/CCDModels/Items/ProblemsItem/update', payload).then(function (response) {
-                $('#problem-name-' + index).toggle();
-                $('#problem-edit-' + index).toggle();
-                $('.problem-edit-btn').show();
-                $('.problem-delete-btn').show();
-                $('#problem-save-btn-' + index).toggle();
-            }, function (response) {
-                console.log(response);
-            });
-        },
-
-        deleteProblem: function deleteProblem(index, e) {
-            if (confirm("Are you sure you want to delete this problem?")) {
-                var self = this;
-
-                var payload = {
-                    'problem': this.problems[index]
-                };
-
-                window.axios.post('/CCDModels/Items/ProblemsItem/destroy', payload).then(function (response) {
-                    self.problems.splice(index, 1);
-                }, function (response) {
-                    console.log(response);
-                });
-            }
-        },
-
-        postEvents: function postEvents(index, e) {
-            window.axios.post('/CCDModels/Items/ProblemsItem/store', this.problems).then(function (response) {}, function (response) {
-                console.log(response);
-            });
-        }
-    }
-});
-
-/***/ }),
-/* 127 */
-/***/ (function(module, exports, __webpack_require__) {
-
-module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;
-  return _c('div', {
-    staticClass: "row",
-    attrs: {
-      "id": "problems"
-    }
-  }, [_c('div', {
-    staticClass: "col-sm-12"
-  }, [_c('div', {
-    staticClass: "list-group"
-  }, [_vm._l((_vm.problems), function(problemitem, index) {
-    return [(problemitem.name) ? _c('div', {
-      staticClass: "list-group-item",
-      staticStyle: {
-        "padding": "5px",
-        "font-size": "12px"
-      },
-      on: {
-        "submit": function($event) {
-          $event.preventDefault();
-        }
-      }
-    }, [_c('div', {
-      staticClass: "row"
-    }, [_c('div', {
-      staticClass: "col-sm-10"
-    }, [_c('div', {
-      staticClass: "list-group-item-heading"
-    }, [_c('span', {
-      attrs: {
-        "id": 'problem-name-' + index
-      }
-    }, [_vm._v(_vm._s(problemitem.name))]), _vm._v(" "), _c('textarea', {
-      directives: [{
-        name: "model",
-        rawName: "v-model",
-        value: (problemitem.name),
-        expression: "problemitem.name"
-      }],
-      staticStyle: {
-        "display": "none"
-      },
-      attrs: {
-        "id": 'problem-edit-' + index,
-        "rows": "10"
-      },
-      domProps: {
-        "value": (problemitem.name)
-      },
-      on: {
-        "input": function($event) {
-          if ($event.target.composing) { return; }
-          problemitem.name = $event.target.value
-        }
-      }
-    }, [_vm._v(_vm._s(problemitem.name))]), _vm._v(" "), _c('input', {
-      attrs: {
-        "type": "hidden",
-        "name": "id"
-      },
-      domProps: {
-        "value": problemitem.id
-      }
-    }), _vm._v(" "), _c('input', {
-      attrs: {
-        "type": "hidden",
-        "name": "patient_id"
-      },
-      domProps: {
-        "value": problemitem.patient_id
-      }
-    })])]), _vm._v(" "), _c('div', {
-      staticClass: "col-sm-2 text-right"
-    }, [(problemitem.name) ? _c('p', {
-      staticClass: "list-group-item-text"
-    }, [_vm._v(_vm._s(problemitem.description))]) : _vm._e(), _vm._v(" "), (problemitem.name) ? _c('button', {
-      staticClass: "btn btn-xs btn-danger problem-delete-btn",
-      on: {
-        "click": function($event) {
-          $event.stopPropagation();
-          $event.preventDefault();
-          _vm.deleteProblem(index, _vm.problem)
-        }
-      }
-    }, [_vm._m(0, true)]) : _vm._e(), _vm._v(" "), (problemitem.name) ? _c('button', {
-      staticClass: "btn btn-xs btn-primary problem-edit-btn",
-      on: {
-        "click": function($event) {
-          $event.stopPropagation();
-          $event.preventDefault();
-          _vm.editProblem(index, _vm.problem)
-        }
-      }
-    }, [_vm._m(1, true)]) : _vm._e(), _vm._v(" "), (problemitem.name) ? _c('button', {
-      staticClass: "btn btn-xs btn-success problem-save-btn",
-      staticStyle: {
-        "display": "none"
-      },
-      attrs: {
-        "id": 'problem-save-btn-' + index
-      },
-      on: {
-        "click": function($event) {
-          $event.stopPropagation();
-          $event.preventDefault();
-          _vm.updateProblem(index, _vm.problem)
-        }
-      }
-    }, [_vm._m(2, true)]) : _vm._e()])])]) : _vm._e()]
-  })], 2)]), _vm._v(" "), _c('div', {
-    staticClass: "col-sm-12"
-  }, [_c('div', {
-    staticClass: "panel panel-default"
-  }, [_c('div', {
-    staticClass: "panel-heading"
-  }, [_vm._v("\n                Add a Problem\n            ")]), _vm._v(" "), _c('div', {
-    staticClass: "panel-body"
-  }, [_c('div', {
-    staticClass: "row"
-  }, [_c('div', {
-    staticClass: "col-sm-9"
-  }, [_c('input', {
-    attrs: {
-      "type": "hidden",
-      "id": "patient_id",
-      "name": "patient_id"
-    },
-    domProps: {
-      "value": _vm.problem.patient_id
-    }
-  }), _vm._v(" "), _c('div', {
-    staticClass: "form-group"
-  }, [_c('input', {
-    directives: [{
-      name: "model",
-      rawName: "v-model",
-      value: (_vm.problem.name),
-      expression: "problem.name"
-    }],
-    staticClass: "form-control",
-    attrs: {
-      "placeholder": "Problem Name"
-    },
-    domProps: {
-      "value": (_vm.problem.name)
-    },
-    on: {
-      "input": function($event) {
-        if ($event.target.composing) { return; }
-        _vm.problem.name = $event.target.value
-      }
-    }
-  })])]), _vm._v(" "), _c('div', {
-    staticClass: "col-sm-3 text-right"
-  }, [_c('button', {
-    staticClass: "btn btn-success",
-    on: {
-      "click": function($event) {
-        $event.stopPropagation();
-        $event.preventDefault();
-        _vm.addProblem()
-      }
-    }
-  }, [_vm._m(3)])])])])])])])
-},staticRenderFns: [function (){var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;
-  return _c('span', [_c('i', {
-    staticClass: "glyphicon glyphicon-remove"
-  })])
-},function (){var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;
-  return _c('span', [_c('i', {
-    staticClass: "glyphicon glyphicon-pencil"
-  })])
-},function (){var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;
-  return _c('span', [_c('i', {
-    staticClass: "glyphicon glyphicon-ok"
-  })])
-},function (){var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;
-  return _c('span', [_c('i', {
-    staticClass: "glyphicon glyphicon-plus"
-  }), _vm._v(" Add")])
-}]}
-module.exports.render._withStripped = true
-if (false) {
-  module.hot.accept()
-  if (module.hot.data) {
-     require("vue-hot-reload-api").rerender("data-v-50157be8", module.exports)
-  }
-}
-
-/***/ }),
-/* 128 */
-/***/ (function(module, exports, __webpack_require__) {
-
-var disposed = false
-var Component = __webpack_require__(1)(
-  /* script */
-  __webpack_require__(129),
-  /* template */
-  __webpack_require__(130),
+  __webpack_require__(124),
   /* styles */
   null,
   /* scopeId */
@@ -56842,7 +56836,7 @@ module.exports = Component.exports
 
 
 /***/ }),
-/* 129 */
+/* 123 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -56975,7 +56969,7 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 });
 
 /***/ }),
-/* 130 */
+/* 124 */
 /***/ (function(module, exports, __webpack_require__) {
 
 module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;

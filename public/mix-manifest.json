@@ -17,6 +17,8 @@
     "/js/importer-training.js.map": "/js/importer-training.js.map",
     "/css/fab.css.map": "/css/fab.css.map",
     "/css/compiled/provider-dashboard.css.map": "/css/compiled/provider-dashboard.css.map",
+    "/js/v-careplan-problems.js": "/js/v-careplan-problems.js",
+    "/js/v-careplan-problems.js.map": "/js/v-careplan-problems.js.map",
     "/css/stylesheet.css": "/css/stylesheet.css",
     "/css/provider-dashboard.css": "/css/provider-dashboard.css"
 }
