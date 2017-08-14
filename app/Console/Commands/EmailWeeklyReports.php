@@ -47,20 +47,22 @@ class EmailWeeklyReports extends Command
      */
     public function handle()
     {
-        $startRange = Carbon::now()->setTime(0, 0, 0)->subWeek();
-        $endRange = Carbon::now()->setTime(0, 0, 0);
+        $testerEmail = null;
 
-        foreach ($this->activePractices as $practice) {
-            $this->sendPracticeReport($practice, $startRange, $endRange);
-            $this->sendProviderReport($practice, $startRange, $endRange);
-        }
-    }
-
-    public function sendProviderReport($practice, $startRange, $endRange) {
         if ($this->argument('email')) {
             $testerEmail = $this->argument('email');
         }
 
+        $startRange = Carbon::now()->setTime(0, 0, 0)->subWeek();
+        $endRange = Carbon::now()->setTime(0, 0, 0);
+
+        foreach ($this->activePractices as $practice) {
+            $this->sendPracticeReport($practice, $startRange, $endRange, $testerEmail);
+            $this->sendProviderReport($practice, $startRange, $endRange, $testerEmail);
+        }
+    }
+
+    public function sendProviderReport($practice, $startRange, $endRange, $testerEmail) {
         $providers_for_practice = $practice->getProviders($practice->id);
 
         //handle providers
@@ -83,7 +85,7 @@ class EmailWeeklyReports extends Command
 
             $subjectProvider = 'Dr. ' . $provider->last_name . '\'s CCM Weekly Summary';
 
-            if (isset($testerEmail)) {
+            if ($testerEmail) {
                 Mail::send('sales.by-provider.report', ['data' => $providerData], function ($message) use (
                     $provider,
                     $subjectProvider,
@@ -108,11 +110,7 @@ class EmailWeeklyReports extends Command
         }
     }
 
-    public function sendPracticeReport(Practice $practice, $startRange, $endRange) {
-        if ($this->argument('email')) {
-            $testerEmail = $this->argument('email');
-        }
-
+    public function sendPracticeReport(Practice $practice, $startRange, $endRange, $testerEmail) {
         $subjectPractice = $practice->display_name . '\'s CCM Weekly Summary';
 
         $practiceData = (new SalesByPracticeReport(
@@ -132,7 +130,7 @@ class EmailWeeklyReports extends Command
 
             $organizationSummaryRecipients = explode(', ', trim($practice->weekly_report_recipients));
 
-            if (isset($testerEmail)) {
+            if ($testerEmail) {
                 $organizationSummaryRecipients = [$testerEmail];
             }
 
