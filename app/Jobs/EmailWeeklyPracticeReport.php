@@ -6,7 +6,6 @@ use App\Practice;
 use App\Reports\Sales\Practice\SalesByPracticeReport;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
-use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\Facades\Mail;
@@ -14,7 +13,7 @@ use Maknz\Slack\Facades\Slack;
 
 class EmailWeeklyPracticeReport implements ShouldQueue
 {
-    use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
+    use InteractsWithQueue, Queueable, SerializesModels;
 
     protected $practice;
     protected $startRange;
