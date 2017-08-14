@@ -6,6 +6,7 @@ use App\Console\Commands\Athena\GetCcds;
 use App\Console\Commands\CheckEmrDirectInbox;
 use App\Console\Commands\EmailRNDailyReport;
 use App\Console\Commands\EmailsProvidersToApproveCareplans;
+use App\Console\Commands\EmailWeeklyReports;
 use App\Console\Commands\ExportNurseSchedulesToGoogleCalendar;
 use App\Console\Commands\FormatLocationPhone;
 use App\Console\Commands\GeneratePatientReports;
@@ -60,6 +61,7 @@ class Kernel extends ConsoleKernel
         ProcessCcdaLGHMixup::class,
         ImportLGHInsurance::class,
         CheckEmrDirectInbox::class,
+        EmailWeeklyReports::class,
     ];
 
     /**
