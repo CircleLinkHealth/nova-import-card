@@ -369,11 +369,21 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
         return $this->hasOne(CarePlan::class, 'user_id', 'id');
     }
 
+    /**
+     * Calls made from CLH to the User
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
     public function inboundCalls()
     {
         return $this->hasMany(Call::class, 'inbound_cpm_id', 'id');
     }
 
+    /**
+     * Calls made from the User to CLH
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
     public function outboundCalls()
     {
         return $this->hasMany(Call::class, 'outbound_cpm_id', 'id');
