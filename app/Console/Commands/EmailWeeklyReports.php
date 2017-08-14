@@ -55,8 +55,8 @@ class EmailWeeklyReports extends Command
             $testerEmail = $this->argument('email');
         }
 
-        $startRange = Carbon::now()->setTime(0, 0, 0)->subWeek();
-        $endRange = Carbon::now()->setTime(0, 0, 0);
+        $startRange = Carbon::now()->subWeek()->startOfDay();
+        $endRange = Carbon::now()->endOfDay();
 
         foreach ($this->activePractices as $practice) {
             dispatch(new EmailWeeklyPracticeReport($practice, $startRange, $endRange, $testerEmail));
