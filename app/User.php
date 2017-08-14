@@ -351,7 +351,7 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
 
     public function patientActivities()
     {
-        return $this->hasMany('App\Activity', 'patient_id', 'id');
+        return $this->hasMany(Activity::class, 'patient_id', 'id');
     }
 
     public function providerInfo()
