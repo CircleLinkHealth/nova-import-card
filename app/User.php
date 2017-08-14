@@ -376,7 +376,7 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
 
     public function outboundCalls()
     {
-        return $this->hasMany('App\Call', 'outbound_cpm_id', 'id');
+        return $this->hasMany(Call::class, 'outbound_cpm_id', 'id');
     }
 
     public function inboundMessages()
