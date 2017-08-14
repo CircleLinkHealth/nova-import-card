@@ -22,7 +22,7 @@ class EnrollmentSummary extends SalesReportSection
     ) {
         parent::__construct($provider, $start, $end);
         $this->provider = $provider;
-        $this->service = (new ProviderStatsHelper($start, $end));
+        $this->service = (new ProviderStatsHelper($provider, $start, $end));
     }
 
     public function renderSection()

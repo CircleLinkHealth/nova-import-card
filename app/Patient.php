@@ -10,6 +10,11 @@ class Patient extends Model
     use SoftDeletes;
     use \Venturecraft\Revisionable\RevisionableTrait;
 
+    protected $dates = [
+        'date_withdrawn',
+        'date_paused',
+    ];
+
     /**
      * The connection name for the model.
      *

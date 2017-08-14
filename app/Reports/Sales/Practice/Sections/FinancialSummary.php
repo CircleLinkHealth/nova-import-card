@@ -20,17 +20,15 @@ class FinancialSummary extends SalesReportSection
         Carbon $end
     ) {
         parent::__construct($practice, $start, $end);
-        // override report to always give current data.
-        // $this->start = Carbon::now();
         $this->practice = $practice;
-        $this->service = (new PracticeStatsHelper($start, $end));
+        $this->service = (new PracticeStatsHelper($practice, $start, $end));
         $this->clhpppm = $this->practice->clh_pppm ?? false;
     }
 
     public function renderSection()
     {
         setlocale(LC_MONETARY, 'en_US.UTF-8');
-        $total = $this->service->totalBilled($this->practice);
+        $total = $this->service->totalBilled();
         $this->data['billed_so_far'] = $total;
 
         $this->data['revenue_so_far'] = money_format('%.0n', round($total * 40, -2));
@@ -52,7 +50,7 @@ class FinancialSummary extends SalesReportSection
 
             }
 
-            $billable = $this->service->billableCountForMonth($this->practice, $start);
+            $billable = $this->service->billableCountForMonth($start);
             $billableDollars = $billable * 40;
             $billableRounded = $billableDollars;
 
@@ -67,9 +65,6 @@ class FinancialSummary extends SalesReportSection
 
             $this->data['historical']['Patients >20mins (some are not billed)'][$month]
                 = $billable;
-
-//            $this->data['historical']['CCM Revenue'][$month]
-//                = '~'.money_format('%.0n',$billableRounded);
 
             $this->data['historical']['CCM Profit (Approx.)'][$month]
                 = ($this->clhpppm != 0)

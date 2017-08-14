@@ -7,9 +7,9 @@ use App\Reports\Sales\Location\SalesByLocationReport;
 use App\Reports\Sales\Practice\SalesByPracticeReport;
 use App\Reports\Sales\Provider\SalesByProviderReport;
 use App\User;
+use Barryvdh\Snappy\Facades\SnappyPdf as PDF;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
-use Barryvdh\Snappy\Facades\SnappyPdf as PDF;
 use Illuminate\Support\Facades\Mail;
 
 class SalesReportsController extends Controller
@@ -42,8 +42,8 @@ class SalesReportsController extends Controller
         $provider = User::find($input['provider']);
         $sections = $input['sections'];
 
-        $data = (new SalesByProviderReport
-        ($provider,
+        $data = (new SalesByProviderReport(
+            $provider,
             $sections,
             Carbon::parse($input['start_date']),
             Carbon::parse($input['end_date'])
@@ -123,8 +123,7 @@ class SalesReportsController extends Controller
 
             $email = $input['email'];
 
-            Mail::send('sales.by-practice.report', ['data' => $data], function ($message) use
-            (
+            Mail::send('sales.by-practice.report', ['data' => $data], function ($message) use (
                 $email,
                 $subjectPractice
             ) {

@@ -23,21 +23,14 @@ class EnrollmentSummary extends SalesReportSection
     ) {
         parent::__construct($practice, $start, $end);
         $this->practice = $practice;
-        $this->service = (new PracticeStatsHelper($start, $end));
+        $this->service = (new PracticeStatsHelper($practice, $start, $end));
         $this->clhpppm = $this->practice->clh_pppm ?? false;
     }
 
     public function renderSection()
     {
-        $id = $this->practice->id;
-
-        $enrollmentCumulative = Patient::whereHas('user', function ($q) use
-        (
-            $id
-        ) {
-
-            $q->whereProgramId($id);
-
+        $enrollmentCumulative = Patient::whereHas('user', function ($q) {
+            $q->whereProgramId($this->practice->id);
         })
             ->whereNotNull('ccm_status')
             ->select(DB::raw('count(ccm_status) as total, ccm_status'))
@@ -49,8 +42,7 @@ class EnrollmentSummary extends SalesReportSection
         $this->data['paused'] = $enrollmentCumulative[1]['total'] ?? 'N/A';
         $this->data['withdrawn'] = $enrollmentCumulative[2]['total'] ?? 'N/A';
 
-        $this->data['historical'] = $this->service->historicalEnrollmentPerformance($this->practice,
-            Carbon::parse($this->start), Carbon::parse($this->end));
+        $this->data['historical'] = $this->service->historicalEnrollmentPerformance();
 
         return $this->data;
 

@@ -29,8 +29,7 @@ class PracticeDemographics extends SalesReportSection
         $mas = $this->practice->getCountOfUserTypeAtPractice('med_assistant');
         $oa = $this->practice->getCountOfUserTypeAtPractice('office_admin');
 
-        $disabled_users = User
-            ::whereProgramId($this->practice->id)
+        $disabled_users = User::whereProgramId($this->practice->id)
             ->whereHas('roles', function ($q) {
                 $q->where('name', 'provider')
                 ->orWhere('name', 'med_assistant')
