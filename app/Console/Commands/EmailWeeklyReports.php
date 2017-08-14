@@ -55,7 +55,7 @@ class EmailWeeklyReports extends Command
             $testerEmail = $this->argument('email');
         }
 
-        $startRange = Carbon::now()->subWeek()->startOfDay();
+        $startRange = Carbon::now()->subWeek()->startOfMonth()->startOfDay();
         $endRange = Carbon::now()->endOfDay();
 
         foreach ($this->activePractices as $practice) {
