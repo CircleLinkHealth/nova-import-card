@@ -21,7 +21,7 @@ class FinancialSummary extends SalesReportSection
     ) {
         parent::__construct($provider, $start, $end);
         $this->provider = $provider;
-        $this->service = (new ProviderStatsHelper($start, $end));
+        $this->service = (new ProviderStatsHelper($provider, $start, $end));
         $this->clhpppm = $this->provider->primaryPractice->clh_pppm ?? false;
     }
 
@@ -52,7 +52,7 @@ class FinancialSummary extends SalesReportSection
 
             }
 
-            $billable = $this->service->billableCountForMonth($this->provider, $start);
+            $billable = $this->service->billableCountForMonth($start);
             $billableDollars = $billable * 40;
             $billableRounded = intval($billableDollars / 10) * 10;
 

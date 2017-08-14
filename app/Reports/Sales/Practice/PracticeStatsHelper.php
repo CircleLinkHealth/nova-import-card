@@ -21,172 +21,147 @@ use Illuminate\Support\Facades\URL;
 
 class PracticeStatsHelper
 {
-
+    private $practice;
     private $start;
     private $end;
 
     public function __construct(
+        Practice $practice,
         Carbon $st,
         Carbon $end
     ) {
+        $this->practice = $practice;
+        $this->start = $st->startOfDay();
+        $this->end = $end->endOfDay();
+    }
 
-        $this->start = $st;
-        $this->end = $end;
+    public function enrollmentCount()
+    {
+        $patients = User
+            ::ofType('participant')
+            ->whereProgramId($this->practice->id)
+            ->get();
+
+        $data = [
+            'withdrawn' => 0,
+            'paused'    => 0,
+            'added'     => 0,
+        ];
+
+        foreach ($patients as $patient) {
+            if ($patient->created_at->gte($this->start) && $patient->created_at->lte($this->end)) {
+                $data['added']++;
+            }
+
+            if (!$patient->patientInfo) {
+                continue;
+            }
+
+            if ($patient->patientInfo->date_withdrawn && $patient->patientInfo->date_withdrawn->gte($this->start) && $patient->patientInfo->date_withdrawn->lte($this->end)) {
+                $data['withdrawn']++;
+            }
+
+            if ($patient->patientInfo->date_paused && $patient->patientInfo->date_paused->gte($this->start) && $patient->patientInfo->date_paused->lte($this->end)) {
+                $data['paused']++;
+            }
+        }
+
+        return $data;
 
     }
 
-    public function callCountForPractice(Practice $practice)
+    public function successfulCallCount()
     {
+        return $this->callCount('reached');
+    }
 
-        $id = $practice->id;
-
-        return Call
-            ::whereHas('inboundUser', function ($q) use
-            (
-                $id
-            ) {
-                $q->whereProgramId($id);
+    public function callCount($status = null)
+    {
+        $q = Call
+            ::whereHas('inboundUser', function ($q) {
+                $q->whereProgramId($this->practice->id);
             })
-            ->where('called_date', '>', $this->start)
-            ->where('called_date', '<', $this->end)
-            ->count();
+            ->where('called_date', '>=', $this->start)
+            ->where('called_date', '<=', $this->end);
 
+        if ($status) {
+            $q->whereStatus($status);
+        }
+
+        return $q->count();
     }
 
-    public function successfulCallCountForPractice(Practice $practice)
+    public function totalCCMTimeHours()
     {
-
-        $id = $practice->id;
-
-        return Call
-            ::whereHas('inboundUser', function ($q) use
-            (
-                $id
-            ) {
-                $q->whereProgramId($id);
-            })
-            ->where('called_date', '>', $this->start)
-            ->where('called_date', '<', $this->end)
-            ->whereStatus('reached')
-            ->count();
-
-    }
-
-    public function totalCCMTime(Practice $practice)
-    {
-
-        $id = $practice->id;
-
         $duration = Activity
-            ::whereHas('patient', function ($q) use
-            (
-                $id
-            ) {
-                $q->whereProgramId($id);
+            ::whereHas('patient', function ($q) {
+                $q->whereProgramId($this->practice->id);
             })
-            ->where('performed_at', '>', $this->start->toDateTimeString())
-            ->where('performed_at', '<', $this->end->toDateTimeString())
+            ->where('performed_at', '>=', $this->start->toDateTimeString())
+            ->where('performed_at', '<=', $this->end->toDateTimeString())
             ->sum('duration');
 
-        return round($duration / 3600 , 1);
-
-
+        return round($duration / 3600, 1);
     }
 
-    public function numberOfBiometricsRecorded(Practice $practice)
+    public function numberOfBiometricsRecorded()
     {
-
-        $id = $practice->id;
-
-        return Observation
-            ::whereHas('user', function ($q) use
-            (
-                $id
-            ) {
-                $q->whereProgramId($id);
-            })
-            ->where('created_at', '>', $this->start)
-            ->where('created_at', '<', $this->end)
+        return Observation::whereHas('user', function ($q) {
+            $q->whereProgramId($this->practice->id);
+        })
+            ->where('created_at', '>=', $this->start)
+            ->where('created_at', '<=', $this->end)
             ->count();
-
     }
 
-    public function noteStats(Practice $practice)
+    public function noteStats()
     {
-
-        $providers = User::where('program_id', $practice->id)
-            ->whereHas('roles', function ($q){
+        $providers = User::where('program_id', $this->practice->id)
+            ->whereHas('roles', function ($q) {
                 $q->whereName('provider');
             })->pluck('id')->toArray();
 
-        debug($providers);
-
-        return MailLog
-            ::whereIn('receiver_cpm_id', $providers)
-            ->where('created_at', '>', $this->start)
-            ->where('created_at', '<', $this->end)
+        return MailLog::whereIn('receiver_cpm_id', $providers)
+            ->where('created_at', '>=', $this->start)
+            ->where('created_at', '<=', $this->end)
             ->whereType('note')
             ->count();
     }
 
-    public function emergencyNotesCount(Practice $practice)
+    public function emergencyNotesCount()
     {
-
-        $id = $practice->id;
-
         return MailLog
-            ::whereHas('note', function ($q) use
-            (
-                $id
-            ) {
+            ::whereHas('note', function ($q) {
                 $q->where('isTCM', 1)
-                    ->whereHas('patient', function ($k) use
-                    (
-                        $id
-                    ) {
-                        $k->where('program_id', $id);
+                    ->whereHas('patient', function ($k) {
+                        $k->where('program_id', $this->practice->id);
                     });
             })
             ->whereType('note')
-            ->where('created_at', '>', $this->start)
-            ->where('created_at', '<', $this->end)
+            ->where('created_at', '>=', $this->start)
+            ->where('created_at', '<=', $this->end)
             ->count();
 
     }
 
-    public function linkToPracticeNotes(Practice $practice)
+    public function linkToPracticeNotes()
     {
-
         return URL::route('patient.note.listing'); //. "/?provider=$provider->id";
-
     }
 
-    public function historicalEnrollmentPerformance(
-        Practice $practice,
-        Carbon $start,
-        Carbon $end
-    ) {
-
-        $initTime = Carbon::parse($start)->toDateString();
-        $endTime = Carbon::parse($end)->toDateString();
-
-        $patients = User
-            ::ofType('participant')
-            ->whereProgramId($practice->id)
+    public function historicalEnrollmentPerformance()
+    {
+        $patients = User::ofType('participant')
+            ->whereProgramId($this->practice->id)
             ->get();
 
         for ($i = 0; $i < 5; $i++) {
-
             if ($i == 0) {
-
-                $start = Carbon::parse($initTime);
-                $end = Carbon::parse($endTime);
-
+                $start = $this->start;
+                $end = $this->end;
             } else {
-
-                $start = Carbon::parse($initTime)->subMonth($i)->firstOfMonth();
-                $end = Carbon::parse($initTime)->subMonth($i)->endOfMonth();
-
+                $start = $this->start->copy()->subMonth($i)->firstOfMonth()->startOfDay();
+                $end = $start->copy()->endOfMonth()->endOfDay();
             }
 
             $index = $start->toDateString();
@@ -195,125 +170,56 @@ class PracticeStatsHelper
             $data['added'][$index] = 0;
 
             foreach ($patients as $patient) {
-
-                if ($patient->user_registered > $start->toDateTimeString() && $patient->user_registered <= $end->toDateTimeString()) {
-
+                if ($patient->created_at->gte($start) && $patient->created_at->lte($end)) {
                     $data['added'][$index]++;
-
                 }
 
-                if ($patient->patientInfo->date_withdrawn > $start->toDateTimeString() && $patient->patientInfo->date_withdrawn <= $end->toDateTimeString()) {
+                if (!$patient->patientInfo) {
+                    continue;
+                }
 
+                if ($patient->patientInfo->date_withdrawn && $patient->patientInfo->date_withdrawn->gte($start) && $patient->patientInfo->date_withdrawn->lte($end)) {
                     $data['withdrawn'][$index]++;
-
                 }
 
-                if ($patient->patientInfo->date_paused > $start->toDateTimeString() && $patient->patientInfo->date_paused <= $end->toDateTimeString()) {
-
+                if ($patient->patientInfo->date_paused && $patient->patientInfo->date_paused->gte($start) && $patient->patientInfo->date_paused->lte($end)) {
                     $data['paused'][$index]++;
-
                 }
-
             }
-
-
         }
 
         return $data;
 
     }
 
-    public function enrollmentCountByPractice(
-        Practice $practice,
-        Carbon $start,
-        Carbon $end
-    ) {
-
-        $patients = User
-            ::ofType('participant')
-            ->whereProgramId($practice->id)
-            ->get();
-
-        $data = [
-
-            'withdrawn' => 0,
-            'paused'    => 0,
-            'added'     => 0,
-
-        ];
-
-        foreach ($patients as $patient) {
-
-            if ($patient->created_at > $start->toDateTimeString() && $patient->created_at <= $end->toDateTimeString()) {
-
-                $data['added']++;
-
-            }
-
-            if ($patient->patientInfo->date_withdrawn > $start->toDateTimeString() && $patient->patientInfo->date_withdrawn <= $end->toDateTimeString()) {
-
-                $data['withdrawn']++;
-
-            }
-
-            if ($patient->patientInfo->date_paused > $start->toDateTimeString() && $patient->patientInfo->date_paused <= $end->toDateTimeString()) {
-
-                $data['paused']++;
-
-            }
-
-        }
-
-        return $data;
-
-    }
-
-    public function totalBilled(Practice $practice)
+    public function totalBilled()
     {
-
-        return PatientMonthlySummary
-            ::whereHas('patient_info', function ($q) use
-            (
-                $practice
-            ) {
-                $q->whereHas('user', function ($k) use
-                (
-                    $practice
-                ) {
-                    $k->whereProgramId($practice->id);
-                });
-            })
+        return PatientMonthlySummary::whereHas('patient_info', function ($q) {
+            $q->whereHas('user', function ($k) {
+                $k->whereProgramId($this->practice->id);
+            });
+        })
             ->where('ccm_time', '>', 1199)
             ->count();
 
     }
 
-    public function billableCountForMonth(
-        Practice $practice,
-        Carbon $month
-    ) {
-        return PatientMonthlySummary
-            ::whereHas('patient_info', function ($q) use
-            (
-                $practice
-            ) {
-                $q->whereHas('user', function ($k) use
-                (
-                    $practice
-                ) {
-                    $k->whereProgramId($practice->id);
-                });
-            })
+    public function billableCountForMonth(Carbon $month)
+    {
+        return PatientMonthlySummary::whereHas('patient_info', function ($q) {
+            $q->whereHas('user', function ($k) {
+                $k->whereProgramId($this->practice->id);
+            });
+        })
             ->where('ccm_time', '>', 1199)
             ->where('month_year', $month->firstOfMonth())
             ->count();
 
     }
 
-    public function billableCountCurrentMonth(Practice $practice)
+    public function billableCountCurrentMonth()
     {
-
-        $patientsForPractice = $practice->users()->ofType('participant')->get();
+        $patientsForPractice = $this->practice->users()->ofType('participant')->get();
 
         $month = Carbon::now()->startOfMonth()->toDateString();
         $count = 0;

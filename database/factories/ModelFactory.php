@@ -14,6 +14,7 @@
 use App\Enrollee;
 use App\Entities\Invite;
 use App\Nurse;
+use App\Practice;
 
 $factory->define(App\User::class, function (Faker\Generator $faker) {
     return [
@@ -25,10 +26,9 @@ $factory->define(App\User::class, function (Faker\Generator $faker) {
         'timezone'     => 'America/Chicago',
         'username'     => $faker->userName,
         'address'      => $faker->streetAddress,
-        'city'         => 'Chicago',
+        'city'         => $faker->city,
         'state'        => 'IL',
         'zip'          => '12345',
-        'program_id'   => 8,
     ];
 });
 
@@ -151,4 +151,27 @@ $factory->define(Enrollee::class, function (Faker\Generator $faker) {
 
 $factory->define(Nurse::class, function (Faker\Generator $faker) {
 
+});
+
+$factory->define(Practice::class, function (Faker\Generator $faker) {
+    $name = $faker->company;
+
+    return [
+        'name' => $name,
+        'display_name' => $name,
+        'active' => true,
+        'federal_tax_id' => $faker->randomNumber(5),
+//        'user_id',
+//        'same_clinical_contact',
+        'clh_pppm' => 0,
+//        'same_ehr_login',
+//        'sms_marketing_number',
+        'weekly_report_recipients' => 'mantoniou@circlelinkhealth.com',
+        'invoice_recipients' => 'mantoniou@circlelinkhealth.com',
+        'bill_to_name' => $name,
+//        'auto_approve_careplans',
+//        'send_alerts',
+        'outgoing_phone_number' => $faker->phoneNumber,
+        'term_days' => 30,
+    ];
 });

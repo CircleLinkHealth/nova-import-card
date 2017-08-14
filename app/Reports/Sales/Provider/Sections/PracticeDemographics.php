@@ -20,16 +20,21 @@ class PracticeDemographics extends SalesReportSection
     ) {
         parent::__construct($provider, $start, $end);
         $this->provider = $provider;
-        $this->service = (new ProviderStatsHelper($start, $end));
+        $this->service = (new ProviderStatsHelper($provider, $start, $end));
     }
 
     public function renderSection()
     {
+        if (!$this->provider->primaryPractice) {
+            \Log::critical("Provider {$this->provider->id} does not have a primary practice set.");
+            return 'This provider does not have a primary practice set.';
+        }
 
         return (new \App\Reports\Sales\Practice\Sections\PracticeDemographics(
             $this->provider->primaryPractice,
             $this->start,
-            $this->end))->renderSection();
+            $this->end
+        ))->renderSection();
 
     }
 
