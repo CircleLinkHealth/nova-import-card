@@ -74,8 +74,6 @@ class PhiMail
         $this->connector->authenticateUser('careplanmanager@direct.circlelinkhealth.com', env('EMR_DIRECT_PASSWORD'));
 
         try {
-            echo("Sending a CDA as an attachment\n");
-
             // After authentication, the server has a blank outgoing message
             // template. Begin building this message by adding a recipient.
             // Multiple recipients can be added by calling this command more
