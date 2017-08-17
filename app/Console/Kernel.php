@@ -108,11 +108,7 @@ class Kernel extends ConsoleKernel
         })->everyMinute();
 
         //Comments out until we find all the bugs
-//        $schedule->call(function () {
-//
-//            (new WeeklyReportDispatcher())->exec();
-//
-//        })->weeklyOn(1, '10:00');
+        $schedule->command('email:weeklyReports --practice --provider')->weeklyOn(1, '10:00');
 
         $schedule->command('emailapprovalreminder:providers')
             ->weekdays()

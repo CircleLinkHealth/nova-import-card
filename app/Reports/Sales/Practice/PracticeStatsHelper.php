@@ -22,24 +22,20 @@ use Illuminate\Support\Facades\URL;
 class PracticeStatsHelper
 {
     private $practice;
-    private $start;
-    private $end;
 
     public function __construct(
-        Practice $practice,
-        Carbon $st,
-        Carbon $end
+        Practice $practice
     ) {
         $this->practice = $practice;
-        $this->start = $st->startOfDay();
-        $this->end = $end->endOfDay();
     }
 
-    public function enrollmentCount()
+    public function enrollmentCount(Carbon $start, Carbon $end)
     {
-        $patients = User
-            ::ofType('participant')
-            ->whereProgramId($this->practice->id)
+        $start = $start->startOfDay();
+        $end = $end->endOfDay();
+        
+        $patients = User::ofType('participant')
+            ->where('program_id', '=', $this->practice->id)
             ->get();
 
         $data = [
@@ -49,7 +45,7 @@ class PracticeStatsHelper
         ];
 
         foreach ($patients as $patient) {
-            if ($patient->created_at->gte($this->start) && $patient->created_at->lte($this->end)) {
+            if ($patient->created_at->gte($start) && $patient->created_at->lte($end)) {
                 $data['added']++;
             }
 
@@ -57,11 +53,11 @@ class PracticeStatsHelper
                 continue;
             }
 
-            if ($patient->patientInfo->date_withdrawn && $patient->patientInfo->date_withdrawn->gte($this->start) && $patient->patientInfo->date_withdrawn->lte($this->end)) {
+            if ($patient->patientInfo->date_withdrawn && $patient->patientInfo->date_withdrawn->gte($start) && $patient->patientInfo->date_withdrawn->lte($end)) {
                 $data['withdrawn']++;
             }
 
-            if ($patient->patientInfo->date_paused && $patient->patientInfo->date_paused->gte($this->start) && $patient->patientInfo->date_paused->lte($this->end)) {
+            if ($patient->patientInfo->date_paused && $patient->patientInfo->date_paused->gte($start) && $patient->patientInfo->date_paused->lte($end)) {
                 $data['paused']++;
             }
         }
@@ -70,19 +66,24 @@ class PracticeStatsHelper
 
     }
 
-    public function successfulCallCount()
+    public function successfulCallCount(Carbon $start, Carbon $end)
     {
-        return $this->callCount('reached');
+        $start = $start->startOfDay();
+        $end = $end->endOfDay();
+
+        return $this->callCount($start, $end, 'reached');
     }
 
-    public function callCount($status = null)
+    public function callCount(Carbon $start, Carbon $end, $status = null)
     {
-        $q = Call
-            ::whereHas('inboundUser', function ($q) {
-                $q->whereProgramId($this->practice->id);
+        $start = $start->startOfDay();
+        $end = $end->endOfDay();
+
+        $q = Call::whereHas('inboundUser', function ($q) {
+                $q->where('program_id', '=', $this->practice->id);
             })
-            ->where('called_date', '>=', $this->start)
-            ->where('called_date', '<=', $this->end);
+            ->where('called_date', '>=', $start)
+            ->where('called_date', '<=', $end);
 
         if ($status) {
             $q->whereStatus($status);
@@ -91,45 +92,57 @@ class PracticeStatsHelper
         return $q->count();
     }
 
-    public function totalCCMTimeHours()
+    public function totalCCMTimeHours(Carbon $start, Carbon $end)
     {
+        $start = $start->startOfDay();
+        $end = $end->endOfDay();
+
         $duration = Activity
             ::whereHas('patient', function ($q) {
-                $q->whereProgramId($this->practice->id);
+                $q->where('program_id', '=', $this->practice->id);
             })
-            ->where('performed_at', '>=', $this->start->toDateTimeString())
-            ->where('performed_at', '<=', $this->end->toDateTimeString())
+            ->where('performed_at', '>=', $start->toDateTimeString())
+            ->where('performed_at', '<=', $end->toDateTimeString())
             ->sum('duration');
 
         return round($duration / 3600, 1);
     }
 
-    public function numberOfBiometricsRecorded()
+    public function numberOfBiometricsRecorded(Carbon $start, Carbon $end)
     {
+        $start = $start->startOfDay();
+        $end = $end->endOfDay();
+
         return Observation::whereHas('user', function ($q) {
             $q->whereProgramId($this->practice->id);
         })
-            ->where('created_at', '>=', $this->start)
-            ->where('created_at', '<=', $this->end)
+            ->where('created_at', '>=', $start)
+            ->where('created_at', '<=', $end)
             ->count();
     }
 
-    public function noteStats()
+    public function noteStats(Carbon $start, Carbon $end)
     {
+        $start = $start->startOfDay();
+        $end = $end->endOfDay();
+
         $providers = User::where('program_id', $this->practice->id)
             ->whereHas('roles', function ($q) {
                 $q->whereName('provider');
             })->pluck('id')->toArray();
 
         return MailLog::whereIn('receiver_cpm_id', $providers)
-            ->where('created_at', '>=', $this->start)
-            ->where('created_at', '<=', $this->end)
+            ->where('created_at', '>=', $start)
+            ->where('created_at', '<=', $end)
             ->whereType('note')
             ->count();
     }
 
-    public function emergencyNotesCount()
+    public function emergencyNotesCount(Carbon $start, Carbon $end)
     {
+        $start = $start->startOfDay();
+        $end = $end->endOfDay();
+
         return MailLog
             ::whereHas('note', function ($q) {
                 $q->where('isTCM', 1)
@@ -138,29 +151,32 @@ class PracticeStatsHelper
                     });
             })
             ->whereType('note')
-            ->where('created_at', '>=', $this->start)
-            ->where('created_at', '<=', $this->end)
+            ->where('created_at', '>=', $start)
+            ->where('created_at', '<=', $end)
             ->count();
 
     }
 
     public function linkToPracticeNotes()
     {
-        return URL::route('patient.note.listing'); //. "/?provider=$provider->id";
+        return URL::route('patient.note.listing');
     }
 
-    public function historicalEnrollmentPerformance()
+    public function historicalEnrollmentPerformance(Carbon $start, Carbon $end)
     {
+        $start = $start->startOfDay();
+        $end = $end->endOfDay();
+
         $patients = User::ofType('participant')
             ->whereProgramId($this->practice->id)
             ->get();
 
         for ($i = 0; $i < 5; $i++) {
             if ($i == 0) {
-                $start = $this->start;
-                $end = $this->end;
+                $start = $start;
+                $end = $end;
             } else {
-                $start = $this->start->copy()->subMonth($i)->firstOfMonth()->startOfDay();
+                $start = $start->copy()->subMonth($i)->firstOfMonth()->startOfDay();
                 $end = $start->copy()->endOfMonth()->endOfDay();
             }
 
@@ -226,8 +242,7 @@ class PracticeStatsHelper
 
         foreach ($patientsForPractice as $patient) {
 
-            $data[] = Patient
-                ::where('cur_month_activity_time', '>', 1199)
+            $data[] = Patient::where('cur_month_activity_time', '>', 1199)
                 ->whereUserId($patient->id)
                 ->first();
 

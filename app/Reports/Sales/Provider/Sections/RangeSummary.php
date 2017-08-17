@@ -1,17 +1,14 @@
-<?php
+<?php namespace App\Reports\Sales\Provider\Sections;
 
-namespace App\Reports\Sales\Provider\Sections;
-
-use App\Reports\Sales\Provider\ProviderStatsHelper;
+use App\Reports\Sales\ProviderReportable;
 use App\Reports\Sales\SalesReportSection;
+use App\Reports\Sales\StatsHelper;
 use App\User;
 use Carbon\Carbon;
 
 class RangeSummary extends SalesReportSection
 {
-
-    private $provider;
-    private $service;
+    protected $service;
 
     public function __construct(
         User $provider,
@@ -19,20 +16,19 @@ class RangeSummary extends SalesReportSection
         Carbon $end
     ) {
         parent::__construct($provider, $start, $end);
-        $this->provider = $provider;
-        $this->service = (new ProviderStatsHelper($provider, $start, $end));
+        $this->service = new StatsHelper(new ProviderReportable($provider));
     }
 
-    public function renderSection()
+    public function render()
     {
         return $this->data['Overall Summary'] = [
-            'no_of_call_attempts'             => $this->service->callCount(),
-            'no_of_successful_calls'          => $this->service->successfulCallCount(),
-            'total_ccm_time'                  => $this->service->totalCCMTimeHours(),
-            'no_of_biometric_entries'         => $this->service->numberOfBiometricsRecorded(),
-            'no_of_forwarded_notes'           => $this->service->noteStats(),
-            'no_of_forwarded_emergency_notes' => $this->service->emergencyNotesCount(),
-            'link_to_notes_listing'           => $this->service->linkToProviderNotes(),
+            'no_of_call_attempts'             => $this->service->callCount($this->start, $this->end),
+            'no_of_successful_calls'          => $this->service->successfulCallCount($this->start, $this->end),
+            'total_ccm_time'                  => $this->service->totalCCMTimeHours($this->start, $this->end),
+            'no_of_biometric_entries'         => $this->service->numberOfBiometricsRecorded($this->start, $this->end),
+            'no_of_forwarded_notes'           => $this->service->noteStats($this->start, $this->end),
+            'no_of_forwarded_emergency_notes' => $this->service->emergencyNotesCount($this->start, $this->end),
+            'link_to_notes_listing'           => $this->service->linkToNotes(),
         ];
     }
 

@@ -25,7 +25,7 @@ class FinancialSummary extends SalesReportSection
         $this->clhpppm = $this->provider->primaryPractice->clh_pppm ?? false;
     }
 
-    public function renderSection()
+    public function render()
     {
         setlocale(LC_MONETARY, 'en_US.UTF-8');
 

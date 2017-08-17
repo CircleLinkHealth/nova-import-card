@@ -41,29 +41,12 @@ class ProviderStatsHelper
 
     public function callCount($status = null)
     {
-        $q = Call
-            ::whereHas('inboundUser', function ($q) {
-                $q->hasBillingProvider($this->provider->id);
-            })
-            ->where('called_date', '>=', $this->start)
-            ->where('called_date', '<=', $this->end);
 
-        if ($status) {
-            $q->whereStatus($status);
-        }
-
-        return $q->count();
     }
 
     public function totalCCMTimeHours()
     {
-        $duration = Activity
-            ::whereHas('patient', function ($q) {
-                $q->hasBillingProvider($this->provider->id);
-            })
-            ->where('created_at', '>=', $this->start->toDateTimeString())
-            ->where('created_at', '<=', $this->end->toDateTimeString())
-            ->sum('duration');
+
 
         return round($duration / 3600, 1);
 
@@ -71,36 +54,17 @@ class ProviderStatsHelper
 
     public function numberOfBiometricsRecorded()
     {
-        return Observation
-            ::whereHas('user', function ($q) {
-                $q->hasBillingProvider($this->provider->id);
-            })
-            ->where('created_at', '>=', $this->start)
-            ->where('created_at', '<=', $this->end)
-            ->count();
+
     }
 
     public function noteStats()
     {
-        return MailLog
-            ::whereReceiverCpmId($this->provider->id)
-            ->whereNotNull('note_id')
-            ->where('created_at', '>', $this->start->toDateTimeString())
-            ->where('created_at', '<', $this->end->toDateTimeString())
-            ->count();
+
     }
 
     public function emergencyNotesCount()
     {
-        return MailLog
-            ::whereHas('note', function ($q) {
-                $q->where('isTCM', 1);
-            })
-            ->whereReceiverCpmId($this->provider->id)
-            ->whereNotNull('note_id')
-            ->where('created_at', '>', $this->start)
-            ->where('created_at', '<', $this->end)
-            ->count();
+
     }
 
     public function linkToProviderNotes()
@@ -110,13 +74,7 @@ class ProviderStatsHelper
 
     public function enrollmentCount()
     {
-        $patients = User::ofType('participant')
-            ->whereHas('careTeamMembers', function ($q) {
-
-                $q->whereType(CarePerson::BILLING_PROVIDER)
-                    ->whereMemberUserId($this->provider->id);
-
-            })->get();
+        $patients =
 
         $data = [
 
@@ -194,17 +152,7 @@ class ProviderStatsHelper
 
     public function totalBilled()
     {
-        return PatientMonthlySummary
-            ::whereHas('patient_info', function ($q) {
-                $q->whereHas('user', function ($k) {
-                    $k->whereHas('careTeamMembers', function ($q) {
-                        $q->whereType(CarePerson::BILLING_PROVIDER)
-                            ->whereMemberUserId($this->provider->id);
-                    });
-                });
-            })
-            ->where('ccm_time', '>', 1199)
-            ->count();
+
     }
 
     public function billableCountForMonth(Carbon $month) {

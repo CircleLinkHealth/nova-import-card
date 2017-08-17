@@ -21,7 +21,7 @@ class PracticeDemographics extends SalesReportSection
         $this->practice = $practice;
     }
 
-    public function renderSection()
+    public function render()
     {
 
         $lead = $this->practice->lead->fullName ?? 'N/A';
