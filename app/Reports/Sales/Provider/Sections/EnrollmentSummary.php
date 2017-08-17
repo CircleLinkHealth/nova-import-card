@@ -39,8 +39,7 @@ class EnrollmentSummary extends SalesReportSection
         $this->data['paused'] = $enrollmentCumulative[1]['total'] ?? 0;
         $this->data['withdrawn'] = $enrollmentCumulative[2]['total'] ?? 0;
 
-        $this->data['historical'] = $this->service->historicalEnrollmentPerformance($this->provider,
-            $this->start->startOfMonth(), $this->end);
+        $this->data['historical'] = $this->service->historicalEnrollmentPerformance($this->start->startOfMonth(), $this->end);
 
         return $this->data;
 
