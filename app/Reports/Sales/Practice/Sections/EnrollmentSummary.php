@@ -4,17 +4,15 @@ namespace App\Reports\Sales\Practice\Sections;
 
 use App\Patient;
 use App\Practice;
-use App\Reports\Sales\Practice\PracticeStatsHelper;
+use App\Reports\Sales\PracticeReportable;
 use App\Reports\Sales\SalesReportSection;
+use App\Reports\Sales\StatsHelper;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
 
 class EnrollmentSummary extends SalesReportSection
 {
-
-    private $practice;
-    private $service;
-
+    protected $service;
 
     public function __construct(
         Practice $practice,
@@ -22,15 +20,14 @@ class EnrollmentSummary extends SalesReportSection
         Carbon $end
     ) {
         parent::__construct($practice, $start, $end);
-        $this->practice = $practice;
-        $this->service = (new PracticeStatsHelper($practice, $start, $end));
-        $this->clhpppm = $this->practice->clh_pppm ?? false;
+        $this->service = new StatsHelper(new PracticeReportable($practice));
+        $this->clhpppm = $this->for->clh_pppm ?? false;
     }
 
-    public function renderSection()
+    public function render()
     {
         $enrollmentCumulative = Patient::whereHas('user', function ($q) {
-            $q->whereProgramId($this->practice->id);
+            $q->whereProgramId($this->for->id);
         })
             ->whereNotNull('ccm_status')
             ->select(DB::raw('count(ccm_status) as total, ccm_status'))
@@ -42,7 +39,8 @@ class EnrollmentSummary extends SalesReportSection
         $this->data['paused'] = $enrollmentCumulative[1]['total'] ?? 'N/A';
         $this->data['withdrawn'] = $enrollmentCumulative[2]['total'] ?? 'N/A';
 
-        $this->data['historical'] = $this->service->historicalEnrollmentPerformance();
+        $this->data['historical'] = $this->service->historicalEnrollmentPerformance($this->start->startOfMonth(),
+            $this->end);
 
         return $this->data;
 

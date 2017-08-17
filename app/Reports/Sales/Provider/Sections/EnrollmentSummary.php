@@ -3,17 +3,16 @@
 namespace App\Reports\Sales\Provider\Sections;
 
 use App\Patient;
-use App\Reports\Sales\Provider\ProviderStatsHelper;
+use App\Reports\Sales\ProviderReportable;
 use App\Reports\Sales\SalesReportSection;
+use App\Reports\Sales\StatsHelper;
 use App\User;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
 
 class EnrollmentSummary extends SalesReportSection
 {
-
-    private $provider;
-    private $service;
+    protected $service;
 
     public function __construct(
         User $provider,
@@ -22,20 +21,13 @@ class EnrollmentSummary extends SalesReportSection
     ) {
         parent::__construct($provider, $start, $end);
         $this->provider = $provider;
-        $this->service = (new ProviderStatsHelper($provider, $start, $end));
+        $this->service = new StatsHelper(new ProviderReportable($provider));
     }
 
-    public function renderSection()
+    public function render()
     {
-        $id = $this->provider->id;
-
-        $enrollmentCumulative = Patient::whereHas('user', function ($q) use
-        (
-            $id
-        ) {
-
-            $q->hasBillingProvider($id);
-
+        $enrollmentCumulative = Patient::whereHas('user', function ($q) {
+            $q->hasBillingProvider($this->for->id);
         })
             ->whereNotNull('ccm_status')
             ->select(DB::raw('count(ccm_status) as total, ccm_status'))
@@ -48,7 +40,7 @@ class EnrollmentSummary extends SalesReportSection
         $this->data['withdrawn'] = $enrollmentCumulative[2]['total'] ?? 0;
 
         $this->data['historical'] = $this->service->historicalEnrollmentPerformance($this->provider,
-            Carbon::parse($this->start), Carbon::parse($this->end));
+            $this->start->startOfMonth(), $this->end);
 
         return $this->data;
 

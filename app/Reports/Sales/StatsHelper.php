@@ -1,0 +1,140 @@
+<?php
+
+namespace App\Reports\Sales;
+
+use App\Contracts\Reports\Reportable;
+use Carbon\Carbon;
+use Illuminate\Support\Facades\URL;
+
+class StatsHelper
+{
+    protected $reportable;
+
+    public function __construct(Reportable $reportable)
+    {
+        $this->reportable = $reportable;
+    }
+
+    public function enrollmentCount(Carbon $start, Carbon $end)
+    {
+        $start = $start->startOfDay();
+        $end = $end->endOfDay();
+
+        $patients = $this->reportable->patients();
+
+        $data = [
+            'withdrawn' => 0,
+            'paused'    => 0,
+            'added'     => 0,
+        ];
+
+        foreach ($patients as $patient) {
+            if ($patient->created_at->gte($start) && $patient->created_at->lte($end)) {
+                $data['added']++;
+            }
+
+            if (!$patient->patientInfo) {
+                continue;
+            }
+
+            if ($patient->patientInfo->date_withdrawn && $patient->patientInfo->date_withdrawn->gte($start) && $patient->patientInfo->date_withdrawn->lte($end)) {
+                $data['withdrawn']++;
+            }
+
+            if ($patient->patientInfo->date_paused && $patient->patientInfo->date_paused->gte($start) && $patient->patientInfo->date_paused->lte($end)) {
+                $data['paused']++;
+            }
+        }
+
+        return $data;
+
+    }
+
+    public function successfulCallCount(Carbon $start, Carbon $end)
+    {
+        return $this->callCount($start->startOfDay(), $end->endOfDay(), 'reached');
+    }
+
+    public function callCount(Carbon $start, Carbon $end, $status = null)
+    {
+        return $this->reportable->callCount($start->startOfDay(), $end->endOfDay(), $status);
+    }
+
+    public function totalCCMTimeHours(Carbon $start, Carbon $end)
+    {
+        $duration = $this->reportable->activitiesDuration($start->startOfDay(), $end->endOfDay());
+
+        return round($duration / 3600, 1);
+    }
+
+    public function numberOfBiometricsRecorded(Carbon $start, Carbon $end)
+    {
+        return $this->reportable->observationsCount($start->startOfDay(), $end->endOfDay());
+    }
+
+    public function noteStats(Carbon $start, Carbon $end)
+    {
+        return $this->reportable->forwardedNotesCount($start->startOfDay(), $end->endOfDay());
+    }
+
+    public function emergencyNotesCount(Carbon $start, Carbon $end)
+    {
+        return $this->reportable->forwardedEmergencyNotesCount($start->startOfDay(), $end->endOfDay());
+    }
+
+    public function linkToNotes()
+    {
+        return $this->reportable->linkToNotes();
+    }
+
+    public function historicalEnrollmentPerformance(Carbon $start, Carbon $end)
+    {
+        $start = $start->startOfDay();
+        $end = $end->endOfDay();
+
+        $patients = $this->reportable->patients();
+
+        for ($i = 0; $i < 5; $i++) {
+            if ($i != 0) {
+                $start = $start->copy()->subMonth($i)->firstOfMonth()->startOfDay();
+                $end = $start->copy()->endOfMonth()->endOfDay();
+            }
+
+            $index = $start->toDateString();
+            $data['withdrawn'][$index] = 0;
+            $data['paused'][$index] = 0;
+            $data['added'][$index] = 0;
+
+            foreach ($patients as $patient) {
+                if ($patient->created_at->gte($start) && $patient->created_at->lte($end)) {
+                    $data['added'][$index]++;
+                }
+
+                if (!$patient->patientInfo) {
+                    continue;
+                }
+
+                if ($patient->patientInfo->date_withdrawn && $patient->patientInfo->date_withdrawn->gte($start) && $patient->patientInfo->date_withdrawn->lte($end)) {
+                    $data['withdrawn'][$index]++;
+                }
+
+                if ($patient->patientInfo->date_paused && $patient->patientInfo->date_paused->gte($start) && $patient->patientInfo->date_paused->lte($end)) {
+                    $data['paused'][$index]++;
+                }
+            }
+        }
+
+        return $data;
+
+    }
+
+    public function totalBilled()
+    {
+        return $this->reportable->totalBilledPatientsCount();
+    }
+
+    public function billableCountForMonth(Carbon $month)
+    {
+        return $this->reportable->billablePatientsCountForMonth($month);
+    }
+}

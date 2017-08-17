@@ -3,16 +3,15 @@
 namespace App\Reports\Sales\Practice\Sections;
 
 use App\Practice;
-use App\Reports\Sales\Practice\PracticeStatsHelper;
+use App\Reports\Sales\PracticeReportable;
 use App\Reports\Sales\SalesReportSection;
+use App\Reports\Sales\StatsHelper;
 use Carbon\Carbon;
 
 class FinancialSummary extends SalesReportSection
 {
-
-    private $practice;
-    private $clhpppm;
-    private $service;
+    protected $clhpppm;
+    protected $service;
 
     public function __construct(
         Practice $practice,
@@ -20,12 +19,11 @@ class FinancialSummary extends SalesReportSection
         Carbon $end
     ) {
         parent::__construct($practice, $start, $end);
-        $this->practice = $practice;
-        $this->service = (new PracticeStatsHelper($practice, $start, $end));
-        $this->clhpppm = $this->practice->clh_pppm ?? false;
+        $this->service = new StatsHelper(new PracticeReportable($practice));
+        $this->clhpppm = $this->for->clh_pppm ?? false;
     }
 
-    public function renderSection()
+    public function render()
     {
         setlocale(LC_MONETARY, 'en_US.UTF-8');
         $total = $this->service->totalBilled();
@@ -60,7 +58,7 @@ class FinancialSummary extends SalesReportSection
             } else {
 
                 $profit = ($billableRounded * (1 - ($this->clhpppm / 40)));
-                $profit =  floor($profit / 10) * 10;
+                $profit = floor($profit / 10) * 10;
             }
 
             $this->data['historical']['Patients >20mins (some are not billed)'][$month]

@@ -42,13 +42,14 @@ class EmailWeeklyPracticeReport implements ShouldQueue
     {
         $subjectPractice = $this->practice->display_name . '\'s CCM Weekly Summary';
 
+        //get Range Summary for this week, and for the other sections get month to date
         $practiceData = (new SalesByPracticeReport(
             $this->practice,
             SalesByPracticeReport::SECTIONS,
             $this->startRange,
             $this->endRange
-
         ))->data(true);
+
 
         $practiceData['name'] = $this->practice->display_name;
         $practiceData['start'] = $this->startRange->toDateString();

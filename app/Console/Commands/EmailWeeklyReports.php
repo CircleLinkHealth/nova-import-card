@@ -5,11 +5,8 @@ namespace App\Console\Commands;
 use App\Jobs\EmailWeeklyPracticeReport;
 use App\Jobs\EmailWeeklyProviderReport;
 use App\Practice;
-use App\Reports\Sales\Practice\SalesByPracticeReport;
-use App\Reports\Sales\Provider\SalesByProviderReport;
 use Carbon\Carbon;
 use Illuminate\Console\Command;
-use Illuminate\Support\Facades\Mail;
 use Maknz\Slack\Facades\Slack;
 
 class EmailWeeklyReports extends Command
@@ -19,7 +16,7 @@ class EmailWeeklyReports extends Command
      *
      * @var string
      */
-    protected $signature = 'email:weeklyReports {email?}';
+    protected $signature = 'email:weeklyReports {--practice} {--provider} {email?}';
 
     /**
      * The console command description.
@@ -55,12 +52,17 @@ class EmailWeeklyReports extends Command
             $testerEmail = $this->argument('email');
         }
 
-        $startRange = Carbon::now()->subWeek()->startOfMonth()->startOfDay();
+        $startRange = Carbon::now()->subWeek()->startOfDay();
         $endRange = Carbon::now()->endOfDay();
 
         foreach ($this->activePractices as $practice) {
-            dispatch(new EmailWeeklyPracticeReport($practice, $startRange, $endRange, $testerEmail));
-            dispatch(new EmailWeeklyProviderReport($practice, $startRange, $endRange, $testerEmail));
+            if ($this->option('practice')) {
+                dispatch(new EmailWeeklyPracticeReport($practice, $startRange, $endRange, $testerEmail));
+            }
+
+            if ($this->option('provider')) {
+                dispatch(new EmailWeeklyProviderReport($practice, $startRange, $endRange, $testerEmail));
+            }
         }
     }
 }

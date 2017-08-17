@@ -2,8 +2,9 @@
 
 namespace App\Reports\Sales\Provider\Sections;
 
-use App\Reports\Sales\Provider\ProviderStatsHelper;
+use App\Reports\Sales\ProviderReportable;
 use App\Reports\Sales\SalesReportSection;
+use App\Reports\Sales\StatsHelper;
 use App\User;
 use Carbon\Carbon;
 
@@ -21,16 +22,16 @@ class FinancialSummary extends SalesReportSection
     ) {
         parent::__construct($provider, $start, $end);
         $this->provider = $provider;
-        $this->service = (new ProviderStatsHelper($provider, $start, $end));
+        $this->service = new StatsHelper(new ProviderReportable($provider));
         $this->clhpppm = $this->provider->primaryPractice->clh_pppm ?? false;
     }
 
-    public function renderSection()
+    public function render()
     {
         setlocale(LC_MONETARY, 'en_US.UTF-8');
 
 
-        $total = $this->service->totalBilled($this->provider);
+        $total = $this->service->totalBilled();
         $this->data['billed_so_far'] = $total;
 
 
@@ -63,7 +64,7 @@ class FinancialSummary extends SalesReportSection
             } else {
 
                 $profit = ($billableRounded * (1 - ($this->clhpppm / 40)));
-                $profit =  floor($profit / 10) * 10;
+                $profit = floor($profit / 10) * 10;
 
             }
 
