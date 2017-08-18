@@ -23,7 +23,7 @@
 
                 <div class="input-field col s4">
                     {{ Form::select('settings[careplan_mode]', ['web'=>'Web','pdf'=>'PDF'], $practiceSettings->careplan_mode) }}
-                    <label>Default CarePlan Mode</label>
+                    <label>Starting CarePlan Mode</label>
                 </div>
             </div>
 
