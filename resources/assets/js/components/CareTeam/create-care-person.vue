@@ -39,12 +39,12 @@
                     </h5>
                 </div>
             </div>
-            <!--<div class="row providerForm">-->
-            <!--<search-providers v-if="!newCarePerson.user.id"-->
-            <!--v-bind:first_name="newCarePerson.user.first_name"-->
-            <!--v-bind:last_name="newCarePerson.user.last_name"-->
-            <!--&gt;</search-providers>-->
-            <!--</div>-->
+
+            <search-providers v-if="!newCarePerson.user.id"
+                              :first_name="newCarePerson.user.first_name"
+                              :last_name="newCarePerson.user.last_name"
+                              @existing-user-selected=""
+            ></search-providers>
 
 
             <vue-form :state="formstate" @submit.prevent="onSubmit">
@@ -507,6 +507,7 @@
 
 <script>
     import modal from '../shared/modal.vue';
+    import SearchProviders from './search-providers.vue'
     import {mapGetters, mapActions} from 'vuex'
     import {getPatientCareTeam, clearOpenModal, addNotification, updateCarePerson} from '../../store/actions'
 
@@ -519,7 +520,8 @@
         },
 
         components: {
-            modal
+            modal,
+            SearchProviders
         },
 
         computed: Object.assign({},
@@ -569,8 +571,8 @@
 
                     let url = window.location.href
 
-                    if(url.includes('view-careplan')) {
-                        window.location.replace(url+'/#care-team')
+                    if (url.includes('view-careplan')) {
+                        window.location.replace(url + '/#care-team')
                     }
                 },
 

@@ -2,7 +2,7 @@
     <div v-if="matchedUsers.length>0" class="alert alert-info"><h4>Did you mean?</h4>
         <ul>
             <li v-for="user in matchedUsers"><a href="#"
-                                                v-on:click.stop.prevent="attachExistingProvider(user)">{{user.first_name}} {{user.last_name}}, {{user.primary_practice.display_name}}</a>
+                                                @click.stop.prevent="attachExistingProvider(user)">{{user.first_name}} {{user.last_name}}, {{user.primary_practice.display_name}}</a>
             </li>
         </ul>
     </div>
@@ -20,7 +20,7 @@
         },
 
         mounted: function () {
-            this.getSearchUrl = $('meta[name="providers-search"]').attr('content');
+            this.getSearchUrl = $('meta[name="providers-search-route"]').attr('content');
         },
 
         computed: {
@@ -35,18 +35,19 @@
 
         methods: {
             search: function () {
+                let self = this
 
                 let url = this.getSearchUrl + '?firstName=' + this.first_name + '&lastName=' + this.last_name;
 
-                this.$http.get(url).then(function (response) {
-                    this.$set('matchedUsers', response.data.results);
+                window.axios.get(url).then(function (response) {
+                    self.matchedUsers = response.data.results;
                 }, function (response) {
                     //error
                 });
             },
 
             attachExistingProvider: function (user_obj) {
-                this.$dispatch('existing-user-selected', {
+                this.$emit('existing-user-selected', {
                     user: user_obj,
                 })
             }

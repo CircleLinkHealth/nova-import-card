@@ -7,6 +7,7 @@
       content="{{ URL::route('patient.appointment.create', ['patientId' => $patient->id]) }}">
 <meta name="provider-update-route" content="{{ route('user.care-team.update', ['userId' => $patient->id, 'id'=>'']) }}">
 <meta name="patient_id" content="{{$patient->id}}">
+<meta name="providers-search-route" content="{{ route('providers.search') }}">
 
 <div id="v-fab">
     <open-modal></open-modal>
