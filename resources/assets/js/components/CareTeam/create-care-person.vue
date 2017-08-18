@@ -543,9 +543,10 @@
             mapActions(['getPatientCareTeam', 'clearOpenModal', 'addNotification', 'updateCarePerson']),
             {
                 attachExistingUser(user) {
-                    this.newCarePerson.user.email = user.email
-                    this.newCarePerson.user.first_name = user.first_name
-                    this.newCarePerson.user.last_name = user.last_name
+                    this.newCarePerson.user = user
+                    this.newCarePerson.user.phone_numbers = user.phone_numbers
+                    this.newCarePerson.user.primary_practice = user.primary_practice
+                    this.newCarePerson.user.provider_info = user.provider_info
                 },
 
                 sendForm() {
