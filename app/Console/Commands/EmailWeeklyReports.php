@@ -16,7 +16,7 @@ class EmailWeeklyReports extends Command
      *
      * @var string
      */
-    protected $signature = 'email:weeklyReports {--practice} {--provider} {email?}';
+    protected $signature = 'email:weeklyReports {--practice} {--provider} {email?} {practiceId?}';
 
     /**
      * The console command description.
@@ -52,8 +52,18 @@ class EmailWeeklyReports extends Command
             $testerEmail = $this->argument('email');
         }
 
+        if ($this->argument('practiceId')) {
+            $onlyForPractice = Practice::find($this->argument('practiceId'));
+        }
+
         $startRange = Carbon::now()->subWeek()->startOfDay();
         $endRange = Carbon::now()->endOfDay();
+
+        if (isset($onlyForPractice)) {
+            dispatch(new EmailWeeklyPracticeReport($onlyForPractice, $startRange, $endRange, $testerEmail));
+
+            return;
+        }
 
         foreach ($this->activePractices as $practice) {
             if (!$practice->settings[0]->email_weekly_report) {
