@@ -114,11 +114,11 @@ class StatsHelper
                     continue;
                 }
 
-                if ($patient->patientInfo->date_withdrawn && $patient->patientInfo->date_withdrawn->gte($start) && $patient->patientInfo->date_withdrawn->lte($end)) {
+                if (!empty($patient->patientInfo->date_withdrawn) && $patient->patientInfo->date_withdrawn->gte($start) && $patient->patientInfo->date_withdrawn->lte($end)) {
                     $data['withdrawn'][$index]++;
                 }
 
-                if ($patient->patientInfo->date_paused && $patient->patientInfo->date_paused->gte($start) && $patient->patientInfo->date_paused->lte($end)) {
+                if (!empty($patient->patientInfo->date_paused) && $patient->patientInfo->date_paused->gte($start) && $patient->patientInfo->date_paused->lte($end)) {
                     $data['paused'][$index]++;
                 }
             }

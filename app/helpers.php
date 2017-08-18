@@ -3,8 +3,26 @@
 
 use App\AppConfig;
 use App\CarePlanTemplate;
+use App\Jobs\SendSlackMessage;
 use Carbon\Carbon;
 use Illuminate\Support\Collection;
+
+if (!function_exists('sendSlackMessage')) {
+    /**
+     * Sends a message to Slack
+     *
+     * @param $to
+     * @param $message
+     *
+     *
+     */
+    function sendSlackMessage($to, $message)
+    {
+        $job = new SendSlackMessage($to, $message);
+
+        dispatch($job);
+    }
+}
 
 if (!function_exists('formatPhoneNumber')) {
     /**

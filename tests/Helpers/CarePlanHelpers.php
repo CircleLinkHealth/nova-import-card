@@ -530,11 +530,9 @@ trait CarePlanHelpers
             'cpm_testing',
             'cpm_hotfix',
         ])) {
-//            Slack::to('#qualityassurance')
-//                ->send($text);
+            sendSlackMessage('#qualityassurance', $text);
         } else {
-//            Slack::to('#background-tasks-dev')
-//                ->send($text);
+            sendSlackMessage('#background-tasks-dev', $text);
         }
 
         echo $text;

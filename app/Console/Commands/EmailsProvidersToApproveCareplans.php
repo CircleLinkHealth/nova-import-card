@@ -183,8 +183,7 @@ class EmailsProvidersToApproveCareplans extends Command
             }
 
             try {
-                Slack::to('#background-tasks')
-                    ->send("Sent pending approvals email to {$recipient->fullName}.");
+                sendSlackMessage('#background-tasks', "Sent pending approvals email to {$recipient->fullName}.");
             } catch (\Exception $e) {
 
             }

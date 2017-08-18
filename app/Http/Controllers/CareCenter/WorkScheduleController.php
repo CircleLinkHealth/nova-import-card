@@ -64,7 +64,7 @@ class WorkScheduleController extends Controller
             'holidaysThisWeek',
             'windows',
             'tzAbbr',
-            'nurse'
+            'nurse',
         ]));
     }
 
@@ -85,9 +85,15 @@ class WorkScheduleController extends Controller
                 ->withInput();
         }
 
-        $holiday = auth()->user()->nurseInfo->holidays()->create([
+        $user = auth()->user();
+
+        $holiday = $user->nurseInfo->holidays()->create([
             'date' => Carbon::parse($request->input('holiday'))->format('Y-m-d'),
         ]);
+
+        $message = "Nurse {$user->display_name} just added a holiday on {$holiday->date->format('l, F j Y')}";
+
+        sendSlackMessage('#callcenter_ops', $message);
 
         return redirect()->back();
     }
@@ -169,25 +175,44 @@ class WorkScheduleController extends Controller
         }
 
         if ($isAdmin) {
-            $this->nurseContactWindows->create([
+            $user = auth()->user();
+
+            $window = $this->nurseContactWindows->create([
                 'nurse_info_id'     => $nurseInfoId,
                 'date'              => Carbon::now()->format('Y-m-d'),
                 'day_of_week'       => $request->input('day_of_week'),
                 'window_time_start' => $request->input('window_time_start'),
                 'window_time_end'   => $request->input('window_time_end'),
             ]);
+
+            $nurseUser = Nurse::find($nurseInfoId)->user;
+
+            $nurseMessage = "Admin {$user->display_name} assigned Nurse {$nurseUser->display_name} to work for";
         } else {
-            $window = auth()->user()->nurseInfo->windows()->create([
+            $user = auth()->user();
+
+            $window = $user->nurseInfo->windows()->create([
                 'date'              => Carbon::now()->format('Y-m-d'),
                 'day_of_week'       => $request->input('day_of_week'),
                 'window_time_start' => $request->input('window_time_start'),
                 'window_time_end'   => $request->input('window_time_end'),
             ]);
+
+            $nurseMessage = "Nurse {$user->display_name} will work for";
         }
+
+        $dayName = clhDayOfWeekToDayName($window->day_of_week);
+
+        $from = Carbon::parse($window->window_time_start);
+        $to = Carbon::parse($window->window_time_end);
+
+        $message = "$nurseMessage {$request->input('work_hours')} hours on $dayName between {$from->format('h:i T')} to {$to->format('h:i T')}";
+
+        sendSlackMessage('#callcenter_ops', $message);
 
         $workHours = $this->workHours->updateOrCreate([
             'workhourable_type' => Nurse::class,
-            'workhourable_id' => $nurseInfoId,
+            'workhourable_id'   => $nurseInfoId,
         ], [
             strtolower(clhDayOfWeekToDayName($request->input('day_of_week'))) => $request->input('work_hours'),
         ]);
@@ -266,17 +291,18 @@ class WorkScheduleController extends Controller
         return view('admin.nurse.schedules.index', compact(['data', 'tzAbbr', 'workHours']));
     }
 
-    protected function canAddNewWindow(Carbon $date)
+    public function updateDailyHours(Request $request, $id)
     {
-        return ($date->gt($this->nextWeekStart) && $this->today->dayOfWeek < 4)
-            || $date->gt($this->nextWeekEnd);
-    }
-
-    public function updateDailyHours(Request $request, $id) {
         $workHours = WorkHours::find($id);
         $workHours->{$request->input('day')} = $request->input('workHours');
         $workHours->save();
 
         return response()->json();
+    }
+
+    protected function canAddNewWindow(Carbon $date)
+    {
+        return ($date->gt($this->nextWeekStart) && $this->today->dayOfWeek < 4)
+            || $date->gt($this->nextWeekEnd);
     }
 }
