@@ -25,6 +25,7 @@ class Settings extends Model
         //Email Notifications
         'email_careplan_approval_reminders',
         'email_note_was_forwarded',
+        'email_weekly_report',
     ];
 
     /**

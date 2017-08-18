@@ -21,7 +21,7 @@
                     <label for="auto_approve_careplans">Auto Approve Care Plans</label>
                 </div>
 
-                <div class="input-field col s6">
+                <div class="input-field col s4">
                     {{ Form::select('settings[careplan_mode]', ['web'=>'Web','pdf'=>'PDF'], $practiceSettings->careplan_mode) }}
                     <label>Default CarePlan Mode</label>
                 </div>
@@ -89,6 +89,12 @@
                     <input name="settings[email_note_was_forwarded]" type="checkbox" id="email_note_was_forwarded"
                            value="1" @if($practiceSettings->email_note_was_forwarded){{'checked'}}@endif>
                     <label for="email_note_was_forwarded">Email Note Was Forwarded</label>
+                </div>
+
+                <div class="input-field col s6">
+                    <input name="settings[email_weekly_report]" type="checkbox" id="email_weekly_report"
+                           value="1" @if($practiceSettings->email_weekly_report){{'checked'}}@endif>
+                    <label for="email_weekly_report">Weekly Reports</label>
                 </div>
             </div>
         </div>
