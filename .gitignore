@@ -4,3 +4,4 @@
 .env
 _ide_helper.php
 /public/js/compiled/
+/public/mix-manifest.json

@@ -1,5 +1,5 @@
 <template>
-    <div v-if="matchedUsers.length>0" class="alert alert-info"><h4>Did you mean?</h4>
+    <div v-if="matchedUsers.length>0 && show" class="alert alert-info"><h4>Did you mean?</h4>
         <ul>
             <li v-for="user in matchedUsers"><a href="#"
                                                 @click.stop.prevent="attachExistingProvider(user)">{{user.first_name}} {{user.last_name}}, {{user.primary_practice.display_name}}</a>
@@ -16,6 +16,7 @@
             return {
                 matchedUsers: [],
                 getSearchUrl: '',
+                show: true,
             }
         },
 
@@ -46,10 +47,9 @@
                 });
             },
 
-            attachExistingProvider: function (user_obj) {
-                this.$emit('existing-user-selected', {
-                    user: user_obj,
-                })
+            attachExistingProvider: function (user) {
+                this.$emit('existing-user-selected', user)
+                this.show = false
             }
         },
 

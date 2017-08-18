@@ -43,7 +43,7 @@
             <search-providers v-if="!newCarePerson.user.id"
                               :first_name="newCarePerson.user.first_name"
                               :last_name="newCarePerson.user.last_name"
-                              @existing-user-selected=""
+                              @existing-user-selected="attachExistingUser"
             ></search-providers>
 
 
@@ -542,6 +542,12 @@
         methods: Object.assign({},
             mapActions(['getPatientCareTeam', 'clearOpenModal', 'addNotification', 'updateCarePerson']),
             {
+                attachExistingUser(user) {
+                    this.newCarePerson.user.email = user.email
+                    this.newCarePerson.user.first_name = user.first_name
+                    this.newCarePerson.user.last_name = user.last_name
+                },
+
                 sendForm() {
                     this.submitClicked = true
 
@@ -574,9 +580,11 @@
                     if (url.includes('view-careplan')) {
                         window.location.replace(url + '/#care-team')
                     }
-                },
+                }
+                ,
 
-                fieldClassName(field) {
+                fieldClassName(field)
+                {
                     if (!field) {
                         return '';
                     }
@@ -586,7 +594,8 @@
                     if ((field.$touched || field.$submitted) && field.$invalid) {
                         return 'has-danger';
                     }
-                },
+                }
+                ,
             }
         ),
 
