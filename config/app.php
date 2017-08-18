@@ -1,7 +1,7 @@
 <?php
 
-use App\Providers\ViewComposerServiceProvider;
 use App\Providers\ObserversServiceProvider;
+use App\Providers\ViewComposerServiceProvider;
 
 return [
 
@@ -208,6 +208,7 @@ return [
         Dionera\BeanstalkdUI\BeanstalkdUIServiceProvider::class,
         Laravel\Tinker\TinkerServiceProvider::class,
         ViewComposerServiceProvider::class,
+        jeremykenedy\Slack\Laravel\ServiceProvider::class,
     ],
 
     /*
@@ -268,7 +269,7 @@ return [
         'JWTFactory'     => \Tymon\JWTAuth\Facades\JWTFactory::class,
         'LERN'           => Tylercd100\LERN\Facades\LERN::class,
         'PDF'            => \Barryvdh\Snappy\Facades\SnappyPdf::class,
-//        'Slack'          => Maknz\Slack\Facades\Slack::class,
+        'Slack'          => jeremykenedy\Slack\Laravel\Facade::class,
         'GoogleCalendar' => Spatie\GoogleCalendar\GoogleCalendarFacade::class,
 
     ],
