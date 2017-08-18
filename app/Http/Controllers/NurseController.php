@@ -264,13 +264,10 @@ class NurseController extends Controller
                 $countMade =
                     Call::where('outbound_cpm_id', $nurse->id)
                         ->where(function ($q) use ($dayCounter){
-                            $q->where('called_date', '>=', Carbon::parse($dayCounter)->startOfDay())
-                                ->where('called_date', '<=', Carbon::parse($dayCounter)->endOfDay());
+                            $q->where('called_date', '>=', Carbon::parse($dayCounter)->startOfDay()->toDateTimeString())
+                                ->where('called_date', '<=', Carbon::parse($dayCounter)->endOfDay()->toDateTimeString());
                         })
-                        ->where(function ($q){
-                            $q->where('status', '=', 'reached')
-                                ->orWhere('status', '=', 'not reached');
-                        })
+                        ->where('status', '!=', 'dropped')
                         ->count();
 
                 $formattedDate = Carbon::parse($dayCounter)->format('m/d Y');

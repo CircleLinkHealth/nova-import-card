@@ -1,4 +1,6 @@
 <?php
+
+use App\Call;
 use App\CLH\Helpers\StringManipulation;
 use App\Reports\ApproveBillablePatientsReport;
 use App\Services\Phaxio\PhaxioService;
@@ -32,15 +34,18 @@ if (app()->environment() != 'production') {
 
     Route::get('/rohan', function () {
 
-        $date = Carbon::parse('2017-03-01');
+        $date = Carbon::parse('2017-08-07');
 
-        dd(\App\User::find(3882)->practices->pluck('id')->toArray());
+        $countMade =
+            Call::where('outbound_cpm_id', 2159)
+                ->where('scheduled_date', '2017-08-07')
+//                ->where(function ($q) use ($date){
+//                    $q->where('called_date', '>=', $date->startOfDay()->toDateTimeString())
+//                        ->where('called_date', '<=', $date->endOfDay()->toDateTimeString());
+//                })
+                ->count();
 
-        dd((new \App\Reports\WeeklyReportDispatcher())->exec());
-
-        $reporter = new ApproveBillablePatientsReport($date, 21);
-        $reporter->dataV1();
-        dd($reporter->format());
+        return $countMade;
 
     });
 
