@@ -3,7 +3,6 @@
 use App\Activity;
 use App\Algorithms\Invoicing\AlternativeCareTimePayableCalculator;
 use App\Models\PatientSession;
-use App\NurseMonthlySummary;
 use App\PageTimer;
 use App\Services\ActivityService;
 use App\Services\TimeTracking\Service as TimeTrackingService;
@@ -63,8 +62,7 @@ class PageTimerController extends Controller
             $message .= " Data: " . json_encode($data);
             $message .= " Env: " . env('APP_ENV');
 
-//            Slack::to('#time-tracking-issues')
-//                ->send($message);
+            sendSlackMessage('#time-tracking-issues', $message);
         }
 
         $startTime = Carbon::createFromFormat('Y-m-d H:i:s', $data['startTime']);
@@ -156,8 +154,7 @@ class PageTimerController extends Controller
             $message .= " PageTimer Object id {$newActivity->id}: " . json_encode($newActivity) . PHP_EOL . PHP_EOL;
             $message .= " Env: " . env('APP_ENV');
 
-//            Slack::to('#time-tracking-issues')
-//                ->send($message);
+            sendSlackMessage('#time-tracking-issues', $message);
 
             $newActivity->delete();
 
@@ -240,6 +237,24 @@ class PageTimerController extends Controller
         return false;
     }
 
+    public function handleNurseLogs($activityId)
+    {
+
+        $activity = Activity::find($activityId);
+        $nurse = User::find($activity->provider_id)->nurseInfo;
+
+        if ($nurse) {
+
+            $alternativePayComputer = new AlternativeCareTimePayableCalculator($nurse);
+
+            $alternativePayComputer->adjustCCMPaybleForActivity($activity);
+
+        }
+
+        return false;
+
+    }
+
     /**
      * Display the specified resource.
      *
@@ -259,24 +274,6 @@ class PageTimerController extends Controller
         //This is intentionally left blank!
         //All the logic happens in Controller, because of some restrictions with Laravel at the time I'm writing this,
         //that's the best way I can come up with right now. Gross, I know, but it's 3:30am on a Saturday
-    }
-
-    public function handleNurseLogs($activityId)
-    {
-
-        $activity = Activity::find($activityId);
-        $nurse = User::find($activity->provider_id)->nurseInfo;
-
-        if ($nurse) {
-
-            $alternativePayComputer = new AlternativeCareTimePayableCalculator($nurse);
-            
-            $alternativePayComputer->adjustCCMPaybleForActivity($activity);
-            
-        }
-
-        return false;
-
     }
 
 }

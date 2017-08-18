@@ -167,8 +167,7 @@ class NurseWorkScheduleTest extends BrowserKitTestCase
             'cpm_testing',
             'cpm_hotfix',
         ])) {
-//            Slack::to('#qualityassurance')
-//                ->send($text);
+            sendSlackMessage('#qualityassurance', $text);
         }
 
         echo $text;
