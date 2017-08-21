@@ -127,7 +127,12 @@ class PracticeController extends Controller
 
         $program = Practice::find($id);
 
-        $recipients = $program->getInvoiceRecipients()->implode(', ');
+        $recipients = '';
+        $invRec = $program->getInvoiceRecipients();
+
+        if($invRec->count() > 0){
+            $recipients = $invRec->implode(', ');
+        }
 
         $locations = $program->locations->all();
 
