@@ -12,8 +12,6 @@
                    role="button">Patient Overview</a>
             </li>
 
-            {{$patient->careplan_mode}}
-
             @if ($patient->careplan_mode == App\CarePlan::WEB)
                 <li class="inline-block">
                     <a href="{{ empty($patient->id) ? URL::route('patients.search') : URL::route('patient.careplan.show', array('patient' => $patient->id, 'page' => '1')) }}"
