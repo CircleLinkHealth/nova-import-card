@@ -61,6 +61,7 @@ class EmailWeeklyReports extends Command
 
         if (isset($onlyForPractice)) {
             dispatch(new EmailWeeklyPracticeReport($onlyForPractice, $startRange, $endRange, $testerEmail));
+            dispatch(new EmailWeeklyProviderReport($onlyForPractice, $startRange, $endRange, $testerEmail));
 
             return;
         }
