@@ -471,6 +471,12 @@ class ReportsController extends Controller
 
         $patient = User::find($patientId);
 
+        //to force recompile view
+        header('Expires: Sun, 01 Jan 2014 00:00:00 GMT');
+        header('Cache-Control: no-store, no-cache, must-revalidate');
+        header('Cache-Control: post-check=0, pre-check=0', FALSE);
+        header('Pragma: no-cache');
+
         return view('patient.careplan.view-pdf-careplan', compact(['patient']));
     }
 
@@ -498,6 +504,12 @@ class ReportsController extends Controller
         $patient = User::find($patientId);
 
         $showInsuranceReviewFlag = $insurances->checkPendingInsuranceApproval($patient);
+
+        //force recompile view
+        header('Expires: Sun, 01 Jan 2014 00:00:00 GMT');
+        header('Cache-Control: no-store, no-cache, must-revalidate');
+        header('Cache-Control: post-check=0, pre-check=0', FALSE);
+        header('Pragma: no-cache');
 
         return view('wpUsers.patient.careplan.print',
             [
