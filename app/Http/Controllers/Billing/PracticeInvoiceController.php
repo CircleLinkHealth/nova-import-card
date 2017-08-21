@@ -335,11 +335,11 @@ class PracticeInvoiceController extends Controller
             if ($practice->invoice_recipients != '') {
 
                 $recipients = explode(', ', $practice->invoice_recipients);
-                $recipients = array_merge($recipients, Practice::getInvoiceRecipients($practice));
+                $recipients = array_merge($recipients, $practice->getInvoiceRecipients());
 
             } else {
 
-                $recipients = Practice::getInvoiceRecipients($practice);
+                $recipients = $practice->getInvoiceRecipients();
 
             }
 
