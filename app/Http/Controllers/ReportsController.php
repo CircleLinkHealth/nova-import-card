@@ -472,10 +472,7 @@ class ReportsController extends Controller
 
         $patient = User::find($patientId);
 
-        return \Response::view('patient.careplan.view-pdf-careplan', compact(['patient']))
-            ->header('Cache-Control', 'no-store, no-cache, must-revalidate, post-check=0, pre-check=0')
-            ->header('Pragma', 'no-cache')
-            ->header('expires', 'Sun, 01 Jan 2014 00:00:00 GMT');
+        return view('patient.careplan.view-pdf-careplan', compact(['patient']));
     }
 
     public function viewPrintCareplan(
@@ -503,7 +500,7 @@ class ReportsController extends Controller
 
         $showInsuranceReviewFlag = $insurances->checkPendingInsuranceApproval($patient);
 
-        return \Response::view('wpUsers.patient.careplan.print',
+        return view('wpUsers.patient.careplan.print',
             [
                 'patient'                 => $patient,
                 'problems'                => $careplan[$patientId]['problems'],
@@ -518,10 +515,7 @@ class ReportsController extends Controller
                 'appointments'            => $careplan[$patientId]['appointments'],
                 'other'                   => $careplan[$patientId]['other'],
                 'showInsuranceReviewFlag' => $showInsuranceReviewFlag,
-            ])
-            ->header('Cache-Control', 'no-store, no-cache, must-revalidate, post-check=0, pre-check=0')
-            ->header('Pragma', 'no-cache')
-            ->header('expires', 'Sun, 01 Jan 2014 00:00:00 GMT');
+            ]);
     }
 
     public function biometricsCharts(
