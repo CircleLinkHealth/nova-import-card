@@ -47,7 +47,7 @@
                     this.showUploadModal = true
                 },
 
-                deletePdf(pdf){
+                deletePdf(pdf) {
                     let disassociate = confirm('Are you sure you want to delete this CarePlan?');
 
                     if (!disassociate) {
@@ -80,7 +80,9 @@
                     })
 
                     if (this.modeBeforeUpload === 'web') {
-                        window.location.replace(window.location.href + '/pdf')
+                        Vue.nextTick(() => {
+                            window.location.replace(window.location.href + '/pdf')
+                        })
                     }
                 }
             }
