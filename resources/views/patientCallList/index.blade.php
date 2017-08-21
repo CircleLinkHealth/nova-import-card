@@ -152,12 +152,12 @@
                                                             @endif
                                                         </td>
                                                         <td>
-                                                            @if($call->inboundUser)
+                                                            @if( $call->inboundUser && $call->inboundUser->patientInfo)
                                                                 {{ $call->inboundUser->patientInfo->last_contact_time }}
                                                             @endif
                                                         </td>
                                                         <td>
-                                                            @if($call->inboundUser)
+                                                            @if( $call->inboundUser && $call->inboundUser->patientInfo)
                                                                 {{ $call->inboundUser->patientInfo->currentMonthCCMTime }}
                                                             @else
                                                                 <em style="color:red;">-</em>
