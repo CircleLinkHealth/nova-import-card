@@ -2,7 +2,6 @@
 
 use App\Call;
 use App\CLH\Helpers\StringManipulation;
-use App\Reports\ApproveBillablePatientsReport;
 use App\Services\Phaxio\PhaxioService;
 use App\Services\PhiMail\PhiMail;
 use Carbon\Carbon;
@@ -1508,8 +1507,9 @@ Route::group([
     ]);
 
     Route::get('', [
-        'uses' => 'Provider\DashboardController@getIndex',
-        'as'   => 'provider.dashboard.index',
+//        'uses' => 'Provider\DashboardController@getIndex',
+    'uses' => 'Provider\DashboardController@getCreateNotifications',
+    'as'   => 'provider.dashboard.index',
     ]);
 
     Route::get('locations', [
