@@ -7,6 +7,7 @@ use App\Contracts\Repositories\LocationRepository;
 use App\Contracts\Repositories\PracticeRepository;
 use App\Contracts\Repositories\UserRepository;
 use App\Http\Controllers\Controller;
+use App\Http\Requests\UpdatePracticeSettingsAndNotifications;
 use App\Practice;
 use App\Services\OnboardingService;
 use App\Settings;
@@ -137,7 +138,7 @@ class DashboardController extends Controller
             ]);
     }
 
-    public function postStoreNotifications(Request $request)
+    public function postStoreNotifications(UpdatePracticeSettingsAndNotifications $request)
     {
         $settingsInput = $request->input('settings');
         $errors = collect();
