@@ -35,6 +35,7 @@ return [
     "digits"               => "The :attribute must be :digits digits.",
     "digits_between"       => "The :attribute must be between :min and :max digits.",
     "email"                => "The :attribute must be a valid email address.",
+    'email_array'          => 'The :attribute must contain only valid email addresses.',
     "filled"               => "The :attribute field is required.",
     "exists"               => "The selected :attribute is invalid.",
     "image"                => "The :attribute must be an image.",
@@ -86,9 +87,7 @@ return [
     */
 
     'custom' => [
-        'attribute-name' => [
-            'rule-name' => 'custom-message',
-        ],
+
     ],
 
     /*
