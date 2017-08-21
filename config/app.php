@@ -1,5 +1,6 @@
 <?php
 
+use App\Providers\EmailArrayValidatorServiceProvider;
 use App\Providers\ObserversServiceProvider;
 use App\Providers\ViewComposerServiceProvider;
 
@@ -209,6 +210,7 @@ return [
         Laravel\Tinker\TinkerServiceProvider::class,
         ViewComposerServiceProvider::class,
         jeremykenedy\Slack\Laravel\ServiceProvider::class,
+        EmailArrayValidatorServiceProvider::class,
     ],
 
     /*
