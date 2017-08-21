@@ -13,7 +13,7 @@
             {!! Form::open(['url' => route('provider.dashboard.store.notifications', ['practiceSlug' => $practiceSlug]), 'method' => 'post', 'class' => 'col s12', 'id'=>'practice-settings-form']) !!}
 
             <div class="row">
-                <div class="input-field col s12">Settings</div>
+                <div class="input-field col s12"><h6>Settings</h6></div>
 
                 <div class="input-field col s6">
                     <input name="settings[auto_approve_careplans]" type="checkbox" id="auto_approve_careplans"
@@ -28,7 +28,7 @@
             </div>
 
             <div class="row">
-                <div class="input-field col s12">Direct Mail Notifications</div>
+                <div class="input-field col s12"><h6>Direct Mail Notifications</h6></div>
 
                 <div class="input-field col s6">
                     <input name="settings[dm_pdf_careplan]" type="checkbox" id="dm_pdf_careplan"
@@ -52,7 +52,7 @@
             </div>
 
             <div class="row">
-                <div class="input-field col s12">Efax Notifications</div>
+                <div class="input-field col s12"><h6>Efax Notifications</h6></div>
 
                 <div class="input-field col s6">
                     <input name="settings[efax_pdf_careplan]" type="checkbox" id="efax_pdf_careplan"
@@ -76,7 +76,7 @@
             </div>
 
             <div class="row">
-                <div class="input-field col s12">Email Notifications</div>
+                <div class="input-field col s12"><h6>Email Notifications</h6></div>
 
                 <div class="input-field col s6">
                     <input name="settings[email_careplan_approval_reminders]" type="checkbox"
@@ -95,6 +95,24 @@
                     <input name="settings[email_weekly_report]" type="checkbox" id="email_weekly_report"
                            value="1" @if($practiceSettings->email_weekly_report){{'checked'}}@endif>
                     <label for="email_weekly_report">Weekly Reports</label>
+                </div>
+
+                <div class="input-field col s12" style="margin-top: 3rem;">
+                    <textarea id="invoice-recipients"
+                              class="materialize-textarea">{{$practice->invoice_recipients}}</textarea>
+                    <label for="invoice-recipients">Invoice Recipients (comma separated, w/ spaces after comma)</label>
+                    @if($invoiceRecipients)
+                        <small>The emails above will receive invoices, in addition to {{$invoiceRecipients}}.</small>
+                    @else
+                        <small>The emails above will receive invoices.</small>
+                    @endif
+                </div>
+
+                <div class="input-field col s12" style="margin-top: 3rem;">
+                    <textarea id="wekly-summary-recipients"
+                              class="materialize-textarea">{{$practice->weekly_report_recipients}}</textarea>
+                    <label for="wekly-summary-recipients">Weekly Organization Summary Recipients (comma separated, w/ spaces after comma)</label>
+                    <small>The emails above will receive weekly summary reports.</small>
                 </div>
             </div>
         </div>
@@ -115,7 +133,7 @@
 
 @section('scripts')
     <script>
-        $(document).ready(function() {
+        $(document).ready(function () {
             $('select').material_select();
         });
     </script>

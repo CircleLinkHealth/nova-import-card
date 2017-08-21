@@ -103,9 +103,13 @@ class Practice extends Model
         }
     }
 
-    public function getInvoiceRecipients()
+    public function getInvoiceRecipients($return = 'collection')
     {
         $emails = $this->users()->where('send_billing_reports', '=', true)->pluck('email');
+
+        if ($return == 'string') {
+            return $emails->implode(', ');
+        }
 
         return $emails;
     }

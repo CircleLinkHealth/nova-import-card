@@ -80,9 +80,13 @@ class DashboardController extends Controller
             $practiceSettings = $this->primaryPractice->syncSettings(new Settings());
         }
 
+        $invoiceRecipients = $this->primaryPractice->getInvoiceRecipients('string');
+
         return view('provider.notifications.create', array_merge([
-            'practiceSlug'     => $this->practiceSlug,
-            'practiceSettings' => $practiceSettings ?? $this->primaryPractice->settings->first(),
+            'practice'          => $this->primaryPractice,
+            'practiceSlug'      => $this->practiceSlug,
+            'practiceSettings'  => $practiceSettings ?? $this->primaryPractice->settings->first(),
+            'invoiceRecipients' => $invoiceRecipients,
         ], $this->returnWithAll));
     }
 
