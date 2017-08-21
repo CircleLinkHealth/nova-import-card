@@ -98,7 +98,7 @@
                 </div>
 
                 <div class="input-field col s12" style="margin-top: 3rem;">
-                    <textarea id="invoice-recipients"
+                    <textarea id="invoice-recipients" name="invoice_recipients"
                               class="materialize-textarea">{{$practice->invoice_recipients}}</textarea>
                     <label for="invoice-recipients">Invoice Recipients (comma separated, w/ spaces after comma)</label>
                     @if($invoiceRecipients)
@@ -109,7 +109,7 @@
                 </div>
 
                 <div class="input-field col s12" style="margin-top: 3rem;">
-                    <textarea id="wekly-summary-recipients"
+                    <textarea id="wekly-summary-recipients" name="weekly_report_recipients"
                               class="materialize-textarea">{{$practice->weekly_report_recipients}}</textarea>
                     <label for="wekly-summary-recipients">Weekly Organization Summary Recipients (comma separated, w/ spaces after comma)</label>
                     <small>The emails above will receive weekly summary reports.</small>
@@ -121,7 +121,6 @@
         <button type="submit"
                 form="practice-settings-form"
                 class="btn blue waves-effect waves-light col s12"
-                id="update-practice"
                 onclick="Materialize.toast('{{$practice->display_name}} preferences was successfully updated.', 4000)">
             Update Preferences
         </button>

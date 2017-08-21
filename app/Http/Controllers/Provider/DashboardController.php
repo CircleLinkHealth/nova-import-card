@@ -139,10 +139,10 @@ class DashboardController extends Controller
 
     public function postStoreNotifications(Request $request)
     {
-        $input = $request->input('settings');
+        $settingsInput = $request->input('settings');
         $errors = collect();
 
-        if (isset($input['dm_audit_reports'])) {
+        if (isset($settingsInput['dm_audit_reports'])) {
             $locationsWithoutDM = collect();
 
             foreach ($this->primaryPractice->locations as $location) {
@@ -152,7 +152,7 @@ class DashboardController extends Controller
             }
 
             if ($this->primaryPractice->locations->count() == $locationsWithoutDM->count()) {
-                unset($input['dm_audit_reports']);
+                unset($settingsInput['dm_audit_reports']);
                 $errors->push('Send Audit Reports via Direct Mail was not activated because none of the Locations have a DM address. Please add a Direct Address for at least one Location, and then try activating the Notification again.');
             } elseif ($locationsWithoutDM->count() == 0) {
                 //
@@ -163,7 +163,7 @@ class DashboardController extends Controller
             }
         }
 
-        if (isset($input['efax_audit_reports'])) {
+        if (isset($settingsInput['efax_audit_reports'])) {
             $locationsWithoutFax = collect();
 
             foreach ($this->primaryPractice->locations as $location) {
@@ -173,7 +173,7 @@ class DashboardController extends Controller
             }
 
             if ($this->primaryPractice->locations->count() == $locationsWithoutFax->count()) {
-                unset($input['efax_audit_reports']);
+                unset($settingsInput['efax_audit_reports']);
                 $errors->push('Send Audit Reports via eFax was not activated because none of the Locations have a fax number. Please add a Fax Number for at least one Location, and then try activating the Notification again.');
             } elseif ($locationsWithoutFax->count() == 0) {
                 //
@@ -184,7 +184,15 @@ class DashboardController extends Controller
             }
         }
 
-        $this->primaryPractice->syncSettings(new Settings($input ?? []));
+        $this->primaryPractice->syncSettings(new Settings($settingsInput ?? []));
+
+        $invoiceRecipients = $request->input('invoice_recipients');
+        $weeklyReportRecipients = $request->input('weekly_report_recipients');
+
+        $this->primaryPractice->update([
+            'invoice_recipients' => $invoiceRecipients,
+            'weekly_report_recipients' => $weeklyReportRecipients
+        ]);
 
         return redirect()->back()->withErrors($errors);
     }
