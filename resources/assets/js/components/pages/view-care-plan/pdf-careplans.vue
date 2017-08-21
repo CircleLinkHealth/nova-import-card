@@ -80,9 +80,9 @@
                     })
 
                     if (this.modeBeforeUpload === 'web') {
-                        Vue.nextTick(() => {
+                        setTimeout(() => {
                             window.location.replace(window.location.href + '/pdf')
-                        })
+                        }, 1000)
                     }
                 }
             }

@@ -21,6 +21,7 @@ if (isset($patient) && !empty($patient)) {
 @endif
 
 @section('scripts')
+    {{--contains care team modules as well--}}
     <script src="{{asset('js/compiled/v-pdf-careplans.js')}}"></script>
 @endsection
 
