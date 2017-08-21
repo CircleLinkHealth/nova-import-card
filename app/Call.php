@@ -55,6 +55,7 @@ class Call extends Model
 
         if (!$user->patientInfo) {
             $user->patientInfo()->create([]);
+            return;
         }
 
         // get record for month
@@ -70,6 +71,7 @@ class Call extends Model
 
         if (!$user->patientInfo) {
             $user->patientInfo()->create([]);
+            return;
         }
 
         // get record for month
