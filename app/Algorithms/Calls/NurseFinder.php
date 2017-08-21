@@ -14,6 +14,7 @@ use App\Nurse;
 use App\NurseContactWindow;
 use App\Patient;
 use App\PatientContactWindow;
+use App\User;
 use Carbon\Carbon;
 
 class NurseFinder
@@ -31,6 +32,7 @@ class NurseFinder
     protected $windowStart;
     protected $windowEnd;
     protected $matchArray;
+    protected $previousCall;
 
 
     protected $data;
@@ -39,7 +41,8 @@ class NurseFinder
         Patient $patient,
         Carbon $date,
         $windowStart,
-        $windowEnd
+        $windowEnd,
+        $previousCall
     ) {
 
         $this->patient = $patient;
@@ -47,6 +50,70 @@ class NurseFinder
         $this->windowStart = $windowStart;
         $this->windowEnd = $windowEnd;
         $this->nursesForPatient = $this->getMostFrequentNursesForPatient();
+        $this->previousCall = $previousCall;
+
+    }
+
+    public function find()
+    {
+
+//        foreach ($this->nursesForPatient as $nurseId => $count) {
+//
+//            $nurse = Nurse::where('user_id', $nurseId)->first();
+//
+//            $date_match = $this->checkNurseForTargetDays($nurse); //first days
+//
+//            if ($date_match) {
+//
+//                $no_of_calls_in_window = $this->countScheduledCallCountForNurseForWindow($date_match);
+//
+//                //check threshold for nurse
+//                if ($no_of_calls_in_window < 6) {
+//
+//                    return $date_match;
+//
+//                }// else keep looking!
+//
+//            }
+//
+//        }
+//        $match['nurse'] = current(array_keys($this->nursesForPatient));
+
+        if($this->previousCall['attempt_note'] == '') {
+
+            $match['nurse'] = $this->previousCall['outbound_cpm_id'];
+            $match['window_match'] = 'Attempt Note was empty, assigning to care person that last contacted patient. ';
+
+        } else {
+
+            $data = $this->getLastRNCallWithoutAttemptNote($this->patient, $this->previousCall['outbound_cpm_id']);
+            $match['window_match'] = 'Attempt Note present, looking for last care person that contacted patient without one..';
+
+            if($data == null){
+
+                //assign back to RN that first called patient
+                $match['nurse'] = $this->previousCall['outbound_cpm_id'];
+                $match['window_match'] .= " No previous care person without attempt note found, assigning to last contacted care person. ";
+
+            } else {
+
+                $match['nurse'] = $data;
+                $match['window_match'] .= " Found care person that contacted patient in the past without attempt note. ";
+
+            }
+
+        }
+
+        /*
+         *
+        Always schedule next call to RN who made last call EXCEPT:
+        if attempt note exists for a call: then assign next call to RN who performed the last call without an attempt note
+        note: if there is no such RN (ex: first call ever has an attempt note), then assign next call to RN who made last call
+         */
+
+        $match['window_match'] .= '('. User::find($match['nurse'])->display_name . ')';
+
+        return $match;
 
     }
 
@@ -91,40 +158,6 @@ class NurseFinder
 
     }
 
-
-    public function find()
-    {
-
-        foreach ($this->nursesForPatient as $nurseId => $count) {
-
-            $nurse = Nurse::where('user_id', $nurseId)->first();
-
-            $date_match = $this->checkNurseForTargetDays($nurse); //first days
-
-            if ($date_match) {
-
-                $no_of_calls_in_window = $this->countScheduledCallCountForNurseForWindow($date_match);
-
-                //check threshold for nurse
-                if ($no_of_calls_in_window < 6) {
-
-                    return $date_match;
-
-                }// else keep looking!
-
-            }
-
-        }
-
-
-        //No matches, return first available window of
-
-        $date_match['nurse'] = current(array_keys($this->nursesForPatient));
-        $date_match['window_match'] = 'No windows found, assigning `most successfully reached nurse` to original patient target';
-
-        return $date_match;
-
-    }
 
     public
     function checkNurseForTargetDays(
@@ -375,6 +408,23 @@ class NurseFinder
 
 
     }
+
+    public function getLastRNCallWithoutAttemptNote($patient, $nurseToIgnore)
+    {
+
+        $call = Call
+            ::where('inbound_cpm_id', $patient->user_id)
+            ->where('status', '!=', 'scheduled')
+            ->where('called_date', '!=', '')
+            ->where('outbound_cpm_id', '!=', $nurseToIgnore)
+            ->where('attempt_note', '=', '')
+            ->orderBy('called_date', 'desc')
+            ->first()['outbound_cpm_id'];
+
+        return $call;
+
+    }
+
 
 
 }
