@@ -55,7 +55,6 @@ class Call extends Model
 
         if (!$user->patientInfo) {
             $user->patientInfo()->create([]);
-            return;
         }
 
         // get record for month
@@ -70,7 +69,7 @@ class Call extends Model
     public static function numberOfSuccessfulCallsForPatientForMonth(User $user, $date){
 
         if (!$user->patientInfo) {
-            return;
+            $user->patientInfo()->create([]);
         }
 
         // get record for month
