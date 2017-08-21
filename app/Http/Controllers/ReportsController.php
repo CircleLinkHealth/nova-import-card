@@ -464,14 +464,16 @@ class ReportsController extends Controller
     }
 
     public function viewPdfCarePlan(Request $request,
-                                    $patientId = false) {
+                                    $patientId = false)
+    {
         if (!$patientId) {
             return "Patient Not Found..";
         }
 
         $patient = User::find($patientId);
 
-        return view('patient.careplan.view-pdf-careplan', compact(['patient']));
+        return \Response::view('patient.careplan.view-pdf-careplan', compact(['patient']))->header('Cache-Control',
+            'no-store, no-cache, must-revalidate, post-check=0, pre-check=0');
     }
 
     public function viewPrintCareplan(
@@ -499,7 +501,7 @@ class ReportsController extends Controller
 
         $showInsuranceReviewFlag = $insurances->checkPendingInsuranceApproval($patient);
 
-        return view('wpUsers.patient.careplan.print',
+        return \Response::view('wpUsers.patient.careplan.print',
             [
                 'patient'                 => $patient,
                 'problems'                => $careplan[$patientId]['problems'],
@@ -514,7 +516,7 @@ class ReportsController extends Controller
                 'appointments'            => $careplan[$patientId]['appointments'],
                 'other'                   => $careplan[$patientId]['other'],
                 'showInsuranceReviewFlag' => $showInsuranceReviewFlag,
-            ]);
+            ])->header('Cache-Control', 'no-store, no-cache, must-revalidate, post-check=0, pre-check=0');
     }
 
     public function biometricsCharts(

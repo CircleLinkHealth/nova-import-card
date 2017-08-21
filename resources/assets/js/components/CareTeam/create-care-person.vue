@@ -39,12 +39,12 @@
                     </h5>
                 </div>
             </div>
-            <!--<div class="row providerForm">-->
-            <!--<search-providers v-if="!newCarePerson.user.id"-->
-            <!--v-bind:first_name="newCarePerson.user.first_name"-->
-            <!--v-bind:last_name="newCarePerson.user.last_name"-->
-            <!--&gt;</search-providers>-->
-            <!--</div>-->
+
+            <search-providers v-if="!newCarePerson.user.id"
+                              :first_name="newCarePerson.user.first_name"
+                              :last_name="newCarePerson.user.last_name"
+                              @existing-user-selected="attachExistingUser"
+            ></search-providers>
 
 
             <vue-form :state="formstate" @submit.prevent="onSubmit">
@@ -507,6 +507,7 @@
 
 <script>
     import modal from '../shared/modal.vue';
+    import SearchProviders from './search-providers.vue'
     import {mapGetters, mapActions} from 'vuex'
     import {getPatientCareTeam, clearOpenModal, addNotification, updateCarePerson} from '../../store/actions'
 
@@ -519,7 +520,8 @@
         },
 
         components: {
-            modal
+            modal,
+            SearchProviders
         },
 
         computed: Object.assign({},
@@ -540,6 +542,13 @@
         methods: Object.assign({},
             mapActions(['getPatientCareTeam', 'clearOpenModal', 'addNotification', 'updateCarePerson']),
             {
+                attachExistingUser(user) {
+                    this.newCarePerson.user = user
+                    this.newCarePerson.user.phone_numbers = user.phone_numbers
+                    this.newCarePerson.user.primary_practice = user.primary_practice
+                    this.newCarePerson.user.provider_info = user.provider_info
+                },
+
                 sendForm() {
                     this.submitClicked = true
 
@@ -569,12 +578,14 @@
 
                     let url = window.location.href
 
-                    if(url.includes('view-careplan')) {
-                        window.location.replace(url+'/#care-team')
+                    if (url.includes('view-careplan')) {
+                        window.location.replace(url + '/#care-team')
                     }
-                },
+                }
+                ,
 
-                fieldClassName(field) {
+                fieldClassName(field)
+                {
                     if (!field) {
                         return '';
                     }
@@ -584,7 +595,8 @@
                     if ((field.$touched || field.$submitted) && field.$invalid) {
                         return 'has-danger';
                     }
-                },
+                }
+                ,
             }
         ),
 
