@@ -266,7 +266,7 @@ class PatientController extends Controller
         $foundUsers = []; // save resources, no duplicate db calls
         $foundPrograms = []; // save resources, no duplicate db calls
 
-        $canApproveCarePlans = auth()->user()->can('care-plan-approve');
+        $canApproveCarePlans = auth()->user()->canApproveCareplans();
         $canQAApproveCarePlans = auth()->user()->can('care-plan-qa-approve');
         $isCareCenter = Auth::user()->hasRole('care-center');
         $isAdmin = Auth::user()->hasRole('administrator');

@@ -35,7 +35,7 @@ class UpdateCarePlanStatus
             return false;
         }
 
-        if ($user->carePlanStatus == 'qa_approved' && auth()->user()->can('care-plan-approve')) {
+        if ($user->carePlanStatus == 'qa_approved' && auth()->user()->canApproveCarePlans()) {
             $user->carePlanStatus = 'provider_approved'; // careplan_status
             $user->carePlanProviderApprover = auth()->user()->id; // careplan_provider_approver
             $user->carePlanProviderApproverDate = date('Y-m-d H:i:s'); // careplan_provider_date

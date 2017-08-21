@@ -2407,4 +2407,8 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
             ? Carbon::now($this->timezone)->format('T')
             : Carbon::now()->setTimezone('America/New_York')->format('T');
     }
+
+    public function canApproveCarePlans() {
+        return $this->can('care-plan-approve');
+    }
 }

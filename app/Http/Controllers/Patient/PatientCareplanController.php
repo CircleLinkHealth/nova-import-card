@@ -740,7 +740,7 @@ class PatientCareplanController extends Controller
             }
         }
 
-        if ($patient->carePlanStatus == 'qa_approved' && auth()->user()->can('care-plan-approve')) {
+        if ($patient->carePlanStatus == 'qa_approved' && auth()->user()->canApproveCarePlans()) {
             $showApprovalButton = true;
         } elseif ($patient->carePlanStatus == 'draft' && auth()->user()->can('care-plan-qa-approve')) {
             $showApprovalButton = true;
