@@ -2408,7 +2408,9 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
             : Carbon::now()->setTimezone('America/New_York')->format('T');
     }
 
-    public function canApproveCarePlans() {
-        return $this->can('care-plan-approve');
+    public function canApproveCarePlans()
+    {
+        return $this->can('care-plan-approve')
+            || ($this->hasRole('registered-nurse') && $this->primaryPractice->settings[0]->rn_can_approve_careplans);
     }
 }

@@ -25,6 +25,12 @@
                     {{ Form::select('settings[careplan_mode]', ['web'=>'Web','pdf'=>'PDF'], $practiceSettings->careplan_mode) }}
                     <label>Starting CarePlan Mode</label>
                 </div>
+
+                <div class="input-field col s6">
+                    <input name="settings[rn_can_approve_careplans]" type="checkbox" id="rn_can_approve_careplans"
+                           value="1" @if($practiceSettings->rn_can_approve_careplans){{'checked'}}@endif>
+                    <label for="rn_can_approve_careplans">RN's can approve Care Plans</label>
+                </div>
             </div>
 
             <div class="row">

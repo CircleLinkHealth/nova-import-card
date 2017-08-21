@@ -11,6 +11,7 @@ class Settings extends Model
     protected $fillable = [
         'careplan_mode',
         'auto_approve_careplans',
+        'rn_can_approve_careplans',
 
         //Direct Mail Notifications
         'dm_pdf_careplan',
