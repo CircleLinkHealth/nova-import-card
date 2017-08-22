@@ -1,11 +1,11 @@
 <template>
-    <div class="admin-panel-locations-container" v-cloak>
+    <div class="admin-panel-users-container" v-cloak>
         <div class="row">
             <div class="col s6">
                 <div class="input-field">
-                    <div @click="addLocation()"
+                    <div @click="addUser()"
                          class="btn blue waves-effect waves-light" id="submit">
-                        Add New Location
+                        Add New User
                     </div>
                 </div>
             </div>
@@ -14,13 +14,13 @@
                 <div class="input-field">
                     <i class="material-icons" style="position: absolute;top: 0.7rem;">search</i>
                     <input id="search" type="search" name="query" v-model="searchQuery"
-                           placeholder="search for a location">
+                           placeholder="search for a user">
                     <i class="material-icons" @click="searchQuery = ''">close</i></div>
             </div>
         </div>
 
         <grid
-                :data="locations"
+                :data="users"
                 :options="gridOptions"
                 :filter-key="searchQuery"
                 @click="cellClicked">
@@ -30,22 +30,22 @@
 
 <script>
     import {mapGetters, mapActions} from 'vuex'
-    import {practiceLocations} from '../../../store/getters'
-    import {getPracticeLocations, deletePracticeLocation} from '../../../store/actions'
+    import {practiceUsers} from '../../../store/getters'
+    import {getPracticeUsers, deletePracticeUser} from '../../../store/actions'
 
     export default {
         computed: Object.assign({},
             mapGetters({
-                locations: 'practiceLocations'
+                users: 'practiceUsers'
             })
         ),
 
         mounted() {
-            this.getPracticeLocations(this.practiceId)
+            this.getPracticeUsers(this.practiceId)
         },
 
         methods: Object.assign({},
-            mapActions(['getPracticeLocations', 'deletePracticeLocation']),
+            mapActions(['getPracticeUsers', 'deletePracticeUser']),
             {
                 cellClicked(index, entry, entryIndex) {
                     switch (index) {
@@ -61,21 +61,21 @@
                 },
 
                 deleteRow(index) {
-                    let disassociate = confirm('Are you sure you want to delete ' + this.locations[index].name + '?');
+                    let disassociate = confirm('Are you sure you want to delete ' + this.users[index].name + '?');
 
                     if (!disassociate) {
                         return true;
                     }
 
-                    this.deletePracticeLocation(this.locations[index])
+                    this.deletePracticeUser(this.users[index])
                 },
 
                 editRow(index) {
-                    this.$emit('update-view', 'update-location', this.locations[index])
+                    this.$emit('update-view', 'update-user', this.users[index])
                 },
 
-                addLocation() {
-                    this.$emit('update-view', 'update-location')
+                addUser() {
+                    this.$emit('update-view', 'update-user')
                 }
             }),
 
@@ -83,7 +83,7 @@
             return {
                 compName: '',
                 showModal: false,
-                editedLocation: {},
+                editedUser: {},
                 searchQuery: '',
                 gridOptions: {
                     columns: {
@@ -95,17 +95,14 @@
                             name: '',
                             content: '<a class="red waves-effect waves-light btn" style="padding: 0 .4rem;"><i class="material-icons center text-white">clear</i></a>',
                         },
-                        name: {
+                        full_name: {
                             name: 'Name'
                         },
-                        address_line_1: {
-                            name: 'Address Line 1'
+                        role_name: {
+                            name: 'Role'
                         },
-                        city: {
-                            name: 'City'
-                        },
-                        state: {
-                            name: 'State'
+                        phone_number: {
+                            name: 'Phone'
                         },
                     }
                 },
@@ -116,7 +113,7 @@
 </script>
 
 <style>
-    .admin-panel-locations-container .input-field {
+    .admin-panel-users-container .input-field {
         margin-top: 0;
     }
 
