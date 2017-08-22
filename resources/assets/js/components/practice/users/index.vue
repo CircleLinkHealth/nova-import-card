@@ -30,22 +30,22 @@
 
 <script>
     import {mapGetters, mapActions} from 'vuex'
-    import {practiceUsers} from '../../../store/getters'
-    import {getPracticeUsers, deletePracticeUser} from '../../../store/actions'
+    import {practiceStaff} from '../../../store/getters'
+    import {getPracticeStaff, deletePracticeStaff} from '../../../store/actions'
 
     export default {
         computed: Object.assign({},
             mapGetters({
-                users: 'practiceUsers'
+                users: 'practiceStaff'
             })
         ),
 
         mounted() {
-            this.getPracticeUsers(this.practiceId)
+            this.getPracticeStaff(this.practiceId)
         },
 
         methods: Object.assign({},
-            mapActions(['getPracticeUsers', 'deletePracticeUser']),
+            mapActions(['getPracticeStaff', 'deletePracticeStaff']),
             {
                 cellClicked(index, entry, entryIndex) {
                     switch (index) {
@@ -67,7 +67,7 @@
                         return true;
                     }
 
-                    this.deletePracticeUser(this.users[index])
+                    this.deletePracticeStaff(this.users[index])
                 },
 
                 editRow(index) {

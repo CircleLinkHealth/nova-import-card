@@ -138,39 +138,39 @@ export const SET_ERRORS = (state, errors) => {
 }
 
 /**
- * Clear Practice Users
+ * Clear Practice Staff
  *
  * @param state
  * @constructor
  */
-export const CLEAR_PRACTICE_USERS = (state) => {
-    state.practiceUsers = []
+export const CLEAR_PRACTICE_STAFF = (state) => {
+    state.practiceStaff = []
 }
 
 /**
- * Set Practice Users
+ * Set Practice Staff
  *
  * @param state
- * @param practiceUsers
+ * @param practiceStaff
  * @constructor
  */
-export const SET_PRACTICE_USERS = (state, practiceUsers) => {
-    practiceUsers.forEach(user => {
-        state.practiceUsers.push(user)
+export const SET_PRACTICE_STAFF = (state, practiceStaff) => {
+    practiceStaff.forEach(user => {
+        state.practiceStaff.push(user)
     })
 }
 
 /**
- * Update Practice Users
+ * Update Practice Staff Member
  *
  * @param state
  * @param user
  * @constructor
  */
-export const UPDATE_PRACTICE_USER = (state, user) => {
-    state.practiceUsers.forEach((pracUser, index) => {
+export const UPDATE_PRACTICE_STAFF = (state, user) => {
+    state.practiceStaff.forEach((pracUser, index) => {
         if (pracUser.id === user.id) {
-            state.practiceUsers[index] = user;
+            state.practiceStaff[index] = user;
         }
     })
 }

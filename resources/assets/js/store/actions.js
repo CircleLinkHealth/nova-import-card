@@ -1,7 +1,7 @@
 import userProfile from "../api/user-profile";
 import careTeam from "../api/care-team";
 import practiceLocationsApi from "../api/practice-location";
-import practiceUsersApi from "../api/practice-users";
+import practiceStaffApi from "../api/practice-staff";
 import carePersonApi from "../api/care-person";
 import carePlanApi from "../api/patient-care-plan";
 
@@ -117,32 +117,32 @@ export const deletePracticeLocation = ({commit}, location) => {
 }
 
 /**
- * Get Practice Users
+ * Get Practice Staffs
  *
  * @param commit
  * @param practiceId
  */
-export const getPracticeUsers = ({commit}, practiceId) => {
+export const getPracticeStaff = ({commit}, practiceId) => {
     if (!practiceId) {
         return
     }
 
-    practiceUsersApi.getPracticeUsers(practice => {
-        commit('CLEAR_PRACTICE_USERS');
+    practiceStaffApi.index(practice => {
+        commit('CLEAR_PRACTICE_STAFF');
 
-        commit('SET_PRACTICE_USERS', practice);
+        commit('SET_PRACTICE_STAFF', practice);
     }, (error) => {
         console.log(error)
     }, practiceId)
 }
 
 /**
- * Update Practice User
+ * Update Practice Staff
  *
  * @param commit
  * @param user
  */
-export const updatePracticeUser = ({commit}, user) => {
+export const updatePracticeStaff = ({commit}, user) => {
     let practiceId = user.practice_id
 
     if (!practiceId) {
@@ -150,7 +150,7 @@ export const updatePracticeUser = ({commit}, user) => {
         return
     }
 
-    practiceUsersApi.update(user => {
+    practiceStaffApi.update(user => {
         commit('UPDATE_PRACTICE_USER', user);
     }, errors => {
         commit('SET_ERRORS', errors)
@@ -158,12 +158,12 @@ export const updatePracticeUser = ({commit}, user) => {
 }
 
 /**
- * Delete Practice User
+ * Delete Practice Staff
  *
  * @param commit
  * @param user
  */
-export const deletePracticeUser = ({commit}, user) => {
+export const deletePracticeStaff = ({commit}, user) => {
     let practiceId = user.practice_id
 
     if (!practiceId) {
@@ -171,7 +171,7 @@ export const deletePracticeUser = ({commit}, user) => {
         return
     }
 
-    practiceUsersApi.delete(user => {
+    practiceStaffApi.delete(user => {
         commit('DELETE_PRACTICE_USER', user);
     }, errors => {
         commit('SET_ERRORS', errors)

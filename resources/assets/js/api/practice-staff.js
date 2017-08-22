@@ -1,7 +1,7 @@
 import Vue from 'vue'
 
 export default {
-    getPracticeUsers (cb, ecb = null, practiceId) {
+    index (cb, ecb = null, practiceId) {
         if (!practiceId) {
             return;
         }

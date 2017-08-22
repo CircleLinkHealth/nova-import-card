@@ -9,7 +9,7 @@ use App\Role;
 use App\User;
 use Illuminate\Http\Request;
 
-class PracticeUsersController extends Controller
+class PracticeStaffController extends Controller
 {
     /**
      * Display a listing of the resource.
