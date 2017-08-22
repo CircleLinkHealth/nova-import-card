@@ -25,7 +25,7 @@ window.Vue.use(VueForm, {
 Vue.component('v-input', require('./components/shared/materialize/input.vue'))
 
 Vue.component('managePracticeLocations', require('./components/pages/provider-admin-panel/manage-practice-locations.vue'));
-Vue.component('managePracticeUsers', require('./components/pages/provider-admin-panel/manage-practice-users.vue'));
+Vue.component('managePracticeUsers', require('./components/pages/provider-admin-panel/manage-practice-staff.vue'));
 Vue.component('select2', require('./components/src/select2'));
 Vue.component('openModal', require('./components/shared/open-modal.vue'));
 Vue.component('notifications', require('./components/shared/notifications/notifications.vue'));
