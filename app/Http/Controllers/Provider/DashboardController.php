@@ -56,13 +56,10 @@ class DashboardController extends Controller
             return response('Practice not found', 404);
         }
 
-        $this->onboardingService->getExistingLocations($primaryPractice);
-
-        return view('provider.location.create', array_merge([
-            'leadId'       => auth()->user()->id,
+        return view('provider.location.create',[
             'practiceSlug' => $this->practiceSlug,
             'practice'     => $this->primaryPractice,
-        ], $this->returnWithAll));
+        ]);
     }
 
     public function getCreatePractice()
