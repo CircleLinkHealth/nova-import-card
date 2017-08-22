@@ -1,5 +1,5 @@
 <template>
-    <component :is="componentName" :location="props" @update-view="updateView"></component>
+    <component :is="componentName" :editedStaffMember="props" @update-view="updateView"></component>
 </template>
 
 <script>
