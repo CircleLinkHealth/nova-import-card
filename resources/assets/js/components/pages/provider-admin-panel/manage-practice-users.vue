@@ -3,18 +3,18 @@
 </template>
 
 <script>
-    import UpdateLocation from '../../practice/lodations/update.vue'
-    import IndexLocations from '../../practice/lodations/index.vue'
+    import UpdateUser from '../../practice/users/update.vue'
+    import IndexUsers from '../../practice/users/index.vue'
 
     export default {
         components: {
-            UpdateLocation,
-            IndexLocations
+            UpdateUser,
+            IndexUsers
         },
 
         data() {
             return {
-                componentName: 'index-locations',
+                componentName: 'index-users',
                 props: {}
             }
         },
