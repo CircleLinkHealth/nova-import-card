@@ -4,6 +4,7 @@ use App\Http\Controllers\Controller;
 use App\PageTimer;
 use App\User;
 use Auth;
+use Carbon\Carbon;
 use DateInterval;
 use DatePeriod;
 use DateTime;
@@ -21,7 +22,8 @@ class NurseTimeReportController extends Controller
 	 */
 	public function index(Request $request)
 	{
-		//dd('yo');
+		dd('This module has been disabled because the server blows up. If you need to run this, let the developers know on Slack. Thanks.');
+
 		if (!Auth::user()->can('report-nurse-time-view')) {
 			//abort(403);
 		}
@@ -37,9 +39,6 @@ class NurseTimeReportController extends Controller
 			})
 			->get();
 
-		// get date
-		$date = date('Y-m-d H:i:s');
-
 		$i = 0;
 
 		// header
@@ -49,8 +48,8 @@ class NurseTimeReportController extends Controller
 		}
 
 		// get array of dates
-		$startDate = new DateTime('first day of this month');
-		$endDate = new DateTime(date('Y-m-d'));
+		$startDate = Carbon::now()->startOfDay();
+		$endDate = Carbon::now()->endOfDay();
 
 		// if form submitted dates, override here
 		$showAllTimes = false;
@@ -58,10 +57,10 @@ class NurseTimeReportController extends Controller
 			$showAllTimes = 'checked';
 		}
 		if ($request->input('start_date')) {
-			$startDate = new DateTime($request->input('start_date') . ' 00:00:01');
+			$startDate = Carbon::parse($request->input('start_date'))->startOfDay();
 		}
 		if ($request->input('end_date')) {
-			$endDate = new DateTime($request->input('end_date') . ' 23:59:59');
+			$endDate = Carbon::parse($request->input('end_date'))->endOfDay();
 		}
 
 		// to exclude the end date (so you just get dates between start and end date):
