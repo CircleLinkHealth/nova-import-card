@@ -49,7 +49,7 @@ mix.js('resources/assets/js/importer-training.js', 'public/js/compiled');
 
 //apps
 mix.js('resources/assets/js/app-provider-ui.js', 'public/js/compiled');
-mix.js('resources/assets/js/app-provider-admin-panel-ui.js', 'public/js/compiled');
+mix.js('resources/assets/js/app-provider-admin-panel-ui.js', 'public/js/compiled').sourceMaps();
 mix.js('resources/assets/js/app-clh-admin-ui.js', 'public/js/compiled');
 
 

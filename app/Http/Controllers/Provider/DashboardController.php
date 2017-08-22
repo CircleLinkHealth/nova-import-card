@@ -90,17 +90,15 @@ class DashboardController extends Controller
 
     public function getCreateStaff()
     {
-        $primaryPractice = $this->primaryPractice;
+        $practice = $this->primaryPractice;
 
-        if (!$primaryPractice) {
+        if (!$practice) {
             return response('Practice not found', 404);
         }
 
-        $this->onboardingService->getExistingStaff($primaryPractice);
-
         $practiceSlug = $this->practiceSlug;
 
-        return view('provider.user.create-staff', array_merge(compact('invite', 'practiceSlug'), $this->returnWithAll));
+        return view('provider.user.create-staff', compact('invite', 'practiceSlug', 'practice'));
     }
 
     public function getIndex()
