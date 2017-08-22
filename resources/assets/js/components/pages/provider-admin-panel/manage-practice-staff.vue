@@ -3,18 +3,18 @@
 </template>
 
 <script>
-    import UpdateUser from '../../practice/users/update.vue'
-    import IndexUsers from '../../practice/users/index.vue'
+    import UpdateStaff from '../../practice/users/update.vue'
+    import IndexStaff from '../../practice/users/index.vue'
 
     export default {
         components: {
-            UpdateUser,
-            IndexUsers
+            UpdateStaff,
+            IndexStaff
         },
 
         data() {
             return {
-                componentName: 'index-users',
+                componentName: 'index-staff',
                 props: {}
             }
         },

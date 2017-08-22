@@ -1,11 +1,11 @@
 <template>
-    <div class="admin-panel-users-container" v-cloak>
+    <div class="admin-panel-staff-container" v-cloak>
         <div class="row">
             <div class="col s6">
                 <div class="input-field">
                     <div @click="addUser()"
                          class="btn blue waves-effect waves-light" id="submit">
-                        Add New User
+                        Add New Staff Member
                     </div>
                 </div>
             </div>
@@ -14,7 +14,7 @@
                 <div class="input-field">
                     <i class="material-icons" style="position: absolute;top: 0.7rem;">search</i>
                     <input id="search" type="search" name="query" v-model="searchQuery"
-                           placeholder="search for a user">
+                           placeholder="search for a staff member">
                     <i class="material-icons" @click="searchQuery = ''">close</i></div>
             </div>
         </div>
@@ -71,11 +71,11 @@
                 },
 
                 editRow(index) {
-                    this.$emit('update-view', 'update-user', this.users[index])
+                    this.$emit('update-view', 'update-staff', this.users[index])
                 },
 
                 addUser() {
-                    this.$emit('update-view', 'update-user')
+                    this.$emit('update-view', 'update-staff')
                 }
             }),
 
@@ -113,7 +113,7 @@
 </script>
 
 <style>
-    .admin-panel-users-container .input-field {
+    .admin-panel-staff-container .input-field {
         margin-top: 0;
     }
 
