@@ -2,4 +2,4 @@
     <problems-list></problems-list>
 </div>
 
-<script src="{{asset('/js/compiled/v-careplan-problems-list.js')}}"></script>
+<script src="{{asset('/compiled/js/v-careplan-problems-list.js')}}"></script>

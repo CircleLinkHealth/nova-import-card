@@ -48,7 +48,7 @@
 
 @include('partials.footer')
 
-<script src="{{asset('js/compiled/app-provider-admin-panel-ui.js')}}"></script>
+<script src="{{asset('compiled/js/app-provider-admin-panel-ui.js')}}"></script>
 @yield('scripts')
 
 </body>

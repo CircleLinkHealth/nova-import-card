@@ -25,5 +25,5 @@
 @stop
 
 @section('scripts')
-    <script src="{{asset('js/compiled/v-pdf-careplans.js')}}"></script>
+    <script src="{{asset('compiled/js/v-pdf-careplans.js')}}"></script>
 @endsection

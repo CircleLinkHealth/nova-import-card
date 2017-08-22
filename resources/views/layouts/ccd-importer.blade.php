@@ -34,7 +34,7 @@
 
 @include('partials.footer')
 
-<script src="{{ asset('/js/compiled/scripts.js') }}"></script>
+<script src="{{ asset('/compiled/js/scripts.js') }}"></script>
 <script src="/js/uploader.js"></script>
 </body>
 

@@ -4,7 +4,7 @@
 @section('activity', 'Patient Input Appointment')
 
 @section('scripts')
-    <script src="{{asset('/js/compiled/v-create-appointments-add-care-person.js')}}"></script>
+    <script src="{{asset('/compiled/js/v-create-appointments-add-care-person.js')}}"></script>
 @endsection
 
 @section('content')

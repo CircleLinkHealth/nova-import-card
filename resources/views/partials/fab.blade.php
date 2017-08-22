@@ -16,7 +16,7 @@
 </div>
 
 
-<script src="{{asset('js/compiled/v-fab.js')}}"></script>
+<script src="{{asset('compiled/js/v-fab.js')}}"></script>
 
 
 

@@ -2,4 +2,4 @@
     <medications-list></medications-list>
 </div>
 
-<script src="{{asset('/js/compiled/v-careplan-medications-list.js')}}"></script>
+<script src="{{asset('/compiled/js/v-careplan-medications-list.js')}}"></script>

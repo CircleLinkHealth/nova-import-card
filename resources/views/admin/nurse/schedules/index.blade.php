@@ -50,6 +50,6 @@
         </div>
     </div>
 
-    <script src="{{asset('js/compiled/nurse-work-schedule.js')}}"></script>
+    <script src="{{asset('compiled/js/nurse-work-schedule.js')}}"></script>
 
 @endsection
