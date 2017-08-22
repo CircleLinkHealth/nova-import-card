@@ -10,7 +10,7 @@
     <title>CPM API</title>
 
     <!-- Stylesheets -->
-    {{-- <link href="{{ asset('/css/stylesheet.css') }}" rel="stylesheet"> --}}
+    {{-- <link href="{{ asset('/compiled/css/stylesheet.css') }}" rel="stylesheet"> --}}
     {{-- <link href="{{ asset('/css/lavish-2.css') }}" rel="stylesheet"> --}}
     <link href="{{ asset('/css/admin.css') }}" rel="stylesheet">
     <link href="{{ asset('/img/favicon.png') }}" rel="icon">

@@ -7,7 +7,7 @@
 	<title>CarePlanManager - Password Reset</title>
 
 	<link href="{{ asset('/css/wpstyle.css') }}" rel="stylesheet">
-	<link href="{{ asset('/css/stylesheet.css') }}" rel="stylesheet">
+	<link href="{{ asset('/compiled/css/stylesheet.css') }}" rel="stylesheet">
 	<link href="{{ asset('/css/wpstyle.css') }}" rel="stylesheet">
 	<link href="{{ asset('/img/favicon.png') }}" rel="icon">
 	<style type="text/css">
