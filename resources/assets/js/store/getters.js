@@ -22,6 +22,10 @@ export const practiceLocations = state => {
     return state.practiceLocations
 }
 
+export const practiceUsers = state => {
+    return state.practiceUsers
+}
+
 export const errors = state => {
     return state.errors
 }

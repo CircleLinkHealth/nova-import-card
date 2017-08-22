@@ -83,16 +83,36 @@ export const REMOVE_NOTIFICATION = (state, notification) => {
     state.notifications.splice(state.notifications.indexOf(notification), 1)
 }
 
+/**
+ * Clear Practice Locations
+ * 
+ * @param state
+ * @constructor
+ */
 export const CLEAR_PRACTICE_LOCATIONS = (state) => {
     state.practiceLocations = []
 }
 
+/**
+ * Set Practice Locations 
+ * 
+ * @param state
+ * @param practiceLocations
+ * @constructor
+ */
 export const SET_PRACTICE_LOCATIONS = (state, practiceLocations) => {
     practiceLocations.forEach(loc => {
         state.practiceLocations.push(loc)
     })
 }
 
+/**
+ * Update Practice Locations
+ * 
+ * @param state
+ * @param location
+ * @constructor
+ */
 export const UPDATE_PRACTICE_LOCATION = (state, location) => {
     state.practiceLocations.forEach((pracLoc, index) => {
         if (pracLoc.id === location.id) {
@@ -115,4 +135,42 @@ export const CLEAR_ERROR = (state, field) => {
 
 export const SET_ERRORS = (state, errors) => {
     state.errors.setErrors(errors)
+}
+
+/**
+ * Clear Practice Users
+ *
+ * @param state
+ * @constructor
+ */
+export const CLEAR_PRACTICE_USERS = (state) => {
+    state.practiceUsers = []
+}
+
+/**
+ * Set Practice Users
+ *
+ * @param state
+ * @param practiceUsers
+ * @constructor
+ */
+export const SET_PRACTICE_USERS = (state, practiceUsers) => {
+    practiceUsers.forEach(user => {
+        state.practiceUsers.push(user)
+    })
+}
+
+/**
+ * Update Practice Users
+ *
+ * @param state
+ * @param user
+ * @constructor
+ */
+export const UPDATE_PRACTICE_USER = (state, user) => {
+    state.practiceUsers.forEach((pracUser, index) => {
+        if (pracUser.id === user.id) {
+            state.practiceUsers[index] = user;
+        }
+    })
 }

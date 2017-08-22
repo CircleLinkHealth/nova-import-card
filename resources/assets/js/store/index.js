@@ -35,6 +35,7 @@ const state = {
         pdfs: []
     },
     practiceLocations: [],
+    practiceUsers: [],
 }
 
 export default new Vuex.Store({

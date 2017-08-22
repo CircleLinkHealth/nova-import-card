@@ -1,6 +1,7 @@
 import userProfile from "../api/user-profile";
 import careTeam from "../api/care-team";
 import practiceLocationsApi from "../api/practice-location";
+import practiceUsersApi from "../api/practice-users";
 import carePersonApi from "../api/care-person";
 import carePlanApi from "../api/patient-care-plan";
 
@@ -53,6 +54,12 @@ export const destroyCarePerson = ({commit}, carePerson) => {
     }, null, carePerson)
 }
 
+/**
+ * Get Practice Locations
+ * 
+ * @param commit
+ * @param practiceId
+ */
 export const getPracticeLocations = ({commit}, practiceId) => {
     if (!practiceId) {
         return
@@ -67,6 +74,12 @@ export const getPracticeLocations = ({commit}, practiceId) => {
     }, practiceId)
 }
 
+/**
+ * Update Practice Location
+ * 
+ * @param commit
+ * @param location
+ */
 export const updatePracticeLocation = ({commit}, location) => {
     let practiceId = location.practice_id
 
@@ -82,6 +95,12 @@ export const updatePracticeLocation = ({commit}, location) => {
     }, practiceId, location)
 }
 
+/**
+ * Delete Practice Location
+ * 
+ * @param commit
+ * @param location
+ */
 export const deletePracticeLocation = ({commit}, location) => {
     let practiceId = location.practice_id
 
@@ -95,6 +114,68 @@ export const deletePracticeLocation = ({commit}, location) => {
     }, errors => {
         commit('SET_ERRORS', errors)
     }, practiceId, location)
+}
+
+/**
+ * Get Practice Users
+ *
+ * @param commit
+ * @param practiceId
+ */
+export const getPracticeUsers = ({commit}, practiceId) => {
+    if (!practiceId) {
+        return
+    }
+
+    practiceUsersApi.getPracticeUsers(practice => {
+        commit('CLEAR_PRACTICE_USERS');
+
+        commit('SET_PRACTICE_USERS', practice);
+    }, (error) => {
+        console.log(error)
+    }, practiceId)
+}
+
+/**
+ * Update Practice User
+ *
+ * @param commit
+ * @param user
+ */
+export const updatePracticeUser = ({commit}, user) => {
+    let practiceId = user.practice_id
+
+    if (!practiceId) {
+        console.log('invalid practiceId')
+        return
+    }
+
+    practiceUsersApi.update(user => {
+        commit('UPDATE_PRACTICE_USER', user);
+    }, errors => {
+        commit('SET_ERRORS', errors)
+    }, practiceId, user)
+}
+
+/**
+ * Delete Practice User
+ *
+ * @param commit
+ * @param user
+ */
+export const deletePracticeUser = ({commit}, user) => {
+    let practiceId = user.practice_id
+
+    if (!practiceId) {
+        console.log('invalid practiceId')
+        return
+    }
+
+    practiceUsersApi.delete(user => {
+        commit('DELETE_PRACTICE_USER', user);
+    }, errors => {
+        commit('SET_ERRORS', errors)
+    }, practiceId, user)
 }
 
 export const getPatientCarePlan = ({commit}, patientId) => {
