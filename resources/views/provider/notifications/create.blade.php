@@ -21,15 +21,15 @@
                     <label for="auto_approve_careplans">Auto Approve Care Plans</label>
                 </div>
 
-                <div class="input-field col s4">
-                    {{ Form::select('settings[careplan_mode]', ['web'=>'Web','pdf'=>'PDF'], $practiceSettings->careplan_mode) }}
-                    <label>Starting CarePlan Mode</label>
-                </div>
-
                 <div class="input-field col s6">
                     <input name="settings[rn_can_approve_careplans]" type="checkbox" id="rn_can_approve_careplans"
                            value="1" @if($practiceSettings->rn_can_approve_careplans){{'checked'}}@endif>
-                    <label for="rn_can_approve_careplans">RN's can approve Care Plans</label>
+                    <label for="rn_can_approve_careplans">RNs Can Approve Care Plans</label>
+                </div>
+
+                <div class="input-field col s4" style="margin-top: 3rem;">
+                    {{ Form::select('settings[careplan_mode]', ['web'=>'Web','pdf'=>'PDF'], $practiceSettings->careplan_mode) }}
+                    <label>Starting CarePlan Mode</label>
                 </div>
             </div>
 
