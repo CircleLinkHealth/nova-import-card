@@ -2411,6 +2411,6 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
     public function canApproveCarePlans()
     {
         return $this->can('care-plan-approve')
-            || ($this->hasRole('registered-nurse') && $this->primaryPractice->settings[0]->rn_can_approve_careplans);
+            || ($this->role()->name == 'registered-nurse' && $this->primaryPractice->settings[0]->rn_can_approve_careplans);
     }
 }
