@@ -50,14 +50,12 @@
 
                 <div class="row">
                     <div class="input-field col s4">
-                        <v-input type="number" label="Phone Number" v-model="formData.phone_number" name="phone_number"
-                                 required></v-input>
+                        <v-input type="number" label="Phone Number" v-model="formData.phone_number" name="phone_number"></v-input>
                     </div>
 
                     <div class="input-field col s4">
                         <v-input type="number" label="Phone Extension" v-model="formData.phone_extension"
-                                 name="phone_extension"
-                                 required></v-input>
+                                 name="phone_extension"></v-input>
                     </div>
 
                     <div class="input-field col s4">
@@ -73,8 +71,7 @@
 
                 <div class="row">
                     <div class="input-field col s4">
-                        <v-input type="email" label="EMR Direct Address" v-model="formData.emr_direct_address" name="emr_direct_address"
-                                 required></v-input>
+                        <v-input type="email" label="EMR Direct Address" v-model="formData.emr_direct_address" name="emr_direct_address"></v-input>
                     </div>
 
                     <div class="input-field col s4">
@@ -82,6 +79,25 @@
                                  required></v-input>
                     </div>
                 </div>
+
+                <div class="row">
+                <h6 class="col s12">
+                   Whom should we notify for clinical issues regarding provider’s patients?
+                </h6>
+
+                <div class="input-field col s8">
+                    <material-select v-model="formData.forward_alerts_to.who" class="input-field"
+                                     name="forward_alerts_to.who">
+                        <option v-for="option in clinicalIssuesContactOptions" :value="option.value"
+                                v-text="option.name"></option>
+                    </material-select>
+                </div>
+
+                <div v-show="formData.forward_alerts_to.who !== 'billing_provider'">
+
+
+                </div>
+            </div>
             </div>
         </div>
     </div>
@@ -209,6 +225,20 @@
                         name: 'Work',
                         value: 3
                     }
+                ],
+                clinicalIssuesContactOptions: [
+                    {
+                        name: 'Billing Provider',
+                        value: 'billing_provider',
+                   },
+                    {
+                        name: 'Someone else in addition to Billing Provider',
+                        value: 'forward_alerts_in_addition_to_provider',
+                    },
+                    {
+                        name: 'Someone else instead of Billing Provider',
+                        value: 'forward_alerts_instead_of_provider',
+                    },
                 ]
             }
         },
