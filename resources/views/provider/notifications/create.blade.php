@@ -100,7 +100,7 @@
                 <div class="input-field col s6">
                     <input name="settings[email_weekly_report]" type="checkbox" id="email_weekly_report"
                            value="1" @if($practiceSettings->email_weekly_report){{'checked'}}@endif>
-                    <label for="email_weekly_report">Weekly Reports</label>
+                    <label for="email_weekly_report">MDs Receive Weekly Reports</label>
                 </div>
 
                 <div class="input-field col s12" style="margin-top: 3rem;">
