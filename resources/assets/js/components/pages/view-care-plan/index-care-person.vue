@@ -10,17 +10,13 @@
                 <p v-if="carePerson.alert">Receives Alerts</p>
             </div>
             <div class="col-md-2">
-                <div class="col-md-6 text-right">
-                    <button class="btn btn-xs btn-danger problem-delete-btn"
-                            v-on:click.stop.prevent="deleteCarePerson()"><span> <i
-                            class="glyphicon glyphicon-remove"></i> </span></button>
-                </div>
+                <button class="btn btn-xs btn-danger problem-delete-btn"
+                        v-on:click.stop.prevent="deleteCarePerson()"><span> <i
+                        class="glyphicon glyphicon-remove"></i> </span></button>
 
-                <div class="col-md-6 text-left">
-                    <button class="btn btn-xs btn-primary problem-edit-btn"
-                            v-on:click.stop.prevent="editCarePerson()"><span> <i
-                            class="glyphicon glyphicon-pencil"></i> </span></button>
-                </div>
+                <button class="btn btn-xs btn-primary problem-edit-btn"
+                        v-on:click.stop.prevent="editCarePerson()"><span> <i
+                        class="glyphicon glyphicon-pencil"></i> </span></button>
             </div>
         </div>
     </div>
@@ -52,9 +48,8 @@
         methods: Object.assign({},
             mapActions(['destroyCarePerson', 'setOpenModal']),
             {
-                deleteCarePerson()
-                {
-                    let disassociate = confirm('Are you sure you want to remove ' + name +' from the CareTeam?');
+                deleteCarePerson() {
+                    let disassociate = confirm('Are you sure you want to remove ' + name + ' from the CareTeam?');
 
                     if (!disassociate) {
                         return true;
@@ -64,8 +59,7 @@
                 }
             },
             {
-                editCarePerson()
-                {
+                editCarePerson() {
                     this.setOpenModal({
                         name: 'update-care-person',
                         props: {
