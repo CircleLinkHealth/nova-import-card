@@ -491,11 +491,10 @@
 
         <template slot="footer">
             <div class="row">
-                <div class="col-md-6 text-center">
-                    <button style="width:50%" class="btn btn-default" @click="clearOpenModal">Close</button>
-                </div>
-                <div class="col-md-6 text-center">
-                    <button style="width:50%" :disabled="false" @click="sendForm" class=" btn btn-info">
+                <div class="col-md-12 text-right">
+                    <button class="btn btn-default" @click="clearOpenModal">Close</button>
+
+                    <button :disabled="false" @click="sendForm" class=" btn btn-info">
                         Save <i v-if="false" class="fa fa-spinner fa-pulse fa-fw"></i>
                     </button>
                 </div>
