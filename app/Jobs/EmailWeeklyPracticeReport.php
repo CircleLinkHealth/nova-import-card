@@ -46,8 +46,8 @@ class EmailWeeklyPracticeReport implements ShouldQueue
         $practiceData = (new SalesByPracticeReport(
             $this->practice,
             SalesByPracticeReport::SECTIONS,
-            $this->startRange,
-            $this->endRange
+            $this->startRange->copy(),
+            $this->endRange->copy()
         ))->data(true);
 
 

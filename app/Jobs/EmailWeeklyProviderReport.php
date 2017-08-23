@@ -49,8 +49,8 @@ class EmailWeeklyProviderReport implements ShouldQueue
                 (new SalesByProviderReport(
                     $provider,
                     SalesByProviderReport::SECTIONS,
-                    $this->startRange,
-                    $this->endRange
+                    $this->startRange->copy(),
+                    $this->endRange->copy()
                 ))
                     ->data(true);
 
