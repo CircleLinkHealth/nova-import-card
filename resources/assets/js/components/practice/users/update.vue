@@ -70,6 +70,18 @@
                         <label for="phone_type">Phone Type</label>
                     </div>
                 </div>
+
+                <div class="row">
+                    <div class="input-field col s4">
+                        <v-input type="email" label="EMR Direct Address" v-model="formData.emr_direct_address" name="emr_direct_address"
+                                 required></v-input>
+                    </div>
+
+                    <div class="input-field col s4">
+                        <v-input type="email" label="Email" v-model="formData.email" name="email"
+                                 required></v-input>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
