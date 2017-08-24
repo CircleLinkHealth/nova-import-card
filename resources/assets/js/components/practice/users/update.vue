@@ -50,7 +50,8 @@
 
                 <div class="row">
                     <div class="input-field col s4">
-                        <v-input type="number" label="Phone Number" v-model="formData.phone_number" name="phone_number"></v-input>
+                        <v-input type="number" label="Phone Number" v-model="formData.phone_number"
+                                 name="phone_number"></v-input>
                     </div>
 
                     <div class="input-field col s4">
@@ -71,7 +72,8 @@
 
                 <div class="row">
                     <div class="input-field col s4">
-                        <v-input type="email" label="EMR Direct Address" v-model="formData.emr_direct_address" name="emr_direct_address"></v-input>
+                        <v-input type="email" label="EMR Direct Address" v-model="formData.emr_direct_address"
+                                 name="emr_direct_address"></v-input>
                     </div>
 
                     <div class="input-field col s4">
@@ -81,23 +83,63 @@
                 </div>
 
                 <div class="row">
-                <h6 class="col s12">
-                   Whom should we notify for clinical issues regarding provider’s patients?
-                </h6>
+                    <div class="input-field col s4">
+                        <input type="checkbox" class="filled-in" id="grandAdminRights"
+                               v-model="formData.grandAdminRights" :checked="formData.grandAdminRights"/>
+                        <label for="grandAdminRights">Grand Admin Rights</label>
+                    </div>
 
-                <div class="input-field col s8">
-                    <material-select v-model="formData.forward_alerts_to.who" class="input-field"
-                                     name="forward_alerts_to.who">
-                        <option v-for="option in clinicalIssuesContactOptions" :value="option.value"
-                                v-text="option.name"></option>
-                    </material-select>
+                    <div class="input-field col s4">
+                        <input type="checkbox" class="filled-in" id="sendBillingReports"
+                               v-model="formData.sendBillingReports" :checked="formData.sendBillingReports"/>
+                        <label for="sendBillingReports">Send Billing Reports</label>
+                    </div>
                 </div>
 
-                <div v-show="formData.forward_alerts_to.who !== 'billing_provider'">
+                <div class="row">
+                    <h6 class="col s12">
+                        Whom should we notify for clinical issues regarding provider’s patients?
+                    </h6>
 
+                    <div class="input-field col s6">
+                        <material-select v-model="formData.forward_alerts_to.who" class="input-field"
+                                         name="forward_alerts_to.who">
+                            <option v-for="option in clinicalIssuesContactOptions" :value="option.value"
+                                    v-text="option.name"></option>
+                        </material-select>
+                    </div>
 
+                    <div v-show="formData.forward_alerts_to.who !== 'billing_provider'" class="input-field col s6">
+                        <material-select v-model="formData.forward_alerts_to.user_id" class="input-field"
+                                         name="forward_alerts_to.user_id">
+                            <option v-for="user in staff" :value="user.id" v-if="user.id !== formData.id"
+                                    v-text="user.full_name"></option>
+                        </material-select>
+                    </div>
                 </div>
-            </div>
+
+                <div class="row">
+                    <h6 class="col s12">
+                        Whom should we notify for approval of care plans regarding provider’s patients?
+                    </h6>
+
+                    <div class="input-field col s6">
+                        <material-select v-model="formData.forward_careplan_approval_emails_to.who" class="input-field"
+                                         name="forward_careplan_approval_emails_to.who">
+                            <option v-for="option in clinicalIssuesContactOptions" :value="option.value"
+                                    v-text="option.name"></option>
+                        </material-select>
+                    </div>
+
+                    <div v-show="formData.forward_careplan_approval_emails_to.who !== 'billing_provider'" class="input-field col s6">
+                        <material-select v-model="formData.forward_careplan_approval_emails_to.user_id" class="input-field"
+                                         name="forward_careplan_approval_emails_to.user_id">
+                            <option v-for="user in staff" :value="user.id" v-if="user.id !== formData.id"
+                                    v-text="user.full_name"></option>
+                        </material-select>
+                    </div>
+                </div>
+
             </div>
         </div>
     </div>
@@ -228,15 +270,15 @@
                 ],
                 clinicalIssuesContactOptions: [
                     {
-                        name: 'Billing Provider',
+                        name: 'Provider',
                         value: 'billing_provider',
-                   },
+                    },
                     {
-                        name: 'Someone else in addition to Billing Provider',
+                        name: 'Someone else in addition to provider',
                         value: 'forward_alerts_in_addition_to_provider',
                     },
                     {
-                        name: 'Someone else instead of Billing Provider',
+                        name: 'Someone else instead of provider',
                         value: 'forward_alerts_instead_of_provider',
                     },
                 ]
