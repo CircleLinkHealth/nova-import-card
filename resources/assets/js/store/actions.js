@@ -56,7 +56,7 @@ export const destroyCarePerson = ({commit}, carePerson) => {
 
 /**
  * Get Practice Locations
- * 
+ *
  * @param commit
  * @param practiceId
  */
@@ -76,7 +76,7 @@ export const getPracticeLocations = ({commit}, practiceId) => {
 
 /**
  * Update Practice Location
- * 
+ *
  * @param commit
  * @param location
  */
@@ -97,7 +97,7 @@ export const updatePracticeLocation = ({commit}, location) => {
 
 /**
  * Delete Practice Location
- * 
+ *
  * @param commit
  * @param location
  */
@@ -151,7 +151,7 @@ export const updatePracticeStaff = ({commit}, user) => {
     }
 
     practiceStaffApi.update(user => {
-        commit('UPDATE_PRACTICE_USER', user);
+        commit('UPDATE_PRACTICE_STAFF', user);
     }, errors => {
         commit('SET_ERRORS', errors)
     }, practiceId, user)
@@ -172,7 +172,7 @@ export const deletePracticeStaff = ({commit}, user) => {
     }
 
     practiceStaffApi.delete(user => {
-        commit('DELETE_PRACTICE_USER', user);
+        commit('DELETE_PRACTICE_STAFF', user);
     }, errors => {
         commit('SET_ERRORS', errors)
     }, practiceId, user)

@@ -8,6 +8,7 @@ use App\Practice;
 use App\Role;
 use App\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Collection;
 
 class PracticeStaffController extends Controller
 {
@@ -50,104 +51,65 @@ class PracticeStaffController extends Controller
 
         //Get the users that were as clinical emergency contacts from the locations page
         $existingUsers = $practiceUsers->map(function ($user) use (
-            $primaryPractice, $roles
+            $primaryPractice,
+            $roles
         ) {
-            $permissions = $user->practice($primaryPractice->id);
-            $phone = $user->phoneNumbers->first();
-
-            $roleId = $permissions->pivot->role_id
-                ? $permissions->pivot->role_id
-                : $user->roles->first()['id'];
-
-            $forwardAlertsToContactUser = $user->forwardAlertsTo()
-                    ->having('name', '=', User::FORWARD_ALERTS_IN_ADDITION_TO_PROVIDER)
-                    ->orHaving('name', '=', User::FORWARD_ALERTS_INSTEAD_OF_PROVIDER)
-                    ->first()
-                ?? null;
-
-            $forwardCarePlanApprovalEmailsToContactUser = $user->forwardAlertsTo()
-                    ->having('name', '=', User::FORWARD_CAREPLAN_APPROVAL_EMAILS_IN_ADDITION_TO_PROVIDER)
-                    ->orHaving('name', '=', User::FORWARD_CAREPLAN_APPROVAL_EMAILS_INSTEAD_OF_PROVIDER)
-                    ->first()
-                ?? null;
-
-            return [
-                'id'                                  => $user->id,
-                'email'                               => $user->email,
-                'last_name'                           => $user->last_name,
-                'first_name'                          => $user->first_name,
-                'full_name'                           => $user->display_name,
-                'phone_number'                        => $phone->number ?? '',
-                'phone_extension'                     => $phone->extension ?? '',
-                'phone_type'                          => array_search($phone->type ?? '',
-                        PhoneNumber::getTypes()) ?? '',
-                'isComplete'                          => false,
-                'validated'                           => false,
-                'grandAdminRights'                    => $permissions->pivot->has_admin_rights ?? false,
-                'sendBillingReports'                  => $permissions->pivot->send_billing_reports ?? false,
-                'errorCount'                          => 0,
-                'role_id'                             => $roleId,
-                'role_name'                           => $roles[$roleId]->display_name,
-                'locations'                           => $user->locations->pluck('id'),
-                'emr_direct_address'                  => $user->emr_direct_address,
-                'forward_alerts_to'                   => [
-                    'who'     => $forwardAlertsToContactUser->pivot->name ?? 'billing_provider',
-                    'user_id' => $forwardAlertsToContactUser->id ?? null,
-                ],
-                'forward_careplan_approval_emails_to' => [
-                    'who'     => $forwardCarePlanApprovalEmailsToContactUser->pivot->name ?? 'billing_provider',
-                    'user_id' => $forwardCarePlanApprovalEmailsToContactUser->id ?? null,
-                ],
-            ];
+            return $this->present($user, $primaryPractice, $roles);
         });
 
         return response()->json($existingUsers);
     }
 
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function create()
+    public function present(User $user, Practice $primaryPractice, Collection $roles)
     {
-        //
-    }
+        $permissions = $user->practice($primaryPractice->id);
+        $phone = $user->phoneNumbers->first();
 
-    /**
-     * Store a newly created resource in storage.
-     *
-     * @param  \Illuminate\Http\Request $request
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function store(Request $request)
-    {
-        //
-    }
+        $roleId = $permissions->pivot->role_id
+            ? $permissions->pivot->role_id
+            : $user->roles->first()['id'];
 
-    /**
-     * Display the specified resource.
-     *
-     * @param  int $id
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function show($id)
-    {
-        //
-    }
+        $forwardAlertsToContactUser = $user->forwardAlertsTo()
+                ->having('name', '=', User::FORWARD_ALERTS_IN_ADDITION_TO_PROVIDER)
+                ->orHaving('name', '=', User::FORWARD_ALERTS_INSTEAD_OF_PROVIDER)
+                ->first()
+            ?? null;
 
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  int $id
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function edit($id)
-    {
-        //
+        $forwardCarePlanApprovalEmailsToContactUser = $user->forwardAlertsTo()
+                ->having('name', '=', User::FORWARD_CAREPLAN_APPROVAL_EMAILS_IN_ADDITION_TO_PROVIDER)
+                ->orHaving('name', '=', User::FORWARD_CAREPLAN_APPROVAL_EMAILS_INSTEAD_OF_PROVIDER)
+                ->first()
+            ?? null;
+
+        return [
+            'id'                                  => $user->id,
+            'practice_id'                         => $primaryPractice->id,
+            'email'                               => $user->email,
+            'last_name'                           => $user->last_name,
+            'first_name'                          => $user->first_name,
+            'full_name'                           => $user->display_name,
+            'phone_number'                        => $phone->number ?? '',
+            'phone_extension'                     => $phone->extension ?? '',
+            'phone_type'                          => array_search($phone->type ?? '',
+                    PhoneNumber::getTypes()) ?? '',
+            'isComplete'                          => false,
+            'validated'                           => false,
+            'grandAdminRights'                    => $permissions->pivot->has_admin_rights ?? false,
+            'sendBillingReports'                  => $permissions->pivot->send_billing_reports ?? false,
+            'errorCount'                          => 0,
+            'role_id'                             => $roleId,
+            'role_name'                           => $roles[$roleId]->display_name,
+            'locations'                           => $user->locations->pluck('id'),
+            'emr_direct_address'                  => $user->emr_direct_address,
+            'forward_alerts_to'                   => [
+                'who'     => $forwardAlertsToContactUser->pivot->name ?? 'billing_provider',
+                'user_id' => $forwardAlertsToContactUser->id ?? null,
+            ],
+            'forward_careplan_approval_emails_to' => [
+                'who'     => $forwardCarePlanApprovalEmailsToContactUser->pivot->name ?? 'billing_provider',
+                'user_id' => $forwardCarePlanApprovalEmailsToContactUser->id ?? null,
+            ],
+        ];
     }
 
     /**
@@ -170,8 +132,14 @@ class PracticeStaffController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function destroy($id)
+    public function destroy($practiceId, $userId)
     {
-        //
+        $staff = User::find($userId);
+
+        if ($staff) {
+            $staff->delete();
+        }
+
+        return response()->json($staff);
     }
 }

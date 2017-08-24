@@ -85,7 +85,7 @@ export const REMOVE_NOTIFICATION = (state, notification) => {
 
 /**
  * Clear Practice Locations
- * 
+ *
  * @param state
  * @constructor
  */
@@ -94,8 +94,8 @@ export const CLEAR_PRACTICE_LOCATIONS = (state) => {
 }
 
 /**
- * Set Practice Locations 
- * 
+ * Set Practice Locations
+ *
  * @param state
  * @param practiceLocations
  * @constructor
@@ -108,7 +108,7 @@ export const SET_PRACTICE_LOCATIONS = (state, practiceLocations) => {
 
 /**
  * Update Practice Locations
- * 
+ *
  * @param state
  * @param location
  * @constructor
@@ -171,6 +171,14 @@ export const UPDATE_PRACTICE_STAFF = (state, user) => {
     state.practiceStaff.forEach((pracUser, index) => {
         if (pracUser.id === user.id) {
             state.practiceStaff[index] = user;
+        }
+    })
+}
+
+export const DELETE_PRACTICE_STAFF = (state, user) => {
+    state.practiceStaff.forEach((pracUser, index) => {
+        if (pracUser.id === user.id) {
+            state.practiceStaff.splice(index, 1);
         }
     })
 }
