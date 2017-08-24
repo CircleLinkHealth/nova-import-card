@@ -50,8 +50,6 @@ class PracticeLocationsController extends Controller
             'address_line_1'            => $loc->address_line_1,
             'address_line_2'            => $loc->address_line_2,
             'ehr_login'                 => $loc->ehr_login,
-            'errorCount'                => 0,
-            'isComplete'                => true,
             'name'                      => $loc->name,
             'postal_code'               => $loc->postal_code,
             'state'                     => $loc->state,
