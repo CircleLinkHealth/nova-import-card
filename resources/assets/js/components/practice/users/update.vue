@@ -140,6 +140,21 @@
                     </div>
                 </div>
 
+            <div class="row">
+                <div class="col s12">
+                    <div @click="submitForm()"
+                         class="btn green waves-effect waves-light right">
+                        Save & Close
+                    </div>
+
+                    <div @click="close()"
+                         class="btn red waves-effect waves-light right"
+                         style="margin-right: 2rem;">
+                        Close
+                    </div>
+                </div>
+            </div>
+
             </div>
         </div>
     </div>
