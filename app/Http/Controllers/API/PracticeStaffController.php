@@ -3,11 +3,12 @@
 namespace App\Http\Controllers\API;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\UpdatePracticeStaff;
 use App\PhoneNumber;
 use App\Practice;
+use App\ProviderInfo;
 use App\Role;
 use App\User;
-use Illuminate\Http\Request;
 use Illuminate\Support\Collection;
 
 class PracticeStaffController extends Controller
@@ -117,9 +118,75 @@ class PracticeStaffController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, $id)
+    public function update(UpdatePracticeStaff $request, $primaryPracticeId, $userId)
     {
-        //
+        $primaryPractice = Practice::find($primaryPracticeId);
+
+        $formData = $request->input();
+
+        $implementationLead = $primaryPractice->lead;
+
+        $roles = Role::get()->keyBy('id');
+        $userRole = $roles->keyBy('name')[$formData['role_name']];
+        
+        $user = User::updateOrCreate([
+            'id' => $formData['id'],
+        ], [
+            'program_id'   => $primaryPractice->id,
+            'email'        => $formData['email'],
+            'first_name'   => $formData['first_name'],
+            'last_name'    => $formData['last_name'],
+            'display_name' => "{$formData['first_name']} {$formData['last_name']}",
+            'user_status'  => 1,
+        ]);
+
+        $user->attachGlobalRole($userRole);
+        
+        if ($formData['emr_direct_address']) {
+            $user->emr_direct_address = $formData['emr_direct_address'];   
+        }
+
+        $grandAdminRights = false;
+        if ($formData['grandAdminRights']) {
+            $grandAdminRights = true;
+        }
+
+        $sendBillingReports = false;
+        if ($formData['sendBillingReports']) {
+            $sendBillingReports = true;
+        }
+
+        //Attach the locations
+        $user->attachLocation($formData['locations']);
+
+        $attachPractice = $user->attachPractice($primaryPractice, $grandAdminRights, $sendBillingReports,
+            $userRole->id);
+
+        //attach phone
+        $phone = $user->clearAllPhonesAndAddNewPrimary($formData['phone_number'], $formData['phone_type'], true,
+            $formData['phone_extension']);
+
+        if ($formData['role_name'] == 'provider') {
+            $providerInfoCreated = ProviderInfo::firstOrCreate([
+                'user_id' => $user->id,
+            ]);
+        }
+
+        //clean up other contacts before adding the new one
+        $user->forwardAlertsTo()->sync([]);
+
+        if ($formData['forward_alerts_to']['who'] != 'billing_provider') {
+            $user->forwardTo($formData['forward_alerts_to']['user_id'], $formData['forward_alerts_to']['who']);
+        }
+
+        if ($formData['forward_careplan_approval_emails_to']['who'] != 'billing_provider') {
+            $user->forwardTo($formData['forward_careplan_approval_emails_to']['user_id'],
+                $formData['forward_careplan_approval_emails_to']['who']);
+        }
+
+//                $user->notify(new StaffInvite($implementationLead, $primaryPractice));
+
+        return response()->json($this->present($user, $primaryPractice, $roles));
     }
 
     /**
@@ -129,7 +196,8 @@ class PracticeStaffController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function destroy($practiceId, $userId)
+    public
+    function destroy($practiceId, $userId)
     {
         $staff = User::find($userId);
 
