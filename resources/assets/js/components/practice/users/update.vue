@@ -220,21 +220,28 @@
         data() {
             return {
                 formData: {
-                    role: '',
-                    locations: [],
-                    grandAdminRights: false,
-                    sendBillingReports: false,
-                    emr_direct_address: '',
-                    phone_number: '',
-                    phone_extension: '',
-                    phone_type: '',
-                    forward_alerts_to: {
-                        who: 'billing_provider',
-                        user_id: ''
+                    'id': 'new',
+                    'practice_id': '',
+                    'email': '',
+                    'last_name': '',
+                    'first_name': '',
+                    'full_name': '',
+                    'phone_number': '',
+                    'phone_extension': '',
+                    'phone_type': '',
+                    'grandAdminRights': '',
+                    'sendBillingReports': '',
+                    'role_id': '',
+                    'role_name': '',
+                    'locations': '',
+                    'emr_direct_address': '',
+                    'forward_alerts_to': {
+                        'who': 'billing_provider',
+                        'user_id': '',
                     },
-                    forward_careplan_approval_emails_to: {
-                        who: 'billing_provider',
-                        user_id: ''
+                    'forward_careplan_approval_emails_to': {
+                        'who': 'billing_provider',
+                        'user_id': '',
                     },
                 },
                 formState: {},
