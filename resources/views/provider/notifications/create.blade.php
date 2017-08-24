@@ -12,6 +12,13 @@
         <div class="row">
             {!! Form::open(['url' => route('provider.dashboard.store.notifications', ['practiceSlug' => $practiceSlug]), 'method' => 'post', 'class' => 'col s12', 'id'=>'practice-settings-form']) !!}
 
+            <button type="submit"
+                    form="practice-settings-form"
+                    class="btn blue waves-effect waves-light col s4"
+                    onclick="Materialize.toast('{{$practice->display_name}} preferences was successfully updated.', 4000)">
+                Update Preferences
+            </button>
+
             <div class="row">
                 <div class="input-field col s12"><h6>Settings</h6></div>
 
@@ -126,7 +133,7 @@
 
         <button type="submit"
                 form="practice-settings-form"
-                class="btn blue waves-effect waves-light col s12"
+                class="btn blue waves-effect waves-light col s4"
                 onclick="Materialize.toast('{{$practice->display_name}} preferences was successfully updated.', 4000)">
             Update Preferences
         </button>
