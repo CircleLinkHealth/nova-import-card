@@ -2369,7 +2369,7 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
      *
      * @return Role|null
      */
-    public function role()
+    public function practiceOrGlobalRole()
     {
         if ($this->practice($this->primaryPractice)) {
             $primaryPractice = $this->practice($this->primaryPractice);
@@ -2411,6 +2411,6 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
     public function canApproveCarePlans()
     {
         return $this->can('care-plan-approve')
-            || ($this->role()->name == 'registered-nurse' && $this->primaryPractice->settings[0]->rn_can_approve_careplans);
+            || ($this->practiceOrGlobalRole()->name == 'registered-nurse' && $this->primaryPractice->settings[0]->rn_can_approve_careplans);
     }
 }
