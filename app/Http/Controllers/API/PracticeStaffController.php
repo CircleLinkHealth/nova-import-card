@@ -94,8 +94,8 @@ class PracticeStaffController extends Controller
                     PhoneNumber::getTypes()) ?? '',
             'grandAdminRights'                    => $permissions->pivot->has_admin_rights ?? false,
             'sendBillingReports'                  => $permissions->pivot->send_billing_reports ?? false,
-            'role_id'                             => $roleId,
-            'role_name'                           => $roles[$roleId]->display_name,
+            'role_name'                           => $roles[$roleId]->name,
+            'role_display_name'                   => $roles[$roleId]->display_name,
             'locations'                           => $user->locations->pluck('id'),
             'emr_direct_address'                  => $user->emr_direct_address,
             'forward_alerts_to'                   => [

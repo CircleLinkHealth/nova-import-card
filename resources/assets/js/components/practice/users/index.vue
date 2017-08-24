@@ -98,7 +98,7 @@
                         full_name: {
                             name: 'Name'
                         },
-                        role_name: {
+                        role_display_name: {
                             name: 'Role'
                         },
                         phone_number: {

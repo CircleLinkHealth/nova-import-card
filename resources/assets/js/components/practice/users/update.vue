@@ -38,13 +38,13 @@
                     </div>
 
                     <div class="input-field col s4">
-                        <material-select v-model="formData.role" name="role" id="role"
-                                         :class="isValid(formData.role)">
+                        <material-select v-model="formData.role_name" name="role_name" id="role_name"
+                                         :class="isValid(formData.role_name)">
                             <option v-for="option in roleOptions" :value="option.value"
                                     v-text="option.name"></option>
                         </material-select>
 
-                        <label for="role">Role</label>
+                        <label for="role_name">Role</label>
                     </div>
                 </div>
 
@@ -231,7 +231,7 @@
                     'phone_type': '',
                     'grandAdminRights': '',
                     'sendBillingReports': '',
-                    'role_id': '',
+                    'role': {},
                     'role_name': '',
                     'locations': '',
                     'emr_direct_address': '',
