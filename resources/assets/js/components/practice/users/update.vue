@@ -124,16 +124,16 @@
                     </h6>
 
                     <div class="input-field col s6">
-                        <material-select v-model="formData.forward_careplan_approval_emails_to.who" class="input-field"
-                                         name="forward_careplan_approval_emails_to.who">
+                        <material-select v-model="formData.forward_alerts_to.who" class="input-field"
+                                         name="forward_alerts_to.who">
                             <option v-for="option in clinicalIssuesContactOptions" :value="option.value"
                                     v-text="option.name"></option>
                         </material-select>
                     </div>
 
-                    <div v-show="formData.forward_careplan_approval_emails_to.who !== 'billing_provider'" class="input-field col s6">
-                        <material-select v-model="formData.forward_careplan_approval_emails_to.user_id" class="input-field"
-                                         name="forward_careplan_approval_emails_to.user_id">
+                    <div v-show="formData.forward_alerts_to.who !== 'billing_provider'" class="input-field col s6">
+                        <material-select v-model="formData.forward_alerts_to.user_id" class="input-field"
+                                         name="forward_alerts_to.user_id">
                             <option v-for="user in staff" :value="user.id" v-if="user.id !== formData.id"
                                     v-text="user.full_name"></option>
                         </material-select>
