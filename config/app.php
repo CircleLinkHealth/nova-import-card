@@ -211,6 +211,7 @@ return [
         ViewComposerServiceProvider::class,
         jeremykenedy\Slack\Laravel\ServiceProvider::class,
         EmailArrayValidatorServiceProvider::class,
+        GeneaLabs\LaravelCaffeine\Providers\LaravelCaffeineService::class,
     ],
 
     /*
