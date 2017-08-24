@@ -118,7 +118,7 @@
                     </div>
                 </div>
 
-                <div class="row">
+                <div class="row" v-show="formData.role_name == 'provider'">
                     <h6 class="col s12">
                         Whom should we notify for approval of care plans regarding provider’s patients?
                     </h6>
