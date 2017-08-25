@@ -15,7 +15,7 @@ class ProfileController extends Controller
     public function index()
     {
         $user = auth()->user();
-        $role = $user->role();
+        $role = $user->practiceOrGlobalRole();
 
         $data = [
             'user' => [
