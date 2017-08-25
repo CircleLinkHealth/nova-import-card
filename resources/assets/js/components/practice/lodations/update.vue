@@ -13,7 +13,7 @@
 
                 <div @click="submitForm()"
                      class="btn green waves-effect waves-light right">
-                    Save
+                    Save & Close
                 </div>
 
                 <div @click="close()"
