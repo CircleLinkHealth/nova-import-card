@@ -13,7 +13,12 @@ class DownloadController extends Controller
      */
     public function file($filePath)
     {
-        $path = storage_path("$filePath");
+        $path = storage_path($filePath);
+
+        //try looking in the download folder
+        if (!file_exists($path)) {
+            $path = storage_path("download/$filePath");
+        }
 
         if (!file_exists($path)) {
             return "Could not locate file with name: $filePath";

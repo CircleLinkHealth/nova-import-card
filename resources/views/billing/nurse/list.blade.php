@@ -13,7 +13,7 @@
                         <h3>Generated invoices</h3>
                         @foreach($invoices as $key => $value)
                             <li>
-                                <a href="{{url('/admin/download/'. $value['link'])}}">{{$value['name']}}</a>
+                                <a href="{{route('download', ['filePath' => $value['link']])}}">{{$value['name']}}</a>
                             </li>
                         @endforeach
                     </div>
