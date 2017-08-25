@@ -150,7 +150,7 @@ Route::group(['middleware' => 'auth'], function () {
     Route::get('download/{filePath}', [
         'uses' => 'DownloadController@file',
         'as'   => 'download',
-    ])->where('filePath', '[A-Za-z0-9\-\_\.]+');
+    ]);
 
     /**
      * API
