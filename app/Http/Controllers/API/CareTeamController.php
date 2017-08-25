@@ -349,8 +349,9 @@ class CareTeamController extends Controller
                         'display_name' => $primaryPractice['display_name'],
                     ]);
                 } else {
-                    $practice = Practice::create([
+                    $practice = Practice::updateOrCreate([
                         'display_name' => $primaryPractice['display_name'],
+                    ], [
                         'name'         => str_slug($primaryPractice['display_name']),
                     ]);
                 }
