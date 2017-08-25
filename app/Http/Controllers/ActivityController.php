@@ -245,7 +245,12 @@ class ActivityController extends Controller
 		$actId = Activity::createNewActivity($input);
 
 		$activity = Activity::find($actId);
-		$nurse = User::find($activity->provider_id)->nurseInfo;
+
+		$nurse = null;
+
+		if ($activity->provider_id) {
+            $nurse = User::find($activity->provider_id)->nurseInfo;
+        }
 
 		// store meta
 		if (array_key_exists('meta', $input)) {
