@@ -204,7 +204,7 @@
                     Vue.nextTick(() => {
                         setTimeout(() => {
                             if (!this.errors.any()) {
-                                Materialize.toast(this.formData.name + ' was successfully updated.', 3000)
+                                Materialize.toast(this.formData.first_name + ' ' + this.formData.last_name + ' was successfully updated.', 3000)
                                 this.close()
                             }
                         }, 500);
