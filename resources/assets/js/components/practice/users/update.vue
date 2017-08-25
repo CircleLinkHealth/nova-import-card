@@ -236,7 +236,7 @@
             return {
                 formData: {
                     'id': 'new',
-                    'practice_id': '',
+                    'practice_id': $('meta[name=practice-id]').attr('content'),
                     'email': '',
                     'last_name': '',
                     'first_name': '',
