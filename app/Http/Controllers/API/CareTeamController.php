@@ -29,7 +29,7 @@ class CareTeamController extends Controller
         $type = $member->type;
 
         if ($member->user->practice($patient->primaryPractice->id) && $member->type != CarePerson::BILLING_PROVIDER) {
-            $type = $member->user->role()->display_name . " (Internal)";
+            $type = $member->user->practiceOrGlobalRole()->display_name . " (Internal)";
         }
 
         $formattedType = snakeToSentenceCase($type);
@@ -113,7 +113,7 @@ class CareTeamController extends Controller
                 $type = $member->type;
 
                 if ($member->user->practice($patient->primaryPractice->id) && $member->type != CarePerson::BILLING_PROVIDER) {
-                    $type = $member->user->role()->display_name . " (Internal)";
+                    $type = $member->user->practiceOrGlobalRole()->display_name . " (Internal)";
                 }
 
                 $formattedType = snakeToSentenceCase($type);
@@ -262,7 +262,7 @@ class CareTeamController extends Controller
                 $oldBillingProvider->type = 'external';
 
                 if ($oldBillingProvider->user && $oldBillingProvider->user->practice($patient->primaryPractice->id)) {
-                    $oldBillingProvider->type = $oldBillingProvider->user->role();
+                    $oldBillingProvider->type = $oldBillingProvider->user->practiceOrGlobalRole();
                 }
 
                 $oldBillingProvider->save();
@@ -284,7 +284,7 @@ class CareTeamController extends Controller
         }
 
         if ($providerUser->practice($patient->primaryPractice->id) && $type != CarePerson::BILLING_PROVIDER) {
-            $type = $providerUser->role()->display_name . " (Internal)";
+            $type = $providerUser->practiceOrGlobalRole()->display_name . " (Internal)";
         }
 
         if (str_contains($input['id'], 'new')) {
