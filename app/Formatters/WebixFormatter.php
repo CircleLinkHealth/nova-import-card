@@ -132,13 +132,14 @@ class WebixFormatter implements ReportFormatter
 
                 } else {
 
-                    $formatted_data[$count]['logger_name'] = User::withTrashed()->find($data->provider_id)
-                        ->fullName;
-                    $formatted_data[$count]['comment'] = $data->getCommentForActivity();
-                    $formatted_data[$count]['logged_from'] = 'manual_input';
-                    $formatted_data[$count]['type_name'] = $data->type;
-                    $formatted_data[$count]['performed_at'] = $data->performed_at;
-
+                    if ($data->provider_id) {
+                        $formatted_data[$count]['logger_name'] = User::withTrashed()->find($data->provider_id)
+                            ->fullName;
+                        $formatted_data[$count]['comment'] = $data->getCommentForActivity();
+                        $formatted_data[$count]['logged_from'] = 'manual_input';
+                        $formatted_data[$count]['type_name'] = $data->type;
+                        $formatted_data[$count]['performed_at'] = $data->performed_at;
+                    }
                 }
             }
 
