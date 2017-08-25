@@ -26,6 +26,10 @@ class ClosePatientSession
      */
     public function handle(Logout $event)
     {
+        if (!isset($event->user->id)) {
+            return;
+        }
+
         //CLEAR OUT ANY REMAINING PATIENT SESSIONS ON LOGOUT
         $session = PatientSession::where('user_id', '=', $event->user->id)
             ->delete();
