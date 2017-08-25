@@ -70,10 +70,6 @@
     <script src="{{ asset('/js/bootstrap-select.min.js') }}"></script>
     <link href="//cdnjs.cloudflare.com/ajax/libs/select2/4.0.0/css/select2.min.css" rel="stylesheet"/>
     <script src="//cdnjs.cloudflare.com/ajax/libs/select2/4.0.0/js/select2.min.js"></script>
-
-    <!-- misc scripts -->
-    <script src="{{ asset('/compiled/js/scripts.js') }}"></script>
-
 </head>
 <body>
 @if ( ! Auth::guest() && Entrust::can('admin-access'))

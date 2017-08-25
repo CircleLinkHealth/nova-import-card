@@ -93,7 +93,6 @@
 <![endif]-->
 
 <script src="{{ asset('/js/idle-timer.min.js') }}"></script>
-{{--<script src="{{ asset('/js/scripts.js') }}"></script>--}}
 <script src="{{ asset('/js/bootstrap-select.min.js') }}"></script>
 <script src="{{ asset('/js/typeahead.bundle.js') }}"></script>
 @include('partials.searchjs')
