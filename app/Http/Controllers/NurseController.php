@@ -132,13 +132,7 @@ class NurseController extends Controller
 
             }
 
-            $nurses[$i]['# Scheduled Calls Today'] =
-                Call::where('outbound_cpm_id', $nurse->id)
-                    ->where(function ($q) {
-                        $q->where('scheduled_date', '>=', Carbon::now()->startOfDay())
-                            ->where('scheduled_date', '<=', Carbon::now()->endOfDay());
-                    })
-                    ->count();
+            $nurses[$i]['# Scheduled Calls Today'] = $nurse->nurseInfo->scheduledCallsForToday()->count();
 
             $nurses[$i]['# Completed Calls Today'] =
                 Call::where('outbound_cpm_id', $nurse->id)
