@@ -21,9 +21,9 @@ Inline CSS prevents loss of table borders in emails
 <table class="table table-bordered myTable" style="border-collapse: collapse;border: 1px solid black; padding: 2px">
     <tr>
         <td style="width: 25%; border: 1px solid black; padding: 2px"></td>
-        <th style="width: 25%; border: 1px solid black; padding: 2px">{{$data['start']->format('F') . ' to Date'}}</th>
-        <th style="width: 25%; border: 1px solid black; padding: 2px">{{$data['start']->copy()->subMonthNoOverflow()->format('F')}}</th>
-        <th style="width: 25%; border: 1px solid black; padding: 2px">{{$data['start']->copy()->subMonthNoOverflow()->format('F')}}</th>
+        <th style="width: 25%; border: 1px solid black; padding: 2px">{{$data['end']->format('F') . ' to Date'}}</th>
+        <th style="width: 25%; border: 1px solid black; padding: 2px">{{$data['end']->copy()->subMonthNoOverflow(1)->format('F')}}</th>
+        <th style="width: 25%; border: 1px solid black; padding: 2px">{{$data['end']->copy()->subMonthNoOverflow(2)->format('F')}}</th>
 
     </tr>
 

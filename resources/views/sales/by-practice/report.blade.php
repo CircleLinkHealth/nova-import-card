@@ -44,7 +44,7 @@ $practiceSection = \App\Reports\Sales\Practice\Sections\PracticeDemographics::cl
         @else
             <h1>{{$data['name']}}
                 <small>CircleLink Health  CCM Summary <b></b>
-                    <span>({{Carbon\Carbon::parse($data['start'])->format('jS F') . ' - ' . Carbon\Carbon::parse($data['end'])->format('jS F') }})</span></small>
+                    <span>({{$data['start']->format('jS F') . ' - ' . $data['end']->format('jS F') }})</span></small>
             </h1>
         @endif
     </div>
@@ -55,7 +55,7 @@ $practiceSection = \App\Reports\Sales\Practice\Sections\PracticeDemographics::cl
 
             @if(!$data['isEmail'])
                 <p>Here's a summary of CCM activities for the period
-                    specified: {{Carbon\Carbon::parse($data['start'])->format('l, jS F') . ' - ' . Carbon\Carbon::parse($data['end'])->format('l, jS F') }}</p>
+                    specified: {{$data['start']->format('l, jS F') . ' - ' . $data['end']->format('l, jS F') }}</p>
             @else
                 <p>Hope you had a good weekend! Here's a summary of CCM activities for last week:</p>
             @endif

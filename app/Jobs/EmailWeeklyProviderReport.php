@@ -55,8 +55,8 @@ class EmailWeeklyProviderReport implements ShouldQueue
                     ->data(true);
 
             $providerData['name'] = $provider->display_name;
-            $providerData['start'] = $this->startRange->toDateString();
-            $providerData['end'] = $this->endRange->toDateString();
+            $providerData['start'] = $this->startRange;
+            $providerData['end'] = $this->endRange;
             $providerData['isEmail'] = true;
 
 
