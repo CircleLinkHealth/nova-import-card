@@ -422,6 +422,11 @@ class PatientController extends Controller
     {
 
         $input = $request->all();
+
+        if (!array_key_exists('users', $input)) {
+            return;
+        }
+
         $searchTerms = explode(' ', $input['users']);
 
         $query = User::intersectPracticesWith(auth()->user())
