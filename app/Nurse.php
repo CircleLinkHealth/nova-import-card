@@ -206,8 +206,7 @@ class Nurse extends Model
     {
         return Call::where([
             ['outbound_cpm_id', '=', $this->user->id],
-            ['scheduled_date', '>=', Carbon::now()->startOfDay()],
-            ['scheduled_date', '<=', Carbon::now()->endOfDay()],
+            ['scheduled_date', '=', Carbon::now()->toDateString()],
             ['status', '=', 'scheduled'],
         ])->get();
     }
