@@ -4,8 +4,6 @@
 Inline CSS prevents loss of table borders in emails
 -->
 
-<?php $start = Carbon\Carbon::parse($data['start']) ?>
-
 <div class="">
     <span style="font-size: 17px">
         <u><span style="text-align: left">TOTALS</span></u>
@@ -17,11 +15,11 @@ Inline CSS prevents loss of table borders in emails
     <table class="table tab table-bordered myTable" style="border-collapse: collapse;border: 1px solid black; padding: 2px">
         <tr>
             <td class="tab" style="width: 12%;border: 1px solid black;  padding: 2px"></td>
-            <th class="tab" style="width: 12%;border: 1px solid black; padding: 2px">{{$start->format('F') . ' to Date'}}</th>
-            <th class="tab" style="width: 12%;border: 1px solid black; padding: 2px">{{$start->subMonthNoOverflow()->format('F')}}</th>
-            <th class="tab" style="width: 12%;border: 1px solid black; padding: 2px">{{$start->subMonthNoOverflow()->format('F')}}</th>
-            <th class="tab" style="width: 12%;border: 1px solid black; padding: 2px">{{$start->subMonthNoOverflow()->format('F')}}</th>
-            <th class="tab" style="width: 12%;border: 1px solid black; padding: 2px">{{$start->subMonthNoOverflow()->format('F')}}</th>
+            <th class="tab" style="width: 12%;border: 1px solid black; padding: 2px">{{$data['end']->format('F') . ' to Date'}}</th>
+            <th class="tab" style="width: 12%;border: 1px solid black; padding: 2px">{{$data['start']->copy()->subMonthNoOverflow()->format('F')}}</th>
+            <th class="tab" style="width: 12%;border: 1px solid black; padding: 2px">{{$data['start']->copy()->subMonthNoOverflow()->format('F')}}</th>
+            <th class="tab" style="width: 12%;border: 1px solid black; padding: 2px">{{$data['start']->copy()->subMonthNoOverflow()->format('F')}}</th>
+            <th class="tab" style="width: 12%;border: 1px solid black; padding: 2px">{{$data['start']->copy()->subMonthNoOverflow()->format('F')}}</th>
         </tr>
 
         @foreach($data[$enrollmentSection]['historical'] as $key => $values)

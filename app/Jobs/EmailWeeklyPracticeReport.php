@@ -52,8 +52,8 @@ class EmailWeeklyPracticeReport implements ShouldQueue
 
 
         $practiceData['name'] = $this->practice->display_name;
-        $practiceData['start'] = $this->startRange->toDateString();
-        $practiceData['end'] = $this->endRange->toDateString();
+        $practiceData['start'] = $this->startRange;
+        $practiceData['end'] = $this->endRange;
         $practiceData['isEmail'] = true;
 
         if ($this->practice->weekly_report_recipients != null) {
