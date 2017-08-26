@@ -16,10 +16,10 @@ Inline CSS prevents loss of table borders in emails
         <tr>
             <td class="tab" style="width: 12%;border: 1px solid black;  padding: 2px"></td>
             <th class="tab" style="width: 12%;border: 1px solid black; padding: 2px">{{$data['end']->format('F') . ' to Date'}}</th>
-            <th class="tab" style="width: 12%;border: 1px solid black; padding: 2px">{{$data['start']->copy()->subMonthNoOverflow()->format('F')}}</th>
-            <th class="tab" style="width: 12%;border: 1px solid black; padding: 2px">{{$data['start']->copy()->subMonthNoOverflow()->format('F')}}</th>
-            <th class="tab" style="width: 12%;border: 1px solid black; padding: 2px">{{$data['start']->copy()->subMonthNoOverflow()->format('F')}}</th>
-            <th class="tab" style="width: 12%;border: 1px solid black; padding: 2px">{{$data['start']->copy()->subMonthNoOverflow()->format('F')}}</th>
+            <th class="tab" style="width: 12%;border: 1px solid black; padding: 2px">{{$data['end']->copy()->subMonthNoOverflow(1)->format('F')}}</th>
+            <th class="tab" style="width: 12%;border: 1px solid black; padding: 2px">{{$data['end']->copy()->subMonthNoOverflow(2)->format('F')}}</th>
+            <th class="tab" style="width: 12%;border: 1px solid black; padding: 2px">{{$data['end']->copy()->subMonthNoOverflow(3)->format('F')}}</th>
+            <th class="tab" style="width: 12%;border: 1px solid black; padding: 2px">{{$data['end']->copy()->subMonthNoOverflow(4)->format('F')}}</th>
         </tr>
 
         @foreach($data[$enrollmentSection]['historical'] as $key => $values)
