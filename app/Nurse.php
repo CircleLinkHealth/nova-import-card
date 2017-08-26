@@ -136,7 +136,8 @@ class Nurse extends Model
      */
     public function upcomingHolidays()
     {
-        return $this->hasMany(Holiday::class, 'nurse_info_id', 'id')->where('date', '>=', Carbon::now()->format('Y-m-d'));
+        return $this->hasMany(Holiday::class, 'nurse_info_id', 'id')->where('date', '>=',
+            Carbon::now()->format('Y-m-d'));
     }
 
     public function getHolidaysThisWeekAttribute()
@@ -160,19 +161,8 @@ class Nurse extends Model
         return $this->morphMany(WorkHours::class, 'workhourable');
     }
 
-    public function weeklySchedule() {
-        $schedule = [];
-
-        foreach ($this->windows->sortBy('window_time_start') as $window) {
-            $schedule[$window->day_of_week][] = $window;
-        }
-
-        ksort($schedule);
-
-        return collect($schedule);
-    }
-
-    public function firstWindowAfter(Carbon $date) {
+    public function firstWindowAfter(Carbon $date)
+    {
         $dayOfWeek = carbonToClhDayOfWeek($date->dayOfWeek);
 
         $weeklySchedule = $this->weeklySchedule();
@@ -197,5 +187,28 @@ class Nurse extends Model
         $result->date = $date->next(clhToCarbonDayOfWeek($result->day_of_week));
 
         return $result;
+    }
+
+    public function weeklySchedule()
+    {
+        $schedule = [];
+
+        foreach ($this->windows->sortBy('window_time_start') as $window) {
+            $schedule[$window->day_of_week][] = $window;
+        }
+
+        ksort($schedule);
+
+        return collect($schedule);
+    }
+
+    public function scheduledCallsForToday()
+    {
+        return Call::where([
+            ['outbound_cpm_id', '=', $this->user->id],
+            ['scheduled_date', '>=', Carbon::now()->startOfDay()],
+            ['scheduled_date', '<=', Carbon::now()->endOfDay()],
+            ['status', '=', 'scheduled'],
+        ])->get();
     }
 }
