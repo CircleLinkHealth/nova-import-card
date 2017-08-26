@@ -4,7 +4,6 @@
 Inline CSS prevents loss of table borders in emails
 -->
 
-<?php $start = Carbon\Carbon::parse($data['start']) ?>
 {{--<h5>--}}
 {{--CCM Revenue to date: <span--}}
 {{--style="color: green"> {{$data[$financialSection]['revenue_so_far'] ?? 'N/A'}} </span><br />--}}
@@ -22,9 +21,9 @@ Inline CSS prevents loss of table borders in emails
 <table class="table table-bordered myTable" style="border-collapse: collapse;border: 1px solid black; padding: 2px">
     <tr>
         <td style="width: 25%; border: 1px solid black; padding: 2px"></td>
-        <th style="width: 25%; border: 1px solid black; padding: 2px">{{$start->format('F') . ' to Date'}}</th>
-        <th style="width: 25%; border: 1px solid black; padding: 2px">{{$start->subMonthNoOverflow()->format('F')}}</th>
-        <th style="width: 25%; border: 1px solid black; padding: 2px">{{$start->subMonthNoOverflow()->format('F')}}</th>
+        <th style="width: 25%; border: 1px solid black; padding: 2px">{{$data['start']->format('F') . ' to Date'}}</th>
+        <th style="width: 25%; border: 1px solid black; padding: 2px">{{$data['start']->copy()->subMonthNoOverflow()->format('F')}}</th>
+        <th style="width: 25%; border: 1px solid black; padding: 2px">{{$data['start']->copy()->subMonthNoOverflow()->format('F')}}</th>
 
     </tr>
 
