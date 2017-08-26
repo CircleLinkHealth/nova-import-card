@@ -3,6 +3,7 @@
 namespace App;
 
 use App\Models\Holiday;
+use App\Models\WorkHours;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
 
@@ -135,7 +136,8 @@ class Nurse extends Model
      */
     public function upcomingHolidays()
     {
-        return $this->hasMany(Holiday::class, 'nurse_info_id', 'id')->where('date', '>=', Carbon::now()->format('Y-m-d'));
+        return $this->hasMany(Holiday::class, 'nurse_info_id', 'id')->where('date', '>=',
+            Carbon::now()->format('Y-m-d'));
     }
 
     public function getHolidaysThisWeekAttribute()
@@ -149,5 +151,64 @@ class Nurse extends Model
             });
 
         return array_filter($holidaysThisWeek->all());
+    }
+
+    /**
+     * Get all the App\Models\WorkHours attached to this CarePlan.
+     */
+    public function workhourables()
+    {
+        return $this->morphMany(WorkHours::class, 'workhourable');
+    }
+
+    public function firstWindowAfter(Carbon $date)
+    {
+        $dayOfWeek = carbonToClhDayOfWeek($date->dayOfWeek);
+
+        $weeklySchedule = $this->weeklySchedule();
+
+        $result = null;
+
+        foreach ($weeklySchedule as $day => $windows) {
+            if ($day > $dayOfWeek) {
+                $result = $windows[0];
+                break;
+            }
+        }
+
+        if (!$result) {
+            $result = $weeklySchedule->first()[0];
+        }
+
+        if (!$result) {
+            return false;
+        }
+
+        $result->date = $date->next(clhToCarbonDayOfWeek($result->day_of_week));
+
+        return $result;
+    }
+
+    public function weeklySchedule()
+    {
+        $schedule = [];
+
+        foreach ($this->windows->sortBy('window_time_start') as $window) {
+            $schedule[$window->day_of_week][] = $window;
+        }
+
+        ksort($schedule);
+
+        return collect($schedule);
+    }
+
+    public function scheduledCallsForToday()
+    {
+        return Call::where([
+            ['outbound_cpm_id', '=', $this->user->id],
+            ['scheduled_date', '>=', Carbon::now()->startOfDay()],
+            ['scheduled_date', '<=', Carbon::now()->endOfDay()],
+            ['status', '=', 'scheduled'],
+        ])->get();
     }
 }
