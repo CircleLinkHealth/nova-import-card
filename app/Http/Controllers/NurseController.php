@@ -4,7 +4,6 @@ namespace App\Http\Controllers;
 
 use App\Activity;
 use App\Billing\NurseMonthlyBillGenerator;
-use App\Call;
 use App\Mail\NurseInvoiceMailer;
 use App\Nurse;
 use App\PageTimer;
@@ -74,7 +73,7 @@ class NurseController extends Controller
                 [
                     'invoices' => $links,
                     'data'     => $data,
-                    'month'  => Carbon::parse($startDate)->format('F')
+                    'month'    => Carbon::parse($startDate)->format('F'),
                 ]
             );
         }
@@ -83,12 +82,12 @@ class NurseController extends Controller
     public function sendInvoice(Request $request)
     {
 
-        $invoices = (array) json_decode($request->input('links'));
+        $invoices = (array)json_decode($request->input('links'));
         $month = $request->input('month');
 
         foreach ($invoices as $key => $value) {
 
-            $value = (array) $value;
+            $value = (array)$value;
 
             $user = User::find($key);
 
@@ -132,28 +131,9 @@ class NurseController extends Controller
 
             }
 
-            $nurses[$i]['# Scheduled Calls Today'] = $nurse->nurseInfo->scheduledCallsForToday()->count();
-
-            $nurses[$i]['# Completed Calls Today'] =
-                Call::where('outbound_cpm_id', $nurse->id)
-                    ->where(function ($q) {
-                        $q->where('called_date', '>=', Carbon::now()->startOfDay())
-                            ->where('called_date', '<=', Carbon::now()->endOfDay());
-                    })
-                    ->where(function ($k) {
-                        $k->where('status', 'reached')
-                            ->orWhere('status', 'not reached');
-                    })
-                    ->count();
-
-            $nurses[$i]['# Successful Calls Today'] =
-                Call::where('outbound_cpm_id', $nurse->id)
-                    ->where(function ($j) {
-                        $j->where('called_date', '>=', Carbon::now()->startOfDay())
-                            ->where('called_date', '<=', Carbon::now()->endOfDay());
-                    })
-                    ->where('status', 'reached')
-                    ->count();
+            $nurses[$i]['# Scheduled Calls Today'] = $nurse->nurseInfo->countScheduledCallsForToday();
+            $nurses[$i]['# Completed Calls Today'] = $nurse->nurseInfo->countCompletedCallsForToday();
+            $nurses[$i]['# Successful Calls Today'] = $nurse->nurseInfo->countSuccessfulCallsForToday();
 
             $activity_time = Activity::
             where('provider_id', $nurse->id)
@@ -221,16 +201,17 @@ class NurseController extends Controller
 
     }
 
-    public function monthlyOverview(Request $request){
+    public function monthlyOverview(Request $request)
+    {
 
         $input = $request->input();
 
-        if(isset($input['next'])){
+        if (isset($input['next'])) {
 
             $dayCounter = Carbon::parse($input['next'])->firstOfMonth()->toDateTimeString();
             $last = Carbon::parse($input['next'])->lastOfMonth()->toDateTimeString();
 
-        } elseif(isset($input['previous'])){
+        } elseif (isset($input['previous'])) {
 
             $dayCounter = Carbon::parse($input['previous'])->firstOfMonth()->toDateTimeString();
             $last = Carbon::parse($input['previous'])->lastOfMonth()->toDateTimeString();
@@ -246,39 +227,25 @@ class NurseController extends Controller
         $data = [];
 
 
-        while ($dayCounter <= $last){
+        while ($dayCounter <= $last) {
 
-            foreach ($nurses as $nurse){
+            foreach ($nurses as $nurse) {
 
-                $countScheduled =
-                    Call::where('outbound_cpm_id', $nurse->id)
-                        ->where('scheduled_date', Carbon::parse($dayCounter)->format('Y-m-d'))
-                        ->count();
+                $countScheduled = $nurse->nurseInfo->countScheduledCallsFor(Carbon::parse($dayCounter));
 
-                $countMade =
-                    Call::where('outbound_cpm_id', $nurse->id)
-                        ->where(function ($q) use ($dayCounter){
-                            $q->where('called_date', '>=', Carbon::parse($dayCounter)->startOfDay()->toDateTimeString())
-                                ->where('called_date', '<=', Carbon::parse($dayCounter)->endOfDay()->toDateTimeString());
-                        })
-                        ->where('status', '!=', 'dropped')
-                        ->count();
+                $countMade = $nurse->nurseInfo->countCompletedCallsFor(Carbon::parse($dayCounter));
 
                 $formattedDate = Carbon::parse($dayCounter)->format('m/d Y');
 
                 $name = $nurse->first_name[0] . '. ' . $nurse->last_name;
 
-                 if($countScheduled > 0){
+                if ($countScheduled > 0) {
+                    $data[$formattedDate][$name]['Scheduled'] = $countScheduled;
+                } else {
+                    $data[$formattedDate][$name]['Scheduled'] = 0;
+                }
 
-                     $data[$formattedDate][$name]['Scheduled'] = $countScheduled;
-
-                 } else {
-
-                     $data[$formattedDate][$name]['Scheduled'] = 0;
-
-                 }
-
-                if($countMade > 0){
+                if ($countMade > 0) {
 
                     $data[$formattedDate][$name]['Actual Made'] = $countMade;
 
@@ -295,8 +262,8 @@ class NurseController extends Controller
         }
 
         return view('admin.reports.allocation', [
-            'data' => $data,
-            'month' => Carbon::parse($last)
+            'data'  => $data,
+            'month' => Carbon::parse($last),
         ]);
 
     }
