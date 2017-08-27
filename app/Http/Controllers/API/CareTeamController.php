@@ -212,7 +212,18 @@ class CareTeamController extends Controller
             ->with('phoneNumbers')
             ->where('first_name', 'like', "$firstNameTerm%")
             ->where('last_name', 'like', "$lastNameTerm%")
-            ->get();
+            ->get()
+            ->map(function ($user) {
+                //Add an empty phone number if there are none so that the front end doesn't break
+                //v-model="newCarePerson.user.phone_numbers[0].number"
+                if ($user->phoneNumbers->isEmpty()) {
+                    $user->phoneNumbers->push(['id' => '', 'number' => '']);
+                }
+
+                return $user;
+            });
+
+
 
         return response()->json(['results' => $users]);
     }
@@ -352,7 +363,7 @@ class CareTeamController extends Controller
                     $practice = Practice::updateOrCreate([
                         'display_name' => $primaryPractice['display_name'],
                     ], [
-                        'name'         => str_slug($primaryPractice['display_name']),
+                        'name' => str_slug($primaryPractice['display_name']),
                     ]);
                 }
 
