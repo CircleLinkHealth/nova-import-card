@@ -23,11 +23,11 @@ class NurseScheduledCallsTest extends TestCase
     }
 
     /**
-     * Test it gets scheduled calls for today.
+     * Test it gets calls (scheduled, reached, not reached) for today.
      *
      * @return void
      */
-    public function testScheduledCallsForToday()
+    public function testCallsForToday()
     {
         $call1 = Call::create([
             'status' => 'scheduled',
@@ -53,9 +53,21 @@ class NurseScheduledCallsTest extends TestCase
             'scheduled_date' => Carbon::today(),
         ]);
 
-        $calls = $this->nurse->nurseInfo->scheduledCallsForToday();
+        $call4 = Call::create([
+            'status' => 'reached',
+            'inbound_cpm_id' => $this->patient->id,
+            'outbound_cpm_id' => $this->nurse->id,
+            'called_date' => Carbon::yesterday(),
+            'scheduled_date' => Carbon::today(),
+        ]);
 
-        $this->assertEquals(2, $calls->count());
+        $scheduledCallCount = $this->nurse->nurseInfo->countScheduledCallsForToday();
+        $successfulCallCount = $this->nurse->nurseInfo->countSuccessfulCallsForToday();
+        $completedCallCount = $this->nurse->nurseInfo->countCompletedCallsForToday();
+
+        $this->assertEquals(2, $scheduledCallCount);
+        $this->assertEquals(1, $successfulCallCount);
+        $this->assertEquals(2, $completedCallCount);
     }
 
     /**
@@ -65,8 +77,8 @@ class NurseScheduledCallsTest extends TestCase
      */
     public function testNoScheduledCallsForToday()
     {
-        $calls = $this->nurse->nurseInfo->scheduledCallsForToday();
+        $calls = $this->nurse->nurseInfo->countScheduledCallsForToday();
 
-        $this->assertEquals(0, $calls->count());
+        $this->assertEquals(0, $calls);
     }
 }
