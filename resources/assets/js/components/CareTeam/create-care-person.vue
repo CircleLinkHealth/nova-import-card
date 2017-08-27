@@ -583,8 +583,7 @@
                 }
                 ,
 
-                fieldClassName(field)
-                {
+                fieldClassName(field) {
                     if (!field) {
                         return '';
                     }
@@ -599,8 +598,7 @@
             }
         ),
 
-        data()
-        {
+        data() {
             return {
                 submitClicked: false,
                 updateRoute: $('meta[name="provider-update-route"]').attr('content'),
