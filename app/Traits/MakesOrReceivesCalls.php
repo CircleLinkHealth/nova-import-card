@@ -133,7 +133,6 @@ trait MakesOrReceivesCalls
     {
         $calls = $this->calls()
             ->where([
-                ['scheduled_date', '=', Carbon::now()->toDateString()],
                 ['called_date', '>=', Carbon::now()->startOfDay()->toDateTimeString()],
                 ['called_date', '<=', Carbon::now()->endOfDay()->toDateTimeString()],
                 ['calls.status', '=', 'reached'],
