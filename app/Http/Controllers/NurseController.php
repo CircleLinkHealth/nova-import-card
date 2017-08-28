@@ -133,7 +133,7 @@ class NurseController extends Controller
 
             $nurses[$i]['# Scheduled Calls Today'] = $nurse->nurseInfo->countScheduledCallsForToday();
             $nurses[$i]['# Completed Calls Today'] = $nurse->nurseInfo->countCompletedCallsForToday();
-            $nurses[$i]['# Successful Calls Today'] = $nurse->nurseInfo->countSuccessfulCallsForToday();
+            $nurses[$i]['# Successful Calls Today'] = $nurse->nurseInfo->countSuccessfulCallsMadeToday();
 
             $activity_time = Activity::
             where('provider_id', $nurse->id)
@@ -231,7 +231,7 @@ class NurseController extends Controller
 
             foreach ($nurses as $nurse) {
 
-                $countScheduled = $nurse->nurseInfo->countScheduledCallsFor(Carbon::parse($dayCounter));
+                $countScheduled = $nurse->nurseInfo->countCallsOriginallyScheduledFor(Carbon::parse($dayCounter));
 
                 $countMade = $nurse->nurseInfo->countCompletedCallsFor(Carbon::parse($dayCounter));
 
