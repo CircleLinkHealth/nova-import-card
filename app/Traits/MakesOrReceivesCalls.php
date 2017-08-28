@@ -55,7 +55,9 @@ trait MakesOrReceivesCalls
 
     public function scheduledCallsFor(Carbon $date)
     {
-        return $this->callsFor($date, 'scheduled');
+        return $this->calls()
+            ->where('scheduled_date', '=', $date->toDateString())
+            ->get();
     }
 
     public function countSuccessfulCallsForToday()
