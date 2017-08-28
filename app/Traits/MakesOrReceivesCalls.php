@@ -47,6 +47,12 @@ trait MakesOrReceivesCalls
         return $this->completedCallsForToday()->count();
     }
 
+    /**
+     * Returns today's completed calls.
+     * Completed Call: A call that was placed today and was either successful, or unsuccessful. It doesn’t matter when it was scheduled for.
+     *
+     * @return Collection
+     */
     public function completedCallsForToday()
     {
         $calls = $this->calls()
@@ -65,9 +71,10 @@ trait MakesOrReceivesCalls
     }
 
     /**
+     * Returns today's scheduled calls.
+     * Scheduled Call: A call that was scheduled for today and either was placed today, or not placed yet.
      *
-     *
-     * @return mixed
+     * @return Collection
      */
     public function scheduledCallsForToday()
     {
@@ -107,7 +114,7 @@ trait MakesOrReceivesCalls
      *
      * @param Carbon $date
      *
-     * @return Collection|null
+     * @return Collection
      */
     public function callsOriginallyScheduledFor(Carbon $date)
     {
@@ -125,9 +132,10 @@ trait MakesOrReceivesCalls
     }
 
     /**
-     * Calls that were scheduled for today and were actually made today
+     * Returns today's successful calls.
+     * Successful Call: A call that was placed today and was successful. It does not matter if the call was scheduled for tomorrow.
      *
-     * @return Collection|null
+     * @return Collection
      */
     public function successfulCallsMadeToday()
     {
