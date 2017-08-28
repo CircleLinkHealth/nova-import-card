@@ -53,6 +53,13 @@ trait MakesOrReceivesCalls
         return $this->scheduledCallsFor($date)->count();
     }
 
+    /**
+     * Get the calls that were scheduled for a certain day, regardless of status.
+     *
+     * @param Carbon $date
+     *
+     * @return mixed
+     */
     public function scheduledCallsFor(Carbon $date)
     {
         return $this->calls()
@@ -65,8 +72,19 @@ trait MakesOrReceivesCalls
         return $this->successfulCallsForToday()->count();
     }
 
+    /**
+     * Calls that were scheduled for today and were actually made today
+     *
+     * @return mixed
+     */
     public function successfulCallsForToday()
     {
-        return $this->callsFor(Carbon::now(), 'reached');
+        return $this->calls()
+            ->where([
+                ['scheduled_date', '=', Carbon::now()->toDateString()],
+                ['called_date', '=', Carbon::now()->toDateString()],
+                ['calls.status', '=','reached'],
+            ])
+            ->get();
     }
 }
