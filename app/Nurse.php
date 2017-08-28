@@ -4,11 +4,14 @@ namespace App;
 
 use App\Models\Holiday;
 use App\Models\WorkHours;
+use App\Traits\MakesOrReceivesCalls;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
 
 class Nurse extends Model
 {
+    use MakesOrReceivesCalls;
+
     //nurse mapping for import csv
     public static $nurseMap = [
         'Patricia' => 1920,
@@ -94,23 +97,14 @@ class Nurse extends Model
         return $this->hasMany(NurseContactWindow::class, 'nurse_info_id', 'id');
     }
 
-    public function calls()
-    {
-
-        return $this->hasMany('App\Call');
-    }
-
     public function states()
     {
-
         return $this->belongsToMany(State::class, 'nurse_info_state');
     }
 
     public function careRateLogs()
     {
-
         return $this->hasMany(NurseCareRateLog::class);
-
     }
 
     public function callStatsForRange(Carbon $start, Carbon $end)
@@ -202,12 +196,8 @@ class Nurse extends Model
         return collect($schedule);
     }
 
-    public function scheduledCallsForToday()
+    public function calls()
     {
-        return Call::where([
-            ['outbound_cpm_id', '=', $this->user->id],
-            ['scheduled_date', '=', Carbon::now()->toDateString()],
-            ['status', '=', 'scheduled'],
-        ])->get();
+        return $this->hasManyThrough(Call::class, User::class, 'id', 'outbound_cpm_id', 'user_id');
     }
 }
