@@ -97,6 +97,11 @@ trait MakesOrReceivesCalls
                         ['scheduled_date', '=', $date->toDateString()],
                         ['called_date', '=', null],
                         ['calls.status', '=', 'scheduled'],
+                    ])
+                    ->orWhere([
+                        ['scheduled_date', '=', $date->toDateString()],
+                        ['called_date', '=', null],
+                        ['calls.status', '=', 'dropped'],
                     ]);
             })
             ->get();
