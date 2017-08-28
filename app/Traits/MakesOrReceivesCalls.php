@@ -5,6 +5,14 @@ namespace App\Traits;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Collection;
 
+/**
+ * IMPORTANT: Laravel overwrites the final model's id with the intermediate model's id in a HasManyThrough Relationship
+ * https://github.com/laravel/framework/issues/20805
+ *
+ * Trait MakesOrReceivesCalls
+ * @package App\Traits
+ */
+
 trait MakesOrReceivesCalls
 {
     public function countCompletedCallsFor(Carbon $date)
@@ -14,32 +22,14 @@ trait MakesOrReceivesCalls
 
     public function completedCallsFor(Carbon $date)
     {
-        return $this->callsFor($date, ['reached', 'not reached']);
-    }
+        $calls = $this->calls()
+            ->where([
+                ['called_date', '>=', $date->startOfDay()->toDateTimeString()],
+                ['called_date', '<=', $date->endOfDay()->toDateTimeString()],
+            ])->whereIn('calls.status', ['reached', 'not reached'])
+            ->get();
 
-    public function callsFor(Carbon $scheduledDate, Carbon $calledDate = null, $status = null)
-    {
-        if (!is_array($status) && !empty($status)) {
-            $status = [$status];
-        }
-
-        $args = [
-            ['scheduled_date', '=', $scheduledDate->toDateString()],
-        ];
-
-        $q = $this->calls()
-            ->where($args);
-
-        if ($calledDate) {
-            $args[] = ['called_date', '>=', $calledDate->startOfDay()->toDateTimeString()];
-            $args[] = ['called_date', '<=', $calledDate->endOfDay()->toDateTimeString()];
-        }
-
-        if ($status) {
-            $q->whereIn('calls.status', $status);
-        }
-
-        return $q->get();
+        return $calls;
     }
 
     public function countCompletedCallsForToday()
@@ -55,14 +45,7 @@ trait MakesOrReceivesCalls
      */
     public function completedCallsForToday()
     {
-        $calls = $this->calls()
-            ->where([
-                ['called_date', '>=', Carbon::now()->startOfDay()->toDateTimeString()],
-                ['called_date', '<=', Carbon::now()->endOfDay()->toDateTimeString()],
-            ])->whereIn('calls.status', ['reached', 'not reached'])
-            ->get();
-
-        return $calls;
+        return $this->completedCallsFor(Carbon::now());
     }
 
     public function countScheduledCallsForToday()
@@ -78,22 +61,7 @@ trait MakesOrReceivesCalls
      */
     public function scheduledCallsForToday()
     {
-        $calls = $this->calls()
-            ->where(function ($q) {
-                $q->where([
-                    ['scheduled_date', '=', Carbon::now()->toDateString()],
-                    ['called_date', '>=', Carbon::now()->startOfDay()->toDateTimeString()],
-                    ['called_date', '<=', Carbon::now()->endOfDay()->toDateTimeString()],
-                ])
-                    ->orWhere([
-                        ['scheduled_date', '=', Carbon::now()->toDateString()],
-                        ['called_date', '=', null],
-                        ['calls.status', '=', 'scheduled'],
-                    ]);
-            })
-            ->get();
-
-        return $calls;
+        return $this->scheduledCallsFor(Carbon::now());
     }
 
     /**
@@ -103,9 +71,9 @@ trait MakesOrReceivesCalls
      *
      * @return int
      */
-    public function countCallsOriginallyScheduledFor(Carbon $date)
+    public function countScheduledCallsFor(Carbon $date)
     {
-        return $this->callsOriginallyScheduledFor($date)->count();
+        return $this->scheduledCallsFor($date)->count();
     }
 
     /**
@@ -116,9 +84,24 @@ trait MakesOrReceivesCalls
      *
      * @return Collection
      */
-    public function callsOriginallyScheduledFor(Carbon $date)
+    public function scheduledCallsFor(Carbon $date)
     {
-        return $this->callsFor($date);
+        $calls = $this->calls()
+            ->where(function ($q) use ($date) {
+                $q->where([
+                    ['scheduled_date', '=', $date->toDateString()],
+                    ['called_date', '>=', $date->startOfDay()->toDateTimeString()],
+                    ['called_date', '<=', $date->endOfDay()->toDateTimeString()],
+                ])
+                    ->orWhere([
+                        ['scheduled_date', '=', $date->toDateString()],
+                        ['called_date', '=', null],
+                        ['calls.status', '=', 'scheduled'],
+                    ]);
+            })
+            ->get();
+
+        return $calls;
     }
 
     /**
@@ -139,10 +122,14 @@ trait MakesOrReceivesCalls
      */
     public function successfulCallsMadeToday()
     {
+        return $this->successfulCallsFor(Carbon::now());
+    }
+
+    public function successfulCallsfor(Carbon $date) {
         $calls = $this->calls()
             ->where([
-                ['called_date', '>=', Carbon::now()->startOfDay()->toDateTimeString()],
-                ['called_date', '<=', Carbon::now()->endOfDay()->toDateTimeString()],
+                ['called_date', '>=', $date->startOfDay()->toDateTimeString()],
+                ['called_date', '<=', $date->endOfDay()->toDateTimeString()],
                 ['calls.status', '=', 'reached'],
             ])
             ->get();

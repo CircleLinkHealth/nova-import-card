@@ -231,11 +231,17 @@ class NurseController extends Controller
 
             foreach ($nurses as $nurse) {
 
-                $countScheduled = $nurse->nurseInfo->countCallsOriginallyScheduledFor(Carbon::parse($dayCounter));
+                if (!$nurse->nurseInfo) {
+                    continue;
+                }
 
-                $countMade = $nurse->nurseInfo->countCompletedCallsFor(Carbon::parse($dayCounter));
+                $date = Carbon::parse($dayCounter);
 
-                $formattedDate = Carbon::parse($dayCounter)->format('m/d Y');
+                $countScheduled = $nurse->nurseInfo->countScheduledCallsFor($date);
+
+                $countMade = $nurse->nurseInfo->countCompletedCallsFor($date);
+
+                $formattedDate = $date->format('m/d Y');
 
                 $name = $nurse->first_name[0] . '. ' . $nurse->last_name;
 
@@ -257,7 +263,7 @@ class NurseController extends Controller
 
             }
 
-            $dayCounter = Carbon::parse($dayCounter)->addDays(1)->toDateTimeString();
+            $dayCounter = $date->addDays(1)->toDateTimeString();
 
         }
 

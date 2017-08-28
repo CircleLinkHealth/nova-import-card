@@ -27,7 +27,7 @@ class NurseScheduledCallsTest extends TestCase
      *
      * @return void
      */
-    public function testCallsForToday()
+    public function testDailyReport()
     {
         $call1 = Call::create([
             'status' => 'scheduled',
