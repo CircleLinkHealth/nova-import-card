@@ -204,16 +204,12 @@ export const destroyPdf = ({commit}, pdfId) => {
     }, null, pdfId)
 }
 
-export const uploadPdfCarePlan = ({commit}, formData) => {
-    if (!formData) {
-        return
-    }
-
+export const uploadPdfCarePlan = ({commit}, payload) => {
     carePlanApi.uploadPdfCareplan(pdf => {
         commit('ADD_PDF_CARE_PLAN', pdf)
     }, error => {
         console.log(error)
-    }, formData)
+    }, payload)
 }
 
 export const clearErrors = ({commit}, field) => {

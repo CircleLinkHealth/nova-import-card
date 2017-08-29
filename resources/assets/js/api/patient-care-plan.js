@@ -17,11 +17,8 @@ export default {
         );
     },
 
-    uploadPdfCareplan (cb, ecb = null, formData) {
-        // formdata needs to contain
-        // formData.set('files[' + i + ']', this.files[i].file)
-        // formData.set('carePlanId', this.patientCarePlan.id)
-        window.axios.post('care-plans/' + formData.get('carePlanId') + '/pdfs', formData).then(
+    uploadPdfCareplan (cb, ecb = null, payload) {
+        window.axios.post('care-plans/' + payload.carePlanId + '/pdfs', payload.formData).then(
             (resp) => cb(resp.data),
             (resp) => ecb(resp.data)
         );

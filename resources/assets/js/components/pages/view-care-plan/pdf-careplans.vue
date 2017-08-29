@@ -62,15 +62,13 @@
                     let formData = new FormData()
 
                     for (var i = this.indexOfLastUploadedFile + 1; i < this.files.length; i++) {
-                        formData.set('files[' + i + ']', this.files[i].file) // set the filename with php
+                        formData.append('files[' + i + ']', this.files[i].file)
                         this.indexOfLastUploadedFile = i
                     }
 
-                    formData.set('carePlanId', this.patientCarePlan.id)
-
                     this.modeBeforeUpload = this.patientCarePlan.mode
 
-                    this.uploadPdfCarePlan(formData)
+                    this.uploadPdfCarePlan({formData: formData, carePlanId: this.patientCarePlan.id})
 
                     this.addNotification({
                         title: "Successfully uploaded PDF Careplan(s)",
