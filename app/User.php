@@ -59,7 +59,7 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
     use \Venturecraft\Revisionable\RevisionableTrait;
     public $rules = [
         'username'         => 'required',
-        'email'            => 'required|email',
+        'email'            => 'required|email|unique:users,email',
         'password'         => 'required|min:8',
         'password_confirm' => 'required|same:password',
     ];
