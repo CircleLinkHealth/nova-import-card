@@ -128,7 +128,7 @@ class PracticeStaffController extends Controller
 
         $roles = Role::get()->keyBy('id');
         $userRole = $roles->keyBy('name')[$formData['role_name']];
-        
+
         $user = User::updateOrCreate([
             'id' => $formData['id'],
         ], [
@@ -141,9 +141,9 @@ class PracticeStaffController extends Controller
         ]);
 
         $user->attachGlobalRole($userRole);
-        
+
         if ($formData['emr_direct_address']) {
-            $user->emr_direct_address = $formData['emr_direct_address'];   
+            $user->emr_direct_address = $formData['emr_direct_address'];
         }
 
         $grandAdminRights = false;
@@ -166,22 +166,22 @@ class PracticeStaffController extends Controller
         $phone = $user->clearAllPhonesAndAddNewPrimary($formData['phone_number'], $formData['phone_type'], true,
             $formData['phone_extension']);
 
-        if ($formData['role_name'] == 'provider') {
-            $providerInfoCreated = ProviderInfo::firstOrCreate([
-                'user_id' => $user->id,
-            ]);
-        }
-
-        //clean up other contacts before adding the new one
+        //clean up forwardAlertsTo before adding the new ones
         $user->forwardAlertsTo()->sync([]);
 
         if ($formData['forward_alerts_to']['who'] != 'billing_provider') {
             $user->forwardTo($formData['forward_alerts_to']['user_id'], $formData['forward_alerts_to']['who']);
         }
 
-        if ($formData['forward_careplan_approval_emails_to']['who'] != 'billing_provider') {
-            $user->forwardTo($formData['forward_careplan_approval_emails_to']['user_id'],
-                $formData['forward_careplan_approval_emails_to']['who']);
+        if ($formData['role_name'] == 'provider') {
+            $providerInfo = ProviderInfo::firstOrCreate([
+                'user_id' => $user->id,
+            ]);
+
+            if ($formData['forward_careplan_approval_emails_to']['who'] != 'billing_provider') {
+                $user->forwardTo($formData['forward_careplan_approval_emails_to']['user_id'],
+                    $formData['forward_careplan_approval_emails_to']['who']);
+            }
         }
 
 //                $user->notify(new StaffInvite($implementationLead, $primaryPractice));
@@ -196,8 +196,7 @@ class PracticeStaffController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public
-    function destroy($practiceId, $userId)
+    public function destroy($practiceId, $userId)
     {
         $staff = User::find($userId);
 
