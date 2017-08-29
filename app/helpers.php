@@ -18,6 +18,10 @@ if (!function_exists('sendSlackMessage')) {
      */
     function sendSlackMessage($to, $message)
     {
+        if (app()->environment() != 'production') {
+            return;
+        }
+
         $job = new SendSlackMessage($to, $message);
 
         dispatch($job);
