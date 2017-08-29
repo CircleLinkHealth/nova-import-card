@@ -47,12 +47,6 @@
             <div class="col-lg-8 col-lg-offset-2">
                 @include('errors.errors')
                 @include('errors.messages')
-
-                @if(session('status'))
-                    <div class="alert alert-success success">
-                        {{session('status')}}
-                    </div>
-                @endif
             </div>
             <div class="main-form-container col-lg-4 col-lg-offset-4">
                 <div class="row">

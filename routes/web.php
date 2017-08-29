@@ -118,6 +118,7 @@ Route::get('login', 'Auth\LoginController@showLoginForm');
 
 Route::group([
     'prefix' => 'auth',
+    'middleware' => 'web'
 ], function () {
     Auth::routes();
 
