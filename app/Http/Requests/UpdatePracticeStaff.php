@@ -28,9 +28,8 @@ class UpdatePracticeStaff extends FormRequest
             'email'                               => 'required|email',
             'first_name'                          => 'required',
             'last_name'                           => 'required',
-            'phone_number'                        => 'nullable',
+            'phone_number'                        => 'nullable|phone:US',
             'phone_extension'                     => 'nullable',
-            'phone_type'                          => 'nullable',
             'emr_direct_address'                  => 'nullable|email',
         ];
     }
