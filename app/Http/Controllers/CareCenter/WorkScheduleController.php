@@ -187,7 +187,11 @@ class WorkScheduleController extends Controller
 
             $nurseUser = Nurse::find($nurseInfoId)->user;
 
+            $dayName = clhDayOfWeekToDayName($window->day_of_week);
             $nurseMessage = "Admin {$user->display_name} assigned Nurse {$nurseUser->display_name} to work for";
+            $message = "$nurseMessage {$request->input('work_hours')} hours on $dayName between {$window->range()->start->format('h:i A T')} to {$window->range()->end->format('h:i A T')}";
+            sendSlackMessage('#carecoachscheduling', $message);
+
         } else {
             $user = auth()->user();
 
@@ -197,18 +201,7 @@ class WorkScheduleController extends Controller
                 'window_time_start' => $request->input('window_time_start'),
                 'window_time_end'   => $request->input('window_time_end'),
             ]);
-
-            $nurseMessage = "Nurse {$user->display_name} will work for";
         }
-
-        $dayName = clhDayOfWeekToDayName($window->day_of_week);
-
-        $from = Carbon::parse($window->window_time_start);
-        $to = Carbon::parse($window->window_time_end);
-
-        $message = "$nurseMessage {$request->input('work_hours')} hours on $dayName between {$from->format('h:i T')} to {$to->format('h:i T')}";
-
-        sendSlackMessage('#carecoachscheduling', $message);
 
         $workHours = $this->workHours->updateOrCreate([
             'workhourable_type' => Nurse::class,

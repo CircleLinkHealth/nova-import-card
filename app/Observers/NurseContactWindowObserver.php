@@ -3,7 +3,6 @@
 namespace App\Observers;
 
 
-use App\Jobs\SendSlackMessage;
 use App\NurseContactWindow;
 use Maknz\Slack\Facades\Slack;
 
@@ -18,10 +17,6 @@ class NurseContactWindowObserver
      */
     public function created(NurseContactWindow $window)
     {
-        if (!app()->environment('production')) {
-            return;
-        }
-
         $auth = auth()->user();
 
         if ($auth->id != $window->nurse->user->id) {
@@ -29,12 +24,10 @@ class NurseContactWindowObserver
         }
 
         $sentence = "Nurse $auth->fullName has just created a new Window for ";
-        $sentence .= "$window->dayName, {$window->date->format('m-d-Y')} from $window->window_time_start to $window->window_time_end. View Schedule at ";
+        $sentence .= "$window->dayName, {$window->date->format('m-d-Y')} from {$window->range()->start->format('h:i A T')} to {$window->range()->end->format('h:i A T')}. View Schedule at ";
         $sentence .= route('get.admin.nurse.schedules');
 
-        $job = new SendSlackMessage('#carecoachscheduling', $sentence);
-
-        dispatch($job);
+        \sendSlackMessage('#carecoachscheduling', $sentence);
     }
 
 
@@ -47,10 +40,6 @@ class NurseContactWindowObserver
      */
     public function deleted(NurseContactWindow $window)
     {
-        if (!app()->environment('production')) {
-            return;
-        }
-
         $auth = auth()->user();
 
         if ($auth->id != $window->nurse->user->id) {
@@ -58,12 +47,10 @@ class NurseContactWindowObserver
         }
 
         $sentence = "Nurse $auth->fullName has just deleted the Window for ";
-        $sentence .= "$window->dayName, {$window->date->format('m-d-Y')} from $window->window_time_start to $window->window_time_end. View Schedule at ";
+        $sentence .= "$window->dayName, {$window->date->format('m-d-Y')} from {$window->range()->start->format('h:i A T')} to {$window->range()->end->format('h:i A T')}. View Schedule at ";
         $sentence .= route('get.admin.nurse.schedules');
 
-        $job = new SendSlackMessage('#carecoachscheduling', $sentence);
-
-        dispatch($job);
+        \sendSlackMessage('#carecoachscheduling', $sentence);
     }
 
 
