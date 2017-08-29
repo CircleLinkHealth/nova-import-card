@@ -37,7 +37,7 @@ class WelcomeController extends Controller
 
                 return view('errors.403', [
                     'hideLinks' => true,
-                    'message'   => 'Unauthorized login attempt. This User has no assigned Roles.',
+                    'message'   => 'Unauthorized login request. This User has no assigned Roles.',
                 ]);
             }
 
