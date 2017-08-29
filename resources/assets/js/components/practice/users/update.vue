@@ -38,6 +38,13 @@
                     </div>
 
                     <div class="input-field col s4">
+                        <v-input type="email" label="Email" v-model="formData.email" name="email"
+                                 required></v-input>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="input-field col s6">
                         <material-select v-model="formData.role_name" name="role_name" id="role_name"
                                          :class="isValid(formData.role_name)">
                             <option v-for="option in roleOptions" :value="option.value"
@@ -46,20 +53,32 @@
 
                         <label for="role_name">Role</label>
                     </div>
+
+                    <div class="input-field col s3">
+                        <input type="checkbox" class="filled-in" id="grandAdminRights"
+                               v-model="formData.grandAdminRights" :checked="formData.grandAdminRights"/>
+                        <label for="grandAdminRights">Grand Admin Rights</label>
+                    </div>
+
+                    <div class="input-field col s3">
+                        <input type="checkbox" class="filled-in" id="sendBillingReports"
+                               v-model="formData.sendBillingReports" :checked="formData.sendBillingReports"/>
+                        <label for="sendBillingReports">Send Billing Reports</label>
+                    </div>
                 </div>
 
                 <div class="row">
-                    <div class="input-field col s4">
+                    <div class="input-field col s3">
                         <v-input type="number" label="Phone Number" v-model="formData.phone_number"
                                  name="phone_number"></v-input>
                     </div>
 
-                    <div class="input-field col s4">
+                    <div class="input-field col s2">
                         <v-input type="number" label="Phone Extension" v-model="formData.phone_extension"
                                  name="phone_extension"></v-input>
                     </div>
 
-                    <div class="input-field col s4">
+                    <div class="input-field col s2">
                         <material-select v-model="formData.phone_type" name="phone_type" id="phone_type"
                                          :class="isValid(formData.phone_type)">
                             <option v-for="option in phoneTypes" :value="option.value"
@@ -68,31 +87,10 @@
 
                         <label for="phone_type">Phone Type</label>
                     </div>
-                </div>
 
-                <div class="row">
-                    <div class="input-field col s4">
+                    <div class="input-field col s5">
                         <v-input type="email" label="EMR Direct Address" v-model="formData.emr_direct_address"
                                  name="emr_direct_address"></v-input>
-                    </div>
-
-                    <div class="input-field col s4">
-                        <v-input type="email" label="Email" v-model="formData.email" name="email"
-                                 required></v-input>
-                    </div>
-                </div>
-
-                <div class="row">
-                    <div class="input-field col s4">
-                        <input type="checkbox" class="filled-in" id="grandAdminRights"
-                               v-model="formData.grandAdminRights" :checked="formData.grandAdminRights"/>
-                        <label for="grandAdminRights">Grand Admin Rights</label>
-                    </div>
-
-                    <div class="input-field col s4">
-                        <input type="checkbox" class="filled-in" id="sendBillingReports"
-                               v-model="formData.sendBillingReports" :checked="formData.sendBillingReports"/>
-                        <label for="sendBillingReports">Send Billing Reports</label>
                     </div>
                 </div>
 
@@ -126,13 +124,15 @@
                     <div class="input-field col s6">
                         <material-select v-model="formData.forward_careplan_approval_emails_to.who" class="input-field"
                                          name="forward_careplan_approval_emails_to.who">
-                            <option v-for="option in contactOptions" :value="option.value"
+                            <option v-for="option in carePlanApprovalEmailOptions" :value="option.value"
                                     v-text="option.name"></option>
                         </material-select>
                     </div>
 
-                    <div v-show="formData.forward_careplan_approval_emails_to.who !== 'billing_provider'" class="input-field col s6">
-                        <material-select v-model="formData.forward_careplan_approval_emails_to.user_id" class="input-field"
+                    <div v-show="formData.forward_careplan_approval_emails_to.who !== 'billing_provider'"
+                         class="input-field col s6">
+                        <material-select v-model="formData.forward_careplan_approval_emails_to.user_id"
+                                         class="input-field"
                                          name="forward_careplan_approval_emails_to.user_id">
                             <option v-for="user in staff" :value="user.id" v-if="user.id !== formData.id"
                                     v-text="user.full_name"></option>
@@ -140,20 +140,20 @@
                     </div>
                 </div>
 
-            <div class="row">
-                <div class="col s12">
-                    <div @click="submitForm()"
-                         class="btn green waves-effect waves-light right">
-                        Save & Close
-                    </div>
+                <div class="row">
+                    <div class="col s12">
+                        <div @click="submitForm()"
+                             class="btn green waves-effect waves-light right">
+                            Save & Close
+                        </div>
 
-                    <div @click="close()"
-                         class="btn red waves-effect waves-light right"
-                         style="margin-right: 2rem;">
-                        Close
+                        <div @click="close()"
+                             class="btn red waves-effect waves-light right"
+                             style="margin-right: 2rem;">
+                            Close
+                        </div>
                     </div>
                 </div>
-            </div>
 
             </div>
         </div>
@@ -302,6 +302,20 @@
                     {
                         name: 'Someone else instead of provider',
                         value: 'forward_alerts_instead_of_provider',
+                    },
+                ],
+                carePlanApprovalEmailOptions: [
+                    {
+                        name: 'Provider',
+                        value: 'billing_provider',
+                    },
+                    {
+                        name: 'Someone else in addition to provider',
+                        value: 'forward_careplan_approval_emails_in_addition_to_provider',
+                    },
+                    {
+                        name: 'Someone else instead of provider',
+                        value: 'forward_careplan_approval_emails_instead_of_provider',
                     },
                 ]
             }
