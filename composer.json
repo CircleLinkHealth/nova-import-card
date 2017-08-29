@@ -45,6 +45,7 @@
     "phaxio/phaxio": "^1.0",
     "prettus/l5-repository": "dev-master",
     "prettus/laravel-validation": "*",
+    "propaganistas/laravel-phone": "^3.0",
     "rap2hpoutre/laravel-log-viewer": "^0.4.0",
     "rigor789/airbrake-laravel": "^1.2",
     "spatie/laravel-google-calendar": "^1.0",
