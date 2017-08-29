@@ -1,13 +1,12 @@
 <div class="form-group text-left">
     <div class="col-md-12">
-
         <div class="minimum-padding">
             <select class="form-control" name="day_of_week" required>
                 @foreach(weekDays() as $key => $day)
                     @if(!isset($window))
-                        <option value="{{carbonToClhDayOfWeek($key)}}">{{$day}}</option>
+                        <option value="{{$key}}" {{old('day_of_week') == $key ? 'selected' : '' }}>{{$day}}</option>
                     @else
-                        <option value="{{carbonToClhDayOfWeek($key)}}" {{$window->day_of_week == carbonToClhDayOfWeek($key) ? 'selected' : '' }}>{{$day}}</option>
+                        <option value="{{$key}}" {{$window->day_of_week == $key ? 'selected' : '' }}>{{$day}}</option>
                     @endif
                 @endforeach
             </select>
