@@ -198,6 +198,6 @@ class Nurse extends Model
 
     public function calls()
     {
-        return $this->hasManyThrough(Call::class, User::class, 'id', 'outbound_cpm_id', 'user_id');
+        return $this->user->outboundCalls();
     }
 }
