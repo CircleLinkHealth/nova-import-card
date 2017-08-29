@@ -93,7 +93,7 @@ class WorkScheduleController extends Controller
 
         $message = "Nurse {$user->display_name} just added a holiday on {$holiday->date->format('l, F j Y')}";
 
-        sendSlackMessage('#callcenter_ops', $message);
+        sendSlackMessage('#carecoachscheduling', $message);
 
         return redirect()->back();
     }
@@ -208,7 +208,7 @@ class WorkScheduleController extends Controller
 
         $message = "$nurseMessage {$request->input('work_hours')} hours on $dayName between {$from->format('h:i T')} to {$to->format('h:i T')}";
 
-        sendSlackMessage('#callcenter_ops', $message);
+        sendSlackMessage('#carecoachscheduling', $message);
 
         $workHours = $this->workHours->updateOrCreate([
             'workhourable_type' => Nurse::class,
