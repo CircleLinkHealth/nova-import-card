@@ -43,12 +43,12 @@
 <div class="container-fluid">
 	<section class="main-form">
 		<div class="row">
-			<div class="col-lg-8 col-lg-offset-2">
+			<div class="col-lg-6 col-lg-offset-3">
 				@include('errors.errors')
 				@include('errors.messages')
 
 				@if(session('status'))
-					<div class="alert alert-success success">
+					<div class="alert alert-success success" style="font-size: 20rem;">
 						{{session('status')}}
 					</div>
 				@endif
