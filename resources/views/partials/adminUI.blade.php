@@ -363,7 +363,8 @@
 @include('partials.footer')
 
 @yield('content')
-@yield('javascript')
+
+@yield('scripts')
 <div style="clear:both;height:100px;"></div>
 </body>
 </html>
