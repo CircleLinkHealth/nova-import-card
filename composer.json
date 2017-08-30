@@ -25,6 +25,7 @@
     "arcturial/clickatell": "*",
     "barryvdh/laravel-debugbar": "*",
     "barryvdh/laravel-snappy": "^0.3.0",
+    "bugsnag/bugsnag-laravel": "^2.0",
     "chrisbjr/api-guard": "~2.0",
     "dionera/laravel-beanstalkd-ui": "^0.3.4",
     "dusterio/laravel-aws-worker": "^0.1.5",

@@ -140,6 +140,7 @@ return [
     */
 
     'providers' => [
+        Bugsnag\BugsnagLaravel\BugsnagServiceProvider::class,
 
         /*
          * Laravel Framework Service Providers...
@@ -275,7 +276,7 @@ return [
         'PDF'            => \Barryvdh\Snappy\Facades\SnappyPdf::class,
         'Slack'          => jeremykenedy\Slack\Laravel\Facade::class,
         'GoogleCalendar' => Spatie\GoogleCalendar\GoogleCalendarFacade::class,
-
+        'Bugsnag'        => Bugsnag\BugsnagLaravel\Facades\Bugsnag::class,
     ],
 
 ];
