@@ -208,18 +208,18 @@ class NurseController extends Controller
 
         if (isset($input['next'])) {
 
-            $dayCounter = Carbon::parse($input['next'])->firstOfMonth()->toDateTimeString();
-            $last = Carbon::parse($input['next'])->lastOfMonth()->toDateTimeString();
+            $dayCounter = Carbon::parse($input['next'])->firstOfMonth()->startOfDay();
+            $last = Carbon::parse($input['next'])->lastOfMonth()->endOfDay();
 
         } elseif (isset($input['previous'])) {
 
-            $dayCounter = Carbon::parse($input['previous'])->firstOfMonth()->toDateTimeString();
-            $last = Carbon::parse($input['previous'])->lastOfMonth()->toDateTimeString();
+            $dayCounter = Carbon::parse($input['previous'])->firstOfMonth()->startOfDay();
+            $last = Carbon::parse($input['previous'])->lastOfMonth()->endOfDay();
 
         } else {
 
-            $dayCounter = Carbon::now()->firstOfMonth()->toDateTimeString();
-            $last = Carbon::now()->lastOfMonth()->toDateTimeString();
+            $dayCounter = Carbon::now()->firstOfMonth()->startOfDay();
+            $last = Carbon::now()->lastOfMonth()->endOfDay();
 
         }
 
@@ -227,7 +227,7 @@ class NurseController extends Controller
         $data = [];
 
 
-        while ($dayCounter <= $last) {
+        while ($dayCounter->lte($last)) {
 
             foreach ($nurses as $nurse) {
 
@@ -235,13 +235,11 @@ class NurseController extends Controller
                     continue;
                 }
 
-                $date = Carbon::parse($dayCounter);
+                $countScheduled = $nurse->nurseInfo->countScheduledCallsFor($dayCounter);
 
-                $countScheduled = $nurse->nurseInfo->countScheduledCallsFor($date);
+                $countMade = $nurse->nurseInfo->countCompletedCallsFor($dayCounter);
 
-                $countMade = $nurse->nurseInfo->countCompletedCallsFor($date);
-
-                $formattedDate = $date->format('m/d Y');
+                $formattedDate = $dayCounter->format('m/d Y');
 
                 $name = $nurse->first_name[0] . '. ' . $nurse->last_name;
 
@@ -263,7 +261,7 @@ class NurseController extends Controller
 
             }
 
-            $dayCounter = $date->addDays(1)->toDateTimeString();
+            $dayCounter = $dayCounter->addDays(1);
 
         }
 
