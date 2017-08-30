@@ -53,7 +53,7 @@ mix.js('resources/assets/js/app-clh-admin-ui.js', 'public/compiled/js');
 /*
  * The following is resources/assets/js/app-provider-ui.js broken up into separate parts, because Vue does not get along with webix and the previous UI
  */
-mix.js('resources/assets/js/nurse-work-schedule.js', 'public/compiled/js');
+mix.js('resources/assets/js/nurse-work-schedule.js', 'public/compiled/js').sourceMaps();
 mix.js('resources/assets/js/fab.js', 'public/compiled/js/v-fab.js');
 mix.js('resources/assets/js/pdf-careplans.js', 'public/compiled/js/v-pdf-careplans.js');
 mix.js('resources/assets/js/careplan-problems-list.js', 'public/compiled/js/v-careplan-problems-list.js');
