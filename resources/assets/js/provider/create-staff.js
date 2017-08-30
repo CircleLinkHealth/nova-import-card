@@ -1,11 +1,11 @@
-var Vue = require('vue');
+require('../bootstrap');
+require('../../../../public/js/materialize.min');
+require('select2');
 
-Vue.use(require('vue-resource'));
+window.Vue = require('vue');
 
-require('../components/src/select2.js');
-require('../components/src/select.js');
-
-Vue.http.headers.common['X-CSRF-TOKEN'] = $('meta[name="csrf-token"]').attr('content');
+Vue.component('material-select', require('../components/src/material-select.vue'));
+Vue.component('select2', require('../components/src/select2.vue'));
 
 /**
  *
@@ -31,7 +31,7 @@ var createStaffVM = new Vue({
     computed: {
         //Is the form fully filled out?
         formCompleted: function () {
-            for (var index = 0; index < this.newUsers.length; index++) {
+            for (let index = 0; index < this.newUsers.length; index++) {
 
                 this.isValidated(index);
 
@@ -44,26 +44,30 @@ var createStaffVM = new Vue({
         },
 
         showErrorBanner: function () {
-            if (this.invalidCount > 0) {
-                return true;
-            }
+            return this.invalidCount > 0;
         }
     },
 
-    ready: function () {
-        for (var i = 0, len = cpm.existingUsers.length; i < len; i++) {
-            this.newUsers.$set(i, cpm.existingUsers[i]);
-        }
+    mounted: function () {
+        let self = this;
 
-        this.$set('locations', cpm.locations);
-        this.$set('locationIds', cpm.locationIds);
-        this.$set('roles', cpm.roles);
-        this.$set('rolesMap', cpm.rolesMap);
-        this.$set('phoneTypes', cpm.phoneTypes);
+        Vue.nextTick(function () {
+            let len = cpm.existingUsers.length;
 
-        if (len < 1) {
-            this.addUser();
-        }
+            for (let i = 0; i < len; i++) {
+                Vue.set(self.newUsers, i, cpm.existingUsers[i]);
+            }
+
+            self.locations = cpm.locations;
+            self.locationIds = cpm.locationIds;
+            self.roles = cpm.roles;
+            self.rolesMap = cpm.rolesMap;
+            self.phoneTypes = cpm.phoneTypes;
+
+            if (len < 1) {
+                self.addUser();
+            }
+        });
     },
 
     methods: {
@@ -87,11 +91,6 @@ var createStaffVM = new Vue({
                     user_id: ''
                 },
             });
-
-            this.$nextTick(function () {
-                $('select').material_select();
-                $('.collapsible').collapsible();
-            });
         },
 
         deleteUser: function (index) {
@@ -104,18 +103,20 @@ var createStaffVM = new Vue({
 
         //Is the form for the given user filled out?
         isValidated: function (index) {
-            this.$set('invalidCount', $('.invalid').length);
+            Vue.nextTick(function () {
+                createStaffVM.invalidCount = $('.invalid').length;
 
-            this.$set('newUsers[' + index + '].isComplete', this.newUsers[index].first_name
-                && this.newUsers[index].last_name
-                && this.newUsers[index].email
-                && this.newUsers[index].role_id
-            );
+                createStaffVM.newUsers[index].isComplete = createStaffVM.newUsers[index].first_name
+                    && createStaffVM.newUsers[index].last_name
+                    && createStaffVM.newUsers[index].email
+                    && createStaffVM.newUsers[index].role_id;
 
-            this.$set('newUsers[' + index + '].errorCount', $('#user-' + index).find('.invalid').length);
-            this.$set('newUsers[' + index + '].validated', this.newUsers[index].isComplete && this.newUsers[index].errorCount == 0);
+                createStaffVM.newUsers[index].errorCount = $('#user-' + index).find('.invalid').length;
+                createStaffVM.newUsers[index].validated = createStaffVM.newUsers[index].isComplete && createStaffVM.newUsers[index].errorCount === 0;
+            });
 
-            return this.newUsers[index].validated;
+
+            return createStaffVM.newUsers[index].validated;
         },
 
         submitForm: function (url) {

@@ -18,28 +18,28 @@
 
         <tr v-for="importedMedicalRecord in importedMedicalRecords"
             v-bind:class="{ 'flag': importedMedicalRecord.flag }"
-            id="row-{{ importedMedicalRecord.id }}">
+            v-bind:id="'row-' + importedMedicalRecord.id">
 
-            <td id="import-row-{{ importedMedicalRecord.id }}">
+            <td v-bind:id="'import-row-' + importedMedicalRecord.id">
                 <label class="mdl-checkbox mdl-js-checkbox mdl-js-ripple-effect"
-                       for="import-{{ importedMedicalRecord.id }}"
-                       id="import-label-{{ importedMedicalRecord.id }}">
-                    <input v-model="okToImport" value="{{ importedMedicalRecord.id }}" type="checkbox"
-                           id="import-{{ importedMedicalRecord.id }}" class="mdl-checkbox__input"
+                       v-bind:for="'import-' + importedMedicalRecord.id"
+                       v-bind:id="'import-label-' + importedMedicalRecord.id">
+                    <input v-model="okToImport" v-bind:value="importedMedicalRecord.id" type="checkbox"
+                           v-bind:id="'import-' + importedMedicalRecord.id" class="mdl-checkbox__input"
                            v-on:click="toggleCheckboxes">
                     <span class="mdl-checkbox__label"></span>
                 </label>
             </td>
-            <td id="edit-row-{{ importedMedicalRecord.id }}" class="mdl-data-table__cell--non-numeric">
-                <a href="/ccd-importer/uploaded-ccd-items/{{importedMedicalRecord.id}}/edit">Edit</a>
+            <td v-bind:id="'edit-row-' + importedMedicalRecord.id" class="mdl-data-table__cell--non-numeric">
+                <a v-bind:href="'/ccd-importer/uploaded-ccd-items/' + importedMedicalRecord.id + '/edit'">Edit</a>
             </td>
 
-            <td id="delete-row-{{ importedMedicalRecord.id }}">
+            <td v-bind:id="'delete-row-' + importedMedicalRecord.id">
                 <label class="mdl-switch mdl-js-switch mdl-js-ripple-effect"
-                       for="delete-{{ importedMedicalRecord.id }}"
-                       id="delete-label-{{ importedMedicalRecord.id }}">
-                    <input v-model="okToDelete" value="{{ importedMedicalRecord.id }}" type="checkbox"
-                           id="delete-{{ importedMedicalRecord.id }}" class="mdl-switch__input"
+                       v-bind:for="'delete-' + importedMedicalRecord.id"
+                       v-bind:id="'delete-label-' + importedMedicalRecord.id">
+                    <input v-model="okToDelete" v-bind:value="importedMedicalRecord.id" type="checkbox"
+                           v-bind:id="'delete-' + importedMedicalRecord.id" class="mdl-switch__input"
                            v-on:click="toggleCheckboxes">
                     <span class="mdl-switch__label"></span>
                 </label>

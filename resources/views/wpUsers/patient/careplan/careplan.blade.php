@@ -7,27 +7,32 @@ $new_user = false;
 
 @if($patient->careplanStatus == 'provider_approved')
     @section('title', 'Edit/Modify Care Plan')
-@section('activity', 'Edit/Modify Care Plan')
+    @section('activity', 'Edit/Modify Care Plan')
 @else
     @section('title', 'Initial Care Plan Setup')
-@section('activity', 'Initial Care Plan Setup')
+    @section('activity', 'Initial Care Plan Setup')
 @endif
 
-@section('content')
+@section('scripts')
     <script type="text/javascript" src="{{ asset('/js/patient/careplan.js') }}"></script>
+@endsection
+
+@section('content')
     {!! Form::open(array('url' => URL::route('patient.careplan.store', array('patientId' => $patient->id)), 'class' => '', 'id' => 'ucpForm')) !!}
 
     <div id="content" class="row">
         <div class="container">
             <section class="">
-                <div class="row">
-                    <div class="icon-container col-lg-12">
-                        @if(isset($patient) && !$new_user )
-                            @include('wpUsers.patient.careplan.nav')
-                        @endif
+                @if ($patient->careplan_mode == App\CarePlan::WEB)
+                    <div class="row">
+                        <div class="icon-container col-lg-12">
+                            @if(isset($patient) && !$new_user )
+                                @include('wpUsers.patient.careplan.nav')
+                            @endif
+                        </div>
                     </div>
-                </div>
-                <br/>
+                    <br/>
+                @endif
                 <div class="row">
                     <div class="main-form-container col-lg-8 col-lg-offset-2">
                         <div class="row">

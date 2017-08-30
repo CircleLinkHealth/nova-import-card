@@ -80,9 +80,7 @@ class EmailWeeklyProviderReport implements ShouldQueue
                 });
             }
 
-//                Slack::to('#background-tasks')
-//                    ->send("The CPMbot just sent the provider's summary for $practice->display_name to $provider->fullName");
-
+            sendSlackMessage('#background-tasks', "The CPMbot just sent the provider's summary for $this->practice->display_name to $provider->fullName");
         }
     }
 }

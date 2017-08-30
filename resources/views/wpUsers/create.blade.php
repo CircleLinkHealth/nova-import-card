@@ -75,9 +75,9 @@
                                 <div class="form-group">
                                     <div class="row">
                                         <div class="col-xs-2">{!! Form::label('password', 'Password:') !!}</div>
-                                        <div class="col-xs-4">{!! Form::password('password', '', ['class' => 'form-control']) !!}</div>
+                                        <div class="col-xs-4">{!! Form::password('password', ['class' => 'form-control']) !!}</div>
                                         <div class="col-xs-2">{!! Form::label('password_confirm', 'Confirm Password:') !!}</div>
-                                        <div class="col-xs-4">{!! Form::password('password_confirm', '', ['class' => 'form-control']) !!}</div>
+                                        <div class="col-xs-4">{!! Form::password('password_confirm', ['class' => 'form-control']) !!}</div>
                                     </div>
                                 </div>
                                 <div class="form-group">

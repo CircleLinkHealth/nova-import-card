@@ -74,8 +74,6 @@ class PhiMail
         $this->connector->authenticateUser('careplanmanager@direct.circlelinkhealth.com', env('EMR_DIRECT_PASSWORD'));
 
         try {
-            echo("Sending a CDA as an attachment\n");
-
             // After authentication, the server has a blank outgoing message
             // template. Begin building this message by adding a recipient.
             // Multiple recipients can be added by calling this command more
@@ -121,9 +119,8 @@ class PhiMail
                     ? " succeeded id={$sr->messageId}"
                     : "failed err={$sr->errorText}";
 
-                Slack::to('#background-tasks')->send(
-                    "Send to {$sr->recipient}: $status \n"
-                );
+
+                sendSlackMessage('#background-tasks', "Send to {$sr->recipient}: $status \n");
             }
 
         } catch (\Exception $e) {
@@ -157,8 +154,7 @@ class PhiMail
                 $message = $this->connector->check();
 
                 if ($message == null) {
-                    Slack::to('#background-tasks-dev')
-                        ->send("Checked EMR Direct Mailbox. There where no messages. \n" . env('DB_DATABASE'));
+                    sendSlackMessage('#background-tasks-dev', "Checked EMR Direct Mailbox. There where no messages. \n" . env('DB_DATABASE'));
                     break;
                 }
 
@@ -253,7 +249,7 @@ class PhiMail
 
                     echo $message;
 
-                    Slack::to('#background-tasks')->send($message);
+                    sendSlackMessage('#background-tasks', $message);
                 }
 
                 Log::critical('***************');
@@ -310,8 +306,7 @@ class PhiMail
 
         $link = route('view.files.ready.to.import');
 
-        Slack::to('#ccd-file-status')
-            ->send("We received {$numberOfCcds} CCDs from EMR Direct. \n Please visit {$link} to import.");
+        sendSlackMessage('#ccd-file-status', "We received {$numberOfCcds} CCDs from EMR Direct. \n Please visit {$link} to import.");
     }
 
 }

@@ -90,6 +90,6 @@
     </div>
 @endsection
 
-@section('javascript')
+@section('scripts')
     <script src="/js/importer-training.js"></script>
 @endsection

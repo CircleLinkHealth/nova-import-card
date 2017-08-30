@@ -9,7 +9,7 @@
             <div class="col">
                 <div class="card horizontal">
                     <div class="card-image">
-                        <img src="https://www.getupandgobaked.com/wp-content/uploads/2015/03/smart-cookie-pic-copy.jpg">
+                        <img src="/img/cookie.png">
                     </div>
                     <div class="card-stacked">
                         <div class="card-content">

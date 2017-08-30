@@ -33,7 +33,7 @@ class CpmMiscService implements CpmModel
             ->all();
 
         //get the user's miscs
-        $userMiscs = $user->cpmMiscs()->getRelatedIds()->all();
+        $userMiscs = $user->cpmMiscs->pluck('id')->all();
 
         //If ids is an empty array, then detach all cptMiscsIds miscs and return
         if (empty($ids)) {

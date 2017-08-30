@@ -59,7 +59,7 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
     use \Venturecraft\Revisionable\RevisionableTrait;
     public $rules = [
         'username'         => 'required',
-        'email'            => 'required|email',
+        'email'            => 'required|email|unique:users,email',
         'password'         => 'required|min:8',
         'password_confirm' => 'required|same:password',
     ];
@@ -117,7 +117,8 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
     ];
 
     protected $hidden = [
-//        'password',
+        //@todo: Need to fix repository package. It does not validate hidden attributes. May temporarily comment out until then
+        'password',
     ];
 
     protected $dates = ['user_registered'];
@@ -350,7 +351,7 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
 
     public function patientActivities()
     {
-        return $this->hasMany('App\Activity', 'patient_id', 'id');
+        return $this->hasMany(Activity::class, 'patient_id', 'id');
     }
 
     public function providerInfo()
@@ -368,14 +369,24 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
         return $this->hasOne(CarePlan::class, 'user_id', 'id');
     }
 
+    /**
+     * Calls made from CLH to the User
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
     public function inboundCalls()
     {
-        return $this->hasMany('App\Call', 'inbound_cpm_id', 'id');
+        return $this->hasMany(Call::class, 'inbound_cpm_id', 'id');
     }
 
+    /**
+     * Calls made from the User to CLH
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
     public function outboundCalls()
     {
-        return $this->hasMany('App\Call', 'outbound_cpm_id', 'id');
+        return $this->hasMany(Call::class, 'outbound_cpm_id', 'id');
     }
 
     public function inboundMessages()
@@ -403,9 +414,11 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
 
     public function viewableProgramIds(): array
     {
-        return $this->practices
-            ->pluck('id')
-            ->all();
+        return $this->hasRole('administrator')
+            ? Practice::active()->pluck('id')->all()
+            : $this->practices
+                ->pluck('id')
+                ->all();
     }
 
     public function viewableProviderIds()
@@ -1952,10 +1965,14 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
         $query,
         $user
     ) {
+        $viewableLocations = $user->hasRole('administrator')
+            ? Location::all()->pluck('id')->all()
+            : $user->locations->pluck('id')->all();
+
         return $query->whereHas('locations', function ($q) use (
-            $user
+            $viewableLocations
         ) {
-            $q->whereIn('locations.id', $user->locations->pluck('id')->all());
+            $q->whereIn('locations.id', $viewableLocations);
         });
     }
 
@@ -1969,10 +1986,14 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
         $query,
         $user
     ) {
+        $viewablePractices = $user->hasRole('administrator')
+            ? Practice::active()->pluck('id')->all()
+            : $user->viewableProgramIds();
+
         return $query->whereHas('practices', function ($q) use (
-            $user
+            $viewablePractices
         ) {
-            $q->whereIn('id', $user->viewableProgramIds());
+            $q->whereIn('id', $viewablePractices);
         });
     }
 
@@ -2290,6 +2311,19 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
     }
 
     /**
+     * Forward Alerts/Notifications to another User.
+     * Attaches forwards to a user using forwardAlertsTo() relationship.
+     *
+     * @return void
+     */
+    public function forwardTo($receiverUserId, $forwardTypeName)
+    {
+        $this->forwardAlertsTo()->attach($receiverUserId, [
+            'name' => $forwardTypeName,
+        ]);
+    }
+
+    /**
      * Forward Alerts to another User
      *
      * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
@@ -2298,6 +2332,20 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
     {
         return $this->morphToMany(User::class, 'contactable', 'contacts')
             ->withPivot('name')
+            ->withTimestamps();
+    }
+
+    /**
+     * Get the Users that are forwarding alerts to this User.
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
+     */
+    public function forwardedCarePlanApprovalEmailsBy()
+    {
+        return $this->forwardedAlertsBy()
+            ->withPivot('name')
+            ->wherePivot('name', '=', User::FORWARD_CAREPLAN_APPROVAL_EMAILS_IN_ADDITION_TO_PROVIDER)
+            ->orWherePivot('name', '=', User::FORWARD_CAREPLAN_APPROVAL_EMAILS_INSTEAD_OF_PROVIDER)
             ->withTimestamps();
     }
 
@@ -2317,38 +2365,11 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
     }
 
     /**
-     * Forward Alerts/Notifications to another User.
-     * Attaches forwards to a user using forwardAlertsTo() relationship.
-     *
-     * @return void
-     */
-    public function forwardTo($receiverUserId, $forwardTypeName)
-    {
-        $this->forwardAlertsTo()->attach($receiverUserId, [
-            'name' => $forwardTypeName,
-        ]);
-    }
-
-    /**
-     * Get the Users that are forwarding alerts to this User.
-     *
-     * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
-     */
-    public function forwardedCarePlanApprovalEmailsBy()
-    {
-        return $this->forwardedAlertsBy()
-            ->withPivot('name')
-            ->wherePivot('name', '=', User::FORWARD_CAREPLAN_APPROVAL_EMAILS_IN_ADDITION_TO_PROVIDER)
-            ->orWherePivot('name', '=', User::FORWARD_CAREPLAN_APPROVAL_EMAILS_INSTEAD_OF_PROVIDER)
-            ->withTimestamps();
-    }
-
-    /**
      * Get the User's Primary Or Global Role
      *
      * @return Role|null
      */
-    public function role()
+    public function practiceOrGlobalRole()
     {
         if ($this->practice($this->primaryPractice)) {
             $primaryPractice = $this->practice($this->primaryPractice);
@@ -2361,9 +2382,35 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
         return $this->roles->first();
     }
 
-    public function getTimezoneAbbrAttribute() {
+    public function getCareplanModeAttribute()
+    {
+        $careplanMode = null;
+
+        if ($this->carePlan) {
+            $careplanMode = $this->carePlan->mode;
+        }
+
+        if (!$careplanMode && $this->primaryPractice && $this->primaryPractice->settings) {
+            $careplanMode = $this->primaryPractice->settings->first()->careplan_mode;
+        }
+
+        if (!$careplanMode) {
+            $careplanMode = CarePlan::WEB;
+        }
+
+        return $careplanMode;
+    }
+
+    public function getTimezoneAbbrAttribute()
+    {
         return $this->timezone
             ? Carbon::now($this->timezone)->format('T')
             : Carbon::now()->setTimezone('America/New_York')->format('T');
+    }
+
+    public function canApproveCarePlans()
+    {
+        return $this->can('care-plan-approve')
+            || ($this->practiceOrGlobalRole()->name == 'registered-nurse' && $this->primaryPractice->settings[0]->rn_can_approve_careplans);
     }
 }

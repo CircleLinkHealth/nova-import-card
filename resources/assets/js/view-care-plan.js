@@ -1,9 +1,23 @@
 var Vue = require('vue');
 Vue.use(require('vue-resource'));
-require('./components/CareTeam/care-team.js');
-require('./components/src/select2.js');
+
+import VueForm from 'vue-form';
+
+Vue.use(VueForm, {
+    inputClasses: {
+        valid: 'form-control-success',
+        invalid: 'form-control-danger'
+    }
+});
+
+require('./components/CareTeam/care-team.vue');
+require('./components/src/select2.vue');
 
 Vue.http.headers.common['X-CSRF-TOKEN'] = $('meta[name="csrf-token"]').attr('content');
+
+// This is the event hub we'll use in every
+// component to communicate between them.
+let eventHub = new Vue();
 
 /**
  *
@@ -11,31 +25,34 @@ Vue.http.headers.common['X-CSRF-TOKEN'] = $('meta[name="csrf-token"]').attr('con
  *
  */
 const vm = new Vue({
-    el: 'body',
+    el: '#app',
 
     data: {
         careTeamCollection: [],
     },
 
-    events: {
-        'care-person-created': function (data) {
-            this.careTeamCollection.push(data.newCarePerson);
-        }
+
+    created: function () {
+        eventHub.$on('care-person-created', this.addCarePerson);
     },
 
-    ready: function () {
-        if (typeof cpm !== 'undefined') {
-            for (var i = 0, len = cpm.careTeam.length; i < len; i++) {
-                this.careTeamCollection.$set(i, cpm.careTeam[i]);
-            }
-        }
+    beforeDestroy: function () {
+        eventHub.$off('care-person-created', this.addCarePerson);
+    },
+
+    mounted: function () {
+        this.careTeamCollection = cpm.careTeam;
     },
 
     methods: {
+        addCarePerson: function (data) {
+            vm.careTeamCollection.push(data.newCarePerson);
+        },
+
         createCarePerson: function () {
             let id = 'new' + parseInt((Math.random() * 100), 10);
 
-            this.$dispatch('care-person-created', {
+            eventHub.$emit('care-person-created', {
                 newCarePerson: {
                     id: id,
                     formatted_type: 'External',
@@ -70,8 +87,8 @@ const vm = new Vue({
                 },
             });
 
-            this.$nextTick(function () {
-                $("#editCareTeamModal-" + id).modal();
+            Vue.nextTick(function () {
+                $("#editCareTeamModal-" + id).modal({    backdrop: 'static',    keyboard: false});
             });
         },
     }

@@ -1,5 +1,5 @@
 <!-- PAGE TIMER START -->
-<div class="modal fade" id="timerModal" role="dialog" style="height: 10000px; opacity: 1;background-color: black">
+<div class="modal fade" id="timerModal" role="dialog" style="z-index:5000; height: 10000px; opacity: 1;background-color: black">
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">

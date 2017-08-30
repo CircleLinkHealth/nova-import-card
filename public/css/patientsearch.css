@@ -1,6 +1,6 @@
 #bloodhound{
     /*background-color: #fff;*/
-    min-width: 250px;
+    /*min-width: 20px;*/
     position: relative;
     margin-bottom: -35px;
     margin-top: -3px;
@@ -35,8 +35,7 @@
 }
 
 .twitter-typeahead {
-
-
+    width: 100%;
 }
 
 .typeahead:focus {
@@ -56,13 +55,13 @@
 }
 
 .tt-menu {
-    position: absolute !important;
-    left:-2px !important;
-    max-height: 250px;
-    overflow-y: auto;
-    width: 535px !important;
-    margin: 38px 0;
-    padding: 3px 0;
+    /*position: absolute !important;*/
+    /*left:-2px !important;*/
+    /*max-height: 250px;*/
+    /*overflow-y: auto;*/
+    /*width: 535px !important;*/
+    /*margin: 38px 0;*/
+    /*padding: 3px 0;*/
     background-color: #fff;
     border: 1px solid #ccc;
     -webkit-border-radius: 8px;

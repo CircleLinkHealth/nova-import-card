@@ -5,7 +5,7 @@
 
 @section('content')
 
-    <script type="text/javascript" src="{{ asset('/js/patient/observation-create.js') }}"></script>
+    <script type="text/javascript" src="{{ asset('/js/patient/observation-create.vue') }}"></script>
 
     <script>
         $(document).ready(function () {

@@ -91,7 +91,7 @@ class Call extends Model
 
     public function outboundUser()
     {
-        return $this->belongsTo('App\User', 'outbound_cpm_id', 'id');
+        return $this->belongsTo(User::class, 'outbound_cpm_id');
     }
 
     public function inboundUser()

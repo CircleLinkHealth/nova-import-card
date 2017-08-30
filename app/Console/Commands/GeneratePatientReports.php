@@ -37,7 +37,7 @@ class GeneratePatientReports extends Command {
 	 *
 	 * @return mixed
 	 */
-	public function fire()
+	public function handle()
 	{
 		$patient_ids = explode(',',$this->argument('patientIds'));
 		foreach($patient_ids as $patient_id){

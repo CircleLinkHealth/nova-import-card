@@ -174,7 +174,7 @@ class Activity extends Model implements Transformable
 
     public function patient()
     {
-        return $this->belongsTo('App\User', 'patient_id', 'id');
+        return $this->belongsTo(User::class, 'patient_id', 'id');
     }
 
     public function provider()

@@ -10,7 +10,10 @@
                {{--class="navbar-title collapse navbar-collapse navbar-text navbar-left">CarePlan<span class="thin">Manager™</span></a>--}}
 
         </div>
-        @include('partials.search')
+
+        <div class="col-md-3">
+            @include('partials.search')
+        </div>
 
         <div class="navbar-right hidden-xs" style="">
             <ul class="nav navbar-nav">

@@ -3,7 +3,6 @@
 namespace App\Console\Commands;
 
 use App\CarePlan;
-use App\CLH\Contracts\Repositories\UserRepository;
 use App\Models\EmailSettings;
 use App\User;
 use Carbon\Carbon;
@@ -40,117 +39,34 @@ class EmailsProvidersToApproveCareplans extends Command
 
         $bar = $this->output->createProgressBar(count($providers));
 
-        $emailsSent = $providers->map(function ($user) use (
+        $emailsSent = $providers->map(function ($providerUser) use (
             $bar,
             $pretend
         ) {
-            //Middletown
-            if ($user->program_id == 23) {
+            if (!$this->shouldSend($providerUser)) {
                 return false;
             }
 
-            //Miller
-            if ($user->program_id == 10) {
-                return false;
-            }
-            //Icli
-            if ($user->program_id == 19) {
-                return false;
-            }
-            //Purser
-            if ($user->program_id == 22) {
-                return false;
-            }
-
-            if (!$user->primaryPractice) {
-                return false;
-            }
-
-            if ($user->primaryPractice->settings && !$user->primaryPractice->settings->isEmpty() && $user->primaryPractice->settings->first()->email_careplan_approval_reminders) {
-                return false;
-            }
-
-            if ($user->primaryPractice->settings && $user->primaryPractice->settings->isEmpty() && $user->primaryPractice->settings->first()->auto_approve_careplans) {
-                return false;
-            }
-
-            $recipients = collect();
-
-            if ($user->forwardAlertsTo->isEmpty()) {
-                $recipients->push($user->email);
-            } else {
-                foreach ($user->forwardAlertsTo as $forwardee) {
-                    if ($forwardee->pivot->name == User::FORWARD_CAREPLAN_APPROVAL_EMAILS_IN_ADDITION_TO_PROVIDER) {
-                        $recipients->push($user->email);
-                        $recipients->push($forwardee->email);
-                    }
-
-                    if ($forwardee->pivot->name == User::FORWARD_CAREPLAN_APPROVAL_EMAILS_INSTEAD_OF_PROVIDER) {
-                        $recipients->push($forwardee->email);
-                    }
-                }
-            }
+            $recipients = $this->recipients($providerUser);
 
             if ($recipients->isEmpty()) {
                 return false;
             }
 
-            $numberOfCareplans = CarePlan::getNumberOfCareplansPendingApproval($user);
+            $numberOfCareplans = CarePlan::getNumberOfCareplansPendingApproval($providerUser);
 
             if ($numberOfCareplans < 1) {
                 return false;
             }
 
-            $data = [
-                'numberOfCareplans' => $numberOfCareplans,
-                'drName'            => $user->fullName,
-            ];
-
-            $view = 'emails.careplansPendingApproval';
-            $subject = "{$numberOfCareplans} CircleLink Care Plan(s) for your Approval!";
-
-            $settings = $user->emailSettings()->firstOrNew([]);
-
-            $send = $settings->frequency == EmailSettings::DAILY
-                ? true
-                : ($settings->frequency == EmailSettings::WEEKLY) && Carbon::today()->dayOfWeek == 1
-                    ? true
-                    : ($settings->frequency == EmailSettings::MWF) &&
-                    (Carbon::today()->dayOfWeek == 1
-                        || Carbon::today()->dayOfWeek == 3
-                        || Carbon::today()->dayOfWeek == 5)
-                        ? true
-                        : false;
-
-            if (!$send) {
-                return false;
+            foreach ($recipients as $recipient) {
+                $this->sendEmail($recipient, $numberOfCareplans, $providerUser, $pretend);
+                $bar->advance();
             }
-
-            if (!$pretend) {
-                if ($send) {
-                    Mail::send($view, $data, function ($message) use (
-                        $recipients,
-                        $subject
-                    ) {
-                        $message->from('notifications@careplanmanager.com', 'CircleLink Health')
-                            ->to($recipients->all())
-                            ->subject($subject);
-                    });
-                }
-
-                try {
-                    Slack::to('#background-tasks')
-                        ->send("Sent pending approvals email to {$user->fullName}.");
-                } catch (\Exception $e) {
-
-                }
-            }
-
-            $bar->advance();
 
             return [
-                'practice'         => $user->primaryPractice->display_name,
-                'receivers'         => implode(', ', $recipients->all()),
+                'practice'         => $providerUser->primaryPractice->display_name,
+                'receivers'        => implode(', ', $recipients->all()),
                 'pendingApprovals' => $numberOfCareplans,
             ];
         });
@@ -167,6 +83,110 @@ class EmailsProvidersToApproveCareplans extends Command
 
         $count = count($emailsSent);
 
-        $this->info("Sent $count emails.");
+        $this->info("$count emails.");
+    }
+
+    public function shouldSend(User $providerUser)
+    {
+        //Middletown
+        if ($providerUser->program_id == 23) {
+            return false;
+        }
+
+        //Miller
+        if ($providerUser->program_id == 10) {
+            return false;
+        }
+        //Icli
+        if ($providerUser->program_id == 19) {
+            return false;
+        }
+        //Purser
+        if ($providerUser->program_id == 22) {
+            return false;
+        }
+
+        if (!$providerUser->primaryPractice) {
+            return false;
+        }
+
+        if ($providerUser->primaryPractice->settings && !$providerUser->primaryPractice->settings->isEmpty() && $providerUser->primaryPractice->settings->first()->email_careplan_approval_reminders) {
+            return false;
+        }
+
+        if ($providerUser->primaryPractice->settings && !$providerUser->primaryPractice->settings->isEmpty() && $providerUser->primaryPractice->settings->first()->auto_approve_careplans) {
+            return false;
+        }
+
+        return true;
+    }
+
+    public function recipients(User $providerUser)
+    {
+        $recipients = collect();
+
+        if ($providerUser->forwardAlertsTo->isEmpty()) {
+            $recipients->push($providerUser);
+        } else {
+            foreach ($providerUser->forwardAlertsTo as $forwardee) {
+                if ($forwardee->pivot->name == User::FORWARD_CAREPLAN_APPROVAL_EMAILS_IN_ADDITION_TO_PROVIDER) {
+                    $recipients->push($providerUser);
+                    $recipients->push($forwardee);
+                }
+
+                if ($forwardee->pivot->name == User::FORWARD_CAREPLAN_APPROVAL_EMAILS_INSTEAD_OF_PROVIDER) {
+                    $recipients->push($forwardee);
+                }
+            }
+        }
+
+        return $recipients;
+    }
+
+    public function sendEmail(User $recipient, $numberOfCareplans, User $providerUser, bool $pretend)
+    {
+        $data = [
+            'numberOfCareplans' => $numberOfCareplans,
+            'recipient'         => $recipient,
+        ];
+
+        $view = 'emails.careplansPendingApproval';
+        $subject = "{$numberOfCareplans} CircleLink Care Plan(s) for your Approval!";
+
+        $settings = $providerUser->emailSettings()->firstOrNew([]);
+
+        $send = $settings->frequency == EmailSettings::DAILY
+            ? true
+            : ($settings->frequency == EmailSettings::WEEKLY) && Carbon::today()->dayOfWeek == 1
+                ? true
+                : ($settings->frequency == EmailSettings::MWF) &&
+                (Carbon::today()->dayOfWeek == 1
+                    || Carbon::today()->dayOfWeek == 3
+                    || Carbon::today()->dayOfWeek == 5)
+                    ? true
+                    : false;
+
+        if (!$send) {
+            return false;
+        }
+
+        if (!$pretend) {
+            if ($send && $recipient->email) {
+                Mail::send($view, $data, function ($message) use (
+                    $recipient,
+                    $subject
+                ) {
+                    $message->from('notifications@careplanmanager.com', 'CircleLink Health')
+                        ->to($recipient->email)
+                        ->subject($subject);
+                });
+            }
+
+            try {
+                sendSlackMessage('#background-tasks', "Sent pending approvals email to {$recipient->fullName}.");
+            } catch (\Exception $e) {
+
+            }
+        }
     }
 }

@@ -127,15 +127,9 @@ class PracticeController extends Controller
 
         $program = Practice::find($id);
 
-        $recipients = implode(', ', Practice::getInvoiceRecipients($program));
-
-        if(count($recipients) > 0){
-            $recipients = implode(', ', Practice::getInvoiceRecipients($program));
-        }
-
         $locations = $program->locations->all();
 
-		return view('admin.wpBlogs.edit', compact([ 'program', 'locations', 'errors', 'messages', 'recipients' ]));
+		return view('admin.wpBlogs.edit', compact([ 'program', 'locations', 'errors', 'messages' ]));
 	}
 
 	/**
@@ -163,8 +157,6 @@ class PracticeController extends Controller
 
 		$program->name = $params['name'];
 		$program->display_name = $params['display_name'];
-		$program->weekly_report_recipients = $params['weekly_report_recipients'];
-        $program->invoice_recipients = $params['invoice_recipients'];
 		$program->clh_pppm = $params['clh_pppm'];
 		$program->term_days = $params['term_days'];
 		$program->bill_to_name = $params['bill_to_name'];

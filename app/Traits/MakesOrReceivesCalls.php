@@ -6,9 +6,6 @@ use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Collection;
 
 /**
- * IMPORTANT: Laravel overwrites the final model's id with the intermediate model's id in a HasManyThrough Relationship
- * https://github.com/laravel/framework/issues/20805
- *
  * Trait MakesOrReceivesCalls
  * @package App\Traits
  */

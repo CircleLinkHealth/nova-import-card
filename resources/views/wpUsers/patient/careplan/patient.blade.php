@@ -7,16 +7,21 @@ $user_info = array();
 @section('title', 'Patient Demographics')
 @section('activity', 'Edit/Modify Care Plan')
 
-@section('content')
+@section('scripts')
     <script type="text/javascript" src="{{ asset('/js/patient/careplan.js') }}"></script>
+@endsection
+
+@section('content')
     {!! Form::open(array('url' => URL::route('patients.demographics.store', array('patientId' => $patient->id)), 'class' => 'form-horizontal', 'id' => 'ucpForm')) !!}
     <div class="row" style="margin-top:20px;">
         <div class="col-lg-10 col-lg-offset-1">
-            <div class="icon-container col-lg-12">
-                @if(isset($patient))
-                    @include('wpUsers.patient.careplan.nav')
-                @endif
-            </div>
+            @if ($patient->careplan_mode == App\CarePlan::WEB)
+                <div class="icon-container col-lg-12">
+                    @if(isset($patient))
+                        @include('wpUsers.patient.careplan.nav')
+                    @endif
+                </div>
+            @endif
             {{-- {!! Form::select('patient_id', array($patient), null, ['class' => 'patient2 form-control']) !!}
             @if(!isset($patient->id) )
                 <div class=" col-lg-8 col-lg-offset-2 alert alert-info">NOTE: Adding a new patient</div>
@@ -325,7 +330,7 @@ $user_info = array();
                 </div>
             </div>
         </div>
-        @include('wpUsers.patient.careplan.footer')
+            @include('wpUsers.patient.careplan.footer')
         <br/><br/>
 
         @if(isset($_GET['scrollTo']))
@@ -339,7 +344,7 @@ $user_info = array();
                     $('#insurance-name').focus();
 
                     $('#policies-title').css('border-left', '15px solid #47beab')
-                            .css('padding-left', '5px');
+                        .css('padding-left', '5px');
 
                     $('.glow').addClass('animated flash');
 

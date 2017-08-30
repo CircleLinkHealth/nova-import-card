@@ -59,28 +59,69 @@
                         </li>
                     @endif
                     @if( auth()->user()->can(['ccd-import']) )
-                    <li class="menu-item">
-                        <a id="patient-list" href="{{ route('import.ccd') }}">
-                            <div class="icon-container column-centered">
-                                <i class="icon--menu" aria-hidden="true">
-                                    <img src="/img/icon--download.png"
-                                         style="
+                        <li class="menu-item">
+                            <a id="patient-list" href="{{ route('import.ccd') }}">
+                                <div class="icon-container column-centered">
+                                    <i class="icon--menu" aria-hidden="true">
+                                        <img src="/img/icon--download.png"
+                                             style="
                                             max-width: 61px;
                                             position: absolute;
                                             left: 15px;
                                             bottom: 12px;">
-                                </i>
-                            </div>
-                            <div>
-                                <p class="text-medium-big text--menu text-serif">Import CCDs<BR><BR><br></p>
-                            </div>
-                        </a>
+                                    </i>
+                                </div>
+                                <div>
+                                    <p class="text-medium-big text--menu text-serif">Import CCDs<BR><BR><br></p>
+                                </div>
+                            </a>
 
-                    </li>
+                        </li>
                     @endif
 
                 </ul>
             </div>
         </div>
+
+        @if(auth()->user()->nurseInfo)
+            <div id="v-show-nurse-work-schedule" class="row-centered nurse-dashboard-schedule">
+                <notifications class="text-left"></notifications>
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="row">
+                            <h3>
+                                Your Schedule ({{auth()->user()->timezone_abbr}})
+                            </h3>
+                            <a href="{{ route('care.center.work.schedule.index') }}" id="work-schedule-link"
+                               class="edit-work-schedule btn btn-primary">
+                                Create/Edit Schedule
+                            </a>
+                        </div>
+                        @include('partials.care-center.work-schedule-slot.index', [
+                                   'windows' => auth()->user()->nurseInfo->windows,
+                                   'holidaysThisWeek' => auth()->user()->nurseInfo->holidays_this_week,
+                                   'nurse' => auth()->user()->nurseInfo
+                               ])
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="row">
+                            <h3>
+                                Your Days Off
+                            </h3>
+                        </div>
+                        @include('partials.care-center.holiday-schedule.index', [
+                                    'holidays' => auth()->user()->nurseInfo->upcoming_holiday_dates
+                                ])
+                    </div>
+                </div>
+            </div>
+        @endif
     </div>
 @stop
+
+@section('scripts')
+    <script src="{{asset('compiled/js/nurse-work-schedule.js')}}"></script>
+@endsection

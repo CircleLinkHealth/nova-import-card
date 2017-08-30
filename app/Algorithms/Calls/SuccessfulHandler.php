@@ -50,6 +50,7 @@ class SuccessfulHandler implements CallHandler
     private $attemptNote;
     private $isComplex;
     private $matchArray = [];
+    private $prevCall;
 
     //return package
     private $prediction;
@@ -61,7 +62,8 @@ class SuccessfulHandler implements CallHandler
     public function __construct(
         Patient $calledPatient,
         Carbon $initTime,
-        $isComplex
+        $isComplex,
+        $previousCall
     ) {
 
         $this->week = $initTime->weekOfMonth;
@@ -72,6 +74,7 @@ class SuccessfulHandler implements CallHandler
         $this->attemptNote = '';
         $this->prediction = [];
         $this->isComplex = $isComplex;
+        $this->prevCall = $previousCall;
 
     }
 
@@ -95,7 +98,9 @@ class SuccessfulHandler implements CallHandler
             $this->patient,
             $this->nextCallDate,
             $this->prediction['window_start'],
-            $this->prediction['window_end']))
+            $this->prediction['window_end'],
+            $this->prevCall
+        ))
             ->find();
 
         $this->prediction = (collect($this->prediction))->merge($result)->toArray();

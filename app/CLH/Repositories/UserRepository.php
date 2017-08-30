@@ -2,7 +2,6 @@
 
 use App\CareAmbassador;
 use App\CarePlan;
-use App\CarePlanTemplate;
 use App\Nurse;
 use App\Patient;
 use App\PhoneNumber;
@@ -286,7 +285,7 @@ class UserRepository implements \App\CLH\Contracts\Repositories\UserRepository
             CarePlan::updateOrCreate([
                 'user_id' => $user->id,
             ], [
-                'status'                => $params->get('careplan_status'),
+                'status' => $params->get('careplan_status'),
             ]);
 
             $params->remove('careplan_status');
@@ -393,8 +392,7 @@ class UserRepository implements \App\CLH\Contracts\Repositories\UserRepository
             'program'       => $program_name,
         ];
 
-        Mail::send($email_view, $data, function ($message) use
-        (
+        Mail::send($email_view, $data, function ($message) use (
             $recipients,
             $email_subject
         ) {
@@ -552,8 +550,7 @@ class UserRepository implements \App\CLH\Contracts\Repositories\UserRepository
         $select = '*'
     ) {
         return User::select(DB::raw($select))
-            ->whereHas('roles', function ($q) use
-            (
+            ->whereHas('roles', function ($q) use (
                 $role
             ) {
                 $q->where('name', '=', $role);

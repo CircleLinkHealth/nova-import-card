@@ -88,4 +88,19 @@ class NurseContactWindow extends Model
             ->orderBy('date', 'asc')
             ->orderBy('window_time_start', 'asc');
     }
+
+
+    /**
+     * Returns the range of the windows as an object consisting of 2 Carbon Objects
+     *
+     * @return \stdClass
+     */
+    public function range() {
+        $object = new \stdClass();
+
+        $object->start = Carbon::parse($this->window_time_start);
+        $object->end = Carbon::parse($this->window_time_end);
+
+        return $object;
+    }
 }

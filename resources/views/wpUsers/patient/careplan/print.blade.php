@@ -20,12 +20,20 @@ if (isset($patient) && !empty($patient)) {
 @section('activity', 'Care Plan View/Print')
 @endif
 
+@section('scripts')
+    {{--contains care team modules as well--}}
+    <script src="{{asset('compiled/js/v-pdf-careplans.js')}}"></script>
+@endsection
+
 @section('content')
     @if(isset($patient) && !empty($patient))
-        <div class="container">
+        <div id="v-pdf-careplans" class="container">
+            <open-modal></open-modal>
+            <notifications></notifications>
             <section class="patient-summary">
                 <div class="patient-info__main">
                     @if(!isset($isPdf))
+
                         <div class="row">
                             <div class="col-xs-12 text-right hidden-print">
 
@@ -44,23 +52,30 @@ if (isset($patient) && !empty($patient)) {
                                     </div>
                                 @endif
 
-                                <span class="btn btn-group text-right">
 
-                                    @if ( ($patient->carePlanStatus == 'qa_approved' && auth()->user()->can('care-plan-approve')) || ($patient->carePlanStatus == 'draft' && auth()->user()->can('care-plan-qa-approve')) )
-                                        <a style="margin-right:10px;" class="btn btn-info btn-sm inline-block"
-                                           aria-label="..."
-                                           role="button"
-                                           href="{{ URL::route('patients.listing', ['patient_approval_id' => $patient->id]) }}">Approve Care Plan</a>
-                                    @endif
+                                <div class="col-xs-12 text-left">
+                                    <pdf-careplans v-cloak>
+                                        <span class="btn btn-group text-right">
+                                        @if ( ($patient->carePlanStatus == 'qa_approved' && auth()->user()->canApproveCarePlans()) || ($patient->carePlanStatus == 'draft' && auth()->user()->can('care-plan-qa-approve')) )
+                                                <a style="margin-right:10px;" class="btn btn-info btn-sm inline-block"
+                                                   aria-label="..."
+                                                   role="button"
+                                                   href="{{ URL::route('patients.listing', ['patient_approval_id' => $patient->id]) }}">Approve Care Plan</a>
+                                            @endif
 
-                                    <a class="btn btn-info btn-sm inline-block" aria-label="..." role="button"
-                                       href="{{ URL::route('patients.careplan.multi') }}?users={{ $patient->id }}">Print This Page</a>
+                                            <a class="btn btn-info btn-sm inline-block" aria-label="..." role="button"
+                                               href="{{ URL::route('patients.careplan.multi') }}?users={{ $patient->id }}">Print This Page</a>
 
-                                    <form class="lang" action="#" method="POST" id="form">
+                                        <form class="lang" action="#" method="POST" id="form">
                                         {{ csrf_field() }}
-                                        <input type="hidden" name="lang" value="es"/>
-                                        <!-- <button type="submit" class="btn btn-info btn-sm text-right" aria-label="..." value="">Translate to Spanish</button>
-                              -->   </form></span></div>
+                                            <input type="hidden" name="lang" value="es"/>
+                                            <!-- <button type="submit" class="btn btn-info btn-sm text-right" aria-label="..." value="">Translate to Spanish</button>
+                                  -->       </form>
+                                    </span>
+                                    </pdf-careplans>
+                                </div>
+                            </div>
+
                         </div>
                     @endif
                     <div class="row gutter">
@@ -303,7 +318,7 @@ if (isset($patient) && !empty($patient)) {
                 <!-- /SOCIAL AND OTHER SERVICES -->
 
                 <!-- CARE TEAM -->
-                <div class="patient-info__subareas">
+                <div id="care-team" class="patient-info__subareas">
                     <div class="row">
                         <div class="col-xs-12">
                             <h2 class="patient-summary__subtitles patient-summary--careplan-background">Care Team:</h2>
