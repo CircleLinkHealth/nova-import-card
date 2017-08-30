@@ -26,7 +26,8 @@ class UpdatePracticeLocation extends FormRequest
         return [
             'practice_id'            => 'required|exists:practices,id',
             'name'                   => 'required',
-            'phone'                  => 'required',
+            'phone'                  => 'required|phone:US',
+            'fax'                    => 'phone:US',
             'address_line_1'         => 'required',
             'address_line_2'         => '',
             'city'                   => 'required',
