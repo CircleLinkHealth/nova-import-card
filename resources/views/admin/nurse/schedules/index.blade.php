@@ -2,11 +2,14 @@
 
 @section('content')
     <div id="app">
-        @include('errors.errors')
+
+        <div style="    position: fixed;bottom: 0;width: 100%;z-index: 100;opacity: 0.95;">
+            @include('errors.errors')
+        </div>
 
         <div class="container">
             @foreach($data as $user)
-                <div class="row" style="padding-bottom: 10%;">
+                <div id="nurse-{{$user->nurseInfo->id}}" class="row" style="padding-bottom: 10%;">
                     <h3>
                         <b>{{ $user->fullName }}</b>
                         <span class="pull-right red-text">Timezone: {{ $user->timezone ? $user->timezone : 'Not set' }}</span>
@@ -49,7 +52,14 @@
             @endforeach
         </div>
     </div>
+@endsection
 
-    <script src="{{asset('compiled/js/nurse-work-schedule.js')}}"></script>
-
+@section('scripts')
+    @if(session('editedNurseId'))
+        <script>
+            (function () {
+                window.location.hash = '#nurse-{{session('editedNurseId')}}';
+            })();
+        </script>
+    @endif
 @endsection

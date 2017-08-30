@@ -171,7 +171,8 @@ class WorkScheduleController extends Controller
 
             return redirect()->back()
                 ->withErrors($validator)
-                ->withInput();
+                ->withInput()
+                ->with(['editedNurseId' => $nurseInfoId]);
         }
 
         if ($isAdmin) {
@@ -210,7 +211,7 @@ class WorkScheduleController extends Controller
             strtolower(clhDayOfWeekToDayName($request->input('day_of_week'))) => $request->input('work_hours'),
         ]);
 
-        return redirect()->back();
+        return redirect()->back()->with(['editedNurseId' => $nurseInfoId]);
     }
 
     public function destroy($windowId)
