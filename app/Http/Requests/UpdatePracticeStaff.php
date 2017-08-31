@@ -24,13 +24,14 @@ class UpdatePracticeStaff extends FormRequest
     public function rules()
     {
         return [
-            'practice_id'                         => 'required|exists:practices,id',
-            'email'                               => 'required|email',
-            'first_name'                          => 'required',
-            'last_name'                           => 'required',
-            'phone_number'                        => 'nullable|phone:US',
-            'phone_extension'                     => 'nullable',
-            'emr_direct_address'                  => 'nullable|email',
+            'practice_id'        => 'required|exists:practices,id',
+            'email'              => 'required|email',
+            'first_name'         => 'required',
+            'last_name'          => 'required',
+            'phone_number'       => 'nullable|phone:US',
+            'phone_extension'    => 'nullable',
+            'emr_direct_address' => 'nullable|email',
+            'role_name'          => 'required',
         ];
     }
 }

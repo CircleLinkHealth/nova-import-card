@@ -248,7 +248,7 @@
                     'grandAdminRights': '',
                     'sendBillingReports': '',
                     'role': {},
-                    'role_name': '',
+                    'role_name': 'med_assistant',
                     'locations': [],
                     'emr_direct_address': '',
                     'forward_alerts_to': {
