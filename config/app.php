@@ -189,14 +189,11 @@ return [
         /*
          * CPM Providers
          */
-        \Chrisbjr\ApiGuard\Providers\ApiGuardServiceProvider::class,
         \Tymon\JWTAuth\Providers\JWTAuthServiceProvider::class,
         \Collective\Html\HtmlServiceProvider::class,
         \Rap2hpoutre\LaravelLogViewer\LaravelLogViewerServiceProvider::class,
         Zizaco\Entrust\EntrustServiceProvider::class,
-        \Fideloper\Proxy\TrustedProxyServiceProvider::class,
         \Maatwebsite\Excel\ExcelServiceProvider::class,
-        \rigor789\AirbrakeLaravel\AirbrakeServiceProvider::class,
         Prettus\Repository\Providers\RepositoryServiceProvider::class,
         Yajra\Datatables\DatatablesServiceProvider::class,
         App\Providers\AWSWorkerServiceProvider::class,
