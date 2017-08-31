@@ -244,7 +244,7 @@
                     'full_name': '',
                     'phone_number': '',
                     'phone_extension': '',
-                    'phone_type': '',
+                    'phone_type': 1,
                     'grandAdminRights': '',
                     'sendBillingReports': '',
                     'role': {},
