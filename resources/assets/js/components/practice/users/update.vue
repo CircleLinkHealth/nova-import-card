@@ -249,7 +249,7 @@
                     'sendBillingReports': '',
                     'role': {},
                     'role_name': '',
-                    'locations': '',
+                    'locations': [],
                     'emr_direct_address': '',
                     'forward_alerts_to': {
                         'who': 'billing_provider',
