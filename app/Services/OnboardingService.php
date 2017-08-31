@@ -135,7 +135,7 @@ class OnboardingService
                         PhoneNumber::getTypes()) ?? '',
                 'isComplete'                          => false,
                 'validated'                           => false,
-                'grandAdminRights'                    => $permissions->pivot->has_admin_rights ?? false,
+                'grantAdminRights'                    => $permissions->pivot->has_admin_rights ?? false,
                 'sendBillingReports'                  => $permissions->pivot->send_billing_reports ?? false,
                 'errorCount'                          => 0,
                 'role_id'                             => $roleId,
@@ -446,9 +446,9 @@ class OnboardingService
 
                 $user->emr_direct_address = $newUser['emr_direct_address'];
 
-                $grandAdminRights = false;
-                if ($newUser['grandAdminRights']) {
-                    $grandAdminRights = true;
+                $grantAdminRights = false;
+                if ($newUser['grantAdminRights']) {
+                    $grantAdminRights = true;
                 }
 
                 $sendBillingReports = false;
@@ -459,7 +459,7 @@ class OnboardingService
                 //Attach the locations
                 $user->attachLocation($newUser['locations']);
 
-                $attachPractice = $user->attachPractice($primaryPractice, $grandAdminRights, $sendBillingReports,
+                $attachPractice = $user->attachPractice($primaryPractice, $grantAdminRights, $sendBillingReports,
                     $newUser['role_id']);
 
                 //attach phone

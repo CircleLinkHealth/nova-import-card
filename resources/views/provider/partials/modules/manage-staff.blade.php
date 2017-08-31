@@ -182,7 +182,7 @@
                                     'value' => '1',
                                     'class' => 'col s12',
                                     'attributes' => [
-                                        'v-model' => 'newUser.grandAdminRights'
+                                        'v-model' => 'newUser.grantAdminRights'
                                     ],
                                 ])
                             </div>

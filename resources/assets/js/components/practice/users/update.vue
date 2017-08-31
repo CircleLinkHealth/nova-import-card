@@ -55,9 +55,9 @@
                     </div>
 
                     <div class="input-field col s3">
-                        <input type="checkbox" class="filled-in" id="grandAdminRights"
-                               v-model="formData.grandAdminRights" :checked="formData.grandAdminRights"/>
-                        <label for="grandAdminRights">Grand Admin Rights</label>
+                        <input type="checkbox" class="filled-in" id="grantAdminRights"
+                               v-model="formData.grantAdminRights" :checked="formData.grantAdminRights"/>
+                        <label for="grantAdminRights">Grant Admin Rights</label>
                     </div>
 
                     <div class="input-field col s3">
@@ -245,7 +245,7 @@
                     'phone_number': '',
                     'phone_extension': '',
                     'phone_type': 1,
-                    'grandAdminRights': '',
+                    'grantAdminRights': '',
                     'sendBillingReports': '',
                     'role': {},
                     'role_name': 'med_assistant',

@@ -76,7 +76,7 @@ var createStaffVM = new Vue({
 
             this.newUsers.push({
                 locations: this.locationIds,
-                grandAdminRights: false,
+                grantAdminRights: false,
                 sendBillingReports: false,
                 emr_direct_address: '',
                 phone_number: '',
