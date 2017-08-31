@@ -31,7 +31,7 @@
 <script>
     import {mapGetters, mapActions} from 'vuex'
     import {practiceStaff} from '../../../store/getters'
-    import {getPracticeStaff, deletePracticeStaff} from '../../../store/actions'
+    import {getPracticeStaff, deletePracticeStaff, getPracticeLocations} from '../../../store/actions'
 
     export default {
         computed: Object.assign({},
@@ -42,10 +42,11 @@
 
         mounted() {
             this.getPracticeStaff(this.practiceId)
+            this.getPracticeLocations(this.practiceId)
         },
 
         methods: Object.assign({},
-            mapActions(['getPracticeStaff', 'deletePracticeStaff']),
+            mapActions(['getPracticeStaff', 'deletePracticeStaff', 'getPracticeLocations']),
             {
                 cellClicked(index, entry, entryIndex) {
                     switch (index) {

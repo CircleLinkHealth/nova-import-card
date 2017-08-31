@@ -164,7 +164,7 @@
     import modal from '../../shared/materialize/modal.vue';
     import {mapGetters, mapActions} from 'vuex'
     import {clearOpenModal, addNotification, updatePracticeStaff, clearErrors} from '../../../store/actions'
-    import {errors, practiceStaff} from '../../../store/getters'
+    import {errors, practiceStaff, practiceLocations} from '../../../store/getters'
     import MaterialSelect from '../../src/material-select.vue'
 
     export default {
@@ -191,7 +191,8 @@
         computed: Object.assign(
             mapGetters({
                 errors: 'errors',
-                staff: 'practiceStaff'
+                staff: 'practiceStaff',
+                locations: 'practiceLocations'
             })
         ),
 
