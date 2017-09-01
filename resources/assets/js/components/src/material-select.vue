@@ -1,47 +1,100 @@
 <template>
-    <select><slot></slot></select>
+    <select v-model="model" v-bind:multiple="multiple">
+        <option value=""
+                disabled
+        >{{ selectText }}</option>
+        <option v-for="item in items"
+                v-bind:value="item.id"
+                v-text="item[textField]"
+        ></option>
+        <slot></slot>
+    </select>
 </template>
 
-<script>
+<script type="text/babel">
+    import IsLoadable from '../../mixins/is-loadable'
+
     export default {
-        props: ['value'],
+        props: {
+            items: {
+                type: Array,
+                default: () => []
+            },
+            multiple: {
+                type: Boolean,
+                default: false
+            },
+            selectText: {
+                type: String,
+                default: 'Choose your option'
+            },
+            value: {
+                default: null,
+                required: false
+            },
+            textField: {
+                type: String,
+                default: 'text'
+            }
+        },
+
         watch: {
-            value: function (value) {
-
-                this.reload(value);
+            items () {
+                this.$el.removeAttribute('onchange')
+                this.$nextTick(this.init)
+            },
+            value () {
+                this.$el.removeAttribute('onchange')
+                this.$nextTick(this.init)
             }
         },
+
+        computed: {
+            model () {
+                if (this.multiple && !this.value) {
+                    return []
+                }
+
+                return this.value
+            }
+        },
+
+        mixins: [
+            IsLoadable
+        ],
+
         methods: {
-            reload: function (value) {
+            init () {
+                $(this.$el).material_select()
 
-                var select = $(this.$el);
+                const vm = this
+                this.$el.onchange = function () {
+                    if (!this.multiple) {
+                        vm.$emit('input', this.value)
+                    } else {
+                        vm.multi(this, vm)
+                    }
+                }
+            },
 
-                select.val(value || this.value);
-                select.material_select('destroy');
-                select.material_select();
+            multi (context, vm) {
+                const siblings = [...vm.$el.previousSibling.getElementsByClassName('active')].map(i => {
+                    return i.getElementsByTagName('label')[0].nextSibling.nodeValue
+                })
+
+                const options = [...context.getElementsByTagName('option')]
+                let array = []
+
+                siblings.forEach(i => {
+                    const option = options.find(j => j.textContent == i)
+
+                    if (option) {
+                        array.push(option.value)
+                    }
+                })
+
+                vm.$emit('input', array)
             }
-        },
-        mounted: function () {
-
-            var vm = this;
-            var select = $(this.$el);
-
-            select
-                .val(this.value)
-                .on('change', function () {
-
-                    vm.$emit('input', this.value);
-                });
-
-            select.material_select();
-        },
-        updated: function () {
-
-            this.reload();
-        },
-        destroyed: function () {
-
-            $(this.$el).material_select('destroy');
         }
     }
 </script>
