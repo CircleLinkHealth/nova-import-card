@@ -2115,7 +2115,7 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
         }
 
         try {
-            $this->locations()->attach($id);
+            $this->locations()->attach($location);
         } catch (\Exception $e) {
             //check if this is a mysql exception for unique key constraint
             if ($e instanceof \Illuminate\Database\QueryException) {
