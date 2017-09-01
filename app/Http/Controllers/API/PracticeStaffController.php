@@ -157,6 +157,7 @@ class PracticeStaffController extends Controller
         }
 
         //Attach the locations
+        $user->locations()->sync([]);
         $user->attachLocation($formData['locations']);
 
         $attachPractice = $user->attachPractice($primaryPractice, $grantAdminRights, $sendBillingReports,

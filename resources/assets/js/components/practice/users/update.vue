@@ -46,9 +46,7 @@
                 <div class="row">
                     <div class="input-field col s6">
                         <material-select v-model="formData.role_name" name="role_name" id="role_name"
-                                         :class="isValid(formData.role_name)">
-                            <option v-for="option in roleOptions" :value="option.value"
-                                    v-text="option.name"></option>
+                                         :class="isValid(formData.role_name)" :items="roleOptions">
                         </material-select>
 
                         <label for="role_name">Role</label>
@@ -144,6 +142,18 @@
                 </div>
 
                 <div class="row">
+                    <div class="input-field col s12">
+                        <material-select multiple v-model="formData.locations" name="locations" id="locations"
+                                         :class="isValid(formData.locations)">
+                            <option v-for="location in locations" :value="location.id"
+                                    v-text="location.name"></option>
+                        </material-select>
+
+                        <label for="locations">Locations</label>
+                    </div>
+                </div>
+
+                <div class="row">
                     <div class="col s12">
                         <div @click="submitForm()"
                              class="btn green waves-effect waves-light right">
@@ -189,6 +199,12 @@
             if (!_.isEmpty(this.editedStaffMember)) {
                 this.formData = JSON.parse(JSON.stringify(this.editedStaffMember))
             }
+            //select all locations if this is a new staff member
+            if (this.formData.id === 'new') {
+                this.formData.locations = this.locations.map((loc) => {
+                    return loc.id
+                })
+            }
         },
 
         computed: Object.assign(
@@ -213,8 +229,6 @@
                             }
                         }, 500);
                     })
-
-
                 },
 
                 isValid(field) {
@@ -265,20 +279,20 @@
                 },
                 formState: {},
                 roleOptions: [{
-                    name: 'Medical Assistant',
-                    value: 'med_assistant'
+                    text: 'Medical Assistant',
+                    id: 'med_assistant'
                 }, {
-                    name: 'Office Admin',
-                    value: 'office_admin'
+                    text: 'Office Admin',
+                    id: 'office_admin'
                 }, {
-                    name: 'Provider',
-                    value: 'provider'
+                    text: 'Provider',
+                    id: 'provider'
                 }, {
-                    name: 'Registered Nurse',
-                    value: 'registered-nurse'
+                    text: 'Registered Nurse',
+                    id: 'registered-nurse'
                 }, {
-                    name: 'Specialist',
-                    value: 'specialist'
+                    text: 'Specialist',
+                    id: 'specialist'
                 }],
                 phoneTypes: [
                     {
