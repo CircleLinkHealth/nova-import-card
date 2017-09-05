@@ -63,6 +63,7 @@
                 },
 
                 showSuccess() {
+                    this.$refs.pdfCareplansDropzone.removeAllFiles()
                     this.showUploadModal = false;
                     this.modeBeforeUpload = this.patientCarePlan.mode
 
@@ -73,11 +74,15 @@
                         timeout: true
                     })
 
-                    setTimeout(() => {
-                        if (this.modeBeforeUpload === 'web') {
+                    if (this.modeBeforeUpload === 'web') {
+                        setTimeout(() => {
                             window.location.replace(window.location.href + '/pdf')
-                        }
-                    }, 1000)
+                        }, 1000)
+                    }
+
+                    if (this.modeBeforeUpload === 'pdf') {
+                        this.getPatientCarePlan(this.patientId)
+                    }
                 },
             }
         ),
@@ -113,13 +118,15 @@
             <template slot="body">
                 <dropzone
                         id="upload-pdf-dropzone"
+                        ref="pdfCareplansDropzone"
                         :headers="csrfHeader"
                         :url="apiUrl"
-                        @vdropzone-success="showSuccess"
+                        @vdropzone-success-multiple="showSuccess"
                         acceptedFileTypes="application/pdf"
                         dictDefaultMessage="Drop a PDF here, or click to choose a file to upload."
                         :maxFileSizeInMB="10"
-                        :createImageThumbnails="false">
+                        :createImageThumbnails="false"
+                        :uploadMultiple="true">
                     <input type="hidden" name="csrf-token" :value="csrfToken">
                 </dropzone>
             </template>

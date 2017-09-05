@@ -48,7 +48,7 @@ class PatientCarePlanController extends Controller
 
         $created = [];
 
-        foreach ($request->file() as $file) {
+        foreach ($request->file()['file'] as $file) {
             $now = Carbon::now()->toDateTimeString();
             $hash = Str::random();
             $filename = "{$carePlan->patient->first_name}_{$carePlan->patient->last_name}-{$hash}-{$now}-CarePlan.pdf";
