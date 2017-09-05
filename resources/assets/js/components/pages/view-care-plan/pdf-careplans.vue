@@ -2,8 +2,8 @@
     import {mapActions, mapGetters} from 'vuex'
     import {getPatientCarePlan, destroyPdf, uploadPdfCarePlan, addNotification} from '../../../store/actions'
     import {patientCarePlan} from '../../../store/getters'
-    import modal from '../../shared/modal.vue';
-    import FileUpload from 'vue-upload-component'
+    import modal from '../../shared/modal.vue'
+    import Dropzone from 'vue2-dropzone'
 
     import CreateCarePerson from '../../CareTeam/create-care-person.vue'
     import UpdateCarePerson from '../../pages/view-care-plan/update-care-person.vue'
@@ -19,7 +19,7 @@
 
         components: {
             modal,
-            FileUpload,
+            Dropzone,
             CreateCarePerson,
             UpdateCarePerson,
             IndexCarePerson,
@@ -28,15 +28,20 @@
 
         created() {
             this.getPatientCarePlan(this.patientId)
+            this.apiUrl = window.axios.defaults.baseURL + '/care-plans/' + this.patientCareplanId + '/pdfs'
         },
 
         data() {
             return {
                 patientId: $('meta[name="patient_id"]').attr('content'),
+                patientCareplanId: $('meta[name="patient_careplan_id"]').attr('content'),
                 showUploadModal: false,
-                files: [],
-                indexOfLastUploadedFile: -1,
-                modeBeforeUpload: ''
+                modeBeforeUpload: '',
+                apiUrl: null,
+                csrfToken: document.head.querySelector('meta[name="csrf-token"]').content,
+                csrfHeader: {
+                    'X-CSRF-TOKEN': document.head.querySelector('meta[name="csrf-token"]').content
+                }
             }
         },
 
@@ -56,33 +61,24 @@
 
                     this.destroyPdf(pdf.id)
                 },
-                uploadPdf() {
+
+                showSuccess() {
                     this.showUploadModal = false;
-
-                    let formData = new FormData()
-
-                    for (var i = this.indexOfLastUploadedFile + 1; i < this.files.length; i++) {
-                        formData.append('files[' + i + ']', this.files[i].file)
-                        this.indexOfLastUploadedFile = i
-                    }
-
                     this.modeBeforeUpload = this.patientCarePlan.mode
 
                     this.addNotification({
-                        title: "Uploading PDF Careplan(s)",
+                        title: "PDF Careplan(s) uploaded",
                         text: "",
-                        type: "info",
+                        type: "success",
                         timeout: true
                     })
 
-                    this.uploadPdfCarePlan({formData: formData, carePlanId: this.patientCarePlan.id})
-
                     setTimeout(() => {
-                        if (this.modeBeforeUpload === 'web' && this.patientCarePlan.pdfs.length == this.files.length) {
+                        if (this.modeBeforeUpload === 'web') {
                             window.location.replace(window.location.href + '/pdf')
                         }
                     }, 1000)
-                }
+                },
             }
         ),
     }
@@ -115,10 +111,17 @@
                 <h4 class="modal-title">Upload PDF CarePlan</h4>
             </template>
             <template slot="body">
-                <file-upload id="drop-pdf-cp" @input="uploadPdf()" v-model="files" accept="application/pdf"
-                             class="dropzone" multiple="multiple" drop="#drop-pdf-cp">
-                    Drop a PDF here, or click to choose a file to upload.
-                </file-upload>
+                <dropzone
+                        id="upload-pdf-dropzone"
+                        :headers="csrfHeader"
+                        :url="apiUrl"
+                        @vdropzone-success="showSuccess"
+                        acceptedFileTypes="application/pdf"
+                        dictDefaultMessage="Drop a PDF here, or click to choose a file to upload."
+                        :maxFileSizeInMB="10"
+                        :createImageThumbnails="false">
+                    <input type="hidden" name="csrf-token" :value="csrfToken">
+                </dropzone>
             </template>
             <template slot="footer">
             </template>

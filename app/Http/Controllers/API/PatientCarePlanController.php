@@ -48,11 +48,7 @@ class PatientCarePlanController extends Controller
 
         $created = [];
 
-        if (!array_key_exists('files', $request->file())) {
-            return 'Files not found in input.';
-        }
-
-        foreach ($request->file()['files'] as $file) {
+        foreach ($request->file() as $file) {
             $now = Carbon::now()->toDateTimeString();
             $hash = Str::random();
             $filename = "{$carePlan->patient->first_name}_{$carePlan->patient->last_name}-{$hash}-{$now}-CarePlan.pdf";

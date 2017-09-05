@@ -24,7 +24,7 @@
     export default {}
 </script>
 
-<style scoped>
+<style>
     .close-button {
         font-size: 25px;
         font-weight: 100;
