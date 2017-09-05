@@ -68,8 +68,6 @@
 
                     this.modeBeforeUpload = this.patientCarePlan.mode
 
-                    this.uploadPdfCarePlan({formData: formData, carePlanId: this.patientCarePlan.id})
-
                     this.addNotification({
                         title: "Uploading PDF Careplan(s)",
                         text: "",
@@ -77,11 +75,13 @@
                         timeout: true
                     })
 
-                    if (this.modeBeforeUpload === 'web') {
-                        setTimeout(() => {
+                    this.uploadPdfCarePlan({formData: formData, carePlanId: this.patientCarePlan.id}).then(() => {
+                        if (this.modeBeforeUpload === 'web') {
                             window.location.replace(window.location.href + '/pdf')
-                        }, 3500)
-                    }
+                        }
+                    })
+
+
                 }
             }
         ),
