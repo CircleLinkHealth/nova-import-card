@@ -75,13 +75,13 @@
                         timeout: true
                     })
 
-                    this.uploadPdfCarePlan({formData: formData, carePlanId: this.patientCarePlan.id}).then(() => {
-                        if (this.modeBeforeUpload === 'web') {
+                    this.uploadPdfCarePlan({formData: formData, carePlanId: this.patientCarePlan.id})
+
+                    setTimeout(() => {
+                        if (this.modeBeforeUpload === 'web' && this.patientCarePlan.pdfs.length == this.files.length) {
                             window.location.replace(window.location.href + '/pdf')
                         }
-                    })
-
-
+                    }, 1000)
                 }
             }
         ),
