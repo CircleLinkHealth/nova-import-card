@@ -50,13 +50,7 @@
                             </div>
                             <div class="col-sm-4 pull-right"
                                  style="text-align: right;top: 9px;font-size: 22px;color: #ec683e;">
-                                <div style="position: relative; top: -6px; padding-top: 2px" class="radio-inline">
-                                    <input type="checkbox"
-                                           name="complex"
-                                           {{$ccm_complex ? 'checked' : ''}}
-                                           id="complex"/><label
-                                            for="complex"><span> </span>Complex CCM</label>
-                                </div>
+                                @include('partials.complex-ccm-badge')
                             </div>
                         </div>
                     </div>
@@ -297,7 +291,7 @@
         $(document).ready(function () {
             $("#complex").click(function (e) {
                 if ($("#complex").is(':checked')) {
-                    $("#confirmButtonModal").modal({    backdrop: 'static',    keyboard: false});
+                    $("#confirmButtonModal").modal({backdrop: 'static', keyboard: false});
                 } else {
                     $("#complex_tag").hide();
                 }
