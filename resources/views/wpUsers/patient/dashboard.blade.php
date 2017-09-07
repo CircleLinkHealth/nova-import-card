@@ -83,7 +83,7 @@
             </div>
         </div>
 
-        @if(auth()->user()->nurseInfo)
+        @if(auth()->user()->nurseInfo && auth()->user()->hasRole(['care-center']))
             <div id="v-show-nurse-work-schedule" class="row-centered nurse-dashboard-schedule">
                 <notifications class="text-left"></notifications>
                 <div class="row">
