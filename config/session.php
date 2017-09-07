@@ -109,7 +109,7 @@ return [
     |
     */
 
-    'cookie' => 'laravel_session',
+    'cookie' => 'cpm_'.env('APP_ENV').'_laravel_session',
 
     /*
     |--------------------------------------------------------------------------
