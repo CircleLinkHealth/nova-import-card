@@ -28,8 +28,8 @@ class HolidayObserver
             return;
         }
 
-        $sentence = "Nurse $auth->fullName will take the day off on {$holiday->date->format('m-d-Y')}";
-        $sentence .= "View Schedule at ";
+        $sentence = "Nurse $auth->fullName will take the day off on {$holiday->date->format('l, F j Y')}";
+        $sentence .= " View Schedule at ";
         $sentence .= route('get.admin.nurse.schedules');
 
         $job = new SendSlackMessage('#carecoachscheduling', $sentence);
@@ -57,8 +57,8 @@ class HolidayObserver
             return;
         }
 
-        $sentence = "Nurse $auth->fullName will take the day off on {$holiday->date->format('m-d-Y')}";
-        $sentence .= "View Schedule at ";
+        $sentence = "Change of plans y'all! Nurse $auth->fullName will NOT be taking the day off on {$holiday->date->format('l, F j Y')}";
+        $sentence .= " View Schedule at ";
         $sentence .= route('get.admin.nurse.schedules');
 
         $job = new SendSlackMessage('#carecoachscheduling', $sentence);
