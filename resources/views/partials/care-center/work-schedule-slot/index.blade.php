@@ -24,7 +24,7 @@
 
                         <th style="width: 14.29%;" class="text-center">{{ucfirst($day)}}
                             <nurse-daily-hours day="{{strtolower($day)}}"
-                                               hours="@if($nurse->workhourables->first() && $nurse->workhourables->first()->{strtolower($day)}) {{$nurse->workhourables->first()->toJson()}} @endif"
+                                               hours="@if($nurse->workhourables->first()) {{$nurse->workhourables->first()->toJson()}} @endif"
                                                windows="{{ $windows->where('day_of_week', $index)->values()->toJson() }}"
                             >
                             </nurse-daily-hours>
