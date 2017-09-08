@@ -126,7 +126,7 @@
     <script src="https://unpkg.com/vue@2.1.3/dist/vue.js"></script>
     <script src="https://cdn.jsdelivr.net/vue.resource/1.2.0/vue-resource.min.js"></script>
     <script src="//static.twilio.com/libs/twiliojs/1.3/twilio.min.js"></script>
-    <script src="{{ asset('js/browser-calls.js', true) }}"></script>
+    <script src="{{ asset('js/browser-calls.js', !app()->environment() == 'local') }}"></script>
 
     <script>
 
@@ -143,9 +143,9 @@
                 provider_name: '{{ $enrollee->providerFullName }}',
                 practice_name: '{{ $enrollee->practiceName }}',
                 practice_phone: '{{ $enrollee->practice->outgoing_phone_number}}',
-                home_phone: '{{ (new App\CLH\Helpers\StringManipulation())->formatPhoneNumber($enrollee->home_phone) ?? 'N/A' }}',
-                cell_phone: '{{ (new App\CLH\Helpers\StringManipulation())->formatPhoneNumber($enrollee->cell_phone) ?? 'N/A' }}',
-                other_phone: '{{ (new App\CLH\Helpers\StringManipulation())->formatPhoneNumber($enrollee->other_phone) ?? 'N/A' }}',
+                home_phone: '{{ (new App\CLH\Helpers\StringManipulation())->formatPhoneNumberE164($enrollee->home_phone) ?? 'N/A' }}',
+                cell_phone: '{{ (new App\CLH\Helpers\StringManipulation())->formatPhoneNumberE164($enrollee->cell_phone) ?? 'N/A' }}',
+                other_phone: '{{ (new App\CLH\Helpers\StringManipulation())->formatPhoneNumberE164($enrollee->other_phone) ?? 'N/A' }}',
                 address: '{{ $enrollee->address ?? 'N/A' }}',
                 address_2: '{{ $enrollee->address_2 ?? 'N/A' }}',
                 state: '{{ $enrollee->state ?? 'N/A' }}',

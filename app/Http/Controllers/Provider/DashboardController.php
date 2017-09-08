@@ -7,6 +7,7 @@ use App\Contracts\Repositories\LocationRepository;
 use App\Contracts\Repositories\PracticeRepository;
 use App\Contracts\Repositories\UserRepository;
 use App\Http\Controllers\Controller;
+use App\Http\Requests\UpdatePracticeSettingsAndNotifications;
 use App\Practice;
 use App\Services\OnboardingService;
 use App\Settings;
@@ -55,12 +56,10 @@ class DashboardController extends Controller
             return response('Practice not found', 404);
         }
 
-        $this->onboardingService->getExistingLocations($primaryPractice);
-
-        return view('provider.location.create', array_merge([
-            'leadId'       => auth()->user()->id,
+        return view('provider.location.create',[
             'practiceSlug' => $this->practiceSlug,
-        ], $this->returnWithAll));
+            'practice'     => $this->primaryPractice,
+        ]);
     }
 
     public function getCreatePractice()
@@ -79,25 +78,27 @@ class DashboardController extends Controller
             $practiceSettings = $this->primaryPractice->syncSettings(new Settings());
         }
 
+        $invoiceRecipients = $this->primaryPractice->getInvoiceRecipients('string');
+
         return view('provider.notifications.create', array_merge([
-            'practiceSlug'     => $this->practiceSlug,
-            'practiceSettings' => $practiceSettings ?? $this->primaryPractice->settings->first(),
+            'practice'          => $this->primaryPractice,
+            'practiceSlug'      => $this->practiceSlug,
+            'practiceSettings'  => $practiceSettings ?? $this->primaryPractice->settings->first(),
+            'invoiceRecipients' => $invoiceRecipients,
         ], $this->returnWithAll));
     }
 
     public function getCreateStaff()
     {
-        $primaryPractice = $this->primaryPractice;
+        $practice = $this->primaryPractice;
 
-        if (!$primaryPractice) {
+        if (!$practice) {
             return response('Practice not found', 404);
         }
 
-        $this->onboardingService->getExistingStaff($primaryPractice);
-
         $practiceSlug = $this->practiceSlug;
 
-        return view('provider.user.create-staff', array_merge(compact('invite', 'practiceSlug'), $this->returnWithAll));
+        return view('provider.user.create-staff', compact('invite', 'practiceSlug', 'practice'));
     }
 
     public function getIndex()
@@ -132,12 +133,12 @@ class DashboardController extends Controller
             ]);
     }
 
-    public function postStoreNotifications(Request $request)
+    public function postStoreNotifications(UpdatePracticeSettingsAndNotifications $request)
     {
-        $input = $request->input('settings');
+        $settingsInput = $request->input('settings');
         $errors = collect();
 
-        if (isset($input['dm_audit_reports'])) {
+        if (isset($settingsInput['dm_audit_reports'])) {
             $locationsWithoutDM = collect();
 
             foreach ($this->primaryPractice->locations as $location) {
@@ -147,7 +148,7 @@ class DashboardController extends Controller
             }
 
             if ($this->primaryPractice->locations->count() == $locationsWithoutDM->count()) {
-                unset($input['dm_audit_reports']);
+                unset($settingsInput['dm_audit_reports']);
                 $errors->push('Send Audit Reports via Direct Mail was not activated because none of the Locations have a DM address. Please add a Direct Address for at least one Location, and then try activating the Notification again.');
             } elseif ($locationsWithoutDM->count() == 0) {
                 //
@@ -158,7 +159,7 @@ class DashboardController extends Controller
             }
         }
 
-        if (isset($input['efax_audit_reports'])) {
+        if (isset($settingsInput['efax_audit_reports'])) {
             $locationsWithoutFax = collect();
 
             foreach ($this->primaryPractice->locations as $location) {
@@ -168,7 +169,7 @@ class DashboardController extends Controller
             }
 
             if ($this->primaryPractice->locations->count() == $locationsWithoutFax->count()) {
-                unset($input['efax_audit_reports']);
+                unset($settingsInput['efax_audit_reports']);
                 $errors->push('Send Audit Reports via eFax was not activated because none of the Locations have a fax number. Please add a Fax Number for at least one Location, and then try activating the Notification again.');
             } elseif ($locationsWithoutFax->count() == 0) {
                 //
@@ -179,7 +180,15 @@ class DashboardController extends Controller
             }
         }
 
-        $this->primaryPractice->syncSettings(new Settings($input ?? []));
+        $this->primaryPractice->syncSettings(new Settings($settingsInput ?? []));
+
+        $invoiceRecipients = $request->input('invoice_recipients');
+        $weeklyReportRecipients = $request->input('weekly_report_recipients');
+
+        $this->primaryPractice->update([
+            'invoice_recipients' => $invoiceRecipients,
+            'weekly_report_recipients' => $weeklyReportRecipients
+        ]);
 
         return redirect()->back()->withErrors($errors);
     }

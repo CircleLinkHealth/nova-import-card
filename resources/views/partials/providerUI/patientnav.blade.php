@@ -11,9 +11,21 @@
                 <a href="{{ empty($patient->id) ? URL::route('patients.search') : URL::route('patient.summary', array('patient' => $patient->id)) }}"
                    role="button">Patient Overview</a>
             </li>
-            <li class="inline-block">
-                <a href="{{ empty($patient->id) ? URL::route('patients.search') : URL::route('patient.careplan.show', array('patient' => $patient->id, 'page' => '1')) }}"
-                   role="button">Edit Care Plan</a></li>
+
+            @if ($patient->careplan_mode == App\CarePlan::WEB)
+                <li class="inline-block">
+                    <a href="{{ empty($patient->id) ? URL::route('patients.search') : URL::route('patient.careplan.show', array('patient' => $patient->id, 'page' => '1')) }}"
+                       role="button">Edit Care Plan</a>
+                </li>
+            @endif
+
+            @if ($patient->careplan_mode == App\CarePlan::PDF)
+                <li class="inline-block">
+                    <a href="{{ URL::route('patient.demographics.show', array('patientId' => $patient->id)) }}"
+                       role="button">Patient Profile</a>
+                </li>
+            @endif
+
 
             <li class="inline-block dropdown">
                 <a href="" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false"

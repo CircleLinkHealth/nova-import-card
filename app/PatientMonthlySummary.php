@@ -10,6 +10,10 @@ class PatientMonthlySummary extends Model
 
     protected $table = 'patient_monthly_summaries';
 
+    protected $dates = [
+        'month_year'
+    ];
+
     protected $fillable = [
         'month_year',
         'ccm_time',

@@ -6294,7 +6294,7 @@ label,
   padding: 5px 15px;
 }
 
-.dropzone {
+.cpm-dropzone {
 
   width: 100%;
   height: 300px;
@@ -6304,7 +6304,7 @@ label,
   text-align: center;
 }
 
-.dropzone.dragover {
+.cpm-dropzone.dragover {
   border-color: #000;
   color:#000;
 }

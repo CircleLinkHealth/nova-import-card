@@ -32,6 +32,15 @@ class WelcomeController extends Controller
     public function index()
     {
         if (auth()->user()) {
+            if (auth()->user()->roles->isEmpty()) {
+                auth()->logout();
+
+                return view('errors.403', [
+                    'hideLinks' => true,
+                    'message'   => 'Unauthorized login request. This User has no assigned Roles.',
+                ]);
+            }
+
             if (auth()->user()->hasRole('administrator')) {
                 return redirect()->route('admin.dashboard', [])->send();
             }

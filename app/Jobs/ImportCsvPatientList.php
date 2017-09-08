@@ -72,7 +72,7 @@ class ImportCsvPatientList implements ShouldQueue
 
         $url = url('view.files.ready.to.import');
 
-//        Slack::to('#background-tasks')->send("Queued job Import CSV for {$this->practice->display_name} completed! Visit $url.");
+        sendSlackMessage('#background-tasks', "Queued job Import CSV for {$this->practice->display_name} completed! Visit $url.");
     }
 
     /**
@@ -224,6 +224,6 @@ class ImportCsvPatientList implements ShouldQueue
      */
     public function failed(\Exception $exception)
     {
-//        Slack::to('#background-tasks')->send("Queued job Import CSV patient list failed: $exception");
+        sendSlackMessage('#background-tasks', "Queued job Import CSV patient list failed: $exception");
     }
 }

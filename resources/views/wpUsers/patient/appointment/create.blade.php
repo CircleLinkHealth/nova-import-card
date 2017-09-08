@@ -3,12 +3,15 @@
 @section('title', 'Input Appointments')
 @section('activity', 'Patient Input Appointment')
 
+@section('scripts')
+    <script src="{{asset('/compiled/js/v-create-appointments-add-care-person.js')}}"></script>
+@endsection
+
 @section('content')
 
     <script>
         $(document).ready(function () {
             $(".provider").select2();
-
         });
     </script>
 
@@ -43,11 +46,11 @@
                                     <div class="new-observation-item">
                                         <div class="form-group">
                                             <div class="col-sm-12 provider-label" id="provider-label">
-                                                <label for="provider">
-                                                    Select Existing Provider (or, <span style="color: #4fb2e2"><a
-                                                                href="#"
-                                                                v-on:click="createCarePerson">add new</a></span>)
-                                                </label>
+                                                <div id="v-create-appointments-add-care-person">
+                                                    <open-modal></open-modal>
+                                                    <notifications></notifications>
+                                                    <create-appointments-add-care-person></create-appointments-add-care-person>
+                                                </div>
                                             </div>
                                             <div class="col-sm-12" id="providerDiv">
                                                 <div class="form-group providerBox" id="providerBox">

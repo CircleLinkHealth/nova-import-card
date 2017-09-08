@@ -1,6 +1,6 @@
 <meta name="submit-url" content="{{$postUrl}}">
 
-<div id="create-staff-component" v-on:click="isValidated(index)">
+<div v-cloak id="create-staff-component" v-on:click="isValidated(index)">
 
     <div v-if="showErrorBanner" class="row">
         <div class="card-panel red lighten-5 red-text text-darken-4">
@@ -25,11 +25,11 @@
 
     <div class="row">
         <ul id="users" class="collapsible" data-collapsible="accordion">
-            <li v-for="(index, newUser) in newUsers" id="user-@{{index}}" v-on:click="isValidated(index)">
+            <li v-for="(newUser, index) in newUsers" v-bind:id="'user-'+index" v-on:click="isValidated(index)">
                 <div class="collapsible-header" v-bind:class="{ active: (index == newUsers.length - 1) }">
                     <div class="col s8">
                             <span v-if="newUser.first_name || newUser.last_name">
-                                @{{newUser.first_name | uppercase}} @{{newUser.last_name | uppercase}}
+                                @{{newUser.first_name.toUpperCase()}} @{{newUser.last_name.toUpperCase()}}
                                 | @{{ newUser.role_id > 0 ? rolesMap[newUser.role_id].display_name : 'No role selected'}}
                             </span>
                         <span v-else>
@@ -38,7 +38,7 @@
                     </div>
 
                     <div class="col s4 right-align">
-                        <div v-if="newUser.validated && newUser.errorCount == 0">
+                        <div v-if="isValidated(index)">
                             <span class="green-text">Valid Data</span>
                         </div>
                         <div v-else>
@@ -101,10 +101,10 @@
                         ])
 
                         <div class="input-field col s6 validate">
-                            <select v-select="newUser.role_id" required>
+                            <material-select v-bind:selected="newUser.role_id" v-model="newUser.role_id" required>
                                 <option value="" disabled selected></option>
                                 <option v-for="role in roles" v-bind:value="role.id">@{{role.display_name}}</option>
-                            </select>
+                            </material-select>
                             <label>Role</label>
                         </div>
                     </div>
@@ -144,11 +144,12 @@
                        ])
 
                         <div class="input-field col s3">
-                            <select id="phones" v-select="newUser.phone_type" name="users[@{{index}}][phone_type]"
-                                    required v-on:change="isValidated(index)">
+                            <material-select id="phones" v-bind:selected="newUser.phone_type" v-model="newUser.phone_type"
+                                             required v-on:change="isValidated(index)"
+                                             name="users[@{{index}}][phone_type]">
                                 <option value="" disabled selected></option>
-                                <option v-for="(index, type) in phoneTypes" :value="index">@{{ type }}</option>
-                            </select>
+                                <option v-for="(type, index) in phoneTypes" :value="index">@{{ type }}</option>
+                            </material-select>
                             <label>Phone Type</label>
                         </div>
                     </div>
@@ -181,7 +182,7 @@
                                     'value' => '1',
                                     'class' => 'col s12',
                                     'attributes' => [
-                                        'v-model' => 'newUser.grandAdminRights'
+                                        'v-model' => 'newUser.grantAdminRights'
                                     ],
                                 ])
                             </div>
@@ -358,10 +359,10 @@
 
                     <div class="row">
                         <div class="input-field col s12">
-                            <select v-select="newUser.locations" required multiple>
+                            <material-select v-bind:selected="newUser.locations" v-model="newUser.locations" required multiple>
                                 <option v-for="location in locations" :value="location.id"
                                         selected>@{{location.name}}</option>
-                            </select>
+                            </material-select>
                             <label>Locations</label>
                         </div>
                     </div>

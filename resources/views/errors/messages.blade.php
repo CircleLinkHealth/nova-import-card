@@ -14,13 +14,3 @@
     @endif
 @endif
 
-<script>
-    /*
-    $(".success").slideDown(function() {
-        setTimeout(function() {
-            $(".success").slideUp();
-        }, 3000);
-    });
-    */
-</script>
-

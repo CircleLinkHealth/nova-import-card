@@ -1,27 +1,27 @@
 <div class="row">
     @include('provider.partials.mdl.form.text.textfield', [
-    'name' => 'locations[@{{index}}][clinical_contact][firstName]',
+    'name' => 'locations[@{{index}}][clinical_contact][first_name]',
     'label' => 'First name',
     'class' => 'col s6',
-    'value' => '@{{loc.clinical_contact.firstName}}',
+    'value' => '@{{loc.clinical_contact.first_name}}',
     'attributes' => [
         'required' => 'required',
-        'v-model' => 'loc.clinical_contact.firstName',
+        'v-model' => 'loc.clinical_contact.first_name',
         'v-on:change' => 'isValidated(index)',
         'v-on:invalid' => 'isValidated(index)',
         'v-on:keyup' => 'isValidated(index)',
         'v-on:click' => 'isValidated(index)',
-    ]
+    ],
 ])
 
     @include('provider.partials.mdl.form.text.textfield', [
-        'name' => 'locations[@{{index}}][clinical_contact][lastName]',
+        'name' => 'locations[@{{index}}][clinical_contact][last_name]',
         'label' => 'Last name',
         'class' => 'col s6',
-        'value' => '@{{loc.clinical_contact.lastName}}',
+        'value' => '@{{loc.clinical_contact.last_name}}',
         'attributes' => [
             'required' => 'required',
-            'v-model' => 'loc.clinical_contact.lastName',
+            'v-model' => 'loc.clinical_contact.last_name',
             'v-on:change' => 'isValidated(index)',
             'v-on:invalid' => 'isValidated(index)',
             'v-on:keyup' => 'isValidated(index)',

@@ -1,7 +1,3 @@
-<div class="row">
-    <h3>Your Days Off</h3>
-</div>
-
 @if($holidays->isEmpty())
     <div class="row">
         You do not have any days off.

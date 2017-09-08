@@ -1,6 +1,7 @@
 <?php namespace App;
 
 use App\Contracts\PdfReport;
+use App\Models\Pdf;
 use App\Services\ReportsService;
 use App\Traits\PdfReportTrait;
 use Carbon\Carbon;
@@ -16,8 +17,13 @@ class CarePlan extends Model implements PdfReport
     const QA_APPROVED = 'qa_approved';
     const PROVIDER_APPROVED = 'provider_approved';
 
+    // modes
+    const WEB = 'web';
+    const PDF = 'pdf';
+
     protected $fillable = [
         'user_id',
+        'mode',
         'provider_approver_id',
         'qa_approver_id',
         'care_plan_template_id',
@@ -131,5 +137,13 @@ class CarePlan extends Model implements PdfReport
 
     public function isProviderApproved() {
         return $this->status == CarePlan::PROVIDER_APPROVED;
+    }
+
+    /**
+     * Get all the PDF CarePlans attached to this CarePlan.
+     */
+    public function pdfs()
+    {
+        return $this->morphMany(Pdf::class, 'pdfable');
     }
 }

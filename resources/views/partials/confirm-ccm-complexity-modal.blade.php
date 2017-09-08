@@ -16,7 +16,7 @@
                         data-dismiss="modal">Confirm
                 </button>
                 <button type="button" name="complex_cancel" id="complex_cancel" class="btn btn-danger"
-                        data-dismiss="modal">Disable
+                        data-dismiss="modal">Cancel
                 </button>
             </div>
         </div>

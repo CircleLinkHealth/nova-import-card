@@ -75,9 +75,7 @@ class EmailWeeklyPracticeReport implements ShouldQueue
                     $message->to($recipient)->subject($subjectPractice);
                 });
 
-//                    Slack::to('#background-tasks')
-//                        ->send("The CPMbot just sent the organization weekly summary for $practice->display_name to $recipient");
-
+                sendSlackMessage('#background-tasks', "The CPMbot just sent the organization weekly summary for $this->practice->display_name to $recipient");
             }
         }
     }

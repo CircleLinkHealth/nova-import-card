@@ -370,10 +370,10 @@ class Patient extends Model
 //            to optimize further, check whether the nurse has any windows upcoming
 //                $future_windows = $nurse->windows->where('date', '>', Carbon::now()->toDateTimeString());
 
-                //check if they can care for patient AND if they have a window.
-                if ($intersection ) { //&& $future_windows->count() > 0
-                    $result[] = $nurse->user_id;
-                }
+            //check if they can care for patient AND if they have a window.
+            if ($intersection) { //&& $future_windows->count() > 0
+                $result[] = $nurse->user_id;
+            }
 
         }
 
@@ -383,12 +383,10 @@ class Patient extends Model
 
     public function isCCMComplex()
     {
-
         return $this->patientSummaries
-                ->where('month_year', Carbon::now()
-                    ->firstOfMonth()
-                    ->toDateString())->first()->is_ccm_complex ?? false;
-
+                ->where('month_year', Carbon::now()->firstOfMonth())
+                ->first()
+                ->is_ccm_complex ?? false;
     }
 
 

@@ -1,5 +1,6 @@
 <?php namespace App\Http\Controllers\Patient;
 
+use App\CarePlan;
 use App\CLH\Repositories\UserRepository;
 use App\Events\CarePlanWasApproved;
 use App\Formatters\WebixFormatter;
@@ -505,6 +506,7 @@ class PatientCareplanController extends Controller
                 'careplan_status' => 'draft',
             ]);
             $newUser = $userRepo->createNewUser($user, $params);
+
             if ($newUser) {
                 //Update patient info changes
                 $info = $newUser->patientInfo;
@@ -514,6 +516,11 @@ class PatientCareplanController extends Controller
                         $params->get('window_end'));
                 }
                 $info->save();
+
+                if ($newUser->carePlan && !$newUser->primaryPractice->settings->isEmpty()) {
+                    $newUser->carePlan->mode = $newUser->primaryPractice->settings->first()->careplan_mode;
+                    $newUser->carePlan->save();
+                }
             }
 
             return redirect(\URL::route('patient.demographics.show', ['patientId' => $newUser->id]))->with('messages',
@@ -733,7 +740,7 @@ class PatientCareplanController extends Controller
             }
         }
 
-        if ($patient->carePlanStatus == 'qa_approved' && auth()->user()->can('care-plan-approve')) {
+        if ($patient->carePlanStatus == 'qa_approved' && auth()->user()->canApproveCarePlans()) {
             $showApprovalButton = true;
         } elseif ($patient->carePlanStatus == 'draft' && auth()->user()->can('care-plan-qa-approve')) {
             $showApprovalButton = true;
@@ -934,5 +941,15 @@ class PatientCareplanController extends Controller
         }
 
         return redirect()->back()->with('messages', ['successfully updated patient care plan']);
+    }
+
+    public function switchToWebMode($carePlanId)
+    {
+        $cp = CarePlan::find($carePlanId);
+
+        $cp->mode = CarePlan::WEB;
+        $cp->save();
+
+        return redirect()->route('patient.careplan.print', ['patientId' => $cp->user_id]);
     }
 }

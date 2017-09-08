@@ -39,13 +39,15 @@ class SchedulerService
                 ? 'reached'
                 : 'not reached');
 
-
         //Updates Call Record
         PatientMonthlySummary::updateCallInfoForPatient($patient->patientInfo, $success);
 
+        //last attempt
+        $previousCall = $this->getPreviousCall($patient, $scheduled_call['id']);
+
         if ($success) {
 
-            $prediction = (new SuccessfulHandler($patient->patientInfo, Carbon::now(), $isComplex))->handle();
+            $prediction = (new SuccessfulHandler($patient->patientInfo, Carbon::now(), $isComplex, $previousCall))->handle();
 
             $prediction['successful'] = true;
 
@@ -53,7 +55,7 @@ class SchedulerService
 
         }
 
-        $prediction = (new UnsuccessfulHandler($patient->patientInfo, Carbon::now(), $isComplex))->handle();
+        $prediction = (new UnsuccessfulHandler($patient->patientInfo, Carbon::now(), $isComplex, $previousCall))->handle();
 
         $prediction['successful'] = false;
 
@@ -441,6 +443,24 @@ class SchedulerService
             ? 'No Patients Need Refreshin\'!'
             : $reprocess_bucket;
 
+    }
+
+    public function getPreviousCall($patient, $scheduled_call_id)
+    {
+
+        //be careful not to consider call just made,
+        //since algo already updates it before getting here.
+        //check for day != today
+
+        $call = Call
+            ::where('inbound_cpm_id', $patient->id)
+            ->where('status', '!=', 'scheduled')
+            ->where('called_date', '!=', '')
+//            ->where('id', '!=', $scheduled_call_id)
+            ->orderBy('called_date', 'desc')
+            ->first();
+
+        return $call;
     }
 
 }

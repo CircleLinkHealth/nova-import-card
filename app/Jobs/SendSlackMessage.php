@@ -6,12 +6,12 @@ use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
-use Tylercd100\Notify\Facades\Slack;
 
 class SendSlackMessage implements ShouldQueue
 {
     use InteractsWithQueue, Queueable, SerializesModels;
-    protected $channel;
+
+    protected $to;
     protected $message;
 
     /**
@@ -19,9 +19,9 @@ class SendSlackMessage implements ShouldQueue
      *
      * @return void
      */
-    public function __construct($channel, $message)
+    public function __construct($to, $message)
     {
-        $this->channel = $channel;
+        $this->to = $to;
         $this->message = $message;
     }
 
@@ -32,6 +32,6 @@ class SendSlackMessage implements ShouldQueue
      */
     public function handle()
     {
-        Slack::to($this->channel)->send($this->message);
+        \Slack::to($this->to)->send($this->message);
     }
 }

@@ -13,7 +13,6 @@ use App\CLH\CCD\Importer\QAImportManager;
 use App\CLH\Repositories\CCDImporterRepository;
 use App\Contracts\Repositories\CcdaRepository;
 use App\Contracts\Repositories\CcdaRequestRepository;
-use App\Importer\Loggers\Ccda\CcdaSectionsLogger;
 use App\Models\CCD\CcdVendor;
 use App\Models\MedicalRecords\Ccda;
 use Carbon\Carbon;
@@ -36,15 +35,13 @@ class Service
         $practiceId,
         Carbon $startDate,
         Carbon $endDate
-    )
-    {
+    ) {
         $start = $startDate->format('m/d/Y');
         $end = $endDate->format('m/d/Y');
 
         $departments = $this->api->getDepartmentIds($practiceId);
 
-        foreach ($departments['departments'] as $department)
-        {
+        foreach ($departments['departments'] as $department) {
             $response = $this->api->getBookedAppointments($practiceId, $start, $end, $department['departmentid']);
             $this->logPatientIdsFromAppointments($response, $practiceId);
         }
@@ -86,16 +83,18 @@ class Service
                     && str_contains($customField['customfieldvalue'], ['Y', 'y'])
                 ) {
                     $ccdaRequest = $this->ccdaRequests->create([
-                        'patient_id' => $patientId,
+                        'patient_id'    => $patientId,
                         'department_id' => $departmentId,
-                        'vendor' => 'athena',
-                        'practice_id' => $practiceId,
+                        'vendor'        => 'athena',
+                        'practice_id'   => $practiceId,
                     ]);
                 }
             }
         }
 
-        if (isset($response['next'])) $this->logPatientIdsFromAppointments($this->api->getNextPage($response['next']), $practiceId);
+        if (isset($response['next'])) {
+            $this->logPatientIdsFromAppointments($this->api->getNextPage($response['next']), $practiceId);
+        }
     }
 
     public function getCcdsFromRequestQueue($number = 5)
@@ -107,18 +106,23 @@ class Service
             ])->take($number);
 
         $imported = $ccdaRequests->map(function ($ccdaRequest) {
-            $xmlCcda = $this->api->getCcd($ccdaRequest->patient_id, $ccdaRequest->practice_id, $ccdaRequest->department_id);
+            $xmlCcda = $this->api->getCcd($ccdaRequest->patient_id, $ccdaRequest->practice_id,
+                $ccdaRequest->department_id);
 
-            if (!isset($xmlCcda[0]['ccda'])) return false;
+            if (!isset($xmlCcda[0]['ccda'])) {
+                return false;
+            }
 
             $vendor = CcdVendor::wherePracticeId($ccdaRequest->practice_id)->first();
 
-            if (!$vendor) return false;
+            if (!$vendor) {
+                return false;
+            }
 
             $ccda = $this->ccdas->create([
-                'xml' => $xmlCcda[0]['ccda'],
+                'xml'       => $xmlCcda[0]['ccda'],
                 'vendor_id' => $vendor->id,
-                'source' => Ccda::ATHENA_API,
+                'source'    => Ccda::ATHENA_API,
             ]);
 
             $ccdaRequest->ccda_id = $ccda->id;
@@ -136,8 +140,8 @@ class Service
             if (app()->environment('worker')) {
                 $link = route('view.files.ready.to.import');
 
-                Slack::to('#ccd-file-status')
-                    ->send("We received a CCD from Athena. \n Please visit {$link} to import.");
+                sendSlackMessage('#ccd-file-status',
+                    "We received a CCD from Athena. \n Please visit {$link} to import.");
             }
 
             return $ccda;

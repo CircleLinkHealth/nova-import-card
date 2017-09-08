@@ -1,6 +1,7 @@
 <?php
+
+use App\Call;
 use App\CLH\Helpers\StringManipulation;
-use App\Reports\ApproveBillablePatientsReport;
 use App\Services\Phaxio\PhaxioService;
 use App\Services\PhiMail\PhiMail;
 use Carbon\Carbon;
@@ -32,15 +33,18 @@ if (app()->environment() != 'production') {
 
     Route::get('/rohan', function () {
 
-        $date = Carbon::parse('2017-03-01');
+        $date = Carbon::parse('2017-08-07');
 
-        dd(\App\User::find(3882)->practices->pluck('id')->toArray());
+        $countMade =
+            Call::where('outbound_cpm_id', 2159)
+                ->where('scheduled_date', '2017-08-07')
+//                ->where(function ($q) use ($date){
+//                    $q->where('called_date', '>=', $date->startOfDay()->toDateTimeString())
+//                        ->where('called_date', '<=', $date->endOfDay()->toDateTimeString());
+//                })
+                ->count();
 
-        dd((new \App\Reports\WeeklyReportDispatcher())->exec());
-
-        $reporter = new ApproveBillablePatientsReport($date, 21);
-        $reporter->dataV1();
-        dd($reporter->format());
+        return $countMade;
 
     });
 
@@ -114,6 +118,7 @@ Route::get('login', 'Auth\LoginController@showLoginForm');
 
 Route::group([
     'prefix' => 'auth',
+    'middleware' => 'web'
 ], function () {
     Auth::routes();
 
@@ -142,6 +147,39 @@ Route::group(['namespace' => 'Redox'], function () {
 /****************************/
 /****************************/
 Route::group(['middleware' => 'auth'], function () {
+
+    Route::get('download/{filePath}', [
+        'uses' => 'DownloadController@file',
+        'as'   => 'download',
+    ]);
+
+    /**
+     * API
+     */
+
+    Route::resource('profiles', 'API\ProfileController');
+
+    Route::resource('user.care-plan', 'API\PatientCarePlanController');
+    Route::resource('user.care-team', 'API\CareTeamController');
+    Route::resource('practice.locations', 'API\PracticeLocationsController');
+    Route::resource('practice.users', 'API\PracticeStaffController');
+
+    Route::get('provider/search', [
+        'uses' => 'API\CareTeamController@searchProviders',
+        'as'   => 'providers.search',
+    ]);
+
+    Route::delete('pdf/{id}', 'API\PatientCarePlanController@deletePdf');
+
+    Route::post('care-plans/{careplan_id}/pdfs', 'API\PatientCarePlanController@uploadPdfs');
+
+    Route::get('download-pdf-careplan/{filePath}', [
+        'uses' => 'API\PatientCarePlanController@downloadPdf',
+        'as'   => 'download.pdf.careplan',
+    ]);
+
+    Route::patch('work-hours/{id}', 'CareCenter\WorkScheduleController@updateDailyHours');
+// end API
 
     Route::resource('settings/email', 'EmailSettingsController');
 
@@ -254,20 +292,22 @@ Route::group(['middleware' => 'auth'], function () {
         'prefix'     => 'manage-patients/',
         'middleware' => ['patientProgramSecurity'],
     ], function () {
+
         Route::get('dashboard', [
             'uses' => 'Patient\PatientController@showDashboard',
             'as'   => 'patients.dashboard',
         ]);
 
-        Route::get('download/{fileName}', [
-            'uses' => 'DownloadController@file',
-            'as'   => 'download',
-        ])->where('filename', '[A-Za-z0-9\-\_\.]+');
+        Route::get('switch-to-web-careplan/{carePlanId}', [
+            'uses' => 'Patient\PatientCareplanController@switchToWebMode',
+            'as'   => 'switch.to.web.careplan',
+        ]);
 
         Route::get('listing', [
             'uses' => 'Patient\PatientController@showPatientListing',
             'as'   => 'patients.listing',
         ]);
+
         Route::get('careplan-print-multi', [
             'uses' => 'Patient\PatientCareplanController@printMultiCareplan',
             'as'   => 'patients.careplan.multi',
@@ -313,13 +353,6 @@ Route::group(['middleware' => 'auth'], function () {
             'as'   => 'patient.note.listing',
         ]);
 
-        Route::resource('care-team', 'CareTeamController');
-
-        Route::get('provider/search', [
-            'uses' => 'CareTeamController@searchProviders',
-            'as'   => 'providers.search',
-        ]);
-
         // nurse call list
         Route::group(['prefix' => 'patient-call-list'], function () {
             Route::get('', [
@@ -357,6 +390,12 @@ Route::group(['middleware' => 'auth'], function () {
             'uses' => 'ReportsController@viewPrintCareplan',
             'as'   => 'patient.careplan.print',
         ]);
+
+        Route::get('view-careplan/pdf', [
+            'uses' => 'ReportsController@viewPdfCarePlan',
+            'as'   => 'patient.pdf.careplan.print',
+        ]);
+
         Route::post('input/observation/create', [
             'uses' => 'ObservationController@store',
             'as'   => 'patient.observation.store',
@@ -542,11 +581,6 @@ Route::group(['middleware' => 'auth'], function () {
          * LOGGER
          */
         Route::get('logs', '\Rap2hpoutre\LaravelLogViewer\LogViewerController@index');
-
-        Route::get('download/{fileName}', [
-            'uses' => 'DownloadController@file',
-            'as'   => 'download',
-        ])->where('filename', '[A-Za-z0-9\-\_\.]+');
 
         Route::get('nurses/windows', [
             'uses' => 'CareCenter\WorkScheduleController@getAllNurseSchedules',
@@ -1475,8 +1509,9 @@ Route::group([
     ]);
 
     Route::get('', [
-        'uses' => 'Provider\DashboardController@getIndex',
-        'as'   => 'provider.dashboard.index',
+//        'uses' => 'Provider\DashboardController@getIndex',
+    'uses' => 'Provider\DashboardController@getCreateNotifications',
+    'as'   => 'provider.dashboard.index',
     ]);
 
     Route::get('locations', [
@@ -1498,25 +1533,27 @@ Route::group([
         'as'   => 'enrollment.sms.reply',
     ]);
 
-    Route::get('/', [
-        'uses' => 'Enrollment\EnrollmentCenterController@dashboard',
-        'as'   => 'enrollment-center.dashboard',
-    ]);
+    Route::group(['middleware' => 'auth'], function () {
+        Route::get('/', [
+            'uses' => 'Enrollment\EnrollmentCenterController@dashboard',
+            'as'   => 'enrollment-center.dashboard',
+        ]);
 
-    Route::post('/consented', [
-        'uses' => 'Enrollment\EnrollmentCenterController@consented',
-        'as'   => 'enrollment-center.consented',
-    ]);
+        Route::post('/consented', [
+            'uses' => 'Enrollment\EnrollmentCenterController@consented',
+            'as'   => 'enrollment-center.consented',
+        ]);
 
-    Route::post('/utc', [
-        'uses' => 'Enrollment\EnrollmentCenterController@unableToContact',
-        'as'   => 'enrollment-center.utc',
-    ]);
+        Route::post('/utc', [
+            'uses' => 'Enrollment\EnrollmentCenterController@unableToContact',
+            'as'   => 'enrollment-center.utc',
+        ]);
 
-    Route::post('/rejected', [
-        'uses' => 'Enrollment\EnrollmentCenterController@rejected',
-        'as'   => 'enrollment-center.rejected',
-    ]);
+        Route::post('/rejected', [
+            'uses' => 'Enrollment\EnrollmentCenterController@rejected',
+            'as'   => 'enrollment-center.rejected',
+        ]);
+    });
 });
 
 /*

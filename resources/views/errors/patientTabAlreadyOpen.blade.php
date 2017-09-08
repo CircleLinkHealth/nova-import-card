@@ -10,7 +10,7 @@
 
     <title>CarePlanManager - Error</title>
 
-    <link href="{{ asset('/css/stylesheet.css') }}" rel="stylesheet">
+    <link href="{{ asset('/compiled/css/stylesheet.css') }}" rel="stylesheet">
     <link href="{{ asset('/css/wpstyle.css') }}" rel="stylesheet">
     <link href="{{ asset('/img/favicon.png') }}" rel="icon">
 
@@ -49,7 +49,6 @@
     <script src="//cdnjs.cloudflare.com/ajax/libs/parsley.js/2.0.7/parsley.min.js"></script>
     <script src="//cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.1/js/bootstrap.min.js"></script>
     <script src="{{ asset('/js/idle-timer.min.js') }}"></script>
-    <script src="{{ asset('/js/scripts.js') }}"></script>
     <script src="{{ asset('/js/bootstrap-select.min.js') }}"></script>
     <script src="{{ asset('/js/typeahead.bundle.js') }}"></script>
 

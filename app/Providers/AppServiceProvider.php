@@ -1,6 +1,7 @@
 <?php namespace App\Providers;
 
 use App\AppConfig;
+use App\CarePlan;
 use App\Contracts\Efax;
 use App\Contracts\ReportFormatter;
 use App\Contracts\Repositories\ActivityRepository;
@@ -24,6 +25,7 @@ use App\Repositories\PracticeRepositoryEloquent;
 use App\Repositories\UserRepositoryEloquent;
 use App\Services\Phaxio\PhaxioService;
 use Illuminate\Support\ServiceProvider;
+use View;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -56,6 +58,9 @@ class AppServiceProvider extends ServiceProvider
      */
     public function register()
     {
+        $this->app->alias('bugsnag.logger', \Illuminate\Contracts\Logging\Log::class);
+        $this->app->alias('bugsnag.logger', \Psr\Log\LoggerInterface::class);
+
         $this->app->bind(
             'Illuminate\Contracts\Auth\Registrar',
             'App\Services\Registrar'
