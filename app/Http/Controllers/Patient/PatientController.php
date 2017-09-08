@@ -438,6 +438,7 @@ class PatientController extends Controller
             $query->where(function ($q) use ($term) {
                 $q->where('first_name', 'like', "%$term%")
                     ->orWhere('last_name', 'like', "%$term%")
+                    ->orWhere('id', 'like', "%$term%")
                     ->orWhereHas('patientInfo', function($query) use ($term) {
                         $query->where('mrn_number', 'like', "%$term%")
                             ->orWhere('birth_date', 'like', "%$term%");
@@ -458,7 +459,7 @@ class PatientController extends Controller
             $programObj = Practice::find($d->program_id);
 
             $patients[$i]['program'] = $programObj->display_name ?? '';
-            $patients[$i]['hint'] = $patients[$i]['name'] . " DOB:" . $patients[$i]['dob'] . " [" . $patients[$i]['program'] . "] MRN: " . $patients[$i]['mrn'];
+            $patients[$i]['hint'] = $patients[$i]['name'] . " DOB:" . $patients[$i]['dob'] . " [" . $patients[$i]['program'] . "] MRN: {$patients[$i]['mrn']} ID: {$d->id}";
             $i++;
         }
 
