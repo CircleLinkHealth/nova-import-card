@@ -12,7 +12,6 @@ use App\Practice;
 use App\Services\CarePlanViewService;
 use App\User;
 use Carbon\Carbon;
-use DB;
 use EllipseSynergie\ApiResponse\Laravel\Response;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -244,6 +243,7 @@ class PatientController extends Controller
         $patientData = [];
         $patients = User::intersectPracticesWith(auth()->user())
             ->ofType('participant')
+            ->whereHas('patientInfo')
             ->with('primaryPractice')
             ->with('carePlan')
             ->with([
@@ -266,7 +266,7 @@ class PatientController extends Controller
         $foundUsers = []; // save resources, no duplicate db calls
         $foundPrograms = []; // save resources, no duplicate db calls
 
-        $canApproveCarePlans = auth()->user()->can('care-plan-approve');
+        $canApproveCarePlans = auth()->user()->canApproveCareplans();
         $canQAApproveCarePlans = auth()->user()->can('care-plan-qa-approve');
         $isCareCenter = Auth::user()->hasRole('care-center');
         $isAdmin = Auth::user()->hasRole('administrator');
@@ -422,19 +422,30 @@ class PatientController extends Controller
     {
 
         $input = $request->all();
-        $query = $input['users'];
 
-        $userIds = $commaList = implode(', ', Auth::user()->viewablePatientIds());
+        if (!array_key_exists('users', $input)) {
+            return;
+        }
 
-        $sql = "select distinct *
-        	FROM users u
-        	JOIN patient_info pi ON pi.user_id = u.id
-             AND u.id IN (" . $userIds . ")
-             AND concat(u.first_name , ' ', u.last_name, ' ', pi.user_id, ' ', pi.mrn_number, ' ', pi.birth_date ) like '%" . $query . "%'
-             order by 1
-            ;";
+        $searchTerms = explode(' ', $input['users']);
 
-        $results = DB::select(DB::raw($sql));
+        $query = User::intersectPracticesWith(auth()->user())
+            ->ofType('participant')
+            ->with('primaryPractice')
+            ->with('patientInfo');
+
+        foreach ($searchTerms as $term) {
+            $query->where(function ($q) use ($term) {
+                $q->where('first_name', 'like', "%$term%")
+                    ->orWhere('last_name', 'like', "%$term%")
+                    ->orWhereHas('patientInfo', function($query) use ($term) {
+                        $query->where('mrn_number', 'like', "%$term%")
+                            ->orWhere('birth_date', 'like', "%$term%");
+                    });
+            });
+        }
+
+        $results = $query->get();
         $patients = [];
         $i = 0;
         foreach ($results as $d) {
@@ -442,7 +453,7 @@ class PatientController extends Controller
             $dob = new Carbon(($d->birth_date));
             $patients[$i]['dob'] = $dob->format('m-d-Y');
             $patients[$i]['mrn'] = $d->mrn_number;
-            $patients[$i]['link'] = URL::route('patient.summary', ['patient' => $d->user_id]);
+            $patients[$i]['link'] = URL::route('patient.summary', ['patient' => $d->id]);
 
             $programObj = Practice::find($d->program_id);
 

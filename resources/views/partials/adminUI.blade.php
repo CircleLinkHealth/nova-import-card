@@ -5,11 +5,12 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="csrf-token" content="{{ csrf_token() }}">
+    <meta name="base-url" content="{{ url('/') }}">
 
     <title>CPM API</title>
 
     <!-- Stylesheets -->
-    {{-- <link href="{{ asset('/css/stylesheet.css') }}" rel="stylesheet"> --}}
+    {{-- <link href="{{ asset('/compiled/css/stylesheet.css') }}" rel="stylesheet"> --}}
     {{-- <link href="{{ asset('/css/lavish-2.css') }}" rel="stylesheet"> --}}
     <link href="{{ asset('/css/admin.css') }}" rel="stylesheet">
     <link href="{{ asset('/img/favicon.png') }}" rel="icon">
@@ -69,10 +70,6 @@
     <script src="{{ asset('/js/bootstrap-select.min.js') }}"></script>
     <link href="//cdnjs.cloudflare.com/ajax/libs/select2/4.0.0/css/select2.min.css" rel="stylesheet"/>
     <script src="//cdnjs.cloudflare.com/ajax/libs/select2/4.0.0/js/select2.min.js"></script>
-
-    <!-- misc scripts -->
-    <script src="{{ asset('/js/scripts.js') }}"></script>
-
 </head>
 <body>
 @if ( ! Auth::guest() && Entrust::can('admin-access'))
@@ -97,7 +94,7 @@
             <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
                 <ul class="nav navbar-nav">
                     @if ( ! Auth::guest())
-                        <li role="presentation" 0lass="dropdown">
+                        <li role="presentation" class="dropdown">
                             <a class="dropdown-toggle" data-toggle="dropdown" href="#" role="button"
                                aria-expanded="false">
                                 Users <span class="caret"></span>
@@ -114,7 +111,7 @@
                     @endif
 
                     @if ( ! Auth::guest())
-                        <li role="presentation" 0lass="dropdown">
+                        <li role="presentation" class="dropdown">
                             <a class="dropdown-toggle" data-toggle="dropdown" href="#" role="button"
                                aria-expanded="false">
                                 Calls <span class="caret"></span>
@@ -366,7 +363,8 @@
 @include('partials.footer')
 
 @yield('content')
-@yield('javascript')
+
+@yield('scripts')
 <div style="clear:both;height:100px;"></div>
 </body>
 </html>

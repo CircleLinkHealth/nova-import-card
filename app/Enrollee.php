@@ -133,7 +133,7 @@ class Enrollee extends Model
     public function getPracticeNameAttribute()
     {
 
-        return $this->practice->name ?? null;
+        return $this->practice->display_name ?? null;
 
     }
 

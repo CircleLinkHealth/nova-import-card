@@ -7,7 +7,7 @@
 	<title>CarePlanManager - Password Reset</title>
 
 	<link href="{{ asset('/css/wpstyle.css') }}" rel="stylesheet">
-	<link href="{{ asset('/css/stylesheet.css') }}" rel="stylesheet">
+	<link href="{{ asset('/compiled/css/stylesheet.css') }}" rel="stylesheet">
 	<link href="{{ asset('/css/wpstyle.css') }}" rel="stylesheet">
 	<link href="{{ asset('/img/favicon.png') }}" rel="icon">
 	<style type="text/css">
@@ -43,9 +43,15 @@
 <div class="container-fluid">
 	<section class="main-form">
 		<div class="row">
-			<div class="col-lg-8 col-lg-offset-2">
+			<div class="col-lg-6 col-lg-offset-3">
 				@include('errors.errors')
 				@include('errors.messages')
+
+				@if(session('status'))
+					<div class="alert alert-success success" style="font-size: 20rem;">
+						{{session('status')}}
+					</div>
+				@endif
 			</div>
 			<div class="main-form-container col-lg-4 col-lg-offset-4">
 				<div class="row">

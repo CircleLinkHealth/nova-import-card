@@ -34,7 +34,7 @@ class MapSnomedToCpmProblems extends Command
      *
      * @return mixed
      */
-    public function fire()
+    public function handle()
     {
 //        $cpmProblems = CpmProblem::all();
 //        SnomedToCpmIcdMap::truncate();

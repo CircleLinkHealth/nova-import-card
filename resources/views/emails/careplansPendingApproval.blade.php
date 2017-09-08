@@ -1,6 +1,6 @@
 <body>
 <p>
-    Dear Dr. {{ $drName }},
+    Dear @if($recipient->hasRole('provider'))Dr. @endif{{ $recipient->fullName }},
 </p>
 
 <p>

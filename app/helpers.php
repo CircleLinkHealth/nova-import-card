@@ -3,8 +3,30 @@
 
 use App\AppConfig;
 use App\CarePlanTemplate;
+use App\Jobs\SendSlackMessage;
 use Carbon\Carbon;
 use Illuminate\Support\Collection;
+
+if (!function_exists('sendSlackMessage')) {
+    /**
+     * Sends a message to Slack
+     *
+     * @param $to
+     * @param $message
+     *
+     *
+     */
+    function sendSlackMessage($to, $message)
+    {
+        if (app()->environment() != 'production') {
+            return;
+        }
+
+        $job = new SendSlackMessage($to, $message);
+
+        dispatch($job);
+    }
+}
 
 if (!function_exists('formatPhoneNumber')) {
     /**
@@ -188,6 +210,24 @@ if (!function_exists('validateBloodPressureString')) {
         }
 
         return true;
+    }
+}
+
+if (!function_exists('clhToCarbonDayOfWeek')) {
+    /**
+     * Convert CLH DayOfWeek to Carbon DayOfWeek.
+     * Carbon does 0-6 for Sun-Sat.
+     * We do 1-7 for Mon-Sun.
+     *
+     * @param $dayOfWeek
+     *
+     * @return int
+     */
+    function clhToCarbonDayOfWeek($dayOfWeek)
+    {
+        return $dayOfWeek == 7
+            ? 0
+            : $dayOfWeek;
     }
 }
 

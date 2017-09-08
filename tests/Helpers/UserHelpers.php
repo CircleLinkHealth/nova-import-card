@@ -86,18 +86,18 @@ trait UserHelpers
         $user->locations()->sync($locations);
 
         foreach ($locations as $locId) {
-            $this->seeInDatabase('location_user', [
+            $this->assertDatabaseHas('location_user', [
                 'location_id' => $locId,
                 'user_id'     => $user->id,
             ]);
         }
 
         //check that it was created
-        $this->seeInDatabase('users', ['email' => $email]);
+        $this->assertDatabaseHas('users', ['email' => $email]);
 
         //check that the roles were created
         foreach ($roles as $role) {
-            $this->seeInDatabase('lv_role_user', [
+            $this->assertDatabaseHas('lv_role_user', [
                 'user_id' => $user->id,
                 'role_id' => $role,
             ]);
@@ -122,7 +122,7 @@ trait UserHelpers
 
         //By default PHPUnit fails the test if the output buffer wasn't closed.
         //So we're adding this to make the test work.
-        ob_end_clean();
+//        ob_end_clean();
     }
 
     public function createLastCallForPatient(

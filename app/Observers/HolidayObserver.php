@@ -32,7 +32,7 @@ class HolidayObserver
         $sentence .= "View Schedule at ";
         $sentence .= route('get.admin.nurse.schedules');
 
-        $job = new SendSlackMessage('#callcenter_ops', $sentence);
+        $job = new SendSlackMessage('#carecoachscheduling', $sentence);
 
         dispatch($job);
     }
@@ -61,7 +61,7 @@ class HolidayObserver
         $sentence .= "View Schedule at ";
         $sentence .= route('get.admin.nurse.schedules');
 
-        $job = new SendSlackMessage('#callcenter_ops', $sentence);
+        $job = new SendSlackMessage('#carecoachscheduling', $sentence);
 
         dispatch($job);
     }

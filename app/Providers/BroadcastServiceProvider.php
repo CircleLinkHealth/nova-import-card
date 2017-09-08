@@ -19,7 +19,7 @@ class BroadcastServiceProvider extends ServiceProvider
         /*
          * Authenticate the user's personal channel...
          */
-        Broadcast::channel('App.User.*', function (
+        Broadcast::channel('App.User.{userId}', function (
             $user,
             $userId
         ) {

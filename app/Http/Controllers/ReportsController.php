@@ -2,7 +2,7 @@
 
 use App\CareItem;
 use App\CareItemUserValue;
-use App\CarePerson;
+use App\CarePlan;
 use App\Formatters\WebixFormatter;
 use App\Location;
 use App\Models\CPM\CpmProblem;
@@ -463,6 +463,18 @@ class ReportsController extends Controller
         return json_encode($feed);
     }
 
+    public function viewPdfCarePlan(Request $request,
+                                    $patientId = false)
+    {
+        if (!$patientId) {
+            return "Patient Not Found..";
+        }
+
+        $patient = User::find($patientId);
+
+        return view('patient.careplan.view-pdf-careplan', compact(['patient']));
+    }
+
     public function viewPrintCareplan(
         Request $request,
         $patientId = false,
@@ -474,6 +486,10 @@ class ReportsController extends Controller
 
         $patient = User::find($patientId);
 
+        if ($patient->careplan_mode == CarePlan::PDF) {
+            return redirect()->route('patient.pdf.careplan.print', ['patientId' => $patientId]);
+        }
+
         $careplan = $this->formatter->formatDataForViewPrintCareplanReport([$patient]);
 
         if (!$careplan) {
@@ -482,65 +498,23 @@ class ReportsController extends Controller
 
         $patient = User::find($patientId);
 
-        $careTeam = CarePerson::with([
-            'user.phoneNumbers',
-            'user.providerInfo',
-            'user.primaryPractice',
-        ])
-            ->whereUserId($patient->id)
-            ->orderBy('type')
-            ->get()
-            ->transform(function ($member) use
-            (
-                $patient
-            ) {
-                $member->user->firstOrNewProviderInfo();
-
-                $type = $member->type;
-
-                if ($member->user->practice($patient->primaryPractice->id) && $member->type != CarePerson::BILLING_PROVIDER) {
-                    $type = $member->user->role()->display_name . " (Internal)";
-                }
-
-                $member->formatted_type = snakeToSentenceCase($type);
-                $member->specialty = $member->user->getSpecialtyAttribute();
-                $member->is_billing_provider = $member->type == CarePerson::BILLING_PROVIDER;
-
-                $member->primaryRole = $member->user->role();
-
-                if ($member->user->phoneNumbers) {
-                    $member->user->phoneNumbers->push(['number' => '']);
-                }
-
-                if ($member->user->primaryPractice) {
-                    $member->user->primaryPractice->push(['display_name' => '']);
-                }
-
-                return $member;
-            });
-
         $showInsuranceReviewFlag = $insurances->checkPendingInsuranceApproval($patient);
-
-        \JavaScript::put([
-            'careTeam' => $careTeam,
-        ]);
 
         return view('wpUsers.patient.careplan.print',
             [
-                'patient'             => $patient,
-                'problems'            => $careplan[$patientId]['problems'],
-                'problemNames'        => $careplan[$patientId]['problem'],
-                'biometrics'          => $careplan[$patientId]['bio_data'],
-                'symptoms'            => $careplan[$patientId]['symptoms'],
-                'lifestyle'           => $careplan[$patientId]['lifestyle'],
-                'medications_monitor' => $careplan[$patientId]['medications'],
-                'taking_medications'  => $careplan[$patientId]['taking_meds'],
-                'allergies'           => $careplan[$patientId]['allergies'],
+                'patient'                 => $patient,
+                'problems'                => $careplan[$patientId]['problems'],
+                'problemNames'            => $careplan[$patientId]['problem'],
+                'biometrics'              => $careplan[$patientId]['bio_data'],
+                'symptoms'                => $careplan[$patientId]['symptoms'],
+                'lifestyle'               => $careplan[$patientId]['lifestyle'],
+                'medications_monitor'     => $careplan[$patientId]['medications'],
+                'taking_medications'      => $careplan[$patientId]['taking_meds'],
+                'allergies'               => $careplan[$patientId]['allergies'],
                 'social'                  => $careplan[$patientId]['social'],
                 'appointments'            => $careplan[$patientId]['appointments'],
                 'other'                   => $careplan[$patientId]['other'],
                 'showInsuranceReviewFlag' => $showInsuranceReviewFlag,
-                'careTeam'                => $careTeam,
             ]);
     }
 
@@ -607,8 +581,7 @@ class ReportsController extends Controller
         $date = date('Y-m-d H:i:s');
         $users = User::all();
 
-        Excel::create('CLH-Report-' . $date, function ($excel) use
-        (
+        Excel::create('CLH-Report-' . $date, function ($excel) use (
             $date,
             $users,
             $usersCondition
@@ -625,8 +598,7 @@ class ReportsController extends Controller
             $excel->setDescription('CLH Report T1');
 
             // Our first sheet
-            $excel->sheet('Sheet 1', function ($sheet) use
-            (
+            $excel->sheet('Sheet 1', function ($sheet) use (
                 $users,
                 $usersCondition
             ) {
@@ -685,8 +657,7 @@ class ReportsController extends Controller
 
         $date = date('Y-m-d H:i:s');
 
-        Excel::create('CLH-Report-' . $date, function ($excel) use
-        (
+        Excel::create('CLH-Report-' . $date, function ($excel) use (
             $date,
             $users
         ) {
@@ -702,8 +673,7 @@ class ReportsController extends Controller
             $excel->setDescription('CLH Report T2');
 
             // Our first sheet
-            $excel->sheet('Sheet 1', function ($sheet) use
-            (
+            $excel->sheet('Sheet 1', function ($sheet) use (
                 $users
             ) {
                 $sheet->protect('clhpa$$word', function (\PHPExcel_Worksheet_Protection $protection) {
@@ -825,8 +795,7 @@ class ReportsController extends Controller
 
         $date = date('Y-m-d H:i:s');
 
-        Excel::create('CLH-Report-' . $date, function ($excel) use
-        (
+        Excel::create('CLH-Report-' . $date, function ($excel) use (
             $date,
             $users
         ) {
@@ -842,8 +811,7 @@ class ReportsController extends Controller
             $excel->setDescription('CLH Report T3');
 
             // Our first sheet
-            $excel->sheet('Sheet 1', function ($sheet) use
-            (
+            $excel->sheet('Sheet 1', function ($sheet) use (
                 $users
             ) {
                 $sheet->protect('clhpa$$word', function (\PHPExcel_Worksheet_Protection $protection) {
@@ -919,8 +887,7 @@ class ReportsController extends Controller
 
         $date = date('Y-m-d H:i:s');
 
-        Excel::create('CLH-Report-' . $date, function ($excel) use
-        (
+        Excel::create('CLH-Report-' . $date, function ($excel) use (
             $date,
             $users
         ) {
@@ -936,8 +903,7 @@ class ReportsController extends Controller
             $excel->setDescription('CLH Report T4');
 
             // Our first sheet
-            $excel->sheet('Sheet 1', function ($sheet) use
-            (
+            $excel->sheet('Sheet 1', function ($sheet) use (
                 $users
             ) {
                 $sheet->protect('clhpa$$word', function (\PHPExcel_Worksheet_Protection $protection) {

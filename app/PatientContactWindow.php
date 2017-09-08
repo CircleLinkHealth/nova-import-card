@@ -334,7 +334,7 @@ class PatientContactWindow extends Model
 
         foreach ($patient_windows as $window) {
 
-            $days[] = Carbon::parse($adjusted_offset)->next(carbonToClhDayOfWeek($window->day_of_week));
+            $days[] = Carbon::parse($adjusted_offset)->next(clhToCarbonDayOfWeek($window->day_of_week));
 
         }
 

@@ -1,6 +1,8 @@
 <?php
 
+use App\Providers\EmailArrayValidatorServiceProvider;
 use App\Providers\ObserversServiceProvider;
+use App\Providers\ViewComposerServiceProvider;
 
 return [
 
@@ -138,6 +140,7 @@ return [
     */
 
     'providers' => [
+        Bugsnag\BugsnagLaravel\BugsnagServiceProvider::class,
 
         /*
          * Laravel Framework Service Providers...
@@ -186,16 +189,12 @@ return [
         /*
          * CPM Providers
          */
-        \Chrisbjr\ApiGuard\Providers\ApiGuardServiceProvider::class,
         \Tymon\JWTAuth\Providers\JWTAuthServiceProvider::class,
         \Collective\Html\HtmlServiceProvider::class,
         \Rap2hpoutre\LaravelLogViewer\LaravelLogViewerServiceProvider::class,
         Zizaco\Entrust\EntrustServiceProvider::class,
-        \Fideloper\Proxy\TrustedProxyServiceProvider::class,
         \Maatwebsite\Excel\ExcelServiceProvider::class,
-        \rigor789\AirbrakeLaravel\AirbrakeServiceProvider::class,
         Prettus\Repository\Providers\RepositoryServiceProvider::class,
-        \Maknz\Slack\SlackServiceProvider::class,
         Yajra\Datatables\DatatablesServiceProvider::class,
         App\Providers\AWSWorkerServiceProvider::class,
         Spatie\GoogleCalendar\GoogleCalendarServiceProvider::class,
@@ -206,6 +205,12 @@ return [
         Xethron\MigrationsGenerator\MigrationsGeneratorServiceProvider::class,
         Tylercd100\LERN\LERNServiceProvider::class,
         Dionera\BeanstalkdUI\BeanstalkdUIServiceProvider::class,
+        Laravel\Tinker\TinkerServiceProvider::class,
+        ViewComposerServiceProvider::class,
+        jeremykenedy\Slack\Laravel\ServiceProvider::class,
+        EmailArrayValidatorServiceProvider::class,
+        GeneaLabs\LaravelCaffeine\Providers\LaravelCaffeineService::class,
+        Propaganistas\LaravelPhone\PhoneServiceProvider::class,
     ],
 
     /*
@@ -266,9 +271,9 @@ return [
         'JWTFactory'     => \Tymon\JWTAuth\Facades\JWTFactory::class,
         'LERN'           => Tylercd100\LERN\Facades\LERN::class,
         'PDF'            => \Barryvdh\Snappy\Facades\SnappyPdf::class,
-        'Slack'          => Maknz\Slack\Facades\Slack::class,
+        'Slack'          => jeremykenedy\Slack\Laravel\Facade::class,
         'GoogleCalendar' => Spatie\GoogleCalendar\GoogleCalendarFacade::class,
-
+        'Bugsnag'        => Bugsnag\BugsnagLaravel\Facades\Bugsnag::class,
     ],
 
 ];

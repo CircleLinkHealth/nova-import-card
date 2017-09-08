@@ -1,50 +1,68 @@
-var Vue = require('vue');
+require('./bootstrap');
 
-Vue.config.debug = true;
+window.Vue = require('vue');
+window.Vue.use(require('vue-resource'));
 
-Vue.use(require('vue-resource'));
+const vm = new Vue({
+    el: '#trainer-results',
 
-Vue.http.headers.common['X-CSRF-TOKEN'] = $('meta[name="csrf-token"]').attr('content');
+    data: {
+        practices: [],
+        locationsCollection: [],
+        providersCollection: [],
+        practice: null,
+        location: null,
+        billingProvider: null,
+    },
 
-/**
- *
- * VUE INSTANCE
- *
- */
-var vm = new Vue({
-        el: 'body',
+    mounted: function () {
+        this.practices = cpm.practices;
+        this.practice = cpm.predictedPracticeId;
+        this.location = cpm.predictedLocationId;
+        this.billingProvider = cpm.predictedBillingProviderId;
+    },
 
-        data: {
-            practices: [],
-            locationsCollection: [],
-            providersCollection: [],
-            practice: '',
-            location: '',
-            billingProvider: '',
-        },
+    computed: {
+        locations: function () {
+            let self = this;
+            
+            if (self.practice === null) {
+                Vue.nextTick(function () {
+                    self.location = null;
+                    self.billingProvider = null;
+                    self.providersCollection = [];
+                });
 
-        ready: function () {
-            this.$set('practices', cpm.practices);
-            this.$set('practice', cpm.predictedPracticeId);
-            this.$set('location', cpm.predictedLocationId);
-            this.$set('billingProvider', cpm.predictedBillingProviderId);
-        },
-
-        computed: {
-            locations: function () {
-                this.$set('locationsCollection', this.practices[this.practice].locations);
-
-                return this.locationsCollection;
-            },
-
-            providers: function () {
-                this.$set('providersCollection', this.locations[this.location].providers);
-
-                return this.providersCollection;
+                return [];
             }
+
+            Vue.nextTick(function () {
+                self.locationsCollection = self.practices[self.practice].locations;
+            });
+
+            return self.locationsCollection;
+        },
+
+        providers: function () {
+            let self = this;
+            
+            if (self.location === null || !self.practices[self.practice].locations[self.location]) {
+                Vue.nextTick(function () {
+                    self.billingProvider = null;
+                    self.providersCollection = [];
+                });
+
+                return [];
+            }
+
+            Vue.nextTick(function () {
+                self.providersCollection = self.locations[self.location].providers;
+            });
+
+            return self.providersCollection;
         }
-    })
-    ;
+    }
+});
 
 
 

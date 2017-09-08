@@ -6,7 +6,7 @@ use Carbon\Carbon;
 use Tests\Helpers\CarePlanHelpers;
 use Tests\Helpers\UserHelpers;
 
-class NurseWorkScheduleTest extends TestCase
+class NurseWorkScheduleTest extends BrowserKitTestCase
 {
     use CarePlanHelpers,
         UserHelpers;
@@ -53,7 +53,7 @@ class NurseWorkScheduleTest extends TestCase
 
         //By default PHPUnit fails the test if the output buffer wasn't closed.
         //So we're adding this to make the test work.
-        ob_end_clean();
+//        ob_end_clean();
     }
 
     protected function nurse_stores_and_deletes_window(User $nurse)
@@ -68,12 +68,12 @@ class NurseWorkScheduleTest extends TestCase
         User $nurse,
         Carbon $date,
         $valid = true,
-        $timeStart = '09:00',
-        $timeEnd = '19:00'
+        $timeStart = '09:00:00',
+        $timeEnd = '19:00:00'
     ) {
         $this->actingAs($nurse)
             ->visit(route('care.center.work.schedule.index'))
-            ->type($date->format('m-d-Y'), 'date')
+            ->select(carbonToClhDayOfWeek($date->dayOfWeek), 'day_of_week')
             ->type($timeStart, 'window_time_start')
             ->type($timeEnd, 'window_time_end')
             ->press('store-window');
@@ -81,7 +81,6 @@ class NurseWorkScheduleTest extends TestCase
         if ($valid) {
             $this->seeInDatabase('nurse_contact_window', [
                 'nurse_info_id'     => $nurse->nurseInfo->id,
-                'date'              => $date->format('Y-m-d'),
                 'day_of_week'       => carbonToClhDayOfWeek($date->dayOfWeek),
                 'window_time_start' => $timeStart,
                 'window_time_end'   => $timeEnd,
@@ -92,7 +91,6 @@ class NurseWorkScheduleTest extends TestCase
 
         $this->dontSeeInDatabase('nurse_contact_window', [
             'nurse_info_id'     => $nurse->nurseInfo->id,
-            'date'              => $date->format('Y-m-d'),
             'window_time_start' => $timeStart,
             'window_time_end'   => $timeEnd,
         ]);
@@ -169,8 +167,7 @@ class NurseWorkScheduleTest extends TestCase
             'cpm_testing',
             'cpm_hotfix',
         ])) {
-            Slack::to('#qualityassurance')
-                ->send($text);
+            sendSlackMessage('#qualityassurance', $text);
         }
 
         echo $text;

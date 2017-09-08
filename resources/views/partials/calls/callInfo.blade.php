@@ -120,8 +120,7 @@
             return $(this).val() == $("#firstname").val();
         }).attr('selected', true);
 
-        $("#name").live("change", function() {
-
+        $("#name").on("change", function() {
             $("#firstname").val($(this).find("option:selected").attr("value"));
         });
     });

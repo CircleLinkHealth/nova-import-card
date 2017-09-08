@@ -8,7 +8,7 @@
         <form method="POST" v-on:submit="onSubmitForm" enctype="multipart/form-data"
               class="mdl-cell mdl-cell--12-col" action="/ccd-importer/imported-medical-records">
 
-            <input type="hidden" name="_token" value="{{ csrfToken }}">
+            <input type="hidden" name="_token" v-bind:value="csrfToken">
 
             <!--UPLOAD BOX-->
             <div class="mdl-cell mdl-cell--12-col">

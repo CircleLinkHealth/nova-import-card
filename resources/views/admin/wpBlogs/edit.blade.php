@@ -56,22 +56,6 @@
                             </div>
 
                             <div class="row" style="margin-top:20px;">
-                                <div class="col-xs-2">{!! Form::label('invoice_recipients', 'Invoice Recipients (comma separated, w/ spaces after comma)') !!}</div>
-                                <div class="col-xs-10"><textarea class="form-control" name="invoice_recipients"
-                                                                 style="width: 100%">@if(isset($program->invoice_recipients)){{$program->invoice_recipients}}@endif</textarea>
-                                    <small>The emails above will receive invoices @if($recipients), in addition to {{$recipients}}. @endif</small>
-                                </div>
-                            </div>
-
-                            <div class="row" style="margin-top:20px;">
-                                <div class="col-xs-2">{!! Form::label('weekly_report_recipients', 'Weekly Organization Summary Recipients (comma separated, w/ spaces after comma)') !!}</div>
-                                <div class="col-xs-10"><textarea class="form-control" name="weekly_report_recipients"
-                                                                 style="width: 100%">@if(isset($program->weekly_report_recipients)){{$program->weekly_report_recipients}}@endif</textarea>
-                                    <small>The emails above will receive weekly summary reports.</small>
-                                </div>
-                            </div>
-
-                            <div class="row" style="margin-top:20px;">
                                 <div class="col-xs-2">{!! Form::label('clh_pppm', 'CPM Price') !!}</div>
                                 <div class="col-xs-3"><input class="form-control" name="clh_pppm" style="width: 100%"
                                                              @if(isset($program->clh_pppm)) value="{{$program->clh_pppm}}" @endif/>

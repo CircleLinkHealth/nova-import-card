@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\CLH\Helpers\StringManipulation;
 use App\Enrollee;
 use App\Practice;
 use App\User;
@@ -22,8 +23,8 @@ class TwilioController extends Controller
     public function __construct(Request $request)
     {
 
-        $this->capability = new ClientToken($_ENV['TWILIO_SID'], $_ENV['TWILIO_TOKEN']);
-        $this->capability->allowClientOutgoing($_ENV['TWILIO_ENROLLMENT_TWIML_APP_SID']);
+        $this->capability = new ClientToken(env('TWILIO_SID'), env('TWILIO_TOKEN'));
+        $this->capability->allowClientOutgoing(env('TWILIO_ENROLLMENT_TWIML_APP_SID'));
         $this->token = $this->capability->generateToken();
 
     }
@@ -51,13 +52,15 @@ class TwilioController extends Controller
 
         $response = new Twiml();
 
-        $phoneNumberToDial = $request->input('phoneNumber');
+        $phoneNumberToDial = (new StringManipulation())->formatPhoneNumberE164($request->input('phoneNumber'));
 
-        $practiceId = Enrollee::where(function ($q) use ($phoneNumberToDial){
+        $enrollee = Enrollee::where(function ($q) use ($phoneNumberToDial){
             $q->where('cell_phone', $phoneNumberToDial)
                 ->orWhere('home_phone', $phoneNumberToDial)
                 ->orWhere('other_phone', $phoneNumberToDial);
-        })->first()['practice_id'];
+        })->first();
+
+        $practiceId = $enrollee['practice_id'];
 
         $callerIdNumber = Practice::find($practiceId)->outgoing_phone_number;
 

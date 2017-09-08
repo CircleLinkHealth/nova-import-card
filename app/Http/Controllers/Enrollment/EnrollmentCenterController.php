@@ -16,6 +16,13 @@ class EnrollmentCenterController extends Controller
 
         $careAmbassador = auth()->user()->careAmbassador;
 
+        if (!$careAmbassador) {
+            return view('errors.403', [
+                'message' => 'You need to be a Care Ambassador to acccess this page.',
+                'hideLinks' => true
+            ]);
+        }
+
         //if logged in ambassador is spanish, pick up a spanish patient
         if ($careAmbassador->speaks_spanish) {
 

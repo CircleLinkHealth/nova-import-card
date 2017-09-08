@@ -43,12 +43,10 @@ class Kernel extends ConsoleKernel
         EmailRNDailyReport::class,
         EmailsProvidersToApproveCareplans::class,
         ExportNurseSchedulesToGoogleCalendar::class,
-        FormatLocationPhone::class,
         GeneratePatientReports::class,
         ImportNurseScheduleFromGoogleCalendar::class,
         Inspire::class,
         MapSnomedToCpmProblems::class,
-        NukeItemAndMeta::class,
         GetAppointments::class,
         GetCcds::class,
         ResetCcmTime::class,
@@ -79,11 +77,11 @@ class Kernel extends ConsoleKernel
             $handled = (new ReschedulerHandler())->handle();
 
             if (!empty($handled)) {
-                Slack::to('#background-tasks')->send("The CPMbot just rescheduled some calls");
+                sendSlackMessage('#background-tasks', "The CPMbot just rescheduled some calls");
             }
 
             foreach ($handled as $call) {
-                Slack::to('#background-tasks')->send("We just fixed call: {$call->id}");
+                sendSlackMessage('#background-tasks', "We just fixed call: {$call->id}");
             }
 
         })->dailyAt('00:05');
