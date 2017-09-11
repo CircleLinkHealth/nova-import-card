@@ -116,10 +116,10 @@ class CarePlanViewService
         $patientMiscs = $patient->cpmMiscs()->get();
         $patientMiscsIds = $patientMiscs->pluck('id')->all();
 
-        $bloodPressure = $patient->cpmBloodPressure()->firstOrNew([]);
-        $bloodSugar = $patient->cpmBloodSugar()->firstOrNew([]);
-        $smoking = $patient->cpmSmoking()->firstOrNew([]);
-        $weight = $patient->cpmWeight()->firstOrNew([]);
+        $bloodPressure = $patient->cpmBloodPressure()->firstOrNew(['patient_id' => $patient->id]);
+        $bloodSugar = $patient->cpmBloodSugar()->firstOrNew(['patient_id' => $patient->id]);
+        $smoking = $patient->cpmSmoking()->firstOrNew(['patient_id' => $patient->id]);
+        $weight = $patient->cpmWeight()->firstOrNew(['patient_id' => $patient->id]);
 
         $patientBiometrics = $patient->cpmBiometrics()->get();
 
