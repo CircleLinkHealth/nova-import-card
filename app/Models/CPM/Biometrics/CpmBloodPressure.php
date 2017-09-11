@@ -6,6 +6,11 @@ use Illuminate\Database\Eloquent\Model;
 
 class CpmBloodPressure extends Model implements Biometric
 {
+    public function __construct(array $attributes = [])
+    {
+        parent::__construct($attributes);
+        $this->setDefaultTarget();
+    }
 
     public static $rules = [
         'systolic_high_alert'  => 'max:999|numeric',
@@ -31,11 +36,11 @@ class CpmBloodPressure extends Model implements Biometric
         'diastolic_low_alert',
     ];
     protected $attributes = [
-        'systolic_high_alert' => 180,
-        'systolic_low_alert' => 80,
+        'systolic_high_alert'  => 180,
+        'systolic_low_alert'   => 80,
         'diastolic_high_alert' => 90,
-        'diastolic_low_alert' => 40,
-        'target' => '130/80',
+        'diastolic_low_alert'  => 40,
+        'target'               => '130/80',
     ];
 
     /**
@@ -49,12 +54,31 @@ class CpmBloodPressure extends Model implements Biometric
     public function getUserValues(User $user)
     {
         $biometric = $this->wherePatientId($user->id)->first();
+
         return $biometric
             ? [
                 'starting' => $biometric->starting,
-                'target' => $biometric->target
+                'target'   => $biometric->target,
             ]
             : false;
+    }
+
+    public function setDefaultTarget()
+    {
+        $patient = $this->patient;
+
+        if (!$patient) {
+            return;
+        };
+
+
+        $settings = $this->patient->primaryPractice->settings->first();
+
+        if (!$settings) {
+            return;
+        };
+
+        $this->attributes['target'] = $settings->default_target_bp;
     }
 
 }
