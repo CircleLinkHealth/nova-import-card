@@ -232,7 +232,7 @@
                 success: function (data) {
                     console.log(data);
                     var a = document.getElementById('downloadAudit');
-                    a.href = "{{url('/manage-patients/download/')}}" + data;
+                    a.href = "{{url('/download/')}}" + data;
                     a.click();
                 }
             });
