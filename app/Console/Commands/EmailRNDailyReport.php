@@ -2,6 +2,8 @@
 
 namespace App\Console\Commands;
 
+use App\Activity;
+use App\PageTimer;
 use App\User;
 use Carbon\Carbon;
 use Illuminate\Console\Command;
