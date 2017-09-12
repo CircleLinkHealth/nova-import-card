@@ -61,22 +61,21 @@ class EmailWeeklyReports extends Command
 
         if (isset($onlyForPractice)) {
             dispatch(new EmailWeeklyPracticeReport($onlyForPractice, $startRange, $endRange, $testerEmail));
-            dispatch(new EmailWeeklyProviderReport($onlyForPractice, $startRange, $endRange, $testerEmail));
+
+            if ($this->option('provider')) {
+                dispatch(new EmailWeeklyProviderReport($onlyForPractice, $startRange, $endRange, $testerEmail));
+            }
 
             return;
         }
 
         foreach ($this->activePractices as $practice) {
-            if (!$practice->settings[0]->email_weekly_report) {
-                continue;
+            if ($practice->settings->first() && $practice->settings->first()->email_weekly_report && $this->option('provider')) {
+                dispatch(new EmailWeeklyProviderReport($practice, $startRange, $endRange, $testerEmail));
             }
 
             if ($this->option('practice')) {
                 dispatch(new EmailWeeklyPracticeReport($practice, $startRange, $endRange, $testerEmail));
-            }
-
-            if ($this->option('provider')) {
-                dispatch(new EmailWeeklyProviderReport($practice, $startRange, $endRange, $testerEmail));
             }
         }
     }
