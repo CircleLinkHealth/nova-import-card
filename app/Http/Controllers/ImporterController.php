@@ -169,7 +169,7 @@ class ImporterController extends Controller
             return "The CSV list is being processed. $link";
         } //assume XML CCDA
 
-        dispatch(new TrainCcdaImporter(file_get_contents($file)));
+        dispatch(new TrainCcdaImporter(file_get_contents($file), auth()->user()));
 
         return "The CCDA is being processed. A message will be sent to #ccda-trainer on Slack when completed";
     }

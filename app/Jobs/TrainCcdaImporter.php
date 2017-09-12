@@ -4,26 +4,28 @@ namespace App\Jobs;
 
 use App\CLH\Repositories\CCDImporterRepository;
 use App\Models\MedicalRecords\Ccda;
+use App\User;
 use Illuminate\Bus\Queueable;
-use Illuminate\Queue\SerializesModels;
-use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
-use Illuminate\Http\UploadedFile;
+use Illuminate\Queue\InteractsWithQueue;
+use Illuminate\Queue\SerializesModels;
 
 class TrainCcdaImporter implements ShouldQueue
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
     private $file;
+    private $authUser;
 
     /**
      * Create a new job instance.
      *
      * @return void
      */
-    public function __construct($file)
+    public function __construct($file, User $authUser)
     {
         $this->file = $file;
+        $this->authUser = $authUser;
     }
 
     /**
@@ -38,7 +40,7 @@ class TrainCcdaImporter implements ShouldQueue
         $json = (new CCDImporterRepository())->toJson($xml);
 
         $ccda = Ccda::create([
-            'user_id'   => auth()->user()->id,
+            'user_id'   => $this->authUser->id,
             'vendor_id' => 1,
             'xml'       => $xml,
             'json'      => $json,
@@ -47,9 +49,10 @@ class TrainCcdaImporter implements ShouldQueue
 
         $importedMedicalRecord = $ccda->import();
 
-        $link = link_to_route('get.importer.training.results', "Click to review training results for Imported MEdical Record with id {$importedMedicalRecord->id}", [
-            'imrId' => $importedMedicalRecord->id
-        ]);
+        $link = link_to_route('get.importer.training.results',
+            "Click to review training results for Imported MEdical Record with id {$importedMedicalRecord->id}", [
+                'imrId' => $importedMedicalRecord->id,
+            ]);
 
         sendSlackMessage('#ccda-trainer', $link);
     }
