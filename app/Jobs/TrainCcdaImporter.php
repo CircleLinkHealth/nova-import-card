@@ -22,9 +22,9 @@ class TrainCcdaImporter implements ShouldQueue
      *
      * @return void
      */
-    public function __construct($file, User $authUser)
+    public function __construct($path, User $authUser)
     {
-        $this->file = $file;
+        $this->file = file_get_contents($path);
         $this->authUser = $authUser;
     }
 
@@ -40,7 +40,7 @@ class TrainCcdaImporter implements ShouldQueue
         $json = (new CCDImporterRepository())->toJson($xml);
 
         $ccda = Ccda::create([
-            'user_id'   => $this->authUser->id,
+            'user_id'   => $this->authUser->id ?? null,
             'vendor_id' => 1,
             'xml'       => $xml,
             'json'      => $json,
