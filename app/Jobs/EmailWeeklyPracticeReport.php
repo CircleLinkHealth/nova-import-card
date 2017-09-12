@@ -40,6 +40,16 @@ class EmailWeeklyPracticeReport implements ShouldQueue
      */
     public function handle()
     {
+        if (!$this->practice->weekly_report_recipients) {
+            return;
+        }
+
+        $organizationSummaryRecipients = explode(', ', trim($this->practice->weekly_report_recipients));
+
+        if ($this->testerEmail) {
+            $organizationSummaryRecipients = [$this->testerEmail];
+        }
+
         $subjectPractice = $this->practice->display_name . '\'s CCM Weekly Summary';
 
         //get Range Summary for this week, and for the other sections get month to date
@@ -50,33 +60,24 @@ class EmailWeeklyPracticeReport implements ShouldQueue
             $this->endRange->copy()
         ))->data(true);
 
-
         $practiceData['name'] = $this->practice->display_name;
         $practiceData['start'] = $this->startRange;
         $practiceData['end'] = $this->endRange;
         $practiceData['isEmail'] = true;
 
-        if ($this->practice->weekly_report_recipients != null) {
+        //handle leads
+        foreach ($organizationSummaryRecipients as $recipient) {
 
-            $organizationSummaryRecipients = explode(', ', trim($this->practice->weekly_report_recipients));
+            Mail::send('sales.by-practice.report', ['data' => $practiceData], function ($message) use (
+                $recipient,
+                $subjectPractice
+            ) {
+                $message->from('notifications@careplanmanager.com', 'CircleLink Health');
+                $message->to($recipient)->subject($subjectPractice);
+            });
 
-            if ($this->testerEmail) {
-                $organizationSummaryRecipients = [$this->testerEmail];
-            }
-
-            //handle leads
-            foreach ($organizationSummaryRecipients as $recipient) {
-
-                Mail::send('sales.by-practice.report', ['data' => $practiceData], function ($message) use (
-                    $recipient,
-                    $subjectPractice
-                ) {
-                    $message->from('notifications@careplanmanager.com', 'CircleLink Health');
-                    $message->to($recipient)->subject($subjectPractice);
-                });
-
-                sendSlackMessage('#background-tasks', "The CPMbot just sent the organization weekly summary for $this->practice->display_name to $recipient");
-            }
+            sendSlackMessage('#background-tasks',
+                "The CPMbot just sent the organization weekly summary for $this->practice->display_name to $recipient");
         }
     }
 }
