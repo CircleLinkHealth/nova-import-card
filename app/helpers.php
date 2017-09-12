@@ -18,7 +18,7 @@ if (!function_exists('sendSlackMessage')) {
      */
     function sendSlackMessage($to, $message)
     {
-        if (app()->environment() != 'production') {
+        if (!in_array(app()->environment(), ['production', 'worker'])) {
             return;
         }
 
