@@ -4,6 +4,7 @@ use App\CLH\Repositories\CCDImporterRepository;
 use App\Importer\Models\ItemLogs\DocumentLog;
 use App\Importer\Models\ItemLogs\ProviderLog;
 use App\Jobs\ImportCsvPatientList;
+use App\Jobs\TrainCcdaImporter;
 use App\Models\MedicalRecords\Ccda;
 use App\Models\MedicalRecords\ImportedMedicalRecord;
 use App\Practice;
@@ -93,34 +94,19 @@ class ImporterController extends Controller
         return view('CCDUploader.uploadedSummary');
     }
 
-    //Train the Importing Algo
-    public function train(Request $request)
-    {
-        if (!$request->hasFile('medical_record')) {
-            return 'Please upload a CCDA';
+    public function getTrainingResults($imrId) {
+            $importedMedicalRecord = ImportedMedicalRecord::find($imrId);
+
+            if (!$importedMedicalRecord) {
+                return "Could not find an Imported Medical Record with this ID";
+            }
+
+            $ccda = $importedMedicalRecord->medicalRecord();
+
+        if (!$ccda) {
+            return "Could not find the CCDA for this Imported Medical Record.";
         }
-
-        $file = $request->file('medical_record');
-
-        if ($file->getClientOriginalExtension() == 'csv') {
-            dispatch((new ImportCsvPatientList(parseCsvToArray($file), $file->getClientOriginalName())));
-        } //assume XML CCDA
-        else {
-            $xml = file_get_contents($file);
-
-            $json = $this->repo->toJson($xml);
-
-            $ccda = Ccda::create([
-                'user_id'   => auth()->user()->id,
-                'vendor_id' => 1,
-                'xml'       => $xml,
-                'json'      => $json,
-                'source'    => Ccda::IMPORTER,
-            ]);
-
-            $importedMedicalRecord = $ccda->import();
-
-            //gather the features for review
+        //gather the features for review
             $document = $ccda->document->first();
             $providers = $ccda->providers;
 
@@ -163,7 +149,29 @@ class ImporterController extends Controller
                 'providers',
                 'importedMedicalRecord',
             ]));
+    }
+
+    //Train the Importing Algo
+    public function train(Request $request)
+    {
+        if (!$request->hasFile('medical_record')) {
+            return 'Please upload a CCDA';
         }
+
+        $file = $request->file('medical_record');
+
+        if ($file->getClientOriginalExtension() == 'csv') {
+            dispatch((new ImportCsvPatientList(parseCsvToArray($file), $file->getClientOriginalName())));
+
+            $link = link_to_route('view.files.ready.to.import',
+                'Visit to CCDs Ready to Import page to review imported files.');
+
+            return "The CSV list is being processed. $link";
+        } //assume XML CCDA
+
+        dispatch(new TrainCcdaImporter(file_get_contents($file)));
+
+        return "The CCDA is being processed. A message will be sent to #ccda-trainer on Slack when completed";
     }
 
     public function storeTrainingFeatures(Request $request)

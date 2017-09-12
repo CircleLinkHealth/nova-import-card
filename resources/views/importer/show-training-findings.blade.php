@@ -4,7 +4,7 @@
     <div id="trainer-results" class="container-fluid">
 
         <h1>Hola, human.</h1>
-        <h1>Here's what I see as feautures to help me identify future CCDs from this Practice. Please check off
+        <h1>Here's what I see as features to help me identify future CCDs from this Practice. Please check off
             irrelevant information. Information such as 'athenahealth' is too broad, so it should not be saved.</h1>
 
         <form class="form-group" action="{{route('post.store.training.features')}}" method="POST">
