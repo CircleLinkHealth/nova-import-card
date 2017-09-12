@@ -1105,7 +1105,10 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
 
     public function getAgeAttribute()
     {
-        $from = new DateTime($this->birthDate);
+        //in case the date is passed with - separators
+        $dob = str_replace('-', '/', $this->birthDate);
+
+        $from = new DateTime($dob);
         $to = new DateTime('today');
 
         return $from->diff($to)->y;
