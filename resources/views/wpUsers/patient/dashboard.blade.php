@@ -83,7 +83,7 @@
             </div>
         </div>
 
-        @if(auth()->user()->nurseInfo && auth()->user()->hasRole(['care-center']))
+        @if($nurse)
             <div id="v-show-nurse-work-schedule" class="row-centered nurse-dashboard-schedule">
                 <notifications class="text-left"></notifications>
                 <div class="row">
@@ -98,9 +98,9 @@
                             </a>
                         </div>
                         @include('partials.care-center.work-schedule-slot.index', [
-                                   'windows' => auth()->user()->nurseInfo->windows,
-                                   'holidaysThisWeek' => auth()->user()->nurseInfo->holidays_this_week,
-                                   'nurse' => auth()->user()->nurseInfo
+                                   'windows' => $nurse->windows,
+                                   'holidaysThisWeek' => $nurse->holidays_this_week,
+                                   'nurse' => $nurse
                                ])
                     </div>
                 </div>
@@ -113,7 +113,7 @@
                             </h3>
                         </div>
                         @include('partials.care-center.holiday-schedule.index', [
-                                    'holidays' => auth()->user()->nurseInfo->upcoming_holiday_dates
+                                    'holidays' => $nurse->upcoming_holiday_dates
                                 ])
                     </div>
                 </div>
