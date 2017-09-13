@@ -231,6 +231,11 @@ Route::group(['middleware' => 'auth'], function () {
         'as'   => 'ccd-old-viewer.post',
     ]);
 
+    Route::get('imported-medical-record/{imrId}/training-results', [
+        'uses' => 'ImporterController@getTrainingResults',
+        'as'   => 'get.importer.training.results',
+    ]);
+
     Route::post('importer/train', [
         'uses' => 'ImporterController@train',
         'as'   => 'post.train.importing.algorithm',

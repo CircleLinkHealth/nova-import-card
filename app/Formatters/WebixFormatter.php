@@ -254,34 +254,21 @@ class WebixFormatter implements ReportFormatter
             if ($metric == 'Blood Pressure') {
 
                 if ($biometric_values['starting'] == 'N/A' || $biometric_values['target'] == 'TBD') {
-
                     $biometric_values['verb'] = 'Regulate';
-
                 } else {
-
                     $starting = explode('/', $biometric_values['starting']);
                     $starting = $starting[0];
                     $target = explode('/', $biometric_values['target']);
                     $target = $target[0];
 
                     if ($starting > $target) {
-
                         $biometric_values['verb'] = 'Decrease';
-
                     } else {
-                        if ($starting < $target) {
-
+                        if ($starting < 90) {
                             $biometric_values['verb'] = 'Increase';
-
                         } else {
-
                             $biometric_values['verb'] = 'Regulate';
-
                         }
-                    }
-
-                    if ($starting >= 100 && $starting <= 130) {
-                        $biometric_values['verb'] = 'Regulate';
                     }
                 }
 

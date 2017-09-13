@@ -1064,7 +1064,7 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
             return '';
         }
 
-        return $this->patientInfo->birth_date;
+        return str_replace('-', '/', $this->patientInfo->birth_date);
     }
 
     public function setBirthDateAttribute($value)
@@ -1072,7 +1072,7 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
         if (!$this->patientInfo) {
             return '';
         }
-        $this->patientInfo->birth_date = $value;
+        $this->patientInfo->birth_date = str_replace('-', '/', $value);
         $this->patientInfo->save();
 
         return true;
@@ -1105,10 +1105,7 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
 
     public function getAgeAttribute()
     {
-        //in case the date is passed with - separators
-        $dob = str_replace('-', '/', $this->birthDate);
-
-        $from = new DateTime($dob);
+        $from = new DateTime($this->birthDate);
         $to = new DateTime('today');
 
         return $from->diff($to)->y;
@@ -2367,24 +2364,6 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
             ->withTimestamps();
     }
 
-    /**
-     * Get the User's Primary Or Global Role
-     *
-     * @return Role|null
-     */
-    public function practiceOrGlobalRole()
-    {
-        if ($this->practice($this->primaryPractice)) {
-            $primaryPractice = $this->practice($this->primaryPractice);
-
-            if ($primaryPractice->pivot->role_id) {
-                return Role::find($primaryPractice->pivot->role_id);
-            }
-        }
-
-        return $this->roles->first();
-    }
-
     public function getCareplanModeAttribute()
     {
         $careplanMode = null;
@@ -2415,5 +2394,23 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
     {
         return $this->can('care-plan-approve')
             || ($this->practiceOrGlobalRole()->name == 'registered-nurse' && $this->primaryPractice->settings[0]->rn_can_approve_careplans);
+    }
+
+    /**
+     * Get the User's Primary Or Global Role
+     *
+     * @return Role|null
+     */
+    public function practiceOrGlobalRole()
+    {
+        if ($this->practice($this->primaryPractice)) {
+            $primaryPractice = $this->practice($this->primaryPractice);
+
+            if ($primaryPractice->pivot->role_id) {
+                return Role::find($primaryPractice->pivot->role_id);
+            }
+        }
+
+        return $this->roles->first();
     }
 }

@@ -404,30 +404,5 @@ class CcdApiController extends Controller
         $link = route('view.files.ready.to.import');
 
         sendSlackMessage('#ccd-file-status', "Aprima sent a CCD. It went {$status}. \n Please visit {$link} to import.");
-
-        //REPLACE EMAILS WITH SLACK
-//        $recipients = [
-//            'rohanm@circlelinkhealth.com',
-//            'mantoniou@circlelinkhealth.com',
-//            'jkatz@circlelinkhealth.com',
-//            'Raph@circlelinkhealth.com',
-//            'kgallo@circlelinkhealth.com',
-//        ];
-//
-//        $view = 'emails.aprimaSentCCDs';
-//        $subject = "Aprima sent a CCD. It went {$status}.";
-//
-//        $data = [
-//            'ccdId' => $ccda->id,
-//            'errorMessage' => $errorMessage,
-//            'userId' => $user->id,
-//            'line' => $line,
-//            'providerInfo' => $providerInfo
-//        ];
-//
-//        Mail::send($view, $data, function ($message) use ($recipients, $subject) {
-//            $message->from('aprima-api@careplanmanager.com', 'CircleLink Health');
-//            $message->to($recipients)->subject($subject);
-//        });
     }
 }
