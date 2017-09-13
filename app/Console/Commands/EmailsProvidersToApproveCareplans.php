@@ -181,12 +181,6 @@ class EmailsProvidersToApproveCareplans extends Command
                         ->subject($subject);
                 });
             }
-
-            try {
-                sendSlackMessage('#background-tasks', "Sent pending approvals email to {$recipient->fullName}.");
-            } catch (\Exception $e) {
-
-            }
         }
     }
 }

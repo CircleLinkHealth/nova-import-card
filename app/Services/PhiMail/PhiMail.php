@@ -154,7 +154,6 @@ class PhiMail
                 $message = $this->connector->check();
 
                 if ($message == null) {
-                    sendSlackMessage('#background-tasks-dev', "Checked EMR Direct Mailbox. There where no messages. \n" . env('DB_DATABASE'));
                     break;
                 }
 

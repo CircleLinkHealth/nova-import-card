@@ -50,11 +50,5 @@ class GetCcds extends Command
         foreach ($vendors as $vendor) {
             $this->service->getCcdsFromRequestQueue(5);
         }
-
-        if (app()->environment('worker')) {
-            sendSlackMessage('#background-tasks', "Grabbing CCDs from Athena CCDA request queue. \n");
-        }
-
-
     }
 }
