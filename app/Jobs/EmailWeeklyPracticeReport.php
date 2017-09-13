@@ -75,9 +75,6 @@ class EmailWeeklyPracticeReport implements ShouldQueue
                 $message->from('notifications@careplanmanager.com', 'CircleLink Health');
                 $message->to($recipient)->subject($subjectPractice);
             });
-
-            sendSlackMessage('#background-tasks',
-                "The CPMbot just sent the organization weekly summary for $this->practice->display_name to $recipient");
         }
     }
 }
