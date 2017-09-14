@@ -54,6 +54,8 @@ class PracticeInvoiceGenerator
 
         }
 
+        $data['practiceId'] = $this->practice->id;
+
         return $data;
 
     }
