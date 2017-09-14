@@ -196,7 +196,6 @@ return [
         \Maatwebsite\Excel\ExcelServiceProvider::class,
         Prettus\Repository\Providers\RepositoryServiceProvider::class,
         Yajra\Datatables\DatatablesServiceProvider::class,
-        App\Providers\AWSWorkerServiceProvider::class,
         Spatie\GoogleCalendar\GoogleCalendarServiceProvider::class,
         ObserversServiceProvider::class,
         Barryvdh\Debugbar\ServiceProvider::class,

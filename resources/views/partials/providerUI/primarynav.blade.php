@@ -11,7 +11,7 @@
 
         </div>
 
-        <div class="col-md-3">
+        <div class="col-md-4" id="search-bar-container">
             @include('partials.search')
         </div>
 

@@ -91,10 +91,6 @@ class WorkScheduleController extends Controller
             'date' => Carbon::parse($request->input('holiday'))->format('Y-m-d'),
         ]);
 
-        $message = "Nurse {$user->display_name} just added a holiday on {$holiday->date->format('l, F j Y')}";
-
-        sendSlackMessage('#carecoachscheduling', $message);
-
         return redirect()->back();
     }
 

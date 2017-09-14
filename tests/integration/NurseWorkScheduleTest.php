@@ -164,8 +164,6 @@ class NurseWorkScheduleTest extends BrowserKitTestCase
 
         if (in_array($db, [
             'cpm_staging',
-            'cpm_testing',
-            'cpm_hotfix',
         ])) {
             sendSlackMessage('#qualityassurance', $text);
         }

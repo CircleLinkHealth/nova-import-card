@@ -144,10 +144,21 @@ if (isset($patient) && !empty($patient)) {
                             <ul class="subareas__list">
                                 <li class="subareas__item subareas__item--wide col-sm-12">
                                     @foreach(array_reverse($biometrics) as $key => $value)
-                                        <div class="col-xs-5 print-row text-bold">{{ $value['verb'] }} {{$key}}</div>
-                                        <div class="col-xs-4 print-row text-bold">{{($value['verb'] == 'Maintain') ? 'at' :  'to' }} {{str_replace('sbp','mm Hg', $value['target'])}}</div>
-                                        <div class="col-xs-3 print-row">
-                                            from {{str_replace('sbp','mm Hg', $value['starting'])}}</div>
+                                        @if ($key == 'Blood Pressure')
+
+                                            <div class="col-xs-5 print-row text-bold">{{ $value['verb'] }} {{$key}}</div>
+                                            <div class="col-xs-4 print-row text-bold">{{($value['verb'] == 'Regulate') ? 'keep under' :  'to' }} {{$value['target']}}</div>
+                                            <div class="col-xs-3 print-row">
+                                                from {{$value['starting']}}</div>
+
+                                        @else
+
+                                            <div class="col-xs-5 print-row text-bold">{{ $value['verb'] }} {{$key}}</div>
+                                            <div class="col-xs-4 print-row text-bold">{{($value['verb'] == 'Maintain') ? 'at' :  'to' }} {{$value['target']}}</div>
+                                            <div class="col-xs-3 print-row">
+                                                from {{$value['starting']}}</div>
+
+                                        @endif
                                     @endforeach
                                 </li>
                             </ul>

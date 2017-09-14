@@ -4,6 +4,7 @@ use App\CLH\Repositories\CCDImporterRepository;
 use App\Importer\Models\ItemLogs\DocumentLog;
 use App\Importer\Models\ItemLogs\ProviderLog;
 use App\Jobs\ImportCsvPatientList;
+use App\Jobs\TrainCcdaImporter;
 use App\Models\MedicalRecords\Ccda;
 use App\Models\MedicalRecords\ImportedMedicalRecord;
 use App\Practice;
@@ -93,6 +94,64 @@ class ImporterController extends Controller
         return view('CCDUploader.uploadedSummary');
     }
 
+    public function getTrainingResults($imrId)
+    {
+        $importedMedicalRecord = ImportedMedicalRecord::find($imrId);
+
+        if (!$importedMedicalRecord) {
+            return "Could not find an Imported Medical Record with this ID";
+        }
+
+        $ccda = $importedMedicalRecord->medicalRecord();
+
+        if (!$ccda) {
+            return "Could not find the CCDA for this Imported Medical Record.";
+        }
+        //gather the features for review
+        $document = $ccda->document->first();
+        $providers = $ccda->providers;
+
+        $predictedLocationId = $importedMedicalRecord->location_id;
+        $predictedPracticeId = $importedMedicalRecord->practice_id;
+        $predictedBillingProviderId = $importedMedicalRecord->billing_provider_id;
+        $practicesCollection = Practice::with('locations.providers')
+            ->get([
+                'id',
+                'display_name',
+            ]);
+
+        //fixing up the data for vue. basically keying locations and providers by id
+        $practices = $practicesCollection->keyBy('id')
+            ->map(function ($practice) {
+                return [
+                    'id'           => $practice->id,
+                    'display_name' => $practice->display_name,
+                    'locations'    => $practice->locations->map(function ($loc) {
+                        //is there no better way to do this?
+                        $loc = new Collection($loc);
+
+                        $loc['providers'] = collect($loc['providers'])->keyBy('id');
+
+                        return $loc;
+                    })
+                        ->keyBy('id'),
+                ];
+            });
+
+        \JavaScript::put([
+            'practices'                  => $practices,
+            'predictedBillingProviderId' => $predictedBillingProviderId,
+            'predictedLocationId'        => $predictedLocationId,
+            'predictedPracticeId'        => $predictedPracticeId,
+        ]);
+
+        return view('importer.show-training-findings', compact([
+            'document',
+            'providers',
+            'importedMedicalRecord',
+        ]));
+    }
+
     //Train the Importing Algo
     public function train(Request $request)
     {
@@ -104,66 +163,25 @@ class ImporterController extends Controller
 
         if ($file->getClientOriginalExtension() == 'csv') {
             dispatch((new ImportCsvPatientList(parseCsvToArray($file), $file->getClientOriginalName())));
+
+            $link = link_to_route('view.files.ready.to.import',
+                'Visit to CCDs Ready to Import page to review imported files.');
+
+            return "The CSV list is being processed. $link";
         } //assume XML CCDA
-        else {
-            $xml = file_get_contents($file);
 
-            $json = $this->repo->toJson($xml);
+        $path = storage_path('ccdas/import/') . str_random(30) . '.xml';
 
-            $ccda = Ccda::create([
-                'user_id'   => auth()->user()->id,
-                'vendor_id' => 1,
-                'xml'       => $xml,
-                'json'      => $json,
-                'source'    => Ccda::IMPORTER,
-            ]);
+        $ccda = Ccda::create([
+            'user_id'   => auth()->user()->id,
+            'vendor_id' => 1,
+            'xml'       => file_get_contents($file),
+            'source'    => Ccda::IMPORTER,
+        ]);
 
-            $importedMedicalRecord = $ccda->import();
+        dispatch(new TrainCcdaImporter($ccda));
 
-            //gather the features for review
-            $document = $ccda->document->first();
-            $providers = $ccda->providers;
-
-            $predictedLocationId = $importedMedicalRecord->location_id;
-            $predictedPracticeId = $importedMedicalRecord->practice_id;
-            $predictedBillingProviderId = $importedMedicalRecord->billing_provider_id;
-            $practicesCollection = Practice::with('locations.providers')
-                ->get([
-                    'id',
-                    'display_name',
-                ]);
-
-            //fixing up the data for vue. basically keying locations and providers by id
-            $practices = $practicesCollection->keyBy('id')
-                ->map(function ($practice) {
-                    return [
-                        'id'           => $practice->id,
-                        'display_name' => $practice->display_name,
-                        'locations'    => $practice->locations->map(function ($loc) {
-                            //is there no better way to do this?
-                            $loc = new Collection($loc);
-
-                            $loc['providers'] = collect($loc['providers'])->keyBy('id');
-
-                            return $loc;
-                        })
-                            ->keyBy('id'),
-                    ];
-                });
-
-            \JavaScript::put([
-                'predictedLocationId'        => $predictedLocationId,
-                'predictedPracticeId'        => $predictedPracticeId,
-                'predictedBillingProviderId' => $predictedBillingProviderId,
-                'practices'                  => $practices,
-            ]);
-
-            return view('importer.show-training-findings', compact([
-                'document',
-                'providers',
-                'importedMedicalRecord',
-            ]));
-        }
+        return "The CCDA is being processed. A message will be sent to #ccda-trainer on Slack when completed";
     }
 
     public function storeTrainingFeatures(Request $request)

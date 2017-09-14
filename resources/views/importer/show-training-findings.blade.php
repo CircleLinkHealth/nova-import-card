@@ -4,7 +4,7 @@
     <div id="trainer-results" class="container-fluid">
 
         <h1>Hola, human.</h1>
-        <h1>Here's what I see as feautures to help me identify future CCDs from this Practice. Please check off
+        <h1>Here's what I see as features to help me identify future CCDs from this Practice. Please check off
             irrelevant information. Information such as 'athenahealth' is too broad, so it should not be saved.</h1>
 
         <form class="form-group" action="{{route('post.store.training.features')}}" method="POST">
@@ -61,14 +61,14 @@
                     <h1>Practice</h1>
 
                     <select v-model="practice" class="col-md-12" name="practiceId">
-                        <option v-for="p in practices" v-bind:value="p.id">@{{ p.display_name }}</option>
+                        <option v-for="p in practices" :value="p.id">@{{ p.display_name }}</option>
                     </select>
                 </div>
                 <div class="col-md-4">
                     <h1>Location</h1>
 
                     <select v-model="location" class="col-md-12" name="locationId">
-                        <option v-for="l in locations" v-bind:value="l.id">@{{ l.name }}</option>
+                        <option v-for="l in locations" :value="l.id">@{{ l.name }}</option>
                     </select>
                 </div>
                 <div class="col-md-4">
@@ -76,7 +76,7 @@
 
                     <select v-model="billingProvider" class="col-md-12" name="billingProviderId">
                         <option v-for="prov in providers"
-                                v-bind:value="prov.id">@{{ prov.first_name }} @{{ prov.last_name }}</option>
+                                :value="prov.id">@{{ prov.first_name }} @{{ prov.last_name }}</option>
                     </select>
                 </div>
             </div>
@@ -91,5 +91,5 @@
 @endsection
 
 @section('scripts')
-    <script src="/js/importer-training.js"></script>
+    <script src="/compiled/js/importer-training.js"></script>
 @endsection
