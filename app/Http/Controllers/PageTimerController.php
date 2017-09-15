@@ -56,22 +56,8 @@ class PageTimerController extends Controller
         //Difference between start and end dates on the server
         $duration = ceil($totalTime / 1000);
 
-        if ($totalTime < 1) {
-            $error = __METHOD__ . ' ' . __LINE__;
-            $message = "Time Tracking Error: $error" . PHP_EOL;
-            $message .= " Data: " . json_encode($data);
-            $message .= " Env: " . env('APP_ENV');
-
-            sendSlackMessage('#time-tracking-issues', $message);
-        }
-
         $startTime = Carbon::createFromFormat('Y-m-d H:i:s', $data['startTime']);
         $endTime = $startTime->copy()->addSeconds($duration);
-
-        if (app()->environment('testing') || isset($data['testing'])) {
-            $endTime = Carbon::createFromFormat('Y-m-d H:i:s', $data['testEndTime']);
-            $duration = $startTime->diffInSeconds($endTime);
-        }
 
         $loc = $data['redirectLocation'] ?? null;
 
@@ -97,24 +83,6 @@ class PageTimerController extends Controller
         $newActivity->activity_type = $data['activity'];
         $newActivity->title = $data['title'];
 
-        if ($patientId) {
-            $exists = PatientSession::where('user_id', '=', $providerId)
-                ->where('patient_id', '=', $patientId)
-                ->exists();
-
-
-            //If the user does not have an open session with this patient, save page timer as soft deleted and go back.
-            if (!$exists) {
-//                $newActivity->processed = 'N';
-                $newActivity->redirect_to = 'Double Tab';
-//                $newActivity->save();
-//                $newActivity->delete();
-//
-//                return response('', 200);
-            }
-        }
-
-
         $overlaps = PageTimer::where('provider_id', '=', $providerId)
             ->where([
                 [
@@ -133,41 +101,18 @@ class PageTimerController extends Controller
             ->get();
 
         if (!$overlaps->isEmpty() && $startTime->diffInSeconds($endTime) > 0) {
-
             $overlapsAsc = $overlaps->sortBy('start_time');
             $this->timeTrackingService->figureOutOverlaps($newActivity, $overlapsAsc);
-
         } else {
-
             $newActivity->billable_duration = $duration;
             $newActivity->end_time = $startTime->addSeconds($duration)->toDateTimeString();
             $newActivity->save();
-
-        }
-
-        //
-
-        if ($newActivity->billable_duration > 3600) {
-            $error = __METHOD__ . ' ' . __LINE__;
-            $message = "Time Tracking Error: $error" . PHP_EOL . PHP_EOL;
-            $message .= " Data From Browser: " . json_encode($data) . PHP_EOL . PHP_EOL;
-            $message .= " PageTimer Object id {$newActivity->id}: " . json_encode($newActivity) . PHP_EOL . PHP_EOL;
-            $message .= " Env: " . env('APP_ENV');
-
-            sendSlackMessage('#time-tracking-issues', $message);
-
-            $newActivity->delete();
-
-            return response('', 200);
-
         }
 
         $activityId = $this->addPageTimerActivities($newActivity);
 
         if ($activityId) {
-
             $this->handleNurseLogs($activityId);
-
         }
 
         return response("PageTimer Logged, duration:" . $duration, 201);
