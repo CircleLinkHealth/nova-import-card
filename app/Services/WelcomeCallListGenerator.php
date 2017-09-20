@@ -384,8 +384,14 @@ class WelcomeCallListGenerator
     /**
      * Exports the Patient List to a csv file.
      */
-    public function exportToCsv()
+    public function exportToCsv($storeOnServer = false, $filenamePrefix = null)
     {
+        $filename = "Welcome Call List";
+
+        if ($filenamePrefix) {
+            $filename = "$filenamePrefix $filename";
+        }
+
         $now = Carbon::now()->toDateTimeString();
 
         $this->patientList = $this->patientList->map(function ($patient) {
@@ -434,13 +440,19 @@ class WelcomeCallListGenerator
             return $patientArr;
         });
 
-        return Excel::create("Welcome Call List - $now", function ($excel) {
+        $excel = Excel::create("$filename - $now", function ($excel) {
             $excel->sheet('Welcome Calls', function ($sheet) {
                 $sheet->fromArray(
                     $this->patientList->values()->all()
                 );
             });
-        })->export('xls');
+        });
+
+        if ($storeOnServer) {
+            $excel->store('xls', $path = false, $returnInfo = false);
+        }
+
+        return $excel->export('xls');
     }
 
     /**

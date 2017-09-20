@@ -131,7 +131,8 @@ class WelcomeCallListController extends Controller
      */
     public function makePhoenixHeartCallList()
     {
-        $names = PhoenixHeartName::get()
+        $names = PhoenixHeartName::where('processed', '=', false)
+            ->get()
             ->keyBy('patient_id');
 
         $patientList = $names->map(function ($patient) {
@@ -166,12 +167,17 @@ class WelcomeCallListController extends Controller
             $patient->put('primary_insurance', $insurances->get(0)->name ?? null);
             $patient->put('secondary_insurance', $insurances->get(1)->name ?? null);
 
+            PhoenixHeartName::where('patient_id', '=', $patient['patient_id'])
+                ->update([
+                    'processed' => true
+                ]);
+
             return $patient;
         });
 
         $list = (new WelcomeCallListGenerator($patientList, false, true, true, false));
 
-        $list->exportToCsv();
+        $list->exportToCsv(true, 'Phoenix Heart');
 //        $list->exportIneligibleToCsv();
     }
 }
