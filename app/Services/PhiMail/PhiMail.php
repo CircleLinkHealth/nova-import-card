@@ -9,20 +9,20 @@ use Maknz\Slack\Facades\Slack;
 class PhiMail
 {
     protected $ccdas = [];
+    private $connector;
 
     public function __construct()
     {
-        $phiMailUser = env('EMR_DIRECT_USER');
-        $phiMailPass = env('EMR_DIRECT_PASSWORD');
-
         if (!$this->initPhiMailConnection()) {
             return false;
         }
-        $this->connector->authenticateUser($phiMailUser, $phiMailPass);
     }
 
     private function initPhiMailConnection() {
         try {
+            $phiMailUser = env('EMR_DIRECT_USER');
+            $phiMailPass = env('EMR_DIRECT_PASSWORD');
+
             // Use the following command to enable client TLS authentication, if
             // required. The key file referenced should contain the following
             // PEM data concatenated into one file:
@@ -44,13 +44,14 @@ class PhiMail
             $phiMailPort = env('EMR_DIRECT_PORT');
 
             $this->connector = new PhiMailConnector($phiMailServer, $phiMailPort);
+            $this->connector->authenticateUser($phiMailUser, $phiMailPass);
+
+            return true;
         } catch (\Exception $e) {
             Log::critical($e);
-
-            return false;
         }
 
-        return true;
+        return false;
     }
 
     public function __destruct()
