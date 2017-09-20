@@ -12,6 +12,7 @@ class PhiMail
 
     public function __construct()
     {
+        return;
         $phiMailServer = env('EMR_DIRECT_MAIL_SERVER');
         $phiMailPort = env('EMR_DIRECT_PORT');
         $phiMailUser = env('EMR_DIRECT_USER');
