@@ -19,6 +19,7 @@ use App\Console\Commands\ProcessCcdaLGHMixup;
 use App\Console\Commands\QueueCcdasToConvertToJson;
 use App\Console\Commands\QueueCcdasToProcess;
 use App\Console\Commands\QueueCcdaToDetermineEnrollmentEligibility;
+use App\Console\Commands\QueueMakeWelcomeCallsList;
 use App\Console\Commands\QueueSendAuditReports;
 use App\Console\Commands\RecalculateCcmTime;
 use App\Console\Commands\ResetCcmTime;
@@ -60,6 +61,7 @@ class Kernel extends ConsoleKernel
         ImportLGHInsurance::class,
         CheckEmrDirectInbox::class,
         EmailWeeklyReports::class,
+        QueueMakeWelcomeCallsList::class,
     ];
 
     /**

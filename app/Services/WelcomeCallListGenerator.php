@@ -252,7 +252,7 @@ class WelcomeCallListGenerator
 
         $this->patientList = $this->patientList->reject(function ($row) {
             $primary = strtolower($row['primary_insurance'] ?? null);
-            $secondary = strtolower($row['secondary_insurance']  ?? null);
+            $secondary = strtolower($row['secondary_insurance'] ?? null);
 
             //Change none to an empty string
             if (str_contains($primary, 'none')) {
@@ -384,7 +384,7 @@ class WelcomeCallListGenerator
     /**
      * Exports the Patient List to a csv file.
      */
-    public function exportToCsv($storeOnServer = false, $filenamePrefix = null)
+    public function exportToCsv($download = true, $storeOnServer = false, $filenamePrefix = null)
     {
         $filename = "Welcome Call List";
 
@@ -452,7 +452,9 @@ class WelcomeCallListGenerator
             $excel->store('xls', $path = false, $returnInfo = false);
         }
 
-        return $excel->export('xls');
+        if ($download) {
+            return $excel->export('xls');
+        }
     }
 
     /**
