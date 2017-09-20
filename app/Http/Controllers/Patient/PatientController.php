@@ -29,7 +29,14 @@ class PatientController extends Controller
     {
         $pendingApprovals = CarePlan::getNumberOfCareplansPendingApproval(auth()->user());
 
-        return view('wpUsers.patient.dashboard', compact(['pendingApprovals']));
+        $nurse = null;
+
+        if (auth()->user()->nurseInfo && auth()->user()->hasRole(['care-center'])) {
+            $nurse = auth()->user()->nurseInfo;
+            auth()->user()->nurseInfo->workhourables()->firstOrCreate([]);
+        }
+
+        return view('wpUsers.patient.dashboard', compact(['pendingApprovals', 'nurse']));
     }
 
     /**

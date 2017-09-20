@@ -1,65 +1,47 @@
 require('./bootstrap');
 
 window.Vue = require('vue');
-window.Vue.use(require('vue-resource'));
 
-const vm = new Vue({
+window.axios.defaults.baseURL = $('meta[name="base-url"]').attr('content');
+
+window.App = new Vue({
     el: '#trainer-results',
 
     data: {
-        practices: [],
+        practices: cpm.practices,
         locationsCollection: [],
         providersCollection: [],
-        practice: null,
-        location: null,
-        billingProvider: null,
-    },
-
-    mounted: function () {
-        this.practices = cpm.practices;
-        this.practice = cpm.predictedPracticeId;
-        this.location = cpm.predictedLocationId;
-        this.billingProvider = cpm.predictedBillingProviderId;
+        practice: cpm.predictedPracticeId,
+        location: cpm.predictedLocationId,
+        billingProvider: cpm.predictedBillingProviderId,
     },
 
     computed: {
         locations: function () {
-            let self = this;
-            
-            if (self.practice === null) {
-                Vue.nextTick(function () {
-                    self.location = null;
-                    self.billingProvider = null;
-                    self.providersCollection = [];
-                });
+            if (_.isNull(this.practice)) {
+                this.location = null;
+                this.billingProvider = null;
+                this.providersCollection = [];
 
                 return [];
             }
 
-            Vue.nextTick(function () {
-                self.locationsCollection = self.practices[self.practice].locations;
-            });
+            this.locationsCollection = this.practices[this.practice].locations;
 
-            return self.locationsCollection;
+            return this.locationsCollection;
         },
 
         providers: function () {
-            let self = this;
-            
-            if (self.location === null || !self.practices[self.practice].locations[self.location]) {
-                Vue.nextTick(function () {
-                    self.billingProvider = null;
-                    self.providersCollection = [];
-                });
+            if (this.location === null || !this.practices[this.practice].locations[this.location]) {
+                this.billingProvider = null;
+                this.providersCollection = [];
 
                 return [];
             }
 
-            Vue.nextTick(function () {
-                self.providersCollection = self.locations[self.location].providers;
-            });
+            this.providersCollection = this.locations[this.location].providers;
 
-            return self.providersCollection;
+            return this.providersCollection;
         }
     }
 });

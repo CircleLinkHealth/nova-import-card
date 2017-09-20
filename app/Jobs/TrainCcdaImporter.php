@@ -14,18 +14,16 @@ use Illuminate\Queue\SerializesModels;
 class TrainCcdaImporter implements ShouldQueue
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
-    private $file;
-    private $authUser;
+    private $ccda;
 
     /**
      * Create a new job instance.
      *
      * @return void
      */
-    public function __construct($path, User $authUser)
+    public function __construct(Ccda $ccda)
     {
-        $this->file = file_get_contents($path);
-        $this->authUser = $authUser;
+        $this->ccda = $ccda;
     }
 
     /**
@@ -35,22 +33,15 @@ class TrainCcdaImporter implements ShouldQueue
      */
     public function handle()
     {
-        $xml = $this->file;
+        $json = (new CCDImporterRepository())->toJson($this->ccda->xml);
 
-        $json = (new CCDImporterRepository())->toJson($xml);
+        $this->ccda->json = $json;
+        $this->ccda->save();
 
-        $ccda = Ccda::create([
-            'user_id'   => $this->authUser->id ?? null,
-            'vendor_id' => 1,
-            'xml'       => $xml,
-            'json'      => $json,
-            'source'    => Ccda::IMPORTER,
-        ]);
-
-        $importedMedicalRecord = $ccda->import();
+        $importedMedicalRecord = $this->ccda->import();
 
         $link = link_to_route('get.importer.training.results',
-            "Click to review training results for Imported MEdical Record with id {$importedMedicalRecord->id}", [
+            "Click to review training results for Imported Medical Record with id {$importedMedicalRecord->id}", [
                 'imrId' => $importedMedicalRecord->id,
             ]);
 
