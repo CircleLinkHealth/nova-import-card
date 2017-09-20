@@ -8,7 +8,7 @@ use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
 
 //Call Lists TEMP
-//(new WelcomeCallListController(new \Illuminate\Http\Request()))->makePhoenixHeartCallList();
+//(new App\Http\Controllers\Admin\WelcomeCallListController(new \Illuminate\Http\Request()))->makePhoenixHeartCallList();
 
 Route::post('send-sample-fax', function (Illuminate\Http\Request $request) {
     $number = (new StringManipulation())->formatPhoneNumberE164($request->input('fax_number'));

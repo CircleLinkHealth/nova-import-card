@@ -252,7 +252,7 @@ class WelcomeCallListGenerator
 
         $this->patientList = $this->patientList->reject(function ($row) {
             $primary = strtolower($row['primary_insurance'] ?? null);
-            $secondary = strtolower($row['secondary_insurance']  ?? null);
+            $secondary = strtolower($row['secondary_insurance'] ?? null);
 
             //Change none to an empty string
             if (str_contains($primary, 'none')) {
@@ -384,8 +384,14 @@ class WelcomeCallListGenerator
     /**
      * Exports the Patient List to a csv file.
      */
-    public function exportToCsv()
+    public function exportToCsv($download = true, $storeOnServer = false, $filenamePrefix = null)
     {
+        $filename = "Welcome Call List";
+
+        if ($filenamePrefix) {
+            $filename = "$filenamePrefix $filename";
+        }
+
         $now = Carbon::now()->toDateTimeString();
 
         $this->patientList = $this->patientList->map(function ($patient) {
@@ -434,13 +440,21 @@ class WelcomeCallListGenerator
             return $patientArr;
         });
 
-        return Excel::create("Welcome Call List - $now", function ($excel) {
+        $excel = Excel::create("$filename - $now", function ($excel) {
             $excel->sheet('Welcome Calls', function ($sheet) {
                 $sheet->fromArray(
                     $this->patientList->values()->all()
                 );
             });
-        })->export('xls');
+        });
+
+        if ($storeOnServer) {
+            $excel->store('xls', $path = false, $returnInfo = false);
+        }
+
+        if ($download) {
+            return $excel->export('xls');
+        }
     }
 
     /**
