@@ -48,7 +48,7 @@ class PhiMail
 
             return true;
         } catch (\Exception $e) {
-            Log::critical($e);
+            $this->handleException($e);
         }
 
         return false;
