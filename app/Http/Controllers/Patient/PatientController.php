@@ -31,7 +31,8 @@ class PatientController extends Controller
         $pendingApprovals = CarePlan::getNumberOfCareplansPendingApproval(auth()->user());
 
         $nurse = null;
-        $patientsPendingApproval = null;
+        $patientsPendingApproval = [];
+        $showPatientsPendingApprovalBox = false;
 
         if (auth()->user()->nurseInfo && auth()->user()->hasRole(['care-center'])) {
             $nurse = auth()->user()->nurseInfo;
