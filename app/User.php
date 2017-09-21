@@ -2413,4 +2413,52 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
 
         return $this->roles->first();
     }
+
+    public function patientList() {
+        return User::intersectPracticesWith($this)
+            ->ofType('participant')
+            ->whereHas('patientInfo')
+            ->with('primaryPractice')
+            ->with('carePlan')
+            ->with([
+                'observations'    => function ($query) {
+                    $query->where('obs_key', '!=', 'Outbound');
+                    $query->orderBy('obs_date', 'DESC');
+                    $query->first();
+                },
+                'careTeamMembers' => function ($q) {
+                    $q->where('type', '=', CarePerson::BILLING_PROVIDER)
+                        ->with('user');
+                },
+                'phoneNumbers'    => function ($q) {
+                    $q->where('type', '=', PhoneNumber::HOME);
+                },
+            ])
+            ->get();
+    }
+
+    public function patientsPendingApproval() {
+        return User::intersectPracticesWith($this)
+            ->ofType('participant')
+            ->whereHas('patientInfo')
+            ->whereHas('carePlan', function ($q) {
+                $q->where('status', '=', CarePlan::QA_APPROVED);
+            })
+            ->with('primaryPractice')
+            ->with([
+                'observations'    => function ($query) {
+                    $query->where('obs_key', '!=', 'Outbound');
+                    $query->orderBy('obs_date', 'DESC');
+                    $query->first();
+                },
+                'careTeamMembers' => function ($q) {
+                    $q->where('type', '=', CarePerson::BILLING_PROVIDER)
+                        ->with('user');
+                },
+                'phoneNumbers'    => function ($q) {
+                    $q->where('type', '=', PhoneNumber::HOME);
+                }
+            ])
+            ->get();
+    }
 }
