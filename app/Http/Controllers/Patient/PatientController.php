@@ -245,16 +245,8 @@ class PatientController extends Controller
      *
      * @return Response
      */
-    public function showPatientListing(Request $request)
+    public function showPatientListing()
     {
-        //If returning back from after approving a careplan from /view-careplan,
-        //then update the status.
-        $input = $request->all();
-
-        if (isset($input['patient_approval_id'])) {
-            event(new CarePlanWasApproved(User::find($input['patient_approval_id'])));
-        }
-
         $data = (new WebixFormatter())->patientListing();
 
         return view('wpUsers.patient.listing', $data);
