@@ -83,41 +83,15 @@
             </div>
         </div>
 
-        @if(auth()->user()->nurseInfo && auth()->user()->hasRole(['care-center']))
-            <div id="v-show-nurse-work-schedule" class="row-centered nurse-dashboard-schedule">
-                <notifications class="text-left"></notifications>
-                <div class="row">
-                    <div class="col-md-12">
-                        <div class="row">
-                            <h3>
-                                Your Schedule ({{auth()->user()->timezone_abbr}})
-                            </h3>
-                            <a href="{{ route('care.center.work.schedule.index') }}" id="work-schedule-link"
-                               class="edit-work-schedule btn btn-primary">
-                                Create/Edit Schedule
-                            </a>
-                        </div>
-                        @include('partials.care-center.work-schedule-slot.index', [
-                                   'windows' => auth()->user()->nurseInfo->windows,
-                                   'holidaysThisWeek' => auth()->user()->nurseInfo->holidays_this_week,
-                                   'nurse' => auth()->user()->nurseInfo
-                               ])
-                    </div>
-                </div>
+        @if($nurse)
+            @include('partials.care-center.dashboard-schedule', [$nurse])
+        @endif
 
-                <div class="row">
-                    <div class="col-md-12">
-                        <div class="row">
-                            <h3>
-                                Your Days Off
-                            </h3>
-                        </div>
-                        @include('partials.care-center.holiday-schedule.index', [
-                                    'holidays' => auth()->user()->nurseInfo->upcoming_holiday_dates
-                                ])
-                    </div>
-                </div>
-            </div>
+    </div>
+
+    <div class="container-fluid">
+        @if($showPatientsPendingApprovalBox)
+            @include('partials.provider.patients-pending-approval')
         @endif
     </div>
 @stop

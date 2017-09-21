@@ -8,7 +8,7 @@ use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
 
 //Call Lists TEMP
-//(new WelcomeCallListController(new \Illuminate\Http\Request()))->makePhoenixHeartCallList();
+//(new App\Http\Controllers\Admin\WelcomeCallListController(new \Illuminate\Http\Request()))->makePhoenixHeartCallList();
 
 Route::post('send-sample-fax', function (Illuminate\Http\Request $request) {
     $number = (new StringManipulation())->formatPhoneNumberE164($request->input('fax_number'));
@@ -16,11 +16,7 @@ Route::post('send-sample-fax', function (Illuminate\Http\Request $request) {
     dd($faxTest);
 });
 
-Route::post('/send-sample-direct-mail', function (Illuminate\Http\Request $request) {
-    $phiMail = new PhiMail();
-    $test = $phiMail->send($request->input('direct_address'), public_path('assets/pdf/sample-note.pdf'));
-    dd($test);
-});
+Route::post('/send-sample-direct-mail', 'DemoController@sendSampleEMRNote');
 
 //Patient Landing Pages
 Route::resource('sign-up', 'PatientSignupController');
@@ -391,9 +387,15 @@ Route::group(['middleware' => 'auth'], function () {
             'uses' => 'Patient\PatientController@showPatientObservationCreate',
             'as'   => 'patient.observation.create',
         ]);
+
         Route::get('view-careplan', [
             'uses' => 'ReportsController@viewPrintCareplan',
             'as'   => 'patient.careplan.print',
+        ]);
+
+        Route::get('approve-careplan/{viewNext?}', [
+            'uses' => 'ProviderController@approveCarePlan',
+            'as'   => 'patient.careplan.approve',
         ]);
 
         Route::get('view-careplan/pdf', [

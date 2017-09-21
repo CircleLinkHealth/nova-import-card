@@ -42,7 +42,7 @@ mix.combine([
  * JS
  *
  */
-mix.js('resources/assets/js/importer-training.js', 'public/compiled/js');
+mix.js('resources/assets/js/importer-training.js', 'public/compiled/js').sourceMaps();
 
 //apps
 mix.js('resources/assets/js/app-provider-ui.js', 'public/compiled/js');

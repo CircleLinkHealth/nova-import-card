@@ -13,8 +13,8 @@
                         @foreach($invoices as $key => $value)
                             <li>
                                 <b>{{$key}}</b>
-                                <a href="{{url('/admin/download/'. $value['Invoice'])}}">Invoice</a> •
-                                <a href="{{url('/admin/download/'. $value['Patient Report'])}}">Patient Report</a>
+                                <a href="{{url('/admin/reports/monthly-billing/v2/downloadInvoice/'.$value['practiceId'].'/'. $value['Invoice'])}}">Invoice</a> •
+                                <a href="{{url('/admin/reports/monthly-billing/v2/downloadInvoice/'.$value['practiceId'].'/'. $value['Patient Report'])}}">Patient Report</a> •
                             </li>
                         @endforeach
 

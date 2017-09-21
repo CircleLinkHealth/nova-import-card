@@ -9,33 +9,49 @@ use Maknz\Slack\Facades\Slack;
 class PhiMail
 {
     protected $ccdas = [];
+    private $connector;
 
     public function __construct()
     {
-        $phiMailServer = env('EMR_DIRECT_MAIL_SERVER');
-        $phiMailPort = env('EMR_DIRECT_PORT');
-        $phiMailUser = env('EMR_DIRECT_USER');
-        $phiMailPass = env('EMR_DIRECT_PASSWORD');
+        if (!$this->initPhiMailConnection()) {
+            return false;
+        }
+    }
 
-        // Use the following command to enable client TLS authentication, if
-        // required. The key file referenced should contain the following
-        // PEM data concatenated into one file:
-        //   <your_private_key.pem>
-        //   <your_client_certificate.pem>
-        //   <intermediate_CA_certificate.pem>
-        //   <root_CA_certificate.pem>
-        //
-        PhiMailConnector::setClientCertificate(
-            base_path() . env('EMR_DIRECT_CONC_KEYS_PEM_PATH'),
-            env('EMR_DIRECT_PASS_PHRASE')
-        );
+    private function initPhiMailConnection() {
+        try {
+            $phiMailUser = env('EMR_DIRECT_USER');
+            $phiMailPass = env('EMR_DIRECT_PASSWORD');
 
-        // This command is recommended for added security to set the trusted
-        // SSL certificate or trust anchor for the phiMail server.
-        PhiMailConnector::setServerCertificate(base_path() . env('EMR_DIRECT_SERVER_CERT_PEM_PATH'));
+            // Use the following command to enable client TLS authentication, if
+            // required. The key file referenced should contain the following
+            // PEM data concatenated into one file:
+            //   <your_private_key.pem>
+            //   <your_client_certificate.pem>
+            //   <intermediate_CA_certificate.pem>
+            //   <root_CA_certificate.pem>
+            //
+            PhiMailConnector::setClientCertificate(
+                base_path() . env('EMR_DIRECT_CONC_KEYS_PEM_PATH'),
+                env('EMR_DIRECT_PASS_PHRASE')
+            );
 
-        $this->connector = new PhiMailConnector($phiMailServer, $phiMailPort);
-        $this->connector->authenticateUser($phiMailUser, $phiMailPass);
+            // This command is recommended for added security to set the trusted
+            // SSL certificate or trust anchor for the phiMail server.
+            PhiMailConnector::setServerCertificate(base_path() . env('EMR_DIRECT_SERVER_CERT_PEM_PATH'));
+
+            $phiMailServer = env('EMR_DIRECT_MAIL_SERVER');
+            $phiMailPort = env('EMR_DIRECT_PORT');
+
+            $this->connector = new PhiMailConnector($phiMailServer, $phiMailPort);
+            $this->connector->authenticateUser($phiMailUser, $phiMailPass);
+
+            return true;
+        } catch (\Exception $e) {
+            $this->handleException($e);
+        }
+
+        return false;
     }
 
     public function __destruct()
