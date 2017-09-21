@@ -16,11 +16,11 @@ class ProviderController extends Controller
         if ($viewNext) {
             $nextPatient = auth()->user()->patientsPendingApproval()->first();
 
-            if ($nextPatient) {
-                $patientId = $nextPatient->id;
+            if (!$nextPatient) {
+                return redirect()->to('/');
             }
 
-            return redirect()->to('/');
+            $patientId = $nextPatient->id;
         }
 
         return redirect()->to(route('patient.careplan.print', [
