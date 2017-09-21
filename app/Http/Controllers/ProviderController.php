@@ -8,9 +8,14 @@ use Illuminate\Http\Request;
 
 class ProviderController extends Controller
 {
-    public function approveCarePlan(Request $request, $patientId)
+    public function approveCarePlan(Request $request, $patientId, $viewNext = false)
     {
         event(new CarePlanWasApproved(User::find($patientId)));
+        $viewNext = (boolean) $viewNext;
+
+        if ($viewNext) {
+
+        }
 
         return redirect()->to(route('patient.careplan.print', [
             'patientId' => $patientId,

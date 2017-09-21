@@ -62,12 +62,12 @@ if (isset($patient) && !empty($patient)) {
                                                    role="button"
                                                    href="{{ URL::route('patient.careplan.approve', ['patientId' => $patient->id]) }}">Approve Care Plan</a>
 
-                                                {{--@if(auth()->user()->hasRole('provider'))--}}
-                                                    {{--<a style="margin-right:10px;" class="btn btn-success btn-sm inline-block"--}}
-                                                       {{--aria-label="..."--}}
-                                                       {{--role="button"--}}
-                                                       {{--href="{{ route('patient.careplan.approve', ['patientId' => $patient->id]) }}">Approve and View Next</a>--}}
-                                                {{--@endif--}}
+                                                @if(auth()->user()->hasRole('provider'))
+                                                    <a style="margin-right:10px;" class="btn btn-success btn-sm inline-block"
+                                                       aria-label="..."
+                                                       role="button"
+                                                       href="{{ route('patient.careplan.approve', ['patientId' => $patient->id, 'viewNext' => true]) }}">Approve and View Next</a>
+                                                @endif
                                             @endif
 
                                             <a class="btn btn-info btn-sm inline-block" aria-label="..." role="button"
