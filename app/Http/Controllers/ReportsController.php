@@ -3,6 +3,7 @@
 use App\CareItem;
 use App\CareItemUserValue;
 use App\CarePlan;
+use App\Events\CarePlanWasApproved;
 use App\Formatters\WebixFormatter;
 use App\Location;
 use App\Models\CPM\CpmProblem;

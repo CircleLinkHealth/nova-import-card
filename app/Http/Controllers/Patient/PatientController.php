@@ -5,6 +5,7 @@ use App\CarePerson;
 use App\CarePlan;
 use App\CPRulesQuestions;
 use App\Events\CarePlanWasApproved;
+use App\Formatters\WebixFormatter;
 use App\Http\Controllers\Controller;
 use App\Observation;
 use App\PhoneNumber;
@@ -30,13 +31,21 @@ class PatientController extends Controller
         $pendingApprovals = CarePlan::getNumberOfCareplansPendingApproval(auth()->user());
 
         $nurse = null;
+        $patientsPendingApproval = [];
+        $showPatientsPendingApprovalBox = false;
 
         if (auth()->user()->nurseInfo && auth()->user()->hasRole(['care-center'])) {
             $nurse = auth()->user()->nurseInfo;
-            auth()->user()->nurseInfo->workhourables()->firstOrCreate([]);
+            $nurse->workhourables()->firstOrCreate([]);
         }
 
-        return view('wpUsers.patient.dashboard', compact(['pendingApprovals', 'nurse']));
+        if (auth()->user()->providerInfo && auth()->user()->hasRole(['provider'])) {
+            $showPatientsPendingApprovalBox = true;
+            $patients = auth()->user()->patientsPendingApproval()->get();
+            $patientsPendingApproval = (new WebixFormatter())->patientListing($patients);
+        }
+
+        return view('wpUsers.patient.dashboard', array_merge(compact(['pendingApprovals', 'nurse', 'showPatientsPendingApprovalBox']), $patientsPendingApproval));
     }
 
     /**
@@ -236,177 +245,11 @@ class PatientController extends Controller
      *
      * @return Response
      */
-    public function showPatientListing(Request $request)
+    public function showPatientListing()
     {
+        $data = (new WebixFormatter())->patientListing();
 
-        //If returning back from after approving a careplan from /view-careplan,
-        //then update the status.
-        $input = $request->all();
-
-        if (isset($input['patient_approval_id'])) {
-            event(new CarePlanWasApproved(User::find($input['patient_approval_id'])));
-        }
-
-        $patientData = [];
-        $patients = User::intersectPracticesWith(auth()->user())
-            ->ofType('participant')
-            ->whereHas('patientInfo')
-            ->with('primaryPractice')
-            ->with('carePlan')
-            ->with([
-                'observations'    => function ($query) {
-                    $query->where('obs_key', '!=', 'Outbound');
-                    $query->orderBy('obs_date', 'DESC');
-                    $query->first();
-                },
-                'careTeamMembers' => function ($q) {
-                    $q->where('type', '=', CarePerson::BILLING_PROVIDER)
-                        ->with('user');
-                },
-                'phoneNumbers'    => function ($q) {
-                    $q->where('type', '=', PhoneNumber::HOME);
-                },
-            ])
-            ->get();
-
-
-        $foundUsers = []; // save resources, no duplicate db calls
-        $foundPrograms = []; // save resources, no duplicate db calls
-
-        $canApproveCarePlans = auth()->user()->canApproveCareplans();
-        $canQAApproveCarePlans = auth()->user()->can('care-plan-qa-approve');
-        $isCareCenter = Auth::user()->hasRole('care-center');
-        $isAdmin = Auth::user()->hasRole('administrator');
-        $isProvider = Auth::user()->hasRole('provider');
-
-
-        foreach ($patients as $patient) {
-            // skip if patient has no name
-            if (empty($patient->first_name)) {
-                continue 1;
-            }
-
-            $careplanStatus = $patient->carePlan->status ?? '';
-            $careplanStatusLink = '';
-            $approverName = 'NA';
-            $tooltip = 'NA';
-
-            if ($careplanStatus == 'provider_approved') {
-                $approver = $patient->carePlan->providerApproverUser;
-                if ($approver) {
-                    $approverName = $approver->fullName;
-                }
-
-                $carePlanProviderDate = $patient->carePlan->provider_date;
-                $careplanStatus = 'Approved';
-                $careplanStatusLink = '<span data-toggle="" title="' . $approverName . ' ' . $carePlanProviderDate . '">Approved</span>';
-                $tooltip = $approverName . ' ' . $carePlanProviderDate;
-            } else {
-                if ($careplanStatus == 'qa_approved') {
-                    $careplanStatus = 'Approve Now';
-                    $tooltip = $careplanStatus;
-                    $careplanStatusLink = 'Approve Now';
-                    if ($canApproveCarePlans) {
-                        $careplanStatusLink = '<a style="text-decoration:underline;" href="' . URL::route('patient.careplan.print',
-                                ['patient' => $patient->id]) . '"><strong>Approve Now</strong></a>';
-                    }
-                } else {
-                    if ($careplanStatus == 'draft') {
-                        $careplanStatus = 'CLH Approve';
-                        $tooltip = $careplanStatus;
-                        $careplanStatusLink = 'CLH Approve';
-                        if ($canQAApproveCarePlans) {
-                            $careplanStatusLink = '<a style="text-decoration:underline;" href="' . URL::route('patient.demographics.show',
-                                    ['patient' => $patient->id]) . '"><strong>CLH Approve</strong></a>';
-                        }
-                    }
-                }
-            }
-
-            // get billing provider name
-            $bpName = '';
-            $bpID = $patient->billingProviderID;
-            if (!isset($foundPrograms[$patient->program_id])) {
-                $program = $patient->primaryPractice;
-                $foundPrograms[$patient->program_id] = $program;
-            } else {
-                $program = $foundPrograms[$patient->program_id];
-            }
-            $programName = $program->display_name;
-
-            $bpCareTeamMember = $patient->careTeamMembers->first();
-
-            if ($bpCareTeamMember) {
-                $bpUser = $bpCareTeamMember->user;
-
-                if (!$bpUser) {
-                    continue;
-                }
-
-                $bpName = $bpUser->fullName;
-                $foundUsers[$bpID] = $bpUser;
-            }
-
-            // get date of last observation
-            $lastObservationDate = 'No Readings';
-            $lastObservation = $patient->observations;
-            if ($lastObservation->count() > 0) {
-                $lastObservationDate = date("m/d/Y", strtotime($lastObservation[0]->obs_date));
-            }
-
-            try {
-                $patientData[] = [
-                    'key'                        => $patient->id,
-                    // $part->id,
-                    'patient_name'               => $patient->fullName,
-                    //$meta[$part->id]["first_name"][0] . " " .$meta[$part->id]["last_name"][0],
-                    'first_name'                 => $patient->first_name,
-                    //$meta[$part->id]["first_name"][0],
-                    'last_name'                  => $patient->last_name,
-                    //$meta[$part->id]["last_name"][0],
-                    'ccm_status'                 => ucfirst($patient->ccmStatus),
-                    //ucfirst($meta[$part->id]["ccm_status"][0]),
-                    'careplan_status'            => $careplanStatus,
-                    //$careplanStatus,
-                    'tooltip'                    => $tooltip,
-                    //$tooltip,
-                    'careplan_status_link'       => $careplanStatusLink,
-                    //$careplanStatusLink,
-                    'careplan_provider_approver' => $approverName,
-                    //$approverName,
-                    'dob'                        => Carbon::parse($patient->birthDate)->format('m/d/Y'),
-                    //date("m/d/Y", strtotime($user_config[$part->id]["birth_date"])),
-                    'phone'                      => isset($patient->phoneNumbers->number)
-                        ? $patient->phoneNumbers->number
-                        : $patient->phone,
-                    //$user_config[$part->id]["study_phone_number"],
-                    'age'                        => $patient->age,
-                    'reg_date'                   => Carbon::parse($patient->registrationDate)->format('m/d/Y'),
-                    //date("m/d/Y", strtotime($user_config[$part->id]["registration_date"])) ,
-                    'last_read'                  => $lastObservationDate,
-                    //date("m/d/Y", strtotime($last_read)),
-                    'ccm_time'                   => $patient->patientInfo->cur_month_activity_time,
-                    //$ccm_time[0],
-                    'ccm_seconds'                => $patient->patientInfo->cur_month_activity_time,
-                    //$meta[$part->id]['cur_month_activity_time'][0]
-                    'provider'                   => $bpName,
-                    // $bpUserInfo['prefix'] . ' ' . $bpUserInfo['first_name'] . ' ' . $bpUserInfo['last_name'] . ' ' . $bpUserInfo['qualification']
-                    'site'                       => $programName,
-                ];
-            } catch (\Exception $e) {
-                \Log::critical("{$patient->id} has no patient info");
-                \Log::critical("{$e} has no patient info");
-            }
-        }
-        $patientJson = json_encode($patientData);
-
-        return view('wpUsers.patient.listing', compact([
-            'patientJson',
-            'canApproveCarePlans',
-            'isCareCenter',
-            'isAdmin',
-            'isProvider',
-        ]));
+        return view('wpUsers.patient.listing', $data);
     }
 
     /**
