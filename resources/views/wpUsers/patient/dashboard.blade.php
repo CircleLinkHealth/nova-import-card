@@ -87,10 +87,12 @@
             @include('partials.care-center.dashboard-schedule', [$nurse])
         @endif
 
-        @if($patientsPendingApproval)
+    </div>
+
+    <div class="container-fluid">
+        @if($showPatientsPendingApprovalBox)
             @include('partials.provider.patients-pending-approval')
         @endif
-
     </div>
 @stop
 

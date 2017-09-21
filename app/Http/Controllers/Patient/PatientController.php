@@ -39,11 +39,12 @@ class PatientController extends Controller
         }
 
         if (auth()->user()->providerInfo && auth()->user()->hasRole(['provider'])) {
+            $showPatientsPendingApprovalBox = true;
             $patients = auth()->user()->patientsPendingApproval();
             $patientsPendingApproval = (new WebixFormatter())->patientListing($patients);
         }
 
-        return view('wpUsers.patient.dashboard', compact(['pendingApprovals', 'nurse', 'patientsPendingApproval']));
+        return view('wpUsers.patient.dashboard', array_merge(compact(['pendingApprovals', 'nurse', 'showPatientsPendingApprovalBox']), $patientsPendingApproval));
     }
 
     /**
