@@ -31,18 +31,19 @@ class PatientController extends Controller
         $pendingApprovals = CarePlan::getNumberOfCareplansPendingApproval(auth()->user());
 
         $nurse = null;
+        $patientsPendingApproval = null;
 
         if (auth()->user()->nurseInfo && auth()->user()->hasRole(['care-center'])) {
             $nurse = auth()->user()->nurseInfo;
-            $nurse->nurseInfo->workhourables()->firstOrCreate([]);
+            $nurse->workhourables()->firstOrCreate([]);
         }
 
         if (auth()->user()->providerInfo && auth()->user()->hasRole(['provider'])) {
             $patients = auth()->user()->patientsPendingApproval();
-            $providerApprovals = (new WebixFormatter())->patientListing($patients);
+            $patientsPendingApproval = (new WebixFormatter())->patientListing($patients);
         }
 
-        return view('wpUsers.patient.dashboard', compact(['pendingApprovals', 'nurse']));
+        return view('wpUsers.patient.dashboard', compact(['pendingApprovals', 'nurse', 'patientsPendingApproval']));
     }
 
     /**
