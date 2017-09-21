@@ -460,6 +460,10 @@ class WebixFormatter implements ReportFormatter
 
             $provider = User::find($appt->provider_id);
 
+            if (!$provider) {
+                continue;
+            }
+
             $specialty = $provider->providerInfo->specialty ?? null;
             if ($specialty) {
                 $specialty = '(' . $specialty . ')';
