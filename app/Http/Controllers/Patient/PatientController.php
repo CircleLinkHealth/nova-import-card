@@ -41,7 +41,7 @@ class PatientController extends Controller
 
         if (auth()->user()->providerInfo && auth()->user()->hasRole(['provider'])) {
             $showPatientsPendingApprovalBox = true;
-            $patients = auth()->user()->patientsPendingApproval();
+            $patients = auth()->user()->patientsPendingApproval()->get();
             $patientsPendingApproval = (new WebixFormatter())->patientListing($patients);
         }
 

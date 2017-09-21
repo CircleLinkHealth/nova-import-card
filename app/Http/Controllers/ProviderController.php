@@ -14,11 +14,18 @@ class ProviderController extends Controller
         $viewNext = (boolean) $viewNext;
 
         if ($viewNext) {
+            $nextPatient = auth()->user()->patientsPendingApproval()->first();
 
+            if ($nextPatient) {
+                $patientId = $nextPatient->id;
+            }
+
+            return redirect()->to('/');
         }
 
         return redirect()->to(route('patient.careplan.print', [
             'patientId' => $patientId,
+            'clearSession' => $viewNext
         ]));
     }
 }

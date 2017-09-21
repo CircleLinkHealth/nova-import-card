@@ -2458,7 +2458,6 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
                 'phoneNumbers'    => function ($q) {
                     $q->where('type', '=', PhoneNumber::HOME);
                 }
-            ])
-            ->get();
+            ]);
     }
 }
