@@ -88,7 +88,7 @@
         @endif
 
         @if($patientsPendingApproval)
-
+            @include('partials.provider.patients-pending-approval')
         @endif
 
     </div>
