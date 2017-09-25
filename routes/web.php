@@ -16,11 +16,7 @@ Route::post('send-sample-fax', function (Illuminate\Http\Request $request) {
     dd($faxTest);
 });
 
-Route::post('/send-sample-direct-mail', function (Illuminate\Http\Request $request) {
-    $phiMail = new PhiMail();
-    $test = $phiMail->send($request->input('direct_address'), public_path('assets/pdf/sample-note.pdf'));
-    dd($test);
-});
+Route::post('/send-sample-direct-mail', 'DemoController@sendSampleEMRNote');
 
 //Patient Landing Pages
 Route::resource('sign-up', 'PatientSignupController');

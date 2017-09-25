@@ -34,7 +34,7 @@ class MakePhoenixHeartWelcomeCallList implements ShouldQueue
     public function handle()
     {
         $names = PhoenixHeartName::where('processed', '=', false)
-            ->take(10)
+            ->take(3000)
             ->get()
             ->keyBy('patient_id');
 
