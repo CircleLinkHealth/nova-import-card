@@ -48,7 +48,9 @@ class MedicalRecordImportController extends Controller
                 $imr = ImportedMedicalRecord::find($id);
 
                 $medicalRecord = app($imr->medical_record_type)->find($imr->medical_record_id);
-                $medicalRecord->delete();
+                $medicalRecord->update([
+                    'imported' => false
+                ]);
 
                 $imr->delete();
 

@@ -16,6 +16,10 @@ class CarePlanObserver
      */
     public function saving(CarePlan $carePlan)
     {
+        if ($carePlan->status == CarePlan::QA_APPROVED) {
+            $carePlan->provider_approver_id = null;
+        }
+
         if (!array_key_exists('care_plan_template_id', $carePlan->getAttributes())) {
             $carePlan->care_plan_template_id = getDefaultCarePlanTemplate()->id;
         }

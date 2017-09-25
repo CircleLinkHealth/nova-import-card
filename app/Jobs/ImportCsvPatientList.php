@@ -136,7 +136,7 @@ class ImportCsvPatientList implements ShouldQueue
             $importedMedicalRecord->location_id = $this->practice->primary_location_id;
         }
 
-        if ($importedMedicalRecord->billing_provider_id) {
+        if (!$importedMedicalRecord->billing_provider_id) {
             $providerName = explode(' ', $row['provider']);
 
             if (count($providerName) >= 2) {
