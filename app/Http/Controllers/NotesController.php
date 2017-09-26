@@ -462,7 +462,7 @@ class NotesController extends Controller
         }
 
         $data['comment'] = $note->body;
-        $data['addendums'] = $note->addendums;
+        $data['addendums'] = $note->addendums->sortByDesc('created_at');
 
         $careteam_info = $this->service->getPatientCareTeamMembers($patientId);
 

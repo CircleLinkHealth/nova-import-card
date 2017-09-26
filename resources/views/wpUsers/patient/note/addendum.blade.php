@@ -1,7 +1,17 @@
-<blockquote>
+<style>
+    .note-addendum {
+        padding: 15px;
+        border: 1px solid #eee;
+        margin: 15px 0 30px 0;
+        border-left: #9ed3ef 25px solid;
+        background-color: #ebf1f5;
+    }
+</style>
+
+<div class="note-addendum">
     <p class="text-left">{{$addendum->body}}</p>
 
-    <p class="text-right">
-        <sub><em>Authored by {{$addendum->author->fullName}}, <b>{{ $addendum->created_at->diffForHumans() }}</b></em></sub>
+    <p class="text-right" style="padding-top: 2%;">
+        <sub>Authored by <em>{{$addendum->author->fullName}}, <b>{{ $addendum->created_at->diffForHumans() }}</b></em></sub>
     </p>
-</blockquote>
+</div>
