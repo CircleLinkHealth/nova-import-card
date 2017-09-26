@@ -170,7 +170,7 @@
                                     </div>
                                 </div>
                                 <div class="form-group col-sm-4">
-                                    <input type="hidden" name="patient_id" value="{{$patient->id}}">
+                                        <input type="hidden" name="patient_id" value="{{$patient->id}}">
                                     <input type="hidden" name="logger_id" value="{{Auth::user()->id}}">
                                     <input type="hidden" name="noteId" value="{{$note['id']}}">
                                     <input type="hidden" name="patientID" id="patientID" value="{{$patient->id}}">
