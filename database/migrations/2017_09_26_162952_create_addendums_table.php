@@ -18,7 +18,7 @@ class CreateAddendumsTable extends Migration
             $table->string('addendumable_type');
             $table->unsignedInteger('addendumable_id');
             $table->unsignedInteger('author_user_id');
-            $table->text('body');
+            $table->longText('body');
             $table->timestamps();
 
             $table->foreign('author_user_id')
