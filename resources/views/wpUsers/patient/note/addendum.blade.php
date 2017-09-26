@@ -3,7 +3,6 @@
         padding: 15px;
         border: 1px solid #eee;
         margin: 15px 0 30px 0;
-        border-left: #9ed3ef 25px solid;
         background-color: #ebf1f5;
     }
 </style>
