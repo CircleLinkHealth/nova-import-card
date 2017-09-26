@@ -4,6 +4,7 @@
         border: 1px solid #eee;
         margin: 15px 0 30px 0;
         background-color: #ebf1f5;
+        border-left: #5cbfde 25px solid;
     }
 </style>
 
