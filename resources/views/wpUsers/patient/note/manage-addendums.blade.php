@@ -21,6 +21,6 @@
             @include('wpUsers.patient.note.addendum')
         @endforeach
     @else
-        <p>There are no Follow-up Notes at this time. Any new Follow-up Notes will be displayed here.</p>
+        <p>There are no Follow-up Notes at this time. New Follow-up Notes will be displayed here.</p>
     @endif
 </div>
