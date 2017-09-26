@@ -187,6 +187,17 @@
                                         </div>
                                     </div>
                                 </div>
+
+                                <div class="row">
+                                    <div class="col-sm-12">
+                                        <div class="form-item form-item-spacing">
+                                            <h3>Follow-up Notes (Addendums)</h3>
+                                            @foreach($note['addendums'] as $addendum)
+                                                @include('wpUsers.patient.note.addendum')
+                                            @endforeach
+                                        </div>
+                                    </div>
+                                </div>
                                 <script>
                                     $(function () {
                                         $('[data-toggle="tooltip"]').tooltip()

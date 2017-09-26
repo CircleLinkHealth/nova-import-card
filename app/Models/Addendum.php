@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\User;
 use Illuminate\Database\Eloquent\Model;
 
 class Addendum extends Model
@@ -19,5 +20,10 @@ class Addendum extends Model
     public function addendumable()
     {
         return $this->morphTo();
+    }
+
+    public function author()
+    {
+        return $this->belongsTo(User::class, 'author_user_id');
     }
 }

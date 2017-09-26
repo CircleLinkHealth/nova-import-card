@@ -462,6 +462,7 @@ class NotesController extends Controller
         }
 
         $data['comment'] = $note->body;
+        $data['addendums'] = $note->addendums;
 
         $careteam_info = $this->service->getPatientCareTeamMembers($patientId);
 
