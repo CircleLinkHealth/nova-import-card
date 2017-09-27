@@ -127,7 +127,7 @@ if (isset($patient) && !empty($patient) && is_a($patient, App\User::class)) {
                 });
             });
 
-            window.addEventListener("beforeunload", function () {
+            window.addEventListener("unload", function () {
                 $(document).idleTimer("pause");
                 endTime = new Date();
                 totalTime = totalTime + (endTime - startTime);
@@ -168,6 +168,7 @@ if (isset($patient) && !empty($patient) && is_a($patient, App\User::class)) {
                     url: '<?php echo URL::route('api.pagetracking'); ?>',
                     data: data,
                     encode: true,
+                    async: false,
                     headers: {
                         'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
                     },
