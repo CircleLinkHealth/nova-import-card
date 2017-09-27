@@ -76,12 +76,12 @@ class CareTeamController extends Controller
                 'provider_info'    => $member->user->providerInfo
                     ? [
                         'id'            => $member->user->providerInfo->id,
-                        'qualification' => $member->user->providerInfo->qualification,
+                        'is_clinical' => $member->user->providerInfo->is_clinical,
                         'specialty'     => $member->user->providerInfo->specialty,
                     ]
                     : [
                         'id'            => '',
-                        'qualification' => '',
+                        'is_clinical' => '',
                         'specialty'     => '',
                     ]
                 ,
@@ -161,12 +161,12 @@ class CareTeamController extends Controller
                         'provider_info'    => $member->user->providerInfo
                             ? [
                                 'id'            => $member->user->providerInfo->id,
-                                'qualification' => $member->user->providerInfo->qualification,
+                                'is_clinical' => $member->user->providerInfo->is_clinical,
                                 'specialty'     => $member->user->providerInfo->specialty,
                             ]
                             : [
                                 'id'            => '',
-                                'qualification' => '',
+                                'is_clinical' => '',
                                 'specialty'     => '',
                             ]
                         ,
@@ -336,8 +336,8 @@ class CareTeamController extends Controller
             $providerInfo = $input['user']['provider_info'];
 
             $args = [];
-            if (array_key_exists('qualification', $providerInfo)) {
-                $args['qualification'] = $providerInfo['qualification'];
+            if (array_key_exists('is_clinical', $providerInfo)) {
+                $args['is_clinical'] = $providerInfo['is_clinical'];
             }
             if (array_key_exists('specialty', $providerInfo)) {
                 $args['specialty'] = $providerInfo['specialty'];

@@ -33,6 +33,7 @@ class ProviderInfo extends Model
      * @var array
      */
     protected $fillable = [
+        'is_clinical',
         'user_id',
         'prefix',
         'qualification',
