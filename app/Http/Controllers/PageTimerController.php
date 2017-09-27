@@ -82,6 +82,7 @@ class PageTimerController extends Controller
         $newActivity->ip_addr = $data['ipAddr'];
         $newActivity->activity_type = $data['activity'];
         $newActivity->title = $data['title'];
+        $newActivity->user_agent = $request->userAgent();
 
         $overlaps = PageTimer::where('provider_id', '=', $providerId)
             ->where([
