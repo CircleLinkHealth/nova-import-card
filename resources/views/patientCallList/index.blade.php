@@ -101,7 +101,7 @@
                                                 <th># Calls to date</th>
                                                 <th>Provider</th>
                                                 <th>Practice</th>
-                                                <th></th>
+                                                {{--<th></th>--}}
                                             </tr>
                                             </thead>
                                             <tbody>
@@ -182,16 +182,16 @@
                                                                 <em style="color:red;">n/a</em>
                                                             @endif
                                                         </td>
-                                                        <td class="text-right vert-align">
-                                                            @if($call->status == 'reached')
+                                                        {{--<td class="text-right vert-align">--}}
+                                                            {{--@if($call->status == 'reached')--}}
 
-                                                            @elseif($call->status == 'scheduled')
-                                                                <a href="{{ URL::route('patientCallList.index', array('id' => $call->id, 'action' => 'unassign')) }}"
-                                                                   class="btn btn-danger btn-xs"><i
-                                                                            class="glyphicon glyphicon-remove"></i>
-                                                                    Unassign</a>
-                                                            @endif
-                                                        </td>
+                                                            {{--@elseif($call->status == 'scheduled')--}}
+                                                                {{--<a href="{{ URL::route('patientCallList.index', array('id' => $call->id, 'action' => 'unassign')) }}"--}}
+                                                                   {{--class="btn btn-danger btn-xs"><i--}}
+                                                                            {{--class="glyphicon glyphicon-remove"></i>--}}
+                                                                    {{--Unassign</a>--}}
+                                                            {{--@endif--}}
+                                                        {{--</td>--}}
                                                     </tr>
                                                 @endforeach
                                             @else
