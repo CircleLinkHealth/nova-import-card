@@ -170,7 +170,7 @@
                                     </div>
                                 </div>
                                 <div class="form-group col-sm-4">
-                                    <input type="hidden" name="patient_id" value="{{$patient->id}}">
+                                        <input type="hidden" name="patient_id" value="{{$patient->id}}">
                                     <input type="hidden" name="logger_id" value="{{Auth::user()->id}}">
                                     <input type="hidden" name="noteId" value="{{$note['id']}}">
                                     <input type="hidden" name="patientID" id="patientID" value="{{$patient->id}}">
@@ -187,6 +187,7 @@
                                         </div>
                                     </div>
                                 </div>
+
                                 <script>
                                     $(function () {
                                         $('[data-toggle="tooltip"]').tooltip()
@@ -218,6 +219,26 @@
             </div>
         </div>
     </div>
+
+    <div class="row" style="padding-top: 30px;">
+        <div class="main-form-container col-lg-6 col-lg-offset-3 col-md-10 col-md-offset-1">
+            <div class="row">
+                <div class="main-form-title col-lg-12">
+                    Follow-up Notes (Addendums)
+                </div>
+                <div class="main-form-block main-form-horizontal main-form-primary-horizontal col-md-12">
+                    <div class="row">
+                        <div class="col-sm-12">
+                            <div class="form-item form-item-spacing">
+                                @include('wpUsers.patient.note.manage-addendums')
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <div class="form-block col-md-6">
         <br/>
     </div>

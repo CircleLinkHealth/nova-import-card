@@ -483,6 +483,10 @@ Route::group(['middleware' => 'auth'], function () {
                 'uses' => 'NotesController@send',
                 'as'   => 'patient.note.send',
             ]);
+            Route::post('{noteId}/addendums', [
+                'uses' => 'NotesController@storeAddendum',
+                'as'   => 'note.store.addendum',
+            ]);
         });
 
         Route::post('ccm/toggle', [
