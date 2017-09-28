@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class Settings extends Model
 {
-    protected $table = 'settings';
+    protected $table = 'cpm_settings';
 
     protected $fillable = [
         'careplan_mode',
