@@ -1,21 +1,10 @@
 <?php namespace App\Reports;
 
-use App\Activity;
-use App\Call;
 use App\CLH\CCD\Importer\SnomedToCpmIcdMap;
-use App\CLH\CCD\Importer\SnomedToICD10Map;
-use App\Models\CCD\Problem;
-use App\Models\CPM\CpmInstruction;
-use App\Models\CPM\CpmMisc;
-use App\Models\CPM\CpmProblem;
 use App\Patient;
-use App\Practice;
-use App\Role;
 use App\User;
 use Carbon\Carbon;
-use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\URL;
 use Yajra\Datatables\Facades\Datatables;
 
@@ -78,8 +67,7 @@ class ApproveBillablePatientsReport
 
             $practice = $this->practice;
 
-            $this->patients = $this->patients->whereHas('user', function ($k) use
-            (
+            $this->patients = $this->patients->whereHas('user', function ($k) use (
                 $practice
 
             ) {
@@ -113,13 +101,13 @@ class ApproveBillablePatientsReport
                 ])
                 ->sum('duration');
 
-            if($ccm < 1200){
+            if ($ccm < 1200) {
                 continue;
             }
 
             $info = $u->patientInfo;
 
-            if(is_null($info)){
+            if (is_null($info)) {
                 continue;
             }
 
@@ -158,11 +146,11 @@ class ApproveBillablePatientsReport
 
                         $code = SnomedToCpmIcdMap::whereCpmProblemId($problems[$i]->id)->first()->icd_10_code;
 
-                        if($report->$problemCode == ''){
-
+                        if (!$report->$problemCode) {
                             $report->$problemCode = $code;
+                        }
 
-                        } else {
+                        if (!$report->$problemCode) {
 
                             $lacksCode = true;
                             $billableProblems[$i]['code'] = "<button style='font-size: 10px' class='btn btn-primary codePicker' patient='$u->fullName' name=$problemCode value='$options' id='$report->id'>Select Code</button >";
@@ -187,12 +175,25 @@ class ApproveBillablePatientsReport
 
                     //if there is a problem but no code
 
-                    if (!$report->$problemCode){
+                    if (!$report->$problemCode) {
+                        $code = null;
 
-                        $code = SnomedToCpmIcdMap::whereCpmProblemId($problems[$i]->id)->first()->icd_10_code ?? '';
+                        $lastMonthReport = $info->patientSummaries()
+                            ->where('month_year',
+                                Carbon::parse($this->month)->subMonth()->firstOfMonth()->toDateString())->first();
+
+                        if ($lastMonthReport->$problemName == $report->$problemName) {
+                            $code = $lastMonthReport->$problemCode;
+                        }
+
+                        if (!$code) {
+                            $code = SnomedToCpmIcdMap::whereCpmProblemId($problems[$i]->id)
+                                    ->where('icd_10_code', '!=', '')
+                                    ->where('icd_10_code', '!=', null)
+                                    ->first()->icd_10_code ?? '';
+                        }
 
                         $report->$problemCode = $billableProblems[$i]['code'] = $code;
-
 
                         $problem = $report->$problemName;
 
@@ -269,7 +270,7 @@ class ApproveBillablePatientsReport
                 //this is a hidden sorter
                 'qa'                     => $toQA,
                 'problems'               => $options,
-                'lacksProblems'          => $lacksProblems || $lacksCode
+                'lacksProblems'          => $lacksProblems || $lacksCode,
 
             ];
 
