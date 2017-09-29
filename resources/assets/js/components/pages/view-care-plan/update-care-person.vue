@@ -415,22 +415,22 @@
                                 <div class="row">
                                     <!--clinical type-->
                                     <div class="form-group required-field col-md-6">
-                                        <validate auto-label :class="fieldClassName(formstate.qualification)">
+                                        <validate auto-label :class="fieldClassName(formstate.is_clinical)">
                                             <div class="col-md-12">
 
-                                                <select v-model="formData.user.provider_info.qualification"
-                                                        id="qualification"
-                                                        name="qualification"
+                                                <select v-model="formData.user.provider_info.is_clinical"
+                                                        id="is_clinical"
+                                                        name="is_clinical"
                                                         class="form-control input-md"
                                                         required>
                                                     <option value="" disabled></option>
-                                                    <option value="clinical">Clinical (MD, RN or other)</option>
-                                                    <option value="non-clinical">Non-clinical</option>
+                                                    <option value="1">Clinical (MD, RN or other)</option>
+                                                    <option value="0">Non-clinical</option>
                                                 </select>
                                             </div>
 
                                             <div class="col-md-12">
-                                                <field-messages name="qualification"
+                                                <field-messages name="is_clinical"
                                                                 show="$untouched || $touched || $submitted">
                                                     <div></div>
                                                     <div class="validation-error has-errors text-right" slot="required">
@@ -759,7 +759,7 @@
                         },
                         provider_info: {
                             id: '',
-                            qualification: '',
+                            is_clinical: '',
                             specialty: '',
                         }
                     }

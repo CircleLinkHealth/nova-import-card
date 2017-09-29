@@ -2155,7 +2155,7 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
         $billingProvider = $this->billingProvider();
 
         return $billingProvider
-            ? ucwords($billingProvider->fullName)
+            ? ucwords("{$billingProvider->fullName} {$billingProvider->qualification}")
             : '';
     }
 
