@@ -162,6 +162,7 @@
                                                   readonly>{{trim($note['comment'])}}</textarea> <br/>
                                     </div>
                                 </div>
+
                                 <div class="form-block col-md-12">
                                     <div class="row">
                                         <div class="new-note-item">
@@ -212,34 +213,15 @@
                                     });
                                 </script>
                                 {!! Form::close() !!}
+
+                                <div class="col-sm-12">
+                                    @include('wpUsers.patient.note.manage-addendums')
+                                </div>
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
-    </div>
-
-    <div class="row" style="padding-top: 30px;">
-        <div class="main-form-container col-lg-6 col-lg-offset-3 col-md-10 col-md-offset-1">
-            <div class="row">
-                <div class="main-form-title col-lg-12">
-                    Follow-up Notes (Addendums)
-                </div>
-                <div class="main-form-block main-form-horizontal main-form-primary-horizontal col-md-12">
-                    <div class="row">
-                        <div class="col-sm-12">
-                            <div class="form-item form-item-spacing">
-                                @include('wpUsers.patient.note.manage-addendums')
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <div class="form-block col-md-6">
-        <br/>
     </div>
 @endsection
