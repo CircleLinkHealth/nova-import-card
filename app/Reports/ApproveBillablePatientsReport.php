@@ -149,7 +149,7 @@ class ApproveBillablePatientsReport
                 $problemName = 'billable_problem' . ($i + 1);
                 $problemCode = 'billable_problem' . ($i + 1) . '_code';
 
-                if ($report->$problemName == '') {
+                if (!$report->$problemName) {
 
                     if (isset($problems[$i])) {
 
@@ -187,16 +187,21 @@ class ApproveBillablePatientsReport
 
                     //if there is a problem but no code
 
-                    if ($report->$problemCode == ''){
+                    if (!$report->$problemCode){
+
+                        $code = SnomedToCpmIcdMap::whereCpmProblemId($problems[$i]->id)->first()->icd_10_code ?? '';
+
+                        $report->$problemCode = $billableProblems[$i]['code'] = $code;
+
 
                         $problem = $report->$problemName;
 
                         $name = 'billable_problem' . ($i + 1);
 
-                        $lacksCode = true;
-
-                        $billableProblems[$i]['code'] = "<button style='font-size: 10px' class='btn btn-primary problemPicker' patient='$u->fullName' name=$name value='$problem' id='$report->id'>Select Code</button >";
-
+                        if (!$code) {
+                            $lacksCode = true;
+                            $billableProblems[$i]['code'] = "<button style='font-size: 10px' class='btn btn-primary problemPicker' patient='$u->fullName' name=$name value='$problem' id='$report->id'>Select Code</button >";
+                        }
                     } else {
 
                         $billableProblems[$i]['code'] = $report->$problemCode;
