@@ -182,7 +182,7 @@ class ApproveBillablePatientsReport
                             ->where('month_year',
                                 Carbon::parse($this->month)->subMonth()->firstOfMonth()->toDateString())->first();
 
-                        if ($lastMonthReport->$problemName == $report->$problemName) {
+                        if ($lastMonthReport && $lastMonthReport->$problemName == $report->$problemName) {
                             $code = $lastMonthReport->$problemCode;
                         }
 
