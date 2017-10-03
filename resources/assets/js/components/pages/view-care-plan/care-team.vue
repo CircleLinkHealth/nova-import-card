@@ -24,6 +24,8 @@
 
         mounted() {
             this.careTeam = this.getPatientCareTeam(this.patientId);
+            console.log('mounted care team');
+            console.log(this.patientCareTeam);
         },
 
         data() {
