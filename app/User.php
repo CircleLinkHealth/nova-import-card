@@ -654,8 +654,13 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
     {
         $firstName = ucwords($this->first_name);
         $lastName = ucwords($this->last_name);
+        $fullName = $firstName . ' ' . $lastName;
 
-        return $firstName . ' ' . $lastName;
+        if ($this->hasRole('provider')) {
+            return "{$fullName} {$this->qualification}";
+        }
+
+        return $fullName;
     }
 
     public function getFullNameWithIdAttribute()
