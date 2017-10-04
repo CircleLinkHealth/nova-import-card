@@ -1,9 +1,9 @@
 <?php
 
 use App\Practice;
-use Illuminate\Support\Facades\Schema;
-use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Schema;
 
 class AddDefaultTargetBpToSettings extends Migration
 {
@@ -14,19 +14,27 @@ class AddDefaultTargetBpToSettings extends Migration
      */
     public function up()
     {
-        Schema::table('settings', function (Blueprint $table) {
+        Schema::table('cpm_settings', function (Blueprint $table) {
+            if (Schema::hasColumn('cpm_settings', 'default_target_bp')) {
+                return;
+            }
+
             $table->string('default_target_bp', 7)
                 ->default('130/80')
-            ->after('efax_audit_reports');
+                ->after('efax_audit_reports');
         });
 
         $lgh = Practice::whereName('lafayette-general-health')->first();
 
-        if (!$lgh) return;
+        if (!$lgh) {
+            return;
+        }
 
         $settings = $lgh->settings->first();
 
-        if (!$settings) return;
+        if (!$settings) {
+            return;
+        }
 
         $settings->default_target_bp = '140/90';
         $settings->save();
