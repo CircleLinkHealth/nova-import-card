@@ -7,7 +7,7 @@ window.axios.defaults.baseURL = $('meta[name="base-url"]').attr('content');
 import VueForm from "vue-form";
 import store from "./store";
 
-window.Vue.config.debug = store.state.debug
+window.Vue.config.debug = true
 
 window.Vue.use(VueForm, {
     inputClasses: {
