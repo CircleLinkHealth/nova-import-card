@@ -421,22 +421,29 @@
                             <div class="row">
                                 <!--clinical type-->
                                 <div class="form-group required-field col-md-6">
-                                    <validate auto-label :class="fieldClassName(formstate.is_clinical)">
+                                    <validate auto-label :class="fieldClassName(formstate.qualification)">
                                         <div class="col-md-12">
-
-                                            <select v-model="newCarePerson.user.provider_info.is_clinical"
-                                                    id="is_clinical"
-                                                    name="is_clinical"
+                                            <select v-model="newCarePerson.user.provider_info.qualification"
+                                                    id="qualification"
+                                                    name="qualification"
                                                     class="form-control input-md"
                                                     required>
                                                 <option value="" disabled></option>
-                                                <option value="1" :selected="newCarePerson.user.provider_info.is_clinical">Clinical (MD, RN or other)</option>
-                                                <option value="0" :selected="!newCarePerson.user.provider_info.is_clinical">Non-clinical</option>
+                                                <option value="non-clinical" :selected="newCarePerson.user.provider_info.is_clinical == 0">Non-clinical</option>
+                                                <option value="MD">MD</option>
+                                                <option value="DO">DO</option>
+                                                <option value="NP">NP</option>
+                                                <option value="PA">PA</option>
+                                                <option value="RN">RN</option>
+                                                <option value="LPN">LPN</option>
+                                                <option value="PN">PN</option>
+                                                <option value="CNA">CNA</option>
+                                                <option value="MA">MA</option>
                                             </select>
                                         </div>
 
                                         <div class="col-md-12">
-                                            <field-messages name="is_clinical"
+                                            <field-messages name="qualification"
                                                             show="$untouched || $touched || $submitted">
                                                 <div></div>
                                                 <div class="validation-error has-errors text-right" slot="required">
@@ -578,10 +585,13 @@
                     let url = window.location.href
 
                     if (url.includes('view-careplan')) {
-                        window.location.replace(url + '/#care-team')
+                        if (_.includes(url, '#care-team')) {
+                            window.location.replace(_.replace(url, '/#care-team', ''))
+                        } else {
+                            window.location.replace(url + '/#care-team')
+                        }
                     }
-                }
-                ,
+                },
 
                 fieldClassName(field) {
                     if (!field) {
@@ -633,6 +643,7 @@
                         },
                         provider_info: {
                             id: '',
+                            qualification: '',
                             is_clinical: '',
                             specialty: '',
                         }

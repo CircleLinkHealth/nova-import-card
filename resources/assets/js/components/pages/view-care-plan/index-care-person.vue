@@ -1,9 +1,9 @@
 <template>
     <div>
-        <div v-show="carePerson.user.first_name && carePerson.user.last_name">
+        <div v-show="carePerson.user.full_name">
             <div class="col-md-7">
                 <p style="margin-left: -10px;">
-                    <strong>{{carePerson.formatted_type}}: </strong>{{carePerson.user.first_name}} {{carePerson.user.last_name}} <em>{{carePerson.user.primaryRole}}</em>
+                    <strong>{{carePerson.formatted_type}}: </strong>{{carePerson.user.full_name}}<em>{{carePerson.user.primaryRole}}</em>
                 </p>
             </div>
             <div class="col-md-3">

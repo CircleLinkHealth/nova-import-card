@@ -339,7 +339,7 @@ if (isset($patient) && !empty($patient)) {
                 <div id="care-team" class="patient-info__subareas">
                     <div class="row">
                         <div class="col-xs-12">
-                            <h2 class="patient-summary__subtitles patient-summary--careplan-background">Care Team:</h2>
+                            <h2 id="care-team-label" class="patient-summary__subtitles patient-summary--careplan-background">Care Team:</h2>
                         </div>
                         <div class="col-xs-12">
                             @include('wpUsers.patient.careplan.print.careteam')
