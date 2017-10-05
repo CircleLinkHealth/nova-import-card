@@ -18,7 +18,8 @@ class PhiMail
         }
     }
 
-    private function initPhiMailConnection() {
+    private function initPhiMailConnection()
+    {
         try {
             $phiMailUser = env('EMR_DIRECT_USER');
             $phiMailPass = env('EMR_DIRECT_PASSWORD');
@@ -59,6 +60,7 @@ class PhiMail
         try {
             $this->connector->close();
         } catch (\Exception $ignore) {
+            Log::critical($ignore);
         }
     }
 
@@ -87,9 +89,9 @@ class PhiMail
         $ccdaAttachmentPath = null,
         User $patient = null
     ) {
-        $this->connector->authenticateUser('careplanmanager@direct.circlelinkhealth.com', env('EMR_DIRECT_PASSWORD'));
-
         try {
+            $this->connector->authenticateUser('careplanmanager@direct.circlelinkhealth.com', env('EMR_DIRECT_PASSWORD'));
+
             // After authentication, the server has a blank outgoing message
             // template. Begin building this message by adding a recipient.
             // Multiple recipients can be added by calling this command more
@@ -164,6 +166,10 @@ class PhiMail
 
     public function receive()
     {
+        if (!$this->connector) {
+            return false;
+        }
+
         try {
             while (true) {
                 // check next message or status update
@@ -321,7 +327,8 @@ class PhiMail
 
         $link = route('view.files.ready.to.import');
 
-        sendSlackMessage('#ccd-file-status', "We received {$numberOfCcds} CCDs from EMR Direct. \n Please visit {$link} to import.");
+        sendSlackMessage('#ccd-file-status',
+            "We received {$numberOfCcds} CCDs from EMR Direct. \n Please visit {$link} to import.");
     }
 
 }
