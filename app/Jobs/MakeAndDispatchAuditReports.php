@@ -44,11 +44,11 @@ class MakeAndDispatchAuditReports implements ShouldQueue
      * @param PhiMail $phiMail
      * @param Efax $efax
      */
-    public function __construct(User $patient, Efax $efax, PhiMail $phiMail)
+    public function __construct(User $patient, Efax $eFax = null, PhiMail $phiMail = null)
     {
         $this->patient = $patient;
-        $this->phiMail = $phiMail;
-        $this->eFax = $efax;
+        $this->phiMail = $phiMail ?? new PhiMail();
+        $this->eFax = $eFax ?? new PhaxioService();
     }
 
     /**
