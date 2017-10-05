@@ -15,15 +15,17 @@ if (isset($patient) && !empty($patient)) {
     $alreadyShown = [];
 }
 ?>
+
 @if(!isset($isPdf))
     @section('title', 'Care Plan View/Print')
-@section('activity', 'Care Plan View/Print')
-@endif
+    @section('activity', 'Care Plan View/Print')
 
-@section('scripts')
-    {{--contains care team modules as well--}}
-    <script src="{{asset('compiled/js/v-pdf-careplans.js')}}"></script>
-@endsection
+
+    @section('scripts')
+        {{--contains care team modules as well--}}
+        <script src="{{asset('compiled/js/v-pdf-careplans.js')}}"></script>
+    @endsection
+@endif
 
 @section('content')
     @if(isset($patient) && !empty($patient))
@@ -63,7 +65,8 @@ if (isset($patient) && !empty($patient)) {
                                                    href="{{ URL::route('patient.careplan.approve', ['patientId' => $patient->id]) }}">Approve</a>
 
                                                 @if(auth()->user()->hasRole('provider'))
-                                                    <a style="margin-right:10px;" class="btn btn-success btn-sm inline-block"
+                                                    <a style="margin-right:10px;"
+                                                       class="btn btn-success btn-sm inline-block"
                                                        aria-label="..."
                                                        role="button"
                                                        href="{{ route('patient.careplan.approve', ['patientId' => $patient->id, 'viewNext' => true]) }}">Approve and View Next</a>

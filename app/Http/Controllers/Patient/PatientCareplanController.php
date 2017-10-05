@@ -158,16 +158,20 @@ class PatientCareplanController extends Controller
         $datetimePrefix = date('Y-m-dH:i:s');
         $pageFileNames = [];
 
-        // first create blank page
-        $pdf = App::make('snappy.pdf.wrapper');
-        $pdf->loadView('wpUsers.patient.careplan.print', [
-            'patient' => false,
-            'isPdf'   => true,
-        ]);
+        try {
+            // first create blank page
+            $pdf = App::make('snappy.pdf.wrapper');
+            $pdf->loadView('wpUsers.patient.careplan.print', [
+                'patient' => false,
+                'isPdf'   => true,
+            ]);
 
-        $fileNameBlankPage = $storageDirectory . $datetimePrefix . '-0-PDFblank.pdf';
-        $fileNameWithPathBlankPage = base_path($fileNameBlankPage);
-        $pdf->save($fileNameWithPathBlankPage, true);
+            $fileNameBlankPage = $storageDirectory . $datetimePrefix . '-0-PDFblank.pdf';
+            $fileNameWithPathBlankPage = base_path($fileNameBlankPage);
+            $pdf->save($fileNameWithPathBlankPage, true);
+        } catch (\Exception $e) {
+            \Log::critical($e);
+        }
 
         // create pdf for each user
         $p = 1;
@@ -181,27 +185,31 @@ class PatientCareplanController extends Controller
             if (empty($careplan)) {
                 return false;
             }
-
-            // build pdf
-            $pdf = App::make('snappy.pdf.wrapper');
+            try {
+                // build pdf
+                $pdf = App::make('snappy.pdf.wrapper');
 //            leaving these here in case we need them
 //            $pdf->setOption('disable-javascript', false);
 //            $pdf->setOption('enable-javascript', true);
 //            $pdf->setOption('javascript-delay', 400);
 
-            $pdf->loadView('wpUsers.patient.multiview', [
-                'careplans'    => [$user_id => $careplan],
-                'isPdf'        => true,
-                'letter'       => $letter,
-                'problemNames' => $careplan['problem'],
-                'careTeam'     => $user->careTeamMembers,
-            ]);
-            $pdf->setOption('footer-center', 'Page [page]');
-            //$pdf->setOption('margin-top', '2');
+                $pdf->loadView('wpUsers.patient.multiview', [
+                    'careplans'    => [$user_id => $careplan],
+                    'isPdf'        => true,
+                    'letter'       => $letter,
+                    'problemNames' => $careplan['problem'],
+                    'careTeam'     => $user->careTeamMembers,
+                ]);
+                $pdf->setOption('footer-center', 'Page [page]');
+                //$pdf->setOption('margin-top', '2');
 
-            $fileName = $storageDirectory . $prefix . '-PDF_' . str_random(40) . '.pdf';
-            $fileNameWithPath = base_path($fileName);
-            $pdf->save($fileNameWithPath, true);
+                $fileName = $storageDirectory . $prefix . '-PDF_' . str_random(40) . '.pdf';
+                $fileNameWithPath = base_path($fileName);
+
+                $pdf->save($fileNameWithPath, true);
+            } catch (\Exception $e) {
+                \Log::critical($e);
+            }
             $pageCount = $this->count_pages($fileNameWithPath);
 //            echo PHP_EOL . '<br /><br />' . $fileNameWithPath . ' - PAGE COUNT: ' . $pageCount;
 
