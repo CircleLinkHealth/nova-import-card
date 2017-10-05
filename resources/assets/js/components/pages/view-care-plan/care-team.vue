@@ -22,7 +22,7 @@
             mapActions(['getPatientCareTeam']),
         ),
 
-        mounted() {
+        created() {
             this.getPatientCareTeam(this.patientId);
         },
 
