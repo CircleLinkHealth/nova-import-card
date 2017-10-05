@@ -23,7 +23,7 @@
         ),
 
         created() {
-            this.getPatientCareTeam(this.patientId);
+            this.getPatientCareTeam($('meta[name=patient_id]').attr('content'));
         },
 
         data() {
