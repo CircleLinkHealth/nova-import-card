@@ -4,7 +4,6 @@ namespace App\Reports\Sales;
 
 use App\Contracts\Reports\Reportable;
 use Carbon\Carbon;
-use Illuminate\Support\Facades\URL;
 
 class StatsHelper
 {
@@ -89,16 +88,13 @@ class StatsHelper
 
     public function historicalEnrollmentPerformance(Carbon $start, Carbon $end)
     {
-        $start = $start->startOfDay();
-        $end = $end->endOfDay();
+        $endMonthStart = $end->startOfDay();
 
         $patients = $this->reportable->patients();
 
         for ($i = 0; $i < 5; $i++) {
-            if ($i != 0) {
-                $start = $start->copy()->subMonth($i)->firstOfMonth()->startOfDay();
-                $end = $start->copy()->endOfMonth()->endOfDay();
-            }
+            $start = $endMonthStart->copy()->subMonth($i)->firstOfMonth()->startOfDay();
+            $end = $start->copy()->endOfMonth()->endOfDay();
 
             $index = $start->toDateString();
             $data['withdrawn'][$index] = 0;

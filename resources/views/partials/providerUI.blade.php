@@ -22,7 +22,7 @@
                 return function () {
                     heap.push([e].concat(Array.prototype.slice.call(arguments, 0)))
                 }
-            }, p = ["addEventProperties", "addUserProperties", "clearEventProperties", "identify", "removeEventProperty", "setEventProperties", "track", "unsetEventProperty"], c = 0; c < p.length; c++)heap[p[c]] = o(p[c])
+            }, p = ["addEventProperties", "addUserProperties", "clearEventProperties", "identify", "removeEventProperty", "setEventProperties", "track", "unsetEventProperty"], c = 0; c < p.length; c++) heap[p[c]] = o(p[c])
         };
         heap.load("4070082021");
     </script>
@@ -34,14 +34,17 @@
     <link href="{{ asset('/css/patientsearch.css') }}" rel="stylesheet">
     <link href="{{ asset('/css/wpstyle.css') }}" rel="stylesheet">
     <link href="{{ asset('/img/favicon.png') }}" rel="icon">
-    <link rel="stylesheet" href="//code.jquery.com/ui/1.11.4/themes/smoothness/jquery-ui.css">
 
-    <!-- Fonts -->
+    @if(!isset($isPdf))
+        <link rel="stylesheet" href="//code.jquery.com/ui/1.11.4/themes/smoothness/jquery-ui.css">
+    @endif
+
+<!-- Fonts -->
     <link href='https://fonts.googleapis.com/css?family=Roboto:400,300' rel='stylesheet' type='text/css'>
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
 
 
-@if(!isset($isPdf))
+    @if(!isset($isPdf))
     <!-- http://curioussolutions.github.io/DateTimePicker/ -->
         <link rel="stylesheet" type="text/css" href="//cdn.jsdelivr.net/datetimepicker/latest/DateTimePicker.min.css"/>
         <link rel="stylesheet" href="{{ asset('/webix/codebase/webix.css') }}" type="text/css">
