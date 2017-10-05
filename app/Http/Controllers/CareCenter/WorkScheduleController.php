@@ -10,6 +10,7 @@ use App\NurseContactWindow;
 use App\User;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
+use Illuminate\Validation\Rule;
 use Validator;
 
 class WorkScheduleController extends Controller
@@ -70,12 +71,21 @@ class WorkScheduleController extends Controller
 
     public function storeHoliday(Request $request)
     {
+        $user = auth()->user();
+
         $request->replace([
             'holiday' => Carbon::parse($request->input('holiday'))->toDateTimeString(),
         ]);
 
         $validator = Validator::make($request->all(), [
-            'holiday' => "required|date|after:tomorrow|unique:holidays,date",
+            'holiday' => [
+                Rule::unique('holidays', 'date')->where(function ($query) use ($user) {
+                    $query->where('nurse_info_id', $user->nurseInfo->id);
+                }),
+                'required',
+                'date',
+                'after:tomorrow',
+            ],
         ]);
 
 
@@ -84,8 +94,6 @@ class WorkScheduleController extends Controller
                 ->withErrors($validator)
                 ->withInput();
         }
-
-        $user = auth()->user();
 
         $holiday = $user->nurseInfo->holidays()->create([
             'date' => Carbon::parse($request->input('holiday'))->format('Y-m-d'),
