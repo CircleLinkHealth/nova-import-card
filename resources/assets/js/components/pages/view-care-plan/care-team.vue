@@ -12,23 +12,34 @@
     import {patientCareTeam} from '../../../store/getters';
 
     export default {
-        computed: Object.assign({},
-            mapGetters({
-                patientCareTeam: 'patientCareTeam'
-            }),
-        ),
-
         methods: Object.assign(
             mapActions(['getPatientCareTeam']),
         ),
 
         created() {
+            //not working for some reason
             this.getPatientCareTeam($('meta[name=patient_id]').attr('content'));
+
+            let patientId = $('meta[name=patient_id]').attr('content')
+
+            if (!patientId) {
+                return;
+            }
+
+            window.axios.get('user/' + patientId + '/care-team').then(
+                (resp) => {
+                    this.patientCareTeam = resp.data
+                },
+                (resp) => {
+                    console.log(resp.data)
+                }
+            );
         },
 
         data() {
             return {
                 patientId: $('meta[name=patient_id]').attr('content'),
+                patientCareTeam: []
             }
         }
     }
