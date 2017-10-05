@@ -3,6 +3,7 @@
 namespace App\Jobs;
 
 use App\CLH\Helpers\StringManipulation;
+use App\Contracts\Efax;
 use App\Reports\PatientDailyAuditReport;
 use App\Services\Phaxio\PhaxioService;
 use App\Services\PhiMail\PhiMail;
@@ -25,13 +26,29 @@ class MakeAndDispatchAuditReports implements ShouldQueue
     protected $patient;
 
     /**
+     * An instance of PhiMail
+     *
+     * @var PhiMail
+     */
+    protected $phiMail;
+
+    /**
+     * @var Efax
+     */
+    protected $eFax;
+
+    /**
      * Create a new job instance.
      *
      * @param User $patient
+     * @param PhiMail $phiMail
+     * @param Efax $efax
      */
-    public function __construct(User $patient)
+    public function __construct(User $patient, Efax $efax, PhiMail $phiMail)
     {
         $this->patient = $patient;
+        $this->phiMail = $phiMail;
+        $this->eFax = $efax;
     }
 
     /**
@@ -47,20 +64,23 @@ class MakeAndDispatchAuditReports implements ShouldQueue
 
         $path = storage_path("download/$fileName");
 
-        //send DM message
-        $dmAddress = $this->patient->locations->first()->emr_direct_address;
+        $settings = $this->patient->primaryPractice->settings->firstOrNew();
 
-        if ($this->patient->primaryPractice->settings->first()->dm_audit_reports && $dmAddress) {
-            $phiMail = new PhiMail();
-            $test = $phiMail->send($dmAddress, $path);
-        }
+        $dmSent = $this->patient->locations->get()->map(function ($location) use ($path, $settings) {
+            //Send DM mail
+            if ($settings->dm_audit_reports) {
+                $this->phiMail->send($location->emr_direct_address, $path);
+            }
 
-        //send eFax
-        $fax = $this->patient->locations->first()->fax;
+            //Send eFax
+            $fax = $location->fax;
 
-        if ($this->patient->primaryPractice->settings->first()->efax_audit_reports && $fax) {
-            $number = (new StringManipulation())->formatPhoneNumberE164($fax);
-            $faxTest = (new PhaxioService())->send($number, $path);
-        }
+            if ($settings->efax_audit_reports && $fax) {
+                $number = (new StringManipulation())->formatPhoneNumberE164($fax);
+                $this->eFax->send($number, $path);
+            }
+
+            return $location;
+        });
     }
 }
