@@ -88,12 +88,12 @@ class StatsHelper
 
     public function historicalEnrollmentPerformance(Carbon $start, Carbon $end)
     {
-        $currentMonthStart = $start->startOfDay();
+        $endMonthStart = $end->startOfDay();
 
         $patients = $this->reportable->patients();
 
         for ($i = 0; $i < 5; $i++) {
-            $start = $currentMonthStart->copy()->subMonth($i)->firstOfMonth()->startOfDay();
+            $start = $endMonthStart->copy()->subMonth($i)->firstOfMonth()->startOfDay();
             $end = $start->copy()->endOfMonth()->endOfDay();
 
             $index = $start->toDateString();
