@@ -9,7 +9,6 @@
 <script>
     import {mapGetters, mapActions} from 'vuex'
     import {getPatientCareTeam} from '../../../store/actions'
-    import {patientCareTeam} from '../../../store/getters';
 
     export default {
         methods: Object.assign(
@@ -17,10 +16,7 @@
         ),
 
         created() {
-            //not working for some reason
-            this.getPatientCareTeam($('meta[name=patient_id]').attr('content'));
-
-            let patientId = $('meta[name=patient_id]').attr('content')
+            let patientId = this.patientId
 
             if (!patientId) {
                 return;
@@ -34,6 +30,14 @@
                     console.log(resp.data)
                 }
             );
+
+            //not working for some reason
+            this.getPatientCareTeam(this.patientId);
+        },
+
+        mounted() {
+            //not working for some reason
+            this.getPatientCareTeam(this.patientId);
         },
 
         data() {
