@@ -60,6 +60,7 @@ class PhiMail
         try {
             $this->connector->close();
         } catch (\Exception $ignore) {
+            Log::critical($ignore);
         }
     }
 
