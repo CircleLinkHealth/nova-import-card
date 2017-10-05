@@ -152,7 +152,7 @@ class Kernel extends ConsoleKernel
         $schedule->command('send:audit-reports')
             ->monthlyOn(1, '02:00');
 
-        $schedule->command('dm:check')->everyMinute();
+        $schedule->command('dm:check')->everyFiveMinutes();
     }
 
     /**
