@@ -23,13 +23,12 @@
         ),
 
         mounted() {
-            this.careTeam = this.getPatientCareTeam(this.patientId);
+            this.getPatientCareTeam(this.patientId);
         },
 
         data() {
             return {
                 patientId: $('meta[name=patient_id]').attr('content'),
-                careTeam: [],
             }
         }
     }
