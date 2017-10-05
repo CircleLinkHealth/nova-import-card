@@ -30,9 +30,6 @@
                     console.log(resp.data)
                 }
             );
-
-            //not working for some reason
-            this.getPatientCareTeam(this.patientId);
         },
 
         mounted() {

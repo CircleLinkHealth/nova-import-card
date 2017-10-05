@@ -19,15 +19,22 @@
                         class="glyphicon glyphicon-pencil"></i> </span></button>
             </div>
         </div>
+
+        <component-proxy v-if="componentName" :name="componentName" :props="componentProps"></component-proxy>
     </div>
 </template>
 
 <script>
     import {mapActions} from 'vuex'
     import {destroyCarePerson, setOpenModal} from '../../../store/actions'
+    import UpdateCarePerson from './update-care-person.vue'
 
     export default {
         props: ['carePerson'],
+
+        components: {
+            UpdateCarePerson
+        },
 
         computed: {
             name() {
@@ -41,7 +48,9 @@
             return {
                 patientId: $('meta[name="patient_id"]').attr('content'),
                 currentModal: '',
-                editedModel: {}
+                editedModel: {},
+                componentName: '',
+                componentProps: {},
             }
         },
 
@@ -60,13 +69,19 @@
             },
             {
                 editCarePerson() {
-                    this.setOpenModal({
-                        name: 'update-care-person',
-                        props: {
-                            carePerson: this.carePerson
-                        },
+                    this.componentName = 'update-care-person'
+                    this.componentProps = {
+                        carePerson: this.carePerson,
+                        show: true
+                    }
 
-                    })
+//                    this.setOpenModal({
+//                        name: 'update-care-person',
+//                        props: {
+//                            carePerson: this.carePerson
+//                        },
+//
+//                    })
                 }
             }
         )
