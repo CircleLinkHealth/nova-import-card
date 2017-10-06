@@ -64,7 +64,7 @@ class PatientObserver
                 ->emr_direct_address;
 
             if ($direct) {
-                (new PhiMail())->send($direct, $pdfPath);
+                (new PhiMail())->send($direct, $pdfPath, $note->fileName ?? $pdfPath);
             }
         }
     }
