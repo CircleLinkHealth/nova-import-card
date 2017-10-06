@@ -533,8 +533,11 @@
         ),
 
         methods: Object.assign(
-            mapActions(['getPatientCareTeam', 'clearOpenModal', 'addNotification', 'updateCarePerson']),
+            mapActions(['getPatientCareTeam', 'addNotification', 'updateCarePerson']),
             {
+                clearOpenModal() {
+                    this.show = false
+                },
                 sendForm() {
                     this.submitClicked = true
 
@@ -565,8 +568,12 @@
 
                     let url = window.location.href
 
-                    if(url.includes('view-careplan')) {
-                        window.location.replace(url + '/#care-team')
+                    if (url.includes('view-careplan')) {
+                        if (_.includes(url, '#care-team')) {
+                            window.location.replace(_.replace(url, '/#care-team', ''))
+                        } else {
+                            window.location.replace(url + '/#care-team')
+                        }
                     }
                 },
 
