@@ -9,26 +9,38 @@
 <script>
     import {mapGetters, mapActions} from 'vuex'
     import {getPatientCareTeam} from '../../../store/actions'
-    import {patientCareTeam} from '../../../store/getters';
 
     export default {
-        computed: Object.assign({},
-            mapGetters({
-                patientCareTeam: 'patientCareTeam'
-            }),
-        ),
-
         methods: Object.assign(
             mapActions(['getPatientCareTeam']),
         ),
 
         created() {
+            let patientId = this.patientId
+
+            if (!patientId) {
+                return;
+            }
+
+            window.axios.get('user/' + patientId + '/care-team').then(
+                (resp) => {
+                    this.patientCareTeam = resp.data
+                },
+                (resp) => {
+                    console.log(resp.data)
+                }
+            );
+        },
+
+        mounted() {
+            //not working for some reason
             this.getPatientCareTeam(this.patientId);
         },
 
         data() {
             return {
                 patientId: $('meta[name=patient_id]').attr('content'),
+                patientCareTeam: []
             }
         }
     }

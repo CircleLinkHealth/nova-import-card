@@ -543,8 +543,11 @@
         ),
 
         methods: Object.assign(
-            mapActions(['getPatientCareTeam', 'clearOpenModal', 'addNotification', 'updateCarePerson']),
+            mapActions(['getPatientCareTeam', 'addNotification', 'updateCarePerson']),
             {
+                clearOpenModal() {
+                    this.show = false
+                },
                 sendForm() {
                     this.submitClicked = true
 
