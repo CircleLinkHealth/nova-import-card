@@ -103,9 +103,6 @@ class PhiMail
         User $patient = null
     ) {
         try {
-            $this->connector->authenticateUser('careplanmanager@direct.circlelinkhealth.com',
-                env('EMR_DIRECT_PASSWORD'));
-
             // After authentication, the server has a blank outgoing message
             // template. Begin building this message by adding a recipient.
             // Multiple recipients can be added by calling this command more
