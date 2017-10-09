@@ -26,7 +26,7 @@
         <div class="col-md-8 col-md-offset-2">
             <div class="jumbotron" style="padding-top: 0px">
                 <h3>Email Preview</h3>
-                <h3>Subject: {{Carbon\Carbon::now()->format('F')}} Time and Fees Earned Report</h3>
+                <h3>Subject: {{$month}} Time and Fees Earned Report</h3>
                 <span id="result">
                     <hr>
 
