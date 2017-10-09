@@ -42,7 +42,11 @@ class UserController extends Controller
         $users = User::whereIn('id', Auth::user()->viewableUserIds())
             ->orderBy('id', 'desc')
             ->get()
-            ->pluck('fullNameWithId', 'id')
+            ->mapWithKeys(function ($user) {
+                return [
+                    $user->id => "{$user->first_name} {$user->last_name} ({$user->id})"
+                ];
+            })
             ->all();
 
         $filterUser = 'all';
