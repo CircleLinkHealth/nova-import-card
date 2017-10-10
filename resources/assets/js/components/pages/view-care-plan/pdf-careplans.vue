@@ -9,14 +9,9 @@
     import UpdateCarePerson from '../../pages/view-care-plan/update-care-person.vue'
     import IndexCarePerson from '../../pages/view-care-plan/index-care-person.vue'
     import CareTeam from '../../pages/view-care-plan/care-team.vue'
+    import CarePlanApi from '../../../api/patient-care-plan'
 
     export default {
-        computed: Object.assign(
-            mapGetters({
-                patientCarePlan: 'patientCarePlan'
-            })
-        ),
-
         components: {
             modal,
             Dropzone,
@@ -41,13 +36,29 @@
                 csrfToken: document.head.querySelector('meta[name="csrf-token"]').content,
                 csrfHeader: {
                     'X-CSRF-TOKEN': document.head.querySelector('meta[name="csrf-token"]').content
-                }
+                },
+                patientCarePlan: {}
             }
         },
 
         methods: Object.assign({},
-            mapActions(['getPatientCarePlan', 'destroyPdf', 'uploadPdfCarePlan', 'addNotification']),
+            mapActions(['destroyPdf', 'uploadPdfCarePlan', 'addNotification']),
             {
+                getPatientCarePlan(patientId) {
+                    if (!patientId) {
+                        return
+                    }
+
+                    CarePlanApi.getPatientCareplan(carePlan => {
+                        if (!carePlan) {
+                            return
+                        }
+                        this.patientCarePlan = carePlan;
+                    }, error => {
+                        console.log(error)
+                    }, patientId)
+                },
+
                 openModal() {
                     this.showUploadModal = true
                 },
@@ -60,6 +71,21 @@
                     }
 
                     this.destroyPdf(pdf.id)
+
+                    //delete pdf locally
+                    //this is a quickfix for https://github.com/CircleLinkHealth/cpm-web/issues/693
+                    //@todo: fix vuex
+                    let removeThis = null;
+                    for (let i = 0; i < this.patientCarePlan.pdfs.length; i++) {
+                        if (this.patientCarePlan.pdfs[i].id == pdf.id) {
+                            removeThis = i;
+                            break;
+                        }
+                    }
+
+                    if (!_.isNull(removeThis)) {
+                        this.patientCarePlan.pdfs.splice(removeThis, 1)
+                    }
                 },
 
                 showSuccess() {
