@@ -15,12 +15,12 @@
     <div id="v-pdf-careplans" class="container">
         <pdf-careplans></pdf-careplans>
 
-        <div class="row" style="padding-top: 20%;">
-            <div class="col-md-12 text-center">
-                <a href="{{route('switch.to.web.careplan', ['carePlanId' => $patient->carePlan->id])}}"
-                   class="btn revert-btn inline-block">REVERT TO EDITABLE CAREPLAN FROM CCD/PATIENT DATA</a>
-            </div>
-        </div>
+        {{--<div class="row" style="padding-top: 20%;">--}}
+            {{--<div class="col-md-12 text-center">--}}
+                {{--<a href="{{route('switch.to.web.careplan', ['carePlanId' => $patient->carePlan->id])}}"--}}
+                   {{--class="btn revert-btn inline-block">REVERT TO EDITABLE CAREPLAN FROM CCD/PATIENT DATA</a>--}}
+            {{--</div>--}}
+        {{--</div>--}}
     </div>
 @stop
 
