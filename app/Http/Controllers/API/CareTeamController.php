@@ -251,7 +251,7 @@ class CareTeamController extends Controller
         ], [
             'first_name' => $input['user']['first_name'],
             'last_name'  => $input['user']['last_name'],
-            'suffix'     => $input['user']['suffix'] == 'non-clinical'
+            'suffix'     => $input['user']['suffix'] && $input['user']['suffix'] == 'non-clinical'
                 ? null
                 : $input['user']['suffix'],
             'address'    => $input['user']['address'],
