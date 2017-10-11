@@ -47,7 +47,7 @@ class AddDefaultTargetBpToSettings extends Migration
      */
     public function down()
     {
-        Schema::table('settings', function (Blueprint $table) {
+        Schema::table('cpm_settings', function (Blueprint $table) {
             $table->dropColumn('default_target_bp');
         });
     }
