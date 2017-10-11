@@ -64,19 +64,11 @@ class Problem extends Model
     }
 
     public function icd10Code() {
-        if ($this->isIcd10()) {
+        if ($this->isIcd10() && $this->code) {
             return $this->code;
         }
 
-        if ($this->isIcd9()) {
-            return $this->convertCode('icd_9_code', 'icd_10_code');
-        }
-
-        if ($this->isSnomed()) {
-            return $this->convertCode('snomed_code', 'icd_10_code');
-        }
-
-        return null;
+        return $this->cpmProblem->default_icd_10_code ?? null;
     }
 
     public function convertCode($from, $to) {
