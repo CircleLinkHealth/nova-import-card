@@ -2468,7 +2468,7 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
             ->whereNotNull('cpm_problem_id')
             ->get()
             ->map(function ($problem) use ($billableProblems) {
-                $problem->icd_10_code = $problem->icd10Code();
+                $problem->icd_10_code = $problem->icd10Code() ?? $problem->cpmProblem->default_icd_10_code ?? null;
 
                 if (!$problem->icd_10_code) {
                     return $problem;
