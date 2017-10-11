@@ -36,16 +36,6 @@ class Nurse extends Model
         'isNLC',
     ];
 
-    public static function activeNursesForUI()
-    {
-
-        return User::whereHas('roles', function ($q) {
-            $q->where('name', '=', 'care-center');
-        })->where('user_status', 1)->pluck('display_name', 'id');
-
-
-    }
-
     public static function careGivenToPatientForCurrentMonthByNurse(Patient $patient, Nurse $nurse)
     {
 
@@ -56,15 +46,6 @@ class Nurse extends Model
                     ->where('updated_at', '<=', Carbon::now()->endOfMonth());
             })
             ->sum('duration');
-    }
-
-    public function scopeActive()
-    {
-
-        return User::whereHas('roles', function ($q) {
-            $q->where('name', '=', 'care-center');
-        })->where('user_status', 1)->get();
-
     }
 
     public function user()
