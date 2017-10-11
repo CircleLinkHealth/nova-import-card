@@ -52,7 +52,7 @@
                                 </div>
 
                                 <div class="form-group">
-                                    <label class="col-md-2 control-label" for="start_date">From</label>
+                                    <label class="col-md-2 control-label" for="start_date">From (inclusive)</label>
                                     <div class="col-md-6">
                                         <input class="form-control" type="date"
                                                value="{{\Carbon\Carbon::now()->startOfMonth()->toDateString()}}"
@@ -62,7 +62,7 @@
                                 </div>
 
                                 <div class="form-group">
-                                    <label class="col-md-2 control-label" for="end_date">To</label>
+                                    <label class="col-md-2 control-label" for="end_date">To (inclusive)</label>
                                     <div class="col-md-6">
                                         <input class="form-control" type="date"
                                                value="{{\Carbon\Carbon::now()->toDateString()}}" name="end_date"
