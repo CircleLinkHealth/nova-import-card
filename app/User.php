@@ -189,28 +189,12 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
         return $this->hasMany(Medication::class, 'patient_id');
     }
 
-    /**
-     * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
-     */
-    public function ccdProblems()
-    {
-        return $this->hasMany(Problem::class, 'patient_id');
-    }
-
     public function careAmbassador()
     {
 
         return $this->hasOne(CareAmbassador::class);
 
     }
-
-    /*****/
-
-    /*
-     *
-     * CPM Models
-     *
-     */
 
     /**
      * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
@@ -221,6 +205,14 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
             ->withPivot('cpm_instruction_id')
             ->withTimestamps('created_at', 'updated_at');
     }
+
+    /*****/
+
+    /*
+     *
+     * CPM Models
+     *
+     */
 
     /**
      * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
@@ -272,13 +264,6 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
             ->withTimestamps('created_at', 'updated_at');
     }
 
-
-    /*
-     *
-     * CPM Biometrics
-     *
-     */
-
     /**
      * @return \Illuminate\Database\Eloquent\Relations\HasOne
      */
@@ -286,6 +271,13 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
     {
         return $this->hasOne(CpmBloodPressure::class, 'patient_id');
     }
+
+
+    /*
+     *
+     * CPM Biometrics
+     *
+     */
 
     /**
      * @return \Illuminate\Database\Eloquent\Relations\HasOne
@@ -311,12 +303,12 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
         return $this->hasOne(CpmWeight::class, 'patient_id');
     }
 
-    /*****/
-
     public function foreignId()
     {
         return $this->hasMany(ForeignId::class);
     }
+
+    /*****/
 
     public function patientDemographics()
     {
@@ -479,13 +471,13 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
         }
     }
 
-
-    // END RELATIONSHIPS
-
     public function primaryProgramId()
     {
         return $this->program_id;
     }
+
+
+    // END RELATIONSHIPS
 
     public function getPrimaryPracticeIdAttribute()
     {
@@ -1374,7 +1366,6 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
         return $bp;
     }
 
-
     public function setBillingProviderIDAttribute($value)
     {
         if (empty($value)) {
@@ -1843,9 +1834,6 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
 
     }
 
-
-// MISC, these should be removed eventually
-
     public function createNewUser(
         $email,
         $password
@@ -1857,6 +1845,9 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
 
         return $this;
     }
+
+
+// MISC, these should be removed eventually
 
     public function getUCP()
     {
@@ -1904,12 +1895,12 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
         return new UserService();
     }
 
-// user data scrambler
-
     public function emailSettings()
     {
         return $this->hasOne(EmailSettings::class);
     }
+
+// user data scrambler
 
     public function isCCMCountable()
     {
@@ -2190,7 +2181,6 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
         });
     }
 
-
     /**
      * Get billing provider.
      *
@@ -2468,5 +2458,40 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
                     $q->where('type', '=', PhoneNumber::HOME);
                 },
             ]);
+    }
+
+    public function billableProblems()
+    {
+        $billableProblems = new Collection();
+
+        $ccdProblems = $this->ccdProblems()
+            ->whereNotNull('cpm_problem_id')
+            ->get()
+            ->map(function ($problem) use ($billableProblems) {
+                $problem->icd_10_code = $problem->icd10Code();
+
+                if (!$problem->icd_10_code) {
+                    return $problem;
+                }
+
+                if ($problem->isIcd10()) {
+                    $billableProblems->prepend($problem);
+                    return $problem;
+                }
+
+                $billableProblems->push($problem);
+
+                return $problem;
+            });
+
+        return $billableProblems;
+    }
+
+    /**
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
+     */
+    public function ccdProblems()
+    {
+        return $this->hasMany(Problem::class, 'patient_id');
     }
 }
