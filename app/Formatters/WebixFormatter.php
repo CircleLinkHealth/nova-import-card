@@ -632,7 +632,6 @@ class WebixFormatter implements ReportFormatter
                     'ccm_seconds'                => $patient->patientInfo->cur_month_activity_time,
                     //$meta[$part->id]['cur_month_activity_time'][0]
                     'provider'                   => $bpName,
-                    // $bpUserInfo['prefix'] . ' ' . $bpUserInfo['first_name'] . ' ' . $bpUserInfo['last_name'] . ' ' . $bpUserInfo['qualification']
                     'site'                       => $programName,
                 ];
             } catch (\Exception $e) {

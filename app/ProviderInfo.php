@@ -36,7 +36,6 @@ class ProviderInfo extends Model
         'is_clinical',
         'user_id',
         'prefix',
-        'qualification',
         'npi_number',
         'specialty',
     ];

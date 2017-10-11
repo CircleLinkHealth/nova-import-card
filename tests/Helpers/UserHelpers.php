@@ -68,7 +68,7 @@ trait UserHelpers
 
             //provider Info
             'prefix'            => 'Dr',
-            'qualification'     => 'MD',
+            'suffix'     => 'MD',
             'npi_number'        => 1234567890,
             'specialty'         => 'Unit Tester',
 
