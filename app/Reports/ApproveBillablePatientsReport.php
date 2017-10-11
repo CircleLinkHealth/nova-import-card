@@ -161,8 +161,6 @@ class ApproveBillablePatientsReport
 
             }
 
-            $report->save();
-
             //if patient was paused/withdrawn and acted upon already, it's not QA no more
             $isNotEnrolledAndApproved = ($report->actor_id == null) && ($info->ccm_status == 'withdrawn' || $info->ccm_status == 'paused');
 
