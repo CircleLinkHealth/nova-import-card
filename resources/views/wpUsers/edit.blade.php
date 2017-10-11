@@ -97,13 +97,10 @@
                                 <div class="form-group">
                                     <div class="row">
                                         <div class="col-xs-2">{!! Form::label('username', 'Login:') !!}</div>
-                                        <div class="col-xs-10">{!! Form::text('username', $patient->username, ['class' => 'form-control', 'style' => 'width:80%;']) !!}</div>
-                                    </div>
-                                </div>
-                                <div class="form-group">
-                                    <div class="row">
+                                        <div class="col-xs-4">{!! Form::text('username', $patient->username, ['class' => 'form-control', 'style' => 'width:80%;']) !!}</div>
+
                                         <div class="col-xs-2">{!! Form::label('email', 'email:') !!}</div>
-                                        <div class="col-xs-10">{!! Form::email('email', $patient->email, ['class' => 'form-control', 'style' => 'width:80%;']) !!}</div>
+                                        <div class="col-xs-4">{!! Form::email('email', $patient->email, ['class' => 'form-control', 'style' => 'width:80%;']) !!}</div>
                                     </div>
                                 </div>
                                 <div class="form-group">
@@ -112,10 +109,12 @@
                                         <div class="col-xs-4">{!! Form::text('first_name', $patient->first_name, ['class' => 'form-control']) !!}</div>
                                         <div class="col-xs-2">{!! Form::label('last_name', 'Last Name:') !!}</div>
                                         <div class="col-xs-4">{!! Form::text('last_name', $patient->last_name, ['class' => 'form-control']) !!}</div>
-
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <div class="row">
                                         <div class="col-xs-2">{!! Form::label('suffix', 'Suffix:') !!}</div>
-                                        <div class="col-xs-10">{!! Form::text('suffix', $patient->suffix, ['class' => 'form-control']) !!}</div>
-
+                                        <div class="col-xs-4">{!! Form::text('suffix', $patient->suffix, ['class' => 'form-control']) !!}</div>
                                     </div>
                                 </div>
                                 <div class="form-group">
