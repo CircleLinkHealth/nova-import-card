@@ -46,6 +46,7 @@ class CareTeamController extends Controller
                 'email'            => $member->user->email,
                 'first_name'       => $member->user->first_name,
                 'last_name'        => $member->user->last_name,
+                'suffix'           => $member->user->suffix,
                 'address'          => $member->user->address,
                 'address2'         => $member->user->address2,
                 'city'             => $member->user->city,
@@ -75,16 +76,14 @@ class CareTeamController extends Controller
                     ],
                 'provider_info'    => $member->user->providerInfo
                     ? [
-                        'id'            => $member->user->providerInfo->id,
+                        'id'          => $member->user->providerInfo->id,
                         'is_clinical' => $member->user->providerInfo->is_clinical,
-                        'qualification' => $member->user->providerInfo->qualification,
-                        'specialty'     => $member->user->providerInfo->specialty,
+                        'specialty'   => $member->user->providerInfo->specialty,
                     ]
                     : [
-                        'id'            => '',
+                        'id'          => '',
                         'is_clinical' => '',
-                        'qualification' => '',
-                        'specialty'     => '',
+                        'specialty'   => '',
                     ]
                 ,
             ],
@@ -134,6 +133,9 @@ class CareTeamController extends Controller
                         'first_name'       => $member->user->first_name,
                         'last_name'        => $member->user->last_name,
                         'full_name'        => $member->user->full_name,
+                        'suffix'           => $member->user->providerInfo->is_clinical
+                            ? $member->user->suffix
+                            : 'non-clinical',
                         'address'          => $member->user->address,
                         'address2'         => $member->user->address2,
                         'city'             => $member->user->city,
@@ -163,16 +165,14 @@ class CareTeamController extends Controller
                             ],
                         'provider_info'    => $member->user->providerInfo
                             ? [
-                                'id'            => $member->user->providerInfo->id,
+                                'id'          => $member->user->providerInfo->id,
                                 'is_clinical' => $member->user->providerInfo->is_clinical,
-                                'qualification' => $member->user->providerInfo->is_clinical ? $member->user->providerInfo->qualification : 'non-clinical',
-                                'specialty'     => $member->user->providerInfo->specialty,
+                                'specialty'   => $member->user->providerInfo->specialty,
                             ]
                             : [
-                                'id'            => '',
+                                'id'          => '',
                                 'is_clinical' => '',
-                                'qualification' => '',
-                                'specialty'     => '',
+                                'specialty'   => '',
                             ]
                         ,
                     ],
@@ -229,7 +229,6 @@ class CareTeamController extends Controller
             });
 
 
-
         return response()->json(['results' => $users]);
     }
 
@@ -252,6 +251,9 @@ class CareTeamController extends Controller
         ], [
             'first_name' => $input['user']['first_name'],
             'last_name'  => $input['user']['last_name'],
+            'suffix'     => $input['user']['suffix'] == 'non-clinical'
+                ? null
+                : $input['user']['suffix'],
             'address'    => $input['user']['address'],
             'address2'   => $input['user']['address2'],
             'city'       => $input['user']['city'],
@@ -341,15 +343,8 @@ class CareTeamController extends Controller
             $providerInfo = $input['user']['provider_info'];
 
             $args = [];
-            if (array_key_exists('qualification', $providerInfo)) {
-                $args['is_clinical'] = $providerInfo['qualification'] != 'non-clinical';
-                $args['qualification'] = null;
-
-                $args['qualification'] = null;
-
-                if ($args['is_clinical']) {
-                    $args['qualification'] = $providerInfo['qualification'];
-                }
+            if (array_key_exists('suffix', $input['user'])) {
+                $args['is_clinical'] = $input['user']['suffix'] != 'non-clinical';
             }
             if (array_key_exists('specialty', $providerInfo)) {
                 $args['specialty'] = $providerInfo['specialty'];
