@@ -134,21 +134,23 @@ class ApproveBillablePatientsReport
                 $problemName = 'billable_problem' . ($i + 1);
                 $problemCode = 'billable_problem' . ($i + 1) . '_code';
 
-                if (!$report->$problemName) {
+                $billableProblems[$i]['name'] = $report->$problemName;
+                $billableProblems[$i]['code'] = $report->$problemCode;
+
+                if (!$report->$problemName || !$report->$problemCode) {
                     if (isset($problemsWithIcd10Code[$i])) {
                         $report->$problemName = $problemsWithIcd10Code[$i]->name;
                         $report->$problemCode = $problemsWithIcd10Code[$i]->icd_10_code;
                         $billableProblems[$i]['name'] = $report->$problemName;
+                        $billableProblems[$i]['code'] = $report->$problemCode;
 
                         $lacksCode = false;
-                        $billableProblems[$i]['code'] = $report->$problemCode;
 
                         if (!$report->$problemCode) {
                             $lacksCode = true;
                             $billableProblems[$i]['code'] = "<button style='font-size: 10px' class='btn btn-primary codePicker' patient='$u->fullName' name=$problemCode value='$options' id='$report->id'>Select Code</button >";
                         }
                     } else {
-
                         $name = 'billable_problem' . ($i + 1);
 
                         $lacksProblems = true;
@@ -156,46 +158,7 @@ class ApproveBillablePatientsReport
 
                         $billableProblems[$i]['name'] = "<button style='font-size: 10px' class='btn btn-primary problemPicker' patient='$u->fullName' name=$name value='$options' id='$report->id'>Select Problem</button >";
                         $billableProblems[$i]['code'] = "<button style='font-size: 10px' class='btn btn-primary codePicker' patient='$u->fullName' name=$name value='$options' id='$report->id'>Select Code</button >";
-
                     }
-
-                } else { // there's a problem
-
-                    //if there is a problem but no code
-
-                    if (!$report->$problemCode) {
-                        $code = null;
-
-                        $lastMonthReport = $info->patientSummaries()
-                            ->where('month_year',
-                                $this->month->copy()->subMonth()->firstOfMonth()->toDateString())->first();
-
-                        if ($lastMonthReport && $lastMonthReport->$problemName == $report->$problemName) {
-                            $code = $lastMonthReport->$problemCode;
-                        }
-
-                        if (!$code && isset($problemsWithIcd10Code[$i])) {
-                            $code = $problemsWithIcd10Code[$i]->icd_10_code;
-                        }
-
-                        $report->$problemCode = $billableProblems[$i]['code'] = $code;
-
-                        $problem = $report->$problemName;
-
-                        $name = 'billable_problem' . ($i + 1);
-
-                        if (!$code) {
-                            $lacksCode = true;
-                            $billableProblems[$i]['code'] = "<button style='font-size: 10px' class='btn btn-primary problemPicker' patient='$u->fullName' name=$name value='$problem' id='$report->id'>Select Code</button >";
-                        }
-                    } else {
-
-                        $billableProblems[$i]['code'] = $report->$problemCode;
-
-                    }
-
-                    $billableProblems[$i]['name'] = $report->$problemName;
-
                 }
 
             }
