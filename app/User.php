@@ -103,6 +103,7 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
         'spam',
         'first_name',
         'last_name',
+        'suffix',
         'address',
         'address2',
         'city',
