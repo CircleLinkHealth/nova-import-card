@@ -144,8 +144,6 @@ class ApproveBillablePatientsReport
                         $billableProblems[$i]['name'] = $report->$problemName;
                         $billableProblems[$i]['code'] = $report->$problemCode;
 
-                        $lacksCode = false;
-
                         if (!$report->$problemCode) {
                             $lacksCode = true;
                             $billableProblems[$i]['code'] = "<button style='font-size: 10px' class='btn btn-primary codePicker' patient='$u->fullName' name=$problemCode value='$options' id='$report->id'>Select Code</button >";
