@@ -43,9 +43,7 @@ class ApproveBillablePatientsReport
             'cpmProblems',
             'patientInfo',
         ])
-            ->whereHas('roles', function ($q) {
-                $q->where('name', '=', 'participant');
-            })
+            ->ofType('participant')
             ->where('program_id', '=', $this->practice)
             ->get();
 
