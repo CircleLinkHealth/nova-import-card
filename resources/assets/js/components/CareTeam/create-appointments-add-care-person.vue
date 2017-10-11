@@ -438,8 +438,16 @@
                                                         class="form-control input-md"
                                                         required>
                                                     <option value="" disabled></option>
-                                                    <option value="clinical">Clinical (MD, RN or other)</option>
-                                                    <option value="non-clinical">Non-clinical</option>
+                                                    <option value="non-clinical" :selected="newCarePerson.user.provider_info.is_clinical == 0">Non-clinical</option>
+                                                    <option value="MD">MD</option>
+                                                    <option value="DO">DO</option>
+                                                    <option value="NP">NP</option>
+                                                    <option value="PA">PA</option>
+                                                    <option value="RN">RN</option>
+                                                    <option value="LPN">LPN</option>
+                                                    <option value="PN">PN</option>
+                                                    <option value="CNA">CNA</option>
+                                                    <option value="MA">MA</option>
                                                 </select>
                                             </div>
 
