@@ -4,7 +4,7 @@
 
     <?php
 
-    $active_nurses  = (new App\Nurse())->activeNursesForUI();
+    $active_nurses  = activeNurseNames();
 
     ?>
     <script type="text/javascript">

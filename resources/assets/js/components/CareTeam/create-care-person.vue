@@ -421,11 +421,11 @@
                             <div class="row">
                                 <!--clinical type-->
                                 <div class="form-group required-field col-md-6">
-                                    <validate auto-label :class="fieldClassName(formstate.qualification)">
+                                    <validate auto-label :class="fieldClassName(formstate.suffix)">
                                         <div class="col-md-12">
-                                            <select v-model="newCarePerson.user.provider_info.qualification"
-                                                    id="qualification"
-                                                    name="qualification"
+                                            <select v-model="newCarePerson.user.suffix"
+                                                    id="suffix"
+                                                    name="suffix"
                                                     class="form-control input-md"
                                                     required>
                                                 <option value="" disabled></option>
@@ -443,7 +443,7 @@
                                         </div>
 
                                         <div class="col-md-12">
-                                            <field-messages name="qualification"
+                                            <field-messages name="suffix"
                                                             show="$untouched || $touched || $submitted">
                                                 <div></div>
                                                 <div class="validation-error has-errors text-right" slot="required">
@@ -626,6 +626,7 @@
                         email: '',
                         first_name: '',
                         last_name: '',
+                        suffix: '',
                         address: '',
                         address2: '',
                         city: '',
@@ -643,7 +644,6 @@
                         },
                         provider_info: {
                             id: '',
-                            qualification: '',
                             is_clinical: '',
                             specialty: '',
                         }

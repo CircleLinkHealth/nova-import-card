@@ -19,7 +19,7 @@ class NurseController extends Controller
     public function makeInvoice()
     {
 
-        $nurses = (new \App\Nurse())->activeNursesForUI();
+        $nurses = activeNurseNames();
 
         return view('billing.nurse.create',
             [
