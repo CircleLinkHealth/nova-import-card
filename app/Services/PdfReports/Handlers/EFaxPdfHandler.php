@@ -32,6 +32,12 @@ class EFaxPdfHandler implements PdfReportHandler
      */
     public function pdfHandle(PdfReport $report)
     {
+        $cpmSettings = $report->patient->primaryPractice->cpmSettings();
+
+        if (!$cpmSettings->efax_pdf_notes) {
+            return;
+        }
+
         $location = Location::find($report->patient->preferredContactLocation);
 
         if (!$location) {
