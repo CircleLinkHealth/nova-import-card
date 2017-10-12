@@ -41,6 +41,6 @@ class NoteForwarded extends Mailable
         ])
             ->subject($this->message->subject)
             ->to($this->message->receiver_email)
-            ->bcc(['raph@circlelinkhealth.com', 'chelsea@circlelinkhealth.com']);
+            ->bcc(['raph@circlelinkhealth.com', 'chelsea@circlelinkhealth.com', 'sheller@circlelinkhealth.com']);
     }
 }
