@@ -133,9 +133,14 @@ class CarePlanTemplate extends Model
                 throw new \Exception("Relationship `$rel` does not exist.");
             }
 
-            $attributes[$rel] = function ($query) {
+            $attributes[$rel] = function ($query) use ($rel) {
                 $query->with('cpmInstructions')
                     ->orderBy('pivot_ui_sort');
+
+                //@todo: temporary until nurses fill out type for all diabetes patients
+                if ($rel == 'cpmProblems') {
+                    $query->where('name', '!=', 'Diabetes');
+                }
             };
         }
 

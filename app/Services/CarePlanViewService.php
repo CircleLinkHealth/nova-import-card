@@ -42,7 +42,8 @@ class CarePlanViewService
         // if (empty($template)) abort(404, 'Care Plan Template not found.');
 
         //get the User's cpmProblems
-        $patientProblems = $patient->cpmProblems()->get();
+        //@todo: temporary until nurses fill out type for all diabetes patients
+        $patientProblems = $patient->cpmProblems()->where('name', '!=', 'Diabetes')->get();
         $patientProblemsIds = $patientProblems->pluck('id')->all();
 
         $patientLifestyles = $patient->cpmLifestyles()->get();
@@ -207,6 +208,8 @@ class CarePlanViewService
     public function getProblemsToMonitor(User $patient)
     {
         $problems = $patient->cpmProblems()
+            //@todo: temporary until nurses fill out type for all diabetes patients
+            ->where('name', '!=', 'Diabetes')
             ->get()
             ->sortBy('name')
             ->values()
