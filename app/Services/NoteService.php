@@ -118,9 +118,9 @@ class NoteService
 
         $careteam = new Collection();
 
-        $emailNotificationsOn = $patient->primaryPractice->cpmSettings()->email_note_was_forwarded;
+        $cpmSettings = $patient->primaryPractice->cpmSettings();
 
-        if ($notifyCareteam && $emailNotificationsOn) {
+        if ($notifyCareteam && $cpmSettings->email_note_was_forwarded) {
             $careteam = $patient->care_team_receives_alerts;
         }
 
@@ -132,7 +132,7 @@ class NoteService
          * Only send PDF to the Practice if the CareTeam is to be notified.
          * ie. We don't want to send Notes meant only for Patient Support to the Doctor's Office.
          */
-        if ($notifyCareteam) {
+        if ($notifyCareteam && ($cpmSettings->efax_pdf_notes || $cpmSettings->dm_pdf_notes)) {
             event(new PdfableCreated($note, $notifyCareteam));
         }
 
