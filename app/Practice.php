@@ -269,4 +269,10 @@ class Practice extends Model
         return $q->whereActive(1);
 
     }
+
+    public function cpmSettings() {
+        return $this->settings->isEmpty()
+            ? $this->syncSettings(new Settings())
+            : $this->settings->first();
+    }
 }

@@ -74,16 +74,12 @@ class DashboardController extends Controller
 
     public function getCreateNotifications()
     {
-        if ($this->primaryPractice->settings->isEmpty()) {
-            $practiceSettings = $this->primaryPractice->syncSettings(new Settings());
-        }
-
         $invoiceRecipients = $this->primaryPractice->getInvoiceRecipients('string');
 
         return view('provider.notifications.create', array_merge([
             'practice'          => $this->primaryPractice,
             'practiceSlug'      => $this->practiceSlug,
-            'practiceSettings'  => $practiceSettings ?? $this->primaryPractice->settings->first(),
+            'practiceSettings'  => $this->primaryPractice->cpmSettings(),
             'invoiceRecipients' => $invoiceRecipients,
         ], $this->returnWithAll));
     }
