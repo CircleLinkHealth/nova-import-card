@@ -12,7 +12,17 @@ class AddRnSuffixToActiveNurses extends Migration
      */
     public function up()
     {
-        foreach (Nurse::whereStatus('active')->get() as $nurse) {
+        $nurses = Nurse::whereHas('user', function ($query) {
+                $query->whereNotIn('display_name', [
+                    'Nivea Taylor',
+                    'Jared Palakanis',
+                    'Dawn Brook',
+                    'Davona McCready',
+                ]);
+            })
+            ->get();
+
+        foreach ($nurses as $nurse) {
             if (!$nurse->user) {
                 continue;
             }
