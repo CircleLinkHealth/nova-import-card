@@ -118,7 +118,9 @@ class NoteService
 
         $careteam = new Collection();
 
-        if ($notifyCareteam) {
+        $emailNotificationsOn = $patient->primaryPractice->cpmSettings()->email_note_was_forwarded;
+
+        if ($notifyCareteam && $emailNotificationsOn) {
             $careteam = $patient->care_team_receives_alerts;
         }
 
