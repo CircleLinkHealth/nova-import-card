@@ -248,16 +248,6 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
     /**
      * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
      */
-    public function cpmProblems()
-    {
-        return $this->belongsToMany(CpmProblem::class, 'cpm_problems_users', 'patient_id')
-            ->withPivot('cpm_instruction_id')
-            ->withTimestamps('created_at', 'updated_at');
-    }
-
-    /**
-     * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
-     */
     public function cpmSymptoms()
     {
         return $this->belongsToMany(CpmSymptom::class, 'cpm_symptoms_users', 'patient_id')
@@ -273,13 +263,6 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
         return $this->hasOne(CpmBloodPressure::class, 'patient_id');
     }
 
-
-    /*
-     *
-     * CPM Biometrics
-     *
-     */
-
     /**
      * @return \Illuminate\Database\Eloquent\Relations\HasOne
      */
@@ -287,6 +270,13 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
     {
         return $this->hasOne(CpmBloodSugar::class, 'patient_id');
     }
+
+
+    /*
+     *
+     * CPM Biometrics
+     *
+     */
 
     /**
      * @return \Illuminate\Database\Eloquent\Relations\HasOne
@@ -309,12 +299,12 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
         return $this->hasMany(ForeignId::class);
     }
 
-    /*****/
-
     public function patientDemographics()
     {
         return $this->hasMany(DemographicsImport::class, 'provider_id');
     }
+
+    /*****/
 
     public function comment()
     {
@@ -477,13 +467,13 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
         return $this->program_id;
     }
 
-
-    // END RELATIONSHIPS
-
     public function getPrimaryPracticeIdAttribute()
     {
         return $this->program_id;
     }
+
+
+    // END RELATIONSHIPS
 
     public function getUserMetaByKey($key)
     {
@@ -1824,9 +1814,6 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
         return $this;
     }
 
-
-// MISC, these should be removed eventually
-
     public function getUCP()
     {
         $userUcp = $this->ucp()->with([
@@ -1863,6 +1850,9 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
         return $userUcpData;
     }
 
+
+// MISC, these should be removed eventually
+
     public function ucp()
     {
         return $this->hasMany('App\CPRulesUCP', 'user_id', 'id');
@@ -1878,14 +1868,14 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
         return $this->hasOne(EmailSettings::class);
     }
 
-// user data scrambler
-
     public function isCCMCountable()
     {
 
         return (in_array($this->roles[0]->name, Role::CCM_TIME_ROLES));
 
     }
+
+// user data scrambler
 
     /**
      * Scope a query to only include users of a given type (Role).
@@ -2475,6 +2465,7 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
 
                 if ($problem->isIcd10()) {
                     $billableProblems->prepend($problem);
+
                     return $problem;
                 }
 
@@ -2492,5 +2483,36 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
     public function ccdProblems()
     {
         return $this->hasMany(Problem::class, 'patient_id');
+    }
+
+    public function hasProblem($problem)
+    {
+        $cpmProblem = is_a(CpmProblem::class, $problem)
+            ? $problem
+            : is_int($problem)
+                ? CpmProblem::find($problem)
+                : CpmProblem::whereName($problem)->first();
+
+
+        $exists = $this->cpmProblems->contains(function ($prob) use ($cpmProblem) {
+            return $cpmProblem->id == $prob->id;
+        });
+
+        if ($exists) {
+            return true;
+
+        }
+
+        return false;
+    }
+
+    /**
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
+     */
+    public function cpmProblems()
+    {
+        return $this->belongsToMany(CpmProblem::class, 'cpm_problems_users', 'patient_id')
+            ->withPivot('cpm_instruction_id')
+            ->withTimestamps('created_at', 'updated_at');
     }
 }
