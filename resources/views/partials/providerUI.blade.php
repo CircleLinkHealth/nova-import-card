@@ -84,6 +84,10 @@
 
     @yield('content')
 
+    @if(isset($showBanner))
+        @include('partials.providerUI.notification-banner')
+    @endif
+
 </div> <!-- end #app -->
 
 @if(!isset($isPdf))
@@ -105,7 +109,6 @@
 @yield('scripts')
 
 <script src="{{asset('/js/fab.js') }}"></script>
-{{--<script src="{{asset('compiled/js/app-provider-ui.js')}}"></script>--}}
 @endif
 </body>
 
