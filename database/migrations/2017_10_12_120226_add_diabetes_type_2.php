@@ -29,16 +29,16 @@ class AddDiabetesType2 extends Migration
             ->with('cpmInstructions')
             ->first();
 
-        $defaultCarePlan = CarePlanTemplate::where('type', '=', 'CLH Default')->first();
+        foreach (CarePlanTemplate::get() as $cpt) {
+            if (count($diabetes->cpmInstructions) > 0) {
+                $cpt->cpmProblems()->attach($diabetes1->id, [
+                    'cpm_instruction_id' => $diabetes->cpmInstructions[0]->id,
+                ]);
 
-        if (count($diabetes->cpmInstructions) > 0) {
-            $defaultCarePlan->cpmProblems()->attach($diabetes1->id, [
-                'cpm_instruction_id' => $diabetes->cpmInstructions[0]->id,
-            ]);
-
-            $defaultCarePlan->cpmProblems()->attach($diabetes2->id, [
-                'cpm_instruction_id' => $diabetes->cpmInstructions[0]->id,
-            ]);
+                $cpt->cpmProblems()->attach($diabetes2->id, [
+                    'cpm_instruction_id' => $diabetes->cpmInstructions[0]->id,
+                ]);
+            }
         }
     }
 
