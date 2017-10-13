@@ -42,17 +42,16 @@ class CarePlanViewService
         // if (empty($template)) abort(404, 'Care Plan Template not found.');
 
         //get the User's cpmProblems
-        //@todo: temporary until nurses fill out type for all diabetes patients
-        $patientProblems = $patient->cpmProblems()->where('name', '!=', 'Diabetes')->get();
+        $patientProblems = $patient->cpmProblems;
         $patientProblemsIds = $patientProblems->pluck('id')->all();
 
-        $patientLifestyles = $patient->cpmLifestyles()->get();
+        $patientLifestyles = $patient->cpmLifestyles;
         $patientLifestylesIds = $patientLifestyles->pluck('id')->all();
 
-        $patientMedicationGroups = $patient->cpmMedicationGroups()->get();
+        $patientMedicationGroups = $patient->cpmMedicationGroups;
         $patientMedicationGroupsIds = $patientMedicationGroups->pluck('id')->all();
 
-        $patientMiscs = $patient->cpmMiscs()->get();
+        $patientMiscs = $patient->cpmMiscs;
         $patientMiscsIds = $patientMiscs->pluck('id')->all();
 
         $template = $template->loadWithInstructionsAndSort([
@@ -114,7 +113,7 @@ class CarePlanViewService
         ]);
 
 
-        $patientMiscs = $patient->cpmMiscs()->get();
+        $patientMiscs = $patient->cpmMiscs;
         $patientMiscsIds = $patientMiscs->pluck('id')->all();
 
         $bloodPressure = $patient->cpmBloodPressure()->firstOrNew(['patient_id' => $patient->id]);
@@ -122,7 +121,7 @@ class CarePlanViewService
         $smoking = $patient->cpmSmoking()->firstOrNew(['patient_id' => $patient->id]);
         $weight = $patient->cpmWeight()->firstOrNew(['patient_id' => $patient->id]);
 
-        $patientBiometrics = $patient->cpmBiometrics()->get();
+        $patientBiometrics = $patient->cpmBiometrics;
 
         $biometrics = new Section();
         $biometrics->name = 'cpmBiometrics';
@@ -162,10 +161,10 @@ class CarePlanViewService
         ]);
 
         //get the User's cpmProblems
-        $patientSymptoms = $patient->cpmSymptoms()->get();
+        $patientSymptoms = $patient->cpmSymptoms;
         $patientSymptomsIds = $patientSymptoms->pluck('id')->all();
 
-        $patientMiscs = $patient->cpmMiscs()->get();
+        $patientMiscs = $patient->cpmMiscs;
         $patientMiscsIds = $patientMiscs->pluck('id')->all();
 
         $symptoms = new Section();
@@ -208,8 +207,6 @@ class CarePlanViewService
     public function getProblemsToMonitor(User $patient)
     {
         $problems = $patient->cpmProblems()
-            //@todo: temporary until nurses fill out type for all diabetes patients
-            ->where('name', '!=', 'Diabetes')
             ->get()
             ->sortBy('name')
             ->values()

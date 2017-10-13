@@ -136,11 +136,6 @@ class CarePlanTemplate extends Model
             $attributes[$rel] = function ($query) use ($rel) {
                 $query->with('cpmInstructions')
                     ->orderBy('pivot_ui_sort');
-
-                //@todo: temporary until nurses fill out type for all diabetes patients
-                if ($rel == 'cpmProblems') {
-                    $query->where('name', '!=', 'Diabetes');
-                }
             };
         }
 
