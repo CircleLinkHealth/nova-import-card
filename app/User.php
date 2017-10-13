@@ -2487,7 +2487,7 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
 
     public function hasProblem($problem)
     {
-        $cpmProblem = is_a(CpmProblem::class, $problem)
+        $cpmProblem = is_a($problem, CpmProblem::class)
             ? $problem
             : is_int($problem)
                 ? CpmProblem::find($problem)
