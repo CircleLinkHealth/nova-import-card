@@ -8,17 +8,22 @@ use Illuminate\Support\ServiceProvider;
 class ViewComposerServiceProvider extends ServiceProvider
 {
     /**
-     * Bootstrap the application services.
+     * Register bindings in the container.
      *
      * @return void
      */
     public function boot()
     {
+        View::composer('*', function ($view) {
+            if ($view->patient && $view->patient->hasProblem('Diabetes')) {
 
+                $view->with('showBanner', true);
+            }
+        });
     }
 
     /**
-     * Register the application services.
+     * Register the service provider.
      *
      * @return void
      */
