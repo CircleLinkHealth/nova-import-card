@@ -2,6 +2,7 @@
 
 namespace App\Providers;
 
+use App\User;
 use Illuminate\Support\Facades\View;
 use Illuminate\Support\ServiceProvider;
 
@@ -15,7 +16,7 @@ class ViewComposerServiceProvider extends ServiceProvider
     public function boot()
     {
         View::composer('*', function ($view) {
-            if ($view->patient && $view->patient->hasProblem('Diabetes') && !$view->patient->hasProblem('Diabetes Type 1') && !$view->patient->hasProblem('Diabetes Type 2')) {
+            if ($view->patient && is_a($view->patient, User::class) && $view->patient->hasProblem('Diabetes') && !$view->patient->hasProblem('Diabetes Type 1') && !$view->patient->hasProblem('Diabetes Type 2')) {
 
                 $view->with('showBanner', true);
             }
