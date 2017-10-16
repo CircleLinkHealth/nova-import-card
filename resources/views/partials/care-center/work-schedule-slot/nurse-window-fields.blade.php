@@ -36,7 +36,8 @@
                    @else
                    value="{{ old('window_time_start') ? old('window_time_start') :  '09:00' }}"
                    @endif
-                   required>
+                   required
+                   style="max-width: 120px;">
         </div>
 
         <div class="minimum-padding">
@@ -51,7 +52,8 @@
                    @else
                    value="{{ old('window_time_end') ? old('window_time_end') :  '17:00' }}"
                    @endif
-                   required>
+                   required
+                   style="max-width: 120px;">
         </div>
 
         <div class="minimum-padding">
