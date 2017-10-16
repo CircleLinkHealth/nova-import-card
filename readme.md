@@ -9,4 +9,4 @@
 5. Run database migrations `php artisan migrate` (ask a team member for a copy of staging DB)
 6. Run database seeders with `php artisan db:seed`
 7. Set environment variables as structured in the /.env.example file
-8. Fire up the server and you'r egood to go!
+8. Fire up the server and you're good to go!
