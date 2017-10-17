@@ -38,24 +38,6 @@ class ReportsService
         }
     }
 
-    public function reportHeader($id)
-    {
-        $user = User::find($id);
-        $user_meta = UserMeta::where('user_id', '=', $user->id)->pluck('meta_value', 'meta_key')->all();
-        $userHeader['date'] = Carbon::now()->toDateString();
-        $userHeader['Patient_Name'] = $user_meta['first_name'] . ' ' . $user_meta['last_name'];
-        $userConfig = $user->userConfig();
-        $userHeader['Patient_Phone'] = $userConfig['study_phone_number'];
-        $provider = User::findOrFail($user->billingProviderID);
-        $providerConfig = $provider->userConfig();
-        $provider_meta = UserMeta::where('user_id', '=', $provider->id)->pluck('meta_value', 'meta_key')->all();
-        $userHeader['Provider_Name'] = trim($providerConfig['prefix'] . ' ' . $provider_meta['first_name'] . ' ' . $provider_meta['last_name'] . ' ' . $providerConfig['qualification']);
-        $userHeader['Provider_Phone'] = $providerConfig['study_phone_number'];
-        $userHeader['Clinic_Name'] = Location::getLocationName($userConfig['preferred_contact_location']);
-
-        return $userHeader;
-    }
-
     public function getBiometricsToMonitor(User $user)
     {
         return $user->cpmBiometrics()->get()->pluck('name')->all();

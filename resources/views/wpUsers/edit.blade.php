@@ -79,7 +79,8 @@
                             @endif
 
                             @if($patient->hasRole('care-ambassador') && $patient->careAmbassador)
-                                <li role="presentation"><a href="#careAmbassador" aria-controls="careAmbassador" role="tab"
+                                <li role="presentation"><a href="#careAmbassador" aria-controls="careAmbassador"
+                                                           role="tab"
                                                            data-toggle="tab">Care Ambassador Settings</a></li>
                             @endif
 
@@ -96,13 +97,10 @@
                                 <div class="form-group">
                                     <div class="row">
                                         <div class="col-xs-2">{!! Form::label('username', 'Login:') !!}</div>
-                                        <div class="col-xs-10">{!! Form::text('username', $patient->username, ['class' => 'form-control', 'style' => 'width:80%;']) !!}</div>
-                                    </div>
-                                </div>
-                                <div class="form-group">
-                                    <div class="row">
+                                        <div class="col-xs-4">{!! Form::text('username', $patient->username, ['class' => 'form-control', 'style' => 'width:80%;']) !!}</div>
+
                                         <div class="col-xs-2">{!! Form::label('email', 'email:') !!}</div>
-                                        <div class="col-xs-10">{!! Form::email('email', $patient->email, ['class' => 'form-control', 'style' => 'width:80%;']) !!}</div>
+                                        <div class="col-xs-4">{!! Form::email('email', $patient->email, ['class' => 'form-control', 'style' => 'width:80%;']) !!}</div>
                                     </div>
                                 </div>
                                 <div class="form-group">
@@ -111,6 +109,12 @@
                                         <div class="col-xs-4">{!! Form::text('first_name', $patient->first_name, ['class' => 'form-control']) !!}</div>
                                         <div class="col-xs-2">{!! Form::label('last_name', 'Last Name:') !!}</div>
                                         <div class="col-xs-4">{!! Form::text('last_name', $patient->last_name, ['class' => 'form-control']) !!}</div>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <div class="row">
+                                        <div class="col-xs-2">{!! Form::label('suffix', 'Suffix:') !!}</div>
+                                        <div class="col-xs-4">{!! Form::text('suffix', $patient->suffix, ['class' => 'form-control']) !!}</div>
                                     </div>
                                 </div>
                                 <div class="form-group">
@@ -474,12 +478,6 @@
                                     </div>
                                     <div class="form-group">
                                         <div class="row">
-                                            <div class="col-xs-2">{!! Form::label('qualification', 'Qualification:') !!}</div>
-                                            <div class="col-xs-10">{!! Form::text('qualification', $patient->qualification, ['class' => 'form-control', 'style' => 'width:20%;']) !!}</div>
-                                        </div>
-                                    </div>
-                                    <div class="form-group">
-                                        <div class="row">
                                             <div class="col-xs-2">{!! Form::label('specialty', 'Specialty:') !!}</div>
                                             <div class="col-xs-10">{!! Form::text('specialty', $patient->specialty, ['class' => 'form-control', 'style' => 'width:50%;']) !!}</div>
                                         </div>
@@ -537,7 +535,10 @@
                                         <div class="row"></div>
                                         <div class="row">
                                             <div class="col-xs-2">{!! Form::label('speaks_spanish', 'Spanish Speaking:') !!}</div>
-                                            <div class="col-xs-10"><input type="checkbox" @if($patient->careAmbassador->speaks_spanish) checked @endif name="speaks_spanish" id="speaks_spanish"></div>
+                                            <div class="col-xs-10"><input type="checkbox"
+                                                                          @if($patient->careAmbassador->speaks_spanish) checked
+                                                                          @endif name="speaks_spanish"
+                                                                          id="speaks_spanish"></div>
                                         </div>
                                     </div>
                                 </div>

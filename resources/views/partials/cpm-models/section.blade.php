@@ -22,8 +22,9 @@
         </div>
         <div class='form-block form-block--right col-md-6'>
             @endif
+
             <div class="row">
-                <div class="form-item col-sm-12" style="padding-left: 0px;">
+                <div class="form-item col-sm-12" style="padding-left: 0px;@if (is_a($section->items[$i], App\Models\CPM\CpmProblem::class) && $section->items[$i]->name == 'Diabetes') display:none; @endif">
                     <?php
                     $item = $section->items[$i];
                     ?>

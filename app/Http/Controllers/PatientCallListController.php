@@ -16,17 +16,17 @@ class PatientCallListController extends Controller
     {
 
         // ACTIONS
-        if ($request->input('action') && $request->input('action') == 'unassign') {
-            if ($request->input('id') && !empty($request->input('id'))) {
-                $call = Call::find($request->input('id'));
-                if ($call) {
-                    $call->outbound_cpm_id = null;
-                    $call->save();
-                }
-
-                return redirect()->back()->with('messages', ['successfully unassigned call']);
-            }
-        }
+//        if ($request->input('action') && $request->input('action') == 'unassign') {
+//            if ($request->input('id') && !empty($request->input('id'))) {
+//                $call = Call::find($request->input('id'));
+//                if ($call) {
+//                    $call->outbound_cpm_id = null;
+//                    $call->save();
+//                }
+//
+//                return redirect()->back()->with('messages', ['successfully unassigned call']);
+//            }
+//        }
 
         // get all calls
         $calls = Call::where('id', '>', 0);

@@ -33,9 +33,9 @@ class ProviderInfo extends Model
      * @var array
      */
     protected $fillable = [
+        'is_clinical',
         'user_id',
         'prefix',
-        'qualification',
         'npi_number',
         'specialty',
     ];
@@ -46,7 +46,7 @@ class ProviderInfo extends Model
 
     public function user()
     {
-        return $this->belongsTo('App\User', 'id', 'user_id');
+        return $this->belongsTo(User::class, 'user_id', 'id');
     }
     // END RELATIONSHIPS
 

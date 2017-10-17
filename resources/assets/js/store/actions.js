@@ -39,7 +39,9 @@ export const getPatientCareTeam = ({commit}, patientId) => {
     careTeam.getPatientCareTeam(careTeam => {
         commit('CLEAR_CARE_TEAM');
         commit('SET_CARE_TEAM', careTeam);
-    }, null, patientId)
+    }, (error) => {
+        console.log(error)
+    }, patientId)
 }
 
 export const updateCarePerson = ({commit}, carePerson) => {

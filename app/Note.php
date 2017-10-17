@@ -3,13 +3,16 @@
 namespace App;
 
 use App\Contracts\PdfReport;
+use App\Models\Addendum;
+use App\Traits\IsAddendumable;
 use App\Traits\PdfReportTrait;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
 
 class Note extends Model implements PdfReport
 {
-    use PdfReportTrait;
+    use IsAddendumable,
+        PdfReportTrait;
 
     protected $table = 'notes';
 
