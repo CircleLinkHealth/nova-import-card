@@ -14,6 +14,7 @@ class Problem extends Model
         'vendor_id',
         'ccd_problem_log_id',
         'name',
+        'icd_10_code',
         'code',
         'code_system',
         'code_system_name',
