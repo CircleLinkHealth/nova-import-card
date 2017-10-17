@@ -3,11 +3,12 @@
     <br/>
     <div id="paging_container"></div>
     <br/>
+
     @push('scripts')
-        <script>
-            function filterText(text) {
-                // var text = node;
-                if (!text) return obs_alerts_dtable.filter();
+    <script>
+        function filterText(text) {
+            // var text = node;
+            if (!text) return obs_alerts_dtable.filter();
 
                 obs_alerts_dtable.filter(function (obj) {
                     return obj.ccm_status == text;
@@ -50,7 +51,7 @@
                 columns: [
                     {
                         id: "first_name",
-                        header: ["Patient Name", {content: "textFilter", placeholder: "Filter"}],
+                        headeÏ: ["Patient Name", {content: "textFilter", placeholder: "Filter"}],
                         template: "<a href='<?php echo URL::route('patient.summary',
                             array('patient' => '#key#')); ?>'>#first_name# #last_name#</a>",
                         width: 200,
@@ -158,12 +159,13 @@
             });
             webix.event(window, "resize", function () {
                 obs_alerts_dtable.adjust();
-            }),
-                obs_alerts_dtable.sort("#patient_name#");
+            });
+            obs_alerts_dtable.sort("#patient_name#");
             obs_alerts_dtable.hideColumn("last_name");
             obs_alerts_dtable.hideColumn("site");
-        </script>
+    </script>
     @endpush
+
     <input id='lastName_btn' type='button' class='btn btn-primary' value='Show by Last Name'
            style='margin:15px;'
            onclick='obs_alerts_dtable.showColumn("last_name");obs_alerts_dtable.hideColumn("first_name");obs_alerts_dtable.sort("#last_name#");this.style.display = "none";getElementById("firstName_btn").style.display = "inline-block";'>

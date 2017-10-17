@@ -21,10 +21,10 @@ if (isset($patient) && !empty($patient)) {
     @section('activity', 'Care Plan View/Print')
 
 
-    @section('scripts')
+    @push('scripts')
         {{--contains care team modules as well--}}
         <script src="{{asset('compiled/js/v-pdf-careplans.js')}}"></script>
-    @endsection
+    @endpush
 @endif
 
 @section('content')

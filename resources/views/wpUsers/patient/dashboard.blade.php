@@ -94,8 +94,8 @@
             @include('partials.provider.patients-pending-approval')
         @endif
     </div>
-@stop
-
-@section('scripts')
-    <script src="{{asset('compiled/js/nurse-work-schedule.js')}}"></script>
 @endsection
+
+@push('scripts')
+    <script src="{{asset('compiled/js/nurse-work-schedule.js')}}"></script>
+@endpush

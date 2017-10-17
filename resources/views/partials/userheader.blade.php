@@ -121,7 +121,7 @@ $location = empty($patient->getPreferredLocationName())
 
 <meta name="is_ccm_complex" content="{{$ccm_complex}}">
 
-@section('scripts')
+@push('scripts')
     <script>
         $(document).ready(function () {
 
@@ -134,7 +134,7 @@ $location = empty($patient->getPreferredLocationName())
         });
 
     </script>
-@endsection
+@endpush
 
 
 
