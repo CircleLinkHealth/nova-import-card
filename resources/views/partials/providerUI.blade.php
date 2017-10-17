@@ -98,17 +98,10 @@
 <![endif]-->
 
 <script type="text/javascript" src="{{ asset('compiled/js/issue-688.js') }}"></script>
-<!-- <script src="{{ asset('/js/idle-timer.min.js') }}"></script>
-<script src="{{ asset('/js/bootstrap-select.min.js') }}"></script>
-<script src="{{ asset('/js/typeahead.bundle.js') }}"></script> -->
 @include('partials.searchjs')
 @include('partials.providerUItimer')
-<!-- <script src="{{asset('/js/bootstrap.min.js')}}"></script>
-<script src="{{asset('/js/DateTimePicker.min.js')}}"></script> -->
 
 @stack('scripts')
-
-<!-- <script src="{{asset('/js/fab.js') }}"></script> -->
 @endif
 </body>
 
