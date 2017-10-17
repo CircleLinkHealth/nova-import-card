@@ -139,8 +139,8 @@ class ApproveBillablePatientsReport
 
                 if (!$report->$problemName || !$report->$problemCode) {
                     if (isset($problemsWithIcd10Code[$i])) {
-                        $report->$problemName = $problemsWithIcd10Code[$i]->name;
-                        $report->$problemCode = $problemsWithIcd10Code[$i]->icd_10_code;
+                        $report->$problemName = $problemsWithIcd10Code[$i]->cpmProblem->name;
+                        $report->$problemCode = $problemsWithIcd10Code[$i]->billing_code;
                         $billableProblems[$i]['name'] = $report->$problemName;
                         $billableProblems[$i]['code'] = $report->$problemCode;
 
@@ -236,3 +236,4 @@ class ApproveBillablePatientsReport
 
 
 }
+
