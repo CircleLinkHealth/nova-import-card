@@ -95,7 +95,3 @@
         @endif
     </div>
 @endsection
-
-@push('scripts')
-    <script src="{{asset('compiled/js/nurse-work-schedule.js')}}"></script>
-@endpush
