@@ -64,7 +64,15 @@ class Problem extends Model
             || str_contains(strtolower($this->code_system_name), ['10']);
     }
 
+    public function hasIcd10BillingCode() {
+        return !empty($this->icd_10_code);
+    }
+
     public function icd10Code() {
+        if ($this->hasIcd10BillingCode()) {
+            return $this->icd_10_code;
+        }
+
         if ($this->isIcd10() && $this->code) {
             return $this->code;
         }
