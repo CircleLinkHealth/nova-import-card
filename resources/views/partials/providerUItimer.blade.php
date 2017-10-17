@@ -56,6 +56,7 @@ if (isset($patient) && !empty($patient) && is_a($patient, App\User::class)) {
 ?>
 
 @if ($enableTimeTracking)
+    @push('scripts')
     <script>
         (function ($) {
             //We get startTime, and endTime from the client to not have to deal with timezones
@@ -190,5 +191,5 @@ if (isset($patient) && !empty($patient) && is_a($patient, App\User::class)) {
 
         })(jQuery);
     </script>
-
+    @endpush
 @endif
