@@ -364,7 +364,9 @@
 
 @yield('content')
 
-@yield('scripts')
+<script src="{{asset('compiled/js/app-clh-admin-ui.js')}}"></script>
+@stack('scripts')
+
 <div style="clear:both;height:100px;"></div>
 </body>
 </html>
