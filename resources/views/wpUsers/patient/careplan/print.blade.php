@@ -19,12 +19,6 @@ if (isset($patient) && !empty($patient)) {
 @if(!isset($isPdf))
     @section('title', 'Care Plan View/Print')
     @section('activity', 'Care Plan View/Print')
-
-
-    @push('scripts')
-        {{--contains care team modules as well--}}
-        <script src="{{asset('compiled/js/v-pdf-careplans.js')}}"></script>
-    @endpush
 @endif
 
 @section('content')

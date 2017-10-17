@@ -23,7 +23,3 @@
         {{--</div>--}}
     </div>
 @endsection
-
-@push('scripts')
-    <script src="{{asset('compiled/js/v-pdf-careplans.js')}}"></script>
-@endpush
