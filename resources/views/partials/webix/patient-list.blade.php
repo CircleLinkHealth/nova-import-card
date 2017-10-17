@@ -3,6 +3,8 @@
     <br/>
     <div id="paging_container"></div>
     <br/>
+
+    @push('scripts')
     <script>
         function filterText(text) {
             // var text = node;
@@ -162,6 +164,8 @@
         obs_alerts_dtable.hideColumn("last_name");
         obs_alerts_dtable.hideColumn("site");
     </script>
+    @endpush
+
     <input id='lastName_btn' type='button' class='btn btn-primary' value='Show by Last Name'
            style='margin:15px;'
            onclick='obs_alerts_dtable.showColumn("last_name");obs_alerts_dtable.hideColumn("first_name");obs_alerts_dtable.sort("#last_name#");this.style.display = "none";getElementById("firstName_btn").style.display = "inline-block";'>
@@ -221,10 +225,13 @@
                style='display:none;margin:15px;'
                onclick='obs_alerts_dtable.hideColumn("site");this.style.display = "none";getElementById("site_show_btn").style.display = "inline-block";'>
     @endif
+
+    @push('scripts')
     <script type="text/javascript">
         window.onload = filterText('');
         // obs_alerts_dtable.hideColumn("ccm_status");
     </script>
+    @endpush
 @else
     <div style="text-align:center;margin:50px;">There are no patients to display</div>
 @endif
