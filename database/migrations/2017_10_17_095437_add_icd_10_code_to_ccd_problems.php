@@ -14,7 +14,9 @@ class AddIcd10CodeToCcdProblems extends Migration
     public function up()
     {
         Schema::table('ccd_problems', function (Blueprint $table) {
-            $table->string('icd_10_code', 20)->after('name');
+            $table->string('icd_10_code', 20)
+                ->nullable()
+                ->after('name');
         });
     }
 
