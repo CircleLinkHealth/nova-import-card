@@ -47,9 +47,9 @@ mix.combine([
 mix.combine([
     'bower_components/jquery/dist/jquery.js',
     'bower_components/jquery-ui/jquery-ui.js',
+    'bower_components/jquery-idletimer/dist/idle-timer.js',
     'bower_components/select2/dist/select2.js',
     'bower_components/webix/codebase/webix.js',
-    'bower_components/jquery-idletimer/dist/idle-timer.js',
     'bower_components/bootstrap-select/dist/js/bootstrap-select.js',
     'bower_components/bootstrap/dist/js/bootstrap.js',
     'public/js/typeahead.bundle.js',
@@ -58,11 +58,21 @@ mix.combine([
 ], 'public/compiled/js/issue-688.js');
 
 mix.js('public/compiled/js/issue-688.js', 'public/compiled/js');
-// mix.combine([
-//     'node_modules/jquery/dist/jquery.js',
-//     ''
-// ], 'public/compiled/js')
 /** end fixing issue 688 */
+
+/** start fixing admin-ui */
+mix.combine([
+    'bower_components/jquery/dist/jquery.js',
+    'bower_components/jquery-ui/jquery-ui.js',
+    'public/js/DateTimePicker.min.js',
+    'bower_components/jquery-idletimer/dist/idle-timer.js',
+    'public/js/jquery-ui-timepicker.min.js',
+    'bower_components/parsleyjs/dist/parsley.js',
+    'bower_components/bootstrap-select/dist/js/bootstrap-select.js',
+    'bower_components/select2/dist/select2.js',
+    'bower_components/bootstrap/dist/js/bootstrap.js'
+], 'public/compiled/js/admin-ui.js');
+/** end fixing admin-ui */
 
 mix.js('resources/assets/js/importer-training.js', 'public/compiled/js').sourceMaps();
 

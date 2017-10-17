@@ -27,32 +27,32 @@
 
     <!-- JQuery -->
     <link rel="stylesheet" href="//code.jquery.com/ui/1.11.4/themes/smoothness/jquery-ui.css">
-    <script src="//code.jquery.com/jquery-1.10.2.js"></script>
-    <script src="//code.jquery.com/ui/1.11.4/jquery-ui.js"></script>
+    <!-- <script src="//code.jquery.com/jquery-1.10.2.js"></script>
+    <script src="//code.jquery.com/ui/1.11.4/jquery-ui.js"></script> -->
 
     <!-- idleTime -->
-    <script src="{{ asset('/js/idle-timer.min.js') }}"></script>
+    <!-- <script src="{{ asset('/js/idle-timer.min.js') }}"></script> -->
 
     <!-- http://trentrichardson.com/examples/timepicker/ -->
     <link rel="stylesheet"
           href="//cdnjs.cloudflare.com/ajax/libs/jquery-ui-timepicker-addon/1.4.5/jquery-ui-timepicker-addon.min.css">
-    <script src="//cdnjs.cloudflare.com/ajax/libs/jquery-ui-timepicker-addon/1.4.5/jquery-ui-timepicker-addon.min.js"></script>
+    <!-- <script src="//cdnjs.cloudflare.com/ajax/libs/jquery-ui-timepicker-addon/1.4.5/jquery-ui-timepicker-addon.min.js"></script> -->
 
     <!-- Parsley -->
-    <script src="//cdnjs.cloudflare.com/ajax/libs/parsley.js/2.0.7/parsley.min.js"></script>
+    <!-- <script src="//cdnjs.cloudflare.com/ajax/libs/parsley.js/2.0.7/parsley.min.js"></script> -->
 
     <!-- http://curioussolutions.github.io/DateTimePicker/ -->
     <link rel="stylesheet" type="text/css" href="//cdn.jsdelivr.net/datetimepicker/latest/DateTimePicker.min.css"/>
-    <script type="text/javascript" src="//cdn.jsdelivr.net/datetimepicker/latest/DateTimePicker.min.js"></script>
+    <!-- <script type="text/javascript" src="//cdn.jsdelivr.net/datetimepicker/latest/DateTimePicker.min.js"></script> -->
 
     <!-- START BOOTSTRAP -->
     <!-- Latest compiled and minified CSS -->
     <link href="{{ asset('/css/'.$app_config_admin_stylesheet) }}" rel="stylesheet">
 
     <!-- select2 -->
-    <script src="{{ asset('/js/bootstrap-select.min.js') }}"></script>
+    <!-- <script src="{{ asset('/js/bootstrap-select.min.js') }}"></script> -->
     <link href="//cdnjs.cloudflare.com/ajax/libs/select2/4.0.0/css/select2.min.css" rel="stylesheet"/>
-    <script src="//cdnjs.cloudflare.com/ajax/libs/select2/4.0.0/js/select2.min.js"></script>
+    <!-- <script src="//cdnjs.cloudflare.com/ajax/libs/select2/4.0.0/js/select2.min.js"></script> -->
 
     <style>
         .table-striped > tbody > tr:nth-child(odd) > td,
@@ -60,10 +60,11 @@
             /* background-color: #eee; */
         }
     </style>
+    @stack('styles')
     <!-- Latest compiled and minified JavaScript -->
-    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"
+    <!-- <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"
             integrity="sha384-0mSbJDEHialfmuBBQP6A4Qrprq5OVfW37PRR3j5ELqxss1yVqOtnepnHVP9aJ7xS"
-            crossorigin="anonymous"></script>
+            crossorigin="anonymous"></script> -->
     <!-- END BOOTSTRAP -->
 </head>
 <body>
@@ -356,12 +357,14 @@
 
 {{--This is for JS variables. Purposefully included before content.--}}
 @include('partials.footer')
+<div id="app">
+    @yield('content')
+</div>
 
-@yield('content')
 
 <script src="{{asset('compiled/js/app-clh-admin-ui.js')}}"></script>
+<script type="text/javascript" src="{{ asset('compiled/js/admin-ui.js') }}"></script>
 @stack('scripts')
-
 <div style="clear:both;height:100px;"></div>
 </body>
 </html>
