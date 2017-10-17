@@ -92,12 +92,12 @@
 <![endif]-->
 
 <script type="text/javascript" src="{{ asset('compiled/js/issue-688.js') }}"></script>
-<script src="{{asset('compiled/js/app-provider-ui.js')}}"></script>
 
 @include('partials.searchjs')
 @include('partials.providerUItimer')
 
 @stack('scripts')
+<script src="{{asset('compiled/js/app-provider-ui.js')}}"></script>
 @endif
 </body>
 
