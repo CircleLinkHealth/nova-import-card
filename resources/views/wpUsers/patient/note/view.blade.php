@@ -162,6 +162,7 @@
                                                   readonly>{{trim($note['comment'])}}</textarea> <br/>
                                     </div>
                                 </div>
+
                                 <div class="form-block col-md-12">
                                     <div class="row">
                                         <div class="new-note-item">
@@ -170,7 +171,7 @@
                                     </div>
                                 </div>
                                 <div class="form-group col-sm-4">
-                                    <input type="hidden" name="patient_id" value="{{$patient->id}}">
+                                        <input type="hidden" name="patient_id" value="{{$patient->id}}">
                                     <input type="hidden" name="logger_id" value="{{Auth::user()->id}}">
                                     <input type="hidden" name="noteId" value="{{$note['id']}}">
                                     <input type="hidden" name="patientID" id="patientID" value="{{$patient->id}}">
@@ -187,6 +188,7 @@
                                         </div>
                                     </div>
                                 </div>
+
                                 <script>
                                     $(function () {
                                         $('[data-toggle="tooltip"]').tooltip()
@@ -211,14 +213,15 @@
                                     });
                                 </script>
                                 {!! Form::close() !!}
+
+                                <div class="col-sm-12">
+                                    @include('wpUsers.patient.note.manage-addendums')
+                                </div>
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
-    </div>
-    <div class="form-block col-md-6">
-        <br/>
     </div>
 @endsection

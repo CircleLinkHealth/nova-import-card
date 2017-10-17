@@ -387,9 +387,15 @@ Route::group(['middleware' => 'auth'], function () {
             'uses' => 'Patient\PatientController@showPatientObservationCreate',
             'as'   => 'patient.observation.create',
         ]);
+
         Route::get('view-careplan', [
             'uses' => 'ReportsController@viewPrintCareplan',
             'as'   => 'patient.careplan.print',
+        ]);
+
+        Route::get('approve-careplan/{viewNext?}', [
+            'uses' => 'ProviderController@approveCarePlan',
+            'as'   => 'patient.careplan.approve',
         ]);
 
         Route::get('view-careplan/pdf', [
@@ -476,6 +482,10 @@ Route::group(['middleware' => 'auth'], function () {
             Route::post('send/{noteId}', [
                 'uses' => 'NotesController@send',
                 'as'   => 'patient.note.send',
+            ]);
+            Route::post('{noteId}/addendums', [
+                'uses' => 'NotesController@storeAddendum',
+                'as'   => 'note.store.addendum',
             ]);
         });
 

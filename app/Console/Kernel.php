@@ -110,7 +110,7 @@ class Kernel extends ConsoleKernel
         })->everyMinute();
 
         //Comments out until we find all the bugs
-//        $schedule->command('email:weeklyReports --practice --provider')->weeklyOn(1, '10:00');
+        $schedule->command('email:weeklyReports --practice --provider')->weeklyOn(1, '10:00');
 
         $schedule->command('emailapprovalreminder:providers')
             ->weekdays()
@@ -152,7 +152,7 @@ class Kernel extends ConsoleKernel
         $schedule->command('send:audit-reports')
             ->monthlyOn(1, '02:00');
 
-        $schedule->command('dm:check')->everyMinute();
+        $schedule->command('dm:check')->everyFiveMinutes();
     }
 
     /**

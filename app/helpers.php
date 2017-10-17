@@ -4,8 +4,24 @@
 use App\AppConfig;
 use App\CarePlanTemplate;
 use App\Jobs\SendSlackMessage;
+use App\User;
 use Carbon\Carbon;
 use Illuminate\Support\Collection;
+
+if (!function_exists('activeNurseNames')) {
+    /**
+     * Returns an array of nurse names keyed by id.
+     *
+     * @return mixed
+     */
+    function activeNurseNames()
+    {
+        return User::ofType('care-center')
+            ->where('user_status', 1)
+            ->pluck('display_name', 'id');
+    }
+}
+
 
 if (!function_exists('sendSlackMessage')) {
     /**

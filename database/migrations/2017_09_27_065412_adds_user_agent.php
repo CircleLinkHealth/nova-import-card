@@ -14,7 +14,7 @@ class AddsUserAgent extends Migration
     public function up()
     {
         Schema::table('lv_page_timer', function (Blueprint $table) {
-            $table->string('user_agent');
+            $table->string('user_agent')->nullable();
         });
     }
 

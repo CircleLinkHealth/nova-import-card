@@ -492,7 +492,7 @@ class NoteService
             $patientRecord->is_ccm_complex = 1;
             $patientRecord->save();
 
-            if ($patient->cur_month_activity_time > 3600) {
+            if ($patient->cur_month_activity_time > 3600 && auth()->user()->nurseInfo) {
 
                 (new AlternativeCareTimePayableCalculator(auth()->user()->nurseInfo))->adjustPayOnCCMComplexSwitch60Mins();
 

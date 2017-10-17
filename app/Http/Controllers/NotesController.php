@@ -1,12 +1,10 @@
 <?php namespace App\Http\Controllers;
 
 use App\Activity;
-use App\Algorithms\Invoicing\AlternativeCareTimePayableCalculator;
-use App\CarePerson;
 use App\Formatters\WebixFormatter;
+use App\Note;
 use App\PatientContactWindow;
 use App\PatientMonthlySummary;
-use App\Practice;
 use App\Services\Calls\SchedulerService;
 use App\Services\NoteService;
 use App\User;
@@ -462,6 +460,7 @@ class NotesController extends Controller
         }
 
         $data['comment'] = $note->body;
+        $data['addendums'] = $note->addendums->sortByDesc('created_at');
 
         $careteam_info = $this->service->getPatientCareTeamMembers($patientId);
 
@@ -490,6 +489,23 @@ class NotesController extends Controller
         $this->service->forwardNote($input, $patientId);
 
         return redirect()->route('patient.note.index', ['patient' => $patientId]);
+    }
+
+    public function storeAddendum(
+        Request $request,
+        $patientId,
+        $noteId
+    ) {
+        $this->validate($request, [
+            'addendum-body' => 'required',
+        ]);
+
+        $note = Note::find($noteId)->addendums()->create([
+            'body'           => $request->input('addendum-body'),
+            'author_user_id' => auth()->user()->id,
+        ]);
+
+        return redirect()->to(route('patient.note.view', ['patientId' => $patientId, 'noteId' => $noteId]).'#create-addendum');
     }
 }
 

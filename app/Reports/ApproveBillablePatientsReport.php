@@ -28,7 +28,7 @@ class ApproveBillablePatientsReport
         $practice
     ) {
 
-        $this->month = $month->firstOfMonth()->toDateString();
+        $this->month = $month->firstOfMonth();
         $this->practice = $practice;
 
     }
@@ -43,9 +43,7 @@ class ApproveBillablePatientsReport
             'cpmProblems',
             'patientInfo',
         ])
-            ->whereHas('roles', function ($q) {
-                $q->where('name', '=', 'participant');
-            })
+            ->ofType('participant')
             ->where('program_id', '=', $this->practice)
             ->get();
 
@@ -57,8 +55,7 @@ class ApproveBillablePatientsReport
         $this->patients = Patient
             ::whereHas('patientSummaries', function ($q) {
                 $q
-//              ->where('month_year', Carbon::now()->firstOfMonth()->toDateString())
-                    ->where('month_year', $this->month)
+                    ->where('month_year', $this->month->toDateString())
                     ->where('no_of_successful_calls', '>', 0);
 
             });
@@ -90,8 +87,8 @@ class ApproveBillablePatientsReport
 
         foreach ($this->patients as $u) {
 
-            $start = Carbon::parse($this->month)->startOfMonth()->startOfDay()->format("Y-m-d H:i:s");
-            $end = Carbon::parse($this->month)->endOfMonth()->endOfDay()->format("Y-m-d H:i:s");
+            $start = $this->month->copy()->startOfMonth()->startOfDay()->format("Y-m-d H:i:s");
+            $end = $this->month->copy()->endOfMonth()->endOfDay()->format("Y-m-d H:i:s");
 
             $ccm = DB::table('lv_activities')
                 ->where('patient_id', $u->id)
@@ -112,14 +109,14 @@ class ApproveBillablePatientsReport
             }
 
             $report = $info->patientSummaries()
-                ->where('month_year', $this->month)->first();
+                ->where('month_year', $this->month->toDateString())->first();
 
             if ($report == null) {
                 continue;
             }
 
             //@todo add problem type and code
-            $problems = $u->cpmProblems()->take(2)->get();
+            $problemsWithIcd10Code = $u->billableProblems();
             $reportId = $report->id;
 
             $billableProblems = [];
@@ -131,36 +128,27 @@ class ApproveBillablePatientsReport
             $options = $u->ccdProblems()->pluck('name');
             $options = implode('|', $options->toArray());
 
-            //First look for problems in the report itself. If no problems, then find problems from CCM. If none, give select box
+            //First look for problemsWithIcd10Code in the report itself. If no problemsWithIcd10Code, then find problemsWithIcd10Code from CCM. If none, give select box
             for ($i = 0; $i < 2; $i++) {
 
                 $problemName = 'billable_problem' . ($i + 1);
                 $problemCode = 'billable_problem' . ($i + 1) . '_code';
 
-                if (!$report->$problemName) {
+                $billableProblems[$i]['name'] = $report->$problemName;
+                $billableProblems[$i]['code'] = $report->$problemCode;
 
-                    if (isset($problems[$i])) {
-
-                        $report->$problemName = $problems[$i]->name;
+                if (!$report->$problemName || !$report->$problemCode) {
+                    if (isset($problemsWithIcd10Code[$i])) {
+                        $report->$problemName = $problemsWithIcd10Code[$i]->name;
+                        $report->$problemCode = $problemsWithIcd10Code[$i]->icd_10_code;
                         $billableProblems[$i]['name'] = $report->$problemName;
-
-                        $code = SnomedToCpmIcdMap::whereCpmProblemId($problems[$i]->id)->first()->icd_10_code;
-
-                        if (!$report->$problemCode) {
-                            $report->$problemCode = $code;
-                        }
-
-                        if (!$report->$problemCode) {
-
-                            $lacksCode = true;
-                            $billableProblems[$i]['code'] = "<button style='font-size: 10px' class='btn btn-primary codePicker' patient='$u->fullName' name=$problemCode value='$options' id='$report->id'>Select Code</button >";
-
-                        }
-
                         $billableProblems[$i]['code'] = $report->$problemCode;
 
+                        if (!$report->$problemCode) {
+                            $lacksCode = true;
+                            $billableProblems[$i]['code'] = "<button style='font-size: 10px' class='btn btn-primary codePicker' patient='$u->fullName' name=$problemCode value='$options' id='$report->id'>Select Code</button >";
+                        }
                     } else {
-
                         $name = 'billable_problem' . ($i + 1);
 
                         $lacksProblems = true;
@@ -168,54 +156,10 @@ class ApproveBillablePatientsReport
 
                         $billableProblems[$i]['name'] = "<button style='font-size: 10px' class='btn btn-primary problemPicker' patient='$u->fullName' name=$name value='$options' id='$report->id'>Select Problem</button >";
                         $billableProblems[$i]['code'] = "<button style='font-size: 10px' class='btn btn-primary codePicker' patient='$u->fullName' name=$name value='$options' id='$report->id'>Select Code</button >";
-
                     }
-
-                } else { // there's a problem
-
-                    //if there is a problem but no code
-
-                    if (!$report->$problemCode) {
-                        $code = null;
-
-                        $lastMonthReport = $info->patientSummaries()
-                            ->where('month_year',
-                                Carbon::parse($this->month)->subMonth()->firstOfMonth()->toDateString())->first();
-
-                        if ($lastMonthReport && $lastMonthReport->$problemName == $report->$problemName) {
-                            $code = $lastMonthReport->$problemCode;
-                        }
-
-                        if (!$code) {
-                            $code = SnomedToCpmIcdMap::whereCpmProblemId($problems[$i]->id)
-                                    ->where('icd_10_code', '!=', '')
-                                    ->where('icd_10_code', '!=', null)
-                                    ->first()->icd_10_code ?? '';
-                        }
-
-                        $report->$problemCode = $billableProblems[$i]['code'] = $code;
-
-                        $problem = $report->$problemName;
-
-                        $name = 'billable_problem' . ($i + 1);
-
-                        if (!$code) {
-                            $lacksCode = true;
-                            $billableProblems[$i]['code'] = "<button style='font-size: 10px' class='btn btn-primary problemPicker' patient='$u->fullName' name=$name value='$problem' id='$report->id'>Select Code</button >";
-                        }
-                    } else {
-
-                        $billableProblems[$i]['code'] = $report->$problemCode;
-
-                    }
-
-                    $billableProblems[$i]['name'] = $report->$problemName;
-
                 }
 
             }
-
-            $report->save();
 
             //if patient was paused/withdrawn and acted upon already, it's not QA no more
             $isNotEnrolledAndApproved = ($report->actor_id == null) && ($info->ccm_status == 'withdrawn' || $info->ccm_status == 'paused');
@@ -269,7 +213,7 @@ class ApproveBillablePatientsReport
                 'report_id'              => $reportId ?? null,
                 //this is a hidden sorter
                 'qa'                     => $toQA,
-                'problems'               => $options,
+                'problemsWithIcd10Code'               => $options,
                 'lacksProblems'          => $lacksProblems || $lacksCode,
 
             ];

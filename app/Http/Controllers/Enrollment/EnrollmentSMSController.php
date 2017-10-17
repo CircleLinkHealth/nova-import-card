@@ -2,26 +2,21 @@
 
 namespace App\Http\Controllers\Enrollment;
 
-use Aloha\Twilio\Twilio;
-use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
+use App\Mail\SMSReceived;
+use Illuminate\Http\Request;
+use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Support\Facades\Log;
 
 class EnrollmentSMSController extends Controller
 {
 
-    public function handleIncoming(Request $request){
+    public function handleIncoming(Request $request)
+    {
+        Mail::to('mantoniou@circlelinkhealth.com')
+            ->send(new SMSReceived($request));
 
-        $sender = new Twilio(
-            env('TWILIO_SID'),
-            env('TWILIO_TOKEN'),
-            env('TWILIO_FROM')
-        );
-
-        $sender->message('+19727622642', 'We receieved a message!');
-
-        Log::info($request);
-
+        Log::to($request);
     }
 
 }

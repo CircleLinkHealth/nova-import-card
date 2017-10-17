@@ -15,15 +15,17 @@ if (isset($patient) && !empty($patient)) {
     $alreadyShown = [];
 }
 ?>
+
 @if(!isset($isPdf))
     @section('title', 'Care Plan View/Print')
-@section('activity', 'Care Plan View/Print')
-@endif
+    @section('activity', 'Care Plan View/Print')
 
-@section('scripts')
-    {{--contains care team modules as well--}}
-    <script src="{{asset('compiled/js/v-pdf-careplans.js')}}"></script>
-@endsection
+
+    @section('scripts')
+        {{--contains care team modules as well--}}
+        <script src="{{asset('compiled/js/v-pdf-careplans.js')}}"></script>
+    @endsection
+@endif
 
 @section('content')
     @if(isset($patient) && !empty($patient))
@@ -60,7 +62,15 @@ if (isset($patient) && !empty($patient)) {
                                                 <a style="margin-right:10px;" class="btn btn-info btn-sm inline-block"
                                                    aria-label="..."
                                                    role="button"
-                                                   href="{{ URL::route('patients.listing', ['patient_approval_id' => $patient->id]) }}">Approve Care Plan</a>
+                                                   href="{{ URL::route('patient.careplan.approve', ['patientId' => $patient->id]) }}">Approve</a>
+
+                                                @if(auth()->user()->hasRole('provider'))
+                                                    <a style="margin-right:10px;"
+                                                       class="btn btn-success btn-sm inline-block"
+                                                       aria-label="..."
+                                                       role="button"
+                                                       href="{{ route('patient.careplan.approve', ['patientId' => $patient->id, 'viewNext' => true]) }}">Approve and View Next</a>
+                                                @endif
                                             @endif
 
                                             <a class="btn btn-info btn-sm inline-block" aria-label="..." role="button"
@@ -332,7 +342,7 @@ if (isset($patient) && !empty($patient)) {
                 <div id="care-team" class="patient-info__subareas">
                     <div class="row">
                         <div class="col-xs-12">
-                            <h2 class="patient-summary__subtitles patient-summary--careplan-background">Care Team:</h2>
+                            <h2 id="care-team-label" class="patient-summary__subtitles patient-summary--careplan-background">Care Team:</h2>
                         </div>
                         <div class="col-xs-12">
                             @include('wpUsers.patient.careplan.print.careteam')

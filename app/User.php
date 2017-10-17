@@ -103,6 +103,7 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
         'spam',
         'first_name',
         'last_name',
+        'suffix',
         'address',
         'address2',
         'city',
@@ -189,28 +190,12 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
         return $this->hasMany(Medication::class, 'patient_id');
     }
 
-    /**
-     * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
-     */
-    public function ccdProblems()
-    {
-        return $this->hasMany(Problem::class, 'patient_id');
-    }
-
     public function careAmbassador()
     {
 
         return $this->hasOne(CareAmbassador::class);
 
     }
-
-    /*****/
-
-    /*
-     *
-     * CPM Models
-     *
-     */
 
     /**
      * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
@@ -221,6 +206,14 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
             ->withPivot('cpm_instruction_id')
             ->withTimestamps('created_at', 'updated_at');
     }
+
+    /*****/
+
+    /*
+     *
+     * CPM Models
+     *
+     */
 
     /**
      * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
@@ -255,29 +248,12 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
     /**
      * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
      */
-    public function cpmProblems()
-    {
-        return $this->belongsToMany(CpmProblem::class, 'cpm_problems_users', 'patient_id')
-            ->withPivot('cpm_instruction_id')
-            ->withTimestamps('created_at', 'updated_at');
-    }
-
-    /**
-     * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
-     */
     public function cpmSymptoms()
     {
         return $this->belongsToMany(CpmSymptom::class, 'cpm_symptoms_users', 'patient_id')
             ->withPivot('cpm_instruction_id')
             ->withTimestamps('created_at', 'updated_at');
     }
-
-
-    /*
-     *
-     * CPM Biometrics
-     *
-     */
 
     /**
      * @return \Illuminate\Database\Eloquent\Relations\HasOne
@@ -295,6 +271,13 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
         return $this->hasOne(CpmBloodSugar::class, 'patient_id');
     }
 
+
+    /*
+     *
+     * CPM Biometrics
+     *
+     */
+
     /**
      * @return \Illuminate\Database\Eloquent\Relations\HasOne
      */
@@ -311,8 +294,6 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
         return $this->hasOne(CpmWeight::class, 'patient_id');
     }
 
-    /*****/
-
     public function foreignId()
     {
         return $this->hasMany(ForeignId::class);
@@ -322,6 +303,8 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
     {
         return $this->hasMany(DemographicsImport::class, 'provider_id');
     }
+
+    /*****/
 
     public function comment()
     {
@@ -479,9 +462,6 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
         }
     }
 
-
-    // END RELATIONSHIPS
-
     public function primaryProgramId()
     {
         return $this->program_id;
@@ -491,6 +471,9 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
     {
         return $this->program_id;
     }
+
+
+    // END RELATIONSHIPS
 
     public function getUserMetaByKey($key)
     {
@@ -655,7 +638,7 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
         $firstName = ucwords($this->first_name);
         $lastName = ucwords($this->last_name);
 
-        return $firstName . ' ' . $lastName;
+        return "$firstName $lastName {$this->suffix}";
     }
 
     public function getFullNameWithIdAttribute()
@@ -751,24 +734,6 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
             return '';
         }
         $this->providerInfo->npi_number = $value;
-        $this->providerInfo->save();
-    }
-
-    public function getQualificationAttribute()
-    {
-        if (!$this->providerInfo) {
-            return '';
-        }
-
-        return $this->providerInfo->qualification;
-    }
-
-    public function setQualificationAttribute($value)
-    {
-        if (!$this->providerInfo) {
-            return '';
-        }
-        $this->providerInfo->qualification = $value;
         $this->providerInfo->save();
     }
 
@@ -1369,7 +1334,6 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
         return $bp;
     }
 
-
     public function setBillingProviderIDAttribute($value)
     {
         if (empty($value)) {
@@ -1838,9 +1802,6 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
 
     }
 
-
-// MISC, these should be removed eventually
-
     public function createNewUser(
         $email,
         $password
@@ -1889,6 +1850,9 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
         return $userUcpData;
     }
 
+
+// MISC, these should be removed eventually
+
     public function ucp()
     {
         return $this->hasMany('App\CPRulesUCP', 'user_id', 'id');
@@ -1898,8 +1862,6 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
     {
         return new UserService();
     }
-
-// user data scrambler
 
     public function emailSettings()
     {
@@ -1912,6 +1874,8 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
         return (in_array($this->roles[0]->name, Role::CCM_TIME_ROLES));
 
     }
+
+// user data scrambler
 
     /**
      * Scope a query to only include users of a given type (Role).
@@ -2155,7 +2119,7 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
         $billingProvider = $this->billingProvider();
 
         return $billingProvider
-            ? ucwords($billingProvider->fullName)
+            ? $billingProvider->fullName
             : '';
     }
 
@@ -2185,13 +2149,13 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
         });
     }
 
-
     /**
      * Get billing provider.
      *
      * @return User
      */
-    public function leadContact(): User
+    public
+    function leadContact(): User
     {
         $leadContact = $this->careTeamMembers
             ->where('type', 'lead_contact')
@@ -2200,7 +2164,8 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
         return $leadContact->user ?? new User();
     }
 
-    public function scopeWithCareTeamOfType(
+    public
+    function scopeWithCareTeamOfType(
         $query,
         $type
     ) {
@@ -2221,34 +2186,40 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
      *
      * @return void
      */
-    public function sendPasswordResetNotification($token)
+    public
+    function sendPasswordResetNotification($token)
     {
         $this->notify(new ResetPassword($token));
     }
 
-    public function latestCcda()
+    public
+    function latestCcda()
     {
         return $this->ccdas()
             ->orderBy('updated_at', 'desc')
             ->first();
     }
 
-    public function ccdas()
+    public
+    function ccdas()
     {
         return $this->hasMany(Ccda::class, 'patient_id', 'id');
     }
 
-    public function getCcmTimeAttribute()
+    public
+    function getCcmTimeAttribute()
     {
         return $this->patientInfo()->firstOrNew([])->cur_month_activity_time;
     }
 
-    public function patientInfo()
+    public
+    function patientInfo()
     {
         return $this->hasOne(Patient::class, 'user_id', 'id');
     }
 
-    public function clinicalEmergencyContactLocations()
+    public
+    function clinicalEmergencyContactLocations()
     {
         return $this->morphedByMany(Location::class, 'contactable', 'contacts')
             ->withPivot('name')
@@ -2257,7 +2228,8 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
             ->withTimestamps();
     }
 
-    public function routeNotificationForTwilio()
+    public
+    function routeNotificationForTwilio()
     {
         return $this->primaryPhone;
     }
@@ -2270,7 +2242,8 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
      *
      * @return bool
      */
-    public function attachGlobalRole($roleId)
+    public
+    function attachGlobalRole($roleId)
     {
         if (is_array($roleId)) {
             foreach ($roleId as $key => $role) {
@@ -2299,7 +2272,8 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
         return true;
     }
 
-    public function firstOrNewProviderInfo()
+    public
+    function firstOrNewProviderInfo()
     {
         if (!$this->hasRole('provider')) {
             return false;
@@ -2316,7 +2290,8 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
      *
      * @return void
      */
-    public function forwardTo($receiverUserId, $forwardTypeName)
+    public
+    function forwardTo($receiverUserId, $forwardTypeName)
     {
         $this->forwardAlertsTo()->attach($receiverUserId, [
             'name' => $forwardTypeName,
@@ -2328,7 +2303,8 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
      *
      * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
      */
-    public function forwardAlertsTo()
+    public
+    function forwardAlertsTo()
     {
         return $this->morphToMany(User::class, 'contactable', 'contacts')
             ->withPivot('name')
@@ -2340,7 +2316,8 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
      *
      * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
      */
-    public function forwardedCarePlanApprovalEmailsBy()
+    public
+    function forwardedCarePlanApprovalEmailsBy()
     {
         return $this->forwardedAlertsBy()
             ->withPivot('name')
@@ -2355,7 +2332,8 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
      *
      * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
      */
-    public function forwardedAlertsBy()
+    public
+    function forwardedAlertsBy()
     {
         return $this->morphedByMany(User::class, 'contactable', 'contacts')
             ->withPivot('name')
@@ -2364,7 +2342,8 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
             ->withTimestamps();
     }
 
-    public function getCareplanModeAttribute()
+    public
+    function getCareplanModeAttribute()
     {
         $careplanMode = null;
 
@@ -2383,14 +2362,16 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
         return $careplanMode;
     }
 
-    public function getTimezoneAbbrAttribute()
+    public
+    function getTimezoneAbbrAttribute()
     {
         return $this->timezone
             ? Carbon::now($this->timezone)->format('T')
             : Carbon::now()->setTimezone('America/New_York')->format('T');
     }
 
-    public function canApproveCarePlans()
+    public
+    function canApproveCarePlans()
     {
         return $this->can('care-plan-approve')
             || ($this->practiceOrGlobalRole()->name == 'registered-nurse' && $this->primaryPractice->settings[0]->rn_can_approve_careplans);
@@ -2401,7 +2382,8 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
      *
      * @return Role|null
      */
-    public function practiceOrGlobalRole()
+    public
+    function practiceOrGlobalRole()
     {
         if ($this->practice($this->primaryPractice)) {
             $primaryPractice = $this->practice($this->primaryPractice);
@@ -2412,5 +2394,125 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
         }
 
         return $this->roles->first();
+    }
+
+    public
+    function patientList()
+    {
+        return User::intersectPracticesWith($this)
+            ->ofType('participant')
+            ->whereHas('patientInfo')
+            ->with('primaryPractice')
+            ->with('carePlan')
+            ->with([
+                'observations'    => function ($query) {
+                    $query->where('obs_key', '!=', 'Outbound');
+                    $query->orderBy('obs_date', 'DESC');
+                    $query->first();
+                },
+                'careTeamMembers' => function ($q) {
+                    $q->where('type', '=', CarePerson::BILLING_PROVIDER)
+                        ->with('user');
+                },
+                'phoneNumbers'    => function ($q) {
+                    $q->where('type', '=', PhoneNumber::HOME);
+                },
+            ])
+            ->get();
+    }
+
+    public
+    function patientsPendingApproval()
+    {
+        return User::intersectPracticesWith($this)
+            ->ofType('participant')
+            ->whereHas('patientInfo')
+            ->whereHas('carePlan', function ($q) {
+                $q->where('status', '=', CarePlan::QA_APPROVED);
+            })
+            ->whereHas('careTeamMembers', function ($q) {
+                $q->where([
+                    ['type', '=', CarePerson::BILLING_PROVIDER],
+                    ['member_user_id', '=', $this->id],
+                ]);
+            })
+            ->with('primaryPractice')
+            ->with([
+                'observations' => function ($query) {
+                    $query->where('obs_key', '!=', 'Outbound');
+                    $query->orderBy('obs_date', 'DESC');
+                    $query->first();
+                },
+                'phoneNumbers' => function ($q) {
+                    $q->where('type', '=', PhoneNumber::HOME);
+                },
+            ]);
+    }
+
+    public function billableProblems()
+    {
+        $billableProblems = new Collection();
+
+        $ccdProblems = $this->ccdProblems()
+            ->whereNotNull('cpm_problem_id')
+            ->get()
+            ->map(function ($problem) use ($billableProblems) {
+                $problem->icd_10_code = $problem->icd10Code();
+
+                if (!$problem->icd_10_code) {
+                    return $problem;
+                }
+
+                if ($problem->isIcd10()) {
+                    $billableProblems->prepend($problem);
+
+                    return $problem;
+                }
+
+                $billableProblems->push($problem);
+
+                return $problem;
+            });
+
+        return $billableProblems;
+    }
+
+    /**
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
+     */
+    public function ccdProblems()
+    {
+        return $this->hasMany(Problem::class, 'patient_id');
+    }
+
+    public function hasProblem($problem)
+    {
+        $cpmProblem = is_a($problem, CpmProblem::class)
+            ? $problem
+            : is_int($problem)
+                ? CpmProblem::find($problem)
+                : CpmProblem::whereName($problem)->first();
+
+
+        $exists = $this->cpmProblems->contains(function ($prob) use ($cpmProblem) {
+            return $cpmProblem->id == $prob->id;
+        });
+
+        if ($exists) {
+            return true;
+
+        }
+
+        return false;
+    }
+
+    /**
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
+     */
+    public function cpmProblems()
+    {
+        return $this->belongsToMany(CpmProblem::class, 'cpm_problems_users', 'patient_id')
+            ->withPivot('cpm_instruction_id')
+            ->withTimestamps('created_at', 'updated_at');
     }
 }

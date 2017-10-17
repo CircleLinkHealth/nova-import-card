@@ -85,7 +85,7 @@ class PatientDailyAuditReport
             foreach ($notes as $note) {
 
                 $time = Carbon::parse($note->created_at)->format("g:i:s A");
-                $performer = User::find($note->author_id)->fullName;
+                $performer = User::withTrashed()->find($note->author_id)->fullName ?? '';
                 $this->data['daily'][$date]['notes'][$note->id]['performer'] = $performer;
                 $this->data['daily'][$date]['notes'][$note->id]['time'] = $time;
                 $this->data['daily'][$date]['notes'][$note->id]['body'] = $note->body;

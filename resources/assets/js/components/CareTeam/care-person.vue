@@ -148,7 +148,7 @@
                     phone: '',
                     practice: '',
                     email: '',
-                    qualification: '',
+                    is_clinical: '',
                     send_alerts: '',
                     is_billing_provider: '',
                 }

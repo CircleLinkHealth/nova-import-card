@@ -1,6 +1,5 @@
 <?php namespace App\Http\Controllers;
 
-use App\CLH\DataTemplates\UserConfigTemplate;
 use App\CLH\Repositories\UserRepository;
 use App\CPRulesPCP;
 use App\Location;
@@ -42,7 +41,11 @@ class UserController extends Controller
         $users = User::whereIn('id', Auth::user()->viewableUserIds())
             ->orderBy('id', 'desc')
             ->get()
-            ->pluck('fullNameWithId', 'id')
+            ->mapWithKeys(function ($user) {
+                return [
+                    $user->id => "{$user->first_name} {$user->last_name} ({$user->id})"
+                ];
+            })
             ->all();
 
         $filterUser = 'all';
@@ -221,9 +224,6 @@ class UserController extends Controller
 
         $roles = Role::pluck('name', 'id')->all();
 
-        // user config
-        $userConfig = (new UserConfigTemplate())->getArray();
-
         // set role
         $wpRole = '';
 
@@ -310,7 +310,6 @@ class UserController extends Controller
             'states_arr'    => $states_arr,
             'timezones_arr' => $timezones_arr,
             'wpBlogs'       => $wpBlogs,
-            'userConfig'    => $userConfig,
             'providers_arr' => $providers_arr,
             'messages'      => $messages,
             'roles'         => $roles,

@@ -3,13 +3,16 @@
 namespace App;
 
 use App\Contracts\PdfReport;
+use App\Models\Addendum;
+use App\Traits\IsAddendumable;
 use App\Traits\PdfReportTrait;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
 
 class Note extends Model implements PdfReport
 {
-    use PdfReportTrait;
+    use IsAddendumable,
+        PdfReportTrait;
 
     protected $table = 'notes';
 
@@ -71,9 +74,10 @@ class Note extends Model implements PdfReport
             'provider' => $this->patient->billingProvider(),
         ]);
 
-        $file_name = base_path('storage/pdfs/notes/' . Carbon::now()->toDateString() . '-' . $this->patient->fullName . '.pdf');
-        $pdf->save($file_name, true);
+        $this->fileName = Carbon::now()->toDateString() . '-' . $this->patient->fullName . '.pdf';
+        $filePath = base_path('storage/pdfs/notes/' . $this->fileName);
+        $pdf->save($filePath, true);
 
-        return $file_name;
+        return $filePath;
     }
 }

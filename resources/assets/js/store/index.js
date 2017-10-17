@@ -7,8 +7,9 @@ import Errors from '../components/src/Errors'
 
 Vue.use(Vuex)
 
-const debug = process.env.NODE_ENV !== 'production'
-Vue.config.debug = debug
+// const debug = process.env.NODE_ENV !== 'production'
+const debug = true
+Vue.config.debug = true
 
 const state = {
     errors: new Errors(),

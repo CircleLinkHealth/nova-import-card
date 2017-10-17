@@ -133,7 +133,7 @@ class CarePlanTemplate extends Model
                 throw new \Exception("Relationship `$rel` does not exist.");
             }
 
-            $attributes[$rel] = function ($query) {
+            $attributes[$rel] = function ($query) use ($rel) {
                 $query->with('cpmInstructions')
                     ->orderBy('pivot_ui_sort');
             };

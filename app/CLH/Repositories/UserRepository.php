@@ -98,6 +98,9 @@ class UserRepository implements \App\CLH\Contracts\Repositories\UserRepository
         if ($params->get('last_name')) {
             $user->last_name = $params->get('last_name');
         }
+        if ($params->get('suffix')) {
+            $user->suffix = $params->get('suffix');
+        }
         if ($params->get('address')) {
             $user->address = $params->get('address');
         }
