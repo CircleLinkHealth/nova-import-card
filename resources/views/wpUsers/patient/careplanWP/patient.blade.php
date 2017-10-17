@@ -6,7 +6,6 @@ $new_user = false;
 @extends('partials.providerUI')
 
 @section('content')
-    <script type="text/javascript" src="{{ asset('/js/patient/careplan.js') }}"></script>
     <link href="{{ asset('/css/wpstyle.css') }}" rel="stylesheet">
     {!! Form::open(array('url' => URL::route('patients.demographics.store', array('patientId' => $patient->id)), 'class' => 'form-horizontal', 'id' => 'ucpForm')) !!}
     <div class="row">
@@ -249,3 +248,7 @@ $new_user = false;
         </div>
     </div>
 @stop
+
+@push('scripts')
+    <script type="text/javascript" src="{{ asset('/js/patient/careplan.js') }}"></script>
+@endpush

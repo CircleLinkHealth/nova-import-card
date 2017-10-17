@@ -333,22 +333,25 @@ $user_info = array();
         <br/><br/>
 
         @if(isset($_GET['scrollTo']))
-            <script>
-                $(function () {
-                    // Handler for .ready() called.
-                    $('html, body').animate({
-                        scrollTop: $("#{{ $_GET['scrollTo'] }}").offset().top
-                    }, 'slow');
+            @push('scripts')
+                <script>
+                    $(function () {
+                        // Handler for .ready() called.
+                        $('html, body').animate({
+                            scrollTop: $("#{{ $_GET['scrollTo'] }}").offset().top
+                        }, 'slow');
 
-                    $('#insurance-name').focus();
+                        $('#insurance-name').focus();
 
-                    $('#policies-title').css('border-left', '15px solid #47beab')
-                        .css('padding-left', '5px');
+                        $('#policies-title').css('border-left', '15px solid #47beab')
+                            .css('padding-left', '5px');
 
-                    $('.glow').addClass('animated flash');
+                        $('.glow').addClass('animated flash');
 
-                });
-            </script>
+                    });
+                </script>
+            @endpush
+            
     </div>
     @endif
 
