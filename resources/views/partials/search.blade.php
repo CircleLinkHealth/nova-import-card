@@ -4,7 +4,7 @@
            placeholder="{{ !empty($patient->id) ? $patient->fullName : 'Enter a Patient Name, MRN or DOB (mm-dd-yyyy)' }}">
 </div>
 
-@section('scripts')
+@push('scripts')
     <script>
         jQuery(document).ready(function ($) {
             var pat = new Bloodhound({
@@ -45,4 +45,4 @@
         });
 
     </script>
-@endsection
+@endpush

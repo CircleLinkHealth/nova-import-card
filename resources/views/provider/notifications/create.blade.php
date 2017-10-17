@@ -143,10 +143,10 @@
     </div>
 @endsection
 
-@section('scripts')
+@push('scripts')
     <script>
         $(document).ready(function () {
             $('select').material_select();
         });
     </script>
-@endsection
+@endpush

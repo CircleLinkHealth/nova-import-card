@@ -123,7 +123,7 @@
 
 @stop
 
-@section('scripts2')
+@push('scripts')
 <script>
                             function startCompare(value, filter) {
                                 value = value.toString().toLowerCase();
@@ -291,4 +291,4 @@
 
 
         </script>
-@stop
+@endpush

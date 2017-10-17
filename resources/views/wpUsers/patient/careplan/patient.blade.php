@@ -7,9 +7,9 @@ $user_info = array();
 @section('title', 'Patient Demographics')
 @section('activity', 'Edit/Modify Care Plan')
 
-@section('scripts')
+@push('scripts')
     <script type="text/javascript" src="{{ asset('/js/patient/careplan.js') }}"></script>
-@endsection
+@endpush
 
 @section('content')
     {!! Form::open(array('url' => URL::route('patients.demographics.store', array('patientId' => $patient->id)), 'class' => 'form-horizontal', 'id' => 'ucpForm')) !!}

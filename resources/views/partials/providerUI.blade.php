@@ -106,8 +106,8 @@
 <!-- <script src="{{asset('/js/bootstrap.min.js')}}"></script>
 <script src="{{asset('/js/DateTimePicker.min.js')}}"></script> -->
 
-@yield('scripts')
-@yield('scripts2')
+@stack('scripts')
+
 
 <!-- <script src="{{asset('/js/fab.js') }}"></script> -->
 @endif
