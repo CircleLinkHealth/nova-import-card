@@ -5,7 +5,7 @@
 
 @section('content')
 
-    @include('partials.confirm-ccm-complexity-modal')
+    @include('partials.confirm-modal')
 
     <div class="row main-form-block" style="margin-top:30px;">
         <div class="main-form-container col-lg-8 col-lg-offset-2">
@@ -21,12 +21,7 @@
                             NOTE</a></div>
                     <div class="col-sm-6 pull-right"
                          style="text-align: right;top: 12px;font-size: 22px;color: #ec683e;">
-                        <form method="post" name="complexity_toggle" id="complexity_toggle"
-                              action="{{URL::route('patient.ccm.toggle', array('patient' => $patient->id))}}"
-                              class="form-horizontal">
-                            {{ csrf_field() }}
-                            @include('partials.complex-ccm-badge')
-                        </form>
+                        @include('partials.complex-ccm-badge')
                     </div>
                 </div>
                 <div class="main-form-horizontal main-form-primary-horizontal col-md-12"
@@ -266,32 +261,5 @@
                 </div>
             </div>
         </div>
-
-        @push('scripts')
-        <script>
-
-            $(document).ready(function () {
-                $("#complex").click(function (e) {
-                        if($(this).is(':checked')){
-                            $("#confirmButtonModal").modal({    backdrop: 'static',    keyboard: false});
-                        } else {
-                            $("#complex").prop("checked", false);
-                            $("#complexity_toggle").submit();
-                        }
-
-                });
-
-                $("#complex_confirm").click(function (e) {
-                    $("#complex").prop("checked", true);
-                    $("#complexity_toggle").submit();
-                });
-
-                $("#complex_cancel").click(function (e) {
-                    $("#complex").prop("checked", false);
-                });
-
-            });
-        </script>
-        @endpush
 
 @stop

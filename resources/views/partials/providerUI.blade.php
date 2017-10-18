@@ -107,7 +107,7 @@
 <script src="{{asset('/js/DateTimePicker.min.js')}}"></script>
 
 @yield('scripts')
-
+@stack('scripts')
 <script src="{{asset('/js/fab.js') }}"></script>
 @endif
 </body>
