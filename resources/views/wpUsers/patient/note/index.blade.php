@@ -34,11 +34,16 @@
                     @if($data)
                         <div id="obs_alerts_container" class=""></div><br/>
                         <div id="paging_container"></div><br/>
+
+                        @push('styles')
                         <style>
                             .webix_hcell {
                                 background-color: #d2e3ef;
                             }
                         </style>
+                        @endpush
+                        
+                        @push('scripts')
                         <script>
                             function startCompare(value, filter) {
                                 value = value.toString().toLowerCase();
@@ -180,13 +185,16 @@
                                 obs_alerts_dtable.adjust();
                             })
                         </script>
+                        @endpush
 
                         <div class="row">
+                            @push('scripts')
                             <style>
                                 li {
                                     padding-bottom: 2px;
                                 }
                             </style>
+                            @endpush
                             <div class="col-sm-6" style="padding: 10px; top: -14px">
                                 <li>
                                     <div class="label label-info" style="margin-right: 4px; text-align: right;">
@@ -259,6 +267,7 @@
             </div>
         </div>
 
+        @push('scripts')
         <script>
 
             $(document).ready(function () {
@@ -282,8 +291,7 @@
                 });
 
             });
-
-
         </script>
+        @endpush
 
 @stop

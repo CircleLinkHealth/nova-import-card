@@ -13,6 +13,7 @@
     $userTimeGMT = $userTimeGMT->format('Y-m-d\TH:i');
     ?>
 
+    @push('styles')
     <style>
         .edit_button {
             -webkit-appearance: none;
@@ -21,6 +22,7 @@
             background: transparent;
         }
     </style>
+    @endpush
 
     @include('partials.confirm-ccm-complexity-modal')
 
@@ -279,6 +281,7 @@
         <br/>
     </div>
 
+    @push('scripts')
     <script>
 
         $(document).ready(function () {
@@ -309,4 +312,5 @@
         });
 
     </script>
+    @endpush
 @endsection
