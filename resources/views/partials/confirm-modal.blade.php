@@ -2,7 +2,7 @@
     A generic modal for confirming actions.
     Usage: 
     ```
-        $("<modal-jquery-selector>").showConfirmModal({
+        $.showConfirmModal({
             title: "Modal Title",
             body: "Modal Body"
         }).then(function (action) {
@@ -42,7 +42,7 @@
             var $body = $modal.find(".modal-body");
             var $confirm = $modal.find("[name='confirm']");
             var $cancel = $modal.find("[name='cancel']");
-            $.fn.showConfirmModal = function (modal) {
+            $.showConfirmModal = function (modal) {
                 console.log("modal-definition", modal);
                 $title.html(modal.title || "");
                 $body.html(modal.body || "");
