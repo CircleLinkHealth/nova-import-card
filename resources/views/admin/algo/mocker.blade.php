@@ -102,7 +102,8 @@
             </div>
 
     </div>
-    <script>
+    @push('scripts')
+        <script>
 
         $(document).ready(function () {
             $('input[name=seconds]').keyup(function () {
@@ -143,4 +144,5 @@
         });
 
     </script>
+    @endpush
 @stop
