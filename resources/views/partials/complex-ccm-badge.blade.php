@@ -27,8 +27,8 @@
             body: `<p>Please confirm patient will benefit from extra CCM care time this month.</p>
                    <p>Friendly Reminder: A Medication Reconciliation is required for Complex CCM patients.</p>`
         }
-        var submitViaAjax = function (e) {
-            console.log("complex-ccm-badge-form-request", $action.val(), $(this).serialize(), e)
+        var submitViaAjax = function () {
+            console.log("complex-ccm-badge-form-request", $action.val(), $(this).serialize())
             $.post($action.val(), $(this).serialize()).then(function (res) {
                 console.log("complex-ccm-badge-form-response", "see network");
             }).catch(function (err) {
