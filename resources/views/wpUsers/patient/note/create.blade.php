@@ -13,6 +13,7 @@
     $userTimeGMT = $userTimeGMT->format('Y-m-d\TH:i');
     ?>
 
+    @push('styles')
     <style>
         .edit_button {
             -webkit-appearance: none;
@@ -21,8 +22,9 @@
             background: transparent;
         }
     </style>
+    @endpush
 
-    @include('partials.confirm-ccm-complexity-modal')
+    @include('partials.confirm-modal')
 
     <div class="row" style="margin-top:30px;">
         <div class="main-form-container col-lg-6 col-lg-offset-3 col-md-10 col-md-offset-1"
@@ -50,7 +52,7 @@
                             </div>
                             <div class="col-sm-4 pull-right"
                                  style="text-align: right;top: 9px;font-size: 22px;color: #ec683e;">
-                                @include('partials.complex-ccm-badge')
+                                 @include('partials.complex-ccm-badge')
                             </div>
                         </div>
                     </div>
@@ -279,6 +281,7 @@
         <br/>
     </div>
 
+    @push('scripts')
     <script>
 
         $(document).ready(function () {
@@ -288,25 +291,6 @@
             });
         });
 
-        $(document).ready(function () {
-            $("#complex").click(function (e) {
-                if ($("#complex").is(':checked')) {
-                    $("#confirmButtonModal").modal({backdrop: 'static', keyboard: false});
-                } else {
-                    $("#complex_tag").hide();
-                }
-            });
-
-            $("#complex_confirm").click(function (e) {
-                $("#complex").prop("checked", true);
-                $("#complex_tag").show();
-            });
-
-            $("#complex_cancel").click(function (e) {
-                $("#complex").prop("checked", false);
-                $("#complex_tag").hide();
-            });
-        });
-
     </script>
+    @endpush
 @endsection

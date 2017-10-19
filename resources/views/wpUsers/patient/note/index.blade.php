@@ -5,7 +5,7 @@
 
 @section('content')
 
-    @include('partials.confirm-ccm-complexity-modal')
+    @include('partials.confirm-modal')
 
     <div class="row main-form-block" style="margin-top:30px;">
         <div class="main-form-container col-lg-8 col-lg-offset-2">
@@ -21,12 +21,7 @@
                             NOTE</a></div>
                     <div class="col-sm-6 pull-right"
                          style="text-align: right;top: 12px;font-size: 22px;color: #ec683e;">
-                        <form method="post" name="complexity_toggle" id="complexity_toggle"
-                              action="{{URL::route('patient.ccm.toggle', array('patient' => $patient->id))}}"
-                              class="form-horizontal">
-                            {{ csrf_field() }}
-                            @include('partials.complex-ccm-badge')
-                        </form>
+                        @include('partials.complex-ccm-badge')
                     </div>
                 </div>
                 <div class="main-form-horizontal main-form-primary-horizontal col-md-12"
@@ -34,11 +29,16 @@
                     @if($data)
                         <div id="obs_alerts_container" class=""></div><br/>
                         <div id="paging_container"></div><br/>
+
+                        @push('styles')
                         <style>
                             .webix_hcell {
                                 background-color: #d2e3ef;
                             }
                         </style>
+                        @endpush
+                        
+                        @push('scripts')
                         <script>
                             function startCompare(value, filter) {
                                 value = value.toString().toLowerCase();
@@ -180,13 +180,16 @@
                                 obs_alerts_dtable.adjust();
                             })
                         </script>
+                        @endpush
 
                         <div class="row">
+                            @push('styles')
                             <style>
                                 li {
                                     padding-bottom: 2px;
                                 }
                             </style>
+                            @endpush
                             <div class="col-sm-6" style="padding: 10px; top: -14px">
                                 <li>
                                     <div class="label label-info" style="margin-right: 4px; text-align: right;">
@@ -258,32 +261,5 @@
                 </div>
             </div>
         </div>
-
-        <script>
-
-            $(document).ready(function () {
-                $("#complex").click(function (e) {
-                        if($(this).is(':checked')){
-                            $("#confirmButtonModal").modal({    backdrop: 'static',    keyboard: false});
-                        } else {
-                            $("#complex").prop("checked", false);
-                            $("#complexity_toggle").submit();
-                        }
-
-                });
-
-                $("#complex_confirm").click(function (e) {
-                    $("#complex").prop("checked", true);
-                    $("#complexity_toggle").submit();
-                });
-
-                $("#complex_cancel").click(function (e) {
-                    $("#complex").prop("checked", false);
-                });
-
-            });
-
-
-        </script>
 
 @stop

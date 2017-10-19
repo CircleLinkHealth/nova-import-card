@@ -57,6 +57,7 @@
 
         <script src="{{ asset('/webix/codebase/webix.js') }}" type="text/javascript"></script>
     @endif
+    @stack('styles')
 </head>
 <body>
 
@@ -107,7 +108,7 @@
 <script src="{{asset('/js/DateTimePicker.min.js')}}"></script>
 
 @yield('scripts')
-
+@stack('scripts')
 <script src="{{asset('/js/fab.js') }}"></script>
 @endif
 </body>
