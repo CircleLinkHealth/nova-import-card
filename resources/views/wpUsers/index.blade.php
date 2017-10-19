@@ -1,7 +1,10 @@
 @extends('partials.adminUI')
 
 @section('content')
-    <script type="text/javascript" src="{{ asset('/js/wpUsers/wpUsers.js') }}"></script>
+    @push('scripts')
+        <script type="text/javascript" src="{{ asset('/js/wpUsers/wpUsers.js') }}"></script>
+    @endpush
+    
     <div class="container-fluid">
         <div class="row">
             <div class="col-md-10 col-md-offset-1">

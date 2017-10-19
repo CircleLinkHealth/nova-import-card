@@ -48,7 +48,7 @@ mix.combine([
     'bower_components/jquery/dist/jquery.js',
     'bower_components/jquery-ui/jquery-ui.js',
     'bower_components/jquery-idletimer/dist/idle-timer.js',
-    'bower_components/select2/dist/select2.js',
+    'bower_components/select2/dist/js/select2.js',
     'bower_components/webix/codebase/webix.js',
     'bower_components/bootstrap-select/dist/js/bootstrap-select.js',
     'bower_components/bootstrap/dist/js/bootstrap.js',
@@ -69,7 +69,7 @@ mix.combine([
     'public/js/jquery-ui-timepicker.min.js',
     'bower_components/parsleyjs/dist/parsley.js',
     'bower_components/bootstrap-select/dist/js/bootstrap-select.js',
-    'bower_components/select2/dist/select2.js',
+    'bower_components/select2/dist/js/select2.js',
     'bower_components/bootstrap/dist/js/bootstrap.js'
 ], 'public/compiled/js/admin-ui.js');
 /** end fixing admin-ui */
