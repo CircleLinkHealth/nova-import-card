@@ -1,6 +1,5 @@
 <div id="confirmButtonModal" class="modal fade" role="dialog">
     <div class="modal-dialog">
-
         <!-- Modal content-->
         <div class="modal-content">
             <div class="modal-header">
@@ -20,6 +19,5 @@
                 </button>
             </div>
         </div>
-
     </div>
 </div>

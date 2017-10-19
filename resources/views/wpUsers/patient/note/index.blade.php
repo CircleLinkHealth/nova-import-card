@@ -5,7 +5,7 @@
 
 @section('content')
 
-    @include('partials.confirm-ccm-complexity-modal')
+    @include('partials.confirm-modal')
 
     <div class="row main-form-block" style="margin-top:30px;">
         <div class="main-form-container col-lg-8 col-lg-offset-2">
@@ -21,12 +21,7 @@
                             NOTE</a></div>
                     <div class="col-sm-6 pull-right"
                          style="text-align: right;top: 12px;font-size: 22px;color: #ec683e;">
-                        <form method="post" name="complexity_toggle" id="complexity_toggle"
-                              action="{{URL::route('patient.ccm.toggle', array('patient' => $patient->id))}}"
-                              class="form-horizontal">
-                            {{ csrf_field() }}
-                            @include('partials.complex-ccm-badge')
-                        </form>
+                        @include('partials.complex-ccm-badge')
                     </div>
                 </div>
                 <div class="main-form-horizontal main-form-primary-horizontal col-md-12"
@@ -34,97 +29,17 @@
                     @if($data)
                         <div id="obs_alerts_container" class=""></div><br/>
                         <div id="paging_container"></div><br/>
+
+                        @push('styles')
                         <style>
                             .webix_hcell {
                                 background-color: #d2e3ef;
                             }
                         </style>
+                        @endpush
                         
-
-                        <div class="row">
-                            <style>
-                                li {
-                                    padding-bottom: 2px;
-                                }
-                            </style>
-                            <div class="col-sm-6" style="padding: 10px; top: -14px">
-                                <li>
-                                    <div class="label label-info" style="margin-right: 4px; text-align: right;">
-                                        <span class="glyphicon glyphicon-earphone" aria-hidden="true"></span>
-                                    </div>
-                                    Patient Reached
-                                </li>
-
-                                <li>
-                                    <div class="label label-danger" style="margin-right: 4px; text-align: right;">
-                                        <span class="glyphicon glyphicon-flag"></span>
-                                    </div>
-                                    Patient recently in ER or Hospital
-                                </li>
-
-                                <li>
-                                    <div class="label label-warning" style="margin-right: 4px; text-align: right;">
-                                        <span class="glyphicon glyphicon-envelope"></span>
-                                    </div>
-                                    Forwarded To Provider
-                                </li>
-
-                                <li>
-                                    <div class="label label-success" style="margin-right: 4px; text-align: right;">
-                                        <span class="glyphicon glyphicon-eye-open"></span>
-                                    </div>
-                                    Forward Seen By Provider
-                                </li>
-
-                            </div>
-                            @if(auth()->user()->hasRole(['administrator', 'med_assistant', 'provider']))
-
-                                <input type="button" value="Export as PDF" class="btn btn-primary"
-                                       style='margin:15px;'
-                                       onclick="webix.toPDF($$(obs_alerts_dtable), {
-                                               header: 'Circlelink Health notes for {!!  $patient->fullName . ", Dr. " . $patient->billingProviderName . " as of " . Carbon\Carbon::now()->toDateString() !!}',
-                                               orientation:'landscape',
-                                               autowidth:true,
-                                               filename: '{{$patient->fullName }} {{Carbon\Carbon::now()->toDateString()}}',
-                                               columns:{
-                                               'performed_at':       { header:'Date/Time', width: 200, template: webix.template('#performed_at#') },
-                                               'logger_name':             { header:'Author Name',    width:200, sort:'string', template: webix.template('#logger_name#')},
-                                               'comment':             { header:'Note Contents',    width:200, sort:'string', template: webix.template('#comment#')}
-
-                                               }});">
-
-                                <input type="button" value="Export as Excel" class="btn btn-primary"
-                                       style='margin:15px;'
-                                       onclick="webix.toExcel($$(obs_alerts_dtable), {
-                                               header:'Circlelink Health notes for {!! $patient->fullName . ", Dr. " . $patient->billingProviderName . " as of " . Carbon\Carbon::now()->toDateString() !!}',
-                                               orientation:'landscape',
-                                               autowidth:true,
-                                               filename: '{{$patient->fullName }} {{Carbon\Carbon::now()->toDateString()}}',
-
-                                               columns:{
-                                               'performed_at':       { header:'Date/Time', width: 110, template: webix.template('#performed_at#') },
-                                               'logger_name':             { header:'Author Name',    width:75, sort:'string', template: webix.template('#logger_name#')},
-                                               'comment':             { header:'Note Contents',    width:400, sort:'string', template: webix.template('#comment#')}
-
-                                               }});">
-                            @endif
-                            @else
-                                <div style="text-align:center;margin:50px;">There are no patient Notes/Offline
-                                    Activities to
-                                    display for this month.
-                                </div>
-                            @endif
-                        </div>
-                </div>
-            </div>
-        </div>
-
-        
-
-@stop
-
-@push('scripts')
-<script>
+                        @push('scripts')
+                        <script>
                             function startCompare(value, filter) {
                                 value = value.toString().toLowerCase();
                                 filter = '<' + filter.toString().toLowerCase();
@@ -265,30 +180,86 @@
                                 obs_alerts_dtable.adjust();
                             })
                         </script>
-    <script>
+                        @endpush
 
-            $(document).ready(function () {
-                $("#complex").click(function (e) {
-                        if($(this).is(':checked')){
-                            $("#confirmButtonModal").modal({    backdrop: 'static',    keyboard: false});
-                        } else {
-                            $("#complex").prop("checked", false);
-                            $("#complexity_toggle").submit();
-                        }
+                        <div class="row">
+                            @push('styles')
+                            <style>
+                                li {
+                                    padding-bottom: 2px;
+                                }
+                            </style>
+                            @endpush
+                            <div class="col-sm-6" style="padding: 10px; top: -14px">
+                                <li>
+                                    <div class="label label-info" style="margin-right: 4px; text-align: right;">
+                                        <span class="glyphicon glyphicon-earphone" aria-hidden="true"></span>
+                                    </div>
+                                    Patient Reached
+                                </li>
 
-                });
+                                <li>
+                                    <div class="label label-danger" style="margin-right: 4px; text-align: right;">
+                                        <span class="glyphicon glyphicon-flag"></span>
+                                    </div>
+                                    Patient recently in ER or Hospital
+                                </li>
 
-                $("#complex_confirm").click(function (e) {
-                    $("#complex").prop("checked", true);
-                    $("#complexity_toggle").submit();
-                });
+                                <li>
+                                    <div class="label label-warning" style="margin-right: 4px; text-align: right;">
+                                        <span class="glyphicon glyphicon-envelope"></span>
+                                    </div>
+                                    Forwarded To Provider
+                                </li>
 
-                $("#complex_cancel").click(function (e) {
-                    $("#complex").prop("checked", false);
-                });
+                                <li>
+                                    <div class="label label-success" style="margin-right: 4px; text-align: right;">
+                                        <span class="glyphicon glyphicon-eye-open"></span>
+                                    </div>
+                                    Forward Seen By Provider
+                                </li>
 
-            });
+                            </div>
+                            @if(auth()->user()->hasRole(['administrator', 'med_assistant', 'provider']))
 
+                                <input type="button" value="Export as PDF" class="btn btn-primary"
+                                       style='margin:15px;'
+                                       onclick="webix.toPDF($$(obs_alerts_dtable), {
+                                               header: 'Circlelink Health notes for {!!  $patient->fullName . ", Dr. " . $patient->billingProviderName . " as of " . Carbon\Carbon::now()->toDateString() !!}',
+                                               orientation:'landscape',
+                                               autowidth:true,
+                                               filename: '{{$patient->fullName }} {{Carbon\Carbon::now()->toDateString()}}',
+                                               columns:{
+                                               'performed_at':       { header:'Date/Time', width: 200, template: webix.template('#performed_at#') },
+                                               'logger_name':             { header:'Author Name',    width:200, sort:'string', template: webix.template('#logger_name#')},
+                                               'comment':             { header:'Note Contents',    width:200, sort:'string', template: webix.template('#comment#')}
 
-        </script>
-@endpush
+                                               }});">
+
+                                <input type="button" value="Export as Excel" class="btn btn-primary"
+                                       style='margin:15px;'
+                                       onclick="webix.toExcel($$(obs_alerts_dtable), {
+                                               header:'Circlelink Health notes for {!! $patient->fullName . ", Dr. " . $patient->billingProviderName . " as of " . Carbon\Carbon::now()->toDateString() !!}',
+                                               orientation:'landscape',
+                                               autowidth:true,
+                                               filename: '{{$patient->fullName }} {{Carbon\Carbon::now()->toDateString()}}',
+
+                                               columns:{
+                                               'performed_at':       { header:'Date/Time', width: 110, template: webix.template('#performed_at#') },
+                                               'logger_name':             { header:'Author Name',    width:75, sort:'string', template: webix.template('#logger_name#')},
+                                               'comment':             { header:'Note Contents',    width:400, sort:'string', template: webix.template('#comment#')}
+
+                                               }});">
+                            @endif
+                            @else
+                                <div style="text-align:center;margin:50px;">There are no patient Notes/Offline
+                                    Activities to
+                                    display for this month.
+                                </div>
+                            @endif
+                        </div>
+                </div>
+            </div>
+        </div>
+
+@stop

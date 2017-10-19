@@ -107,7 +107,7 @@ $location = empty($patient->getPreferredLocationName())
             <div style="clear:both"></div>
             <ul id="user-header-problems-checkboxes" class="person-conditions-list inline-block text-medium" style="margin-top: -10px">
                 @foreach($problems as $problem)
-                    @if($problem != App\Models\CPM\CpmMisc::OTHER_CONDITIONS)
+                    @if($problem != App\Models\CPM\CpmMisc::OTHER_CONDITIONS && $problem != 'Diabetes')
                         <li class="inline-block"><input type="checkbox" id="item27" name="condition27" value="Active"
                                                         checked="checked" disabled="disabled">
                             <label for="condition27"><span> </span>{{$problem}}</label>
