@@ -183,7 +183,7 @@
                         @endpush
 
                         <div class="row">
-                            @push('scripts')
+                            @push('styles')
                             <style>
                                 li {
                                     padding-bottom: 2px;
