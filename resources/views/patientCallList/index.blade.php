@@ -4,29 +4,30 @@
 @section('activity', '')
 
 @section('content')
-
-    <link href="https://cdn.datatables.net/1.10.12/css/jquery.dataTables.min.css" rel="stylesheet">
+    @push('styles')
+        <link href="https://cdn.datatables.net/1.10.12/css/jquery.dataTables.min.css" rel="stylesheet">
+    @endpush
     @push('scripts')
-    <script type="text/javascript" src="https://cdn.datatables.net/1.10.12/js/jquery.dataTables.min.js"></script>
-    <script>
-        $(document).ready(function () {
-            $('#cpmEditableTable').DataTable({
-                "order": [[2, "asc"], [3, "asc"]],
-                "iDisplayLength": 100,
-                scrollX: true,
-                fixedHeader: true
-            });
+        <script type="text/javascript" src="https://cdn.datatables.net/1.10.12/js/jquery.dataTables.min.js"></script>
+        <script>
+            $(document).ready(function () {
+                $('#cpmEditableTable').DataTable({
+                    "order": [[2, "asc"], [3, "asc"]],
+                    "iDisplayLength": 100,
+                    scrollX: true,
+                    fixedHeader: true
+                });
 
-            $('.patientNameLink').click(function () {
-                callId = $(this).attr('call-id');
-                if (callId && $("#attemptNoteCall" + callId).length) {
-                    $("#attemptNoteCall" + callId).modal();
-                    return false;
-                }
-                return true;
+                $('.patientNameLink').click(function () {
+                    callId = $(this).attr('call-id');
+                    if (callId && $("#attemptNoteCall" + callId).length) {
+                        $("#attemptNoteCall" + callId).modal();
+                        return false;
+                    }
+                    return true;
+                });
             });
-        });
-    </script>
+        </script>
     @endpush
     
 
@@ -80,15 +81,17 @@
                                         @include('errors.messages')
 
                                         <h3>Scheduled Calls</h3>
-                                        <style>
-                                            .table tbody > tr > td.vert-align {
-                                                vertical-align: middle;
-                                            }
+                                        @push('styles')
+                                            <style>
+                                                .table tbody > tr > td.vert-align {
+                                                    vertical-align: middle;
+                                                }
 
-                                            #cpmEditableTable tbody > tr > td {
-                                                white-space: nowrap;
-                                            }
-                                        </style>
+                                                #cpmEditableTable tbody > tr > td {
+                                                    white-space: nowrap;
+                                                }
+                                            </style>
+                                        @endpush
                                         <table style="" id="cpmEditableTable" class="display" width="100%"
                                                cellspacing="0">
                                             <thead>
@@ -198,9 +201,10 @@
                                                     </tr>
                                                 @endforeach
                                             @else
-                                                <tr>
-                                                    <td colspan="7">No calls found</td>
-                                                </tr>
+                                                {{-- DataTables automatically provides a `No data available in table` message --}}
+                                                {{--  <tr>
+                                                    <td colspan="11">No calls found</td>
+                                                </tr>  --}}
                                             @endif
                                             </tbody>
                                         </table>
