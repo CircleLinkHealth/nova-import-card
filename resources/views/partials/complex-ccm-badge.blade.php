@@ -28,11 +28,11 @@
                    <p>Friendly Reminder: A Medication Reconciliation is required for Complex CCM patients.</p>`
         }
         var submitViaAjax = function () {
-            console.log("complex-ccm-badge-form-request", $action.val(), $(this).serialize())
+            //console.log("complex-ccm-badge-form-request", $action.val(), $(this).serialize())
             $.post($action.val(), $(this).serialize()).then(function (res) {
-                console.log("complex-ccm-badge-form-response", "see network");
+                //console.log("complex-ccm-badge-form-response", "see network");
             }).catch(function (err) {
-                console.error(err);
+                //console.error(err);
             })
             return false;
         }
@@ -57,7 +57,7 @@
                 newForm.append(tokenInput);
                 newForm.append(checkbox);
                 document.body.append(newForm);
-                console.log(newForm);
+                //console.log(newForm);
                 submitViaAjax.call(newForm)
             }
         }
