@@ -27,8 +27,17 @@
             body: `<p>Please confirm patient will benefit from extra CCM care time this month.</p>
                    <p>Friendly Reminder: A Medication Reconciliation is required for Complex CCM patients.</p>`
         }
+        var submitViaAjax = function (e) {
+            console.log("complex-ccm-badge-form-request", $action.val(), $(this).serialize(), e)
+            $.post($action.val(), $(this).serialize()).then(function (res) {
+                console.log("complex-ccm-badge-form-response", "see network");
+            }).catch(function (err) {
+                console.error(err);
+            })
+            return false;
+        }
         var submitForm = function (isChecked) {
-            if ($form.length) $form.submit();
+            if ($form.length) submitViaAjax.call($form.first())
             else {
                 /**
                 * Laravel does not render the form when it exists within a parent form, so create a new form dynamically
@@ -49,7 +58,7 @@
                 newForm.append(checkbox);
                 document.body.append(newForm);
                 console.log(newForm);
-                newForm.submit();
+                submitViaAjax.call(newForm)
             }
         }
         console.log("ccs-badge-form", $form, $container);
