@@ -1,30 +1,32 @@
 @extends('provider.layouts.default')
 
 <head>
-    <style>
-        .onboarding-user-card > .mdl-card__title {
-            color: #fff;
-            height: 170px;
-            background: url({{asset('/img/clh_logo.svg')}}) center / contain;
-            background-repeat: no-repeat;
-            padding: 0;
-            margin: 0;
-        }
+    @push('styles')
+        <style>
+            .onboarding-user-card > .mdl-card__title {
+                color: #fff;
+                height: 170px;
+                background: url({{asset('/img/clh_logo.svg')}}) center / contain;
+                background-repeat: no-repeat;
+                padding: 0;
+                margin: 0;
+            }
 
-        .onboarding-user-card.mdl-card {
-            width: 600px !important;
-        }
+            .onboarding-user-card.mdl-card {
+                width: 600px !important;
+            }
 
-        .container {
-            padding-top: 3%;
-            background-color: #ffffff;
-            min-height: 100%;
-        }
+            .container {
+                padding-top: 3%;
+                background-color: #ffffff;
+                min-height: 100%;
+            }
 
-        body, html {
-            background-color: #ffffff !important;
-        }
-    </style>
+            body, html {
+                background-color: #ffffff !important;
+            }
+        </style>
+    @endpush
 </head>
 
 @section('content')

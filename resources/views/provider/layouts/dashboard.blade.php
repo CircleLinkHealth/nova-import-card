@@ -3,14 +3,18 @@
 @section('title', 'Provider Dashboard')
 
 @section('head')
-    <link rel="stylesheet" href="{{ asset('/css/provider-dashboard.css') }}"/>
+    @push('styles')
+        <link rel="stylesheet" href="{{ asset('/css/provider-dashboard.css') }}"/>
+    @endpush
 @endsection
 
-<style>
-    main, header {
-        padding-left: 300px;
-    }
-</style>
+@push('styles')
+    <style>
+        main, header {
+            padding-left: 300px;
+        }
+    </style>
+@endpush
 
 @section('content')
     <header>
@@ -42,7 +46,3 @@
         </div>
     </main>
 @endsection
-
-@push('scripts')
-
-@endpush
