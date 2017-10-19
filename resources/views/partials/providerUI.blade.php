@@ -57,6 +57,7 @@
 
         <script src="{{ asset('/webix/codebase/webix.js') }}" type="text/javascript"></script>
     @endif
+    @stack('styles')
 </head>
 <body>
 
