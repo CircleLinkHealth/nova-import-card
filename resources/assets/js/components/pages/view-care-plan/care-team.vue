@@ -1,6 +1,6 @@
 <template>
     <ul class="col-xs-12">
-        <li v-for="(carePerson, index) in patientCareTeam" class="col-xs-12">
+        <li v-for="(carePerson, index) in patientCareTeam" :key="index" class="col-xs-12">
             <index-care-person :carePerson="carePerson"></index-care-person>
         </li>
     </ul>

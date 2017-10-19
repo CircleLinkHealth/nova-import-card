@@ -13,9 +13,9 @@ $new_user = false;
     @section('activity', 'Initial Care Plan Setup')
 @endif
 
-@section('scripts')
+@push('scripts')
     <script type="text/javascript" src="{{ asset('/js/patient/careplan.js') }}"></script>
-@endsection
+@endpush
 
 @section('content')
     {!! Form::open(array('url' => URL::route('patient.careplan.store', array('patientId' => $patient->id)), 'class' => '', 'id' => 'ucpForm')) !!}

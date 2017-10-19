@@ -76,8 +76,4 @@
 
         </div>
     </div>
-@stop
-
-@section('scripts')
-    <script src="{{asset('compiled/js/nurse-work-schedule.js')}}"></script>
 @endsection

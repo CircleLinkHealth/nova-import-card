@@ -49,7 +49,7 @@
 @include('partials.footer')
 
 <script src="{{asset('compiled/js/app-provider-admin-panel-ui.js')}}"></script>
-@yield('scripts')
+@stack('scripts')
 
 </body>
 </html>

@@ -5,8 +5,9 @@
 
 @section('content')
 
-    <script type="text/javascript" src="https://cdn.datatables.net/1.10.12/js/jquery.dataTables.min.js"></script>
     <link href="https://cdn.datatables.net/1.10.12/css/jquery.dataTables.min.css" rel="stylesheet">
+    @push('scripts')
+    <script type="text/javascript" src="https://cdn.datatables.net/1.10.12/js/jquery.dataTables.min.js"></script>
     <script>
         $(document).ready(function () {
             $('#cpmEditableTable').DataTable({
@@ -26,6 +27,8 @@
             });
         });
     </script>
+    @endpush
+    
 
     <div class="row" style="margin-top:60px;">
         <div class="main-form-container col-lg-10 col-lg-offset-1 col-md-10 col-md-offset-1">
