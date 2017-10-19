@@ -9,6 +9,7 @@
     </form>
 </div>
 
+@push('scripts')
 <script>
     /**
     * Manage the CCM Badge Form
@@ -82,3 +83,4 @@
         });
     })(jQuery, document)
 </script>
+@endpush
