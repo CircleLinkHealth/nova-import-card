@@ -12,6 +12,6 @@
     </div>
 </nav>
 
-@section('scripts')
+@push('scripts')
 
-@endsection
+@endpush

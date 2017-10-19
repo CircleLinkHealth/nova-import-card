@@ -54,11 +54,15 @@
                     @if($data)
                         <div id="obs_alerts_container" class=""></div><br/>
                         <div id="paging_container"></div><br/>
+                        @push('styles')
                         <style>
                             .webix_hcell {
                                 background-color: #d2e3ef;
                             }
                         </style>
+                        @endpush
+                        @push('scripts')
+
                         <script>
                             function startCompare(value, filter) {
                                 value = value.toString().toLowerCase();
@@ -174,6 +178,7 @@
                                 obs_alerts_dtable.adjust();
                             })
                         </script>
+                        @endpush
                         @if(auth()->user()->hasRole(['administrator', 'med_assistant', 'provider']))
                             <input type="button" value="Export as PDF" class="btn btn-primary" style='margin:15px;'
                                    onclick="webix.toPDF($$(obs_alerts_dtable), {
@@ -213,6 +218,7 @@
 
     <div></div>
 
+    @push('scripts')
     <script>
 
         $("#audit").on('click', function () {
@@ -241,5 +247,5 @@
         });
 
     </script>
-
+    @endpush
 @stop

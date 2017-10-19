@@ -372,6 +372,6 @@
 
 </div>
 
-@section('scripts')
+@push('scripts')
     <script src="/js/create-locations.js"></script>
-@endsection
+@endpush

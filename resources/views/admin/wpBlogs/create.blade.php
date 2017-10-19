@@ -1,11 +1,13 @@
 @extends('partials.adminUI')
 
 @section('content')
-    <style>
-        .form-group {
-            margin: 20px;
-        }
-    </style>
+    @push('styles')
+        <style>
+            .form-group {
+                margin: 20px;
+            }
+        </style>
+    @endpush
     <div class="container-fluid">
         <div class="row">
             <div class="col-md-10 col-md-offset-1">

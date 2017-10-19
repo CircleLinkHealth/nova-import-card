@@ -54,7 +54,7 @@
     </div>
 @endsection
 
-@section('scripts')
+@push('scripts')
     @if(session('editedNurseId'))
         <script>
             (function () {
@@ -62,4 +62,4 @@
             })();
         </script>
     @endif
-@endsection
+@endpush

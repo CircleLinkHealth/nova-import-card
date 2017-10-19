@@ -1,7 +1,9 @@
 @extends('partials.adminUI')
 
 @section('content')
-    <link rel="stylesheet" href="//cdn.datatables.net/1.10.7/css/jquery.dataTables.min.css">
+    @push('styles')
+        <link rel="stylesheet" href="//cdn.datatables.net/1.10.7/css/jquery.dataTables.min.css">
+    @endpush
 
     <div class="container-fluid">
         <div class="row">
@@ -53,9 +55,11 @@
             </div>
         </div>
     </div>
-
+</div>
         {{--<script type="text/javascript" src="dataTables.numericComma.js"></script>--}}
 
+    
+    @push('scripts')
         <script>
 
             $(function() {
@@ -90,6 +94,7 @@
 
         </script>
         <script src="//cdn.datatables.net/1.10.7/js/jquery.dataTables.min.js"></script>
+    @endpush
 
 
 @stop

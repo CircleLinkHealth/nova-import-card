@@ -7,15 +7,17 @@
 @section('module')
 
     <head>
-        <style>
-            .breadcrumb:last-child {
-                color: rgba(255, 255, 255, 0.7);
-            }
+        @push('styles')
+            <style>
+                .breadcrumb:last-child {
+                    color: rgba(255, 255, 255, 0.7);
+                }
 
-            #step1 {
-                color: #039be5 !important;
-            }
-        </style>
+                #step0 {
+                    color: #039be5 !important;
+                }
+            </style>
+        @endpush
     </head>
 
     <div id="create-practice-component">

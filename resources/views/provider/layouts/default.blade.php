@@ -38,6 +38,7 @@
     <link href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.3/css/select2.min.css" rel="stylesheet"/>
 
     @yield('head')
+    @stack('styles')
 </head>
 
 <body class="main-container">
@@ -49,7 +50,7 @@
 @include('partials.footer')
 
 <script src="{{asset('compiled/js/app-provider-admin-panel-ui.js')}}"></script>
-@yield('scripts')
+@stack('scripts')
 
 </body>
 </html>

@@ -3,10 +3,6 @@
 @section('title', 'Input Appointments')
 @section('activity', 'Patient Input Appointment')
 
-@section('scripts')
-    <script src="{{asset('/compiled/js/v-create-appointments-add-care-person.js')}}"></script>
-@endsection
-
 @section('content')
 
     <script>
@@ -163,4 +159,4 @@
             </div>
         </div>
     </div>
-@stop
+@endsection

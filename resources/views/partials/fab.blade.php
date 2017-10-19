@@ -19,8 +19,5 @@
 </div>
 
 
-<script src="{{asset('compiled/js/v-fab.js')}}"></script>
-
-
 
 

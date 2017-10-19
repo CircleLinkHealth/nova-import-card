@@ -52,9 +52,11 @@
                     <div class="sub-form-title">
                         <div class="sub-form-title-lh"><?php echo $section['title']; ?></div>
                         <div class="sub-form-title-rh">
+                            @push('styles')
                             <style type="text/css">
                                 i:hover {cursor: pointer; }
                             </style>
+                            @endpush
                             <i class="fa fa-print" onclick="webix.toPDF($$({{ $section['id'] }}), {
                                 header:'CarePlanManager.com - Patient <?php echo $section['title']; ?> Report <?= date('M d,Y') ?>',
                                 orientation:'landscape',
@@ -94,6 +96,7 @@
 
                     <div id="paging_container"></div>
                     <br/>
+                    @push('scripts')
                     <script>
                         function filterText(text) {
                             // var text = node;
@@ -170,6 +173,7 @@
                             adjust();
                         })
                     </script>
+                    @endpush
                     <?php
                     }
                     ?>

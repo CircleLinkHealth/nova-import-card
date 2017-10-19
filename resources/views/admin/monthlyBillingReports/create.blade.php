@@ -2,21 +2,23 @@
 
 @section('content')
 
-    <script>
-        $(document).ready(function () {
-            $(function () {
-                $("#programsCheckAll").click(function () {
-                    $(".programs").prop("checked", true);
-                    return false;
-                });
+    @push('scripts')
+        <script>
+            $(document).ready(function () {
+                $(function () {
+                    $("#programsCheckAll").click(function () {
+                        $(".programs").prop("checked", true);
+                        return false;
+                    });
 
-                $("#programsUncheckAll").click(function () {
-                    $(".programs").prop("checked", false);
-                    return false;
+                    $("#programsUncheckAll").click(function () {
+                        $(".programs").prop("checked", false);
+                        return false;
+                    });
                 });
             });
-        });
-    </script>
+        </script>
+    @endpush
 
     {!! Form::open(array('url' => URL::route('MonthlyBillingReportsController.makeMonthlyReport', array()), 'class' => 'form-horizontal')) !!}
     <div class="container-fluid">

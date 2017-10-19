@@ -49,14 +49,17 @@
         <link rel="stylesheet" href="{{ asset('/webix/codebase/webix.css') }}" type="text/css">
 
         <link href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.3/css/select2.min.css" rel="stylesheet"/>
-
-        {{--Prefer to load JS assets in the footer. These have to be loaded here :(--}}
-        <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
-        <script src="//code.jquery.com/ui/1.11.4/jquery-ui.js"></script>
-        <script src="//cdnjs.cloudflare.com/ajax/libs/select2/4.0.3/js/select2.min.js"></script>
-
-        <script src="{{ asset('/webix/codebase/webix.js') }}" type="text/javascript"></script>
+        @stack('styles')
     @endif
+    <style>
+        span.twitter-typeahead .twitter-typeahead {
+            position: absolute !important;
+        }
+
+        #bloodhound > .twitter-typeahead > .tt-menu > .tt-dataset.tt-dataset-User_list {
+            display: none;
+        }
+    </style>
     @stack('styles')
 </head>
 <body>
@@ -90,7 +93,7 @@
     @endif
 
 </div> <!-- end #app -->
-
+    </div>
 @if(!isset($isPdf))
     @include('partials.footer')
 
@@ -99,17 +102,13 @@
 <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
 <![endif]-->
 
-<script src="{{ asset('/js/idle-timer.min.js') }}"></script>
-<script src="{{ asset('/js/bootstrap-select.min.js') }}"></script>
-<script src="{{ asset('/js/typeahead.bundle.js') }}"></script>
+<script type="text/javascript" src="{{ asset('compiled/js/issue-688.js') }}"></script>
+
 @include('partials.searchjs')
 @include('partials.providerUItimer')
-<script src="{{asset('/js/bootstrap.min.js')}}"></script>
-<script src="{{asset('/js/DateTimePicker.min.js')}}"></script>
 
-@yield('scripts')
 @stack('scripts')
-<script src="{{asset('/js/fab.js') }}"></script>
+<script src="{{asset('compiled/js/app-provider-ui.js')}}"></script>
 @endif
 </body>
 
