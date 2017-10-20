@@ -74,8 +74,6 @@ mix.combine([
 ], 'public/compiled/js/admin-ui.js');
 /** end fixing admin-ui */
 
-mix.js('resources/assets/js/importer-training.js', 'public/compiled/js').sourceMaps();
-
 //apps
 mix.js('resources/assets/js/app-provider-ui.js', 'public/compiled/js');
 mix.js('resources/assets/js/app-provider-admin-panel-ui.js', 'public/compiled/js').sourceMaps();
