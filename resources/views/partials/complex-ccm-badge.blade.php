@@ -31,6 +31,7 @@
         var submitViaAjax = function () {
             //console.log("complex-ccm-badge-form-request", $action.val(), $(this).serialize())
             $.post($action.val(), $(this).serialize()).then(function (res) {
+                $(document).trigger("complex-ccm-form-submit", $checkbox.is(":checked")) //raise event with the value of the checkbox (true/false)
                 //console.log("complex-ccm-badge-form-response", "see network");
             }).catch(function (err) {
                 //console.error(err);
