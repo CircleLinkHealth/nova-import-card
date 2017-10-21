@@ -1,7 +1,23 @@
 <template>
     <ul class="col-xs-12">
-        <li v-for="(carePerson, index) in patientCareTeam" :key="index" class="col-xs-12">
-            <index-care-person :carePerson="carePerson"></index-care-person>
+        <li v-for="carePerson in patientCareTeam" class="col-xs-12">
+            <div class="col-md-7">
+                <p style="margin-left: -10px;">
+                    <strong>{{carePerson.formatted_type}}: </strong>{{fullName(carePerson)}}<em>{{carePerson.user.primaryRole}}</em>
+                </p>
+            </div>
+            <div class="col-md-3">
+                <p v-show="carePerson.alert">Receives Alerts</p>
+            </div>
+            <div class="col-md-2">
+                <button class="btn btn-xs btn-danger problem-delete-btn"
+                        v-on:click.stop.prevent="deleteCarePerson(carePerson)"><span> <i
+                        class="glyphicon glyphicon-remove"></i> </span></button>
+
+                <button class="btn btn-xs btn-primary problem-edit-btn"
+                        v-on:click.stop.prevent="editCarePerson(carePerson)"><span> <i
+                        class="glyphicon glyphicon-pencil"></i> </span></button>
+            </div>
         </li>
     </ul>
 </template>
@@ -9,38 +25,58 @@
 <script>
     import {mapGetters, mapActions} from 'vuex'
     import {getPatientCareTeam} from '../../../store/actions'
+    import {patientCareTeam} from '../../../store/getters'
+    import UpdateCarePerson from './update-care-person.vue'
 
     export default {
-        methods: Object.assign(
-            mapActions(['getPatientCareTeam']),
-        ),
-
-        created() {
-            let patientId = this.patientId
-
-            if (!patientId) {
-                return;
-            }
-
-            window.axios.get('user/' + patientId + '/care-team').then(
-                (resp) => {
-                    this.patientCareTeam = resp.data
-                },
-                (resp) => {
-                    console.log(resp.data)
-                }
-            );
+        components: {
+            UpdateCarePerson
         },
 
+        computed: Object.assign(
+            mapGetters({
+                patientCareTeam: 'patientCareTeam'
+            })
+        ),
+
+        methods: Object.assign(
+            mapActions(['getPatientCareTeam', 'destroyCarePerson', 'setOpenModal']),
+            {
+                deleteCarePerson(carePerson) {
+                    let disassociate = confirm('Are you sure you want to remove ' + this.fullName(carePerson) + ' from the CareTeam?');
+
+                    if (!disassociate) {
+                        return true;
+                    }
+
+                    this.destroyCarePerson(carePerson)
+                }
+            },
+            {
+                editCarePerson(carePerson) {
+                    this.setOpenModal({
+                        name: 'update-care-person',
+                        props: {
+                            carePerson: carePerson
+                        },
+                    })
+                }
+            },
+            {
+                fullName(carePerson) {
+                    let suffix = carePerson.user.suffix === 'non-clinical' ? '' : carePerson.user.suffix
+                    return carePerson.user.first_name + ' ' + carePerson.user.last_name + ' ' + suffix
+                }
+            },
+        ),
+
         mounted() {
-            //not working for some reason
             this.getPatientCareTeam(this.patientId);
         },
 
         data() {
             return {
                 patientId: $('meta[name=patient_id]').attr('content'),
-                patientCareTeam: []
             }
         }
     }
