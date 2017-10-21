@@ -60,8 +60,8 @@ class PhiMail
         $message = $e->getMessage() . "\n" . $e->getFile() . "\n" . $e->getLine();
         $traceString = $e->getTraceAsString() . "\n";
 
-        Log::error($message);
-        Log::error($traceString);
+        Log::critical($message);
+        Log::critical($traceString);
     }
 
     public function __destruct()
@@ -260,7 +260,7 @@ class PhiMail
                 }
                 // This signals the server that the message can be safely removed from the queue
                 // and should only be sent after all required parts of the message have been
-                // retrieved and processed.
+                // retrieved and processed.:log
                 $this->connector->acknowledgeMessage();
 
 //                Log::critical('Number of Attachments: ' . $message->numAttachments);
