@@ -51,7 +51,7 @@
                 columns: [
                     {
                         id: "first_name",
-                        headeÏ: ["Patient Name", {content: "textFilter", placeholder: "Filter"}],
+                        header: ["Patient Name", {content: "textFilter", placeholder: "Filter"}],
                         template: "<a href='<?php echo URL::route('patient.summary',
                             array('patient' => '#key#')); ?>'>#first_name# #last_name#</a>",
                         width: 200,
