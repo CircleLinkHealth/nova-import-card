@@ -11,7 +11,7 @@
 
 <template>
     <ul class="col-xs-12">
-        <li v-for="(care_person, index) in careTeamCollection" class="col-xs-12">
+        <li v-for="(care_person, index) in careTeamCollection" :key="index" class="col-xs-12">
             <div v-show="care_person.user.first_name && care_person.user.last_name">
                 <div class="col-md-7"><p style="margin-left: -10px;"><strong>{{care_person.formatted_type}}
                     : </strong>{{care_person.user.first_name}} {{care_person.user.last_name}}

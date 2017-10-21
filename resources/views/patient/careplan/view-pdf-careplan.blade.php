@@ -22,8 +22,4 @@
             {{--</div>--}}
         {{--</div>--}}
     </div>
-@stop
-
-@section('scripts')
-    <script src="{{asset('compiled/js/v-pdf-careplans.js')}}"></script>
 @endsection

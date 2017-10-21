@@ -570,8 +570,6 @@
 
                     this.updateCarePerson(this.newCarePerson)
 
-                    this.getPatientCareTeam(this.patientId)
-
                     Object.assign(this.$data, this.$options.data.apply(this))
                     this.clearOpenModal();
 
@@ -581,16 +579,6 @@
                         type: "success",
                         timeout: true
                     })
-
-                    let url = window.location.href
-
-                    if (url.includes('view-careplan')) {
-                        if (_.includes(url, '#care-team')) {
-                            window.location.replace(_.replace(url, '/#care-team', ''))
-                        } else {
-                            window.location.replace(url + '/#care-team')
-                        }
-                    }
                 },
 
                 fieldClassName(field) {

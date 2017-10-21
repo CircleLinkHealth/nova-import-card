@@ -1,7 +1,7 @@
 <template>
     <div v-if="matchedUsers.length>0 && show" class="alert alert-info"><h4>Did you mean?</h4>
         <ul>
-            <li v-for="user in matchedUsers"><a href="#"
+            <li v-for="(user, index) in matchedUsers" :key="index"><a href="#"
                                                 @click.stop.prevent="attachExistingProvider(user)">{{user.first_name}} {{user.last_name}}, {{user.primary_practice.display_name}}</a>
             </li>
         </ul>

@@ -41,6 +41,18 @@ $location = empty($patient->getPreferredLocationName())
                     <span id="complex_tag"
                       style="background-color: #ec683e;font-size: 15px; position: relative; top: -7px;"
                       class="label label-warning"> Complex CCM</span>
+                    @push('scripts')
+                        <script>
+                            (function () {
+                                // subscribe to jQuery event to know whether the complex-cscm checkbox value has been changed or not
+                                var $complexSpan = $("#complex_tag");
+                                $(document).on("complex-ccm-form-submit", function (e, status) {
+                                    if (status) $complexSpan.show();
+                                    else $complexSpan.hide();
+                                })
+                            })()
+                        </script>
+                    @endpush
                 @endif
                 <a
                         href="{{ URL::route('patient.demographics.show', array('patient' => $patient->id)) }}"><span
@@ -121,7 +133,7 @@ $location = empty($patient->getPreferredLocationName())
 
 <meta name="is_ccm_complex" content="{{$ccm_complex}}">
 
-@section('scripts')
+@push('scripts')
     <script>
         $(document).ready(function () {
 
@@ -134,7 +146,7 @@ $location = empty($patient->getPreferredLocationName())
         });
 
     </script>
-@endsection
+@endpush
 
 
 

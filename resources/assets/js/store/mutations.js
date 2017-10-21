@@ -9,13 +9,18 @@ export const UPDATE_CARE_PERSON = (state, newCarePerson) => {
 
     state.patientCareTeam.forEach((carePerson, index) => {
         if (carePerson.id === newCarePerson.id) {
-            state.patientCareTeam[index] = newCarePerson;
+            Vue.set(state.patientCareTeam, index, newCarePerson)
             matched = true
+        }
+
+        if (newCarePerson.is_billing_provider && carePerson.is_billing_provider) {
+            Vue.set(state.patientCareTeam[index], 'is_billing_provider', false)
+            Vue.set(state.patientCareTeam[index], 'formatted_type', 'External')
         }
     })
 
     if (!matched) {
-        state.patientCareTeam.unshift(newCarePerson)
+        state.patientCareTeam.push(newCarePerson)
     }
 }
 
@@ -116,7 +121,7 @@ export const SET_PRACTICE_LOCATIONS = (state, practiceLocations) => {
 export const UPDATE_PRACTICE_LOCATION = (state, location) => {
     state.practiceLocations.forEach((pracLoc, index) => {
         if (pracLoc.id === location.id) {
-            state.practiceLocations[index] = location;
+            Vue.set(state.practiceLocations, index, location)
         }
     })
 }
@@ -170,7 +175,7 @@ export const SET_PRACTICE_STAFF = (state, practiceStaff) => {
 export const UPDATE_PRACTICE_STAFF = (state, user) => {
     state.practiceStaff.forEach((pracUser, index) => {
         if (pracUser.id === user.id) {
-            state.practiceStaff[index] = user;
+            Vue.set(state.practiceStaff, index, user)
         }
     })
 }

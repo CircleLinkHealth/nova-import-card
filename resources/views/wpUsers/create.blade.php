@@ -1,7 +1,9 @@
 @extends('partials.adminUI')
 
 @section('content')
-    <script type="text/javascript" src="{{ asset('/js/wpUsers/wpUsers.js') }}"></script>
+
+@push('scripts')
+<script type="text/javascript" src="{{ asset('/js/wpUsers/wpUsers.js') }}"></script>
     <script>
         $(document).ready(function() {
             $("#togglePrograms").click(function (event) {
@@ -23,11 +25,15 @@
             });
         });
     </script>
+@endpush
+@push('styles')
     <style>
         .form-group {
             margin:20px;
         }
     </style>
+@endpush
+    
     <div class="container-fluid">
         <div class="row">
             <div class="col-md-10 col-md-offset-1">

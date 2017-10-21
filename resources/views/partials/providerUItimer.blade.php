@@ -56,139 +56,142 @@ if (isset($patient) && !empty($patient) && is_a($patient, App\User::class)) {
 ?>
 
 @if ($enableTimeTracking)
+    @push('scripts')
     <script>
         (function ($) {
-            //We get startTime, and endTime from the client to not have to deal with timezones
-            var startTime = new Date();
-            var endTime;
-            var noResponse = true; // set to false if user clicks yes/no button
-            var totalTime = 0; // total accumulated time on page
-            var modalDelay = 60000 * 8; // ms modal waits before force logout (60000 = 1min)
-            var isTimerProcessed = false;
-            var redirectLocation = null;
-            var idleTime = 60000 * 2; // ms before modal display (60000 = 1min)
+            $(document).ready(function () {
+                //We get startTime, and endTime from the client to not have to deal with timezones
+                var startTime = new Date();
+                var endTime;
+                var noResponse = true; // set to false if user clicks yes/no button
+                var totalTime = 0; // total accumulated time on page
+                var modalDelay = 60000 * 8; // ms modal waits before force logout (60000 = 1min)
+                var isTimerProcessed = false;
+                var redirectLocation = null;
+                var idleTime = 60000 * 2; // ms before modal display (60000 = 1min)
 
-//            console.log('startTime');
-//            console.log(startTime);
+    //            console.log('startTime');
+    //            console.log(startTime);
 
-            //start idle timer
-            $(document).idleTimer(idleTime);
+                //start idle timer
+                $(document).idleTimer(idleTime);
 
-            //once we go idle
-            $(document).on("idle.idleTimer", function (event, elem, obj) {
-                // set to false if user clicks yes/no button
-                noResponse = true;
+                //once we go idle
+                $(document).on("idle.idleTimer", function (event, elem, obj) {
+                    // set to false if user clicks yes/no button
+                    noResponse = true;
 
-                $(document).idleTimer("pause");
+                    $(document).idleTimer("pause");
 
-                // we went idle, add previously active time to total time
-                endTime = new Date();
-                totalTime = totalTime + (endTime - startTime);
+                    // we went idle, add previously active time to total time
+                    endTime = new Date();
+                    totalTime = totalTime + (endTime - startTime);
 
-                // reset startTime to time modal was opened
-                startTime = new Date();
+                    // reset startTime to time modal was opened
+                    startTime = new Date();
 
-                $('#timerModal').modal({backdrop: 'static', keyboard: false});
+                    $('#timerModal').modal({backdrop: 'static', keyboard: false});
 
 
-                // if no response to modal, log out after {modalDelay}
-                var noResponseTimer = setTimeout(function () {
-                    totalTime = totalTime - 90000;
-                    redirectLocation = 'logout';
+                    // if no response to modal, log out after {modalDelay}
+                    var noResponseTimer = setTimeout(function () {
+                        totalTime = totalTime - 90000;
+                        redirectLocation = 'logout';
+                        submitTotalTime();
+                    }, modalDelay);
+
+
+                    $('#timeModalYes').on("click", function () {
+                        $(document).idleTimer("resume");
+                        $('#timeModalNo, #timeModalYes').unbind('click');
+                        clearTimeout(noResponseTimer);
+
+                        return true;
+                    });
+
+                    $('#timeModalNo').on("click", function () {
+                        totalTime = totalTime - 90000;
+
+                        $('#timeModalNo, #timeModalYes').unbind('click');
+                        clearTimeout(noResponseTimer);
+                        redirectLocation = 'home';
+                        submitTotalTime();
+                        return true;
+                    });
+
+                    // if modal is closed (from clicking outside the modal in the grey area), force cancellation of modal idle timer
+                    $('#timerModal').on('hide.bs.modal', function (e) {
+                        $(document).idleTimer("resume");
+                        $('#timeModalNo, #timeModalYes').unbind('click');
+
+                        clearTimeout(noResponseTimer);
+                        return true;
+                    });
+                });
+
+                window.addEventListener("unload", function () {
+                    $(document).idleTimer("pause");
+                    endTime = new Date();
+                    totalTime = totalTime + (endTime - startTime);
                     submitTotalTime();
-                }, modalDelay);
-
-
-                $('#timeModalYes').on("click", function () {
-                    $(document).idleTimer("resume");
-                    $('#timeModalNo, #timeModalYes').unbind('click');
-                    clearTimeout(noResponseTimer);
-
-                    return true;
                 });
 
-                $('#timeModalNo').on("click", function () {
-                    totalTime = totalTime - 90000;
+                function submitTotalTime() {
 
-                    $('#timeModalNo, #timeModalYes').unbind('click');
-                    clearTimeout(noResponseTimer);
-                    redirectLocation = 'home';
-                    submitTotalTime();
-                    return true;
-                });
+                    if (isTimerProcessed == true) {
+                        return true;
+                    }
+                    $('#timerModal').modal('hide');
 
-                // if modal is closed (from clicking outside the modal in the grey area), force cancellation of modal idle timer
-                $('#timerModal').on('hide.bs.modal', function (e) {
-                    $(document).idleTimer("resume");
-                    $('#timeModalNo, #timeModalYes').unbind('click');
+                    $(document).idleTimer("pause");
 
-                    clearTimeout(noResponseTimer);
-                    return true;
-                });
-            });
+                    var data = {
+                        "patientId": '<?php echo $patientId; ?>',
+                        "providerId": '<?php echo Auth::user()->id ?>',
+                        "totalTime": totalTime,
+                        "programId": '<?php echo $patientProgramId; ?>',
+                        "startTime": '<?php echo Carbon::now()->subSeconds(8)->toDateTimeString(); ?>',
+                        "urlFull": '<?php echo Request::url(); ?>',
+                        "urlShort": '<?php echo $urlShort; ?>',
+                        "ipAddr": '<?php echo $ipAddr; ?>',
+                        "activity": $('#activityName').val(),
+                        "title": '<?php echo $title; ?>',
+                        "redirectLocation": redirectLocation
+                    };
 
-            window.addEventListener("unload", function () {
-                $(document).idleTimer("pause");
-                endTime = new Date();
-                totalTime = totalTime + (endTime - startTime);
-                submitTotalTime();
-            });
+    //                console.log('endTime');
+    //                console.log(endTime);
 
-            function submitTotalTime() {
+    //                console.log('totalTime');
+    //                console.log(totalTime / 1000);
 
-                if (isTimerProcessed == true) {
-                    return true;
-                }
-                $('#timerModal').modal('hide');
-
-                $(document).idleTimer("pause");
-
-                var data = {
-                    "patientId": '<?php echo $patientId; ?>',
-                    "providerId": '<?php echo Auth::user()->id ?>',
-                    "totalTime": totalTime,
-                    "programId": '<?php echo $patientProgramId; ?>',
-                    "startTime": '<?php echo Carbon::now()->subSeconds(8)->toDateTimeString(); ?>',
-                    "urlFull": '<?php echo Request::url(); ?>',
-                    "urlShort": '<?php echo $urlShort; ?>',
-                    "ipAddr": '<?php echo $ipAddr; ?>',
-                    "activity": $('#activityName').val(),
-                    "title": '<?php echo $title; ?>',
-                    "redirectLocation": redirectLocation
-                };
-
-//                console.log('endTime');
-//                console.log(endTime);
-
-//                console.log('totalTime');
-//                console.log(totalTime / 1000);
-
-                $.ajax({
-                    type: "POST",
-                    url: '<?php echo URL::route('api.pagetracking'); ?>',
-                    data: data,
-                    encode: true,
-                    async: false,
-                    headers: {
-                        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-                    },
-                    success: function (data) {
-                        if (redirectLocation) {
-                            if (redirectLocation == 'logout') {
-                                window.location.href = "<?php echo url('/auth/logout'); ?>";
-                            } else if (redirectLocation == 'home') {
-                                window.location.href = "<?php echo URL::route('patients.dashboard'); ?>";
+                    $.ajax({
+                        type: "POST",
+                        url: '<?php echo URL::route('api.pagetracking'); ?>',
+                        data: data,
+                        encode: true,
+                        async: false,
+                        headers: {
+                            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                        },
+                        success: function (data) {
+                            if (redirectLocation) {
+                                if (redirectLocation == 'logout') {
+                                    window.location.href = "<?php echo url('/auth/logout'); ?>";
+                                } else if (redirectLocation == 'home') {
+                                    window.location.href = "<?php echo URL::route('patients.dashboard'); ?>";
+                                }
                             }
                         }
-                    }
-                });
+                    });
 
-                isTimerProcessed = true;
+                    isTimerProcessed = true;
 
-                return false;
-            }
+                    return false;
+                }
+            })
 
         })(jQuery);
     </script>
-
+    @endpush
 @endif

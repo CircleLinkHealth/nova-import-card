@@ -2,14 +2,18 @@
 
 @section('content')
 
-    <script>
-        $(document).ready(function () {
-            $(".nurses").select2();
+    @push('scripts')
+        <script>
+            $(document).ready(function () {
+                $(".nurses").select2();
 
-        });
-    </script>
+            });
+        </script>
+    @endpush
 
-    <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/font-awesome/4.4.0/css/font-awesome.min.css">
+    @push('styles')
+        <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/font-awesome/4.4.0/css/font-awesome.min.css">
+    @endpush
     {!! Form::open(array('url' => URL::route('admin.reports.nurse.generate', array()),'class' => 'form-horizontal')) !!}
     <div class="container-fluid">
         <div class="row">
@@ -128,9 +132,9 @@
     </div>
 
 
-    <script>
-
-        $('.collapse').collapse();
-
-    </script>
+    @push('scripts')
+        <script>
+            $('.collapse').collapse();
+        </script>
+    @endpush
 @stop

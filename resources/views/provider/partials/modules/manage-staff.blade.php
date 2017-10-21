@@ -401,6 +401,6 @@
 </div>
 
 
-@section('scripts')
+@push('scripts')
     <script src="/js/create-staff.js"></script>
-@endsection
+@endpush

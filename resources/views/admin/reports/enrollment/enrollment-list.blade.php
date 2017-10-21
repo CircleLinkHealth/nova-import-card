@@ -1,7 +1,9 @@
 @extends('partials.adminUI')
 
 @section('content')
-    <link rel="stylesheet" href="//cdn.datatables.net/1.10.7/css/jquery.dataTables.min.css">
+    @push('styles')
+        <link rel="stylesheet" href="//cdn.datatables.net/1.10.7/css/jquery.dataTables.min.css">
+    @endpush
 
     <div class="container-fluid">
         <div class="row">
@@ -80,46 +82,48 @@
                 </div>
             </div>
         </div>
+    </div>
+        @push('scripts')
+            <script>
 
-        <script>
-
-            $(function() {
-                $('#enrollment_list').DataTable({
-                    processing: true,
-                    serverSide: false,
-                    "scrollX": true,
-                    ajax: '{!! url('/admin/enrollment/list/data') !!}',
-                    columns: [
-                        {data: 'name', name: 'name'},
-                        {data: 'program', name: 'program'},
-                        {data: 'provider', name: 'provider'},
-                        {data: 'has_copay', name: 'has_copay'},
-                        {data: 'care_ambassador', name: 'care_ambassador'},
-                        {data: 'status', name: 'status'},
-                        {data: 'last_call_outcome', name: 'last_call_outcome'},
-                        {data: 'last_call_outcome_reason', name: 'last_call_outcome_reason'},
-                        {data: 'mrn_number', name: 'mrn_number'},
-                        {data: 'dob', name: 'dob'},
-                        {data: 'phone', name: 'phone'},
-                        {data: 'invite_sent_at', name: 'invite_sent_at'},
-                        {data: 'invite_opened_at', name: 'invite_opened_at'},
-                        {data: 'last_attempt_at', name: 'last_attempt_at'},
-                        {data: 'consented_at', name: 'consented_at'},
-                        {data: 'preferred_days', name: 'preferred_days'},
-                        {data: 'preferred_window', name: 'preferred_window'},
+                $(function() {
+                    $('#enrollment_list').DataTable({
+                        processing: true,
+                        serverSide: false,
+                        "scrollX": true,
+                        ajax: '{!! url('/admin/enrollment/list/data') !!}',
+                        columns: [
+                            {data: 'name', name: 'name'},
+                            {data: 'program', name: 'program'},
+                            {data: 'provider', name: 'provider'},
+                            {data: 'has_copay', name: 'has_copay'},
+                            {data: 'care_ambassador', name: 'care_ambassador'},
+                            {data: 'status', name: 'status'},
+                            {data: 'last_call_outcome', name: 'last_call_outcome'},
+                            {data: 'last_call_outcome_reason', name: 'last_call_outcome_reason'},
+                            {data: 'mrn_number', name: 'mrn_number'},
+                            {data: 'dob', name: 'dob'},
+                            {data: 'phone', name: 'phone'},
+                            {data: 'invite_sent_at', name: 'invite_sent_at'},
+                            {data: 'invite_opened_at', name: 'invite_opened_at'},
+                            {data: 'last_attempt_at', name: 'last_attempt_at'},
+                            {data: 'consented_at', name: 'consented_at'},
+                            {data: 'preferred_days', name: 'preferred_days'},
+                            {data: 'preferred_window', name: 'preferred_window'},
 
 
 
-                    ],
-//                    "aaSorting":[3,'desc'],
-                    "iDisplayLength": 25,
+                        ],
+    //                    "aaSorting":[3,'desc'],
+                        "iDisplayLength": 25,
+                    });
+
                 });
 
-            });
 
-
-        </script>
-        <script src="//cdn.datatables.net/1.10.7/js/jquery.dataTables.min.js"></script>
+            </script>
+            <script src="//cdn.datatables.net/1.10.7/js/jquery.dataTables.min.js"></script>
+        @endpush
 
 
 @stop
