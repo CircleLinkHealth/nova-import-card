@@ -43,8 +43,6 @@
                                         <div class="form-group">
                                             <div class="col-sm-12 provider-label" id="provider-label">
                                                 <div id="v-create-appointments-add-care-person">
-                                                    <open-modal></open-modal>
-                                                    <notifications></notifications>
                                                     <create-appointments-add-care-person></create-appointments-add-care-person>
                                                 </div>
                                             </div>
