@@ -12,6 +12,11 @@ export const UPDATE_CARE_PERSON = (state, newCarePerson) => {
             Vue.set(state.patientCareTeam, index, newCarePerson)
             matched = true
         }
+
+        if (newCarePerson.is_billing_provider && carePerson.is_billing_provider) {
+            Vue.set(state.patientCareTeam[index], 'is_billing_provider', false)
+            Vue.set(state.patientCareTeam[index], 'formatted_type', 'External')
+        }
     })
 
     if (!matched) {
