@@ -2457,13 +2457,13 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
             ->whereNotNull('cpm_problem_id')
             ->get()
             ->map(function ($problem) use ($billableProblems) {
-                $problem->icd_10_code = $problem->icd10Code();
+                $problem->billing_code = $problem->icd10Code();
 
-                if (!$problem->icd_10_code) {
+                if (!$problem->billing_code) {
                     return $problem;
                 }
 
-                if ($problem->isIcd10()) {
+                if ($problem->isIcd10() || $problem->hasIcd10BillingCode()) {
                     $billableProblems->prepend($problem);
 
                     return $problem;

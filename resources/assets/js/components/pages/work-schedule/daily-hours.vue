@@ -37,7 +37,7 @@
 
         computed: {
             totalHours() {
-                let total = 0
+                let total = 0;
                 for (let i = 0; i < this.dayWindows.length; i++) {
                     total += this.hoursDifference(this.dayWindows[i].window_time_start, this.dayWindows[i].window_time_end)
                 }
@@ -110,8 +110,8 @@
 
             hoursDifference(startTime, endTime) {
                 //hack, since we only have time and no date
-                let start = new Date('2017-01-01 ' + startTime)
-                let end = new Date('2017-01-01 ' + endTime)
+                let start = new Date('2017/01/01 ' + startTime)
+                let end = new Date('2017/01/01 ' + endTime)
 
                 return Math.floor((end - start) / 1000 / 60 / 60);
             },
