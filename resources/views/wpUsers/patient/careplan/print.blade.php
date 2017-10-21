@@ -24,8 +24,6 @@ if (isset($patient) && !empty($patient)) {
 @section('content')
     @if(isset($patient) && !empty($patient))
         <div id="v-pdf-careplans" class="container">
-            <open-modal></open-modal>
-            <notifications></notifications>
             <section class="patient-summary">
                 <div class="patient-info__main">
                     @if(!isset($isPdf))

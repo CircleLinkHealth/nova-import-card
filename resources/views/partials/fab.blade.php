@@ -13,8 +13,6 @@
 <meta name="providers-search-route" content="{{ route('providers.search') }}">
 
 <div id="v-fab">
-    <open-modal></open-modal>
-    <notifications></notifications>
     <fab></fab>
 </div>
 
