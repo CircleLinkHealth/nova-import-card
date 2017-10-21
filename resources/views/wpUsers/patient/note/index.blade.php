@@ -37,7 +37,7 @@
                             }
                         </style>
                         @endpush
-                        
+
                         @push('scripts')
                         <script>
                             function startCompare(value, filter) {
@@ -45,6 +45,7 @@
                                 filter = '<' + filter.toString().toLowerCase();
                                 return value.indexOf(filter) === 0;
                             }
+
                             webix.locale.pager = {
                                 first: "<<",// the first button
                                 last: ">>",// the last button
@@ -73,19 +74,19 @@
                                         template: function (obj) {
                                             if (obj.logged_from == "note")
                                                 return "<a href='<?php echo route('patient.note.view', [
-                                                                'patientId' => $patient->id,
-                                                                'noteId'    => ''
-                                                        ]); ?>/" + obj.id + "'>" + obj.type_name + "</a>";
+                                                    'patientId' => $patient->id,
+                                                    'noteId'    => ''
+                                                ]); ?>/" + obj.id + "'>" + obj.type_name + "</a>";
                                             else if (obj.logged_from == "appointment") {
                                                 return "<a href='<?php echo route('patient.appointment.view', [
-                                                                'patientId'     => $patient->id,
-                                                                'appointmentId' => ''
-                                                        ]); ?>/" + obj.id + "'>" + obj.type_name + "</a>"
+                                                    'patientId'     => $patient->id,
+                                                    'appointmentId' => ''
+                                                ]); ?>/" + obj.id + "'>" + obj.type_name + "</a>"
                                             } else {
                                                 return "<a href='<?php echo route('patient.activity.view', [
-                                                                'patientId' => $patient->id,
-                                                                'actId'     => ''
-                                                        ]); ?>/" + obj.id + "'>" + obj.type_name + "</a>"
+                                                    'patientId' => $patient->id,
+                                                    'actId'     => ''
+                                                ]); ?>/" + obj.id + "'>" + obj.type_name + "</a>"
                                             }
                                             return obj.type_name;
                                         },
@@ -124,19 +125,19 @@
                                         template: function (obj) {
                                             if (obj.logged_from == "note")
                                                 return "<a href='<?php echo route('patient.note.view', [
-                                                                'patientId' => $patient->id,
-                                                                'noteId'    => ''
-                                                        ]); ?>/" + obj.id + "'>" + obj.comment + "</a>";
+                                                    'patientId' => $patient->id,
+                                                    'noteId'    => ''
+                                                ]); ?>/" + obj.id + "'>" + obj.comment + "</a>";
                                             else if (obj.logged_from == "manual_input" || obj.logged_from == "activity") {
                                                 return "<a href='<?php echo route('patient.activity.view', [
-                                                                'patientId' => $patient->id,
-                                                                'actId'     => ''
-                                                        ]); ?>/" + obj.id + "'>" + obj.comment + "</a>"
+                                                    'patientId' => $patient->id,
+                                                    'actId'     => ''
+                                                ]); ?>/" + obj.id + "'>" + obj.comment + "</a>"
                                             } else if (obj.logged_from == "appointment") {
                                                 return "<a href='<?php echo route('patient.appointment.view', [
-                                                                'patientId'     => $patient->id,
-                                                                'appointmentId' => ''
-                                                        ]); ?>/" + obj.id + "'>" + obj.comment + "</a>"
+                                                    'patientId'     => $patient->id,
+                                                    'appointmentId' => ''
+                                                ]); ?>/" + obj.id + "'>" + obj.comment + "</a>"
                                             } else
                                                 return obj.type_name;
                                         },
@@ -261,5 +262,5 @@
                 </div>
             </div>
         </div>
-
-@stop
+    </div>
+@endsection
