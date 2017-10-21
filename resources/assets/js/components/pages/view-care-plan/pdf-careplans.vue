@@ -7,7 +7,6 @@
 
     import CreateCarePerson from '../../CareTeam/create-care-person.vue'
     import UpdateCarePerson from '../../pages/view-care-plan/update-care-person.vue'
-    import IndexCarePerson from '../../pages/view-care-plan/index-care-person.vue'
     import CareTeam from '../../pages/view-care-plan/care-team.vue'
     import CarePlanApi from '../../../api/patient-care-plan'
 
@@ -17,7 +16,6 @@
             Dropzone,
             CreateCarePerson,
             UpdateCarePerson,
-            IndexCarePerson,
             CareTeam,
         },
 
