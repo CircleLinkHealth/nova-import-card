@@ -570,8 +570,6 @@
 
                     this.updateCarePerson(this.newCarePerson)
 
-                    this.getPatientCareTeam(this.patientId)
-
                     Object.assign(this.$data, this.$options.data.apply(this))
                     this.clearOpenModal();
 

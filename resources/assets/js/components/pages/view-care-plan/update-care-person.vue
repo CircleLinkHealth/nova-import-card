@@ -26,7 +26,7 @@
 
 <template>
     <div>
-        <modal v-show="show">
+        <modal>
             <template slot="header">
                 <button type="button" class="close" @click="clearOpenModal">×</button>
                 <h4 class="modal-title">Provider Details</h4>
@@ -516,10 +516,6 @@
 
     export default {
         props: {
-            show: {
-                type: Boolean,
-                default: false
-            },
             carePerson: Object
         },
 
@@ -543,11 +539,8 @@
         ),
 
         methods: Object.assign(
-            mapActions(['getPatientCareTeam', 'addNotification', 'updateCarePerson']),
+            mapActions(['getPatientCareTeam', 'addNotification', 'updateCarePerson', 'clearOpenModal']),
             {
-                clearOpenModal() {
-                    this.show = false
-                },
                 sendForm() {
                     this.submitClicked = true
 
@@ -565,9 +558,7 @@
 
                     this.updateCarePerson(this.formData)
 
-                    this.getPatientCareTeam(this.patientId)
-
-                    this.clearOpenModal();
+                    this.clearOpenModal()
 
                     this.addNotification({
                         title: "Successfully saved Care Person",
@@ -575,16 +566,6 @@
                         type: "success",
                         timeout: true
                     })
-
-                    let url = window.location.href
-
-                    if (url.includes('view-careplan')) {
-                        if (_.includes(url, '#care-team')) {
-                            window.location.replace(_.replace(url, '/#care-team', ''))
-                        } else {
-                            window.location.replace(url + '/#care-team')
-                        }
-                    }
                 },
 
                 fieldClassName(field) {
