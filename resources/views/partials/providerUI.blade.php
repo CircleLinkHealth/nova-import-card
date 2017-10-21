@@ -92,8 +92,11 @@
         @include('partials.providerUI.notification-banner')
     @endif
 
+    <open-modal></open-modal>
+    <notifications></notifications>
+
 </div> <!-- end #app -->
-    </div>
+
 @if(!isset($isPdf))
     @include('partials.footer')
 
