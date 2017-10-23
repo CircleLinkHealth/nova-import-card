@@ -11,8 +11,6 @@ use Illuminate\Database\Eloquent\Model;
 
 class Problem extends Model
 {
-    use WithNonImported;
-
     protected $fillable = [
         'ccda_id',
         'vendor_id',
@@ -28,18 +26,6 @@ class Problem extends Model
     ];
 
     protected $table = 'ccd_problems';
-
-    /**
-     * The "booting" method of the model.
-     *
-     * @return void
-     */
-    protected static function boot()
-    {
-        parent::boot();
-
-        static::addGlobalScope(new Imported());
-    }
 
     /**
      * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
