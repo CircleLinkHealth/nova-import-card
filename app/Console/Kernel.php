@@ -8,13 +8,11 @@ use App\Console\Commands\EmailRNDailyReport;
 use App\Console\Commands\EmailsProvidersToApproveCareplans;
 use App\Console\Commands\EmailWeeklyReports;
 use App\Console\Commands\ExportNurseSchedulesToGoogleCalendar;
-use App\Console\Commands\FormatLocationPhone;
 use App\Console\Commands\GeneratePatientReports;
 use App\Console\Commands\ImportLGHInsurance;
 use App\Console\Commands\ImportNurseScheduleFromGoogleCalendar;
 use App\Console\Commands\Inspire;
 use App\Console\Commands\MapSnomedToCpmProblems;
-use App\Console\Commands\NukeItemAndMeta;
 use App\Console\Commands\ProcessCcdaLGHMixup;
 use App\Console\Commands\QueueCcdasToConvertToJson;
 use App\Console\Commands\QueueCcdasToProcess;
@@ -24,11 +22,9 @@ use App\Console\Commands\QueueSendAuditReports;
 use App\Console\Commands\RecalculateCcmTime;
 use App\Console\Commands\ResetCcmTime;
 use App\Console\Commands\SplitMergedCcdas;
-use App\Reports\WeeklyReportDispatcher;
 use App\Services\Calls\SchedulerService;
 use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Foundation\Console\Kernel as ConsoleKernel;
-use Maknz\Slack\Facades\Slack;
 
 //use EnrollmentSMSSender;
 
@@ -152,7 +148,7 @@ class Kernel extends ConsoleKernel
         $schedule->command('send:audit-reports')
             ->monthlyOn(1, '02:00');
 
-        $schedule->command('dm:check')->everyFiveMinutes();
+        $schedule->command('emrDirect:checkInbox')->everyFiveMinutes();
     }
 
     /**
