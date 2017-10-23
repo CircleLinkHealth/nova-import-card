@@ -3,12 +3,14 @@
 namespace App\Models;
 
 use App\Models\CCD\Problem;
+use App\Scopes\Imported;
+use App\Scopes\WithNonImported;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 class ProblemCode extends Model
 {
-    use SoftDeletes;
+    use SoftDeletes, WithNonImported;
 
     public $fillable = [
         'problem_id',
@@ -17,6 +19,18 @@ class ProblemCode extends Model
         'code',
         'is_imported',
     ];
+
+    /**
+     * The "booting" method of the model.
+     *
+     * @return void
+     */
+    protected static function boot()
+    {
+        parent::boot();
+
+        static::addGlobalScope(new Imported());
+    }
 
     public function problem() {
         return $this->belongsTo(Problem::class, 'problem_id');
