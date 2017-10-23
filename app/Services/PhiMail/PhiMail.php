@@ -1,6 +1,7 @@
 <?php namespace App\Services\PhiMail;
 
 use App\CLH\Repositories\CCDImporterRepository;
+use App\Jobs\TrainCcdaImporter;
 use App\Models\MedicalRecords\Ccda;
 use App\User;
 use Illuminate\Support\Facades\Log;
@@ -239,13 +240,7 @@ class PhiMail
                     } elseif (str_contains($showRes->mimeType, 'xml')) {
                         //save ccd to file
                         self::writeDataFile(storage_path(str_random(20) . '.xml'), $showRes->data);
-                        $import = $this->importCcd($message->sender, $showRes);
-
-                        if (!$import) {
-                            continue;
-                        }
-
-                        $this->ccdas[] = $import;
+                        $this->importCcd($showRes);
                     }
 
                     // Display the list of attachments and associated info. This info is only
@@ -292,27 +287,16 @@ class PhiMail
     }
 
     private function importCcd(
-        $sender,
         $attachment
     ) {
-        $ccdaRepo = new CCDImporterRepository;
-
-        $json = $ccdaRepo->toJson($attachment->data);
-
         $this->ccda = Ccda::create([
             'user_id'   => null,
             'vendor_id' => 1,
-            'json'      => $json,
             'xml'       => $attachment->data,
             'source'    => Ccda::EMR_DIRECT,
         ]);
 
-        $this->ccda->import();
-
-        return [
-            'id'       => $this->ccda->id,
-            'fileName' => $attachment->filename,
-        ];
+        dispatch(new TrainCcdaImporter($this->ccda));
     }
 
     /**
