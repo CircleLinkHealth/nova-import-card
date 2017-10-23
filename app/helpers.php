@@ -622,3 +622,26 @@ if (!function_exists('parseCallTimes')) {
 }
 
 
+if (!function_exists('getProblemCodeSystemName')) {
+    function getProblemCodeSystemName($problem)
+    {
+        if ($problem->code_system == '2.16.840.1.113883.6.96'
+            || str_contains(strtolower($problem->code_system_name), ['snomed'])) {
+            return 'SNOMED CT';
+        }
+
+        if ($problem->code_system == '2.16.840.1.113883.6.103'
+            || str_contains(strtolower($problem->code_system_name), ['9'])) {
+            return 'ICD-9';
+        }
+
+        if ($problem->code_system == '2.16.840.1.113883.6.3'
+            || str_contains(strtolower($problem->code_system_name), ['10'])) {
+            return 'ICD-10';
+        }
+
+        return false;
+    }
+}
+
+
