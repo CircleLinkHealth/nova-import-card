@@ -27,8 +27,6 @@ class MigrateCcdProblemCodesToProblemCodes extends Migration
                 'code_system_name' => $p->code_system_name,
                 'code_system_oid'  => $p->code_system,
                 'code'             => $p->code,
-            ], [
-                'is_imported' => true,
             ]);
         });
     }
