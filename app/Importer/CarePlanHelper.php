@@ -16,6 +16,7 @@ use App\Models\CCD\Problem;
 use App\Models\CPM\CpmMisc;
 use App\Models\MedicalRecords\Ccda;
 use App\Models\MedicalRecords\ImportedMedicalRecord;
+use App\Models\ProblemCode;
 use App\Patient;
 use App\PatientContactWindow;
 use App\PhoneNumber;
@@ -395,13 +396,23 @@ class CarePlanHelper
                 'problem_import_id'  => $problem->id,
                 'ccd_problem_log_id' => $problem->ccd_problem_log_id,
                 'name'               => $problem->name,
-                'code'               => $problem->code,
-                'code_system'        => $problem->code_system,
-                'code_system_name'   => $problem->code_system_name,
                 'activate'           => $problem->activate,
                 'cpm_problem_id'     => $problem->cpm_problem_id,
                 'patient_id'         => $this->user->id,
             ]);
+
+            $problemLog = $problem->ccdLog;
+
+            if ($problemLog) {
+                $problemLog->codesLogs->map(function ($codeLog) use ($ccdProblem) {
+                    ProblemCode::create([
+                        'problem_id' => $ccdProblem->id,
+                        'code_system_name' => $codeLog->code_system_name,
+                        'code_system_oid' => $codeLog->code_system_oid,
+                        'code' => $codeLog->code,
+                    ]);
+                });
+            }
         }
 
         $misc = CpmMisc::whereName(CpmMisc::OTHER_CONDITIONS)
