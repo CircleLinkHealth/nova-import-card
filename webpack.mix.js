@@ -56,8 +56,6 @@ mix.combine([
     'public/js/DateTimePicker.min.js',
     'public/js/fab.js',   
 ], 'public/compiled/js/issue-688.js')
-
-mix.js('public/compiled/js/issue-688.js', 'public/compiled/js')
 /** end fixing issue 688 */
 
 /** start fixing admin-ui */
