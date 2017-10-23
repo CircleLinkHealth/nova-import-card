@@ -106,7 +106,8 @@ class Kernel extends ConsoleKernel
         })->everyMinute();
 
         //Comments out until we find all the bugs
-        $schedule->command('email:weeklyReports --practice --provider')->weeklyOn(1, '10:00');
+        $schedule->command('email:weeklyReports --practice --provider')
+            ->weeklyOn(1, '10:00');
 
         $schedule->command('emailapprovalreminder:providers')
             ->weekdays()
@@ -133,13 +134,16 @@ class Kernel extends ConsoleKernel
             ->dailyAt('05:00');
 
 //        $schedule->command('ccda:toJson')
-//            ->everyMinute();
+//            ->everyMinute()
+//            ->withoutOverlapping();
 
 //        $schedule->command('ccda:determineEligibility')
-//            ->everyMinute();
+//            ->everyMinute()
+//            ->withoutOverlapping();
 
 //        $schedule->command('ccda:process')
-//            ->everyMinute();
+//            ->everyMinute()
+//            ->withoutOverlapping();
 
         //every 2 hours
 //        $schedule->command('ccdas:split-merged')
@@ -148,7 +152,9 @@ class Kernel extends ConsoleKernel
         $schedule->command('send:audit-reports')
             ->monthlyOn(1, '02:00');
 
-        $schedule->command('emrDirect:checkInbox')->everyFiveMinutes();
+        $schedule->command('emrDirect:checkInbox')
+            ->everyFiveMinutes()
+            ->withoutOverlapping();
     }
 
     /**
