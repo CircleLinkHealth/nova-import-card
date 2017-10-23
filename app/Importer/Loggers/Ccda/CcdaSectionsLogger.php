@@ -10,6 +10,7 @@ use App\Importer\Models\ItemLogs\DemographicsLog;
 use App\Importer\Models\ItemLogs\DocumentLog;
 use App\Importer\Models\ItemLogs\InsuranceLog;
 use App\Importer\Models\ItemLogs\MedicationLog;
+use App\Importer\Models\ItemLogs\ProblemCodeLog;
 use App\Importer\Models\ItemLogs\ProblemLog;
 use App\Importer\Models\ItemLogs\ProviderLog;
 use App\Models\MedicalRecords\Ccda;
@@ -110,9 +111,15 @@ class CcdaSectionsLogger implements MedicalRecordLogger
         $problems = $this->ccd->problems;
 
         foreach ($problems as $prob) {
-            $saved = ProblemLog::create(
+            $problemLog = ProblemLog::create(
                 array_merge($this->transformer->problem($prob), $this->foreignKeys)
             );
+
+            $codes = $this->transformer->problemCodes($prob, $problemLog);
+
+            foreach ($codes as $code) {
+                ProblemCodeLog::create($code);
+            }
         }
 
         return $this;

@@ -49,9 +49,6 @@ class Problems extends BaseImporter
                 'imported_medical_record_id' => $importedMedicalRecord->id,
                 'ccd_problem_log_id'         => $itemLog->id,
                 'name'                       => $problemCodes->cons_name,
-                'code'                       => $problemCodes->cons_code,
-                'code_system'                => $problemCodes->cons_code_system,
-                'code_system_name'           => $problemCodes->cons_code_system_name,
             ]);
         }
 
