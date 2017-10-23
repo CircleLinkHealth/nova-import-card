@@ -17,8 +17,9 @@ class CreateProblemCodesTable extends Migration
             $table->increments('id');
             $table->unsignedInteger('problem_id');
             $table->string('code_system_name', 20);
-            $table->string('code_system_oid', 50);
+            $table->string('code_system_oid', 50)->nullable();
             $table->string('code', 20);
+            $table->boolean('is_imported')->nullable();
             $table->timestamps();
             $table->softDeletes();
 
