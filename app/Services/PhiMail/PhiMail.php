@@ -98,8 +98,8 @@ class PhiMail
 
     public function send(
         $outboundRecipient,
-        $binaryAttachmentFilePath = null,
-        $binaryAttachmentFileName = null,
+        $binaryAttachmentFilePath,
+        $binaryAttachmentFileName,
         $ccdaAttachmentPath = null,
         User $patient = null
     ) {
