@@ -6,7 +6,7 @@ use App\Models\CCD\Problem;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
-class ProblemCodes extends Model
+class ProblemCode extends Model
 {
     use SoftDeletes;
 
