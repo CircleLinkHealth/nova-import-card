@@ -10,27 +10,14 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 
 class ProblemCode extends Model
 {
-    use SoftDeletes, WithNonImported;
+    use SoftDeletes;
 
     public $fillable = [
         'problem_id',
         'code_system_name',
         'code_system_oid',
         'code',
-        'is_imported',
     ];
-
-    /**
-     * The "booting" method of the model.
-     *
-     * @return void
-     */
-    protected static function boot()
-    {
-        parent::boot();
-
-        static::addGlobalScope(new Imported());
-    }
 
     public function problem() {
         return $this->belongsTo(Problem::class, 'problem_id');
