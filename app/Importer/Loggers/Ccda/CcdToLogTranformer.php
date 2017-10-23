@@ -135,14 +135,28 @@ class CcdToLogTranformer
 
     public function problemCodes($ccdProblem, $problemLog)
     {
-        $codes[] = [
-            'ccd_problem_log_id' => $problemLog->id,
-            'code_system_name'   => $ccdProblem->code_system_name,
-            'code_system_oid'    => $ccdProblem->code_system,
-            'code'               => $ccdProblem->code,
-        ];
+        if (!$ccdProblem->code_system_name) {
+            $ccdProblem->code_system_name = getProblemCodeSystemName($ccdProblem);
+        }
+
+        if ($ccdProblem->code_system_name) {
+            $codes[] = [
+                'ccd_problem_log_id' => $problemLog->id,
+                'code_system_name'   => $ccdProblem->code_system_name,
+                'code_system_oid'    => $ccdProblem->code_system,
+                'code'               => $ccdProblem->code,
+            ];
+        }
 
         foreach ($ccdProblem->translations as $translation) {
+            if (!$translation->code_system_name) {
+                $translation->code_system_name = getProblemCodeSystemName($translation);
+
+                if (!$translation->code_system_name) {
+                    continue;
+                }
+            }
+
             $codes[] = [
                 'ccd_problem_log_id' => $problemLog->id,
                 'code_system_name'   => $translation->code_system_name,
