@@ -15,6 +15,7 @@ class ProblemCode extends Model
         'code_system_name',
         'code_system_oid',
         'code',
+        'is_imported',
     ];
 
     public function problem() {
