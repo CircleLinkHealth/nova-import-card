@@ -12,13 +12,6 @@ class PhiMail
     protected $ccdas = [];
     private $connector;
 
-    public function __construct()
-    {
-        if (!$this->initPhiMailConnection()) {
-            return false;
-        }
-    }
-
     private function initPhiMailConnection()
     {
         try {
@@ -47,6 +40,8 @@ class PhiMail
 
             $this->connector = new PhiMailConnector($phiMailServer, $phiMailPort);
             $this->connector->authenticateUser($phiMailUser, $phiMailPass);
+
+            sendSlackMessage('#background-tasks', "Connected to EMR Direct.");
 
             return true;
         } catch (\Exception $e) {
@@ -78,24 +73,6 @@ class PhiMail
         }
     }
 
-    /**
-     * @param args the command line arguments
-     */
-    public function sendReceive(
-        $outboundReceipient = null
-    ) {
-        try {
-            if ($outboundReceipient) {
-                $this->send($outboundReceipient);
-            }
-
-            //Receive mail
-            $this->receive();
-        } catch (\Exception $e) {
-            $this->handleException($e);
-        }
-    }
-
     public function send(
         $outboundRecipient,
         $binaryAttachmentFilePath,
@@ -103,6 +80,10 @@ class PhiMail
         $ccdaAttachmentPath = null,
         User $patient = null
     ) {
+        if (!$this->initPhiMailConnection()) {
+            return false;
+        }
+
         try {
             // After authentication, the server has a blank outgoing message
             // template. Begin building this message by adding a recipient.
@@ -169,6 +150,10 @@ class PhiMail
 
     public function receive()
     {
+        if (!$this->initPhiMailConnection()) {
+            return false;
+        }
+
         if (!$this->connector) {
             return false;
         }
