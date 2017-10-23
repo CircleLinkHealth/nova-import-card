@@ -50,17 +50,9 @@ class Problem extends Model
         return $this->belongsTo(User::class, 'patient_id');
     }
 
-    public function hasIcd10BillingCode() {
-        return !empty($this->icd_10_code);
-    }
-
     public function icd10Code() {
-        if ($this->hasIcd10BillingCode()) {
-            return $this->icd_10_code;
-        }
-
-        if ($this->isIcd10() && $this->code) {
-            return $this->code;
+        if ($this->icd10Codes()->exists()) {
+            return $this->icd10Codes()->first();
         }
 
         return $this->cpmProblem->default_icd_10_code ?? null;
