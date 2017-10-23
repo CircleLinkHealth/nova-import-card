@@ -135,6 +135,8 @@ class CcdToLogTranformer
 
     public function problemCodes($ccdProblem, $problemLog)
     {
+        $codes = [];
+
         if (!$ccdProblem->code_system_name) {
             $ccdProblem->code_system_name = getProblemCodeSystemName($ccdProblem);
         }
