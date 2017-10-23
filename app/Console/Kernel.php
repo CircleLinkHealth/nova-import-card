@@ -20,6 +20,7 @@ use App\Console\Commands\QueueCcdaToDetermineEnrollmentEligibility;
 use App\Console\Commands\QueueMakeWelcomeCallsList;
 use App\Console\Commands\QueueSendAuditReports;
 use App\Console\Commands\RecalculateCcmTime;
+use App\Console\Commands\ReImportCcdsToGetTranslations;
 use App\Console\Commands\ResetCcmTime;
 use App\Console\Commands\SplitMergedCcdas;
 use App\Services\Calls\SchedulerService;
@@ -58,6 +59,7 @@ class Kernel extends ConsoleKernel
         CheckEmrDirectInbox::class,
         EmailWeeklyReports::class,
         QueueMakeWelcomeCallsList::class,
+        ReImportCcdsToGetTranslations::class,
     ];
 
     /**
