@@ -20,4 +20,19 @@ class ProblemCode extends Model
     public function problem() {
         return $this->belongsTo(Problem::class, 'problem_id');
     }
+
+    public function isSnomed() {
+        return $this->code_system_oid == '2.16.840.1.113883.6.96'
+            || str_contains(strtolower($this->code_system_name), ['snomed']);
+    }
+
+    public function isIcd9() {
+        return $this->code_system_oid == '2.16.840.1.113883.6.103'
+            || str_contains(strtolower($this->code_system_name), ['9']);
+    }
+
+    public function isIcd10() {
+        return $this->code_system_oid == '2.16.840.1.113883.6.3'
+            || str_contains(strtolower($this->code_system_name), ['10']);
+    }
 }
