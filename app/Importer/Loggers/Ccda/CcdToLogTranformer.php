@@ -124,20 +124,48 @@ class CcdToLogTranformer
     public function problem($problem)
     {
         return [
-            'reference'                    => $problem->reference,
-            'reference_title'              => trim($problem->reference_title),
-            'start'                        => $problem->date_range->start,
-            'end'                          => $problem->date_range->end,
-            'status'                       => $problem->status,
-            'name'                         => $problem->name,
-            'code'                         => $problem->code,
-            'code_system'                  => $problem->code_system,
-            'code_system_name'             => $problem->code_system_name,
-            'translation_name'             => $problem->translation->name,
-            'translation_code'             => $problem->translation->code,
-            'translation_code_system'      => $problem->translation->code_system,
-            'translation_code_system_name' => $problem->translation->code_system_name,
+            'reference'       => $problem->reference,
+            'reference_title' => trim($problem->reference_title),
+            'start'           => $problem->date_range->start,
+            'end'             => $problem->date_range->end,
+            'status'          => $problem->status,
+            'name'            => $problem->name,
         ];
+    }
+
+    public function problemCodes($ccdProblem, $problemLog)
+    {
+        if (!$ccdProblem->code_system_name) {
+            $ccdProblem->code_system_name = getProblemCodeSystemName($ccdProblem);
+        }
+
+        if ($ccdProblem->code_system_name) {
+            $codes[] = [
+                'ccd_problem_log_id' => $problemLog->id,
+                'code_system_name'   => $ccdProblem->code_system_name,
+                'code_system_oid'    => $ccdProblem->code_system,
+                'code'               => $ccdProblem->code,
+            ];
+        }
+
+        foreach ($ccdProblem->translations as $translation) {
+            if (!$translation->code_system_name) {
+                $translation->code_system_name = getProblemCodeSystemName($translation);
+
+                if (!$translation->code_system_name) {
+                    continue;
+                }
+            }
+
+            $codes[] = [
+                'ccd_problem_log_id' => $problemLog->id,
+                'code_system_name'   => $translation->code_system_name,
+                'code_system_oid'    => $translation->code_system,
+                'code'               => $translation->code,
+            ];
+        }
+
+        return $codes;
     }
 
     /**

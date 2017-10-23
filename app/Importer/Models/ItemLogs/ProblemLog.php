@@ -42,4 +42,7 @@ class ProblemLog extends Model implements ItemLog
         return $this->hasOne(ProblemImport::class);
     }
 
+    public function codesLogs() {
+        return $this->hasMany(ProblemCodeLog::class, 'ccd_problem_log_id');
+    }
 }
