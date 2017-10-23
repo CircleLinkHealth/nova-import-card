@@ -14,4 +14,8 @@ class ProblemCodeLog extends Model
         'code_system_oid',
         'code',
     ];
+
+    public function problemLog() {
+        return $this->belongsTo(ProblemLog::class, 'ccd_problem_log_id');
+    }
 }
