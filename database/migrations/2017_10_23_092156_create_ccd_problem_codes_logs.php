@@ -36,6 +36,6 @@ class CreateCcdProblemCodesLogs extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('ccd_problem_codes_logs');
+        Schema::dropIfExists('ccd_problem_code_logs');
     }
 }
