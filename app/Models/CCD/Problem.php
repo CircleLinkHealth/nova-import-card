@@ -3,6 +3,7 @@
 use App\CLH\CCD\Importer\SnomedToCpmIcdMap;
 use App\Importer\Models\ItemLogs\ProblemLog;
 use App\Models\CPM\CpmProblem;
+use App\Models\ProblemCodes;
 use App\User;
 use Illuminate\Database\Eloquent\Model;
 
@@ -86,5 +87,9 @@ class Problem extends Model
             ->where($to, '!=', '')
             ->first()
             ->{$to} ?? null;
+    }
+
+    public function codes() {
+        return $this->hasMany(ProblemCodes::class);
     }
 }
