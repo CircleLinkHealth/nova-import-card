@@ -12,7 +12,7 @@ class CheckEmrDirectInbox extends Command
      *
      * @var string
      */
-    protected $signature = 'dm:check';
+    protected $signature = 'emrDirect:checkInbox';
 
     /**
      * The console command description.
