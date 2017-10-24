@@ -54,8 +54,6 @@ class ReImportCcdToGetProblemTranslationCodes implements ShouldQueue
 
         $problems = collect($parsed->problems)->map(function ($prob) use ($ccdProblems) {
             $ccdProblem = $ccdProblems->where('name', '=', $prob->name)
-                ->where('code', '=', $prob->code)
-                ->where('code_system', '=', $prob->code_system)
                 ->first();
 
             foreach ($prob->translations as $translation) {
