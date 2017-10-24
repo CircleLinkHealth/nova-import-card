@@ -2443,7 +2443,7 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
                     return $problem;
                 }
 
-                if ($problem->isIcd10() || $problem->hasIcd10BillingCode()) {
+                if ($problem->icd10Codes()->exists()) {
                     $billableProblems->prepend($problem);
 
                     return $problem;
