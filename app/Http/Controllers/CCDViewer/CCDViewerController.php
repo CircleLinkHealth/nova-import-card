@@ -27,7 +27,7 @@ class CCDViewerController extends Controller
         $ccda = Ccda::find($ccdaId);
 
         if ($ccda) {
-            $ccd = json_decode($ccda->json);
+            $ccd = json_decode((new CCDImporterRepository())->toJson($ccda->xml));
 
             return view('CCDViewer.old-viewer', compact('ccd'));
         }
@@ -40,7 +40,7 @@ class CCDViewerController extends Controller
         $ccda = Ccda::wherePatientId($userId)->first();
 
         if ($ccda) {
-            $ccd = json_decode($ccda->json);
+            $ccd = json_decode((new CCDImporterRepository())->toJson($ccda->xml));
 
             return view('CCDViewer.old-viewer', compact('ccd'));
         }
