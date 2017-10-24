@@ -2,18 +2,28 @@
 
 use App\Models\CCD\Problem;
 use App\Models\ProblemCode;
-use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Seeder;
 
-class MigrateCcdProblemCodesToProblemCodes extends Migration
+class MigrateCcdProblemCodesToProblemCodesSeeder extends Seeder
 {
     /**
-     * Run the migrations.
+     * Run the database seeds.
      *
      * @return void
      */
-    public function up()
+    public function run()
     {
-        $problems = Problem::whereNotNull('code')->get()->map(function ($p) {
+        $problems = Problem::select([
+            'id',
+            'code_system_name',
+            'code_system',
+            'code',
+        ])
+            ->whereNotNull('code')
+            ->get();
+
+
+        foreach ($problems as $p) {
             if (!$p->code_system_name) {
                 if (!$p->code_system && !$this->getCodeSystemName($p)) {
                     return;
@@ -28,7 +38,8 @@ class MigrateCcdProblemCodesToProblemCodes extends Migration
                 'code_system_oid'  => $p->code_system,
                 'code'             => $p->code,
             ]);
-        });
+        }
+
     }
 
     public function getCodeSystemName(Problem $problem)
@@ -49,15 +60,5 @@ class MigrateCcdProblemCodesToProblemCodes extends Migration
         }
 
         return false;
-    }
-
-    /**
-     * Reverse the migrations.
-     *
-     * @return void
-     */
-    public function down()
-    {
-        //
     }
 }
