@@ -32,7 +32,7 @@ class Problem extends Model
      */
     public function ccdLog()
     {
-        return $this->belongsTo(ProblemLog::class);
+        return $this->belongsTo(ProblemLog::class, 'ccd_problem_log_id');
     }
 
     /**
