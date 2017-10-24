@@ -3,7 +3,11 @@
 namespace App\Jobs;
 
 use App\CLH\Repositories\CCDImporterRepository;
-use App\Importer\Loggers\Ccda\CcdToLogTranformer;
+use App\Importer\CarePlanHelper;
+use App\Importer\Loggers\Ccda\CcdaSectionsLogger;
+use App\Importer\Models\ImportedItems\ProblemImport;
+use App\Importer\Models\ItemLogs\ProblemLog;
+use App\Importer\Section\Importers\Problems;
 use App\Models\CCD\Problem;
 use App\Models\MedicalRecords\Ccda;
 use App\Models\ProblemCode;
@@ -18,8 +22,9 @@ class ReImportCcdToGetProblemTranslationCodes implements ShouldQueue
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
     private $patient;
-    private $transformer;
+    private $logger;
     private $repo;
+    private $ccda;
 
     /**
      * Create a new job instance.
@@ -30,7 +35,25 @@ class ReImportCcdToGetProblemTranslationCodes implements ShouldQueue
     {
         $this->patient = $patient;
         $this->repo = new CCDImporterRepository();
-        $this->transformer = new CcdToLogTranformer();
+
+        $this->ccda = Ccda::select(['id', 'patient_id', 'xml'])
+            ->where('patient_id', '=', $this->patient->id)
+            ->first();
+
+        ProblemImport::where('medical_record_id', '=', $this->ccda->id)
+            ->where('medical_record_type', '=', Ccda::class)
+            ->delete();
+
+        ProblemLog::where('medical_record_id', '=', $this->ccda->id)
+            ->where('medical_record_type', '=', Ccda::class)
+            ->delete();
+
+        Problem::where('patient_id', '=', $this->patient->id)
+            ->delete();
+
+        $this->logger = new CcdaSectionsLogger($this->ccda);
+
+        $this->logger->logProblemsSection();
     }
 
     /**
@@ -40,53 +63,11 @@ class ReImportCcdToGetProblemTranslationCodes implements ShouldQueue
      */
     public function handle()
     {
-        $ccda = Ccda::select(['id', 'patient_id', 'xml'])
-            ->where('patient_id', '=', $this->patient->id)
-            ->first();
+        $problemsImporter = new Problems();
+        $problemsList = $problemsImporter->import($this->ccda->id, Ccda::class, $this->ccda->importedMedicalRecord());
 
-        if (!$ccda) {
-            return;
-        }
-
-        $parsed = json_decode($this->repo->toJson($ccda->xml));
-
-        $ccdProblems = Problem::where('patient_id', '=', $this->patient->id)->get();
-
-        $problems = collect($parsed->problems)->map(function ($prob) use ($ccdProblems) {
-            $cons = $this->consolidateProblemInfo($prob);
-
-            $ccdProblem = $ccdProblems->where('name', '=', $cons->cons_name)
-                ->first();
-
-            foreach ($prob->translations as $translation) {
-                if (!$translation->code_system_name) {
-                    $translation->code_system_name = getProblemCodeSystemName($translation);
-
-                    if (!$translation->code_system_name) {
-                        continue;
-                    }
-                }
-
-                ProblemCode::updateOrCreate([
-                    'problem_id'       => $ccdProblem->id,
-                    'code_system_name' => $translation->code_system_name,
-                    'code_system_oid'  => $translation->code_system,
-                    'code'             => $translation->code,
-                ]);
-            }
-        });
-    }
-
-    public function consolidateProblemInfo($problemLog)
-    {
-        $consolidatedProblem = new \stdClass();
-
-        $consolidatedProblem->cons_name = $problemLog->name;
-
-        if (empty($consolidatedProblem->cons_name) && !empty($problemLog->reference_title)) {
-            $consolidatedProblem->cons_name = $problemLog->reference_title;
-        }
-
-        return $consolidatedProblem;
+        $carePlanHelper = new CarePlanHelper($this->patient, $this->ccda->importedMedicalRecord());
+        $carePlanHelper->storeProblemsList()
+            ->storeProblemsToMonitor();
     }
 }
