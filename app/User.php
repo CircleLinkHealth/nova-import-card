@@ -2433,6 +2433,9 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
         $billableProblems = new Collection();
 
         $ccdProblems = $this->ccdProblems()
+            ->with('icd10Codes')
+            ->with('cpmProblem')
+            ->whereHas('icd10Codes')
             ->whereNotNull('cpm_problem_id')
             ->groupBy('cpm_problem_id')
             ->get()

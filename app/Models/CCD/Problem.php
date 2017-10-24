@@ -55,8 +55,10 @@ class Problem extends Model implements \App\Contracts\Models\CCD\Problem
     }
 
     public function icd10Code() {
-        if ($this->icd10Codes()->exists()) {
-            return $this->icd10Codes()->first()->code;
+        $icd10 = $this->icd10Codes->first();
+
+        if ($icd10) {
+            return $icd10->code;
         }
 
         return $this->cpmProblem->default_icd_10_code ?? null;
