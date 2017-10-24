@@ -53,7 +53,9 @@ class ReImportCcdToGetProblemTranslationCodes implements ShouldQueue
         $ccdProblems = Problem::where('patient_id', '=', $this->patient->id)->get();
 
         $problems = collect($parsed->problems)->map(function ($prob) use ($ccdProblems) {
-            $ccdProblem = $ccdProblems->where('name', '=', $prob->name)
+            $cons = $this->consolidateProblemInfo($prob);
+
+            $ccdProblem = $ccdProblems->where('name', '=', $cons->cons_name)
                 ->first();
 
             foreach ($prob->translations as $translation) {
@@ -73,5 +75,18 @@ class ReImportCcdToGetProblemTranslationCodes implements ShouldQueue
                 ]);
             }
         });
+    }
+
+    public function consolidateProblemInfo($problemLog)
+    {
+        $consolidatedProblem = new \stdClass();
+
+        $consolidatedProblem->cons_name = $problemLog->name;
+
+        if (empty($consolidatedProblem->cons_name) && !empty($problemLog->reference_title)) {
+            $consolidatedProblem->cons_name = $problemLog->reference_title;
+        }
+
+        return $consolidatedProblem;
     }
 }
