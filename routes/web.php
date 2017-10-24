@@ -424,15 +424,18 @@ Route::group(['middleware' => 'auth'], function () {
                 'uses' => 'Patient\PatientCareplanController@storePatientCareteam',
                 'as'   => 'patient.careteam.store',
             ]);
-            // careplan sections
-            Route::get('sections/{page}', [
-                'uses' => 'Patient\PatientCareplanController@showPatientCareplan',
-                'as'   => 'patient.careplan.show',
-            ]);
-            Route::post('sections', [
-                'uses' => 'Patient\PatientCareplanController@storePatientCareplan',
-                'as'   => 'patient.careplan.store',
-            ]);
+
+            Route::group(['middleware' => 'check.careplan.mode'], function () {
+                // careplan sections
+                Route::get('sections/{page}', [
+                    'uses' => 'Patient\PatientCareplanController@showPatientCareplan',
+                    'as'   => 'patient.careplan.show',
+                ]);
+                Route::post('sections', [
+                    'uses' => 'Patient\PatientCareplanController@storePatientCareplan',
+                    'as'   => 'patient.careplan.store',
+                ]);
+            });
         });
 
 
