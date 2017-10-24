@@ -53,6 +53,8 @@ class Problems extends BaseImporter
         }
 
         $this->activateBillableProblems($problemsList);
+
+        return $problemsList;
     }
 
     /*
