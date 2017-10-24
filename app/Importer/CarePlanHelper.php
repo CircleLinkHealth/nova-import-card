@@ -24,14 +24,14 @@ use App\User;
 
 class CarePlanHelper
 {
-    private $allergiesImport;
-    private $demographicsImport;
-    private $medicationsImport;
-    private $problemsImport;
-    private $user;
-    private $importedMedicalRecord;
-    private $carePlan;
-    private $patientInfo;
+    public $allergiesImport;
+    public $demographicsImport;
+    public $medicationsImport;
+    public $problemsImport;
+    public $user;
+    public $importedMedicalRecord;
+    public $carePlan;
+    public $patientInfo;
 
     public function __construct(
         User $user,
@@ -321,7 +321,7 @@ class CarePlanHelper
      *
      * @return $this
      */
-    private function storeMedications()
+    public function storeMedications()
     {
         if (empty($this->medicationsImport)) {
             return $this;
@@ -357,7 +357,7 @@ class CarePlanHelper
      *
      * @return $this
      */
-    private function storeProblemsToMonitor()
+    public function storeProblemsToMonitor()
     {
         if (empty($this->problemsImport)) {
             return $this;
@@ -385,7 +385,7 @@ class CarePlanHelper
      *
      * @return $this
      */
-    private function storeProblemsList()
+    public function storeProblemsList()
     {
         if (empty($this->problemsImport)) {
             return $this;
@@ -428,7 +428,7 @@ class CarePlanHelper
      *
      * @return $this
      */
-    private function storeAllergies()
+    public function storeAllergies()
     {
         if (empty($this->allergiesImport)) {
             return $this;
@@ -456,7 +456,7 @@ class CarePlanHelper
      *
      * @return $this
      */
-    private function createNewCarePlan()
+    public function createNewCarePlan()
     {
         $this->carePlan = CarePlan::updateOrCreate([
             'user_id' => $this->user->id,
