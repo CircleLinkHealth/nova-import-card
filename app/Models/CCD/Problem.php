@@ -6,11 +6,14 @@ use App\Models\CPM\CpmProblem;
 use App\Models\ProblemCode;
 use App\Scopes\Imported;
 use App\Scopes\WithNonImported;
+use App\Traits\HasProblemCodes;
 use App\User;
 use Illuminate\Database\Eloquent\Model;
 
-class Problem extends Model
+class Problem extends Model implements \App\Contracts\Models\CCD\Problem
 {
+    use HasProblemCodes;
+
     protected $fillable = [
         'ccda_id',
         'vendor_id',
@@ -67,33 +70,10 @@ class Problem extends Model
             ->{$to} ?? null;
     }
 
+    /**
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
     public function codes() {
         return $this->hasMany(ProblemCode::class);
-    }
-
-    public function icd9Codes() {
-        return $this->codes()
-            ->where('code_system_oid', '=', '2.16.840.1.113883.6.103')
-            ->orWhere([
-                ['code_system_name', 'like', '%9%'],
-                ['code_system_name', 'like', '%icd%'],
-            ]);
-    }
-
-    public function icd10Codes() {
-        return $this->codes()
-            ->where('code_system_oid', '=', '2.16.840.1.113883.6.3')
-            ->orWhere([
-                ['code_system_name', 'like', '%10%'],
-                ['code_system_name', 'like', '%icd%'],
-            ]);
-    }
-
-    public function snomedCodes() {
-        return $this->codes()
-            ->where('code_system_oid', '=', '2.16.840.1.113883.6.96')
-            ->orWhere([
-                ['code_system_name', 'like', '%snomed%'],
-            ]);
     }
 }
