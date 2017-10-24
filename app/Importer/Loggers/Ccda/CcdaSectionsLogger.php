@@ -24,13 +24,12 @@ class CcdaSectionsLogger implements MedicalRecordLogger
 
     protected $foreignKeys = [];
     protected $ccdaId;
+    private $problemLogs;
 
 
     public function __construct(Ccda $ccd)
     {
-        $this->ccd = $ccd->json
-            ? json_decode($ccd->json)
-            : json_decode((new CCDImporterRepository())->toJson($ccd->xml));
+        $this->ccd = json_decode((new CCDImporterRepository())->toJson($ccd->xml));
 
         $this->ccdaId = $ccd->id;
         $this->vendorId = $ccd->vendor_id;
@@ -120,6 +119,8 @@ class CcdaSectionsLogger implements MedicalRecordLogger
             foreach ($codes as $code) {
                 ProblemCodeLog::create($code);
             }
+
+            $this->problemLogs = $problemLog;
         }
 
         return $this;
