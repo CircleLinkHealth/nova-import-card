@@ -404,7 +404,7 @@ class CarePlanHelper
             $problemLog = $problem->ccdLog;
 
             if ($problemLog) {
-                $problemLog->codesLogs->map(function ($codeLog) use ($ccdProblem) {
+                $problemLog->codes->map(function ($codeLog) use ($ccdProblem) {
                     ProblemCode::create([
                         'problem_id' => $ccdProblem->id,
                         'code_system_name' => $codeLog->code_system_name,
