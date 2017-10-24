@@ -42,16 +42,19 @@ trait HasProblemCodes
     public function codeMap() {
         $map = collect();
 
-        if ($this->icd9Codes()->exists()) {
-            $map[Constants::ICD9] = $this->icd9Codes->first()->code;
+        $icd9 = $this->icd9Codes->first();
+        if ($icd9) {
+            $map[Constants::ICD9] = $icd9->code;
         }
 
-        if ($this->icd10Codes()->exists()) {
-            $map[Constants::ICD10] = $this->icd10Codes->first()->code;
+        $icd10 = $this->icd10Codes->first();
+        if ($icd10) {
+            $map[Constants::ICD10] = $icd10->code;
         }
 
-        if ($this->snomedCodes()->exists()) {
-            $map[Constants::SNOMED] = $this->snomedCodes->first()->code;
+        $snomed = $this->snomedCodes->first();
+        if ($snomed) {
+            $map[Constants::SNOMED] = $snomed->code;
         }
 
         return $map;
