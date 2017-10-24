@@ -9,6 +9,7 @@ use App\CLH\CCD\Importer\StorageStrategies\Biometrics\BloodPressure;
 use App\CLH\CCD\Importer\StorageStrategies\Biometrics\Weight;
 use App\CLH\CCD\Importer\StorageStrategies\Problems\ProblemsToMonitor;
 use App\CLH\Helpers\StringManipulation;
+use App\CLH\Repositories\CCDImporterRepository;
 use App\Models\CCD\Allergy;
 use App\Models\CCD\CcdInsurancePolicy;
 use App\Models\CCD\Medication;
@@ -86,11 +87,11 @@ class CarePlanHelper
 
         $ccda = Ccda::find($this->importedMedicalRecord->medical_record_id);
 
-        //doing this here to not break Gavril's View CCDA button
+        //doing this here to not break View CCDA button
         $ccda->patient_id = $this->user->id;
         $ccda->save();
 
-        $decodedCcda = json_decode($ccda->json);
+        $decodedCcda = json_decode((new CCDImporterRepository())->toJson($ccda->xml));
 
         //Weight
         $weightParseAndStore = new Weight($this->user->program_id, $this->user);
