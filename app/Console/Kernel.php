@@ -21,6 +21,7 @@ use App\Console\Commands\QueueMakeWelcomeCallsList;
 use App\Console\Commands\QueueSendAuditReports;
 use App\Console\Commands\RecalculateCcmTime;
 use App\Console\Commands\ResetCcmTime;
+use App\Console\Commands\SendCarePlanApprovalReminderTestEmail;
 use App\Console\Commands\SplitMergedCcdas;
 use App\Services\Calls\SchedulerService;
 use Illuminate\Console\Scheduling\Schedule;
@@ -58,6 +59,7 @@ class Kernel extends ConsoleKernel
         CheckEmrDirectInbox::class,
         EmailWeeklyReports::class,
         QueueMakeWelcomeCallsList::class,
+        SendCarePlanApprovalReminderTestEmail::class,
     ];
 
     /**
