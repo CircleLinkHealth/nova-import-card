@@ -39,8 +39,40 @@ $today = \Carbon\Carbon::now()->toFormattedDateString();
             div.breakhere {
                 page-break-after: always;
             }
+
+            .address-height-print {
+                height: 1in !important;
+                max-height: 1in !important;
+            }
+
+            .sender-address-width-print {
+                width: 3.375in !important;
+                max-width: 3.375in !important;
+            }
+
+            .sender-address-print {
+                font-size: 20px !important;
+            }
+
+            .receiver-address-print {
+                font-size: 24px !important;
+            }
+
+            .receiver-address-width-print {
+                width: 4in !important;
+                max-width: 4in !important;
+            }
+
+            .sender-address-margin {
+                margin-top: 0 !important;
+                margin-bottom: 0 !important;
+            }
+
+            .receiver-address-padding {
+                padding-top: 1.2in !important;
+            }
         </style>
-        <div class="container">
+        <div class="container" style="margin-top: -45px !important; padding-top: 0 !important;">
             <section class="patient-summary">
                 <div class="patient-info__main">
                     <div class="row">
@@ -55,52 +87,44 @@ $today = \Carbon\Carbon::now()->toFormattedDateString();
                     <div class="patient-info__main">
                     </div>
                     @if($letter)
-                        <div class="patient-info__main">
+                        <div class="patient-info__main ">
                             <div class="row gutter">
-                                <div class="col-xs-12">
-                                    <div class="col-xs-1 col-xs-offset-5"></div>
-                                    <div class="col-xs-12 address"><br><strong>On Behalf of</strong></div>
-                                    <div class="col-xs-7 address">
-                                        @if($billing)
-                                            @if($billing->fullName){{$billing->fullName}}@endif
-                                        @endif
+                                <div class="address-height-print sender-address-margin">
+                                    <div class="col-xs-12 sender-address-print">
+                                        <div class="col-xs-12 address"><br><strong>On Behalf of</strong></div>
+                                        <div class="col-xs-7 address">
+                                            @if($billing)
+                                                @if($billing->fullName){{$billing->fullName}}@endif
+                                            @endif
+                                        </div>
+                                        <div class="col-xs-4 col-xs-offset-1 print-row text-right">290 Harbor Drive
+                                        </div>
+                                        <div class="col-xs-7 address">{{$patient->primaryPractice->display_name}}</div>
+                                        <div class="col-xs-4 col-xs-offset-1 print-row text-right">Stamford, CT 06902
+                                        </div>
+                                        <div class="sender-address-width-print">
+                                            @if($patient->getPreferredLocationAddress())
+                                                <div class="col-xs-12 address">{{$patient->getPreferredLocationAddress()->address_line_1}}</div>
+                                                <!-- <div class="col-xs-4 col-xs-offset-1 print-row text-right">Phone: 203 847 5890</div> -->
+                                                <div class="col-xs-12 address">{{$patient->getPreferredLocationAddress()->city}}
+                                                    , {{$patient->getPreferredLocationAddress()->state}} {{$patient->getPreferredLocationAddress()->postal_code}}</div>
+                                            @endif
+                                        </div>
+                                        <!-- <div class="col-xs-4 col-xs-offset-1 print-row text-right">Fax: 203 847 5899</div> -->
+                                        <!-- <div class="col-xs-12 address"></div> -->
                                     </div>
-                                    <div class="col-xs-4 col-xs-offset-1 print-row text-right">290 Harbor Drive</div>
-                                    <div class="col-xs-7 address">{{$patient->primaryPractice->display_name}}</div>
-                                    <div class="col-xs-4 col-xs-offset-1 print-row text-right">Stamford, CT 06902</div>
-                                    @if($patient->getPreferredLocationAddress())
-                                        <div class="col-xs-12 address">{{$patient->getPreferredLocationAddress()->address_line_1}}</div>
-                                        <!-- <div class="col-xs-4 col-xs-offset-1 print-row text-right">Phone: 203 847 5890</div> -->
-                                        <div class="col-xs-12 address">{{$patient->getPreferredLocationAddress()->city}}
-                                            , {{$patient->getPreferredLocationAddress()->state}} {{$patient->getPreferredLocationAddress()->postal_code}}</div>
-                                @endif
-                                <!-- <div class="col-xs-4 col-xs-offset-1 print-row text-right">Fax: 203 847 5899</div> -->
-                                    <!-- <div class="col-xs-12 address"></div> -->
+                                </div>
+
+                                <div class="receiver-address-width-print receiver-address-padding">
+                                    <div class="col-xs-12 receiver-address-print">
+                                        <div class="col-xs-12 address">{{strtoupper($patient->fullName)}}</div>
+                                        <div class="col-xs-12 address">{{strtoupper($patient->address)}}</div>
+                                        <div class="col-xs-12 address"> {{strtoupper($patient->city)}}
+                                            , {{strtoupper($patient->state)}} {{strtoupper($patient->zip)}}</div>
+                                    </div>
                                 </div>
                             </div>
 
-                            <div class="row gutter">
-                            </div>
-                            <div class="row gutter">
-                                <div class="col-xs-12 col-sm-12">&nbsp;</div>
-                            </div>
-                            <div class="row gutter">
-                                <div class="col-xs-12 col-sm-12">&nbsp;</div>
-                            </div>
-                            <div class="row gutter">
-                                <div class="col-xs-12 col-sm-12">&nbsp;</div>
-                            </div>
-                            <div class="row gutter">
-                                <div class="col-xs-12 col-sm-12">&nbsp;</div>
-                            </div>
-                            <div class="row gutter">
-                                <div class="col-xs-12">
-                                    <div class="col-xs-9 address">{{strtoupper($patient->fullName)}}</div>
-                                    <div class="col-xs-9 address">{{strtoupper($patient->address)}}</div>
-                                    <div class="col-xs-9 address"> {{strtoupper($patient->city)}}
-                                        , {{strtoupper($patient->state)}} {{strtoupper($patient->zip)}}</div>
-                                </div>
-                            </div>
                             <div class="row address">
                             </div>
                             <div class="row address">
@@ -108,7 +132,7 @@ $today = \Carbon\Carbon::now()->toFormattedDateString();
                             <div class="row gutter">
                             </div>
                             <div class="row gutter">
-                                <div class="col-xs-10 text-right"><?= date("F d, Y") ?></div>
+                                <div class="col-xs-12 text-right"><?= date("F d, Y") ?></div>
                             </div>
                             <div class="row gutter">
                                 <div class="col-xs-10 welcome-copy">
