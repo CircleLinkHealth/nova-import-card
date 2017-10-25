@@ -142,6 +142,11 @@ return [
     */
 
     'providers' => [
+        /*
+        * Jenssegers User Agent
+        */
+        Jenssegers\Agent\AgentServiceProvider::class,
+
         Bugsnag\BugsnagLaravel\BugsnagServiceProvider::class,
 
         /*
@@ -228,6 +233,7 @@ return [
     'aliases' => [
 
         'App'          => Illuminate\Support\Facades\App::class,
+        'Agent'        => Jenssegers\Agent\Facades\Agent::class,
         'Artisan'      => Illuminate\Support\Facades\Artisan::class,
         'Auth'         => Illuminate\Support\Facades\Auth::class,
         'Blade'        => Illuminate\Support\Facades\Blade::class,
