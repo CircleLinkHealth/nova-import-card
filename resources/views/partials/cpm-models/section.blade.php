@@ -24,7 +24,7 @@
             @endif
 
             <div class="row">
-                <div class="form-item col-sm-12" style="padding-left: 0px;@if (is_a($section->items[$i], App\Models\CPM\CpmProblem::class) && $section->items[$i]->name == 'Diabetes') display:none; @endif">
+                <div class="form-item col-sm-12" style="padding-left: 0px;@if (is_a($section->items[$i], App\Models\CPM\CpmProblem::class) && $section->items[$i]->name == 'Diabetes' && !auth()->user()->hasRole('administrator')) display:none; @endif">
                     <?php
                     $item = $section->items[$i];
                     ?>
