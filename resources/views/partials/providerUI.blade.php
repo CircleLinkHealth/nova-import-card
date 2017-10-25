@@ -105,6 +105,11 @@
 <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
 <![endif]-->
 
+@if (Agent::match('Trident'))
+    <!-- Script for polyfilling Promises on IE9 and 10 -->
+    <script src='https://cdn.polyfill.io/v2/polyfill.min.js'></script>
+@endif
+
 <script src="{{asset('compiled/js/app-provider-ui.js')}}"></script>
 <script type="text/javascript" src="{{ asset('compiled/js/issue-688.js') }}"></script>
 
