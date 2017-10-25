@@ -98,6 +98,11 @@
 <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
 <![endif]-->
 
+@if (Agent::match('Trident'))
+    <!-- Script for polyfilling Promises on IE9 and 10 -->
+    <script src='https://cdn.polyfill.io/v2/polyfill.min.js'></script>
+@endif
+
 <script src="{{ asset('/js/idle-timer.min.js') }}"></script>
 <script src="{{ asset('/js/bootstrap-select.min.js') }}"></script>
 <script src="{{ asset('/js/typeahead.bundle.js') }}"></script>
