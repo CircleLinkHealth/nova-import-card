@@ -74,7 +74,7 @@ $today = \Carbon\Carbon::now()->toFormattedDateString();
             }
 
             .receiver-address-padding {
-                padding-top: 1in !important;
+                padding-top: 2in !important;
                 margin-top: 0px !important;
                 margin-bottom: 0px !important;
             }
