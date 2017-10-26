@@ -8,3 +8,4 @@ _ide_helper.php
 /public/mix-manifest.json
 /bower_components/
 launch.json
+.DS_STORE

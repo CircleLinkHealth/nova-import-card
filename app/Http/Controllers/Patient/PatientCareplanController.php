@@ -209,6 +209,7 @@ class PatientCareplanController extends Controller
                 $pdf->save($fileNameWithPath, true);
             } catch (\Exception $e) {
                 \Log::critical($e);
+                //dd($e);
             }
             $pageCount = $this->count_pages($fileNameWithPath);
 //            echo PHP_EOL . '<br /><br />' . $fileNameWithPath . ' - PAGE COUNT: ' . $pageCount;
