@@ -80,7 +80,7 @@ $today = \Carbon\Carbon::now()->toFormattedDateString();
             }
 
             .welcome-copy {
-                font-size: 16px;
+                font-size: 24px;
             }
         </style>
         <div class="container" style="margin-top: -45px !important; padding-top: 0 !important;">
