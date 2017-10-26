@@ -7,3 +7,4 @@ _ide_helper.php
 /public/compiled/
 /public/mix-manifest.json
 /bower_components/
+.DS_STORE
