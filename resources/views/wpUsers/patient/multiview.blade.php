@@ -74,7 +74,7 @@ $today = \Carbon\Carbon::now()->toFormattedDateString();
             }
 
             .receiver-address-padding {
-                padding-top: 0.625in !important;
+                padding-top: 1in !important;
                 margin-top: 0px !important;
                 margin-bottom: 0px !important;
             }
@@ -104,7 +104,7 @@ $today = \Carbon\Carbon::now()->toFormattedDateString();
                                     <div class="row address-height-print sender-address-margin">
                                         <div class="col-xs-12 sender-address-print">
                                             <div class="row">
-                                                <div class="col-xs-12 address"><br><strong>On Behalf of</strong></div>
+                                                <div class="col-xs-12 address"><strong>On Behalf of</strong></div>
                                                 <div class="col-xs-7 address">
                                                     <div>
                                                         @if($billing)
