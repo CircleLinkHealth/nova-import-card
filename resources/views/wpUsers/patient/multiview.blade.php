@@ -69,18 +69,19 @@ $today = \Carbon\Carbon::now()->toFormattedDateString();
             }
 
             .sender-address-margin {
-                margin-top: 0 !important;
+                margin-top: 0.5in !important;
                 margin-bottom: 0 !important;
             }
 
             .receiver-address-padding {
-                padding-top: 2in !important;
+                padding-top: 1.8in !important;
                 margin-top: 0px !important;
                 margin-bottom: 0px !important;
             }
 
             .welcome-copy {
                 font-size: 24px;
+                margin-top: 0.3in !important;
             }
         </style>
         <div class="container" style="margin-top: -45px !important; padding-top: 0 !important;">
