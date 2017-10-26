@@ -1,5 +1,4 @@
 /// <reference path="./app.config.js" />
-/// <reference path="./socket.js" />
 /// <reference path="./time-display.js" />
 /// <reference path="./comps/modal.vue.js" />
 /// <reference path="./inactivity-tracker.js" />
