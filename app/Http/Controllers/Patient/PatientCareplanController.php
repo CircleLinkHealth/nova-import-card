@@ -186,6 +186,17 @@ class PatientCareplanController extends Controller
                 return false;
             }
             try {
+                //HTML render to help us with debugging
+                if ($request->has('render') && $request->input('render') == 'html') {
+                    return view('wpUsers.patient.multiview', [
+                        'careplans'    => [$user_id => $careplan],
+                        'isPdf'        => true,
+                        'letter'       => $letter,
+                        'problemNames' => $careplan['problem'],
+                        'careTeam'     => $user->careTeamMembers,
+                    ]);
+                }
+
                 // build pdf
                 $pdf = App::make('snappy.pdf.wrapper');
 //            leaving these here in case we need them
