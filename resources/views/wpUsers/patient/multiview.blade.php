@@ -49,23 +49,13 @@ $today = \Carbon\Carbon::now()->toFormattedDateString();
                 max-height: 1in !important;
             }
 
-            .sender-address-width-print {
-                width: 3.375in !important;
-                max-width: 3.375in !important;
-            }
-
             .sender-address-print {
                 font-size: 16px !important;
             }
 
             .receiver-address-print {
                 font-size: 16px !important;
-                height:  1in !important;
-            }
-
-            .receiver-address-width-print {
-                width: 4in !important;
-                max-width: 4in !important;
+                height: 1in !important;
             }
 
             .sender-address-margin {
@@ -74,14 +64,14 @@ $today = \Carbon\Carbon::now()->toFormattedDateString();
             }
 
             .receiver-address-padding {
-                padding-top: 1.8in !important;
-                margin-top: 0px !important;
-                margin-bottom: 0px !important;
+                padding-top: 1.7in !important;
+                margin-top: 0 !important;
+                margin-bottom: 0 !important;
             }
 
             .welcome-copy {
                 font-size: 24px;
-                margin-top: 0.3in !important;
+                margin-top: 0.5in !important;
             }
         </style>
         <div class="container" style="margin-top: -45px !important; padding-top: 0 !important;">
