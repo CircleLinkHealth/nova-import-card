@@ -69,7 +69,7 @@ $today = \Carbon\Carbon::now()->toFormattedDateString();
             }
 
             .sender-address-margin {
-                margin-top: 0.5in !important;
+                margin-top: 0in !important;
                 margin-bottom: 0 !important;
             }
 
