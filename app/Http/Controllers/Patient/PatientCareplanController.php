@@ -212,9 +212,9 @@ class PatientCareplanController extends Controller
                     'careTeam'     => $user->careTeamMembers,
                 ]);
                 $pdf->setOption('footer-center', 'Page [page]');
-                $pdf->setOption('margin-top', '25');
-                $pdf->setOption('margin-left', '5');
-                $pdf->setOption('margin-bottom', '20');
+                $pdf->setOption('margin-top', '12');
+                $pdf->setOption('margin-left', '25');
+                $pdf->setOption('margin-bottom', '15');
                 $pdf->setOption('margin-right', '31.75'); //1.25 inches
 
                 $fileName = $storageDirectory . $prefix . '-PDF_' . str_random(40) . '.pdf';
