@@ -61,6 +61,7 @@ class Kernel extends HttpKernel
         'providerDashboardACL'       => Middleware\ACL\ProviderDashboardACL::class,
         'role'                       => \Zizaco\Entrust\Middleware\EntrustRole::class,
         'verify.invite'              => \App\Http\Middleware\CheckOnboardingInvite::class,
+        'check.careplan.mode'        => \App\Http\Middleware\CheckCarePlanMode::class,
     ];
 
 }

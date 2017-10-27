@@ -7,13 +7,15 @@
     $active_nurses  = activeNurseNames();
 
     ?>
-    <script type="text/javascript">
+    
+    @push('scripts')
+    <script>
         var callUpdatePostUri = "{{ URL::route('api.callupdate') }}";
         var datatableDataUri = "{{ URL::route('datatables.anyCallsManagement') }}";
     </script>
     <script type="text/javascript" src="{{ asset('/js/admin/patientCallManagement.js') }}"></script>
     <link rel="stylesheet" href="//code.jquery.com/ui/1.11.4/themes/smoothness/jquery-ui.css">
-    <script src="//code.jquery.com/ui/1.11.4/jquery-ui.js"></script>
+    <!-- <script src="//code.jquery.com/ui/1.11.4/jquery-ui.js"></script> -->
     <script type="text/javascript" src="https://cdn.datatables.net/1.10.12/js/jquery.dataTables.min.js"></script>
     <link href="https://cdn.datatables.net/1.10.12/css/jquery.dataTables.min.css" rel="stylesheet">
 
@@ -55,6 +57,7 @@
             z-index: 1051; /* should ensure the modal body is always visible */
         }
     </style>
+    @endpush
 
 
     <div id="nurseFormWrapper" style="display:none;">

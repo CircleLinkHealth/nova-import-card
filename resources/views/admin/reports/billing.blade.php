@@ -1,13 +1,15 @@
 @extends('partials.adminUI')
 
 @section('content')
-    <style>
-        .select2-container {
-            width: 300px !important;
-        }
-    </style>
+    @push('styles')
+        <style>
+            .select2-container {
+                width: 300px !important;
+            }
+        </style>
 
-    <link rel="stylesheet" href="//cdn.datatables.net/1.10.7/css/jquery.dataTables.min.css">
+        <link rel="stylesheet" href="//cdn.datatables.net/1.10.7/css/jquery.dataTables.min.css">
+    @endpush
 
     <!-- Modal -->
     <div class="modal fade" id="problemPicker" tabindex="-1" role="dialog"
@@ -194,62 +196,89 @@
             </div>
         </div>
 
-        <script>
+        @push('scripts')
+            <script>
 
-            $(function () {
+                $(function () {
 
-                setLoadingLabels();
+                    setLoadingLabels();
 
-                $('#billable_list').DataTable({
+                    $('#billable_list').DataTable({
 
-                    processing: true,
-                    serverSide: false,
-                    "scrollX": true,
-                    select: true,
-                    ajax: {
-                        "url": '{!! url('/admin/reports/monthly-billing/v2/data') !!}',
-                        "type": "POST",
-                        "data": function (d) {
-                            d.practice_id = $('#practice_id').val();
-                            d.date        = $("#date option:selected").text()
-                        }
-                    },
-                    columns: [
-                        {data: 'provider', name: 'provider'},
-                        {data: 'name', name: 'name'},
-                        {data: 'practice', name: 'practice'},
-                        {data: 'dob', name: 'dob'},
-                        {data: 'status', name: 'status'},
-                        {data: 'ccm', name: 'ccm'},
-                        {data: 'problem1', name: 'problem1'},
-                        {data: 'problem1_code', name: 'problem1_code'},
-                        {data: 'problem2', name: 'problem2'},
-                        {data: 'problem2_code', name: 'problem2_code'},
-                        {data: 'no_of_successful_calls', name: 'no_of_successful_calls'},
-                        {data: 'approve', name: 'approve'},
-                        {data: 'reject', name: 'reject'},
-                        {data: 'report_id', name: 'report_id'},
-                        {data: 'qa', name: 'qa'},
-                    ],
-                    dom: 'Bfrtip',
-                    buttons: [
-                        'excel'
-                    ],
-                    "columnDefs": [
-                        {
-                            "targets": [13, 14],
-                            "visible": false,
-                            "searchable": false
-                        }
-                    ],
-                    "iDisplayLength": 25,
-                    "aaSorting": [14, 'desc'],
-                    "fnRowCallback": function (nRow, aData, iDisplayIndex, iDisplayIndexFull) {
-                        if (aData['background_color'] != '') {
-                            $('td', nRow).css('background-color', aData['background_color']);
-                        }
-                    },
-                    "initComplete": function (settings, json) {
+                        processing: true,
+                        serverSide: false,
+                        "scrollX": true,
+                        select: true,
+                        ajax: {
+                            "url": '{!! url('/admin/reports/monthly-billing/v2/data') !!}',
+                            "type": "POST",
+                            "data": function (d) {
+                                d.practice_id = $('#practice_id').val();
+                                d.date        = $("#date option:selected").text()
+                            }
+                        },
+                        columns: [
+                            {data: 'provider', name: 'provider'},
+                            {data: 'name', name: 'name'},
+                            {data: 'practice', name: 'practice'},
+                            {data: 'dob', name: 'dob'},
+                            {data: 'status', name: 'status'},
+                            {data: 'ccm', name: 'ccm'},
+                            {data: 'problem1', name: 'problem1'},
+                            {data: 'problem1_code', name: 'problem1_code'},
+                            {data: 'problem2', name: 'problem2'},
+                            {data: 'problem2_code', name: 'problem2_code'},
+                            {data: 'no_of_successful_calls', name: 'no_of_successful_calls'},
+                            {data: 'approve', name: 'approve'},
+                            {data: 'reject', name: 'reject'},
+                            {data: 'report_id', name: 'report_id'},
+                            {data: 'qa', name: 'qa'},
+                        ],
+                        dom: 'Bfrtip',
+                        buttons: [
+                            'excel'
+                        ],
+                        "columnDefs": [
+                            {
+                                "targets": [13, 14],
+                                "visible": false,
+                                "searchable": false
+                            }
+                        ],
+                        "iDisplayLength": 25,
+                        "aaSorting": [14, 'desc'],
+                        "fnRowCallback": function (nRow, aData, iDisplayIndex, iDisplayIndexFull) {
+                            if (aData['background_color'] != '') {
+                                $('td', nRow).css('background-color', aData['background_color']);
+                            }
+                        },
+                        "initComplete": function (settings, json) {
+
+                            var url = '{!! route('monthly.billing.count') !!}';
+
+                            $.ajax({
+                                type: "POST",
+                                url: url,
+                                data: {
+                                    practice_id: $('#practice_id').val(),
+                                    date: $("#date option:selected").text()
+                                },
+
+                                success: function (data) {
+
+                                    updateBillingCounts(data);
+
+                                }
+                            });
+                        },
+                    });
+
+                    //When a new practice is picked, update table
+                    $('.reloader').on('change', function () {
+
+                        $('#billable_list').DataTable().ajax.reload();
+
+                        setLoadingLabels();
 
                         var url = '{!! route('monthly.billing.count') !!}';
 
@@ -267,265 +296,240 @@
 
                             }
                         });
-                    },
-                });
 
-                //When a new practice is picked, update table
-                $('.reloader').on('change', function () {
 
-                    $('#billable_list').DataTable().ajax.reload();
+                    });
 
-                    setLoadingLabels();
+                    $('#select_problem').on('change', function () {
 
-                    var url = '{!! route('monthly.billing.count') !!}';
+                        if ($("#select_problem option:selected").text() == 'Other') {
 
-                    $.ajax({
-                        type: "POST",
-                        url: url,
-                        data: {
-                            practice_id: $('#practice_id').val(),
-                            date: $("#date option:selected").text()
-                        },
+                            $("#showOther").css('display', 'block');
 
-                        success: function (data) {
+                        } else {
 
-                            updateBillingCounts(data);
+                            $("#showOther").css('display', 'none');
 
                         }
+
                     });
 
 
-                });
+                    $(".practices").select2();
 
-                $('#select_problem').on('change', function () {
+                    //HANDLE ACCEPTANCE
+                    $('#billable_list').on('change', '.approved_checkbox', function () {
 
-                    if ($("#select_problem option:selected").text() == 'Other') {
+                        setLoadingLabels();
 
-                        $("#showOther").css('display', 'block');
+                        var rejectedBox = $('#' + this.id + '.rejected_checkbox');
+                        let approved    = 0;
 
-                    } else {
+                        if ($(this).is(':checked')) {
+    //
+                            approved = 1;
+
+                            if (rejectedBox.is(':checked') == true) {
+
+                                rejectedBox.attr('checked', false);
+
+                            }
+    //
+                        }
+
+                        var url = '{!! route('monthly.billing.approve') !!}';
+
+                        $.ajax({
+                            type: "POST",
+                            url: url,
+                            data: {
+                                //send report id to mark
+                                report_id: this.id,
+                                practice_id: $('#practice_id').val(),
+                                approved: approved,
+                                date: $("#date option:selected").text()
+                            },
+
+                            success: function (data) {
+
+                                console.log(data);
+                                updateBillingCounts(data.counts);
+
+                            }
+                        });
+
+                    });
+
+                    //HANDLE REJECTION
+                    $('#billable_list').on('change', '.rejected_checkbox', function () {
+
+                        setLoadingLabels();
+
+                        var approveBox = $('.approved_checkbox#' + this.id);
+                        var rejected   = 0;
+
+                        if ($(this).is(':checked')) {
+
+                            rejected = 1;
+
+                            if (approveBox.is(':checked') == true) {
+
+                                approveBox.attr('checked', false);
+
+                            }
+
+                        }
+
+                        var url = '{!! route('monthly.billing.reject') !!}';
+
+
+                        $.ajax({
+                            type: "POST",
+                            url: url,
+                            data: {
+                                //send report id to mark
+                                report_id: this.id,
+                                practice_id: $('#practice_id').val(),
+                                rejected: rejected,
+                                date: $("#date option:selected").text()
+
+                            },
+
+                            success: function (data) {
+
+                                updateBillingCounts(data.counts);
+
+                            }
+                        });
+
+                    });
+
+                    //BUILD MODAL FOR PROBLEM PICKER
+                    $('#billable_list').on('click', '.problemPicker', function () {
+
+                        name = $(this).attr('patient');
+                        console.log(name);
+                        $("#patientName").html(name);
+
+                        $('#report_id').val(this.id);
+                        $('#problem_no').val(this.name);
+                        $('#has_problem').val(0);
+
+                        //to update the billing counts
+                        let practice = $('#practice_id option:selected').val();
+                        $('#modal_practice_id').val(practice);
+                        let date = $("#date option:selected").text();
+                        $('#modal_date').val(date);
+
+                        $('#otherProblem').empty();
+                        $('#select_problem').empty();
+
+                        //the options are stored in a | delimted string
+                        $.each(this.value.split('|'), function (key, value) {
+                            $('#select_problem').append('<option value="' + value + '">' + (value == '-1' ? 'select' : value) + '</option>');
+                        });
+
+                        $('#select_problem').append('<option value="other" name="other">Other</option>');
+
+                        $('#problemPicker').modal('show');
+
+                    });
+
+                    //BUILD MODAL FOR CODE PICKER
+                    $('#billable_list').on('click', '.codePicker', function () {
+
+                        name = $(this).attr('patient');
+                        console.log(name);
+                        $("#patientName").html(name);
+
+                        $('#report_id').val(this.id);
+                        $('#problem_no').val(this.name);
+                        $('#has_problem').val(1);
+
+
+                        let practice = $("#practice_id option:selected").text();
+                        $('#modal_practice_id').val(practice);
+
+                        let date = $("#date option:selected").text();
+                        $('#modal_date').val(date);
+
+                        console.log(practice);
+                        console.log(date);
+
+                        $('#otherProblem').empty();
+                        $('#select_problem').empty();
+
+                        //the options are stored in a | delimted string
+                        $('#select_problem').append('<option value="' + this.value + '" selected disabled>' + this.value + '</option>');
+
+                        $('#problemPicker').modal('show');
+
+                    });
+
+                    //HANDLE MODAL SUBMIT
+                    $('#confirm_problem').click(function () {
+
+                        setLoadingLabels();
+
+                        let url = '{!!route('monthly.billing.store-problem')!!}';
 
                         $("#showOther").css('display', 'none');
 
-                    }
+                        $.ajax({
+                            type: "POST",
+                            url: url,
+                            data: $('#problem_form').serialize(),
+
+                            success: function (data) {
+
+                                updateBillingCounts(data.counts);
+                                console.log(data.counts);
+
+                                $('#billable_list').DataTable().ajax.reload();
+                                $('#problemPicker').modal('hide');
+
+                                //set the modal to cleared for further use
+                                $('#select_problem').val('');
+                                $('#otherProblem').val('');
+                                $('#code').val('');
+                                $('#report_id').val('');
+                                $('#problem_no').val('');
+
+                            }
+                        });
+
+
+                    })
 
                 });
 
+                function updateBillingCounts(data) {
 
-                $(".practices").select2();
+                    $("#approved-count").text(data.approved);
+                    $("#toQA-count").text(data.toQA);
+                    $("#rejected-count").text(data.rejected);
 
-                //HANDLE ACCEPTANCE
-                $('#billable_list').on('change', '.approved_checkbox', function () {
+                }
 
-                    setLoadingLabels();
+                function setLoadingLabels() {
 
-                    var rejectedBox = $('#' + this.id + '.rejected_checkbox');
-                    let approved    = 0;
+                    $("#approved-count").text('Loading...');
+                    $("#toQA-count").text('Loading...');
+                    $("#rejected-count").text('Loading...');
 
-                    if ($(this).is(':checked')) {
-//
-                        approved = 1;
+                }
 
-                        if (rejectedBox.is(':checked') == true) {
 
-                            rejectedBox.attr('checked', false);
+            </script>
 
-                        }
-//
-                    }
-
-                    var url = '{!! route('monthly.billing.approve') !!}';
-
-                    $.ajax({
-                        type: "POST",
-                        url: url,
-                        data: {
-                            //send report id to mark
-                            report_id: this.id,
-                            practice_id: $('#practice_id').val(),
-                            approved: approved,
-                            date: $("#date option:selected").text()
-                        },
-
-                        success: function (data) {
-
-                            console.log(data);
-                            updateBillingCounts(data.counts);
-
-                        }
-                    });
-
-                });
-
-                //HANDLE REJECTION
-                $('#billable_list').on('change', '.rejected_checkbox', function () {
-
-                    setLoadingLabels();
-
-                    var approveBox = $('.approved_checkbox#' + this.id);
-                    var rejected   = 0;
-
-                    if ($(this).is(':checked')) {
-
-                        rejected = 1;
-
-                        if (approveBox.is(':checked') == true) {
-
-                            approveBox.attr('checked', false);
-
-                        }
-
-                    }
-
-                    var url = '{!! route('monthly.billing.reject') !!}';
-
-
-                    $.ajax({
-                        type: "POST",
-                        url: url,
-                        data: {
-                            //send report id to mark
-                            report_id: this.id,
-                            practice_id: $('#practice_id').val(),
-                            rejected: rejected,
-                            date: $("#date option:selected").text()
-
-                        },
-
-                        success: function (data) {
-
-                            updateBillingCounts(data.counts);
-
-                        }
-                    });
-
-                });
-
-                //BUILD MODAL FOR PROBLEM PICKER
-                $('#billable_list').on('click', '.problemPicker', function () {
-
-                    name = $(this).attr('patient');
-                    console.log(name);
-                    $("#patientName").html(name);
-
-                    $('#report_id').val(this.id);
-                    $('#problem_no').val(this.name);
-                    $('#has_problem').val(0);
-
-                    //to update the billing counts
-                    let practice = $('#practice_id option:selected').val();
-                    $('#modal_practice_id').val(practice);
-                    let date = $("#date option:selected").text();
-                    $('#modal_date').val(date);
-
-                    $('#otherProblem').empty();
-                    $('#select_problem').empty();
-
-                    //the options are stored in a | delimted string
-                    $.each(this.value.split('|'), function (key, value) {
-                        $('#select_problem').append('<option value="' + value + '">' + (value == '-1' ? 'select' : value) + '</option>');
-                    });
-
-                    $('#select_problem').append('<option value="other" name="other">Other</option>');
-
-                    $('#problemPicker').modal('show');
-
-                });
-
-                //BUILD MODAL FOR CODE PICKER
-                $('#billable_list').on('click', '.codePicker', function () {
-
-                    name = $(this).attr('patient');
-                    console.log(name);
-                    $("#patientName").html(name);
-
-                    $('#report_id').val(this.id);
-                    $('#problem_no').val(this.name);
-                    $('#has_problem').val(1);
-
-
-                    let practice = $("#practice_id option:selected").text();
-                    $('#modal_practice_id').val(practice);
-
-                    let date = $("#date option:selected").text();
-                    $('#modal_date').val(date);
-
-                    console.log(practice);
-                    console.log(date);
-
-                    $('#otherProblem').empty();
-                    $('#select_problem').empty();
-
-                    //the options are stored in a | delimted string
-                    $('#select_problem').append('<option value="' + this.value + '" selected disabled>' + this.value + '</option>');
-
-                    $('#problemPicker').modal('show');
-
-                });
-
-                //HANDLE MODAL SUBMIT
-                $('#confirm_problem').click(function () {
-
-                    setLoadingLabels();
-
-                    let url = '{!!route('monthly.billing.store-problem')!!}';
-
-                    $("#showOther").css('display', 'none');
-
-                    $.ajax({
-                        type: "POST",
-                        url: url,
-                        data: $('#problem_form').serialize(),
-
-                        success: function (data) {
-
-                            updateBillingCounts(data.counts);
-                            console.log(data.counts);
-
-                            $('#billable_list').DataTable().ajax.reload();
-                            $('#problemPicker').modal('hide');
-
-                            //set the modal to cleared for further use
-                            $('#select_problem').val('');
-                            $('#otherProblem').val('');
-                            $('#code').val('');
-                            $('#report_id').val('');
-                            $('#problem_no').val('');
-
-                        }
-                    });
-
-
-                })
-
-            });
-
-            function updateBillingCounts(data) {
-
-                $("#approved-count").text(data.approved);
-                $("#toQA-count").text(data.toQA);
-                $("#rejected-count").text(data.rejected);
-
-            }
-
-            function setLoadingLabels() {
-
-                $("#approved-count").text('Loading...');
-                $("#toQA-count").text('Loading...');
-                $("#rejected-count").text('Loading...');
-
-            }
-
-
-        </script>
-
-        <script src="//cdn.datatables.net/1.10.15/js/jquery.dataTables.min.js"></script>
-        <script src="//cdn.datatables.net/buttons/1.3.1/js/dataTables.buttons.min.js"></script>
-        <script src="//cdnjs.cloudflare.com/ajax/libs/jszip/3.1.3/jszip.min.js"></script>
-        <script src="//cdn.rawgit.com/bpampuch/pdfmake/0.1.27/build/pdfmake.min.js"></script>
-        <script src="//cdn.rawgit.com/bpampuch/pdfmake/0.1.27/build/vfs_fonts.js"></script>
-        <script src="//cdn.datatables.net/buttons/1.3.1/js/buttons.html5.min.js"></script>
-        <script src="//cdn.datatables.net/buttons/1.3.1/js/buttons.print.min.js"></script>
+            <script src="//cdn.datatables.net/1.10.15/js/jquery.dataTables.min.js"></script>
+            <script src="//cdn.datatables.net/buttons/1.3.1/js/dataTables.buttons.min.js"></script>
+            <script src="//cdnjs.cloudflare.com/ajax/libs/jszip/3.1.3/jszip.min.js"></script>
+            <script src="//cdn.rawgit.com/bpampuch/pdfmake/0.1.27/build/pdfmake.min.js"></script>
+            <script src="//cdn.rawgit.com/bpampuch/pdfmake/0.1.27/build/vfs_fonts.js"></script>
+            <script src="//cdn.datatables.net/buttons/1.3.1/js/buttons.html5.min.js"></script>
+            <script src="//cdn.datatables.net/buttons/1.3.1/js/buttons.print.min.js"></script>
+        @endpush
 
 
 

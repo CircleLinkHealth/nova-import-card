@@ -42,7 +42,7 @@ class ProcessCcdaLGHMixup implements ShouldQueue
         $json = (new CCDImporterRepository())->toJson($ccda->xml);
 
         if ($json) {
-            $ccda->json = $json;
+            $json;
 
             $decoded = json_decode($json);
 

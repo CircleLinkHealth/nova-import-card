@@ -6,6 +6,7 @@ use Illuminate\Support\Collection;
 use Tests\Helpers\CarePlanHelpers;
 use Tests\Helpers\TimeTrackingHelpers;
 use Tests\Helpers\UserHelpers;
+use Tests\TestCase;
 
 class TimeTrackingOverlapTest extends TestCase
 {

@@ -1,9 +1,15 @@
 @extends('partials.adminUI')
 
 @section('content')
-    <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/font-awesome/4.4.0/css/font-awesome.min.css">
-    <script src="{{ asset('/js/bootstrap-select.min.js') }}"></script>
-    <script src="{{ asset('/js/typeahead.bundle.js') }}"></script>
+    @push('styles')
+        <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/font-awesome/4.4.0/css/font-awesome.min.css">
+    @endpush
+    {{--  <script src="{{ asset('/js/bootstrap-select.min.js') }}"></script>  --}}
+
+    @push('scripts')
+        <script src="{{ asset('/js/typeahead.bundle.js') }}"></script>
+    @endpush
+    
     <div class="container-fluid">
         {!! Form::open(array('url' => URL::route('admin.families.store', array()), 'class' => 'form-horizontal')) !!}
         <div class="row">
@@ -39,5 +45,7 @@
 
             </div>
         </div>
+    </div>
+    </div>
 @stop
 

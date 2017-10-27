@@ -1,16 +1,19 @@
 <?php namespace App\Importer\Models\ItemLogs;
 
 use App\Contracts\Importer\MedicalRecord\Section\ItemLog;
+use App\Contracts\Models\CCD\Problem;
 use App\Importer\Models\ImportedItems\ProblemImport;
+use App\Traits\HasProblemCodes;
 use App\Traits\Relationships\BelongsToCcda;
 use App\Traits\Relationships\BelongsToVendor;
 use Illuminate\Database\Eloquent\Model;
 
-class ProblemLog extends Model implements ItemLog
+class ProblemLog extends Model implements ItemLog, Problem
 {
 
     use BelongsToCcda,
-        BelongsToVendor;
+        BelongsToVendor,
+        HasProblemCodes;
 
     protected $table = 'ccd_problem_logs';
 
@@ -42,4 +45,7 @@ class ProblemLog extends Model implements ItemLog
         return $this->hasOne(ProblemImport::class);
     }
 
+    public function codes() {
+        return $this->hasMany(ProblemCodeLog::class, 'ccd_problem_log_id');
+    }
 }

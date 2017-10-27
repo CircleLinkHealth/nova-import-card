@@ -187,7 +187,7 @@
 
 @endsection
 
-@section('scripts')
+@push('scripts')
     <script>
         $(document).ready(function () {
             $(".scroll-to-form").click(function () {
@@ -199,6 +199,6 @@
             });
         });
     </script>
-@endsection
+@endpush
 
 

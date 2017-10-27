@@ -49,14 +49,18 @@
         <link rel="stylesheet" href="{{ asset('/webix/codebase/webix.css') }}" type="text/css">
 
         <link href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.3/css/select2.min.css" rel="stylesheet"/>
-
-        {{--Prefer to load JS assets in the footer. These have to be loaded here :(--}}
-        <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
-        <script src="//code.jquery.com/ui/1.11.4/jquery-ui.js"></script>
-        <script src="//cdnjs.cloudflare.com/ajax/libs/select2/4.0.3/js/select2.min.js"></script>
-
-        <script src="{{ asset('/webix/codebase/webix.js') }}" type="text/javascript"></script>
+        @stack('styles')
     @endif
+    <style>
+        span.twitter-typeahead .twitter-typeahead {
+            position: absolute !important;
+        }
+
+        #bloodhound > .twitter-typeahead > .tt-menu > .tt-dataset.tt-dataset-User_list {
+            display: none;
+        }
+    </style>
+    @stack('styles')
 </head>
 <body>
 
@@ -88,6 +92,9 @@
         @include('partials.providerUI.notification-banner')
     @endif
 
+    <open-modal></open-modal>
+    <notifications></notifications>
+
 </div> <!-- end #app -->
 
 @if(!isset($isPdf))
@@ -103,17 +110,13 @@
     <script src='https://cdn.polyfill.io/v2/polyfill.min.js'></script>
 @endif
 
-<script src="{{ asset('/js/idle-timer.min.js') }}"></script>
-<script src="{{ asset('/js/bootstrap-select.min.js') }}"></script>
-<script src="{{ asset('/js/typeahead.bundle.js') }}"></script>
+<script src="{{asset('compiled/js/app-provider-ui.js')}}"></script>
+<script type="text/javascript" src="{{ asset('compiled/js/issue-688.js') }}"></script>
+
 @include('partials.searchjs')
 @include('partials.providerUItimer')
-<script src="{{asset('/js/bootstrap.min.js')}}"></script>
-<script src="{{asset('/js/DateTimePicker.min.js')}}"></script>
 
-@yield('scripts')
-
-<script src="{{asset('/js/fab.js') }}"></script>
+@stack('scripts')
 @endif
 </body>
 

@@ -19,19 +19,11 @@ if (isset($patient) && !empty($patient)) {
 @if(!isset($isPdf))
     @section('title', 'Care Plan View/Print')
     @section('activity', 'Care Plan View/Print')
-
-
-    @section('scripts')
-        {{--contains care team modules as well--}}
-        <script src="{{asset('compiled/js/v-pdf-careplans.js')}}"></script>
-    @endsection
 @endif
 
 @section('content')
     @if(isset($patient) && !empty($patient))
         <div id="v-pdf-careplans" class="container">
-            <open-modal></open-modal>
-            <notifications></notifications>
             <section class="patient-summary">
                 <div class="patient-info__main">
                     @if(!isset($isPdf))

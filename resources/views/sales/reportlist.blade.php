@@ -20,9 +20,9 @@
     </div>
 
 
-    <script>
-
-        $('.collapse').collapse();
-
-    </script>
+    @push('scripts')
+        <script>
+            $('.collapse').collapse();
+        </script>
+    @endpush
 @stop

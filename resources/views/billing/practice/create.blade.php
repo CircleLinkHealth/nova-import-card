@@ -2,12 +2,13 @@
 
 @section('content')
 
-    <script>
-        $(document).ready(function () {
-            $(".practices").select2();
-
-        });
-    </script>
+    @push('scripts')
+        <script>
+            $(document).ready(function () {
+                $(".practices").select2();
+            });
+        </script>
+    @endpush
 
     <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/font-awesome/4.4.0/css/font-awesome.min.css">
     {!! Form::open(array('url' => URL::route('practice.billing.make', array()),'class' => 'form-horizontal')) !!}
@@ -91,9 +92,9 @@
     </div>
 
 
-    <script>
-
-        $('.collapse').collapse();
-
-    </script>
+    @push('scripts')
+        <script>
+            $('.collapse').collapse();
+        </script>
+    @endpush
 @stop

@@ -129,12 +129,6 @@ class Service
             $ccdaRequest->successful_call = true;
             $ccdaRequest->save();
 
-            $repo = new CCDImporterRepository();
-
-            $json = $repo->toJson($ccda->xml);
-            $ccda->json = $json;
-            $ccda->save();
-
             $ccda->import();
 
             if (app()->environment('worker')) {
