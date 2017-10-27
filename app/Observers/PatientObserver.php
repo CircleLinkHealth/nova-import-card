@@ -38,6 +38,11 @@ class PatientObserver
 
         $pdfPath = $note->toPdf();
 
+        if (!$pdfPath) {
+            \Log::error("File not found: $pdfPath");
+            return;
+        }
+
         if ($patient->user->primaryPractice
             ->settings
             ->first()

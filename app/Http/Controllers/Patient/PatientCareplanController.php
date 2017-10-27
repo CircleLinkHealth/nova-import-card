@@ -186,6 +186,17 @@ class PatientCareplanController extends Controller
                 return false;
             }
             try {
+                //HTML render to help us with debugging
+                if ($request->has('render') && $request->input('render') == 'html') {
+                    return view('wpUsers.patient.multiview', [
+                        'careplans'    => [$user_id => $careplan],
+                        'isPdf'        => true,
+                        'letter'       => $letter,
+                        'problemNames' => $careplan['problem'],
+                        'careTeam'     => $user->careTeamMembers,
+                    ]);
+                }
+
                 // build pdf
                 $pdf = App::make('snappy.pdf.wrapper');
 //            leaving these here in case we need them
@@ -201,7 +212,9 @@ class PatientCareplanController extends Controller
                     'careTeam'     => $user->careTeamMembers,
                 ]);
                 $pdf->setOption('footer-center', 'Page [page]');
-                //$pdf->setOption('margin-top', '2');
+                $pdf->setOption('margin-top', '0');
+                $pdf->setOption('margin-left', '5');
+                $pdf->setOption('margin-right', '31.75'); //1.25 inches
 
                 $fileName = $storageDirectory . $prefix . '-PDF_' . str_random(40) . '.pdf';
                 $fileNameWithPath = base_path($fileName);

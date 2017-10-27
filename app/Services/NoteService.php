@@ -339,7 +339,7 @@ class NoteService
 
         foreach ($mails as $mail) {
 
-            $mail_recipient = User::find($mail->receiver_cpm_id);
+            $mail_recipient = User::withTrashed()->find($mail->receiver_cpm_id);
 
             if ($mail_recipient->hasRole('provider')) {
 

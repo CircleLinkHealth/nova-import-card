@@ -64,6 +64,11 @@ class MakeAndDispatchAuditReports implements ShouldQueue
 
         $path = storage_path("download/$fileName");
 
+        if (!$path) {
+            \Log::error("File not found: $path");
+            return;
+        }
+
         $settings = $this->patient->primaryPractice->settings->firstOrNew();
 
         $dmSent = $this->patient->locations->get()->map(function ($location) use ($path, $settings, $fileName) {

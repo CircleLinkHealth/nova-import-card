@@ -88,7 +88,7 @@
 
     @yield('content')
 
-    @if(isset($showBanner))
+    @if(isset($showBanner) && !isset($isPdf))
         @include('partials.providerUI.notification-banner')
     @endif
 
