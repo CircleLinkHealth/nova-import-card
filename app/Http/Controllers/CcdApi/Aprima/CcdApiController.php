@@ -358,9 +358,6 @@ class CcdApiController extends Controller
         try {
             $json = $this->importer->toJson($xml);
 
-            $ccdObj->json = $json;
-            $ccdObj->save();
-
             $providerId = empty($provider['id'])
                 ? null
                 : $provider['id'];

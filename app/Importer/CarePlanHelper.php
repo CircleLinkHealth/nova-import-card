@@ -9,6 +9,7 @@ use App\CLH\CCD\Importer\StorageStrategies\Biometrics\BloodPressure;
 use App\CLH\CCD\Importer\StorageStrategies\Biometrics\Weight;
 use App\CLH\CCD\Importer\StorageStrategies\Problems\ProblemsToMonitor;
 use App\CLH\Helpers\StringManipulation;
+use App\CLH\Repositories\CCDImporterRepository;
 use App\Models\CCD\Allergy;
 use App\Models\CCD\CcdInsurancePolicy;
 use App\Models\CCD\Medication;
@@ -16,6 +17,7 @@ use App\Models\CCD\Problem;
 use App\Models\CPM\CpmMisc;
 use App\Models\MedicalRecords\Ccda;
 use App\Models\MedicalRecords\ImportedMedicalRecord;
+use App\Models\ProblemCode;
 use App\Patient;
 use App\PatientContactWindow;
 use App\PhoneNumber;
@@ -23,14 +25,14 @@ use App\User;
 
 class CarePlanHelper
 {
-    private $allergiesImport;
-    private $demographicsImport;
-    private $medicationsImport;
-    private $problemsImport;
-    private $user;
-    private $importedMedicalRecord;
-    private $carePlan;
-    private $patientInfo;
+    public $allergiesImport;
+    public $demographicsImport;
+    public $medicationsImport;
+    public $problemsImport;
+    public $user;
+    public $importedMedicalRecord;
+    public $carePlan;
+    public $patientInfo;
 
     public function __construct(
         User $user,
@@ -85,11 +87,11 @@ class CarePlanHelper
 
         $ccda = Ccda::find($this->importedMedicalRecord->medical_record_id);
 
-        //doing this here to not break Gavril's View CCDA button
+        //doing this here to not break View CCDA button
         $ccda->patient_id = $this->user->id;
         $ccda->save();
 
-        $decodedCcda = json_decode($ccda->json);
+        $decodedCcda = json_decode((new CCDImporterRepository())->toJson($ccda->xml));
 
         //Weight
         $weightParseAndStore = new Weight($this->user->program_id, $this->user);
@@ -320,7 +322,7 @@ class CarePlanHelper
      *
      * @return $this
      */
-    private function storeMedications()
+    public function storeMedications()
     {
         if (empty($this->medicationsImport)) {
             return $this;
@@ -356,7 +358,7 @@ class CarePlanHelper
      *
      * @return $this
      */
-    private function storeProblemsToMonitor()
+    public function storeProblemsToMonitor()
     {
         if (empty($this->problemsImport)) {
             return $this;
@@ -384,7 +386,7 @@ class CarePlanHelper
      *
      * @return $this
      */
-    private function storeProblemsList()
+    public function storeProblemsList()
     {
         if (empty($this->problemsImport)) {
             return $this;
@@ -395,13 +397,23 @@ class CarePlanHelper
                 'problem_import_id'  => $problem->id,
                 'ccd_problem_log_id' => $problem->ccd_problem_log_id,
                 'name'               => $problem->name,
-                'code'               => $problem->code,
-                'code_system'        => $problem->code_system,
-                'code_system_name'   => $problem->code_system_name,
                 'activate'           => $problem->activate,
                 'cpm_problem_id'     => $problem->cpm_problem_id,
                 'patient_id'         => $this->user->id,
             ]);
+
+            $problemLog = $problem->ccdLog;
+
+            if ($problemLog) {
+                $problemLog->codes->map(function ($codeLog) use ($ccdProblem) {
+                    ProblemCode::create([
+                        'problem_id' => $ccdProblem->id,
+                        'code_system_name' => $codeLog->code_system_name,
+                        'code_system_oid' => $codeLog->code_system_oid,
+                        'code' => $codeLog->code,
+                    ]);
+                });
+            }
         }
 
         $misc = CpmMisc::whereName(CpmMisc::OTHER_CONDITIONS)
@@ -417,7 +429,7 @@ class CarePlanHelper
      *
      * @return $this
      */
-    private function storeAllergies()
+    public function storeAllergies()
     {
         if (empty($this->allergiesImport)) {
             return $this;
@@ -445,7 +457,7 @@ class CarePlanHelper
      *
      * @return $this
      */
-    private function createNewCarePlan()
+    public function createNewCarePlan()
     {
         $this->carePlan = CarePlan::updateOrCreate([
             'user_id' => $this->user->id,

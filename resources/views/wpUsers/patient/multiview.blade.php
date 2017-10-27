@@ -31,6 +31,10 @@ $today = \Carbon\Carbon::now()->toFormattedDateString();
         $lead = $patient->leadContact();
         ?>
         <style type="text/css">
+            body {
+                margin: 0;
+            }
+
             div.address {
                 line-height: 1.1em;
                 font-family: 'Roboto', sans-serif;
@@ -39,81 +43,94 @@ $today = \Carbon\Carbon::now()->toFormattedDateString();
             div.breakhere {
                 page-break-after: always;
             }
+
+            .address-height-print {
+                height: 1in !important;
+                max-height: 1in !important;
+            }
+
+            .sender-address-print {
+                font-size: 16px !important;
+            }
+
+            .receiver-address-print {
+                font-size: 16px !important;
+                height: 1in !important;
+            }
+
+            .receiver-address-padding {
+                padding-top: 1.7in !important;
+                margin-top: 0 !important;
+                margin-bottom: 0 !important;
+            }
+
+            .welcome-copy {
+                font-size: 24px;
+                margin-top: 0.5in !important;
+            }
         </style>
         <div class="container">
             <section class="patient-summary">
                 <div class="patient-info__main">
-                    <div class="row">
-                        <div class="col-xs-12 text-right hidden-print">
-					<span class="btn btn-group text-right">
-				<form class="lang" action="#" method="POST" id="form">
-                    {{ csrf_field() }}
-                    <input type="hidden" name="lang" value="es"/>
-
-                </form></span></div>
-                    </div>
-                    <div class="patient-info__main">
-                    </div>
                     @if($letter)
-                        <div class="patient-info__main">
+                        <div class="patient-info__main ">
                             <div class="row gutter">
                                 <div class="col-xs-12">
-                                    <div class="col-xs-1 col-xs-offset-5"></div>
-                                    <div class="col-xs-12 address"><br><strong>On Behalf of</strong></div>
-                                    <div class="col-xs-7 address">
-                                        @if($billing)
-                                            @if($billing->fullName){{$billing->fullName}}@endif
-                                        @endif
+                                    <div class="row address-height-print">
+                                        <div class="col-xs-12 sender-address-print">
+                                            <div class="row">
+                                                <div class="col-xs-12 address"><strong>On Behalf of</strong></div>
+                                                <div class="col-xs-7 address">
+                                                    <div>
+                                                        @if($billing)
+                                                            @if($billing->fullName){{$billing->fullName}}@endif
+                                                        @endif
+                                                    </div>
+                                                    <div>
+                                                        {{$patient->primaryPractice->display_name}}
+                                                    </div>
+                                                    <div>
+                                                        @if($patient->getPreferredLocationAddress())
+                                                            <div>{{$patient->getPreferredLocationAddress()->address_line_1}}</div>
+                                                            <!-- <div class="col-xs-4 col-xs-offset-1 print-row text-right">Phone: 203 847 5890</div> -->
+                                                            <div>{{$patient->getPreferredLocationAddress()->city}}
+                                                                , {{$patient->getPreferredLocationAddress()->state}} {{$patient->getPreferredLocationAddress()->postal_code}}</div>
+                                                        @endif
+                                                    </div>
+                                                </div>
+                                                <div class="col-xs-4 col-xs-offset-1 print-row text-right">
+                                                    <div>290 Harbor Drive</div>
+                                                    <div>Stamford, CT 06902</div>
+                                                </div>
+                                            </div>
+                                        </div>
                                     </div>
-                                    <div class="col-xs-4 col-xs-offset-1 print-row text-right">290 Harbor Drive</div>
-                                    <div class="col-xs-7 address">{{$patient->primaryPractice->display_name}}</div>
-                                    <div class="col-xs-4 col-xs-offset-1 print-row text-right">Stamford, CT 06902</div>
-                                    @if($patient->getPreferredLocationAddress())
-                                        <div class="col-xs-12 address">{{$patient->getPreferredLocationAddress()->address_line_1}}</div>
-                                        <!-- <div class="col-xs-4 col-xs-offset-1 print-row text-right">Phone: 203 847 5890</div> -->
-                                        <div class="col-xs-12 address">{{$patient->getPreferredLocationAddress()->city}}
-                                            , {{$patient->getPreferredLocationAddress()->state}} {{$patient->getPreferredLocationAddress()->postal_code}}</div>
-                                @endif
-                                <!-- <div class="col-xs-4 col-xs-offset-1 print-row text-right">Fax: 203 847 5899</div> -->
-                                    <!-- <div class="col-xs-12 address"></div> -->
+
+                                    <div class="row receiver-address-padding">
+                                        <div class="col-xs-12 receiver-address-print">
+                                            <div class="row">
+                                                <div class="col-xs-8">
+                                                    <div class="row">
+                                                        <div class="col-xs-12 address">{{strtoupper($patient->fullName)}}</div>
+                                                        <div class="col-xs-12 address">{{strtoupper($patient->address)}}</div>
+                                                        <div class="col-xs-12 address"> {{strtoupper($patient->city)}}
+                                                            , {{strtoupper($patient->state)}} {{strtoupper($patient->zip)}}</div>
+                                                    </div>
+                                                </div>
+                                                <div class="col-xs-4 text-right">
+                                                    <br>
+                                                    <?= date("F d, Y") ?>
+                                                </div>
+                                            </div>
+
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
 
-                            <div class="row gutter">
-                            </div>
-                            <div class="row gutter">
-                                <div class="col-xs-12 col-sm-12">&nbsp;</div>
-                            </div>
-                            <div class="row gutter">
-                                <div class="col-xs-12 col-sm-12">&nbsp;</div>
-                            </div>
-                            <div class="row gutter">
-                                <div class="col-xs-12 col-sm-12">&nbsp;</div>
-                            </div>
-                            <div class="row gutter">
-                                <div class="col-xs-12 col-sm-12">&nbsp;</div>
-                            </div>
-                            <div class="row gutter">
-                                <div class="col-xs-12">
-                                    <div class="col-xs-9 address">{{strtoupper($patient->fullName)}}</div>
-                                    <div class="col-xs-9 address">{{strtoupper($patient->address)}}</div>
-                                    <div class="col-xs-9 address"> {{strtoupper($patient->city)}}
-                                        , {{strtoupper($patient->state)}} {{strtoupper($patient->zip)}}</div>
-                                </div>
-                            </div>
-                            <div class="row address">
-                            </div>
-                            <div class="row address">
-                            </div>
-                            <div class="row gutter">
-                            </div>
-                            <div class="row gutter">
-                                <div class="col-xs-10 text-right"><?= date("F d, Y") ?></div>
-                            </div>
                             <div class="row gutter">
                                 <div class="col-xs-10 welcome-copy">
                                     <div class="row gutter">
-                                        <BR><BR><BR><BR>
                                         Dear {{ucfirst(strtolower($patient->first_name))}} {{ucfirst(strtolower($patient->last_name))}}
                                         ,
                                     </div>

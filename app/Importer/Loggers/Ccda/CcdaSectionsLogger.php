@@ -10,6 +10,7 @@ use App\Importer\Models\ItemLogs\DemographicsLog;
 use App\Importer\Models\ItemLogs\DocumentLog;
 use App\Importer\Models\ItemLogs\InsuranceLog;
 use App\Importer\Models\ItemLogs\MedicationLog;
+use App\Importer\Models\ItemLogs\ProblemCodeLog;
 use App\Importer\Models\ItemLogs\ProblemLog;
 use App\Importer\Models\ItemLogs\ProviderLog;
 use App\Models\MedicalRecords\Ccda;
@@ -23,13 +24,12 @@ class CcdaSectionsLogger implements MedicalRecordLogger
 
     protected $foreignKeys = [];
     protected $ccdaId;
+    private $problemLogs;
 
 
     public function __construct(Ccda $ccd)
     {
-        $this->ccd = $ccd->json
-            ? json_decode($ccd->json)
-            : json_decode((new CCDImporterRepository())->toJson($ccd->xml));
+        $this->ccd = json_decode((new CCDImporterRepository())->toJson($ccd->xml));
 
         $this->ccdaId = $ccd->id;
         $this->vendorId = $ccd->vendor_id;
@@ -110,9 +110,17 @@ class CcdaSectionsLogger implements MedicalRecordLogger
         $problems = $this->ccd->problems;
 
         foreach ($problems as $prob) {
-            $saved = ProblemLog::create(
+            $problemLog = ProblemLog::create(
                 array_merge($this->transformer->problem($prob), $this->foreignKeys)
             );
+
+            $codes = $this->transformer->problemCodes($prob, $problemLog);
+
+            foreach ($codes as $code) {
+                ProblemCodeLog::create($code);
+            }
+
+            $this->problemLogs = $problemLog;
         }
 
         return $this;

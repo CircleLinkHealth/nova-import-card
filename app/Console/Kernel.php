@@ -20,6 +20,7 @@ use App\Console\Commands\QueueCcdaToDetermineEnrollmentEligibility;
 use App\Console\Commands\QueueMakeWelcomeCallsList;
 use App\Console\Commands\QueueSendAuditReports;
 use App\Console\Commands\RecalculateCcmTime;
+use App\Console\Commands\ReImportCcdsToGetTranslations;
 use App\Console\Commands\ResetCcmTime;
 use App\Console\Commands\SendCarePlanApprovalReminderTestEmail;
 use App\Console\Commands\SplitMergedCcdas;
@@ -60,6 +61,7 @@ class Kernel extends ConsoleKernel
         EmailWeeklyReports::class,
         QueueMakeWelcomeCallsList::class,
         SendCarePlanApprovalReminderTestEmail::class,
+        ReImportCcdsToGetTranslations::class,
     ];
 
     /**
