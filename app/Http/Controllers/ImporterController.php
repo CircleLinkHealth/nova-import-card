@@ -181,7 +181,7 @@ class ImporterController extends Controller
             dispatch(new TrainCcdaImporter($ccda));
         }
 
-        return "The CCDA is being processed. A message will be sent to #ccda-trainer on Slack when completed";
+        return redirect()->route('view.files.ready.to.import');
     }
 
     public function storeTrainingFeatures(Request $request)
