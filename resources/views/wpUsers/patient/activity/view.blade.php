@@ -32,7 +32,7 @@
                                         </div>
                                         <div class="col-sm-12">
                                             <div class="form-group">
-                                                <select id="activityKey" name="type" class="selectpicker" data-size="10"
+                                                <select id="activityKey" name="type" class="selectpicker form-control" data-size="10"
                                                         required disabled>
                                                     <option value="">Select Activity</option>
                                                     <optgroup label="">
@@ -52,7 +52,7 @@
                                         </div>
                                         <div class="col-sm-12">
                                             <div class="form-group">
-                                                <select id="performedBy" name="provider_id" class="selectpicker"
+                                                <select id="performedBy" name="provider_id" class="selectpicker form-control"
                                                         data-size="10" disabled>
                                                     <option value="391">{{$activity['provider_name']}}</option>
                                                 </select>
@@ -74,7 +74,7 @@
                                         <div class="col-sm-12">
                                             <div class="form-group">
                                                 <input readonly name="performed_at" type="datetime-local"
-                                                       class="selectpicker" data-width="95px" data-size="10" list
+                                                       class="selectpicker form-control" data-width="95px" data-size="10" list
                                                        max="{{$userTime}}"
                                                        value="{{$userTime}}">
                                             </div>
@@ -91,7 +91,7 @@
                                                     </label>
                                                 </div>
                                                 <div class="form-group col-sm-4">
-                                                    <select name="duration" id="activityValue" class="selectpicker"
+                                                    <select name="duration" id="activityValue" class="selectpicker form-control"
                                                             data-size="10" disabled>
                                                         <option value="">{{$activity['duration']}}</option>
                                                     </select>
