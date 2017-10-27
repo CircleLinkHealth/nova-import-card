@@ -40,9 +40,7 @@
 
                         @include('errors.errors')
 
-                        <div class="row">
-                            {!! Form::open(array('url' => URL::route('admin.users.update', array('id' => $patient->id)), 'class' => 'form-horizontal')) !!}
-                        </div>
+                        {!! Form::open(array('url' => URL::route('admin.users.update', array('id' => $patient->id)), 'class' => 'form-horizontal')) !!}
 
                         <div class="row" style="">
                             <div class="col-sm-12">
