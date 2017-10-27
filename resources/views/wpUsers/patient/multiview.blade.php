@@ -32,7 +32,7 @@ $today = \Carbon\Carbon::now()->toFormattedDateString();
         ?>
         <style type="text/css">
             body {
-                margin: 1in;
+                margin: 0;
             }
 
             div.address {
@@ -58,11 +58,6 @@ $today = \Carbon\Carbon::now()->toFormattedDateString();
                 height: 1in !important;
             }
 
-            .sender-address-margin {
-                margin-top: 0.4in !important;
-                margin-bottom: 0 !important;
-            }
-
             .receiver-address-padding {
                 padding-top: 1.7in !important;
                 margin-top: 0 !important;
@@ -74,25 +69,14 @@ $today = \Carbon\Carbon::now()->toFormattedDateString();
                 margin-top: 0.5in !important;
             }
         </style>
-        <div class="container" style="margin-top: -45px !important; padding-top: 0 !important;">
+        <div class="container">
             <section class="patient-summary">
                 <div class="patient-info__main">
-                    <div class="row">
-                        <div class="col-xs-12 text-right hidden-print">
-					<span class="btn btn-group text-right">
-				<form class="lang" action="#" method="POST" id="form">
-                    {{ csrf_field() }}
-                    <input type="hidden" name="lang" value="es"/>
-
-                </form></span></div>
-                    </div>
-                    <div class="patient-info__main">
-                    </div>
                     @if($letter)
                         <div class="patient-info__main ">
                             <div class="row gutter">
                                 <div class="col-xs-12">
-                                    <div class="row address-height-print sender-address-margin">
+                                    <div class="row address-height-print">
                                         <div class="col-xs-12 sender-address-print">
                                             <div class="row">
                                                 <div class="col-xs-12 address"><strong>On Behalf of</strong></div>
@@ -118,8 +102,6 @@ $today = \Carbon\Carbon::now()->toFormattedDateString();
                                                     <div>290 Harbor Drive</div>
                                                     <div>Stamford, CT 06902</div>
                                                 </div>
-                                                <!-- <div class="col-xs-4 col-xs-offset-1 print-row text-right">Fax: 203 847 5899</div> -->
-                                                <!-- <div class="col-xs-12 address"></div> -->
                                             </div>
                                         </div>
                                     </div>
