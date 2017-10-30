@@ -1,13 +1,33 @@
 <script>
     export default {
+        props: {
+            practice: {
+                type: [Number, String],
+                required: false,
+                default: null
+            },
+            location: {
+                type: [Number, String],
+                required: false,
+                default: null
+            },
+            billingProvider: {
+                type: [Number, String],
+                required: false,
+                default: null
+            },
+        },
+
         data() {
+            window.axios.get('/practices/all')
+                .then((response) => {
+                    this.practices = response.data
+                })
+
             return {
-                practices: cpm.practices,
+                practices: [],
                 locationsCollection: [],
                 providersCollection: [],
-                practice: cpm.predictedPracticeId,
-                location: cpm.predictedLocationId,
-                billingProvider: cpm.predictedBillingProviderId,
             }
         },
 

@@ -148,6 +148,7 @@ Route::group(['middleware' => 'auth'], function () {
     /**
      * API
      */
+    Route::get('practices/all', 'API\PracticeController@allPracticesWithLocationsAndStaff');
 
     Route::resource('profiles', 'API\ProfileController');
 
@@ -223,7 +224,12 @@ Route::group(['middleware' => 'auth'], function () {
         'as'   => 'ccd-old-viewer.post',
     ]);
 
-    Route::get('imported-medical-record/{imrId}/training-results', [
+    Route::get('imported-medical-records/determine-eligibility/create', [
+        'uses' => 'ImporterController@showEligibilityUploadPage',
+        'as'   => 'upload.ccdas.to.determine.eligibility',
+    ]);
+
+    Route::get('imported-medical-records/{imrId}/training-results', [
         'uses' => 'ImporterController@getTrainingResults',
         'as'   => 'get.importer.training.results',
     ]);

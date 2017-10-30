@@ -143,7 +143,6 @@
                                         Invoices</a></li>
                                 <li><a href="{{ URL::route('admin.reports.nurse.allocation', array()) }}">
                                         Allocation</a></li>
-
                             </ul>
                         </li>
                     @endif
@@ -161,6 +160,9 @@
                             </li>
                             <li role="presentation" class="dropdown">
                                 <a href="{{ URL::route('enrollment.practice.stats', array()) }}">Practice KPIs</a>
+                            </li>
+                            <li role="presentation" class="dropdown">
+                                <a href="{{ route('upload.ccdas.to.determine.eligibility') }}">Determine Eligibility from CCDAs</a>
                             </li>
                         </ul>
                     </li>
