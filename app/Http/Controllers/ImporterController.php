@@ -155,33 +155,33 @@ class ImporterController extends Controller
     //Train the Importing Algo
     public function train(Request $request)
     {
-        if (!$request->hasFile('medical_record')) {
+        if (!$request->hasFile('medical_records')) {
             return 'Please upload a CCDA';
         }
 
-        $file = $request->file('medical_record');
+        foreach ($request->allFiles()['medical_records'] as $file) {
+            if ($file->getClientOriginalExtension() == 'csv') {
+                dispatch((new ImportCsvPatientList(parseCsvToArray($file), $file->getClientOriginalName())));
 
-        if ($file->getClientOriginalExtension() == 'csv') {
-            dispatch((new ImportCsvPatientList(parseCsvToArray($file), $file->getClientOriginalName())));
+                $link = link_to_route('view.files.ready.to.import',
+                    'Visit to CCDs Ready to Import page to review imported files.');
 
-            $link = link_to_route('view.files.ready.to.import',
-                'Visit to CCDs Ready to Import page to review imported files.');
+                return "The CSV list is being processed. $link";
+            } //assume XML CCDA
 
-            return "The CSV list is being processed. $link";
-        } //assume XML CCDA
+            $path = storage_path('ccdas/import/') . str_random(30) . '.xml';
 
-        $path = storage_path('ccdas/import/') . str_random(30) . '.xml';
+            $ccda = Ccda::create([
+                'user_id'   => auth()->user()->id,
+                'vendor_id' => 1,
+                'xml'       => file_get_contents($file),
+                'source'    => Ccda::IMPORTER,
+            ]);
 
-        $ccda = Ccda::create([
-            'user_id'   => auth()->user()->id,
-            'vendor_id' => 1,
-            'xml'       => file_get_contents($file),
-            'source'    => Ccda::IMPORTER,
-        ]);
+            dispatch(new TrainCcdaImporter($ccda));
+        }
 
-        dispatch(new TrainCcdaImporter($ccda));
-
-        return "The CCDA is being processed. A message will be sent to #ccda-trainer on Slack when completed";
+        return redirect()->route('view.files.ready.to.import');
     }
 
     public function storeTrainingFeatures(Request $request)

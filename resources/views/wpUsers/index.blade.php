@@ -28,38 +28,36 @@
 
                         <div class="row">
                             {!! Form::open(array('url' => URL::route('admin.users.index', array()), 'method' => 'get', 'class' => 'form-horizontal')) !!}
-                        </div>
-
-
-
-                        <a class="btn btn-info panel-title" data-toggle="collapse" data-parent="#accordion" href="#collapseFilter">Toggle Filters</a><br /><br />
-                        <div id="collapseFilter" class="panel-collapse collapse">
-                            <div class="row" style="margin:20px 0px 40px 0px;">
-                                <div class="col-md-8 col-md-offset-2">
-                                    <div class="row">
-                                        <div class="col-xs-4 text-right">{!! Form::label('filterUser', 'Find User:') !!}</div>
-                                        <div class="col-xs-8">{!! Form::select('filterUser', array('all' => 'All Users') + $users, $filterUser, ['class' => 'form-control select-picker', 'style' => 'width:80%;']) !!}</div>
+                                <a class="btn btn-info panel-title" data-toggle="collapse" data-parent="#accordion" href="#collapseFilter">Toggle Filters</a><br /><br />
+                                <div id="collapseFilter" class="panel-collapse collapse">
+                                    <div class="row" style="margin:20px 0px 40px 0px;">
+                                        <div class="col-md-8 col-md-offset-2">
+                                            <div class="row">
+                                                <div class="col-xs-4 text-right">{!! Form::label('filterUser', 'Find User:') !!}</div>
+                                                <div class="col-xs-8">{!! Form::select('filterUser', array('all' => 'All Users') + $users, $filterUser, ['class' => 'form-control select-picker', 'style' => 'width:80%;']) !!}</div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <div class="row">
+                                            <div class="col-xs-2 text-right">{!! Form::label('filterRole', 'Role:') !!}</div>
+                                            <div class="col-xs-4">{!! Form::select('filterRole', array('all' => 'All Roles') + $roles, $filterRole, ['class' => 'form-control select-picker', 'style' => 'width:80%;']) !!}</div>
+                                            <div class="col-xs-2 text-right">{!! Form::label('filterProgram', 'Program:') !!}</div>
+                                            <div class="col-xs-4">{!! Form::select('filterProgram', array('all' => 'All Programs') + $programs, $filterProgram, ['class' => 'form-control select-picker', 'style' => 'width:80%;']) !!}</div>
+                                        </div>
+                                    </div>
+                                    <div class="row" style="margin-top:50px;">
+                                        <div class="col-sm-12">
+                                            <div class="" style="text-align:center;">
+                                                {!! Form::hidden('action', 'filter') !!}
+                                                <button type="submit" class="btn btn-primary"><i class="glyphicon glyphicon-sort"></i> Apply Filters</button>
+                                                <button type="submit" class="btn btn-primary"><i class="glyphicon glyphicon-refresh"></i> Reset Filters</button>
+                                                </form>
+                                            </div>
+                                        </div>
                                     </div>
                                 </div>
-                            </div>
-                            <div class="form-group">
-                                <div class="row">
-                                    <div class="col-xs-2 text-right">{!! Form::label('filterRole', 'Role:') !!}</div>
-                                    <div class="col-xs-4">{!! Form::select('filterRole', array('all' => 'All Roles') + $roles, $filterRole, ['class' => 'form-control select-picker', 'style' => 'width:80%;']) !!}</div>
-                                    <div class="col-xs-2 text-right">{!! Form::label('filterProgram', 'Program:') !!}</div>
-                                    <div class="col-xs-4">{!! Form::select('filterProgram', array('all' => 'All Programs') + $programs, $filterProgram, ['class' => 'form-control select-picker', 'style' => 'width:80%;']) !!}</div>
-                                </div>
-                            </div>
-                            <div class="row" style="margin-top:50px;">
-                                <div class="col-sm-12">
-                                    <div class="" style="text-align:center;">
-                                        {!! Form::hidden('action', 'filter') !!}
-                                        <button type="submit" class="btn btn-primary"><i class="glyphicon glyphicon-sort"></i> Apply Filters</button>
-                                        <button type="submit" class="btn btn-primary"><i class="glyphicon glyphicon-refresh"></i> Reset Filters</button>
-                                        </form>
-                                    </div>
-                                </div>
-                            </div>
+                            </form>
                         </div>
 
 

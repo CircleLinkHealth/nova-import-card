@@ -39,7 +39,5 @@ class TrainCcdaImporter implements ShouldQueue
             "Click to review training results for Imported Medical Record with id {$importedMedicalRecord->id}", [
                 'imrId' => $importedMedicalRecord->id,
             ]);
-
-        sendSlackMessage('#ccda-trainer', $link);
     }
 }
