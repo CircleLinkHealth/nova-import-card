@@ -67,9 +67,9 @@
         <div class="col-md-4">
             <h1>Practice</h1>
 
-            <select v-model="practice" class="col-md-12" name="practiceId">
+            <select2 v-model="practice" class="col-md-12" name="practiceId">
                 <option v-for="p in practices" :value="p.id">{{ p.display_name }}</option>
-            </select>
+            </select2>
         </div>
         <div class="col-md-4">
             <h1>Location</h1>

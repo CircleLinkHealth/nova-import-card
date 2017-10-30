@@ -29,8 +29,7 @@ class PracticeController extends Controller
                         $loc['providers'] = collect($loc['providers'])->keyBy('id');
 
                         return $loc;
-                    })
-                        ->keyBy('id'),
+                    })->keyBy('id'),
                 ];
             });
 
