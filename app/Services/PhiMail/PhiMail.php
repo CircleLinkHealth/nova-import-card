@@ -41,8 +41,6 @@ class PhiMail
             $this->connector = new PhiMailConnector($phiMailServer, $phiMailPort);
             $this->connector->authenticateUser($phiMailUser, $phiMailPass);
 
-            sendSlackMessage('#background-tasks', "Connected to EMR Direct.");
-
             return true;
         } catch (\Exception $e) {
             $this->handleException($e);
