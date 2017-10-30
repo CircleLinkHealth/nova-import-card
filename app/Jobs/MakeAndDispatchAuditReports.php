@@ -79,7 +79,7 @@ class MakeAndDispatchAuditReports implements ShouldQueue
 
         $settings = $this->patient->primaryPractice->settings()->firstOrNew([]);
 
-        $sent = $this->patient->locations->get()->map(function ($location) use ($path, $settings, $fileName) {
+        $sent = $this->patient->locations->map(function ($location) use ($path, $settings, $fileName) {
             //Send DM mail
             if ($settings->dm_audit_reports) {
                 $this->phiMail->send($location->emr_direct_address, $path, $fileName);
