@@ -61,7 +61,7 @@
                     <label for="provider" class="sr-only">Select Month:</label>
 
                     <select name="provider" id="provider" class="provider selectpicker" data-width="200px"
-                            data-size="10" style="display: none;"@if(auth()->user()->hasRole('administrator') == false  &&
+                            data-size="10" style="display: none;" @if(auth()->user()->hasRole('administrator') == false  &&
                                                           auth()->user()->hasRole('care-center') == false)
                             required
                             @endif>
@@ -79,8 +79,7 @@
 
                     <div class="inline-block">
                         <label for="year" class="sr-only">Date Range:</label>
-                        <select name="range" id="range" class="range selectpicker" data-width="250px" style="display: none;"
-                                required="required">
+                        <select name="range" id="range" class="range selectpicker" data-width="250px">
                             <option value="">Select Range</option>
                             @for($i = 0; $i < 4; $i++)
                                 <option value={{$i}}
@@ -91,9 +90,18 @@
                             @endfor
                         </select>
                         <button type="submit" id="find" class="btn btn-primary">Go</button>
-                        {!! Form::close() !!}
                     </div>
                 </div>
+                @push('scripts')
+                    <script>
+                        window.addEventListener('load', function () {
+                            var rangeElem = document.querySelector("[name='range']")
+                            rangeElem.style.display = 'block'
+                            rangeElem.setAttribute('required', 'required')
+                        });
+                    </script>
+                @endpush
+                {!! Form::close() !!}
 
 
                 <div class="main-form-horizontal main-form-primary-horizontal col-md-12"
