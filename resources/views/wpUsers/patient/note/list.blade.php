@@ -16,14 +16,18 @@
     }
 
     ?>
+    
+    @push('scripts')
+        <script>
+            $(document).ready(function () {
+                $(".provider").select2();
+                $(".range").select2();
 
-    <script>
-        $(document).ready(function () {
-            $(".provider").select2();
-            $(".range").select2();
+            });
+        </script>
+    @endpush
 
-        });
-    </script>
+    
 
     <div class="row main-form-block" style="margin-top:30px;">
         <div class="main-form-container col-lg-8 col-lg-offset-2">
@@ -98,138 +102,144 @@
                         @if($notes)
                             <div id="obs_alerts_container" class=""></div><br/>
                             <div id="paging_container"></div><br/>
-                            <style>
-                                .webix_hcell {
-                                    background-color: #d2e3ef;
-                                }
-                            </style>
-                            <script>
-                                function startCompare(value, filter) {
-                                    value = value.toString().toLowerCase();
-                                    filter = '<' + filter.toString().toLowerCase();
-                                    return value.indexOf(filter) === 0;
-                                }
-                                webix.locale.pager = {
-                                    first: "<<",// the first button
-                                    last: ">>",// the last button
-                                    next: ">",// the next button
-                                    prev: "<"// the previous button
-                                };
-                                webix.ui.datafilter.mySummColumn = webix.extend({
-                                    refresh: function (master, node, value) {
-                                        var seconds = 0;
-                                        master.data.each(function (obj) {
-                                            seconds = seconds + parseInt(obj.duration);
-                                        });
-                                        var date = new Date(seconds * 1000);
-                                        var mm = Math.floor(seconds / 60);
-                                        var ss = date.getSeconds();
-                                        if (ss < 10) {
-                                            ss = "0" + ss;
-                                        }
-                                        var time = "" + mm + ":" + ss;
-                                        result = "<span title='" + mm + ":" + ss + "' style='float:right;'><b>" + time + "</b></span>";
-                                        node.firstChild.innerHTML = result;
-                                    }
-                                }, webix.ui.datafilter.summColumn);
-
-                                obs_alerts_dtable = new webix.ui({
-                                    container: "obs_alerts_container",
-                                    view: "datatable",
-                                    autoheight: true,
-                                    fixedRowHeight: false, rowLineHeight: 25, rowHeight: 25,
-                                    scrollX: true,
-                                    resizeColumn: true,
-                                    tooltip: true,
-                                    footer: false,
-                                    columns: [
-
-                                        {
-                                            id: "patient_name",
-                                            header: ["Patient Name", {content: "textFilter", placeholder: "Filter"}],
-                                            width: 140,
-                                            sort: 'string',
-                                            template: "<a href='<?php echo URL::route('patient.note.view', array(
-                                                    'patient' => '#patient_id#',
-                                                    'noteId'  => '#id#'
-                                            )); ?>'>#patient_name#</a>"
-
-
-                                        },
-                                        {
-                                            id: "program_name",
-                                            header: ["Program", {content: "selectFilter", placeholder: "Filter"}],
-                                            width: 140,
-                                            sort: 'string',
-                                        },
-                                        {
-                                            id: "author_name",
-                                            header: ["Author", {content: "selectFilter", placeholder: "Filter"}],
-                                            width: 140,
-                                            sort: 'string'
-                                        },
-                                        {
-                                            id: "tags",
-                                            css: {'text-align': 'left', 'top': 0, 'left': 0, 'bottom': 0, 'right': 0},
-                                            header: ["Status", {content: "textFilter", placeholder: "Filter"}],
-                                            width: 110,
-                                            sort: 'string'
-                                        },
-                                        {
-                                            id: "comment",
-                                            header: ["Preview", {content: "textFilter", placeholder: "Filter"}],
-                                            width: 250,
-                                            sort: 'string',
-                                            tooltip: ['#comment#'],
-                                            fillspace: true,
-                                            template: "<a href='<?php echo URL::route('patient.note.view', array(
-                                                    'patient' => '#patient_id#',
-                                                    'noteId'  => '#id#'
-                                            )); ?>'>#comment#</a>"
-                                        },
-                                        {
-                                            id: "date",
-                                            header: ["Date", {content: "textFilter", placeholder: "Filter"}],
-                                            width: 110,
-                                            sort: 'string'
-                                        },
-                                        {
-                                            id: "type",
-                                            header: ["Type", {content: "textFilter", placeholder: "Filter"}],
-                                            width: 150,
-                                            sort: 'string',
-                                        },
-                                    ],
-
-                                    ready: function () {
-                                        this.adjustRowHeight("obs_key");
-                                    },
-
-                                    pager: {
-                                        container: "paging_container",// the container where the pager controls will be placed into
-                                        template: "{common.first()} {common.prev()} {common.pages()} {common.next()} {common.last()}",
-                                        size: 15, // the number of records per a page
-                                        group: 5   // the number of pages in the pager
-                                    },
-
-
-                                    <?php echo $webix  ?>
-                                });
-
-
-                                obs_alerts_dtable.hideColumn("program_name");
-
-                                webix.event(window, "resize", function () {
-                                    obs_alerts_dtable.adjust();
-                                });
-
-                            </script>
-                            <div class="row">
+                            @push('styles')
                                 <style>
-                                    li {
-                                        padding-bottom: 2px;
+                                    .webix_hcell {
+                                        background-color: #d2e3ef;
                                     }
                                 </style>
+                            @endpush
+                            @push('scripts')
+                                <script>
+                                    function startCompare(value, filter) {
+                                        value = value.toString().toLowerCase();
+                                        filter = '<' + filter.toString().toLowerCase();
+                                        return value.indexOf(filter) === 0;
+                                    }
+                                    webix.locale.pager = {
+                                        first: "<<",// the first button
+                                        last: ">>",// the last button
+                                        next: ">",// the next button
+                                        prev: "<"// the previous button
+                                    };
+                                    webix.ui.datafilter.mySummColumn = webix.extend({
+                                        refresh: function (master, node, value) {
+                                            var seconds = 0;
+                                            master.data.each(function (obj) {
+                                                seconds = seconds + parseInt(obj.duration);
+                                            });
+                                            var date = new Date(seconds * 1000);
+                                            var mm = Math.floor(seconds / 60);
+                                            var ss = date.getSeconds();
+                                            if (ss < 10) {
+                                                ss = "0" + ss;
+                                            }
+                                            var time = "" + mm + ":" + ss;
+                                            result = "<span title='" + mm + ":" + ss + "' style='float:right;'><b>" + time + "</b></span>";
+                                            node.firstChild.innerHTML = result;
+                                        }
+                                    }, webix.ui.datafilter.summColumn);
+
+                                    obs_alerts_dtable = new webix.ui({
+                                        container: "obs_alerts_container",
+                                        view: "datatable",
+                                        autoheight: true,
+                                        fixedRowHeight: false, rowLineHeight: 25, rowHeight: 25,
+                                        scrollX: true,
+                                        resizeColumn: true,
+                                        tooltip: true,
+                                        footer: false,
+                                        columns: [
+
+                                            {
+                                                id: "patient_name",
+                                                header: ["Patient Name", {content: "textFilter", placeholder: "Filter"}],
+                                                width: 140,
+                                                sort: 'string',
+                                                template: "<a href='<?php echo URL::route('patient.note.view', array(
+                                                        'patient' => '#patient_id#',
+                                                        'noteId'  => '#id#'
+                                                )); ?>'>#patient_name#</a>"
+
+
+                                            },
+                                            {
+                                                id: "program_name",
+                                                header: ["Program", {content: "selectFilter", placeholder: "Filter"}],
+                                                width: 140,
+                                                sort: 'string',
+                                            },
+                                            {
+                                                id: "author_name",
+                                                header: ["Author", {content: "selectFilter", placeholder: "Filter"}],
+                                                width: 140,
+                                                sort: 'string'
+                                            },
+                                            {
+                                                id: "tags",
+                                                css: {'text-align': 'left', 'top': 0, 'left': 0, 'bottom': 0, 'right': 0},
+                                                header: ["Status", {content: "textFilter", placeholder: "Filter"}],
+                                                width: 110,
+                                                sort: 'string'
+                                            },
+                                            {
+                                                id: "comment",
+                                                header: ["Preview", {content: "textFilter", placeholder: "Filter"}],
+                                                width: 250,
+                                                sort: 'string',
+                                                tooltip: ['#comment#'],
+                                                fillspace: true,
+                                                template: "<a href='<?php echo URL::route('patient.note.view', array(
+                                                        'patient' => '#patient_id#',
+                                                        'noteId'  => '#id#'
+                                                )); ?>'>#comment#</a>"
+                                            },
+                                            {
+                                                id: "date",
+                                                header: ["Date", {content: "textFilter", placeholder: "Filter"}],
+                                                width: 110,
+                                                sort: 'string'
+                                            },
+                                            {
+                                                id: "type",
+                                                header: ["Type", {content: "textFilter", placeholder: "Filter"}],
+                                                width: 150,
+                                                sort: 'string',
+                                            },
+                                        ],
+
+                                        ready: function () {
+                                            this.adjustRowHeight("obs_key");
+                                        },
+
+                                        pager: {
+                                            container: "paging_container",// the container where the pager controls will be placed into
+                                            template: "{common.first()} {common.prev()} {common.pages()} {common.next()} {common.last()}",
+                                            size: 15, // the number of records per a page
+                                            group: 5   // the number of pages in the pager
+                                        },
+
+
+                                        <?php echo $webix  ?>
+                                    });
+
+
+                                    obs_alerts_dtable.hideColumn("program_name");
+
+                                    webix.event(window, "resize", function () {
+                                        obs_alerts_dtable.adjust();
+                                    });
+
+                                </script>
+                            @endpush
+                            <div class="row">
+                                @push('styles')
+                                    <style>
+                                        li {
+                                            padding-bottom: 2px;
+                                        }
+                                    </style>
+                                @endpush
                                 <div class="col-sm-6" style="padding: 10px; top: -14px">
                                     <li>
                                         <div class="label label-info" style="margin-right: 4px; text-align: right;">
@@ -316,4 +326,6 @@
                 @endif
             </div>
         </div>
+    </div>
+    </div>
 @stop
