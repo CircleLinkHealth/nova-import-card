@@ -29,6 +29,16 @@ class Handler extends ExceptionHandler
     ];
 
     /**
+     * A list of the inputs that are never flashed for validation exceptions.
+     *
+     * @var array
+     */
+    protected $dontFlash = [
+        'password',
+        'password_confirmation',
+    ];
+
+    /**
      * Report or log an exception.
      *
      * This is a great spot to send exceptions to Sentry, Bugsnag, etc.
@@ -39,6 +49,8 @@ class Handler extends ExceptionHandler
      */
     public function report(Exception $e)
     {
+        parent::report($e);
+
         if ($e instanceof \Illuminate\Database\QueryException) {
             $errorCode = $e->errorInfo[1];
             if ($errorCode == 1062) {
@@ -78,8 +90,6 @@ class Handler extends ExceptionHandler
                 */
             }
         }
-
-        return parent::report($e);
     }
 
     /**

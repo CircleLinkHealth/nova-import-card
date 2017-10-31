@@ -34,7 +34,7 @@ class AppConfigController extends Controller
             abort(403);
         }
         // display view
-        return view('admin.appConfig.create', [ 'errors' => array(), 'messages' => array() ]);
+        return view('admin.appConfig.create', [ 'errors' => [], 'messages' => [] ]);
     }
 
     /**
@@ -68,7 +68,7 @@ class AppConfigController extends Controller
         }
         // display view
         $appConfig = AppConfig::find($id);
-        return view('admin.appConfig.show', [ 'appConfig' => $appConfig, 'errors' => array(), 'messages' => array() ]);
+        return view('admin.appConfig.show', [ 'appConfig' => $appConfig, 'errors' => [], 'messages' => [] ]);
     }
 
     /**

@@ -20,8 +20,8 @@ class ObservationService
         $sequence = 0;
 
         // arrays to validate input
-        $from = array("_","y","n");
-        $to = array("/","Y","N");
+        $from = ["_","y","n"];
+        $to = ["/","Y","N"];
         $obsValue = str_replace($from, $to, $obsValue);
 
         // first and foremost, check if $isStartingObs, and if so, update and return true if already exists

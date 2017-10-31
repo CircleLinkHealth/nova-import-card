@@ -16,7 +16,7 @@ class MapIcd9ToCpmProblems extends Migration
     public function up()
     {
         //Seed table first
-        Artisan::call('db:seed', array('--class' => 'SnomedToIcd9MapTableSeeder'));
+        Artisan::call('db:seed', ['--class' => 'SnomedToIcd9MapTableSeeder']);
 
         $cpmProblems = CpmProblem::all();
 

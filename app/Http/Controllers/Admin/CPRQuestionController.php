@@ -73,7 +73,7 @@ class CPRQuestionController extends Controller
         }
         // display view
         $question = CPRulesQuestions::find($id);
-        return view('admin.questions.show', ['question' => $question, 'errors' => array(), 'messages' => array()]);
+        return view('admin.questions.show', ['question' => $question, 'errors' => [], 'messages' => []]);
     }
 
     /**

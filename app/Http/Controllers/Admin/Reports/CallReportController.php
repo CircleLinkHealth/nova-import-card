@@ -139,7 +139,7 @@ class CallReportController extends Controller
                         }
                     }
                     // call days
-                    $days = array(
+                    $days = [
                         1 => 'M',
                         2 => 'Tu',
                         3 => 'W',
@@ -147,7 +147,7 @@ class CallReportController extends Controller
                         5 => 'F',
                         6 => 'Sa',
                         7 => 'Su'
-                    );
+                    ];
                     $preferredCallDays =  'n/a';
                     if ($call->inboundUser && $call->inboundUser->patientInfo) {
                         $windowText = '';
@@ -165,7 +165,7 @@ class CallReportController extends Controller
                     }
 
                     //dd($call);
-                    $columns = array($call->call_id, $call->nurse_name, $call->patient_name, $call->program_name, $noAttmpts, $call->scheduled_date, $call->window_start, $call->window_end, $preferredCallDays, $call->last_contact_time, $ccmTime, $call->no_of_successful_calls, $call->ccm_status, $call->billing_provider, $call->birth_date, $call->scheduler_user_name);
+                    $columns = [$call->call_id, $call->nurse_name, $call->patient_name, $call->program_name, $noAttmpts, $call->scheduled_date, $call->window_start, $call->window_end, $preferredCallDays, $call->last_contact_time, $ccmTime, $call->no_of_successful_calls, $call->ccm_status, $call->billing_provider, $call->birth_date, $call->scheduler_user_name];
                     $sheet->appendRow($columns);
                 }
             });

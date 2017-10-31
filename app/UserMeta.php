@@ -9,12 +9,7 @@ class UserMeta extends Model
     use \Venturecraft\Revisionable\RevisionableTrait;
     public $timestamps = false;
     protected $revisionCreationsEnabled = true;
-    /**
-     * The connection name for the model.
-     *
-     * @var string
-     */
-    protected $connection = 'mysql_no_prefix';
+
     /**
      * The database table used by the model.
      *

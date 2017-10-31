@@ -66,7 +66,7 @@ class MsgSubstitutions
             if (!empty($arrList)) {
                 $arrReadings = $msgCPRules->getReadings($provid, $user_id);
                 // variables for scheduled RPT
-                $tmpArr = array();
+                $tmpArr = [];
                 $i = 0; // counter for tense of the word reading or readings depending on how many we send.
 
                 foreach ($arrList as $row) {
@@ -146,7 +146,7 @@ class MsgSubstitutions
                         );
 
                         // insert new observation record
-                        $obs_id = DB::connection('mysql_no_prefix')->table('ma_'.$provid.'_observations')->insertGetId( $data );
+                        $obs_id = DB::table('ma_'.$provid.'_observations')->insertGetId( $data );
                         echo "<br>MsgSubstitutions->getReadingsText() Created New Observation#=" . $obs_id;
                         //$obs_id = $this->_ci->obs->insert_observation($data, false, $provid);
 

@@ -33,7 +33,7 @@ class CarePlanRepository
             // attach to dupe if doesnt already exist
             $carePlanSection = $carePlanDupe->careSections()->where('section_id', '=', $careSection['id'])->first();
             if (empty($carePlanSection)) {
-                $carePlanDupe->careSections()->attach(array($careSection['id'] => array('status' => 'active')));
+                $carePlanDupe->careSections()->attach([$careSection['id'] => ['status' => 'active']]);
             }
             $carePlanItems = CarePlanItem::where('plan_id', '=', $carePlan->id)->where('section_id', '=', $careSection['id'])->get();
             foreach ($carePlanItems as $careItemCarePlan) {

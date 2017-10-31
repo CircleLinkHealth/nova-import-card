@@ -40,7 +40,7 @@ class MsgReceiver
 // echo "</pre><br>";
         echo "<br>";
         $sql = "SELECT * FROM ma_". $intBlogId ."_outbound_log WHERE phone_no=1$strPhoneNumber AND date(call_logged) = date(now()) AND info rLIKE 'Inbound SMS' AND info LIKE '%$hexMoMsgId%' ;";
-        $query = $this->db->query($sql, array($strPhoneNumber, $hexMoMsgId));
+        $query = $this->db->query($sql, [$strPhoneNumber, $hexMoMsgId]);
 
         if ($query->num_rows() >= 2) {
             $row   = $query->row();

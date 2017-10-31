@@ -22,7 +22,7 @@ class AuthController extends Controller
      */
     public function getAccessToken(Request $request)
     {
-        if (!$request->has('username') || !$request->has('password')) {
+        if (!$request->filled('username') || !$request->filled('password')) {
             response()->json(['error' => 'Username and password need to be included on the request.'], 400);
         }
 

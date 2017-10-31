@@ -73,7 +73,7 @@ class CPRItemController extends Controller
         }
         // display view
         $item = CPRulesItem::find($id);
-        return view('admin.items.show', [ 'item' => $item, 'errors' => array(), 'messages' => array() ]);
+        return view('admin.items.show', [ 'item' => $item, 'errors' => [], 'messages' => [] ]);
     }
 
     /**

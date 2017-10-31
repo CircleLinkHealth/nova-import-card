@@ -99,7 +99,7 @@ and qs.qs_type = 'TOD'
 query;
 
 // echo $query;
-        $results = DB::connection('mysql_no_prefix')->select(DB::raw($sql));
+        $results = DB::select(DB::raw($sql));
 
         return $results;
     }//getActiveList
@@ -116,7 +116,7 @@ query;
          *
          */
 
-        $arrReturn = array();
+        $arrReturn = [];
 
         if (!empty($intItemID) and !empty($user_id)) {
             $sql = <<<query
@@ -130,7 +130,7 @@ query;
 
             // echo $query;
 
-            $results = DB::connection('mysql_no_prefix')->select(DB::raw($sql));
+            $results = DB::select(DB::raw($sql));
             if (isset($results[0])) {
                 $arrReturn = $results[0];
             }
@@ -141,7 +141,7 @@ query;
 
     public function getNext($strCat, $intSeqNum = 0)
     {
-        $arrReturn = array();
+        $arrReturn = [];
 
         if (!empty($strCat)) {
             $sql = <<<query
@@ -158,7 +158,7 @@ query;
 
 // echo query;
 
-            $results = DB::connection('mysql_no_prefix')->select(DB::raw($sql));
+            $results = DB::select(DB::raw($sql));
             if (isset($results[0])) {
                 $arrReturn = $results[0];
             }
@@ -170,14 +170,14 @@ query;
     {
 
         if (!empty($strCat) and !empty($user_id) and !empty($qssort)) {
-            $data = array(
+            $data = [
                 'items_id' => $strCat,
                 'user_id' => $user_id,
                 'meta_key' => 'TOD',
-                'meta_value' => $qssort);
+                'meta_value' => $qssort];
 
 // echo query;
-            $obs_id = DB::connection('mysql_no_prefix')->table('rules_ucp')->insertGetId($data);
+            $obs_id = DB::table('rules_ucp')->insertGetId($data);
             echo "<br>MsgTod->insertNew() rules_ucp.id#=" . $user_id;
         }
         return;
@@ -197,7 +197,7 @@ query;
             query;
             */
             // echo query;
-            $result = DB::connection('mysql_no_prefix')->table('rules_ucp')
+            $result = DB::table('rules_ucp')
                 ->where('items_id', '=', $strCat)
                 ->where('user_id', '=', $user_id)
                 ->where('meta_key', '=', 'TOD')

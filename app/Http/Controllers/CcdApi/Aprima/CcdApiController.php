@@ -301,11 +301,11 @@ class CcdApiController extends Controller
             return response()->json(['error' => 'You are not authorized to submit CCDs to this API.'], 403);
         }
 
-        if (!$request->has('file')) {
+        if (!$request->filled('file')) {
             return response()->json(['error' => 'file is a required field.'], 422);
         }
 
-        if (!$request->has('provider')) {
+        if (!$request->filled('provider')) {
             return response()->json(['error' => 'provider is a required field.'], 422);
         }
 

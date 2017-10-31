@@ -69,7 +69,7 @@ class MsgDelivery
         /*
         $strCommentsTable = "wp_". $intProgramID ."_comments";
         $sql = "SELECT * FROM $strCommentsTable WHERE user_id=".$intUserId." AND comment_type like 'state%' ORDER BY comment_date DESC LIMIT 1";
-        $query = DB::connection('mysql_no_prefix')->select( DB::raw($sql) );
+        $query = DB::select( DB::raw($sql) );
         $parentID = 0;
 
         if(!empty($query))
@@ -103,7 +103,7 @@ class MsgDelivery
         $comment->save();
 
         /*
-        $last_comment_no = DB::connection('mysql_no_prefix')->table('wp_'.$intProgramID.'_comments')->insertGetId( $mixCommentData );
+        $last_comment_no = DB::table('wp_'.$intProgramID.'_comments')->insertGetId( $mixCommentData );
         */
         //dd('last_comment_no ==' . $last_comment_no);
         echo '<br>MsgDelivery->writeOutboundSmsMessage() last_comment_no =' . $comment->id;
@@ -127,7 +127,7 @@ class MsgDelivery
         $mixReturnResult = false;
         $strCommentsTable = "wp_". $this->intProgramID ."_comments";
         $sql = "SELECT * FROM $strCommentsTable WHERE user_id=$intUserId AND comment_type='state_".$arrPart[$intUserId]['usermeta']['msgtype']."' ORDER BY comment_date DESC LIMIT 1";
-        $results = DB::connection('mysql_no_prefix')->select( DB::raw($sql) );
+        $results = DB::select( DB::raw($sql) );
         */
         $commentType = $arrPart[$intUserId]['usermeta']['msgtype'];
         $results = Comment::where('user_id', '=', $intUserId)->where(

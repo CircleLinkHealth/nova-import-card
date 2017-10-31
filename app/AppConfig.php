@@ -8,13 +8,6 @@ class AppConfig extends Model
     public $timestamps = true;
 
     /**
-     * The connection name for the model.
-     *
-     * @var string
-     */
-    protected $connection = 'mysql_no_prefix';
-
-    /**
      * The database table used by the model.
      *
      * @var string

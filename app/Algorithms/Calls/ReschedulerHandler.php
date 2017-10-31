@@ -55,7 +55,7 @@ class ReschedulerHandler
             ->where('scheduled_date', '<=', Carbon::now()->toDateString())
             ->get();
 
-        $missed = array();
+        $missed = [];
 
         /*
          * Check to see if the call is dropped if it's the current day

@@ -45,8 +45,8 @@ class DashboardController extends Controller
 
         // switch dashboard view based on logged in user
         if ($user->can('admin-access')) {
-            $stats = array();
-            $roleStats = array();
+            $stats = [];
+            $roleStats = [];
             $stats['totalPrograms'] = Practice::all()->count();
             $stats['totalUsers'] = User::all()->count();
             foreach ($roles as $role) {

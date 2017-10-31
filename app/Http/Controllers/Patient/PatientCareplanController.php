@@ -186,7 +186,7 @@ class PatientCareplanController extends Controller
             }
             try {
                 //HTML render to help us with debugging
-                if ($request->has('render') && $request->input('render') == 'html') {
+                if ($request->filled('render') && $request->input('render') == 'html') {
                     return view('wpUsers.patient.multiview', [
                         'careplans'    => [$user_id => $careplan],
                         'isPdf'        => true,

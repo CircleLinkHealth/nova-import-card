@@ -22,7 +22,7 @@ class AuthorizationController extends Controller
 
         // working code
         // get credentials
-        $credentials = \Input::only('email', 'password');
+        $credentials = $request->only('email', 'password');
 
         // set the identifier for wp_users
         \JWTAuth::setIdentifier('id');
