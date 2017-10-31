@@ -1,0 +1,663 @@
+--- app/Practice.php
++++ PHP_CodeSniffer
+@@ -153,12 +153,12 @@
+ 
+     public function pcp()
+     {
+-        return $this->hasMany('App\CPRulesPCP', 'prov_id', 'id');
++        return $this->hasMany(\App\CPRulesPCP::class, 'prov_id', 'id');
+     }
+ 
+     public function careplan()
+     {
+-        return $this->hasMany('App\CarePlanTemplate', 'patient_id');
++        return $this->hasMany(\App\CarePlanTemplate::class, 'patient_id');
+     }
+ 
+     public function getPrimaryLocationIdAttribute()
+
+--- app/MailLog.php
++++ PHP_CodeSniffer
+@@ -27,16 +27,16 @@
+ 
+     public function senderUser()
+     {
+-        return $this->belongsTo('App\User', 'sender_cpm_id', 'id');
++        return $this->belongsTo(\App\User::class, 'sender_cpm_id', 'id');
+     }
+ 
+     public function receiverUser()
+     {
+-        return $this->belongsTo('App\User', 'receiver_cpm_id', 'id');
++        return $this->belongsTo(\App\User::class, 'receiver_cpm_id', 'id');
+     }
+ 
+     public function note()
+     {
+-        return $this->belongsTo('App\Note', 'note_id');
++        return $this->belongsTo(\App\Note::class, 'note_id');
+     }
+ }
+
+--- app/PhoneNumber.php
++++ PHP_CodeSniffer
+@@ -56,7 +56,7 @@
+ 
+     public function user()
+     {
+-        return $this->belongsTo('App\User', 'id', 'user_id');
++        return $this->belongsTo(\App\User::class, 'id', 'user_id');
+     }
+     // END RELATIONSHIPS
+ }
+
+--- app/UserMeta.php
++++ PHP_CodeSniffer
+@@ -43,6 +43,6 @@
+ 
+     public function wpUser()
+     {
+-        return $this->belongsTo('App\User', 'user_id', 'id');
++        return $this->belongsTo(\App\User::class, 'user_id', 'id');
+     }
+ }
+
+--- app/Rules.php
++++ PHP_CodeSniffer
+@@ -29,11 +29,11 @@
+ 
+     public function intrConditions()
+     {
+-        return $this->hasMany('App\RulesIntrConditions', 'rule_id');
++        return $this->hasMany(\App\RulesIntrConditions::class, 'rule_id');
+     }
+ 
+     public function intrActions()
+     {
+-        return $this->hasMany('App\RulesIntrActions', 'rule_id');
++        return $this->hasMany(\App\RulesIntrActions::class, 'rule_id');
+     }
+ }
+
+--- app/CareItem.php
++++ PHP_CodeSniffer
+@@ -54,7 +54,7 @@
+ 
+     public function carePlans()
+     {
+-        return $this->belongsToMany('App\CarePlan', 'care_plan_care_item', 'item_id', 'plan_id')->withPivot('id');
++        return $this->belongsToMany(\App\CarePlan::class, 'care_plan_care_item', 'item_id', 'plan_id')->withPivot('id');
+     }
+ 
+     public function userValues()
+@@ -64,12 +64,12 @@
+ 
+     public function question() // rules prefix because ->items is a protect class var on parent
+     {
+-        return $this->belongsTo('App\CPRulesQuestions', 'qid', 'qid');
++        return $this->belongsTo(\App\CPRulesQuestions::class, 'qid', 'qid');
+     }
+ 
+     public function parents()
+     {
+-        return $this->belongsTo('App\CareItem', 'parent_id');
++        return $this->belongsTo(\App\CareItem::class, 'parent_id');
+     }
+ 
+ 
+@@ -77,7 +77,7 @@
+ 
+     public function children()
+     {
+-        return $this->hasMany('App\CareItem', 'parent_id');
++        return $this->hasMany(\App\CareItem::class, 'parent_id');
+     }
+ 
+     // END ATTRIBUTES
+
+--- app/RulesIntrActions.php
++++ PHP_CodeSniffer
+@@ -28,16 +28,16 @@
+ 
+     public function rule()
+     {
+-        return $this->belongsTo('App\Rules');
++        return $this->belongsTo(\App\Rules::class);
+     }
+ 
+     public function action()
+     {
+-        return $this->belongsTo('App\RulesActions');
++        return $this->belongsTo(\App\RulesActions::class);
+     }
+ 
+     public function operator()
+     {
+-        return $this->belongsTo('App\RulesOperators');
++        return $this->belongsTo(\App\RulesOperators::class);
+     }
+ }
+
+--- app/Activity.php
++++ PHP_CodeSniffer
+@@ -164,7 +164,7 @@
+ 
+     public function meta()
+     {
+-        return $this->hasMany('App\ActivityMeta');
++        return $this->hasMany(\App\ActivityMeta::class);
+     }
+ 
+     public function careRateLogs()
+@@ -179,12 +179,12 @@
+ 
+     public function provider()
+     {
+-        return $this->belongsTo('App\User', 'provider_id', 'id');
++        return $this->belongsTo(\App\User::class, 'provider_id', 'id');
+     }
+ 
+     public function pageTime()
+     {
+-        return $this->belongsTo('App\PageTimer');
++        return $this->belongsTo(\App\PageTimer::class);
+     }
+ 
+     public function ccmApiTimeSentLog()
+
+--- app/ActivityMeta.php
++++ PHP_CodeSniffer
+@@ -33,6 +33,6 @@
+ 
+     public function activity()
+     {
+-        return $this->belongsTo('App\Activity');
++        return $this->belongsTo(\App\Activity::class);
+     }
+ }
+
+--- app/RulesConditions.php
++++ PHP_CodeSniffer
+@@ -28,6 +28,6 @@
+ 
+     public function intrConditions()
+     {
+-        return $this->hasMany('App\RulesIntrConditions', 'condition_id');
++        return $this->hasMany(\App\RulesIntrConditions::class, 'condition_id');
+     }
+ }
+
+--- app/CPRulesItemMeta.php
++++ PHP_CodeSniffer
+@@ -37,6 +37,6 @@
+ 
+     public function CPRulesItem()
+     {
+-        return $this->belongsTo('App\CPRulesItem', 'items_id');
++        return $this->belongsTo(\App\CPRulesItem::class, 'items_id');
+     }
+ }
+
+--- app/CPRulesQuestionSets.php
++++ PHP_CodeSniffer
+@@ -37,11 +37,11 @@
+ 
+     public function question()
+     {
+-        return $this->hasOne('App\CPRulesQuestions', 'qid', 'qid');
++        return $this->hasOne(\App\CPRulesQuestions::class, 'qid', 'qid');
+     }
+ 
+     public function answer()
+     {
+-        return $this->hasOne('App\CPRulesAnswers', 'qid', 'qid');
++        return $this->hasOne(\App\CPRulesAnswers::class, 'qid', 'qid');
+     }
+ }
+
+--- app/PageTimer.php
++++ PHP_CodeSniffer
+@@ -49,21 +49,21 @@
+ 
+     public function logger()
+     {
+-        return $this->belongsTo('App\User', 'provider_id', 'id');
++        return $this->belongsTo(\App\User::class, 'provider_id', 'id');
+     }
+ 
+     public function patient()
+     {
+-        return $this->belongsTo('App\User', 'patient_id', 'id');
++        return $this->belongsTo(\App\User::class, 'patient_id', 'id');
+     }
+ 
+     public function rule()
+     {
+-        return $this->belongsTo('App\Rules');
++        return $this->belongsTo(\App\Rules::class);
+     }
+ 
+     public function activities()
+     {
+-        return $this->hasMany('App\Activity', 'page_timer_id');
++        return $this->hasMany(\App\Activity::class, 'page_timer_id');
+     }
+ }
+
+--- app/RulesOperators.php
++++ PHP_CodeSniffer
+@@ -28,11 +28,11 @@
+ 
+     public function intrConditions()
+     {
+-        return $this->hasMany('App\RulesIntrConditions', 'operator_id');
++        return $this->hasMany(\App\RulesIntrConditions::class, 'operator_id');
+     }
+ 
+     public function intrActions()
+     {
+-        return $this->hasMany('App\RulesIntrActions', 'operator_id');
++        return $this->hasMany(\App\RulesIntrActions::class, 'operator_id');
+     }
+ }
+
+--- app/CPRulesUCP.php
++++ PHP_CodeSniffer
+@@ -38,12 +38,12 @@
+ 
+     public function item()
+     {
+-        return $this->belongsTo('App\CPRulesItem', 'items_id');
++        return $this->belongsTo(\App\CPRulesItem::class, 'items_id');
+     }
+ 
+     public function user()
+     {
+-        return $this->hasOne('App\User', 'user_id');
++        return $this->hasOne(\App\User::class, 'user_id');
+     }
+ 
+     public function getCPRulesUCP($userId)
+
+--- app/Providers/AppServiceProvider.php
++++ PHP_CodeSniffer
+@@ -68,7 +68,7 @@
+ 
+         $this->app->bind(
+             'Illuminate\Contracts\Auth\Registrar',
+-            'App\Services\Registrar'
++            \App\Services\Registrar::class
+         );
+ 
+         $this->app->bind(
+
+--- app/CareSection.php
++++ PHP_CodeSniffer
+@@ -35,12 +35,12 @@
+ 
+     public function carePlans()
+     {
+-        return $this->belongsToMany('App\CarePlan', 'care_item_care_plan', 'section_id', 'plan_id');
++        return $this->belongsToMany(\App\CarePlan::class, 'care_item_care_plan', 'section_id', 'plan_id');
+     }
+ 
+     public function carePlanItems()
+     {
+-        return $this->hasMany('App\CarePlanItem', 'section_id');
++        return $this->hasMany(\App\CarePlanItem::class, 'section_id');
+     }
+ 
+     public static function boot()
+
+--- app/ObservationMeta.php
++++ PHP_CodeSniffer
+@@ -35,7 +35,7 @@
+ 
+     public function observationMeta()
+     {
+-        return $this->belongsTo('App\Observation', 'obs_id');
++        return $this->belongsTo(\App\Observation::class, 'obs_id');
+     }
+ 
+ 
+
+--- app/CPRulesItem.php
++++ PHP_CodeSniffer
+@@ -38,17 +38,17 @@
+ 
+     public function meta()
+     {
+-        return $this->hasMany('App\CPRulesItemMeta', 'items_id');
++        return $this->hasMany(\App\CPRulesItemMeta::class, 'items_id');
+     }
+ 
+     public function pcp()
+     {
+-        return $this->belongsTo('App\CPRulesPCP', 'pcp_id');
++        return $this->belongsTo(\App\CPRulesPCP::class, 'pcp_id');
+     }
+ 
+     public function question()
+     {
+-        return $this->belongsTo('App\CPRulesQuestions', 'qid', 'qid');
++        return $this->belongsTo(\App\CPRulesQuestions::class, 'qid', 'qid');
+     }
+ 
+     public function getRulesItem($itemId)
+
+--- app/Note.php
++++ PHP_CodeSniffer
+@@ -35,22 +35,22 @@
+ 
+     public function mail()
+     {
+-        return $this->hasMany('App\MailLog');
++        return $this->hasMany(\App\MailLog::class);
+     }
+ 
+     public function call()
+     {
+-        return $this->hasOne('App\Call');
++        return $this->hasOne(\App\Call::class);
+     }
+ 
+     public function author()
+     {
+-        return $this->belongsTo('App\User', 'author_id', 'id');
++        return $this->belongsTo(\App\User::class, 'author_id', 'id');
+     }
+ 
+     public function program()
+     {
+-        return $this->belongsTo('App\User', 'author_id', 'id');
++        return $this->belongsTo(\App\User::class, 'author_id', 'id');
+     }
+ 
+     /**
+
+--- app/CarePlanItem.php
++++ PHP_CodeSniffer
+@@ -37,26 +37,26 @@
+ 
+     public function carePlan()
+     {
+-        return $this->belongsTo('App\CarePlan', 'plan_id', 'id');
++        return $this->belongsTo(\App\CarePlan::class, 'plan_id', 'id');
+     }
+ 
+     public function careItem()
+     {
+-        return $this->belongsTo('App\CareItem', 'item_id', 'id');
++        return $this->belongsTo(\App\CareItem::class, 'item_id', 'id');
+     }
+ 
+     public function careSection()
+     {
+-        return $this->belongsTo('App\CareSection', 'section_id', 'id');
++        return $this->belongsTo(\App\CareSection::class, 'section_id', 'id');
+     }
+ 
+     public function parents()
+     {
+-        return $this->belongsTo('App\CarePlanItem', 'parent_id');
++        return $this->belongsTo(\App\CarePlanItem::class, 'parent_id');
+     }
+ 
+     public function children()
+     {
+-        return $this->hasMany('App\CarePlanItem', 'parent_id');
++        return $this->hasMany(\App\CarePlanItem::class, 'parent_id');
+     }
+ }
+
+--- app/Observation.php
++++ PHP_CodeSniffer
+@@ -94,17 +94,17 @@
+ 
+     public function comment()
+     {
+-        return $this->belongsTo('App\Comment');
++        return $this->belongsTo(\App\Comment::class);
+     }
+ 
+     public function question()
+     {
+-        return $this->belongsTo('App\CPRulesQuestions', 'obs_message_id', 'msg_id');
++        return $this->belongsTo(\App\CPRulesQuestions::class, 'obs_message_id', 'msg_id');
+     }
+ 
+     public function user()
+     {
+-        return $this->belongsTo('App\User', 'user_id', 'id');
++        return $this->belongsTo(\App\User::class, 'user_id', 'id');
+     }
+ 
+ 
+@@ -127,7 +127,7 @@
+ 
+     public function meta()
+     {
+-        return $this->hasMany('App\ObservationMeta', 'obs_id', 'id');
++        return $this->hasMany(\App\ObservationMeta::class, 'obs_id', 'id');
+     }
+ 
+     public function getAlertLogAttribute()
+
+--- app/RulesActions.php
++++ PHP_CodeSniffer
+@@ -28,6 +28,6 @@
+ 
+     public function intrActions()
+     {
+-        return $this->hasMany('App\RulesIntrActions', 'action_id');
++        return $this->hasMany(\App\RulesIntrActions::class, 'action_id');
+     }
+ }
+
+--- app/RulesIntrConditions.php
++++ PHP_CodeSniffer
+@@ -30,16 +30,16 @@
+ 
+     public function rule()
+     {
+-        return $this->belongsTo('App\Rules');
++        return $this->belongsTo(\App\Rules::class);
+     }
+ 
+     public function condition()
+     {
+-        return $this->belongsTo('App\RulesConditions');
++        return $this->belongsTo(\App\RulesConditions::class);
+     }
+ 
+     public function operator()
+     {
+-        return $this->belongsTo('App\RulesOperators');
++        return $this->belongsTo(\App\RulesOperators::class);
+     }
+ }
+
+--- app/Comment.php
++++ PHP_CodeSniffer
+@@ -37,12 +37,12 @@
+ 
+     public function user()
+     {
+-        return $this->belongsTo('App\User', 'id');
++        return $this->belongsTo(\App\User::class, 'id');
+     }
+ 
+     public function observation()
+     {
+-        return $this->belongsTo('App\Observation', 'comment_ID');
++        return $this->belongsTo(\App\Observation::class, 'comment_ID');
+     }
+ 
+     public function save(array $params = [])
+
+--- app/User.php
++++ PHP_CodeSniffer
+@@ -304,18 +304,18 @@
+ 
+     public function comment()
+     {
+-        return $this->hasMany('App\Comment', 'user_id', 'id');
++        return $this->hasMany(\App\Comment::class, 'user_id', 'id');
+     }
+ 
+     public function observations()
+     {
+-        return $this->hasMany('App\Observation', 'user_id', 'id');
++        return $this->hasMany(\App\Observation::class, 'user_id', 'id');
+     }
+ 
+     public function careItems()
+     {
+         return $this->belongsToMany(
+-            'App\CareItem',
++            \App\CareItem::class,
+             'care_item_user_values',
+             'user_id',
+             'care_item_id'
+@@ -324,12 +324,12 @@
+ 
+     public function activities()
+     {
+-        return $this->hasMany('App\Activity');
++        return $this->hasMany(\App\Activity::class);
+     }
+ 
+     public function notes()
+     {
+-        return $this->hasMany('App\Note', 'patient_id', 'id');
++        return $this->hasMany(\App\Note::class, 'patient_id', 'id');
+     }
+ 
+     public function patientActivities()
+@@ -339,7 +339,7 @@
+ 
+     public function providerInfo()
+     {
+-        return $this->hasOne('App\ProviderInfo', 'user_id', 'id');
++        return $this->hasOne(\App\ProviderInfo::class, 'user_id', 'id');
+     }
+ 
+     public function nurseInfo()
+@@ -508,7 +508,7 @@
+ 
+     public function meta()
+     {
+-        return $this->hasMany('App\UserMeta', 'user_id', 'id');
++        return $this->hasMany(\App\UserMeta::class, 'user_id', 'id');
+     }
+ 
+     public function primaryProgramName()
+@@ -1859,7 +1859,7 @@
+ 
+     public function ucp()
+     {
+-        return $this->hasMany('App\CPRulesUCP', 'user_id', 'id');
++        return $this->hasMany(\App\CPRulesUCP::class, 'user_id', 'id');
+     }
+ 
+     public function service()
+
+--- app/CPRulesQuestions.php
++++ PHP_CodeSniffer
+@@ -39,22 +39,22 @@
+ 
+     public function rulesItems() // rules prefix because ->items is a protect class var on parent
+     {
+-        return $this->hasMany('App\CPRulesItem', 'qid', 'qid');
++        return $this->hasMany(\App\CPRulesItem::class, 'qid', 'qid');
+     }
+ 
+     public function careItems()
+     {
+-        return $this->hasMany('App\CareItem', 'qid', 'qid');
++        return $this->hasMany(\App\CareItem::class, 'qid', 'qid');
+     }
+ 
+     public function questionSets()
+     {
+-        return $this->hasMany('App\CPRulesQuestionSets', 'qid', 'qid');
++        return $this->hasMany(\App\CPRulesQuestionSets::class, 'qid', 'qid');
+     }
+ 
+     public function observations()
+     {
+-        return $this->hasMany('App\Observation', 'msg_id', 'obs_message_id');
++        return $this->hasMany(\App\Observation::class, 'msg_id', 'obs_message_id');
+     }
+ 
+ 
+
+--- app/CPRulesPCP.php
++++ PHP_CodeSniffer
+@@ -36,7 +36,7 @@
+ 
+     public function items()
+     {
+-        return $this->hasMany('App\CPRulesItem', 'pcp_id');
++        return $this->hasMany(\App\CPRulesItem::class, 'pcp_id');
+     }
+ 
+     public function program()
+
+--- bootstrap/app.php
++++ PHP_CodeSniffer
+@@ -28,17 +28,17 @@
+ 
+ $app->singleton(
+     'Illuminate\Contracts\Http\Kernel',
+-    'App\Http\Kernel'
++    \App\Http\Kernel::class
+ );
+ 
+ $app->singleton(
+     'Illuminate\Contracts\Console\Kernel',
+-    'App\Console\Kernel'
++    \App\Console\Kernel::class
+ );
+ 
+ $app->singleton(
+     'Illuminate\Contracts\Debug\ExceptionHandler',
+-    'App\Exceptions\Handler'
++    \App\Exceptions\Handler::class
+ );
+ 
+ 
+
+--- config/jwt.php
++++ PHP_CodeSniffer
+@@ -64,7 +64,7 @@
+     |
+     */
+ 
+-    'user' => 'App\User',
++    'user' => App\User::class,
+ 
+     /*
+     |--------------------------------------------------------------------------
+
+--- config/entrust.php
++++ PHP_CodeSniffer
+@@ -19,7 +19,7 @@
+     | the role if it is in a different namespace.
+     |
+     */
+-    'role' => 'App\Role',
++    'role' => App\Role::class,
+ 
+     /*
+     |--------------------------------------------------------------------------
+@@ -40,7 +40,7 @@
+     | Update the permission if it is in a different namespace.
+     |
+     */
+-    'permission' => 'App\Permission',
++    'permission' => App\Permission::class,
+ 
+     /*
+     |--------------------------------------------------------------------------
+
