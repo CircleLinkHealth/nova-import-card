@@ -1,12 +1,13 @@
 <?php
 
+use Tests\TestCase;
 use App\NurseContactWindow;
 use App\User;
 use Carbon\Carbon;
 use Tests\Helpers\CarePlanHelpers;
 use Tests\Helpers\UserHelpers;
 
-class NurseWorkScheduleTest extends BrowserKitTestCase
+class NurseWorkScheduleTest extends TestCase
 {
     use CarePlanHelpers,
         UserHelpers;
@@ -78,7 +79,7 @@ class NurseWorkScheduleTest extends BrowserKitTestCase
             ->press('store-window');
 
         if ($valid) {
-            $this->seeInDatabase('nurse_contact_window', [
+            $this->assertDatabaseHas('nurse_contact_window', [
                 'nurse_info_id'     => $nurse->nurseInfo->id,
                 'day_of_week'       => carbonToClhDayOfWeek($date->dayOfWeek),
                 'window_time_start' => $timeStart,
@@ -118,7 +119,7 @@ class NurseWorkScheduleTest extends BrowserKitTestCase
                 ->visit(route('care.center.work.schedule.index'))
                 ->dontSee("delete-window-{$window->id}");
 
-            $this->seeInDatabase('nurse_contact_window', [
+            $this->assertDatabaseHas('nurse_contact_window', [
                 'nurse_info_id' => $nurse->nurseInfo->id,
                 'id'            => $window->id,
             ]);

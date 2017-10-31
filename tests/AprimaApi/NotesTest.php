@@ -1,5 +1,6 @@
 <?php
 
+use Tests\TestCase;
 use App\PatientReports;
 use Tests\Helpers\AuthenticatesApiUsers;
 

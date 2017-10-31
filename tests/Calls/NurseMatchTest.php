@@ -1,5 +1,6 @@
 <?php
 
+use Tests\TestCase;
 use App\Algorithms\Calls\CallAlgoHelper;
 use App\User;
 use Tests\Helpers\UserHelpers;

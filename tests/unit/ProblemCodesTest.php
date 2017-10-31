@@ -2,6 +2,7 @@
 
 namespace Tests\Unit;
 
+use Tests\TestCase;
 use App\Models\CCD\Problem;
 use App\User;
 use Illuminate\Foundation\Testing\DatabaseTransactions;

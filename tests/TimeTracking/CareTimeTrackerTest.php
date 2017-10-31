@@ -1,5 +1,6 @@
 <?php
 
+use Tests\TestCase;
 use App\Activity;
 use App\Algorithms\Calls\CallAlgoHelper;
 use App\Algorithms\Invoicing\AlternativeCareTimePayableCalculator;

@@ -26,7 +26,7 @@ trait CcdImporterHelpers
     ) {
         $this->userLogin($this->admin);
 
-        $this->visit(route('patients.dashboard'))
+        $response = $this->get(route('patients.dashboard'))
             ->click('Import CCDs')
             ->seePageIs('/ccd-importer/create')
             ->findElement("label-vendor-{$ccdVendor->id}")
@@ -46,7 +46,7 @@ trait CcdImporterHelpers
         $summary = ImportedMedicalRecord::all()->last();
 
         $this->assertTrue(!empty($summary->name));
-        $this->see($summary->name);
+        $response->assertSee($summary->name);
 
         $this->assertGreaterThan(0, $summary->medications);
         $this->assertGreaterThan(0, $summary->problems);

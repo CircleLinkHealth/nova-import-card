@@ -1,5 +1,6 @@
 <?php
 
+use Tests\TestCase;
 use App\CarePerson;
 use App\User;
 use Faker\Factory;

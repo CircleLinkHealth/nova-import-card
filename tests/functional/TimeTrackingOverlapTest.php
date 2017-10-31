@@ -1,6 +1,7 @@
 <?php
 
 
+use Tests\TestCase;
 use Carbon\Carbon;
 use Illuminate\Support\Collection;
 use Tests\Helpers\CarePlanHelpers;

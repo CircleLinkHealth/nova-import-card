@@ -1,4 +1,5 @@
 <?php
+use Tests\TestCase;
 
 /**
  * Created by PhpStorm.
@@ -12,7 +13,7 @@ class UploadCcdTest extends TestCase
     {
         $response = $this->call('POST', '/api/v1.0/ccd', []);
 
-        $this->assertResponseStatus(400);
+        $response->assertStatus(400);
     }
 
     public function test_ccd_with_provider_info()
@@ -35,6 +36,6 @@ class UploadCcdTest extends TestCase
 //            ])
 //        ]);
 //
-//        $this->assertResponseStatus(201);
+//        $response->assertStatus(201);
     }
 }

@@ -2,6 +2,7 @@
 
 namespace Tests\Unit;
 
+use Tests\TestCase;
 use App\Call;
 use Carbon\Carbon;
 use Tests\Helpers\UserHelpers;
