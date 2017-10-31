@@ -1,39 +1,45 @@
-<style>
-    .cp-item-row {
-        border:0px solid blue;
-    }
-    .cp-item {
-        border:0px solid #222;
-    }
-    .cp-item-child {
-        border:0px solid #444;
-    }
-    .cp-section {
-        border:0px solid #666;
-    }
-</style>
-
-@if(isset($editMode) && $editMode != false)
+@push('styles')
     <style>
         .cp-item-row {
-            border:1px solid blue;
+            border:0px solid blue;
         }
         .cp-item {
-            border:1px solid #222;
+            border:0px solid #222;
         }
         .cp-item-child {
-            border:1px solid #444;
+            border:0px solid #444;
         }
         .cp-section {
-            border:1px solid #666;
+            border:0px solid #666;
         }
     </style>
+@endpush
+
+@if(isset($editMode) && $editMode != false)
+    @push('styles')
+        <style>
+            .cp-item-row {
+                border:1px solid blue;
+            }
+            .cp-item {
+                border:1px solid #222;
+            }
+            .cp-item-child {
+                border:1px solid #444;
+            }
+            .cp-section {
+                border:1px solid #666;
+            }
+        </style>
+    @endpush
 @endif
-<style>
-    .cp-section {
-        border-bottom:3px solid #50B2E2;
-    }
-</style>
+@push('styles')
+    <style>
+        .cp-section {
+            border-bottom:3px solid #50B2E2;
+        }
+    </style>
+@endpush
 
 <div class="col-sm-12X cp-itemX" style="">
     @if(isset($editMode) && $editMode != false)
