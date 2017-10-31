@@ -111,10 +111,10 @@ class OnboardingTest extends TestCase
         $response = $this->get(route('get.onboarding.create.program.lead.user', [
             'code' => $this->invite->code,
         ]))
-            ->see('firstName')
-            ->see('lastName')
-            ->see('email')
-            ->see('password');
+            ->assertSee('firstName')
+            ->assertSee('lastName')
+            ->assertSee('email')
+            ->assertSee('password');
     }
 
 
@@ -127,7 +127,7 @@ class OnboardingTest extends TestCase
 
         $response = $this->get(route('get.onboarding.create.program.lead.user', [
             'code' => 'q',
-        ]))->seeStatusCode(403);
+        ]))->assertStatus(403);
     }
 
     public function test_post_locations()

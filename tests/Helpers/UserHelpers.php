@@ -114,7 +114,6 @@ trait UserHelpers
     public function userLogin(User $user)
     {
         $response = $this->get('/auth/login')
-            ->see('CarePlanManager')
             ->type($user->email, 'email')
             ->type('password', 'password')
             ->press('Log In');

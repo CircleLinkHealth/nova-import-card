@@ -61,12 +61,12 @@ trait CarePlanHelpers
         $this
             ->actingAs($this->provider)
             ->visit("/manage-patients/{$patient->id}/careplan/team")
-            ->see('Edit Patient Care Team')
+            ->assertSee('Edit Patient Care Team')
             ->click('#add-care-team-member')
-            ->see('Billing Provider')
-            ->see('Lead Contact')
-            ->see('Send Alert')
-            ->see($this->provider->display_name);
+            ->assertSee('Billing Provider')
+            ->assertSee('Lead Contact')
+            ->assertSee('Send Alert')
+            ->assertSee($this->provider->display_name);
     }
 
     public function fillCareplanPage1(
@@ -298,12 +298,12 @@ trait CarePlanHelpers
             ->visit("/manage-patients/{$patient->id}/careplan/sections/3")
             ->click('approve-forward')
             ->seePageIs("/manage-patients/{$patient->id}/view-careplan?page=3")
-            ->see('Care Plan')
-            ->see($patient->fullName)
-            ->see($patient->phone)
-            ->see($today)
-            ->see($billingProvider->fullName)
-            ->see($billingProvider->phone);
+            ->assertSee('Care Plan')
+            ->assertSee($patient->fullName)
+            ->assertSee($patient->phone)
+            ->assertSee($today)
+            ->assertSee($billingProvider->fullName)
+            ->assertSee($billingProvider->phone);
 
         /**
          * Check that entities are on the page
@@ -344,7 +344,7 @@ trait CarePlanHelpers
     {
         $this->actingAs($this->provider)
             ->visit(route('patients.dashboard'))
-            ->see('Add a Patient')
+            ->assertSee('Add a Patient')
             ->click('add-patient')
             ->seePageIs('/manage-patients/careplan/demographics');
 

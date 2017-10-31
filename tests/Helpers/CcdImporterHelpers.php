@@ -36,12 +36,12 @@ trait CcdImporterHelpers
             ->type($pathToCcda, 'ccd')
             ->press('Upload')
             ->seePageIs('/ccd-importer/qaimport')
-            ->see('Name')
-            ->see('Provider')
-            ->see('Has Phone')
-            ->see('Import')
-            ->see('Delete')
-            ->see('IMPORT/DELETE CHECKED CCDS');
+            ->assertSee('Name')
+            ->assertSee('Provider')
+            ->assertSee('Has Phone')
+            ->assertSee('Import')
+            ->assertSee('Delete')
+            ->assertSee('IMPORT/DELETE CHECKED CCDS');
 
         $summary = ImportedMedicalRecord::all()->last();
 

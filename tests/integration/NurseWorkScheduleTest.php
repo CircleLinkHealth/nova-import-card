@@ -35,8 +35,8 @@ class NurseWorkScheduleTest extends TestCase
     {
         $this->actingAs($nurse)
             ->visit(route('patients.dashboard'))
-            ->see($nurse->full_name)
-            ->see('work-schedule-link');
+            ->assertSee($nurse->full_name)
+            ->assertSee('work-schedule-link');
 
         //By default PHPUnit fails the test if the output buffer wasn't closed.
         //So we're adding this to make the test work.
@@ -51,8 +51,8 @@ class NurseWorkScheduleTest extends TestCase
 
         $this->actingAs($provider)
             ->visit(route('patients.dashboard'))
-            ->see($provider->full_name)
-            ->dontSee('work-schedule-link');
+            ->assertSee($provider->full_name)
+            ->assertDontSee('work-schedule-link');
 
         //By default PHPUnit fails the test if the output buffer wasn't closed.
         //So we're adding this to make the test work.
@@ -119,7 +119,7 @@ class NurseWorkScheduleTest extends TestCase
 
             $this->actingAs($nurse)
                 ->visit(route('care.center.work.schedule.index'))
-                ->dontSee("delete-window-{$window->id}");
+                ->assertDontSee("delete-window-{$window->id}");
 
             $this->assertDatabaseHas('nurse_contact_window', [
                 'nurse_info_id' => $nurse->nurseInfo->id,
