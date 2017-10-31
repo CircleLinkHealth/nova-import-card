@@ -412,7 +412,7 @@ class CareplanService
                 if (isset($ucpItem['parent_status'])) {
                     // if active
                     if ($ucpItem['parent_status'] == 'Active') {
-                        $query = DB::connection('mysql_no_prefix')->table('rules_questions')->select('msg_id')
+                        $query = DB::table('rules_questions')->select('msg_id')
                             ->where('obs_key', "=", $obsKey);
                         $questionInfo = $query->first();
                         if ($questionInfo) {

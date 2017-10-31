@@ -377,7 +377,7 @@ order by ui_sort
  -- and p.status = 'active'
 ;";
 
-        $results = DB::connection('mysql_no_prefix')->select(DB::raw($sql_ucp));
+        $results = DB::select(DB::raw($sql_ucp));
 
         if (isset($results)) {
             //dd($results);

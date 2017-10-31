@@ -5,12 +5,7 @@ use Illuminate\Database\Eloquent\Model;
 class ObservationMeta extends Model
 {
 
-    /**
-     * The connection name for the model.
-     *
-     * @var string
-     */
-    protected $connection = 'mysql_no_prefix';
+
 
     /**
      * The database table used by the model.
@@ -70,11 +65,11 @@ class ObservationMeta extends Model
 
         // updating or inserting?
         if($this->id) {
-            DB::connection('mysql_no_prefix')->table('ma_'.$wpUser->primaryProgramId().'_observationmeta')->where('comment_ID', $this->legacy_meta_id)->update($params);
+            DB::table('ma_'.$wpUser->primaryProgramId().'_observationmeta')->where('comment_ID', $this->legacy_meta_id)->update($params);
         } else {
             // add to legacy if doesnt already exist
             if(empty($this->legacy_meta_id)) {
-                $resultId = DB::connection('mysql_no_prefix')->table('ma_' . $wpUser->primaryProgramId() . '_observationmeta')->insertGetId($params);
+                $resultId = DB::table('ma_' . $wpUser->primaryProgramId() . '_observationmeta')->insertGetId($params);
                 $this->legacy_meta_id = $resultId;
             }
         }

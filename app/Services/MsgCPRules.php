@@ -126,7 +126,7 @@ class MsgCPRules
                 or q.qtype rlike 'FreeText|None|End|TOD')
                 LIMIT 1";
 
-        $results = DB::connection('mysql_no_prefix')->select(DB::raw($query));
+        $results = DB::select(DB::raw($query));
 
         if (isset($results[0])) {
             return $results[0];
@@ -171,7 +171,7 @@ limit 1";
 
 // echo $query;
 
-        $results = DB::connection('mysql_no_prefix')->select(DB::raw($query));
+        $results = DB::select(DB::raw($query));
         if (isset($results[0])) {
             $qInfo = $results[0];
             $qInfo->low = '';
@@ -246,7 +246,7 @@ limit 1";
 
         //echo '<br>MsgCPRules->getMixedValid()';
 
-        $results = DB::connection('mysql_no_prefix')->select(DB::raw($query));
+        $results = DB::select(DB::raw($query));
         if (isset($results[0])) {
             return $results[0];
         } else {
@@ -256,7 +256,7 @@ limit 1";
 
     public function getQsType($msgId, $programId)
     {
-        $qsType = DB::connection('mysql_no_prefix')->table('rules_question_sets')
+        $qsType = DB::table('rules_question_sets')
             ->join('rules_questions', 'rules_question_sets.qid', '=', 'rules_questions.qid')
             ->select('rules_question_sets.qs_type')
             ->where('rules_questions.msg_id', $msgId)
@@ -306,7 +306,7 @@ query;
 
 //echo $query;
 
-        $results = DB::connection('mysql_no_prefix')->select(DB::raw($query));
+        $results = DB::select(DB::raw($query));
         //dd($results[0]);
         if (isset($results[0])) {
             return $results[0];
@@ -350,7 +350,7 @@ query;
 
 // echo $query;
 
-        $results = DB::connection('mysql_no_prefix')->select(DB::raw($query));
+        $results = DB::select(DB::raw($query));
         //dd($results[0]);
         return $results;
     }//getNextList
@@ -380,7 +380,7 @@ query;
         group by orderedobs.obs_message_id
         order by obs_date DESC";
 
-        $results = DB::connection('mysql_no_prefix')->select(DB::raw($query));
+        $results = DB::select(DB::raw($query));
         $y = 0;
         $n = 0;
         $scheduled = 0;
@@ -500,7 +500,7 @@ query;
 
 // echo $query;
 
-        $results = DB::connection('mysql_no_prefix')->select(DB::raw($query));
+        $results = DB::select(DB::raw($query));
         if (isset($results[0])) {
             return $results[0]->meta_value;
         } else {
@@ -528,7 +528,7 @@ query;
             and o.obs_key in ('Blood_Sugar', 'Blood_Pressure', 'Weight', 'Cigarettes')";
 
 // echo $query;
-        $results = DB::connection('mysql_no_prefix')->select(DB::raw($sql));
+        $results = DB::select(DB::raw($sql));
 
         return $results;
     }//getReadings
@@ -562,7 +562,7 @@ query;
 
 // echo $query;
 
-        $results = DB::connection('mysql_no_prefix')->select(DB::raw($sql));
+        $results = DB::select(DB::raw($sql));
 
         return $results;
     }//getReadingDefaults
@@ -591,7 +591,7 @@ query;
 
 // echo $query;
 
-        $results = DB::connection('mysql_no_prefix')->select(DB::raw($query));
+        $results = DB::select(DB::raw($query));
         if (isset($results[0])) {
             return $results[0];
         } else {
@@ -664,7 +664,7 @@ query;
 
 // echo $query;
 
-        $results = DB::connection('mysql_no_prefix')->select(DB::raw($query));
+        $results = DB::select(DB::raw($query));
         if (isset($results[0])) {
             return $results[0];
         } else {
@@ -768,7 +768,7 @@ query;
     public function getUserConfig($provid, $user_id)
     {
         $sql = "select meta_key, meta_value from wp_usermeta where user_id = {$user_id} and meta_key = 'wp_{$provid}_user_config'";
-        $results = DB::connection('mysql_no_prefix')->select(DB::raw($sql));
+        $results = DB::select(DB::raw($sql));
         if (isset($results[0])) {
             return $results[0]->meta_value;
         }

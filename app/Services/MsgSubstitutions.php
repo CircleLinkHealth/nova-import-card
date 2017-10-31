@@ -146,7 +146,7 @@ class MsgSubstitutions
                         );
 
                         // insert new observation record
-                        $obs_id = DB::connection('mysql_no_prefix')->table('ma_'.$provid.'_observations')->insertGetId( $data );
+                        $obs_id = DB::table('ma_'.$provid.'_observations')->insertGetId( $data );
                         echo "<br>MsgSubstitutions->getReadingsText() Created New Observation#=" . $obs_id;
                         //$obs_id = $this->_ci->obs->insert_observation($data, false, $provid);
 

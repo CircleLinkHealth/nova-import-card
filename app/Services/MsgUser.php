@@ -55,7 +55,7 @@ class MsgUser
 
     public function check_for_scheduled_records($userId, $blogId)
     {
-        $query = DB::connection('mysql_no_prefix')->table('wp_'. $blogId .'_comments');
+        $query = DB::table('wp_'. $blogId .'_comments');
         $query->select('*');
         $query->where('user_id', '=', $userId);
         $query->where('comment_author', '=', 'schedulercontroller');
@@ -204,7 +204,7 @@ class MsgUser
         WHERE rucp.user_id = " . $intUserId . "
         AND pcp.prov_id = " . $intBlogId . "
         AND im.meta_key = 'alert_key'";
-        $rulesData = DB::connection('mysql_no_prefix')->select(DB::raw($query));
+        $rulesData = DB::select(DB::raw($query));
         // set alert_values
         $arrReturnResult = [];
         if (!empty($rulesData)) {
@@ -231,7 +231,7 @@ class MsgUser
         $this->int_id = $int_id;
 
         // query
-        $query = DB::connection('mysql_no_prefix')->table('rules_ucp AS rucp');
+        $query = DB::table('rules_ucp AS rucp');
         $query->select(
             'rucp.*',
             'pcp.pcp_id',
@@ -348,7 +348,7 @@ class MsgUser
                 and s.meta_value like binary '%Active%'
                 and cm.user_id is null ".$limit."";
 
-        $userData = DB::connection('mysql_no_prefix')->select(DB::raw($sql));
+        $userData = DB::select(DB::raw($sql));
         //dd($userData);
 
         $logString = '';
@@ -488,7 +488,7 @@ class MsgUser
                 and s.meta_value like '%Active%'
                 and cm.user_id is null $limit;";
 
-        $userData = DB::connection('mysql_no_prefix')->select(DB::raw($sql));
+        $userData = DB::select(DB::raw($sql));
         if (!empty($userData)) {
             foreach ($userData as $row) {
                 $arrCapabilities = unserialize($row->$strCapabilitiesIdent);
@@ -528,7 +528,7 @@ class MsgUser
     public function get_comments_for_user($userId, $blogId)
     {
         $commentTable = 'wp_'.$blogId.'_comments';
-        $query = DB::connection('mysql_no_prefix')->table($commentTable . ' AS cm');
+        $query = DB::table($commentTable . ' AS cm');
         $query->select("cm.*");
         $where = ['cm.user_id' => $userId];
         $query->where($where);
@@ -587,7 +587,7 @@ class MsgUser
             }
             $arrMsgType = $arrUserData[$intUserId]['usermeta']['curresp'];
             $sql = "SELECT comment_ID, comment_type,comment_content FROM $strCommentsTable WHERE (comment_type LIKE 'state_$arrMsgType') and user_id=$intUserId and DATE(comment_date)=DATE(NOW()) AND comment_approved = 0 ORDER BY comment_date DESC LIMIT 1";
-            $query = DB::connection('mysql_no_prefix')->select(DB::raw($sql));
+            $query = DB::select(DB::raw($sql));
 
             if (!empty($query)) {
                 $row = $query[0];
@@ -605,7 +605,7 @@ class MsgUser
         } else {
             // Existing Msg Flow session Response
             $sql = "SELECT comment_ID, comment_type,comment_content FROM $strCommentsTable WHERE (comment_type LIKE 'state_%') and user_id=$intUserId and DATE(comment_date)=DATE(NOW()) AND comment_approved = 0 ORDER BY comment_date DESC LIMIT 1";
-            $query = DB::connection('mysql_no_prefix')->select(DB::raw($sql));
+            $query = DB::select(DB::raw($sql));
 
             if (!empty($query)) {
                 $row = $query[0];
@@ -641,7 +641,7 @@ class MsgUser
             'comment_approved'     => 0,
         ];
 
-        $comment_id = DB::connection('mysql_no_prefix')->table($strCommentsTable)->insertGetId($arrUnsolicitedData);
+        $comment_id = DB::table($strCommentsTable)->insertGetId($arrUnsolicitedData);
         echo "<br>MsgDelivery->create_new_unsolicited_comment_row() Created New Comment = " . $comment_id;
 
         return $comment_id;
@@ -1003,7 +1003,7 @@ WHERE {$str_observation_table}.user_id = ?;", [$user_id]);
     public function get_user_state_record_by_id($intProgramId, $id)
     {
         echo "<br>MsgUser->get_user_state_record_by_id() id=".$id;
-        $query = DB::connection('mysql_no_prefix')->table('wp_'. $intProgramId .'_comments');
+        $query = DB::table('wp_'. $intProgramId .'_comments');
         $query->select('*');
         $query->where('comment_ID', '=', $id);
         $record_exists = $query->get();
