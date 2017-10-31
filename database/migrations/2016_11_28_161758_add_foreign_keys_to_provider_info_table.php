@@ -30,5 +30,4 @@ class AddForeignKeysToProviderInfoTable extends Migration
             $table->dropForeign('provider_info_user_id_foreign');
         });
     }
-
 }

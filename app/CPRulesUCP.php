@@ -2,7 +2,8 @@
 
 use Illuminate\Database\Eloquent\Model;
 
-class CPRulesUCP extends Model {
+class CPRulesUCP extends Model
+{
 
     public $timestamps = false;
 
@@ -56,12 +57,10 @@ class CPRulesUCP extends Model {
     {
         $rulesUCP = CPRulesUCP::where('user_id', '=', $userId)->get();
 
-        foreach ( $rulesUCP as $rules )
-        {
+        foreach ($rulesUCP as $rules) {
             $rules['item'] = $rules->item;
         }
 
         return $rulesUCP;
     }
-
 }

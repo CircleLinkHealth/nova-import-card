@@ -46,7 +46,6 @@ class StatsHelper
         }
 
         return $data;
-
     }
 
     public function successfulCallCount(Carbon $start, Carbon $end)
@@ -121,7 +120,6 @@ class StatsHelper
         }
 
         return $data;
-
     }
 
     public function totalBilled()

@@ -34,5 +34,4 @@ class AddForeignKeysToNotesTable extends Migration
             $table->dropForeign('notes_patient_id_foreign');
         });
     }
-
 }

@@ -131,8 +131,10 @@ class OnboardingService
                 'first_name'                          => $user->first_name,
                 'phone_number'                        => $phone->number ?? '',
                 'phone_extension'                     => $phone->extension ?? '',
-                'phone_type'                          => array_search($phone->type ?? '',
-                        PhoneNumber::getTypes()) ?? '',
+                'phone_type'                          => array_search(
+                    $phone->type ?? '',
+                    PhoneNumber::getTypes()
+                ) ?? '',
                 'isComplete'                          => false,
                 'validated'                           => false,
                 'grantAdminRights'                    => $permissions->pivot->has_admin_rights ?? false,
@@ -250,7 +252,6 @@ class OnboardingService
         $sameEHRLogin = $request->input('sameEHRLogin');
 
         foreach ($request->input('locations') as $index => $newLocation) {
-
             if (!$newLocation['name']) {
                 continue;
             }
@@ -459,12 +460,20 @@ class OnboardingService
                 //Attach the locations
                 $user->attachLocation($newUser['locations']);
 
-                $attachPractice = $user->attachPractice($primaryPractice, $grantAdminRights, $sendBillingReports,
-                    $newUser['role_id']);
+                $attachPractice = $user->attachPractice(
+                    $primaryPractice,
+                    $grantAdminRights,
+                    $sendBillingReports,
+                    $newUser['role_id']
+                );
 
                 //attach phone
-                $phone = $user->clearAllPhonesAndAddNewPrimary($newUser['phone_number'], $newUser['phone_type'], true,
-                    $newUser['phone_extension']);
+                $phone = $user->clearAllPhonesAndAddNewPrimary(
+                    $newUser['phone_number'],
+                    $newUser['phone_type'],
+                    true,
+                    $newUser['phone_extension']
+                );
 
                 $providerRole = Role::whereName('provider')->first();
 
@@ -482,8 +491,10 @@ class OnboardingService
                 }
 
                 if ($newUser['forward_careplan_approval_emails_to']['who'] != 'billing_provider') {
-                    $user->forwardTo($newUser['forward_careplan_approval_emails_to']['user_id'],
-                        $newUser['forward_careplan_approval_emails_to']['who']);
+                    $user->forwardTo(
+                        $newUser['forward_careplan_approval_emails_to']['user_id'],
+                        $newUser['forward_careplan_approval_emails_to']['who']
+                    );
                 }
 
 //                $user->notify(new StaffInvite($implementationLead, $primaryPractice));
@@ -515,5 +526,4 @@ class OnboardingService
             ], 400);
         }
     }
-
 }

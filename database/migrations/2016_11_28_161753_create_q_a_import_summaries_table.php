@@ -44,5 +44,4 @@ class CreateQAImportSummariesTable extends Migration
     {
         Schema::drop('q_a_import_summaries');
     }
-
 }

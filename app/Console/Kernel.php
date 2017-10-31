@@ -87,7 +87,6 @@ class Kernel extends ConsoleKernel
 
                 sendSlackMessage('#background-tasks', $message);
             }
-
         })->dailyAt('00:05');
 
         //tunes scheduled call dates.

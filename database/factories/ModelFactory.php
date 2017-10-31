@@ -55,8 +55,8 @@ $factory->define(\App\Models\CPM\Biometrics\CpmBloodPressure::class, function (F
 
     return [
 //        'patient_id' => '', this has to be passed in when calling the factory
-'starting' => "$systolicStarting/$diastolicStarting",
-'target'   => "$systolicTarget/$diastolicTarget",
+    'starting' => "$systolicStarting/$diastolicStarting",
+    'target'   => "$systolicTarget/$diastolicTarget",
     ];
 });
 
@@ -64,8 +64,8 @@ $factory->define(\App\Models\CPM\Biometrics\CpmBloodSugar::class, function (Fake
 
     return [
 //        'patient_id' => '', this has to be passed in when calling the factory
-'starting'     => rand(140, 300),
-'starting_a1c' => rand('6.7', '13.8'),
+    'starting'     => rand(140, 300),
+    'starting_a1c' => rand('6.7', '13.8'),
     ];
 });
 
@@ -73,8 +73,8 @@ $factory->define(\App\Models\CPM\Biometrics\CpmSmoking::class, function (Faker\G
 
     return [
 //        'patient_id' => '', this has to be passed in when calling the factory
-'starting' => rand(15, 50),
-'target'   => rand(0, 8),
+    'starting' => rand(15, 50),
+    'target'   => rand(0, 8),
     ];
 });
 
@@ -94,12 +94,12 @@ $factory->define(\App\Models\CCD\CcdInsurancePolicy::class, function (Faker\Gene
     return [
 //        'ccda_id' => '', this has to be passed in when calling the factory
 //        'patient_id' => '', this has to be passed in when calling the factory
-'name'       => $faker->company,
-'type'       => $types[array_rand($types, 1)],
-'policy_id'  => $faker->swiftBicNumber,
-'relation'   => $relations[array_rand($relations, 1)],
-'subscriber' => $faker->name,
-'approved'   => rand(0, 1),
+    'name'       => $faker->company,
+    'type'       => $types[array_rand($types, 1)],
+    'policy_id'  => $faker->swiftBicNumber,
+    'relation'   => $relations[array_rand($relations, 1)],
+    'subscriber' => $faker->name,
+    'approved'   => rand(0, 1),
     ];
 });
 
@@ -150,7 +150,6 @@ $factory->define(Enrollee::class, function (Faker\Generator $faker) {
 });
 
 $factory->define(Nurse::class, function (Faker\Generator $faker) {
-
 });
 
 $factory->define(Practice::class, function (Faker\Generator $faker) {

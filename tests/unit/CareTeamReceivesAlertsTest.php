@@ -160,5 +160,4 @@ class CareTeamReceivesAlertsTest extends TestCase
             $location->clinicalEmergencyContact()->sync([]);
         }
     }
-
 }

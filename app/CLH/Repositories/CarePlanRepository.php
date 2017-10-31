@@ -47,7 +47,6 @@ class CarePlanRepository
         $carePlanItems = CarePlanItem::where('plan_id', '=', $carePlanDupe->id)->get();
         if ($carePlanItems->count() > 0) {
             foreach ($carePlanItems as $carePlanItem) {
-
                 // skip if no care item relation
                 if (is_null($carePlanItem->careItem)) {
                     continue 1;
@@ -82,8 +81,8 @@ class CarePlanRepository
     public function createCarePlan(
         CarePlan $carePlan,
         ParameterBag $params
-    )
-    {
+    ) {
+    
         $carePlan->name = $params->get('name');
         $carePlan->display_name = $params->get('display_name');
         $carePlan->type = $params->get('type');

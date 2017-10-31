@@ -6,7 +6,8 @@ use App\Services\CPM\CpmMiscService;
 use App\User;
 use Illuminate\Database\Eloquent\Model;
 
-class CpmMisc extends Model implements Serviceable{
+class CpmMisc extends Model implements Serviceable
+{
     
     use Instructable;
 

@@ -8,13 +8,14 @@ use App\Services\CPM\CpmProblemService;
 use App\User;
 use Illuminate\Database\Eloquent\Model;
 
-class CpmProblem extends Model implements Serviceable{
+class CpmProblem extends Model implements Serviceable
+{
     
     use Instructable;
 
     protected $table = 'cpm_problems';
 
-	protected $guarded = [];
+    protected $guarded = [];
     
     /**
      * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany

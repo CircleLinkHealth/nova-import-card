@@ -39,5 +39,4 @@ class MailLog extends Model
     {
         return $this->belongsTo('App\Note', 'note_id');
     }
-
 }

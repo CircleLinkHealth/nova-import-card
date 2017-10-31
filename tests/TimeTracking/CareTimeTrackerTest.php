@@ -73,9 +73,10 @@ class CareTimeTrackerTest extends TestCase
         $data = $calculator->adjustCCMPaybleForActivity($this->activity);
 
         $report = $calculator->createOrIncrementNurseSummary(
-                                                $data['toAddToAccuredTowardsCCM'],
-                                                $data['toAddToAccuredAfterCCM'],
-                                                $this->activity->id);
+            $data['toAddToAccuredTowardsCCM'],
+            $data['toAddToAccuredAfterCCM'],
+            $this->activity->id
+        );
 
         $post_ccm = $this->patient->cur_month_activity_time;
         $data['is_ccm_complex'] = $record->is_ccm_complex;

@@ -86,9 +86,16 @@ class DetermineCcdaEnrollmentEligibility implements ShouldQueue
         $lgh = Practice::whereName('lafayette-general-health')
             ->first();
 
-        $list = (new WelcomeCallListGenerator(collect([$patient]), false, $filterInsurance, true, true, $lgh,
+        $list = (new WelcomeCallListGenerator(
+            collect([$patient]),
+            false,
+            $filterInsurance,
+            true,
+            true,
+            $lgh,
             Ccda::class,
-            $this->ccda->id));
+            $this->ccda->id
+        ));
 
         $this->ccda->status = Ccda::ELIGIBLE;
 

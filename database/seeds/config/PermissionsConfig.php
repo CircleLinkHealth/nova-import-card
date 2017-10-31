@@ -4,8 +4,8 @@ use App\Permission;
 use App\Role;
 use Illuminate\Database\Seeder;
 
-
-class PermissionsConfig extends Seeder {
+class PermissionsConfig extends Seeder
+{
 
     var $roles = array();
     var $permissions = array();
@@ -215,21 +215,21 @@ class PermissionsConfig extends Seeder {
         // -------------------------------------------------------
 
         $this->updateRolesAndPermissions();
-
     }
 
 
-    public function updateRolesAndPermissions() {
+    public function updateRolesAndPermissions()
+    {
         $permissions = $this->permissions;
         $roles = $this->roles;
 
         // first make sure all permissions are in database
         echo PHP_EOL.PHP_EOL . 'PERMISSIONS' . PHP_EOL.PHP_EOL;
-        foreach($permissions as $permissionName => $permissionInfo) {
+        foreach ($permissions as $permissionName => $permissionInfo) {
             echo $permissionName . PHP_EOL;
             // get permission and add id to array
             $permission = Permission::where('name', '=', $permissionName)->first();
-            if(!empty($permission)) {
+            if (!empty($permission)) {
                 $permissions[$permission->name]['id'] = $permission->id;
                 $permission->description = $permissionInfo['description']; // update description
                 $permission->save();
@@ -248,9 +248,9 @@ class PermissionsConfig extends Seeder {
 
         // remove any permissions that are no longer in permissions array
         $existingPermissions = Permission::all();
-        if(!empty($existingPermissions)) {
-            foreach($existingPermissions as $existingPermission) {
-                if(!array_key_exists($existingPermission->name, $permissions)) {
+        if (!empty($existingPermissions)) {
+            foreach ($existingPermissions as $existingPermission) {
+                if (!array_key_exists($existingPermission->name, $permissions)) {
                     $existingPermission->delete();
                     echo 'permission no longer exists, removing - '.$existingPermission->name . PHP_EOL;
                 }
@@ -259,11 +259,11 @@ class PermissionsConfig extends Seeder {
 
         // next make sure all roles are in the database
         echo PHP_EOL.PHP_EOL . 'ROLES' . PHP_EOL.PHP_EOL;
-        foreach($roles as $roleName => $roleInfo) {
+        foreach ($roles as $roleName => $roleInfo) {
             echo PHP_EOL . $roleName . PHP_EOL;
             // get role and add id to array
             $role = Role::where('name', '=', $roleName)->first();
-            if(!empty($role)) {
+            if (!empty($role)) {
                 $roles[$roleName]['id'] = $role->id;
                 $role->description = $roleInfo['description']; // update description
                 $role->save();
@@ -280,17 +280,17 @@ class PermissionsConfig extends Seeder {
 
             // role permissions
             $rolePermissionIds = array();
-            foreach($permissions as $key => $permission) {
+            foreach ($permissions as $key => $permission) {
                 // administrator gets all
-                if($roleName == 'administrator') {
+                if ($roleName == 'administrator') {
                     $rolePermissionIds[] = $permission['id'];
                 } else {
-                    if(in_array($key, $roleInfo['permissions'])) {
+                    if (in_array($key, $roleInfo['permissions'])) {
                         $rolePermissionIds[] = $permission['id'];
                     }
                 }
             }
-            foreach($rolePermissionIds as $permissionId) {
+            foreach ($rolePermissionIds as $permissionId) {
                 // administrator gets all
                 echo ' id-' . $permissionId . PHP_EOL;
             }
@@ -302,9 +302,9 @@ class PermissionsConfig extends Seeder {
 
         // remove any roles that are no longer in roles array
         $existingRoles = Role::all();
-        if($existingRoles->count() > 0) {
-            foreach($existingRoles as $existingRole) {
-                if(!array_key_exists($existingRole->name, $roles)) {
+        if ($existingRoles->count() > 0) {
+            foreach ($existingRoles as $existingRole) {
+                if (!array_key_exists($existingRole->name, $roles)) {
                     $existingRole->users()->sync([]); // Delete relationship data
                     $existingRole->perms()->sync([]); // Delete relationship data
                     $existingRole->forceDelete();
@@ -315,5 +315,4 @@ class PermissionsConfig extends Seeder {
         // end
         echo PHP_EOL.PHP_EOL.'End role/permissions sync.' .$this->msg. PHP_EOL.PHP_EOL;
     }
-
 }

@@ -2,7 +2,6 @@
 
 namespace App\Observers;
 
-
 use App\NurseContactWindow;
 use Maknz\Slack\Facades\Slack;
 
@@ -52,6 +51,4 @@ class NurseContactWindowObserver
 
         \sendSlackMessage('#carecoachscheduling', $sentence);
     }
-
-
 }

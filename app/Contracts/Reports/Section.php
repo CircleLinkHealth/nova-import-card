@@ -1,5 +1,6 @@
 <?php namespace App\Contracts\Reports;
 
-interface Section {
+interface Section
+{
     public function render();
 }

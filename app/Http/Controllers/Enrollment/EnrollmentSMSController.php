@@ -18,5 +18,4 @@ class EnrollmentSMSController extends Controller
 
         Log::to($request);
     }
-
 }

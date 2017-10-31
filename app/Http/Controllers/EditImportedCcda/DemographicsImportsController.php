@@ -17,9 +17,9 @@ class DemographicsImportsController extends Controller
      */
     public function store(Request $request)
     {
-        $demographics = $request->input( 'demographics' );
+        $demographics = $request->input('demographics');
 
-        $newDemographics = DemographicsImport::whereId( $demographics[ 'id' ] )->update( $demographics );
+        $newDemographics = DemographicsImport::whereId($demographics[ 'id' ])->update($demographics);
 
         $provider = User::find($demographics['provider_id']);
         $location = Location::find($demographics['location_id']);
@@ -32,6 +32,6 @@ class DemographicsImportsController extends Controller
         $summary->save();
 
 
-        return response()->json( 'OK', 201 );
+        return response()->json('OK', 201);
     }
 }

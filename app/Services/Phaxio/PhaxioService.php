@@ -8,7 +8,6 @@
 
 namespace App\Services\Phaxio;
 
-
 use App\Contracts\Efax;
 use Phaxio\Phaxio;
 

@@ -17,7 +17,6 @@ class AddVariableRatesToNurseInfo extends Migration
 
             $table->integer('high_rate')->default('30')->after('billing_type');
             $table->integer('low_rate')->default('10')->after('billing_type');
-
         });
     }
 
@@ -32,7 +31,6 @@ class AddVariableRatesToNurseInfo extends Migration
 
             $table->dropColumn('high_rate');
             $table->dropColumn('low_rate');
-
         });
     }
 }

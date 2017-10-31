@@ -26,7 +26,6 @@ class NurseInvoiceMailer extends Mailable
         $this->link = $link;
         $this->recipient = User::find($id);
         $this->month = $month;
-
     }
 
     /**
@@ -57,6 +56,5 @@ class NurseInvoiceMailer extends Mailable
                 'as' => 'invoice.pdf',
                 'mime' => 'application/pdf',
             ]);
-
     }
 }

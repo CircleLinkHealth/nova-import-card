@@ -8,7 +8,6 @@
 
 namespace App\Services;
 
-
 use App\CLH\CCD\Importer\SnomedToCpmIcdMap;
 use App\Enrollee;
 use App\Models\CPM\CpmProblem;
@@ -137,7 +136,6 @@ class WelcomeCallListGenerator
             $qualifyingProblemsCpmIdStack = [];
 
             foreach ($problems as $problemCode) {
-
                 if (!$problemCode) {
                     continue;
                 }
@@ -291,7 +289,6 @@ class WelcomeCallListGenerator
             $this->ineligiblePatients->push($row);
 
             return true;
-
         });
 
         return $this;

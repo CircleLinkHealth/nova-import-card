@@ -26,19 +26,23 @@ class ProblemCodesTest extends TestCase
         $this->snomedProblem = $this->makeSnomedProblem($patient);
     }
 
-    public function test_is_icd_9() {
+    public function test_is_icd_9()
+    {
         $this->assertTrue($this->icd9Problem->isIcd9());
     }
 
-    public function test_is_icd_10() {
+    public function test_is_icd_10()
+    {
         $this->assertTrue($this->icd10Problem->isIcd10());
     }
 
-    public function test_is_snomed() {
+    public function test_is_snomed()
+    {
         $this->assertTrue($this->snomedProblem->isSnomed());
     }
 
-    public function test_icd10_code() {
+    public function test_icd10_code()
+    {
         $this->assertNotNull($this->icd9Problem->icd10Code());
         $this->assertNotNull($this->icd10Problem->icd10Code());
         $this->assertNull($this->snomedProblem->icd10Code());

@@ -38,5 +38,4 @@ class CreateAppointmentsTable extends Migration
     {
         Schema::drop('appointments');
     }
-
 }

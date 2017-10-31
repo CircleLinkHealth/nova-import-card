@@ -31,7 +31,6 @@ class AddInviteOpenedAtToEnrollees extends Migration
         Schema::table('enrollees', function (Blueprint $table) {
 
             $table->dropColumn('invite_opened_at');
-
         });
     }
 }

@@ -8,7 +8,6 @@
 
 namespace App\Services\AthenaAPI;
 
-
 use App\CLH\CCD\Importer\QAImportManager;
 use App\CLH\Repositories\CCDImporterRepository;
 use App\Contracts\Repositories\CcdaRepository;
@@ -71,7 +70,6 @@ class Service
         }
 
         foreach ($response['appointments'] as $bookedAppointment) {
-
             $patientId = $bookedAppointment['patientid'];
             $departmentId = $bookedAppointment['departmentid'];
 
@@ -106,8 +104,11 @@ class Service
             ])->take($number);
 
         $imported = $ccdaRequests->map(function ($ccdaRequest) {
-            $xmlCcda = $this->api->getCcd($ccdaRequest->patient_id, $ccdaRequest->practice_id,
-                $ccdaRequest->department_id);
+            $xmlCcda = $this->api->getCcd(
+                $ccdaRequest->patient_id,
+                $ccdaRequest->practice_id,
+                $ccdaRequest->department_id
+            );
 
             if (!isset($xmlCcda[0]['ccda'])) {
                 return false;
@@ -134,8 +135,10 @@ class Service
             if (app()->environment('worker')) {
                 $link = route('view.files.ready.to.import');
 
-                sendSlackMessage('#ccd-file-status',
-                    "We received a CCD from Athena. \n Please visit {$link} to import.");
+                sendSlackMessage(
+                    '#ccd-file-status',
+                    "We received a CCD from Athena. \n Please visit {$link} to import."
+                );
             }
 
             return $ccda;

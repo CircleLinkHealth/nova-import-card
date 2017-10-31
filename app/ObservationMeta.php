@@ -2,7 +2,8 @@
 
 use Illuminate\Database\Eloquent\Model;
 
-class ObservationMeta extends Model {
+class ObservationMeta extends Model
+{
 
     /**
      * The connection name for the model.
@@ -40,14 +41,14 @@ class ObservationMeta extends Model {
 
     public function save(array $params = array())
     {
-        if(empty($this->obs_id)) {
+        if (empty($this->obs_id)) {
             return false;
         }
         $observation = Observation::find($this->obs_id);
         $comment = Comment::find($observation->comment_id);
         $wpUser = User::find($observation->user_id);
 
-        if(!$wpUser || !$observation) {
+        if (!$wpUser || !$observation) {
             return false;
         }
 
@@ -82,7 +83,4 @@ class ObservationMeta extends Model {
         parent::save();
         // http://www.amitavroy.com/justread/content/articles/events-laravel-5-and-customize-model-save
     }
-
-
-
 }

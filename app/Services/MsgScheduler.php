@@ -15,18 +15,20 @@ $this->load->model('cpm_1_7_scheduler_model','collector');
 $this->load->library('cpm_1_7_msgchooser_library');
  */
 
-class MsgScheduler {
+class MsgScheduler
+{
 
     function __construct()
     {
     }
 
-    public function test($blogId){
+    public function test($blogId)
+    {
         $msgUser = new MsgUser;
         $activeUsers = $msgUser->get_all_active_patients($blogId);
         //dd($activeUsers);
         foreach ($activeUsers as $key => $intUserID) {
-            if ($msgUser->check_for_scheduled_records($intUserID, $blogId)){
+            if ($msgUser->check_for_scheduled_records($intUserID, $blogId)) {
                 $arrPart = $msgUser->get_users_data($intUserID, 'id', $blogId, true);
                 //$ret = $this->create_app_schedule($arrPart);
             }
@@ -37,14 +39,15 @@ class MsgScheduler {
     /**
      * @param $intProgramID
      */
-    public function sendDailyReminder($intProgramID, $debug=false){
+    public function sendDailyReminder($intProgramID, $debug = false)
+    {
         date_default_timezone_set('America/New_York');
         //switch_to_blog( $intProgramID );
         echo "<br><br>#################### start sendDailyReminder() ######################";
         $today = date('N');
         echo "<br><br>sendDailyReminder Date: ".$today."<br><br>";
 
-        if (in_array($today, array("1","3","5") ) ) {
+        if (in_array($today, array("1","3","5"))) {
             $reminders = array('daily' => 'day', 'welcome' => 'new' ,'hospital' => 'hsp_dm');
         } else {
             $reminders = array('daily' => 'day', 'welcome' => 'new' );
@@ -69,19 +72,19 @@ class MsgScheduler {
                 $ucp = $msgUser->get_user_care_plan_items($value['user_id'], $intProgramID);
                 foreach ($ucp as $ucpkey => $ucpvalue) {
                     if ($ucpvalue['section_text'] == 'Transitional Care Management'
-                        && $ucpvalue['items_text'] == 'Contact Days')
-                    {
+                        && $ucpvalue['items_text'] == 'Contact Days') {
                         $tc[$value['user_id']]['contactDays'] = $ucpvalue['meta_value'];
                     }
 
                     if ($ucpvalue['section_text'] == 'Transitional Care Management'
-                        && $ucpvalue['meta_key'] == 'status')
-                    {
+                        && $ucpvalue['meta_key'] == 'status') {
                         $tc[$value['user_id']]['status'] = $ucpvalue['meta_value'];
                     }
                 }
-                if($debug) var_export($tc);
-                if( $msgType == "hospital"
+                if ($debug) {
+                    var_export($tc);
+                }
+                if ($msgType == "hospital"
                     && in_array($today, explode(',', $tc[$value['user_id']]['contactDays']))
                     && $tc[$value['user_id']]['status'] == 'Active' ) {
                     echo "[".$value['user_id']."]UCP ALLOWED SEND $msgType<BR>";
@@ -98,24 +101,27 @@ class MsgScheduler {
                 $msgChooser = new MsgChooser;
                 $nextMessageInfo = $msgChooser->nextMessage($arrPart[$value['user_id']]);
 
-                if($msgType == 'welcome') {
+                if ($msgType == 'welcome') {
                     $content_author = 'welcome';
                 } else {
                     $content_author = 'dailyreminder';
                 }
 
                 //  Create new state comment
-                if(!$debug)                $comment_id = $this->addStateComment($intProgramID, 'state_'.$msgTypeAbrev, $value['user_id'], 'dailyreminder');
+                if (!$debug) {
+                    $comment_id = $this->addStateComment($intProgramID, 'state_'.$msgTypeAbrev, $value['user_id'], 'dailyreminder');
+                }
                 $return[$value['user_id']]['usermeta']['comment_ID'] = $comment_id;
 
                 // loop through the message list and send each message
-                foreach ($nextMessageInfo['msg_list'] as $msg => $msgResponse)
-                {
-                    if($debug) var_export($msgResponse);
+                foreach ($nextMessageInfo['msg_list'] as $msg => $msgResponse) {
+                    if ($debug) {
+                        var_export($msgResponse);
+                    }
                     foreach ($msgResponse as $msgId => $msgMeta) {
-                        if(!empty($msgId)) {
+                        if (!empty($msgId)) {
                             $msgDelivery = new MsgDelivery;
-                            if(!$debug) {
+                            if (!$debug) {
                                 echo "<br>MsgScheduler->sendDailyReminder() -> msgDelivery->sendMessageBody()";
                                 $sendresult = $msgDelivery->sendMessageBody($nextMessageInfo, $msgId, $msgMeta['msg_text'], 'smsoutbound', true);
                                 error_log("Sent Msg: $msg to user " . $value['user_id'] . " with no delay.");
@@ -131,7 +137,8 @@ class MsgScheduler {
 
 
 
-    private function addStateComment($programId, $comment_type, $user_id, $comment_author,$arrCommentContent = array()) {
+    private function addStateComment($programId, $comment_type, $user_id, $comment_author, $arrCommentContent = array())
+    {
         $dateTime = new DateTime('now', new DateTimeZone('America/New_York'));
         $localTime = $dateTime->format('Y-m-d H:i:s');
 
@@ -159,7 +166,7 @@ class MsgScheduler {
 
 
 
-    public function index($intProgramID=null, $strDevice=null, $strDate=null)
+    public function index($intProgramID = null, $strDevice = null, $strDate = null)
     {
         echo "<pre><span class='alert'>Running scheduler</span><span>: " . date("Y-m-d") . " on site: |[" . $intProgramID . "]|\n<BR></span>";
         echo "<span class='alert2'>@: " . date("Y-m-d H:i:s T") . "<BR></span>";
@@ -190,14 +197,15 @@ class MsgScheduler {
     }
 
 
-    function createScheduledMessages($intProgramID) {
+    function createScheduledMessages($intProgramID)
+    {
 
         echo "<br><br>#################### start createScheduledMessages() ######################<br>";
 
         $msgUser = new MsgUser;
         $active_users = $msgUser->get_all_active_patients($intProgramID);
 
-        if(empty($active_users)) {
+        if (empty($active_users)) {
             echo "<br>createScheduledMessages() -> No patients found to process";
         } else {
             foreach ($active_users as $key => $intUserID) {
@@ -279,13 +287,14 @@ class MsgScheduler {
         echo "<br><br>#################### end createScheduledMessages() ######################";
     }
 
-    public function create_app_schedule($arrData){
+    public function create_app_schedule($arrData)
+    {
         reset($arrData);
         $user_id        =  key($arrData);
         echo "<br><br>MsgScheduler->create_app_schedule() Start";
         $wpUser = User::find($user_id);
         $userMeta = $wpUser->userMeta();
-        if(empty($userMeta['user_config'])) {
+        if (empty($userMeta['user_config'])) {
             echo "<br>MsgScheduler->create_app_schedule() Missing User Config";
             return false;
         }
@@ -305,9 +314,9 @@ class MsgScheduler {
         $tmpArr = array();
         $appArr = array();
         $i = 0;
-        foreach ($arrQS as $key ) {
+        foreach ($arrQS as $key) {
             // check if messages is allowed to be sent today
-            if(($key->pcp_status == 'Active' || ($key->ucp_status == 'Active' && strpos($key->cdays, date('N')) !== FALSE))){
+            if (($key->pcp_status == 'Active' || ($key->ucp_status == 'Active' && strpos($key->cdays, date('N')) !== false))) {
                 // $tmpArr[$i++][$key['msg_id']] = '';
                 $tmpArr[($i+1)][$key->msg_id] = $key->obs_key;
                 $appArr[$i][0] = array($key->msg_id => "");
@@ -338,7 +347,6 @@ class MsgScheduler {
                 $observation->obs_date_gmt = gmdate("Y-m-d H:i:s");
                 $observation->save();
                 echo "<br>MsgScheduler->create_app_schedule() Added Observation obs_id#=" . $observation->id;
-
             }
         }
 
@@ -353,9 +361,5 @@ class MsgScheduler {
         echo "Called: $strUrl<BR>";
 
         return 'OK';
-
     }
-
-
-
 }

@@ -72,7 +72,6 @@ class Patient extends Model
             }
 
             return '';
-
         };
 
         $days = explode(',', $string);
@@ -80,7 +79,6 @@ class Patient extends Model
         $formatted = array_map($mapper, $days);
 
         return implode(',', $formatted);
-
     }
 
     public function user()
@@ -109,7 +107,6 @@ class Patient extends Model
     {
 
         return $this->belongsTo(Family::class, 'family_id');
-
     }
 
     public function getFirstNameAttribute()
@@ -227,7 +224,6 @@ class Patient extends Model
         $family = $patient->family;
 
         if (is_object($family)) {
-
             $members = $family->patients()->get();
 
             //remove the patient from the family itself
@@ -237,7 +233,6 @@ class Patient extends Model
         }
 
         return [];
-
     }
 
     public function getCurrentMonthCCMTimeAttribute()
@@ -257,7 +252,6 @@ class Patient extends Model
     {
 
         return $query->where('ccm_status', 'enrolled');
-
     }
 
     /**
@@ -308,7 +302,6 @@ class Patient extends Model
     {
 
         return $query->whereNotNull('family_id');
-
     }
 
     public function lastReachedNurse()
@@ -318,7 +311,6 @@ class Patient extends Model
                    ->whereNotNull('called_date')
                    ->orderBy('called_date', 'desc')
                    ->first()['outbound_cpm_id'];
-
     }
 
     public function lastNurseThatPerformedActivity()
@@ -334,7 +326,6 @@ class Patient extends Model
                   ->first()['provider_id'];
 
         return Nurse::where('user_id', $id)->first();
-
     }
 
 
@@ -353,14 +344,12 @@ class Patient extends Model
         $nurses = Nurse::whereHas('user', function ($q) {
 
             $q->where('user_status', 1);
-
         })->get();
 
         //Result array with Nurses
         $result = [];
 
         foreach ($nurses as $nurse) {
-
             //get all locations for nurse
             $nurse_programs = $nurse->user->viewableProgramIds();
 //                dd();
@@ -374,11 +363,9 @@ class Patient extends Model
             if ($intersection) { //&& $future_windows->count() > 0
                 $result[] = $nurse->user_id;
             }
-
         }
 
         return $result;
-
     }
 
     public function isCCMComplex()
@@ -388,6 +375,4 @@ class Patient extends Model
                 ->first()
                 ->is_ccm_complex ?? false;
     }
-
-
 }

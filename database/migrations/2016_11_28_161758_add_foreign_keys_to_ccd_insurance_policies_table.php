@@ -32,5 +32,4 @@ class AddForeignKeysToCcdInsurancePoliciesTable extends Migration
             $table->dropForeign('ccd_insurance_policies_patient_id_foreign');
         });
     }
-
 }

@@ -69,7 +69,6 @@ class TimeTrackingOverlapTest extends TestCase
         ]);
 
         $this->createActivitiesAndRunTest($create);
-
     }
 
 

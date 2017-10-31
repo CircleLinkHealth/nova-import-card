@@ -44,5 +44,4 @@ class CcmTimeApiLogRepositoryEloquent extends BaseRepository implements CcmTimeA
     {
         return $this->makeModel()->updateOrCreate($attributes, $values);
     }
-
 }

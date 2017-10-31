@@ -8,10 +8,9 @@ class State extends Model
 {
     public $timestamps = false;
 
-    public function nurses(){
+    public function nurses()
+    {
         
         return $this->belongsToMany('App\NurseInfo');
-
     }
-
 }

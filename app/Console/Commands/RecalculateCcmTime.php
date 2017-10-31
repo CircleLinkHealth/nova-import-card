@@ -7,7 +7,6 @@ use App\Patient;
 use Carbon\Carbon;
 use Illuminate\Console\Command;
 
-
 class RecalculateCcmTime extends Command
 {
     /**

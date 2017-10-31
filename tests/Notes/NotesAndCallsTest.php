@@ -33,9 +33,5 @@ class NotesAndCallsTest extends TestCase
         echo $testStatus;
 
         $this->createNote($this->patient, $this->provider);
-
-        
     }
-
-
 }

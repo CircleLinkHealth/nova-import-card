@@ -40,5 +40,4 @@ class CreateCcdMedicationsTable extends Migration
     {
         Schema::drop('ccd_medications');
     }
-
 }

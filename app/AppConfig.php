@@ -2,7 +2,8 @@
 
 use Illuminate\Database\Eloquent\Model;
 
-class AppConfig extends Model {
+class AppConfig extends Model
+{
 
     public $timestamps = true;
 
@@ -33,5 +34,4 @@ class AppConfig extends Model {
      * @var array
      */
     protected $fillable = ['config_key', 'config_value'];
-
 }

@@ -61,7 +61,6 @@ class NurseWorkScheduleTest extends BrowserKitTestCase
         $window = $this->store_window($nurse, Carbon::now()->addWeek(2));
 
         $this->delete_window($nurse, $window);
-
     }
 
     protected function store_window(

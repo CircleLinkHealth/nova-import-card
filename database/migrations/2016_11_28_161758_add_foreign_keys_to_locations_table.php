@@ -30,5 +30,4 @@ class AddForeignKeysToLocationsTable extends Migration
             $table->dropForeign('locations_practice_id_foreign');
         });
     }
-
 }

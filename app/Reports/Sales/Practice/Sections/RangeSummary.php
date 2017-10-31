@@ -30,6 +30,5 @@ class RangeSummary extends SalesReportSection
             'no_of_forwarded_emergency_notes' => $this->service->emergencyNotesCount($this->start, $this->end),
             'link_to_notes_listing'           => $this->service->linkToNotes(),
         ];
-
     }
 }

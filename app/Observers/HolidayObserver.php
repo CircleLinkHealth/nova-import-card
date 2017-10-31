@@ -2,7 +2,6 @@
 
 namespace App\Observers;
 
-
 use App\Jobs\SendSlackMessage;
 use App\Models\Holiday;
 use App\NurseContactWindow;
@@ -65,6 +64,4 @@ class HolidayObserver
 
         dispatch($job);
     }
-
-
 }

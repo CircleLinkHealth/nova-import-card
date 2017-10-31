@@ -28,16 +28,16 @@ class ValidEndDateTest extends TestCase
 
     public function test_past_date_returns_inactive()
     {
-        $this->assertFalse( $this->getValidationStrategy()->validate( $this->mockProblem( '12/29/2015' ) ) );
+        $this->assertFalse($this->getValidationStrategy()->validate($this->mockProblem('12/29/2015')));
     }
 
     public function test_future_date_returns_active()
     {
-        $this->assertTrue( $this->getValidationStrategy()->validate( $this->mockProblem( \Carbon\Carbon::tomorrow() ) ) );
+        $this->assertTrue($this->getValidationStrategy()->validate($this->mockProblem(\Carbon\Carbon::tomorrow())));
     }
 
     public function test_invalid_date_returns_inactive()
     {
-        $this->assertFalse( $this->getValidationStrategy()->validate( $this->mockProblem( 'not a date' ) ) );
+        $this->assertFalse($this->getValidationStrategy()->validate($this->mockProblem('not a date')));
     }
 }

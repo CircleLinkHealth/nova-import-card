@@ -29,7 +29,6 @@ abstract class BaseImporter implements SectionImporter
     public function chooseValidator(ItemLog $item)
     {
         foreach ($this->validators() as $className) {
-
             $validator = app($className);
 
             if ($validator->shouldValidate($item)) {

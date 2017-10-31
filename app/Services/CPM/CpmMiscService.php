@@ -8,7 +8,6 @@
 
 namespace App\Services\CPM;
 
-
 use App\Contracts\Services\CpmModel;
 use App\User;
 
@@ -16,7 +15,9 @@ class CpmMiscService implements CpmModel
 {
     public function syncWithUser(User $user, array $ids, $page, array $instructions)
     {
-        if (!is_int($page)) throw new \Exception('The page number needs to be an integer.');
+        if (!is_int($page)) {
+            throw new \Exception('The page number needs to be an integer.');
+        }
 
         //get careplan templateMiscs id
         $templateMiscs = $user->service()
@@ -75,17 +76,22 @@ class CpmMiscService implements CpmModel
         return true;
     }
 
-    public function getMiscWithInstructionsForUser(User $user, $miscName){
+    public function getMiscWithInstructionsForUser(User $user, $miscName)
+    {
 
-        $misc = $user->cpmMiscs->where('name',$miscName)->first();
+        $misc = $user->cpmMiscs->where('name', $miscName)->first();
         //For the CPM Misc Item, extract the instruction and
         //store in a key value pair
-        if($misc) {
+        if ($misc) {
             $instruction = \App\Models\CPM\CpmInstruction::find($misc->pivot->cpm_instruction_id);
-        } else return '';
+        } else {
+            return '';
+        }
 
-        if($instruction) return $instruction->name;
-        else return '';
+        if ($instruction) {
+            return $instruction->name;
+        } else {
+            return '';
+        }
     }
-
 }

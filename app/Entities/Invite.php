@@ -39,5 +39,4 @@ class Invite extends Model implements Transformable
     {
         return $this->belongsTo(Role::class);
     }
-
 }

@@ -103,7 +103,7 @@ class Activity extends Model implements Transformable
 
         $data = $query
             ->whereIn('patient_id', function ($subQuery) use
-            (
+                (
                 $timeLessThan
             ) {
                 $subQuery->select('patient_id')
@@ -212,8 +212,10 @@ class Activity extends Model implements Transformable
 
     public function getActivityCommentFromMeta($id)
     {
-        $comment = DB::table('lv_activitymeta')->where('activity_id', $id)->where('meta_key',
-            'comment')->pluck('meta_value');
+        $comment = DB::table('lv_activitymeta')->where('activity_id', $id)->where(
+            'meta_key',
+            'comment'
+        )->pluck('meta_value');
 
         if ($comment) {
             return $comment;
@@ -231,21 +233,20 @@ class Activity extends Model implements Transformable
     }
 
     public static function totalTimeForPatientForMonth(
-        Patient $p, Carbon $month, $format = false
+        Patient $p,
+        Carbon $month,
+        $format = false
     ) {
 
         $raw = Activity::where('patient_id', $p->user_id)
-            ->where('performed_at','>', $month->firstOfMonth()->startOfMonth()->toDateTimeString())
-            ->where('performed_at','<', $month->lastOfMonth()->endOfDay()->toDateTimeString())
+            ->where('performed_at', '>', $month->firstOfMonth()->startOfMonth()->toDateTimeString())
+            ->where('performed_at', '<', $month->lastOfMonth()->endOfDay()->toDateTimeString())
         ->sum('duration');
 
-        if($format){
+        if ($format) {
             return round($raw / 60, 2);
         }
 
         return $raw;
-
     }
-
-
 }

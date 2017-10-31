@@ -21,15 +21,17 @@ class ProblemsToMonitorTest extends TestCase
         $problems = $this->mockProblems(json_decode($this->icd10highCholesterol));
         $parser = $this->getParser();
 
-        $this->assertEquals(json_decode($expected, true),
-            $parser->parse($problems, new \App\Importer\Section\Validators\ImportAllItems()));
+        $this->assertEquals(
+            json_decode($expected, true),
+            $parser->parse($problems, new \App\Importer\Section\Validators\ImportAllItems())
+        );
     }
 
     public function mockProblems($problems)
     {
         $problemsJson = new stdClass();
 
-        is_array( $problems )
+        is_array($problems)
             ? $problemsJson->problems = $problems
             : $problemsJson->problems[] = $problems;
 
@@ -45,33 +47,39 @@ class ProblemsToMonitorTest extends TestCase
     {
         $expected = '{"0":"Hypertension"}';
 
-        $problems = $this->mockProblems( json_decode( $this->icd9hypertension ) );
+        $problems = $this->mockProblems(json_decode($this->icd9hypertension));
         $parser = $this->getParser();
 
-        $this->assertEquals(json_decode($expected, true),
-            $parser->parse($problems, new \App\Importer\Section\Validators\ImportAllItems()));
+        $this->assertEquals(
+            json_decode($expected, true),
+            $parser->parse($problems, new \App\Importer\Section\Validators\ImportAllItems())
+        );
     }
 
     public function test_keywords_returns_expected()
     {
         $expected = '{"0":"Diabetes"}';
 
-        $problems = $this->mockProblems( json_decode( $this->keywordsDiabetes ) );
+        $problems = $this->mockProblems(json_decode($this->keywordsDiabetes));
         $parser = $this->getParser();
 
-        $this->assertEquals(json_decode($expected, true),
-            $parser->parse($problems, new \App\Importer\Section\Validators\ImportAllItems()));
+        $this->assertEquals(
+            json_decode($expected, true),
+            $parser->parse($problems, new \App\Importer\Section\Validators\ImportAllItems())
+        );
     }
 
     public function test_snomed_returns_expected()
     {
         $expected = '{"0":"Obesity"}';
 
-        $problems = $this->mockProblems( json_decode( $this->snomedObesity ) );
+        $problems = $this->mockProblems(json_decode($this->snomedObesity));
         $parser = $this->getParser();
 
-        $this->assertEquals(json_decode($expected, true),
-            $parser->parse($problems, new \App\Importer\Section\Validators\ImportAllItems()));
+        $this->assertEquals(
+            json_decode($expected, true),
+            $parser->parse($problems, new \App\Importer\Section\Validators\ImportAllItems())
+        );
     }
 
     public function test_one_of_each_returns_expected()
@@ -79,29 +87,33 @@ class ProblemsToMonitorTest extends TestCase
         $expected = '{"0":"Hypertension","1":"High Cholesterol","2":"Obesity", "3":"Diabetes"}';
 
 
-        $problems = $this->mockProblems( [
-            json_decode( $this->icd9hypertension ),
-            json_decode( $this->icd10highCholesterol ),
-            json_decode( $this->emptyProblem ),
-            json_decode( $this->snomedObesity ),
-            json_decode( $this->keywordsDiabetes )
-        ] );
+        $problems = $this->mockProblems([
+            json_decode($this->icd9hypertension),
+            json_decode($this->icd10highCholesterol),
+            json_decode($this->emptyProblem),
+            json_decode($this->snomedObesity),
+            json_decode($this->keywordsDiabetes)
+        ]);
         $parser = $this->getParser();
 
-        $this->assertEquals(json_decode($expected, true),
-            $parser->parse($problems, new \App\Importer\Section\Validators\ImportAllItems()));
+        $this->assertEquals(
+            json_decode($expected, true),
+            $parser->parse($problems, new \App\Importer\Section\Validators\ImportAllItems())
+        );
     }
 
     public function test_empty_problem_returns_nothing()
     {
         $expected = '{}';
 
-        $problems = $this->mockProblems( [
-            json_decode( $this->emptyProblem )
-        ] );
+        $problems = $this->mockProblems([
+            json_decode($this->emptyProblem)
+        ]);
         $parser = $this->getParser();
 
-        $this->assertEquals(json_decode($expected, true),
-            $parser->parse($problems, new \App\Importer\Section\Validators\ImportAllItems()));
+        $this->assertEquals(
+            json_decode($expected, true),
+            $parser->parse($problems, new \App\Importer\Section\Validators\ImportAllItems())
+        );
     }
 }

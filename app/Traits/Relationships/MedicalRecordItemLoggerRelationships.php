@@ -49,8 +49,11 @@ trait MedicalRecordItemLoggerRelationships
 
     public function demographicsImports()
     {
-        return $this->morphMany(DemographicsImport::class, 'providerLoggable', 'medical_record_type',
-            'medical_record_id');
+        return $this->morphMany(
+            DemographicsImport::class,
+            'providerLoggable',
+            'medical_record_type',
+            'medical_record_id'
+        );
     }
-
 }

@@ -2,7 +2,6 @@
 
 namespace App\Models\CPM\UI;
 
-
 class Biometrics
 {
     public $bloodPressure;

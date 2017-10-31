@@ -41,5 +41,4 @@ class PdfableTest extends TestCase
             'care_plan_template_id' => 1,
         ]);
     }
-
 }

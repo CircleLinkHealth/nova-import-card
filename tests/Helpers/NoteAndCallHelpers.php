@@ -5,7 +5,8 @@ use Carbon\Carbon;
 trait NoteAndCallHelpers
 {
 
-    public function createNote(){
+    public function createNote()
+    {
 
         $this->actingAs($this->provider)
             ->visit("/manage-patients/{$this->patient->id}/notes/create")
@@ -21,8 +22,5 @@ trait NoteAndCallHelpers
             ->select(948, 'careteam[]')
             ->press('Submit')
             ->seePageIs("/manage-patients/{$this->patient->id}/notes");
-
     }
-
 }
-                                         

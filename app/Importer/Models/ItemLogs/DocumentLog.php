@@ -13,6 +13,5 @@ class DocumentLog extends Model implements ItemLog
 
     protected $table = 'ccd_document_logs';
 
-	protected $guarded = [];
-
+    protected $guarded = [];
 }

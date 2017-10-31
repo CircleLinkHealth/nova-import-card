@@ -52,5 +52,4 @@ class AuthController extends Controller
 
         return response()->json(compact('access_token'), 200);
     }
-
 }

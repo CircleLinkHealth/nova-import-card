@@ -5,7 +5,8 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
-class ApiLog extends ApiLogRepository {
+class ApiLog extends ApiLogRepository
+{
 
     /**
      * The database table used by the model.
@@ -14,7 +15,7 @@ class ApiLog extends ApiLogRepository {
      */
     protected $table = 'lv_api_logs';
 
-	public function logThisRequest(Request $request, $apiKey)
+    public function logThisRequest(Request $request, $apiKey)
     {
         $logger = new ApiLog();
         $apiKey = ApiKey::where('key', '=', $apiKey)->limit(1)->get();
@@ -26,5 +27,4 @@ class ApiLog extends ApiLogRepository {
         $logger->ip_address = $request->getClientIp();
         $logger->save();
     }
-
 }

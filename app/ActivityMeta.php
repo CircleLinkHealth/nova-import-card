@@ -3,7 +3,8 @@
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
-class ActivityMeta extends Model {
+class ActivityMeta extends Model
+{
 
     use SoftDeletes;
 
@@ -34,7 +35,4 @@ class ActivityMeta extends Model {
     {
         return $this->belongsTo('App\Activity');
     }
-
-
-
 }

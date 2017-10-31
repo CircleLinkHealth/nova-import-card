@@ -16,7 +16,6 @@ class AddTimeSpentToEnrollees extends Migration
         Schema::table('enrollees', function (Blueprint $table) {
 
             $table->integer('total_time_spent')->after('care_ambassador_id')->default(0);
-
         });
     }
 
@@ -30,7 +29,6 @@ class AddTimeSpentToEnrollees extends Migration
         Schema::table('enrollees', function (Blueprint $table) {
 
             $table->drop('total_time_spent');
-
         });
     }
 }

@@ -33,5 +33,4 @@ class CreateSnomedToCpmIcdMapsTable extends Migration
     {
         Schema::drop('snomed_to_cpm_icd_maps');
     }
-
 }

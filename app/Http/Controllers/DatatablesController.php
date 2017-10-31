@@ -84,7 +84,8 @@ class DatatablesController extends Controller
                     \DB::raw('CONCAT_WS(", ", patient.last_name, patient.first_name) AS patient_name'),
                     'program.display_name AS program_name',
                     'billing_provider.display_name AS billing_provider',
-                ])
+                ]
+            )
 //            ->where('nurse_info.status', '=', 'active')
 //            ->orWhere('nurse_name')
             ->where('calls.status', '=', 'scheduled')
@@ -95,7 +96,7 @@ class DatatablesController extends Controller
             ->leftJoin('users AS scheduler_user', 'calls.scheduler', '=', 'scheduler_user.id')
             ->leftJoin('patient_info', 'calls.inbound_cpm_id', '=', 'patient_info.user_id')
             ->leftJoin('patient_monthly_summaries', function ($join) use
-            (
+                (
                 $date
             ) {
                 $join->on('patient_monthly_summaries.patient_info_id', '=', 'patient_info.id');
@@ -106,8 +107,12 @@ class DatatablesController extends Controller
                 $join->on('patient.id', '=', 'patient_care_team_members.user_id');
                 $join->where('patient_care_team_members.type', '=', "billing_provider");
             })
-            ->leftJoin('users AS billing_provider', 'patient_care_team_members.member_user_id', '=',
-                'billing_provider.id')
+            ->leftJoin(
+                'users AS billing_provider',
+                'patient_care_team_members.member_user_id',
+                '=',
+                'billing_provider.id'
+            )
             ->groupBy('call_id')
             ->get();
 
@@ -142,7 +147,6 @@ class DatatablesController extends Controller
 
                 if ($isCcmComplex) {
                     return "<span id=\"complex_tag\" hidden style=\"background-color: #ec683e;\" class=\"label label-warning\"> Complex CCM</span>";
-
                 } else {
                     return '';
                 }
@@ -164,8 +168,10 @@ class DatatablesController extends Controller
                 }
             })
             ->editColumn('patient_name', function ($call) {
-                return '<a href="' . \URL::route('patient.demographics.show',
-                    ['patientId' => $call->inboundUser->id]) . '" target="_blank">' . $call->patient_name . '</span>';
+                return '<a href="' . \URL::route(
+                    'patient.demographics.show',
+                    ['patientId' => $call->inboundUser->id]
+                ) . '" target="_blank">' . $call->patient_name . '</span>';
             })
             ->editColumn('nurse_name', function ($call) {
                 return '<a href="#"><span class="cpm-editable-icon" call-id="' . $call->call_id . '" column-name="outbound_cpm_id" column-value="' . $call->outbound_cpm_id . '">' . $call->nurse_name . '</span>';
@@ -266,14 +272,18 @@ class DatatablesController extends Controller
                     return '';
                 }
 
-                return '<a target="_blank" href="' . \URL::route('patient.note.index',
-                    ['patientId' => $call->inboundUser->id]) . '">Notes</a>';
+                return '<a target="_blank" href="' . \URL::route(
+                    'patient.note.index',
+                    ['patientId' => $call->inboundUser->id]
+                ) . '">Notes</a>';
             })
             ->addColumn('notes_html', function ($call) {
                 $notesHtml = '';
                 if ($call->inboundUser) {
-                    $notes = $call->inboundUser->notes()->with('call')->with('mail')->orderBy('performed_at',
-                        'desc')->limit(3)->get();
+                    $notes = $call->inboundUser->notes()->with('call')->with('mail')->orderBy(
+                        'performed_at',
+                        'desc'
+                    )->limit(3)->get();
                     if ($notes->count() > 0) {
                         $notesHtml .= '<ul>';
                         foreach ($notes as $note) {
@@ -299,8 +309,10 @@ class DatatablesController extends Controller
                                             $mailText .= $mail->receiverUser->display_name . ', ';
                                         }
                                     }
-                                    $notesHtml .= '<div class="label label-info" style="margin:5px;" data-toggle="tooltip" title="' . rtrim($mailText,
-                                            ',') . '">Forwarded</div>';
+                                    $notesHtml .= '<div class="label label-info" style="margin:5px;" data-toggle="tooltip" title="' . rtrim(
+                                        $mailText,
+                                        ','
+                                    ) . '">Forwarded</div>';
                                 }
                             }
                             if ($note->isTCM) {

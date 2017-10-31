@@ -24,6 +24,4 @@ class Role extends EntrustRole
      * @var string
      */
     protected $table = 'lv_roles';
-    
-    
 }

@@ -31,5 +31,4 @@ class CreateAppConfigTable extends Migration
     {
         Schema::drop('app_config');
     }
-
 }

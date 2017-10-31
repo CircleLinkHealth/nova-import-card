@@ -211,7 +211,6 @@ trait CarePlanHelpers
          * Hope this makes sense in the future :)
          */
         $this->assertGreaterThanOrEqual(count($carePlanEntities->all()), count($patientEntities));
-
     }
 
     public function fillCareplanPage2(

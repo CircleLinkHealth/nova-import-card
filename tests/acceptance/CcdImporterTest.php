@@ -28,8 +28,10 @@ class CcdImporterTest extends SeleniumTestCase
      */
     public function test_it_imports_mazhar_ccda()
     {
-        $this->qaImport(storage_path('/ccdas/Samples/mazhar-sample.xml'),
-            CcdVendor::whereVendorName('Mazhar')->first());
+        $this->qaImport(
+            storage_path('/ccdas/Samples/mazhar-sample.xml'),
+            CcdVendor::whereVendorName('Mazhar')->first()
+        );
     }
 
     /**
@@ -49,7 +51,9 @@ class CcdImporterTest extends SeleniumTestCase
      */
     public function test_it_imports_tabernacle_ccda()
     {
-        $this->qaImport(storage_path('/ccdas/Samples/tabernacle-sample.xml'),
-            CcdVendor::whereVendorName('Tabernacle')->first());
+        $this->qaImport(
+            storage_path('/ccdas/Samples/tabernacle-sample.xml'),
+            CcdVendor::whereVendorName('Tabernacle')->first()
+        );
     }
 }

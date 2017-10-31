@@ -33,5 +33,4 @@ class CreatePracticesTable extends Migration
     {
         Schema::drop('practices');
     }
-
 }

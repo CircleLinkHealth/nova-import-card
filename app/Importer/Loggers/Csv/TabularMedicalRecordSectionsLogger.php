@@ -61,7 +61,6 @@ class TabularMedicalRecordSectionsLogger implements MedicalRecordLogger
         $allergies = explode(',', $this->medicalRecord->allergies_string);
 
         foreach ($allergies as $allergy) {
-
             if (strtolower($allergy) == 'no') {
                 continue;
             }

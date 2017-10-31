@@ -2,7 +2,6 @@
 
 namespace App\Billing\Practices;
 
-
 use App\Activity;
 use App\AppConfig;
 use App\Patient;
@@ -26,7 +25,6 @@ class PracticeInvoiceGenerator
 
         $this->practice = $practice;
         $this->month = $month;
-
     }
 
     public function generatePdf($withItemized = true)
@@ -43,7 +41,6 @@ class PracticeInvoiceGenerator
         ];
 
         if ($withItemized) {
-
             $pdfItemized = PDF::loadView('billing.practice.itemized', $this->getItemizedPatientData());
 
             $itemizedName = trim($this->practice->name) . '-' . $this->month->toDateString() . '-patients';
@@ -51,13 +48,11 @@ class PracticeInvoiceGenerator
             $pdfItemized->save(storage_path("download/$itemizedName.pdf"), true);
 
             $data['Patient Report'] = $itemizedName . '.pdf';
-
         }
 
         $data['practiceId'] = $this->practice->id;
 
         return $data;
-
     }
 
     public function getInvoiceData()
@@ -88,7 +83,6 @@ class PracticeInvoiceGenerator
         $data['billable'] = 0;
 
         foreach ($patients as $patient) {
-
             $ccm = DB::table('lv_activities')
                 ->where('patient_id', $patient->id)
                 ->whereBetween('performed_at', [
@@ -105,17 +99,13 @@ class PracticeInvoiceGenerator
                 ->first();
 
             if ($report && $report->approved == 1 && $ccm > 1199) {
-
                 $data['billable']++;
-
             }
-
         }
 
         $data['invoice_amount'] = round((double)$this->practice->clh_pppm * $data['billable'], 2);
 
         return $data;
-
     }
 
     public function incrementInvoiceNo()
@@ -130,7 +120,6 @@ class PracticeInvoiceGenerator
         $num->save();
 
         return $current;
-
     }
 
     public function getItemizedPatientData()
@@ -140,12 +129,10 @@ class PracticeInvoiceGenerator
             ::whereHas('patientSummaries', function ($q) {
                 $q->where('month_year', $this->month->firstOfMonth()->toDateString())
                     ->where('approved', 1);
-
             })
             ->whereHas('user', function ($k) {
                 $k->where('program_id', $this->practice->id);
-            }
-            )
+            })
             ->orderBy('updated_at', 'desc')
             ->get();
 
@@ -156,7 +143,6 @@ class PracticeInvoiceGenerator
         $data['month'] = $this->month->toDateString();
 
         foreach ($patients as $p) {
-
             $u = $p->user;
 
             $ccm = DB::table('lv_activities')
@@ -172,7 +158,6 @@ class PracticeInvoiceGenerator
                 ->first();
 
             if ($report && $report->approved == 1 && $ccm > 1199) {
-
                 $data['patientData'][$p->user_id]['ccm_time'] = round($ccm / 60, 2);
                 $data['patientData'][$p->user_id]['name'] = $u->fullName;
                 $data['patientData'][$p->user_id]['dob'] = $u->birth_date;
@@ -184,7 +169,6 @@ class PracticeInvoiceGenerator
                 $data['patientData'][$p->user_id]['problem2'] = $report->billable_problem2;
                 $data['patientData'][$p->user_id]['problem2_code'] = $report->billable_problem2_code;
             }
-
         }
 
         $data['patientData'] = array_key_exists('patientData', $data)
@@ -192,7 +176,6 @@ class PracticeInvoiceGenerator
             : null;
 
         return $data;
-
     }
 
     function array_orderby()
@@ -232,14 +215,15 @@ class PracticeInvoiceGenerator
             ->get();
 
         foreach ($users as $user) {
-
             $sum = Activity::where('patient_id', $user->id)
                 ->where('performed_at', '>', $this->month->firstOfMonth()->toDateTimeString())
                 ->where('performed_at', '<', $this->month->endOfMonth()->toDateTimeString())
                 ->sum('duration');
 
-            $summary = $user->patientInfo->patientSummaries()->where('month_year',
-                $this->month->firstOfMonth()->toDateString())->first();
+            $summary = $user->patientInfo->patientSummaries()->where(
+                'month_year',
+                $this->month->firstOfMonth()->toDateString()
+            )->first();
 
             if ($summary == null) {
                 continue;
@@ -253,7 +237,5 @@ class PracticeInvoiceGenerator
         return ($count > 0)
             ? true
             : false;
-
     }
-
 }

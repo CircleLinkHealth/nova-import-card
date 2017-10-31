@@ -23,7 +23,6 @@ class AddRejectedToPatientMonthlySummaries extends Migration
                 ->on('users')
                 ->onUpdate('CASCADE')
                 ->onDelete('CASCADE');
-
         });
     }
 
@@ -38,7 +37,6 @@ class AddRejectedToPatientMonthlySummaries extends Migration
 
             $table->dropColumn('rejected');
             $table->dropColumn('actor_id');
-
         });
     }
 }

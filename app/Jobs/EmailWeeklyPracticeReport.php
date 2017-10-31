@@ -67,7 +67,6 @@ class EmailWeeklyPracticeReport implements ShouldQueue
 
         //handle leads
         foreach ($organizationSummaryRecipients as $recipient) {
-
             Mail::send('sales.by-practice.report', ['data' => $practiceData], function ($message) use (
                 $recipient,
                 $subjectPractice

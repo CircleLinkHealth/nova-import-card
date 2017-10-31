@@ -6,7 +6,8 @@ use App\Http\Controllers\Controller;
 use App\ThirdPartyApiConfig;
 use Illuminate\Http\Request;
 
-class ConfigController extends Controller {
+class ConfigController extends Controller
+{
 
     /**
      * Show the form for creating a new resource.
@@ -17,7 +18,9 @@ class ConfigController extends Controller {
     {
         $getApiKey = ThirdPartyApiConfig::select('meta_value')->whereMetaKey('qliqsoft_api_key')->first();
 
-        if ( !empty( $getApiKey ) ) return redirect()->action('qliqSOFT\ConfigController@edit', [ 'api-config' ]);
+        if (!empty($getApiKey)) {
+            return redirect()->action('qliqSOFT\ConfigController@edit', [ 'api-config' ]);
+        }
 
         return view('thirdPartyApisConfig.qliqsoft.create');
     }
@@ -29,9 +32,10 @@ class ConfigController extends Controller {
      */
     public function store(Request $request)
     {
-        foreach ( $request->input() as $key => $value )
-        {
-            if ( $key == '_token' ) continue; //don't store the form csrf_token in the db
+        foreach ($request->input() as $key => $value) {
+            if ($key == '_token') {
+                continue; //don't store the form csrf_token in the db
+            }
 
             $newConfig = new ThirdPartyApiConfig();
             $newConfig->meta_key = $key;
@@ -40,7 +44,6 @@ class ConfigController extends Controller {
         }
 
         return redirect()->back();
-
     }
 
     /**
@@ -52,12 +55,16 @@ class ConfigController extends Controller {
     public function edit()
     {
         $getApiKey = ThirdPartyApiConfig::select('meta_value')->whereMetaKey('qliqsoft_api_key')->first();
-        if ( !empty( $getApiKey ) ) $apiKey = $getApiKey['meta_value'];
+        if (!empty($getApiKey)) {
+            $apiKey = $getApiKey['meta_value'];
+        }
 
         $getApiUrl = ThirdPartyApiConfig::select('meta_value')->whereMetaKey('qliqsoft_api_url')->first();
-        if ( !empty( $getApiUrl ) ) $apiUrl = $getApiUrl['meta_value'];
+        if (!empty($getApiUrl)) {
+            $apiUrl = $getApiUrl['meta_value'];
+        }
 
-        if ( empty($apiKey) && empty($apiUrl) ) {
+        if (empty($apiKey) && empty($apiUrl)) {
             return redirect()->action('qliqSOFT\ConfigController@create');
         }
 

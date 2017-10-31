@@ -37,5 +37,4 @@ class CreateRulesItemsTable extends Migration
     {
         Schema::drop('rules_items');
     }
-
 }

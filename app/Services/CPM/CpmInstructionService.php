@@ -8,7 +8,6 @@
 
 namespace App\Services\CPM;
 
-
 use App\Models\CPM\CpmInstruction;
 use App\User;
 
@@ -16,7 +15,9 @@ class CpmInstructionService
 {
     public function syncWithUser(User $user, $relationship, $entityForeign, $entityId, $instructionInput)
     {
-        if (!method_exists($user, $relationship)) throw new \Exception('Relationship does not exist', 500);
+        if (!method_exists($user, $relationship)) {
+            throw new \Exception('Relationship does not exist', 500);
+        }
         
         $pivotTableName = snake_case($relationship).'_users';
 
@@ -30,9 +31,13 @@ class CpmInstructionService
 
             $oldInstruction = CpmInstruction::find($oldInstructionId);
 
-            if (empty($oldInstruction)) return;
+            if (empty($oldInstruction)) {
+                return;
+            }
 
-            if (preg_replace("/\r|\n/", "", trim($oldInstruction->name)) == preg_replace("/\r|\n/", "", trim($instructionInput))) return;
+            if (preg_replace("/\r|\n/", "", trim($oldInstruction->name)) == preg_replace("/\r|\n/", "", trim($instructionInput))) {
+                return;
+            }
 
             $userWithSameInstr = \DB::table($pivotTableName)
                 ->where('cpm_instruction_id', '=', 1025)

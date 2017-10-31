@@ -82,10 +82,16 @@ class ReportsController extends Controller
             //$first = reset($array);
             if ($value) {
                 foreach ($value as $key => $value) {
-                    $biometrics_array[$bio_name]['unit'] = $this->service->biometricsUnitMapping(str_replace('_', ' ',
-                        $bio_name));
-                    $biometrics_array[$bio_name]['target'] = $this->service->getTargetValueForBiometric($bio_name,
-                        $user, false);
+                    $biometrics_array[$bio_name]['unit'] = $this->service->biometricsUnitMapping(str_replace(
+                        '_',
+                        ' ',
+                        $bio_name
+                    ));
+                    $biometrics_array[$bio_name]['target'] = $this->service->getTargetValueForBiometric(
+                        $bio_name,
+                        $user,
+                        false
+                    );
                     $biometrics_array[$bio_name]['reading'] = intval($value->Avg);
                     if (intval($value->Avg) > $biometrics_array[$bio_name]['max']) {
                         $biometrics_array[$bio_name]['max'] = intval($value->Avg);
@@ -115,7 +121,6 @@ class ReportsController extends Controller
         ];
 
         return view('wpUsers.patient.progress', $data);
-
     }
 
     public function u20(
@@ -231,7 +236,6 @@ class ReportsController extends Controller
                     unset($u20_patients[$patient_counter]);
                     continue 2;
                 }
-
             }
             $patient_counter++;
         }
@@ -294,7 +298,6 @@ class ReportsController extends Controller
             $month_selected_text = $time->format('F');
             $month_selected = $time->format('m');
             $year_selected = $time->format('Y');
-
         }
 
         $patients = User::intersectPracticesWith(auth()->user())
@@ -390,7 +393,6 @@ class ReportsController extends Controller
                     }
                 }
                 $u20_patients[$act_count]['colsum_total'] += intval($activity->duration);
-
             }
 
             if ($u20_patients[$act_count]['colsum_total'] < 1200) {
@@ -398,7 +400,6 @@ class ReportsController extends Controller
             }
 
             $act_count++;
-
         }
 
         $reportData = "data:" . json_encode(array_values($u20_patients)) . "";
@@ -464,9 +465,11 @@ class ReportsController extends Controller
         return json_encode($feed);
     }
 
-    public function viewPdfCarePlan(Request $request,
-                                    $patientId = false)
-    {
+    public function viewPdfCarePlan(
+        Request $request,
+        $patientId = false
+    ) {
+    
         if (!$patientId) {
             return "Patient Not Found..";
         }
@@ -501,7 +504,8 @@ class ReportsController extends Controller
 
         $showInsuranceReviewFlag = $insurances->checkPendingInsuranceApproval($patient);
 
-        return view('wpUsers.patient.careplan.print',
+        return view(
+            'wpUsers.patient.careplan.print',
             [
                 'patient'                 => $patient,
                 'problems'                => $careplan[$patientId]['problems'],
@@ -516,7 +520,8 @@ class ReportsController extends Controller
                 'appointments'            => $careplan[$patientId]['appointments'],
                 'other'                   => $careplan[$patientId]['other'],
                 'showInsuranceReviewFlag' => $showInsuranceReviewFlag,
-            ]);
+            ]
+        );
     }
 
     public function biometricsCharts(
@@ -851,11 +856,11 @@ class ReportsController extends Controller
                             ->where('activity_type', '!=', '')
                             ->sum('duration');
 
-                        $rowUserValues[] = number_format((float)($pageTime / 60), 2, '.', '');;
+                        $rowUserValues[] = number_format((float)($pageTime / 60), 2, '.', '');
+                        ;
                     }
 
                     $sheetRows[] = $rowUserValues;
-
                 }
 
                 $sheetRows = array_reverse($sheetRows);

@@ -33,5 +33,4 @@ class CreateCpmWeightsTable extends Migration
     {
         Schema::drop('cpm_weights');
     }
-
 }

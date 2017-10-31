@@ -8,7 +8,6 @@
 
 namespace App\Services\CPM;
 
-
 use App\CarePlanTemplate;
 use App\Contracts\Services\CpmModel;
 use App\User;
@@ -42,7 +41,9 @@ class CpmProblemService implements CpmModel
 
         //Get all the User's Problems
         $problems = $user->cpmProblems()->get()->sortBy('name')->values()->all();
-        if (!$problems) return '';
+        if (!$problems) {
+            return '';
+        }
 
         //For each problem, extract the instructions and
         //store in a key value pair

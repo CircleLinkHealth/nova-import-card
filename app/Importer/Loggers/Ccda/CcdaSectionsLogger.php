@@ -2,7 +2,6 @@
 
 namespace App\Importer\Loggers\Ccda;
 
-
 use App\CLH\Repositories\CCDImporterRepository;
 use App\Contracts\Importer\MedicalRecord\MedicalRecordLogger;
 use App\Importer\Models\ItemLogs\AllergyLog;
@@ -206,7 +205,6 @@ class CcdaSectionsLogger implements MedicalRecordLogger
     {
         if (!empty($this->ccd->payers)) {
             foreach ($this->ccd->payers as $payer) {
-
                 if (empty($payer->insurance)) {
                     continue;
                 }

@@ -32,5 +32,4 @@ class CreateLvPermissionsTable extends Migration
     {
         Schema::drop('lv_permissions');
     }
-
 }

@@ -1,6 +1,7 @@
 <?php namespace App\CLH\Contracts\Messaging;
 
-interface SecureMessage {
+interface SecureMessage
+{
 
     /**
      * This method will send a message to the user through an api.
@@ -12,5 +13,4 @@ interface SecureMessage {
      * @return mixed
      */
     public function send($to, $from, $message, $args = []);
-
 }

@@ -140,5 +140,4 @@ class OnboardingTest extends TestCase
         $this->faker = Factory::create();
         $this->invite = factory(Invite::class)->create();
     }
-
 }

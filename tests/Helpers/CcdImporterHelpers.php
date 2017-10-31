@@ -8,7 +8,6 @@
 
 namespace Tests\Helpers;
 
-
 use App\Models\CCD\CcdVendor;
 use App\Models\MedicalRecords\ImportedMedicalRecord;
 
