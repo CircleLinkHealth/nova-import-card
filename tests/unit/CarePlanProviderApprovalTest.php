@@ -2,8 +2,6 @@
 
 namespace Tests\unit;
 
-
-
 use Tests\TestCase;
 use App\CarePlan;
 use App\User;

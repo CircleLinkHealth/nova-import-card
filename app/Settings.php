@@ -37,7 +37,8 @@ class Settings extends Model
         return $this->morphTo('settingsable', 'settingsable_type', 'settingsable_id');
     }
 
-    public function notesChannels() {
+    public function notesChannels()
+    {
         $channels = [];
 
         if ($this->email_note_was_forwarded) {
