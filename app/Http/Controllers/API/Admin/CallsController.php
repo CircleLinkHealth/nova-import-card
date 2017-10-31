@@ -17,6 +17,7 @@ class CallsController extends Controller
     public function index()
     {
         $calls = Call::where('status', '=', 'scheduled')
+            ->where('status', '=', 'scheduled')
             ->whereHas('inboundUser')
             ->with([
                 'inboundUser.billingProvider.user'         => function ($q) {

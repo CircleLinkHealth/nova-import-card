@@ -65,7 +65,7 @@ class ProcessCcda implements ShouldQueue
         $keep = $duplicates->first();
 
         foreach ($duplicates as $dup) {
-            if ($dup->status != Ccda::DETERMINE_ENROLLEMENT_ELIGIBILITY) {
+            if ($dup->status && $dup->status != Ccda::DETERMINE_ENROLLEMENT_ELIGIBILITY) {
                 $status = $dup->status;
             }
 
