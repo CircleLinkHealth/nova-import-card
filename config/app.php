@@ -206,7 +206,6 @@ return [
         Spatie\GoogleCalendar\GoogleCalendarServiceProvider::class,
         ObserversServiceProvider::class,
         Barryvdh\Debugbar\ServiceProvider::class,
-        Modelizer\Selenium\SeleniumServiceProvider::class,
         Way\Generators\GeneratorsServiceProvider::class,
         Xethron\MigrationsGenerator\MigrationsGeneratorServiceProvider::class,
         Tylercd100\LERN\LERNServiceProvider::class,
@@ -214,7 +213,6 @@ return [
         ViewComposerServiceProvider::class,
         jeremykenedy\Slack\Laravel\ServiceProvider::class,
         EmailArrayValidatorServiceProvider::class,
-        GeneaLabs\LaravelCaffeine\Providers\LaravelCaffeineService::class,
         Propaganistas\LaravelPhone\PhoneServiceProvider::class,
     ],
 
