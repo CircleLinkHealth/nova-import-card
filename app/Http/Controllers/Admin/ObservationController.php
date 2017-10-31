@@ -39,7 +39,7 @@ class ObservationController extends Controller
         }
 
         // filter key
-        $obsKeys = array('Severity' => 'Severity', 'Other' => 'Other', 'Blood_Pressure' => 'Blood_Pressure', 'Blood_Sugar' => 'Blood_Sugar', 'Cigarettes' => 'Cigarettes', 'Weight' => 'Weight', 'Adherence' => 'Adherence');
+        $obsKeys = ['Severity' => 'Severity', 'Other' => 'Other', 'Blood_Pressure' => 'Blood_Pressure', 'Blood_Sugar' => 'Blood_Sugar', 'Cigarettes' => 'Cigarettes', 'Weight' => 'Weight', 'Adherence' => 'Adherence'];
         $filterObsKey = 'all';
         if (!empty($params['filterObsKey'])) {
             $filterObsKey = $params['filterObsKey'];
@@ -101,7 +101,7 @@ class ObservationController extends Controller
         }
         // display view
         $observation = Observation::find($id);
-        return view('admin.observations.show', [ 'observation' => $observation, 'errors' => array(), 'messages' => array() ]);
+        return view('admin.observations.show', [ 'observation' => $observation, 'errors' => [], 'messages' => [] ]);
     }
 
     /**

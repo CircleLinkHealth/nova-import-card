@@ -61,7 +61,7 @@ class RulesController extends Controller
         $rule->save();
         // build conditions from inputs
         if (!empty($params['conditions'])) {
-            $newConditions = array();
+            $newConditions = [];
             $affectedRows = RulesIntrConditions::where('rule_id', '=', $rule->id)->delete();
             foreach ($params['conditions'] as $key => $formKey) {
                 if (strlen($formKey) < 3) {
@@ -77,7 +77,7 @@ class RulesController extends Controller
         }
         // build conditions from inputs
         if (!empty($params['actions'])) {
-            $newActions = array();
+            $newActions = [];
             $affectedRows = RulesIntrActions::where('rule_id', '=', $rule->id)->delete();
             foreach ($params['actions'] as $key => $formKey) {
                 if (strlen($formKey) < 3) {
@@ -151,7 +151,7 @@ class RulesController extends Controller
         $rule = Rules::with('intrConditions', 'intrActions')->find($id);
         // build conditions from inputs
         if (!empty($params['conditions'])) {
-            $newConditions = array();
+            $newConditions = [];
             $affectedRows = RulesIntrConditions::where('rule_id', '=', $rule->id)->delete();
             foreach ($params['conditions'] as $key => $formKey) {
                 if (strlen($formKey) < 3) {
@@ -167,7 +167,7 @@ class RulesController extends Controller
         }
         // build conditions from inputs
         if (!empty($params['actions'])) {
-            $newActions = array();
+            $newActions = [];
             $affectedRows = RulesIntrActions::where('rule_id', '=', $rule->id)->delete();
             foreach ($params['actions'] as $key => $formKey) {
                 if (strlen($formKey) < 3) {

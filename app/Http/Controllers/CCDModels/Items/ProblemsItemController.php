@@ -13,15 +13,15 @@ class ProblemsItemController extends Controller
 
     public function index(Request $request)
     {
-        $data   = array();
+        $data   = [];
         $patientId = $request->input('patient_id');
         $ccdProblems = Problem::where('patient_id', '=', $patientId)->orderBy('name')->get();
         if ($ccdProblems->count() > 0) {
             foreach ($ccdProblems as $ccdProblem) {
-                $data[] = array(
+                $data[] = [
                     'id' => $ccdProblem->id,
                     'patient_id' => $ccdProblem->patient_id,
-                    'name' => $ccdProblem->name);
+                    'name' => $ccdProblem->name];
             }
         }
         // return a JSON response
@@ -39,7 +39,7 @@ class ProblemsItemController extends Controller
             $ccdProblem->save();
             $id = $ccdProblem;
         }
-        $result = array('id' => $id);
+        $result = ['id' => $id];
         // return a JSON response
         return response()->json($result);
     }

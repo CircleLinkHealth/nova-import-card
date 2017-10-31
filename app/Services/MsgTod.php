@@ -116,7 +116,7 @@ query;
          *
          */
 
-        $arrReturn = array();
+        $arrReturn = [];
 
         if (!empty($intItemID) and !empty($user_id)) {
             $sql = <<<query
@@ -141,7 +141,7 @@ query;
 
     public function getNext($strCat, $intSeqNum = 0)
     {
-        $arrReturn = array();
+        $arrReturn = [];
 
         if (!empty($strCat)) {
             $sql = <<<query
@@ -170,11 +170,11 @@ query;
     {
 
         if (!empty($strCat) and !empty($user_id) and !empty($qssort)) {
-            $data = array(
+            $data = [
                 'items_id' => $strCat,
                 'user_id' => $user_id,
                 'meta_key' => 'TOD',
-                'meta_value' => $qssort);
+                'meta_value' => $qssort];
 
 // echo query;
             $obs_id = DB::connection('mysql_no_prefix')->table('rules_ucp')->insertGetId($data);

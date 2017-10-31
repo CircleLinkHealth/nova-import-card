@@ -45,7 +45,7 @@ class Comment extends Model
         return $this->belongsTo('App\Observation', 'comment_ID');
     }
 
-    public function save(array $params = array())
+    public function save(array $params = [])
     {
         if (empty($this->user_id)) {
             dd('user_id is required for comment');

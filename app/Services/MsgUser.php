@@ -15,7 +15,7 @@ class MsgUser
         // get all users
         $allUsers = $this->get_all_users($id);
         if (!$allUsers->isEmpty()) {
-            $activeUsers = array();
+            $activeUsers = [];
             foreach ($allUsers as $user) {
                 // check if active based on user_config
                 $user_config = unserialize($user['user_config']);
@@ -74,13 +74,13 @@ class MsgUser
 
     public function get_users_data($strUserKey, $strKeyType = 'id', $intBlogId = null, $includeUCP = false)
     {
-        $arrReturnResult = array();
+        $arrReturnResult = [];
 
         switch ($strKeyType) {
             default:
             case 'id':
                 $intUserId = $strUserKey;
-                $arrReturnResult = $this->standard_user_lookup(array($intUserId), $intBlogId, $includeUCP);
+                $arrReturnResult = $this->standard_user_lookup([$intUserId], $intBlogId, $includeUCP);
                 break;
 
             /*
@@ -136,7 +136,7 @@ class MsgUser
     private function standard_user_lookup($arrUserId, $intBlogId = null, $includeUCP = false)
     {
         // initialize return result
-        $arrReturnResult = array();
+        $arrReturnResult = [];
 
         // user id is always array, implode
         $intUserId = implode(',', $arrUserId);
@@ -148,7 +148,7 @@ class MsgUser
             foreach ($wpUsers as $wpUser) {
                 $wpUserMeta = UserMeta::where('user_id', '=', $wpUser->id)->get();
                 if (!$wpUsers->isEmpty()) {
-                    $arrUserMeta = array();
+                    $arrUserMeta = [];
                     foreach ($wpUserMeta as $meta) {
                         $arrUserMeta[$meta->meta_key] = $meta->meta_value;
                         // unserialize when needed
@@ -325,8 +325,8 @@ class MsgUser
         $strCommentFile = 'wp_' . $intProgramID . '_comments';
         $strContactTimesContainer = 'wp_' . $intProgramID . '_user_config';
 
-        $arrUserData = array();
-        $arrAllParticipantUserIDs = array();
+        $arrUserData = [];
+        $arrAllParticipantUserIDs = [];
         $limit = '';
         if ($max > 0) {
             $limit = " LIMIT {$max}";
@@ -445,15 +445,15 @@ class MsgUser
      */
     private function conformTime($strTime)
     {
-        $strSearchTZ = array('ET','MT','CT','PT');
+        $strSearchTZ = ['ET','MT','CT','PT'];
 
         if (date('I', time())) {
-            $strReplaceTZ = array('EDT','MDT','CDT','PDT');
+            $strReplaceTZ = ['EDT','MDT','CDT','PDT'];
         } else {
-            $strReplaceTZ = array('EST','MST','CST','PST');
+            $strReplaceTZ = ['EST','MST','CST','PST'];
         }
 
-        $strReplace = array('');
+        $strReplace = [''];
         $strTimeTZ = str_replace($strSearchTZ, $strReplaceTZ, $strTime);
         $strConformTime = date("Y-m-d H:i:s", strtotime($strTimeTZ));
 
@@ -469,8 +469,8 @@ class MsgUser
         $strCommentFile = 'wp_' . $intProgramID . '_comments';
         $strContactTimesContainer = 'wp_' . $intProgramID . '_user_config';
 
-        $arrUserData = array();
-        $arrAllParticipantUserIDs = array();
+        $arrUserData = [];
+        $arrAllParticipantUserIDs = [];
         $limit = "";
         if ($max > 0) {
             $limit = " LIMIT $max";
@@ -530,7 +530,7 @@ class MsgUser
         $commentTable = 'wp_'.$blogId.'_comments';
         $query = DB::connection('mysql_no_prefix')->table($commentTable . ' AS cm');
         $query->select("cm.*");
-        $where = array('cm.user_id' => $userId);
+        $where = ['cm.user_id' => $userId];
         $query->where($where);
         $query->orderBy("cm.comment_ID", 'DESC');
         $query->limit('20');
@@ -548,10 +548,10 @@ class MsgUser
         $this->db->join('rules_ucp AS ucp', 'u.id = ucp.user_id');
         $this->db->join('rules_items ri', 'ri.items_id = ucp.items_id');
         $this->db->join('rules_pcp pcp', 'ri.pcp_id = pcp.pcp_id');
-        $where = array('ucp.items_id'   => $items_id,
+        $where = ['ucp.items_id'   => $items_id,
                        'ucp.meta_value' => 'Active',
                        'pcp.prov_id'    => $int_id,
-        );
+        ];
         $this->db->where($where);
         $this->db->order_by("ucp.user_id", 'DESC');
         $query = $this->db->get();
@@ -570,7 +570,7 @@ class MsgUser
         $intUserId = key($arrUserData);
         $arrUserData[$intUserId]['usermeta']['msgtype'] = $arrUserData[$intUserId]['usermeta']['curresp'];
         $strCommentsTable = 'wp_' . $arrUserData[$intUserId]['usermeta']['intProgramId'] . '_comments';
-        if (in_array(strtoupper($arrUserData[$intUserId]['usermeta']['curresp']), array("RPT","SYM","R","S","CALL","H","HSP")) > 0) {
+        if (in_array(strtoupper($arrUserData[$intUserId]['usermeta']['curresp']), ["RPT","SYM","R","S","CALL","H","HSP"]) > 0) {
             switch (strtoupper($arrUserData[$intUserId]['usermeta']['curresp'])) {
                 case 'R':
                     $arrUserData[$intUserId]['usermeta']['curresp'] = 'RPT';
@@ -650,7 +650,7 @@ class MsgUser
     public function get_all_active_participants($intBlogId = null)
     {
 // This is a BAD way if doing this.....only used by the original cpm_1_5_datamonitor.php not for v1.7
-        $arrReturnResult = array();
+        $arrReturnResult = [];
 
         $strCapabilityKey = 'wp' . $intBlogId . '_capabilities';
         $strProgramKey = 'wp' . $intBlogId . '_ca';
@@ -681,7 +681,7 @@ class MsgUser
                 ORDER BY
                     u1.user_id";
 
-        $query = $this->db->query($sql, array($strCapabilityKey, $strProgramKey, $strConfigKey));
+        $query = $this->db->query($sql, [$strCapabilityKey, $strProgramKey, $strConfigKey]);
 
         if ($query->num_rows() > 0) {
             foreach ($query->result() as $row) {
@@ -733,7 +733,7 @@ class MsgUser
         $strMetaKey = 'wp_' . $intBlogId . '_user_config';
         $sql = "SELECT meta_value FROM wp_usermeta WHERE user_id=? AND meta_key=? LIMIT 1";
 
-        $query = $this->db->query($sql, array($intUserId, $strMetaKey));
+        $query = $this->db->query($sql, [$intUserId, $strMetaKey]);
 
         if ($query->num_rows() > 0) {
             $row = $query->row();
@@ -755,9 +755,9 @@ class MsgUser
 
     public function getMD5UserIds()
     {
-        $arrReturnResult = array();
-        $arrId2MD5 = array();
-        $arrMD52Id = array();
+        $arrReturnResult = [];
+        $arrId2MD5 = [];
+        $arrMD52Id = [];
 
         $sql = "SELECT id FROM wp_users";
         $query = $this->db->query($sql);
@@ -825,7 +825,7 @@ order by qs.qs_type, qs.sort, qs.aid
     {
         $this->db->select('b.domain');
         $this->db->from('wp_blogs AS b');
-        $this->db->where(array('b.id' => $intBlogId));
+        $this->db->where(['b.id' => $intBlogId]);
         $query = $this->db->get();
         $result = $query->row();
         if (!empty($result)) {
@@ -863,13 +863,13 @@ order by qs.qs_type, qs.sort, qs.aid
         // nickname, first_name, last_name, description, rich_editing, comment_shortcuts, admin_color, user_ssl, show_admin_bar_front
         // wp_8_capabilities, wp_8_user_level, wp_8_user_config, dismissed_wp_pointers
         if (!empty($user_meta)) {
-            $this->db->delete("wp_usermeta", array('user_id' => $new_user_id));
+            $this->db->delete("wp_usermeta", ['user_id' => $new_user_id]);
             foreach ($user_meta as $key => $value) {
                 $meta_value = $value;
                 if (is_array($meta_value)) {
                     $meta_value = serialize($meta_value);
                 }
-                $this->db->insert('wp_usermeta', array('user_id' => $new_user_id, 'meta_key' => $key, 'meta_value' => $meta_value));
+                $this->db->insert('wp_usermeta', ['user_id' => $new_user_id, 'meta_key' => $key, 'meta_value' => $meta_value]);
             }
         }
         return $new_user_id;
@@ -914,7 +914,7 @@ order by qs.qs_type, qs.sort, qs.aid
         // nickname, first_name, last_name, description, rich_editing, comment_shortcuts, admin_color, user_ssl, show_admin_bar_front
         // wp_8_capabilities, wp_8_user_level, wp_8_user_config, dismissed_wp_pointers
         if (!empty($user_meta)) {
-            $this->db->delete("wp_usermeta", array('user_id' => $new_user_id));
+            $this->db->delete("wp_usermeta", ['user_id' => $new_user_id]);
             $user_meta['first_name'] = substr(str_shuffle("0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"), 0, 8);
             $user_meta['last_name'] = substr(str_shuffle("0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"), 0, 6);
             foreach ($user_meta as $key => $value) {
@@ -923,15 +923,15 @@ order by qs.qs_type, qs.sort, qs.aid
                     $meta_value['study_phone_number'] = '203-252-2556';
                     $meta_value = serialize($meta_value);
                 }
-                $this->db->insert('wp_usermeta', array('user_id' => $new_user_id, 'meta_key' => $key, 'meta_value' => $meta_value));
+                $this->db->insert('wp_usermeta', ['user_id' => $new_user_id, 'meta_key' => $key, 'meta_value' => $meta_value]);
             }
         }
 
         // ucp
-        $this->db->delete("rules_ucp", array('user_id' => $new_user_id));
+        $this->db->delete("rules_ucp", ['user_id' => $new_user_id]);
         if (!empty($ucp_items)) {
             foreach ($ucp_items as $ucp_item) {
-                $this->db->insert('rules_ucp', array('items_id' => $ucp_item['items_id'], 'user_id' => $new_user_id, 'meta_key' => $ucp_item['meta_key'], 'meta_value' => $ucp_item['meta_value']));
+                $this->db->insert('rules_ucp', ['items_id' => $ucp_item['items_id'], 'user_id' => $new_user_id, 'meta_key' => $ucp_item['meta_key'], 'meta_value' => $ucp_item['meta_value']]);
             }
         }
 
@@ -957,12 +957,12 @@ order by qs.qs_type, qs.sort, qs.aid
         $str_comments_table = 'lv_comments';
 
         // remove all users comment data
-        $this->db->delete("{$str_comments_table}", array('user_id' => $user_id));
+        $this->db->delete("{$str_comments_table}", ['user_id' => $user_id]);
         $this->db->query("
 DELETE  {$str_observationmeta_table}.* FROM {$str_observationmeta_table}
 INNER JOIN {$str_observation_table} ON ({$str_observation_table}.obs_id = {$str_observationmeta_table}.obs_id)
-WHERE {$str_observation_table}.user_id = ?;", array($user_id));
-        $this->db->delete("{$str_observation_table}", array('user_id' => $user_id));
+WHERE {$str_observation_table}.user_id = ?;", [$user_id]);
+        $this->db->delete("{$str_observation_table}", ['user_id' => $user_id]);
 
         // insert comments on target server
         foreach ($comment_data as $comment) {

@@ -209,7 +209,7 @@ class Observation extends Model
         return $observations;
     }
 
-    public function save(array $params = array())
+    public function save(array $params = [])
     {
         if (empty($this->user_id)) {
             return false;

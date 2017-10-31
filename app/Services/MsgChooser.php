@@ -39,7 +39,7 @@ class MsgChooser
     public function setAppAnswerAndNextMessage($userId, $commentId, $msgId, $answer, $debug = true)
     {
 
-        $log = array();
+        $log = [];
 
         // instantiate user
         $wpUser = User::find($userId);
@@ -96,8 +96,8 @@ class MsgChooser
             } else {
                 $log[] = "MsgChooser->setNextMessage() [[ 2 ]] has params, complex ";
                 $exe = explode("(", $answerResponse->action, 2);
-                $params = array($exe[1]);
-                $nextMsgId = call_user_func_array(array($this, $exe[0]), $params);
+                $params = [$exe[1]];
+                $nextMsgId = call_user_func_array([$this, $exe[0]], $params);
             }
             $log[] = "MsgChooser->setNextMessage() [[ 3 ]] nextMsgId = ".$nextMsgId;
 
@@ -125,22 +125,22 @@ class MsgChooser
                     ////rebuild key array (will break > 1 level deep!!)
                     ////$commentContent[$key] = array();
                     // add original question
-                    $commentContent[$key][$i] = array($msgId => $answer);
+                    $commentContent[$key][$i] = [$msgId => $answer];
                     // apply next question
                     if (isset($nextQuestionInfo)) {
                         $log[] = "MsgChooser->setNextMessage() found i=$i next question found and being appended $nextMsgId";
-                        $commentContent[$key][$i+1] = array($nextMsgId => '');
+                        $commentContent[$key][$i+1] = [$nextMsgId => ''];
                     }
                 }
             }
         }
         // if no match was found, append a new question/answer
         if (!$matchFound) {
-            $commentContent[$key+1][0] = array($msgId => $answer);
+            $commentContent[$key+1][0] = [$msgId => $answer];
             $log[] = "MsgChooser->setNextMessage() NEW question being added $msgId";
             if (isset($nextQuestionInfo)) {
                 $log[] = "MsgChooser->setNextMessage() NEW question answer being added $nextMsgId";
-                $commentContent[$key+1][1] = array($nextMsgId => '');
+                $commentContent[$key+1][1] = [$nextMsgId => ''];
             }
         }
         $comment->comment_content = serialize($commentContent);
@@ -159,7 +159,7 @@ class MsgChooser
     public function setObsResponse($userId, $parentId, $msgId, $answer, $obsDate, $sequence, $debug = true)
     {
 
-        $log = array();
+        $log = [];
 
         // instantiate user
         $wpUser = User::find($userId);
@@ -211,8 +211,8 @@ class MsgChooser
                 $this->obsValue = $answer;
                 $log[] = "MsgChooser->setObsResponse() [[ 2 ]] has params, complex ";
                 $exe = explode("(", $answerResponse->action, 2);
-                $params = array($exe[1]);
-                $nextMsgId = call_user_func_array(array($this, $exe[0]), $params);
+                $params = [$exe[1]];
+                $nextMsgId = call_user_func_array([$this, $exe[0]], $params);
             }
             $log[] = "MsgChooser->setObsResponse() [[ 3 ]] nextMsgId = ".$nextMsgId;
 
@@ -285,7 +285,7 @@ class MsgChooser
         }
 
         // default value
-        $ret = array();
+        $ret = [];
 
         // validate the response and get info for next question
         // echo '<br>Prov: '.$this->provid.' and qstype: '.$qstype.' msg_id: '.$lastMsgid.' Response: '.$strResponse.'<br>';
@@ -351,8 +351,8 @@ class MsgChooser
                 } else {
                     echo "<br>MsgChooser->nextMessage() [[ 1 ]] no tmpfunc";
                     $exe = explode("(", $ret->action, 2);
-                    $params = array($exe[1]);
-                    $tmpMsgId = call_user_func_array(array($this, $exe[0]), $params);
+                    $params = [$exe[1]];
+                    $tmpMsgId = call_user_func_array([$this, $exe[0]], $params);
                 }
 
                 echo "<br>MsgChooser->nextMessage() [[ 3 ]] Provider: ".$this->provid.' QSType: '.$qstype;

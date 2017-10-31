@@ -17,11 +17,11 @@ class CareplanUIService extends Facade
      * @param $wpUser
      * @return string
      */
-    public function renderCareplanSections($pcpSections = array(), $programId, User $user = null)
+    public function renderCareplanSections($pcpSections = [], $programId, User $user = null)
     {
         // if not set, get all pcp sections
         if (!$pcpSections) {
-            $pcpSections = array();
+            $pcpSections = [];
             $pcps = CPRulesPCP::where('prov_id', '=', $programId)->where('status', '=', 'Active')->get();
             if (count($pcps) > 0) {
                 foreach ($pcps as $pcp) {
@@ -236,7 +236,7 @@ class CareplanUIService extends Facade
                                 break;
 
                             case 'RADIO':
-                                $radio_options = array();
+                                $radio_options = [];
                                 if (!empty($value['radio_options'])) {
                                     $radio_options = json_decode($value['radio_options'], 1);
                                 }

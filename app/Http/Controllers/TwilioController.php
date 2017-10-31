@@ -94,11 +94,11 @@ class TwilioController extends Controller
 
                     // the number we are sending to - Any phone number
                     $recipient->cell_phone,
-                    array(
+                    [
 
                         'from' => $recipient->practice->outgoing_phone_number,
                         'body' => $message,
-                    )
+                    ]
                 );
             } else {
                 $sad_face_emoji = "\u{1F648}";
@@ -115,11 +115,11 @@ class TwilioController extends Controller
 
                     // the number we are sending to - Any phone number
                     $recipient->cell_phone,
-                    array(
+                    [
 
                         'from' => $recipient->practice->outgoing_phone_number,
                         'body' => $message,
-                    )
+                    ]
                 );
             }
         }

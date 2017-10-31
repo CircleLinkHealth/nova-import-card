@@ -39,7 +39,7 @@ class MsgCPRules
         // $tmpArray = explode(' ', $strResponse);
         $tmpArray = preg_split("/[ _]/", $strResponse);
         $strResponse2 = $tmpArray[0];
-        $log = array();
+        $log = [];
         $log[] = "MsgCPRules->getValidAnswer() start, answer = $strResponse";
 
         // echo '<br>Valid tmpArray: ';
@@ -58,7 +58,7 @@ class MsgCPRules
         if ($qdata->obs_key == 'Blood_Pressure') {
             // make sure both halves contain numbers else reject
             if (!is_numeric($tmpArray[0]) || empty($tmpArray[1]) || !is_numeric($tmpArray[1])) {
-                return array();
+                return [];
             }
         }
 
@@ -73,7 +73,7 @@ class MsgCPRules
                     return $questionSet;
                 }
             }
-            return array();
+            return [];
             /*
             $mixedReturn = $this->getMixedValid($strMsgID, $pid, $strResponse);
             if(empty($mixedReturn)) {
@@ -98,7 +98,7 @@ class MsgCPRules
                     return $questionSet;
                 }
             }
-            return array();
+            return [];
         }
 
 
@@ -387,14 +387,14 @@ query;
         foreach ($results as $row) {
             $scheduled++;
             if ($row->obs_unit != 'scheduled') {
-                if (in_array($row->obs_value, array('Y', 'y', 'Yes', 'yes'))) {
+                if (in_array($row->obs_value, ['Y', 'y', 'Yes', 'yes'])) {
                     $y++;
-                } else if (in_array($row->obs_value, array('N', 'n', 'No', 'no'))) {
+                } else if (in_array($row->obs_value, ['N', 'n', 'No', 'no'])) {
                     $n++;
                 }
             }
         }
-        $counts = array('Y' => $y, 'N' => $n, 'scheduled' => $scheduled);
+        $counts = ['Y' => $y, 'N' => $n, 'scheduled' => $scheduled];
         return $counts;
     }//getAdherenceCounts
 
@@ -464,14 +464,14 @@ query2;
             }
 
             //flag obs_processor of response
-            $data = array(
+            $data = [
                 'comment_id' => $row->comment_ID,
                 'sequence_id' => $lastkey,
                 'obs_message_id' => $question,
                 'obs_key' => $obs_key,
                 'obs_value' => $obs_value,
                 'obs_unit' => $obs_unit
-            );
+            ];
             error_log('Sending to update:'.print_r($data, true));
             $ret =  $this->_ci->obs->update_observation($data, $intProvID);
         }
@@ -636,7 +636,7 @@ query;
 
         $this->db->select('im.meta_value');
         $this->db->from('rules_itemmeta AS im');
-        $this->db->where(array('im.meta_key' => $meta_key, 'im.items_id' => $item_id));
+        $this->db->where(['im.meta_key' => $meta_key, 'im.items_id' => $item_id]);
         $query = $this->db->get();
         return $query->row();
     }
@@ -686,7 +686,7 @@ query;
         // get result for item (likely a child item)
         $this->db->select('ri.qid, ri.items_parent');
         $this->db->from('rules_items AS ri');
-        $this->db->where(array('ri.items_id' => $item_id));
+        $this->db->where(['ri.items_id' => $item_id]);
         $query = $this->db->get();
         $result = $query->result_array();
         if (isset($result[0]['qid'])) {
@@ -695,7 +695,7 @@ query;
                 // if qid=0, query for parent qid
                 $this->db->select('ri.qid');
                 $this->db->from('rules_items AS ri');
-                $this->db->where(array('ri.items_id' => $result[0]['items_parent']));
+                $this->db->where(['ri.items_id' => $result[0]['items_parent']]);
                 $query = $this->db->get();
                 $result = $query->result_array();
                 if (empty($result)) {
@@ -708,7 +708,7 @@ query;
         if ($target_qid > 0) {
             $this->db->select('rq.msg_id');
             $this->db->from('rules_questions AS rq');
-            $this->db->where(array('rq.qid' => $target_qid));
+            $this->db->where(['rq.qid' => $target_qid]);
             $query = $this->db->get();
             $result = $query->result_array();
             if (isset($result[0]['msg_id'])) {

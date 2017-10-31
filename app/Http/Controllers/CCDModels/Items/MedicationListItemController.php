@@ -13,16 +13,16 @@ class MedicationListItemController extends Controller
 
     public function index(Request $request)
     {
-        $data   = array();
+        $data   = [];
         $patientId = $request->input('patient_id');
         $ccdMedications = Medication::where('patient_id', '=', $patientId)->orderBy('name')->get();
         if ($ccdMedications->count() > 0) {
             foreach ($ccdMedications as $ccdMedication) {
-                $data[] = array(
+                $data[] = [
                     'id' => $ccdMedication->id,
                     'patient_id' => $ccdMedication->patient_id,
                     'name' => $ccdMedication->name,
-                    'sig' => $ccdMedication->sig);
+                    'sig' => $ccdMedication->sig];
             }
         }
         // return a JSON response
@@ -41,7 +41,7 @@ class MedicationListItemController extends Controller
             $ccdMedication->save();
             $id = $ccdMedication;
         }
-        $result = array('id' => $id);
+        $result = ['id' => $id];
         // return a JSON response
         return response()->json($result);
     }

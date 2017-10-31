@@ -39,7 +39,7 @@ class ObservationMeta extends Model
     }
 
 
-    public function save(array $params = array())
+    public function save(array $params = [])
     {
         if (empty($this->obs_id)) {
             return false;

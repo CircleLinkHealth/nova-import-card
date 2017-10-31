@@ -73,11 +73,11 @@ class Connection
         $this->practiceid = $practiceid;
         $this->baseurl = 'https://api.athenahealth.com/' . $this->version;
 
-        $auth_prefixes = array(
+        $auth_prefixes = [
             'v1' => 'oauth/token',
             'preview1' => 'oauthpreview/token',
             'openpreview1' => 'ouathopenpreview/token',
-        );
+        ];
         $this->authurl = 'https://api.athenahealth.com/' . $auth_prefixes[$this->version];
 
         $this->authenticate();
@@ -89,11 +89,11 @@ class Connection
         # steps of basic authentication.  The URL to authenticate to is determined by the version of
         # the API specified at construction.
         $url = $this->authurl;
-        $parameters = array('grant_type' => 'client_credentials');
-        $headers = array(
+        $parameters = ['grant_type' => 'client_credentials'];
+        $headers = [
             'Content-type' => 'application/x-www-form-urlencoded',
             'Authorization' => 'Basic ' . base64_encode($this->key . ':' . $this->secret),
-        );
+        ];
 
         $authorization = $this->call('POST', $url, $parameters, $headers);
 
@@ -119,7 +119,7 @@ class Connection
     {
         # It's easier to specify headers as an associative array, but making it a context requires
         # everything to be in the values of an indexed array.
-        $formatted_headers = array();
+        $formatted_headers = [];
         foreach ($headers as $k => $v) {
             $formatted_headers[] = $k . ': ' . $v;
         }
@@ -127,14 +127,14 @@ class Connection
         # We shouldn't always be ignoring errors, but if we're calling this a second time, it's
         # because we found errors we want to ignore.  So we set ignore_errors to be the same as
         # $secondcall.
-        $context = stream_context_create(array(
-            'http' => array(
+        $context = stream_context_create([
+            'http' => [
                 'method' => $verb,
                 'header' => $formatted_headers,
                 'content' => http_build_query($body),
                 'ignore_errors' => $secondcall,
-            )
-        ));
+            ]
+        ]);
         # NOTE: The warnings in file_get_contents are suppressed because the MDP API returns HTTP
         # status codes other than 200 (like 401 and 400) with information in the body that provides
         # a much better explanation than the code itself.
@@ -254,15 +254,15 @@ class Connection
      */
     public function POST($url, $parameters = null, $headers = null)
     {
-        $new_parameters = array();
+        $new_parameters = [];
         if ($parameters) {
             $new_parameters = array_merge($new_parameters, $parameters);
         }
 
         # Make sure POSTs have the proper headers
-        $new_headers = array(
+        $new_headers = [
             'Content-type' => 'application/x-www-form-urlencoded',
-        );
+        ];
         if ($headers) {
             $new_headers = array_merge($new_headers, $headers);
         }
@@ -282,15 +282,15 @@ class Connection
      */
     public function PUT($url, $parameters = null, $headers = null)
     {
-        $new_parameters = array();
+        $new_parameters = [];
         if ($parameters) {
             $new_parameters = array_merge($new_parameters, $parameters);
         }
 
         # Make sure PUTs have the proper headers
-        $new_headers = array(
+        $new_headers = [
             'Content-type' => 'application/x-www-form-urlencoded',
-        );
+        ];
         if ($headers) {
             $new_headers = array_merge($new_headers, $headers);
         }
@@ -315,12 +315,12 @@ class Connection
             $new_url .= '?' . http_build_query($parameters);
         }
 
-        $new_headers = array();
+        $new_headers = [];
         if ($headers) {
             $new_headers = array_merge($new_headers, $headers);
         }
 
-        return $this->authorized_call('DELETE', $new_url, array(), $new_headers);
+        return $this->authorized_call('DELETE', $new_url, [], $new_headers);
     }
 
     /**

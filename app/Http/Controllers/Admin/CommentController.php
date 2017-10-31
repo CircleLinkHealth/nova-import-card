@@ -75,7 +75,7 @@ class CommentController extends Controller
         }
         // display view
         $comment = Comment::find($id);
-        return view('admin.comments.show', [ 'comment' => $comment, 'errors' => array(), 'messages' => array() ]);
+        return view('admin.comments.show', [ 'comment' => $comment, 'errors' => [], 'messages' => [] ]);
     }
 
     /**

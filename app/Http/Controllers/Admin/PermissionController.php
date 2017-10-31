@@ -36,7 +36,7 @@ class PermissionController extends Controller
         }
         // display view
         $roles = Role::all();
-        return view('admin.permissions.create', [ 'roles' => $roles, 'errors' => array(), 'messages' => array() ]);
+        return view('admin.permissions.create', [ 'roles' => $roles, 'errors' => [], 'messages' => [] ]);
     }
 
     /**
@@ -75,7 +75,7 @@ class PermissionController extends Controller
         }
         // display view
         $permission = Permission::find($id);
-        return view('admin.permissions.show', [ 'permission' => $permission, 'errors' => array(), 'messages' => array() ]);
+        return view('admin.permissions.show', [ 'permission' => $permission, 'errors' => [], 'messages' => [] ]);
     }
 
     /**

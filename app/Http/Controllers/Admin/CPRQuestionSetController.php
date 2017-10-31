@@ -27,7 +27,7 @@ class CPRQuestionSetController extends Controller
         $params = $request->all();
 
         // filter qsType
-        $qsTypes = array('SYM' => 'SYM', 'RPT' => 'RPT', 'HSP' => 'HSP');
+        $qsTypes = ['SYM' => 'SYM', 'RPT' => 'RPT', 'HSP' => 'HSP'];
         $filterQsType = 'all';
         if (!empty($params['filterQsType'])) {
             $filterQsType = $params['filterQsType'];
@@ -124,7 +124,7 @@ class CPRQuestionSetController extends Controller
         }
         // display view
         $questionSet = CPRulesQuestionSets::find($id);
-        return view('admin.questionSets.show', ['questionSet' => $questionSet, 'errors' => array(), 'messages' => array()]);
+        return view('admin.questionSets.show', ['questionSet' => $questionSet, 'errors' => [], 'messages' => []]);
     }
 
     /**

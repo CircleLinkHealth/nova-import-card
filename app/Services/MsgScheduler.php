@@ -47,14 +47,14 @@ class MsgScheduler
         $today = date('N');
         echo "<br><br>sendDailyReminder Date: ".$today."<br><br>";
 
-        if (in_array($today, array("1","3","5"))) {
-            $reminders = array('daily' => 'day', 'welcome' => 'new' ,'hospital' => 'hsp_dm');
+        if (in_array($today, ["1","3","5"])) {
+            $reminders = ['daily' => 'day', 'welcome' => 'new' ,'hospital' => 'hsp_dm'];
         } else {
-            $reminders = array('daily' => 'day', 'welcome' => 'new' );
+            $reminders = ['daily' => 'day', 'welcome' => 'new' ];
         }
         foreach ($reminders as $msgType => $msgTypeAbrev) {
             echo "<br><br>^^^^^^^^ START msgType = $msgType ^^^^^^^^<br>";
-            $arrMsgType = array('msgType' => $msgType, 'msgTypeAbrev' => $msgTypeAbrev);
+            $arrMsgType = ['msgType' => $msgType, 'msgTypeAbrev' => $msgTypeAbrev];
             $msgUser = new MsgUser;
             $arrUsers = $msgUser->get_readyusers_for_daily_reminder($intProgramID, $arrMsgType, null, 1); //, $strDevice, $strDate);
 
@@ -62,10 +62,10 @@ class MsgScheduler
             echo "<br><br>MsgScheduler->sendDailyReminder() # of users to process = " . count($arrUsers);
             foreach ($arrUsers as $key => $value) {
                 // default
-                $tc[$value['user_id']] = array(
+                $tc[$value['user_id']] = [
                     'contactDays' => '',
                     'status' => ''
-                );
+                ];
                 echo '<br><br>[---Process User #'.$value['user_id'].'---]<br>';
                 $arrPart[$value['user_id']] = $msgUser->get_users_data($value['user_id'], 'id', $intProgramID);
                 //Added to check for Transitional Care Active and contact day
@@ -137,7 +137,7 @@ class MsgScheduler
 
 
 
-    private function addStateComment($programId, $comment_type, $user_id, $comment_author, $arrCommentContent = array())
+    private function addStateComment($programId, $comment_type, $user_id, $comment_author, $arrCommentContent = [])
     {
         $dateTime = new DateTime('now', new DateTimeZone('America/New_York'));
         $localTime = $dateTime->format('Y-m-d H:i:s');
@@ -221,8 +221,8 @@ class MsgScheduler
         }
 
         // instantiate arrays
-        $arrUsers = array();
-        $arrPart = array();
+        $arrUsers = [];
+        $arrPart = [];
 
         /*
         // get ready users
@@ -311,15 +311,15 @@ class MsgScheduler
         echo "<br><br>MsgScheduler->create_app_schedule() $provider_id, $user_id, $qstype, $qtype";
         $msgCPRules = new MsgCPRules;
         $arrQS = $msgCPRules->getNextList($provider_id, $user_id, $qstype, $qtype);
-        $tmpArr = array();
-        $appArr = array();
+        $tmpArr = [];
+        $appArr = [];
         $i = 0;
         foreach ($arrQS as $key) {
             // check if messages is allowed to be sent today
             if (($key->pcp_status == 'Active' || ($key->ucp_status == 'Active' && strpos($key->cdays, date('N')) !== false))) {
                 // $tmpArr[$i++][$key['msg_id']] = '';
                 $tmpArr[($i+1)][$key->msg_id] = $key->obs_key;
-                $appArr[$i][0] = array($key->msg_id => "");
+                $appArr[$i][0] = [$key->msg_id => ""];
                 $i++;
             }
         }

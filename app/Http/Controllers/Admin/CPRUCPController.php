@@ -113,7 +113,7 @@ class CPRUCPController extends Controller
         }
         // display view
         $ucp = CPRulesUCP::find($id);
-        return view('admin.ucp.show', [ 'ucp' => $ucp, 'errors' => array(), 'messages' => array() ]);
+        return view('admin.ucp.show', [ 'ucp' => $ucp, 'errors' => [], 'messages' => [] ]);
     }
 
     /**

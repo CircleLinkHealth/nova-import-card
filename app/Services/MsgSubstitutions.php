@@ -66,7 +66,7 @@ class MsgSubstitutions
             if (!empty($arrList)) {
                 $arrReadings = $msgCPRules->getReadings($provid, $user_id);
                 // variables for scheduled RPT
-                $tmpArr = array();
+                $tmpArr = [];
                 $i = 0; // counter for tense of the word reading or readings depending on how many we send.
 
                 foreach ($arrList as $row) {

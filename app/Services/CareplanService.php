@@ -26,14 +26,14 @@ class CareplanService
         $this->programId = $wpUser->program_id;
 
         // start feed
-        $feed = array(
+        $feed = [
             "User_ID"  => $this->wpUser->id,
             "Comments" => "All data string are variable, DMS quantity and type of messages will change daily for each patient. Messages with Return Responses can nest. Message Content will have variable fields filled in by CPM and can vary between each patient. Message quantities will vary from day to day.",
-            "Data"     => array(
+            "Data"     => [
                 "Version" => "2.1",
-                "EventDateTime" => date('Y-m-d H:i:s')),
-            "CP_Feed"  => array(),
-        );
+                "EventDateTime" => date('Y-m-d H:i:s')],
+            "CP_Feed"  => [],
+        ];
 
         $i = 0;
         // loop through dates
@@ -42,15 +42,15 @@ class CareplanService
             $this->date = $date;
 
             // instantiate feed for date
-            $feed["CP_Feed"][$i] = array(
-                "Feed" => array(
+            $feed["CP_Feed"][$i] = [
+                "Feed" => [
                     "FeedDate" => $date,
-                    "Messages" => array(),
-                    "DMS" => array(),
-                    "Reminders" => array(),
-                    "Biometric" => array(),
-                    "Symptoms" => array())
-            );
+                    "Messages" => [],
+                    "DMS" => [],
+                    "Reminders" => [],
+                    "Biometric" => [],
+                    "Symptoms" => []]
+            ];
 
             // DSM
             $feed["CP_Feed"][$i]['Feed']["DMS"] = $this->setObsDMS();
@@ -76,7 +76,7 @@ class CareplanService
     private function setObsDMS()
     {
         $dmsMsgIds = $this->getScheduledDMS();
-        $dmsObs = array();
+        $dmsObs = [];
         $i = 0;
         foreach ($dmsMsgIds as $dmsMsgId) {
             $observation = Observation::where('obs_message_id', '=', $dmsMsgId)
@@ -84,7 +84,7 @@ class CareplanService
                 ->where('obs_unit', '!=', 'scheduled')
                 ->where('obs_unit', '!=', 'invalid')
                 ->where('obs_unit', '!=', 'outbound')
-                ->whereRaw("obs_date BETWEEN '" . $this->date . " 00:00:00' AND '" . $this->date . " 23:59:59'", array())
+                ->whereRaw("obs_date BETWEEN '" . $this->date . " 00:00:00' AND '" . $this->date . " 23:59:59'", [])
                 ->orderBy('obs_date', 'desc')
                 ->first();
             if (!empty($observation) && $observation->comment_id != 0) {
@@ -121,7 +121,7 @@ class CareplanService
                     $currQuestionInfo->message = '-';
                 }
                 // add to feed
-                $dmsObs[$i - 1]['Response'][0] = array(
+                $dmsObs[$i - 1]['Response'][0] = [
                     "MessageID" => $currQuestionInfo->msg_id,
                     "Obs_Key" => $currQuestionInfo->obs_key,
                     "ParentID" => 0,
@@ -135,7 +135,7 @@ class CareplanService
                     "PatientAnswer" => '',
                     "ReadingUnit" => '',
                     "ResponseDate" => ''
-                );
+                ];
             }
         }
         return $this->sortObs($dmsObs);
@@ -225,7 +225,7 @@ class CareplanService
             //var_dump($currQuestionInfo);
             //echo "<br><BR>".PHP_EOL;
             // add to feed
-            $obsArr = array(
+            $obsArr = [
                 "MessageID" => $currQuestionInfo->msg_id,
                 "Obs_Key" => $currQuestionInfo->obs_key,
                 "ParentID" => 0,
@@ -239,14 +239,14 @@ class CareplanService
                 "PatientAnswer" => '',
                 "ReadingUnit" => '',
                 "ResponseDate" => ''
-            );
+            ];
             return $obsArr;
         }
         // get all observations for message_thread
         $observations = Observation::where('comment_id', '=', $commentId)
             ->orderBy('sequence_id', 'asc')
             ->get();
-        $obsArr = array();
+        $obsArr = [];
         if ($observations->count() > 0) {
             $o = 0;
             $numOutbounds = 0;
@@ -289,7 +289,7 @@ class CareplanService
                     if ($o == 0) {
                         $tmpCommentId = 0;
                     }
-                    $obsTemp = array(
+                    $obsTemp = [
                         "MessageID" => $currQuestionInfo->msg_id,
                         "Obs_Key" => $currQuestionInfo->obs_key,
                         "ParentID" => $tmpCommentId,
@@ -303,7 +303,7 @@ class CareplanService
                         "PatientAnswer" => $observation->obs_value,
                         "ReadingUnit" => $reportsService->biometricsUnitMapping(str_replace('_', ' ', $currQuestionInfo->obs_key)),
                         "ResponseDate" => $observation->obs_date
-                    );
+                    ];
                     if ($o == 0) {
                         $obsArr = $obsTemp;
                     } else if ($o == 1) {
@@ -329,9 +329,9 @@ class CareplanService
     {
         // bypass for now
         return $observations;
-        $obsByDate = array(); // key => obs array where key is the ResponseDate
-        $obsUnanswered = array(); // array of obs where ResponseDate is blank
-        $obsSorted = array(); // resulting sorted obs
+        $obsByDate = []; // key => obs array where key is the ResponseDate
+        $obsUnanswered = []; // array of obs where ResponseDate is blank
+        $obsSorted = []; // resulting sorted obs
         foreach ($observations as $tmpObs) {
             if (strlen($tmpObs['ResponseDate']) > 6) {
                 $obsByDate[$tmpObs['ResponseDate']] = $tmpObs;
@@ -508,7 +508,7 @@ class CareplanService
             })
             ->where('meta_value', '=', 'Active')
             ->get();
-        $msgIds = array();
+        $msgIds = [];
         if ($ucp->count() > 0) {
             foreach ($ucp as $ucpItem) {
                 if ($ucpItem->item->question) {
