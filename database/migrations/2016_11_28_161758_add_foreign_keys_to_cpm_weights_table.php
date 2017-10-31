@@ -30,5 +30,4 @@ class AddForeignKeysToCpmWeightsTable extends Migration
             $table->dropForeign('cpm_weights_patient_id_foreign');
         });
     }
-
 }

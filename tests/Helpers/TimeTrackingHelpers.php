@@ -55,8 +55,10 @@ trait TimeTrackingHelpers
         $activities = Activity::whereIn('page_timer_id', $pageTimers->pluck('id')->all())
             ->get();
 
-        $this->assertEquals($activities->sum('duration'),
-            $pageTimers->whereIn('id', $activities->pluck('page_timer_id')->all())->sum('billable_duration'));
+        $this->assertEquals(
+            $activities->sum('duration'),
+            $pageTimers->whereIn('id', $activities->pluck('page_timer_id')->all())->sum('billable_duration')
+        );
     }
 
     public function createTrackingEvent(
@@ -111,7 +113,8 @@ trait TimeTrackingHelpers
      *
      * @return Activity
      */
-    public function createActivityForPatientNurse(Patient $patient, User $nurse, $duration) : Activity {
+    public function createActivityForPatientNurse(Patient $patient, User $nurse, $duration) : Activity
+    {
 
         //since this doesn't happen automatically, for testing purposes we update the patient's
         //current ccm_time
@@ -131,6 +134,5 @@ trait TimeTrackingHelpers
             'type' => 'Test Activity'
 
         ]);
-
     }
 }

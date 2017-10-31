@@ -4,7 +4,8 @@ use App\ThirdPartyApiConfig;
 use GuzzleHttp\Client;
 use Symfony\Component\HttpFoundation\Request;
 
-class RedoxAuthentication {
+class RedoxAuthentication
+{
 
     protected $apiKey;
 
@@ -37,7 +38,7 @@ class RedoxAuthentication {
             ]
         ]);
 
-        $body = json_decode( $response->getBody(), true );
+        $body = json_decode($response->getBody(), true);
 
         $this->saveCredentialsToDb($body);
     }
@@ -53,7 +54,7 @@ class RedoxAuthentication {
             ]
         ]);
 
-        $body = json_decode( $response->getBody(), true );
+        $body = json_decode($response->getBody(), true);
 
         $this->saveCredentialsToDb($body);
     }

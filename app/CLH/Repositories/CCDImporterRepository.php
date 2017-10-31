@@ -2,7 +2,6 @@
 
 namespace App\CLH\Repositories;
 
-
 use App\Importer\Models\ImportedItems\DemographicsImport;
 use App\Models\MedicalRecords\ImportedMedicalRecord;
 use App\Role;

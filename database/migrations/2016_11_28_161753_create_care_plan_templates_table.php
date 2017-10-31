@@ -32,5 +32,4 @@ class CreateCarePlanTemplatesTable extends Migration
     {
         Schema::drop('care_plan_templates');
     }
-
 }

@@ -34,5 +34,4 @@ class AddForeignKeysToCallsTable extends Migration
             $table->dropForeign('calls_outbound_cpm_id_foreign');
         });
     }
-
 }

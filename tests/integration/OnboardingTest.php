@@ -1,5 +1,7 @@
 <?php
+namespace Tests\integration;
 
+use Tests\TestCase;
 use App\Entities\Invite;
 use App\User;
 use Faker\Factory;
@@ -32,7 +34,7 @@ class OnboardingTest extends TestCase
 //        $password = $this->faker->password;
 //
 //
-//        $this->visit(route('get.onboarding.create.program.lead.user', [
+//        $response = $this->get(route('get.onboarding.create.program.lead.user', [
 //            'code' => $this->invite->code,
 //        ]))
 //            ->type($firstName, 'firstName')
@@ -40,7 +42,7 @@ class OnboardingTest extends TestCase
 //            ->type($email, 'email')
 //            ->type($password, 'password')
 //            ->press('Next')
-//            ->seeInDatabase('users', [
+//            ->assertDatabaseHas('users', [
 //                'first_name' => $firstName,
 //                'last_name'  => $lastName,
 //                'email'      => $email,
@@ -65,7 +67,7 @@ class OnboardingTest extends TestCase
 //
 //        $this->practice = Practice::whereUserId($this->provider->id)->first();
 //
-//        $this->seeInDatabase('practices', [
+//        $this->assertDatabaseHas('practices', [
 //            'name'         => str_slug($name),
 //            'display_name' => $name,
 //            'user_id'      => $this->provider->id,
@@ -106,13 +108,13 @@ class OnboardingTest extends TestCase
      */
     public function test_it_shows_create_lead_user_form()
     {
-        $this->visit(route('get.onboarding.create.program.lead.user', [
+        $response = $this->get(route('get.onboarding.create.program.lead.user', [
             'code' => $this->invite->code,
         ]))
-            ->see('firstName')
-            ->see('lastName')
-            ->see('email')
-            ->see('password');
+            ->assertSee('firstName')
+            ->assertSee('lastName')
+            ->assertSee('email')
+            ->assertSee('password');
     }
 
 
@@ -123,9 +125,9 @@ class OnboardingTest extends TestCase
     {
         $this->expectException(\Illuminate\Foundation\Testing\HttpException::class);
 
-        $this->visit(route('get.onboarding.create.program.lead.user', [
+        $response = $this->get(route('get.onboarding.create.program.lead.user', [
             'code' => 'q',
-        ]))->seeStatusCode(403);
+        ]))->assertStatus(403);
     }
 
     public function test_post_locations()
@@ -140,5 +142,4 @@ class OnboardingTest extends TestCase
         $this->faker = Factory::create();
         $this->invite = factory(Invite::class)->create();
     }
-
 }

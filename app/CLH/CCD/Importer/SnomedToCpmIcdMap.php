@@ -11,5 +11,4 @@ class SnomedToCpmIcdMap extends Model
     {
         return $this->belongsTo(CpmProblem::class);
     }
-
 }

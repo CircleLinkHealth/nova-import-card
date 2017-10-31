@@ -65,8 +65,6 @@ class PhoenixHeartSectionsLogger extends TabularMedicalRecordSectionsLogger
             ->get();
 
         foreach ($medications as $medication) {
-
-
             $endDate = null;
             $end = null;
             $startDate = null;
@@ -92,8 +90,8 @@ class PhoenixHeartSectionsLogger extends TabularMedicalRecordSectionsLogger
                     'text'          => $medication->instructions,
                 ], $this->foreignKeys),
                 [
-//                    'start' => $startDate,
-//                    'end'   => $end
+                //                    'start' => $startDate,
+                //                    'end'   => $end
                 ]
             );
         }
@@ -178,7 +176,6 @@ class PhoenixHeartSectionsLogger extends TabularMedicalRecordSectionsLogger
             ], $this->foreignKeys));
 
             return $this;
-
         }
 
         $provider = ProviderLog::create(array_merge([

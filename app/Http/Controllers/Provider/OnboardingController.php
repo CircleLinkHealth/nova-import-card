@@ -14,7 +14,6 @@ use App\User;
 use Illuminate\Http\Request;
 use Prettus\Validator\Exceptions\ValidatorException;
 
-
 class OnboardingController extends Controller
 {
     /**

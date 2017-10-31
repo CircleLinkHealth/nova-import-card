@@ -2,7 +2,6 @@
 
 namespace App\Reports\Sales;
 
-
 use App\Activity;
 use App\Call;
 use App\CarePerson;

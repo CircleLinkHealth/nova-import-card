@@ -6,6 +6,7 @@ use App\Services\MsgCPRules;
 use App\Services\MsgDelivery;
 use App\Services\MsgUsers;
 use DB;
+
 /*
 $this->_ci =& get_instance();
 $this->_ci->load->model('cpm_1_7_rules_model','rules');
@@ -13,29 +14,43 @@ $this->_ci->load->model('cpm_1_7_smsdelivery_model','mailman');
 $this->_ci->load->model('cpm_1_7_observation_model','obs');
 */
 
-class MsgSubstitutions {
+class MsgSubstitutions
+{
 
-    public function __construct() {
+    public function __construct()
+    {
     } //construct
 
-    public function doSubstitutions($strMessage, $provid = 0, $user_id = 0) {
+    public function doSubstitutions($strMessage, $provid = 0, $user_id = 0)
+    {
 
-        if (preg_match("/#Readings#/", $strMessage))  { $strMessage = $this->getReadingsText($provid, $user_id, $strMessage, 'EN');}
-        if (preg_match("/#lecturas#/", $strMessage))  { $strMessage = $this->getReadingsText($provid, $user_id, $strMessage, 'ES');}
+        if (preg_match("/#Readings#/", $strMessage)) {
+            $strMessage = $this->getReadingsText($provid, $user_id, $strMessage, 'EN');
+        }
+        if (preg_match("/#lecturas#/", $strMessage)) {
+            $strMessage = $this->getReadingsText($provid, $user_id, $strMessage, 'ES');
+        }
 
-        if (preg_match("/#Reminder#/", $strMessage))  { $strMessage = $this->getReminderText($provid, $user_id, $strMessage, 'EN');}
-        if (preg_match("/#Aviso#/",    $strMessage))  { $strMessage = $this->getReminderText($provid, $user_id, $strMessage, 'ES');}
+        if (preg_match("/#Reminder#/", $strMessage)) {
+            $strMessage = $this->getReminderText($provid, $user_id, $strMessage, 'EN');
+        }
+        if (preg_match("/#Aviso#/", $strMessage)) {
+            $strMessage = $this->getReminderText($provid, $user_id, $strMessage, 'ES');
+        }
 
-        if (preg_match("/#CONTACTTIME#/", $strMessage))  { $strMessage = $this->getContactTime($provid, $user_id, $strMessage);}
+        if (preg_match("/#CONTACTTIME#/", $strMessage)) {
+            $strMessage = $this->getContactTime($provid, $user_id, $strMessage);
+        }
 
         return $strMessage;
     } //doSubstitutions
 
     // Replacement text for #Readings#
-    private function getReadingsText($provid, $user_id, $strMessage, $strLang = 'EN') {
+    private function getReadingsText($provid, $user_id, $strMessage, $strLang = 'EN')
+    {
 
         /**
-         * @todo	Need to replace hard coding to use db for replacements
+         * @todo    Need to replace hard coding to use db for replacements
          */
 
         $msgCPRules = new MsgCPRules;
@@ -43,12 +58,12 @@ class MsgSubstitutions {
 
         $strReturn = '';
 
-        if($provid > 0 and $user_id > 0) {
+        if ($provid > 0 and $user_id > 0) {
             // get list of Reading for individual
             $arrList = $msgCPRules->getReadingDefaults($user_id, $provid);
             // echo '<br>Readings to send today: ';
             // print_r($arrList);
-            if(!empty($arrList)) {
+            if (!empty($arrList)) {
                 $arrReadings = $msgCPRules->getReadings($provid, $user_id);
                 // variables for scheduled RPT
                 $tmpArr = array();
@@ -56,15 +71,15 @@ class MsgSubstitutions {
 
                 foreach ($arrList as $row) {
                     // chech if biometric is active and can be sent today
-                    if((!empty($row->APActive) && $row->APActive == 'Active') or ($row->UActive == 'Active' and strpos($row->cdays, $row->today) !== FALSE)) {
+                    if ((!empty($row->APActive) && $row->APActive == 'Active') or ($row->UActive == 'Active' and strpos($row->cdays, $row->today) !== false)) {
                         // build array of RPT scheduled for today.
                         $tmpArr[$i++][$row->msg_id] = $row->obs_key;
 
                         // only use open ones for message substitutions
-                        if(empty($arrReadings) || strpos(serialize($arrReadings), $row->obs_key) === FALSE) {
+                        if (empty($arrReadings) || strpos(serialize($arrReadings), $row->obs_key) === false) {
                             switch ($row->obs_key) {
                                 case 'Blood_Pressure':
-                                    if($strLang == 'ES') {
+                                    if ($strLang == 'ES') {
                                         $strReturn .= 'presion arterial en reposo, ';
                                     } else {
                                         $strReturn .= 'resting blood pressure, ';
@@ -72,7 +87,7 @@ class MsgSubstitutions {
                                     break;
 
                                 case 'Blood_Sugar':
-                                    if($strLang == 'ES') {
+                                    if ($strLang == 'ES') {
                                         $strReturn .= 'el nivel de azucar en la sangre en ayunas, ';
                                     } else {
                                         $strReturn .= 'fasting blood sugar, ';
@@ -80,7 +95,7 @@ class MsgSubstitutions {
                                     break;
 
                                 case 'Cigarettes':
-                                    if($strLang == 'ES') {
+                                    if ($strLang == 'ES') {
                                         $strReturn .= 'numero de cigarrillos fumados, ';
                                     } else {
                                         $strReturn .= 'number of cigarettes smoked, ';
@@ -88,7 +103,7 @@ class MsgSubstitutions {
                                     break;
 
                                 case 'Weight':
-                                    if($strLang == 'ES') {
+                                    if ($strLang == 'ES') {
                                         $strReturn .= 'peso, ';
                                     } else {
                                         $strReturn .= 'weight, ';
@@ -143,7 +158,7 @@ class MsgSubstitutions {
         }
 
         //  check language
-        if($strLang == 'ES') {
+        if ($strLang == 'ES') {
             $strMessage = preg_replace('/#lecturas#/', $strReturn, $strMessage);
         } else {
             $strMessage = preg_replace('/#Readings#/', $strReturn, $strMessage);
@@ -167,13 +182,13 @@ class MsgSubstitutions {
         // echo '<hr><hr>Substitution: i: '.$i.' and message: '.$strMessage.'<hr><hr>';
         //echo "<br>MsgSubstitutions->getReadingsText, returning '$strMessage''";
         return $strMessage;
-
     }//fxCheckForReadings
 
 
     // Replacement text for #Readings#
-    private function getReminderText($provid, $user_id, $strMessage, $strLang = 'EN') {
-        if($strLang == 'ES') {
+    private function getReminderText($provid, $user_id, $strMessage, $strLang = 'EN')
+    {
+        if ($strLang == 'ES') {
             $strNewMessage = 'Por favor recuerde de enviar sus #lecturas# eviando RPT por mensaje de texto hoy.';
             $strNewMessage = $this->getReadingsText($provid, $user_id, $strNewMessage, $strLang);
             $strMessage = preg_replace('/#Aviso#/', $strNewMessage, $strMessage);
@@ -188,7 +203,8 @@ class MsgSubstitutions {
     }
 
     // Replacement text for CONTACTTIME
-    private function getContactTime($provid, $user_id, $strMessage) {
+    private function getContactTime($provid, $user_id, $strMessage)
+    {
         $msgCPRules = new MsgCPRules;
         $strConfig = $msgCPRules->getUserConfig($provid, $user_id);
         $arrConfig = unserialize($strConfig);
@@ -197,7 +213,4 @@ class MsgSubstitutions {
 
         return $strMessage;
     } //getContactTime
-
-
-
 }

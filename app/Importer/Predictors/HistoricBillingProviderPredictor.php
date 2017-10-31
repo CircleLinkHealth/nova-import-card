@@ -22,7 +22,11 @@ class HistoricBillingProviderPredictor extends BaseHistoricPredictor implements 
         $providersPredictions = $this->providersLookup('billing_provider_id', 5);
         $addressesPredictions = $this->addressesLookup('billing_provider_id', 2);
 
-        return $this->makePrediction('billing_provider_id', $addressesPredictions, $custodianPredictions,
-            $providersPredictions);
+        return $this->makePrediction(
+            'billing_provider_id',
+            $addressesPredictions,
+            $custodianPredictions,
+            $providersPredictions
+        );
     }
 }

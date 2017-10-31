@@ -44,5 +44,4 @@ class DemographicsLog extends Model implements ItemLog
     {
         return $this->hasOne(DemographicsImport::class);
     }
-
 }

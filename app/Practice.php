@@ -75,15 +75,19 @@ class Practice extends Model
     ) {
         $categories = [];
         //PCP has the sections for each provider, get all sections for the user's blog
-        $pcp = CPRulesPCP::where('prov_id', '=', $blogId)->where('status', '=', 'Active')->where('section_text',
-            $item)->first();
+        $pcp = CPRulesPCP::where('prov_id', '=', $blogId)->where('status', '=', 'Active')->where(
+            'section_text',
+            $item
+        )->first();
         //Get all the items for each section
         if ($pcp) {
             $items = CPRulesItem::where('pcp_id', $pcp->pcp_id)->where('items_parent', 0)->pluck('items_id')->all();
             for ($i = 0; $i < count($items); $i++) {
                 //get id's of all lifestyle items that are active for the given user
-                $item_for_user[$i] = CPRulesUCP::where('items_id', $items[$i])->where('meta_value',
-                    'Active')->where('user_id', $blogId)->first();
+                $item_for_user[$i] = CPRulesUCP::where('items_id', $items[$i])->where(
+                    'meta_value',
+                    'Active'
+                )->where('user_id', $blogId)->first();
                 if ($item_for_user[$i] != null) {
                     //Find the items_text for the one's that are active
                     $user_items = CPRulesItem::find($item_for_user[$i]->items_id);
@@ -124,7 +128,6 @@ class Practice extends Model
     {
 
         return Practice::whereActive(1)->get();
-
     }
 
     public function getCountOfUserTypeAtPractice($role)
@@ -141,7 +144,6 @@ class Practice extends Model
                 $q->whereName($role);
             })
             ->count();
-
     }
 
     public function getFormattedNameAttribute()
@@ -191,7 +193,6 @@ class Practice extends Model
         $patients = Patient::whereHas('user', function ($q) {
 
             $q->where('program_id', $this->id);
-
         })
             ->whereNotNull('ccm_status')
             ->get();
@@ -205,29 +206,20 @@ class Practice extends Model
         ];
 
         foreach ($patients as $patient) {
-
             if ($patient->created_at > $start->toDateTimeString() && $patient->created_at <= $end->toDateTimeString()) {
-
                 $data['added']++;
-
             }
 
             if ($patient->date_withdrawn > $start->toDateTimeString() && $patient->date_withdrawn <= $end->toDateTimeString()) {
-
                 $data['withdrawn']++;
-
             }
 
             if ($patient->date_paused > $start->toDateTimeString() && $patient->date_paused <= $end->toDateTimeString()) {
-
                 $data['paused']++;
-
             }
-
         }
 
         return $data;
-
     }
 
     public function getAddress()
@@ -245,7 +237,6 @@ class Practice extends Model
             'line2' => $primary->city . ', ' . $primary->state . ' ' . $primary->postal_code,
 
         ];
-
     }
 
     public function locations()
@@ -267,10 +258,10 @@ class Practice extends Model
     {
 
         return $q->whereActive(1);
-
     }
 
-    public function cpmSettings() {
+    public function cpmSettings()
+    {
         return $this->settings->isEmpty()
             ? $this->syncSettings(new Settings())
             : $this->settings->first();

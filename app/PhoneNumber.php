@@ -59,5 +59,4 @@ class PhoneNumber extends Model
         return $this->belongsTo('App\User', 'id', 'user_id');
     }
     // END RELATIONSHIPS
-
 }

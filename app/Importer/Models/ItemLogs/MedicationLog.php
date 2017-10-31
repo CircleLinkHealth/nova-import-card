@@ -42,5 +42,4 @@ class MedicationLog extends Model implements ItemLog
     {
         return $this->hasOne(MedicationImport::class);
     }
-
 }

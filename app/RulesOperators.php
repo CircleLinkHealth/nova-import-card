@@ -2,7 +2,8 @@
 
 use Illuminate\Database\Eloquent\Model;
 
-class RulesOperators extends Model {
+class RulesOperators extends Model
+{
 
     /**
      * The connection name for the model.

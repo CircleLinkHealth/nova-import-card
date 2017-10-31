@@ -12,6 +12,4 @@ class PatientSignup extends Model
         'email',
         'comment',
     ];
-
-
 }

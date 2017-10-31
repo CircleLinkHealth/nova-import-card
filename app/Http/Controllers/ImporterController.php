@@ -163,8 +163,10 @@ class ImporterController extends Controller
             if ($file->getClientOriginalExtension() == 'csv') {
                 dispatch((new ImportCsvPatientList(parseCsvToArray($file), $file->getClientOriginalName())));
 
-                $link = link_to_route('view.files.ready.to.import',
-                    'Visit to CCDs Ready to Import page to review imported files.');
+                $link = link_to_route(
+                    'view.files.ready.to.import',
+                    'Visit to CCDs Ready to Import page to review imported files.'
+                );
 
                 return "The CSV list is being processed. $link";
             } //assume XML CCDA
@@ -244,5 +246,4 @@ class ImporterController extends Controller
 
         return redirect()->route('view.files.ready.to.import');
     }
-
 }

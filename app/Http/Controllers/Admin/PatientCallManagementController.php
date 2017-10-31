@@ -19,7 +19,6 @@ class PatientCallManagementController extends Controller
     {
 
         if ($request->input('action')) {
-
             //Manage Assignments
             if ($request->input('action') == 'assign') {
                 if (($request->input('calls')
@@ -47,11 +46,8 @@ class PatientCallManagementController extends Controller
             }
 
             if ($request->input('action') == 'delete' && !empty($request->input('calls'))) {
-
                 if (is_array($request->input('calls'))) {
-
                     foreach ($request->input('calls') as $callId) {
-
                         $call = Call::find($callId);
 
                         if ($call) {
@@ -61,10 +57,7 @@ class PatientCallManagementController extends Controller
                 }
 
                 return redirect()->back()->with('messages', ['Successfully deleted calls!']);
-
-
             }
-
         }
 
         // get all calls
@@ -241,5 +234,4 @@ class PatientCallManagementController extends Controller
     {
         //
     }
-
 }

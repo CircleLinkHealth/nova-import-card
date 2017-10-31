@@ -67,8 +67,13 @@ class DatamonitorService
                         $observation = false;
                         $msg_id = $item['msg_id'];
                         $day1_date = date('Y-m-d', strtotime("-1 days"));
-                        $item_observations = $this->CI->observation_model->get_3day_observations(strtolower($item['alert_key']),
-                            $msg_id, $user_id, $day1_date, $this->int_id);
+                        $item_observations = $this->CI->observation_model->get_3day_observations(
+                            strtolower($item['alert_key']),
+                            $msg_id,
+                            $user_id,
+                            $day1_date,
+                            $this->int_id
+                        );
                         //echo "<pre>";var_dump($item_observations);echo "</pre>";
                         if (!empty($item_observations)) {
                             $i = 1; // standard loop counter, 1 = most recent obs found
@@ -127,8 +132,10 @@ class DatamonitorService
                                 'meta_key'   => 'dm_log_missed_' . strtolower($item['alert_key']),
                                 'meta_value' => $send_alert,
                             ];
-                            $observationmeta_id = $this->CI->observationmeta_model->insert_observationmeta($observationmeta_paramaters,
-                                $this->int_id);
+                            $observationmeta_id = $this->CI->observationmeta_model->insert_observationmeta(
+                                $observationmeta_paramaters,
+                                $this->int_id
+                            );
                             $log_string .= "added new observationmeta dm_log_missed_" . strtolower($item['alert_key']) . " - obsmeta_id = {$observationmeta_id}" . PHP_EOL;
                             if ($type == 'Adherence') { // HACK FIX
                                 // update observation to ensure it has obs_key
@@ -136,12 +143,20 @@ class DatamonitorService
                                     'obs_id'  => $observation['id'],
                                     'obs_key' => 'Adherence',
                                 ];
-                                $this->CI->observation_model->update_observation($observation_paramaters,
-                                    $this->int_id);
+                                $this->CI->observation_model->update_observation(
+                                    $observation_paramaters,
+                                    $this->int_id
+                                );
                             }
                             // send actual alert
-                            $log_string .= $this->send_obs_alert($observation, $message_id, $send_email, $extra_vars,
-                                false, $this->int_id);
+                            $log_string .= $this->send_obs_alert(
+                                $observation,
+                                $message_id,
+                                $send_email,
+                                $extra_vars,
+                                false,
+                                $this->int_id
+                            );
                         } else {
                             $log_string .= "Patient[{$user_id}][{$msg_id}][GOOD] did not miss for past 3 days asked, checked obs[{$item_obs_ids}]" . PHP_EOL;
                         }
@@ -275,8 +290,7 @@ class DatamonitorService
         return $log_string;
     }
 
-    public
-    function get_alert_msg_info(
+    public function get_alert_msg_info(
         $alert_msg_id
     ) {
         if ($alert_msg_id == 'CF_AL_01') {
@@ -447,8 +461,13 @@ class DatamonitorService
 
         // get message info
         $msgCPRules = new MsgCPRules();
-        $message_info = $msgCPRules->getQuestion($message_id, $user->id, 'EMAIL_' . $user->preferred_contact_language,
-            $user->program_id, 'SOL');
+        $message_info = $msgCPRules->getQuestion(
+            $message_id,
+            $user->id,
+            'EMAIL_' . $user->preferred_contact_language,
+            $user->program_id,
+            'SOL'
+        );
 
         //Breaks down here, suspect the params are not as expected in getQuestion()
 
@@ -469,12 +488,11 @@ class DatamonitorService
             return false;
         }
         foreach ($user->sendAlertTo as $recipient_id) {
-
             $provider_user = User::find($recipient_id);
             $email = $provider_user->email;
 
             Mail::send('emails.dmalert', $data, function ($message) use
-            (
+                (
                 $email,
                 $email_subject
             ) {
@@ -821,8 +839,14 @@ class DatamonitorService
             if ($send_alert !== false) {
                 $log_string .= "SEND ALERT [{$send_alert}]" . PHP_EOL;
                 // if exception, trigger alert flow
-                $log_string .= $this->send_obs_alert($observation, $message_id, $send_email, $extra_vars,
-                    $observation->obs_method, $this->int_id);
+                $log_string .= $this->send_obs_alert(
+                    $observation,
+                    $message_id,
+                    $send_email,
+                    $extra_vars,
+                    $observation->obs_method,
+                    $this->int_id
+                );
             }
         }
 
@@ -1302,8 +1326,7 @@ class DatamonitorService
      *
      * @return array
      */
-    public
-    function process_alert_obs_call(
+    public function process_alert_obs_call(
         $user,
         $userUcpData,
         $observation,
@@ -1423,8 +1446,7 @@ class DatamonitorService
      *
      * @return array
      */
-    public
-    function process_alert_obs_adherence(
+    public function process_alert_obs_adherence(
         $user,
         $userUcpData,
         $observation,
@@ -1476,8 +1498,7 @@ class DatamonitorService
      *
      * @return array
      */
-    public
-    function process_alert_obs_other(
+    public function process_alert_obs_other(
         $user,
         $userUcpData,
         $observation,
@@ -1524,8 +1545,7 @@ class DatamonitorService
      *
      * @return array
      */
-    public
-    function process_alert_obs_hsp(
+    public function process_alert_obs_hsp(
         $user,
         $userUcpData,
         $observation,
@@ -1572,8 +1592,11 @@ class DatamonitorService
                     $message_id = 'CF_AL_25'; // HSP_HOSP + C
                     $send_alert = '';
                 } else {
-                    $log_string .= "Hospital Discharge on " . str_replace('_', '/',
-                            $obs_value) . ", follow up required";
+                    $log_string .= "Hospital Discharge on " . str_replace(
+                        '_',
+                        '/',
+                        $obs_value
+                    ) . ", follow up required";
                     $message_id = 'CF_AL_26'; // HSP_HOSP + dd_mm
                     $send_alert = '';
                 }

@@ -53,5 +53,4 @@ class CarePerson extends Model
         return $this->belongsTo(User::class, 'member_user_id', 'id');
     }
     // END RELATIONSHIPS
-
 }

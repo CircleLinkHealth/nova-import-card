@@ -3,7 +3,8 @@
 use App\Importer\Models\ItemLogs\ProblemLog;
 use Illuminate\Database\Eloquent\Model;
 
-class ProblemImport extends Model {
+class ProblemImport extends Model
+{
 
     protected $guarded = [];
 

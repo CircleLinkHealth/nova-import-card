@@ -90,8 +90,6 @@ class Nurse extends Model
 
     public function callStatsForRange(Carbon $start, Carbon $end)
     {
-
-
     }
 
     public function getUpcomingHolidayDatesAttribute()
@@ -99,8 +97,10 @@ class Nurse extends Model
         return $this->upcomingHolidays()
             ->get()
             ->sortBy(function ($item) {
-                return Carbon::createFromFormat('Y-m-d',
-                    "{$item->date->format('Y-m-d')}");
+                return Carbon::createFromFormat(
+                    'Y-m-d',
+                    "{$item->date->format('Y-m-d')}"
+                );
             });
     }
 
@@ -111,8 +111,11 @@ class Nurse extends Model
      */
     public function upcomingHolidays()
     {
-        return $this->hasMany(Holiday::class, 'nurse_info_id', 'id')->where('date', '>=',
-            Carbon::now()->format('Y-m-d'));
+        return $this->hasMany(Holiday::class, 'nurse_info_id', 'id')->where(
+            'date',
+            '>=',
+            Carbon::now()->format('Y-m-d')
+        );
     }
 
     public function getHolidaysThisWeekAttribute()

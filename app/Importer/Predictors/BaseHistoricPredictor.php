@@ -13,7 +13,6 @@ use App\Importer\Models\ItemLogs\ProviderLog;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 
-
 abstract class BaseHistoricPredictor
 {
     /**
@@ -52,7 +51,7 @@ abstract class BaseHistoricPredictor
                 $item,
                 $key
             ) use
-            (
+                (
                 $label
             ) {
                 $collection = new Collection($item);
@@ -96,20 +95,20 @@ abstract class BaseHistoricPredictor
             ->get();
 
         $collection = $results->map(function (
-                $item,
-                $key
-            ) use
+            $item,
+            $key
+        ) use
             (
-                $weightMultiplier,
-                $label
-            ) {
+            $weightMultiplier,
+            $label
+        ) {
                 return [
                     $label        => $item->{$label},
                     'total_count' => $item->total_count * $weightMultiplier,
                 ];
-            })
+        })
             ->reject(function ($item) use
-            (
+                (
                 $label
             ) {
                 return !$item[$label];
@@ -143,7 +142,7 @@ abstract class BaseHistoricPredictor
             $item,
             $weightMultiplier
         ) use
-        (
+            (
             $label
         ) {
             return [
@@ -152,7 +151,7 @@ abstract class BaseHistoricPredictor
             ];
         })
             ->reject(function ($item) use
-            (
+                (
                 $label
             ) {
                 return !$item[$label];
@@ -184,7 +183,7 @@ abstract class BaseHistoricPredictor
             ->get();
 
         $collection = $results->map(function ($item) use
-        (
+            (
             $label,
             $weightMultiplier
         ) {
@@ -194,7 +193,7 @@ abstract class BaseHistoricPredictor
             ];
         })
             ->reject(function ($item) use
-            (
+                (
                 $label
             ) {
                 return !$item[$label];

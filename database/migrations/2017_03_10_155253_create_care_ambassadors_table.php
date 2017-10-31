@@ -24,7 +24,6 @@ class CreateCareAmbassadorsTable extends Migration
                 ->on('users')
                 ->onUpdate('cascade')
                 ->onDelete('cascade');
-
         });
     }
 
@@ -38,7 +37,6 @@ class CreateCareAmbassadorsTable extends Migration
         Schema::table('care_ambassadors', function (Blueprint $table) {
 
             $table->drop();
-
         });
     }
 }

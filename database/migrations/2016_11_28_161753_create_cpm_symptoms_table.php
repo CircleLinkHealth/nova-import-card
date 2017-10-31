@@ -31,5 +31,4 @@ class CreateCpmSymptomsTable extends Migration
     {
         Schema::drop('cpm_symptoms');
     }
-
 }

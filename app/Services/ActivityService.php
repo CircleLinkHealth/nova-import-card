@@ -29,7 +29,6 @@ class ActivityService
             ->groupBy(DB::raw('provider_id, DATE(performed_at),type'))
             ->orderBy('performed_at', 'desc')
             ->get();
-
     }
 
     public function getTotalActivityTimeForRange(
@@ -51,8 +50,7 @@ class ActivityService
             })
             ->groupBy(DB::raw('provider_id, DATE(performed_at),type'))
             ->orderBy('performed_at', 'desc')
-            ->get()
-        );
+            ->get());
 
         return $acts->map(function ($act) {
             return $act->duration;
@@ -153,5 +151,4 @@ class ActivityService
 
         return $totalDuration;
     }
-
 }

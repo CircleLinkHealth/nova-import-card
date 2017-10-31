@@ -1,11 +1,12 @@
 <?php
 
-namespace Tests\Unit;
+namespace Tests\unit;
 
 use App\Call;
 use Carbon\Carbon;
 use Tests\Helpers\UserHelpers;
 use Tests\TestCase;
+
 
 class NurseScheduledCallsTest extends TestCase
 {

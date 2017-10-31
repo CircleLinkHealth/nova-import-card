@@ -35,5 +35,4 @@ class CreateLocationUserTable extends Migration
     {
         Schema::drop('location_user');
     }
-
 }

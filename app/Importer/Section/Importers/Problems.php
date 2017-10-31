@@ -8,7 +8,6 @@
 
 namespace App\Importer\Section\Importers;
 
-
 use App\CLH\CCD\Importer\SnomedToCpmIcdMap;
 use App\Contracts\Importer\ImportedMedicalRecord\ImportedMedicalRecord;
 use App\Importer\Models\ImportedItems\ProblemImport;
@@ -67,13 +66,11 @@ class Problems extends BaseImporter
         $problemsToActivate = [];
 
         foreach ($problemImports as $importedProblem) {
-
             $map = $importedProblem->ccdLog
                 ->first()
                 ->codeMap();
 
             foreach ($map as $codeSystemName => $code) {
-
                 $problemMap = SnomedToCpmIcdMap::where($codeSystemName, '=', $code)
                     ->first();
 

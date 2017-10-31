@@ -11,10 +11,10 @@ class Family extends Model
 
     protected $table = 'families';
 
-    public function patients(){
+    public function patients()
+    {
 
         return $this->hasMany(Patient::class);
-
     }
 
 //    public function getClosestCallDateForFamily(){
@@ -23,6 +23,4 @@ class Family extends Model
 //
 //
 //    }
-
-
 }

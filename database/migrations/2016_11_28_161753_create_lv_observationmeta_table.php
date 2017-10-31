@@ -36,5 +36,4 @@ class CreateLvObservationmetaTable extends Migration
     {
         Schema::drop('lv_observationmeta');
     }
-
 }

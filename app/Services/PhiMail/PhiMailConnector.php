@@ -1,4 +1,5 @@
 <?php namespace App\Services\PhiMail;
+
 /*
  * PhiMailConnector class for phiMail Server
  *
@@ -19,7 +20,8 @@
  * @author EMR Direct
  */
 
-class SendResult {
+class SendResult
+{
 
     /**
      * The recipient to whom this result object pertains
@@ -45,18 +47,20 @@ class SendResult {
      */
     public $errorText = null;
 
-    function __construct($r, $s, $m) {
+    function __construct($r, $s, $m)
+    {
         $this->recipient = $r;
         $this->succeeded = $s;
-        if ($s)
+        if ($s) {
             $this->messageId = $m;
-        else
+        } else {
             $this->errorText = $m;
+        }
     }
-
 }
 
-class CheckResult {
+class CheckResult
+{
 
     /**
      * Type of CheckResult: true if mail message, false if status notification
@@ -104,7 +108,8 @@ class CheckResult {
      *
      * @return CheckResult
      */
-    public static function newStatus($id, $status, $info) {
+    public static function newStatus($id, $status, $info)
+    {
         $instance = new self();
         $instance->mail = false;
         $instance->messageId = $id;
@@ -126,7 +131,8 @@ class CheckResult {
      *
      * @return CheckResult
      */
-    public static function newMail($r, $s, $numAttach, $id) {
+    public static function newMail($r, $s, $numAttach, $id)
+    {
         $instance = new self();
         $instance->mail = true;
         $instance->messageId = $id;
@@ -142,7 +148,8 @@ class CheckResult {
      * Is this a mail message?
      * @return bool true if this is an incoming mail message, false otherwise
      */
-    public function isMail() {
+    public function isMail()
+    {
         return $this->mail;
     }
 
@@ -150,13 +157,14 @@ class CheckResult {
      * Is this a status notification?
      * @return bool true if this is a status message, false otherwise
      */
-    public function isStatus() {
+    public function isStatus()
+    {
         return !$this->mail;
     }
-
 }
 
-class ShowResult {
+class ShowResult
+{
 
     /**
      * The message part returned: 0..n-1
@@ -195,7 +203,8 @@ class ShowResult {
      */
     public $attachmentInfo;
 
-    function __construct($p, $h, $f, $m, $l, $d, $ai) {
+    function __construct($p, $h, $f, $m, $l, $d, $ai)
+    {
         $this->partNum = $p;
         $this->headers = $h;
         $this->filename = $f;
@@ -204,10 +213,10 @@ class ShowResult {
         $this->data = $d;
         $this->attachmentInfo = $ai;
     }
-
 }
 
-class AttachmentInfo {
+class AttachmentInfo
+{
 
     /** @var string $filename */
     public $filename;
@@ -216,15 +225,16 @@ class AttachmentInfo {
     /** @var string $description */
     public $description;
 
-    function __construct($filename, $mimeType, $description) {
+    function __construct($filename, $mimeType, $description)
+    {
         $this->filename = $filename;
         $this->mimeType = $mimeType;
         $this->description = $description;
     }
-
 }
 
-class PhiMailConnector {
+class PhiMailConnector
+{
 
     const PHIMAIL_VERSION = '1.0';
     const PHIMAIL_BUILD = '104';
@@ -240,29 +250,40 @@ class PhiMailConnector {
      * @param int    $p the phiMail service port number
      * @throws \Exception if connection cannot be opened.
      */
-    function __construct($s, $p) {
-        if (!isset(self::$context)) self::$context = stream_context_create();
+    function __construct($s, $p)
+    {
+        if (!isset(self::$context)) {
+            self::$context = stream_context_create();
+        }
         $host = 'ssl://' . $s . ':' . $p;
         $socketTries = 0;
         $socket = 0;
         while ($socketTries < 3 && !$socket) {
             $socketTries++;
-            $socket = stream_socket_client($host, $err1, $err2,
-                30, STREAM_CLIENT_CONNECT, self::$context);
+            $socket = stream_socket_client(
+                $host,
+                $err1,
+                $err2,
+                30,
+                STREAM_CLIENT_CONNECT,
+                self::$context
+            );
         }
         if (!$socket) {
             $err = 'Connection failed';
-            if ($err1)
+            if ($err1) {
                 $err .= ": error $err1 ($err2)";
-            if ($err1 == '111')
+            }
+            if ($err1 == '111') {
                 $err .= ': The server may be offline.';
+            }
             throw new \Exception($err);
         }
         // set_stream_timeout returns false on failure
         stream_set_timeout($socket, self::PHIMAIL_READ_TIMEOUT);
         $this->socket = $socket;
         $response = $this->sendCommand('INFO VER PHP '
-            . self::PHIMAIL_VERSION . '.' . self::PHIMAIL_BUILD );
+            . self::PHIMAIL_VERSION . '.' . self::PHIMAIL_BUILD);
     }
 
     /**
@@ -320,13 +341,21 @@ class PhiMailConnector {
      * @return void
      * @throws \Exception if server certificate cannot be set
      */
-    public static function setServerCertificate($filename) {
-        if (!isset(self::$context)) self::$context = stream_context_create();
-        if (!isset($filename) || $filename === '') throw new \Exception('Server Certificate filename is invalid.');
-        if (!is_readable($filename)) throw new \Exception ('Server Certificate file is not readable.');
+    public static function setServerCertificate($filename)
+    {
+        if (!isset(self::$context)) {
+            self::$context = stream_context_create();
+        }
+        if (!isset($filename) || $filename === '') {
+            throw new \Exception('Server Certificate filename is invalid.');
+        }
+        if (!is_readable($filename)) {
+            throw new \Exception('Server Certificate file is not readable.');
+        }
         if (!stream_context_set_option(self::$context, 'ssl', 'verify_peer', true) ||
-            !stream_context_set_option(self::$context, 'ssl', 'cafile', $filename))
+            !stream_context_set_option(self::$context, 'ssl', 'cafile', $filename)) {
             throw new \Exception('Set Server Certificate failed.');
+        }
     }
 
     /**
@@ -336,19 +365,26 @@ class PhiMailConnector {
      * @return void
      * @throws \Exception if client certificate cannot be set
      */
-    public static function setClientCertificate($filename, $passphrase = "") {
-        if (!isset(self::$context)) self::$context = stream_context_create();
-        if (!isset($filename)) return;
+    public static function setClientCertificate($filename, $passphrase = "")
+    {
+        if (!isset(self::$context)) {
+            self::$context = stream_context_create();
+        }
+        if (!isset($filename)) {
+            return;
+        }
         if (!stream_context_set_option(self::$context, 'ssl', 'passphrase', $passphrase) ||
-            !stream_context_set_option(self::$context, 'ssl', 'local_cert', $filename))
+            !stream_context_set_option(self::$context, 'ssl', 'local_cert', $filename)) {
             throw new \Exception('Set Client Certificate failed.');
+        }
     }
 
     /**
      * Close the socket connection to the server.
      * @return void
      */
-    public function close() {
+    public function close()
+    {
         fclose($this->socket);
     }
 
@@ -359,10 +395,12 @@ class PhiMailConnector {
      * @return void
      * @throws \Exception if user cannot be authenticated
      */
-    public function authenticateUser($user, $pass = null) {
+    public function authenticateUser($user, $pass = null)
+    {
         $response = $this->sendCommand('AUTH ' . $user . $this->extraParam($pass));
-        if ($response != 'OK')
+        if ($response != 'OK') {
             throw new \Exception('Authentication failed: ' . $response);
+        }
     }
 
     private function extraParam($s)
@@ -378,10 +416,12 @@ class PhiMailConnector {
      * @return void
      * @throws \Exception on unexpected failure
      */
-    public function changePassword($pass) {
+    public function changePassword($pass)
+    {
         $response = $this->sendCommand('PASS ' . $pass);
-        if ($response != 'OK')
+        if ($response != 'OK') {
             throw new \Exception('Password change failed: ' . $response);
+        }
     }
 
     /**
@@ -390,10 +430,12 @@ class PhiMailConnector {
      * @return string information found in the corresponding public certificate
      * @throws \Exception if the recipient cannot be added
      */
-    public function addRecipient($recipient) {
+    public function addRecipient($recipient)
+    {
         $response = $this->sendCommand('TO ' . $recipient);
-        if ($response != 'OK')
+        if ($response != 'OK') {
             throw new \Exception('Add recipient failed: ' . $response);
+        }
         return $this->readLine(); //get recipient info
     }
 
@@ -403,10 +445,12 @@ class PhiMailConnector {
      * @return string information found in the corresponding public certificate
      * @throws \Exception if the CC recipient cannot be added
      */
-    public function addCCRecipient($recipient) {
+    public function addCCRecipient($recipient)
+    {
         $response = $this->sendCommand('CC ' . $recipient);
-        if ($response != 'OK')
+        if ($response != 'OK') {
             throw new \Exception('Add CC recipient failed: ' . $response);
+        }
         return $this->readLine(); //get recipient info
     }
 
@@ -416,10 +460,12 @@ class PhiMailConnector {
      * @return void
      * @throws \Exception on unexpected failure
      */
-    public function clear() {
+    public function clear()
+    {
         $response = $this->sendCommand('CLEAR');
-        if ($response != 'OK')
+        if ($response != 'OK') {
             throw new \Exception('Clear failed: ' . $response);
+        }
     }
 
     /**
@@ -427,10 +473,12 @@ class PhiMailConnector {
      * @return void
      * @throws \Exception on unexpected failure
      */
-    public function logout() {
+    public function logout()
+    {
         $response = $this->sendCommand('LOGOUT');
-        if ($response != 'OK')
+        if ($response != 'OK') {
             throw new \Exception('Logout failed: ' . $response);
+        }
     }
 
     /**
@@ -440,10 +488,12 @@ class PhiMailConnector {
      * @return void
      * @throws \Exception on unexpected failure
      */
-    public function bye() {
+    public function bye()
+    {
         $response = $this->sendCommand('BYE');
-        if ($response != 'BYE')
+        if ($response != 'BYE') {
             throw new \Exception('Bye failed: ' . $response);
+        }
     }
 
     /**
@@ -467,7 +517,8 @@ class PhiMailConnector {
      * @return void
      * @throws \Exception
      */
-    private function addData($dataBytes, $dataType, $filename = null, $encoding = null) {
+    private function addData($dataBytes, $dataType, $filename = null, $encoding = null)
+    {
         if ($encoding != null && !mb_detect_encoding($dataBytes, $encoding, true)) {
             $this->sendCommand('INFO ERR invalid character encoding.');
             $response = 'FAIL invalid character encoding.';
@@ -476,14 +527,16 @@ class PhiMailConnector {
                 . mb_strlen($dataBytes, '8bit')
                 . $this->extraParam($filename));
         }
-        if ($response != 'BEGIN')
+        if ($response != 'BEGIN') {
             throw new \Exception('Add ' . $dataType . ' failed: ' . $response);
+        }
         @fwrite($this->socket, $dataBytes);
         @fflush($this->socket);
         $response = $this->readLine();
-        if ($response == null || $response != 'OK')
+        if ($response == null || $response != 'OK') {
             throw new \Exception('Add ' . $dataType . ' failed: '
                 . ($response == null ? '' : $response));
+        }
     }
 
     /**
@@ -494,7 +547,8 @@ class PhiMailConnector {
      * @return void
      * @throws \Exception on unexpected failure
      */
-    public function addCDA($data, $filename = null) {
+    public function addCDA($data, $filename = null)
+    {
         $this->addData($data, 'ADD CDA', $filename, 'UTF-8');
     }
 
@@ -506,7 +560,8 @@ class PhiMailConnector {
      * @return void
      * @throws \Exception on unexpected failure
      */
-    public function addXML($data, $filename = null) {
+    public function addXML($data, $filename = null)
+    {
         $this->addData($data, 'ADD CDA', $filename, 'UTF-8');
     }
 
@@ -519,7 +574,8 @@ class PhiMailConnector {
      * @return void
      * @throws \Exception on unexpected failure
      */
-    public function addCCR($data, $filename = null) {
+    public function addCCR($data, $filename = null)
+    {
         $this->addData($data, 'ADD CCR', $filename, 'UTF-8');
     }
 
@@ -532,7 +588,8 @@ class PhiMailConnector {
      * @return void
      * @throws \Exception on unexpected failure
      */
-    public function addText($data, $filename = null) {
+    public function addText($data, $filename = null)
+    {
         $this->addData($data, 'ADD TEXT', $filename, 'UTF-8');
     }
 
@@ -546,7 +603,8 @@ class PhiMailConnector {
      * @return void
      * @throws \Exception on unexpected failure
      */
-    public function addRaw($dataBytes, $filename = null) {
+    public function addRaw($dataBytes, $filename = null)
+    {
         $this->addData($dataBytes, 'ADD RAW', $filename);
     }
 
@@ -558,10 +616,12 @@ class PhiMailConnector {
      * @return void
      * @throws \Exception on unexpected failure
      */
-    public function setSubject($data) {
+    public function setSubject($data)
+    {
         $response = $this->sendCommand('SUBJECT' . $this->extraParam($data));
-        if ($response != 'OK')
+        if ($response != 'OK') {
             throw new \Exception('Set subject failed: ' . $response);
+        }
     }
 
     /**
@@ -571,10 +631,12 @@ class PhiMailConnector {
      * @return void
      * @throws \Exception on unexpected failure
      */
-    public function setDeliveryNotification($value) {
+    public function setDeliveryNotification($value)
+    {
         $response = $this->sendCommand('SET FINAL ' . ($value ? '1' : '0'));
-        if ($response != 'OK')
+        if ($response != 'OK') {
             throw new \Exception('Set delivery notification failed: ' . $response);
+        }
     }
 
     /**
@@ -582,10 +644,12 @@ class PhiMailConnector {
      * @return SendResult[] one for each recipient
      * @throws \Exception on unexpected failure
      */
-    public function send() {
+    public function send()
+    {
         $response = $this->sendCommand('SEND');
-        if (substr($response, 0, 4) == 'FAIL')
+        if (substr($response, 0, 4) == 'FAIL') {
             throw new \Exception('Send failed: ' . $response);
+        }
         $output = array();
         while ($response != null && $response != 'OK') {
             $rExplode = explode(' ', trim($response), 3);
@@ -597,8 +661,7 @@ class PhiMailConnector {
                     $output[] = new SendResult($rExplode[1], true, $rExplode[2]);
                     break;
                 default: //unrecognized
-                    throw new \Exception
-                    ('Send failed with unexpected response: ' . $response);
+                    throw new \Exception('Send failed with unexpected response: ' . $response);
             }
             $response = $this->sendCommand('OK');
         }
@@ -610,25 +673,34 @@ class PhiMailConnector {
      * @return CheckResult|null the first item on queue, or null if queue is empty
      * @throws \Exception on unexpected failure
      */
-    public function check() {
+    public function check()
+    {
         $response = $this->sendCommand('CHECK');
-        if ($response == 'NONE')
+        if ($response == 'NONE') {
             return null;
-        if (substr($response, 0, 4) == 'FAIL')
+        }
+        if (substr($response, 0, 4) == 'FAIL') {
             throw new \Exception('Check failed: ' . $response);
+        }
         if (substr($response, 0, 6) == 'STATUS') {
             $rExplode = explode(' ', trim($response), 4);
-            return CheckResult::newStatus($rExplode[1], $rExplode[2],
-                isset($rExplode[3]) ? $rExplode[3] : null);
+            return CheckResult::newStatus(
+                $rExplode[1],
+                $rExplode[2],
+                isset($rExplode[3]) ? $rExplode[3] : null
+            );
         } else if (substr($response, 0, 4) == 'MAIL') {
             $rExplode = explode(' ', trim($response), 5);
             $numAttach = (int) $rExplode[3];
-            return CheckResult::newMail($rExplode[1], $rExplode[2],
-                $numAttach, $rExplode[4]);
+            return CheckResult::newMail(
+                $rExplode[1],
+                $rExplode[2],
+                $numAttach,
+                $rExplode[4]
+            );
+        } else {
+            throw new \Exception('Check failed with unexpected response: ' . $response);
         }
-        else
-            throw new \Exception
-            ('Check failed with unexpected response: ' . $response);
     }
 
     /**
@@ -636,10 +708,12 @@ class PhiMailConnector {
      * @return void
      * @throws \Exception on unexpected failure
      */
-    public function acknowledgeStatus() {
+    public function acknowledgeStatus()
+    {
         $response = $this->sendCommand('OK');
-        if ($response != 'OK')
+        if ($response != 'OK') {
             throw new \Exception('Status acknowledgement failed: ' . $response);
+        }
     }
 
     /**
@@ -649,10 +723,12 @@ class PhiMailConnector {
      * @return void
      * @throws \Exception on unexpected failure
      */
-    public function retry() {
+    public function retry()
+    {
         $response = $this->sendCommand('RETRY');
-        if ($response != 'OK')
+        if ($response != 'OK') {
             throw new \Exception('Retry failed: ' . $response);
+        }
     }
 
     /**
@@ -684,10 +760,12 @@ class PhiMailConnector {
      * @return ShowResult the requested content
      * @throws \Exception on time-out reading message data
      */
-    public function show($messagePart) {
+    public function show($messagePart)
+    {
         $response = $this->sendCommand('SHOW ' . $messagePart);
-        if ($response != 'OK')
+        if ($response != 'OK') {
             throw new \Exception('Show ' . $messagePart . ' failed: ' . $response);
+        }
 
         $headers = array();
         $filename = null;
@@ -729,8 +807,15 @@ class PhiMailConnector {
             }
         }
 
-        return new ShowResult($messagePart, $headers, $filename, $mimeType,
-            $length, $buf, $ai);
+        return new ShowResult(
+            $messagePart,
+            $headers,
+            $filename,
+            $mimeType,
+            $length,
+            $buf,
+            $ai
+        );
     }
 
     /**
@@ -739,15 +824,18 @@ class PhiMailConnector {
      * @return string[] an array of matching JSON-encoded directory entries
      * @throws \Exception on unexpected failure
      */
-    public function searchDirectory($searchFilter) {
+    public function searchDirectory($searchFilter)
+    {
         $response = $this->sendCommand('LOOKUP JSON ' . $searchFilter);
-        if ($response != 'OK')
+        if ($response != 'OK') {
             throw new \Exception('Directory search failed: ' . $response);
+        }
 
         $numResults = (int) ($this->readLine());
         $searchResults = array();
-        while ($numResults-- > 0) $searchResults[] = $this->readLine();
+        while ($numResults-- > 0) {
+            $searchResults[] = $this->readLine();
+        }
         return $searchResults;
     }
-
 }

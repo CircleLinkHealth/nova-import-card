@@ -2,7 +2,6 @@
 
 namespace App\Importer\Section\Importers;
 
-
 use App\Importer\Models\ItemLogs\MedicationLog;
 
 trait ConsolidatesMedicationInfo

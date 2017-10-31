@@ -14,14 +14,15 @@ $this->load->library('session');
 $this->load->library('cpm_1_7_substitution_library');
 */
 
-class MsgDelivery {
+class MsgDelivery
+{
 
     function __construct()
     {
     }
 
     //returns an array with the http response headers/body from the texting service
-    public function sendMessageBody($arrPart, $strMessageCode, $strMessageBody, $strCommentType='smsoutbound', $boolSaveState=true, $boolUnsolicited=false)
+    public function sendMessageBody($arrPart, $strMessageCode, $strMessageBody, $strCommentType = 'smsoutbound', $boolSaveState = true, $boolUnsolicited = false)
     {
         $strState = ($boolUnsolicited == false) ? 'state' : 'unsolicited';
         $intUserId = key($arrPart);
@@ -30,9 +31,9 @@ class MsgDelivery {
         $phoneNumber = $arrPart[$intUserId]['usermeta']['wp_'.$intProgramID.'_user_config']['study_phone_number'] ;
 
         $this->intProgramID = $intProgramID;
-        $lastCommentNo = $this->writeOutboundSmsMessage($intUserId, $substitutedMessage, $strMessageCode,$strCommentType,$intProgramID);
+        $lastCommentNo = $this->writeOutboundSmsMessage($intUserId, $substitutedMessage, $strMessageCode, $strCommentType, $intProgramID);
         //Actually send itwriteOutboundSmsMessage
-        $sms['phone_number'] = preg_replace('/[^0-9]/','', $phoneNumber);
+        $sms['phone_number'] = preg_replace('/[^0-9]/', '', $phoneNumber);
         $sms['msg_text']     = $substitutedMessage;
         $sms['msg_type']     = 'SMS';
         $sms['source']       = 'Clickatell';
@@ -129,8 +130,11 @@ class MsgDelivery {
         $results = DB::connection('mysql_no_prefix')->select( DB::raw($sql) );
         */
         $commentType = $arrPart[$intUserId]['usermeta']['msgtype'];
-        $results = Comment::where('user_id', '=', $intUserId)->where('comment_type', '=',
-            $commentType)->orderBy('comment_date', 'desc')->first();
+        $results = Comment::where('user_id', '=', $intUserId)->where(
+            'comment_type',
+            '=',
+            $commentType
+        )->orderBy('comment_date', 'desc')->first();
 
         if (!empty($results)) {
             //echo "<br><br>UPDATE DB STATE ROW";
@@ -183,7 +187,6 @@ class MsgDelivery {
 
             echo "<br>MsgDelivery->saveState() Created New Observation#=" . $newObservation->id;
             $log_string = "added new observation, obs_id = {$newObservation->id}" . PHP_EOL;
-
         }
 
         return;
@@ -203,7 +206,7 @@ class MsgDelivery {
 
     //taken from Yvesh: smsoutbound_model.php
 
-    public function sendMessage($intUserId, $strMessageCode, $strCommentType='smsoutbound', $boolSaveState=true, $intProgramID, $boolUnsolicited=false)
+    public function sendMessage($intUserId, $strMessageCode, $strCommentType = 'smsoutbound', $boolSaveState = true, $intProgramID, $boolUnsolicited = false)
     {
         $strState = ($boolUnsolicited == false) ? 'state' : 'unsolicited';
 // echo "<BR>" . $strState . "<BR>" ;
@@ -225,11 +228,11 @@ class MsgDelivery {
 
         //Fire message off
         //Mark that it was sent in DB
-        $lastCommentNo = $this->writeOutboundSmsMessage($intUserId, $substitutedMessage, $strMessageCode,$strCommentType,$intProgramID);
-        $this->session->set_userdata('lastCommentNo',$lastCommentNo);
+        $lastCommentNo = $this->writeOutboundSmsMessage($intUserId, $substitutedMessage, $strMessageCode, $strCommentType, $intProgramID);
+        $this->session->set_userdata('lastCommentNo', $lastCommentNo);
         //$this->setCPMstorage('lastCommentNo', $lastCommentNo, true);
         //Actually send it
-        $sms['phone_number'] = preg_replace('/[^0-9]/','', $phoneNumber);
+        $sms['phone_number'] = preg_replace('/[^0-9]/', '', $phoneNumber);
         $sms['msg_text']     = $substitutedMessage;
         $sms['msg_type']     = 'SMS';
         $sms['source']       = 'Clickatell';
@@ -274,8 +277,7 @@ class MsgDelivery {
 
         $query = $this->db->query($strGetPostIdSql);
 
-        if ($query->num_rows() > 0)
-        {
+        if ($query->num_rows() > 0) {
             $row = $query->row();
             $strMessageBody = $row->content;
             $query->free_result();
@@ -288,17 +290,23 @@ class MsgDelivery {
         $intUserId,
         $strValue = '',
         $type = ''
-    )
-    {
+    ) {
+    
         /**
          * @todo Finish...
          */
 
-        if (preg_match("/#AvgLWSC#/", $strMessage))  { $strMessage = preg_replace('/#AvgLWSC#/', $this->calc->getAverageSteps($intUserId, 0, -7,4), $strMessage);}
-        if (preg_match("/#AvgSC#/", $strMessage))  { $strMessage = preg_replace('/#AvgSC#/', $this->calc->getAvgSC($intUserId,4), $strMessage);}
-        if (preg_match("/#AvgCAL#/", $strMessage))  {$strMessage = preg_replace('/#AvgCAL#/', $this->calc->getAvgCal($intUserId), $strMessage);}
+        if (preg_match("/#AvgLWSC#/", $strMessage)) {
+            $strMessage = preg_replace('/#AvgLWSC#/', $this->calc->getAverageSteps($intUserId, 0, -7, 4), $strMessage);
+        }
+        if (preg_match("/#AvgSC#/", $strMessage)) {
+            $strMessage = preg_replace('/#AvgSC#/', $this->calc->getAvgSC($intUserId, 4), $strMessage);
+        }
+        if (preg_match("/#AvgCAL#/", $strMessage)) {
+            $strMessage = preg_replace('/#AvgCAL#/', $this->calc->getAvgCal($intUserId), $strMessage);
+        }
 
-        if (preg_match("/#SS_Red_Percent#/", $strMessage))  {
+        if (preg_match("/#SS_Red_Percent#/", $strMessage)) {
             $perc = $this->calc->getCigPerc($intUserId);
             $strMessage = preg_replace('/#SS_Red_Percent#/', $perc['PercReduce'] . '%', $strMessage);
         }
@@ -306,10 +314,18 @@ class MsgDelivery {
         /**
          *@todo get number of good BP weeks
          */
-        if (preg_match("/#BP_Weeks#/", $strMessage))  {$strMessage = preg_replace('/#BP_Weeks#/', $this->calc->getWeeksBP($intUserId), $strMessage);}
-        if (preg_match("/#BS_Phone#/", $strMessage))  {$strMessage = preg_replace('/#BS_Phone#/', $this->calc->getPhoneBS($intUserId), $strMessage);}
-        if (preg_match("/#WT_Loss#/", $strMessage))  {$strMessage = preg_replace('/#WT_Loss#/', $this->calc->chkWeightLoss(14, $intUserId), $strMessage);}
-        if (preg_match("/#SS_Urge#/", $strMessage)) { $strMessage = preg_replace('/#SS_Urge#/', $this->calc->getUrgeSS($intUserId), $strMessage);}
+        if (preg_match("/#BP_Weeks#/", $strMessage)) {
+            $strMessage = preg_replace('/#BP_Weeks#/', $this->calc->getWeeksBP($intUserId), $strMessage);
+        }
+        if (preg_match("/#BS_Phone#/", $strMessage)) {
+            $strMessage = preg_replace('/#BS_Phone#/', $this->calc->getPhoneBS($intUserId), $strMessage);
+        }
+        if (preg_match("/#WT_Loss#/", $strMessage)) {
+            $strMessage = preg_replace('/#WT_Loss#/', $this->calc->chkWeightLoss(14, $intUserId), $strMessage);
+        }
+        if (preg_match("/#SS_Urge#/", $strMessage)) {
+            $strMessage = preg_replace('/#SS_Urge#/', $this->calc->getUrgeSS($intUserId), $strMessage);
+        }
 
         if (preg_match("/#ParticipantID#/", $strMessage)) {
             $strUserName =  get_the_author_meta('display_name', $intUserId);
@@ -322,13 +338,17 @@ class MsgDelivery {
 
         if (preg_match("/#ProblemList#/", $strMessage)) {
             $arrProblemList =  get_user_meta($intUserId, 'wp_4_alert_data', true);
-            if ($arrProblemList == '') {$arrProblemList['Problem List:'] = 'N/A';}
+            if ($arrProblemList == '') {
+                $arrProblemList['Problem List:'] = 'N/A';
+            }
             $strMessage = preg_replace('/#ProblemList#/', 'Problem List: ' . $arrProblemList['Problem List:'], $strMessage);
         }
 
         if (preg_match("/#CurrentMedications#/", $strMessage)) {
             $arrCurrentMedications =  get_user_meta($intUserId, 'wp_4_alert_data', true);
-            if ($arrCurrentMedications == '') {$arrCurrentMedications['Current Medications:'] = 'N/A';}
+            if ($arrCurrentMedications == '') {
+                $arrCurrentMedications['Current Medications:'] = 'N/A';
+            }
             $strMessage = preg_replace('/#CurrentMedications#/', 'Current Medications: ' . $arrCurrentMedications['Current Medications:'], $strMessage);
         }
 
@@ -366,28 +386,31 @@ class MsgDelivery {
             $strMessage = preg_replace('/#BETAlinkPR#/', $urlObsLink, $strMessage);
         }
 
-        if (preg_match("/#UserID#/", $strMessage)) { $strMessage = preg_replace('/#UserID#/', $intUserId, $strMessage);}
-        if (preg_match("/#Value#/", $strMessage)) { $strMessage = preg_replace('/#Value#/', $strValue, $strMessage);}
+        if (preg_match("/#UserID#/", $strMessage)) {
+            $strMessage = preg_replace('/#UserID#/', $intUserId, $strMessage);
+        }
+        if (preg_match("/#Value#/", $strMessage)) {
+            $strMessage = preg_replace('/#Value#/', $strValue, $strMessage);
+        }
 
-        if (preg_match("/#EDmsgSE#/", $strMessage)) { $strMessage = preg_replace('/#Value#/', "#EDmsgSE# [Replacement Message Needed for this message.]", $strMessage);}
+        if (preg_match("/#EDmsgSE#/", $strMessage)) {
+            $strMessage = preg_replace('/#Value#/', "#EDmsgSE# [Replacement Message Needed for this message.]", $strMessage);
+        }
 
         if (preg_match("/#SYMPTOMS#/", $strMessage)) {
-
             $strCommentsTable = "wp_". $this->intProgramID ."_comments";
             $sql = "SELECT * FROM $strCommentsTable WHERE user_id=? AND comment_type in ('state', 'unsolicited') ORDER BY comment_date DESC LIMIT 1";
             $query = $this->db->query($sql, $intUserId);
             $parentID = 0;
 
-            if($query->num_rows > 0)
-            {
+            if ($query->num_rows > 0) {
                 $row = $query->row();
                 $symptoms .= '';
                 $arrSymptoms = unserialize($row->comment_content);
                 // echo "<br>Found: $row->comment_ID<br>";var_export($arrSymptoms) ; echo "<br>";
                 foreach ($arrSymptoms as $key => $value) {
-
-                    if ($arrSymptoms[str_replace('SE_02', 'SE_03', $key)] > 6 ) {
-                        if (strpos($key,'SE_02') > 0) {
+                    if ($arrSymptoms[str_replace('SE_02', 'SE_03', $key)] > 6) {
+                        if (strpos($key, 'SE_02') > 0) {
                             if ($symptoms == '') {
                                 $symptoms .= $value;
                             } else {
@@ -406,5 +429,4 @@ class MsgDelivery {
         // return '[' . $intUserId.'] '.$strMessage;
         return $strMessage;
     }//saveState
-
 }

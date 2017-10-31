@@ -39,7 +39,6 @@ class MigrateCcdProblemCodesToProblemCodesSeeder extends Seeder
                 'code'             => $p->code,
             ]);
         }
-
     }
 
     public function getCodeSystemName(Problem $problem)

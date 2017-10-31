@@ -60,5 +60,4 @@ class MedicalRecordImportController extends Controller
 
         return response()->json(compact('imported', 'deleted'), 200);
     }
-
 }

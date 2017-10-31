@@ -2,17 +2,17 @@
 
 namespace App\CLH\CCD\Importer\StorageStrategies\Problems;
 
-
 use App\CLH\CCD\Importer\StorageStrategies\BaseStorageStrategy;
 use App\CLH\Contracts\CCD\StorageStrategy;
 use App\Models\CPM\CpmProblem;
-
 
 class ProblemsToMonitor extends BaseStorageStrategy implements StorageStrategy
 {
     public function import($cpmProblemIds = [])
     {
-        if (empty($cpmProblemIds)) return;
+        if (empty($cpmProblemIds)) {
+            return;
+        }
 
         $cpmProblems = $this->user->carePlan->carePlanTemplate->cpmProblems->whereIn('id', $cpmProblemIds);
 
@@ -51,14 +51,21 @@ class ProblemsToMonitor extends BaseStorageStrategy implements StorageStrategy
                 ->pluck('cpm_symptom_id')
                 ->all();
 
-            if ($biometricsToActivate) $this->user->cpmBiometrics()->sync($biometricsToActivate, false);
+            if ($biometricsToActivate) {
+                $this->user->cpmBiometrics()->sync($biometricsToActivate, false);
+            }
 
-            if ($lifestylesToActivate) $this->user->cpmLifestyles()->sync($lifestylesToActivate, false);
+            if ($lifestylesToActivate) {
+                $this->user->cpmLifestyles()->sync($lifestylesToActivate, false);
+            }
 
-            if ($medsToActivate) $this->user->cpmMedicationGroups()->sync($medsToActivate, false);
+            if ($medsToActivate) {
+                $this->user->cpmMedicationGroups()->sync($medsToActivate, false);
+            }
 
-            if ($symptomsToActivate) $this->user->cpmSymptoms()->sync($symptomsToActivate, false);
+            if ($symptomsToActivate) {
+                $this->user->cpmSymptoms()->sync($symptomsToActivate, false);
+            }
         }
-
     }
 }

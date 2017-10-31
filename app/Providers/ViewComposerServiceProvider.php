@@ -23,7 +23,6 @@ class ViewComposerServiceProvider extends ServiceProvider
                 && !$view->patient->hasProblem('Diabetes Type 2')
                 && $view->patient->primaryPractice->name != 'northeast-georgia-diagnostic-clinic'
             ) {
-
                 $view->with('showBanner', true);
             }
         });

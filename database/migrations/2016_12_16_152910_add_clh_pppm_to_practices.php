@@ -33,7 +33,6 @@ class AddClhPppmToPractices extends Migration
         Schema::table('practices', function (Blueprint $table) {
 
             $table->dropColumn('clh_ppm');
-
         });
     }
 }

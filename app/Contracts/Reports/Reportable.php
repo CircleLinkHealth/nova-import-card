@@ -8,7 +8,6 @@
 
 namespace App\Contracts\Reports;
 
-
 use Carbon\Carbon;
 
 interface Reportable

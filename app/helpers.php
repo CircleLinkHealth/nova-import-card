@@ -408,7 +408,8 @@ if (!function_exists('windowToTimestamps')) {
         $endTimeH = Carbon::parse($end)->format('H');
         $endTimei = Carbon::parse($end)->format('i');
 
-        $endDate = $endDate->setTime($endTimeH, $endTimei)->toDateTimeString();;
+        $endDate = $endDate->setTime($endTimeH, $endTimei)->toDateTimeString();
+        ;
 
         return [
             'window_start' => $startDate,
@@ -643,5 +644,3 @@ if (!function_exists('getProblemCodeSystemName')) {
         return false;
     }
 }
-
-

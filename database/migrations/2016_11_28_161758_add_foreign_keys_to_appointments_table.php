@@ -34,5 +34,4 @@ class AddForeignKeysToAppointmentsTable extends Migration
             $table->dropForeign('appointments_provider_id_foreign');
         });
     }
-
 }

@@ -30,5 +30,4 @@ class AddForeignKeysToCcdProblemLogsTable extends Migration
             $table->dropForeign('ccd_problem_logs_cpm_problem_id_foreign');
         });
     }
-
 }

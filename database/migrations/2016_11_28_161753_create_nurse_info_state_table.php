@@ -30,5 +30,4 @@ class CreateNurseInfoStateTable extends Migration
     {
         Schema::drop('nurse_info_state');
     }
-
 }

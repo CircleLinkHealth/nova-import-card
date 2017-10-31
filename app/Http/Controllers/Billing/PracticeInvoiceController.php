@@ -12,7 +12,6 @@ use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Mail;
 
-
 class PracticeInvoiceController extends Controller
 {
 
@@ -26,11 +25,9 @@ class PracticeInvoiceController extends Controller
         $dates = [];
 
         for ($i = -6; $i < 6; $i++) {
-
             $date = Carbon::parse($currentMonth)->addMonths($i)->firstOfMonth()->toDateString();
 
             $dates[$date] = Carbon::parse($date)->format('F, Y');
-
         }
 
         $counts = $this->getCounts(Carbon::parse($currentMonth), $practices[0]->id);
@@ -50,7 +47,6 @@ class PracticeInvoiceController extends Controller
             //            'toQA',
             'dates',
         ]));
-
     }
 
     public function getCounts(
@@ -62,7 +58,6 @@ class PracticeInvoiceController extends Controller
         $practice = Practice::find($practice);
 
         return PatientMonthlySummary::getPatientQACountForPracticeForMonth($practice, $date);
-
     }
 
     public function data(Request $request)
@@ -87,15 +82,11 @@ class PracticeInvoiceController extends Controller
 
         //if approved was checked
         if ($input['approved'] == 1) {
-
             $report->approved = 1;
             $report->rejected = 0;
-
         } else {
-
             //approved was unchecked
             $report->approved = 0;
-
         }
 
         //if approved was unchecked, rejected stays as is. If it was approved, rejected becomes 0
@@ -111,7 +102,6 @@ class PracticeInvoiceController extends Controller
                 'counts'    => $counts,
             ]
         );
-
     }
 
     public function updateRejected(Request $request)
@@ -123,16 +113,12 @@ class PracticeInvoiceController extends Controller
 
         //if approved was checked
         if ($input['rejected'] == 1) {
-
             $report->rejected = 1;
             $report->approved = 0;
-
         } else {
-
             //rejected was unchecked
 
             $report->rejected = 0;
-
         }
 
         //if approved was unchecked, rejected stays as is. If it was approved, rejected becomes 0
@@ -159,11 +145,9 @@ class PracticeInvoiceController extends Controller
         $dates = [];
 
         for ($i = -6; $i < 6; $i++) {
-
             $date = Carbon::parse($currentMonth)->addMonths($i)->firstOfMonth()->toDateString();
 
             $dates[$date] = Carbon::parse($date)->format('F, Y');
-
         }
 
         $readyToBill = [];
@@ -213,17 +197,14 @@ class PracticeInvoiceController extends Controller
         $date = Carbon::parse($request->input('date'));
 
         foreach ($request->input('practices') as $practiceId) {
-
             $practice = Practice::find($practiceId);
 
             $data = (new PracticeInvoiceGenerator($practice, $date))->generatePdf();
 
             $invoices[$practice->display_name] = $data;
-
         }
 
         return view('billing.practice.list', compact(['invoices']));
-
     }
 
     public function storeProblem(Request $request)
@@ -237,23 +218,15 @@ class PracticeInvoiceController extends Controller
         $codeKey = $input['problem_no'] . '_code';
 
         if ($input['has_problem'] == 1) {
-
             $report->$codeKey = $input['code'];
-
         } else {
-
             if ($input['select_problem'] == 'other') {
-
                 $report->$key = $input['otherProblem'];
-
             } else {
-
                 $report->$key = $input['select_problem'];
-
             }
 
             $report->$codeKey = $input['code'];
-
         }
 
         //if report has both problems setup with codes, set approved to 1 here to they show up on the count for the view.
@@ -279,7 +252,6 @@ class PracticeInvoiceController extends Controller
                 'counts'    => $counts,
             ]
         );
-
     }
 
     public function counts(Request $request)
@@ -314,7 +286,6 @@ class PracticeInvoiceController extends Controller
         $logger = '';
 
         foreach ($invoices as $key => $value) {
-
             $practice = Practice::whereDisplayName($key)->first();
 
             $data = (array)$value;
@@ -322,8 +293,7 @@ class PracticeInvoiceController extends Controller
             $patientReport = $data['Patient Report'];
             $invoice = $data['Invoice'];
 
-            $invoiceLink = route
-            (
+            $invoiceLink = route(
                 'monthly.billing.download',
                 [
                     'name'     => $patientReport,
@@ -333,21 +303,15 @@ class PracticeInvoiceController extends Controller
 
 
             if ($practice->invoice_recipients != '') {
-
                 $recipients = explode(', ', $practice->invoice_recipients);
 
                 $recipients = array_merge($recipients, $practice->getInvoiceRecipients()->toArray());
-
             } else {
-
                 $recipients = $practice->getInvoiceRecipients();
-
             }
 
             if (count($recipients) > 0) {
-
                 foreach ($recipients as $recipient) {
-
                     Mail::send('billing.practice.mail', ['link' => $invoiceLink], function ($m) use (
                         $recipient,
                         $invoice
@@ -358,23 +322,15 @@ class PracticeInvoiceController extends Controller
                         $m->to($recipient)->subject('Your Invoice and Billing Report from CircleLink');
 
                         $m->attach(storage_path('/download/' . $invoice));
-
                     });
 
                     $logger .= "Sent report for $practice->name to $recipient <br />";
                 }
-
             } else {
-
                 $logger .= "No recipients setup for $practice->name...";
-
             }
-
         }
 
         return $logger;
-
     }
-
-
 }

@@ -76,5 +76,4 @@ class CCDViewerController extends Controller
             return view('CCDViewer.old-viewer', compact('xml'));
         }
     }
-
 }

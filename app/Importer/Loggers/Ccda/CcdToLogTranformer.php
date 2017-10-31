@@ -2,7 +2,6 @@
 
 namespace App\Importer\Loggers\Ccda;
 
-
 use App\Facades\UserMetaParserHelpers;
 use App\Importer\Models\ItemLogs\AllergyLog;
 use App\Importer\Models\ItemLogs\DemographicsLog;
@@ -208,5 +207,4 @@ class CcdToLogTranformer
             'work_phone'   => $phones['work'][0],
         ];
     }
-
 }

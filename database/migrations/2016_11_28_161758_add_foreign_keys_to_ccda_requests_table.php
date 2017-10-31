@@ -30,5 +30,4 @@ class AddForeignKeysToCcdaRequestsTable extends Migration
             $table->dropForeign('ccda_requests_ccda_id_foreign');
         });
     }
-
 }

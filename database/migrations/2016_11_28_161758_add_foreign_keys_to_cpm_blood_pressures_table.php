@@ -30,5 +30,4 @@ class AddForeignKeysToCpmBloodPressuresTable extends Migration
             $table->dropForeign('cpm_blood_pressures_patient_id_foreign');
         });
     }
-
 }

@@ -8,7 +8,6 @@
 
 namespace App\Contracts\Repositories;
 
-
 interface AprimaCcdApiRepository
 {
     public function getPatientAndProviderIdsByLocationAndForeignSystem($locationId, $foreignSystem);

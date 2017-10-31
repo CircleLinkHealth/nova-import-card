@@ -13,16 +13,15 @@ class CareAmbassador extends Model
         'speaks_spanish'
     ];
 
-    public function user(){
+    public function user()
+    {
 
         return $this->belongsTo(User::class, 'user_id');
-
     }
 
-    public function logs(){
+    public function logs()
+    {
 
         return $this->hasMany(CareAmbassadorLog::class, 'enroller_id');
-
     }
-
 }

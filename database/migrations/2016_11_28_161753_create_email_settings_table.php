@@ -31,5 +31,4 @@ class CreateEmailSettingsTable extends Migration
     {
         Schema::drop('email_settings');
     }
-
 }

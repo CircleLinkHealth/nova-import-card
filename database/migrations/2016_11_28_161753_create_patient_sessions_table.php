@@ -31,5 +31,4 @@ class CreatePatientSessionsTable extends Migration
     {
         Schema::drop('patient_sessions');
     }
-
 }

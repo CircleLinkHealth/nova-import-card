@@ -86,5 +86,4 @@ class PatientCallListController extends Controller
     {
         //
     }
-
 }

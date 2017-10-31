@@ -2,7 +2,8 @@
 
 use Illuminate\Database\Eloquent\Model;
 
-class RulesIntrConditions extends Model {
+class RulesIntrConditions extends Model
+{
 
     /**
      * The connection name for the model.
@@ -41,5 +42,4 @@ class RulesIntrConditions extends Model {
     {
         return $this->belongsTo('App\RulesOperators');
     }
-
 }

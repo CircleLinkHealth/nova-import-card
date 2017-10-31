@@ -40,5 +40,4 @@ class CreateCcdaRequestsTable extends Migration
     {
         Schema::drop('ccda_requests');
     }
-
 }

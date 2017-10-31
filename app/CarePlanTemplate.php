@@ -128,7 +128,6 @@ class CarePlanTemplate extends Model
         }
 
         foreach ($relationship as $rel) {
-
             if (!method_exists($this, $rel)) {
                 throw new \Exception("Relationship `$rel` does not exist.");
             }

@@ -37,5 +37,4 @@ class CreateCcdDocumentLogsTable extends Migration
     {
         Schema::drop('ccd_document_logs');
     }
-
 }

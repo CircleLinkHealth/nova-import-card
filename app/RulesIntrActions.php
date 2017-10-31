@@ -2,7 +2,8 @@
 
 use Illuminate\Database\Eloquent\Model;
 
-class RulesIntrActions extends Model {
+class RulesIntrActions extends Model
+{
 
     /**
      * The connection name for the model.
@@ -39,5 +40,4 @@ class RulesIntrActions extends Model {
     {
         return $this->belongsTo('App\RulesOperators');
     }
-
 }

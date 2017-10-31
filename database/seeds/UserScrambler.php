@@ -3,7 +3,6 @@
 use App\User;
 use Illuminate\Database\Seeder;
 
-
 class UserScrambler extends Seeder
 {
 
@@ -41,5 +40,4 @@ class UserScrambler extends Seeder
             '--class' => CreateTesterUsersSeeder::class,
         ]);
     }
-
 }

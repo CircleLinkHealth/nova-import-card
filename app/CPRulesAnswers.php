@@ -2,7 +2,8 @@
 
 use Illuminate\Database\Eloquent\Model;
 
-class CPRulesAnswers extends Model {
+class CPRulesAnswers extends Model
+{
 
     /**
      * The connection name for the model.
@@ -33,6 +34,4 @@ class CPRulesAnswers extends Model {
     protected $fillable = ['value', 'alt_answers', 'a_sort'];
 
     public $timestamps = false;
-
-
 }
