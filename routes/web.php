@@ -1502,8 +1502,8 @@ Route::group([
 
     Route::get('', [
 //        'uses' => 'Provider\DashboardController@getIndex',
-'uses' => 'Provider\DashboardController@getCreateNotifications',
-'as'   => 'provider.dashboard.index',
+    'uses' => 'Provider\DashboardController@getCreateNotifications',
+    'as'   => 'provider.dashboard.index',
     ]);
 
     Route::get('locations', [

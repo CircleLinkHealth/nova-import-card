@@ -1,7 +1,6 @@
 <?php
 namespace Tests\integration;
 
-
 use Tests\TestCase;
 use App\NurseContactWindow;
 use App\User;
