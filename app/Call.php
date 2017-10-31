@@ -46,11 +46,6 @@ class Call extends Model
         'is_cpm_outbound'
     ];
 
-    public static function boot()
-    {
-        parent::boot();
-    }
-
     public static function numberOfCallsForPatientForMonth(User $user, $date)
     {
 
@@ -87,7 +82,7 @@ class Call extends Model
 
     public function note()
     {
-        return $this->belongsTo('App\Note', 'note_id', 'id');
+        return $this->belongsTo(Note::class, 'note_id', 'id');
     }
 
     public function outboundUser()
@@ -97,6 +92,6 @@ class Call extends Model
 
     public function inboundUser()
     {
-        return $this->belongsTo('App\User', 'inbound_cpm_id', 'id');
+        return $this->belongsTo(User::class, 'inbound_cpm_id', 'id');
     }
 }
