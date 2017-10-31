@@ -21,7 +21,7 @@
         }
     ],
     "require": {
-        "php": ">=5.6.4",
+        "php": ">=7.0.0",
         "arcturial/clickatell": "*",
         "barryvdh/laravel-debugbar": "*",
         "barryvdh/laravel-snappy": "*",
@@ -34,7 +34,7 @@
         "jenssegers/agent": "^2.5",
         "jeremykenedy/slack-laravel": "^2.2",
         "laracasts/utilities": "~2.0",
-        "laravel/framework": "5.4.*",
+        "laravel/framework": "5.5.*",
         "laravel/tinker": "^1.0",
         "laravelcollective/html": "~5.0",
         "league/fractal": "0.12.*",
@@ -53,21 +53,23 @@
         "tymon/jwt-auth": "0.5.*",
         "venturecraft/revisionable": "1.*",
         "yajra/laravel-datatables-oracle": "~6.0",
-        "zizaco/entrust": "5.2.x-dev"
+        "zizaco/entrust": "5.2.x-dev",
+        "fideloper/proxy": "~3.3"
     },
     "require-dev": {
         "Xethron/Laravel-4-Generators": "*",
         "doctrine/dbal": "~2.3",
         "fzaninotto/faker": "~1.4",
-        "laravel/dusk": "^1.0",
+        "laravel/dusk": "^2.0",
         "mockery/mockery": "0.9.*",
         "orangehill/iseed": "dev-master",
         "phpspec/phpspec": "~2.1",
-        "phpunit/phpunit": "~5.7",
+        "phpunit/phpunit": "~6.0",
         "phpunit/phpunit-selenium": "^3.0",
         "symfony/css-selector": "3.1.*",
         "symfony/dom-crawler": "3.1.*",
-        "xethron/migrations-generator": "dev-l5"
+        "xethron/migrations-generator": "dev-l5",
+        "filp/whoops": "~2.0"
     },
     "autoload": {
         "classmap": [
@@ -93,13 +95,9 @@
         "post-create-project-cmd": [
             "php artisan key:generate"
         ],
-        "post-install-cmd": [
-            "Illuminate\\Foundation\\ComposerScripts::postInstall",
-            "php artisan optimize"
-        ],
-        "post-update-cmd": [
-            "Illuminate\\Foundation\\ComposerScripts::postUpdate",
-            "php artisan optimize"
+        "post-autoload-dump": [
+            "Illuminate\\Foundation\\ComposerScripts::postAutoloadDump",
+            "@php artisan package:discover"
         ]
     },
     "config": {
@@ -110,5 +108,10 @@
             "github.com": "e0e31db02693e426dc2be482ecbee4daeafd8196"
         },
         "process-timeout": 0
+    },
+    "extra": {
+        "laravel": {
+            "dont-discover": []
+        }
     }
 }
