@@ -17,8 +17,6 @@
             <directory suffix="Test.php">./tests/Unit</directory>
         </testsuite>
         <testsuite name="Deployment">
-            <directory>./tests/acceptance/</directory>
-            <directory>./tests/functional/</directory>
             <directory>./tests/integration/</directory>
             <directory>./tests/unit/</directory>
         </testsuite>
