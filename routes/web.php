@@ -1,9 +1,6 @@
 <?php
 
 use App\Call;
-use App\CLH\Helpers\StringManipulation;
-use App\Services\Phaxio\PhaxioService;
-use App\Services\PhiMail\PhiMail;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
 
@@ -94,8 +91,8 @@ Route::get('home', 'WelcomeController@index');
 Route::get('login', 'Auth\LoginController@showLoginForm');
 
 Route::group([
-    'prefix' => 'auth',
-    'middleware' => 'web'
+    'prefix'     => 'auth',
+    'middleware' => 'web',
 ], function () {
     Auth::routes();
 
@@ -133,6 +130,11 @@ Route::group(['middleware' => 'auth'], function () {
     /**
      * API
      */
+    Route::group(['prefix' => 'api'], function () {
+        Route::group(['prefix' => 'admin'], function () {
+            Route::resource('calls', 'API\Admin\CallsController');
+        });
+    });
 
     Route::resource('profiles', 'API\ProfileController');
 
@@ -1500,8 +1502,8 @@ Route::group([
 
     Route::get('', [
 //        'uses' => 'Provider\DashboardController@getIndex',
-    'uses' => 'Provider\DashboardController@getCreateNotifications',
-    'as'   => 'provider.dashboard.index',
+'uses' => 'Provider\DashboardController@getCreateNotifications',
+'as'   => 'provider.dashboard.index',
     ]);
 
     Route::get('locations', [
