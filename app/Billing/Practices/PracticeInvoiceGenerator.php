@@ -103,7 +103,7 @@ class PracticeInvoiceGenerator
             }
         }
 
-        $data['invoice_amount'] = round((double)$this->practice->clh_pppm * $data['billable'], 2);
+        $data['invoice_amount'] = number_format(round((double)$this->practice->clh_pppm * $data['billable'], 2), 2);
 
         return $data;
     }
