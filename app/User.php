@@ -2119,7 +2119,7 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
      */
     public function getBillingProviderNameAttribute()
     {
-        $billingProvider = $this->billingProvider();
+        $billingProvider = $this->billingProviderUser();
 
         return $billingProvider
             ? $billingProvider->fullName
@@ -2127,17 +2127,27 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
     }
 
     /**
-     * Get billing provider.
+     * Get billing provider User.
      *
      * @return User
      */
-    public function billingProvider(): User
+    public function billingProviderUser(): User
     {
         $billingProvider = $this->careTeamMembers
             ->where('type', 'billing_provider')
             ->first();
 
         return $billingProvider->user ?? new User();
+    }
+
+    /**
+     * Get billing provider.
+     *
+     * @return User
+     */
+    public function billingProvider()
+    {
+        return $this->careTeamMembers()->where('type', '=', 'billing_provider');
     }
 
     public function scopeHasBillingProvider(
