@@ -188,14 +188,14 @@ class ImporterController extends Controller
 
     public function storeTrainingFeatures(Request $request)
     {
-        if ($request->has('documentId')) {
+        if ($request->filled('documentId')) {
             DocumentLog::whereId($request->input('documentId'))
                 ->update([
                     'ml_ignore' => true,
                 ]);
         }
 
-        if ($request->has('providerIds')) {
+        if ($request->filled('providerIds')) {
             ProviderLog::whereIn('id', $request->input('providerIds'))
                 ->update([
                     'ml_ignore' => true,
@@ -208,7 +208,7 @@ class ImporterController extends Controller
 
         $ids[] = $request->input('imported_medical_record_id');
 
-        if ($request->has('imported_medical_record_ids')) {
+        if ($request->filled('imported_medical_record_ids')) {
             $ids = $request->input('imported_medical_record_ids');
         }
 
