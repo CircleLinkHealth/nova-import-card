@@ -47,11 +47,6 @@
             <directory suffix=".php">./app</directory>
         </whitelist>
     </filter>
-    <listeners>
-        <listener class="\Mockery\Adapter\Phpunit\TestListener"
-                  file="vendor/mockery/mockery/library/Mockery/Adapter/Phpunit/TestListener.php">
-        </listener>
-    </listeners>
     <php>
         <env name="APP_ENV" value="testing"/>
         <env name="CACHE_DRIVER" value="array"/>
