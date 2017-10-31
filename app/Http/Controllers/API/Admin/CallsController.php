@@ -19,7 +19,9 @@ class CallsController extends Controller
         $calls = Call::where('status', '=', 'scheduled')
             ->whereHas('inboundUser')
             ->with([
-                'inboundUser.careTeamMembers',
+                'inboundUser.billingProvider.user'         => function ($q) {
+                    $q->select(['id', 'first_name', 'last_name', 'suffix', 'display_name']);
+                },
                 'inboundUser.patientInfo.patientSummaries' => function ($q) {
                     $q->where('month_year', '=', Carbon::now()->format('Y-m-d'));
                 },
