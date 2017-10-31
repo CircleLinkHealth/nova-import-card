@@ -1,4 +1,8 @@
 <?php
+
+namespace Tests\Importer\ParsingStrategiesTests;
+
+
 use Tests\TestCase;
 
 /**

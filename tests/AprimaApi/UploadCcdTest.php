@@ -1,4 +1,7 @@
 <?php
+
+namespace Tests\AprimaApi;
+
 use Tests\TestCase;
 
 /**

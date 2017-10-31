@@ -5,7 +5,6 @@ namespace Tests\Feature\unit;
 use Tests\TestCase;
 use Carbon\Carbon;
 use Tests\Helpers\UserHelpers;
-use Tests\TestCase;
 
 class NurseScheduleTest extends TestCase
 {

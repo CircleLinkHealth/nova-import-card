@@ -1,4 +1,5 @@
 <?php
+namespace Tests\Nurse;
 
 use Tests\TestCase;
 use App\Activity;

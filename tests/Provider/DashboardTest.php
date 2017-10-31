@@ -1,4 +1,5 @@
 <?php
+namespace Tests\Provider;
 
 use Tests\TestCase;
 use App\Role;

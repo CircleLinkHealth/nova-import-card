@@ -1,5 +1,7 @@
 <?php
 
+namespace Tests\AprimaApi;
+
 use Tests\TestCase;
 use App\PatientReports;
 use Tests\Helpers\AuthenticatesApiUsers;

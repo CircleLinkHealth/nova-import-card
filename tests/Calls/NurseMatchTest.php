@@ -1,5 +1,7 @@
 <?php
 
+namespace Tests\Calls;
+
 use Tests\TestCase;
 use App\Algorithms\Calls\CallAlgoHelper;
 use App\User;

@@ -1,4 +1,5 @@
 <?php
+namespace Tests\TimeTracking;
 
 use Tests\TestCase;
 use App\Activity;

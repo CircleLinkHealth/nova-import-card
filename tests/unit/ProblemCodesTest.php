@@ -6,7 +6,6 @@ use Tests\TestCase;
 use App\Models\CCD\Problem;
 use App\User;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
-use Tests\TestCase;
 
 class ProblemCodesTest extends TestCase
 {

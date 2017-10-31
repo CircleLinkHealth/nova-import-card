@@ -1,4 +1,5 @@
 <?php
+namespace Tests\integration;
 
 use Tests\TestCase;
 use App\Entities\Invite;

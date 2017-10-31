@@ -1,4 +1,5 @@
 <?php
+namespace Tests\Notes;
 
 use Tests\TestCase;
 use Tests\Helpers\CarePlanHelpers;
