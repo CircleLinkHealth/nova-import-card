@@ -25,7 +25,7 @@
         }
       },
       mounted() {
-        console.log(await this.$http.get(rootUrl('api/admin/calls')))
+        this.$http.get(rootUrl('api/admin/calls')).then((data) => console.log(data))
       }
   }
 </script>
