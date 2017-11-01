@@ -525,36 +525,6 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
             : '';
     }
 
-    public function setUserConfigByKey(
-        $key,
-        $value
-    ) {
-        $configKey = 'wp_' . $this->primaryProgramId() . '_user_config';
-        $userConfig = UserMeta::where('user_id', $this->id)->where('meta_key', $configKey)->first();
-        if (empty($userConfig)) {
-            $userConfig = new UserMeta;
-            $userConfig->meta_key = $configKey;
-            $userConfig->meta_value = serialize([]);
-            $userConfig->user_id = $this->id;
-            $userConfig->save();
-            $userConfigArray = [];
-        } else {
-            $userConfigArray = unserialize($userConfig['meta_value']);
-        }
-
-        // serialize value if needed
-        /*
-        if(is_array($value)) {
-            $value = serialize($value);
-        }
-        */
-        $userConfigArray[$key] = $value;
-        $userConfig->meta_value = serialize($userConfigArray);
-        $userConfig->save();
-
-        return true;
-    }
-
     public function setUserAttributeByKey(
         $key,
         $value
