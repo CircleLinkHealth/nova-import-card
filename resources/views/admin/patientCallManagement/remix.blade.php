@@ -36,5 +36,31 @@
 @endpush
 
 @section('content')
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-md-10 col-md-offset-1">
+            <div class="row">
+                <div class="col-sm-8">
+                    <h1>Patient Call Management</h1>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-sm-12">
+                    <div class="panel panel-default">
+                        <div class="panel-heading">Manage Patient Calls</div>
+                        <div class="panel-body">
+                            <div>
+                                @include('errors.errors')
+                                @include('errors.messages')
+                            </div>
+                            <div class="call-mgmt-section">
 
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
 @endsection
