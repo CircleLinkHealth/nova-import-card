@@ -5,6 +5,7 @@
 </template>
 
 <script>
+  import { rootUrl } from '../../app.config.js'
 
   export default {
       name: 'CallMgmtApp',
@@ -22,6 +23,9 @@
           // see the options API
           }
         }
+      },
+      mounted() {
+        console.log(await this.$http.get(rootUrl('api/admin/calls')))
       }
   }
 </script>
