@@ -89,6 +89,8 @@ class GenerateNurseInvoice implements ShouldQueue
                 'message'    => 'There was an error when compiling the reports. Please try again, and if the error persists, notify CLH.',
                 'data'       => [],
             ]);
+
+            return;
         }
 
         \Cache::put($key, [
@@ -103,5 +105,18 @@ class GenerateNurseInvoice implements ShouldQueue
                 'month'    => Carbon::parse($this->startDate)->format('F'),
             ],
         ], 11000);
+
+        \Redis::rpush("user{$this->requestor->id}views", [
+            'key'        => $key,
+            'created_at' => Carbon::now()->toDateTimeString(),
+            'expires_at' => Carbon::now()->addWeek()->toDateTimeString(),
+            'view'       => 'billing.nurse.list',
+            'message'    => 'The Nurse Invoices you requested are ready!',
+            'data'       => [
+                'invoices' => $links ?? [],
+                'data'     => $data ?? [],
+                'month'    => Carbon::parse($this->startDate)->format('F'),
+            ],
+        ]);
     }
 }
