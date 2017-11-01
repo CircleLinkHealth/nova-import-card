@@ -1,5 +1,7 @@
 <?php
+namespace Tests\Provider;
 
+use Tests\TestCase;
 use App\Role;
 use Faker\Factory;
 
@@ -43,7 +45,7 @@ class DashboardTest extends TestCase
             ->type($description, 'description')
             ->press('update-practice');
 
-        $this->seeInDatabase('wp_blogs', [
+        $this->assertDatabaseHas('wp_blogs', [
             'name'         => str_slug($name),
             'display_name' => $name,
             'description'  => $description,
@@ -68,7 +70,7 @@ class DashboardTest extends TestCase
             ->type($role->id, 'role')
             ->press('Invite');
 
-        $this->seeInDatabase('invites', [
+        $this->assertDatabaseHas('invites', [
             'inviter_id' => $this->programLead->ID,
             'role_id'    => $role->id,
             'email'      => $inviteeEmail,
@@ -79,6 +81,6 @@ class DashboardTest extends TestCase
 
     public function testDashboardGet()
     {
-        $this->visit(route('get.provider.dashboard'));
+        $response = $this->get(route('get.provider.dashboard'));
     }
 }

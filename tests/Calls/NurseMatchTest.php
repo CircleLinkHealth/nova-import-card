@@ -1,5 +1,8 @@
 <?php
 
+namespace Tests\Calls;
+
+use Tests\TestCase;
 use App\Algorithms\Calls\CallAlgoHelper;
 use App\User;
 use Tests\Helpers\UserHelpers;
@@ -52,33 +55,38 @@ class NurseMatchTest extends TestCase
 
         $this->createPatientWindows();
 
-        $this->createWindowForNurse($this->nurse,
+        $this->createWindowForNurse(
+            $this->nurse,
             Carbon\Carbon::parse('2016-12-17 08:00:00'),
-            Carbon\Carbon::parse('2016-12-17 11:00:00'));
+            Carbon\Carbon::parse('2016-12-17 11:00:00')
+        );
 
-        $this->createWindowForNurse($this->nurse2,
+        $this->createWindowForNurse(
+            $this->nurse2,
             Carbon\Carbon::parse('2016-12-21 08:00:00'),
-            Carbon\Carbon::parse('2016-12-21 11:00:00'));
+            Carbon\Carbon::parse('2016-12-21 11:00:00')
+        );
 
         $this->findNurse();
 
         dd($this->prediction);
 
         $this->assertTrue($this->prediction['nurse'] == $this->nurse->user_id);
-
     }
 
-    public function createPatientWindows(){
+    public function createPatientWindows()
+    {
 
-        for($i = 1; $i < 6; $i++){
-            $windows[] = $this->createWindowForPatient($this->patient,
+        for ($i = 1; $i < 6; $i++) {
+            $windows[] = $this->createWindowForPatient(
+                $this->patient,
                 Carbon\Carbon::parse('10:00:00'),
                 Carbon\Carbon::parse('17:00:00'),
-                $i);
+                $i
+            );
         }
 
 
         return $windows;
     }
-
 }

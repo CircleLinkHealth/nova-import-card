@@ -13,7 +13,6 @@ use Twilio\Jwt\ClientToken;
 use Twilio\Twiml;
 use Twilio\Rest\Client;
 
-
 class TwilioController extends Controller
 {
 
@@ -26,25 +25,23 @@ class TwilioController extends Controller
         $this->capability = new ClientToken(env('TWILIO_SID'), env('TWILIO_TOKEN'));
         $this->capability->allowClientOutgoing(env('TWILIO_ENROLLMENT_TWIML_APP_SID'));
         $this->token = $this->capability->generateToken();
-
     }
 
     public function obtainToken()
     {
 
         return response()->json(['token' => $this->capability->generateToken()]);
-
-
     }
 
     public function makeCall()
     {
 
-        return view('partials.calls.make-twilio-call',
+        return view(
+            'partials.calls.make-twilio-call',
             [
                 'token' => $this->token,
-            ]);
-
+            ]
+        );
     }
 
     public function newCall(Request $request)
@@ -54,7 +51,7 @@ class TwilioController extends Controller
 
         $phoneNumberToDial = (new StringManipulation())->formatPhoneNumberE164($request->input('phoneNumber'));
 
-        $enrollee = Enrollee::where(function ($q) use ($phoneNumberToDial){
+        $enrollee = Enrollee::where(function ($q) use ($phoneNumberToDial) {
             $q->where('cell_phone', $phoneNumberToDial)
                 ->orWhere('home_phone', $phoneNumberToDial)
                 ->orWhere('other_phone', $phoneNumberToDial);
@@ -71,20 +68,20 @@ class TwilioController extends Controller
         return $response;
     }
 
-    public function sendTestSMS(){
+    public function sendTestSMS()
+    {
 
         $client = new Client($_ENV['TWILIO_SID'], $_ENV['TWILIO_TOKEN']);
 
         $smsQueue = Enrollee::toSMS()->get();
 
-        foreach ($smsQueue as $recipient){
-
+        foreach ($smsQueue as $recipient) {
             $provider_name = User::find($recipient->provider_id)->fullName;
 
-            if($recipient->invite_sent_at == null){
+            if ($recipient->invite_sent_at == null) {
                 //first go, make invite code:
 
-                $recipient->invite_code = rand(183,982) . substr(uniqid(), -3);
+                $recipient->invite_code = rand(183, 982) . substr(uniqid(), -3);
                 $link = url("join/$recipient->invite_code");
                 $recipient->invite_sent_at = Carbon::now()->toDateTimeString();
                 $recipient->last_attempt_at = Carbon::now()->toDateTimeString();
@@ -95,18 +92,15 @@ class TwilioController extends Controller
 
                 $client->account->messages->create(
 
-                // the number we are sending to - Any phone number
+                    // the number we are sending to - Any phone number
                     $recipient->cell_phone,
-
-                    array(
+                    [
 
                         'from' => $recipient->practice->outgoing_phone_number,
                         'body' => $message,
-                    )
+                    ]
                 );
-
             } else {
-
                 $sad_face_emoji = "\u{1F648}";
 
                 $link = url("join/$recipient->invite_code");
@@ -119,22 +113,15 @@ class TwilioController extends Controller
 
                 $client->account->messages->create(
 
-                // the number we are sending to - Any phone number
+                    // the number we are sending to - Any phone number
                     $recipient->cell_phone,
-
-                    array(
+                    [
 
                         'from' => $recipient->practice->outgoing_phone_number,
                         'body' => $message,
-                    )
+                    ]
                 );
-
             }
-
         }
-
-
     }
-
-
 }

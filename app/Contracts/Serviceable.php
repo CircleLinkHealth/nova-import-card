@@ -8,12 +8,11 @@
 
 namespace App\Contracts;
 
-
 interface Serviceable
 {
     /**
      * Get this Model's Service Class
-     * 
+     *
      * @return Serviceable
      */
     public function service();

@@ -35,5 +35,4 @@ class CreateCpmBloodSugarsTable extends Migration
     {
         Schema::drop('cpm_blood_sugars');
     }
-
 }

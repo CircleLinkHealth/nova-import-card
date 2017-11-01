@@ -2,14 +2,10 @@
 
 use Illuminate\Database\Eloquent\Model;
 
-class CPRulesItem extends Model {
+class CPRulesItem extends Model
+{
 
-    /**
-     * The connection name for the model.
-     *
-     * @var string
-     */
-    protected $connection = 'mysql_no_prefix';
+
 
     /**
      * The database table used by the model.
@@ -64,9 +60,8 @@ class CPRulesItem extends Model {
         /**
          * Automatically delete and item's meta when the item is deleted
          */
-        CPRulesItem::deleting(function($CPRulesItem){
+        CPRulesItem::deleting(function ($CPRulesItem) {
             $CPRulesItem->meta()->delete();
         });
     }
-
 }

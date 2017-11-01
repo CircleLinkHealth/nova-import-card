@@ -11,14 +11,14 @@
                 datumTokenizer: Bloodhound.tokenizers.obj.whitespace('search'),
                 queryTokenizer: Bloodhound.tokenizers.whitespace,
                 remote: {
-                    url: '{{route('patients.query')}}',
+                    url: '{!! route('patients.query') . '?users=%QUERY' !!}',
                     wildcard: '%QUERY'
                 }
             });
 
             pat.initialize();
 
-            var searchBox = $('#patient-search-text-box');
+            let searchBox = $('#patient-search-text-box');
 
             searchBox.typeahead({
                 hint: true,
@@ -33,7 +33,7 @@
                 limit: 50,
                 templates: {
                     empty: [
-                        '<div class="empty-message">No Patients Found</div>'
+                        '<div class="empty-message">No Patients Found...</div>'
                     ]
                 }
             });

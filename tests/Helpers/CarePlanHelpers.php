@@ -61,12 +61,12 @@ trait CarePlanHelpers
         $this
             ->actingAs($this->provider)
             ->visit("/manage-patients/{$patient->id}/careplan/team")
-            ->see('Edit Patient Care Team')
+            ->assertSee('Edit Patient Care Team')
             ->click('#add-care-team-member')
-            ->see('Billing Provider')
-            ->see('Lead Contact')
-            ->see('Send Alert')
-            ->see($this->provider->display_name);
+            ->assertSee('Billing Provider')
+            ->assertSee('Lead Contact')
+            ->assertSee('Send Alert')
+            ->assertSee($this->provider->display_name);
     }
 
     public function fillCareplanPage1(
@@ -180,14 +180,14 @@ trait CarePlanHelpers
             ->visit($url);
 
         empty($sectionTitle)
-            ?: $this->see($sectionTitle);
+            ?: $response->assertSee($sectionTitle);
 
         foreach ($carePlanEntities as $entity) {
             $this->select($entity->id, "{$relationship}[$entity->id]");
 
             $this->press('TestSubmit');
 
-            $this->seeInDatabase("{$entity->getTable()}_users", [
+            $this->assertDatabaseHas("{$entity->getTable()}_users", [
                 $entityIdFieldName   => $entity->id,
                 'patient_id'         => $patient->id,
                 'cpm_instruction_id' => $entity->pivot->cpm_instruction_id,
@@ -211,7 +211,6 @@ trait CarePlanHelpers
          * Hope this makes sense in the future :)
          */
         $this->assertGreaterThanOrEqual(count($carePlanEntities->all()), count($patientEntities));
-
     }
 
     public function fillCareplanPage2(
@@ -299,12 +298,12 @@ trait CarePlanHelpers
             ->visit("/manage-patients/{$patient->id}/careplan/sections/3")
             ->click('approve-forward')
             ->seePageIs("/manage-patients/{$patient->id}/view-careplan?page=3")
-            ->see('Care Plan')
-            ->see($patient->fullName)
-            ->see($patient->phone)
-            ->see($today)
-            ->see($billingProvider->fullName)
-            ->see($billingProvider->phone);
+            ->assertSee('Care Plan')
+            ->assertSee($patient->fullName)
+            ->assertSee($patient->phone)
+            ->assertSee($today)
+            ->assertSee($billingProvider->fullName)
+            ->assertSee($billingProvider->phone);
 
         /**
          * Check that entities are on the page
@@ -337,7 +336,7 @@ trait CarePlanHelpers
                 continue;
             }
 
-            $this->see($entity->name);
+            $response->assertSee($entity->name);
         }
     }
 
@@ -345,7 +344,7 @@ trait CarePlanHelpers
     {
         $this->actingAs($this->provider)
             ->visit(route('patients.dashboard'))
-            ->see('Add a Patient')
+            ->assertSee('Add a Patient')
             ->click('add-patient')
             ->seePageIs('/manage-patients/careplan/demographics');
 
@@ -421,7 +420,7 @@ trait CarePlanHelpers
             ->type($windowTimeEnd, 'window_end')
             ->press('TestSubmit');
 
-        $this->seeInDatabase('users', [
+        $this->assertDatabaseHas('users', [
             'first_name'   => $firstName,
             'last_name'    => $lastName,
             'email'        => $email,
@@ -436,7 +435,7 @@ trait CarePlanHelpers
 
         $patient = User::whereEmail($email)->first();
 
-        $this->seeInDatabase('location_user', [
+        $this->assertDatabaseHas('location_user', [
             'location_id' => 10,
             'user_id'     => $patient->id,
         ]);
@@ -457,7 +456,7 @@ trait CarePlanHelpers
         $patientInfo = $patient->patientInfo;
 
         for ($i = 1; $i < 6; $i++) {
-            $this->seeInDatabase('patient_contact_window', [
+            $this->assertDatabaseHas('patient_contact_window', [
                 'patient_info_id'   => $patientInfo->id,
                 'day_of_week'       => $i,
                 'window_time_start' => $windowTimeStart,
@@ -465,7 +464,7 @@ trait CarePlanHelpers
             ]);
         }
 
-        $this->seeInDatabase('patient_info', [
+        $this->assertDatabaseHas('patient_info', [
             'user_id'                    => $patient->id,
             'agent_name'                 => $agentName,
             'agent_telephone'            => $agentPhone,
@@ -487,7 +486,7 @@ trait CarePlanHelpers
             'hospital_reminder_areas'    => 'TBD',
         ]);
 
-        $this->seeInDatabase('care_plans', [
+        $this->assertDatabaseHas('care_plans', [
             'user_id' => $patient->id,
             'status'  => 'draft',
         ]);

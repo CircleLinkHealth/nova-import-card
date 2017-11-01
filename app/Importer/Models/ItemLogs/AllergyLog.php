@@ -30,5 +30,4 @@ class AllergyLog extends Model implements ItemLog
     {
         return $this->hasOne(AllergyImport::class);
     }
-
 }

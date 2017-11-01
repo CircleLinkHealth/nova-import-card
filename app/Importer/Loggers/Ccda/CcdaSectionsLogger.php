@@ -2,7 +2,6 @@
 
 namespace App\Importer\Loggers\Ccda;
 
-
 use App\CLH\Repositories\CCDImporterRepository;
 use App\Contracts\Importer\MedicalRecord\MedicalRecordLogger;
 use App\Importer\Models\ItemLogs\AllergyLog;
@@ -47,7 +46,7 @@ class CcdaSectionsLogger implements MedicalRecordLogger
      * Transform the Demographics Section into Log models..
      * @return MedicalRecordLogger
      */
-    public function logDemographicsSection() : MedicalRecordLogger
+    public function logDemographicsSection(): MedicalRecordLogger
     {
         $demographics = $this->ccd->demographics;
 
@@ -62,7 +61,7 @@ class CcdaSectionsLogger implements MedicalRecordLogger
      * Transform the Document Section into Log models..
      * @return MedicalRecordLogger
      */
-    public function logDocumentSection() : MedicalRecordLogger
+    public function logDocumentSection(): MedicalRecordLogger
     {
         $document = $this->ccd->document;
 
@@ -88,7 +87,7 @@ class CcdaSectionsLogger implements MedicalRecordLogger
      * Transform the Medications Section into Log models..
      * @return MedicalRecordLogger
      */
-    public function logMedicationsSection() : MedicalRecordLogger
+    public function logMedicationsSection(): MedicalRecordLogger
     {
         $medications = $this->ccd->medications;
 
@@ -105,7 +104,7 @@ class CcdaSectionsLogger implements MedicalRecordLogger
      * Transform the Problems Section into Log models..
      * @return MedicalRecordLogger
      */
-    public function logProblemsSection() : MedicalRecordLogger
+    public function logProblemsSection(): MedicalRecordLogger
     {
         $problems = $this->ccd->problems;
 
@@ -117,6 +116,9 @@ class CcdaSectionsLogger implements MedicalRecordLogger
             $codes = $this->transformer->problemCodes($prob, $problemLog);
 
             foreach ($codes as $code) {
+                if (!$code['code']) {
+                    continue;
+                }
                 ProblemCodeLog::create($code);
             }
 
@@ -130,7 +132,7 @@ class CcdaSectionsLogger implements MedicalRecordLogger
      * Transform the Providers Section into Log models..
      * @return MedicalRecordLogger
      */
-    public function logProvidersSection() : MedicalRecordLogger
+    public function logProvidersSection(): MedicalRecordLogger
     {
         //Add them both together
         array_push($this->ccd->document->documentation_of, $this->ccd->document->author);
@@ -182,7 +184,7 @@ class CcdaSectionsLogger implements MedicalRecordLogger
      * Transform the Allergies Section into Log models..
      * @return MedicalRecordLogger
      */
-    public function logAllergiesSection() : MedicalRecordLogger
+    public function logAllergiesSection(): MedicalRecordLogger
     {
         $allergies = $this->ccd->allergies;
 
@@ -199,11 +201,10 @@ class CcdaSectionsLogger implements MedicalRecordLogger
      * Log Insurance Section.
      * @return MedicalRecordLogger
      */
-    public function logInsuranceSection() : MedicalRecordLogger
+    public function logInsuranceSection(): MedicalRecordLogger
     {
         if (!empty($this->ccd->payers)) {
             foreach ($this->ccd->payers as $payer) {
-
                 if (empty($payer->insurance)) {
                     continue;
                 }

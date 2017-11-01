@@ -2,14 +2,10 @@
 
 use Illuminate\Database\Eloquent\Model;
 
-class CPRulesPCP extends Model {
+class CPRulesPCP extends Model
+{
 
-    /**
-     * The connection name for the model.
-     *
-     * @var string
-     */
-    protected $connection = 'mysql_no_prefix';
+
 
     /**
      * The database table used by the model.
@@ -49,5 +45,4 @@ class CPRulesPCP extends Model {
 
         return $CPrulesPCP;
     }
-
 }

@@ -35,17 +35,16 @@ class PatientsForInsuranceCheck extends Controller
             });
 
         Excel::create("{$date->toDateString()} - Patients For Insurance Check", function ($excel) use
-        (
+            (
             $users
         ) {
 
             $excel->sheet('Patients', function ($sheet) use
-            (
+                (
                 $users
             ) {
 
                 $sheet->fromArray($users);
-
             });
         })->export('xls');
     }

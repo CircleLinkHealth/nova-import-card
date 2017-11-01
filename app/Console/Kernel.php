@@ -22,6 +22,7 @@ use App\Console\Commands\QueueSendAuditReports;
 use App\Console\Commands\RecalculateCcmTime;
 use App\Console\Commands\ReImportCcdsToGetTranslations;
 use App\Console\Commands\ResetCcmTime;
+use App\Console\Commands\SendCarePlanApprovalReminderTestEmail;
 use App\Console\Commands\SplitMergedCcdas;
 use App\Services\Calls\SchedulerService;
 use Illuminate\Console\Scheduling\Schedule;
@@ -32,36 +33,6 @@ use Illuminate\Foundation\Console\Kernel as ConsoleKernel;
 
 class Kernel extends ConsoleKernel
 {
-    /**
-     * The Artisan commands provided by your application.
-     *
-     * @var array
-     */
-    protected $commands = [
-        EmailRNDailyReport::class,
-        EmailsProvidersToApproveCareplans::class,
-        ExportNurseSchedulesToGoogleCalendar::class,
-        GeneratePatientReports::class,
-        ImportNurseScheduleFromGoogleCalendar::class,
-        Inspire::class,
-        MapSnomedToCpmProblems::class,
-        GetAppointments::class,
-        GetCcds::class,
-        ResetCcmTime::class,
-        RecalculateCcmTime::class,
-        SplitMergedCcdas::class,
-        QueueCcdasToConvertToJson::class,
-        QueueCcdaToDetermineEnrollmentEligibility::class,
-        QueueCcdasToProcess::class,
-        QueueSendAuditReports::class,
-        ProcessCcdaLGHMixup::class,
-        ImportLGHInsurance::class,
-        CheckEmrDirectInbox::class,
-        EmailWeeklyReports::class,
-        QueueMakeWelcomeCallsList::class,
-        ReImportCcdsToGetTranslations::class,
-    ];
-
     /**
      * Define the application's command schedule.
      *
@@ -85,7 +56,6 @@ class Kernel extends ConsoleKernel
 
                 sendSlackMessage('#background-tasks', $message);
             }
-
         })->dailyAt('00:05');
 
         //tunes scheduled call dates.
@@ -166,6 +136,7 @@ class Kernel extends ConsoleKernel
      */
     protected function commands()
     {
+        $this->load(__DIR__.'/Commands');
         require base_path('routes/console.php');
     }
 }

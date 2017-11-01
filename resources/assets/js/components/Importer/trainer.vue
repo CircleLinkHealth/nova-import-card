@@ -1,13 +1,33 @@
 <script>
     export default {
+        props: {
+            practice: {
+                type: [Number, String],
+                required: false,
+                default: null
+            },
+            location: {
+                type: [Number, String],
+                required: false,
+                default: null
+            },
+            billingProvider: {
+                type: [Number, String],
+                required: false,
+                default: null
+            },
+        },
+
         data() {
+            window.axios.get('/practices/all')
+                .then((response) => {
+                    this.practices = response.data
+                })
+
             return {
-                practices: cpm.practices,
+                practices: [],
                 locationsCollection: [],
                 providersCollection: [],
-                practice: cpm.predictedPracticeId,
-                location: cpm.predictedLocationId,
-                billingProvider: cpm.predictedBillingProviderId,
             }
         },
 
@@ -47,9 +67,9 @@
         <div class="col-md-4">
             <h1>Practice</h1>
 
-            <select v-model="practice" class="col-md-12" name="practiceId">
+            <select2 v-model="practice" class="col-md-12" name="practiceId">
                 <option v-for="p in practices" :value="p.id">{{ p.display_name }}</option>
-            </select>
+            </select2>
         </div>
         <div class="col-md-4">
             <h1>Location</h1>

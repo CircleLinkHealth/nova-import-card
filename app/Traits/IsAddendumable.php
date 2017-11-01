@@ -8,12 +8,12 @@
 
 namespace App\Traits;
 
-
 use App\Models\Addendum;
 
 trait IsAddendumable
 {
-    public function addendums() {
+    public function addendums()
+    {
         return $this->morphMany(Addendum::class, 'addendumable');
     }
 }

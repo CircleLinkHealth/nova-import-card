@@ -41,14 +41,13 @@ class UpdateCarePlanStatus
             $user->carePlanProviderApproverDate = date('Y-m-d H:i:s'); // careplan_provider_date
 
             event(new PdfableCreated($user->carePlan));
-
         } elseif ($user->carePlanStatus == 'draft' && auth()->user()->can('care-plan-qa-approve')) {
             $user->carePlanStatus = 'qa_approved'; // careplan_status
             $user->carePlanQaApprover = auth()->user()->id; // careplan_qa_approver
 
             if ($user->carePlan->patient->primaryPractice->settings()->first()->auto_approve_careplans) {
                 $user->carePlan->status = 'provider_approved';
-                $user->carePlan->provider_approver_id = $user->billingProvider()->id ?? null;
+                $user->carePlan->provider_approver_id = $user->billingProviderUser()->id ?? null;
                 $user->carePlan->save();
 
                 event(new PdfableCreated($user->carePlan));

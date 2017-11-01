@@ -54,7 +54,8 @@ class Problem extends Model implements \App\Contracts\Models\CCD\Problem
         return $this->belongsTo(User::class, 'patient_id');
     }
 
-    public function icd10Code() {
+    public function icd10Code()
+    {
         $icd10 = $this->icd10Codes->first();
 
         if ($icd10) {
@@ -64,7 +65,8 @@ class Problem extends Model implements \App\Contracts\Models\CCD\Problem
         return $this->cpmProblem->default_icd_10_code ?? null;
     }
 
-    public function convertCode($from, $to) {
+    public function convertCode($from, $to)
+    {
         return SnomedToCpmIcdMap::where($from, '=', $this->code)
             ->whereNotNull($to)
             ->where($to, '!=', '')
@@ -75,7 +77,8 @@ class Problem extends Model implements \App\Contracts\Models\CCD\Problem
     /**
      * @return \Illuminate\Database\Eloquent\Relations\HasMany
      */
-    public function codes() {
+    public function codes()
+    {
         return $this->hasMany(ProblemCode::class);
     }
 }

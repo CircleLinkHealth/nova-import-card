@@ -1,8 +1,10 @@
 <?php
 
+namespace Tests\integration;
+
+use Tests\TestCase;
 use Tests\Helpers\CarePlanHelpers;
 use Tests\Helpers\UserHelpers;
-
 
 class CarePlanTest extends TestCase
 {

@@ -91,8 +91,10 @@ class PracticeStaffController extends Controller
             'full_name'                           => $user->display_name,
             'phone_number'                        => $phone->number ?? '',
             'phone_extension'                     => $phone->extension ?? '',
-            'phone_type'                          => array_search($phone->type ?? '',
-                    PhoneNumber::getTypes()) ?? '',
+            'phone_type'                          => array_search(
+                $phone->type ?? '',
+                PhoneNumber::getTypes()
+            ) ?? '',
             'grantAdminRights'                    => $permissions->pivot->has_admin_rights ?? false,
             'sendBillingReports'                  => $permissions->pivot->send_billing_reports ?? false,
             'role_name'                           => $roles[$roleId]->name,
@@ -160,12 +162,20 @@ class PracticeStaffController extends Controller
         $user->locations()->sync([]);
         $user->attachLocation($formData['locations']);
 
-        $attachPractice = $user->attachPractice($primaryPractice, $grantAdminRights, $sendBillingReports,
-            $userRole->id);
+        $attachPractice = $user->attachPractice(
+            $primaryPractice,
+            $grantAdminRights,
+            $sendBillingReports,
+            $userRole->id
+        );
 
         //attach phone
-        $phone = $user->clearAllPhonesAndAddNewPrimary($formData['phone_number'], $formData['phone_type'], true,
-            $formData['phone_extension']);
+        $phone = $user->clearAllPhonesAndAddNewPrimary(
+            $formData['phone_number'],
+            $formData['phone_type'],
+            true,
+            $formData['phone_extension']
+        );
 
         //clean up forwardAlertsTo before adding the new ones
         $user->forwardAlertsTo()->sync([]);
@@ -180,8 +190,10 @@ class PracticeStaffController extends Controller
             ]);
 
             if ($formData['forward_careplan_approval_emails_to']['who'] != 'billing_provider') {
-                $user->forwardTo($formData['forward_careplan_approval_emails_to']['user_id'],
-                    $formData['forward_careplan_approval_emails_to']['who']);
+                $user->forwardTo(
+                    $formData['forward_careplan_approval_emails_to']['user_id'],
+                    $formData['forward_careplan_approval_emails_to']['who']
+                );
             }
         }
 

@@ -34,7 +34,7 @@ class CcdaRepositoryEloquent extends BaseRepository implements CcdaRepository
         $this->pushCriteria(app(RequestCriteria::class));
     }
 
-    public function logSentActivity(array $attributes, array $values = array())
+    public function logSentActivity(array $attributes, array $values = [])
     {
         // TODO: Implement logSentActivity() method.
     }

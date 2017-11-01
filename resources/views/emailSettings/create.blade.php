@@ -12,7 +12,7 @@
                     <div class="container-fluid">
                         <div class="row">
                             <div class="col-md-12">
-                                <form action="{{ route('settings.email.store') }}" method="post">
+                                <form action="{{ route('email.store') }}" method="post">
                                     {{ csrf_field() }}
                                     <div class="form-group">
 

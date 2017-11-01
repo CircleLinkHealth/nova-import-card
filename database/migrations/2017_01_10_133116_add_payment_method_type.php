@@ -16,7 +16,6 @@ class AddPaymentMethodType extends Migration
         Schema::table('nurse_info', function (Blueprint $table) {
 
             $table->string('billing_type')->default('fixed')->after('hourly_rate');
-
         });
     }
 
@@ -30,7 +29,6 @@ class AddPaymentMethodType extends Migration
         Schema::table('nurse_info', function (Blueprint $table) {
 
             $table->dropColumn('billing_type');
-
         });
     }
 }

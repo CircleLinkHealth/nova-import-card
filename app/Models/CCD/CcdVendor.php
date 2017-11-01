@@ -4,7 +4,8 @@ use App\CLH\CCD\ImportRoutine\CcdImportRoutine;
 use App\Traits\Relationships\MedicalRecordItemLoggerRelationships;
 use Illuminate\Database\Eloquent\Model;
 
-class CcdVendor extends Model {
+class CcdVendor extends Model
+{
 
     use MedicalRecordItemLoggerRelationships;
 

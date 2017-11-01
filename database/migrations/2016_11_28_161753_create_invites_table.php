@@ -36,5 +36,4 @@ class CreateInvitesTable extends Migration
     {
         Schema::drop('invites');
     }
-
 }

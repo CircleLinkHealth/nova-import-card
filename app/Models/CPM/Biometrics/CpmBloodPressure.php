@@ -80,5 +80,4 @@ class CpmBloodPressure extends Model implements Biometric
 
         $this->attributes['target'] = $settings->default_target_bp;
     }
-
 }

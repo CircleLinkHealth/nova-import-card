@@ -39,5 +39,4 @@ class CreateCarePlanTemplatesCpmBiometricsTable extends Migration
     {
         Schema::drop('care_plan_templates_cpm_biometrics');
     }
-
 }

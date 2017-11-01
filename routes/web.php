@@ -1,9 +1,6 @@
 <?php
 
 use App\Call;
-use App\CLH\Helpers\StringManipulation;
-use App\Services\Phaxio\PhaxioService;
-use App\Services\PhiMail\PhiMail;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
 
@@ -19,7 +16,6 @@ Route::resource('sign-up', 'PatientSignupController');
 Route::get('talk-to-us', 'PatientSignupController@talkToUs');
 
 if (app()->environment() != 'production') {
-
     //test route
     Route::get('/sms/test', 'TwilioController@sendTestSMS');
 
@@ -37,9 +33,7 @@ if (app()->environment() != 'production') {
                 ->count();
 
         return $countMade;
-
     });
-
 }
 
 //Algo test routes.
@@ -49,49 +43,37 @@ Route::group(['prefix' => 'algo'], function () {
     Route::get('family', function () {
 
         if (app()->environment() == 'production') {
-
             return 'Sorry, this cannot be run on the production environment.';
-
         }
 
         return (new \App\Services\Calls\SchedulerService())->syncFamilialCalls();
-
     });
 
     Route::get('cleaner', function () {
 
         if (app()->environment() == 'production') {
-
             return 'Sorry, this cannot be run on the production environment.';
-
         }
 
         return (new \App\Services\Calls\SchedulerService())->removeScheduledCallsForWithdrawnAndPausedPatients();
-
     });
 
     Route::get('tuner', function () {
 
         if (app()->environment() == 'production') {
-
             return 'Sorry, this cannot be run on the production environment.';
-
         }
 
         return (new \App\Services\Calls\SchedulerService())->tuneScheduledCallsWithUpdatedCCMTime();
-
     });
 
     Route::get('rescheduler', function () {
 
         if (app()->environment() == 'production') {
-
             return 'Sorry, this cannot be run on the production environment.';
-
         }
 
         return (new \App\Algorithms\Calls\ReschedulerHandler())->handle();
-
     });
 });
 
@@ -109,28 +91,12 @@ Route::get('home', 'WelcomeController@index');
 Route::get('login', 'Auth\LoginController@showLoginForm');
 
 Route::group([
-    'prefix' => 'auth',
-    'middleware' => 'web'
+    'prefix'     => 'auth',
+    'middleware' => 'web',
 ], function () {
     Auth::routes();
 
     Route::get('logout', 'Auth\LoginController@logout');
-});
-
-/****************************/
-/****************************/
-//    REDOX
-/****************************/
-/****************************/
-Route::group(['namespace' => 'Redox'], function () {
-    Route::get('redox', [
-        'uses' => 'AppVerificationController@getVerificationRequest',
-    ]);
-
-    Route::group(['middleware' => 'getRedoxAccessToken'], function () {
-        //@todo: this is not an actual route, it was made for testing
-        Route::get('testRedoxx', 'PostToRedoxController@index');
-    });
 });
 
 /****************************/
@@ -148,6 +114,11 @@ Route::group(['middleware' => 'auth'], function () {
     /**
      * API
      */
+    Route::group(['prefix' => 'api'], function () {
+        Route::group(['prefix' => 'admin'], function () {
+            Route::resource('calls', 'API\Admin\CallsController');
+        });
+    });
 
     Route::resource('profiles', 'API\ProfileController');
 
@@ -177,10 +148,14 @@ Route::group(['middleware' => 'auth'], function () {
 
     Route::get('/CCDModels/Items/MedicationListItem', 'CCDModels\Items\MedicationListItemController@index');
     Route::post('/CCDModels/Items/MedicationListItem/store', 'CCDModels\Items\MedicationListItemController@store');
-    Route::post('/CCDModels/Items/MedicationListItem/update',
-        'CCDModels\Items\MedicationListItemController@update');
-    Route::post('/CCDModels/Items/MedicationListItem/destroy',
-        'CCDModels\Items\MedicationListItemController@destroy');
+    Route::post(
+        '/CCDModels/Items/MedicationListItem/update',
+        'CCDModels\Items\MedicationListItemController@update'
+    );
+    Route::post(
+        '/CCDModels/Items/MedicationListItem/destroy',
+        'CCDModels\Items\MedicationListItemController@destroy'
+    );
 
     Route::get('/CCDModels/Items/ProblemsItem', 'CCDModels\Items\ProblemsItemController@index');
     Route::post('/CCDModels/Items/ProblemsItem/store', 'CCDModels\Items\ProblemsItemController@store');
@@ -457,7 +432,6 @@ Route::group(['middleware' => 'auth'], function () {
                 'uses' => 'AppointmentController@view',
                 'as'   => 'patient.appointment.view',
             ]);
-
         });
 
         // notes
@@ -568,23 +542,19 @@ Route::group(['middleware' => 'auth'], function () {
             $total = 0;
 
             foreach ($nurses as $nurse) {
-
                 $data[$nurse->user->fullName] = (new \App\Billing\NurseMonthlyBillGenerator(
                     $nurse,
                     \Carbon\Carbon::now()->subMonths($from),
                     \Carbon\Carbon::now()->subMonths($to),
                     false
-
                 ))->getCallsPerHourOverPeriod();
 
                 $total += $data[$nurse->user->fullName]['calls/hour'];
-
             }
 
             $data['AVERAGE'] = $total / $nurses->count();
 
             return $data;
-
         });
 
         /**
@@ -721,7 +691,6 @@ Route::group(['middleware' => 'auth'], function () {
                     'uses' => 'Billing\PracticeInvoiceController@send',
                     'as'   => 'monthly.billing.send',
                 ]);
-
             });
 
             Route::get('patients-for-insurance-check', [
@@ -768,7 +737,6 @@ Route::group(['middleware' => 'auth'], function () {
                     'uses' => 'SalesReportsController@makePracticeReport',
                     'as'   => 'reports.sales.practice.report',
                 ]);
-
             });
 
             Route::get('monthly-billing/create', [
@@ -814,7 +782,6 @@ Route::group(['middleware' => 'auth'], function () {
                 'uses' => 'Billing\PracticeInvoiceController@makeInvoices',
                 'as'   => 'practice.billing.make',
             ]);
-
         });
 
         //Algo Mocker
@@ -1050,39 +1017,6 @@ Route::group(['middleware' => 'auth'], function () {
             Route::post('families/{id}/edit', [
                 'uses' => 'FamilyController@update',
                 'as'   => 'admin.families.update',
-            ]);
-        });
-
-        // rules
-        Route::group([
-            'middleware' => [
-                'permission:rules-engine-view',
-            ],
-        ], function () {
-            Route::resource('rules', 'RulesController');
-            Route::get('rules/create', [
-                'uses' => 'RulesController@create',
-                'as'   => 'admin.rules.create',
-            ]);
-            Route::post('rules/store', [
-                'uses' => 'RulesController@store',
-                'as'   => 'admin.rules.store',
-            ]);
-            Route::get('rules/{id}', [
-                'uses' => 'RulesController@show',
-                'as'   => 'admin.rules.show',
-            ]);
-            Route::get('rules/{id}/edit', [
-                'uses' => 'RulesController@edit',
-                'as'   => 'admin.rules.edit',
-            ]);
-            Route::post('rules/{id}/edit', [
-                'uses' => 'RulesController@update',
-                'as'   => 'admin.rules.update',
-            ]);
-            Route::get('rulesmatches', [
-                'uses' => 'RulesController@showMatches',
-                'as'   => 'admin.rules.matches',
             ]);
         });
 
@@ -1334,21 +1268,6 @@ Route::group(['middleware' => 'auth'], function () {
                 'as'   => 'locations.update',
             ]);
         });
-
-        // apikeys
-        Route::group([
-            'middleware' => [
-                'permission:apikeys-view',
-            ],
-        ], function () {
-            Route::resource('apikeys', 'Admin\ApiKeyController', [
-                'only' => [
-                    'index',
-                    'destroy',
-                    'store',
-                ],
-            ]);
-        });
     });
 
 
@@ -1388,7 +1307,6 @@ Route::group(['middleware' => 'auth'], function () {
             'as'   => 'care.center.work.schedule.holiday.destroy',
         ]);
     });
-
 });
 
 /*
@@ -1428,17 +1346,6 @@ Route::group([], function () {
         'as'   => 'api.callcreate',
     ]);
 });
-
-/**********************************/
-//  CRON ROUTES
-/**********************************/
-Route::group(['prefix' => 'cron'], function () {
-    Route::get('/scheduler/{id}', function ($id) {
-        $msgScheduler = new \App\Services\MsgScheduler();
-        $msgScheduler->index($id);
-    });
-});
-
 
 Route::group([
     'prefix' => 'datatables',
@@ -1588,8 +1495,6 @@ Route::group([
         'uses' => 'Enrollment\EnrollmentConsentController@update',
         'as'   => 'patient.enroll.update',
     ]);
-
-
 });
 
 Route::group([
@@ -1683,7 +1588,4 @@ Route::group([
     ]);
 
     Route::get('/call', 'TwilioController@makeCall');
-
 });
-
-

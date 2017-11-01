@@ -44,7 +44,6 @@ class EmailWeeklyProviderReport implements ShouldQueue
 
         //handle providers
         foreach ($providers_for_practice as $provider) {
-
             $providerData =
                 (new SalesByProviderReport(
                     $provider,

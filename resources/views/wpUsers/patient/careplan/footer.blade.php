@@ -5,10 +5,9 @@
     <div class="row row-centered">
         @if($patient->careplan_mode == App\CarePlan::PDF)
             <div class="progress-buttons col-sm-12 col-centered text-center">
-                <a id="approve-forward" href="#" class="btn btn-primary btn-next inline-block submitFormBtn"
-                   dtarget="{{ URL::route('patient.demographics.store', array('user_id' => $patient->id)) }}">
+                <button id="approve-forward" form="ucpForm" type="submit" class="btn btn-primary btn-next inline-block submitFormBtn">
                     Save
-                </a>
+                </button>
             </div>
         @endif
 

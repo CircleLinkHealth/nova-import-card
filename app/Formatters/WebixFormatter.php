@@ -28,7 +28,6 @@ class WebixFormatter implements ReportFormatter
         $formatted_notes = [];
 
         foreach ($notes as $note) {
-
             $formatted_notes[$count]['id'] = $note->id;
 
             //Display Name
@@ -94,7 +93,6 @@ class WebixFormatter implements ReportFormatter
         }
 
         return $formatted_notes;
-
     }
 
     public function formatDataForNotesAndOfflineActivitiesReport($report_data)
@@ -110,31 +108,23 @@ class WebixFormatter implements ReportFormatter
         $count = 0;
 
         foreach ($report_data as $data) {
-
             $formatted_data[$count]['id'] = $data->id;
 
 
-            if (get_class($data) == Note::class) // only notes have authors
-            {
+            if (get_class($data) == Note::class) { // only notes have authors
                 $formatted_data[$count]['logger_name'] = User::withTrashed()->find($data->author_id)->fullName;
                 $formatted_data[$count]['comment'] = $data->body;
                 $formatted_data[$count]['logged_from'] = 'note';
                 $formatted_data[$count]['type_name'] = $data->type;
                 $formatted_data[$count]['performed_at'] = $data->performed_at;
-
-
             } else {
-                if (get_class($data) == Appointment::class)// handles appointments
-                {
+                if (get_class($data) == Appointment::class) {// handles appointments
                     $formatted_data[$count]['logger_name'] = User::withTrashed()->find($data->author_id)->fullName;
                     $formatted_data[$count]['comment'] = $data->comment;
                     $formatted_data[$count]['type_name'] = $data->type;
                     $formatted_data[$count]['logged_from'] = 'appointment';
                     $formatted_data[$count]['performed_at'] = Carbon::parse($data->date)->toDateString();
-
-
                 } else {
-
                     if ($data->provider_id) {
                         $formatted_data[$count]['logger_name'] = User::withTrashed()->find($data->provider_id)
                             ->fullName;
@@ -153,7 +143,6 @@ class WebixFormatter implements ReportFormatter
 
             //check if it's a note, if yes, add tags
             if (get_class($data) == Note::class) {
-
                 if (count($data->mail) > 0) {
                     if ((new NoteService())->wasSentToProvider($data)) {
                         $formatted_data[$count]['tags'] .= '<div class="label label-warning"><span class="glyphicon glyphicon-envelope" aria-hidden="true"></span></div> ';
@@ -179,21 +168,15 @@ class WebixFormatter implements ReportFormatter
             }
 
             $count++;
-
-
         }
 
 
         $report_data = collect($formatted_data)->sortByDesc('performed_at')->toArray();
 
         if (!empty($report_data)) {
-
             return "data:" . json_encode(array_values($report_data)) . "";
-
         } else {
-
             return '';
-
         }
     }
 
@@ -203,7 +186,6 @@ class WebixFormatter implements ReportFormatter
         $careplanReport = [];
 
         foreach ($users as $user) {
-
 //            if (!is_object($user)) {
 //                $user = User::find($user);
 //            }
@@ -231,12 +213,10 @@ class WebixFormatter implements ReportFormatter
         }
 
         foreach ($careplanReport[$user->id]['biometrics'] as $metric) {
-
             $biometric = $user->cpmBiometrics->where('name', $metric)->first();
             $biometric_values = app(config('cpmmodelsmap.biometrics')[$biometric->type])->getUserValues($user);
 
             if ($biometric_values) {
-
                 //Check to see whether the user has a starting value
                 if ($biometric_values['starting'] == '') {
                     $biometric_values['starting'] = 'N/A';
@@ -255,7 +235,6 @@ class WebixFormatter implements ReportFormatter
 
             //Special verb use for each biometric
             if ($metric == 'Blood Pressure') {
-
                 if ($biometric_values['starting'] == 'N/A' || $biometric_values['target'] == 'TBD') {
                     $biometric_values['verb'] = 'Regulate';
                 } else {
@@ -274,56 +253,35 @@ class WebixFormatter implements ReportFormatter
                         }
                     }
                 }
-
             }
 
             if ($metric == 'Weight') {
-
                 if ($biometric_values['starting'] == 'N/A' || $biometric_values['target'] == 'TBD') {
-
                     $biometric_values['verb'] = 'Regulate';
-
                 } else {
-
                     if ($biometric_values['starting'] > $biometric_values['target']) {
-
                         $biometric_values['verb'] = 'Decrease';
-
                     } else {
                         if ($biometric_values['starting'] < $biometric_values['target']) {
-
                             $biometric_values['verb'] = 'Increase';
-
                         } else {
-
                             $biometric_values['verb'] = 'Regulate';
-
                         }
                     }
                 }
-
             }
 
             if ($metric == 'Blood Sugar') {
                 if ($biometric_values['starting'] == 'N/A' || $biometric_values['target'] == 'TBD') {
-
                     $biometric_values['verb'] = 'Regulate';
-
                 } else {
-
                     if ($biometric_values['starting'] > $biometric_values['target']) {
-
                         $biometric_values['verb'] = 'Decrease';
-
                     } else {
                         if ($biometric_values['starting'] < $biometric_values['target']) {
-
                             $biometric_values['verb'] = 'Increase';
-
                         } else {
-
                             $biometric_values['verb'] = 'Regulate';
-
                         }
                     }
                 }
@@ -331,15 +289,12 @@ class WebixFormatter implements ReportFormatter
                 if (intval($biometric_values['starting']) >= 70 && intval($biometric_values['starting']) <= 130) {
                     $biometric_values['verb'] = 'Regulate';
                 }
-
-
             }
 
 
             $careplanReport[$user->id]['bio_data'][$metric]['target'] = $biometric_values['target'] . ReportsService::biometricsUnitMapping($metric);
             $careplanReport[$user->id]['bio_data'][$metric]['starting'] = $biometric_values['starting'] . ReportsService::biometricsUnitMapping($metric);
             $careplanReport[$user->id]['bio_data'][$metric]['verb'] = $biometric_values['verb'];
-
         }//dd($careplanReport[$user->id]['bio_data']);
 
 
@@ -390,16 +345,20 @@ class WebixFormatter implements ReportFormatter
 
         //Social Services
         if ($user->cpmMiscs->where('name', CpmMisc::SOCIAL_SERVICES)->first()) {
-            $careplanReport[$user->id]['social'] = (new CpmMiscService())->getMiscWithInstructionsForUser($user,
-                CpmMisc::SOCIAL_SERVICES);
+            $careplanReport[$user->id]['social'] = (new CpmMiscService())->getMiscWithInstructionsForUser(
+                $user,
+                CpmMisc::SOCIAL_SERVICES
+            );
         } else {
             $careplanReport[$user->id]['social'] = '';
         }
 
         //Other
         if ($user->cpmMiscs->where('name', CpmMisc::OTHER)->first()) {
-            $careplanReport[$user->id]['other'] = (new CpmMiscService())->getMiscWithInstructionsForUser($user,
-                CpmMisc::OTHER);
+            $careplanReport[$user->id]['other'] = (new CpmMiscService())->getMiscWithInstructionsForUser(
+                $user,
+                CpmMisc::OTHER
+            );
         } else {
             $careplanReport[$user->id]['other'] = '';
         }
@@ -415,7 +374,6 @@ class WebixFormatter implements ReportFormatter
             ->take(3)->get();
 
         foreach ($upcoming as $appt) {
-
             $provider = User::find($appt->provider_id);
 
             $specialty = $provider->providerInfo->specialty ?? null;
@@ -425,8 +383,11 @@ class WebixFormatter implements ReportFormatter
 
             //format super specific phone number requirements
             if ($provider->primaryPhone) {
-                $phone = "P: " . preg_replace('~.*(\d{3})[^\d]{0,7}(\d{3})[^\d]{0,7}(\d{4}).*~', '$1-$2-$3',
-                        $provider->primaryPhone);
+                $phone = "P: " . preg_replace(
+                    '~.*(\d{3})[^\d]{0,7}(\d{3})[^\d]{0,7}(\d{4}).*~',
+                    '$1-$2-$3',
+                    $provider->primaryPhone
+                );
             } else {
                 $phone = null;
             }
@@ -446,7 +407,6 @@ class WebixFormatter implements ReportFormatter
             ];
 
             $careplanReport[$user->id]['appointments']['upcoming'] = $formattedUpcomingAppointment;
-
         }
 
         //past
@@ -457,7 +417,6 @@ class WebixFormatter implements ReportFormatter
             ->take(3)->get();
 
         foreach ($past as $appt) {
-
             $provider = User::find($appt->provider_id);
 
             if (!$provider) {
@@ -471,8 +430,11 @@ class WebixFormatter implements ReportFormatter
 
             //format super specific phone number requirements
             if ($provider->primaryPhone) {
-                $phone = "P: " . preg_replace('~.*(\d{3})[^\d]{0,7}(\d{3})[^\d]{0,7}(\d{4}).*~', '$1-$2-$3',
-                        $provider->primaryPhone);
+                $phone = "P: " . preg_replace(
+                    '~.*(\d{3})[^\d]{0,7}(\d{3})[^\d]{0,7}(\d{4}).*~',
+                    '$1-$2-$3',
+                    $provider->primaryPhone
+                );
             } else {
                 $phone = null;
             }
@@ -494,17 +456,15 @@ class WebixFormatter implements ReportFormatter
             ];
 
             $careplanReport[$user->id]['appointments']['past'] = $formattedPastAppointment;
-
-
         }
 
 
 //        array_reverse($biometrics)
         return $careplanReport;
-
     }
 
-    public function patientListing(Collection $patients = null) {
+    public function patientListing(Collection $patients = null)
+    {
         $patientData = [];
         $auth = auth()->user();
 
@@ -549,8 +509,10 @@ class WebixFormatter implements ReportFormatter
                     $tooltip = $careplanStatus;
                     $careplanStatusLink = 'Approve Now';
                     if ($canApproveCarePlans) {
-                        $careplanStatusLink = '<a style="text-decoration:underline;" href="' . route('patient.careplan.print',
-                                ['patient' => $patient->id]) . '"><strong>Approve Now</strong></a>';
+                        $careplanStatusLink = '<a style="text-decoration:underline;" href="' . route(
+                            'patient.careplan.print',
+                            ['patient' => $patient->id]
+                        ) . '"><strong>Approve Now</strong></a>';
                     }
                 } else {
                     if ($careplanStatus == 'draft') {
@@ -558,8 +520,10 @@ class WebixFormatter implements ReportFormatter
                         $tooltip = $careplanStatus;
                         $careplanStatusLink = 'CLH Approve';
                         if ($canQAApproveCarePlans) {
-                            $careplanStatusLink = '<a style="text-decoration:underline;" href="' . route('patient.demographics.show',
-                                    ['patient' => $patient->id]) . '"><strong>CLH Approve</strong></a>';
+                            $careplanStatusLink = '<a style="text-decoration:underline;" href="' . route(
+                                'patient.demographics.show',
+                                ['patient' => $patient->id]
+                            ) . '"><strong>CLH Approve</strong></a>';
                         }
                     }
                 }

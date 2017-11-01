@@ -22,7 +22,6 @@ class CreateCareAmbassadorLogsTable extends Migration
             $table->integer('no_utc');
             $table->integer('total_calls');
             $table->integer('total_time_in_system');
-
         });
     }
 
@@ -36,7 +35,6 @@ class CreateCareAmbassadorLogsTable extends Migration
         Schema::table('care_ambassador_logs', function (Blueprint $table) {
 
             $table->drop();
-
         });
     }
 }

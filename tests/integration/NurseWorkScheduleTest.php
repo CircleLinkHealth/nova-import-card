@@ -1,12 +1,14 @@
 <?php
+namespace Tests\integration;
 
+use Tests\TestCase;
 use App\NurseContactWindow;
 use App\User;
 use Carbon\Carbon;
 use Tests\Helpers\CarePlanHelpers;
 use Tests\Helpers\UserHelpers;
 
-class NurseWorkScheduleTest extends BrowserKitTestCase
+class NurseWorkScheduleTest extends TestCase
 {
     use CarePlanHelpers,
         UserHelpers;
@@ -32,8 +34,8 @@ class NurseWorkScheduleTest extends BrowserKitTestCase
     {
         $this->actingAs($nurse)
             ->visit(route('patients.dashboard'))
-            ->see($nurse->full_name)
-            ->see('work-schedule-link');
+            ->assertSee($nurse->full_name)
+            ->assertSee('work-schedule-link');
 
         //By default PHPUnit fails the test if the output buffer wasn't closed.
         //So we're adding this to make the test work.
@@ -48,8 +50,8 @@ class NurseWorkScheduleTest extends BrowserKitTestCase
 
         $this->actingAs($provider)
             ->visit(route('patients.dashboard'))
-            ->see($provider->full_name)
-            ->dontSee('work-schedule-link');
+            ->assertSee($provider->full_name)
+            ->assertDontSee('work-schedule-link');
 
         //By default PHPUnit fails the test if the output buffer wasn't closed.
         //So we're adding this to make the test work.
@@ -61,7 +63,6 @@ class NurseWorkScheduleTest extends BrowserKitTestCase
         $window = $this->store_window($nurse, Carbon::now()->addWeek(2));
 
         $this->delete_window($nurse, $window);
-
     }
 
     protected function store_window(
@@ -79,7 +80,7 @@ class NurseWorkScheduleTest extends BrowserKitTestCase
             ->press('store-window');
 
         if ($valid) {
-            $this->seeInDatabase('nurse_contact_window', [
+            $this->assertDatabaseHas('nurse_contact_window', [
                 'nurse_info_id'     => $nurse->nurseInfo->id,
                 'day_of_week'       => carbonToClhDayOfWeek($date->dayOfWeek),
                 'window_time_start' => $timeStart,
@@ -117,9 +118,9 @@ class NurseWorkScheduleTest extends BrowserKitTestCase
 
             $this->actingAs($nurse)
                 ->visit(route('care.center.work.schedule.index'))
-                ->dontSee("delete-window-{$window->id}");
+                ->assertDontSee("delete-window-{$window->id}");
 
-            $this->seeInDatabase('nurse_contact_window', [
+            $this->assertDatabaseHas('nurse_contact_window', [
                 'nurse_info_id' => $nurse->nurseInfo->id,
                 'id'            => $window->id,
             ]);

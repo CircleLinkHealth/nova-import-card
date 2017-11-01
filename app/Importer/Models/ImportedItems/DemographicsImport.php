@@ -52,5 +52,4 @@ class DemographicsImport extends Model implements Transformable
     {
         return $this->belongsTo(User::class, 'provider_id');
     }
-
 }

@@ -2,7 +2,6 @@
 
 namespace App\CLH\CCD\ImportRoutine;
 
-
 trait ExecutesImportRoutine
 {
     public static function import($ccd, $validationStrategy, $parsingStrategy, $storageStrategy = null, $blogId = null, $userId = null)
@@ -12,19 +11,20 @@ trait ExecutesImportRoutine
         $storage = null;
         $items = null;
 
-        if (! isset($parsingStrategy) || ! isset($storageStrategy)) abort('400', 'Parsing Strategy and Storage Strategy are required');
+        if (! isset($parsingStrategy) || ! isset($storageStrategy)) {
+            abort('400', 'Parsing Strategy and Storage Strategy are required');
+        }
 
-        if ( class_exists( $validationStrategy ) ) {
+        if (class_exists($validationStrategy)) {
             $validator = new $validationStrategy();
         }
-        if ( class_exists( $parsingStrategy ) ) {
+        if (class_exists($parsingStrategy)) {
             $parser = new $parsingStrategy();
-            $items = $parser->parse( $ccd, $validator );
+            $items = $parser->parse($ccd, $validator);
         }
-        if ( class_exists( $storageStrategy ) ) {
+        if (class_exists($storageStrategy)) {
             $storage = new $storageStrategy( $blogId, $userId );
-            $storage->import( $items );
+            $storage->import($items);
         }
     }
-
 }

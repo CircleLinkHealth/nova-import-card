@@ -34,5 +34,4 @@ class AddForeignKeysToCpmBiometricsUsersTable extends Migration
             $table->dropForeign('cpm_biometrics_users_patient_id_foreign');
         });
     }
-
 }

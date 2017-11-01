@@ -41,8 +41,6 @@ class PhiMail
             $this->connector = new PhiMailConnector($phiMailServer, $phiMailPort);
             $this->connector->authenticateUser($phiMailUser, $phiMailPass);
 
-            sendSlackMessage('#background-tasks', "Connected to EMR Direct.");
-
             return true;
         } catch (\Exception $e) {
             $this->handleException($e);
@@ -133,13 +131,11 @@ class PhiMail
 
                 sendSlackMessage('#background-tasks', "Send to {$sr->recipient}: $status \n");
             }
-
         } catch (\Exception $e) {
             $this->handleException($e);
         }
 
         return $srList ?? false;
-
     }
 
     public function loadFile(
@@ -298,8 +294,9 @@ class PhiMail
 
         $link = route('view.files.ready.to.import');
 
-        sendSlackMessage('#ccd-file-status',
-            "We received {$numberOfCcds} CCDs from EMR Direct. \n Please visit {$link} to import.");
+        sendSlackMessage(
+            '#ccd-file-status',
+            "We received {$numberOfCcds} CCDs from EMR Direct. \n Please visit {$link} to import."
+        );
     }
-
 }

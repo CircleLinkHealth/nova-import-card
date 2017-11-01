@@ -37,5 +37,4 @@ class CreateCpmProblemsActivateCpmBiometricsTable extends Migration
     {
         Schema::drop('cpm_problems_activate_cpm_biometrics');
     }
-
 }

@@ -2,14 +2,10 @@
 
 use Illuminate\Database\Eloquent\Model;
 
-class CPRulesQuestionSets extends Model {
+class CPRulesQuestionSets extends Model
+{
 
-    /**
-     * The connection name for the model.
-     *
-     * @var string
-     */
-    protected $connection = 'mysql_no_prefix';
+
 
     /**
      * The database table used by the model.
@@ -43,5 +39,4 @@ class CPRulesQuestionSets extends Model {
     {
         return $this->hasOne('App\CPRulesAnswers', 'qid', 'qid');
     }
-
 }

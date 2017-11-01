@@ -16,8 +16,13 @@ class ViewComposerServiceProvider extends ServiceProvider
     public function boot()
     {
         View::composer('*', function ($view) {
-            if ($view->patient && is_a($view->patient, User::class) && $view->patient->hasProblem('Diabetes') && !$view->patient->hasProblem('Diabetes Type 1') && !$view->patient->hasProblem('Diabetes Type 2')) {
-
+            if ($view->patient
+                && is_a($view->patient, User::class)
+                && $view->patient->hasProblem('Diabetes')
+                && !$view->patient->hasProblem('Diabetes Type 1')
+                && !$view->patient->hasProblem('Diabetes Type 2')
+                && $view->patient->primaryPractice->name != 'northeast-georgia-diagnostic-clinic'
+            ) {
                 $view->with('showBanner', true);
             }
         });

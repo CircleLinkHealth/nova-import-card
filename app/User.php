@@ -37,7 +37,6 @@ use Illuminate\Notifications\Notifiable;
 use Illuminate\Support\Collection;
 use Zizaco\Entrust\Traits\EntrustUserTrait;
 
-
 class User extends Model implements AuthenticatableContract, CanResetPasswordContract, Serviceable
 {
     const FORWARD_ALERTS_IN_ADDITION_TO_PROVIDER = 'forward_alerts_in_addition_to_provider';
@@ -129,13 +128,11 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
         parent::boot();
 
         static::creating(function ($user) {
-
         });
 
         self::saved(function ($user) {
 
 //            $user->load('roles');
-
         });
 
         static::deleting(function ($user) {
@@ -194,7 +191,6 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
     {
 
         return $this->hasOne(CareAmbassador::class);
-
     }
 
     /**
@@ -318,8 +314,12 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
 
     public function careItems()
     {
-        return $this->belongsToMany('App\CareItem', 'care_item_user_values', 'user_id',
-            'care_item_id')->withPivot('value');
+        return $this->belongsToMany(
+            'App\CareItem',
+            'care_item_user_values',
+            'user_id',
+            'care_item_id'
+        )->withPivot('value');
     }
 
     public function activities()
@@ -398,7 +398,7 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
     public function viewableProgramIds(): array
     {
         return $this->hasRole('administrator')
-            ? Practice::active()->pluck('id')->all()
+            ? Practice::active()->get()->pluck('id')->all()
             : $this->practices
                 ->pluck('id')
                 ->all();
@@ -512,7 +512,6 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
     }
 
     public function primaryProgramName()
-
     {
         return Practice::find($this->primaryProgramId())->display_name;
     }
@@ -524,36 +523,6 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
         return (isset($userConfig[$key]))
             ? $userConfig[$key]
             : '';
-    }
-
-    public function setUserConfigByKey(
-        $key,
-        $value
-    ) {
-        $configKey = 'wp_' . $this->primaryProgramId() . '_user_config';
-        $userConfig = UserMeta::where('user_id', $this->id)->where('meta_key', $configKey)->first();
-        if (empty($userConfig)) {
-            $userConfig = new UserMeta;
-            $userConfig->meta_key = $configKey;
-            $userConfig->meta_value = serialize([]);
-            $userConfig->user_id = $this->id;
-            $userConfig->save();
-            $userConfigArray = [];
-        } else {
-            $userConfigArray = unserialize($userConfig['meta_value']);
-        }
-
-        // serialize value if needed
-        /*
-        if(is_array($value)) {
-            $value = serialize($value);
-        }
-        */
-        $userConfigArray[$key] = $value;
-        $userConfig->meta_value = serialize($userConfigArray);
-        $userConfig->save();
-
-        return true;
     }
 
     public function setUserAttributeByKey(
@@ -1200,11 +1169,15 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
 
             return false; // must be array
         }
-        $this->careTeamMembers()->where('type', 'member')->whereNotIn('member_user_id',
-            $memberUserIds)->delete();
+        $this->careTeamMembers()->where('type', 'member')->whereNotIn(
+            'member_user_id',
+            $memberUserIds
+        )->delete();
         foreach ($memberUserIds as $memberUserId) {
-            $careTeamMember = $this->careTeamMembers()->where('type', 'member')->where('member_user_id',
-                $memberUserId)->first();
+            $careTeamMember = $this->careTeamMembers()->where('type', 'member')->where(
+                'member_user_id',
+                $memberUserId
+            )->first();
             if ($careTeamMember) {
                 $careTeamMember->member_user_id = $memberUserId;
             } else {
@@ -1302,8 +1275,10 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
 
             return false; // must be array
         }
-        $this->careTeamMembers()->where('alert', '=', true)->whereNotIn('member_user_id',
-            $memberUserIds)->delete();
+        $this->careTeamMembers()->where('alert', '=', true)->whereNotIn(
+            'member_user_id',
+            $memberUserIds
+        )->delete();
         foreach ($memberUserIds as $memberUserId) {
             $careTeamMember = $this->careTeamMembers()->where('alert', '=', false)
                 ->where('member_user_id', $memberUserId)
@@ -1799,7 +1774,6 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
         $user->agentEmail = 'secret@agent.net';
         $user->agentRelationship = 'SA';
         $user->save();
-
     }
 
     public function createNewUser(
@@ -1872,7 +1846,6 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
     {
 
         return (in_array($this->roles[0]->name, Role::CCM_TIME_ROLES));
-
     }
 
 // user data scrambler
@@ -1951,7 +1924,7 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
         $user
     ) {
         $viewablePractices = $user->hasRole('administrator')
-            ? Practice::active()->pluck('id')->all()
+            ? Practice::active()->get()->pluck('id')->all()
             : $user->viewableProgramIds();
 
         return $query->whereHas('practices', function ($q) use (
@@ -2116,7 +2089,7 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
      */
     public function getBillingProviderNameAttribute()
     {
-        $billingProvider = $this->billingProvider();
+        $billingProvider = $this->billingProviderUser();
 
         return $billingProvider
             ? $billingProvider->fullName
@@ -2124,17 +2097,27 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
     }
 
     /**
-     * Get billing provider.
+     * Get billing provider User.
      *
      * @return User
      */
-    public function billingProvider(): User
+    public function billingProviderUser(): User
     {
         $billingProvider = $this->careTeamMembers
             ->where('type', 'billing_provider')
             ->first();
 
         return $billingProvider->user ?? new User();
+    }
+
+    /**
+     * Get billing provider.
+     *
+     * @return User
+     */
+    public function billingProvider()
+    {
+        return $this->careTeamMembers()->where('type', '=', 'billing_provider');
     }
 
     public function scopeHasBillingProvider(
@@ -2483,7 +2466,6 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
 
         if ($exists) {
             return true;
-
         }
 
         return false;

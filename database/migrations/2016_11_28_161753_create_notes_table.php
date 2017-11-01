@@ -36,5 +36,4 @@ class CreateNotesTable extends Migration
     {
         Schema::drop('notes');
     }
-
 }

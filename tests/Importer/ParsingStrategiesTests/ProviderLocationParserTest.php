@@ -1,5 +1,9 @@
 <?php
 
+namespace Tests\Importer\ParsingStrategiesTests;
+
+use Tests\TestCase;
+
 /**
  * Created by PhpStorm.
  * User: michalis
@@ -20,15 +24,13 @@ class ProviderLocationParserTest extends TestCase
     {
         //Assuming Location01 exists
         $this->assertArraySubset(
-            [\App\Location::whereName( 'Location02' )->first()],
-            $this->getParser()->parse( json_decode( $this->workingLocation ) )
+            [\App\Location::whereName('Location02')->first()],
+            $this->getParser()->parse(json_decode($this->workingLocation))
         );
     }
 
     public function test_null_location_returns_false()
     {
-        $this->assertFalse( $this->getParser()->parse( json_decode( $this->nullLocation ) ) );
+        $this->assertFalse($this->getParser()->parse(json_decode($this->nullLocation)));
     }
-
-
 }

@@ -38,5 +38,4 @@ class CreateCcdInsurancePoliciesTable extends Migration
     {
         Schema::drop('ccd_insurance_policies');
     }
-
 }

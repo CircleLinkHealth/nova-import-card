@@ -8,7 +8,6 @@
 
 namespace App\Contracts\Importer\ImportedMedicalRecord;
 
-
 use App\CarePlan;
 use App\Contracts\Importer\MedicalRecord\MedicalRecord;
 use App\Importer\Models\ImportedItems\DemographicsImport;
@@ -54,5 +53,4 @@ interface ImportedMedicalRecord
     public function createCarePlan() : CarePlan;
 
     public function reimport() : self;
-
 }

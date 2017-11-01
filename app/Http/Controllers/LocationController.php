@@ -165,5 +165,4 @@ class LocationController extends Controller
 
         return 'deleted ' . $id;
     }
-
 }

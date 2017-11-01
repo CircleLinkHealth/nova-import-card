@@ -30,5 +30,4 @@ class AddForeignKeysToCpmBloodSugarsTable extends Migration
             $table->dropForeign('cpm_blood_sugars_patient_id_foreign');
         });
     }
-
 }

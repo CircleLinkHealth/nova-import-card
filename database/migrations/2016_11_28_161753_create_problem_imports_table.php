@@ -40,5 +40,4 @@ class CreateProblemImportsTable extends Migration
     {
         Schema::drop('problem_imports');
     }
-
 }

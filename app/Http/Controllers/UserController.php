@@ -122,7 +122,6 @@ class UserController extends Controller
             'invalidUsers',
             'queryString',
         ]));
-
     }
 
 
@@ -144,8 +143,10 @@ class UserController extends Controller
             // Item Categories
             $sections[] = $item->section_text;
             // Sub Items
-            $subItems[$item->section_text] = CPRulesPCP::find($item->pcp_id)->items()->where('items_parent',
-                '0')->where('items_text', '!=', '')->get();
+            $subItems[$item->section_text] = CPRulesPCP::find($item->pcp_id)->items()->where(
+                'items_parent',
+                '0'
+            )->where('items_text', '!=', '')->get();
         }//dd($subItems['Diagnosis / Problems to Monitor'][0]->items_id);
 
         //Array of days
@@ -192,7 +193,6 @@ class UserController extends Controller
             'providers' => $providers,
             'offices'   => $locations,
         ]);
-
     }
 
     public function storeQuickPatient()
@@ -204,8 +204,10 @@ class UserController extends Controller
 
         // create participant here
 
-        return redirect()->route('admin.users.edit', [$wpUser->id])->with('messages',
-            ['successfully created new user - ' . $wpUser->id]);
+        return redirect()->route('admin.users.edit', [$wpUser->id])->with(
+            'messages',
+            ['successfully created new user - ' . $wpUser->id]
+        );
     }
 
     /**
@@ -343,9 +345,10 @@ class UserController extends Controller
         }
 
 
-        return redirect()->route('admin.users.edit', [$wpUser->id])->with('messages',
-            ['successfully created new user - ' . $wpUser->id]);
-
+        return redirect()->route('admin.users.edit', [$wpUser->id])->with(
+            'messages',
+            ['successfully created new user - ' . $wpUser->id]
+        );
     }
 
     /**

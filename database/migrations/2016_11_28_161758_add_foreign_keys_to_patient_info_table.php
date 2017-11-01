@@ -34,5 +34,4 @@ class AddForeignKeysToPatientInfoTable extends Migration
             $table->dropForeign('patient_info_user_id_foreign');
         });
     }
-
 }

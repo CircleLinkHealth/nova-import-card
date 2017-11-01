@@ -34,5 +34,4 @@ class CreateLvApiLogsTable extends Migration
     {
         Schema::drop('lv_api_logs');
     }
-
 }

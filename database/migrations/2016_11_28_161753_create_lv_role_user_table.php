@@ -33,5 +33,4 @@ class CreateLvRoleUserTable extends Migration
     {
         Schema::drop('lv_role_user');
     }
-
 }

@@ -29,6 +29,16 @@ class Handler extends ExceptionHandler
     ];
 
     /**
+     * A list of the inputs that are never flashed for validation exceptions.
+     *
+     * @var array
+     */
+    protected $dontFlash = [
+        'password',
+        'password_confirmation',
+    ];
+
+    /**
      * Report or log an exception.
      *
      * This is a great spot to send exceptions to Sentry, Bugsnag, etc.
@@ -39,6 +49,8 @@ class Handler extends ExceptionHandler
      */
     public function report(Exception $e)
     {
+        parent::report($e);
+
         if ($e instanceof \Illuminate\Database\QueryException) {
             $errorCode = $e->errorInfo[1];
             if ($errorCode == 1062) {
@@ -57,7 +69,6 @@ class Handler extends ExceptionHandler
         ) {
             //Check to see if LERN is installed otherwise you will not get an exception.
             if (app()->bound("lern")) {
-
                 //
                 LERN::pushHandler(
                     new \Monolog\Handler\SlackWebhookHandler(
@@ -66,7 +77,8 @@ class Handler extends ExceptionHandler
                         config('lern.notify.slack.username'),
                         true,
                         null,
-                        false)
+                        false
+                    )
                 );
 
                 app()->make("lern")->handle($e); //Record and Notify the Exception
@@ -78,8 +90,6 @@ class Handler extends ExceptionHandler
                 */
             }
         }
-
-        return parent::report($e);
     }
 
     /**
@@ -141,5 +151,4 @@ class Handler extends ExceptionHandler
 
         return redirect()->guest('login');
     }
-
 }

@@ -26,7 +26,6 @@ class CallController extends Controller
         $calls = Call::where('status', 'scheduled')->get();
 
         return $calls;
-
     }
 
     public function create(Request $request)
@@ -47,12 +46,14 @@ class CallController extends Controller
             ]), 422);
         }
 
-        $input = $request->only('inbound_cpm_id',
+        $input = $request->only(
+            'inbound_cpm_id',
             'outbound_cpm_id',
             'scheduled_date',
             'window_start',
             'window_end',
-            'attempt_note');
+            'attempt_note'
+        );
 
         // validate patient doesnt already have a scheduled call
         $patient = User::find($input['inbound_cpm_id']);
@@ -110,8 +111,7 @@ class CallController extends Controller
 
         //We are storing the current caller as the next scheduled call's outbound cpm_id
         $this->scheduler->storeScheduledCall(
-            $patientId
-            ,
+            $patientId,
             $window_start,
             $window_end,
             $input['date'],
@@ -120,18 +120,15 @@ class CallController extends Controller
             isset($input['attempt_note'])
                 ? $input['attempt_note']
                 : ''
-
         );
 
 
-        $patient = Patient::where('user_id', intval($patientId
-        ))->first();
+        $patient = Patient::where('user_id', intval($patientId))->first();
 
         return redirect()->route('patient.note.index', [
             'patientId' => $patientId,
         ])
             ->with('messages', ['Successfully Created Note']);
-
     }
 
     public function show($id)
@@ -149,9 +146,11 @@ class CallController extends Controller
     public function update(Request $request)
     {
 
-        $data = $request->only('callId',
+        $data = $request->only(
+            'callId',
             'columnName',
-            'value');
+            'value'
+        );
 
         // VALIDATION
         if (empty($data['callId'])) {
@@ -169,11 +168,9 @@ class CallController extends Controller
 
         // for null outbound_cpm_id
         if ($data['columnName'] == 'outbound_cpm_id' && (empty($data['value']) || strtolower($data['value']) == 'unassigned')) {
-
             $call->scheduler = Auth::user()->id;
             $col = $data['columnName'];
             $call->$col = null;
-
         } else {
             if ($data['columnName'] == 'attempt_note' && (empty($data['value']) || strtolower($data['value']) == 'add text')) {
                 $call->attempt_note = '';
@@ -197,9 +194,10 @@ class CallController extends Controller
 
         $call->save();
 
-        return response("successfully updated call " . $data['columnName'] . "=" . $data['value'] . " - CallId=" . $data['callId'],
-            201);
-
+        return response(
+            "successfully updated call " . $data['columnName'] . "=" . $data['value'] . " - CallId=" . $data['callId'],
+            201
+        );
     }
 
     public function import(Request $request)
@@ -216,5 +214,4 @@ class CallController extends Controller
             }
         }
     }
-
 }

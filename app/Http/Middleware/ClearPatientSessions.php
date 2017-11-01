@@ -6,7 +6,6 @@ use App\Models\PatientSession;
 use Closure;
 use Illuminate\Http\Request;
 
-
 class ClearPatientSessions
 {
     /**
@@ -42,8 +41,10 @@ class ClearPatientSessions
         $clearPatientSessions = preg_match('/(?<![0-9])[0-9]{2,4}(?![0-9])/', $request->getRequestUri()) == 0;
 
         if (!empty($patientId)) {
-            $clearPatientSessions = !str_contains($request->getRequestUri(),
-                $patientId)//    && str_contains(\URL::previous(), $patientId)
+            $clearPatientSessions = !str_contains(
+                $request->getRequestUri(),
+                $patientId
+            )//    && str_contains(\URL::previous(), $patientId)
             ;
         }
 

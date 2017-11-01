@@ -8,12 +8,7 @@ class PageTimer extends Model
 {
     use DateScopesTrait, SoftDeletes;
 
-    /**
-     * The connection name for the model.
-     *
-     * @var string
-     */
-    protected $connection = 'mysql_no_prefix';
+
 
     /**
      * The database table used by the model.
@@ -55,11 +50,6 @@ class PageTimer extends Model
     public function patient()
     {
         return $this->belongsTo('App\User', 'patient_id', 'id');
-    }
-
-    public function rule()
-    {
-        return $this->belongsTo('App\Rules');
     }
 
     public function activities()

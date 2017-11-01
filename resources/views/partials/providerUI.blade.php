@@ -88,7 +88,7 @@
 
     @yield('content')
 
-    @if(isset($showBanner))
+    @if(isset($showBanner) && !isset($isPdf))
         @include('partials.providerUI.notification-banner')
     @endif
 
@@ -110,13 +110,18 @@
     <script src='https://cdn.polyfill.io/v2/polyfill.min.js'></script>
 @endif
 
-<script src="{{asset('compiled/js/app-provider-ui.js')}}"></script>
+<script type="text/javascript" src="{{asset('compiled/js/app-provider-ui.js')}}"></script>
 <script type="text/javascript" src="{{ asset('compiled/js/issue-688.js') }}"></script>
 
 @include('partials.searchjs')
 @include('partials.providerUItimer')
 
 @stack('scripts')
+<script>
+    $(function () {
+        $('.selectpicker').selectpicker('refresh')
+    })
+</script>
 @endif
 </body>
 

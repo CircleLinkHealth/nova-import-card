@@ -8,9 +8,17 @@
     </div>
     <div class="col-sm-12">
         @if(!$patient->care_team_receives_alerts->isEmpty())
-            <input type="checkbox" id="notify-careteam" name="notify_careteam" value="1">
+            <input type="checkbox" id="notify-careteam" name="notify_careteam" @empty($patient->primaryPractice->cpmSettings()->notesChannels()) disabled="disabled" @endempty value="1">
             <label for="notify-careteam"><span> </span>Provider/CareTeam
-                (Notifies: @foreach($patient->care_team_receives_alerts as $carePerson){{ ($loop->first ? '' : ', ') . $carePerson->fullName }}@endforeach)
+                (
+                    @empty($patient->primaryPractice->cpmSettings()->notesChannels())
+                    <b>This Practice has <em>Forwarded Note Notifications</em> turned off. Please notify CirleLink support.</b>
+                    @else
+                        <b>Notifies:</b>
+                        @foreach($patient->care_team_receives_alerts as $carePerson){{ ($loop->first ? '' : ', ') . ($loop->last && $loop->iteration > 1 ? 'and ' : '') . $carePerson->fullName }}@endforeach
+                        <b><u>via</u></b> @foreach($patient->primaryPractice->cpmSettings()->notesChannels() as $channel){{ ($loop->first ? '' : ', ') . ($loop->last && $loop->iteration > 1 ? 'and ' : '') . $channel }}@endforeach
+                    @endempty
+                )
             </label>
         @else
             <p style="color: red;">

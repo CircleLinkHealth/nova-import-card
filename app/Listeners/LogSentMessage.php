@@ -63,6 +63,5 @@ class LogSentMessage
 
             sendSlackMessage('#dev-chat', $message);
         }
-
     }
 }

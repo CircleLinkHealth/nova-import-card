@@ -3,15 +3,15 @@
 use App\CPRulesItem;
 use App\CPRulesPCP;
 
-class DBCleanup {
+class DBCleanup
+{
 
     public static function nukeItemsAndTheirMeta($itemText)
     {
         $rulesItem = CPRulesItem::whereItemsText($itemText)->get();
 
-        foreach($rulesItem as $item) {
+        foreach ($rulesItem as $item) {
             $item->delete();
         }
     }
-
 }

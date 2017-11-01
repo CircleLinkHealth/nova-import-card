@@ -2,7 +2,6 @@
 
 namespace App\Traits\Relationships;
 
-
 use App\Models\CCD\CcdVendor;
 
 trait BelongsToVendor

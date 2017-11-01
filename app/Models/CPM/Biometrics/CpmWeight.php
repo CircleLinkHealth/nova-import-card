@@ -38,7 +38,7 @@ class CpmWeight extends Model implements Biometric
             ? [
                 'starting' => $biometric->starting,
                 'target' => $biometric->target
-            ] 
+            ]
             : false;
     }
 }

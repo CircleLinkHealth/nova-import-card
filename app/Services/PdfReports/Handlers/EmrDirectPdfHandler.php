@@ -8,7 +8,6 @@
 
 namespace App\Services\PdfReports\Handlers;
 
-
 use App\Contracts\PdfReport;
 use App\Contracts\PdfReportHandler;
 use App\Location;
@@ -54,7 +53,7 @@ class EmrDirectPdfHandler implements PdfReportHandler
 
         $pathToPdf = $report->toPdf();
 
-        $fileName = $report->patient->fullName . ' ' . Carbon::now()->toDateTimeString();
+        $fileName = $report->patient->fullName . ' ' . Carbon::now()->toDateTimeString() . '.pdf';
 
         $this->phiMail->send($location->emr_direct_address, $pathToPdf, $fileName);
     }

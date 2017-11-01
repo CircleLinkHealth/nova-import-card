@@ -17,7 +17,6 @@ class AddSentAtAndDobToEnrollees extends Migration
 
             $table->date('dob')->after('phone')->nullable();
             $table->date('invite_sent_at')->after('preferred_window')->nullable();
-
         });
     }
 
@@ -32,7 +31,6 @@ class AddSentAtAndDobToEnrollees extends Migration
 
             $table->dropColumn('dob');
             $table->dropColumn('invite_sent_at');
-
         });
     }
 }

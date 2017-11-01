@@ -17,7 +17,6 @@ class AddCodesToMonthlyBilling extends Migration
 
             $table->text('billable_problem1_code')->after('billable_problem1');
             $table->text('billable_problem2_code')->after('billable_problem2');
-
         });
     }
 
@@ -32,7 +31,6 @@ class AddCodesToMonthlyBilling extends Migration
 
             $table->dropColumn('billable_problem1_code');
             $table->dropColumn('billable_problem2_code');
-
         });
     }
 }

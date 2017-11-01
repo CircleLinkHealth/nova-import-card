@@ -14,12 +14,18 @@ class AddForeignKeysToCpmProblemsActivateCpmSymptomsTable extends Migration
     public function up()
     {
         Schema::table('cpm_problems_activate_cpm_symptoms', function (Blueprint $table) {
-            $table->foreign('cpm_problem_id',
-                'cpm_problem_problem_activates_symptom_foreign')->references('id')->on('cpm_problems')->onUpdate('CASCADE')->onDelete('CASCADE');
-            $table->foreign('cpm_symptom_id',
-                'cpm_symptom_problem_activates_symptom_foreign')->references('id')->on('cpm_symptoms')->onUpdate('CASCADE')->onDelete('CASCADE');
-            $table->foreign('care_plan_template_id',
-                'cpt_problem_activates_symptom_foreign')->references('id')->on('care_plan_templates')->onUpdate('CASCADE')->onDelete('CASCADE');
+            $table->foreign(
+                'cpm_problem_id',
+                'cpm_problem_problem_activates_symptom_foreign'
+            )->references('id')->on('cpm_problems')->onUpdate('CASCADE')->onDelete('CASCADE');
+            $table->foreign(
+                'cpm_symptom_id',
+                'cpm_symptom_problem_activates_symptom_foreign'
+            )->references('id')->on('cpm_symptoms')->onUpdate('CASCADE')->onDelete('CASCADE');
+            $table->foreign(
+                'care_plan_template_id',
+                'cpt_problem_activates_symptom_foreign'
+            )->references('id')->on('care_plan_templates')->onUpdate('CASCADE')->onDelete('CASCADE');
         });
     }
 
@@ -37,5 +43,4 @@ class AddForeignKeysToCpmProblemsActivateCpmSymptomsTable extends Migration
             $table->dropForeign('cpt_problem_activates_symptom_foreign');
         });
     }
-
 }

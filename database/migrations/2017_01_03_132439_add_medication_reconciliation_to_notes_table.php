@@ -16,7 +16,6 @@ class AddMedicationReconciliationToNotesTable extends Migration
         Schema::table('notes', function (Blueprint $table) {
 
             $table->boolean('did_medication_recon')->after('isTCM');
-
         });
     }
 
@@ -30,7 +29,6 @@ class AddMedicationReconciliationToNotesTable extends Migration
         Schema::table('notes', function (Blueprint $table) {
 
             $table->dropColumn('did_medication_recon');
-
         });
     }
 }

@@ -30,5 +30,4 @@ class AddForeignKeysToQAImportSummariesTable extends Migration
             $table->dropForeign('q_a_import_summaries_ccda_id_foreign');
         });
     }
-
 }

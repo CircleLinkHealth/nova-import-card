@@ -76,13 +76,13 @@ class MonthlyBillingReportsController extends Controller
                 'patientInfo',
             ])
                 ->whereHas('roles', function ($q) use
-                (
+                    (
                     $patientRole
                 ) {
                     $q->where('name', '=', $patientRole->name);
                 })
                 ->whereHas('patientInfo', function ($query) use
-                (
+                    (
                     $ccmStatuses
                 ) {
                     $query->whereIn('ccm_status', $ccmStatuses);
@@ -94,11 +94,10 @@ class MonthlyBillingReportsController extends Controller
             $problems = [];
 
             foreach ($patients as $patient) {
-
                 $billableCpmProblems = [];
 
                 $calls = Call::where(function ($q) use
-                (
+                    (
                     $patient
                 ) {
                     $q->where('inbound_cpm_id', $patient->id)
@@ -120,7 +119,6 @@ class MonthlyBillingReportsController extends Controller
                 //for patients whose ccd problems were not logged
                 //we're gonna pick their cpm problems
                 if (count($patient->ccdProblems) < 1) {
-
                     $patientCpmProblems = $patient->cpmProblems;
 
                     //get the other conditions misc. we need its id
@@ -141,7 +139,6 @@ class MonthlyBillingReportsController extends Controller
                     //to a line in the other conditions field.
                     //may god be with us on this quest
                     foreach ($patientCpmProblems as $cpmProblem) {
-
                         if (empty($instruction)) {
                             //add it to billable
                             $billableCpmProblems[] = $cpmProblem;
@@ -159,11 +156,13 @@ class MonthlyBillingReportsController extends Controller
                             }
 
                             if ($strPos = strpos($instruction->name, $keyword)) {
-
                                 $break = strpos($instruction->name, ';', $strPos);
 
-                                $otherConditionsText[$cpmProblem->id] = substr($instruction->name, $strPos,
-                                    $break - $strPos);
+                                $otherConditionsText[$cpmProblem->id] = substr(
+                                    $instruction->name,
+                                    $strPos,
+                                    $break - $strPos
+                                );
 
                                 //add it to billable
                                 $billableCpmProblems[] = $cpmProblem;
@@ -184,11 +183,13 @@ class MonthlyBillingReportsController extends Controller
                             }
 
                             if ($strPos = strpos($instruction->name, $keyword)) {
-
                                 $break = strpos($instruction->name, ';', $strPos);
 
-                                $otherConditionsText[$cpmProblem->id] = substr($instruction->name, $strPos,
-                                    $break - $strPos);
+                                $otherConditionsText[$cpmProblem->id] = substr(
+                                    $instruction->name,
+                                    $strPos,
+                                    $break - $strPos
+                                );
 
                                 //add it to billable
                                 $billableCpmProblems[] = $cpmProblem;
@@ -294,11 +295,10 @@ class MonthlyBillingReportsController extends Controller
                 'month',
                 'year',
             ]);
-
         }
 
         Excel::create("Billing Report $direction $ccmTimeMin minutes - $month/$year", function ($excel) use
-        (
+            (
             $worksheets
         ) {
 
@@ -312,7 +312,7 @@ class MonthlyBillingReportsController extends Controller
             }
 
             $excel->sheet('Master', function ($sheet) use
-            (
+                (
                 $masterList
             ) {
                 $sheet->fromArray(
@@ -320,7 +320,6 @@ class MonthlyBillingReportsController extends Controller
                 );
             });
             foreach ($worksheets as $worksheet) {
-
                 $sheetName = $worksheet['program']->name;
 
                 if (strlen($sheetName) > 31) {
@@ -328,7 +327,7 @@ class MonthlyBillingReportsController extends Controller
                 }
 
                 $excel->sheet("$sheetName", function ($sheet) use
-                (
+                    (
                     $worksheet
                 ) {
                     $sheet->fromArray(
@@ -337,7 +336,5 @@ class MonthlyBillingReportsController extends Controller
                 });
             }
         })->export('xls');
-
     }
-
 }

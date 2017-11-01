@@ -8,7 +8,6 @@
 
 namespace App\Services\CPM;
 
-
 use App\Contracts\Services\CpmModel;
 use App\User;
 

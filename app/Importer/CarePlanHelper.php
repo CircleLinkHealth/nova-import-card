@@ -2,7 +2,6 @@
 
 namespace App\Importer;
 
-
 use App\CarePerson;
 use App\CarePlan;
 use App\CLH\CCD\Importer\StorageStrategies\Biometrics\BloodPressure;
@@ -122,8 +121,7 @@ class CarePlanHelper
             $this->importedMedicalRecord->medical_record_type
         )->update([
                 'patient_id' => $this->user->id,
-            ]
-        );
+            ]);
 
         return $this;
     }
@@ -231,8 +229,12 @@ class CarePlanHelper
         }
 
 
-        PatientContactWindow::sync($this->patientInfo, $preferredCallDays, $preferredCallTimes['start'],
-            $preferredCallTimes['end']);
+        PatientContactWindow::sync(
+            $this->patientInfo,
+            $preferredCallDays,
+            $preferredCallTimes['start'],
+            $preferredCallTimes['end']
+        );
 
 
         return $this;

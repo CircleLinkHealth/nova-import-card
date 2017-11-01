@@ -3,12 +3,13 @@
 use App\Importer\Models\ItemLogs\AllergyLog;
 use Illuminate\Database\Eloquent\Model;
 
-class AllergyImport extends Model {
+class AllergyImport extends Model
+{
 
-	protected $guarded = [];
+    protected $guarded = [];
 
-	public function ccdLog()
-	{
+    public function ccdLog()
+    {
         return $this->belongsTo(AllergyLog::class);
-	}
+    }
 }

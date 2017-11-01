@@ -51,7 +51,6 @@ class PatientCareplanController extends Controller
             ->get();
 
         foreach ($patients as $patient) {
-
             $last_printed = $patient->careplan_last_printed;
 
             if ($last_printed) {
@@ -186,6 +185,17 @@ class PatientCareplanController extends Controller
                 return false;
             }
             try {
+                //HTML render to help us with debugging
+                if ($request->filled('render') && $request->input('render') == 'html') {
+                    return view('wpUsers.patient.multiview', [
+                        'careplans'    => [$user_id => $careplan],
+                        'isPdf'        => true,
+                        'letter'       => $letter,
+                        'problemNames' => $careplan['problem'],
+                        'careTeam'     => $user->careTeamMembers,
+                    ]);
+                }
+
                 // build pdf
                 $pdf = App::make('snappy.pdf.wrapper');
 //            leaving these here in case we need them
@@ -201,7 +211,10 @@ class PatientCareplanController extends Controller
                     'careTeam'     => $user->careTeamMembers,
                 ]);
                 $pdf->setOption('footer-center', 'Page [page]');
-                //$pdf->setOption('margin-top', '2');
+                $pdf->setOption('margin-top', '12');
+                $pdf->setOption('margin-left', '25');
+                $pdf->setOption('margin-bottom', '15');
+                $pdf->setOption('margin-right', '31.75'); //1.25 inches
 
                 $fileName = $storageDirectory . $prefix . '-PDF_' . str_random(40) . '.pdf';
                 $fileNameWithPath = base_path($fileName);
@@ -231,12 +244,15 @@ class PatientCareplanController extends Controller
 
         // merge to final file
         $mergedFileName = $this->merge_pages($pageFileNames, $datetimePrefix, $storageDirectory);
-        $mergedFileNameWithPath = $storageDirectory . $this->merge_pages($pageFileNames, $datetimePrefix,
-                $storageDirectory);
+        $mergedFileNameWithPath = $storageDirectory . $this->merge_pages(
+            $pageFileNames,
+            $datetimePrefix,
+            $storageDirectory
+        );
 
         //dd($mergedFileName . ' - PAGE COUNT: '.$this->count_pages(base_path($mergedFileNameWithPath)));
 
-        return Response::make(file_get_contents(base_path($mergedFileNameWithPath)), 200, [
+        return response(file_get_contents(base_path($mergedFileNameWithPath)), 200, [
             'Content-Type'        => 'application/pdf',
             'Content-Disposition' => 'inline; filename="' . $mergedFileName . '"',
         ]);
@@ -302,8 +318,10 @@ class PatientCareplanController extends Controller
         }
 
         // get program
-        $programs = Practice::whereIn('id', Auth::user()->viewableProgramIds())->pluck('display_name',
-            'id')->all();
+        $programs = Practice::whereIn('id', Auth::user()->viewableProgramIds())->pluck(
+            'display_name',
+            'id'
+        )->all();
 
         // roles
         $patientRoleId = Role::where('name', '=', 'participant')->first();
@@ -475,8 +493,12 @@ class PatientCareplanController extends Controller
             //we are checking this $info->patientContactWindows()->exists()
             //in case we want to delete all call windows, since $params->get('days') will evaluate to null if we unselect all
             if ($params->get('days') || $info->patientContactWindows()->exists()) {
-                PatientContactWindow::sync($info, $params->get('days', []), $params->get('window_start'),
-                    $params->get('window_end'));
+                PatientContactWindow::sync(
+                    $info,
+                    $params->get('days', []),
+                    $params->get('window_start'),
+                    $params->get('window_end')
+                );
             }
             $info->save();
             // validate
@@ -487,8 +509,10 @@ class PatientCareplanController extends Controller
             $this->validate($request, $user->patient_rules, $messages);
             $userRepo->editUser($user, $params);
             if ($params->get('direction')) {
-                return redirect($params->get('direction'))->with('messages',
-                    ['Successfully updated patient demographics.']);
+                return redirect($params->get('direction'))->with(
+                    'messages',
+                    ['Successfully updated patient demographics.']
+                );
             }
 
             return redirect()->back()->with('messages', ['Successfully updated patient demographics.']);
@@ -521,8 +545,12 @@ class PatientCareplanController extends Controller
                 $info = $newUser->patientInfo;
                 //in case we want to delete all call windows
                 if ($params->get('days') || $info->patientContactWindows()->exists()) {
-                    PatientContactWindow::sync($info, $params->get('days', []), $params->get('window_start'),
-                        $params->get('window_end'));
+                    PatientContactWindow::sync(
+                        $info,
+                        $params->get('days', []),
+                        $params->get('window_start'),
+                        $params->get('window_end')
+                    );
                 }
                 $info->save();
 
@@ -532,8 +560,10 @@ class PatientCareplanController extends Controller
                 }
             }
 
-            return redirect(\URL::route('patient.demographics.show', ['patientId' => $newUser->id]))->with('messages',
-                ['Successfully created new patient with demographics.']);
+            return redirect(\URL::route('patient.demographics.show', ['patientId' => $newUser->id]))->with(
+                'messages',
+                ['Successfully created new patient with demographics.']
+            );
         }
     }
 
@@ -590,7 +620,6 @@ class PatientCareplanController extends Controller
                     $careTeamUsers[] = User::find($careTeamUserIds);
                 }
             }
-
         }
 
         // get providers
@@ -771,7 +800,6 @@ class PatientCareplanController extends Controller
         ]);
 
         return view('wpUsers.patient.careplan.careplan', array_merge($defaultViewVars, $pageViewVars));
-
     }
 
     /**
@@ -858,8 +886,11 @@ class PatientCareplanController extends Controller
             //blood sugar
             if (isset($biometricsValues['bloodSugar'])) {
                 if (!empty($biometricsValues['bloodSugar']['starting']) || !empty($biometricsValues['bloodSugar']['starting_a1c']) || !empty($biometricsValues['bloodSugar']['target'])) {
-                    $validator = \Validator::make($biometricsValues['bloodSugar'], CpmBloodSugar::$rules,
-                        CpmBloodSugar::$messages);
+                    $validator = \Validator::make(
+                        $biometricsValues['bloodSugar'],
+                        CpmBloodSugar::$rules,
+                        CpmBloodSugar::$messages
+                    );
 
                     if ($validator->fails()) {
                         return redirect()
@@ -878,8 +909,11 @@ class PatientCareplanController extends Controller
             //blood pressure
             if (isset($biometricsValues['bloodPressure'])) {
                 if (!empty($biometricsValues['bloodPressure']['starting']) || !empty($biometricsValues['bloodPressure']['target'])) {
-                    $validator = \Validator::make($biometricsValues['bloodPressure'], CpmBloodPressure::$rules,
-                        CpmBloodPressure::$messages);
+                    $validator = \Validator::make(
+                        $biometricsValues['bloodPressure'],
+                        CpmBloodPressure::$rules,
+                        CpmBloodPressure::$messages
+                    );
 
                     $validStarting = validateBloodPressureString($biometricsValues['bloodPressure']['starting']);
                     $validTarget = validateBloodPressureString($biometricsValues['bloodPressure']['target']);
@@ -906,8 +940,11 @@ class PatientCareplanController extends Controller
             //smoking
             if (isset($biometricsValues['smoking'])) {
                 if (!empty($biometricsValues['smoking']['starting']) || !empty($biometricsValues['smoking']['target'])) {
-                    $validator = \Validator::make($biometricsValues['smoking'], CpmSmoking::$rules,
-                        CpmSmoking::$messages);
+                    $validator = \Validator::make(
+                        $biometricsValues['smoking'],
+                        CpmSmoking::$rules,
+                        CpmSmoking::$messages
+                    );
 
                     if ($validator->fails()) {
                         return redirect()

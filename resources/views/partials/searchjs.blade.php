@@ -13,7 +13,9 @@
 
             pat.initialize();
 
-            $('#bloodhound .typeahead').typeahead({
+            let searchBox = $('#patient-search-text-box');
+
+            searchBox.typeahead({
                 hint: true,
                 highlight: true,
                 minLength: 3
@@ -31,7 +33,7 @@
                 }
             });
 
-            $('#bloodhound .typeahead').on('typeahead:selected', function (e, datum) {
+            searchBox.on('typeahead:selected', function (e, datum) {
                 window.location.href = datum.link;
                 datum.val(datum.name);
             });

@@ -59,6 +59,9 @@
         .table-striped > tbody > tr:nth-child(odd) > th {
             /* background-color: #eee; */
         }
+        .modal-dialog {
+            z-index: 1051 !important;
+        }
     </style>
     @stack('styles')
     <!-- Latest compiled and minified JavaScript -->
@@ -143,7 +146,6 @@
                                         Invoices</a></li>
                                 <li><a href="{{ URL::route('admin.reports.nurse.allocation', array()) }}">
                                         Allocation</a></li>
-
                             </ul>
                         </li>
                     @endif

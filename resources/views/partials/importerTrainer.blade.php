@@ -5,7 +5,7 @@
                 {{ csrf_field() }}
                 <div class="form-group">
                     <label for="medical_record">Just upload a CCDA to train the algo.</label>
-                    <input type="file" name="medical_record" id="medical_record" required>
+                    <input type="file" name="medical_records[]" id="medical_record" multiple required>
                     <p class="help-block">Hint: You can also drop a CSV file on this panel</p>
 
                     <input type="submit" class="btn btn-default funky-background" value="Train" name="submit">
