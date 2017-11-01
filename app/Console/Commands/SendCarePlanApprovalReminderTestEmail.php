@@ -45,5 +45,7 @@ class SendCarePlanApprovalReminderTestEmail extends Command
         $user = User::findOrFail($testerEmail);
 
         Mail::send(new CarePlanApprovalReminder($user));
+
+        $this->output->success('Email sent!');
     }
 }
