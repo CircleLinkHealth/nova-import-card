@@ -1378,17 +1378,6 @@ Route::group([], function () {
     ]);
 });
 
-/**********************************/
-//  CRON ROUTES
-/**********************************/
-Route::group(['prefix' => 'cron'], function () {
-    Route::get('/scheduler/{id}', function ($id) {
-        $msgScheduler = new \App\Services\MsgScheduler();
-        $msgScheduler->index($id);
-    });
-});
-
-
 Route::group([
     'prefix' => 'datatables',
 ], function () {

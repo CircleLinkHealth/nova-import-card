@@ -67,11 +67,6 @@ class AppServiceProvider extends ServiceProvider
         $this->app->alias('bugsnag.logger', \Psr\Log\LoggerInterface::class);
 
         $this->app->bind(
-            'Illuminate\Contracts\Auth\Registrar',
-            'App\Services\Registrar'
-        );
-
-        $this->app->bind(
             ActivityRepository::class,
             ActivityRepositoryEloquent::class
         );

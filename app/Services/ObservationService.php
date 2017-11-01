@@ -10,7 +10,15 @@ use DateTimeZone;
 class ObservationService
 {
 
-    public function storeObservationFromApp($userId, $parentId, $obsValue, $obsDate, $obsMessageId, $obsKey, $timezone, $source = 'manual_input', $isStartingObs = 'N')
+    public function storeObservationFromApp($userId,
+                                            $parentId,
+                                            $obsValue,
+                                            $obsDate,
+                                            $obsMessageId,
+                                            $obsKey,
+                                            $timezone,
+                                            $source = 'manual_input',
+                                            $isStartingObs = 'N')
     {
 
         // get user
@@ -20,8 +28,8 @@ class ObservationService
         $sequence = 0;
 
         // arrays to validate input
-        $from = ["_","y","n"];
-        $to = ["/","Y","N"];
+        $from = ["_", "y", "n"];
+        $to = ["/", "Y", "N"];
         $obsValue = str_replace($from, $to, $obsValue);
 
         // first and foremost, check if $isStartingObs, and if so, update and return true if already exists
@@ -40,6 +48,7 @@ class ObservationService
                     // update existing observation and return
                     $observation->obs_value = $obsValue;
                     $observation->save();
+
                     return true;
                 }
             }
@@ -74,7 +83,6 @@ class ObservationService
             $comment->save();
             $commentId = $comment->id;
         }
-
 
 
         // SAMPLES, compare
@@ -152,27 +160,6 @@ class ObservationService
             $newObservationMeta->save();
         }
 
-        //Hack to validate a1c.
-        //This code is gross
-        if ($obsKey == 'A1c') {
-            return true;
-        }
-
-        // Next Message Block
-        $msgChooser = new MsgChooser();
-
-        // skip responses for adherence
-        if ($obsKey == 'Adherence') {
-            return true;
-        }
-
-        if (!empty($commentId)) {
-            //$msgChooser->setAppAnswerAndNextMessage($userId, $commentId, $obsMessageId, $obsValue, false);
-            $msgChooser->setObsResponse($userId, $commentId, $obsMessageId, $obsValue, $obsDate, $sequence, false);
-            return true;
-        } else {
-            $msgChooser->setObsResponse($userId, $commentId, $obsMessageId, $obsValue, $obsDate, $sequence, false);
-            return true;
-        }
+        return true;
     }
 }
