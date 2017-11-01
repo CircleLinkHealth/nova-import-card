@@ -1,26 +1,27 @@
 <template>
   <div>
-    <v-client-table :data="tableData" :columns="columns" :options="options"></v-client-table>
-    <row-info :data="'hello'"></row-info>
+    <v-client-table :data="tableData" :columns="columns" :options="options">
+      <template slot="child_row" scope="props">
+        <div>Hello World</div>
+      </template>
+    </v-client-table>
+    
   </div>
 </template>
 
 <script>
   import { rootUrl } from '../../app.config.js'
-  import RowInfo from './comps/row-info'
 
   export default {
       name: 'CallMgmtApp',
-      components: {
-        'row-info': RowInfo
-      },
+      components: {},
       data() {
         return {
           columns: ['id', 'Nurse','Patient','Status', 'Practice', 'Last Call Status', 'Next Call', 'Call Time Start', 'Call Time End', 'Time Zone', 'Preferred Call Days', 'Last Call', 'CCM Time'],
           tableData: [],
           options: {
           // see the options API
-            childRow: 'row-info'
+            
           }
         }
       },
@@ -58,5 +59,16 @@
 </script>
 
 <style>
+  .VueTables__child-row-toggler {
+    display: block;
+    width: 20px;
+    height: 20px;
+    border: 1px solid #AAA;
+    border-radius: 50%;
+    cursor: pointer;
+  }
 
+  .VueTables__child-row-toggler.VueTables__child-row-toggler--open {
+    border-color: #0AF;
+  }
 </style>
