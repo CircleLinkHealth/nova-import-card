@@ -16,6 +16,7 @@ window.Vue.use(VueForm, {
 
 Vue.component('nurseDailyHours', require('./components/pages/work-schedule/daily-hours.vue'));
 Vue.component('importerTrainer', require('./components/Importer/trainer.vue'));
+Vue.component('select2', require('./components/src/select2'));
 
 window.App = new Vue({
     el: '#app',

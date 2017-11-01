@@ -41,9 +41,7 @@ class DetermineCcdaEnrollmentEligibility implements ShouldQueue
             return;
         }
 
-        $json = $this->ccda->json
-            ? json_decode($this->ccda->json)
-            : json_decode((new CCDImporterRepository())->toJson($this->ccda->xml));
+        $json = json_decode((new CCDImporterRepository())->toJson($this->ccda->xml));
 
         $demographics = collect($this->transformer->demographics($json->demographics));
         $problems = collect($json->problems)->map(function ($prob) {
