@@ -24,7 +24,7 @@ class CCMComplexToggleController extends Controller
 
         $patientRecord = $patient
             ->patientInfo
-            ->patientSummaries
+            ->monthlySummaries
             ->where('month_year', $date_index)->first();
 
         if (empty($patientRecord)) {

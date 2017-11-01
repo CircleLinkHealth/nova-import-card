@@ -94,7 +94,7 @@ class PracticeInvoiceGenerator
             $report = Patient::firstOrCreate([
                 'user_id' => $patient->id,
             ])
-                ->patientSummaries()
+                ->monthlySummaries()
                 ->where('month_year', $this->month->firstOfMonth()->toDateString())
                 ->first();
 
@@ -126,7 +126,7 @@ class PracticeInvoiceGenerator
     {
 
         $patients = Patient
-            ::whereHas('patientSummaries', function ($q) {
+            ::whereHas('monthlySummaries', function ($q) {
                 $q->where('month_year', $this->month->firstOfMonth()->toDateString())
                     ->where('approved', 1);
             })
@@ -153,7 +153,7 @@ class PracticeInvoiceGenerator
                 ])
                 ->sum('duration');
 
-            $report = $p->patientSummaries()
+            $report = $p->monthlySummaries()
                 ->where('month_year', $this->month->firstOfMonth()->toDateString())
                 ->first();
 
@@ -220,7 +220,7 @@ class PracticeInvoiceGenerator
                 ->where('performed_at', '<', $this->month->endOfMonth()->toDateTimeString())
                 ->sum('duration');
 
-            $summary = $user->patientInfo->patientSummaries()->where(
+            $summary = $user->patientInfo->monthlySummaries()->where(
                 'month_year',
                 $this->month->firstOfMonth()->toDateString()
             )->first();

@@ -6,6 +6,7 @@ use App\Call;
 use App\Http\Controllers\Controller;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
+use App\Http\Resources\Call as CallResource;
 
 class CallsController extends Controller
 {
@@ -23,7 +24,7 @@ class CallsController extends Controller
                 'inboundUser.billingProvider.user'         => function ($q) {
                     $q->select(['id', 'first_name', 'last_name', 'suffix', 'display_name']);
                 },
-                'inboundUser.patientInfo.patientSummaries' => function ($q) {
+                'inboundUser.patientInfo.monthlySummaries' => function ($q) {
                     $q->where('month_year', '=', Carbon::now()->format('Y-m-d'));
                 },
                 'inboundUser.primaryPractice',
@@ -32,7 +33,7 @@ class CallsController extends Controller
             ])
             ->paginate(50);
 
-        return response()->json($calls);
+        return CallResource::collection($calls);
     }
 
     /**

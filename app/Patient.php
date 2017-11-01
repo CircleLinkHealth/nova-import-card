@@ -91,7 +91,7 @@ class Patient extends Model
         return $this->hasMany(PatientContactWindow::class, 'patient_info_id', 'id');
     }
 
-    public function patientSummaries()
+    public function monthlySummaries()
     {
         return $this->hasMany(PatientMonthlySummary::class, 'patient_info_id', 'id');
     }
@@ -370,7 +370,7 @@ class Patient extends Model
 
     public function isCCMComplex()
     {
-        return $this->patientSummaries
+        return $this->monthlySummaries
                 ->where('month_year', Carbon::now()->firstOfMonth())
                 ->first()
                 ->is_ccm_complex ?? false;

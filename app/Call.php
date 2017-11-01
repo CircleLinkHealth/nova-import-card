@@ -11,6 +11,7 @@ class Call extends Model
     use \Venturecraft\Revisionable\RevisionableTrait;
 
     protected $table = 'calls';
+
     protected $fillable = [
         'note_id',
         'service',
@@ -56,7 +57,7 @@ class Call extends Model
 
         // get record for month
         $day_start = Carbon::parse(Carbon::now()->firstOfMonth())->format('Y-m-d');
-        $record = $user->patientInfo->patientSummaries()->where('month_year', $day_start)->first();
+        $record = $user->patientInfo->monthlySummaries()->where('month_year', $day_start)->first();
         if (!$record) {
             return 0;
         }
@@ -73,7 +74,7 @@ class Call extends Model
 
         // get record for month
         $day_start = Carbon::parse(Carbon::now()->firstOfMonth())->format('Y-m-d');
-        $record = $user->patientInfo->patientSummaries()->where('month_year', $day_start)->first();
+        $record = $user->patientInfo->monthlySummaries()->where('month_year', $day_start)->first();
         if (!$record) {
             return 0;
         }

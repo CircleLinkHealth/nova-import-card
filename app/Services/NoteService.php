@@ -445,7 +445,7 @@ class NoteService
         $date_index = Carbon::now()->firstOfMonth()->toDateString();
 
         $patientRecord = $patient
-            ->patientSummaries
+            ->monthlySummaries
             ->where('month_year', $date_index)->first();
 
         if (empty($patientRecord)) {

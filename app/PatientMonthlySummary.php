@@ -37,7 +37,7 @@ class PatientMonthlySummary extends Model
 
         // get record for month
         $day_start = Carbon::parse(Carbon::now()->firstOfMonth())->format('Y-m-d');
-        $record = $patient->patientSummaries()->where('month_year', $day_start)->first();
+        $record = $patient->monthlySummaries()->where('month_year', $day_start)->first();
 
         // set increment var
         $successful_call_increment = 0;
@@ -79,7 +79,7 @@ class PatientMonthlySummary extends Model
 
         // get record for month
         $day_start = Carbon::parse(Carbon::now()->firstOfMonth())->format('Y-m-d');
-        $record = $patient->patientSummaries()->where('month_year', $day_start)->first();
+        $record = $patient->monthlySummaries()->where('month_year', $day_start)->first();
 
         //Detemine whether to add to record or not
         if (!$record) {

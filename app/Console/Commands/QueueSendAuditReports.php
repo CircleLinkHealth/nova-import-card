@@ -42,7 +42,7 @@ class QueueSendAuditReports extends Command
     {
         $patients = User::ofType('participant')
             ->with('patientInfo')
-            ->with('patientInfo.patientSummaries')
+            ->with('patientInfo.monthlySummaries')
             ->with('primaryPractice')
             ->with('primaryPractice.settings')
             ->whereHas('primaryPractice', function ($query) {
@@ -52,7 +52,7 @@ class QueueSendAuditReports extends Command
                             ->orWhere('efax_audit_reports', '=', true);
                     });
             })
-            ->whereHas('patientInfo.patientSummaries', function ($query) {
+            ->whereHas('patientInfo.monthlySummaries', function ($query) {
                 $query->where('ccm_time', '>', 0)
                     ->where('month_year', Carbon::now()->subMonth()->firstOfMonth()->toDateString());
             })

@@ -51,7 +51,7 @@ class ApproveBillablePatientsReport
     {
 
         $this->patients = Patient
-            ::whereHas('patientSummaries', function ($q) {
+            ::whereHas('monthlySummaries', function ($q) {
                 $q
                     ->where('month_year', $this->month->toDateString())
                     ->where('no_of_successful_calls', '>', 0);
@@ -101,7 +101,7 @@ class ApproveBillablePatientsReport
                 continue;
             }
 
-            $report = $info->patientSummaries()
+            $report = $info->monthlySummaries()
                 ->where('month_year', $this->month->toDateString())->first();
 
             if ($report == null) {
