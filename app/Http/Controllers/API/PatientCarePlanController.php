@@ -94,7 +94,7 @@ class PatientCarePlanController extends Controller
             return "Could not locate file with name: $fileName";
         }
 
-        return Response::make(file_get_contents($path), 200, [
+        return response(file_get_contents($path), 200, [
             'Content-Type'        => 'application/pdf',
             'Content-Disposition' => 'inline; filename="' . $fileName . '"',
         ]);

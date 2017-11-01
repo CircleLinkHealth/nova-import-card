@@ -251,7 +251,7 @@ class PatientCareplanController extends Controller
 
         //dd($mergedFileName . ' - PAGE COUNT: '.$this->count_pages(base_path($mergedFileNameWithPath)));
 
-        return Response::make(file_get_contents(base_path($mergedFileNameWithPath)), 200, [
+        return response(file_get_contents(base_path($mergedFileNameWithPath)), 200, [
             'Content-Type'        => 'application/pdf',
             'Content-Disposition' => 'inline; filename="' . $mergedFileName . '"',
         ]);
