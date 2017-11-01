@@ -40,18 +40,18 @@ trait UserRedisCache
     public function cachedViews($start = 0, $end = -1)
     {
         return collect(Redis::lrange("user{$this->id}views", $start, $end))->map(function ($json) {
-            $array = json_decode($json, true);
+            $cache = json_decode($json, true);
 
             $now = Carbon::now();
-            $expires = Carbon::parse($array['expires_at']);
+            $expires = Carbon::parse($cache['expires_at']);
 
-            if ($now->greaterThan($expires)) {
+            if ($now->greaterThan($expires) || !\Cache::has($cache['key'])) {
                 Redis::lrem("user{$this->id}views", 0, $json);
 
                 return false;
             }
 
-            return $array;
+            return $cache;
         })->filter();
     }
 
