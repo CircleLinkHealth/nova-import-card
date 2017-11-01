@@ -398,7 +398,7 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
     public function viewableProgramIds(): array
     {
         return $this->hasRole('administrator')
-            ? Practice::active()->pluck('id')->all()
+            ? Practice::active()->get()->pluck('id')->all()
             : $this->practices
                 ->pluck('id')
                 ->all();
@@ -1954,7 +1954,7 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
         $user
     ) {
         $viewablePractices = $user->hasRole('administrator')
-            ? Practice::active()->pluck('id')->all()
+            ? Practice::active()->get()->pluck('id')->all()
             : $user->viewableProgramIds();
 
         return $query->whereHas('practices', function ($q) use (

@@ -18,7 +18,7 @@ class PracticeInvoiceController extends Controller
     public function make()
     {
 
-        $practices = Practice::active();
+        $practices = Practice::active()->get();
 
         $currentMonth = Carbon::now()->firstOfMonth()->toDateString();
 
@@ -139,7 +139,7 @@ class PracticeInvoiceController extends Controller
     public function createInvoices()
     {
 
-        $practices = Practice::active();
+        $practices = Practice::active()->get();
         $currentMonth = Carbon::now()->firstOfMonth()->toDateString();
 
         $dates = [];
