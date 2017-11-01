@@ -34,37 +34,6 @@ use Illuminate\Foundation\Console\Kernel as ConsoleKernel;
 class Kernel extends ConsoleKernel
 {
     /**
-     * The Artisan commands provided by your application.
-     *
-     * @var array
-     */
-    protected $commands = [
-        EmailRNDailyReport::class,
-        EmailsProvidersToApproveCareplans::class,
-        ExportNurseSchedulesToGoogleCalendar::class,
-        GeneratePatientReports::class,
-        ImportNurseScheduleFromGoogleCalendar::class,
-        Inspire::class,
-        MapSnomedToCpmProblems::class,
-        GetAppointments::class,
-        GetCcds::class,
-        ResetCcmTime::class,
-        RecalculateCcmTime::class,
-        SplitMergedCcdas::class,
-        QueueCcdasToConvertToJson::class,
-        QueueCcdaToDetermineEnrollmentEligibility::class,
-        QueueCcdasToProcess::class,
-        QueueSendAuditReports::class,
-        ProcessCcdaLGHMixup::class,
-        ImportLGHInsurance::class,
-        CheckEmrDirectInbox::class,
-        EmailWeeklyReports::class,
-        QueueMakeWelcomeCallsList::class,
-        SendCarePlanApprovalReminderTestEmail::class,
-        ReImportCcdsToGetTranslations::class,
-    ];
-
-    /**
      * Define the application's command schedule.
      *
      * @param  \Illuminate\Console\Scheduling\Schedule $schedule
