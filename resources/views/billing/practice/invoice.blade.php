@@ -70,7 +70,7 @@
     </div>
 
     <div class="col-sm-12 row" style="text-align: right; font-size: 25px;">
-        BALANCE DUE: ${{$invoice_amount}}.00
+        BALANCE DUE: ${{$invoice_amount}}
     </div>
 
 

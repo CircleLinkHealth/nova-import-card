@@ -76,7 +76,7 @@ class ProcessCcda implements ShouldQueue
             $dup->delete();
         }
 
-        $keep->status = $status;
+        $keep->status = $status ?? Ccda::DETERMINE_ENROLLEMENT_ELIGIBILITY;
         $keep->save();
     }
 }
