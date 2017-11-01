@@ -101,22 +101,6 @@ Route::group([
 
 /****************************/
 /****************************/
-//    REDOX
-/****************************/
-/****************************/
-Route::group(['namespace' => 'Redox'], function () {
-    Route::get('redox', [
-        'uses' => 'AppVerificationController@getVerificationRequest',
-    ]);
-
-    Route::group(['middleware' => 'getRedoxAccessToken'], function () {
-        //@todo: this is not an actual route, it was made for testing
-        Route::get('testRedoxx', 'PostToRedoxController@index');
-    });
-});
-
-/****************************/
-/****************************/
 //    AUTH ROUTES
 /****************************/
 /****************************/
@@ -1282,21 +1266,6 @@ Route::group(['middleware' => 'auth'], function () {
             Route::post('locations/update', [
                 'uses' => 'LocationController@update',
                 'as'   => 'locations.update',
-            ]);
-        });
-
-        // apikeys
-        Route::group([
-            'middleware' => [
-                'permission:apikeys-view',
-            ],
-        ], function () {
-            Route::resource('apikeys', 'Admin\ApiKeyController', [
-                'only' => [
-                    'index',
-                    'destroy',
-                    'store',
-                ],
             ]);
         });
     });

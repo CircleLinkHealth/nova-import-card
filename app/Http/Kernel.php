@@ -54,8 +54,6 @@ class Kernel extends HttpKernel
         //CLH Middleware
         'ability'                    => \Zizaco\Entrust\Middleware\EntrustAbility::class,
         'aprima.ccdapi.auth.adapter' => Middleware\AprimaCcdApiAuthAdapter::class,
-        'authApiCall'                => \App\Http\Middleware\AuthenticateApiCall::class,
-        'getRedoxAccessToken'        => \App\Http\Middleware\GetRedoxAccessToken::class,
         'permission'                 => \Zizaco\Entrust\Middleware\EntrustPermission::class,
         'patientProgramSecurity'     => \App\Http\Middleware\PatientProgramSecurity::class,
         'patient.session'            => \App\Http\Middleware\CheckPatientSession::class,
