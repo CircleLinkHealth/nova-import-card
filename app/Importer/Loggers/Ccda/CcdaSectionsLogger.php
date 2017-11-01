@@ -209,17 +209,12 @@ class CcdaSectionsLogger implements MedicalRecordLogger
                     continue;
                 }
 
-                $insurance = InsuranceLog::create([
+                $insurance = InsuranceLog::create(array_merge($this->transformer->insurance($payer), [
                     'medical_record_id'   => $this->ccdaId,
                     'medical_record_type' => Ccda::class,
-                    'name'                => $payer->insurance,
-                    'type'                => $payer->policy_type,
-                    'policy_id'           => $payer->policy_id,
-                    'relation'            => $payer->relation,
-                    'subscriber'          => $payer->subscriber,
                     'approved'            => false,
                     'import'              => true,
-                ]);
+                ]));
             }
         }
 

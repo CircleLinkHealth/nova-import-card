@@ -86,6 +86,25 @@ class CcdToLogTranformer
     }
 
     /**
+     * @see InsuranceLog
+     *
+     * @param $payer
+     *
+     * @return array
+     */
+    public function insurance($payer)
+    {
+        return [
+            'name'       => $payer->insurance,
+            'type'       => $payer->policy_type,
+            'policy_id'  => $payer->policy_id,
+            'relation'   => $payer->relation,
+            'subscriber' => $payer->subscriber,
+        ];
+    }
+
+
+    /**
      * @see @see App\Importer\Models\ItemLogs\MedicationLog
      *
      * @param $medication
