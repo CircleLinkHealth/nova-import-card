@@ -52,7 +52,9 @@ trait UserRedisCache
             }
 
             return $cache;
-        })->filter();
+        })
+            ->filter()
+            ->reverse();
     }
 
     /**

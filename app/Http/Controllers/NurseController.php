@@ -54,7 +54,7 @@ class NurseController extends Controller
             dispatch((new GenerateNurseInvoice($nurseIds, $startDate, $endDate, $variablePay, $addTime, $addNotes, auth()->user())));
         }
 
-        return "Waldo is working on compiling the reports you requested. We'll get back to you, when we hear back.";
+        return "Waldo is working on compiling the reports you requested. <br> Give it a minute, and then head to " . link_to('/jobs/completed') . " and refresh frantically to see a link to the report you requested.";
     }
 
     public function sendInvoice(Request $request)
