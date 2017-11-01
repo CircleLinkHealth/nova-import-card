@@ -106,6 +106,15 @@ Route::group([
 /****************************/
 Route::group(['middleware' => 'auth'], function () {
 
+    Route::get('cache/view/{key}', [
+        'as' => 'get.cached.vue.by.key',
+        'uses' => 'Cache\UserCacheController@getCachedViewByKey',
+    ]);
+
+    Route::get('jobs/completed', function(){
+        return view('admin.jobsCompleted.manage');
+    });
+
     Route::get('download/{filePath}', [
         'uses' => 'DownloadController@file',
         'as'   => 'download',
