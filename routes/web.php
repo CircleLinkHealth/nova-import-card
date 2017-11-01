@@ -125,6 +125,8 @@ Route::group(['namespace' => 'Redox'], function () {
 /****************************/
 Route::group(['middleware' => 'auth'], function () {
 
+    Route::get('cache/view/{key}', 'Cache\UserCacheController@getCachedViewByKey');
+
     Route::get('download/{filePath}', [
         'uses' => 'DownloadController@file',
         'as'   => 'download',
