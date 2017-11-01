@@ -100,23 +100,25 @@ class GenerateNurseInvoice implements ShouldQueue
             'created_at' => Carbon::now()->toDateTimeString(),
             'expires_at' => Carbon::now()->addWeek()->toDateTimeString(),
             'data'       => [
-                'invoices' => $links ?? [],
-                'data'     => $data ?? [],
+                'invoices' => $links,
+                'data'     => $data,
                 'month'    => Carbon::parse($this->startDate)->format('F'),
             ],
         ], 11000);
 
-        \Redis::rpush("user{$this->requestor->id}views", [
+        $month = Carbon::parse($this->startDate)->format('F');
+
+        \Redis::rpush("user{$this->requestor->id}views", json_encode([
             'key'        => $key,
             'created_at' => Carbon::now()->toDateTimeString(),
             'expires_at' => Carbon::now()->addWeek()->toDateTimeString(),
             'view'       => 'billing.nurse.list',
             'message'    => 'The Nurse Invoices you requested are ready!',
             'data'       => [
-                'invoices' => $links ?? [],
-                'data'     => $data ?? [],
-                'month'    => Carbon::parse($this->startDate)->format('F'),
+                'invoices' => $links,
+                'data'     => $data,
+                'month'    => $month,
             ],
-        ]);
+        ]));
     }
 }

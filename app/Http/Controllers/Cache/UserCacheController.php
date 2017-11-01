@@ -8,9 +8,9 @@ use App\Http\Controllers\Controller;
 class UserCacheController extends Controller
 {
     public function getCachedViewByKey($key) {
-        $cached = \Cache::pull($key);
+        $cached = \Cache::get($key);
 
-        if (!$cached) {
+        if (empty($cached)) {
             return "This view has expired.";
         }
 
