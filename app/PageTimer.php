@@ -52,11 +52,6 @@ class PageTimer extends Model
         return $this->belongsTo('App\User', 'patient_id', 'id');
     }
 
-    public function rule()
-    {
-        return $this->belongsTo('App\Rules');
-    }
-
     public function activities()
     {
         return $this->hasMany('App\Activity', 'page_timer_id');

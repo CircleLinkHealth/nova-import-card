@@ -167,7 +167,6 @@ class PageTimerController extends Controller
             $result = $activityService->reprocessMonthlyActivityTime($pageTimer->patient_id);
 
             $pageTimer->processed = 'Y';
-            $pageTimer->rule_params = serialize($params);
 
             $pageTimer->save();
 
@@ -176,7 +175,6 @@ class PageTimerController extends Controller
 
         // update pagetimer
         $pageTimer->processed = 'Y';
-        $pageTimer->rule_params = serialize($params);
 
         $pageTimer->save();
 

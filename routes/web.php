@@ -1036,39 +1036,6 @@ Route::group(['middleware' => 'auth'], function () {
             ]);
         });
 
-        // rules
-        Route::group([
-            'middleware' => [
-                'permission:rules-engine-view',
-            ],
-        ], function () {
-            Route::resource('rules', 'RulesController');
-            Route::get('rules/create', [
-                'uses' => 'RulesController@create',
-                'as'   => 'admin.rules.create',
-            ]);
-            Route::post('rules/store', [
-                'uses' => 'RulesController@store',
-                'as'   => 'admin.rules.store',
-            ]);
-            Route::get('rules/{id}', [
-                'uses' => 'RulesController@show',
-                'as'   => 'admin.rules.show',
-            ]);
-            Route::get('rules/{id}/edit', [
-                'uses' => 'RulesController@edit',
-                'as'   => 'admin.rules.edit',
-            ]);
-            Route::post('rules/{id}/edit', [
-                'uses' => 'RulesController@update',
-                'as'   => 'admin.rules.update',
-            ]);
-            Route::get('rulesmatches', [
-                'uses' => 'RulesController@showMatches',
-                'as'   => 'admin.rules.matches',
-            ]);
-        });
-
         // roles
         Route::group([
             'middleware' => [
