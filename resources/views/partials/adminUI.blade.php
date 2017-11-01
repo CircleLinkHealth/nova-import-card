@@ -338,7 +338,6 @@
                             {{--<li><a href="{{ url('/auth/login') }}">Login</a></li>--}}
                             {{--<li><a href="{{ url('/auth/register') }}">Register</a></li>--}}
                         @else
-                            <li class="dropdown">
                             <li class="active">
                                 <a href="{{url('/jobs/completed')}}">
                                     <span class="badge">{{auth()->user()->cachedViewCount()}}</span>
