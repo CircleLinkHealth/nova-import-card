@@ -636,6 +636,12 @@ Route::group(['middleware' => 'auth'], function () {
             'as'   => 'post.GeneralCommentsCsv',
         ]);
 
+
+        Route::get('calls/remix', [
+            'uses' => 'Admin\PatientCallManagementController@remix',
+            'as'   => 'admin.patientCallManagement.remix',
+        ]);
+
         Route::get('calls/{patientId}', 'CallController@showCallsForPatient');
 
 
