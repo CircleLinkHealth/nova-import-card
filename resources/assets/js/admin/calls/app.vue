@@ -38,7 +38,10 @@
                                 Nurse: (call.getNurse() || {}).full_name,
                                 Patient: (call.getPatient() || {}).full_name,
                                 Status: call.status,
-                                Practice: (call.getNurse() || {}).primary_practice_id
+                                Practice: (call.getNurse() || {}).primary_practice_id,
+                                'Next Call': call.scheduled_date,
+                                'Call Time Start': call.window_start,
+                                'Call Time End': call.window_end
                               }))
           this.tableData = this.tableData.concat(tableCalls)
           console.log(calls);
