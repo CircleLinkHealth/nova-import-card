@@ -16,7 +16,6 @@ class AddApprovedToPatientMonthlySummaries extends Migration
         Schema::table('patient_monthly_summaries', function (Blueprint $table) {
 
             $table->boolean('approved')->defualt(0)->after('is_ccm_complex');
-
         });
     }
 
@@ -30,7 +29,6 @@ class AddApprovedToPatientMonthlySummaries extends Migration
         Schema::table('patient_monthly_summaries', function (Blueprint $table) {
 
             $table->dropColumn('approved');
-
         });
     }
 }

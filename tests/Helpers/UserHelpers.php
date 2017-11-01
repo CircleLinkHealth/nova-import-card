@@ -23,7 +23,6 @@ use Carbon\Carbon;
 use Faker\Factory;
 use Symfony\Component\HttpFoundation\ParameterBag;
 
-
 trait UserHelpers
 {
     /**
@@ -114,8 +113,7 @@ trait UserHelpers
 
     public function userLogin(User $user)
     {
-        $this->visit('/auth/login')
-            ->see('CarePlanManager')
+        $response = $this->get('/auth/login')
             ->type($user->email, 'email')
             ->type('password', 'password')
             ->press('Log In');
@@ -159,7 +157,6 @@ trait UserHelpers
         ]);
 
         return $call;
-
     }
 
     public function createWindowForNurse(
@@ -183,7 +180,6 @@ trait UserHelpers
         ]);
 
         return $res;
-
     }
 
     //NURSE TEST HELPERS
@@ -207,14 +203,11 @@ trait UserHelpers
             'patient_info_id' => $patient->id,
 
         ]);
-
     }
 
     public function makePatientMonthlyRecord(Patient $patient)
     {
 
         return PatientMonthlySummary::updateCallInfoForPatient($patient, true);
-
     }
-
 }

@@ -41,13 +41,11 @@ class PopulateDefaultIcd10Code extends Migration
             '29' => 'Z85.46',
             '30' => 'C34.90',
             '31' => 'C54.1',
-        ])->map(function($icd10Code, $id){
+        ])->map(function ($icd10Code, $id) {
             $problem = CpmProblem::find($id);
             $problem->default_icd_10_code = $icd10Code;
             $problem->save();
         });
-
-
     }
 
     /**

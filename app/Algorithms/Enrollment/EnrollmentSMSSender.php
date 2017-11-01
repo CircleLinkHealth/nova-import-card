@@ -7,7 +7,6 @@ use App\Enrollee;
 use App\User;
 use Carbon\Carbon;
 
-
 /** PhpStorm.
  * User: RohanM
  * Date: 3/14/17
@@ -21,19 +20,13 @@ class EnrollmentSMSSender
     public function __construct()
     {
         $this->twilio = new Twilio(
-                            env('TWILIO_SID'),
-                            env('TWILIO_TOKEN'),
-                            env('TWILIO_FROM')
+            env('TWILIO_SID'),
+            env('TWILIO_TOKEN'),
+            env('TWILIO_FROM')
         );
-
     }
 
-    public function exec(){
-
-
-
+    public function exec()
+    {
     }
-
-
-
 }

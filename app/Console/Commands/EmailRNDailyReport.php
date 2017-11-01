@@ -48,7 +48,6 @@ class EmailRNDailyReport extends Command
         $emailsSent = [];
 
         foreach ($nurses as $nurse) {
-
             if (!$nurse->nurseInfo) {
                 continue;
             }
@@ -80,8 +79,10 @@ class EmailRNDailyReport extends Command
 
             $totalTimeInSystemThisMonth = secondsToHMS($totalMonthSystemTimeSeconds);
 
-            $totalEarningsThisMonth = round((float)($totalMonthSystemTimeSeconds * $nurse->nurseInfo->hourly_rate / 60 / 60),
-                2);
+            $totalEarningsThisMonth = round(
+                (float)($totalMonthSystemTimeSeconds * $nurse->nurseInfo->hourly_rate / 60 / 60),
+                2
+            );
 
             $nextUpcomingWindow = $nurse->nurseInfo->firstWindowAfter(Carbon::now());
 

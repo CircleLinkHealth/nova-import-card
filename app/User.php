@@ -37,7 +37,6 @@ use Illuminate\Notifications\Notifiable;
 use Illuminate\Support\Collection;
 use Zizaco\Entrust\Traits\EntrustUserTrait;
 
-
 class User extends Model implements AuthenticatableContract, CanResetPasswordContract, Serviceable
 {
     const FORWARD_ALERTS_IN_ADDITION_TO_PROVIDER = 'forward_alerts_in_addition_to_provider';
@@ -129,13 +128,11 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
         parent::boot();
 
         static::creating(function ($user) {
-
         });
 
         self::saved(function ($user) {
 
 //            $user->load('roles');
-
         });
 
         static::deleting(function ($user) {
@@ -194,7 +191,6 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
     {
 
         return $this->hasOne(CareAmbassador::class);
-
     }
 
     /**
@@ -318,8 +314,12 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
 
     public function careItems()
     {
-        return $this->belongsToMany('App\CareItem', 'care_item_user_values', 'user_id',
-            'care_item_id')->withPivot('value');
+        return $this->belongsToMany(
+            'App\CareItem',
+            'care_item_user_values',
+            'user_id',
+            'care_item_id'
+        )->withPivot('value');
     }
 
     public function activities()
@@ -512,7 +512,6 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
     }
 
     public function primaryProgramName()
-
     {
         return Practice::find($this->primaryProgramId())->display_name;
     }
@@ -1200,11 +1199,15 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
 
             return false; // must be array
         }
-        $this->careTeamMembers()->where('type', 'member')->whereNotIn('member_user_id',
-            $memberUserIds)->delete();
+        $this->careTeamMembers()->where('type', 'member')->whereNotIn(
+            'member_user_id',
+            $memberUserIds
+        )->delete();
         foreach ($memberUserIds as $memberUserId) {
-            $careTeamMember = $this->careTeamMembers()->where('type', 'member')->where('member_user_id',
-                $memberUserId)->first();
+            $careTeamMember = $this->careTeamMembers()->where('type', 'member')->where(
+                'member_user_id',
+                $memberUserId
+            )->first();
             if ($careTeamMember) {
                 $careTeamMember->member_user_id = $memberUserId;
             } else {
@@ -1302,8 +1305,10 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
 
             return false; // must be array
         }
-        $this->careTeamMembers()->where('alert', '=', true)->whereNotIn('member_user_id',
-            $memberUserIds)->delete();
+        $this->careTeamMembers()->where('alert', '=', true)->whereNotIn(
+            'member_user_id',
+            $memberUserIds
+        )->delete();
         foreach ($memberUserIds as $memberUserId) {
             $careTeamMember = $this->careTeamMembers()->where('alert', '=', false)
                 ->where('member_user_id', $memberUserId)
@@ -1799,7 +1804,6 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
         $user->agentEmail = 'secret@agent.net';
         $user->agentRelationship = 'SA';
         $user->save();
-
     }
 
     public function createNewUser(
@@ -1872,7 +1876,6 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
     {
 
         return (in_array($this->roles[0]->name, Role::CCM_TIME_ROLES));
-
     }
 
 // user data scrambler
@@ -2483,7 +2486,6 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
 
         if ($exists) {
             return true;
-
         }
 
         return false;

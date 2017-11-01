@@ -35,5 +35,4 @@ class CreateCcdAllergiesTable extends Migration
     {
         Schema::drop('ccd_allergies');
     }
-
 }

@@ -17,7 +17,6 @@ class AddBillableProblemsToPatientMonthlySummaries extends Migration
 
             $table->text('billable_problem1')->after('no_of_successful_calls');
             $table->text('billable_problem2')->after('billable_problem1');
-
         });
     }
 
@@ -32,7 +31,6 @@ class AddBillableProblemsToPatientMonthlySummaries extends Migration
 
             $table->dropColumn('billable_problem1');
             $table->dropColumn('billable_problem2');
-
         });
     }
 }

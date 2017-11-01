@@ -2,7 +2,6 @@
 
 namespace App\Importer\Section\Validators;
 
-
 use App\Contracts\Importer\MedicalRecord\Section\ItemLog;
 use App\Contracts\Importer\MedicalRecord\Section\Validator as SectionValidator;
 

@@ -16,7 +16,6 @@ class AddRateToCareAmbassador extends Migration
         Schema::table('care_ambassadors', function (Blueprint $table) {
 
             $table->unsignedInteger('hourly_rate')->after('user_id')->nullable();
-
         });
     }
 
@@ -30,7 +29,6 @@ class AddRateToCareAmbassador extends Migration
         Schema::table('care_ambassadors', function (Blueprint $table) {
 
             $table->dropColumn('hourly_rate');
-
         });
     }
 }

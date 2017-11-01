@@ -39,5 +39,4 @@ class CreateCareItemsTable extends Migration
     {
         Schema::drop('care_items');
     }
-
 }

@@ -44,5 +44,4 @@ class CreateCallsTable extends Migration
     {
         Schema::drop('calls');
     }
-
 }

@@ -1,5 +1,7 @@
 <?php
+namespace Tests\Notes;
 
+use Tests\TestCase;
 use Tests\Helpers\CarePlanHelpers;
 use Tests\Helpers\NoteAndCallHelpers;
 use Tests\Helpers\UserHelpers;
@@ -33,9 +35,5 @@ class NotesAndCallsTest extends TestCase
         echo $testStatus;
 
         $this->createNote($this->patient, $this->provider);
-
-        
     }
-
-
 }

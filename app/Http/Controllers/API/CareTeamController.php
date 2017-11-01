@@ -389,5 +389,4 @@ class CareTeamController extends Controller
             'oldBillingProvider' => $billingProvider ?? null,
         ], 200);
     }
-
 }

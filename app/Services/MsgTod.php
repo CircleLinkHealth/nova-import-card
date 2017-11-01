@@ -6,21 +6,24 @@ use DB;
 $this->_ci->load->model('cpm_1_7_rules_tod_model', 'tod');
 */
 
-class MsgTod {
+class MsgTod
+{
 
-    public function __construct() {
+    public function __construct()
+    {
     }
 
 
     // get list of available Diagnosis for user
-    public function getNextTod($prov_id, $user_id) {
+    public function getNextTod($prov_id, $user_id)
+    {
         $strReturn = '';
 
         // Get list of Diagnosis groups that user is active in.
         $arrPickList = $this->getActiveList($prov_id, $user_id);
 
         // select message group at random from above list
-        if(!empty($arrPickList)) {
+        if (!empty($arrPickList)) {
             $strCat = $arrPickList[array_rand($arrPickList)];
         }
 
@@ -29,7 +32,7 @@ class MsgTod {
 
         // if no message group found, there is nothing to send
         // if(!empty($strCat)) {
-        if(isset($strCat->items_parent)) {
+        if (isset($strCat->items_parent)) {
             // find last message sent for this category
 
             // print_r($this->_ci->tod->getLastMsg($strCat->items_parent, $user_id));
@@ -37,22 +40,21 @@ class MsgTod {
             $intSeqNum = get_object_vars($makeobj);
 
             // select next record
-            if(empty($intSeqNum)){
+            if (empty($intSeqNum)) {
                 $arrReturn = $this->getNext($strCat->items_parent);
             } else {
                 $arrReturn = $this->getNext($strCat->items_parent, $intSeqNum['meta_value']);
             }
 
             // if last question was last asked, start over again
-            if(empty($arrReturn)) {
+            if (empty($arrReturn)) {
                 $arrReturn = $this->getNext($strCat->items_parent);
             }
 
             // if sequence not found create record and start from first message
-            if(!empty($arrReturn)) {
-
+            if (!empty($arrReturn)) {
                 // print_r($arrReturn);
-                if(empty($intSeqNum)) {
+                if (empty($intSeqNum)) {
                     $this->insertNew($strCat->items_parent, $user_id, $arrReturn->qs_sort);
                 } else {
                     // update ucp record
@@ -73,7 +75,8 @@ class MsgTod {
 
 
 
-    public function getActiveList($prov_id, $user_id) {
+    public function getActiveList($prov_id, $user_id)
+    {
         /**
          *
          *  @param    prov_id: provider id
@@ -96,14 +99,14 @@ and qs.qs_type = 'TOD'
 query;
 
 // echo $query;
-        $results = DB::connection('mysql_no_prefix')->select( DB::raw($sql) );
+        $results = DB::connection('mysql_no_prefix')->select(DB::raw($sql));
 
         return $results;
-
     }//getActiveList
 
 
-    public function getLastMsg($intItemID, $user_id) {
+    public function getLastMsg($intItemID, $user_id)
+    {
         /**
          *
          * @param    inItemID : Item id for category
@@ -115,7 +118,7 @@ query;
 
         $arrReturn = array();
 
-        if(!empty($intItemID) and !empty($user_id)) {
+        if (!empty($intItemID) and !empty($user_id)) {
             $sql = <<<query
 select meta_value
 from rules_ucp
@@ -127,8 +130,8 @@ query;
 
             // echo $query;
 
-            $results = DB::connection('mysql_no_prefix')->select( DB::raw($sql) );
-            if(isset($results[0])) {
+            $results = DB::connection('mysql_no_prefix')->select(DB::raw($sql));
+            if (isset($results[0])) {
                 $arrReturn = $results[0];
             }
         }
@@ -136,10 +139,11 @@ query;
         return $arrReturn;
     }//getLastMsg
 
-    public function getNext($strCat, $intSeqNum = 0) {
+    public function getNext($strCat, $intSeqNum = 0)
+    {
         $arrReturn = array();
 
-        if(!empty($strCat)) {
+        if (!empty($strCat)) {
             $sql = <<<query
 select qs.qs_sort, q.msg_id
 from rules_items i
@@ -154,17 +158,18 @@ query;
 
 // echo query;
 
-            $results = DB::connection('mysql_no_prefix')->select( DB::raw($sql) );
-            if(isset($results[0])) {
+            $results = DB::connection('mysql_no_prefix')->select(DB::raw($sql));
+            if (isset($results[0])) {
                 $arrReturn = $results[0];
             }
         }
         return $arrReturn;
     }//getNext
 
-    public function insertNew($strCat, $user_id, $qssort) {
+    public function insertNew($strCat, $user_id, $qssort)
+    {
 
-        if(!empty($strCat) and !empty($user_id) and !empty($qssort)) {
+        if (!empty($strCat) and !empty($user_id) and !empty($qssort)) {
             $data = array(
                 'items_id' => $strCat,
                 'user_id' => $user_id,
@@ -172,16 +177,16 @@ query;
                 'meta_value' => $qssort);
 
 // echo query;
-            $obs_id = DB::connection('mysql_no_prefix')->table('rules_ucp')->insertGetId( $data );
+            $obs_id = DB::connection('mysql_no_prefix')->table('rules_ucp')->insertGetId($data);
             echo "<br>MsgTod->insertNew() rules_ucp.id#=" . $user_id;
         }
         return;
-
     }// insertNew
 
-    public function updateTod($strCat, $user_id, $qssort) {
+    public function updateTod($strCat, $user_id, $qssort)
+    {
 
-        if(!empty($strCat) and !empty($user_id) and !empty($qssort)) {
+        if (!empty($strCat) and !empty($user_id) and !empty($qssort)) {
             /*
             $query = <<<query
             update rules_ucp
@@ -200,7 +205,5 @@ query;
             echo "<br>MsgTod->updateTod() updated , items_id=$user_id, items_id=$strCat, meta_value=$qssort";
         }
         return;
-
     }//updateTod
-
 }

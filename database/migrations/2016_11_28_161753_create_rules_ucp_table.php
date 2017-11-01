@@ -37,5 +37,4 @@ class CreateRulesUcpTable extends Migration
     {
         Schema::drop('rules_ucp');
     }
-
 }

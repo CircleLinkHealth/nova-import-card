@@ -86,5 +86,4 @@ class CareItem extends Model
     {
         return $this->pivot->meta_key;
     }
-
 }

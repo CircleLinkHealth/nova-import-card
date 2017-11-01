@@ -8,7 +8,7 @@
     </div>
     <div class="col-sm-12">
         @if(!$patient->care_team_receives_alerts->isEmpty())
-            <input type="checkbox" id="notify-careteam" name="notify_careteam" value="1">
+            <input type="checkbox" id="notify-careteam" name="notify_careteam" @empty($patient->primaryPractice->cpmSettings()->notesChannels()) disabled="disabled" @endempty value="1">
             <label for="notify-careteam"><span> </span>Provider/CareTeam
                 (
                     @empty($patient->primaryPractice->cpmSettings()->notesChannels())

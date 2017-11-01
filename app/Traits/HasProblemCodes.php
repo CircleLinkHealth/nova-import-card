@@ -8,12 +8,12 @@
 
 namespace App\Traits;
 
-
 use App\Constants;
 
 trait HasProblemCodes
 {
-    public function icd9Codes() {
+    public function icd9Codes()
+    {
         return $this->codes()
             ->where('code_system_oid', '=', '2.16.840.1.113883.6.103')
             ->orWhere([
@@ -22,7 +22,8 @@ trait HasProblemCodes
             ]);
     }
 
-    public function icd10Codes() {
+    public function icd10Codes()
+    {
         return $this->codes()
             ->where('code_system_oid', '=', '2.16.840.1.113883.6.3')
             ->orWhere([
@@ -31,7 +32,8 @@ trait HasProblemCodes
             ]);
     }
 
-    public function snomedCodes() {
+    public function snomedCodes()
+    {
         return $this->codes()
             ->where('code_system_oid', '=', '2.16.840.1.113883.6.96')
             ->orWhere([
@@ -39,7 +41,8 @@ trait HasProblemCodes
             ]);
     }
 
-    public function codeMap() {
+    public function codeMap()
+    {
         $map = collect();
 
         $icd9 = $this->icd9Codes->first();

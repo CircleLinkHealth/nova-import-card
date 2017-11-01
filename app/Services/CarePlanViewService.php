@@ -8,7 +8,6 @@
 
 namespace App\Services;
 
-
 use App\CarePlan as CarePlan;
 use App\CarePlanTemplate;
 use App\Models\CPM\CpmMisc;
@@ -94,7 +93,6 @@ class CarePlanViewService
         ];
 
         return compact('sections');
-
     }
 
     public function carePlanSecondPage(

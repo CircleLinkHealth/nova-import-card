@@ -8,7 +8,6 @@
 
 namespace App;
 
-
 class Constants
 {
     const ICD9 = 'icd_9_code';

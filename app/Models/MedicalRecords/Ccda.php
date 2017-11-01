@@ -1,6 +1,5 @@
 <?php namespace App\Models\MedicalRecords;
 
-
 use App\Contracts\Importer\MedicalRecord\MedicalRecord;
 use App\Contracts\Importer\MedicalRecord\MedicalRecordLogger;
 use App\Entities\CcdaRequest;

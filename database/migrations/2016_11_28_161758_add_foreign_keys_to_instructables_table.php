@@ -30,5 +30,4 @@ class AddForeignKeysToInstructablesTable extends Migration
             $table->dropForeign('instructables_cpm_instruction_id_foreign');
         });
     }
-
 }

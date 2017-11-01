@@ -32,5 +32,4 @@ class Allergy extends Model
     {
         return $this->belongsTo(User::class, 'patient_id');
     }
-
 }

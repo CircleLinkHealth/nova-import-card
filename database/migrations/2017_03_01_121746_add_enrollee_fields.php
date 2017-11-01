@@ -30,8 +30,6 @@ class AddEnrolleeFields extends Migration
             $table->string('problems')->before('address');
             $table->string('ccm_condition_2')->after('problems');
             $table->string('ccm_condition_1')->after('problems');
-
-
         });
     }
 

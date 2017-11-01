@@ -63,5 +63,4 @@ class Kernel extends HttpKernel
         'verify.invite'              => \App\Http\Middleware\CheckOnboardingInvite::class,
         'check.careplan.mode'        => \App\Http\Middleware\CheckCarePlanMode::class,
     ];
-
 }

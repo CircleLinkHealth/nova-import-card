@@ -2,7 +2,8 @@
 
 use Illuminate\Database\Eloquent\Model;
 
-class CPRulesItemMeta extends Model {
+class CPRulesItemMeta extends Model
+{
 
     /**
      * The connection name for the model.
@@ -38,7 +39,4 @@ class CPRulesItemMeta extends Model {
     {
         return $this->belongsTo('App\CPRulesItem', 'items_id');
     }
-
-
-
 }

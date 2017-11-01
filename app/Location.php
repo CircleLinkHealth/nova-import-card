@@ -101,7 +101,6 @@ class Location extends Model
         $loc->save();
 
         return $loc;
-
     }
 
     public function practice()

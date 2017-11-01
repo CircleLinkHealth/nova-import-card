@@ -2,7 +2,8 @@
 
 use Illuminate\Database\Eloquent\Model;
 
-class UserMeta extends Model {
+class UserMeta extends Model
+{
 
     // for revisionable
     use \Venturecraft\Revisionable\RevisionableTrait;
@@ -44,5 +45,4 @@ class UserMeta extends Model {
     {
         return $this->belongsTo('App\User', 'user_id', 'id');
     }
-
 }

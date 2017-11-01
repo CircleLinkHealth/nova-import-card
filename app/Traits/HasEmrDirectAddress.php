@@ -8,7 +8,6 @@
 
 namespace App\Traits;
 
-
 use App\EmrDirectAddress;
 
 trait HasEmrDirectAddress

@@ -4,31 +4,33 @@ use App\CPRulesQuestions;
 use App\CPRulesQuestionSets;
 use DB;
 
-class MsgCPRules {
+class MsgCPRules
+{
 
     /**
      * rules_model
      *
-     * @author 		mrand@mcirclelinkhealth.com
-     * @copyright 	CircleLink Health, LLC - 01/30/2015
+     * @author      mrand@mcirclelinkhealth.com
+     * @copyright   CircleLink Health, LLC - 01/30/2015
      *
      */
 
 
-    public function __construct() {
-
+    public function __construct()
+    {
     }
 
-    public function getValidAnswer($pid, $qstype, $strMsgID='', $strResponse='', $debug = true) {
+    public function getValidAnswer($pid, $qstype, $strMsgID = '', $strResponse = '', $debug = true)
+    {
         /**
          *
-         *	@internal 	Returns instructions for handling messages.
-         *	@param 		pid: ProviderID
-         *				qstype:  Question group type (SOL, UNS, RPT, etc..)
-         *				strMsgID: Title of question to look up response for.
-         *				strResponse: actual value sent by user
-         *	@return 	question set record with infromation on how to proceed based on user response
-         *	@todo		Currently query may blurr question categories between list, Range; FreeText may not be combined at this time
+         *  @internal   Returns instructions for handling messages.
+         *  @param      pid: ProviderID
+         *              qstype:  Question group type (SOL, UNS, RPT, etc..)
+         *              strMsgID: Title of question to look up response for.
+         *              strResponse: actual value sent by user
+         *  @return     question set record with infromation on how to proceed based on user response
+         *  @todo       Currently query may blurr question categories between list, Range; FreeText may not be combined at this time
          *
          */
 
@@ -46,24 +48,24 @@ class MsgCPRules {
         $qdata = $this->getQuestion($strMsgID, 0, '', '16');
         $log[] = "MsgCPRules->getValidAnswer() obs_key = ".$qdata->obs_key;
 
-        if($debug) {
-            foreach($log as $logMsg) {
+        if ($debug) {
+            foreach ($log as $logMsg) {
                 echo "<br>$logMsg";
             }
         }
         //dd($qdata);
         // check for Blood Pressure format
-        if($qdata->obs_key == 'Blood_Pressure'){
+        if ($qdata->obs_key == 'Blood_Pressure') {
             // make sure both halves contain numbers else reject
-            if(!is_numeric($tmpArray[0]) || empty($tmpArray[1]) || !is_numeric($tmpArray[1])){
+            if (!is_numeric($tmpArray[0]) || empty($tmpArray[1]) || !is_numeric($tmpArray[1])) {
                 return array();
             }
         }
 
         // check for mm/dd format
-        if($qdata->obs_key == 'HSP'){
+        if ($qdata->obs_key == 'HSP') {
             $question = CPRulesQuestions::where('msg_id', '=', $strMsgID)->first();
-            if($question) {
+            if ($question) {
                 $questionSet = CPRulesQuestionSets::where('qid', '=', $question->qid)
                     ->where('provider_id', '=', $pid)
                     ->first();
@@ -86,9 +88,9 @@ class MsgCPRules {
         }
 
 
-        if($strMsgID == 'CF_HSP_30'){
+        if ($strMsgID == 'CF_HSP_30') {
             $question = CPRulesQuestions::where('msg_id', '=', $strMsgID)->first();
-            if($question) {
+            if ($question) {
                 $questionSet = CPRulesQuestionSets::where('qid', '=', $question->qid)
                     ->where('provider_id', '=', $pid)
                     ->first();
@@ -106,9 +108,9 @@ class MsgCPRules {
         // }
 
 
-        $strQS	= '';
-        if(!empty($qstype)) {
-            $strQS	= " AND qs.qs_type = '{$qstype}' ";
+        $strQS  = '';
+        if (!empty($qstype)) {
+            $strQS  = " AND qs.qs_type = '{$qstype}' ";
         }
 
         // hardcoded qs.provider_id = '16'
@@ -124,25 +126,25 @@ class MsgCPRules {
                 or q.qtype rlike 'FreeText|None|End|TOD')
                 LIMIT 1";
 
-        $results = DB::connection('mysql_no_prefix')->select( DB::raw($query) );
+        $results = DB::connection('mysql_no_prefix')->select(DB::raw($query));
 
-        if(isset($results[0])) {
+        if (isset($results[0])) {
             return $results[0];
         } else {
             return false;
         }
-
     }//getValidAnswer
 
-    public function getQuestion($strMsgId, $intUserId=0, $strMsgText='SMS_EN', $pid = '0', $qstype = 'SOL') {
+    public function getQuestion($strMsgId, $intUserId = 0, $strMsgText = 'SMS_EN', $pid = '0', $qstype = 'SOL')
+    {
         /**
          *
-         *	@internal 	Returns question information for next question to ask.
+         *  @internal   Returns question information for next question to ask.
          *
          * @param        strMsgId : Message id
          *
          * @return    question data
-         *	@todo		Currently query may blurr question categories between list, Range; FreeText may not be combined at this time
+         *  @todo       Currently query may blurr question categories between list, Range; FreeText may not be combined at this time
          *
          */
 // if((u2.meta_value = 'Active' or im2.meta_value = 'Active'), 'Active', 'Inactive') as status
@@ -169,8 +171,8 @@ limit 1";
 
 // echo $query;
 
-        $results = DB::connection('mysql_no_prefix')->select( DB::raw($query) );
-        if(isset($results[0])) {
+        $results = DB::connection('mysql_no_prefix')->select(DB::raw($query));
+        if (isset($results[0])) {
             $qInfo = $results[0];
             $qInfo->low = '';
             $qInfo->high = '';
@@ -179,13 +181,13 @@ limit 1";
             $questionSet = CPRulesQuestionSets::where('qid', '=', $qInfo->qid)
                 ->where('provider_id', '=', $pid)
                 ->get();
-            if($questionSet->count()) {
+            if ($questionSet->count()) {
                 foreach ($questionSet as $qSet) {
                     if (isset($qSet->low)) {
                         if (($qSet->low == 0)) {
                             $qInfo->low = $qSet->low;
                         } else if ($qInfo->low == '' || ($qSet->low < $qInfo->low)) {
-                            if($qInfo->low != '0') {
+                            if ($qInfo->low != '0') {
                                 $qInfo->low = $qSet->low;
                             }
                         }
@@ -198,34 +200,33 @@ limit 1";
                 }
             }
 
-            if(empty($qInfo->message)) {
+            if (empty($qInfo->message)) {
                 $qInfo->message = '';
             }
 
             // low/high overrides
-            if($qInfo->obs_key == 'Blood_Pressure') {
+            if ($qInfo->obs_key == 'Blood_Pressure') {
                 $qInfo->low = $qInfo->low .'/30';
                 $qInfo->high = $qInfo->high .'/300';
             }
 
             // valid answer manual overrides
             $qInfo->valid_answers = '';
-            if($strMsgId == 'CF_HSP_10') {
+            if ($strMsgId == 'CF_HSP_10') {
                 $qInfo->valid_answers = 'Yes,No';
-            } else if($strMsgId == 'CF_HSP_20') {
+            } else if ($strMsgId == 'CF_HSP_20') {
                 $qInfo->valid_answers = 'ER,HSP';
             }
-            if($qInfo->obs_key == 'Severity') {
+            if ($qInfo->obs_key == 'Severity') {
                 $qInfo->valid_answers = 'Yes,No';
             }
-            if($qInfo->obs_key == 'Adherence') {
+            if ($qInfo->obs_key == 'Adherence') {
                 $qInfo->valid_answers = 'Yes,No';
             }
             return $qInfo;
         } else {
             return false;
         }
-
     } //getMixedValid
 
     public function getMixedValid(
@@ -251,18 +252,18 @@ limit 1";
         } else {
             return false;
         }
-
     }//getQuestion
 
-    public function getQsType($msgId, $programId) {
+    public function getQsType($msgId, $programId)
+    {
         $qsType = DB::connection('mysql_no_prefix')->table('rules_question_sets')
-            ->join('rules_questions','rules_question_sets.qid','=','rules_questions.qid')
+            ->join('rules_questions', 'rules_question_sets.qid', '=', 'rules_questions.qid')
             ->select('rules_question_sets.qs_type')
-            ->where('rules_questions.msg_id',$msgId)
-            ->where('rules_question_sets.provider_id',$programId)
+            ->where('rules_questions.msg_id', $msgId)
+            ->where('rules_question_sets.provider_id', $programId)
             ->orderBy('qs_sort', 'desc')
             ->first();
-        if($qsType) {
+        if ($qsType) {
             return $qsType->qs_type;
         } else {
             return false;
@@ -270,15 +271,16 @@ limit 1";
     }
 
 
-    public function getQuestionById($intID, $intUserId=0, $strMsgText='SMS_EN', $pid = '0', $qstype = 'SOL') {
+    public function getQuestionById($intID, $intUserId = 0, $strMsgText = 'SMS_EN', $pid = '0', $qstype = 'SOL')
+    {
         /**
          *
-         *	@internal 	Returns question information for next question to ask.
+         *  @internal   Returns question information for next question to ask.
          *
          * @param        strMsgId : Message id
          *
          * @return    question data
-         *	@todo		Currently query may blurr question categories between list, Range; FreeText may not be combined at this time
+         *  @todo       Currently query may blurr question categories between list, Range; FreeText may not be combined at this time
          *
          */
 
@@ -304,24 +306,24 @@ query;
 
 //echo $query;
 
-        $results = DB::connection('mysql_no_prefix')->select( DB::raw($query) );
+        $results = DB::connection('mysql_no_prefix')->select(DB::raw($query));
         //dd($results[0]);
-        if(isset($results[0])) {
+        if (isset($results[0])) {
             return $results[0];
         } else {
             return false;
         }
-
     }//getQuestionById
 
 
-    public function getNextList($provid, $user_id, $qstype, $qtype) {
+    public function getNextList($provid, $user_id, $qstype, $qtype)
+    {
         /**
          *
-         *	@internal 	Returns question set for next question to ask.
-         *	@param 		provid: provider id
-         *				qstype: question set name or group of questions (ex: SOL, RPT, SYM, etc....)
-         *	@return 	array of questions
+         *  @internal   Returns question set for next question to ask.
+         *  @param      provid: provider id
+         *              qstype: question set name or group of questions (ex: SOL, RPT, SYM, etc....)
+         *  @return     array of questions
          *
          */
 
@@ -348,21 +350,21 @@ query;
 
 // echo $query;
 
-        $results = DB::connection('mysql_no_prefix')->select( DB::raw($query) );
+        $results = DB::connection('mysql_no_prefix')->select(DB::raw($query));
         //dd($results[0]);
         return $results;
-
     }//getNextList
 
-    public function getAdherenceCounts($provid, $user_id, $date = null) {
+    public function getAdherenceCounts($provid, $user_id, $date = null)
+    {
         /**
          *
-         *	@internal 	Counts responses to adherence questions plus how many should have been asked
-         *	@return 	array of counts (should be 3 rows)
+         *  @internal   Counts responses to adherence questions plus how many should have been asked
+         *  @return     array of counts (should be 3 rows)
          *
          */
 
-        if(!$date) {
+        if (!$date) {
             $date = date('Y-m-d');
         }
         $query = "select max(obs_id), obs_message_id, obs_value, obs_date, obs_unit, count(*) as count
@@ -378,13 +380,13 @@ query;
         group by orderedobs.obs_message_id
         order by obs_date DESC";
 
-        $results = DB::connection('mysql_no_prefix')->select( DB::raw($query) );
+        $results = DB::connection('mysql_no_prefix')->select(DB::raw($query));
         $y = 0;
         $n = 0;
         $scheduled = 0;
-        foreach($results as $row) {
+        foreach ($results as $row) {
             $scheduled++;
-            if($row->obs_unit != 'scheduled') {
+            if ($row->obs_unit != 'scheduled') {
                 if (in_array($row->obs_value, array('Y', 'y', 'Yes', 'yes'))) {
                     $y++;
                 } else if (in_array($row->obs_value, array('N', 'n', 'No', 'no'))) {
@@ -394,27 +396,27 @@ query;
         }
         $counts = array('Y' => $y, 'N' => $n, 'scheduled' => $scheduled);
         return $counts;
-
     }//getAdherenceCounts
 
 
 
     // Saves response to comments table
-    public function saveResponse($input, $question, $intProvID='0', $obs_key='Other', $obs_unit='')	{
+    public function saveResponse($input, $question, $intProvID = '0', $obs_key = 'Other', $obs_unit = '')
+    {
 
         /**
          *
-         *	@internal 	Saves response to comment_table and sends response to obs_processor
-         *	@param 		input: user arrray
-         *		 		question: MsgID of question
-         *  			intProvID: which system is calling this (7 = Crisfield)
-         *	@return 	nothing
+         *  @internal   Saves response to comment_table and sends response to obs_processor
+         *  @param      input: user arrray
+         *              question: MsgID of question
+         *              intProvID: which system is calling this (7 = Crisfield)
+         *  @return     nothing
          *
          */
 
         $CID = $input['usermeta']['comment_ID'];
 
-        if(empty($CID)) {
+        if (empty($CID)) {
             error_log('saveResonse: comment_ID missing.');
             return;
         }
@@ -433,17 +435,17 @@ query;
         // echo '<br>From save2/$row: '; print_r($row);
 
         //replace the response
-        $dbState	= unserialize($row->comment_content);
+        $dbState    = unserialize($row->comment_content);
         // only continue if we have comment_content
-        if(is_array($dbState) && !empty($dbState)) {
+        if (is_array($dbState) && !empty($dbState)) {
             error_log('Recieved: '.urldecode($input[usermeta]['curresp']));
             end($dbState);
-            $lastkey	= key($dbState);
+            $lastkey    = key($dbState);
             foreach ($dbState[$lastkey] as $key => $value) {
                 $dbState[$lastkey][$key] = urldecode($input[usermeta]['curresp']);
             }
             // $dbState[$question]  .= $input[usermeta]['curresp'];
-            $serializedState 	 = serialize($dbState);
+            $serializedState     = serialize($dbState);
 
             //save it back
             $saveq = <<<query2
@@ -455,7 +457,7 @@ query2;
             $results2 = $this->db->query($saveq);
 
             // special handling need to put the forward slashes back in for BP
-            if($obs_key == 'Blood_Pressure'){
+            if ($obs_key == 'Blood_Pressure') {
                 $obs_value = preg_replace("/[ _]/", "/", trim($input[usermeta]['curresp']));
             } else {
                 $obs_value = trim($input[usermeta]['curresp']);
@@ -477,12 +479,13 @@ query2;
     }//saveResponse
 
 
-    public function isCHF($user, $pid='0') {
+    public function isCHF($user, $pid = '0')
+    {
         /**
          *
-         *	@internal 	Checks if person has CHF checked
-         *	@param 		user: user_id
-         *	@return 	bool
+         *  @internal   Checks if person has CHF checked
+         *  @param      user: user_id
+         *  @return     bool
          *
          */
 
@@ -497,23 +500,23 @@ query;
 
 // echo $query;
 
-        $results = DB::connection('mysql_no_prefix')->select( DB::raw($query) );
-        if(isset($results[0])) {
+        $results = DB::connection('mysql_no_prefix')->select(DB::raw($query));
+        if (isset($results[0])) {
             return $results[0]->meta_value;
         } else {
             return false;
         }
-
     }//isCHF
 
 
-    public function getReadings($provid, $user_id) {
+    public function getReadings($provid, $user_id)
+    {
         /**
          *
-         *	@internal 	Returns list of today's readings (bp, bs, wt, and cs)
-         *	@param 		provid: provider id
-         *				user_id: user id
-         *	@return 	array of readings found
+         *  @internal   Returns list of today's readings (bp, bs, wt, and cs)
+         *  @param      provid: provider id
+         *              user_id: user id
+         *  @return     array of readings found
          *
          */
 
@@ -525,10 +528,9 @@ query;
             and o.obs_key in ('Blood_Sugar', 'Blood_Pressure', 'Weight', 'Cigarettes')";
 
 // echo $query;
-        $results = DB::connection('mysql_no_prefix')->select( DB::raw($sql) );
+        $results = DB::connection('mysql_no_prefix')->select(DB::raw($sql));
 
         return $results;
-
     }//getReadings
 
 
@@ -538,9 +540,9 @@ query;
     ) {
         /**
          *
-         *	@internal 	Returns Default list for today's readings (bp, bs, and wt)
-         *	@param 		user_id: user id
-         *	@return 	array of readings to check for
+         *  @internal   Returns Default list for today's readings (bp, bs, and wt)
+         *  @param      user_id: user id
+         *  @return     array of readings to check for
          *
          */
 
@@ -560,17 +562,17 @@ query;
 
 // echo $query;
 
-        $results = DB::connection('mysql_no_prefix')->select( DB::raw($sql) );
+        $results = DB::connection('mysql_no_prefix')->select(DB::raw($sql));
 
         return $results;
-
     }//getReadingDefaults
 
 
-    public function getLastWeight($provid, $intID) {
+    public function getLastWeight($provid, $intID)
+    {
         /**
          *
-         *	@internal 	Returns last weight we recieved
+         *  @internal   Returns last weight we recieved
          *
          * @param        intID : User id
          *
@@ -589,13 +591,12 @@ query;
 
 // echo $query;
 
-        $results = DB::connection('mysql_no_prefix')->select( DB::raw($query) );
-        if(isset($results[0])) {
+        $results = DB::connection('mysql_no_prefix')->select(DB::raw($query));
+        if (isset($results[0])) {
             return $results[0];
         } else {
             return false;
         }
-
     }//getLastWeight
 
 
@@ -641,10 +642,11 @@ query;
     }
 
 
-    public function getTargetWeight($intID) {
+    public function getTargetWeight($intID)
+    {
         /**
          *
-         *	@internal 	Returns last weight we recieved
+         *  @internal   Returns last weight we recieved
          *
          * @param        intID : User id
          *
@@ -662,13 +664,12 @@ query;
 
 // echo $query;
 
-        $results = DB::connection('mysql_no_prefix')->select( DB::raw($query) );
-        if(isset($results[0])) {
+        $results = DB::connection('mysql_no_prefix')->select(DB::raw($query));
+        if (isset($results[0])) {
             return $results[0];
         } else {
             return false;
         }
-
     }//getTargetWeight
 
 
@@ -688,29 +689,29 @@ query;
         $this->db->where(array('ri.items_id' => $item_id));
         $query = $this->db->get();
         $result = $query->result_array();
-        if(isset($result[0]['qid'])) {
+        if (isset($result[0]['qid'])) {
             $target_qid = $result[0]['qid'];
-            if($result[0]['qid'] == 0) {
+            if ($result[0]['qid'] == 0) {
                 // if qid=0, query for parent qid
                 $this->db->select('ri.qid');
                 $this->db->from('rules_items AS ri');
                 $this->db->where(array('ri.items_id' => $result[0]['items_parent']));
                 $query = $this->db->get();
                 $result = $query->result_array();
-                if(empty($result)) {
+                if (empty($result)) {
                     $target_qid = '';
-                } else if(isset($result[0]['qid'])) {
+                } else if (isset($result[0]['qid'])) {
                     $target_qid = $result[0]['qid'];
                 }
             }
         }
-        if($target_qid > 0) {
+        if ($target_qid > 0) {
             $this->db->select('rq.msg_id');
             $this->db->from('rules_questions AS rq');
             $this->db->where(array('rq.qid' => $target_qid));
             $query = $this->db->get();
             $result = $query->result_array();
-            if(isset($result[0]['msg_id'])) {
+            if (isset($result[0]['msg_id'])) {
                 return $result[0]['msg_id'];
             }
         }
@@ -718,7 +719,8 @@ query;
     }
 
 
-    public function get_adherence_items($int_id) {
+    public function get_adherence_items($int_id)
+    {
         // get message ids
         $this->db->select('ri.qid, ri.items_id, rq.msg_id, rq.obs_key AS alert_key, rm.meta_value AS alert_msg_id');
         $this->db->from('rules_questions rq');
@@ -763,14 +765,13 @@ query;
 
 
     // returns config for user
-    public function getUserConfig($provid, $user_id) {
+    public function getUserConfig($provid, $user_id)
+    {
         $sql = "select meta_key, meta_value from wp_usermeta where user_id = {$user_id} and meta_key = 'wp_{$provid}_user_config'";
-        $results = DB::connection('mysql_no_prefix')->select( DB::raw($sql) );
-        if(isset($results[0])) {
+        $results = DB::connection('mysql_no_prefix')->select(DB::raw($sql));
+        if (isset($results[0])) {
             return $results[0]->meta_value;
         }
         return '';
-
     } //getUserConfig
-
 }

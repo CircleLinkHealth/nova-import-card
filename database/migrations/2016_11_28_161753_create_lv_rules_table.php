@@ -41,5 +41,4 @@ class CreateLvRulesTable extends Migration
     {
         Schema::drop('lv_rules');
     }
-
 }

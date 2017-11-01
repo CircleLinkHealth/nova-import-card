@@ -32,5 +32,4 @@ class CreateInstructablesTable extends Migration
     {
         Schema::drop('instructables');
     }
-
 }

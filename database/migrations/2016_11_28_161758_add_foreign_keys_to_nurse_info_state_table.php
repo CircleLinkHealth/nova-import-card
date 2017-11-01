@@ -15,8 +15,10 @@ class AddForeignKeysToNurseInfoStateTable extends Migration
     {
         Schema::table('nurse_info_state', function (Blueprint $table) {
             $table->foreign('nurse_info_id')->references('id')->on('nurse_info')->onUpdate('CASCADE')->onDelete('CASCADE');
-            $table->foreign('state_id',
-                'nurse_info_state_states_id_foreign')->references('id')->on('states')->onUpdate('CASCADE')->onDelete('CASCADE');
+            $table->foreign(
+                'state_id',
+                'nurse_info_state_states_id_foreign'
+            )->references('id')->on('states')->onUpdate('CASCADE')->onDelete('CASCADE');
         });
     }
 
@@ -33,5 +35,4 @@ class AddForeignKeysToNurseInfoStateTable extends Migration
             $table->dropForeign('nurse_info_state_states_id_foreign');
         });
     }
-
 }

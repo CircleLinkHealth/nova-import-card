@@ -23,7 +23,7 @@ trait MedicalRecordIdAndTypeTrait
         $type = Ccda::class
     ) {
         $builder->where(function ($q) use
-        (
+            (
             $id,
             $type
         ) {

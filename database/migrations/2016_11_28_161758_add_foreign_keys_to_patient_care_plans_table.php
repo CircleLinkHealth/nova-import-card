@@ -36,5 +36,4 @@ class AddForeignKeysToPatientCarePlansTable extends Migration
             $table->dropForeign('patient_care_plans_qa_approver_id_foreign');
         });
     }
-
 }

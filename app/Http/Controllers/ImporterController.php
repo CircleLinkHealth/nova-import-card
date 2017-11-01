@@ -114,15 +114,41 @@ class ImporterController extends Controller
         $predictedLocationId = $importedMedicalRecord->location_id;
         $predictedPracticeId = $importedMedicalRecord->practice_id;
         $predictedBillingProviderId = $importedMedicalRecord->billing_provider_id;
+        $practicesCollection = Practice::with('locations.providers')
+            ->get([
+                'id',
+                'display_name',
+            ]);
 
+        //fixing up the data for vue. basically keying locations and providers by id
+        $practices = $practicesCollection->keyBy('id')
+            ->map(function ($practice) {
+                return [
+                    'id'           => $practice->id,
+                    'display_name' => $practice->display_name,
+                    'locations'    => $practice->locations->map(function ($loc) {
+                        //is there no better way to do this?
+                        $loc = new Collection($loc);
+
+                        $loc['providers'] = collect($loc['providers'])->keyBy('id');
+
+                        return $loc;
+                    })
+                        ->keyBy('id'),
+                ];
+            });
+
+        \JavaScript::put([
+            'practices'                  => $practices,
+            'predictedBillingProviderId' => $predictedBillingProviderId,
+            'predictedLocationId'        => $predictedLocationId,
+            'predictedPracticeId'        => $predictedPracticeId,
+        ]);
 
         return view('importer.show-training-findings', compact([
             'document',
             'providers',
             'importedMedicalRecord',
-            'predictedBillingProviderId',
-            'predictedLocationId',
-            'predictedPracticeId',
         ]));
     }
 
@@ -137,8 +163,10 @@ class ImporterController extends Controller
             if ($file->getClientOriginalExtension() == 'csv') {
                 dispatch((new ImportCsvPatientList(parseCsvToArray($file), $file->getClientOriginalName())));
 
-                $link = link_to_route('view.files.ready.to.import',
-                    'Visit to CCDs Ready to Import page to review imported files.');
+                $link = link_to_route(
+                    'view.files.ready.to.import',
+                    'Visit to CCDs Ready to Import page to review imported files.'
+                );
 
                 return "The CSV list is being processed. $link";
             } //assume XML CCDA
@@ -217,36 +245,5 @@ class ImporterController extends Controller
         }
 
         return redirect()->route('view.files.ready.to.import');
-    }
-
-    public function showEligibilityUploadPage() {
-        $practicesCollection = Practice::with('locations.providers')
-            ->get([
-                'id',
-                'display_name',
-            ]);
-        //fixing up the data for vue. basically keying locations and providers by id
-        $practices = $practicesCollection->keyBy('id')
-            ->map(function ($practice) {
-                return [
-                    'id'           => $practice->id,
-                    'display_name' => $practice->display_name,
-                    'locations'    => $practice->locations->map(function ($loc) {
-                        //is there no better way to do this?
-                        $loc = new Collection($loc);
-
-                        $loc['providers'] = collect($loc['providers'])->keyBy('id');
-
-                        return $loc;
-                    })
-                        ->keyBy('id'),
-                ];
-            });
-
-        \JavaScript::put([
-            'practices'                  => $practices,
-        ]);
-
-        return view('CCDUploader.determineEligibility');
     }
 }

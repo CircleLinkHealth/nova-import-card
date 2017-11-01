@@ -49,16 +49,12 @@ class UserRepository implements \App\CLH\Contracts\Repositories\UserRepository
 
         // nurse info
         if ($user->hasRole('care-center')) {
-
             $this->saveOrUpdateNurseInfo($user, $params);
-
         }
 
         // care ambassador info
         if ($user->hasRole('care-ambassador')) {
-
             $this->saveOrUpdateCareAmbassadorInfo($user, $params);
-
         }
 
         //Add Email Notification
@@ -296,8 +292,7 @@ class UserRepository implements \App\CLH\Contracts\Repositories\UserRepository
 
         foreach ($patientInfo as $key => $value) {
             // hack for date_paused and date_withdrawn
-            if (
-                $key == 'date_paused'
+            if ($key == 'date_paused'
                 || $key == 'date_withdrawn'
             ) {
                 continue 1;
@@ -343,15 +338,12 @@ class UserRepository implements \App\CLH\Contracts\Repositories\UserRepository
     ) {
 
         if ($user->careAmbassador != null) {
-
             $user->careAmbassador->hourly_rate = $params->get('hourly_rate');
             $user->careAmbassador->speaks_spanish = $params->get('speaks_spanish') == 'on'
                 ? 1
                 : 0;
             $user->careAmbassador->save();
-
         } else {
-
             $ambassador = CareAmbassador::create([
                 'user_id' => $user->id,
             ]);
@@ -359,11 +351,7 @@ class UserRepository implements \App\CLH\Contracts\Repositories\UserRepository
             $ambassador->save();
 
             $user->careAmbassador()->save($ambassador);
-
-
         }
-
-
     }
 
     public function adminEmailNotify(
@@ -402,7 +390,6 @@ class UserRepository implements \App\CLH\Contracts\Repositories\UserRepository
             $message->from('no-reply@careplanmanager.com', 'CircleLink Health');
             $message->to($recipients)->subject($email_subject);
         });
-
     }
 
     public function editUser(
@@ -428,9 +415,7 @@ class UserRepository implements \App\CLH\Contracts\Repositories\UserRepository
 
         // care ambassador
         if ($user->hasRole('care-ambassador')) {
-
             $this->saveOrUpdateCareAmbassadorInfo($user, $params);
-
         }
 
         // provider info

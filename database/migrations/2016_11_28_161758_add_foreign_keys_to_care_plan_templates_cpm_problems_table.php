@@ -34,5 +34,4 @@ class AddForeignKeysToCarePlanTemplatesCpmProblemsTable extends Migration
             $table->dropForeign('care_plan_templates_cpm_problems_cpm_problem_id_foreign');
         });
     }
-
 }

@@ -21,7 +21,6 @@ class ChangePdfReportsNames extends Migration
                 $r->file_type = CarePlan::class;
             }
             $r->save();
-
         }
     }
 

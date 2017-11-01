@@ -3,7 +3,8 @@
 use App\Services\MsgUI;
 use Illuminate\Database\Eloquent\Model;
 
-class CPRulesQuestions extends Model {
+class CPRulesQuestions extends Model
+{
 
     /**
      * The connection name for the model.
@@ -62,7 +63,7 @@ class CPRulesQuestions extends Model {
         $html = '';
         $msgUI = new MsgUI;
         $msgIcon = $msgUI->getMsgIcon($this->icon);
-        if(!empty($msgIcon)) {
+        if (!empty($msgIcon)) {
             $html = "<i style='color:" . $msgIcon['color'] . "' class='fa fa-2x fa-" . $msgIcon['icon'] . "'></i>";
         }
         return $html;
@@ -72,10 +73,10 @@ class CPRulesQuestions extends Model {
 
     // ATTRIBUTES
 
-    public function getMsgIdAndObsKeyAttribute() {
+    public function getMsgIdAndObsKeyAttribute()
+    {
         $msgId = $this->msg_id;
         $obsKey = $this->obs_key;
         return $msgId . ' [' . $obsKey . ']';
     }
-
 }

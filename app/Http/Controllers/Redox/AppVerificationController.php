@@ -8,7 +8,8 @@ use Illuminate\Support\Facades\Response;
 
 use App\ThirdPartyApiConfig;
 
-class AppVerificationController extends Controller {
+class AppVerificationController extends Controller
+{
 
     /**
      * This is the endpoint Redox will use to verify the app that we created.
@@ -18,7 +19,7 @@ class AppVerificationController extends Controller {
      * @param Request $request
      * @return string
      */
-	public function getVerificationRequest(Request $request)
+    public function getVerificationRequest(Request $request)
     {
         $challenge = $request->input('challenge');
         $verificationToken = $request->input('verification-token');
@@ -27,7 +28,7 @@ class AppVerificationController extends Controller {
             ->whereMetaKey('redox_app_verification_token')
             ->first();
 
-        if ( !empty( $getAppVerifToken ) ) {
+        if (!empty($getAppVerifToken)) {
             $appVerifToken = $getAppVerifToken['meta_value'];
 
             if ($verificationToken == $appVerifToken) {
@@ -45,5 +46,4 @@ class AppVerificationController extends Controller {
     {
         return response('OK', 200);
     }
-
 }

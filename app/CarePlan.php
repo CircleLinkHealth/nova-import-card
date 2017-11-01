@@ -67,7 +67,7 @@ class CarePlan extends Model implements PdfReport
                         $q->whereCcmStatus('enrolled');
                     })
                     ->whereHas('careTeamMembers', function ($q) use
-                    (
+                        (
                         $user
                     ) {
                         $q->where('member_user_id', '=', $user->id)
@@ -135,7 +135,8 @@ class CarePlan extends Model implements PdfReport
         return $file_name;
     }
 
-    public function isProviderApproved() {
+    public function isProviderApproved()
+    {
         return $this->status == CarePlan::PROVIDER_APPROVED;
     }
 

@@ -11,17 +11,15 @@ class NurseCareRateLog extends Model
 
     protected $fillable = ['nurse_id', 'activity_id', 'ccm_type', 'increment', 'created_at'];
 
-    public function nurse(){
+    public function nurse()
+    {
 
         return $this->belongsTo(Nurse::class, 'nurse_id');
-
     }
 
-    public function activity(){
+    public function activity()
+    {
 
         return $this->belongsTo(Activity::class, 'activity_id');
-
-
     }
-
 }

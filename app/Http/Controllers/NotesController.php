@@ -43,15 +43,16 @@ class NotesController extends Controller
 
         $ccm_complex = $patient->patientInfo->isCCMComplex() ?? false;
 
-        return view('wpUsers.patient.note.index',
+        return view(
+            'wpUsers.patient.note.index',
             [
                 'activity_json' => $report_data,
                 'patient'       => $patient,
                 'messages'      => $messages,
                 'data'          => $data,
                 'ccm_complex'   => $ccm_complex,
-            ]);
-
+            ]
+        );
     }
 
     public function listing(Request $request)
@@ -72,7 +73,6 @@ class NotesController extends Controller
             $months = $input['range'];
             $start = Carbon::now()->startOfMonth()->subMonth($months)->format('Y-m-d');
             $end = Carbon::now()->endOfMonth()->format('Y-m-d');
-
         } //if user resets time
         else {
             $months = 0;
@@ -90,24 +90,18 @@ class NotesController extends Controller
 
         //Check to see whether a provider was selected.
         if (isset($input['provider']) && $input['provider'] != '') {
-
             $provider = User::find($input['provider']);
 
             if ($only_mailed_notes) {
-
                 $notes = $this->service->getForwardedNotesWithRangeForProvider($provider->id, $start, $end);
-
             } else {
-
                 $notes = $this->service->getNotesWithRangeForProvider($provider->id, $start, $end);
-
             }
 
 
             $title = $provider->display_name;
 
             if (!empty($notes)) {
-
                 $notes = $this->formatter->formatDataForNotesListingReport($notes, $request);
             }
 
@@ -123,10 +117,8 @@ class NotesController extends Controller
                 'only_mailed_notes'  => $only_mailed_notes,
                 'admin_filter'       => $admin_filter,
             ];
-
         } else {
             if ((auth()->user()->hasRole('administrator') || auth()->user()->hasRole('care-center')) && $admin_filter) {
-
                 //If an admin is viewing this, we show them all
                 //notes from all providers who are in the
                 //same program as the provider selected.
@@ -136,7 +128,6 @@ class NotesController extends Controller
                 $title = 'All Forwarded Notes';
 
                 if (!empty($notes)) {
-
                     $notes = $this->formatter->formatDataForNotesListingReport($notes, $request);
                 }
 
@@ -152,7 +143,6 @@ class NotesController extends Controller
                     'only_mailed_notes'  => $only_mailed_notes,
                     'admin_filter'       => $admin_filter,
                 ];
-
             } else { // Not enough data for a report, return only the essentials
 
                 $data = [
@@ -163,12 +153,10 @@ class NotesController extends Controller
                     'isProviderSelected' => false,
                     'only_mailed_notes'  => false,
                 ];
-
             }
         }
 
         return view('wpUsers.patient.note.list', $data);
-
     }
 
     public function create(
@@ -194,7 +182,7 @@ class NotesController extends Controller
 
             $patient_name = $patient->fullName;
 
-            //Pull up user's call information. 
+            //Pull up user's call information.
 
             //Gather details to generate form
 
@@ -290,8 +278,12 @@ class NotesController extends Controller
         $params = new ParameterBag($input);
 
         if ($params->get('days') && $params->get('window_start') && $params->get('window_end')) {
-            PatientContactWindow::sync($info, $params->get('days', []), $params->get('window_start'),
-                $params->get('window_end'));
+            PatientContactWindow::sync(
+                $info,
+                $params->get('days', []),
+                $params->get('window_start'),
+                $params->get('window_end')
+            );
         }
 
         /**
@@ -301,28 +293,22 @@ class NotesController extends Controller
          */
 
         if (Auth::user()->hasRole('care-center')) {
-
             //If the patient was just withdrawn, let's redirect them back to notes.index
             if ($info->ccm_status == 'withdrawn') {
-
-                return redirect()->route('patient.note.index', ['patient' => $patientId])->with('messages',
-                    ['Successfully Created Note']);
-
+                return redirect()->route('patient.note.index', ['patient' => $patientId])->with(
+                    'messages',
+                    ['Successfully Created Note']
+                );
             }
 
             if (isset($input['phone'])) {
-
                 if (isset($input['call_status']) && $input['call_status'] == 'reached') {
-
                     //Updates when the patient was successfully contacted last
                     $info->last_successful_contact_time = Carbon::now()->format('Y-m-d H:i:s'); // @todo add H:i:s
 
                     $prediction = (new SchedulerService())->getNextCall($patient, $note->id, true);
-
                 } else {
-
                     $prediction = (new SchedulerService())->getNextCall($patient, $note->id, false);
-
                 }
 
                 // add last contact time regardless of if success
@@ -345,58 +331,64 @@ class NotesController extends Controller
 
 
                 return view('wpUsers.patient.calls.create', $prediction);
-
             }
-
         }
 
         //If successful phone call and provider, also mark as the last successful day contacted. [ticket: 592]
         if (isset($input['phone'])) {
-
             if (isset($input['call_status']) && $input['call_status'] == 'reached') {
-
                 if (auth()->user()->hasRole('provider')) {
-
                     $this->service->storeCallForNote($note, 'reached', $patient, Auth::user(), Auth::user()->id, null);
 
                     (new PatientMonthlySummary())->updateCallInfoForPatient($patient->patientInfo, true);
 
                     $info->last_successful_contact_time = Carbon::now()->format('Y-m-d H:i:s');
                     $info->save();
-
                 }
             }
 
             if (auth()->user()->hasRole('no-ccm-care-center')) {
-
                 if (isset($input['welcome_call'])) {
-
-                    $this->service->storeCallForNote($note, 'welcome call', $patient, auth()->user(),
-                        auth()->user()->id, null);
+                    $this->service->storeCallForNote(
+                        $note,
+                        'welcome call',
+                        $patient,
+                        auth()->user(),
+                        auth()->user()->id,
+                        null
+                    );
 
                     $info->date_welcomed = Carbon::now()->format('Y-m-d H:i:s');
                     $info->save();
-
                 } else {
-
-                    $this->service->storeCallForNote($note, 'welcome attempt', $patient, auth()->user(),
-                        auth()->user()->id, null);
-
+                    $this->service->storeCallForNote(
+                        $note,
+                        'welcome attempt',
+                        $patient,
+                        auth()->user(),
+                        auth()->user()->id,
+                        null
+                    );
                 }
 
                 if (isset($input['other_call'])) {
-
-                    $this->service->storeCallForNote($note, 'other call', $patient, auth()->user(), auth()->user()->id,
-                        null);
-
+                    $this->service->storeCallForNote(
+                        $note,
+                        'other call',
+                        $patient,
+                        auth()->user(),
+                        auth()->user()->id,
+                        null
+                    );
                 }
             }
         }
 
 
-        return redirect()->route('patient.note.index', ['patient' => $patientId])->with('messages',
-            ['Successfully Created Note']);
-
+        return redirect()->route('patient.note.index', ['patient' => $patientId])->with(
+            'messages',
+            ['Successfully Created Note']
+        );
     }
 
     public function show(
@@ -508,4 +500,3 @@ class NotesController extends Controller
         return redirect()->to(route('patient.note.view', ['patientId' => $patientId, 'noteId' => $noteId]).'#create-addendum');
     }
 }
-

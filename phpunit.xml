@@ -7,17 +7,21 @@
          convertNoticesToExceptions="true"
          convertWarningsToExceptions="true"
          processIsolation="false"
-         stopOnFailure="false"
-         syntaxCheck="true">
+         stopOnFailure="false">
     <testsuites>
+        <testsuite name="Feature">
+            <directory suffix="Test.php">./tests/Feature</directory>
+        </testsuite>
+
+        <testsuite name="Unit">
+            <directory suffix="Test.php">./tests/Unit</directory>
+        </testsuite>
         <testsuite name="Deployment">
-            <directory>./tests/acceptance/</directory>
-            <directory>./tests/functional/</directory>
             <directory>./tests/integration/</directory>
             <directory>./tests/unit/</directory>
         </testsuite>
         <testsuite name="Application Test Suite">
-        <directory>./tests/Notes/</directory>
+            <directory>./tests/Notes/</directory>
         </testsuite>
         <testsuite name="Notes">
             <directory>./tests/Notes/</directory>
@@ -38,6 +42,11 @@
             <directory>./tests/Provider/</directory>
         </testsuite>
     </testsuites>
+    <filter>
+        <whitelist processUncoveredFilesFromWhitelist="true">
+            <directory suffix=".php">./app</directory>
+        </whitelist>
+    </filter>
     <listeners>
         <listener class="\Mockery\Adapter\Phpunit\TestListener"
                   file="vendor/mockery/mockery/library/Mockery/Adapter/Phpunit/TestListener.php">

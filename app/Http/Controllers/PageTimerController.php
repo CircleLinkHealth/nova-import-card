@@ -190,15 +190,12 @@ class PageTimerController extends Controller
         $nurse = User::find($activity->provider_id)->nurseInfo;
 
         if ($nurse) {
-
             $alternativePayComputer = new AlternativeCareTimePayableCalculator($nurse);
 
             $alternativePayComputer->adjustCCMPaybleForActivity($activity);
-
         }
 
         return false;
-
     }
 
     /**
@@ -221,5 +218,4 @@ class PageTimerController extends Controller
         //All the logic happens in Controller, because of some restrictions with Laravel at the time I'm writing this,
         //that's the best way I can come up with right now. Gross, I know, but it's 3:30am on a Saturday
     }
-
 }

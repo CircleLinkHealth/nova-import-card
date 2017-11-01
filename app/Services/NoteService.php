@@ -17,7 +17,6 @@ use Carbon\Carbon;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\URL;
 
-
 class NoteService
 {
 
@@ -137,7 +136,6 @@ class NoteService
         }
 
         for ($i = 0; $i < count($careteam); $i++) {
-
             $receiver = $careteam[$i];
 
             if (is_object($receiver) == false) {
@@ -182,11 +180,9 @@ class NoteService
             ]);
 
             $receiver->notify(new NewNote($message, $url));
-
         }
 
         return true;
-
     }
 
     //Get data for patient note index page, w/ offline activities
@@ -195,7 +191,6 @@ class NoteService
     {
 
         return Note::where('id', $note_id)->with('call')->with('mail')->first();
-
     }
 
     //Get all notes for patients with specified date range
@@ -219,7 +214,6 @@ class NoteService
         $data = $notes->merge($activities)->sortByDesc('created_at');
 
         return $data;
-
     }
 
     //Get all notes that were forwarded with specified date range
@@ -236,7 +230,6 @@ class NoteService
 
         return Appointment::wherePatientId($patient->user_id)
             ->get();
-
     }
 
     //Get all notes that have been sent to anyone for a given provider with specified date range
@@ -247,19 +240,19 @@ class NoteService
         $end
     ) {
 
-        $patients = User::whereHas('careTeamMembers',
-
+        $patients = User::whereHas(
+            'careTeamMembers',
             function ($q) use
-            (
+                (
                 $provider
             ) {
 
                 $q->where('member_user_id', $provider)
                     ->where('type', 'billing_provider');
-            })->pluck('id');
+            }
+        )->pluck('id');
 
         return $this->getNotesWithRangeForPatients($patients, $start, $end);
-
     }
 
     //Save call information for note
@@ -278,7 +271,6 @@ class NoteService
             ->orderBy('performed_at', 'desc')
             ->with('patient')->with('mail')->with('call')->with('author')
             ->get();
-
     }
 
     public function getForwardedNotesWithRangeForProvider(
@@ -288,7 +280,7 @@ class NoteService
     ) {
 
         $patients = User::whereHas('careTeamMembers', function ($q) use
-        (
+            (
             $provider
         ) {
             $q->where('member_user_id', $provider)
@@ -300,14 +292,12 @@ class NoteService
         $provider_forwarded_notes = [];
 
         foreach ($notes as $note) {
-
             if ($this->wasSentToProvider($note)) {
                 $provider_forwarded_notes[] = $note;
             }
         }
 
         return collect($provider_forwarded_notes);
-
     }
 
     public function getForwardedNotesWithRangeForPatients(
@@ -325,7 +315,6 @@ class NoteService
             ->orderBy('performed_at', 'desc')
             ->with('patient')->with('mail')->with('call')->with('author')
             ->get();
-
     }
 
     public function wasSentToProvider(Note $note)
@@ -338,11 +327,9 @@ class NoteService
         }
 
         foreach ($mails as $mail) {
-
             $mail_recipient = User::withTrashed()->find($mail->receiver_cpm_id);
 
             if ($mail_recipient->hasRole('provider')) {
-
                 return true;
             }
         }
@@ -364,14 +351,11 @@ class NoteService
         }
 
         foreach ($mails as $mail) {
-
             $mail_recipient = User::find($mail->receiver_cpm_id);
             $patient = User::find($note->patient_id);
 
             if ($mail_recipient->id == $patient->billingProvider()->id && $mail->seen_on != null) {
-
                 return true;
-
             }
         }
 
@@ -402,14 +386,12 @@ class NoteService
         $provider_forwarded_notes = [];
 
         foreach ($notes as $note) {
-
             if ($this->wasSentToProvider($note)) {
                 $provider_forwarded_notes[] = $note;
             }
         }
 
         return collect($provider_forwarded_notes);
-
     }
 
     public function updateMailLogsForNote(
@@ -421,12 +403,9 @@ class NoteService
             ->where('receiver_cpm_id', $viewer)->first();
 
         if (is_object($mail)) {
-
             $mail->seen_on = Carbon::now()->toDateTimeString();
             $mail->save();
-
         }
-
     }
 
     public function getSeenForwards(Note $note)
@@ -438,10 +417,8 @@ class NoteService
         $data = [];
 
         foreach ($mails as $mail) {
-
             $name = User::find($mail->receiver_cpm_id)->fullName;
             $data[$name] = $mail->seen_on;
-
         }
 
         if (count($data) > 0) {
@@ -449,7 +426,6 @@ class NoteService
         }
 
         return false;
-
     }
 
     public function forwardedNoteWasSeenByPrimaryProvider(
@@ -459,7 +435,6 @@ class NoteService
 
         $mail = MailLog::where('note_id', $note->id)
             ->where('receiver_cpm_id', $patient->billingProvider()->id)->first();
-
     }
 
     public function updatePatientRecords(
@@ -474,34 +449,25 @@ class NoteService
             ->where('month_year', $date_index)->first();
 
         if (empty($patientRecord)) {
-
             $patientRecord = PatientMonthlySummary::updateCCMInfoForPatient(
                 $patient,
                 $patient->cur_month_activity_time
             );
-
         } else {
-
             $patientRecord->is_ccm_complex = 0;
             $patientRecord->save();
-
         }
 
         if ($ccmComplex) {
-
             $patientRecord->is_ccm_complex = 1;
             $patientRecord->save();
 
             if ($patient->cur_month_activity_time > 3600 && auth()->user()->nurseInfo) {
-
                 (new AlternativeCareTimePayableCalculator(auth()->user()->nurseInfo))->adjustPayOnCCMComplexSwitch60Mins();
-
             }
-
         }
 
         return $patientRecord;
-
     }
 
     //return bool of whether note was sent to a provider
@@ -528,7 +494,6 @@ class NoteService
             $inbound_num = $patient->primaryPhone;
             $inbound_id = $patient->id;
             $isCpmOutbound = true;
-
         }
 
         Call::create([
@@ -556,7 +521,6 @@ class NoteService
             'is_cpm_outbound' => $isCpmOutbound,
 
         ]);
-
     }
 
     public function getPatientCareTeamMembers($patientId)
@@ -573,8 +537,5 @@ class NoteService
         }
 
         return $careteam_info;
-
     }
-
-
 }

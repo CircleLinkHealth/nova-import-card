@@ -1,13 +1,14 @@
 <?php
 
+
 namespace Tests\Unit;
 
+use Tests\TestCase;
 use App\Practice;
 use App\Reports\Sales\PracticeReportable;
 use App\Reports\Sales\StatsHelper;
 use Carbon\Carbon;
 use Tests\Helpers\UserHelpers;
-use Tests\TestCase;
 
 class PracticeStatsHelperTest extends TestCase
 {

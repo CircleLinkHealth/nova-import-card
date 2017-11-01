@@ -22,22 +22,21 @@ class Appointment extends Model
         'updated_at'
     ];
 
-    public function patient(){
+    public function patient()
+    {
 
         return $this->belongsTo(User::class, 'patient_id');
-
     }
 
-    public function author(){
+    public function author()
+    {
 
         return $this->belongsTo(User::class, 'author_id');
-
     }
 
-    public function provider(){
+    public function provider()
+    {
 
         return $this->belongsTo(User::class, 'provider_id');
-
     }
-
 }

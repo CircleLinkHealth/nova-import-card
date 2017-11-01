@@ -3,11 +3,10 @@
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
+class PatientReports extends Model
+{
 
-class PatientReports extends Model {
+    use SoftDeletes;
 
-	use SoftDeletes;
-
-	protected $guarded = [];
-
+    protected $guarded = [];
 }

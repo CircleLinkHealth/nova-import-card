@@ -48,8 +48,7 @@ class Service
                     $secondary->start_time = '0000-00-00 00:00:00';
                     $secondary->end_time = '0000-00-00 00:00:00';
                     $secondary->save();
-                }
-                //if the secondary start is the minDate, we want to get $secondaryStart->diffInSeconds($greedyStart)
+                } //if the secondary start is the minDate, we want to get $secondaryStart->diffInSeconds($greedyStart)
                 // we are assuming that only the $secondary activity has this start date
                 elseif ($minDate == $secondaryStart) {
                     $secondaryDuration = $secondaryStart->diffInSeconds($greedyStart);
@@ -58,7 +57,6 @@ class Service
                     $secondary->save();
 
                     $greedy->billable_duration = $greedyStart->diffInSeconds($greedyEnd);
-
                 } else {
                     $secondaryDuration = $secondaryStart->diffInSeconds($minDate);
                     $minDate = $secondaryStart->copy();
@@ -67,13 +65,11 @@ class Service
                     $secondary->save();
 
                     $greedy->billable_duration = $greedyStart->diffInSeconds($greedyEnd);
-
                 }
 
                 if ($greedyEnd->gt($maxDate)) {
                     $maxDate = $greedyEnd->copy();
                 }
-
             } elseif ($greedyStart->lte($secondaryStart) && $greedyEnd->gte($secondaryEnd)) {
                 if ($greedyStart->lt($minDate)) {
                     $minDate = $greedyStart->copy();
@@ -95,7 +91,6 @@ class Service
                     $minDate,
                     $maxDate
                 );
-
             } elseif ($greedyStart->gte($secondaryStart) && $greedyEnd->lte($secondaryEnd)) {
                 $this->overlapAllTheThings(
                     $secondary,
@@ -108,7 +103,6 @@ class Service
                     $minDate,
                     $maxDate
                 );
-
             } elseif ($greedyStart->lte($secondaryStart) && $greedyEnd->lte($secondaryEnd)) {
                 if ($greedyStart->lt($minDate)) {
                     $minDate = $greedyStart->copy();
@@ -119,7 +113,6 @@ class Service
                     $secondaryStart = $greedyEnd->copy();
                     $secondary->start_time = $secondaryStart->toDateTimeString();
                     $secondary->billable_duration = $secondaryStart->diffInSeconds($secondaryEnd);
-
                 } elseif ($secondaryStart->lte($minDate)) {
                     $minDate = $secondaryStart->copy();
                     $secondary->billable_duration = $secondaryStart->diffInSeconds($greedyStart);
@@ -140,8 +133,7 @@ class Service
 
             //If new activity is null, it means it was completely overlapped by another activity.
             //We want to stop at this point to avoid getting other dates compared with this and getting huge duration
-            if (
-                $newActivity->start_time == '0000-00-00 00:00:00'
+            if ($newActivity->start_time == '0000-00-00 00:00:00'
                 && $newActivity->end_time == '0000-00-00 00:00:00'
             ) {
                 break;

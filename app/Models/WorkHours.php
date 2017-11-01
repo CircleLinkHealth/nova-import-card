@@ -28,5 +28,4 @@ class WorkHours extends Model
     {
         return $this->morphTo();
     }
-
 }

@@ -2,7 +2,8 @@
 
 use Illuminate\Database\Eloquent\Model;
 
-class Comment extends Model {
+class Comment extends Model
+{
 
     /**
      * The connection name for the model.
@@ -46,7 +47,7 @@ class Comment extends Model {
 
     public function save(array $params = array())
     {
-        if(empty($this->user_id)) {
+        if (empty($this->user_id)) {
             dd('user_id is required for comment');
         }
         $wpUser = User::find($this->user_id);
@@ -96,5 +97,4 @@ class Comment extends Model {
         parent::save();
         // http://www.amitavroy.com/justread/content/articles/events-laravel-5-and-customize-model-save
     }
-
 }

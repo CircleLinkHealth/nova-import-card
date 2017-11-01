@@ -65,8 +65,7 @@ class PatientProgramSecurity
                 if ($user->id != Auth::user()->id && !Auth::user()->can('users-view-all')) {
                     abort(403);
                 }
-                if (
-//                    count(array_intersect(
+                if (//                    count(array_intersect(
 //                        $user->locations->pluck('id')->all(),
 //                        auth()->user()->locations->pluck('id')->all()
 //                    )) == 0
@@ -83,5 +82,4 @@ class PatientProgramSecurity
 
         return $next($request);
     }
-
 }

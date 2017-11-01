@@ -8,18 +8,17 @@ class ImpersonationController extends Controller
 
     public function postImpersonate(Request $request)
     {
-        $email = $request->input( 'email' );
+        $email = $request->input('email');
 
         try {
             $user = User::whereEmail($email)->firstOrFail();
-        } catch ( \Exception $e ) {
+        } catch (\Exception $e) {
             echo "No User was found with email address $email <br><br> Please go back and try again.";
             exit;
         }
 
-        auth()->setUserToImpersonate( $user );
+        auth()->setUserToImpersonate($user);
 
-        return redirect()->route( 'patients.dashboard', ['impersonatedUserEmail' => $email] );
+        return redirect()->route('patients.dashboard', ['impersonatedUserEmail' => $email]);
     }
-
 }

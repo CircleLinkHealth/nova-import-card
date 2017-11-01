@@ -2,7 +2,6 @@
 
 namespace App\CLH\Helpers;
 
-
 class StringManipulation
 {
     /**

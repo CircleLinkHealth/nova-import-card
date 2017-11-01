@@ -73,8 +73,13 @@ class CcdApiController extends Controller
             ->getPatientAndProviderIdsByLocationAndForeignSystem($locationId, ForeignId::APRIMA);
 
         foreach ($patientAndProviderIds as $ids) {
-            $activities = $this->activities->getCcmActivities($ids->clhPatientUserId, $ids->clhProviderUserId,
-                $startDate, $endDate, $sendAll);
+            $activities = $this->activities->getCcmActivities(
+                $ids->clhPatientUserId,
+                $ids->clhProviderUserId,
+                $startDate,
+                $endDate,
+                $sendAll
+            );
 
             if ($activities->isEmpty()) {
                 continue;
@@ -160,7 +165,6 @@ class CcdApiController extends Controller
         $json = [];
 
         foreach ($pendingReports as $report) {
-
             //Get patient's lead provider
             $provider = CarePerson::whereUserId($report->patient_id)
                 ->whereType('lead_contact')
@@ -243,7 +247,6 @@ class CcdApiController extends Controller
         $json = [];
 
         foreach ($pendingReports as $report) {
-
             //Get patient's lead provider
             $provider = CarePerson::whereUserId($report->patient_id)
                 ->whereType('lead_contact')
@@ -363,11 +366,16 @@ class CcdApiController extends Controller
                 : $provider['id'];
 
             $ccdObj->import();
-
         } catch (\Exception $e) {
             if (app()->environment('production')) {
-                $this->notifyAdmins($user, $ccdObj, $providerJsonStr, 'bad', __METHOD__ . ' ' . __LINE__,
-                    $e->getMessage());
+                $this->notifyAdmins(
+                    $user,
+                    $ccdObj,
+                    $providerJsonStr,
+                    'bad',
+                    __METHOD__ . ' ' . __LINE__,
+                    $e->getMessage()
+                );
             }
 
             return response()->json(['message' => 'CCD uploaded successfully.'], 201);

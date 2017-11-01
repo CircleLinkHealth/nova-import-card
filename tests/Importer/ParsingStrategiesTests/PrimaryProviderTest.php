@@ -1,5 +1,10 @@
 <?php
 
+namespace Tests\Importer\ParsingStrategiesTests;
+
+
+use Tests\TestCase;
+
 /**
  * Created by PhpStorm.
  * User: michalis
@@ -19,11 +24,11 @@ class PrimaryProviderTest extends TestCase
 
     public function test_jim_provider_returns_expected()
     {
-        $this->assertArraySubset( [\App\WpUser::whereDisplayName('Jim Provider')->first()], $this->getParser()->parse( json_decode($this->containsJimProvider) ) );
+        $this->assertArraySubset([\App\WpUser::whereDisplayName('Jim Provider')->first()], $this->getParser()->parse(json_decode($this->containsJimProvider)));
     }
 
     public function test_empty_provider_returns_false()
     {
-        $this->assertFalse($this->getParser()->parse( json_decode($this->emptyProvider) ));
+        $this->assertFalse($this->getParser()->parse(json_decode($this->emptyProvider)));
     }
 }

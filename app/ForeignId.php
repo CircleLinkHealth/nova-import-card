@@ -14,11 +14,12 @@ use Prettus\Repository\Traits\TransformableTrait;
  * Class ForeignId
  * @package App
  */
-class ForeignId extends Model implements Transformable{
+class ForeignId extends Model implements Transformable
+{
 
     use TransformableTrait;
 
-	protected $guarded = [];
+    protected $guarded = [];
 
     //Define systems here
     const APRIMA = 'aprima';
@@ -28,5 +29,4 @@ class ForeignId extends Model implements Transformable{
     {
         return $this->belongsTo(User::class);
     }
-
 }

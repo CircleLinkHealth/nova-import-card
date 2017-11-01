@@ -2,7 +2,8 @@
 
 use Illuminate\Database\Eloquent\Model;
 
-class CareSection extends Model {
+class CareSection extends Model
+{
 
     /**
      * The connection name for the model.
@@ -49,9 +50,8 @@ class CareSection extends Model {
         /**
          * Automatically delete and item's meta when the item is deleted
          */
-        CPRulesItem::deleting(function($CPRulesItem){
+        CPRulesItem::deleting(function ($CPRulesItem) {
             $CPRulesItem->meta()->delete();
         });
     }
-
 }

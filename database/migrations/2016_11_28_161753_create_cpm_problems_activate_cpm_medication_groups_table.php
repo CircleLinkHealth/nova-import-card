@@ -37,5 +37,4 @@ class CreateCpmProblemsActivateCpmMedicationGroupsTable extends Migration
     {
         Schema::drop('cpm_problems_activate_cpm_medication_groups');
     }
-
 }

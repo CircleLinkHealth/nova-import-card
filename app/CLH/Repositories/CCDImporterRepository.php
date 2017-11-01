@@ -2,7 +2,6 @@
 
 namespace App\CLH\Repositories;
 
-
 use App\Importer\Models\ImportedItems\DemographicsImport;
 use App\Models\MedicalRecords\ImportedMedicalRecord;
 use App\Role;
@@ -74,7 +73,7 @@ class CCDImporterRepository
             'body'    => $xml,
         ]);
 
-        if (!$response->getStatusCode() == 200) {
+        if ($response->getStatusCode() != 200) {
             return [
                 $response->getStatusCode(),
                 $response->getReasonPhrase(),

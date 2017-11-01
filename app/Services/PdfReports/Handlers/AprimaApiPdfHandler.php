@@ -8,7 +8,6 @@
 
 namespace App\Services\PdfReports\Handlers;
 
-
 use App\Contracts\PdfReport;
 use App\Contracts\PdfReportHandler;
 use App\ForeignId;

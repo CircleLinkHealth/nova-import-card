@@ -11,17 +11,15 @@ class Message extends Model
 
     protected $table = 'cpm_mail_logs';
 
-    public function recipient(){
+    public function recipient()
+    {
 
         return $this->belongsTo(User::class, 'receiver_cpm_id', 'id');
-
     }
 
-    public function sender(){
+    public function sender()
+    {
 
         return $this->belongsTo(User::class, 'sender_cpm_id', 'id');
-
     }
-
-
 }

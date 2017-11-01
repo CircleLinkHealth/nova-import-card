@@ -2,7 +2,8 @@
 
 use Illuminate\Database\Eloquent\Model;
 
-class Rules extends Model {
+class Rules extends Model
+{
 
     /**
      * The connection name for the model.
@@ -35,5 +36,4 @@ class Rules extends Model {
     {
         return $this->hasMany('App\RulesIntrActions', 'rule_id');
     }
-
 }

@@ -56,7 +56,7 @@ class DashboardController extends Controller
             return response('Practice not found', 404);
         }
 
-        return view('provider.location.create',[
+        return view('provider.location.create', [
             'practiceSlug' => $this->practiceSlug,
             'practice'     => $this->primaryPractice,
         ]);
