@@ -1,20 +1,26 @@
 <template>
   <div>
     <v-client-table :data="tableData" :columns="columns" :options="options"></v-client-table>
+    <row-info :data="'hello'"></row-info>
   </div>
 </template>
 
 <script>
   import { rootUrl } from '../../app.config.js'
+  import RowInfo from './comps/row-info'
 
   export default {
       name: 'CallMgmtApp',
+      components: {
+        'row-info': RowInfo
+      },
       data() {
         return {
-          columns: ['ID', 'Nurse','Patient','Status', 'Practice', 'Last Call Status', 'Next Call', 'Call Time Start', 'Call Time End', 'Time Zone', 'Preferred Call Days', 'Last Call', 'CCM Time'],
+          columns: ['id', 'Nurse','Patient','Status', 'Practice', 'Last Call Status', 'Next Call', 'Call Time Start', 'Call Time End', 'Time Zone', 'Preferred Call Days', 'Last Call', 'CCM Time'],
           tableData: [],
           options: {
           // see the options API
+            childRow: 'row-info'
           }
         }
       },
@@ -34,7 +40,7 @@
                                             null)
           })
           const tableCalls = calls.map(call => ({
-                                ID: call.id,
+                                id: call.id,
                                 Nurse: (call.getNurse() || {}).full_name,
                                 Patient: (call.getPatient() || {}).full_name,
                                 Status: call.status,
