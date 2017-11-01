@@ -53,7 +53,7 @@
                                 @include('errors.errors')
                                 @include('errors.messages')
                             </div>
-                            <div class="call-mgmt-section">
+                            <div id="call-mgmt-app">
 
                             </div>
                         </div>
@@ -64,3 +64,7 @@
     </div>
 </div>
 @endsection
+
+@push('scripts')
+    <script src="{{ asset('compiled/js/v-call-mgmt.min.js') }}"></script>
+@endpush

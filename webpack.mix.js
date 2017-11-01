@@ -76,3 +76,4 @@ mix.combine([
 mix.js('resources/assets/js/app-provider-ui.js', 'public/compiled/js').sourceMaps()
 mix.js('resources/assets/js/app-provider-admin-panel-ui.js', 'public/compiled/js').sourceMaps()
 mix.js('resources/assets/js/app-clh-admin-ui.js', 'public/compiled/js').sourceMaps()
+mix.js('resources/assets/js/admin/calls/main.js', 'public/compiled/js/v-call-mgmt.min.js').sourceMaps()
