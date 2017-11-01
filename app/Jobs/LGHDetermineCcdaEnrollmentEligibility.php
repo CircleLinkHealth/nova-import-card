@@ -13,7 +13,7 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 
-class DetermineCcdaEnrollmentEligibility implements ShouldQueue
+class LGHDetermineCcdaEnrollmentEligibility implements ShouldQueue
 {
     use InteractsWithQueue, Queueable, SerializesModels;
     protected $ccda;
