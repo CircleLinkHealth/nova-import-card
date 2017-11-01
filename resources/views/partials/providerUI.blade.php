@@ -55,10 +55,6 @@
         span.twitter-typeahead .twitter-typeahead {
             position: absolute !important;
         }
-
-        #bloodhound > .twitter-typeahead > .tt-menu > .tt-dataset.tt-dataset-User_list {
-            display: none;
-        }
     </style>
     @stack('styles')
 </head>
@@ -113,7 +109,6 @@
 <script type="text/javascript" src="{{asset('compiled/js/app-provider-ui.js')}}"></script>
 <script type="text/javascript" src="{{ asset('compiled/js/issue-688.js') }}"></script>
 
-@include('partials.searchjs')
 @include('partials.providerUItimer')
 
 @stack('scripts')
