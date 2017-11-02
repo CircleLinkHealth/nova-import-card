@@ -7,6 +7,7 @@ use App\Importer\Loggers\Ccda\CcdaSectionsLogger;
 use App\Importer\MedicalRecordEloquent;
 use App\Traits\Relationships\BelongsToPatientUser;
 use App\User;
+use GuzzleHttp\Client;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Prettus\Repository\Contracts\Transformable;
 use Prettus\Repository\Traits\TransformableTrait;
@@ -101,5 +102,44 @@ class Ccda extends MedicalRecordEloquent implements Transformable
         }
 
         return '';
+    }
+
+    public function bluebuttonJson() {
+        if (!$this->id && !$this->xml) {
+            return false;
+        }
+
+        $key = "ccda{$this->id}json";
+
+        if (\Cache::has($key)) {
+            return \Cache::get($key);
+        }
+
+        $json = $this->parseToJson($this->xml);
+
+        \Cache::put($key, $json, 120);
+
+        return $json;
+    }
+
+    protected function parseToJson($xml)
+    {
+        $client = new Client([
+            'base_uri' => env('CCD_PARSER_BASE_URI', 'https://circlelink-ccd-parser.medstack.net'),
+        ]);
+
+        $response = $client->request('POST', '/ccda/parse', [
+            'headers' => ['Content-Type' => 'text/xml'],
+            'body'    => $xml,
+        ]);
+
+        if ($response->getStatusCode() != 200) {
+            return [
+                $response->getStatusCode(),
+                $response->getReasonPhrase(),
+            ];
+        }
+
+        return (string)$response->getBody() ? json_decode((string)$response->getBody()) : false;
     }
 }

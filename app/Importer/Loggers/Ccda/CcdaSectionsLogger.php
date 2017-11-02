@@ -28,7 +28,7 @@ class CcdaSectionsLogger implements MedicalRecordLogger
 
     public function __construct(Ccda $ccd)
     {
-        $this->ccd = json_decode((new CCDImporterRepository())->toJson($ccd->xml));
+        $this->ccd = $ccd->bluebuttonJson();
 
         $this->ccdaId = $ccd->id;
         $this->vendorId = $ccd->vendor_id;
