@@ -153,12 +153,12 @@
                     {{--</code></pre>--}}
 
 
-                <a name="smokingstatus-section"></a>
+                {{--<a name="smokingstatus-section"></a>--}}
 
-                <h2>Smoking Status</h2>
-                <pre><code id="smokingstatus" class="javascript">
-                        {!! json_encode($ccd->smoking_status, JSON_PRETTY_PRINT) !!}
-                    </code></pre>
+                {{--<h2>Smoking Status</h2>--}}
+                {{--<pre><code id="smokingstatus" class="javascript">--}}
+                        {{--{!! json_encode($ccd->smoking_status, JSON_PRETTY_PRINT) !!}--}}
+                    {{--</code></pre>--}}
 
 
                 <a name="vitals-section"></a>
