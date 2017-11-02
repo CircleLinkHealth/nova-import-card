@@ -140,9 +140,9 @@ class Kernel extends ConsoleKernel
 //            ->everyMinute()
 //            ->withoutOverlapping();
 
-//        $schedule->command('ccda:determineEligibility')
-//            ->everyMinute()
-//            ->withoutOverlapping();
+        $schedule->command('ccda:determineEligibility')
+            ->everyTenMinutes()
+            ->withoutOverlapping();
 
 //        $schedule->command('ccda:process')
 //            ->everyMinute()
