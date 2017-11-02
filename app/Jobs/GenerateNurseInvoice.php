@@ -26,7 +26,7 @@ class GenerateNurseInvoice implements ShouldQueue
     /**
      * Create a new job instance.
      *
-     * @param array $nurseIds
+     * @param array $nurseUserIds
      * @param Carbon $startDate
      * @param Carbon $endDate
      * @param bool $variablePay
@@ -34,7 +34,7 @@ class GenerateNurseInvoice implements ShouldQueue
      * @param string $addNotes
      * @param User $requestor
      */
-    public function __construct(array $nurseIds,
+    public function __construct(array $nurseUserIds,
                                 Carbon $startDate,
                                 Carbon $endDate,
                                 bool $variablePay = false,
@@ -42,7 +42,7 @@ class GenerateNurseInvoice implements ShouldQueue
                                 string $addNotes = '',
                                 User $requestor)
     {
-        $this->nurses = Nurse::whereIn('user_id', $nurseIds)->get();
+        $this->nurses = Nurse::whereIn('user_id', $nurseUserIds)->get();
         $this->startDate = $startDate;
         $this->endDate = $endDate;
         $this->variablePay = $variablePay;
