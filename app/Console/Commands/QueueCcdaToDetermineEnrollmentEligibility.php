@@ -44,7 +44,9 @@ class QueueCcdaToDetermineEnrollmentEligibility extends Command
     {
         $ccdas = Ccda::where([
             ['status', '=', Ccda::DETERMINE_ENROLLEMENT_ELIGIBILITY],
-        ])->whereNotNull('mrn')->take(5000)->get(['id', 'referring_provider_name'])
+        ])->whereNotNull('mrn')
+            ->take(5000)
+            ->get(['id', 'practice_id'])
             ->map(function ($ccda) {
                 //lgh
                 if ($ccda->practice_id == 141) {
@@ -61,7 +63,8 @@ class QueueCcdaToDetermineEnrollmentEligibility extends Command
 
                     dispatch($job);
                 }
-
             });
+
+        $this->output->success('Jobs scheduled!');
     }
 }
