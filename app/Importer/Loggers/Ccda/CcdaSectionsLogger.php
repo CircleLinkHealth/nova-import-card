@@ -113,9 +113,11 @@ class CcdaSectionsLogger implements MedicalRecordLogger
                 array_merge($this->transformer->problem($prob), $this->foreignKeys)
             );
 
-            $codes = $this->transformer->problemCodes($prob, $problemLog);
+            $codes = $this->transformer->problemCodes($prob);
 
             foreach ($codes as $code) {
+                $code['ccd_problem_log_id'] = $problemLog->id;
+
                 if (!$code['code']) {
                     continue;
                 }

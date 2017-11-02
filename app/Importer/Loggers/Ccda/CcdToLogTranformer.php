@@ -151,7 +151,7 @@ class CcdToLogTranformer
         ];
     }
 
-    public function problemCodes($ccdProblem, $problemLog)
+    public function problemCodes($ccdProblem)
     {
         $codes = [];
 
@@ -161,10 +161,10 @@ class CcdToLogTranformer
 
         if ($ccdProblem->code_system_name) {
             $codes[] = [
-                'ccd_problem_log_id' => $problemLog->id,
                 'code_system_name'   => $ccdProblem->code_system_name,
                 'code_system_oid'    => $ccdProblem->code_system,
                 'code'               => $ccdProblem->code,
+                'name'               => $ccdProblem->name,
             ];
         }
 
@@ -178,10 +178,10 @@ class CcdToLogTranformer
             }
 
             $codes[] = [
-                'ccd_problem_log_id' => $problemLog->id,
                 'code_system_name'   => $translation->code_system_name,
                 'code_system_oid'    => $translation->code_system,
                 'code'               => $translation->code,
+                'name'               => $translation->name,
             ];
         }
 
