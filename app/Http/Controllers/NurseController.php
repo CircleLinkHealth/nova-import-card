@@ -3,9 +3,8 @@
 namespace App\Http\Controllers;
 
 use App\Activity;
-use App\Billing\NurseMonthlyBillGenerator;
+use App\Jobs\GenerateNurseInvoice;
 use App\Mail\NurseInvoiceMailer;
-use App\Nurse;
 use App\PageTimer;
 use App\User;
 use Carbon\Carbon;
@@ -34,7 +33,7 @@ class NurseController extends Controller
 
         $input = $request->input();
 
-        $nurses = $request->input('nurses');
+        $nurseIds = $request->input('nurses');
 
         $addTime = $request->input('manual_time')
             ? $request->input('manual_time')
@@ -52,35 +51,10 @@ class NurseController extends Controller
             $startDate = Carbon::parse($request->input('start_date'));
             $endDate = Carbon::parse($request->input('end_date'));
 
-            foreach ($nurses as $nurse) {
-                $nurse = Nurse::where('user_id', $nurse)->first();
-
-                $generator = (new NurseMonthlyBillGenerator(
-                    $nurse,
-                    $startDate,
-                    $endDate,
-                    $variablePay,
-                    $addTime,
-                    $addNotes
-                ))
-//                    ->formatItemizedActivities();
-                    ->handle();
-
-                $data[] = $generator;
-
-                $links[$nurse->user_id]['link'] = $generator['link'];
-                $links[$nurse->user_id]['name'] = $generator['name'];
-            }
-
-            return view(
-                'billing.nurse.list',
-                [
-                    'invoices' => $links,
-                    'data'     => $data,
-                    'month'    => Carbon::parse($startDate)->format('F'),
-                ]
-            );
+            dispatch((new GenerateNurseInvoice($nurseIds, $startDate, $endDate, $variablePay, $addTime, $addNotes, auth()->user())));
         }
+
+        return "Waldo is working on compiling the reports you requested. <br> Give it a minute, and then head to " . link_to('/jobs/completed') . " and refresh frantically to see a link to the report you requested.";
     }
 
     public function sendInvoice(Request $request)

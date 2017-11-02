@@ -21,6 +21,7 @@ use App\Models\EmailSettings;
 use App\Models\MedicalRecords\Ccda;
 use App\Notifications\ResetPassword;
 use App\Services\UserService;
+use App\Traits\Cache\UserRedisCache;
 use App\Traits\HasEmrDirectAddress;
 use Carbon\Carbon;
 use DateTime;
@@ -49,7 +50,8 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
         CanResetPassword,
         HasEmrDirectAddress,
         Notifiable,
-        SoftDeletes;
+        SoftDeletes,
+        UserRedisCache;
 
     use EntrustUserTrait {
         EntrustUserTrait::restore insteadof SoftDeletes;

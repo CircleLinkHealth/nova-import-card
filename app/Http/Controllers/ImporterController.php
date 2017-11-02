@@ -139,17 +139,18 @@ class ImporterController extends Controller
             });
 
         \JavaScript::put([
-            'practices'                  => $practices,
+            'practices' => $practices,
+        ]);
+
+        return view('importer.show-training-findings', array_merge([
             'predictedBillingProviderId' => $predictedBillingProviderId,
             'predictedLocationId'        => $predictedLocationId,
             'predictedPracticeId'        => $predictedPracticeId,
-        ]);
-
-        return view('importer.show-training-findings', compact([
+        ], compact([
             'document',
             'providers',
             'importedMedicalRecord',
-        ]));
+        ])));
     }
 
     //Train the Importing Algo
@@ -170,8 +171,6 @@ class ImporterController extends Controller
 
                 return "The CSV list is being processed. $link";
             } //assume XML CCDA
-
-            $path = storage_path('ccdas/import/') . str_random(30) . '.xml';
 
             $ccda = Ccda::create([
                 'user_id'   => auth()->user()->id,

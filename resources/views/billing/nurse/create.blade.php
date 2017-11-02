@@ -115,7 +115,7 @@
                                         <label class="col-md-2 control-label" for="end_date"></label>
                                         <div class="col-md-2">
                                             <button id="submit" name="submit" value="download" class="btn btn-success">Download
-                                                Invoice (s)
+                                                Invoice(s)
                                             </button>
                                         </div>
                                     </div>

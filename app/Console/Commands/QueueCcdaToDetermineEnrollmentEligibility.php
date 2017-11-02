@@ -2,7 +2,8 @@
 
 namespace App\Console\Commands;
 
-use App\Jobs\DetermineCcdaEnrollmentEligibility;
+use App\Jobs\LGHDetermineCcdaEnrollmentEligibility;
+use App\Jobs\OttawaDetermineCcdaEnrollmentEligibility;
 use App\Models\MedicalRecords\Ccda;
 use Carbon\Carbon;
 use Illuminate\Console\Command;
@@ -43,12 +44,28 @@ class QueueCcdaToDetermineEnrollmentEligibility extends Command
     {
         $ccdas = Ccda::where([
             ['status', '=', Ccda::DETERMINE_ENROLLEMENT_ELIGIBILITY],
-        ])->whereNotNull('mrn')->take(5000)->get(['id', 'referring_provider_name'])
+        ])->whereNotNull('mrn')
+            ->inRandomOrder()
+            ->take(5000)
+            ->get(['id', 'practice_id'])
             ->map(function ($ccda) {
-                $job = (new DetermineCcdaEnrollmentEligibility($ccda))
-                    ->delay(Carbon::now()->addSeconds(20));
+                //lgh
+                if ($ccda->practice_id == 141) {
+                    $job = (new LGHDetermineCcdaEnrollmentEligibility($ccda))
+                        ->delay(Carbon::now()->addSeconds(20));
 
-                dispatch($job);
+                    dispatch($job);
+                }
+
+                //ottawa
+                if ($ccda->practice_id == 158) {
+                    $job = (new OttawaDetermineCcdaEnrollmentEligibility($ccda))
+                        ->delay(Carbon::now()->addSeconds(20));
+
+                    dispatch($job);
+                }
             });
+
+        $this->output->success('Jobs scheduled!');
     }
 }
