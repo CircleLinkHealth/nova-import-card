@@ -27,7 +27,7 @@
                     <a href="#problems-section">Problems</a> ||
                     {{--<a href="#procedures-section">Procedures</a> ||--}}
                     {{--<a href="#results-section">Results (Labs)</a> ||--}}
-                    <a href="#smokingstatus-section">Smoking Status</a> ||
+                    {{--<a href="#smokingstatus-section">Smoking Status</a> ||--}}
                     <a href="#vitals-section">Vitals</a>
                 </nav>
 
