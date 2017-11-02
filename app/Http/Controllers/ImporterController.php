@@ -139,17 +139,18 @@ class ImporterController extends Controller
             });
 
         \JavaScript::put([
-            'practices'                  => $practices,
+            'practices' => $practices,
+        ]);
+
+        return view('importer.show-training-findings', array_merge([
             'predictedBillingProviderId' => $predictedBillingProviderId,
             'predictedLocationId'        => $predictedLocationId,
             'predictedPracticeId'        => $predictedPracticeId,
-        ]);
-
-        return view('importer.show-training-findings', compact([
+        ], compact([
             'document',
             'providers',
             'importedMedicalRecord',
-        ]));
+        ])));
     }
 
     //Train the Importing Algo
