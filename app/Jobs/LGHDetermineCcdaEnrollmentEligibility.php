@@ -45,16 +45,20 @@ class LGHDetermineCcdaEnrollmentEligibility implements ShouldQueue
 
         $demographics = collect($this->transformer->demographics($json->demographics));
         $problems = collect($json->problems)->map(function ($prob) {
-            $problem = $this->transformer->problem($prob);
+            $problem = array_merge($this->transformer->problem($prob));
 
-            if ($problem['code']) {
-                return $problem['code'];
-            } elseif ($problem['translation_code']) {
-                return $problem['translation_code'];
-            } elseif ($problem['name']) {
-                return $problem['name'];
-            } elseif ($problem['translation_name']) {
-                return $problem['translation_name'];
+            $codes = collect($this->transformer->problemCodes($prob))->sortByDesc(function ($code) {
+                return $code['code'];
+            })->values();
+
+            foreach ($codes as $code) {
+                if ($code['code']) {
+                    return $code['code'];
+                } elseif ($problem['name']) {
+                    return $problem['name'];
+                } elseif ($code['name']) {
+                    return $code['name'];
+                }
             }
 
             return '';
