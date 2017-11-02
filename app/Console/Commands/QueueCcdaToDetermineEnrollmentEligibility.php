@@ -46,7 +46,7 @@ class QueueCcdaToDetermineEnrollmentEligibility extends Command
             ['status', '=', Ccda::DETERMINE_ENROLLEMENT_ELIGIBILITY],
         ])->whereNotNull('mrn')
             ->inRandomOrder()
-            ->take(20)
+            ->take(30)
             ->get(['id', 'practice_id'])
             ->map(function ($ccda) {
                 //lgh
