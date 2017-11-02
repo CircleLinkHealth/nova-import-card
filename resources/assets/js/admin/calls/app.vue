@@ -1,11 +1,11 @@
 <template>
   <div>
-    <v-client-table :data="tableData" :columns="columns" :options="options">
+    <v-client-table ref="'tblCalls'" :data="tableData" :columns="columns" :options="options">
       <template slot="child_row" scope="props">
-        <div>Hello World</div>
+        <div>This will contain more row INFO</div>
       </template>
       <template slot="selected" scope="props">
-        <input class="row-select" v-model="props.selected" type="checkbox" />
+        <input class="row-select" v-model="props.row.selected" type="checkbox" />
       </template>
       <template slot="h__selected" scope="props">
         <input class="row-select" v-model="selected" @change="toggleAllSelect" type="checkbox" />
@@ -37,8 +37,9 @@
       },
       methods: {
         toggleAllSelect(e) {
-          this.tableData.forEach(row => {
-            row.selected = e.target.checked;
+          this.tableData = this.tableData.map(row => {
+            row.selected = this.selected;
+            return row;
           })
         }
       },
@@ -59,6 +60,7 @@
           })
           const tableCalls = calls.map(call => ({
                                 id: call.id,
+                                selected: false,
                                 Nurse: (call.getNurse() || {}).full_name,
                                 Patient: (call.getPatient() || {}).full_name,
                                 Status: call.status,
@@ -69,7 +71,7 @@
                               }))
           this.tableData = this.tableData.concat(tableCalls)
           console.log(calls);
-          console.log(this.tableData);
+          console.log(this.$refs);
         })
       }
   }
