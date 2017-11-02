@@ -4,6 +4,12 @@
       <template slot="child_row" scope="props">
         <div>Hello World</div>
       </template>
+      <template slot="selected" scope="props">
+        <input class="row-select" v-model="props.selected" type="checkbox" />
+      </template>
+      <template slot="h__selected" scope="props">
+        <input class="row-select" v-model="selected" @change="toggleAllSelect" type="checkbox" />
+      </template>
     </v-client-table>
     
   </div>
@@ -17,12 +23,23 @@
       components: {},
       data() {
         return {
-          columns: ['id', 'Nurse','Patient','Status', 'Practice', 'Last Call Status', 'Next Call', 'Call Time Start', 'Call Time End', 'Time Zone', 'Preferred Call Days', 'Last Call', 'CCM Time'],
+          selected: false,
+          columns: ['selected', 'id', 'Nurse','Patient','Status', 'Practice', 'Last Call Status', 'Next Call', 'Call Time Start', 'Call Time End', 'Time Zone', 'Preferred Call Days', 'Last Call', 'CCM Time'],
           tableData: [],
           options: {
           // see the options API
-            
+            columnsClasses: {
+              'selected': 'blank'
+            },
+            sortable: ['id', 'Nurse','Patient','Status', 'Practice', 'Last Call Status', 'Next Call', 'Call Time Start', 'Call Time End', 'Time Zone', 'Preferred Call Days', 'Last Call', 'CCM Time']
           }
+        }
+      },
+      methods: {
+        toggleAllSelect(e) {
+          this.tableData.forEach(row => {
+            row.selected = e.target.checked;
+          })
         }
       },
       mounted() {
@@ -70,5 +87,9 @@
 
   .VueTables__child-row-toggler.VueTables__child-row-toggler--open {
     border-color: #0AF;
+  }
+
+  .row-select {
+    font-size: 20px;
   }
 </style>
