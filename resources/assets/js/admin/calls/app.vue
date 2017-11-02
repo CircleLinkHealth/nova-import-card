@@ -2,7 +2,65 @@
   <div>
     <v-client-table ref="'tblCalls'" :data="tableData" :columns="columns" :options="options">
       <template slot="child_row" scope="props">
-        <div>This will contain more row INFO</div>
+        <div class="row row-info">
+          <div class="col-sm-12">
+            <div class="row">
+              <div class="col-lg-2">
+                General Comment:
+              </div>
+              <div class="col-lg-10">
+                <a href="#">
+                    <span class="cpm-editable-icon" call-id="13687" column-name="general_comment" column-value="Call with spouse Luther Smith.">
+                      Call with spouse Lorem Ipsum.
+                    </span>
+                  </a>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-lg-2">Attempt Note:</div>
+              <div class="col-lg-10">
+                <a href="#"><span class="cpm-editable-icon" call-id="13687" column-name="attempt_note" column-value="Add Text">Add Text</span></a>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-lg-2">Last 3 Notes:</div>
+              <div class="col-lg-10">
+                <ul>
+                  <li>
+                    Note 2016-11-21 13:06:00: 
+                    <div class="label label-info" style="margin:5px;">Outbound Call</div>
+                    <span style="font-weight:bold;">General (Clinical)</span> 
+                    Attempted clinical check-in. Left voice message. 
+                    </li>
+                  <li>
+                    Note 2016-11-18 11:52:00: 
+                    <div class="label label-info" style="margin:5px;">Outbound Call</div>
+                    <span style="font-weight:bold;">General (Clinical)</span> 
+                    Attempted clinical check-in. Left voice message. 
+                    </li>
+                  <li>
+                    Note 2016-11-11 12:35:00: 
+                    <div class="label label-info" style="margin:5px;">Outbound Call</div>
+                    <span style="font-weight:bold;">General (Clinical)</span> 
+                    Attempted clinical check-in. Left voice message. 
+                  </li>
+                </ul>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-sm-2">Call Windows:</div>
+              <div class="col-sm-10">
+                <ul class="info-list">
+                  <li>M: 09:00:00 - 17:00:00</li>
+                  <li>Tu: 09:00:00 - 17:00:00</li>
+                  <li>W: 09:00:00 - 17:00:00</li>
+                  <li>Th: 09:00:00 - 17:00:00</li>
+                  <li>F: 09:00:00 - 17:00:00</li>
+                </ul>
+              </div>
+            </div>
+          </div>
+        </div>
       </template>
       <template slot="selected" scope="props">
         <input class="row-select" v-model="props.row.selected" type="checkbox" />
@@ -93,5 +151,13 @@
 
   .row-select {
     font-size: 20px;
+  }
+
+  .row-info ul{
+    margin-left: -23px;
+  }
+
+  .row-info li {
+    margin:5px 0px;
   }
 </style>
