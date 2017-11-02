@@ -35,7 +35,7 @@ class ProcessCcda implements ShouldQueue
     {
         $ccda = $this->ccda;
 
-        $json = json_decode((new CCDImporterRepository())->toJson($ccda->xml));
+        $json = $ccda->bluebuttonJson();
 
         if (!$json) {
             return;

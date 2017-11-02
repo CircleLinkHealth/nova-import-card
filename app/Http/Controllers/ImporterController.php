@@ -172,8 +172,6 @@ class ImporterController extends Controller
                 return "The CSV list is being processed. $link";
             } //assume XML CCDA
 
-            $path = storage_path('ccdas/import/') . str_random(30) . '.xml';
-
             $ccda = Ccda::create([
                 'user_id'   => auth()->user()->id,
                 'vendor_id' => 1,
