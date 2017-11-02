@@ -21,7 +21,6 @@ use App\Models\EmailSettings;
 use App\Models\MedicalRecords\Ccda;
 use App\Notifications\ResetPassword;
 use App\Services\UserService;
-use App\Traits\Cache\UserRedisCache;
 use App\Traits\HasEmrDirectAddress;
 use Carbon\Carbon;
 use DateTime;
@@ -50,8 +49,7 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
         CanResetPassword,
         HasEmrDirectAddress,
         Notifiable,
-        SoftDeletes,
-        UserRedisCache;
+        SoftDeletes;
 
     use EntrustUserTrait {
         EntrustUserTrait::restore insteadof SoftDeletes;
@@ -2501,5 +2499,58 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
         return $this->belongsToMany(CpmProblem::class, 'cpm_problems_users', 'patient_id')
             ->withPivot('cpm_instruction_id')
             ->withTimestamps('created_at', 'updated_at');
+    }
+
+    /**
+     * Get the User's cached views
+     *
+     * Example Cached View:
+     *
+     * [
+     * 'key'        => $key,
+     * 'created_at' => Carbon::now()->toDateTimeString(),
+     * 'expires_at' => Carbon::now()->addWeek()->toDateTimeString(),
+     * 'view'       => 'billing.nurse.list',
+     * 'message'    => 'The Nurse Invoices you requested are ready!',
+     * 'data'       => [
+     * 'invoices' => $links,
+     * 'data'     => $data,
+     * 'month'    => $month,
+     * ],
+     * ]
+     *
+     * @param int $start
+     * @param int $end
+     *
+     * @return static
+     */
+    public function cachedViews($start = 0, $end = -1)
+    {
+        return collect(Redis::lrange("user{$this->id}views", $start, $end))->map(function ($json) {
+            $cache = json_decode($json, true);
+
+            $now = Carbon::now();
+            $expires = Carbon::parse($cache['expires_at']);
+
+            if ($now->greaterThan($expires) || !\Cache::has($cache['key'])) {
+                Redis::lrem("user{$this->id}views", 0, $json);
+
+                return false;
+            }
+
+            return $cache;
+        })
+            ->filter()
+            ->reverse();
+    }
+
+    /**
+     * Returns the cached view count
+     *
+     * @return mixed
+     */
+    public function cachedViewCount()
+    {
+        return Redis::llen("user{$this->id}views");
     }
 }
