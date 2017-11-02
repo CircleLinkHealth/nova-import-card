@@ -51,18 +51,20 @@ class QueueCcdaToDetermineEnrollmentEligibility extends Command
             ->map(function ($ccda) {
                 //lgh
                 if ($ccda->practice_id == 141) {
-                    $job = (new LGHDetermineCcdaEnrollmentEligibility($ccda))
-                        ->delay(Carbon::now()->addSeconds(20));
-
-                    dispatch($job);
+                    dispatch(
+                        (new LGHDetermineCcdaEnrollmentEligibility($ccda))
+                        ->delay(Carbon::now()->addSeconds(20))
+                        ->onQueue('ccda-processor')
+                    );
                 }
 
                 //ottawa
                 if ($ccda->practice_id == 158) {
-                    $job = (new OttawaDetermineCcdaEnrollmentEligibility($ccda))
-                        ->delay(Carbon::now()->addSeconds(20));
-
-                    dispatch($job);
+                    dispatch(
+                        (new OttawaDetermineCcdaEnrollmentEligibility($ccda))
+                        ->delay(Carbon::now()->addSeconds(20))
+                        ->onQueue('ccda-processor')
+                    );
                 }
             });
 

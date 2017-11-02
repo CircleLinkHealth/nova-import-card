@@ -58,7 +58,7 @@ class ImportLGHInsurance extends Command
                 continue;
             }
 
-            $job = (new \App\Jobs\ImportLGHInsurance($fileName))->onQueue('ccda-splitter');
+            $job = (new \App\Jobs\ImportLGHInsurance($fileName))->onQueue('ccda-processor');
 
             dispatch($job);
 
