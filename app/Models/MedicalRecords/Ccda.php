@@ -1,12 +1,12 @@
 <?php namespace App\Models\MedicalRecords;
 
-use App\Contracts\Importer\MedicalRecord\MedicalRecord;
 use App\Contracts\Importer\MedicalRecord\MedicalRecordLogger;
 use App\Entities\CcdaRequest;
 use App\Importer\Loggers\Ccda\CcdaSectionsLogger;
 use App\Importer\MedicalRecordEloquent;
 use App\Traits\Relationships\BelongsToPatientUser;
 use App\User;
+use Cache;
 use GuzzleHttp\Client;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Prettus\Repository\Contracts\Transformable;
@@ -34,14 +34,14 @@ class Ccda extends MedicalRecordEloquent implements Transformable
     ];
 
     protected $dates = [
-        'date'
+        'date',
     ];
 
     protected $fillable = [
         'date',
         'mrn',
         'referring_provider_name',
-        'location_id'.
+        'location_id' .
         'practice_id',
         'billing_provider_id',
         'user_id',
@@ -77,7 +77,7 @@ class Ccda extends MedicalRecordEloquent implements Transformable
      *
      * @return MedicalRecordLogger
      */
-    public function getLogger() : MedicalRecordLogger
+    public function getLogger(): MedicalRecordLogger
     {
         return new CcdaSectionsLogger($this);
     }
@@ -87,7 +87,7 @@ class Ccda extends MedicalRecordEloquent implements Transformable
      *
      * @return User
      */
-    public function getPatient() : User
+    public function getPatient(): User
     {
         return $this->patient;
     }
@@ -95,7 +95,7 @@ class Ccda extends MedicalRecordEloquent implements Transformable
     /**
      * @return string
      */
-    public function getDocumentCustodian() : string
+    public function getDocumentCustodian(): string
     {
         if ($this->document->first()) {
             return $this->document->first()->custodian;
@@ -104,22 +104,22 @@ class Ccda extends MedicalRecordEloquent implements Transformable
         return '';
     }
 
-    public function bluebuttonJson() {
+    public function bluebuttonJson()
+    {
         if (!$this->id && !$this->xml) {
             return false;
         }
 
         $key = "ccda{$this->id}json";
 
-        if (\Cache::has($key)) {
-            return \Cache::get($key);
-        }
+        return Cache::remember($key, 7000, function () {
+            if (!$this->json) {
+                $this->json = $this->parseToJson($this->xml);
+                $this->save();
+            }
 
-        $json = $this->parseToJson($this->xml);
-
-        \Cache::put($key, $json, 120);
-
-        return $json;
+            return json_decode($this->json);
+        });
     }
 
     protected function parseToJson($xml)
@@ -140,6 +140,6 @@ class Ccda extends MedicalRecordEloquent implements Transformable
             ];
         }
 
-        return (string)$response->getBody() ? json_decode((string)$response->getBody()) : false;
+        return (string)$response->getBody();
     }
 }
