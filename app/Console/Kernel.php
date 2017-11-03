@@ -144,6 +144,10 @@ class Kernel extends ConsoleKernel
             ->dailyAt('04:00')
             ->withoutOverlapping();
 
+        $schedule->command('report:nurseDaily')
+            ->dailyAt('23:50')
+            ->withoutOverlapping();
+
 //        $schedule->command('ccda:toJson')
 //            ->everyMinute()
 //            ->withoutOverlapping();

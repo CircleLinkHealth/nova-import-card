@@ -39,7 +39,9 @@ class QueueGenerateNurseDailyReport extends Command
      */
     public function handle()
     {
-        (new GenerateNurseDailyReportCsv(User::ofType('administrator')->pluck('id')))
-            ->onQueue('reports');
+        dispatch(
+            (new GenerateNurseDailyReportCsv(User::ofType('administrator')->pluck('id')))
+                ->onQueue('reports')
+        );
     }
 }

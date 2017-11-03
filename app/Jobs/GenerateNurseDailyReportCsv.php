@@ -45,7 +45,7 @@ class GenerateNurseDailyReportCsv implements ShouldQueue
         $now = Carbon::now();
 
         $message = link_to_route('download', "Download Nurse Daily Report for {$now->toDateTimeString()}", [
-            'filePth' => $path,
+            'filePth' => $path['full'],
         ]);
 
         $this->cachedUserView->storeSuccessResponse($message);
@@ -62,15 +62,7 @@ class GenerateNurseDailyReportCsv implements ShouldQueue
         return Excel::create("{$filename}_{$now}", function ($excel) {
             $excel->sheet('Nurse Daily Report', function ($sheet) {
                 $sheet->fromArray(
-                    $this->reportData->get([
-                        'name',
-                        'Time Since Last Activity',
-                        '# Successful Calls Today',
-                        '# Scheduled Calls Today',
-                        '# Completed Calls Today',
-                        'CCM Mins Today',
-                        'Last Activity',
-                    ])->all()
+                    $this->reportData->all()
                 );
             });
         })->store('xls', false, true);
