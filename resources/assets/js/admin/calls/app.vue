@@ -96,10 +96,12 @@
 
 <script>
   import { rootUrl } from '../../app.config.js'
+  import { Event } from 'vue-tables-2'
   import TextEditable from './comps/text-editable'
   import DateEditable from './comps/date-editable'
   import SelectEditable from './comps/select-editable'
   import TimeEditable from './comps/time-editable'
+  import BindAppEvents from './app.events'
 
   export default {
       name: 'CallMgmtApp',
@@ -164,6 +166,8 @@
           console.log(calls);
           console.log(this.$refs);
         })
+
+        BindAppEvents(this, Event);
       }
   }
 </script>
