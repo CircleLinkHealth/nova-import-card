@@ -8,7 +8,7 @@ use App\Services\CPM\CpmMedicationGroupService;
 use App\User;
 use Illuminate\Database\Eloquent\Model;
 
-class CpmMedicationGroup extends Model implements Serviceable
+class CpmMedicationGroup extends \App\BaseModel implements Serviceable
 {
     
     use Instructable;

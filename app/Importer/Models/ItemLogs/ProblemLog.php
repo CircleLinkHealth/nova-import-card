@@ -8,7 +8,7 @@ use App\Traits\Relationships\BelongsToCcda;
 use App\Traits\Relationships\BelongsToVendor;
 use Illuminate\Database\Eloquent\Model;
 
-class ProblemLog extends Model implements ItemLog, Problem
+class ProblemLog extends \App\BaseModel implements ItemLog, Problem
 {
 
     use BelongsToCcda,

@@ -4,7 +4,7 @@ use App\Scopes\Universal\DateScopesTrait;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
-class PageTimer extends Model
+class PageTimer extends \App\BaseModel
 {
     use DateScopesTrait, SoftDeletes;
 

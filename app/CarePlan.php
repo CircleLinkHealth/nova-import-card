@@ -8,7 +8,7 @@ use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\App;
 
-class CarePlan extends Model implements PdfReport
+class CarePlan extends \App\BaseModel implements PdfReport
 {
     use PdfReportTrait;
 

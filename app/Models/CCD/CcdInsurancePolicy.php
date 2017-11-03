@@ -7,7 +7,7 @@ use App\User;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
-class CcdInsurancePolicy extends Model
+class CcdInsurancePolicy extends \App\BaseModel
 {
     use MedicalRecordIdAndTypeTrait,
         SoftDeletes;

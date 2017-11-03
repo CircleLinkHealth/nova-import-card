@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 use Prettus\Repository\Contracts\Transformable;
 use Prettus\Repository\Traits\TransformableTrait;
 
-class CcdaRequest extends Model implements Transformable
+class CcdaRequest extends \App\BaseModel implements Transformable
 {
     use TransformableTrait;
 

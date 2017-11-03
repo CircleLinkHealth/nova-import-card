@@ -2,7 +2,7 @@
 
 use Illuminate\Database\Eloquent\Model;
 
-class CPRulesPCP extends Model
+class CPRulesPCP extends \App\BaseModel
 {
 
 

@@ -8,7 +8,7 @@ use App\Services\CPM\CpmSymptomService;
 use App\User;
 use Illuminate\Database\Eloquent\Model;
 
-class CpmSymptom extends Model implements Serviceable
+class CpmSymptom extends \App\BaseModel implements Serviceable
 {
     
     use Instructable;

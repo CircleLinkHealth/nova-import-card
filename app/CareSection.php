@@ -2,7 +2,7 @@
 
 use Illuminate\Database\Eloquent\Model;
 
-class CareSection extends Model
+class CareSection extends \App\BaseModel
 {
 
 

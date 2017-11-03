@@ -7,7 +7,7 @@ use App\Traits\Relationships\BelongsToCcda;
 use App\Traits\Relationships\BelongsToVendor;
 use Illuminate\Database\Eloquent\Model;
 
-class InsuranceLog extends Model
+class InsuranceLog extends \App\BaseModel
 {
     use BelongsToCcda,
         BelongsToVendor;

@@ -2,7 +2,7 @@
 
 use Illuminate\Database\Eloquent\Model;
 
-class UserMeta extends Model
+class UserMeta extends \App\BaseModel
 {
 
     // for revisionable

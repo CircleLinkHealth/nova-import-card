@@ -4,7 +4,7 @@ namespace App;
 
 use Illuminate\Database\Eloquent\Model;
 
-class CareAmbassador extends Model
+class CareAmbassador extends \App\BaseModel
 {
 
     protected $fillable = [

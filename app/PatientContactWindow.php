@@ -3,7 +3,7 @@
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
 
-class PatientContactWindow extends Model
+class PatientContactWindow extends \App\BaseModel
 {
 
     protected $table = 'patient_contact_window';

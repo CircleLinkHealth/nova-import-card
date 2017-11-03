@@ -8,7 +8,7 @@ use App\Models\CPM\CpmProblem;
 use App\Models\CPM\CpmSymptom;
 use Illuminate\Database\Eloquent\Model;
 
-class CarePlanTemplate extends Model
+class CarePlanTemplate extends \App\BaseModel
 {
     protected $fillable = ['program_id', 'display_name', 'type'];
 

@@ -14,7 +14,7 @@ use Prettus\Repository\Traits\TransformableTrait;
  * Class ForeignId
  * @package App
  */
-class ForeignId extends Model implements Transformable
+class ForeignId extends \App\BaseModel implements Transformable
 {
 
     use TransformableTrait;

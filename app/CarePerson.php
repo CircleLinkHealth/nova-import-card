@@ -2,7 +2,7 @@
 
 use Illuminate\Database\Eloquent\Model;
 
-class CarePerson extends Model
+class CarePerson extends \App\BaseModel
 {
 
     const BILLING_PROVIDER = 'billing_provider';

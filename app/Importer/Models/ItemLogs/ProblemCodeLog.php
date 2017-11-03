@@ -4,7 +4,7 @@ namespace App\Importer\Models\ItemLogs;
 
 use Illuminate\Database\Eloquent\Model;
 
-class ProblemCodeLog extends Model
+class ProblemCodeLog extends \App\BaseModel
 {
     protected $table = 'ccd_problem_code_logs';
 

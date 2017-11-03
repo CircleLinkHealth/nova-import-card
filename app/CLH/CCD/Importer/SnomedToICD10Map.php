@@ -2,7 +2,7 @@
 
 use Illuminate\Database\Eloquent\Model;
 
-class SnomedToICD10Map extends Model
+class SnomedToICD10Map extends \App\BaseModel
 {
     public $timestamps = false;
     protected $table = 'snomed_to_icd10_map';

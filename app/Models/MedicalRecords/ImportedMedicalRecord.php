@@ -17,7 +17,7 @@ use App\User;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
-class ImportedMedicalRecord extends Model implements ImportedMedicalRecordInterface
+class ImportedMedicalRecord extends \App\BaseModel implements ImportedMedicalRecordInterface
 {
     use MedicalRecordIdAndTypeTrait,
         SoftDeletes;

@@ -8,7 +8,7 @@ use Prettus\Repository\Contracts\Transformable;
 use Prettus\Repository\Traits\TransformableTrait;
 use SoftDeletingTrait;
 
-class Activity extends Model implements Transformable
+class Activity extends \App\BaseModel implements Transformable
 {
 
     use DateScopesTrait, TransformableTrait;

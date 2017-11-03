@@ -2,7 +2,7 @@
 
 use Illuminate\Database\Eloquent\Model;
 
-class AppConfig extends Model
+class AppConfig extends \App\BaseModel
 {
 
     public $timestamps = true;

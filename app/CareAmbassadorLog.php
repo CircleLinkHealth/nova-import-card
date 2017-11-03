@@ -5,7 +5,7 @@ namespace App;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
 
-class CareAmbassadorLog extends Model
+class CareAmbassadorLog extends \App\BaseModel
 {
 
     protected $fillable  = [

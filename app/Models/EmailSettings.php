@@ -5,7 +5,7 @@ namespace App\Models;
 use App\User;
 use Illuminate\Database\Eloquent\Model;
 
-class EmailSettings extends Model
+class EmailSettings extends \App\BaseModel
 {
     public $fillable = [
         'user_id',

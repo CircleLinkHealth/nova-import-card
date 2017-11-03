@@ -4,7 +4,7 @@ namespace App;
 
 use Illuminate\Database\Eloquent\Model;
 
-class NurseCareRateLog extends Model
+class NurseCareRateLog extends \App\BaseModel
 {
 
     protected $table = 'nurse_care_rate_logs';

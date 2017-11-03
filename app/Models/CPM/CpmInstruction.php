@@ -2,7 +2,7 @@
 
 use Illuminate\Database\Eloquent\Model;
 
-class CpmInstruction extends Model
+class CpmInstruction extends \App\BaseModel
 {
 
     protected $guarded = [];

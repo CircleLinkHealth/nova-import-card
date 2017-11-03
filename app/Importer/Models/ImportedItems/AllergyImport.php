@@ -3,7 +3,7 @@
 use App\Importer\Models\ItemLogs\AllergyLog;
 use Illuminate\Database\Eloquent\Model;
 
-class AllergyImport extends Model
+class AllergyImport extends \App\BaseModel
 {
 
     protected $guarded = [];

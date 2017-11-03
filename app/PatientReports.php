@@ -3,7 +3,7 @@
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
-class PatientReports extends Model
+class PatientReports extends \App\BaseModel
 {
 
     use SoftDeletes;

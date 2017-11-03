@@ -7,7 +7,7 @@ use App\CLH\Helpers\StringManipulation;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
 
-class Enrollee extends Model
+class Enrollee extends \App\BaseModel
 {
     /**
      * status = eligible

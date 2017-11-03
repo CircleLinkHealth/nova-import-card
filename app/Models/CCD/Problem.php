@@ -10,7 +10,7 @@ use App\Traits\HasProblemCodes;
 use App\User;
 use Illuminate\Database\Eloquent\Model;
 
-class Problem extends Model implements \App\Contracts\Models\CCD\Problem
+class Problem extends \App\BaseModel implements \App\Contracts\Models\CCD\Problem
 {
     use HasProblemCodes;
 

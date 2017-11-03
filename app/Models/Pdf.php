@@ -6,7 +6,7 @@ use App\CarePlan;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
-class Pdf extends Model
+class Pdf extends \App\BaseModel
 {
     use SoftDeletes;
 
