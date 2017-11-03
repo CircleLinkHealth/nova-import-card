@@ -124,6 +124,8 @@ Route::group(['middleware' => 'auth'], function () {
      * API
      */
     Route::group(['prefix' => 'api'], function () {
+        Route::get('practices/all', 'API\PracticeController@allPracticesWithLocationsAndStaff');
+
         Route::group(['prefix' => 'admin'], function () {
             Route::resource('calls', 'API\Admin\CallsController');
         });
