@@ -74,6 +74,7 @@ class UserNotificationList
             'title'       => $title,
             'description' => $description,
             'link'        => $link,
+            'linkTitle'        => $linkTitle,
         ]);
     }
 
