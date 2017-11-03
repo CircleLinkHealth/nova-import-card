@@ -49,14 +49,12 @@ class GenerateNurseDailyReportCsv implements ShouldQueue
     {
         $path = $this->exportToCsv($this->reportData);
 
-        $now = Carbon::now();
-
         $link = linkToDownloadFile("exports/{$path['file']}");
 
         $this->notifyUserIds->map(function ($userId) use ($link) {
             $userNotification = new UserNotificationList($userId);
 
-            $userNotification->push('Nurse Daily Reports', '', $link, 'Download Spreadsheet');
+            $userNotification->push('Nurse Daily Report', '', $link, 'Download Spreadsheet');
         });
 
     }

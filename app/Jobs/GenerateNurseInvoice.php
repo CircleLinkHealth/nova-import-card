@@ -100,7 +100,7 @@ class GenerateNurseInvoice implements ShouldQueue
             }
 
             $userNotification->push('Nurse Invoices',
-                "Invoices were generated for {$this->nurses->count()} nurses: {$this->nurses->map(function($n) {return $n->user->fullName;})->implode(', ')}",
+                "Invoice(s) were generated for {$this->nurses->count()} nurse(s): {$this->nurses->map(function($n) {return $n->user->fullName;})->implode(', ')}",
                 route('get.cached.view.by.key', ['key' => $viewHashKey]),
                 'Go to page'
             );
