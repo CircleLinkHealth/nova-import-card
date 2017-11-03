@@ -68,6 +68,12 @@
       <template slot="h__selected" scope="props">
         <input class="row-select" v-model="selected" @change="toggleAllSelect" type="checkbox" />
       </template>
+      <template slot="Nurse" scope="props">
+        <text-editable :value="props.row.Nurse"></text-editable>
+      </template>
+      <template slot="Next Call" scope="props">
+        <date-editable :value="props.row['Next Call']" :format="'YYYY-mm-DD'"></date-editable>
+      </template>
     </v-client-table>
     <text-editable :value="'Mykeels'"></text-editable>
     <date-editable :value="'01-20-2017'" :format="'mm-DD-YYYY'"></date-editable>

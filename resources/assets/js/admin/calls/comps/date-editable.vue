@@ -2,8 +2,8 @@
     <div :class="className">
         <div v-if="isEditMode">
             <form @submit="toggleEdit">
-                <input type="date" v-model="date" required />
-                <span @click="toggleEdit">&#9989;</span>
+                <input type="date" class="float-left" v-model="date" required />
+                <span class="float-right" @click="toggleEdit">&#9989;</span>
             </form>
         </div>
         <div v-if="!isEditMode" @dblclick="toggleEdit">
@@ -58,5 +58,13 @@
 </script>
 
 <style>
-    
+    .float-left {
+        float: left;
+        width: 90%;
+    }
+
+    .float-right {
+        float: right;
+        margin-top: 4px;
+    }
 </style>

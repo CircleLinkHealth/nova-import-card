@@ -2,11 +2,11 @@
     <div :class="{ className: className }">
         <div v-if="isEditMode">
             <form @submit="toggleEdit">
-                <select v-model="text">
+                <select v-model="text" class="float-left">
                     <option v-if="v.constructor.name === 'String'" v-for="(v, index) in values" :key="index" :value="v">{{v}}</option>
                     <option v-if="v.constructor.name === 'Object'" v-for="(v, index) in values" :key="index" :value="v.value">{{v.text}}</option>
                 </select>
-                <span @click="toggleEdit">&#9989;</span>
+                <span class="float-right" @click="toggleEdit">&#9989;</span>
             </form>
         </div>
         <div v-if="!isEditMode" @dblclick="toggleEdit">
@@ -49,5 +49,13 @@
 </script>
 
 <style>
-    
+    .float-left {
+        float: left;
+        width: 90%;
+    }
+
+    .float-right {
+        float: right;
+        margin-top: 4px;
+    }
 </style>
