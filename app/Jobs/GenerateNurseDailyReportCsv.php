@@ -28,7 +28,17 @@ class GenerateNurseDailyReportCsv implements ShouldQueue
     public function __construct(Collection $notifyUserIds)
     {
         $this->notifyUserIds = $notifyUserIds;
-        $this->reportData = NurseDailyReport::data();
+        $this->reportData = NurseDailyReport::data()->map(function ($nurseReport) {
+            return [
+                $nurseReport['name'],
+                $nurseReport['Time Since Last Activity'],
+                $nurseReport['# Successful Calls Today'],
+                $nurseReport['# Scheduled Calls Today'],
+                $nurseReport['# Completed Calls Today'],
+                $nurseReport['CCM Mins Today'],
+                $nurseReport['last_activity'],
+            ];
+        });
         $this->cachedUserView = new UserView($this->notifyUserIds);
 
     }
@@ -45,7 +55,7 @@ class GenerateNurseDailyReportCsv implements ShouldQueue
         $now = Carbon::now();
 
         $message = link_to_route('download', "Download Nurse Daily Report for {$now->toDateTimeString()}", [
-            'filePath' => $path['full'],
+            'filePath' => "exports/{$path['file']}",
         ]);
 
         $this->cachedUserView->storeSuccessResponse($message);
