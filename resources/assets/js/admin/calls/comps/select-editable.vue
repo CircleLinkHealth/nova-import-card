@@ -1,5 +1,5 @@
 <template>
-    <div :class="{ className: className }">
+    <div :class="className">
         <div v-if="isEditMode">
             <form @submit="toggleEdit">
                 <select v-model="text" class="float-left">

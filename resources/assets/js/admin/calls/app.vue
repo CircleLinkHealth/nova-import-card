@@ -69,7 +69,14 @@
         <input class="row-select" v-model="selected" @change="toggleAllSelect" type="checkbox" />
       </template>
       <template slot="Nurse" scope="props">
-        <text-editable :value="props.row.Nurse" :class-name="'blue'"></text-editable>
+        <select-editable :value="props.row.Nurse" :values="[
+                                    'Nurse N RN', 
+                                    'Kathryn Alchalabi RN', 
+                                    'Patricia Koeppel RN', 
+                                    'Dillenis Diaz RN', 
+                                    'Liza Herrera RN', 
+                                    'Monique Potter RN'
+                                  ]" :class-name="'blue'"></select-editable>
       </template>
       <template slot="Next Call" scope="props">
         <date-editable :value="props.row['Next Call']" :format="'YYYY-mm-DD'" :class-name="'blue'"></date-editable>
