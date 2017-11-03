@@ -135,8 +135,12 @@ class Kernel extends ConsoleKernel
         $schedule->command('ccm_time:reset')
             ->cron('1 0 1 * *');
 
-        $schedule->command('lgh:importInsurance')
-            ->dailyAt('05:00');
+//        $schedule->command('lgh:importInsurance')
+//            ->dailyAt('05:00');
+
+        $schedule->command('report:nurseInvoices')
+            ->dailyAt('04:00')
+            ->withoutOverlapping();
 
 //        $schedule->command('ccda:toJson')
 //            ->everyMinute()
