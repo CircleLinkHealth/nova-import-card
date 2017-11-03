@@ -69,16 +69,22 @@
         <input class="row-select" v-model="selected" @change="toggleAllSelect" type="checkbox" />
       </template>
     </v-client-table>
-    
+    <text-editable :value="'Mykeels'" :class-name="''"></text-editable>
+    <text-editable :value="currentDate" :class-name="''"></text-editable>
   </div>
 </template>
 
 <script>
   import { rootUrl } from '../../app.config.js'
+  import TextEditable from './comps/text-editable'
+  import DateEditable from './comps/text-editable'
 
   export default {
       name: 'CallMgmtApp',
-      components: {},
+      components: {
+        'text-editable': TextEditable,
+        'date-editable': DateEditable
+      },
       data() {
         return {
           selected: false,
@@ -90,7 +96,8 @@
               'selected': 'blank'
             },
             sortable: ['id', 'Nurse','Patient','Status', 'Practice', 'Last Call Status', 'Next Call', 'Call Time Start', 'Call Time End', 'Time Zone', 'Preferred Call Days', 'Last Call', 'CCM Time']
-          }
+          },
+          currentDate: new Date()
         }
       },
       methods: {
