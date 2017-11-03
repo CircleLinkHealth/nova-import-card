@@ -37,7 +37,7 @@
                         </h3>
 
                         @isset($cache['link'])
-                            <a href="{{$cache['link']}}" class="alert-link">Visit</a>
+                            <a href="{{$cache['link']}}" class="alert-link">{{$cache['linkTitle']}}</a>
                         @endisset
 
                         <h5>{{$cache['description'] ?? ''}}</h5>

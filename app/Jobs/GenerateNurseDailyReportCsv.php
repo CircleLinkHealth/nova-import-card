@@ -56,7 +56,7 @@ class GenerateNurseDailyReportCsv implements ShouldQueue
         $this->notifyUserIds->map(function ($userId) use ($link) {
             $userNotification = new UserNotificationList($userId);
 
-            $userNotification->push('Nurse Daily Reports', '', $link);
+            $userNotification->push('Nurse Daily Reports', '', $link, 'Download Spreadsheet');
         });
 
     }

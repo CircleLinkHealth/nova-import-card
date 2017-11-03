@@ -32,12 +32,13 @@ class UserNotificationList
      * @param string $title
      * @param string $description
      * @param null $link
+     * @param string $linkTitle
      */
-    public function push($title = '', $description = '', $link = null)
+    public function push($title = '', $description = '', $link = null, $linkTitle = 'Link')
     {
         \Redis::rpush(
             $this->userHashKey(),
-            $this->userCachedNotificationFactory($title, $description, $link)
+            $this->userCachedNotificationFactory($title, $description, $link, $linkTitle)
         );
     }
 
@@ -59,10 +60,12 @@ class UserNotificationList
      * @param string $description
      * @param null $link
      *
-     * @return array
+     * @param $linkTitle
+     * @param null $cacheKey
      *
+     * @return array
      */
-    public function userCachedNotificationFactory($title, $description = '', $link = null, $cacheKey = null)
+    protected function userCachedNotificationFactory($title, $description = '', $link = null, $linkTitle, $cacheKey = null)
     {
         return json_encode([
             'key'         => $cacheKey,
