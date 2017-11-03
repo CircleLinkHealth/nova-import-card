@@ -13,9 +13,19 @@
 </template>
 
 <script>
+    /**
+     * The text-editable component is used to edit text
+     * 
+     * Input:
+     * value: A string value
+     * is-edit: A boolean indicating whether or not the component is in EDIT mode
+     * class-name: A string containing class names to pass to the component DIV
+     * on-change: To contain a reference to a function that the text value will be passed to when changed
+     */
+
     export default {
         name: 'TextEditable',
-        props: ['value', 'is-edit', 'class-name'],
+        props: ['value', 'is-edit', 'class-name', 'on-change'],
         data(){
             return {
                 text: this.value,
@@ -26,6 +36,9 @@
             toggleEdit(e) {
                 e.preventDefault();
                 this.isEditMode = !this.isEditMode;
+                if (!this.isEditMode && typeof(this.onChange) === 'function') {
+                    this.onChange(this.text)
+                }
             }
         }
     }
