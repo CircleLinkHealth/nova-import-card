@@ -147,6 +147,8 @@ class CcdaSectionsLogger implements MedicalRecordLogger
             $data = $this->transformer->provider($provider);
 
             $shouldBeIgnored = ProviderLog::where('ml_ignore', '=', 1)
+                ->where('first_name', $data['first_name'])
+                ->where('last_name', $data['last_name'])
                 ->where('street', $data['street'])
                 ->where('city', $data['city'])
                 ->where('state', $data['state'])
@@ -156,7 +158,7 @@ class CcdaSectionsLogger implements MedicalRecordLogger
                 ->where('work_phone', $data['work_phone'])
                 ->first();
 
-            if ($shouldBeIgnored) {
+            if ($shouldBeIgnored || empty(array_filter($data))) {
                 continue;
             }
 

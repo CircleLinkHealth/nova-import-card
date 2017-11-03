@@ -19,7 +19,7 @@
         },
 
         data() {
-            window.axios.get('/practices/all')
+            window.axios.get('api/practices/all')
                 .then((response) => {
                     this.practices = response.data
                 })
@@ -62,24 +62,24 @@
     }
 </script>
 
-<template>
+<template v-cloak>
     <div class="row">
         <div class="col-md-4">
-            <h1>Practice</h1>
+            <h3>Select Practice</h3>
 
             <select2 v-model="practice" class="col-md-12" name="practiceId">
                 <option v-for="p in practices" :value="p.id">{{ p.display_name }}</option>
             </select2>
         </div>
         <div class="col-md-4">
-            <h1>Location</h1>
+            <h3>Select Location</h3>
 
             <select v-model="location" class="col-md-12" name="locationId">
                 <option v-for="l in locations" :value="l.id">{{ l.name }}</option>
             </select>
         </div>
         <div class="col-md-4">
-            <h1>Billing Provider</h1>
+            <h3>Select Billing Provider</h3>
 
             <select v-model="billingProvider" class="col-md-12" name="billingProviderId">
                 <option v-for="prov in providers"
