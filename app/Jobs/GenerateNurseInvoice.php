@@ -4,13 +4,14 @@ namespace App\Jobs;
 
 use App\Billing\NurseMonthlyBillGenerator;
 use App\Nurse;
-use App\User;
+use App\Repositories\Cache\UserView;
 use Carbon\Carbon;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
+use Illuminate\Support\Collection;
 
 class GenerateNurseInvoice implements ShouldQueue
 {
@@ -21,34 +22,38 @@ class GenerateNurseInvoice implements ShouldQueue
     private $variablePay;
     private $addNotes;
     private $addTime;
-    private $requestor;
+    private $requestors;
+    private $cachedUserView;
 
     /**
      * Create a new job instance.
      *
-     * @param array $nurseIds
+     * @param array $nurseUserIds
      * @param Carbon $startDate
      * @param Carbon $endDate
+     * @param Collection|int $requestors
      * @param bool $variablePay
      * @param int $addTime
      * @param string $addNotes
-     * @param User $requestor
      */
-    public function __construct(array $nurseIds,
+    public function __construct(array $nurseUserIds,
                                 Carbon $startDate,
                                 Carbon $endDate,
+                                $requestors,
                                 bool $variablePay = false,
                                 int $addTime = 0,
-                                string $addNotes = '',
-                                User $requestor)
+                                string $addNotes = '')
     {
-        $this->nurses = Nurse::whereIn('user_id', $nurseIds)->get();
+        $this->nurses = Nurse::whereIn('user_id', $nurseUserIds)->get();
         $this->startDate = $startDate;
         $this->endDate = $endDate;
         $this->variablePay = $variablePay;
         $this->addTime = $addTime;
         $this->addNotes = $addNotes;
-        $this->requestor = $requestor;
+        $this->requestors = is_a($requestors, Collection::class)
+            ? $requestors
+            : collect($requestors);
+        $this->cachedUserView = new UserView($this->requestors);
     }
 
     /**
@@ -77,48 +82,20 @@ class GenerateNurseInvoice implements ShouldQueue
             $links[$nurse->user_id]['name'] = $generator['name'];
         }
 
-        $key = 'view' . str_random('20');
-
 
         if (empty($links) && empty($data)) {
-            \Redis::rpush("user{$this->requestor->id}views", [
-                'key'        => $key,
-                'created_at' => Carbon::now()->toDateTimeString(),
-                'expires_at' => Carbon::now()->addWeek()->toDateTimeString(),
-                'view'       => false,
-                'message'    => 'There was an error when compiling the reports. Please try again, and if the error persists, notify CLH.',
-                'data'       => [],
-            ]);
+            $this->cachedUserView->storeFailResponse();
 
             return;
         }
 
-        \Cache::put($key, [
-            'key'        => $key,
-            'view'       => 'billing.nurse.list',
-            'message'    => 'The Nurse Invoices you requested are ready!',
-            'created_at' => Carbon::now()->toDateTimeString(),
-            'expires_at' => Carbon::now()->addWeek()->toDateTimeString(),
-            'data'       => [
-                'invoices' => $links,
-                'data'     => $data,
-                'month'    => Carbon::parse($this->startDate)->format('F'),
-            ],
-        ], 11000);
+        $this->cachedUserView->storeViewInCache('billing.nurse.list', [
+            'invoices' => $links,
+            'data'     => $data,
+            'month'    => Carbon::parse($this->startDate)->format('F'),
+        ]);
 
-        $month = Carbon::parse($this->startDate)->format('F');
+        $this->cachedUserView->storeSuccessResponse();
 
-        \Redis::rpush("user{$this->requestor->id}views", json_encode([
-            'key'        => $key,
-            'created_at' => Carbon::now()->toDateTimeString(),
-            'expires_at' => Carbon::now()->addWeek()->toDateTimeString(),
-            'view'       => 'billing.nurse.list',
-            'message'    => 'The Nurse Invoices you requested are ready!',
-            'data'       => [
-                'invoices' => $links,
-                'data'     => $data,
-                'month'    => $month,
-            ],
-        ]));
     }
 }

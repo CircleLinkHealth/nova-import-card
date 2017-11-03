@@ -2,7 +2,7 @@
 
 use Illuminate\Database\Eloquent\Model;
 
-class CPRulesQuestionSets extends Model
+class CPRulesQuestionSets extends \App\BaseModel
 {
 
 

@@ -2,7 +2,7 @@
 
 use Illuminate\Database\Eloquent\Model;
 
-class PhoneNumber extends Model
+class PhoneNumber extends \App\BaseModel
 {
 
     //types

@@ -6,7 +6,7 @@ use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\App;
 
-class NurseMonthlySummary extends Model
+class NurseMonthlySummary extends \App\BaseModel
 {
 
     protected $fillable = [

@@ -4,7 +4,7 @@ use App\Contracts\Models\CPM\Biometric;
 use App\User;
 use Illuminate\Database\Eloquent\Model;
 
-class CpmBloodPressure extends Model implements Biometric
+class CpmBloodPressure extends \App\BaseModel implements Biometric
 {
     public function __construct(array $attributes = [])
     {

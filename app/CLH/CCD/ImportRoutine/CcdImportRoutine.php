@@ -3,7 +3,7 @@
 use App\Models\CCD\CcdVendor;
 use Illuminate\Database\Eloquent\Model;
 
-class CcdImportRoutine extends Model
+class CcdImportRoutine extends \App\BaseModel
 {
 
     protected $guarded = [];

@@ -4,7 +4,7 @@ use App\Importer\Models\ItemLogs\MedicationLog;
 use App\Models\CPM\CpmMedicationGroup;
 use Illuminate\Database\Eloquent\Model;
 
-class MedicationImport extends Model
+class MedicationImport extends \App\BaseModel
 {
 
     protected $guarded = [];

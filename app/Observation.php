@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Model;
  * @SWG\Definition(definition="observation",required={"primaryKey"},@SWG\Xml(name="Observation")))
  */
 
-class Observation extends Model
+class Observation extends \App\BaseModel
 {
 
     // for revisionable

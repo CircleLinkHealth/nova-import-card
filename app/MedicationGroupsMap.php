@@ -5,7 +5,7 @@ namespace App;
 use App\Models\CPM\CpmMedicationGroup;
 use Illuminate\Database\Eloquent\Model;
 
-class MedicationGroupsMap extends Model
+class MedicationGroupsMap extends \App\BaseModel
 {
     protected $fillable = [
         'keyword',

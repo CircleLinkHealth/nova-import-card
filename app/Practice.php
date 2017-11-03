@@ -6,7 +6,7 @@ use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
-class Practice extends Model
+class Practice extends \App\BaseModel
 {
     use HasSettings,
         SoftDeletes;

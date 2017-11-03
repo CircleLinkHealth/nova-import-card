@@ -2,7 +2,7 @@
 
 use Illuminate\Database\Eloquent\Model;
 
-class CareItem extends Model
+class CareItem extends \App\BaseModel
 {
     /**
      * The database table used by the model.

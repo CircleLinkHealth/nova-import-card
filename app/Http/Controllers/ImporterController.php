@@ -40,13 +40,10 @@ class ImporterController extends Controller
             \Log::info('Begin processing CCD ' . Carbon::now()->toDateTimeString());
             $xml = file_get_contents($file);
 
-            $json = $this->repo->toJson($xml);
-
             $ccda = Ccda::create([
                 'user_id'   => auth()->user()->id,
                 'vendor_id' => 1,
                 'xml'       => $xml,
-                'json'      => $json,
                 'source'    => Ccda::IMPORTER,
             ]);
 

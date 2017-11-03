@@ -5,7 +5,7 @@ namespace App;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
 
-class PatientMonthlySummary extends Model
+class PatientMonthlySummary extends \App\BaseModel
 {
 
     protected $table = 'patient_monthly_summaries';

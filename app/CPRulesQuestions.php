@@ -3,7 +3,7 @@
 use App\Services\MsgUI;
 use Illuminate\Database\Eloquent\Model;
 
-class CPRulesQuestions extends Model
+class CPRulesQuestions extends \App\BaseModel
 {
 
 

@@ -2,7 +2,7 @@
 
 use Illuminate\Database\Eloquent\Model;
 
-class CarePlanItem extends Model
+class CarePlanItem extends \App\BaseModel
 {
 
     public $timestamps = false;

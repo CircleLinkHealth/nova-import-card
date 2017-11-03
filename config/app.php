@@ -214,6 +214,7 @@ return [
         jeremykenedy\Slack\Laravel\ServiceProvider::class,
         EmailArrayValidatorServiceProvider::class,
         Propaganistas\LaravelPhone\PhoneServiceProvider::class,
+        Spiritix\LadaCache\LadaCacheServiceProvider::class,
     ],
 
     /*

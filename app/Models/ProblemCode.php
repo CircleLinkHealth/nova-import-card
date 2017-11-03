@@ -8,7 +8,7 @@ use App\Scopes\WithNonImported;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
-class ProblemCode extends Model
+class ProblemCode extends \App\BaseModel
 {
     use SoftDeletes;
 

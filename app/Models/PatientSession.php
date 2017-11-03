@@ -4,7 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
-class PatientSession extends Model
+class PatientSession extends \App\BaseModel
 {
     public $fillable = [
         'user_id',

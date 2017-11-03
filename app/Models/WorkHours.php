@@ -5,7 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
-class WorkHours extends Model
+class WorkHours extends \App\BaseModel
 {
     use SoftDeletes;
 

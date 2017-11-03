@@ -2,7 +2,7 @@
 
 use Illuminate\Database\Eloquent\Model;
 
-class CPRulesItemMeta extends Model
+class CPRulesItemMeta extends \App\BaseModel
 {
 
 

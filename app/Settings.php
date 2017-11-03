@@ -4,7 +4,7 @@ namespace App;
 
 use Illuminate\Database\Eloquent\Model;
 
-class Settings extends Model
+class Settings extends \App\BaseModel
 {
     protected $table = 'cpm_settings';
 

@@ -41,7 +41,7 @@ class LGHDetermineCcdaEnrollmentEligibility implements ShouldQueue
             return;
         }
 
-        $json = json_decode((new CCDImporterRepository())->toJson($this->ccda->xml));
+        $json = $this->ccda->bluebuttonJson();
 
         $demographics = collect($this->transformer->demographics($json->demographics));
         $problems = collect($json->problems)->map(function ($prob) {

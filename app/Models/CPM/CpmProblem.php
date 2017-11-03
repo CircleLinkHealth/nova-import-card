@@ -8,7 +8,7 @@ use App\Services\CPM\CpmProblemService;
 use App\User;
 use Illuminate\Database\Eloquent\Model;
 
-class CpmProblem extends Model implements Serviceable
+class CpmProblem extends \App\BaseModel implements Serviceable
 {
     
     use Instructable;

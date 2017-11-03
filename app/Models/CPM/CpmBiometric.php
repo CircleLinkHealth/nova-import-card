@@ -6,7 +6,7 @@ use App\Services\CPM\CpmBiometricService;
 use App\User;
 use Illuminate\Database\Eloquent\Model;
 
-class CpmBiometric extends Model implements Serviceable
+class CpmBiometric extends \App\BaseModel implements Serviceable
 {
 
     use Instructable;

@@ -4,7 +4,7 @@ use Illuminate\Database\Eloquent\Model;
 use Prettus\Repository\Contracts\Transformable;
 use Prettus\Repository\Traits\TransformableTrait;
 
-class CcmTimeApiLog extends Model implements Transformable
+class CcmTimeApiLog extends \App\BaseModel implements Transformable
 {
 
     use TransformableTrait;

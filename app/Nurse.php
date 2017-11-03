@@ -8,7 +8,7 @@ use App\Traits\MakesOrReceivesCalls;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
 
-class Nurse extends Model
+class Nurse extends \App\BaseModel
 {
     use MakesOrReceivesCalls;
 

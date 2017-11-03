@@ -5,7 +5,7 @@ namespace App;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
 
-class Call extends Model
+class Call extends \App\BaseModel
 {
 
     use \Venturecraft\Revisionable\RevisionableTrait;

@@ -2,7 +2,7 @@
 
 use Illuminate\Database\Eloquent\Model;
 
-class ObservationMeta extends Model
+class ObservationMeta extends \App\BaseModel
 {
 
 
