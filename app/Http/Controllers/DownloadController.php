@@ -21,6 +21,11 @@ class DownloadController extends Controller
         }
 
         if (!file_exists($path)) {
+            $filePath = base64_decode($filePath);
+            $path = storage_path($filePath);
+        }
+
+        if (!file_exists($path)) {
             return "Could not locate file with name: $filePath";
         }
 
