@@ -112,7 +112,9 @@
             columnsClasses: {
               'selected': 'blank'
             },
-            sortable: ['Nurse','Patient','Status', 'Practice', 'Last Call Status', 'Next Call', 'Call Time Start', 'Call Time End', 'Time Zone', 'Preferred Call Days', 'Last Call', 'CCM Time']
+            sortable: ['Nurse','Patient','Status', 'Practice', 'Last Call Status', 'Next Call', 'Call Time Start', 'Call Time End', 'Time Zone', 'Preferred Call Days', 'Last Call', 'CCM Time'],
+            filterable: ['Nurse','Patient','Status', 'Practice', 'Last Call Status', 'Next Call', 'Call Time Start', 'Call Time End', 'Time Zone', 'Preferred Call Days', 'Last Call', 'CCM Time'],
+            filterByColumn: true
           },
           currentDate: new Date()
         }
@@ -187,5 +189,10 @@
 
   .blue {
     color: #008cba;
+  }
+  
+  tr.VueTables__filters-row input {
+    font-size: 12px;
+    height: 22px;
   }
 </style>
