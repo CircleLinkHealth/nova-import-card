@@ -41,10 +41,11 @@ class QueueGenerateNurseInvoices extends Command
     public function handle()
     {
         dispatch(
-            (new GenerateNurseInvoice(activeNurseNames()->keys(),
+            (new GenerateNurseInvoice(
+                activeNurseNames()->keys()->all(),
                 Carbon::yesterday()->startOfDay(),
                 Carbon::yesterday()->endOfDay(),
-                User::ofType('administrator')->pluck('id')
+                User::ofType('administrator')->pluck('id')->all()
             ))->onQueue('reports')
         );
     }

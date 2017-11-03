@@ -17,6 +17,7 @@ use App\Console\Commands\ProcessCcdaLGHMixup;
 use App\Console\Commands\QueueCcdasToConvertToJson;
 use App\Console\Commands\QueueCcdasToProcess;
 use App\Console\Commands\QueueCcdaToDetermineEnrollmentEligibility;
+use App\Console\Commands\QueueGenerateNurseInvoices;
 use App\Console\Commands\QueueMakeWelcomeCallsList;
 use App\Console\Commands\QueueSendAuditReports;
 use App\Console\Commands\RecalculateCcmTime;
@@ -62,6 +63,7 @@ class Kernel extends ConsoleKernel
         QueueMakeWelcomeCallsList::class,
         SendCarePlanApprovalReminderTestEmail::class,
         ReImportCcdsToGetTranslations::class,
+        QueueGenerateNurseInvoices::class,
     ];
 
     /**
