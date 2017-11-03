@@ -84,10 +84,8 @@ class UserView
      * Store a success response in the requesting User's view cache, basically notifying the User that this job was
      * completed successfully.
      */
-    public function storeSuccessResponse()
+    public function storeSuccessResponse($title = 'Nurse Invoices')
     {
-        $title = 'Nurse Invoices';
-
         $this->userIds->map(function ($userId) use ($title) {
             \Redis::rpush(
                 $this->getHashKeyForUser($userId),
