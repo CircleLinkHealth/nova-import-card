@@ -20,8 +20,8 @@ use App\Models\CPM\CpmSymptom;
 use App\Models\EmailSettings;
 use App\Models\MedicalRecords\Ccda;
 use App\Notifications\ResetPassword;
+use App\Repositories\Cache\UserNotificationList;
 use App\Services\UserService;
-use App\Traits\Cache\UserRedisCache;
 use App\Traits\HasEmrDirectAddress;
 use Carbon\Carbon;
 use DateTime;
@@ -50,8 +50,7 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
         CanResetPassword,
         HasEmrDirectAddress,
         Notifiable,
-        SoftDeletes,
-        UserRedisCache;
+        SoftDeletes;
 
     use EntrustUserTrait {
         EntrustUserTrait::restore insteadof SoftDeletes;
@@ -2501,5 +2500,9 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
         return $this->belongsToMany(CpmProblem::class, 'cpm_problems_users', 'patient_id')
             ->withPivot('cpm_instruction_id')
             ->withTimestamps('created_at', 'updated_at');
+    }
+
+    public function cachedNotificationsList() {
+        return new UserNotificationList($this->id);
     }
 }

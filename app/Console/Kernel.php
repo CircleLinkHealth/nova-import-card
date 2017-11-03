@@ -17,6 +17,8 @@ use App\Console\Commands\ProcessCcdaLGHMixup;
 use App\Console\Commands\QueueCcdasToConvertToJson;
 use App\Console\Commands\QueueCcdasToProcess;
 use App\Console\Commands\QueueCcdaToDetermineEnrollmentEligibility;
+use App\Console\Commands\QueueGenerateNurseDailyReport;
+use App\Console\Commands\QueueGenerateNurseInvoices;
 use App\Console\Commands\QueueMakeWelcomeCallsList;
 use App\Console\Commands\QueueSendAuditReports;
 use App\Console\Commands\RecalculateCcmTime;
@@ -62,6 +64,8 @@ class Kernel extends ConsoleKernel
         QueueMakeWelcomeCallsList::class,
         SendCarePlanApprovalReminderTestEmail::class,
         ReImportCcdsToGetTranslations::class,
+        QueueGenerateNurseInvoices::class,
+        QueueGenerateNurseDailyReport::class,
     ];
 
     /**
@@ -133,8 +137,16 @@ class Kernel extends ConsoleKernel
         $schedule->command('ccm_time:reset')
             ->cron('1 0 1 * *');
 
-        $schedule->command('lgh:importInsurance')
-            ->dailyAt('05:00');
+//        $schedule->command('lgh:importInsurance')
+//            ->dailyAt('05:00');
+
+        $schedule->command('report:nurseInvoices')
+            ->dailyAt('04:00')
+            ->withoutOverlapping();
+
+        $schedule->command('report:nurseDaily')
+            ->dailyAt('23:50')
+            ->withoutOverlapping();
 
 //        $schedule->command('ccda:toJson')
 //            ->everyMinute()

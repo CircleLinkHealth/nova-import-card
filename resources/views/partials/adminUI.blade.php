@@ -340,7 +340,7 @@
                         @else
                             <li class="dropdown">
                                 <a href="{{url('/jobs/completed')}}">
-                                    <span class="badge">{{auth()->user()->cachedViewCount()}}</span>
+                                    <span class="badge">{{auth()->user()->cachedNotificationsList()->count()}}</span>
                                     Jobs Completed
                                 </a>
                             </li>
