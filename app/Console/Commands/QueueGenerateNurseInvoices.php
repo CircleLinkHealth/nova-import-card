@@ -45,7 +45,8 @@ class QueueGenerateNurseInvoices extends Command
                 activeNurseNames()->keys()->all(),
                 Carbon::now()->startOfMonth(),
                 Carbon::now()->endOfMonth(),
-                User::ofType('administrator')->pluck('id')->all()
+                User::ofType('administrator')->pluck('id')->all(),
+                true
             ))->onQueue('reports')
         );
     }
