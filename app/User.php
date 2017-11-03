@@ -2526,14 +2526,14 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
      */
     public function cachedViews($start = 0, $end = -1)
     {
-        return collect(Redis::lrange("user{$this->id}views", $start, $end))->map(function ($json) {
+        return collect(\Redis::lrange("user:{$this->id}:views", $start, $end))->map(function ($json) {
             $cache = json_decode($json, true);
 
             $now = Carbon::now();
             $expires = Carbon::parse($cache['expires_at']);
 
             if ($now->greaterThan($expires) || !\Cache::has($cache['key'])) {
-                Redis::lrem("user{$this->id}views", 0, $json);
+                \Redis::lrem("user:{$this->id}:views", 0, $json);
 
                 return false;
             }
@@ -2551,6 +2551,6 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
      */
     public function cachedViewCount()
     {
-        return Redis::llen("user{$this->id}views");
+        return \Redis::llen("user:{$this->id}:views");
     }
 }
