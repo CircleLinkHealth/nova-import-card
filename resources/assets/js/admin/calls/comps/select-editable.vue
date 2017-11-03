@@ -28,7 +28,7 @@
      */
     
     export default {
-        name: 'TextEditable',
+        name: 'SelectEditable',
         props: ['value', 'values', 'is-edit', 'class-name', 'on-change'],
         data(){
             return {
