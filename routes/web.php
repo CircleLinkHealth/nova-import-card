@@ -142,7 +142,7 @@ Route::group(['middleware' => 'auth'], function () {
     /**
      * API
      */
-    Route::get('practices/all', 'API\PracticeController@allPracticesWithLocationsAndStaff');
+    Route::get('api/practices/all', 'API\PracticeController@allPracticesWithLocationsAndStaff');
 
     Route::resource('profiles', 'API\ProfileController');
 
