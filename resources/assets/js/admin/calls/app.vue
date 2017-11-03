@@ -69,16 +69,16 @@
         <input class="row-select" v-model="selected" @change="toggleAllSelect" type="checkbox" />
       </template>
       <template slot="Nurse" scope="props">
-        <text-editable :value="props.row.Nurse"></text-editable>
+        <text-editable :value="props.row.Nurse" :class-name="'blue'"></text-editable>
       </template>
       <template slot="Next Call" scope="props">
-        <date-editable :value="props.row['Next Call']" :format="'YYYY-mm-DD'"></date-editable>
+        <date-editable :value="props.row['Next Call']" :format="'YYYY-mm-DD'" :class-name="'blue'"></date-editable>
       </template>
       <template slot="Call Time Start" scope="props">
-        <time-editable :value="props.row['Call Time Start']" :format="'YYYY-mm-DD'"></time-editable>
+        <time-editable :value="props.row['Call Time Start']" :format="'YYYY-mm-DD'" :class-name="'blue'"></time-editable>
       </template>
       <template slot="Call Time End" scope="props">
-        <time-editable :value="props.row['Call Time End']" :format="'YYYY-mm-DD'"></time-editable>
+        <time-editable :value="props.row['Call Time End']" :format="'YYYY-mm-DD'" :class-name="'blue'"></time-editable>
       </template>
     </v-client-table>
     <text-editable :value="'Mykeels'"></text-editable>
@@ -183,5 +183,9 @@
 
   .row-info li {
     margin:5px 0px;
+  }
+
+  .blue {
+    color: #008cba;
   }
 </style>

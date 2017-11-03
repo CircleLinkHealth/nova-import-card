@@ -67,4 +67,8 @@
         float: right;
         margin-top: 4px;
     }
+
+    span.float-right {
+        cursor: pointer;
+    }
 </style>
