@@ -3,7 +3,7 @@
 @section('content')
     <div class="container">
         @foreach(auth()->user()->cachedViews() as $cache)
-            @if(!$cache['view'])
+            @if(!$cache['key'])
                 <div class="alert alert-danger" role="alert">
                     <strong>Error!</strong>{{$cache['message']}}
                 </div>

@@ -27,7 +27,7 @@
                     <a href="#problems-section">Problems</a> ||
                     {{--<a href="#procedures-section">Procedures</a> ||--}}
                     {{--<a href="#results-section">Results (Labs)</a> ||--}}
-                    <a href="#smokingstatus-section">Smoking Status</a> ||
+                    {{--<a href="#smokingstatus-section">Smoking Status</a> ||--}}
                     <a href="#vitals-section">Vitals</a>
                 </nav>
 
@@ -153,12 +153,12 @@
                     {{--</code></pre>--}}
 
 
-                <a name="smokingstatus-section"></a>
+                {{--<a name="smokingstatus-section"></a>--}}
 
-                <h2>Smoking Status</h2>
-                <pre><code id="smokingstatus" class="javascript">
-                        {!! json_encode($ccd->smoking_status, JSON_PRETTY_PRINT) !!}
-                    </code></pre>
+                {{--<h2>Smoking Status</h2>--}}
+                {{--<pre><code id="smokingstatus" class="javascript">--}}
+                        {{--{!! json_encode($ccd->smoking_status, JSON_PRETTY_PRINT) !!}--}}
+                    {{--</code></pre>--}}
 
 
                 <a name="vitals-section"></a>

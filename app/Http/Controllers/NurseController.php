@@ -51,7 +51,7 @@ class NurseController extends Controller
             $startDate = Carbon::parse($request->input('start_date'));
             $endDate = Carbon::parse($request->input('end_date'));
 
-            dispatch((new GenerateNurseInvoice($nurseIds, $startDate, $endDate, $variablePay, $addTime, $addNotes, auth()->user())));
+            dispatch((new GenerateNurseInvoice($nurseIds, $startDate, $endDate, auth()->user()->id, $variablePay, $addTime, $addNotes)));
         }
 
         return "Waldo is working on compiling the reports you requested. <br> Give it a minute, and then head to " . link_to('/jobs/completed') . " and refresh frantically to see a link to the report you requested.";
