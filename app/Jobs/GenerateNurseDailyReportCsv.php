@@ -6,11 +6,12 @@ use App\Reports\NurseDailyReport;
 use App\Repositories\Cache\UserView;
 use Carbon\Carbon;
 use Illuminate\Bus\Queueable;
-use Illuminate\Queue\SerializesModels;
-use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
+use Illuminate\Queue\InteractsWithQueue;
+use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\Collection;
+use Maatwebsite\Excel\Facades\Excel;
 
 class GenerateNurseDailyReportCsv implements ShouldQueue
 {
@@ -43,7 +44,9 @@ class GenerateNurseDailyReportCsv implements ShouldQueue
 
         $now = Carbon::now();
 
-        $message = link_to_route('download', "Download Nurse Daily Report for {$now->toDateTimeString()}");
+        $message = link_to_route('download', "Download Nurse Daily Report for {$now->toDateTimeString()}", [
+            'filePth' => $path,
+        ]);
 
         $this->cachedUserView->storeSuccessResponse($message);
     }
@@ -59,7 +62,15 @@ class GenerateNurseDailyReportCsv implements ShouldQueue
         return Excel::create("{$filename}_{$now}", function ($excel) {
             $excel->sheet('Nurse Daily Report', function ($sheet) {
                 $sheet->fromArray(
-                    $this->reportData->all()
+                    $this->reportData->get([
+                        'name',
+                        'Time Since Last Activity',
+                        '# Successful Calls Today',
+                        '# Scheduled Calls Today',
+                        '# Completed Calls Today',
+                        'CCM Mins Today',
+                        'Last Activity',
+                    ])->all()
                 );
             });
         })->store('xls', false, true);
