@@ -1,6 +1,6 @@
 <template>
   <div>
-    <v-client-table ref="'tblCalls'" :data="tableData" :columns="columns" :options="options">
+    <v-client-table ref="tblCalls" :data="tableData" :columns="columns" :options="options">
       <template slot="child_row" scope="props">
         <div class="row row-info">
           <div class="col-sm-12">
@@ -68,29 +68,65 @@
       <template slot="h__selected" scope="props">
         <input class="row-select" v-model="selected" @change="toggleAllSelect" type="checkbox" />
       </template>
+      <template slot="Nurse" scope="props">
+        <select-editable :value="props.row.Nurse" :values="[
+                                    'Nurse N RN', 
+                                    'Kathryn Alchalabi RN', 
+                                    'Patricia Koeppel RN', 
+                                    'Dillenis Diaz RN', 
+                                    'Liza Herrera RN', 
+                                    'Monique Potter RN'
+                                  ]" :class-name="'blue'"></select-editable>
+      </template>
+      <template slot="Next Call" scope="props">
+        <date-editable :value="props.row['Next Call']" :format="'YYYY-mm-DD'" :class-name="'blue'"></date-editable>
+      </template>
+      <template slot="Call Time Start" scope="props">
+        <time-editable :value="props.row['Call Time Start']" :format="'YYYY-mm-DD'" :class-name="'blue'"></time-editable>
+      </template>
+      <template slot="Call Time End" scope="props">
+        <time-editable :value="props.row['Call Time End']" :format="'YYYY-mm-DD'" :class-name="'blue'"></time-editable>
+      </template>
     </v-client-table>
-    
+    <text-editable :value="'Mykeels'"></text-editable>
+    <date-editable :value="'01-20-2017'" :format="'mm-DD-YYYY'"></date-editable>
+    <select-editable :values="['One', 'Two', 'Three']"></select-editable>
   </div>
 </template>
 
 <script>
   import { rootUrl } from '../../app.config.js'
+  import { Event } from 'vue-tables-2'
+  import TextEditable from './comps/text-editable'
+  import DateEditable from './comps/date-editable'
+  import SelectEditable from './comps/select-editable'
+  import TimeEditable from './comps/time-editable'
+  import BindAppEvents from './app.events'
 
   export default {
       name: 'CallMgmtApp',
-      components: {},
+      components: {
+        'text-editable': TextEditable,
+        'date-editable': DateEditable,
+        'select-editable': SelectEditable,
+        'time-editable': TimeEditable
+      },
       data() {
         return {
+          page: 1,
           selected: false,
-          columns: ['selected', 'id', 'Nurse','Patient','Status', 'Practice', 'Last Call Status', 'Next Call', 'Call Time Start', 'Call Time End', 'Time Zone', 'Preferred Call Days', 'Last Call', 'CCM Time'],
+          columns: ['selected', 'Nurse','Patient ID', 'Patient','Next Call', 'Last Call Status', 'Last Call', 'CCM Time', 'Successful Calls', 'Time Zone', 'Call Time Start', 'Call Time End', 'Preferred Call Days', 'Patient Status', 'Practice', 'Billing Provider', 'DOB', 'Scheduler'],
           tableData: [],
           options: {
           // see the options API
             columnsClasses: {
               'selected': 'blank'
             },
-            sortable: ['id', 'Nurse','Patient','Status', 'Practice', 'Last Call Status', 'Next Call', 'Call Time Start', 'Call Time End', 'Time Zone', 'Preferred Call Days', 'Last Call', 'CCM Time']
-          }
+            sortable: ['Nurse','Patient ID', 'Patient','Next Call', 'Last Call Status', 'Last Call', 'CCM Time', 'Successful Calls', 'Time Zone', 'Call Time Start', 'Call Time End', 'Preferred Call Days', 'Patient Status', 'Practice', 'Billing Provider', 'DOB', 'Scheduler'],
+            filterable: ['Nurse','Patient ID', 'Patient','Next Call', 'Last Call Status', 'Last Call', 'CCM Time', 'Successful Calls', 'Time Zone', 'Call Time Start', 'Call Time End', 'Preferred Call Days', 'Patient Status', 'Practice', 'Billing Provider', 'DOB', 'Scheduler'],
+            filterByColumn: true
+          },
+          currentDate: new Date()
         }
       },
       methods: {
@@ -99,38 +135,60 @@
             row.selected = this.selected;
             return row;
           })
+        },
+        next() {
+          if (!this.$nextPromise) {
+            return this.$nextPromise = this.$http.get(rootUrl('api/admin/calls?page=' + this.page)).then((result) => result.data).then(result => {
+              const calls = result.data;
+              calls.forEach(call => {
+                if (call.inbound_user) call.inbound_user.id = call.inbound_cpm_id;
+                if (call.outbound_user) call.outbound_user.id = call.outbound_cpm_id;                
+                call.getNurse = () => ((call.inbound_user && call.inbound_user.nurse_info) ?
+                                                call.inbound_user : 
+                                          (call.outbound_user && call.outbound_user.nurse_info) ?
+                                                call.outbound_user : 
+                                                null)
+                call.getPatient = () => ((call.inbound_user && call.inbound_user.patient_info) ?
+                                                call.inbound_user : 
+                                          (call.outbound_user && call.outbound_user.patient_info) ?
+                                                call.outbound_user : 
+                                                null);
+                
+                const patient = call.getPatient();
+                if (patient) {
+                  patient.getBillingProvider = () => ((patient.billing_provider || [])[0] || {});
+                  patient.getPractice = () => (patient.primary_practice || {});
+
+                  const billingProvider = patient.getBillingProvider();
+                  billingProvider.getUser = () => (billingProvider.user || {});
+                }
+              })
+              const tableCalls = calls.map(call => ({
+                                    id: call.id,
+                                    selected: false,
+                                    Nurse: (call.getNurse() || {}).full_name,
+                                    Patient: (call.getPatient() || {}).full_name,
+                                    Practice: (call.getPatient() || {}).getPractice().display_name,
+                                    Scheduler: call.scheduler,
+                                    'Billing Provider': call.getPatient().getBillingProvider().getUser().display_name,
+                                    'Patient ID': call.getPatient().id,
+                                    'Next Call': call.scheduled_date,
+                                    'Call Time Start': call.window_start,
+                                    'Call Time End': call.window_end
+                                  }))
+              this.tableData = this.tableData.concat(tableCalls)
+              this.page++;
+              delete this.$nextPromise;
+              console.log(calls);
+              console.log(this.$refs);
+              return tableCalls;
+            })
+          }
         }
       },
       mounted() {
-        this.$http.get(rootUrl('api/admin/calls')).then((result) => result.data).then(result => {
-          const calls = result.data;
-          calls.forEach(call => {
-            call.getNurse = () => ((call.inbound_user && call.inbound_user.nurse_info) ?
-                                            call.inbound_user : 
-                                      (call.outbound_user && call.outbound_user.nurse_info) ?
-                                            call.outbound_user : 
-                                            null)
-            call.getPatient = () => ((call.inbound_user && call.inbound_user.patient_info) ?
-                                            call.inbound_user : 
-                                      (call.outbound_user && call.outbound_user.patient_info) ?
-                                            call.outbound_user : 
-                                            null)
-          })
-          const tableCalls = calls.map(call => ({
-                                id: call.id,
-                                selected: false,
-                                Nurse: (call.getNurse() || {}).full_name,
-                                Patient: (call.getPatient() || {}).full_name,
-                                Status: call.status,
-                                Practice: (call.getNurse() || {}).primary_practice_id,
-                                'Next Call': call.scheduled_date,
-                                'Call Time Start': call.window_start,
-                                'Call Time End': call.window_end
-                              }))
-          this.tableData = this.tableData.concat(tableCalls)
-          console.log(calls);
-          console.log(this.$refs);
-        })
+        BindAppEvents(this, Event);
+        this.next();
       }
   }
 </script>
@@ -159,5 +217,14 @@
 
   .row-info li {
     margin:5px 0px;
+  }
+
+  .blue {
+    color: #008cba;
+  }
+  
+  tr.VueTables__filters-row input {
+    font-size: 12px;
+    height: 22px;
   }
 </style>

@@ -1,6 +1,6 @@
 import Vue from 'vue'
 import VueResource from 'vue-resource'
-import { ClientTable, Event } from 'vue-tables-2'
+import { ClientTable } from 'vue-tables-2'
 
 //custom components
 import CallMgmtApp from './app'
