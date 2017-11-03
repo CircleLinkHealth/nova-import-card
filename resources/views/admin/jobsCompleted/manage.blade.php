@@ -30,16 +30,20 @@
             <div class="col-md-8 col-md-offset-2">
                 @foreach(auth()->user()->cachedViews() as $cache)
                     @if(!$cache['key'])
-                        <div class="alert alert-danger" role="alert">
-                            <strong>Error!</strong>{{$cache['message']}}
-                        </div>
+                        <div class="job-completed-card col-md-12 text-center">
+                            <h5>{!! $cache['message'] ?? '' !!}</h5>
 
+                            <p class="job-completed-card-footer">
+                                <span class="pull-left">created: <strong>{{$cache['created_at']}}</strong></span>
+                                <span class="pull-right">expires: <strong>{{$cache['expires_at']}}</strong></span>
+                            </p>
+                        </div>
                     @else
                         <div class="job-completed-card col-md-12 text-center">
                             <h3 class="job-completed-card-title">
                                 {{$cache['title'] ?? ''}}
                             </h3>
-                            <a href="{{route('get.cached.vue.by.key', ['key' => $cache['key']])}}" class="alert-link">Go to
+                            <a href="{{route('get.cached.view.by.key', ['key' => $cache['key']])}}" class="alert-link">Go to
                                 page</a>
 
                             <h5>{{$cache['message'] ?? ''}}</h5>
