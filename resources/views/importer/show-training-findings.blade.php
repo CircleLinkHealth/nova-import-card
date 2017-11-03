@@ -7,6 +7,15 @@
         <h1>Here's what I see as features to help me identify future CCDs from this Practice. Please check off
             irrelevant information. Information such as 'athenahealth' is too broad, so it should not be saved.</h1>
 
+        <div class="text-left">
+            <a href="{{ route('get.CCDViewerController.show', [ 'ccdaId' => $medicalRecordId]) }}"
+               class="btn btn-warning btn-xs"
+               target="_blank" style="font-size: 20px"
+            >
+                View CCDA
+            </a>
+        </div>
+
         <form class="form-group" action="{{route('post.store.training.features')}}" method="POST">
 
             <input type="hidden" name="_token" value="{{ csrf_token() }}">

@@ -143,6 +143,7 @@ class ImporterController extends Controller
             'predictedBillingProviderId' => $predictedBillingProviderId,
             'predictedLocationId'        => $predictedLocationId,
             'predictedPracticeId'        => $predictedPracticeId,
+            'medicalRecordId'            => $ccda->id
         ], compact([
             'document',
             'providers',
