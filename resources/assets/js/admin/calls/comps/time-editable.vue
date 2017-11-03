@@ -47,7 +47,7 @@
 <style>
     .float-left {
         float: left;
-        width: 90%;
+        width: 80%;
     }
 
     .float-right {

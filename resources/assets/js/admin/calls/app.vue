@@ -74,6 +74,12 @@
       <template slot="Next Call" scope="props">
         <date-editable :value="props.row['Next Call']" :format="'YYYY-mm-DD'"></date-editable>
       </template>
+      <template slot="Call Time Start" scope="props">
+        <time-editable :value="props.row['Call Time Start']" :format="'YYYY-mm-DD'"></time-editable>
+      </template>
+      <template slot="Call Time End" scope="props">
+        <time-editable :value="props.row['Call Time End']" :format="'YYYY-mm-DD'"></time-editable>
+      </template>
     </v-client-table>
     <text-editable :value="'Mykeels'"></text-editable>
     <date-editable :value="'01-20-2017'" :format="'mm-DD-YYYY'"></date-editable>
@@ -86,25 +92,27 @@
   import TextEditable from './comps/text-editable'
   import DateEditable from './comps/date-editable'
   import SelectEditable from './comps/select-editable'
+  import TimeEditable from './comps/time-editable'
 
   export default {
       name: 'CallMgmtApp',
       components: {
         'text-editable': TextEditable,
         'date-editable': DateEditable,
-        'select-editable': SelectEditable
+        'select-editable': SelectEditable,
+        'time-editable': TimeEditable
       },
       data() {
         return {
           selected: false,
-          columns: ['selected', 'id', 'Nurse','Patient','Status', 'Practice', 'Last Call Status', 'Next Call', 'Call Time Start', 'Call Time End', 'Time Zone', 'Preferred Call Days', 'Last Call', 'CCM Time'],
+          columns: ['selected', 'Nurse','Patient','Status', 'Practice', 'Last Call Status', 'Next Call', 'Call Time Start', 'Call Time End', 'Time Zone', 'Preferred Call Days', 'Last Call', 'CCM Time'],
           tableData: [],
           options: {
           // see the options API
             columnsClasses: {
               'selected': 'blank'
             },
-            sortable: ['id', 'Nurse','Patient','Status', 'Practice', 'Last Call Status', 'Next Call', 'Call Time Start', 'Call Time End', 'Time Zone', 'Preferred Call Days', 'Last Call', 'CCM Time']
+            sortable: ['Nurse','Patient','Status', 'Practice', 'Last Call Status', 'Next Call', 'Call Time Start', 'Call Time End', 'Time Zone', 'Preferred Call Days', 'Last Call', 'CCM Time']
           },
           currentDate: new Date()
         }
