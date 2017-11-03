@@ -21,7 +21,7 @@ class QueueGenerateNurseInvoices extends Command
      *
      * @var string
      */
-    protected $description = 'Generate Nurse Invoice cached view for the day before';
+    protected $description = 'Generate Nurse Invoice cached view for the current month.';
 
     /**
      * Create a new command instance.

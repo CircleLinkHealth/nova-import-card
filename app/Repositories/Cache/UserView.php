@@ -29,9 +29,9 @@ class UserView
     public function storeFailResponse()
     {
         $this->userIds->map(function ($userId) {
-            $message = 'There was an error when compiling the reports.';
+            $title = 'There was an error when compiling the reports.';
 
-            \Redis::rpush($this->getHashKeyForUser($userId), $this->userCachedNotificationFactory($message));
+            \Redis::rpush($this->getHashKeyForUser($userId), $this->userCachedNotificationFactory($title));
         });
     }
 
@@ -50,19 +50,20 @@ class UserView
     /**
      * Create a User view
      *
-     * @param $message
+     * @param $title
      * @param bool $view
      * @param array $data
      *
      * @return array
      */
-    public function userCachedNotificationFactory($message)
+    public function userCachedNotificationFactory($title, $description = '')
     {
         return json_encode([
-            'key'        => $this->viewHashKey,
-            'created_at' => Carbon::now()->toDateTimeString(),
-            'expires_at' => Carbon::now()->addWeek()->toDateTimeString(),
-            'message'    => $message,
+            'key'         => $this->viewHashKey,
+            'created_at'  => Carbon::now()->toDateTimeString(),
+            'expires_at'  => Carbon::now()->addWeek()->toDateTimeString(),
+            'title'       => $title,
+            'description' => $description,
         ]);
     }
 
@@ -85,12 +86,12 @@ class UserView
      */
     public function storeSuccessResponse()
     {
-        $message = 'Nurse Invoices';
+        $title = 'Nurse Invoices';
 
-        $this->userIds->map(function ($userId) use ($message) {
+        $this->userIds->map(function ($userId) use ($title) {
             \Redis::rpush(
                 $this->getHashKeyForUser($userId),
-                $this->userCachedNotificationFactory($message)
+                $this->userCachedNotificationFactory($title)
             );
         });
     }
