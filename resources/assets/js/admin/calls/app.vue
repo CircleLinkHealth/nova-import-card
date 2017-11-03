@@ -70,14 +70,14 @@
       </template>
     </v-client-table>
     <text-editable :value="'Mykeels'" :class-name="''"></text-editable>
-    <text-editable :value="currentDate" :class-name="''"></text-editable>
+    <date-editable :value="'01-20-2017'" :format="'mm-DD-YYYY'" :class-name="''"></date-editable>
   </div>
 </template>
 
 <script>
   import { rootUrl } from '../../app.config.js'
   import TextEditable from './comps/text-editable'
-  import DateEditable from './comps/text-editable'
+  import DateEditable from './comps/date-editable'
 
   export default {
       name: 'CallMgmtApp',

@@ -7,19 +7,31 @@
             </form>
         </div>
         <div v-if="!isEditMode" @dblclick="toggleEdit">
-            {{date}}
+            {{text}}
         </div>
     </div>
 </template>
 
 <script>
+    import moment from 'moment'
+
+    const INPUT_DATE_FORMAT = 'YYYY-mm-DD'
+
     export default {
         name: 'TextEditable',
         props: ['value', 'format', 'is-edit', 'class-name'],
         data(){
             return {
-                date: new Date(this.value),
+                date: moment(this.value, this.format).format(INPUT_DATE_FORMAT),
                 isEditMode: this.isEdit
+            }
+        },
+        computed: {
+            text() {
+                return this.moment.format(this.format)
+            },
+            moment() {
+                return moment(this.date, INPUT_DATE_FORMAT)
             }
         },
         methods: {
