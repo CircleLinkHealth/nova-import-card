@@ -4,6 +4,7 @@ namespace App\Jobs;
 
 use App\Billing\NurseMonthlyBillGenerator;
 use App\Nurse;
+use App\Repositories\Cache\UserView;
 use Carbon\Carbon;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
@@ -22,7 +23,7 @@ class GenerateNurseInvoice implements ShouldQueue
     private $addNotes;
     private $addTime;
     private $requestors;
-    private $key;
+    private $cachedUserView;
 
     /**
      * Create a new job instance.
@@ -52,7 +53,7 @@ class GenerateNurseInvoice implements ShouldQueue
         $this->requestors = is_a($requestors, Collection::class)
             ? $requestors
             : collect($requestors);
-        $this->key = 'view' . str_random('20');
+        $this->cachedUserView = new UserView($this->requestors);
     }
 
     /**
@@ -83,90 +84,18 @@ class GenerateNurseInvoice implements ShouldQueue
 
 
         if (empty($links) && empty($data)) {
-            $this->storeFailResponse();
+            $this->cachedUserView->storeFailResponse();
 
             return;
         }
 
-        $this->storeViewInCache('billing.nurse.list', [
+        $this->cachedUserView->storeViewInCache('billing.nurse.list', [
             'invoices' => $links,
             'data'     => $data,
             'month'    => Carbon::parse($this->startDate)->format('F'),
         ]);
 
-        $this->storeSuccessResponse();
+        $this->cachedUserView->storeSuccessResponse();
 
-    }
-
-    /**
-     * Store a fail response in the requesting User's view cache, basically notifying the User that this job failed.
-     */
-    public function storeFailResponse()
-    {
-        $this->requestors->map(function ($userId) {
-            $message = 'There was an error when compiling the reports. Please try again, and if the error persists, notify CLH.';
-
-            \Redis::rpush($this->getHashKeyForUser($userId), $this->userCachedNotificationFactory($message));
-        });
-    }
-
-    /**
-     * Get the hash key for the give User's cached views list
-     *
-     * @param $userId
-     *
-     * @return string
-     */
-    public function getHashKeyForUser($userId)
-    {
-        return "user:{$userId}:views";
-    }
-
-    /**
-     * Create a User view
-     *
-     * @param $message
-     * @param bool $view
-     * @param array $data
-     *
-     * @return array
-     */
-    public function userCachedNotificationFactory($message)
-    {
-        return json_encode([
-            'key'        => $this->key,
-            'created_at' => Carbon::now()->toDateTimeString(),
-            'expires_at' => Carbon::now()->addWeek()->toDateTimeString(),
-            'message'    => $message,
-        ]);
-    }
-
-    /**
-     * Store a fail response in the requesting User's view cache, basically notifying the User that this job failed.
-     */
-    public function storeViewInCache($view, $data)
-    {
-        \Cache::put($this->key, [
-            'view'       => $view,
-            'created_at' => Carbon::now()->toDateTimeString(),
-            'expires_at' => Carbon::now()->addWeek()->toDateTimeString(),
-            'data'       => $data,
-        ], 11000);
-    }
-
-    /**
-     * Store a success response in the requesting User's view cache, basically notifying the User that this job was
-     * completed successfully.
-     */
-    public function storeSuccessResponse()
-    {
-        $message = 'Nurse Invoices';
-
-        $this->requestors->map(function ($userId) use ($message) {
-            \Redis::rpush(
-                $this->getHashKeyForUser($userId),
-                $this->userCachedNotificationFactory($message)
-            );
-        });
     }
 }
