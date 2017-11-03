@@ -45,7 +45,7 @@ class GenerateNurseDailyReportCsv implements ShouldQueue
         $now = Carbon::now();
 
         $message = link_to_route('download', "Download Nurse Daily Report for {$now->toDateTimeString()}", [
-            'filePth' => $path['full'],
+            'filePath' => $path['full'],
         ]);
 
         $this->cachedUserView->storeSuccessResponse($message);
