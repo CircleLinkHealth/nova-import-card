@@ -101,7 +101,7 @@ class GenerateNurseInvoice implements ShouldQueue
 
             $userNotification->push('Nurse Invoices',
                 "Invoice(s) were generated for {$this->nurses->count()} nurse(s): {$this->nurses->map(function($n) {return $n->user->fullName;})->implode(', ')}",
-                route('get.cached.view.by.key', ['key' => $viewHashKey]),
+                linkToCachedView($viewHashKey),
                 'Go to page'
             );
         });

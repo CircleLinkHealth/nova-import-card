@@ -408,8 +408,7 @@ if (!function_exists('windowToTimestamps')) {
         $endTimeH = Carbon::parse($end)->format('H');
         $endTimei = Carbon::parse($end)->format('i');
 
-        $endDate = $endDate->setTime($endTimeH, $endTimei)->toDateTimeString();
-        ;
+        $endDate = $endDate->setTime($endTimeH, $endTimei)->toDateTimeString();;
 
         return [
             'window_start' => $startDate,
@@ -577,6 +576,26 @@ if (!function_exists('linkToDownloadFile')) {
         return route('download', [
             'filePath' => base64_encode($path),
         ]);
+    }
+}
+
+if (!function_exists('linkToCachedView')) {
+    /**
+     * Generate a link to a cached view
+     *
+     * @param $viewHashKey
+     *
+     * @return string
+     * @throws Exception
+     *
+     */
+    function linkToCachedView($viewHashKey)
+    {
+        if (!$viewHashKey) {
+            throw new \Exception("File path cannot be empty");
+        }
+
+        return route('get.cached.view.by.key', ['key' => $viewHashKey]);
     }
 }
 
