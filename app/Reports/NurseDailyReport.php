@@ -26,7 +26,6 @@ class NurseDailyReport
         $i = 0;
 
         foreach ($nurse_users as $nurse) {
-            $nurses[$i]['id'] = $nurse;
             $nurses[$i]['name'] = $nurse->fullName;
 
             $last_activity_date = DB::table('lv_page_timer')
