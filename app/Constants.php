@@ -10,6 +10,14 @@ namespace App;
 
 class Constants
 {
+    /**
+     * Redis Cache Keys
+     */
+    const CACHED_USER_NOTIFICATIONS = 'user:{$userId}:notifications';
+
+    /**
+     * Problem Codes
+     */
     const ICD9 = 'icd_9_code';
     const ICD10 = 'icd_10_code';
     const SNOMED = 'snomed_code';
