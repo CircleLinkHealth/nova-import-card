@@ -32,13 +32,17 @@
         div.modal-dialog {
             z-index: 1051; /* should ensure the modal body is always visible */
         }
+        div.main-section {
+            width: 94%;
+            margin-left: 3%;
+        }
     </style>
 @endpush
 
 @section('content')
 <div class="container-fluid">
     <div class="row">
-        <div class="col-md-10 col-md-offset-1">
+        <div class="col-md-11 main-section">
             <div class="row">
                 <div class="col-sm-8">
                     <h1>Patient Call Management</h1>

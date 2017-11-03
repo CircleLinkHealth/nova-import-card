@@ -115,15 +115,15 @@
         return {
           page: 1,
           selected: false,
-          columns: ['selected', 'Nurse','Patient','Status', 'Practice', 'Last Call Status', 'Next Call', 'Call Time Start', 'Call Time End', 'Time Zone', 'Preferred Call Days', 'Last Call', 'CCM Time'],
+          columns: ['selected', 'Nurse','Patient ID', 'Patient','Next Call', 'Last Call Status', 'Last Call', 'CCM Time', 'Successful Calls', 'Time Zone', 'Call Time Start', 'Call Time End', 'Preferred Call Days', 'Patient Status', 'Practice', 'Billing Provider', 'DOB', 'Scheduler'],
           tableData: [],
           options: {
           // see the options API
             columnsClasses: {
               'selected': 'blank'
             },
-            sortable: ['Nurse','Patient','Status', 'Practice', 'Last Call Status', 'Next Call', 'Call Time Start', 'Call Time End', 'Time Zone', 'Preferred Call Days', 'Last Call', 'CCM Time'],
-            filterable: ['Nurse','Patient','Status', 'Practice', 'Last Call Status', 'Next Call', 'Call Time Start', 'Call Time End', 'Time Zone', 'Preferred Call Days', 'Last Call', 'CCM Time'],
+            sortable: ['Nurse','Patient ID', 'Patient','Next Call', 'Last Call Status', 'Last Call', 'CCM Time', 'Successful Calls', 'Time Zone', 'Call Time Start', 'Call Time End', 'Preferred Call Days', 'Patient Status', 'Practice', 'Billing Provider', 'DOB', 'Scheduler'],
+            filterable: ['Nurse','Patient ID', 'Patient','Next Call', 'Last Call Status', 'Last Call', 'CCM Time', 'Successful Calls', 'Time Zone', 'Call Time Start', 'Call Time End', 'Preferred Call Days', 'Patient Status', 'Practice', 'Billing Provider', 'DOB', 'Scheduler'],
             filterByColumn: true
           },
           currentDate: new Date()
@@ -141,6 +141,8 @@
             return this.$nextPromise = this.$http.get(rootUrl('api/admin/calls?page=' + this.page)).then((result) => result.data).then(result => {
               const calls = result.data;
               calls.forEach(call => {
+                if (call.inbound_user) call.inbound_user.id = call.inbound_cpm_id;
+                if (call.outbound_user) call.outbound_user.id = call.outbound_cpm_id;                
                 call.getNurse = () => ((call.inbound_user && call.inbound_user.nurse_info) ?
                                                 call.inbound_user : 
                                           (call.outbound_user && call.outbound_user.nurse_info) ?
@@ -150,15 +152,26 @@
                                                 call.inbound_user : 
                                           (call.outbound_user && call.outbound_user.patient_info) ?
                                                 call.outbound_user : 
-                                                null)
+                                                null);
+                
+                const patient = call.getPatient();
+                if (patient) {
+                  patient.getBillingProvider = () => ((patient.billing_provider || [])[0] || {});
+                  patient.getPractice = () => (patient.primary_practice || {});
+
+                  const billingProvider = patient.getBillingProvider();
+                  billingProvider.getUser = () => (billingProvider.user || {});
+                }
               })
               const tableCalls = calls.map(call => ({
                                     id: call.id,
                                     selected: false,
                                     Nurse: (call.getNurse() || {}).full_name,
                                     Patient: (call.getPatient() || {}).full_name,
-                                    Status: call.status,
-                                    Practice: (call.getNurse() || {}).primary_practice_id,
+                                    Practice: (call.getPatient() || {}).getPractice().display_name,
+                                    Scheduler: call.scheduler,
+                                    'Billing Provider': call.getPatient().getBillingProvider().getUser().display_name,
+                                    'Patient ID': call.getPatient().id,
                                     'Next Call': call.scheduled_date,
                                     'Call Time Start': call.window_start,
                                     'Call Time End': call.window_end
