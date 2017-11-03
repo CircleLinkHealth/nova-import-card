@@ -558,6 +558,28 @@ if (!function_exists('snakeToSentenceCase')) {
         return ucwords(str_replace('_', ' ', $string));
     }
 }
+
+if (!function_exists('linkToDownloadFile')) {
+    /**
+     * Generate a file to download a file
+     *
+     * @param $path
+     *
+     * @return string
+     * @throws Exception
+     */
+    function linkToDownloadFile($path)
+    {
+        if (!$path) {
+            throw new \Exception("File path cannot be empty");
+        }
+
+        return route('download', [
+            'filePath' => base64_encode($path),
+        ]);
+    }
+}
+
 if (!function_exists('parseCallDays')) {
     function parseCallDays($preferredCallDays)
     {
