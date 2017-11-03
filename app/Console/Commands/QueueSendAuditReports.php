@@ -60,7 +60,7 @@ class QueueSendAuditReports extends Command
 
         foreach ($patients as $patient) {
             $job = (new MakeAndDispatchAuditReports($patient))
-                ->onQueue('send-audit-reports');
+                ->onQueue('reports');
 
             dispatch($job);
         }

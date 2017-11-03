@@ -2,26 +2,25 @@
 
 namespace App\Console\Commands;
 
-use App\Jobs\GenerateNurseInvoice;
+use App\Jobs\GenerateNurseDailyReportCsv;
 use App\User;
-use Carbon\Carbon;
 use Illuminate\Console\Command;
 
-class QueueGenerateNurseInvoices extends Command
+class QueueGenerateNurseDailyReport extends Command
 {
     /**
      * The name and signature of the console command.
      *
      * @var string
      */
-    protected $signature = 'report:nurseInvoices';
+    protected $signature = 'report:nurseDaily';
 
     /**
      * The console command description.
      *
      * @var string
      */
-    protected $description = 'Generate Nurse Invoice cached view for the current month.';
+    protected $description = 'Genrates a csv of nurse daily report.';
 
     /**
      * Create a new command instance.
@@ -41,13 +40,8 @@ class QueueGenerateNurseInvoices extends Command
     public function handle()
     {
         dispatch(
-            (new GenerateNurseInvoice(
-                activeNurseNames()->keys()->all(),
-                Carbon::now()->startOfMonth(),
-                Carbon::now()->endOfMonth(),
-                User::ofType('administrator')->pluck('id')->all(),
-                true
-            ))->onQueue('reports')
+            (new GenerateNurseDailyReportCsv(User::ofType('administrator')->pluck('id')))
+                ->onQueue('reports')
         );
     }
 }

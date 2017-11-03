@@ -25,31 +25,28 @@
 @endpush
 
 @section('content')
+
     <div class="container">
         <div class="row">
             <div class="col-md-8 col-md-offset-2">
-                @foreach(auth()->user()->cachedViews() as $cache)
-                    @if(!$cache['key'])
-                        <div class="alert alert-danger" role="alert">
-                            <strong>Error!</strong>{{$cache['message']}}
-                        </div>
+                @foreach(auth()->user()->cachedNotificationsList()->all() as $cache)
 
-                    @else
-                        <div class="job-completed-card col-md-12 text-center">
-                            <h3 class="job-completed-card-title">
-                                {{$cache['title'] ?? ''}}
-                            </h3>
-                            <a href="{{route('get.cached.vue.by.key', ['key' => $cache['key']])}}" class="alert-link">Go to
-                                page</a>
+                    <div class="job-completed-card col-md-12 text-center">
+                        <h3 class="job-completed-card-title">
+                            {{$cache['title'] ?? ''}}
+                        </h3>
 
-                            <h5>{{$cache['message'] ?? ''}}</h5>
+                        @isset($cache['link'])
+                            <a href="{{$cache['link']}}" class="alert-link">{{$cache['linkTitle']}}</a>
+                        @endisset
 
-                            <p class="job-completed-card-footer">
-                                <span class="pull-left">created: <strong>{{$cache['created_at']}}</strong></span>
-                                <span class="pull-right">expires: <strong>{{$cache['expires_at']}}</strong></span>
-                            </p>
-                        </div>
-                    @endif
+                        <h5>{{$cache['description'] ?? ''}}</h5>
+
+                        <p class="job-completed-card-footer">
+                            <span class="pull-left">created: <strong>{{$cache['created_at']}}</strong></span>
+                            <span class="pull-right">expires: <strong>{{$cache['expires_at']}}</strong></span>
+                        </p>
+                    </div>
                 @endforeach
             </div>
         </div>

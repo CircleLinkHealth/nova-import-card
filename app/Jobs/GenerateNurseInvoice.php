@@ -4,7 +4,8 @@ namespace App\Jobs;
 
 use App\Billing\NurseMonthlyBillGenerator;
 use App\Nurse;
-use App\Repositories\Cache\UserView;
+use App\Repositories\Cache\UserNotificationList;
+use App\Repositories\Cache\View;
 use Carbon\Carbon;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
@@ -23,7 +24,6 @@ class GenerateNurseInvoice implements ShouldQueue
     private $addNotes;
     private $addTime;
     private $requestors;
-    private $cachedUserView;
 
     /**
      * Create a new job instance.
@@ -44,7 +44,7 @@ class GenerateNurseInvoice implements ShouldQueue
                                 int $addTime = 0,
                                 string $addNotes = '')
     {
-        $this->nurses = Nurse::whereIn('user_id', $nurseUserIds)->get();
+        $this->nurses = Nurse::whereIn('user_id', $nurseUserIds)->with('user')->get();
         $this->startDate = $startDate;
         $this->endDate = $endDate;
         $this->variablePay = $variablePay;
@@ -53,7 +53,6 @@ class GenerateNurseInvoice implements ShouldQueue
         $this->requestors = is_a($requestors, Collection::class)
             ? $requestors
             : collect($requestors);
-        $this->cachedUserView = new UserView($this->requestors);
     }
 
     /**
@@ -82,20 +81,30 @@ class GenerateNurseInvoice implements ShouldQueue
             $links[$nurse->user_id]['name'] = $generator['name'];
         }
 
-
-        if (empty($links) && empty($data)) {
-            $this->cachedUserView->storeFailResponse();
-
-            return;
+        $viewHashKey = null;
+        if (!empty($links) && !empty($data)) {
+            $viewHashKey = (new View())->storeViewInCache('billing.nurse.list', [
+                'invoices' => $links,
+                'data'     => $data,
+                'month'    => $this->startDate->format('F'),
+            ]);
         }
 
-        $this->cachedUserView->storeViewInCache('billing.nurse.list', [
-            'invoices' => $links,
-            'data'     => $data,
-            'month'    => Carbon::parse($this->startDate)->format('F'),
-        ]);
+        $this->requestors->map(function ($userId) use ($links, $data, $viewHashKey) {
+            $userNotification = new UserNotificationList($userId);
 
-        $this->cachedUserView->storeSuccessResponse();
+            if (empty($links) && empty($data)) {
+                $userNotification->push('There was no data for Nurse Invoices.');
+
+                return;
+            }
+
+            $userNotification->push('Nurse Invoices',
+                "Invoice(s) were generated for {$this->nurses->count()} nurse(s): {$this->nurses->map(function($n) {return $n->user->fullName;})->implode(', ')}",
+                linkToCachedView($viewHashKey),
+                'Go to page'
+            );
+        });
 
     }
 }

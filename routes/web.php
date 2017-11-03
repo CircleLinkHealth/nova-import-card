@@ -107,7 +107,7 @@ Route::group([
 Route::group(['middleware' => 'auth'], function () {
 
     Route::get('cache/view/{key}', [
-        'as' => 'get.cached.vue.by.key',
+        'as' => 'get.cached.view.by.key',
         'uses' => 'Cache\UserCacheController@getCachedViewByKey',
     ]);
 
