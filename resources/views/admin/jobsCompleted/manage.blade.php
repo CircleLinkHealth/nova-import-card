@@ -31,7 +31,9 @@
                 @foreach(auth()->user()->cachedViews() as $cache)
                     @if(!$cache['key'])
                         <div class="job-completed-card col-md-12 text-center">
-                            <h5>{!! $cache['message'] ?? '' !!}</h5>
+                            <h5>{{$cache['title'] ?? ''}}</h5>
+
+                            <p>{!! $cache['description'] ?? '' !!}</p>
 
                             <p class="job-completed-card-footer">
                                 <span class="pull-left">created: <strong>{{$cache['created_at']}}</strong></span>
@@ -46,7 +48,7 @@
                             <a href="{{route('get.cached.view.by.key', ['key' => $cache['key']])}}" class="alert-link">Go to
                                 page</a>
 
-                            <h5>{{$cache['message'] ?? ''}}</h5>
+                            <h5>{{$cache['description'] ?? ''}}</h5>
 
                             <p class="job-completed-card-footer">
                                 <span class="pull-left">created: <strong>{{$cache['created_at']}}</strong></span>
