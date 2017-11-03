@@ -56,7 +56,11 @@
                 </div>
             @endif
 
-            <importer-trainer></importer-trainer>
+            <importer-trainer
+                    practice="{{$predictedPracticeId ?? null}}"
+                    location="{{$predictedLocationId ?? null}}"
+                    billingProvider="{{$predictedBillingProviderId ?? null}}">
+            </importer-trainer>
 
             <div class="col-md-12">
                 <div class="row">
