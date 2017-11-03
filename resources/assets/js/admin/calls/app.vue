@@ -69,8 +69,8 @@
         <input class="row-select" v-model="selected" @change="toggleAllSelect" type="checkbox" />
       </template>
     </v-client-table>
-    <text-editable :value="'Mykeels'" :class-name="''"></text-editable>
-    <date-editable :value="'01-20-2017'" :format="'mm-DD-YYYY'" :class-name="''"></date-editable>
+    <text-editable :value="'Mykeels'"></text-editable>
+    <date-editable :value="'01-20-2017'" :format="'mm-DD-YYYY'"></date-editable>
   </div>
 </template>
 

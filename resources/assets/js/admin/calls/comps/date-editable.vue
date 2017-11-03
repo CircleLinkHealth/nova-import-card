@@ -1,5 +1,5 @@
 <template>
-    <div :class="{ className: className }">
+    <div :class="className">
         <div v-if="isEditMode">
             <form @submit="toggleEdit">
                 <input type="date" v-model="date" required />
