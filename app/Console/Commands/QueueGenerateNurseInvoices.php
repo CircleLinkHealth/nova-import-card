@@ -43,8 +43,8 @@ class QueueGenerateNurseInvoices extends Command
         dispatch(
             (new GenerateNurseInvoice(
                 activeNurseNames()->keys()->all(),
-                Carbon::yesterday()->startOfDay(),
-                Carbon::yesterday()->endOfDay(),
+                Carbon::now()->startOfMonth(),
+                Carbon::now()->endOfMonth(),
                 User::ofType('administrator')->pluck('id')->all()
             ))->onQueue('reports')
         );
