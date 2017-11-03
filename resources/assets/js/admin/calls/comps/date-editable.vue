@@ -23,6 +23,7 @@
      * class-name: A string containing class names to pass to the component DIV
      * on-change: To contain a reference to a function that the date value will be passed to when changed
      */
+    
     import moment from 'moment'
 
     const INPUT_DATE_FORMAT = 'YYYY-mm-DD'

@@ -71,6 +71,7 @@
     </v-client-table>
     <text-editable :value="'Mykeels'"></text-editable>
     <date-editable :value="'01-20-2017'" :format="'mm-DD-YYYY'"></date-editable>
+    <select-editable :values="['One', 'Two', 'Three']"></select-editable>
   </div>
 </template>
 
@@ -78,12 +79,14 @@
   import { rootUrl } from '../../app.config.js'
   import TextEditable from './comps/text-editable'
   import DateEditable from './comps/date-editable'
+  import SelectEditable from './comps/select-editable'
 
   export default {
       name: 'CallMgmtApp',
       components: {
         'text-editable': TextEditable,
-        'date-editable': DateEditable
+        'date-editable': DateEditable,
+        'select-editable': SelectEditable
       },
       data() {
         return {
