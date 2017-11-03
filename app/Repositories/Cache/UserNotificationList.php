@@ -62,9 +62,10 @@ class UserNotificationList
      * @return array
      *
      */
-    public function userCachedNotificationFactory($title, $description = '', $link = null)
+    public function userCachedNotificationFactory($title, $description = '', $link = null, $cacheKey = null)
     {
         return json_encode([
+            'key'         => $cacheKey,
             'created_at'  => Carbon::now()->toDateTimeString(),
             'expires_at'  => Carbon::now()->addWeek()->toDateTimeString(),
             'title'       => $title,
@@ -99,8 +100,8 @@ class UserNotificationList
             $now = Carbon::now();
             $expires = Carbon::parse($cache['expires_at']);
 
-            if ($now->greaterThan($expires) || !\Cache::has($cache['key'])) {
-                \Redis::lrem($this->userHashKey(), 0, $json);
+            if ($now->greaterThan($expires) || (isset($cache['key']) && !\Cache::has($cache['key']))) {
+                $this->delete($json);
 
                 return false;
             }
@@ -109,5 +110,9 @@ class UserNotificationList
         })
             ->filter()
             ->reverse();
+    }
+
+    public function delete($notification) {
+        return \Redis::lrem($this->userHashKey(), 0, $notification);
     }
 }

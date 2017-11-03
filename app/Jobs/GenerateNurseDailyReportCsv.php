@@ -3,7 +3,7 @@
 namespace App\Jobs;
 
 use App\Reports\NurseDailyReport;
-use App\Repositories\Cache\UserView;
+use App\Repositories\Cache\UserNotificationList;
 use Carbon\Carbon;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
@@ -18,7 +18,6 @@ class GenerateNurseDailyReportCsv implements ShouldQueue
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
     private $reportData;
     private $notifyUserIds;
-    private $cachedUserView;
 
     /**
      * Create a new job instance.
@@ -39,8 +38,6 @@ class GenerateNurseDailyReportCsv implements ShouldQueue
                 $nurseReport['last_activity'],
             ];
         });
-        $this->cachedUserView = new UserView($this->notifyUserIds);
-
     }
 
     /**
@@ -54,11 +51,14 @@ class GenerateNurseDailyReportCsv implements ShouldQueue
 
         $now = Carbon::now();
 
-        $message = link_to_route('download', "Download Nurse Daily Report for {$now->toDateTimeString()}", [
-            'filePath' => "exports/{$path['file']}",
-        ]);
+        $link = linkToDownloadFile("exports/{$path['file']}");
 
-        $this->cachedUserView->storeSuccessResponse($message);
+        $this->notifyUserIds->map(function ($userId) use ($link) {
+            $userNotification = new UserNotificationList($userId);
+
+            $userNotification->push('Nurse Daily Reports', '', $link);
+        });
+
     }
 
     /**

@@ -25,37 +25,28 @@
 @endpush
 
 @section('content')
+
     <div class="container">
         <div class="row">
             <div class="col-md-8 col-md-offset-2">
-                @foreach(auth()->user()->cachedViews() as $cache)
-                    @if(!$cache['key'])
-                        <div class="job-completed-card col-md-12 text-center">
-                            <h5>{{$cache['title'] ?? ''}}</h5>
+                @foreach(auth()->user()->cachedNotificationsList()->all() as $cache)
 
-                            <p>{!! $cache['description'] ?? '' !!}</p>
+                    <div class="job-completed-card col-md-12 text-center">
+                        <h3 class="job-completed-card-title">
+                            {{$cache['title'] ?? ''}}
+                        </h3>
 
-                            <p class="job-completed-card-footer">
-                                <span class="pull-left">created: <strong>{{$cache['created_at']}}</strong></span>
-                                <span class="pull-right">expires: <strong>{{$cache['expires_at']}}</strong></span>
-                            </p>
-                        </div>
-                    @else
-                        <div class="job-completed-card col-md-12 text-center">
-                            <h3 class="job-completed-card-title">
-                                {{$cache['title'] ?? ''}}
-                            </h3>
-                            <a href="{{route('get.cached.view.by.key', ['key' => $cache['key']])}}" class="alert-link">Go to
-                                page</a>
+                        @isset($cache['link'])
+                            <a href="{{$cache['link']}}" class="alert-link">Visit</a>
+                        @endisset
 
-                            <h5>{{$cache['description'] ?? ''}}</h5>
+                        <h5>{{$cache['description'] ?? ''}}</h5>
 
-                            <p class="job-completed-card-footer">
-                                <span class="pull-left">created: <strong>{{$cache['created_at']}}</strong></span>
-                                <span class="pull-right">expires: <strong>{{$cache['expires_at']}}</strong></span>
-                            </p>
-                        </div>
-                    @endif
+                        <p class="job-completed-card-footer">
+                            <span class="pull-left">created: <strong>{{$cache['created_at']}}</strong></span>
+                            <span class="pull-right">expires: <strong>{{$cache['expires_at']}}</strong></span>
+                        </p>
+                    </div>
                 @endforeach
             </div>
         </div>
