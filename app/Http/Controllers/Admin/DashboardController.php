@@ -38,50 +38,14 @@ class DashboardController extends Controller
      */
     public function index()
     {
-
-        $user = $wpUser = User::find(Auth::user()->id);
-
-        $roles = Role::all();
+        $user = Auth::user();
 
         // switch dashboard view based on logged in user
         if ($user->can('admin-access')) {
-            $stats = [];
-            $roleStats = [];
-            $stats['totalPrograms'] = Practice::all()->count();
-            $stats['totalUsers'] = User::all()->count();
-            foreach ($roles as $role) {
-                $roleStats[$role->name] = User::whereHas('roles', function ($q) use ($role) {
-                    $q->where('name', '=', $role->name);
-                })
-                    ->get()->count();
-            }
-            /*
-			foreach($roles as $role) {
-				$stats['totalAdministrators'] = User::whereHas('roles', function ($q) {
-					$q->where('name', '=', 'administrator');
-				})
-					->get()->count();
-				$stats['totalCareCenter'] = User::whereHas('roles', function ($q) {
-					$q->where('name', '=', 'care-center');
-				})
-					->get()->count();
-				$stats['totalParticipants'] = User::whereHas('roles', function ($q) {
-					$q->where('name', '=', 'participant');
-				})
-					->get()->count();
-				$stats['totalProviders'] = User::whereHas('roles', function ($q) {
-					$q->where('name', '=', 'provider');
-				})
-					->get()->count();
-			}
-			*/
-
-            return view('admin/dashboard', compact(['user', 'stats', 'roleStats']));
+            return view('admin.dashboard', compact(['user']));
         } else {
             return redirect()->route('patients.dashboard', [])->send();
         }
-
-        return view('home', ['user' => $user]);
     }
 
 
