@@ -31,7 +31,6 @@ use Illuminate\Auth\Passwords\CanResetPassword;
 use Illuminate\Contracts\Auth\Authenticatable as AuthenticatableContract;
 use Illuminate\Contracts\Auth\CanResetPassword as CanResetPasswordContract;
 use Illuminate\Database\Eloquent\Collection as EloquentCollection;
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\QueryException;
 use Illuminate\Notifications\Notifiable;
@@ -328,7 +327,8 @@ class User extends \App\BaseModel implements AuthenticatableContract, CanResetPa
         return $this->hasMany(Activity::class, 'patient_id');
     }
 
-    public function appointments() {
+    public function appointments()
+    {
         return $this->hasMany(Appointment::class, 'patient_id');
     }
 
@@ -2108,7 +2108,9 @@ class User extends \App\BaseModel implements AuthenticatableContract, CanResetPa
      */
     public function billingProviderUser(): User
     {
-        return $this->billingProvider->isEmpty() ? new User() : $this->billingProvider->first()->user;
+        return $this->billingProvider->isEmpty()
+            ? new User()
+            : $this->billingProvider->first()->user;
     }
 
     /**
@@ -2454,22 +2456,8 @@ class User extends \App\BaseModel implements AuthenticatableContract, CanResetPa
 
     public function hasProblem($problem)
     {
-        $cpmProblem = is_a($problem, CpmProblem::class)
-            ? $problem
-            : is_int($problem)
-                ? CpmProblem::find($problem)
-                : CpmProblem::whereName($problem)->first();
-
-
-        $exists = $this->cpmProblems->contains(function ($prob) use ($cpmProblem) {
-            return $cpmProblem->id == $prob->id;
-        });
-
-        if ($exists) {
-            return true;
-        }
-
-        return false;
+        return !$this->cpmProblems->where('id', '=', $problem)->isEmpty()
+            || !$this->cpmProblems->where('name', '=', $problem)->isEmpty();
     }
 
     /**
@@ -2482,7 +2470,8 @@ class User extends \App\BaseModel implements AuthenticatableContract, CanResetPa
             ->withTimestamps('created_at', 'updated_at');
     }
 
-    public function cachedNotificationsList() {
+    public function cachedNotificationsList()
+    {
         return new UserNotificationList($this->id);
     }
 }

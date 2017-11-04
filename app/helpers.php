@@ -685,3 +685,20 @@ if (!function_exists('getProblemCodeSystemName')) {
         return false;
     }
 }
+
+if (!function_exists('showDiabetesBanner')) {
+    function showDiabetesBanner($patient)
+    {
+        if ($patient
+            && is_a($patient, User::class)
+            && $patient->hasProblem('Diabetes')
+            && !$patient->hasProblem('Diabetes Type 1')
+            && !$patient->hasProblem('Diabetes Type 2')
+            && $patient->primaryPractice->name != 'northeast-georgia-diagnostic-clinic'
+        ) {
+                return true;
+        }
+
+        return false;
+    }
+}

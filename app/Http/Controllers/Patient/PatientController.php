@@ -1,14 +1,11 @@
 <?php namespace App\Http\Controllers\Patient;
 
 use App\CareItem;
-use App\CarePerson;
 use App\CarePlan;
 use App\CPRulesQuestions;
-use App\Events\CarePlanWasApproved;
 use App\Formatters\WebixFormatter;
 use App\Http\Controllers\Controller;
 use App\Observation;
-use App\PhoneNumber;
 use App\Practice;
 use App\Services\CarePlanViewService;
 use App\User;
@@ -45,7 +42,9 @@ class PatientController extends Controller
             $patientsPendingApproval = (new WebixFormatter())->patientListing($patients);
         }
 
-        return view('wpUsers.patient.dashboard', array_merge(compact(['pendingApprovals', 'nurse', 'showPatientsPendingApprovalBox']), $patientsPendingApproval));
+        return view('wpUsers.patient.dashboard',
+            array_merge(compact(['pendingApprovals', 'nurse', 'showPatientsPendingApprovalBox']),
+                $patientsPendingApproval));
     }
 
     /**
@@ -62,18 +61,32 @@ class PatientController extends Controller
     ) {
         $messages = \Session::get('messages');
 
-        $wpUser = User::find($patientId);
+        $wpUser = User::with([
+            'primaryPractice',
+            'cpmProblems.cpmInstructions',
+            'cpmMiscs',
+            'observations' => function($q) {
+                $q->where('obs_unit', '!=', "invalid")
+                    ->where('obs_unit', '!=', "scheduled")
+                    ->with([
+                        'meta',
+                        'question.careItems',
+                    ])
+                    ->orderBy('obs_date', 'desc')
+                    ->take(100);
+            },
+            'patientInfo.monthlySummaries'
+        ])
+            ->where('id', $patientId)
+            ->first();
+
         if (!$wpUser) {
             return response("User not found", 401);
         }
 
-        // security
-//        if (!Auth::user()->can('observations-view')) {
-//            abort(403);
-//        }
 
         // program
-        $program = Practice::find($wpUser->program_id);
+        $program = $wpUser->primaryPractice;
 
         $problems = $carePlanViewService->getProblemsToMonitor($wpUser);
 
@@ -114,12 +127,7 @@ class PatientController extends Controller
             ],
         ];
 
-        $observations = Observation::where('user_id', '=', $wpUser->id)
-            ->where('obs_unit', '!=', "invalid")
-            ->where('obs_unit', '!=', "scheduled")
-            ->orderBy('obs_date', 'desc')
-            ->take(100)
-            ->get();
+        $observations = $wpUser->observations;
 
         // build array of pcp
         $obs_by_pcp = [
@@ -156,10 +164,10 @@ class PatientController extends Controller
                     $obs_by_pcp['obs_biometrics'][] = $observation;
                     break;
                 case 'Adherence':
-                    $question = CPRulesQuestions::where('msg_id', '=', $observation->obs_message_id)->first();
+                    $question = $observation->question;
                     // find carePlanItem with qid
                     if ($question) {
-                        $item = CareItem::where('qid', '=', $question->qid)->first();
+                        $item = $question->careItems->first();
                         if ($item) {
                             $observation['description'] = $item->display_name;
                         }
@@ -169,7 +177,7 @@ class PatientController extends Controller
                 case 'Symptom':
                 case 'Severity':
                     // get description
-                    $question = CPRulesQuestions::where('msg_id', '=', $observation->obs_message_id)->first();
+                    $question = $observation->question;
                     if ($question) {
                         $observation['items_text'] = $question->description;
                         $observation['description'] = $question->description;
@@ -180,10 +188,10 @@ class PatientController extends Controller
                 case 'Other':
                 case 'Call':
                     // only y/n responses, skip anything that is a number as its assumed it is response to a list
-                    $question = CPRulesQuestions::where('msg_id', '=', $observation->obs_message_id)->first();
+                    $question = $observation->question;
                     // find carePlanItem with qid
                     if ($question) {
-                        $item = CareItem::where('qid', '=', $question->qid)->first();
+                        $item = $question->careItems->first();
                         if ($item) {
                             $observation['description'] = $item->display_name;
                         }
@@ -226,7 +234,6 @@ class PatientController extends Controller
             $observation_json[$section] .= "],";
         }
 
-        //return response()->json($cpFeed);
         return view('wpUsers.patient.summary', [
             'program'          => $program,
             'patient'          => $wpUser,

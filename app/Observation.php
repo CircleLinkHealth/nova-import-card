@@ -1,12 +1,10 @@
 <?php namespace App;
 
 use App\Services\DatamonitorService;
-use Illuminate\Database\Eloquent\Model;
 
 /**
  * @SWG\Definition(definition="observation",required={"primaryKey"},@SWG\Xml(name="Observation")))
  */
-
 class Observation extends \App\BaseModel
 {
 
@@ -28,19 +26,32 @@ class Observation extends \App\BaseModel
     protected $table = 'lv_observations';
     /**
      * The primary key for the model.
-     *@SWG\Property(format="int64")
+     * @SWG\Property(format="int64")
      * @var int
      */
     protected $primaryKey = 'id';
     /**
      * The attributes that are mass assignable.
-     *@SWG\Property()
+     * @SWG\Property()
      * @var array
      */
-    protected $fillable = ['obs_date', 'obs_date_gmt', 'comment_id', 'sequence_id', 'obs_message_id', 'user_id', 'obs_method', 'obs_key', 'obs_value', 'obs_unit', 'program_id', 'legacy_obs_id'];
+    protected $fillable = [
+        'obs_date',
+        'obs_date_gmt',
+        'comment_id',
+        'sequence_id',
+        'obs_message_id',
+        'user_id',
+        'obs_method',
+        'obs_key',
+        'obs_value',
+        'obs_unit',
+        'program_id',
+        'legacy_obs_id',
+    ];
     /**
      * The attributes that are mass assignable.
-     *@SWG\Property()
+     * @SWG\Property()
      * @var array
      */
     protected $dates = ['deleted_at'];
@@ -57,7 +68,7 @@ class Observation extends \App\BaseModel
         $userId,
         $message_id
     ) {
-    
+
         /*
         $starting = Observation::whereHas('meta', function($q) use ($message_id)
         {
@@ -68,8 +79,7 @@ class Observation extends \App\BaseModel
         */
 
         $starting = Observation::where('user_id', $userId)
-            ->whereHas('meta', function ($q) use
-                (
+            ->whereHas('meta', function ($q) use (
                 $message_id
             ) {
                 $q->where('meta_key', 'starting_observation')
@@ -94,7 +104,7 @@ class Observation extends \App\BaseModel
 
     public function question()
     {
-        return $this->belongsTo('App\CPRulesQuestions', 'obs_message_id', 'msg_id');
+        return $this->belongsTo(CPRulesQuestions::class, 'obs_message_id', 'msg_id');
     }
 
     public function user()
@@ -103,75 +113,76 @@ class Observation extends \App\BaseModel
     }
 
 
-
-
-
-
-
     // START META ATTRIBUTES
 
     public function getAlertLevelAttribute()
     {
         $name = '';
-        $meta = $this->meta()->where('meta_key', '=', 'dm_alert_level')->first();
+        $meta = $this->meta->where('meta_key', '=', 'dm_alert_level')->first();
         if (isset($meta)) {
             $name = $meta->meta_value;
         }
+
         return $name;
     }
 
     public function meta()
     {
-        return $this->hasMany('App\ObservationMeta', 'obs_id', 'id');
+        return $this->hasMany(ObservationMeta::class, 'obs_id', 'id');
     }
 
     public function getAlertLogAttribute()
     {
         $name = '';
-        $meta = $this->meta()->where('meta_key', '=', 'dm_log')->first();
+        $meta = $this->meta->where('meta_key', '=', 'dm_log')->first();
         if (isset($meta)) {
             $name = $meta->meta_value;
         }
+
         return $name;
     }
 
     public function getAlertStatusHistoryAttribute()
     {
         $name = '';
-        $meta = $this->meta()->where('meta_key', '=', 'alert_status_hist')->first();
+        $meta = $this->meta->where('meta_key', '=', 'alert_status_hist')->first();
         if (isset($meta)) {
             $name = $meta->meta_value;
         }
+
         return $name;
     }
 
     public function getAlertStatusChangeAttribute()
     {
         $name = '';
-        $meta = $this->meta()->where('meta_key', '=', 'alert_status_change')->first();
+        $meta = $this->meta->where('meta_key', '=', 'alert_status_change')->first();
         if (isset($meta)) {
             $name = $meta->meta_value;
         }
+
         return $name;
     }
 
     public function getAlertSortWeightAttribute()
     {
         $name = '';
-        $meta = $this->meta()->where('meta_key', '=', 'alert_sort_weight')->first();
+        $meta = $this->meta->where('meta_key', '=', 'alert_sort_weight')->first();
         if (isset($meta)) {
             $name = $meta->meta_value;
         }
+
         return $name;
     }
 
     public function getTimezoneAttribute()
     {
         $name = '';
-        $meta = $this->meta()->where('meta_key', '=', 'timezone')->first();
+        $meta = $this->meta->where('meta_key', '=', 'timezone')->first();
         if (isset($meta)) {
             $name = $meta->meta_value;
         }
+
         return $name;
     }
 
@@ -180,16 +191,18 @@ class Observation extends \App\BaseModel
     public function getStartingObservationAttribute()
     {
         $name = 'no';
-        $meta = $this->meta()->where('meta_key', '=', 'starting_observation')->first();
+        $meta = $this->meta->where('meta_key', '=', 'starting_observation')->first();
         if (isset($meta)) {
             $name = $meta->meta_value;
         }
+
         return $name;
     }
 
     public function getObservation($obs_id)
     {
         $observation = Observation::where('obs_id', '=', $obs_id)->get();
+
         return $observation;
     }
 
