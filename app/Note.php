@@ -45,7 +45,7 @@ class Note extends \App\BaseModel implements PdfReport
 
     public function author()
     {
-        return $this->belongsTo('App\User', 'author_id', 'id');
+        return $this->belongsTo(User::class, 'author_id')->withTrashed();
     }
 
     public function program()
@@ -79,5 +79,33 @@ class Note extends \App\BaseModel implements PdfReport
         $pdf->save($filePath, true);
 
         return $filePath;
+    }
+
+    public function wasSentToProvider()
+    {
+        foreach ($this->mail as $mail) {
+            $mail_recipient = $mail->receiverUser;
+
+            if ($mail_recipient->hasRole('provider')) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    public function wasReadByBillingProvider(User $patient = null)
+    {
+        $patient = $patient ?? $this->patient;
+
+        foreach ($this->mail as $mail) {
+            $mail_recipient = $mail->receiverUser;
+
+            if ($mail_recipient->id == $patient->billingProviderUser()->id && $mail->seen_on != null) {
+                return true;
+            }
+        }
+
+        return false;
     }
 }

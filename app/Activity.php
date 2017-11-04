@@ -159,7 +159,7 @@ class Activity extends \App\BaseModel implements Transformable
 
     public function meta()
     {
-        return $this->hasMany('App\ActivityMeta');
+        return $this->hasMany(ActivityMeta::class);
     }
 
     public function careRateLogs()
@@ -174,7 +174,7 @@ class Activity extends \App\BaseModel implements Transformable
 
     public function provider()
     {
-        return $this->belongsTo('App\User', 'provider_id', 'id');
+        return $this->belongsTo(User::class, 'provider_id');
     }
 
     public function pageTime()

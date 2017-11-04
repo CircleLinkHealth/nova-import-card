@@ -325,7 +325,11 @@ class User extends \App\BaseModel implements AuthenticatableContract, CanResetPa
 
     public function activities()
     {
-        return $this->hasMany('App\Activity');
+        return $this->hasMany(Activity::class, 'patient_id');
+    }
+
+    public function appointments() {
+        return $this->hasMany(Appointment::class, 'patient_id');
     }
 
     public function notes()
@@ -2104,11 +2108,7 @@ class User extends \App\BaseModel implements AuthenticatableContract, CanResetPa
      */
     public function billingProviderUser(): User
     {
-        $billingProvider = $this->careTeamMembers
-            ->where('type', 'billing_provider')
-            ->first();
-
-        return $billingProvider->user ?? new User();
+        return $this->billingProvider->isEmpty() ? new User() : $this->billingProvider->first()->user;
     }
 
     /**

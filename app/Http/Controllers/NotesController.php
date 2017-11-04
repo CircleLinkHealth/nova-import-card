@@ -11,6 +11,7 @@ use App\User;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use Symfony\Component\HttpFoundation\ParameterBag;
 
 class NotesController extends Controller
@@ -32,14 +33,30 @@ class NotesController extends Controller
         $patientId
     ) {
 
-        $patient = User::find($patientId);
+        $patient = User::where('id', $patientId)
+            ->with([
+                'activities' => function ($q) {
+                    return $q->where('logged_from', '=', 'manual_input')
+                        ->with('meta')
+                        ->groupBy(DB::raw('provider_id, DATE(performed_at),type'))
+                        ->orderBy('performed_at', 'desc');
+                },
+                'appointments',
+                'billingProvider',
+                'notes.author',
+                'notes.call',
+                'notes.mail.receiverUser.roles',
+                'patientInfo',
+            ])->orderByDesc('created_at')
+            ->first();
+
         $messages = \Session::get('messages');
 
         //test comment
 
-        $data = $this->service->getNotesAndOfflineActivitiesForPatient($patient);
+//        $data = $this->service->getNotesAndOfflineActivitiesForPatient($patient);
 
-        $report_data = $this->formatter->formatDataForNotesAndOfflineActivitiesReport($data);
+        $report_data = $this->formatter->formatDataForNotesAndOfflineActivitiesReport($patient);
 
         $ccm_complex = $patient->patientInfo->isCCMComplex() ?? false;
 
@@ -49,7 +66,7 @@ class NotesController extends Controller
                 'activity_json' => $report_data,
                 'patient'       => $patient,
                 'messages'      => $messages,
-                'data'          => $data,
+//                'data'          => $data,
                 'ccm_complex'   => $ccm_complex,
             ]
         );
@@ -497,6 +514,7 @@ class NotesController extends Controller
             'author_user_id' => auth()->user()->id,
         ]);
 
-        return redirect()->to(route('patient.note.view', ['patientId' => $patientId, 'noteId' => $noteId]).'#create-addendum');
+        return redirect()->to(route('patient.note.view',
+                ['patientId' => $patientId, 'noteId' => $noteId]) . '#create-addendum');
     }
 }

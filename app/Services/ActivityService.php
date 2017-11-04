@@ -19,18 +19,6 @@ class ActivityService
      *
      * @return mixed
      */
-
-    public function getOfflineActivitiesForPatient(User $patient)
-    {
-
-        return Activity::select(DB::raw('*'))
-            ->where('patient_id', $patient->id)
-            ->where('logged_from', 'manual_input')
-            ->groupBy(DB::raw('provider_id, DATE(performed_at),type'))
-            ->orderBy('performed_at', 'desc')
-            ->get();
-    }
-
     public function getTotalActivityTimeForRange(
         $userId,
         Carbon $from,

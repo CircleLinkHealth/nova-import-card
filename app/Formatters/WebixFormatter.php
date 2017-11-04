@@ -1,14 +1,12 @@
 <?php namespace App\Formatters;
 
 use App\Appointment;
-use App\CarePerson;
 use App\Contracts\ReportFormatter;
 use App\Models\CCD\Allergy;
 use App\Models\CCD\Medication;
 use App\Models\CPM\CpmBiometric;
 use App\Models\CPM\CpmMisc;
 use App\Note;
-use App\PhoneNumber;
 use App\Services\CPM\CpmMiscService;
 use App\Services\NoteService;
 use App\Services\ReportsService;
@@ -18,7 +16,6 @@ use Illuminate\Database\Eloquent\Collection;
 
 class WebixFormatter implements ReportFormatter
 {
-
     //Transform Reports Data for Webix
 
     public function formatDataForNotesListingReport($notes, $request)
@@ -67,7 +64,7 @@ class WebixFormatter implements ReportFormatter
             $formatted_notes[$count]['tags'] = '';
 
             if (count($note->mail) > 0) {
-                if ((new NoteService())->wasSentToProvider($note)) {
+                if ($note->wasSentToProvider()) {
                     $formatted_notes[$count]['tags'] .= '<div class="label label-warning"><span class="glyphicon glyphicon-envelope" aria-hidden="true"></span></div> ';
                 }
             }
@@ -83,7 +80,7 @@ class WebixFormatter implements ReportFormatter
                 $formatted_notes[$count]['tags'] .= '<div class="label label-danger"><span class="glyphicon glyphicon-flag" aria-hidden="true"></span></div> ';
             }
 
-            $was_seen = (new NoteService())->wasReadByBillingProvider($note);
+            $was_seen = $note->wasReadByBillingProvider();
 
             if ($was_seen) {
                 $formatted_notes[$count]['tags'] .= '<div class="label label-success"><span class="glyphicon glyphicon-eye-open" aria-hidden="true"></span></div> ';
@@ -95,86 +92,84 @@ class WebixFormatter implements ReportFormatter
         return $formatted_notes;
     }
 
-    public function formatDataForNotesAndOfflineActivitiesReport($report_data)
+    public function formatDataForNotesAndOfflineActivitiesReport($patient)
     {
-
-        if ($report_data->isEmpty()) {
-            return false;
-        }
-
-        $report_data = $report_data->sortByDesc('created_at');
-
-        $formatted_data = [];
+        $formatted_data = collect();
         $count = 0;
 
-        foreach ($report_data as $data) {
-            $formatted_data[$count]['id'] = $data->id;
+        $billingProvider = $patient->billingProviderName;
 
+        $notes = $patient->notes->map(function ($note) use ($patient, $billingProvider) {
+            $result = [
+                'id'           => $note->id,
+                'logger_name'  => $note->author->fullName,
+                'comment'      => $note->body,
+                'logged_from'  => 'note',
+                'type_name'    => $note->type,
+                'performed_at' => $note->performed_at,
+                'provider_name' => $billingProvider,
+                'tags' => '',
+            ];
 
-            if (get_class($data) == Note::class) { // only notes have authors
-                $formatted_data[$count]['logger_name'] = User::withTrashed()->find($data->author_id)->fullName;
-                $formatted_data[$count]['comment'] = $data->body;
-                $formatted_data[$count]['logged_from'] = 'note';
-                $formatted_data[$count]['type_name'] = $data->type;
-                $formatted_data[$count]['performed_at'] = $data->performed_at;
-            } else {
-                if (get_class($data) == Appointment::class) {// handles appointments
-                    $formatted_data[$count]['logger_name'] = User::withTrashed()->find($data->author_id)->fullName;
-                    $formatted_data[$count]['comment'] = $data->comment;
-                    $formatted_data[$count]['type_name'] = $data->type;
-                    $formatted_data[$count]['logged_from'] = 'appointment';
-                    $formatted_data[$count]['performed_at'] = Carbon::parse($data->date)->toDateString();
-                } else {
-                    if ($data->provider_id) {
-                        $formatted_data[$count]['logger_name'] = User::withTrashed()->find($data->provider_id)
-                            ->fullName;
-                        $formatted_data[$count]['comment'] = $data->getCommentForActivity();
-                        $formatted_data[$count]['logged_from'] = 'manual_input';
-                        $formatted_data[$count]['type_name'] = $data->type;
-                        $formatted_data[$count]['performed_at'] = $data->performed_at;
-                    }
+            if (count($note->mail) > 0) {
+                if ($note->wasSentToProvider()) {
+                    $result['tags'] .= '<div class="label label-warning"><span class="glyphicon glyphicon-envelope" aria-hidden="true"></span></div> ';
                 }
             }
 
-            $formatted_data[$count]['provider_name'] = User::find($data->patient_id)->billingProviderName;
 
-            //TAGS
-            $formatted_data[$count]['tags'] = '';
-
-            //check if it's a note, if yes, add tags
-            if (get_class($data) == Note::class) {
-                if (count($data->mail) > 0) {
-                    if ((new NoteService())->wasSentToProvider($data)) {
-                        $formatted_data[$count]['tags'] .= '<div class="label label-warning"><span class="glyphicon glyphicon-envelope" aria-hidden="true"></span></div> ';
-                    }
-                }
-
-
-                if (count($data->call) > 0) {
-                    if ($data->call->status == 'reached') {
-                        $formatted_data[$count]['tags'] .= '<div class="label label-info"><span class="glyphicon glyphicon-earphone" aria-hidden="true"></span></div> ';
-                    }
-                }
-
-                if ($data->isTCM) {
-                    $formatted_data[$count]['tags'] .= '<div class="label label-danger"><span class="glyphicon glyphicon-flag" aria-hidden="true"></span></div> ';
-                }
-
-                $was_seen = (new NoteService())->wasReadByBillingProvider($data);
-
-                if ($was_seen) {
-                    $formatted_data[$count]['tags'] .= '<div class="label label-success"><span class="glyphicon glyphicon-eye-open" aria-hidden="true"></span></div> ';
+            if (count($note->call) > 0) {
+                if ($note->call->status == 'reached') {
+                    $result['tags'] .= '<div class="label label-info"><span class="glyphicon glyphicon-earphone" aria-hidden="true"></span></div> ';
                 }
             }
 
-            $count++;
-        }
+            if ($note->isTCM) {
+                $result['tags'] .= '<div class="label label-danger"><span class="glyphicon glyphicon-flag" aria-hidden="true"></span></div> ';
+            }
 
+            $was_seen = $note->wasReadByBillingProvider($patient);
 
-        $report_data = collect($formatted_data)->sortByDesc('performed_at')->toArray();
+            if ($was_seen) {
+                $result['tags'] .= '<div class="label label-success"><span class="glyphicon glyphicon-eye-open" aria-hidden="true"></span></div> ';
+            }
+            return $result;
+        });
+
+        $appointments = $patient->appointments->map(function ($appointment) use ($billingProvider) {
+            return [
+                'id'           => $appointment->id,
+                'logger_name'  => $appointment->author->fullName,
+                'comment'      => $appointment->comment,
+                'logged_from'  => $appointment->type,
+                'type_name'    => 'appointment',
+                'performed_at' => Carbon::parse($appointment->date)->toDateString(),
+                'provider_name' => $billingProvider,
+                'tags' => '',
+            ];
+        });
+
+        $activities = $patient->activities->map(function ($activity) use ($billingProvider) {
+            return [
+                'id'           => $activity->id,
+                'logger_name'  => $activity->provider->fullName,
+                'comment'      => $activity->getCommentForActivity(),
+                'logged_from'  => 'manual_input',
+                'type_name'    => $activity->type,
+                'performed_at' => $activity->performed_at,
+                'provider_name' => $billingProvider,
+                'tags' => '',
+            ];
+        });
+
+        $report_data = $notes->merge($appointments)
+            ->merge($activities)
+            ->sortByDesc('performed_at')
+            ->values()
+            ->toJson();
 
         if (!empty($report_data)) {
-            return "data:" . json_encode(array_values($report_data)) . "";
+            return "data:$report_data";
         } else {
             return '';
         }
@@ -384,10 +379,10 @@ class WebixFormatter implements ReportFormatter
             //format super specific phone number requirements
             if ($provider->primaryPhone) {
                 $phone = "P: " . preg_replace(
-                    '~.*(\d{3})[^\d]{0,7}(\d{3})[^\d]{0,7}(\d{4}).*~',
-                    '$1-$2-$3',
-                    $provider->primaryPhone
-                );
+                        '~.*(\d{3})[^\d]{0,7}(\d{3})[^\d]{0,7}(\d{4}).*~',
+                        '$1-$2-$3',
+                        $provider->primaryPhone
+                    );
             } else {
                 $phone = null;
             }
@@ -431,10 +426,10 @@ class WebixFormatter implements ReportFormatter
             //format super specific phone number requirements
             if ($provider->primaryPhone) {
                 $phone = "P: " . preg_replace(
-                    '~.*(\d{3})[^\d]{0,7}(\d{3})[^\d]{0,7}(\d{4}).*~',
-                    '$1-$2-$3',
-                    $provider->primaryPhone
-                );
+                        '~.*(\d{3})[^\d]{0,7}(\d{3})[^\d]{0,7}(\d{4}).*~',
+                        '$1-$2-$3',
+                        $provider->primaryPhone
+                    );
             } else {
                 $phone = null;
             }
@@ -510,9 +505,9 @@ class WebixFormatter implements ReportFormatter
                     $careplanStatusLink = 'Approve Now';
                     if ($canApproveCarePlans) {
                         $careplanStatusLink = '<a style="text-decoration:underline;" href="' . route(
-                            'patient.careplan.print',
-                            ['patient' => $patient->id]
-                        ) . '"><strong>Approve Now</strong></a>';
+                                'patient.careplan.print',
+                                ['patient' => $patient->id]
+                            ) . '"><strong>Approve Now</strong></a>';
                     }
                 } else {
                     if ($careplanStatus == 'draft') {
@@ -521,9 +516,9 @@ class WebixFormatter implements ReportFormatter
                         $careplanStatusLink = 'CLH Approve';
                         if ($canQAApproveCarePlans) {
                             $careplanStatusLink = '<a style="text-decoration:underline;" href="' . route(
-                                'patient.demographics.show',
-                                ['patient' => $patient->id]
-                            ) . '"><strong>CLH Approve</strong></a>';
+                                    'patient.demographics.show',
+                                    ['patient' => $patient->id]
+                                ) . '"><strong>CLH Approve</strong></a>';
                         }
                     }
                 }

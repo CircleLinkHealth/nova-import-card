@@ -21,18 +21,14 @@ class MailLog extends \App\BaseModel
         'note_id'
     ];
 
-    /**
-     * @return array
-     */
-
     public function senderUser()
     {
-        return $this->belongsTo('App\User', 'sender_cpm_id', 'id');
+        return $this->belongsTo(User::class, 'sender_cpm_id');
     }
 
     public function receiverUser()
     {
-        return $this->belongsTo('App\User', 'receiver_cpm_id', 'id');
+        return $this->belongsTo(User::class, 'receiver_cpm_id');
     }
 
     public function note()
