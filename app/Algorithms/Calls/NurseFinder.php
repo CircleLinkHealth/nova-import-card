@@ -254,7 +254,7 @@ class NurseFinder
     public function getNextWindowsForPatient()
     {
 
-        $patient_windows = $this->patient->patientContactWindows->all();
+        $patient_windows = $this->patient->contactWindows->all();
 
         //to count the current day in the calculation as well, we sub one day.
         $offset_date = Carbon::parse($this->offsetDate)->subDay()->toDateString();

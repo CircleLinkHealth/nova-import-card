@@ -60,7 +60,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @property mixed $state
  * @property mixed $zip
  * @property-read \Illuminate\Database\Eloquent\Collection|\App\PatientMonthlySummary[] $monthlySummaries
- * @property-read \Illuminate\Database\Eloquent\Collection|\App\PatientContactWindow[] $patientContactWindows
+ * @property-read \Illuminate\Database\Eloquent\Collection|\App\PatientContactWindow[] $contactWindows
  * @property-read \Illuminate\Database\Eloquent\Collection|\Venturecraft\Revisionable\Revision[] $revisionHistory
  * @property-read \App\User $user
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Patient enrolled()
@@ -198,7 +198,7 @@ class Patient extends \App\BaseModel
         return $this->belongsTo(User::class, 'user_id', 'id');
     }
 
-    public function patientContactWindows()
+    public function contactWindows()
     {
         return $this->hasMany(PatientContactWindow::class, 'patient_info_id', 'id');
     }

@@ -193,7 +193,7 @@ class NotesController extends Controller
             //set contact flag
             $patient_contact_window_exists = false;
 
-            if (count($patient->patientInfo->patientContactWindows) != 0) {
+            if (count($patient->patientInfo->contactWindows) != 0) {
                 $patient_contact_window_exists = true;
             }
 
@@ -229,7 +229,7 @@ class NotesController extends Controller
             $window = PatientContactWindow::getPreferred($patient->patientInfo);
 
             $contact_days_array = [];
-            if (is_object($patient->patientInfo->patientContactWindows)) {
+            if (is_object($patient->patientInfo->contactWindows)) {
                 $contact_days_array = array_merge(explode(',', $patient->patientInfo->preferred_cc_contact_days));
             }
 

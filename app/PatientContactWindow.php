@@ -42,7 +42,7 @@ class PatientContactWindow extends \App\BaseModel
     public static function getNextWindowsForPatient($patient)
     {
 
-        $patient_windows = $patient->patientInfo->patientContactWindows()->get();
+        $patient_windows = $patient->patientInfo->contactWindows()->get();
 
         //If there are no contact windows, we just return the next day for now. @todo confirm logic
         if (!$patient_windows) {
@@ -115,7 +115,7 @@ class PatientContactWindow extends \App\BaseModel
         $offset_date
     ) {
 
-        $patient_windows = $patient->patientContactWindows->all();
+        $patient_windows = $patient->contactWindows->all();
 
         //to count the current day in the calculation as well, we sub one day.
         $offset_date = Carbon::parse($offset_date)->subDay()->toDateString();
@@ -216,7 +216,7 @@ class PatientContactWindow extends \App\BaseModel
         $created = [];
 
         //first delete all call windows
-        $info->patientContactWindows()->delete();
+        $info->contactWindows()->delete();
 
         foreach ($days as $dayId) {
             $created[] = PatientContactWindow::create([
@@ -255,7 +255,7 @@ class PatientContactWindow extends \App\BaseModel
     public function getEarliestWindowForPatient(User $patient)
     {
 
-        $patient_windows = $patient->patientInfo->patientContactWindows()->get();
+        $patient_windows = $patient->patientInfo->contactWindows()->get();
 
         //If there are no contact windows, we just return the next day for now. @todo confirm logic
         if (!$patient_windows) {
@@ -308,7 +308,7 @@ class PatientContactWindow extends \App\BaseModel
     ) {
 
 
-        $patient_windows = $patient->patientContactWindows()->get();
+        $patient_windows = $patient->contactWindows()->get();
 
         //If no contact window, just return the same date.
         if ($patient_windows->count() == 0) {

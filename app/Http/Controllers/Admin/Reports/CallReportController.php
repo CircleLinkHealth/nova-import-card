@@ -151,7 +151,7 @@ class CallReportController extends Controller
                     $preferredCallDays =  'n/a';
                     if ($call->inboundUser && $call->inboundUser->patientInfo) {
                         $windowText = '';
-                        $windows = $call->inboundUser->patientInfo->patientContactWindows()->get();
+                        $windows = $call->inboundUser->patientInfo->contactWindows()->get();
                         if ($windows) {
                             foreach ($days as $key => $val) {
                                 foreach ($windows as $window) {
