@@ -2543,8 +2543,6 @@ class User extends \App\BaseModel implements AuthenticatableContract, CanResetPa
         return User::intersectPracticesWith($this)
             ->ofType('participant')
             ->whereHas('patientInfo')
-            ->with('primaryPractice')
-            ->with('carePlan')
             ->with([
                 'observations'    => function ($query) {
                     $query->where('obs_key', '!=', 'Outbound');
@@ -2558,6 +2556,9 @@ class User extends \App\BaseModel implements AuthenticatableContract, CanResetPa
                 'phoneNumbers'    => function ($q) {
                     $q->where('type', '=', PhoneNumber::HOME);
                 },
+                'carePlan.providerApproverUser',
+                'primaryPractice',
+                'patientInfo',
             ])
             ->get();
     }

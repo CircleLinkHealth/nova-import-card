@@ -461,7 +461,7 @@ class WebixFormatter implements ReportFormatter
     public function patientListing(Collection $patients = null)
     {
         $patientData = [];
-        $auth = auth()->user();
+        $auth = \Auth::user();
 
         if (!$patients) {
             $patients = $auth->patientList();
