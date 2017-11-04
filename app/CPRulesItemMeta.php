@@ -2,6 +2,20 @@
 
 use Illuminate\Database\Eloquent\Model;
 
+/**
+ * App\CPRulesItemMeta
+ *
+ * @property int $itemmeta_id
+ * @property int|null $items_id
+ * @property string|null $meta_key
+ * @property string|null $meta_value
+ * @property-read \App\CPRulesItem|null $CPRulesItem
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\CPRulesItemMeta whereItemmetaId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\CPRulesItemMeta whereItemsId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\CPRulesItemMeta whereMetaKey($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\CPRulesItemMeta whereMetaValue($value)
+ * @mixin \Eloquent
+ */
 class CPRulesItemMeta extends \App\BaseModel
 {
 

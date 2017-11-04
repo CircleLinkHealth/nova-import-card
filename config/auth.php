@@ -76,6 +76,8 @@ return [
         // ],
     ],
 
+    //entrust needs this
+    'model' => App\User::class,
     /*
     |--------------------------------------------------------------------------
     | Resetting Passwords

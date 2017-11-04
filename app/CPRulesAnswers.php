@@ -2,6 +2,19 @@
 
 use Illuminate\Database\Eloquent\Model;
 
+/**
+ * App\CPRulesAnswers
+ *
+ * @property int $aid
+ * @property string $value
+ * @property string|null $alt_answers
+ * @property int|null $a_sort
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\CPRulesAnswers whereASort($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\CPRulesAnswers whereAid($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\CPRulesAnswers whereAltAnswers($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\CPRulesAnswers whereValue($value)
+ * @mixin \Eloquent
+ */
 class CPRulesAnswers extends \App\BaseModel
 {
 

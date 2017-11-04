@@ -3,6 +3,36 @@
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
+/**
+ * App\PatientReports
+ *
+ * @property int $id
+ * @property int $patient_id
+ * @property string $patient_mrn
+ * @property string $provider_id
+ * @property string $file_type
+ * @property int $location_id
+ * @property string $file_base64
+ * @property string|null $deleted_at
+ * @property \Carbon\Carbon $created_at
+ * @property \Carbon\Carbon $updated_at
+ * @method static bool|null forceDelete()
+ * @method static \Illuminate\Database\Query\Builder|\App\PatientReports onlyTrashed()
+ * @method static bool|null restore()
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\PatientReports whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\PatientReports whereDeletedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\PatientReports whereFileBase64($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\PatientReports whereFileType($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\PatientReports whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\PatientReports whereLocationId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\PatientReports wherePatientId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\PatientReports wherePatientMrn($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\PatientReports whereProviderId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\PatientReports whereUpdatedAt($value)
+ * @method static \Illuminate\Database\Query\Builder|\App\PatientReports withTrashed()
+ * @method static \Illuminate\Database\Query\Builder|\App\PatientReports withoutTrashed()
+ * @mixin \Eloquent
+ */
 class PatientReports extends \App\BaseModel
 {
 

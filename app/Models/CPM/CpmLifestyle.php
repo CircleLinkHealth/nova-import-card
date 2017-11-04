@@ -8,6 +8,25 @@ use App\Services\CPM\CpmLifestyleService;
 use App\User;
 use Illuminate\Database\Eloquent\Model;
 
+/**
+ * App\Models\CPM\CpmLifestyle
+ *
+ * @property int $id
+ * @property int|null $care_item_id
+ * @property string $name
+ * @property \Carbon\Carbon $created_at
+ * @property \Carbon\Carbon $updated_at
+ * @property-read \App\CareItem $carePlanItemIdDeprecated
+ * @property-read \Illuminate\Database\Eloquent\Collection|\App\CarePlanTemplate[] $carePlanTemplates
+ * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\CPM\CpmInstruction[] $cpmInstructions
+ * @property-read \Illuminate\Database\Eloquent\Collection|\App\User[] $patient
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\CPM\CpmLifestyle whereCareItemId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\CPM\CpmLifestyle whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\CPM\CpmLifestyle whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\CPM\CpmLifestyle whereName($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\CPM\CpmLifestyle whereUpdatedAt($value)
+ * @mixin \Eloquent
+ */
 class CpmLifestyle extends \App\BaseModel implements Serviceable
 {
     

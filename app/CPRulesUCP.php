@@ -2,6 +2,23 @@
 
 use Illuminate\Database\Eloquent\Model;
 
+/**
+ * App\CPRulesUCP
+ *
+ * @property int $ucp_id
+ * @property int|null $items_id
+ * @property int|null $user_id
+ * @property string|null $meta_key
+ * @property string|null $meta_value
+ * @property-read \App\CPRulesItem|null $item
+ * @property-read \App\User $user
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\CPRulesUCP whereItemsId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\CPRulesUCP whereMetaKey($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\CPRulesUCP whereMetaValue($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\CPRulesUCP whereUcpId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\CPRulesUCP whereUserId($value)
+ * @mixin \Eloquent
+ */
 class CPRulesUCP extends \App\BaseModel
 {
 

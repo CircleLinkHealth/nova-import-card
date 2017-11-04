@@ -8,6 +8,57 @@ use Prettus\Repository\Contracts\Transformable;
 use Prettus\Repository\Traits\TransformableTrait;
 use SoftDeletingTrait;
 
+/**
+ * App\Activity
+ *
+ * @property int $id
+ * @property string|null $type
+ * @property int $duration
+ * @property string|null $duration_unit
+ * @property int $patient_id
+ * @property int $provider_id
+ * @property int $logger_id
+ * @property int $comment_id
+ * @property int|null $sequence_id
+ * @property string $obs_message_id
+ * @property string $logged_from
+ * @property string $performed_at
+ * @property string $performed_at_gmt
+ * @property \Carbon\Carbon $created_at
+ * @property \Carbon\Carbon $updated_at
+ * @property \Carbon\Carbon|null $deleted_at
+ * @property int|null $page_timer_id
+ * @property-read \Illuminate\Database\Eloquent\Collection|\App\NurseCareRateLog[] $careRateLogs
+ * @property-read \App\CcmTimeApiLog $ccmApiTimeSentLog
+ * @property-read mixed $performed_at_year_month
+ * @property-read \Illuminate\Database\Eloquent\Collection|\App\ActivityMeta[] $meta
+ * @property-read \App\PageTimer $pageTime
+ * @property-read \App\User $patient
+ * @property-read \App\User $provider
+ * @property-read \Illuminate\Database\Eloquent\Collection|\Venturecraft\Revisionable\Revision[] $revisionHistory
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Activity createdBy(\App\User $user)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Activity createdThisMonth($field = 'created_at')
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Activity createdToday($field = 'created_at')
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Activity createdYesterday($field = 'created_at')
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Activity whereCommentId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Activity whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Activity whereDeletedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Activity whereDuration($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Activity whereDurationUnit($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Activity whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Activity whereLoggedFrom($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Activity whereLoggerId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Activity whereObsMessageId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Activity wherePageTimerId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Activity wherePatientId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Activity wherePerformedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Activity wherePerformedAtGmt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Activity whereProviderId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Activity whereSequenceId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Activity whereType($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Activity whereUpdatedAt($value)
+ * @mixin \Eloquent
+ */
 class Activity extends \App\BaseModel implements Transformable
 {
 

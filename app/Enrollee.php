@@ -7,6 +7,114 @@ use App\CLH\Helpers\StringManipulation;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
 
+/**
+ * App\Enrollee
+ *
+ * @property int $id
+ * @property string|null $medical_record_type
+ * @property int|null $medical_record_id
+ * @property int|null $user_id
+ * @property int|null $provider_id
+ * @property int|null $practice_id
+ * @property int|null $care_ambassador_id
+ * @property int $total_time_spent
+ * @property string|null $last_call_outcome
+ * @property string|null $last_call_outcome_reason
+ * @property string $mrn
+ * @property string $first_name
+ * @property string $last_name
+ * @property string $address
+ * @property string $address_2
+ * @property string $city
+ * @property string $state
+ * @property string $zip
+ * @property mixed $primary_phone
+ * @property string $other_phone
+ * @property string $home_phone
+ * @property string $cell_phone
+ * @property \Carbon\Carbon|null $dob
+ * @property string $lang
+ * @property string $invite_code
+ * @property string $status
+ * @property int $attempt_count
+ * @property string|null $preferred_days
+ * @property string|null $preferred_window
+ * @property string|null $invite_sent_at
+ * @property string|null $consented_at
+ * @property string|null $last_attempt_at
+ * @property string|null $invite_opened_at
+ * @property \Carbon\Carbon|null $created_at
+ * @property \Carbon\Carbon|null $updated_at
+ * @property string $primary_insurance
+ * @property string $secondary_insurance
+ * @property string $tertiary_insurance
+ * @property int|null $has_copay
+ * @property string $email
+ * @property string $last_encounter
+ * @property string $referring_provider_name
+ * @property int|null $confident_provider_guess
+ * @property string $problems
+ * @property int $cpm_problem_1
+ * @property int $cpm_problem_2
+ * @property string|null $color
+ * @property-read \App\CareAmbassador|null $careAmbassador
+ * @property-read mixed $practice_name
+ * @property-read mixed $provider_full_name
+ * @property-read \App\Practice|null $practice
+ * @property-read \App\User|null $provider
+ * @property-write mixed $primary_phone_number
+ * @property-read \App\User|null $user
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Enrollee toCall()
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Enrollee toSMS()
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Enrollee whereAddress($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Enrollee whereAddress2($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Enrollee whereAttemptCount($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Enrollee whereCareAmbassadorId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Enrollee whereCellPhone($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Enrollee whereCity($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Enrollee whereColor($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Enrollee whereConfidentProviderGuess($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Enrollee whereConsentedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Enrollee whereCpmProblem1($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Enrollee whereCpmProblem2($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Enrollee whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Enrollee whereDob($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Enrollee whereEmail($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Enrollee whereFirstName($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Enrollee whereHasCopay($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Enrollee whereHomePhone($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Enrollee whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Enrollee whereInviteCode($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Enrollee whereInviteOpenedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Enrollee whereInviteSentAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Enrollee whereLang($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Enrollee whereLastAttemptAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Enrollee whereLastCallOutcome($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Enrollee whereLastCallOutcomeReason($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Enrollee whereLastEncounter($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Enrollee whereLastName($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Enrollee whereMedicalRecordId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Enrollee whereMedicalRecordType($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Enrollee whereMrn($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Enrollee whereOtherPhone($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Enrollee wherePracticeId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Enrollee wherePreferredDays($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Enrollee wherePreferredWindow($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Enrollee wherePrimaryInsurance($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Enrollee wherePrimaryPhone($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Enrollee whereProblems($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Enrollee whereProviderId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Enrollee whereReferringProviderName($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Enrollee whereSecondaryInsurance($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Enrollee whereState($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Enrollee whereStatus($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Enrollee whereTertiaryInsurance($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Enrollee whereTotalTimeSpent($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Enrollee whereUpdatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Enrollee whereUserId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Enrollee whereZip($value)
+ * @mixin \Eloquent
+ */
 class Enrollee extends \App\BaseModel
 {
     /**

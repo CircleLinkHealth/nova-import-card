@@ -2,6 +2,33 @@
 
 use Illuminate\Database\Eloquent\Model;
 
+/**
+ * App\CPRulesQuestionSets
+ *
+ * @property int $qsid
+ * @property int $provider_id
+ * @property string|null $qs_type
+ * @property int $qs_sort
+ * @property int|null $qid
+ * @property int|null $answer_response
+ * @property int|null $aid
+ * @property int|null $low
+ * @property int|null $high
+ * @property string|null $action
+ * @property-read \App\CPRulesAnswers $answer
+ * @property-read \App\CPRulesQuestions $question
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\CPRulesQuestionSets whereAction($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\CPRulesQuestionSets whereAid($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\CPRulesQuestionSets whereAnswerResponse($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\CPRulesQuestionSets whereHigh($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\CPRulesQuestionSets whereLow($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\CPRulesQuestionSets whereProviderId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\CPRulesQuestionSets whereQid($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\CPRulesQuestionSets whereQsSort($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\CPRulesQuestionSets whereQsType($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\CPRulesQuestionSets whereQsid($value)
+ * @mixin \Eloquent
+ */
 class CPRulesQuestionSets extends \App\BaseModel
 {
 

@@ -4,6 +4,38 @@ namespace App;
 
 use Illuminate\Database\Eloquent\Model;
 
+/**
+ * App\Appointment
+ *
+ * @property int $id
+ * @property int $patient_id
+ * @property int $author_id
+ * @property int|null $provider_id
+ * @property string $date
+ * @property string $time
+ * @property string $status
+ * @property string $comment
+ * @property int $was_completed
+ * @property \Carbon\Carbon|null $created_at
+ * @property \Carbon\Carbon|null $updated_at
+ * @property string $type
+ * @property-read \App\User $author
+ * @property-read \App\User $patient
+ * @property-read \App\User|null $provider
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Appointment whereAuthorId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Appointment whereComment($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Appointment whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Appointment whereDate($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Appointment whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Appointment wherePatientId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Appointment whereProviderId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Appointment whereStatus($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Appointment whereTime($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Appointment whereType($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Appointment whereUpdatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Appointment whereWasCompleted($value)
+ * @mixin \Eloquent
+ */
 class Appointment extends \App\BaseModel
 {
 

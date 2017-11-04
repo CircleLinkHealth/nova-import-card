@@ -2,6 +2,16 @@
 
 use Illuminate\Database\Eloquent\Model;
 
+/**
+ * App\CarePlanItem
+ *
+ * @property-read \App\CareItem $careItem
+ * @property-read \App\CarePlan $carePlan
+ * @property-read \App\CareSection $careSection
+ * @property-read \Illuminate\Database\Eloquent\Collection|\App\CarePlanItem[] $children
+ * @property-read \App\CarePlanItem $parents
+ * @mixin \Eloquent
+ */
 class CarePlanItem extends \App\BaseModel
 {
 

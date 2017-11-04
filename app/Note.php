@@ -9,6 +9,39 @@ use App\Traits\PdfReportTrait;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
 
+/**
+ * App\Note
+ *
+ * @property int $id
+ * @property int $patient_id
+ * @property int $author_id
+ * @property string $body
+ * @property int $isTCM
+ * @property int $did_medication_recon
+ * @property \Carbon\Carbon $created_at
+ * @property \Carbon\Carbon $updated_at
+ * @property string $type
+ * @property string $performed_at
+ * @property int|null $logger_id
+ * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\Addendum[] $addendums
+ * @property-read \App\User $author
+ * @property-read \App\Call $call
+ * @property-read \Illuminate\Database\Eloquent\Collection|\App\MailLog[] $mail
+ * @property-read \App\User $patient
+ * @property-read \App\User $program
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Note whereAuthorId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Note whereBody($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Note whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Note whereDidMedicationRecon($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Note whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Note whereIsTCM($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Note whereLoggerId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Note wherePatientId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Note wherePerformedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Note whereType($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Note whereUpdatedAt($value)
+ * @mixin \Eloquent
+ */
 class Note extends \App\BaseModel implements PdfReport
 {
     use IsAddendumable,

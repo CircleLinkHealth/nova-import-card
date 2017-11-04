@@ -3,6 +3,26 @@
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
 
+/**
+ * App\PatientContactWindow
+ *
+ * @property int $id
+ * @property int $patient_info_id
+ * @property int $day_of_week
+ * @property string $window_time_start
+ * @property string $window_time_end
+ * @property \Carbon\Carbon|null $created_at
+ * @property \Carbon\Carbon|null $updated_at
+ * @property-read \App\Patient $patient_info
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\PatientContactWindow whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\PatientContactWindow whereDayOfWeek($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\PatientContactWindow whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\PatientContactWindow wherePatientInfoId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\PatientContactWindow whereUpdatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\PatientContactWindow whereWindowTimeEnd($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\PatientContactWindow whereWindowTimeStart($value)
+ * @mixin \Eloquent
+ */
 class PatientContactWindow extends \App\BaseModel
 {
 

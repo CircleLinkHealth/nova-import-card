@@ -6,6 +6,26 @@ use App\Services\CPM\CpmMiscService;
 use App\User;
 use Illuminate\Database\Eloquent\Model;
 
+/**
+ * App\Models\CPM\CpmMisc
+ *
+ * @property int $id
+ * @property int|null $details_care_item_id
+ * @property int|null $care_item_id
+ * @property string $name
+ * @property \Carbon\Carbon $created_at
+ * @property \Carbon\Carbon $updated_at
+ * @property-read \Illuminate\Database\Eloquent\Collection|\App\CarePlanTemplate[] $carePlanTemplates
+ * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\CPM\CpmInstruction[] $cpmInstructions
+ * @property-read \Illuminate\Database\Eloquent\Collection|\App\User[] $patient
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\CPM\CpmMisc whereCareItemId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\CPM\CpmMisc whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\CPM\CpmMisc whereDetailsCareItemId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\CPM\CpmMisc whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\CPM\CpmMisc whereName($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\CPM\CpmMisc whereUpdatedAt($value)
+ * @mixin \Eloquent
+ */
 class CpmMisc extends \App\BaseModel implements Serviceable
 {
     

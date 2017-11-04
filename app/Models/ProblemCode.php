@@ -8,6 +8,35 @@ use App\Scopes\WithNonImported;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
+/**
+ * App\Models\ProblemCode
+ *
+ * @property int $id
+ * @property int $problem_id
+ * @property string $code_system_name
+ * @property string|null $code_system_oid
+ * @property string $code
+ * @property string|null $name
+ * @property \Carbon\Carbon|null $created_at
+ * @property \Carbon\Carbon|null $updated_at
+ * @property string|null $deleted_at
+ * @property-read \App\Models\CCD\Problem $problem
+ * @method static bool|null forceDelete()
+ * @method static \Illuminate\Database\Query\Builder|\App\Models\ProblemCode onlyTrashed()
+ * @method static bool|null restore()
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\ProblemCode whereCode($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\ProblemCode whereCodeSystemName($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\ProblemCode whereCodeSystemOid($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\ProblemCode whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\ProblemCode whereDeletedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\ProblemCode whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\ProblemCode whereName($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\ProblemCode whereProblemId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\ProblemCode whereUpdatedAt($value)
+ * @method static \Illuminate\Database\Query\Builder|\App\Models\ProblemCode withTrashed()
+ * @method static \Illuminate\Database\Query\Builder|\App\Models\ProblemCode withoutTrashed()
+ * @mixin \Eloquent
+ */
 class ProblemCode extends \App\BaseModel
 {
     use SoftDeletes;

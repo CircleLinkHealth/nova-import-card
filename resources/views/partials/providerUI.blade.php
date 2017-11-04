@@ -88,7 +88,7 @@
 
     @yield('content')
 
-    @if(showDiabetesBanner($patient) && !isset($isPdf))
+    @if(isset($patient) && showDiabetesBanner($patient) && !isset($isPdf))
         @include('partials.providerUI.notification-banner')
     @endif
 

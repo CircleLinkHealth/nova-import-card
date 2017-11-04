@@ -57,7 +57,9 @@
     },
     "require-dev": {
         "Xethron/Laravel-4-Generators": "*",
+        "barryvdh/laravel-ide-helper": "^2.4",
         "doctrine/dbal": "~2.3",
+        "filp/whoops": "~2.0",
         "fzaninotto/faker": "~1.4",
         "laravel/dusk": "^2.0",
         "mockery/mockery": "0.9.*",
@@ -66,8 +68,7 @@
         "phpunit/phpunit": "~6.0",
         "symfony/css-selector": "3.1.*",
         "symfony/dom-crawler": "3.1.*",
-        "xethron/migrations-generator": "dev-l5",
-        "filp/whoops": "~2.0"
+        "xethron/migrations-generator": "dev-l5"
     },
     "autoload": {
         "classmap": [

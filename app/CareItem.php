@@ -2,6 +2,42 @@
 
 use Illuminate\Database\Eloquent\Model;
 
+/**
+ * App\CareItem
+ *
+ * @property int $id
+ * @property string|null $model_field_name
+ * @property int|null $type_id
+ * @property string|null $type
+ * @property string $relationship_fn_name
+ * @property int $parent_id
+ * @property int $qid
+ * @property string $obs_key
+ * @property string $name
+ * @property string $display_name
+ * @property string $description
+ * @property \Carbon\Carbon $created_at
+ * @property \Carbon\Carbon $updated_at
+ * @property-read \Illuminate\Database\Eloquent\Collection|\App\CarePlan[] $carePlans
+ * @property-read \Illuminate\Database\Eloquent\Collection|\App\CareItem[] $children
+ * @property-read mixed $meta_key
+ * @property-read \App\CareItem $parents
+ * @property-read \App\CPRulesQuestions $question
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\CareItem whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\CareItem whereDescription($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\CareItem whereDisplayName($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\CareItem whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\CareItem whereModelFieldName($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\CareItem whereName($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\CareItem whereObsKey($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\CareItem whereParentId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\CareItem whereQid($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\CareItem whereRelationshipFnName($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\CareItem whereType($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\CareItem whereTypeId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\CareItem whereUpdatedAt($value)
+ * @mixin \Eloquent
+ */
 class CareItem extends \App\BaseModel
 {
     /**
@@ -47,11 +83,6 @@ class CareItem extends \App\BaseModel
     public function carePlans()
     {
         return $this->belongsToMany('App\CarePlan', 'care_plan_care_item', 'item_id', 'plan_id')->withPivot('id');
-    }
-
-    public function userValues()
-    {
-        return $this->hasMany('App\CareItemUserValue', 'care_item_id', 'id');
     }
 
     public function question() // rules prefix because ->items is a protect class var on parent

@@ -5,6 +5,47 @@ namespace App;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
 
+/**
+ * App\PatientMonthlySummary
+ *
+ * @property int $id
+ * @property int $patient_info_id
+ * @property int $ccm_time
+ * @property \Carbon\Carbon $month_year
+ * @property int $no_of_calls
+ * @property int $no_of_successful_calls
+ * @property string $billable_problem1
+ * @property string $billable_problem1_code
+ * @property string $billable_problem2
+ * @property string $billable_problem2_code
+ * @property int $is_ccm_complex
+ * @property int $approved
+ * @property int $rejected
+ * @property int|null $actor_id
+ * @property \Carbon\Carbon|null $created_at
+ * @property \Carbon\Carbon|null $updated_at
+ * @property-read \App\User $actor
+ * @property-read \App\Patient $patient_info
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\PatientMonthlySummary getCurrent()
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\PatientMonthlySummary getForMonth(\Carbon\Carbon $month)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\PatientMonthlySummary whereActorId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\PatientMonthlySummary whereApproved($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\PatientMonthlySummary whereBillableProblem1($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\PatientMonthlySummary whereBillableProblem1Code($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\PatientMonthlySummary whereBillableProblem2($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\PatientMonthlySummary whereBillableProblem2Code($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\PatientMonthlySummary whereCcmTime($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\PatientMonthlySummary whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\PatientMonthlySummary whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\PatientMonthlySummary whereIsCcmComplex($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\PatientMonthlySummary whereMonthYear($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\PatientMonthlySummary whereNoOfCalls($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\PatientMonthlySummary whereNoOfSuccessfulCalls($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\PatientMonthlySummary wherePatientInfoId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\PatientMonthlySummary whereRejected($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\PatientMonthlySummary whereUpdatedAt($value)
+ * @mixin \Eloquent
+ */
 class PatientMonthlySummary extends \App\BaseModel
 {
 

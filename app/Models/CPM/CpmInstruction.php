@@ -2,6 +2,21 @@
 
 use Illuminate\Database\Eloquent\Model;
 
+/**
+ * App\Models\CPM\CpmInstruction
+ *
+ * @property int $id
+ * @property int $is_default
+ * @property string $name
+ * @property \Carbon\Carbon $created_at
+ * @property \Carbon\Carbon $updated_at
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\CPM\CpmInstruction whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\CPM\CpmInstruction whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\CPM\CpmInstruction whereIsDefault($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\CPM\CpmInstruction whereName($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\CPM\CpmInstruction whereUpdatedAt($value)
+ * @mixin \Eloquent
+ */
 class CpmInstruction extends \App\BaseModel
 {
 

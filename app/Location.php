@@ -5,6 +5,60 @@ use App\Traits\HasEmrDirectAddress;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
+/**
+ * App\Location
+ *
+ * @property int $id
+ * @property int $practice_id
+ * @property int $is_primary
+ * @property string|null $external_department_id
+ * @property string $name
+ * @property string $phone
+ * @property string|null $fax
+ * @property string $address_line_1
+ * @property string|null $address_line_2
+ * @property string $city
+ * @property string $state
+ * @property string|null $timezone
+ * @property string $postal_code
+ * @property string|null $ehr_login
+ * @property string|null $ehr_password
+ * @property \Carbon\Carbon $created_at
+ * @property \Carbon\Carbon $updated_at
+ * @property string|null $deleted_at
+ * @property-read \Illuminate\Database\Eloquent\Collection|\App\User[] $clinicalEmergencyContact
+ * @property-read \Illuminate\Database\Eloquent\Collection|\App\EmrDirectAddress[] $emrDirect
+ * @property mixed $emr_direct_address
+ * @property-read \App\Location $parent
+ * @property-read \App\Practice $practice
+ * @property-read \App\Practice $program
+ * @property-read \Illuminate\Database\Eloquent\Collection|\App\User[] $providers
+ * @property-read \Illuminate\Database\Eloquent\Collection|\App\User[] $user
+ * @method static bool|null forceDelete()
+ * @method static \Illuminate\Database\Query\Builder|\App\Location onlyTrashed()
+ * @method static bool|null restore()
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Location whereAddressLine1($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Location whereAddressLine2($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Location whereCity($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Location whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Location whereDeletedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Location whereEhrLogin($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Location whereEhrPassword($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Location whereExternalDepartmentId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Location whereFax($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Location whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Location whereIsPrimary($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Location whereName($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Location wherePhone($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Location wherePostalCode($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Location wherePracticeId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Location whereState($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Location whereTimezone($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Location whereUpdatedAt($value)
+ * @method static \Illuminate\Database\Query\Builder|\App\Location withTrashed()
+ * @method static \Illuminate\Database\Query\Builder|\App\Location withoutTrashed()
+ * @mixin \Eloquent
+ */
 class Location extends \App\BaseModel
 {
     use HasEmrDirectAddress,
