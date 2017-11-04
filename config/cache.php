@@ -89,6 +89,6 @@ return [
     'prefix' => 'laravel',
 
     //entrust needs this
-    'ttl' => 60 * 24,
+    'ttl' => 30,
 
 ];
