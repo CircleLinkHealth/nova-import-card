@@ -567,7 +567,7 @@ if (!function_exists('linkToDownloadFile')) {
      * @return string
      * @throws Exception
      */
-    function linkToDownloadFile($path)
+    function linkToDownloadFile($path, $absolute = false)
     {
         if (!$path) {
             throw new \Exception("File path cannot be empty");
@@ -575,7 +575,7 @@ if (!function_exists('linkToDownloadFile')) {
 
         return route('download', [
             'filePath' => base64_encode($path),
-        ]);
+        ], $absolute);
     }
 }
 
