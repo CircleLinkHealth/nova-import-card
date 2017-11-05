@@ -595,7 +595,7 @@ if (!function_exists('linkToCachedView')) {
             throw new \Exception("File path cannot be empty");
         }
 
-        return route('get.cached.view.by.key', ['key' => $viewHashKey]);
+        return route('get.cached.view.by.key', ['key' => $viewHashKey], $absolute);
     }
 }
 
