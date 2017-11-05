@@ -136,7 +136,7 @@
                             <li role="presentation" class="dropdown">
                                 <a class="dropdown-toggle" data-toggle="dropdown" href="#" role="button"
                                    aria-expanded="false">
-                                    Nurse Management <span class="caret"></span>
+                                    Nurses <span class="caret"></span>
                                 </a>
                                 <ul class="dropdown-menu" role="menu">
                                     <li><a href="{{ URL::route('get.admin.nurse.schedules') }}">Schedules</a>
