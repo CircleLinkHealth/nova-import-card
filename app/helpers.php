@@ -589,7 +589,7 @@ if (!function_exists('linkToCachedView')) {
      * @throws Exception
      *
      */
-    function linkToCachedView($viewHashKey)
+    function linkToCachedView($viewHashKey, $absolute = false)
     {
         if (!$viewHashKey) {
             throw new \Exception("File path cannot be empty");
