@@ -1,7 +1,6 @@
 <?php namespace App;
 
 use Carbon\Carbon;
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 /**
@@ -200,12 +199,12 @@ class Patient extends \App\BaseModel
 
     public function contactWindows()
     {
-        return $this->hasMany(PatientContactWindow::class, 'patient_info_id', 'id');
+        return $this->hasMany(PatientContactWindow::class, 'patient_info_id');
     }
 
     public function monthlySummaries()
     {
-        return $this->hasMany(PatientMonthlySummary::class, 'patient_info_id', 'id');
+        return $this->hasMany(PatientMonthlySummary::class, 'patient_info_id');
     }
 
     // END RELATIONSHIPS
@@ -356,6 +355,19 @@ class Patient extends \App\BaseModel
         $monthlyTime = sprintf("%02d:%02d:%02d", $H, $i, $s);
 
         return $monthlyTime;
+    }
+
+    public function getLastCallStatusAttribute()
+    {
+        if (!$this->no_call_attempts_since_last_success) {
+            return 'n/a';
+        }
+
+        if ($this->no_call_attempts_since_last_success > 0) {
+            return $this->no_call_attempts_since_last_success . 'x Attempts';
+        }
+
+        return 'Success';
     }
 
     //Query Scopes:

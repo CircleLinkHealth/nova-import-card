@@ -25,7 +25,7 @@ class CallsController extends Controller
                     $q->select(['id', 'first_name', 'last_name', 'suffix', 'display_name']);
                 },
                 'inboundUser.patientInfo.monthlySummaries' => function ($q) {
-                    $q->where('month_year', '=', Carbon::now()->format('Y-m-d'));
+                    $q->where('month_year', '=', Carbon::now()->startOfMonth()->format('Y-m-d'));
                 },
                 'inboundUser.primaryPractice' => function($q) {
                     $q->select(['id', 'display_name']);
