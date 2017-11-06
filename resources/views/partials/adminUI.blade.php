@@ -384,7 +384,7 @@
 @stack('scripts')
 <script>
   if ('serviceWorker' in navigator) {
-    navigator.serviceWorker.register('/sw.js')
+    navigator.serviceWorker.register('/compiled/sw.js')
     .then(function(registration) {
       console.log('Service Worker registration successful with scope: ',
        registration.scope);

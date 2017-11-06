@@ -123,13 +123,13 @@
     })
 
     if ('serviceWorker' in navigator) {
-        navigator.serviceWorker.register('/sw.js')
+        navigator.serviceWorker.register('/compiled/sw.js')
         .then(function(registration) {
-        console.log('Service Worker registration successful with scope: ',
-        registration.scope);
+            console.log('Service Worker registration successful with scope: ',
+            registration.scope);
         })
         .catch(function(err) {
-        console.log(err);
+            console.log(err);
         });
     }
 </script>
