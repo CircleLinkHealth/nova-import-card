@@ -22,31 +22,19 @@
             <div class="row">
               <div class="col-lg-2">Attempt Note:</div>
               <div class="col-lg-10">
-                <a href="#"><span class="cpm-editable-icon" call-id="13687" column-name="attempt_note" column-value="Add Text">Add Text</span></a>
+                <text-editable :value="props.row.AttemptNote || 'Add Text'" :multi="true" :class-name="'blue'"></text-editable>
               </div>
             </div>
-            <div class="row">
+            <div class="row" v-if="props.row.Notes.length > 0">
               <div class="col-lg-2">Last 3 Notes:</div>
               <div class="col-lg-10">
                 <ul>
-                  <li>
-                    Note 2016-11-21 13:06:00: 
-                    <div class="label label-info" style="margin:5px;">Outbound Call</div>
-                    <span style="font-weight:bold;">General (Clinical)</span> 
-                    Attempted clinical check-in. Left voice message. 
+                  <li v-for="(note, index) in props.row.Notes.slice(0, 3)" :key="index">
+                    Note {{note.created_at}}: 
+                    <div class="label label-info" :class="{ inbound: note.type === 'in', outbound: note.type === 'out' }" style="margin:5px;">{{note.type === 'in' ? 'In' : 'Out'}} Call</div>
+                    <span style="font-weight:bold;">{{note.category}}</span> 
+                    {{note.message}}
                     </li>
-                  <li>
-                    Note 2016-11-18 11:52:00: 
-                    <div class="label label-info" style="margin:5px;">Outbound Call</div>
-                    <span style="font-weight:bold;">General (Clinical)</span> 
-                    Attempted clinical check-in. Left voice message. 
-                    </li>
-                  <li>
-                    Note 2016-11-11 12:35:00: 
-                    <div class="label label-info" style="margin:5px;">Outbound Call</div>
-                    <span style="font-weight:bold;">General (Clinical)</span> 
-                    Attempted clinical check-in. Left voice message. 
-                  </li>
                 </ul>
               </div>
             </div>
@@ -54,11 +42,7 @@
               <div class="col-sm-2">Call Windows:</div>
               <div class="col-sm-10">
                 <ul class="info-list">
-                  <li>M: 09:00:00 - 17:00:00</li>
-                  <li>Tu: 09:00:00 - 17:00:00</li>
-                  <li>W: 09:00:00 - 17:00:00</li>
-                  <li>Th: 09:00:00 - 17:00:00</li>
-                  <li>F: 09:00:00 - 17:00:00</li>
+                  <li v-for="(time_window, index) in props.row.CallWindows" :key="index">{{time_window.shortDayOfWeek}}: {{time_window.window_time_start}} - {{time_window.window_time_end}}</li>
                 </ul>
               </div>
             </div>
@@ -211,6 +195,11 @@
 
                   const billingProvider = patient.getBillingProvider();
                   billingProvider.getUser = () => (billingProvider.user || {});
+
+                  patient.getInfo().contact_windows.forEach(time_window => {
+                    time_window.dayOfWeek = DayOfWeek[time_window.day_of_week];
+                    time_window.shortDayOfWeek = ShortDayOfWeek(time_window.day_of_week);
+                  })
                 }
               })
               const tableCalls = calls.map(call => ({
@@ -222,13 +211,15 @@
                                     Scheduler: call.scheduler,
                                     CallWindows: call.getPatient().getInfo().contact_windows,
                                     Comment: call.getPatient().getInfo().general_comment,
+                                    AttemptNote: call.attempt_note,
+                                    Notes: [],
                                     'Last Call Status': call.getPatient().getInfo().last_call_status,
                                     'Last Call': new Date(call.getPatient().getInfo().last_contact_time).toDateString(),
                                     'CCM Time': call.getPatient().getInfo().cur_month_activity_time,
                                     'Successful Calls': (call.getPatient().getInfo().monthly_summaries.slice(-1).no_of_successful_calls || 0),
                                     'Time Zone': call.getPatient().timezone,
                                     'Preferred Call Days': Object.values(call.getPatient().getInfo().contact_windows
-                                                                                    .map(time_window => ShortDayOfWeek(time_window.day_of_week))
+                                                                                    .map(time_window => time_window.shortDayOfWeek)
                                                                                     .reduce((obj, key) => {
                                                                                       obj[key] = key;
                                                                                       return obj;
