@@ -2,8 +2,9 @@
     <div :class="className">
         <div v-if="isEditMode">
             <form @submit="toggleEdit">
-                <input type="text" class="float-left" v-model="text" required />
-                <span class="float-right" @click="toggleEdit">&#9989;</span>
+                <textarea class="float-left form-control" v-if="multi" v-model="text" required></textarea>
+                <input type="text" class="float-left" v-if="!multi" v-model="text" required />
+                <button class="float-right icon-btn" type="submit">&#9989;</button>
             </form>
         </div>
         <div v-if="!isEditMode" @dblclick="toggleEdit">
@@ -25,7 +26,7 @@
 
     export default {
         name: 'TextEditable',
-        props: ['value', 'is-edit', 'class-name', 'on-change'],
+        props: ['value', 'is-edit', 'class-name', 'on-change', 'multi'],
         data(){
             return {
                 text: this.value,
@@ -57,5 +58,10 @@
 
     span.float-right {
         cursor: pointer;
+    }
+
+    .icon-btn {
+        border: none;
+        background: none;
     }
 </style>
