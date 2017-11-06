@@ -98,9 +98,9 @@
     <text-editable :value="'Mykeels'"></text-editable>
     <date-editable :value="'01-20-2017'" :format="'mm-DD-YYYY'"></date-editable>
     <select-editable :values="['One', 'Two', 'Three']"></select-editable>
-    <modal :no-title="true" :no-footer="true">
-      <template>
-        <select class="form-control">
+    <modal :no-title="true" :no-footer="true" :info="selectNursesModalInfo">
+      <template scope="props">
+        <select class="form-control" @change="props.info.onChange">
           <option value="">Pick a Nurse</option>
           <option value="1">Nurse N RN</option>
           <option value="2">Kathryn Alchalabi RN</option>
@@ -155,6 +155,13 @@
       computed: {
         itemsAreSelected() {
           return !!this.tableData.find(row => !!row.selected)
+        },
+        selectNursesModalInfo() {
+          return {
+            onChange(e) {
+              console.log(e)
+            }
+          }
         }
       },
       methods: {

@@ -6,20 +6,20 @@
                     <div class="modal-container">
                         
                         <div class="modal-header" v-if="!noTitle">
-                            <slot name="title">
+                            <slot name="title" :info="info">
                                 <div>{{title}}</div>
                             </slot>
                         </div>
             
                         <div class="modal-body">
-                            <slot>
+                            <slot :info="info">
                                 <div v-html="body"></div>
                             </slot>
                         </div>
             
                         <div class="modal-footer" v-if="!noFooter">
                             <div>
-                                <slot name="footer">
+                                <slot name="footer" :info="info">
                                     <div>{{footer}}</div>
                                 </slot>
                             </div>
@@ -68,12 +68,28 @@
      * For footer,
      * 
      * <template slot='footer'> ... footer html here ... </template>
+     * 
+     * For custom behavior, use the template slots and pass the :info prop to the modal component.
+     * 
+     * Within the template slots, you can use scope to props e.g.
+     * 
+     * <modal :no-title="true" :no-footer="true" :info="selectNursesModalInfo">
+            <template scope="props">
+                <select class="form-control" @change="props.info.onChange">
+                    <option value="">Pick a Nurse</option>
+                    <option value="1">Nurse N RN</option>
+                    <option value="2">Kathryn Alchalabi RN</option>
+                </select>
+            </template>
+       </modal>
+
+     * Where [selectNursesModalInfo] is an object that contains the `onChange` callback
      */
     import { Event } from 'vue-tables-2'
 
     export default {
         name: 'modal',
-        props: ['name', 'no-title', 'no-footer'],
+        props: ['name', 'no-title', 'no-footer', 'info'],
         data() {
             return {
                 title: '',
@@ -100,6 +116,8 @@
                 this.footer = modal.footer || '';
                 this.show = true;
             })
+
+            console.log(this.info)
         }
     }
 </script>
