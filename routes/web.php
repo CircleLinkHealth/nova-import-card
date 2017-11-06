@@ -883,27 +883,6 @@ Route::group(['middleware' => 'auth'], function () {
             ]);
         });
 
-        // pagetimer
-        Route::group([
-            'middleware' => [
-                'permission:activities-pagetimer-view',
-            ],
-        ], function () {
-            Route::resource('pagetimer', 'PageTimerController');
-            Route::get('pagetimer/create', [
-                'uses' => 'PageTimerController@create',
-                'as'   => 'admin.pagetimer.create',
-            ]);
-            Route::get('pagetimer/{id}', [
-                'uses' => 'PageTimerController@show',
-                'as'   => 'admin.pagetimer.show',
-            ]);
-            Route::get('pagetimer/{id}/edit', [
-                'uses' => 'PageTimerController@edit',
-                'as'   => 'admin.pagetimer.edit',
-            ]);
-        });
-
         // users
         Route::group([
             'middleware' => [
