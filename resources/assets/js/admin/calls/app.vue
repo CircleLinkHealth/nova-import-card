@@ -3,7 +3,7 @@
     <div class="row">
       <div class="col-sm-6"></div>
       <div class="col-sm-6 text-right" v-if="itemsAreSelected">
-        <button class="btn btn-primary btn-xs">Assign Nurse</button>
+        <button class="btn btn-primary btn-xs" @click="assignSelectedToNurse">Assign To Nurse</button>
         <button class="btn btn-danger btn-xs" @click="deleteSelected">Delete</button>
       </div>
     </div>
@@ -98,6 +98,20 @@
     <text-editable :value="'Mykeels'"></text-editable>
     <date-editable :value="'01-20-2017'" :format="'mm-DD-YYYY'"></date-editable>
     <select-editable :values="['One', 'Two', 'Three']"></select-editable>
+    <modal :no-title="true" :no-footer="true">
+      <template>
+        <select class="form-control">
+          <option value="">Pick a Nurse</option>
+          <option value="1">Nurse N RN</option>
+          <option value="2">Kathryn Alchalabi RN</option>
+          <option value="3">atricia Koeppel RN</option>
+          <option value="4">Dillenis Diaz RN</option>
+          <option value="5">Liza Herrera RN</option>
+          <option value="6">Monique Potter RN</option>
+          <option value="7">Nurse Loisa</option>
+        </select>
+      </template>
+    </modal>
   </div>
 </template>
 
@@ -108,6 +122,7 @@
   import DateEditable from './comps/date-editable'
   import SelectEditable from './comps/select-editable'
   import TimeEditable from './comps/time-editable'
+  import Modal from './comps/modal'
   import BindAppEvents from './app.events'
 
   export default {
@@ -116,7 +131,8 @@
         'text-editable': TextEditable,
         'date-editable': DateEditable,
         'select-editable': SelectEditable,
-        'time-editable': TimeEditable
+        'time-editable': TimeEditable,
+        'modal': Modal
       },
       data() {
         return {
@@ -163,6 +179,9 @@
               }
             }
           }
+        },
+        assignSelectedToNurse() {
+          Event.$emit('modal:show')
         },
         next() {
           if (!this.$nextPromise) {
