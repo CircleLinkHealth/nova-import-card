@@ -16,13 +16,13 @@
                 General Comment:
               </div>
               <div class="col-lg-10">
-                <text-editable :value="props.row.Comment" :multi="true" :class-name="'blue'"></text-editable>
+                <text-editable :value="props.row.Comment" :multi="true" :class-name="'blue big-text-edit'"></text-editable>
               </div>
             </div>
             <div class="row">
               <div class="col-lg-2">Attempt Note:</div>
               <div class="col-lg-10">
-                <text-editable :value="props.row.AttemptNote || 'Add Text'" :multi="true" :class-name="'blue'"></text-editable>
+                <text-editable :value="props.row.AttemptNote || 'Add Text'" :multi="true" :class-name="'blue big-text-edit'"></text-editable>
               </div>
             </div>
             <div class="row" v-if="props.row.Notes.length > 0">
@@ -282,5 +282,10 @@
   tr.VueTables__filters-row input {
     font-size: 12px;
     height: 22px;
+  }
+
+  .big-text-edit button {
+      font-size: 25px;
+      float: left;
   }
 </style>
