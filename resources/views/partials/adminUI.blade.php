@@ -57,17 +57,10 @@
         <nav class="navbar navbar-default">
             <div class="container-fluid">
                 <div class="navbar-header">
-                    <button type="button" class="navbar-toggle collapsed" data-toggle="collapse"
-                            data-target="#bs-example-navbar-collapse-1">
-                        <span class="sr-only">Toggle Navigation</span>
-                        <span class="icon-bar"></span>
-                        <span class="icon-bar"></span>
-                        <span class="icon-bar"></span>
-                    </button>
                     <a class="navbar-brand" href="{{ URL::route('admin.dashboard', array()) }}">
-                        <img src="/img/ui/clh_logo_lt.png"
+                        <img src="/img/clh_logo_sm.png"
                              alt="Care Plan Manager"
-                             style="position:relative;top:-15px"
+                             style="position:relative;top:-5px"
                              width="50px"/>
                     </a>
                 </div>
@@ -83,10 +76,7 @@
                                 <ul class="dropdown-menu" role="menu">
                                     <li><a href="{{ URL::route('admin.users.index', array()) }}">All Users</a></li>
                                     <li><a href="{{ URL::route('admin.users.create', array()) }}">New User</a></li>
-                                    <li><a href="{{ URL::route('admin.observations.index', array()) }}">Observations</a>
-                                    </li>
-                                    {{--                                <li><a href="{{ URL::route('comments.index', array()) }}">Comments</a></li>--}}
-                                    {{--                                <li><a href="{{ URL::route('ucp.index', array()) }}">UCP</a></li>--}}
+                                    <li><a href="{{ URL::route('admin.observations.index', array()) }}">Observations</a></li>
                                 </ul>
                             </li>
                         @endif
