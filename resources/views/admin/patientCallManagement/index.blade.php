@@ -7,11 +7,11 @@
     $active_nurses  = activeNurseNames();
 
     ?>
-    
+
     @push('scripts')
     <script>
         var callUpdatePostUri = "{{ URL::route('api.callupdate') }}";
-        var datatableDataUri = "{{ URL::route('datatables.anyCallsManagement') }}";
+        var datatableDataUri = "{{ URL::route('call.anyCallsManagement') }}";
     </script>
     <script type="text/javascript" src="{{ asset('/js/admin/patientCallManagement.js') }}"></script>
     <link rel="stylesheet" href="//code.jquery.com/ui/1.11.4/themes/smoothness/jquery-ui.css">
@@ -75,7 +75,7 @@
                     <div class="row" style="margin:20px 0px 40px 0px;">
                         <form id="addCallForm" action="<?php echo URL::route('api.callcreate'); ?>" method="post">
                             {{ csrf_field() }}
-                        <div class="col-md-10 col-md-offset-1">
+                        <div class="col-md-12">
                             <div class="row">
                                 <div class="col-xs-12" id="addCallErrorMsg"></div>
                             </div>
@@ -118,14 +118,13 @@
 
     <div class="container-fluid">
         <div class="row">
-            <div class="col-md-10 col-md-offset-1">
+            <div class="col-md-12">
                 <div class="row">
                     <div class="col-sm-8">
                         <h1>Patient Call Management</h1>
                     </div>
                 </div>
                 <div class="panel panel-default">
-                    <div class="panel-heading">Manage Patient Calls</div>
                     <div class="panel-body">
                         @include('errors.errors')
                         @include('errors.messages')
