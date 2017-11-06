@@ -365,6 +365,18 @@
 <script src="{{asset('compiled/js/app-clh-admin-ui.js')}}"></script>
 <script type="text/javascript" src="{{ asset('compiled/js/admin-ui.js') }}"></script>
 @stack('scripts')
+<script>
+  if ('serviceWorker' in navigator) {
+    navigator.serviceWorker.register('/sw.js')
+    .then(function(registration) {
+      console.log('Service Worker registration successful with scope: ',
+       registration.scope);
+    })
+    .catch(function(err) {
+      console.log(err);
+    });
+  }
+</script>
 <div style="clear:both;height:100px;"></div>
 </body>
 </html>
