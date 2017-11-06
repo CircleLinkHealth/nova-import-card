@@ -567,7 +567,7 @@ if (!function_exists('linkToDownloadFile')) {
      * @return string
      * @throws Exception
      */
-    function linkToDownloadFile($path)
+    function linkToDownloadFile($path, $absolute = false)
     {
         if (!$path) {
             throw new \Exception("File path cannot be empty");
@@ -575,7 +575,7 @@ if (!function_exists('linkToDownloadFile')) {
 
         return route('download', [
             'filePath' => base64_encode($path),
-        ]);
+        ], $absolute);
     }
 }
 
@@ -589,13 +589,13 @@ if (!function_exists('linkToCachedView')) {
      * @throws Exception
      *
      */
-    function linkToCachedView($viewHashKey)
+    function linkToCachedView($viewHashKey, $absolute = false)
     {
         if (!$viewHashKey) {
             throw new \Exception("File path cannot be empty");
         }
 
-        return route('get.cached.view.by.key', ['key' => $viewHashKey]);
+        return route('get.cached.view.by.key', ['key' => $viewHashKey], $absolute);
     }
 }
 

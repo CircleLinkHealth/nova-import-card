@@ -29,13 +29,13 @@ class GenerateNurseDailyReportCsv implements ShouldQueue
         $this->notifyUserIds = $notifyUserIds;
         $this->reportData = NurseDailyReport::data()->map(function ($nurseReport) {
             return [
-                $nurseReport['name'],
-                $nurseReport['Time Since Last Activity'],
-                $nurseReport['# Successful Calls Today'],
-                $nurseReport['# Scheduled Calls Today'],
-                $nurseReport['# Completed Calls Today'],
-                $nurseReport['CCM Mins Today'],
-                $nurseReport['last_activity'],
+                'name'                     => $nurseReport['name'],
+                'Time Since Last Activity' => $nurseReport['Time Since Last Activity'],
+                '# Successful Calls Today' => $nurseReport['# Successful Calls Today'],
+                '# Scheduled Calls Today'  => $nurseReport['# Scheduled Calls Today'],
+                '# Completed Calls Today'  => $nurseReport['# Completed Calls Today'],
+                'CCM Mins Today'           => $nurseReport['CCM Mins Today'],
+                'last_activity'            => $nurseReport['last_activity'],
             ];
         });
     }
