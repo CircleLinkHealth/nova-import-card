@@ -9,6 +9,38 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 use Prettus\Repository\Contracts\Transformable;
 use Prettus\Repository\Traits\TransformableTrait;
 
+/**
+ * App\Entities\Invite
+ *
+ * @property int $id
+ * @property int $inviter_id
+ * @property int|null $role_id
+ * @property string $email
+ * @property string|null $subject
+ * @property string|null $message
+ * @property string|null $code
+ * @property \Carbon\Carbon|null $created_at
+ * @property \Carbon\Carbon|null $updated_at
+ * @property \Carbon\Carbon|null $deleted_at
+ * @property-read \App\User $inviter
+ * @property-read \App\Role|null $role
+ * @method static bool|null forceDelete()
+ * @method static \Illuminate\Database\Query\Builder|\App\Entities\Invite onlyTrashed()
+ * @method static bool|null restore()
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Entities\Invite whereCode($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Entities\Invite whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Entities\Invite whereDeletedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Entities\Invite whereEmail($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Entities\Invite whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Entities\Invite whereInviterId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Entities\Invite whereMessage($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Entities\Invite whereRoleId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Entities\Invite whereSubject($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Entities\Invite whereUpdatedAt($value)
+ * @method static \Illuminate\Database\Query\Builder|\App\Entities\Invite withTrashed()
+ * @method static \Illuminate\Database\Query\Builder|\App\Entities\Invite withoutTrashed()
+ * @mixin \Eloquent
+ */
 class Invite extends \App\BaseModel implements Transformable
 {
     use SoftDeletes, TransformableTrait;

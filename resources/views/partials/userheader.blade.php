@@ -1,9 +1,8 @@
 <?php
 // calculate display, fix bug where gmdate('i:s') doesnt work for > 24hrs
-$seconds = 0;
-if ($patient->patientInfo) {
-    $seconds = $patient->patientInfo()->first()->cur_month_activity_time;
-}
+
+$seconds = optional($patient->patientInfo)->cur_month_activity_time ?? 0;
+
 $H = floor($seconds / 3600);
 $i = ($seconds / 60) % 60;
 $s = $seconds % 60;
@@ -21,7 +20,7 @@ if ($seconds > 1199 && !$ccm_complex) {
     $ccm_above = true;
 }
 
-$provider = App\User::find($patient->billingProviderID)->fullName ?? 'No Provider Selected';
+$provider = optional($patient->billingProviderUser())->fullName ?? 'No Provider Selected';
 
 $location = empty($patient->getPreferredLocationName())
     ? 'Not Set'

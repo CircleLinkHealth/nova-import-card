@@ -20,9 +20,10 @@ mix.webpackConfig({
  * CSS
  *
  */
+mix.less('resources/assets/less/css/app.less', 'public/compiled/css/app-compiled.css')
+
 mix.combine([
-    'resources/assets/less/css/app.less',
-    'resources/assets/less/css/tooltip.less',
+    'public/compiled/css/app-compiled.css',
     'resources/assets/less/css/animate.min.css'
 ], 'public/compiled/css/stylesheet.css')
 
@@ -54,7 +55,7 @@ mix.combine([
     'bower_components/bootstrap-select/dist/js/bootstrap-select.js',
     'public/js/typeahead.bundle.js',
     'public/js/DateTimePicker.min.js',
-    'public/js/fab.js',   
+    'public/js/fab.js',
 ], 'public/compiled/js/issue-688.js')
 /** end fixing issue 688 */
 

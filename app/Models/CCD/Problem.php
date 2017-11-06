@@ -10,6 +10,47 @@ use App\Traits\HasProblemCodes;
 use App\User;
 use Illuminate\Database\Eloquent\Model;
 
+/**
+ * App\Models\CCD\Problem
+ *
+ * @property int $id
+ * @property int|null $problem_import_id
+ * @property int|null $ccda_id
+ * @property int $patient_id
+ * @property int|null $vendor_id
+ * @property int|null $ccd_problem_log_id
+ * @property string|null $name
+ * @property string|null $icd_10_code
+ * @property string|null $code
+ * @property string|null $code_system
+ * @property string|null $code_system_name
+ * @property int $activate
+ * @property int|null $cpm_problem_id
+ * @property string|null $deleted_at
+ * @property \Carbon\Carbon $created_at
+ * @property \Carbon\Carbon $updated_at
+ * @property-read \App\Importer\Models\ItemLogs\ProblemLog|null $ccdLog
+ * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\ProblemCode[] $codes
+ * @property-read \App\Models\CPM\CpmProblem|null $cpmProblem
+ * @property-read \App\User $patient
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\CCD\Problem whereActivate($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\CCD\Problem whereCcdProblemLogId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\CCD\Problem whereCcdaId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\CCD\Problem whereCode($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\CCD\Problem whereCodeSystem($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\CCD\Problem whereCodeSystemName($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\CCD\Problem whereCpmProblemId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\CCD\Problem whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\CCD\Problem whereDeletedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\CCD\Problem whereIcd10Code($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\CCD\Problem whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\CCD\Problem whereName($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\CCD\Problem wherePatientId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\CCD\Problem whereProblemImportId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\CCD\Problem whereUpdatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\CCD\Problem whereVendorId($value)
+ * @mixin \Eloquent
+ */
 class Problem extends \App\BaseModel implements \App\Contracts\Models\CCD\Problem
 {
     use HasProblemCodes;

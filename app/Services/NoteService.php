@@ -195,42 +195,15 @@ class NoteService
 
     //Get all notes for patients with specified date range
 
-    public function getNotesAndOfflineActivitiesForPatient(User $patient)
-    {
-
-        // @todo figure out compiling these sections together
-        $notes = $this->getNotesForPatient($patient);
-
-        $activities = (new ActivityService())->getOfflineActivitiesForPatient($patient);
-
-        $appointments = $this->getAppointmentsForPatient($patient->patientInfo);
-
-        $activities = $activities->merge($appointments);
-
-        //Convert to Collections
-        $activities = collect($activities);
-        $notes = collect($notes);
-
-        $data = $notes->merge($activities)->sortByDesc('created_at');
-
-        return $data;
-    }
-
-    //Get all notes that were forwarded with specified date range
-
-    public function getNotesForPatient(User $patient)
-    {
-        return Note::where('patient_id', $patient->id)->get();
-    }
-
-    //Get all notes for a given provider with specified date range
-
-    public function getAppointmentsForPatient(Patient $patient)
-    {
-
-        return Appointment::wherePatientId($patient->user_id)
-            ->get();
-    }
+//    public function getNotesAndOfflineActivitiesForPatient(User $patient)
+//    {
+//        $notes = $patient->notes;
+//        $activities = $patient->activities;
+//        $appointments = $patient->appointments;
+//
+//        return $notes->merge($activities)
+//            ->merge($appointments);
+//    }
 
     //Get all notes that have been sent to anyone for a given provider with specified date range
 
@@ -292,7 +265,7 @@ class NoteService
         $provider_forwarded_notes = [];
 
         foreach ($notes as $note) {
-            if ($this->wasSentToProvider($note)) {
+            if ($note->wasSentToProvider()) {
                 $provider_forwarded_notes[] = $note;
             }
         }
@@ -317,53 +290,6 @@ class NoteService
             ->get();
     }
 
-    public function wasSentToProvider(Note $note)
-    {
-
-        $mails = $note->mail;
-
-        if (count($mails) < 1) {
-            return false;
-        }
-
-        foreach ($mails as $mail) {
-            $mail_recipient = User::withTrashed()->find($mail->receiver_cpm_id);
-
-            if ($mail_recipient->hasRole('provider')) {
-                return true;
-            }
-        }
-
-        return false;
-    }
-
-    //MAIL HELPERS
-
-    //send notes when stored
-
-    public function wasReadByBillingProvider(Note $note)
-    {
-
-        $mails = $note->mail;
-
-        if (count($mails) < 1) {
-            return false;
-        }
-
-        foreach ($mails as $mail) {
-            $mail_recipient = User::find($mail->receiver_cpm_id);
-            $patient = User::find($note->patient_id);
-
-            if ($mail_recipient->id == $patient->billingProviderUser()->id && $mail->seen_on != null) {
-                return true;
-            }
-        }
-
-        return false;
-    }
-
-    //note sender
-
     public function getAllForwardedNotesWithRange(
         Carbon $start,
         Carbon $end
@@ -386,7 +312,7 @@ class NoteService
         $provider_forwarded_notes = [];
 
         foreach ($notes as $note) {
-            if ($this->wasSentToProvider($note)) {
+            if ($note->wasSentToProvider()) {
                 $provider_forwarded_notes[] = $note;
             }
         }

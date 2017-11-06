@@ -33,6 +33,6 @@ class PracticeController extends Controller
                 ];
             });
 
-        return response()->json($practices);
+        return response()->json($practices->all());
     }
 }

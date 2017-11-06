@@ -20,6 +20,7 @@ use App\Models\CPM\CpmSymptom;
 use App\Models\EmailSettings;
 use App\Models\MedicalRecords\Ccda;
 use App\Notifications\ResetPassword;
+use App\Repositories\Cache\UserNotificationList;
 use App\Services\UserService;
 use App\Traits\HasEmrDirectAddress;
 use Carbon\Carbon;
@@ -30,13 +31,187 @@ use Illuminate\Auth\Passwords\CanResetPassword;
 use Illuminate\Contracts\Auth\Authenticatable as AuthenticatableContract;
 use Illuminate\Contracts\Auth\CanResetPassword as CanResetPasswordContract;
 use Illuminate\Database\Eloquent\Collection as EloquentCollection;
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\QueryException;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Support\Collection;
 use Zizaco\Entrust\Traits\EntrustUserTrait;
 
+/**
+ * App\User
+ *
+ * @property int $id
+ * @property int $count_ccm_time
+ * @property string $username
+ * @property string $program_id
+ * @property string $password
+ * @property string $email
+ * @property \Carbon\Carbon $user_registered
+ * @property int $user_status
+ * @property int $auto_attach_programs
+ * @property string $display_name
+ * @property string $first_name
+ * @property string $last_name
+ * @property string|null $suffix
+ * @property string $address
+ * @property string $address2
+ * @property string $city
+ * @property string $state
+ * @property string $zip
+ * @property string|null $timezone
+ * @property string $status
+ * @property int $access_disabled
+ * @property int|null $is_auto_generated
+ * @property string|null $remember_token
+ * @property \Carbon\Carbon $created_at
+ * @property \Carbon\Carbon $updated_at
+ * @property string|null $deleted_at
+ * @property string|null $last_login
+ * @property int $is_online
+ * @property-read \Illuminate\Database\Eloquent\Collection|\App\Activity[] $activities
+ * @property-read \Illuminate\Database\Eloquent\Collection|\App\Appointment[] $appointments
+ * @property-read \App\CareAmbassador $careAmbassador
+ * @property-read \Illuminate\Database\Eloquent\Collection|\App\CareItem[] $careItems
+ * @property-read \App\CarePlan $carePlan
+ * @property-read \Illuminate\Database\Eloquent\Collection|\App\CarePerson[] $careTeamMembers
+ * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\CCD\Allergy[] $ccdAllergies
+ * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\CCD\CcdInsurancePolicy[] $ccdInsurancePolicies
+ * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\CCD\Medication[] $ccdMedications
+ * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\CCD\Problem[] $ccdProblems
+ * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\MedicalRecords\Ccda[] $ccdas
+ * @property-read \Illuminate\Database\Eloquent\Collection|\App\Comment[] $comment
+ * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\CPM\CpmBiometric[] $cpmBiometrics
+ * @property-read \App\Models\CPM\Biometrics\CpmBloodPressure $cpmBloodPressure
+ * @property-read \App\Models\CPM\Biometrics\CpmBloodSugar $cpmBloodSugar
+ * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\CPM\CpmLifestyle[] $cpmLifestyles
+ * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\CPM\CpmMedicationGroup[] $cpmMedicationGroups
+ * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\CPM\CpmMisc[] $cpmMiscs
+ * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\CPM\CpmProblem[] $cpmProblems
+ * @property-read \App\Models\CPM\Biometrics\CpmSmoking $cpmSmoking
+ * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\CPM\CpmSymptom[] $cpmSymptoms
+ * @property-read \App\Models\CPM\Biometrics\CpmWeight $cpmWeight
+ * @property-read \App\Models\EmailSettings $emailSettings
+ * @property-read \Illuminate\Database\Eloquent\Collection|\App\EmrDirectAddress[] $emrDirect
+ * @property-read \Illuminate\Database\Eloquent\Collection|\App\ForeignId[] $foreignId
+ * @property-read \Illuminate\Database\Eloquent\Collection|\App\User[] $forwardAlertsTo
+ * @property mixed $active_date
+ * @property-read mixed $age
+ * @property mixed $agent_email
+ * @property mixed $agent_name
+ * @property mixed $agent_phone
+ * @property mixed $agent_relationship
+ * @property mixed $agent_telephone
+ * @property mixed $billing_provider_i_d
+ * @property-read string $billing_provider_name
+ * @property mixed $birth_date
+ * @property mixed $care_plan_provider_approver
+ * @property mixed $care_plan_provider_approver_date
+ * @property mixed $care_plan_q_a_approver
+ * @property mixed $care_plan_q_a_date
+ * @property mixed $care_plan_status
+ * @property mixed $care_team
+ * @property-read \Collection $care_team_receives_alerts
+ * @property mixed $careplan_last_printed
+ * @property-read mixed $careplan_mode
+ * @property mixed $ccm_status
+ * @property-read mixed $ccm_time
+ * @property mixed $consent_date
+ * @property mixed $cur_month_activity_time
+ * @property mixed $daily_reminder_areas
+ * @property mixed $daily_reminder_optin
+ * @property mixed $daily_reminder_time
+ * @property mixed $date_paused
+ * @property mixed $date_withdrawn
+ * @property mixed $emr_direct_address
+ * @property-read mixed $full_name
+ * @property-read mixed $full_name_with_id
+ * @property mixed $gender
+ * @property mixed $home_phone_number
+ * @property mixed $hospital_reminder_areas
+ * @property mixed $hospital_reminder_optin
+ * @property mixed $hospital_reminder_time
+ * @property mixed $lead_contact_i_d
+ * @property mixed $m_r_n
+ * @property mixed $mobile_phone_number
+ * @property mixed $mrn_number
+ * @property mixed $npi_number
+ * @property mixed $phone
+ * @property mixed $preferred_cc_contact_days
+ * @property mixed $preferred_contact_language
+ * @property mixed $preferred_contact_location
+ * @property mixed $preferred_contact_method
+ * @property mixed $preferred_contact_time
+ * @property mixed $prefix
+ * @property-read mixed $primary_phone
+ * @property-read mixed $primary_practice_id
+ * @property-read string $primary_practice_name
+ * @property mixed $registration_date
+ * @property mixed $send_alert_to
+ * @property mixed $specialty
+ * @property-read mixed $timezone_abbr
+ * @property mixed $work_phone_number
+ * @property-read \Illuminate\Database\Eloquent\Collection|\App\Call[] $inboundCalls
+ * @property-read \Illuminate\Database\Eloquent\Collection|\App\Message[] $inboundMessages
+ * @property-read \Illuminate\Database\Eloquent\Collection|\App\Location[] $locations
+ * @property-read \Illuminate\Database\Eloquent\Collection|\App\UserMeta[] $meta
+ * @property-read \Illuminate\Database\Eloquent\Collection|\App\Note[] $notes
+ * @property-read \Illuminate\Notifications\DatabaseNotificationCollection|\Illuminate\Notifications\DatabaseNotification[] $notifications
+ * @property-read \App\Nurse $nurseInfo
+ * @property-read \Illuminate\Database\Eloquent\Collection|\App\Observation[] $observations
+ * @property-read \Illuminate\Database\Eloquent\Collection|\App\Call[] $outboundCalls
+ * @property-read \Illuminate\Database\Eloquent\Collection|\App\Message[] $outboundMessages
+ * @property-read \Illuminate\Database\Eloquent\Collection|\App\Activity[] $patientActivities
+ * @property-read \Illuminate\Database\Eloquent\Collection|\App\Importer\Models\ImportedItems\DemographicsImport[] $patientDemographics
+ * @property-read \App\Patient $patientInfo
+ * @property-read \Illuminate\Database\Eloquent\Collection|\App\PhoneNumber[] $phoneNumbers
+ * @property-read \Illuminate\Database\Eloquent\Collection|\App\Practice[] $practices
+ * @property-read \App\Practice $primaryPractice
+ * @property-read \App\ProviderInfo $providerInfo
+ * @property-read \Illuminate\Database\Eloquent\Collection|\Venturecraft\Revisionable\Revision[] $revisionHistory
+ * @property-read \Illuminate\Database\Eloquent\Collection|\App\Role[] $roles
+ * @property-write mixed $email_address
+ * @property-read \Illuminate\Database\Eloquent\Collection|\App\CPRulesUCP[] $ucp
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\User exceptType($type)
+ * @method static bool|null forceDelete()
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\User hasBillingProvider($billing_provider_id)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\User intersectLocationsWith($user)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\User intersectPracticesWith($user)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\User ofType($type)
+ * @method static \Illuminate\Database\Query\Builder|\App\User onlyTrashed()
+ * @method static bool|null restore()
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\User whereAccessDisabled($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\User whereAddress($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\User whereAddress2($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\User whereAutoAttachPrograms($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\User whereCity($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\User whereCountCcmTime($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\User whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\User whereDeletedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\User whereDisplayName($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\User whereEmail($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\User whereFirstName($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\User whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\User whereIsAutoGenerated($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\User whereIsOnline($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\User whereLastLogin($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\User whereLastName($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\User wherePassword($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\User whereProgramId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\User whereRememberToken($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\User whereState($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\User whereStatus($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\User whereSuffix($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\User whereTimezone($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\User whereUpdatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\User whereUserRegistered($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\User whereUserStatus($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\User whereUsername($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\User whereZip($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\User withCareTeamOfType($type)
+ * @method static \Illuminate\Database\Query\Builder|\App\User withTrashed()
+ * @method static \Illuminate\Database\Query\Builder|\App\User withoutTrashed()
+ * @mixin \Eloquent
+ */
 class User extends \App\BaseModel implements AuthenticatableContract, CanResetPasswordContract, Serviceable
 {
     const FORWARD_ALERTS_IN_ADDITION_TO_PROVIDER = 'forward_alerts_in_addition_to_provider';
@@ -324,7 +499,12 @@ class User extends \App\BaseModel implements AuthenticatableContract, CanResetPa
 
     public function activities()
     {
-        return $this->hasMany('App\Activity');
+        return $this->hasMany(Activity::class, 'patient_id');
+    }
+
+    public function appointments()
+    {
+        return $this->hasMany(Appointment::class, 'patient_id');
     }
 
     public function notes()
@@ -2103,11 +2283,9 @@ class User extends \App\BaseModel implements AuthenticatableContract, CanResetPa
      */
     public function billingProviderUser(): User
     {
-        $billingProvider = $this->careTeamMembers
-            ->where('type', 'billing_provider')
-            ->first();
-
-        return $billingProvider->user ?? new User();
+        return $this->billingProvider->isEmpty()
+            ? new User()
+            : $this->billingProvider->first()->user;
     }
 
     /**
@@ -2365,8 +2543,6 @@ class User extends \App\BaseModel implements AuthenticatableContract, CanResetPa
         return User::intersectPracticesWith($this)
             ->ofType('participant')
             ->whereHas('patientInfo')
-            ->with('primaryPractice')
-            ->with('carePlan')
             ->with([
                 'observations'    => function ($query) {
                     $query->where('obs_key', '!=', 'Outbound');
@@ -2380,6 +2556,9 @@ class User extends \App\BaseModel implements AuthenticatableContract, CanResetPa
                 'phoneNumbers'    => function ($q) {
                     $q->where('type', '=', PhoneNumber::HOME);
                 },
+                'carePlan.providerApproverUser',
+                'primaryPractice',
+                'patientInfo',
             ])
             ->get();
     }
@@ -2453,22 +2632,8 @@ class User extends \App\BaseModel implements AuthenticatableContract, CanResetPa
 
     public function hasProblem($problem)
     {
-        $cpmProblem = is_a($problem, CpmProblem::class)
-            ? $problem
-            : is_int($problem)
-                ? CpmProblem::find($problem)
-                : CpmProblem::whereName($problem)->first();
-
-
-        $exists = $this->cpmProblems->contains(function ($prob) use ($cpmProblem) {
-            return $cpmProblem->id == $prob->id;
-        });
-
-        if ($exists) {
-            return true;
-        }
-
-        return false;
+        return !$this->cpmProblems->where('id', '=', $problem)->isEmpty()
+            || !$this->cpmProblems->where('name', '=', $problem)->isEmpty();
     }
 
     /**
@@ -2481,56 +2646,8 @@ class User extends \App\BaseModel implements AuthenticatableContract, CanResetPa
             ->withTimestamps('created_at', 'updated_at');
     }
 
-    /**
-     * Get the User's cached views
-     *
-     * Example Cached View:
-     *
-     * [
-     * 'key'        => $key,
-     * 'created_at' => Carbon::now()->toDateTimeString(),
-     * 'expires_at' => Carbon::now()->addWeek()->toDateTimeString(),
-     * 'view'       => 'billing.nurse.list',
-     * 'message'    => 'The Nurse Invoices you requested are ready!',
-     * 'data'       => [
-     * 'invoices' => $links,
-     * 'data'     => $data,
-     * 'month'    => $month,
-     * ],
-     * ]
-     *
-     * @param int $start
-     * @param int $end
-     *
-     * @return static
-     */
-    public function cachedViews($start = 0, $end = -1)
+    public function cachedNotificationsList()
     {
-        return collect(\Redis::lrange("user:{$this->id}:views", $start, $end))->map(function ($json) {
-            $cache = json_decode($json, true);
-
-            $now = Carbon::now();
-            $expires = Carbon::parse($cache['expires_at']);
-
-            if ($now->greaterThan($expires) || !\Cache::has($cache['key'])) {
-                \Redis::lrem("user:{$this->id}:views", 0, $json);
-
-                return false;
-            }
-
-            return $cache;
-        })
-            ->filter()
-            ->reverse();
-    }
-
-    /**
-     * Returns the cached view count
-     *
-     * @return mixed
-     */
-    public function cachedViewCount()
-    {
-        return \Redis::llen("user:{$this->id}:views");
+        return new UserNotificationList($this->id);
     }
 }

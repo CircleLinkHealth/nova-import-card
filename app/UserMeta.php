@@ -2,6 +2,21 @@
 
 use Illuminate\Database\Eloquent\Model;
 
+/**
+ * App\UserMeta
+ *
+ * @property int $umeta_id
+ * @property int $user_id
+ * @property string|null $meta_key
+ * @property string|null $meta_value
+ * @property-read \Illuminate\Database\Eloquent\Collection|\Venturecraft\Revisionable\Revision[] $revisionHistory
+ * @property-read \App\User $wpUser
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\UserMeta whereMetaKey($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\UserMeta whereMetaValue($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\UserMeta whereUmetaId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\UserMeta whereUserId($value)
+ * @mixin \Eloquent
+ */
 class UserMeta extends \App\BaseModel
 {
 

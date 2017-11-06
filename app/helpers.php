@@ -408,8 +408,7 @@ if (!function_exists('windowToTimestamps')) {
         $endTimeH = Carbon::parse($end)->format('H');
         $endTimei = Carbon::parse($end)->format('i');
 
-        $endDate = $endDate->setTime($endTimeH, $endTimei)->toDateTimeString();
-        ;
+        $endDate = $endDate->setTime($endTimeH, $endTimei)->toDateTimeString();;
 
         return [
             'window_start' => $startDate,
@@ -558,6 +557,48 @@ if (!function_exists('snakeToSentenceCase')) {
         return ucwords(str_replace('_', ' ', $string));
     }
 }
+
+if (!function_exists('linkToDownloadFile')) {
+    /**
+     * Generate a file to download a file
+     *
+     * @param $path
+     *
+     * @return string
+     * @throws Exception
+     */
+    function linkToDownloadFile($path)
+    {
+        if (!$path) {
+            throw new \Exception("File path cannot be empty");
+        }
+
+        return route('download', [
+            'filePath' => base64_encode($path),
+        ]);
+    }
+}
+
+if (!function_exists('linkToCachedView')) {
+    /**
+     * Generate a link to a cached view
+     *
+     * @param $viewHashKey
+     *
+     * @return string
+     * @throws Exception
+     *
+     */
+    function linkToCachedView($viewHashKey)
+    {
+        if (!$viewHashKey) {
+            throw new \Exception("File path cannot be empty");
+        }
+
+        return route('get.cached.view.by.key', ['key' => $viewHashKey]);
+    }
+}
+
 if (!function_exists('parseCallDays')) {
     function parseCallDays($preferredCallDays)
     {
@@ -639,6 +680,23 @@ if (!function_exists('getProblemCodeSystemName')) {
         if ($problem->code_system == '2.16.840.1.113883.6.3'
             || str_contains(strtolower($problem->code_system_name), ['10'])) {
             return 'ICD-10';
+        }
+
+        return false;
+    }
+}
+
+if (!function_exists('showDiabetesBanner')) {
+    function showDiabetesBanner($patient)
+    {
+        if ($patient
+            && is_a($patient, User::class)
+            && $patient->hasProblem('Diabetes')
+            && !$patient->hasProblem('Diabetes Type 1')
+            && !$patient->hasProblem('Diabetes Type 2')
+            && $patient->primaryPractice->name != 'northeast-georgia-diagnostic-clinic'
+        ) {
+                return true;
         }
 
         return false;

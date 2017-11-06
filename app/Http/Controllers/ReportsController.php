@@ -1,9 +1,7 @@
 <?php namespace App\Http\Controllers;
 
 use App\CareItem;
-use App\CareItemUserValue;
 use App\CarePlan;
-use App\Events\CarePlanWasApproved;
 use App\Formatters\WebixFormatter;
 use App\Location;
 use App\Models\CPM\CpmProblem;
@@ -469,7 +467,7 @@ class ReportsController extends Controller
         Request $request,
         $patientId = false
     ) {
-    
+
         if (!$patientId) {
             return "Patient Not Found..";
         }
@@ -856,8 +854,7 @@ class ReportsController extends Controller
                             ->where('activity_type', '!=', '')
                             ->sum('duration');
 
-                        $rowUserValues[] = number_format((float)($pageTime / 60), 2, '.', '');
-                        ;
+                        $rowUserValues[] = number_format((float)($pageTime / 60), 2, '.', '');;
                     }
 
                     $sheetRows[] = $rowUserValues;

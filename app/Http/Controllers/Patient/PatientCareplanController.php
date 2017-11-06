@@ -304,7 +304,7 @@ class PatientCareplanController extends Controller
         $user = new User;
         $programId = false;
         if ($patientId) {
-            $user = User::with('patientInfo.patientContactWindows')->find($patientId);
+            $user = User::with('patientInfo.contactWindows')->find($patientId);
             if (!$user) {
                 return response("User not found", 401);
             }
@@ -410,7 +410,7 @@ class PatientCareplanController extends Controller
 
         $contact_days_array = [];
         if ($patient->patientInfo()->exists()) {
-            $contactWindows = $patient->patientInfo->patientContactWindows;
+            $contactWindows = $patient->patientInfo->contactWindows;
             $contact_days_array = $contactWindows->pluck('day_of_week')->toArray();
         }
 
@@ -490,9 +490,9 @@ class PatientCareplanController extends Controller
             if ($params->get('frequency')) {
                 $info->preferred_calls_per_month = $params->get('frequency');
             }
-            //we are checking this $info->patientContactWindows()->exists()
+            //we are checking this $info->contactWindows()->exists()
             //in case we want to delete all call windows, since $params->get('days') will evaluate to null if we unselect all
-            if ($params->get('days') || $info->patientContactWindows()->exists()) {
+            if ($params->get('days') || $info->contactWindows()->exists()) {
                 PatientContactWindow::sync(
                     $info,
                     $params->get('days', []),
@@ -544,7 +544,7 @@ class PatientCareplanController extends Controller
                 //Update patient info changes
                 $info = $newUser->patientInfo;
                 //in case we want to delete all call windows
-                if ($params->get('days') || $info->patientContactWindows()->exists()) {
+                if ($params->get('days') || $info->contactWindows()->exists()) {
                     PatientContactWindow::sync(
                         $info,
                         $params->get('days', []),

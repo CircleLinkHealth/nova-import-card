@@ -213,7 +213,7 @@ class DatatablesController extends Controller
                 ];
                 $windowText = '';
                 if ($call->inboundUser && $call->inboundUser->patientInfo) {
-                    $windows = $call->inboundUser->patientInfo->patientContactWindows()->get();
+                    $windows = $call->inboundUser->patientInfo->contactWindows()->get();
                     if ($windows) {
                         $windowText .= '<ul>';
                         foreach ($days as $key => $val) {
@@ -243,7 +243,7 @@ class DatatablesController extends Controller
                 ];
                 if ($call->inboundUser && $call->inboundUser->patientInfo) {
                     $windowText = '';
-                    $windows = $call->inboundUser->patientInfo->patientContactWindows()->get();
+                    $windows = $call->inboundUser->patientInfo->contactWindows()->get();
                     if ($windows) {
                         foreach ($days as $key => $val) {
                             foreach ($windows as $window) {

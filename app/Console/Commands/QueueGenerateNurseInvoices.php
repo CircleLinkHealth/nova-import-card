@@ -21,7 +21,7 @@ class QueueGenerateNurseInvoices extends Command
      *
      * @var string
      */
-    protected $description = 'Generate Nurse Invoice cached view for the day before';
+    protected $description = 'Generate Nurse Invoice cached view for the current month.';
 
     /**
      * Create a new command instance.
@@ -45,7 +45,8 @@ class QueueGenerateNurseInvoices extends Command
                 activeNurseNames()->keys()->all(),
                 Carbon::now()->startOfMonth(),
                 Carbon::now()->endOfMonth(),
-                User::ofType('administrator')->pluck('id')->all()
+                User::ofType('administrator')->pluck('id')->all(),
+                true
             ))->onQueue('reports')
         );
     }

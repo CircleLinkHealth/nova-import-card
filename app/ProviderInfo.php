@@ -3,6 +3,41 @@
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
+/**
+ * App\ProviderInfo
+ *
+ * @property int $id
+ * @property int|null $is_clinical
+ * @property int $user_id
+ * @property string|null $prefix
+ * @property string|null $npi_number
+ * @property string|null $specialty
+ * @property string $created_at
+ * @property string $updated_at
+ * @property string|null $deleted_at
+ * @property mixed $address
+ * @property mixed $city
+ * @property mixed $first_name
+ * @property mixed $last_name
+ * @property mixed $state
+ * @property mixed $zip
+ * @property-read \App\User $user
+ * @method static bool|null forceDelete()
+ * @method static \Illuminate\Database\Query\Builder|\App\ProviderInfo onlyTrashed()
+ * @method static bool|null restore()
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\ProviderInfo whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\ProviderInfo whereDeletedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\ProviderInfo whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\ProviderInfo whereIsClinical($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\ProviderInfo whereNpiNumber($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\ProviderInfo wherePrefix($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\ProviderInfo whereSpecialty($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\ProviderInfo whereUpdatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\ProviderInfo whereUserId($value)
+ * @method static \Illuminate\Database\Query\Builder|\App\ProviderInfo withTrashed()
+ * @method static \Illuminate\Database\Query\Builder|\App\ProviderInfo withoutTrashed()
+ * @mixin \Eloquent
+ */
 class ProviderInfo extends \App\BaseModel
 {
 

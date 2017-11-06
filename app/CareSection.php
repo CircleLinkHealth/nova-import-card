@@ -2,6 +2,27 @@
 
 use Illuminate\Database\Eloquent\Model;
 
+/**
+ * App\CareSection
+ *
+ * @property int $id
+ * @property string $name
+ * @property string $display_name
+ * @property string $description
+ * @property string $template
+ * @property \Carbon\Carbon $created_at
+ * @property \Carbon\Carbon $updated_at
+ * @property-read \Illuminate\Database\Eloquent\Collection|\App\CarePlanItem[] $carePlanItems
+ * @property-read \Illuminate\Database\Eloquent\Collection|\App\CarePlan[] $carePlans
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\CareSection whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\CareSection whereDescription($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\CareSection whereDisplayName($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\CareSection whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\CareSection whereName($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\CareSection whereTemplate($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\CareSection whereUpdatedAt($value)
+ * @mixin \Eloquent
+ */
 class CareSection extends \App\BaseModel
 {
 

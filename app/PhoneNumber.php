@@ -2,6 +2,32 @@
 
 use Illuminate\Database\Eloquent\Model;
 
+/**
+ * App\PhoneNumber
+ *
+ * @property int $id
+ * @property int $user_id
+ * @property int $location_id
+ * @property string|null $number
+ * @property string|null $extension
+ * @property string|null $type
+ * @property int $is_primary
+ * @property string $created_at
+ * @property string $updated_at
+ * @property string|null $deleted_at
+ * @property-read \App\User $user
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\PhoneNumber whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\PhoneNumber whereDeletedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\PhoneNumber whereExtension($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\PhoneNumber whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\PhoneNumber whereIsPrimary($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\PhoneNumber whereLocationId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\PhoneNumber whereNumber($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\PhoneNumber whereType($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\PhoneNumber whereUpdatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\PhoneNumber whereUserId($value)
+ * @mixin \Eloquent
+ */
 class PhoneNumber extends \App\BaseModel
 {
 

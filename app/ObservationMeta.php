@@ -2,6 +2,32 @@
 
 use Illuminate\Database\Eloquent\Model;
 
+/**
+ * App\ObservationMeta
+ *
+ * @property int $id
+ * @property int $obs_id
+ * @property int $comment_id
+ * @property string $message_id
+ * @property string $meta_key
+ * @property string $meta_value
+ * @property int $program_id
+ * @property int $legacy_meta_id
+ * @property \Carbon\Carbon $created_at
+ * @property \Carbon\Carbon $updated_at
+ * @property-read \App\Observation $observationMeta
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\ObservationMeta whereCommentId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\ObservationMeta whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\ObservationMeta whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\ObservationMeta whereLegacyMetaId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\ObservationMeta whereMessageId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\ObservationMeta whereMetaKey($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\ObservationMeta whereMetaValue($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\ObservationMeta whereObsId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\ObservationMeta whereProgramId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\ObservationMeta whereUpdatedAt($value)
+ * @mixin \Eloquent
+ */
 class ObservationMeta extends \App\BaseModel
 {
 

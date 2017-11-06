@@ -136,7 +136,7 @@
                             <li role="presentation" class="dropdown">
                                 <a class="dropdown-toggle" data-toggle="dropdown" href="#" role="button"
                                    aria-expanded="false">
-                                    Nurse Management <span class="caret"></span>
+                                    Nurses <span class="caret"></span>
                                 </a>
                                 <ul class="dropdown-menu" role="menu">
                                     <li><a href="{{ URL::route('get.admin.nurse.schedules') }}">Schedules</a>
@@ -340,7 +340,7 @@
                         @else
                             <li class="dropdown">
                                 <a href="{{url('/jobs/completed')}}">
-                                    <span class="badge">{{auth()->user()->cachedViewCount()}}</span>
+                                    <span class="badge">{{auth()->user()->cachedNotificationsList()->count()}}</span>
                                     Jobs Completed
                                 </a>
                             </li>

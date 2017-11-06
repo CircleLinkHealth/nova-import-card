@@ -15,67 +15,66 @@ Route::post('/send-sample-direct-mail', 'DemoController@sendSampleEMRNote');
 Route::resource('sign-up', 'PatientSignupController');
 Route::get('talk-to-us', 'PatientSignupController@talkToUs');
 
-if (app()->environment() != 'production') {
-    //test route
-    Route::get('/sms/test', 'TwilioController@sendTestSMS');
-
-    Route::get('/rohan', function () {
-
-        $date = Carbon::parse('2017-08-07');
-
-        $countMade =
-            Call::where('outbound_cpm_id', 2159)
-                ->where('scheduled_date', '2017-08-07')
-//                ->where(function ($q) use ($date){
-//                    $q->where('called_date', '>=', $date->startOfDay()->toDateTimeString())
-//                        ->where('called_date', '<=', $date->endOfDay()->toDateTimeString());
-//                })
-                ->count();
-
-        return $countMade;
-    });
-}
+//if (app()->environment() != 'production') {
+//    //test route
+//    Route::get('/sms/test', 'TwilioController@sendTestSMS');
+//
+//    Route::get('/rohan', function () {
+//
+//        $date = Carbon::parse('2017-08-07');
+//
+//        $countMade =
+//            Call::where('outbound_cpm_id', 2159)
+//                ->where('scheduled_date', '2017-08-07')
+////                ->where(function ($q) use ($date){
+////                    $q->where('called_date', '>=', $date->startOfDay()->toDateTimeString())
+////                        ->where('called_date', '<=', $date->endOfDay()->toDateTimeString());
+////                })
+//                ->count();
+//
+//        return $countMade;
+//    });
+//}
 
 //Algo test routes.
 
-Route::group(['prefix' => 'algo'], function () {
+//Route::group(['prefix' => 'algo'], function () {
+//    Route::get('family', function () {
+//
+//        if (app()->environment() == 'production') {
+//            return 'Sorry, this cannot be run on the production environment.';
+//        }
+//
+//        return (new \App\Services\Calls\SchedulerService())->syncFamilialCalls();
+//    });
 
-    Route::get('family', function () {
-
-        if (app()->environment() == 'production') {
-            return 'Sorry, this cannot be run on the production environment.';
-        }
-
-        return (new \App\Services\Calls\SchedulerService())->syncFamilialCalls();
-    });
-
-    Route::get('cleaner', function () {
-
-        if (app()->environment() == 'production') {
-            return 'Sorry, this cannot be run on the production environment.';
-        }
-
-        return (new \App\Services\Calls\SchedulerService())->removeScheduledCallsForWithdrawnAndPausedPatients();
-    });
-
-    Route::get('tuner', function () {
-
-        if (app()->environment() == 'production') {
-            return 'Sorry, this cannot be run on the production environment.';
-        }
-
-        return (new \App\Services\Calls\SchedulerService())->tuneScheduledCallsWithUpdatedCCMTime();
-    });
-
-    Route::get('rescheduler', function () {
-
-        if (app()->environment() == 'production') {
-            return 'Sorry, this cannot be run on the production environment.';
-        }
-
-        return (new \App\Algorithms\Calls\ReschedulerHandler())->handle();
-    });
-});
+//    Route::get('cleaner', function () {
+//
+//        if (app()->environment() == 'production') {
+//            return 'Sorry, this cannot be run on the production environment.';
+//        }
+//
+//        return (new \App\Services\Calls\SchedulerService())->removeScheduledCallsForWithdrawnAndPausedPatients();
+//    });
+//
+//    Route::get('tuner', function () {
+//
+//        if (app()->environment() == 'production') {
+//            return 'Sorry, this cannot be run on the production environment.';
+//        }
+//
+//        return (new \App\Services\Calls\SchedulerService())->tuneScheduledCallsWithUpdatedCCMTime();
+//    });
+//
+//    Route::get('rescheduler', function () {
+//
+//        if (app()->environment() == 'production') {
+//            return 'Sorry, this cannot be run on the production environment.';
+//        }
+//
+//        return (new \App\Algorithms\Calls\ReschedulerHandler())->handle();
+//    });
+//});
 
 
 Route::get('ajax/patients', 'UserController@getPatients');
@@ -107,13 +106,11 @@ Route::group([
 Route::group(['middleware' => 'auth'], function () {
 
     Route::get('cache/view/{key}', [
-        'as' => 'get.cached.vue.by.key',
+        'as' => 'get.cached.view.by.key',
         'uses' => 'Cache\UserCacheController@getCachedViewByKey',
     ]);
 
-    Route::get('jobs/completed', function(){
-        return view('admin.jobsCompleted.manage');
-    });
+    Route::view('jobs/completed','admin.jobsCompleted.manage');
 
     Route::get('download/{filePath}', [
         'uses' => 'DownloadController@file',
@@ -124,6 +121,8 @@ Route::group(['middleware' => 'auth'], function () {
      * API
      */
     Route::group(['prefix' => 'api'], function () {
+        Route::get('practices/all', 'API\PracticeController@allPracticesWithLocationsAndStaff');
+
         Route::group(['prefix' => 'admin'], function () {
             Route::resource('calls', 'API\Admin\CallsController');
         });
@@ -221,14 +220,6 @@ Route::group(['middleware' => 'auth'], function () {
         'uses' => 'ImporterController@storeTrainingFeatures',
         'as'   => 'post.store.training.features',
     ]);
-
-    /****************************
-     * VUE CCD VIEWER
-     ****************************/
-    Route::get('vue', function () {
-        return view('CCDViewer.new-vuer');
-    });
-
 
     /**
      * CCD Importer Routes
@@ -541,30 +532,30 @@ Route::group(['middleware' => 'auth'], function () {
             'as'   => 'get.athena.ccdas',
         ]);
 
-        Route::get('nursecalls/{from}/{to}', function (
-            $from,
-            $to
-        ) {
-
-            $nurses = App\Nurse::all();
-            $data = [];
-            $total = 0;
-
-            foreach ($nurses as $nurse) {
-                $data[$nurse->user->fullName] = (new \App\Billing\NurseMonthlyBillGenerator(
-                    $nurse,
-                    \Carbon\Carbon::now()->subMonths($from),
-                    \Carbon\Carbon::now()->subMonths($to),
-                    false
-                ))->getCallsPerHourOverPeriod();
-
-                $total += $data[$nurse->user->fullName]['calls/hour'];
-            }
-
-            $data['AVERAGE'] = $total / $nurses->count();
-
-            return $data;
-        });
+//        Route::get('nursecalls/{from}/{to}', function (
+//            $from,
+//            $to
+//        ) {
+//
+//            $nurses = App\Nurse::all();
+//            $data = [];
+//            $total = 0;
+//
+//            foreach ($nurses as $nurse) {
+//                $data[$nurse->user->fullName] = (new \App\Billing\NurseMonthlyBillGenerator(
+//                    $nurse,
+//                    \Carbon\Carbon::now()->subMonths($from),
+//                    \Carbon\Carbon::now()->subMonths($to),
+//                    false
+//                ))->getCallsPerHourOverPeriod();
+//
+//                $total += $data[$nurse->user->fullName]['calls/hour'];
+//            }
+//
+//            $data['AVERAGE'] = $total / $nurses->count();
+//
+//            return $data;
+//        });
 
         /**
          * LOGGER
@@ -810,32 +801,6 @@ Route::group(['middleware' => 'auth'], function () {
                 'uses' => 'AlgoController@computeMock',
                 'as'   => 'algo.mock.compute',
             ]);
-        });
-
-        Route::get('emr-direct/check', function () {
-            (new \App\Services\PhiMail\PhiMail())->receive();
-        });
-
-        Route::get('dupes', function () {
-            $results = DB::select(DB::raw("
-                SELECT *
-                FROM lv_activities
-                WHERE performed_at != '0000-00-00 00:00:00'
-                AND performed_at > '2016-04-30'
-                /*AND duration != '0'*/
-                AND provider_id != '1877'
-                /*group by concat(performed_at, provider_id)
-                having count(*) >= 2 */"));
-            $a = 0;
-            foreach ($results as $result) {
-                echo $result->id .
-                    ' - ' . $result->provider_id .
-                    ' - ' . $result->performed_at .
-                    '<br /><br />';
-                $a++;
-            }
-            echo "TOTAL:" . $a;
-            dd('done');
         });
 
         // excel reports

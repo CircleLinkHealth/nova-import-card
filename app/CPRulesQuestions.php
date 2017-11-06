@@ -3,6 +3,30 @@
 use App\Services\MsgUI;
 use Illuminate\Database\Eloquent\Model;
 
+/**
+ * App\CPRulesQuestions
+ *
+ * @property int $qid
+ * @property string $msg_id
+ * @property string|null $qtype
+ * @property string|null $obs_key
+ * @property string|null $description
+ * @property string $icon
+ * @property string $category
+ * @property-read \Illuminate\Database\Eloquent\Collection|\App\CareItem[] $careItems
+ * @property-read mixed $msg_id_and_obs_key
+ * @property-read \Illuminate\Database\Eloquent\Collection|\App\Observation[] $observations
+ * @property-read \Illuminate\Database\Eloquent\Collection|\App\CPRulesQuestionSets[] $questionSets
+ * @property-read \Illuminate\Database\Eloquent\Collection|\App\CPRulesItem[] $rulesItems
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\CPRulesQuestions whereCategory($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\CPRulesQuestions whereDescription($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\CPRulesQuestions whereIcon($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\CPRulesQuestions whereMsgId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\CPRulesQuestions whereObsKey($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\CPRulesQuestions whereQid($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\CPRulesQuestions whereQtype($value)
+ * @mixin \Eloquent
+ */
 class CPRulesQuestions extends \App\BaseModel
 {
 

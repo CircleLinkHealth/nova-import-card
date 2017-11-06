@@ -19,7 +19,7 @@ class HistoricBillingProviderPredictor extends BaseHistoricPredictor implements 
     public function predict()
     {
         $custodianPredictions = $this->custodianLookup('billing_provider_id');
-        $providersPredictions = $this->providersLookup('billing_provider_id', 5);
+        $providersPredictions = $this->providersLookup('billing_provider_id', 10000);
         $addressesPredictions = $this->addressesLookup('billing_provider_id', 2);
 
         return $this->makePrediction(

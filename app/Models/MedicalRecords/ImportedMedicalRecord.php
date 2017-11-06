@@ -17,6 +17,44 @@ use App\User;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
+/**
+ * App\Models\MedicalRecords\ImportedMedicalRecord
+ *
+ * @property int $id
+ * @property int|null $patient_id
+ * @property string $medical_record_type
+ * @property int $medical_record_id
+ * @property int|null $billing_provider_id
+ * @property int|null $location_id
+ * @property int|null $practice_id
+ * @property \Carbon\Carbon|null $created_at
+ * @property \Carbon\Carbon|null $updated_at
+ * @property string|null $deleted_at
+ * @property-read \Illuminate\Database\Eloquent\Collection|\App\Importer\Models\ImportedItems\AllergyImport[] $allergies
+ * @property-read \App\User|null $billingProvider
+ * @property-read \App\Importer\Models\ImportedItems\DemographicsImport $demographics
+ * @property-read \App\Location|null $location
+ * @property-read \Illuminate\Database\Eloquent\Collection|\App\Importer\Models\ImportedItems\MedicationImport[] $medications
+ * @property-read \App\Practice|null $practice
+ * @property-read \Illuminate\Database\Eloquent\Collection|\App\Importer\Models\ImportedItems\ProblemImport[] $problems
+ * @method static bool|null forceDelete()
+ * @method static \Illuminate\Database\Query\Builder|\App\Models\MedicalRecords\ImportedMedicalRecord onlyTrashed()
+ * @method static bool|null restore()
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\MedicalRecords\ImportedMedicalRecord whereBillingProviderId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\MedicalRecords\ImportedMedicalRecord whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\MedicalRecords\ImportedMedicalRecord whereDeletedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\MedicalRecords\ImportedMedicalRecord whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\MedicalRecords\ImportedMedicalRecord whereLocationId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\MedicalRecords\ImportedMedicalRecord whereMedicalRecordId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\MedicalRecords\ImportedMedicalRecord whereMedicalRecordType($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\MedicalRecords\ImportedMedicalRecord wherePatientId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\MedicalRecords\ImportedMedicalRecord wherePracticeId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\MedicalRecords\ImportedMedicalRecord whereUpdatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\MedicalRecords\ImportedMedicalRecord withMedicalRecord($id, $type = 'App\Models\MedicalRecords\Ccda')
+ * @method static \Illuminate\Database\Query\Builder|\App\Models\MedicalRecords\ImportedMedicalRecord withTrashed()
+ * @method static \Illuminate\Database\Query\Builder|\App\Models\MedicalRecords\ImportedMedicalRecord withoutTrashed()
+ * @mixin \Eloquent
+ */
 class ImportedMedicalRecord extends \App\BaseModel implements ImportedMedicalRecordInterface
 {
     use MedicalRecordIdAndTypeTrait,

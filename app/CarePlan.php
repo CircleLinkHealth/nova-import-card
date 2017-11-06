@@ -8,6 +8,41 @@ use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\App;
 
+/**
+ * App\CarePlan
+ *
+ * @property int $id
+ * @property string $mode
+ * @property int $user_id
+ * @property int|null $provider_approver_id
+ * @property int|null $qa_approver_id
+ * @property int $care_plan_template_id
+ * @property string $type
+ * @property string $status
+ * @property \Carbon\Carbon $qa_date
+ * @property \Carbon\Carbon $provider_date
+ * @property string|null $last_printed
+ * @property \Carbon\Carbon $created_at
+ * @property \Carbon\Carbon $updated_at
+ * @property-read \App\CarePlanTemplate $carePlanTemplate
+ * @property-read \App\User $patient
+ * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\Pdf[] $pdfs
+ * @property-read \App\User|null $providerApproverUser
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\CarePlan whereCarePlanTemplateId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\CarePlan whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\CarePlan whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\CarePlan whereLastPrinted($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\CarePlan whereMode($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\CarePlan whereProviderApproverId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\CarePlan whereProviderDate($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\CarePlan whereQaApproverId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\CarePlan whereQaDate($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\CarePlan whereStatus($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\CarePlan whereType($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\CarePlan whereUpdatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\CarePlan whereUserId($value)
+ * @mixin \Eloquent
+ */
 class CarePlan extends \App\BaseModel implements PdfReport
 {
     use PdfReportTrait;
@@ -88,12 +123,6 @@ class CarePlan extends \App\BaseModel implements PdfReport
     public function patient()
     {
         return $this->belongsTo(User::class, 'user_id');
-    }
-
-    public function getCarePlanTemplateIdAttribute()
-    {
-        //@todo: pretty sure that's not the way it's done. come back here later
-        return $this->attributes['care_plan_template_id'];
     }
 
     public function providerApproverUser()

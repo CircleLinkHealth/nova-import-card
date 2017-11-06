@@ -464,7 +464,7 @@ class CarePlanHelper
         $this->carePlan = CarePlan::updateOrCreate([
             'user_id' => $this->user->id,
         ], [
-            'care_plan_template_id' => $this->user->service()->firstOrDefaultCarePlan($this->user)->getCarePlanTemplateIdAttribute(),
+            'care_plan_template_id' => $this->user->service()->firstOrDefaultCarePlan($this->user)->care_plan_template_id,
             'status'                => 'draft',
         ]);
 
