@@ -16,9 +16,9 @@ class PatientContactWindows extends Resource
     public function toArray($request)
     {
         return [
-            'day_of_week'       => 1,
-            'window_time_start' => '09:00:00',
-            'window_time_end'   => '17:00:00',
+            'day_of_week'       => $this->day_of_week,
+            'window_time_start' => $this->window_time_start,
+            'window_time_end'   => $this->window_time_end,
         ];
     }
 }
