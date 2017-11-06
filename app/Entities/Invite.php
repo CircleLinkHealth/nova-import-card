@@ -9,7 +9,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 use Prettus\Repository\Contracts\Transformable;
 use Prettus\Repository\Traits\TransformableTrait;
 
-class Invite extends Model implements Transformable
+class Invite extends \App\BaseModel implements Transformable
 {
     use SoftDeletes, TransformableTrait;
 
@@ -39,5 +39,4 @@ class Invite extends Model implements Transformable
     {
         return $this->belongsTo(Role::class);
     }
-
 }

@@ -29,7 +29,6 @@ abstract class BaseImporter implements SectionImporter
     public function chooseValidator(ItemLog $item)
     {
         foreach ($this->validators() as $className) {
-
             $validator = app($className);
 
             if ($validator->shouldValidate($item)) {
@@ -45,7 +44,7 @@ abstract class BaseImporter implements SectionImporter
      */
     public function validators() : array
     {
-        return \Config::get('importer')['validators'];
+        return \config('importer')['validators'];
     }
 
     abstract public function import(

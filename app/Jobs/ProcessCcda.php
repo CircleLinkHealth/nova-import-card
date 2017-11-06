@@ -35,35 +35,30 @@ class ProcessCcda implements ShouldQueue
     {
         $ccda = $this->ccda;
 
-        $json = !empty($ccda->json)
-            ? $ccda->json
-            : (new CCDImporterRepository())->toJson($ccda->xml);
+        $json = $ccda->bluebuttonJson();
 
-        if ($json) {
-            $ccda->json = $json;
-
-            $decoded = json_decode($json);
-
-            if ($decoded) {
-                $ccda->mrn = $decoded->demographics->mrn_number;
-
-                if (array_key_exists(0, $decoded->document->documentation_of)) {
-                    $provider = (new CcdToLogTranformer())->provider($decoded->document->documentation_of[0]);
-                    $ccda->referring_provider_name = "{$provider['first_name']} {$provider['last_name']}";
-                }
-
-                $ccda->date = Carbon::parse($decoded->document->date)->toDateTimeString();
-            }
-
-            $ccda->save();
+        if (!$json) {
+            return;
         }
+
+        $ccda->mrn = $json->demographics->mrn_number;
+
+        if (array_key_exists(0, $json->document->documentation_of)) {
+            $provider = (new CcdToLogTranformer())->provider($json->document->documentation_of[0]);
+            $ccda->referring_provider_name = "{$provider['first_name']} {$provider['last_name']}";
+        }
+
+        $ccda->date = Carbon::parse($json->document->date)->toDateTimeString();
+
+        $ccda->save();
 
         $this->handleDuplicateCcdas($ccda);
     }
 
     public function handleDuplicateCcdas(Ccda $ccda)
     {
-        $duplicates = Ccda::where('mrn', '=', $ccda->mrn)
+        $duplicates = Ccda::withTrashed()
+            ->where('mrn', '=', $ccda->mrn)
             ->get(['id', 'date'])
             ->sortByDesc(function ($ccda) {
                 return $ccda->date;
@@ -72,11 +67,18 @@ class ProcessCcda implements ShouldQueue
         $keep = $duplicates->first();
 
         foreach ($duplicates as $dup) {
+            if ($dup->status && $dup->status != Ccda::DETERMINE_ENROLLEMENT_ELIGIBILITY) {
+                $status = $dup->status;
+            }
+
             if ($dup->id == $keep->id) {
                 continue;
             }
 
             $dup->delete();
         }
+
+        $keep->status = $status ?? Ccda::DETERMINE_ENROLLEMENT_ELIGIBILITY;
+        $keep->save();
     }
 }

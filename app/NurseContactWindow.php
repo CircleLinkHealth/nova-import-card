@@ -6,7 +6,7 @@ use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
-class NurseContactWindow extends Model
+class NurseContactWindow extends \App\BaseModel
 {
     use SoftDeletes;
 
@@ -95,7 +95,8 @@ class NurseContactWindow extends Model
      *
      * @return \stdClass
      */
-    public function range() {
+    public function range()
+    {
         $object = new \stdClass();
 
         $object->start = Carbon::parse($this->window_time_start);

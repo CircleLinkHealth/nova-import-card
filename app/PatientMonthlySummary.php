@@ -5,7 +5,7 @@ namespace App;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
 
-class PatientMonthlySummary extends Model
+class PatientMonthlySummary extends \App\BaseModel
 {
 
     protected $table = 'patient_monthly_summaries';
@@ -37,7 +37,7 @@ class PatientMonthlySummary extends Model
 
         // get record for month
         $day_start = Carbon::parse(Carbon::now()->firstOfMonth())->format('Y-m-d');
-        $record = $patient->patientSummaries()->where('month_year', $day_start)->first();
+        $record = $patient->monthlySummaries()->where('month_year', $day_start)->first();
 
         // set increment var
         $successful_call_increment = 0;
@@ -67,7 +67,6 @@ class PatientMonthlySummary extends Model
         }
 
         return $record;
-
     }
 
     //updates Call info for patient
@@ -80,7 +79,7 @@ class PatientMonthlySummary extends Model
 
         // get record for month
         $day_start = Carbon::parse(Carbon::now()->firstOfMonth())->format('Y-m-d');
-        $record = $patient->patientSummaries()->where('month_year', $day_start)->first();
+        $record = $patient->monthlySummaries()->where('month_year', $day_start)->first();
 
         //Detemine whether to add to record or not
         if (!$record) {
@@ -97,7 +96,6 @@ class PatientMonthlySummary extends Model
         }
 
         return $record;
-
     }
 
     public function patient_info()
@@ -114,14 +112,12 @@ class PatientMonthlySummary extends Model
     {
 
         return $q->whereMonthYear(Carbon::now()->firstOfMonth()->toDateString());
-
     }
 
     public function scopeGetForMonth($q, Carbon $month)
     {
 
         return $q->whereMonthYear(Carbon::parse($month)->firstOfMonth()->toDateString());
-
     }
 
 
@@ -141,21 +137,18 @@ class PatientMonthlySummary extends Model
         $count = 0;
 
         foreach ($patients as $p) {
-
             if (Activity::totalTimeForPatientForMonth($p->patientInfo, $month, false) > 1199) {
                 $count++;
             }
-
         }
 
         return $count;
-
     }
 
     public static function getPatientQACountForPracticeForMonth(
         Practice $practice,
         Carbon $month
-    ){
+    ) {
 
         $patients = User::where('program_id', $practice->id)
             ->whereHas('roles', function ($q) {
@@ -167,13 +160,10 @@ class PatientMonthlySummary extends Model
         $count['rejected'] = 0;
 
         foreach ($patients as $p) {
-
             $ccm = Activity::totalTimeForPatientForMonth($p->patientInfo, $month, false) ;
 
             if ($ccm < 1200) {
-
                 continue;
-
             }
 
             $report = PatientMonthlySummary::where('month_year', $month->firstOfMonth()->toDateString())
@@ -191,22 +181,15 @@ class PatientMonthlySummary extends Model
                 || ($report->billable_problem1 == '');
 
             if (($report->rejected == 0 && $report->approved == 0) || $emptyProblemOrCode) {
-
                 $count['toQA'] += 1;
-
             } else if ($report->rejected == 1) {
-
                 $count['rejected'] += 1;
-
             } else if ($report->approved == 1) {
-
                 $count['approved'] += 1;
-
             }
         }
 
         return $count;
-
     }
 
     public function createCallReportsForCurrentMonth()
@@ -215,7 +198,6 @@ class PatientMonthlySummary extends Model
         $patients = Patient::all();
 
         foreach ($patients as $patient) {
-
             $day_start = Carbon::parse(Carbon::now()->firstOfMonth()->format('Y-m-d'));
 
             PatientMonthlySummary::create([
@@ -245,7 +227,7 @@ class PatientMonthlySummary extends Model
             ->where('created_at', '>=', $day_end)->count();
 
         $no_of_successful_calls = Call::where('status', 'reached')->where(function ($q) use
-        (
+            (
             $patient
         ) {
             $q->where('outbound_cpm_id', $patient->id)
@@ -264,7 +246,5 @@ class PatientMonthlySummary extends Model
         } else {
             //dd('no report');
         }
-
-
     }
 }

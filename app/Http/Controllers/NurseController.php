@@ -3,9 +3,8 @@
 namespace App\Http\Controllers;
 
 use App\Activity;
-use App\Billing\NurseMonthlyBillGenerator;
+use App\Jobs\GenerateNurseInvoice;
 use App\Mail\NurseInvoiceMailer;
-use App\Nurse;
 use App\PageTimer;
 use App\User;
 use Carbon\Carbon;
@@ -21,12 +20,12 @@ class NurseController extends Controller
 
         $nurses = activeNurseNames();
 
-        return view('billing.nurse.create',
+        return view(
+            'billing.nurse.create',
             [
                 'nurses' => $nurses->sort(),
             ]
         );
-
     }
 
     public function generateInvoice(Request $request)
@@ -34,7 +33,7 @@ class NurseController extends Controller
 
         $input = $request->input();
 
-        $nurses = $request->input('nurses');
+        $nurseIds = $request->input('nurses');
 
         $addTime = $request->input('manual_time')
             ? $request->input('manual_time')
@@ -47,36 +46,15 @@ class NurseController extends Controller
         $variablePay = isset($input['alternative_pay']);
 
         if ($request->input('submit') == 'download') {
-
             $links = [];
 
             $startDate = Carbon::parse($request->input('start_date'));
             $endDate = Carbon::parse($request->input('end_date'));
 
-            foreach ($nurses as $nurse) {
-
-                $nurse = Nurse::where('user_id', $nurse)->first();
-
-                $generator = (new NurseMonthlyBillGenerator($nurse, $startDate, $endDate, $variablePay, $addTime,
-                    $addNotes))
-//                    ->formatItemizedActivities();
-                    ->handle();
-
-                $data[] = $generator;
-
-                $links[$nurse->user_id]['link'] = $generator['link'];
-                $links[$nurse->user_id]['name'] = $generator['name'];
-
-            }
-
-            return view('billing.nurse.list',
-                [
-                    'invoices' => $links,
-                    'data'     => $data,
-                    'month'    => Carbon::parse($startDate)->format('F'),
-                ]
-            );
+            dispatch((new GenerateNurseInvoice($nurseIds, $startDate, $endDate, auth()->user()->id, $variablePay, $addTime, $addNotes)));
         }
+
+        return "Waldo is working on compiling the reports you requested. <br> Give it a minute, and then head to " . link_to('/jobs/completed') . " and refresh frantically to see a link to the report you requested.";
     }
 
     public function sendInvoice(Request $request)
@@ -86,13 +64,11 @@ class NurseController extends Controller
         $month = $request->input('month');
 
         foreach ($invoices as $key => $value) {
-
             $value = (array)$value;
 
             $user = User::find($key);
 
             Mail::to($user)->send(new NurseInvoiceMailer($key, $value['link'], $month));
-
         }
 
         return redirect()->route('admin.reports.nurse.invoice')->with(['success' => 'yes']);
@@ -102,7 +78,6 @@ class NurseController extends Controller
     {
 
         return view('admin.reports.nursedaily');
-
     }
 
     public function dailyReport()
@@ -115,7 +90,6 @@ class NurseController extends Controller
         $i = 0;
 
         foreach ($nurse_users as $nurse) {
-
             $nurses[$i]['id'] = $nurse;
             $nurses[$i]['name'] = $nurse->fullName;
 
@@ -128,7 +102,6 @@ class NurseController extends Controller
                 $nurses[$i]['Time Since Last Activity'] = 'N/A';
             } else {
                 $nurses[$i]['Time Since Last Activity'] = Carbon::parse($last_activity_date[0]->last_activity)->diffForHumans();
-
             }
 
             $nurses[$i]['# Scheduled Calls Today'] = $nurse->nurseInfo->countScheduledCallsForToday();
@@ -159,11 +132,8 @@ class NurseController extends Controller
             $nurses[$i]['lessThan20MinsAgo'] = false;
 
             if ($last_activity_date == null) {
-
                 $nurses[$i]['last_activity'] = 'N/A';
-
             } else {
-
                 $carbon_last_act = Carbon::parse($last_activity_date[0]->last_activity);
                 $nurses[$i]['last_activity'] = $carbon_last_act->toDateTimeString();
 
@@ -179,14 +149,12 @@ class NurseController extends Controller
             }
 
             $i++;
-
         }
 
         $nurses = collect($nurses);
         $nurses->sortBy('last_activity');
 
         return Datatables::collection($nurses)->make(true);
-
     }
 
     public function makeHourlyStatistics()
@@ -198,7 +166,6 @@ class NurseController extends Controller
 //            ->nurseCallsPerHour();
 
         return view('statistics.nurses.info');
-
     }
 
     public function monthlyOverview(Request $request)
@@ -207,20 +174,14 @@ class NurseController extends Controller
         $input = $request->input();
 
         if (isset($input['next'])) {
-
             $dayCounter = Carbon::parse($input['next'])->firstOfMonth()->startOfDay();
             $last = Carbon::parse($input['next'])->lastOfMonth()->endOfDay();
-
         } elseif (isset($input['previous'])) {
-
             $dayCounter = Carbon::parse($input['previous'])->firstOfMonth()->startOfDay();
             $last = Carbon::parse($input['previous'])->lastOfMonth()->endOfDay();
-
         } else {
-
             $dayCounter = Carbon::now()->firstOfMonth()->startOfDay();
             $last = Carbon::now()->lastOfMonth()->endOfDay();
-
         }
 
         $nurses = User::ofType('care-center')->where('access_disabled', 0)->get();
@@ -228,9 +189,7 @@ class NurseController extends Controller
 
 
         while ($dayCounter->lte($last)) {
-
             foreach ($nurses as $nurse) {
-
                 if (!$nurse->nurseInfo) {
                     continue;
                 }
@@ -250,26 +209,18 @@ class NurseController extends Controller
                 }
 
                 if ($countMade > 0) {
-
                     $data[$formattedDate][$name]['Actual Made'] = $countMade;
-
                 } else {
-
                     $data[$formattedDate][$name]['Actual Made'] = 0;
-
                 }
-
             }
 
             $dayCounter = $dayCounter->addDays(1);
-
         }
 
         return view('admin.reports.allocation', [
             'data'  => $data,
             'month' => Carbon::parse($last),
         ]);
-
     }
-
 }

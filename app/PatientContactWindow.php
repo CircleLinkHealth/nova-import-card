@@ -3,7 +3,7 @@
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
 
-class PatientContactWindow extends Model
+class PatientContactWindow extends \App\BaseModel
 {
 
     protected $table = 'patient_contact_window';
@@ -26,9 +26,7 @@ class PatientContactWindow extends Model
 
         //If there are no contact windows, we just return the next day for now. @todo confirm logic
         if (!$patient_windows) {
-
             return Carbon::tomorrow()->toDateTimeString();
-
         }
 
         // leaving first blank to offset weird way of storing week as 1-7 instead of 0-6.
@@ -47,7 +45,6 @@ class PatientContactWindow extends Model
         $count = 0;
 
         foreach ($patient_windows as $window) {
-
             $carbon_date_start = Carbon::parse('next ' . $week[$window->day_of_week]);
             $carbon_date_end = Carbon::parse('next ' . $week[$window->day_of_week]);
 
@@ -70,7 +67,6 @@ class PatientContactWindow extends Model
         //current solution to double the number of windows, add a week and give more options. @todo refactor
 
         foreach ($patient_windows as $window) {
-
             $carbon_date_start = Carbon::parse('next ' . $week[$window->day_of_week])->addWeek(1);
             $carbon_date_end = Carbon::parse('next ' . $week[$window->day_of_week])->addWeek(1);
 
@@ -90,7 +86,6 @@ class PatientContactWindow extends Model
         }
 
         return collect($windows)->sort()->toArray();
-
     }
 
     // END RELATIONSHIPS
@@ -109,7 +104,6 @@ class PatientContactWindow extends Model
 
         //If there are no contact windows, we just the same day. @todo confirm logic
         if (!$patient_windows) {
-
             $carbon_date_start = Carbon::parse($offset_date);
             $carbon_date_end = Carbon::parse($offset_date);
 
@@ -120,7 +114,6 @@ class PatientContactWindow extends Model
             $windows[0]['window_end'] = $carbon_date_end->toDateTimeString();
 
             return collect($windows);
-
         }
 
         // leaving first blank to offset weird way of storing week as 1-7 instead of 0-6.
@@ -149,24 +142,18 @@ class PatientContactWindow extends Model
         $weeks_range = 2;
 
         for ($i = 0; $i < $weeks_range; $i++) {
-
             //add windows for each week needed.
 
             foreach ($patient_windows as $window) {
-
                 //the first date should include the target date, so we backtrack one day
                 //and see whether the date is a window.
 
                 if ($i == 0) {
-
                     $carbon_date_start = Carbon::parse($offset_date)->subDay()->next($week[$window->day_of_week]);
                     $carbon_date_end = Carbon::parse($offset_date)->subDay()->next($week[$window->day_of_week]);
-
                 } else {
-
                     $carbon_date_start = Carbon::parse($offset_date)->addWeek($i)->next($week[$window->day_of_week]);
                     $carbon_date_end = Carbon::parse($offset_date)->addWeek($i)->next($week[$window->day_of_week]);
-
                 }
 
                 $carbon_hour_start = Carbon::parse($window->window_time_start)->format('H');
@@ -182,11 +169,9 @@ class PatientContactWindow extends Model
                 $windows[$count]['window_end'] = $carbon_date_end->toDateTimeString();
                 $count++;
             }
-
         }
 
         return collect($windows)->sort();
-
     }
 
     //Returns Array with each element containing a start_window_time and an end_window_time in dateString format
@@ -254,9 +239,7 @@ class PatientContactWindow extends Model
 
         //If there are no contact windows, we just return the next day for now. @todo confirm logic
         if (!$patient_windows) {
-
             return Carbon::tomorrow()->toDateTimeString();
-
         }
 
         // leaving first blank to offset weird way of storing week as 1-7 instead of 0-6.
@@ -275,7 +258,6 @@ class PatientContactWindow extends Model
         $min_date = Carbon::maxValue();
 
         foreach ($patient_windows as $window) {
-
             $carbon_date = Carbon::parse('next ' . $week[$window->day_of_week]);
 
             $carbon_hour = Carbon::parse($window->window_time_start)->format('H');
@@ -285,7 +267,6 @@ class PatientContactWindow extends Model
             $date_string = $carbon_date->toDateTimeString();
 
             if ($min_date > $date_string) {
-
                 $min_date = $date_string;
                 $min_date_carbon = $date_string;
                 $closest_window = $window;
@@ -299,7 +280,6 @@ class PatientContactWindow extends Model
             'window_end'   => Carbon::parse($closest_window->window_time_end)->format('H:i'),
 
         ];
-
     }
 
     public function getEarliestWindowForPatientFromDate(
@@ -312,7 +292,6 @@ class PatientContactWindow extends Model
 
         //If no contact window, just return the same date.
         if ($patient_windows->count() == 0) {
-
             //to make sure the day returned is a weekday for calls.
             while (!$offset_date->isWeekday()) {
                 $offset_date->addDay();
@@ -327,15 +306,12 @@ class PatientContactWindow extends Model
                 'window_end'   => Carbon::parse('17:00:00')->format('H:i'),
 
             ];
-
         }
 
         $adjusted_offset = Carbon::parse($offset_date)->subDay()->toDateString();
 
         foreach ($patient_windows as $window) {
-
             $days[] = Carbon::parse($adjusted_offset)->next(clhToCarbonDayOfWeek($window->day_of_week));
-
         }
 
         $date = min($days)->toDateString();
@@ -349,6 +325,5 @@ class PatientContactWindow extends Model
         ];
 
         // we sub one day to check whether the offset day is an option.
-
     }
 }

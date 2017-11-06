@@ -3,16 +3,10 @@
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
-class ActivityMeta extends Model {
+class ActivityMeta extends \App\BaseModel
+{
 
     use SoftDeletes;
-
-    /**
-     * The connection name for the model.
-     *
-     * @var string
-     */
-    protected $connection = 'mysql_no_prefix';
 
     /**
      * The database table used by the model.
@@ -34,7 +28,4 @@ class ActivityMeta extends Model {
     {
         return $this->belongsTo('App\Activity');
     }
-
-
-
 }

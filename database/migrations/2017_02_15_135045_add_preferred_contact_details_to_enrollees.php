@@ -17,7 +17,6 @@ class AddPreferredContactDetailsToEnrollees extends Migration
 
             $table->string('preferred_days')->after('attempt_count')->nullable();
             $table->string('preferred_window')->after('preferred_days')->nullable();
-
         });
     }
 
@@ -32,7 +31,6 @@ class AddPreferredContactDetailsToEnrollees extends Migration
 
             $table->dropColumn('preferred_days');
             $table->dropColumn('preferred_window');
-
         });
     }
 }

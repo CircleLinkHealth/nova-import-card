@@ -7,7 +7,7 @@ use App\CLH\Helpers\StringManipulation;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
 
-class Enrollee extends Model
+class Enrollee extends \App\BaseModel
 {
     /**
      * status = eligible
@@ -99,42 +99,36 @@ class Enrollee extends Model
     {
 
         return $this->belongsTo(User::class, 'user_id');
-
     }
 
     public function provider()
     {
 
         return $this->belongsTo(User::class, 'provider_id');
-
     }
 
     public function careAmbassador()
     {
 
         return $this->belongsTo(CareAmbassador::class, 'care_ambassador_id');
-
     }
 
     public function practice()
     {
 
         return $this->belongsTo(Practice::class, 'practice_id');
-
     }
 
     public function getProviderFullNameAttribute()
     {
 
         return $this->provider->fullName ?? null;
-
     }
 
     public function getPracticeNameAttribute()
     {
 
         return $this->practice->display_name ?? null;
-
     }
 
     public function sendEnrollmentConsentSMS()
@@ -144,8 +138,10 @@ class Enrollee extends Model
         $link = url("join/$this->invite_code");
         $provider_name = User::find($this->provider_id)->fullName;
 
-        $twilio->message($this->primary_phone,
-            "Dr. $provider_name has invited you to their new wellness program! Please enroll here: $link");
+        $twilio->message(
+            $this->primary_phone,
+            "Dr. $provider_name has invited you to their new wellness program! Please enroll here: $link"
+        );
     }
 
     /**
@@ -227,10 +223,10 @@ class Enrollee extends Model
 
         $provider_name = User::find($this->provider_id)->fullName;
 
-        $twilio->message($this->primary_phone,
-            "Dr. $provider_name hasn’t heard from you regarding their new wellness program $emjo. Please enroll here: $link");
-
-
+        $twilio->message(
+            $this->primary_phone,
+            "Dr. $provider_name hasn’t heard from you regarding their new wellness program $emjo. Please enroll here: $link"
+        );
     }
 
     public function scopeToSMS($query)
@@ -239,7 +235,6 @@ class Enrollee extends Model
         return $query
             ->where('status', self::TO_SMS)
             ->whereNotNull('cell_phone');
-
     }
 
     public function scopeToCall($query)
@@ -247,7 +242,5 @@ class Enrollee extends Model
         //@todo add check for where phones are not all null
 
         return $query->where('status', self::TO_CALL);
-
     }
-
 }

@@ -29,15 +29,12 @@ class PopulateTwilioSMSToPractices extends Seeder
         ];
 
         foreach ($practicesToSendTo as $key => $value) {
-
             $practice = Practice::whereName($key)->first();
 
             if ($practice != null) {
                 $practice->outgoing_phone_number = $value;
                 $practice->save();
             }
-
         }
-
     }
 }

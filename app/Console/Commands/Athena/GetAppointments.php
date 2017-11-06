@@ -52,7 +52,6 @@ class GetAppointments extends Command
         $startDate = $endDate->copy()->subWeeks(2);
 
         foreach ($vendors as $vendor) {
-
             if (app()->environment('worker')) {
                 sendSlackMessage('#background-tasks', "Getting appointments for vendor: {$vendor->vendor_name}. \n");
             }

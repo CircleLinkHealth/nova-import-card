@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 use Prettus\Repository\Contracts\Transformable;
 use Prettus\Repository\Traits\TransformableTrait;
 
-class DemographicsImport extends Model implements Transformable
+class DemographicsImport extends \App\BaseModel implements Transformable
 {
     use BelongsToCcda,
         TransformableTrait;
@@ -52,5 +52,4 @@ class DemographicsImport extends Model implements Transformable
     {
         return $this->belongsTo(User::class, 'provider_id');
     }
-
 }

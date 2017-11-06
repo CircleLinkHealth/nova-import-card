@@ -72,9 +72,5 @@ class AthenaApiController extends Controller
         }
 
         return count($imported) . " CCDs were imported. To finish the importing process go to:  " . link_to_route('view.files.ready.to.import');
-
-
     }
 }
-
-

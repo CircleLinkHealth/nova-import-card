@@ -8,7 +8,7 @@ use App\Models\CPM\CpmProblem;
 use App\Models\CPM\CpmSymptom;
 use Illuminate\Database\Eloquent\Model;
 
-class CarePlanTemplate extends Model
+class CarePlanTemplate extends \App\BaseModel
 {
     protected $fillable = ['program_id', 'display_name', 'type'];
 
@@ -128,7 +128,6 @@ class CarePlanTemplate extends Model
         }
 
         foreach ($relationship as $rel) {
-
             if (!method_exists($this, $rel)) {
                 throw new \Exception("Relationship `$rel` does not exist.");
             }

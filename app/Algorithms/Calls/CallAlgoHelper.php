@@ -8,7 +8,6 @@
 
 namespace App\Algorithms\Calls;
 
-
 use App\Call;
 use App\Nurse;
 use App\PatientContactWindow;
@@ -21,19 +20,17 @@ trait CallAlgoHelper
     {
 
         if ($this->attemptNote != 'Call This Weekend') {
-
             //this will give us the first available call window from the date the logic offsets, per the patient's preferred times.
-            $next_predicted_contact_window = (new PatientContactWindow)->getEarliestWindowForPatientFromDate($this->patient,
-                $this->nextCallDate);
-
+            $next_predicted_contact_window = (new PatientContactWindow)->getEarliestWindowForPatientFromDate(
+                $this->patient,
+                $this->nextCallDate
+            );
         } else {
-
             //This override is to schedule calls on weekends.
 
             $next_predicted_contact_window['day'] = $this->nextCallDate->next(Carbon::SATURDAY)->toDateString();
             $next_predicted_contact_window['window_start'] = '10:00:00';
             $next_predicted_contact_window['window_end'] = '17:00:00';
-
         }
 
         $this->prediction = [
@@ -65,14 +62,15 @@ trait CallAlgoHelper
         $s = $this->ccmTime % 60;
         $formattedMonthlyTime = sprintf("%02d:%02d:%02d", $H, $i, $s);
 
-        $successfulCallsThisMonth = Call::numberOfSuccessfulCallsForPatientForMonth($this->patient->user,
-            Carbon::now()->toDateTimeString());
+        $successfulCallsThisMonth = Call::numberOfSuccessfulCallsForPatientForMonth(
+            $this->patient->user,
+            Carbon::now()->toDateTimeString()
+        );
 
         $this->prediction['no_of_successful_calls'] = $successfulCallsThisMonth;
         $this->prediction['ccm_time_achieved'] = $ccm_time_achieved;
         $this->prediction['formatted_monthly_time'] = $formattedMonthlyTime;
         $this->prediction['attempt_note'] = '';
-
     }
 
     //exec function for window intersection checks
@@ -93,29 +91,21 @@ trait CallAlgoHelper
         $found = $this->checkNurseForTargetDays($this->nurse);
 
         if ($found != false) {
-
             $this->prediction['nurse'] = $found['nurse'];
             $this->prediction['date'] = $found['date'];
             $this->prediction['window_match'] = $found['window_match'];
 
             return $this->prediction;
-
-
         } else {
-
             $found = $this->checkAdditionalNurses();
 
-            if(!$found) {
-
+            if (!$found) {
                 $this->prediction['nurse'] = null;
                 $this->prediction['window_match'] = 'We didn\'t find a free nurse but will reassign patient name to a call soon!';
-
             }
 
             return $this->prediction;
-
         }
-
     }
 
     public function checkAdditionalNurses()
@@ -131,22 +121,17 @@ trait CallAlgoHelper
 
 
         foreach ($other_nurses as $nurse) {
-
             $found = $this->checkNurseForTargetDays($nurse);
 
             //will exit on first match, to prevent overwriting.
             if ($found != false) {
-
                 $this->prediction['nurse'] = $found['nurse'];
                 $this->prediction['date'] = $found['date'];
                 $this->prediction['window_match'] = $found['window_match'];
 
                 return true;
-
             }
-
         }
-
     }
 
     public function checkNurseForTargetDays(Nurse $nurse)
@@ -158,11 +143,8 @@ trait CallAlgoHelper
 
 
         foreach ($date_matches as $key => $value) {
-
             if (isset($value['patient']) && isset($value['nurse'])) {
-
                 if ($this->checkForIntersectingTimes($value['patient'], $value['nurse'])) {
-
                     $startWindow = Carbon::parse($value['patient']['window_start']);
                     $endWindow = Carbon::parse($value['patient']['window_end']);
 
@@ -174,9 +156,7 @@ trait CallAlgoHelper
                     $match['nurse'] = $nurse->user_id;
 
                     return $match;
-
                 }
-
             } else { // temp override
 
                 $match['date'] = $this->prediction['date'];
@@ -187,9 +167,7 @@ trait CallAlgoHelper
                 $match['nurse'] = $nurse->user_id;
 
                 return $match;
-
             }
-
         }
 
         //nurse has no windows
@@ -218,7 +196,6 @@ trait CallAlgoHelper
         $patientUpcomingWindows = PatientContactWindow::getNextWindowsForPatientFromDate($this->patient, $patientWindow['date']);
 
         foreach ($targetDays as $day) {
-
             $dayString = $day->toDateString();
 
             //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~//
@@ -229,43 +206,41 @@ trait CallAlgoHelper
                 $value,
                 $key
             ) use
-            ($dayString) {
+                ($dayString) {
 
                 //check whether any days fall in this window
                 return $value->date->toDateString() == $dayString;
-
             });
 
             if ($nurseWindow != null) {
-
-                $this->matchArray[$dayString]['nurse'] = clhWindowToTimestamps($nurseWindow['date'],
+                $this->matchArray[$dayString]['nurse'] = clhWindowToTimestamps(
+                    $nurseWindow['date'],
                     $nurseWindow['window_time_start'],
-                    $nurseWindow['window_time_end']);
+                    $nurseWindow['window_time_end']
+                );
             }
 
             //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~//
 
             //CHECK for patient window on target day
 
-            $patientWindow = $patientUpcomingWindows->filter(function ($value, $key) use
-            ($day) {
+            $patientWindow = $patientUpcomingWindows->filter(function (
+                $value,
+                $key
+            ) use
+                ($day) {
 
                 return Carbon::parse($value['window_start'])->toDateString() == $day->toDateString();
-
             })->first();
 
             if ($patientWindow != null) {
-
                 $this->matchArray[$dayString]['patient'] = $patientWindow;
-
             }
 
             //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~//
-
         }
 
         return $this->matchArray;
-
     }
 
     //for every day window-pair given for nurses and patients, this will return whether they intersect.
@@ -283,7 +258,5 @@ trait CallAlgoHelper
 
         //any overlap is true
         return ($patientStartCarbon < $nurseEndCarbon) && ($patientEndCarbon > $nurseStartCarbon);
-
     }
-
 }

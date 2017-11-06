@@ -2,16 +2,12 @@
 
 use Illuminate\Database\Eloquent\Model;
 
-class CPRulesUCP extends Model {
+class CPRulesUCP extends \App\BaseModel
+{
 
     public $timestamps = false;
 
-    /**
-     * The connection name for the model.
-     *
-     * @var string
-     */
-    protected $connection = 'mysql_no_prefix';
+
 
     /**
      * The database table used by the model.
@@ -56,12 +52,10 @@ class CPRulesUCP extends Model {
     {
         $rulesUCP = CPRulesUCP::where('user_id', '=', $userId)->get();
 
-        foreach ( $rulesUCP as $rules )
-        {
+        foreach ($rulesUCP as $rules) {
             $rules['item'] = $rules->item;
         }
 
         return $rulesUCP;
     }
-
 }

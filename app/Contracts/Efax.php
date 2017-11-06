@@ -8,7 +8,6 @@
 
 namespace App\Contracts;
 
-
 interface Efax
 {
     public function send(

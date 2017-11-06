@@ -30,5 +30,4 @@ class AddForeignKeysToCpmBiometricsTable extends Migration
             $table->dropForeign('cpm_biometrics_care_item_id_foreign');
         });
     }
-
 }

@@ -2,16 +2,8 @@
 
 use Illuminate\Database\Eloquent\Model;
 
-class CareItem extends Model
+class CareItem extends \App\BaseModel
 {
-
-    /**
-     * The connection name for the model.
-     *
-     * @var string
-     */
-    protected $connection = 'mysql_no_prefix';
-
     /**
      * The database table used by the model.
      *
@@ -86,5 +78,4 @@ class CareItem extends Model
     {
         return $this->pivot->meta_key;
     }
-
 }

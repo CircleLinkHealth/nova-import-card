@@ -1,13 +1,13 @@
 <?php namespace App\Models\MedicalRecords;
 
-
-use App\Contracts\Importer\MedicalRecord\MedicalRecord;
 use App\Contracts\Importer\MedicalRecord\MedicalRecordLogger;
 use App\Entities\CcdaRequest;
 use App\Importer\Loggers\Ccda\CcdaSectionsLogger;
 use App\Importer\MedicalRecordEloquent;
 use App\Traits\Relationships\BelongsToPatientUser;
 use App\User;
+use Cache;
+use GuzzleHttp\Client;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Prettus\Repository\Contracts\Transformable;
 use Prettus\Repository\Traits\TransformableTrait;
@@ -34,14 +34,14 @@ class Ccda extends MedicalRecordEloquent implements Transformable
     ];
 
     protected $dates = [
-        'date'
+        'date',
     ];
 
     protected $fillable = [
         'date',
         'mrn',
         'referring_provider_name',
-        'location_id'.
+        'location_id' .
         'practice_id',
         'billing_provider_id',
         'user_id',
@@ -77,7 +77,7 @@ class Ccda extends MedicalRecordEloquent implements Transformable
      *
      * @return MedicalRecordLogger
      */
-    public function getLogger() : MedicalRecordLogger
+    public function getLogger(): MedicalRecordLogger
     {
         return new CcdaSectionsLogger($this);
     }
@@ -87,7 +87,7 @@ class Ccda extends MedicalRecordEloquent implements Transformable
      *
      * @return User
      */
-    public function getPatient() : User
+    public function getPatient(): User
     {
         return $this->patient;
     }
@@ -95,12 +95,51 @@ class Ccda extends MedicalRecordEloquent implements Transformable
     /**
      * @return string
      */
-    public function getDocumentCustodian() : string
+    public function getDocumentCustodian(): string
     {
         if ($this->document->first()) {
             return $this->document->first()->custodian;
         }
 
         return '';
+    }
+
+    public function bluebuttonJson()
+    {
+        if (!$this->id && !$this->xml) {
+            return false;
+        }
+
+        $key = "ccda{$this->id}json";
+
+        return Cache::remember($key, 7000, function () {
+            if (!$this->json) {
+                $this->json = $this->parseToJson($this->xml);
+                $this->save();
+            }
+
+            return json_decode($this->json);
+        });
+    }
+
+    protected function parseToJson($xml)
+    {
+        $client = new Client([
+            'base_uri' => env('CCD_PARSER_BASE_URI', 'https://circlelink-ccd-parser.medstack.net'),
+        ]);
+
+        $response = $client->request('POST', '/ccda/parse', [
+            'headers' => ['Content-Type' => 'text/xml'],
+            'body'    => $xml,
+        ]);
+
+        if ($response->getStatusCode() != 200) {
+            return [
+                $response->getStatusCode(),
+                $response->getReasonPhrase(),
+            ];
+        }
+
+        return (string)$response->getBody();
     }
 }

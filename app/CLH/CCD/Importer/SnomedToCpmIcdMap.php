@@ -3,7 +3,7 @@
 use App\Models\CPM\CpmProblem;
 use Illuminate\Database\Eloquent\Model;
 
-class SnomedToCpmIcdMap extends Model
+class SnomedToCpmIcdMap extends \App\BaseModel
 {
     protected $guarded = [];
 
@@ -11,5 +11,4 @@ class SnomedToCpmIcdMap extends Model
     {
         return $this->belongsTo(CpmProblem::class);
     }
-
 }

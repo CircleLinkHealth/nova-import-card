@@ -35,5 +35,4 @@ class CreateLvRulesConditionsTable extends Migration
     {
         Schema::drop('lv_rules_conditions');
     }
-
 }

@@ -24,42 +24,42 @@ interface MedicalRecord
     /**
      * status: A record created for the purpose of determining whether the patient is eligible to be called for enrollment.
      */
-    CONST DETERMINE_ENROLLEMENT_ELIGIBILITY = 'determine_enrollement_eligibility';
+    const DETERMINE_ENROLLEMENT_ELIGIBILITY = 'determine_enrollement_eligibility';
 
     /**
      * status: The patient is eligible ot be called for enrollment.
      */
-    CONST ELIGIBLE = 'eligible';
+    const ELIGIBLE = 'eligible';
 
     /**
      * status: The patient is ineligible ot be called for enrollment.
      */
-    CONST INELIGIBLE = 'ineligible';
+    const INELIGIBLE = 'ineligible';
 
     /**
      * status: The patient has consented to enrolling to CCM.
      */
-    CONST PATIENT_CONSENTED = 'patient_consented';
+    const PATIENT_CONSENTED = 'patient_consented';
 
     /**
      * status: The patient has declined enrolling to CCM.
      */
-    CONST PATIENT_DECLINED = 'patient_declined';
+    const PATIENT_DECLINED = 'patient_declined';
 
     /**
      * status: The CCD is ready to be imported.
      */
-    CONST IMPORT = 'import';
+    const IMPORT = 'import';
 
     /**
      * status: The imported CCD is undergoing QA process.
      */
-    CONST QA = 'qa';
+    const QA = 'qa';
 
     /**
      * status: A careplan was created.
      */
-    CONST CAREPLAN_CREATED = 'careplan_created';
+    const CAREPLAN_CREATED = 'careplan_created';
 
     /**
      * Handles importing a MedicalRecord for QA.

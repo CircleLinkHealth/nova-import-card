@@ -43,24 +43,24 @@ class DemographicsImportRepositoryEloquent extends BaseRepository implements Dem
      * @param string $foreignSystem
      * @return mixed
      */
-    public function getPatientAndProviderIdsByLocationAndForeignSystem($locationId, $foreignSystem) {
+    public function getPatientAndProviderIdsByLocationAndForeignSystem($locationId, $foreignSystem)
+    {
         //Dynamically get all the tables' names since we'll probably change them soon
         $ccdaTable = ( new Ccda() )->getTable();
         $patientTable = ( new DemographicsImport() )->getTable();
         $foreignIdTable = ( new ForeignId() )->getTable();
 
-        $patientAndProviderIds = DemographicsImport::select( DB::raw( "$patientTable.mrn_number as patientId,
+        $patientAndProviderIds = DemographicsImport::select(DB::raw("$patientTable.mrn_number as patientId,
                 $ccdaTable.patient_id as clhPatientUserId,
                 $foreignIdTable.foreign_id as providerId,
-                $patientTable.provider_id as clhProviderUserId"
-        ) )
-            ->where( "$patientTable.location_id", $locationId )
-            ->join( $ccdaTable, "$ccdaTable.id", '=', "$patientTable.ccda_id" )
-            ->whereNotNull( "$ccdaTable.patient_id" )
-            ->join( $foreignIdTable, "$foreignIdTable.user_id", '=', "$patientTable.provider_id" )
-            ->where( "$foreignIdTable.system", '=', $foreignSystem )
-            ->where( "$foreignIdTable.location_id", '=', $locationId )
-            ->whereNotNull( "$foreignIdTable.foreign_id" )
+                $patientTable.provider_id as clhProviderUserId"))
+            ->where("$patientTable.location_id", $locationId)
+            ->join($ccdaTable, "$ccdaTable.id", '=', "$patientTable.ccda_id")
+            ->whereNotNull("$ccdaTable.patient_id")
+            ->join($foreignIdTable, "$foreignIdTable.user_id", '=', "$patientTable.provider_id")
+            ->where("$foreignIdTable.system", '=', $foreignSystem)
+            ->where("$foreignIdTable.location_id", '=', $locationId)
+            ->whereNotNull("$foreignIdTable.foreign_id")
             ->get();
 
         return $patientAndProviderIds;

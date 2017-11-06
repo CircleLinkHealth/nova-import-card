@@ -8,7 +8,6 @@
 
 namespace App\Services\PdfReports\Handlers;
 
-
 use App\Contracts\Efax;
 use App\Contracts\PdfReport;
 use App\Contracts\PdfReportHandler;

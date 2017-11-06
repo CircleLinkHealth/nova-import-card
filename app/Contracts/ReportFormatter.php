@@ -11,7 +11,7 @@ namespace App\Contracts;
 interface ReportFormatter
 {
     
-    /* 
+    /*
      * This Interface will be used to format reports for the CPM Frontend
      */
     
@@ -31,6 +31,4 @@ interface ReportFormatter
     //public function formatDataForPatientCarePlanPrintList();
 
     //public function formatDataForProgressReport();
-
-
 }

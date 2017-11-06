@@ -2,14 +2,10 @@
 
 use Illuminate\Database\Eloquent\Model;
 
-class Comment extends Model {
+class Comment extends \App\BaseModel
+{
 
-    /**
-     * The connection name for the model.
-     *
-     * @var string
-     */
-    protected $connection = 'mysql_no_prefix';
+
 
     /**
      * The database table used by the model.
@@ -44,9 +40,9 @@ class Comment extends Model {
         return $this->belongsTo('App\Observation', 'comment_ID');
     }
 
-    public function save(array $params = array())
+    public function save(array $params = [])
     {
-        if(empty($this->user_id)) {
+        if (empty($this->user_id)) {
             dd('user_id is required for comment');
         }
         $wpUser = User::find($this->user_id);
@@ -83,11 +79,11 @@ class Comment extends Model {
         // updating or inserting?
         /*
         if($this->id) {
-            DB::connection('mysql_no_prefix')->table('wp_' . $wpUser->primaryProgramId() . '_comments')->where('comment_ID', $this->legacy_comment_id)->update($params);
+            DB::table('wp_' . $wpUser->primaryProgramId() . '_comments')->where('comment_ID', $this->legacy_comment_id)->update($params);
         } else {
             // add to legacy if doesnt already exist
             if(empty($this->legacy_comment_id)) {
-                $resultCommentId = DB::connection('mysql_no_prefix')->table('wp_' . $wpUser->primaryProgramId() . '_comments')->insertGetId($params);
+                $resultCommentId = DB::table('wp_' . $wpUser->primaryProgramId() . '_comments')->insertGetId($params);
                 $this->legacy_comment_id = $resultCommentId;
             }
         }
@@ -96,5 +92,4 @@ class Comment extends Model {
         parent::save();
         // http://www.amitavroy.com/justread/content/articles/events-laravel-5-and-customize-model-save
     }
-
 }

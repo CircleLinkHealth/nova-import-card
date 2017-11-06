@@ -33,5 +33,4 @@ class CreateRulesPcpTable extends Migration
     {
         Schema::drop('rules_pcp');
     }
-
 }

@@ -15,26 +15,29 @@
 
 <p>
     To review and approve, simply
-    <a href="https://www.careplanmanager.com/manage-patients/listing">
-        view Patient List here</a>, then filter to "Approve Now" using the filter header in the "CarePlan Status"
-    column. You may also want to filter for your name in the “Provider” column:
+    <a href="https://www.careplanmanager.com/">
+        login here</a>. Then, on the homepage, click "Approve Now" in the “Pending Care Plans” list, for the first patient you wish to approve:
 </p>
 
-<img src="{{ $message->embed(public_path('/img/patient-listing-example.png')) }}" alt="Patient Listing example image.">
+<img src="{{ $message->embed(public_path('/img/emails/careplan-pending-approvals/approval-box.png')) }}" alt="Approve CarePlans table example image.">
+
 <p>
-    Click the "Approve Now" link (above) for a patient of your choice and you will be taken to the Care Plan page where
-    you will review the care plan (below).
+    You will be taken to the Care Plan page where you will review the care plan (below):
 </p>
 
-<img src="{{ $message->embed(public_path('/img/careplan-example.png')) }}" alt="CarePlan example image.">
+<img src="{{ $message->embed(public_path('/img/emails/careplan-pending-approvals/view-care-plan-example.png')) }}" alt="View CarePlan example image.">
 
 <p>
-    If you agree with the care plan, please click the "Approve Care Plan" button in the top right, and you will be
-    taken back to Patient List.
+    If you agree with the care plan, please click the "Approve and View Next" button in the top right, and you will be taken to the next care plan to approve.
 </p>
 
 <p>
     Please make any changes via the “Edit Care Plan” button in top center.
+</p>
+
+<p>
+    Alternatively, you can upload your own PDF care plan using the "Upload PDF" button.
+    (<b><u>NOTE:</u></b> <em>Please make sure uploaded PDF care plans conform to Medicare requirements.</em>)
 </p>
 
 <p>

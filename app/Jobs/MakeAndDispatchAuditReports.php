@@ -38,15 +38,23 @@ class MakeAndDispatchAuditReports implements ShouldQueue
     protected $eFax;
 
     /**
+     * @var Carbon
+     */
+    protected $date;
+
+    /**
      * Create a new job instance.
      *
      * @param User $patient
-     * @param PhiMail $phiMail
-     * @param Efax $efax
+     * @param Carbon $date
+     * @param Efax|null $eFax
+     * @param PhiMail|null $phiMail
+     *
      */
-    public function __construct(User $patient, Efax $eFax = null, PhiMail $phiMail = null)
+    public function __construct(User $patient, Carbon $date = null, Efax $eFax = null, PhiMail $phiMail = null)
     {
         $this->patient = $patient;
+        $this->date = $date ?? Carbon::now();
         $this->phiMail = $phiMail ?? new PhiMail();
         $this->eFax = $eFax ?? new PhaxioService();
     }
@@ -58,15 +66,22 @@ class MakeAndDispatchAuditReports implements ShouldQueue
      */
     public function handle()
     {
-        $fileName = (new PatientDailyAuditReport($this->patient->patientInfo,
-            Carbon::now()->subMonth()->startOfMonth()))
+        $fileName = (new PatientDailyAuditReport(
+            $this->patient->patientInfo,
+            $this->date->startOfMonth()
+        ))
             ->renderPDF();
 
         $path = storage_path("download/$fileName");
 
-        $settings = $this->patient->primaryPractice->settings->firstOrNew();
+        if (!$path) {
+            \Log::error("File not found: $path");
+            return;
+        }
 
-        $dmSent = $this->patient->locations->get()->map(function ($location) use ($path, $settings, $fileName) {
+        $settings = $this->patient->primaryPractice->settings()->firstOrNew([]);
+
+        $sent = $this->patient->locations->map(function ($location) use ($path, $settings, $fileName) {
             //Send DM mail
             if ($settings->dm_audit_reports) {
                 $this->phiMail->send($location->emr_direct_address, $path, $fileName);

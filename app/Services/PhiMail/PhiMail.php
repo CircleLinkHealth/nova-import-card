@@ -1,6 +1,7 @@
 <?php namespace App\Services\PhiMail;
 
 use App\CLH\Repositories\CCDImporterRepository;
+use App\Jobs\TrainCcdaImporter;
 use App\Models\MedicalRecords\Ccda;
 use App\User;
 use Illuminate\Support\Facades\Log;
@@ -10,13 +11,6 @@ class PhiMail
 {
     protected $ccdas = [];
     private $connector;
-
-    public function __construct()
-    {
-        if (!$this->initPhiMailConnection()) {
-            return false;
-        }
-    }
 
     private function initPhiMailConnection()
     {
@@ -60,8 +54,8 @@ class PhiMail
         $message = $e->getMessage() . "\n" . $e->getFile() . "\n" . $e->getLine();
         $traceString = $e->getTraceAsString() . "\n";
 
-        Log::error($message);
-        Log::error($traceString);
+        Log::critical($message);
+        Log::critical($traceString);
     }
 
     public function __destruct()
@@ -77,31 +71,17 @@ class PhiMail
         }
     }
 
-    /**
-     * @param args the command line arguments
-     */
-    public function sendReceive(
-        $outboundReceipient = null
-    ) {
-        try {
-            if ($outboundReceipient) {
-                $this->send($outboundReceipient);
-            }
-
-            //Receive mail
-            $this->receive();
-        } catch (\Exception $e) {
-            $this->handleException($e);
-        }
-    }
-
     public function send(
         $outboundRecipient,
-        $binaryAttachmentFilePath = null,
-        $binaryAttachmentFileName = null,
+        $binaryAttachmentFilePath,
+        $binaryAttachmentFileName,
         $ccdaAttachmentPath = null,
         User $patient = null
     ) {
+        if (!$this->initPhiMailConnection()) {
+            return false;
+        }
+
         try {
             // After authentication, the server has a blank outgoing message
             // template. Begin building this message by adding a recipient.
@@ -151,13 +131,11 @@ class PhiMail
 
                 sendSlackMessage('#background-tasks', "Send to {$sr->recipient}: $status \n");
             }
-
         } catch (\Exception $e) {
             $this->handleException($e);
         }
 
         return $srList ?? false;
-
     }
 
     public function loadFile(
@@ -168,6 +146,10 @@ class PhiMail
 
     public function receive()
     {
+        if (!$this->initPhiMailConnection()) {
+            return false;
+        }
+
         if (!$this->connector) {
             return false;
         }
@@ -205,17 +187,17 @@ class PhiMail
                 // If you are checking messages for an address group,
                 // $message->recipient will contain the address in that
                 // group to which this message should be delivered.
-                Log::critical("A new message is available for " . $message->recipient . "\n");
-                Log::critical("from " . $message->sender . "; id "
-                    . $message->messageId . "; #att=" . $message->numAttachments
-                    . "\n");
+//                Log::critical("A new message is available for " . $message->recipient . "\n");
+//                Log::critical("from " . $message->sender . "; id "
+//                    . $message->messageId . "; #att=" . $message->numAttachments
+//                    . "\n");
 
                 for ($i = 0; $i <= $message->numAttachments; $i++) {
                     // Get content for part i of the current message.
                     $showRes = $this->connector->show($i);
 
-                    Log::critical("MimeType = " . $showRes->mimeType
-                        . "; length=" . $showRes->length . "\n");
+//                    Log::critical("MimeType = " . $showRes->mimeType
+//                        . "; length=" . $showRes->length . "\n");
 
                     // List all the headers. Headers are set by the
                     // sender and may include Subject, Date, additional
@@ -223,9 +205,9 @@ class PhiMail
                     // Do NOT use the To: header to determine the address
                     // to which this message should be delivered
                     // internally; use $messagerecipient instead.
-                    foreach ($showRes->headers as $header) {
-                        Log::critical("Header: " . $header . "\n");
-                    }
+//                    foreach ($showRes->headers as $header) {
+//                        Log::critical("Header: " . $header . "\n");
+//                    }
 
                     // Process the content; for this example text data
                     // is echoed to the console and non-text data is
@@ -233,37 +215,31 @@ class PhiMail
 
                     if (str_contains($showRes->mimeType, 'plain')) {
                         // ... do something with text parts ...
-                        Log::critical('The plain text part of the mail');
-                        Log::critical($showRes->data);
+//                        Log::critical('The plain text part of the mail');
+//                        Log::critical($showRes->data);
                         self::writeDataFile(storage_path(str_random(20) . '.txt'), $showRes->data);
                     } elseif (str_contains($showRes->mimeType, 'xml')) {
                         //save ccd to file
                         self::writeDataFile(storage_path(str_random(20) . '.xml'), $showRes->data);
-                        $import = $this->importCcd($message->sender, $showRes);
-
-                        if (!$import) {
-                            continue;
-                        }
-
-                        $this->ccdas[] = $import;
+                        $this->importCcd($showRes);
                     }
 
                     // Display the list of attachments and associated info. This info is only
                     // included with message part 0.
-                    for ($k = 0; $i == 0 && $k < $message->numAttachments; $k++) {
-                        Log::critical("Attachment " . ($k + 1)
-                            . ": " . $showRes->attachmentInfo[$k]->mimeType
-                            . " fn:" . $showRes->attachmentInfo[$k]->filename
-                            . " Desc:" . $showRes->attachmentInfo[$k]->description
-                            . "\n");
-                    }
+//                    for ($k = 0; $i == 0 && $k < $message->numAttachments; $k++) {
+//                        Log::critical("Attachment " . ($k + 1)
+//                            . ": " . $showRes->attachmentInfo[$k]->mimeType
+//                            . " fn:" . $showRes->attachmentInfo[$k]->filename
+//                            . " Desc:" . $showRes->attachmentInfo[$k]->description
+//                            . "\n");
+//                    }
                 }
                 // This signals the server that the message can be safely removed from the queue
                 // and should only be sent after all required parts of the message have been
-                // retrieved and processed.
+                // retrieved and processed.:log
                 $this->connector->acknowledgeMessage();
 
-                Log::critical('Number of Attachments: ' . $message->numAttachments);
+//                Log::critical('Number of Attachments: ' . $message->numAttachments);
 
                 if ($message->numAttachments > 0) {
                     $this->notifyAdmins($message->numAttachments);
@@ -275,7 +251,7 @@ class PhiMail
                     sendSlackMessage('#background-tasks', $message);
                 }
 
-                Log::critical('***************');
+//                Log::critical('***************');
             }
         } catch (\Exception $e) {
             $this->handleException($e);
@@ -292,27 +268,16 @@ class PhiMail
     }
 
     private function importCcd(
-        $sender,
         $attachment
     ) {
-        $ccdaRepo = new CCDImporterRepository;
-
-        $json = $ccdaRepo->toJson($attachment->data);
-
         $this->ccda = Ccda::create([
             'user_id'   => null,
             'vendor_id' => 1,
-            'json'      => $json,
             'xml'       => $attachment->data,
             'source'    => Ccda::EMR_DIRECT,
         ]);
 
-        $this->ccda->import();
-
-        return [
-            'id'       => $this->ccda->id,
-            'fileName' => $attachment->filename,
-        ];
+        dispatch(new TrainCcdaImporter($this->ccda));
     }
 
     /**
@@ -329,8 +294,9 @@ class PhiMail
 
         $link = route('view.files.ready.to.import');
 
-        sendSlackMessage('#ccd-file-status',
-            "We received {$numberOfCcds} CCDs from EMR Direct. \n Please visit {$link} to import.");
+        sendSlackMessage(
+            '#ccd-file-status',
+            "We received {$numberOfCcds} CCDs from EMR Direct. \n Please visit {$link} to import."
+        );
     }
-
 }

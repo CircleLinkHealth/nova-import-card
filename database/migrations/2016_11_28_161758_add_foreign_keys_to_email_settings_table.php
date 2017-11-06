@@ -30,5 +30,4 @@ class AddForeignKeysToEmailSettingsTable extends Migration
             $table->dropForeign('email_settings_user_id_foreign');
         });
     }
-
 }

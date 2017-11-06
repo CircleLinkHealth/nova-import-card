@@ -2,7 +2,6 @@
 
 namespace App\CLH\DataTemplates;
 
-
 use App\CLH\Contracts\DataTemplate;
 use App\User;
 

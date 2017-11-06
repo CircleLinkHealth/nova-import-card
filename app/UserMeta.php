@@ -2,18 +2,14 @@
 
 use Illuminate\Database\Eloquent\Model;
 
-class UserMeta extends Model {
+class UserMeta extends \App\BaseModel
+{
 
     // for revisionable
     use \Venturecraft\Revisionable\RevisionableTrait;
     public $timestamps = false;
     protected $revisionCreationsEnabled = true;
-    /**
-     * The connection name for the model.
-     *
-     * @var string
-     */
-    protected $connection = 'mysql_no_prefix';
+
     /**
      * The database table used by the model.
      *
@@ -44,5 +40,4 @@ class UserMeta extends Model {
     {
         return $this->belongsTo('App\User', 'user_id', 'id');
     }
-
 }

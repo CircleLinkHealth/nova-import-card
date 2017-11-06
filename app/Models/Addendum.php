@@ -5,7 +5,7 @@ namespace App\Models;
 use App\User;
 use Illuminate\Database\Eloquent\Model;
 
-class Addendum extends Model
+class Addendum extends \App\BaseModel
 {
     protected $fillable = [
         'addendumable_type',

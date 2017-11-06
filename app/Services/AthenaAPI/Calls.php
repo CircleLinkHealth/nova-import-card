@@ -2,7 +2,6 @@
 
 namespace App\Services\AthenaAPI;
 
-
 class Calls
 {
     protected $api;

@@ -45,7 +45,6 @@ class ReschedulerHandler
         $this->handleCalls();
 
         return $this->rescheduledCalls;
-
     }
 
     public function collectCallsToBeRescheduled()
@@ -56,7 +55,7 @@ class ReschedulerHandler
             ->where('scheduled_date', '<=', Carbon::now()->toDateString())
             ->get();
 
-        $missed = array();
+        $missed = [];
 
         /*
          * Check to see if the call is dropped if it's the current day
@@ -66,7 +65,6 @@ class ReschedulerHandler
         */
 
         foreach ($calls as $call) {
-
             $end_carbon = Carbon::parse($call->scheduled_date);
 
             $carbon_hour_end = Carbon::parse($call->window_end)->format('H');
@@ -79,18 +77,15 @@ class ReschedulerHandler
             if ($end_time < $now_carbon) {
                 $missed[] = $call;
             }
-
         }
 
         return $missed;
-
     }
 
     public function handleCalls()
     {
 
         foreach ($this->callsToReschedule as $call) {
-
             //Handle Previous Call
             $call->status = 'dropped';
             $call->scheduler = 'rescheduler algorithm';
@@ -98,11 +93,12 @@ class ReschedulerHandler
 
             $patient = Patient::where('user_id', $call->inbound_cpm_id)->first();
 
-            if(is_object($patient)) {
-
+            if (is_object($patient)) {
                 //this will give us the first available call window from the date the logic offsets, per the patient's preferred times.
-                $next_predicted_contact_window = (new PatientContactWindow)->getEarliestWindowForPatientFromDate($patient,
-                    Carbon::now());
+                $next_predicted_contact_window = (new PatientContactWindow)->getEarliestWindowForPatientFromDate(
+                    $patient,
+                    Carbon::now()
+                );
 
                 $window_start = Carbon::parse($next_predicted_contact_window['window_start'])->format('H:i');
                 $window_end = Carbon::parse($next_predicted_contact_window['window_end'])->format('H:i');
@@ -118,9 +114,6 @@ class ReschedulerHandler
                     ''
                 );
             }
-
         }
-
     }
-
 }

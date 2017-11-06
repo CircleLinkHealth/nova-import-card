@@ -2,7 +2,7 @@
 
 use Illuminate\Database\Eloquent\Model;
 
-class PhoneNumber extends Model
+class PhoneNumber extends \App\BaseModel
 {
 
     //types
@@ -59,5 +59,4 @@ class PhoneNumber extends Model
         return $this->belongsTo('App\User', 'id', 'user_id');
     }
     // END RELATIONSHIPS
-
 }

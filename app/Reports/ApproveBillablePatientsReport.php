@@ -30,7 +30,6 @@ class ApproveBillablePatientsReport
 
         $this->month = $month->firstOfMonth();
         $this->practice = $practice;
-
     }
 
     public function dataV1()
@@ -46,27 +45,23 @@ class ApproveBillablePatientsReport
             ->ofType('participant')
             ->where('program_id', '=', $this->practice)
             ->get();
-
     }
 
     public function dataV2()
     {
 
         $this->patients = Patient
-            ::whereHas('patientSummaries', function ($q) {
+            ::whereHas('monthlySummaries', function ($q) {
                 $q
                     ->where('month_year', $this->month->toDateString())
                     ->where('no_of_successful_calls', '>', 0);
-
             });
 
         if ($this->practice != 0) {
-
             $practice = $this->practice;
 
             $this->patients = $this->patients->whereHas('user', function ($k) use (
                 $practice
-
             ) {
                 $k->whereProgramId($practice);
             });
@@ -76,7 +71,6 @@ class ApproveBillablePatientsReport
             ->get();
 
         return $this->patients;
-
     }
 
     public function format()
@@ -86,7 +80,6 @@ class ApproveBillablePatientsReport
         $formatted = [];
 
         foreach ($this->patients as $u) {
-
             $start = $this->month->copy()->startOfMonth()->startOfDay()->format("Y-m-d H:i:s");
             $end = $this->month->copy()->endOfMonth()->endOfDay()->format("Y-m-d H:i:s");
 
@@ -108,7 +101,7 @@ class ApproveBillablePatientsReport
                 continue;
             }
 
-            $report = $info->patientSummaries()
+            $report = $info->monthlySummaries()
                 ->where('month_year', $this->month->toDateString())->first();
 
             if ($report == null) {
@@ -130,7 +123,6 @@ class ApproveBillablePatientsReport
 
             //First look for problemsWithIcd10Code in the report itself. If no problemsWithIcd10Code, then find problemsWithIcd10Code from CCM. If none, give select box
             for ($i = 0; $i < 2; $i++) {
-
                 $problemName = 'billable_problem' . ($i + 1);
                 $problemCode = 'billable_problem' . ($i + 1) . '_code';
 
@@ -139,8 +131,8 @@ class ApproveBillablePatientsReport
 
                 if (!$report->$problemName || !$report->$problemCode) {
                     if (isset($problemsWithIcd10Code[$i])) {
-                        $report->$problemName = $problemsWithIcd10Code[$i]->name;
-                        $report->$problemCode = $problemsWithIcd10Code[$i]->icd_10_code;
+                        $report->$problemName = $problemsWithIcd10Code[$i]->cpmProblem->name;
+                        $report->$problemCode = $problemsWithIcd10Code[$i]->billing_code;
                         $billableProblems[$i]['name'] = $report->$problemName;
                         $billableProblems[$i]['code'] = $report->$problemCode;
 
@@ -158,20 +150,15 @@ class ApproveBillablePatientsReport
                         $billableProblems[$i]['code'] = "<button style='font-size: 10px' class='btn btn-primary codePicker' patient='$u->fullName' name=$name value='$options' id='$report->id'>Select Code</button >";
                     }
                 }
-
             }
 
             //if patient was paused/withdrawn and acted upon already, it's not QA no more
             $isNotEnrolledAndApproved = ($report->actor_id == null) && ($info->ccm_status == 'withdrawn' || $info->ccm_status == 'paused');
 
             if ($lacksProblems || $report->rejected == 1 || $lacksCode) {
-
                 $approved = '';
-
             } else {
-
                 $approved = 'checked';
-
             }
 
             $rejected = ($report->rejected == 1)
@@ -219,7 +206,6 @@ class ApproveBillablePatientsReport
             ];
 
             $count++;
-
         }
 
         return Datatables::of(collect($formatted))
@@ -231,8 +217,5 @@ class ApproveBillablePatientsReport
                 }
             })
             ->make(true);
-
     }
-
-
 }

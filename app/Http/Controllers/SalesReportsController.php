@@ -24,14 +24,15 @@ class SalesReportsController extends Controller
 
         $sections = SalesByProviderReport::SECTIONS;
 
-        return view('sales.by-provider.create',
+        return view(
+            'sales.by-provider.create',
             [
 
                 'sections'  => $sections,
                 'providers' => $providers,
 
-            ]);
-
+            ]
+        );
     }
 
     public function makeProviderReport(Request $request)
@@ -57,7 +58,6 @@ class SalesReportsController extends Controller
 
         //PDF download support
         if ($input['submit'] == 'download') {
-
             $pdf = PDF::loadView('sales.by-practice.report', ['data' => $data]);
 
             $name = $provider->last_name . '-' . Carbon::now()->toDateString();
@@ -69,11 +69,9 @@ class SalesReportsController extends Controller
             return response()->download($path, $name, [
                 'Content-Length: ' . filesize($path),
             ]);
-
         }
 
         return view('sales.by-provider.report', ['data' => $data]);
-
     }
 
     //PRACTICE REPORTS
@@ -81,18 +79,19 @@ class SalesReportsController extends Controller
     public function createPracticeReport(Request $request)
     {
 
-        $practices = Practice::active()->pluck('display_name', 'id');
+        $practices = Practice::active()->get()->pluck('display_name', 'id');
 
         $sections = SalesByPracticeReport::SECTIONS;
 
-        return view('sales.by-practice.create',
+        return view(
+            'sales.by-practice.create',
             [
 
                 'sections'  => $sections,
                 'practices' => $practices,
 
-            ]);
-
+            ]
+        );
     }
 
     public function makePracticeReport(Request $request)
@@ -102,8 +101,8 @@ class SalesReportsController extends Controller
         $sections = $input['sections'];
         $practice = Practice::find($input['practice']);
 
-        $data = (new SalesByPracticeReport
-        ($practice,
+        $data = (new SalesByPracticeReport(
+            $practice,
             $sections,
             Carbon::parse($input['start_date']),
             Carbon::parse($input['end_date'])
@@ -116,7 +115,6 @@ class SalesReportsController extends Controller
         $data['isEmail'] = false;
 
         if ($input['submit'] == 'test') {
-
             $subjectPractice = $practice->display_name . '\'s CCM Weekly Summary';
 
             $practiceData['isEmail'] = true;
@@ -132,12 +130,10 @@ class SalesReportsController extends Controller
             });
 
             return 'Sent to ' . $input['email'] . '!';
-
         }
 
         //PDF download support
         if ($input['submit'] == 'download') {
-
             $pdf = PDF::loadView('sales.by-practice.report', ['data' => $data]);
 
             $name = $practice->display_name . '-' . Carbon::now()->toDateString();
@@ -147,17 +143,14 @@ class SalesReportsController extends Controller
             $pdf->save($path, true);
 
             return response()->download($path, $name, ['Content-Length: ' . filesize($path),]);
-
         }
 
         return view('sales.by-practice.report', ['data' => $data]);
-
     }
 
 //LOCATION REPORTS
 
-    public
-    function createLocationReport(
+    public function createLocationReport(
         Request $request
     ) {
 
@@ -168,18 +161,18 @@ class SalesReportsController extends Controller
             'Financial Summary',
         ];
 
-        return view('sales.by-location.create',
+        return view(
+            'sales.by-location.create',
             [
 
                 'programs' => $programs,
                 'sections' => $sections,
 
-            ]);
-
+            ]
+        );
     }
 
-    public
-    function makeLocationReport(
+    public function makeLocationReport(
         Request $request
     ) {
 
@@ -194,18 +187,17 @@ class SalesReportsController extends Controller
         $links = [];
 
         foreach ($programs as $program) {
-
             $program = Practice::find($program);
 
-            $links[$program->display_name] = (new SalesByLocationReport($program,
+            $links[$program->display_name] = (new SalesByLocationReport(
+                $program,
                 Carbon::parse($input['start_date']),
                 Carbon::parse($input['end_date']),
-                $withHistory)
+                $withHistory
+            )
             )->handle();
         }
 
         return view('sales.reportlist', ['reports' => $links]);
-
     }
-
 }

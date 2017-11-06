@@ -8,13 +8,11 @@ use App\Console\Commands\EmailRNDailyReport;
 use App\Console\Commands\EmailsProvidersToApproveCareplans;
 use App\Console\Commands\EmailWeeklyReports;
 use App\Console\Commands\ExportNurseSchedulesToGoogleCalendar;
-use App\Console\Commands\FormatLocationPhone;
 use App\Console\Commands\GeneratePatientReports;
 use App\Console\Commands\ImportLGHInsurance;
 use App\Console\Commands\ImportNurseScheduleFromGoogleCalendar;
 use App\Console\Commands\Inspire;
 use App\Console\Commands\MapSnomedToCpmProblems;
-use App\Console\Commands\NukeItemAndMeta;
 use App\Console\Commands\ProcessCcdaLGHMixup;
 use App\Console\Commands\QueueCcdasToConvertToJson;
 use App\Console\Commands\QueueCcdasToProcess;
@@ -22,48 +20,19 @@ use App\Console\Commands\QueueCcdaToDetermineEnrollmentEligibility;
 use App\Console\Commands\QueueMakeWelcomeCallsList;
 use App\Console\Commands\QueueSendAuditReports;
 use App\Console\Commands\RecalculateCcmTime;
+use App\Console\Commands\ReImportCcdsToGetTranslations;
 use App\Console\Commands\ResetCcmTime;
+use App\Console\Commands\SendCarePlanApprovalReminderTestEmail;
 use App\Console\Commands\SplitMergedCcdas;
-use App\Reports\WeeklyReportDispatcher;
 use App\Services\Calls\SchedulerService;
 use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Foundation\Console\Kernel as ConsoleKernel;
-use Maknz\Slack\Facades\Slack;
 
 //use EnrollmentSMSSender;
 
 
 class Kernel extends ConsoleKernel
 {
-    /**
-     * The Artisan commands provided by your application.
-     *
-     * @var array
-     */
-    protected $commands = [
-        EmailRNDailyReport::class,
-        EmailsProvidersToApproveCareplans::class,
-        ExportNurseSchedulesToGoogleCalendar::class,
-        GeneratePatientReports::class,
-        ImportNurseScheduleFromGoogleCalendar::class,
-        Inspire::class,
-        MapSnomedToCpmProblems::class,
-        GetAppointments::class,
-        GetCcds::class,
-        ResetCcmTime::class,
-        RecalculateCcmTime::class,
-        SplitMergedCcdas::class,
-        QueueCcdasToConvertToJson::class,
-        QueueCcdaToDetermineEnrollmentEligibility::class,
-        QueueCcdasToProcess::class,
-        QueueSendAuditReports::class,
-        ProcessCcdaLGHMixup::class,
-        ImportLGHInsurance::class,
-        CheckEmrDirectInbox::class,
-        EmailWeeklyReports::class,
-        QueueMakeWelcomeCallsList::class,
-    ];
-
     /**
      * Define the application's command schedule.
      *
@@ -87,7 +56,6 @@ class Kernel extends ConsoleKernel
 
                 sendSlackMessage('#background-tasks', $message);
             }
-
         })->dailyAt('00:05');
 
         //tunes scheduled call dates.
@@ -110,7 +78,8 @@ class Kernel extends ConsoleKernel
         })->everyMinute();
 
         //Comments out until we find all the bugs
-        $schedule->command('email:weeklyReports --practice --provider')->weeklyOn(1, '10:00');
+        $schedule->command('email:weeklyReports --practice --provider')
+            ->weeklyOn(1, '10:00');
 
         $schedule->command('emailapprovalreminder:providers')
             ->weekdays()
@@ -137,13 +106,16 @@ class Kernel extends ConsoleKernel
             ->dailyAt('05:00');
 
 //        $schedule->command('ccda:toJson')
-//            ->everyMinute();
+//            ->everyMinute()
+//            ->withoutOverlapping();
 
-//        $schedule->command('ccda:determineEligibility')
-//            ->everyMinute();
+        $schedule->command('ccda:determineEligibility')
+            ->everyFiveMinutes()
+            ->withoutOverlapping();
 
 //        $schedule->command('ccda:process')
-//            ->everyMinute();
+//            ->everyMinute()
+//            ->withoutOverlapping();
 
         //every 2 hours
 //        $schedule->command('ccdas:split-merged')
@@ -152,7 +124,9 @@ class Kernel extends ConsoleKernel
         $schedule->command('send:audit-reports')
             ->monthlyOn(1, '02:00');
 
-        $schedule->command('dm:check')->everyFiveMinutes();
+        $schedule->command('emrDirect:checkInbox')
+            ->everyFiveMinutes()
+            ->withoutOverlapping();
     }
 
     /**
@@ -162,6 +136,7 @@ class Kernel extends ConsoleKernel
      */
     protected function commands()
     {
+        $this->load(__DIR__.'/Commands');
         require base_path('routes/console.php');
     }
 }

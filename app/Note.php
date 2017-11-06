@@ -9,7 +9,7 @@ use App\Traits\PdfReportTrait;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
 
-class Note extends Model implements PdfReport
+class Note extends \App\BaseModel implements PdfReport
 {
     use IsAddendumable,
         PdfReportTrait;

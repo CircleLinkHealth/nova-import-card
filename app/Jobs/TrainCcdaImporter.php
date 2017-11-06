@@ -33,18 +33,14 @@ class TrainCcdaImporter implements ShouldQueue
      */
     public function handle()
     {
-        $json = (new CCDImporterRepository())->toJson($this->ccda->xml);
-
-        $this->ccda->json = $json;
-        $this->ccda->save();
-
         $importedMedicalRecord = $this->ccda->import();
 
-        $link = link_to_route('get.importer.training.results',
-            "Click to review training results for Imported Medical Record with id {$importedMedicalRecord->id}", [
+        $link = link_to_route(
+            'get.importer.training.results',
+            "Click to review training results for Imported Medical Record with id {$importedMedicalRecord->id}",
+            [
                 'imrId' => $importedMedicalRecord->id,
-            ]);
-
-        sendSlackMessage('#ccda-trainer', $link);
+            ]
+        );
     }
 }

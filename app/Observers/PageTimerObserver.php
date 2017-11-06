@@ -2,7 +2,6 @@
 
 namespace App\Observers;
 
-
 use App\Activity;
 use App\PageTimer;
 
@@ -25,6 +24,4 @@ class PageTimerObserver
                 ]);
         }
     }
-
-
 }

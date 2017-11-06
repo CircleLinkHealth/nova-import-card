@@ -38,5 +38,4 @@ class CreateCpmMailLogsTable extends Migration
     {
         Schema::drop('cpm_mail_logs');
     }
-
 }

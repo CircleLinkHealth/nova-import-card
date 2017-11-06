@@ -22,7 +22,11 @@ class HistoricPracticePredictor extends BaseHistoricPredictor implements Predict
         $providersPredictions = $this->providersLookup('practice_id', 5);
         $addressesPredictions = $this->addressesLookup('practice_id', 2);
 
-        return $this->makePrediction('practice_id', $addressesPredictions, $custodianPredictions,
-            $providersPredictions);
+        return $this->makePrediction(
+            'practice_id',
+            $addressesPredictions,
+            $custodianPredictions,
+            $providersPredictions
+        );
     }
 }

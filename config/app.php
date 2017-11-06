@@ -142,6 +142,11 @@ return [
     */
 
     'providers' => [
+        /*
+        * Jenssegers User Agent
+        */
+        Jenssegers\Agent\AgentServiceProvider::class,
+
         Bugsnag\BugsnagLaravel\BugsnagServiceProvider::class,
 
         /*
@@ -201,17 +206,15 @@ return [
         Spatie\GoogleCalendar\GoogleCalendarServiceProvider::class,
         ObserversServiceProvider::class,
         Barryvdh\Debugbar\ServiceProvider::class,
-        Modelizer\Selenium\SeleniumServiceProvider::class,
         Way\Generators\GeneratorsServiceProvider::class,
         Xethron\MigrationsGenerator\MigrationsGeneratorServiceProvider::class,
         Tylercd100\LERN\LERNServiceProvider::class,
         Dionera\BeanstalkdUI\BeanstalkdUIServiceProvider::class,
-        Laravel\Tinker\TinkerServiceProvider::class,
         ViewComposerServiceProvider::class,
         jeremykenedy\Slack\Laravel\ServiceProvider::class,
         EmailArrayValidatorServiceProvider::class,
-        GeneaLabs\LaravelCaffeine\Providers\LaravelCaffeineService::class,
         Propaganistas\LaravelPhone\PhoneServiceProvider::class,
+        Spiritix\LadaCache\LadaCacheServiceProvider::class,
     ],
 
     /*
@@ -228,6 +231,7 @@ return [
     'aliases' => [
 
         'App'          => Illuminate\Support\Facades\App::class,
+        'Agent'        => Jenssegers\Agent\Facades\Agent::class,
         'Artisan'      => Illuminate\Support\Facades\Artisan::class,
         'Auth'         => Illuminate\Support\Facades\Auth::class,
         'Blade'        => Illuminate\Support\Facades\Blade::class,

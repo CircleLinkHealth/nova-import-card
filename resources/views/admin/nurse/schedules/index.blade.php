@@ -1,8 +1,6 @@
 @extends('partials.adminUI')
 
 @section('content')
-    <div id="app">
-
         <div style="    position: fixed;bottom: 0;width: 100%;z-index: 100;opacity: 0.95;">
             @include('errors.errors')
         </div>
@@ -51,7 +49,6 @@
                 </div>
             @endforeach
         </div>
-    </div>
 @endsection
 
 @push('scripts')

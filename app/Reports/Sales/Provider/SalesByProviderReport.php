@@ -43,7 +43,6 @@ class SalesByProviderReport extends SalesReport
         $this->user = $provider;
         $this->start = $start;
         $this->end = $end;
-
     }
 
     public function renderPDF(
@@ -62,16 +61,12 @@ class SalesByProviderReport extends SalesReport
             $this->requestedSections = self::SECTIONS;
             return parent::data();
         } else {
-
             return parent::data(false);
-
         }
-
     }
 
     public function renderView($view = 'sales.by-provider.create')
     {
         return parent::renderView($view);
     }
-
 }

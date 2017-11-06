@@ -34,5 +34,4 @@ class AddForeignKeysToCpmMailLogsTable extends Migration
             $table->dropForeign('cpm_mail_logs_sender_cpm_id_foreign');
         });
     }
-
 }

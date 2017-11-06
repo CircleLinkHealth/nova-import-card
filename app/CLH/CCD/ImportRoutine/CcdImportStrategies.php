@@ -2,10 +2,10 @@
 
 use Illuminate\Database\Eloquent\Model;
 
-class CcdImportStrategies extends Model {
+class CcdImportStrategies extends \App\BaseModel
+{
 
     protected $table = 'ccd_import_routines_strategies';
 
     protected $guarded = [];
-
 }

@@ -1,6 +1,7 @@
 @extends('partials.adminUI')
 
 @section('content')
+    @push('scripts')
     <script type="text/javascript" src="{{ asset('/js/wpUsers/wpUsers.js') }}"></script>
     <script>
         $(document).ready(function () {
@@ -23,11 +24,15 @@
             });
         });
     </script>
+    @endpush
+
+    @push('styles')
     <style>
         .form-group {
             margin: 20px;
         }
     </style>
+    @endpush
     <div class="container-fluid">
         <div class="row">
             <div class="col-md-10 col-md-offset-1">
@@ -40,9 +45,7 @@
 
                         @include('errors.errors')
 
-                        <div class="row">
-                            {!! Form::open(array('url' => URL::route('admin.users.update', array('id' => $patient->id)), 'class' => 'form-horizontal')) !!}
-                        </div>
+                        {!! Form::open(array('url' => URL::route('admin.users.update', array('id' => $patient->id)), 'class' => 'form-horizontal')) !!}
 
                         <div class="row" style="">
                             <div class="col-sm-12">

@@ -49,16 +49,12 @@ class UserRepository implements \App\CLH\Contracts\Repositories\UserRepository
 
         // nurse info
         if ($user->hasRole('care-center')) {
-
             $this->saveOrUpdateNurseInfo($user, $params);
-
         }
 
         // care ambassador info
         if ($user->hasRole('care-ambassador')) {
-
             $this->saveOrUpdateCareAmbassadorInfo($user, $params);
-
         }
 
         //Add Email Notification
@@ -296,8 +292,7 @@ class UserRepository implements \App\CLH\Contracts\Repositories\UserRepository
 
         foreach ($patientInfo as $key => $value) {
             // hack for date_paused and date_withdrawn
-            if (
-                $key == 'date_paused'
+            if ($key == 'date_paused'
                 || $key == 'date_withdrawn'
             ) {
                 continue 1;
@@ -343,15 +338,12 @@ class UserRepository implements \App\CLH\Contracts\Repositories\UserRepository
     ) {
 
         if ($user->careAmbassador != null) {
-
             $user->careAmbassador->hourly_rate = $params->get('hourly_rate');
             $user->careAmbassador->speaks_spanish = $params->get('speaks_spanish') == 'on'
                 ? 1
                 : 0;
             $user->careAmbassador->save();
-
         } else {
-
             $ambassador = CareAmbassador::create([
                 'user_id' => $user->id,
             ]);
@@ -359,11 +351,7 @@ class UserRepository implements \App\CLH\Contracts\Repositories\UserRepository
             $ambassador->save();
 
             $user->careAmbassador()->save($ambassador);
-
-
         }
-
-
     }
 
     public function adminEmailNotify(
@@ -402,7 +390,6 @@ class UserRepository implements \App\CLH\Contracts\Repositories\UserRepository
             $message->from('no-reply@careplanmanager.com', 'CircleLink Health');
             $message->to($recipients)->subject($email_subject);
         });
-
     }
 
     public function editUser(
@@ -428,9 +415,7 @@ class UserRepository implements \App\CLH\Contracts\Repositories\UserRepository
 
         // care ambassador
         if ($user->hasRole('care-ambassador')) {
-
             $this->saveOrUpdateCareAmbassadorInfo($user, $params);
-
         }
 
         // provider info
@@ -444,108 +429,6 @@ class UserRepository implements \App\CLH\Contracts\Repositories\UserRepository
         }
 
         return $user;
-    }
-
-    public function saveOrUpdateUserMeta(
-        User $user,
-        ParameterBag $params
-    ) {
-        /*
-        $userMetaTemplate = (new UserMetaTemplate())->getArray();
-
-        foreach($userMetaTemplate as $key => $defaultValue)
-        {
-            $paramValue = $params->get($key);
-
-            //serialize arrays
-            if($paramValue && is_array($paramValue)) {
-                $paramValue = serialize($paramValue);
-            } else if($defaultValue && is_array($defaultValue)) {
-                $defaultValue = serialize($defaultValue);
-            }
-
-            // use existing value if form input wasnt passed in (only updating partial data)
-            if(!$params->get($key)) {
-                $meta = $user->meta->where('meta_key', $key)->first();
-                if (!empty($meta)) {
-                    $paramValue = $meta->meta_value;
-                    $params->add(array($key => $paramValue));
-                }
-            }
-
-
-            // set new value
-            $newValue = $defaultValue;
-            if($params->get($key)) {
-                $newValue = $paramValue;
-            }
-
-            // since first/last name are now on user model
-            if($key == 'first_name' ||
-                $key == 'last_name' ||
-                $key == 'city' ||
-                $key == 'state' ||
-                $key == 'address' ||
-                $key == 'address2' ||
-                $key == 'zip') {
-                $user->$key = $newValue;
-                $user->save();
-                continue 1;
-            }
-
-            // the rest of the attributes
-            if($params->get($key)) {
-                $user->setUserAttributeByKey($key, $newValue);
-            }
-        }
-        */
-    }
-
-    public function updateUserConfig(
-        User $wpUser,
-        ParameterBag $params
-    ) {
-        /*
-        // meta
-        $userMeta = UserMeta::where('user_id', '=', $wpUser->id)->pluck('meta_value', 'meta_key')->all();
-
-        // config
-        $userConfig = (new UserConfigTemplate())->getArray();
-        if (isset($userMeta['wp_' . $wpUser->program_id . '_user_config'])) {
-            $userConfig = unserialize($userMeta['wp_' . $wpUser->program_id . '_user_config']);
-            $userConfig = array_merge((new UserConfigTemplate())->getArray(), $userConfig);
-        }
-
-        // contact days checkbox formatting
-        if($params->get('contact_days')) {
-            $contactDays = $params->get('contact_days');
-            $contactDaysDelmited = '';
-            for($i=0; $i < count($contactDays); $i++){
-                $contactDaysDelmited .= (count($contactDays) == $i+1) ? $contactDays[$i] : $contactDays[$i] . ', ';
-            }
-            $params->add(array('preferred_cc_contact_days' => $contactDaysDelmited));
-        }
-
-        foreach($userConfig as $key => $value)
-        {
-            $paramValue = $params->get($key);
-
-            //serialize arrays
-            if($paramValue && is_array($paramValue)) {
-                $paramValue = serialize($paramValue);
-            } else if($value && is_array($value)) {
-                $value = serialize($value);
-            }
-
-            // set new value
-            $newValue = $value;
-            if($params->get($key)) {
-                $newValue = $paramValue;
-            }
-
-            $wpUser->setUserAttributeByKey($key, $newValue);
-        }
-        */
     }
 
     public function findByRole(

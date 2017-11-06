@@ -4,7 +4,7 @@ use App\Importer\Models\ItemLogs\AllergyLog;
 use App\User;
 use Illuminate\Database\Eloquent\Model;
 
-class Allergy extends Model
+class Allergy extends \App\BaseModel
 {
 
     protected $fillable = [
@@ -32,5 +32,4 @@ class Allergy extends Model
     {
         return $this->belongsTo(User::class, 'patient_id');
     }
-
 }

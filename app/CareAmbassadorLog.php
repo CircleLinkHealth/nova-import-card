@@ -5,7 +5,7 @@ namespace App;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
 
-class CareAmbassadorLog extends Model
+class CareAmbassadorLog extends \App\BaseModel
 {
 
     protected $fillable  = [
@@ -18,10 +18,10 @@ class CareAmbassadorLog extends Model
         'total_time_in_system'
     ];
 
-    public function enroller(){
+    public function enroller()
+    {
 
         return $this->belongsTo(CareAmbassador::class, 'enroller_id');
-
     }
 
 //    public function totalUniquePatientsCalled(){
@@ -30,7 +30,8 @@ class CareAmbassadorLog extends Model
 //
 //    }
 
-    public static function createOrGetLogs($enroller_id){
+    public static function createOrGetLogs($enroller_id)
+    {
 
         $date = Carbon::now()->format('Y-m-d');
         $report =
@@ -39,19 +40,14 @@ class CareAmbassadorLog extends Model
                     ->where('day', $date)
                     ->first();
 
-        if($report == null){
-
+        if ($report == null) {
             return self
                    ::create([
                         'enroller_id' => $enroller_id,
                         'day' => $date,
                    ]);
-
         }
 
         return $report;
-
     }
-
-
 }

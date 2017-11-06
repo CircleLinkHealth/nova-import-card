@@ -39,5 +39,4 @@ class CreateCarePlanTemplatesCpmLifestylesTable extends Migration
     {
         Schema::drop('care_plan_templates_cpm_lifestyles');
     }
-
 }

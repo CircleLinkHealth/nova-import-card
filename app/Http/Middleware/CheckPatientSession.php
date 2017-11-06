@@ -33,7 +33,7 @@ class CheckPatientSession
             return $next($request);
         }
 
-        if ($request->has('clearSession') && $request->method() == 'GET') {
+        if ($request->filled('clearSession') && $request->method() == 'GET') {
             PatientSession::where('user_id', '=', $user->id)
                 ->delete();
 

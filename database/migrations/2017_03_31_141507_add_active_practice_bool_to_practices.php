@@ -16,7 +16,6 @@ class AddActivePracticeBoolToPractices extends Migration
         Schema::table('practices', function (Blueprint $table) {
 
             $table->boolean('active')->after('display_name')->default(0);
-
         });
     }
 
@@ -30,7 +29,6 @@ class AddActivePracticeBoolToPractices extends Migration
         Schema::table('practices', function (Blueprint $table) {
 
             $table->dropColumn('active');
-
         });
     }
 }

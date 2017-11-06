@@ -1,5 +1,7 @@
 <?php
+namespace Tests\integration;
 
+use Tests\TestCase;
 use App\User;
 use Faker\Factory;
 use Tests\Helpers\CarePlanHelpers;
@@ -41,5 +43,4 @@ class PdfableTest extends TestCase
             'care_plan_template_id' => 1,
         ]);
     }
-
 }

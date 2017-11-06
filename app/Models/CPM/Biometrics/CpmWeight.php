@@ -4,7 +4,7 @@ use App\Contracts\Models\CPM\Biometric;
 use App\User;
 use Illuminate\Database\Eloquent\Model;
 
-class CpmWeight extends Model implements Biometric
+class CpmWeight extends \App\BaseModel implements Biometric
 {
 
     public static $rules = [
@@ -38,7 +38,7 @@ class CpmWeight extends Model implements Biometric
             ? [
                 'starting' => $biometric->starting,
                 'target' => $biometric->target
-            ] 
+            ]
             : false;
     }
 }

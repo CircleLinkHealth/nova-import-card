@@ -25,6 +25,7 @@ use App\Repositories\PracticeRepositoryEloquent;
 use App\Repositories\UserRepositoryEloquent;
 use App\Services\Phaxio\PhaxioService;
 use Illuminate\Support\ServiceProvider;
+use Laravel\Dusk\DuskServiceProvider;
 use View;
 
 class AppServiceProvider extends ServiceProvider
@@ -58,13 +59,12 @@ class AppServiceProvider extends ServiceProvider
      */
     public function register()
     {
+        if ($this->app->environment('local', 'testing', 'staging')) {
+            $this->app->register(DuskServiceProvider::class);
+        }
+
         $this->app->alias('bugsnag.logger', \Illuminate\Contracts\Logging\Log::class);
         $this->app->alias('bugsnag.logger', \Psr\Log\LoggerInterface::class);
-
-        $this->app->bind(
-            'Illuminate\Contracts\Auth\Registrar',
-            'App\Services\Registrar'
-        );
 
         $this->app->bind(
             ActivityRepository::class,
@@ -130,5 +130,4 @@ class AppServiceProvider extends ServiceProvider
             $this->app->register('Orangehill\Iseed\IseedServiceProvider');
         }
     }
-
 }

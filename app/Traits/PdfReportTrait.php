@@ -12,7 +12,6 @@ use App\Contracts\PdfReportHandler;
 use App\Services\PdfReports\Handlers\EFaxPdfHandler;
 use App\Services\PdfReports\Handlers\EmrDirectPdfHandler;
 
-
 trait PdfReportTrait
 {
     /**

@@ -6,7 +6,7 @@ use App\Traits\Relationships\BelongsToCcda;
 use App\Traits\Relationships\BelongsToVendor;
 use Illuminate\Database\Eloquent\Model;
 
-class MedicationLog extends Model implements ItemLog
+class MedicationLog extends \App\BaseModel implements ItemLog
 {
 
     use BelongsToCcda,
@@ -42,5 +42,4 @@ class MedicationLog extends Model implements ItemLog
     {
         return $this->hasOne(MedicationImport::class);
     }
-
 }

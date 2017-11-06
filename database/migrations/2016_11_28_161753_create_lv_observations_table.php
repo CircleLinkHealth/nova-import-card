@@ -41,5 +41,4 @@ class CreateLvObservationsTable extends Migration
     {
         Schema::drop('lv_observations');
     }
-
 }

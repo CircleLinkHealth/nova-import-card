@@ -23,7 +23,7 @@ class MakeCareTeamGreatAgain extends Migration
         foreach ($careTeams as $team) {
             $billingProvider = $team->where('type', '=', CarePerson::BILLING_PROVIDER)->first();
             $members = $team->where('type', '=', CarePerson::MEMBER)->reject(function ($member) use
-            (
+                (
                 $billingProvider,
                 &
                 $membersToDelete

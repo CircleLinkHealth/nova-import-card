@@ -31,5 +31,4 @@ class RangeSummary extends SalesReportSection
             'link_to_notes_listing'           => $this->service->linkToNotes(),
         ];
     }
-
 }

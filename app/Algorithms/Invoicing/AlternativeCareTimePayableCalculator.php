@@ -30,7 +30,6 @@ class AlternativeCareTimePayableCalculator
         $report = NurseMonthlySummary::where('nurse_id', $this->nurse->id)->where('month_year', $this->month)->first();
 
         $this->nurseReport = $report;
-
     }
 
     public function createOrIncrementNurseSummary( // note, not storing call data for now.
@@ -40,12 +39,9 @@ class AlternativeCareTimePayableCalculator
     ) {
 
         if ($this->nurseReport) {
-
             $this->nurseReport->accrued_after_ccm = $toAddToAccruedAfterCCM + $this->nurseReport->accrued_after_ccm;
             $this->nurseReport->accrued_towards_ccm = $toAddToAccruedTowardsCCM + $this->nurseReport->accrued_towards_ccm;
-
         } else {
-
             $this->nurseReport = NurseMonthlySummary::create([
 
                 'nurse_id'               => $this->nurse->id,
@@ -55,11 +51,9 @@ class AlternativeCareTimePayableCalculator
                 'no_of_calls'            => 0,
                 'no_of_successful_calls' => 0,
             ]);
-
         }
 
         if ($toAddToAccruedAfterCCM != 0) {
-
             NurseCareRateLog::create([
 
                 'nurse_id'    => $this->nurse->id,
@@ -71,7 +65,6 @@ class AlternativeCareTimePayableCalculator
         }
 
         if ($toAddToAccruedTowardsCCM != 0) {
-
             NurseCareRateLog::create([
 
                 'nurse_id'    => $this->nurse->id,
@@ -85,7 +78,6 @@ class AlternativeCareTimePayableCalculator
         $this->nurseReport->save();
 
         return $this->nurseReport;
-
     }
 
     public function adjustCCMPaybleForActivity(Activity $activity)
@@ -130,18 +122,14 @@ class AlternativeCareTimePayableCalculator
         debug(['before' => $ccm_before_activity, 'after' => $ccm_after_activity]);
 
         if ($isComplex) {
-
 //            dd($ccm_after_activity, $ccm_before_activity);
 
             if ($ccm_before_over_120) {
-
                 // before: 8000, add: 200, total: 8200; target (was): 7200
                 // towards: 0, after: 200
 
                 $toAddToAccuredAfterCCM = $activity->duration;
-
             } elseif ($ccm_before_under_120 && $ccm_before_over_90) {
-
                 if ($ccm_after_over_120) {//patient just reached 120
 
                     // before: 0, add: 20, total: 20; target: 20
@@ -159,15 +147,11 @@ class AlternativeCareTimePayableCalculator
 //                    $nurse = User::find($activity->logger_id)->nurseInfo;
 //
 //                    $nurseCareForPatient = $nurse->careGivenToPatientForCurrentMonth($patient, $nurse);
-
                 } else { //still under, mins go to
 
                     $toAddToAccuredAfterCCM = $activity->duration;
-
                 }
-
             } elseif ($ccm_before_under_90 && $ccm_before_over_60) {
-
                 if ($ccm_after_over_90) {//patient just reached 90
 
                     // before: 0, add: 20, total: 20; target: 20
@@ -185,14 +169,10 @@ class AlternativeCareTimePayableCalculator
 //                    $nurse = User::find($activity->logger_id)->nurseInfo;
 //
 //                    $nurseCareForPatient = $nurse->careGivenToPatientForCurrentMonth($patient, $nurse);
-
                 } else { //still under, mins go to
 
                     $toAddToAccuredAfterCCM = $activity->duration;
-
                 }
-
-
             } elseif ($ccm_before_under_60 && $ccm_before_over_20) { //if patient was already over 20 mins.
 
                 if ($ccm_after_over_60) {//patient just reached 60
@@ -201,13 +181,10 @@ class AlternativeCareTimePayableCalculator
 
                     //Removes all the credit given for lower rate (20 - mins over 20) + new mins over 60
                     $toAddToAccuredAfterCCM = ($ccm_after_activity - 3600) + (1200 - $ccm_before_activity);
-
                 } else { //still under, mins go to
 
                     $toAddToAccuredAfterCCM = $activity->duration;
-
                 }
-
             } elseif ($ccm_before_under_20) { //if patient hasn't met 20mins
 
                 if ($ccm_after_over_20) { //patient reached 20 mins with this activity
@@ -217,18 +194,14 @@ class AlternativeCareTimePayableCalculator
 
                     $toAddToAccuredAfterCCM = $ccm_after_activity - 1200;
                     $toAddToAccuredTowardsCCM = 1200 - $ccm_before_activity;
-
                 } else {//patient is still under 20mins
 
                     // before: 200, add: 200, total: 400; target: 1200
                     // towards: 200, after: 0
 
                     $toAddToAccuredTowardsCCM = $activity->duration;
-
                 }
-
             }
-
         } else { //NOT COMPLEX
 
             if ($ccm_before_over_20) { //if patient was already over 20 mins.
@@ -237,7 +210,6 @@ class AlternativeCareTimePayableCalculator
                 // towards: 0, after: 200
 
                 $toAddToAccuredAfterCCM = $activity->duration;
-
             } elseif ($ccm_before_under_20) { //if patient hasn't met 20mins
 
                 if ($ccm_after_over_20) { //patient reached 20 mins with this activity
@@ -247,18 +219,14 @@ class AlternativeCareTimePayableCalculator
 
                     $toAddToAccuredAfterCCM = $ccm_after_activity - 1200;
                     $toAddToAccuredTowardsCCM = 1200 - $ccm_before_activity;
-
                 } else {//patient is still under 20mins
 
                     // before: 200, add: 200, total: 400; target: 1200
                     // towards: 200, after: 0
 
                     $toAddToAccuredTowardsCCM = $activity->duration;
-
                 }
-
             }
-
         }
 
         $this->createOrIncrementNurseSummary($toAddToAccuredTowardsCCM, $toAddToAccuredAfterCCM, $activity->id);
@@ -268,10 +236,10 @@ class AlternativeCareTimePayableCalculator
             'toAddToAccuredAfterCCM'   => $toAddToAccuredAfterCCM,
             'activity_id'              => $activity->id,
         ];
-
     }
 
-    public function adjustPayOnCCMComplexSwitch60Mins() {
+    public function adjustPayOnCCMComplexSwitch60Mins()
+    {
 
         /*
          * If patient was at 64 and was turned to complex:
@@ -290,11 +258,9 @@ class AlternativeCareTimePayableCalculator
         $this->createOrIncrementNurseSummary(
             $toAddToAccruedTowardsCCM,
             $toAddToAccruedAfterCCM,
-            null);
+            null
+        );
 
         return $this->nurseReport;
-
     }
-
-
 }

@@ -2,7 +2,6 @@
 
 namespace App\CLH\CCD\Importer\ParsingStrategies\CareTeam;
 
-
 use App\CLH\Contracts\CCD\ParsingStrategy;
 use App\CLH\Contracts\CCD\ValidationStrategy;
 use App\CLH\Contracts\Repositories\UserRepository;
@@ -30,24 +29,26 @@ class PrimaryProviders implements ParsingStrategy
     {
         $documentationOf = ProviderLog::whereCcdaId($ccd->id)->get();
 
-        if ( empty($documentationOf) ) return false;
+        if (empty($documentationOf)) {
+            return false;
+        }
 
-        foreach ( $documentationOf as $doc )
-        {
-            if ( isset($doc->first_name) && isset($doc->last_name) )
-            {
+        foreach ($documentationOf as $doc) {
+            if (isset($doc->first_name) && isset($doc->last_name)) {
                 $doctorNames[$doc->id] = $doc->first_name . ' ' . $doc->last_name;
             }
         }
 
-        if ( !isset($doctorNames) ) return false;
+        if (!isset($doctorNames)) {
+            return false;
+        }
 
         $providers = $this->users->findByRole('provider');
 
-        foreach ( $doctorNames as $docId => $docName ) {
+        foreach ($doctorNames as $docId => $docName) {
             $matchedProviders = $providers->where('display_name', $docName)->all();
 
-            foreach ($matchedProviders as $provider){
+            foreach ($matchedProviders as $provider) {
                 $providerLog = ProviderLog::find($docId);
                 $providerLog->import = true;
                 $providerLog->save();
@@ -78,7 +79,6 @@ class PrimaryProviders implements ParsingStrategy
                             }
                         }
                     }
-
                 }
 
                 $careTeam[] = $provider;

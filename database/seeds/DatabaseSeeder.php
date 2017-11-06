@@ -3,18 +3,19 @@
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Seeder;
 
-class DatabaseSeeder extends Seeder {
+class DatabaseSeeder extends Seeder
+{
 
-	/**
-	 * Run the database seeds.
-	 *
-	 * @return void
-	 */
-	public function run()
-	{
-		Model::unguard();
+    /**
+     * Run the database seeds.
+     *
+     * @return void
+     */
+    public function run()
+    {
+        Model::unguard();
 
-		/*
+        /*
 		$this->call('database\seeds\UserTableSeeder');
 		$this->command->info('User table seeded!');
 
@@ -28,8 +29,8 @@ class DatabaseSeeder extends Seeder {
 		$this->command->info('User table program ids seeded!');
 		*/
 
-		// ObservationsCommentsSeeder, kg 2015/9/24
-		// S20150929SymItems, kg 2015/9/28
+        // ObservationsCommentsSeeder, kg 2015/9/24
+        // S20150929SymItems, kg 2015/9/28
 //	    $this->call('SnomedToIcd10MapTableSeeder');
 //		$this->command->info('SnomedToIcd10MapTableSeeder success!');
 
@@ -41,7 +42,5 @@ class DatabaseSeeder extends Seeder {
 
         $this->call(SnomedToIcd9MapTableSeeder::class);
         $this->call(AddActiveStatusToPractices::class);
-
     }
-
 }

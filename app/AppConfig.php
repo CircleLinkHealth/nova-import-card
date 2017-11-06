@@ -2,16 +2,10 @@
 
 use Illuminate\Database\Eloquent\Model;
 
-class AppConfig extends Model {
+class AppConfig extends \App\BaseModel
+{
 
     public $timestamps = true;
-
-    /**
-     * The connection name for the model.
-     *
-     * @var string
-     */
-    protected $connection = 'mysql_no_prefix';
 
     /**
      * The database table used by the model.
@@ -33,5 +27,4 @@ class AppConfig extends Model {
      * @var array
      */
     protected $fillable = ['config_key', 'config_value'];
-
 }

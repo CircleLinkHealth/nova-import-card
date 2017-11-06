@@ -4,7 +4,7 @@ namespace App;
 
 use Illuminate\Database\Eloquent\Model;
 
-class Settings extends Model
+class Settings extends \App\BaseModel
 {
     protected $table = 'cpm_settings';
 
@@ -35,5 +35,24 @@ class Settings extends Model
     public function settingsable()
     {
         return $this->morphTo('settingsable', 'settingsable_type', 'settingsable_id');
+    }
+
+    public function notesChannels()
+    {
+        $channels = [];
+
+        if ($this->email_note_was_forwarded) {
+            $channels[] = 'Email';
+        }
+
+        if ($this->dm_pdf_notes) {
+            $channels[] = 'DM';
+        }
+
+        if ($this->efax_pdf_notes) {
+            $channels[] = 'eFax';
+        }
+
+        return $channels;
     }
 }

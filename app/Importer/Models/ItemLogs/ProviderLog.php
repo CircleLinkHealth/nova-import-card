@@ -5,7 +5,7 @@ use App\Traits\Relationships\BelongsToCcda;
 use App\Traits\Relationships\BelongsToVendor;
 use Illuminate\Database\Eloquent\Model;
 
-class ProviderLog extends Model implements ItemLog
+class ProviderLog extends \App\BaseModel implements ItemLog
 {
     use BelongsToCcda,
         BelongsToVendor;

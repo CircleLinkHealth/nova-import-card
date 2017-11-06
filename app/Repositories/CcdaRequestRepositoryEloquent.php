@@ -45,8 +45,7 @@ class CcdaRequestRepositoryEloquent extends BaseRepository implements CcdaReques
         try {
             $created = parent::create($attributes);
         } catch (\Exception $e) {
-            if ($e->errorInfo[1] && str_contains($e->errorInfo[2], 'ccda_requests_vendor_patient_id_unique'))
-            {
+            if ($e->errorInfo[1] && str_contains($e->errorInfo[2], 'ccda_requests_vendor_patient_id_unique')) {
                 //if it's duplicate unique key exception for ccda_requests_vendor_patient_id_unique
                 return false;
             }

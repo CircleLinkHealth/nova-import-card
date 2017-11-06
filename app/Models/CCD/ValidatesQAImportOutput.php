@@ -8,7 +8,6 @@ use App\Models\MedicalRecords\ImportedMedicalRecord;
 use App\User;
 use Carbon\Carbon;
 
-
 trait ValidatesQAImportOutput
 {
     public function validateQAImportOutput(
@@ -18,7 +17,7 @@ trait ValidatesQAImportOutput
         $demographics = DemographicsLog::whereCcdaId($ccda->id)->first();
 
         $name = function () use
-        (
+            (
             $demographics
         ) {
             return empty($name = $demographics->first_name . ' ' . $demographics->last_name)
@@ -26,7 +25,7 @@ trait ValidatesQAImportOutput
         };
 
         $provider = function () use
-        (
+            (
             $output
         ) {
             if (isset($output['provider'][0])) {
@@ -35,7 +34,7 @@ trait ValidatesQAImportOutput
         };
 
         $location = function () use
-        (
+            (
             $output
         ) {
             if (isset($output['location'][0])) {
@@ -44,14 +43,14 @@ trait ValidatesQAImportOutput
         };
 
         $duplicateCheck = function () use
-        (
+            (
             $demographics
         ) {
             $date = (new Carbon($demographics->dob))->format('Y-m-d');
 
             $dup = User::with([
                 'patientInfo' => function ($q) use
-                (
+                    (
                     $demographics,
                     $date
                 ) {
@@ -69,7 +68,7 @@ trait ValidatesQAImportOutput
         };
 
         $phoneCheck = function () use
-        (
+            (
             $demographics
         ) {
             return ($demographics->cell_phone
@@ -78,14 +77,14 @@ trait ValidatesQAImportOutput
         };
 
         $counter = function ($index) use
-        (
+            (
             $output
         ) {
             return count($output[$index]);
         };
 
         $hasStreetAddress = function () use
-        (
+            (
             $demographics
         ) {
             return empty($demographics->street)
@@ -94,7 +93,7 @@ trait ValidatesQAImportOutput
         };
 
         $hasCity = function () use
-        (
+            (
             $demographics
         ) {
             return empty($demographics->city)
@@ -103,7 +102,7 @@ trait ValidatesQAImportOutput
         };
 
         $hasState = function () use
-        (
+            (
             $demographics
         ) {
             return empty($demographics->state)
@@ -112,7 +111,7 @@ trait ValidatesQAImportOutput
         };
 
         $hasZip = function () use
-        (
+            (
             $demographics
         ) {
             return empty($demographics->zip)
@@ -126,7 +125,7 @@ trait ValidatesQAImportOutput
         $fullName = $name();
 
         $duplicateCcdCheck = function () use
-        (
+            (
             $medications,
             $problems,
             $allergies,
@@ -143,7 +142,6 @@ trait ValidatesQAImportOutput
         $duplicateCcdJustUploaded = $duplicateCcdCheck();
 
         if ($duplicateCcdJustUploaded || $duplicatePatient) {
-
             $deleteTheCCD = true;
 
             if ($duplicatePatient) {
@@ -204,5 +202,4 @@ trait ValidatesQAImportOutput
 
         return $qaSummary;
     }
-
 }

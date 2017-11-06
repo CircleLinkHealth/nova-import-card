@@ -52,5 +52,4 @@ class CreateDemographicsImportsTable extends Migration
     {
         Schema::drop('demographics_imports');
     }
-
 }

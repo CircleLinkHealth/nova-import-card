@@ -8,7 +8,7 @@ use App\Services\CPM\CpmLifestyleService;
 use App\User;
 use Illuminate\Database\Eloquent\Model;
 
-class CpmLifestyle extends Model implements Serviceable
+class CpmLifestyle extends \App\BaseModel implements Serviceable
 {
     
     use Instructable;

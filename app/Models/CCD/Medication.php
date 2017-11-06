@@ -5,7 +5,7 @@ use App\Models\CPM\CpmMedicationGroup;
 use App\User;
 use Illuminate\Database\Eloquent\Model;
 
-class Medication extends Model
+class Medication extends \App\BaseModel
 {
 
     protected $fillable = [

@@ -3,6 +3,7 @@
 namespace App\Console\Commands;
 
 use App\CarePlan;
+use App\Mail\CarePlanApprovalReminder;
 use App\Models\EmailSettings;
 use App\User;
 use Carbon\Carbon;
@@ -145,14 +146,6 @@ class EmailsProvidersToApproveCareplans extends Command
 
     public function sendEmail(User $recipient, $numberOfCareplans, User $providerUser, bool $pretend)
     {
-        $data = [
-            'numberOfCareplans' => $numberOfCareplans,
-            'recipient'         => $recipient,
-        ];
-
-        $view = 'emails.careplansPendingApproval';
-        $subject = "{$numberOfCareplans} CircleLink Care Plan(s) for your Approval!";
-
         $settings = $providerUser->emailSettings()->firstOrNew([]);
 
         $send = $settings->frequency == EmailSettings::DAILY
@@ -172,14 +165,7 @@ class EmailsProvidersToApproveCareplans extends Command
 
         if (!$pretend) {
             if ($send && $recipient->email) {
-                Mail::send($view, $data, function ($message) use (
-                    $recipient,
-                    $subject
-                ) {
-                    $message->from('notifications@careplanmanager.com', 'CircleLink Health')
-                        ->to($recipient->email)
-                        ->subject($subject);
-                });
+                Mail::send(new CarePlanApprovalReminder($recipient, $numberOfCareplans));
             }
         }
     }

@@ -40,9 +40,8 @@ class CcmTimeApiLogRepositoryEloquent extends BaseRepository implements CcmTimeA
      * @param array $values
      * @return mixed
      */
-    public function logSentActivity(array $attributes, array $values = array())
+    public function logSentActivity(array $attributes, array $values = [])
     {
         return $this->makeModel()->updateOrCreate($attributes, $values);
     }
-
 }

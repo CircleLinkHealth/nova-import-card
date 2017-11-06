@@ -4,7 +4,7 @@ namespace App;
 
 use Illuminate\Database\Eloquent\Model;
 
-class MailLog extends Model
+class MailLog extends \App\BaseModel
 {
 
     protected $table = 'cpm_mail_logs';
@@ -39,5 +39,4 @@ class MailLog extends Model
     {
         return $this->belongsTo('App\Note', 'note_id');
     }
-
 }

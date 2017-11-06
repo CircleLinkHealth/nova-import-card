@@ -8,7 +8,6 @@
 
 namespace Tests\Helpers;
 
-
 use App\Models\CCD\CcdVendor;
 use App\Models\MedicalRecords\ImportedMedicalRecord;
 
@@ -27,7 +26,7 @@ trait CcdImporterHelpers
     ) {
         $this->userLogin($this->admin);
 
-        $this->visit(route('patients.dashboard'))
+        $response = $this->get(route('patients.dashboard'))
             ->click('Import CCDs')
             ->seePageIs('/ccd-importer/create')
             ->findElement("label-vendor-{$ccdVendor->id}")
@@ -37,17 +36,17 @@ trait CcdImporterHelpers
             ->type($pathToCcda, 'ccd')
             ->press('Upload')
             ->seePageIs('/ccd-importer/qaimport')
-            ->see('Name')
-            ->see('Provider')
-            ->see('Has Phone')
-            ->see('Import')
-            ->see('Delete')
-            ->see('IMPORT/DELETE CHECKED CCDS');
+            ->assertSee('Name')
+            ->assertSee('Provider')
+            ->assertSee('Has Phone')
+            ->assertSee('Import')
+            ->assertSee('Delete')
+            ->assertSee('IMPORT/DELETE CHECKED CCDS');
 
         $summary = ImportedMedicalRecord::all()->last();
 
         $this->assertTrue(!empty($summary->name));
-        $this->see($summary->name);
+        $response->assertSee($summary->name);
 
         $this->assertGreaterThan(0, $summary->medications);
         $this->assertGreaterThan(0, $summary->problems);

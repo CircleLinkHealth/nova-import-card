@@ -27,7 +27,8 @@ class UploadsController extends Controller
             $patient = User::where('first_name', $firstName)
                 ->where('last_name', $lastName)
                 ->whereHas('patientInfo', function ($q) use ($row) {
-                    $q->where('birth_date',
+                    $q->where(
+                        'birth_date',
                         Carbon::parse($row['DOB'])->toDateString()
                     );
                 })
@@ -40,7 +41,9 @@ class UploadsController extends Controller
 
             $info = $patient->patientInfo;
 
-            if (array_key_exists('General Comment', $row)) $generalComment = $row['General Comment'];
+            if (array_key_exists('General Comment', $row)) {
+                $generalComment = $row['General Comment'];
+            }
 
             if (!empty($generalComment)) {
                 $info->general_comment = $generalComment;
@@ -48,8 +51,7 @@ class UploadsController extends Controller
             }
         }
 
-        if (!empty($failed))
-        {
+        if (!empty($failed)) {
             echo "We could not find these patients. Is the name spelled correctly?";
 
             dd($failed);

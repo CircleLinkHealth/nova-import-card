@@ -4,7 +4,7 @@ use App\Contracts\Models\CPM\Biometric;
 use App\User;
 use Illuminate\Database\Eloquent\Model;
 
-class CpmBloodSugar extends Model implements Biometric
+class CpmBloodSugar extends \App\BaseModel implements Biometric
 {
 
     public static $rules = [

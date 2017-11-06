@@ -18,7 +18,9 @@ class CcdInsurancePolicyService
         $hasPolicies = $patient->ccdInsurancePolicies()->get();
 
         //patient has no policies, so no approval needed
-        if ($hasPolicies->isEmpty()) return false;
+        if ($hasPolicies->isEmpty()) {
+            return false;
+        }
 
         //check if the user has approved insurance policies
         $approvedInsurance = $patient->ccdInsurancePolicies()
@@ -27,5 +29,4 @@ class CcdInsurancePolicyService
 
         return $approvedInsurance->isEmpty();
     }
-
 }

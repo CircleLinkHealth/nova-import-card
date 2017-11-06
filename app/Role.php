@@ -11,12 +11,7 @@ class Role extends EntrustRole
         'provider'
     ];
 
-    /**
-     * The connection name for the model.
-     *
-     * @var string
-     */
-    protected $connection = 'mysql_no_prefix';
+
 
     /**
      * The database table used by the model.
@@ -24,6 +19,4 @@ class Role extends EntrustRole
      * @var string
      */
     protected $table = 'lv_roles';
-    
-    
 }

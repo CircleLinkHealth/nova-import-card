@@ -16,7 +16,6 @@ class AddHadCopayToEnrollees extends Migration
         Schema::table('enrollees', function (Blueprint $table) {
 
             $table->boolean('has_copay')->after('secondary_insurance')->default(0);
-
         });
     }
 
@@ -30,7 +29,6 @@ class AddHadCopayToEnrollees extends Migration
         Schema::table('enrollees', function (Blueprint $table) {
 
             $table->dropColumn('has_copay');
-
         });
     }
 }

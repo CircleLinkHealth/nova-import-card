@@ -5,7 +5,7 @@ use App\Traits\HasEmrDirectAddress;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
-class Location extends Model
+class Location extends \App\BaseModel
 {
     use HasEmrDirectAddress,
         SoftDeletes;
@@ -101,7 +101,6 @@ class Location extends Model
         $loc->save();
 
         return $loc;
-
     }
 
     public function practice()

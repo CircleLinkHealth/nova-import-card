@@ -2,11 +2,11 @@
 
 @section('content')
     @push('styles')
-        <style>
-            .form-group {
-                margin: 20px;
-            }
-        </style>
+    <style>
+        .form-group {
+            margin: 20px;
+        }
+    </style>
     @endpush
     <div class="container-fluid">
         <div class="row">
@@ -25,9 +25,9 @@
                         Add New Practice
                     </div>
                     <div class="panel-body">
+                        {!! Form::open(array('url' => URL::route('admin.programs.store', array()), 'class' => 'form-horizontal')) !!}
 
                         <div class="row">
-                            {!! Form::open(array('url' => URL::route('admin.programs.store', array()), 'class' => 'form-horizontal')) !!}
                         </div>
 
                         <div class="row" style="">
@@ -97,10 +97,10 @@
                                 <div class="pull-right">
                                     <a href="{{ URL::route('admin.programs.index', array()) }}" class="btn btn-danger">Cancel</a>
                                     {!! Form::submit('Add Practice', array('class' => 'btn btn-success')) !!}
-                                    </form>
                                 </div>
                             </div>
                         </div>
+                        {!! Form::close() !!}
 
                     </div>
                 </div>

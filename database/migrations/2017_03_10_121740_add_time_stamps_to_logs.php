@@ -16,7 +16,6 @@ class AddTimeStampsToLogs extends Migration
         Schema::table('care_ambassador_logs', function (Blueprint $table) {
 
             $table->timestamps();
-
         });
     }
 
@@ -31,7 +30,6 @@ class AddTimeStampsToLogs extends Migration
 
             $table->dropColumn('created_at');
             $table->dropColumn('updated_at');
-
         });
     }
 }

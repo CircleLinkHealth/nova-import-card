@@ -38,5 +38,4 @@ class CreateCcdVendorsTable extends Migration
     {
         Schema::drop('ccd_vendors');
     }
-
 }

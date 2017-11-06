@@ -5,7 +5,7 @@ namespace App\Models;
 use App\Nurse;
 use Illuminate\Database\Eloquent\Model;
 
-class Holiday extends Model
+class Holiday extends \App\BaseModel
 {
     protected $dates = [
         'date',

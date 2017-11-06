@@ -4,7 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
-class PatientSignup extends Model
+class PatientSignup extends \App\BaseModel
 {
     protected $fillable = [
         'name',
@@ -12,6 +12,4 @@ class PatientSignup extends Model
         'email',
         'comment',
     ];
-
-
 }

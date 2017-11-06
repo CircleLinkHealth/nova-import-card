@@ -74,8 +74,6 @@ class AddNewProblems extends Seeder
                 ]);
             }
         }
-
-
     }
 
     /**

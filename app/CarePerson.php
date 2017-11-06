@@ -2,7 +2,7 @@
 
 use Illuminate\Database\Eloquent\Model;
 
-class CarePerson extends Model
+class CarePerson extends \App\BaseModel
 {
 
     const BILLING_PROVIDER = 'billing_provider';
@@ -53,5 +53,4 @@ class CarePerson extends Model
         return $this->belongsTo(User::class, 'member_user_id', 'id');
     }
     // END RELATIONSHIPS
-
 }
