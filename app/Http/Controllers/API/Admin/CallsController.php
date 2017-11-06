@@ -24,6 +24,7 @@ class CallsController extends Controller
                 'inboundUser.billingProvider.user'         => function ($q) {
                     $q->select(['id', 'first_name', 'last_name', 'suffix', 'display_name']);
                 },
+                'inboundUser.patientInfo.contactWindows',
                 'inboundUser.patientInfo.monthlySummaries' => function ($q) {
                     $q->where('month_year', '=', Carbon::now()->startOfMonth()->format('Y-m-d'));
                 },
