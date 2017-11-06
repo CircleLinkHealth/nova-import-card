@@ -16,11 +16,7 @@
                 General Comment:
               </div>
               <div class="col-lg-10">
-                <a href="#">
-                    <span class="cpm-editable-icon" call-id="13687" column-name="general_comment" column-value="Call with spouse Luther Smith.">
-                      Call with spouse Lorem Ipsum.
-                    </span>
-                  </a>
+                <text-editable :value="props.row.Comment" :multi="true" :class-name="'blue'"></text-editable>
               </div>
             </div>
             <div class="row">
@@ -124,6 +120,7 @@
   import TimeEditable from './comps/time-editable'
   import Modal from './comps/modal'
   import BindAppEvents from './app.events'
+  import { DayOfWeek, ShortDayOfWeek } from './helpers/day-of-week'
 
   export default {
       name: 'CallMgmtApp',
@@ -223,12 +220,19 @@
                                     Patient: (call.getPatient() || {}).full_name,
                                     Practice: (call.getPatient() || {}).getPractice().display_name,
                                     Scheduler: call.scheduler,
+                                    CallWindows: call.getPatient().getInfo().contact_windows,
+                                    Comment: call.getPatient().getInfo().general_comment,
                                     'Last Call Status': call.getPatient().getInfo().last_call_status,
                                     'Last Call': new Date(call.getPatient().getInfo().last_contact_time).toDateString(),
                                     'CCM Time': call.getPatient().getInfo().cur_month_activity_time,
                                     'Successful Calls': (call.getPatient().getInfo().monthly_summaries.slice(-1).no_of_successful_calls || 0),
                                     'Time Zone': call.getPatient().timezone,
-                                    'Preferred Call Days': call.getPatient().getInfo().contact_windows,
+                                    'Preferred Call Days': Object.values(call.getPatient().getInfo().contact_windows
+                                                                                    .map(time_window => ShortDayOfWeek(time_window.day_of_week))
+                                                                                    .reduce((obj, key) => {
+                                                                                      obj[key] = key;
+                                                                                      return obj;
+                                                                                    }, {})).join(','),
                                     'Patient Status': call.getPatient().getInfo().ccm_status,
                                     'DOB': call.getPatient().getInfo().birth_date,
                                     'Billing Provider': call.getPatient().getBillingProvider().getUser().display_name,
