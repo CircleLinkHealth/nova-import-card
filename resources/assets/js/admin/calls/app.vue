@@ -1,5 +1,11 @@
 <template>
   <div>
+    <div class="row">
+      <div class="col-sm-6 text-right" v-if="itemsAreSelected">
+        <button class="btn btn-primary btn-xs">Assign Nurse</button>
+        <button class="btn btn-danger btn-xs">Delete</button>
+      </div>
+    </div>
     <v-client-table ref="tblCalls" :data="tableData" :columns="columns" :options="options">
       <template slot="child_row" scope="props">
         <div class="row row-info">
@@ -63,7 +69,7 @@
         </div>
       </template>
       <template slot="selected" scope="props">
-        <input class="row-select" v-model="props.row.selected" type="checkbox" />
+        <input class="row-select" v-model="props.row.selected" @change="toggleSelect(props.row.id)" type="checkbox" />
       </template>
       <template slot="h__selected" scope="props">
         <input class="row-select" v-model="selected" @change="toggleAllSelect" type="checkbox" />
@@ -129,12 +135,23 @@
           currentDate: new Date()
         }
       },
+      computed: {
+        itemsAreSelected() {
+          return !!this.tableData.find(row => !!row.selected)
+        }
+      },
       methods: {
         toggleAllSelect(e) {
           this.tableData = this.tableData.map(row => {
             row.selected = this.selected;
             return row;
           })
+        },
+        toggleSelect(id) {
+          const row = this.tableData.find(row => row.id === id)
+          if (row) {
+            row.selected = !row.selected
+          }
         },
         next() {
           if (!this.$nextPromise) {
