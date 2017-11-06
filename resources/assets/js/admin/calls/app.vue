@@ -1,9 +1,10 @@
 <template>
   <div>
     <div class="row">
+      <div class="col-sm-6"></div>
       <div class="col-sm-6 text-right" v-if="itemsAreSelected">
         <button class="btn btn-primary btn-xs">Assign Nurse</button>
-        <button class="btn btn-danger btn-xs">Delete</button>
+        <button class="btn btn-danger btn-xs" @click="deleteSelected">Delete</button>
       </div>
     </div>
     <v-client-table ref="tblCalls" :data="tableData" :columns="columns" :options="options">
@@ -151,6 +152,16 @@
           const row = this.tableData.find(row => row.id === id)
           if (row) {
             row.selected = !row.selected
+          }
+        },
+        deleteSelected() {
+          if (window) {
+            const count = this.tableData.filter(row => !!row.selected).length;
+            if (count) {
+              if (confirm(`Are you sure you want to delete the ${count} selected item${count > 1 ? 's' : ''}?`)) {
+                //perform delete action
+              }
+            }
           }
         },
         next() {
