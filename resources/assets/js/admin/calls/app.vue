@@ -149,19 +149,17 @@
             filterable: ['Nurse','Patient ID', 'Patient','Next Call', 'Last Call Status', 'Last Call', 'CCM Time', 'Successful Calls', 'Time Zone', 'Call Time Start', 'Call Time End', 'Preferred Call Days', 'Patient Status', 'Practice', 'Billing Provider', 'DOB', 'Scheduler'],
             filterByColumn: true
           },
-          currentDate: new Date()
+          currentDate: new Date(),
+          selectNursesModalInfo: {
+            onChange(e) {
+              console.log(e)
+            }
+          }
         }
       },
       computed: {
         itemsAreSelected() {
           return !!this.tableData.find(row => !!row.selected)
-        },
-        selectNursesModalInfo() {
-          return {
-            onChange(e) {
-              console.log(e)
-            }
-          }
         }
       },
       methods: {
