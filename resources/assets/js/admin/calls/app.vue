@@ -210,6 +210,7 @@
                 if (patient) {
                   patient.getBillingProvider = () => ((patient.billing_provider || [])[0] || {});
                   patient.getPractice = () => (patient.primary_practice || {});
+                  patient.getInfo = () => (patient.patient_info || {});
 
                   const billingProvider = patient.getBillingProvider();
                   billingProvider.getUser = () => (billingProvider.user || {});
@@ -222,6 +223,14 @@
                                     Patient: (call.getPatient() || {}).full_name,
                                     Practice: (call.getPatient() || {}).getPractice().display_name,
                                     Scheduler: call.scheduler,
+                                    'Last Call Status': call.getPatient().getInfo().last_call_status,
+                                    'Last Call': new Date(call.getPatient().getInfo().last_contact_time).toDateString(),
+                                    'CCM Time': call.getPatient().getInfo().cur_month_activity_time,
+                                    'Successful Calls': (call.getPatient().getInfo().monthly_summaries.slice(-1).no_of_successful_calls || 0),
+                                    'Time Zone': call.getPatient().timezone,
+                                    'Preferred Call Days': call.getPatient().getInfo().contact_windows,
+                                    'Patient Status': call.getPatient().getInfo().ccm_status,
+                                    'DOB': call.getPatient().getInfo().birth_date,
                                     'Billing Provider': call.getPatient().getBillingProvider().getUser().display_name,
                                     'Patient ID': call.getPatient().id,
                                     'Next Call': call.scheduled_date,
