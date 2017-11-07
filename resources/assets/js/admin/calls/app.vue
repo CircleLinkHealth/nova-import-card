@@ -1,7 +1,10 @@
 <template>
   <div>
     <div class="row">
-      <div class="col-sm-6"></div>
+      <div class="col-sm-6">
+        <a class="btn btn-primary btn-xs" :href="rootUrl('admin/reports/call')">Export Records</a>
+        <button class="btn btn-success btn-xs" @click="addCall">Add Call</button>
+      </div>
       <div class="col-sm-6 text-right" v-if="itemsAreSelected">
         <button class="btn btn-primary btn-xs" @click="assignSelectedToNurse">Assign To Nurse</button>
         <button class="btn btn-danger btn-xs" @click="deleteSelected">Delete</button>
@@ -26,7 +29,7 @@
               </div>
             </div>
             <div class="row" v-if="props.row.Notes.length > 0">
-              <div class="col-lg-2">Last 3 Notes:</div>
+              <div class="col-lg-2"><a :href="rootUrl('manage-patients/' + props.row['Patient ID'] + '/notes')" target="_blank">Last 3 Notes:</a></div>
               <div class="col-lg-10">
                 <ul>
                   <li v-for="(note, index) in props.row.Notes.slice(0, 3)" :key="index">
@@ -78,20 +81,8 @@
     <text-editable :value="'Mykeels'"></text-editable>
     <date-editable :value="'01-20-2017'" :format="'mm-DD-YYYY'"></date-editable>
     <select-editable :values="['One', 'Two', 'Three']"></select-editable>
-    <modal :no-title="true" :no-footer="true" :info="selectNursesModalInfo">
-      <template scope="props">
-        <select class="form-control" @change="props.info.onChange">
-          <option value="">Pick a Nurse</option>
-          <option value="1">Nurse N RN</option>
-          <option value="2">Kathryn Alchalabi RN</option>
-          <option value="3">atricia Koeppel RN</option>
-          <option value="4">Dillenis Diaz RN</option>
-          <option value="5">Liza Herrera RN</option>
-          <option value="6">Monique Potter RN</option>
-          <option value="7">Nurse Loisa</option>
-        </select>
-      </template>
-    </modal>
+    <select-nurse-modal></select-nurse-modal>
+    <add-call-modal></add-call-modal>
   </div>
 </template>
 
@@ -103,6 +94,8 @@
   import SelectEditable from './comps/select-editable'
   import TimeEditable from './comps/time-editable'
   import Modal from './comps/modal'
+  import AddCallModal from './comps/modals/add-call.modal'
+  import SelectNurseModal from './comps/modals/select-nurse.modal'
   import BindAppEvents from './app.events'
   import { DayOfWeek, ShortDayOfWeek } from './helpers/day-of-week'
 
@@ -113,7 +106,9 @@
         'date-editable': DateEditable,
         'select-editable': SelectEditable,
         'time-editable': TimeEditable,
-        'modal': Modal
+        'modal': Modal,
+        'add-call-modal': AddCallModal,
+        'select-nurse-modal': SelectNurseModal
       },
       data() {
         return {
@@ -128,14 +123,10 @@
             },
             sortable: ['Nurse','Patient ID', 'Patient','Next Call', 'Last Call Status', 'Last Call', 'CCM Time', 'Successful Calls', 'Time Zone', 'Call Time Start', 'Call Time End', 'Preferred Call Days', 'Patient Status', 'Practice', 'Billing Provider', 'DOB', 'Scheduler'],
             filterable: ['Nurse','Patient ID', 'Patient','Next Call', 'Last Call Status', 'Last Call', 'CCM Time', 'Successful Calls', 'Time Zone', 'Call Time Start', 'Call Time End', 'Preferred Call Days', 'Patient Status', 'Practice', 'Billing Provider', 'DOB', 'Scheduler'],
-            filterByColumn: true
+            filterByColumn: true,
+            footerHeadings: true
           },
-          currentDate: new Date(),
-          selectNursesModalInfo: {
-            onChange(e) {
-              console.log(e)
-            }
-          }
+          currentDate: new Date()
         }
       },
       computed: {
@@ -144,6 +135,7 @@
         }
       },
       methods: {
+        rootUrl,
         toggleAllSelect(e) {
           this.tableData = this.tableData.map(row => {
             row.selected = this.selected;
@@ -167,7 +159,10 @@
           }
         },
         assignSelectedToNurse() {
-          Event.$emit('modal:show')
+          Event.$emit('modal-select-nurse:show')
+        },
+        addCall() {
+          Event.$emit("modal-add-call:show")
         },
         next() {
           if (!this.$nextPromise) {
@@ -189,7 +184,8 @@
                 
                 const patient = call.getPatient();
                 if (patient) {
-                  patient.getBillingProvider = () => ((patient.billing_provider || [])[0] || {});
+                  const emptyObject = {}
+                  patient.getBillingProvider = () => ((patient.billing_provider || [])[0] || emptyObject);
                   patient.getPractice = () => (patient.primary_practice || {});
                   patient.getInfo = () => (patient.patient_info || {});
 
@@ -212,7 +208,12 @@
                                     CallWindows: call.getPatient().getInfo().contact_windows,
                                     Comment: call.getPatient().getInfo().general_comment,
                                     AttemptNote: call.attempt_note,
-                                    Notes: [],
+                                    Notes: [{
+                                      created_at: (new Date()).toDateString(),
+                                      type: 'in',
+                                      category: 'Morning Checkup',
+                                      message: 'Demo: The Patient is responding to treatment'
+                                    }],
                                     'Last Call Status': call.getPatient().getInfo().last_call_status,
                                     'Last Call': new Date(call.getPatient().getInfo().last_contact_time).toDateString(),
                                     'CCM Time': call.getPatient().getInfo().cur_month_activity_time,
