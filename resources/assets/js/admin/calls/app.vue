@@ -94,67 +94,7 @@
         </select>
       </template>
     </modal>
-    <modal name="add-call" :info="addCallModalInfo" :no-footer="true" class-name="modal-add-call">
-      <template slot="title"><div>Add New Call</div></template>
-      <template scope="props">
-        <div class="row">
-          <div class="col-sm-12">
-            <div class="row form-group">
-              <div class="col-sm-5">
-                Patient:
-              </div>
-              <div class="col-sm-7">
-                <select class="form-control">
-                  <option value="">Unassigned</option>
-                </select>
-              </div>
-            </div>
-            <div class="row form-group">
-              <div class="col-sm-5">
-                Nurse:
-              </div>
-              <div class="col-sm-7">
-                <select class="form-control">
-                  <option value="">Unassigned</option>
-                </select>
-              </div>
-            </div>
-            <div class="row form-group">
-              <div class="col-sm-5">
-                Date:
-              </div>
-              <div class="col-sm-7">
-                <input class="form-control" type="date" />
-              </div>
-            </div>
-            <div class="row form-group">
-              <div class="col-sm-5">
-                Start Time
-              </div>
-              <div class="col-sm-7">
-                <input class="form-control" type="time" />
-              </div>
-            </div>
-            <div class="row form-group">
-              <div class="col-sm-5">
-                End Time:
-              </div>
-              <div class="col-sm-7">
-                <input class="form-control" type="time" />
-              </div>
-            </div>
-            <div class="row form-group">
-              <div class="col-sm-5">
-                Add Text:
-              </div>
-              <div class="col-sm-7">
-                <textarea class="form-control"></textarea>
-              </div>
-            </div>
-          </div>
-        </div>
-      </template>
-    </modal>
+    <add-call-modal></add-call-modal>
   </div>
 </template>
 
@@ -166,6 +106,7 @@
   import SelectEditable from './comps/select-editable'
   import TimeEditable from './comps/time-editable'
   import Modal from './comps/modal'
+  import AddCallModal from './comps/modals/add-call.modal'
   import BindAppEvents from './app.events'
   import { DayOfWeek, ShortDayOfWeek } from './helpers/day-of-week'
 
@@ -176,7 +117,8 @@
         'date-editable': DateEditable,
         'select-editable': SelectEditable,
         'time-editable': TimeEditable,
-        'modal': Modal
+        'modal': Modal,
+        'add-call-modal': AddCallModal
       },
       data() {
         return {
@@ -197,12 +139,6 @@
           selectNursesModalInfo: {
             onChange(e) {
               console.log(e)
-            }
-          },
-          addCallModalInfo: {
-            okHandler() {
-              console.log("okay clicked")
-              Event.$emit("modal-add-call:hide")
             }
           }
         }
@@ -365,9 +301,5 @@
   .big-text-edit button {
       font-size: 25px;
       float: left;
-  }
-
-  .modal-add-call .modal-container {
-    width: 420px;
   }
 </style>
