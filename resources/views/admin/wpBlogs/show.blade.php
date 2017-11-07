@@ -15,7 +15,7 @@
                     </div>
                     <div class="col-sm-4">
                         <div class="pull-right" style="margin:20px;">
-                            @if(Entrust::can('programs-manage'))
+                            @if(Cerberus::can('programs-manage'))
                                 <a href="{{ URL::route('admin.programs.edit', array('id' => $program->id)) }}"
                                    class="btn btn-info">Edit</a>
                             @endif

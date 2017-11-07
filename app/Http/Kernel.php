@@ -52,13 +52,13 @@ class Kernel extends HttpKernel
         'throttle'                   => \Illuminate\Routing\Middleware\ThrottleRequests::class,
 
         //CLH Middleware
-        'ability'                    => \Michalisantoniou6\Entrust\Middleware\EntrustAbility::class,
+        'ability'                    => \Michalisantoniou6\Cerberus\Middleware\CerberusAbility::class,
         'aprima.ccdapi.auth.adapter' => Middleware\AprimaCcdApiAuthAdapter::class,
-        'permission'                 => \Michalisantoniou6\Entrust\Middleware\EntrustPermission::class,
+        'permission'                 => \Michalisantoniou6\Cerberus\Middleware\CerberusPermission::class,
         'patientProgramSecurity'     => \App\Http\Middleware\PatientProgramSecurity::class,
         'patient.session'            => \App\Http\Middleware\CheckPatientSession::class,
         'providerDashboardACL'       => Middleware\ACL\ProviderDashboardACL::class,
-        'role'                       => \Michalisantoniou6\Entrust\Middleware\EntrustRole::class,
+        'role'                       => \Michalisantoniou6\Cerberus\Middleware\CerberusRole::class,
         'verify.invite'              => \App\Http\Middleware\CheckOnboardingInvite::class,
         'check.careplan.mode'        => \App\Http\Middleware\CheckCarePlanMode::class,
     ];

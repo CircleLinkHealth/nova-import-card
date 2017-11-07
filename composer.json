@@ -17,10 +17,6 @@
             "url": "https://packagist.org"
         },
         {
-        "type": "git",
-        "url": "https://github.com/michalisantoniou6/entrust"
-        },
-        {
             "packagist": false
         }
     ],
@@ -43,6 +39,7 @@
         "laravelcollective/html": "5.5.*",
         "league/fractal": "0.12.*",
         "maatwebsite/excel": "~2.1.0",
+        "michalisantoniou6/laravel-cerberus": "dev-master",
         "pda/pheanstalk": "~3.0",
         "phaxio/phaxio": "^1.0",
         "predis/predis": "^1.1",
@@ -56,8 +53,7 @@
         "tylercd100/lern": "^3.8",
         "tymon/jwt-auth": "0.5.*",
         "venturecraft/revisionable": "1.*",
-        "yajra/laravel-datatables-oracle": "~6.0",
-        "michalisantoniou6/entrust": "dev-master"
+        "yajra/laravel-datatables-oracle": "~6.0"
     },
     "require-dev": {
         "Xethron/Laravel-4-Generators": "*",

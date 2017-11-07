@@ -31,7 +31,7 @@
                                 <td>{{ $role->name }}</td>
                                 <td>{{ $role->display_name }}</td>
                                 <td>
-                                    @if(Entrust::can('roles-manage'))
+                                    @if(Cerberus::can('roles-manage'))
                                         <a href="{{ URL::route('roles.edit', array('id' => $role->id)) }}"
                                            class="btn btn-primary">Edit</a>
                                     @endif

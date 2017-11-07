@@ -14,7 +14,7 @@
                     <div class="col-sm-8">
                         <h1>App Configs</h1>
                     </div>
-                    @if(Entrust::can('app-config-manage'))
+                    @if(Cerberus::can('app-config-manage'))
                         <div class="col-sm-4">
                             <div class="pull-right" style="margin:20px;">
                                 <a href="{{ URL::route('admin.appConfig.create', array()) }}" class="btn btn-success">New App Config</a>
@@ -46,7 +46,7 @@
                                 <td>{{ date('F d, Y g:i A', strtotime($appConfig->created_at)) }}</td>
                                 <td>{{ date('F d, Y g:i A', strtotime($appConfig->updated_at)) }}</td>
                                 <td>
-                                    @if(Entrust::can('app-config-manage'))
+                                    @if(Cerberus::can('app-config-manage'))
                                         <a href="{{ URL::route('admin.appConfig.edit', array('id' => $appConfig->id)) }}" class="btn btn-primary">Edit</a>
                                         <a href="{{ URL::route('admin.appConfig.destroy', array('id' => $appConfig->id)) }}" class="btn btn-danger">Delete</a>
                                     @endif

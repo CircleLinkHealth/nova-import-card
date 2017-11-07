@@ -3,7 +3,7 @@
 use App\Location;
 use App\Practice;
 use Auth;
-use Entrust;
+use Cerberus;
 use Illuminate\Http\Request;
 
 class LocationController extends Controller

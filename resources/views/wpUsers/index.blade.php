@@ -12,7 +12,7 @@
                     <div class="col-sm-2">
                         <h1>Users</h1>
                     </div>
-                    @if(Entrust::can('users-create'))
+                    @if(Cerberus::can('users-create'))
                         <div class="col-sm-10">
                             <div class="pull-right" style="margin:20px;">
                                 <a href="{{ URL::route('admin.users.create', array()) }}" class="btn btn-success">New User</a>
@@ -62,7 +62,7 @@
 
 
                         {!! Form::open(array('url' => URL::route('admin.users.doAction', array()), 'method' => 'get', 'class' => 'form-horizontal')) !!}
-                        @if(Entrust::can('users-edit-all'))
+                        @if(Cerberus::can('users-edit-all'))
                             Selected User Actions:
                             <select name="action">
                                 <option value="scramble">Scramble</option>
@@ -103,7 +103,7 @@
                                             @endif
                                         </td>
                                         <td class="text-right">
-                                            @if(Entrust::can('users-edit-all'))
+                                            @if(Cerberus::can('users-edit-all'))
                                                 <a href="{{ URL::route('admin.users.edit', array('id' => $wpUser->id)) }}"
                                                    class="btn btn-primary btn-xs"><i
                                                             class="glyphicon glyphicon-edit"></i> Edit</a>
@@ -115,7 +115,7 @@
                                                                 class="glyphicon glyphicon-eye-open"></i> UI</a>
                                                 @endif
                                             @endif
-                                            @if(Entrust::can('users-edit-all'))
+                                            @if(Cerberus::can('users-edit-all'))
                                                 <a href="{{ URL::route('admin.users.destroy', array('id' => $wpUser->id)) }}"
                                                    class="btn btn-danger btn-xs" style="margin-left:10px;"><i
                                                             class="glyphicon glyphicon-remove-sign"></i> Delete</a>

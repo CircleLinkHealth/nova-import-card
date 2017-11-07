@@ -13,7 +13,7 @@
                     <div class="col-sm-8">
                         <h1>Permissions</h1>
                     </div>
-                    @if(Entrust::can('roles-permissions-manage'))
+                    @if(Cerberus::can('roles-permissions-manage'))
                         <div class="col-sm-4">
                             <div class="pull-right" style="margin:20px;">
                                 <a href="{{ URL::route('permissions.create', array()) }}" class="btn btn-success">New
@@ -45,7 +45,7 @@
                                 <td>{{ $permission->description }}</td>
                                 <td>{{ date('F d, Y g:i A', strtotime($permission->created_at)) }}</td>
                                 <td>
-                                    @if(Entrust::can('roles-permissions-manage'))
+                                    @if(Cerberus::can('roles-permissions-manage'))
                                         <a href="{{ URL::route('permissions.edit', array('id' => $permission->id)) }}"
                                            class="btn btn-primary">Edit</a>
                                     @endif

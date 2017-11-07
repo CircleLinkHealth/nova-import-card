@@ -35,8 +35,8 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\QueryException;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Support\Collection;
-use Michalisantoniou6\Entrust\Traits\EntrustSiteUserTrait;
-use Michalisantoniou6\Entrust\Traits\EntrustUserTrait;
+use Michalisantoniou6\Cerberus\Traits\CerberusSiteUserTrait;
+use Michalisantoniou6\Cerberus\Traits\CerberusUserTrait;
 
 /**
  * App\User
@@ -223,13 +223,13 @@ class User extends \App\BaseModel implements AuthenticatableContract, CanResetPa
 
     use Authenticatable,
         CanResetPassword,
-        EntrustSiteUserTrait,
+        CerberusSiteUserTrait,
         HasEmrDirectAddress,
         Notifiable,
         SoftDeletes;
 
-    use EntrustUserTrait {
-        EntrustUserTrait::restore insteadof SoftDeletes;
+    use CerberusUserTrait {
+        CerberusUserTrait::restore insteadof SoftDeletes;
     }
 
     use \Venturecraft\Revisionable\RevisionableTrait;

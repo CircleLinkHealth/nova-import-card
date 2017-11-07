@@ -1,6 +1,6 @@
 <?php namespace App;
 
-use Michalisantoniou6\Entrust\EntrustPermission;
+use Michalisantoniou6\Cerberus\CerberusPermission;
 
 /**
  * App\Permission
@@ -20,7 +20,7 @@ use Michalisantoniou6\Entrust\EntrustPermission;
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Permission whereUpdatedAt($value)
  * @mixin \Eloquent
  */
-class Permission extends EntrustPermission
+class Permission extends CerberusPermission
 {
 
 

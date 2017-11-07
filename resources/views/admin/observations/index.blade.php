@@ -15,7 +15,7 @@
                     <div class="col-sm-8">
                         <h1>Observations</h1>
                     </div>
-                    @if(Entrust::can('observations-create'))
+                    @if(Cerberus::can('observations-create'))
                         <div class="col-sm-4">
                             <div class="pull-right" style="margin:20px;">
                                 <a href="{{ URL::route('admin.observations.create', array()) }}" class="btn btn-success" disabled="disabled">Input Observation</a>
@@ -86,10 +86,10 @@
                                     <td>{{ $observation->obs_unit }}</td>
                                     <td><a href="{{ URL::route('admin.programs.show', array('id' => $observation->program_id)) }}" class="btn btn-orange btn-xs">{{ $observation->program_id }}</a></td>
                                     <td>
-                                        @if(Entrust::can('observations-edit'))
+                                        @if(Cerberus::can('observations-edit'))
                                             <a href="{{ URL::route('admin.observations.edit', array('id' => $observation->id)) }}" class="btn btn-primary">Edit</a>
                                         @endif
-                                        @if(Entrust::can('observations-destroy'))
+                                        @if(Cerberus::can('observations-destroy'))
                                             <a href="{{ URL::route('admin.observations.destroy', array('id' => $observation->id)) }}" class="btn btn-warning">Remove</a></td>
                                         @endif
                                 </tr>

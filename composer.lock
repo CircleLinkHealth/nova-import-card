@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "content-hash": "68a8b850acc013472820ca0bad3ebb5d",
+    "content-hash": "775ee4f02e90bbc846e8b7c18b5963e9",
     "packages": [
         {
             "name": "arcturial/clickatell",
@@ -2308,12 +2308,18 @@
             "time": "2017-09-13T12:19:36+00:00"
         },
         {
-            "name": "michalisantoniou6/entrust",
+            "name": "michalisantoniou6/laravel-cerberus",
             "version": "dev-master",
             "source": {
                 "type": "git",
-                "url": "https://github.com/michalisantoniou6/entrust",
-                "reference": "7666ef9c8c8e58e9433eb9a9e1527ff92c9d2ac4"
+                "url": "https://github.com/michalisantoniou6/laravel-cerberus.git",
+                "reference": "9438c03ee67cc4c4f26e627d6f51088dc4a2f126"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/michalisantoniou6/laravel-cerberus/zipball/9438c03ee67cc4c4f26e627d6f51088dc4a2f126",
+                "reference": "9438c03ee67cc4c4f26e627d6f51088dc4a2f126",
+                "shasum": ""
             },
             "require": {
                 "illuminate/cache": "~5.0",
@@ -2328,30 +2334,36 @@
                 "sami/sami": "dev-master"
             },
             "type": "library",
+            "extra": {
+                "laravel": {
+                    "providers": [
+                        "Michalisantoniou6\\Cerberus\\CerberusServiceProvider"
+                    ],
+                    "aliases": {
+                        "Cerberus": "Michalisantoniou6\\Cerberus\\CerberusFacade"
+                    }
+                }
+            },
             "autoload": {
                 "classmap": [
                     "src/commands"
                 ],
                 "psr-4": {
-                    "Michalisantoniou6\\Entrust\\": "src/Entrust/"
+                    "Michalisantoniou6\\Cerberus\\": "src/Cerberus/"
                 }
             },
-            "autoload-dev": {
-                "classmap": [
-                    "tests/Middleware/MiddlewareTest.php"
-                ]
-            },
+            "notification-url": "https://packagist.org/downloads/",
             "license": [
                 "MIT"
             ],
             "authors": [
                 {
-                    "name": "Zizaco Zizuini",
-                    "email": "zizaco@gmail.com"
-                },
-                {
                     "name": "Andrew Elkins",
                     "homepage": "http://andrewelkins.com"
+                },
+                {
+                    "name": "Zizaco Zizuini",
+                    "email": "zizaco@gmail.com"
                 },
                 {
                     "name": "Ben Batschelet",
@@ -2366,16 +2378,17 @@
                     "email": "michalisantoniou6@gmail.com"
                 }
             ],
-            "description": "This package provides a flexible way to add Role-based Permissions to Laravel",
+            "description": "This package provides a flexible way to add Multi-tenant Role-based Permissions to Laravel 5.*",
             "keywords": [
                 "acl",
                 "auth",
                 "illuminate",
                 "laravel",
+                "multi-tenant",
                 "permission",
                 "roles"
             ],
-            "time": "2017-11-07T19:22:56+00:00"
+            "time": "2017-11-07T23:05:14+00:00"
         },
         {
             "name": "mobiledetect/mobiledetectlib",
@@ -7845,8 +7858,8 @@
     "aliases": [],
     "minimum-stability": "stable",
     "stability-flags": {
+        "michalisantoniou6/laravel-cerberus": 20,
         "prettus/l5-repository": 20,
-        "michalisantoniou6/entrust": 20,
         "orangehill/iseed": 20,
         "xethron/migrations-generator": 20
     },
