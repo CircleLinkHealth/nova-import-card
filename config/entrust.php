@@ -5,7 +5,7 @@
  * a role & permission management solution for Laravel.
  *
  * @license MIT
- * @package Zizaco\Entrust
+ * @package Michalisantoniou6\Entrust
  */
 
 return [
@@ -19,7 +19,7 @@ return [
     | the role if it is in a different namespace.
     |
     */
-    'role' => 'App\Role',
+    'role'                   => 'App\Role',
 
     /*
     |--------------------------------------------------------------------------
@@ -29,40 +29,51 @@ return [
     | This is the roles table used by Entrust to save roles to the database.
     |
     */
-    'roles_table' => 'lv_roles',
+    'roles_table'            => 'lv_roles',
 
     /*
     |--------------------------------------------------------------------------
-    | Entrust Permission Model
+    | Entrust role foreign key
     |--------------------------------------------------------------------------
     |
-    | This is the Permission model used by Entrust to create correct relations.
-    | Update the permission if it is in a different namespace.
+    | This is the role foreign key used by Entrust to make a proper
+    | relation between permissions and roles & roles and users
     |
     */
-    'permission' => 'App\Permission',
+    'role_foreign_key'       => 'role_id',
 
     /*
     |--------------------------------------------------------------------------
-    | Entrust Permissions Table
+    | Site role foreign key
     |--------------------------------------------------------------------------
     |
-    | This is the permissions table used by Entrust to save permissions to the
+    | This is the site foreign key used by Entrust to make a proper
+    | relation between permissions and roles, roles and users and users and sites
+    |
+    */
+    'site_foreign_key'       => 'program_id',
+
+    /*
+    |--------------------------------------------------------------------------
+    | Application User Model
+    |--------------------------------------------------------------------------
+    |
+    | This is the User model used by Entrust to create correct relations.
+    | Update the User if it is in a different namespace.
+    |
+    */
+    'user'                   => 'App\User',
+
+    /*
+    |--------------------------------------------------------------------------
+    | Application Users Table
+    |--------------------------------------------------------------------------
+    |
+    | This is the users table used by the application to save users to the
     | database.
     |
     */
-    'permissions_table' => 'lv_permissions',
-
-    /*
-    |--------------------------------------------------------------------------
-    | Entrust permission_role Table
-    |--------------------------------------------------------------------------
-    |
-    | This is the permission_role table used by Entrust to save relationship
-    | between permissions and roles to the database.
-    |
-    */
-    'permission_role_table' => 'lv_permission_role',
+    'users_table'            => 'users',
 
     /*
     |--------------------------------------------------------------------------
@@ -73,6 +84,82 @@ return [
     | database.
     |
     */
-    'role_user_table' => 'practice_user',
+    'role_user_site_table'   => 'practice_user',
 
+    /*
+    |--------------------------------------------------------------------------
+    | Entrust user foreign key
+    |--------------------------------------------------------------------------
+    |
+    | This is the user foreign key used by Entrust to make a proper
+    | relation between roles and users
+    |
+    */
+    'user_foreign_key'       => 'user_id',
+
+    /*
+    |--------------------------------------------------------------------------
+    | Entrust Permission Model
+    |--------------------------------------------------------------------------
+    |
+    | This is the Permission model used by Entrust to create correct relations.
+    | Update the permission if it is in a different namespace.
+    |
+    */
+    'permission'             => 'App\Permission',
+
+    /*
+    |--------------------------------------------------------------------------
+    | Entrust Permissions Table
+    |--------------------------------------------------------------------------
+    |
+    | This is the permissions table used by Entrust to save permissions to the
+    | database.
+    |
+    */
+    'permissions_table'      => 'lv_permissions',
+
+    /*
+    |--------------------------------------------------------------------------
+    | Entrust permission_role Table
+    |--------------------------------------------------------------------------
+    |
+    | This is the permission_role table used by Entrust to save relationship
+    | between permissions and roles to the database.
+    |
+    */
+    'permission_role_table'  => 'lv_permission_role',
+
+    /*
+    |--------------------------------------------------------------------------
+    | Entrust permission foreign key
+    |--------------------------------------------------------------------------
+    |
+    | This is the permission foreign key used by Entrust to make a proper
+    | relation between permissions and roles
+    |
+    */
+    'permission_foreign_key' => 'permission_id',
+
+    /*
+    |--------------------------------------------------------------------------
+    | Sites Model
+    |--------------------------------------------------------------------------
+    |
+    | This is the Sites model used by Entrust to create correct relations between roles, users and sites.
+    | Update the permission if it is in a different namespace.
+    |
+    */
+    'site'                   => 'App\Practice',
+
+    /*
+    |--------------------------------------------------------------------------
+    | Entrust Sites Table
+    |--------------------------------------------------------------------------
+    |
+    | This is the permissions table used by Entrust to save permissions to the
+    | database.
+    |
+    */
+    'sites_table'            => 'practices',
 ];
