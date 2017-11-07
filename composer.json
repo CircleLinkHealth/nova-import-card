@@ -17,6 +17,10 @@
             "url": "https://packagist.org"
         },
         {
+        "type": "git",
+        "url": "https://github.com/michalisantoniou6/entrust"
+        },
+        {
             "packagist": false
         }
     ],
@@ -53,7 +57,7 @@
         "tymon/jwt-auth": "0.5.*",
         "venturecraft/revisionable": "1.*",
         "yajra/laravel-datatables-oracle": "~6.0",
-        "zizaco/entrust": "5.2.x-dev"
+        "michalisantoniou6/entrust": "dev-master"
     },
     "require-dev": {
         "Xethron/Laravel-4-Generators": "*",
