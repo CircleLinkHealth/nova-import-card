@@ -80,20 +80,7 @@
     <text-editable :value="'Mykeels'"></text-editable>
     <date-editable :value="'01-20-2017'" :format="'mm-DD-YYYY'"></date-editable>
     <select-editable :values="['One', 'Two', 'Three']"></select-editable>
-    <modal name="select-nurse" :no-title="true" :no-footer="true" :info="selectNursesModalInfo">
-      <template scope="props">
-        <select class="form-control" @change="props.info.onChange">
-          <option value="">Pick a Nurse</option>
-          <option value="1">Nurse N RN</option>
-          <option value="2">Kathryn Alchalabi RN</option>
-          <option value="3">atricia Koeppel RN</option>
-          <option value="4">Dillenis Diaz RN</option>
-          <option value="5">Liza Herrera RN</option>
-          <option value="6">Monique Potter RN</option>
-          <option value="7">Nurse Loisa</option>
-        </select>
-      </template>
-    </modal>
+    <select-nurse-modal></select-nurse-modal>
     <add-call-modal></add-call-modal>
   </div>
 </template>
@@ -107,6 +94,7 @@
   import TimeEditable from './comps/time-editable'
   import Modal from './comps/modal'
   import AddCallModal from './comps/modals/add-call.modal'
+  import SelectNurseModal from './comps/modals/select-nurse.modal'
   import BindAppEvents from './app.events'
   import { DayOfWeek, ShortDayOfWeek } from './helpers/day-of-week'
 
@@ -118,7 +106,8 @@
         'select-editable': SelectEditable,
         'time-editable': TimeEditable,
         'modal': Modal,
-        'add-call-modal': AddCallModal
+        'add-call-modal': AddCallModal,
+        'select-nurse-modal': SelectNurseModal
       },
       data() {
         return {
@@ -135,12 +124,7 @@
             filterable: ['Nurse','Patient ID', 'Patient','Next Call', 'Last Call Status', 'Last Call', 'CCM Time', 'Successful Calls', 'Time Zone', 'Call Time Start', 'Call Time End', 'Preferred Call Days', 'Patient Status', 'Practice', 'Billing Provider', 'DOB', 'Scheduler'],
             filterByColumn: true
           },
-          currentDate: new Date(),
-          selectNursesModalInfo: {
-            onChange(e) {
-              console.log(e)
-            }
-          }
+          currentDate: new Date()
         }
       },
       computed: {
