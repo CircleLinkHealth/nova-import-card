@@ -1,7 +1,9 @@
 <template>
   <div>
     <div class="row">
-      <div class="col-sm-6"></div>
+      <div class="col-sm-6">
+        <button class="btn btn-primary btn-xs" @click="addCall">Add Call</button>
+      </div>
       <div class="col-sm-6 text-right" v-if="itemsAreSelected">
         <button class="btn btn-primary btn-xs" @click="assignSelectedToNurse">Assign To Nurse</button>
         <button class="btn btn-danger btn-xs" @click="deleteSelected">Delete</button>
@@ -78,7 +80,7 @@
     <text-editable :value="'Mykeels'"></text-editable>
     <date-editable :value="'01-20-2017'" :format="'mm-DD-YYYY'"></date-editable>
     <select-editable :values="['One', 'Two', 'Three']"></select-editable>
-    <modal :no-title="true" :no-footer="true" :info="selectNursesModalInfo">
+    <modal name="select-nurse" :no-title="true" :no-footer="true" :info="selectNursesModalInfo">
       <template scope="props">
         <select class="form-control" @change="props.info.onChange">
           <option value="">Pick a Nurse</option>
@@ -90,6 +92,67 @@
           <option value="6">Monique Potter RN</option>
           <option value="7">Nurse Loisa</option>
         </select>
+      </template>
+    </modal>
+    <modal name="add-call" :info="addCallModalInfo" :no-footer="true" class-name="modal-add-call">
+      <template slot="title"><div>Add New Call</div></template>
+      <template scope="props">
+        <div class="row">
+          <div class="col-sm-12">
+            <div class="row form-group">
+              <div class="col-sm-5">
+                Patient:
+              </div>
+              <div class="col-sm-7">
+                <select class="form-control">
+                  <option value="">Unassigned</option>
+                </select>
+              </div>
+            </div>
+            <div class="row form-group">
+              <div class="col-sm-5">
+                Nurse:
+              </div>
+              <div class="col-sm-7">
+                <select class="form-control">
+                  <option value="">Unassigned</option>
+                </select>
+              </div>
+            </div>
+            <div class="row form-group">
+              <div class="col-sm-5">
+                Date:
+              </div>
+              <div class="col-sm-7">
+                <input class="form-control" type="date" />
+              </div>
+            </div>
+            <div class="row form-group">
+              <div class="col-sm-5">
+                Start Time
+              </div>
+              <div class="col-sm-7">
+                <input class="form-control" type="time" />
+              </div>
+            </div>
+            <div class="row form-group">
+              <div class="col-sm-5">
+                End Time:
+              </div>
+              <div class="col-sm-7">
+                <input class="form-control" type="time" />
+              </div>
+            </div>
+            <div class="row form-group">
+              <div class="col-sm-5">
+                Add Text:
+              </div>
+              <div class="col-sm-7">
+                <textarea class="form-control"></textarea>
+              </div>
+            </div>
+          </div>
+        </div>
       </template>
     </modal>
   </div>
@@ -135,6 +198,12 @@
             onChange(e) {
               console.log(e)
             }
+          },
+          addCallModalInfo: {
+            okHandler() {
+              console.log("okay clicked")
+              Event.$emit("modal-add-call:hide")
+            }
           }
         }
       },
@@ -168,7 +237,10 @@
           }
         },
         assignSelectedToNurse() {
-          Event.$emit('modal:show')
+          Event.$emit('modal-select-nurse:show')
+        },
+        addCall() {
+          Event.$emit("modal-add-call:show")
         },
         next() {
           if (!this.$nextPromise) {
@@ -293,5 +365,9 @@
   .big-text-edit button {
       font-size: 25px;
       float: left;
+  }
+
+  .modal-add-call .modal-container {
+    width: 420px;
   }
 </style>
