@@ -1,5 +1,15 @@
 <template>
   <div>
+    <div class="row">
+      <div class="col-sm-6">
+        <a class="btn btn-primary btn-xs" :href="rootUrl('admin/reports/call')">Export Records</a>
+        <button class="btn btn-success btn-xs" @click="addCall">Add Call</button>
+      </div>
+      <div class="col-sm-6 text-right" v-if="itemsAreSelected">
+        <button class="btn btn-primary btn-xs" @click="assignSelectedToNurse">Assign To Nurse</button>
+        <button class="btn btn-danger btn-xs" @click="deleteSelected">Delete</button>
+      </div>
+    </div>
     <v-client-table ref="tblCalls" :data="tableData" :columns="columns" :options="options">
       <template slot="child_row" scope="props">
         <div class="row row-info">
@@ -9,41 +19,25 @@
                 General Comment:
               </div>
               <div class="col-lg-10">
-                <a href="#">
-                    <span class="cpm-editable-icon" call-id="13687" column-name="general_comment" column-value="Call with spouse Luther Smith.">
-                      Call with spouse Lorem Ipsum.
-                    </span>
-                  </a>
+                <text-editable :value="props.row.Comment" :multi="true" :class-name="'blue big-text-edit'"></text-editable>
               </div>
             </div>
             <div class="row">
               <div class="col-lg-2">Attempt Note:</div>
               <div class="col-lg-10">
-                <a href="#"><span class="cpm-editable-icon" call-id="13687" column-name="attempt_note" column-value="Add Text">Add Text</span></a>
+                <text-editable :value="props.row.AttemptNote || 'Add Text'" :multi="true" :class-name="'blue big-text-edit'"></text-editable>
               </div>
             </div>
-            <div class="row">
-              <div class="col-lg-2">Last 3 Notes:</div>
+            <div class="row" v-if="props.row.Notes.length > 0">
+              <div class="col-lg-2"><a :href="rootUrl('manage-patients/' + props.row['Patient ID'] + '/notes')" target="_blank">Last 3 Notes:</a></div>
               <div class="col-lg-10">
                 <ul>
-                  <li>
-                    Note 2016-11-21 13:06:00: 
-                    <div class="label label-info" style="margin:5px;">Outbound Call</div>
-                    <span style="font-weight:bold;">General (Clinical)</span> 
-                    Attempted clinical check-in. Left voice message. 
+                  <li v-for="(note, index) in props.row.Notes.slice(0, 3)" :key="index">
+                    Note {{note.created_at}}: 
+                    <div class="label label-info" :class="{ inbound: note.type === 'in', outbound: note.type === 'out' }" style="margin:5px;">{{note.type === 'in' ? 'In' : 'Out'}} Call</div>
+                    <span style="font-weight:bold;">{{note.category}}</span> 
+                    {{note.message}}
                     </li>
-                  <li>
-                    Note 2016-11-18 11:52:00: 
-                    <div class="label label-info" style="margin:5px;">Outbound Call</div>
-                    <span style="font-weight:bold;">General (Clinical)</span> 
-                    Attempted clinical check-in. Left voice message. 
-                    </li>
-                  <li>
-                    Note 2016-11-11 12:35:00: 
-                    <div class="label label-info" style="margin:5px;">Outbound Call</div>
-                    <span style="font-weight:bold;">General (Clinical)</span> 
-                    Attempted clinical check-in. Left voice message. 
-                  </li>
                 </ul>
               </div>
             </div>
@@ -51,11 +45,7 @@
               <div class="col-sm-2">Call Windows:</div>
               <div class="col-sm-10">
                 <ul class="info-list">
-                  <li>M: 09:00:00 - 17:00:00</li>
-                  <li>Tu: 09:00:00 - 17:00:00</li>
-                  <li>W: 09:00:00 - 17:00:00</li>
-                  <li>Th: 09:00:00 - 17:00:00</li>
-                  <li>F: 09:00:00 - 17:00:00</li>
+                  <li v-for="(time_window, index) in props.row.CallWindows" :key="index">{{time_window.shortDayOfWeek}}: {{time_window.window_time_start}} - {{time_window.window_time_end}}</li>
                 </ul>
               </div>
             </div>
@@ -63,7 +53,7 @@
         </div>
       </template>
       <template slot="selected" scope="props">
-        <input class="row-select" v-model="props.row.selected" type="checkbox" />
+        <input class="row-select" v-model="props.row.selected" @change="toggleSelect(props.row.id)" type="checkbox" />
       </template>
       <template slot="h__selected" scope="props">
         <input class="row-select" v-model="selected" @change="toggleAllSelect" type="checkbox" />
@@ -91,6 +81,8 @@
     <text-editable :value="'Mykeels'"></text-editable>
     <date-editable :value="'01-20-2017'" :format="'mm-DD-YYYY'"></date-editable>
     <select-editable :values="['One', 'Two', 'Three']"></select-editable>
+    <select-nurse-modal></select-nurse-modal>
+    <add-call-modal></add-call-modal>
   </div>
 </template>
 
@@ -101,7 +93,11 @@
   import DateEditable from './comps/date-editable'
   import SelectEditable from './comps/select-editable'
   import TimeEditable from './comps/time-editable'
+  import Modal from './comps/modal'
+  import AddCallModal from './comps/modals/add-call.modal'
+  import SelectNurseModal from './comps/modals/select-nurse.modal'
   import BindAppEvents from './app.events'
+  import { DayOfWeek, ShortDayOfWeek } from './helpers/day-of-week'
 
   export default {
       name: 'CallMgmtApp',
@@ -109,7 +105,10 @@
         'text-editable': TextEditable,
         'date-editable': DateEditable,
         'select-editable': SelectEditable,
-        'time-editable': TimeEditable
+        'time-editable': TimeEditable,
+        'modal': Modal,
+        'add-call-modal': AddCallModal,
+        'select-nurse-modal': SelectNurseModal
       },
       data() {
         return {
@@ -124,17 +123,46 @@
             },
             sortable: ['Nurse','Patient ID', 'Patient','Next Call', 'Last Call Status', 'Last Call', 'CCM Time', 'Successful Calls', 'Time Zone', 'Call Time Start', 'Call Time End', 'Preferred Call Days', 'Patient Status', 'Practice', 'Billing Provider', 'DOB', 'Scheduler'],
             filterable: ['Nurse','Patient ID', 'Patient','Next Call', 'Last Call Status', 'Last Call', 'CCM Time', 'Successful Calls', 'Time Zone', 'Call Time Start', 'Call Time End', 'Preferred Call Days', 'Patient Status', 'Practice', 'Billing Provider', 'DOB', 'Scheduler'],
-            filterByColumn: true
+            filterByColumn: true,
+            footerHeadings: true
           },
           currentDate: new Date()
         }
       },
+      computed: {
+        itemsAreSelected() {
+          return !!this.tableData.find(row => !!row.selected)
+        }
+      },
       methods: {
+        rootUrl,
         toggleAllSelect(e) {
           this.tableData = this.tableData.map(row => {
             row.selected = this.selected;
             return row;
           })
+        },
+        toggleSelect(id) {
+          const row = this.tableData.find(row => row.id === id)
+          if (row) {
+            row.selected = !row.selected
+          }
+        },
+        deleteSelected() {
+          if (window) {
+            const count = this.tableData.filter(row => !!row.selected).length;
+            if (count) {
+              if (confirm(`Are you sure you want to delete the ${count} selected item${count > 1 ? 's' : ''}?`)) {
+                //perform delete action
+              }
+            }
+          }
+        },
+        assignSelectedToNurse() {
+          Event.$emit('modal-select-nurse:show')
+        },
+        addCall() {
+          Event.$emit("modal-add-call:show")
         },
         next() {
           if (!this.$nextPromise) {
@@ -156,11 +184,18 @@
                 
                 const patient = call.getPatient();
                 if (patient) {
-                  patient.getBillingProvider = () => ((patient.billing_provider || [])[0] || {});
+                  const emptyObject = {}
+                  patient.getBillingProvider = () => ((patient.billing_provider || [])[0] || emptyObject);
                   patient.getPractice = () => (patient.primary_practice || {});
+                  patient.getInfo = () => (patient.patient_info || {});
 
                   const billingProvider = patient.getBillingProvider();
                   billingProvider.getUser = () => (billingProvider.user || {});
+
+                  patient.getInfo().contact_windows.forEach(time_window => {
+                    time_window.dayOfWeek = DayOfWeek[time_window.day_of_week];
+                    time_window.shortDayOfWeek = ShortDayOfWeek(time_window.day_of_week);
+                  })
                 }
               })
               const tableCalls = calls.map(call => ({
@@ -170,6 +205,28 @@
                                     Patient: (call.getPatient() || {}).full_name,
                                     Practice: (call.getPatient() || {}).getPractice().display_name,
                                     Scheduler: call.scheduler,
+                                    CallWindows: call.getPatient().getInfo().contact_windows,
+                                    Comment: call.getPatient().getInfo().general_comment,
+                                    AttemptNote: call.attempt_note,
+                                    Notes: [{
+                                      created_at: (new Date()).toDateString(),
+                                      type: 'in',
+                                      category: 'Morning Checkup',
+                                      message: 'Demo: The Patient is responding to treatment'
+                                    }],
+                                    'Last Call Status': call.getPatient().getInfo().last_call_status,
+                                    'Last Call': new Date(call.getPatient().getInfo().last_contact_time).toDateString(),
+                                    'CCM Time': call.getPatient().getInfo().cur_month_activity_time,
+                                    'Successful Calls': (call.getPatient().getInfo().monthly_summaries.slice(-1).no_of_successful_calls || 0),
+                                    'Time Zone': call.getPatient().timezone,
+                                    'Preferred Call Days': Object.values(call.getPatient().getInfo().contact_windows
+                                                                                    .map(time_window => time_window.shortDayOfWeek)
+                                                                                    .reduce((obj, key) => {
+                                                                                      obj[key] = key;
+                                                                                      return obj;
+                                                                                    }, {})).join(','),
+                                    'Patient Status': call.getPatient().getInfo().ccm_status,
+                                    'DOB': call.getPatient().getInfo().birth_date,
                                     'Billing Provider': call.getPatient().getBillingProvider().getUser().display_name,
                                     'Patient ID': call.getPatient().id,
                                     'Next Call': call.scheduled_date,
@@ -226,5 +283,10 @@
   tr.VueTables__filters-row input {
     font-size: 12px;
     height: 22px;
+  }
+
+  .big-text-edit button {
+      font-size: 25px;
+      float: left;
   }
 </style>

@@ -184,7 +184,7 @@ class ApproveBillablePatientsReport
             $formatted[$count] = [
 
                 'name'                   => $name,
-                'provider'               => $u->billingProvider()->fullName,
+                'provider'               => $u->billingProviderUser()->fullName,
                 'practice'               => $u->primaryPractice->display_name,
                 'dob'                    => $info->birth_date,
                 'ccm'                    => round($ccm / 60, 2),
