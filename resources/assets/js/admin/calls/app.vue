@@ -2,7 +2,8 @@
   <div>
     <div class="row">
       <div class="col-sm-6">
-        <button class="btn btn-primary btn-xs" @click="addCall">Add Call</button>
+        <a class="btn btn-primary btn-xs" :href="rootUrl('admin/reports/call')">Export Records</a>
+        <button class="btn btn-success btn-xs" @click="addCall">Add Call</button>
       </div>
       <div class="col-sm-6 text-right" v-if="itemsAreSelected">
         <button class="btn btn-primary btn-xs" @click="assignSelectedToNurse">Assign To Nurse</button>
@@ -122,7 +123,8 @@
             },
             sortable: ['Nurse','Patient ID', 'Patient','Next Call', 'Last Call Status', 'Last Call', 'CCM Time', 'Successful Calls', 'Time Zone', 'Call Time Start', 'Call Time End', 'Preferred Call Days', 'Patient Status', 'Practice', 'Billing Provider', 'DOB', 'Scheduler'],
             filterable: ['Nurse','Patient ID', 'Patient','Next Call', 'Last Call Status', 'Last Call', 'CCM Time', 'Successful Calls', 'Time Zone', 'Call Time Start', 'Call Time End', 'Preferred Call Days', 'Patient Status', 'Practice', 'Billing Provider', 'DOB', 'Scheduler'],
-            filterByColumn: true
+            filterByColumn: true,
+            footerHeadings: true
           },
           currentDate: new Date()
         }
@@ -182,7 +184,8 @@
                 
                 const patient = call.getPatient();
                 if (patient) {
-                  patient.getBillingProvider = () => ((patient.billing_provider || [])[0] || {});
+                  const emptyObject = {}
+                  patient.getBillingProvider = () => ((patient.billing_provider || [])[0] || emptyObject);
                   patient.getPractice = () => (patient.primary_practice || {});
                   patient.getInfo = () => (patient.patient_info || {});
 
