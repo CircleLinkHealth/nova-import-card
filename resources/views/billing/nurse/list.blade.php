@@ -2,7 +2,7 @@
 
 @section('content')
     @push('styles')
-    <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/font-awesome/4.4.0/css/font-awesome.min.css">
+        <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/font-awesome/4.4.0/css/font-awesome.min.css">
     @endpush
 
     {!! Form::open(array('url' => route('admin.reports.nurse.send', []),'method' => 'post','id' => 'form', 'class' => 'form-horizontal')) !!}

@@ -6,7 +6,7 @@
 
 @section('module')
 
-    <head>V=
+    <head>
         @push('styles')
             <style>
                 .breadcrumb:last-child {
