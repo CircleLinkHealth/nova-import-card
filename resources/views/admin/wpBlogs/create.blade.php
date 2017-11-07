@@ -2,11 +2,11 @@
 
 @section('content')
     @push('styles')
-    <style>
-        .form-group {
-            margin: 20px;
-        }
-    </style>
+        <style>
+            .form-group {
+                margin: 20px;
+            }
+        </style>
     @endpush
     <div class="container-fluid">
         <div class="row">
@@ -26,9 +26,6 @@
                     </div>
                     <div class="panel-body">
                         {!! Form::open(array('url' => URL::route('admin.programs.store', array()), 'class' => 'form-horizontal')) !!}
-
-                        <div class="row">
-                        </div>
 
                         <div class="row" style="">
                             <div class="col-sm-12">
@@ -87,8 +84,6 @@
                                                               style="width: 100%" checked/>
                                 </div>
                             </div>
-
-
                         </div>
 
 
@@ -101,10 +96,10 @@
                             </div>
                         </div>
                         {!! Form::close() !!}
-
                     </div>
                 </div>
             </div>
         </div>
     </div>
+    
 @stop
