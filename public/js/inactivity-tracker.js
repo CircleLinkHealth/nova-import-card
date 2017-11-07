@@ -17,7 +17,7 @@ const InactivityTracker = Vue.component("inactivity-tracker", {
       this.interval = setInterval(
         function() {
           this.endTime = new Date();
-          const ALERT_INTERVAL = 60;
+          const ALERT_INTERVAL = 59;
           if (this.seconds >= ALERT_INTERVAL) {
             if (!this.alertIsActive) {
               this.$parent.$emit("stop");
