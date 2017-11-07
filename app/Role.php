@@ -1,6 +1,6 @@
 <?php namespace App;
 
-use Zizaco\Entrust\EntrustRole;
+use Michalisantoniou6\Entrust\EntrustRole;
 
 /**
  * App\Role

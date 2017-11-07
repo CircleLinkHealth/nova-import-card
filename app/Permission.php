@@ -1,6 +1,6 @@
 <?php namespace App;
 
-use Zizaco\Entrust\EntrustPermission;
+use Michalisantoniou6\Entrust\EntrustPermission;
 
 /**
  * App\Permission

@@ -35,7 +35,8 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\QueryException;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Support\Collection;
-use Zizaco\Entrust\Traits\EntrustUserTrait;
+use Michalisantoniou6\Entrust\Traits\EntrustSiteUserTrait;
+use Michalisantoniou6\Entrust\Traits\EntrustUserTrait;
 
 /**
  * App\User
@@ -222,6 +223,7 @@ class User extends \App\BaseModel implements AuthenticatableContract, CanResetPa
 
     use Authenticatable,
         CanResetPassword,
+        EntrustSiteUserTrait,
         HasEmrDirectAddress,
         Notifiable,
         SoftDeletes;
@@ -318,7 +320,7 @@ class User extends \App\BaseModel implements AuthenticatableContract, CanResetPa
             $user->inboundCalls()->delete();
         });
 
-        self::restoring(function ($user) {
+        static::restoring(function ($user) {
             $user->providerInfo()->restore();
             $user->patientInfo()->restore();
             $user->carePlan()->restore();
