@@ -123,6 +123,11 @@ Route::group(['middleware' => 'auth'], function () {
     Route::group(['prefix' => 'api'], function () {
         Route::get('practices/all', 'API\PracticeController@allPracticesWithLocationsAndStaff');
 
+        Route::get('calls-management', [
+            'uses' => 'API\Admin\CallsController@toBeDeprecatedIndex',
+            'as'   => 'call.anyCallsManagement',
+        ]);
+
         Route::group(['prefix' => 'admin'], function () {
             Route::resource('calls', 'API\Admin\CallsController');
         });
@@ -636,7 +641,6 @@ Route::group(['middleware' => 'auth'], function () {
             'as'   => 'post.GeneralCommentsCsv',
         ]);
 
-
         Route::get('calls/remix', [
             'uses' => 'Admin\PatientCallManagementController@remix',
             'as'   => 'admin.patientCallManagement.remix',
@@ -880,27 +884,6 @@ Route::group(['middleware' => 'auth'], function () {
             Route::get('activities/{id}/edit', [
                 'uses' => 'ActivityController@edit',
                 'as'   => 'admin.activities.edit',
-            ]);
-        });
-
-        // pagetimer
-        Route::group([
-            'middleware' => [
-                'permission:activities-pagetimer-view',
-            ],
-        ], function () {
-            Route::resource('pagetimer', 'PageTimerController');
-            Route::get('pagetimer/create', [
-                'uses' => 'PageTimerController@create',
-                'as'   => 'admin.pagetimer.create',
-            ]);
-            Route::get('pagetimer/{id}', [
-                'uses' => 'PageTimerController@show',
-                'as'   => 'admin.pagetimer.show',
-            ]);
-            Route::get('pagetimer/{id}/edit', [
-                'uses' => 'PageTimerController@edit',
-                'as'   => 'admin.pagetimer.edit',
             ]);
         });
 
@@ -1289,27 +1272,6 @@ Route::group(['middleware' => 'auth'], function () {
     });
 });
 
-/*
- * Third Party Apis Config Pages
- */
-Route::group(['prefix' => 'third-party-api-settings'], function () {
-    Route::resource('redox-engine', 'Redox\ConfigController', [
-        'except' => [
-            'index',
-            'destroy',
-            'show',
-        ],
-    ]);
-
-    Route::resource('qliqsoft', 'qliqSOFT\ConfigController', [
-        'except' => [
-            'index',
-            'destroy',
-            'show',
-        ],
-    ]);
-});
-
 // pagetimer
 Route::group([], function () {
     //Route::get('pagetimer', 'PageTimerController@store');
@@ -1326,31 +1288,6 @@ Route::group([], function () {
         'as'   => 'api.callcreate',
     ]);
 });
-
-Route::group([
-    'prefix' => 'datatables',
-], function () {
-    Route::any('data', [
-        'uses' => 'DatatablesController@anyData',
-        'as'   => 'datatables.data',
-    ]);
-
-    Route::any('calls-management', [
-        'uses' => 'DatatablesController@anyCallsManagement',
-        'as'   => 'datatables.anyCallsManagement',
-    ]);
-
-    Route::get('index', [
-        'uses' => 'DatatablesController@getIndex',
-        'as'   => 'datatables',
-    ]);
-
-    Route::get('callData', [
-        'uses' => 'DatatablesController@callData',
-        'as'   => 'datatables.callData',
-    ]);
-});
-
 
 /*
  *

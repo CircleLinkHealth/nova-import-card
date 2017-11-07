@@ -2,12 +2,10 @@
 
 namespace App\Console\Commands\Athena;
 
-use App\ForeignId;
-use App\Models\CCD\CcdVendor;
+use App\Practice;
 use App\Services\AthenaAPI\Service;
 use Carbon\Carbon;
 use Illuminate\Console\Command;
-use Maknz\Slack\Facades\Slack;
 
 class GetAppointments extends Command
 {
@@ -46,21 +44,22 @@ class GetAppointments extends Command
      */
     public function handle()
     {
-        $vendors = CcdVendor::whereEhrName(ForeignId::ATHENA)->get();
+        $practices = Practice::whereHas('ehr', function ($q) {
+            $q->where('name', '=', 'Athena');
+        })
+            ->whereNotNull('external_id')
+            ->get();
 
         $endDate = Carbon::today();
         $startDate = $endDate->copy()->subWeeks(2);
 
-        foreach ($vendors as $vendor) {
+        foreach ($practices as $practice) {
             if (app()->environment('worker')) {
-                sendSlackMessage('#background-tasks', "Getting appointments for vendor: {$vendor->vendor_name}. \n");
+                sendSlackMessage('#background-tasks',
+                    "Getting appointments from Athena for practice: {$practice->display_name}. \n");
             }
 
-            $this->service->getAppointments($vendor->practice_id, $startDate, $endDate);
-        }
-
-        if (app()->environment('worker')) {
-            sendSlackMessage('#background-tasks', "Finished getting appointments from Athena API. \n");
+            $this->service->getAppointments($practice->external_id, $startDate, $endDate);
         }
     }
 }

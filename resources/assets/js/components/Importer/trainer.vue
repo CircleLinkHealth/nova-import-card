@@ -1,17 +1,17 @@
 <script>
     export default {
         props: {
-            practice: {
+            practiceProp: {
                 type: [Number, String],
                 required: false,
                 default: null
             },
-            location: {
+            locationProp: {
                 type: [Number, String],
                 required: false,
                 default: null
             },
-            billingProvider: {
+            billingProviderProp: {
                 type: [Number, String],
                 required: false,
                 default: null
@@ -25,6 +25,9 @@
                 })
 
             return {
+                practice: JSON.parse(JSON.stringify(this.practiceProp)),
+                location: JSON.parse(JSON.stringify(this.locationProp)),
+                billingProvider: JSON.parse(JSON.stringify(this.billingProviderProp)),
                 practices: [],
                 locationsCollection: [],
                 providersCollection: [],
@@ -33,7 +36,7 @@
 
         computed: {
             locations: function () {
-                if (_.isNull(this.practice)) {
+                if (!this.practice) {
                     this.location = null;
                     this.billingProvider = null;
                     this.providersCollection = [];
@@ -47,7 +50,7 @@
             },
 
             providers: function () {
-                if (this.location === null || !this.practices[this.practice].locations[this.location]) {
+                if (!this.location || !this.practices[this.practice].locations[this.location]) {
                     this.billingProvider = null;
                     this.providersCollection = [];
 

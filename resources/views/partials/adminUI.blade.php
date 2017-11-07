@@ -12,8 +12,6 @@
     <base href="{{asset('')}}">
 
     <!-- Stylesheets -->
-    {{-- <link href="{{ asset('/compiled/css/stylesheet.css') }}" rel="stylesheet"> --}}
-    {{-- <link href="{{ asset('/css/lavish-2.css') }}" rel="stylesheet"> --}}
     <link href="{{ asset('/css/admin.css') }}" rel="stylesheet">
     <link href="{{ asset('/img/favicon.png') }}" rel="icon">
 
@@ -29,32 +27,18 @@
 
     <!-- JQuery -->
     <link rel="stylesheet" href="//code.jquery.com/ui/1.11.4/themes/smoothness/jquery-ui.css">
-    <!-- <script src="//code.jquery.com/jquery-1.10.2.js"></script>
-    <script src="//code.jquery.com/ui/1.11.4/jquery-ui.js"></script> -->
-
-    <!-- idleTime -->
-<!-- <script src="{{ asset('/js/idle-timer.min.js') }}"></script> -->
 
     <!-- http://trentrichardson.com/examples/timepicker/ -->
     <link rel="stylesheet"
           href="//cdnjs.cloudflare.com/ajax/libs/jquery-ui-timepicker-addon/1.4.5/jquery-ui-timepicker-addon.min.css">
-    <!-- <script src="//cdnjs.cloudflare.com/ajax/libs/jquery-ui-timepicker-addon/1.4.5/jquery-ui-timepicker-addon.min.js"></script> -->
-
-    <!-- Parsley -->
-    <!-- <script src="//cdnjs.cloudflare.com/ajax/libs/parsley.js/2.0.7/parsley.min.js"></script> -->
 
     <!-- http://curioussolutions.github.io/DateTimePicker/ -->
     <link rel="stylesheet" type="text/css" href="//cdn.jsdelivr.net/datetimepicker/latest/DateTimePicker.min.css"/>
-    <!-- <script type="text/javascript" src="//cdn.jsdelivr.net/datetimepicker/latest/DateTimePicker.min.js"></script> -->
 
-    <!-- START BOOTSTRAP -->
-    <!-- Latest compiled and minified CSS -->
-    <link href="{{ asset('/css/'.$app_config_admin_stylesheet) }}" rel="stylesheet">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
 
     <!-- select2 -->
-<!-- <script src="{{ asset('/js/bootstrap-select.min.js') }}"></script> -->
     <link href="//cdnjs.cloudflare.com/ajax/libs/select2/4.0.0/css/select2.min.css" rel="stylesheet"/>
-    <!-- <script src="//cdnjs.cloudflare.com/ajax/libs/select2/4.0.0/js/select2.min.js"></script> -->
 
     <style>
         .table-striped > tbody > tr:nth-child(odd) > td,
@@ -67,11 +51,6 @@
         }
     </style>
     @stack('styles')
-    <!-- Latest compiled and minified JavaScript -->
-    <!-- <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"
-            integrity="sha384-0mSbJDEHialfmuBBQP6A4Qrprq5OVfW37PRR3j5ELqxss1yVqOtnepnHVP9aJ7xS"
-            crossorigin="anonymous"></script> -->
-    <!-- END BOOTSTRAP -->
 </head>
 <body>
 <div id="app">
@@ -80,17 +59,10 @@
         <nav class="navbar navbar-default">
             <div class="container-fluid">
                 <div class="navbar-header">
-                    <button type="button" class="navbar-toggle collapsed" data-toggle="collapse"
-                            data-target="#bs-example-navbar-collapse-1">
-                        <span class="sr-only">Toggle Navigation</span>
-                        <span class="icon-bar"></span>
-                        <span class="icon-bar"></span>
-                        <span class="icon-bar"></span>
-                    </button>
                     <a class="navbar-brand" href="{{ URL::route('admin.dashboard', array()) }}">
-                        <img src="/img/ui/clh_logo_lt.png"
+                        <img src="/img/clh_logo_sm.png"
                              alt="Care Plan Manager"
-                             style="position:relative;top:-15px"
+                             style="position:relative;top:-5px"
                              width="50px"/>
                     </a>
                 </div>
@@ -106,10 +78,7 @@
                                 <ul class="dropdown-menu" role="menu">
                                     <li><a href="{{ URL::route('admin.users.index', array()) }}">All Users</a></li>
                                     <li><a href="{{ URL::route('admin.users.create', array()) }}">New User</a></li>
-                                    <li><a href="{{ URL::route('admin.observations.index', array()) }}">Observations</a>
-                                    </li>
-                                    {{--                                <li><a href="{{ URL::route('comments.index', array()) }}">Comments</a></li>--}}
-                                    {{--                                <li><a href="{{ URL::route('ucp.index', array()) }}">UCP</a></li>--}}
+                                    <li><a href="{{ URL::route('admin.observations.index', array()) }}">Observations</a></li>
                                 </ul>
                             </li>
                         @endif
@@ -202,71 +171,9 @@
                                     @if(Entrust::can('locations-view'))
                                         <li><a href="{{ URL::route('locations.index', array()) }}">Locations</a></li>
                                     @endif
-                                    {{--@if(Entrust::can('practices-manage'))--}}
-                                    {{--<li><a href="{{ URL::route('admin.questions.index', array()) }}">Questions</a></li>--}}
-                                    {{--<li><a href="{{ URL::route('admin.questionSets.index', array()) }}">Question--}}
-                                    {{--Sets</a></li>--}}
-                                    {{--<li><a href="{{ URL::route('admin.items.index', array()) }}">Items</a></li>--}}
-                                    {{--@endif--}}
                                 </ul>
                             </li>
                         @endif
-
-                        {{--@if(Entrust::can('practices-view'))--}}
-                        {{--<li role="presentation" class="dropdown">--}}
-                        {{--<a class="dropdown-toggle" data-toggle="dropdown" href="#" role="button"--}}
-                        {{--aria-expanded="false">--}}
-                        {{--Care Plans <span class="caret"></span>--}}
-                        {{--</a>--}}
-                        {{--<ul class="dropdown-menu" role="menu">--}}
-                        {{--<li><a href="{{ URL::route('careplans.index', array()) }}">Care Plans</a></li>--}}
-                        {{--<li><a href="{{ URL::route('careitems.index', array()) }}">Care Items</a></li>--}}
-                        {{--</ul>--}}
-                        {{--</li>--}}
-                        {{--@endif--}}
-
-                        {{--@if(Entrust::can('activities-view'))--}}
-                        {{--<li role="presentation" class="dropdown">--}}
-                        {{--<a class="dropdown-toggle" data-toggle="dropdown" href="#" role="button"--}}
-                        {{--aria-expanded="false">--}}
-                        {{--Activities <span class="caret"></span>--}}
-                        {{--</a>--}}
-                        {{--<ul class="dropdown-menu" role="menu">--}}
-                        {{--<li><a href="{{ URL::route('admin.activities.index', array()) }}">Activities</a></li>--}}
-                        {{--@if(Entrust::can('activities-pagetimer-view'))--}}
-                        {{--<li><a href="{{ URL::route('admin.pagetimer.index', array()) }}">Page Timer</a></li>--}}
-                        {{--@endif--}}
-                        {{--</ul>--}}
-                        {{--</li>--}}
-                        {{--@endif--}}
-
-                        {{--@if(Entrust::can('rules-engine-view'))--}}
-                        {{--<li role="presentation" class="dropdown">--}}
-                        {{--<a class="dropdown-toggle" data-toggle="dropdown" href="#" role="button"--}}
-                        {{--aria-expanded="false">--}}
-                        {{--Rules <span class="caret"></span>--}}
-                        {{--</a>--}}
-                        {{--<ul class="dropdown-menu" role="menu">--}}
-                        {{--<li><a href="{{ URL::route('admin.rules.index', array()) }}">Rules</a></li>--}}
-                        {{--@if(Entrust::can('rules-engine-manage'))--}}
-                        {{--<li><a href="{{ URL::route('admin.rules.create', array()) }}">Add new</a></li>--}}
-                        {{--@endif--}}
-                        {{--</ul>--}}
-                        {{--</li>--}}
-                        {{--@endif--}}
-                        {{--@if(Entrust::can('apikeys-view'))--}}
-                        {{--<li role="presentation" class="dropdown">--}}
-                        {{--<a class="dropdown-toggle" data-toggle="dropdown" href="#" role="button"--}}
-                        {{--aria-expanded="false">--}}
-                        {{--API<span class="caret"></span>--}}
-                        {{--</a>--}}
-                        {{--<ul class="dropdown-menu" role="menu">--}}
-                        {{--<li><a href="{{ URL::route('admin.apikeys.index', array()) }}">API Keys</a></li>--}}
-                        {{--<li><a href="{{ action('Redox\ConfigController@create') }}">Redox Engine</a></li>--}}
-                        {{--<li><a href="{{ action('qliqSOFT\ConfigController@create') }}">qliqSOFT</a></li>--}}
-                        {{--</ul>--}}
-                        {{--</li>--}}
-                        {{--@endif--}}
 
                         <li role="presentation" class="dropdown">
                             <a class="dropdown-toggle" data-toggle="dropdown" href="#" role="button"
@@ -347,7 +254,7 @@
                                 </a>
                             </li>
                             <li class="dropdown">
-                                <a href="{{ URL::route('patients.dashboard', array()) }}" class="btn-xs btn-primary"
+                                <a href="{{ URL::route('patients.dashboard', array()) }}"
                                    style=""><i class="glyphicon glyphicon-eye-open"></i> Provider UI</a>
                             </li>
                             <li class="dropdown">
