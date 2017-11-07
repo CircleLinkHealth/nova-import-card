@@ -31,9 +31,6 @@ class UserRepository implements \App\CLH\Contracts\Repositories\UserRepository
         // roles
         $this->saveOrUpdateRoles($user, $params);
 
-        // programs
-        $this->saveOrUpdatePrograms($user, $params);
-
         // phone numbers
         $this->saveOrUpdatePhoneNumbers($user, $params);
 
@@ -83,9 +80,6 @@ class UserRepository implements \App\CLH\Contracts\Repositories\UserRepository
         } else {
             $user->access_disabled = 0; // 0 = good, 1 = disabled
         }
-        $user->program_id = $params->get('program_id');
-
-        $user->attachPractice($params->get('program_id'));
 
         $user->auto_attach_programs = $params->get('auto_attach_programs');
         if ($params->get('first_name')) {
@@ -122,20 +116,20 @@ class UserRepository implements \App\CLH\Contracts\Repositories\UserRepository
         User $user,
         ParameterBag $params
     ) {
+        $practiceId = $this->saveAndGetPractice($user, $params);
         // support for both single or array or roles
         if (!empty($params->get('role'))) {
-            $user->roles()->sync([$params->get('role')]);
-            $user->save();
-            $user->load('roles');
+            $user->detachRoles();
+            $user->attachRoleForSite($params->get('role'), $practiceId);
         }
 
         if (!empty($params->get('roles'))) {
+            $user->detachRoles();
             // support if one role is passed in as a string
             if (!is_array($params->get('roles'))) {
-                $roleId = $params->get('roles');
-                $user->roles()->sync([$roleId]);
+                $user->attachRoleForSite($params->get('roles'), $practiceId);
             } else {
-                $user->roles()->sync($params->get('roles'));
+                $user->attachRolesForSite($params->get('roles'), $practiceId);
             }
         }
 
@@ -164,13 +158,13 @@ class UserRepository implements \App\CLH\Contracts\Repositories\UserRepository
         }
     }
 
-    public function saveOrUpdatePrograms(
+    public function saveAndGetPractice(
         User $wpUser,
         ParameterBag $params
     ) {
         // get selected programs
         $userPrograms = [];
-        if ($params->get('programs')) { // && ($wpUser->practices->count() > 0)
+        if ($params->get('programs')) {
             $userPrograms = $params->get('programs');
         }
         if ($params->get('program_id')) {
@@ -179,35 +173,16 @@ class UserRepository implements \App\CLH\Contracts\Repositories\UserRepository
             }
         }
 
-        //dd($userPrograms);
-
         // if still empty at this point, no program_id or program param
         if (empty($userPrograms)) {
-            return true;
+            return false;
         }
 
         // set primary program
         $wpUser->program_id = $params->get('program_id');
         $wpUser->save();
 
-        // get role
-        $roleId = $params->get('role');
-        if ($roleId) {
-            $role = Role::find($roleId);
-        } else {
-            // default to participant
-            $role = Role::where('name', '=', 'participant')->first();
-        }
-
-        // first detatch relationship
-        $wpUser->practices()->detach();
-
-        $wpBlogs = Practice::orderBy('id', 'desc')->pluck('id')->all();
-        foreach ($wpBlogs as $wpBlogId) {
-            if (in_array($wpBlogId, $userPrograms)) {
-                $wpUser->practices()->attach($wpBlogId);
-            }
-        }
+        return $params->get('program_id');
     }
 
     public function saveOrUpdatePhoneNumbers(
@@ -401,9 +376,6 @@ class UserRepository implements \App\CLH\Contracts\Repositories\UserRepository
 
         // roles
         $this->saveOrUpdateRoles($user, $params);
-
-        // programs
-        $this->saveOrUpdatePrograms($user, $params);
 
         // phone numbers
         $this->saveOrUpdatePhoneNumbers($user, $params);

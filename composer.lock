@@ -2313,12 +2313,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/michalisantoniou6/laravel-cerberus.git",
-                "reference": "9438c03ee67cc4c4f26e627d6f51088dc4a2f126"
+                "reference": "4208487692d45d0eaa009dbf1f7b12e13864b29b"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/michalisantoniou6/laravel-cerberus/zipball/9438c03ee67cc4c4f26e627d6f51088dc4a2f126",
-                "reference": "9438c03ee67cc4c4f26e627d6f51088dc4a2f126",
+                "url": "https://api.github.com/repos/michalisantoniou6/laravel-cerberus/zipball/4208487692d45d0eaa009dbf1f7b12e13864b29b",
+                "reference": "4208487692d45d0eaa009dbf1f7b12e13864b29b",
                 "shasum": ""
             },
             "require": {
@@ -2388,7 +2388,7 @@
                 "permission",
                 "roles"
             ],
-            "time": "2017-11-07T23:05:14+00:00"
+            "time": "2017-11-07T23:33:30+00:00"
         },
         {
             "name": "mobiledetect/mobiledetectlib",
