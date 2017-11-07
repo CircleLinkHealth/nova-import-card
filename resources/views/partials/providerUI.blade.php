@@ -9,6 +9,7 @@
     <meta http-equiv="pragma" content="no-cache">
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <meta name="base-url" content="{{ url('/') }}">
+    <base href="{{asset('')}}">
 
     <script type="text/javascript">
         window.heap = window.heap || [], heap.load = function (e, t) {

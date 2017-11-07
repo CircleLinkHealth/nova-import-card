@@ -26,7 +26,7 @@
               </div>
             </div>
             <div class="row" v-if="props.row.Notes.length > 0">
-              <div class="col-lg-2">Last 3 Notes:</div>
+              <div class="col-lg-2"><a :href="rootUrl('manage-patients/' + props.row['Patient ID'] + '/notes')" target="_blank">Last 3 Notes:</a></div>
               <div class="col-lg-10">
                 <ul>
                   <li v-for="(note, index) in props.row.Notes.slice(0, 3)" :key="index">
@@ -144,6 +144,7 @@
         }
       },
       methods: {
+        rootUrl,
         toggleAllSelect(e) {
           this.tableData = this.tableData.map(row => {
             row.selected = this.selected;
@@ -212,7 +213,12 @@
                                     CallWindows: call.getPatient().getInfo().contact_windows,
                                     Comment: call.getPatient().getInfo().general_comment,
                                     AttemptNote: call.attempt_note,
-                                    Notes: [],
+                                    Notes: [{
+                                      created_at: (new Date()).toDateString(),
+                                      type: 'in',
+                                      category: 'Morning Checkup',
+                                      message: 'Demo: The Patient is responding to treatment'
+                                    }],
                                     'Last Call Status': call.getPatient().getInfo().last_call_status,
                                     'Last Call': new Date(call.getPatient().getInfo().last_contact_time).toDateString(),
                                     'CCM Time': call.getPatient().getInfo().cur_month_activity_time,
