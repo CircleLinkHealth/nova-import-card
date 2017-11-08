@@ -82,7 +82,10 @@
                 <br>
                 <br>
                 <div class="col-md-12">
-                    <input class="btn-success btn btn-lg" type="submit" value="Done!">
+                    <input class="btn-danger btn btn-lg" type="submit" value="Done!">
+                    <span style="border-bottom: 5px solid red;color: blue;">
+                            WARNING! When you click Done, all the rows you checked off on "Custodian" and "Providers and Addresses" above will be deleted.
+                    </span>
                 </div>
             </div>
 
