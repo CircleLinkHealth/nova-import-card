@@ -11,6 +11,10 @@ var patients = require('./routes/patients');
 var app = express();
 var expressWs = require('./sockets/socket.js')(app)
 
+var rootCas = require('ssl-root-cas/latest').create();
+
+ require('https').globalAgent.options.ca = rootCas;
+
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'ejs');

@@ -1,6 +1,8 @@
 module.exports = app => {
   require("express-ws")(app);
 
+  const axios = require("axios")
+
   const usersTime = {};
 
   app.ws("/time", (ws, req) => {
@@ -22,6 +24,17 @@ module.exports = app => {
             const key = `${data.id}-${data.patientId}`;
             ws.key = key;
             if (data.message === "update") {
+              if (!usersTime[key]) {
+                if (!data.info || data.info.constructor.name !== 'Object') {
+                  /**
+                   * Verify that [data.info] is a valid object
+                   */
+                  ws.send(JSON.stringify({
+                    error: 'Invalid data: [data.info] must be a valid object'
+                  }))
+                  return;
+                }
+              }
               usersTime[key] = usersTime[key] || {
                 seconds: 0,
                 dates: [
@@ -30,6 +43,7 @@ module.exports = app => {
                     end: null
                   }
                 ],
+                info: data.info,
                 sockets: [],
                 interval() {
                   //console.log(this.dates)
@@ -93,7 +107,7 @@ module.exports = app => {
           console.error("[data] is not an Object", data);
         }
       } catch (ex) {
-        console.error("there was an error parsing", message);
+        console.error("there was an error parsing", message, ex);
       }
     });
 
@@ -102,7 +116,18 @@ module.exports = app => {
       if (key)
         usersTime[key].sockets.splice(usersTime[key].sockets.indexOf(ws), 1);
         if (usersTime[key].sockets.length == 0) {
-          delete usersTime[key];
+          if (usersTime[key].info) {
+            const info = usersTime[key].info;
+            info.totalTime = usersTime[key].seconds * 1000;
+            const url = info.submitUrl.replace('https://cpm-web.dev/', 'http://localhost:8000/')
+            console.log(info, url)
+
+            axios.post(url, info).then((response) => {
+              console.log(response.status)
+              //console.log(response)
+              delete usersTime[key];
+            })
+          }
         }
     });
   });
