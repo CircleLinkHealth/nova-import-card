@@ -16,6 +16,7 @@ class Note extends Resource
     public function toArray($request)
     {
         return [
+            'id'                   => $this->id,
             'patient_id'           => $this->patient_id,
             'author_id'            => $this->author_id,
             'logger_id'            => $this->logger_id,
