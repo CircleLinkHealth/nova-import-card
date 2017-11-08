@@ -152,13 +152,13 @@
 
                                 <div class="form-group">
                                     <div class="col-xs-1">{!! Form::label('address', 'Address:') !!}</div>
-                                    <div class="col-xs-4">{!! Form::text('address', $patient->address, ['class' => 'form-control']) !!}</div>
+                                    <div class="col-xs-3">{!! Form::text('address', $patient->address, ['class' => 'form-control']) !!}</div>
                                     <div class="col-xs-1">{!! Form::label('city', 'City:') !!}</div>
                                     <div class="col-xs-2">{!! Form::text('city', $patient->city, ['class' => 'form-control']) !!}</div>
                                     <div class="col-xs-1">{!! Form::label('state', 'State:') !!}</div>
                                     <div class="col-xs-1">{!! Form::select('state', $states_arr, $patient->state, ['class' => 'form-control select-picker']) !!}</div>
                                     <div class="col-xs-1">{!! Form::label('zip', 'Zip:') !!}</div>
-                                    <div class="col-xs-1">{!! Form::text('zip', $patient->zip, ['class' => 'form-control']) !!}</div>
+                                    <div class="col-xs-2">{!! Form::text('zip', $patient->zip, ['class' => 'form-control']) !!}</div>
                                 </div>
 
                                 <div class="form-group">
