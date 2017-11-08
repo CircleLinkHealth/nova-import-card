@@ -37,7 +37,7 @@
         },
         methods: {
             updateTime() {
-                this.socket.send(JSON.stringify({ id: this.info.userId, patientId: this.info.patientId, message: 'update' }));
+                this.socket.send(JSON.stringify(Object.assign(this.info, { id: this.info.userId, message: 'update' })));
             },
             createSocket() {
                 try {
@@ -82,12 +82,12 @@
             })
 
             this.$on('tracker:stop', () => {
-                if (this.socket) this.socket.send(JSON.stringify({ id: this.info.userId, patientId: this.info.patientId, message: 'stop' }))
+                if (this.socket) this.socket.send(JSON.stringify(Object.assign(this.info, { id: this.info.userId, message: 'stop' })))
             })
 
             this.$on('tracker:start', () => {
                 if (this.socket && this.socket.readyState === WebSocket.OPEN) 
-                    this.socket.send(JSON.stringify({ id: this.info.userId, patientId: this.info.patientId, message: 'start' }))
+                    this.socket.send(JSON.stringify(Object.assign(this.info, { id: this.info.userId, message: 'start' })))
             })
 
             this.createSocket()
