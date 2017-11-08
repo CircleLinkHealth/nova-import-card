@@ -9,6 +9,7 @@
     <meta http-equiv="pragma" content="no-cache">
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <meta name="base-url" content="{{ url('/') }}">
+    <base href="{{asset('')}}">
 
     <script type="text/javascript">
         window.heap = window.heap || [], heap.load = function (e, t) {
@@ -121,6 +122,17 @@
     $(function () {
         $('.selectpicker').selectpicker('refresh')
     })
+
+    if ('serviceWorker' in navigator) {
+        navigator.serviceWorker.register('/compiled/sw.js')
+        .then(function(registration) {
+            console.log('Service Worker registration successful with scope: ',
+            registration.scope);
+        })
+        .catch(function(err) {
+            console.log(err);
+        });
+    }
 </script>
 @endif
 </body>

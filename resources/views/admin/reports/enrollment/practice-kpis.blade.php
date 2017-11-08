@@ -1,7 +1,9 @@
 @extends('partials.adminUI')
 
 @section('content')
-    <link rel="stylesheet" href="//cdn.datatables.net/1.10.7/css/jquery.dataTables.min.css">
+    @push('styles')
+        <link rel="stylesheet" href="//cdn.datatables.net/1.10.7/css/jquery.dataTables.min.css">
+    @endpush
 
     <div class="container-fluid">
         <div class="row">
@@ -76,70 +78,72 @@
             </div>
         </div>
 
-        <script>
+        @push('scripts')
+            <script>
 
-            $(function () {
+                $(function () {
 
-                $("#start_date").change(function () {
-                    // whatever you need to be done on change of the input field
+                    $("#start_date").change(function () {
+                        // whatever you need to be done on change of the input field
+                    });
+
+                    $("#end_date").change(function () {
+                        // whatever you need to be done on change of the input field
+                    });
+
+                    $('#practice_kpis').DataTable({
+                        processing: true,
+                        serverSide: false,
+                        "scrollX": true,
+                        ajax: {
+                            "url": '{!! url('/admin/enrollment/practice/kpis/data') !!}',
+                            "type": "GET",
+                            "data": function (d) {
+                                d.start_date = $('#start_date').val();
+                                d.end_date = $('#end_date').val();
+                            }
+                        },
+                        columns: [
+
+                            {data: 'name', name: 'name'},
+                            {data: 'unique_patients_called', name: 'unique_patients_called'},
+                            {data: 'consented', name: 'consented'},
+                            {data: 'utc', name: 'utc'},
+                            {data: 'rejected', name: 'rejected'},
+                            {data: 'labor_hours', name: 'labor_hours'},
+                            {data: 'conversion', name: 'conversion'},
+                            {data: 'labor_rate', name: 'labor_rate'},
+                            {data: 'total_cost', name: 'total_cost'},
+                            {data: 'acq_cost', name: 'acq_cost'}
+
+                        ],
+                        "aaSorting": [2, 'desc'],
+                        "iDisplayLength": 15,
+                    });
+
                 });
 
-                $("#end_date").change(function () {
-                    // whatever you need to be done on change of the input field
+                $('#start_date').on('change', function () {
+                    console.log($('#start_date').val());
+                    $('#practice_kpis').DataTable().ajax.reload();
                 });
 
-                $('#practice_kpis').DataTable({
-                    processing: true,
-                    serverSide: false,
-                    "scrollX": true,
-                    ajax: {
-                        "url": '{!! url('/admin/enrollment/practice/kpis/data') !!}',
-                        "type": "GET",
-                        "data": function (d) {
-                            d.start_date = $('#start_date').val();
-                            d.end_date = $('#end_date').val();
-                        }
-                    },
-                    columns: [
-
-                        {data: 'name', name: 'name'},
-                        {data: 'unique_patients_called', name: 'unique_patients_called'},
-                        {data: 'consented', name: 'consented'},
-                        {data: 'utc', name: 'utc'},
-                        {data: 'rejected', name: 'rejected'},
-                        {data: 'labor_hours', name: 'labor_hours'},
-                        {data: 'conversion', name: 'conversion'},
-                        {data: 'labor_rate', name: 'labor_rate'},
-                        {data: 'total_cost', name: 'total_cost'},
-                        {data: 'acq_cost', name: 'acq_cost'}
-
-                    ],
-                    "aaSorting": [2, 'desc'],
-                    "iDisplayLength": 15,
+                $('#end_date').on('change', function () {
+                    console.log($('#end_date').val());
+                    $('#practice_kpis').DataTable().ajax.reload();
                 });
 
-            });
+                $.fn.dataTable.ext.errMode = 'none';
 
-            $('#start_date').on('change', function () {
-                console.log($('#start_date').val());
-                $('#practice_kpis').DataTable().ajax.reload();
-            });
+                $('#practice_kpis')
+                    .on('error.dt', function (e, settings, techNote, message) {
+                        console.log('An error has been reported by DataTables: ', message);
+                    })
+                    .DataTable();
 
-            $('#end_date').on('change', function () {
-                console.log($('#end_date').val());
-                $('#practice_kpis').DataTable().ajax.reload();
-            });
-
-            $.fn.dataTable.ext.errMode = 'none';
-
-            $('#practice_kpis')
-                .on('error.dt', function (e, settings, techNote, message) {
-                    console.log('An error has been reported by DataTables: ', message);
-                })
-                .DataTable();
-
-        </script>
-        <script src="//cdn.datatables.net/1.10.7/js/jquery.dataTables.min.js"></script>
+            </script>
+            <script src="//cdn.datatables.net/1.10.7/js/jquery.dataTables.min.js"></script>
+        @endpush
 
 
 @stop

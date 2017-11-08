@@ -36,6 +36,7 @@ class User extends Resource
             'deleted_at'          => $this->deleted_at,
 
             'billing_provider' => BillingProvider::make($this->whenLoaded('billingProvider')),
+            'notes'            => Note::collection($this->whenLoaded('notes')),
             'nurse_info'       => NurseInfo::make($this->whenLoaded('nurseInfo')),
             'patient_info'     => PatientInfo::make($this->whenLoaded('patientInfo')),
             'provider_info'    => ProviderInfo::make($this->whenLoaded('providerInfo')),

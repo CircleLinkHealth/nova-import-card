@@ -105,44 +105,44 @@
     @push('scripts')
         <script>
 
-        $(document).ready(function () {
-            $('input[name=seconds]').keyup(function () {
-                var sec = parseInt($(this).val());
+            $(document).ready(function () {
+                $('input[name=seconds]').keyup(function () {
+                    var sec = parseInt($(this).val());
 
-                var minutes = Math.floor(sec / 60);
-                var seconds = sec % 60;
-                var seconds = seconds > 9 ? "" + seconds : "0" + seconds;
+                    var minutes = Math.floor(sec / 60);
+                    var seconds = sec % 60;
+                    var seconds = seconds > 9 ? "" + seconds : "0" + seconds;
 
-                $('#convert').text(minutes + ':' + seconds);
-            });
-        });
-
-        $("#compute").submit(function (e) {
-
-            var url = '{!! route('algo.mock.compute') !!}'; // the script where you handle the form input.
-
-            $.ajax({
-                type: "POST",
-                url: url,
-                headers: {
-                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-                },
-                data: {
-                    seconds: $('#seconds').val(),
-                    date: $('#date').val(),
-                    days: $('#days').val(),
-                    status: $('#status').val(),
-//                    call_status: $('#call_success').val()
-                }, // serializes the form's elements.
-                success: function (data) {
-                    console.log(data); // show response from the php script.
-                    $('#result').text(data);
-                }
+                    $('#convert').text(minutes + ':' + seconds);
+                });
             });
 
-            e.preventDefault(); // avoid to execute the actual submit of the form.
-        });
+            $("#compute").submit(function (e) {
 
-    </script>
+                var url = '{!! route('algo.mock.compute') !!}'; // the script where you handle the form input.
+
+                $.ajax({
+                    type: "POST",
+                    url: url,
+                    headers: {
+                        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                    },
+                    data: {
+                        seconds: $('#seconds').val(),
+                        date: $('#date').val(),
+                        days: $('#days').val(),
+                        status: $('#status').val(),
+    //                    call_status: $('#call_success').val()
+                    }, // serializes the form's elements.
+                    success: function (data) {
+                        console.log(data); // show response from the php script.
+                        $('#result').text(data);
+                    }
+                });
+
+                e.preventDefault(); // avoid to execute the actual submit of the form.
+            });
+
+        </script>
     @endpush
 @stop

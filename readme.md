@@ -10,6 +10,6 @@
 6. Run database seeders with `php artisan db:seed`
 7. Set environment variables as structured in the /.env.example file
 8. Run `npm install` to install npm dependencies.
-9. Run `npm run dev` to build js/css assets.
+9. Run `npm run dev` to build js/css assets. Make sure your npm version is up to date. Check with `npm -v`
    
    Fire up the server and you're good to go!

@@ -1,5 +1,5 @@
 <template>
-    <div v-if="show">
+    <div :class="className" v-if="show">
         <transition name="modal">
             <div class="modal-mask">
                 <div class="modal-wrapper" @click="close">
@@ -26,7 +26,7 @@
                         </div>
 
                         <div class="modal-footer close-footer">
-                            <button class="modal-default-button" @click="close()">
+                            <button class="modal-default-button" @click="ok()">
                                 OK
                             </button>
                         </div>
@@ -89,7 +89,7 @@
 
     export default {
         name: 'modal',
-        props: ['name', 'no-title', 'no-footer', 'info'],
+        props: ['name', 'no-title', 'no-footer', 'info', 'class-name'],
         data() {
             return {
                 title: '',
@@ -103,6 +103,10 @@
                 if (!e || (e.target && e.target.classList.contains('modal-wrapper'))) {
                     this.show = false;
                 }
+            },
+            ok() {
+                if (this.info && this.info.okHandler) this.info.okHandler();
+                else this.close();
             }
         },
         computed: {
@@ -115,6 +119,10 @@
                 this.body = modal.body;
                 this.footer = modal.footer || '';
                 this.show = true;
+            })
+
+            Event.$on(`modal${this.name ? '-' + this.name : ''}:hide`, () => {
+                this.close();
             })
 
             console.log(this.info)

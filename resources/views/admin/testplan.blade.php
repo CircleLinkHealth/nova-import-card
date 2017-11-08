@@ -5,15 +5,17 @@ $codebaseUrl = 'https://circlelink-health2.codebasehq.com/projects/cpm/tickets/'
 @extends('partials.adminUI')
 
 @section('content')
-	<style>
-		.panel-collapse {
-			border-bottom:1px solid #fff;
-		}
+	@push('styles')
+		<style>
+			.panel-collapse {
+				border-bottom:1px solid #fff;
+			}
 
-		.complete {
-			text-decoration: line-through;
-		}
-	</style>
+			.complete {
+				text-decoration: line-through;
+			}
+		</style>
+	@endpush
 	<div class="container">
 		<div class="row">
 
