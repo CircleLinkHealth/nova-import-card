@@ -20,7 +20,7 @@
                 /**
                  * {
                  *  wsUrl: 'https://clh-ws.io/time',
-                 *  userId: 0,
+                 *  providerId: 0,
                  *  patientId: 0
                  * }
                  */
@@ -38,7 +38,7 @@
         },
         methods: {
             updateTime() {
-                this.socket.send(JSON.stringify(Object.assign(this.info, { id: this.info.userId, message: 'update' })));
+                this.socket.send(JSON.stringify({ id: this.info.providerId, patientId: this.info.patientId, message: 'update', info: this.info }));
             },
             createSocket() {
                 try {
@@ -83,12 +83,12 @@
             })
 
             EventBus.$on('tracker:stop', () => {
-                if (this.socket) this.socket.send(JSON.stringify(Object.assign(this.info, { id: this.info.userId, message: 'stop' })))
+                if (this.socket) this.socket.send(JSON.stringify({ id: this.info.providerId, patientId: this.info.patientId, message: 'stop', info: this.info }))
             })
 
             EventBus.$on('tracker:start', () => {
                 if (this.socket && this.socket.readyState === WebSocket.OPEN) 
-                    this.socket.send(JSON.stringify(Object.assign(this.info, { id: this.info.userId, message: 'start' })))
+                    this.socket.send(JSON.stringify({ id: this.info.providerId, patientId: this.info.patientId, message: 'start', info: this.info }))
             })
 
             this.createSocket()
