@@ -24,71 +24,77 @@
             </div>
         </div>
 
-        <form class="form-group" action="{{route('post.store.training.features')}}" method="POST">
+        <div class="row">
+            <form class="form-group" action="{{route('post.store.training.features')}}" method="POST">
 
-            <input type="hidden" name="_token" value="{{ csrf_token() }}">
+                <input type="hidden" name="_token" value="{{ csrf_token() }}">
 
-            <importer-trainer
-                    practice-prop="{{$predictedPracticeId ?? null}}"
-                    location-prop="{{$predictedLocationId ?? null}}"
-                    billing-provider-prop="{{$predictedBillingProviderId ?? null}}"
-            >
-            </importer-trainer>
+                <importer-trainer
+                        practice-prop="{{$predictedPracticeId ?? null}}"
+                        location-prop="{{$predictedLocationId ?? null}}"
+                        billing-provider-prop="{{$predictedBillingProviderId ?? null}}"
+                >
+                </importer-trainer>
 
-            @if(isset($importedMedicalRecord))
-                <input type="hidden" name="imported_medical_record_id" value="{{ $importedMedicalRecord->id }}">
-            @endif
+                @if(isset($importedMedicalRecord))
+                    <input type="hidden" name="imported_medical_record_id" value="{{ $importedMedicalRecord->id }}">
+                @endif
 
-            @if(isset($importedMedicalRecords))
-                @foreach($importedMedicalRecords as $importedMedicalRecord)
-                    <input type="hidden" name="imported_medical_record_ids[]" value="{{ $importedMedicalRecord->id }}">
-                @endforeach
-            @endif
+                @if(isset($importedMedicalRecords))
+                    @foreach($importedMedicalRecords as $importedMedicalRecord)
+                        <input type="hidden" name="imported_medical_record_ids[]" value="{{ $importedMedicalRecord->id }}">
+                    @endforeach
+                @endif
 
-            <div class="row">
-                @if($document)
-                    <div class="col-xs-6">
-                        <h3>Custodian</h3>
+                <br>
 
-                        <div class="input-group">
+                <div class="row">
+                    <div class="col-md-12">
+                        @if($document)
+                            <div class="col-xs-5">
+                                <h3>Forget <b>Custodian</b> records</h3>
+
+                                <div class="input-group">
                     <span class="input-group-addon">
                       <input type="checkbox" name="documentId" value="{{$document->id}}" aria-label="...">
                     </span>
-                            <p class="form-control" aria-label="...">{{$document->custodian}}</p>
-                        </div>
-                    </div>
-                @endif
+                                    <p class="form-control" aria-label="...">{{$document->custodian}}</p>
+                                </div>
+                            </div>
+                        @endif
 
-                @if($providers)
-                    <div class="col-xs-6">
-                        <h3>Providers and Addresses</h3>
-                        @foreach($providers as $provider)
+                        @if($providers)
+                            <div class="col-xs-7">
+                                <h3>Forget <b>Providers/Addresses</b></h3>
+                                @foreach($providers as $provider)
 
-                            <div class="input-group">
+                                    <div class="input-group">
                     <span class="input-group-addon">
                       <input type="checkbox" name="providerIds[]" value="{{$provider->id}}" aria-label="...">
                     </span>
-                                <p class="form-control" aria-label="...">{{$provider->first_name}}
-                                    , {{$provider->last_name}}, {{$provider->street}}, {{$provider->city}}
-                                    , {{$provider->state}}, {{$provider->zip}}, {{$provider->cell_phone}}
-                                    , {{$provider->home_phone}}, {{$provider->work_phone}} </p>
+                                        <p class="form-control" aria-label="...">{{$provider->first_name}}
+                                            , {{$provider->last_name}}, {{$provider->street}}, {{$provider->city}}
+                                            , {{$provider->state}}, {{$provider->zip}}, {{$provider->cell_phone}}
+                                            , {{$provider->home_phone}}, {{$provider->work_phone}} </p>
+                                    </div>
+                                @endforeach
                             </div>
-                        @endforeach
+                        @endif
                     </div>
-                @endif
-            </div>
+                </div>
 
-            <div class="row text-center">
-                <br>
-                <br>
-                <div class="col-md-12">
-                    <input class="btn-danger btn btn-lg" type="submit" value="Done!">
-                    <span style="border-bottom: 5px solid red;color: blue;">
+                <div class="row text-center">
+                    <br>
+                    <br>
+                    <div class="col-md-12">
+                        <input class="btn-danger btn btn-lg" type="submit" value="Done!">
+                        <span style="border-bottom: 5px solid red;color: blue;">
                             WARNING! When you click Done, all the rows you checked off on "Custodian" and "Providers and Addresses" above will be deleted.
                     </span>
+                    </div>
                 </div>
-            </div>
 
-        </form>
+            </form>
+        </div>
     </div>
 @endsection

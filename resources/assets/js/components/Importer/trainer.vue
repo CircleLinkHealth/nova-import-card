@@ -66,23 +66,23 @@
 </script>
 
 <template v-cloak>
-    <div class="row">
-        <div class="col-md-4">
-            <h3>Select Practice</h3>
+    <div class="row panel">
+        <div class="col-md-4 left-border">
+            <h3>Select <b>Practice</b></h3>
 
             <select2 v-model="practice" class="col-md-12" name="practiceId">
                 <option v-for="p in practices" :value="p.id">{{ p.display_name }}</option>
             </select2>
         </div>
-        <div class="col-md-4">
-            <h3>Select Location</h3>
+        <div class="col-md-4 left-border">
+            <h3>Select <b>Location</b></h3>
 
             <select v-model="location" class="col-md-12" name="locationId">
                 <option v-for="l in locations" :value="l.id">{{ l.name }}</option>
             </select>
         </div>
-        <div class="col-md-4">
-            <h3>Select Billing Provider</h3>
+        <div class="col-md-4 left-border">
+            <h3>Select <b>Billing Provider</b></h3>
 
             <select v-model="billingProvider" class="col-md-12" name="billingProviderId">
                 <option v-for="prov in providers"
@@ -91,3 +91,16 @@
         </div>
     </div>
 </template>
+
+<style scoped>
+    .panel {
+        border: 2px solid #eeeeee;
+        padding: 2rem 3rem 6rem 3rem;
+        margin: 2rem;
+        border-radius: 2rem;
+    }
+
+    .left-border {
+        border-left: 1px solid #ededed;
+    }
+</style>
