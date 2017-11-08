@@ -228,10 +228,6 @@ class User extends \App\BaseModel implements AuthenticatableContract, CanResetPa
         Notifiable,
         SoftDeletes;
 
-    use CerberusUserTrait {
-        CerberusUserTrait::restore insteadof SoftDeletes;
-    }
-
     use \Venturecraft\Revisionable\RevisionableTrait;
     public $rules = [
         'username'         => 'required',
