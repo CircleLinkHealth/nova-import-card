@@ -119,13 +119,15 @@ module.exports = app => {
           if (usersTime[key].info) {
             const info = usersTime[key].info;
             info.totalTime = usersTime[key].seconds * 1000;
-            const url = info.submitUrl.replace('https://cpm-web.dev/', 'http://localhost:8000/')
+            const url = info.submitUrl
             console.log(info, url)
 
             axios.post(url, info).then((response) => {
               console.log(response.status)
               //console.log(response)
               delete usersTime[key];
+            }).catch((err) => {
+              console.error(err)
             })
           }
         }
