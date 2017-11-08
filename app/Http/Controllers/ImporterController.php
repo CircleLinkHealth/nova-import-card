@@ -66,10 +66,6 @@ class ImporterController extends Controller
 
     /**
      * Show all QASummaries that are related to a CCDA
-     *
-     * @painpoints:
-     * 1. What about summaries not related to a CCDA? (Probably just delete them)
-     * 2. Not sure if this should be in this Controller
      */
     public function index()
     {
@@ -82,10 +78,24 @@ class ImporterController extends Controller
             ->with('location')
             ->with('billingProvider')
             ->get()
-            ->all();
+            ->map(function ($summary) {
+                $summary['flag'] = false;
+
+                $providers = $summary->medicalRecord()->providers()->where([
+                    ['first_name', '!=', null],
+                    ['last_name', '!=', null],
+                    ['ml_ignore', '=', false],
+                ])->get();
+
+                if ($providers->count() > 1) {
+                    $summary['flag'] = true;
+                }
+
+                return $summary;
+            })->values();
 
         JavaScript::put([
-            'importedMedicalRecords' => array_values($qaSummaries),
+            'importedMedicalRecords' => $qaSummaries,
         ]);
 
         return view('CCDUploader.uploadedSummary');
@@ -106,7 +116,7 @@ class ImporterController extends Controller
         }
         //gather the features for review
         $document = $ccda->document->first();
-        $providers = $ccda->providers;
+        $providers = $ccda->providers()->where('ml_ignore', '=', false)->get();
 
         $predictedLocationId = $importedMedicalRecord->location_id;
         $predictedPracticeId = $importedMedicalRecord->practice_id;
