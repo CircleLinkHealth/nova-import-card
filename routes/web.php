@@ -38,43 +38,17 @@ Route::get('talk-to-us', 'PatientSignupController@talkToUs');
 
 //Algo test routes.
 
-//Route::group(['prefix' => 'algo'], function () {
-//    Route::get('family', function () {
-//
-//        if (app()->environment() == 'production') {
-//            return 'Sorry, this cannot be run on the production environment.';
-//        }
-//
-//        return (new \App\Services\Calls\SchedulerService())->syncFamilialCalls();
-//    });
+Route::group(['prefix' => 'algo'], function () {
 
-//    Route::get('cleaner', function () {
-//
-//        if (app()->environment() == 'production') {
-//            return 'Sorry, this cannot be run on the production environment.';
-//        }
-//
-//        return (new \App\Services\Calls\SchedulerService())->removeScheduledCallsForWithdrawnAndPausedPatients();
-//    });
-//
-//    Route::get('tuner', function () {
-//
-//        if (app()->environment() == 'production') {
-//            return 'Sorry, this cannot be run on the production environment.';
-//        }
-//
-//        return (new \App\Services\Calls\SchedulerService())->tuneScheduledCallsWithUpdatedCCMTime();
-//    });
-//
-//    Route::get('rescheduler', function () {
-//
-//        if (app()->environment() == 'production') {
-//            return 'Sorry, this cannot be run on the production environment.';
-//        }
-//
-//        return (new \App\Algorithms\Calls\ReschedulerHandler())->handle();
-//    });
-//});
+   Route::get('family', 'AlgoTestController@algoFamily'); 
+
+   Route::get('cleaner', 'AlgoTestController@algoCleaner');
+
+   Route::get('tuner', 'AlgoTestController@algoTuner');
+
+   Route::get('rescheduler', 'AlgoTestController@algoRescheduler');
+
+});
 
 
 Route::get('ajax/patients', 'UserController@getPatients');
