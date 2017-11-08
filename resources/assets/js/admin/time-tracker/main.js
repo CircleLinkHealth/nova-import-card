@@ -1,16 +1,16 @@
 import Vue from 'vue'
 
 //custom components
-import { TimeTracker } from './index'
+import TimeTracker from './index'
 import { BindWindowFocusChange, BindWindowVisibilityChange } from './events/window.event'
 
 Vue.config.productionTip = false
 
 const App = new Vue({
   el: '#time-tracker',
-  template: '<time-tracker :info="info"/>',
+  template: '<time-tracker :info="info"></time-tracker>',
   data: {
-    info: pageInfo || {}
+    info: window.pageInfo || {}
   },
   components: { 
     'time-tracker': TimeTracker
@@ -22,5 +22,5 @@ const App = new Vue({
   }
 })
 
-BindWindowFocusChange(window, App)
-BindWindowVisibilityChange(window, document, App)
+BindWindowFocusChange(window)
+BindWindowVisibilityChange(window, document)

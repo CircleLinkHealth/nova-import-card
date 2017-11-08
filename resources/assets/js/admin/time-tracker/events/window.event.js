@@ -1,30 +1,33 @@
 /**
  * Detect window.onfocus and window.onblur
  */
-export const BindWindowFocusChange = function (window, app) {
+
+import EventBus from '../comps/event-bus'
+
+export const BindWindowFocusChange = function (window, App = EventBus) {
     window.onfocus = function () {
-        app.$emit('tracker:start');
-        app.$emit('tracker:reset');
-        app.$emit('inactivity:start');
+        App.$emit('tracker:start');
+        App.$emit('inactivity:reset');
+        App.$emit('inactivity:start');
     }
     
     window.onblur = function () {
         console.log('leave')
-        app.$emit('tracker:stop');
-        app.$emit("inactivity:stop");
+        App.$emit('tracker:stop');
+        App.$emit("inactivity:stop");
     }
     
     window.onkeydown = window.onmousemove = 
     window.onwheel = window.onmousewheel = 
     window.onmousedown = window.onkeyup = function () {
-        app.$emit('tracker:reset');
+        App.$emit('inactivity:reset');
     }
 }
 
 /**
  * Detect window visibility change
  */
-export const BindWindowVisibilityChange = function(window, document, app) {
+export const BindWindowVisibilityChange = function(window, document, App = EventBus) {
     var hidden = "hidden";
 
     // Standards:
@@ -59,13 +62,13 @@ export const BindWindowVisibilityChange = function(window, document, app) {
         
         const listener = (state) => {
             if (state === v) {
-                app.$emit('tracker:start');
-                app.$emit('tracker:reset');
-                app.$emit('inactivity:start');
+                App.$emit('tracker:start');
+                App.$emit('inactivity:reset');
+                App.$emit('inactivity:start');
             }
             else {
-                app.$emit('tracker:stop');
-                app.$emit("inactivity:stop");
+                App.$emit('tracker:stop');
+                App.$emit("inactivity:stop");
             }
             console.log(state);
         }

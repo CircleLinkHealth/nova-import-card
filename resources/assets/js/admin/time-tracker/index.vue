@@ -9,8 +9,9 @@
     import { rootUrl } from '../../app.config'
     import InactivityTracker from './comps/inactivity-tracker'
     import TimeDisplay from './comps/time-display'
+    import EventBus from './comps/event-bus'
     
-    export const TimeTracker = {
+    export default {
         name: 'time-tracker',
         props: {
             info: {
@@ -43,7 +44,7 @@
                 try {
                     const self = this; //a way to keep the context
                     this.socket = this.socket || (function () {
-                        const socket = new WebSocket(this.info.wsUrl);
+                        const socket = new WebSocket(self.info.wsUrl);
         
                         socket.onmessage = (message) => {
                             if (message.data) {
@@ -62,7 +63,7 @@
                         socket.onclose = (ev) => {
                             console.warn("socket connection has closed", ev)
                             self.socket = null;
-                            self.$emit("tracker:stop");
+                            EventBus.$emit("tracker:stop");
 
                             setTimeout(self.createSocket.bind(self), 3000);
                         }
@@ -76,16 +77,16 @@
             }
         },
         mounted() {
-            this.$on('tracker:tick', () => {
+            EventBus.$on('tracker:tick', () => {
                 this.seconds++;
                 this.$forceUpdate()
             })
 
-            this.$on('tracker:stop', () => {
+            EventBus.$on('tracker:stop', () => {
                 if (this.socket) this.socket.send(JSON.stringify(Object.assign(this.info, { id: this.info.userId, message: 'stop' })))
             })
 
-            this.$on('tracker:start', () => {
+            EventBus.$on('tracker:start', () => {
                 if (this.socket && this.socket.readyState === WebSocket.OPEN) 
                     this.socket.send(JSON.stringify(Object.assign(this.info, { id: this.info.userId, message: 'start' })))
             })

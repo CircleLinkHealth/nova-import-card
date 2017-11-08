@@ -248,6 +248,9 @@
                             {{--<li><a href="{{ url('/auth/register') }}">Register</a></li>--}}
                         @else
                             <li class="dropdown">
+                                <div id="time-tracker"></div>
+                            </li>
+                            <li class="dropdown">
                                 <a href="{{url('/jobs/completed')}}">
                                     <span class="badge">{{auth()->user()->cachedNotificationsList()->count()}}</span>
                                     Jobs Completed

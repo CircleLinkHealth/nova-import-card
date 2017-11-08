@@ -3,6 +3,8 @@
 </template>
 
 <script>
+    import EventBus from './event-bus'
+
     export default {
         name: 'time-display',
         props: ['seconds'],
@@ -27,7 +29,7 @@
                 const STEP = 1000;
                 if (this.interval) clearInterval(this.interval);
                 this.interval = setInterval((function () {
-                    this.$parent.$emit("tracker:tick")
+                    EventBus.$emit("tracker:tick")
                 }).bind(this), STEP)
             },
             stop() {
@@ -36,8 +38,8 @@
         },
         mounted() {
             this.start()
-            this.$parent.$on('tracker:start', this.start.bind(this));
-            this.$parent.$on('tracker:stop', this.stop.bind(this));
+            EventBus.$on('tracker:start', this.start.bind(this));
+            EventBus.$on('tracker:stop', this.stop.bind(this));
         }
     }
 </script>

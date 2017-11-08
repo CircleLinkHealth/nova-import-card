@@ -3,6 +3,8 @@
 </template>
 
 <script>
+    import EventBus from './event-bus'
+
     export default {
         data() {
             return {
@@ -25,15 +27,15 @@
                     const ALERT_INTERVAL = 59;
                     if (this.seconds >= ALERT_INTERVAL) {
                         if (!this.alertIsActive) {
-                        this.$parent.$emit("tracker:stop");
-                        this.alertIsActive = true;
-                        alert(
-                            `${ALERT_INTERVAL} seconds have elapsed since your last activity`
-                        );
-                        this.alertIsActive = false;
-                        this.$parent.$emit("tracker:start");
-                        
-                        this.reset();
+                            EventBus.$emit("tracker:stop");
+                            this.alertIsActive = true;
+                            alert(
+                                `${ALERT_INTERVAL} seconds have elapsed since your last activity`
+                            );
+                            this.alertIsActive = false;
+                            EventBus.$emit("tracker:start");
+                            
+                            this.reset();
                         }
                     }
                     }.bind(this),
@@ -72,9 +74,10 @@
         },
         mounted() {
             this.start();
-            this.$parent.$on("inactivity:reset", this.reset.bind(this));
-            this.$parent.$on("inactivity:stop", this.stop.bind(this));
-            this.$parent.$on("inactivity:start", this.start.bind(this));
+            EventBus.$on("inactivity:reset", this.reset.bind(this));
+            EventBus.$on("inactivity:stop", this.stop.bind(this));
+            EventBus.$on("inactivity:start", this.start.bind(this));
+            console.log("inactivity's parent", EventBus)
         }
     }
 </script>

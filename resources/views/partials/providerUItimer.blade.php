@@ -193,5 +193,21 @@ if (isset($patient) && !empty($patient) && is_a($patient, App\User::class)) {
 
         })(jQuery);
     </script>
+    <script>
+        var pageInfo = {
+                        "patientId": '<?php echo $patientId; ?>',
+                        "providerId": '<?php echo Auth::user()->id ?>',
+                        "totalTime": 0,
+                        "wsUrl": "ws://localhost:8888/time",
+                        "programId": '<?php echo $patientProgramId; ?>',
+                        "startTime": '<?php echo Carbon::now()->subSeconds(8)->toDateTimeString(); ?>',
+                        "urlFull": '<?php echo Request::url(); ?>',
+                        "urlShort": '<?php echo $urlShort; ?>',
+                        "ipAddr": '<?php echo $ipAddr; ?>',
+                        "activity": $('#activityName').val(),
+                        "title": '<?php echo $title; ?>'
+                    }
+    </script>
+    <script src="{{ asset('compiled/js/v-time-tracker.min.js') }}"></script>
     @endpush
 @endif
