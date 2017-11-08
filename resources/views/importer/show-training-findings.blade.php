@@ -29,9 +29,9 @@
             <input type="hidden" name="_token" value="{{ csrf_token() }}">
 
             <importer-trainer
-                    practice="{{$predictedPracticeId ?? null}}"
-                    location="{{$predictedLocationId ?? null}}"
-                    billing-provider="{{$predictedBillingProviderId ?? null}}"
+                    practice-prop="{{$predictedPracticeId ?? null}}"
+                    location-prop="{{$predictedLocationId ?? null}}"
+                    billing-provider-prop="{{$predictedBillingProviderId ?? null}}"
             >
             </importer-trainer>
 
