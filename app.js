@@ -59,21 +59,3 @@ app.server.listen(process.env.PORT || 8888, function(){
 // });
 
 module.exports = app;
-
-require('axios').post('https://cpm-web.dev/api/v2.1/pagetimer', { patientId: '2601',
-  providerId: '3864',
-  totalTime: 5000,
-  wsUrl: 'ws://localhost:8888/time',
-  programId: '29',
-  urlFull: 'https://cpm-web.dev/manage-patients/2601/notes',
-  urlShort: '/manage-patients/2601/notes',
-  ipAddr: '127.0.0.1',
-  activity: 'Notes/Offline Activities Review',
-  title: 'patient.note.index',
-  submitUrl: 'https://cpm-web.dev/api/v2.1/pagetimer',
-  startTime: '2017-11-08 11:51:48' })
-.then(function (response) {
-  console.log(response)
-}).catch(function (err) {
-  console.error(err)
-})
