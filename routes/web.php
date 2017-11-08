@@ -40,7 +40,7 @@ Route::get('talk-to-us', 'PatientSignupController@talkToUs');
 
 Route::group(['prefix' => 'algo'], function () {
 
-   Route::get('family', 'AlgoTestController@algoFamily'); 
+   Route::get('family', 'AlgoTestController@algoFamily');
 
    Route::get('cleaner', 'AlgoTestController@algoCleaner');
 
@@ -185,7 +185,7 @@ Route::group(['middleware' => 'auth'], function () {
         'as'   => 'ccd-old-viewer.post',
     ]);
 
-    Route::get('imported-medical-record/{imrId}/training-results', [
+    Route::get('imported-medical-records/{imrId}/training-results', [
         'uses' => 'ImporterController@getTrainingResults',
         'as'   => 'get.importer.training.results',
     ]);

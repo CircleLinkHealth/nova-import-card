@@ -67,7 +67,7 @@
 
 <template v-cloak>
     <div class="row panel">
-        <div class="col-md-4 left-border">
+        <div class="col-md-4">
             <h3>Select <b>Practice</b></h3>
 
             <select2 v-model="practice" class="col-md-12" name="practiceId">
