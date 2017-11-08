@@ -1,8 +1,12 @@
 @extends('partials.adminUI')
 
 @section('content')
-    <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/font-awesome/4.4.0/css/font-awesome.min.css">
-    <script type="text/javascript" src="{{ asset('/js/admin/questionSets.js') }}"></script>
+    @push('styles')
+        <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/font-awesome/4.4.0/css/font-awesome.min.css">
+    @endpush
+    @push('scripts')
+        <script type="text/javascript" src="{{ asset('/js/admin/questionSets.js') }}"></script>
+    @endpush
     <div class="container-fluid">
         <div class="row">
             <div class="col-md-10 col-md-offset-1">
@@ -26,34 +30,36 @@
                     <div class="panel-body">
                         @include('errors.errors')
                         <div class="row">
-                            {!! Form::open(array('url' => URL::route('admin.questionSets.index', array()), 'class' => 'form-horizontal', 'id' => 'filterForm')) !!}
-                        </div>
-
-                        <div id="filters">
-                            <h3>Filter</h3>
-                            <div class="form-group">
-                                <div class="row">
-                                    <div class="col-xs-2 text-right">{!! Form::label('filterProgram', 'Practice:') !!}</div>
-                                    <div class="col-xs-4">{!! Form::select('filterProgram', array('all' => 'All Programs') + $programs, $filterProgram, ['class' => 'form-control select-picker', 'style' => 'width:80%;']) !!}</div>
-                                    <div class="col-xs-2">{!! Form::label('filterQsType', 'Type:') !!}</div>
-                                    <div class="col-xs-4">{!! Form::select('filterQsType', array('all' => 'All Qs Types') + $qsTypes, $filterQsType, ['class' => 'form-control select-picker', 'style' => 'width:80%;']) !!}</div>
-                                </div>
-                            </div>
-                            <div class="form-group">
-                                <div class="row">
-                                    <div class="col-xs-2 text-right">{!! Form::label('filterQuestion', 'Question:') !!}</div>
-                                    <div class="col-xs-4">{!! Form::select('filterQuestion', array('all' => 'All Questions') + $questions, $filterQuestion, ['class' => 'form-control select-picker', 'style' => 'width:80%;']) !!}</div>
-                                </div>
-                            </div>
-                            <div class="row" style="margin-top:50px;">
-                                <div class="col-sm-12">
-                                    <div class="" style="text-align:center;">
-                                        {!! Form::hidden('action', 'filter') !!}
-                                        {!! Form::submit('Apply Filters', array('class' => 'btn btn-orange', 'id' => 'filterSubmit')) !!}
-                                        {!! Form::submit('Reset Filters', array('class' => 'btn btn-orange')) !!}
-                                        </form>
+                            <div class="col-sm-12">
+                                {!! Form::open(array('url' => URL::route('admin.questionSets.index', array()), 'class' => 'form-horizontal', 'id' => 'filterForm')) !!}
+                                <div id="filters">
+                                    <h3>Filter</h3>
+                                    <div class="form-group">
+                                        <div class="row">
+                                            <div class="col-xs-2 text-right">{!! Form::label('filterProgram', 'Practice:') !!}</div>
+                                            <div class="col-xs-4">{!! Form::select('filterProgram', array('all' => 'All Programs') + $programs, $filterProgram, ['class' => 'form-control select-picker', 'style' => 'width:80%;']) !!}</div>
+                                            <div class="col-xs-2">{!! Form::label('filterQsType', 'Type:') !!}</div>
+                                            <div class="col-xs-4">{!! Form::select('filterQsType', array('all' => 'All Qs Types') + $qsTypes, $filterQsType, ['class' => 'form-control select-picker', 'style' => 'width:80%;']) !!}</div>
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <div class="row">
+                                            <div class="col-xs-2 text-right">{!! Form::label('filterQuestion', 'Question:') !!}</div>
+                                            <div class="col-xs-4">{!! Form::select('filterQuestion', array('all' => 'All Questions') + $questions, $filterQuestion, ['class' => 'form-control select-picker', 'style' => 'width:80%;']) !!}</div>
+                                        </div>
+                                    </div>
+                                    <div class="row" style="margin-top:50px;">
+                                        <div class="col-sm-12">
+                                            <div class="" style="text-align:center;">
+                                                {!! Form::hidden('action', 'filter') !!}
+                                                {!! Form::submit('Apply Filters', array('class' => 'btn btn-orange', 'id' => 'filterSubmit')) !!}
+                                                {!! Form::submit('Reset Filters', array('class' => 'btn btn-orange')) !!}
+                                                </form>
+                                            </div>
+                                        </div>
                                     </div>
                                 </div>
+                                {!! Form::close() !!}
                             </div>
                         </div>
 

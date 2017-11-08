@@ -1,7 +1,10 @@
 @extends('partials.adminUI')
 
 @section('content')
-    <script type="text/javascript" src="{{ asset('/js/admin/patientCallManagement.js') }}"></script>
+    @push('scripts')
+        <script type="text/javascript" src="{{ asset('/js/admin/patientCallManagement.js') }}"></script>
+    @endpush
+    
     {!! Form::open(array('url' => URL::route('admin.patientCallManagement.update', array('id' => $call->id)), 'class' => 'form-horizontal')) !!}
     <div class="container-fluid">
         <div class="row">
@@ -66,12 +69,10 @@
                                 </div>
                             </div>
                         </div>
-                        {!! Form::close() !!}
                     </div>
                 </div>
             </div>
         </div>
-
-
     </div>
+    {!! Form::close() !!}
 @stop
