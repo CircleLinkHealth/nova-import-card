@@ -38,14 +38,7 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot()
     {
-        if (\Schema::hasTable((new AppConfig)->getTable())) {
-            $appConfigs = AppConfig::all();
-            $adminStylesheet = $appConfigs->where('config_key', 'admin_stylesheet')->first();
-            view()->share('app_config_admin_stylesheet', 'admin-bootswatch-default.css');
-            if ($adminStylesheet) {
-                view()->share('app_config_admin_stylesheet', $adminStylesheet->config_value);
-            }
-        }
+        //
     }
 
     /**

@@ -1,6 +1,6 @@
 <?php namespace App;
 
-use Zizaco\Entrust\EntrustRole;
+use Michalisantoniou6\Cerberus\CerberusRole;
 
 /**
  * App\Role
@@ -21,7 +21,7 @@ use Zizaco\Entrust\EntrustRole;
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Role whereUpdatedAt($value)
  * @mixin \Eloquent
  */
-class Role extends EntrustRole
+class Role extends CerberusRole
 {
 
     const CCM_TIME_ROLES = [

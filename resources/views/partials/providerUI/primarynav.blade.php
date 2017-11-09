@@ -74,7 +74,7 @@
                             </li>
                         @endif
 
-                        @if ( !Auth::guest() && Auth::user()->can(['admin-access']))
+                        @if ( !Auth::guest() && Auth::user()->hasRole(['administrator']))
                             <li><a style="color: #47beab" href="{{ empty($patient->id) ? URL::route('admin.dashboard') : URL::route('admin.users.edit', array('patient' => $patient->id)) }}">
                                     Admin Panel
                                 </a>
