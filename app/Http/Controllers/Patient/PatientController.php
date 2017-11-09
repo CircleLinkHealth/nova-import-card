@@ -452,7 +452,7 @@ class PatientController extends Controller
         }
 
         // security
-        if (!Auth::user()->can('observations-create')) {
+        if (!Auth::user()->canForSite('observations-create', $patient->primary_practice_id)) {
             abort(403);
         }
 

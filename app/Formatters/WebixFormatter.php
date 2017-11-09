@@ -471,7 +471,7 @@ class WebixFormatter implements ReportFormatter
         $foundPrograms = []; // save resources, no duplicate db calls
 
         $canApproveCarePlans = $auth->canApproveCareplans();
-        $canQAApproveCarePlans = $auth->can('care-plan-qa-approve');
+        $canQAApproveCarePlans = $auth->canQAApproveCarePlans();
         $isCareCenter = $auth->hasRole('care-center');
         $isAdmin = $auth->hasRole('administrator');
         $isProvider = $auth->hasRole('provider');

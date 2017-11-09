@@ -142,8 +142,6 @@ class PracticeStaffController extends Controller
             'user_status'  => 1,
         ]);
 
-        $user->attachGlobalRole($userRole);
-
         if ($formData['emr_direct_address']) {
             $user->emr_direct_address = $formData['emr_direct_address'];
         }

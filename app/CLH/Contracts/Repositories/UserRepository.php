@@ -22,7 +22,7 @@ interface UserRepository
         ParameterBag $params
     );
 
-    public function saveOrUpdatePrograms(
+    public function saveAndGetPractice(
         User $wpUser,
         ParameterBag $params
     );

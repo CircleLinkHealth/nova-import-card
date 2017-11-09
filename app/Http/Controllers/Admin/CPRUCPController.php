@@ -17,7 +17,7 @@ class CPRUCPController extends Controller
      */
     public function index(Request $request)
     {
-        if (!Auth::user()->can('programs-manage')) {
+        if (!Auth::user()->hasPermission('programs-manage')) {
             abort(403);
         }
         // display view
@@ -73,7 +73,7 @@ class CPRUCPController extends Controller
      */
     public function create()
     {
-        if (!Auth::user()->can('programs-manage')) {
+        if (!Auth::user()->hasPermission('programs-manage')) {
             abort(403);
         }
         // display view
@@ -87,7 +87,7 @@ class CPRUCPController extends Controller
      */
     public function store(Request $request)
     {
-        if (!Auth::user()->can('programs-manage')) {
+        if (!Auth::user()->hasPermission('programs-manage')) {
             abort(403);
         }
         $params = $request->input();
@@ -108,7 +108,7 @@ class CPRUCPController extends Controller
      */
     public function show($id)
     {
-        if (!Auth::user()->can('programs-manage')) {
+        if (!Auth::user()->hasPermission('programs-manage')) {
             abort(403);
         }
         // display view
@@ -124,7 +124,7 @@ class CPRUCPController extends Controller
      */
     public function edit($id)
     {
-        if (!Auth::user()->can('programs-manage')) {
+        if (!Auth::user()->hasPermission('programs-manage')) {
             abort(403);
         }
         $ucp = CPRulesUCP::find($id);
@@ -139,7 +139,7 @@ class CPRUCPController extends Controller
      */
     public function update(Request $request, $id)
     {
-        if (!Auth::user()->can('programs-manage')) {
+        if (!Auth::user()->hasPermission('programs-manage')) {
             abort(403);
         }
         $params = $request->input();
@@ -160,7 +160,7 @@ class CPRUCPController extends Controller
      */
     public function destroy($id)
     {
-        if (!Auth::user()->can('programs-manage')) {
+        if (!Auth::user()->hasPermission('programs-manage')) {
             abort(403);
         }
         CPRulesUCP::destroy($id);

@@ -151,7 +151,7 @@ class PatientCallManagementController extends Controller
         Request $request,
         $id
     ) {
-        if (!Auth::user()->can('users-edit-all')) {
+        if (!Auth::user()->hasRole('administrator')) {
             abort(403);
         }
         $messages = \Session::get('messages');
@@ -193,7 +193,7 @@ class PatientCallManagementController extends Controller
         Request $request,
         $id
     ) {
-        if (!Auth::user()->can('users-edit-all')) {
+        if (!Auth::user()->hasRole('administrator')) {
             abort(403);
         }
         // instantiate user

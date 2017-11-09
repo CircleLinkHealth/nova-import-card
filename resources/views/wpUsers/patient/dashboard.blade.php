@@ -58,7 +58,7 @@
                             </a>
                         </li>
                     @endif
-                    @if( auth()->user()->can(['ccd-import']) )
+                    @if( auth()->user()->hasPermission(['ccd-import']) )
                         <li class="menu-item">
                             <a id="patient-list" href="{{ route('import.ccd') }}">
                                 <div class="icon-container column-centered">

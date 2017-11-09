@@ -199,7 +199,6 @@ return [
         \Tymon\JWTAuth\Providers\JWTAuthServiceProvider::class,
         \Collective\Html\HtmlServiceProvider::class,
         \Rap2hpoutre\LaravelLogViewer\LaravelLogViewerServiceProvider::class,
-        Zizaco\Entrust\EntrustServiceProvider::class,
         \Maatwebsite\Excel\ExcelServiceProvider::class,
         Prettus\Repository\Providers\RepositoryServiceProvider::class,
         Yajra\Datatables\DatatablesServiceProvider::class,
@@ -267,7 +266,6 @@ return [
         'Inspiring' => Illuminate\Foundation\Inspiring::class,
 
         'Debugbar'       => Barryvdh\Debugbar\Facade::class,
-        'Entrust'        => \Zizaco\Entrust\EntrustFacade::class,
         'Excel'          => \Maatwebsite\Excel\Facades\Excel::class,
         'Form'           => \Collective\Html\FormFacade::class,
         'Html'           => \Collective\Html\HtmlFacade::class,
