@@ -57,7 +57,7 @@ if (isset($patient) && !empty($patient) && is_a($patient, App\User::class)) {
 
 @if ($enableTimeTracking)
     @push('scripts')
-    <script>
+    {{--  <script>
         (function ($) {
             $(document).ready(function () {
                 //We get startTime, and endTime from the client to not have to deal with timezones
@@ -192,12 +192,18 @@ if (isset($patient) && !empty($patient) && is_a($patient, App\User::class)) {
             })
 
         })(jQuery);
-    </script>
+    </script>  --}}
     <script>
         var pageInfo = {
                         "patientId": '<?php echo $patientId; ?>',
                         "providerId": '<?php echo Auth::user()->id ?>',
-                        "totalTime": 0,
+                        "totalTime": ((monthlyTime) => {
+                                        const split = monthlyTime.split(':');
+                                        const minutes = split[2], hours = split[1], days = split[0];
+                                        return (minutes * 60) + 
+                                                (hours * 60 * 60) + 
+                                                (days * 24 * 60 * 60);
+                                    })(document.querySelector('[data-monthly-time]').getAttribute('data-monthly-time')),
                         "wsUrl": "{{ env('WS_URL') }}",
                         "programId": '<?php echo $patientProgramId; ?>',
                         "urlFull": '<?php echo Request::url(); ?>',

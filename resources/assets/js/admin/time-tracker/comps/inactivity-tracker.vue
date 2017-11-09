@@ -1,5 +1,5 @@
 <template>
-    <div class="activity-tracker">{{time}}</div>
+    <div class="inactivity-tracker">{{time}}</div>
 </template>
 
 <script>
@@ -83,5 +83,7 @@
 </script>
 
 <style>
-    
+    .inactivity-tracker {
+        display: none;
+    }
 </style>

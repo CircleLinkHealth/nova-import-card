@@ -17,7 +17,7 @@
 
         <div class="navbar-right hidden-xs" style="">
             <ul class="nav navbar-nav">
-                <li><div id="time-tracker"></div></li>
+                <li></li>
                 {{--URL::route('patients.dashboard', array())--}}
                 <li><a href="{{ URL::route('patients.dashboard') }}"><i class="icon--home--white"></i> Home</a></li>
                 {{--<li><a href="{{ URL::route('patients.search') }}"><i class="icon--search--white"></i> Search Patient</a>--}}

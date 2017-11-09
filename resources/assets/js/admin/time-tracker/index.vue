@@ -1,8 +1,8 @@
 <template>
-    <div class="time-tracker">
+    <span class="time-tracker">
         <time-display :seconds="seconds" />
         <inactivity-tracker />
-    </div>
+    </span>
 </template>
 
 <script>
@@ -50,7 +50,7 @@
                             if (message.data) {
                                 const data = JSON.parse(message.data)
                                 if (!!Number(data.seconds))
-                                    self.seconds = Number(data.seconds)
+                                    self.seconds = self.previousSeconds + Number(data.seconds)
                                 console.log(data);
                             }
                         }
@@ -77,6 +77,9 @@
             }
         },
         mounted() {
+            this.seconds = this.info.totalTime;
+            this.previousSeconds = this.info.totalTime || 0;
+
             EventBus.$on('tracker:tick', () => {
                 this.seconds++;
                 this.$forceUpdate()

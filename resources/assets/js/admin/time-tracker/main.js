@@ -6,7 +6,7 @@ import { BindWindowFocusChange, BindWindowVisibilityChange } from './events/wind
 
 Vue.config.productionTip = false
 
-const App = new Vue({
+var TimeTrackerApp = new Vue({
   el: '#time-tracker',
   template: '<time-tracker :info="info"></time-tracker>',
   data: {
