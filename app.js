@@ -1,5 +1,4 @@
 var express = require('express');
-var https = require('https')
 var path = require('path');
 var favicon = require('serve-favicon');
 var logger = require('morgan');
@@ -49,13 +48,8 @@ app.use(function(err, req, res, next) {
   res.render('error');
 });
 
-app.server = https.createServer(app);
-app.server.listen(process.env.PORT || 8888, function(){
-  console.log('Listening on port ' + app.server.address().port); //Listening on port 8888
-})
-
-// var listener = app.listen(process.env.PORT || 8888, function(){
-//   console.log('Listening on port ' + listener.address().port); //Listening on port 8888
-// });
+var listener = app.listen(process.env.PORT || 8888, function(){
+  console.log('Listening on port ' + listener.address().port); //Listening on port 8888
+});
 
 module.exports = app;
