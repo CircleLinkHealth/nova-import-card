@@ -5,7 +5,16 @@
     @push('scripts')
         <script>
             $(document).ready(function () {
-                $(".practices").select2();
+                let practices = $(".practices")
+
+                practices.select2()
+
+                practices.on('select2:select', function(e){
+                    var id = e.params.data.id;
+                    var option = $(e.target).children('[value='+id+']');
+                    option.detach();
+                    $(e.target).append(option).change();
+                });
             });
         </script>
     @endpush
