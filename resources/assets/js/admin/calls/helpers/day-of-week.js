@@ -1,3 +1,13 @@
+/**
+ * Helper JS for resolving Days of the Week for CLH
+ * 
+ * Monday => 1
+ * Tues, Wed ...
+ * Sunday => 7
+ * 
+ * This is done this way because of how it was written on the laravel backend
+ */
+
 export const DayOfWeek = {
     1: 'Monday',
     2: 'Tuesday',
