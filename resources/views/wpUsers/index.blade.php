@@ -117,6 +117,7 @@
                                             @endif
                                             @if(Entrust::can('users-edit-all'))
                                                 <a href="{{ URL::route('admin.users.destroy', array('id' => $wpUser->id)) }}"
+                                                   onclick="var result = confirm('Are you sure you want to delete?');if (!result) {event.preventDefault();}"
                                                    class="btn btn-danger btn-xs" style="margin-left:10px;"><i
                                                             class="glyphicon glyphicon-remove-sign"></i> Delete</a>
                                             @endif
