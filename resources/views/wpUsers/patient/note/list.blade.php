@@ -312,7 +312,7 @@
 
                                                        }});">
                                     @endif
-                                    @if ( !Auth::guest() && Auth::user()->can(['admin-access']))
+                                    @if ( !Auth::guest() && Auth::user()->hasPermission(['admin-access']))
                                         <input id='site_show_btn' type='button' class='btn btn-primary'
                                                value='Show Program' style='margin:4px;'
                                                onclick='obs_alerts_dtable.showColumn("program_name");this.style.display = "none";getElementById("site_hide_btn").style.display = "inline-block";'>

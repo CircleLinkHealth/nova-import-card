@@ -9,7 +9,7 @@
                     <div class="col-sm-8">
                         <h1>Practice</h1>
                     </div>
-                    @if(Cerberus::can('programs-manage'))
+                    @if(Cerberus::hasPermission('programs-manage'))
                         <div class="col-sm-4">
                             <div class="pull-right" style="margin:20px;">
                                 <a href="{{ route('admin.programs.create')}}" class="btn btn-success">New
@@ -48,7 +48,7 @@
                                         </td>
                                         <td>{{ date('F d, Y g:i A', strtotime($wpBlog->created_at)) }}</td>
                                         <td class="text-right">
-                                            @if(Cerberus::can('programs-manage'))
+                                            @if(Cerberus::hasPermission('programs-manage'))
                                                 <a href="{{ URL::route('provider.dashboard.index', ['practiceSlug' => $wpBlog->name]) }}"
                                                    class="btn btn-xs btn-success">
                                                     Admin

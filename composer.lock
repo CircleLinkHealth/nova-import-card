@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "content-hash": "616c79bf9867c21bd021ef5355a90e9f",
+    "content-hash": "775ee4f02e90bbc846e8b7c18b5963e9",
     "packages": [
         {
             "name": "arcturial/clickatell",
@@ -2309,16 +2309,16 @@
         },
         {
             "name": "michalisantoniou6/laravel-cerberus",
-            "version": "dev-3.0-dev",
+            "version": "dev-master",
             "source": {
                 "type": "git",
                 "url": "https://github.com/michalisantoniou6/laravel-cerberus.git",
-                "reference": "fbd5556447a3752f7d40fc47b0262c49e491f977"
+                "reference": "d10f09a4667cace780493a14993a5c983e1fa174"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/michalisantoniou6/laravel-cerberus/zipball/fbd5556447a3752f7d40fc47b0262c49e491f977",
-                "reference": "fbd5556447a3752f7d40fc47b0262c49e491f977",
+                "url": "https://api.github.com/repos/michalisantoniou6/laravel-cerberus/zipball/d10f09a4667cace780493a14993a5c983e1fa174",
+                "reference": "d10f09a4667cace780493a14993a5c983e1fa174",
                 "shasum": ""
             },
             "require": {
@@ -2388,7 +2388,7 @@
                 "permission",
                 "roles"
             ],
-            "time": "2017-11-08T00:59:49+00:00"
+            "time": "2017-11-09T00:37:46+00:00"
         },
         {
             "name": "mobiledetect/mobiledetectlib",

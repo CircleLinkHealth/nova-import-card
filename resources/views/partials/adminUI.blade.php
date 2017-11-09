@@ -55,7 +55,7 @@
 <body>
 <div id="app">
 
-    @if ( ! Auth::guest() && Cerberus::can('admin-access'))
+    @if ( ! Auth::guest() && Cerberus::hasPermission('admin-access'))
         <nav class="navbar navbar-default">
             <div class="container-fluid">
                 <div class="navbar-header">
@@ -144,7 +144,7 @@
                             </ul>
                         </li>
 
-                        @if(Cerberus::can('roles-view'))
+                        @if(Cerberus::hasPermission('roles-view'))
                             <li role="presentation" class="dropdown">
                                 <a class="dropdown-toggle" data-toggle="dropdown" href="#" role="button"
                                    aria-expanded="false">
@@ -152,7 +152,7 @@
                                 </a>
                                 <ul class="dropdown-menu" role="menu">
                                     <li><a href="{{ URL::route('roles.index', array()) }}">Roles</a></li>
-                                    @if(Cerberus::can('roles-permissions-view'))
+                                    @if(Cerberus::hasPermission('roles-permissions-view'))
                                         <li><a href="{{ URL::route('permissions.index', array()) }}">Permissions</a>
                                         </li>
                                     @endif
@@ -160,7 +160,7 @@
                             </li>
                         @endif
 
-                        @if(Cerberus::can('practices-view'))
+                        @if(Cerberus::hasPermission('practices-view'))
                             <li role="presentation" class="dropdown">
                                 <a class="dropdown-toggle" data-toggle="dropdown" href="#" role="button"
                                    aria-expanded="false">
@@ -168,7 +168,7 @@
                                 </a>
                                 <ul class="dropdown-menu" role="menu">
                                     <li><a href="{{ URL::route('admin.practices.index', array()) }}">Programs</a></li>
-                                    @if(Cerberus::can('locations-view'))
+                                    @if(Cerberus::hasPermission('locations-view'))
                                         <li><a href="{{ URL::route('locations.index', array()) }}">Locations</a></li>
                                     @endif
                                 </ul>

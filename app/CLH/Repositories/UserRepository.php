@@ -119,12 +119,12 @@ class UserRepository implements \App\CLH\Contracts\Repositories\UserRepository
         $practiceId = $this->saveAndGetPractice($user, $params);
         // support for both single or array or roles
         if (!empty($params->get('role'))) {
-            $user->detachRoles();
+            $user->detachRolesForSite([], $practiceId);
             $user->attachRoleForSite($params->get('role'), $practiceId);
         }
 
         if (!empty($params->get('roles'))) {
-            $user->detachRoles();
+            $user->detachRolesForSite([], $practiceId);
             // support if one role is passed in as a string
             if (!is_array($params->get('roles'))) {
                 $user->attachRoleForSite($params->get('roles'), $practiceId);

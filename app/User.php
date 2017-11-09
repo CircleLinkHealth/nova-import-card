@@ -592,11 +592,9 @@ class User extends \App\BaseModel implements AuthenticatableContract, CanResetPa
             $q->whereIn('program_id', $programIds);
         });
 
-        //if(!Auth::user()->can('admin-access')) {
         $patientIds->whereHas('roles', function ($q) {
             $q->where('name', '=', 'provider');
         });
-        //}
 
         $patientIds = $patientIds->pluck('id')->all();
 
@@ -2514,8 +2512,13 @@ class User extends \App\BaseModel implements AuthenticatableContract, CanResetPa
 
     public function canApproveCarePlans()
     {
-        return $this->can('care-plan-approve')
-            || ($this->practiceOrGlobalRole()->name == 'registered-nurse' && $this->primaryPractice->settings[0]->rn_can_approve_careplans);
+        return $this->canForSite('care-plan-approve', $this->primary_practice_id)
+            || ($this->hasRoleForSite('registered-nurse', $this->primary_practice_name) && $this->primaryPractice->settings[0]->rn_can_approve_careplans);
+    }
+
+    public function canQAApproveCarePlans()
+    {
+        return $this->canForSite('care-plan-qa-approve', $this->primary_practice_id);
     }
 
     /**

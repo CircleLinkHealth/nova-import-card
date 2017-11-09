@@ -39,7 +39,7 @@
         "laravelcollective/html": "5.5.*",
         "league/fractal": "0.12.*",
         "maatwebsite/excel": "~2.1.0",
-        "michalisantoniou6/laravel-cerberus": "dev-3.0-dev",
+        "michalisantoniou6/laravel-cerberus": "dev-master",
         "pda/pheanstalk": "~3.0",
         "phaxio/phaxio": "^1.0",
         "predis/predis": "^1.1",
