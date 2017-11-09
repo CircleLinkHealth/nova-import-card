@@ -9,6 +9,7 @@
 
                 practices.select2()
 
+                //show selections in the order they were selected
                 practices.on('select2:select', function(e){
                     var id = e.params.data.id;
                     var option = $(e.target).children('[value='+id+']');
