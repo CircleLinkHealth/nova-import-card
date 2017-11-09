@@ -24,7 +24,7 @@ const app = new Vue({
             try {
                 const self = this; //a way to keep the context
                 this.socket = this.socket || (function () {
-                    const socket = new WebSocket(`${location.origin.replace(/^https?/, 'ws')}/time`);
+                    const socket = new WebSocket(`${location.origin.replace(/^https/, 'wss').replace(/^http/, 'ws')}/time`);
     
                     socket.onmessage = (message) => {
                         if (message.data) {
