@@ -198,7 +198,7 @@ if (isset($patient) && !empty($patient) && is_a($patient, App\User::class)) {
                         "patientId": '<?php echo $patientId; ?>',
                         "providerId": '<?php echo Auth::user()->id ?>',
                         "totalTime": 0,
-                        "wsUrl": "ws://localhost:8888/time",
+                        "wsUrl": "{{ env('WS_URL') }}",
                         "programId": '<?php echo $patientProgramId; ?>',
                         "urlFull": '<?php echo Request::url(); ?>',
                         "urlShort": '<?php echo $urlShort; ?>',
@@ -206,7 +206,7 @@ if (isset($patient) && !empty($patient) && is_a($patient, App\User::class)) {
                         "activity": $('#activityName').val(),
                         "title": '<?php echo $title; ?>',
                         "submitUrl": '<?php echo URL::route("api.pagetracking"); ?>',
-                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+                        "startTime": '<?php echo Carbon::now()->subSeconds(8)->toDateTimeString(); ?>'
                     }
     </script>
     <script src="{{ asset('compiled/js/v-time-tracker.min.js') }}"></script>
