@@ -6,11 +6,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>
-        <%= title %>
+        Time Tracker
     </title>
     <base href="/" />
-    <base name="user-id" value="874" />
-    <base name="patient-id" value="<%= patientId %>" />
     <link rel="stylesheet" href="./css/min/bootstrap.min.css">
     <link rel="stylesheet" href="./css/style.css">
 </head>
@@ -18,80 +16,33 @@
 <body>
     <div class="container">
         <center>
-            <h3>
-                You are viewing info for Patient
-                <%= patientId %>
-            </h3>
-            <div class="clock row">
-                <span class="paused" v-if="!socket">(Connection Closed)</span>
-                <time-display :seconds="seconds" inline-template>
-                    <div>
-                        <h3>Time Display</h3>
-                        <div class="time-display">{{time}}</div>
-                    </div>
-                </time-display>
-                <inactivity-tracker inline-template>
-                    <div>
-                        <h3>Inactivity Tracker</h3>
-                        <div class="activity-tracker">{{time}}</div>
-                    </div>
-                </inactivity-tracker>
-                <modal inline-template>
-                    <div v-if="show">
-                        <transition name="modal">
-                            <div class="modal-mask">
-                                <div class="modal-wrapper">
-                                    <div class="modal-container">
-
-                                        <div class="modal-header">
-                                            {{title}} <button @click="copyBody">Copy</button>
-                                        </div>
-
-                                        <div class="modal-body" v-html="body"></div>
-
-                                        <div class="modal-footer">
-                                            <div>
-                                                {{footer}}
-                                            </div>
-                                            <button class="modal-default-button" @click="close">
-                                            OK
-                                        </button>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </transition>
-                    </div>
-                </modal>
-            </div>
-            <br>
-            <h3><a href="/patients/1">Patient 1</a></h3>
-            <h3><a href="/patients/2">Patient 2</a></h3>
-            <h3><a href="/patients/3">Patient 3</a></h3>
-            <h3>Switch tabs or switch windows while keeping this open and see what happens</h3>
-            <br>
-            <h3>We can use something similar for time tracking ...</h3>
-            <br>
-            <h3>Inactivity Tracker will reset on:</h3>
-            <ul>
-                <li>onfocus</li>
-                <li>onkeydown</li>
-                <li>onmousemove</li>
-                <li>onwheel</li>
-                <li>onmousewheel</li>
-                <li>onmousedown</li>
-                <li>onkeyup</li>
-                <li>15 seconds elapsed since last activity</li>
-            </ul>
+            <div id="time-tracker"></div>
         </center>
     </div>
-    <script type="text/javascript" src="./js/app.config.js"></script>
-    <script type="text/javascript" src="./js/min/vue.min.js"></script>
-    <script type="text/javascript" src="./js/inactivity-tracker.js"></script>
-    <script type="text/javascript" src="./js/comps/modal.vue.js"></script>
-    <script type="text/javascript" src="./js/time-display.js"></script>
-    <script type="text/javascript" src="./js/app.js"></script>
-    <script type="text/javascript" src="./js/window.event.js"></script>
+    <script>
+        const localDomains = ['localhost', 'mykeels.dev', '127.0.0.1']
+        const webUrl = `${localDomains.some(domain => location.origin.indexOf(domain) >= 0) ? 'https://cpm-web.dev/' : 'https://staging.careplanmanager.com/'}`
+        var pageInfo = {
+                            "patientId": '1',
+                            "providerId": '1',
+                            "totalTime": 0,
+                            "wsUrl": `${location.origin.replace(/^https/, 'wss').replace(/^http/, 'ws')}/time`,
+                            "programId": '1',
+                            "urlFull": `${webUrl}manage-patients/1/notes`,
+                            "urlShort": '/manage-patients/1/notes',
+                            "ipAddr": '127.0.0.1',
+                            "title": 'patient.note.index',
+                            "submitUrl": `${webUrl}api/v2.1/pagetimer`,
+                            "startTime": (() => {
+                                            var d = new Date();
+                                            return `${d.getFullYear()}-${d.getMonth() + 1}-${d.getDate()} ${d.getHours()}:${d.getMinutes()}:${d.getSeconds()}` 
+                                        })()
+                        }
+
+        const timeTrackScript = document.createElement('script');
+        timeTrackScript.src = `${webUrl}compiled/js/v-time-tracker.min.js`;
+        window.onload = () => document.body.appendChild(timeTrackScript);
+    </script>
 </body>
 
 </html>
