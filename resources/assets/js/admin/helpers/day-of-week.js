@@ -22,7 +22,7 @@ export const ShortDayOfWeek = (code) => {
     const day = DayOfWeek[code];
 
     if (day) {
-        const pickCount = day[0] === 'T' ? 2 : 1;
+        const pickCount = (['T', 'S'].indexOf(day[0]) >= 0) ? 2 : 1;
 
         return day.slice(0, pickCount)
     }

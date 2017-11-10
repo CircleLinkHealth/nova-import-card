@@ -125,7 +125,7 @@
                 this.close();
             })
 
-            console.log(this.info)
+            //console.log(this.info)
         }
     }
 </script>

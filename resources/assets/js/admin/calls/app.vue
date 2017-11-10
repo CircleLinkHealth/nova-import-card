@@ -97,7 +97,7 @@
   import AddCallModal from './comps/modals/add-call.modal'
   import SelectNurseModal from './comps/modals/select-nurse.modal'
   import BindAppEvents from './app.events'
-  import { DayOfWeek, ShortDayOfWeek } from './helpers/day-of-week'
+  import { DayOfWeek, ShortDayOfWeek } from '../helpers/day-of-week'
 
   export default {
       name: 'CallMgmtApp',
@@ -167,6 +167,7 @@
         next() {
           if (!this.$nextPromise) {
             return this.$nextPromise = this.$http.get(rootUrl('api/admin/calls?page=' + this.page)).then((result) => result.data).then(result => {
+                console.log(result)
               if (result) {
                 const calls = result.data;
                 if (calls && Array.isArray(calls)) {
@@ -243,6 +244,8 @@
                   return tableCalls;
                 }
               }
+            }).catch(function (err) {
+              //console.error(err)
             })
           }
         }
