@@ -85,13 +85,23 @@
                 this.$forceUpdate()
             })
 
+            const STATE = {
+                STOP: 'stop',
+                START: 'start'
+            }
+
             EventBus.$on('tracker:stop', () => {
-                if (this.socket) this.socket.send(JSON.stringify({ id: this.info.providerId, patientId: this.info.patientId, message: 'stop', info: this.info }))
+                if (this.socket) {
+                    this.state = STATE.STOP;
+                    this.socket.send(JSON.stringify({ id: this.info.providerId, patientId: this.info.patientId, message: STATE.STOP, info: this.info }))
+                }
             })
 
             EventBus.$on('tracker:start', () => {
-                if (this.socket && this.socket.readyState === WebSocket.OPEN) 
-                    this.socket.send(JSON.stringify({ id: this.info.providerId, patientId: this.info.patientId, message: 'start', info: this.info }))
+                if (this.socket && this.socket.readyState === WebSocket.OPEN) {
+                    this.state = STATE.START
+                    this.socket.send(JSON.stringify({ id: this.info.providerId, patientId: this.info.patientId, message: STATE.START, info: this.info }))
+                }
             })
 
             this.createSocket()

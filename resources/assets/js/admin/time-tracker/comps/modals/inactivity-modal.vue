@@ -59,7 +59,7 @@
     }
 
     .i-modal .modal-cancel-button {
-        float: none;
+        float: right;
     }
 
     .i-modal .modal-button {

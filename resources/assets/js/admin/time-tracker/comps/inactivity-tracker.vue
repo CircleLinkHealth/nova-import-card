@@ -32,7 +32,8 @@
                     function() {
                         this.endTime = new Date();
                         const ALERT_INTERVAL = 120;
-                        if (this.seconds && ((this.seconds % ALERT_INTERVAL) === 0)) {
+                        if (this.totalSeconds && ((this.totalSeconds % ALERT_INTERVAL) === 0)) {
+                            console.log(this.totalSeconds)
                             EventBus.$emit("tracker:stop");
                             EventBus.$emit('modal-inactivity:show')
                         }
@@ -65,6 +66,9 @@
                     this.elapsed / 1000 - this.minutes * 60 - this.hours * 3600,
                     2
                 );
+            },
+            totalSeconds() {
+                return Math.floor(this.elapsed / 1000);
             },
             time() {
                 return `${this.hours} : ${this.minutes} : ${this.seconds}`;
