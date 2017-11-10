@@ -113,7 +113,7 @@ module.exports = app => {
 
     ws.on("close", ev => {
       const key = ws.key;
-      if (key)
+      if (key && usersTime[key]) {
         usersTime[key].sockets.splice(usersTime[key].sockets.indexOf(ws), 1);
         if (usersTime[key].sockets.length == 0) {
           if (usersTime[key].info) {
@@ -131,6 +131,7 @@ module.exports = app => {
             })
           }
         }
+      }
     });
   });
 
