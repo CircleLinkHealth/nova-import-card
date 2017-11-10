@@ -18,7 +18,7 @@ class CommentController extends Controller
      */
     public function index(Request $request)
     {
-        if (!Auth::user()->can('observations-view')) {
+        if (!Auth::user()->hasPermission('observations-view')) {
             abort(403);
         }
         // display view
@@ -33,7 +33,7 @@ class CommentController extends Controller
      */
     public function create()
     {
-        if (!Auth::user()->can('observations-add')) {
+        if (!Auth::user()->hasPermission('observations-add')) {
             abort(403);
         }
         // display view
@@ -47,7 +47,7 @@ class CommentController extends Controller
      */
     public function store(Request $request)
     {
-        if (!Auth::user()->can('observations-add')) {
+        if (!Auth::user()->hasPermission('observations-add')) {
             abort(403);
         }
         $params = $request->input();
@@ -70,7 +70,7 @@ class CommentController extends Controller
      */
     public function show($id)
     {
-        if (!Auth::user()->can('observations-view')) {
+        if (!Auth::user()->hasPermission('observations-view')) {
             abort(403);
         }
         // display view
@@ -86,7 +86,7 @@ class CommentController extends Controller
      */
     public function edit($id)
     {
-        if (!Auth::user()->can('observations-edit')) {
+        if (!Auth::user()->hasPermission('observations-edit')) {
             abort(403);
         }
         $comment = Comment::find($id);
@@ -101,7 +101,7 @@ class CommentController extends Controller
      */
     public function update(Request $request, $id)
     {
-        if (!Auth::user()->can('observations-edit')) {
+        if (!Auth::user()->hasPermission('observations-edit')) {
             abort(403);
         }
         $params = $request->input();
@@ -124,7 +124,7 @@ class CommentController extends Controller
      */
     public function destroy($id)
     {
-        if (!Auth::user()->can('observations-destroy')) {
+        if (!Auth::user()->hasPermission('observations-destroy')) {
             abort(403);
         }
         Comment::destroy($id);

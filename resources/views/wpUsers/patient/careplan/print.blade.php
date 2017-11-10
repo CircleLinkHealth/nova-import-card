@@ -50,7 +50,7 @@ if (isset($patient) && !empty($patient)) {
                                 <div class="col-xs-12 text-left">
                                     <pdf-careplans v-cloak>
                                         <span class="btn btn-group text-right">
-                                        @if ( ($patient->carePlanStatus == 'qa_approved' && auth()->user()->canApproveCarePlans()) || ($patient->carePlanStatus == 'draft' && auth()->user()->can('care-plan-qa-approve')) )
+                                        @if ( ($patient->carePlanStatus == 'qa_approved' && auth()->user()->canApproveCarePlans()) || ($patient->carePlanStatus == 'draft' && auth()->user()->hasPermission('care-plan-qa-approve')) )
                                                 <a style="margin-right:10px;" class="btn btn-info btn-sm inline-block"
                                                    aria-label="..."
                                                    role="button"

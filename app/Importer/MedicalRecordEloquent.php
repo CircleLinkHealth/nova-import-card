@@ -59,9 +59,15 @@ abstract class MedicalRecordEloquent extends \App\BaseModel implements MedicalRe
             ->importInsurance()
             ->importMedications()
             ->importProblems()
-            ->importProviders();
+            ->importProviders()
+            ->raiseConcerns();
 
         return $this->importedMedicalRecord;
+    }
+
+
+    public function raiseConcerns() {
+
     }
 
     /**

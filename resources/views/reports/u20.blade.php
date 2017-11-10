@@ -351,7 +351,7 @@
                             <input type="button" value="Export as Excel" class="btn btn-primary" style='margin:15px;'
                                    onclick="webix.toExcel(obs_alerts_dtable);">
                         @endif
-                        @if ( !Auth::guest() && Auth::user()->can(['admin-access']))
+                        @if ( !Auth::guest() && Auth::user()->hasPermission(['admin-access']))
                             <input id='site_show_btn' type='button' class='btn btn-primary' value='Show Practice'
                                    style='margin:15px;'
                                    onclick='obs_alerts_dtable.showColumn("site");this.style.display = "none";getElementById("site_hide_btn").style.display = "inline-block";'>

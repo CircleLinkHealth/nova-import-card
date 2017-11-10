@@ -15,7 +15,7 @@ class AppConfigController extends Controller
      */
     public function index()
     {
-        if (!Auth::user()->can('app-config-view')) {
+        if (!Auth::user()->hasPermission('app-config-view')) {
             abort(403);
         }
         // display view
@@ -30,7 +30,7 @@ class AppConfigController extends Controller
      */
     public function create()
     {
-        if (!Auth::user()->can('roles-manage')) {
+        if (!Auth::user()->hasPermission('roles-manage')) {
             abort(403);
         }
         // display view
@@ -44,7 +44,7 @@ class AppConfigController extends Controller
      */
     public function store(Request $request)
     {
-        if (!Auth::user()->can('app-config-manage')) {
+        if (!Auth::user()->hasPermission('app-config-manage')) {
             abort(403);
         }
         $params = $request->input();
@@ -63,7 +63,7 @@ class AppConfigController extends Controller
      */
     public function show($id)
     {
-        if (!Auth::user()->can('app-config-view')) {
+        if (!Auth::user()->hasPermission('app-config-view')) {
             abort(403);
         }
         // display view
@@ -79,7 +79,7 @@ class AppConfigController extends Controller
      */
     public function edit($id)
     {
-        if (!Auth::user()->can('app-config-manage')) {
+        if (!Auth::user()->hasPermission('app-config-manage')) {
             abort(403);
         }
         $appConfig = AppConfig::find($id);
@@ -94,7 +94,7 @@ class AppConfigController extends Controller
      */
     public function update(Request $request, $id)
     {
-        if (!Auth::user()->can('app-config-manage')) {
+        if (!Auth::user()->hasPermission('app-config-manage')) {
             abort(403);
         }
         $params = $request->input();
@@ -113,7 +113,7 @@ class AppConfigController extends Controller
      */
     public function destroy($id)
     {
-        if (!Auth::user()->can('app-config-manage')) {
+        if (!Auth::user()->hasPermission('app-config-manage')) {
             abort(403);
         }
         $appConfig = AppConfig::find($id);

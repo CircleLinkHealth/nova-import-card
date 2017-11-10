@@ -312,8 +312,15 @@ class PatientCareplanController extends Controller
         }
         $patient = $user;
 
+        // locations @todo get location id for Program
+        $program = Practice::find($programId);
+        $locations = [];
+        if ($program) {
+            $locations = $program->locations->pluck('name', 'id')->all();
+        }
+
         // security
-        if (!Auth::user()->can('observations-view')) {
+        if (!Auth::user()->canForSite('observations-view', $programId)) {
             abort(403);
         }
 
@@ -327,12 +334,7 @@ class PatientCareplanController extends Controller
         $patientRoleId = Role::where('name', '=', 'participant')->first();
         $patientRoleId = $patientRoleId->id;
 
-        // locations @todo get location id for Program
-        $program = Practice::find($programId);
-        $locations = [];
-        if ($program) {
-            $locations = $program->locations->pluck('name', 'id')->all();
-        }
+
 
         // States (for dropdown)
         $states = [
@@ -780,7 +782,7 @@ class PatientCareplanController extends Controller
 
         if ($patient->carePlanStatus == 'qa_approved' && auth()->user()->canApproveCarePlans()) {
             $showApprovalButton = true;
-        } elseif ($patient->carePlanStatus == 'draft' && auth()->user()->can('care-plan-qa-approve')) {
+        } elseif ($patient->carePlanStatus == 'draft' && auth()->user()->canForSite('care-plan-qa-approve', $patient->primary_practice_id)) {
             $showApprovalButton = true;
         } else {
             $showApprovalButton = false;
