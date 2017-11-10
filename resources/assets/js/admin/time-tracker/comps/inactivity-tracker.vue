@@ -30,22 +30,12 @@
                 if (this.interval) clearInterval(this.interval);
                 this.interval = setInterval(
                     function() {
-                    this.endTime = new Date();
-                    const ALERT_INTERVAL = 5;
-                    if (this.seconds >= ALERT_INTERVAL) {
-                        if (!this.alertIsActive) {
+                        this.endTime = new Date();
+                        const ALERT_INTERVAL = 120;
+                        if (this.seconds && ((this.seconds % ALERT_INTERVAL) === 0)) {
                             EventBus.$emit("tracker:stop");
-                            this.alertIsActive = true;
                             EventBus.$emit('modal-inactivity:show')
-                            // alert(
-                            //     `${ALERT_INTERVAL} seconds have elapsed since your last activity`
-                            // );
-                            this.alertIsActive = false;
-                            EventBus.$emit("tracker:start");
-                            
-                            this.reset();
                         }
-                    }
                     }.bind(this),
                     1000
                 );
@@ -85,9 +75,12 @@
             EventBus.$on("inactivity:reset", this.reset.bind(this));
             EventBus.$on("inactivity:stop", this.stop.bind(this));
             EventBus.$on("inactivity:start", this.start.bind(this));
-            console.log("inactivity's parent", EventBus)
 
-            EventBus.$emit('modal-inactivity:show')
+            EventBus.$on('modal-inactivity:close', () => {
+                EventBus.$emit("tracker:start")
+                this.reset()
+                console.log('modal closed')
+            })
         }
     }
 </script>

@@ -1,6 +1,6 @@
 <template>
     <modal name="inactivity" class-name="i-modal" :no-footer="true" 
-            cancel-text="No" ok-text="Yes">
+            cancel-text="No" ok-text="Yes" :info="inactivityModalInfo">
         <template slot="title">
             You have gone idle ...
         </template>
@@ -18,16 +18,26 @@
     import EventBus from '../event-bus'
     import { Event } from 'vue-tables-2'
     import Modal from '../../../common/modal'
+    import { rootUrl } from '../../../../app.config'
 
     export default {
         name: 'inactivity-modal',
+        data() {
+            return {
+                inactivityModalInfo: {
+                    cancelHandler: (e) => {
+                        document.location.href = rootUrl('manage-patients/dashboard')
+                    }
+                }
+            }
+        },
         components: {
             'modal': Modal
         },
         mounted() {
             EventBus.$on('modal-inactivity:show', (obj) => Event.$emit('modal-inactivity:show', obj))
             EventBus.$on('modal-inactivity:hide', () => Event.$emit('modal-inactivity:hide'))
-            console.log('modal-inactivity', this)
+            Event.$on('modal-inactivity:close', () => EventBus.$emit('modal-inactivity:close'))
         }
     }
 </script>

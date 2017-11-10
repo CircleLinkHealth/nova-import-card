@@ -26,7 +26,7 @@
                         </div>
 
                         <div class="modal-footer close-footer">
-                            <button v-if="!noCancel" class="modal-button modal-cancel-button" @click="close()">
+                            <button v-if="!noCancel" class="modal-button modal-cancel-button" @click="cancel()">
                                 {{cancelText || 'Cancel'}}
                             </button>
                             <button class="modal-button modal-ok-button" @click="ok()">
@@ -56,7 +56,8 @@
             'info', 
             'class-name',
             'cancelText',
-            'okText'
+            'okText',
+            'on-cancel'
             ],
         data() {
             return {
@@ -71,14 +72,16 @@
                 if (!e || (e.target && e.target.classList.contains('modal-wrapper'))) {
                     this.show = false;
                 }
+                Event.$emit(`modal${this.name ? '-' + this.name : ''}:close`)
+            },
+            cancel() {
+                if (this.info && typeof(this.info.cancelHandler) === 'function') this.info.cancelHandler();
+                else this.close();
             },
             ok() {
-                if (this.info && this.info.okHandler) this.info.okHandler();
+                if (this.info && typeof(this.info.okHandler) === 'function') this.info.okHandler();
                 else this.close();
             }
-        },
-        computed: {
-            
         },
         mounted() {
             Event.$on(`modal${this.name ? '-' + this.name : ''}:show`, (modal) => {
@@ -92,8 +95,6 @@
             Event.$on(`modal${this.name ? '-' + this.name : ''}:hide`, () => {
                 this.close();
             })
-
-            //console.log(this.info)
         }
     }
 </script>
