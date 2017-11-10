@@ -1,9 +1,8 @@
 <!-- PAGE TIMER START -->
-<div class="modal fade" id="timerModal" role="dialog" style="z-index:5000; height: 10000px; opacity: 1;background-color: black">
+<!--<div class="modal fade" id="timerModal" role="dialog" style="z-index:5000; height: 10000px; opacity: 1;background-color: black">
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
-                <!--<button type="button" class="close" data-dismiss="modal" aria-hidden="true">x</button>-->
                 <h4 class="modal-title" id="myModalLabel">You have gone idle....</h4>
             </div>
             <div class="modal-body">
@@ -18,7 +17,7 @@
             </div>
         </div>
     </div>
-</div>
+</div>-->
 <input type="hidden" name="activityName" id="activityName" value="@yield('activity')">
 
 <?php
@@ -57,7 +56,7 @@ if (isset($patient) && !empty($patient) && is_a($patient, App\User::class)) {
 
 @if ($enableTimeTracking)
     @push('scripts')
-    {{--  <script>
+    <!--  <script>
         (function ($) {
             $(document).ready(function () {
                 //We get startTime, and endTime from the client to not have to deal with timezones
@@ -192,18 +191,22 @@ if (isset($patient) && !empty($patient) && is_a($patient, App\User::class)) {
             })
 
         })(jQuery);
-    </script>  --}}
+    </script>  -->
     <script>
+
         var pageInfo = {
                         "patientId": '<?php echo $patientId; ?>',
                         "providerId": '<?php echo Auth::user()->id ?>',
                         "totalTime": ((monthlyTime) => {
-                                        const split = monthlyTime.split(':');
-                                        const minutes = split[2], hours = split[1], days = split[0];
-                                        return (minutes * 60) + 
-                                                (hours * 60 * 60) + 
-                                                (days * 24 * 60 * 60);
-                                    })(document.querySelector('[data-monthly-time]').getAttribute('data-monthly-time')),
+                                        if (monthlyTime) {
+                                            const split = monthlyTime.split(':');
+                                            const minutes = Number(split[2]), hours = Number(split[1]), days = Number(split[0]);
+                                            return (minutes * 60) + 
+                                                    (hours * 60 * 60) + 
+                                                    (days * 24 * 60 * 60);
+                                        }
+                                        return 0;
+                                    })(document.querySelector('[data-monthly-time]') ? document.querySelector('[data-monthly-time]').getAttribute('data-monthly-time') : null),
                         "wsUrl": "{{ env('WS_URL') }}",
                         "programId": '<?php echo $patientProgramId; ?>',
                         "urlFull": '<?php echo Request::url(); ?>',
