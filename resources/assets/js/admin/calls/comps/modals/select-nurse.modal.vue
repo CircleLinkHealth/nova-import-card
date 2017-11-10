@@ -16,7 +16,7 @@
 </template>
 
 <script>
-    import Modal from '../modal'
+    import Modal from '../../../common/modal'
 
     export default {
         name: 'select-nurse-modal',

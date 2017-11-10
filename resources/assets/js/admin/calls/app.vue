@@ -93,7 +93,7 @@
   import DateEditable from './comps/date-editable'
   import SelectEditable from './comps/select-editable'
   import TimeEditable from './comps/time-editable'
-  import Modal from './comps/modal'
+  import Modal from '../common/modal'
   import AddCallModal from './comps/modals/add-call.modal'
   import SelectNurseModal from './comps/modals/select-nurse.modal'
   import BindAppEvents from './app.events'
