@@ -167,78 +167,82 @@
         next() {
           if (!this.$nextPromise) {
             return this.$nextPromise = this.$http.get(rootUrl('api/admin/calls?page=' + this.page)).then((result) => result.data).then(result => {
-              const calls = result.data;
-              calls.forEach(call => {
-                if (call.inbound_user) call.inbound_user.id = call.inbound_cpm_id;
-                if (call.outbound_user) call.outbound_user.id = call.outbound_cpm_id;                
-                call.getNurse = () => ((call.inbound_user && call.inbound_user.nurse_info) ?
-                                                call.inbound_user : 
-                                          (call.outbound_user && call.outbound_user.nurse_info) ?
-                                                call.outbound_user : 
-                                                null)
-                call.getPatient = () => ((call.inbound_user && call.inbound_user.patient_info) ?
-                                                call.inbound_user : 
-                                          (call.outbound_user && call.outbound_user.patient_info) ?
-                                                call.outbound_user : 
-                                                null);
-                
-                const patient = call.getPatient();
-                if (patient) {
-                  const emptyObject = {}
-                  patient.getBillingProvider = () => ((patient.billing_provider || [])[0] || emptyObject);
-                  patient.getPractice = () => (patient.primary_practice || {});
-                  patient.getInfo = () => (patient.patient_info || {});
+              if (result) {
+                const calls = result.data;
+                if (calls && Array.isArray(calls)) {
+                  calls.forEach(call => {
+                    if (call.inbound_user) call.inbound_user.id = call.inbound_cpm_id;
+                    if (call.outbound_user) call.outbound_user.id = call.outbound_cpm_id;                
+                    call.getNurse = () => ((call.inbound_user && call.inbound_user.nurse_info) ?
+                                                    call.inbound_user : 
+                                              (call.outbound_user && call.outbound_user.nurse_info) ?
+                                                    call.outbound_user : 
+                                                    null)
+                    call.getPatient = () => ((call.inbound_user && call.inbound_user.patient_info) ?
+                                                    call.inbound_user : 
+                                              (call.outbound_user && call.outbound_user.patient_info) ?
+                                                    call.outbound_user : 
+                                                    null);
+                    
+                    const patient = call.getPatient();
+                    if (patient) {
+                      const emptyObject = {}
+                      patient.getBillingProvider = () => ((patient.billing_provider || [])[0] || emptyObject);
+                      patient.getPractice = () => (patient.primary_practice || {});
+                      patient.getInfo = () => (patient.patient_info || {});
 
-                  const billingProvider = patient.getBillingProvider();
-                  billingProvider.getUser = () => (billingProvider.user || {});
+                      const billingProvider = patient.getBillingProvider();
+                      billingProvider.getUser = () => (billingProvider.user || {});
 
-                  patient.getInfo().contact_windows.forEach(time_window => {
-                    time_window.dayOfWeek = DayOfWeek[time_window.day_of_week];
-                    time_window.shortDayOfWeek = ShortDayOfWeek(time_window.day_of_week);
+                      patient.getInfo().contact_windows.forEach(time_window => {
+                        time_window.dayOfWeek = DayOfWeek[time_window.day_of_week];
+                        time_window.shortDayOfWeek = ShortDayOfWeek(time_window.day_of_week);
+                      })
+                    }
                   })
+                  const tableCalls = calls.map(call => ({
+                                        id: call.id,
+                                        selected: false,
+                                        Nurse: (call.getNurse() || {}).full_name,
+                                        Patient: (call.getPatient() || {}).full_name,
+                                        Practice: (call.getPatient() || {}).getPractice().display_name,
+                                        Scheduler: call.scheduler,
+                                        CallWindows: call.getPatient().getInfo().contact_windows,
+                                        Comment: call.getPatient().getInfo().general_comment,
+                                        AttemptNote: call.attempt_note,
+                                        Notes: [{
+                                          created_at: (new Date()).toDateString(),
+                                          type: 'in',
+                                          category: 'Morning Checkup',
+                                          message: 'Demo: The Patient is responding to treatment'
+                                        }],
+                                        'Last Call Status': call.getPatient().getInfo().last_call_status,
+                                        'Last Call': new Date(call.getPatient().getInfo().last_contact_time).toDateString(),
+                                        'CCM Time': call.getPatient().getInfo().cur_month_activity_time,
+                                        'Successful Calls': (call.getPatient().getInfo().monthly_summaries.slice(-1).no_of_successful_calls || 0),
+                                        'Time Zone': call.getPatient().timezone,
+                                        'Preferred Call Days': Object.values(call.getPatient().getInfo().contact_windows
+                                                                                        .map(time_window => time_window.shortDayOfWeek)
+                                                                                        .reduce((obj, key) => {
+                                                                                          obj[key] = key;
+                                                                                          return obj;
+                                                                                        }, {})).join(','),
+                                        'Patient Status': call.getPatient().getInfo().ccm_status,
+                                        'DOB': call.getPatient().getInfo().birth_date,
+                                        'Billing Provider': call.getPatient().getBillingProvider().getUser().display_name,
+                                        'Patient ID': call.getPatient().id,
+                                        'Next Call': call.scheduled_date,
+                                        'Call Time Start': call.window_start,
+                                        'Call Time End': call.window_end
+                                      }))
+                  this.tableData = this.tableData.concat(tableCalls)
+                  this.page++;
+                  delete this.$nextPromise;
+                  console.log(calls);
+                  console.log(this.$refs);
+                  return tableCalls;
                 }
-              })
-              const tableCalls = calls.map(call => ({
-                                    id: call.id,
-                                    selected: false,
-                                    Nurse: (call.getNurse() || {}).full_name,
-                                    Patient: (call.getPatient() || {}).full_name,
-                                    Practice: (call.getPatient() || {}).getPractice().display_name,
-                                    Scheduler: call.scheduler,
-                                    CallWindows: call.getPatient().getInfo().contact_windows,
-                                    Comment: call.getPatient().getInfo().general_comment,
-                                    AttemptNote: call.attempt_note,
-                                    Notes: [{
-                                      created_at: (new Date()).toDateString(),
-                                      type: 'in',
-                                      category: 'Morning Checkup',
-                                      message: 'Demo: The Patient is responding to treatment'
-                                    }],
-                                    'Last Call Status': call.getPatient().getInfo().last_call_status,
-                                    'Last Call': new Date(call.getPatient().getInfo().last_contact_time).toDateString(),
-                                    'CCM Time': call.getPatient().getInfo().cur_month_activity_time,
-                                    'Successful Calls': (call.getPatient().getInfo().monthly_summaries.slice(-1).no_of_successful_calls || 0),
-                                    'Time Zone': call.getPatient().timezone,
-                                    'Preferred Call Days': Object.values(call.getPatient().getInfo().contact_windows
-                                                                                    .map(time_window => time_window.shortDayOfWeek)
-                                                                                    .reduce((obj, key) => {
-                                                                                      obj[key] = key;
-                                                                                      return obj;
-                                                                                    }, {})).join(','),
-                                    'Patient Status': call.getPatient().getInfo().ccm_status,
-                                    'DOB': call.getPatient().getInfo().birth_date,
-                                    'Billing Provider': call.getPatient().getBillingProvider().getUser().display_name,
-                                    'Patient ID': call.getPatient().id,
-                                    'Next Call': call.scheduled_date,
-                                    'Call Time Start': call.window_start,
-                                    'Call Time End': call.window_end
-                                  }))
-              this.tableData = this.tableData.concat(tableCalls)
-              this.page++;
-              delete this.$nextPromise;
-              console.log(calls);
-              console.log(this.$refs);
-              return tableCalls;
+              }
             })
           }
         }

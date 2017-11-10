@@ -50,6 +50,7 @@
                 e.preventDefault();
                 this.isEditMode = !this.isEditMode;
                 if (!this.isEditMode && typeof(this.onChange) === 'function') {
+                    /**this.onChange is a function to be passed in as a prop */
                     this.onChange(this.text, this.moment)
                 }
             }

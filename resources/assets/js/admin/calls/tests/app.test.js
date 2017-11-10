@@ -1,8 +1,26 @@
 import Vue from 'vue'
-import App from '../app.vue'
+import VueResource from 'vue-resource'
+import { mount } from 'vue-test-utils'
+import CallMgmtApp from '../app.vue'
+import TextEditable from '../comps/text-editable'
+import DateEditable from '../comps/date-editable'
+import SelectEditable from '../comps/select-editable'
+import TimeEditable from '../comps/time-editable'
 
-describe('App', () => {
+describe('CallMgmtApp', () => {
+    Vue.use(VueResource)
+    
+    const comp = mount(CallMgmtApp)
+
     it('has a mounted() hook', () => {
-        expect(typeof(App.mounted)).toEqual('function')
+        expect(typeof(CallMgmtApp.mounted)).toEqual('function')
+    })
+
+    it('is called "CallMgmtApp"', () => {
+        expect(CallMgmtApp.name).toEqual('CallMgmtApp')
+    })
+
+    it('contains a TextEditable component', () => {
+        expect(comp.contains(TextEditable)).toBe(true)
     })
 })
