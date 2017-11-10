@@ -26,8 +26,11 @@
                         </div>
 
                         <div class="modal-footer close-footer">
-                            <button class="modal-default-button" @click="ok()">
-                                OK
+                            <button v-if="!noCancel" class="modal-button modal-cancel-button" @click="close()">
+                                {{cancelText || 'Cancel'}}
+                            </button>
+                            <button class="modal-button modal-ok-button" @click="ok()">
+                                {{okText || 'OK'}}
                             </button>
                         </div>
                     </div>
@@ -42,10 +45,19 @@
      See README.md for docs
      */
     import { Event } from 'vue-tables-2'
-
+    
     export default {
         name: 'modal',
-        props: ['name', 'no-title', 'no-footer', 'info', 'class-name'],
+        props: [
+            'name', 
+            'no-title', 
+            'no-footer', 
+            'no-cancel',
+            'info', 
+            'class-name',
+            'cancelText',
+            'okText'
+            ],
         data() {
             return {
                 title: '',
@@ -124,7 +136,7 @@
         margin: 20px 0;
     }
     
-    .modal-default-button {
+    .modal-button {
         float: right;
     }
     
