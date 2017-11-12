@@ -123,7 +123,7 @@ module.exports = app => {
             console.log(info, url)
 
             axios.post(url, info).then((response) => {
-              console.log(response.status)
+              console.log(response.status, response.data)
               //console.log(response)
               delete usersTime[key];
             }).catch((err) => {
