@@ -17,7 +17,10 @@
 
         <div class="navbar-right hidden-xs" style="">
             <ul class="nav navbar-nav">
-                <li></li>
+                <li style="padding-top: 15px; padding-bottom: 15px; line-height: 20px">
+                    <span id="time-tracker">
+                    </span>
+                </li>
                 {{--URL::route('patients.dashboard', array())--}}
                 <li><a href="{{ URL::route('patients.dashboard') }}"><i class="icon--home--white"></i> Home</a></li>
                 {{--<li><a href="{{ URL::route('patients.search') }}"><i class="icon--search--white"></i> Search Patient</a>--}}
