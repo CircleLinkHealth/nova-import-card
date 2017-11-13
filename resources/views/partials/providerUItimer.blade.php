@@ -195,7 +195,7 @@ if (isset($patient) && !empty($patient) && is_a($patient, App\User::class)) {
     <script>
 
         var pageInfo = {
-                        "patientId": '<?php echo $patientId; ?>',
+                        "patientId": '<?php echo $patientId; ?>' === '' ? '0' : '<?php echo $patientId; ?>',
                         "providerId": '<?php echo Auth::user()->id ?>',
                         "totalTime": ((monthlyTime) => {
                                         if (monthlyTime) {
