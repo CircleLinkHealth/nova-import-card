@@ -18,8 +18,9 @@
         <div class="navbar-right hidden-xs" style="">
             <ul class="nav navbar-nav">
                 <li style="padding-top: 15px; padding-bottom: 15px; line-height: 20px">
-                    <span id="time-tracker">
-                    </span>
+                    @if (!isset($patient))
+                        <span id="time-tracker"></span>
+                    @endif
                 </li>
                 {{--URL::route('patients.dashboard', array())--}}
                 <li><a href="{{ URL::route('patients.dashboard') }}"><i class="icon--home--white"></i> Home</a></li>
