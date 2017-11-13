@@ -2,6 +2,7 @@
 
 namespace App;
 
+use App\Filters\Filterable;
 use App\Models\Holiday;
 use App\Models\WorkHours;
 use App\Traits\MakesOrReceivesCalls;
@@ -49,7 +50,8 @@ use Illuminate\Database\Eloquent\Model;
  */
 class Nurse extends \App\BaseModel
 {
-    use MakesOrReceivesCalls;
+    use Filterable,
+        MakesOrReceivesCalls;
 
     //nurse mapping for import csv
     public static $nurseMap = [
@@ -119,7 +121,7 @@ class Nurse extends \App\BaseModel
 
     public function states()
     {
-        return $this->belongsToMany(State::class, 'nurse_info_state');
+        return $this->belongsToMany(State::class, 'nurse_info_state', 'nurse_info_id');
     }
 
     public function careRateLogs()
