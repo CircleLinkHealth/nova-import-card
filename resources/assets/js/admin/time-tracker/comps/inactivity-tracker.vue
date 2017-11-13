@@ -6,7 +6,12 @@
 </template>
 
 <script>
+    /**
+     * Inactivity Tracker keeps track of the time the user is inactive on the page.
+     */
+
     import EventBus from './event-bus'
+    import { rootUrl } from '../../../app.config'
     import InactivityModal from './modals/inactivity-modal'
 
     export default {
@@ -32,10 +37,20 @@
                     function() {
                         this.endTime = new Date();
                         const ALERT_INTERVAL = 120;
+                        const LOGOUT_INTERVAL = 300;
                         if (this.totalSeconds && ((this.totalSeconds % ALERT_INTERVAL) === 0)) {
-                            console.log(this.totalSeconds)
-                            EventBus.$emit("tracker:stop");
+                            /**
+                             * Stop Tracking Time
+                             * Show Modal asking the user why he/she has been inactive
+                             */
+                            EventBus.$emit("tracker:stop")
                             EventBus.$emit('modal-inactivity:show')
+                        }
+                        else if (this.totalSeconds && ((this.totalSeconds % LOGOUT_INTERVAL) === 0)) {
+                            /**
+                             * Logout the user automatically
+                             */
+                            location.href = rootUrl('auth/logout')
                         }
                     }.bind(this),
                     1000
