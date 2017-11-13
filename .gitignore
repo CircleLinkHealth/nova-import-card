@@ -8,3 +8,4 @@ _ide_helper.php
 /public/mix-manifest.json
 launch.json
 .DS_Store
+.phpstorm.meta.php
