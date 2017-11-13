@@ -2,14 +2,12 @@
 
 namespace App\Notifications;
 
-use App\Mail\CarePlanApprovalReminder;
+use App\Mail\CarePlanApprovalReminder as CarePlanApprovalReminderMailable;
 use App\User;
 use Illuminate\Bus\Queueable;
 use Illuminate\Notifications\Notification;
-use Illuminate\Contracts\Queue\ShouldQueue;
-use Illuminate\Notifications\Messages\MailMessage;
 
-class CarePlanApprovalReminderNotification extends Notification
+class CarePlanApprovalReminder extends Notification
 {
     use Queueable;
 
@@ -24,8 +22,6 @@ class CarePlanApprovalReminderNotification extends Notification
     protected $numberOfCareplans;
 
 
-
-
     public function __construct(User $recipient, $numberOfCareplans = null)
     {
         $this->recipient = $recipient;
@@ -36,7 +32,8 @@ class CarePlanApprovalReminderNotification extends Notification
     /**
      * Get the notification's delivery channels.
      *
-     * @param  mixed  $notifiable
+     * @param  mixed $notifiable
+     *
      * @return array
      */
     public function via($notifiable)
@@ -50,20 +47,20 @@ class CarePlanApprovalReminderNotification extends Notification
     /**
      * Get the mail representation of the notification.
      *
-     * @param  mixed  $notifiable
-     * @return CarePlanApprovalReminder
+     * @param  mixed $notifiable
+     *
+     * @return CarePlanApprovalReminderMailable
      */
     public function toMail($notifiable)
     {
-
-        return (new CarePlanApprovalReminder($this->recipient, $this->numberOfCareplans));
-
+        return new CarePlanApprovalReminderMailable($this->recipient, $this->numberOfCareplans);
     }
 
     /**
      * Get the array representation of the notification.
      *
-     * @param  mixed  $notifiable
+     * @param  mixed $notifiable
+     *
      * @return array
      */
     public function toArray($notifiable)
@@ -76,7 +73,7 @@ class CarePlanApprovalReminderNotification extends Notification
     public function toDatabase($notifiable)
     {
         return [
-            'numberOfCareplans' => $this->numberOfCareplans
+            'numberOfCareplans' => $this->numberOfCareplans,
         ];
     }
 }
