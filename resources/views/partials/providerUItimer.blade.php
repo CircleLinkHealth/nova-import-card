@@ -35,7 +35,7 @@ $requestUri = Request::getRequestUri();
 $pieces = explode("?", $requestUri);
 $urlShort = $pieces[0];
 
-$enableTimeTracking = !isset($disableTimeTracking);
+$enableTimeTracking = auth()->user()->isCCMCountable() && !isset($disableTimeTracking);
 
 // disable if login
 if (strpos($requestUri, 'login') !== false) {
@@ -192,6 +192,7 @@ if (isset($patient) && !empty($patient) && is_a($patient, App\User::class)) {
 
         })(jQuery);
     </script>  -->
+    
     <script>
 
         var pageInfo = {
