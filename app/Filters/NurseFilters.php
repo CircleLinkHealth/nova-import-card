@@ -7,6 +7,13 @@ use Illuminate\Database\Eloquent\Builder;
 
 class NurseFilters extends QueryFilters
 {
+    public function globalFilters()
+    {
+        return [
+            'active' => ''
+        ];
+    }
+
     /**
      * Scope for active nurses.
      *

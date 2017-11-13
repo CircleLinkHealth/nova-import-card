@@ -40,7 +40,7 @@ abstract class QueryFilters
     public function apply(Builder $builder)
     {
         $this->builder = $builder;
-        foreach ($this->filters() as $name => $value) {
+        foreach (array_merge($this->filters(), $this->globalFilters()) as $name => $value) {
             if ( ! method_exists($this, $name)) {
                 continue;
             }
@@ -63,4 +63,11 @@ abstract class QueryFilters
     {
         return $this->request->all();
     }
+
+    /*
+     * Returns an array of Global Filters
+     *
+     * @return array
+     */
+    abstract function globalFilters();
 }
