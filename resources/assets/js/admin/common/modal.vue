@@ -26,8 +26,11 @@
                         </div>
 
                         <div class="modal-footer close-footer">
-                            <button class="modal-default-button" @click="ok()">
-                                OK
+                            <button v-if="!noCancel" class="modal-button modal-cancel-button" @click="cancel()">
+                                {{cancelText || 'Cancel'}}
+                            </button>
+                            <button class="modal-button modal-ok-button" @click="ok()">
+                                {{okText || 'OK'}}
                             </button>
                         </div>
                     </div>
@@ -39,57 +42,23 @@
 
 <script>
     /**
-     * This is a generic modal component
-     * 
-     * It depends on an EventBus component called `Event` ... feel free to replace this
-     * 
-     * Trigger with:
-     * 
-     * ```
-     * Event.$emit('modal:show', { title: 'My Modal Title', 'body': 'Hello Modal Everyone', footer: 'Cool Modal!' })
-     * ```
-     * 
-     * You can pass a name prop to the modal to differentiate it from others.
-     * 
-     * In that case, the trigger script key becomes 'modal-<name>:show` where you replace `<name>` with whatever :name value you passed to the component
-     * 
-     * You can choose to not show title or footer by passing the `no-title` and `no-footer` props which take boolean values
-     * 
-     * You may specify the templates for title, body and footer via templates. 
-     * 
-     * For Body,
-     * 
-     * <template> ... body html here ... </template>
-     * 
-     * For title,
-     * 
-     * <template slot='title'> ... title html here ... </template>
-     * 
-     * For footer,
-     * 
-     * <template slot='footer'> ... footer html here ... </template>
-     * 
-     * For custom behavior, use the template slots and pass the :info prop to the modal component.
-     * 
-     * Within the template slots, you can use scope to props e.g.
-     * 
-     * <modal :no-title="true" :no-footer="true" :info="selectNursesModalInfo">
-            <template scope="props">
-                <select class="form-control" @change="props.info.onChange">
-                    <option value="">Pick a Nurse</option>
-                    <option value="1">Nurse N RN</option>
-                    <option value="2">Kathryn Alchalabi RN</option>
-                </select>
-            </template>
-       </modal>
-
-     * Where [selectNursesModalInfo] is an object that contains the `onChange` callback
+     See README.md for docs
      */
     import { Event } from 'vue-tables-2'
-
+    
     export default {
         name: 'modal',
-        props: ['name', 'no-title', 'no-footer', 'info', 'class-name'],
+        props: [
+            'name', 
+            'no-title', 
+            'no-footer', 
+            'no-cancel',
+            'info', 
+            'class-name',
+            'cancelText',
+            'okText',
+            'on-cancel'
+            ],
         data() {
             return {
                 title: '',
@@ -103,14 +72,16 @@
                 if (!e || (e.target && e.target.classList.contains('modal-wrapper'))) {
                     this.show = false;
                 }
+                Event.$emit(`modal${this.name ? '-' + this.name : ''}:close`)
+            },
+            cancel() {
+                if (this.info && typeof(this.info.cancelHandler) === 'function') this.info.cancelHandler();
+                else this.close();
             },
             ok() {
-                if (this.info && this.info.okHandler) this.info.okHandler();
+                if (this.info && typeof(this.info.okHandler) === 'function') this.info.okHandler();
                 else this.close();
             }
-        },
-        computed: {
-            
         },
         mounted() {
             Event.$on(`modal${this.name ? '-' + this.name : ''}:show`, (modal) => {
@@ -124,8 +95,6 @@
             Event.$on(`modal${this.name ? '-' + this.name : ''}:hide`, () => {
                 this.close();
             })
-
-            console.log(this.info)
         }
     }
 </script>
@@ -168,7 +137,7 @@
         margin: 20px 0;
     }
     
-    .modal-default-button {
+    .modal-button {
         float: right;
     }
     

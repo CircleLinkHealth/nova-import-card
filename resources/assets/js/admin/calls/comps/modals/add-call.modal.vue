@@ -64,7 +64,7 @@
 
 <script>
     import { Event } from 'vue-tables-2'
-    import Modal from '../modal'
+    import Modal from '../../../common/modal'
 
     export default {
         name: 'add-call-modal',

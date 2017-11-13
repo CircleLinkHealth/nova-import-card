@@ -19,6 +19,7 @@ class VerifyCsrfToken extends Middleware
         '/admin/reports/monthly-billing/v2/updateRejected',
         '/admin/reports/monthly-billing/v2/data',
         '/admin/reports/monthly-billing/v2/storeProblem',
-        '/admin/reports/monthly-billing/v2/counts'
+        '/admin/reports/monthly-billing/v2/counts',
+        'api/v2.1/pagetimer'
     ];
 }

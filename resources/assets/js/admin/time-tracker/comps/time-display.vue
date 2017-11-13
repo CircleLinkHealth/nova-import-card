@@ -1,0 +1,49 @@
+<template>
+    <span class="time-display">{{time}}</span>
+</template>
+
+<script>
+    import EventBus from './event-bus'
+
+    export default {
+        name: 'time-display',
+        props: ['seconds'],
+        computed: {
+            hours() {
+                return this.pad(Math.floor(this.seconds / 3600), 2)
+            },
+            minutes() {
+                return this.pad(Math.floor(this.seconds / 60), 2)
+            },
+            time() {
+                return `${this.hours} : ${this.minutes} : ${this.pad(this.seconds % 60, 2)}`;
+            }
+        },
+        methods: {
+            pad (num, count) {
+                count = count || 0;
+                const $num = num + '';
+                return '0'.repeat(count - $num.length) + $num;
+            },
+            start() {
+                const STEP = 1000;
+                if (this.interval) clearInterval(this.interval);
+                this.interval = setInterval((function () {
+                    EventBus.$emit("tracker:tick")
+                }).bind(this), STEP)
+            },
+            stop() {
+                clearInterval(this.interval)
+            }
+        },
+        mounted() {
+            this.start()
+            EventBus.$on('tracker:start', this.start.bind(this));
+            EventBus.$on('tracker:stop', this.stop.bind(this));
+        }
+    }
+</script>
+
+<style>
+    
+</style>

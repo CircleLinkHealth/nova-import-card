@@ -16,7 +16,7 @@
 </template>
 
 <script>
-    import Modal from '../modal'
+    import Modal from '../../../common/modal'
 
     export default {
         name: 'select-nurse-modal',
@@ -27,7 +27,7 @@
             return {
                 selectNursesModalInfo: {
                     onChange(e) {
-                    console.log(e)
+                        console.log(e)
                     }
                 }
             }
