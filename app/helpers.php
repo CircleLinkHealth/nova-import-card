@@ -229,6 +229,40 @@ if (!function_exists('validateBloodPressureString')) {
     }
 }
 
+if (!function_exists('carbonGetNext')) {
+    /**
+     * Get carbon instance of the next $day
+     *
+     * @param $day
+     *
+     * @return Carbon|false
+     */
+    function carbonGetNext($day = 'monday')
+    {
+        if (!is_numeric($day)) {
+            $dayOfWeek = clhToCarbonDayOfWeek(dayNameToClhDayOfWeek($day));
+            $dayName = $day;
+        }
+
+        if (is_numeric($day)) {
+            $dayOfWeek = clhToCarbonDayOfWeek($day);
+            $dayName = clhDayOfWeekToDayName($day);
+        }
+
+        if (!isset($dayOfWeek)) {
+            return false;
+        }
+
+        $now = Carbon::now();
+
+        if ($now->dayOfWeek == $dayOfWeek) {
+            return $now;
+        }
+
+        return $now->parse("next $dayName");
+    }
+}
+
 if (!function_exists('clhToCarbonDayOfWeek')) {
     /**
      * Convert CLH DayOfWeek to Carbon DayOfWeek.
@@ -312,7 +346,7 @@ if (!function_exists('dayNameToClhDayOfWeek')) {
             'Sunday'    => 7,
         ];
 
-        return $days[trim($clhDayOfWeek)];
+        return $days[ucfirst(strtolower(trim($clhDayOfWeek)))];
     }
 }
 
