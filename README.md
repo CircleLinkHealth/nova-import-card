@@ -2,6 +2,38 @@
 
 A NodeJS app which hosts a web socket server at `::/time`, that manages time-tracking for CLH users.
 
+## How to use
+
+Clone the Repository:
+
+```bash
+git clone https://github.com/CircleLinkHealth/time-tracker.git
+```
+
+Navigate to the Directory
+
+```bash
+    cd time-tracker
+```
+
+Install NPM Dependencies
+
+```bash
+npm install
+```
+
+Start the Node App at `http://localhost:3000`
+
+```bash
+npm start
+```
+
+or if you use Nodemon,
+
+```bash
+nodemon app.js
+```
+
 ## WS Structure
 
 The ws server exists at `http://localhost:3000/time`, and messages are usually a stringified version of this format:
@@ -87,36 +119,3 @@ Where:
 `submitUrl` => The location of API to submit the time-track log to
 
 `startTime` => The Time when the Tracking started (8 seconds after server page render)
-
-
-## How to use
-
-Clone the Repository:
-
-```bash
-git clone https://github.com/CircleLinkHealth/time-tracker.git
-```
-
-Navigate to the Directory
-
-```bash
-    cd time-tracker
-```
-
-Install NPM Dependencies
-
-```bash
-npm install
-```
-
-Start the Node App at `http://localhost:3000`
-
-```bash
-npm start
-```
-
-or if you use Nodemon,
-
-```bash
-nodemon app.js
-```
