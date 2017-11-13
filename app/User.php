@@ -2020,8 +2020,7 @@ class User extends \App\BaseModel implements AuthenticatableContract, CanResetPa
 
     public function isCCMCountable()
     {
-
-        return (in_array($this->roles[0]->name, Role::CCM_TIME_ROLES));
+        return $this->roles()->whereIn('name', Role::CCM_TIME_ROLES)->exists();
     }
 
 // user data scrambler
