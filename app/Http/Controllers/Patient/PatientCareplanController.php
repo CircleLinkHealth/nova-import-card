@@ -214,7 +214,7 @@ class PatientCareplanController extends Controller
                 $pdf->setOption('margin-top', '12');
                 $pdf->setOption('margin-left', '25');
                 $pdf->setOption('margin-bottom', '15');
-                $pdf->setOption('margin-right', '31.75'); //1.25 inches
+                $pdf->setOption('margin-right', '0.75'); //31.75 //1.25 inches
 
                 $fileName = $storageDirectory . $prefix . '-PDF_' . str_random(40) . '.pdf';
                 $fileNameWithPath = base_path($fileName);

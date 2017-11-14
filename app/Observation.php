@@ -49,6 +49,7 @@ use App\Services\DatamonitorService;
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Observation whereUpdatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Observation whereUserId($value)
  * @mixin \Eloquent
+ * @SWG\Definition()
  */
 class Observation extends \App\BaseModel
 {
@@ -57,7 +58,11 @@ class Observation extends \App\BaseModel
     use \Venturecraft\Revisionable\RevisionableTrait;
     /**
      * The attributes that are mass assignable.
-     * @SWG\Property()
+     * @SWG\Property(
+     *  @SWG\Items(
+     *      type="object"
+     *  ) 
+     * )
      * @var array
      */
     public $timestamps = true;
@@ -77,7 +82,11 @@ class Observation extends \App\BaseModel
     protected $primaryKey = 'id';
     /**
      * The attributes that are mass assignable.
-     * @SWG\Property()
+     * @SWG\Property(
+     *  @SWG\Items(
+     *      type="string"
+     *  ) 
+     * )
      * @var array
      */
     protected $fillable = [
@@ -96,7 +105,11 @@ class Observation extends \App\BaseModel
     ];
     /**
      * The attributes that are mass assignable.
-     * @SWG\Property()
+     * @SWG\Property(
+     *  @SWG\Items(
+     *      type="string"
+     *  ) 
+     * )
      * @var array
      */
     protected $dates = ['deleted_at'];
