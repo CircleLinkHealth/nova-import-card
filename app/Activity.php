@@ -72,7 +72,7 @@ class Activity extends \App\BaseModel implements Transformable
 
     /**
      * The database table used by the model.
-     * @SWG\Property()
+     * 
      * @var string
      */
     protected $table = 'lv_activities';

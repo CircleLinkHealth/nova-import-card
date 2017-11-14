@@ -102,6 +102,8 @@ Route::group(['middleware' => 'auth'], function () {
             'as'   => 'call.anyCallsManagement',
         ]);
 
+        Route::resource('profile', 'API\ProfileController');
+
         Route::resource('nurses', 'API\NurseController');
 
         Route::group(['prefix' => 'admin'], function () {

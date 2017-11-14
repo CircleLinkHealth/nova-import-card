@@ -5,14 +5,14 @@ namespace App\Filters;
 
 use App\User;
 use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Support\Facades\DB;
 
 class NurseFilters extends QueryFilters
 {
-    public function globalFilters() : array
+    public function globalFilters(): array
     {
         return [
             'status' => 'active',
+            'user'   => true,
         ];
     }
 
@@ -93,6 +93,12 @@ class NurseFilters extends QueryFilters
         return $this->builder->with('states');
     }
 
+    /**
+     * Check whether a nurse can call a patient.
+     * checks licenced states, schedule, and nurse holidays.
+     *
+     * @param $patientUserId
+     */
     public function canCallPatient($patientUserId)
     {
         $patient = User::with('patientInfo.contactWindows')
@@ -116,31 +122,21 @@ class NurseFilters extends QueryFilters
             $this->holidays(function ($q) use ($window) {
                 $q->orWhere('date', '!=', carbonGetNext($window->day_of_week)->toDateString());
             });
-
-//            $this->calls(function ($q) use ($window) {
-//                $q->selectRaw('*, count(*) as count')
-//                    ->where([
-//                        ['scheduled_date', '=', $window->day_of_week],
-//                        ['window_time_start', '<=', $window->window_time_start],
-//                        ['window_time_end', '>=', $window->window_time_end],
-//                        ['count', '<', 2],
-//                    ]);
-//            });
         });
     }
 
     /**
-     * Get the calls for each nurse
+     * Get the windows for each nurse
      *
      * @return Builder
      */
-    public function calls($callBack = null)
+    public function windows($callBack = null)
     {
         if ($callBack) {
-            $this->builder->whereHas('user.outboundCalls', $callBack);
+            $this->builder->whereHas('windows', $callBack);
         }
 
-        return $this->builder->with('user.outboundCalls');
+        return $this->builder->with('windows');
     }
 
     /**
@@ -158,16 +154,25 @@ class NurseFilters extends QueryFilters
     }
 
     /**
-     * Get the windows for each nurse
+     * Get the calls for each nurse
      *
      * @return Builder
      */
-    public function windows($callBack = null)
+    public function calls($callBack = null)
     {
         if ($callBack) {
-            $this->builder->whereHas('windows', $callBack);
+            $this->builder->whereHas('user.outboundCalls', $callBack);
         }
 
-        return $this->builder->with('windows');
+        return $this->builder->with('user.outboundCalls');
+    }
+
+    /**
+     * Get the user model for a nurse
+     *
+     * @return Builder
+     */
+    public function user() {
+        return $this->builder->with('user');
     }
 }
