@@ -31,15 +31,31 @@ class CarePlanApprovalReminderTest extends TestCase
             $recipient,
             CarePlanApprovalReminder::class,
             function ($notification) use ($recipient, $numberOfCareplans) {
-                $mailData = $notification->toMail($recipient)->build();
-
-                $expectedTo = [['address' => $recipient->email, 'name' => $recipient->fullName]];
-
-                $this->assertEquals("$numberOfCareplans CircleLink Care Plan(s) for your Approval!", $mailData->subject);
-                $this->assertEquals($expectedTo, $mailData->to);
+                $this->checkToMail($notification, $recipient, $numberOfCareplans);
+                $this->checkToDatabase($notification, $recipient, $numberOfCareplans);
 
                 return true;
             }
         );
+    }
+
+    public function checkToMail($notification, $recipient, $numberOfCareplans){
+        $mailData = $notification->toMail($recipient)->build();
+
+        $expectedTo = [['address' => $recipient->email, 'name' => $recipient->fullName]];
+
+        $this->assertEquals("$numberOfCareplans CircleLink Care Plan(s) for your Approval!", $mailData->subject);
+        $this->assertEquals($expectedTo, $mailData->to);
+        $this->assertEquals('emails.careplansPendingApproval', $mailData->view);
+    }
+
+    public function checkToDatabase($notification, $recipient, $numberOfCareplans){
+
+        $databaseData = $notification->toDatabase($recipient);
+
+        $expected = ['numberOfCareplans' => $numberOfCareplans];
+
+        $this->assertEquals($expected, $databaseData);
+        $this->assertArrayHasKey('numberOfCareplans', $databaseData);
     }
 }

@@ -81,6 +81,7 @@
         "files": [
             "app/helpers.php"
         ]
+
     },
     "autoload-dev": {
         "psr-4": {
