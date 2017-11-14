@@ -33,6 +33,7 @@ $today = \Carbon\Carbon::now()->toFormattedDateString();
         <style type="text/css">
             body {
                 margin: 0;
+                margin-right: 150px !important;
             }
 
             div.address {
@@ -42,6 +43,7 @@ $today = \Carbon\Carbon::now()->toFormattedDateString();
 
             div.breakhere {
                 page-break-after: always;
+                height: 100%;
             }
 
             .address-height-print {
@@ -67,6 +69,14 @@ $today = \Carbon\Carbon::now()->toFormattedDateString();
             .welcome-copy {
                 font-size: 24px;
                 margin-top: 0.5in !important;
+            }
+
+            .omr-bar {
+                height: 15px;
+                background-color: black;
+                width: 35%;
+                margin-left: 120%;
+                margin-top: 15%;
             }
         </style>
         <div class="container">
@@ -101,6 +111,7 @@ $today = \Carbon\Carbon::now()->toFormattedDateString();
                                                 <div class="col-xs-4 col-xs-offset-1 print-row text-right">
                                                     <div>290 Harbor Drive</div>
                                                     <div>Stamford, CT 06902</div>
+                                                    <div class="omr-bar"></div>
                                                 </div>
                                             </div>
                                         </div>
