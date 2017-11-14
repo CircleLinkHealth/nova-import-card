@@ -9,7 +9,7 @@ use Illuminate\Support\Facades\DB;
 
 class NurseFilters extends QueryFilters
 {
-    public function globalFilters()
+    public function globalFilters() : array
     {
         return [
             'status' => 'active',

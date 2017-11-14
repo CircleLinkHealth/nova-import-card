@@ -69,5 +69,5 @@ abstract class QueryFilters
      *
      * @return array
      */
-    abstract function globalFilters();
+    abstract public function globalFilters() : array;
 }
