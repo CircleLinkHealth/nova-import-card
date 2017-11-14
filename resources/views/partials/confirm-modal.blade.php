@@ -42,6 +42,7 @@
             var $body = $modal.find(".modal-body");
             var $confirm = $modal.find("[name='confirm']");
             var $cancel = $modal.find("[name='cancel']");
+            var $close = $modal.find(".close");
             $.showConfirmModal = function (modal) {
                 console.log("modal-definition", modal);
                 $title.html(modal.title || "");
@@ -56,6 +57,9 @@
                         resolve(true);
                     })
                     $cancel.on('click', function () {
+                        resolve(false);
+                    })
+                    $close.on('click', function () {
                         resolve(false);
                     })
                 })
