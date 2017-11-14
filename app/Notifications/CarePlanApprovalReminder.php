@@ -17,15 +17,11 @@ class CarePlanApprovalReminder extends Notification
      * @return void
      */
 
-    protected $recipient;
-
     protected $numberOfCareplans;
 
 
-    public function __construct(User $recipient, $numberOfCareplans = null)
+    public function __construct($numberOfCareplans = null)
     {
-        $this->recipient = $recipient;
-
         $this->numberOfCareplans = $numberOfCareplans;
     }
 
@@ -47,13 +43,13 @@ class CarePlanApprovalReminder extends Notification
     /**
      * Get the mail representation of the notification.
      *
-     * @param  mixed $notifiable
+     * @param  User $notifiable
      *
      * @return CarePlanApprovalReminderMailable
      */
-    public function toMail($notifiable)
+    public function toMail(User $notifiable)
     {
-        return new CarePlanApprovalReminderMailable($this->recipient, $this->numberOfCareplans);
+        return new CarePlanApprovalReminderMailable($notifiable, $this->numberOfCareplans);
     }
 
     /**
