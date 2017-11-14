@@ -7,6 +7,14 @@ use Illuminate\Foundation\Validation\ValidatesRequests;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controller as BaseController;
 
+/**
+* @SWG\Swagger(
+*   @SWG\Info(
+*       title="CPM-WEB",
+*       version="1.0.0"
+*   )   
+* )
+*/
 class Controller extends BaseController
 {
     use AuthorizesRequests, DispatchesJobs, ValidatesRequests;
