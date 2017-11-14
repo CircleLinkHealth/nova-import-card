@@ -47,7 +47,7 @@ $today = \Carbon\Carbon::now()->toFormattedDateString();
 
             div.breakhere {
                 page-break-after: always;
-                height: 100%;
+                /*height: 100%;*/
             }
 
             .address-height-print {
