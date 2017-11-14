@@ -407,12 +407,24 @@ class CallsController extends Controller
     /**
      * Remove the specified resource from storage.
      *
-     * @param  int $id
+     * @param string $ids
      *
      * @return \Illuminate\Http\Response
+     *
      */
-    public function destroy($id)
+    public function destroy($ids)
     {
-        //
+        if (str_contains($ids, ',')) {
+            $ids = explode(',', $ids);
+        }
+
+        if (! is_array($ids)) {
+            $ids = [$ids];
+        }
+
+        Call::whereIn('id', $ids)
+            ->delete();
+
+        return response()->json($ids);
     }
 }

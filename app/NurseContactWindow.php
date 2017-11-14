@@ -55,7 +55,7 @@ class NurseContactWindow extends \App\BaseModel
 
     protected $primaryKey = 'id';
 
-    protected $guarded = ['id'];
+    protected $guarded = [];
 
     // START RELATIONSHIPS
 
