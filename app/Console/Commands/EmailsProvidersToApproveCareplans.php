@@ -165,7 +165,6 @@ class EmailsProvidersToApproveCareplans extends Command
 
         if (!$pretend) {
             if ($send && $recipient->email) {
-
                 $recipient->notify(new CarePlanApprovalReminder($recipient, $numberOfCareplans));
             }
         }
