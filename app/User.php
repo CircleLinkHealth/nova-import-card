@@ -2650,4 +2650,13 @@ class User extends \App\BaseModel implements AuthenticatableContract, CanResetPa
     {
         return new UserNotificationList($this->id);
     }
+
+    /**
+     * Determines whether a patient is eligible to enroll.
+     *
+     * @return bool
+     */
+    public function isCcmEligible() {
+        return $this->care_plan_status == 'to_enroll';
+    }
 }
