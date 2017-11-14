@@ -46,6 +46,8 @@
                 console.log("modal-definition", modal);
                 $title.html(modal.title || "");
                 $body.html(modal.body || "");
+                $confirm.text(modal.confirmText || 'Confirm');
+                $cancel.text(modal.cancelText || 'Cancel');
                 $confirm.off('click');
                 $cancel.off('click');
                 $modal.modal({backdrop: 'static', keyboard: false});

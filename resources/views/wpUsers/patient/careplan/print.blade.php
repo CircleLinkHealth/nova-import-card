@@ -414,5 +414,52 @@ if (isset($patient) && !empty($patient)) {
                 <!-- /OTHER INFORMATION -->
             </section>
         </div>
+        @include('partials.confirm-modal')
+
+        @push('scripts')
+            <script>
+                console.log("is-ccm-eligible", {{$patient->isCcmEligible()}})
+            </script>
+        @endpush
+
+        @if ($patient->isCcmEligible())
+            @push('scripts')
+                <script type="text/html" name="ccm-enrollment-details">
+                    <ul>
+                        <li>Program is a way for me / MD to follow-up between office visits</li>
+                        <li>You will receive a personalized care manager (registered nurse) to check-in and keep us connected / answer Questions</li>
+                        <li>Medicare covers the program and if you have supplemental insurance or Medicaid, it should cover the co-pay (~8/mo.)</li>
+                        <li>You can quit anytime, just give us a call</li>
+                    </ul>
+                    <style>
+                        #confirm-modal ul {
+                            margin-bottom: 30px;
+                        }
+
+                        #confirm-modal li {
+                            list-style-type: circle;
+                            line-height: 30px;
+                            margin-bottom: 10px;
+                            font-size: 18px;
+                        }
+                    </style>
+                </script>
+                <script>
+                    $.showConfirmModal({
+                        title: 'CCM Enrollment Talking Points For {{$patient->display_name}}, DOB: {{$patient->dob}}',
+                        body: document.querySelector('[name="ccm-enrollment-details"]').innerHTML,
+                        confirmText: 'Patient Consented',
+                        cancelText: 'Did Not Consent'
+                    }).then((patientHasConsented) => {
+                        if (patientHasConsented) {
+                            location.href = '{{asset("manage-patients/" . $patient->id . "/view-careplan/assessment")}}';
+                        }
+                        else {
+                            location.href = '{{asset("manage-patients/dashboard")}}'
+                        }
+                    })
+                </script> 
+            @endpush
+        @endif
     @endif
 @stop
