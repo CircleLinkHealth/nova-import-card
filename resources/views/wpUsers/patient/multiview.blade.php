@@ -1,6 +1,10 @@
 @extends('partials.providerUI')
 
 <?php
+/**
+* Could generate careplan in HTML or PDF
+* https://cpm-web.dev/manage-patients/careplan-print-multi?letter&users={patientId}
+*/
 
 if (!function_exists('checkIfExists')) {
     //check if exists
