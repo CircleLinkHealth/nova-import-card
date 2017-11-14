@@ -8,8 +8,16 @@ use Illuminate\Http\Request;
 class ProfileController extends ApiController
 {
     /**
-     * Display a listing of the resource.
-     *
+     *   @SWG\GET(
+     *     path="profile",
+     *     tags={"user"},
+     *     summary="Get User Info",
+     *     description="Get Basic User Information",
+     *     @SWG\Response(
+     *         response="default", 
+     *         description="Basic User Information"
+     *     )
+     *   )   
      * @return \Illuminate\Http\Response
      */
     public function index()

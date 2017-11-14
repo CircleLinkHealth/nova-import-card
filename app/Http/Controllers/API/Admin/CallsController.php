@@ -3,7 +3,7 @@
 namespace App\Http\Controllers\API\Admin;
 
 use App\Call;
-use App\Http\Controllers\Controller;
+use App\Http\Controllers\API\ApiController;
 use App\Http\Resources\Call as CallResource;
 use Carbon\Carbon;
 use DateTime;
@@ -12,7 +12,7 @@ use Illuminate\Http\Request;
 use Yajra\Datatables\Datatables;
 
 
-class CallsController extends Controller
+class CallsController extends ApiController
 {
     public function toBeDeprecatedIndex()
     {
@@ -314,9 +314,17 @@ class CallsController extends Controller
                          ->make(true);
     }
 
-    /**
-     * Display a listing of the resource.
-     *
+    /**    
+     *   @SWG\GET(
+     *     path="admin/calls",
+     *     tags={"calls"},
+     *     summary="Get Calls Info",
+     *     description="Display a listing of calls",
+     *     @SWG\Response(
+     *         response="default", 
+     *         description="A listing of calls"
+     *     )
+     *   )   
      * @return \Illuminate\Http\Response
      */
     public function index()
