@@ -346,6 +346,11 @@ Route::group(['middleware' => 'auth'], function () {
             'uses' => 'ReportsController@viewPrintCareplan',
             'as'   => 'patient.careplan.print',
         ]);
+        
+        Route::get('view-careplan/assessment', [
+            'uses' => 'ReportsController@makeAssessment',
+            'as'   => 'patient.careplan.assessment',
+        ]);
 
         Route::get('approve-careplan/{viewNext?}', [
             'uses' => 'ProviderController@approveCarePlan',

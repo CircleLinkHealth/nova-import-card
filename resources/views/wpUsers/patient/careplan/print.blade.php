@@ -418,7 +418,7 @@ if (isset($patient) && !empty($patient)) {
 
         @push('scripts')
             <script>
-                console.log("is-ccm-eligible", {{$patient->isCcmEligible()}})
+                console.log("is-ccm-eligible", '{{json_encode($patient)}}')
             </script>
         @endpush
 
@@ -446,7 +446,7 @@ if (isset($patient) && !empty($patient)) {
                 </script>
                 <script>
                     $.showConfirmModal({
-                        title: 'CCM Enrollment Talking Points For {{$patient->display_name}}, DOB: {{$patient->dob}}',
+                        title: 'CCM Enrollment Talking Points For {{$patient->display_name}}, DOB: {{optional($patient->patient_info)->birth_date}}',
                         body: document.querySelector('[name="ccm-enrollment-details"]').innerHTML,
                         confirmText: 'Patient Consented',
                         cancelText: 'Did Not Consent'
