@@ -110,7 +110,10 @@
                         title: 'Are you sure you want to skip?',
                         body: 'Advanced care planning by MD during visit is needed to bill the G0506 code.',
                         confirmText: 'Skip',
-                        cancelText: 'Go Back'
+                        cancelText: 'Go Back',
+                        neverShow: true
+                    }).then(function (obj) {
+                        console.log(obj)
                     })
                 })
             })()

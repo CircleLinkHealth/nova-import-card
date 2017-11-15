@@ -4,10 +4,26 @@
     ```
         $.showConfirmModal({
             title: "Modal Title",
-            body: "Modal Body"
+            body: "Modal Body",
+            confirmText: 'Skip', //override confirm text
+            cancelText: 'Go Back', //override cancel text
+            neverShow: true //show or hide div that shows "I don't want to see this again"
         }).then(function (action) {
-            if (action); //user confirmed
-            else; //user cancelled
+            if (action.constructor.name === 'Object') {
+                // [action] is an object with schema:
+                /**
+                    {
+                        action: true, //or false,
+                        neverShowAgain: true //or false
+                    }
+                */
+            }
+            else {
+                // [action] is a Boolean
+                if (action); //user confirmed
+                else; //user cancelled
+            }
+            
         })
     ```
 -->
@@ -22,6 +38,14 @@
             <div class="modal-body">
                 
             </div>
+            <div class="modal-footer never-show">
+                <p>
+                    <label>
+                        <input type="checkbox" name="never-show" value="never-show">
+                        I don't want to see this again.
+                    </label>
+                </p>
+            </div>
             <div class="modal-footer">
                 <button type="button" name="confirm" id="complex_confirm" class="btn btn-primary"
                         data-dismiss="modal">Confirm
@@ -34,6 +58,16 @@
     </div>
 </div>
 
+@push('styles')
+    <style>
+        .modal-footer.never-show {
+            padding: 10px;
+            text-align: left;
+            font-size: 18px;
+        }
+    </style>
+@endpush
+
 @push('scripts')
     <script>
         (function ($) {
@@ -43,6 +77,8 @@
             var $confirm = $modal.find("[name='confirm']");
             var $cancel = $modal.find("[name='cancel']");
             var $close = $modal.find(".close");
+            var $neverShowContainer = $modal.find(".never-show");
+            var $neverShow = $modal.find("[name='never-show']")
             $.showConfirmModal = function (modal) {
                 console.log("modal-definition", modal);
                 $title.html(modal.title || "");
@@ -51,16 +87,28 @@
                 $cancel.text(modal.cancelText || 'Cancel');
                 $confirm.off('click');
                 $cancel.off('click');
+                if (!!modal.neverShow) $neverShowContainer.show();
+                else $neverShowContainer.hide();
                 $modal.modal({backdrop: 'static', keyboard: false});
+
+                var isComplex= !!modal.neverShow;
+
+                var getReturnValue = function (action) {
+                    return !isComplex ? action : {
+                        action: action,
+                        neverShowAgain: $neverShow.is(':checked')
+                    }
+                }
+
                 return new Promise(function (resolve, reject) {
                     $confirm.on('click', function () {
-                        resolve(true);
+                        resolve(getReturnValue(true));
                     })
                     $cancel.on('click', function () {
-                        resolve(false);
+                        resolve(getReturnValue(false));
                     })
                     $close.on('click', function () {
-                        resolve(false);
+                        resolve(getReturnValue(false));
                     })
                 })
             }
