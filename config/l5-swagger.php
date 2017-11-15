@@ -139,7 +139,7 @@ return [
             'description'      => 'A short description for oauth2 security scheme.',
             'flow'             => 'implicit',
             // The flow used by the OAuth2 security scheme. Valid values are "implicit", "password", "application" or "accessCode".
-            'authorizationUrl' => url('oauth/authorize'),
+            'authorizationUrl' => 'http://cpm.dev/oauth/authorize',
             // The authorization URL to be used for (implicit/accessCode)
             //'tokenUrl' => 'http://example.com/auth' // The authorization URL to be used for (password/application/accessCode)
             'scopes'           => [
