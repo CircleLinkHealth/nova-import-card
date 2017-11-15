@@ -79,3 +79,4 @@ mix.js('resources/assets/js/app-provider-admin-panel-ui.js', 'public/compiled/js
 mix.js('resources/assets/js/app-clh-admin-ui.js', 'public/compiled/js').sourceMaps()
 mix.js('resources/assets/js/admin/calls/main.js', 'public/compiled/js/v-call-mgmt.min.js').sourceMaps()
 mix.js('resources/assets/js/admin/time-tracker/main.js', 'public/compiled/js/v-time-tracker.min.js').sourceMaps()
+mix.js('resources/assets/js/admin/questionnaire/main.js', 'public/compiled/js/v-questionnaire.min.js').sourceMaps()

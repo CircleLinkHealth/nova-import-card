@@ -9,6 +9,10 @@
 
 @push('styles')
     <style>
+        .font-24 {
+            font-size: 24px;
+        }
+
         .top-20 {
             margin-top: 20px;
         }
@@ -21,8 +25,24 @@
             background-color: #109ace;
         }
 
-        input[type='radio'] {
+        input[type='radio'], input[type='checkbox'] {
             display: inline;
+        }
+
+        .questionnaire .question-text {
+            line-height: 50px;
+        }
+
+        .questionnaire .question-option {
+            padding: 10px;
+        }
+
+        .questionnaire .form-group {
+            margin-bottom: 30px;
+        }
+
+        .modal-body {
+            line-height: 40px;
         }
     </style>
 @endpush
@@ -38,34 +58,62 @@
                     <div class="col-xs-12">
                         <div class="row">
                             <div class="col-xs-12">
-                                <h4>Risk level for your patient</h4>
-                                <div class="form-group">
-                                    <div>
-                                        <label>
-                                            <input type="radio" name="risk" value="high"> High
-                                        </label>
+                                <form name="questionnaire-form">
+                                    <div class="text-right">
+                                        <input type="button" name="skip" class="btn btn-warning font-24" value="Skip">
                                     </div>
-                                    <div>
-                                        <label>
-                                            <input type="radio" name="risk" value="medium"> Medium
-                                        </label>
-                                    </div>
-                                    <div>
-                                        <label>
-                                            <input type="radio" name="risk" value="low"> Low
-                                        </label>
-                                    </div>
-                                    <div>
-                                        <label>
-                                            <input type="radio" name="risk" value="vulnerable"> Vulnerable
-                                        </label>
-                                    </div>
-                                </div>
+                                    <div id="questionnaire-app"></div>
+                                    <button class="btn btn-success font-24">Submit</button>
+                                </form>
                             </div>
                         </div>
                     </div>
                 </div>
+                @include('partials.confirm-modal')
             </div>
         </section>
     </div>
+    @push('scripts')
+        <script type="application/json" id="questions-script">
+            <?php 
+                include app_path() . '/../public/data/ccm-eligibility-questions.json';
+            ?>
+        </script>
+        <script>
+            var questions = JSON.parse(document.getElementById('questions-script').innerHTML);
+        </script>
+        <script src="{{asset('compiled/js/v-questionnaire.min.js')}}"></script>
+        <script>
+            (function ($) {
+                $.fn.serializeObject = function () {
+                    return $(this).serializeArray().reduce(function (obj, x) {
+                                if ((!obj[x.name]) && obj[x.name] != '') obj[x.name] = x.value;
+                                else {
+                                    if (Array.isArray(obj[x.name])) {
+                                        obj[x.name] = obj[x.name].concat(x.value);
+                                    }
+                                    else {
+                                        obj[x.name] = (new Array((obj[x.name] || "").toString())).concat(x.value);
+                                    }
+                                }
+                                return obj;
+                            }, {})
+                }
+            })(jQuery);
+
+            (function () {
+                var $form = $("[name='questionnaire-form']");
+                var $skipBtn = $form.find("[name='skip']");
+
+                $skipBtn.click(function () {
+                    $.showConfirmModal({
+                        title: 'Are you sure you want to skip?',
+                        body: 'Advanced care planning by MD during visit is needed to bill the G0506 code.',
+                        confirmText: 'Skip',
+                        cancelText: 'Go Back'
+                    })
+                })
+            })()
+        </script>
+    @endpush
 @endsection
