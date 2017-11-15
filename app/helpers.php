@@ -42,7 +42,7 @@ if (!function_exists('parseIds')) {
             return explode(',', $value);
         }
 
-        return (array) $value;
+        return array_filter((array) $value);
     }
 }
 

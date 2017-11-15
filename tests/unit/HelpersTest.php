@@ -69,5 +69,17 @@ class HelpersTest extends TestCase
         $int = 5;
         $ids = parseIds($int);
         $this->assertEquals([5], $ids);
+
+        //test empty array
+        $ids = parseIds([]);
+        $this->assertEquals([], $ids);
+
+        //test null
+        $ids = parseIds(null);
+        $this->assertEquals([], $ids);
+
+        //test empty string
+        $ids = parseIds('');
+        $this->assertEquals([], $ids);
     }
 }
