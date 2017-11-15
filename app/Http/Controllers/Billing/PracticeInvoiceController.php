@@ -5,12 +5,12 @@ namespace App\Http\Controllers\Billing;
 use App\AppConfig;
 use App\Billing\Practices\PracticeInvoiceGenerator;
 use App\Http\Controllers\Controller;
+use App\Notifications\PracticeInvoice;
 use App\PatientMonthlySummary;
 use App\Practice;
 use App\Reports\ApproveBillablePatientsReport;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Mail;
 
 class PracticeInvoiceController extends Controller
 {
@@ -312,17 +312,11 @@ class PracticeInvoiceController extends Controller
 
             if (count($recipients) > 0) {
                 foreach ($recipients as $recipient) {
-                    Mail::send('billing.practice.mail', ['link' => $invoiceLink], function ($m) use (
-                        $recipient,
-                        $invoice
-                    ) {
 
-                        $m->from('billing@circlelinkhealth.com', 'CircleLink Health');
 
-                        $m->to($recipient)->subject('Your Invoice and Billing Report from CircleLink');
+                    $filePath = storage_path('/download/' . $invoice);
 
-                        $m->attach(storage_path('/download/' . $invoice));
-                    });
+                    $recipient->notify(new PracticeInvoice($invoiceLink, $filePath));
 
                     $logger .= "Sent report for $practice->name to $recipient <br />";
                 }
