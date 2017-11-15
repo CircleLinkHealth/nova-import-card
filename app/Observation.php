@@ -2,93 +2,20 @@
 
 use App\Services\DatamonitorService;
 
-/**
- * App\Observation
- *
- * @SWG\Definition (definition="observation",required={"primaryKey"},@SWG\Xml(name="Observation")))
- * @property int $id
- * @property string $obs_date
- * @property string $obs_date_gmt
- * @property int $comment_id
- * @property int $sequence_id
- * @property string $obs_message_id
- * @property int $user_id
- * @property string $obs_method
- * @property string $obs_key
- * @property string $obs_value
- * @property string $obs_unit
- * @property int $program_id
- * @property int $legacy_obs_id
- * @property \Carbon\Carbon $created_at
- * @property \Carbon\Carbon $updated_at
- * @property-read \App\Comment $comment
- * @property-read mixed $alert_level
- * @property-read mixed $alert_log
- * @property-read mixed $alert_sort_weight
- * @property-read mixed $alert_status_change
- * @property-read mixed $alert_status_history
- * @property-read mixed $starting_observation
- * @property-read mixed $timezone
- * @property-read \Illuminate\Database\Eloquent\Collection|\App\ObservationMeta[] $meta
- * @property-read \App\CPRulesQuestions $question
- * @property-read \Illuminate\Database\Eloquent\Collection|\Venturecraft\Revisionable\Revision[] $revisionHistory
- * @property-read \App\User $user
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Observation whereCommentId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Observation whereCreatedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Observation whereId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Observation whereLegacyObsId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Observation whereObsDate($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Observation whereObsDateGmt($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Observation whereObsKey($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Observation whereObsMessageId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Observation whereObsMethod($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Observation whereObsUnit($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Observation whereObsValue($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Observation whereProgramId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Observation whereSequenceId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Observation whereUpdatedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Observation whereUserId($value)
- * @mixin \Eloquent
- * @SWG\Definition()
- */
 class Observation extends \App\BaseModel
 {
 
     // for revisionable
     use \Venturecraft\Revisionable\RevisionableTrait;
-    /**
-     * The attributes that are mass assignable.
-     * @SWG\Property(
-     *  @SWG\Items(
-     *      type="object"
-     *  ) 
-     * )
-     * @var array
-     */
+
     public $timestamps = true;
     protected $revisionCreationsEnabled = true;
 
-    /**
-     * The database table used by the model.
-     * @SWG\Property()
-     * @var string
-     */
+
     protected $table = 'lv_observations';
-    /**
-     * The primary key for the model.
-     * @SWG\Property(format="int64")
-     * @var int
-     */
+
     protected $primaryKey = 'id';
-    /**
-     * The attributes that are mass assignable.
-     * @SWG\Property(
-     *  @SWG\Items(
-     *      type="string"
-     *  ) 
-     * )
-     * @var array
-     */
+
     protected $fillable = [
         'obs_date',
         'obs_date_gmt',
@@ -103,15 +30,7 @@ class Observation extends \App\BaseModel
         'program_id',
         'legacy_obs_id',
     ];
-    /**
-     * The attributes that are mass assignable.
-     * @SWG\Property(
-     *  @SWG\Items(
-     *      type="string"
-     *  ) 
-     * )
-     * @var array
-     */
+
     protected $dates = ['deleted_at'];
 
 
