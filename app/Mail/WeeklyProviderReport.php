@@ -8,7 +8,7 @@ use Illuminate\Mail\Mailable;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Contracts\Queue\ShouldQueue;
 
-class WeeklyPracticeReport extends Mailable
+class WeeklyProviderReport extends Mailable
 {
     use Queueable, SerializesModels;
 
@@ -16,34 +16,26 @@ class WeeklyPracticeReport extends Mailable
     /**
      * @var User
      */
-    public $recipient;
+    protected $provider;
 
     /**
      * The data passed to the view
      *
-     * For an example @see: EmailWeeklyPracticeReport, method handle
+     * For an example @see: EmailWeeklyProviderReport, method handle
      * @var array
      */
-    public $data;
+    protected $data;
 
-    /**
-     * The subject passed to the view
-     *
-     * For an example @see: EmailWeeklyPracticeReport, method handle
-     *
-     */
-    public $subject;
 
     /**
      * Create a new message instance.
      *
      * @return void
      */
-    public function __construct(User $recipient, array $data, $subject)
+    public function __construct(User $provider, array $data)
     {
-        $this->recipient = $recipient;
+        $this->provider = $provider;
         $this->data = $data;
-        $this->subject = $subject;
     }
 
     /**
@@ -53,10 +45,10 @@ class WeeklyPracticeReport extends Mailable
      */
     public function build()
     {
-        return $this->view('sales.by-practice.report')
+        return $this->view('sales.by-provider.report')
             ->with($this->data)
-            ->to($this->recipient->email)
+            ->to($this->provider->email)
             ->from('notifications@careplanmanager.com', 'CircleLink Health')
-            ->subject($this->subject);
+            ->subject('Dr. ' . $this->provider->last_name . '\'s CCM Weekly Summary');
     }
 }

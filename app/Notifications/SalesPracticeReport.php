@@ -2,32 +2,32 @@
 
 namespace App\Notifications;
 
-use App\Mail\WeeklyPracticeReport as WeeklyPracticeReportMailable;
 use App\User;
+use App\Mail\SalesPracticeReport as SalesPracticeReportMailable;
 use Illuminate\Bus\Queueable;
 use Illuminate\Notifications\Notification;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Messages\MailMessage;
 
-class WeeklyPracticeReport extends Notification
+class SalesPracticeReport extends Notification
 {
-
-
     use Queueable;
+
 
     protected $data;
 
-    protected $subject;
+    protected $recipientEmail;
+
 
     /**
      * Create a new notification instance.
      *
      * @return void
      */
-    public function __construct(array $data, $subject)
+    public function __construct(array $data, $recipientEmail)
     {
         $this->data = $data;
-        $this->subject = $subject;
+        $this->recipientEmail = $recipientEmail;
     }
 
     /**
@@ -39,20 +39,20 @@ class WeeklyPracticeReport extends Notification
     public function via($notifiable)
     {
         return [
-        'mail',
-        'database',
-    ];
+            'mail',
+            'database',
+            ];
     }
 
     /**
      * Get the mail representation of the notification.
      *
      * @param  mixed  $notifiable
-     * @return WeeklyPracticeReportMailable
+     * @return \Illuminate\Notifications\Messages\MailMessage
      */
-    public function toMail(User $notifiable)
+    public function toMail($notifiable)
     {
-        return new WeeklyPracticeReportMailable($notifiable, $this->data, $this->subject);
+        return (new SalesPracticeReportMailable($notifiable, $this->data, $this->recipientEmail ));
     }
 
     /**

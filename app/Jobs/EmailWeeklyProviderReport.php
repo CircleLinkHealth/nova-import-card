@@ -2,8 +2,10 @@
 
 namespace App\Jobs;
 
+use App\Notifications\WeeklyProviderReport;
 use App\Practice;
 use App\Reports\Sales\Provider\SalesByProviderReport;
+use App\User;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Queue\InteractsWithQueue;
@@ -18,19 +20,19 @@ class EmailWeeklyProviderReport implements ShouldQueue
     protected $practice;
     protected $startRange;
     protected $endRange;
-    protected $testerEmail;
+    protected $tester;
 
     /**
      * Create a new job instance.
      *
      * @return void
      */
-    public function __construct(Practice $practice, $startRange, $endRange, $testerEmail)
+    public function __construct(Practice $practice, $startRange, $endRange, User $tester = null)
     {
         $this->practice = $practice;
         $this->startRange = $startRange;
         $this->endRange = $endRange;
-        $this->testerEmail = $testerEmail;
+        $this->tester = $tester;
     }
 
     /**
@@ -61,22 +63,10 @@ class EmailWeeklyProviderReport implements ShouldQueue
 
             $subjectProvider = 'Dr. ' . $provider->last_name . '\'s CCM Weekly Summary';
 
-            if ($this->testerEmail) {
-                Mail::send('sales.by-provider.report', ['data' => $providerData], function ($message) use (
-                    $provider,
-                    $subjectProvider
-                ) {
-                    $message->from('notifications@careplanmanager.com', 'CircleLink Health');
-                    $message->to($this->testerEmail)->subject($subjectProvider);
-                });
+            if ($this->tester) {
+                $this->tester->notify(new WeeklyPrLoviderReport($providerData));
             } else {
-                Mail::send('sales.by-provider.report', ['data' => $providerData], function ($message) use (
-                    $provider,
-                    $subjectProvider
-                ) {
-                    $message->from('notifications@careplanmanager.com', 'CircleLink Health');
-                    $message->to($provider->email)->subject($subjectProvider);
-                });
+                $provider->notify(new WeeklyProviderReport($providerData));
             }
         }
     }

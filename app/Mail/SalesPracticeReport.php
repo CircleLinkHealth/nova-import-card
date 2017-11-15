@@ -2,48 +2,43 @@
 
 namespace App\Mail;
 
+use App\Practice;
 use App\User;
 use Illuminate\Bus\Queueable;
 use Illuminate\Mail\Mailable;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Contracts\Queue\ShouldQueue;
 
-class WeeklyPracticeReport extends Mailable
+class SalesPracticeReport extends Mailable
 {
     use Queueable, SerializesModels;
-
 
     /**
      * @var User
      */
-    public $recipient;
+    protected $practice;
+
 
     /**
      * The data passed to the view
      *
-     * For an example @see: EmailWeeklyPracticeReport, method handle
+     * For an example @see: SalesReportsController, method makePracticeReport
      * @var array
      */
-    public $data;
+    protected $data;
 
-    /**
-     * The subject passed to the view
-     *
-     * For an example @see: EmailWeeklyPracticeReport, method handle
-     *
-     */
-    public $subject;
+    protected $recipientEmail;
 
     /**
      * Create a new message instance.
      *
      * @return void
      */
-    public function __construct(User $recipient, array $data, $subject)
+    public function __construct(Practice $practice, array $data, $recipientEmail)
     {
-        $this->recipient = $recipient;
+        $this->practice = $practice;
         $this->data = $data;
-        $this->subject = $subject;
+        $this->recipientEmail = $recipientEmail;
     }
 
     /**
@@ -55,8 +50,8 @@ class WeeklyPracticeReport extends Mailable
     {
         return $this->view('sales.by-practice.report')
             ->with($this->data)
-            ->to($this->recipient->email)
+            ->to($this->recipientEmail)
             ->from('notifications@careplanmanager.com', 'CircleLink Health')
-            ->subject($this->subject);
+            ->subject($this->practice->display_name . '\'s CCM Weekly Summary');
     }
 }
