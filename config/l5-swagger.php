@@ -43,16 +43,16 @@ return [
         | Middleware allows to prevent unexpected access to API documentation
         |--------------------------------------------------------------------------
          */
-        'middleware' => [
-            'api' => [],
-            'asset' => [],
-            'docs' => [],
+        'middleware'      => [
+            'api'             => ['web', 'auth'],
+            'asset'           => ['web', 'auth'],
+            'docs'            => ['web', 'auth'],
             'oauth2_callback' => [],
         ],
 
     ],
 
-    'paths' => [
+    'paths'    => [
 
         /*
         |--------------------------------------------------------------------------
@@ -191,7 +191,7 @@ return [
     | Uncomment to add constants which can be used in anotations
     |--------------------------------------------------------------------------
      */
-    'constants' => [
+    'constants'     => [
         'L5_SWAGGER_CONST_HOST' => env('L5_SWAGGER_CONST_HOST', 'http://my-default-host.com'),
     ],
 ];
