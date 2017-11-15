@@ -10,3 +10,5 @@ launch.json
 .DS_Store
 /storage/api-docs
 .phpstorm.meta.php
+storage/oauth-private.key
+storage/oauth-public.key
