@@ -9,3 +9,4 @@ _ide_helper.php
 launch.json
 .DS_Store
 /storage/api-docs
+.phpstorm.meta.php
