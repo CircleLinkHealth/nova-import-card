@@ -20,6 +20,7 @@ class Kernel extends HttpKernel
             \Illuminate\Routing\Middleware\SubstituteBindings::class,
             \App\Http\Middleware\LogoutIfAccessDisabled::class,
             \App\Http\Middleware\ClearPatientSessions::class,
+            \Laravel\Passport\Http\Middleware\CreateFreshApiToken::class,
         ],
         'api' => [
             'throttle:60,1',

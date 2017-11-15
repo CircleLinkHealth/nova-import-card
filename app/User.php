@@ -35,6 +35,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\QueryException;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Support\Collection;
+use Laravel\Passport\HasApiTokens;
 use Michalisantoniou6\Cerberus\Traits\CerberusSiteUserTrait;
 use Michalisantoniou6\Cerberus\Traits\CerberusUserTrait;
 
@@ -224,6 +225,7 @@ class User extends \App\BaseModel implements AuthenticatableContract, CanResetPa
     use Authenticatable,
         CanResetPassword,
         CerberusSiteUserTrait,
+        HasApiTokens,
         HasEmrDirectAddress,
         Notifiable,
         SoftDeletes;
