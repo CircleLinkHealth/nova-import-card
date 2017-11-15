@@ -106,9 +106,7 @@ Route::group(['middleware' => 'auth'], function () {
 
         Route::resource('nurses', 'API\NurseController');
 
-        Route::group(['prefix' => 'admin'], function () {
-            Route::resource('calls', 'API\Admin\CallsController');
-        });
+
     });
 
     Route::resource('profiles', 'API\ProfileController');

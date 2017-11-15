@@ -34,7 +34,9 @@ class AuthController extends Controller
             return response()->json(['error' => 'Invalid Credentials.'], 400);
         }
 
-        if (!$user->hasRole('aprima-api-location')) {
+
+        //Verify Role for UPG
+        if (!$user->hasRoleForSite('aprima-api-location', 16)) {
             return response()->json(['error' => 'Invalid Credentials.'], 400);
         }
 

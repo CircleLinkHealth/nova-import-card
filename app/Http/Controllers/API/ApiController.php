@@ -8,7 +8,7 @@ use Illuminate\Routing\Controller as BaseController;
 
 /**
 * @SWG\Swagger(
-*   basePath="/api",    
+*   basePath="/api/",
 *   @SWG\Info(
 *       title="CPM-API",
 *       version="1.0.0"
