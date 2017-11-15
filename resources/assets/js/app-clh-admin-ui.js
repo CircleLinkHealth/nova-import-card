@@ -17,6 +17,9 @@ window.Vue.use(VueForm, {
 Vue.component('nurseDailyHours', require('./components/pages/work-schedule/daily-hours.vue'));
 Vue.component('importerTrainer', require('./components/Importer/trainer.vue'));
 Vue.component('select2', require('./components/src/select2'));
+Vue.component('passport-clients', require('./components/passport/Clients.vue'));
+Vue.component('passport-authorized-clients', require('./components/passport/AuthorizedClients.vue'));
+Vue.component('passport-personal-access-tokens', require('./components/passport/PersonalAccessTokens.vue'));
 
 window.App = new Vue({
     el: '#app',
