@@ -12,7 +12,7 @@ class NurseController extends ApiController
 {
     /**    
      *   @SWG\GET(
-     *     path="nurses",
+     *     path="/nurses",
      *     tags={"nurses"},
      *     summary="Get Nurses Info",
      *     description="Display a listing of nurses",
