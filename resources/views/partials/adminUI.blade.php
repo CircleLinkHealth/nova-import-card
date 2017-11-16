@@ -266,7 +266,8 @@
                                             class="caret"></span></a>
                                 <ul class="dropdown-menu" role="menu">
                                     <li><a href="{{ URL::route('admin.users.edit', array('id' => Auth::user()->id)) }}"
-                                           class=""> My Account</a></li>
+                                           class="">My Account</a></li>
+                                    <li><a href="{{ url('/admin/api-clients') }}">Api Clients</a></li>
                                     <li><a href="{{ url('/auth/logout') }}">Logout</a></li>
                                 </ul>
                             </li>
