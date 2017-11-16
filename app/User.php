@@ -1395,6 +1395,7 @@ class User extends \App\BaseModel implements AuthenticatableContract, CanResetPa
 
         $users = new Collection();
 
+        //Get email forwarding
         foreach ($careTeam as $carePerson) {
             if ($carePerson->user->forwardAlertsTo->isEmpty() && $carePerson->user) {
                 $users->push($carePerson->user);
@@ -1412,6 +1413,7 @@ class User extends \App\BaseModel implements AuthenticatableContract, CanResetPa
             }
         }
 
+        //Get clinical emergency contacts from locations
         foreach ($this->locations as $location) {
             if ( ! $location->clinicalEmergencyContact->isEmpty()) {
                 $contact = $location->clinicalEmergencyContact->first();
