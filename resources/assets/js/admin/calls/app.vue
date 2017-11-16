@@ -10,74 +10,76 @@
         <button class="btn btn-danger btn-xs" @click="deleteSelected">Delete</button>
       </div>
     </div>
-    <v-client-table ref="tblCalls" :data="tableData" :columns="columns" :options="options">
-      <template slot="child_row" scope="props">
-        <div class="row row-info">
-          <div class="col-sm-12">
-            <div class="row">
-              <div class="col-lg-2">
-                General Comment:
+    <div>
+      <v-client-table ref="tblCalls" :data="tableData" :columns="columns" :options="options">
+        <template slot="child_row" scope="props">
+          <div class="row row-info">
+            <div class="col-sm-12">
+              <div class="row">
+                <div class="col-lg-2">
+                  General Comment:
+                </div>
+                <div class="col-lg-10">
+                  <text-editable :value="props.row.Comment" :multi="true" :class-name="'blue big-text-edit'"></text-editable>
+                </div>
               </div>
-              <div class="col-lg-10">
-                <text-editable :value="props.row.Comment" :multi="true" :class-name="'blue big-text-edit'"></text-editable>
+              <div class="row">
+                <div class="col-lg-2">Attempt Note:</div>
+                <div class="col-lg-10">
+                  <text-editable :value="props.row.AttemptNote || 'Add Text'" :multi="true" :class-name="'blue big-text-edit'"></text-editable>
+                </div>
               </div>
-            </div>
-            <div class="row">
-              <div class="col-lg-2">Attempt Note:</div>
-              <div class="col-lg-10">
-                <text-editable :value="props.row.AttemptNote || 'Add Text'" :multi="true" :class-name="'blue big-text-edit'"></text-editable>
+              <div class="row" v-if="props.row.Notes.length > 0">
+                <div class="col-lg-2"><a :href="rootUrl('manage-patients/' + props.row['Patient ID'] + '/notes')" target="_blank">Last 3 Notes:</a></div>
+                <div class="col-lg-10">
+                  <ul>
+                    <li v-for="(note, index) in props.row.Notes.slice(0, 3)" :key="index">
+                      Note {{note.created_at}}: 
+                      <div class="label label-info" :class="{ inbound: note.type === 'in', outbound: note.type === 'out' }" style="margin:5px;">{{note.type === 'in' ? 'In' : 'Out'}} Call</div>
+                      <span style="font-weight:bold;">{{note.category}}</span> 
+                      {{note.message}}
+                      </li>
+                  </ul>
+                </div>
               </div>
-            </div>
-            <div class="row" v-if="props.row.Notes.length > 0">
-              <div class="col-lg-2"><a :href="rootUrl('manage-patients/' + props.row['Patient ID'] + '/notes')" target="_blank">Last 3 Notes:</a></div>
-              <div class="col-lg-10">
-                <ul>
-                  <li v-for="(note, index) in props.row.Notes.slice(0, 3)" :key="index">
-                    Note {{note.created_at}}: 
-                    <div class="label label-info" :class="{ inbound: note.type === 'in', outbound: note.type === 'out' }" style="margin:5px;">{{note.type === 'in' ? 'In' : 'Out'}} Call</div>
-                    <span style="font-weight:bold;">{{note.category}}</span> 
-                    {{note.message}}
-                    </li>
-                </ul>
-              </div>
-            </div>
-            <div class="row">
-              <div class="col-sm-2">Call Windows:</div>
-              <div class="col-sm-10">
-                <ul class="info-list">
-                  <li v-for="(time_window, index) in props.row.CallWindows" :key="index">{{time_window.shortDayOfWeek}}: {{time_window.window_time_start}} - {{time_window.window_time_end}}</li>
-                </ul>
+              <div class="row">
+                <div class="col-sm-2">Call Windows:</div>
+                <div class="col-sm-10">
+                  <ul class="info-list">
+                    <li v-for="(time_window, index) in props.row.CallWindows" :key="index">{{time_window.shortDayOfWeek}}: {{time_window.window_time_start}} - {{time_window.window_time_end}}</li>
+                  </ul>
+                </div>
               </div>
             </div>
           </div>
-        </div>
-      </template>
-      <template slot="selected" scope="props">
-        <input class="row-select" v-model="props.row.selected" @change="toggleSelect(props.row.id)" type="checkbox" />
-      </template>
-      <template slot="h__selected" scope="props">
-        <input class="row-select" v-model="selected" @change="toggleAllSelect" type="checkbox" />
-      </template>
-      <template slot="Nurse" scope="props">
-        <select-editable :value="props.row.Nurse" :values="[
-                                    'Nurse N RN', 
-                                    'Kathryn Alchalabi RN', 
-                                    'Patricia Koeppel RN', 
-                                    'Dillenis Diaz RN', 
-                                    'Liza Herrera RN', 
-                                    'Monique Potter RN'
-                                  ]" :class-name="'blue'"></select-editable>
-      </template>
-      <template slot="Next Call" scope="props">
-        <date-editable :value="props.row['Next Call']" :format="'YYYY-mm-DD'" :class-name="'blue'"></date-editable>
-      </template>
-      <template slot="Call Time Start" scope="props">
-        <time-editable :value="props.row['Call Time Start']" :format="'YYYY-mm-DD'" :class-name="'blue'"></time-editable>
-      </template>
-      <template slot="Call Time End" scope="props">
-        <time-editable :value="props.row['Call Time End']" :format="'YYYY-mm-DD'" :class-name="'blue'"></time-editable>
-      </template>
-    </v-client-table>
+        </template>
+        <template slot="selected" scope="props">
+          <input class="row-select" v-model="props.row.selected" @change="toggleSelect(props.row.id)" type="checkbox" />
+        </template>
+        <template slot="h__selected" scope="props">
+          <input class="row-select" v-model="selected" @change="toggleAllSelect" type="checkbox" />
+        </template>
+        <template slot="Nurse" scope="props">
+          <select-editable :value="props.row.Nurse" :values="[
+                                      'Nurse N RN', 
+                                      'Kathryn Alchalabi RN', 
+                                      'Patricia Koeppel RN', 
+                                      'Dillenis Diaz RN', 
+                                      'Liza Herrera RN', 
+                                      'Monique Potter RN'
+                                    ]" :class-name="'blue'"></select-editable>
+        </template>
+        <template slot="Next Call" scope="props">
+          <date-editable :value="props.row['Next Call']" :format="'YYYY-mm-DD'" :class-name="'blue'"></date-editable>
+        </template>
+        <template slot="Call Time Start" scope="props">
+          <time-editable :value="props.row['Call Time Start']" :format="'YYYY-mm-DD'" :class-name="'blue'"></time-editable>
+        </template>
+        <template slot="Call Time End" scope="props">
+          <time-editable :value="props.row['Call Time End']" :format="'YYYY-mm-DD'" :class-name="'blue'"></time-editable>
+        </template>
+      </v-client-table>
+    </div>
     <text-editable :value="'Mykeels'"></text-editable>
     <date-editable :value="'01-20-2017'" :format="'mm-DD-YYYY'"></date-editable>
     <select-editable :values="['One', 'Two', 'Three']"></select-editable>
@@ -100,7 +102,6 @@
   import { DayOfWeek, ShortDayOfWeek } from '../helpers/day-of-week'
 
   export default {
-      name: 'CallMgmtApp',
       components: {
         'text-editable': TextEditable,
         'date-editable': DateEditable,
@@ -166,7 +167,7 @@
         },
         next() {
           if (!this.$nextPromise) {
-            return this.$nextPromise = window.axios.get(rootUrl('api/admin/calls?page=' + this.page)).then((result) => result.data).then(result => {
+            return this.$nextPromise = this.axios.get(rootUrl('api/admin/calls?page=' + this.page)).then((result) => result.data).then(result => {
                 console.log(result)
               if (result) {
                 const calls = result.data;

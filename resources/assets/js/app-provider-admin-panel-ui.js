@@ -1,42 +1,71 @@
-require('./bootstrap');
+require('./bootstrap')
+require('hammerjs')
+require('materialize-css')
+//require('../../../public/js/materialize.min')
 
-require('../../../public/js/materialize.min')
-
-window.Vue = require('vue');
-
-window.axios.defaults.baseURL = $('meta[name="base-url"]').attr('content');
-
-if (!window.axios.defaults.baseURL) {
-    console.log('Error: base url not found.')
-}
-
+import Vue from 'vue'
+import axios from './bootstrap-axios'
+import VueAxios from 'vue-axios'
 import VueForm from "vue-form";
 import store from "./store";
 
-window.Vue.config.debug = true
+if (document) {
+    const elem = document.querySelector('meta[name="base-url"]')
+    if (elem) {
+        axios.defaults.baseURL = elem.getAttribute('content');
+    }
+    else {
+        console.error('base url not found.')
+    }
+}
 
-window.Vue.use(VueForm, {
+Vue.use(VueAxios, axios)
+
+Vue.config.debug = true
+
+Vue.use(VueForm, {
     inputClasses: {
         valid: 'form-control-success',
         invalid: 'form-control-danger'
     }
 });
 
-Vue.component('v-input', require('./components/shared/materialize/input.vue'))
+import InputComponent from './components/shared/materialize/input'
+import ManagePracticeLocations from './components/pages/provider-admin-panel/manage-practice-locations'
+import ManagePracticeUsers from './components/pages/provider-admin-panel/manage-practice-staff'
+import Select2Component from './components/src/select2'
+import OpenModal from './components/shared/open-modal'
+import NotificationsComponent from './components/shared/notifications/notifications'
+import GridComponent from './components/shared/grid'
 
-Vue.component('managePracticeLocations', require('./components/pages/provider-admin-panel/manage-practice-locations.vue'));
-Vue.component('managePracticeUsers', require('./components/pages/provider-admin-panel/manage-practice-staff.vue'));
-Vue.component('select2', require('./components/src/select2'));
-Vue.component('openModal', require('./components/shared/open-modal.vue'));
-Vue.component('notifications', require('./components/shared/notifications/notifications.vue'));
-Vue.component('grid', require('./components/shared/grid.vue'));
+// Vue.component('v-input', InputComponent)
+// Vue.component('managePracticeLocations', ManagePracticeLocations)
+// Vue.component('managePracticeUsers', ManagePracticeUsers)
+// Vue.component('select2', Select2Component);
+// Vue.component('openModal', OpenModal);
+// Vue.component('notifications', NotificationsComponent);
+// Vue.component('grid', GridComponent);
 
-
-window.App = new Vue({
-    el: '#app',
+export const AppComponent = {
     store,
     components: {
-
+        'v-input': InputComponent,
+        'managePracticeLocations': ManagePracticeLocations,
+        'managePracticeUsers': ManagePracticeUsers,
+        'select2': Select2Component,
+        'openModal': OpenModal,
+        'notifications': NotificationsComponent,
+        'grid': GridComponent
     }
-});
+}
 
+const App = new Vue(Object.assign({
+    el: '#app'
+}, AppComponent))
+
+export default App
+
+if (window) {
+    window.App = App
+    window.Vue = Vue
+}
