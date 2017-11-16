@@ -1,3 +1,5 @@
+require('../../bootstrap');
+
 import Vue from 'vue'
 import VueResource from 'vue-resource'
 import { ClientTable } from 'vue-tables-2'

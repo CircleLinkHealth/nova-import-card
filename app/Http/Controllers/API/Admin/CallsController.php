@@ -316,10 +316,11 @@ class CallsController extends ApiController
 
     /**    
      *   @SWG\GET(
-     *     path="admin/calls",
+     *     path="/admin/calls",
      *     tags={"calls"},
      *     summary="Get Calls Info",
      *     description="Display a listing of calls",
+     *     @SWG\Header(header="X-Requested-With", type="String", default="XMLHttpRequest"),
      *     @SWG\Response(
      *         response="default", 
      *         description="A listing of calls"

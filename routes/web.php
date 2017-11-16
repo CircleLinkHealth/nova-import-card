@@ -106,9 +106,7 @@ Route::group(['middleware' => 'auth'], function () {
 
         Route::resource('nurses', 'API\NurseController');
 
-        Route::group(['prefix' => 'admin'], function () {
-            Route::resource('calls', 'API\Admin\CallsController');
-        });
+
     });
 
     Route::resource('profiles', 'API\ProfileController');
@@ -346,6 +344,11 @@ Route::group(['middleware' => 'auth'], function () {
             'uses' => 'ReportsController@viewPrintCareplan',
             'as'   => 'patient.careplan.print',
         ]);
+        
+        Route::get('view-careplan/assessment', [
+            'uses' => 'ReportsController@makeAssessment',
+            'as'   => 'patient.careplan.assessment',
+        ]);
 
         Route::get('approve-careplan/{viewNext?}', [
             'uses' => 'ProviderController@approveCarePlan',
@@ -507,6 +510,7 @@ Route::group(['middleware' => 'auth'], function () {
         ],
         'prefix'     => 'admin',
     ], function () {
+        Route::view('api-clients', 'admin.manage-api-clients');
 
         Route::resource('medication-groups-maps', 'MedicationGroupsMapController');
 

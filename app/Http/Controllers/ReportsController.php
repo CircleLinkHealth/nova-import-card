@@ -477,6 +477,49 @@ class ReportsController extends Controller
         return view('patient.careplan.view-pdf-careplan', compact(['patient']));
     }
 
+    public function makeAssessment(
+        Request $request,
+        $patientId = false,
+        CcdInsurancePolicyService $insurances
+    ) {
+        if (!$patientId) {
+            return "Patient Not Found..";
+        }
+        else {
+            $patient = User::find($patientId);
+
+            if (!$patient) return "Patient Not Found..";
+            if (!$patient->isCcmEligible()) return redirect()->route('patient.careplan.print', ['patientId' => $patientId]);
+
+            $careplan = $this->formatter->formatDataForViewPrintCareplanReport([$patient]);
+        
+            if (!$careplan) {
+                return 'Careplan not found...';
+            }
+
+            $showInsuranceReviewFlag = $insurances->checkPendingInsuranceApproval($patient);
+
+            return view(
+                'wpUsers.patient.careplan.assessment',
+                [
+                    'patient'                 => $patient,
+                    'problems'                => $careplan[$patientId]['problems'],
+                    'problemNames'            => $careplan[$patientId]['problem'],
+                    'biometrics'              => $careplan[$patientId]['bio_data'],
+                    'symptoms'                => $careplan[$patientId]['symptoms'],
+                    'lifestyle'               => $careplan[$patientId]['lifestyle'],
+                    'medications_monitor'     => $careplan[$patientId]['medications'],
+                    'taking_medications'      => $careplan[$patientId]['taking_meds'],
+                    'allergies'               => $careplan[$patientId]['allergies'],
+                    'social'                  => $careplan[$patientId]['social'],
+                    'appointments'            => $careplan[$patientId]['appointments'],
+                    'other'                   => $careplan[$patientId]['other'],
+                    'showInsuranceReviewFlag' => $showInsuranceReviewFlag,
+                ]
+            );
+        }
+    }
+
     public function viewPrintCareplan(
         Request $request,
         $patientId = false,

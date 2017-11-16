@@ -1,0 +1,122 @@
+[
+    {
+        "name": "risk",
+        "text": "Risk level for your patient:",
+        "required": true,
+        "options": [
+            {
+                "text": "High",
+                "value": "high"
+            },
+            {
+                "text": "Medium",
+                "value": "medium"
+            },
+            {
+                "text": "Low",
+                "value": "low"
+            },
+            {
+                "text": "Vulnerable",
+                "value": "vulnerable"
+            }
+        ]
+    },
+    {
+        "name": "risk-factors",
+        "text": "Risk Factors Present",
+        "required": true,
+        "multi": true,
+        "options": [
+            "High level of resource use / utilization",
+            "Frequest visits to urgent / emergency care",
+            "Frequent Hospitalizations",
+            "Terminal Illness",
+            "Psychosocial Issues",
+            "Advanced age with frailty"
+        ]
+    },
+    {
+        "name": "key-treatment",
+        "text": "Key Treatment Goals",
+        "required": true
+    },
+    {
+        "name": "alcohol-misuse-counseling",
+        "text": "Alcohol misuse counseling, if applicable, last done date and next due date",
+        "required": true
+    },
+    {
+        "name": "tobacco-misuse-counseling",
+        "text": "Tobacco misuse counseling, if applicable, last done date and next due date",
+        "required": true
+    },
+    {
+        "name": "diabetes-screening-risk",
+        "text": "(1/3) Diabetes screening, patient is at risk based on",
+        "required": true,
+        "multi": true,
+        "options": [
+            "Family History",
+            "Gestational Diabetes History",
+            "PCOS",
+            "Overweight",
+            "Obese",
+            {
+                "text": "Other",
+                "editable": true
+            }
+        ]
+    },
+    {
+        "name": "diabetes-screening-interval",
+        "text": "(2/4) Diabetes Screening to be done:",
+        "required": true,
+        "options": [
+            "Every 12 months",
+            "Every 6 months",
+            "Not applicable",
+            {
+                "text": "Other",
+                "editable": true
+            }
+        ]
+    },
+    {
+        "name": "diabetes-screening-last-and-next-date",
+        "text": "(3/3) Diabetes screening: Last date and next screening due date",
+        "required": true
+    },
+    {
+        "name": "eye-screening-last-and-next-date",
+        "text": "Eye Exam / Glaucoma Screening last date performed and next date due",
+        "required": true
+    },
+    {
+        "name": "patient-functional-assistance-areas",
+        "text": "Functional needs / areas where patient needs assistance:",
+        "required": true,
+        "multi": true,
+        "options": [
+            "Bathing",
+            "Grooming / Personal Hygiene",
+            "Eating",
+            "Mobility",
+            "Needs Walker?",
+            "Needs Wheelchair?"
+        ]
+    },
+    {
+        "name": "patient-psychosocial-areas-to-watch",
+        "text": "Patient Psychosocial Areas to Watch:",
+        "required": true,
+        "multi": true,
+        "options": [
+            "Patient does NOT have a good understanding of his / her illness",
+            "Impaired abilities to perform work duties",
+            "Financial issues of concern",
+            "Patient lacks transport and does not have ability to use public transport family of other transport help",
+            "Lack of sufficient social support"
+        ]
+    }
+]

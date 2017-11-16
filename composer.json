@@ -35,6 +35,7 @@
         "jeremykenedy/slack-laravel": "^2.2",
         "laracasts/utilities": "~2.0",
         "laravel/framework": "5.5.*",
+        "laravel/passport": "^4.0",
         "laravel/tinker": "^1.0",
         "laravelcollective/html": "5.5.*",
         "league/fractal": "0.12.*",

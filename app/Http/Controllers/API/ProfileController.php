@@ -9,7 +9,7 @@ class ProfileController extends ApiController
 {
     /**
      *   @SWG\GET(
-     *     path="profile",
+     *     path="/profile",
      *     tags={"user"},
      *     summary="Get User Info",
      *     description="Get Basic User Information",
