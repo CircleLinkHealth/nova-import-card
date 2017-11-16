@@ -9,15 +9,15 @@ Vue.config.productionTip = false
 
 var TimeTrackerApp = new Vue({
   el: '#time-tracker',
-  template: '<time-tracker :info="info"></time-tracker>',
+  template: '<time-tracker :info="timeTrackerInfo"></time-tracker>',
   data: {
-    info: window.pageInfo || {}
+    timeTrackerInfo: window.timeTrackerInfo || {}
   },
   components: { 
     'time-tracker': TimeTracker
   },
   mounted() {
-      if (Object.keys(this.info).length === 0) {
+      if (Object.keys(this.timeTrackerInfo).length === 0) {
           throw new Error("Time-Tracker: Info Object should have values");
       }
   }

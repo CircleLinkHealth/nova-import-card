@@ -42,28 +42,39 @@ import ProblemsList from './ccd-models/problems'
 import AllergiesList from './ccd-models/allergies'
 import NurseDailyHours from './components/pages/work-schedule/daily-hours'
 import QuestionnaireApp from './admin/questionnaire/app'
+import TimeTracker from './admin/time-tracker'
+
+import EventBus from './admin/time-tracker/comps/event-bus'
+import { BindWindowFocusChange, BindWindowVisibilityChange } from './admin/time-tracker/events/window.event'
 
 Vue.component('component-proxy', ComponentProxy)
-Vue.component('careTeam', CareTeamComponent);
-Vue.component('createAppointmentsAddCarePerson', CreateAppointmentsAddCarePerson);
-Vue.component('createCarePerson', CreateCarePerson);
-Vue.component('updateCarePerson', UpdateCarePerson);
-Vue.component('select2', Select2Component);
-Vue.component('fab', FabComponent);
-Vue.component('openModal', OpenModalComponent);
-Vue.component('notifications', NotificationsComponent);
-Vue.component('pdfCareplans', PdfCarePlans);
-Vue.component('medicationsList', MedicationsListComponent);
-Vue.component('problemsList', ProblemsList);
-Vue.component('allergiesList', AllergiesList);
-Vue.component('nurseDailyHours', NurseDailyHours);
-Vue.component('questionnaire-app', QuestionnaireApp);
+Vue.component('careTeam', CareTeamComponent)
+Vue.component('createAppointmentsAddCarePerson', CreateAppointmentsAddCarePerson)
+Vue.component('createCarePerson', CreateCarePerson)
+Vue.component('updateCarePerson', UpdateCarePerson)
+Vue.component('select2', Select2Component)
+Vue.component('fab', FabComponent)
+Vue.component('openModal', OpenModalComponent)
+Vue.component('notifications', NotificationsComponent)
+Vue.component('pdfCareplans', PdfCarePlans)
+Vue.component('medicationsList', MedicationsListComponent)
+Vue.component('problemsList', ProblemsList)
+Vue.component('allergiesList', AllergiesList)
+Vue.component('nurseDailyHours', NurseDailyHours)
+Vue.component('questionnaire-app', QuestionnaireApp)
+Vue.component('time-tracker', TimeTracker)
 
 const App = new Vue({
     el: '#app',
     store,
     data: {
-        questions: window.questions || []
+        questions: window.questions || [],
+        timeTrackerInfo: window.timeTrackerInfo || {}
+    },
+    mounted() {
+        if (Object.keys(this.timeTrackerInfo).length === 0) {
+            console.error("Time-Tracker: Info Object should have values");
+        }
     }
 })
 
@@ -73,3 +84,6 @@ if (window) {
     window.App = App
     window.Vue = Vue
 }
+
+BindWindowFocusChange(window)
+BindWindowVisibilityChange(window, document)

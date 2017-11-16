@@ -110,11 +110,13 @@
     <script src='https://cdn.polyfill.io/v2/polyfill.min.js'></script>
 @endif
 
+@include('partials.providerUItimer')
+@stack('prescripts')
+
 <script type="text/javascript" src="{{asset('compiled/js/app-provider-ui.js')}}"></script>
 <script type="text/javascript" src="{{ asset('compiled/js/issue-688.js') }}"></script>
 
 @include('partials.searchjs')
-@include('partials.providerUItimer')
 
 @stack('scripts')
 <script>
