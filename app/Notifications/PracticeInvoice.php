@@ -2,33 +2,50 @@
 
 namespace App\Notifications;
 
-use App\Mail\NurseDailyReport as NurseDailyReportMailable;
+
+use App\Mail\PracticeInvoice as PracticeInvoiceMailable;
 use App\User;
 use Illuminate\Bus\Queueable;
 use Illuminate\Notifications\Notification;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Messages\MailMessage;
 
-class NurseDailyReport extends Notification
+class PracticeInvoice extends Notification
 {
     use Queueable;
 
+
     /**
-     * The data passed to the view
+     * The link passed to the view
      *
-     * For an example @see: EmailRNDailyReport, method handle
-     * @var array
+     * For an example @see: PracticeInvoiceController, method send
+     *
      */
-    protected $data;
+    protected $invoiceLink;
+
+
+
+    /**
+     * The attachment to the Mailable
+     *
+     * For an example @see: PracticeInvoiceController, method send
+     *
+     */
+    protected $filePath;
+
 
     /**
      * Create a new notification instance.
      *
-     * @return void
+     * @param $invoiceLink
+     * @param $filePath
      */
-    public function __construct(array $data)
+    public function __construct($invoiceLink, $filePath)
     {
-        $this->data = $data;
+        $this->invoiceLink = $invoiceLink;
+
+        $this->filePath = $filePath;
+
     }
 
     /**
@@ -48,12 +65,12 @@ class NurseDailyReport extends Notification
     /**
      * Get the mail representation of the notification.
      *
-     * @param  User $notifiable
-     * @return \Illuminate\Notifications\Messages\MailMessage
+     * @param  mixed  $notifiable
+     * @return PracticeInvoiceMailable
      */
     public function toMail(User $notifiable)
     {
-        return new NurseDailyReportMailable($notifiable, $this->data);
+        return (new PracticeInvoiceMailable($notifiable, $this->invoiceLink, $this->filePath));
     }
 
     /**
@@ -73,7 +90,7 @@ class NurseDailyReport extends Notification
     {
         return
             [
-            'data' => $this->data,
+                'invoiceLink' => $this->invoiceLink,
             ];
     }
 }

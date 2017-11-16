@@ -2,29 +2,24 @@
 
 namespace App\Notifications;
 
-use App\Mail\NurseDailyReport as NurseDailyReportMailable;
+use App\Mail\WeeklyProviderReport as WeeklyProviderReportMailable;
 use App\User;
 use Illuminate\Bus\Queueable;
 use Illuminate\Notifications\Notification;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Messages\MailMessage;
 
-class NurseDailyReport extends Notification
+class WeeklyProviderReport extends Notification
 {
     use Queueable;
 
-    /**
-     * The data passed to the view
-     *
-     * For an example @see: EmailRNDailyReport, method handle
-     * @var array
-     */
     protected $data;
+
 
     /**
      * Create a new notification instance.
      *
-     * @return void
+     * @param array $data
      */
     public function __construct(array $data)
     {
@@ -48,12 +43,12 @@ class NurseDailyReport extends Notification
     /**
      * Get the mail representation of the notification.
      *
-     * @param  User $notifiable
-     * @return \Illuminate\Notifications\Messages\MailMessage
+     * @param  mixed  $notifiable
+     * @return WeeklyProviderReportMailable
      */
-    public function toMail(User $notifiable)
+    public function toMail($notifiable)
     {
-        return new NurseDailyReportMailable($notifiable, $this->data);
+        return new WeeklyProviderReportMailable($notifiable, $this->data);
     }
 
     /**
@@ -73,7 +68,7 @@ class NurseDailyReport extends Notification
     {
         return
             [
-            'data' => $this->data,
+                'data' => $this->data,
             ];
     }
 }
