@@ -102,6 +102,7 @@
   import { DayOfWeek, ShortDayOfWeek } from '../helpers/day-of-week'
 
   export default {
+      name: 'CallMgmtApp',
       components: {
         'text-editable': TextEditable,
         'date-editable': DateEditable,

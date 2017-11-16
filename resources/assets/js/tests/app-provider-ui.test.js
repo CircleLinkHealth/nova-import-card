@@ -1,7 +1,7 @@
 import { mount } from 'vue-test-utils'
-import App from '../app-clh-admin-ui'
+import App from '../app-provider-ui'
 
-describe('App-CLH-Admin-UI', () => {
+describe('App-Provider-UI', () => {
     it('builds successfully', () => {
         
     })

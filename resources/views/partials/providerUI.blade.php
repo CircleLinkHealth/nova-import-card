@@ -50,7 +50,6 @@
         <link rel="stylesheet" href="{{ asset('/webix/codebase/webix.css') }}" type="text/css">
 
         <link href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.3/css/select2.min.css" rel="stylesheet"/>
-        @stack('styles')
     @endif
     <style>
         span.twitter-typeahead .twitter-typeahead {

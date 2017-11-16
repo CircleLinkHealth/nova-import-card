@@ -38,30 +38,18 @@ import OpenModal from './components/shared/open-modal'
 import NotificationsComponent from './components/shared/notifications/notifications'
 import GridComponent from './components/shared/grid'
 
-// Vue.component('v-input', InputComponent)
-// Vue.component('managePracticeLocations', ManagePracticeLocations)
-// Vue.component('managePracticeUsers', ManagePracticeUsers)
-// Vue.component('select2', Select2Component);
-// Vue.component('openModal', OpenModal);
-// Vue.component('notifications', NotificationsComponent);
-// Vue.component('grid', GridComponent);
+Vue.component('v-input', InputComponent)
+Vue.component('managePracticeLocations', ManagePracticeLocations)
+Vue.component('managePracticeUsers', ManagePracticeUsers)
+Vue.component('select2', Select2Component);
+Vue.component('openModal', OpenModal);
+Vue.component('notifications', NotificationsComponent);
+Vue.component('grid', GridComponent);
 
-export const AppComponent = {
-    store,
-    components: {
-        'v-input': InputComponent,
-        'managePracticeLocations': ManagePracticeLocations,
-        'managePracticeUsers': ManagePracticeUsers,
-        'select2': Select2Component,
-        'openModal': OpenModal,
-        'notifications': NotificationsComponent,
-        'grid': GridComponent
-    }
-}
-
-const App = new Vue(Object.assign({
-    el: '#app'
-}, AppComponent))
+const App = new Vue({
+    el: '#app',
+    store
+})
 
 export default App
 

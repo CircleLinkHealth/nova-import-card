@@ -46,17 +46,10 @@ Vue.component('passport-clients', PassportClientsComponent)
 Vue.component('passport-authorized-clients', PassportAuthorizedClientsComponent)
 Vue.component('passport-personal-access-tokens', PassportPersonalAccessTokensComponent)
 
-export const AppComponent = {
-    store
-}
-
-const App = new Vue(Object.assign({
+const App = new Vue({
     el: '#app',
-    data: {},
-    components: {
-        'call-mgmt-app': CallMgmtApp
-    }
-}, AppComponent))
+    store
+})
 
 export default App
 
