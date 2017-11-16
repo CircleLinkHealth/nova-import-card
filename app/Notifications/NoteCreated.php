@@ -4,7 +4,9 @@ namespace App\Notifications;
 
 use App\Channels\DirectMailChannel;
 use App\Channels\FaxChannel;
+use App\Location;
 use App\Note;
+use App\Traits\NotificationChannels;
 use Illuminate\Bus\Queueable;
 use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
@@ -12,8 +14,8 @@ use Illuminate\Notifications\Notification;
 class NoteCreated extends Notification
 {
     use Queueable;
+
     protected $note;
-    protected $channels = ['database'];
 
     /**
      * Create a new notification instance.
@@ -23,41 +25,6 @@ class NoteCreated extends Notification
     public function __construct(Note $note)
     {
         $this->note = $note;
-
-        $this->setChannels();
-
-        //If there's only one channel, it means the practice has chosen not to receive notifications
-        if (count($this->channels) == 1) {
-            return false;
-        }
-    }
-
-    /**
-     * Set the channels from the practice's settings
-     */
-    public function setChannels()
-    {
-        $settings = $this->note->patient->primaryPractice->cpmSettings();
-
-        foreach ($this->settingsChannelMap() as $key => $channel) {
-            if ($settings->{$key}) {
-                $this->channels[] = $channel;
-            }
-        }
-    }
-
-    /**
-     * Channels map
-     *
-     * @return array
-     */
-    public function settingsChannelMap()
-    {
-        return [
-            'email_note_was_forwarded' => 'mail',
-            'efax_pdf_notes'           => FaxChannel::class,
-            'dm_pdf_notes'             => DirectMailChannel::class,
-        ];
     }
 
     /**
@@ -69,7 +36,7 @@ class NoteCreated extends Notification
      */
     public function via($notifiable)
     {
-        return $this->channels;
+        return ['mail', 'database'];
     }
 
     /**
@@ -97,9 +64,9 @@ class NoteCreated extends Notification
                 'chelsea@circlelinkhealth.com',
                 'sheller@circlelinkhealth.com',
             ]);
-
-
     }
+
+
 
     /**
      * Get the body of the email
@@ -142,10 +109,8 @@ class NoteCreated extends Notification
             'receiver_email'  => $notifiable->email,
             'body'            => $this->getBody(),
             'subject'         => $this->getSubject(),
-            'type'            => 'note',
             'sender_cpm_id'   => auth()->user()->id,
             'receiver_cpm_id' => $notifiable->id,
-            'created_at'      => $this->note->created_at,
             'note_id'         => $this->note->id,
         ];
     }
