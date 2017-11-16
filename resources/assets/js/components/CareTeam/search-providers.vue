@@ -40,7 +40,7 @@
 
                 let url = this.getSearchUrl + '?firstName=' + this.first_name + '&lastName=' + this.last_name;
 
-                window.axios.get(url).then(function (response) {
+                this.axios.get(url).then(function (response) {
                     self.matchedUsers = response.data.results;
                 }, function (response) {
                     //error

@@ -27,8 +27,10 @@
             },
             'class-name': String
         },
-        methods: {
-
+        mounted() {
+            if (!this.questions || !Array.isArray(this.questions)) {
+                throw new Error('[questions] prop value must be an array')
+            }
         }
     }
 </script>

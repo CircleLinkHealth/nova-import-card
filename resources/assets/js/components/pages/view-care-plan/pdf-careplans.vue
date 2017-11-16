@@ -21,7 +21,7 @@
 
         created() {
             this.getPatientCarePlan(this.patientId)
-            this.apiUrl = window.axios.defaults.baseURL + '/care-plans/' + this.patientCareplanId + '/pdfs'
+            this.apiUrl = this.axios.defaults.baseURL + '/care-plans/' + this.patientCareplanId + '/pdfs'
         },
 
         data() {
@@ -125,7 +125,7 @@
         <div class="row" v-if="patientCarePlan.mode == 'pdf'">
             <div class="col-md-6">
                 <ul class="list-group">
-                    <li v-for="(pdf, index) in patientCarePlan.pdfs" class="list-group-item pdf-careplan">
+                    <li v-for="(pdf, index) in patientCarePlan.pdfs" :key="index" class="list-group-item pdf-careplan">
                         <a :href="pdf.url" target="_blank">{{pdf.label}} </a>
                         <button @click="deletePdf(pdf)" class="btn btn-xs btn-danger problem-delete-btn"><span><i
                                 class="glyphicon glyphicon-remove"></i></span></button>

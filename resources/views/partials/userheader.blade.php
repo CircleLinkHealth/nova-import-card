@@ -82,7 +82,7 @@ $location = empty($patient->getPreferredLocationName())
 
                 <span style="font-size: 27px;{{$ccm_above ? 'color: #47beab;' : ''}}">
                     <span data-monthly-time="{{$monthlyTime}}" style="color: inherit" data-href="{{ empty($patient->id) ? URL::route('patients.search') : URL::route('patient.activity.providerUIIndex', array('patient' => $patient->id)) }}">
-                        <span id="time-tracker">{{$monthlyTime}}</span>
+                        <time-tracker :info="timeTrackerInfo">{{$monthlyTime}}</time-tracker>
                     </span>
                 </span>
                 <span style="font-size:15px"></span><br/>

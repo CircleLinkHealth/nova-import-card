@@ -5,7 +5,7 @@
             <th v-for="(col, index) in columns"
                 v-if="col.name"
                 @click="sortBy(index)"
-                :class="sortKey == index ? 'active th-' + index : 'th-' + index">
+                :class="sortKey == index ? 'active th-' + index : 'th-' + index" :key="index">
                 {{ col.name | capitalize }}
                 <span class="arrow" :class="sortOrders[index] > 0 ? 'asc' : 'dsc'"></span>
             </th>
@@ -13,8 +13,8 @@
         </tr>
         </thead>
         <tbody>
-        <tr v-for="(entry, entryIndex) in filteredData">
-            <td v-for="(col, index) in columns" @click="$emit('click', index, entry, entryIndex)" :class="'td-' + index">
+        <tr v-for="(entry, entryIndex) in filteredData" :key="entryIndex">
+            <td v-for="(col, index) in columns" @click="$emit('click', index, entry, entryIndex)" :class="'td-' + index" :key="index">
                 <div v-if="col.content" v-html="col.content"></div>
                 <div v-else>{{entry[index]}}</div>
             </td>

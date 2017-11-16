@@ -9,7 +9,7 @@
     "prod": "bower install && npm run production",
     "production": "cross-env NODE_ENV=production node_modules/webpack/bin/webpack.js --progress --hide-modules --config=node_modules/laravel-mix/setup/webpack.config.js",
     "service-worker": "node_modules/webpack/bin/webpack.js --config sw.config.js",
-    "test": "jest --verbose"
+    "test": "jest --verbose --watch"
   },
   "jest": {
     "verbose": true,
@@ -44,9 +44,9 @@
     "moment": "^2.19.1",
     "select2": "^4.0.3",
     "vue": "^2.4.1",
+    "vue-axios": "^2.0.2",
     "vue-form": "^4.4.1",
     "vue-mdl": "^1.1.1",
-    "vue-resource": "^1.3.4",
     "vue-tables-2": "^0.6.84",
     "vue2-dropzone": "^2.3.5",
     "vuejs-paginator": "^2.0.2",
@@ -54,10 +54,10 @@
     "webpack": "3.5.5"
   },
   "devDependencies": {
+    "axios-mock-adapter": "^1.10.0",
     "babel-jest": "^21.2.0",
     "jest": "^21.2.1",
     "jest-vue-preprocessor": "^1.3.1",
-    "vue-resource-mock": "0.0.6",
     "vue-test-utils": "^1.0.0-beta.4",
     "workbox-webpack-plugin": "^2.1.0"
   }

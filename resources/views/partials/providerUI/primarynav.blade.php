@@ -19,7 +19,7 @@
             <ul class="nav navbar-nav">
                 <li style="padding-top: 15px; padding-bottom: 15px; line-height: 20px">
                     @if (!isset($patient))
-                        <span id="time-tracker"></span>
+                        <time-tracker :info="timeTrackerInfo"></time-tracker>
                     @endif
                 </li>
                 {{--URL::route('patients.dashboard', array())--}}

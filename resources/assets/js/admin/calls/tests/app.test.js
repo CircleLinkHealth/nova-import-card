@@ -1,6 +1,7 @@
 import Vue from 'vue'
-import VueResource from 'vue-resource'
-import VueResourceMock from 'vue-resource-mock'
+import axios from 'axios'
+import VueAxios from 'vue-axios'
+import MockAdapter from 'axios-mock-adapter'
 import { mount } from 'vue-test-utils'
 import CallMgmtApp from '../app.vue'
 import TextEditable from '../comps/text-editable'
@@ -8,28 +9,21 @@ import DateEditable from '../comps/date-editable'
 import SelectEditable from '../comps/select-editable'
 import TimeEditable from '../comps/time-editable'
 
-const adminCallsMock = {
-    ['GET /api/admin/calls?page=1'] (pathMatch, query, request) {
-        let body = {
-            data: {
-                data: []
-            }
-        }
-        return {
-            body: body,
-            status: 200,
-            statusText: 'OK',
-            headers: {
+Vue.use(VueAxios, axios)
 
-            },
-            delay: 500
-        }
+const mock = new MockAdapter(axios)
+
+mock.onGet('/api/admin/calls', { 
+    params: {
+        page: 1
     }
-}
+ }).reply(200, {
+    data: {
+        data: []
+    }
+})
 
 describe('CallMgmtApp', () => {
-    Vue.use(VueResource)
-    Vue.use(VueResourceMock, adminCallsMock)
     
     const comp = mount(CallMgmtApp)
 
@@ -43,5 +37,11 @@ describe('CallMgmtApp', () => {
 
     it('contains a TextEditable component', () => {
         expect(comp.contains(TextEditable)).toBe(true)
+    })
+})
+
+describe('CallMgmtApp-Main', () => {
+    it('builds successfully', () => {
+        const MainApp = require('../main')
     })
 })

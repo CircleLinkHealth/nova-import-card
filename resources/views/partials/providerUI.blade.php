@@ -50,7 +50,6 @@
         <link rel="stylesheet" href="{{ asset('/webix/codebase/webix.css') }}" type="text/css">
 
         <link href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.3/css/select2.min.css" rel="stylesheet"/>
-        @stack('styles')
     @endif
     <style>
         span.twitter-typeahead .twitter-typeahead {
@@ -111,11 +110,13 @@
     <script src='https://cdn.polyfill.io/v2/polyfill.min.js'></script>
 @endif
 
+@include('partials.providerUItimer')
+@stack('prescripts')
+
 <script type="text/javascript" src="{{asset('compiled/js/app-provider-ui.js')}}"></script>
 <script type="text/javascript" src="{{ asset('compiled/js/issue-688.js') }}"></script>
 
 @include('partials.searchjs')
-@include('partials.providerUItimer')
 
 @stack('scripts')
 <script>

@@ -62,6 +62,9 @@
                                     <div class="text-right">
                                         <input type="button" name="skip" class="btn btn-warning font-24" value="Skip">
                                     </div>
+                                    <div>
+                                        <questionnaire-app :questions="questions" class-name="questionnaire"></questionnaire-app>
+                                    </div>
                                     <div id="questionnaire-app"></div>
                                     <button class="btn btn-success font-24">Submit</button>
                                 </form>
@@ -73,7 +76,7 @@
             </div>
         </section>
     </div>
-    @push('scripts')
+    @push('styles')
         <script type="application/json" id="questions-script">
             <?php 
                 include app_path() . '/../public/data/ccm-eligibility-questions.json';
@@ -82,7 +85,9 @@
         <script>
             var questions = JSON.parse(document.getElementById('questions-script').innerHTML);
         </script>
-        <script src="{{asset('compiled/js/v-questionnaire.min.js')}}"></script>
+    @endpush
+    @push('scripts')
+        
         <script>
             (function ($) {
                 $.fn.serializeObject = function () {
@@ -113,6 +118,9 @@
                         cancelText: 'Go Back',
                         neverShow: true
                     }).then(function (obj) {
+                        if (obj.action) {
+                            location.href = "{{asset('manage-patients/' . $patient->id . '/view-careplan?skippedAssessment')}}"
+                        }
                         console.log(obj)
                     })
                 })

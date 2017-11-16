@@ -1,6 +1,6 @@
 <template>
     <ul class="col-xs-12">
-        <li v-for="carePerson in patientCareTeam" class="col-xs-12">
+        <li v-for="(carePerson, index) in patientCareTeam" :key="index" class="col-xs-12">
             <div class="col-md-7">
                 <p style="margin-left: -10px;">
                     <strong>{{carePerson.formatted_type}}: </strong>{{fullName(carePerson)}}<em>{{carePerson.user.primaryRole}}</em>

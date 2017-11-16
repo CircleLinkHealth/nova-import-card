@@ -19,7 +19,7 @@
         },
 
         data() {
-            window.axios.get('api/practices/all')
+            this.axios.get('api/practices/all')
                 .then((response) => {
                     this.practices = response.data
                 })
@@ -71,21 +71,21 @@
             <h3>Select <b>Practice</b></h3>
 
             <select2 v-model="practice" class="col-md-12" name="practiceId">
-                <option v-for="p in practices" :value="p.id">{{ p.display_name }}</option>
+                <option v-for="p in practices" :key="p.id" :value="p.id">{{ p.display_name }}</option>
             </select2>
         </div>
         <div class="col-md-4 left-border">
             <h3>Select <b>Location</b></h3>
 
             <select v-model="location" class="col-md-12" name="locationId">
-                <option v-for="l in locations" :value="l.id">{{ l.name }}</option>
+                <option v-for="l in locations" :key="l.id" :value="l.id">{{ l.name }}</option>
             </select>
         </div>
         <div class="col-md-4 left-border">
             <h3>Select <b>Billing Provider</b></h3>
 
             <select v-model="billingProvider" class="col-md-12" name="billingProviderId">
-                <option v-for="prov in providers"
+                <option v-for="prov in providers" :key="prov.id"
                         :value="prov.id">{{ prov.first_name }} {{ prov.last_name }}</option>
             </select>
         </div>

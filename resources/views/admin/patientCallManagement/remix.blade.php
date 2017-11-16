@@ -57,8 +57,8 @@
                                 @include('errors.errors')
                                 @include('errors.messages')
                             </div>
-                            <div id="call-mgmt-app">
-
+                            <div>
+                                <call-mgmt-app ref="callMgmtApp"></call-mgmt-app>
                             </div>
                         </div>
                     </div>
@@ -70,5 +70,5 @@
 @endsection
 
 @push('scripts')
-    <script src="{{ asset('compiled/js/v-call-mgmt.min.js') }}"></script>
+    <!--<script src="{{ asset('compiled/js/v-call-mgmt.min.js') }}"></script>-->
 @endpush
