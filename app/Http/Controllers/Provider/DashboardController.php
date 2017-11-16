@@ -74,7 +74,7 @@ class DashboardController extends Controller
 
     public function getCreateNotifications()
     {
-        $invoiceRecipients = $this->primaryPractice->getInvoiceRecipients('string');
+        $invoiceRecipients = $this->primaryPractice->getInvoiceRecipients()->pluck('email')->implode(',');
 
         return view('provider.notifications.create', array_merge([
             'practice'          => $this->primaryPractice,

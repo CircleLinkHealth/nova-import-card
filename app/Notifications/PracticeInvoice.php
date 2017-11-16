@@ -7,8 +7,6 @@ use App\Mail\PracticeInvoice as PracticeInvoiceMailable;
 use App\User;
 use Illuminate\Bus\Queueable;
 use Illuminate\Notifications\Notification;
-use Illuminate\Contracts\Queue\ShouldQueue;
-use Illuminate\Notifications\Messages\MailMessage;
 
 class PracticeInvoice extends Notification
 {
@@ -22,7 +20,6 @@ class PracticeInvoice extends Notification
      *
      */
     protected $invoiceLink;
-
 
 
     /**
@@ -51,7 +48,8 @@ class PracticeInvoice extends Notification
     /**
      * Get the notification's delivery channels.
      *
-     * @param  mixed  $notifiable
+     * @param  mixed $notifiable
+     *
      * @return array
      */
     public function via($notifiable)
@@ -59,24 +57,27 @@ class PracticeInvoice extends Notification
         return [
             'mail',
             'database',
-            ];
+        ];
     }
 
     /**
      * Get the mail representation of the notification.
      *
-     * @param  mixed  $notifiable
+     * @param  mixed $notifiable
+     *
      * @return PracticeInvoiceMailable
      */
     public function toMail(User $notifiable)
     {
-        return (new PracticeInvoiceMailable($notifiable, $this->invoiceLink, $this->filePath));
+        return (new PracticeInvoiceMailable($this->invoiceLink, $this->filePath))
+            ->to($notifiable->email);
     }
 
     /**
      * Get the array representation of the notification.
      *
-     * @param  mixed  $notifiable
+     * @param  mixed $notifiable
+     *
      * @return array
      */
     public function toArray($notifiable)

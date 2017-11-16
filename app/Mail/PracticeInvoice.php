@@ -42,9 +42,8 @@ class PracticeInvoice extends Mailable
      *
      * @return void
      */
-    public function __construct(User $recipient, $invoiceLink, $filePath)
+    public function __construct($invoiceLink, $filePath)
     {
-        $this->recipient = $recipient;
         $this->invoiceLink = $invoiceLink;
 
         if (!file_exists($filePath)) {
@@ -61,10 +60,9 @@ class PracticeInvoice extends Mailable
     public function build()
     {
         return $this->view('billing.practice.mail')
-            ->with($this->invoiceLink)
-            ->to($this->recipient->email)
+            ->with(['link' => $this->invoiceLink])
             ->from('billing@circlelinkhealth.com', 'CircleLink Health')
             ->subject('Your Invoice and Billing Report from CircleLink')
-            ->$this->attach($this->filePath);
+            ->attach($this->filePath);
     }
 }

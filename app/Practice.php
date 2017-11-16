@@ -107,15 +107,9 @@ class Practice extends \App\BaseModel
         return $providers;
     }
 
-    public function getInvoiceRecipients($return = 'collection')
+    public function getInvoiceRecipients()
     {
-        $emails = $this->users()->where('send_billing_reports', '=', true)->pluck('email');
-
-        if ($return == 'string') {
-            return $emails->implode(', ');
-        }
-
-        return $emails;
+        return $this->users()->where('send_billing_reports', '=', true)->get();
     }
 
     public function users()

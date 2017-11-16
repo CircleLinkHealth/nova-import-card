@@ -2,12 +2,9 @@
 
 namespace App\Notifications;
 
-use App\User;
 use App\Mail\SalesPracticeReport as SalesPracticeReportMailable;
 use Illuminate\Bus\Queueable;
 use Illuminate\Notifications\Notification;
-use Illuminate\Contracts\Queue\ShouldQueue;
-use Illuminate\Notifications\Messages\MailMessage;
 
 class SalesPracticeReport extends Notification
 {
@@ -26,14 +23,15 @@ class SalesPracticeReport extends Notification
      */
     public function __construct(array $data, $recipientEmail)
     {
-        $this->data = $data;
+        $this->data           = $data;
         $this->recipientEmail = $recipientEmail;
     }
 
     /**
      * Get the notification's delivery channels.
      *
-     * @param  mixed  $notifiable
+     * @param  mixed $notifiable
+     *
      * @return array
      */
     public function via($notifiable)
@@ -41,24 +39,26 @@ class SalesPracticeReport extends Notification
         return [
             'mail',
             'database',
-            ];
+        ];
     }
 
     /**
      * Get the mail representation of the notification.
      *
-     * @param  mixed  $notifiable
-     * @return \Illuminate\Notifications\Messages\MailMessage
+     * @param  mixed $notifiable
+     *
+     * @return SalesPracticeReportMailable
      */
     public function toMail($notifiable)
     {
-        return (new SalesPracticeReportMailable($notifiable, $this->data, $this->recipientEmail ));
+        return new SalesPracticeReportMailable($notifiable, $this->data, $this->recipientEmail);
     }
 
     /**
      * Get the array representation of the notification.
      *
-     * @param  mixed  $notifiable
+     * @param  mixed $notifiable
+     *
      * @return array
      */
     public function toArray($notifiable)

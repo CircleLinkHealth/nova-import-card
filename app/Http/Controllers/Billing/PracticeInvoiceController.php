@@ -54,7 +54,7 @@ class PracticeInvoiceController extends Controller
         $practice
     ) {
 
-        $date = Carbon::parse($date);
+        $date     = Carbon::parse($date);
         $practice = Practice::find($practice);
 
         return PatientMonthlySummary::getPatientQACountForPracticeForMonth($practice, $date);
@@ -139,7 +139,7 @@ class PracticeInvoiceController extends Controller
     public function createInvoices()
     {
 
-        $practices = Practice::active()->get();
+        $practices    = Practice::active()->get();
         $currentMonth = Carbon::now()->firstOfMonth()->toDateString();
 
         $dates = [];
@@ -151,8 +151,8 @@ class PracticeInvoiceController extends Controller
         }
 
         $readyToBill = [];
-        $needsQA = [];
-        $invoice_no = AppConfig::where('config_key', 'billing_invoice_count')->first()['config_value'];
+        $needsQA     = [];
+        $invoice_no  = AppConfig::where('config_key', 'billing_invoice_count')->first()['config_value'];
 
         $readyToBill = $practices;
 
@@ -214,7 +214,7 @@ class PracticeInvoiceController extends Controller
 
         $report = PatientMonthlySummary::find($input['report_id']);
 
-        $key = $input['problem_no'];
+        $key     = $input['problem_no'];
         $codeKey = $input['problem_no'] . '_code';
 
         if ($input['has_problem'] == 1) {
@@ -257,7 +257,7 @@ class PracticeInvoiceController extends Controller
     public function counts(Request $request)
     {
 
-        $date = Carbon::parse($request['date']);
+        $date     = Carbon::parse($request['date']);
         $practice = Practice::find($request['practice_id']);
 
         $counts = PatientMonthlySummary::getPatientQACountForPracticeForMonth($practice, $date);
@@ -269,7 +269,7 @@ class PracticeInvoiceController extends Controller
         $practice,
         $name
     ) {
-        if (!auth()->user()->practice((int) $practice)) {
+        if ( ! auth()->user()->practice((int)$practice)) {
             return abort(403, 'Unauthorized action.');
         }
 
@@ -291,7 +291,7 @@ class PracticeInvoiceController extends Controller
             $data = (array)$value;
 
             $patientReport = $data['Patient Report'];
-            $invoice = $data['Invoice'];
+            $invoice       = $data['Invoice'];
 
             $invoiceLink = route(
                 'monthly.billing.download',
@@ -301,24 +301,22 @@ class PracticeInvoiceController extends Controller
                 ]
             );
 
-
-            if ($practice->invoice_recipients != '') {
-                $recipients = explode(', ', $practice->invoice_recipients);
-
-                $recipients = array_merge($recipients, $practice->getInvoiceRecipients()->toArray());
-            } else {
-                $recipients = $practice->getInvoiceRecipients();
-            }
+            $recipients = $practice->getInvoiceRecipients();
+            $filePath   = storage_path('/download/' . $invoice);
 
             if (count($recipients) > 0) {
                 foreach ($recipients as $recipient) {
-
-
-                    $filePath = storage_path('/download/' . $invoice);
-
                     $recipient->notify(new PracticeInvoice($invoiceLink, $filePath));
+                    $logger .= "Sent report for $practice->name to $recipient->email <br />";
+                }
+            }
 
-                    $logger .= "Sent report for $practice->name to $recipient <br />";
+            if ($practice->invoice_recipients != '') {
+                $recipientEmails = explode(', ', $practice->invoice_recipients);
+
+                foreach ($recipientEmails as $recipientEmail) {
+                    \Mail:: to($recipientEmail)->send(new \App\Mail\PracticeInvoice($invoiceLink, $filePath));
+                    $logger .= "Sent report for $practice->name to $recipientEmail <br />";
                 }
             } else {
                 $logger .= "No recipients setup for $practice->name...";
