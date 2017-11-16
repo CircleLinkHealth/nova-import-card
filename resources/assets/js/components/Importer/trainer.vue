@@ -19,7 +19,7 @@
         },
 
         data() {
-            window.axios.get('api/practices/all')
+            this.axios.get('api/practices/all')
                 .then((response) => {
                     this.practices = response.data
                 })

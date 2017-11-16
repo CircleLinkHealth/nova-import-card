@@ -25,7 +25,7 @@
                     }
                 };
 
-                window.axios.get('/CCDModels/Items/ProblemsItem', params).then(function (response) {
+                this.axios.get('/CCDModels/Items/ProblemsItem', params).then(function (response) {
                     self.problems = response.data;
                 }, function (response) {
                     console.log(response);
@@ -40,7 +40,7 @@
                         'problem': this.problem
                     };
 
-                    window.axios.post('/CCDModels/Items/ProblemsItem/store', payload).then(function (response) {
+                    this.axios.post('/CCDModels/Items/ProblemsItem/store', payload).then(function (response) {
                         let id = response.data.id.id;
                         
                         self.problems.push({id: id, patient_id: self.problem.patient_id, name: response.data.id.name});
@@ -64,7 +64,7 @@
                     'problem': this.problems[index]
                 };
 
-                window.axios.post('/CCDModels/Items/ProblemsItem/update', payload).then(function (response) {
+                this.axios.post('/CCDModels/Items/ProblemsItem/update', payload).then(function (response) {
                     $('#problem-name-' + index).toggle();
                     $('#problem-edit-' + index).toggle();
                     $('.problem-edit-btn').show();
@@ -83,7 +83,7 @@
                         'problem': this.problems[index]
                     };
 
-                    window.axios.post('/CCDModels/Items/ProblemsItem/destroy', payload).then(function (response) {
+                    this.axios.post('/CCDModels/Items/ProblemsItem/destroy', payload).then(function (response) {
                         self.problems.splice(index, 1);
                     }, function (response) {
                         console.log(response);
@@ -92,7 +92,7 @@
             },
 
             postEvents: function (index, e) {
-                window.axios.post('/CCDModels/Items/ProblemsItem/store', this.problems).then(function (response) {
+                this.axios.post('/CCDModels/Items/ProblemsItem/store', this.problems).then(function (response) {
                 }, function (response) {
                     console.log(response);
                 });
@@ -106,24 +106,26 @@
     <div class="row" id="problems">
         <div class="col-sm-12">
             <div class="list-group">
-                <template v-for="(problemitem, index) in problems">
-                    <div class="list-group-item" v-on:submit.prevent v-if="problemitem.name"
+                <template>
+                    <div v-for="(problemitem, index) in problems" :key="index">
+                        <div class="list-group-item" v-on:submit.prevent v-if="problemitem.name"
                          style="padding:5px;font-size:12px;">
-                        <div class="row">
-                            <div class="col-sm-10">
-                                <div class="list-group-item-heading">
-                                    <span :id="'problem-name-'+index">{{ problemitem.name }}</span>
-                                    <textarea v-model="problemitem.name" :id="'problem-edit-'+index" style="display:none;" rows="10">{{ problemitem.name }}</textarea>
-                                    <input type="hidden" name="id" :value="problemitem.id">
-                                    <input type="hidden" name="patient_id" :value="problemitem.patient_id">
+                            <div class="row">
+                                <div class="col-sm-10">
+                                    <div class="list-group-item-heading">
+                                        <span :id="'problem-name-'+index">{{ problemitem.name }}</span>
+                                        <textarea v-model="problemitem.name" :id="'problem-edit-'+index" style="display:none;" rows="10"></textarea>
+                                        <input type="hidden" name="id" :value="problemitem.id">
+                                        <input type="hidden" name="patient_id" :value="problemitem.patient_id">
+                                    </div>
                                 </div>
-                            </div>
-                            <div class="col-sm-2 text-right">
+                                <div class="col-sm-2 text-right">
 
-                                <p class="list-group-item-text" v-if="problemitem.name">{{ problemitem.description }}</p>
-                                <button class="btn btn-xs btn-danger problem-delete-btn" v-if="problemitem.name" v-on:click.stop.prevent="deleteProblem(index, problem)" ><span><i class="glyphicon glyphicon-remove"></i></span></button>
-                                <button class="btn btn-xs btn-primary problem-edit-btn" v-if="problemitem.name" v-on:click.stop.prevent="editProblem(index, problem)"><span><i class="glyphicon glyphicon-pencil"></i></span></button>
-                                <button class="btn btn-xs btn-success problem-save-btn" :id="'problem-save-btn-'+index" v-if="problemitem.name" v-on:click.stop.prevent="updateProblem(index, problem)" style="display:none;"><span><i class="glyphicon glyphicon-ok"></i></span></button>
+                                    <p class="list-group-item-text" v-if="problemitem.name">{{ problemitem.description }}</p>
+                                    <button class="btn btn-xs btn-danger problem-delete-btn" v-if="problemitem.name" v-on:click.stop.prevent="deleteProblem(index, problem)" ><span><i class="glyphicon glyphicon-remove"></i></span></button>
+                                    <button class="btn btn-xs btn-primary problem-edit-btn" v-if="problemitem.name" v-on:click.stop.prevent="editProblem(index, problem)"><span><i class="glyphicon glyphicon-pencil"></i></span></button>
+                                    <button class="btn btn-xs btn-success problem-save-btn" :id="'problem-save-btn-'+index" v-if="problemitem.name" v-on:click.stop.prevent="updateProblem(index, problem)" style="display:none;"><span><i class="glyphicon glyphicon-ok"></i></span></button>
+                                </div>
                             </div>
                         </div>
                     </div>

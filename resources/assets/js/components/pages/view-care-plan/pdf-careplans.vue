@@ -21,7 +21,7 @@
 
         created() {
             this.getPatientCarePlan(this.patientId)
-            this.apiUrl = window.axios.defaults.baseURL + '/care-plans/' + this.patientCareplanId + '/pdfs'
+            this.apiUrl = this.axios.defaults.baseURL + '/care-plans/' + this.patientCareplanId + '/pdfs'
         },
 
         data() {

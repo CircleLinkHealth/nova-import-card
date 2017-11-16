@@ -567,7 +567,7 @@
 
                     let id = this.newCarePerson.id ? this.newCarePerson.id : 'new'
 
-                    window.axios.patch(this.updateRoute + '/' + id, this.newCarePerson).then(
+                    this.axios.patch(this.updateRoute + '/' + id, this.newCarePerson).then(
                         (response) => {
                             this.newCarePerson.id = response.data.carePerson.id;
                             this.newCarePerson.formatted_type = response.data.carePerson.formatted_type;

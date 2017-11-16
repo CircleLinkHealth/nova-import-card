@@ -105,7 +105,7 @@
                     return
                 }
 
-                window.axios.patch('work-hours/' + this.workHours.id, {
+                this.axios.patch('work-hours/' + this.workHours.id, {
                     workHours: this.workHours[this.day],
                     day: this.day
                 }).then((response) => {
