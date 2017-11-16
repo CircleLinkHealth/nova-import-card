@@ -7,10 +7,8 @@ use App\Jobs\ImportCsvPatientList;
 use App\Jobs\TrainCcdaImporter;
 use App\Models\MedicalRecords\Ccda;
 use App\Models\MedicalRecords\ImportedMedicalRecord;
-use App\Practice;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
-use Illuminate\Support\Collection;
 use Laracasts\Utilities\JavaScript\JavaScriptFacade as JavaScript;
 
 class ImporterController extends Controller
@@ -32,7 +30,7 @@ class ImporterController extends Controller
      */
     public function uploadRawFiles(Request $request)
     {
-        if (!$request->hasFile('file')) {
+        if ( ! $request->hasFile('file')) {
             return response()->json('No file found', 400);
         }
 
@@ -73,26 +71,28 @@ class ImporterController extends Controller
         $delete = ImportedMedicalRecord::whereNull('medical_record_id')->delete();
 
         $qaSummaries = ImportedMedicalRecord::whereNull('patient_id')
-            ->with('demographics')
-            ->with('practice')
-            ->with('location')
-            ->with('billingProvider')
-            ->get()
-            ->map(function ($summary) {
-                $summary['flag'] = false;
+                                            ->with('demographics')
+                                            ->with('practice')
+                                            ->with('location')
+                                            ->with('billingProvider')
+                                            ->get()
+                                            ->map(function ($summary) {
+                                                $summary['flag'] = false;
 
-                $providers = $summary->medicalRecord()->providers()->where([
-                    ['first_name', '!=', null],
-                    ['last_name', '!=', null],
-                    ['ml_ignore', '=', false],
-                ])->get();
+                                                $providers = $summary->medicalRecord()->providers()->where([
+                                                    ['first_name', '!=', null],
+                                                    ['last_name', '!=', null],
+                                                    ['ml_ignore', '=', false],
+                                                ])->get()->unique(function ($m) {
+                                                    return $m->first_name . $m->last_name;
+                                                });
 
-                if ($providers->count() > 1) {
-                    $summary['flag'] = true;
-                }
+                                                if ($providers->count() > 1) {
+                                                    $summary['flag'] = true;
+                                                }
 
-                return $summary;
-            })->values();
+                                                return $summary;
+                                            })->values();
 
         JavaScript::put([
             'importedMedicalRecords' => $qaSummaries,
@@ -105,28 +105,28 @@ class ImporterController extends Controller
     {
         $importedMedicalRecord = ImportedMedicalRecord::find($imrId);
 
-        if (!$importedMedicalRecord) {
+        if ( ! $importedMedicalRecord) {
             return "Could not find an Imported Medical Record with this ID";
         }
 
         $ccda = $importedMedicalRecord->medicalRecord();
 
-        if (!$ccda) {
+        if ( ! $ccda) {
             return "Could not find the CCDA for this Imported Medical Record.";
         }
         //gather the features for review
-        $document = $ccda->document->first();
+        $document  = $ccda->document->first();
         $providers = $ccda->providers()->where('ml_ignore', '=', false)->get();
 
-        $predictedLocationId = $importedMedicalRecord->location_id;
-        $predictedPracticeId = $importedMedicalRecord->practice_id;
+        $predictedLocationId        = $importedMedicalRecord->location_id;
+        $predictedPracticeId        = $importedMedicalRecord->practice_id;
         $predictedBillingProviderId = $importedMedicalRecord->billing_provider_id;
 
         return view('importer.show-training-findings', array_merge([
             'predictedBillingProviderId' => $predictedBillingProviderId,
             'predictedLocationId'        => $predictedLocationId,
             'predictedPracticeId'        => $predictedPracticeId,
-            'medicalRecordId'            => $ccda->id
+            'medicalRecordId'            => $ccda->id,
         ], compact([
             'document',
             'providers',
@@ -137,7 +137,7 @@ class ImporterController extends Controller
     //Train the Importing Algo
     public function train(Request $request)
     {
-        if (!$request->hasFile('medical_records')) {
+        if ( ! $request->hasFile('medical_records')) {
             return 'Please upload a CCDA';
         }
 
@@ -170,20 +170,20 @@ class ImporterController extends Controller
     {
         if ($request->has('documentId')) {
             DocumentLog::whereId($request->input('documentId'))
-                ->update([
-                    'ml_ignore' => true,
-                ]);
+                       ->update([
+                           'ml_ignore' => true,
+                       ]);
         }
 
         if ($request->has('providerIds')) {
             ProviderLog::whereIn('id', $request->input('providerIds'))
-                ->update([
-                    'ml_ignore' => true,
-                ]);
+                       ->update([
+                           'ml_ignore' => true,
+                       ]);
         }
 
-        $practiceId = $request->input('practiceId');
-        $locationId = $request->input('locationId');
+        $practiceId        = $request->input('practiceId');
+        $locationId        = $request->input('locationId');
         $billingProviderId = $request->input('billingProviderId');
 
         $ids[] = $request->input('imported_medical_record_id');
@@ -193,35 +193,35 @@ class ImporterController extends Controller
         }
 
         foreach ($ids as $mrId) {
-            $imr = ImportedMedicalRecord::find($mrId);
-            $imr->practice_id = $practiceId;
-            $imr->location_id = $locationId;
+            $imr                      = ImportedMedicalRecord::find($mrId);
+            $imr->practice_id         = $practiceId;
+            $imr->location_id         = $locationId;
             $imr->billing_provider_id = $billingProviderId;
             $imr->save();
 
 
             //save the features on the medical record, document and provider logs
-            $mr = app($imr->medical_record_type)->find($imr->medical_record_id);
-            $mr->practice_id = $practiceId;
-            $mr->location_id = $locationId;
+            $mr                      = app($imr->medical_record_type)->find($imr->medical_record_id);
+            $mr->practice_id         = $practiceId;
+            $mr->location_id         = $locationId;
             $mr->billing_provider_id = $billingProviderId;
             $mr->save();
 
             $docs = DocumentLog::where('medical_record_type', '=', $imr->medical_record_type)
-                ->where('medical_record_id', '=', $imr->medical_record_id)
-                ->update([
-                    'practice_id'         => $practiceId,
-                    'location_id'         => $locationId,
-                    'billing_provider_id' => $billingProviderId,
-                ]);
+                               ->where('medical_record_id', '=', $imr->medical_record_id)
+                               ->update([
+                                   'practice_id'         => $practiceId,
+                                   'location_id'         => $locationId,
+                                   'billing_provider_id' => $billingProviderId,
+                               ]);
 
             $provs = ProviderLog::where('medical_record_type', '=', $imr->medical_record_type)
-                ->where('medical_record_id', '=', $imr->medical_record_id)
-                ->update([
-                    'practice_id'         => $practiceId,
-                    'location_id'         => $locationId,
-                    'billing_provider_id' => $billingProviderId,
-                ]);
+                                ->where('medical_record_id', '=', $imr->medical_record_id)
+                                ->update([
+                                    'practice_id'         => $practiceId,
+                                    'location_id'         => $locationId,
+                                    'billing_provider_id' => $billingProviderId,
+                                ]);
         }
 
         return redirect()->route('view.files.ready.to.import');
