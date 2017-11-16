@@ -1,6 +1,7 @@
 <?php
 
 use App\Providers\EmailArrayValidatorServiceProvider;
+use App\Providers\FaxServiceProvider;
 use App\Providers\ObserversServiceProvider;
 use App\Providers\ViewComposerServiceProvider;
 
@@ -188,6 +189,7 @@ return [
         // App\Providers\BroadcastServiceProvider::class,
         App\Providers\EventServiceProvider::class,
         App\Providers\RouteServiceProvider::class,
+        FaxServiceProvider::class,
 
 
         App\Providers\UserMetaParserHelpersServiceProvider::class,
