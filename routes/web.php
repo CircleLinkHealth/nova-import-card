@@ -510,6 +510,7 @@ Route::group(['middleware' => 'auth'], function () {
         ],
         'prefix'     => 'admin',
     ], function () {
+        Route::view('api-clients', 'admin.manage-api-clients');
 
         Route::resource('medication-groups-maps', 'MedicationGroupsMapController');
 

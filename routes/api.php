@@ -44,5 +44,7 @@ Route::group([
 Route::group(['middleware' => 'auth:api'], function () {
     Route::group(['prefix' => 'admin'], function () {
         Route::resource('calls', 'API\Admin\CallsController');
+
+        Route::resource('user.outbound-calls', 'API\UserOutboundCallController');
     });
 });

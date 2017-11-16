@@ -320,6 +320,7 @@ class CallsController extends ApiController
      *     tags={"calls"},
      *     summary="Get Calls Info",
      *     description="Display a listing of calls",
+     *     @SWG\Header(header="X-Requested-With", type="String", default="XMLHttpRequest"),
      *     @SWG\Response(
      *         response="default", 
      *         description="A listing of calls"

@@ -43,16 +43,16 @@ return [
         | Middleware allows to prevent unexpected access to API documentation
         |--------------------------------------------------------------------------
          */
-        'middleware' => [
-            'api' => [],
-            'asset' => [],
-            'docs' => [],
+        'middleware'      => [
+            'api'             => ['web', 'auth'],
+            'asset'           => ['web', 'auth'],
+            'docs'            => ['web', 'auth'],
             'oauth2_callback' => [],
         ],
 
     ],
 
-    'paths' => [
+    'paths'    => [
 
         /*
         |--------------------------------------------------------------------------
@@ -132,6 +132,21 @@ return [
                 'write:projects' => 'modify projects in your account',
             ]
         ],*/
+
+        'passport' => [
+            'type'             => 'oauth2',
+            // The type of the security scheme. Valid values are "basic", "apiKey" or "oauth2".
+            'description'      => 'A short description for oauth2 security scheme.',
+            'flow'             => 'password',
+            // The flow used by the OAuth2 security scheme. Valid values are "implicit", "password", "application" or "accessCode".
+//            'authorizationUrl' => 'http://cpm.dev/oauth/authorize',
+            // The authorization URL to be used for (implicit/accessCode)
+            'tokenUrl' => 'http://cpm.dev/oauth/token', // The authorization URL to be used for (password/application/accessCode)
+            'scopes'           => [
+                'read:projects'  => 'read your projects',
+                'write:projects' => 'modify projects in your account',
+            ],
+        ],
     ],
 
     /*
@@ -191,7 +206,7 @@ return [
     | Uncomment to add constants which can be used in anotations
     |--------------------------------------------------------------------------
      */
-    'constants' => [
+    'constants'     => [
         'L5_SWAGGER_CONST_HOST' => env('L5_SWAGGER_CONST_HOST', 'http://my-default-host.com'),
     ],
 ];

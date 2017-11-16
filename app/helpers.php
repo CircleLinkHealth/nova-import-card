@@ -6,7 +6,45 @@ use App\CarePlanTemplate;
 use App\Jobs\SendSlackMessage;
 use App\User;
 use Carbon\Carbon;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Collection;
+use Illuminate\Database\Eloquent\Collection as EloquentCollection;
+
+if (!function_exists('parseIds')) {
+    /**
+     * Get all of the IDs from the given mixed value.
+     *
+     * @param  mixed  $value
+     * @return array
+     */
+    function parseIds($value)
+    {
+        if ($value instanceof Model) {
+            return [$value->getKey()];
+        }
+
+        if ($value instanceof EloquentCollection) {
+            return $value->modelKeys();
+        }
+
+        if (is_array($value)) {
+            $value = collect($value);
+        }
+
+        if ($value instanceof Collection) {
+            return $value->map(function($el){
+                $id = parseIds($el);
+                return $id[0];
+            })->values()->toArray();
+        }
+
+        if (is_string($value) && str_contains($value, ',')) {
+            return explode(',', $value);
+        }
+
+        return array_filter((array) $value);
+    }
+}
 
 if (!function_exists('activeNurseNames')) {
     /**
