@@ -55,7 +55,7 @@ class ImportCsvPatientList implements ShouldQueue
     {
         foreach ($this->patientsArr as $row) {
             if (isset($row['medical_record_type'])) {
-                if (stripslashes($row['medical_record_type']) == Ccda::class) {
+                if ($row['medical_record_type'] == Ccda::class) {
                     $imr = $this->importExistingCcda($row['medical_record_id']);
 
                     if ($imr) {
