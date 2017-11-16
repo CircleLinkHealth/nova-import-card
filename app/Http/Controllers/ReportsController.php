@@ -545,6 +545,8 @@ class ReportsController extends Controller
 
         $showInsuranceReviewFlag = $insurances->checkPendingInsuranceApproval($patient);
 
+        $skippedAssessment = $request->has('skippedAssessment');
+
         return view(
             'wpUsers.patient.careplan.print',
             [
@@ -561,6 +563,7 @@ class ReportsController extends Controller
                 'appointments'            => $careplan[$patientId]['appointments'],
                 'other'                   => $careplan[$patientId]['other'],
                 'showInsuranceReviewFlag' => $showInsuranceReviewFlag,
+                'skippedAssessment'       => $skippedAssessment
             ]
         );
     }

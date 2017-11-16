@@ -48,33 +48,40 @@ if (isset($patient) && !empty($patient)) {
 
 
                                 <div class="col-xs-12 text-left">
-                                    <pdf-careplans v-cloak>
-                                        <span class="btn btn-group text-right">
-                                        @if ( ($patient->carePlanStatus == 'qa_approved' && auth()->user()->canApproveCarePlans()) || ($patient->carePlanStatus == 'draft' && auth()->user()->hasPermission('care-plan-qa-approve')) )
-                                                <a style="margin-right:10px;" class="btn btn-info btn-sm inline-block"
-                                                   aria-label="..."
-                                                   role="button"
-                                                   href="{{ URL::route('patient.careplan.approve', ['patientId' => $patient->id]) }}">Approve</a>
+                                    @if ($skippedAssessment)
+                                        <div class="text-right">
+                                            <a class="btn btn-success btn-lg inline-block" aria-label="..." role="button"
+                                                href="{{ URL::route('patients.careplan.multi') }}?users={{ $patient->id }}">Skipped: Print This Page</a>
+                                        </div>
+                                    @else
+                                        <pdf-careplans v-cloak>
+                                            <span class="btn btn-group text-right">
+                                                @if ( ($patient->carePlanStatus == 'qa_approved' && auth()->user()->canApproveCarePlans()) || ($patient->carePlanStatus == 'draft' && auth()->user()->hasPermission('care-plan-qa-approve')) )
+                                                    <a style="margin-right:10px;" class="btn btn-info btn-sm inline-block"
+                                                    aria-label="..."
+                                                    role="button"
+                                                    href="{{ URL::route('patient.careplan.approve', ['patientId' => $patient->id]) }}">Approve</a>
 
-                                                @if(auth()->user()->hasRole('provider'))
-                                                    <a style="margin-right:10px;"
-                                                       class="btn btn-success btn-sm inline-block"
-                                                       aria-label="..."
-                                                       role="button"
-                                                       href="{{ route('patient.careplan.approve', ['patientId' => $patient->id, 'viewNext' => true]) }}">Approve and View Next</a>
+                                                    @if(auth()->user()->hasRole('provider'))
+                                                        <a style="margin-right:10px;"
+                                                        class="btn btn-success btn-sm inline-block"
+                                                        aria-label="..."
+                                                        role="button"
+                                                        href="{{ route('patient.careplan.approve', ['patientId' => $patient->id, 'viewNext' => true]) }}">Approve and View Next</a>
+                                                    @endif
                                                 @endif
-                                            @endif
 
-                                            <a class="btn btn-info btn-sm inline-block" aria-label="..." role="button"
-                                               href="{{ URL::route('patients.careplan.multi') }}?users={{ $patient->id }}">Print This Page</a>
+                                                <a class="btn btn-info btn-sm inline-block" aria-label="..." role="button"
+                                                href="{{ URL::route('patients.careplan.multi') }}?users={{ $patient->id }}">Print This Page</a>
 
-                                        <form class="lang" action="#" method="POST" id="form">
-                                        {{ csrf_field() }}
-                                            <input type="hidden" name="lang" value="es"/>
-                                            <!-- <button type="submit" class="btn btn-info btn-sm text-right" aria-label="..." value="">Translate to Spanish</button>
-                                  -->       </form>
-                                    </span>
-                                    </pdf-careplans>
+                                                <form class="lang" action="#" method="POST" id="form">
+                                                {{ csrf_field() }}
+                                                    <input type="hidden" name="lang" value="es"/>
+                                                    <!-- <button type="submit" class="btn btn-info btn-sm text-right" aria-label="..." value="">Translate to Spanish</button>
+                                    -->       </form>
+                                            </span>
+                                        </pdf-careplans>
+                                    @endif
                                 </div>
                             </div>
 
@@ -416,13 +423,7 @@ if (isset($patient) && !empty($patient)) {
         </div>
         @include('partials.confirm-modal')
 
-        @push('scripts')
-            <script>
-                console.log("is-ccm-eligible", '{{json_encode($patient)}}')
-            </script>
-        @endpush
-
-        @if ($patient->isCcmEligible())
+        @if ($patient->isCcmEligible() && !$skippedAssessment)
             @push('scripts')
                 <script type="text/html" name="ccm-enrollment-details">
                     <ul>
