@@ -44,9 +44,9 @@ return [
         |--------------------------------------------------------------------------
          */
         'middleware'      => [
-            'api'             => ['web', 'auth'],
-            'asset'           => ['web', 'auth'],
-            'docs'            => ['web', 'auth'],
+            'api'             => [],
+            'asset'           => [],
+            'docs'            => [],
             'oauth2_callback' => [],
         ],
 
