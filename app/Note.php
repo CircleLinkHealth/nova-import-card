@@ -3,11 +3,9 @@
 namespace App;
 
 use App\Contracts\PdfReport;
-use App\Models\Addendum;
 use App\Traits\IsAddendumable;
 use App\Traits\PdfReportTrait;
 use Carbon\Carbon;
-use Illuminate\Database\Eloquent\Model;
 
 /**
  * App\Note
@@ -49,6 +47,10 @@ class Note extends \App\BaseModel implements PdfReport
 
     protected $table = 'notes';
 
+    protected $dates = [
+        'performed_at'
+    ];
+
     protected $fillable = [
         'patient_id',
         'author_id',
@@ -60,10 +62,22 @@ class Note extends \App\BaseModel implements PdfReport
         'performed_at',
     ];
 
+    public function link()
+    {
+        return route('patient.note.view', [
+            'patientId' => $this->patient_id,
+            'noteId'    => $this->id,
+        ]);
+    }
 
     public function patient()
     {
         return $this->belongsTo(User::class, 'patient_id', 'id');
+    }
+
+    public function logger()
+    {
+        return $this->belongsTo(User::class, 'logger_id')->withTrashed();
     }
 
     public function mail()
@@ -91,7 +105,7 @@ class Note extends \App\BaseModel implements PdfReport
      *
      * @return string
      */
-    public function toPdf() : string
+    public function toPdf(): string
     {
         $problems = $this->patient
             ->cpmProblems
@@ -108,7 +122,7 @@ class Note extends \App\BaseModel implements PdfReport
         ]);
 
         $this->fileName = Carbon::now()->toDateString() . '-' . $this->patient->fullName . '.pdf';
-        $filePath = base_path('storage/pdfs/notes/' . $this->fileName);
+        $filePath       = base_path('storage/pdfs/notes/' . $this->fileName);
         $pdf->save($filePath, true);
 
         return $filePath;
