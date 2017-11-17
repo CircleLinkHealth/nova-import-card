@@ -46,6 +46,23 @@ if (!function_exists('parseIds')) {
     }
 }
 
+if (!function_exists('str_substr_after')) {
+    /**
+     * Get the substring after the given character
+     *
+     * @param $string
+     * @param string $character
+     *
+     * @return string
+     */
+    function str_substr_after($string, $character = '/')
+    {
+        $pos = strrpos($string, $character);
+
+        return $pos === false ? $string : substr($string, $pos + 1);
+    }
+}
+
 if (!function_exists('activeNurseNames')) {
     /**
      * Returns an array of nurse names keyed by id.
