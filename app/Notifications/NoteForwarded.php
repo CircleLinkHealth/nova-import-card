@@ -3,7 +3,6 @@
 namespace App\Notifications;
 
 use App\Note;
-use App\Traits\NotificationChannels;
 use Illuminate\Bus\Queueable;
 use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
@@ -98,7 +97,7 @@ class NoteForwarded extends Notification
     }
 
     /**
-     * Get a pdf representation of the note
+     * Get a pdf representation of the note to send via Fax
      *
      * @param $notifiable
      *
@@ -110,6 +109,32 @@ class NoteForwarded extends Notification
             return false;
         }
 
+        return $this->toPdf();
+    }
+
+    /**
+     * Get a pdf representation of the note to send via DM
+     *
+     * @param $notifiable
+     *
+     * @return bool|string
+     */
+    public function toDirectMail($notifiable)
+    {
+        if ( ! $notifiable || ! $notifiable->emr_direct_address) {
+            return false;
+        }
+
+        return $this->toPdf();
+    }
+
+    /**
+     * Get a pdf representation of the note
+     *
+     * @return string
+     */
+    public function toPdf()
+    {
         if ( ! file_exists($this->pathToPdf)) {
             $this->pathToPdf = $this->note->toPdf();
         }
