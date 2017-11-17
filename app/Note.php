@@ -6,7 +6,7 @@ use App\Channels\DirectMailChannel;
 use App\Channels\FaxChannel;
 use App\Contracts\PdfReport;
 use App\Notifications\ForwardPdfNote;
-use App\Notifications\NoteCreated;
+use App\Notifications\NoteForwarded;
 use App\Traits\IsAddendumable;
 use App\Traits\PdfReportTrait;
 use Carbon\Carbon;
@@ -185,7 +185,7 @@ class Note extends \App\BaseModel implements PdfReport
         }
 
         $recipients->map(function ($carePersonUser) {
-            $carePersonUser->notify(new NoteCreated($this));
+            $carePersonUser->notify(new NoteForwarded($this));
         });
 
         $channels = [];
@@ -202,6 +202,6 @@ class Note extends \App\BaseModel implements PdfReport
             return;
         }
 
-        optional($this->patient->location)->notify(new ForwardPdfNote($this, $channels));
+        optional($this->patient->location)->notify(new NoteForwarded($this, $channels));
     }
 }

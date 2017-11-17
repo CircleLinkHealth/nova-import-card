@@ -10,7 +10,7 @@ use App\Channels\FaxChannel;
 use App\MailLog;
 use App\Note;
 use App\Notifications\ForwardPdfNote;
-use App\Notifications\NoteCreated;
+use App\Notifications\NoteForwarded;
 use App\Patient;
 use App\PatientMonthlySummary;
 use App\User;

@@ -4,27 +4,34 @@ namespace App\Notifications;
 
 use App\Channels\DirectMailChannel;
 use App\Channels\FaxChannel;
-use App\Location;
 use App\Note;
 use App\Traits\NotificationChannels;
 use Illuminate\Bus\Queueable;
 use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
 
-class NoteCreated extends Notification
+class NoteForwarded extends Notification
 {
     use Queueable;
 
-    protected $note;
+    public $note;
+    public $channels = ['database'];
+    public $pathToPdf;
+
 
     /**
      * Create a new notification instance.
      *
      * @param Note $note
+     * @param array $channels
      */
-    public function __construct(Note $note)
-    {
+    public function __construct(
+        Note $note,
+        $channels = [FaxChannel::class, DirectMailChannel::class, 'mail']
+    ) {
         $this->note = $note;
+
+        $this->channels[] = $channels;
     }
 
     /**
@@ -36,7 +43,7 @@ class NoteCreated extends Notification
      */
     public function via($notifiable)
     {
-        return ['mail', 'database'];
+        return $this->channels;
     }
 
     /**
@@ -66,8 +73,6 @@ class NoteCreated extends Notification
             ]);
     }
 
-
-
     /**
      * Get the body of the email
      *
@@ -96,6 +101,24 @@ class NoteCreated extends Notification
     }
 
     /**
+     * Get a pdf representation of the note
+     *
+     * @param $notifiable
+     *
+     * @return bool|string
+     */
+    public function toFax($notifiable)
+    {
+        if ( ! $notifiable || ! $notifiable->fax) {
+            return false;
+        }
+
+        $this->pathToPdf = $this->note->toPdf();
+
+        return $this->pathToPdf;
+    }
+
+    /**
      * Get the array representation of the notification.
      *
      * @param  mixed $notifiable
@@ -112,6 +135,7 @@ class NoteCreated extends Notification
             'sender_cpm_id'   => auth()->user()->id,
             'receiver_cpm_id' => $notifiable->id,
             'note_id'         => $this->note->id,
+            'pathToPdf'       => $this->pathToPdf,
         ];
     }
 }
