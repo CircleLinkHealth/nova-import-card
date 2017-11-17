@@ -250,7 +250,7 @@ class CallsController extends ApiController
                          ->addColumn('notes_html', function ($call) {
                              $notesHtml = '';
                              if ($call->inboundUser) {
-                                 $notes = $call->inboundUser->notes()->with('call')->with('mail')->orderBy(
+                                 $notes = $call->inboundUser->notes()->with(['call', 'notifications'])->orderBy(
                                      'performed_at',
                                      'desc'
                                  )->limit(3)->get();

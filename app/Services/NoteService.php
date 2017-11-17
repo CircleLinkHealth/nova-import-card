@@ -5,7 +5,6 @@ namespace App\Services;
 use App\Algorithms\Invoicing\AlternativeCareTimePayableCalculator;
 use App\Call;
 use App\CarePerson;
-use App\MailLog;
 use App\Note;
 use App\Patient;
 use App\PatientMonthlySummary;
@@ -51,14 +50,6 @@ class NoteService
         $note->forward($input['notify_careteam'], $input['notify_circlelink_support']);
 
         return $note;
-    }
-
-    //Get data for patient note index page, w/ offline activities
-
-    public function getNoteWithCommunications($note_id)
-    {
-
-        return Note::where('id', $note_id)->with('call')->with('mail')->first();
     }
 
     //Get all notes for patients with specified date range
@@ -109,7 +100,7 @@ class NoteService
                        $end,
                    ])
                    ->orderBy('performed_at', 'desc')
-                   ->with('patient')->with('mail')->with('call')->with('author')
+                   ->with('patient')->with(['call', 'notifications', 'author'])
                    ->get();
     }
 
@@ -131,7 +122,7 @@ class NoteService
         $provider_forwarded_notes = [];
 
         foreach ($notes as $note) {
-            if ($note->wasSentToProvider()) {
+            if ($note->wasForwardedToCareTeam()) {
                 $provider_forwarded_notes[] = $note;
             }
         }
@@ -150,9 +141,9 @@ class NoteService
                        $start,
                        $end,
                    ])
-                   ->has('mail')
+                   ->has('notifications')
                    ->orderBy('performed_at', 'desc')
-                   ->with('patient')->with('mail')->with('call')->with('author')
+                   ->with('patient')->with(['call', 'notifications', 'author'])
                    ->get();
     }
 
@@ -170,15 +161,15 @@ class NoteService
                          $start,
                          $end,
                      ])
-                     ->has('mail')
+                     ->has('notifications')
                      ->orderBy('performed_at', 'desc')
-                     ->with('patient')->with('mail')->with('call')->with('author')
+                     ->with('patient')->with(['call', 'notifications', 'author'])
                      ->get();
 
         $provider_forwarded_notes = [];
 
         foreach ($notes as $note) {
-            if ($note->wasSentToProvider()) {
+            if ($note->wasForwardedToCareTeam()) {
                 $provider_forwarded_notes[] = $note;
             }
         }
@@ -187,46 +178,27 @@ class NoteService
     }
 
     public function updateMailLogsForNote(
-        $viewer,
+        User $viewer,
         Note $note
     ) {
-
-        $mail = MailLog::where('note_id', $note->id)
-                       ->where('receiver_cpm_id', $viewer)->first();
-
-        if (is_object($mail)) {
-            $mail->seen_on = Carbon::now()->toDateTimeString();
-            $mail->save();
-        }
+        $viewer->unreadNotifications()
+               ->whereHas('note', function ($q) use ($note) {
+                   $q->where('id', '=', $note->id);
+               })
+               ->get()
+               ->markAsRead();
     }
 
     public function getSeenForwards(Note $note)
     {
-
-        $mails = MailLog::where('note_id', $note->id)
-                        ->whereNotNull('seen_on')->get();
-
-        $data = [];
-
-        foreach ($mails as $mail) {
-            $name        = User::find($mail->receiver_cpm_id)->fullName;
-            $data[$name] = $mail->seen_on;
-        }
-
-        if (count($data) > 0) {
-            return $data;
-        }
-
-        return false;
-    }
-
-    public function forwardedNoteWasSeenByPrimaryProvider(
-        Note $note,
-        Patient $patient
-    ) {
-
-        $mail = MailLog::where('note_id', $note->id)
-                       ->where('receiver_cpm_id', $patient->billingProvider()->id)->first();
+        return $note->notifications()
+                    ->has('user')
+                    ->with('notifiable')
+                    ->whereNotNull('read_at')
+                    ->get()
+                    ->map(function ($notification) {
+                        return [$notification->notifiable->fullName => $notification->read_at];
+                    })->values();
     }
 
     public function updatePatientRecords(

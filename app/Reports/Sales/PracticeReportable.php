@@ -5,12 +5,12 @@ namespace App\Reports\Sales;
 use App\Activity;
 use App\Call;
 use App\Contracts\Reports\Reportable;
-use App\MailLog;
 use App\Observation;
 use App\PatientMonthlySummary;
 use App\Practice;
 use App\User;
 use Carbon\Carbon;
+use Illuminate\Notifications\DatabaseNotification;
 
 class PracticeReportable implements Reportable
 {
@@ -29,8 +29,8 @@ class PracticeReportable implements Reportable
     public function patients()
     {
         return User::ofType('participant')
-            ->where('program_id', '=', $this->practice->id)
-            ->get();
+                   ->where('program_id', '=', $this->practice->id)
+                   ->get();
     }
 
     /**
@@ -47,8 +47,8 @@ class PracticeReportable implements Reportable
         $q = Call::whereHas('inboundUser', function ($q) {
             $q->where('program_id', '=', $this->practice->id);
         })
-            ->where('called_date', '>=', $start)
-            ->where('called_date', '<=', $end);
+                 ->where('called_date', '>=', $start)
+                 ->where('called_date', '<=', $end);
 
         if ($status) {
             $q->whereStatus($status);
@@ -70,9 +70,9 @@ class PracticeReportable implements Reportable
         return Activity::whereHas('patient', function ($q) {
             $q->where('program_id', '=', $this->practice->id);
         })
-            ->where('performed_at', '>=', $start->toDateTimeString())
-            ->where('performed_at', '<=', $end->toDateTimeString())
-            ->sum('duration');
+                       ->where('performed_at', '>=', $start->toDateTimeString())
+                       ->where('performed_at', '<=', $end->toDateTimeString())
+                       ->sum('duration');
     }
 
     /**
@@ -88,9 +88,9 @@ class PracticeReportable implements Reportable
         return Observation::whereHas('user', function ($q) {
             $q->whereProgramId($this->practice->id);
         })
-            ->where('created_at', '>=', $start)
-            ->where('created_at', '<=', $end)
-            ->count();
+                          ->where('created_at', '>=', $start)
+                          ->where('created_at', '<=', $end)
+                          ->count();
     }
 
     /**
@@ -103,16 +103,13 @@ class PracticeReportable implements Reportable
      */
     public function forwardedNotesCount(Carbon $start, Carbon $end)
     {
-        $providers = User::where('program_id', $this->practice->id)
-            ->whereHas('roles', function ($q) {
-                $q->whereName('provider');
-            })->pluck('id')->toArray();
-
-        return MailLog::whereIn('receiver_cpm_id', $providers)
-            ->where('created_at', '>=', $start)
-            ->where('created_at', '<=', $end)
-            ->whereType('note')
-            ->count();
+        return DatabaseNotification::distinct()
+                                   ->whereHas('note.patient.primaryPractice', function ($q){
+                                        $q->where('id', '=', $this->practice->id);
+                                   })
+                                   ->where('created_at', '>=', $start)
+                                   ->where('created_at', '<=', $end)
+                                   ->count();
     }
 
     /**
@@ -125,17 +122,16 @@ class PracticeReportable implements Reportable
      */
     public function forwardedEmergencyNotesCount(Carbon $start, Carbon $end)
     {
-        return MailLog
-            ::whereHas('note', function ($q) {
-                $q->where('isTCM', 1)
-                    ->whereHas('patient', function ($k) {
-                        $k->where('program_id', $this->practice->id);
-                    });
-            })
-            ->whereType('note')
-            ->where('created_at', '>=', $start)
-            ->where('created_at', '<=', $end)
-            ->count();
+        return DatabaseNotification::distinct()
+                                   ->whereHas('note', function ($q) {
+                                       $q->where('isTCM', 1)
+                                         ->whereHas('patient', function ($k) {
+                                             $k->where('program_id', '=', $this->practice->id);
+                                         });
+                                   })
+                                   ->where('created_at', '>=', $start)
+                                   ->where('created_at', '<=', $end)
+                                   ->count(['attachment_id']);
     }
 
     /**
@@ -164,7 +160,7 @@ class PracticeReportable implements Reportable
                 $k->whereProgramId($this->practice->id);
             });
         })
-            ->where('ccm_time', '>', 1199);
+                                  ->where('ccm_time', '>', 1199);
 
         if ($month) {
             $q->where('month_year', $month->firstOfMonth());

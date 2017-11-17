@@ -4,7 +4,7 @@ namespace App;
 use App\Traits\HasEmrDirectAddress;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
-use Illuminate\Notifications\Notifiable;
+use App\Notifications\Notifiable;
 
 /**
  * App\Location

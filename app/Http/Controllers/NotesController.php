@@ -45,16 +45,12 @@ class NotesController extends Controller
                            'billingProvider',
                            'notes.author',
                            'notes.call',
-                           'notes.mail.receiverUser.roles',
+                           'notes.notifications',
                            'patientInfo',
                        ])->orderByDesc('created_at')
                        ->first();
 
         $messages = \Session::get('messages');
-
-        //test comment
-
-//        $data = $this->service->getNotesAndOfflineActivitiesForPatient($patient);
 
         $report_data = $this->formatter->formatDataForNotesAndOfflineActivitiesReport($patient);
 
@@ -66,7 +62,6 @@ class NotesController extends Controller
                 'activity_json' => $report_data,
                 'patient'       => $patient,
                 'messages'      => $messages,
-                //                'data'          => $data,
                 'ccm_complex'   => $ccm_complex,
             ]
         );
@@ -415,9 +410,11 @@ class NotesController extends Controller
     ) {
 
         $patient = User::find($patientId);
-        $note    = $this->service->getNoteWithCommunications($noteId);
+        $note    = Note::where('id', $noteId)
+                       ->with(['call', 'notifications'])
+                       ->first();
 
-        $this->service->updateMailLogsForNote(auth()->user()->id, $note);
+        $this->service->updateMailLogsForNote(auth()->user(), $note);
 
         $readers = $this->service->getSeenForwards($note);
 
