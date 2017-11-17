@@ -142,32 +142,20 @@ class Note extends \App\BaseModel implements PdfReport
         return $filePath;
     }
 
-    public function wasSentToProvider()
+    public function wasForwardedToCareTeam()
     {
-        foreach ($this->mail as $mail) {
-            $mail_recipient = $mail->receiverUser;
-
-            if ($mail_recipient->hasRole('provider')) {
-                return true;
-            }
-        }
-
-        return false;
+        return $this->notifications()->has('user')->count() > 0;
     }
 
-    public function wasReadByBillingProvider(User $patient = null)
+    public function wasSeenByBillingProvider()
     {
-        $patient = $patient ?? $this->patient;
-
-        foreach ($this->mail as $mail) {
-            $mail_recipient = $mail->receiverUser;
-
-            if ($mail_recipient->id == $patient->billingProviderUser()->id && $mail->seen_on != null) {
-                return true;
-            }
-        }
-
-        return false;
+        return $this->notifications()
+             ->where([
+                 ['read_at', '!=', null],
+                 ['notifiable_type', '=', User::class],
+                 ['notifiable_id', '=', $this->patient->billingProviderUser()->id],
+             ])
+            ->count() > 0;
     }
 
     /**

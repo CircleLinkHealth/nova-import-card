@@ -64,7 +64,7 @@ class WebixFormatter implements ReportFormatter
             $formatted_notes[$count]['tags'] = '';
 
             if (count($note->mail) > 0) {
-                if ($note->wasSentToProvider()) {
+                if ($note->wasForwardedToCareTeam()) {
                     $formatted_notes[$count]['tags'] .= '<div class="label label-warning"><span class="glyphicon glyphicon-envelope" aria-hidden="true"></span></div> ';
                 }
             }
@@ -80,7 +80,7 @@ class WebixFormatter implements ReportFormatter
                 $formatted_notes[$count]['tags'] .= '<div class="label label-danger"><span class="glyphicon glyphicon-flag" aria-hidden="true"></span></div> ';
             }
 
-            $was_seen = $note->wasReadByBillingProvider();
+            $was_seen = $note->wasSeenByBillingProvider();
 
             if ($was_seen) {
                 $formatted_notes[$count]['tags'] .= '<div class="label label-success"><span class="glyphicon glyphicon-eye-open" aria-hidden="true"></span></div> ';
@@ -111,8 +111,8 @@ class WebixFormatter implements ReportFormatter
                 'tags' => '',
             ];
 
-            if (count($note->mail) > 0) {
-                if ($note->wasSentToProvider()) {
+            if ($note->notifications->count() > 0) {
+                if ($note->wasForwardedToCareTeam()) {
                     $result['tags'] .= '<div class="label label-warning"><span class="glyphicon glyphicon-envelope" aria-hidden="true"></span></div> ';
                 }
             }
@@ -128,7 +128,7 @@ class WebixFormatter implements ReportFormatter
                 $result['tags'] .= '<div class="label label-danger"><span class="glyphicon glyphicon-flag" aria-hidden="true"></span></div> ';
             }
 
-            $was_seen = $note->wasReadByBillingProvider($patient);
+            $was_seen = $note->wasSeenByBillingProvider();
 
             if ($was_seen) {
                 $result['tags'] .= '<div class="label label-success"><span class="glyphicon glyphicon-eye-open" aria-hidden="true"></span></div> ';
