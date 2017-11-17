@@ -3,6 +3,7 @@
 namespace App\Notifications;
 
 use App\Note;
+use App\User;
 use Illuminate\Bus\Queueable;
 use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
@@ -113,6 +114,20 @@ class NoteForwarded extends Notification
     }
 
     /**
+     * Get a pdf representation of the note
+     *
+     * @return string
+     */
+    public function toPdf()
+    {
+        if ( ! file_exists($this->pathToPdf)) {
+            $this->pathToPdf = $this->note->toPdf();
+        }
+
+        return $this->pathToPdf;
+    }
+
+    /**
      * Get a pdf representation of the note to send via DM
      *
      * @param $notifiable
@@ -129,20 +144,6 @@ class NoteForwarded extends Notification
     }
 
     /**
-     * Get a pdf representation of the note
-     *
-     * @return string
-     */
-    public function toPdf()
-    {
-        if ( ! file_exists($this->pathToPdf)) {
-            $this->pathToPdf = $this->note->toPdf();
-        }
-
-        return $this->pathToPdf;
-    }
-
-    /**
      * Get the array representation of the notification.
      *
      * @param  mixed $notifiable
@@ -152,15 +153,22 @@ class NoteForwarded extends Notification
     public function toArray($notifiable)
     {
         return [
-            'channels'        => $this->channels,
-            'sender_email'    => auth()->user()->email,
-            'receiver_email'  => $notifiable->email,
-            'body'            => $this->getBody(),
-            'subject'         => $this->getSubject(),
-            'sender_cpm_id'   => auth()->user()->id,
-            'receiver_cpm_id' => $notifiable->id,
-            'note_id'         => $this->note->id,
-            'pathToPdf'       => $this->pathToPdf,
+            'channels' => $this->channels,
+
+            'sender_id'    => auth()->user()->id,
+            'sender_type'  => User::class,
+            'sender_email' => auth()->user()->email,
+
+            'receiver_type'  => $notifiable->id,
+            'receiver_id'    => get_class($notifiable),
+            'receiver_email' => $notifiable->email,
+
+            'body'    => $this->getBody(),
+            'subject' => $this->getSubject(),
+
+            'note_id'   => $this->note->id,
+
+            'pathToPdf' => $this->pathToPdf,
         ];
     }
 }
