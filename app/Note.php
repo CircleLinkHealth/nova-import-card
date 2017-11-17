@@ -160,21 +160,24 @@ class Note extends \App\BaseModel implements PdfReport
         return false;
     }
 
+    /**
+     * Forwards note to CareTeam and/or Support
+     *
+     * @param bool $notifySupport
+     * @param bool $notifyCareteam
+     */
     public function forward(bool $notifySupport, bool $notifyCareteam)
     {
         $this->load([
             'patient.primaryPractice.cpmSettings',
             'patient.location',
         ]);
-
-        $patient = $this->patient;
-
         $recipients = collect();
 
-        $cpmSettings = $patient->primaryPractice->cpmSettings();
+        $cpmSettings = $this->patient->primaryPractice->cpmSettings();
 
         if ($notifyCareteam && $cpmSettings->email_note_was_forwarded) {
-            $recipients = $patient->care_team_receives_alerts;
+            $recipients = $this->patient->care_team_receives_alerts;
         }
 
         if ($notifySupport) {
@@ -199,6 +202,6 @@ class Note extends \App\BaseModel implements PdfReport
             return;
         }
 
-        optional($patient->location)->notify(new ForwardPdfNote($this, $channels));
+        optional($this->patient->location)->notify(new ForwardPdfNote($this, $channels));
     }
 }
