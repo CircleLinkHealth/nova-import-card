@@ -2,8 +2,6 @@
 
 namespace App\Notifications;
 
-use App\Channels\DirectMailChannel;
-use App\Channels\FaxChannel;
 use App\Note;
 use App\Traits\NotificationChannels;
 use Illuminate\Bus\Queueable;
@@ -27,11 +25,11 @@ class NoteForwarded extends Notification
      */
     public function __construct(
         Note $note,
-        $channels = [FaxChannel::class, DirectMailChannel::class, 'mail']
+        $channels = ['mail']
     ) {
         $this->note = $note;
 
-        $this->channels[] = $channels;
+        $this->channels = array_merge($this->channels, $channels);
     }
 
     /**
@@ -65,7 +63,6 @@ class NoteForwarded extends Notification
                 'level'      => '',
             ])
             ->subject($this->getSubject())
-            ->to($notifiable->email)
             ->bcc([
                 'raph@circlelinkhealth.com',
                 'chelsea@circlelinkhealth.com',
@@ -113,7 +110,9 @@ class NoteForwarded extends Notification
             return false;
         }
 
-        $this->pathToPdf = $this->note->toPdf();
+        if ( ! file_exists($this->pathToPdf)) {
+            $this->pathToPdf = $this->note->toPdf();
+        }
 
         return $this->pathToPdf;
     }
@@ -128,6 +127,7 @@ class NoteForwarded extends Notification
     public function toArray($notifiable)
     {
         return [
+            'channels'        => $this->channels,
             'sender_email'    => auth()->user()->email,
             'receiver_email'  => $notifiable->email,
             'body'            => $this->getBody(),
