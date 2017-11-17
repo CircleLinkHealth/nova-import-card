@@ -1473,7 +1473,7 @@ class User extends \App\BaseModel implements AuthenticatableContract, CanResetPa
         return true;
     }
 
-    public function getBillingProviderIDAttribute()
+    public function getBillingProviderIdAttribute()
     {
         $bp = '';
         if ( ! $this->careTeamMembers) {
@@ -1490,7 +1490,7 @@ class User extends \App\BaseModel implements AuthenticatableContract, CanResetPa
         return $bp;
     }
 
-    public function setBillingProviderIDAttribute($value)
+    public function setBillingProviderIdAttribute($value)
     {
         if (empty($value)) {
             $this->careTeamMembers()->where('type', 'billing_provider')->delete();
