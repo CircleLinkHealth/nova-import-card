@@ -3,18 +3,18 @@
 namespace App\Services;
 
 use App\Algorithms\Invoicing\AlternativeCareTimePayableCalculator;
-use App\Appointment;
 use App\Call;
 use App\CarePerson;
-use App\Events\PdfableCreated;
+use App\Channels\DirectMailChannel;
+use App\Channels\FaxChannel;
 use App\MailLog;
 use App\Note;
-use App\Notifications\NewNote;
+use App\Notifications\ForwardPdfNote;
+use App\Notifications\NoteCreated;
 use App\Patient;
 use App\PatientMonthlySummary;
 use App\User;
 use Carbon\Carbon;
-use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\URL;
 
 class NoteService
@@ -43,146 +43,18 @@ class NoteService
         // update usermeta: cur_month_activity_time
         $activityService = new ActivityService;
         $activityService->reprocessMonthlyActivityTime($input['patient_id']);
-        $linkToNote = URL::route('patient.note.view', [
+        $linkToNote  = URL::route('patient.note.view', [
             'patientId' => $note->patient_id,
             'noteId'    => $note->id,
         ]);// . '/' . $note->id;
-        $logger = User::find($input['logger_id']);
+        $logger      = User::find($input['logger_id']);
         $logger_name = $logger->display_name;
 
         $input['noteId'] = $note->id;
 
-        //if emails are to be sent
-        $this->forwardNote($input, $note->patient_id);
+        $note->forward($input['notify_circlelink_support'], $input['notify_careteam']);
 
         return $note;
-    }
-
-    //NOTE RETRIEVALS (ranges, relations, owners)
-
-    //Get all notes for patient
-
-    public function forwardNote(
-        $input,
-        $patientId
-    ) {
-        $notifyPatientSupport = $input['notify_circlelink_support'] ?? false;
-        $notifyCareteam = $input['notify_careteam'] ?? false;
-
-        if (!$notifyPatientSupport && !$notifyCareteam) {
-            return;
-        }
-
-        $note = Note::findOrFail($input['noteId']);
-
-        $author = User::find($input['logger_id']);
-
-        if (is_object($author)) {
-            $author_name = $author->fullName;
-        } else {
-            $author_name = '';
-        }
-
-        $linkToNote = route('patient.note.view', [
-            'patientId' => $patientId,
-            'noteId'    => $note->id,
-        ]);
-
-        $result = $this->sendNoteToCareTeam(
-            $note,
-            $linkToNote,
-            false,
-            $notifyPatientSupport,
-            $notifyCareteam
-        );
-    }
-
-    //Get note with mail
-
-    public function sendNoteToCareTeam(
-        Note $note,
-        $url,
-        $newNoteFlag,
-        $notifyPatientSupport = false,
-        $notifyCareteam = false
-    ) {
-
-        /*
-         *  New note: "Please see new note for patient [patient name]: [link]"
-         *  Old/Fw'd note: "Please see forwarded note for patient [patient  name], created on [creation date] by [note creator]: [link]
-         */
-
-        $patient = User::find($note->patient_id);
-        $sender = User::find($note->logger_id);
-
-        $careteam = new Collection();
-
-        $cpmSettings = $patient->primaryPractice->cpmSettings();
-
-        if ($notifyCareteam && $cpmSettings->email_note_was_forwarded) {
-            $careteam = $patient->care_team_receives_alerts;
-        }
-
-        if ($notifyPatientSupport) {
-            $careteam->push(User::find(948));
-        }
-
-        /**
-         * Only send PDF to the Practice if the CareTeam is to be notified.
-         * ie. We don't want to send Notes meant only for Patient Support to the Doctor's Office.
-         */
-        if ($notifyCareteam && ($cpmSettings->efax_pdf_notes || $cpmSettings->dm_pdf_notes)) {
-            event(new PdfableCreated($note, $notifyCareteam));
-        }
-
-        for ($i = 0; $i < count($careteam); $i++) {
-            $receiver = $careteam[$i];
-
-            if (is_object($receiver) == false) {
-                continue;
-            }
-
-            $email = $receiver->email;
-
-            $performed_at = Carbon::parse($note->performed_at)->toFormattedDateString();
-
-            $data = [
-                'patient_name' => $patient->fullName,
-                'url'          => $url,
-                'time'         => $performed_at,
-                'logger'       => $sender->fullName,
-            ];
-
-            if ($newNoteFlag || $note->isTCM) {
-                $email_subject = 'Urgent Patient Note from CircleLink Health';
-            } else {
-                $email_subject = 'You have been forwarded a note from CarePlanManager';
-            }
-
-            if ($newNoteFlag) {
-                $body = 'Please click below button to see a note regarding one of your patients.';
-            } else {
-                $body = 'Please click below button to see a forwarded note regarding one of your patients, created on ' . $performed_at . ' by ' . $sender->fullName;
-            }
-
-            \Log::info("Email sent to {$receiver->email}");
-
-            $message = MailLog::create([
-                'sender_email'    => $sender->email,
-                'receiver_email'  => $receiver->email,
-                'body'            => $body,
-                'subject'         => $email_subject,
-                'type'            => 'note',
-                'sender_cpm_id'   => $sender->id,
-                'receiver_cpm_id' => $receiver->id,
-                'created_at'      => $note->created_at,
-                'note_id'         => $note->id,
-            ]);
-
-            $receiver->notify(new NewNote($message, $url));
-        }
-
-        return true;
     }
 
     //Get data for patient note index page, w/ offline activities
@@ -215,13 +87,12 @@ class NoteService
 
         $patients = User::whereHas(
             'careTeamMembers',
-            function ($q) use
-                (
+            function ($q) use (
                 $provider
             ) {
 
                 $q->where('member_user_id', $provider)
-                    ->where('type', 'billing_provider');
+                  ->where('type', 'billing_provider');
             }
         )->pluck('id');
 
@@ -237,13 +108,13 @@ class NoteService
     ) {
 
         return Note::whereIn('patient_id', $patients)
-            ->whereBetween('performed_at', [
-                $start,
-                $end,
-            ])
-            ->orderBy('performed_at', 'desc')
-            ->with('patient')->with('mail')->with('call')->with('author')
-            ->get();
+                   ->whereBetween('performed_at', [
+                       $start,
+                       $end,
+                   ])
+                   ->orderBy('performed_at', 'desc')
+                   ->with('patient')->with('mail')->with('call')->with('author')
+                   ->get();
     }
 
     public function getForwardedNotesWithRangeForProvider(
@@ -252,12 +123,11 @@ class NoteService
         $end
     ) {
 
-        $patients = User::whereHas('careTeamMembers', function ($q) use
-            (
+        $patients = User::whereHas('careTeamMembers', function ($q) use (
             $provider
         ) {
             $q->where('member_user_id', $provider)
-                ->where('type', 'billing_provider');
+              ->where('type', 'billing_provider');
         })->pluck('id');
 
         $notes = $this->getForwardedNotesWithRangeForPatients($patients, $start, $end);
@@ -280,14 +150,14 @@ class NoteService
     ) {
 
         return Note::whereIn('patient_id', $patients)
-            ->whereBetween('performed_at', [
-                $start,
-                $end,
-            ])
-            ->has('mail')
-            ->orderBy('performed_at', 'desc')
-            ->with('patient')->with('mail')->with('call')->with('author')
-            ->get();
+                   ->whereBetween('performed_at', [
+                       $start,
+                       $end,
+                   ])
+                   ->has('mail')
+                   ->orderBy('performed_at', 'desc')
+                   ->with('patient')->with('mail')->with('call')->with('author')
+                   ->get();
     }
 
     public function getAllForwardedNotesWithRange(
@@ -296,18 +166,18 @@ class NoteService
     ) {
 
         $patients = User::ofType('participant')
-            ->get()
-            ->pluck('id');
+                        ->get()
+                        ->pluck('id');
 
         $notes = Note::whereIn('patient_id', $patients)
-            ->whereBetween('created_at', [
-                $start,
-                $end,
-            ])
-            ->has('mail')
-            ->orderBy('performed_at', 'desc')
-            ->with('patient')->with('mail')->with('call')->with('author')
-            ->get();
+                     ->whereBetween('created_at', [
+                         $start,
+                         $end,
+                     ])
+                     ->has('mail')
+                     ->orderBy('performed_at', 'desc')
+                     ->with('patient')->with('mail')->with('call')->with('author')
+                     ->get();
 
         $provider_forwarded_notes = [];
 
@@ -326,7 +196,7 @@ class NoteService
     ) {
 
         $mail = MailLog::where('note_id', $note->id)
-            ->where('receiver_cpm_id', $viewer)->first();
+                       ->where('receiver_cpm_id', $viewer)->first();
 
         if (is_object($mail)) {
             $mail->seen_on = Carbon::now()->toDateTimeString();
@@ -338,12 +208,12 @@ class NoteService
     {
 
         $mails = MailLog::where('note_id', $note->id)
-            ->whereNotNull('seen_on')->get();
+                        ->whereNotNull('seen_on')->get();
 
         $data = [];
 
         foreach ($mails as $mail) {
-            $name = User::find($mail->receiver_cpm_id)->fullName;
+            $name        = User::find($mail->receiver_cpm_id)->fullName;
             $data[$name] = $mail->seen_on;
         }
 
@@ -360,7 +230,7 @@ class NoteService
     ) {
 
         $mail = MailLog::where('note_id', $note->id)
-            ->where('receiver_cpm_id', $patient->billingProvider()->id)->first();
+                       ->where('receiver_cpm_id', $patient->billingProvider()->id)->first();
     }
 
     public function updatePatientRecords(
@@ -409,16 +279,16 @@ class NoteService
     ) {
 
         if ($phone_direction == 'inbound') {
-            $outbound_num = $patient->primaryPhone;
-            $outbound_id = $patient->id;
-            $inbound_num = $author->primaryPhone;
-            $inbound_id = $author->id;
+            $outbound_num  = $patient->primaryPhone;
+            $outbound_id   = $patient->id;
+            $inbound_num   = $author->primaryPhone;
+            $inbound_id    = $author->id;
             $isCpmOutbound = false;
         } else {
-            $outbound_num = $author->primaryPhone;
-            $outbound_id = $author->id;
-            $inbound_num = $patient->primaryPhone;
-            $inbound_id = $patient->id;
+            $outbound_num  = $author->primaryPhone;
+            $outbound_id   = $author->id;
+            $inbound_num   = $patient->primaryPhone;
+            $inbound_id    = $patient->id;
             $isCpmOutbound = true;
         }
 
@@ -453,7 +323,7 @@ class NoteService
     {
 
         $careteam_info = [];
-        $careteam_ids = CarePerson
+        $careteam_ids  = CarePerson
             ::whereUserId($patientId)->pluck('member_user_id');
 
         foreach ($careteam_ids as $id) {
