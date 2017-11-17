@@ -9,6 +9,7 @@ use App\Notifications\NoteForwarded;
 use App\Traits\IsAddendumable;
 use App\Traits\PdfReportTrait;
 use Carbon\Carbon;
+use Illuminate\Database\Eloquent\Relations\MorphMany;
 
 /**
  * App\Note
@@ -81,6 +82,16 @@ class Note extends \App\BaseModel implements PdfReport
     public function logger()
     {
         return $this->belongsTo(User::class, 'logger_id')->withTrashed();
+    }
+
+    /**
+     * Returns the notifications that included this note as an attachment
+     *
+     * @return MorphMany
+     */
+    public function notifications() {
+        return $this->morphMany(DatabaseNotification::class, 'attachment')
+                    ->orderBy('created_at', 'desc');
     }
 
     public function mail()
