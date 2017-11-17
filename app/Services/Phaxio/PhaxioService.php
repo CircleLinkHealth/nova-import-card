@@ -18,7 +18,7 @@ class PhaxioService implements Efax
         $config = config('phaxio');
 
         if (!$mode) {
-            $mode = app()->environment('production')
+            $mode = (app()->environment('production') || app()->environment('worker'))
                 ? 'production'
                 : 'test';
         }
