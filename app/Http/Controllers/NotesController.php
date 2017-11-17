@@ -493,9 +493,9 @@ class NotesController extends Controller
         $patientId,
         $noteId
     ) {
-        $input = $input->all();
+        $note = Note::findOrFail($input['noteId']);
 
-        $this->service->forwardNote($input, $patientId);
+        $note->forward($input['notify_circlelink_support'], $input['notify_careteam']);
 
         return redirect()->route('patient.note.index', ['patient' => $patientId]);
     }
