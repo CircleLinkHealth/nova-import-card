@@ -3,8 +3,6 @@
 namespace App\Observers;
 
 use App\Patient;
-use App\Services\Phaxio\PhaxioService;
-use App\Services\PhiMail\PhiMail;
 use Carbon\Carbon;
 
 class PatientObserver
@@ -16,7 +14,7 @@ class PatientObserver
      */
     public function created(Patient $patient)
     {
-        if (!$patient->consent_date) {
+        if ( ! $patient->consent_date) {
             return;
         }
 
@@ -25,7 +23,7 @@ class PatientObserver
 
     public function sendPatientConsentedNote(Patient $patient)
     {
-        if (!$patient->user->careplan->isProviderApproved()) {
+        if ( ! $patient->user->careplan->isProviderApproved()) {
             return;
         }
 
@@ -34,44 +32,7 @@ class PatientObserver
             'body'         => "Patient consented on $patient->consent_date",
             'type'         => 'Patient Consented',
             'performed_at' => Carbon::now()->toDateTimeString(),
-        ]);
-
-        $pdfPath = $note->toPdf();
-
-        if (!$pdfPath) {
-            \Log::error("File not found: $pdfPath");
-            return;
-        }
-
-        if ($patient->user->primaryPractice
-            ->settings
-            ->first()
-            ->efax_pdf_notes
-        ) {
-            $efax = $patient->user
-                ->locations
-                ->first()
-                ->fax;
-
-            if ($efax) {
-                (new PhaxioService())->send($efax, $pdfPath);
-            }
-        }
-
-        if ($patient->user
-            ->primaryPractice
-            ->settings
-            ->first()
-            ->dm_pdf_notes
-        ) {
-            $direct = $patient->user
-                ->billingProvider()
-                ->emr_direct_address;
-
-            if ($direct) {
-                (new PhiMail())->send($direct, $pdfPath, $note->fileName ?? $pdfPath);
-            }
-        }
+        ])->forward(true, false);
     }
 
     /**
@@ -81,7 +42,7 @@ class PatientObserver
      */
     public function updated(Patient $patient)
     {
-        if (!$patient->isDirty('consent_date')) {
+        if ( ! $patient->isDirty('consent_date')) {
             return;
         }
 

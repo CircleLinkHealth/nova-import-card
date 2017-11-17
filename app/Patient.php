@@ -310,7 +310,7 @@ class Patient extends \App\BaseModel
 
     public function setCcmStatusAttribute($value)
     {
-        $statusBefore = $this->ccm_status;
+        $statusBefore                   = $this->ccm_status;
         $this->attributes['ccm_status'] = $value;
         // update date tracking
         if ($statusBefore !== $value) {
@@ -348,10 +348,10 @@ class Patient extends \App\BaseModel
 
     public function getCurrentMonthCCMTimeAttribute()
     {
-        $seconds = $this->cur_month_activity_time;
-        $H = floor($seconds / 3600);
-        $i = ($seconds / 60) % 60;
-        $s = $seconds % 60;
+        $seconds     = $this->cur_month_activity_time;
+        $H           = floor($seconds / 3600);
+        $i           = ($seconds / 60) % 60;
+        $s           = $seconds % 60;
         $monthlyTime = sprintf("%02d:%02d:%02d", $H, $i, $s);
 
         return $monthlyTime;
@@ -359,7 +359,7 @@ class Patient extends \App\BaseModel
 
     public function getLastCallStatusAttribute()
     {
-        if (!$this->no_call_attempts_since_last_success) {
+        if ( ! $this->no_call_attempts_since_last_success) {
             return 'n/a';
         }
 
@@ -400,17 +400,17 @@ class Patient extends \App\BaseModel
             5,
         ];
 
-        if (!empty($days)) {
+        if ( ! empty($days)) {
             $daysNumber = $days;
         }
 
         $timeFrom = '09:00:00';
-        $timeTo = '17:00:00';
+        $timeTo   = '17:00:00';
 
-        if (!empty($fromTime)) {
+        if ( ! empty($fromTime)) {
             $timeFrom = Carbon::parse($fromTime)->format('H:i:s');
         }
-        if (!empty($toTime)) {
+        if ( ! empty($toTime)) {
             $timeTo = Carbon::parse($toTime)->format('H:i:s');
         }
 
@@ -441,13 +441,13 @@ class Patient extends \App\BaseModel
     {
 
         $id = Activity::where('patient_id', $this->user_id)
-                  ->whereHas('provider', function ($q) {
-                      $q->whereHas('roles', function ($k) {
-                          $k->where('name', 'care-center');
-                      });
-                  })
-                  ->orderBy('created_at', 'desc')
-                  ->first()['provider_id'];
+                      ->whereHas('provider', function ($q) {
+                          $q->whereHas('roles', function ($k) {
+                              $k->where('name', 'care-center');
+                          });
+                      })
+                      ->orderBy('created_at', 'desc')
+                      ->first()['provider_id'];
 
         return Nurse::where('user_id', $id)->first();
     }
@@ -495,8 +495,18 @@ class Patient extends \App\BaseModel
     public function isCCMComplex()
     {
         return $this->monthlySummaries
-                ->where('month_year', Carbon::now()->firstOfMonth())
-                ->first()
-                ->is_ccm_complex ?? false;
+                   ->where('month_year', Carbon::now()->firstOfMonth())
+                   ->first()
+                   ->is_ccm_complex ?? false;
+    }
+
+    /**
+     * Get the patient's Location
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     */
+    public function location()
+    {
+        return $this->belongsTo(Location::class, 'preferred_contact_location');
     }
 }

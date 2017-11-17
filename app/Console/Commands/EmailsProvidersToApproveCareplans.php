@@ -3,7 +3,7 @@
 namespace App\Console\Commands;
 
 use App\CarePlan;
-use App\Mail\CarePlanApprovalReminder;
+use App\Notifications\CarePlanApprovalReminder;
 use App\Models\EmailSettings;
 use App\User;
 use Carbon\Carbon;
@@ -165,7 +165,7 @@ class EmailsProvidersToApproveCareplans extends Command
 
         if (!$pretend) {
             if ($send && $recipient->email) {
-                Mail::send(new CarePlanApprovalReminder($recipient, $numberOfCareplans));
+                $recipient->notify(new CarePlanApprovalReminder($recipient, $numberOfCareplans));
             }
         }
     }

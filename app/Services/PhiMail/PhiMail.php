@@ -1,13 +1,14 @@
 <?php namespace App\Services\PhiMail;
 
 use App\CLH\Repositories\CCDImporterRepository;
+use App\Contracts\DirectMail;
 use App\Jobs\TrainCcdaImporter;
 use App\Models\MedicalRecords\Ccda;
 use App\User;
 use Illuminate\Support\Facades\Log;
 use Maknz\Slack\Facades\Slack;
 
-class PhiMail
+class PhiMail implements DirectMail
 {
     protected $ccdas = [];
     private $connector;

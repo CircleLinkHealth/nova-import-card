@@ -1,8 +1,5 @@
 <?php namespace App\Providers;
 
-use App\AppConfig;
-use App\CarePlan;
-use App\Contracts\Efax;
 use App\Contracts\ReportFormatter;
 use App\Contracts\Repositories\ActivityRepository;
 use App\Contracts\Repositories\AprimaCcdApiRepository;
@@ -23,10 +20,10 @@ use App\Repositories\InviteRepositoryEloquent;
 use App\Repositories\LocationRepositoryEloquent;
 use App\Repositories\PracticeRepositoryEloquent;
 use App\Repositories\UserRepositoryEloquent;
-use App\Services\Phaxio\PhaxioService;
+use Illuminate\Notifications\Channels\DatabaseChannel;
+use Illuminate\Notifications\DatabaseNotification;
 use Illuminate\Support\ServiceProvider;
 use Laravel\Dusk\DuskServiceProvider;
-use View;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -52,6 +49,9 @@ class AppServiceProvider extends ServiceProvider
      */
     public function register()
     {
+        $this->app->bind(DatabaseChannel::class, \App\Notifications\Channels\DatabaseChannel::class);
+        $this->app->bind(DatabaseNotification::class, \App\DatabaseNotification::class);
+
         if ($this->app->environment('local', 'testing', 'staging')) {
             $this->app->register(DuskServiceProvider::class);
         }
@@ -82,11 +82,6 @@ class AppServiceProvider extends ServiceProvider
         $this->app->bind(
             AprimaCcdApiRepository::class,
             AprimaCcdApiRepositoryEloquent::class
-        );
-
-        $this->app->bind(
-            Efax::class,
-            PhaxioService::class
         );
 
         $this->app->bind(

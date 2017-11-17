@@ -4,6 +4,7 @@ namespace App;
 use App\Traits\HasEmrDirectAddress;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Notifications\Notifiable;
 
 /**
  * App\Location
@@ -62,6 +63,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 class Location extends \App\BaseModel
 {
     use HasEmrDirectAddress,
+        Notifiable,
         SoftDeletes;
 
     //Aprima's constant location id.

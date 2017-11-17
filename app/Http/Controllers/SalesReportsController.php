@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Mail\SalesPracticeReport;
 use App\Practice;
 use App\Reports\Sales\Location\SalesByLocationReport;
 use App\Reports\Sales\Practice\SalesByPracticeReport;
@@ -121,13 +122,7 @@ class SalesReportsController extends Controller
 
             $email = $input['email'];
 
-            Mail::send('sales.by-practice.report', ['data' => $data], function ($message) use (
-                $email,
-                $subjectPractice
-            ) {
-                $message->from('notifications@careplanmanager.com', 'CircleLink Health');
-                $message->to($email)->subject($subjectPractice);
-            });
+            Mail::send(new SalesPracticeReport($practice, $data, $email));
 
             return 'Sent to ' . $input['email'] . '!';
         }

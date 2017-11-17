@@ -24,7 +24,7 @@ class NotesController extends Controller
         NoteService $noteService,
         WebixFormatter $formatter
     ) {
-        $this->service = $noteService;
+        $this->service   = $noteService;
         $this->formatter = $formatter;
     }
 
@@ -34,21 +34,21 @@ class NotesController extends Controller
     ) {
 
         $patient = User::where('id', $patientId)
-            ->with([
-                'activities' => function ($q) {
-                    return $q->where('logged_from', '=', 'manual_input')
-                        ->with('meta')
-                        ->groupBy(DB::raw('provider_id, DATE(performed_at),type'))
-                        ->orderBy('performed_at', 'desc');
-                },
-                'appointments',
-                'billingProvider',
-                'notes.author',
-                'notes.call',
-                'notes.mail.receiverUser.roles',
-                'patientInfo',
-            ])->orderByDesc('created_at')
-            ->first();
+                       ->with([
+                           'activities' => function ($q) {
+                               return $q->where('logged_from', '=', 'manual_input')
+                                        ->with('meta')
+                                        ->groupBy(DB::raw('provider_id, DATE(performed_at),type'))
+                                        ->orderBy('performed_at', 'desc');
+                           },
+                           'appointments',
+                           'billingProvider',
+                           'notes.author',
+                           'notes.call',
+                           'notes.mail.receiverUser.roles',
+                           'patientInfo',
+                       ])->orderByDesc('created_at')
+                       ->first();
 
         $messages = \Session::get('messages');
 
@@ -66,7 +66,7 @@ class NotesController extends Controller
                 'activity_json' => $report_data,
                 'patient'       => $patient,
                 'messages'      => $messages,
-//                'data'          => $data,
+                //                'data'          => $data,
                 'ccm_complex'   => $ccm_complex,
             ]
         );
@@ -80,7 +80,7 @@ class NotesController extends Controller
         $session_user = auth()->user();
 
         $providers_for_blog = User::whereIn('id', $session_user->viewableProviderIds())
-            ->pluck('display_name', 'id')->sort();
+                                  ->pluck('display_name', 'id')->sort();
 
         //TIME FILTERS
 
@@ -88,13 +88,13 @@ class NotesController extends Controller
         if (isset($input['range'])) {
             //Sub no of months by input
             $months = $input['range'];
-            $start = Carbon::now()->startOfMonth()->subMonth($months)->format('Y-m-d');
-            $end = Carbon::now()->endOfMonth()->format('Y-m-d');
+            $start  = Carbon::now()->startOfMonth()->subMonth($months)->format('Y-m-d');
+            $end    = Carbon::now()->endOfMonth()->format('Y-m-d');
         } //if user resets time
         else {
             $months = 0;
-            $start = Carbon::now()->startOfMonth()->format('Y-m-d');
-            $end = Carbon::now()->endOfMonth()->format('Y-m-d');
+            $start  = Carbon::now()->startOfMonth()->format('Y-m-d');
+            $end    = Carbon::now()->endOfMonth()->format('Y-m-d');
         }
 
         $only_mailed_notes = (isset($input['mail_filter']))
@@ -118,7 +118,7 @@ class NotesController extends Controller
 
             $title = $provider->display_name;
 
-            if (!empty($notes)) {
+            if ( ! empty($notes)) {
                 $notes = $this->formatter->formatDataForNotesListingReport($notes, $request);
             }
 
@@ -144,7 +144,7 @@ class NotesController extends Controller
 
                 $title = 'All Forwarded Notes';
 
-                if (!empty($notes)) {
+                if ( ! empty($notes)) {
                     $notes = $this->formatter->formatDataForNotesListingReport($notes, $request);
                 }
 
@@ -186,7 +186,7 @@ class NotesController extends Controller
         if ($patientId) {
             // patient view
             $patient = User::find($patientId);
-            if (!$patient) {
+            if ( ! $patient) {
                 return response("User not found", 401);
             }
 
@@ -221,8 +221,8 @@ class NotesController extends Controller
             //providers
             $provider_info = [];
 
-            $author = Auth::user();
-            $author_id = $author->id;
+            $author      = Auth::user();
+            $author_id   = $author->id;
             $author_name = $author->fullName;
 
             //Patient Call Windows:
@@ -337,13 +337,13 @@ class NotesController extends Controller
                 $ccm_complex = $patient->patientInfo->isCCMComplex() ?? false;
 
                 $ccm_above = false;
-                if ($seconds > 1199 && !$ccm_complex) {
+                if ($seconds > 1199 && ! $ccm_complex) {
                     $ccm_above = true;
                 } elseif ($seconds > 3599 && $ccm_complex) {
                     $ccm_above = true;
                 }
 
-                $prediction['ccm_above'] = $ccm_above;
+                $prediction['ccm_above']   = $ccm_above;
                 $prediction['ccm_complex'] = $ccm_complex;
 
 
@@ -415,7 +415,7 @@ class NotesController extends Controller
     ) {
 
         $patient = User::find($patientId);
-        $note = $this->service->getNoteWithCommunications($noteId);
+        $note    = $this->service->getNoteWithCommunications($noteId);
 
         $this->service->updateMailLogsForNote(auth()->user()->id, $note);
 
@@ -458,17 +458,17 @@ class NotesController extends Controller
             $meta_tags[] = 'Medication Reconciliation';
         }
 
-        $data['type'] = $note->type;
-        $data['id'] = $note->id;
+        $data['type']         = $note->type;
+        $data['id']           = $note->id;
         $data['performed_at'] = $note->performed_at;
-        $provider = User::find($note->author_id);
+        $provider             = User::find($note->author_id);
         if ($provider) {
             $data['provider_name'] = $provider->fullName;
         } else {
             $data['provider_name'] = '';
         }
 
-        $data['comment'] = $note->body;
+        $data['comment']   = $note->body;
         $data['addendums'] = $note->addendums->sortByDesc('created_at');
 
         $careteam_info = $this->service->getPatientCareTeamMembers($patientId);
@@ -493,9 +493,9 @@ class NotesController extends Controller
         $patientId,
         $noteId
     ) {
-        $input = $input->all();
+        $note = Note::findOrFail($input['noteId']);
 
-        $this->service->forwardNote($input, $patientId);
+        $note->forward($input['notify_careteam'], $input['notify_circlelink_support']);
 
         return redirect()->route('patient.note.index', ['patient' => $patientId]);
     }
