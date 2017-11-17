@@ -2,7 +2,11 @@
 
 namespace App;
 
+use App\Channels\DirectMailChannel;
+use App\Channels\FaxChannel;
 use App\Contracts\PdfReport;
+use App\Notifications\ForwardPdfNote;
+use App\Notifications\NoteCreated;
 use App\Traits\IsAddendumable;
 use App\Traits\PdfReportTrait;
 use Carbon\Carbon;
@@ -48,7 +52,7 @@ class Note extends \App\BaseModel implements PdfReport
     protected $table = 'notes';
 
     protected $dates = [
-        'performed_at'
+        'performed_at',
     ];
 
     protected $fillable = [
@@ -154,5 +158,47 @@ class Note extends \App\BaseModel implements PdfReport
         }
 
         return false;
+    }
+
+    public function forward(bool $notifySupport, bool $notifyCareteam)
+    {
+        $this->load([
+            'patient.primaryPractice.cpmSettings',
+            'patient.location',
+        ]);
+
+        $patient = $this->patient;
+
+        $recipients = collect();
+
+        $cpmSettings = $patient->primaryPractice->cpmSettings();
+
+        if ($notifyCareteam && $cpmSettings->email_note_was_forwarded) {
+            $recipients = $patient->care_team_receives_alerts;
+        }
+
+        if ($notifySupport) {
+            $recipients->push(User::find(948));
+        }
+
+        $recipients->map(function ($carePersonUser) {
+            $carePersonUser->notify(new NoteCreated($this));
+        });
+
+        $channels = [];
+
+        if ($cpmSettings->efax_pdf_notes) {
+            $channels[] = FaxChannel::class;
+        }
+
+        if ($cpmSettings->dm_pdf_notes) {
+            $channels[] = DirectMailChannel::class;
+        }
+
+        if ( ! $notifyCareteam || empty($channels)) {
+            return;
+        }
+
+        optional($patient->location)->notify(new ForwardPdfNote($this, $channels));
     }
 }
