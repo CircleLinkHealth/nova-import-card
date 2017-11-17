@@ -1,5 +1,6 @@
 <?php
 
+use App\Providers\DirectMailServiceProvider;
 use App\Providers\EmailArrayValidatorServiceProvider;
 use App\Providers\FaxServiceProvider;
 use App\Providers\ObserversServiceProvider;
@@ -190,6 +191,7 @@ return [
         App\Providers\EventServiceProvider::class,
         App\Providers\RouteServiceProvider::class,
         FaxServiceProvider::class,
+        DirectMailServiceProvider::class,
 
 
         App\Providers\UserMetaParserHelpersServiceProvider::class,
