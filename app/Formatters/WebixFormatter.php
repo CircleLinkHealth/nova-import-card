@@ -106,7 +106,7 @@ class WebixFormatter implements ReportFormatter
                 'comment'      => $note->body,
                 'logged_from'  => 'note',
                 'type_name'    => $note->type,
-                'performed_at' => $note->performed_at,
+                'performed_at' => $note->performed_at->toDateString(),
                 'provider_name' => $billingProvider,
                 'tags' => '',
             ];
