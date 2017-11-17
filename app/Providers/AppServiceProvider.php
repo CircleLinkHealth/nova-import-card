@@ -22,6 +22,8 @@ use App\Repositories\PracticeRepositoryEloquent;
 use App\Repositories\UserRepositoryEloquent;
 use Illuminate\Notifications\Channels\DatabaseChannel;
 use Illuminate\Notifications\DatabaseNotification;
+use Illuminate\Notifications\HasDatabaseNotifications;
+use Illuminate\Notifications\Notifiable;
 use Illuminate\Support\ServiceProvider;
 use Laravel\Dusk\DuskServiceProvider;
 
@@ -49,8 +51,11 @@ class AppServiceProvider extends ServiceProvider
      */
     public function register()
     {
+        //Bind database notification classes to local
         $this->app->bind(DatabaseChannel::class, \App\Notifications\Channels\DatabaseChannel::class);
         $this->app->bind(DatabaseNotification::class, \App\DatabaseNotification::class);
+        $this->app->bind(HasDatabaseNotifications::class, \App\Notifications\HasDatabaseNotifications::class);
+        $this->app->bind(Notifiable::class, \App\Notifications\Notifiable::class);
 
         if ($this->app->environment('local', 'testing', 'staging')) {
             $this->app->register(DuskServiceProvider::class);
