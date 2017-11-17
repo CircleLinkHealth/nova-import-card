@@ -15,7 +15,7 @@ class NoteForwarded extends Notification
     public $note;
     public $channels = ['database'];
     public $pathToPdf;
-
+    public $attachment;
 
     /**
      * Create a new notification instance.
@@ -27,7 +27,7 @@ class NoteForwarded extends Notification
         Note $note,
         $channels = ['mail']
     ) {
-        $this->note = $note;
+        $this->attachment = $this->note = $note;
 
         $this->channels = array_merge($this->channels, $channels);
     }
@@ -170,5 +170,13 @@ class NoteForwarded extends Notification
 
             'pathToPdf' => $this->pathToPdf,
         ];
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getAttachment()
+    {
+        return $this->attachment;
     }
 }

@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Channels;
+namespace App\Notifications\Channels;
 
 use App\Contracts\Efax;
 use Illuminate\Notifications\Notification;

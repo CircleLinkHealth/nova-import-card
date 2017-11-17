@@ -2,10 +2,9 @@
 
 namespace App;
 
-use App\Channels\DirectMailChannel;
-use App\Channels\FaxChannel;
 use App\Contracts\PdfReport;
-use App\Notifications\ForwardPdfNote;
+use App\Notifications\Channels\DirectMailChannel;
+use App\Notifications\Channels\FaxChannel;
 use App\Notifications\NoteForwarded;
 use App\Traits\IsAddendumable;
 use App\Traits\PdfReportTrait;

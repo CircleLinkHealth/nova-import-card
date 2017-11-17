@@ -1,9 +1,8 @@
 <?php
 
-namespace App\Channels;
+namespace App\Notifications\Channels;
 
 use App\Contracts\DirectMail;
-use App\Services\Phaxio\PhaxioService;
 use Illuminate\Notifications\Notification;
 
 class DirectMailChannel
