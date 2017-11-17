@@ -122,7 +122,7 @@ class Note extends \App\BaseModel implements PdfReport
             'problems' => $problems,
             'sender'   => $this->author,
             'note'     => $this,
-            'provider' => $this->patient->billingProvider(),
+            'provider' => $this->patient->billingProviderUser(),
         ]);
 
         $this->fileName = Carbon::now()->toDateString() . '-' . $this->patient->fullName . '.pdf';
@@ -166,12 +166,13 @@ class Note extends \App\BaseModel implements PdfReport
      * @param bool $notifySupport
      * @param bool $notifyCareteam
      */
-    public function forward(bool $notifySupport, bool $notifyCareteam)
+    public function forward(bool $notifyCareteam = null, bool $notifySupport = null)
     {
         $this->load([
-            'patient.primaryPractice.cpmSettings',
-            'patient.location',
+            'patient.primaryPractice.settings',
+            'patient.patientInfo.location',
         ]);
+
         $recipients = collect();
 
         $cpmSettings = $this->patient->primaryPractice->cpmSettings();
@@ -185,7 +186,7 @@ class Note extends \App\BaseModel implements PdfReport
         }
 
         $recipients->map(function ($carePersonUser) {
-            $carePersonUser->notify(new NoteForwarded($this));
+            $carePersonUser->notify(new NoteForwarded($this, ['mail']));
         });
 
         $channels = [];
@@ -202,6 +203,6 @@ class Note extends \App\BaseModel implements PdfReport
             return;
         }
 
-        optional($this->patient->location)->notify(new NoteForwarded($this, $channels));
+        optional($this->patient->patientInfo->location)->notify(new NoteForwarded($this, $channels));
     }
 }
