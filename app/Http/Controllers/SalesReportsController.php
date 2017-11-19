@@ -53,8 +53,8 @@ class SalesReportsController extends Controller
             ->data();
 
         $data['name'] = $provider->fullName;
-        $data['start'] = Carbon::parse($input['start_date'])->toDateString();
-        $data['end'] = Carbon::parse($input['end_date'])->toDateString();
+        $data['start'] = Carbon::parse($input['start_date']);
+        $data['end'] = Carbon::parse($input['end_date']);
         $data['isEmail'] = false;
 
         //PDF download support
