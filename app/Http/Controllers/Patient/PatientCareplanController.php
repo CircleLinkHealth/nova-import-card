@@ -320,7 +320,7 @@ class PatientCareplanController extends Controller
         }
 
         // security
-        if (!Auth::user()->canForSite('observations-view', $programId)) {
+        if (!Auth::user()->hasPermissionForSite('observations-view', $programId)) {
             abort(403);
         }
 
@@ -782,7 +782,7 @@ class PatientCareplanController extends Controller
 
         if ($patient->carePlanStatus == 'qa_approved' && auth()->user()->canApproveCarePlans()) {
             $showApprovalButton = true;
-        } elseif ($patient->carePlanStatus == 'draft' && auth()->user()->canForSite('care-plan-qa-approve', $patient->primary_practice_id)) {
+        } elseif ($patient->carePlanStatus == 'draft' && auth()->user()->hasPermissionForSite('care-plan-qa-approve', $patient->primary_practice_id)) {
             $showApprovalButton = true;
         } else {
             $showApprovalButton = false;
