@@ -30,7 +30,7 @@ class MigrateCpmMail extends Migration
                     'attachment_type' => $log->note_id
                         ? Note::class
                         : null,
-                    'data'            => $log->toJson(),
+                    'data'            => $log,
                     'read_at'         => $log->seen_on ?? $log->created_at,
                     'created_at'      => $log->created_at,
                     'updated_at'      => $log->created_at,
