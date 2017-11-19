@@ -7,7 +7,6 @@ use App\Call;
 use App\CarePerson;
 use App\Contracts\Reports\Reportable;
 use App\DatabaseNotification;
-use App\MailLog;
 use App\Observation;
 use App\PatientMonthlySummary;
 use App\User;
@@ -30,10 +29,8 @@ class ProviderReportable implements Reportable
     public function patients()
     {
         return User::ofType('participant')
-                   ->whereHas('careTeamMembers', function ($q) {
-                       $q->whereType(CarePerson::BILLING_PROVIDER)
-                         ->whereMemberUserId($this->provider->id);
-                   })->get();
+                   ->hasBillingProvider($this->provider->id)
+                   ->get();
     }
 
     /**
