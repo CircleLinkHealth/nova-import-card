@@ -114,7 +114,7 @@ class Practice extends \App\BaseModel
 
     public function users()
     {
-        return $this->belongsToMany(User::class, 'practice_user', 'program_id', 'user_id')
+        return $this->belongsToMany(User::class, 'practice_role_user', 'program_id', 'user_id')
             ->withPivot('role_id', 'has_admin_rights', 'send_billing_reports');
     }
 

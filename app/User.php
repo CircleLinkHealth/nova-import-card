@@ -2205,7 +2205,7 @@ class User extends \App\BaseModel implements AuthenticatableContract, CanResetPa
 
     public function practices()
     {
-        return $this->belongsToMany(Practice::class, 'practice_user', 'user_id', 'program_id')
+        return $this->belongsToMany(Practice::class, 'practice_role_user', 'user_id', 'program_id')
                     ->withPivot('role_id', 'has_admin_rights', 'send_billing_reports');
     }
 
