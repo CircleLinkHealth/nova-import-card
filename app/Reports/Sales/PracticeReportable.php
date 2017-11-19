@@ -5,12 +5,12 @@ namespace App\Reports\Sales;
 use App\Activity;
 use App\Call;
 use App\Contracts\Reports\Reportable;
+use App\Note;
 use App\Observation;
 use App\PatientMonthlySummary;
 use App\Practice;
 use App\User;
 use Carbon\Carbon;
-use Illuminate\Notifications\DatabaseNotification;
 
 class PracticeReportable implements Reportable
 {
@@ -103,13 +103,9 @@ class PracticeReportable implements Reportable
      */
     public function forwardedNotesCount(Carbon $start, Carbon $end)
     {
-        return DatabaseNotification::distinct()
-                                   ->whereHas('note.patient.primaryPractice', function ($q){
-                                        $q->where('id', '=', $this->practice->id);
-                                   })
-                                   ->where('created_at', '>=', $start)
-                                   ->where('created_at', '<=', $end)
-                                   ->count();
+        return Note::forwarded($start, $end)
+                   ->patientPractice($this->practice->id)
+                   ->count();
     }
 
     /**
@@ -122,16 +118,10 @@ class PracticeReportable implements Reportable
      */
     public function forwardedEmergencyNotesCount(Carbon $start, Carbon $end)
     {
-        return DatabaseNotification::distinct()
-                                   ->whereHas('note', function ($q) {
-                                       $q->where('isTCM', 1)
-                                         ->whereHas('patient', function ($k) {
-                                             $k->where('program_id', '=', $this->practice->id);
-                                         });
-                                   })
-                                   ->where('created_at', '>=', $start)
-                                   ->where('created_at', '<=', $end)
-                                   ->count(['attachment_id']);
+        return Note::emergency()
+                   ->patientPractice($this->practice->id)
+                   ->forwarded($start, $end)
+                   ->count();
     }
 
     /**

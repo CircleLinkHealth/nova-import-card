@@ -1,20 +1,12 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: michalis
- * Date: 11/17/2017
- * Time: 3:54 PM
- */
 
 namespace App;
 
 
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
-
 class DatabaseNotification extends \Illuminate\Notifications\DatabaseNotification
 {
     protected $dates = [
-        'read_at'
+        'read_at',
     ];
 
     /**
@@ -26,23 +18,28 @@ class DatabaseNotification extends \Illuminate\Notifications\DatabaseNotificatio
     }
 
     /**
-     * Get the note that was attached to this notification.
+     * Scope notifications by a specific attachment type
      *
-     * @todo: fix eager loading
-     * @return BelongsTo
+     * @param $builder
+     * @param $type | Fully qualified class name (eg. User::class)
+     *
+     * @return mixed
      */
-    public function note() {
-        return $this->belongsTo(Note::class, 'attachment_id')
-            ->where('attachment_type', '=', Note::class);
+    public function scopeHasAttachmentType($builder, $type)
+    {
+        return $builder->where('attachment_type', '=', $type);
     }
 
     /**
-     * Get the user this notification belongs to.
-     * @todo: fix eager loading
-     * @return BelongsTo
+     * Scope notifications by a specific notifiable type
+     *
+     * @param $builder
+     * @param $type | Fully qualified class name (eg. User::class)
+     *
+     * @return mixed
      */
-    public function user() {
-        return $this->belongsTo(User::class, 'notifiable_id')
-                    ->where('notifiable_type', '=', User::class);
+    public function scopeHasNotifiableType($builder, $type)
+    {
+        return $builder->where('notifiable_type', '=', $type);
     }
 }

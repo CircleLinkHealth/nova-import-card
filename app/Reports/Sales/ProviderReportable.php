@@ -6,7 +6,7 @@ use App\Activity;
 use App\Call;
 use App\CarePerson;
 use App\Contracts\Reports\Reportable;
-use App\DatabaseNotification;
+use App\Note;
 use App\Observation;
 use App\PatientMonthlySummary;
 use App\User;
@@ -105,15 +105,8 @@ class ProviderReportable implements Reportable
      */
     public function forwardedNotesCount(Carbon $start, Carbon $end)
     {
-        return DatabaseNotification::distinct()
-                                   ->has('note')
-                                   ->where([
-                                       ['notifiable_type', '=', get_class($this->provider)],
-                                       ['notifiable_id', '=', $this->provider->id],
-                                       ['created_at', '>=', $start],
-                                       ['created_at', '<=', $end],
-                                   ])
-                                   ->count(['attachment_id']);
+        return Note::forwardedTo(get_class($this->provider), $this->provider->id, $start, $end)
+                   ->count();
     }
 
     /**
@@ -126,17 +119,9 @@ class ProviderReportable implements Reportable
      */
     public function forwardedEmergencyNotesCount(Carbon $start, Carbon $end)
     {
-        return DatabaseNotification::distinct()
-                                   ->whereHas('note', function ($q) {
-                                       $q->where('isTCM', 1);
-                                   })
-                                   ->where([
-                                       ['notifiable_type', '=', get_class($this->provider)],
-                                       ['notifiable_id', '=', $this->provider->id],
-                                       ['created_at', '>=', $start],
-                                       ['created_at', '<=', $end],
-                                   ])
-                                   ->count(['attachment_id']);
+        return Note::forwardedTo(get_class($this->provider), $this->provider->id, $start, $end)
+                   ->emergency()
+                   ->count();
     }
 
     /**

@@ -182,9 +182,8 @@ class NoteService
         Note $note
     ) {
         $viewer->unreadNotifications()
-               ->whereHas('note', function ($q) use ($note) {
-                   $q->where('id', '=', $note->id);
-               })
+            ->hasNotifiableType(Note::class)
+               ->where('attachment_id', '=', $note->id)
                ->get()
                ->markAsRead();
     }
@@ -192,7 +191,7 @@ class NoteService
     public function getSeenForwards(Note $note)
     {
         return $note->notifications()
-                    ->has('user')
+                    ->hasNotifiableType(User::class)
                     ->with('notifiable')
                     ->whereNotNull('read_at')
                     ->get()
