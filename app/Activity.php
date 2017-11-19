@@ -225,7 +225,7 @@ class Activity extends \App\BaseModel implements Transformable
 
     public function provider()
     {
-        return $this->belongsTo(User::class, 'provider_id');
+        return $this->belongsTo(User::class, 'provider_id')->withTrashed();
     }
 
     public function pageTime()

@@ -22,9 +22,8 @@ class FaxChannel
      */
     public function send($notifiable, Notification $notification)
     {
-        $message = $notification->toFax($notifiable);
-
         if ($notifiable->fax) {
+            $message = $notification->toFax($notifiable);
             $this->fax->send($notifiable->fax, $message);
         }
     }

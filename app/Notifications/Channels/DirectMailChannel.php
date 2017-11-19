@@ -17,16 +17,17 @@ class DirectMailChannel
     /**
      * Send the given notification.
      *
-     * @param  mixed  $notifiable
-     * @param  \Illuminate\Notifications\Notification  $notification
+     * @param  mixed $notifiable
+     * @param  \Illuminate\Notifications\Notification $notification
+     *
      * @return void
      */
     public function send($notifiable, Notification $notification)
     {
-        $filePath = $notification->toDirectMail($notifiable);
-
-        $fileName = str_substr_after($filePath, '/');
-
-        $this->dm->send($notifiable->emr_direct_address, $filePath, $fileName);
+        if ($notifiable->emr_direct_address) {
+            $filePath = $notification->toDirectMail($notifiable);
+            $fileName = str_substr_after($filePath, '/');
+            $this->dm->send($notifiable->emr_direct_address, $filePath, $fileName);
+        }
     }
 }
