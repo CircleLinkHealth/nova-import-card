@@ -24,7 +24,7 @@
                     url: rootUrl('ccd-importer/imported-medical-records'),
                     headers: { 
                         'X-CSRF-TOKEN': csrfToken()
-                     },
+                    },
                     acceptedFileTypes: 'text/xml,application/xml,application/vnd.ms-excel,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
                 }
             }

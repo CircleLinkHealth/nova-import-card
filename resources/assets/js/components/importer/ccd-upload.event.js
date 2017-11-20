@@ -3,7 +3,14 @@ export default (App, VueDropZone) => {
         console.log("vdropzone-success", file, response)
     })
 
-    VueDropZone.$on('vdropzone-error', (file, message, xhr) => {
-        console.log("vdropzone-error", file, message, xhr)
+    VueDropZone.$on('vdropzone-error', (file, data, xhr) => {
+        console.log("vdropzone-error", file, data, xhr)
+
+        if (!!(data || {}).message) {
+            const messageElem = (file.previewElement || document.createElement('div'))
+                        .querySelector('[data-dz-errormessage]') || document.createElement('span')
+
+            messageElem.innerText = (data || {}).message
+        }
     })
 }
