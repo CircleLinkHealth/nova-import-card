@@ -64,8 +64,6 @@ class OnboardingController extends Controller
         OnboardingService $onboardingService,
         Request $request
     ) {
-        parent::__construct($request);
-
         $this->invites = $inviteRepository;
         $this->locations = $locationRepository;
         $this->practices = $practiceRepository;
