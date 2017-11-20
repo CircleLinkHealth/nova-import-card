@@ -11,6 +11,7 @@
 <script>
     import vue2Dropzone from 'vue2-dropzone'
     import { rootUrl, csrfToken } from '../../app.config'
+    import CcdRegisterEvents from './ccd-upload.event'
 
     export default {
         name: 'ccd-upload',
@@ -20,16 +21,18 @@
         data() {
             return {
                 dzOptions: {
-                    url: rootUrl('ccd-importer/post'),
+                    url: rootUrl('ccd-importer/imported-medical-records'),
                     headers: { 
                         'X-CSRF-TOKEN': csrfToken()
                      },
-                    acceptedFileTypes: 'application/xml,application/vnd.ms-excel,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+                    acceptedFileTypes: 'text/xml,application/xml,application/vnd.ms-excel,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
                 }
             }
         },
         mounted() {
             console.log(this.$refs.vueDropzone)
+
+            CcdRegisterEvents(this, this.$refs.vueDropzone)
         }
     }
 </script>

@@ -30,6 +30,9 @@
 </template>
 
 <script>
+    /**
+     * Notification Component
+     */
     import {mapActions} from 'vuex'
     import {removeNotification} from '../../../store/actions'
 
