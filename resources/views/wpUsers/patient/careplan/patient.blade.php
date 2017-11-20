@@ -130,10 +130,9 @@ $user_info = array();
                                     <div class="form-group form-item form-item-spacing col-sm-12 {{ $errors->first('birth_date') ? 'has-error' : '' }}">
                                         <label for="birth_date">Date Of Birth<span class="attention">*</span>:</label>
                                         <input id="birth_date" name="birth_date" type="date" class="form-control"
-                                               value="{{ (old('birth_date') ? old('birth_date') : ($patient->birth_date ? $patient->birth_date : '01-01-1960')) }}"
+                                               value="{{ (old('birth_date') ? old('birth_date') : ($patient->birth_date ? $patient->birth_date : '1960-01-01')) }}"
                                                data-field="date" data-format="yyyy-MM-dd"/><br/>
                                         <span class="help-block">{{ $errors->first('birth_date') }}</span>
-                                        <div id="dtBox"></div>
                                     </div>
                                     <div class="form-item col-sm-12">
                                         <div class="row">
