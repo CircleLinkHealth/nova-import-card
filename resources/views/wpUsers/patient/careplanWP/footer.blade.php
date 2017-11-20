@@ -4,7 +4,7 @@
             <div class="progress-buttons col-sm-12 col-centered text-center">
                 <a href="#" class="btn btn-green btn-next inline-block submitFormBtn" dtarget="/" omitsubmit="yes">Cancel</a>
                 <a href="#" class="btn btn-green btn-next inline-block submitFormBtn"
-                   dtarget="{{ URL::route('patient.careteam.show', array('patientId' => $patient->id)) }}">
+                   dtarget="{{ URL::route('patient.demographics.show', array('patientId' => $patient->id)) }}">
 
                 </a>
                 <button type="submit" class="btn btn-orange">Submit</button>
@@ -19,10 +19,9 @@
             <div class="progress-status">
                 @if(!$user_info)
                     @if(Route::is('patient.demographics.show')) <p class="">PROGRESS: 1 of 5</p> @endif
-                    @if(Route::is('patient.careteam.show')) <p class="">PROGRESS: 2 of 5</p> @endif
+                    @if(Route::is('patient.careplan.show')) <p class="">PROGRESS: 2 of 5</p> @endif
                     @if(Route::is('patient.careplan.show')) <p class="">PROGRESS: 3 of 5</p> @endif
                     @if(Route::is('patient.careplan.show')) <p class="">PROGRESS: 4 of 5</p> @endif
-                    @if(Route::is('patient.careplan.show')) <p class="">PROGRESS: 5 of 5</p> @endif
                 @else
                     <p class="">&nbsp;</p>
                 @endif
