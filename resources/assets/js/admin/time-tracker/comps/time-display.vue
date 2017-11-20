@@ -16,7 +16,7 @@
                 return this.pad(Math.floor(this.seconds / 60), 2)
             },
             time() {
-                return `${this.hours} : ${this.minutes} : ${this.pad(this.seconds % 60, 2)}`;
+                return `${this.hours}:${this.minutes}:${this.pad(this.seconds % 60, 2)}`;
             }
         },
         methods: {

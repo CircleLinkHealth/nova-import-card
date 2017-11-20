@@ -139,7 +139,7 @@ class WebixFormatter implements ReportFormatter
         $appointments = $patient->appointments->map(function ($appointment) use ($billingProvider) {
             return [
                 'id'           => $appointment->id,
-                'logger_name'  => $appointment->author->fullName,
+                'logger_name'  => optional($appointment->author)->fullName,
                 'comment'      => $appointment->comment,
                 'logged_from'  => $appointment->type,
                 'type_name'    => 'appointment',

@@ -36,16 +36,17 @@ if (isset($patient) && !empty($patient) && is_a($patient, App\User::class)) {
 
 @push('prescripts')
     <script>
+
         var timeTrackerInfo = {
             "patientId": '<?php echo $patientId; ?>' === '' ? '0' : '<?php echo $patientId; ?>',
             "providerId": '<?php echo Auth::user()->id ?>',
             "totalTime": ((monthlyTime) => {
                             if (monthlyTime) {
                                 const split = monthlyTime.split(':');
-                                const minutes = Number(split[2]), hours = Number(split[1]), days = Number(split[0]);
-                                return (minutes * 60) + 
-                                        (hours * 60 * 60) + 
-                                        (days * 24 * 60 * 60);
+                                const seconds = Number(split[2]), minutes = Number(split[1]), hours = Number(split[0]);
+                                return seconds +
+                                        (minutes * 60) + 
+                                        (hours * 60 * 60);
                             }
                             return 0;
                         })(document.querySelector('[data-monthly-time]') ? document.querySelector('[data-monthly-time]').getAttribute('data-monthly-time') : null),
@@ -57,7 +58,8 @@ if (isset($patient) && !empty($patient) && is_a($patient, App\User::class)) {
             "activity": (document.getElementById('activityName') || { value: '' }).value,
             "title": '<?php echo $title; ?>',
             "submitUrl": '<?php echo URL::route("api.pagetracking"); ?>',
-            "startTime": '<?php echo Carbon::now()->subSeconds(8)->toDateTimeString(); ?>'
+            "startTime": '<?php echo Carbon::now()->subSeconds(8)->toDateTimeString(); ?>',
+            "disabled": ('{{!$enableTimeTracking}}' == '1')
         }
     </script>
 @endpush

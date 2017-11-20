@@ -43,8 +43,18 @@ class PatientController extends Controller
         }
 
         return view('wpUsers.patient.dashboard',
-            array_merge(compact(['pendingApprovals', 'nurse', 'showPatientsPendingApprovalBox']),
-                $patientsPendingApproval));
+                array_merge([
+                    'disableTimeTracking' => true
+                ],
+                array_merge(
+                    compact([
+                        'pendingApprovals', 
+                        'nurse', 
+                        'showPatientsPendingApprovalBox'
+                        ]),
+                    $patientsPendingApproval)
+                )
+            );
     }
 
     /**
