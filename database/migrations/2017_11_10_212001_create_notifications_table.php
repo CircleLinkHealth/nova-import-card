@@ -19,7 +19,7 @@ class CreateNotificationsTable extends Migration
             $table->morphs('notifiable');
 
             $table->unsignedInteger("attachment_id")->nullable();
-            $table->string("{attachment_type")->nullable();
+            $table->string("attachment_type")->nullable();
             $table->index(["attachment_id", "attachment_type"]);
 
             $table->text('data');
