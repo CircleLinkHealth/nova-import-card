@@ -3,6 +3,7 @@ require('./bootstrap');
 import Vue from 'vue'
 import axios from './bootstrap-axios'
 import VueAxios from 'vue-axios'
+import { ClientTable } from 'vue-tables-2'
 
 if (document) {
     const elem = document.querySelector('meta[name="base-url"]')
@@ -15,12 +16,15 @@ if (document) {
 }
 
 Vue.use(VueAxios, axios)
+Vue.use(ClientTable, {}, false)
 
 Vue.config.debug = true
 
 import CcdUpload from './components/importer/ccd-upload'
+import CcdViewer from './components/importer/ccd-viewer'
 
 Vue.component('ccd-upload', CcdUpload)
+Vue.component('ccd-viewer', CcdViewer)
 
 const App = new Vue({
     el: '#app'
