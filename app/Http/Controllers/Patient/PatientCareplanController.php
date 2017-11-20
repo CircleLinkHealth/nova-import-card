@@ -320,7 +320,7 @@ class PatientCareplanController extends Controller
         }
 
         // security
-        if (!Auth::user()->hasPermissionForSite('observations-view', $programId)) {
+        if (!Auth::user()->hasPermission('observations-view')) {
             abort(403);
         }
 
