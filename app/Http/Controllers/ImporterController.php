@@ -72,6 +72,36 @@ class ImporterController extends Controller
         return view('CCDUploader.uploader-remix');
     }
 
+    function getImportedRecords() {
+        return ImportedMedicalRecord::whereNull('patient_id')
+                ->with('demographics')
+                ->with('practice')
+                ->with('location')
+                ->with('billingProvider')
+                ->get()
+                ->map(function ($summary) {
+                    $summary['flag'] = false;
+
+                    $providers = $summary->medicalRecord()->providers()->where([
+                        ['first_name', '!=', null],
+                        ['last_name', '!=', null],
+                        ['ml_ignore', '=', false],
+                    ])->get()->unique(function ($m) {
+                        return $m->first_name . $m->last_name;
+                    });
+
+                    if ($providers->count() > 1) {
+                        $summary['flag'] = true;
+                    }
+
+                    return $summary;
+                })->values();
+    }
+
+    public function records() {
+        return $this::getImportedRecords();
+    }
+
     /**
      * Show all QASummaries that are related to a CCDA
      */
@@ -80,32 +110,10 @@ class ImporterController extends Controller
         //get rid of orphans
         $delete = ImportedMedicalRecord::whereNull('medical_record_id')->delete();
 
-        $qaSummaries = ImportedMedicalRecord::whereNull('patient_id')
-                                            ->with('demographics')
-                                            ->with('practice')
-                                            ->with('location')
-                                            ->with('billingProvider')
-                                            ->get()
-                                            ->map(function ($summary) {
-                                                $summary['flag'] = false;
-
-                                                $providers = $summary->medicalRecord()->providers()->where([
-                                                    ['first_name', '!=', null],
-                                                    ['last_name', '!=', null],
-                                                    ['ml_ignore', '=', false],
-                                                ])->get()->unique(function ($m) {
-                                                    return $m->first_name . $m->last_name;
-                                                });
-
-                                                if ($providers->count() > 1) {
-                                                    $summary['flag'] = true;
-                                                }
-
-                                                return $summary;
-                                            })->values();
+        $importedRecords = $this::getImportedRecords();
 
         JavaScript::put([
-            'importedMedicalRecords' => $qaSummaries,
+            'importedMedicalRecords' => $importedRecords,
         ]);
 
         return view('CCDUploader.uploadedSummary');

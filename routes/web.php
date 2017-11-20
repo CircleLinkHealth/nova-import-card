@@ -106,7 +106,18 @@ Route::group(['middleware' => 'auth'], function () {
 
         Route::resource('nurses', 'API\NurseController');
 
-
+        Route::group([
+            'middleware' => [
+                'permission:ccd-import'
+            ],
+            'prefix'     => 'ccd-importer'
+        ], function () {
+            Route::get('imported-medical-records', [
+                'uses' => 'API\ImporterController@records',
+                'as'   => 'view.records.ready.to.import',
+            ]);
+        });
+        
     });
 
     Route::resource('profiles', 'API\ProfileController');
@@ -230,6 +241,7 @@ Route::group(['middleware' => 'auth'], function () {
             'uses' => 'ImporterController@index',
             'as'   => 'view.files.ready.to.import',
         ]);
+        
 
         Route::post('import', 'MedicalRecordImportController@import');
 
