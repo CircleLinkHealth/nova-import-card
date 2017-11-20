@@ -129,7 +129,7 @@ $user_info = array();
                                     </div>
                                     <div class="form-group form-item form-item-spacing col-sm-12 {{ $errors->first('birth_date') ? 'has-error' : '' }}">
                                         <label for="birth_date">Date Of Birth<span class="attention">*</span>:</label>
-                                        <input id="birth_date" name="birth_date" type="input" class="form-control"
+                                        <input id="birth_date" name="birth_date" type="date" class="form-control"
                                                value="{{ (old('birth_date') ? old('birth_date') : ($patient->birth_date ? $patient->birth_date : '01-01-1960')) }}"
                                                data-field="date" data-format="yyyy-MM-dd"/><br/>
                                         <span class="help-block">{{ $errors->first('birth_date') }}</span>
@@ -276,7 +276,7 @@ $user_info = array();
                                         <label for="mf-consent_date">Consent Date <span
                                                     class="attention">*</span>:</label>
                                         <input id="consent_date" name="consent_date" class="form-control"
-                                               type="input"
+                                               type="date"
                                                value="{{ (old('consent_date') ? old('consent_date') : ($patient->consent_date ? $patient->consent_date : '')) }}"
                                                data-field="date" data-format="yyyy-MM-dd"/><br/>
                                         <span class="help-block">{{ $errors->first('consent_date') }}</span>
