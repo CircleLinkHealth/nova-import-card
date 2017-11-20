@@ -25,7 +25,7 @@ class RenamePracticeUser extends Migration
      */
     public function down()
     {
-        Schema::table('practice_user', function (Blueprint $table) {
+        Schema::table('practice_role_user', function (Blueprint $table) {
             $table->rename('practice_user');
         });
     }
