@@ -23,7 +23,6 @@ use Michalisantoniou6\Cerberus\CerberusRole;
  */
 class Role extends CerberusRole
 {
-
     const CCM_TIME_ROLES = [
         'care-center',
         'med_assistant',
