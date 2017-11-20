@@ -1,6 +1,6 @@
 <template>
     <div>
-        <vue-dropzone ref="vueDropzone" id="dropzone" :url="dropzoneOptions.url" :options="dropzoneOptions" />
+        <vue-dropzone ref="vueDropzone" id="dropzone" :url="dzOptions.url" :accepted-file-types="dzOptions.acceptedFileTypes" />
     </div>
 </template>
 
@@ -15,12 +15,15 @@
         },
         data() {
             return {
-                dropzoneOptions: {
+                dzOptions: {
                     url: rootUrl('ccd-importer/post'),
                     headers: {  },
-                    acceptedFiles: 'application/xml,application/vnd.ms-excel,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+                    acceptedFileTypes: 'application/xml,application/vnd.ms-excel,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
                 }
             }
+        },
+        mounted() {
+            console.log(this.$refs.vueDropzone)
         }
     }
 </script>
