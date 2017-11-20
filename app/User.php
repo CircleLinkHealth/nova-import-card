@@ -2518,7 +2518,7 @@ class User extends \App\BaseModel implements AuthenticatableContract, CanResetPa
     {
         return $this->hasPermissionForSite('care-plan-approve', $this->primary_practice_id)
                || ($this->hasRoleForSite('registered-nurse',
-                    $this->primary_practice_name) && $this->primaryPractice->settings[0]->rn_can_approve_careplans);
+                    $this->primary_practice_id) && $this->primaryPractice->settings[0]->rn_can_approve_careplans);
     }
 
     public function canQAApproveCarePlans()

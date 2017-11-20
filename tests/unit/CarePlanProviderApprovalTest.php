@@ -2,6 +2,7 @@
 
 namespace Tests\unit;
 
+use App\Practice;
 use Tests\TestCase;
 use App\CarePlan;
 use App\User;
@@ -56,11 +57,14 @@ class CarePlanProviderApprovalTest extends TestCase
             'patientId' => $this->patient->id,
             'page'      => 3,
         ]))
-            ->assertSee('Approve/Next');
+            ->assertDontSee('Approve/Next');
     }
 
     public function test_r_n_can_approve()
     {
+        Practice::find(8)->cpmSettings()->update([
+            'rn_can_approve_careplans' => true,
+        ]);
         $rn = $this->createUser(8, 'registered-nurse');
         auth()->login($rn);
 
