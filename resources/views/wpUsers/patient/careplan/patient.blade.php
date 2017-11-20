@@ -55,9 +55,9 @@ $user_info = array();
                                 <input type=hidden name=hospital_reminder_time value="19:00">
                                 <input type=hidden name=hospital_reminder_areas value="TBD">
                                 <input type=hidden name=qualification value="">
-                                <input type=hidden name=specialty
+                                <input type=hidden name=specialty"
                                        value="<?php /*echo $validation['specialty']['value'];*/ ?>">
-                                <input type=hidden name=npi_number
+                                <input type=hidden name=npi_number"
                                        value="<?php /*echo $validation['npi_number']['value'];*/ ?>">
                                 <div class="row">
 

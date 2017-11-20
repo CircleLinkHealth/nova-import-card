@@ -1177,7 +1177,7 @@ class User extends \App\BaseModel implements AuthenticatableContract, CanResetPa
             return '';
         }
 
-        return str_replace('-', '/', $this->patientInfo->birth_date);
+        return $this->patientInfo->birth_date;
     }
 
     public function setBirthDateAttribute($value)

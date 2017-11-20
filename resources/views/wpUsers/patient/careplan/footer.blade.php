@@ -138,4 +138,3 @@
         </div>
         @endif
 </div>
-</div><!-- /main-form-progress -->
