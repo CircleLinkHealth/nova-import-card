@@ -116,7 +116,7 @@ module.exports = app => {
         }
       } catch (ex) {
         console.error("there was an error parsing", message, ex);
-      }
+      } 
     });
 
     ws.on("close", ev => {
@@ -127,7 +127,7 @@ module.exports = app => {
           if (usersTime[key].info) {
             const info = usersTime[key].info;
             info.totalTime = usersTime[key].exit() * 1000;
-            
+
             const url = info.submitUrl
 
             axios.post(url, info).then((response) => {
