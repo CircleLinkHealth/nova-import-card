@@ -3,7 +3,7 @@
 namespace App\Console\Commands;
 
 use App\CarePlan;
-use App\Mail\CarePlanApprovalReminder;
+use App\Notifications\CarePlanApprovalReminder;
 use App\Models\EmailSettings;
 use App\User;
 use Carbon\Carbon;
@@ -111,11 +111,11 @@ class EmailsProvidersToApproveCareplans extends Command
             return false;
         }
 
-        if ($providerUser->primaryPractice->settings && !$providerUser->primaryPractice->settings->isEmpty() && $providerUser->primaryPractice->settings->first()->email_careplan_approval_reminders) {
+        if (!$providerUser->primaryPractice->cpmSettings()->email_careplan_approval_reminders) {
             return false;
         }
 
-        if ($providerUser->primaryPractice->settings && !$providerUser->primaryPractice->settings->isEmpty() && $providerUser->primaryPractice->settings->first()->auto_approve_careplans) {
+        if ($providerUser->primaryPractice->cpmSettings()->auto_approve_careplans) {
             return false;
         }
 
@@ -165,7 +165,7 @@ class EmailsProvidersToApproveCareplans extends Command
 
         if (!$pretend) {
             if ($send && $recipient->email) {
-                Mail::send(new CarePlanApprovalReminder($recipient, $numberOfCareplans));
+                $recipient->notify(new CarePlanApprovalReminder($numberOfCareplans));
             }
         }
     }

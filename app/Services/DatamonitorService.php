@@ -270,14 +270,6 @@ class DatamonitorService
         $observationMeta->save();
         $log_string .= "added new observationmeta alert_sort_weight - obsmeta_id = {$observationMeta->id}" . PHP_EOL;
 
-        // send email
-        if ($send_email) {
-            //Disable sending alerts to providers
-//            $log_string .= $this->send_email($observation, $message_id, $extra_vars, $this->int_id);
-        } else {
-            $log_string .= 'No email sent' . PHP_EOL;
-        }
-
         $observationMeta = new ObservationMeta();
         $observationMeta->obs_id = $observation->id;
         $observationMeta->comment_id = $observation->comment_id;
@@ -437,101 +429,6 @@ class DatamonitorService
      *
      ******************************************
      ******************************************/
-
-    /**
-     * @param $user_id
-     * @param $message_id
-     * @param $extra_vars
-     * @param int $int_id
-     *
-     * @return bool|string
-     */
-    public function send_email(
-        $observation,
-        $message_id,
-        $extra_vars,
-        $int_id = 7
-    ) {
-
-        // get user info
-        $user = User::find($observation['user_id']);
-        if (!$user) {
-            return false;
-        }
-
-        // get message info
-        $msgCPRules = new MsgCPRules();
-        $message_info = $msgCPRules->getQuestion(
-            $message_id,
-            $user->id,
-            'EMAIL_' . $user->preferred_contact_language,
-            $user->program_id,
-            'SOL'
-        );
-
-        //Breaks down here, suspect the params are not as expected in getQuestion()
-
-        if (empty($message_info)) {
-            return 'ERROR: $message_info is emptyt';
-        }
-
-        // set email params
-        $email_subject = 'New Alert from CircleLink Health CPM';
-        $email_message = $message_info->message;
-        $email_message = $this->process_message_substitutions($email_message, $extra_vars);
-        $data = ['message_text' => $email_message];
-
-
-        $email_sent_list = [];
-
-        if (!is_array($user->sendAlertTo)) {
-            return false;
-        }
-        foreach ($user->sendAlertTo as $recipient_id) {
-            $provider_user = User::find($recipient_id);
-            $email = $provider_user->email;
-
-            Mail::send('emails.dmalert', $data, function ($message) use
-                (
-                $email,
-                $email_subject
-            ) {
-                $message->from('Support@CircleLinkHealth.com', 'CircleLink Health');
-                $message->to($email)->subject($email_subject);
-            });
-
-            $email_sent_list[] = $provider_user->email;
-        }
-
-        // log to db by adding comment record
-        $comment_content = [
-            'user_id'    => $user->id,
-            'subject'    => $email_subject,
-            'message'    => $email_message,
-            'recipients' => $email_sent_list,
-        ];
-        $comment_params = [
-            'comment_content' => serialize($comment_content),
-            'user_id'         => $user->id,
-            'comment_type'    => 'dm_alert_email',
-            'comment_parent'  => $observation['comment_id'],
-        ];
-        $comment = new Comment;
-        $comment->comment_post_ID = 0;
-        $comment->comment_author = 'SYSTEM_EMAIL';
-        $comment->comment_author_email = '';
-        $comment->comment_author_url = '';
-        $comment->comment_content = serialize($comment_content);
-        $comment->comment_type = 'alert_email';
-        $comment->comment_parent = 0;
-        $comment->user_id = $user->id;
-        $comment->comment_author_IP = '127.0.0.1';
-        $comment->comment_agent = 'N/A';
-        $comment->comment_date = date('Y-m-d H:i:s');
-        $comment->comment_date_gmt = date('Y-m-d H:i:s');
-        $comment->comment_approved = 1;
-        $comment->save();
-    }
 
     /**
      * @param $email_message

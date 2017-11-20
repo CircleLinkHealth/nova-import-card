@@ -33,7 +33,7 @@ use Illuminate\Contracts\Auth\CanResetPassword as CanResetPasswordContract;
 use Illuminate\Database\Eloquent\Collection as EloquentCollection;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\QueryException;
-use Illuminate\Notifications\Notifiable;
+use App\Notifications\Notifiable;
 use Illuminate\Support\Collection;
 use Laravel\Passport\HasApiTokens;
 use Michalisantoniou6\Cerberus\Traits\CerberusSiteUserTrait;
@@ -1395,6 +1395,7 @@ class User extends \App\BaseModel implements AuthenticatableContract, CanResetPa
 
         $users = new Collection();
 
+        //Get email forwarding
         foreach ($careTeam as $carePerson) {
             if ($carePerson->user->forwardAlertsTo->isEmpty() && $carePerson->user) {
                 $users->push($carePerson->user);
@@ -1412,6 +1413,7 @@ class User extends \App\BaseModel implements AuthenticatableContract, CanResetPa
             }
         }
 
+        //Get clinical emergency contacts from locations
         foreach ($this->locations as $location) {
             if ( ! $location->clinicalEmergencyContact->isEmpty()) {
                 $contact = $location->clinicalEmergencyContact->first();
@@ -1471,7 +1473,7 @@ class User extends \App\BaseModel implements AuthenticatableContract, CanResetPa
         return true;
     }
 
-    public function getBillingProviderIDAttribute()
+    public function getBillingProviderIdAttribute()
     {
         $bp = '';
         if ( ! $this->careTeamMembers) {
@@ -1488,7 +1490,7 @@ class User extends \App\BaseModel implements AuthenticatableContract, CanResetPa
         return $bp;
     }
 
-    public function setBillingProviderIDAttribute($value)
+    public function setBillingProviderIdAttribute($value)
     {
         if (empty($value)) {
             $this->careTeamMembers()->where('type', 'billing_provider')->delete();
@@ -2203,7 +2205,7 @@ class User extends \App\BaseModel implements AuthenticatableContract, CanResetPa
 
     public function practices()
     {
-        return $this->belongsToMany(Practice::class, 'practice_user', 'user_id', 'program_id')
+        return $this->belongsToMany(Practice::class, 'practice_role_user', 'user_id', 'program_id')
                     ->withPivot('role_id', 'has_admin_rights', 'send_billing_reports');
     }
 
@@ -2514,14 +2516,14 @@ class User extends \App\BaseModel implements AuthenticatableContract, CanResetPa
 
     public function canApproveCarePlans()
     {
-        return $this->canForSite('care-plan-approve', $this->primary_practice_id)
+        return $this->hasPermissionForSite('care-plan-approve', $this->primary_practice_id)
                || ($this->hasRoleForSite('registered-nurse',
                     $this->primary_practice_name) && $this->primaryPractice->settings[0]->rn_can_approve_careplans);
     }
 
     public function canQAApproveCarePlans()
     {
-        return $this->canForSite('care-plan-qa-approve', $this->primary_practice_id);
+        return $this->hasPermissionForSite('care-plan-qa-approve', $this->primary_practice_id);
     }
 
     /**

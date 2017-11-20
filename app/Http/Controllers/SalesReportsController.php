@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Mail\SalesPracticeReport;
 use App\Practice;
 use App\Reports\Sales\Location\SalesByLocationReport;
 use App\Reports\Sales\Practice\SalesByPracticeReport;
@@ -52,8 +53,8 @@ class SalesReportsController extends Controller
             ->data();
 
         $data['name'] = $provider->fullName;
-        $data['start'] = Carbon::parse($input['start_date'])->toDateString();
-        $data['end'] = Carbon::parse($input['end_date'])->toDateString();
+        $data['start'] = Carbon::parse($input['start_date']);
+        $data['end'] = Carbon::parse($input['end_date']);
         $data['isEmail'] = false;
 
         //PDF download support
@@ -121,13 +122,7 @@ class SalesReportsController extends Controller
 
             $email = $input['email'];
 
-            Mail::send('sales.by-practice.report', ['data' => $data], function ($message) use (
-                $email,
-                $subjectPractice
-            ) {
-                $message->from('notifications@careplanmanager.com', 'CircleLink Health');
-                $message->to($email)->subject($subjectPractice);
-            });
+            Mail::send(new SalesPracticeReport($practice, $data, $email));
 
             return 'Sent to ' . $input['email'] . '!';
         }

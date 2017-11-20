@@ -51,7 +51,7 @@ class CarePlanApprovalReminder extends Mailable
         $subject = "{$this->numberOfCareplans} CircleLink Care Plan(s) for your Approval!";
 
         return $this->from('notifications@careplanmanager.com', 'CircleLink Health')
-            ->to($this->recipient->email)
+            ->to($this->recipient->email, $this->recipient->fullName)
             ->subject($subject)
             ->view($view)
             ->with($data);

@@ -3,7 +3,6 @@
 use App\Models\Ehr;
 use App\Traits\HasSettings;
 use Carbon\Carbon;
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 /**
@@ -108,20 +107,14 @@ class Practice extends \App\BaseModel
         return $providers;
     }
 
-    public function getInvoiceRecipients($return = 'collection')
+    public function getInvoiceRecipients()
     {
-        $emails = $this->users()->where('send_billing_reports', '=', true)->pluck('email');
-
-        if ($return == 'string') {
-            return $emails->implode(', ');
-        }
-
-        return $emails;
+        return $this->users()->where('send_billing_reports', '=', true)->get();
     }
 
     public function users()
     {
-        return $this->belongsToMany(User::class, 'practice_user', 'program_id', 'user_id')
+        return $this->belongsToMany(User::class, 'practice_role_user', 'program_id', 'user_id')
             ->withPivot('role_id', 'has_admin_rights', 'send_billing_reports');
     }
 
@@ -183,7 +176,8 @@ class Practice extends \App\BaseModel
     public function enrollmentByProgram(
         Carbon $start,
         Carbon $end
-    ) {
+    )
+    {
 
         $patients = Patient::whereHas('user', function ($q) {
 
@@ -195,8 +189,8 @@ class Practice extends \App\BaseModel
         $data = [
 
             'withdrawn' => 0,
-            'paused'    => 0,
-            'added'     => 0,
+            'paused' => 0,
+            'added' => 0,
 
         ];
 

@@ -6,7 +6,7 @@ use App\Activity;
 use App\Call;
 use App\CarePerson;
 use App\Contracts\Reports\Reportable;
-use App\MailLog;
+use App\Note;
 use App\Observation;
 use App\PatientMonthlySummary;
 use App\User;
@@ -29,10 +29,8 @@ class ProviderReportable implements Reportable
     public function patients()
     {
         return User::ofType('participant')
-            ->whereHas('careTeamMembers', function ($q) {
-                $q->whereType(CarePerson::BILLING_PROVIDER)
-                    ->whereMemberUserId($this->provider->id);
-            })->get();
+                   ->hasBillingProvider($this->provider->id)
+                   ->get();
     }
 
     /**
@@ -49,8 +47,8 @@ class ProviderReportable implements Reportable
         $q = Call::whereHas('inboundUser', function ($q) {
             $q->hasBillingProvider($this->provider->id);
         })
-            ->where('called_date', '>=', $start)
-            ->where('called_date', '<=', $end);
+                 ->where('called_date', '>=', $start)
+                 ->where('called_date', '<=', $end);
 
         if ($status) {
             $q->whereStatus($status);
@@ -107,11 +105,8 @@ class ProviderReportable implements Reportable
      */
     public function forwardedNotesCount(Carbon $start, Carbon $end)
     {
-        return MailLog::whereReceiverCpmId($this->provider->id)
-            ->whereNotNull('note_id')
-            ->where('created_at', '>', $start->toDateTimeString())
-            ->where('created_at', '<', $end->toDateTimeString())
-            ->count();
+        return Note::forwardedTo(get_class($this->provider), $this->provider->id, $start, $end)
+                   ->count();
     }
 
     /**
@@ -124,15 +119,21 @@ class ProviderReportable implements Reportable
      */
     public function forwardedEmergencyNotesCount(Carbon $start, Carbon $end)
     {
-        return MailLog
-            ::whereHas('note', function ($q) {
-                $q->where('isTCM', 1);
-            })
-            ->whereReceiverCpmId($this->provider->id)
-            ->whereNotNull('note_id')
-            ->where('created_at', '>', $start)
-            ->where('created_at', '<', $end)
-            ->count();
+        return Note::forwardedTo(get_class($this->provider), $this->provider->id, $start, $end)
+                   ->emergency()
+                   ->count();
+    }
+
+    /**
+     * Total eligible-to-be-billed patients count (for given month) for this Reportable.
+     *
+     * @param Carbon $month
+     *
+     * @return mixed
+     */
+    public function billablePatientsCountForMonth(Carbon $month)
+    {
+        return $this->totalBilledPatientsCount($month);
     }
 
     /**
@@ -148,29 +149,17 @@ class ProviderReportable implements Reportable
             $q->whereHas('user', function ($k) {
                 $k->whereHas('careTeamMembers', function ($q) {
                     $q->whereType(CarePerson::BILLING_PROVIDER)
-                        ->whereMemberUserId($this->provider->id);
+                      ->whereMemberUserId($this->provider->id);
                 });
             });
         })
-            ->where('ccm_time', '>', 1199);
+                                  ->where('ccm_time', '>', 1199);
 
         if ($month) {
             $q->where('month_year', $month->firstOfMonth());
         }
 
         return $q->count();
-    }
-
-    /**
-     * Total eligible-to-be-billed patients count (for given month) for this Reportable.
-     *
-     * @param Carbon $month
-     *
-     * @return mixed
-     */
-    public function billablePatientsCountForMonth(Carbon $month)
-    {
-        return $this->totalBilledPatientsCount($month);
     }
 
     /**

@@ -84,7 +84,7 @@ return [
     | database.
     |
     */
-    'role_user_site_table'   => 'practice_user',
+    'role_user_site_table'   => 'practice_role_user',
 
     /*
     |--------------------------------------------------------------------------
