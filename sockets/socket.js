@@ -61,6 +61,14 @@ module.exports = app => {
                                               .map(date => date.end - date.start)
                                               .reduce((a, b) => a + b, 0) / 1000);
                   this.dates = this.dates.filter(date => !date.end);
+
+                  return this.seconds
+                },
+                exit() {
+                  if (this.dates[this.dates.length - 1] && !this.dates[this.dates.length - 1].end) {
+                    this.dates[this.dates.length - 1].end = new Date()
+                  }
+                  return this.cleanup()
                 }
               };
               if (usersTime[key].sockets.indexOf(ws) < 0) {
@@ -118,9 +126,9 @@ module.exports = app => {
         if (usersTime[key].sockets.length == 0) {
           if (usersTime[key].info) {
             const info = usersTime[key].info;
-            info.totalTime = usersTime[key].seconds * 1000;
+            info.totalTime = usersTime[key].exit() * 1000;
+            
             const url = info.submitUrl
-            console.log(info, url)
 
             axios.post(url, info).then((response) => {
               console.log(response.status, response.data)
