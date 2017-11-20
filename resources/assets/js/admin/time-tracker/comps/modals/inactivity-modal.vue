@@ -94,10 +94,16 @@
     .i-modal .modal-cancel-button {
         color: #fff;
         background-color: #f0ad4e;
+        float: initial;
     }
 
     .i-modal .modal-ok-button {
         color: #fff;
-        background-color: #50b2e2;
+        background-color: #5cb85c;
+        float: right;
+    }
+
+    .i-modal .modal-mask {
+        background: black !important;
     }
 </style>
