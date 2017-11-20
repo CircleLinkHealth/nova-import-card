@@ -61,6 +61,16 @@ class ImporterController extends Controller
     {
         return view('CCDUploader.uploader');
     }
+    
+    /**
+        * Show the form to upload CCDs.
+        *
+        * @return \Illuminate\View\View
+        */
+    public function remix()
+    {
+        return view('CCDUploader.uploader-remix');
+    }
 
     /**
      * Show all QASummaries that are related to a CCDA

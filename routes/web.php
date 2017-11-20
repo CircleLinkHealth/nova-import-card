@@ -216,6 +216,11 @@ Route::group(['middleware' => 'auth'], function () {
             'uses' => 'ImporterController@create',
             'as'   => 'import.ccd',
         ]);
+        
+        Route::get('create/remix', [
+            'uses' => 'ImporterController@remix',
+            'as'   => 'import.ccd.remix',
+        ]);
 
         Route::post('imported-medical-records', [
             'uses' => 'ImporterController@uploadRawFiles',
