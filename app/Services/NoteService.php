@@ -177,7 +177,7 @@ class NoteService
         return collect($provider_forwarded_notes);
     }
 
-    public function updateMailLogsForNote(
+    public function markNoteAsRead(
         User $viewer,
         Note $note
     ) {

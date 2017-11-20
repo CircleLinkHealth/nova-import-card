@@ -414,7 +414,7 @@ class NotesController extends Controller
                        ->with(['call', 'notifications'])
                        ->first();
 
-        $this->service->updateMailLogsForNote(auth()->user(), $note);
+        $this->service->markNoteAsRead(auth()->user(), $note);
 
         $readers = $this->service->getSeenForwards($note);
 

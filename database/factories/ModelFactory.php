@@ -15,6 +15,7 @@ use App\Enrollee;
 use App\Entities\Invite;
 use App\Nurse;
 use App\Practice;
+use Carbon\Carbon;
 
 $factory->define(App\User::class, function (Faker\Generator $faker) {
     return [
@@ -29,6 +30,19 @@ $factory->define(App\User::class, function (Faker\Generator $faker) {
         'city'         => $faker->city,
         'state'        => 'IL',
         'zip'          => '12345',
+    ];
+});
+
+$factory->define(App\Note::class, function (Faker\Generator $faker) use ($factory) {
+    return [
+        'patient_id' => $factory->create(App\User::class)->id,
+        'author_id' => $factory->create(App\User::class)->id,
+        'logger_id' => $factory->create(App\User::class)->id,
+        'body' => $faker->text(100),
+        'isTCM' => $faker->boolean(50),
+        'type' => $faker->text(10),
+        'did_medication_recon' => $faker->boolean(50),
+        'performed_at' => Carbon::now(),
     ];
 });
 
