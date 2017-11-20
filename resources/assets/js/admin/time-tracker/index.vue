@@ -1,5 +1,5 @@
 <template>
-    <span class="time-tracker">
+    <span v-if="visible" class="time-tracker">
         <time-display :seconds="seconds" />
         <inactivity-tracker />
     </span>
@@ -29,6 +29,7 @@
         data() {
             return {
                 seconds: 0,
+                visible: true,
                 socket: null
             }
         },
@@ -80,31 +81,38 @@
             this.seconds = this.info.totalTime;
             this.previousSeconds = this.info.totalTime || 0;
 
-            EventBus.$on('tracker:tick', () => {
-                this.seconds++;
-                this.$forceUpdate()
-            })
+            console.log(this.info)
 
-            const STATE = {
-                STOP: 'stop',
-                START: 'start'
+            if (this.info.disabled) {
+                this.visible = false;
             }
+            else {
+                EventBus.$on('tracker:tick', () => {
+                    this.seconds++;
+                    this.$forceUpdate()
+                })
 
-            EventBus.$on('tracker:stop', () => {
-                if (this.socket) {
-                    this.state = STATE.STOP;
-                    this.socket.send(JSON.stringify({ id: this.info.providerId, patientId: this.info.patientId, message: STATE.STOP, info: this.info }))
+                const STATE = {
+                    STOP: 'stop',
+                    START: 'start'
                 }
-            })
 
-            EventBus.$on('tracker:start', () => {
-                if (this.socket && this.socket.readyState === WebSocket.OPEN) {
-                    this.state = STATE.START
-                    this.socket.send(JSON.stringify({ id: this.info.providerId, patientId: this.info.patientId, message: STATE.START, info: this.info }))
-                }
-            })
+                EventBus.$on('tracker:stop', () => {
+                    if (this.socket) {
+                        this.state = STATE.STOP;
+                        this.socket.send(JSON.stringify({ id: this.info.providerId, patientId: this.info.patientId, message: STATE.STOP, info: this.info }))
+                    }
+                })
 
-            this.createSocket()
+                EventBus.$on('tracker:start', () => {
+                    if (this.socket && this.socket.readyState === WebSocket.OPEN) {
+                        this.state = STATE.START
+                        this.socket.send(JSON.stringify({ id: this.info.providerId, patientId: this.info.patientId, message: STATE.START, info: this.info }))
+                    }
+                })
+
+                this.createSocket()
+            }
         }
     }
 </script>
