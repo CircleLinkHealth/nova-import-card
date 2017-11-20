@@ -22,7 +22,6 @@ class CreateNotificationsTable extends Migration
             $table->string("{attachment_type")->nullable();
             $table->index(["attachment_id", "attachment_type"]);
 
-            $table->morphs('attachment');
             $table->text('data');
             $table->timestamp('read_at')->nullable();
             $table->timestamps();
