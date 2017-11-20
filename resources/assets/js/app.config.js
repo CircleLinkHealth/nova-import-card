@@ -21,3 +21,9 @@ export function baseValue(name) {
     }
     else return '';
 }
+
+export function csrfToken() {
+    let metaElem = document.querySelector('meta[name="csrf-token"]');
+    if (metaElem) return metaElem.getAttribute('content');
+    return null;
+}

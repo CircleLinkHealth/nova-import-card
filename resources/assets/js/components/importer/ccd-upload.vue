@@ -6,7 +6,7 @@
 
 <script>
     import vue2Dropzone from 'vue2-dropzone'
-    import { rootUrl } from '../../app.config'
+    import { rootUrl, csrfToken } from '../../app.config'
 
     export default {
         name: 'ccd-upload',
@@ -17,7 +17,9 @@
             return {
                 dzOptions: {
                     url: rootUrl('ccd-importer/post'),
-                    headers: {  },
+                    headers: { 
+                        'X-CSRF-TOKEN': csrfToken()
+                     },
                     acceptedFileTypes: 'application/xml,application/vnd.ms-excel,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
                 }
             }
