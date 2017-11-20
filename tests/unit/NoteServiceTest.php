@@ -29,8 +29,23 @@ class NoteServiceTest extends TestCase
 
     public function test_it_marks_unread_notifications_as_read()
     {
+        $notification = $this->createNotification();
+
+        $this->assertDatabaseHas((new DatabaseNotification())->getTable(), $notification->toArray());
+
+        $this->service->markNoteAsRead($this->provider, $this->note);
+
+        $this->assertDatabaseMissing((new DatabaseNotification())->getTable(), $notification->toArray());
+
+        $notification = DatabaseNotification::find($notification->id);
+
+        $this->assertNotNull($notification->read_at);
+    }
+
+    public function createNotification($id = null)
+    {
         $args = [
-            'id'              => "test_1",
+            'id'              => $id ?? 'test_' . str_random(5),
             'type'            => NoteForwarded::class,
             'notifiable_id'   => $this->provider->id,
             'notifiable_type' => User::class,
@@ -39,16 +54,6 @@ class NoteServiceTest extends TestCase
             'read_at'         => null,
         ];
 
-        DatabaseNotification::create($args);
-
-        $this->assertDatabaseHas((new DatabaseNotification())->getTable(), $args);
-
-        $this->service->markNoteAsRead($this->provider, $this->note);
-
-        $this->assertDatabaseMissing((new DatabaseNotification())->getTable(), $args);
-
-        $notification = DatabaseNotification::find($args['id']);
-
-        $this->assertNotNull($notification->read_at);
+        return DatabaseNotification::create($args);
     }
 }
