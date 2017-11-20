@@ -3,7 +3,6 @@
 use App\Events\CarePlanWasApproved;
 use App\Events\PdfableCreated;
 use App\Events\UpdateUserLoginInfo;
-use App\Listeners\ClosePatientSession;
 use App\Listeners\CreateAndHandlePdfReport;
 use App\Listeners\UpdateCarePlanStatus;
 use Illuminate\Auth\Events\Login;
@@ -30,7 +29,7 @@ class EventServiceProvider extends ServiceProvider
             CreateAndHandlePdfReport::class,
         ],
         Logout::class              => [
-            ClosePatientSession::class,
+
         ],
         MessageSending::class      => [
 

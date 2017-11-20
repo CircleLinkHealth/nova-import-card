@@ -19,7 +19,6 @@ class Kernel extends HttpKernel
             \App\Http\Middleware\VerifyCsrfToken::class,
             \Illuminate\Routing\Middleware\SubstituteBindings::class,
             \App\Http\Middleware\LogoutIfAccessDisabled::class,
-            \App\Http\Middleware\ClearPatientSessions::class,
             \Laravel\Passport\Http\Middleware\CreateFreshApiToken::class,
         ],
         'api' => [
@@ -57,7 +56,6 @@ class Kernel extends HttpKernel
         'aprima.ccdapi.auth.adapter' => Middleware\AprimaCcdApiAuthAdapter::class,
         'permission'                 => \Michalisantoniou6\Cerberus\Middleware\CerberusPermission::class,
         'patientProgramSecurity'     => \App\Http\Middleware\PatientProgramSecurity::class,
-        'patient.session'            => \App\Http\Middleware\CheckPatientSession::class,
         'providerDashboardACL'       => Middleware\ACL\ProviderDashboardACL::class,
         'role'                       => \Michalisantoniou6\Cerberus\Middleware\CerberusRole::class,
         'verify.invite'              => \App\Http\Middleware\CheckOnboardingInvite::class,

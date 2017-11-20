@@ -17,8 +17,6 @@ class PageTimerController extends Controller
         Request $request,
         TimeTrackingService $timeTrackingService
     ) {
-        parent::__construct($request);
-
         $this->timeTrackingService = $timeTrackingService;
     }
 
@@ -183,12 +181,5 @@ class PageTimerController extends Controller
         $pageTime = PageTimer::find($id);
 
         return view('pageTimer.show', ['pageTime' => $pageTime]);
-    }
-
-    public function closePatientSession(Request $request)
-    {
-        //This is intentionally left blank!
-        //All the logic happens in Controller, because of some restrictions with Laravel at the time I'm writing this,
-        //that's the best way I can come up with right now. Gross, I know, but it's 3:30am on a Saturday
     }
 }
