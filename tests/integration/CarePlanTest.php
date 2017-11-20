@@ -20,7 +20,7 @@ class CarePlanTest extends TestCase
         parent::setUp();
 
         $this->provider = $this->createUser();
-        $this->userLogin($this->provider);
+        auth()->login($this->provider);
     }
 
     public function testCreatePatientWithSomeItemsChecked()

@@ -112,18 +112,6 @@ trait UserHelpers
         return $user;
     }
 
-    public function userLogin(User $user)
-    {
-        $response = $this->get('/auth/login')
-            ->type($user->email, 'email')
-            ->type('password', 'password')
-            ->press('Log In');
-
-        //By default PHPUnit fails the test if the output buffer wasn't closed.
-        //So we're adding this to make the test work.
-//        ob_end_clean();
-    }
-
     public function createLastCallForPatient(
         Patient $patient,
         Nurse $scheduler
