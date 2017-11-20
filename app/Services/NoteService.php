@@ -182,7 +182,8 @@ class NoteService
         Note $note
     ) {
         $viewer->unreadNotifications()
-            ->hasNotifiableType(Note::class)
+               ->hasNotifiableType(User::class)
+               ->hasAttachmentType(Note::class)
                ->where('attachment_id', '=', $note->id)
                ->get()
                ->markAsRead();
