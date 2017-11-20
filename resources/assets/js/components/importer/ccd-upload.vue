@@ -1,6 +1,10 @@
 <template>
     <div>
-        <vue-dropzone ref="vueDropzone" id="dropzone" :url="dzOptions.url" :accepted-file-types="dzOptions.acceptedFileTypes" />
+        <vue-dropzone ref="vueDropzone" id="dropzone" param-name="file" 
+            :url="dzOptions.url" 
+            :headers="dzOptions.headers" 
+            :upload-multiple="true"
+            :accepted-file-types="dzOptions.acceptedFileTypes" />
     </div>
 </template>
 
