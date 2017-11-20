@@ -20,16 +20,7 @@ class ImporterController extends Controller
         $this->repo = $repo;
     }
 
-    /**
-     * Receives XML files, saves them in DB, and returns them JSON Encoded
-     *
-     * @param Request $request
-     *
-     * @return string
-     * @throws \Exception
-     */
-    public function uploadRawFiles(Request $request)
-    {
+    function handleCcdFilesUpload(Request $request) {
         if ( ! $request->hasFile('file')) {
             return response()->json('No file found', 400);
         }
@@ -48,8 +39,38 @@ class ImporterController extends Controller
             $ccda->import();
             \Log::info('End processing CCD ' . Carbon::now()->toDateTimeString());
         }
+    }
+
+    /**
+     * Receives XML files, saves them in DB, and returns them JSON Encoded
+     *
+     * @param Request $request
+     *
+     * @return string
+     * @throws \Exception
+     */
+    public function uploadRawFiles(Request $request)
+    {
+        $this::handleCcdFilesUpload($request);
 
         return redirect()->route('view.files.ready.to.import');
+    }
+    
+    /**
+     * Route: /api/ccd-importer/import-medical-records
+     * 
+     * Receives XML and XLSX files, saves them in DB, and returns them JSON Encoded
+     *
+     * @param Request $request
+     *
+     * @return string
+     * @throws \Exception
+     */
+    public function uploadRecords(Request $request) 
+    {    
+        $this::handleCcdFilesUpload($request);
+
+        return redirect()->route('view.records.ready.to.import');
     }
 
     /**

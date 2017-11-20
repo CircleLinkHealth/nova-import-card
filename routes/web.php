@@ -113,8 +113,12 @@ Route::group(['middleware' => 'auth'], function () {
             'prefix'     => 'ccd-importer'
         ], function () {
             Route::get('imported-medical-records', [
-                'uses' => 'API\ImporterController@records',
+                'uses' => 'ImporterController@records',
                 'as'   => 'view.records.ready.to.import',
+            ]);
+            Route::post('imported-medical-records', [
+                'uses' => 'ImporterController@uploadRecords',
+                'as'   => 'upload.ccda.records',
             ]);
         });
         
