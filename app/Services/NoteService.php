@@ -143,7 +143,7 @@ class NoteService
                    ])
                    ->has('notifications')
                    ->orderBy('performed_at', 'desc')
-                   ->with('patient')->with(['call', 'notifications', 'author'])
+                   ->with(['patient', 'call', 'notifications', 'author'])
                    ->get();
     }
 
@@ -163,7 +163,7 @@ class NoteService
                      ])
                      ->has('notifications')
                      ->orderBy('performed_at', 'desc')
-                     ->with('patient')->with(['call', 'notifications', 'author'])
+                     ->with(['patient', 'call', 'notifications', 'author'])
                      ->get();
 
         $provider_forwarded_notes = [];
