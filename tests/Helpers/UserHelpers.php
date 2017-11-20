@@ -96,9 +96,10 @@ trait UserHelpers
 
         //check that the roles were created
         foreach ($roles as $role) {
-            $this->assertDatabaseHas('lv_role_user', [
+            $this->assertDatabaseHas('practice_role_user', [
                 'user_id' => $user->id,
                 'role_id' => $role,
+                'program_id' => $practiceId,
             ]);
         }
 
