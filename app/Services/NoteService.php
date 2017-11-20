@@ -47,7 +47,7 @@ class NoteService
 
         $input['noteId'] = $note->id;
 
-        $note->forward($input['notify_careteam'], $input['notify_circlelink_support']);
+        $note->forward($input['notify_careteam'] ?? false, $input['notify_circlelink_support'] ?? false);
 
         return $note;
     }
