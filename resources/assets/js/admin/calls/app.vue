@@ -83,7 +83,7 @@
     <text-editable :value="'Mykeels'"></text-editable>
     <date-editable :value="'01-20-2017'" :format="'mm-DD-YYYY'"></date-editable>
     <select-editable :values="['One', 'Two', 'Three']"></select-editable>
-    <select-nurse-modal></select-nurse-modal>
+    <select-nurse-modal :selected-patients="selectedPatients"></select-nurse-modal>
     <add-call-modal></add-call-modal>
   </div>
 </template>
@@ -134,6 +134,16 @@
       computed: {
         itemsAreSelected() {
           return !!this.tableData.find(row => !!row.selected)
+        },
+        selectedPatients() {
+          return this.tableData.filter(row => row.selected).map(row => ({
+            id: row['Patient ID'],
+            name: row.Patient,
+            nurse: {
+              id: row.NurseId,
+              name: row.Nurse
+            }
+          }))
         }
       },
       methods: {
@@ -207,6 +217,7 @@
                                         id: call.id,
                                         selected: false,
                                         Nurse: (call.getNurse() || {}).full_name,
+                                        NurseId: (call.getNurse() || {}).id,
                                         Patient: (call.getPatient() || {}).full_name,
                                         Practice: (call.getPatient() || {}).getPractice().display_name,
                                         Scheduler: call.scheduler,
