@@ -12,15 +12,17 @@ class MigrateRolesData extends Migration
      */
     public function up()
     {
-        foreach (App\User::withTrashed()->with(['roles', 'practices'])->get() as $user) {
-            foreach ($user->practices as $practice) {
-                foreach ($user->roles as $role) {
-                    $result = $user->practices()->updateExistingPivot($practice->id, [
-                        'role_id'    => $role->id,
-                    ]);
+        App\User::withTrashed()->with(['roles', 'practices'])->chunk(5000, function($users){
+            foreach ($users as $user) {
+                foreach ($user->practices as $practice) {
+                    foreach ($user->roles as $role) {
+                        $result = $user->practices()->updateExistingPivot($practice->id, [
+                            'role_id'    => $role->id,
+                        ]);
+                    }
                 }
             }
-        }
+        });
     }
 
     /**
