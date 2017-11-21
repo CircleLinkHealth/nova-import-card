@@ -437,14 +437,8 @@ class NotesController extends Controller
             }
         }
 
-        if ($note->mail->count() > 0) {
-            $mailText = 'Forwarded';
-            foreach ($note->mail as $mail) {
-                if ($mail->receiverUser) {
-                    $mailText .= ' ' . $mail->receiverUser->display_name . ',';
-                }
-            }
-            $meta_tags[] = rtrim($mailText, ',');
+        if ($readers->count() > 0) {
+            $meta_tags['forwarded'] = $readers->keys()->implode(', ');
         }
 
         if ($note->isTCM) {
@@ -479,7 +473,7 @@ class NotesController extends Controller
             'patient'       => $patient,
             'program_id'    => $patient->program_id,
             'meta'          => $meta_tags,
-            'hasReaders'    => $readers,
+            'hasReaders'    => $readers->all(),
         ];
 
         return view('wpUsers.patient.note.view', $view_data);

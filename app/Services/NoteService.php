@@ -196,9 +196,9 @@ class NoteService
                     ->with('notifiable')
                     ->whereNotNull('read_at')
                     ->get()
-                    ->map(function ($notification) {
-                        return [$notification->notifiable->fullName => $notification->read_at];
-                    })->values();
+                    ->mapWithKeys(function ($notification) {
+                        return [$notification->notifiable->fullName => $notification->read_at->format('m/d/y h:iA T')];
+                    });
     }
 
     public function updatePatientRecords(

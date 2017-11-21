@@ -110,16 +110,16 @@
                                 <div class="new-note-item">
                                     <div class="form-group">
                                         <div class="col-sm-12">
-                                            @foreach($meta as $tag)
+                                            @foreach($meta as $key => $tag)
                                                 @if($tag == 'Patient Recently in Hospital/ER')
                                                     <h5>
                                                         <div class="label label-danger">{{ucwords($tag)}}</div>
                                                     </h5>
-                                                @elseif(strpos($tag, 'Forward') !== false)
+                                                @elseif($key == 'forwarded')
                                                     <h5>
-                                                        <div class="label label-info" data-toggle="tooltip"
-                                                             title="{{$tag}}">Forwarded
-                                                        </div>
+                                                        <span class="label label-info info" data-tooltip="{{$tag}}">
+                                                            <span>Forwarded</span>
+                                                        </span>
                                                     </h5>
                                                 @else
                                                     <h5>
@@ -130,17 +130,14 @@
                                             @if(is_array($hasReaders))
                                                 @foreach($hasReaders as $key => $value)
                                                     <h5>
-                                                        <div style="margin-right: 2px; margin-bottom: 4px;"
-                                                             class="inline label label-success" data-toggle="tooltip"
-                                                             title="{{$value}}">
-                                                            <div style="padding: 1px; padding-left: 0px"
-                                                                 class="label label-success">
-                                                                <span class="glyphicon glyphicon-eye-open"
-                                                                      aria-hidden="true"></span>
+                                                        <div style="margin-right: 2px; margin-bottom: 4px;" class="inline label label-success" data-tooltip="{{$value}}">
+                                                            <div style="padding: 1px; padding-left: 0" class="label label-success">
+                                                                <span class="glyphicon glyphicon-eye-open" aria-hidden="true"></span>
                                                                 @if($key == $note['provider_name'])
                                                                     (B.P.)
                                                                 @endif
-                                                            </div>{{$key}}
+                                                            </div>
+                                                            {{$key}}
                                                         </div>
                                                     </h5>
                                                 @endforeach
