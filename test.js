@@ -94,3 +94,16 @@ describe('TimeTrackerUser', () => {
         assert.equal(user.stop().dates.length, 1)
     })
 })
+
+describe('TimeTracker Flow', () => {
+    const timeTracker = new TimeTracker()
+
+    it('resume()->2->stop()->2->resume()->8->stop() should have interval() equal to 10 and dates.length equal to 2', () => {
+        const user = timeTracker.create(key, info) //resume() is implicit
+        user.stop(addSeconds(2)) //add 2 seconds
+        user.resume(addSeconds(4)) //resume after 2 seconds
+        user.stop(addSeconds(12)) //lasts for 8 seconds
+        assert.equal(user.interval(), 10)
+        assert.equal(user.dates.length, 2)
+    })
+})
