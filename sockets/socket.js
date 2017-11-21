@@ -8,12 +8,16 @@ module.exports = app => {
 
   const timeTracker = new TimeTracker()
 
+  const wsErrorHandler = function (err) {
+    console.error("ws-error", err)
+  }
+
   const errorThrow = (err, ws) => {
     console.error(err)
     if (ws) {
       ws.send(JSON.stringify({
         error: err
-      }))
+      }), wsErrorHandler)
     }
   }
 
@@ -45,7 +49,7 @@ module.exports = app => {
                 ws.send(JSON.stringify({
                   seconds: user.interval(),
                   clients: user.sockets.length
-                }))
+                }), wsErrorHandler)
               }
               catch (ex) {
                 errorThrow(ex, ws)
@@ -61,7 +65,7 @@ module.exports = app => {
                 ws.send(
                   JSON.stringify({
                     message: 'ws stopped'
-                  })
+                  }), wsErrorHandler
                 )
               }
               catch (ex) {
@@ -77,7 +81,7 @@ module.exports = app => {
                 ws.send(
                   JSON.stringify({
                     message: 'ws started'
-                  })
+                  }), wsErrorHandler
                 )
               }
               catch (ex) {
@@ -143,7 +147,7 @@ module.exports = app => {
             JSON.stringify({
               seconds: user.interval(),
               clients: user.sockets.length
-            })
+            }), wsErrorHandler
           );
         }
       });
