@@ -9,7 +9,7 @@ module.exports = app => {
   const timeTracker = new TimeTracker()
 
   const wsErrorHandler = function (err) {
-    console.error("ws-error", err)
+    if (err) console.error("ws-error", err)
   }
 
   const errorThrow = (err, ws) => {
