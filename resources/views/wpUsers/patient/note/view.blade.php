@@ -9,23 +9,25 @@
     $userTime = $userTime->format('Y-m-d\TH:i');
     ?>
 
-    <style type="text/css">
-        div.inline {
-            float: left;
-        }
+    @push('styles')
+        <style type="text/css">
+            div.inline {
+                float: left;
+            }
 
-        .clearBoth {
-            clear: both;
-        }
+            .clearBoth {
+                clear: both;
+            }
 
-        blockquote {
-            padding: 10px 20px;
-            margin: 10px 0 20px;
-            font-size: 17.5px;
-            border-left: 5px solid #50b2e2;
-            line-height: 24px;
-        }
-    </style>
+            blockquote {
+                padding: 10px 20px;
+                margin: 10px 0 20px;
+                font-size: 17.5px;
+                border-left: 5px solid #50b2e2;
+                line-height: 24px;
+            }
+        </style>
+    @endpush
 
     <div class="row" style="margin-top:30px;">
         <div class="main-form-container col-lg-6 col-lg-offset-3 col-md-10 col-md-offset-1">
@@ -189,29 +191,31 @@
                                     </div>
                                 </div>
 
-                                <script>
-                                    $(function () {
-                                        $('[data-toggle="tooltip"]').tooltip()
-                                    });
+                                @push('scripts')
+                                    <script>
+                                        $(function () {
+                                            $('[data-toggle="tooltip"]').tooltip()
+                                        });
 
-                                    $('.collapse').collapse();
+                                        $('.collapse').collapse();
 
-                                    $("input:checkbox").on('click', function () {
-                                        // in the handler, 'this' refers to the box clicked on
-                                        var $box = $(this);
-                                        if ($box.is(":checked")) {
-                                            // the name of the box is retrieved using the .attr() method
-                                            // as it is assumed and expected to be immutable
-                                            var group = "input:checkbox[name='" + $box.attr("name") + "']";
-                                            // the checked state of the group/box on the other hand will change
-                                            // and the current value is retrieved using .prop() method
-                                            $(group).prop("checked", false);
-                                            $box.prop("checked", true);
-                                        } else {
-                                            $box.prop("checked", false);
-                                        }
-                                    });
-                                </script>
+                                        $("input:checkbox").on('click', function () {
+                                            // in the handler, 'this' refers to the box clicked on
+                                            var $box = $(this);
+                                            if ($box.is(":checked")) {
+                                                // the name of the box is retrieved using the .attr() method
+                                                // as it is assumed and expected to be immutable
+                                                var group = "input:checkbox[name='" + $box.attr("name") + "']";
+                                                // the checked state of the group/box on the other hand will change
+                                                // and the current value is retrieved using .prop() method
+                                                $(group).prop("checked", false);
+                                                $box.prop("checked", true);
+                                            } else {
+                                                $box.prop("checked", false);
+                                            }
+                                        });
+                                    </script>
+                                @endpush
                                 {!! Form::close() !!}
 
                                 <div class="col-sm-12">
