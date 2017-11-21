@@ -1,3 +1,15 @@
+<?php
+    if (isset($patient)) {
+        $seconds = optional($patient->patientInfo)->cur_month_activity_time ?? 0;
+        $H = floor($seconds / 3600);
+        $i = ($seconds / 60) % 60;
+        $s = $seconds % 60;
+        $monthlyTime = sprintf("%02d:%02d:%02d", $H, $i, $s);
+    }
+    else {
+        $monthlyTime = "";
+    }
+?>
 <nav class="navbar primary-navbar">
     <div class="container-fluid col-md-12" style="width: 100%;">
 
@@ -17,7 +29,7 @@
 
         <div class="navbar-right hidden-xs" style="">
             <ul class="nav navbar-nav">
-                <li style="padding-top: 15px; padding-bottom: 15px; line-height: 20px">
+                <li data-monthly-time="{{$monthlyTime}}" style="padding-top: 15px; padding-bottom: 15px; line-height: 20px">
                     @if (!isset($patient))
                         <time-tracker :info="timeTrackerInfo"></time-tracker>
                     @endif

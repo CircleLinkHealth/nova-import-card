@@ -42,7 +42,11 @@
                             /**
                              * Stop Tracking Time
                              * Show Modal asking the user why he/she has been inactive
+                             * 
+                             * Disable the window.onfocus handler
                              */
+                            this.windowFocusHandler = window.onfocus
+                            window.onfocus = null;
                             EventBus.$emit("tracker:stop")
                             EventBus.$emit('modal-inactivity:show')
                         }
@@ -59,7 +63,7 @@
             stop() {
                 clearInterval(this.interval);
             },
-            reset() {
+            reset(e) {
                 this.startTime = this.endTime;
             }
         },
@@ -99,6 +103,8 @@
                 EventBus.$emit("tracker:start")
                 this.reset()
                 console.log('modal closed')
+                //restore the window.onfocus handler
+                if (this.windowFocusHandler) window.onfocus = this.windowFocusHandler
             })
         }
     }

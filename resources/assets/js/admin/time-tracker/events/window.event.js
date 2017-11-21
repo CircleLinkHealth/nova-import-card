@@ -5,10 +5,10 @@
 import EventBus from '../comps/event-bus'
 
 export const BindWindowFocusChange = function (window, App = EventBus) {
-    window.onfocus = function () {
-        App.$emit('tracker:start');
-        App.$emit('inactivity:reset');
-        App.$emit('inactivity:start');
+    window.onfocus = function (e) {
+        App.$emit('tracker:start', e);
+        App.$emit('inactivity:reset', e);
+        App.$emit('inactivity:start', e);
     }
     
     window.onblur = function () {
