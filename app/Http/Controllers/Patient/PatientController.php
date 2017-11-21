@@ -298,8 +298,7 @@ class PatientController extends Controller
 
         $query = User::intersectPracticesWith(auth()->user())
             ->ofType('participant')
-            ->with('primaryPractice')
-            ->with('patientInfo');
+            ->with(['primaryPractice', 'patientInfo', 'phoneNumbers']);
 
         foreach ($searchTerms as $term) {
             $query->where(function ($q) use ($term) {
@@ -309,6 +308,9 @@ class PatientController extends Controller
                     ->orWhereHas('patientInfo', function ($query) use ($term) {
                         $query->where('mrn_number', 'like', "%$term%")
                             ->orWhere('birth_date', 'like', "%$term%");
+                    })
+                    ->orWhereHas('phoneNumbers', function ($query) use ($term) {
+                        $query->where('number', 'like', "%$term%");
                     });
             });
         }
@@ -326,7 +328,7 @@ class PatientController extends Controller
             $programObj = Practice::find($d->program_id);
 
             $patients[$i]['program'] = $programObj->display_name ?? '';
-            $patients[$i]['hint'] = $patients[$i]['name'] . " DOB:" . $patients[$i]['dob'] . " [" . $patients[$i]['program'] . "] MRN: {$patients[$i]['mrn']} ID: {$d->id}";
+            $patients[$i]['hint'] = $patients[$i]['name'] . " DOB:" . $patients[$i]['dob'] . " [" . $patients[$i]['program'] . "] MRN: {$patients[$i]['mrn']} ID: {$d->id} PRIMARY PHONE: {$d->primary_phone}";
             $i++;
         }
 
