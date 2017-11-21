@@ -58,7 +58,7 @@ function TimeTrackerUser(key, info, now = () => (new Date())) {
           return this.seconds
         },
         stop(nowFn = now) {
-          return this.setEndTime(nowFn).cleanup()
+          return this.setEndTime(nowFn)
         },
         resume(nowFn = now) {
             /**

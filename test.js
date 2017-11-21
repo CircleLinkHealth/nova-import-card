@@ -1,4 +1,6 @@
 const assert = require('chai').assert
+require('./prototypes/array.prototype')
+require('./prototypes/date.prototype')
 
 const TimeTracker = require('./time-tracker')
 const TimeTrackerUser = TimeTracker.TimeTrackerUser
@@ -26,6 +28,8 @@ const TimeTrackerInfo = function () {
 
 const info = (new TimeTrackerInfo())
 const key = (new TimeTrackerInfo()).createKey()
+
+const addSeconds = (seconds) => () => (new Date).addSeconds(seconds)
 
 describe('TimeTracker', () => {
     it('should make an instance of TimeTracker', () => {
@@ -65,5 +69,28 @@ describe('TimeTrackerUser', () => {
     })
     it('should return 0 when interval() is called for the first time', () => {
         assert.equal(user.interval(), 0)
+    })
+    it('should return 3 when addSeconds(3) is passed to interval() for the first time', () => {
+        const user = timeTracker.create(key, info)
+        assert.equal(user.interval(addSeconds(3)), 3)
+    })
+    it('interval() should return 3 when addSeconds(3) is passed to setEndTime() for the first time', () => {
+        const user = timeTracker.create(key, info)
+        assert.equal(user.setEndTime(addSeconds(3)).interval(), 3)
+    })
+    it('should have cleanup() and interval() values equal', () => {
+        const user = timeTracker.create(key, info)
+        user.setEndTime(addSeconds(5))
+        assert.equal(user.interval(), user.cleanup())
+        assert.equal(user.interval(), 5)
+        assert.equal(user.cleanup(), 5)
+    })
+    it('interval() should return 4 when addSeconds(4) is passed to stop() for the first time', () => {
+        const user = timeTracker.create(key, info)
+        assert.equal(user.stop(addSeconds(4)).interval(), 4)
+    })
+    it('should have dates.length equal to 1 when stop() is called for the first time', () => {
+        const user = timeTracker.create(key, info)
+        assert.equal(user.stop().dates.length, 1)
     })
 })
