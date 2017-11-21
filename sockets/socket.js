@@ -100,7 +100,7 @@ module.exports = app => {
       } catch (ex) {
         errorThrow(ex, ws);
       } 
-    });
+    }); 
 
     ws.on('close', ev => {
       const key = ws.key;
