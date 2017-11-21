@@ -39,7 +39,7 @@
         },
         methods: {
             updateTime() {
-                this.socket.send(JSON.stringify({ id: this.info.providerId, patientId: this.info.patientId, message: 'update', info: this.info }));
+                this.socket.send(JSON.stringify({ id: this.info.providerId, patientId: this.info.patientId, message: 'start', info: this.info }));
             },
             createSocket() {
                 try {
@@ -94,7 +94,7 @@
 
                 const STATE = {
                     STOP: 'stop',
-                    START: 'start'
+                    START: 'resume'
                 }
 
                 EventBus.$on('tracker:stop', () => {
