@@ -1,20 +1,26 @@
 module.exports = app => {
   require("express-ws")(app);
 
+  const TimeTracker = require('./time-tracker')
+  const TimeTrackerUser = TimeTracker.TimeTrackerUser
+
   const axios = require("axios")
 
-  const usersTime = {};
+  const timeTracker = new TimeTracker()
 
   app.ws("/time", (ws, req) => {
     ws.on("message", (message = "") => {
       try {
         const data = JSON.parse(message);
         /**
-                 * {
-                 *  "id": 1,
-                 *  "patientId": 874
-                 * }
-                 */
+         * Sample structure of [data] object
+         * {
+         *  "id": 1,
+         *  "patientId": 874,
+         *  "message": "start"
+         *  "info": { ... }
+         * }
+         */
         if (data.constructor.name === "Object") {
           if (
             (!!Number(data.id) || Number(data.id) === 0) &&
