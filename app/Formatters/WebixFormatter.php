@@ -6,9 +6,7 @@ use App\Models\CCD\Allergy;
 use App\Models\CCD\Medication;
 use App\Models\CPM\CpmBiometric;
 use App\Models\CPM\CpmMisc;
-use App\Note;
 use App\Services\CPM\CpmMiscService;
-use App\Services\NoteService;
 use App\Services\ReportsService;
 use App\User;
 use Carbon\Carbon;
@@ -63,10 +61,9 @@ class WebixFormatter implements ReportFormatter
             //TAGS
             $formatted_notes[$count]['tags'] = '';
 
-            if (count($note->mail) > 0) {
-                if ($note->wasForwardedToCareTeam()) {
-                    $formatted_notes[$count]['tags'] .= '<div class="label label-warning"><span class="glyphicon glyphicon-envelope" aria-hidden="true"></span></div> ';
-                }
+
+            if ($note->wasForwardedToCareTeam()) {
+                $formatted_notes[$count]['tags'] .= '<div class="label label-warning"><span class="glyphicon glyphicon-envelope" aria-hidden="true"></span></div> ';
             }
 
 
@@ -95,20 +92,20 @@ class WebixFormatter implements ReportFormatter
     public function formatDataForNotesAndOfflineActivitiesReport($patient)
     {
         $formatted_data = collect();
-        $count = 0;
+        $count          = 0;
 
         $billingProvider = $patient->billingProviderName;
 
         $notes = $patient->notes->map(function ($note) use ($patient, $billingProvider) {
             $result = [
-                'id'           => $note->id,
-                'logger_name'  => $note->author->fullName,
-                'comment'      => $note->body,
-                'logged_from'  => 'note',
-                'type_name'    => $note->type,
-                'performed_at' => $note->performed_at->toDateString(),
+                'id'            => $note->id,
+                'logger_name'   => $note->author->fullName,
+                'comment'       => $note->body,
+                'logged_from'   => 'note',
+                'type_name'     => $note->type,
+                'performed_at'  => $note->performed_at->toDateString(),
                 'provider_name' => $billingProvider,
-                'tags' => '',
+                'tags'          => '',
             ];
 
             if ($note->notifications->count() > 0) {
@@ -133,42 +130,43 @@ class WebixFormatter implements ReportFormatter
             if ($was_seen) {
                 $result['tags'] .= '<div class="label label-success"><span class="glyphicon glyphicon-eye-open" aria-hidden="true"></span></div> ';
             }
+
             return $result;
         });
 
         $appointments = $patient->appointments->map(function ($appointment) use ($billingProvider) {
             return [
-                'id'           => $appointment->id,
-                'logger_name'  => optional($appointment->author)->fullName,
-                'comment'      => $appointment->comment,
-                'logged_from'  => $appointment->type,
-                'type_name'    => 'appointment',
-                'performed_at' => Carbon::parse($appointment->date)->toDateString(),
+                'id'            => $appointment->id,
+                'logger_name'   => optional($appointment->author)->fullName,
+                'comment'       => $appointment->comment,
+                'logged_from'   => $appointment->type,
+                'type_name'     => 'appointment',
+                'performed_at'  => Carbon::parse($appointment->date)->toDateString(),
                 'provider_name' => $billingProvider,
-                'tags' => '',
+                'tags'          => '',
             ];
         });
 
         $activities = $patient->activities->map(function ($activity) use ($billingProvider) {
             return [
-                'id'           => $activity->id,
-                'logger_name'  => $activity->provider->fullName,
-                'comment'      => $activity->getCommentForActivity(),
-                'logged_from'  => 'manual_input',
-                'type_name'    => $activity->type,
-                'performed_at' => $activity->performed_at,
+                'id'            => $activity->id,
+                'logger_name'   => $activity->provider->fullName,
+                'comment'       => $activity->getCommentForActivity(),
+                'logged_from'   => 'manual_input',
+                'type_name'     => $activity->type,
+                'performed_at'  => $activity->performed_at,
                 'provider_name' => $billingProvider,
-                'tags' => '',
+                'tags'          => '',
             ];
         });
 
         $report_data = $notes->merge($appointments)
-            ->merge($activities)
-            ->sortByDesc('performed_at')
-            ->values()
-            ->toJson();
+                             ->merge($activities)
+                             ->sortByDesc('performed_at')
+                             ->values()
+                             ->toJson();
 
-        if (!empty($report_data)) {
+        if ( ! empty($report_data)) {
             return "data:$report_data";
         } else {
             return '';
@@ -185,17 +183,17 @@ class WebixFormatter implements ReportFormatter
 //                $user = User::find($user);
 //            }
 
-            $careplanReport[$user->id]['symptoms'] = $user->cpmSymptoms()->get()->pluck('name')->all();
-            $careplanReport[$user->id]['problem'] = $user->cpmProblems()->get()->sortBy('name')->pluck('name')->all();
-            $careplanReport[$user->id]['problems'] = (new \App\Services\CPM\CpmProblemService())->getProblemsWithInstructionsForUser($user);
-            $careplanReport[$user->id]['lifestyle'] = $user->cpmLifestyles()->get()->pluck('name')->all();
-            $careplanReport[$user->id]['biometrics'] = $user->cpmBiometrics()->get()->pluck('name')->all();
+            $careplanReport[$user->id]['symptoms']    = $user->cpmSymptoms()->get()->pluck('name')->all();
+            $careplanReport[$user->id]['problem']     = $user->cpmProblems()->get()->sortBy('name')->pluck('name')->all();
+            $careplanReport[$user->id]['problems']    = (new \App\Services\CPM\CpmProblemService())->getProblemsWithInstructionsForUser($user);
+            $careplanReport[$user->id]['lifestyle']   = $user->cpmLifestyles()->get()->pluck('name')->all();
+            $careplanReport[$user->id]['biometrics']  = $user->cpmBiometrics()->get()->pluck('name')->all();
             $careplanReport[$user->id]['medications'] = $user->cpmMedicationGroups()->get()->pluck('name')->all();
         }
 
         $other_problems = (new ReportsService())->getInstructionsforOtherProblems($user);
 
-        if (!empty($other_problems)) {
+        if ( ! empty($other_problems)) {
             $careplanReport[$user->id]['problems']['Full Conditions List'] = $other_problems;
         }
 
@@ -208,7 +206,7 @@ class WebixFormatter implements ReportFormatter
         }
 
         foreach ($careplanReport[$user->id]['biometrics'] as $metric) {
-            $biometric = $user->cpmBiometrics->where('name', $metric)->first();
+            $biometric        = $user->cpmBiometrics->where('name', $metric)->first();
             $biometric_values = app(config('cpmmodelsmap.biometrics')[$biometric->type])->getUserValues($user);
 
             if ($biometric_values) {
@@ -225,7 +223,7 @@ class WebixFormatter implements ReportFormatter
                 //If no values are retrievable, then default to these:
             } else {
                 $biometric_values['starting'] = 'N/A';
-                $biometric_values['target'] = 'TBD';
+                $biometric_values['target']   = 'TBD';
             }
 
             //Special verb use for each biometric
@@ -235,8 +233,8 @@ class WebixFormatter implements ReportFormatter
                 } else {
                     $starting = explode('/', $biometric_values['starting']);
                     $starting = $starting[0];
-                    $target = explode('/', $biometric_values['target']);
-                    $target = $target[0];
+                    $target   = explode('/', $biometric_values['target']);
+                    $target   = $target[0];
 
                     if ($starting > $target) {
                         $biometric_values['verb'] = 'Decrease';
@@ -287,9 +285,9 @@ class WebixFormatter implements ReportFormatter
             }
 
 
-            $careplanReport[$user->id]['bio_data'][$metric]['target'] = $biometric_values['target'] . ReportsService::biometricsUnitMapping($metric);
+            $careplanReport[$user->id]['bio_data'][$metric]['target']   = $biometric_values['target'] . ReportsService::biometricsUnitMapping($metric);
             $careplanReport[$user->id]['bio_data'][$metric]['starting'] = $biometric_values['starting'] . ReportsService::biometricsUnitMapping($metric);
-            $careplanReport[$user->id]['bio_data'][$metric]['verb'] = $biometric_values['verb'];
+            $careplanReport[$user->id]['bio_data'][$metric]['verb']     = $biometric_values['verb'];
         }//dd($careplanReport[$user->id]['bio_data']);
 
 
@@ -297,18 +295,18 @@ class WebixFormatter implements ReportFormatter
 
         //Medications List
         $careplanReport[$user->id]['taking_meds'] = 'No instructions at this time';
-        $medicationList = $user->cpmMiscs->where('name', CpmMisc::MEDICATION_LIST)->all();
-        if (!empty($medicationList)) {
+        $medicationList                           = $user->cpmMiscs->where('name', CpmMisc::MEDICATION_LIST)->all();
+        if ( ! empty($medicationList)) {
             $meds = Medication::where('patient_id', '=', $user->id)->orderBy('name')->get();
             if ($meds->count() > 0) {
-                $i = 0;
+                $i                                        = 0;
                 $careplanReport[$user->id]['taking_meds'] = [];
                 foreach ($meds as $med) {
                     empty($med->name)
                         ? $medText = ''
                         : $medText = '' . $med->name;
 
-                    if (!empty($med->sig)) {
+                    if ( ! empty($med->sig)) {
                         $medText .= '<br /><span style="font-style:italic;">- ' . $med->sig . '</span>';
                     }
                     $careplanReport[$user->id]['taking_meds'][] = $medText;
@@ -319,12 +317,12 @@ class WebixFormatter implements ReportFormatter
 
         //Allergies
         $careplanReport[$user->id]['allergies'] = 'No instructions at this time';
-        $allergy = $user->cpmMiscs->where('name', CpmMisc::ALLERGIES)->all();
-        if (!empty($allergy)) {
+        $allergy                                = $user->cpmMiscs->where('name', CpmMisc::ALLERGIES)->all();
+        if ( ! empty($allergy)) {
             $allergies = Allergy::where('patient_id', '=', $user->id)->orderBy('allergen_name')->get();
             if ($allergies->count() > 0) {
                 $careplanReport[$user->id]['allergies'] = '';
-                $i = 0;
+                $i                                      = 0;
                 foreach ($allergies as $allergy) {
                     if (empty($allergy->allergen_name)) {
                         continue 1;
@@ -414,7 +412,7 @@ class WebixFormatter implements ReportFormatter
         foreach ($past as $appt) {
             $provider = User::find($appt->provider_id);
 
-            if (!$provider) {
+            if ( ! $provider) {
                 continue;
             }
 
@@ -461,20 +459,20 @@ class WebixFormatter implements ReportFormatter
     public function patientListing(Collection $patients = null)
     {
         $patientData = [];
-        $auth = \Auth::user();
+        $auth        = \Auth::user();
 
-        if (!$patients) {
+        if ( ! $patients) {
             $patients = $auth->patientList();
         }
 
-        $foundUsers = []; // save resources, no duplicate db calls
+        $foundUsers    = []; // save resources, no duplicate db calls
         $foundPrograms = []; // save resources, no duplicate db calls
 
-        $canApproveCarePlans = $auth->canApproveCareplans();
+        $canApproveCarePlans   = $auth->canApproveCareplans();
         $canQAApproveCarePlans = $auth->canQAApproveCarePlans();
-        $isCareCenter = $auth->hasRole('care-center');
-        $isAdmin = $auth->hasRole('administrator');
-        $isProvider = $auth->hasRole('provider');
+        $isCareCenter          = $auth->hasRole('care-center');
+        $isAdmin               = $auth->hasRole('administrator');
+        $isProvider            = $auth->hasRole('provider');
 
 
         foreach ($patients as $patient) {
@@ -483,10 +481,10 @@ class WebixFormatter implements ReportFormatter
                 continue 1;
             }
 
-            $careplanStatus = $patient->carePlan->status ?? '';
+            $careplanStatus     = $patient->carePlan->status ?? '';
             $careplanStatusLink = '';
-            $approverName = 'NA';
-            $tooltip = 'NA';
+            $approverName       = 'NA';
+            $tooltip            = 'NA';
 
             if ($careplanStatus == 'provider_approved') {
                 $approver = $patient->carePlan->providerApproverUser;
@@ -495,13 +493,13 @@ class WebixFormatter implements ReportFormatter
                 }
 
                 $carePlanProviderDate = $patient->carePlan->provider_date;
-                $careplanStatus = 'Approved';
-                $careplanStatusLink = '<span data-toggle="" title="' . $approverName . ' ' . $carePlanProviderDate . '">Approved</span>';
-                $tooltip = $approverName . ' ' . $carePlanProviderDate;
+                $careplanStatus       = 'Approved';
+                $careplanStatusLink   = '<span data-toggle="" title="' . $approverName . ' ' . $carePlanProviderDate . '">Approved</span>';
+                $tooltip              = $approverName . ' ' . $carePlanProviderDate;
             } else {
                 if ($careplanStatus == 'qa_approved') {
-                    $careplanStatus = 'Approve Now';
-                    $tooltip = $careplanStatus;
+                    $careplanStatus     = 'Approve Now';
+                    $tooltip            = $careplanStatus;
                     $careplanStatusLink = 'Approve Now';
                     if ($canApproveCarePlans) {
                         $careplanStatusLink = '<a style="text-decoration:underline;" href="' . route(
@@ -511,8 +509,8 @@ class WebixFormatter implements ReportFormatter
                     }
                 } else {
                     if ($careplanStatus == 'draft') {
-                        $careplanStatus = 'CLH Approve';
-                        $tooltip = $careplanStatus;
+                        $careplanStatus     = 'CLH Approve';
+                        $tooltip            = $careplanStatus;
                         $careplanStatusLink = 'CLH Approve';
                         if ($canQAApproveCarePlans) {
                             $careplanStatusLink = '<a style="text-decoration:underline;" href="' . route(
@@ -526,9 +524,9 @@ class WebixFormatter implements ReportFormatter
 
             // get billing provider name
             $bpName = '';
-            $bpID = $patient->billingProviderID;
-            if (!isset($foundPrograms[$patient->program_id])) {
-                $program = $patient->primaryPractice;
+            $bpID   = $patient->billingProviderID;
+            if ( ! isset($foundPrograms[$patient->program_id])) {
+                $program                             = $patient->primaryPractice;
                 $foundPrograms[$patient->program_id] = $program;
             } else {
                 $program = $foundPrograms[$patient->program_id];
@@ -540,17 +538,17 @@ class WebixFormatter implements ReportFormatter
             if ($bpCareTeamMember) {
                 $bpUser = $bpCareTeamMember->user;
 
-                if (!$bpUser) {
+                if ( ! $bpUser) {
                     continue;
                 }
 
-                $bpName = $bpUser->fullName;
+                $bpName            = $bpUser->fullName;
                 $foundUsers[$bpID] = $bpUser;
             }
 
             // get date of last observation
             $lastObservationDate = 'No Readings';
-            $lastObservation = $patient->observations;
+            $lastObservation     = $patient->observations;
             if ($lastObservation->count() > 0) {
                 $lastObservationDate = date("m/d/Y", strtotime($lastObservation[0]->obs_date));
             }

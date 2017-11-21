@@ -143,7 +143,7 @@ class NoteService
                    ])
                    ->has('notifications')
                    ->orderBy('performed_at', 'desc')
-                   ->with('patient')->with(['call', 'notifications', 'author'])
+                   ->with(['patient', 'call', 'notifications', 'author'])
                    ->get();
     }
 
@@ -163,7 +163,7 @@ class NoteService
                      ])
                      ->has('notifications')
                      ->orderBy('performed_at', 'desc')
-                     ->with('patient')->with(['call', 'notifications', 'author'])
+                     ->with(['patient', 'call', 'notifications', 'author'])
                      ->get();
 
         $provider_forwarded_notes = [];
@@ -177,12 +177,13 @@ class NoteService
         return collect($provider_forwarded_notes);
     }
 
-    public function updateMailLogsForNote(
+    public function markNoteAsRead(
         User $viewer,
         Note $note
     ) {
         $viewer->unreadNotifications()
-            ->hasNotifiableType(Note::class)
+               ->hasNotifiableType(User::class)
+               ->hasAttachmentType(Note::class)
                ->where('attachment_id', '=', $note->id)
                ->get()
                ->markAsRead();

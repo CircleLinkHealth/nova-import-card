@@ -19,6 +19,7 @@ use App\Models\CPM\CpmProblem;
 use App\Models\CPM\CpmSymptom;
 use App\Models\EmailSettings;
 use App\Models\MedicalRecords\Ccda;
+use App\Notifications\Notifiable;
 use App\Notifications\ResetPassword;
 use App\Repositories\Cache\UserNotificationList;
 use App\Services\UserService;
@@ -33,7 +34,6 @@ use Illuminate\Contracts\Auth\CanResetPassword as CanResetPasswordContract;
 use Illuminate\Database\Eloquent\Collection as EloquentCollection;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\QueryException;
-use App\Notifications\Notifiable;
 use Illuminate\Support\Collection;
 use Laravel\Passport\HasApiTokens;
 use Michalisantoniou6\Cerberus\Traits\CerberusSiteUserTrait;
@@ -543,16 +543,6 @@ class User extends \App\BaseModel implements AuthenticatableContract, CanResetPa
         return $this->hasMany(Call::class, 'inbound_cpm_id', 'id');
     }
 
-    /**
-     * Calls made from the User to CLH
-     *
-     * @return \Illuminate\Database\Eloquent\Relations\HasMany
-     */
-    public function outboundCalls()
-    {
-        return $this->hasMany(Call::class, 'outbound_cpm_id', 'id');
-    }
-
     public function inboundMessages()
     {
         return $this->hasMany(Message::class, 'receiver_cpm_id', 'id');
@@ -651,9 +641,6 @@ class User extends \App\BaseModel implements AuthenticatableContract, CanResetPa
         return $this->program_id;
     }
 
-
-    // END RELATIONSHIPS
-
     public function getUserMetaByKey($key)
     {
         $value = '';
@@ -664,6 +651,9 @@ class User extends \App\BaseModel implements AuthenticatableContract, CanResetPa
 
         return $value;
     }
+
+
+    // END RELATIONSHIPS
 
     public function setUserMetaByKey(
         $key,
@@ -1177,7 +1167,7 @@ class User extends \App\BaseModel implements AuthenticatableContract, CanResetPa
             return '';
         }
 
-        return str_replace('-', '/', $this->patientInfo->birth_date);
+        return $this->patientInfo->birth_date;
     }
 
     public function setBirthDateAttribute($value)
@@ -1397,11 +1387,16 @@ class User extends \App\BaseModel implements AuthenticatableContract, CanResetPa
 
         //Get email forwarding
         foreach ($careTeam as $carePerson) {
-            if ($carePerson->user->forwardAlertsTo->isEmpty() && $carePerson->user) {
+            $forwards = $carePerson->user->forwardAlertsTo->whereIn('pivot.name', [
+                User::FORWARD_ALERTS_IN_ADDITION_TO_PROVIDER,
+                User::FORWARD_ALERTS_INSTEAD_OF_PROVIDER,
+            ]);
+
+            if ($forwards->isEmpty() && $carePerson->user) {
                 $users->push($carePerson->user);
             }
 
-            foreach ($carePerson->user->forwardAlertsTo as $forwardee) {
+            foreach ($forwards as $forwardee) {
                 if ($forwardee->pivot->name == User::FORWARD_ALERTS_IN_ADDITION_TO_PROVIDER) {
                     $users->push($carePerson->user);
                     $users->push($forwardee);
@@ -2005,13 +2000,13 @@ class User extends \App\BaseModel implements AuthenticatableContract, CanResetPa
         return $userUcpData;
     }
 
-
-// MISC, these should be removed eventually
-
     public function ucp()
     {
         return $this->hasMany('App\CPRulesUCP', 'user_id', 'id');
     }
+
+
+// MISC, these should be removed eventually
 
     public function service()
     {
@@ -2027,8 +2022,6 @@ class User extends \App\BaseModel implements AuthenticatableContract, CanResetPa
     {
         return $this->roles()->whereIn('name', Role::CCM_TIME_ROLES)->exists();
     }
-
-// user data scrambler
 
     /**
      * Scope a query to only include users of a given type (Role).
@@ -2050,6 +2043,8 @@ class User extends \App\BaseModel implements AuthenticatableContract, CanResetPa
             }
         });
     }
+
+// user data scrambler
 
     /**
      * Scope a query to include users NOT of a given type (Role).
@@ -2518,7 +2513,7 @@ class User extends \App\BaseModel implements AuthenticatableContract, CanResetPa
     {
         return $this->hasPermissionForSite('care-plan-approve', $this->primary_practice_id)
                || ($this->hasRoleForSite('registered-nurse',
-                    $this->primary_practice_name) && $this->primaryPractice->settings[0]->rn_can_approve_careplans);
+                    $this->primary_practice_id) && $this->primaryPractice->settings[0]->rn_can_approve_careplans);
     }
 
     public function canQAApproveCarePlans()
@@ -2677,5 +2672,15 @@ class User extends \App\BaseModel implements AuthenticatableContract, CanResetPa
         $calls = Call::whereIn('id', parseIds($calls))->get();
 
         return $this->outboundCalls()->saveMany($calls);
+    }
+
+    /**
+     * Calls made from the User to CLH
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
+    public function outboundCalls()
+    {
+        return $this->hasMany(Call::class, 'outbound_cpm_id', 'id');
     }
 }

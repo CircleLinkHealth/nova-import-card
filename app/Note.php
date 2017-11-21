@@ -258,7 +258,7 @@ class Note extends \App\BaseModel implements PdfReport
         }
 
         $recipients->map(function ($carePersonUser) {
-            $carePersonUser->notify(new NoteForwarded($this, ['mail']));
+            optional($carePersonUser)->notify(new NoteForwarded($this, ['mail']));
         });
 
         $channels = [];

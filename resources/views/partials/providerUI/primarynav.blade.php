@@ -23,7 +23,7 @@
 
         </div>
 
-        <div class="col-md-4" id="search-bar-container">
+        <div class="col-md-5" id="search-bar-container">
             @include('partials.search')
         </div>
 

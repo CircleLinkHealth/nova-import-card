@@ -176,8 +176,8 @@ $codebaseUrl = 'https://circlelink-health2.codebasehq.com/projects/cpm/tickets/'
 							<h4 class="panel-title"><a data-toggle="collapse" data-parent="#accordion" href="#collapseCareTeam"><strong><i class="glyphicon glyphicon-list"></i> Care Team Setup</strong> - 95%</a></h4>
 							<div id="collapseCareTeam" class="panel-collapse collapse in">
                                 <br/>link: <a
-                                        href="{{ empty($patient) ? '' : URL::route('patient.careteam.show', array('patient' => $patient->id)) }}"
-                                        target="_blank">{{ empty($patient) ? '' : URL::route('patient.careteam.show', array('patient' => $patient->id)) }}</a><br/><br/>
+                                        href="{{ empty($patient) ? '' : URL::route('patient.demographics.show', array('patient' => $patient->id)) }}"
+                                        target="_blank">{{ empty($patient) ? '' : URL::route('patient.demographics.show', array('patient' => $patient->id)) }}</a><br/><br/>
 								<h5>Known Issues</h5>
 								<ul>
 									<li class="complete">"Are you sure?" confirmation modal missing green submit button <a class="btn-primary btn-xs" target="_blank" href="{{ $codebaseUrl }}/102">#102</a></li>

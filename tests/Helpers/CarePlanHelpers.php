@@ -57,16 +57,6 @@ trait CarePlanHelpers
             'member_user_id' => $this->provider->id,
             'type'           => CarePerson::SEND_ALERT_TO,
         ]);
-
-        $this
-            ->actingAs($this->provider)
-            ->visit("/manage-patients/{$patient->id}/careplan/team")
-            ->assertSee('Edit Patient Care Team')
-            ->click('#add-care-team-member')
-            ->assertSee('Billing Provider')
-            ->assertSee('Lead Contact')
-            ->assertSee('Send Alert')
-            ->assertSee($this->provider->display_name);
     }
 
     public function fillCareplanPage1(
@@ -178,9 +168,6 @@ trait CarePlanHelpers
         $this
             ->actingAs($this->provider)
             ->visit($url);
-
-        empty($sectionTitle)
-            ?: $response->assertSee($sectionTitle);
 
         foreach ($carePlanEntities as $entity) {
             $this->select($entity->id, "{$relationship}[$entity->id]");

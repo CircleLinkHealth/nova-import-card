@@ -25,7 +25,6 @@ class NotesAndCallsTest extends TestCase
         //Create Provider
         $this->provider = $this->createUser();
         $testStatus .= 'Test user ' . $this->provider->fullName . 'was created. ';
-        $this->userLogin($this->provider);
 
         //Create Patient
         $this->patient = $this->createNewPatient();

@@ -319,11 +319,6 @@ class PatientCareplanController extends Controller
             $locations = $program->locations->pluck('name', 'id')->all();
         }
 
-        // security
-        if (!Auth::user()->hasPermissionForSite('observations-view', $programId)) {
-            abort(403);
-        }
-
         // get program
         $programs = Practice::whereIn('id', Auth::user()->viewableProgramIds())->pluck(
             'display_name',
@@ -333,8 +328,6 @@ class PatientCareplanController extends Controller
         // roles
         $patientRoleId = Role::where('name', '=', 'participant')->first();
         $patientRoleId = $patientRoleId->id;
-
-
 
         // States (for dropdown)
         $states = [

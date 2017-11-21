@@ -29,7 +29,7 @@
                         @if( isset($showApprovalButton) && $showApprovalButton)
                             <a id="approve-backward" href="#"
                                class="btn btn-primary btn-next inline-block submitFormBtn"
-                               dtarget="{{ URL::route('patient.careteam.show', array('patientId' => $patient->id)) }}"><span
+                               dtarget="{{ URL::route('patient.demographics.show', array('patientId' => $patient->id)) }}"><span
                                         class="glyphicon glyphicon-circle-arrow-left"></span></a>
                             <a id="approve-forward" href="#" class="btn btn-primary btn-next inline-block submitFormBtn"
                                dtarget="{{ URL::route('patient.careplan.show', array('patientId' => $patient->id, 'page' => 2)) }}">Approve/Next
@@ -138,4 +138,3 @@
         </div>
         @endif
 </div>
-</div><!-- /main-form-progress -->
