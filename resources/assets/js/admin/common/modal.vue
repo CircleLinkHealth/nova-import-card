@@ -57,7 +57,8 @@
             'class-name',
             'cancelText',
             'okText',
-            'on-cancel'
+            'on-cancel',
+            'no-wrapper-close'
             ],
         data() {
             return {
@@ -69,10 +70,11 @@
         },
         methods: {
             close(e) {
-                if (!e || (e.target && e.target.classList.contains('modal-wrapper'))) {
+                if (!e || (e.target && (!this.noWrapperClose && e.target.classList.contains('modal-wrapper')))) {
+                    console.log(e)
                     this.show = false;
+                    Event.$emit(`modal${this.name ? '-' + this.name : ''}:close`)
                 }
-                Event.$emit(`modal${this.name ? '-' + this.name : ''}:close`)
             },
             cancel() {
                 if (this.info && typeof(this.info.cancelHandler) === 'function') this.info.cancelHandler();

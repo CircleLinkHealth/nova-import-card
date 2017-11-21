@@ -1,6 +1,6 @@
 <template>
     <modal name="inactivity" class-name="i-modal" :no-footer="true" 
-            cancel-text="No" ok-text="Yes" :info="inactivityModalInfo">
+            cancel-text="No" ok-text="Yes" :info="inactivityModalInfo" :no-wrapper-close="true">
         <template slot="title">
             You have gone idle ...
         </template>
