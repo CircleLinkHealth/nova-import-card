@@ -1,27 +1,36 @@
 module.exports = app => {
-  require("express-ws")(app);
+  require('express-ws')(app);
 
-  const TimeTracker = require('./time-tracker')
+  const TimeTracker = require('../time-tracker')
   const TimeTrackerUser = TimeTracker.TimeTrackerUser
 
-  const axios = require("axios")
+  const axios = require('axios')
 
   const timeTracker = new TimeTracker()
 
-  app.ws("/time", (ws, req) => {
-    ws.on("message", (message = "") => {
+  const errorThrow = (err, ws) => {
+    console.error(err)
+    if (ws) {
+      ws.send(JSON.stringify({
+        error: err
+      }))
+    }
+  }
+
+  app.ws('/time', (ws, req) => {
+    ws.on('message', (message = '') => {
       try {
         const data = JSON.parse(message);
         /**
          * Sample structure of [data] object
          * {
-         *  "id": 1,
-         *  "patientId": 874,
-         *  "message": "start"
-         *  "info": { ... }
+         *  'id': 1,
+         *  'patientId': 874,
+         *  'message': 'start'
+         *  'info': { ... }
          * }
          */
-        if (data.constructor.name === "Object") {
+        if (data.constructor.name === 'Object') {
           if (
             (!!Number(data.id) || Number(data.id) === 0) &&
             (!!Number(data.patientId) || Number(data.patientId) === 0)
@@ -29,120 +38,88 @@ module.exports = app => {
             //check that [id] and [patientId] are numbers
             const key = `${data.id}-${data.patientId}`;
             ws.key = key;
-            if (data.message === "update") {
-              if (!usersTime[key]) {
-                if (!data.info || data.info.constructor.name !== 'Object') {
-                  /**
-                   * Verify that [data.info] is a valid object
-                   */
-                  ws.send(JSON.stringify({
-                    error: 'Invalid data: [data.info] must be a valid object'
-                  }))
-                  return;
-                }
+            if (data.message === 'start') {
+              try {
+                const user = timeTracker.get(key, data.info)
+                if (user.sockets.indexOf(ws) < 0) user.sockets.push(ws);
+                ws.send(JSON.stringify({
+                  seconds: user.interval(),
+                  clients: user.sockets.length
+                }))
               }
-              usersTime[key] = usersTime[key] || {
-                seconds: 0,
-                dates: [
-                  {
-                    start: new Date(),
-                    end: null
-                  }
-                ],
-                info: data.info,
-                sockets: [],
-                interval() {
-                  //console.log(this.dates)
-                  const seconds = Math.floor(this.dates.map(date => {
-                    return (date.end || new Date()) - date.start;
-                  }).reduce((a, b) => a + b, 0) / 1000);
-                  return this.seconds + seconds;
-                },
-                cleanup() {
-                  /**
-                   * remove objects with start and end data properties from [dates] array
-                   * so it doesn't get bulky and make .interval() take longer than necessary
-                   */
-                  this.seconds += Math.floor(this.dates.filter(date => date.start && date.end)
-                                              .map(date => date.end - date.start)
-                                              .reduce((a, b) => a + b, 0) / 1000);
-                  this.dates = this.dates.filter(date => !date.end);
-
-                  return this.seconds
-                },
-                exit() {
-                  if (this.dates[this.dates.length - 1] && !this.dates[this.dates.length - 1].end) {
-                    this.dates[this.dates.length - 1].end = new Date()
-                  }
-                  return this.cleanup()
-                }
-              };
-              if (usersTime[key].sockets.indexOf(ws) < 0) {
-                //add ws to client sockets list
-                usersTime[key].sockets.push(ws);
+              catch (ex) {
+                errorThrow(ex, ws)
+                return;
               }
-              ws.send(
-                JSON.stringify({
-                  seconds: usersTime[key].interval(),
-                  clients: usersTime[key].sockets.length
-                })
-              );
-            } else if (data.message === "stop") {
-              const key = ws.key;
-              if (usersTime[key].dates[usersTime[key].dates.length - 1]) usersTime[key].dates[usersTime[key].dates.length - 1].end = new Date();
-              usersTime[key].cleanup();
-              ws.clientState = "stopped";
-              ws.send(
-                JSON.stringify({
-                  message: "ws stopped"
-                })
-              );
-            } else if (data.message === "start") {
-              const key = ws.key;
-              if (usersTime[key].dates[usersTime[key].dates.length - 1] && !usersTime[key].dates[usersTime[key].dates.length - 1].end) {
-                usersTime[key].dates[usersTime[key].dates.length - 1].end = new Date();
+            } 
+            else if (data.message === 'stop') {
+              try {
+                const user = timeTracker.get(key)
+                user.stop()
+                user.cleanup()
+                ws.clientState = 'stopped'
+                ws.send(
+                  JSON.stringify({
+                    message: 'ws stopped'
+                  })
+                )
               }
-              usersTime[key].dates.push({
-                start: new Date(),
-                end: null
-              });
-              usersTime[key].cleanup();
-              ws.clientState = null;
-              ws.send(
-                JSON.stringify({
-                  message: "ws started"
-                })
-              );
+              catch (ex) {
+                errorThrow(ex, ws)
+                return;
+              }
+            } 
+            else if (data.message === 'resume') {
+              try {
+                const user = timeTracker.get(key, data.info)
+                user.resume()
+                ws.clientState = null;
+                ws.send(
+                  JSON.stringify({
+                    message: 'ws started'
+                  })
+                )
+              }
+              catch (ex) {
+                errorThrow(ex, ws)
+                return;
+              }
             }
-          } else {
-            console.error("[data.id] is NaN", data.id);
+          } 
+          else {
+            errorThrow('[data.id] is NaN', ws);
           }
-        } else {
-          console.error("[data] is not an Object", data);
+        } 
+        else {
+          errorThrow('[data] is not an Object', ws);
         }
       } catch (ex) {
-        console.error("there was an error parsing", message, ex);
+        errorThrow(ex, ws);
       } 
     });
 
-    ws.on("close", ev => {
+    ws.on('close', ev => {
       const key = ws.key;
-      if (key && usersTime[key]) {
-        usersTime[key].sockets.splice(usersTime[key].sockets.indexOf(ws), 1);
-        if (usersTime[key].sockets.length == 0) {
-          if (usersTime[key].info) {
-            const info = usersTime[key].info;
-            info.totalTime = usersTime[key].exit() * 1000;
-
+      const user = timeTracker.get(key)
+      if (key && user) {
+        user.sockets.splice(user.sockets.indexOf(ws), 1);
+        if (user.sockets.length == 0) {
+          const info = user.info;
+          if (info) {
+            info.totalTime = user.cleanup() * 1000;
+            
             const url = info.submitUrl
-
+            
+            timeTracker.remove(key);
+  
             axios.post(url, info).then((response) => {
               console.log(response.status, response.data)
-              //console.log(response)
-              delete usersTime[key];
             }).catch((err) => {
               console.error(err)
             })
+          }
+          else {
+            errorThrow('info.totalTime is undefined ... key is ' + key)
           }
         }
       }
@@ -150,28 +127,27 @@ module.exports = app => {
   });
 
   setInterval(() => {
-    for (const key in usersTime) {
-      const listeners = usersTime[key].sockets.filter(
-                          socket => socket.clientState !== "stopped"
-                        ).length
+    for (const user of timeTracker.users()) {
+      const listeners = user.sockets.filter(
+                          socket => socket.clientState !== 'stopped'
+                        )
+
       console.log(
-        "sending message to ",
-        listeners,
-        " clients", usersTime[key].interval()
+        'sending message to clients:',
+        listeners.length,
+        'interval:', user.interval()
       );
-      if (listeners === 0 && usersTime[key].dates[usersTime[key].dates.length - 1] && !usersTime[key].dates[usersTime[key].dates.length - 1].end) {
-        usersTime[key].dates[usersTime[key].dates.length - 1].end = new Date();
-      }
-      usersTime[key].sockets.forEach(socket => {
-        if (socket.clientState != "stopped") {
+      user.sockets.forEach(socket => {
+        if (socket.clientState != 'stopped') {
           socket.send(
             JSON.stringify({
-              seconds: usersTime[key].interval(),
-              clients: usersTime[key].sockets.length
+              seconds: user.interval(),
+              clients: user.sockets.length
             })
           );
         }
       });
     }
   }, 3000);
+
 };

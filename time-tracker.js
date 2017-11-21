@@ -1,7 +1,7 @@
 
 
 function TimeTracker(now = () => (new Date())) {
-    var users = {}
+    const users = {}
 
     this.get = (key, info) => {
         return users[key] = users[key] || this.create(key, info)
@@ -9,6 +9,14 @@ function TimeTracker(now = () => (new Date())) {
 
     this.create = (key, info) => {
         return new TimeTrackerUser(key, info, now)
+    }
+
+    this.users = () => {
+        return Object.values(users)
+    }
+
+    this.remove = (key) => {
+        if (users[key]) delete users[key]
     }
 }
 
