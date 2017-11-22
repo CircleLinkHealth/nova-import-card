@@ -30,7 +30,7 @@
             return {
                 seconds: 0,/** from when page loads, till the page ends */
                 previousSeconds: 0,/**from the DB, ccm total time */
-                visible: true,
+                visible: false,
                 socket: null
             }
         },
@@ -59,6 +59,7 @@
                                 const data = JSON.parse(res.data)
                                 if (data.message === 'tt:update-previous-seconds' && !!Number(data.previousSeconds)) {
                                     self.previousSeconds = Math.max(data.previousSeconds, self.previousSeconds)
+                                    self.visible = true //display the component when the previousSeconds value has been received from the server to keep the display up-to-date
                                 }
                                 else if (data.message === 'tt:resume') {
                                     if (!!Number(data.seconds)) {
