@@ -98,6 +98,16 @@ module.exports = app => {
                 return;
               }
             }
+            else if (data.message === 'inactivity-cancel') {
+              try {
+                const user = timeTracker.get(key, data.info)
+                user.seconds = Math.min(user.seconds, 30)
+              }
+              catch (ex) {
+                errorThrow(ex, ws)
+                return;
+              }
+            }
           } 
           else {
             errorThrow('[data.id] is NaN', ws);
