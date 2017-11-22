@@ -1,7 +1,7 @@
 <template>
     <span v-if="visible" class="time-tracker">
-        <time-display :seconds="totalTime" />
-        <inactivity-tracker />
+        <time-display ref="timeDisplay" :seconds="totalTime" />
+        <inactivity-tracker ref="inactivityTracker" />
     </span>
 </template>
 
@@ -50,6 +50,7 @@
             createSocket() {
                 try {
                     const self = this; //a way to keep the context
+                    self.socketReloadCount = (self.socketReloadCount || 0) + 1;
                     this.socket = this.socket || (function () {
                         const socket = new WebSocket(self.info.wsUrl);
         
@@ -69,8 +70,9 @@
                         }
                 
                         socket.onopen = (ev) => {
-                            console.log("socket connection opened", ev)
+                            console.log("socket connection opened", ev, self.socketReloadCount, EventBus.isInFocus)
                             self.updateTime()
+                            if (EventBus.isInFocus) EventBus.$emit("tracker:start")
                         }
                 
                         socket.onclose = (ev) => {
@@ -98,6 +100,8 @@
                 this.visible = false;
             }
             else {
+                EventBus.isInFocus = true;
+
                 EventBus.$on('tracker:tick', () => {
                     this.seconds++;
                     this.$forceUpdate()

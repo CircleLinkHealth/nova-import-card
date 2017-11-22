@@ -9,12 +9,14 @@ export const BindWindowFocusChange = function (window, App = EventBus) {
         App.$emit('tracker:start', e);
         App.$emit('inactivity:reset', e);
         App.$emit('inactivity:start', e);
+        App.isInFocus = true;
     }
     
     window.onblur = function () {
         console.log('leave')
         App.$emit('tracker:stop');
         App.$emit("inactivity:stop");
+        App.isInFocus = false;
     }
     
     window.onkeydown = window.onmousemove = 
@@ -65,10 +67,12 @@ export const BindWindowVisibilityChange = function(window, document, App = Event
                 App.$emit('tracker:start');
                 App.$emit('inactivity:reset');
                 App.$emit('inactivity:start');
+                App.isInFocus = true;
             }
             else {
                 App.$emit('tracker:stop');
                 App.$emit("inactivity:stop");
+                App.isInFocus = false;
             }
             console.log(state);
         }
