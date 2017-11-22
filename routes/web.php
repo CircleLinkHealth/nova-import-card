@@ -95,6 +95,11 @@ Route::group(['middleware' => 'auth'], function () {
      * API
      */
     Route::group(['prefix' => 'api'], function () {
+        Route::get('providers/{providerId}/patients/{patientId}/ccm-time', [
+            'uses' => 'API\CcmTimeController@between',
+            'as' => 'get.ccm.time.from.to'
+        ]);
+
         Route::get('practices/all', 'API\PracticeController@allPracticesWithLocationsAndStaff');
 
         Route::get('calls-management', [

@@ -11,12 +11,15 @@ use Illuminate\Http\Request;
 
 class PageTimerController extends Controller
 {
+    protected $activityService;
     protected $timeTrackingService;
 
     public function __construct(
         Request $request,
-        TimeTrackingService $timeTrackingService
+        TimeTrackingService $timeTrackingService,
+        ActivityService $activityService
     ) {
+        $this->activityService = $activityService;
         $this->timeTrackingService = $timeTrackingService;
     }
 
@@ -126,8 +129,7 @@ class PageTimerController extends Controller
             // if rule exists, create activity
             $activityId = Activity::createNewActivity($activityParams);
 
-            $activityService = new ActivityService;
-            $activityService->processMonthlyActivityTime([$pageTimer->patient_id]);
+            $this->activityService->processMonthlyActivityTime([$pageTimer->patient_id]);
 
             $pageTimer->processed = 'Y';
 

@@ -33,16 +33,25 @@ $factory->define(App\User::class, function (Faker\Generator $faker) {
     ];
 });
 
+$factory->define(App\Activity::class, function (Faker\Generator $faker) use ($factory) {
+    return [
+        'type'          => $faker->text(15),
+        'duration'      => $faker->numberBetween(1, 120),
+        'duration_unit' => 'seconds',
+        'performed_at'  => Carbon::now(),
+    ];
+});
+
 $factory->define(App\Note::class, function (Faker\Generator $faker) use ($factory) {
     return [
-        'patient_id' => $factory->create(App\User::class)->id,
-        'author_id' => $factory->create(App\User::class)->id,
-        'logger_id' => $factory->create(App\User::class)->id,
-        'body' => $faker->text(100),
-        'isTCM' => $faker->boolean(50),
-        'type' => $faker->text(10),
+        'patient_id'           => $factory->create(App\User::class)->id,
+        'author_id'            => $factory->create(App\User::class)->id,
+        'logger_id'            => $factory->create(App\User::class)->id,
+        'body'                 => $faker->text(100),
+        'isTCM'                => $faker->boolean(50),
+        'type'                 => $faker->text(10),
         'did_medication_recon' => $faker->boolean(50),
-        'performed_at' => Carbon::now(),
+        'performed_at'         => Carbon::now(),
     ];
 });
 

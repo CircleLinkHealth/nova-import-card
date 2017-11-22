@@ -3,12 +3,18 @@
 use App\Activity;
 use App\Patient;
 use App\PatientMonthlySummary;
+use App\Repositories\Eloquent\ActivityRepository;
 use Carbon\Carbon;
-use DB;
-use Illuminate\Support\Collection;
 
 class ActivityService
 {
+    protected $repo;
+
+    public function __construct(ActivityRepository $repo)
+    {
+        $this->repo = $repo;
+    }
+
     /**
      * Process activity time for month
      *
@@ -23,20 +29,27 @@ class ActivityService
             $monthYear = Carbon::now();
         }
 
-        $acts = Activity::whereIn('patient_id', $userIds)
-                            ->where('performed_at', '>=', $monthYear->startOfMonth())
-                            ->where('performed_at', '<=', $monthYear->copy()->endOfMonth())
-                            ->selectRaw('sum(duration) as total_duration, patient_id')
-                            ->pluck('total_duration', 'patient_id');
+        $acts = $this->repo->totalCCMTime($userIds, $monthYear)
+                        ->pluck('total_time', 'patient_id');
 
         foreach ($acts as $id => $ccmTime) {
             $info = Patient::updateOrCreate([
                 'user_id' => $id,
             ], [
-                'cur_month_activity_time' => $ccmTime
+                'cur_month_activity_time' => $ccmTime,
             ]);
 
             (new PatientMonthlySummary())->updateCCMInfoForPatient($info, $ccmTime);
         }
+    }
+
+    public function ccmTimeBetween($providerId, array $patientIds, Carbon $monthYear = null)
+    {
+        if ( ! $monthYear) {
+            $monthYear = Carbon::now();
+        }
+
+        return $this->repo->ccmTimeBetween($providerId, $patientIds, $monthYear)
+            ->pluck('total_time', 'patient_id');
     }
 }
