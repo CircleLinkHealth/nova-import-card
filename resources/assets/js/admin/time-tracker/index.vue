@@ -110,7 +110,8 @@
 
                 const STATE = {
                     STOP: 'stop',
-                    START: 'resume'
+                    START: 'resume',
+                    INACTIVITY_CANCEL: 'inactivity-cancel'
                 }
 
                 EventBus.$on('tracker:stop', () => {
@@ -124,6 +125,15 @@
                     if (this.socket && this.socket.readyState === WebSocket.OPEN) {
                         this.state = STATE.START
                         this.socket.send(JSON.stringify({ id: this.info.providerId, patientId: this.info.patientId, message: STATE.START, info: this.info }))
+                    }
+                })
+
+                EventBus.$on('tracker:inactivity-cancel', () => {
+                    if (this.socket && this.socket.readyState === WebSocket.OPEN) {
+                        this.socket.send(JSON.stringify({ id: this.info.providerId, patientId: this.info.patientId, message: STATE.INACTIVITY_CANCEL }))
+                        setTimeout(() => {
+                            document.location.href = rootUrl('manage-patients/dashboard')
+                        }, 700)
                     }
                 })
 
