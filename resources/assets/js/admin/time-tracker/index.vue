@@ -1,6 +1,6 @@
 <template>
     <span v-if="visible" class="time-tracker">
-        <time-display :seconds="seconds" />
+        <time-display :seconds="totalTime" />
         <inactivity-tracker />
     </span>
 </template>
@@ -28,7 +28,8 @@
         },
         data() {
             return {
-                seconds: 0,
+                seconds: 0,/** from when page loads, till the page ends */
+                previousSeconds: 0,/**from the DB, ccm total time */
                 visible: true,
                 socket: null
             }
@@ -36,6 +37,11 @@
         components: { 
             'inactivity-tracker': InactivityTracker,
             'time-display': TimeDisplay
+        },
+        computed: {
+            totalTime() {
+                return this.seconds + this.previousSeconds
+            }
         },
         methods: {
             updateTime() {
@@ -47,11 +53,17 @@
                     this.socket = this.socket || (function () {
                         const socket = new WebSocket(self.info.wsUrl);
         
-                        socket.onmessage = (message) => {
-                            if (message.data) {
-                                const data = JSON.parse(message.data)
-                                if (!!Number(data.seconds))
-                                    self.seconds = self.previousSeconds + Number(data.seconds)
+                        socket.onmessage = (res) => {
+                            if (res.data) {
+                                const data = JSON.parse(res.data)
+                                if (data.message === 'tt:update-previous-seconds' && !!Number(data.previousSeconds)) {
+                                    self.previousSeconds = Math.max(data.previousSeconds, self.previousSeconds)
+                                }
+                                else if (data.message === 'tt:resume') {
+                                    if (!!Number(data.seconds)) {
+                                        self.seconds = Number(data.seconds)
+                                    }
+                                }
                                 console.log(data);
                             }
                         }
@@ -78,7 +90,6 @@
             }
         },
         mounted() {
-            this.seconds = this.info.totalTime;
             this.previousSeconds = this.info.totalTime || 0;
 
             console.log(this.info)

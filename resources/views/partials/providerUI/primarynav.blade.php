@@ -31,7 +31,7 @@
             <ul class="nav navbar-nav">
                 <li data-monthly-time="{{$monthlyTime}}" style="padding-top: 15px; padding-bottom: 15px; line-height: 20px">
                     @if (!isset($patient))
-                        <time-tracker :info="timeTrackerInfo"></time-tracker>
+                        <time-tracker ref="TimeTrackerApp" :info="timeTrackerInfo"></time-tracker>
                     @endif
                 </li>
                 {{--URL::route('patients.dashboard', array())--}}
