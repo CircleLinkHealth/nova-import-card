@@ -80,7 +80,6 @@ class PageTimerController extends Controller
         $newActivity->title             = $data['title'];
         $newActivity->user_agent        = $request->userAgent();
         $newActivity->billable_duration = $duration;
-        $newActivity->end_time          = $startTime->addSeconds($duration)->toDateTimeString();
         $newActivity->save();
 
         $activityId = $this->addPageTimerActivities($newActivity);
