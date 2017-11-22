@@ -29,9 +29,9 @@
 
         <div class="navbar-right hidden-xs" style="">
             <ul class="nav navbar-nav">
-                <li data-monthly-time="{{$monthlyTime}}" style="padding-top: 15px; padding-bottom: 15px; line-height: 20px;display: none;">
-                    <time-tracker ref="TimeTrackerApp" :info="timeTrackerInfo"></time-tracker>
-                </li>
+                {{--<li data-monthly-time="{{$monthlyTime}}" style="padding-top: 15px; padding-bottom: 15px; line-height: 20px;display: none;">--}}
+                    {{--<time-tracker ref="TimeTrackerApp" :info="timeTrackerInfo"></time-tracker>--}}
+                {{--</li>--}}
                 <li>
                     <a href="{{ URL::route('patients.dashboard') }}"><i class="icon--home--white"></i> Home</a>
                 </li>
