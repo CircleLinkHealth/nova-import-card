@@ -14,7 +14,7 @@ class ViewComposerServiceProvider extends ServiceProvider
      */
     public function boot()
     {
-        View::composer('partials.userheader', function ($view) {
+        View::composer(['partials.userheader', 'wpUsers.patient.careplan.print'], function ($view) {
             // calculate display, fix bug where gmdate('i:s') doesnt work for > 24hrs
             $patient = $view->patient;
 

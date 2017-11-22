@@ -4,11 +4,13 @@
 
 <?php
 
-if (isset($patient) && !empty($patient)) {
+if (isset($patient) && ! empty($patient)) {
     $billing = null;
-    $lead = null;
-    if (!empty($patient->getBillingProviderIDAttribute())) $billing = App\User::find($patient->getBillingProviderIDAttribute());
-    if (!empty($patient->getLeadContactIDAttribute())) $lead = App\User::find($patient->getLeadContactIDAttribute());
+    $lead    = null;
+    if ( ! empty($patient->getBillingProviderIDAttribute()))
+        $billing = App\User::find($patient->getBillingProviderIDAttribute());
+    if ( ! empty($patient->getLeadContactIDAttribute()))
+        $lead = App\User::find($patient->getLeadContactIDAttribute());
 
     $today = \Carbon\Carbon::now()->toFormattedDateString();
 // $provider = App\User::find($patient->getLeadContactIDAttribute());
@@ -18,7 +20,7 @@ if (isset($patient) && !empty($patient)) {
 
 @if(!isset($isPdf))
     @section('title', 'Care Plan View/Print')
-    @section('activity', 'Care Plan View/Print')
+@section('activity', 'Care Plan View/Print')
 @endif
 
 @section('content')
@@ -27,9 +29,17 @@ if (isset($patient) && !empty($patient)) {
             <section class="patient-summary">
                 <div class="patient-info__main">
                     @if(!isset($isPdf))
-
                         <div class="row">
                             <div class="col-xs-12 text-right hidden-print">
+
+                                <div class="hide">
+                                 <span style="font-size: 27px;{{$ccm_above ? 'color: #47beab;' : ''}}">
+                    <span data-monthly-time="{{$monthlyTime}}" style="color: inherit"
+                          data-href="{{ empty($patient->id) ? URL::route('patients.search') : URL::route('patient.activity.providerUIIndex', array('patient' => $patient->id)) }}">
+                        <time-tracker ref="TimeTrackerApp" :info="timeTrackerInfo"></time-tracker>
+                    </span>
+                </span>
+                                </div>
 
                                 @if($showInsuranceReviewFlag)
                                     <div class="alert alert-danger text-left" role="alert">
@@ -50,29 +60,33 @@ if (isset($patient) && !empty($patient)) {
                                 <div class="col-xs-12 text-left">
                                     @if ($skippedAssessment)
                                         <div class="text-right">
-                                            <a class="btn btn-success btn-lg inline-block" aria-label="..." role="button"
-                                                href="{{ URL::route('patients.careplan.multi') }}?users={{ $patient->id }}">Skipped: Print This Page</a>
+                                            <a class="btn btn-success btn-lg inline-block" aria-label="..."
+                                               role="button"
+                                               href="{{ URL::route('patients.careplan.multi') }}?users={{ $patient->id }}">Skipped:
+                                                Print This Page</a>
                                         </div>
                                     @else
                                         <pdf-careplans v-cloak>
                                             <span class="btn btn-group text-right">
                                                 @if ( ($patient->carePlanStatus == 'qa_approved' && auth()->user()->canApproveCarePlans()) || ($patient->carePlanStatus == 'draft' && auth()->user()->hasPermission('care-plan-qa-approve')) )
-                                                    <a style="margin-right:10px;" class="btn btn-info btn-sm inline-block"
-                                                    aria-label="..."
-                                                    role="button"
-                                                    href="{{ URL::route('patient.careplan.approve', ['patientId' => $patient->id]) }}">Approve</a>
+                                                    <a style="margin-right:10px;"
+                                                       class="btn btn-info btn-sm inline-block"
+                                                       aria-label="..."
+                                                       role="button"
+                                                       href="{{ URL::route('patient.careplan.approve', ['patientId' => $patient->id]) }}">Approve</a>
 
                                                     @if(auth()->user()->hasRole('provider'))
                                                         <a style="margin-right:10px;"
-                                                        class="btn btn-success btn-sm inline-block"
-                                                        aria-label="..."
-                                                        role="button"
-                                                        href="{{ route('patient.careplan.approve', ['patientId' => $patient->id, 'viewNext' => true]) }}">Approve and View Next</a>
+                                                           class="btn btn-success btn-sm inline-block"
+                                                           aria-label="..."
+                                                           role="button"
+                                                           href="{{ route('patient.careplan.approve', ['patientId' => $patient->id, 'viewNext' => true]) }}">Approve and View Next</a>
                                                     @endif
                                                 @endif
 
-                                                <a class="btn btn-info btn-sm inline-block" aria-label="..." role="button"
-                                                href="{{ URL::route('patients.careplan.multi') }}?users={{ $patient->id }}">Print This Page</a>
+                                                <a class="btn btn-info btn-sm inline-block" aria-label="..."
+                                                   role="button"
+                                                   href="{{ URL::route('patients.careplan.multi') }}?users={{ $patient->id }}">Print This Page</a>
 
                                                 <form class="lang" action="#" method="POST" id="form">
                                                 {{ csrf_field() }}
@@ -341,7 +355,8 @@ if (isset($patient) && !empty($patient)) {
                 <div id="care-team" class="patient-info__subareas">
                     <div class="row">
                         <div class="col-xs-12">
-                            <h2 id="care-team-label" class="patient-summary__subtitles patient-summary--careplan-background">Care Team:</h2>
+                            <h2 id="care-team-label"
+                                class="patient-summary__subtitles patient-summary--careplan-background">Care Team:</h2>
                         </div>
                         <div class="col-xs-12">
                             @include('wpUsers.patient.careplan.print.careteam')
@@ -425,41 +440,45 @@ if (isset($patient) && !empty($patient)) {
 
         @if ($patient->isCcmEligible() && !$skippedAssessment)
             @push('scripts')
-                <script type="text/html" name="ccm-enrollment-details">
-                    <ul>
-                        <li>Program is a way for me / MD to follow-up between office visits</li>
-                        <li>You will receive a personalized care manager (registered nurse) to check-in and keep us connected / answer Questions</li>
-                        <li>Medicare covers the program and if you have supplemental insurance or Medicaid, it should cover the co-pay (~8/mo.)</li>
-                        <li>You can quit anytime, just give us a call</li>
-                    </ul>
-                    <style>
-                        #confirm-modal ul {
-                            margin-bottom: 30px;
-                        }
+            <script type="text/html" name="ccm-enrollment-details">
+                <ul>
+                    <li>Program is a way for me / MD to follow-up between office visits</li>
+                    <li>You will receive a personalized care manager (registered nurse) to check-in and keep us
+                        connected / answer Questions
+                    </li>
+                    <li>Medicare covers the program and if you have supplemental insurance or Medicaid, it should cover
+                        the co-pay (~8/mo.)
+                    </li>
+                    <li>You can quit anytime, just give us a call</li>
+                </ul>
+                <style>
+                    #confirm-modal ul {
+                        margin-bottom: 30px;
+                    }
 
-                        #confirm-modal li {
-                            list-style-type: circle;
-                            line-height: 30px;
-                            margin-bottom: 10px;
-                            font-size: 18px;
-                        }
-                    </style>
-                </script>
-                <script>
-                    $.showConfirmModal({
-                        title: 'CCM Enrollment Talking Points For {{$patient->display_name}}, DOB: {{optional($patient->patient_info)->birth_date}}',
-                        body: document.querySelector('[name="ccm-enrollment-details"]').innerHTML,
-                        confirmText: 'Patient Consented',
-                        cancelText: 'Did Not Consent'
-                    }).then((patientHasConsented) => {
-                        if (patientHasConsented) {
-                            location.href = '{{asset("manage-patients/" . $patient->id . "/view-careplan/assessment")}}';
-                        }
-                        else {
-                            location.href = '{{asset("manage-patients/dashboard")}}'
-                        }
-                    })
-                </script> 
+                    #confirm-modal li {
+                        list-style-type: circle;
+                        line-height: 30px;
+                        margin-bottom: 10px;
+                        font-size: 18px;
+                    }
+                </style>
+            </script>
+            <script>
+                $.showConfirmModal({
+                    title: 'CCM Enrollment Talking Points For {{$patient->display_name}}, DOB: {{optional($patient->patient_info)->birth_date}}',
+                    body: document.querySelector('[name="ccm-enrollment-details"]').innerHTML,
+                    confirmText: 'Patient Consented',
+                    cancelText: 'Did Not Consent'
+                }).then((patientHasConsented) => {
+                    if (patientHasConsented) {
+                        location.href = '{{asset("manage-patients/" . $patient->id . "/view-careplan/assessment")}}';
+                    }
+                    else {
+                        location.href = '{{asset("manage-patients/dashboard")}}'
+                    }
+                })
+            </script>
             @endpush
         @endif
     @endif
