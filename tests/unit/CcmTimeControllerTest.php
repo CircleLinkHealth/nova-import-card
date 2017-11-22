@@ -11,7 +11,7 @@ use Tests\TestCase;
 
 class CcmTimeControllerTest extends TestCase
 {
-    use //DatabaseTransactions,
+    use DatabaseTransactions,
         WithoutMiddleware,
         UserHelpers;
 
