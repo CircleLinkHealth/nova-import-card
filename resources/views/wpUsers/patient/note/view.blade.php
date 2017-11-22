@@ -10,23 +10,23 @@
     ?>
 
     @push('styles')
-        <style type="text/css">
-            div.inline {
-                float: left;
-            }
+    <style type="text/css">
+        div.inline {
+            float: left;
+        }
 
-            .clearBoth {
-                clear: both;
-            }
+        .clearBoth {
+            clear: both;
+        }
 
-            blockquote {
-                padding: 10px 20px;
-                margin: 10px 0 20px;
-                font-size: 17.5px;
-                border-left: 5px solid #50b2e2;
-                line-height: 24px;
-            }
-        </style>
+        blockquote {
+            padding: 10px 20px;
+            margin: 10px 0 20px;
+            font-size: 17.5px;
+            border-left: 5px solid #50b2e2;
+            line-height: 24px;
+        }
+    </style>
     @endpush
 
     <div class="row" style="margin-top:30px;">
@@ -112,29 +112,23 @@
                                 <div class="new-note-item">
                                     <div class="form-group">
                                         <div class="col-sm-12">
-                                            @foreach($meta as $key => $tag)
-                                                @if($tag == 'Patient Recently in Hospital/ER')
-                                                    <h5>
-                                                        <div class="label label-danger">{{ucwords($tag)}}</div>
-                                                    </h5>
-                                                @elseif($key == 'forwarded')
-                                                    <h5>
-                                                        <span class="label label-info info" data-tooltip="{{$tag}}">
-                                                            <span>Forwarded</span>
-                                                        </span>
-                                                    </h5>
-                                                @else
-                                                    <h5>
-                                                        <div class="label label-info">{{ucwords($tag)}}</div>
-                                                    </h5>
-                                                @endif
+                                            @foreach($meta as $tag)
+                                                <h5>
+                                                    <div class="label label-{{$tag->severity}} info" @isset($tag->tooltip) data-tooltip="{{$tag->tooltip}}" @endisset>
+                                                        {{ucwords($tag->title)}}
+                                                    </div>
+                                                </h5>
                                             @endforeach
                                             @if(is_array($hasReaders))
                                                 @foreach($hasReaders as $key => $value)
                                                     <h5>
-                                                        <div style="margin-right: 2px; margin-bottom: 4px;" class="inline label label-success" data-tooltip="{{$value}}">
-                                                            <div style="padding: 1px; padding-left: 0" class="label label-success">
-                                                                <span class="glyphicon glyphicon-eye-open" aria-hidden="true"></span>
+                                                        <div style="margin-right: 2px; margin-bottom: 4px;"
+                                                             class="inline label label-success"
+                                                             data-tooltip="{{$value}}">
+                                                            <div style="padding: 1px; padding-left: 0"
+                                                                 class="label label-success">
+                                                                <span class="glyphicon glyphicon-eye-open"
+                                                                      aria-hidden="true"></span>
                                                                 @if($key == $note['provider_name'])
                                                                     (B.P.)
                                                                 @endif
@@ -170,7 +164,7 @@
                                     </div>
                                 </div>
                                 <div class="form-group col-sm-4">
-                                        <input type="hidden" name="patient_id" value="{{$patient->id}}">
+                                    <input type="hidden" name="patient_id" value="{{$patient->id}}">
                                     <input type="hidden" name="logger_id" value="{{Auth::user()->id}}">
                                     <input type="hidden" name="noteId" value="{{$note['id']}}">
                                     <input type="hidden" name="patientID" id="patientID" value="{{$patient->id}}">
@@ -189,29 +183,29 @@
                                 </div>
 
                                 @push('scripts')
-                                    <script>
-                                        $(function () {
-                                            $('[data-toggle="tooltip"]').tooltip()
-                                        });
+                                <script>
+                                    $(function () {
+                                        $('[data-toggle="tooltip"]').tooltip()
+                                    });
 
-                                        $('.collapse').collapse();
+                                    $('.collapse').collapse();
 
-                                        $("input:checkbox").on('click', function () {
-                                            // in the handler, 'this' refers to the box clicked on
-                                            var $box = $(this);
-                                            if ($box.is(":checked")) {
-                                                // the name of the box is retrieved using the .attr() method
-                                                // as it is assumed and expected to be immutable
-                                                var group = "input:checkbox[name='" + $box.attr("name") + "']";
-                                                // the checked state of the group/box on the other hand will change
-                                                // and the current value is retrieved using .prop() method
-                                                $(group).prop("checked", false);
-                                                $box.prop("checked", true);
-                                            } else {
-                                                $box.prop("checked", false);
-                                            }
-                                        });
-                                    </script>
+                                    $("input:checkbox").on('click', function () {
+                                        // in the handler, 'this' refers to the box clicked on
+                                        var $box = $(this);
+                                        if ($box.is(":checked")) {
+                                            // the name of the box is retrieved using the .attr() method
+                                            // as it is assumed and expected to be immutable
+                                            var group = "input:checkbox[name='" + $box.attr("name") + "']";
+                                            // the checked state of the group/box on the other hand will change
+                                            // and the current value is retrieved using .prop() method
+                                            $(group).prop("checked", false);
+                                            $box.prop("checked", true);
+                                        } else {
+                                            $box.prop("checked", false);
+                                        }
+                                    });
+                                </script>
                                 @endpush
                                 {!! Form::close() !!}
 

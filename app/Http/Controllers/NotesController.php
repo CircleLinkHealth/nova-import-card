@@ -8,6 +8,7 @@ use App\PatientMonthlySummary;
 use App\Services\Calls\SchedulerService;
 use App\Services\NoteService;
 use App\User;
+use App\View\MetaTag;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -427,26 +428,26 @@ class NotesController extends Controller
         //Call Info
         if (count($note->call) > 0) {
             if ($note->call->is_cpm_inbound) {
-                $meta_tags[] = 'Inbound Call';
+                $meta_tags[] = new MetaTag('info', 'Inbound Call');
             } else {
-                $meta_tags[] = 'Outbound Call';
+                $meta_tags[] = new MetaTag('info', 'Outbound Call');
             }
 
             if ($note->call->status == 'reached') {
-                $meta_tags[] = 'Successful Clinical Call';
+                $meta_tags[] = new MetaTag('info', 'Successful Clinical Call');
             }
         }
 
         if ($readers->count() > 0) {
-            $meta_tags['forwarded'] = $readers->keys()->implode(', ');
+            $meta_tags[] = new MetaTag('info', 'Forwarded', $readers->keys()->implode(', '));
         }
 
         if ($note->isTCM) {
-            $meta_tags[] = 'Patient Recently in Hospital/ER';
+            $meta_tags[] = new MetaTag('danger', 'Patient Recently in Hospital/ER');
         }
 
         if ($note->did_medication_recon) {
-            $meta_tags[] = 'Medication Reconciliation';
+            $meta_tags[] = new MetaTag('info', 'Medication Reconciliation');
         }
 
         $data['type']         = $note->type;
