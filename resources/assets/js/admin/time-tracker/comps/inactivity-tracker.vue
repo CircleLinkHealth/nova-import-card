@@ -29,7 +29,7 @@
                 num = Math.floor(num);
                 count = count || Number.POSITIVE_INFINITY;
                 const $num = num + "";
-                return "0".repeat(count - $num.length) + $num;
+                return "0".repeat((count - $num.length) || 0) + $num;
             },
             start() {
                 if (this.interval) clearInterval(this.interval);
