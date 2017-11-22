@@ -37,7 +37,7 @@
                     function() {
                         this.endTime = new Date();
                         const ALERT_INTERVAL = 120;
-                        const LOGOUT_INTERVAL = 300;
+                        const LOGOUT_INTERVAL = 600;
                         if (this.totalSeconds && ((this.totalSeconds % ALERT_INTERVAL) === 0)) {
                             /**
                              * Stop Tracking Time
@@ -50,7 +50,7 @@
                             EventBus.$emit("tracker:stop")
                             EventBus.$emit('modal-inactivity:show')
                         }
-                        else if (this.totalSeconds && ((this.totalSeconds % LOGOUT_INTERVAL) === 0)) {
+                        else if (this.totalSeconds && this.totalSeconds >= LOGOUT_INTERVAL) {
                             /**
                              * Logout the user automatically
                              */
