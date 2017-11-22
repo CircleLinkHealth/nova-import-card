@@ -18,6 +18,12 @@ use Illuminate\Support\Facades\DB;
  */
 class ActivityController extends Controller
 {
+    private $activityService;
+
+    public function __construct(ActivityService $activityService)
+    {
+        $this->activityService = $activityService;
+    }
 
     public function providerUIIndex(
         Request $request,
@@ -260,9 +266,7 @@ class ActivityController extends Controller
             $activity->meta()->saveMany($metaArray);
         }
 
-        // update usermeta: cur_month_activity_time
-        $activityService = new ActivityService;
-        $activityService->processMonthlyActivityTime($input['patient_id']);
+        $this->activityService->processMonthlyActivityTime($input['patient_id']);
 
         if ($nurse) {
             $activity = Activity::find($actId);
@@ -355,8 +359,7 @@ class ActivityController extends Controller
         )->first();
         $actMeta->fill($meta['0'])->save();
 
-        $activityService = new ActivityService;
-        $activityService->processMonthlyActivityTime([$input['patient_id']]);
+        $this->activityService->processMonthlyActivityTime([$input['patient_id']]);
 
         return response("Activity Updated", 201);
     }
