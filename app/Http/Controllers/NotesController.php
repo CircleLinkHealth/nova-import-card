@@ -49,7 +49,7 @@ class NotesController extends Controller
                            'notes.notifications',
                            'patientInfo',
                        ])->orderByDesc('created_at')
-                       ->first();
+                       ->firstOrFail();
 
         $messages = \Session::get('messages');
 

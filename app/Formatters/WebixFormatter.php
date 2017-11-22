@@ -94,7 +94,7 @@ class WebixFormatter implements ReportFormatter
         $formatted_data = collect();
         $count          = 0;
 
-        $billingProvider = optional($patient)->billingProviderName;
+        $billingProvider = $patient->billingProviderName;
 
         $notes = $patient->notes->map(function ($note) use ($patient, $billingProvider) {
             $result = [
