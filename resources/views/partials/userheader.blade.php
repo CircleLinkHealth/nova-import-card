@@ -50,9 +50,9 @@
             </div>
             <div class="col-sm-4" style="line-height: 22px; text-align: right">
 
+                <a href="{{ empty($patient->id) ?: route('patient.activity.providerUIIndex', ['patient' => $patient->id]) }}">
                 <span style="font-size: 27px;{{$ccm_above ? 'color: #47beab;' : ''}}">
-                    <span data-monthly-time="{{$monthlyTime}}" style="color: inherit"
-                          data-href="{{ empty($patient->id) ? URL::route('patients.search') : URL::route('patient.activity.providerUIIndex', array('patient' => $patient->id)) }}">
+                    <span data-monthly-time="{{$monthlyTime}}" style="color: inherit">
                         @if (auth()->user()->isCCMCountable())
                             <time-tracker ref="TimeTrackerApp" :info="timeTrackerInfo"></time-tracker>
                         @else
@@ -60,6 +60,7 @@
                         @endif
                     </span>
                 </span>
+                </a>
 
                 <span style="font-size:15px"></span><br/>
 
