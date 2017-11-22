@@ -18,6 +18,16 @@ function TimeTracker(now = () => (new Date())) {
     this.remove = (key) => {
         if (users[key]) delete users[key]
     }
+
+    this.exit = (key) => {
+        if (users[key]) {
+            const user = users[key]
+            if (user.info) {
+                user.info.totalTime = Number(user.info.totalTime || 0) + Number(user.seconds)
+            }
+            user.seconds = 0
+        }
+    }
 }
 
 Array.prototype.last = function () {

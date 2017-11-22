@@ -47,12 +47,10 @@ module.exports = app => {
                 const user = timeTracker.get(key, data.info)
                 if (user.sockets.indexOf(ws) < 0) user.sockets.push(ws);
                 user.sockets.forEach(socket => {
-                  if (socket != ws) {
-                    socket.send(JSON.stringify({
-                      message: 'tt:update-previous-seconds',
-                      previousSeconds: data.info.totalTime
-                    }))
-                  }
+                  socket.send(JSON.stringify({
+                    message: 'tt:update-previous-seconds',
+                    previousSeconds: user.info.totalTime
+                  }))
                 })
                 ws.send(JSON.stringify({
                   message: 'tt:tick',
@@ -121,13 +119,16 @@ module.exports = app => {
         if (user.sockets.length == 0) {
           const info = user.info;
           if (info) {
-            info.totalTime = user.cleanup() * 1000;
             
             const url = info.submitUrl
+
+            const requestData = Object.assign(Object.assign({}, info), { totalTime: user.cleanup() * 1000 })
             
-            timeTracker.remove(key);
+            console.log(requestData)
+            
+            timeTracker.exit(key);
   
-            axios.post(url, info).then((response) => {
+            axios.post(url, requestData).then((response) => {
               console.log(response.status, response.data)
             }).catch((err) => {
               console.error(err)
@@ -150,7 +151,7 @@ module.exports = app => {
       console.log(
         'sending message to clients:',
         listeners.length,
-        'interval:', user.interval()
+        'interval:', user.interval(), 'totalTime:', (user.info || {}).totalTime
       );
       user.sockets.forEach(socket => {
         if (socket.clientState != 'stopped') {
