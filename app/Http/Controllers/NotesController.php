@@ -423,32 +423,7 @@ class NotesController extends Controller
         $data = [];
 
         //Sets up tags for patient note tags
-        $meta_tags = [];
-
-        //Call Info
-        if (count($note->call) > 0) {
-            if ($note->call->is_cpm_inbound) {
-                $meta_tags[] = new MetaTag('info', 'Inbound Call');
-            } else {
-                $meta_tags[] = new MetaTag('info', 'Outbound Call');
-            }
-
-            if ($note->call->status == 'reached') {
-                $meta_tags[] = new MetaTag('info', 'Successful Clinical Call');
-            }
-        }
-
-        if ($readers->count() > 0) {
-            $meta_tags[] = new MetaTag('info', 'Forwarded', $readers->keys()->implode(', '));
-        }
-
-        if ($note->isTCM) {
-            $meta_tags[] = new MetaTag('danger', 'Patient Recently in Hospital/ER');
-        }
-
-        if ($note->did_medication_recon) {
-            $meta_tags[] = new MetaTag('info', 'Medication Reconciliation');
-        }
+        $meta_tags = $this->service->tags($note);
 
         $data['type']         = $note->type;
         $data['id']           = $note->id;

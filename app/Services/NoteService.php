@@ -9,6 +9,7 @@ use App\Note;
 use App\Patient;
 use App\PatientMonthlySummary;
 use App\User;
+use App\View\MetaTag;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\URL;
 
@@ -301,5 +302,37 @@ class NoteService
         }
 
         return $careteam_info;
+    }
+
+    public function tags(Note $note) {
+        $meta_tags = [];
+
+        if ($note->call) {
+            if ($note->call->is_cpm_inbound) {
+                $meta_tags[] = new MetaTag('info', 'Inbound Call');
+            } else {
+                $meta_tags[] = new MetaTag('info', 'Outbound Call');
+            }
+
+            if ($note->call->status == 'reached') {
+                $meta_tags[] = new MetaTag('info', 'Successful Clinical Call');
+            }
+        }
+
+        $readers = $this->getSeenForwards($note);
+
+        if ($readers->count() > 0) {
+            $meta_tags[] = new MetaTag('info', 'Forwarded', $readers->keys()->implode(', '));
+        }
+
+        if ($note->isTCM) {
+            $meta_tags[] = new MetaTag('danger', 'Patient Recently in Hospital/ER');
+        }
+
+        if ($note->did_medication_recon) {
+            $meta_tags[] = new MetaTag('info', 'Medication Reconciliation');
+        }
+
+        return $meta_tags;
     }
 }
