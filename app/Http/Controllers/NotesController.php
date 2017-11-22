@@ -8,6 +8,7 @@ use App\PatientMonthlySummary;
 use App\Services\Calls\SchedulerService;
 use App\Services\NoteService;
 use App\User;
+use App\View\MetaTag;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -422,38 +423,7 @@ class NotesController extends Controller
         $data = [];
 
         //Sets up tags for patient note tags
-        $meta_tags = [];
-
-        //Call Info
-        if (count($note->call) > 0) {
-            if ($note->call->is_cpm_inbound) {
-                $meta_tags[] = 'Inbound Call';
-            } else {
-                $meta_tags[] = 'Outbound Call';
-            }
-
-            if ($note->call->status == 'reached') {
-                $meta_tags[] = 'Successful Clinical Call';
-            }
-        }
-
-        if ($note->mail->count() > 0) {
-            $mailText = 'Forwarded';
-            foreach ($note->mail as $mail) {
-                if ($mail->receiverUser) {
-                    $mailText .= ' ' . $mail->receiverUser->display_name . ',';
-                }
-            }
-            $meta_tags[] = rtrim($mailText, ',');
-        }
-
-        if ($note->isTCM) {
-            $meta_tags[] = 'Patient Recently in Hospital/ER';
-        }
-
-        if ($note->did_medication_recon) {
-            $meta_tags[] = 'Medication Reconciliation';
-        }
+        $meta_tags = $this->service->tags($note);
 
         $data['type']         = $note->type;
         $data['id']           = $note->id;
@@ -479,7 +449,7 @@ class NotesController extends Controller
             'patient'       => $patient,
             'program_id'    => $patient->program_id,
             'meta'          => $meta_tags,
-            'hasReaders'    => $readers,
+            'hasReaders'    => $readers->all(),
         ];
 
         return view('wpUsers.patient.note.view', $view_data);
