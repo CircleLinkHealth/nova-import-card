@@ -139,7 +139,7 @@ module.exports = app => {
         }
       }
     });
-  });
+  }); 
 
   setInterval(() => {
     for (const user of timeTracker.users()) {
