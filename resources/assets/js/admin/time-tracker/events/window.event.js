@@ -3,6 +3,7 @@
  */
 
 import EventBus from '../comps/event-bus'
+import { setCookie } from '../../../cookie'
 
 export const BindWindowFocusChange = function (window, App = EventBus) {
     window.onfocus = function (e) {
@@ -21,6 +22,10 @@ export const BindWindowFocusChange = function (window, App = EventBus) {
     window.onwheel = window.onmousewheel = 
     window.onmousedown = window.onkeyup = function () {
         App.$emit('inactivity:reset');
+    }
+
+    window.onbeforeunload = function () {
+        setCookie("tt:time", App.seconds)
     }
 }
 
