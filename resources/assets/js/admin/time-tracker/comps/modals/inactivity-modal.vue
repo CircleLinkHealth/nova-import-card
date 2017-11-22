@@ -26,7 +26,7 @@
             return {
                 inactivityModalInfo: {
                     cancelHandler: (e) => {
-                        document.location.href = rootUrl('manage-patients/dashboard')
+                        EventBus.$emit('tracker:inactivity-cancel')
                     }
                 }
             }
