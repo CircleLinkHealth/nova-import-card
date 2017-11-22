@@ -7,7 +7,6 @@ use App\Practice;
 use App\Services\CarePlanViewService;
 use App\User;
 use Carbon\Carbon;
-use EllipseSynergie\ApiResponse\Laravel\Response;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use URL;
