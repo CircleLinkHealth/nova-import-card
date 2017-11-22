@@ -32,14 +32,12 @@
                 <li data-monthly-time="{{$monthlyTime}}" style="padding-top: 15px; padding-bottom: 15px; line-height: 20px;display: none;">
                     <time-tracker ref="TimeTrackerApp" :info="timeTrackerInfo"></time-tracker>
                 </li>
-                {{--URL::route('patients.dashboard', array())--}}
-                <li><a href="{{ URL::route('patients.dashboard') }}"><i class="icon--home--white"></i> Home</a></li>
-                {{--<li><a href="{{ URL::route('patients.search') }}"><i class="icon--search--white"></i> Search Patient</a>--}}
-                {{--</li>--}}
-                <li><a href="{{ URL::route('patients.listing') }}"><i class="icon--patients"></i> Patient List</a>
+                <li>
+                    <a href="{{ URL::route('patients.dashboard') }}"><i class="icon--home--white"></i> Home</a>
                 </li>
-                {{--<li><a href="{{ URL::route('patients.demographics.show') }}"><i class="icon--add-user"></i> Add--}}
-                        {{--Patient</a></li>--}}
+                <li>
+                    <a href="{{ URL::route('patients.listing') }}"><i class="icon--patients"></i> Patient List</a>
+                </li>
 
                 <li class="dropdown">
                     <div class="dropdown-toggle" data-toggle="dropdown" role="button"
