@@ -46,7 +46,16 @@ module.exports = app => {
               try {
                 const user = timeTracker.get(key, data.info)
                 if (user.sockets.indexOf(ws) < 0) user.sockets.push(ws);
+                user.sockets.forEach(socket => {
+                  if (socket != ws) {
+                    socket.send(JSON.stringify({
+                      message: 'tt:update-previous-seconds',
+                      previousSeconds: data.info.totalTime
+                    }))
+                  }
+                })
                 ws.send(JSON.stringify({
+                  message: 'tt:tick',
                   seconds: user.interval(),
                   clients: user.sockets.length
                 }), wsErrorHandler)
@@ -64,7 +73,7 @@ module.exports = app => {
                 ws.clientState = 'stopped'
                 ws.send(
                   JSON.stringify({
-                    message: 'ws stopped'
+                    message: 'tt:stopped'
                   }), wsErrorHandler
                 )
               }
@@ -80,7 +89,9 @@ module.exports = app => {
                 ws.clientState = null;
                 ws.send(
                   JSON.stringify({
-                    message: 'ws started'
+                    message: 'tt:resume',
+                    seconds: user.interval(),
+                    clients: user.sockets.length
                   }), wsErrorHandler
                 )
               }
@@ -145,6 +156,7 @@ module.exports = app => {
         if (socket.clientState != 'stopped') {
           socket.send(
             JSON.stringify({
+              message: 'tt:tick',
               seconds: user.interval(),
               clients: user.sockets.length
             }), wsErrorHandler
