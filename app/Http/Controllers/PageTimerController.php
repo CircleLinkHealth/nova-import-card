@@ -47,9 +47,6 @@ class PageTimerController extends Controller
 
         $totalTime = $data['totalTime'] ?? 0;
 
-        //We have the duration from two sources.
-        //On page JS timer
-        //Difference between start and end dates on the server
         $duration = ceil($totalTime / 1000);
 
         $startTime = Carbon::createFromFormat('Y-m-d H:i:s', $data['startTime']);
@@ -104,13 +101,6 @@ class PageTimerController extends Controller
             return false;
         }
 
-        // user role param
-        $params['role'] = '';
-        $role           = $user->roles()->first();
-        if ($role) {
-            $params['role'] = $role->name;
-        }
-
         // activity param
         $params['activity'] = $pageTimer->activity_type;
 
@@ -137,7 +127,7 @@ class PageTimerController extends Controller
             $activityId = Activity::createNewActivity($activityParams);
 
             $activityService = new ActivityService;
-            $result          = $activityService->reprocessMonthlyActivityTime($pageTimer->patient_id);
+            $activityService->processMonthlyActivityTime([$pageTimer->patient_id]);
 
             $pageTimer->processed = 'Y';
 

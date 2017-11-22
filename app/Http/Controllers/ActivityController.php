@@ -262,7 +262,7 @@ class ActivityController extends Controller
 
         // update usermeta: cur_month_activity_time
         $activityService = new ActivityService;
-        $activityService->reprocessMonthlyActivityTime($input['patient_id']);
+        $activityService->processMonthlyActivityTime($input['patient_id']);
 
         if ($nurse) {
             $activity = Activity::find($actId);
@@ -356,7 +356,7 @@ class ActivityController extends Controller
         $actMeta->fill($meta['0'])->save();
 
         $activityService = new ActivityService;
-        $result = $activityService->reprocessMonthlyActivityTime($input['patient_id']);
+        $activityService->processMonthlyActivityTime([$input['patient_id']]);
 
         return response("Activity Updated", 201);
     }
