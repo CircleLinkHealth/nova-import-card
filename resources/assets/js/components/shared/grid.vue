@@ -14,7 +14,7 @@
         </thead>
         <tbody>
         <tr v-for="(entry, entryIndex) in filteredData" :key="entryIndex">
-            <td v-for="(col, index) in columns" @click="$emit('click', index, entry, entryIndex)" :class="'td-' + index" :key="index">
+            <td v-for="(col, index) in columns" @click="$emit('click', index, entry)" :class="'td-' + index" :key="index">
                 <div v-if="col.content" v-html="col.content"></div>
                 <div v-else>{{entry[index]}}</div>
             </td>
