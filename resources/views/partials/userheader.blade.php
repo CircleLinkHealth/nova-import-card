@@ -8,19 +8,19 @@
                     </a> </span>
                 @if($ccm_complex)
                     <span id="complex_tag"
-                      style="background-color: #ec683e;font-size: 15px; position: relative; top: -7px;"
-                      class="label label-warning"> Complex CCM</span>
+                          style="background-color: #ec683e;font-size: 15px; position: relative; top: -7px;"
+                          class="label label-warning"> Complex CCM</span>
                     @push('scripts')
-                        <script>
-                            (function () {
-                                // subscribe to jQuery event to know whether the complex-cscm checkbox value has been changed or not
-                                var $complexSpan = $("#complex_tag");
-                                $(document).on("complex-ccm-form-submit", function (e, status) {
-                                    if (status) $complexSpan.show();
-                                    else $complexSpan.hide();
-                                })
-                            })()
-                        </script>
+                    <script>
+                        (function () {
+                            // subscribe to jQuery event to know whether the complex-cscm checkbox value has been changed or not
+                            var $complexSpan = $("#complex_tag");
+                            $(document).on("complex-ccm-form-submit", function (e, status) {
+                                if (status) $complexSpan.show();
+                                else $complexSpan.hide();
+                            })
+                        })()
+                    </script>
                     @endpush
                 @endif
                 <a
@@ -51,10 +51,16 @@
             <div class="col-sm-4" style="line-height: 22px; text-align: right">
 
                 <span style="font-size: 27px;{{$ccm_above ? 'color: #47beab;' : ''}}">
-                    <span data-monthly-time="{{$monthlyTime}}" style="color: inherit" data-href="{{ empty($patient->id) ? URL::route('patients.search') : URL::route('patient.activity.providerUIIndex', array('patient' => $patient->id)) }}">
-                        <time-tracker ref="TimeTrackerApp" :info="timeTrackerInfo"></time-tracker>
+                    <span data-monthly-time="{{$monthlyTime}}" style="color: inherit"
+                          data-href="{{ empty($patient->id) ? URL::route('patients.search') : URL::route('patient.activity.providerUIIndex', array('patient' => $patient->id)) }}">
+                        @if (auth()->user()->isCCMCountable())
+                            <time-tracker ref="TimeTrackerApp" :info="timeTrackerInfo"></time-tracker>
+                        @else
+                            {{$monthlyTime}}
+                        @endif
                     </span>
                 </span>
+
                 <span style="font-size:15px"></span><br/>
 
                 @if(Route::is('patient.note.create'))
@@ -89,7 +95,8 @@
         </div>
         @if(!empty($problems))
             <div style="clear:both"></div>
-            <ul id="user-header-problems-checkboxes" class="person-conditions-list inline-block text-medium" style="margin-top: -10px">
+            <ul id="user-header-problems-checkboxes" class="person-conditions-list inline-block text-medium"
+                style="margin-top: -10px">
                 @foreach($problems as $problem)
                     @if($problem != App\Models\CPM\CpmMisc::OTHER_CONDITIONS && $problem != 'Diabetes')
                         <li class="inline-block"><input type="checkbox" id="item27" name="condition27" value="Active"
@@ -106,18 +113,18 @@
 <meta name="is_ccm_complex" content="{{$ccm_complex}}">
 
 @push('scripts')
-    <script>
-        $(document).ready(function () {
+<script>
+    $(document).ready(function () {
 
-            if ($('meta[name="is_ccm_complex"]').attr('content')) {
-                $("#complex_tag").show();
-            } else {
-                $("#complex_tag").hide();
-            }
+        if ($('meta[name="is_ccm_complex"]').attr('content')) {
+            $("#complex_tag").show();
+        } else {
+            $("#complex_tag").hide();
+        }
 
-        });
+    });
 
-    </script>
+</script>
 @endpush
 
 
