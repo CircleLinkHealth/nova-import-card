@@ -34,20 +34,6 @@ class NoteService
 
         $note->save();
 
-        $patient = User::find($note->patient_id);
-
-        // update usermeta: cur_month_activity_time
-        $activityService = new ActivityService;
-        $activityService->reprocessMonthlyActivityTime($input['patient_id']);
-        $linkToNote  = URL::route('patient.note.view', [
-            'patientId' => $note->patient_id,
-            'noteId'    => $note->id,
-        ]);// . '/' . $note->id;
-        $logger      = User::find($input['logger_id']);
-        $logger_name = $logger->display_name;
-
-        $input['noteId'] = $note->id;
-
         $note->forward($input['notify_careteam'] ?? false, $input['notify_circlelink_support'] ?? false);
 
         return $note;
@@ -190,18 +176,6 @@ class NoteService
                ->markAsRead();
     }
 
-    public function getSeenForwards(Note $note)
-    {
-        return $note->notifications()
-                    ->hasNotifiableType(User::class)
-                    ->with('notifiable')
-                    ->whereNotNull('read_at')
-                    ->get()
-                    ->mapWithKeys(function ($notification) {
-                        return [$notification->notifiable->fullName => $notification->read_at->format('m/d/y h:iA T')];
-                    });
-    }
-
     public function updatePatientRecords(
         Patient $patient,
         $ccmComplex
@@ -234,8 +208,6 @@ class NoteService
 
         return $patientRecord;
     }
-
-    //return bool of whether note was sent to a provider
 
     public function storeCallForNote(
         $note,
@@ -288,6 +260,8 @@ class NoteService
         ]);
     }
 
+    //return bool of whether note was sent to a provider
+
     public function getPatientCareTeamMembers($patientId)
     {
 
@@ -304,7 +278,8 @@ class NoteService
         return $careteam_info;
     }
 
-    public function tags(Note $note) {
+    public function tags(Note $note)
+    {
         $meta_tags = [];
 
         if ($note->call) {
@@ -334,5 +309,17 @@ class NoteService
         }
 
         return $meta_tags;
+    }
+
+    public function getSeenForwards(Note $note)
+    {
+        return $note->notifications()
+                    ->hasNotifiableType(User::class)
+                    ->with('notifiable')
+                    ->whereNotNull('read_at')
+                    ->get()
+                    ->mapWithKeys(function ($notification) {
+                        return [$notification->notifiable->fullName => $notification->read_at->format('m/d/y h:iA T')];
+                    });
     }
 }
