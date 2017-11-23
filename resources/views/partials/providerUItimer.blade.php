@@ -58,8 +58,8 @@ if (isset($patient) && !empty($patient) && is_a($patient, App\User::class)) {
             "activity": (document.getElementById('activityName') || { value: '' }).value,
             "title": '<?php echo $title; ?>',
             "submitUrl": '<?php echo URL::route("api.pagetracking"); ?>',
-            "startTime": '<?php echo Carbon::now()->subSeconds(8)->toDateTimeString(); ?>',
-            "disabled": ('{{!$enableTimeTracking}}' == '1')
+            "startTime": '<?php echo Carbon::now()->subSeconds(8)->toDateTimeString(); ?>'//,
+            //"disabled": ('{{!$enableTimeTracking}}' == '1')
         }
     </script>
 @endpush

@@ -7,7 +7,7 @@
 
     export default {
         name: 'time-display',
-        props: ['seconds'],
+        props: ['seconds', 'no-live-count'],
         computed: {
             hours() {
                 return this.pad(Math.floor(this.seconds / 3600), 2)
@@ -26,11 +26,13 @@
                 return '0'.repeat(count - $num.length) + $num;
             },
             start() {
-                const STEP = 1000;
-                if (this.interval) clearInterval(this.interval);
-                this.interval = setInterval((function () {
-                    EventBus.$emit("tracker:tick")
-                }).bind(this), STEP)
+                if (!this.noLiveCount) {
+                    const STEP = 1000;
+                    if (this.interval) clearInterval(this.interval);
+                    this.interval = setInterval((function () {
+                        EventBus.$emit("tracker:tick")
+                    }).bind(this), STEP)
+                }
             },
             stop() {
                 clearInterval(this.interval)

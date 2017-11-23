@@ -1,6 +1,6 @@
 <template>
-    <span v-if="visible" class="time-tracker">
-        <time-display ref="timeDisplay" :seconds="totalTime" />
+    <span v-if="visible" class="time-tracker" :class="className">
+        <time-display ref="timeDisplay" :seconds="totalTime" :no-live-count="noLiveCount" />
         <inactivity-tracker ref="inactivityTracker" />
     </span>
 </template>
@@ -25,7 +25,9 @@
                  *  patientId: 0
                  * }
                  */
-            }
+            },
+            'no-live-count': Boolean,
+            'class-name': String
         },
         data() {
             return {
@@ -72,7 +74,7 @@
                                     self.visible = true //display the component when the previousSeconds value has been received from the server to keep the display up-to-date
                                 }
                                 else if (data.message === 'tt:resume') {
-                                    if (!!Number(data.seconds)) {
+                                    if (!self.noLiveCount && !!Number(data.seconds)) {
                                         self.seconds = Number(data.seconds)
                                     }
                                 }
