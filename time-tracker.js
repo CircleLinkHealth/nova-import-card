@@ -49,7 +49,7 @@ function TimeTrackerUser(key, info, now = () => (new Date())) {
         seconds: 0,
         dates: [],
         key: key,
-        info: info,
+        info: Object.assign(info, { activities: {} }),
         sockets: [],
         setEndTime(nowFn = now) {
             if (this.dates.last() && !this.dates.last().end) {
@@ -57,11 +57,13 @@ function TimeTrackerUser(key, info, now = () => (new Date())) {
             }
             return this
         },
+        slimInterval(nowFn = now) {
+            return Math.floor(this.dates.map(date => {
+                return (date.end || nowFn()) - date.start;
+              }).reduce((a, b) => a + b, 0) / 1000)
+        },
         interval(nowFn = now) {
-          const seconds = Math.floor(this.dates.map(date => {
-            return (date.end || nowFn()) - date.start;
-          }).reduce((a, b) => a + b, 0) / 1000);
-          return this.seconds + seconds;
+          return this.seconds + this.slimInterval(nowFn);
         },
         cleanup() {
           /**
@@ -75,8 +77,10 @@ function TimeTrackerUser(key, info, now = () => (new Date())) {
 
           return this.seconds
         },
-        stop(nowFn = now) {
-          return this.setEndTime(nowFn)
+        stop(activity, nowFn = now) {
+          this.setEndTime(nowFn)
+          this.info.activities[activity] = (this.info.activities[activity] || 0) + this.slimInterval()
+          return this
         },
         resume(nowFn = now) {
             /**

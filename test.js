@@ -28,6 +28,9 @@ const TimeTrackerInfo = function () {
 
 const info = (new TimeTrackerInfo())
 const key = (new TimeTrackerInfo()).createKey()
+const activity1 = 'patient-notes-1'
+const activity2 = 'patient-notes-2'
+const activity3 = 'patient-notes-3'
 
 const addSeconds = (seconds) => () => (new Date).addSeconds(seconds)
 
@@ -87,23 +90,58 @@ describe('TimeTrackerUser', () => {
     })
     it('interval() should return 4 when addSeconds(4) is passed to stop() for the first time', () => {
         const user = timeTracker.create(key, info)
-        assert.equal(user.stop(addSeconds(4)).interval(), 4)
+        assert.equal(user.stop(activity1, addSeconds(4)).interval(), 4)
     })
     it('should have dates.length equal to 1 when stop() is called for the first time', () => {
         const user = timeTracker.create(key, info)
-        assert.equal(user.stop().dates.length, 1)
+        assert.equal(user.stop(activity1).dates.length, 1)
     })
 })
 
 describe('TimeTracker Flow', () => {
     const timeTracker = new TimeTracker()
+    const activity = 'patient-notes'
 
     it('resume()->2->stop()->2->resume()->8->stop() should have interval() equal to 10 and dates.length equal to 2', () => {
         const user = timeTracker.create(key, info) //resume() is implicit
-        user.stop(addSeconds(2)) //add 2 seconds
+        user.stop(activity, addSeconds(2)) //add 2 seconds
         user.resume(addSeconds(4)) //resume after 2 seconds
-        user.stop(addSeconds(12)) //lasts for 8 seconds
+        user.stop(activity, addSeconds(12)) //lasts for 8 seconds
         assert.equal(user.interval(), 10)
         assert.equal(user.dates.length, 2)
+    })
+})
+
+describe('TimeTracker Activity Flow', () => {
+    const timeTracker = new TimeTracker()
+    
+    it('should have activity-time set to 3 seconds after stopping', () => { 
+        const user = timeTracker.create(key, info)
+        user.stop(activity1, addSeconds(3))
+        assert.equal(user.info.activities[activity1], 3)
+    })
+    it('should have activity-time set to 5 seconds after stopping', () => {
+        const user = timeTracker.create(key, info)
+        user.stop(activity1, addSeconds(3))
+        user.cleanup()
+        user.resume(addSeconds(4))
+        user.stop(activity1, addSeconds(6))
+        assert.equal(user.info.activities[activity1], 5)
+    })
+    it('should have activity-time set to 5 seconds for activity1 and 10 seconds for activity2 after stopping', () => {
+        const user = timeTracker.create(key, info)
+        user.stop(activity1, addSeconds(3)) //activity1 lasts for 3 seconds
+        user.cleanup()
+        user.resume(addSeconds(4))
+        user.stop(activity2, addSeconds(11)) //activity2 lasts for 7 seconds
+        user.cleanup()
+        user.resume(addSeconds(12))
+        user.stop(activity1, addSeconds(14)) //activity1 lasts for 2 seconds
+        user.cleanup()
+        user.resume(addSeconds(15))
+        user.stop(activity2, addSeconds(18)) //activity2 lasts for 3 seconds
+        console.log(user.info.activities)
+        assert.equal(user.info.activities[activity1], 5)
+        assert.equal(user.info.activities[activity2], 10)
     })
 })
