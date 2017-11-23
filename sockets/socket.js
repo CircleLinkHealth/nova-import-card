@@ -70,7 +70,12 @@ module.exports = app => {
             else if (data.message === 'stop') {
               try {
                 const user = timeTracker.get(key)
-                user.stop((data.info || {}).activity || 'unknown')
+                const info = (data.info || {})
+                user.stop({ 
+                  name: info.activity || 'unknown', 
+                  urlFull: info.urlFull, 
+                  urlShort: info.urlShort 
+                })
                 user.cleanup()
                 ws.clientState = 'stopped'
                 ws.send(

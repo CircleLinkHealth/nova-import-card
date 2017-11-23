@@ -78,22 +78,24 @@ function TimeTrackerUser(key, info, now = () => (new Date())) {
 
           return this.seconds
         },
-        setActivity(activityName) {
-            const activity = this.info.activities.find(a => a.name === activityName)
+        setActivity(_activity) {
+            const activity = this.info.activities.find(a => a.name === _activity.name)
             if (activity) {
                 activity.duration = (activity.duration || 0) + this.slimInterval()
             }
             else {
                 this.info.activities.push({
-                    name: activityName,
+                    name: _activity.name,
+                    url: _activity.urlFull,
+                    url_short: _activity.urlShort,
                     start_time: moment((this.dates[0] || {}).start || new Date()).format('YYYY-MM-DD hh:mm:ss'),
                     duration: this.slimInterval()
                 })
             }
         },
-        stop(activityName, nowFn = now) {
+        stop(_activity, nowFn = now) {
           this.setEndTime(nowFn)
-          this.setActivity(activityName)
+          this.setActivity(_activity)
           return this
         },
         resume(nowFn = now) {
