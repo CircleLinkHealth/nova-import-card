@@ -54,7 +54,7 @@
                 <span style="font-size: 27px;{{$ccm_above ? 'color: #47beab;' : ''}}">
                     <span data-monthly-time="{{$monthlyTime}}" style="color: inherit">
                         @if (auth()->user()->isCCMCountable())
-                            @if ($disableTimeTracking)
+                            @if (isset($disableTimeTracking) && $disableTimeTracking)
                                 <div class="color-grey">{{$monthlyTime}}</div>
                             @else
                                 <time-tracker ref="TimeTrackerApp" :info="timeTrackerInfo"></time-tracker>
