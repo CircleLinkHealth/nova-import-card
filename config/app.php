@@ -4,6 +4,7 @@ use App\Providers\DirectMailServiceProvider;
 use App\Providers\EmailArrayValidatorServiceProvider;
 use App\Providers\FaxServiceProvider;
 use App\Providers\ObserversServiceProvider;
+use App\View\Composers\ProviderUITimerComposer;
 use App\Providers\ViewComposerServiceProvider;
 
 return [
@@ -214,6 +215,7 @@ return [
         Tylercd100\LERN\LERNServiceProvider::class,
         Dionera\BeanstalkdUI\BeanstalkdUIServiceProvider::class,
         ViewComposerServiceProvider::class,
+        ProviderUITimerComposer::class,
         jeremykenedy\Slack\Laravel\ServiceProvider::class,
         EmailArrayValidatorServiceProvider::class,
         Propaganistas\LaravelPhone\PhoneServiceProvider::class,

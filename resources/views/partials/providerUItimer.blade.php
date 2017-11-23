@@ -3,35 +3,7 @@
 <?php
 use App\User;use Carbon\Carbon;
 
-if (!isset($activity)) {
-    $activity = 'Undefined';
-}
 
-$title = Route::currentRouteName();
-
-$ipAddr = Request::ip();
-
-$requestUri = Request::getRequestUri();
-$pieces = explode("?", $requestUri);
-$urlShort = $pieces[0];
-
-$enableTimeTracking = auth()->user()->isCCMCountable() && !isset($disableTimeTracking);
-
-// disable if login
-if (strpos($requestUri, 'login') !== false) {
-//    $enableTimeTracking = false;
-}
-
-// set patient vars
-$patientId = '';
-$patientProgramId = '';
-if (isset($patient) && !empty($patient) && is_a($patient, App\User::class)) {
-    $patientId = $patient->id;
-    $patientProgramId = $patient->program_id;
-} elseif (isset($patient) && !empty($patient) && is_a($patient, App\Patient::class)) {
-    $patientId = $patient->user_id;
-    $patientProgramId = $patient->user->program_id;
-}
 ?>
 
 @push('prescripts')
