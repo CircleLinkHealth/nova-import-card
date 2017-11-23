@@ -7,6 +7,7 @@
 
 <script>
     import { rootUrl } from '../../app.config'
+    import startupTime from '../../startup-time'
     import InactivityTracker from './comps/inactivity-tracker'
     import TimeDisplay from './comps/time-display'
     import EventBus from './comps/event-bus'
@@ -45,7 +46,16 @@
         },
         methods: {
             updateTime() {
-                this.socket.send(JSON.stringify({ id: this.info.providerId, patientId: this.info.patientId, message: 'start', info: this.info }));
+                this.info.initSeconds = Math.ceil(startupTime() / 1000)
+                console.log('tracker:init-seconds', this.info.initSeconds)
+                this.socket.send(
+                    JSON.stringify({ 
+                            id: this.info.providerId, 
+                            patientId: this.info.patientId, 
+                            message: 'start', 
+                            info: this.info
+                        })
+                    );
             },
             createSocket() {
                 try {
@@ -94,8 +104,6 @@
         },
         mounted() {
             this.previousSeconds = this.info.totalTime || 0;
-
-            console.log(this.info)
 
             if (this.info.disabled) {
                 this.visible = false;
