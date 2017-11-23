@@ -59,6 +59,8 @@
                             @else
                                 <time-tracker ref="TimeTrackerApp" :info="timeTrackerInfo"></time-tracker>
                             @endif
+                        @else
+                            <div class="color-grey">{{$monthlyTime}}</div>
                         @endif
                     </span>
                 </span>
