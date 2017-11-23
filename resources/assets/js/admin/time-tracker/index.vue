@@ -1,6 +1,6 @@
 <template>
     <span v-if="visible" class="time-tracker" :class="className">
-        <time-display ref="timeDisplay" :seconds="totalTime" :no-live-count="noLiveCount" />
+        <time-display ref="timeDisplay" :seconds="totalTime" :no-live-count="!!noLiveCount" />
         <inactivity-tracker ref="inactivityTracker" />
     </span>
 </template>
@@ -26,7 +26,7 @@
                  * }
                  */
             },
-            'no-live-count': Boolean,
+            'no-live-count': Number,
             'class-name': String
         },
         data() {

@@ -56,10 +56,13 @@
                         @if (isset($disableTimeTracking) && $disableTimeTracking)
                             <div class="color-grey">{{$monthlyTime}}</div>
                         @else
-                            <?php $ccmCountableUser = auth()->user()->isCCMCountable(); ?>
-                            <time-tracker ref="TimeTrackerApp" class-name="{{$ccmCountableUser ? '' : 'color-grey'}}"
+                            <?php
+                                $noLiveCountTimeTracking = isset($noLiveCountTimeTracking) && $noLiveCountTimeTracking;
+                                $ccmCountableUser = auth()->user()->isCCMCountable();
+                             ?>
+                            <time-tracker ref="TimeTrackerApp" class-name="{{$noLiveCountTimeTracking ? 'color-grey' : ($ccmCountableUser ? '' : 'color-grey')}}"
                                     :info="timeTrackerInfo" 
-                                    :no-live-count="{{$ccmCountableUser ? 'false' : 'true'}}"></time-tracker>
+                                    :no-live-count="{{$noLiveCountTimeTracking ? true : ($ccmCountableUser ? 'false' : 'true')}}"></time-tracker>
                         @endif
                     </span>
                 </span>

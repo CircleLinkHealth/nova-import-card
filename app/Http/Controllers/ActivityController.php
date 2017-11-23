@@ -124,7 +124,7 @@ class ActivityController extends Controller
                 'patient'             => $patient,
                 'data'                => $data,
                 'messages'            => $messages,
-                'disableTimeTracking' => true
+                'noLiveCountTimeTracking' => true
             ]
         );
     }
