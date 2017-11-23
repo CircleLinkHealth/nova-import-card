@@ -45,6 +45,10 @@ module.exports = app => {
             if (data.message === 'start') {
               try {
                 const user = timeTracker.get(key, data.info)
+                if (user.info) {
+                  user.info.initSeconds = data.info.initSeconds;
+                  console.log(user.setInitSeconds())
+                }
                 if (user.sockets.indexOf(ws) < 0) user.sockets.push(ws);
                 user.sockets.forEach(socket => {
                   socket.send(JSON.stringify({

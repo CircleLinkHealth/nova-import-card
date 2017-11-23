@@ -1,4 +1,4 @@
-
+require('./prototypes/date.prototype')
 
 function TimeTracker(now = () => (new Date())) {
     const users = {}
@@ -90,6 +90,13 @@ function TimeTrackerUser(key, info, now = () => (new Date())) {
                 })
             }
             return this
+        },
+        setInitSeconds(nowFn = now) {
+            this.dates.unshift({
+                start: nowFn().addSeconds(0 - info.initSeconds),
+                end: nowFn()
+            })
+            return this.dates
         }
     }
     return user.resume()
