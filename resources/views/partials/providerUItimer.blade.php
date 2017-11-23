@@ -1,11 +1,5 @@
 <input type="hidden" name="activityName" id="activityName" value="@yield('activity')">
 
-<?php
-use App\User;use Carbon\Carbon;
-
-
-?>
-
 @push('prescripts')
     <script>
 
@@ -29,8 +23,8 @@ use App\User;use Carbon\Carbon;
             "ipAddr": '<?php echo $ipAddr; ?>',
             "activity": (document.getElementById('activityName') || { value: '' }).value,
             "title": '<?php echo $title; ?>',
-            "submitUrl": '<?php echo URL::route("api.pagetracking"); ?>',
-            "startTime": '<?php echo Carbon::now()->subSeconds(8)->toDateTimeString(); ?>'//,
+            "submitUrl": '<?php echo route("api.pagetracking"); ?>',
+            "startTime": '<?php echo Carbon\Carbon::now()->subSeconds(8)->toDateTimeString(); ?>'//,
             //"disabled": ('{{!$enableTimeTracking}}' == '1')
         }
     </script>
