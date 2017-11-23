@@ -1,4 +1,5 @@
 require('./prototypes/date.prototype')
+const moment = require('moment')
 
 function TimeTracker(now = () => (new Date())) {
     const users = {}
@@ -49,7 +50,7 @@ function TimeTrackerUser(key, info, now = () => (new Date())) {
         seconds: 0,
         dates: [],
         key: key,
-        info: Object.assign(info, { activities: {} }),
+        info: Object.assign(info, { activities: [] }),
         sockets: [],
         setEndTime(nowFn = now) {
             if (this.dates.last() && !this.dates.last().end) {
@@ -77,9 +78,22 @@ function TimeTrackerUser(key, info, now = () => (new Date())) {
 
           return this.seconds
         },
-        stop(activity, nowFn = now) {
+        setActivity(activityName) {
+            const activity = this.info.activities.find(a => a.name === activityName)
+            if (activity) {
+                activity.duration = (activity.duration || 0) + this.slimInterval()
+            }
+            else {
+                this.info.activities.push({
+                    name: activityName,
+                    start_time: moment((this.dates[0] || {}).start || new Date()).format('YYYY-MM-DD hh:mm:ss'),
+                    duration: this.slimInterval()
+                })
+            }
+        },
+        stop(activityName, nowFn = now) {
           this.setEndTime(nowFn)
-          this.info.activities[activity] = (this.info.activities[activity] || 0) + this.slimInterval()
+          this.setActivity(activityName)
           return this
         },
         resume(nowFn = now) {
