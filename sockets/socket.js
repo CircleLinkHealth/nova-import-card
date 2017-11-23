@@ -152,6 +152,8 @@ module.exports = app => {
             }).catch((err) => {
               console.error(err)
             })
+
+            info.activities = []
           }
           else {
             errorThrow('info.totalTime is undefined ... key is ' + key)
