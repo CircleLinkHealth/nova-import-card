@@ -13,7 +13,7 @@
                 return this.pad(Math.floor(this.seconds / 3600), 2)
             },
             minutes() {
-                return this.pad(Math.floor(this.seconds / 60), 2)
+                return this.pad((Math.floor(this.seconds / 60) % 60), 2)
             },
             time() {
                 return `${this.hours}:${this.minutes}:${this.pad(this.seconds % 60, 2)}`;
@@ -23,7 +23,7 @@
             pad (num, count) {
                 count = count || 0;
                 const $num = num + '';
-                return '0'.repeat(count - $num.length) + $num;
+                return '0'.repeat(Math.max(count - $num.length, 0)) + $num;
             },
             start() {
                 if (!this.noLiveCount) {
