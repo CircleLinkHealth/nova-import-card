@@ -2,7 +2,7 @@
     <div>
         <v-client-table ref="ccdRecords" :data="tableData" :columns="columns" :options="options">
             <template slot="selected" scope="props">
-                <input class="row-select" v-model="props.row.selected" type="checkbox" />
+                <input class="row-select" v-model="props.row.selected" @change="select($event, props.row.id)" type="checkbox" />
             </template>
             <template slot="h__selected" scope="props">
                 <input class="row-select" v-model="selected" @change="toggleAllSelect" type="checkbox" />
@@ -26,10 +26,16 @@
                 <input class="row-select" v-model="props.row['Supplemental Ins']" type="checkbox" />
             </template>
             <template slot="h__Remove" scope="props">
-                <input class="btn btn-danger btn-delete btn-yellow" v-if="multipleSelected" @click="deleteMultiple" type="button" value="x" />
+                <input class="btn btn-danger btn-round" v-if="multipleSelected" @click="deleteMultiple" type="button" value="x" />
             </template>
             <template slot="Remove" scope="props">
-                <input class="btn btn-danger btn-delete" type="button" @click="delete(props.row.id)" value="x" />
+                <input class="btn btn-danger btn-round" :class="{ 'btn-gray': multipleSelected }" type="button" @click="deleteOne(props.row.id)" value="x" />
+            </template>
+            <template slot="h__Submit" scope="props">
+                <input class="btn btn-success btn-round" type="button" v-if="multipleSelected" @click="submitMultiple" value="✔" />
+            </template>
+            <template slot="Submit" scope="props">
+                <input class="btn btn-success btn-round" :class="{ 'btn-gray': multipleSelected }" type="button" @click="submitOne(props.row)" value="✔" />
             </template>
         </v-client-table>
     </div>
@@ -48,7 +54,7 @@
             return {
                 url: rootUrl('api/ccd-importer/imported-medical-records'),
                 selected: false,
-                columns: ['selected', 'Name', 'DOB', 'Practice', 'Location', 'Billing Provider', '2+ Cond', 'Medicare', 'Supplemental Ins', 'Remove'],
+                columns: ['selected', 'Name', 'DOB', 'Practice', 'Location', 'Billing Provider', '2+ Cond', 'Medicare', 'Supplemental Ins', 'Submit', 'Remove'],
                 tableData: [],
                 options: {
                     sortable: ['Name', 'DOB', 'Practice', 'Location', 'Billing Provider']
@@ -85,7 +91,13 @@
                     console.error(err)
                 })
             },
-            delete(id) {
+            select(e, id) {
+                const row = this.tableData.find(row => row.id === id)
+                if (row) {
+                    row.selected = e.target.checked
+                }
+            },
+            deleteOne(id) {
                 if (confirm('Are you sure you want to delete this record?')) {
 
                 }
@@ -94,6 +106,9 @@
                 if (confirm('Multiple: Are you sure you want to delete these records?')) {
                     
                 }
+            },
+            submit(row) {
+
             },
             toggleAllSelect(e) {
                 this.tableData = this.tableData.map(row => {
@@ -114,15 +129,15 @@
         width: 100%;
     }
 
-    .btn-delete {
+    .btn-round {
         border-radius: 50%;
         margin-left: 14%;
         padding: 3px 7px;
         font-size: 11px;
     }
 
-    .btn-yellow {
-        background-color: #fa0;
+    .btn-gray {
+        background-color: #999;
         border-color: transparent;
     }
 </style>
