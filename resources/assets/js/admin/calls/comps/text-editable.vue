@@ -4,7 +4,7 @@
             <form @submit="toggleEdit">
                 <textarea class="float-left form-control" v-if="multi" v-model="text" required></textarea>
                 <input type="text" class="float-left" v-if="!multi" v-model="text" required />
-                <button class="float-right icon-btn" type="submit">&#9989;</button>
+                <button class="float-right icon-btn" v-if="!noButton" type="submit">&#9989;</button>
             </form>
         </div>
         <div v-if="!isEditMode" @dblclick="toggleEdit">
@@ -26,7 +26,7 @@
 
     export default {
         name: 'TextEditable',
-        props: ['value', 'is-edit', 'class-name', 'on-change', 'multi'],
+        props: ['value', 'is-edit', 'class-name', 'on-change', 'multi', 'no-button'],
         data(){
             return {
                 text: this.value,

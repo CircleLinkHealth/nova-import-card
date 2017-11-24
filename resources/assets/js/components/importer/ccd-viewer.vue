@@ -5,16 +5,16 @@
                 <input class="row-select" v-model="props.row.selected" type="checkbox" />
             </template>
             <template slot="h__selected" scope="props">
-                <input class="row-select" v-model="selected" type="checkbox" />
+                <input class="row-select" v-model="selected" @change="toggleAllSelect" type="checkbox" />
             </template>
             <template slot="Practice" scope="props">
-                <text-editable :value="props.row.Practice"></text-editable>
+                <text-editable :value="props.row.Practice" :no-button="true"></text-editable>
             </template>
             <template slot="Location" scope="props">
-                <text-editable :value="props.row.Location"></text-editable>
+                <text-editable :value="props.row.Location" :no-button="true"></text-editable>
             </template>
             <template slot="Billing Provider" scope="props">
-                <text-editable :value="props.row['Billing Provider']"></text-editable>
+                <text-editable :value="props.row['Billing Provider']" :no-button="true"></text-editable>
             </template>
             <template slot="2+ Cond" scope="props">
                 <input class="row-select" v-model="props.row['2+ Cond']" type="checkbox" />
@@ -24,6 +24,12 @@
             </template>
             <template slot="Supplemental Ins" scope="props">
                 <input class="row-select" v-model="props.row['Supplemental Ins']" type="checkbox" />
+            </template>
+            <template slot="h__Remove" scope="props">
+                <input class="btn btn-danger btn-delete btn-yellow" v-if="multipleSelected" @click="deleteMultiple" type="button" value="x" />
+            </template>
+            <template slot="Remove" scope="props">
+                <input class="btn btn-danger btn-delete" type="button" @click="delete(props.row.id)" value="x" />
             </template>
         </v-client-table>
     </div>
@@ -42,11 +48,16 @@
             return {
                 url: rootUrl('api/ccd-importer/imported-medical-records'),
                 selected: false,
-                columns: ['selected', 'Name', 'DOB', 'Practice', 'Location', 'Billing Provider', '2+ Cond', 'Medicare', 'Supplemental Ins'],
+                columns: ['selected', 'Name', 'DOB', 'Practice', 'Location', 'Billing Provider', '2+ Cond', 'Medicare', 'Supplemental Ins', 'Remove'],
                 tableData: [],
                 options: {
-
+                    sortable: ['Name', 'DOB', 'Practice', 'Location', 'Billing Provider']
                 }
+            }
+        },
+        computed: {
+            multipleSelected() {
+                return this.tableData.filter(row => !!row.selected).length > 1
             }
         },
         methods: {
@@ -73,6 +84,22 @@
                 }).catch(err => {
                     console.error(err)
                 })
+            },
+            delete(id) {
+                if (confirm('Are you sure you want to delete this record?')) {
+
+                }
+            }, 
+            deleteMultiple() {
+                if (confirm('Multiple: Are you sure you want to delete these records?')) {
+                    
+                }
+            },
+            toggleAllSelect(e) {
+                this.tableData = this.tableData.map(row => {
+                    row.selected = this.selected;
+                    return row;
+                })
             }
         },
         mounted() {
@@ -82,5 +109,20 @@
 </script>
 
 <style>
-    
+    input.float-left {
+        float: initial;
+        width: 100%;
+    }
+
+    .btn-delete {
+        border-radius: 50%;
+        margin-left: 14%;
+        padding: 3px 7px;
+        font-size: 11px;
+    }
+
+    .btn-yellow {
+        background-color: #fa0;
+        border-color: transparent;
+    }
 </style>
