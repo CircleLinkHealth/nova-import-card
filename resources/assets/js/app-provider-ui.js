@@ -43,6 +43,7 @@ import AllergiesList from './ccd-models/allergies'
 import NurseDailyHours from './components/pages/work-schedule/daily-hours'
 import QuestionnaireApp from './admin/questionnaire/app'
 import TimeTracker from './admin/time-tracker'
+import ServerTimeDisplay from './admin/time-tracker/comps/server-time-display'
 
 import EventBus from './admin/time-tracker/comps/event-bus'
 import { BindWindowFocusChange, BindWindowVisibilityChange } from './admin/time-tracker/events/window.event'
@@ -63,6 +64,7 @@ Vue.component('allergiesList', AllergiesList)
 Vue.component('nurseDailyHours', NurseDailyHours)
 Vue.component('questionnaire-app', QuestionnaireApp)
 Vue.component('time-tracker', TimeTracker)
+Vue.component('server-time-display', ServerTimeDisplay)
 
 const App = new Vue({
     el: '#app',

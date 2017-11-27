@@ -54,7 +54,9 @@
                 <span style="font-size: 27px;{{$ccm_above ? 'color: #47beab;' : ''}}">
                     <span data-monthly-time="{{$monthlyTime}}" style="color: inherit">
                         @if (isset($disableTimeTracking) && $disableTimeTracking)
-                            <div class="color-grey">{{$monthlyTime}}</div>
+                            <div class="color-grey">
+                                <server-time-display url="{{env('WS_SERVER_URL')}}" patient-id="{{$patient->id}}" provider-id="{{Auth::user()->id}}" value="{{$monthlyTime}}"></server-time-display>
+                            </div>
                         @else
                             <?php
                                 $noLiveCountTimeTracking = isset($noLiveCountTimeTracking) && $noLiveCountTimeTracking;
