@@ -78,4 +78,3 @@ mix.js('resources/assets/js/app-provider-ui.js', 'public/compiled/js').sourceMap
 mix.js('resources/assets/js/app-provider-admin-panel-ui.js', 'public/compiled/js').sourceMaps()
 mix.js('resources/assets/js/app-clh-admin-ui.js', 'public/compiled/js').sourceMaps()
 mix.js('resources/assets/js/app-ccd-importer.js', 'public/compiled/js').sourceMaps()
-mix.js('resources/assets/js/uploader.js', 'public/js').sourceMaps()
