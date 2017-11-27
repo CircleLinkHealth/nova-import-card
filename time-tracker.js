@@ -96,6 +96,7 @@ function TimeTrackerUser(key, info, now = () => (new Date())) {
                 this.info.activities.push({
                     name: _activity.name,
                     url: _activity.urlFull,
+                    title: _activity.title,
                     url_short: _activity.urlShort,
                     start_time: moment((this.dates[0] || {}).start || new Date()).format('YYYY-MM-DD hh:mm:ss'),
                     duration: this.slimInterval()

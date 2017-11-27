@@ -8,7 +8,6 @@ if (!app.timeTracker) throw new Error('app.timeTracker should be an instance of 
 router.use(function (req, res, next) {
   const allowedOrigins = [ 'https://cpm-web.dev', 'https://staging.careplanmanager.com', 'https://careplanmanager.com' ]
   const origin = req.headers.origin
-  console.log(origin)
   if (allowedOrigins.indexOf(origin) >= 0) res.header('Access-Control-Allow-Origin', origin)
   res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept, X-CSRF-TOKEN")
   next()
@@ -32,6 +31,7 @@ router.get('/:providerId/:patientId', function(req, res, next) {
     const user = timeTracker.get(key)
     if (user) res.send({
       seconds: user.interval(),
+      totalTime: user.interval() + user.info.totalTime,
       info: user.info,
       key: user.key
     })

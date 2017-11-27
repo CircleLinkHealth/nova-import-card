@@ -75,6 +75,7 @@ module.exports = app => {
                 const info = (data.info || {})
                 user.stop({ 
                   name: info.activity || 'unknown', 
+                  title: info.title || 'unknown',
                   urlFull: info.urlFull, 
                   urlShort: info.urlShort 
                 })
