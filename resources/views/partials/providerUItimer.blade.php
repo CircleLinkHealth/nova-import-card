@@ -1,6 +1,11 @@
 <input type="hidden" name="activityName" id="activityName" value="@yield('activity')">
 
 @push('prescripts')
+    <?php 
+        if (isset($patient)) {
+            $patientId = $patient->id;
+        }
+    ?>
     <script>
 
         var timeTrackerInfo = {
