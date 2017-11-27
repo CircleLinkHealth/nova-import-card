@@ -109,7 +109,7 @@ class NoteService
         $provider_forwarded_notes = [];
 
         foreach ($notes as $note) {
-            if ($note->wasForwardedToCareTeam()) {
+            if ($this->wasForwardedToCareTeam($note)) {
                 $provider_forwarded_notes[] = $note;
             }
         }
@@ -156,7 +156,7 @@ class NoteService
         $provider_forwarded_notes = [];
 
         foreach ($notes as $note) {
-            if ($note->wasForwardedToCareTeam()) {
+            if ($this->wasForwardedToCareTeam($note)) {
                 $provider_forwarded_notes[] = $note;
             }
         }
@@ -294,10 +294,10 @@ class NoteService
             }
         }
 
-        $readers = $this->getSeenForwards($note);
+        $forwardedTo = $this->getForwards($note);
 
-        if ($readers->count() > 0) {
-            $meta_tags[] = new MetaTag('info', 'Forwarded', $readers->keys()->implode(', '));
+        if ($forwardedTo->count() > 0) {
+            $meta_tags[] = new MetaTag('info', 'Forwarded', $forwardedTo->keys()->implode(', '));
         }
 
         if ($note->isTCM) {
@@ -321,5 +321,34 @@ class NoteService
                     ->mapWithKeys(function ($notification) {
                         return [$notification->notifiable->fullName => $notification->read_at->format('m/d/y h:iA T')];
                     });
+    }
+
+    public function getForwards(Note $note)
+    {
+        return $note->notifications()
+                    ->hasNotifiableType(User::class)
+                    ->with('notifiable')
+                    ->get()
+                    ->mapWithKeys(function ($notification) {
+                        return [$notification->notifiable->fullName => $notification->created_at->format('m/d/y h:iA T')];
+                    });
+    }
+
+    public function wasForwardedToCareTeam(Note $note)
+    {
+        return $note->notifications()
+                    ->where('notifiable_id', '!=', 948)
+                    ->count() > 0;
+    }
+
+    public function wasSeenByBillingProvider(Note $note)
+    {
+        return $note->notifications()
+                    ->hasNotifiableType(User::class)
+                    ->where([
+                        ['read_at', '!=', null],
+                        ['notifiable_id', '=', $note->patient->billingProviderUser()->id],
+                    ])
+                    ->count() > 0;
     }
 }

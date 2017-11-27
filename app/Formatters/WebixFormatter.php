@@ -7,6 +7,7 @@ use App\Models\CCD\Medication;
 use App\Models\CPM\CpmBiometric;
 use App\Models\CPM\CpmMisc;
 use App\Services\CPM\CpmMiscService;
+use App\Services\NoteService;
 use App\Services\ReportsService;
 use App\User;
 use Carbon\Carbon;
@@ -14,7 +15,12 @@ use Illuminate\Database\Eloquent\Collection;
 
 class WebixFormatter implements ReportFormatter
 {
-    //Transform Reports Data for Webix
+    private $noteService;
+
+    public function __construct(NoteService $noteService)
+    {
+        $this->noteService = $noteService;
+    }
 
     public function formatDataForNotesListingReport($notes, $request)
     {
@@ -62,7 +68,7 @@ class WebixFormatter implements ReportFormatter
             $formatted_notes[$count]['tags'] = '';
 
 
-            if ($note->wasForwardedToCareTeam()) {
+            if ($this->noteService->wasForwardedToCareTeam($note)) {
                 $formatted_notes[$count]['tags'] .= '<div class="label label-warning"><span class="glyphicon glyphicon-envelope" aria-hidden="true"></span></div> ';
             }
 
@@ -77,7 +83,7 @@ class WebixFormatter implements ReportFormatter
                 $formatted_notes[$count]['tags'] .= '<div class="label label-danger"><span class="glyphicon glyphicon-flag" aria-hidden="true"></span></div> ';
             }
 
-            $was_seen = $note->wasSeenByBillingProvider();
+            $was_seen = $this->noteService->wasSeenByBillingProvider($note);
 
             if ($was_seen) {
                 $formatted_notes[$count]['tags'] .= '<div class="label label-success"><span class="glyphicon glyphicon-eye-open" aria-hidden="true"></span></div> ';
@@ -109,7 +115,7 @@ class WebixFormatter implements ReportFormatter
             ];
 
             if ($note->notifications->count() > 0) {
-                if ($note->wasForwardedToCareTeam()) {
+                if ($this->noteService->wasForwardedToCareTeam($note)) {
                     $result['tags'] .= '<div class="label label-warning"><span class="glyphicon glyphicon-envelope" aria-hidden="true"></span></div> ';
                 }
             }
@@ -125,7 +131,7 @@ class WebixFormatter implements ReportFormatter
                 $result['tags'] .= '<div class="label label-danger"><span class="glyphicon glyphicon-flag" aria-hidden="true"></span></div> ';
             }
 
-            $was_seen = $note->wasSeenByBillingProvider();
+            $was_seen = $this->noteService->wasSeenByBillingProvider($note);
 
             if ($was_seen) {
                 $result['tags'] .= '<div class="label label-success"><span class="glyphicon glyphicon-eye-open" aria-hidden="true"></span></div> ';

@@ -8,6 +8,8 @@
 
 namespace App\Contracts;
 
+use Illuminate\Database\Eloquent\Collection;
+
 interface ReportFormatter
 {
     
@@ -19,6 +21,7 @@ interface ReportFormatter
 
     public function formatDataForNotesAndOfflineActivitiesReport($patient);
 
+    public function patientListing(Collection $patients = null);
 
     //public function formatDataForU20Report();
 

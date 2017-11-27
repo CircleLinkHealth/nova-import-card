@@ -1,14 +1,13 @@
 <?php namespace App\Http\Controllers;
 
 use App\Activity;
-use App\Formatters\WebixFormatter;
+use App\Contracts\ReportFormatter;
 use App\Note;
 use App\PatientContactWindow;
 use App\PatientMonthlySummary;
 use App\Services\Calls\SchedulerService;
 use App\Services\NoteService;
 use App\User;
-use App\View\MetaTag;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -23,7 +22,7 @@ class NotesController extends Controller
 
     public function __construct(
         NoteService $noteService,
-        WebixFormatter $formatter
+        ReportFormatter $formatter
     ) {
         $this->service   = $noteService;
         $this->formatter = $formatter;
