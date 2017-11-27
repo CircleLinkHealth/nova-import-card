@@ -7,6 +7,8 @@
 var app = require('../app');
 var debug = require('debug')('sockets-demo:server');
 var http = require('http');
+var https = require('https');
+var fs = require('fs');
 
 /**
  * Get port from environment and store in Express.
@@ -14,6 +16,11 @@ var http = require('http');
 
 // var port = normalizePort(process.env.PORT || '3000');
 // app.set('port', port);
+
+/**
+ * Create credentials
+ */
+
 
 /**
  * Create HTTP server.
@@ -24,6 +31,17 @@ var server = http.createServer(app);
 /**
  * Listen on provided port, on all network interfaces.
  */
+
+if (process.env.NODE_ENV != 'production') {
+  var privateKey = fs.readFileSync('ssl/server.key', 'utf8')
+  var certificate = fs.readFileSync('ssl/server.crt', 'utf8')
+  var httpsServer = https.createServer({
+    key: privateKey,
+    cert: certificate,
+    passphrase: 'x12345678y'
+  }, app)
+  httpsServer.listen(3001)
+}
 
 //server.listen(port);
 server.on('error', onError);
