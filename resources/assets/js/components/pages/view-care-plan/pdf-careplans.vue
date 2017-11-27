@@ -38,7 +38,9 @@
                 patientCarePlan: {}
             }
         },
+        computed: {
 
+        },
         methods: Object.assign({},
             mapActions(['destroyPdf', 'uploadPdfCarePlan', 'addNotification']),
             {
@@ -51,7 +53,16 @@
                         if (!carePlan) {
                             return
                         }
-                        console.log(carePlan)
+
+                        carePlan.pdfs = (carePlan.pdfs || []).map(pdf => {
+                            if (pdf.created_at) pdf.created_at = new Date(pdf.created_at)
+                            if (pdf.deleted_at) pdf.deleted_at = new Date(pdf.deleted_at)
+                            if (pdf.updated_at) pdf.updated_at = new Date(pdf.updated_at)
+                            return pdf
+                        }).sort((pdfA, pdfB) => pdfB.updated_at - pdfA.updated_at)
+
+                        //console.log(carePlan)
+                        
                         this.patientCarePlan = carePlan;
                     }, error => {
                         console.log(error)
