@@ -9,8 +9,8 @@ app = express();
 
 var expressWs = require('./sockets')(app)
 
-var indexRoute = require('./routes/index');
-var timeRoute = require('./routes/time');
+var indexRoute = require('./routes/index.route');
+var timeRoute = require('./routes/time.route');
 
 if ((process.env.NODE_ENV || 'development') === 'development') {
   process.env.NODE_TLS_REJECT_UNAUTHORIZED = "0"
