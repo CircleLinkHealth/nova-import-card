@@ -5,7 +5,7 @@ use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
 
 //Call Lists TEMP
-//(new App\Http\Controllers\Admin\WelcomeCallListController(new \Illuminate\Http\Request()))->makePhoenixHeartCallList();
+//(new App\Http\Controllers\Admin\WelcomeCallListController())->makePhoenixHeartCallList();
 
 Route::post('send-sample-fax', 'DemoController@sendSampleEfaxNote');
 
