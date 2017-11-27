@@ -51,6 +51,7 @@
                         if (!carePlan) {
                             return
                         }
+                        console.log(carePlan)
                         this.patientCarePlan = carePlan;
                     }, error => {
                         console.log(error)
@@ -123,14 +124,28 @@
         </div>
 
         <div class="row" v-if="patientCarePlan.mode == 'pdf'">
-            <div class="col-md-6">
-                <ul class="list-group">
-                    <li v-for="(pdf, index) in patientCarePlan.pdfs" :key="index" class="list-group-item pdf-careplan">
-                        <a :href="pdf.url" target="_blank">{{pdf.label}} </a>
-                        <button @click="deletePdf(pdf)" class="btn btn-xs btn-danger problem-delete-btn"><span><i
-                                class="glyphicon glyphicon-remove"></i></span></button>
-                    </li>
-                </ul>
+            <div class="col-md-12 list-group">
+                <div class="list-group-item list-group-item-action top-20" v-for="(pdf, index) in patientCarePlan.pdfs" :key="index">
+                    <h3 class="pdf-title">
+                        {{pdf.label}} 
+                        <button @click="deletePdf(pdf)" class="btn btn-xs btn-danger problem-delete-btn">
+                            <span>
+                                <i class="glyphicon glyphicon-remove"></i>
+                            </span>
+                        </button>
+                    </h3>
+                    <div class="pdf-body">
+                        <object :data="pdf.url" type="application/pdf" width="100%" height="100%">
+                            <iframe :src="pdf.url" width="100%" height="100%" style="border: none;">
+                                <div>
+                                    Sorry, your browser does not support PDF Embeds ... 
+                                    
+                                    Please update it as soon as possible, or click <a :href="pdf.url">here</a> to download the PDF
+                                </div>
+                            </iframe>
+                        </object>
+                    </div>
+                </div>
             </div>
         </div>
 
@@ -163,5 +178,9 @@
 <style>
     li.pdf-careplan {
         font-size: 16px;
+    }
+
+    .top-20 {
+        margin-top: 20px;
     }
 </style>
