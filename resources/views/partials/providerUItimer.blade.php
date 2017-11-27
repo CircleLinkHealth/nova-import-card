@@ -29,8 +29,8 @@
             "activity": (document.getElementById('activityName') || { value: '' }).value,
             "title": '{{$title}}',
             "submitUrl": '{{route("api.pagetracking")}}',
-            "startTime": '{{Carbon\Carbon::now()->subSeconds(8)->toDateTimeString()}}'//,
-            //"disabled": ('{{!$enableTimeTracking}}' == '1')
+            "startTime": '{{Carbon\Carbon::now()->subSeconds(8)->toDateTimeString()}}',
+            "noLiveCount": ('noLiveCountTimeTracking' == 'true') ? 1 : 0
         }
     </script>
 @endpush

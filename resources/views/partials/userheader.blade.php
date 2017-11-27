@@ -65,11 +65,10 @@
                              ?>
                             <time-tracker ref="TimeTrackerApp" class-name="{{$noLiveCountTimeTracking ? 'color-grey' : ($ccmCountableUser ? '' : 'color-grey')}}"
                                     :info="timeTrackerInfo" 
-                                    :no-live-count="{{$noLiveCountTimeTracking ? true : ($ccmCountableUser ? 'false' : 'true')}}"></time-tracker>
+                                    :no-live-count="{{($noLiveCountTimeTracking ? true : ($ccmCountableUser ? false : true)) ? 1 : 0}}"></time-tracker>
                         @endif
                     </span>
                 </span>
-                </a>
 
                 <span style="font-size:15px"></span><br/>
 
