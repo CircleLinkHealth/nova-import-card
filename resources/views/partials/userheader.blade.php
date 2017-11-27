@@ -69,7 +69,6 @@
                         @endif
                     </span>
                 </span>
-                </a>
 
                 <span style="font-size:15px"></span><br/>
 

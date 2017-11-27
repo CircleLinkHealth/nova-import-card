@@ -128,7 +128,10 @@
 <template>
     <div class="col-md-12" style="padding-top: 2%;" v-cloak>
         <div class="row">
-            <div class="col-md-12 text-right">
+            <div class="col-md-6">
+                
+            </div>
+            <div class="col-md-6 text-right">
                 <a @click="openModal()" class="btn btn-info btn-sm inline-block">Upload PDF</a>
                 <slot></slot>
             </div>
