@@ -107,7 +107,10 @@
                     
                 }
             },
-            submit(row) {
+            submitMultiple() {
+
+            },
+            submitOne(row) {
 
             },
             toggleAllSelect(e) {

@@ -12,3 +12,5 @@ launch.json
 .phpstorm.meta.php
 storage/oauth-private.key
 storage/oauth-public.key
+public/js/uploader.js
+public/js/uploader.js.map

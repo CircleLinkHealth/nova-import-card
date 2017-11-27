@@ -1,12 +1,23 @@
-var Vue = require('vue');
-var Vmdl = require('vue-mdl');
+require('./bootstrap');
+
+import VueMdl from 'vue-mdl'
+import Vue from 'vue'
 var MDL = require('material-design-lite');
+import axios from './bootstrap-axios'
+import VueAxios from 'vue-axios'
 
-Vmdl.registerAll(Vue);
+if (document) {
+    const elem = document.querySelector('meta[name="base-url"]')
+    if (elem) {
+        axios.defaults.baseURL = elem.getAttribute('content');
+    }
+    else {
+        console.error('base url not found.')
+    }
+}
 
-Vue.use(require('vue-resource'));
-
-Vue.http.headers.common['X-CSRF-TOKEN'] = $('meta[name="csrf-token"]').attr('content');
+Vue.use(VueMdl)
+Vue.use(VueAxios, axios)
 
 /**
  *
@@ -141,6 +152,8 @@ var UploadedCcdsPanel = Vue.extend({
                         deleteLabel.toggleClass('is-checked');
                     }
                 }
+
+                console.log(this.okToImport, this.okToDelete)
             }
         }
     })
@@ -256,7 +269,7 @@ Vue.component('uploaded-ccd-panel', UploadedCcdsPanel);
  *
  */
 var vm = new Vue({
-    el: 'body'
+    el: '#app'
 });
 
 

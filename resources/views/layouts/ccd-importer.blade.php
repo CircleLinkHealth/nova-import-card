@@ -21,16 +21,17 @@
     <script src="https://code.getmdl.io/1.1.1/material.min.js"></script>
 </head>
 <body>
+<div id="app">
+    @if(isset($currentVue))
+        <component is="{{ $currentVue }}">
+    @endif
 
-@if(isset($currentVue))
-    <component is="{{ $currentVue }}">
-@endif
+            @yield('content')
 
-        @yield('content')
-
-@if(isset($currentVue))
-    </component>
-@endif
+    @if(isset($currentVue))
+        </component>
+    @endif
+</div>
 
 @include('partials.footer')
 

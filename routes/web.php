@@ -251,7 +251,8 @@ Route::group(['middleware' => 'auth'], function () {
             'as'   => 'view.files.ready.to.import',
         ]);
         
-
+        Route::get('import/delete', 'MedicalRecordImportController@deleteRecords');
+        
         Route::post('import', 'MedicalRecordImportController@import');
 
         Route::get('uploaded-ccd-items/{importedMedicalRecordId}/edit', 'ImportedMedicalRecordController@edit');
