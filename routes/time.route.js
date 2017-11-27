@@ -6,7 +6,10 @@ if (!app) throw new Error('express app should be globally accessible')
 if (!app.timeTracker) throw new Error('app.timeTracker should be an instance of TimeTracker')
 
 router.use(function (req, res, next) {
-  res.header('Access-Control-Allow-Origin', 'https://cpm-web.dev, https://staging.careplanmanager.com, https://careplanmanager.com')
+  const allowedOrigins = [ 'https://cpm-web.dev', 'https://staging.careplanmanager.com', 'https://careplanmanager.com' ]
+  const origin = req.headers.origin
+  console.log(origin)
+  if (allowedOrigins.indexOf(origin) >= 0) res.header('Access-Control-Allow-Origin', origin)
   res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept, X-CSRF-TOKEN")
   next()
 })
