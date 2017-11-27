@@ -20,6 +20,14 @@ function TimeTracker(now = () => (new Date())) {
         if (users[key]) delete users[key]
     }
 
+    this.exists = (key) => {
+        return !!users[key]
+    }
+
+    this.keys = () => {
+        return Object.keys(users)
+    }
+
     this.exit = (key) => {
         if (users[key]) {
             const user = users[key]
@@ -39,11 +47,12 @@ Array.prototype.last = function () {
 function TimeTrackerUser(key, info, now = () => (new Date())) {
     /** verify that key is valid string in regex format /\d*-\d*\/ */
     if (!key || key.constructor.name !== 'String' || (key.indexOf('-') < 0)) {
-        /** verify that info is a valid object */
-        if (!info || info.constructor.name !== 'Object') {
-            throw new Error('[info] must be a valid object')
-        }
         throw new Error('[key] must be a valid string')
+    }
+
+    /** verify that info is a valid object */
+    if (!info || info.constructor.name !== 'Object') {
+        throw new Error('[info] must be a valid object')
     }
 
     const user = {

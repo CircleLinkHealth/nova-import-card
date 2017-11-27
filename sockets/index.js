@@ -8,6 +8,8 @@ module.exports = app => {
 
   const timeTracker = new TimeTracker()
 
+  app.timeTracker = timeTracker
+
   const wsErrorHandler = function (err) {
     if (err) console.error("ws-error", err)
   }
