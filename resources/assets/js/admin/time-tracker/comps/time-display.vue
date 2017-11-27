@@ -1,13 +1,16 @@
 <template>
-    <span class="time-display">{{time}}</span>
+    <span class="time-display">
+        <a :href="redirectUrl">{{time}}</a>
+    </span>
 </template>
 
 <script>
     import EventBus from './event-bus'
+    import { rootUrl } from '../../../app.config'
 
     export default {
         name: 'time-display',
-        props: ['seconds', 'no-live-count'],
+        props: ['seconds', 'no-live-count', 'redirectUrl'],
         computed: {
             hours() {
                 return this.pad(Math.floor(this.seconds / 3600), 2)
