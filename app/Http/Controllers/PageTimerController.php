@@ -50,7 +50,7 @@ class PageTimerController extends Controller
         foreach ($data['activities'] as $activity) {
             $duration = $activity['duration'] ?? 0;
 
-            $startTime = Carbon::createFromFormat('Y-m-d H:i:s', $activity['startTime']);
+            $startTime = Carbon::createFromFormat('Y-m-d H:i:s', $activity['start_time']);
             $endTime   = $startTime->copy()->addSeconds($duration);
 
             $redirectTo = $data['redirectLocation'] ?? null;
