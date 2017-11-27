@@ -15,6 +15,7 @@ class MedicalRecordImportController extends Controller
 
     public function deleteRecords(Request $request) {
         $recordsToDelete = explode(',', $request->input('records'));
+        $recordsNotFound = [];
 
         foreach ($recordsToDelete as $id) {
             if (empty($id)) {
@@ -23,15 +24,21 @@ class MedicalRecordImportController extends Controller
 
             $imr = ImportedMedicalRecord::find($id);
 
-            $medicalRecord = app($imr->medical_record_type)->find($imr->medical_record_id);
-            $medicalRecord->update([
-                'imported' => false
-            ]);
-
-            $imr->delete();
+            if ($imr) {
+                $medicalRecord = app($imr->medical_record_type)->find($imr->medical_record_id);
+                $medicalRecord->update([
+                    'imported' => false
+                ]);
+    
+                $imr->delete();
+            }
+            else {
+                array_push($recordsNotFound, $id);
+                array_splice($recordsToDelete, array_search($id, $recordsToDelete));
+            }
         }
 
-        return response()->json([ 'deleted' => $recordsToDelete ], 200);
+        return response()->json([ 'deleted' => $recordsToDelete, 'not_found' => $recordsNotFound ], 200);
     }
 
     public function import(Request $request) {
