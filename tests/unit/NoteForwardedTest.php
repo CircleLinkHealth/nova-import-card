@@ -5,16 +5,17 @@ namespace Tests\Unit;
 use App\Notifications\NoteForwarded;
 use App\Practice;
 use App\User;
+use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Illuminate\Foundation\Testing\WithoutMiddleware;
 use Notification;
 use Tests\TestCase;
 
 class NoteForwardedTest extends TestCase
 {
-//    use DatabaseTransactions;
-    use WithoutMiddleware;
+    use DatabaseTransactions,
+        WithoutMiddleware;
 
-    public function testExample()
+    public function test_it_sends_notifications()
     {
         $practice                           = Practice::find(8);
         $settings                           = $practice->cpmSettings();
