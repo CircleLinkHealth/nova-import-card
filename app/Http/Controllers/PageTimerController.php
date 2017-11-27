@@ -42,53 +42,47 @@ class PageTimerController extends Controller
      */
     public function store(Request $request)
     {
-
         $data = $request->input();
 
         $patientId  = $request->input('patientId');
         $providerId = $data['providerId'] ?? null;
 
-        $totalTime = $data['totalTime'] ?? 0;
+        foreach ($data['activities'] as $activity) {
+            $duration = $activity['duration'] ?? 0;
 
-        $duration = ceil($totalTime / 1000);
+            $startTime = Carbon::createFromFormat('Y-m-d H:i:s', $activity['startTime']);
+            $endTime   = $startTime->copy()->addSeconds($duration);
 
-        $startTime = Carbon::createFromFormat('Y-m-d H:i:s', $data['startTime']);
-        $endTime   = $startTime->copy()->addSeconds($duration);
+            $redirectTo = $data['redirectLocation'] ?? null;
 
-        $loc = $data['redirectLocation'] ?? null;
+            $newActivity                    = new PageTimer();
+            $newActivity->redirect_to       = $redirectTo;
+            $newActivity->billable_duration = $duration;
+            $newActivity->duration          = $duration;
+            $newActivity->duration_unit     = 'seconds';
+            $newActivity->patient_id        = $patientId;
+            $newActivity->provider_id       = $providerId;
+            $newActivity->start_time        = $startTime->toDateTimeString();
+            $newActivity->actual_start_time = $startTime->toDateTimeString();
+            $newActivity->actual_end_time   = $endTime->toDateTimeString();
+            $newActivity->end_time          = $endTime->toDateTimeString();
+            $newActivity->url_full          = $activity['url'];
+            $newActivity->url_short         = $activity['url_short'];
+            $newActivity->program_id        = $data['programId'];
+            $newActivity->ip_addr           = $data['ipAddr'];
+            $newActivity->activity_type     = $activity['name'];
+            $newActivity->title             = $activity['title'];
+            $newActivity->user_agent        = $request->userAgent();
+            $newActivity->save();
 
-        $redirectTo = empty($loc)
-            ? null
-            : $loc;
+            $activityId = $this->addPageTimerActivities($newActivity);
 
-        $newActivity                    = new PageTimer();
-        $newActivity->redirect_to       = $redirectTo;
-        $newActivity->billable_duration = 0;
-        $newActivity->duration          = $duration;
-        $newActivity->duration_unit     = 'seconds';
-        $newActivity->patient_id        = $patientId;
-        $newActivity->provider_id       = $providerId;
-        $newActivity->start_time        = $startTime->toDateTimeString();
-        $newActivity->actual_start_time = $startTime->toDateTimeString();
-        $newActivity->actual_end_time   = $endTime->toDateTimeString();
-        $newActivity->end_time          = $endTime->toDateTimeString();
-        $newActivity->url_full          = $data['urlFull'];
-        $newActivity->url_short         = $data['urlShort'];
-        $newActivity->program_id        = $data['programId'];
-        $newActivity->ip_addr           = $data['ipAddr'];
-        $newActivity->activity_type     = $data['activity'];
-        $newActivity->title             = $data['title'];
-        $newActivity->user_agent        = $request->userAgent();
-        $newActivity->billable_duration = $duration;
-        $newActivity->save();
-
-        $activityId = $this->addPageTimerActivities($newActivity);
-
-        if ($activityId) {
-            $this->handleNurseLogs($activityId);
+            if ($activityId) {
+                $this->handleNurseLogs($activityId);
+            }
         }
 
-        return response("PageTimer Logged, duration:" . $duration, 201);
+        return response("PageTimer activities logged.", 201);
     }
 
     public function addPageTimerActivities(PageTimer $pageTimer)
