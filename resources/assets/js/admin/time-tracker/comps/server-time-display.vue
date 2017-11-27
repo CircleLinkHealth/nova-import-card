@@ -35,8 +35,8 @@
         mounted() {
             this.$http.get(`${this.url}/${this.providerId}/${this.patientId}`).then((res) => {
                 this.visible = true
-                this.seconds = (((res.data || {}).info || {}).totalTime || 0)
-                console.log('server-time-display', res.data)
+                this.seconds = ((res.data || {}).totalTime || 0)
+                console.log('server-time-display', this.seconds, this.time, this.value)
             }).catch((err) => {
                 this.showDefault = true
                 this.visible = true
