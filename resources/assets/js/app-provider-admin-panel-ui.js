@@ -1,6 +1,8 @@
 require('./bootstrap')
 require('hammerjs')
 require('materialize-css')
+require('materialize-css/js/toasts')
+
 //require('../../../public/js/materialize.min')
 
 import Vue from 'vue'
@@ -56,4 +58,5 @@ export default App
 if (window) {
     window.App = App
     window.Vue = Vue
+    window.Vel = require('velocity-animate')
 }
