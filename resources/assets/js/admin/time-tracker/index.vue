@@ -1,7 +1,9 @@
 <template>
     <span v-if="visible" class="time-tracker" :class="className">
         <div v-if="noLiveCount">{{info.monthlyTime}}</div>
-        <time-display v-if="!noLiveCount" ref="timeDisplay" :seconds="totalTime" :no-live-count="!!noLiveCount" :redirect-url="'manage-patients/' + info.patientId + '/activities'" />
+        <span :class="{ hidden: !showTimer }">
+            <time-display v-if="!noLiveCount" ref="timeDisplay" :seconds="totalTime" :no-live-count="!!noLiveCount" :redirect-url="'manage-patients/' + info.patientId + '/activities'" />
+        </span>
         <inactivity-tracker ref="inactivityTracker" />
     </span>
 </template>
@@ -36,7 +38,8 @@
                 previousSeconds: 0,/**from the DB, ccm total time */
                 visible: false,
                 socket: null,
-                startCount: 0
+                startCount: 0,
+                showTimer: true
             }
         },
         components: { 
@@ -81,6 +84,7 @@
                                 else if (data.message === 'tt:resume') {
                                     if (!self.noLiveCount && !!Number(data.seconds)) {
                                         self.seconds = Number(data.seconds)
+                                        self.showTimer = true
                                     }
                                 }
                                 console.log(data);
@@ -138,6 +142,7 @@
 
                 EventBus.$on('tracker:stop', () => {
                     if (this.socket) {
+                        this.showTimer = false
                         this.state = STATE.STOP;
                         this.socket.send(JSON.stringify({ id: this.info.providerId, patientId: this.info.patientId, message: STATE.STOP, info: this.info }))
                     }
@@ -167,5 +172,7 @@
 </script>
 
 <style>
-    
+    .hidden {
+        display: none;
+    }
 </style>
