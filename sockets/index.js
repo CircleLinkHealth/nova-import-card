@@ -144,7 +144,7 @@ module.exports = app => {
         errorThrow(ex, ws);
       } 
     }); 
-
+ 
     ws.on('close', ev => {
       const key = ws.key;
       const user = timeTracker.exists(key) ? timeTracker.get(key) :
