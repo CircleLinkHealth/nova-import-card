@@ -47,7 +47,7 @@ Array.prototype.last = function () {
 function TimeTrackerUser(key, info, now = () => (new Date())) {
     /** verify that key is valid string in regex format /\d*-\d*\/ */
     if (!key || key.constructor.name !== 'String' || (key.indexOf('-') < 0)) {
-        throw new Error('[key] must be a valid string')
+        throw new Error('[key] must be a valid string', key)
     }
 
     /** verify that info is a valid object */
@@ -123,10 +123,13 @@ function TimeTrackerUser(key, info, now = () => (new Date())) {
             return this
         },
         setInitSeconds(nowFn = now) {
-            this.dates.unshift({
-                start: nowFn().addSeconds(0 - (info.initSeconds || 0)),
-                end: nowFn()
-            })
+            if (!info.initSecondsSet) {
+                this.dates.unshift({
+                    start: nowFn().addSeconds(0 - (info.initSeconds || 0)),
+                    end: nowFn()
+                })
+                info.initSecondsSet = true
+            }
             return this.dates
         }
     }
