@@ -99,7 +99,8 @@ function TimeTrackerUser(key, info, now = () => (new Date())) {
                     title: _activity.title,
                     url_short: _activity.urlShort,
                     start_time: moment((this.dates[0] || {}).start || new Date()).format('YYYY-MM-DD hh:mm:ss'),
-                    duration: this.slimInterval()
+                    duration: this.slimInterval(),
+                    noLiveCount: _activity.noLiveCount
                 })
             }
         },

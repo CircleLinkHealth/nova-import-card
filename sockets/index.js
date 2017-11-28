@@ -7,8 +7,14 @@ module.exports = app => {
   const axios = require('axios')
 
   const timeTracker = new TimeTracker()
+  const timeTrackerNoLiveCount = new TimeTracker()
 
   app.timeTracker = timeTracker
+  app.timeTrackerNoLiveCount = timeTrackerNoLiveCount
+  app.getTimeTracker = (info) => {
+    if (info.noLiveCount) return timeTrackerNoLiveCount
+    else return timeTracker
+  }
 
   const wsErrorHandler = function (err) {
     if (err) console.error("ws-error", err)
@@ -46,17 +52,20 @@ module.exports = app => {
             ws.key = key;
             if (data.message === 'start') {
               try {
-                const user = timeTracker.get(key, data.info)
+                const user = app.getTimeTracker(data.info).get(key, data.info)
                 if (user.info) {
                   user.info.initSeconds = data.info.initSeconds;
-                  console.log(user.setInitSeconds())
+                  console.log('tt:start-dates', JSON.stringify(user.setInitSeconds(), null, 2))
                 }
                 if (user.sockets.indexOf(ws) < 0) user.sockets.push(ws);
                 user.sockets.forEach(socket => {
-                  socket.send(JSON.stringify({
-                    message: 'tt:update-previous-seconds',
-                    previousSeconds: user.info.totalTime
-                  }))
+                  if (socket.readyState === socket.OPEN) {
+                    socket.send(JSON.stringify({
+                      message: 'tt:update-previous-seconds',
+                      previousSeconds: user.info.totalTime
+                    }))
+                  }
+                  
                 })
                 ws.send(JSON.stringify({
                   message: 'tt:tick',
@@ -71,13 +80,14 @@ module.exports = app => {
             } 
             else if (data.message === 'stop') {
               try {
-                const user = timeTracker.get(key)
                 const info = (data.info || {})
+                const user = app.getTimeTracker(info).get(key)
                 user.stop({ 
                   name: info.activity || 'unknown', 
                   title: info.title || 'unknown',
                   urlFull: info.urlFull, 
-                  urlShort: info.urlShort 
+                  urlShort: info.urlShort,
+                  noLiveCount: !!info.noLiveCount
                 })
                 user.cleanup()
                 ws.clientState = 'stopped'
@@ -94,7 +104,7 @@ module.exports = app => {
             } 
             else if (data.message === 'resume') {
               try {
-                const user = timeTracker.get(key, data.info)
+                const user = app.getTimeTracker(data.info).get(key, data.info)
                 user.resume()
                 ws.clientState = null;
                 ws.send(
@@ -112,7 +122,7 @@ module.exports = app => {
             }
             else if (data.message === 'inactivity-cancel') {
               try {
-                const user = timeTracker.get(key, data.info)
+                const user = app.getTimeTracker(data.info).get(key, data.info)
                 user.seconds = Math.min(user.seconds, 30)
               }
               catch (ex) {
@@ -135,7 +145,8 @@ module.exports = app => {
 
     ws.on('close', ev => {
       const key = ws.key;
-      const user = timeTracker.get(key)
+      const user = timeTracker.exists(key) ? timeTracker.get(key) :
+                  (timeTrackerNoLiveCount.get(key))
       if (key && user) {
         user.sockets.splice(user.sockets.indexOf(ws), 1);
         if (user.sockets.length == 0) {
@@ -146,9 +157,8 @@ module.exports = app => {
 
             const requestData = Object.assign(Object.assign({}, info), { totalTime: user.cleanup() * 1000 })
             
-            console.log(requestData)
-            
             timeTracker.exit(key);
+            timeTrackerNoLiveCount.exit(key);
   
             axios.post(url, requestData).then((response) => {
               console.log(response.status, response.data)
@@ -167,7 +177,7 @@ module.exports = app => {
   }); 
 
   setInterval(() => {
-    for (const user of timeTracker.users()) {
+    for (const user of [...timeTracker.users(), ...timeTrackerNoLiveCount.users()]) {
       const listeners = user.sockets.filter(
                           socket => socket.clientState !== 'stopped'
                         )
@@ -175,7 +185,8 @@ module.exports = app => {
       console.log(
         'sending message to clients:',
         listeners.length,
-        'interval:', user.interval(), 'totalTime:', (user.info || {}).totalTime
+        'interval:', user.interval(), 
+        'totalTime:', (user.info || {}).totalTime
       );
       user.sockets.forEach(socket => {
         if (socket.clientState != 'stopped') {
