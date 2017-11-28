@@ -148,7 +148,7 @@ module.exports = app => {
     ws.on('close', ev => {
       const key = ws.key;
       const user = timeTracker.exists(key) ? timeTracker.get(key) :
-                  (timeTrackerNoLiveCount.get(key))
+                  (timeTrackerNoLiveCount.exists(key) ? timeTrackerNoLiveCount.get(key) : null)
       if (key && user) {
         user.sockets.splice(user.sockets.indexOf(ws), 1);
         if (user.sockets.length == 0) {
