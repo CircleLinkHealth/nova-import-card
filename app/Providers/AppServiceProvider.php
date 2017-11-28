@@ -20,6 +20,7 @@ use App\Repositories\InviteRepositoryEloquent;
 use App\Repositories\LocationRepositoryEloquent;
 use App\Repositories\PracticeRepositoryEloquent;
 use App\Repositories\UserRepositoryEloquent;
+use App\Services\NoteService;
 use Illuminate\Notifications\Channels\DatabaseChannel;
 use Illuminate\Notifications\DatabaseNotification;
 use Illuminate\Notifications\HasDatabaseNotifications;
@@ -118,6 +119,10 @@ class AppServiceProvider extends ServiceProvider
             ReportFormatter::class,
             WebixFormatter::class
         );
+
+        $this->app->bind(WebixFormatter::class, function(){
+            return new WebixFormatter(new NoteService());
+        });
 
         if ($this->app->environment('local')) {
             $this->app->register('Orangehill\Iseed\IseedServiceProvider');

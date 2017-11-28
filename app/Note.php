@@ -203,13 +203,6 @@ class Note extends \App\BaseModel implements PdfReport
         $builder->where('isTCM', '=', $yes);
     }
 
-    public function wasForwardedToCareTeam()
-    {
-        return $this->notifications()
-                    ->where('notifiable_id', '!=', 948)
-                    ->count() > 0;
-    }
-
     /**
      * Returns the notifications that included this note as an attachment
      *
@@ -219,17 +212,6 @@ class Note extends \App\BaseModel implements PdfReport
     {
         return $this->morphMany(DatabaseNotification::class, 'attachment')
                     ->orderBy('created_at', 'desc');
-    }
-
-    public function wasSeenByBillingProvider()
-    {
-        return $this->notifications()
-                    ->hasNotifiableType(User::class)
-                    ->where([
-                        ['read_at', '!=', null],
-                        ['notifiable_id', '=', $this->patient->billingProviderUser()->id],
-                    ])
-                    ->count() > 0;
     }
 
     /**

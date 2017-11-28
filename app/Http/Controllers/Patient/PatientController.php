@@ -1,7 +1,7 @@
 <?php namespace App\Http\Controllers\Patient;
 
 use App\CarePlan;
-use App\Formatters\WebixFormatter;
+use App\Contracts\ReportFormatter;
 use App\Http\Controllers\Controller;
 use App\Practice;
 use App\Services\CarePlanViewService;
@@ -13,6 +13,12 @@ use URL;
 
 class PatientController extends Controller
 {
+    private $formatter;
+
+    public function __construct(ReportFormatter $formatter)
+    {
+        $this->formatter = $formatter;
+    }
 
     /**
      * Display the specified resource.
@@ -35,7 +41,7 @@ class PatientController extends Controller
         if (auth()->user()->providerInfo && auth()->user()->hasRole(['provider'])) {
             $showPatientsPendingApprovalBox = true;
             $patients                       = auth()->user()->patientsPendingApproval()->get();
-            $patientsPendingApproval        = (new WebixFormatter())->patientListing($patients);
+            $patientsPendingApproval        = $this->formatter->patientListing($patients);
         }
 
         return view('wpUsers.patient.dashboard',
@@ -258,7 +264,7 @@ class PatientController extends Controller
      */
     public function showPatientListing()
     {
-        $data = (new WebixFormatter())->patientListing();
+        $data = $this->formatter->patientListing();
 
         return view('wpUsers.patient.listing', $data);
     }
