@@ -50,7 +50,7 @@
         },
         methods: {
             updateTime() {
-                this.info.initSeconds = Math.ceil(startupTime() / 1000)
+                if (this.info.initSeconds == 0) this.info.initSeconds = Math.ceil(startupTime() / 1000)
                 this.startCount += 1;
                 console.log('tracker:init-seconds', this.info.initSeconds)
                 this.socket.send(
@@ -74,6 +74,8 @@
                                 const data = JSON.parse(res.data)
                                 if (data.message === 'tt:update-previous-seconds' && !!Number(data.previousSeconds)) {
                                     self.previousSeconds = Math.max(data.previousSeconds, self.previousSeconds)
+                                    self.info.totalTime = self.previousSeconds
+                                    self.seconds = Math.max(self.seconds, data.seconds)
                                     self.visible = true //display the component when the previousSeconds value has been received from the server to keep the display up-to-date
                                 }
                                 else if (data.message === 'tt:resume') {
@@ -99,6 +101,9 @@
                             console.warn("socket connection has closed", ev)
                             self.socket = null;
                             EventBus.$emit("tracker:stop");
+                            self.startCount = 0;
+                            self.info.initSeconds = self.seconds
+                            console.log(self.info.totalTime, self.seconds)
 
                             setTimeout(self.createSocket.bind(self), 3000);
                         }
