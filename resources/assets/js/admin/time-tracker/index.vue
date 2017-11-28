@@ -35,7 +35,8 @@
                 seconds: 0,/** from when page loads, till the page ends */
                 previousSeconds: 0,/**from the DB, ccm total time */
                 visible: false,
-                socket: null
+                socket: null,
+                startCount: 0
             }
         },
         components: { 
@@ -50,6 +51,7 @@
         methods: {
             updateTime() {
                 this.info.initSeconds = Math.ceil(startupTime() / 1000)
+                this.startCount += 1;
                 console.log('tracker:init-seconds', this.info.initSeconds)
                 this.socket.send(
                     JSON.stringify({ 
@@ -84,9 +86,13 @@
                         }
                 
                         socket.onopen = (ev) => {
-                            console.log("socket connection opened", ev, self.socketReloadCount, EventBus.isInFocus)
-                            self.updateTime()
-                            if (EventBus.isInFocus) EventBus.$emit("tracker:start")
+                            if (EventBus.isInFocus) {
+                                EventBus.$emit("tracker:start")
+                            }
+                            else {
+                                self.startCount = 0;
+                            }
+                            console.log("socket connection opened", ev, self.startCount, EventBus.isInFocus)
                         }
                 
                         socket.onclose = (ev) => {
@@ -134,6 +140,7 @@
 
                 EventBus.$on('tracker:start', () => {
                     if (this.socket && this.socket.readyState === WebSocket.OPEN) {
+                        if (this.startCount === 0) this.updateTime();
                         this.state = STATE.START
                         this.socket.send(JSON.stringify({ id: this.info.providerId, patientId: this.info.patientId, message: STATE.START, info: this.info }))
                     }
