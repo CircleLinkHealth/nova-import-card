@@ -55,14 +55,16 @@ module.exports = app => {
                 const user = app.getTimeTracker(data.info).get(key, data.info)
                 if (user.info) {
                   user.info.initSeconds = data.info.initSeconds;
-                  console.log('tt:start-dates', JSON.stringify(user.setInitSeconds(), null, 2))
+                  user.setInitSeconds()
+                  console.log('tt:init-seconds', data.info.initSeconds)
                 }
                 if (user.sockets.indexOf(ws) < 0) user.sockets.push(ws);
                 user.sockets.forEach(socket => {
                   if (socket.readyState === socket.OPEN) {
                     socket.send(JSON.stringify({
                       message: 'tt:update-previous-seconds',
-                      previousSeconds: user.info.totalTime
+                      previousSeconds: user.info.totalTime,
+                      seconds: user.seconds
                     }))
                   }
                   
