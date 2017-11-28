@@ -1,6 +1,7 @@
 <template>
     <span v-if="visible" class="time-tracker" :class="className">
-        <time-display ref="timeDisplay" :seconds="totalTime" :no-live-count="!!noLiveCount" :redirect-url="'manage-patients/' + info.patientId + '/activities'" />
+        <div v-if="noLiveCount">{{info.monthlyTime}}</div>
+        <time-display v-if="!noLiveCount" ref="timeDisplay" :seconds="totalTime" :no-live-count="!!noLiveCount" :redirect-url="'manage-patients/' + info.patientId + '/activities'" />
         <inactivity-tracker ref="inactivityTracker" />
     </span>
 </template>

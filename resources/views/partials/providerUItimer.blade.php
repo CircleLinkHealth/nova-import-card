@@ -5,6 +5,8 @@
         if (isset($patient)) {
             $patientId = $patient->id;
         }
+
+        $noLiveCountTimeTracking = isset($noLiveCountTimeTracking) && $noLiveCountTimeTracking;
     ?>
     <script>
 
@@ -21,6 +23,7 @@
                             }
                             return 0;
                         })(document.querySelector('[data-monthly-time]') ? document.querySelector('[data-monthly-time]').getAttribute('data-monthly-time') : null),
+            "monthlyTime": document.querySelector('[data-monthly-time]') ? document.querySelector('[data-monthly-time]').getAttribute('data-monthly-time') : null,
             "wsUrl": "{{ env('WS_URL') }}",
             "programId": '{{$patientProgramId}}',
             "urlFull": '{{Request::url()}}',
@@ -30,7 +33,7 @@
             "title": '{{$title}}',
             "submitUrl": '{{route("api.pagetracking")}}',
             "startTime": '{{Carbon\Carbon::now()->subSeconds(8)->toDateTimeString()}}',
-            "noLiveCount": ('noLiveCountTimeTracking' == 'true') ? 1 : 0
+            "noLiveCount": ('{{$noLiveCountTimeTracking}}' == '1') ? 1 : 0
         }
     </script>
 @endpush
