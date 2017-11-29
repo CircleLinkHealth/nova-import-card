@@ -138,9 +138,6 @@
                 EventBus.$on('tracker:tick', () => {
                     this.seconds++;
                     this.$forceUpdate()
-                    if (this.seconds % 5 === 0 && this.socket.readyState === this.socket.OPEN) {
-                        this.socket.send(JSON.stringify({ id: this.info.providerId, patientId: this.info.patientId, message: 'PING' }))
-                    }
                 })
 
                 const STATE = {
@@ -175,6 +172,12 @@
                 })
 
                 this.createSocket()
+
+                setInterval(() => {
+                    if (this.socket.readyState === this.socket.OPEN) {
+                        this.socket.send(JSON.stringify({ id: this.info.providerId, patientId: this.info.patientId, message: 'PING' }))
+                    }
+                }, 5000)
             }
         }
     }
