@@ -1,6 +1,5 @@
 <?php namespace App\Services;
 
-use App\Activity;
 use App\Patient;
 use App\PatientMonthlySummary;
 use App\Repositories\Eloquent\ActivityRepository;
@@ -30,7 +29,7 @@ class ActivityService
         }
 
         $acts = $this->repo->totalCCMTime($userIds, $monthYear)
-                        ->pluck('total_time', 'patient_id');
+                           ->pluck('total_time', 'patient_id');
 
         foreach ($acts as $id => $ccmTime) {
             $info = Patient::updateOrCreate([
@@ -43,6 +42,15 @@ class ActivityService
         }
     }
 
+    /**
+     * Get the CCM Time provided by a specific provider to a specific patient for a given month.
+     *
+     * @param $providerId
+     * @param array $patientIds
+     * @param Carbon|null $monthYear
+     *
+     * @return mixed
+     */
     public function ccmTimeBetween($providerId, array $patientIds, Carbon $monthYear = null)
     {
         if ( ! $monthYear) {
@@ -50,6 +58,6 @@ class ActivityService
         }
 
         return $this->repo->ccmTimeBetween($providerId, $patientIds, $monthYear)
-            ->pluck('total_time', 'patient_id');
+                          ->pluck('total_time', 'patient_id');
     }
 }

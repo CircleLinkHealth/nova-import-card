@@ -14,6 +14,14 @@ class CcmTimeController extends Controller
         $this->activityService = $activityService;
     }
 
+    /**
+     * Get the CCM Time provided by a specific provider to a specific patient during the current month.
+     *
+     * @param $providerId
+     * @param $patientId
+     *
+     * @return \Illuminate\Http\JsonResponse
+     */
     public function between($providerId, $patientId)
     {
         return response()->json($this->activityService->ccmTimeBetween($providerId, [$patientId]));
