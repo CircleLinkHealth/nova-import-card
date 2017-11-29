@@ -23,9 +23,11 @@ module.exports = app => {
   const errorThrow = (err, ws) => {
     console.error(err)
     if (ws) {
-      ws.send(JSON.stringify({
-        error: err
-      }), wsErrorHandler)
+      if (ws.readyState === ws.OPEN) {
+        ws.send(JSON.stringify({
+          error: err
+        }), wsErrorHandler)
+      }
     }
   }
 
@@ -69,11 +71,13 @@ module.exports = app => {
                   }
                   
                 })
-                ws.send(JSON.stringify({
-                  message: 'tt:tick',
-                  seconds: user.interval(),
-                  clients: user.sockets.length
-                }), wsErrorHandler)
+                if (ws.readyState === ws.OPEN) {
+                  ws.send(JSON.stringify({
+                    message: 'tt:tick',
+                    seconds: user.interval(),
+                    clients: user.sockets.length
+                  }), wsErrorHandler)
+                }
               }
               catch (ex) {
                 errorThrow(ex, ws)
@@ -93,11 +97,13 @@ module.exports = app => {
                 })
                 user.cleanup()
                 ws.clientState = 'stopped'
-                ws.send(
-                  JSON.stringify({
-                    message: 'tt:stopped'
-                  }), wsErrorHandler
-                )
+                if (ws.readyState === ws.OPEN) {
+                  ws.send(
+                    JSON.stringify({
+                      message: 'tt:stopped'
+                    }), wsErrorHandler
+                  )
+                }
               }
               catch (ex) {
                 errorThrow(ex, ws)
@@ -109,13 +115,15 @@ module.exports = app => {
                 const user = app.getTimeTracker(data.info).get(key, data.info)
                 user.resume()
                 ws.clientState = null;
-                ws.send(
-                  JSON.stringify({
-                    message: 'tt:resume',
-                    seconds: user.interval(),
-                    clients: user.sockets.length
-                  }), wsErrorHandler
-                )
+                if (ws.readyState === ws.OPEN) {
+                  ws.send(
+                    JSON.stringify({
+                      message: 'tt:resume',
+                      seconds: user.interval(),
+                      clients: user.sockets.length
+                    }), wsErrorHandler
+                  )
+                }
               }
               catch (ex) {
                 errorThrow(ex, ws)
@@ -192,13 +200,15 @@ module.exports = app => {
       );
       user.sockets.forEach(socket => {
         if (socket.clientState != 'stopped') {
-          socket.send(
-            JSON.stringify({
-              message: 'tt:tick',
-              seconds: user.interval(),
-              clients: user.sockets.length
-            }), wsErrorHandler
-          );
+          if (socket.readyState === socket.OPEN) {
+            socket.send(
+              JSON.stringify({
+                message: 'tt:tick',
+                seconds: user.interval(),
+                clients: user.sockets.length
+              }), wsErrorHandler
+            )
+          }
         }
       });
     }
