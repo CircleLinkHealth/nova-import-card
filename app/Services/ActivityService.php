@@ -60,4 +60,21 @@ class ActivityService
         return $this->repo->ccmTimeBetween($providerId, $patientIds, $monthYear)
                           ->pluck('total_time', 'patient_id');
     }
+
+    /**
+     * Get total CCM Time for a patient for a month. If no month is given, it defaults to the current month.
+     *
+     * @param $patientId
+     * @param Carbon|null $monthYear
+     *
+     * @return mixed
+     */
+    public function totalCcmTime($patientId, Carbon $monthYear = null)
+    {
+        if ( ! $monthYear) {
+            $monthYear = Carbon::now();
+        }
+
+        return $this->repo->totalCCMTime([$patientId], $monthYear)->pluck('total_time', 'patient_id');
+    }
 }

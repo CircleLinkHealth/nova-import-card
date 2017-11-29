@@ -100,6 +100,11 @@ Route::group(['middleware' => 'auth'], function () {
             'as' => 'get.ccm.time.from.to'
         ]);
 
+        Route::get('patients/{patientId}/ccm-time', [
+            'uses' => 'API\CcmTimeController@ccmTime',
+            'as' => 'get.total.ccm.time'
+        ]);
+
         Route::get('practices/all', 'API\PracticeController@allPracticesWithLocationsAndStaff');
 
         Route::get('calls-management', [

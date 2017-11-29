@@ -26,4 +26,15 @@ class CcmTimeController extends Controller
     {
         return response()->json($this->activityService->ccmTimeBetween($providerId, [$patientId]));
     }
+
+    /**
+     * Get total CCM Time for a patient for the current month.
+     *
+     * @param $patientId
+     *
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function ccmTime($patientId) {
+        return response()->json($this->activityService->totalCcmTime($patientId));
+    }
 }
