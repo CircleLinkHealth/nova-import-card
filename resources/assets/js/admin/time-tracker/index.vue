@@ -113,6 +113,10 @@
 
                             setTimeout(self.createSocket.bind(self), 3000);
                         }
+
+                        socket.onerror = (err) => {
+                            console.error('socket-error:', err)
+                        }
         
                         return socket;
                     })()
