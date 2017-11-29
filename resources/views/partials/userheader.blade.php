@@ -77,9 +77,10 @@
                             @else
                                 <time-tracker ref="TimeTrackerApp" class-name="{{$noLiveCountTimeTracking ? 'color-grey' : ($ccmCountableUser ? '' : 'color-grey')}}"
                                     :info="timeTrackerInfo" 
-                                    :no-live-count="{{($noLiveCountTimeTracking ? true : ($ccmCountableUser ? false : true)) ? 1 : 0}}"></time-tracker>
+                                    :no-live-count="{{($noLiveCountTimeTracking ? true : ($ccmCountableUser ? false : true)) ? 1 : 0}}">
+                                        @include('partials.tt-loader')
+                                </time-tracker>
                              @endif
-                            
                         @endif
                     </span>
                 </span>
