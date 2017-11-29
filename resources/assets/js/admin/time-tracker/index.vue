@@ -1,11 +1,19 @@
 <template>
-    <span v-if="visible" class="time-tracker" :class="className">
-        <div v-if="noLiveCount">{{info.monthlyTime}}</div>
-        <span><!-- :class="{ 'tt-hidden': !showTimer }"-->
-            <time-display v-if="!noLiveCount" ref="timeDisplay" :seconds="totalTime" :no-live-count="!!noLiveCount" :redirect-url="'manage-patients/' + info.patientId + '/activities'" />
+    <div>
+        <div v-if="!visible">
+            <div class="loader-filler"></div>
+            <div class="loader-container">
+                <loader></loader>
+            </div>
+        </div>
+        <span v-if="visible" class="time-tracker" :class="className">
+            <div v-if="noLiveCount">{{info.monthlyTime}}</div>
+            <span>
+                <time-display v-if="!noLiveCount" ref="timeDisplay" :seconds="totalTime" :no-live-count="!!noLiveCount" :redirect-url="'manage-patients/' + info.patientId + '/activities'" />
+            </span>
+            <inactivity-tracker ref="inactivityTracker" />
         </span>
-        <inactivity-tracker ref="inactivityTracker" />
-    </span>
+    </div>
 </template>
 
 <script>
@@ -14,6 +22,7 @@
     import InactivityTracker from './comps/inactivity-tracker'
     import TimeDisplay from './comps/time-display'
     import EventBus from './comps/event-bus'
+    import LoaderComponent from '../../components/loader'
     
     export default {
         name: 'time-tracker',
@@ -44,7 +53,8 @@
         },
         components: { 
             'inactivity-tracker': InactivityTracker,
-            'time-display': TimeDisplay
+            'time-display': TimeDisplay,
+            'loader': LoaderComponent
         },
         computed: {
             totalTime() {
@@ -113,6 +123,10 @@
 
                             setTimeout(self.createSocket.bind(self), 3000);
                         }
+
+                        socket.onerror = (err) => {
+                            console.error('socket-error:', err)
+                        }
         
                         return socket;
                     })()
@@ -134,9 +148,6 @@
                 EventBus.$on('tracker:tick', () => {
                     this.seconds++;
                     this.$forceUpdate()
-                    if (this.seconds % 5 === 0 && this.socket.readyState === this.socket.OPEN) {
-                        this.socket.send(JSON.stringify({ id: this.info.providerId, patientId: this.info.patientId, message: 'PING' }))
-                    }
                 })
 
                 const STATE = {
@@ -171,6 +182,12 @@
                 })
 
                 this.createSocket()
+
+                setInterval(() => {
+                    if (this.socket.readyState === this.socket.OPEN) {
+                        this.socket.send(JSON.stringify({ id: this.info.providerId, patientId: this.info.patientId, message: 'PING' }))
+                    }
+                }, 5000)
             }
         }
     }
@@ -179,5 +196,16 @@
 <style>
     span.tt-hidden {
         visibility: hidden;
+    }
+
+    div.loader-container {
+        width: 84px;
+        position: absolute;
+        right: -18px;
+        top: 0px;
+    }
+
+    div.loader-filler {
+        height: 30px;
     }
 </style>
