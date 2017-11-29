@@ -85,6 +85,7 @@
                                     if (!self.noLiveCount && !!Number(data.seconds)) {
                                         self.seconds = Number(data.seconds)
                                         self.showTimer = true
+                                        self.previousSeconds = Math.max(data.previousSeconds || 0, self.previousSeconds)
                                     }
                                 }
                                 console.log(data);
