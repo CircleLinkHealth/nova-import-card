@@ -120,7 +120,8 @@ module.exports = app => {
                     JSON.stringify({
                       message: 'tt:resume',
                       seconds: user.interval(),
-                      clients: user.sockets.length
+                      clients: user.sockets.length,
+                      previousSeconds: user.info.totalTime,
                     }), wsErrorHandler
                   )
                 }
