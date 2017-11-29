@@ -116,7 +116,7 @@ module.exports = app => {
                 user.resume()
                 ws.clientState = null;
                 if (ws.readyState === ws.OPEN) {
-                  ws.send(
+                  ws.send( 
                     JSON.stringify({
                       message: 'tt:resume',
                       seconds: user.interval(),
