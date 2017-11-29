@@ -96,12 +96,12 @@ Route::group(['middleware' => 'auth'], function () {
      */
     Route::group(['prefix' => 'api'], function () {
         Route::get('providers/{providerId}/patients/{patientId}/ccm-time', [
-            'uses' => 'API\CcmTimeController@between',
+            'uses' => 'API\ActivityController@between',
             'as' => 'get.ccm.time.from.to'
         ]);
 
         Route::get('patients/{patientId}/ccm-time', [
-            'uses' => 'API\CcmTimeController@ccmTime',
+            'uses' => 'API\ActivityController@ccmTime',
             'as' => 'get.total.ccm.time'
         ]);
 

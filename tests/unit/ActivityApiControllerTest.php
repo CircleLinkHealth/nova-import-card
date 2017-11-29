@@ -9,7 +9,7 @@ use Illuminate\Foundation\Testing\WithoutMiddleware;
 use Tests\Helpers\UserHelpers;
 use Tests\TestCase;
 
-class CcmTimeControllerTest extends TestCase
+class ActivityApiControllerTest extends TestCase
 {
     use DatabaseTransactions,
         WithoutMiddleware,

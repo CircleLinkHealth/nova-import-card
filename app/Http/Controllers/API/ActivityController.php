@@ -5,7 +5,7 @@ namespace App\Http\Controllers\API;
 use App\Http\Controllers\Controller;
 use App\Services\ActivityService;
 
-class CcmTimeController extends Controller
+class ActivityController extends Controller
 {
     private $activityService;
 
