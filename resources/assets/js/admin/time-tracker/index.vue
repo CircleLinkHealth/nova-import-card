@@ -86,6 +86,7 @@
                                         self.seconds = Number(data.seconds)
                                         self.showTimer = true
                                         self.previousSeconds = Math.max(data.previousSeconds || 0, self.previousSeconds)
+                                        self.info.totalTime = self.previousSeconds
                                     }
                                 }
                                 console.log(data);
