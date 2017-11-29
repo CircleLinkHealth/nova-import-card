@@ -63,9 +63,23 @@
                                 $noLiveCountTimeTracking = isset($noLiveCountTimeTracking) && $noLiveCountTimeTracking;
                                 $ccmCountableUser = auth()->user()->isCCMCountable();
                              ?>
-                            <time-tracker ref="TimeTrackerApp" class-name="{{$noLiveCountTimeTracking ? 'color-grey' : ($ccmCountableUser ? '' : 'color-grey')}}"
+                             @if ($noLiveCountTimeTracking)
+                                <div class="color-grey">
+                                    <a href="{{ empty($patient->id) ?: route('patient.activity.providerUIIndex', ['patient' => $patient->id]) }}">
+                                        {{$monthlyTime}}
+                                    </a>
+                                    <span style="display:none">
+                                        <time-tracker ref="TimeTrackerApp" class-name="{{$noLiveCountTimeTracking ? 'color-grey' : ($ccmCountableUser ? '' : 'color-grey')}}"
+                                        :info="timeTrackerInfo" 
+                                        :no-live-count="{{($noLiveCountTimeTracking ? true : ($ccmCountableUser ? false : true)) ? 1 : 0}}"></time-tracker>
+                                    </span>
+                                </div>
+                            @else
+                                <time-tracker ref="TimeTrackerApp" class-name="{{$noLiveCountTimeTracking ? 'color-grey' : ($ccmCountableUser ? '' : 'color-grey')}}"
                                     :info="timeTrackerInfo" 
                                     :no-live-count="{{($noLiveCountTimeTracking ? true : ($ccmCountableUser ? false : true)) ? 1 : 0}}"></time-tracker>
+                             @endif
+                            
                         @endif
                     </span>
                 </span>
