@@ -88,6 +88,7 @@ module.exports = app => {
               try {
                 const info = (data.info || {})
                 const user = app.getTimeTracker(info).get(key)
+                user.setAwayStopTime()
                 user.stop({ 
                   name: info.activity || 'unknown', 
                   title: info.title || 'unknown',
@@ -109,11 +110,59 @@ module.exports = app => {
                 errorThrow(ex, ws)
                 return;
               }
-            } 
+            }
+            else if (data.message === 'push-seconds') {
+              try {
+                const info = (data.info || {})
+                const user = app.getTimeTracker(info).get(key, data.info)
+
+                if (user.info) {
+                  user.setAwaySeconds(data.seconds)
+                  
+                  user.sockets.forEach(socket => {
+                    if (socket.readyState === socket.OPEN) {
+                      socket.send(JSON.stringify({
+                        message: 'tt:update-previous-seconds',
+                        previousSeconds: user.info.totalTime,
+                        seconds: user.seconds,
+                        trigger: 'push-seconds'
+                      }))
+                    }
+                  })
+                }
+              }
+              catch (ex) {
+                errorThrow(ex, ws)
+                return;
+              }
+            }
             else if (data.message === 'resume') {
               try {
                 const user = app.getTimeTracker(data.info).get(key, data.info)
                 user.resume()
+                const elapsedSeconds = user.setAwayResumeTime()
+                if (elapsedSeconds) {
+                  if (ws.readyState === ws.OPEN) {
+                    ws.send( 
+                      JSON.stringify({
+                        message: 'tt:trigger-modal',
+                        seconds: elapsedSeconds
+                      }), wsErrorHandler
+                    )
+                  }
+                }
+                else {
+                  user.sockets.forEach(socket => {
+                    if (socket.readyState === socket.OPEN) {
+                      socket.send(JSON.stringify({
+                        message: 'tt:update-previous-seconds',
+                        previousSeconds: user.info.totalTime,
+                        seconds: user.seconds,
+                        trigger: 'resume'
+                      }))
+                    }
+                  })
+                }
                 ws.clientState = null;
                 if (ws.readyState === ws.OPEN) {
                   ws.send( 
@@ -161,8 +210,10 @@ module.exports = app => {
       if (key && user) {
         user.sockets.splice(user.sockets.indexOf(ws), 1);
         if (user.sockets.length == 0) {
+          //no active sessions
           const info = user.info;
           if (info) {
+            info.away = null
             
             const url = info.submitUrl
 

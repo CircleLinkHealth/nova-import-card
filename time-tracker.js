@@ -50,6 +50,10 @@ function TimeTrackerUser(key, info, now = () => (new Date())) {
         throw new Error('[key] must be a valid string', key)
     }
 
+    if (info && !info.away) {
+        info.away = null
+    }
+
     /** verify that info is a valid object */
     if (!info || info.constructor.name !== 'Object') {
         throw new Error('[info] must be a valid object')
@@ -122,8 +126,8 @@ function TimeTrackerUser(key, info, now = () => (new Date())) {
             }
             return this
         },
-        setInitSeconds(nowFn = now) {
-            if (!info.initSecondsSet) {
+        setInitSeconds(force, nowFn = now) {
+            if (force || !info.initSecondsSet) {
                 this.dates.unshift({
                     start: nowFn().addSeconds(0 - (info.initSeconds || 0)),
                     end: nowFn()
@@ -131,6 +135,27 @@ function TimeTrackerUser(key, info, now = () => (new Date())) {
                 info.initSecondsSet = true
             }
             return this.dates
+        },
+        setAwayStopTime() {
+            info.away = new Date()
+        },
+        setAwayResumeTime() {
+            if (info.away) {
+                const elapsedSeconds = Math.floor(((new Date()) - info.away) / 1000)
+                if (elapsedSeconds < 120) {
+                    this.setAwaySeconds(elapsedSeconds)
+                    return 0
+                }
+                return elapsedSeconds
+            }
+        },
+        setAwaySeconds(seconds) {
+            if (!!Number(seconds)) {
+                seconds = Math.max(Math.min(seconds, 1800), 0)
+                info.initSeconds = seconds
+                info.totalTime += seconds
+                this.setInitSeconds(true)
+            }
         }
     }
     return user.resume()
