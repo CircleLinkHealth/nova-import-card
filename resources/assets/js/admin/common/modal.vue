@@ -77,7 +77,7 @@
                 }
             },
             cancel() {
-                if (this.info && typeof(this.info.cancelHandler) === 'function') this.info.cancelHandler();
+                if (this.info && typeof(this.info.cancelHandler) === 'function') this.info.cancelHandler(this.info);
                 else this.close();
             },
             ok() {

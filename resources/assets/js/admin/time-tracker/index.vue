@@ -12,6 +12,7 @@
                 <time-display v-if="!noLiveCount" ref="timeDisplay" :seconds="totalTime" :no-live-count="!!noLiveCount" :redirect-url="'manage-patients/' + info.patientId + '/activities'" />
             </span>
             <inactivity-tracker ref="inactivityTracker" />
+            <away ref="away" />
         </span>
     </div>
 </template>
@@ -23,6 +24,7 @@
     import TimeDisplay from './comps/time-display'
     import EventBus from './comps/event-bus'
     import LoaderComponent from '../../components/loader'
+    import AwayComponent from './comps/away'
     
     export default {
         name: 'time-tracker',
@@ -54,7 +56,8 @@
         components: { 
             'inactivity-tracker': InactivityTracker,
             'time-display': TimeDisplay,
-            'loader': LoaderComponent
+            'loader': LoaderComponent,
+            'away': AwayComponent
         },
         computed: {
             totalTime() {
@@ -98,6 +101,9 @@
                                         self.previousSeconds = Math.max(data.previousSeconds || 0, self.previousSeconds)
                                         self.info.totalTime = self.previousSeconds
                                     }
+                                }
+                                else if (data.message === 'tt:trigger-modal') {
+                                    EventBus.$emit('away:trigger-modal', data.seconds)
                                 }
                                 console.log(data);
                             }
@@ -153,7 +159,8 @@
                 const STATE = {
                     STOP: 'stop',
                     START: 'resume',
-                    INACTIVITY_CANCEL: 'inactivity-cancel'
+                    INACTIVITY_CANCEL: 'inactivity-cancel',
+                    PUSH_SECONDS: 'push-seconds'
                 }
 
                 EventBus.$on('tracker:stop', () => {
@@ -178,6 +185,12 @@
                         setTimeout(() => {
                             document.location.href = rootUrl('manage-patients/dashboard')
                         }, 700)
+                    }
+                })
+
+                EventBus.$on('tracker:push-seconds', (seconds) => {
+                    if (this.socket && this.socket.readyState === WebSocket.OPEN) {
+                        this.socket.send(JSON.stringify({ id: this.info.providerId, patientId: this.info.patientId, message: STATE.PUSH_SECONDS, seconds: seconds, info: this.info }))
                     }
                 })
 
