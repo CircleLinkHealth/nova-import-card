@@ -57,6 +57,9 @@ module.exports = app => {
                 const user = app.getTimeTracker(data.info).get(key, data.info)
                 if (user.info) {
                   user.info.initSeconds = data.info.initSeconds;
+                  if (data.info.totalTime < user.info.totalTime) {
+                    user.info.totalTime = data.info.totalTime
+                  }
                   user.setInitSeconds()
                   console.log('tt:init-seconds', data.info.initSeconds)
                 }
@@ -214,7 +217,7 @@ module.exports = app => {
           const info = user.info;
           if (info) {
             info.away = null
-            
+
             const url = info.submitUrl
 
             const requestData = Object.assign(Object.assign({}, info), { totalTime: user.cleanup() * 1000 })
@@ -267,3 +270,11 @@ module.exports = app => {
   }, 3000);
  
 };
+
+/**
+ * restart process every day
+ */
+
+setTimeout(function () {
+  process.exit(0)
+}, 24 * 60 * 60 * 1000)
