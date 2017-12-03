@@ -1,6 +1,7 @@
 <?php
 
 use App\Models\CCD\Problem;
+use App\Patient;
 use App\PatientMonthlySummary;
 use Illuminate\Database\Migrations\Migration;
 
@@ -15,7 +16,11 @@ class AddCcdProblems extends Migration
     {
         foreach (PatientMonthlySummary::all() as $summ) {
             if ($summ->billable_problem1_code) {
-                $ccdProblem1 = Problem::where('patient_id', $summ->patientInfo->user_id)
+                $info = Patient::withTrashed()
+                               ->whereId($summ->patient_info_id)
+                               ->first();
+
+                $ccdProblem1 = Problem::where('patient_id', $info->user_id)
                                       ->where('icd_10_code', $summ->billable_problem1_code)
                                       ->first();
 
@@ -28,7 +33,11 @@ class AddCcdProblems extends Migration
             }
 
             if ($summ->billable_problem2_code) {
-                $ccdProblem2 = Problem::where('patient_id', $summ->patientInfo->user_id)
+                $info = Patient::withTrashed()
+                               ->whereId($summ->patient_info_id)
+                               ->first();
+
+                $ccdProblem2 = Problem::where('patient_id', $info->user_id)
                                       ->where('icd_10_code', $summ->billable_problem2_code)
                                       ->first();
 

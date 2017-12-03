@@ -1,6 +1,7 @@
 <?php
 
 use App\Models\CCD\Problem;
+use App\Patient;
 use App\PatientMonthlySummary;
 use Illuminate\Database\Migrations\Migration;
 
@@ -18,7 +19,11 @@ class AddBillableProblemsFromName extends Migration
                              ->chunk(1000, function ($summaries) {
                                  foreach ($summaries as $summ) {
                                      if ($summ->billable_problem1) {
-                                         $ccdProblem1 = Problem::where('patient_id', $summ->patientInfo->user_id)
+                                         $info = Patient::withTrashed()
+                                             ->whereId($summ->patient_info_id)
+                                             ->first();
+
+                                         $ccdProblem1 = Problem::where('patient_id', $info->user_id)
                                                                ->whereHas('cpmProblem', function ($q) use ($summ) {
                                                                    $q->where('name', $summ->billable_problem1);
                                                                })
@@ -44,7 +49,11 @@ class AddBillableProblemsFromName extends Migration
                              ->chunk(1000, function ($summaries) {
                                  foreach ($summaries as $summ) {
                                      if ($summ->billable_problem2) {
-                                         $ccdProblem2 = Problem::where('patient_id', $summ->patientInfo->user_id)
+                                         $info = Patient::withTrashed()
+                                                        ->whereId($summ->patient_info_id)
+                                                        ->first();
+
+                                         $ccdProblem2 = Problem::where('patient_id', $info->user_id)
                                                                ->whereHas('cpmProblem', function ($q) use ($summ) {
                                                                    $q->where('name', $summ->billable_problem2);
                                                                })
