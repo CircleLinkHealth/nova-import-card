@@ -145,17 +145,32 @@ module.exports = app => {
                 user.resume()
                 const jumpSeconds = user.getAwayResumeTime()
                 const elapsedSeconds = user.setAwayResumeTime()
-                if (elapsedSeconds) {
-                  if (ws.readyState === ws.OPEN) {
-                    ws.send( 
-                      JSON.stringify({
-                        message: 'tt:trigger-modal',
-                        seconds: elapsedSeconds
-                      }), wsErrorHandler
-                    )
+                if (elapsedSeconds > 120) {
+                  // greather than 2 mins (either show-modal or logout)
+                  if (elapsedSeconds < 600) {
+                    // less than 10 mins show-modal
+                    if (ws.readyState === ws.OPEN) {
+                      ws.send( 
+                        JSON.stringify({
+                          message: 'tt:trigger-modal',
+                          seconds: elapsedSeconds
+                        }), wsErrorHandler
+                      )
+                    }
+                  }
+                  else {
+                    //greater than 10 mins (logout)
+                    user.sockets.forEach(socket => {
+                      if (socket.readyState === socket.OPEN) {
+                        socket.send(JSON.stringify({
+                          message: 'tt:logout'
+                        }))
+                      }
+                    })
                   }
                 }
                 else {
+                  //less than 2 mins, just update all clients with the current time
                   user.sockets.forEach(socket => {
                     if (socket.readyState === socket.OPEN) {
                       socket.send(JSON.stringify({
