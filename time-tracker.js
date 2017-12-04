@@ -139,6 +139,9 @@ function TimeTrackerUser(key, info, now = () => (new Date())) {
         setAwayStopTime() {
             info.away = new Date()
         },
+        getAwayResumeTime() {
+            return Math.floor(((new Date()) - info.away) / 1000)
+        },
         setAwayResumeTime() {
             if (info.away) {
                 const elapsedSeconds = Math.floor(((new Date()) - info.away) / 1000)

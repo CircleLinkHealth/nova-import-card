@@ -143,6 +143,7 @@ module.exports = app => {
               try {
                 const user = app.getTimeTracker(data.info).get(key, data.info)
                 user.resume()
+                const jumpSeconds = user.getAwayResumeTime()
                 const elapsedSeconds = user.setAwayResumeTime()
                 if (elapsedSeconds) {
                   if (ws.readyState === ws.OPEN) {
@@ -161,7 +162,8 @@ module.exports = app => {
                         message: 'tt:update-previous-seconds',
                         previousSeconds: user.info.totalTime,
                         seconds: user.seconds,
-                        trigger: 'resume'
+                        trigger: 'resume',
+                        jumpSeconds
                       }))
                     }
                   })
