@@ -66,7 +66,7 @@ class PageTimerController extends Controller
             $newActivity->actual_start_time = $startTime->toDateTimeString();
             $newActivity->actual_end_time   = $endTime->toDateTimeString();
             $newActivity->end_time          = $endTime->toDateTimeString();
-            $newActivity->url_full          = $activity['url'];
+            $newActivity->url_full          = $activity['url'] ?? null;
             $newActivity->url_short         = $activity['url_short'];
             $newActivity->program_id        = $data['programId'];
             $newActivity->ip_addr           = $data['ipAddr'];
