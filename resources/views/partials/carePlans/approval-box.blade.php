@@ -1,4 +1,4 @@
-@if($patient->carePlan->provider_approver_id && $patient->carePlan->provider_date)
+@if($patient->carePlan && $patient->carePlan->provider_approver_id && $patient->carePlan->provider_date)
     <div class="col-xs-12">
         <div class="pull-right print-row text-right">
             Approved on {{$patient->carePlan->provider_date->format('m/d/Y')}}
