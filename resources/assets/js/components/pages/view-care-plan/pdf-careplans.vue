@@ -132,6 +132,7 @@
                 
             </div>
             <div class="col-md-6 text-right">
+                <slot name="buttons"></slot>
                 <a @click="openModal()" class="btn btn-info btn-sm inline-block">Upload PDF</a>
                 <slot></slot>
             </div>

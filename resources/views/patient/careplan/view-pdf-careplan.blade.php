@@ -17,10 +17,15 @@
 ?>
 
 <style>
-    .revert-btn {
+    a.revert-btn {
         background-color: #c72e29;
-        border-radius: 0 !important;
+        border-radius: 3px;
         color: white;
+    }
+
+    a.revert-btn:hover,a.revert-btn:focus {
+        color: white;
+        background-color: #b61d18;
     }
 
     .top-20 {
@@ -57,16 +62,14 @@
                 </span>
             </div>
         </div>
-
-        <pdf-careplans></pdf-careplans>
-
-        @if(auth()->user()->hasRole(['administrator', 'provider', 'office_admin', 'med_assistant', 'registered-nurse']))
-            <div class="row" style="padding-top: 20%;">
-                <div class="col-md-12 text-center">
+        
+        <pdf-careplans>
+            <template slot="buttons">
+                @if(auth()->user()->hasRole(['administrator', 'provider', 'office_admin', 'med_assistant', 'registered-nurse']))
                     <a href="{{route('switch.to.web.careplan', ['carePlanId' => $patient->carePlan->id])}}"
-                       class="btn revert-btn inline-block">REVERT TO EDITABLE CAREPLAN FROM CCD/PATIENT DATA</a>
-                </div>
-            </div>
-        @endif
+                            class="btn revert-btn inline-block">REVERT TO EDITABLE CAREPLAN FROM CCD/PATIENT DATA</a>
+                @endif
+            </template>
+        </pdf-careplans>
     </div>
 @endsection
