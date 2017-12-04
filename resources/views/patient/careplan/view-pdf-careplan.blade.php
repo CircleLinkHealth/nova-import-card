@@ -65,7 +65,7 @@
         
         <pdf-careplans>
             <template slot="buttons">
-                @if(auth()->user()->hasRole(['administrator', 'provider', 'office_admin', 'med_assistant', 'registered-nurse']))
+                @if(auth()->user()->hasRole(['administrator', 'provider', 'office_admin', 'med_assistant', 'registered-nurse']) && $patient->carePlan->mode == App\CarePlan::PDF)
                     <a href="{{route('switch.to.web.careplan', ['carePlanId' => $patient->carePlan->id])}}"
                             class="btn revert-btn inline-block">REVERT TO EDITABLE CAREPLAN FROM CCD/PATIENT DATA</a>
                 @endif
