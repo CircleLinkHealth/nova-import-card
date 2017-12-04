@@ -140,7 +140,6 @@ class PracticeController extends Controller
 
         Location::setPrimary(Location::find($params['primary_location']));
 
-        $program->name = str_slug($params['display_name']);
         $program->display_name = $params['display_name'];
         $program->clh_pppm = $params['clh_pppm'];
         $program->term_days = $params['term_days'];
