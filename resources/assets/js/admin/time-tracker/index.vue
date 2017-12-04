@@ -90,7 +90,7 @@
                             if (res.data) {
                                 const data = JSON.parse(res.data)
                                 if (data.message === 'tt:update-previous-seconds' && !!Number(data.previousSeconds)) {
-                                    self.previousSeconds = data.previousSeconds
+                                    if (data.trigger !== 'resume') self.previousSeconds = data.previousSeconds
                                     self.info.totalTime = self.previousSeconds
                                     //self.seconds = Math.max(self.seconds, data.seconds)
                                     self.visible = true //display the component when the previousSeconds value has been received from the server to keep the display up-to-date
@@ -105,6 +105,10 @@
                                 }
                                 else if (data.message === 'tt:trigger-modal') {
                                     EventBus.$emit('away:trigger-modal', data.seconds)
+                                }
+                                else if (data.message === 'tt:logout') {
+                                    EventBus.$emit("tracker:stop")
+                                    location.href = rootUrl('auth/logout')
                                 }
                                 console.log(data);
                             }
