@@ -88,7 +88,7 @@ function TimeTrackerUser(key, info, now = () => (new Date())) {
                                       .map(date => date.end - date.start)
                                       .reduce((a, b) => a + b, 0) / 1000);
           this.dates = this.dates.filter(date => !date.end);
-
+ 
           return this.seconds
         },
         setActivity(_activity) {
