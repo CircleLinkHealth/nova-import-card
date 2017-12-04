@@ -129,7 +129,7 @@ function TimeTrackerUser(key, info, now = () => (new Date())) {
         setInitSeconds(force, nowFn = now) {
             if (force || !info.initSecondsSet) {
                 this.dates.unshift({
-                    start: nowFn().addSeconds(0 - (info.initSeconds || 0)),
+                    start: nowFn().addSeconds(0 - Math.max((info.initSeconds || 0), 0)),
                     end: nowFn()
                 })
                 info.initSecondsSet = true

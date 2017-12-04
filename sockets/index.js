@@ -60,7 +60,7 @@ module.exports = app => {
                   if (data.info.totalTime < user.info.totalTime) {
                     user.info.totalTime = data.info.totalTime
                   }
-                  user.setInitSeconds()
+                  user.setInitSeconds(true)
                   console.log('tt:init-seconds', data.info.initSeconds)
                 }
                 if (user.sockets.indexOf(ws) < 0) user.sockets.push(ws);
@@ -251,7 +251,8 @@ module.exports = app => {
         'sending message to clients:',
         listeners.length,
         'interval:', user.interval(), 
-        'totalTime:', (user.info || {}).totalTime
+        'totalTime:', (user.info || {}).totalTime,
+        'live-count:', user.info.noLiveCount ? '(no)' : '(yes)'
       );
       user.sockets.forEach(socket => {
         if (socket.clientState != 'stopped') {
