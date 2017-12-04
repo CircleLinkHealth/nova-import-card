@@ -67,6 +67,7 @@
         methods: {
             updateTime() {
                 if (this.info.initSeconds == 0) this.info.initSeconds = Math.ceil(startupTime() / 1000)
+                else this.info.initSeconds = -1
                 this.startCount += 1;
                 console.log('tracker:init-seconds', this.info.initSeconds)
                 this.socket.send(
@@ -89,21 +90,25 @@
                             if (res.data) {
                                 const data = JSON.parse(res.data)
                                 if (data.message === 'tt:update-previous-seconds' && !!Number(data.previousSeconds)) {
-                                    self.previousSeconds = Math.max(data.previousSeconds, self.previousSeconds)
+                                    if (data.trigger !== 'resume') self.previousSeconds = data.previousSeconds
                                     self.info.totalTime = self.previousSeconds
-                                    self.seconds = Math.max(self.seconds, data.seconds)
+                                    //self.seconds = Math.max(self.seconds, data.seconds)
                                     self.visible = true //display the component when the previousSeconds value has been received from the server to keep the display up-to-date
                                 }
                                 else if (data.message === 'tt:resume') {
                                     if (!self.noLiveCount && !!Number(data.seconds)) {
                                         self.seconds = Number(data.seconds)
                                         self.showTimer = true
-                                        self.previousSeconds = Math.max(data.previousSeconds || 0, self.previousSeconds)
                                         self.info.totalTime = self.previousSeconds
+                                        self.previousSeconds = data.previousSeconds
                                     }
                                 }
                                 else if (data.message === 'tt:trigger-modal') {
                                     EventBus.$emit('away:trigger-modal', data.seconds)
+                                }
+                                else if (data.message === 'tt:logout') {
+                                    EventBus.$emit("tracker:stop")
+                                    location.href = rootUrl('auth/logout')
                                 }
                                 console.log(data);
                             }
@@ -144,6 +149,7 @@
         },
         mounted() {
             this.previousSeconds = this.info.totalTime || 0;
+            this.info.initSeconds = 0
 
             if (this.info.disabled) {
                 this.visible = false;

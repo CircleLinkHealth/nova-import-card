@@ -68,7 +68,12 @@ if (isset($patient) && ! empty($patient)) {
                                     @else
                                         <pdf-careplans v-cloak>
                                             <span class="btn btn-group text-right">
-                                                @if($patient->carePlan->pdfs->count() > 0)
+                                            <?php
+                                                $patientCarePlan = isset($patient) ? $patient->carePlan : null;
+                                                $patientCarePlanPdfs = isset($patientCarePlan) ? $patientCarePlan->pdfs : null;
+                                                $patientCarePlanPdfsHasItems = isset($patientCarePlanPdfs) ? $patientCarePlanPdfs->count() > 0 : false;
+                                            ?>
+                                                @if ($patientCarePlanPdfsHasItems)
                                                     <a href="{{route('patient.pdf.careplan.print', ['patientId' => $patient->id])}}"
                                                        class="btn revert-btn inline-block">PDF CarePlans</a>
                                                 @endif
