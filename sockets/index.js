@@ -143,8 +143,8 @@ module.exports = app => {
               try {
                 const user = app.getTimeTracker(data.info).get(key, data.info)
                 user.resume()
-                const jumpSeconds = user.getAwayResumeTime()
-                const elapsedSeconds = user.setAwayResumeTime()
+                const elapsedSeconds = user.getAwayResumeTime()
+                user.setAwayResumeTime()
                 if (elapsedSeconds > 120) {
                   // greather than 2 mins (either show-modal or logout)
                   if (elapsedSeconds < 600) {
@@ -178,7 +178,7 @@ module.exports = app => {
                         previousSeconds: user.info.totalTime,
                         seconds: user.seconds,
                         trigger: 'resume',
-                        jumpSeconds
+                        jumpSeconds: elapsedSeconds
                       }))
                     }
                   })
