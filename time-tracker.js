@@ -156,7 +156,7 @@ function TimeTrackerUser(key, info, now = () => (new Date())) {
             if (!!Number(seconds)) {
                 seconds = Math.max(Math.min(seconds, 1800), 0)
                 info.initSeconds = seconds
-                info.totalTime += seconds
+                //info.totalTime += seconds
                 this.setInitSeconds(true)
             }
         }
