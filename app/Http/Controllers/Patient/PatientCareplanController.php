@@ -1000,4 +1000,14 @@ class PatientCareplanController extends Controller
 
         return redirect()->route('patient.careplan.print', ['patientId' => $cp->user_id]);
     }
+
+    public function switchToPdfMode($carePlanId)
+    {
+        $cp = CarePlan::find($carePlanId);
+
+        $cp->mode = CarePlan::PDF;
+        $cp->save();
+
+        return redirect()->route('patient.pdf.careplan.print', ['patientId' => $cp->user_id]);
+    }
 }
