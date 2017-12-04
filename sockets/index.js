@@ -12,7 +12,7 @@ module.exports = app => {
   app.timeTracker = timeTracker
   app.timeTrackerNoLiveCount = timeTrackerNoLiveCount
   app.getTimeTracker = (info) => {
-    if (info.noLiveCount) return timeTrackerNoLiveCount
+    if (info && info.noLiveCount) return timeTrackerNoLiveCount
     else return timeTracker
   }
 
@@ -57,7 +57,7 @@ module.exports = app => {
                 const user = app.getTimeTracker(data.info).get(key, data.info)
                 if (user.info) {
                   user.info.initSeconds = data.info.initSeconds;
-                  if (data.info.totalTime < user.info.totalTime) {
+                  if ((data.info.totalTime < user.info.totalTime) || (user.sockets.length === 0)) {
                     user.info.totalTime = data.info.totalTime
                   }
                   user.setInitSeconds(true)
