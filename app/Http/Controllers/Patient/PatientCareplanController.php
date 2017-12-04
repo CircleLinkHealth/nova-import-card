@@ -991,6 +991,13 @@ class PatientCareplanController extends Controller
         return redirect()->back()->with('messages', ['successfully updated patient care plan']);
     }
 
+    /**
+     * Change CarePlan Mode to Web
+     *
+     * @param $carePlanId
+     *
+     * @return \Illuminate\Http\RedirectResponse
+     */
     public function switchToWebMode($carePlanId)
     {
         $cp = CarePlan::find($carePlanId);
@@ -1001,6 +1008,13 @@ class PatientCareplanController extends Controller
         return redirect()->route('patient.careplan.print', ['patientId' => $cp->user_id]);
     }
 
+    /**
+     * Change CarePlan Mode to Pdf
+     *
+     * @param $carePlanId
+     *
+     * @return \Illuminate\Http\RedirectResponse
+     */
     public function switchToPdfMode($carePlanId)
     {
         $cp = CarePlan::find($carePlanId);
