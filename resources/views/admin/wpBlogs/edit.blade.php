@@ -25,9 +25,9 @@
                     <div class="panel-body">
                         @include('errors.errors')
 
-                        <div class="row">
-                            {!! Form::open(array('url' => URL::route('admin.programs.update', array('id' => $program->id)), 'class' => 'form-horizontal')) !!}
-                        </div>
+
+                        {!! Form::open(array('url' => URL::route('admin.programs.update', array('id' => $program->id)), 'class' => 'form-horizontal')) !!}
+
 
                         <div class="row" style="">
                             <div class="col-sm-12">
@@ -83,7 +83,8 @@
                                     <select id="primary_location" name="primary_location"
                                             class="primary_location dropdown Valid form-control" required>
                                         @foreach($locations as $location)
-                                            <option value="{{$location->id}}" @if($location->is_primary) selected @endif>{{$location->name}}</option>
+                                            <option value="{{$location->id}}"
+                                                    @if($location->is_primary) selected @endif>{{$location->name}}</option>
                                         @endforeach
                                     </select>
                                 </div>
