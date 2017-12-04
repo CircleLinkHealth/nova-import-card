@@ -142,21 +142,25 @@ function TimeTrackerUser(key, info, now = () => (new Date())) {
         getAwayResumeTime() {
             return Math.floor(((new Date()) - (info.away || (new Date()))) / 1000)
         },
-        setAwayResumeTime() {
+        setAwayResumeTime(_activity) {
             if (info.away) {
                 const elapsedSeconds = this.getAwayResumeTime()
                 if (elapsedSeconds < 120) {
-                    this.setAwaySeconds(elapsedSeconds)
+                    this.setAwaySeconds(elapsedSeconds, _activity)
                     return 0
                 }
                 return elapsedSeconds
             }
         },
-        setAwaySeconds(seconds) {
+        setAwaySeconds(seconds, _activity) {
             if (!!Number(seconds)) {
                 seconds = Math.max(Math.min(seconds, 1800), 0)
                 info.initSeconds = seconds
                 this.setInitSeconds(true)
+                info.away = null
+                if (_activity) {
+                    this.setActivity(_activity)
+                }
             }
         }
     }

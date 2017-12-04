@@ -144,7 +144,7 @@ module.exports = app => {
                 const user = app.getTimeTracker(data.info).get(key, data.info)
                 user.resume()
                 const elapsedSeconds = user.getAwayResumeTime()
-                user.setAwayResumeTime()
+                user.setAwayResumeTime({ name: data.info.activity })
                 if (elapsedSeconds > 120) {
                   // greather than 2 mins (either show-modal or logout)
                   if (elapsedSeconds < 600) {
@@ -243,7 +243,7 @@ module.exports = app => {
             timeTrackerNoLiveCount.exit(key);
   
             axios.post(url, requestData).then((response) => {
-              console.log(response.status, response.data)
+              console.log(response.status, response.data, requestData)
             }).catch((err) => {
               console.error(err)
             })
