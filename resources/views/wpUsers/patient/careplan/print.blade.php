@@ -68,6 +68,11 @@ if (isset($patient) && ! empty($patient)) {
                                     @else
                                         <pdf-careplans v-cloak>
                                             <span class="btn btn-group text-right">
+                                                @if($patient->carePlan->pdfs->count() > 0)
+                                                    <a href="{{route('patient.pdf.careplan.print', ['patientId' => $patient->id])}}"
+                                                       class="btn revert-btn inline-block">PDF CarePlans</a>
+                                                @endif
+
                                                 @if ( ($patient->carePlanStatus == 'qa_approved' && auth()->user()->canApproveCarePlans()) || ($patient->carePlanStatus == 'draft' && auth()->user()->hasPermission('care-plan-qa-approve')) )
                                                     <a style="margin-right:10px;"
                                                        class="btn btn-info btn-sm inline-block"

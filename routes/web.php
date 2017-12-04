@@ -293,6 +293,11 @@ Route::group(['middleware' => 'auth'], function () {
             'as'   => 'switch.to.web.careplan',
         ]);
 
+        Route::get('switch-to-pdf-careplan/{carePlanId}', [
+            'uses' => 'Patient\PatientCareplanController@switchToPdfMode',
+            'as'   => 'switch.to.pdf.careplan',
+        ]);
+
         Route::get('listing', [
             'uses' => 'Patient\PatientController@showPatientListing',
             'as'   => 'patients.listing',

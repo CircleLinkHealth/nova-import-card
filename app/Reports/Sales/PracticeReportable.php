@@ -145,7 +145,7 @@ class PracticeReportable implements Reportable
      */
     public function totalBilledPatientsCount(Carbon $month = null)
     {
-        $q = PatientMonthlySummary::whereHas('patient_info', function ($q) {
+        $q = PatientMonthlySummary::whereHas('patientInfo', function ($q) {
             $q->whereHas('user', function ($k) {
                 $k->whereProgramId($this->practice->id);
             });
