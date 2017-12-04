@@ -73,21 +73,6 @@ class PracticeController extends Controller
 
         $program->save();
 
-        // attach to all users who get auto attached
-        $users = User::where('auto_attach_programs', '=', '1')->get();
-        if ($users) {
-            foreach ($users as $user) {
-                // attach program
-                if (!$program) {
-                    continue 1;
-                }
-                if (!$user->practices->contains($program->id)) {
-                    $user->practices()->attach($program->id);
-                }
-                $user->save();
-            }
-        }
-
         return redirect()->route('admin.programs.edit', ['program' => $program])->with('messages', ['successfully created new program'])->send();
     }
 
