@@ -49,11 +49,6 @@
                             </div>
 
                             <div class="row" style="margin-top:20px;">
-                                <div class="col-xs-2">{!! Form::label('name', 'Unique Name:') !!}</div>
-                                <div class="col-xs-10">{!! Form::text('name', '', ['class' => 'form-control', 'style' => 'width:100%;']) !!}</div>
-                            </div>
-
-                            <div class="row" style="margin-top:20px;">
                                 <div class="col-xs-2">{!! Form::label('bill_to_name', 'Bill To:') !!}</div>
                                 <div class="col-xs-10">{!! Form::text('bill_to_name', '', ['class' => 'form-control', 'style' => 'width:100%;']) !!}</div>
                             </div>

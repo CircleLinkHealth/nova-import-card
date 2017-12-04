@@ -61,7 +61,7 @@ class PracticeController extends Controller
 
         $program = new Practice;
 
-        $program->name = $params['name'];
+        $program->name = str_slug($params['display_name']);
         $program->display_name = $params['display_name'];
         $program->weekly_report_recipients = $params['weekly_report_recipients'];
         $program->invoice_recipients = $params['invoice_recipients'];
@@ -155,7 +155,7 @@ class PracticeController extends Controller
 
         Location::setPrimary(Location::find($params['primary_location']));
 
-        $program->name = $params['name'];
+        $program->name = str_slug($params['display_name']);
         $program->display_name = $params['display_name'];
         $program->clh_pppm = $params['clh_pppm'];
         $program->term_days = $params['term_days'];
