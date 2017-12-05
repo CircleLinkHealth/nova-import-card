@@ -101,13 +101,16 @@ class ApproveBillablePatientsService
             $currentProblem = $summary->{"problem_$i"};
 
             if (!$currentProblem) {
-                $summary->{"problem_$i"} = $billableProblems[0];
+                $summary->{"problem_$i"} = $billableProblems[0]['id'];
                 $billableProblems->forget(0);
             } else {
                 $forgetIndex = $billableProblems->search(function($item) use ($currentProblem) {
                     return $item['id'] == $currentProblem;
                 });
-                $billableProblems->forget($forgetIndex);
+
+                if ($forgetIndex) {
+                    $billableProblems->forget($forgetIndex);
+                }
             }
         }
 
