@@ -2,84 +2,27 @@
 
 use App\Patient;
 use App\PatientMonthlySummary;
+use App\Repositories\ApproveBillablePatientsRepository;
 use App\User;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\URL;
-use Yajra\Datatables\Facades\Datatables;
 
 class ApproveBillablePatientsService
 {
+    private $repo;
 
-    private $month;
-    private $practice;
-    private $patients;
-
-    public function __construct(
-        Carbon $month,
-        $practice
-    ) {
-
-        $this->month    = $month->firstOfMonth();
-        $this->practice = $practice;
+    public function __construct(ApproveBillablePatientsRepository $repo)
+    {
+        $this->repo = $repo;
     }
 
-    public function dataV1()
+    public function patientsToApprove($practiceId, Carbon $month)
     {
+        $data = [];
 
-        return $this->patients = User::with([
-            'ccdProblems'      => function ($query) {
-                $query->whereNotNull('cpm_problem_id');
-            },
-            'billableProblems',
-            'patientSummaries' => function ($query) {
-                $query->where('month_year', $this->month->toDateString())
-                      ->where('ccm_time', '>=', 1200);
-            },
-            'cpmProblems',
-            'patientInfo',
-        ])
-                                     ->has('patientInfo')
-                                     ->whereHas('patientSummaries', function ($query) {
-                                         $query->where('month_year', $this->month->toDateString())
-                                               ->where('ccm_time', '>=', 1200)
-                                               ->with(['billableProblem1', 'billableProblem2']);
-                                     })
-                                     ->ofType('participant')
-                                     ->where('program_id', '=', $this->practice)
-                                     ->get();
-    }
+        $patients = $this->repo->billablePatients($practiceId, $month);
 
-    public function dataV2()
-    {
-
-        $this->patients = Patient
-            ::whereHas('patientSummaries', function ($q) {
-                $q
-                    ->where('month_year', $this->month->toDateString())
-                    ->where('no_of_successful_calls', '>', 0);
-            });
-
-        if ($this->practice != 0) {
-            $practice = $this->practice;
-
-            $this->patients = $this->patients->whereHas('user', function ($k) use (
-                $practice
-            ) {
-                $k->whereProgramId($practice);
-            });
-        }
-
-        $this->patients = $this->patients->orderBy('updated_at', 'desc')
-                                         ->get();
-
-        return $this->patients;
-    }
-
-    public function format()
-    {
-        $formatted = [];
-
-        foreach ($this->patients as $u) {
+        foreach ($patients as $u) {
             $info   = $u->patientInfo;
             $report = $info->patientSummaries->first();
 
@@ -109,7 +52,7 @@ class ApproveBillablePatientsService
                     'page'    => 1,
                 ]) . "  target='_blank' >" . $u->fullName . "</a>";
 
-            $formatted[] = [
+            $data[] = [
                 'name'                   => $name,
                 'provider'               => $u->billingProvider()->fullName,
                 'practice'               => $u->primaryPractice->display_name,
@@ -133,15 +76,7 @@ class ApproveBillablePatientsService
             ];
         }
 
-        return Datatables::of(collect($formatted))
-                         ->addColumn('background_color', function ($a) {
-                             if ($a['lacksProblems'] || $a['status'] == 'withdrawn' || $a['status'] == 'paused' || $a['no_of_successful_calls'] < 1) {
-                                 return 'rgba(255, 252, 96, 0.407843)';
-                             } else {
-                                 return '';
-                             }
-                         })
-                         ->make(true);
+        return $data;
     }
 
     private function fillSummaryProblems(User $patient, PatientMonthlySummary $summary)
