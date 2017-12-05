@@ -174,15 +174,6 @@
                     }
                 })
 
-                // EventBus.$on('tracker:inactivity-cancel', () => {
-                //     if (this.socket && this.socket.readyState === WebSocket.OPEN) {
-                //         this.socket.send(JSON.stringify({ message: STATE.INACTIVITY_CANCEL }))
-                //         setTimeout(() => {
-                //             document.location.href = rootUrl('manage-patients/dashboard')
-                //         }, 700)
-                //     }
-                // })
-
                 EventBus.$on('tracker:modal:reply', (response) => {
                     if (this.socket && this.socket.readyState === WebSocket.OPEN) {
                         this.socket.send(JSON.stringify({ message: STATE.MODAL_RESPONSE, info: this.info, response }))
