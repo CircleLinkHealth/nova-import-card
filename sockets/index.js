@@ -79,6 +79,18 @@ module.exports = app => {
                 return;
               }
             }
+            else if (data.message === 'client:modal') {
+              try {
+                const info = data.info
+                const user = app.getTimeTracker(info).get(info)
+                user.respondToModal(!!data.response, info)
+
+              }
+              catch (ex) {
+                errorThrow(ex, ws)
+                return;
+              }
+            }
             else if (data.message === 'PING') {
 
             }

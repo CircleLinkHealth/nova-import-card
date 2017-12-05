@@ -94,8 +94,9 @@ function TimeTrackerUser(info, now = () => (new Date())) {
         url: info.submitUrl,
         programId: info.programId,
         ipAddr: info.ipAddr,
+        totalTime: info.totalTime,
         get totalSeconds() {
-            return this.activities.reduce((a, b) => a + b.duration, 0) + info.totalTime
+            return this.activities.reduce((a, b) => a + b.duration, 0) + this.totalTime
         },
         get allSockets() {
             return this.activities.map(activity => activity.sockets).reduce((a, b) => a.concat(b), [])
@@ -109,6 +110,7 @@ function TimeTrackerUser(info, now = () => (new Date())) {
         validateInfo(info)
         validateWebSocket(ws)
         user.enter(info, ws)
+        user.totalTime = info.totalTime
         ws.providerId = info.providerId
         ws.patientId = info.patientId
         let activity = user.activities.find(item => item.name == info.activity)
@@ -133,6 +135,20 @@ function TimeTrackerUser(info, now = () => (new Date())) {
         }
         if (activity.sockets.indexOf(ws) < 0) {
             activity.sockets.push(ws)
+        }
+        /**
+         * check inactive seconds
+         */
+        if (user.inactiveSeconds) {
+            if (user.inactiveSeconds < 120) {
+                user.respondToModal(true)
+            }
+            else if (user.inactiveSeconds < 600) {
+                if (ws.readyState === ws.OPEN) ws.send(JSON.stringify({ message: 'server:modal' }))
+            }
+            else {
+                if (ws.readyState === ws.OPEN) ws.send(JSON.stringify({ message: 'server:logout' }))
+            }
         }
         ws.active = true
     }
@@ -164,6 +180,17 @@ function TimeTrackerUser(info, now = () => (new Date())) {
                 ws.send(JSON.stringify({ message: 'server:sync', seconds: user.totalSeconds }))
             }
         })
+    }
+
+    user.respondToModal = (response) => {
+        let activity = user.activities.find(item => item.name == info.activity)
+        if (response) {
+            activity.duration += user.inactiveSeconds
+        }
+        else {
+            activity.duration += 30
+        }
+        user.inactiveSeconds = 0
     }
 
     return user
