@@ -250,10 +250,10 @@ class PatientMonthlySummary extends Model
     }
 
     public function billableProblem1() {
-        return $this->hasOne(Problem::class, 'ccd_problem_1');
+        return $this->belongsTo(Problem::class, 'problem_1');
     }
 
     public function billableProblem2() {
-        return $this->hasOne(Problem::class, 'ccd_problem_1');
+        return $this->belongsTo(Problem::class, 'problem_2');
     }
 }
