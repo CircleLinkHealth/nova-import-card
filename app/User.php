@@ -200,8 +200,8 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
     public function cpmBiometrics()
     {
         return $this->belongsToMany(CpmBiometric::class, 'cpm_biometrics_users', 'patient_id')
-            ->withPivot('cpm_instruction_id')
-            ->withTimestamps('created_at', 'updated_at');
+                    ->withPivot('cpm_instruction_id')
+                    ->withTimestamps('created_at', 'updated_at');
     }
 
     /*****/
@@ -218,8 +218,8 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
     public function cpmLifestyles()
     {
         return $this->belongsToMany(CpmLifestyle::class, 'cpm_lifestyles_users', 'patient_id')
-            ->withPivot('cpm_instruction_id')
-            ->withTimestamps('created_at', 'updated_at');
+                    ->withPivot('cpm_instruction_id')
+                    ->withTimestamps('created_at', 'updated_at');
     }
 
     /**
@@ -228,8 +228,8 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
     public function cpmMedicationGroups()
     {
         return $this->belongsToMany(CpmMedicationGroup::class, 'cpm_medication_groups_users', 'patient_id')
-            ->withPivot('cpm_instruction_id')
-            ->withTimestamps('created_at', 'updated_at');
+                    ->withPivot('cpm_instruction_id')
+                    ->withTimestamps('created_at', 'updated_at');
     }
 
     /**
@@ -238,8 +238,8 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
     public function cpmMiscs()
     {
         return $this->belongsToMany(CpmMisc::class, 'cpm_miscs_users', 'patient_id')
-            ->withPivot('cpm_instruction_id')
-            ->withTimestamps('created_at', 'updated_at');
+                    ->withPivot('cpm_instruction_id')
+                    ->withTimestamps('created_at', 'updated_at');
     }
 
     /**
@@ -248,8 +248,8 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
     public function cpmSymptoms()
     {
         return $this->belongsToMany(CpmSymptom::class, 'cpm_symptoms_users', 'patient_id')
-            ->withPivot('cpm_instruction_id')
-            ->withTimestamps('created_at', 'updated_at');
+                    ->withPivot('cpm_instruction_id')
+                    ->withTimestamps('created_at', 'updated_at');
     }
 
     /**
@@ -389,11 +389,11 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
     public function viewablePatientIds(): array
     {
         return User::ofType('participant')
-            ->whereHas('practices', function ($q) {
-                $q->whereIn('program_id', $this->viewableProgramIds());
-            })
-            ->pluck('id')
-            ->all();
+                   ->whereHas('practices', function ($q) {
+                       $q->whereIn('program_id', $this->viewableProgramIds());
+                   })
+                   ->pluck('id')
+                   ->all();
     }
 
     public function viewableProgramIds(): array
@@ -443,9 +443,9 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
 
     public function userMeta($key = null)
     {
-        $userMeta = $this->meta->pluck('meta_value', 'meta_key')->all();
+        $userMeta                = $this->meta->pluck('meta_value', 'meta_key')->all();
         $userMeta['user_config'] = $this->userConfig();
-        if (!$userMeta) {
+        if ( ! $userMeta) {
             return false;
         } else {
             return $userMeta;
@@ -454,9 +454,9 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
 
     public function userConfig()
     {
-        $key = 'wp_' . $this->primaryProgramId() . '_user_config';
+        $key        = 'wp_' . $this->primaryProgramId() . '_user_config';
         $userConfig = $this->meta->where('meta_key', $key)->first();
-        if (!$userConfig) {
+        if ( ! $userConfig) {
             return false;
         } else {
             return unserialize($userConfig['meta_value']);
@@ -479,8 +479,8 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
     public function getUserMetaByKey($key)
     {
         $value = '';
-        $meta = $this->meta->where('meta_key', $key)->first();
-        if (!empty($meta && $meta->meta_value != '')) {
+        $meta  = $this->meta->where('meta_key', $key)->first();
+        if ( ! empty($meta && $meta->meta_value != '')) {
             $value = $meta->meta_value;
         }
 
@@ -492,14 +492,14 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
         $value
     ) {
         $meta = $this->meta->where('meta_key', $key)->first();
-        if (!empty($meta)) {
+        if ( ! empty($meta)) {
             $meta->meta_value = $value;
             $meta->save();
         } else {
-            $meta = new UserMeta;
-            $meta->meta_key = $key;
+            $meta             = new UserMeta;
+            $meta->meta_key   = $key;
             $meta->meta_value = $value;
-            $meta->user_id = $this->id;
+            $meta->user_id    = $this->id;
             $this->meta()->save($meta);
             $this->load('meta');
         }
@@ -530,13 +530,13 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
         $key,
         $value
     ) {
-        $configKey = 'wp_' . $this->primaryProgramId() . '_user_config';
+        $configKey  = 'wp_' . $this->primaryProgramId() . '_user_config';
         $userConfig = UserMeta::where('user_id', $this->id)->where('meta_key', $configKey)->first();
         if (empty($userConfig)) {
-            $userConfig = new UserMeta;
-            $userConfig->meta_key = $configKey;
+            $userConfig             = new UserMeta;
+            $userConfig->meta_key   = $configKey;
             $userConfig->meta_value = serialize([]);
-            $userConfig->user_id = $this->id;
+            $userConfig->user_id    = $this->id;
             $userConfig->save();
             $userConfigArray = [];
         } else {
@@ -549,7 +549,7 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
             $value = serialize($value);
         }
         */
-        $userConfigArray[$key] = $value;
+        $userConfigArray[$key]  = $value;
         $userConfig->meta_value = serialize($userConfigArray);
         $userConfig->save();
 
@@ -560,7 +560,7 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
         $key,
         $value
     ) {
-        $func = create_function('$c', 'return strtoupper($c[1]);');
+        $func      = create_function('$c', 'return strtoupper($c[1]);');
         $attribute = preg_replace_callback('/_([a-z])/', $func, $key);
 
         // these are now on User model, no longer remote attributes:
@@ -620,7 +620,7 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
     public function setFirstNameAttribute($value)
     {
         $this->attributes['first_name'] = ucwords($value);
-        $this->display_name = $this->fullName;
+        $this->display_name             = $this->fullName;
 
         return true;
     }
@@ -628,7 +628,7 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
     public function setLastNameAttribute($value)
     {
         $this->attributes['last_name'] = $value;
-        $this->display_name = $this->fullName;
+        $this->display_name            = $this->fullName;
 
         return true;
     }
@@ -636,7 +636,7 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
     public function getFullNameAttribute()
     {
         $firstName = ucwords($this->first_name);
-        $lastName = ucwords($this->last_name);
+        $lastName  = ucwords($this->last_name);
 
         return "$firstName $lastName {$this->suffix}";
     }
@@ -650,7 +650,7 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
 
     public function getPreferredCcContactDaysAttribute()
     {
-        if (!$this->patientInfo) {
+        if ( ! $this->patientInfo) {
             return '';
         }
 
@@ -659,7 +659,7 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
 
     public function setPreferredCcContactDaysAttribute($value)
     {
-        if (!$this->patientInfo) {
+        if ( ! $this->patientInfo) {
             return '';
         }
         $this->patientInfo->preferred_cc_contact_days = $value;
@@ -670,7 +670,7 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
 
     public function getActiveDateAttribute()
     {
-        if (!$this->patientInfo) {
+        if ( ! $this->patientInfo) {
             return '';
         }
 
@@ -679,7 +679,7 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
 
     public function setActiveDateAttribute($value)
     {
-        if (!$this->patientInfo) {
+        if ( ! $this->patientInfo) {
             return '';
         }
         $this->patientInfo->active_date = $value;
@@ -703,7 +703,7 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
 
     public function getSpecialtyAttribute()
     {
-        if (!$this->providerInfo) {
+        if ( ! $this->providerInfo) {
             return '';
         }
 
@@ -712,7 +712,7 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
 
     public function setSpecialtyAttribute($value)
     {
-        if (!$this->providerInfo) {
+        if ( ! $this->providerInfo) {
             return '';
         }
         $this->providerInfo->specialty = $value;
@@ -721,7 +721,7 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
 
     public function getNpiNumberAttribute()
     {
-        if (!$this->providerInfo) {
+        if ( ! $this->providerInfo) {
             return '';
         }
 
@@ -730,7 +730,7 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
 
     public function setNpiNumberAttribute($value)
     {
-        if (!$this->providerInfo) {
+        if ( ! $this->providerInfo) {
             return '';
         }
         $this->providerInfo->npi_number = $value;
@@ -739,7 +739,7 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
 
     public function getDailyReminderOptinAttribute()
     {
-        if (!$this->patientInfo) {
+        if ( ! $this->patientInfo) {
             return '';
         }
 
@@ -748,7 +748,7 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
 
     public function setDailyReminderOptinAttribute($value)
     {
-        if (!$this->patientInfo) {
+        if ( ! $this->patientInfo) {
             return '';
         }
         $this->patientInfo->daily_reminder_optin = $value;
@@ -759,7 +759,7 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
 
     public function getDailyReminderTimeAttribute()
     {
-        if (!$this->patientInfo) {
+        if ( ! $this->patientInfo) {
             return '';
         }
 
@@ -768,7 +768,7 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
 
     public function setDailyReminderTimeAttribute($value)
     {
-        if (!$this->patientInfo) {
+        if ( ! $this->patientInfo) {
             return '';
         }
         $this->patientInfo->daily_reminder_time = $value;
@@ -779,7 +779,7 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
 
     public function getDailyReminderAreasAttribute()
     {
-        if (!$this->patientInfo) {
+        if ( ! $this->patientInfo) {
             return '';
         }
 
@@ -788,7 +788,7 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
 
     public function setDailyReminderAreasAttribute($value)
     {
-        if (!$this->patientInfo) {
+        if ( ! $this->patientInfo) {
             return '';
         }
         $this->patientInfo->daily_reminder_areas = $value;
@@ -799,7 +799,7 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
 
     public function getHospitalReminderOptinAttribute()
     {
-        if (!$this->patientInfo) {
+        if ( ! $this->patientInfo) {
             return '';
         }
 
@@ -808,7 +808,7 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
 
     public function setHospitalReminderOptinAttribute($value)
     {
-        if (!$this->patientInfo) {
+        if ( ! $this->patientInfo) {
             return '';
         }
         $this->patientInfo->hospital_reminder_optin = $value;
@@ -819,7 +819,7 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
 
     public function getHospitalReminderTimeAttribute()
     {
-        if (!$this->patientInfo) {
+        if ( ! $this->patientInfo) {
             return '';
         }
 
@@ -828,7 +828,7 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
 
     public function setHospitalReminderTimeAttribute($value)
     {
-        if (!$this->patientInfo) {
+        if ( ! $this->patientInfo) {
             return '';
         }
         $this->patientInfo->hospital_reminder_time = $value;
@@ -839,7 +839,7 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
 
     public function getHospitalReminderAreasAttribute()
     {
-        if (!$this->patientInfo) {
+        if ( ! $this->patientInfo) {
             return '';
         }
 
@@ -848,7 +848,7 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
 
     public function setHospitalReminderAreasAttribute($value)
     {
-        if (!$this->patientInfo) {
+        if ( ! $this->patientInfo) {
             return '';
         }
         $this->patientInfo->hospital_reminder_areas = $value;
@@ -859,7 +859,7 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
 
     public function getPrimaryPhoneAttribute()
     {
-        if (!$this->phoneNumbers) {
+        if ( ! $this->phoneNumbers) {
             return '';
         }
         $phoneNumber = $this->phoneNumbers->where('is_primary', 1)->first();
@@ -912,7 +912,7 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
 
     public function getPhoneAttribute()
     {
-        if (!$this->phoneNumbers) {
+        if ( ! $this->phoneNumbers) {
             return '';
         }
 
@@ -941,18 +941,18 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
 
     public function setPhoneAttribute($value)
     {
-        if (!$this->phoneNumbers) {
+        if ( ! $this->phoneNumbers) {
             return '';
         }
         $phoneNumber = $this->phoneNumbers->where('type', 'home')->first();
         if ($phoneNumber) {
             $phoneNumber->number = $value;
         } else {
-            $phoneNumber = new PhoneNumber();
-            $phoneNumber->user_id = $this->id;
+            $phoneNumber             = new PhoneNumber();
+            $phoneNumber->user_id    = $this->id;
             $phoneNumber->is_primary = 1;
-            $phoneNumber->number = $value;
-            $phoneNumber->type = 'home';
+            $phoneNumber->number     = $value;
+            $phoneNumber->type       = 'home';
         }
         $phoneNumber->save();
 
@@ -961,7 +961,7 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
 
     public function getWorkPhoneNumberAttribute()
     {
-        if (!$this->phoneNumbers) {
+        if ( ! $this->phoneNumbers) {
             return '';
         }
         $phoneNumber = $this->phoneNumbers->where('type', 'work')->first();
@@ -974,17 +974,17 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
 
     public function setWorkPhoneNumberAttribute($value)
     {
-        if (!$this->phoneNumbers) {
+        if ( ! $this->phoneNumbers) {
             return '';
         }
         $phoneNumber = $this->phoneNumbers->where('type', 'work')->first();
         if ($phoneNumber) {
             $phoneNumber->number = $value;
         } else {
-            $phoneNumber = new PhoneNumber();
+            $phoneNumber          = new PhoneNumber();
             $phoneNumber->user_id = $this->id;
-            $phoneNumber->number = $value;
-            $phoneNumber->type = 'work';
+            $phoneNumber->number  = $value;
+            $phoneNumber->type    = 'work';
         }
         $phoneNumber->save();
 
@@ -993,7 +993,7 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
 
     public function getMobilePhoneNumberAttribute()
     {
-        if (!$this->phoneNumbers) {
+        if ( ! $this->phoneNumbers) {
             return '';
         }
         $phoneNumber = $this->phoneNumbers->where('type', 'mobile')->first();
@@ -1006,17 +1006,17 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
 
     public function setMobilePhoneNumberAttribute($value)
     {
-        if (!$this->phoneNumbers) {
+        if ( ! $this->phoneNumbers) {
             return '';
         }
         $phoneNumber = $this->phoneNumbers->where('type', 'mobile')->first();
         if ($phoneNumber) {
             $phoneNumber->number = $value;
         } else {
-            $phoneNumber = new PhoneNumber();
+            $phoneNumber          = new PhoneNumber();
             $phoneNumber->user_id = $this->id;
-            $phoneNumber->number = $value;
-            $phoneNumber->type = 'mobile';
+            $phoneNumber->number  = $value;
+            $phoneNumber->type    = 'mobile';
         }
         $phoneNumber->save();
 
@@ -1025,7 +1025,7 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
 
     public function getBirthDateAttribute()
     {
-        if (!$this->patientInfo) {
+        if ( ! $this->patientInfo) {
             return '';
         }
 
@@ -1034,7 +1034,7 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
 
     public function setBirthDateAttribute($value)
     {
-        if (!$this->patientInfo) {
+        if ( ! $this->patientInfo) {
             return '';
         }
         $this->patientInfo->birth_date = str_replace('-', '/', $value);
@@ -1045,7 +1045,7 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
 
     public function getGenderAttribute()
     {
-        if (!$this->patientInfo) {
+        if ( ! $this->patientInfo) {
             return '';
         }
 
@@ -1054,7 +1054,7 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
 
     public function setGenderAttribute($value)
     {
-        if (!$this->patientInfo) {
+        if ( ! $this->patientInfo) {
             return '';
         }
         $this->patientInfo->gender = $value;
@@ -1071,7 +1071,7 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
     public function getAgeAttribute()
     {
         $from = new DateTime($this->birthDate);
-        $to = new DateTime('today');
+        $to   = new DateTime('today');
 
         return $from->diff($to)->y;
     }
@@ -1083,7 +1083,7 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
 
     public function setCurMonthActivityTimeAttribute($value)
     {
-        if (!$this->patientInfo) {
+        if ( ! $this->patientInfo) {
             return '';
         }
         $this->patientInfo->cur_month_activity_time = $value;
@@ -1092,7 +1092,7 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
 
     public function getPreferredContactTimeAttribute()
     {
-        if (!$this->patientInfo) {
+        if ( ! $this->patientInfo) {
             return '';
         }
 
@@ -1101,7 +1101,7 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
 
     public function setPreferredContactTimeAttribute($value)
     {
-        if (!$this->patientInfo) {
+        if ( ! $this->patientInfo) {
             return '';
         }
         $this->patientInfo->preferred_contact_time = $value;
@@ -1112,7 +1112,7 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
 
     public function getPreferredContactMethodAttribute()
     {
-        if (!$this->patientInfo) {
+        if ( ! $this->patientInfo) {
             return '';
         }
 
@@ -1121,7 +1121,7 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
 
     public function setPreferredContactMethodAttribute($value)
     {
-        if (!$this->patientInfo) {
+        if ( ! $this->patientInfo) {
             return '';
         }
         $this->patientInfo->preferred_contact_method = $value;
@@ -1132,7 +1132,7 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
 
     public function getPreferredContactLanguageAttribute()
     {
-        if (!$this->patientInfo) {
+        if ( ! $this->patientInfo) {
             return '';
         }
 
@@ -1141,7 +1141,7 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
 
     public function setPreferredContactLanguageAttribute($value)
     {
-        if (!$this->patientInfo) {
+        if ( ! $this->patientInfo) {
             return '';
         }
         $this->patientInfo->preferred_contact_language = $value;
@@ -1157,7 +1157,7 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
 
     public function getMRNAttribute()
     {
-        if (!$this->patientInfo) {
+        if ( ! $this->patientInfo) {
             return '';
         }
 
@@ -1171,7 +1171,7 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
 
     public function setMRNAttribute($value)
     {
-        if (!$this->patientInfo) {
+        if ( ! $this->patientInfo) {
             return '';
         }
         $this->patientInfo->mrn_number = $value;
@@ -1182,7 +1182,7 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
 
     public function getCareTeamAttribute()
     {
-        $ct = [];
+        $ct              = [];
         $careTeamMembers = $this->careTeamMembers->where('type', 'member');
         if ($careTeamMembers->count() > 0) {
             foreach ($careTeamMembers as $careTeamMember) {
@@ -1195,7 +1195,7 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
 
     public function setCareTeamAttribute(array $memberUserIds)
     {
-        if (!is_array($memberUserIds)) {
+        if ( ! is_array($memberUserIds)) {
             $this->careTeamMembers()->where('type', 'member')->delete();
 
             return false; // must be array
@@ -1212,10 +1212,10 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
             if ($careTeamMember) {
                 $careTeamMember->member_user_id = $memberUserId;
             } else {
-                $careTeamMember = new CarePerson();
-                $careTeamMember->user_id = $this->id;
+                $careTeamMember                 = new CarePerson();
+                $careTeamMember->user_id        = $this->id;
                 $careTeamMember->member_user_id = $memberUserId;
-                $careTeamMember->type = 'member';
+                $careTeamMember->type           = 'member';
             }
             $careTeamMember->save();
         }
@@ -1236,23 +1236,29 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
      */
     public function getCareTeamReceivesAlertsAttribute()
     {
-        if (!$this->primaryPractice->send_alerts) {
+        if ( ! $this->primaryPractice->send_alerts) {
             return new Collection();
         }
 
         $careTeam = $this->careTeamMembers->where('alert', '=', true)
-            ->keyBy('member_user_id')
-            ->unique()
-            ->values();
+                                          ->keyBy('member_user_id')
+                                          ->unique()
+                                          ->values();
 
         $users = new Collection();
 
+        //Get email forwarding
         foreach ($careTeam as $carePerson) {
-            if ($carePerson->user->forwardAlertsTo->isEmpty() && $carePerson->user) {
+            $forwards = $carePerson->user->forwardAlertsTo->whereIn('pivot.name', [
+                User::FORWARD_ALERTS_IN_ADDITION_TO_PROVIDER,
+                User::FORWARD_ALERTS_INSTEAD_OF_PROVIDER,
+            ]);
+
+            if ($forwards->isEmpty() && $carePerson->user) {
                 $users->push($carePerson->user);
             }
 
-            foreach ($carePerson->user->forwardAlertsTo as $forwardee) {
+            foreach ($forwards as $forwardee) {
                 if ($forwardee->pivot->name == User::FORWARD_ALERTS_IN_ADDITION_TO_PROVIDER) {
                     $users->push($carePerson->user);
                     $users->push($forwardee);
@@ -1264,8 +1270,9 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
             }
         }
 
+        //Get clinical emergency contacts from locations
         foreach ($this->locations as $location) {
-            if (!$location->clinicalEmergencyContact->isEmpty()) {
+            if ( ! $location->clinicalEmergencyContact->isEmpty()) {
                 $contact = $location->clinicalEmergencyContact->first();
 
                 if ($contact->pivot->name == CarePerson::INSTEAD_OF_BILLING_PROVIDER) {
@@ -1285,7 +1292,7 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
     public function getSendAlertToAttribute()
     {
         $ctmsa = [];
-        if (!$this->careTeamMembers) {
+        if ( ! $this->careTeamMembers) {
             return '';
         }
         if ($this->careTeamMembers->count() > 0) {
@@ -1301,7 +1308,7 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
 
     public function setSendAlertToAttribute($memberUserIds)
     {
-        if (!is_array($memberUserIds)) {
+        if ( ! is_array($memberUserIds)) {
             $this->careTeamMembers()->where('alert', '=', true)->delete();
 
             return false; // must be array
@@ -1312,8 +1319,8 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
         )->delete();
         foreach ($memberUserIds as $memberUserId) {
             $careTeamMember = $this->careTeamMembers()->where('alert', '=', false)
-                ->where('member_user_id', $memberUserId)
-                ->first();
+                                   ->where('member_user_id', $memberUserId)
+                                   ->first();
             if ($careTeamMember) {
                 $careTeamMember->alert = true;
                 $careTeamMember->save();
@@ -1326,7 +1333,7 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
     public function getBillingProviderIDAttribute()
     {
         $bp = '';
-        if (!$this->careTeamMembers) {
+        if ( ! $this->careTeamMembers) {
             return '';
         }
         if ($this->careTeamMembers->count() > 0) {
@@ -1351,10 +1358,10 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
         if ($careTeamMember) {
             $careTeamMember->member_user_id = $value;
         } else {
-            $careTeamMember = new CarePerson();
-            $careTeamMember->user_id = $this->id;
+            $careTeamMember                 = new CarePerson();
+            $careTeamMember->user_id        = $this->id;
             $careTeamMember->member_user_id = $value;
-            $careTeamMember->type = 'billing_provider';
+            $careTeamMember->type           = 'billing_provider';
         }
         $careTeamMember->save();
 
@@ -1364,7 +1371,7 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
     public function getLeadContactIDAttribute()
     {
         $lc = [];
-        if (!$this->careTeamMembers) {
+        if ( ! $this->careTeamMembers) {
             return '';
         }
         if ($this->careTeamMembers->count() > 0) {
@@ -1389,10 +1396,10 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
         if ($careTeamMember) {
             $careTeamMember->member_user_id = $value;
         } else {
-            $careTeamMember = new CarePerson();
-            $careTeamMember->user_id = $this->id;
+            $careTeamMember                 = new CarePerson();
+            $careTeamMember->user_id        = $this->id;
             $careTeamMember->member_user_id = $value;
-            $careTeamMember->type = 'lead_contact';
+            $careTeamMember->type           = 'lead_contact';
         }
         $careTeamMember->save();
 
@@ -1401,7 +1408,7 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
 
     public function getPreferredLocationAddress()
     {
-        if (!$this->patientInfo) {
+        if ( ! $this->patientInfo) {
             return '';
         }
         $locationId = $this->patientInfo->preferred_contact_location;
@@ -1415,7 +1422,7 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
 
     public function getPreferredLocationName()
     {
-        if (!$this->patientInfo) {
+        if ( ! $this->patientInfo) {
             return '';
         }
         $locationId = $this->patientInfo->preferred_contact_location;
@@ -1433,7 +1440,7 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
 
     public function getPreferredContactLocationAttribute()
     {
-        if (!$this->patientInfo) {
+        if ( ! $this->patientInfo) {
             return '';
         }
 
@@ -1442,7 +1449,7 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
 
     public function setPreferredContactLocationAttribute($value)
     {
-        if (!$this->patientInfo) {
+        if ( ! $this->patientInfo) {
             return '';
         }
         $this->patientInfo->preferred_contact_location = $value;
@@ -1453,7 +1460,7 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
 
     public function getPrefixAttribute()
     {
-        if (!$this->providerInfo) {
+        if ( ! $this->providerInfo) {
             return '';
         }
 
@@ -1462,7 +1469,7 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
 
     public function setPrefixAttribute($value)
     {
-        if (!$this->providerInfo) {
+        if ( ! $this->providerInfo) {
             return '';
         }
         $this->providerInfo->prefix = $value;
@@ -1471,7 +1478,7 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
 
     public function getConsentDateAttribute()
     {
-        if (!$this->patientInfo) {
+        if ( ! $this->patientInfo) {
             return '';
         }
 
@@ -1480,7 +1487,7 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
 
     public function setConsentDateAttribute($value)
     {
-        if (!$this->patientInfo) {
+        if ( ! $this->patientInfo) {
             return '';
         }
         $this->patientInfo->consent_date = $value;
@@ -1491,7 +1498,7 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
 
     public function getAgentNameAttribute()
     {
-        if (!$this->patientInfo) {
+        if ( ! $this->patientInfo) {
             return '';
         }
 
@@ -1500,7 +1507,7 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
 
     public function setAgentNameAttribute($value)
     {
-        if (!$this->patientInfo) {
+        if ( ! $this->patientInfo) {
             return '';
         }
         $this->patientInfo->agent_name = $value;
@@ -1516,7 +1523,7 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
 
     public function getAgentPhoneAttribute()
     {
-        if (!$this->patientInfo) {
+        if ( ! $this->patientInfo) {
             return '';
         }
 
@@ -1530,7 +1537,7 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
 
     public function setAgentPhoneAttribute($value)
     {
-        if (!$this->patientInfo) {
+        if ( ! $this->patientInfo) {
             return '';
         }
         $this->patientInfo->agent_telephone = $value;
@@ -1541,7 +1548,7 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
 
     public function getAgentEmailAttribute()
     {
-        if (!$this->patientInfo) {
+        if ( ! $this->patientInfo) {
             return '';
         }
 
@@ -1550,7 +1557,7 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
 
     public function setAgentEmailAttribute($value)
     {
-        if (!$this->patientInfo) {
+        if ( ! $this->patientInfo) {
             return '';
         }
         $this->patientInfo->agent_email = $value;
@@ -1561,7 +1568,7 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
 
     public function getAgentRelationshipAttribute()
     {
-        if (!$this->patientInfo) {
+        if ( ! $this->patientInfo) {
             return '';
         }
 
@@ -1570,7 +1577,7 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
 
     public function setAgentRelationshipAttribute($value)
     {
-        if (!$this->patientInfo) {
+        if ( ! $this->patientInfo) {
             return '';
         }
         $this->patientInfo->agent_relationship = $value;
@@ -1581,7 +1588,7 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
 
     public function getCarePlanQAApproverAttribute()
     {
-        if (!$this->carePlan) {
+        if ( ! $this->carePlan) {
             return '';
         }
 
@@ -1590,7 +1597,7 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
 
     public function setCarePlanQAApproverAttribute($value)
     {
-        if (!$this->carePlan) {
+        if ( ! $this->carePlan) {
             return '';
         }
         $this->carePlan->qa_approver_id = $value;
@@ -1601,7 +1608,7 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
 
     public function getCarePlanQADateAttribute()
     {
-        if (!$this->carePlan) {
+        if ( ! $this->carePlan) {
             return '';
         }
 
@@ -1610,7 +1617,7 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
 
     public function setCarePlanQADateAttribute($value)
     {
-        if (!$this->carePlan) {
+        if ( ! $this->carePlan) {
             return '';
         }
         $this->carePlan->qa_date = $value;
@@ -1621,7 +1628,7 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
 
     public function getCarePlanProviderApproverAttribute()
     {
-        if (!$this->carePlan) {
+        if ( ! $this->carePlan) {
             return '';
         }
 
@@ -1630,7 +1637,7 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
 
     public function setCarePlanProviderApproverAttribute($value)
     {
-        if (!$this->carePlan) {
+        if ( ! $this->carePlan) {
             return '';
         }
         $this->carePlan->provider_approver_id = $value;
@@ -1641,7 +1648,7 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
 
     public function getCarePlanProviderApproverDateAttribute()
     {
-        if (!$this->carePlan) {
+        if ( ! $this->carePlan) {
             return '';
         }
 
@@ -1650,7 +1657,7 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
 
     public function setCarePlanProviderApproverDateAttribute($value)
     {
-        if (!$this->carePlan) {
+        if ( ! $this->carePlan) {
             return '';
         }
         $this->carePlan->provider_date = $value;
@@ -1661,7 +1668,7 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
 
     public function getCarePlanStatusAttribute()
     {
-        if (!$this->carePlan) {
+        if ( ! $this->carePlan) {
             return '';
         }
 
@@ -1670,7 +1677,7 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
 
     public function setCarePlanStatusAttribute($value)
     {
-        if (!$this->carePlan) {
+        if ( ! $this->carePlan) {
             return '';
         }
         $this->carePlan->status = $value;
@@ -1681,7 +1688,7 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
 
     public function getCareplanLastPrintedAttribute()
     {
-        if (!$this->carePlan) {
+        if ( ! $this->carePlan) {
             return '';
         }
 
@@ -1690,7 +1697,7 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
 
     public function setCareplanLastPrintedAttribute($value)
     {
-        if (!$this->carePlan) {
+        if ( ! $this->carePlan) {
             return '';
         }
         $this->carePlan->last_printed = $value;
@@ -1701,7 +1708,7 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
 
     public function getCcmStatusAttribute()
     {
-        if (!$this->patientInfo) {
+        if ( ! $this->patientInfo) {
             return '';
         }
 
@@ -1710,10 +1717,10 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
 
     public function setCcmStatusAttribute($value)
     {
-        if (!$this->patientInfo) {
+        if ( ! $this->patientInfo) {
             return '';
         }
-        $statusBefore = $this->patientInfo->ccm_status;
+        $statusBefore                  = $this->patientInfo->ccm_status;
         $this->patientInfo->ccm_status = $value;
         $this->patientInfo->save();
         // update date tracking
@@ -1731,7 +1738,7 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
 
     public function getDatePausedAttribute()
     {
-        if (!$this->patientInfo) {
+        if ( ! $this->patientInfo) {
             return '';
         }
 
@@ -1740,7 +1747,7 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
 
     public function setDatePausedAttribute($value)
     {
-        if (!$this->patientInfo) {
+        if ( ! $this->patientInfo) {
             return '';
         }
         $this->patientInfo->date_paused = $value;
@@ -1751,7 +1758,7 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
 
     public function getDateWithdrawnAttribute()
     {
-        if (!$this->patientInfo) {
+        if ( ! $this->patientInfo) {
             return '';
         }
 
@@ -1760,7 +1767,7 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
 
     public function setDateWithdrawnAttribute($value)
     {
-        if (!$this->patientInfo) {
+        if ( ! $this->patientInfo) {
             return '';
         }
         $this->patientInfo->date_withdrawn = $value;
@@ -1777,32 +1784,32 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
     public function scramble()
     {
         $faker = Factory::create();
-        if (!$faker) {
+        if ( ! $faker) {
             return false;
         }
 
         //dd($randomUserInfo);
         // set random data
-        $user = $this;
-        $user->first_name = $faker->firstName;
-        $user->last_name = 'Z-' . $faker->lastName;
-        $user->username = $faker->userName;
-        $user->password = $faker->password;
-        $user->email = $faker->freeEmail;
-        $user->MRN = rand();
-        $user->gender = 'M';
-        $user->address = $faker->address;
-        $user->address2 = $faker->secondaryAddress;
-        $user->city = $faker->city;
-        $user->state = $faker->stateAbbr;
-        $user->zip = $faker->postcode;
-        $user->phone = '111-234-5678';
-        $user->workPhoneNumber = '222-234-5678';
+        $user                    = $this;
+        $user->first_name        = $faker->firstName;
+        $user->last_name         = 'Z-' . $faker->lastName;
+        $user->username          = $faker->userName;
+        $user->password          = $faker->password;
+        $user->email             = $faker->freeEmail;
+        $user->MRN               = rand();
+        $user->gender            = 'M';
+        $user->address           = $faker->address;
+        $user->address2          = $faker->secondaryAddress;
+        $user->city              = $faker->city;
+        $user->state             = $faker->stateAbbr;
+        $user->zip               = $faker->postcode;
+        $user->phone             = '111-234-5678';
+        $user->workPhoneNumber   = '222-234-5678';
         $user->mobilePhoneNumber = '333-234-5678';
-        $user->birthDate = $faker->dateTimeThisCentury->format('Y-m-d');
-        $user->agentName = 'Secret Agent';
-        $user->agentPhone = '111-234-5678';
-        $user->agentEmail = 'secret@agent.net';
+        $user->birthDate         = $faker->dateTimeThisCentury->format('Y-m-d');
+        $user->agentName         = 'Secret Agent';
+        $user->agentPhone        = '111-234-5678';
+        $user->agentEmail        = 'secret@agent.net';
         $user->agentRelationship = 'SA';
         $user->save();
     }
@@ -1812,7 +1819,7 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
         $password
     ) {
         $this->username = $email;
-        $this->email = $email;
+        $this->email    = $email;
         $this->password = bcrypt($password);
         $this->save();
 
@@ -1821,7 +1828,7 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
 
     public function getUCP()
     {
-        $userUcp = $this->ucp()->with([
+        $userUcp     = $this->ucp()->with([
             'item.meta',
             'item.question',
         ])->get();
@@ -1995,15 +2002,15 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
 
             $update = [];
 
-            if (!is_null($grantAdminRights)) {
+            if ( ! is_null($grantAdminRights)) {
                 $update['has_admin_rights'] = $grantAdminRights;
             }
 
-            if (!is_null($subscribeToBillingReports)) {
+            if ( ! is_null($subscribeToBillingReports)) {
                 $update['send_billing_reports'] = $subscribeToBillingReports;
             }
 
-            if (!is_null($roleId)) {
+            if ( ! is_null($roleId)) {
                 $update['role_id'] = $roleId;
             }
 
@@ -2029,10 +2036,10 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
      */
     public function practice($practice)
     {
-        if (is_string($practice) && !is_int($practice)) {
+        if (is_string($practice) && ! is_int($practice)) {
             return $this->practices()
-                ->where('name', '=', $practice)
-                ->first();
+                        ->where('name', '=', $practice)
+                        ->first();
         }
 
         $practiceId = null;
@@ -2045,19 +2052,19 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
             $practiceId = $practice;
         }
 
-        if (!$practiceId) {
+        if ( ! $practiceId) {
             return null;
         }
 
         return $this->practices()
-            ->where('program_id', '=', $practiceId)
-            ->first();
+                    ->where('program_id', '=', $practiceId)
+                    ->first();
     }
 
     public function practices()
     {
         return $this->belongsToMany(Practice::class, 'practice_user', 'user_id', 'program_id')
-            ->withPivot('role_id', 'has_admin_rights', 'send_billing_reports');
+                    ->withPivot('role_id', 'has_admin_rights', 'send_billing_reports');
     }
 
     /**
@@ -2100,7 +2107,7 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
     public function locations()
     {
         return $this->belongsToMany(Location::class)
-            ->withTimestamps();
+                    ->withTimestamps();
     }
 
     /**
@@ -2149,7 +2156,7 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
             $billing_provider_id
         ) {
             $k->whereType('billing_provider')
-                ->whereMemberUserId($billing_provider_id);
+              ->whereMemberUserId($billing_provider_id);
         });
     }
 
@@ -2176,7 +2183,7 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
                 $type
             ) {
                 $q->where('type', $type)
-                    ->with('user');
+                  ->with('user');
             },
         ]);
     }
@@ -2196,8 +2203,8 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
     public function latestCcda()
     {
         return $this->ccdas()
-            ->orderBy('updated_at', 'desc')
-            ->first();
+                    ->orderBy('updated_at', 'desc')
+                    ->first();
     }
 
     public function ccdas()
@@ -2218,10 +2225,10 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
     public function clinicalEmergencyContactLocations()
     {
         return $this->morphedByMany(Location::class, 'contactable', 'contacts')
-            ->withPivot('name')
-            ->wherePivot('name', '=', 'in_addition_to_billing_provider')
-            ->orWherePivot('name', '=', 'instead_of_billing_provider')
-            ->withTimestamps();
+                    ->withPivot('name')
+                    ->wherePivot('name', '=', 'in_addition_to_billing_provider')
+                    ->orWherePivot('name', '=', 'instead_of_billing_provider')
+                    ->withTimestamps();
     }
 
     public function routeNotificationForTwilio()
@@ -2268,7 +2275,7 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
 
     public function firstOrNewProviderInfo()
     {
-        if (!$this->hasRole('provider')) {
+        if ( ! $this->hasRole('provider')) {
             return false;
         }
 
@@ -2298,8 +2305,8 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
     public function forwardAlertsTo()
     {
         return $this->morphToMany(User::class, 'contactable', 'contacts')
-            ->withPivot('name')
-            ->withTimestamps();
+                    ->withPivot('name')
+                    ->withTimestamps();
     }
 
     /**
@@ -2310,10 +2317,10 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
     public function forwardedCarePlanApprovalEmailsBy()
     {
         return $this->forwardedAlertsBy()
-            ->withPivot('name')
-            ->wherePivot('name', '=', User::FORWARD_CAREPLAN_APPROVAL_EMAILS_IN_ADDITION_TO_PROVIDER)
-            ->orWherePivot('name', '=', User::FORWARD_CAREPLAN_APPROVAL_EMAILS_INSTEAD_OF_PROVIDER)
-            ->withTimestamps();
+                    ->withPivot('name')
+                    ->wherePivot('name', '=', User::FORWARD_CAREPLAN_APPROVAL_EMAILS_IN_ADDITION_TO_PROVIDER)
+                    ->orWherePivot('name', '=', User::FORWARD_CAREPLAN_APPROVAL_EMAILS_INSTEAD_OF_PROVIDER)
+                    ->withTimestamps();
     }
 
     /**
@@ -2325,10 +2332,10 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
     public function forwardedAlertsBy()
     {
         return $this->morphedByMany(User::class, 'contactable', 'contacts')
-            ->withPivot('name')
-            ->wherePivot('name', '=', User::FORWARD_ALERTS_IN_ADDITION_TO_PROVIDER)
-            ->orWherePivot('name', '=', User::FORWARD_ALERTS_INSTEAD_OF_PROVIDER)
-            ->withTimestamps();
+                    ->withPivot('name')
+                    ->wherePivot('name', '=', User::FORWARD_ALERTS_IN_ADDITION_TO_PROVIDER)
+                    ->orWherePivot('name', '=', User::FORWARD_ALERTS_INSTEAD_OF_PROVIDER)
+                    ->withTimestamps();
     }
 
     public function getCareplanModeAttribute()
@@ -2339,11 +2346,11 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
             $careplanMode = $this->carePlan->mode;
         }
 
-        if (!$careplanMode && $this->primaryPractice && $this->primaryPractice->settings) {
+        if ( ! $careplanMode && $this->primaryPractice && $this->primaryPractice->settings) {
             $careplanMode = $this->primaryPractice->settings->first()->careplan_mode;
         }
 
-        if (!$careplanMode) {
+        if ( ! $careplanMode) {
             $careplanMode = CarePlan::WEB;
         }
 
@@ -2360,7 +2367,7 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
     public function canApproveCarePlans()
     {
         return $this->can('care-plan-approve')
-            || ($this->practiceOrGlobalRole()->name == 'registered-nurse' && $this->primaryPractice->settings[0]->rn_can_approve_careplans);
+               || ($this->practiceOrGlobalRole()->name == 'registered-nurse' && $this->primaryPractice->settings[0]->rn_can_approve_careplans);
     }
 
     /**
@@ -2384,82 +2391,82 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
     public function patientList()
     {
         return User::intersectPracticesWith($this)
-            ->ofType('participant')
-            ->whereHas('patientInfo')
-            ->with('primaryPractice')
-            ->with('carePlan')
-            ->with([
-                'observations'    => function ($query) {
-                    $query->where('obs_key', '!=', 'Outbound');
-                    $query->orderBy('obs_date', 'DESC');
-                    $query->first();
-                },
-                'careTeamMembers' => function ($q) {
-                    $q->where('type', '=', CarePerson::BILLING_PROVIDER)
-                        ->with('user');
-                },
-                'phoneNumbers'    => function ($q) {
-                    $q->where('type', '=', PhoneNumber::HOME);
-                },
-            ])
-            ->get();
+                   ->ofType('participant')
+                   ->whereHas('patientInfo')
+                   ->with('primaryPractice')
+                   ->with('carePlan')
+                   ->with([
+                       'observations'    => function ($query) {
+                           $query->where('obs_key', '!=', 'Outbound');
+                           $query->orderBy('obs_date', 'DESC');
+                           $query->first();
+                       },
+                       'careTeamMembers' => function ($q) {
+                           $q->where('type', '=', CarePerson::BILLING_PROVIDER)
+                             ->with('user');
+                       },
+                       'phoneNumbers'    => function ($q) {
+                           $q->where('type', '=', PhoneNumber::HOME);
+                       },
+                   ])
+                   ->get();
     }
 
     public function patientsPendingApproval()
     {
         return User::intersectPracticesWith($this)
-            ->ofType('participant')
-            ->whereHas('patientInfo')
-            ->whereHas('carePlan', function ($q) {
-                $q->where('status', '=', CarePlan::QA_APPROVED);
-            })
-            ->whereHas('careTeamMembers', function ($q) {
-                $q->where([
-                    ['type', '=', CarePerson::BILLING_PROVIDER],
-                    ['member_user_id', '=', $this->id],
-                ]);
-            })
-            ->with('primaryPractice')
-            ->with([
-                'observations' => function ($query) {
-                    $query->where('obs_key', '!=', 'Outbound');
-                    $query->orderBy('obs_date', 'DESC');
-                    $query->first();
-                },
-                'phoneNumbers' => function ($q) {
-                    $q->where('type', '=', PhoneNumber::HOME);
-                },
-            ]);
+                   ->ofType('participant')
+                   ->whereHas('patientInfo')
+                   ->whereHas('carePlan', function ($q) {
+                       $q->where('status', '=', CarePlan::QA_APPROVED);
+                   })
+                   ->whereHas('careTeamMembers', function ($q) {
+                       $q->where([
+                           ['type', '=', CarePerson::BILLING_PROVIDER],
+                           ['member_user_id', '=', $this->id],
+                       ]);
+                   })
+                   ->with('primaryPractice')
+                   ->with([
+                       'observations' => function ($query) {
+                           $query->where('obs_key', '!=', 'Outbound');
+                           $query->orderBy('obs_date', 'DESC');
+                           $query->first();
+                       },
+                       'phoneNumbers' => function ($q) {
+                           $q->where('type', '=', PhoneNumber::HOME);
+                       },
+                   ]);
     }
 
-    public function billableProblems()
+    public function problemsWithIcd10Code()
     {
         $billableProblems = new Collection();
 
         $ccdProblems = $this->ccdProblems()
-            ->with('icd10Codes')
-            ->with('cpmProblem')
-            ->whereHas('icd10Codes')
-            ->whereNotNull('cpm_problem_id')
-            ->groupBy('cpm_problem_id')
-            ->get()
-            ->map(function ($problem) use ($billableProblems) {
-                $problem->billing_code = $problem->icd10Code();
+                            ->with('icd10Codes')
+                            ->with('cpmProblem')
+                            ->whereHas('icd10Codes')
+                            ->whereNotNull('cpm_problem_id')
+                            ->groupBy('cpm_problem_id')
+                            ->get()
+                            ->map(function ($problem) use ($billableProblems) {
+                                $problem->billing_code = $problem->icd10Code();
 
-                if (!$problem->billing_code) {
-                    return $problem;
-                }
+                                if ( ! $problem->billing_code) {
+                                    return $problem;
+                                }
 
-                if ($problem->icd10Codes()->exists()) {
-                    $billableProblems->prepend($problem);
+                                if ($problem->icd10Codes()->exists()) {
+                                    $billableProblems->prepend($problem);
 
-                    return $problem;
-                }
+                                    return $problem;
+                                }
 
-                $billableProblems->push($problem);
+                                $billableProblems->push($problem);
 
-                return $problem;
-            });
+                                return $problem;
+                            });
 
         return $billableProblems;
     }
@@ -2498,11 +2505,25 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
     public function cpmProblems()
     {
         return $this->belongsToMany(CpmProblem::class, 'cpm_problems_users', 'patient_id')
-            ->withPivot('cpm_instruction_id')
-            ->withTimestamps('created_at', 'updated_at');
+                    ->withPivot('cpm_instruction_id')
+                    ->withTimestamps('created_at', 'updated_at');
     }
 
-    public function cachedNotificationsList() {
+    public function cachedNotificationsList()
+    {
         return new UserNotificationList($this->id);
+    }
+
+    public function patientSummaries()
+    {
+        return $this->hasMany(PatientMonthlySummary::class, 'patient_id');
+    }
+
+    public function billableProblems()
+    {
+        return $this->ccdProblems()
+                    ->whereNotNull('cpm_problem_id')
+                    ->with('icd10Codes')
+                    ->where('billable', true);
     }
 }
