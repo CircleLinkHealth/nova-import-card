@@ -1,170 +1,118 @@
 require('./prototypes/date.prototype')
+require('./prototypes/array.prototype')
 const moment = require('moment')
 
 function TimeTracker(now = () => (new Date())) {
     const users = {}
 
-    this.get = (key, info) => {
-        return users[key] = users[key] || this.create(key, info)
+    this.key = (info) => `${info.providerId}-${info.patientId}`
+
+    this.validateInfo = (info) => {
+        if (!info || info.constructor.name !== 'Object') throw new Error('[info] must be a valid object')
     }
 
-    this.create = (key, info) => {
-        return new TimeTrackerUser(key, info, now)
+    this.get = (info) => {
+
+        this.validateInfo(info)
+
+        const key = this.key(info)
+
+        return users[key] = users[key] || this.create(info)
+    }
+
+    this.create = (info) => {
+        
+        this.validateInfo(info)
+
+        return new TimeTrackerUser(info, now)
     }
 
     this.users = () => {
         return Object.values(users)
     }
 
-    this.remove = (key) => {
+    this.remove = (info) => {
+        
+        this.validateInfo(info)
+
+        const key = this.key(info)
+
         if (users[key]) delete users[key]
     }
 
-    this.exists = (key) => {
+    this.exists = (info) => {
+        
+        this.validateInfo(info)
+        
+        const key = this.key(info)
+
         return !!users[key]
     }
 
     this.keys = () => {
         return Object.keys(users)
     }
+}
 
-    this.exit = (key) => {
-        if (users[key]) {
-            const user = users[key]
-            if (user.info) {
-                user.info.totalTime = Number(user.info.totalTime || 0) + Number(user.seconds)
-            }
-            user.seconds = 0
+function TimeTrackerUser(info, now = () => (new Date())) {
+
+    if (!info || info.constructor.name !== 'Object') throw new Error('[info] must be a valid object')
+
+    const key = `${info.providerId}-${info.patientId}`
+
+    const validateInfo = (info) => {
+        if (!info || info.constructor.name !== 'Object') throw new Error('[info] must be a valid object')
+    }
+    
+    const validateWebSocket = (ws) => {
+        if (!ws || ws.constructor.name !== 'WebSocket') throw new Error('[ws] must be a valid WebSocket instance')
+    }
+
+    const getActivity = (info) => {
+        validateInfo(info)
+
+        return { 
+            name: info.activity || 'unknown', 
+            title: info.title || 'unknown',
+            duration: 0,
+            urlFull: info.urlFull, 
+            urlShort: info.urlShort,
+            sockets: []
         }
     }
-}
-
-Array.prototype.last = function () {
-    const arr = this
-    return arr[arr.length - 1]
-}
-
-function TimeTrackerUser(key, info, now = () => (new Date())) {
-    /** verify that key is valid string in regex format /\d*-\d*\/ */
-    if (!key || key.constructor.name !== 'String' || (key.indexOf('-') < 0)) {
-        throw new Error('[key] must be a valid string', key)
-    }
-
-    if (info && !info.away) {
-        info.away = null
-    }
-
-    /** verify that info is a valid object */
-    if (!info || info.constructor.name !== 'Object') {
-        throw new Error('[info] must be a valid object')
-    }
-
+    
     const user = {
-        seconds: 0,
-        dates: [],
         key: key,
-        info: Object.assign(info, { activities: [] }),
-        sockets: [],
-        setEndTime(nowFn = now) {
-            if (this.dates.last() && !this.dates.last().end) {
-                this.dates.last().end = nowFn()
-            }
-            return this
-        },
-        slimInterval(nowFn = now) {
-            return Math.floor(this.dates.map(date => {
-                return (date.end || nowFn()) - date.start;
-              }).reduce((a, b) => a + b, 0) / 1000)
-        },
-        interval(nowFn = now) {
-          return this.seconds + this.slimInterval(nowFn);
-        },
-        cleanup() {
-          /**
-           * remove objects with start and end data properties from [dates] array
-           * so it doesn't get bulky and make .interval() take longer than necessary
-           */
-          this.seconds += Math.floor(this.dates.filter(date => date.start && date.end)
-                                      .map(date => date.end - date.start)
-                                      .reduce((a, b) => a + b, 0) / 1000);
-          this.dates = this.dates.filter(date => !date.end);
- 
-          return this.seconds
-        },
-        setActivity(_activity) {
-            const activity = this.info.activities.find(a => a.name === _activity.name)
-            if (activity) {
-                activity.duration = (activity.duration || 0) + this.slimInterval()
-            }
-            else {
-                this.info.activities.push({
-                    name: _activity.name,
-                    url: _activity.urlFull,
-                    title: _activity.title,
-                    url_short: _activity.urlShort,
-                    start_time: moment((this.dates[0] || {}).start || new Date()).format('YYYY-MM-DD hh:mm:ss'),
-                    duration: this.slimInterval(),
-                    noLiveCount: _activity.noLiveCount
-                })
-            }
-        },
-        stop(_activity, nowFn = now) {
-          this.setEndTime(nowFn)
-          this.setActivity(_activity)
-          return this
-        },
-        resume(nowFn = now) {
-            /**
-             * used to be START!
-             */
-            if (!this.dates.last() || this.dates.last().end) {
-                this.setEndTime(nowFn)
-                this.dates.push({
-                    start: nowFn(),
-                    end: null
-                })
-            }
-            return this
-        },
-        setInitSeconds(force, nowFn = now) {
-            if (force || !info.initSecondsSet) {
-                this.dates.unshift({
-                    start: nowFn().addSeconds(0 - Math.max((info.initSeconds || 0), 0)),
-                    end: nowFn()
-                })
-                info.initSecondsSet = true
-            }
-            return this.dates
-        },
-        setAwayStopTime() {
-            info.away = new Date()
-        },
-        getAwayResumeTime() {
-            return Math.floor(((new Date()) - (info.away || (new Date()))) / 1000)
-        },
-        setAwayResumeTime(_activity) {
-            if (info.away) {
-                const elapsedSeconds = this.getAwayResumeTime()
-                if (elapsedSeconds < 120) {
-                    this.setAwaySeconds(elapsedSeconds, _activity)
-                    return 0
-                }
-                return elapsedSeconds
-            }
-        },
-        setAwaySeconds(seconds, _activity) {
-            if (!!Number(seconds)) {
-                seconds = Math.max(Math.min(seconds, 1800), 0)
-                info.initSeconds = seconds
-                this.setInitSeconds(true)
-                info.away = null
-                if (_activity) {
-                    this.setActivity(_activity)
-                }
-            }
-        }
+        inactiveSeconds: 0, //inactive time in seconds
+        activities: []
     }
-    return user.resume()
+
+    user.enter = (info, ws) => {
+        /**
+         * to be executed on client:enter when the client focuses on a page
+         */
+        validateInfo(info)
+        validateWebSocket(ws)
+        let activity = user.activities.find(item => item.name == info.activity)
+        if (!activity) {
+            activity = getActivity(info)
+            user.activities.push(activity)
+        }
+        if (activity.sockets.indexOf(ws) < 0) {
+            activity.sockets.push(ws)
+        }
+        ws.active = true
+    }
+    
+    user.leave = (ws) => {
+        /**
+         * to be executed on client:leave when the client leaves a page
+         */
+        validateWebSocket(ws)
+        ws.active = false
+    }
+
+    return user
 }
 
 module.exports = TimeTracker;
