@@ -65,7 +65,7 @@ function TimeTrackerUser(info, now = () => (new Date())) {
     }
     
     const validateWebSocket = (ws) => {
-        if (!ws || ws.constructor.name !== 'WebSocket') throw new Error('[ws] must be a valid WebSocket instance')
+        if (!ws) throw new Error('[ws] must be a valid WebSocket instance')
     }
 
     const getActivity = (info) => {
@@ -77,7 +77,10 @@ function TimeTrackerUser(info, now = () => (new Date())) {
             duration: 0,
             urlFull: info.urlFull, 
             urlShort: info.urlShort,
-            sockets: []
+            sockets: [],
+            get isActive() {
+                return this.sockets.some(socket => socket.active)
+            }
         }
     }
     

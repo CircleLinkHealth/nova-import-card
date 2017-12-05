@@ -43,12 +43,12 @@ module.exports = app => {
          * }
          */
         if (data.constructor.name === 'Object') {
-          if (data.info) {
+          if (data.info || data.message === 'PING') {
             if (data.message === 'client:start') {
               try {
                 const info = data.info
                 const user = app.getTimeTracker(info).get(info)
-                user.start(info)
+                user.start(info, ws)
                 user.sync()
               }
               catch (ex) {
@@ -60,7 +60,7 @@ module.exports = app => {
               try {
                 const info = data.info
                 const user = app.getTimeTracker(info).get(info)
-                user.leave(info)
+                user.leave(ws)
               }
               catch (ex) {
                 errorThrow(ex, ws)
@@ -71,13 +71,16 @@ module.exports = app => {
               try {
                 const info = data.info
                 const user = app.getTimeTracker(info).get(info)
-                user.enter(info)
+                user.enter(info, ws)
                 user.sync()
               }
               catch (ex) {
                 errorThrow(ex, ws)
                 return;
               }
+            }
+            else if (data.message === 'PING') {
+
             }
             else {
               errorThrow(new Error('invalid message'), ws)
@@ -132,32 +135,18 @@ module.exports = app => {
 
   setInterval(() => {
     for (const user of [...timeTracker.users(), ...timeTrackerNoLiveCount.users()]) {
-      const listeners = user.sockets.filter(
-                          socket => socket.clientState !== 'stopped'
-                        )
+      user.activities.forEach(activity => {
+        if (activity.isActive) {
+          activity.duration += 1;
+        }
+      })
 
       console.log(
-        'sending message to clients:',
-        listeners.length,
-        'interval:', user.interval(), 
-        'totalTime:', (user.info || {}).totalTime,
-        'live-count:', user.info.noLiveCount ? '(no)' : '(yes)'
-      );
-      user.sockets.forEach(socket => {
-        if (socket.clientState != 'stopped') {
-          if (socket.readyState === socket.OPEN) {
-            socket.send(
-              JSON.stringify({
-                message: 'tt:tick',
-                seconds: user.interval(),
-                clients: user.sockets.length
-              }), wsErrorHandler
-            )
-          }
-        }
-      });
+        'activities:', user.activities.filter(activity => activity.isActive).length, 
+        'totalSeconds:', user.totalSeconds
+      )
     }
-  }, 3000);
+  }, 1000);
  
 };
 
