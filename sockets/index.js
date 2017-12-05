@@ -136,9 +136,14 @@ module.exports = app => {
         }
       })
 
+      if (user.allSockets.length > 0 && user.allSockets.every(ws => !ws.active)) {
+        user.inactiveSeconds += 1
+      }
+
       console.log(
         'activities:', user.activities.filter(activity => activity.isActive).length, 
-        'totalSeconds:', user.totalSeconds
+        'total-seconds:', user.totalSeconds,
+        'inactive-seconds:', user.inactiveSeconds 
       )
     }
   }, 1000);
