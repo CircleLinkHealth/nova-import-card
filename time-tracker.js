@@ -84,7 +84,10 @@ function TimeTrackerUser(info, now = () => (new Date())) {
     const user = {
         key: key,
         inactiveSeconds: 0, //inactive time in seconds
-        activities: []
+        activities: [],
+        get totalSeconds() {
+            return this.activities.reduce((a, b) => a + b.duration, 0)
+        }
     }
 
     user.enter = (info, ws) => {
@@ -106,10 +109,22 @@ function TimeTrackerUser(info, now = () => (new Date())) {
     
     user.leave = (ws) => {
         /**
-         * to be executed on client:leave when the client leaves a page
+         * to be executed on client:leave when the client page loses focus
          */
         validateWebSocket(ws)
         ws.active = false
+    }
+
+    user.exit = (ws) => {
+        /**
+         * to be executed on ws:close when a WebSocket connection closes
+         */
+        user.activities.forEach(activity => {
+            const index = activity.sockets.findIndex(socket => socket === ws)
+            if (index >= 0) {
+                activity.sockets.splice(index, 1)
+            }
+        })
     }
 
     return user

@@ -105,11 +105,24 @@ describe('TimeTrackerUser', () => {
             assert.isFalse(user.activities[0].sockets[0].active)
         })
     })
-})
-
-
-
-describe('TimeTracker Activity Flow', () => {
-    const timeTracker = new TimeTracker()
     
+    describe('TimeTrackerUser.prototype.exit()', () => {
+
+        it('should set activities[0].sockets[0] [active] property to false', () => {
+            user.enter(info, ws)
+            user.leave(ws)
+    
+            assert.isFalse(ws.active)
+            assert.isFalse(user.activities[0].sockets[0].active)
+        })
+    })
+    
+    describe('TimeTrackerUser.prototype.totalSeconds', () => {
+
+        it('should have totalSeconds set to 0', () => {
+            user.enter(info, ws)
+
+            assert.equal(user.totalSeconds, 0)
+        })
+    })
 })
