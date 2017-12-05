@@ -38,185 +38,56 @@ module.exports = app => {
         /**
          * Sample structure of [data] object
          * {
-         *  'id': 1,
-         *  'patientId': 874,
-         *  'message': 'start'
+         *  'message': 'client:start'
          *  'info': { ... }
          * }
          */
         if (data.constructor.name === 'Object') {
-          if (
-            (!!Number(data.id) || Number(data.id) === 0) &&
-            (!!Number(data.patientId) || Number(data.patientId) === 0)
-          ) {
-            //check that [id] and [patientId] are numbers
-            const key = `${data.id}-${data.patientId}`;
-            ws.key = key;
-            if (data.message === 'start') {
+          if (data.info) {
+            if (data.message === 'client:start') {
               try {
-                const user = app.getTimeTracker(data.info).get(key, data.info)
-                if (user.info) {
-                  user.info.initSeconds = data.info.initSeconds;
-                  if ((data.info.totalTime < user.info.totalTime) || (user.sockets.length === 0)) {
-                    user.info.totalTime = data.info.totalTime
-                  }
-                  user.setInitSeconds(true)
-                  console.log('tt:init-seconds', data.info.initSeconds)
-                }
-                if (user.sockets.indexOf(ws) < 0) user.sockets.push(ws);
-                user.sockets.forEach(socket => {
-                  if (socket.readyState === socket.OPEN) {
-                    socket.send(JSON.stringify({
-                      message: 'tt:update-previous-seconds',
-                      previousSeconds: user.info.totalTime,
-                      seconds: user.seconds
-                    }))
-                  }
-                  
-                })
-                if (ws.readyState === ws.OPEN) {
-                  ws.send(JSON.stringify({
-                    message: 'tt:tick',
-                    seconds: user.interval(),
-                    clients: user.sockets.length
-                  }), wsErrorHandler)
-                }
+                const info = data.info
+                const user = app.getTimeTracker(info).get(info)
+                user.start(info)
+                user.sync()
               }
               catch (ex) {
                 errorThrow(ex, ws)
                 return;
               }
             } 
-            else if (data.message === 'stop') {
+            else if (data.message === 'client:leave') {
               try {
-                const info = (data.info || {})
-                const user = app.getTimeTracker(info).get(key)
-                user.setAwayStopTime()
-                user.stop({ 
-                  name: info.activity || 'unknown', 
-                  title: info.title || 'unknown',
-                  urlFull: info.urlFull, 
-                  urlShort: info.urlShort,
-                  noLiveCount: !!info.noLiveCount
-                })
-                user.cleanup()
-                ws.clientState = 'stopped'
-                if (ws.readyState === ws.OPEN) {
-                  ws.send(
-                    JSON.stringify({
-                      message: 'tt:stopped'
-                    }), wsErrorHandler
-                  )
-                }
+                const info = data.info
+                const user = app.getTimeTracker(info).get(info)
+                user.leave(info)
               }
               catch (ex) {
                 errorThrow(ex, ws)
                 return;
               }
             }
-            else if (data.message === 'push-seconds') {
+            else if (data.message === 'client:enter') {
               try {
-                const info = (data.info || {})
-                const user = app.getTimeTracker(info).get(key, data.info)
-
-                if (user.info) {
-                  user.setAwaySeconds(data.seconds)
-                  
-                  user.sockets.forEach(socket => {
-                    if (socket.readyState === socket.OPEN) {
-                      socket.send(JSON.stringify({
-                        message: 'tt:update-previous-seconds',
-                        previousSeconds: user.info.totalTime,
-                        seconds: user.seconds,
-                        trigger: 'push-seconds'
-                      }))
-                    }
-                  })
-                }
+                const info = data.info
+                const user = app.getTimeTracker(info).get(info)
+                user.enter(info)
               }
               catch (ex) {
                 errorThrow(ex, ws)
                 return;
               }
             }
-            else if (data.message === 'resume') {
-              try {
-                const user = app.getTimeTracker(data.info).get(key, data.info)
-                user.resume()
-                const elapsedSeconds = user.getAwayResumeTime()
-                user.setAwayResumeTime({ name: data.info.activity })
-                if (elapsedSeconds > 120) {
-                  // greather than 2 mins (either show-modal or logout)
-                  if (elapsedSeconds < 600) {
-                    // less than 10 mins show-modal
-                    if (ws.readyState === ws.OPEN) {
-                      ws.send( 
-                        JSON.stringify({
-                          message: 'tt:trigger-modal',
-                          seconds: elapsedSeconds
-                        }), wsErrorHandler
-                      )
-                    }
-                  }
-                  else {
-                    //greater than 10 mins (logout)
-                    user.sockets.forEach(socket => {
-                      if (socket.readyState === socket.OPEN) {
-                        socket.send(JSON.stringify({
-                          message: 'tt:logout'
-                        }))
-                      }
-                    })
-                  }
-                }
-                else {
-                  //less than 2 mins, just update all clients with the current time
-                  user.sockets.forEach(socket => {
-                    if (socket.readyState === socket.OPEN) {
-                      socket.send(JSON.stringify({
-                        message: 'tt:update-previous-seconds',
-                        previousSeconds: user.info.totalTime,
-                        seconds: user.seconds,
-                        trigger: 'resume',
-                        jumpSeconds: elapsedSeconds
-                      }))
-                    }
-                  })
-                }
-                ws.clientState = null;
-                if (ws.readyState === ws.OPEN) {
-                  ws.send( 
-                    JSON.stringify({
-                      message: 'tt:resume',
-                      seconds: user.interval(),
-                      clients: user.sockets.length,
-                      previousSeconds: user.info.totalTime,
-                    }), wsErrorHandler
-                  )
-                }
-              }
-              catch (ex) {
-                errorThrow(ex, ws)
-                return;
-              }
-            }
-            else if (data.message === 'inactivity-cancel') {
-              try {
-                const user = app.getTimeTracker(data.info).get(key, data.info)
-                user.seconds = Math.min(user.seconds, 30)
-              }
-              catch (ex) {
-                errorThrow(ex, ws)
-                return;
-              }
+            else {
+              errorThrow(new Error('invalid message'), ws)
             }
           } 
           else {
-            errorThrow('[data.id] is NaN', ws);
+            errorThrow('[data.info] must be a valid Object', ws);
           }
         } 
         else {
-          errorThrow('[data] is not an Object', ws);
+          errorThrow('[data] must be a valid Object', ws);
         }
       } catch (ex) {
         errorThrow(ex, ws);
