@@ -2542,26 +2542,25 @@ class User extends \App\BaseModel implements AuthenticatableContract, CanResetPa
     public function patientList()
     {
         return User::intersectPracticesWith($this)
-                   ->ofType('participant')
-                   ->whereHas('patientInfo')
-                   ->with([
-                       'observations'    => function ($query) {
-                           $query->where('obs_key', '!=', 'Outbound');
-                           $query->orderBy('obs_date', 'DESC');
-                           $query->first();
-                       },
-                       'careTeamMembers' => function ($q) {
-                           $q->where('type', '=', CarePerson::BILLING_PROVIDER)
-                             ->with('user');
-                       },
-                       'phoneNumbers'    => function ($q) {
-                           $q->where('type', '=', PhoneNumber::HOME);
-                       },
-                       'carePlan.providerApproverUser',
+            ->ofType('participant')
+            ->whereHas('patientInfo')
+            ->with([
+                'observations'    => function ($query) {
+                    $query->where('obs_key', '!=', 'Outbound');
+                    $query->orderBy('obs_date', 'DESC');
+                    $query->first();
+                },
+                'careTeamMembers' => function ($q) {
+                    $q->where('type', '=', CarePerson::BILLING_PROVIDER)
+                        ->with('user');
+                },
+                'phoneNumbers'    => function ($q) {
+                    $q->where('type', '=', PhoneNumber::HOME);
+                },'carePlan.providerApproverUser',
                        'primaryPractice',
                        'patientInfo',
-                   ])
-                   ->get();
+            ])
+            ->get();
     }
 
     public function patientsPendingApproval()
@@ -2591,7 +2590,7 @@ class User extends \App\BaseModel implements AuthenticatableContract, CanResetPa
                    ]);
     }
 
-    public function billableProblems()
+    public function problemsWithIcd10Code()
     {
         $billableProblems = new Collection();
 
@@ -2650,6 +2649,19 @@ class User extends \App\BaseModel implements AuthenticatableContract, CanResetPa
     public function cachedNotificationsList()
     {
         return new UserNotificationList($this->id);
+    }
+
+    public function patientSummaries()
+    {
+        return $this->hasMany(PatientMonthlySummary::class, 'patient_id');
+    }
+
+    public function billableProblems()
+    {
+        return $this->ccdProblems()
+                    ->whereNotNull('cpm_problem_id')
+                    ->with('icd10Codes')
+                    ->where('billable', true);
     }
 
     /**

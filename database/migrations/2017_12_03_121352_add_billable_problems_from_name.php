@@ -20,8 +20,8 @@ class AddBillableProblemsFromName extends Migration
                                  foreach ($summaries as $summ) {
                                      if ($summ->billable_problem1) {
                                          $info = Patient::withTrashed()
-                                             ->whereId($summ->patient_info_id)
-                                             ->first();
+                                                        ->whereId($summ->patient_info_id)
+                                                        ->first();
 
                                          $ccdProblem1 = Problem::where('patient_id', $info->user_id)
                                                                ->whereHas('cpmProblem', function ($q) use ($summ) {
@@ -34,7 +34,7 @@ class AddBillableProblemsFromName extends Migration
 
                                              if ( ! $ccdProblem1->icd_10_code && $summ->billable_problem1_code) {
                                                  $ccdProblem1->icd_10_code = $summ->billable_problem1_code;
-                                                 $ccdProblem1->billable = true;
+                                                 $ccdProblem1->billable    = true;
                                                  $ccdProblem1->save();
                                              }
                                          }
@@ -64,10 +64,37 @@ class AddBillableProblemsFromName extends Migration
 
                                              if ( ! $ccdProblem2->icd_10_code && $summ->billable_problem2_code) {
                                                  $ccdProblem2->icd_10_code = $summ->billable_problem2_code;
-                                                 $ccdProblem2->billable = true;
+                                                 $ccdProblem2->billable    = true;
                                                  $ccdProblem2->save();
                                              }
                                          }
+                                     }
+
+                                     $summ->save();
+                                 }
+                             });
+
+        PatientMonthlySummary::whereNull('problem_2')
+                             ->orWhere('problem_2', '=', '')
+                             ->whereNull('problem_1')
+                             ->orWhere('problem_1', '=', '')
+                             ->chunk(1000, function ($summaries) {
+                                 foreach ($summaries as $summ) {
+
+                                     $info = Patient::withTrashed()
+                                                    ->whereId($summ->patient_info_id)
+                                                    ->first();
+
+                                     $billableProblems = Problem::where('patient_id', $info->user_id)
+                                         ->where('billable', '=', true)
+                                         ->get();
+
+                                     if (isset($billableProblems[0])) {
+                                         $summ->problem_1 = $billableProblems[0]->id;
+                                     }
+
+                                     if (isset($billableProblems[1])) {
+                                         $summ->problem_2 = $billableProblems[1]->id;
                                      }
 
                                      $summ->save();
