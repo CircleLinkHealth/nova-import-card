@@ -1,12 +1,12 @@
 <template>
     <div>
-        <div v-if="!visible">
+        <div v-if="showLoader || !visible">
             <div class="loader-filler"></div>
             <div class="loader-container">
                 <loader></loader>
             </div>
         </div>
-        <span v-if="visible" class="time-tracker" :class="className">
+        <span v-if="visible" class="time-tracker" :class="{ hidden: showLoader }">
             <div v-if="noLiveCount">{{info.monthlyTime}}</div>
             <span>
                 <time-display v-if="!noLiveCount" ref="timeDisplay" :seconds="totalTime" :no-live-count="!!noLiveCount" :redirect-url="'manage-patients/' + info.patientId + '/activities'" />
@@ -49,7 +49,8 @@
                 visible: false,
                 socket: null,
                 startCount: 0,
-                showTimer: true
+                showTimer: true,
+                showLoader: true
             }
         },
         components: { 
@@ -91,6 +92,7 @@
                                 if (data.message === 'server:sync') {
                                     self.seconds = data.seconds
                                     self.visible = true //display the component when the previousSeconds value has been received from the server to keep the display up-to-date
+                                    self.showLoader = false
                                 }
                                 else if (data.message === 'server:modal') {
                                     EventBus.$emit('away:trigger-modal')
@@ -172,6 +174,7 @@
                         this.state = STATE.LEAVE;
                         this.socket.send(JSON.stringify({ message: STATE.LEAVE, info: this.info }))
                     }
+                    this.showLoader = true
                 })
 
                 EventBus.$on('tracker:modal:reply', (response) => {
