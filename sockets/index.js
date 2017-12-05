@@ -99,35 +99,30 @@ module.exports = app => {
     }); 
  
     ws.on('close', ev => {
-      const key = ws.key;
-      const user = timeTracker.exists(key) ? timeTracker.get(key) :
-                  (timeTrackerNoLiveCount.exists(key) ? timeTrackerNoLiveCount.get(key) : null)
-      if (key && user) {
-        user.sockets.splice(user.sockets.indexOf(ws), 1);
-        if (user.sockets.length == 0) {
+      const keyInfo = { patientId: ws.patientId, providerId: ws.providerId }
+      const user = timeTracker.exists(keyInfo) ? timeTracker.get(keyInfo) :
+                  (timeTrackerNoLiveCount.exists(keyInfo) ? timeTrackerNoLiveCount.get(keyInfo) : null)
+      if (user) {
+        user.exit(ws)
+        if (user.allSockets.length == 0) {
           //no active sessions
-          const info = user.info;
-          if (info) {
-            info.away = null
-
-            const url = info.submitUrl
-
-            const requestData = Object.assign(Object.assign({}, info), { totalTime: user.cleanup() * 1000 })
-            
-            timeTracker.exit(key);
-            timeTrackerNoLiveCount.exit(key);
-  
-            axios.post(url, requestData).then((response) => {
-              console.log(response.status, response.data, requestData)
-            }).catch((err) => {
-              console.error(err)
-            })
-
-            info.activities = []
+          const url = user.url
+          
+          const requestData = {
+            patientId: user.patientId,
+            providerId: user.providerId,
+            ipAddr: user.ipAddr,
+            programId: user.programId,
+            activities: user.activities
           }
-          else {
-            errorThrow('info.totalTime is undefined ... key is ' + key)
-          }
+
+          axios.post(url, requestData).then((response) => {
+            console.log(response.status, response.data, requestData)
+          }).catch((err) => {
+            console.error(err)
+          })
+
+          
         }
       }
     });

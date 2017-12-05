@@ -75,8 +75,9 @@ function TimeTrackerUser(info, now = () => (new Date())) {
             name: info.activity || 'unknown', 
             title: info.title || 'unknown',
             duration: 0,
-            urlFull: info.urlFull, 
-            urlShort: info.urlShort,
+            url: info.urlFull, 
+            url_short: info.urlShort,
+            start_time: info.startTime,
             sockets: [],
             get isActive() {
                 return this.sockets.some(socket => socket.active)
@@ -88,6 +89,11 @@ function TimeTrackerUser(info, now = () => (new Date())) {
         key: key,
         inactiveSeconds: 0, //inactive time in seconds
         activities: [],
+        patientId: info.patientId,
+        providerId: info.providerId,
+        url: info.submitUrl,
+        programId: info.programId,
+        ipAddr: info.ipAddr,
         get totalSeconds() {
             return this.activities.reduce((a, b) => a + b.duration, 0) + info.totalTime
         },
@@ -103,6 +109,8 @@ function TimeTrackerUser(info, now = () => (new Date())) {
         validateInfo(info)
         validateWebSocket(ws)
         user.enter(info, ws)
+        ws.providerId = info.providerId
+        ws.patientId = info.patientId
         let activity = user.activities.find(item => item.name == info.activity)
         if (!!Number(info.initSeconds)) {
             /**
