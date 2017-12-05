@@ -33,14 +33,13 @@
                 endTime: null,
                 awayModalInfo: {
                     cancelHandler: (e) => {
-                        EventBus.$emit('tracker:push-seconds', 30)
+                        EventBus.$emit('tracker:modal:reply', false)
                         EventBus.$emit('modal-away:hide')
                         EventBus.$emit("tracker:start")
                         EventBus.$emit("inactivity:start")
                     },
                     okHandler: (e) => {
-                        console.log('modal elapsed seconds', this.awayModalInfo.elapsedSeconds)
-                        EventBus.$emit('tracker:push-seconds', this.awayModalInfo.elapsedSeconds)
+                        EventBus.$emit('tracker:modal:reply', true)
                         EventBus.$emit('modal-away:hide')
                         EventBus.$emit("tracker:start")
                         EventBus.$emit("inactivity:start")
@@ -50,8 +49,7 @@
         },
         mounted() {
 
-            EventBus.$on('away:trigger-modal', (seconds) => {
-                this.awayModalInfo.elapsedSeconds = seconds
+            EventBus.$on('away:trigger-modal', () => {
                 EventBus.$emit('modal-away:show')
                 EventBus.$emit("tracker:stop")
                 EventBus.$emit("inactivity:reset")
