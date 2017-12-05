@@ -87,11 +87,30 @@ function TimeTrackerUser(info, now = () => (new Date())) {
         activities: [],
         get totalSeconds() {
             return this.activities.reduce((a, b) => a + b.duration, 0)
+        },
+        get allSockets() {
+            return this.activities.map(activity => activity.sockets).reduce((a, b) => a.concat(b), [])
+        }
+    }
+
+    user.start = (info, ws) => {
+        /**
+         * to be executed when a page is opened
+         */
+        validateInfo(info)
+        validateWebSocket(ws)
+        user.enter(info, ws)
+        let activity = user.activities.find(item => item.name == info.activity)
+        if (!!Number(info.initSeconds)) {
+            /**
+             * make sure the page load time is taken into account
+             */
+            activity.duration += info.initSeconds
         }
     }
 
     user.enter = (info, ws) => {
-        /**
+        /*
          * to be executed on client:enter when the client focuses on a page
          */
         validateInfo(info)
@@ -123,6 +142,15 @@ function TimeTrackerUser(info, now = () => (new Date())) {
             const index = activity.sockets.findIndex(socket => socket === ws)
             if (index >= 0) {
                 activity.sockets.splice(index, 1)
+            }
+        })
+    }
+
+    user.sync = (socket) => {
+        user.allSockets.forEach(ws => {
+            const shouldSend = socket ? (socket !== ws) : true // if socket arg is specified, don't send to that socket
+            if (ws.readyState === ws.OPEN && shouldSend) {
+                ws.send(JSON.stringify({ message: 'server:sync', seconds: user.totalSeconds }))
             }
         })
     }

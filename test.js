@@ -125,4 +125,14 @@ describe('TimeTrackerUser', () => {
             assert.equal(user.totalSeconds, 0)
         })
     })
+    
+    describe('TimeTrackerUser.prototype.allSockets', () => {
+
+        it('should have allSockets as an array', () => {
+            user.enter(info, ws)
+
+            assert.isArray(user.allSockets)
+            assert.equal(user.allSockets.length, 1)
+        })
+    })
 })
