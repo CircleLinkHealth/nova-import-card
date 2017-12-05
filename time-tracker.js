@@ -114,7 +114,7 @@ function TimeTrackerUser(info, now = () => (new Date())) {
         ws.providerId = info.providerId
         ws.patientId = info.patientId
         let activity = user.activities.find(item => item.name === info.activity)
-        if (!!Number(info.initSeconds) && user.allSockets.length === 0) {
+        if (!!Number(info.initSeconds) && user.allSockets.length <= 1) {
             /**
              * make sure the page load time is taken into account
              */
