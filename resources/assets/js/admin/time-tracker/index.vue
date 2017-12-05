@@ -92,7 +92,7 @@
                                 if (data.message === 'server:sync') {
                                     self.seconds = data.seconds
                                     self.visible = true //display the component when the previousSeconds value has been received from the server to keep the display up-to-date
-                                    self.showLoader = false
+                                    if (EventBus.isInFocus) self.showLoader = false
                                 }
                                 else if (data.message === 'server:modal') {
                                     EventBus.$emit('away:trigger-modal')
