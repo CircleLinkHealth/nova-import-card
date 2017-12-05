@@ -86,7 +86,7 @@ function TimeTrackerUser(info, now = () => (new Date())) {
         inactiveSeconds: 0, //inactive time in seconds
         activities: [],
         get totalSeconds() {
-            return this.activities.reduce((a, b) => a + b.duration, 0)
+            return this.activities.reduce((a, b) => a + b.duration, 0) + info.totalTime
         },
         get allSockets() {
             return this.activities.map(activity => activity.sockets).reduce((a, b) => a.concat(b), [])

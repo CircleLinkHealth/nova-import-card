@@ -122,7 +122,7 @@ describe('TimeTrackerUser', () => {
         it('should have totalSeconds set to 0', () => {
             user.enter(info, ws)
 
-            assert.equal(user.totalSeconds, 0)
+            assert.equal(user.totalSeconds, info.totalTime)
         })
     })
     
