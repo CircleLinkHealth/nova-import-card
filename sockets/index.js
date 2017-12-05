@@ -72,6 +72,7 @@ module.exports = app => {
                 const info = data.info
                 const user = app.getTimeTracker(info).get(info)
                 user.enter(info)
+                user.sync()
               }
               catch (ex) {
                 errorThrow(ex, ws)
