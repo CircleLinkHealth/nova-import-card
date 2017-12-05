@@ -129,12 +129,12 @@ module.exports = app => {
           }
 
           axios.post(url, requestData).then((response) => {
-            console.log(response.status, response.data, requestData)
+            console.log(response.status, response.data)
           }).catch((err) => {
             console.error(err)
           })
 
-          
+          user.close()
         }
       }
     });
@@ -155,7 +155,8 @@ module.exports = app => {
       console.log(
         'activities:', user.activities.filter(activity => activity.isActive).length, 
         'total-seconds:', user.totalSeconds,
-        'inactive-seconds:', user.inactiveSeconds 
+        'inactive-seconds:', user.inactiveSeconds,
+        'durations:', user.activities.map(activity => activity.duration).join(',')
       )
     }
   }, 1000);

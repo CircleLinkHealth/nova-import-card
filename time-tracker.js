@@ -110,7 +110,7 @@ function TimeTrackerUser(info, now = () => (new Date())) {
         validateInfo(info)
         validateWebSocket(ws)
         user.enter(info, ws)
-        user.totalTime = info.totalTime
+        //user.totalTime = Math.max(user.totalTime, info.totalTime)
         ws.providerId = info.providerId
         ws.patientId = info.patientId
         let activity = user.activities.find(item => item.name == info.activity)
@@ -191,6 +191,16 @@ function TimeTrackerUser(info, now = () => (new Date())) {
             activity.duration += 30
         }
         user.inactiveSeconds = 0
+    }
+
+    user.close = () => {
+        /**
+         * to be executed when all sockets have closed
+         */
+        user.totalTime += user.activities.reduce((a, b) => a + b.duration, 0)
+        user.activities.forEach(activity => {
+            activity.duration = 0
+        })
     }
 
     return user
