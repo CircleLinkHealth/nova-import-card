@@ -7,13 +7,26 @@ use App\Billing\Practices\PracticeInvoiceGenerator;
 use App\Http\Controllers\Controller;
 use App\PatientMonthlySummary;
 use App\Practice;
-use App\Reports\ApproveBillablePatientsReport;
+use App\Services\ApproveBillablePatientsService;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Mail;
+use Yajra\Datatables\Facades\Datatables;
+
 
 class PracticeInvoiceController extends Controller
 {
+    private $service;
+
+    /**
+     * PracticeInvoiceController constructor.
+     *
+     * @param ApproveBillablePatientsService $service
+     */
+    public function __construct(ApproveBillablePatientsService $service)
+    {
+        $this->service = $service;
+    }
 
     public function make()
     {
@@ -53,15 +66,17 @@ class PracticeInvoiceController extends Controller
 
     public function data(Request $request)
     {
-        $input = $request->input();
+        $data = $this->service->patientsToApprove($request['practice_id'], Carbon::parse($request['date']));
 
-        $date = Carbon::parse($input['date']);
-
-        $reporter = new ApproveBillablePatientsReport($date, $input['practice_id']);
-
-        $reporter->dataV1();
-
-        return $reporter->format();
+        return Datatables::of(collect($data))
+                         ->addColumn('background_color', function ($a) {
+                             if ($a['lacksProblems'] || $a['status'] == 'withdrawn' || $a['status'] == 'paused' || $a['no_of_successful_calls'] < 1) {
+                                 return 'rgba(255, 252, 96, 0.407843)';
+                             } else {
+                                 return '';
+                             }
+                         })
+                         ->make(true);
     }
 
     public function updateApproved(Request $request)
