@@ -166,10 +166,16 @@
                                             Problem 1 Code
                                         </th>
                                         <th>
+                                            Edit
+                                        </th>
+                                        <th>
                                             Problem 2
                                         </th>
                                         <th>
                                             Problem 2 Code
+                                        </th>
+                                        <th>
+                                            Edit
                                         </th>
                                         <th>
                                             #Successful Calls
@@ -226,8 +232,10 @@
                             {data: 'ccm', name: 'ccm'},
                             {data: 'problem1', name: 'problem1'},
                             {data: 'problem1_code', name: 'problem1_code'},
+                            {data: 'edit1', name: 'edit1'},
                             {data: 'problem2', name: 'problem2'},
                             {data: 'problem2_code', name: 'problem2_code'},
+                            {data: 'edit2', name: 'edit2'},
                             {data: 'no_of_successful_calls', name: 'no_of_successful_calls'},
                             {data: 'approve', name: 'approve'},
                             {data: 'reject', name: 'reject'},
@@ -430,37 +438,6 @@
                         });
 
                         $('#select_problem').append('<option value="other" name="other">Other</option>');
-
-                        $('#problemPicker').modal('show');
-
-                    });
-
-                    //BUILD MODAL FOR CODE PICKER
-                    $('#billable_list').on('click', '.codePicker', function () {
-
-                        name = $(this).attr('patient');
-                        console.log(name);
-                        $("#patientName").html(name);
-
-                        $('#report_id').val(this.id);
-                        $('#problem_no').val(this.name);
-                        $('#has_problem').val(1);
-
-
-                        let practice = $("#practice_id option:selected").text();
-                        $('#modal_practice_id').val(practice);
-
-                        let date = $("#date option:selected").text();
-                        $('#modal_date').val(date);
-
-                        console.log(practice);
-                        console.log(date);
-
-                        $('#otherProblem').empty();
-                        $('#select_problem').empty();
-
-                        //the options are stored in a | delimted string
-                        $('#select_problem').append('<option value="' + this.value + '" selected disabled>' + this.value + '</option>');
 
                         $('#problemPicker').modal('show');
 

@@ -37,7 +37,6 @@ class ApproveBillablePatientsRepository
                              ->with(['billableProblem1', 'billableProblem2']);
                    })
                    ->ofType('participant')
-                   ->where('program_id', '=', $practiceId)
-                   ->get();
+                   ->where('program_id', '=', $practiceId);
     }
 }
