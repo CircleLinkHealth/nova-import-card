@@ -23,7 +23,7 @@ class ApproveBillablePatientsService
                           ->get()
                           ->map(function ($u) {
                               $info   = $u->patientInfo;
-                              $report = $info->patientSummaries->first();
+                              $report = $u->patientSummaries->first();
 
                               $this->fillSummaryProblems($u, $report);
 
@@ -58,7 +58,7 @@ class ApproveBillablePatientsService
 
                               return [
                                   'name'                   => $name,
-                                  'provider'               => $u->billingProvider()->fullName,
+                                  'provider'               => $u->billingProviderUser()->fullName,
                                   'practice'               => $u->primaryPractice->display_name,
                                   'dob'                    => $info->birth_date,
                                   'ccm'                    => round($report->ccm_time / 60, 2),

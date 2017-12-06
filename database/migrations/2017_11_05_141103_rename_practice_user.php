@@ -13,6 +13,10 @@ class RenamePracticeUser extends Migration
      */
     public function up()
     {
+        if (Schema::hasTable('practice_role_user')) {
+            return true;
+        }
+
         Schema::table('practice_user', function (Blueprint $table) {
             $table->rename('practice_role_user');
         });
