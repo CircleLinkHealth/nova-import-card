@@ -108,6 +108,7 @@
                         "Problem 1 Code":"I10",
                         "Problem 2 Code":"I10",
                         "#Successful Calls":0,
+                        qa: 0,
                         reportId: 9,
                         problems: [
                             {
@@ -138,6 +139,7 @@
                         "Problem 1 Code":null,
                         "Problem 2 Code":null,
                         "#Successful Calls":0,
+                        qa: 1,
                         reportId: 10,
                         problems: [
                             {
@@ -175,6 +177,7 @@
                             approved: this.$elem(patient.approve).querySelector('input').checked,
                             rejected:  this.$elem(patient.reject).querySelector('input').checked,
                             reportId: patient.report_id,
+                            qa: patient.qa,
                             problems: patient.problems || [],
                             Provider: patient.provider,
                             Patient: this.$elem(patient.name).querySelector('a').innerText,
@@ -189,7 +192,7 @@
                             'Problem 2 Code': patient.problem2_code,
                             '#Successful Calls': patient.no_of_successful_calls,
                         }
-                    })
+                    }).sort((pA, pB) => pB.qa - pA.qa)
                     this.loading = false
                     console.log('bills-report', this.tableData)
                 }).catch(err => {
