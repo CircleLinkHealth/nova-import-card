@@ -32,28 +32,28 @@
                 <div class="modal-body">
                     <form name="problem_form" id="problem_form">
                         <div class="form-group">
-                            <label for="select_problem">Eligible Problems</label>
+                            <label for="ccd_problem_id">Eligible Problems</label>
                             <select class="form-control"
-                                    id="select_problem" name="select_problem">
+                                    id="ccd_problem_id" name="ccd_problem_id">
 
                             </select>
                         </div>
 
-                        <div id="showOther" class="form-group" style="display:none">
-                            <label for="otherProblem">If other, please specify</label>
-                            <input class="form-control" name="otherProblem" id="otherProblem">
-                        </div>
+                        {{--<div id="showOther" class="form-group" style="display:none">--}}
+                            {{--<label for="otherProblem">If other, please specify</label>--}}
+                            {{--<input class="form-control" name="otherProblem" id="otherProblem">--}}
+                        {{--</div>--}}
 
-                        <div class="form-group">
-                            <label for="code">Problem ICD10 Code</label>
-                            <input class="form-control" name="code" id="code">
-                        </div>
+                        {{--<div class="form-group">--}}
+                            {{--<label for="code">Problem ICD10 Code</label>--}}
+                            {{--<input class="form-control" name="code" id="code">--}}
+                        {{--</div>--}}
 
                         <input type="hidden" id="report_id" name="report_id">
                         <input type="hidden" id="problem_no" name="problem_no">
-                        <input type="hidden" id="has_problem" name="has_problem">
-                        <input type="hidden" id="modal_date" name="modal_date">
-                        <input type="hidden" id="modal_practice_id" name="modal_practice_id">
+                        {{--<input type="hidden" id="has_problem" name="has_problem">--}}
+                        {{--<input type="hidden" id="modal_date" name="modal_date">--}}
+                        {{--<input type="hidden" id="modal_practice_id" name="modal_practice_id">--}}
                     </form>
                 </div>
 
@@ -166,10 +166,16 @@
                                             Problem 1 Code
                                         </th>
                                         <th>
+                                            Edit
+                                        </th>
+                                        <th>
                                             Problem 2
                                         </th>
                                         <th>
                                             Problem 2 Code
+                                        </th>
+                                        <th>
+                                            Edit
                                         </th>
                                         <th>
                                             #Successful Calls
@@ -226,8 +232,10 @@
                             {data: 'ccm', name: 'ccm'},
                             {data: 'problem1', name: 'problem1'},
                             {data: 'problem1_code', name: 'problem1_code'},
+                            {data: 'edit1', name: 'edit1'},
                             {data: 'problem2', name: 'problem2'},
                             {data: 'problem2_code', name: 'problem2_code'},
+                            {data: 'edit2', name: 'edit2'},
                             {data: 'no_of_successful_calls', name: 'no_of_successful_calls'},
                             {data: 'approve', name: 'approve'},
                             {data: 'reject', name: 'reject'},
@@ -300,9 +308,9 @@
 
                     });
 
-                    $('#select_problem').on('change', function () {
+                    $('#ccd_problem_id').on('change', function () {
 
-                        if ($("#select_problem option:selected").text() == 'Other') {
+                        if ($("#ccd_problem_id option:selected").text() == 'Other') {
 
                             $("#showOther").css('display', 'block');
 
@@ -422,45 +430,13 @@
                         $('#modal_date').val(date);
 
                         $('#otherProblem').empty();
-                        $('#select_problem').empty();
+                        $('#ccd_problem_id').empty();
 
-                        //the options are stored in a | delimted string
-                        $.each(this.value.split('|'), function (key, value) {
-                            $('#select_problem').append('<option value="' + value + '">' + (value == '-1' ? 'select' : value) + '</option>');
+                        $.each(JSON.parse(this.value), function (key, value) {
+                            $('#ccd_problem_id').append('<option value="' + value.id + '">' + (value.name == '-1' ? 'select' : value.name + ', ICD 10 Code: ' + value.code) + '</option>');
                         });
 
-                        $('#select_problem').append('<option value="other" name="other">Other</option>');
-
-                        $('#problemPicker').modal('show');
-
-                    });
-
-                    //BUILD MODAL FOR CODE PICKER
-                    $('#billable_list').on('click', '.codePicker', function () {
-
-                        name = $(this).attr('patient');
-                        console.log(name);
-                        $("#patientName").html(name);
-
-                        $('#report_id').val(this.id);
-                        $('#problem_no').val(this.name);
-                        $('#has_problem').val(1);
-
-
-                        let practice = $("#practice_id option:selected").text();
-                        $('#modal_practice_id').val(practice);
-
-                        let date = $("#date option:selected").text();
-                        $('#modal_date').val(date);
-
-                        console.log(practice);
-                        console.log(date);
-
-                        $('#otherProblem').empty();
-                        $('#select_problem').empty();
-
-                        //the options are stored in a | delimted string
-                        $('#select_problem').append('<option value="' + this.value + '" selected disabled>' + this.value + '</option>');
+//                        $('#ccd_problem_id').append('<option value="other" name="other">Other</option>');
 
                         $('#problemPicker').modal('show');
 
@@ -489,7 +465,7 @@
                                 $('#problemPicker').modal('hide');
 
                                 //set the modal to cleared for further use
-                                $('#select_problem').val('');
+                                $('#ccd_problem_id').val('');
                                 $('#otherProblem').val('');
                                 $('#code').val('');
                                 $('#report_id').val('');

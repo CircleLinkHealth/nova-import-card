@@ -2597,7 +2597,6 @@ class User extends \App\BaseModel implements AuthenticatableContract, CanResetPa
         $ccdProblems = $this->ccdProblems()
                             ->with('icd10Codes')
                             ->with('cpmProblem')
-                            ->whereHas('icd10Codes')
                             ->whereNotNull('cpm_problem_id')
                             ->groupBy('cpm_problem_id')
                             ->get()
