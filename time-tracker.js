@@ -95,6 +95,7 @@ function TimeTrackerUser(info, now = () => (new Date())) {
         programId: info.programId,
         ipAddr: info.ipAddr,
         totalTime: info.totalTime,
+        noLiveCount: info.noLiveCount,
         get totalSeconds() {
             return this.activities.reduce((a, b) => a + b.duration, 0) + this.totalTime
         },

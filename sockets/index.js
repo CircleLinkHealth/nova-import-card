@@ -148,7 +148,7 @@ module.exports = app => {
         }
       })
 
-      if (user.allSockets.length > 0 && user.allSockets.every(ws => !ws.active)) {
+      if (!user.noLiveCount && user.allSockets.length > 0 && user.allSockets.every(ws => !ws.active)) {
         user.inactiveSeconds += 1
       }
 
