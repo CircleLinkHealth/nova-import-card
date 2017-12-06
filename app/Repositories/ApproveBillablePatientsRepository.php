@@ -26,7 +26,8 @@ class ApproveBillablePatientsRepository
             'billableProblems',
             'patientSummaries' => function ($query) use ($month) {
                 $query->where('month_year', $month)
-                      ->where('ccm_time', '>=', 1200);
+                      ->where('ccm_time', '>=', 1200)
+                      ->with(['billableProblem1.icd10Codes', 'billableProblem2.icd10Codes']);
             },
             'cpmProblems',
             'patientInfo',
@@ -34,8 +35,7 @@ class ApproveBillablePatientsRepository
                    ->has('patientInfo')
                    ->whereHas('patientSummaries', function ($query) use ($month) {
                        $query->where('month_year', $month)
-                             ->where('ccm_time', '>=', 1200)
-                             ->with(['billableProblem1', 'billableProblem2']);
+                             ->where('ccm_time', '>=', 1200);
                    })
                    ->ofType('participant')
                    ->where('program_id', '=', $practiceId);

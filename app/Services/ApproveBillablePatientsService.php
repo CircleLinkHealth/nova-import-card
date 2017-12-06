@@ -68,9 +68,6 @@ class ApproveBillablePatientsService
 
                               $report->save();
 
-                              $report->load('billableProblem1');
-                              $report->load('billableProblem2');
-
                               $name = "<a href = " . URL::route('patient.careplan.show', [
                                       'patient' => $u->id,
                                       'page'    => 1,
@@ -175,10 +172,10 @@ class ApproveBillablePatientsService
             }
         }
 
-//        if ($summary->problem_1 == $summary->problem_2) {
-//            $summary->problem_2 = null;
-//            $this->fillProblems($patient, $summary, $billableProblems);
-//        }
+        if ($summary->problem_1 == $summary->problem_2) {
+            $summary->problem_2 = null;
+            $this->fillProblems($patient, $summary, $billableProblems);
+        }
 
         $summary->save();
     }
