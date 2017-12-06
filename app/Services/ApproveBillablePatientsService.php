@@ -23,7 +23,7 @@ class ApproveBillablePatientsService
                           ->get()
                           ->map(function ($u) {
                               $info   = $u->patientInfo;
-                              $report = $info->patientSummaries->first();
+                              $report = $u->patientSummaries->first();
 
                               $this->fillSummaryProblems($u, $report);
 
@@ -80,7 +80,6 @@ class ApproveBillablePatientsService
                                   'report_id'              => $report->id ?? null,
                                   //this is a hidden sorter
                                   'qa'                     => $toQA,
-                                  'problemsWithIcd10Code'  => '',
                                   'lacksProblems'          => $lacksProblems,
 
                               ];
