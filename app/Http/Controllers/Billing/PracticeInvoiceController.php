@@ -207,42 +207,19 @@ class PracticeInvoiceController extends Controller
 
     public function storeProblem(Request $request)
     {
+        $report = PatientMonthlySummary::find($request['report_id']);
 
-        $input = $request->input();
+        $key = $request['problem_no'];
 
-        $report = PatientMonthlySummary::find($input['report_id']);
+        $report->$key = $request['ccd_problem_id'];
 
-        $key = $input['problem_no'];
-        $codeKey = $input['problem_no'] . '_code';
-
-        if ($input['has_problem'] == 1) {
-            $report->$codeKey = $input['code'];
-        } else {
-            if ($input['select_problem'] == 'other') {
-                $report->$key = $input['otherProblem'];
-            } else {
-                $report->$key = $input['select_problem'];
-            }
-
-            $report->$codeKey = $input['code'];
+        if (!$this->service->lacksProblems($report)) {
+            $report->approved = true;
         }
-
-        //if report has both problems setup with codes, set approved to 1 here to they show up on the count for the view.
-        if ($report->billable_problem1_code != ''
-            && ($report->billable_problem2_code != '')
-            && ($report->billable_problem2 != '')
-            && ($report->billable_problem1 != '')
-        ) {
-            $report->approved = 1;
-        };
 
         $report->save();
 
-        $date = Carbon::parse($input['modal_date'])->firstOfMonth()->toDateString();
-
-
-        //used for view report counts
-        $counts = $this->getCounts($date, $input['modal_practice_id']);
+        $counts = $this->getCounts($report->month_year->toDateString(), $report->patient->primaryPractice->id);
 
         return response()->json(
             [

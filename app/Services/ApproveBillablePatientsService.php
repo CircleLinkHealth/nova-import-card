@@ -10,7 +10,7 @@ use Illuminate\Support\Facades\URL;
 
 class ApproveBillablePatientsService
 {
-    private $repo;
+    public $repo;
 
     public function __construct(ApproveBillablePatientsRepository $repo)
     {
@@ -87,7 +87,7 @@ class ApproveBillablePatientsService
                           });
     }
 
-    private function fillSummaryProblems(User $patient, PatientMonthlySummary $summary)
+    public function fillSummaryProblems(User $patient, PatientMonthlySummary $summary)
     {
         if ($this->lacksProblems($summary)) {
             $this->fillProblems($patient, $summary, $this->getBillableProblems($patient));
@@ -110,7 +110,7 @@ class ApproveBillablePatientsService
      *
      * @return bool
      */
-    private function lacksProblems(PatientMonthlySummary $summary)
+    public function lacksProblems(PatientMonthlySummary $summary)
     {
         return ! ($summary->billableProblem1 && $summary->billableProblem2);
     }
@@ -123,7 +123,7 @@ class ApproveBillablePatientsService
      *
      * @return bool
      */
-    private function fillProblems(User $patient, PatientMonthlySummary $summary, Collection $billableProblems)
+    public function fillProblems(User $patient, PatientMonthlySummary $summary, Collection $billableProblems)
     {
         if ($billableProblems->isEmpty()) {
             return false;
@@ -171,7 +171,7 @@ class ApproveBillablePatientsService
      *
      * @return Collection
      */
-    private function getBillableProblems(User $patient)
+    public function getBillableProblems(User $patient)
     {
         return $patient->billableProblems
             ->map(function ($p) {
@@ -183,7 +183,7 @@ class ApproveBillablePatientsService
             });
     }
 
-    private function buildCcdProblemsFromCpmProblems(User $patient)
+    public function buildCcdProblemsFromCpmProblems(User $patient)
     {
         $ccdProblems = $patient->ccdProblems;
 
@@ -203,9 +203,9 @@ class ApproveBillablePatientsService
         });
     }
 
-    private function selectProblemButton($number, User $patient, PatientMonthlySummary $summary)
+    public function selectProblemButton($number, User $patient, PatientMonthlySummary $summary)
     {
-        $name    = "billable_problem$number";
+        $name    = "problem_$number";
         $options = $patient->ccdProblems->map(function ($prob) {
             return [
                 'id'   => $prob->id,
