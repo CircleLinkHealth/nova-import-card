@@ -190,7 +190,19 @@
                 })
             },
             showProblemsModal(patient, type) {
-                Event.$emit('modal-patient-problem:show', patient, type)
+                const self = this
+                Event.$emit('modal-patient-problem:show', patient, type, function (modified) {
+                    const tablePatient = self.tableData.find(pt => pt.id === patient.id)
+                    if (type === 1) {
+                        tablePatient['Problem 1 Code'] = modified.code
+                        tablePatient['Problem 1'] = modified.name
+                    }
+                    else {
+                        tablePatient['Problem 2 Code'] = modified.code
+                        tablePatient['Problem 2'] = modified.name
+                    }
+                    console.log(modified)
+                })
             }
         },
         computed: {

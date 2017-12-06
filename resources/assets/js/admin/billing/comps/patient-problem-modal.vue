@@ -9,7 +9,7 @@
                 Eligible Problems
               </div>
               <div class="col-sm-12">
-                <select class="form-control" v-model="props.info.code">
+                <select class="form-control" v-model="props.info.code" @change="props.info.changeProblemName">
                   <option v-for="(problem, index) in props.info.problems" :key="index" :value="problem.code">{{problem.name}}</option>
                   <option value="Other">Other</option>
                 </select>
@@ -46,16 +46,27 @@
                     okHandler() {
                         console.log("okay clicked")
                         Event.$emit("modal-patient-problem:hide")
+
+                        if (this.done && typeof(this.done) === 'function') {
+                          this.done(this)
+                        }
+                    },
+                    changeProblemName() {
+                      this.name = (this.problems.find(problem => problem.code === this.code) || {}).name
                     }
                 }
             }
         },
+        methods: {
+          
+        },
         mounted() {
-          Event.$on('modal-patient-problem:show', (patientProblem, type) => {
+          Event.$on('modal-patient-problem:show', (patientProblem, type, done) => {
             this.patientProblemModalInfo.problems = patientProblem.problems
             this.patientProblemModalInfo.name = (type === 1) ? patientProblem['Problem 1'] : patientProblem['Problem 1']
             this.patientProblemModalInfo.code = (type === 1) ? patientProblem['Problem 1 Code'] : patientProblem['Problem 1 Code']
-            console.log(this.patientProblemModalInfo)
+            if (done && typeof(done) == 'function') this.patientProblemModalInfo.done = done.bind(this.patientProblemModalInfo)
+            this.patientProblemModalInfo.changeProblemName = this.patientProblemModalInfo.changeProblemName.bind(this.patientProblemModalInfo)
           })
         }
     }
