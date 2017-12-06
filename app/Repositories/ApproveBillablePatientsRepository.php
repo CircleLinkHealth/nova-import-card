@@ -48,8 +48,7 @@ class ApproveBillablePatientsRepository
         return User::with([
             'patientSummaries' => function ($query) use ($month) {
                 $query->where('month_year', $month)
-                      ->where('ccm_time', '>=', 1200)
-                      ->with(['billableProblem1.icd10Codes', 'billableProblem2.icd10Codes']);
+                      ->where('ccm_time', '>=', 1200);
             },
         ])
                    ->whereHas('patientSummaries', function ($query) use ($month) {
