@@ -42,7 +42,9 @@ class ApproveBillablePatientsService
 
                               $report->approved = ! empty($approved);
 
-                              $toQA = ! $approved && ! $rejected ? 1 : '';
+                              $toQA = ! $approved && ! $rejected
+                                  ? 1
+                                  : '';
 
                               $report->save();
 
@@ -61,10 +63,14 @@ class ApproveBillablePatientsService
                                   'dob'                    => $info->birth_date,
                                   'ccm'                    => round($report->ccm_time / 60, 2),
                                   'problem1'               => $report->billableProblem1->name ?? null,
-                                  'problem1_code'          => isset($report->billableProblem1) ? $report->billableProblem1->icd10Code() : null,
+                                  'problem1_code'          => isset($report->billableProblem1)
+                                      ? $report->billableProblem1->icd10Code()
+                                      : null,
                                   'edit1'                  => $this->selectProblemButton(1, $u, $report),
                                   'problem2'               => $report->billableProblem2->name ?? null,
-                                  'problem2_code'          => isset($report->billableProblem2) ? $report->billableProblem2->icd10Code() : null,
+                                  'problem2_code'          => isset($report->billableProblem2)
+                                      ? $report->billableProblem2->icd10Code()
+                                      : null,
                                   'edit2'                  => $this->selectProblemButton(2, $u, $report),
                                   'no_of_successful_calls' => $report->no_of_successful_calls,
                                   'status'                 => $info->ccm_status,
@@ -88,6 +94,11 @@ class ApproveBillablePatientsService
         }
 
         if ($this->lacksProblems($summary)) {
+            $this->fillProblems($patient, $summary, $patient->problemsWithIcd10Code());
+        }
+
+        if ($this->lacksProblems($summary)) {
+            $this->buildCcdProblemsFromCpmProblems($patient);
             $this->fillProblems($patient, $summary, $patient->problemsWithIcd10Code());
         }
     }
@@ -131,7 +142,7 @@ class ApproveBillablePatientsService
                 $summary->{"problem_$i"} = $billableProblems[0]['id'];
                 Problem::where('id', $summary->{"problem_$i"})
                        ->update([
-                           'billable' => true
+                           'billable' => true,
                        ]);
                 $billableProblems->forget(0);
             } else {
@@ -170,6 +181,26 @@ class ApproveBillablePatientsService
                     'code' => $p->icd10Code(),
                 ];
             });
+    }
+
+    private function buildCcdProblemsFromCpmProblems(User $patient)
+    {
+        $ccdProblems = $patient->ccdProblems;
+
+        $patient->cpmProblems->map(function ($problem) use ($ccdProblems, $patient) {
+            if ($ccdProblems->where('cpm_problem_id', $problem->id)->count() == 0) {
+                $newProblem = $patient->ccdProblems()->create([
+                    'name'           => $problem->name,
+                    'cpm_problem_id' => $problem->id,
+                ]);
+
+                $code = $newProblem->codes()->create([
+                    'code_system_name' => 'ICD-10',
+                    'code_system_oid'  => '2.16.840.1.113883.6.3',
+                    'code'             => $problem->default_icd_10_code,
+                ]);
+            }
+        });
     }
 
     private function selectProblemButton($number, User $patient, PatientMonthlySummary $summary)
