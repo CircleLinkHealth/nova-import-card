@@ -125,7 +125,14 @@ module.exports = app => {
             providerId: user.providerId,
             ipAddr: user.ipAddr,
             programId: user.programId,
-            activities: user.activities
+            activities: user.activities.map(activity => ({
+              name: activity.name,
+              title: activity.title,
+              duration: activity.duration,
+              url: activity.url,
+              url_short: activity.url_short,
+              start_time: activity.start_time
+            }))
           }
 
           axios.post(url, requestData).then((response) => {
