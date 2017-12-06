@@ -50,7 +50,7 @@
                             EventBus.$emit("tracker:stop")
                             EventBus.$emit('modal-inactivity:show')
                         }
-                        else if (this.totalSeconds && this.totalSeconds >= LOGOUT_INTERVAL) {
+                        else if (this.totalSeconds && (this.totalSeconds >= LOGOUT_INTERVAL)) {
                             /**
                              * Logout the user automatically
                              */
