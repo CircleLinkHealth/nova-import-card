@@ -45,10 +45,10 @@
                 <a :href="props.row.patientUrl" class="blue">{{props.row.Patient}}</a>
             </template>
             <template slot="Problem 1" scope="props">
-                <span class="blue pointer" @click="showProblemsModal(props.row, 1)">{{props.row['Problem 1']}}</span>
+                <span class="blue pointer" @click="showProblemsModal(props.row, 1)">{{props.row['Problem 1'] || '&lt;Edit&gt;'}}</span>
             </template>
             <template slot="Problem 2" scope="props">
-                <span class="blue pointer" @click="showProblemsModal(props.row, 2)">{{props.row['Problem 2']}}</span>
+                <span class="blue pointer" @click="showProblemsModal(props.row, 2)">{{props.row['Problem 2'] || '&lt;Edit&gt;'}}</span>
             </template>
         </v-client-table>
         <patient-problem-modal></patient-problem-modal>
@@ -202,7 +202,7 @@
                 const self = this
                 Event.$emit('modal-patient-problem:show', patient, type, function (modified) {
                     const tablePatient = self.tableData.find(pt => pt.id === patient.id)
-                    console.log('table-patient', tablePatient)
+                    console.log('table-patient', tablePatient, modified)
                     if (type === 1) {
                         tablePatient['Problem 1 Code'] = modified.code
                         tablePatient['Problem 1'] = modified.name
@@ -224,7 +224,6 @@
                     }).catch(err => {
                         console.error('billing-change-problem', err)
                     })
-                    console.log(modified)
                 })
             }
         },
