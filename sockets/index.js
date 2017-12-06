@@ -152,12 +152,16 @@ module.exports = app => {
         user.inactiveSeconds += 1
       }
 
-      console.log(
-        'activities:', user.activities.filter(activity => activity.isActive).length, 
-        'total-seconds:', user.totalSeconds,
-        'inactive-seconds:', user.inactiveSeconds,
-        'durations:', user.activities.map(activity => activity.duration).join(',')
-      )
+      if (!user.noLiveCount) {
+        console.log(
+          'key:', user.key,
+          'activities:', user.activities.filter(activity => activity.isActive).length, 
+          'total-seconds:', user.totalSeconds,
+          'inactive-seconds:', user.inactiveSeconds,
+          'durations:', user.activities.map(activity => activity.duration).join(','),
+          'sockets:', user.allSockets.length
+        )
+      }
     }
   }, 1000);
  
