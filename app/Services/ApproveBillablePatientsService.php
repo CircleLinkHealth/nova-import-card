@@ -113,12 +113,12 @@ class ApproveBillablePatientsService
         }
 
         if ($this->lacksProblems($summary)) {
-            $this->fillProblems($patient, $summary, $patient->problemsWithIcd10Code());
+            $this->fillProblems($patient, $summary, $patient->ccdProblems);
         }
 
         if ($this->lacksProblems($summary)) {
             $this->buildCcdProblemsFromCpmProblems($patient);
-            $this->fillProblems($patient, $summary, $patient->problemsWithIcd10Code());
+            $this->fillProblems($patient, $summary, $patient->ccdProblems);
         }
     }
 
