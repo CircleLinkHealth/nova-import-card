@@ -432,9 +432,8 @@
                         $('#otherProblem').empty();
                         $('#select_problem').empty();
 
-                        //the options are stored in a | delimted string
-                        $.each(this.value.split('|'), function (key, value) {
-                            $('#select_problem').append('<option value="' + value + '">' + (value == '-1' ? 'select' : value) + '</option>');
+                        $.each(JSON.parse(this.value), function (key, value) {
+                            $('#select_problem').append('<option value="' + value.id + '">' + (value.name == '-1' ? 'select' : value.name) + '</option>');
                         });
 
                         $('#select_problem').append('<option value="other" name="other">Other</option>');

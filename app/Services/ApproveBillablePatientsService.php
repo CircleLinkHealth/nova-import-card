@@ -206,7 +206,13 @@ class ApproveBillablePatientsService
     private function selectProblemButton($number, User $patient, PatientMonthlySummary $summary)
     {
         $name    = "billable_problem$number";
-        $options = $patient->ccdProblems()->get()->implode('name', '|');
+        $options = $patient->ccdProblems->map(function ($prob) {
+            return [
+                'id'   => $prob->id,
+                'name' => $prob->name,
+                'code' => $prob->icd10Code()
+            ];
+        })->toJson();
 
         return "<button style='font-size: 10px' class='btn btn-primary problemPicker' patient='$patient->fullName' name=$name value='$options' id='$summary->id'>Edit</button >";
     }
