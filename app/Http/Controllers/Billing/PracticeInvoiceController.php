@@ -68,15 +68,7 @@ class PracticeInvoiceController extends Controller
     {
         $data = $this->service->patientsToApprove($request['practice_id'], Carbon::parse($request['date']));
 
-        return Datatables::of(collect($data))
-                         ->addColumn('background_color', function ($a) {
-                             if ($a['lacksProblems'] || $a['status'] == 'withdrawn' || $a['status'] == 'paused' || $a['no_of_successful_calls'] < 1) {
-                                 return 'rgba(255, 252, 96, 0.407843)';
-                             } else {
-                                 return '';
-                             }
-                         })
-                         ->make(true);
+        return response()->json($data);
     }
 
     public function updateApproved(Request $request)
