@@ -9,21 +9,18 @@
                 Eligible Problems
               </div>
               <div class="col-sm-12">
-                <select class="form-control">
-                  <option v-for="(problem, index) in problems" :key="index" :value="problem.code">{{problem.name}}</option>
-                  <option value="">Other</option>
+                <select class="form-control" v-model="props.info.code">
+                  <option v-for="(problem, index) in props.info.problems" :key="index" :value="problem.code">{{problem.name}}</option>
+                  <option value="Other">Other</option>
                 </select>
               </div>
             </div>
             <div class="row form-group">
               <div class="col-sm-12">
-                Eligible Problems
+                ICD-10 Code
               </div>
               <div class="col-sm-12">
-                <select class="form-control">
-                  <option v-for="(problem, index) in problems" :key="index" :value="problem.code">{{problem.name}}</option>
-                  <option value="">Other</option>
-                </select>
+                <input class="form-control" type="text" v-model="props.info.code" placeholder="Code" />
               </div>
             </div>
           </div>
@@ -52,6 +49,14 @@
                     }
                 }
             }
+        },
+        mounted() {
+          Event.$on('modal-patient-problem:show', (patientProblem, type) => {
+            this.patientProblemModalInfo.problems = patientProblem.problems
+            this.patientProblemModalInfo.name = (type === 1) ? patientProblem['Problem 1'] : patientProblem['Problem 1']
+            this.patientProblemModalInfo.code = (type === 1) ? patientProblem['Problem 1 Code'] : patientProblem['Problem 1 Code']
+            console.log(this.patientProblemModalInfo)
+          })
         }
     }
 </script>

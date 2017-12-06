@@ -44,7 +44,14 @@
             <template slot="Patient" scope="props">
                 <text-editable :value="props.row.Patient" :class-name="'blue'" :no-button="true"></text-editable>
             </template>
+            <template slot="Problem 1" scope="props">
+                <span class="blue pointer" @click="showProblemsModal(props.row, 1)">{{props.row['Problem 1']}}</span>
+            </template>
+            <template slot="Problem 2" scope="props">
+                <span class="blue pointer" @click="showProblemsModal(props.row, 2)">{{props.row['Problem 2']}}</span>
+            </template>
         </v-client-table>
+        <patient-problem-modal></patient-problem-modal>
     </div>
 </template>
 
@@ -60,7 +67,8 @@
         props: {
         },
         components: {
-            'text-editable': TextEditable
+            'text-editable': TextEditable,
+            'patient-problem-modal': PatientProblemModal
         },
         data() {
             return {
@@ -84,7 +92,61 @@
                     '#Successful Calls', 
                     'approved',
                     'rejected'],
-                tableData: [{"approved":true,"rejected":false,"Provider":"Dr. Demo MD","Patient":"Cecilia Z-Armstrong ","Practice":"Demo","DOB":"1918/09/22","Status":"enrolled","CCM Mins":0,"Problem 1":"Smoking","Problem 2":"Asthma","Problem 1 Code":"I10","Problem 2 Code":"I10","#Successful Calls":0},{"approved":false,"rejected":false,"Provider":"  ","Patient":"Kenneth Z-Smitham ","Practice":"Demo","DOB":"1958-09-08","Status":"enrolled","CCM Mins":0,"Problem 1":null,"Problem 2":null,"Problem 1 Code":null,"Problem 2 Code":null,"#Successful Calls":0}],
+                tableData: [
+                    {
+                        "approved":true,
+                        "rejected":false,
+                        "Provider":"Dr. Demo MD",
+                        "Patient":"Cecilia Z-Armstrong ",
+                        "Practice":"Demo",
+                        "DOB":"1918/09/22",
+                        "Status":"enrolled",
+                        "CCM Mins":0,
+                        "Problem 1":"Smoking",
+                        "Problem 2":"Asthma",
+                        "Problem 1 Code":"I10",
+                        "Problem 2 Code":"I10",
+                        "#Successful Calls":0,
+                        problems: [
+                            {
+                                id: 1,
+                                name: 'Smoking',
+                                code: 'I10'
+                            },
+                            {
+                                id: 2,
+                                name: 'Asthma',
+                                code: 'I11'
+                            }
+                        ]
+                    },
+                    {
+                        "approved":false,
+                        "rejected":false,
+                        "Provider":"  ",
+                        "Patient":"Kenneth Z-Smitham ",
+                        "Practice":"Demo",
+                        "DOB":"1958-09-08",
+                        "Status":"enrolled",
+                        "CCM Mins":0,
+                        "Problem 1":null,
+                        "Problem 2":null,
+                        "Problem 1 Code":null,
+                        "Problem 2 Code":null,
+                        "#Successful Calls":0,
+                        problems: [
+                            {
+                                id: 1,
+                                name: 'Tobacco',
+                                code: 'T01'
+                            },
+                            {
+                                id: 2,
+                                name: 'Syphilis',
+                                code: 'SP2'
+                            }
+                        ]
+                    }],
                 options: {
 
                 }
@@ -106,6 +168,7 @@
                             id: index,
                             approved: this.$elem(patient.approve).querySelector('input').checked,
                             rejected:  this.$elem(patient.reject).querySelector('input').checked,
+                            problems: patient.problems || [],
                             Provider: patient.provider,
                             Patient: this.$elem(patient.name).querySelector('a').innerText,
                             Practice: patient.practice,
@@ -116,7 +179,7 @@
                             'Problem 2': patient.problem2,
                             'Problem 1 Code': patient.problem1_code,
                             'Problem 2 Code': patient.problem2_code,
-                            '#Successful Calls': patient.no_of_successful_calls
+                            '#Successful Calls': patient.no_of_successful_calls,
                         }
                     })
                     this.loading = false
@@ -125,6 +188,9 @@
                     console.error(err)
                     this.loading = false
                 })
+            },
+            showProblemsModal(patient, type) {
+                Event.$emit('modal-patient-problem:show', patient, type)
             }
         },
         computed: {
@@ -180,11 +246,15 @@
         pointer-events: none;
     }
 
-    div.blue {
+    .blue {
         color: #008cba
     }
 
     div.blue input,textarea {
         width: 100%;
+    }
+
+    .pointer {
+        cursor: pointer;
     }
 </style>
