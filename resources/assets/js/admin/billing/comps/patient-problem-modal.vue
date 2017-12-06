@@ -34,7 +34,7 @@
 
 <script>
     import { Event } from 'vue-tables-2'
-    import Modal from '../../../common/modal'
+    import Modal from '../../common/modal'
     export default {
         name: 'patient-problem-modal',
         props: {
