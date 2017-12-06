@@ -35,7 +35,12 @@
             </div>
         </div>
         <v-client-table ref="tblBillingReport" :data="tableData" :columns="columns" :options="options">
-
+            <template slot="approved" scope="props">
+                <input class="row-select" v-bind="props.row.approved" type="checkbox" :readonly="true" />
+            </template>
+            <template slot="rejected" scope="props">
+                <input class="row-select" v-bind="props.row.rejected" type="checkbox" :readonly="true" />
+            </template>
         </v-client-table>
     </div>
 </template>
@@ -71,8 +76,9 @@
                     'Problem 2', 
                     'Problem 2 Code', 
                     '#Successful Calls', 
-                    'Reports'],
-                tableData: [],
+                    'approved',
+                    'rejected'],
+                tableData: [{"approved":true,"rejected":false,"Provider":"Dr. Demo MD","Patient":"Cecilia Z-Armstrong ","Practice":"Demo","DOB":"1918/09/22","Status":"enrolled","CCM Mins":0,"Problem 1":"Smoking","Problem 2":"Asthma","Problem 1 Code":"I10","Problem 2 Code":"I10","#Successful Calls":0},{"approved":false,"rejected":false,"Provider":"  ","Patient":"Kenneth Z-Smitham ","Practice":"Demo","DOB":"1958-09-08","Status":"enrolled","CCM Mins":0,"Problem 1":null,"Problem 2":null,"Problem 1 Code":null,"Problem 2 Code":null,"#Successful Calls":0}],
                 options: {
 
                 }
@@ -96,15 +102,14 @@
                             Provider: patient.provider,
                             Patient: this.$elem(patient.name).querySelector('a').innerText,
                             Practice: patient.practice,
-                            DOB: new Date(patient.dob),
+                            DOB: patient.dob,
                             Status: patient.status,
                             'CCM Mins': patient.ccm,
                             'Problem 1': patient.problem1,
                             'Problem 2': patient.problem2,
                             'Problem 1 Code': patient.problem1_code,
                             'Problem 2 Code': patient.problem2_code,
-                            '#Successful Calls': patient.no_of_successful_calls,
-                            'Reports': patient.report_id
+                            '#Successful Calls': patient.no_of_successful_calls
                         }
                     })
                     this.loading = false
@@ -136,6 +141,8 @@
             }
         },
         mounted() {
+            this.selectedMonth = this.months[0].long
+            this.selectedPractice = this.practices[0].id
             this.retrieve()
         }
     }
