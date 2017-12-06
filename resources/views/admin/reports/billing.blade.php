@@ -32,28 +32,28 @@
                 <div class="modal-body">
                     <form name="problem_form" id="problem_form">
                         <div class="form-group">
-                            <label for="select_problem">Eligible Problems</label>
+                            <label for="ccd_problem_id">Eligible Problems</label>
                             <select class="form-control"
-                                    id="select_problem" name="select_problem">
+                                    id="ccd_problem_id" name="ccd_problem_id">
 
                             </select>
                         </div>
 
-                        <div id="showOther" class="form-group" style="display:none">
-                            <label for="otherProblem">If other, please specify</label>
-                            <input class="form-control" name="otherProblem" id="otherProblem">
-                        </div>
+                        {{--<div id="showOther" class="form-group" style="display:none">--}}
+                            {{--<label for="otherProblem">If other, please specify</label>--}}
+                            {{--<input class="form-control" name="otherProblem" id="otherProblem">--}}
+                        {{--</div>--}}
 
-                        <div class="form-group">
-                            <label for="code">Problem ICD10 Code</label>
-                            <input class="form-control" name="code" id="code">
-                        </div>
+                        {{--<div class="form-group">--}}
+                            {{--<label for="code">Problem ICD10 Code</label>--}}
+                            {{--<input class="form-control" name="code" id="code">--}}
+                        {{--</div>--}}
 
                         <input type="hidden" id="report_id" name="report_id">
                         <input type="hidden" id="problem_no" name="problem_no">
-                        <input type="hidden" id="has_problem" name="has_problem">
-                        <input type="hidden" id="modal_date" name="modal_date">
-                        <input type="hidden" id="modal_practice_id" name="modal_practice_id">
+                        {{--<input type="hidden" id="has_problem" name="has_problem">--}}
+                        {{--<input type="hidden" id="modal_date" name="modal_date">--}}
+                        {{--<input type="hidden" id="modal_practice_id" name="modal_practice_id">--}}
                     </form>
                 </div>
 
@@ -308,9 +308,9 @@
 
                     });
 
-                    $('#select_problem').on('change', function () {
+                    $('#ccd_problem_id').on('change', function () {
 
-                        if ($("#select_problem option:selected").text() == 'Other') {
+                        if ($("#ccd_problem_id option:selected").text() == 'Other') {
 
                             $("#showOther").css('display', 'block');
 
@@ -430,13 +430,13 @@
                         $('#modal_date').val(date);
 
                         $('#otherProblem').empty();
-                        $('#select_problem').empty();
+                        $('#ccd_problem_id').empty();
 
                         $.each(JSON.parse(this.value), function (key, value) {
-                            $('#select_problem').append('<option value="' + value.id + '">' + (value.name == '-1' ? 'select' : value.name) + '</option>');
+                            $('#ccd_problem_id').append('<option value="' + value.id + '">' + (value.name == '-1' ? 'select' : value.name + ', ICD 10 Code: ' + value.code) + '</option>');
                         });
 
-                        $('#select_problem').append('<option value="other" name="other">Other</option>');
+//                        $('#ccd_problem_id').append('<option value="other" name="other">Other</option>');
 
                         $('#problemPicker').modal('show');
 
@@ -465,7 +465,7 @@
                                 $('#problemPicker').modal('hide');
 
                                 //set the modal to cleared for further use
-                                $('#select_problem').val('');
+                                $('#ccd_problem_id').val('');
                                 $('#otherProblem').val('');
                                 $('#code').val('');
                                 $('#report_id').val('');
