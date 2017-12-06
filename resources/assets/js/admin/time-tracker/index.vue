@@ -1,12 +1,12 @@
 <template>
     <div>
-        <div v-if="!visible">
+        <div v-if="showLoader || !visible">
             <div class="loader-filler"></div>
             <div class="loader-container">
                 <loader></loader>
             </div>
         </div>
-        <span v-if="visible" class="time-tracker" :class="className">
+        <span v-if="visible" class="time-tracker" :class="{ hidden: showLoader }">
             <div v-if="noLiveCount">{{info.monthlyTime}}</div>
             <span>
                 <time-display v-if="!noLiveCount" ref="timeDisplay" :seconds="totalTime" :no-live-count="!!noLiveCount" :redirect-url="'manage-patients/' + info.patientId + '/activities'" />
@@ -46,11 +46,11 @@
         data() {
             return {
                 seconds: 0,/** from when page loads, till the page ends */
-                previousSeconds: 0,/**from the DB, ccm total time */
                 visible: false,
                 socket: null,
                 startCount: 0,
-                showTimer: true
+                showTimer: true,
+                showLoader: true
             }
         },
         components: { 
@@ -61,7 +61,7 @@
         },
         computed: {
             totalTime() {
-                return this.seconds + this.previousSeconds
+                return this.seconds
             }
         },
         methods: {
@@ -70,14 +70,14 @@
                 else this.info.initSeconds = -1
                 this.startCount += 1;
                 console.log('tracker:init-seconds', this.info.initSeconds)
-                this.socket.send(
-                    JSON.stringify({ 
-                            id: this.info.providerId, 
-                            patientId: this.info.patientId, 
-                            message: 'start', 
+                if (this.socket.readyState === this.socket.OPEN) {
+                    this.socket.send(
+                        JSON.stringify({ 
+                            message: 'client:start', 
                             info: this.info
                         })
                     );
+                }
             },
             createSocket() {
                 try {
@@ -89,24 +89,15 @@
                         socket.onmessage = (res) => {
                             if (res.data) {
                                 const data = JSON.parse(res.data)
-                                if (data.message === 'tt:update-previous-seconds' && !!Number(data.previousSeconds)) {
-                                    if (data.trigger !== 'resume') self.previousSeconds = data.previousSeconds
-                                    self.info.totalTime = self.previousSeconds
-                                    //self.seconds = Math.max(self.seconds, data.seconds)
+                                if (data.message === 'server:sync') {
+                                    self.seconds = data.seconds
                                     self.visible = true //display the component when the previousSeconds value has been received from the server to keep the display up-to-date
+                                    if (EventBus.isInFocus) self.showLoader = false
                                 }
-                                else if (data.message === 'tt:resume') {
-                                    if (!self.noLiveCount && !!Number(data.seconds)) {
-                                        self.seconds = Number(data.seconds)
-                                        self.showTimer = true
-                                        self.info.totalTime = self.previousSeconds
-                                        self.previousSeconds = data.previousSeconds
-                                    }
+                                else if (data.message === 'server:modal') {
+                                    EventBus.$emit('away:trigger-modal')
                                 }
-                                else if (data.message === 'tt:trigger-modal') {
-                                    EventBus.$emit('away:trigger-modal', data.seconds)
-                                }
-                                else if (data.message === 'tt:logout') {
+                                else if (data.message === 'server:logout') {
                                     EventBus.$emit("tracker:stop")
                                     location.href = rootUrl('auth/logout')
                                 }
@@ -116,7 +107,7 @@
                 
                         socket.onopen = (ev) => {
                             if (EventBus.isInFocus) {
-                                EventBus.$emit("tracker:start")
+                                self.updateTime()
                             }
                             else {
                                 self.startCount = 0;
@@ -163,40 +154,32 @@
                 })
 
                 const STATE = {
-                    STOP: 'stop',
-                    START: 'resume',
+                    LEAVE: 'client:leave',
+                    ENTER: 'client:enter',
                     INACTIVITY_CANCEL: 'inactivity-cancel',
-                    PUSH_SECONDS: 'push-seconds'
+                    MODAL_RESPONSE: 'client:modal'
                 }
-
-                EventBus.$on('tracker:stop', () => {
-                    if (this.socket) {
-                        this.showTimer = false
-                        this.state = STATE.STOP;
-                        this.socket.send(JSON.stringify({ id: this.info.providerId, patientId: this.info.patientId, message: STATE.STOP, info: this.info }))
-                    }
-                })
 
                 EventBus.$on('tracker:start', () => {
                     if (this.socket && this.socket.readyState === WebSocket.OPEN) {
                         if (this.startCount === 0) this.updateTime();
-                        this.state = STATE.START
-                        this.socket.send(JSON.stringify({ id: this.info.providerId, patientId: this.info.patientId, message: STATE.START, info: this.info }))
+                        this.state = STATE.ENTER
+                        this.socket.send(JSON.stringify({ message: STATE.ENTER, info: this.info }))
                     }
                 })
 
-                EventBus.$on('tracker:inactivity-cancel', () => {
-                    if (this.socket && this.socket.readyState === WebSocket.OPEN) {
-                        this.socket.send(JSON.stringify({ id: this.info.providerId, patientId: this.info.patientId, message: STATE.INACTIVITY_CANCEL }))
-                        setTimeout(() => {
-                            document.location.href = rootUrl('manage-patients/dashboard')
-                        }, 700)
+                EventBus.$on('tracker:stop', () => {
+                    if (this.socket) {
+                        this.showTimer = false
+                        this.state = STATE.LEAVE;
+                        this.socket.send(JSON.stringify({ message: STATE.LEAVE, info: this.info }))
                     }
+                    this.showLoader = true
                 })
 
-                EventBus.$on('tracker:push-seconds', (seconds) => {
+                EventBus.$on('tracker:modal:reply', (response) => {
                     if (this.socket && this.socket.readyState === WebSocket.OPEN) {
-                        this.socket.send(JSON.stringify({ id: this.info.providerId, patientId: this.info.patientId, message: STATE.PUSH_SECONDS, seconds: seconds, info: this.info }))
+                        this.socket.send(JSON.stringify({ message: STATE.MODAL_RESPONSE, info: this.info, response }))
                     }
                 })
 
@@ -204,7 +187,7 @@
 
                 setInterval(() => {
                     if (this.socket.readyState === this.socket.OPEN) {
-                        this.socket.send(JSON.stringify({ id: this.info.providerId, patientId: this.info.patientId, message: 'PING' }))
+                        this.socket.send(JSON.stringify({ message: 'PING' }))
                     }
                 }, 5000)
             }

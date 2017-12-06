@@ -26,7 +26,9 @@
             return {
                 inactivityModalInfo: {
                     cancelHandler: (e) => {
-                        EventBus.$emit('tracker:inactivity-cancel')
+                        EventBus.$emit('tracker:modal:reply', false)
+                        EventBus.$emit('modal-inactivity:hide')
+                        EventBus.$emit('tracker:start')
                     }
                 }
             }
