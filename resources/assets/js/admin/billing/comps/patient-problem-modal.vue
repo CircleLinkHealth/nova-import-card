@@ -52,7 +52,9 @@
                         }
                     },
                     changeProblemName() {
-                      this.name = (this.problems.find(problem => problem.code === this.code) || {}).name
+                      const problem = (this.problems.find(problem => problem.code === this.code) || {})
+                      this.name = problem.name
+                      this.id = problem.id
                     }
                 }
             }

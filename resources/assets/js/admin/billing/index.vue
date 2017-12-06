@@ -78,7 +78,6 @@
                 practices: window.practices || [],
                 practiceId: 0,
                 columns: [
-                    'id',
                     'Provider', 
                     'Patient', 
                     'Practice', 
@@ -107,6 +106,7 @@
                         "Problem 1 Code":"I10",
                         "Problem 2 Code":"I10",
                         "#Successful Calls":0,
+                        reportId: 9,
                         problems: [
                             {
                                 id: 1,
@@ -134,6 +134,7 @@
                         "Problem 1 Code":null,
                         "Problem 2 Code":null,
                         "#Successful Calls":0,
+                        reportId: 10,
                         problems: [
                             {
                                 id: 1,
@@ -159,7 +160,8 @@
                 return div
             },
             retrieve() {
-                this.axios.post(rootUrl('/admin/reports/monthly-billing/v2/data'), {
+                this.loading = true
+                this.axios.post(rootUrl('admin/reports/monthly-billing/v2/data'), {
                     practice_id: this.selectedPractice,
                     date: this.selectedMonth
                 }).then(response => {
@@ -168,6 +170,7 @@
                             id: index,
                             approved: this.$elem(patient.approve).querySelector('input').checked,
                             rejected:  this.$elem(patient.reject).querySelector('input').checked,
+                            reportId: patient.report_id,
                             problems: patient.problems || [],
                             Provider: patient.provider,
                             Patient: this.$elem(patient.name).querySelector('a').innerText,
@@ -189,10 +192,12 @@
                     this.loading = false
                 })
             },
+
             showProblemsModal(patient, type) {
                 const self = this
                 Event.$emit('modal-patient-problem:show', patient, type, function (modified) {
                     const tablePatient = self.tableData.find(pt => pt.id === patient.id)
+                    console.log('table-patient', tablePatient)
                     if (type === 1) {
                         tablePatient['Problem 1 Code'] = modified.code
                         tablePatient['Problem 1'] = modified.name
@@ -201,6 +206,19 @@
                         tablePatient['Problem 2 Code'] = modified.code
                         tablePatient['Problem 2'] = modified.name
                     }
+                    self.axios.post(rootUrl('admin/reports/monthly-billing/v2/storeProblem'), {
+                        code: modified.code,
+                        icd_10_code: modified.id,
+                        problem_no: (type === 1) ? 'problem_1' : 'problem_2',
+                        report_id: tablePatient.reportId,
+                        has_problem: 1,
+                        modal_date: moment(Date.now()).format('YYYY-MM-DD'),
+                        modal_practice_id: self.selectedPractice,
+                    }).then(response => {
+                        console.log('billing-change-problem', response)
+                    }).catch(err => {
+                        console.error('billing-change-problem', err)
+                    })
                     console.log(modified)
                 })
             }
@@ -222,7 +240,7 @@
                 return this.tableData.filter(patient => patient.rejected).length
             },
             noOfFlagged() {
-                return this.tableData.filter(patient => patient.flagged).length
+                return this.tableData.filter(patient => patient.qa).length
             }
         },
         mounted() {
