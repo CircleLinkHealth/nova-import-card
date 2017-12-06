@@ -17,6 +17,26 @@ class ApproveBillablePatientsService
         $this->repo = $repo;
     }
 
+    public function counts($practiceId, Carbon $month) {
+        $count['approved'] = 0;
+        $count['toQA'] = 0;
+        $count['rejected'] = 0;
+
+        foreach ($this->repo->billablePatients($practiceId, $month)->get() as $patient) {
+            $report = $patient->patientSummaries->first();
+
+            if (($report->rejected == 0 && $report->approved == 0) || $this->lacksProblems($report)) {
+                $count['toQA'] += 1;
+            } else if ($report->rejected == 1) {
+                $count['rejected'] += 1;
+            } else if ($report->approved == 1) {
+                $count['approved'] += 1;
+            }
+        }
+
+        return $count;
+    }
+
     public function patientsToApprove($practiceId, Carbon $month)
     {
         return $this->repo->billablePatients($practiceId, $month)
@@ -48,9 +68,6 @@ class ApproveBillablePatientsService
 
                               $report->save();
 
-                              $report->load('billableProblem1');
-                              $report->load('billableProblem2');
-
                               $name = "<a href = " . URL::route('patient.careplan.show', [
                                       'patient' => $u->id,
                                       'page'    => 1,
@@ -80,7 +97,6 @@ class ApproveBillablePatientsService
                                   'report_id'              => $report->id ?? null,
                                   //this is a hidden sorter
                                   'qa'                     => $toQA,
-                                  'problemsWithIcd10Code'  => '',
                                   'lacksProblems'          => $lacksProblems,
 
                               ];
@@ -94,12 +110,12 @@ class ApproveBillablePatientsService
         }
 
         if ($this->lacksProblems($summary)) {
-            $this->fillProblems($patient, $summary, $patient->problemsWithIcd10Code());
+            $this->fillProblems($patient, $summary, $patient->ccdProblems);
         }
 
         if ($this->lacksProblems($summary)) {
             $this->buildCcdProblemsFromCpmProblems($patient);
-            $this->fillProblems($patient, $summary, $patient->problemsWithIcd10Code());
+            $this->fillProblems($patient, $summary, $patient->ccdProblems);
         }
     }
 

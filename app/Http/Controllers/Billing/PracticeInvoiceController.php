@@ -59,9 +59,7 @@ class PracticeInvoiceController extends Controller
     ) {
 
         $date = Carbon::parse($date);
-        $practice = Practice::find($practice);
-
-        return PatientMonthlySummary::getPatientQACountForPracticeForMonth($practice, $date);
+        return $this->service->counts($practice, $date->firstOfMonth());
     }
 
     public function data(Request $request)
@@ -239,11 +237,9 @@ class PracticeInvoiceController extends Controller
 
     public function counts(Request $request)
     {
-
         $date = Carbon::parse($request['date']);
-        $practice = Practice::find($request['practice_id']);
 
-        $counts = PatientMonthlySummary::getPatientQACountForPracticeForMonth($practice, $date);
+        $counts = $this->service->counts($request['practice_id'], $date->firstOfMonth());
 
         return response()->json($counts);
     }
