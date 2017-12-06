@@ -52,6 +52,7 @@
     import { rootUrl } from '../../app.config.js'
     import { Event } from 'vue-tables-2'
     import TextEditable from '../comps/text-editable'
+    import PatientProblemModal from './comps/patient-problem-modal'
     import moment from 'moment'
 
     export default {
@@ -69,6 +70,7 @@
                 practices: window.practices || [],
                 practiceId: 0,
                 columns: [
+                    'id',
                     'Provider', 
                     'Patient', 
                     'Practice', 
@@ -99,8 +101,9 @@
                     practice_id: this.selectedPractice,
                     date: this.selectedMonth
                 }).then(response => {
-                    this.tableData = response.data.map(patient => {
+                    this.tableData = response.data.map((patient, index) => {
                         return {
+                            id: index,
                             approved: this.$elem(patient.approve).querySelector('input').checked,
                             rejected:  this.$elem(patient.reject).querySelector('input').checked,
                             Provider: patient.provider,
