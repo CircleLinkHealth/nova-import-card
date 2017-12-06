@@ -155,10 +155,10 @@ class ApproveBillablePatientsService
             }
         }
 
-        if ($summary->problem_1 == $summary->problem_2) {
-            $summary->problem_2 = null;
-            $this->fillProblems($patient, $summary, $billableProblems);
-        }
+//        if ($summary->problem_1 == $summary->problem_2) {
+//            $summary->problem_2 = null;
+//            $this->fillProblems($patient, $summary, $billableProblems);
+//        }
 
         $summary->save();
     }
