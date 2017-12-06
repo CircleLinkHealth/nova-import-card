@@ -36,10 +36,13 @@
         </div>
         <v-client-table ref="tblBillingReport" :data="tableData" :columns="columns" :options="options">
             <template slot="approved" scope="props">
-                <input class="row-select" v-bind="props.row.approved" type="checkbox" :readonly="true" />
+                <input class="row-select" v-model="props.row.approved" type="checkbox" :readonly="true" />
             </template>
             <template slot="rejected" scope="props">
-                <input class="row-select" v-bind="props.row.rejected" type="checkbox" :readonly="true" />
+                <input class="row-select" v-model="props.row.rejected" type="checkbox" :readonly="true" />
+            </template>
+            <template slot="Patient" scope="props">
+                <text-editable :value="props.row.Patient" :class-name="'blue'" :no-button="true"></text-editable>
             </template>
         </v-client-table>
     </div>
@@ -48,6 +51,7 @@
 <script>
     import { rootUrl } from '../../app.config.js'
     import { Event } from 'vue-tables-2'
+    import TextEditable from '../comps/text-editable'
     import moment from 'moment'
 
     export default {
@@ -55,7 +59,7 @@
         props: {
         },
         components: {
-            
+            'text-editable': TextEditable
         },
         data() {
             return {
@@ -167,5 +171,17 @@
 
     .line-50 {
         line-height: 50px
+    }
+
+    input[type='checkbox'][readonly] {
+        pointer-events: none;
+    }
+
+    div.blue {
+        color: #008cba
+    }
+
+    div.blue input,textarea {
+        width: 100%;
     }
 </style>
