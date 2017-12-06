@@ -40,4 +40,23 @@ class ApproveBillablePatientsRepository
                    ->ofType('participant')
                    ->where('program_id', '=', $practiceId);
     }
+
+    public function patientsWithSummaries($practiceId, Carbon $date)
+    {
+        $month = $date->firstOfMonth()->toDateString();
+
+        return User::with([
+            'patientSummaries' => function ($query) use ($month) {
+                $query->where('month_year', $month)
+                      ->where('ccm_time', '>=', 1200)
+                      ->with(['billableProblem1.icd10Codes', 'billableProblem2.icd10Codes']);
+            },
+        ])
+                   ->whereHas('patientSummaries', function ($query) use ($month) {
+                       $query->where('month_year', $month)
+                             ->where('ccm_time', '>=', 1200);
+                   })
+                   ->ofType('participant')
+                   ->where('program_id', '=', $practiceId);
+    }
 }

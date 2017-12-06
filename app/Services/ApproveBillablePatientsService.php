@@ -22,7 +22,7 @@ class ApproveBillablePatientsService
         $count['toQA'] = 0;
         $count['rejected'] = 0;
 
-        foreach ($this->repo->billablePatients($practiceId, $month)->get() as $patient) {
+        foreach ($this->repo->patientsWithSummaries($practiceId, $month)->get() as $patient) {
             $report = $patient->patientSummaries->first();
 
             if (($report->rejected == 0 && $report->approved == 0) || $this->lacksProblems($report)) {
