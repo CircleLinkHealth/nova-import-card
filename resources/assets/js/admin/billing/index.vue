@@ -42,7 +42,7 @@
                 <input class="row-select" v-model="props.row.rejected" type="checkbox" :readonly="true" />
             </template>
             <template slot="Patient" scope="props">
-                <text-editable :value="props.row.Patient" :class-name="'blue'" :no-button="true"></text-editable>
+                <a :href="props.row.patientUrl" class="blue">{{props.row.Patient}}</a>
             </template>
             <template slot="Problem 1" scope="props">
                 <span class="blue pointer" @click="showProblemsModal(props.row, 1)">{{props.row['Problem 1']}}</span>
@@ -93,10 +93,12 @@
                     'rejected'],
                 tableData: [
                     {
+                        id: 1,
                         "approved":true,
                         "rejected":false,
                         "Provider":"Dr. Demo MD",
-                        "Patient":"Cecilia Z-Armstrong ",
+                        "Patient":"Cecilia Z-Armstrong",
+                        "patientUrl":"https://cpm-web.dev/manage-patients/345/careplan/sections/1",
                         "Practice":"Demo",
                         "DOB":"1918/09/22",
                         "Status":"enrolled",
@@ -121,10 +123,12 @@
                         ]
                     },
                     {
+                        id: 2,
                         "approved":false,
                         "rejected":false,
                         "Provider":"  ",
                         "Patient":"Kenneth Z-Smitham ",
+                        "patientUrl":"https://cpm-web.dev/manage-patients/345/careplan/sections/1",
                         "Practice":"Demo",
                         "DOB":"1958-09-08",
                         "Status":"enrolled",
@@ -174,6 +178,7 @@
                             problems: patient.problems || [],
                             Provider: patient.provider,
                             Patient: this.$elem(patient.name).querySelector('a').innerText,
+                            patientUrl: this.$elem(patient.name).querySelector('a').href,
                             Practice: patient.practice,
                             DOB: patient.dob,
                             Status: patient.status,
