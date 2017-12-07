@@ -28,6 +28,11 @@ class PracticeInvoiceController extends Controller
         $this->service = $service;
     }
 
+    /**
+     * Show the page to choose a practice and generate approvable billing reports
+     *
+     * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
+     */
     public function make()
     {
         $practices = Practice::orderBy('display_name')
@@ -43,84 +48,56 @@ class PracticeInvoiceController extends Controller
         ]));
     }
 
+    /**
+     * Get approvable patients for a practice for a month.
+     *
+     * @param Request $request
+     *
+     * @return \Illuminate\Http\JsonResponse
+     */
     public function data(Request $request)
     {
+        if ( ! $request->ajax()) {
+            return response()->json('Method not allowed', 403);
+        }
+
         $data = $this->service->patientsToApprove($request['practice_id'], Carbon::parse($request['date']));
 
         return response()->json($data);
-    }
-
-    public function updateApproved(Request $request)
-    {
-
-        $input = $request->input();
-
-        $report = PatientMonthlySummary::find($input['report_id']);
-
-        //if approved was checked
-        if ($input['approved'] == 1) {
-            $report->approved = 1;
-            $report->rejected = 0;
-        } else {
-            //approved was unchecked
-            $report->approved = 0;
-        }
-
-        //if approved was unchecked, rejected stays as is. If it was approved, rejected becomes 0
-        $report->actor_id = auth()->user()->id;
-        $report->save();
-
-        //used for view report counts
-        $counts = $this->getCounts($input['date'], $input['practice_id']);
-
-        return response()->json(
-            [
-                'report_id' => $report->id,
-                'counts'    => $counts,
-            ]
-        );
     }
 
     public function getCounts(
         $date,
         $practice
     ) {
-
         $date = Carbon::parse($date);
 
         return $this->service->counts($practice, $date->firstOfMonth());
     }
 
-    public function updateRejected(Request $request)
+
+    public function updateStatus(Request $request)
     {
-
-        $input = $request->input();
-
-        $report = PatientMonthlySummary::find($input['report_id']);
-
-        //if approved was checked
-        if ($input['rejected'] == 1) {
-            $report->rejected = 1;
-            $report->approved = 0;
-        } else {
-            //rejected was unchecked
-
-            $report->rejected = 0;
+        if ( ! $request->ajax()) {
+            return response()->json('Method not allowed', 403);
         }
 
+        $summary = PatientMonthlySummary::find($request['report_id']);
+
+        $summary->approved = $request['approved'];
+        $summary->rejected = $request['rejected'];
+
         //if approved was unchecked, rejected stays as is. If it was approved, rejected becomes 0
-        $report->actor_id = auth()->user()->id;
-        $report->save();
+        $summary->actor_id = auth()->user()->id;
+        $summary->save();
 
         //used for view report counts
-        $counts = $this->getCounts($input['date'], $input['practice_id']);
+        $counts = $this->getCounts($summary->month_year, $summary->patient->primaryPractice->id);
 
-        return response()->json(
-            [
-                'report_id' => $report->id,
-                'counts'    => $counts,
-            ]
-        );
+        return response()->json([
+            'report_id' => $summary->id,
+            'counts'    => $counts,
+        ]);
     }
 
     public function createInvoices()
