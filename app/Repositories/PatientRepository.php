@@ -15,6 +15,10 @@ class PatientRepository
 {
     public function storeCcdProblem(User $patient, array $args)
     {
+        if (!$args['code']) {
+            return;
+        }
+
         $newProblem = $patient->ccdProblems()->create([
             'name'           => $args['name'],
             'cpm_problem_id' => $args['cpm_problem_id'],
