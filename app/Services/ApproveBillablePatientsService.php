@@ -83,16 +83,16 @@ class ApproveBillablePatientsService
                                   'problem1_code'          => isset($report->billableProblem1)
                                       ? $report->billableProblem1->icd10Code()
                                       : null,
-                                  'edit1'                  => $this->selectProblemButton(1, $u, $report),
+                                  'edit1'                  => $this->ccdProblems($u),
                                   'problem2'               => $report->billableProblem2->name ?? null,
                                   'problem2_code'          => isset($report->billableProblem2)
                                       ? $report->billableProblem2->icd10Code()
                                       : null,
-                                  'edit2'                  => $this->selectProblemButton(2, $u, $report),
+                                  'edit2'                  => $this->ccdProblems($u),
                                   'no_of_successful_calls' => $report->no_of_successful_calls,
                                   'status'                 => $info->ccm_status,
-                                  'approve'                => "<input type = \"checkbox\" class='approved_checkbox' id='$report->id' $approved>",
-                                  'reject'                 => "<input type=\"checkbox\" class='rejected_checkbox' id='$report->id' $rejected>",
+                                  'approve'                => $approved,
+                                  'reject'                 => $rejected,
                                   //used to reference cells for jQuery ops
                                   'report_id'              => $report->id ?? null,
                                   //this is a hidden sorter
@@ -219,17 +219,14 @@ class ApproveBillablePatientsService
         });
     }
 
-    public function selectProblemButton($number, User $patient, PatientMonthlySummary $summary)
+    public function ccdProblems(User $patient)
     {
-        $name    = "problem_$number";
-        $options = $patient->ccdProblems->map(function ($prob) {
+        return $patient->ccdProblems->map(function ($prob) {
             return [
                 'id'   => $prob->id,
                 'name' => $prob->name,
                 'code' => $prob->icd10Code()
             ];
-        })->toJson();
-
-        return "<button style='font-size: 10px' class='btn btn-primary problemPicker' patient='$patient->fullName' name=$name value='$options' id='$summary->id'>Edit</button >";
+        });
     }
 }
