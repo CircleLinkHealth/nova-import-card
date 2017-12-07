@@ -124,7 +124,7 @@
                     'approved',
                     'rejected'],
                 tableData: [
-                    {
+                    /*{
                         id: 1,
                         "approved": true,
                         "rejected": false,
@@ -195,10 +195,10 @@
                             problem_2: false,
                             approve_reject: false
                         }
-                    }],
+                    }*/],
                 options: {
                     rowClassCallback(row) {
-                        if (row.qa) return 'bg-qa'
+                        if (row.qa) return 'bg-flagged'
                         return ''
                     }
                 }
@@ -429,6 +429,6 @@
     }
 
     .bg-flagged {
-        background-color: rgba(255, 252, 96, 0.408)
+        background-color: rgba(255, 252, 96, 0.408) !important;
     }
 </style>
