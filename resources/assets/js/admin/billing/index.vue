@@ -273,9 +273,8 @@
         computed: {
             months() {
                 let months = []
-                let currentDate = moment(new Date())
                 for (let i = 0; i >= -12; i--) {
-                    let mDate = currentDate.add(i, 'M')
+                    let mDate = moment(new Date()).add(i * 30, 'days')
                     months.push({ short: mDate.format('YYYY-MM-DD'), long: mDate.format('MMM, YYYY'), selected: i === 0 })
                 }
                 return months
