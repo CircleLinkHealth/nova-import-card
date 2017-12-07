@@ -230,7 +230,7 @@
                     self.axios.post(rootUrl('admin/reports/monthly-billing/v2/storeProblem'), {
                         code: modified.code,
                         id: modified.id,
-                        name: modified.name,
+                        cpm_problem_id: modified.cpm_problem_id,
                         problem_no: (type === 1) ? 'problem_1' : 'problem_2',
                         report_id: tablePatient.reportId
                     }).then(response => {
