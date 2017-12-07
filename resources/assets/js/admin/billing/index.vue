@@ -293,6 +293,7 @@
             }
         },
         mounted() {
+            this.tableData = this.tableData.sort((pA, pB) => pB.qa - pA.qa)
             this.selectedMonth = this.months[0].long
             this.selectedPractice = this.practices[0].id
             this.retrieve()
