@@ -187,8 +187,8 @@
                     this.tableData = response.data.map((patient, index) => {
                         return {
                             id: index,
-                            approved: this.$elem(patient.approve).querySelector('input').checked,
-                            rejected:  this.$elem(patient.reject).querySelector('input').checked,
+                            approved: patient.approve,
+                            rejected:  patient.reject,
                             reportId: patient.report_id,
                             qa: patient.qa,
                             problems: patient.problems || [],

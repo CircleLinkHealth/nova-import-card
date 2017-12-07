@@ -17,39 +17,61 @@ class ApproveBillablePatientsService
         $this->repo = $repo;
     }
 
+    public function counts($practiceId, Carbon $month)
+    {
+        $count['approved'] = 0;
+        $count['toQA']     = 0;
+        $count['rejected'] = 0;
+
+        foreach ($this->repo->patientsWithSummaries($practiceId, $month)->get() as $patient) {
+            $report = $patient->patientSummaries->first();
+
+            if (($report->rejected == 0 && $report->approved == 0) || $this->lacksProblems($report)) {
+                $count['toQA'] += 1;
+            } else if ($report->rejected == 1) {
+                $count['rejected'] += 1;
+            } else if ($report->approved == 1) {
+                $count['approved'] += 1;
+            }
+        }
+
+        return $count;
+    }
+
+    /**
+     * Check whether the patient is lacking any billable problems
+     *
+     * @param PatientMonthlySummary $summary
+     *
+     * @return bool
+     */
+    public function lacksProblems(PatientMonthlySummary $summary)
+    {
+        return ! ($summary->billableProblem1 && $summary->billableProblem2);
+    }
+
     public function patientsToApprove($practiceId, Carbon $month)
     {
         return $this->repo->billablePatients($practiceId, $month)
                           ->get()
                           ->map(function ($u) {
                               $info   = $u->patientInfo;
-                              $report = $info->patientSummaries->first();
+                              $summary = $u->patientSummaries->first();
 
-                              $this->fillSummaryProblems($u, $report);
+                              $this->fillSummaryProblems($u, $summary);
 
-                              $lacksProblems = $this->lacksProblems($report);
+                              $lacksProblems = $this->lacksProblems($summary);
                               //if patient was paused/withdrawn and acted upon already, it's not QA no more
-                              $isNotEnrolledAndApproved = $report->actor_id == null && in_array($info->ccm_status,
+                              $isNotEnrolledAndApproved = $summary->actor_id == null && in_array($info->ccm_status,
                                       ['withdrawn', 'paused']);
 
-                              $approved = $lacksProblems || $report->rejected == 1
-                                  ? ''
-                                  : 'checked';
+                              $summary->approved = $approved = !($lacksProblems || $summary->rejected == 1);
 
-                              $rejected = $report->rejected == 1
-                                  ? 'checked'
-                                  : '';
+                              $rejected = $summary->rejected == 1;
 
-                              $report->approved = ! empty($approved);
+                              $toQA = ! $approved && ! $rejected;
 
-                              $toQA = ! $approved && ! $rejected
-                                  ? 1
-                                  : '';
-
-                              $report->save();
-
-                              $report->load('billableProblem1');
-                              $report->load('billableProblem2');
+                              $summary->save();
 
                               $name = "<a href = " . URL::route('patient.careplan.show', [
                                       'patient' => $u->id,
@@ -61,26 +83,22 @@ class ApproveBillablePatientsService
                                   'provider'               => $u->billingProvider()->fullName,
                                   'practice'               => $u->primaryPractice->display_name,
                                   'dob'                    => $info->birth_date,
-                                  'ccm'                    => round($report->ccm_time / 60, 2),
-                                  'problem1'               => $report->billableProblem1->name ?? null,
-                                  'problem1_code'          => isset($report->billableProblem1)
-                                      ? $report->billableProblem1->icd10Code()
+                                  'ccm'                    => round($summary->ccm_time / 60, 2),
+                                  'problem1'               => $summary->billableProblem1->name ?? null,
+                                  'problem1_code'          => isset($summary->billableProblem1)
+                                      ? $summary->billableProblem1->icd10Code()
                                       : null,
-                                  'edit1'                  => $this->selectProblemButton(1, $u, $report),
-                                  'problem2'               => $report->billableProblem2->name ?? null,
-                                  'problem2_code'          => isset($report->billableProblem2)
-                                      ? $report->billableProblem2->icd10Code()
+                                  'problem2'               => $summary->billableProblem2->name ?? null,
+                                  'problem2_code'          => isset($summary->billableProblem2)
+                                      ? $summary->billableProblem2->icd10Code()
                                       : null,
-                                  'edit2'                  => $this->selectProblemButton(2, $u, $report),
-                                  'no_of_successful_calls' => $report->no_of_successful_calls,
+                                  'problems'               => $this->ccdProblems($u),
+                                  'no_of_successful_calls' => $summary->no_of_successful_calls,
                                   'status'                 => $info->ccm_status,
-                                  'approve'                => "<input type = \"checkbox\" class='approved_checkbox' id='$report->id' $approved>",
-                                  'reject'                 => "<input type=\"checkbox\" class='rejected_checkbox' id='$report->id' $rejected>",
-                                  //used to reference cells for jQuery ops
-                                  'report_id'              => $report->id ?? null,
-                                  //this is a hidden sorter
+                                  'approve'                => $approved,
+                                  'reject'                 => $rejected,
+                                  'report_id'              => $summary->id,
                                   'qa'                     => $toQA,
-                                  'problemsWithIcd10Code'  => '',
                                   'lacksProblems'          => $lacksProblems,
 
                               ];
@@ -94,25 +112,13 @@ class ApproveBillablePatientsService
         }
 
         if ($this->lacksProblems($summary)) {
-            $this->fillProblems($patient, $summary, $patient->problemsWithIcd10Code());
+            $this->fillProblems($patient, $summary, $patient->ccdProblems);
         }
 
         if ($this->lacksProblems($summary)) {
             $this->buildCcdProblemsFromCpmProblems($patient);
-            $this->fillProblems($patient, $summary, $patient->problemsWithIcd10Code());
+            $this->fillProblems($patient, $summary, $patient->ccdProblems);
         }
-    }
-
-    /**
-     * Check whether the patient is lacking any billable problems
-     *
-     * @param PatientMonthlySummary $summary
-     *
-     * @return bool
-     */
-    public function lacksProblems(PatientMonthlySummary $summary)
-    {
-        return ! ($summary->billableProblem1 && $summary->billableProblem2);
     }
 
     /**
@@ -203,17 +209,14 @@ class ApproveBillablePatientsService
         });
     }
 
-    public function selectProblemButton($number, User $patient, PatientMonthlySummary $summary)
+    public function ccdProblems(User $patient)
     {
-        $name    = "problem_$number";
-        $options = $patient->ccdProblems->map(function ($prob) {
+        return $patient->ccdProblems->map(function ($prob) {
             return [
                 'id'   => $prob->id,
                 'name' => $prob->name,
-                'code' => $prob->icd10Code()
+                'code' => $prob->icd10Code(),
             ];
-        })->toJson();
-
-        return "<button style='font-size: 10px' class='btn btn-primary problemPicker' patient='$patient->fullName' name=$name value='$options' id='$summary->id'>Edit</button >";
+        });
     }
 }

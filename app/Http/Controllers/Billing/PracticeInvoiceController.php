@@ -30,26 +30,12 @@ class PracticeInvoiceController extends Controller
 
     public function make()
     {
-
-        $practices = Practice::active();
-
-        $currentMonth = Carbon::now()->firstOfMonth()->toDateString();
-
-        $dates = [];
-
-        for ($i = -6; $i < 6; $i++) {
-            $date = Carbon::parse($currentMonth)->addMonths($i)->firstOfMonth()->toDateString();
-
-            $dates[$date] = Carbon::parse($date)->format('F, Y');
-        }
-
-        $counts = $this->getCounts(Carbon::parse($currentMonth), $practices[0]->id);
+        $practices = Practice::orderBy('display_name')
+                             ->active()
+                             ->get();
 
         return view('admin.reports.billing', compact([
-            'practices',
-            'currentMonth',
-            'counts',
-            'dates',
+            'practices'
         ]));
     }
 
@@ -59,9 +45,7 @@ class PracticeInvoiceController extends Controller
     ) {
 
         $date = Carbon::parse($date);
-        $practice = Practice::find($practice);
-
-        return PatientMonthlySummary::getPatientQACountForPracticeForMonth($practice, $date);
+        return $this->service->counts($practice, $date->firstOfMonth());
     }
 
     public function data(Request $request)
@@ -137,7 +121,7 @@ class PracticeInvoiceController extends Controller
     public function createInvoices()
     {
 
-        $practices = Practice::active();
+        $practices = Practice::active()->get();
         $currentMonth = Carbon::now()->firstOfMonth()->toDateString();
 
         $dates = [];
@@ -231,11 +215,9 @@ class PracticeInvoiceController extends Controller
 
     public function counts(Request $request)
     {
-
         $date = Carbon::parse($request['date']);
-        $practice = Practice::find($request['practice_id']);
 
-        $counts = PatientMonthlySummary::getPatientQACountForPracticeForMonth($practice, $date);
+        $counts = $this->service->counts($request['practice_id'], $date->firstOfMonth());
 
         return response()->json($counts);
     }
