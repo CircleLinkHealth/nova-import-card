@@ -93,12 +93,7 @@
                         @push('styles')
                             <script>
                                 var practices = JSON.parse("{{json_encode($practices)}}".replace(/\&quot;/g, '"'))
-                                var cpmProblems = Object.entries(JSON.parse("{{json_encode($cpmProblems)}}".replace(/\&quot;/g, '"'))).map(function (entry) {
-                                    return {
-                                        id: entry[0],
-                                        name: entry[1]
-                                    }
-                                })
+                                var cpmProblems = JSON.parse("{{json_encode($cpmProblems)}}".replace(/\&quot;/g, '"'))
                             </script>
                         @endpush
                         <billing-report ref="billingReport"></billing-report>

@@ -39,8 +39,15 @@ class PracticeInvoiceController extends Controller
                              ->active()
                              ->get();
 
-        $cpmProblems = CpmProblem::get()
-                                 ->pluck('name', 'id');
+        $cpmProblems = CpmProblem::where('name', '!=', 'Diabetes')
+                                 ->get()
+                                 ->map(function ($p) {
+                                     return [
+                                        'id' => $p->id,
+                                        'name' => $p->name,
+                                        'code' => $p->default_icd_10_code,
+                                     ];
+                                 });
 
         return view('admin.reports.billing', compact([
             'cpmProblems',
