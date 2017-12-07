@@ -62,7 +62,7 @@
                     <span class="blue pointer" @click="showProblemsModal(props.row, 2)">{{props.row['Problem 2'] || '&lt;Edit&gt;'}}</span>
                 </template>
             </v-client-table>
-            <patient-problem-modal></patient-problem-modal>
+            <patient-problem-modal :cpm-problems="cpmProblems"></patient-problem-modal>
         </div>
     </div>
 </template>
@@ -89,6 +89,7 @@
                 selectedPractice: 0,
                 loading: true,
                 practices: window.practices || [],
+                cpmProblems: window.cpmProblems || [],
                 practiceId: 0,
                 columns: [
                     'Provider', 
@@ -217,27 +218,35 @@
             showProblemsModal(patient, type) {
                 const self = this
                 Event.$emit('modal-patient-problem:show', patient, type, function (modified) {
+                    /** callback done function */
                     const tablePatient = self.tableData.find(pt => pt.id === patient.id)
                     console.log('table-patient', tablePatient, modified)
-                    if (type === 1) {
-                        tablePatient['Problem 1 Code'] = modified.code
-                        tablePatient['Problem 1'] = modified.name
+                    if (tablePatient) {
+                        if (type === 1) {
+                            tablePatient['Problem 1 Code'] = modified.code
+                            tablePatient['Problem 1'] = modified.name
+                        }
+                        else {
+                            tablePatient['Problem 2 Code'] = modified.code
+                            tablePatient['Problem 2'] = modified.name
+                        }
+                        if (modified.id == 'Other') {
+                            modified.name = (this.cpmProblems.find(problem => problem.id == modified.cpm_id) || {}).name
+                        }
+                        self.axios.post(rootUrl('admin/reports/monthly-billing/v2/storeProblem'), {
+                            code: modified.code,
+                            id: modified.id,
+                            name: modified.name,
+                            problem_no: (type === 1) ? 'problem_1' : 'problem_2',
+                            report_id: tablePatient.reportId,
+                            cpm_problem_id: modified.cpm_id
+                        }).then(response => {
+                            console.log('billing-change-problem', response)
+                        }).catch(err => {
+                            console.error('billing-change-problem', err)
+                        })
                     }
-                    else {
-                        tablePatient['Problem 2 Code'] = modified.code
-                        tablePatient['Problem 2'] = modified.name
-                    }
-                    self.axios.post(rootUrl('admin/reports/monthly-billing/v2/storeProblem'), {
-                        code: modified.code,
-                        id: modified.id,
-                        name: modified.name,
-                        problem_no: (type === 1) ? 'problem_1' : 'problem_2',
-                        report_id: tablePatient.reportId
-                    }).then(response => {
-                        console.log('billing-change-problem', response)
-                    }).catch(err => {
-                        console.error('billing-change-problem', err)
-                    })
+                    else console.error('could not find tablePatient')
                 })
             },
 

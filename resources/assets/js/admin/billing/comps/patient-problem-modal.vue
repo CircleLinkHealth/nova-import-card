@@ -20,7 +20,10 @@
                 Problem Name
               </div>
               <div class="col-sm-12">
-                <input class="form-control" type="text" v-model="props.info.name" placeholder="Name" />
+                <select class="form-control" v-model="props.info.cpm_id">
+                  <option v-for="(problem, index) in props.info.cpmProblems" :key="index" :value="problem.id">{{problem.name}}</option>
+                  <option :value="null">Other</option>
+                </select>
               </div>
             </div>
             <div class="row form-group">
@@ -43,7 +46,7 @@
     export default {
         name: 'patient-problem-modal',
         props: {
-            problems: Array
+            cpmProblems: Array
         },
         components: {
             'modal': Modal
@@ -64,7 +67,9 @@
                       const problem = (this.problems.find(problem => problem.id === this.id) || {})
                       Object.assign(this, problem)
                       self.$forceUpdate()
-                    }
+                    },
+                    cpmProblems: this.cpmProblems,
+                    cpm_id: null
                 }
             }
         },
