@@ -72,7 +72,17 @@ class ApproveBillablePatientsService
 
                                              $rejected = $summary->rejected == 1;
 
-                                             $toQA = ! $approved && ! $rejected;
+                                             $problem1Code = isset($summary->billableProblem1)
+                                                 ? $summary->billableProblem1->icd10Code()
+                                                 : null;
+                                             $problem1Name = $summary->billableProblem1->name ?? null;
+
+                                             $problem2Code = isset($summary->billableProblem2)
+                                                 ? $summary->billableProblem2->icd10Code()
+                                                 : null;
+                                             $problem2Name = $summary->billableProblem2->name ?? null;
+
+                                             $toQA = (! $approved && ! $rejected) || !$problem1Code || !$problem2Code || $problem1Name || $problem2Name;
 
                                              $summary->save();
 
@@ -87,14 +97,10 @@ class ApproveBillablePatientsService
                                                  'practice'               => $u->primaryPractice->display_name,
                                                  'dob'                    => $info->birth_date,
                                                  'ccm'                    => round($summary->ccm_time / 60, 2),
-                                                 'problem1'               => $summary->billableProblem1->name ?? null,
-                                                 'problem1_code'          => isset($summary->billableProblem1)
-                                                     ? $summary->billableProblem1->icd10Code()
-                                                     : null,
-                                                 'problem2'               => $summary->billableProblem2->name ?? null,
-                                                 'problem2_code'          => isset($summary->billableProblem2)
-                                                     ? $summary->billableProblem2->icd10Code()
-                                                     : null,
+                                                 'problem1'               => $problem1Name,
+                                                 'problem1_code'          => $problem1Code,
+                                                 'problem2'               => $problem2Name,
+                                                 'problem2_code'          => $problem2Code,
                                                  'problems'               => $this->ccdProblems($u),
                                                  'no_of_successful_calls' => $summary->no_of_successful_calls,
                                                  'status'                 => $info->ccm_status,
