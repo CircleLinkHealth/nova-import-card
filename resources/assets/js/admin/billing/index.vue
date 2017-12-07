@@ -15,13 +15,17 @@
                 <div class="col-sm-6">
                     <label>Select Practice</label>
                     <select class="form-control" v-model="selectedPractice" @change="retrieve">
-                        <option v-for="(practice, index) in practices" :key="index" :value="practice.id" :selected="practice.id == 8">{{practice.display_name}}</option>
+                        <option v-for="(practice, index) in practices" :key="index" :value="practice.id"
+                                :selected="practice.id == 8">{{practice.display_name}}
+                        </option>
                     </select>
                 </div>
                 <div class="col-sm-6">
                     <label>Select Month</label>
                     <select class="form-control" v-model="selectedMonth" @change="retrieve">
-                        <option v-for="(month, index) in months" :key="index" :value="month.long" :selected="month.selected">{{month.long}}</option>
+                        <option v-for="(month, index) in months" :key="index" :value="month.long"
+                                :selected="month.selected">{{month.long}}
+                        </option>
                     </select>
                 </div>
             </div>
@@ -47,19 +51,21 @@
             </div>
             <v-client-table ref="tblBillingReport" :data="tableData" :columns="columns" :options="options">
                 <template slot="approved" scope="props">
-                    <input class="row-select" v-model="props.row.approved" type="checkbox" :readonly="true" />
+                    <input class="row-select" v-model="props.row.approved" type="checkbox" :readonly="true"/>
                 </template>
                 <template slot="rejected" scope="props">
-                    <input class="row-select" v-model="props.row.rejected" type="checkbox" :readonly="true" />
+                    <input class="row-select" v-model="props.row.rejected" type="checkbox" :readonly="true"/>
                 </template>
                 <template slot="Patient" scope="props">
                     <a :href="props.row.patientUrl" class="blue">{{props.row.Patient}}</a>
                 </template>
                 <template slot="Problem 1" scope="props">
-                    <span class="blue pointer" @click="showProblemsModal(props.row, 1)">{{props.row['Problem 1'] || '&lt;Edit&gt;'}}</span>
+                    <span class="blue pointer"
+                          @click="showProblemsModal(props.row, 1)">{{props.row['Problem 1'] || '&lt;Edit&gt;'}}</span>
                 </template>
                 <template slot="Problem 2" scope="props">
-                    <span class="blue pointer" @click="showProblemsModal(props.row, 2)">{{props.row['Problem 2'] || '&lt;Edit&gt;'}}</span>
+                    <span class="blue pointer"
+                          @click="showProblemsModal(props.row, 2)">{{props.row['Problem 2'] || '&lt;Edit&gt;'}}</span>
                 </template>
             </v-client-table>
             <patient-problem-modal :cpm-problems="cpmProblems"></patient-problem-modal>
@@ -68,17 +74,16 @@
 </template>
 
 <script>
-    import { rootUrl } from '../../app.config.js'
-    import { Event } from 'vue-tables-2'
+    import {rootUrl} from '../../app.config.js'
+    import {Event} from 'vue-tables-2'
     import TextEditable from '../comps/text-editable'
     import PatientProblemModal from './comps/patient-problem-modal'
     import moment from 'moment'
-    import buildReport, { styles } from './excel'
+    import buildReport, {styles} from './excel'
 
     export default {
         name: 'billing-report',
-        props: {
-        },
+        props: {},
         components: {
             'text-editable': TextEditable,
             'patient-problem-modal': PatientProblemModal
@@ -92,36 +97,36 @@
                 cpmProblems: window.cpmProblems || [],
                 practiceId: 0,
                 columns: [
-                    'Provider', 
-                    'Patient', 
-                    'Practice', 
-                    'DOB', 
-                    'Status', 
-                    'CCM Mins', 
-                    'Problem 1', 
+                    'Provider',
+                    'Patient',
+                    'Practice',
+                    'DOB',
+                    'Status',
+                    'CCM Mins',
+                    'Problem 1',
                     'Problem 1 Code',
-                    'Problem 2', 
-                    'Problem 2 Code', 
-                    '#Successful Calls', 
+                    'Problem 2',
+                    'Problem 2 Code',
+                    '#Successful Calls',
                     'approved',
                     'rejected'],
                 tableData: [
                     {
                         id: 1,
-                        "approved":true,
-                        "rejected":false,
-                        "Provider":"Dr. Demo MD",
-                        "Patient":"Cecilia Z-Armstrong",
-                        "patientUrl":"https://cpm-web.dev/manage-patients/345/careplan/sections/1",
-                        "Practice":"Demo",
-                        "DOB":"1918/09/22",
-                        "Status":"enrolled",
-                        "CCM Mins":0,
-                        "Problem 1":"Smoking",
-                        "Problem 2":"Asthma",
-                        "Problem 1 Code":"I10",
-                        "Problem 2 Code":"I10",
-                        "#Successful Calls":0,
+                        "approved": true,
+                        "rejected": false,
+                        "Provider": "Dr. Demo MD",
+                        "Patient": "Cecilia Z-Armstrong",
+                        "patientUrl": "https://cpm-web.dev/manage-patients/345/careplan/sections/1",
+                        "Practice": "Demo",
+                        "DOB": "1918/09/22",
+                        "Status": "enrolled",
+                        "CCM Mins": 0,
+                        "Problem 1": "Smoking",
+                        "Problem 2": "Asthma",
+                        "Problem 1 Code": "I10",
+                        "Problem 2 Code": "I10",
+                        "#Successful Calls": 0,
                         qa: 0,
                         reportId: 9,
                         problems: [
@@ -139,20 +144,20 @@
                     },
                     {
                         id: 2,
-                        "approved":false,
-                        "rejected":false,
-                        "Provider":"  ",
-                        "Patient":"Kenneth Z-Smitham ",
-                        "patientUrl":"https://cpm-web.dev/manage-patients/345/careplan/sections/1",
-                        "Practice":"Demo",
-                        "DOB":"1958-09-08",
-                        "Status":"enrolled",
-                        "CCM Mins":0,
-                        "Problem 1":null,
-                        "Problem 2":null,
-                        "Problem 1 Code":null,
-                        "Problem 2 Code":null,
-                        "#Successful Calls":0,
+                        "approved": false,
+                        "rejected": false,
+                        "Provider": "  ",
+                        "Patient": "Kenneth Z-Smitham ",
+                        "patientUrl": "https://cpm-web.dev/manage-patients/345/careplan/sections/1",
+                        "Practice": "Demo",
+                        "DOB": "1958-09-08",
+                        "Status": "enrolled",
+                        "CCM Mins": 0,
+                        "Problem 1": null,
+                        "Problem 2": null,
+                        "Problem 1 Code": null,
+                        "Problem 2 Code": null,
+                        "#Successful Calls": 0,
                         qa: 1,
                         reportId: 10,
                         problems: [
@@ -168,9 +173,7 @@
                             }
                         ]
                     }],
-                options: {
-
-                }
+                options: {}
             }
         },
         methods: {
@@ -189,7 +192,7 @@
                         return {
                             id: index,
                             approved: patient.approve,
-                            rejected:  patient.reject,
+                            rejected: patient.reject,
                             reportId: patient.report_id,
                             qa: patient.qa,
                             problems: patient.problems || [],
@@ -254,9 +257,7 @@
                 const bytes = buildReport([
                     {
                         name: 'billable patients',
-                        heading: [
-                            
-                        ],
+                        heading: [],
                         merges: [],
                         specification: this.columns.reduce((a, b) => {
                             a[b] = {
@@ -270,7 +271,7 @@
                     }
                 ])
 
-                const blob = new Blob([bytes], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' })
+                const blob = new Blob([bytes], {type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'})
                 const link = document.createElement('a')
                 link.href = window.URL.createObjectURL(blob)
                 link.download = `billable-patients-${this.practice.display_name.toLowerCase().replace(/ /g, '-')}-${this.selectedMonth.replace(', ', '-').toLowerCase()}-${Date.now()}.xlsx`
@@ -282,7 +283,7 @@
                 let months = []
                 for (let i = 0; i >= -12; i--) {
                     let mDate = moment(new Date()).add(i * 30, 'days')
-                    months.push({ short: mDate.format('YYYY-MM-DD'), long: mDate.format('MMM, YYYY'), selected: i === 0 })
+                    months.push({short: mDate.format('YYYY-MM-DD'), long: mDate.format('MMM, YYYY'), selected: i === 0})
                 }
                 return months
             },
@@ -337,7 +338,7 @@
         color: #008cba
     }
 
-    div.blue input,textarea {
+    div.blue input, textarea {
         width: 100%;
     }
 
