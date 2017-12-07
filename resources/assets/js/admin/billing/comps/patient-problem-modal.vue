@@ -41,6 +41,7 @@
             'modal': Modal
         },
         data() {
+            const self = this
             return {
                 patientProblemModalInfo: {
                     okHandler() {
@@ -51,10 +52,10 @@
                           this.done(this)
                         }
                     },
-                    changeProblemName() {
+                    changeProblemName(e) {
                       const problem = (this.problems.find(problem => problem.code === this.code) || {})
-                      this.name = problem.name
-                      this.id = problem.id
+                      Object.assign(this, problem)
+                      self.$forceUpdate()
                     }
                 }
             }
