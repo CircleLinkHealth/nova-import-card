@@ -232,7 +232,7 @@
                         id: modified.id,
                         name: modified.name,
                         problem_no: (type === 1) ? 'problem_1' : 'problem_2',
-                        report_id: tablePatient.reportId,
+                        report_id: tablePatient.reportId
                     }).then(response => {
                         console.log('billing-change-problem', response)
                     }).catch(err => {
