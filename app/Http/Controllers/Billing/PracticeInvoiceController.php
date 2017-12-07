@@ -205,6 +205,7 @@ class PracticeInvoiceController extends Controller
         if ($problemId == 'Other') {
             $problemId = $this->service->storeCcdProblem($summary->patient, [
                 'name'             => $request['name'],
+                'cpm_problem_id'   => $request['cpm_problem_id'],
                 'billable'         => true,
                 'code'             => $request['code'],
                 'code_system_name' => 'ICD-10',
