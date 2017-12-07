@@ -9,8 +9,8 @@
                 Eligible Problems
               </div>
               <div class="col-sm-12">
-                <select class="form-control" v-model="props.info.code" @change="props.info.changeProblemName">
-                  <option v-for="(problem, index) in props.info.problems" :key="index" :value="problem.code">{{problem.name}}</option>
+                <select class="form-control" v-model="props.info.id" @change="props.info.changeProblemName">
+                  <option v-for="(problem, index) in props.info.problems" :key="index" :value="problem.id">{{problem.name}}</option>
                   <option value="Other">Other</option>
                 </select>
               </div>
@@ -53,7 +53,7 @@
                         }
                     },
                     changeProblemName(e) {
-                      const problem = (this.problems.find(problem => problem.code === this.code) || {})
+                      const problem = (this.problems.find(problem => problem.id === this.id) || {})
                       Object.assign(this, problem)
                       self.$forceUpdate()
                     }
@@ -68,6 +68,8 @@
             this.patientProblemModalInfo.problems = patientProblem.problems
             this.patientProblemModalInfo.name = (type === 1) ? patientProblem['Problem 1'] : patientProblem['Problem 1']
             this.patientProblemModalInfo.code = (type === 1) ? patientProblem['Problem 1 Code'] : patientProblem['Problem 1 Code']
+            this.patientProblemModalInfo.id = (patientProblem.problems.find(problem => problem.code === this.patientProblemModalInfo.code) || {}).id
+            console.log(this.patientProblemModalInfo)
             if (done && typeof(done) == 'function') this.patientProblemModalInfo.done = done.bind(this.patientProblemModalInfo)
             this.patientProblemModalInfo.changeProblemName = this.patientProblemModalInfo.changeProblemName.bind(this.patientProblemModalInfo)
           })
