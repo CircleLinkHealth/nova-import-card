@@ -82,7 +82,7 @@ class ApproveBillablePatientsService
                                                  : null;
                                              $problem2Name = $summary->billableProblem2->name ?? null;
 
-                                             $toQA = (! $approved && ! $rejected) || !$problem1Code || !$problem2Code || $problem1Name || $problem2Name;
+                                             $toQA = (! $approved && ! $rejected) || !$problem1Code || !$problem2Code || !$problem1Name || !$problem2Name;
 
                                              $summary->save();
 
