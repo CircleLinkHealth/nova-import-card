@@ -234,8 +234,8 @@
             months() {
                 let months = []
                 let currentDate = moment(new Date())
-                for (let i = 0; i >= -12; i--) {
-                    let mDate = currentDate.add(i, 'M')
+                for (let i = 0; i <= 6; i++) {
+                    let mDate = currentDate.clone().subtract(i, 'M')
                     months.push({ short: mDate.format('YYYY-MM-DD'), long: mDate.format('MMM, YYYY'), selected: i === 0 })
                 }
                 return months
