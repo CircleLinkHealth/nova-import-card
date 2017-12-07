@@ -22,7 +22,7 @@ class ApproveBillablePatientsService
         $count['toQA'] = 0;
         $count['rejected'] = 0;
 
-        foreach ($this->repo->billablePatients($practiceId, $month)->get() as $patient) {
+        foreach ($this->repo->patientsWithSummaries($practiceId, $month)->get() as $patient) {
             $report = $patient->patientSummaries->first();
 
             if (($report->rejected == 0 && $report->approved == 0) || $this->lacksProblems($report)) {
@@ -67,9 +67,6 @@ class ApproveBillablePatientsService
                                   : '';
 
                               $report->save();
-
-                              $report->load('billableProblem1');
-                              $report->load('billableProblem2');
 
                               $name = "<a href = " . URL::route('patient.careplan.show', [
                                       'patient' => $u->id,
@@ -175,10 +172,10 @@ class ApproveBillablePatientsService
             }
         }
 
-//        if ($summary->problem_1 == $summary->problem_2) {
-//            $summary->problem_2 = null;
-//            $this->fillProblems($patient, $summary, $billableProblems);
-//        }
+        if ($summary->problem_1 == $summary->problem_2) {
+            $summary->problem_2 = null;
+            $this->fillProblems($patient, $summary, $billableProblems);
+        }
 
         $summary->save();
     }
