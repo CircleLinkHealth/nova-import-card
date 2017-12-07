@@ -68,8 +68,7 @@
                       self.$forceUpdate()
                     },
                     changeCpmProblemName(e) {
-                      const cpmProblem = (self.cpmProblems.find(problem => problem.id === e.target.value) || {})
-                      console.log('change-cpm-problem', cpmProblem, this, e.target.value, self.cpmProblems)
+                      const cpmProblem = (this.cpmProblems.find(problem => problem.id == e.target.value) || {})
                       this.code = cpmProblem.code
                     },
                     cpmProblems: this.cpmProblems,
