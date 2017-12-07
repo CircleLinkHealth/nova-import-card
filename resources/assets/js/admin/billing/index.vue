@@ -60,12 +60,18 @@
                     <a :href="props.row.patientUrl" class="blue">{{props.row.Patient}}</a>
                 </template>
                 <template slot="Problem 1" scope="props">
-                    <span class="blue pointer"
+                    <div>
+                        <span class="blue pointer"
                           @click="showProblemsModal(props.row, 1)">{{props.row['Problem 1'] || '&lt;Edit&gt;'}}</span>
+                        <div class="loading" v-if="props.row.promises['problem_1']"></div>
+                    </div>
                 </template>
                 <template slot="Problem 2" scope="props">
-                    <span class="blue pointer"
+                    <div>
+                        <span class="blue pointer"
                           @click="showProblemsModal(props.row, 2)">{{props.row['Problem 2'] || '&lt;Edit&gt;'}}</span>
+                        <div class="loading" v-if="props.row.promises['problem_2']"></div>
+                    </div>
                 </template>
             </v-client-table>
             <patient-problem-modal :cpm-problems="cpmProblems"></patient-problem-modal>
@@ -140,7 +146,11 @@
                                 name: 'Asthma',
                                 code: 'I11'
                             }
-                        ]
+                        ],
+                        promises: {
+                            problem_1: false,
+                            problem_2: false
+                        }
                     },
                     {
                         id: 2,
@@ -171,7 +181,11 @@
                                 name: 'Syphilis',
                                 code: 'SP2'
                             }
-                        ]
+                        ],
+                        promises: {
+                            problem_1: false,
+                            problem_2: false
+                        }
                     }],
                 options: {}
             }
@@ -208,6 +222,10 @@
                             'Problem 1 Code': patient.problem1_code,
                             'Problem 2 Code': patient.problem2_code,
                             '#Successful Calls': patient.no_of_successful_calls,
+                            promises: {
+                                problem_1: false,
+                                problem_2: false
+                            }
                         }
                     }).sort((pA, pB) => pB.qa - pA.qa)
                     this.loading = false
@@ -225,6 +243,9 @@
                     const tablePatient = self.tableData.find(pt => pt.id === patient.id)
                     console.log('table-patient', tablePatient, modified)
                     if (tablePatient) {
+                        if (modified.id == 'Other') {
+                            modified.name = (this.cpmProblems.find(problem => problem.id == modified.cpm_id) || {}).name
+                        }
                         if (type === 1) {
                             tablePatient['Problem 1 Code'] = modified.code
                             tablePatient['Problem 1'] = modified.name
@@ -233,21 +254,23 @@
                             tablePatient['Problem 2 Code'] = modified.code
                             tablePatient['Problem 2'] = modified.name
                         }
-                        if (modified.id == 'Other') {
-                            modified.name = (this.cpmProblems.find(problem => problem.id == modified.cpm_id) || {}).name
-                        }
+                        const problemKey = (type === 1) ? 'problem_1' : 'problem_2'
+                        tablePatient.promises[problemKey] = true
                         self.axios.post(rootUrl('admin/reports/monthly-billing/v2/storeProblem'), {
                             code: modified.code,
                             id: modified.id,
                             name: modified.name,
-                            problem_no: (type === 1) ? 'problem_1' : 'problem_2',
+                            problem_no: problemKey,
                             report_id: tablePatient.reportId,
                             cpm_problem_id: modified.cpm_id
                         }).then(response => {
+                            tablePatient.promises[problemKey] = false
                             console.log('billing-change-problem', response)
                         }).catch(err => {
+                            tablePatient.promises[problemKey] = false
                             console.error('billing-change-problem', err)
                         })
+                        console.log('table-patient-promises', tablePatient.promises)
                     }
                     else console.error('could not find tablePatient')
                 })
@@ -344,5 +367,20 @@
 
     .pointer {
         cursor: pointer;
+    }
+
+    .loading {
+        border: 2px solid #f3f3f3;
+        border-top: 2px solid #3498db;
+        border-radius: 50%;
+        width: 20px;
+        height: 20px;
+        animation: spin 2s linear infinite;
+        margin-left: 15px;
+    }
+
+    @keyframes spin {
+        0% { transform: rotate(0deg); }
+        100% { transform: rotate(360deg); }
     }
 </style>

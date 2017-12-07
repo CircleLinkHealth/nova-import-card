@@ -101,7 +101,7 @@
                                 })
                             </script>
                         @endpush
-                        <billing-report></billing-report>
+                        <billing-report ref="billingReport"></billing-report>
                     </div>
                 </div>
             </div>
