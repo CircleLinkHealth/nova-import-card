@@ -198,7 +198,7 @@
                     }*/],
                 options: {
                     rowClassCallback(row) {
-                        if (row.qa) return 'bg-qa'
+                        if (row.qa) return 'bg-flagged'
                         return ''
                     }
                 }
@@ -429,6 +429,6 @@
     }
 
     .bg-flagged {
-        background-color: rgba(255, 252, 96, 0.408)
+        background-color: rgba(255, 252, 96, 0.408) !important;
     }
 </style>
