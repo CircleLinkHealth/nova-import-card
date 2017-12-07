@@ -64,7 +64,7 @@
                     <div class="loading" v-if="props.row.promises['approve_reject']"></div>
                 </template>
                 <template slot="Patient" scope="props">
-                    <a :href="props.row.patientUrl" class="blue">{{props.row.Patient}}</a>
+                    <a :href="props.row.patientUrl" target="_blank" class="blue">{{props.row.Patient}}</a>
                 </template>
                 <template slot="Problem 1" scope="props">
                     <div>
