@@ -187,7 +187,12 @@
                             problem_2: false
                         }
                     }],
-                options: {}
+                options: {
+                    rowClassCallback(row) {
+                        if (row.qa) return 'bg-qa'
+                        return ''
+                    }
+                }
             }
         },
         methods: {
@@ -382,5 +387,9 @@
     @keyframes spin {
         0% { transform: rotate(0deg); }
         100% { transform: rotate(360deg); }
+    }
+
+    .bg-flagged {
+        background-color: rgba(255, 252, 96, 0.408)
     }
 </style>
