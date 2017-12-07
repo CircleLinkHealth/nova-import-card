@@ -15,6 +15,14 @@
                 </select>
               </div>
             </div>
+            <div class="row form-group" v-if="props.info.id == 'Other'">
+              <div class="col-sm-12">
+                Problem Name
+              </div>
+              <div class="col-sm-12">
+                <input class="form-control" type="text" v-model="props.info.name" placeholder="Name" />
+              </div>
+            </div>
             <div class="row form-group">
               <div class="col-sm-12">
                 ICD-10 Code

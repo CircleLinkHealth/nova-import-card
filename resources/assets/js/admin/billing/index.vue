@@ -233,6 +233,7 @@
                         problem_no: (type === 1) ? 'problem_1' : 'problem_2',
                         report_id: tablePatient.reportId,
                         has_problem: 1,
+                        problem_name: modified.name,
                         modal_date: moment(Date.now()).format('YYYY-MM-DD'),
                         modal_practice_id: self.selectedPractice,
                     }).then(response => {
