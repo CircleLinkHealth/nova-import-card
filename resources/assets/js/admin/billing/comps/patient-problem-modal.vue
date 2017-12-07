@@ -22,7 +22,6 @@
               <div class="col-sm-12">
                 <select class="form-control" v-model="props.info.cpm_id">
                   <option v-for="(problem, index) in props.info.cpmProblems" :key="index" :value="problem.id">{{problem.name}}</option>
-                  <option :value="null">Other</option>
                 </select>
               </div>
             </div>
