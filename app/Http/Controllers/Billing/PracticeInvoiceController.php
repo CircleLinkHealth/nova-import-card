@@ -5,13 +5,13 @@ namespace App\Http\Controllers\Billing;
 use App\AppConfig;
 use App\Billing\Practices\PracticeInvoiceGenerator;
 use App\Http\Controllers\Controller;
+use App\Models\CPM\CpmProblem;
 use App\PatientMonthlySummary;
 use App\Practice;
 use App\Services\ApproveBillablePatientsService;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Mail;
-use Yajra\Datatables\Facades\Datatables;
 
 
 class PracticeInvoiceController extends Controller
@@ -34,18 +34,13 @@ class PracticeInvoiceController extends Controller
                              ->active()
                              ->get();
 
+        $cpmProblems = CpmProblem::get()
+                                 ->pluck('name', 'id');
+
         return view('admin.reports.billing', compact([
-            'practices'
+            'cpmProblems',
+            'practices',
         ]));
-    }
-
-    public function getCounts(
-        $date,
-        $practice
-    ) {
-
-        $date = Carbon::parse($date);
-        return $this->service->counts($practice, $date->firstOfMonth());
     }
 
     public function data(Request $request)
@@ -86,6 +81,16 @@ class PracticeInvoiceController extends Controller
         );
     }
 
+    public function getCounts(
+        $date,
+        $practice
+    ) {
+
+        $date = Carbon::parse($date);
+
+        return $this->service->counts($practice, $date->firstOfMonth());
+    }
+
     public function updateRejected(Request $request)
     {
 
@@ -121,7 +126,7 @@ class PracticeInvoiceController extends Controller
     public function createInvoices()
     {
 
-        $practices = Practice::active()->get();
+        $practices    = Practice::active()->get();
         $currentMonth = Carbon::now()->firstOfMonth()->toDateString();
 
         $dates = [];
@@ -133,8 +138,8 @@ class PracticeInvoiceController extends Controller
         }
 
         $readyToBill = [];
-        $needsQA = [];
-        $invoice_no = AppConfig::where('config_key', 'billing_invoice_count')->first()['config_value'];
+        $needsQA     = [];
+        $invoice_no  = AppConfig::where('config_key', 'billing_invoice_count')->first()['config_value'];
 
         $readyToBill = $practices;
 
@@ -191,23 +196,35 @@ class PracticeInvoiceController extends Controller
 
     public function storeProblem(Request $request)
     {
-        $report = PatientMonthlySummary::find($request['report_id']);
+        $summary = PatientMonthlySummary::find($request['report_id']);
 
         $key = $request['problem_no'];
 
-        $report->$key = $request['ccd_problem_id'];
+        $problemId = $request['id'];
 
-        if (!$this->service->lacksProblems($report)) {
-            $report->approved = true;
+        if ($problemId == 'Other') {
+            $problemId = $this->service->storeCcdProblem($summary->patient, [
+                'name'             => $request['name'],
+                'billable'         => true,
+                'code'             => $request['code'],
+                'code_system_name' => 'ICD-10',
+                'code_system_oid'  => '2.16.840.1.113883.6.3',
+            ])->id;
         }
 
-        $report->save();
+        $summary->$key = $problemId;
 
-        $counts = $this->getCounts($report->month_year->toDateString(), $report->patient->primaryPractice->id);
+        if ( ! $this->service->lacksProblems($summary)) {
+            $summary->approved = true;
+        }
+
+        $summary->save();
+
+        $counts = $this->getCounts($summary->month_year->toDateString(), $summary->patient->primaryPractice->id);
 
         return response()->json(
             [
-                'report_id' => $report->id,
+                'report_id' => $summary->id,
                 'counts'    => $counts,
             ]
         );
@@ -226,7 +243,7 @@ class PracticeInvoiceController extends Controller
         $practice,
         $name
     ) {
-        if (!auth()->user()->practice((int) $practice)) {
+        if ( ! auth()->user()->practice((int)$practice)) {
             return abort(403, 'Unauthorized action.');
         }
 
@@ -248,7 +265,7 @@ class PracticeInvoiceController extends Controller
             $data = (array)$value;
 
             $patientReport = $data['Patient Report'];
-            $invoice = $data['Invoice'];
+            $invoice       = $data['Invoice'];
 
             $invoiceLink = route(
                 'monthly.billing.download',

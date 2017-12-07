@@ -93,6 +93,7 @@
                         @push('styles')
                             <script>
                                 var practices = JSON.parse("{{json_encode($practices)}}".replace(/\&quot;/g, '"'))
+                                var cpmProblems = JSON.parse("{{json_encode($cpmProblems)}}".replace(/\&quot;/g, '"'))
                             </script>
                         @endpush
                         <billing-report></billing-report>
