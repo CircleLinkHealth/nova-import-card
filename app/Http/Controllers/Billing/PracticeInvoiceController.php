@@ -5,7 +5,9 @@ namespace App\Http\Controllers\Billing;
 use App\AppConfig;
 use App\Billing\Practices\PracticeInvoiceGenerator;
 use App\Http\Controllers\Controller;
+use App\Models\CCD\Problem;
 use App\Models\CPM\CpmProblem;
+use App\Models\ProblemCode;
 use App\PatientMonthlySummary;
 use App\Practice;
 use App\Services\ApproveBillablePatientsService;
@@ -43,9 +45,9 @@ class PracticeInvoiceController extends Controller
                                  ->get()
                                  ->map(function ($p) {
                                      return [
-                                        'id' => $p->id,
-                                        'name' => $p->name,
-                                        'code' => $p->default_icd_10_code,
+                                         'id'   => $p->id,
+                                         'name' => $p->name,
+                                         'code' => $p->default_icd_10_code,
                                      ];
                                  });
 
@@ -73,16 +75,6 @@ class PracticeInvoiceController extends Controller
         return response()->json($data);
     }
 
-    public function getCounts(
-        $date,
-        $practice
-    ) {
-        $date = Carbon::parse($date);
-
-        return $this->service->counts($practice, $date->firstOfMonth());
-    }
-
-
     public function updateStatus(Request $request)
     {
         if ( ! $request->ajax()) {
@@ -105,6 +97,15 @@ class PracticeInvoiceController extends Controller
             'report_id' => $summary->id,
             'counts'    => $counts,
         ]);
+    }
+
+    public function getCounts(
+        $date,
+        $practice
+    ) {
+        $date = Carbon::parse($date);
+
+        return $this->service->counts($practice, $date->firstOfMonth());
     }
 
     public function createInvoices()
@@ -185,6 +186,39 @@ class PracticeInvoiceController extends Controller
         $key = $request['problem_no'];
 
         $problemId = $request['id'];
+
+        if ($problemId) {
+            $existingProblemId = $summary->$key;
+
+            if ($existingProblemId) {
+                Problem::where('id', $existingProblemId)
+                       ->update([
+                           'billable' => false,
+                       ]);
+            }
+
+            Problem::where('id', $problemId)
+                   ->update([
+                       'billable' => true,
+                   ]);
+
+            $updated = ProblemCode::where('problem_id', $problemId)
+                                  ->where('code_system_name', 'like', '%10%')
+                                  ->update([
+                                      'code'             => $request['code'],
+                                      'code_system_name' => 'ICD-10',
+                                      'code_system_oid'  => '2.16.840.1.113883.6.3',
+                                  ]);
+
+            if ( ! $updated) {
+                ProblemCode::create([
+                    'problem_id'       => $problemId,
+                    'code'             => $request['code'],
+                    'code_system_name' => 'ICD-10',
+                    'code_system_oid'  => '2.16.840.1.113883.6.3',
+                ]);
+            }
+        }
 
         if ($problemId == 'Other') {
             $problemId = $this->service->storeCcdProblem($summary->patient, [
