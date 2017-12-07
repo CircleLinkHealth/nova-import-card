@@ -32,29 +32,36 @@
             <div class="col-sm-12 text-center line-50 row">
                 <div class="col-sm-4">
                     <strong>Approved: </strong>
+                    <div class="loading" v-if="loading"></div>
                     <span class="color-green">
-                        {{loading ? '...loading...' : noOfApproved}}
+                        {{loading ? '' : noOfApproved}}
                     </span>
                 </div>
                 <div class="col-sm-4">
                     <strong>Flagged: </strong>
+                    <div class="loading" v-if="loading"></div>
                     <span class="color-dark-orange">
-                        {{loading ? '...loading...' : noOfFlagged}}
+                        {{loading ? '' : noOfFlagged}}
                     </span>
                 </div>
                 <div class="col-sm-4">
                     <strong>Rejected: </strong>
+                    <div class="loading" v-if="loading"></div>
                     <span class="color-dark-red">
-                        {{loading ? '...loading...' : noOfRejected}}
+                        {{loading ? '' : noOfRejected}}
                     </span>
                 </div>
             </div>
             <v-client-table ref="tblBillingReport" :data="tableData" :columns="columns" :options="options">
                 <template slot="approved" scope="props">
-                    <input class="row-select" v-model="props.row.approved" type="checkbox" :readonly="true"/>
+                    <input class="row-select" v-model="props.row.approved" @change="approveOrReject($event, props.row, 'approve')" 
+                        type="checkbox" :readonly="!!props.row.promises['approve_reject']" />
+                    <div class="loading" v-if="props.row.promises['approve_reject']"></div>
                 </template>
                 <template slot="rejected" scope="props">
-                    <input class="row-select" v-model="props.row.rejected" type="checkbox" :readonly="true"/>
+                    <input class="row-select" v-model="props.row.rejected" @change="approveOrReject($event, props.row, 'reject')" 
+                        type="checkbox" :readonly="!!props.row.promises['approve_reject']" />
+                    <div class="loading" v-if="props.row.promises['approve_reject']"></div>
                 </template>
                 <template slot="Patient" scope="props">
                     <a :href="props.row.patientUrl" class="blue">{{props.row.Patient}}</a>
@@ -149,7 +156,8 @@
                         ],
                         promises: {
                             problem_1: false,
-                            problem_2: false
+                            problem_2: false,
+                            approve_reject: false
                         }
                     },
                     {
@@ -184,7 +192,8 @@
                         ],
                         promises: {
                             problem_1: false,
-                            problem_2: false
+                            problem_2: false,
+                            approve_reject: false
                         }
                     }],
                 options: {
@@ -200,6 +209,35 @@
                 const div = document.createElement('div')
                 div.innerHTML = html
                 return div
+            },
+            approveOrReject(e, row, type) {
+                const tablePatient = this.tableData.find(patient => patient.id == row.id)
+                console.log('billing-approve-reject-patient', tablePatient, e)
+                if (tablePatient) {
+                    if (type == 'approve') {
+                        tablePatient.approved = e.target.checked
+                        tablePatient.rejected = false
+                    }
+                    else {
+                        tablePatient.rejected = e.target.checked
+                        tablePatient.approved = false
+                    }
+                    tablePatient.promises['approve_reject'] = true
+                    this.axios.post(rootUrl('admin/reports/monthly-billing/v2/status/update'), {
+                        report_id: tablePatient.reportId,
+                        approved: tablePatient.approved,
+                        rejected: tablePatient.rejected
+                    }).then(response => {
+                        tablePatient.promises['approve_reject'] = false
+                        tablePatient.approved = !!(response.data.counts || {}).approved
+                        tablePatient.rejected = !!(response.data.counts || {}).rejected
+                        tablePatient.qa = !!(response.data.counts || {}).toQA
+                        console.log('billing-approve-reject', response.data)
+                    }).catch(err => {
+                        tablePatient.promises['approve_reject'] = false
+                        console.error('billing-approve-reject', err)
+                    })
+                }
             },
             retrieve() {
                 this.loading = true
@@ -229,7 +267,8 @@
                             '#Successful Calls': patient.no_of_successful_calls,
                             promises: {
                                 problem_1: false,
-                                problem_2: false
+                                problem_2: false,
+                                approve_reject: false
                             }
                         }
                     }).sort((pA, pB) => pB.qa - pA.qa)

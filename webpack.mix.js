@@ -1,6 +1,6 @@
 let mix = require('laravel-mix')
 
-mix.webpackConfig({
+const webpackConfig = {
     devtool: "#cheap-module-source-map",
     node: {
         fs: 'empty' //to help webpack resolve 'fs'
@@ -9,8 +9,11 @@ mix.webpackConfig({
         {
             './cptable': 'var cptable'
         }
-    ]
-})
+    ],
+    plugins: []
+}
+
+mix.webpackConfig(webpackConfig)
 
 /*
  |--------------------------------------------------------------------------
