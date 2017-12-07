@@ -304,7 +304,7 @@
         computed: {
             months() {
                 let months = []
-                for (let i = 0; i >= -12; i--) {
+                for (let i = 0; i >= -6; i--) {
                     let mDate = moment(new Date()).add(i * 30, 'days')
                     months.push({short: mDate.format('YYYY-MM-DD'), long: mDate.format('MMM, YYYY'), selected: i === 0})
                 }
