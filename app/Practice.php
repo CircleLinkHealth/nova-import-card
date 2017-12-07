@@ -124,12 +124,6 @@ class Practice extends Model
             ->withPivot('role_id', 'has_admin_rights', 'send_billing_reports');
     }
 
-    public static function active()
-    {
-
-        return Practice::whereActive(1)->get();
-    }
-
     public function getCountOfUserTypeAtPractice($role)
     {
 
@@ -256,7 +250,6 @@ class Practice extends Model
 
     public function scopeActive($q)
     {
-
         return $q->whereActive(1);
     }
 

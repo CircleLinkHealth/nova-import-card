@@ -36,7 +36,7 @@ class EmailWeeklyReports extends Command
     {
         parent::__construct();
 
-        $this->activePractices = Practice::active();
+        $this->activePractices = Practice::active()->get();
     }
 
     /**

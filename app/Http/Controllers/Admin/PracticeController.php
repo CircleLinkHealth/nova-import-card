@@ -61,7 +61,7 @@ class PracticeController extends Controller
 
         $program = new Practice;
 
-        $program->name = $params['name'];
+        $program->name = str_slug($params['display_name']);
         $program->display_name = $params['display_name'];
         $program->weekly_report_recipients = $params['weekly_report_recipients'];
         $program->invoice_recipients = $params['invoice_recipients'];
@@ -72,21 +72,6 @@ class PracticeController extends Controller
         $program->active = isset($params['active']) ? 1 : 0;
 
         $program->save();
-
-        // attach to all users who get auto attached
-        $users = User::where('auto_attach_programs', '=', '1')->get();
-        if ($users) {
-            foreach ($users as $user) {
-                // attach program
-                if (!$program) {
-                    continue 1;
-                }
-                if (!$user->practices->contains($program->id)) {
-                    $user->practices()->attach($program->id);
-                }
-                $user->save();
-            }
-        }
 
         return redirect()->route('admin.programs.edit', ['program' => $program])->with('messages', ['successfully created new program'])->send();
     }
@@ -155,7 +140,6 @@ class PracticeController extends Controller
 
         Location::setPrimary(Location::find($params['primary_location']));
 
-        $program->name = $params['name'];
         $program->display_name = $params['display_name'];
         $program->clh_pppm = $params['clh_pppm'];
         $program->term_days = $params['term_days'];
