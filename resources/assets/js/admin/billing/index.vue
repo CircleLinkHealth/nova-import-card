@@ -229,13 +229,10 @@
                     }
                     self.axios.post(rootUrl('admin/reports/monthly-billing/v2/storeProblem'), {
                         code: modified.code,
-                        icd_10_code: modified.id,
+                        id: modified.id,
+                        name: modified.name,
                         problem_no: (type === 1) ? 'problem_1' : 'problem_2',
-                        report_id: tablePatient.reportId,
-                        has_problem: 1,
-                        problem_name: modified.name,
-                        modal_date: moment(Date.now()).format('YYYY-MM-DD'),
-                        modal_practice_id: self.selectedPractice,
+                        report_id: tablePatient.reportId
                     }).then(response => {
                         console.log('billing-change-problem', response)
                     }).catch(err => {
