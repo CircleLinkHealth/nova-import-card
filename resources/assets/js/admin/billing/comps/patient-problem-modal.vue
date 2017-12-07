@@ -20,7 +20,7 @@
                 Problem Name
               </div>
               <div class="col-sm-12">
-                <select class="form-control" v-model="props.info.cpm_id">
+                <select class="form-control" v-model="props.info.cpm_id" @change="props.info.changeCpmProblemName">
                   <option v-for="(problem, index) in props.info.cpmProblems" :key="index" :value="problem.id">{{problem.name}}</option>
                   <option :value="null">Other</option>
                 </select>
@@ -68,6 +68,11 @@
                       Object.assign(this, problem)
                       self.$forceUpdate()
                     },
+                    changeCpmProblemName(e) {
+                      const cpmProblem = (self.cpmProblems.find(problem => problem.id === e.target.value) || {})
+                      console.log('change-cpm-problem', cpmProblem, this, e.target.value, self.cpmProblems)
+                      this.code = cpmProblem.code
+                    },
                     cpmProblems: this.cpmProblems,
                     cpm_id: null
                 }
@@ -85,6 +90,7 @@
             console.log(this.patientProblemModalInfo)
             if (done && typeof(done) == 'function') this.patientProblemModalInfo.done = done.bind(this.patientProblemModalInfo)
             this.patientProblemModalInfo.changeProblemName = this.patientProblemModalInfo.changeProblemName.bind(this.patientProblemModalInfo)
+            this.patientProblemModalInfo.changeCpmProblemName = this.patientProblemModalInfo.changeCpmProblemName.bind(this.patientProblemModalInfo)
           })
         }
     }
