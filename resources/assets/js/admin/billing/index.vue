@@ -1,57 +1,69 @@
 <template>
-    <div class="panel-body">
-        <div class="col-sm-12 row">
-            <div class="col-sm-6">
-                <label>Select Practice</label>
-                <select class="form-control" v-model="selectedPractice" @change="retrieve">
-                    <option v-for="(practice, index) in practices" :key="index" :value="practice.id" :selected="practice.id == 8">{{practice.display_name}}</option>
-                </select>
-            </div>
-            <div class="col-sm-6">
-                <label>Select Month</label>
-                <select class="form-control" v-model="selectedMonth" @change="retrieve">
-                    <option v-for="(month, index) in months" :key="index" :value="month.long" :selected="month.selected">{{month.long}}</option>
-                </select>
+    <div class="panel panel-default">
+        <div class="panel-heading">
+            <div class="row">
+                <div class="col-sm-9">
+                    Approve Billable Patients
+                </div>
+                <div class="col-sm-3 text-right">
+                    <button title="Generate an Excel Sheet" @click="exportExcel">Export</button>
+                </div>
             </div>
         </div>
-        <div class="col-sm-12 text-center line-50 row">
-            <div class="col-sm-4">
-                <strong>Approved: </strong>
-                <span class="color-green">
-                    {{loading ? '...loading...' : noOfApproved}}
-                </span>
+        <div class="panel-body">
+            <div class="col-sm-12 row">
+                <div class="col-sm-6">
+                    <label>Select Practice</label>
+                    <select class="form-control" v-model="selectedPractice" @change="retrieve">
+                        <option v-for="(practice, index) in practices" :key="index" :value="practice.id" :selected="practice.id == 8">{{practice.display_name}}</option>
+                    </select>
+                </div>
+                <div class="col-sm-6">
+                    <label>Select Month</label>
+                    <select class="form-control" v-model="selectedMonth" @change="retrieve">
+                        <option v-for="(month, index) in months" :key="index" :value="month.long" :selected="month.selected">{{month.long}}</option>
+                    </select>
+                </div>
             </div>
-            <div class="col-sm-4">
-                <strong>Flagged: </strong>
-                <span class="color-dark-orange">
-                    {{loading ? '...loading...' : noOfFlagged}}
-                </span>
+            <div class="col-sm-12 text-center line-50 row">
+                <div class="col-sm-4">
+                    <strong>Approved: </strong>
+                    <span class="color-green">
+                        {{loading ? '...loading...' : noOfApproved}}
+                    </span>
+                </div>
+                <div class="col-sm-4">
+                    <strong>Flagged: </strong>
+                    <span class="color-dark-orange">
+                        {{loading ? '...loading...' : noOfFlagged}}
+                    </span>
+                </div>
+                <div class="col-sm-4">
+                    <strong>Rejected: </strong>
+                    <span class="color-dark-red">
+                        {{loading ? '...loading...' : noOfRejected}}
+                    </span>
+                </div>
             </div>
-            <div class="col-sm-4">
-                <strong>Rejected: </strong>
-                <span class="color-dark-red">
-                    {{loading ? '...loading...' : noOfRejected}}
-                </span>
-            </div>
+            <v-client-table ref="tblBillingReport" :data="tableData" :columns="columns" :options="options">
+                <template slot="approved" scope="props">
+                    <input class="row-select" v-model="props.row.approved" type="checkbox" :readonly="true" />
+                </template>
+                <template slot="rejected" scope="props">
+                    <input class="row-select" v-model="props.row.rejected" type="checkbox" :readonly="true" />
+                </template>
+                <template slot="Patient" scope="props">
+                    <a :href="props.row.patientUrl" class="blue">{{props.row.Patient}}</a>
+                </template>
+                <template slot="Problem 1" scope="props">
+                    <span class="blue pointer" @click="showProblemsModal(props.row, 1)">{{props.row['Problem 1'] || '&lt;Edit&gt;'}}</span>
+                </template>
+                <template slot="Problem 2" scope="props">
+                    <span class="blue pointer" @click="showProblemsModal(props.row, 2)">{{props.row['Problem 2'] || '&lt;Edit&gt;'}}</span>
+                </template>
+            </v-client-table>
+            <patient-problem-modal></patient-problem-modal>
         </div>
-        <v-client-table ref="tblBillingReport" :data="tableData" :columns="columns" :options="options">
-            <template slot="approved" scope="props">
-                <input class="row-select" v-model="props.row.approved" type="checkbox" :readonly="true" />
-            </template>
-            <template slot="rejected" scope="props">
-                <input class="row-select" v-model="props.row.rejected" type="checkbox" :readonly="true" />
-            </template>
-            <template slot="Patient" scope="props">
-                <a :href="props.row.patientUrl" class="blue">{{props.row.Patient}}</a>
-            </template>
-            <template slot="Problem 1" scope="props">
-                <span class="blue pointer" @click="showProblemsModal(props.row, 1)">{{props.row['Problem 1'] || '&lt;Edit&gt;'}}</span>
-            </template>
-            <template slot="Problem 2" scope="props">
-                <span class="blue pointer" @click="showProblemsModal(props.row, 2)">{{props.row['Problem 2'] || '&lt;Edit&gt;'}}</span>
-            </template>
-        </v-client-table>
-        <patient-problem-modal></patient-problem-modal>
     </div>
 </template>
 
@@ -61,6 +73,7 @@
     import TextEditable from '../comps/text-editable'
     import PatientProblemModal from './comps/patient-problem-modal'
     import moment from 'moment'
+    import buildReport, { styles } from './excel'
 
     export default {
         name: 'billing-report',
@@ -228,6 +241,33 @@
                         console.error('billing-change-problem', err)
                     })
                 })
+            },
+
+            exportExcel() {
+                const bytes = buildReport([
+                    {
+                        name: 'billable patients',
+                        heading: [
+                            
+                        ],
+                        merges: [],
+                        specification: this.columns.reduce((a, b) => {
+                            a[b] = {
+                                displayName: b,
+                                headerStyle: styles.cellNormal,
+                                width: 100
+                            }
+                            return a
+                        }, {}),
+                        data: this.tableData
+                    }
+                ])
+
+                const blob = new Blob([bytes], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' })
+                const link = document.createElement('a')
+                link.href = window.URL.createObjectURL(blob)
+                link.download = `billable-patients-${this.practice.display_name.toLowerCase().replace(/ /g, '-')}-${this.selectedMonth.replace(', ', '-').toLowerCase()}-${Date.now()}.xlsx`
+                link.click()
             }
         },
         computed: {
@@ -248,6 +288,9 @@
             },
             noOfFlagged() {
                 return this.tableData.filter(patient => patient.qa).length
+            },
+            practice() {
+                return this.practices.find(p => p.id === this.selectedPractice)
             }
         },
         mounted() {

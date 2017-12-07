@@ -1,7 +1,15 @@
 let mix = require('laravel-mix')
 
 mix.webpackConfig({
-    devtool: "#cheap-module-source-map"
+    devtool: "#cheap-module-source-map",
+    node: {
+        fs: 'empty' //to help webpack resolve 'fs'
+    },
+    externals: [
+        {
+            './cptable': 'var cptable'
+        }
+    ]
 })
 
 /*

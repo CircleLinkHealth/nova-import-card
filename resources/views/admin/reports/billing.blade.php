@@ -82,25 +82,20 @@
             <div class="col-md-12">
                 <div class="row">
                     <div class="col-md-12">
-                        <div class="panel panel-default">
-                            <div class="panel-heading">Approve Billable Patients
-                            </div>
-                            <?php 
-                                function getPractice($practice) {
-                                    return [
-                                        'id' => $practice->id,
-                                        'display_name' => $practice->display_name
-                                    ];
-                                }
-                            ?>
-                            @push('styles')
-                                <script>
-                                    var practices = JSON.parse("{{json_encode($practices)}}".replace(/\&quot;/g, '"'))
-                                </script>
-
-                            @endpush
-                            <billing-report></billing-report>
-                        </div>
+                        <?php 
+                            function getPractice($practice) {
+                                return [
+                                    'id' => $practice->id,
+                                    'display_name' => $practice->display_name
+                                ];
+                            }
+                        ?>
+                        @push('styles')
+                            <script>
+                                var practices = JSON.parse("{{json_encode($practices)}}".replace(/\&quot;/g, '"'))
+                            </script>
+                        @endpush
+                        <billing-report></billing-report>
                     </div>
                 </div>
             </div>
