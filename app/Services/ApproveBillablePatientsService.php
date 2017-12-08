@@ -154,7 +154,9 @@ class ApproveBillablePatientsService
         }
 
         for ($i = 1; $i <= 2; $i++) {
-            $billableProblems = $billableProblems->values();
+            $billableProblems = $billableProblems
+                ->where('cpm_problem_id', '!=', null)
+                ->values();
 
             if ($billableProblems->isEmpty()) {
                 continue;
