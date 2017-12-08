@@ -232,14 +232,7 @@ class ApproveBillablePatientsService
 
     public function storeCcdProblem(User $patient, array $arguments)
     {
-        try {
-            return $this->patientRepo->storeCcdProblem($patient, $arguments);
-        } catch (\Exception $e) {
-            return response()->json([
-                'message'    => $e->getMessage(),
-                'stacktrace' => $e->getTraceAsString(),
-            ], $e->getCode());
-        }
+        return $this->patientRepo->storeCcdProblem($patient, $arguments);
     }
 
     public function ccdProblems(User $patient)
