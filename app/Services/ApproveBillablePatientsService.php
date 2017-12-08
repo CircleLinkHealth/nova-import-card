@@ -69,13 +69,13 @@ class ApproveBillablePatientsService
 
                                              $rejected = $summary->rejected == 1;
 
-                                             $problem1Code = isset($summary->billableProblem1)
-                                                 ? $summary->billableProblem1->icd10Code()
+                                             $problem1Code = isset($summary->problem_1)
+                                                 ? $summary->billableProblem1()->first()->icd10Code()
                                                  : null;
                                              $problem1Name = $summary->billableProblem1->name ?? null;
 
-                                             $problem2Code = isset($summary->billableProblem2)
-                                                 ? $summary->billableProblem2->icd10Code()
+                                             $problem2Code = isset($summary->problem_2)
+                                                 ? $summary->billableProblem2()->first()->icd10Code()
                                                  : null;
                                              $problem2Name = $summary->billableProblem2->name ?? null;
 
