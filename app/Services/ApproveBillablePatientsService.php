@@ -79,7 +79,8 @@ class ApproveBillablePatientsService
                                                  : null;
                                              $problem2Name = $summary->billableProblem2->name ?? null;
 
-                                             $toQA = (! $approved && ! $rejected) || !$problem1Code || !$problem2Code || !$problem1Name || !$problem2Name || $summary->no_of_successful_calls == 0 || in_array($info->ccm_status, ['withdrawn', 'paused']);
+                                             $toQA = ( ! $approved && ! $rejected) || ! $problem1Code || ! $problem2Code || ! $problem1Name || ! $problem2Name || $summary->no_of_successful_calls == 0 || in_array($info->ccm_status,
+                                                     ['withdrawn', 'paused']);
 
                                              if ($toQA) {
                                                  $approved = $rejected = false;
@@ -127,7 +128,7 @@ class ApproveBillablePatientsService
 
         if ($this->lacksProblems($summary)) {
             $this->buildCcdProblemsFromCpmProblems($patient);
-            $this->fillProblems($patient, $summary, $patient->ccdProblems);
+            $this->fillProblems($patient, $summary, $patient->ccdProblems()->get());
         }
     }
 
@@ -211,18 +212,20 @@ class ApproveBillablePatientsService
                     'code_system_name' => 'ICD-10',
                     'code_system_oid'  => '2.16.840.1.113883.6.3',
                     'code'             => $problem->default_icd_10_code,
+                    'billable'         => true,
                 ]);
             }
         });
     }
 
-    public function storeCcdProblem(User $patient, array $arguments) {
-        try{
+    public function storeCcdProblem(User $patient, array $arguments)
+    {
+        try {
             return $this->patientRepo->storeCcdProblem($patient, $arguments);
         } catch (\Exception $e) {
             return response()->json([
-                'message' => $e->getMessage(),
-                'stacktrace' => $e->getTraceAsString()
+                'message'    => $e->getMessage(),
+                'stacktrace' => $e->getTraceAsString(),
             ], $e->getCode());
         }
     }
