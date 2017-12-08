@@ -1,10 +1,5 @@
 require('./bootstrap');
 
-import 'babel-core/register'
-import babelHelpers from 'babel-plugin-external-helpers'
-
-window.babelHelpers = babelHelpers
-
 window.Vue = require('vue');
 
 window.axios.defaults.baseURL = $('meta[name="base-url"]').attr('content');

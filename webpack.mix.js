@@ -13,22 +13,6 @@ const webpackConfig = {
     plugins: []
 }
 
-if (mix.inProduction) {
-    mix.options({
-        uglify: false,
-      })
-    // webpackConfig.module = {
-    //     rules: [{
-    //         test: /\.js?$/,
-    //         exclude: /(bower_components)/,
-    //         use: [{
-    //             loader: 'babel-loader',
-    //             options: mix.config.babel()
-    //         }]
-    //     }]
-    // }
-}
-
 mix.webpackConfig(webpackConfig)
 
 /*
@@ -102,4 +86,11 @@ mix.combine([
 //apps
 mix.js('resources/assets/js/app-provider-ui.js', 'public/compiled/js').sourceMaps()
 mix.js('resources/assets/js/app-provider-admin-panel-ui.js', 'public/compiled/js').sourceMaps()
-mix.js('resources/assets/js/app-clh-admin-ui.js', 'public/compiled/js/app-clh-admin-ui.js').sourceMaps()
+
+if (mix.inProduction) {
+    mix.options({
+        uglify: false,
+      })
+}
+
+mix.js('resources/assets/js/app-clh-admin-ui.js', 'public/compiled/js').sourceMaps()

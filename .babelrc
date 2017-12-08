@@ -1,6 +1,3 @@
 {
-    "presets": ["es2015", "stage-2"],
-    "plugins": [
-        "transform-runtime", "external-helpers"
-    ]
+    "presets": ["es2015"]
 }
