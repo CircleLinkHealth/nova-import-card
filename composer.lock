@@ -985,16 +985,16 @@
         },
         {
             "name": "giggsey/libphonenumber-for-php",
-            "version": "8.8.7",
+            "version": "8.8.8",
             "source": {
                 "type": "git",
                 "url": "https://github.com/giggsey/libphonenumber-for-php.git",
-                "reference": "def9915d36025362ec29e8861168fbd9b0df4f43"
+                "reference": "502d5e5e2fea5f5c58782558d04e664607a3dffd"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/giggsey/libphonenumber-for-php/zipball/def9915d36025362ec29e8861168fbd9b0df4f43",
-                "reference": "def9915d36025362ec29e8861168fbd9b0df4f43",
+                "url": "https://api.github.com/repos/giggsey/libphonenumber-for-php/zipball/502d5e5e2fea5f5c58782558d04e664607a3dffd",
+                "reference": "502d5e5e2fea5f5c58782558d04e664607a3dffd",
                 "shasum": ""
             },
             "require": {
@@ -1049,7 +1049,7 @@
                 "phonenumber",
                 "validation"
             ],
-            "time": "2017-11-28T17:20:25+00:00"
+            "time": "2017-12-06T20:11:38+00:00"
         },
         {
             "name": "giggsey/locale",
@@ -1918,16 +1918,16 @@
         },
         {
             "name": "laravel/framework",
-            "version": "v5.5.23",
+            "version": "v5.5.24",
             "source": {
                 "type": "git",
                 "url": "https://github.com/laravel/framework.git",
-                "reference": "cb8ec95aa65fbaeeaf94026c8a9f04bb97c13777"
+                "reference": "06135405bb1f736dac5e9529ed1541fc446c9c0f"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/laravel/framework/zipball/cb8ec95aa65fbaeeaf94026c8a9f04bb97c13777",
-                "reference": "cb8ec95aa65fbaeeaf94026c8a9f04bb97c13777",
+                "url": "https://api.github.com/repos/laravel/framework/zipball/06135405bb1f736dac5e9529ed1541fc446c9c0f",
+                "reference": "06135405bb1f736dac5e9529ed1541fc446c9c0f",
                 "shasum": ""
             },
             "require": {
@@ -2047,7 +2047,7 @@
                 "framework",
                 "laravel"
             ],
-            "time": "2017-12-04T14:19:08+00:00"
+            "time": "2017-12-07T01:28:21+00:00"
         },
         {
             "name": "laravel/passport",
@@ -6630,16 +6630,16 @@
         },
         {
             "name": "laravel/dusk",
-            "version": "v2.0.7",
+            "version": "v2.0.8",
             "source": {
                 "type": "git",
                 "url": "https://github.com/laravel/dusk.git",
-                "reference": "29127c21d72ab5bff53ed3b8eb914c0059c77763"
+                "reference": "a7529e19592879d3a6408728080ba657499890bc"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/laravel/dusk/zipball/29127c21d72ab5bff53ed3b8eb914c0059c77763",
-                "reference": "29127c21d72ab5bff53ed3b8eb914c0059c77763",
+                "url": "https://api.github.com/repos/laravel/dusk/zipball/a7529e19592879d3a6408728080ba657499890bc",
+                "reference": "a7529e19592879d3a6408728080ba657499890bc",
                 "shasum": ""
             },
             "require": {
@@ -6652,8 +6652,8 @@
                 "symfony/process": "~3.2"
             },
             "require-dev": {
-                "mockery/mockery": "^0.9.6",
-                "phpunit/phpunit": "^5.7"
+                "mockery/mockery": "~1.0",
+                "phpunit/phpunit": "~6.0"
             },
             "type": "library",
             "extra": {
@@ -6687,7 +6687,7 @@
                 "testing",
                 "webdriver"
             ],
-            "time": "2017-10-09T16:10:59+00:00"
+            "time": "2017-12-08T14:18:11+00:00"
         },
         {
             "name": "mockery/mockery",
