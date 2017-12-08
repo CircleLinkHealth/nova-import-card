@@ -64,9 +64,6 @@ class ApproveBillablePatientsService
                                              $this->fillSummaryProblems($u, $summary);
 
                                              $lacksProblems = $this->lacksProblems($summary);
-                                             //if patient was paused/withdrawn and acted upon already, it's not QA no more
-                                             $isNotEnrolledAndApproved = $summary->actor_id == null && in_array($info->ccm_status,
-                                                     ['withdrawn', 'paused']);
 
                                              $summary->approved = $approved = ! ($lacksProblems || $summary->rejected == 1);
 
