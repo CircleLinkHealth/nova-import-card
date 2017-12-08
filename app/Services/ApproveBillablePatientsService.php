@@ -128,7 +128,11 @@ class ApproveBillablePatientsService
 
         if ($this->lacksProblems($summary)) {
             $newProblems = $this->buildCcdProblemsFromCpmProblems($patient);
-            $patient->load('ccdProblems');
+
+            if ($newProblems->isNotEmpty()) {
+                $patient->load('ccdProblems');
+            }
+
             $this->fillProblems($patient, $summary, $newProblems);
         }
     }
