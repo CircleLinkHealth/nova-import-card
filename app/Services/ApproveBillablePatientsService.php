@@ -127,7 +127,9 @@ class ApproveBillablePatientsService
         }
 
         if ($this->lacksProblems($summary)) {
-            $this->fillProblems($patient, $summary, $this->buildCcdProblemsFromCpmProblems($patient));
+            $newProblems = $this->buildCcdProblemsFromCpmProblems($patient);
+            $patient->load('ccdProblems');
+            $this->fillProblems($patient, $summary, $newProblems);
         }
     }
 
@@ -236,7 +238,7 @@ class ApproveBillablePatientsService
 
     public function ccdProblems(User $patient)
     {
-        return $patient->ccdProblems()->get()->map(function ($prob) {
+        return $patient->ccdProblems->map(function ($prob) {
             return [
                 'id'   => $prob->id,
                 'name' => $prob->name,
