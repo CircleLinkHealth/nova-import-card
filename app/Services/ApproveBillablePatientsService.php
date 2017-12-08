@@ -206,7 +206,7 @@ class ApproveBillablePatientsService
         $newProblems = [];
         $ccdProblems = $patient->ccdProblems;
 
-        $patient->cpmProblems->map(function ($problem) use ($ccdProblems, $patient) {
+        $patient->cpmProblems->map(function ($problem) use ($ccdProblems, $patient, &$newProblems) {
             if ($ccdProblems->where('cpm_problem_id', $problem->id)->count() == 0) {
                 $newProblems[] = $this->storeCcdProblem($patient, [
                     'name'             => $problem->name,
