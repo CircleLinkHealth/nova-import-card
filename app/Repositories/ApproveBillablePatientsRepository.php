@@ -20,8 +20,7 @@ class ApproveBillablePatientsRepository
 
         return User::with([
             'ccdProblems'      => function ($query) {
-                $query->whereNotNull('cpm_problem_id')
-                      ->where('cpm_problem_id', '!=', 1)
+                $query->where('cpm_problem_id', '!=', 1)
                       ->with('icd10Codes');
             },
             'billableProblems',
