@@ -5,13 +5,15 @@ namespace App\Http\Controllers\Billing;
 use App\AppConfig;
 use App\Billing\Practices\PracticeInvoiceGenerator;
 use App\Http\Controllers\Controller;
+use App\Models\CCD\Problem;
+use App\Models\CPM\CpmProblem;
+use App\Models\ProblemCode;
 use App\PatientMonthlySummary;
 use App\Practice;
 use App\Services\ApproveBillablePatientsService;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Mail;
-use Yajra\Datatables\Facades\Datatables;
 
 
 class PracticeInvoiceController extends Controller
@@ -28,122 +30,92 @@ class PracticeInvoiceController extends Controller
         $this->service = $service;
     }
 
+    /**
+     * Show the page to choose a practice and generate approvable billing reports
+     *
+     * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
+     */
     public function make()
     {
+        $practices = Practice::orderBy('display_name')
+                             ->active()
+                             ->get();
 
-        $practices = Practice::active()->get();
-
-        $currentMonth = Carbon::now()->firstOfMonth()->toDateString();
-
-        $dates = [];
-
-        for ($i = -6; $i < 6; $i++) {
-            $date = Carbon::parse($currentMonth)->addMonths($i)->firstOfMonth()->toDateString();
-
-            $dates[$date] = Carbon::parse($date)->format('F, Y');
-        }
-
-        $counts = $this->getCounts(Carbon::parse($currentMonth), $practices[0]->id);
+        $cpmProblems = CpmProblem::where('name', '!=', 'Diabetes')
+                                 ->get()
+                                 ->map(function ($p) {
+                                     return [
+                                         'id'   => $p->id,
+                                         'name' => $p->name,
+                                         'code' => $p->default_icd_10_code,
+                                     ];
+                                 });
 
         return view('admin.reports.billing', compact([
+            'cpmProblems',
             'practices',
-            'currentMonth',
-            'counts',
-            'dates',
         ]));
+    }
+
+    /**
+     * Get approvable patients for a practice for a month.
+     *
+     * @param Request $request
+     *
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function data(Request $request)
+    {
+        if ( ! $request->ajax()) {
+            return response()->json('Method not allowed', 403);
+        }
+
+        $data = $this->service->patientsToApprove($request['practice_id'], Carbon::parse($request['date']));
+
+        return response()->json($data);
+    }
+
+    public function updateStatus(Request $request)
+    {
+        if ( ! $request->ajax()) {
+            return response()->json('Method not allowed', 403);
+        }
+
+        $summary = PatientMonthlySummary::find($request['report_id']);
+
+        $summary->approved = $request['approved'];
+        $summary->rejected = $request['rejected'];
+
+        //if approved was unchecked, rejected stays as is. If it was approved, rejected becomes 0
+        $summary->actor_id = auth()->user()->id;
+        $summary->save();
+
+        //used for view report counts
+        $counts = $this->getCounts($summary->month_year, $summary->patient->primaryPractice->id);
+
+        return response()->json([
+            'report_id' => $summary->id,
+            'counts'    => $counts,
+            'status'    => [
+                'approved' => $summary->approved,
+                'rejected' => $summary->rejected,
+            ],
+        ]);
     }
 
     public function getCounts(
         $date,
         $practice
     ) {
-
         $date = Carbon::parse($date);
+
         return $this->service->counts($practice, $date->firstOfMonth());
-    }
-
-    public function data(Request $request)
-    {
-        $data = $this->service->patientsToApprove($request['practice_id'], Carbon::parse($request['date']));
-
-        return Datatables::of(collect($data))
-                         ->addColumn('background_color', function ($a) {
-                             if ($a['lacksProblems'] || $a['status'] == 'withdrawn' || $a['status'] == 'paused' || $a['no_of_successful_calls'] < 1) {
-                                 return 'rgba(255, 252, 96, 0.407843)';
-                             } else {
-                                 return '';
-                             }
-                         })
-                         ->make(true);
-    }
-
-    public function updateApproved(Request $request)
-    {
-
-        $input = $request->input();
-
-        $report = PatientMonthlySummary::find($input['report_id']);
-
-        //if approved was checked
-        if ($input['approved'] == 1) {
-            $report->approved = 1;
-            $report->rejected = 0;
-        } else {
-            //approved was unchecked
-            $report->approved = 0;
-        }
-
-        //if approved was unchecked, rejected stays as is. If it was approved, rejected becomes 0
-        $report->actor_id = auth()->user()->id;
-        $report->save();
-
-        //used for view report counts
-        $counts = $this->getCounts($input['date'], $input['practice_id']);
-
-        return response()->json(
-            [
-                'report_id' => $report->id,
-                'counts'    => $counts,
-            ]
-        );
-    }
-
-    public function updateRejected(Request $request)
-    {
-
-        $input = $request->input();
-
-        $report = PatientMonthlySummary::find($input['report_id']);
-
-        //if approved was checked
-        if ($input['rejected'] == 1) {
-            $report->rejected = 1;
-            $report->approved = 0;
-        } else {
-            //rejected was unchecked
-
-            $report->rejected = 0;
-        }
-
-        //if approved was unchecked, rejected stays as is. If it was approved, rejected becomes 0
-        $report->actor_id = auth()->user()->id;
-        $report->save();
-
-        //used for view report counts
-        $counts = $this->getCounts($input['date'], $input['practice_id']);
-
-        return response()->json(
-            [
-                'report_id' => $report->id,
-                'counts'    => $counts,
-            ]
-        );
     }
 
     public function createInvoices()
     {
 
-        $practices = Practice::active();
+        $practices    = Practice::active()->get();
         $currentMonth = Carbon::now()->firstOfMonth()->toDateString();
 
         $dates = [];
@@ -155,8 +127,8 @@ class PracticeInvoiceController extends Controller
         }
 
         $readyToBill = [];
-        $needsQA = [];
-        $invoice_no = AppConfig::where('config_key', 'billing_invoice_count')->first()['config_value'];
+        $needsQA     = [];
+        $invoice_no  = AppConfig::where('config_key', 'billing_invoice_count')->first()['config_value'];
 
         $readyToBill = $practices;
 
@@ -213,23 +185,69 @@ class PracticeInvoiceController extends Controller
 
     public function storeProblem(Request $request)
     {
-        $report = PatientMonthlySummary::find($request['report_id']);
+        $summary = PatientMonthlySummary::find($request['report_id']);
 
         $key = $request['problem_no'];
 
-        $report->$key = $request['ccd_problem_id'];
+        $problemId = $request['id'];
 
-        if (!$this->service->lacksProblems($report)) {
-            $report->approved = true;
+        if ($problemId == 'Other') {
+            $problemId = $this->service->storeCcdProblem($summary->patient, [
+                'name'             => $request['name'],
+                'cpm_problem_id'   => $request['cpm_problem_id'],
+                'billable'         => true,
+                'code'             => $request['code'],
+                'code_system_name' => 'ICD-10',
+                'code_system_oid'  => '2.16.840.1.113883.6.3',
+            ])->id;
         }
 
-        $report->save();
+        if ($problemId) {
+            $existingProblemId = $summary->$key;
 
-        $counts = $this->getCounts($report->month_year->toDateString(), $report->patient->primaryPractice->id);
+            if ($existingProblemId) {
+                Problem::where('id', $existingProblemId)
+                       ->update([
+                           'billable' => false,
+                       ]);
+            }
+
+            Problem::where('id', $problemId)
+                   ->update([
+                       'billable' => true,
+                   ]);
+
+            $updated = ProblemCode::where('problem_id', $problemId)
+                                  ->where('code_system_name', 'like', '%10%')
+                                  ->update([
+                                      'code'             => $request['code'],
+                                      'code_system_name' => 'ICD-10',
+                                      'code_system_oid'  => '2.16.840.1.113883.6.3',
+                                  ]);
+
+            if ( ! $updated) {
+                ProblemCode::create([
+                    'problem_id'       => $problemId,
+                    'code'             => $request['code'],
+                    'code_system_name' => 'ICD-10',
+                    'code_system_oid'  => '2.16.840.1.113883.6.3',
+                ]);
+            }
+        }
+
+        $summary->$key = $problemId;
+
+        if ( ! $this->service->lacksProblems($summary)) {
+            $summary->approved = true;
+        }
+
+        $summary->save();
+
+        $counts = $this->getCounts($summary->month_year->toDateString(), $summary->patient->primaryPractice->id);
 
         return response()->json(
             [
-                'report_id' => $report->id,
+                'report_id' => $summary->id,
                 'counts'    => $counts,
             ]
         );
@@ -248,7 +266,7 @@ class PracticeInvoiceController extends Controller
         $practice,
         $name
     ) {
-        if (!auth()->user()->practice((int) $practice)) {
+        if ( ! auth()->user()->practice((int)$practice)) {
             return abort(403, 'Unauthorized action.');
         }
 
@@ -270,7 +288,7 @@ class PracticeInvoiceController extends Controller
             $data = (array)$value;
 
             $patientReport = $data['Patient Report'];
-            $invoice = $data['Invoice'];
+            $invoice       = $data['Invoice'];
 
             $invoiceLink = route(
                 'monthly.billing.download',

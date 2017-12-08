@@ -5,6 +5,7 @@ import axios from './bootstrap-axios'
 import VueAxios from 'vue-axios'
 import VueForm from "vue-form";
 import store from "./store";
+import { ClientTable } from 'vue-tables-2'
 
 if (document) {
     const elem = document.querySelector('meta[name="base-url"]')
@@ -38,6 +39,7 @@ import PassportPersonalAccessTokensComponent from './components/passport/Persona
 
 Vue.use(ClientTable, {}, false)
 
+Vue.component('billing-report', require('./admin/billing/index.vue'));
 Vue.component('call-mgmt-app', CallMgmtApp)
 Vue.component('nurseDailyHours', NurseDailyHours)
 Vue.component('importerTrainer', ImporterTraining)

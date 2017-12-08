@@ -245,7 +245,6 @@ class Practice extends \App\BaseModel
 
     public function scopeActive($q)
     {
-
         return $q->whereActive(1);
     }
 

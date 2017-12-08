@@ -2659,6 +2659,8 @@ class User extends \App\BaseModel implements AuthenticatableContract, CanResetPa
     {
         return $this->ccdProblems()
                     ->whereNotNull('cpm_problem_id')
+                    //filter out unspecified diabetes
+                    ->where('cpm_problem_id', '!=', 1)
                     ->with('icd10Codes')
                     ->where('billable', true);
     }
