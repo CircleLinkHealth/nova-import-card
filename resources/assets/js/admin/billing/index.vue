@@ -78,10 +78,12 @@
                         <span class="blue pointer"
                           @click="showProblemsModal(props.row, 2)">{{props.row['Problem 2'] || '&lt;Edit&gt;'}}</span>
                         <div class="loading" v-if="props.row.promises['problem_2']"></div>
+
                     </div>
                 </template>
             </v-client-table>
             <patient-problem-modal ref="patientProblemModal" :cpm-problems="cpmProblems"></patient-problem-modal>
+            <error-modal ref="errorModal"></error-modal>
         </div>
     </div>
 </template>
@@ -91,6 +93,7 @@
     import {Event} from 'vue-tables-2'
     import TextEditable from '../comps/text-editable'
     import PatientProblemModal from './comps/patient-problem-modal'
+    import ErrorModal from './comps/error-modal'
     import moment from 'moment'
     import buildReport, {styles} from './excel'
 
@@ -99,7 +102,8 @@
         props: {},
         components: {
             'text-editable': TextEditable,
-            'patient-problem-modal': PatientProblemModal
+            'patient-problem-modal': PatientProblemModal,
+            'error-modal': ErrorModal
         },
         data() {
             return {
@@ -225,13 +229,12 @@
                     tablePatient.promises['approve_reject'] = true
                     this.axios.post(rootUrl('admin/reports/monthly-billing/v2/status/update'), {
                         report_id: tablePatient.reportId,
-                        approved: tablePatient.approved,
-                        rejected: tablePatient.rejected
+                        approved: Number(tablePatient.approved),
+                        rejected: Number(tablePatient.rejected)
                     }).then(response => {
                         tablePatient.promises['approve_reject'] = false
-                        tablePatient.approved = !!(response.data.counts || {}).approved
-                        tablePatient.rejected = !!(response.data.counts || {}).rejected
-                        tablePatient.qa = !!(response.data.counts || {}).toQA
+                        tablePatient.approved = !!(response.data.status || {}).approved
+                        tablePatient.rejected = !!(response.data.status || {}).rejected
                         console.log('billing-approve-reject', response.data)
                     }).catch(err => {
                         tablePatient.promises['approve_reject'] = false
