@@ -81,7 +81,7 @@
                     </div>
                 </template>
             </v-client-table>
-            <patient-problem-modal :cpm-problems="cpmProblems"></patient-problem-modal>
+            <patient-problem-modal ref="patientProblemModal" :cpm-problems="cpmProblems"></patient-problem-modal>
         </div>
     </div>
 </template>
@@ -288,7 +288,7 @@
                     console.log('table-patient', tablePatient, modified)
                     if (tablePatient) {
                         if (modified.id == 'Other') {
-                            modified.name = (this.cpmProblems.find(problem => problem.id == modified.cpm_id) || {}).name
+                            modified.name = (this.cpmProblems.find(problem => problem.id == modified.cpm_id) || {}).name || modified.name
                         }
                         if (type === 1) {
                             tablePatient['Problem 1 Code'] = modified.code

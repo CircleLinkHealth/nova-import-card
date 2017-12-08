@@ -17,12 +17,20 @@
             </div>
             <div class="row form-group" v-if="props.info.id == 'Other'">
               <div class="col-sm-12">
-                Problem Name
+                Choose Problem
               </div>
               <div class="col-sm-12">
                 <select class="form-control" v-model="props.info.cpm_id" @change="props.info.changeCpmProblemName">
                   <option v-for="(problem, index) in props.info.cpmProblems" :key="index" :value="problem.id">{{problem.name}}</option>
                 </select>
+              </div>
+            </div>
+            <div class="row form-group" v-if="props.info.cpm_id">
+              <div class="col-sm-12">
+                Problem Name
+              </div>
+              <div class="col-sm-12">
+                <input class="form-control" type="text" v-model="props.info.name" placeholder="Name" />
               </div>
             </div>
             <div class="row form-group">
@@ -57,8 +65,9 @@
                     okHandler() {
                         console.log("okay clicked")
                         Event.$emit("modal-patient-problem:hide")
-
+                        this.cpm_id = 0
                         if (this.done && typeof(this.done) === 'function') {
+                          console.log('ok-handler', this)
                           this.done(this)
                         }
                     },
@@ -69,6 +78,7 @@
                     },
                     changeCpmProblemName(e) {
                       const cpmProblem = (this.cpmProblems.find(problem => problem.id == e.target.value) || {})
+                      this.name = cpmProblem.name
                       this.code = cpmProblem.code
                     },
                     cpmProblems: this.cpmProblems,
