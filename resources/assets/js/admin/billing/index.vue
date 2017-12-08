@@ -56,13 +56,17 @@
                 <template slot="approved" scope="props">
                     <input class="row-select" v-model="props.row.approved" @change="approveOrReject($event, props.row, 'approve')" 
                         type="checkbox" :readonly="!!props.row.promises['approve_reject']" />
-                    <span class="error-btn" v-if="props.row.errors.approve_reject">x</span>
+                    <span class="error-btn" v-if="props.row.errors.approve_reject" 
+                        title="view error message"
+                        @click="showErrorModal(props.row.id, 'approve_reject')">x</span>
                     <div class="loading" v-if="props.row.promises['approve_reject']"></div>
                 </template>
                 <template slot="rejected" scope="props">
                     <input class="row-select" v-model="props.row.rejected" @change="approveOrReject($event, props.row, 'reject')" 
                         type="checkbox" :readonly="!!props.row.promises['approve_reject']" />
-                    <span class="error-btn" v-if="props.row.errors.approve_reject">x</span>
+                    <span class="error-btn" v-if="props.row.errors.approve_reject" 
+                        title="view error message"
+                        @click="showErrorModal(props.row.id, 'approve_reject')">x</span>
                     <div class="loading" v-if="props.row.promises['approve_reject']"></div>
                 </template>
                 <template slot="Patient" scope="props">
@@ -227,6 +231,8 @@
                         tablePatient.rejected = e.target.checked
                         tablePatient.approved = false
                     }
+
+                    const errorKey = 'approve_reject'
                     tablePatient.promises['approve_reject'] = true
                     this.axios.post(rootUrl('admin/reports/monthly-billing/v2/status/update'), {
                         report_id: tablePatient.reportId,
@@ -240,6 +246,7 @@
                     }).catch(err => {
                         tablePatient.promises['approve_reject'] = false
                         console.error('billing-approve-reject', err)
+                        tablePatient.errors[errorKey] = err.message
                     })
                 }
             },
@@ -275,7 +282,7 @@
                                 approve_reject: false
                             },
                             errors: {
-                                approve_reject: 'There was an error here'
+                                approve_reject: null
                             }
                         }
                     }).sort((pA, pB) => pB.qa - pA.qa)
@@ -324,6 +331,15 @@
                         console.log('table-patient-promises', tablePatient.promises)
                     }
                     else console.error('could not find tablePatient')
+                })
+            },
+
+            showErrorModal(id, name) {
+                const errors = (this.tableData.find(row => row.id === id) || {}).errors
+                console.log(errors)
+                Event.$emit('modal-error:show', { body: errors[name] }, () => {
+                    errors[name] = null
+                    console.log(errors)
                 })
             },
 
@@ -437,5 +453,20 @@
 
     .bg-flagged {
         background-color: rgba(255, 252, 96, 0.408) !important;
+    }
+
+    .error-btn {
+        display: inline-block;
+        width: 15px;
+        height: 15px;
+        background-color: white;
+        text-align: center;
+        padding-top: 0px;
+        border-radius: 8px;
+        color: red;
+        font-size: 10px;
+        cursor: pointer;
+        border: 1px solid red;
+        padding-bottom: 14px;
     }
 </style>

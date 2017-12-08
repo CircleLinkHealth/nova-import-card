@@ -1,13 +1,5 @@
 <template>
-    <modal name="error" :info="errorModalInfo" :no-footer="true" class-name="modal-error">
-        <template slot="title" scope="props"><div>Error Details</div></template>
-        <template scope="props">
-        <div class="row">
-          <div class="col-sm-12 error-body">
-            
-          </div>
-        </div>
-      </template>
+    <modal name="error" :info="errorModalInfo" :no-footer="true" :no-title="true" class-name="modal-error">
     </modal>
 </template>
 
@@ -33,7 +25,7 @@
             }
         },
         mounted() {
-            Event.$on('modal-error:show', (done) => {
+            Event.$on('modal-error:show', (modal, done) => {
                 if (done && typeof(done) == 'function') this.errorModalInfo.done = done.bind(this.errorModalInfo)
           })
         }
@@ -43,5 +35,15 @@
 <style>
     .error-body {
         font-family: "calibri";
+    }
+
+    .modal-error .modal-container {
+        color: red;
+    }
+
+    .modal-error button,input[type='button'] {
+        background-color: transparent;
+        color: red;
+        border-color: #999;
     }
 </style>
