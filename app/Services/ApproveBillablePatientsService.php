@@ -127,8 +127,7 @@ class ApproveBillablePatientsService
         }
 
         if ($this->lacksProblems($summary)) {
-            $this->buildCcdProblemsFromCpmProblems($patient);
-            $this->fillProblems($patient, $summary, $patient->ccdProblems()->get());
+            $this->fillProblems($patient, $summary, $this->buildCcdProblemsFromCpmProblems($patient));
         }
     }
 
@@ -138,9 +137,11 @@ class ApproveBillablePatientsService
      * @param User $patient
      * @param PatientMonthlySummary $summary
      *
+     * @param Collection|Collection $billableProblems
+     *
      * @return bool
      */
-    private function fillProblems(User $patient, PatientMonthlySummary $summary, Collection $billableProblems)
+    private function fillProblems(User $patient, PatientMonthlySummary $summary, $billableProblems)
     {
         if ($billableProblems->isEmpty()) {
             return false;
@@ -202,11 +203,12 @@ class ApproveBillablePatientsService
 
     public function buildCcdProblemsFromCpmProblems(User $patient)
     {
+        $newProblems = [];
         $ccdProblems = $patient->ccdProblems;
 
         $patient->cpmProblems->map(function ($problem) use ($ccdProblems, $patient) {
             if ($ccdProblems->where('cpm_problem_id', $problem->id)->count() == 0) {
-                $this->storeCcdProblem($patient, [
+                $newProblems[] = $this->storeCcdProblem($patient, [
                     'name'             => $problem->name,
                     'cpm_problem_id'   => $problem->id,
                     'code_system_name' => 'ICD-10',
@@ -216,6 +218,8 @@ class ApproveBillablePatientsService
                 ]);
             }
         });
+
+        return collect($newProblems);
     }
 
     public function storeCcdProblem(User $patient, array $arguments)
