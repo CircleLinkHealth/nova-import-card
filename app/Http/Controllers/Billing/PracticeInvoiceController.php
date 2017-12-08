@@ -96,6 +96,10 @@ class PracticeInvoiceController extends Controller
         return response()->json([
             'report_id' => $summary->id,
             'counts'    => $counts,
+            'status'    => [
+                'approved' => $summary->approved,
+                'rejected' => $summary->rejected,
+            ],
         ]);
     }
 
