@@ -232,7 +232,7 @@ class ApproveBillablePatientsService
 
     public function ccdProblems(User $patient)
     {
-        return $patient->ccdProblems->map(function ($prob) {
+        return $patient->ccdProblems()->get()->map(function ($prob) {
             return [
                 'id'   => $prob->id,
                 'name' => $prob->name,
