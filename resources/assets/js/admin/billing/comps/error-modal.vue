@@ -12,8 +12,14 @@
 </template>
 
 <script>
+    import { Event } from 'vue-tables-2'
+    import Modal from '../../common/modal'
+
     export default {
         name: 'error-modal',
+        components: {
+            'modal': Modal
+        },
         data() {
             return {
                 errorModalInfo: {

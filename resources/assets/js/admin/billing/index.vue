@@ -56,11 +56,13 @@
                 <template slot="approved" scope="props">
                     <input class="row-select" v-model="props.row.approved" @change="approveOrReject($event, props.row, 'approve')" 
                         type="checkbox" :readonly="!!props.row.promises['approve_reject']" />
+                    <span class="error-btn" v-if="props.row.errors.approve_reject">x</span>
                     <div class="loading" v-if="props.row.promises['approve_reject']"></div>
                 </template>
                 <template slot="rejected" scope="props">
                     <input class="row-select" v-model="props.row.rejected" @change="approveOrReject($event, props.row, 'reject')" 
                         type="checkbox" :readonly="!!props.row.promises['approve_reject']" />
+                    <span class="error-btn" v-if="props.row.errors.approve_reject">x</span>
                     <div class="loading" v-if="props.row.promises['approve_reject']"></div>
                 </template>
                 <template slot="Patient" scope="props">
@@ -78,7 +80,6 @@
                         <span class="blue pointer"
                           @click="showProblemsModal(props.row, 2)">{{props.row['Problem 2'] || '&lt;Edit&gt;'}}</span>
                         <div class="loading" v-if="props.row.promises['problem_2']"></div>
-
                     </div>
                 </template>
             </v-client-table>
@@ -272,6 +273,9 @@
                                 problem_1: false,
                                 problem_2: false,
                                 approve_reject: false
+                            },
+                            errors: {
+                                approve_reject: 'There was an error here'
                             }
                         }
                     }).sort((pA, pB) => pB.qa - pA.qa)
