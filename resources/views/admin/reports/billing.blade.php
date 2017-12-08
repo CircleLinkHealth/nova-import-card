@@ -92,8 +92,16 @@
                         ?>
                         @push('styles')
                             <script>
+                                function decodeHTML(html) {
+                                    const div = document.createElement('div')
+                                    div.innerHTML = html
+                                    return div.innerText
+                                }
                                 var practices = JSON.parse("{{json_encode($practices)}}".replace(/\&quot;/g, '"'))
-                                var cpmProblems = JSON.parse("{{json_encode($cpmProblems)}}".replace(/\&quot;/g, '"'))
+                                var cpmProblems = JSON.parse("{{json_encode($cpmProblems)}}".replace(/\&quot;/g, '"')).map(function (problem) {
+                                    problem.name = decodeHTML(problem.name)
+                                    return problem
+                                })
                             </script>
                         @endpush
                         <billing-report ref="billingReport"></billing-report>
