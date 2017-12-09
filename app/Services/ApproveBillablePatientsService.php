@@ -63,27 +63,23 @@ class ApproveBillablePatientsService
 
                                              $this->fillSummaryProblems($u, $summary);
 
-                                             $summary->load(['billableProblem1', 'billableProblem2']);
-
                                              $lacksProblems = $this->lacksProblems($summary);
 
                                              $summary->approved = $approved = ! ($lacksProblems || $summary->rejected == 1);
 
                                              $rejected = $summary->rejected == 1;
 
-                                             $problem1     = isset($summary->problem_1)
-                                                 ? $summary->billableProblem1
+                                             $problem1     = isset($summary->problem_1) && $u->ccdProblems
+                                                 ? $u->ccdProblems->where('id', $summary->problem_1)->first()
                                                  : null;
-
                                              $problem1Code = isset($problem1)
                                                  ? $problem1->icd10Code()
                                                  : null;
                                              $problem1Name = $problem1->name ?? null;
 
-                                             $problem2     = isset($summary->problem_2)
-                                                 ? $summary->billableProblem2
+                                             $problem2     = isset($summary->problem_2) && $u->ccdProblems
+                                                 ? $u->ccdProblems->where('id', $summary->problem_2)->first()
                                                  : null;
-
                                              $problem2Code = isset($problem2)
                                                  ? $problem2->icd10Code()
                                                  : null;
