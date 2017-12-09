@@ -14,6 +14,9 @@ class ProblemCodeObserver
      */
     public function saving(ProblemCode $problemCode)
     {
-        $problemCode->problem_code_system_id = getProblemCodeSystemCPMId(['code_system_name', 'code_system_oid']);
+        $problemCode->problem_code_system_id = getProblemCodeSystemCPMId([
+            $problemCode->code_system_name,
+            $problemCode->code_system_oid,
+        ]);
     }
 }
