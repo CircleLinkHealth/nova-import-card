@@ -114,40 +114,19 @@ class PracticeInvoiceController extends Controller
 
     public function createInvoices()
     {
-
-        $practices    = Practice::active()->get();
-        $currentMonth = Carbon::now()->firstOfMonth()->toDateString();
+        $currentMonth = Carbon::now()->firstOfMonth();
 
         $dates = [];
 
-        for ($i = -6; $i < 6; $i++) {
-            $date = Carbon::parse($currentMonth)->addMonths($i)->firstOfMonth()->toDateString();
+        for ($i = 0; $i <= 6; $i++) {
+            $date = $currentMonth->copy()->subMonth($i)->firstOfMonth();
 
-            $dates[$date] = Carbon::parse($date)->format('F, Y');
+            $dates[$date->toDateString()] = $date->format('F, Y');
         }
 
-        $readyToBill = [];
+        $readyToBill = Practice::active()->get();
         $needsQA     = [];
         $invoice_no  = AppConfig::where('config_key', 'billing_invoice_count')->first()['config_value'];
-
-        $readyToBill = $practices;
-
-//        foreach ($practices as $practice) {
-//
-//            $pending = (new PracticeInvoiceGenerator($practice,
-//                Carbon::parse($currentMonth)))->checkForPendingQAForPractice();
-//
-//            if ($pending) {
-//
-//                $needsQA[] = $practice;
-//
-//            } else {
-//
-//                $readyToBill[] = $practice;
-//
-//            }
-//
-//        }
 
         return view('billing.practice.create', compact(
             [
@@ -166,7 +145,7 @@ class PracticeInvoiceController extends Controller
 
         $num = AppConfig::where('config_key', 'billing_invoice_count')->first();
 
-        $num['config_value'] = $request->input('invoice_no');
+        $num->config_value = $request->input('invoice_no');
 
         $num->save();
 

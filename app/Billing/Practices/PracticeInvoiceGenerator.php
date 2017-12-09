@@ -4,12 +4,10 @@ namespace App\Billing\Practices;
 
 use App\Activity;
 use App\AppConfig;
-use App\Patient;
 use App\Practice;
 use App\User;
 use Barryvdh\Snappy\Facades\SnappyPdf as PDF;
 use Carbon\Carbon;
-use Illuminate\Support\Facades\DB;
 
 class PracticeInvoiceGenerator
 {
@@ -24,7 +22,7 @@ class PracticeInvoiceGenerator
     ) {
 
         $this->practice = $practice;
-        $this->month = $month;
+        $this->month    = $month->firstOfMonth();
     }
 
     public function generatePdf($withItemized = true)
@@ -59,53 +57,28 @@ class PracticeInvoiceGenerator
     {
 
         $practiceId = $this->practice->id;
-        $month = $this->month;
 
-        $data['clh_address'] = $this->practice->getAddress();
-        $data['bill_to'] = $this->practice->bill_to_name;
+        $billable = User::ofType('participant')
+                        ->where('program_id', '=', $this->practice->id)
+                        ->whereHas('patientSummaries', function ($query) {
+                            $query->where('month_year', $this->month->toDateString())
+                                  ->where('ccm_time', '>=', 1200)
+                                  ->where('approved', '=', true);
+                        })
+                        ->count() ?? 0;
 
-        $data['practice'] = $this->practice;
-        $data['month'] = $month->format('F, Y');
-
-        $data['rate'] = $this->practice->clh_pppm;
-        $data['invoice_num'] = $this->incrementInvoiceNo();
-
-        $data['invoice_date'] = Carbon::today()->toDateString();
-        $data['due_by'] = Carbon::today()->addDays($this->practice->term_days)->toDateString();
-
-        $patients = User
-            ::whereHas('roles', function ($q) {
-                $q->where('name', '=', 'participant');
-            })
-            ->where('program_id', '=', $this->practice->id)
-            ->get();
-
-        $data['billable'] = 0;
-
-        foreach ($patients as $patient) {
-            $ccm = DB::table('lv_activities')
-                ->where('patient_id', $patient->id)
-                ->whereBetween('performed_at', [
-                    $this->month->firstOfMonth()->startOfDay()->toDateTimeString(),
-                    $this->month->endOfMonth()->endOfDay()->toDateTimeString(),
-                ])
-                ->sum('duration');
-
-            $report = Patient::firstOrCreate([
-                'user_id' => $patient->id,
-            ])
-                ->patientSummaries()
-                ->where('month_year', $this->month->firstOfMonth()->toDateString())
-                ->first();
-
-            if ($report && $report->approved == 1 && $ccm > 1199) {
-                $data['billable']++;
-            }
-        }
-
-        $data['invoice_amount'] = number_format(round((double)$this->practice->clh_pppm * $data['billable'], 2), 2);
-
-        return $data;
+        return [
+            'clh_address'    => $this->practice->getAddress(),
+            'bill_to'        => $this->practice->bill_to_name,
+            'practice'       => $this->practice,
+            'month'          => $this->month->format('F, Y'),
+            'rate'           => $this->practice->clh_pppm,
+            'invoice_num'    => $this->incrementInvoiceNo(),
+            'invoice_date'   => Carbon::today()->toDateString(),
+            'due_by'         => Carbon::today()->addDays($this->practice->term_days)->toDateString(),
+            'invoice_amount' => number_format(round((double)$this->practice->clh_pppm * $billable, 2), 2),
+            'billable'       => $billable,
+        ];
     }
 
     public function incrementInvoiceNo()
@@ -125,50 +98,51 @@ class PracticeInvoiceGenerator
     public function getItemizedPatientData()
     {
 
-        $patients = Patient
-            ::whereHas('patientSummaries', function ($q) {
-                $q->where('month_year', $this->month->firstOfMonth()->toDateString())
-                    ->where('approved', 1);
-            })
-            ->whereHas('user', function ($k) {
-                $k->where('program_id', $this->practice->id);
-            })
-            ->orderBy('updated_at', 'desc')
-            ->get();
+        $patients = User::ofType('participant')
+                        ->with([
+                            'patientSummaries' => function ($q) {
+                                $q->where('month_year', $this->month->toDateString())
+                                  ->where('ccm_time', '>=', 1200)
+                                  ->where('approved', '=', true);
+                            },
+                        ])
+                        ->where('program_id', '=', $this->practice->id)
+                        ->whereHas('patientSummaries', function ($query) {
+                            $query->where('month_year', $this->month->toDateString())
+                                  ->where('ccm_time', '>=', 1200)
+                                  ->where('approved', '=', true);
+                        })
+                        ->orderBy('updated_at', 'desc')
+                        ->get();
 
-        //name, dob, ccm, 2 conditions
-
-        $data = [];
-        $data['name'] = $this->practice->display_name;
+        $data          = [];
+        $data['name']  = $this->practice->display_name;
         $data['month'] = $this->month->toDateString();
 
-        foreach ($patients as $p) {
-            $u = $p->user;
+        foreach ($patients as $u) {
+            $summary = $u->patientSummaries->first();
 
-            $ccm = DB::table('lv_activities')
-                ->where('patient_id', $u->id)
-                ->whereBetween('performed_at', [
-                    $this->month->firstOfMonth()->startOfDay()->toDateTimeString(),
-                    $this->month->endOfMonth()->endOfDay()->toDateTimeString(),
-                ])
-                ->sum('duration');
+            $data['patientData'][$u->id]['ccm_time'] = round($summary->ccm_time / 60, 2);
+            $data['patientData'][$u->id]['name']     = $u->fullName;
+            $data['patientData'][$u->id]['dob']      = $u->birth_date;
+            $data['patientData'][$u->id]['practice'] = $u->program_id;
+            $data['patientData'][$u->id]['provider'] = $u->billingProviderName;
 
-            $report = $p->patientSummaries()
-                ->where('month_year', $this->month->firstOfMonth()->toDateString())
-                ->first();
+            $problem1                                     = isset($summary->problem_1) && $u->ccdProblems
+                ? $u->ccdProblems->where('id', $summary->problem_1)->first()
+                : null;
+            $data['patientData'][$u->id]['problem1_code'] = isset($problem1)
+                ? $problem1->icd10Code()
+                : null;
+            $data['patientData'][$u->id]['problem1']      = $problem1->name ?? null;
 
-            if ($report && $report->approved == 1 && $ccm > 1199) {
-                $data['patientData'][$p->user_id]['ccm_time'] = round($ccm / 60, 2);
-                $data['patientData'][$p->user_id]['name'] = $u->fullName;
-                $data['patientData'][$p->user_id]['dob'] = $u->birth_date;
-                $data['patientData'][$p->user_id]['practice'] = $u->primaryPractice->id;
-                $data['patientData'][$p->user_id]['provider'] = $u->billingProviderName;
-
-                $data['patientData'][$p->user_id]['problem1'] = $report->billable_problem1;
-                $data['patientData'][$p->user_id]['problem1_code'] = $report->billable_problem1_code;
-                $data['patientData'][$p->user_id]['problem2'] = $report->billable_problem2;
-                $data['patientData'][$p->user_id]['problem2_code'] = $report->billable_problem2_code;
-            }
+            $problem2                                     = isset($summary->problem_2) && $u->ccdProblems
+                ? $u->ccdProblems->where('id', $summary->problem_2)->first()
+                : null;
+            $data['patientData'][$u->id]['problem2_code'] = isset($problem2)
+                ? $problem2->icd10Code()
+                : null;
+            $data['patientData'][$u->id]['problem2']      = $problem2->name ?? null;
         }
 
         $data['patientData'] = array_key_exists('patientData', $data)
@@ -201,13 +175,13 @@ class PracticeInvoiceGenerator
     {
 
         $practice = $this->practice;
-        $count = 0;
+        $count    = 0;
 
         $users = User
             ::where('program_id', $practice->id)
             ->whereHas('patientActivities', function ($a) {
                 $a->where('performed_at', '>', $this->month->firstOfMonth()->toDateTimeString())
-                    ->where('performed_at', '<', $this->month->endOfMonth()->toDateTimeString());
+                  ->where('performed_at', '<', $this->month->endOfMonth()->toDateTimeString());
             })
             ->whereHas('roles', function ($r) {
                 $r->whereName('participant');
@@ -216,9 +190,9 @@ class PracticeInvoiceGenerator
 
         foreach ($users as $user) {
             $sum = Activity::where('patient_id', $user->id)
-                ->where('performed_at', '>', $this->month->firstOfMonth()->toDateTimeString())
-                ->where('performed_at', '<', $this->month->endOfMonth()->toDateTimeString())
-                ->sum('duration');
+                           ->where('performed_at', '>', $this->month->firstOfMonth()->toDateTimeString())
+                           ->where('performed_at', '<', $this->month->endOfMonth()->toDateTimeString())
+                           ->sum('duration');
 
             $summary = $user->patientInfo->patientSummaries()->where(
                 'month_year',
