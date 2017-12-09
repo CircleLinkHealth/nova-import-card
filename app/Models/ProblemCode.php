@@ -18,7 +18,6 @@ class ProblemCode extends Model
         'code_system_name',
         'code_system_oid',
         'code',
-        'name',
     ];
 
     public function problem()
