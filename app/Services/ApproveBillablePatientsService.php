@@ -50,7 +50,7 @@ class ApproveBillablePatientsService
      */
     public function lacksProblems(PatientMonthlySummary $summary)
     {
-        return ! ($summary->billableProblem1 && $summary->billableProblem2);
+        return ! ($summary->problem_1 && $summary->problem_2);
     }
 
     public function patientsToApprove($practiceId, Carbon $month)
