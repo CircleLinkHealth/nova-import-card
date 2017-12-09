@@ -1,5 +1,6 @@
 <?php
 
+use App\Constants;
 use App\ProblemCodeSystem;
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
@@ -20,9 +21,9 @@ class CreateProblemCodeSystemsTable extends Migration
             $table->timestamps();
         });
 
-        ProblemCodeSystem::create(['name' => 'ICD 9']);
-        ProblemCodeSystem::create(['name' => 'ICD 10']);
-        ProblemCodeSystem::create(['name' => 'SNOMED']);
+        ProblemCodeSystem::create(['name' => Constants::ICD9_NAME]);
+        ProblemCodeSystem::create(['name' => Constants::ICD10_NAME]);
+        ProblemCodeSystem::create(['name' => Constants::SNOMED_NAME]);
     }
 
     /**
