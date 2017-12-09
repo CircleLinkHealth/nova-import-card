@@ -42,11 +42,11 @@ class ProblemCode extends \App\BaseModel
     use SoftDeletes;
 
     public $fillable = [
+        'problem_code_system_id',
         'problem_id',
         'code_system_name',
         'code_system_oid',
         'code',
-        'name',
     ];
 
     public function problem()

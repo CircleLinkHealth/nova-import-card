@@ -56,11 +56,17 @@
                 <template slot="approved" scope="props">
                     <input class="row-select" v-model="props.row.approved" @change="approveOrReject($event, props.row, 'approve')" 
                         type="checkbox" :readonly="!!props.row.promises['approve_reject']" />
+                    <span class="error-btn" v-if="props.row.errors.approve_reject" 
+                        title="view error message"
+                        @click="showErrorModal(props.row.id, 'approve_reject')">x</span>
                     <div class="loading" v-if="props.row.promises['approve_reject']"></div>
                 </template>
                 <template slot="rejected" scope="props">
                     <input class="row-select" v-model="props.row.rejected" @change="approveOrReject($event, props.row, 'reject')" 
                         type="checkbox" :readonly="!!props.row.promises['approve_reject']" />
+                    <span class="error-btn" v-if="props.row.errors.approve_reject" 
+                        title="view error message"
+                        @click="showErrorModal(props.row.id, 'approve_reject')">x</span>
                     <div class="loading" v-if="props.row.promises['approve_reject']"></div>
                 </template>
                 <template slot="Patient" scope="props">
@@ -81,7 +87,8 @@
                     </div>
                 </template>
             </v-client-table>
-            <patient-problem-modal :cpm-problems="cpmProblems"></patient-problem-modal>
+            <patient-problem-modal ref="patientProblemModal" :cpm-problems="cpmProblems"></patient-problem-modal>
+            <error-modal ref="errorModal"></error-modal>
         </div>
     </div>
 </template>
@@ -91,6 +98,7 @@
     import {Event} from 'vue-tables-2'
     import TextEditable from '../comps/text-editable'
     import PatientProblemModal from './comps/patient-problem-modal'
+    import ErrorModal from './comps/error-modal'
     import moment from 'moment'
     import buildReport, {styles} from './excel'
 
@@ -99,7 +107,8 @@
         props: {},
         components: {
             'text-editable': TextEditable,
-            'patient-problem-modal': PatientProblemModal
+            'patient-problem-modal': PatientProblemModal,
+            'error-modal': ErrorModal
         },
         data() {
             return {
@@ -222,20 +231,22 @@
                         tablePatient.rejected = e.target.checked
                         tablePatient.approved = false
                     }
+
+                    const errorKey = 'approve_reject'
                     tablePatient.promises['approve_reject'] = true
                     this.axios.post(rootUrl('admin/reports/monthly-billing/v2/status/update'), {
                         report_id: tablePatient.reportId,
-                        approved: tablePatient.approved,
-                        rejected: tablePatient.rejected
+                        approved: Number(tablePatient.approved),
+                        rejected: Number(tablePatient.rejected)
                     }).then(response => {
                         tablePatient.promises['approve_reject'] = false
-                        tablePatient.approved = !!(response.data.counts || {}).approved
-                        tablePatient.rejected = !!(response.data.counts || {}).rejected
-                        tablePatient.qa = !!(response.data.counts || {}).toQA
+                        tablePatient.approved = !!(response.data.status || {}).approved
+                        tablePatient.rejected = !!(response.data.status || {}).rejected
                         console.log('billing-approve-reject', response.data)
                     }).catch(err => {
                         tablePatient.promises['approve_reject'] = false
                         console.error('billing-approve-reject', err)
+                        tablePatient.errors[errorKey] = err.message
                     })
                 }
             },
@@ -269,6 +280,9 @@
                                 problem_1: false,
                                 problem_2: false,
                                 approve_reject: false
+                            },
+                            errors: {
+                                approve_reject: null
                             }
                         }
                     }).sort((pA, pB) => pB.qa - pA.qa)
@@ -288,7 +302,7 @@
                     console.log('table-patient', tablePatient, modified)
                     if (tablePatient) {
                         if (modified.id == 'Other') {
-                            modified.name = (this.cpmProblems.find(problem => problem.id == modified.cpm_id) || {}).name
+                            modified.name = (this.cpmProblems.find(problem => problem.id == modified.cpm_id) || {}).name || modified.name
                         }
                         if (type === 1) {
                             tablePatient['Problem 1 Code'] = modified.code
@@ -317,6 +331,15 @@
                         console.log('table-patient-promises', tablePatient.promises)
                     }
                     else console.error('could not find tablePatient')
+                })
+            },
+
+            showErrorModal(id, name) {
+                const errors = (this.tableData.find(row => row.id === id) || {}).errors
+                console.log(errors)
+                Event.$emit('modal-error:show', { body: errors[name] }, () => {
+                    errors[name] = null
+                    console.log(errors)
                 })
             },
 
@@ -430,5 +453,20 @@
 
     .bg-flagged {
         background-color: rgba(255, 252, 96, 0.408) !important;
+    }
+
+    .error-btn {
+        display: inline-block;
+        width: 15px;
+        height: 15px;
+        background-color: white;
+        text-align: center;
+        padding-top: 0px;
+        border-radius: 8px;
+        color: red;
+        font-size: 10px;
+        cursor: pointer;
+        border: 1px solid red;
+        padding-bottom: 14px;
     }
 </style>

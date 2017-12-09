@@ -50,7 +50,7 @@ class ApproveBillablePatientsService
      */
     public function lacksProblems(PatientMonthlySummary $summary)
     {
-        return ! ($summary->billableProblem1 && $summary->billableProblem2);
+        return ! ($summary->problem_1 && $summary->problem_2);
     }
 
     public function patientsToApprove($practiceId, Carbon $month)
@@ -64,25 +64,33 @@ class ApproveBillablePatientsService
                                              $this->fillSummaryProblems($u, $summary);
 
                                              $lacksProblems = $this->lacksProblems($summary);
-                                             //if patient was paused/withdrawn and acted upon already, it's not QA no more
-                                             $isNotEnrolledAndApproved = $summary->actor_id == null && in_array($info->ccm_status,
-                                                     ['withdrawn', 'paused']);
 
                                              $summary->approved = $approved = ! ($lacksProblems || $summary->rejected == 1);
 
                                              $rejected = $summary->rejected == 1;
 
-                                             $problem1Code = isset($summary->billableProblem1)
-                                                 ? $summary->billableProblem1->icd10Code()
+                                             $problem1     = isset($summary->problem_1) && $u->ccdProblems
+                                                 ? $u->ccdProblems->where('id', $summary->problem_1)->first()
                                                  : null;
-                                             $problem1Name = $summary->billableProblem1->name ?? null;
-
-                                             $problem2Code = isset($summary->billableProblem2)
-                                                 ? $summary->billableProblem2->icd10Code()
+                                             $problem1Code = isset($problem1)
+                                                 ? $problem1->icd10Code()
                                                  : null;
-                                             $problem2Name = $summary->billableProblem2->name ?? null;
+                                             $problem1Name = $problem1->name ?? null;
 
-                                             $toQA = (! $approved && ! $rejected) || !$problem1Code || !$problem2Code || !$problem1Name || !$problem2Name || $summary->no_of_successful_calls == 0 || in_array($info->ccm_status, ['withdrawn', 'paused']);
+                                             $problem2     = isset($summary->problem_2) && $u->ccdProblems
+                                                 ? $u->ccdProblems->where('id', $summary->problem_2)->first()
+                                                 : null;
+                                             $problem2Code = isset($problem2)
+                                                 ? $problem2->icd10Code()
+                                                 : null;
+                                             $problem2Name = $problem2->name ?? null;
+
+                                             $toQA = ( ! $approved && ! $rejected) || ! $problem1Code || ! $problem2Code || ! $problem1Name || ! $problem2Name || $summary->no_of_successful_calls == 0 || in_array($info->ccm_status,
+                                                     ['withdrawn', 'paused']);
+
+                                             if (($rejected || $approved) && $summary->actor_id) {
+                                                 $toQA = false;
+                                             }
 
                                              if ($toQA) {
                                                  $approved = $rejected = false;
@@ -129,8 +137,13 @@ class ApproveBillablePatientsService
         }
 
         if ($this->lacksProblems($summary)) {
-            $this->buildCcdProblemsFromCpmProblems($patient);
-            $this->fillProblems($patient, $summary, $patient->ccdProblems);
+            $newProblems = $this->buildCcdProblemsFromCpmProblems($patient);
+
+            if ($newProblems->isNotEmpty()) {
+                $patient->load('ccdProblems');
+            }
+
+            $this->fillProblems($patient, $summary, $newProblems);
         }
     }
 
@@ -140,16 +153,20 @@ class ApproveBillablePatientsService
      * @param User $patient
      * @param PatientMonthlySummary $summary
      *
+     * @param Collection|Collection $billableProblems
+     *
      * @return bool
      */
-    private function fillProblems(User $patient, PatientMonthlySummary $summary, Collection $billableProblems)
+    private function fillProblems(User $patient, PatientMonthlySummary $summary, $billableProblems)
     {
         if ($billableProblems->isEmpty()) {
             return false;
         }
 
         for ($i = 1; $i <= 2; $i++) {
-            $billableProblems = $billableProblems->values();
+            $billableProblems = $billableProblems
+                ->where('cpm_problem_id', '!=', null)
+                ->values();
 
             if ($billableProblems->isEmpty()) {
                 continue;
@@ -204,28 +221,33 @@ class ApproveBillablePatientsService
 
     public function buildCcdProblemsFromCpmProblems(User $patient)
     {
+        $newProblems = [];
         $ccdProblems = $patient->ccdProblems;
 
-        $patient->cpmProblems->map(function ($problem) use ($ccdProblems, $patient) {
+        $patient->cpmProblems->map(function ($problem) use ($ccdProblems, $patient, &$newProblems) {
             if ($ccdProblems->where('cpm_problem_id', $problem->id)->count() == 0) {
-                $this->storeCcdProblem($patient, [
+                $newProblems[] = $this->storeCcdProblem($patient, [
                     'name'             => $problem->name,
                     'cpm_problem_id'   => $problem->id,
                     'code_system_name' => 'ICD-10',
                     'code_system_oid'  => '2.16.840.1.113883.6.3',
                     'code'             => $problem->default_icd_10_code,
+                    'billable'         => true,
                 ]);
             }
         });
+
+        return collect($newProblems);
     }
 
-    public function storeCcdProblem(User $patient, array $arguments) {
-        try{
+    public function storeCcdProblem(User $patient, array $arguments)
+    {
+        try {
             return $this->patientRepo->storeCcdProblem($patient, $arguments);
         } catch (\Exception $e) {
             return response()->json([
-                'message' => $e->getMessage(),
-                'stacktrace' => $e->getTraceAsString()
+                'message'    => $e->getMessage(),
+                'stacktrace' => $e->getTraceAsString(),
             ], $e->getCode());
         }
     }
