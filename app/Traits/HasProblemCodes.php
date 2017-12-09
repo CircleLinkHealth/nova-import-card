@@ -15,30 +15,19 @@ trait HasProblemCodes
     public function icd9Codes()
     {
         return $this->codes()
-            ->where('code_system_oid', '=', '2.16.840.1.113883.6.103')
-            ->orWhere([
-                ['code_system_name', 'like', '%9%'],
-                ['code_system_name', 'like', '%icd%'],
-            ]);
+            ->where('problem_code_system_id', '=', '1');
     }
 
     public function icd10Codes()
     {
         return $this->codes()
-            ->where('code_system_oid', '=', '2.16.840.1.113883.6.3')
-            ->orWhere([
-                ['code_system_name', 'like', '%10%'],
-                ['code_system_name', 'like', '%icd%'],
-            ]);
+            ->where('problem_code_system_id', '=', '2');
     }
 
     public function snomedCodes()
     {
         return $this->codes()
-            ->where('code_system_oid', '=', '2.16.840.1.113883.6.96')
-            ->orWhere([
-                ['code_system_name', 'like', '%snomed%'],
-            ]);
+            ->where('problem_code_system_id', '=', '3');;
     }
 
     public function codeMap()
