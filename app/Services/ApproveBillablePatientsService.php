@@ -63,21 +63,31 @@ class ApproveBillablePatientsService
 
                                              $this->fillSummaryProblems($u, $summary);
 
+                                             $summary->load(['billableProblem1', 'billableProblem2']);
+
                                              $lacksProblems = $this->lacksProblems($summary);
 
                                              $summary->approved = $approved = ! ($lacksProblems || $summary->rejected == 1);
 
                                              $rejected = $summary->rejected == 1;
 
-                                             $problem1Code = isset($summary->problem_1)
-                                                 ? $summary->billableProblem1()->first()->icd10Code()
+                                             $problem1     = isset($summary->problem_1)
+                                                 ? $summary->billableProblem1
                                                  : null;
-                                             $problem1Name = $summary->billableProblem1->name ?? null;
 
-                                             $problem2Code = isset($summary->problem_2)
-                                                 ? $summary->billableProblem2()->first()->icd10Code()
+                                             $problem1Code = isset($problem1)
+                                                 ? $problem1->icd10Code()
                                                  : null;
-                                             $problem2Name = $summary->billableProblem2->name ?? null;
+                                             $problem1Name = $problem1->name ?? null;
+
+                                             $problem2     = isset($summary->problem_2)
+                                                 ? $summary->billableProblem2
+                                                 : null;
+
+                                             $problem2Code = isset($problem2)
+                                                 ? $problem2->icd10Code()
+                                                 : null;
+                                             $problem2Name = $problem2->name ?? null;
 
                                              $toQA = ( ! $approved && ! $rejected) || ! $problem1Code || ! $problem2Code || ! $problem1Name || ! $problem2Name || $summary->no_of_successful_calls == 0 || in_array($info->ccm_status,
                                                      ['withdrawn', 'paused']);
