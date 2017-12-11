@@ -6,9 +6,9 @@
                 <loader></loader>
             </div>
         </div>
-        <span v-if="visible" class="time-tracker" :class="{ hidden: showLoader }">
-            <div v-if="noLiveCount">{{info.monthlyTime}}</div>
-            <span>
+        <span v-if="visible" class="time-tracker">
+            <div v-if="noLiveCount" :class="{ hidden: showLoader }">{{info.monthlyTime}}</div>
+            <span :class="{ hidden: showLoader }">
                 <time-display v-if="!noLiveCount" ref="timeDisplay" :seconds="totalTime" :no-live-count="!!noLiveCount" :redirect-url="'manage-patients/' + info.patientId + '/activities'" />
             </span>
             <inactivity-tracker ref="inactivityTracker" />
