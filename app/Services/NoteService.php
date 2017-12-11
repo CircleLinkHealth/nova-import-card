@@ -189,7 +189,7 @@ class NoteService
 
         if (empty($patientRecord)) {
             $patientRecord = PatientMonthlySummary::updateCCMInfoForPatient(
-                $patient,
+                $patient->user_id,
                 $patient->cur_month_activity_time
             );
         } else {

@@ -29,7 +29,7 @@ class CCMComplexToggleController extends Controller
 
         if (empty($patientRecord)) {
             $patientRecord = PatientMonthlySummary::updateCCMInfoForPatient(
-                $patient->patientInfo,
+                $patient->user_id,
                 $patient->patientInfo->cur_month_activity_time
             );
 
