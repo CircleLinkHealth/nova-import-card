@@ -10,7 +10,7 @@ use Illuminate\Database\Eloquent\Model;
  * App\PatientMonthlySummary
  *
  * @property int $id
- * @property int $patient_info_id
+ * @property int $patient_id
  * @property int $ccm_time
  * @property \Carbon\Carbon $month_year
  * @property int $no_of_calls
@@ -58,7 +58,7 @@ class PatientMonthlySummary extends \App\BaseModel
         'ccm_time',
         'no_of_calls',
         'no_of_successful_calls',
-        'patient_info_id',
+        'patient_id',
         'is_ccm_complex',
         'approved',
         'rejected',
@@ -76,7 +76,9 @@ class PatientMonthlySummary extends \App\BaseModel
 
         // get record for month
         $day_start = Carbon::parse(Carbon::now()->firstOfMonth())->format('Y-m-d');
-        $record = $patient->monthlySummaries()->where('month_year', $day_start)->first();
+        $record = PatientMonthlySummary::where('patient_id', $patient->user_id)
+                                       ->where('month_year', $day_start)
+                                       ->first();
 
         // set increment var
         $successful_call_increment = 0;
@@ -93,7 +95,7 @@ class PatientMonthlySummary extends \App\BaseModel
         // Determine whether to add to record or not
         if (!$record) {
             $record = new PatientMonthlySummary;
-            $record->patient_info_id = $patient->id;
+            $record->patient_id = $patient->user_id;
             $record->ccm_time = 0;
             $record->month_year = $day_start;
             $record->no_of_calls = 1;
@@ -111,17 +113,19 @@ class PatientMonthlySummary extends \App\BaseModel
     //updates Call info for patient
 
     public static function updateCCMInfoForPatient(
-        Patient $patient,
+        $userId,
         $ccmTime
     ) {
         // get record for month
         $day_start = Carbon::parse(Carbon::now()->firstOfMonth())->format('Y-m-d');
-        $record = $patient->monthlySummaries()->where('month_year', $day_start)->first();
+        $record = PatientMonthlySummary::where('patient_id', $userId)
+                                       ->where('month_year', $day_start)
+                                       ->first();
 
         //Detemine whether to add to record or not
         if (!$record) {
             $record = new PatientMonthlySummary;
-            $record->patient_info_id = $patient->id;
+            $record->patient_id = $userId;
             $record->ccm_time = $ccmTime;
             $record->month_year = $day_start;
             $record->no_of_calls = 0;
@@ -209,7 +213,7 @@ class PatientMonthlySummary extends \App\BaseModel
             }
 
             $report = PatientMonthlySummary::where('month_year', $month->firstOfMonth()->toDateString())
-                ->where('patient_info_id', $p->patientInfo->id)->first();
+                ->where('patient_id', $p->id)->first();
 
 
             if (!$report) {
@@ -236,21 +240,19 @@ class PatientMonthlySummary extends \App\BaseModel
 
     public function createCallReportsForCurrentMonth()
     {
+        $monthYear = Carbon::now()->startOfMonth()->toDateString();
 
-        $patients = Patient::all();
-
-        foreach ($patients as $patient) {
-            $day_start = Carbon::parse(Carbon::now()->firstOfMonth()->format('Y-m-d'));
-
-            PatientMonthlySummary::create([
-                'patient_info_id' => $patient->id,
-                'ccm_time' => 0,
-                'month_year' => $day_start,
-                'no_of_calls' => 0,
-                'no_of_successful_calls' => 0,
-
-            ]);
-        }
+        $patients = User::select('id')->ofType('participant')
+                                      ->get()
+                                    ->map(function ($patient) use ($monthYear) {
+                                        PatientMonthlySummary::create([
+                                            'patient_id' => $patient->id,
+                                            'ccm_time' => 0,
+                                            'month_year' => $monthYear,
+                                            'no_of_calls' => 0,
+                                            'no_of_successful_calls' => 0,
+                                        ]);
+                                    });
     }
 
     public function updateMonthlyReportForPatient(
@@ -278,7 +280,7 @@ class PatientMonthlySummary extends \App\BaseModel
             ->where('created_at', '<=', $day_start)
             ->where('created_at', '>=', $day_end)->count();
 
-        $report = PatientMonthlySummary::where('patient_info_id', $info->id)->where('month_year', $day_start)->first();
+        $report = PatientMonthlySummary::where('patient_id', $patient->id)->where('month_year', $day_start)->first();
 
         if ($report) {
             $report->ccm_time = $ccm_time;

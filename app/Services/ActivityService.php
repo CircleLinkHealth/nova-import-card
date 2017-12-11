@@ -38,7 +38,7 @@ class ActivityService
                 'cur_month_activity_time' => $ccmTime,
             ]);
 
-            (new PatientMonthlySummary())->updateCCMInfoForPatient($info, $ccmTime);
+            (new PatientMonthlySummary())->updateCCMInfoForPatient($id, $ccmTime);
         }
     }
 
