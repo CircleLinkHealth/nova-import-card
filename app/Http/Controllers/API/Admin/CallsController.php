@@ -5,6 +5,7 @@ namespace App\Http\Controllers\API\Admin;
 use App\Call;
 use App\Http\Controllers\API\ApiController;
 use App\Http\Resources\Call as CallResource;
+use App\Services\Calls\ManagementService;
 use Carbon\Carbon;
 use DateTime;
 use DateTimeZone;
@@ -14,6 +15,13 @@ use Yajra\Datatables\Datatables;
 
 class CallsController extends ApiController
 {
+    private $service;
+
+    public function __construct(ManagementService $service)
+    {
+        $this->service = $service;
+    }
+
     public function toBeDeprecatedIndex()
     {
         $date = Carbon::now()->startOfMonth();
@@ -330,26 +338,7 @@ class CallsController extends ApiController
      */
     public function index()
     {
-        $calls = Call::where('status', '=', 'scheduled')
-                     ->whereHas('inboundUser')
-                     ->with([
-                         'inboundUser.billingProvider.user'         => function ($q) {
-                             $q->select(['id', 'first_name', 'last_name', 'suffix', 'display_name']);
-                         },
-                         'inboundUser.notes'                        => function ($q) {
-                             $q->latest();
-                         },
-                         'inboundUser.patientInfo.contactWindows',
-                         'inboundUser.patientInfo.monthlySummaries' => function ($q) {
-                             $q->where('month_year', '=', Carbon::now()->startOfMonth()->format('Y-m-d'));
-                         },
-                         'inboundUser.primaryPractice'              => function ($q) {
-                             $q->select(['id', 'display_name']);
-                         },
-                         'outboundUser.nurseInfo',
-                         'note',
-                     ])
-                     ->paginate(30);
+        $calls = $this->service->getScheduledCalls()->paginate(30);
 
         return CallResource::collection($calls);
     }
