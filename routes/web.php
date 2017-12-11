@@ -95,6 +95,22 @@ Route::group(['middleware' => 'auth'], function () {
      * API
      */
     Route::group(['prefix' => 'api'], function () {
+        Route::group(['prefix' => 'admin'], function () {
+            Route::group(['prefix' => 'calls'], function(){
+                Route::get('', [
+                    'uses' => 'API\Admin\CallsController@index',
+                    'as' => 'calls.index'
+                ]);
+
+                Route::delete('{callIds}', [
+                    'uses' => 'API\Admin\CallsController@deleteCalls',
+                    'as' => 'calls.destroy'
+                ]);
+            });
+
+            Route::resource('user.outbound-calls', 'API\UserOutboundCallController');
+        });
+
         Route::get('providers/{providerId}/patients/{patientId}/ccm-time', [
             'uses' => 'API\ActivityController@between',
             'as' => 'get.ccm.time.from.to'
