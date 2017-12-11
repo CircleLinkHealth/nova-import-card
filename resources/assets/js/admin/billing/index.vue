@@ -167,6 +167,9 @@
                             problem_1: false,
                             problem_2: false,
                             approve_reject: false
+                        },
+                        errors: {
+                            approve_reject: null
                         }
                     },
                     {
@@ -203,6 +206,9 @@
                             problem_1: false,
                             problem_2: false,
                             approve_reject: false
+                        },
+                        errors: {
+                            approve_reject: null
                         }
                     }*/],
                 options: {
