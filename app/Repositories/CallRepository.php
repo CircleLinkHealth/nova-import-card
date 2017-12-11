@@ -10,6 +10,7 @@ namespace App\Repositories;
 
 
 use App\Call;
+use App\User;
 use Carbon\Carbon;
 
 class CallRepository
@@ -19,6 +20,12 @@ class CallRepository
     public function __construct(Call $model)
     {
         $this->model = $model;
+    }
+
+    public function patientsWithoutScheduledCalls($practiceId, Carbon $start) {
+        return User::ofType('participant')
+            ->ofPractice($practiceId)
+            ->whereDoesntHave('inboundScheduledCalls');
     }
 
     public function scheduledCalls(Carbon $month = null) {

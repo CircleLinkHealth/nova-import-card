@@ -5,6 +5,7 @@ namespace App\Http\Controllers\API\Admin;
 use App\Call;
 use App\Http\Controllers\API\ApiController;
 use App\Http\Resources\Call as CallResource;
+use App\Http\Resources\User as UserResource;
 use App\Services\Calls\ManagementService;
 use Carbon\Carbon;
 use DateTime;
@@ -341,6 +342,13 @@ class CallsController extends ApiController
         $calls = $this->service->getScheduledCalls()->paginate(30);
 
         return CallResource::collection($calls);
+    }
+
+    public function patientsWithoutScheduledCalls($practiceId) {
+        $patients = $this->service->getPatientsWithoutScheduledCalls($practiceId, Carbon::now()->startOfMonth())
+            ->get();
+
+        return UserResource::collection($patients);
     }
 
     /**
