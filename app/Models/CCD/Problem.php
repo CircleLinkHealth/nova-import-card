@@ -67,6 +67,7 @@ class Problem extends \App\BaseModel implements \App\Contracts\Models\CCD\Proble
         'activate',
         'cpm_problem_id',
         'patient_id',
+        'billable'
     ];
 
     protected $table = 'ccd_problems';
