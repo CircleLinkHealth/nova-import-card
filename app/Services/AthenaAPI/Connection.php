@@ -101,10 +101,6 @@ class Connection
             \Log::alert($authorization);
         }
 
-        if (in_array(app()->environment(), ['local', 'staging'])) {
-            return;
-        }
-
         $this->token = $authorization['access_token'];
         $this->refresh_token = $authorization['refresh_token'];
     }

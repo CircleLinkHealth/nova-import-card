@@ -9,7 +9,6 @@
 namespace App\Services\AthenaAPI;
 
 use App\CLH\CCD\Importer\QAImportManager;
-use App\CLH\Repositories\CCDImporterRepository;
 use App\Contracts\Repositories\CcdaRepository;
 use App\Contracts\Repositories\CcdaRequestRepository;
 use App\Models\CCD\CcdVendor;
@@ -23,11 +22,72 @@ class Service
     protected $ccdaRequests;
     protected $ccdas;
 
-    public function __construct(CcdaRequestRepository $ccdaRequests, CcdaRepository $ccdas)
+    public function __construct(CcdaRequestRepository $ccdaRequests, CcdaRepository $ccdas, Calls $api)
     {
-        $this->api = new Calls();
+        $this->api          = $api;
         $this->ccdaRequests = $ccdaRequests;
-        $this->ccdas = $ccdas;
+        $this->ccdas        = $ccdas;
+    }
+
+    public function getPatientIdFromAppointments(
+        $practiceId,
+        Carbon $startDate,
+        Carbon $endDate
+    ) {
+        $start = $startDate->format('m/d/Y');
+        $end   = $endDate->format('m/d/Y');
+
+        $departments = $this->api->getDepartmentIds($practiceId);
+
+        foreach ($departments['departments'] as $department) {
+            $response = $this->api->getBookedAppointments($practiceId, $start, $end, $department['departmentid']);
+
+            if ( ! isset($response['appointments'])) {
+                return;
+            }
+
+            if (count($response['appointments']) == 0) {
+                return;
+            }
+
+            foreach ($response['appointments'] as $bookedAppointment) {
+                $ehrPatientId = $bookedAppointment['patientid'];
+                $departmentId = $bookedAppointment['departmentid'];
+
+                /**
+                 * $targetPatient = TargetPatient::updateOrCreate([
+                 * 'ehr_id' => $ehrPatientId,
+                 * 'ehr_patient_id' => $departmentId,
+                 * 'practice_id' => $practiceId,
+                 * 'department_id' => $department['departmentid']
+                 * ]);
+                 *
+                 * if (! $targetPatient->status)
+                 * $targetPatient->status = 'ready_to_process'; $targetPAtient->save();
+                 *
+                 */
+
+                //@todo: create TargetPatient
+
+                /**
+                 * model name: TargetPatient
+                 * table name:target_patients
+                 *    ->hasMany(App\CCD\Problem::class)
+                 *    ->hasMany(CcdInsurancePolicy::class)
+                 *
+                 * id => auto_increment
+                 * ehr_id => FK ehrs_id
+                 * status => ['ready_to_process', 'eligible', 'ineligible'] enum
+                 * ehr_patient_id => 31224
+                 * practice_id => 195900
+                 * department_id => 1
+                 *
+                 * {"lastupdated":"12\/11\/2017","totalcount":1,"problems":[{"problemid":"64734","events":[{"source":"HISTORY","status":"CHRONIC","eventtype":"START","startdate":"10\/10\/1980","onsetdate":"10\/10\/1980"}],"codeset":"SNOMED","name":"Carpal tunnel syndrome","bestmatchicd10code":"G56.00","code":"57406009"}]}
+                 *
+                 */
+            }
+
+        }
     }
 
     public function getAppointments(
@@ -36,7 +96,7 @@ class Service
         Carbon $endDate
     ) {
         $start = $startDate->format('m/d/Y');
-        $end = $endDate->format('m/d/Y');
+        $end   = $endDate->format('m/d/Y');
 
         $departments = $this->api->getDepartmentIds($practiceId);
 
@@ -48,7 +108,7 @@ class Service
 
     public function logPatientIdsFromAppointments($response, $practiceId)
     {
-        if (!isset($response['appointments'])) {
+        if ( ! isset($response['appointments'])) {
             return;
         }
 
@@ -65,12 +125,12 @@ class Service
             }
         }
 
-        if (!isset($ccmEnabledFieldId)) {
+        if ( ! isset($ccmEnabledFieldId)) {
             return;
         }
 
         foreach ($response['appointments'] as $bookedAppointment) {
-            $patientId = $bookedAppointment['patientid'];
+            $patientId    = $bookedAppointment['patientid'];
             $departmentId = $bookedAppointment['departmentid'];
 
             $patientCustomFields = $this->api->getPatientCustomFields($patientId, $practiceId, $departmentId);
@@ -110,13 +170,13 @@ class Service
                 $ccdaRequest->department_id
             );
 
-            if (!isset($xmlCcda[0]['ccda'])) {
+            if ( ! isset($xmlCcda[0]['ccda'])) {
                 return false;
             }
 
             $vendor = CcdVendor::wherePracticeId($ccdaRequest->practice_id)->first();
 
-            if (!$vendor) {
+            if ( ! $vendor) {
                 return false;
             }
 
@@ -126,7 +186,7 @@ class Service
                 'source'    => Ccda::ATHENA_API,
             ]);
 
-            $ccdaRequest->ccda_id = $ccda->id;
+            $ccdaRequest->ccda_id         = $ccda->id;
             $ccdaRequest->successful_call = true;
             $ccdaRequest->save();
 

@@ -108,6 +108,25 @@ class Calls
     }
 
     /**
+     * Get problems for a patient
+     *
+     * @param $patientId
+     * @param $practiceId
+     * @param $departmentId
+     * @param bool $showDiagnosisInfo
+     *
+     * @return mixed
+     */
+    public function getPatientProblems($patientId, $practiceId, $departmentId, $showDiagnosisInfo = true) {
+        $response = $this->api->GET("$practiceId/chart/$patientId/problems", [
+            'departmentid' => $departmentId,
+            'showdiagnosisinfo' => $showDiagnosisInfo
+        ]);
+
+        return $this->response($response);
+    }
+
+    /**
      * Get available practices. Passing in practiceId of 1 will return all practices we have access to.
      *
      * @param $practiceId
