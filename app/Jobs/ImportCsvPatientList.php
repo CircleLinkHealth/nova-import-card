@@ -65,9 +65,7 @@ class ImportCsvPatientList implements ShouldQueue
                 }
             }
 
-            if (isset($row['mrn'])) {
-                $this->createTabularMedicalRecordAndImport($row);
-            }
+            $this->createTabularMedicalRecordAndImport($row);
         }
 
         $url = url('view.files.ready.to.import');
@@ -183,10 +181,6 @@ class ImportCsvPatientList implements ShouldQueue
      */
     public function createTabularMedicalRecordAndImport($row)
     {
-        if (in_array($row['mrn'], ['#N/A'])) {
-            return false;
-        }
-
         $row['dob'] = $row['dob']
             ? Carbon::parse($row['dob'])->format('Y-m-d')
             : null;
@@ -198,7 +192,8 @@ class ImportCsvPatientList implements ShouldQueue
         }
 
         $exists = TabularMedicalRecord::where([
-            'mrn' => $row['mrn'],
+            'first_name' => $row['first_name'],
+            'last_name' => $row['last_name'],
             'dob' => $row['dob'],
         ])->first();
 
