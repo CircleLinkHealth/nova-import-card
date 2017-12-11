@@ -33,8 +33,11 @@ class PhoenixHeartSectionsLogger extends TabularMedicalRecordSectionsLogger
 
     public function logDemographicsSection(): MedicalRecordLogger
     {
-        $this->medicalRecord->mrn = $this->lookupMrn($this->medicalRecord->first_name, $this->medicalRecord->last_name, $this->medicalRecord->dob);
-        $this->medicalRecord->save();
+        if (!$this->medicalRecord->mrn) {
+            $this->medicalRecord->mrn = $this->lookupMrn($this->medicalRecord->first_name,
+                $this->medicalRecord->last_name, $this->medicalRecord->dob);
+            $this->medicalRecord->save();
+        }
 
         return parent::logDemographicsSection();
     }
