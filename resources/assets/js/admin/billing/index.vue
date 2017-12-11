@@ -13,20 +13,22 @@
         <div class="panel-body">
             <div class="col-sm-12 row">
                 <div class="col-sm-6">
-                    <label>Select Practice</label>
-                    <select class="form-control" v-model="selectedPractice" @change="retrieve">
-                        <option v-for="(practice, index) in practices" :key="index" :value="practice.id"
-                                :selected="practice.id == 8">{{practice.display_name}}
+                    <div>
+                        <label>Select Practice</label>
+                    </div>
+                    <select2 class="form-control" v-model="selectedPractice" @change="retrieve">
+                        <option v-for="(practice, index) in practices" :key="index" :value="practice.id">{{practice.display_name}}
                         </option>
-                    </select>
+                    </select2>
                 </div>
                 <div class="col-sm-6">
-                    <label>Select Month</label>
-                    <select class="form-control" v-model="selectedMonth" @change="retrieve">
-                        <option v-for="(month, index) in months" :key="index" :value="month.long"
-                                :selected="month.selected">{{month.long}}
+                    <div>
+                        <label>Select Month</label>
+                    </div>
+                    <select2 class="form-control" v-model="selectedMonth" @change="retrieve" :value="months[0].long">
+                        <option v-for="(month, index) in months" :key="index" :value="month.long">{{month.long}}
                         </option>
-                    </select>
+                    </select2>
                 </div>
             </div>
             <div class="col-sm-12 text-center line-50 row">
@@ -101,6 +103,7 @@
     import ErrorModal from './comps/error-modal'
     import moment from 'moment'
     import buildReport, {styles} from './excel'
+    import Select2Component from '../../components/src/select2'
 
     export default {
         name: 'billing-report',
@@ -108,7 +111,8 @@
         components: {
             'text-editable': TextEditable,
             'patient-problem-modal': PatientProblemModal,
-            'error-modal': ErrorModal
+            'error-modal': ErrorModal,
+            'select2': Select2Component
         },
         data() {
             return {
@@ -167,6 +171,9 @@
                             problem_1: false,
                             problem_2: false,
                             approve_reject: false
+                        },
+                        errors: {
+                            approve_reject: null
                         }
                     },
                     {
@@ -203,6 +210,9 @@
                             problem_1: false,
                             problem_2: false,
                             approve_reject: false
+                        },
+                        errors: {
+                            approve_reject: null
                         }
                     }*/],
                 options: {

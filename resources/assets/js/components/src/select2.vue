@@ -5,13 +5,16 @@
 </template>
 
 <script>
+    import $ from 'jquery'
     import select2 from 'select2'
 
     export default {
+        name: 'select2',
+
         props: ['options', 'value'],
 
         mounted: function () {
-            var vm = this
+            const self = this
             $(this.$el)
             // init select2
                 .select2({ data: this.options })
@@ -19,7 +22,8 @@
                 .trigger('change')
                 // emit event on change.
                 .on('change', function () {
-                    vm.$emit('input', this.value)
+                    self.$emit('input', this.value)
+                    self.$emit('change', this.value)
                 })
         },
         watch: {
