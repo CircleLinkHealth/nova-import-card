@@ -42,18 +42,40 @@ class MedicalRecordImportController extends Controller
     }
 
     public function import(Request $request) {
-        //$recordsToImport = $request->all();
+        $recordsToImport = $request->all();
 
-        // if (is_array($recordsToImport)) {
-        //     foreach($recordsToImport as $record) {
-        //         $imr = ImportedMedicalRecord::find($record->id);
-        //         if (empty($imr)) continue;
-        //         else {
-        //             return response()->json($imr, 200);
-        //         }
-        //     }
-        // }
-        return response()->json([], 200);
+        if (is_array($recordsToImport)) {
+            $importedRecords = [];
+            foreach($recordsToImport as $record) {
+                if ($record) {
+                    $id = $record['id'];
+                    $imr = ImportedMedicalRecord::find($id);
+                    if (empty($imr)) continue;
+                    else {
+                        try {
+                            $carePlan = $imr->createCarePlan();
+                            array_push($importedRecords, [
+                                'id' => $id,
+                                'completed' => true
+                            ]);
+                        }
+                        catch (Exception $ex) {
+                            array_push($importedRecords, [
+                                'id' => $id,
+                                'completed' => false,
+                                'error' => $ex
+                            ]);
+                        }
+                    }
+                }
+            }
+            return response()->json($importedRecords, 200);
+        }
+        else {
+            return response()->json([
+                'message' => 'no records provided'
+            ], 400);
+        }
     }
 
     public function importOld(Request $request)
