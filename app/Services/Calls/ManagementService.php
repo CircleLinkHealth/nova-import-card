@@ -10,6 +10,7 @@ namespace App\Services\Calls;
 
 
 use App\Repositories\CallRepository;
+use Carbon\Carbon;
 
 class ManagementService
 {
@@ -20,7 +21,11 @@ class ManagementService
         $this->repository = $repository;
     }
 
-    public function getScheduledCalls() {
-        return $this->repository->scheduledCalls();
+    public function getScheduledCalls(Carbon $month = null) {
+        return $this->repository->scheduledCalls($month);
+    }
+
+    public function getPatientsWithoutScheduledCalls($practiceId, Carbon $start) {
+        return $this->repository->patientsWithoutScheduledCalls($practiceId, $start);
     }
 }

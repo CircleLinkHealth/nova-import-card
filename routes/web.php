@@ -121,7 +121,14 @@ Route::group(['middleware' => 'auth'], function () {
             'as' => 'get.total.ccm.time'
         ]);
 
-        Route::get('practices/all', 'API\PracticeController@allPracticesWithLocationsAndStaff');
+        Route::group(['prefix' => 'practices'], function() {
+            Route::get('all', 'API\PracticeController@allPracticesWithLocationsAndStaff');
+
+            Route::get('{practiceId}/patients/without-scheduled-calls', [
+                'uses' => 'API\Admin\CallsController@patientsWithoutScheduledCalls',
+                'as' => 'practice.patients.without-scheduled-calls',
+            ]);
+        });
 
         Route::get('calls-management', [
             'uses' => 'API\Admin\CallsController@toBeDeprecatedIndex',

@@ -543,6 +543,17 @@ class User extends \App\BaseModel implements AuthenticatableContract, CanResetPa
         return $this->hasMany(Call::class, 'inbound_cpm_id', 'id');
     }
 
+    public function inboundScheduledCalls(Carbon $after = null) {
+        if (!$after) {
+            $after = Carbon::now();
+        }
+
+        return $this->inboundCalls()
+            ->where('status', '=', 'scheduled')
+            ->where('scheduled_date', '>=', $after->toDateString())
+            ->where('called_date', '=', null);
+    }
+
     public function inboundMessages()
     {
         return $this->hasMany(Message::class, 'receiver_cpm_id', 'id');
@@ -2695,5 +2706,15 @@ class User extends \App\BaseModel implements AuthenticatableContract, CanResetPa
     public function outboundCalls()
     {
         return $this->hasMany(Call::class, 'outbound_cpm_id', 'id');
+    }
+
+    public function scopeOfPractice($query, $practiceId) {
+        if (!is_array($practiceId)) {
+            $practiceId = [$practiceId];
+        }
+
+        $query->whereHas('practices', function ($q) use ($practiceId) {
+            $q->whereIn('id', $practiceId);
+        });
     }
 }
