@@ -164,72 +164,79 @@ class PracticeInvoiceController extends Controller
 
     public function storeProblem(Request $request)
     {
-        $summary = PatientMonthlySummary::find($request['report_id']);
+        try {
+            $summary = PatientMonthlySummary::find($request['report_id']);
 
-        $key = $request['problem_no'];
+            $key = $request['problem_no'];
 
-        $problemId = $request['id'];
+            $problemId = $request['id'];
 
-        if ($problemId == 'Other') {
-            $problemId = $this->service->storeCcdProblem($summary->patient, [
-                'name'             => $request['name'],
-                'cpm_problem_id'   => $request['cpm_problem_id'],
-                'billable'         => true,
-                'code'             => $request['code'],
-                'code_system_name' => 'ICD-10',
-                'code_system_oid'  => '2.16.840.1.113883.6.3',
-            ])->id;
-        }
-
-        if ($problemId) {
-            $existingProblemId = $summary->$key;
-
-            if ($existingProblemId) {
-                Problem::where('id', $existingProblemId)
-                       ->update([
-                           'billable' => false,
-                       ]);
-            }
-
-            Problem::where('id', $problemId)
-                   ->update([
-                       'billable' => true,
-                   ]);
-
-            $updated = ProblemCode::where('problem_id', $problemId)
-                                  ->where('code_system_name', 'like', '%10%')
-                                  ->update([
-                                      'code'             => $request['code'],
-                                      'code_system_name' => 'ICD-10',
-                                      'code_system_oid'  => '2.16.840.1.113883.6.3',
-                                  ]);
-
-            if ( ! $updated) {
-                ProblemCode::create([
-                    'problem_id'       => $problemId,
+            if ($problemId == 'Other') {
+                $problemId = $this->service->storeCcdProblem($summary->patient, [
+                    'name'             => $request['name'],
+                    'cpm_problem_id'   => $request['cpm_problem_id'],
+                    'billable'         => true,
                     'code'             => $request['code'],
                     'code_system_name' => 'ICD-10',
                     'code_system_oid'  => '2.16.840.1.113883.6.3',
-                ]);
+                ])->id;
             }
+
+            if ($problemId) {
+                $existingProblemId = $summary->$key;
+
+                if ($existingProblemId) {
+                    Problem::where('id', $existingProblemId)
+                           ->update([
+                               'billable' => false,
+                           ]);
+                }
+
+                Problem::where('id', $problemId)
+                       ->update([
+                           'billable' => true,
+                       ]);
+
+                $updated = ProblemCode::where('problem_id', $problemId)
+                                      ->where('code_system_name', 'like', '%10%')
+                                      ->update([
+                                          'code'             => $request['code'],
+                                          'code_system_name' => 'ICD-10',
+                                          'code_system_oid'  => '2.16.840.1.113883.6.3',
+                                      ]);
+
+                if ( ! $updated) {
+                    ProblemCode::create([
+                        'problem_id'       => $problemId,
+                        'code'             => $request['code'],
+                        'code_system_name' => 'ICD-10',
+                        'code_system_oid'  => '2.16.840.1.113883.6.3',
+                    ]);
+                }
+            }
+
+            $summary->$key = $problemId;
+
+            if ( ! $this->service->lacksProblems($summary)) {
+                $summary->approved = true;
+            }
+
+            $summary->save();
+
+            $counts = $this->getCounts($summary->month_year->toDateString(), $summary->patient->primaryPractice->id);
+
+            return response()->json(
+                [
+                    'report_id' => $summary->id,
+                    'counts'    => $counts,
+                ]
+            );
+        } catch (\Exception $e) {
+            return response()->json([
+                'message'    => $e->getMessage(),
+                'stacktrace' => $e->getTraceAsString(),
+            ], $e->getCode());
         }
-
-        $summary->$key = $problemId;
-
-        if ( ! $this->service->lacksProblems($summary)) {
-            $summary->approved = true;
-        }
-
-        $summary->save();
-
-        $counts = $this->getCounts($summary->month_year->toDateString(), $summary->patient->primaryPractice->id);
-
-        return response()->json(
-            [
-                'report_id' => $summary->id,
-                'counts'    => $counts,
-            ]
-        );
     }
 
     public function counts(Request $request)

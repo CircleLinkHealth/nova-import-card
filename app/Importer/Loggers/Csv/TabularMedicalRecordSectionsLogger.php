@@ -43,8 +43,9 @@ class TabularMedicalRecordSectionsLogger implements MedicalRecordLogger
      */
     public function logAllSections()
     {
-        $this->logAllergiesSection()
+        $this
             ->logDemographicsSection()
+            ->logAllergiesSection()
             ->logDocumentSection()
             ->logInsuranceSection()
             ->logMedicationsSection()
