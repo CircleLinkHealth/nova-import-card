@@ -38,6 +38,7 @@ import PassportPersonalAccessTokensComponent from './components/passport/Persona
 
 Vue.use(ClientTable, {}, false)
 
+Vue.component('billing-report', require('./admin/billing/index.vue'));
 Vue.component('call-mgmt-app', CallMgmtApp)
 Vue.component('nurseDailyHours', NurseDailyHours)
 Vue.component('importerTrainer', ImporterTraining)

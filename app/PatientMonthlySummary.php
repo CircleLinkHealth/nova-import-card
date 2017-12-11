@@ -140,6 +140,11 @@ class PatientMonthlySummary extends \App\BaseModel
         return $this->belongsTo(Patient::class);
     }
 
+    public function patient()
+    {
+        return $this->belongsTo(User::class, 'patient_id');
+    }
+
     public function actor()
     {
         return $this->hasOne(User::class, 'actor_id');

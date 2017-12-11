@@ -1,8 +1,19 @@
 let mix = require('laravel-mix')
 
-mix.webpackConfig({
-    devtool: "#cheap-module-source-map"
-})
+const webpackConfig = {
+    devtool: "#cheap-module-source-map",
+    node: {
+        fs: 'empty' //to help webpack resolve 'fs'
+    },
+    externals: [
+        {
+            './cptable': 'var cptable'
+        }
+    ],
+    plugins: []
+}
+
+mix.webpackConfig(webpackConfig)
 
 /*
  |--------------------------------------------------------------------------
@@ -76,5 +87,12 @@ mix.combine([
 //apps
 mix.js('resources/assets/js/app-provider-ui.js', 'public/compiled/js').sourceMaps()
 mix.js('resources/assets/js/app-provider-admin-panel-ui.js', 'public/compiled/js').sourceMaps()
+
+if (mix.inProduction) {
+    mix.options({
+        uglify: false,
+      })
+}
+
 mix.js('resources/assets/js/app-clh-admin-ui.js', 'public/compiled/js').sourceMaps()
 mix.js('resources/assets/js/app-ccd-importer.js', 'public/compiled/js').sourceMaps()
