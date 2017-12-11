@@ -182,7 +182,7 @@ class ImportCsvPatientList implements ShouldQueue
     public function createTabularMedicalRecordAndImport($row)
     {
         $row['dob'] = $row['dob']
-            ? Carbon::parse($row['dob'])->format('Y-m-d')
+            ? Carbon::parse($row['dob'])->toDateString()
             : null;
         $row['practice_id'] = $this->practice->id;
         $row['location_id'] = $this->practice->primary_location_id;
