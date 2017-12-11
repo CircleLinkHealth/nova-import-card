@@ -63,7 +63,7 @@ class Service
                  * ]);
                  *
                  * if (! $targetPatient->status)
-                 * $targetPatient->status = 'ready_to_process'; $targetPAtient->save();
+                 * $targetPatient->status = 'ready_to_process'; $targetPatient->save();
                  *
                  */
 
@@ -72,11 +72,11 @@ class Service
                 /**
                  * model name: TargetPatient
                  * table name:target_patients
-                 *    ->hasMany(App\CCD\Problem::class)
-                 *    ->hasMany(CcdInsurancePolicy::class)
+                 *    ->belongsTo(App\User::class)
                  *
                  * id => auto_increment
                  * ehr_id => FK ehrs_id
+                 * user_id => FK users_id, nullable
                  * status => ['ready_to_process', 'eligible', 'ineligible'] enum
                  * ehr_patient_id => 31224
                  * practice_id => 195900
