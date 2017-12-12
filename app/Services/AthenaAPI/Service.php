@@ -13,6 +13,7 @@ use App\Contracts\Repositories\CcdaRepository;
 use App\Contracts\Repositories\CcdaRequestRepository;
 use App\Models\CCD\CcdVendor;
 use App\Models\MedicalRecords\Ccda;
+use App\TargetPatient;
 use Carbon\Carbon;
 use Maknz\Slack\Facades\Slack;
 
@@ -54,18 +55,8 @@ class Service
                 $ehrPatientId = $bookedAppointment['patientid'];
                 $departmentId = $bookedAppointment['departmentid'];
 
-                /**
-                 * $targetPatient = TargetPatient::updateOrCreate([
-                 * 'ehr_id' => $ehrPatientId,
-                 * 'ehr_patient_id' => $departmentId,
-                 * 'practice_id' => $practiceId,
-                 * 'department_id' => $department['departmentid']
-                 * ]);
-                 *
-                 * if (! $targetPatient->status)
-                 * $targetPatient->status = 'ready_to_process'; $targetPatient->save();
-                 *
-                 */
+//                //Creates the TargetPatient or updates its status if null
+//                TargetPatient::updateOrCreate($ehrPatientId, $departmentId, $practiceId);
 
             }
 
