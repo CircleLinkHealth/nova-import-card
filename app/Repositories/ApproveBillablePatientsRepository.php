@@ -31,7 +31,9 @@ class ApproveBillablePatientsRepository
             'cpmProblems',
             'patientInfo',
             'primaryPractice',
-            'billingProvider',
+            'careTeamMembers' => function($q) {
+                $q->where('type', '=', 'billing_provider');
+            },
         ])
                    ->has('patientInfo')
                    ->whereHas('patientSummaries', function ($query) use ($month) {

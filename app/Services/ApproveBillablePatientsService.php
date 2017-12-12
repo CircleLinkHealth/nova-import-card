@@ -98,9 +98,11 @@ class ApproveBillablePatientsService
 
                                              $summary->save();
 
+                                             $bP = $u->careTeamMembers->where('type', '=', 'billing_provider')->first();
+
                                              return [
                                                  'name'                   => $u->fullName,
-                                                 'provider'               => $u->billingProvider ? $u->billingProvider->fullName : '',
+                                                 'provider'               => $bP ? $bP->user->fullName : '',
                                                  'practice'               => $u->primaryPractice->display_name,
                                                  'dob'                    => $u->patientInfo->birth_date,
                                                  'ccm'                    => round($summary->ccm_time / 60, 2),

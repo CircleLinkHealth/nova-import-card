@@ -2521,8 +2521,6 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
     public function billableProblems()
     {
         return $this->ccdProblems()
-                    ->whereNotNull('cpm_problem_id')
-                    //filter out unspecified diabetes
                     ->where('cpm_problem_id', '!=', 1)
                     ->with('icd10Codes')
                     ->where('billable', true);
@@ -2535,6 +2533,6 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
      */
     public function billingProvider()
     {
-        return $this->careTeamMembers()->where('type', '=', 'billing_provider');
+        return $this->careTeamMembers->where('type', '=', 'billing_provider');
     }
 }
