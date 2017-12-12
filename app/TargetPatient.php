@@ -12,4 +12,10 @@ class TargetPatient extends Model
     }
 
 
+    public function updateOrCreate()
+    {
+        //
+    }
+
+
 }

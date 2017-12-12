@@ -16,12 +16,22 @@ class CreateTargetPatientsTable extends Migration
         Schema::create('target_patients', function (Blueprint $table) {
             $table->increments('id');
             $table->unsignedInteger('ehr_id');
-            $table->unsignedInteger('user_id');
+            $table->unsignedInteger('user_id')->nullable();
             $table->unsignedInteger('ehr_patient_id');
             $table->unsignedInteger('practice_id');
             $table->unsignedInteger('department_id');
             $table->enum('status', []);
             $table->timestamps();
+
+            $table->foreign('user_id')
+                ->references('id')->on('users')
+                ->onDelete('cascade')
+                ->onUpdate('cascade');
+
+            $table->foreign('ehr_id')
+                ->references('id')->on('ehrs')
+                ->onDelete('cascade')
+                ->onUpdate('cascade');
         });
     }
 
