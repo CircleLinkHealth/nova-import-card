@@ -10,6 +10,7 @@
               </div>
               <div class="col-sm-12">
                 <select class="form-control" v-model="props.info.id" @change="props.info.changeProblemName">
+                  <option value="New">New</option>
                   <option v-for="(problem, index) in props.info.problems" :key="index" :value="problem.id">{{problem.name}}</option>
                   <option value="Other">Other</option>
                 </select>
@@ -74,6 +75,10 @@
                     changeProblemName(e) {
                       const problem = (this.problems.find(problem => problem.id === this.id) || {})
                       Object.assign(this, problem)
+                      if (this.id === 'New' || this.id === 'Other') {
+                        this.code = ''
+                        this.name = ''
+                      }
                       self.$forceUpdate()
                     },
                     changeCpmProblemName(e) {
