@@ -20,8 +20,7 @@ class ApproveBillablePatientsRepository
 
         $result = User::with([
             'ccdProblems'      => function ($query) {
-                $query->where('cpm_problem_id', '!=', 1)
-                      ->with(['icd10Codes', 'cpmProblem']);
+                $query->with(['icd10Codes', 'cpmProblem']);
             },
             'patientSummaries' => function ($query) use ($month) {
                 $query->where('month_year', $month)

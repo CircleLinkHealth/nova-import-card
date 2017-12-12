@@ -171,7 +171,7 @@ class PracticeInvoiceController extends Controller
 
             $problemId = $request['id'];
 
-            if ($problemId == 'Other') {
+            if (in_array(strtolower($problemId), ['other', 'new'])) {
                 $problemId = $this->service->storeCcdProblem($summary->patient, [
                     'name'             => $request['name'],
                     'cpm_problem_id'   => $request['cpm_problem_id'],

@@ -14,12 +14,12 @@ class NormalizePHXDates extends Migration
      */
     public function up()
     {
-        PhoenixHeartName::chunk(500, function ($rows) {
-            foreach ($rows as $row) {
-                $row->dob = Carbon::parse($row->dob)->toDateString();
-                $row->save();
-            }
-        });
+//        PhoenixHeartName::chunk(500, function ($rows) {
+//            foreach ($rows as $row) {
+//                $row->dob = Carbon::parse($row->dob)->toDateString();
+//                $row->save();
+//            }
+//        });
     }
 
     /**
