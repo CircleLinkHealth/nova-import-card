@@ -129,7 +129,7 @@ class ApproveBillablePatientsService
     public function fillSummaryProblems(User $patient, PatientMonthlySummary $summary)
     {
         if ($this->lacksProblems($summary)) {
-            $this->fillProblems($patient, $summary, $this->getBillableProblems($patient));
+            $this->fillProblems($patient, $summary, $patient->billableProblems);
         }
 
         if ($this->lacksProblems($summary)) {
@@ -145,6 +145,11 @@ class ApproveBillablePatientsService
 
             $this->fillProblems($patient, $summary, $newProblems);
         }
+
+        if ( ! $this->validateProblems($summary, $patient)) {
+            $patient->load(['billableProblems', 'ccdProblems']);
+            $this->fillSummaryProblems($patient, $summary);
+        }
     }
 
     /**
@@ -159,18 +164,20 @@ class ApproveBillablePatientsService
      */
     private function fillProblems(User $patient, PatientMonthlySummary $summary, $billableProblems)
     {
-        if ($billableProblems->isEmpty()) {
-            return false;
-        }
+        $billableProblems = $billableProblems
+            ->where('cpm_problem_id', '>', 1)
+            ->reject(function ($problem) {
+                return stripos($problem->name, 'screening') !== false;
+            })
+            ->unique('cpm_problem_id')
+            ->values();
 
         for ($i = 1; $i <= 2; $i++) {
-            $billableProblems = $billableProblems
-                ->where('cpm_problem_id', '!=', null)
-                ->values();
-
             if ($billableProblems->isEmpty()) {
                 continue;
             }
+
+            $billableProblems = $billableProblems->values();
 
             $currentProblem = $summary->{"problem_$i"};
 
@@ -194,10 +201,132 @@ class ApproveBillablePatientsService
 
         if ($summary->problem_1 == $summary->problem_2) {
             $summary->problem_2 = null;
-            $this->fillProblems($patient, $summary, $billableProblems);
+            if ($patient->cpmProblems->where('id', '>', 1)->count() >= 2) {
+                $this->fillProblems($patient, $summary, $billableProblems);
+            }
         }
 
         $summary->save();
+    }
+
+    public function buildCcdProblemsFromCpmProblems(User $patient)
+    {
+        $newProblems = [];
+        $ccdProblems = $patient->ccdProblems;
+
+        $updated  = null;
+        $toUpdate = $patient->ccdProblems->where('cpm_problem_id', '>', 1)
+                                         ->where('billable', null)
+                                         ->reject(function ($problem) {
+                                             return stripos($problem['name'], 'screening') !== false;
+                                         })
+                                         ->unique('cpm_problem_id')
+                                         ->values()
+                                         ->take(2);
+
+        if ($toUpdate->isNotEmpty()) {
+            $updated = Problem::whereIn('id', $toUpdate->pluck('id')->all())->update([
+                'billable' => true,
+            ]);
+        }
+
+        if ($updated) {
+            return $toUpdate;
+        }
+
+        $newProblems = $patient->cpmProblems->reject(function ($problem) use ($ccdProblems, $patient) {
+            if ($ccdProblems->where('cpm_problem_id', $problem->id)->count() == 0) {
+                return false;
+            }
+
+            return true;
+        })
+                                            ->filter()
+                                            ->values()
+                                            ->take(2)
+                                            ->map(function ($problem) use ($ccdProblems, $patient) {
+                                                return $this->storeCcdProblem($patient, [
+                                                    'name'             => $problem->name,
+                                                    'cpm_problem_id'   => $problem->id,
+                                                    'code_system_name' => 'ICD-10',
+                                                    'code_system_oid'  => '2.16.840.1.113883.6.3',
+                                                    'code'             => $problem->default_icd_10_code,
+                                                    'billable'         => true,
+                                                ]);
+                                            });
+
+        return collect($newProblems);
+    }
+
+    public function storeCcdProblem(User $patient, array $arguments)
+    {
+        if ($arguments['cpm_problem_id'] == 1) {
+            return false;
+        }
+
+        return $this->patientRepo->storeCcdProblem($patient, $arguments);
+    }
+
+    public function validateProblems(PatientMonthlySummary &$summary, User &$user)
+    {
+        if ($this->lacksProblems($summary)) {
+            return true;
+        }
+
+        $validate = (collect([$summary->problem_1, $summary->problem_2]))
+            ->map(function ($problemId, $i) use ($user) {
+                $problem = $user->ccdProblems
+                    ->where('cpm_problem_id', '>', 1)
+                    ->where('id', '=', $problemId)
+                    ->first();
+
+                if ( ! $problem) {
+                    return false;
+                }
+
+                if ( ! $problem->icd10Code() || stripos($problem->name, 'screening') !== false) {
+                    return false;
+                }
+
+                return $problem;
+            });
+
+        if ($validate->get(0) && $validate->get(1)) {
+            if (
+                ($validate->get(0)->icd10Code() == $validate->get(1)->icd10Code())
+                || $validate->get(0)->cpm_problem_id == $validate->get(1)->cpm_problem_id
+            ) {
+                if ($user->cpmProblems->where('id', '>', 1)->count() < 2) {
+                    return true;
+                }
+                $validate[1] = false;
+            }
+        }
+
+        foreach ($validate->all() as $index => $isValid) {
+            $problemNo = $index + 1;
+
+            if ( ! $isValid) {
+                Problem::where('id', $summary->{"problem_$problemNo"})
+                       ->update([
+                           'billable' => false,
+                       ]);
+                $summary->{"problem_$problemNo"} = null;
+            }
+        }
+
+        return ! $this->lacksProblems($summary);
+    }
+
+    public function ccdProblems(User $patient)
+    {
+        return $patient->ccdProblems->map(function ($prob) {
+            return [
+                'id'   => $prob->id,
+                'name' => $prob->name,
+                'code' => $prob->icd10Code(),
+            ];
+        });
     }
 
     /**
@@ -217,42 +346,5 @@ class ApproveBillablePatientsService
                     'code' => $p->icd10Code(),
                 ];
             });
-    }
-
-    public function buildCcdProblemsFromCpmProblems(User $patient)
-    {
-        $newProblems = [];
-        $ccdProblems = $patient->ccdProblems;
-
-        $patient->cpmProblems->map(function ($problem) use ($ccdProblems, $patient, &$newProblems) {
-            if ($ccdProblems->where('cpm_problem_id', $problem->id)->count() == 0) {
-                $newProblems[] = $this->storeCcdProblem($patient, [
-                    'name'             => $problem->name,
-                    'cpm_problem_id'   => $problem->id,
-                    'code_system_name' => 'ICD-10',
-                    'code_system_oid'  => '2.16.840.1.113883.6.3',
-                    'code'             => $problem->default_icd_10_code,
-                    'billable'         => true,
-                ]);
-            }
-        });
-
-        return collect($newProblems);
-    }
-
-    public function storeCcdProblem(User $patient, array $arguments)
-    {
-        return $this->patientRepo->storeCcdProblem($patient, $arguments);
-    }
-
-    public function ccdProblems(User $patient)
-    {
-        return $patient->ccdProblems->map(function ($prob) {
-            return [
-                'id'   => $prob->id,
-                'name' => $prob->name,
-                'code' => $prob->icd10Code(),
-            ];
-        });
     }
 }
