@@ -66,6 +66,10 @@ class Problems extends BaseImporter
         $problemsToActivate = [];
 
         foreach ($problemImports as $importedProblem) {
+            if (str_contains(strtolower($importedProblem->name), ['screening', 'history'])) {
+                continue;
+            }
+
             $map = $importedProblem->ccdLog
                 ->first()
                 ->codeMap();
