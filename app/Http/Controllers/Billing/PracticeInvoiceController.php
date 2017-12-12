@@ -195,6 +195,7 @@ class PracticeInvoiceController extends Controller
                 Problem::where('id', $problemId)
                        ->update([
                            'billable' => true,
+                           'name'     => $request['name'],
                        ]);
 
                 $updated = ProblemCode::where('problem_id', $problemId)
