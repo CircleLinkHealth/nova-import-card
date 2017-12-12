@@ -44,6 +44,7 @@
 <script>
     import { rootUrl } from '../../app.config'
     import TextEditable from '../../admin/calls/comps/text-editable'
+    import EventBus from '../../admin/time-tracker/comps/event-bus'
 
     export default {
         name: 'ccd-viewer',
@@ -67,32 +68,33 @@
             }
         },
         methods: {
+            setupRecord(record) {
+                if (record.demographics) {
+                    record.demographics.display_name = record.demographics.first_name + ' ' + record.demographics.last_name
+                }
+                return {
+                    id: record.id,
+                    selected: false,
+                    Name: record.demographics.display_name,
+                    DOB: record.demographics.dob,
+                    Practice: record.practice || 'No Practice',
+                    Location: record.location || 'No Location',
+                    'Billing Provider': record.billing_provider || 'No Billing Provider',
+                    '2+ Cond': false,
+                    Medicare: false,
+                    'Supplemental Ins': false,
+                    errors: {
+                        delete: null
+                    },
+                    loaders: {
+                        delete: false
+                    }
+                }
+            },
             getRecords() {
                 this.axios.get(this.url).then((response) => {
                     const records = response.data || []
-                    this.tableData = records.map(record => {
-                        if (record.demographics) {
-                            record.demographics.display_name = record.demographics.first_name + ' ' + record.demographics.last_name
-                        }
-                        return {
-                            id: record.id,
-                            selected: false,
-                            Name: record.demographics.display_name,
-                            DOB: record.demographics.dob,
-                            Practice: record.practice || 'No Practice',
-                            Location: record.location || 'No Location',
-                            'Billing Provider': record.billing_provider || 'No Billing Provider',
-                            '2+ Cond': false,
-                            Medicare: false,
-                            'Supplemental Ins': false,
-                            errors: {
-                                delete: null
-                            },
-                            loaders: {
-                                delete: false
-                            }
-                        }
-                    })
+                    this.tableData = records.map(this.setupRecord)
                 }).catch(err => {
                     console.error(err)
                 })
@@ -152,6 +154,12 @@
         },
         mounted() {
             this.getRecords()
+
+            EventBus.$on('vdropzone:success', (records) => {
+                this.tableData = records.map(this.setupRecord)
+
+                EventBus.$emit('vdropzone:remove-all-files')
+            })
         }
     }
 </script>
