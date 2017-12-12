@@ -26,7 +26,7 @@
                 </select>
               </div>
             </div>
-            <div class="row form-group" v-if="props.info.cpm_id">
+            <div class="row form-group">
               <div class="col-sm-12">
                 Problem Name
               </div>
