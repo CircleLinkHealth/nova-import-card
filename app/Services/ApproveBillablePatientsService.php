@@ -100,8 +100,13 @@ class ApproveBillablePatientsService
 
                                              $bP = $u->careTeamMembers->where('type', '=', 'billing_provider')->first();
 
-                                             return [
-                                                 'name'                   => $u->fullName,
+                                             $name = "<a href = " . route('patient.careplan.show', [
+                                                     'patient' => $u->id,
+                                                     'page'    => 1,
+                                                 ]) . "  target='_blank' >" . $u->fullName . "</a>";
+
+                                             $result = [
+                                                 'name'                   => $name,
                                                  'provider'               => $bP ? $bP->user->fullName : '',
                                                  'practice'               => $u->primaryPractice->display_name,
                                                  'dob'                    => $u->patientInfo->birth_date,
@@ -120,13 +125,15 @@ class ApproveBillablePatientsService
                                                  'lacksProblems'          => $lacksProblems,
 
                                              ];
+
+                                             return $result;
                                          });
     }
 
     public function fillSummaryProblems(User $patient, PatientMonthlySummary $summary)
     {
         if ($this->lacksProblems($summary)) {
-            $this->fillProblems($patient, $summary, $patient->billableProblems);
+            $this->fillProblems($patient, $summary, $this->validCcdProblems($patient)->where('billable', true));
         }
 
         if ($this->lacksProblems($summary)) {
@@ -180,10 +187,6 @@ class ApproveBillablePatientsService
 
             if ( ! $currentProblem) {
                 $summary->{"problem_$i"} = $billableProblems[0]['id'];
-                Problem::where('id', $summary->{"problem_$i"})
-                       ->update([
-                           'billable' => true,
-                       ]);
                 $billableProblems->forget(0);
             } else {
                 $forgetIndex = $billableProblems->search(function ($item) use ($currentProblem) {
@@ -202,6 +205,11 @@ class ApproveBillablePatientsService
                 $this->fillProblems($patient, $summary, $billableProblems);
             }
         }
+
+        Problem::whereIn('id', array_filter([$summary->problem_1,$summary->problem_2]))
+               ->update([
+                   'billable' => true,
+               ]);
 
         $summary->save();
     }
