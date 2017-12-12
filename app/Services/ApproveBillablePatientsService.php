@@ -7,7 +7,6 @@ use App\Repositories\PatientRepository;
 use App\User;
 use Carbon\Carbon;
 use Illuminate\Support\Collection;
-use Illuminate\Support\Facades\URL;
 
 class ApproveBillablePatientsService
 {
@@ -58,7 +57,6 @@ class ApproveBillablePatientsService
         return $this->approvePatientsRepo->billablePatients($practiceId, $month)
                                          ->get()
                                          ->map(function ($u) {
-                                             $info    = $u->patientInfo;
                                              $summary = $u->patientSummaries->first();
 
                                              $this->fillSummaryProblems($u, $summary);
@@ -85,8 +83,10 @@ class ApproveBillablePatientsService
                                                  : null;
                                              $problem2Name = $problem2->name ?? null;
 
-                                             $toQA = ( ! $approved && ! $rejected) || ! $problem1Code || ! $problem2Code || ! $problem1Name || ! $problem2Name || $summary->no_of_successful_calls == 0 || in_array($info->ccm_status,
-                                                     ['withdrawn', 'paused']);
+                                             $toQA = ( ! $approved && ! $rejected)
+                                                     || ! $problem1Code || ! $problem2Code || ! $problem1Name || ! $problem2Name
+                                                     || $summary->no_of_successful_calls == 0
+                                                     || in_array($u->patientInfo->ccm_status, ['withdrawn', 'paused']);
 
                                              if (($rejected || $approved) && $summary->actor_id) {
                                                  $toQA = false;
@@ -98,16 +98,11 @@ class ApproveBillablePatientsService
 
                                              $summary->save();
 
-                                             $name = "<a href = " . URL::route('patient.careplan.show', [
-                                                     'patient' => $u->id,
-                                                     'page'    => 1,
-                                                 ]) . "  target='_blank' >" . $u->fullName . "</a>";
-
                                              return [
-                                                 'name'                   => $name,
+                                                 'name'                   => $u->fullName,
                                                  'provider'               => $u->billingProvider()->fullName,
                                                  'practice'               => $u->primaryPractice->display_name,
-                                                 'dob'                    => $info->birth_date,
+                                                 'dob'                    => $u->patientInfo->birth_date,
                                                  'ccm'                    => round($summary->ccm_time / 60, 2),
                                                  'problem1'               => $problem1Name,
                                                  'problem1_code'          => $problem1Code,
@@ -115,7 +110,7 @@ class ApproveBillablePatientsService
                                                  'problem2_code'          => $problem2Code,
                                                  'problems'               => $this->ccdProblems($u),
                                                  'no_of_successful_calls' => $summary->no_of_successful_calls,
-                                                 'status'                 => $info->ccm_status,
+                                                 'status'                 => $u->patientInfo->ccm_status,
                                                  'approve'                => $approved,
                                                  'reject'                 => $rejected,
                                                  'report_id'              => $summary->id,
@@ -167,7 +162,7 @@ class ApproveBillablePatientsService
         $billableProblems = $billableProblems
             ->where('cpm_problem_id', '>', 1)
             ->reject(function ($problem) {
-                return !validProblemName($problem->name);
+                return ! validProblemName($problem->name);
             })
             ->unique('cpm_problem_id')
             ->values();
@@ -218,7 +213,7 @@ class ApproveBillablePatientsService
         $toUpdate = $patient->ccdProblems->where('cpm_problem_id', '>', 1)
                                          ->where('billable', null)
                                          ->reject(function ($problem) {
-                                             return !validProblemName($problem->name);
+                                             return ! validProblemName($problem->name);
                                          })
                                          ->unique('cpm_problem_id')
                                          ->values()
@@ -284,7 +279,7 @@ class ApproveBillablePatientsService
                     return false;
                 }
 
-                if ( ! $problem->icd10Code() || !validProblemName($problem->name)) {
+                if ( ! $problem->icd10Code() || ! validProblemName($problem->name)) {
                     return false;
                 }
 
