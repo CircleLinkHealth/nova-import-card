@@ -728,6 +728,6 @@ if (!function_exists('validProblemName')) {
      */
     function validProblemName($name)
     {
-        return !str_contains(strtolower($name), ['screening', 'history']);
+        return !str_contains(strtolower($name), ['screening', 'history', 'scan']);
     }
 }
