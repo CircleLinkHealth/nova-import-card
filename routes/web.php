@@ -158,6 +158,8 @@ Route::group(['middleware' => 'auth'], function () {
                 'uses' => 'MedicalRecordImportController@import',
                 'as'   => 'imported.records.confirm'
             ]);
+            
+            Route::get('records/delete', 'MedicalRecordImportController@deleteRecords');
         });
         
         
@@ -285,8 +287,6 @@ Route::group(['middleware' => 'auth'], function () {
             'uses' => 'ImporterController@index',
             'as'   => 'view.files.ready.to.import',
         ]);
-        
-        Route::get('records/delete', 'MedicalRecordImportController@deleteRecords');
 
         Route::get('uploaded-ccd-items/{importedMedicalRecordId}/edit', 'ImportedMedicalRecordController@edit');
 

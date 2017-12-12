@@ -84,7 +84,13 @@
                             'Billing Provider': record.billing_provider || 'No Billing Provider',
                             '2+ Cond': false,
                             Medicare: false,
-                            'Supplemental Ins': false
+                            'Supplemental Ins': false,
+                            errors: {
+                                delete: null
+                            },
+                            loaders: {
+                                delete: false
+                            }
                         }
                     })
                 }).catch(err => {
@@ -97,14 +103,38 @@
                     row.selected = e.target.checked
                 }
             },
-            deleteOne(id) {
-                if (confirm('Are you sure you want to delete this record?')) {
-
+            deleteOne(id, force) {
+                if (force || confirm('Are you sure you want to delete this record?')) {
+                    const record = this.tableData.find(item => item.id === id)
+                    record.loaders.delete = true
+                    return this.axios.get(rootUrl('api/ccd-importer/records/delete?records=' + id)).then((response) => {
+                        record.loaders.delete = false
+                        if (Array.isArray(response.data.deleted)) {
+                            if (response.data.deleted.some(item => item == id)) {
+                                this.tableData.splice(this.tableData.findIndex(item => item.id === id), 1)
+                            }
+                            else {
+                                record.errors.delete = 'not found'
+                            }
+                        }
+                        else {
+                            record.errors.delete = 'unknown response'
+                        }
+                        console.log('ccd-viewer:delete-one', id, response.data)
+                    }).catch((err) => {
+                        record.errors.delete = err
+                        record.loaders.delete = false
+                        console.error('ccd-viewer:delete-one', err)
+                    })
                 }
             }, 
             deleteMultiple() {
                 if (confirm('Multiple: Are you sure you want to delete these records?')) {
-                    
+                    return Promise.all(this.tableData.filter(record => record.selected).map(record => this.deleteOne(record.id, true))).then(responses => {
+                        console.log('ccd-viewer:delete-multiple', responses)
+                    }).catch(errors => {
+                        console.error('ccd-viewer:delete-multiple', errors)
+                    })
                 }
             },
             submitMultiple() {
