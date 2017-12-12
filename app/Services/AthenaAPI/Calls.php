@@ -127,6 +127,24 @@ class Calls
     }
 
     /**
+     * Get insurances for a patient
+     *
+     * @param $patientId
+     * @param $practiceId
+     * @param $departmentId
+     *
+     *
+     * @return mixed
+     */
+    public function getPatientInsurances($patientId, $practiceId, $departmentId) {
+        $response = $this->api->GET("$practiceId/patients/$patientId/insurances", [
+            'departmentid' => $departmentId,
+        ]);
+
+        return $this->response($response);
+    }
+
+    /**
      * Get available practices. Passing in practiceId of 1 will return all practices we have access to.
      *
      * @param $practiceId

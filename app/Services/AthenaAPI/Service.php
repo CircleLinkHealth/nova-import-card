@@ -13,6 +13,7 @@ use App\Contracts\Repositories\CcdaRepository;
 use App\Contracts\Repositories\CcdaRequestRepository;
 use App\Models\CCD\CcdVendor;
 use App\Models\MedicalRecords\Ccda;
+use App\TargetPatient;
 use Carbon\Carbon;
 use Maknz\Slack\Facades\Slack;
 
@@ -54,37 +55,9 @@ class Service
                 $ehrPatientId = $bookedAppointment['patientid'];
                 $departmentId = $bookedAppointment['departmentid'];
 
-                /**
-                 * $targetPatient = TargetPatient::updateOrCreate([
-                 * 'ehr_id' => $ehrPatientId,
-                 * 'ehr_patient_id' => $departmentId,
-                 * 'practice_id' => $practiceId,
-                 * 'department_id' => $department['departmentid']
-                 * ]);
-                 *
-                 * if (! $targetPatient->status)
-                 * $targetPatient->status = 'ready_to_process'; $targetPatient->save();
-                 *
-                 */
+//                //Creates the TargetPatient or updates its status if null
+//                TargetPatient::updateOrCreate($ehrPatientId, $departmentId, $practiceId);
 
-                //@todo: create TargetPatient
-
-                /**
-                 * model name: TargetPatient
-                 * table name:target_patients
-                 *    ->belongsTo(App\User::class)
-                 *
-                 * id => auto_increment
-                 * ehr_id => FK ehrs_id
-                 * user_id => FK users_id, nullable
-                 * status => ['ready_to_process', 'eligible', 'ineligible'] enum
-                 * ehr_patient_id => 31224
-                 * practice_id => 195900
-                 * department_id => 1
-                 *
-                 * {"lastupdated":"12\/11\/2017","totalcount":1,"problems":[{"problemid":"64734","events":[{"source":"HISTORY","status":"CHRONIC","eventtype":"START","startdate":"10\/10\/1980","onsetdate":"10\/10\/1980"}],"codeset":"SNOMED","name":"Carpal tunnel syndrome","bestmatchicd10code":"G56.00","code":"57406009"}]}
-                 *
-                 */
             }
 
         }

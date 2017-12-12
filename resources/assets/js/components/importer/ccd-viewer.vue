@@ -44,6 +44,7 @@
 <script>
     import { rootUrl } from '../../app.config'
     import TextEditable from '../../admin/calls/comps/text-editable'
+    import EventBus from '../../admin/time-tracker/comps/event-bus'
 
     export default {
         name: 'ccd-viewer',
@@ -67,26 +68,33 @@
             }
         },
         methods: {
+            setupRecord(record) {
+                if (record.demographics) {
+                    record.demographics.display_name = record.demographics.first_name + ' ' + record.demographics.last_name
+                }
+                return {
+                    id: record.id,
+                    selected: false,
+                    Name: record.demographics.display_name,
+                    DOB: record.demographics.dob,
+                    Practice: record.practice || 'No Practice',
+                    Location: record.location || 'No Location',
+                    'Billing Provider': record.billing_provider || 'No Billing Provider',
+                    '2+ Cond': false,
+                    Medicare: false,
+                    'Supplemental Ins': false,
+                    errors: {
+                        delete: null
+                    },
+                    loaders: {
+                        delete: false
+                    }
+                }
+            },
             getRecords() {
                 this.axios.get(this.url).then((response) => {
                     const records = response.data || []
-                    this.tableData = records.map(record => {
-                        if (record.demographics) {
-                            record.demographics.display_name = record.demographics.first_name + ' ' + record.demographics.last_name
-                        }
-                        return {
-                            id: record.id,
-                            selected: false,
-                            Name: record.demographics.display_name,
-                            DOB: record.demographics.dob,
-                            Practice: record.practice || 'No Practice',
-                            Location: record.location || 'No Location',
-                            'Billing Provider': record.billing_provider || 'No Billing Provider',
-                            '2+ Cond': false,
-                            Medicare: false,
-                            'Supplemental Ins': false
-                        }
-                    })
+                    this.tableData = records.map(this.setupRecord)
                 }).catch(err => {
                     console.error(err)
                 })
@@ -97,14 +105,38 @@
                     row.selected = e.target.checked
                 }
             },
-            deleteOne(id) {
-                if (confirm('Are you sure you want to delete this record?')) {
-
+            deleteOne(id, force) {
+                if (force || confirm('Are you sure you want to delete this record?')) {
+                    const record = this.tableData.find(item => item.id === id)
+                    record.loaders.delete = true
+                    return this.axios.get(rootUrl('api/ccd-importer/records/delete?records=' + id)).then((response) => {
+                        record.loaders.delete = false
+                        if (Array.isArray(response.data.deleted)) {
+                            if (response.data.deleted.some(item => item == id)) {
+                                this.tableData.splice(this.tableData.findIndex(item => item.id === id), 1)
+                            }
+                            else {
+                                record.errors.delete = 'not found'
+                            }
+                        }
+                        else {
+                            record.errors.delete = 'unknown response'
+                        }
+                        console.log('ccd-viewer:delete-one', id, response.data)
+                    }).catch((err) => {
+                        record.errors.delete = err
+                        record.loaders.delete = false
+                        console.error('ccd-viewer:delete-one', err)
+                    })
                 }
             }, 
             deleteMultiple() {
                 if (confirm('Multiple: Are you sure you want to delete these records?')) {
-                    
+                    return Promise.all(this.tableData.filter(record => record.selected).map(record => this.deleteOne(record.id, true))).then(responses => {
+                        console.log('ccd-viewer:delete-multiple', responses)
+                    }).catch(errors => {
+                        console.error('ccd-viewer:delete-multiple', errors)
+                    })
                 }
             },
             submitMultiple() {
@@ -122,6 +154,12 @@
         },
         mounted() {
             this.getRecords()
+
+            EventBus.$on('vdropzone:success', (records) => {
+                this.tableData = records.map(this.setupRecord)
+
+                EventBus.$emit('vdropzone:remove-all-files')
+            })
         }
     }
 </script>

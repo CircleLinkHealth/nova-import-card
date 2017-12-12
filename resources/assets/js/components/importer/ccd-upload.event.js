@@ -1,6 +1,10 @@
+import EventBus from '../../admin/time-tracker/comps/event-bus'
+
 export default (App, VueDropZone) => {
     VueDropZone.$on('vdropzone-success', (file, response) => {
         console.log("vdropzone-success", file, response)
+
+        EventBus.$emit('vdropzone:success', response)
     })
 
     VueDropZone.$on('vdropzone-error', (file, data, xhr) => {
@@ -13,4 +17,6 @@ export default (App, VueDropZone) => {
             messageElem.innerText = (data || {}).message
         }
     })
+
+    EventBus.$on('vdropzone:remove-all-files', () => VueDropZone.removeAllFiles())
 }
