@@ -97,8 +97,8 @@ class Connection
 
         $authorization = $this->call('POST', $url, $parameters, $headers);
 
-        if (!isset($authorization['access_token'])) {
-            \Log::alert($authorization);
+        if (!$authorization['access_token']) {
+            return false;
         }
 
         $this->token = $authorization['access_token'];
