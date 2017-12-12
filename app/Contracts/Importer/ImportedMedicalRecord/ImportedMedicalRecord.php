@@ -42,7 +42,10 @@ interface ImportedMedicalRecord
      */
     public function problems();
 
-    public function medicalRecord() : MedicalRecord;
+    /**
+     * @return MedicalRecord|null
+     */
+    public function medicalRecord();
 
     public function getPractice() : Practice;
 

@@ -103,9 +103,12 @@ class ImportedMedicalRecord extends \App\BaseModel implements ImportedMedicalRec
         return $this->hasMany(ProblemImport::class);
     }
 
-    public function medicalRecord() : MedicalRecord
+    /**
+     * @return MedicalRecord|null
+     */
+    public function medicalRecord()
     {
-        return app($this->medical_record_type)->find($this->medical_record_id);
+        return (app($this->medical_record_type))->find($this->medical_record_id);
     }
 
     public function getPractice() : Practice
