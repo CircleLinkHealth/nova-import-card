@@ -717,3 +717,17 @@ if (!function_exists('getProblemCodeSystemCPMId')) {
         return null;
     }
 }
+
+if (!function_exists('validProblemName')) {
+    /**
+     * Is the problem name valid
+     *
+     * @param $name
+     *
+     * @return boolean
+     */
+    function validProblemName($name)
+    {
+        return !str_contains(strtolower($name), ['screening', 'history']);
+    }
+}

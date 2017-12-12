@@ -167,7 +167,7 @@ class ApproveBillablePatientsService
         $billableProblems = $billableProblems
             ->where('cpm_problem_id', '>', 1)
             ->reject(function ($problem) {
-                return stripos($problem->name, 'screening') !== false;
+                return !validProblemName($problem->name);
             })
             ->unique('cpm_problem_id')
             ->values();
@@ -218,7 +218,7 @@ class ApproveBillablePatientsService
         $toUpdate = $patient->ccdProblems->where('cpm_problem_id', '>', 1)
                                          ->where('billable', null)
                                          ->reject(function ($problem) {
-                                             return stripos($problem['name'], 'screening') !== false;
+                                             return !validProblemName($problem->name);
                                          })
                                          ->unique('cpm_problem_id')
                                          ->values()
@@ -284,7 +284,7 @@ class ApproveBillablePatientsService
                     return false;
                 }
 
-                if ( ! $problem->icd10Code() || stripos($problem->name, 'screening') !== false) {
+                if ( ! $problem->icd10Code() || !validProblemName($problem->name)) {
                     return false;
                 }
 
