@@ -86,6 +86,25 @@ class CcdToLogTranformer
     }
 
     /**
+     * @see InsuranceLog
+     *
+     * @param $payer
+     *
+     * @return array
+     */
+    public function insurance($payer)
+    {
+        return [
+            'name'       => $payer->insurance,
+            'type'       => $payer->policy_type,
+            'policy_id'  => $payer->policy_id,
+            'relation'   => $payer->relation,
+            'subscriber' => $payer->subscriber,
+        ];
+    }
+
+
+    /**
      * @see @see App\Importer\Models\ItemLogs\MedicationLog
      *
      * @param $medication
@@ -132,26 +151,26 @@ class CcdToLogTranformer
         ];
     }
 
-    public function problemCodes($ccdProblem, $problemLog)
+    public function problemCodes($ccdProblem)
     {
         $codes = [];
 
         if (!$ccdProblem->code_system_name) {
-            $ccdProblem->code_system_name = getProblemCodeSystemName($ccdProblem);
+            $ccdProblem->code_system_name = getProblemCodeSystemName([$ccdProblem->code_system]);
         }
 
         if ($ccdProblem->code_system_name) {
             $codes[] = [
-                'ccd_problem_log_id' => $problemLog->id,
                 'code_system_name'   => $ccdProblem->code_system_name,
                 'code_system_oid'    => $ccdProblem->code_system,
                 'code'               => $ccdProblem->code,
+                'name'               => $ccdProblem->name,
             ];
         }
 
         foreach ($ccdProblem->translations as $translation) {
             if (!$translation->code_system_name) {
-                $translation->code_system_name = getProblemCodeSystemName($translation);
+                $translation->code_system_name = getProblemCodeSystemName([$translation->code_system]);
 
                 if (!$translation->code_system_name) {
                     continue;
@@ -159,10 +178,10 @@ class CcdToLogTranformer
             }
 
             $codes[] = [
-                'ccd_problem_log_id' => $problemLog->id,
                 'code_system_name'   => $translation->code_system_name,
                 'code_system_oid'    => $translation->code_system,
                 'code'               => $translation->code,
+                'name'               => $translation->name,
             ];
         }
 

@@ -28,7 +28,7 @@ class CcdaSectionsLogger implements MedicalRecordLogger
 
     public function __construct(Ccda $ccd)
     {
-        $this->ccd = json_decode((new CCDImporterRepository())->toJson($ccd->xml));
+        $this->ccd = $ccd->bluebuttonJson();
 
         $this->ccdaId = $ccd->id;
         $this->vendorId = $ccd->vendor_id;
@@ -113,9 +113,11 @@ class CcdaSectionsLogger implements MedicalRecordLogger
                 array_merge($this->transformer->problem($prob), $this->foreignKeys)
             );
 
-            $codes = $this->transformer->problemCodes($prob, $problemLog);
+            $codes = $this->transformer->problemCodes($prob);
 
             foreach ($codes as $code) {
+                $code['ccd_problem_log_id'] = $problemLog->id;
+
                 if (!$code['code']) {
                     continue;
                 }
@@ -145,6 +147,8 @@ class CcdaSectionsLogger implements MedicalRecordLogger
             $data = $this->transformer->provider($provider);
 
             $shouldBeIgnored = ProviderLog::where('ml_ignore', '=', 1)
+                ->where('first_name', $data['first_name'])
+                ->where('last_name', $data['last_name'])
                 ->where('street', $data['street'])
                 ->where('city', $data['city'])
                 ->where('state', $data['state'])
@@ -154,7 +158,7 @@ class CcdaSectionsLogger implements MedicalRecordLogger
                 ->where('work_phone', $data['work_phone'])
                 ->first();
 
-            if ($shouldBeIgnored) {
+            if ($shouldBeIgnored || empty(array_filter($data))) {
                 continue;
             }
 
@@ -209,17 +213,12 @@ class CcdaSectionsLogger implements MedicalRecordLogger
                     continue;
                 }
 
-                $insurance = InsuranceLog::create([
+                $insurance = InsuranceLog::create(array_merge($this->transformer->insurance($payer), [
                     'medical_record_id'   => $this->ccdaId,
                     'medical_record_type' => Ccda::class,
-                    'name'                => $payer->insurance,
-                    'type'                => $payer->policy_type,
-                    'policy_id'           => $payer->policy_id,
-                    'relation'            => $payer->relation,
-                    'subscriber'          => $payer->subscriber,
                     'approved'            => false,
                     'import'              => true,
-                ]);
+                ]));
             }
         }
 

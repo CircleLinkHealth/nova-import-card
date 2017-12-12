@@ -1,19 +1,42 @@
 <script>
     export default {
+        props: {
+            practiceProp: {
+                type: [Number, String],
+                required: false,
+                default: null
+            },
+            locationProp: {
+                type: [Number, String],
+                required: false,
+                default: null
+            },
+            billingProviderProp: {
+                type: [Number, String],
+                required: false,
+                default: null
+            },
+        },
+
         data() {
+            window.axios.get('api/practices/all')
+                .then((response) => {
+                    this.practices = response.data
+                })
+
             return {
-                practices: cpm.practices,
+                practice: JSON.parse(JSON.stringify(this.practiceProp)),
+                location: JSON.parse(JSON.stringify(this.locationProp)),
+                billingProvider: JSON.parse(JSON.stringify(this.billingProviderProp)),
+                practices: [],
                 locationsCollection: [],
                 providersCollection: [],
-                practice: cpm.predictedPracticeId,
-                location: cpm.predictedLocationId,
-                billingProvider: cpm.predictedBillingProviderId,
             }
         },
 
         computed: {
             locations: function () {
-                if (_.isNull(this.practice)) {
+                if (!this.practice) {
                     this.location = null;
                     this.billingProvider = null;
                     this.providersCollection = [];
@@ -27,7 +50,7 @@
             },
 
             providers: function () {
-                if (this.location === null || !this.practices[this.practice].locations[this.location]) {
+                if (!this.location || !this.practices[this.practice].locations[this.location]) {
                     this.billingProvider = null;
                     this.providersCollection = [];
 
@@ -42,24 +65,24 @@
     }
 </script>
 
-<template>
-    <div class="row">
-        <div class="col-md-4">
-            <h1>Practice</h1>
+<template v-cloak>
+    <div class="row panel">
+        <div class="col-md-4 left-border">
+            <h3>Select <b>Practice</b></h3>
 
-            <select v-model="practice" class="col-md-12" name="practiceId">
+            <select2 v-model="practice" class="col-md-12" name="practiceId">
                 <option v-for="p in practices" :value="p.id">{{ p.display_name }}</option>
-            </select>
+            </select2>
         </div>
-        <div class="col-md-4">
-            <h1>Location</h1>
+        <div class="col-md-4 left-border">
+            <h3>Select <b>Location</b></h3>
 
             <select v-model="location" class="col-md-12" name="locationId">
                 <option v-for="l in locations" :value="l.id">{{ l.name }}</option>
             </select>
         </div>
-        <div class="col-md-4">
-            <h1>Billing Provider</h1>
+        <div class="col-md-4 left-border">
+            <h3>Select <b>Billing Provider</b></h3>
 
             <select v-model="billingProvider" class="col-md-12" name="billingProviderId">
                 <option v-for="prov in providers"
@@ -68,3 +91,16 @@
         </div>
     </div>
 </template>
+
+<style scoped>
+    .panel {
+        border: 2px solid #eeeeee;
+        padding: 2rem 3rem 6rem 3rem;
+        margin: 2rem;
+        border-radius: 2rem;
+    }
+
+    .left-border {
+        border-left: 1px solid #ededed;
+    }
+</style>

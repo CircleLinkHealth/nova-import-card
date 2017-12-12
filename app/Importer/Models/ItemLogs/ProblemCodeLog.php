@@ -13,6 +13,7 @@ class ProblemCodeLog extends Model
         'code_system_name',
         'code_system_oid',
         'code',
+        'name',
     ];
 
     public function problemLog()

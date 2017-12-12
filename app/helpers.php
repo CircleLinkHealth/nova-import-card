@@ -3,6 +3,7 @@
 
 use App\AppConfig;
 use App\CarePlanTemplate;
+use App\Constants;
 use App\Jobs\SendSlackMessage;
 use App\User;
 use Carbon\Carbon;
@@ -408,8 +409,7 @@ if (!function_exists('windowToTimestamps')) {
         $endTimeH = Carbon::parse($end)->format('H');
         $endTimei = Carbon::parse($end)->format('i');
 
-        $endDate = $endDate->setTime($endTimeH, $endTimei)->toDateTimeString();
-        ;
+        $endDate = $endDate->setTime($endTimeH, $endTimei)->toDateTimeString();;
 
         return [
             'window_start' => $startDate,
@@ -558,6 +558,48 @@ if (!function_exists('snakeToSentenceCase')) {
         return ucwords(str_replace('_', ' ', $string));
     }
 }
+
+if (!function_exists('linkToDownloadFile')) {
+    /**
+     * Generate a file to download a file
+     *
+     * @param $path
+     *
+     * @return string
+     * @throws Exception
+     */
+    function linkToDownloadFile($path, $absolute = false)
+    {
+        if (!$path) {
+            throw new \Exception("File path cannot be empty");
+        }
+
+        return route('download', [
+            'filePath' => base64_encode($path),
+        ], $absolute);
+    }
+}
+
+if (!function_exists('linkToCachedView')) {
+    /**
+     * Generate a link to a cached view
+     *
+     * @param $viewHashKey
+     *
+     * @return string
+     * @throws Exception
+     *
+     */
+    function linkToCachedView($viewHashKey, $absolute = false)
+    {
+        if (!$viewHashKey) {
+            throw new \Exception("File path cannot be empty");
+        }
+
+        return route('get.cached.view.by.key', ['key' => $viewHashKey], $absolute);
+    }
+}
+
 if (!function_exists('parseCallDays')) {
     function parseCallDays($preferredCallDays)
     {
@@ -624,23 +666,68 @@ if (!function_exists('parseCallTimes')) {
 
 
 if (!function_exists('getProblemCodeSystemName')) {
-    function getProblemCodeSystemName($problem)
+    /**
+     * Get a problem code system name from an array of clues
+     *
+     * @param array $clues
+     *
+     * @return null|string
+     */
+    function getProblemCodeSystemName(array $clues)
     {
-        if ($problem->code_system == '2.16.840.1.113883.6.96'
-            || str_contains(strtolower($problem->code_system_name), ['snomed'])) {
-            return 'SNOMED CT';
+        foreach ($clues as $clue) {
+            if ($clue == '2.16.840.1.113883.6.96'
+                || str_contains(strtolower($clue), ['snomed'])) {
+                return Constants::SNOMED_NAME;
+            }
+
+            if ($clue == '2.16.840.1.113883.6.103'
+                || str_contains(strtolower($clue), ['9'])) {
+                return Constants::ICD9_NAME;
+            }
+
+            if ($clue == '2.16.840.1.113883.6.3'
+                || str_contains(strtolower($clue), ['10'])) {
+                return Constants::ICD10_NAME;
+            }
         }
 
-        if ($problem->code_system == '2.16.840.1.113883.6.103'
-            || str_contains(strtolower($problem->code_system_name), ['9'])) {
-            return 'ICD-9';
+        return null;
+    }
+}
+
+if (!function_exists('getProblemCodeSystemCPMId')) {
+    /**
+     * Get the id of an App\ProblemCodeSystem from an array of clues
+     *
+     * @param array $clues
+     *
+     * @return int|null
+     */
+    function getProblemCodeSystemCPMId(array $clues)
+    {
+        $name = getProblemCodeSystemName($clues);
+
+        $map = Constants::CODE_SYSTEM_NAME_ID_MAP;
+
+        if (array_key_exists($name, $map)) {
+            return $map[$name];
         }
 
-        if ($problem->code_system == '2.16.840.1.113883.6.3'
-            || str_contains(strtolower($problem->code_system_name), ['10'])) {
-            return 'ICD-10';
-        }
+        return null;
+    }
+}
 
-        return false;
+if (!function_exists('validProblemName')) {
+    /**
+     * Is the problem name valid
+     *
+     * @param $name
+     *
+     * @return boolean
+     */
+    function validProblemName($name)
+    {
+        return !str_contains(strtolower($name), ['screening', 'history', 'scan']);
     }
 }

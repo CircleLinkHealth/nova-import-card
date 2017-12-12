@@ -27,7 +27,7 @@ $today = \Carbon\Carbon::now()->toFormattedDateString();
     @foreach($careplans as $id => $careplan)
         <?php
         $patient = App\User::find($id);
-        $billing = $patient->billingProvider();
+        $billing = $patient->billingProviderUser();
         $lead = $patient->leadContact();
         ?>
         <style type="text/css">

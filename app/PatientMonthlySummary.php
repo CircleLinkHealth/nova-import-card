@@ -2,6 +2,7 @@
 
 namespace App;
 
+use App\Models\CCD\Problem;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
 
@@ -98,9 +99,14 @@ class PatientMonthlySummary extends Model
         return $record;
     }
 
-    public function patient_info()
+    public function patientInfo()
     {
         return $this->belongsTo(Patient::class);
+    }
+
+    public function patient()
+    {
+        return $this->belongsTo(User::class, 'patient_id');
     }
 
     public function actor()
@@ -246,5 +252,13 @@ class PatientMonthlySummary extends Model
         } else {
             //dd('no report');
         }
+    }
+
+    public function billableProblem1() {
+        return $this->belongsTo(Problem::class, 'problem_1');
+    }
+
+    public function billableProblem2() {
+        return $this->belongsTo(Problem::class, 'problem_2');
     }
 }

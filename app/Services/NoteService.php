@@ -354,7 +354,7 @@ class NoteService
             $mail_recipient = User::find($mail->receiver_cpm_id);
             $patient = User::find($note->patient_id);
 
-            if ($mail_recipient->id == $patient->billingProvider()->id && $mail->seen_on != null) {
+            if ($mail_recipient->id == $patient->billingProviderUser()->id && $mail->seen_on != null) {
                 return true;
             }
         }
@@ -434,7 +434,7 @@ class NoteService
     ) {
 
         $mail = MailLog::where('note_id', $note->id)
-            ->where('receiver_cpm_id', $patient->billingProvider()->id)->first();
+            ->where('receiver_cpm_id', $patient->billingProviderUser()->id)->first();
     }
 
     public function updatePatientRecords(

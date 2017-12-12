@@ -36,6 +36,7 @@
                         @if($patientJson)
                             <div id="obs_alerts_container" class=""></div><br/>
                             <div id="paging_container"></div><br/>
+                            @push('scripts')
                             <script>
                                 function filterText(text) {
                                     // var text = node;
@@ -45,15 +46,18 @@
                                         return obj.status_ccm == text;
                                     })
                                 }
+
                                 function zeroPad(nr, base) {
                                     var len = (String(base).length - String(nr).length) + 1;
                                     return len > 0 ? new Array(len).join('0') + nr : nr;
                                 }
+
                                 function startCompare(value, filter) {
                                     value = value.toString().toLowerCase();
                                     filter = '<' + filter.toString().toLowerCase();
                                     return value.indexOf(filter) === 0;
                                 }
+
                                 function sortBySeconds(a, b) {
                                     a = a.ccm_seconds.parseInt;
                                     b = b.ccm_seconds.parseInt;
@@ -163,10 +167,11 @@
                                 webix.event(window, "resize", function () {
                                     obs_alerts_dtable.adjust();
                                 }),
-                                        obs_alerts_dtable.sort("#patient_name#");
+                                    obs_alerts_dtable.sort("#patient_name#");
                                 obs_alerts_dtable.filter("#careplan_printed#", "No");
                                 obs_alerts_dtable.hideColumn("last_name");
                             </script>
+                            @endpush
                             <input id='lastName_btn' type='button' class='btn btn-primary' value='Show by Last Name'
                                    style='margin:15px;'
                                    onclick='obs_alerts_dtable.showColumn("last_name");obs_alerts_dtable.hideColumn("first_name");obs_alerts_dtable.sort("#last_name#");this.style.display = "none";getElementById("firstName_btn").style.display = "inline-block";'>

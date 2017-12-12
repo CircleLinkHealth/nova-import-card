@@ -1,14 +1,18 @@
 @extends('partials.adminUI')
 
 @section('content')
+    @push('styles')
     <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/font-awesome/4.4.0/css/font-awesome.min.css">
+    @endpush
+
+    {!! Form::open(array('url' => route('admin.reports.nurse.send', []),'method' => 'post','id' => 'form', 'class' => 'form-horizontal')) !!}
+
     <div class="container-fluid">
         <div class="row">
             <div class="col-md-8 col-md-offset-2">
                 {{ csrf_field() }}
                 <div class="panel panel-default">
                     <div class="panel-heading">Nurse Invoice Generator</div>
-                    {!! Form::open(array('url' => URL::route('admin.reports.nurse.send', array()),'method' => 'post','id' => 'form', 'class' => 'form-horizontal')) !!}
                     <div class="panel-body">
                         <h3>Generated invoices</h3>
                         @foreach($invoices as $key => $value)

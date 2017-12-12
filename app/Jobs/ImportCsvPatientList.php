@@ -7,6 +7,7 @@ use App\Importer\Models\ItemLogs\ProviderLog;
 use App\Models\MedicalRecords\Ccda;
 use App\Models\MedicalRecords\ImportedMedicalRecord;
 use App\Models\MedicalRecords\TabularMedicalRecord;
+use App\Models\PatientData\PhoenixHeart\PhoenixHeartName;
 use App\Practice;
 use App\User;
 use Carbon\Carbon;
@@ -55,7 +56,7 @@ class ImportCsvPatientList implements ShouldQueue
     {
         foreach ($this->patientsArr as $row) {
             if (isset($row['medical_record_type'])) {
-                if (stripslashes($row['medical_record_type']) == Ccda::class) {
+                if ($row['medical_record_type'] == Ccda::class) {
                     $imr = $this->importExistingCcda($row['medical_record_id']);
 
                     if ($imr) {
@@ -65,9 +66,7 @@ class ImportCsvPatientList implements ShouldQueue
                 }
             }
 
-            if (isset($row['mrn'])) {
-                $this->createTabularMedicalRecordAndImport($row);
-            }
+            $this->createTabularMedicalRecordAndImport($row);
         }
 
         $url = url('view.files.ready.to.import');
@@ -183,12 +182,8 @@ class ImportCsvPatientList implements ShouldQueue
      */
     public function createTabularMedicalRecordAndImport($row)
     {
-        if (in_array($row['mrn'], ['#N/A'])) {
-            return false;
-        }
-
         $row['dob'] = $row['dob']
-            ? Carbon::parse($row['dob'])->format('Y-m-d')
+            ? Carbon::parse($row['dob'])->toDateString()
             : null;
         $row['practice_id'] = $this->practice->id;
         $row['location_id'] = $this->practice->primary_location_id;
@@ -198,7 +193,8 @@ class ImportCsvPatientList implements ShouldQueue
         }
 
         $exists = TabularMedicalRecord::where([
-            'mrn' => $row['mrn'],
+            'first_name' => $row['first_name'],
+            'last_name' => $row['last_name'],
             'dob' => $row['dob'],
         ])->first();
 
@@ -210,9 +206,34 @@ class ImportCsvPatientList implements ShouldQueue
             $exists->delete();
         }
 
+        if ($this->practice->id == 139) {
+            $mrn = $this->lookupPHXmrn($row['first_name'], $row['last_name'], $row['dob']);
+
+            if (!$mrn) {
+                return false;
+            }
+
+            $row['mrn'] = $mrn;
+        }
+
         $mr = TabularMedicalRecord::create($row);
 
         $importedMedicalRecords[] = $mr->import();
+    }
+
+    private function lookupPHXmrn($firstName, $lastName, $dob) {
+        $dob = Carbon::parse($dob)->toDateString();
+
+        $row = PhoenixHeartName::where('patient_first_name', $firstName)
+                               ->where('patient_last_name', $lastName)
+                               ->where('dob', $dob)
+                               ->first();
+
+        if ($row && $row->patient_id) {
+            return $row->patient_id;
+        }
+
+        return null;
     }
 
     /**

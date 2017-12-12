@@ -66,6 +66,10 @@ class Problems extends BaseImporter
         $problemsToActivate = [];
 
         foreach ($problemImports as $importedProblem) {
+            if (!validProblemName($importedProblem->name)) {
+                continue;
+            }
+
             $map = $importedProblem->ccdLog
                 ->first()
                 ->codeMap();

@@ -16,6 +16,32 @@ use Carbon\Carbon;
 
 class PhoenixHeartSectionsLogger extends TabularMedicalRecordSectionsLogger
 {
+    public function lookupMrn($firstName, $lastName, $dob) {
+        $dob = Carbon::parse($dob)->toDateString();
+
+        $row = PhoenixHeartName::where('patient_first_name', $firstName)
+            ->where('patient_last_name', $lastName)
+            ->where('dob', $dob)
+            ->first();
+
+        if ($row && $row->patient_id) {
+            return $row->patient_id;
+        }
+
+        return null;
+    }
+
+    public function logDemographicsSection(): MedicalRecordLogger
+    {
+        if (!$this->medicalRecord->mrn) {
+            $this->medicalRecord->mrn = $this->lookupMrn($this->medicalRecord->first_name,
+                $this->medicalRecord->last_name, $this->medicalRecord->dob);
+            $this->medicalRecord->save();
+        }
+
+        return parent::logDemographicsSection();
+    }
+
     /**
      * Log Allergies Section.
      * @return MedicalRecordLogger

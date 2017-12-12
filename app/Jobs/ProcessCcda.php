@@ -35,20 +35,22 @@ class ProcessCcda implements ShouldQueue
     {
         $ccda = $this->ccda;
 
-        $json = json_decode((new CCDImporterRepository())->toJson($ccda->xml));
+        $json = $ccda->bluebuttonJson();
 
-        if ($json) {
-            $ccda->mrn = $json->demographics->mrn_number;
-
-            if (array_key_exists(0, $json->document->documentation_of)) {
-                $provider = (new CcdToLogTranformer())->provider($json->document->documentation_of[0]);
-                $ccda->referring_provider_name = "{$provider['first_name']} {$provider['last_name']}";
-            }
-
-            $ccda->date = Carbon::parse($json->document->date)->toDateTimeString();
-
-            $ccda->save();
+        if (!$json) {
+            return;
         }
+
+        $ccda->mrn = $json->demographics->mrn_number;
+
+        if (array_key_exists(0, $json->document->documentation_of)) {
+            $provider = (new CcdToLogTranformer())->provider($json->document->documentation_of[0]);
+            $ccda->referring_provider_name = "{$provider['first_name']} {$provider['last_name']}";
+        }
+
+        $ccda->date = Carbon::parse($json->document->date)->toDateTimeString();
+
+        $ccda->save();
 
         $this->handleDuplicateCcdas($ccda);
     }

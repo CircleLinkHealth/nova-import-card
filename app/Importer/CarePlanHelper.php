@@ -90,7 +90,7 @@ class CarePlanHelper
         $ccda->patient_id = $this->user->id;
         $ccda->save();
 
-        $decodedCcda = json_decode((new CCDImporterRepository())->toJson($ccda->xml));
+        $decodedCcda = $ccda->bluebuttonJson();
 
         //Weight
         $weightParseAndStore = new Weight($this->user->program_id, $this->user);

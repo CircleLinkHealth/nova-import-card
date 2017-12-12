@@ -25,9 +25,9 @@
                     <div class="panel-body">
                         @include('errors.errors')
 
-                        <div class="row">
-                            {!! Form::open(array('url' => URL::route('admin.programs.update', array('id' => $program->id)), 'class' => 'form-horizontal')) !!}
-                        </div>
+
+                        {!! Form::open(array('url' => URL::route('admin.programs.update', array('id' => $program->id)), 'class' => 'form-horizontal')) !!}
+
 
                         <div class="row" style="">
                             <div class="col-sm-12">
@@ -43,11 +43,6 @@
                             <div class="row" style="margin-top:20px;">
                                 <div class="col-xs-2">{!! Form::label('display_name', 'Display Name:') !!}</div>
                                 <div class="col-xs-10">{!! Form::text('display_name', $program->display_name, ['class' => 'form-control', 'style' => 'width:100%;']) !!}</div>
-                            </div>
-
-                            <div class="row" style="margin-top:20px;">
-                                <div class="col-xs-2">{!! Form::label('name', 'Unique Name:') !!}</div>
-                                <div class="col-xs-10">{!! Form::text('name', $program->name, ['class' => 'form-control', 'style' => 'width:100%;']) !!}</div>
                             </div>
 
                             <div class="row" style="margin-top:20px;">
@@ -83,7 +78,8 @@
                                     <select id="primary_location" name="primary_location"
                                             class="primary_location dropdown Valid form-control" required>
                                         @foreach($locations as $location)
-                                            <option value="{{$location->id}}" @if($location->is_primary) selected @endif>{{$location->name}}</option>
+                                            <option value="{{$location->id}}"
+                                                    @if($location->is_primary) selected @endif>{{$location->name}}</option>
                                         @endforeach
                                     </select>
                                 </div>

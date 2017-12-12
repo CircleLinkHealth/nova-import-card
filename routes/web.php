@@ -125,6 +125,15 @@ Route::group(['namespace' => 'Redox'], function () {
 /****************************/
 Route::group(['middleware' => 'auth'], function () {
 
+    Route::get('cache/view/{key}', [
+        'as' => 'get.cached.view.by.key',
+        'uses' => 'Cache\UserCacheController@getCachedViewByKey',
+    ]);
+
+    Route::get('jobs/completed', function(){
+        return view('admin.jobsCompleted.manage');
+    });
+
     Route::get('download/{filePath}', [
         'uses' => 'DownloadController@file',
         'as'   => 'download',
@@ -133,6 +142,7 @@ Route::group(['middleware' => 'auth'], function () {
     /**
      * API
      */
+    Route::get('api/practices/all', 'API\PracticeController@allPracticesWithLocationsAndStaff');
 
     Route::resource('profiles', 'API\ProfileController');
 
@@ -212,7 +222,12 @@ Route::group(['middleware' => 'auth'], function () {
         'as'   => 'ccd-old-viewer.post',
     ]);
 
-    Route::get('imported-medical-record/{imrId}/training-results', [
+    Route::get('imported-medical-records/determine-eligibility/create', [
+        'uses' => 'ImporterController@showEligibilityUploadPage',
+        'as'   => 'upload.ccdas.to.determine.eligibility',
+    ]);
+
+    Route::get('imported-medical-records/{imrId}/training-results', [
         'uses' => 'ImporterController@getTrainingResults',
         'as'   => 'get.importer.training.results',
     ]);
@@ -676,9 +691,9 @@ Route::group(['middleware' => 'auth'], function () {
                     'as'   => 'monthly.billing.data',
                 ]);
 
-                Route::post('/updateApproved', [
-                    'uses' => 'Billing\PracticeInvoiceController@updateApproved',
-                    'as'   => 'monthly.billing.approve',
+                Route::post('/status/update', [
+                    'uses' => 'Billing\PracticeInvoiceController@updateStatus',
+                    'as'   => 'monthly.billing.status.update',
                 ]);
 
                 Route::post('/counts', [
@@ -694,11 +709,6 @@ Route::group(['middleware' => 'auth'], function () {
                 Route::post('/getBillingCount', [
                     'uses' => 'Billing\PracticeInvoiceController@getCounts',
                     'as'   => 'monthly.billing.counts',
-                ]);
-
-                Route::post('/updateRejected', [
-                    'uses' => 'Billing\PracticeInvoiceController@updateRejected',
-                    'as'   => 'monthly.billing.reject',
                 ]);
 
                 Route::post('/send', [
