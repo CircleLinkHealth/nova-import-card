@@ -55,10 +55,6 @@
         span.twitter-typeahead .twitter-typeahead {
             position: absolute !important;
         }
-
-        #bloodhound > .twitter-typeahead > .tt-menu > .tt-dataset.tt-dataset-User_list {
-            display: none;
-        }
     </style>
     @stack('styles')
 </head>

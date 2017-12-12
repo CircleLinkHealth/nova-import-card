@@ -9,14 +9,13 @@
 namespace App\Repositories;
 
 
-use App\ProblemCodeSystem;
 use App\User;
 
 class PatientRepository
 {
     public function storeCcdProblem(User $patient, array $args)
     {
-        if (!$args['code']) {
+        if ( ! $args['code']) {
             return;
         }
 
@@ -26,14 +25,16 @@ class PatientRepository
             'billable'       => $args['billable'] ?? null,
         ]);
 
-        $codeSystemId = getProblemCodeSystemCPMId([$args['code_system_name'], $args['code_system_oid']]);
+        if ($args['code']) {
+            $codeSystemId = getProblemCodeSystemCPMId([$args['code_system_name'], $args['code_system_oid']]);
 
-        $code = $newProblem->codes()->create([
-            'code_system_name' => $args['code_system_name'],
-            'code_system_oid'  => $args['code_system_oid'],
-            'code'             => $args['code'],
-            'problem_code_system_id' => $codeSystemId
-        ]);
+            $code = $newProblem->codes()->create([
+                'code_system_name'       => $args['code_system_name'],
+                'code_system_oid'        => $args['code_system_oid'],
+                'code'                   => $args['code'],
+                'problem_code_system_id' => $codeSystemId,
+            ]);
+        }
 
         return $newProblem;
     }

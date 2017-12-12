@@ -402,7 +402,7 @@ if (!function_exists('dayNameToClhDayOfWeek')) {
             'Sunday'    => 7,
         ];
 
-        return $days[ucfirst(strtolower(trim($clhDayOfWeek)))];
+        return $days[ucfirst(strtolower(trim($clhDayOfWeek)))] ?? false;
     }
 }
 
@@ -692,7 +692,7 @@ if (!function_exists('linkToCachedView')) {
 if (!function_exists('parseCallDays')) {
     function parseCallDays($preferredCallDays)
     {
-        if (!$preferredCallDays) {
+        if (!$preferredCallDays || str_contains(strtolower($preferredCallDays), ['any'])) {
             return [1, 2, 3, 4, 5];
         }
 
@@ -715,7 +715,7 @@ if (!function_exists('parseCallDays')) {
             $days[] = dayNameToClhDayOfWeek($preferredCallDays);
         }
 
-        return $days;
+        return array_filter($days);
     }
 }
 
@@ -744,9 +744,10 @@ if (!function_exists('parseCallTimes')) {
             $times['start'] = Carbon::parse(trim($preferredTimes[0]))->toTimeString();
             $times['end'] = Carbon::parse(trim($preferredTimes[1]))->toTimeString();
         } else {
-            $startTime = Carbon::parse(trim($preferredCallTimes));
-            $times['start'] = $startTime->toTimeString();
-            $times['end'] = $startTime->addHour()->toTimeString();
+            $times = [
+                'start' => '09:00:00',
+                'end'   => '17:00:00',
+            ];
         }
 
         return $times;
@@ -807,6 +808,20 @@ if (!function_exists('getProblemCodeSystemCPMId')) {
     }
 }
 
+if (!function_exists('validProblemName')) {
+    /**
+     * Is the problem name valid
+     *
+     * @param $name
+     *
+     * @return boolean
+     */
+    function validProblemName($name)
+    {
+        return !str_contains(strtolower($name), ['screening', 'history', 'scan']);
+    }
+}
+
 if (!function_exists('showDiabetesBanner')) {
     function showDiabetesBanner($patient)
     {
@@ -817,7 +832,7 @@ if (!function_exists('showDiabetesBanner')) {
             && !$patient->hasProblem('Diabetes Type 2')
             && $patient->primaryPractice->name != 'northeast-georgia-diagnostic-clinic'
         ) {
-                return true;
+            return true;
         }
 
         return false;
