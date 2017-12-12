@@ -235,7 +235,7 @@ class ApproveBillablePatientsService
         }
 
         $newProblems = $patient->cpmProblems->reject(function ($problem) use ($ccdProblems, $patient) {
-            if ($ccdProblems->where('cpm_problem_id', $problem->id)->where('billable', true)->count() == 0) {
+            if ($ccdProblems->where('cpm_problem_id', $problem->id)->count() == 0) {
                 return false;
             }
 
