@@ -205,7 +205,7 @@ class PracticeInvoiceController extends Controller
                                           'code_system_oid'  => '2.16.840.1.113883.6.3',
                                       ]);
 
-                if ( ! $updated) {
+                if ( ! $updated && $request['code']) {
                     ProblemCode::create([
                         'problem_id'       => $problemId,
                         'code'             => $request['code'],
