@@ -71,7 +71,7 @@ class Note extends Model implements PdfReport
             'problems' => $problems,
             'sender'   => $this->author,
             'note'     => $this,
-            'provider' => $this->patient->billingProvider(),
+            'provider' => $this->patient->billingProviderUser(),
         ]);
 
         $this->fileName = Carbon::now()->toDateString() . '-' . $this->patient->fullName . '.pdf';

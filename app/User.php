@@ -2127,7 +2127,7 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
      */
     public function getBillingProviderNameAttribute()
     {
-        $billingProvider = $this->billingProvider();
+        $billingProvider = $this->billingProviderUser();
 
         return $billingProvider
             ? $billingProvider->fullName
@@ -2139,7 +2139,7 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
      *
      * @return User
      */
-    public function billingProvider(): User
+    public function billingProviderUser(): User
     {
         $billingProvider = $this->careTeamMembers
             ->where('type', 'billing_provider')

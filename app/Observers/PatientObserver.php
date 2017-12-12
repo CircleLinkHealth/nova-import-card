@@ -65,7 +65,7 @@ class PatientObserver
             ->dm_pdf_notes
         ) {
             $direct = $patient->user
-                ->billingProvider()
+                ->billingProviderUser()
                 ->emr_direct_address;
 
             if ($direct) {
