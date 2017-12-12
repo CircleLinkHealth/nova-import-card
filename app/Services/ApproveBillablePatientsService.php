@@ -100,7 +100,7 @@ class ApproveBillablePatientsService
 
                                              return [
                                                  'name'                   => $u->fullName,
-                                                 'provider'               => $u->billingProviderUser()->fullName,
+                                                 'provider'               => $u->billingProvider ? $u->billingProvider->fullName : '',
                                                  'practice'               => $u->primaryPractice->display_name,
                                                  'dob'                    => $u->patientInfo->birth_date,
                                                  'ccm'                    => round($summary->ccm_time / 60, 2),

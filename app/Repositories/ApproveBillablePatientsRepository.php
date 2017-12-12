@@ -31,6 +31,7 @@ class ApproveBillablePatientsRepository
             'cpmProblems',
             'patientInfo',
             'primaryPractice',
+            'billingProvider',
         ])
                    ->has('patientInfo')
                    ->whereHas('patientSummaries', function ($query) use ($month) {

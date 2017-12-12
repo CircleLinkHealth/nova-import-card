@@ -2527,4 +2527,14 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
                     ->with('icd10Codes')
                     ->where('billable', true);
     }
+
+    /**
+     * Get billing provider.
+     *
+     * @return User
+     */
+    public function billingProvider()
+    {
+        return $this->careTeamMembers()->where('type', '=', 'billing_provider');
+    }
 }
