@@ -8,7 +8,8 @@
                 <input class="row-select" v-model="selected" @change="toggleAllSelect" type="checkbox" />
             </template>
             <template slot="Practice" scope="props">
-                <text-editable :value="props.row.Practice" :no-button="true"></text-editable>
+                <select-editable :value="props.row.Practice" :values="props.row.practices()" :no-button="true"
+                        :display-text="props.row.practice_name" :on-change="props.row.changePractice"></select-editable>
             </template>
             <template slot="Location" scope="props">
                 <text-editable :value="props.row.Location" :no-button="true"></text-editable>
@@ -52,6 +53,7 @@
 <script>
     import { rootUrl } from '../../app.config'
     import TextEditable from '../../admin/calls/comps/text-editable'
+    import SelectEditable from '../../admin/calls/comps/select-editable'
     import EventBus from '../../admin/time-tracker/comps/event-bus'
     import LoaderComponent from '../loader'
     import ErrorModal from '../../admin/billing/comps/error-modal'
@@ -63,7 +65,8 @@
             'text-editable': TextEditable,
             'loader': LoaderComponent,
             'error-modal': ErrorModal,
-            'error-modal-button': ErrorModalButton
+            'error-modal-button': ErrorModalButton,
+            'select-editable': SelectEditable
         },
         data() {
             return {
@@ -120,7 +123,23 @@
                         confirm: false,
                         practices: false
                     },
-                    practices: () => self.practices
+                    practice_name: ((record.practice || {}).display_name || null),
+                    practices: () => self.practices,
+                    changePractice(id) {
+                        self.changePractice(record.id, id)
+                        console.log('change-practice-name', record.id, id)
+                    }
+                }
+            },
+            changePractice(recordId, practiceId) {
+                const record = this.tableData.find(row => row.id === recordId)
+                if (record) {
+                    const practice = this.practices.find(practice => practice.id === practiceId)
+                    if (practice) {
+                        record.Practice = practice.id;
+                        record.practice_name = practice.display_name
+                        console.log(practice)
+                    }
                 }
             },
             getRecords() {
@@ -220,7 +239,10 @@
                 this.loaders.practices = true
                 return this.axios.get(rootUrl('api/practices')).then(response => {
                     this.loaders.practices = false
-                    this.practices = response.data
+                    this.practices = (response.data || []).map(item => Object.assign(item, {
+                        value: item.id,
+                        text: item.display_name
+                    }))
                     console.log('get-practices', response.data)
                 }).catch(err => {
                     this.loaders.practices = false

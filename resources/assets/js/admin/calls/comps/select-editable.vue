@@ -2,15 +2,15 @@
     <div :class="className">
         <div v-if="isEditMode">
             <form @submit="toggleEdit">
-                <select v-model="text" class="float-left">
+                <select v-model="text" class="float-left" @change="onSelectChange">
                     <option v-if="v.constructor.name === 'String'" v-for="(v, index) in values" :key="index" :value="v">{{v}}</option>
                     <option v-if="v.constructor.name === 'Object'" v-for="(v, index) in values" :key="index" :value="v.value">{{v.text}}</option>
                 </select>
-                <span class="float-right" @click="toggleEdit">&#9989;</span>
+                <span class="float-right" @click="toggleEdit" v-if="!noButton">&#9989;</span>
             </form>
         </div>
         <div v-if="!isEditMode" @dblclick="toggleEdit">
-            {{text}}
+            {{displayText || text}}
         </div>
     </div>
 </template>
@@ -29,7 +29,7 @@
     
     export default {
         name: 'SelectEditable',
-        props: ['value', 'values', 'is-edit', 'class-name', 'on-change'],
+        props: ['value', 'values', 'is-edit', 'class-name', 'on-change', 'no-button', 'display-text'],
         data(){
             return {
                 text: this.value || (this.values || [])[0] || '',
@@ -42,6 +42,12 @@
                 this.isEditMode = !this.isEditMode;
                 if (!this.isEditMode && typeof(this.onChange) === 'function') {
                     this.onChange(this.text)
+                    this.$emit('change', { target: this.$el.querySelector('select'), value: this.text })
+                }
+            },
+            onSelectChange(e) {
+                if (this.noButton && this.text) {
+                    this.toggleEdit(e)
                 }
             }
         }
