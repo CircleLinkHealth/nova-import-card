@@ -74,6 +74,7 @@
                 options: {
                     sortable: ['Name', 'DOB', 'Practice', 'Location', 'Billing Provider']
                 },
+                practices: [],
                 errors: {
                     delete: null,
                     confirm: null
@@ -97,31 +98,36 @@
                 if (record.demographics) {
                     record.demographics.display_name = record.demographics.first_name + ' ' + record.demographics.last_name
                 }
+                const self = this;
                 return {
                     id: record.id,
                     selected: false,
                     Name: record.demographics.display_name,
                     DOB: record.demographics.dob,
-                    Practice: record.practice || 'No Practice',
-                    Location: record.location || 'No Location',
-                    'Billing Provider': record.billing_provider || 'No Billing Provider',
+                    Practice: ((record.practice || {}).id || null),
+                    Location: ((record.location || {}).id || null),
+                    'Billing Provider': ((record.billing_provider || {}).id || null),
                     '2+ Cond': false,
                     Medicare: false,
                     'Supplemental Ins': false,
                     errors: {
                         delete: null,
-                        confirm: null
+                        confirm: null,
+                        practices: null
                     },
                     loaders: {
                         delete: false,
-                        confirm: false
-                    }
+                        confirm: false,
+                        practices: false
+                    },
+                    practices: () => self.practices
                 }
             },
             getRecords() {
                 this.axios.get(this.url).then((response) => {
                     const records = response.data || []
                     this.tableData = records.map(this.setupRecord)
+                    console.log('get-records', this.tableData)
                 }).catch(err => {
                     console.error(err)
                 })
@@ -209,9 +215,22 @@
                     errors[name] = null
                     console.log(errors)
                 })
+            },
+            getPractices() {
+                this.loaders.practices = true
+                return this.axios.get(rootUrl('api/practices')).then(response => {
+                    this.loaders.practices = false
+                    this.practices = response.data
+                    console.log('get-practices', response.data)
+                }).catch(err => {
+                    this.loaders.practices = false
+                    this.errors.practices = err.message
+                    console.error('get-practices', err)
+                })
             }
         },
         mounted() {
+            this.getPractices()
             this.getRecords()
 
             EventBus.$on('vdropzone:success', (records) => {
