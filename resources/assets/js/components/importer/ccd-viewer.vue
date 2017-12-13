@@ -279,8 +279,10 @@
                     record.loaders.confirm = true
                     return this.axios.post(rootUrl('api/ccd-importer/records/confirm'), [record]).then((response) => {
                         record.loaders.confirm = false
+                        if ((response.data || []).some(item => item.id === id && item.completed)) {
+                            this.tableData.splice(this.tableData.findIndex(item => item.id === id), 1)
+                        }
                         console.log('submit-one', record, response.data)
-                        this.$forceUpdate()
                         return response
                     }).catch((err) => {
                         record.loaders.confirm = false
