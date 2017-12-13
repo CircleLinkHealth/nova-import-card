@@ -108,8 +108,11 @@ class ApproveBillablePatientsService
                                                  ]) . "  target='_blank' >" . $u->fullName . "</a>";
 
                                              $result = [
+                                                 'mrn'                    => $u->patientInfo->mrn_number,
                                                  'name'                   => $name,
-                                                 'provider'               => $bP ? $bP->user->fullName : '',
+                                                 'provider'               => $bP
+                                                     ? $bP->user->fullName
+                                                     : '',
                                                  'practice'               => $u->primaryPractice->display_name,
                                                  'dob'                    => $u->patientInfo->birth_date,
                                                  'ccm'                    => round($summary->ccm_time / 60, 2),
@@ -208,10 +211,28 @@ class ApproveBillablePatientsService
             }
         }
 
-        Problem::whereIn('id', array_filter([$summary->problem_1,$summary->problem_2]))
+        Problem::whereIn('id', array_filter([$summary->problem_1, $summary->problem_2]))
                ->update([
                    'billable' => true,
                ]);
+    }
+
+    /**
+     * @param User $patient
+     *
+     * @return mixed
+     */
+    public function validCcdProblems(User $patient)
+    {
+        return $patient->ccdProblems->where('cpm_problem_id', '!=', 1)
+                                    ->reject(function ($problem) {
+                                        return ! validProblemName($problem->name);
+                                    })
+                                    ->reject(function ($problem) {
+                                        return ! $problem->icd10Code();
+                                    })
+                                    ->unique('cpm_problem_id')
+                                    ->values();
     }
 
     public function buildCcdProblemsFromCpmProblems(User $patient)
@@ -258,24 +279,6 @@ class ApproveBillablePatientsService
         return collect($newProblems);
     }
 
-    /**
-     * @param User $patient
-     *
-     * @return mixed
-     */
-    public function validCcdProblems(User $patient)
-    {
-        return $patient->ccdProblems->where('cpm_problem_id', '!=', 1)
-                                    ->reject(function ($problem) {
-                                        return ! validProblemName($problem->name);
-                                    })
-                                    ->reject(function ($problem) {
-                                        return ! $problem->icd10Code();
-                                    })
-                                    ->unique('cpm_problem_id')
-                                    ->values();
-    }
-
     public function storeCcdProblem(User $patient, array $arguments)
     {
         if ($arguments['cpm_problem_id'] == 1) {
@@ -294,8 +297,8 @@ class ApproveBillablePatientsService
         $validate = (collect([$summary->problem_1, $summary->problem_2]))
             ->map(function ($problemId, $i) use ($user) {
                 $problem = $this->validCcdProblems($user)
-                    ->where('id', '=', $problemId)
-                    ->first();
+                                ->where('id', '=', $problemId)
+                                ->first();
 
                 if ( ! $problem) {
                     return false;
