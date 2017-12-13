@@ -86,7 +86,13 @@ class PracticeController extends Controller
         $practiceId = $request->route()->parameters()['practiceId'];
         $locationId = $request->route()->parameters()['locationId'];
         $providersCollection = Location::where('id', $locationId)->get(['id'])->map(function ($location) {
-            return collect($location['providers'])->toArray();
+            return collect($location['providers'])
+                    ->map(function ($provider) {
+                            return [
+                                'id'    => $provider->id,
+                                'display_name'  => $provider->display_name
+                            ];
+                    })->toArray();
         });
         $providers = $providersCollection->toArray();
         if (isset($providers) && sizeof($providers) > 0) {
