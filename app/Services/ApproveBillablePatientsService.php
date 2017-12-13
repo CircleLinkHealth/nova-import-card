@@ -265,7 +265,7 @@ class ApproveBillablePatientsService
      */
     public function validCcdProblems(User $patient)
     {
-        return $patient->ccdProblems->where('cpm_problem_id', '>', 1)
+        return $patient->ccdProblems->where('cpm_problem_id', '!=', 1)
                                     ->reject(function ($problem) {
                                         return ! validProblemName($problem->name);
                                     })
