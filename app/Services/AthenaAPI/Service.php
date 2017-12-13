@@ -31,17 +31,17 @@ class Service
     }
 
     public function getPatientIdFromAppointments(
-        $practiceId,
+        $ehrPracticeId,
         Carbon $startDate,
         Carbon $endDate
     ) {
         $start = $startDate->format('m/d/Y');
         $end   = $endDate->format('m/d/Y');
 
-        $departments = $this->api->getDepartmentIds($practiceId);
+        $departments = $this->api->getDepartmentIds($ehrPracticeId);
 
         foreach ($departments['departments'] as $department) {
-            $response = $this->api->getBookedAppointments($practiceId, $start, $end, $department['departmentid']);
+            $response = $this->api->getBookedAppointments($ehrPracticeId, $start, $end, $department['departmentid']);
 
             if ( ! isset($response['appointments'])) {
                 return;
@@ -55,9 +55,20 @@ class Service
                 $ehrPatientId = $bookedAppointment['patientid'];
                 $departmentId = $bookedAppointment['departmentid'];
 
-//                //Creates the TargetPatient or updates its status if null
-//                TargetPatient::updateOrCreate($ehrPatientId, $departmentId, $practiceId);
+                if (!$ehrPatientId) {
+                    continue;
+                }
 
+                $target = TargetPatient::updateOrCreate([
+                    'ehr_patient_id', $ehrPatientId,
+                    'ehr_practice_id', $ehrPracticeId,
+                    'ehr_department_id', $departmentId,
+                ]);
+
+                if (!$target->status) {
+                    $target->status = 'to_process';
+                    $target->save();
+                }
             }
 
         }
