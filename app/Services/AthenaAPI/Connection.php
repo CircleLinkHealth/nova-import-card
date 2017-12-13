@@ -97,7 +97,7 @@ class Connection
 
         $authorization = $this->call('POST', $url, $parameters, $headers);
 
-        if (!is_array($authorization) || !array_key_exists(['access_token'], $authorization)) {
+        if (!is_array($authorization) || !array_key_exists('access_token', $authorization)) {
             return false;
         }
 
