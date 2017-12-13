@@ -63,7 +63,7 @@ class MedicalRecordImportController extends Controller
                             array_push($importedRecords, [
                                 'id' => $id,
                                 'completed' => false,
-                                'error' => $ex
+                                'error' => $ex->xdebug_message
                             ]);
                         }
                     }
