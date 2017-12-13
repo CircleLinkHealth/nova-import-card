@@ -21,7 +21,7 @@ class PatientRepository
 
         $newProblem = $patient->ccdProblems()->updateOrCreate([
             'name'           => $args['name'],
-            'cpm_problem_id' => $args['cpm_problem_id'],
+            'cpm_problem_id' => empty($args['cpm_problem_id']) ? null : $args['cpm_problem_id'],
             'billable'       => $args['billable'] ?? null,
         ]);
 
