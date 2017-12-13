@@ -251,7 +251,7 @@
                         console.error('billing-approve-reject', err)
                         tablePatient.errors[errorKey] = err.message
                     })
-                }
+                } 
             },
             retrieve() {
                 this.loading = true
