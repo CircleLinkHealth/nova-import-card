@@ -53,6 +53,9 @@ class MedicalRecordImportController extends Controller
                     if (empty($imr)) continue;
                     else {
                         try {
+                            $imr['location_id'] = $record['Location'];
+                            $imr['practice_id'] = $record['Practice'];
+                            $imr['billing_provider_id'] = $record['Billing Provider'];
                             $carePlan = $imr->createCarePlan();
                             array_push($importedRecords, [
                                 'id' => $id,
