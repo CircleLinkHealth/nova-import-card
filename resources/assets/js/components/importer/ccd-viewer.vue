@@ -8,11 +8,19 @@
                 <input class="row-select" v-model="selected" @change="toggleAllSelect" type="checkbox" />
             </template>
             <template slot="Practice" scope="props">
-                <select-editable :value="props.row.Practice" :values="props.row.practices()" :no-button="true"
-                        :display-text="props.row.practice_name" :on-change="props.row.changePractice"></select-editable>
+                <select class="form-control" v-model="props.row.Practice" @change="props.row.changePractice(props.row.Practice)">
+                    <option value="">Select Practice</option>
+                    <option v-for="(practice, index) in props.row.practices()" :key="practice.id" :value="practice.id">{{practice.display_name}}</option>
+                </select>
             </template>
             <template slot="Location" scope="props">
-                <text-editable :value="props.row.Location" :no-button="true"></text-editable>
+                <select class="form-control" v-model="props.row.Location" @change="props.row.changeLocation(props.row.Location)">
+                    <option :value="null">Select Location</option>
+                    <option v-for="(location, index) in props.row.locations" :key="location.id" :value="location.id">{{location.name}}</option>
+                </select>
+                <div v-if="props.row.loaders.locations">
+                    <loader></loader>
+                </div>
             </template>
             <template slot="Billing Provider" scope="props">
                 <text-editable :value="props.row['Billing Provider']" :no-button="true"></text-editable>
@@ -53,7 +61,6 @@
 <script>
     import { rootUrl } from '../../app.config'
     import TextEditable from '../../admin/calls/comps/text-editable'
-    import SelectEditable from '../../admin/calls/comps/select-editable'
     import EventBus from '../../admin/time-tracker/comps/event-bus'
     import LoaderComponent from '../loader'
     import ErrorModal from '../../admin/billing/comps/error-modal'
@@ -65,8 +72,7 @@
             'text-editable': TextEditable,
             'loader': LoaderComponent,
             'error-modal': ErrorModal,
-            'error-modal-button': ErrorModalButton,
-            'select-editable': SelectEditable
+            'error-modal-button': ErrorModalButton
         },
         data() {
             return {
@@ -108,7 +114,9 @@
                     Name: record.demographics.display_name,
                     DOB: record.demographics.dob,
                     Practice: ((record.practice || {}).id || null),
+                    practice_name: ((record.practice || {}).display_name || null),
                     Location: ((record.location || {}).id || null),
+                    location_name: ((record.location || {}).display_name || null),
                     'Billing Provider': ((record.billing_provider || {}).id || null),
                     '2+ Cond': false,
                     Medicare: false,
@@ -116,18 +124,23 @@
                     errors: {
                         delete: null,
                         confirm: null,
-                        practices: null
+                        practices: null,
+                        locations: null
                     },
                     loaders: {
                         delete: false,
                         confirm: false,
-                        practices: false
+                        practices: false,
+                        locations: false
                     },
-                    practice_name: ((record.practice || {}).display_name || null),
                     practices: () => self.practices,
+                    locations: [],
                     changePractice(id) {
                         self.changePractice(record.id, id)
                         console.log('change-practice-name', record.id, id)
+                    },
+                    changeLocation(id) {
+                        self.changeLocation(record.id, id)
                     }
                 }
             },
@@ -138,7 +151,25 @@
                     if (practice) {
                         record.Practice = practice.id;
                         record.practice_name = practice.display_name
-                        console.log(practice)
+                        record.Location = null
+                        record.locations = []
+                        record.loaders.locations = true
+                        this.getLocations(practiceId).then(locations => {
+                            console.log('get-practice-locations', practiceId, locations)
+                            record.locations = locations
+                            record.loaders.locations = false
+                        })
+                    }
+                }
+            },
+            changeLocation(recordId, locationId) {
+                const record = this.tableData.find(row => row.id === recordId)
+                if (record) {
+                    const location = record.locations.find(l => l.id === locationId)
+                    if (location) {
+                        record.Location = location.id;
+                        record.location_name = location.name
+                        
                     }
                 }
             },
@@ -147,6 +178,7 @@
                     const records = response.data || []
                     this.tableData = records.map(this.setupRecord)
                     console.log('get-records', this.tableData)
+                    return this.tableData
                 }).catch(err => {
                     console.error(err)
                 })
@@ -248,6 +280,20 @@
                     this.loaders.practices = false
                     this.errors.practices = err.message
                     console.error('get-practices', err)
+                })
+            },
+            getLocations(practiceId) {
+                this.loaders.locations = true
+                return this.axios.get(rootUrl(`api/practices/${practiceId}/locations`)).then(response => {
+                    this.loaders.locations = false
+                    return (response.data || []).map(item => Object.assign(item, {
+                        value: item.id,
+                        text: item.name
+                    }))
+                }).catch(err => {
+                    this.loaders.locations = false
+                    this.errors.locations = err.message
+                    console.error('get-practice-locations', err)
                 })
             }
         },
