@@ -59,7 +59,7 @@ class MedicalRecordImportController extends Controller
                                 'completed' => true
                             ]);
                         }
-                        catch (Exception $ex) {
+                        catch (\Exception $ex) {
                             array_push($importedRecords, [
                                 'id' => $id,
                                 'completed' => false,

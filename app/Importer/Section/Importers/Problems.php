@@ -66,7 +66,7 @@ class Problems extends BaseImporter
         $problemsToActivate = [];
 
         foreach ($problemImports as $importedProblem) {
-            if (str_contains(strtolower($importedProblem->name), ['screening', 'history'])) {
+            if (!validProblemName($importedProblem->name)) {
                 continue;
             }
 
