@@ -112,8 +112,6 @@
 <script type="text/javascript" src="{{asset('compiled/js/app-provider-ui.js')}}"></script>
 <script type="text/javascript" src="{{ asset('compiled/js/issue-688.js') }}"></script>
 
-@include('partials.searchjs')
-
 @stack('scripts')
 <script>
     $(function () {
