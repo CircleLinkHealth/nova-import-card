@@ -16,7 +16,7 @@
                     <a href="#allergies-section">Allergies</a> ||
                     {{--<a href="#careplan-section">Care Plan</a> ||--}}
                     {{--<a href="#chiefcomplaint-section">Chief Complaint</a> ||--}}
-                    {{--<a href="#encounters-section">Encounters</a> ||--}}
+                    <a href="#encounters-section">Encounters</a> ||
                     {{--<a href="#functionalstatus-section">Functional Status</a> ||--}}
                     {{--<a href="#immunizations-section">Immunizations</a> ||--}}
                     {{--<br>--}}
@@ -71,12 +71,12 @@
                     {{--</code></pre>--}}
 
 
-                {{--<a name="encounters-section"></a>--}}
+                <a name="encounters-section"></a>
 
-                {{--<h2>Encounters</h2>--}}
-                {{--<pre><code id="encounters" class="javascript">--}}
-                        {{--{!! json_encode($ccd->encounters, JSON_PRETTY_PRINT) !!}--}}
-                    {{--</code></pre>--}}
+                <h2>Encounters</h2>
+                <pre><code id="encounters" class="javascript">
+                        {!! json_encode($ccd->encounters, JSON_PRETTY_PRINT) !!}
+                    </code></pre>
 
 
                 {{--<a name="functionalstatus-section"></a>--}}
