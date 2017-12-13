@@ -123,6 +123,7 @@
                 cpmProblems: window.cpmProblems || [],
                 practiceId: 0,
                 columns: [
+                    'MRN',
                     'Provider',
                     'Patient',
                     'Practice',
@@ -139,6 +140,7 @@
                 tableData: [
                     /*{
                         id: 1,
+                        mrn: "",
                         "approved": true,
                         "rejected": false,
                         "Provider": "Dr. Demo MD",
@@ -178,6 +180,7 @@
                     },
                     {
                         id: 2,
+                        mrn: "",
                         "approved": false,
                         "rejected": false,
                         "Provider": "  ",
@@ -258,7 +261,7 @@
                         console.error('billing-approve-reject', err)
                         tablePatient.errors[errorKey] = err.message
                     })
-                }
+                } 
             },
             retrieve() {
                 this.loading = true
@@ -269,6 +272,7 @@
                     this.tableData = response.data.map((patient, index) => {
                         return {
                             id: index,
+                            MRN: patient.mrn,
                             approved: patient.approve,
                             rejected: patient.reject,
                             reportId: patient.report_id,
