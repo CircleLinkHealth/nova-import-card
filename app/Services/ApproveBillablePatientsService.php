@@ -59,7 +59,9 @@ class ApproveBillablePatientsService
                                          ->map(function ($u) {
                                              $summary = $u->patientSummaries->first();
 
-                                             $this->fillSummaryProblems($u, $summary);
+                                             if ($this->lacksProblems($summary)) {
+                                                 $this->fillSummaryProblems($u, $summary);
+                                             }
 
                                              $lacksProblems = $this->lacksProblems($summary);
 
@@ -210,8 +212,6 @@ class ApproveBillablePatientsService
                ->update([
                    'billable' => true,
                ]);
-
-        $summary->save();
     }
 
     public function buildCcdProblemsFromCpmProblems(User $patient)
