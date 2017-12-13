@@ -23,6 +23,13 @@
                 </div>
             </template>
             <template slot="Billing Provider" scope="props">
+                <select class="form-control" v-model="props.row['Billing Provider']" @change="props.row.changeProvider(props.row['Billing Provider'])">
+                    <option :value="null">Select Billing Provider</option>
+                    <option v-for="(provider, index) in props.row.providers" :key="provider.id" :value="provider.id">{{provider.display_name}}</option>
+                </select>
+                <div v-if="props.row.loaders.providers">
+                    <loader></loader>
+                </div>
                 <text-editable :value="props.row['Billing Provider']" :no-button="true"></text-editable>
             </template>
             <template slot="2+ Cond" scope="props">
@@ -125,22 +132,28 @@
                         delete: null,
                         confirm: null,
                         practices: null,
-                        locations: null
+                        locations: null,
+                        providers: null
                     },
                     loaders: {
                         delete: false,
                         confirm: false,
                         practices: false,
-                        locations: false
+                        locations: false,
+                        providers: false
                     },
                     practices: () => self.practices,
                     locations: [],
+                    providers: [],
                     changePractice(id) {
                         self.changePractice(record.id, id)
                         console.log('change-practice-name', record.id, id)
                     },
                     changeLocation(id) {
                         self.changeLocation(record.id, id)
+                    },
+                    changeProvider(id) {
+                        self.changeProvider(record.id, id)
                     }
                 }
             },
@@ -154,10 +167,16 @@
                         record.Location = null
                         record.locations = []
                         record.loaders.locations = true
+                        record['Billing Provider'] = null
+                        record.providers = []
                         this.getLocations(practiceId).then(locations => {
                             console.log('get-practice-locations', practiceId, locations)
                             record.locations = locations
                             record.loaders.locations = false
+                        }).catch(err => {
+                            record.loaders.locations = false
+                            record.errors.locations = err.message
+                            console.error('get-practice-locations', err)
                         })
                     }
                 }
@@ -169,7 +188,27 @@
                     if (location) {
                         record.Location = location.id;
                         record.location_name = location.name
-                        
+                        record.providers = []
+                        record['Billing Provider'] = null
+                        record.loaders.providers = true
+                        this.getProviders(record.Practice, locationId).then(providers => {
+                            record.providers = providers
+                            record.loaders.providers = false
+                            console.log('get-practice-location-providers', providers)
+                        }).catch(err => {
+                            record.loaders.providers = false
+                            record.errors.providers = err.message
+                            console.error('get-practice-location-providers', err)
+                        })
+                    }
+                }
+            },
+            changeProvider(recordId, providerId) {
+                const record = this.tableData.find(row => row.id === recordId)
+                if (record) {
+                    const provider = record.providers.find(p => p.id === providerId)
+                    if (provider) {
+                        record['Billing Provider'] = provider.id
                     }
                 }
             },
@@ -283,17 +322,19 @@
                 })
             },
             getLocations(practiceId) {
-                this.loaders.locations = true
                 return this.axios.get(rootUrl(`api/practices/${practiceId}/locations`)).then(response => {
-                    this.loaders.locations = false
                     return (response.data || []).map(item => Object.assign(item, {
                         value: item.id,
                         text: item.name
                     }))
-                }).catch(err => {
-                    this.loaders.locations = false
-                    this.errors.locations = err.message
-                    console.error('get-practice-locations', err)
+                })
+            },
+            getProviders(practiceId, locationId) {
+                return this.axios.get(rootUrl(`api/practices/${practiceId}/locations/${locationId}/providers`)).then(response => {
+                    return (response.data || []).map(item => Object.assign(item, {
+                        value: item.id,
+                        text: item.display_name
+                    }))
                 })
             }
         },
