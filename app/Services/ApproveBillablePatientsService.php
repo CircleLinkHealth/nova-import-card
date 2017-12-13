@@ -133,7 +133,7 @@ class ApproveBillablePatientsService
     public function fillSummaryProblems(User $patient, PatientMonthlySummary $summary)
     {
         if ($this->lacksProblems($summary)) {
-            $this->fillProblems($patient, $summary, $this->validCcdProblems($patient)->where('billable', true));
+            $this->fillProblems($patient, $summary, $patient->ccdProblems->where('billable', true));
         }
 
         if ($this->lacksProblems($summary)) {
@@ -169,7 +169,7 @@ class ApproveBillablePatientsService
     private function fillProblems(User $patient, PatientMonthlySummary $summary, $billableProblems)
     {
         $billableProblems = $billableProblems
-            ->where('cpm_problem_id', '>', 1)
+            ->where('cpm_problem_id', '!=', 1)
             ->reject(function ($problem) {
                 return ! validProblemName($problem->name);
             })
