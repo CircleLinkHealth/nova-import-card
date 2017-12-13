@@ -88,7 +88,7 @@
                 columns: ['selected', 'Name', 'DOB', 'Practice', 'Location', 'Billing Provider', '2+ Cond', 'Medicare', 'Supplemental Ins', 'Submit', 'Remove'],
                 tableData: [],
                 options: {
-                    sortable: ['Name', 'DOB', 'Practice', 'Location', 'Billing Provider']
+                    sortable: ['Name', 'DOB']
                 },
                 practices: [],
                 errors: {
