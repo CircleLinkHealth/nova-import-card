@@ -30,14 +30,22 @@
             </template>
             <template slot="Remove" scope="props">
                 <input class="btn btn-danger btn-round" :class="{ 'btn-gray': multipleSelected }" type="button" @click="deleteOne(props.row.id)" value="x" />
+                <div v-if="props.row.loaders.delete">
+                    <loader></loader>
+                </div>
             </template>
             <template slot="h__Submit" scope="props">
                 <input class="btn btn-success btn-round" type="button" v-if="multipleSelected" @click="submitMultiple" value="✔" />
             </template>
             <template slot="Submit" scope="props">
-                <input class="btn btn-success btn-round" :class="{ 'btn-gray': multipleSelected }" type="button" @click="submitOne(props.row)" value="✔" />
+                <input class="btn btn-success btn-round" v-if="!props.row.loaders.confirm" :class="{ 'btn-gray': multipleSelected }" type="button" @click="submitOne(props.row.id)" value="✔" />
+                <div v-if="props.row.loaders.confirm">
+                    <loader></loader>
+                </div>
+                <error-modal-button :errors="getRowErrors(props.row.id)" name="confirm"></error-modal-button>
             </template>
         </v-client-table>
+        <error-modal ref="errorModal"></error-modal>
     </div>
 </template>
 
@@ -45,11 +53,17 @@
     import { rootUrl } from '../../app.config'
     import TextEditable from '../../admin/calls/comps/text-editable'
     import EventBus from '../../admin/time-tracker/comps/event-bus'
+    import LoaderComponent from '../loader'
+    import ErrorModal from '../../admin/billing/comps/error-modal'
+    import ErrorModalButton from '../../admin/billing/comps/error-modal-button'
 
     export default {
         name: 'ccd-viewer',
         components: {
-            'text-editable': TextEditable
+            'text-editable': TextEditable,
+            'loader': LoaderComponent,
+            'error-modal': ErrorModal,
+            'error-modal-button': ErrorModalButton
         },
         data() {
             return {
@@ -59,6 +73,14 @@
                 tableData: [],
                 options: {
                     sortable: ['Name', 'DOB', 'Practice', 'Location', 'Billing Provider']
+                },
+                errors: {
+                    delete: null,
+                    confirm: null
+                },
+                loaders: {
+                    delete: false,
+                    confirm: false
                 }
             }
         },
@@ -68,6 +90,9 @@
             }
         },
         methods: {
+            getRowErrors(id) {
+                return () => this.tableData.find(record => record.id === id).errors
+            },
             setupRecord(record) {
                 if (record.demographics) {
                     record.demographics.display_name = record.demographics.first_name + ' ' + record.demographics.last_name
@@ -84,10 +109,12 @@
                     Medicare: false,
                     'Supplemental Ins': false,
                     errors: {
-                        delete: null
+                        delete: null,
+                        confirm: null
                     },
                     loaders: {
-                        delete: false
+                        delete: false,
+                        confirm: false
                     }
                 }
             },
@@ -123,6 +150,7 @@
                             record.errors.delete = 'unknown response'
                         }
                         console.log('ccd-viewer:delete-one', id, response.data)
+                        return response
                     }).catch((err) => {
                         record.errors.delete = err
                         record.loaders.delete = false
@@ -140,15 +168,46 @@
                 }
             },
             submitMultiple() {
-
+                this.errors.confirm = true
+                return Promise.all(this.tableData.filter(record => record.selected).map(record => this.submitOne(record.id))).then(responses => {
+                    console.log('ccd-viewer:submit-multiple', responses)
+                    this.errors.confirm = false
+                }).catch(errors => {
+                    console.error('ccd-viewer:submit-multiple', errors)
+                    this.errors.confirm = false
+                })
             },
-            submitOne(row) {
-
+            submitOne(id) {
+                const record = this.tableData.find(r => r.id === id)
+                if (record) {
+                    record.loaders.confirm = true
+                    return this.axios.post(rootUrl('api/ccd-importer/records/confirm'), [record]).then((response) => {
+                        record.loaders.confirm = false
+                        console.log('submit-one', record, response.data)
+                        this.$forceUpdate()
+                        return response
+                    }).catch((err) => {
+                        record.loaders.confirm = false
+                        record.errors.confirm = err.message
+                        console.error('submit-one', record, err)
+                    })
+                }
+                else {
+                    record.errors.confirm = 'record not found'
+                }
             },
             toggleAllSelect(e) {
                 this.tableData = this.tableData.map(row => {
                     row.selected = this.selected;
                     return row;
+                })
+            },
+            showErrorModal(id, name) {
+                const errors = (this.tableData.find(row => row.id === id) || {}).errors
+                console.log(errors)
+                Event.$emit('modal-error:show', { body: errors[name] }, () => {
+                    errors[name] = null
+                    console.log(errors)
                 })
             }
         },
