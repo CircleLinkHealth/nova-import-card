@@ -4,6 +4,7 @@
       <div class="col-sm-6">
         <a class="btn btn-primary btn-xs" :href="rootUrl('admin/reports/call')">Export Records</a>
         <button class="btn btn-success btn-xs" @click="addCall">Add Call</button>
+        <button class="btn btn-warning btn-xs" @click="showUnscheduledPatientsModal">Unscheduled Patients</button>
       </div>
       <div class="col-sm-6 text-right" v-if="itemsAreSelected">
         <button class="btn btn-primary btn-xs" @click="assignSelectedToNurse">Assign To Nurse</button>
@@ -85,6 +86,7 @@
     <select-editable :values="['One', 'Two', 'Three']"></select-editable>
     <select-nurse-modal :selected-patients="selectedPatients"></select-nurse-modal>
     <add-call-modal></add-call-modal>
+    <unscheduled-patients-modal ref="unscheduledPatientsModal"></unscheduled-patients-modal>
   </div>
 </template>
 
@@ -98,6 +100,7 @@
   import Modal from '../common/modal'
   import AddCallModal from './comps/modals/add-call.modal'
   import SelectNurseModal from './comps/modals/select-nurse.modal'
+  import UnscheduledPatientsModal from './comps/modals/unscheduled-patients.modal'
   import BindAppEvents from './app.events'
   import { DayOfWeek, ShortDayOfWeek } from '../helpers/day-of-week'
 
@@ -110,7 +113,8 @@
         'time-editable': TimeEditable,
         'modal': Modal,
         'add-call-modal': AddCallModal,
-        'select-nurse-modal': SelectNurseModal
+        'select-nurse-modal': SelectNurseModal,
+        'unscheduled-patients-modal': UnscheduledPatientsModal
       },
       data() {
         return {
@@ -175,6 +179,9 @@
         },
         addCall() {
           Event.$emit("modal-add-call:show")
+        },
+        showUnscheduledPatientsModal() {
+          Event.$emit('modal-unscheduled-patients:show')
         },
         next() {
           if (!this.$nextPromise) {
