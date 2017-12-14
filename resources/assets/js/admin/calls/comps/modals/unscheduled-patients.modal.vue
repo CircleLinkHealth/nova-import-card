@@ -56,7 +56,7 @@
                 practices: [],
                 patients: [],
                 practiceId: null,
-                columns: ['id', 'name'],
+                columns: ['id', 'name', 'city', 'state'],
                 options: {
                     filterable: false
                 }
