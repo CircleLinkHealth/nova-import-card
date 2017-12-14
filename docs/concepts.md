@@ -3,7 +3,7 @@
 ## HIPAA
 **Please review the [HIPAA & PHI](hipaa.md) guide** to learn what you can and can't do with protected health information.
 
-## Roles
+## User Roles
 There are a few different kinds of users that consume, and/or are consumed by the application. **All types of users have a `User` model, which functions as `the base`**. Depending on the `User`'s `Role`, the `User` may also have additional relationships with other Models (eg. User->Patient, User->Nurse, User->ProviderInfo). The idea here is to isolate role specific functionality to separate models. 
 
 The most frequently used `Roles` of the application are 
