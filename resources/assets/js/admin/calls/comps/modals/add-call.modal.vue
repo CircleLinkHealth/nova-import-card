@@ -84,8 +84,9 @@
               </div>
               <div class="row form-group">
                 <div class="col-sm-12">
+                  <div class="alert alert-danger" v-if="errors.submit">{{errors.submit}}</div>
                   <center>
-                    <loader></loader>
+                    <loader v-if="loaders.submit"></loader>
                   </center>
                 </div>
               </div>
@@ -103,6 +104,16 @@
     import { rootUrl } from '../../../../app.config'
     import moment from 'moment'
 
+    const defaultFormData = {
+                              practiceId: null,
+                              patientId: null,
+                              nurseId: null,
+                              date: moment(new Date()).format('YYYY-MM-DD'),
+                              startTime: '09:00',
+                              endTime: '09:10',
+                              text: null
+                            }
+
     export default {
         name: 'add-call-modal',
         components: {
@@ -115,9 +126,16 @@
                     okHandler() {
                         const form = this.$form()
                         form.querySelector('button').click()
+                        this.errors().submit = null
                         console.log("okay clicked", form)
                     },
-                    $form: () => this.$el.querySelector('form')
+                    cancelHandler() {
+                      Object.assign(this, defaultFormData)
+                      this.errors().submit = null
+                      Event.$emit("modal-add-call:hide")
+                    },
+                    $form: () => this.$el.querySelector('form'),
+                    errors: () => this.errors
                 },
                 errors: {
                     practices: null,
@@ -132,15 +150,7 @@
                 practices: [],
                 patients: [],
                 nurses: [],
-                formData: {
-                  practiceId: null,
-                  patientId: null,
-                  nurseId: null,
-                  date: moment(new Date()).format('YYYY-MM-DD'),
-                  startTime: '09:00',
-                  endTime: '09:10',
-                  text: null
-                },
+                formData: Object.create(defaultFormData),
                 filters: {
                   showUnscheduledPatients: false
                 }
@@ -235,6 +245,7 @@
               this.loaders.submit = true
               this.axios.post(rootUrl('callcreate'), formData).then(response => {
                 this.loaders.submit = false
+                this.formData = Object.create(defaultFormData)
                 Event.$emit("modal-add-call:hide")
                 console.log('add-call', response.data)
               }).catch(err => {
