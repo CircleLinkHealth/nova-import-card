@@ -85,7 +85,7 @@
     <date-editable :value="'01-20-2017'" :format="'mm-DD-YYYY'"></date-editable>
     <select-editable :values="['One', 'Two', 'Three']"></select-editable>
     <select-nurse-modal :selected-patients="selectedPatients"></select-nurse-modal>
-    <add-call-modal></add-call-modal>
+    <add-call-modal ref="addCallModal"></add-call-modal>
     <unscheduled-patients-modal ref="unscheduledPatientsModal"></unscheduled-patients-modal>
   </div>
 </template>

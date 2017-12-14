@@ -91,7 +91,6 @@
                         console.error('unscheduled-patients-get-patients', err)
                     })
                 }
-                
             }
         },
         mounted() {

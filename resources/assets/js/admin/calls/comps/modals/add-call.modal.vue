@@ -8,77 +8,90 @@
         </div>
       </template>
       <template scope="props">
-        <div class="row">
-          <div class="col-sm-12">
-            <div class="row form-group">
-              <div class="col-sm-5">
-                Practice:
+        <form action="/callcreate" @submit="submitForm">
+          <div class="row">
+            <div class="col-sm-12">
+              <div class="row form-group">
+                <div class="col-sm-5">
+                  Practice <span class="required">*</span>
+                </div>
+                <div class="col-sm-7">
+                  <select class="form-control" v-model="formData.practiceId" @change="changePractice" required>
+                    <option :value="null">Unassigned</option>
+                    <option v-for="(practice, index) in practices" :key="practice.id" :value="practice.id">{{practice.display_name}}</option>
+                  </select>
+                </div>
               </div>
-              <div class="col-sm-7">
-                <select class="form-control" v-model="practiceId" @change="getPatients">
-                  <option :value="null">Unassigned</option>
-                  <option v-for="(practice, index) in practices" :key="practice.id" :value="practice.id">{{practice.display_name}}</option>
-                </select>
+              <div class="row form-group">
+                <div class="col-sm-5">
+                  Patient <span class="required">*</span>
+                </div>
+                <div class="col-sm-7">
+                  <select class="form-control" name="inbound_cpm_id" v-model="formData.patientId" required>
+                    <option :value="null">Unassigned</option>
+                    <option v-for="(patient, index) in patients" :key="patient.id" :value="patient.id">{{patient.name}} ({{patient.id}})</option>
+                  </select>
+                  <label>
+                    <input type="checkbox" v-model="filters.showUnscheduledPatients" @change="getPatients"> <small>Show Only Unscheduled Patients</small>
+                  </label>
+                  <loader v-if="loaders.patients"></loader>
+                </div>
               </div>
-            </div>
-            <div class="row form-group">
-              <div class="col-sm-5">
-                Patient:
+              <div class="row form-group">
+                <div class="col-sm-5">
+                  Nurse <span class="required">*</span>
+                </div>
+                <div class="col-sm-7">
+                  <select class="form-control" name="outbound_cpm_id" v-model="formData.nurseId" required>
+                    <option :value="null">Unassigned</option>
+                    <option v-for="(nurse, index) in nurses" :key="nurse.id" :value="nurse.id">{{nurse.name}} ({{nurse.id}})</option>
+                  </select>
+                  <loader v-if="loaders.nurses"></loader>
+                </div>
               </div>
-              <div class="col-sm-7">
-                <select class="form-control" v-model="patientId">
-                  <option :value="null">Unassigned</option>
-                  <option v-for="(patient, index) in patients" :key="patient.id" :value="patient.id">{{patient.name}}</option>
-                </select>
-                <input type="checkbox" v-model="filters.showUnscheduledPatients" @change="getPatients"> Show Only Unscheduled Patients
-                <loader v-if="loaders.patients"></loader>
+              <div class="row form-group">
+                <div class="col-sm-5">
+                  Date <span class="required">*</span>
+                </div>
+                <div class="col-sm-7">
+                  <input class="form-control" type="date" name="scheduled_date" v-model="formData.date" required />
+                </div>
               </div>
-            </div>
-            <div class="row form-group">
-              <div class="col-sm-5">
-                Nurse:
+              <div class="row form-group">
+                <div class="col-sm-5">
+                  Start Time <span class="required">*</span>
+                </div>
+                <div class="col-sm-7">
+                  <input class="form-control" type="time" name="window_start" v-model="formData.startTime" required />
+                </div>
               </div>
-              <div class="col-sm-7">
-                <select class="form-control" v-model="nurseId">
-                  <option :value="null">Unassigned</option>
-                  <option v-for="(nurse, index) in nurses" :key="nurse.id" :value="nurse.id">{{nurse.name}}</option>
-                </select>
+              <div class="row form-group">
+                <div class="col-sm-5">
+                  End Time <span class="required">*</span>
+                </div>
+                <div class="col-sm-7">
+                  <input class="form-control" type="time" name="window_end" v-model="formData.endTime" required />
+                </div>
               </div>
-            </div>
-            <div class="row form-group">
-              <div class="col-sm-5">
-                Date:
+              <div class="row form-group">
+                <div class="col-sm-5">
+                  Add Text <span class="required">*</span>
+                </div>
+                <div class="col-sm-7">
+                  <textarea class="form-control" name="attempt_note" v-model="formData.text" required></textarea>
+                  <button class="hidden"></button>
+                </div>
               </div>
-              <div class="col-sm-7">
-                <input class="form-control" type="date" />
-              </div>
-            </div>
-            <div class="row form-group">
-              <div class="col-sm-5">
-                Start Time
-              </div>
-              <div class="col-sm-7">
-                <input class="form-control" type="time" />
-              </div>
-            </div>
-            <div class="row form-group">
-              <div class="col-sm-5">
-                End Time:
-              </div>
-              <div class="col-sm-7">
-                <input class="form-control" type="time" />
-              </div>
-            </div>
-            <div class="row form-group">
-              <div class="col-sm-5">
-                Add Text:
-              </div>
-              <div class="col-sm-7">
-                <textarea class="form-control"></textarea>
+              <div class="row form-group">
+                <div class="col-sm-12">
+                  <center>
+                    <loader></loader>
+                  </center>
+                </div>
               </div>
             </div>
           </div>
-        </div>
+        </form>
       </template>
     </modal>
 </template>
@@ -88,6 +101,7 @@
     import Modal from '../../../common/modal'
     import LoaderComponent from '../../../../components/loader'
     import { rootUrl } from '../../../../app.config'
+    import moment from 'moment'
 
     export default {
         name: 'add-call-modal',
@@ -99,24 +113,34 @@
             return {
                 addCallModalInfo: {
                     okHandler() {
-                        console.log("okay clicked")
-                        Event.$emit("modal-add-call:hide")
-                    }
+                        const form = this.$form()
+                        form.querySelector('button').click()
+                        console.log("okay clicked", form)
+                    },
+                    $form: () => this.$el.querySelector('form')
                 },
                 errors: {
                     practices: null,
-                    patients: null
+                    patients: null,
+                    submit: null
                 },
                 loaders: {
                     practices: false,
-                    patients: false
+                    patients: false,
+                    submit: false
                 },
                 practices: [],
                 patients: [],
                 nurses: [],
-                practiceId: null,
-                patientId: null,
-                nurseId: null,
+                formData: {
+                  practiceId: null,
+                  patientId: null,
+                  nurseId: null,
+                  date: moment(new Date()).format('YYYY-MM-DD'),
+                  startTime: '09:00',
+                  endTime: '09:10',
+                  text: null
+                },
                 filters: {
                   showUnscheduledPatients: false
                 }
@@ -140,9 +164,9 @@
                 })
             },
             getUnscheduledPatients() {
-                if (this.practiceId) {
+                if (this.formData.practiceId) {
                     this.loaders.patients = true
-                    this.axios.get(rootUrl(`api/practices/${this.practiceId}/patients/without-scheduled-calls`)).then(response => {
+                    this.axios.get(rootUrl(`api/practices/${this.formData.practiceId}/patients/without-scheduled-calls`)).then(response => {
                         this.loaders.patients = false
                         this.patients = (response.data || []).map(patient => {
                             patient.name = patient.full_name
@@ -161,9 +185,9 @@
                     this.getUnscheduledPatients() : this.getAllPatients();
             },
             getAllPatients() {
-                if (this.practiceId) {
+                if (this.formData.practiceId) {
                     this.loaders.patients = true
-                    this.axios.get(rootUrl(`api/practices/${this.practiceId}/patients`)).then(response => {
+                    this.axios.get(rootUrl(`api/practices/${this.formData.practiceId}/patients`)).then(response => {
                         this.loaders.patients = false
                         this.patients = (response.data || []).map(patient => {
                             patient.name = patient.full_name
@@ -176,6 +200,48 @@
                         console.error('add-call-get-patients', err)
                     })
                 }
+            },
+            getNurses() {
+                if (this.formData.practiceId) {
+                    this.loaders.nurses = true
+                    this.axios.get(rootUrl(`api/practices/${this.formData.practiceId}/nurses`)).then(response => {
+                        this.loaders.nurses = false
+                        this.nurses = (response.data || []).map(nurse => {
+                            nurse.name = nurse.full_name
+                            return nurse;
+                        }).filter(nurse => nurse.name && nurse.name.trim() != '')
+                        console.log('add-call-get-nurses', this.nurses)
+                    }).catch(err => {
+                        this.loaders.nurses = false
+                        this.errors.nurses = err.message
+                        console.error('add-call-get-nurses', err)
+                    })
+                }
+            },
+            changePractice() {
+              this.getPatients()
+              this.getNurses()
+            },
+            submitForm(e) {
+              e.preventDefault();
+              const formData = {
+                inbound_cpm_id: this.formData.patientId,
+                outbound_cpm_id: this.formData.nurseId,
+                scheduled_date: this.formData.date,
+                window_start: this.formData.startTime,
+                window_end: this.formData.endTime,
+                attempt_note: this.formData.text
+              }
+              this.loaders.submit = true
+              this.axios.post(rootUrl('callcreate'), formData).then(response => {
+                this.loaders.submit = false
+                Event.$emit("modal-add-call:hide")
+                console.log('add-call', response.data)
+              }).catch(err => {
+                this.errors.submit = err.message
+                this.loaders.submit = false
+                console.error('add-call', err)
+              })
             }
         },
         mounted() {
@@ -187,5 +253,13 @@
 <style>
     .modal-add-call .modal-container {
         width: 420px;
+    }
+
+    span.required {
+        color: red;
+        font-size: 29px;
+        position: absolute;
+        top: -7px;
+        margin-left: 5px;
     }
 </style>
