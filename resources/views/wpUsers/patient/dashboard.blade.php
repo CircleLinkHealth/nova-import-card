@@ -36,7 +36,7 @@
                     </li>
 
                     <li class="menu-item">
-                        <a id="add-patient" href="{{ URL::route('patients.demographics.show', array()) }}">
+                        <a dusk="add-patient-btn" href="{{ URL::route('patients.demographics.show', array()) }}">
                             <div class="icon-container column-centered">
                                 <i class="icon--add-patient--big icon--menu"></i>
                             </div>
