@@ -213,4 +213,4 @@ function TimeTrackerUser(info, now = () => (new Date())) {
 }
 
 module.exports = TimeTracker;
-module.exports.TimeTrackerUser = TimeTrackerUser 
+module.exports.TimeTrackerUser = TimeTrackerUser
