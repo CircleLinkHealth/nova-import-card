@@ -148,7 +148,12 @@ function TimeTrackerUser(info, now = () => (new Date())) {
                 if (ws.readyState === ws.OPEN) ws.send(JSON.stringify({ message: 'server:modal' }))
             }
             else {
-                if (ws.readyState === ws.OPEN) ws.send(JSON.stringify({ message: 'server:logout' }))
+                user.inactiveSeconds = 0 // set inactive-seconds to 0
+                user.allSockets.forEach(socket => {
+                    if (socket.readyState === socket.OPEN) {
+                        socket.send(JSON.stringify({ message: 'server:logout' }))
+                    }
+                })
             }
         }
         ws.active = true
