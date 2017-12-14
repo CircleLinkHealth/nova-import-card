@@ -346,9 +346,26 @@ class CallsController extends ApiController
 
     public function patientsWithoutScheduledCalls($practiceId) {
         $patients = $this->service->getPatientsWithoutScheduledCalls($practiceId, Carbon::now()->startOfMonth())
-            ->get();
+            ->get([
+                'id',
+                'first_name',
+                'last_name',
+                'suffix',
+                'city',
+                'state'
+            ])->map(function ($patient) {
+                return [
+                    'id' =>  $patient->id,
+                    'first_name' =>  $patient->first_name,
+                    'last_name' =>  $patient->last_name,
+                    'suffix' =>  $patient->suffix,
+                    'full_name' => $patient->first_name . ' ' . $patient->last_name . ' ' . $patient->suffix,
+                    'city' =>  $patient->city,
+                    'state' =>  $patient->state
+                ];
+            })->toArray();
 
-        return UserResource::collection($patients);
+        return response()->json($patients);
     }
 
     /**

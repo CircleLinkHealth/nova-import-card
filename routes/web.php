@@ -126,6 +126,8 @@ Route::group(['middleware' => 'auth'], function () {
             Route::get('{practiceId}/locations', 'API\PracticeController@getPracticeLocations');
             Route::get('{practiceId}/locations/{locationId}/providers', 'API\PracticeController@getLocationProviders');
             Route::get('all', 'API\PracticeController@allPracticesWithLocationsAndStaff');
+            Route::get('{practiceId}/patients', 'API\PracticeController@getPatients');
+            Route::get('{practiceId}/nurses', 'API\PracticeController@getNurses');
 
             Route::get('{practiceId}/patients/without-scheduled-calls', [
                 'uses' => 'API\Admin\CallsController@patientsWithoutScheduledCalls',

@@ -100,4 +100,50 @@ class PracticeController extends Controller
         }
         else return response()->json([ 'message' => 'location not found' ], 404);
     }
+
+    public function getPatients($practiceId) {
+        $practice = Practice::where('id', $practiceId)->get(['id'])->first();
+        $patients = $practice->patients()->get([
+            'id',
+            'first_name',
+            'last_name',
+            'suffix',
+            'city',
+            'state'
+        ])->map(function ($patient) {
+            return [
+                'id' =>  $patient->id,
+                'first_name' =>  $patient->first_name,
+                'last_name' =>  $patient->last_name,
+                'suffix' =>  $patient->suffix,
+                'full_name' => $patient->first_name . ' ' . $patient->last_name . ' ' . $patient->suffix,
+                'city' =>  $patient->city,
+                'state' =>  $patient->state
+            ];
+        })->toArray();
+        return response()->json($patients);
+    }
+    
+    public function getNurses($practiceId) {
+        $practice = Practice::where('id', $practiceId)->get(['id'])->first();
+        $nurses = $practice->nurses()->get([
+            'id',
+            'first_name',
+            'last_name',
+            'suffix',
+            'city',
+            'state'
+        ])->map(function ($nurse) {
+            return [
+                'id' =>  $nurse->id,
+                'first_name' =>  $nurse->first_name,
+                'last_name' =>  $nurse->last_name,
+                'suffix' =>  $nurse->suffix,
+                'full_name' => $nurse->first_name . ' ' . $nurse->last_name . ' ' . $nurse->suffix,
+                'city' =>  $nurse->city,
+                'state' =>  $nurse->state
+            ];
+        })->toArray();
+        return response()->json($nurses);
+    }
 }

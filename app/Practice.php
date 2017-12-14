@@ -118,6 +118,18 @@ class Practice extends \App\BaseModel
             ->withPivot('role_id', 'has_admin_rights', 'send_billing_reports');
     }
 
+    public function patients() {
+        return $this->users()->whereHas('roles', function ($q) {
+            $q->whereName('participant');
+        });
+    }
+    
+    public function nurses() {
+        return $this->users()->whereHas('roles', function ($q) {
+            $q->where('name', '=', 'care-center')->orWhere('name', 'registered-nurse');
+        });
+    }
+
     public function getCountOfUserTypeAtPractice($role)
     {
 
