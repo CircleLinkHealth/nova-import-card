@@ -1,6 +1,6 @@
-#Concepts
+# Concepts
 
-##Roles
+## Roles
 There are a few different kinds of users that consume, and/or are consumed by the application. Each user will have a `User` model. Depending on the `User`'s `Role`,  
 the `User` may also have additional relationships with other Models. The most frequently used `Roles` of the application are 
     
@@ -10,7 +10,7 @@ the `User` may also have additional relationships with other Models. The most fr
     - CareCenter => CLH's Registerred Nurse.
      
 
-#####Important Relationships
+##### Important Relationships
 - `App\User` hasMany `App\Roles`
 
     Every `User` in the application needs to have a `Role`, associated with a `Practice`. 
