@@ -5,9 +5,9 @@ There are a few different kinds of users that consume, and/or are consumed by th
 
 The most frequently used `Roles` of the application are 
     
-    - Administrator => Only people who work for CLH.
-    - Provider => Someone who is licensed to offer care (eg. A `Medical Doctor`). 
-    - Patient => A patient.
+    - Administrator => Only people who work for CLH. This role can see and do all.
+    - Provider => Someone who is licensed to offer care (eg. A `Medical Doctor`). These are the Doctors that work at the Practices who utilize our service.
+    - Patient => A patient. 
     - CareCenter => CLH's Registerred Nurse.
      
 
