@@ -130,7 +130,6 @@
                         console.log("okay clicked", form)
                     },
                     cancelHandler() {
-                      Object.assign(this, defaultFormData)
                       this.errors().submit = null
                       Event.$emit("modal-add-call:hide")
                     },
