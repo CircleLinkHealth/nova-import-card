@@ -6,6 +6,7 @@ use App\Importer\Loggers\Ccda\CcdToLogTranformer;
 use App\Models\MedicalRecords\Ccda;
 use App\Practice;
 use App\Services\WelcomeCallListGenerator;
+use Carbon\Carbon;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Queue\InteractsWithQueue;
@@ -85,7 +86,7 @@ class CheckCcdaEnrollmentEligibility implements ShouldQueue
 
             if ($lastEncounter) {
                 $filterLastEncounter = true;
-                $patient->put('last_encounter', $lastEncounter);
+                $patient->put('last_encounter', Carbon::parse($lastEncounter));
             }
         }
 
