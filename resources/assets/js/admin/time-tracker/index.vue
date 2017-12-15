@@ -162,20 +162,24 @@
                 }
 
                 EventBus.$on('tracker:start', () => {
-                    if (this.socket && this.socket.readyState === WebSocket.OPEN) {
-                        if (this.startCount === 0) this.updateTime();
-                        this.state = STATE.ENTER
-                        this.socket.send(JSON.stringify({ message: STATE.ENTER, info: this.info }))
+                    if (this.state !== STATE.SHOW_INACTIVE_MODAL) {
+                        if (this.socket && this.socket.readyState === WebSocket.OPEN) {
+                            if (this.startCount === 0) this.updateTime();
+                            this.state = STATE.ENTER
+                            this.socket.send(JSON.stringify({ message: STATE.ENTER, info: this.info }))
+                        }
                     }
                 })
 
                 EventBus.$on('tracker:stop', () => {
-                    if (this.socket) {
-                        this.showTimer = false
-                        this.state = STATE.LEAVE;
-                        this.socket.send(JSON.stringify({ message: STATE.LEAVE, info: this.info }))
+                    if (this.state !== STATE.SHOW_INACTIVE_MODAL) {
+                        if (this.socket) {
+                            this.showTimer = false
+                            this.state = STATE.LEAVE;
+                            this.socket.send(JSON.stringify({ message: STATE.LEAVE, info: this.info }))
+                        }
+                        this.showLoader = true
                     }
-                    this.showLoader = true
                 })
 
                 EventBus.$on('tracker:show-inactive-modal', () => {
