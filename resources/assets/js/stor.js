@@ -140,5 +140,7 @@ const WinName = {
     }
 }
 
-export default new Stor(Modes.Local)
+const stor = new Stor(Modes.Local)
+
+export default stor
 export const sstor = new Stor(Modes.Session)
