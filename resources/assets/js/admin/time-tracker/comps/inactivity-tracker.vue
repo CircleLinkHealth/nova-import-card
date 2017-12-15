@@ -47,7 +47,7 @@
                              */
                             this.windowFocusHandler = window.onfocus
                             window.onfocus = null;
-                            EventBus.$emit("tracker:stop")
+                            EventBus.$emit("tracker:show-inactive-modal")
                             EventBus.$emit('modal-inactivity:show')
                         }
                         else if (this.totalSeconds && (this.totalSeconds >= LOGOUT_INTERVAL)) {
@@ -101,7 +101,7 @@
             EventBus.$on("inactivity:start", this.start.bind(this));
 
             EventBus.$on('modal-inactivity:close', () => {
-                EventBus.$emit("tracker:start")
+                EventBus.$emit("tracker:hide-inactive-modal")
                 this.reset()
                 console.log('modal closed')
                 //restore the window.onfocus handler
