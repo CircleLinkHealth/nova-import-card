@@ -46,14 +46,14 @@ class QueueCcdaToDetermineEnrollmentEligibility extends Command
             ['status', '=', Ccda::DETERMINE_ENROLLEMENT_ELIGIBILITY],
         ])->whereNotNull('mrn')
                     ->inRandomOrder()
-                    ->take(30)
+                    ->take(2000)
                     ->get(['id', 'practice_id'])
                     ->map(function ($ccda) {
                         //lgh
                         if ($ccda->practice_id == 141) {
                             dispatch(
                                 (new LGHDetermineCcdaEnrollmentEligibility($ccda))
-                                    ->delay(Carbon::now()->addSeconds(20))
+                                    ->delay(Carbon::now()->addSeconds(5))
                                     ->onQueue('ccda-processor')
                             );
 
@@ -70,7 +70,7 @@ class QueueCcdaToDetermineEnrollmentEligibility extends Command
 
                             dispatch(
                                 (new CheckCcdaEnrollmentEligibility($ccda, $practice))
-                                    ->delay(Carbon::now()->addSeconds(20))
+                                    ->delay(Carbon::now()->addSeconds(5))
                                     ->onQueue('ccda-processor')
                             );
 

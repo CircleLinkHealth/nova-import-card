@@ -321,7 +321,9 @@ class WelcomeCallListGenerator
                 return true;
             }
 
-            $lastEncounterDate = new Carbon($row['last_encounter']);
+            $lastEncounterDate = is_a($row['last_encounter'], Carbon::class)
+                ? $row['last_encounter']
+                : new Carbon($row['last_encounter']);
 
             if ($lastEncounterDate->lt($minEligibleDate)) {
                 $this->ineligiblePatients->push($row);
