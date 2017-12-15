@@ -157,7 +157,8 @@
                     LEAVE: 'client:leave',
                     ENTER: 'client:enter',
                     INACTIVITY_CANCEL: 'inactivity-cancel',
-                    MODAL_RESPONSE: 'client:modal'
+                    MODAL_RESPONSE: 'client:modal',
+                    SHOW_INACTIVE_MODAL: 'client:show-inactive-modal'
                 }
 
                 EventBus.$on('tracker:start', () => {
@@ -173,6 +174,15 @@
                         this.showTimer = false
                         this.state = STATE.LEAVE;
                         this.socket.send(JSON.stringify({ message: STATE.LEAVE, info: this.info }))
+                    }
+                    this.showLoader = true
+                })
+
+                EventBus.$on('tracker:show-inactive-modal', () => {
+                    if (this.socket) {
+                        this.showTimer = false
+                        this.state = STATE.LEAVE;
+                        this.socket.send(JSON.stringify({ message: STATE.SHOW_INACTIVE_MODAL, info: this.info }))
                     }
                     this.showLoader = true
                 })

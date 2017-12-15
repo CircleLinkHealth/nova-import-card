@@ -36,7 +36,7 @@
                 this.interval = setInterval(
                     function() {
                         this.endTime = new Date();
-                        const ALERT_INTERVAL = 120;
+                        const ALERT_INTERVAL = 20;
                         const LOGOUT_INTERVAL = 600;
                         if (this.totalSeconds && ((this.totalSeconds % ALERT_INTERVAL) === 0)) {
                             /**
@@ -47,7 +47,7 @@
                              */
                             this.windowFocusHandler = window.onfocus
                             window.onfocus = null;
-                            EventBus.$emit("tracker:stop")
+                            EventBus.$emit("tracker:show-inactive-modal")
                             EventBus.$emit('modal-inactivity:show')
                         }
                         else if (this.totalSeconds && (this.totalSeconds >= LOGOUT_INTERVAL)) {
@@ -113,6 +113,6 @@
 
 <style>
     .inactivity-tracker {
-        display: none;
+        display: block;
     }
 </style>
