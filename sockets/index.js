@@ -176,7 +176,7 @@ module.exports = app => {
           'activities:', user.activities.filter(activity => activity.isActive).length, 
           'total-seconds:', user.totalSeconds,
           'inactive-seconds:', user.inactiveSeconds,
-          'durations:', user.activities.map(activity => activity.duration).join(','),
+          'durations:', user.activities.filter(activity => activity.isActive).map(activity => activity.duration).join(','),
           'sockets:', user.allSockets.length
         )
       }
