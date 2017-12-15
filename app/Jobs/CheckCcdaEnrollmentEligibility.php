@@ -2,7 +2,6 @@
 
 namespace App\Jobs;
 
-use App\CLH\Repositories\CCDImporterRepository;
 use App\Importer\Loggers\Ccda\CcdToLogTranformer;
 use App\Models\MedicalRecords\Ccda;
 use App\Practice;
@@ -12,21 +11,24 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 
-class OttawaDetermineCcdaEnrollmentEligibility implements ShouldQueue
+class CheckCcdaEnrollmentEligibility implements ShouldQueue
 {
     use InteractsWithQueue, Queueable, SerializesModels;
     protected $ccda;
+    protected $practice;
     protected $transformer;
 
     /**
      * Create a new job instance.
      *
      * @param Ccda $ccda
+     * @param Practice $practice
      */
-    public function __construct(Ccda $ccda)
+    public function __construct(Ccda $ccda, Practice $practice)
     {
-        $this->ccda = Ccda::find($ccda->id);
+        $this->ccda        = Ccda::find($ccda->id);
         $this->transformer = new CcdToLogTranformer();
+        $this->practice    = $practice;
     }
 
     /**
@@ -40,10 +42,15 @@ class OttawaDetermineCcdaEnrollmentEligibility implements ShouldQueue
             return;
         }
 
+        $this->determineEligibility();
+    }
+
+    private function determineEligibility()
+    {
         $json = $this->ccda->bluebuttonJson();
 
         $demographics = collect($this->transformer->demographics($json->demographics));
-        $problems = collect($json->problems)->map(function ($prob) {
+        $problems     = collect($json->problems)->map(function ($prob) {
             $problem = array_merge($this->transformer->problem($prob));
 
             $codes = collect($this->transformer->problemCodes($prob))->sortByDesc(function ($code) {
@@ -62,7 +69,7 @@ class OttawaDetermineCcdaEnrollmentEligibility implements ShouldQueue
 
             return '';
         });
-        $insurance = collect($json->payers)->map(function ($payer) {
+        $insurance    = collect($json->payers)->map(function ($payer) {
             if (empty($payer->insurance)) {
                 return false;
             }
@@ -72,9 +79,19 @@ class OttawaDetermineCcdaEnrollmentEligibility implements ShouldQueue
 
         $patient = $demographics->put('referring_provider_name', '');
 
+        $filterLastEncounter = false;
+        if (isset($json->encounters) && array_key_exists(0, $json->encounters) && isset($json->encounters[0]->date)) {
+            $lastEncounter = $json->encounters[0]->date;
+
+            if ($lastEncounter) {
+                $filterLastEncounter = true;
+                $patient->put('last_encounter', $lastEncounter);
+            }
+        }
+
         if (array_key_exists(0, $json->document->documentation_of)) {
             $provider = $this->transformer->provider($json->document->documentation_of[0]);
-            $patient = $patient->put('referring_provider_name', "{$provider['first_name']} {$provider['last_name']}");
+            $patient  = $patient->put('referring_provider_name', "{$provider['first_name']} {$provider['last_name']}");
         }
 
         $patient = $patient->put('problems', $problems);
@@ -82,24 +99,20 @@ class OttawaDetermineCcdaEnrollmentEligibility implements ShouldQueue
 
         $filterInsurance = false;
 
-        if (!$insurance->isEmpty()) {
+        if ($insurance->isNotEmpty()) {
             $patient = $patient->put('primary_insurance', $insurance[0] ?? '');
             $patient = $patient->put('secondary_insurance', $insurance[1] ?? '');
 
 //            $filterInsurance = true;
         }
 
-
-        $practice = Practice::whereName('ottawa-family-physicians')
-            ->first();
-
         $list = (new WelcomeCallListGenerator(
             collect([$patient]),
-            false,
+            $filterLastEncounter,
             $filterInsurance,
             true,
             true,
-            $practice,
+            $this->practice,
             Ccda::class,
             $this->ccda->id
         ));
@@ -110,7 +123,9 @@ class OttawaDetermineCcdaEnrollmentEligibility implements ShouldQueue
             $this->ccda->status = Ccda::INELIGIBLE;
         }
 
-        $this->ccda->practice_id = $practice->id;
+        $this->ccda->practice_id = $this->practice->id;
         $this->ccda->save();
+
+        return $this->ccda->status;
     }
 }
