@@ -84,12 +84,12 @@ $user_info = array();
                                             </div>
                                             <div class="col-sm-8">
                                                 <div class="radio-inline">
-                                                    <input type="radio" id="radioMale" name="gender"
+                                                    <input dusk="male-gender" type="radio" id="radioMale" name="gender"
                                                            value="M" {{ ((old('gender') == 'M') ? 'checked="checked"' : (($patient->gender == 'M') ? 'checked="checked"' : '')) }}>
                                                     <label for="radioMale"><span> </span>Male</label>
                                                 </div>
                                                 <div class="radio-inline">
-                                                    <input type="radio" id="radioFemale" name="gender"
+                                                    <input dusk="female-gender" type="radio" id="radioFemale" name="gender"
                                                            value="F" {{ ((old('gender') == 'F') ? 'checked="checked"' : (($patient->gender == 'F') ? 'checked="checked"' : '')) }}>
                                                     <label for="radioFemale"><span> </span>Female</label>
                                                 </div>
@@ -352,11 +352,6 @@ $user_info = array();
             @endpush
             
     </div>
-    @endif
-
-    {{--Added this to allow for testing, since submit is done via js--}}
-    @if(app()->environment('testing'))
-        {!! Form::submit('TestSubmit', ['id' => 'unit-test-submit']) !!}
     @endif
 
     {!! Form::close() !!}
