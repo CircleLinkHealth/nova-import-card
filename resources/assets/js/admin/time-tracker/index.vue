@@ -181,7 +181,7 @@
                 EventBus.$on('tracker:show-inactive-modal', () => {
                     if (this.socket) {
                         this.showTimer = false
-                        this.state = STATE.LEAVE;
+                        this.state = STATE.SHOW_INACTIVE_MODAL;
                         this.socket.send(JSON.stringify({ message: STATE.SHOW_INACTIVE_MODAL, info: this.info }))
                     }
                     this.showLoader = true
