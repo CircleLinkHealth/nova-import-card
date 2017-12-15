@@ -92,7 +92,7 @@
                                 if (data.message === 'server:sync') {
                                     self.seconds = data.seconds
                                     self.visible = true //display the component when the previousSeconds value has been received from the server to keep the display up-to-date
-                                    if (EventBus.isInFocus) self.showLoader = false
+                                    self.showLoader = false
                                 }
                                 else if (data.message === 'server:modal') {
                                     EventBus.$emit('away:trigger-modal')
@@ -113,6 +113,7 @@
                                 self.startCount = 0;
                             }
                             console.log("socket connection opened", ev, self.startCount, EventBus.isInFocus)
+                            if (EventBus.isInFocus) EventBus.$emit('tracker:start')
                         }
                 
                         socket.onclose = (ev) => {
@@ -179,6 +180,15 @@
                             this.socket.send(JSON.stringify({ message: STATE.LEAVE, info: this.info }))
                         }
                         this.showLoader = true
+                    }
+                })
+
+                EventBus.$on('tracker:hide-inactive-modal', () => {
+                    /** does the same as tracker:start without the conditional */
+                    if (this.socket && this.socket.readyState === WebSocket.OPEN) {
+                        if (this.startCount === 0) this.updateTime();
+                        this.state = STATE.ENTER
+                        this.socket.send(JSON.stringify({ message: STATE.ENTER, info: this.info }))
                     }
                 })
 

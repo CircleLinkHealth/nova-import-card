@@ -101,7 +101,7 @@
             EventBus.$on("inactivity:start", this.start.bind(this));
 
             EventBus.$on('modal-inactivity:close', () => {
-                EventBus.$emit("tracker:start")
+                EventBus.$emit("tracker:hide-inactive-modal")
                 this.reset()
                 console.log('modal closed')
                 //restore the window.onfocus handler
