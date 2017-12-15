@@ -146,10 +146,10 @@ function TimeTrackerUser(info, now = () => (new Date())) {
          * check inactive seconds
          */
         if (user.inactiveSeconds) {
-            if (user.inactiveSeconds < 20) {
+            if (user.inactiveSeconds < 120) {
                 user.respondToModal(true)
             }
-            else if (user.inactiveSeconds < 60) {
+            else if (user.inactiveSeconds < 600) {
                 if (ws.readyState === ws.OPEN) ws.send(JSON.stringify({ message: 'server:modal' }))
             }
             else {
