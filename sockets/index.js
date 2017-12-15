@@ -1,3 +1,5 @@
+const colors = require('../logger/colors')
+
 module.exports = app => {
   require('express-ws')(app);
 
@@ -95,7 +97,7 @@ module.exports = app => {
               try {
                 const info = data.info
                 const user = app.getTimeTracker(info).get(info)
-                user.showInactiveModal()
+                user.showInactiveModal(info)
               }
               catch (ex) {
                 errorThrow(ex, ws)
@@ -176,7 +178,7 @@ module.exports = app => {
           'activities:', user.activities.filter(activity => activity.isActive).length, 
           'total-seconds:', user.totalSeconds,
           'inactive-seconds:', user.inactiveSeconds,
-          'durations:', user.activities.filter(activity => activity.isActive).map(activity => activity.duration).join(','),
+          'durations:', user.activities.map(activity => (activity.isActive ? colors.FgGreen : colors.FgRed) + activity.duration + colors.Reset).join(', '),
           'sockets:', user.allSockets.length
         )
       }
