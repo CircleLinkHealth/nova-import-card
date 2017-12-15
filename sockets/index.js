@@ -91,6 +91,17 @@ module.exports = app => {
                 return;
               }
             }
+            else if (data.message === 'client:show-inactive-modal') {
+              try {
+                const info = data.info
+                const user = app.getTimeTracker(info).get(info)
+                user.showInactiveModal()
+              }
+              catch (ex) {
+                errorThrow(ex, ws)
+                return;
+              }
+            }
             else if (data.message === 'PING') {
 
             }
@@ -150,7 +161,7 @@ module.exports = app => {
   setInterval(() => {
     for (const user of [...timeTracker.users(), ...timeTrackerNoLiveCount.users()]) {
       user.activities.forEach(activity => {
-        if (activity.isActive) {
+        if (activity.isActive && !activity.isInActiveModalShown) {
           activity.duration += 1;
         }
       })

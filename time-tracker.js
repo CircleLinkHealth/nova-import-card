@@ -134,9 +134,14 @@ function TimeTrackerUser(info, now = () => (new Date())) {
             activity = getActivity(info)
             user.activities.push(activity)
         }
-        if (activity.sockets.indexOf(ws) < 0) {
-            activity.sockets.push(ws)
+        else if (activity) {
+            activity.isInActiveModalShown = false
+
+            if (activity.sockets.indexOf(ws) < 0) {
+                activity.sockets.push(ws)
+            }
         }
+        
         /**
          * check inactive seconds
          */
@@ -197,6 +202,13 @@ function TimeTrackerUser(info, now = () => (new Date())) {
             activity.duration += 30
         }
         user.inactiveSeconds = 0
+    }
+    
+    user.showInactiveModal = () => {
+        let activity = user.activities.find(item => item.name == info.activity)
+        if (activity) {
+            activity.isInActiveModalShown = true
+        }
     }
 
     user.close = () => {
