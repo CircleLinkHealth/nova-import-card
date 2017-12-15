@@ -215,6 +215,7 @@ function TimeTrackerUser(info, now = () => (new Date())) {
         /**
          * to be executed when all sockets have closed
          */
+        user.inactiveSeconds = 0
         user.totalTime += user.activities.reduce((a, b) => a + b.duration, 0)
         user.activities.forEach(activity => {
             activity.duration = 0
