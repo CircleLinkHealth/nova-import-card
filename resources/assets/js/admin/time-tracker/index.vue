@@ -159,7 +159,8 @@
                     ENTER: 'client:enter',
                     INACTIVITY_CANCEL: 'inactivity-cancel',
                     MODAL_RESPONSE: 'client:modal',
-                    SHOW_INACTIVE_MODAL: 'client:show-inactive-modal'
+                    SHOW_INACTIVE_MODAL: 'client:inactive-modal:show',
+                    CLOSE_INACTIVE_MODAL: 'client:inactive-modal:close'
                 }
 
                 EventBus.$on('tracker:start', () => {
