@@ -118,6 +118,6 @@
 
 <style>
     .inactivity-tracker {
-        display: block;
+        display: none;
     }
 </style>
