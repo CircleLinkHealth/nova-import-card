@@ -208,6 +208,7 @@ function TimeTrackerUser(info, now = () => (new Date())) {
         let activity = user.activities.find(item => item.name === info.activity)
         if (activity) {
             activity.isInActiveModalShown = true
+            activity.inactiveModalShowTime = new Date()
         }
     }
 
