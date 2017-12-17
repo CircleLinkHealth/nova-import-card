@@ -201,7 +201,14 @@ class Enrollee extends \App\BaseModel
         'cpm_problem_2',
     ];
 
-    protected $dates = ['dob'];
+    protected $dates = [
+        'consented_at',
+        'dob',
+        'invite_opened_at',
+        'invite_sent_at',
+        'last_attempt_at',
+        'last_encounter',
+    ];
 
     public function user()
     {
@@ -243,7 +250,7 @@ class Enrollee extends \App\BaseModel
     {
         $twilio = new Twilio(env('TWILIO_SID'), env('TWILIO_TOKEN'), env('TWILIO_FROM'));
 
-        $link = url("join/$this->invite_code");
+        $link          = url("join/$this->invite_code");
         $provider_name = User::find($this->provider_id)->fullName;
 
         $twilio->message(

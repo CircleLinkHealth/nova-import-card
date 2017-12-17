@@ -10,3 +10,5 @@ Protected Health Information means any information, whether oral or recorded in 
 
 (B) relates to the past, present, or future physical or mental health or condition of any individual, the provision of health care to an individual, or the past, present, or future payment for the provision of health care to an individual.”
 
+### CLH HIPAA Policy
+Please review [this doc](https://docs.google.com/document/d/1ZaoOKCJVdy0UmCLAozR6yfxWMtYUmxwBppL_g49SkyY/edit) for CircelLink Health's HIPAA policy. 
