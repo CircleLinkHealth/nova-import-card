@@ -101,6 +101,9 @@
                                     EventBus.$emit("tracker:stop")
                                     location.href = rootUrl('auth/logout')
                                 }
+                                else if (data.message === 'server:inactive-modal:close') {
+                                    EventBus.$emit('modal-inactivity:reset', true)
+                                }
                                 console.log(data);
                             }
                         }
@@ -205,6 +208,12 @@
                 EventBus.$on('tracker:modal:reply', (response) => {
                     if (this.socket && this.socket.readyState === WebSocket.OPEN) {
                         this.socket.send(JSON.stringify({ message: STATE.MODAL_RESPONSE, info: this.info, response }))
+                    }
+                })
+
+                EventBus.$on('tracker:inactive-modal:close', (response) => {
+                    if (this.socket && this.socket.readyState === WebSocket.OPEN) {
+                        this.socket.send(JSON.stringify({ message: STATE.CLOSE_INACTIVE_MODAL, info: this.info, response }))
                     }
                 })
 

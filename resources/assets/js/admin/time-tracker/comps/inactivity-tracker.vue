@@ -36,7 +36,7 @@
                 this.interval = setInterval(
                     function() {
                         this.endTime = new Date();
-                        const ALERT_INTERVAL = 120;
+                        const ALERT_INTERVAL = 20;
                         const LOGOUT_INTERVAL = 600;
                         if (this.totalSeconds && ((this.totalSeconds % ALERT_INTERVAL) === 0)) {
                             /**
@@ -100,11 +100,16 @@
             EventBus.$on("inactivity:stop", this.stop.bind(this));
             EventBus.$on("inactivity:start", this.start.bind(this));
 
-            EventBus.$on('modal-inactivity:close', () => {
+            EventBus.$on('modal-inactivity:close', (preventEmit) => {
                 EventBus.$emit("tracker:hide-inactive-modal")
                 this.reset()
                 console.log('modal closed')
                 //restore the window.onfocus handler
+                if (this.windowFocusHandler) window.onfocus = this.windowFocusHandler
+            })
+
+            EventBus.$on('modal-inactivity:reset', (preventEmit) => {
+                this.reset()
                 if (this.windowFocusHandler) window.onfocus = this.windowFocusHandler
             })
         }
@@ -113,6 +118,6 @@
 
 <style>
     .inactivity-tracker {
-        display: none;
+        display: block;
     }
 </style>
