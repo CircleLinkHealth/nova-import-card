@@ -43,6 +43,24 @@ class GetPatientIdFromAppointments extends Command
      */
     public function handle()
     {
-        //
+        //getting all Practice Ids that belong to the Athena EHR
+        $practices = Practice::whereHas('ehr', function ($q) {
+            $q->where('name', '=', 'Athena');
+        })
+            ->whereNotNull('external_id')
+            ->get();
+
+        $endDate = Carbon::today();
+        $startDate = $endDate->copy()->subWeeks(2);
+
+        //loop to getPatientIds from each practice found
+        foreach ($practices as $practice) {
+            if (app()->environment('worker')) {
+                sendSlackMessage('#background-tasks',
+                    "Getting patient ids from the appointments from Athena, for practice: {$practice->display_name}. \n");
+            }
+
+            $this->service->getPatientIdFromAppointments($practice->external_id, $startDate, $endDate);
+        }
     }
 }
