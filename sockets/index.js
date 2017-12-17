@@ -104,6 +104,18 @@ module.exports = app => {
                 return;
               }
             }
+            else if (data.message === 'client:inactive-modal:close') {
+              try {
+                const info = data.info
+                const user = app.getTimeTracker(info).get(info)
+                user.closeInactiveModal(info, !!data.response)
+                user.sync()
+              }
+              catch (ex) {
+                errorThrow(ex, ws)
+                return;
+              }
+            }
             else if (data.message === 'PING') {
 
             }
