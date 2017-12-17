@@ -140,6 +140,8 @@ function TimeTrackerUser(info, now = () => (new Date())) {
             }
         }
         
+        user.closeAllModals()
+
         /**
          * check inactive seconds
          */
@@ -160,6 +162,17 @@ function TimeTrackerUser(info, now = () => (new Date())) {
             }
         }
         ws.active = true
+    }
+
+    user.closeAllModals = () => {
+        /**
+         * inform all clients to close their open inactivity-modal
+         */
+        user.allSockets.forEach(socket => {
+            if (socket.readyState === socket.OPEN) {
+                socket.send(JSON.stringify({ message: 'server:inactive-modal:close' }))
+            }
+        })
     }
     
     user.leave = (ws) => {
