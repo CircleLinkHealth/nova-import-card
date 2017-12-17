@@ -2,7 +2,9 @@
 
 namespace App\Console\Commands;
 
+use App\Practice;
 use App\Services\AthenaAPI\Service;
+use Carbon\Carbon;
 use Illuminate\Console\Command;
 
 class GetPatientIdFromAppointments extends Command
@@ -12,7 +14,7 @@ class GetPatientIdFromAppointments extends Command
      *
      * @var string
      */
-    protected $signature = 'athena:GetPatientIdFromAppointments';
+    protected $signature = 'athena:getPatientIdFromAppointments';
 
     /**
      * The console command description.

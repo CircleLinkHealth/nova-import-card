@@ -118,6 +118,7 @@ class Calls
      * @return mixed
      */
     public function getPatientProblems($patientId, $practiceId, $departmentId, $showDiagnosisInfo = true) {
+
         $response = $this->api->GET("$practiceId/chart/$patientId/problems", [
             'departmentid' => $departmentId,
             'showdiagnosisinfo' => $showDiagnosisInfo
@@ -137,12 +138,33 @@ class Calls
      * @return mixed
      */
     public function getPatientInsurances($patientId, $practiceId, $departmentId) {
+
         $response = $this->api->GET("$practiceId/patients/$patientId/insurances", [
             'departmentid' => $departmentId,
         ]);
 
         return $this->response($response);
     }
+
+
+    /**
+     * Get first and last name, and phone number for a patient
+     *
+     * @param $patientId
+     * @param $practiceId
+     *
+     * @return mixed
+     */
+    public function getPatientNameAndPhone($patientId, $practiceId) {
+
+        $response = $this->api->GET("$practiceId/patients/$patientId");
+
+        return $this->response($response);
+    }
+
+
+
+
 
     /**
      * Get available practices. Passing in practiceId of 1 will return all practices we have access to.
