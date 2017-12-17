@@ -135,8 +135,6 @@ function TimeTrackerUser(info, now = () => (new Date())) {
             user.activities.push(activity)
         }
         else if (activity) {
-            activity.isInActiveModalShown = false
-
             if (activity.sockets.indexOf(ws) < 0) {
                 activity.sockets.push(ws)
             }
@@ -209,6 +207,21 @@ function TimeTrackerUser(info, now = () => (new Date())) {
         if (activity) {
             activity.isInActiveModalShown = true
             activity.inactiveModalShowTime = new Date()
+        }
+    }
+    
+    user.closeInactiveModal = (info, response) => {
+        let activity = user.activities.find(item => item.name === info.activity)
+        if (activity && activity.inactiveModalShowTime) {
+            activity.isInActiveModalShown = false
+            const elapsedSeconds = moment(new Date((new Date()) - activity.inactiveModalShowTime)).seconds()
+            if (response) {
+                activity.duration += elapsedSeconds
+            }
+            else {
+                activity.duration = Math.max((activity.duration - 90), 0)
+            }
+            activity.inactiveModalShowTime = null
         }
     }
 
