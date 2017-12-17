@@ -93,7 +93,7 @@ module.exports = app => {
                 return;
               }
             }
-            else if (data.message === 'client:show-inactive-modal') {
+            else if (data.message === 'client:inactive-modal:show') {
               try {
                 const info = data.info
                 const user = app.getTimeTracker(info).get(info)
