@@ -13,7 +13,13 @@ class ChangePracticeUserUniqueKey extends Migration
      */
     public function up()
     {
-        Schema::table('practice_user', function (Blueprint $table) {
+        $table = 'practice_user';
+
+        if (! Schema::hasTable($table)) {
+            $table = 'practice_role_user';
+        }
+
+        Schema::table($table, function (Blueprint $table) {
             $table->dropUnique('practice_user_program_id_user_id_unique');
 
             $table->unique(['user_id', 'role_id', 'program_id']);
