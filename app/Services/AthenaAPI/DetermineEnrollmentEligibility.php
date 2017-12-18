@@ -2,24 +2,16 @@
 
 namespace App\Services\AthenaAPI;
 
-use App\CLH\CCD\Importer\QAImportManager;
-use App\Contracts\Repositories\CcdaRepository;
-use App\Contracts\Repositories\CcdaRequestRepository;
 use App\TargetPatient;
 use Carbon\Carbon;
-use Maknz\Slack\Facades\Slack;
 
 class DetermineEnrollmentEligibility
 {
     protected $api;
-    protected $ccdaRequests;
-    protected $ccdas;
 
-    public function __construct(CcdaRequestRepository $ccdaRequests, CcdaRepository $ccdas, Calls $api)
+    public function __construct(Calls $api)
     {
-        $this->api          = $api;
-        $this->ccdaRequests = $ccdaRequests;
-        $this->ccdas        = $ccdas;
+        $this->api = $api;
     }
 
     public function getPatientIdFromAppointments(
@@ -52,12 +44,9 @@ class DetermineEnrollmentEligibility
                 }
 
                 $target = TargetPatient::updateOrCreate([
-                    'ehr_patient_id',
-                    $ehrPatientId,
-                    'ehr_practice_id',
-                    $ehrPracticeId,
-                    'ehr_department_id',
-                    $departmentId,
+                    'ehr_patient_id'    => $ehrPatientId,
+                    'ehr_practice_id'   => $ehrPracticeId,
+                    'ehr_department_id' => $departmentId,
                 ]);
 
                 if ( ! $target->status) {
@@ -71,14 +60,13 @@ class DetermineEnrollmentEligibility
 
     public function getPatientProblemsAndInsurances($patientId, $practiceId, $departmentId)
     {
+        $problemsResponse   = $this->api->getPatientProblems($patientId, $practiceId, $departmentId);
+        $insurancesResponse = $this->api->getPatientInsurances($patientId, $practiceId, $departmentId);
 
-        $problemsResponse   = $this->service->api->getPatientProblems($patientId, $practiceId, $departmentId);
-        $insurancesResponse = $this->service->api->getPatientInsurances($patientId, $practiceId, $departmentId);
+        $problemsAndInsurance = new \stdClass();
+        $problemsAndInsurance->problems = $problemsResponse['problems'];
+        $problemsAndInsurance->insurances = $insurancesResponse['insurances'];
 
-        $patientInfo = [$problemsResponse['problems'], $insurancesResponse['insurances']];
-
-        return $patientInfo;
-
-
+        return $problemsAndInsurance;
     }
 }
