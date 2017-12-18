@@ -10,6 +10,7 @@ use App\Models\CPM\CpmProblem;
 use App\Models\ProblemCode;
 use App\PatientMonthlySummary;
 use App\Practice;
+use App\Repositories\PatientSummaryDBRepository;
 use App\Services\ApproveBillablePatientsService;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
@@ -18,6 +19,7 @@ use Illuminate\Support\Facades\Mail;
 
 class PracticeInvoiceController extends Controller
 {
+    private $patientSummaryDBRepository;
     private $service;
 
     /**
@@ -25,9 +27,10 @@ class PracticeInvoiceController extends Controller
      *
      * @param ApproveBillablePatientsService $service
      */
-    public function __construct(ApproveBillablePatientsService $service)
+    public function __construct(ApproveBillablePatientsService $service, PatientSummaryDBRepository $patientSummaryDBRepository)
     {
         $this->service = $service;
+        $this->patientSummaryDBRepository = $patientSummaryDBRepository;
     }
 
     /**
@@ -172,7 +175,7 @@ class PracticeInvoiceController extends Controller
             $problemId = $request['id'];
 
             if (in_array(strtolower($problemId), ['other', 'new'])) {
-                $problemId = $this->service->storeCcdProblem($summary->patient, [
+                $problemId = $this->patientSummaryDBRepository->storeCcdProblem($summary->patient, [
                     'name'             => $request['name'],
                     'cpm_problem_id'   => $request['cpm_problem_id'],
                     'billable'         => true,
@@ -218,7 +221,7 @@ class PracticeInvoiceController extends Controller
 
             $summary->$key = $problemId;
 
-            if ( ! $this->service->lacksProblems($summary)) {
+            if ( ! $this->patientSummaryDBRepository->lacksProblems($summary)) {
                 $summary->approved = true;
             }
 

@@ -10,6 +10,7 @@ use App\User;
 use Carbon\Carbon;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Illuminate\Foundation\Testing\WithFaker;
+use Illuminate\Foundation\Testing\WithoutMiddleware;
 use Illuminate\Support\Collection;
 use Tests\Helpers\UserHelpers;
 use Tests\TestCase;
@@ -18,11 +19,13 @@ class BillablePatientsServiceTest extends TestCase
 {
     use DatabaseTransactions,
         UserHelpers,
+        WithoutMiddleware,
         WithFaker;
 
     private $practice;
     private $patient;
     private $service;
+    private $summary;
 
     /**
      * This test assumes that the patient has billable and non-billable ccd problems.
@@ -35,13 +38,12 @@ class BillablePatientsServiceTest extends TestCase
         $problem2 = $this->createProblem(true);
         $problem3 = $this->createProblem(false, 0);
         $problem4 = $this->createProblem(false, 2);
-        $summary  = $this->createMonthlySummary($this->patient, Carbon::now(), 1400);
 
         //Run
         $list = $this->service->patientsToApprove($this->practice->id, Carbon::now());
 
         //Assert
-        $this->assertMonthlySummary($summary, $problem1, $problem2, $list);
+        $this->assertMonthlySummary($this->summary, $problem1, $problem2, $list);
     }
 
     /**
@@ -50,22 +52,19 @@ class BillablePatientsServiceTest extends TestCase
      */
     public function test_it_summary_problems_are_null_if_no_billable_problems()
     {
-        //Set up
-        $summary  = $this->createMonthlySummary($this->patient, Carbon::now(), 1400);
-
         //Run
         $list = $this->service->patientsToApprove($this->practice->id, Carbon::now());
 
         //Assert
-        $summary  = $summary->fresh();
+        $this->summary  = $this->summary->fresh();
 
         $this->assertTrue($list->count() == 1);
 
         $row = $list->first();
 
-        $this->assertEquals($row['report_id'], $summary->id);
+        $this->assertEquals($row['report_id'], $this->summary->id);
         $this->assertEquals($row['practice'], $this->practice->display_name);
-        $this->assertEquals($row['ccm'], round($summary->ccm_time / 60, 2));
+        $this->assertEquals($row['ccm'], round($this->summary->ccm_time / 60, 2));
         $this->assertEquals($row['problem1'], null);
         $this->assertEquals($row['problem1_code'], null);
         $this->assertEquals($row['problem2'], null);
@@ -82,7 +81,7 @@ class BillablePatientsServiceTest extends TestCase
      */
     private function createProblem($billable = null, $cpmProblemId = null)
     {
-        return $this->service->storeCcdProblem($this->patient, [
+        return $this->service->patientSummaryRepo->storeCcdProblem($this->patient, [
             'name'             => $this->faker->name,
             'billable'         => $billable,
             'cpm_problem_id'   => $cpmProblemId,
@@ -155,13 +154,12 @@ class BillablePatientsServiceTest extends TestCase
         $problem2 = $this->createProblem();
         $problem3 = $this->createProblem(null, 0);
         $problem4 = $this->createProblem(false, 2);
-        $summary  = $this->createMonthlySummary($this->patient, Carbon::now(), 1400);
 
         //Run
         $list = $this->service->patientsToApprove($this->practice->id, Carbon::now());
 
         //Assert
-        $this->assertMonthlySummary($summary, $problem1, $problem2, $list);
+        $this->assertMonthlySummary($this->summary, $problem1, $problem2, $list);
     }
 
     /**
@@ -173,20 +171,18 @@ class BillablePatientsServiceTest extends TestCase
         $this->patient->cpmProblems()->attach(2);
         $this->patient->cpmProblems()->attach(7);
 
-        $summary  = $this->createMonthlySummary($this->patient, Carbon::now(), 1400);
-
         //Run
         $list = $this->service->patientsToApprove($this->practice->id, Carbon::now());
 
-        $summary  = $summary->fresh();
-        $problem1 = $summary->billableProblem1;
-        $problem2 = $summary->billableProblem2;
+        $this->summary  = $this->summary->fresh();
+        $problem1 = $this->summary->billableProblem1;
+        $problem2 = $this->summary->billableProblem2;
 
         $this->assertTrue(in_array($problem1->cpm_problem_id, [2,7]));
         $this->assertTrue(in_array($problem2->cpm_problem_id, [2,7]));
 
         //Assert
-        $this->assertMonthlySummary($summary, $problem1, $problem2, $list);
+        $this->assertMonthlySummary($this->summary, $problem1, $problem2, $list);
     }
 
     /**
@@ -200,20 +196,35 @@ class BillablePatientsServiceTest extends TestCase
 
         $problem1 = $this->createProblem(true, 33);
 
-        $summary  = $this->createMonthlySummary($this->patient, Carbon::now(), 1400);
-
         //Run
         $list = $this->service->patientsToApprove($this->practice->id, Carbon::now());
 
-        $summary  = $summary->fresh();
-        $problem1 = $summary->billableProblem1;
-        $problem2 = $summary->billableProblem2;
+        $this->summary  = $this->summary->fresh();
+        $problem1 = $this->summary->billableProblem1;
+        $problem2 = $this->summary->billableProblem2;
 
         $this->assertTrue($problem1->cpm_problem_id == 33);
         $this->assertTrue($problem2->cpm_problem_id == 2);
 
         //Assert
-        $this->assertMonthlySummary($summary, $problem1, $problem2, $list);
+        $this->assertMonthlySummary($this->summary, $problem1, $problem2, $list);
+    }
+
+    public function test_it_stores_ccd_problem_with_cpm_id() {
+        $uri = route('monthly.billing.store-problem');
+
+        $params = [
+            'problem_no' => 'problem_1',
+            'id' => 'New',
+            'name' => 'Test problem',
+            'cpm_problem_id' => '33',
+            'code' => 'code',
+            'report_id' => $this->summary->id,
+        ];
+
+        $response = $this->call('POST', $uri, $params);
+
+        $response->assertStatus(200);
     }
 
     protected function setUp()
@@ -223,5 +234,6 @@ class BillablePatientsServiceTest extends TestCase
         $this->practice = factory(Practice::class)->create();
         $this->patient  = $this->createUser($this->practice->id, 'participant');
         $this->service  = app(ApproveBillablePatientsService::class);
+        $this->summary  = $this->createMonthlySummary($this->patient, Carbon::now(), 1400);
     }
 }
