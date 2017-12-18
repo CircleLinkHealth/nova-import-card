@@ -124,6 +124,16 @@ Route::group(['middleware' => 'auth'], function () {
         Route::group(['prefix' => 'problems'], function () {
             Route::resource('', 'CpmProblemController');
         });
+        
+        Route::group([
+                'prefix' => 'patients',
+                'middleware' => ['patientProgramSecurity']
+            ], function () {
+            Route::get('{patientId}', 'PatientController@getPatient');
+            Route::get('{patientId}/problems', 'PatientController@getProblems');
+
+            Route::resource('', 'PatientController');
+        });
 
         Route::group(['prefix' => 'practices'], function() {
             Route::get('', 'API\PracticeController@getPractices');
