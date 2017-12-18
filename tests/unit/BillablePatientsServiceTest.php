@@ -2,18 +2,20 @@
 
 namespace Tests\Unit;
 
-use App\PatientMonthlySummary;
 use App\Practice;
 use App\Services\ApproveBillablePatientsService;
 use Carbon\Carbon;
+use Faker\Generator;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
+use Illuminate\Foundation\Testing\WithFaker;
 use Tests\Helpers\UserHelpers;
 use Tests\TestCase;
 
 class BillablePatientsServiceTest extends TestCase
 {
     use DatabaseTransactions,
-        UserHelpers;
+        UserHelpers,
+        WithFaker;
 
     private $practice;
     private $patient;
@@ -21,45 +23,10 @@ class BillablePatientsServiceTest extends TestCase
 
     public function test_it_selects_billable_ccd_problem_without_cpm_problem_id()
     {
-        $problem1Code = 'icd 10 1';
-
-        $problem1 = $this->service->storeCcdProblem($this->patient, [
-            'name'             => 'Problem 1',
-            'billable'         => true,
-            'cpm_problem_id'   => 33,
-            'code'             => $problem1Code,
-            'code_system_name' => 'ICD-10',
-            'code_system_oid'  => '2.16.840.1.113883.6.3',
-        ]);
-
-
-        $problem2Code = 'icd 10 2';
-        $problem2     = $this->service->storeCcdProblem($this->patient, [
-            'name'             => 'Problem 2',
-            'billable'         => true,
-            'cpm_problem_id'   => null,
-            'code'             => $problem2Code,
-            'code_system_name' => 'ICD-10',
-            'code_system_oid'  => '2.16.840.1.113883.6.3',
-        ]);
-
-        $problem3     = $this->service->storeCcdProblem($this->patient, [
-            'name'             => 'Problem 3',
-            'billable'         => false,
-            'cpm_problem_id'   => 0,
-            'code'             => 'prob3',
-            'code_system_name' => 'ICD-10',
-            'code_system_oid'  => '2.16.840.1.113883.6.3',
-        ]);
-
-        $problem4     = $this->service->storeCcdProblem($this->patient, [
-            'name'             => 'Problem 4',
-            'billable'         => false,
-            'cpm_problem_id'   => 2,
-            'code'             => 'prob4',
-            'code_system_name' => 'ICD-10',
-            'code_system_oid'  => '2.16.840.1.113883.6.3',
-        ]);
+        $problem1 = $this->createProblem(true, 33);
+        $problem2 = $this->createProblem();
+        $problem3 = $this->createProblem(false, 0);
+        $problem4 = $this->createProblem(false, 2);
 
         $summary = $this->patient->patientSummaries()->create([
             'month_year' => Carbon::now()->startOfMonth()->toDateString(),
@@ -80,6 +47,18 @@ class BillablePatientsServiceTest extends TestCase
         $this->assertEquals($first['problem1_code'], $problem1->icd10Code());
         $this->assertEquals($first['problem2'], $problem2->name);
         $this->assertEquals($first['problem2_code'], $problem2->icd10Code());
+    }
+
+    public function createProblem($billable = true, $cpmProblemId = null)
+    {
+        return $this->service->storeCcdProblem($this->patient, [
+            'name'             => $this->faker->name,
+            'billable'         => $billable,
+            'cpm_problem_id'   => $cpmProblemId,
+            'code'             => $this->faker->bankAccountNumber,
+            'code_system_name' => 'ICD-10',
+            'code_system_oid'  => '2.16.840.1.113883.6.3',
+        ]);
     }
 
     protected function setUp()
