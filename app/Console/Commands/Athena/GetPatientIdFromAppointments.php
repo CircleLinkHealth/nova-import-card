@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Console\Commands;
+namespace App\Console\Commands\Athena;
 
 use App\Practice;
 use App\Services\AthenaAPI\Service;
