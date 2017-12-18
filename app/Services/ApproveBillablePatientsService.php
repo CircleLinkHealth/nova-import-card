@@ -173,6 +173,10 @@ class ApproveBillablePatientsService
      */
     private function fillProblems(User $patient, PatientMonthlySummary $summary, $billableProblems)
     {
+        if ($billableProblems->isEmpty()) {
+            return;
+        }
+
         $billableProblems = $billableProblems
             ->where('cpm_problem_id', '!=', 1)
             ->reject(function ($problem) {

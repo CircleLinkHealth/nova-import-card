@@ -107,8 +107,8 @@ class BillablePatientsServiceTest extends TestCase
         $this->assertEquals($row['problem2'], $problem2->name);
         $this->assertEquals($row['problem2_code'], $problem2->icd10Code());
 
-        $this->assertTrue((boolean) $problem1->billable);
-        $this->assertTrue((boolean) $problem2->billable);
+        $this->assertTrue((boolean)$problem1->billable);
+        $this->assertTrue((boolean)$problem2->billable);
     }
 
     public function test_it_selects_billable_ccd_problems()
@@ -122,6 +122,27 @@ class BillablePatientsServiceTest extends TestCase
 
         //Run
         $list = $this->service->patientsToApprove($this->practice->id, Carbon::now());
+
+        //Assert
+        $this->assertMonthlySummary($summary, $problem1, $problem2, $list);
+    }
+
+    public function test_it_creates_billable_ccd_problems_from_cpm_problems()
+    {
+        $this->patient->cpmProblems()->attach(2);
+        $this->patient->cpmProblems()->attach(7);
+
+        $summary  = $this->createMonthlySummary($this->patient, Carbon::now(), 1400);
+
+        //Run
+        $list = $this->service->patientsToApprove($this->practice->id, Carbon::now());
+
+        $summary  = $summary->fresh();
+        $problem1 = $summary->billableProblem1;
+        $problem2 = $summary->billableProblem2;
+
+        $this->assertTrue(in_array($problem1->cpm_problem_id, [2,7]));
+        $this->assertTrue(in_array($problem2->cpm_problem_id, [2,7]));
 
         //Assert
         $this->assertMonthlySummary($summary, $problem1, $problem2, $list);
