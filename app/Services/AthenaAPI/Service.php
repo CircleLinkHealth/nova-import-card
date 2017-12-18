@@ -193,4 +193,19 @@ class Service
     {
         return $this->api->postPatientDocument($patientId, $practiceId, $attachmentContentPath, $departmentId);
     }
+
+
+
+    public function getPatientProblemsAndInsurances($patientId, $practiceId, $departmentId){
+
+        $problemsResponse = $this->service->api->getPatientProblems($patientId, $practiceId, $departmentId);
+        $insurancesResponse = $this->service->api->getPatientInsurances($patientId, $practiceId, $departmentId);
+
+        $patientInfo = [$problemsResponse['problems'], $insurancesResponse['insurances']];
+
+        return $patientInfo;
+
+
+
+    }
 }
