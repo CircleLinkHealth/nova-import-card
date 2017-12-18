@@ -2,7 +2,7 @@
 
 namespace App\Console\Commands\Athena;
 
-use App\Services\AthenaAPI\Service;
+use App\Services\AthenaAPI\DetermineEnrollmentEligibility;
 use Illuminate\Console\Command;
 
 class DetermineTargetPatientEligibility extends Command
@@ -28,7 +28,7 @@ class DetermineTargetPatientEligibility extends Command
      *
      * @return void
      */
-    public function __construct(Service $athenaApi)
+    public function __construct(DetermineEnrollmentEligibility $athenaApi)
     {
         parent::__construct();
 

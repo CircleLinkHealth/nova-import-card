@@ -10,7 +10,7 @@ namespace App\Services\PdfReports\Handlers;
 
 use App\Contracts\PdfReport;
 use App\Contracts\PdfReportHandler;
-use App\Services\AthenaAPI\Service as AthenaApi;
+use App\Services\AthenaAPI\CreateAndPostPdfCareplan as AthenaApi;
 
 class AthenaApiPdfHandler implements PdfReportHandler
 {

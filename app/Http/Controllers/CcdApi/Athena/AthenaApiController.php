@@ -8,7 +8,7 @@ use App\Models\CCD\CcdVendor;
 use App\Models\MedicalRecords\Ccda;
 use App\Practice;
 use App\Services\AthenaAPI\Calls;
-use App\Services\AthenaAPI\Service;
+use App\Services\AthenaAPI\CreateAndPostPdfCareplan;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 
@@ -16,7 +16,7 @@ class AthenaApiController extends Controller
 {
     private $service;
 
-    public function __construct(Service $athenaApi)
+    public function __construct(CreateAndPostPdfCareplan $athenaApi)
     {
         $this->service = $athenaApi;
     }
