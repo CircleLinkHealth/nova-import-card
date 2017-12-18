@@ -195,6 +195,7 @@ class BillablePatientsServiceTest extends TestCase
      */
     public function test_it_creates_billable_ccd_problem_from_cpm_problem_and_selects_billable_problem()
     {
+        //set up
         $this->patient->cpmProblems()->attach(2);
 
         $problem1 = $this->createProblem(true, 33);
