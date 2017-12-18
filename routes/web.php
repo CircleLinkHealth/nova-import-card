@@ -131,6 +131,8 @@ Route::group(['middleware' => 'auth'], function () {
             ], function () {
             Route::get('{patientId}', 'PatientController@getPatient');
             Route::get('{patientId}/problems', 'PatientController@getProblems');
+            Route::get('{patientId}/problems/cpm', 'PatientController@getCpmProblems');
+            Route::get('{patientId}/problems/ccd', 'PatientController@getCcdProblems');
 
             Route::resource('', 'PatientController');
         });
