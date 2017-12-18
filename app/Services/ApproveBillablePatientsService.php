@@ -100,6 +100,13 @@ class ApproveBillablePatientsService
 
                                              $summary->save();
 
+                                             if ($summary->problem_1 && $summary->problem_2) {
+                                                 Problem::whereNotIn('id', array_filter([$summary->problem_1, $summary->problem_2]))
+                                                        ->update([
+                                                            'billable' => false,
+                                                        ]);
+                                             }
+
                                              $bP = $u->careTeamMembers->where('type', '=', 'billing_provider')->first();
 
                                              $name = "<a href = " . route('patient.careplan.show', [

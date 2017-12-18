@@ -141,6 +141,8 @@ class BillablePatientsServiceTest extends TestCase
 
         $this->assertTrue((boolean)$problem1->billable);
         $this->assertTrue((boolean)$problem2->billable);
+
+        $this->assertTrue($this->patient->ccdProblems()->whereBillable(true)->count() == 2);
     }
 
     /**
@@ -182,6 +184,32 @@ class BillablePatientsServiceTest extends TestCase
 
         $this->assertTrue(in_array($problem1->cpm_problem_id, [2,7]));
         $this->assertTrue(in_array($problem2->cpm_problem_id, [2,7]));
+
+        //Assert
+        $this->assertMonthlySummary($summary, $problem1, $problem2, $list);
+    }
+
+    /**
+     * This test assumes that the patient has 1 billable ccd problem, and cpm problems.
+     * In this case, the billable ccd problem will be selected, and a new billable problem will be created from a cpm problem.
+     */
+    public function test_it_creates_billable_ccd_problem_from_cpm_problem_and_selects_billable_problem()
+    {
+        $this->patient->cpmProblems()->attach(2);
+
+        $problem1 = $this->createProblem(true, 33);
+
+        $summary  = $this->createMonthlySummary($this->patient, Carbon::now(), 1400);
+
+        //Run
+        $list = $this->service->patientsToApprove($this->practice->id, Carbon::now());
+
+        $summary  = $summary->fresh();
+        $problem1 = $summary->billableProblem1;
+        $problem2 = $summary->billableProblem2;
+
+        $this->assertTrue($problem1->cpm_problem_id == 33);
+        $this->assertTrue($problem2->cpm_problem_id == 2);
 
         //Assert
         $this->assertMonthlySummary($summary, $problem1, $problem2, $list);
