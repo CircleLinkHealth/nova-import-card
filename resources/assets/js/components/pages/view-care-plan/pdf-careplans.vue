@@ -9,6 +9,7 @@
     import UpdateCarePerson from '../../pages/view-care-plan/update-care-person.vue'
     import CareTeam from '../../pages/view-care-plan/care-team.vue'
     import CarePlanApi from '../../../api/patient-care-plan'
+    import { rootUrl } from '../../../app.config'
 
     export default {
         components: {
@@ -18,6 +19,8 @@
             UpdateCarePerson,
             CareTeam,
         },
+
+        props: ['mode'],
 
         created() {
             this.getPatientCarePlan(this.patientId)
@@ -35,11 +38,20 @@
                 csrfHeader: {
                     'X-CSRF-TOKEN': document.head.querySelector('meta[name="csrf-token"]').content
                 },
-                patientCarePlan: {}
+                patientCarePlan: {},
+                Modes: {
+                    Web: 'web',
+                    Pdf: 'pdf'
+                }
             }
         },
         computed: {
-
+            pdfSwitchUrl() {
+                return rootUrl(`manage-patients/switch-to-pdf-careplan/${this.patientCareplanId}`)
+            },
+            viewCareplanUrl() {
+                return rootUrl('manage-patients/' + this.patientId + '/view-careplan')
+            }
         },
         methods: Object.assign({},
             mapActions(['destroyPdf', 'uploadPdfCarePlan', 'addNotification']),
@@ -61,7 +73,7 @@
                             return pdf
                         }).sort((pdfA, pdfB) => pdfB.updated_at - pdfA.updated_at)
 
-                        //console.log(carePlan)
+                        console.log(carePlan)
                         
                         this.patientCarePlan = carePlan;
                     }, error => {
@@ -112,7 +124,7 @@
 
                     if (this.modeBeforeUpload === 'web') {
                         setTimeout(() => {
-                            window.location.replace(window.location.href + '/pdf')
+                            window.location.replace(rootUrl(`manage-patients/${this.patientId}/view-careplan/pdf`))
                         }, 1000)
                     }
 
@@ -161,6 +173,16 @@
                         </object>
                     </div>
                 </div>
+            </div>
+        </div>
+
+        <div class="row" v-if="mode === Modes.Pdf && patientCarePlan.mode !== 'pdf'">
+            <div class="col-md-12">
+                <center>
+                    <h3>
+                        This Careplan is in Web mode. Click <a :href="viewCareplanUrl">here</a> to access it, or <a :href="pdfSwitchUrl">here</a> to switch to PDF mode.
+                    </h3>
+                </center>
             </div>
         </div>
 

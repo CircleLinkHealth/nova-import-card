@@ -63,10 +63,8 @@ class PatientMonthlySummary extends \App\BaseModel
         'approved',
         'rejected',
         'actor_id',
-        'billable_problem1',
-        'billable_problem2',
-        'billable_problem1_code',
-        'billable_problem2_code',
+        'problem_1',
+        'problem_2',
     ];
 
     public static function updateCallInfoForPatient(
