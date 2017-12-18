@@ -45,6 +45,34 @@ class BillablePatientsServiceTest extends TestCase
     }
 
     /**
+     * This test assumes that the patient has 0 problems.
+     * In this case, the summary should return null for both problems.
+     */
+    public function test_it_summary_problems_are_null_if_no_billable_problems()
+    {
+        //Set up
+        $summary  = $this->createMonthlySummary($this->patient, Carbon::now(), 1400);
+
+        //Run
+        $list = $this->service->patientsToApprove($this->practice->id, Carbon::now());
+
+        //Assert
+        $summary  = $summary->fresh();
+
+        $this->assertTrue($list->count() == 1);
+
+        $row = $list->first();
+
+        $this->assertEquals($row['report_id'], $summary->id);
+        $this->assertEquals($row['practice'], $this->practice->display_name);
+        $this->assertEquals($row['ccm'], round($summary->ccm_time / 60, 2));
+        $this->assertEquals($row['problem1'], null);
+        $this->assertEquals($row['problem1_code'], null);
+        $this->assertEquals($row['problem2'], null);
+        $this->assertEquals($row['problem2_code'], null);
+    }
+
+    /**
      * Create a CCD\Problem
      *
      * @param null $billable
