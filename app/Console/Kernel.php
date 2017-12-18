@@ -65,9 +65,6 @@ class Kernel extends ConsoleKernel
         $schedule->command('athena:getAppointments')
             ->dailyAt('23:00');
 
-//        $schedule->command('athena:getPatientIdFromAppointments')
-//            ->dailyAt('23:30');
-
         $schedule->command('athena:getCcds')
             ->everyThirtyMinutes();
 
