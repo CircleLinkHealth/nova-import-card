@@ -22,6 +22,8 @@ class GetProblemsAndInsurances extends Command
      */
     protected $description = 'Retrieves problems and insurances of a given patient from the Athena API';
 
+    private $service;
+
     /**
      * Create a new command instance.
      *
