@@ -2,6 +2,7 @@
 
 namespace App\Console\Commands\Athena;
 
+use App\Services\AthenaAPI\Service;
 use Illuminate\Console\Command;
 
 class DetermineTargetPatientEligibility extends Command
