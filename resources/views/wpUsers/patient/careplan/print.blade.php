@@ -67,15 +67,18 @@ if (isset($patient) && ! empty($patient)) {
                                         </div>
                                     @else
                                         <pdf-careplans v-cloak>
-                                            <?php
-                                            $patientCarePlan = isset($patient) ? $patient->carePlan : null;
-                                            $patientCarePlanPdfs = isset($patientCarePlan) ? $patientCarePlan->pdfs : null;
-                                            $patientCarePlanPdfsHasItems = isset($patientCarePlanPdfs) ? $patientCarePlanPdfs->count() > 0 : false;
-                                            ?>
-                                            @if ($patientCarePlanPdfsHasItems)
-                                                <a href="{{route('patient.pdf.careplan.print', ['patientId' => $patient->id])}}"
-                                                   class="btn btn-info btn-sm inline-block">PDF CarePlans</a>
-                                            @endif
+                                            <template slot="buttons">
+                                                <?php
+                                                    $patientCarePlan = isset($patient) ? $patient->carePlan : null;
+                                                    $patientCarePlanPdfs = isset($patientCarePlan) ? $patientCarePlan->pdfs : null;
+                                                    $patientCarePlanPdfsHasItems = isset($patientCarePlanPdfs) ? $patientCarePlanPdfs->count() > 0 : false;
+                                                ?>
+                                                @if ($patientCarePlanPdfsHasItems)
+                                                <!--href="{{route('patient.pdf.careplan.print', ['patientId' => $patient->id])}}"-->
+                                                    <a href="{{route('switch.to.pdf.careplan', ['carePlanId' => optional($patientCarePlan)->id])}}"
+                                                    class="btn btn-info btn-sm inline-block">PDF CarePlans</a>
+                                                @endif
+                                            </template>
 
                                             <span class="btn btn-group text-right">
                                                 @if ( ($patient->carePlanStatus == 'qa_approved' && auth()->user()->canApproveCarePlans()) || ($patient->carePlanStatus == 'draft' && auth()->user()->hasPermission('care-plan-qa-approve')) )

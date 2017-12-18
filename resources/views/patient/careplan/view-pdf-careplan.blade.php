@@ -63,7 +63,7 @@
             </div>
         </div>
         
-        <pdf-careplans>
+        <pdf-careplans mode="pdf">
             <template slot="buttons">
                 @if(auth()->user()->hasRole(['administrator', 'provider', 'office_admin', 'med_assistant', 'registered-nurse']) && $patient->carePlan->mode == App\CarePlan::PDF)
                     <a href="{{route('switch.to.web.careplan', ['carePlanId' => $patient->carePlan->id])}}"
