@@ -1,8 +1,8 @@
 <?php namespace App\Services;
 
 use App\Models\CCD\Problem;
-use App\Repositories\ApproveBillablePatientsRepository;
-use App\Repositories\PatientSummaryDBRepository;
+use App\Repositories\BillablePatientsEloquentRepository;
+use App\Repositories\PatientSummaryEloquentRepository;
 use App\User;
 use Carbon\Carbon;
 
@@ -12,8 +12,8 @@ class ApproveBillablePatientsService
     public $patientSummaryRepo;
 
     public function __construct(
-        ApproveBillablePatientsRepository $approvePatientsRepo,
-        PatientSummaryDBRepository $patientSummaryRepo
+        BillablePatientsEloquentRepository $approvePatientsRepo,
+        PatientSummaryEloquentRepository $patientSummaryRepo
     ) {
         $this->approvePatientsRepo = $approvePatientsRepo;
         $this->patientSummaryRepo  = $patientSummaryRepo;

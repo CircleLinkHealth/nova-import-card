@@ -10,7 +10,7 @@ use App\Models\CPM\CpmProblem;
 use App\Models\ProblemCode;
 use App\PatientMonthlySummary;
 use App\Practice;
-use App\Repositories\PatientSummaryDBRepository;
+use App\Repositories\PatientSummaryEloquentRepository;
 use App\Services\ApproveBillablePatientsService;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
@@ -27,7 +27,7 @@ class PracticeInvoiceController extends Controller
      *
      * @param ApproveBillablePatientsService $service
      */
-    public function __construct(ApproveBillablePatientsService $service, PatientSummaryDBRepository $patientSummaryDBRepository)
+    public function __construct(ApproveBillablePatientsService $service, PatientSummaryEloquentRepository $patientSummaryDBRepository)
     {
         $this->service = $service;
         $this->patientSummaryDBRepository = $patientSummaryDBRepository;

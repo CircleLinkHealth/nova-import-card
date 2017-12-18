@@ -8,7 +8,7 @@ use App\PatientMonthlySummary;
 use App\User;
 use Illuminate\Support\Collection;
 
-class PatientSummaryDBRepository
+class PatientSummaryEloquentRepository
 {
     public $patientRepo;
 

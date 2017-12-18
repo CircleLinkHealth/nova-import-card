@@ -12,7 +12,7 @@ namespace App\Repositories;
 use App\User;
 use Carbon\Carbon;
 
-class ApproveBillablePatientsRepository
+class BillablePatientsEloquentRepository
 {
     public function billablePatients($practiceId, Carbon $date)
     {
