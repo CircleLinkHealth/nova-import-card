@@ -18,10 +18,14 @@ class PatientSummaryEloquentRepository
     }
 
     /**
-     * Attach 2 billable problems to the given PatientMonthlySummary,
+     * Attach 2 billable problems to the given PatientMonthlySummary, and returns a new summary.
+     * NOTE: The summary is not persisted to the DB. You will have to call `->save()` on `$summary` this function will
+     * return.
      *
      * @param User $patient
      * @param PatientMonthlySummary $summary
+     *
+     * @return PatientMonthlySummary
      */
     public function attachBillableProblems(User $patient, PatientMonthlySummary $summary)
     {
@@ -30,7 +34,7 @@ class PatientSummaryEloquentRepository
         }
 
         if ($this->lacksProblems($summary)) {
-            $this->fillProblems($patient, $summary, $this->validCcdProblems($patient));
+            $this->fillProblems($patient, $summary, $this->getValidCcdProblems($patient));
         }
 
         if ($this->lacksProblems($summary)) {
@@ -47,6 +51,8 @@ class PatientSummaryEloquentRepository
             $patient->load(['billableProblems', 'ccdProblems']);
             $this->attachBillableProblems($patient, $summary);
         }
+
+        return $summary;
     }
 
     /**
@@ -102,7 +108,7 @@ class PatientSummaryEloquentRepository
                     return $item['id'] == $currentProblem;
                 });
 
-                if ($forgetIndex) {
+                if (is_int($forgetIndex)) {
                     $billableProblems->forget($forgetIndex);
                 }
             }
@@ -126,7 +132,7 @@ class PatientSummaryEloquentRepository
      *
      * @return mixed
      */
-    public function validCcdProblems(User $patient)
+    public function getValidCcdProblems(User $patient)
     {
         return $patient->ccdProblems->where('cpm_problem_id', '!=', 1)
                                     ->reject(function ($problem) {
@@ -152,7 +158,7 @@ class PatientSummaryEloquentRepository
         $ccdProblems = $patient->ccdProblems;
 
         $updated  = null;
-        $toUpdate = $this->validCcdProblems($patient)
+        $toUpdate = $this->getValidCcdProblems($patient)
                          ->where('billable', null)
                          ->take(2);
 
@@ -223,7 +229,7 @@ class PatientSummaryEloquentRepository
 
         $validate = (collect([$summary->problem_1, $summary->problem_2]))
             ->map(function ($problemId, $i) use ($user) {
-                $problem = $this->validCcdProblems($user)
+                $problem = $this->getValidCcdProblems($user)
                                 ->where('id', '=', $problemId)
                                 ->first();
 

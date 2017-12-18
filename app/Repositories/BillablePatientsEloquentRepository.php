@@ -16,7 +16,7 @@ class BillablePatientsEloquentRepository
 {
     public function billablePatients($practiceId, Carbon $date)
     {
-        $month = $date->firstOfMonth()->toDateString();
+        $month = $date->startOfMonth()->toDateString();
 
         $result = User::with([
             'ccdProblems'      => function ($query) {
