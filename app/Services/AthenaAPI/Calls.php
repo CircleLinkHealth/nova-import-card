@@ -118,6 +118,7 @@ class Calls
      * @return mixed
      */
     public function getPatientProblems($patientId, $practiceId, $departmentId, $showDiagnosisInfo = true) {
+
         $response = $this->api->GET("$practiceId/chart/$patientId/problems", [
             'departmentid' => $departmentId,
             'showdiagnosisinfo' => $showDiagnosisInfo
@@ -137,12 +138,80 @@ class Calls
      * @return mixed
      */
     public function getPatientInsurances($patientId, $practiceId, $departmentId) {
+
         $response = $this->api->GET("$practiceId/patients/$patientId/insurances", [
             'departmentid' => $departmentId,
         ]);
 
         return $this->response($response);
     }
+
+
+    /**
+     * Get first and last name, and phone number for a patient
+     *
+     * @param $patientId
+     * @param $practiceId
+     *
+     * @return mixed
+     */
+    public function getPatientNameAndPhone($patientId, $practiceId) {
+
+        $response = $this->api->GET("$practiceId/patients/$patientId");
+
+        return $this->response($response);
+    }
+
+
+
+    /**
+     * Get primary provider for a patient (if set)
+     *
+     *From Athena docs: 'Find a patient. At least one of the following is required:
+     * guarantorfirstname, firstname, dob, workphone, departmentid, guarantorsuffix,
+     * guarantorlastname, mobilephone, middlename, suffix, guarantormiddlename, homephone, lastname.'
+     *
+     * @param $practiceId
+     *
+     * @param null $patientFirstName
+     * @param null $patientMiddleName
+     * @param null $patientLastName
+     * @param null $dob
+     * @param null $mobilephone
+     * @param null $homephone
+     * @param null $workphone
+     * @param null $departmentId
+     * @return mixed
+     * @throws \Exception
+     */
+    public function getPatientPrimaryProvider(
+        $practiceId,
+        $patientFirstName = null,
+        $patientMiddleName = null,
+        $patientLastName = null,
+        $dob = null,
+        $mobilephone = null,
+        $homephone = null,
+        $workphone = null,
+        $departmentId = null
+    ) {
+        $response = $this->api->GET("$practiceId/patients", [
+            'firstname' => $patientFirstName,
+            'middlename' => $patientMiddleName,
+            'lastname' => $patientLastName,
+            'dob' => $dob,
+            'mobilephone' => $mobilephone,
+            'homephone' => $homephone,
+            'workphone' => $workphone,
+            'departmentid' => $departmentId
+        ]);
+
+        return $this->response($response);
+    }
+
+
+
+
 
     /**
      * Get available practices. Passing in practiceId of 1 will return all practices we have access to.
