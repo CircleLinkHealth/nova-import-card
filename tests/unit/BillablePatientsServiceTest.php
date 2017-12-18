@@ -28,10 +28,10 @@ class BillablePatientsServiceTest extends TestCase
     {
         //Set up
         $problem1 = $this->createProblem(true, 33);
-        $problem2 = $this->createProblem();
+        $problem2 = $this->createProblem(true);
         $problem3 = $this->createProblem(false, 0);
         $problem4 = $this->createProblem(false, 2);
-        $summary = $this->createMonthlySummary($this->patient, Carbon::now(), 1400);
+        $summary  = $this->createMonthlySummary($this->patient, Carbon::now(), 1400);
 
         //Run
         $list = $this->service->patientsToApprove($this->practice->id, Carbon::now());
@@ -40,14 +40,15 @@ class BillablePatientsServiceTest extends TestCase
         $this->assertMonthlySummary($summary, $problem1, $problem2, $list);
     }
 
-    private function createMonthlySummary(User $patient, Carbon $monthYear, $ccmTime) {
-        return $patient->patientSummaries()->create([
-            'month_year' => $monthYear->startOfMonth()->toDateString(),
-            'ccm_time'   => $ccmTime,
-        ]);
-    }
-
-    private function createProblem($billable = true, $cpmProblemId = null)
+    /**
+     * Create a CCD\Problem
+     *
+     * @param null $billable
+     * @param null $cpmProblemId
+     *
+     * @return mixed
+     */
+    private function createProblem($billable = null, $cpmProblemId = null)
     {
         return $this->service->storeCcdProblem($this->patient, [
             'name'             => $this->faker->name,
@@ -59,12 +60,41 @@ class BillablePatientsServiceTest extends TestCase
         ]);
     }
 
+    /**
+     * Create a patient monthly summary
+     *
+     * @param User $patient
+     * @param Carbon $monthYear
+     * @param $ccmTime
+     *
+     * @return PatientMonthlySummary
+     */
+    private function createMonthlySummary(User $patient, Carbon $monthYear, $ccmTime)
+    {
+        return $patient->patientSummaries()->create([
+            'month_year' => $monthYear->startOfMonth()->toDateString(),
+            'ccm_time'   => $ccmTime,
+        ]);
+    }
+
+    /**
+     * Assert patient monthly summary
+     *
+     * @param PatientMonthlySummary $summary
+     * @param Problem $problem1
+     * @param Problem $problem2
+     * @param Collection $list
+     */
     private function assertMonthlySummary(
         PatientMonthlySummary $summary,
         Problem $problem1,
         Problem $problem2,
         Collection $list
     ) {
+        $summary  = $summary->fresh();
+        $problem1 = $problem1->fresh();
+        $problem2 = $problem2->fresh();
+
         $this->assertTrue($list->count() == 1);
 
         $row = $list->first();
@@ -76,6 +106,25 @@ class BillablePatientsServiceTest extends TestCase
         $this->assertEquals($row['problem1_code'], $problem1->icd10Code());
         $this->assertEquals($row['problem2'], $problem2->name);
         $this->assertEquals($row['problem2_code'], $problem2->icd10Code());
+
+        $this->assertTrue((boolean) $problem1->billable);
+        $this->assertTrue((boolean) $problem2->billable);
+    }
+
+    public function test_it_selects_billable_ccd_problems()
+    {
+        //Set up
+        $problem1 = $this->createProblem(true, 33);
+        $problem2 = $this->createProblem();
+        $problem3 = $this->createProblem(null, 0);
+        $problem4 = $this->createProblem(false, 2);
+        $summary  = $this->createMonthlySummary($this->patient, Carbon::now(), 1400);
+
+        //Run
+        $list = $this->service->patientsToApprove($this->practice->id, Carbon::now());
+
+        //Assert
+        $this->assertMonthlySummary($summary, $problem1, $problem2, $list);
     }
 
     protected function setUp()
