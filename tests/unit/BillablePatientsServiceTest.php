@@ -24,6 +24,10 @@ class BillablePatientsServiceTest extends TestCase
     private $patient;
     private $service;
 
+    /**
+     * This test assumes that the patient has billable and non-billable ccd problems.
+     * In this case, the billable ccd problems will be selected for the summary.
+     */
     public function test_it_selects_billable_ccd_problem_without_cpm_problem_id()
     {
         //Set up
@@ -111,6 +115,9 @@ class BillablePatientsServiceTest extends TestCase
         $this->assertTrue((boolean)$problem2->billable);
     }
 
+    /**
+     * This test assumes that the patient has 2 billable ccd problems, which should be selected for the monthly summary.
+     */
     public function test_it_selects_billable_ccd_problems()
     {
         //Set up
@@ -127,6 +134,10 @@ class BillablePatientsServiceTest extends TestCase
         $this->assertMonthlySummary($summary, $problem1, $problem2, $list);
     }
 
+    /**
+     * This test assumes that the patient has no billable ccd problems, but has cpm problems.
+     * In this case billable ccd problems have to be created from cpm problems, and they should be set to billable.
+     */
     public function test_it_creates_billable_ccd_problems_from_cpm_problems()
     {
         $this->patient->cpmProblems()->attach(2);
