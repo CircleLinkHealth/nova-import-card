@@ -2,7 +2,6 @@
 
 namespace App\Jobs;
 
-use App\CLH\Repositories\CCDImporterRepository;
 use App\Importer\Loggers\Ccda\CcdToLogTranformer;
 use App\Models\MedicalRecords\Ccda;
 use Carbon\Carbon;
@@ -37,14 +36,14 @@ class ProcessCcda implements ShouldQueue
 
         $json = $ccda->bluebuttonJson();
 
-        if (!$json) {
+        if ( ! $json) {
             return;
         }
 
         $ccda->mrn = $json->demographics->mrn_number;
 
         if (array_key_exists(0, $json->document->documentation_of)) {
-            $provider = (new CcdToLogTranformer())->provider($json->document->documentation_of[0]);
+            $provider                      = (new CcdToLogTranformer())->provider($json->document->documentation_of[0]);
             $ccda->referring_provider_name = "{$provider['first_name']} {$provider['last_name']}";
         }
 
@@ -58,11 +57,11 @@ class ProcessCcda implements ShouldQueue
     public function handleDuplicateCcdas(Ccda $ccda)
     {
         $duplicates = Ccda::withTrashed()
-            ->where('mrn', '=', $ccda->mrn)
-            ->get(['id', 'date'])
-            ->sortByDesc(function ($ccda) {
-                return $ccda->date;
-            })->values();
+                          ->where('mrn', '=', $ccda->mrn)
+                          ->get(['id', 'date'])
+                          ->sortByDesc(function ($ccda) {
+                              return $ccda->date;
+                          })->values();
 
         $keep = $duplicates->first();
 
