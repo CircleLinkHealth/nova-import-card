@@ -17,7 +17,13 @@ class PatientSummaryEloquentRepository
         $this->patientRepo = $patientRepo;
     }
 
-    public function fillSummaryProblems(User $patient, PatientMonthlySummary $summary)
+    /**
+     * Attach 2 billable problems to the given PatientMonthlySummary,
+     *
+     * @param User $patient
+     * @param PatientMonthlySummary $summary
+     */
+    public function attachBillableProblems(User $patient, PatientMonthlySummary $summary)
     {
         if ($this->lacksProblems($summary)) {
             $this->fillProblems($patient, $summary, $patient->ccdProblems->where('billable', true));
@@ -37,9 +43,9 @@ class PatientSummaryEloquentRepository
             $this->fillProblems($patient, $summary, $newProblems);
         }
 
-        if ( ! $this->validateProblems($summary, $patient)) {
+        if ( ! $this->validateSummaryProblems($summary, $patient)) {
             $patient->load(['billableProblems', 'ccdProblems']);
-            $this->fillSummaryProblems($patient, $summary);
+            $this->attachBillableProblems($patient, $summary);
         }
     }
 
@@ -133,6 +139,13 @@ class PatientSummaryEloquentRepository
                                     ->values();
     }
 
+    /**
+     * Create CCDProblems from related CPMProblems
+     *
+     * @param User $patient
+     *
+     * @return Collection
+     */
     public function buildCcdProblemsFromCpmProblems(User $patient)
     {
         $newProblems = [];
@@ -177,6 +190,14 @@ class PatientSummaryEloquentRepository
         return collect($newProblems);
     }
 
+    /**
+     * Store a CCD Problem
+     *
+     * @param User $patient
+     * @param array $arguments
+     *
+     * @return bool|\Illuminate\Database\Eloquent\Model|void
+     */
     public function storeCcdProblem(User $patient, array $arguments)
     {
         if ($arguments['cpm_problem_id'] == 1) {
@@ -186,7 +207,15 @@ class PatientSummaryEloquentRepository
         return $this->patientRepo->storeCcdProblem($patient, $arguments);
     }
 
-    public function validateProblems(PatientMonthlySummary &$summary, User &$user)
+    /**
+     * Validate `problem_1` and `problem_2` on the given PatientMonthlySummary
+     *
+     * @param PatientMonthlySummary $summary
+     * @param User $user
+     *
+     * @return bool
+     */
+    public function validateSummaryProblems(PatientMonthlySummary &$summary, User &$user)
     {
         if ($this->lacksProblems($summary)) {
             return true;

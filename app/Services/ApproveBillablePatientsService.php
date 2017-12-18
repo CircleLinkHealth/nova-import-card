@@ -28,7 +28,7 @@ class ApproveBillablePatientsService
         foreach ($this->approvePatientsRepo->patientsWithSummaries($practiceId, $month)->get() as $patient) {
             $report = $patient->patientSummaries->first();
 
-            if (($report->rejected == 0 && $report->approved == 0) || $this->lacksProblems($report)) {
+            if (($report->rejected == 0 && $report->approved == 0) || $this->patientSummaryRepo->lacksProblems($report)) {
                 $count['toQA'] += 1;
             } else if ($report->rejected == 1) {
                 $count['rejected'] += 1;
@@ -48,7 +48,7 @@ class ApproveBillablePatientsService
                                              $summary = $u->patientSummaries->first();
 
                                              if ($this->patientSummaryRepo->lacksProblems($summary)) {
-                                                 $this->patientSummaryRepo->fillSummaryProblems($u, $summary);
+                                                 $this->patientSummaryRepo->attachBillableProblems($u, $summary);
                                              }
 
                                              $lacksProblems = $this->patientSummaryRepo->lacksProblems($summary);
