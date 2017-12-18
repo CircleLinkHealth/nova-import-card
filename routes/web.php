@@ -122,7 +122,7 @@ Route::group(['middleware' => 'auth'], function () {
         ]);
 
         Route::group(['prefix' => 'problems'], function () {
-            Route::resource('', 'CpmProblemController');
+            Route::resource('', 'ProblemController');
         });
         
         Route::group([
