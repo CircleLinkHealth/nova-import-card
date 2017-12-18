@@ -187,8 +187,6 @@
                                 <li><a href="{{ route('get.patients.for.insurance.check') }}">Patients For Insurance
                                         Check
                                     </a></li>
-                                <li><a href="{{ URL::route('MonthlyBillingReportsController.create', []) }}">Monthly
-                                        Billing</a></li>
 
                                 <li><a href="{{ route('monthly.billing.make') }}">Approve Billable Patients</a></li>
 

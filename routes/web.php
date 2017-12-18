@@ -796,11 +796,6 @@ Route::group(['middleware' => 'auth'], function () {
                 ]);
             });
 
-            Route::get('monthly-billing/create', [
-                'uses' => 'Admin\Reports\MonthlyBillingReportsController@create',
-                'as'   => 'MonthlyBillingReportsController.create',
-            ]);
-
             Route::get('ethnicity', [
                 'uses' => 'Admin\Reports\EthnicityReportController@getReport',
                 'as'   => 'EthnicityReportController.getReport',
