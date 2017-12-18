@@ -36,8 +36,8 @@
                 this.interval = setInterval(
                     function() {
                         this.endTime = new Date();
-                        const ALERT_INTERVAL = 120;
-                        const LOGOUT_INTERVAL = 600;
+                        const ALERT_INTERVAL = 10;
+                        const LOGOUT_INTERVAL = 30;
                         if (this.totalSeconds && ((this.totalSeconds % ALERT_INTERVAL) === 0)) {
                             /**
                              * Stop Tracking Time
