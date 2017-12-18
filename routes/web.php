@@ -121,6 +121,10 @@ Route::group(['middleware' => 'auth'], function () {
             'as' => 'get.total.ccm.time'
         ]);
 
+        Route::group(['prefix' => 'problems'], function () {
+            Route::resource('', 'CpmProblemController');
+        });
+
         Route::group(['prefix' => 'practices'], function() {
             Route::get('', 'API\PracticeController@getPractices');
             Route::get('{practiceId}/locations', 'API\PracticeController@getPracticeLocations');
