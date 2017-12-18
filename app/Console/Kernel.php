@@ -1,6 +1,7 @@
 <?php namespace App\Console;
 
 use App\Algorithms\Calls\ReschedulerHandler;
+use App\Console\Commands\AttachBillableProblemsToLastMonthSummary;
 use App\Services\Calls\SchedulerService;
 use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Foundation\Console\Kernel as ConsoleKernel;
@@ -75,6 +76,10 @@ class Kernel extends ConsoleKernel
         //Run at 12:01am every 1st of month
         $schedule->command('ccm_time:reset')
             ->cron('1 0 1 * *');
+
+        //Run at 12:30am every 1st of month
+        $schedule->command(AttachBillableProblemsToLastMonthSummary::class)
+                 ->cron('30 0 1 * *');
 
 //        $schedule->command('lgh:importInsurance')
 //            ->dailyAt('05:00');
