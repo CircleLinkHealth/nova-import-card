@@ -28,10 +28,12 @@ class CCMComplexToggleController extends Controller
             ->monthlySummaries
             ->where('month_year', $date_index)->first();
 
+
         if (empty($patientRecord)) {
             $patientRecord = PatientMonthlySummary::updateCCMInfoForPatient(
                 $patient->id,
-                $patient->patientInfo->cur_month_activity_time
+                $patient->patientInfo->cur_month_activity_time,
+                $patient->patientInfo->id
             );
 
             if (isset($input['complex'])) {
@@ -65,6 +67,7 @@ class CCMComplexToggleController extends Controller
 
         return response()->json([
             'id' => $patientRecord->id,
+            'patient_id' => $patientId,
             'is_ccm_complex' => $patientRecord->is_ccm_complex
         ]);
     }

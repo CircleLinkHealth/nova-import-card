@@ -494,10 +494,11 @@ class Patient extends \App\BaseModel
 
     public function isCCMComplex()
     {
-        return $this->monthlySummaries
-                   ->where('month_year', Carbon::now()->firstOfMonth())
-                   ->first()
-                   ->is_ccm_complex ?? false;
+        $ccm = $this->monthlySummaries()
+                    ->where('month_year', Carbon::now()->firstOfMonth()->format('Y-m-d'))
+                    ->orderBy('id', 'DESC')
+                    ->first();
+        return $ccm->is_ccm_complex ?? false;
     }
 
     /**
