@@ -112,8 +112,7 @@ class PatientMonthlySummary extends \App\BaseModel
 
     public static function updateCCMInfoForPatient(
         $userId,
-        $ccmTime,
-        $patientId
+        $ccmTime
     ) {
         // get record for month
         $day_start = Carbon::parse(Carbon::now()->firstOfMonth())->format('Y-m-d');
@@ -125,7 +124,6 @@ class PatientMonthlySummary extends \App\BaseModel
         if (!$record) {
             $record = new PatientMonthlySummary;
             $record->patient_id = $userId;
-            $record->patient_info_id = $patientId;
             $record->ccm_time = $ccmTime;
             $record->month_year = $day_start;
             $record->no_of_calls = 0;
