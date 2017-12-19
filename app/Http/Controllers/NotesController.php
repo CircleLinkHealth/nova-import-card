@@ -144,7 +144,7 @@ class NotesController extends Controller
                 }
 
                 $data = [
-                    'filter'             => $input['provider'],
+                    'filter'             => 0,
                     'notes'              => $notes,
                     'title'              => $title,
                     'dateFilter'         => $months,
@@ -164,6 +164,7 @@ class NotesController extends Controller
                     'providers_for_blog' => $providers_for_blog,
                     'isProviderSelected' => false,
                     'only_mailed_notes'  => false,
+                    'dateFilter'        => $months
                 ];
             }
         }
