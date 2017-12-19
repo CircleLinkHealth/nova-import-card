@@ -3,7 +3,6 @@
 namespace App\Http\Controllers;
 
 use App\Algorithms\Invoicing\AlternativeCareTimePayableCalculator;
-use App\Call;
 use App\PatientMonthlySummary;
 use App\User;
 use Carbon\Carbon;
@@ -13,27 +12,30 @@ class CCMComplexToggleController extends Controller
 {
 
     public function toggle(
-        Request $request
+        Request $request,
+        $patientId
     ) {
 
         $input = $request->all();
 
-        $patientId = $request->route()->patientId;
+        $date = Carbon::now()->startOfMonth()->toDateString();
 
-        $patient = User::find($patientId);
-        $date_index = Carbon::now()->firstOfMonth()->toDateString();
+        $patient = User::where('id', $patientId)
+                       ->with([
+                           'patientSummaries' => function ($q) use ($date) {
+                               $q->where('month_year', $date);
+                           },
+                       ])
+                       ->first();
 
         $patientRecord = $patient
-            ->patientInfo
-            ->monthlySummaries
-            ->where('month_year', $date_index)->first();
-
+            ->patientSummaries
+            ->first();
 
         if (empty($patientRecord)) {
             $patientRecord = PatientMonthlySummary::updateCCMInfoForPatient(
                 $patient->id,
-                $patient->patientInfo->cur_month_activity_time,
-                $patient->patientInfo->id
+                $patient->patientInfo->cur_month_activity_time
             );
 
             if (isset($input['complex'])) {
@@ -42,9 +44,9 @@ class CCMComplexToggleController extends Controller
 
                 if ($patient->patientInfo->cur_month_activity_time > 3600) {
                     //Get nurse that did the last activity.
-                    
+
                     (new AlternativeCareTimePayableCalculator($patient->patientInfo->lastNurseThatPerformedActivity()))
-                            ->adjustPayOnCCMComplexSwitch60Mins();
+                        ->adjustPayOnCCMComplexSwitch60Mins();
                 }
             } else {
                 $patientRecord->is_ccm_complex = 0;
@@ -65,10 +67,6 @@ class CCMComplexToggleController extends Controller
             }
         }
 
-        return response()->json([
-            'id' => $patientRecord->id,
-            'patient_id' => $patientId,
-            'is_ccm_complex' => $patientRecord->is_ccm_complex
-        ]);
+        return response()->json(['patientSummary' => $patientRecord]);
     }
 }

@@ -120,7 +120,7 @@ class CallsController extends ApiController
 
                              if ($call->inboundUser) {
                                  $isCcmComplex = $call->inboundUser->patientInfo
-                                     ? $call->inboundUser->patientInfo->isCCMComplex()
+                                     ? $call->inboundUser->isCCMComplex()
                                      : null;
                              }
 

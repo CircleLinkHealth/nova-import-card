@@ -54,7 +54,7 @@ class NotesController extends Controller
 
         $report_data = $this->formatter->formatDataForNotesAndOfflineActivitiesReport($patient);
 
-        $ccm_complex = $patient->patientInfo()->first()->isCCMComplex() ?? false;
+        $ccm_complex = $patient->isCCMComplex() ?? false;
 
         return view(
             'wpUsers.patient.note.index',
@@ -229,7 +229,7 @@ class NotesController extends Controller
                 $contact_days_array = array_merge(explode(',', $patient->patientInfo->preferred_cc_contact_days));
             }
 
-            $ccm_complex = $patient->patientInfo->isCCMComplex() ?? false;
+            $ccm_complex = $patient->isCCMComplex() ?? false;
 
             asort($provider_info);
             asort($careteam_info);
@@ -330,7 +330,7 @@ class NotesController extends Controller
 
                 $seconds = $patient->patientInfo()->first()->cur_month_activity_time;
 
-                $ccm_complex = $patient->patientInfo->isCCMComplex() ?? false;
+                $ccm_complex = $patient->isCCMComplex() ?? false;
 
                 $ccm_above = false;
                 if ($seconds > 1199 && ! $ccm_complex) {
