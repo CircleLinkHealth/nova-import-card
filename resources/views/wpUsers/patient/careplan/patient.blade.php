@@ -353,7 +353,8 @@ $user_info = array();
             
     </div>
     @endif
+    </div>
 
     {!! Form::close() !!}
-    </div>
+    </div></div>
 @endsection
