@@ -13,11 +13,12 @@ class CCMComplexToggleController extends Controller
 {
 
     public function toggle(
-        Request $request,
-        $patientId
+        Request $request
     ) {
 
         $input = $request->all();
+
+        $patientId = $request->route()->patientId;
 
         $patient = User::find($patientId);
         $date_index = Carbon::now()->firstOfMonth()->toDateString();
@@ -29,7 +30,7 @@ class CCMComplexToggleController extends Controller
 
         if (empty($patientRecord)) {
             $patientRecord = PatientMonthlySummary::updateCCMInfoForPatient(
-                $patient->user_id,
+                $patient->id,
                 $patient->patientInfo->cur_month_activity_time
             );
 
@@ -62,6 +63,9 @@ class CCMComplexToggleController extends Controller
             }
         }
 
-        return redirect()->back();
+        return response()->json([
+            'id' => $patientRecord->id,
+            'is_ccm_complex' => $patientRecord->is_ccm_complex
+        ]);
     }
 }
