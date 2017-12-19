@@ -271,6 +271,8 @@ Route::group(['middleware' => 'auth'], function () {
         Route::get('uploaded-ccd-items/{importedMedicalRecordId}/edit', 'ImportedMedicalRecordController@edit');
 
         Route::post('demographics', 'EditImportedCcda\DemographicsImportsController@store');
+
+        Route::post('import', 'MedicalRecordImportController@importDEPRECATED');
     });
 
     //CCD Parser Demo Route
