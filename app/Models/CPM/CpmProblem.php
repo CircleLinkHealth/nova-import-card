@@ -124,8 +124,8 @@ class CpmProblem extends \App\BaseModel implements Serviceable
         return $this->belongsToMany(User::class, 'cpm_problems_users', 'patient_id');
     }
 
-    public function instruction() {
-        return $this->belongsTo(CpmInstruction::class);
+    public function user() {
+        return $this->hasMany(CpmProblemUser::class, 'cpm_problem_id');
     }
 
     /**

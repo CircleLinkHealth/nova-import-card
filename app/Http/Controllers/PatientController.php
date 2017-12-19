@@ -50,15 +50,15 @@ class PatientController extends Controller
                 return $problem;
             };
         };
-        $cpmProblems = array_map($mapTypeFn('cpm'), $this->_getPatientCpmProblems($user));
-        $ccdProblems = array_map($mapTypeFn('ccd'), $this->_getPatientCcdProblems($user));
+        $cpmProblems = array_map($mapTypeFn('cpm'), $this->_getPatientCpmProblems($user, $patientId));
+        $ccdProblems = array_map($mapTypeFn('ccd'), $this->_getPatientCcdProblems($user, $patientId));
         return response()->json(array_merge($cpmProblems, $ccdProblems));
     }
     
     public function getCpmProblems($patientId)
     {
         $user = User::find($patientId);
-        $cpmProblems = $this->_getPatientCpmProblems($user);
+        $cpmProblems = $this->_getPatientCpmProblems($user, $patientId);
         return response()->json($cpmProblems);
     }
     
@@ -76,13 +76,13 @@ class PatientController extends Controller
 
     /** begin private functions */
 
-    function _getPatientCpmProblems($user) {
-        return $user->cpmProblems()->get()->map(function ($p) {
+    function _getPatientCpmProblems($user, $patientId) {
+        return $user->cpmProblems()->get()->map(function ($p) use ($patientId) {
             return [
                 'id'   => $p->id,
                 'name' => $p->name,
                 'code' => $p->default_icd_10_code,
-                'instruction' => $p->instruction()->get()
+                'instructions' => $p->user()->where('patient_id', $patientId)->first()->instruction()->get()
             ];
         })->toArray();
     }
