@@ -173,6 +173,11 @@
                         </object>
                     </div>
                 </div>
+                <div class="list-group-item list-group-item-action top-20 pointer" @click="openModal()" v-if="patientCarePlan.pdfs.length === 0">
+                    <h3 class="pdf-title text-center">
+                        No PDF files uploaded yet ... Click to upload
+                    </h3>
+                </div>
             </div>
         </div>
 
@@ -219,5 +224,9 @@
 
     .top-20 {
         margin-top: 20px;
+    }
+
+    .pointer {
+        cursor: pointer;
     }
 </style>
