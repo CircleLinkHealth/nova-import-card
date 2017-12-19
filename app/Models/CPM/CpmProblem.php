@@ -3,6 +3,7 @@
 use App\CareItem;
 use App\CarePlanItem;
 use App\CarePlanTemplate;
+use App\Models\CPM\CpmInstruction;
 use App\Contracts\Serviceable;
 use App\Services\CPM\CpmProblemService;
 use App\User;
@@ -121,6 +122,10 @@ class CpmProblem extends \App\BaseModel implements Serviceable
     public function patient()
     {
         return $this->belongsToMany(User::class, 'cpm_problems_users', 'patient_id');
+    }
+
+    public function instruction() {
+        return $this->belongsTo(CpmInstruction::class);
     }
 
     /**

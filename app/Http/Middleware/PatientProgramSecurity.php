@@ -52,7 +52,8 @@ class PatientProgramSecurity
         if ($request->route()->patientId) {
             // viewing a specific patient, get patients program_id
             $user = User::find($request->route()->patientId);
-            if (!$user) {
+            $patient = $user ? !!$user->patientInfo() : false;
+            if (!$user || !$patient) {
                 return response('Could not locate patient.', 401);
             } else {
                 // security
