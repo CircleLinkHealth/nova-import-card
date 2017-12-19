@@ -3,7 +3,6 @@
 namespace App\Http\Controllers;
 
 use App\Algorithms\Invoicing\AlternativeCareTimePayableCalculator;
-use App\Call;
 use App\PatientMonthlySummary;
 use App\User;
 use Carbon\Carbon;
@@ -19,17 +18,23 @@ class CCMComplexToggleController extends Controller
 
         $input = $request->all();
 
-        $patient = User::find($patientId);
-        $date_index = Carbon::now()->firstOfMonth()->toDateString();
+        $date = Carbon::now()->startOfMonth()->toDateString();
+
+        $patient = User::where('id', $patientId)
+                       ->with([
+                           'patientSummaries' => function ($q) use ($date) {
+                               $q->where('month_year', $date);
+                           },
+                       ])
+                       ->first();
 
         $patientRecord = $patient
-            ->patientInfo
-            ->monthlySummaries
-            ->where('month_year', $date_index)->first();
+            ->patientSummaries
+            ->first();
 
         if (empty($patientRecord)) {
             $patientRecord = PatientMonthlySummary::updateCCMInfoForPatient(
-                $patient->user_id,
+                $patient->id,
                 $patient->patientInfo->cur_month_activity_time
             );
 
@@ -41,7 +46,7 @@ class CCMComplexToggleController extends Controller
                     //Get nurse that did the last activity.
 
                     (new AlternativeCareTimePayableCalculator($patient->patientInfo->lastNurseThatPerformedActivity()))
-                            ->adjustPayOnCCMComplexSwitch60Mins();
+                        ->adjustPayOnCCMComplexSwitch60Mins();
                 }
             } else {
                 $patientRecord->is_ccm_complex = 0;
@@ -62,6 +67,6 @@ class CCMComplexToggleController extends Controller
             }
         }
 
-        return redirect()->back();
+        return response()->json(['patientSummary' => $patientRecord]);
     }
 }

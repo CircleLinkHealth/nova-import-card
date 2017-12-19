@@ -25,7 +25,7 @@ class SchedulerService
         $success
     ) {
 
-        $isComplex = $patient->patientInfo->isCCMComplex();
+        $isComplex = $patient->isCCMComplex();
 
         //Collect last known scheduled call
         $scheduled_call = $this->getScheduledCallForPatient($patient);
