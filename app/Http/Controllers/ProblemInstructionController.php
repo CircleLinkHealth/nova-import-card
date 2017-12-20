@@ -38,6 +38,30 @@ class ProblemInstructionController extends Controller
         ]);
     }
 
+    public function store(Request $request) {
+        $name = $request->input('name');
+        if ($name && $name != '') {
+            try {
+                $instruction = new CpmInstruction();
+                $instruction->name = $name;
+                $instruction->is_default = 0;
+                $instruction->save();
+                return response()->json($instruction);
+            }
+            catch (Exception $ex) {
+                return response()->json([
+                    'message' => 'error when creating new instruction',
+                    'exception' => $ex
+                ], 500);
+            }
+        }
+        else {
+            return response()->json([
+                'message' => 'please provide a value for the [name] parameter'
+            ], 400);
+        }
+    }
+
     function setupInstruction($value) {
         $value->problems = $value->cpmProblems()->count();
         return $value;
