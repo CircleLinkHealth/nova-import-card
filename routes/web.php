@@ -127,6 +127,10 @@ Route::group(['middleware' => 'auth'], function () {
             Route::get('cpm/{cpmId}', 'ProblemController@cpmProblem');
             Route::get('ccd/{ccdId}', 'ProblemController@ccdProblem');
             Route::resource('', 'ProblemController');
+
+            Route::group(['prefix' => 'instructions'], function () {
+                Route::resource('', 'ProblemInstructionController');
+            });
         });
         
         Route::group([
