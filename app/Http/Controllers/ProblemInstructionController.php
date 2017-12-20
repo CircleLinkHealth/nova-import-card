@@ -4,10 +4,12 @@ namespace App\Http\Controllers;
 
 use App\AppConfig;
 use App\Patient;
+use App\User;
 use App\Http\Controllers\Controller;
 use App\Models\CPM\CpmInstruction;
 use App\Models\CCD\Problem;
 use App\Models\CPM\CpmProblem;
+use App\Models\CPM\CpmProblemUser;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -73,8 +75,42 @@ class ProblemInstructionController extends Controller
         }
     }
 
+    public function addInstructionProblem(Request $request) {
+        $patientId = $request->route()->patientId;
+        $cpmProblemId = $request->route()->cpmId;
+        $instructionId = $request->input('instructionId');
+
+        $patient = User::where('id', $patientId)->first();
+        $problem = CpmProblem::where('id', $cpmProblemId)->first();
+        $instruction = CpmInstruction::where('id', $instructionId)->first();
+
+        if ($patient && $problem && $instruction) {
+            $cpmInstruction = CpmProblemUser::where('patient_id', $patientId)
+                                        ->where('cpm_problem_id', $cpmProblemId)
+                                        ->where('cpm_instruction_id', $instructionId)->first();
+            if (!$cpmInstruction) {
+                $cpmProblemUser= new CpmProblemUser();
+                $cpmProblemUser->patient_id = $patientId;
+                $cpmProblemUser->cpm_problem_id = $cpmProblemId;
+                $cpmProblemUser->cpm_instruction_id = $instructionId;
+                $cpmProblemUser->save();
+                return response()->json($cpmProblemUser);
+            }
+            else {
+                return $this->conflict('a similar instruction->problem relationship already exists');
+            }
+        }
+        else {
+            if (!$patient) return $this->notFound('patient not found');
+            else if (!$problem) return $this->notFound('cpm problem not found');
+            else return $this->notFound('instruction not found');
+        }
+    }
+
     function setupInstruction($value) {
-        $value->problems = $value->cpmProblems()->count();
+        $value->problems = $value->cpmProblems()->get(['cpm_problems.id'])->map(function ($p) {
+            return $p->id;
+        });
         return $value;
     }
 }

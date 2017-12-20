@@ -11,6 +11,12 @@ class Controller extends BaseController
 {
     use AuthorizesRequests, DispatchesJobs, ValidatesRequests;
 
+    public function ok($data = null) {
+        return response()->json($data ?? [
+            'message' => 'success'
+        ]);
+    }
+
     public function notFound($message = null) {
         return response()->json([
             'message' => $message ?? 'not found'
@@ -28,5 +34,11 @@ class Controller extends BaseController
             'message' => $message ?? 'an error occurred',
             'exception' => $ex
         ], 500);
+    }
+    
+    public function conflict($message = null) {
+        return response()->json([
+            'message' => $message ?? 'there was a conflict'
+        ], 409);
     }
 }
