@@ -129,6 +129,7 @@ Route::group(['middleware' => 'auth'], function () {
             Route::resource('', 'ProblemController');
 
             Route::group(['prefix' => 'instructions'], function () {
+                Route::get('{instructionId}', 'ProblemInstructionController@instruction');
                 Route::resource('', 'ProblemInstructionController');
             });
         });

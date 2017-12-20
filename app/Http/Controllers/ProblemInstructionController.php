@@ -26,10 +26,20 @@ class ProblemInstructionController extends Controller
 
     public function index() {
         $instructions = CpmInstruction::paginate(15);
-        $instructions->getCollection()->transform(function ($value) {
-            $value->problems = $value->cpmProblems()->count();
-            return $value;
-        });
+        $instructions->getCollection()->transform([$this, 'setupInstruction']);
         return response()->json($instructions);
+    }
+
+    public function instruction($instructionId) {
+        $instruction = CpmInstruction::where('id', $instructionId)->first();
+        if ($instruction) return response()->json($this->setupInstruction($instruction));
+        else return response()->json([
+            'message' => 'not found'
+        ]);
+    }
+
+    function setupInstruction($value) {
+        $value->problems = $value->cpmProblems()->count();
+        return $value;
     }
 }
