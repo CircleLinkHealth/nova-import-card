@@ -10,6 +10,7 @@ use App\Models\CPM\CpmProblem;
 use App\Models\ProblemCode;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 
 class ProblemController extends Controller
@@ -21,6 +22,13 @@ class ProblemController extends Controller
     public function __construct()
     {
 
+    }
+
+    public function index() {
+        return response()->json([
+            'cpm_count'   => CpmProblem::count(),
+            'ccd_count'   => Problem::select('name', DB::raw('count(*) as total'))->groupBy('name')->pluck('total')->count()
+        ]);
     }
 
     public function cpmProblems() {
@@ -73,9 +81,12 @@ class ProblemController extends Controller
     }
 
     function getCpmProblems() {
-        return CpmProblem::where('name', '!=', 'Diabetes')
-                    ->get()
-                    ->map([$this, 'setupCpmProblem']);
+        $problems = CpmProblem::where('name', '!=', 'Diabetes')
+                    ->paginate(30);
+        $problems->getCollection()->transform(function ($value) {
+            return $this->setupCpmProblem($value);
+        });
+        return $problems;
     }
 
     function getCpmProblem($id) {
