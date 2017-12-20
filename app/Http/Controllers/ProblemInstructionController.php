@@ -33,9 +33,7 @@ class ProblemInstructionController extends Controller
     public function instruction($instructionId) {
         $instruction = CpmInstruction::where('id', $instructionId)->first();
         if ($instruction) return response()->json($this->setupInstruction($instruction));
-        else return response()->json([
-            'message' => 'not found'
-        ]);
+        else return $this->notFound();
     }
 
     public function store(Request $request) {
@@ -49,16 +47,29 @@ class ProblemInstructionController extends Controller
                 return response()->json($instruction);
             }
             catch (Exception $ex) {
-                return response()->json([
-                    'message' => 'error when creating new instruction',
-                    'exception' => $ex
-                ], 500);
+                return $this->error('error when creating new instruction', $ex);
             }
         }
         else {
-            return response()->json([
-                'message' => 'please provide a value for the [name] parameter'
-            ], 400);
+            return $this->badRequest('please provide a value for the [name] parameter');
+        }
+    }
+
+    public function edit(Request $request) {
+        $id = $request->route()->id;
+        $name = $request->input('name');
+        $is_default = $request->input('is_default');
+        if ($id && $id != '') {
+            $instructions = CpmInstruction::where('id', $id);
+            if ($name && $name != '') $instructions->update(['name' => $name]);
+            if ($is_default) $instructions->update(['is_default' => $is_default]);
+
+            $instruction = $instructions->first();
+            if ($instruction) return response()->json($instruction);
+            else return $this->notFound();
+        }
+        else {
+            return $this->badRequest('please provide a value for the [id] parameter');
         }
     }
 
