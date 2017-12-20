@@ -26,18 +26,21 @@ class ProblemInstructionController extends Controller
 
     }
 
+    /** returns paginated list of cpm-instructions */
     public function index() {
         $instructions = CpmInstruction::paginate(15);
         $instructions->getCollection()->transform([$this, 'setupInstruction']);
         return response()->json($instructions);
     }
 
+    /** returns a single cpm-instruction */
     public function instruction($instructionId) {
         $instruction = CpmInstruction::where('id', $instructionId)->first();
         if ($instruction) return response()->json($this->setupInstruction($instruction));
         else return $this->notFound();
     }
 
+    /** creates a cpm-instruction */
     public function store(Request $request) {
         $name = $request->input('name');
         if ($name && $name != '') {
@@ -57,6 +60,7 @@ class ProblemInstructionController extends Controller
         }
     }
 
+    /** edits an existing cpm-instruction */
     public function edit(Request $request) {
         $id = $request->route()->id;
         $name = $request->input('name');
