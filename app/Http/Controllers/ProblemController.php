@@ -27,10 +27,23 @@ class ProblemController extends Controller
         $cpmProblems = $this->getCpmProblems();
         return response()->json($cpmProblems);
     }
+
+    public function ccdProblems() {
+        $ccdProblems = $this->getCcdProblems();
+        return response()->json($ccdProblems);
+    }
     
     public function cpmProblem($cpmId) {
         $cpmProblem = $this->getCpmProblem($cpmId);
         if ($cpmProblem) return response()->json($cpmProblem);
+        else return response()->json([
+            'message' => 'not found'
+        ], 404);
+    }
+    
+    public function ccdProblem($ccdId) {
+        $ccdProblem = $this->getCcdProblem($ccdId);
+        if ($ccdProblem) return response()->json($ccdProblem);
         else return response()->json([
             'message' => 'not found'
         ], 404);
@@ -48,6 +61,16 @@ class ProblemController extends Controller
         ];
     }
     
+    function setupCcdProblem($p) {
+        return [
+            'id'    => $p->id,
+            'name'  => $p->name,
+            'cpm_id'  => $p->cpm_problem_id,
+            'patients' => Problem::where('name', $p->name)->get([ 'patient_id' ])->map(function ($item) {
+                return $item->patient_id;
+            })
+        ];
+    }
 
     function getCpmProblems() {
         return CpmProblem::where('name', '!=', 'Diabetes')
@@ -58,6 +81,20 @@ class ProblemController extends Controller
     function getCpmProblem($id) {
         $problem = CpmProblem::where('id', $id)->first();
         if ($problem) return $this->setupCpmProblem($problem);
+        else return null;
+    }
+
+    function getCcdProblems() {
+        $problems = Problem::groupBy('name')->orderBy('id')->paginate(30);
+        $problems->getCollection()->transform(function ($value) {
+            return $this->setupCcdProblem($value);
+        });
+        return $problems;
+    }
+    
+    function getCcdProblem($id) {
+        $problem = Problem::where('id', $id)->first();
+        if ($problem) return $this->setupCcdProblem($problem);
         else return null;
     }
 }
