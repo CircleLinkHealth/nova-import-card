@@ -18,7 +18,8 @@
         data() {
             return {
                 startTime: new Date(),
-                endTime: new Date()
+                endTime: new Date(),
+                isModalShown: false
             };
         },
         components: {
@@ -36,7 +37,7 @@
                 this.interval = setInterval(
                     function() {
                         this.endTime = new Date();
-                        const ALERT_INTERVAL = 120;
+                        const ALERT_INTERVAL = 10;
                         const LOGOUT_INTERVAL = 600;
                         if (this.totalSeconds && ((this.totalSeconds % ALERT_INTERVAL) === 0)) {
                             /**
@@ -49,6 +50,7 @@
                             window.onfocus = null;
                             EventBus.$emit("tracker:show-inactive-modal")
                             EventBus.$emit('modal-inactivity:show')
+                            this.isModalShown = true
                         }
                         else if (this.totalSeconds && (this.totalSeconds >= LOGOUT_INTERVAL)) {
                             /**
@@ -65,7 +67,8 @@
                 clearInterval(this.interval);
             },
             reset(e) {
-                this.startTime = this.endTime;
+                if (!this.isModalShown) this.startTime = this.endTime;
+                else console.warn('attempt to reset inactivity-tracker rebuffed', this.time)
             }
         },
         computed: {
@@ -102,6 +105,7 @@
 
             EventBus.$on('modal-inactivity:close', (preventEmit) => {
                 EventBus.$emit("tracker:hide-inactive-modal")
+                this.isModalShown = false
                 this.reset()
                 console.log('modal closed')
                 //restore the window.onfocus handler
