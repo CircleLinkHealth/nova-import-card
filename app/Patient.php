@@ -442,9 +442,7 @@ class Patient extends \App\BaseModel
 
         $id = Activity::where('patient_id', $this->user_id)
                       ->whereHas('provider', function ($q) {
-                          $q->whereHas('roles', function ($k) {
-                              $k->where('name', 'care-center');
-                          });
+                          $q->ofType('care-center');
                       })
                       ->orderBy('created_at', 'desc')
                       ->first()['provider_id'];
@@ -490,14 +488,6 @@ class Patient extends \App\BaseModel
         }
 
         return $result;
-    }
-
-    public function isCCMComplex()
-    {
-        return $this->monthlySummaries
-                   ->where('month_year', Carbon::now()->firstOfMonth())
-                   ->first()
-                   ->is_ccm_complex ?? false;
     }
 
     /**

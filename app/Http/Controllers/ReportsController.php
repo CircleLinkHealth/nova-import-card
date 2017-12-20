@@ -130,20 +130,31 @@ class ReportsController extends Controller
             $month_selected      = $time->format('m');
             $month_selected_text = $time->format('F');
             $year_selected       = $time->format('Y');
-            $start               = $time->startOfMonth()->format('Y-m-d');
-            $end                 = $time->endOfMonth()->format('Y-m-d');
+            $start               = $time->startOfMonth()->toDateString();
+            $end                 = $time->endOfMonth()->toDateString();
         } else {
             $time                = Carbon::now();
             $month_selected      = $time->format('m');
             $year_selected       = $time->format('Y');
             $month_selected_text = $time->format('F');
-            $start               = Carbon::now()->startOfMonth()->format('Y-m-d');
-            $end                 = Carbon::now()->endOfMonth()->format('Y-m-d');
+            $start               = Carbon::now()->startOfMonth()->toDateString();
+            $end                 = Carbon::now()->endOfMonth()->toDateString();
         }
 
         $patients = User::intersectPracticesWith(auth()->user())
                         ->ofType('participant')
-                        ->with('primaryPractice')
+                        ->with([
+                            'primaryPractice',
+                            'activities' => function($q) use ($start, $end) {
+                                $q->select(DB::raw('*,DATE(performed_at),provider_id, type, SUM(duration) as duration'))
+                                  ->whereBetween('performed_at', [
+                                      $start,
+                                      $end,
+                                  ])
+                                  ->groupBy(DB::raw('provider_id, DATE(performed_at),type'))
+                                  ->orderBy('performed_at', 'desc');
+                            },
+                        ])
                         ->get();
 
         $u20_patients = [];
@@ -197,16 +208,7 @@ class ReportsController extends Controller
             $u20_patients[$patient_counter]['dob']             = Carbon::parse($patient->birthDate)->format('m/d/Y');
             $u20_patients[$patient_counter]['patient_name']    = $patient->fullName;
             $u20_patients[$patient_counter]['patient_id']      = $patient->id;
-            $acts                                              = DB::table('lv_activities')
-                                                                   ->select(DB::raw('*,DATE(performed_at),provider_id, type, SUM(duration) as duration'))
-                                                                   ->where('patient_id', $patient->id)
-                                                                   ->whereBetween('performed_at', [
-                                                                       $start,
-                                                                       $end,
-                                                                   ])
-                                                                   ->groupBy(DB::raw('provider_id, DATE(performed_at),type'))
-                                                                   ->orderBy('performed_at', 'desc')
-                                                                   ->get();
+            $acts                                              = $patient->activities;
 
             foreach ($acts as $activity) {
                 if (in_array($activity->type, $CarePlan)) {

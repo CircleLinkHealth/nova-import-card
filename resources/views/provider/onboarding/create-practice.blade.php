@@ -30,7 +30,7 @@
         ]) !!}
 
         <div class="row">
-            @include('provider.partials.mdl.form.text.textfield', [
+            @component('provider.partials.mdl.form.text.textfield', [
                 'name' => 'name',
                 'label' => 'Organization Name',
                 'class' => 'col s12',
@@ -38,6 +38,7 @@
                     'required' => 'required',
                 ]
             ])
+            @endcomponent
         </div>
 
         <div class="row">
@@ -67,7 +68,7 @@
 
         <div class="row">
             <button class="btn blue waves-effect waves-light col s12"
-                    id="store-practice">
+                    id="store-practice" dusk="save-practice">
                 Next
             </button>
         </div>

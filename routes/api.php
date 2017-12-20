@@ -31,7 +31,10 @@ Route::group([
 
     Route::group(['middleware' => 'aprima.ccdapi.auth.adapter'], function () {
         //Should make this plural
-        Route::post('ccd', 'CcdApi\Aprima\CcdApiController@uploadCcd');
+        Route::post('ccd', [
+            'uses' => 'CcdApi\Aprima\CcdApiController@uploadCcd',
+            'as' => 'api.aprima.uploadCcd'
+        ]);
         Route::get('reports', 'CcdApi\Aprima\CcdApiController@reports');
 
         Route::get('notes', 'CcdApi\Aprima\CcdApiController@notes');
