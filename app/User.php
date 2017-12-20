@@ -2289,9 +2289,9 @@ class User extends \App\BaseModel implements AuthenticatableContract, CanResetPa
      */
     public function billingProviderUser(): User
     {
-        return $this->billingProvider->isEmpty()
+        return ($this->billingProvider->isEmpty()
             ? new User()
-            : $this->billingProvider->first()->user;
+            : $this->billingProvider->first()->user) ?? new User();
     }
 
     /**
