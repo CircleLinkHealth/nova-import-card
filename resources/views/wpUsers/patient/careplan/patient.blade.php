@@ -356,4 +356,5 @@ $user_info = array();
 
     {!! Form::close() !!}
     </div>
+    </div>
 @endsection
