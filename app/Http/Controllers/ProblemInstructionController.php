@@ -111,6 +111,30 @@ class ProblemInstructionController extends Controller
         }
     }
 
+    public function removeInstructionProblem(Request $request) {
+        $patientId = $request->route()->patientId;
+        $cpmProblemId = $request->route()->cpmId;
+        $instructionId = $request->route()->instructionId;
+
+        $patient = User::where('id', $patientId)->first();
+        $problem = CpmProblem::where('id', $cpmProblemId)->first();
+        $instruction = CpmInstruction::where('id', $instructionId)->first();
+
+        if ($patient && $problem && $instruction) {
+            $cpmInstructions = CpmProblemUser::where('patient_id', $patientId)
+                                        ->where('cpm_problem_id', $cpmProblemId)
+                                        ->where('cpm_instruction_id', $instructionId)->delete();
+            return response()->json([
+                'message' => 'success'
+            ]);
+        }
+        else {
+            if (!$patient) return $this->notFound('patient not found');
+            else if (!$problem) return $this->notFound('cpm problem not found');
+            else return $this->notFound('instruction not found');
+        }
+    }
+
     function setupInstruction($value) {
         $value->problems = $value->cpmProblems()->get(['cpm_problems.id'])->map(function ($p) {
             return $p->id;
