@@ -357,4 +357,41 @@ class Calls
 
         return $this->response($response);
     }
+
+
+    //create method to create patient in athena (for testing), issue with date format
+//    public function createNewPatient(
+//        $practiceId,
+//        $departmentId,
+//        $dob,
+//        $firstName,
+//        $lastName,
+//        $address = null,
+//        $city = null,
+//        $email = null,
+//        $homePhone = null,
+//        $mobilePhone = null,
+//        $state = null,
+//        $zip = null
+//
+//    ){
+//        $response = $this->api->POST("$practiceId/patients", [
+//            'practiceid' => $practiceId,
+//            'departmentid' => $departmentId,
+//            'dob' => $dob,
+//            'firstname' => $firstName,
+//            'lastname' => $lastName,
+//            'address' => $address,
+//            'city' => $city,
+//            'email' => $email,
+//            'homePhone' => $homePhone,
+//            'mobilephone' => $mobilePhone,
+//            'state' => $state,
+//            'zip' => $zip
+//        ]);
+//
+//        //returns patient Id
+//        return $this->response($response);
+//    }
+
 }

@@ -53,11 +53,27 @@ class GetProblemsAndInsurances extends Command
 
             $patientInfo = $this->service->getPatientProblemsAndInsurances($patient->ehr_patient_id, $patient->ehr_practice_id, $patient->ehr_department_id);
 
-            return $patientInfo;
+            //$isEligible = determineEligibility($patientInfo);
+            $isEligible = true;
+
+            if (! $isEligible){
+                $patient->status = 'ineligible';
+                $patient->save();
+                continue;
+            }
+
+            $demos = $this->api->getDemographics();
+
+            if ($demos) {
+                $patient->status = 'eligible';
+            }else {
+                $patient->status = 'error';
+            }
 
 
 
-            //call job to determine eligibility
+
+            //call job to determine eligibility (call or que?)
             //determine($patientProblems, $patientInsurances);
 
         }
