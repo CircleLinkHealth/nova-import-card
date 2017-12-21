@@ -140,6 +140,10 @@ class WebixFormatter implements ReportFormatter
             return $result;
         });
 
+        if ($notes->isEmpty()) {
+            $notes = collect([]);
+        }
+
         $appointments = $patient->appointments->map(function ($appointment) use ($billingProvider) {
             return [
                 'id'            => $appointment->id,
@@ -153,6 +157,10 @@ class WebixFormatter implements ReportFormatter
             ];
         });
 
+        if ($appointments->isEmpty()) {
+            $appointments = collect([]);
+        }
+
         $activities = $patient->activities->map(function ($activity) use ($billingProvider) {
             return [
                 'id'            => $activity->id,
@@ -165,6 +173,10 @@ class WebixFormatter implements ReportFormatter
                 'tags'          => '',
             ];
         });
+
+        if ($activities->isEmpty()) {
+            $activities = collect([]);
+        }
 
         $report_data = $notes->merge($appointments)
                              ->merge($activities)
