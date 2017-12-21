@@ -2,6 +2,8 @@
 
 namespace App\Services\AthenaAPI;
 
+use App\ValueObjects\Athena\Patient;
+
 class Calls
 {
     protected $api;
@@ -360,38 +362,24 @@ class Calls
 
 
     //create method to create patient in athena (for testing), issue with date format
-//    public function createNewPatient(
-//        $practiceId,
-//        $departmentId,
-//        $dob,
-//        $firstName,
-//        $lastName,
-//        $address = null,
-//        $city = null,
-//        $email = null,
-//        $homePhone = null,
-//        $mobilePhone = null,
-//        $state = null,
-//        $zip = null
-//
-//    ){
-//        $response = $this->api->POST("$practiceId/patients", [
-//            'practiceid' => $practiceId,
-//            'departmentid' => $departmentId,
-//            'dob' => $dob,
-//            'firstname' => $firstName,
-//            'lastname' => $lastName,
-//            'address' => $address,
-//            'city' => $city,
-//            'email' => $email,
-//            'homePhone' => $homePhone,
-//            'mobilephone' => $mobilePhone,
-//            'state' => $state,
-//            'zip' => $zip
-//        ]);
-//
-//        //returns patient Id
-//        return $this->response($response);
-//    }
+    public function createNewPatient(Patient $patient){
+
+        $response = $this->api->POST("{$patient->getPracticeId()}/patients", [
+            'departmentid' => $patient->getDepartmentId(),
+            'dob' => $patient->getDob(),
+            'firstname' => $patient->getFirstName(),
+            'lastname' => $patient->getLastName(),
+            'address' => $patient->getAddress(),
+            'city' => $patient->getCity(),
+            'email' => $patient->getEmail(),
+            'homePhone' => $patient->getHomePhone(),
+            'mobilephone' => $patient->getMobilePhone(),
+            'state' => $patient->getState(),
+            'zip' => $patient->getZip()
+        ]);
+
+        //returns patient Id
+        return $this->response($response);
+    }
 
 }
