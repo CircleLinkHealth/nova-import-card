@@ -12,12 +12,14 @@
     $userTimeGMT = $userTimeGMT->format('Y-m-d\TH:i');
     ?>
 
-    <script>
-        $(document).ready(function () {
-            $(".provider").select2();
+    @push('scripts')
+        <script>
+            $(document).ready(function () {
+                $(".provider").select2();
 
-        });
-    </script>
+            });
+        </script>
+    @endpush
 
     <div class="row" style="margin-top:60px;">
         <div class="main-form-container col-lg-6 col-lg-offset-3 col-md-10 col-md-offset-1">
@@ -161,9 +163,11 @@
                                     </div>
 
 
-                                    <script>
-
-                                    </script>
+                                    @push('scripts')
+                                        <script>
+                
+                                        </script>
+                                    @endpush
                                     {!! Form::close() !!}
                                 </div>
                             </div>
