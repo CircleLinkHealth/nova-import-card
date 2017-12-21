@@ -6,7 +6,7 @@
 @section('content')
     <?php
     $userTime = \Carbon\Carbon::parse($activity['performed_at']);
-    $userTime = $userTime->format('Y-m-d\TH:i');
+    $userTime = null; //$userTime->format('Y-m-d\TH:i');
     ?>
     <div class="col-lg-6 col-lg-offset-3 col-md-10 col-md-offset-1">
         @include('errors.errors')
@@ -107,7 +107,7 @@
                                 <div class="col-sm-12">
                                     <input type="hidden" name="meta[0][meta_key]" value="comment">
                                     <textarea readonly class="form-control" placeholder="Enter Comment..."
-                                              name="meta[0][meta_value]">{{$activity['comment'][0]}}</textarea>
+                                              name="meta[0][meta_value]">{{$activity['comment'][0] ?? ''}}</textarea>
                                 </div>
                             </div>
                         </div>
