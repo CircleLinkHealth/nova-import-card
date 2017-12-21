@@ -8,7 +8,7 @@ Route::post('/send-sample-direct-mail', 'DemoController@sendSampleEMRNote');
 Route::resource('sign-up', 'PatientSignupController');
 Route::get('talk-to-us', 'PatientSignupController@talkToUs');
 
-Route::get('care/enroll', 'CareController@enroll');
+Route::get('care/enroll/{enrollUserId}', 'CareController@enroll');
 
 //Algo test routes.
 

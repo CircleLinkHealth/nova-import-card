@@ -26,6 +26,7 @@
             border-radius: 4px;
         }
     </style>
+    @stack('styles')
 </head>
 <body>
     <nav class="navbar primary-navbar">
@@ -50,5 +51,6 @@
             </div>
         </section>
     </div>
+    @stack('scripts')
 </body>
 </html>
