@@ -157,7 +157,7 @@ class Calls
      *
      * @return mixed
      */
-    public function getPatientNameAndPhone($patientId, $practiceId) {
+    public function getDemographics($patientId, $practiceId) {
 
         $response = $this->api->GET("$practiceId/patients/$patientId");
 
@@ -369,13 +369,16 @@ class Calls
             'dob' => $patient->getDob(),
             'firstname' => $patient->getFirstName(),
             'lastname' => $patient->getLastName(),
-            'address' => $patient->getAddress(),
+            'address1' => $patient->getAddress1(),
+            'address2' => $patient->getAddress2(),
+            'donotcallyn' => $patient->getDoNotCall(),
             'city' => $patient->getCity(),
             'email' => $patient->getEmail(),
-            'homePhone' => $patient->getHomePhone(),
+            'homephone' => $patient->getHomePhone(),
             'mobilephone' => $patient->getMobilePhone(),
             'state' => $patient->getState(),
-            'zip' => $patient->getZip()
+            'zip' => $patient->getZip(),
+            'sex' => $patient->getGender(),
         ]);
 
         //returns patient Id

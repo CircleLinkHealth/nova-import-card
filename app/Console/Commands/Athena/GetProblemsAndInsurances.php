@@ -2,6 +2,8 @@
 
 namespace App\Console\Commands\Athena;
 
+use App\Enrollee;
+use App\Practice;
 use App\Services\AthenaAPI\DetermineEnrollmentEligibility;
 use App\TargetPatient;
 use Illuminate\Console\Command;
@@ -51,6 +53,7 @@ class GetProblemsAndInsurances extends Command
         //makes the calls
         foreach ($patients as $patient){
 
+            //class
             $patientInfo = $this->service->getPatientProblemsAndInsurances($patient->ehr_patient_id, $patient->ehr_practice_id, $patient->ehr_department_id);
 
             //$isEligible = determineEligibility($patientInfo);
@@ -62,6 +65,7 @@ class GetProblemsAndInsurances extends Command
                 continue;
             }
 
+            //array
             $demos = $this->api->getDemographics();
 
             if ($demos) {
@@ -70,11 +74,25 @@ class GetProblemsAndInsurances extends Command
                 $patient->status = 'error';
             }
 
+            $practice = Practice::where('external_id'. '=', $patient->ehr_practice_id )->first();
 
+            $enrollee = Enrollee::create([
+                //required
+                'first_name' => $demos['firstname'],
+                'last_name' => $demos['lastname'],
+                'home_phone' => $demos['homephone'],
+                'cell_phone' => $demos['mobilephone'],
+                'practice_id' => $practice,
 
+                //notRequired
+                'address' => $demos['address1'],
+                'address_2' => $demos['address2'],
+                'dob' => $demos['dob'],
+                'state' => $demos['state'],
+                'city' => $demos['city'],
+                'zip' => $demos['zip'],
 
-            //call job to determine eligibility (call or que?)
-            //determine($patientProblems, $patientInsurances);
+            ]);
 
         }
 

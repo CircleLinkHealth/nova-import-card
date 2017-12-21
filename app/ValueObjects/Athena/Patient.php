@@ -19,15 +19,21 @@ class Patient
 
     protected $dob;
 
+    protected $doNotCall = false;
+
     protected $firstName;
 
     protected $lastName;
 
-    protected $address = null;
+    protected $address1 = null;
+
+    protected $address2 = null;
 
     protected $city = null;
 
     protected $email = null;
+
+    protected $gender;
 
     protected $homePhone = null;
 
@@ -129,22 +135,6 @@ class Patient
     /**
      * @return null
      */
-    public function getAddress()
-    {
-        return $this->address;
-    }
-
-    /**
-     * @param null $address
-     */
-    public function setAddress($address)
-    {
-        $this->address = $address;
-    }
-
-    /**
-     * @return null
-     */
     public function getMobilePhone()
     {
         return $this->mobilePhone;
@@ -236,6 +226,70 @@ class Patient
     public function setZip($zip)
     {
         $this->zip = $zip;
+    }
+
+    /**
+     * @return null
+     */
+    public function getAddress1()
+    {
+        return $this->address1;
+    }
+
+    /**
+     * @param null $address1
+     */
+    public function setAddress1($address1)
+    {
+        $this->address1 = $address1;
+    }
+
+    /**
+     * @return null
+     */
+    public function getAddress2()
+    {
+        return $this->address2;
+    }
+
+    /**
+     * @param null $address2
+     */
+    public function setAddress2($address2)
+    {
+        $this->address2 = $address2;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getDoNotCall()
+    {
+        return $this->doNotCall;
+    }
+
+    /**
+     * @param mixed $doNotCall
+     */
+    public function setDoNotCall(bool $doNotCall)
+    {
+        $this->doNotCall = $doNotCall;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getGender()
+    {
+        return $this->gender;
+    }
+
+    /**
+     * @param mixed $gender
+     */
+    public function setGender($gender)
+    {
+        $this->gender = $gender;
     }
 
 
