@@ -137,11 +137,11 @@ class WebixFormatter implements ReportFormatter
                 $result['tags'] .= '<div class="label label-success"><span class="glyphicon glyphicon-eye-open" aria-hidden="true"></span></div> ';
             }
 
-            return $result;
+            return collect($result);
         });
 
         $appointments = $patient->appointments->map(function ($appointment) use ($billingProvider) {
-            return [
+            return collect([
                 'id'            => $appointment->id,
                 'logger_name'   => optional($appointment->author)->fullName,
                 'comment'       => $appointment->comment,
@@ -150,11 +150,11 @@ class WebixFormatter implements ReportFormatter
                 'performed_at'  => Carbon::parse($appointment->date)->toDateString(),
                 'provider_name' => $billingProvider,
                 'tags'          => '',
-            ];
+            ]);
         });
 
         $activities = $patient->activities->map(function ($activity) use ($billingProvider) {
-            return [
+            return collect([
                 'id'            => $activity->id,
                 'logger_name'   => $activity->provider->fullName,
                 'comment'       => $activity->getCommentForActivity(),
@@ -163,7 +163,7 @@ class WebixFormatter implements ReportFormatter
                 'performed_at'  => $activity->performed_at,
                 'provider_name' => $billingProvider,
                 'tags'          => '',
-            ];
+            ]);
         });
 
         $report_data = $notes->merge($appointments)
