@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\AppConfig;
 use App\User;
 use App\Patient;
+use App\Services\PatientService;
 use App\Http\Controllers\Controller;
 use App\Models\CCD\Problem;
 use App\Models\CPM\CpmProblem;
@@ -15,13 +16,14 @@ use Illuminate\Http\Request;
 
 class PatientController extends Controller
 {
+    private $patientService;
     /**
      * CpmProblemController constructor.
      *
      */
-    public function __construct()
-    {
-
+    public function __construct(PatientService $patientService)
+    {   
+        $this->$patientService = $patientService;
     }
 
     /**
@@ -58,7 +60,7 @@ class PatientController extends Controller
     public function getCpmProblems($patientId)
     {
         $user = User::find($patientId);
-        $cpmProblems = $this->_getPatientCpmProblems($user, $patientId);
+        $cpmProblems = $this->$patientService->getCpmProblems($patientId);
         return response()->json($cpmProblems);
     }
     
