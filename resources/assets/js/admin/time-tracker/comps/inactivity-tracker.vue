@@ -37,7 +37,7 @@
                 this.interval = setInterval(
                     function() {
                         this.endTime = new Date();
-                        const ALERT_INTERVAL = 10;
+                        const ALERT_INTERVAL = 120;
                         const LOGOUT_INTERVAL = 600;
                         if (this.totalSeconds && ((this.totalSeconds % ALERT_INTERVAL) === 0)) {
                             /**
