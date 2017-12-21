@@ -157,7 +157,7 @@ class Calls
      *
      * @return mixed
      */
-    public function getPatientNameAndPhone($patientId, $practiceId) {
+    public function getDemographics($patientId, $practiceId) {
 
         $response = $this->api->GET("$practiceId/patients/$patientId");
 
