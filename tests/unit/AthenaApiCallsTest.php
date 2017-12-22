@@ -4,6 +4,7 @@ namespace Tests\Unit;
 
 use App\Services\AthenaAPI\Calls;
 use App\ValueObjects\Athena\Patient;
+use App\ValueObjects\Athena\Problem;
 use Carbon\Carbon;
 use Illuminate\Foundation\Testing\WithFaker;
 use Tests\TestCase;
@@ -12,25 +13,36 @@ class AthenaApiCallsTest extends TestCase
 {
     use WithFaker;
 
-    protected $api;
-    protected $athenaPatientId;
-    protected $fakePatient;
+    private $api;
+    private $athenaPatientId;
+    private $fakePatient;
+    private $athenaDepartmentId;
+    private $athenaPracticeId;
 
     public function test_it_gets_problems()
     {
-        $response = $this->api->getPatientProblems();
+        $problem1        = $this->addProblem($this->fakeProblem(234347009, $this->athenaPatientId, $this->athenaPracticeId));
+        $problem2        = $this->addProblem($this->fakeProblem(195949008, $this->athenaPatientId, $this->athenaPracticeId));
+
+        $response = $this->api->getPatientProblems($this->athenaPatientId, $this->athenaPracticeId, $this->athenaDepartmentId);
 
         $this->assertTrue(is_array($response));
+        $this->assertEquals(2, $response['totalcount']);
         $this->assertArrayHasKey('problems', $response);
+
+        foreach ($response['problems'] as $problem) {
+            $this->assertTrue(in_array($problem['problemid'], [$problem1, $problem2]));
+        }
     }
 
     public function test_it_gets_zero_problems()
     {
         //make a call to ad
-        $response = $this->api->getPatientProblems();
+        $response = $this->api->getPatientProblems($this->athenaPatientId, $this->athenaPracticeId, $this->athenaDepartmentId);
 
         $this->assertTrue(is_array($response));
-        $this->assertEquals([], $response);
+        $this->assertEquals([], $response['problems']);
+        $this->assertEquals(0, $response['totalcount']);
     }
 
     protected function setUp()
@@ -38,11 +50,25 @@ class AthenaApiCallsTest extends TestCase
         parent::setUp();
 
         $this->api             = new Calls();
+
+        $this->athenaPracticeId = 195900;
+        $this->athenaDepartmentId = 1;
         $this->fakePatient     = $this->fakePatient();
         $this->athenaPatientId = $this->createAthenaApiPatient($this->fakePatient);
     }
 
-    public function fakePatient()
+    private function fakeProblem($snomedCode, $athenaPatientId, $athenaPracticeId) {
+        $problem = new Problem();
+        $problem->setDepartmentId(1);
+        $problem->setPracticeId($athenaPracticeId);
+        $problem->setPatientId($athenaPatientId);
+        $problem->setSnomedCode($snomedCode);
+        $problem->setStatus('CHRONIC');
+
+        return $problem;
+    }
+
+    private function fakePatient()
     {
         $patient = new Patient();
         $patient->setPracticeId(195900);
@@ -56,13 +82,13 @@ class AthenaApiCallsTest extends TestCase
         $patient->setState($this->faker()->randomElement(['NY', 'NJ', 'AR', 'CA']));
         $patient->setZip('07601');
         $patient->setGender($this->faker()->randomElement(['F', 'M']));
-        $patient->setHomePhone(rand(1111111111, 9999999999));
-        $patient->setMobilePhone(rand(1111111111, 9999999999));
+        $patient->setHomePhone('2014445555');
+        $patient->setMobilePhone('2012223333');
 
         return $patient;
     }
 
-    public function createAthenaApiPatient()
+    private function createAthenaApiPatient()
     {
         $patients = $this->api->createNewPatient($this->fakePatient);
 
@@ -73,6 +99,21 @@ class AthenaApiCallsTest extends TestCase
         }
 
         $this->assertTrue(false);
+    }
+
+    private function addProblem(Problem $problem)
+    {
+        $problem = $this->api->addProblem($problem);
+
+        if (array_key_exists('errormessage', $problem)) {
+            $this->assertTrue(false, $problem['errormessage']);
+
+            return false;
+        }
+
+        $this->assertTrue(true, 'Problem created in AthenaAPI');
+
+        return $problem['problemid'];
     }
 
 

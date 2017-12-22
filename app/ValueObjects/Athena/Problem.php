@@ -22,6 +22,20 @@ use Carbon\Carbon;
 class Problem
 {
     /**
+     * The athenaNet practice id. (required)
+     *
+     * @var integer
+     */
+    protected $practiceId;
+
+    /**
+     * The athenaNet patient id. (required)
+     *
+     * @var integer
+     */
+    protected $patientId;
+
+    /**
      * The athenaNet department id. (required)
      *
      * @var integer
@@ -141,5 +155,53 @@ class Problem
     public function setStartDate(Carbon $startDate)
     {
         $this->startDate = $startDate;
+    }
+
+    /**
+     * @return int
+     */
+    public function getPracticeId(): int
+    {
+        return $this->practiceId;
+    }
+
+    /**
+     * @param int $practiceId
+     */
+    public function setPracticeId(int $practiceId)
+    {
+        $this->practiceId = $practiceId;
+    }
+
+    /**
+     * @return int
+     */
+    public function getPatientId(): int
+    {
+        return $this->patientId;
+    }
+
+    /**
+     * @param int $patientId
+     */
+    public function setPatientId(int $patientId)
+    {
+        $this->patientId = $patientId;
+    }
+
+    /**
+     * @return string
+     */
+    public function getStatus(): string
+    {
+        return $this->status;
+    }
+
+    /**
+     * @param string $status
+     */
+    public function setStatus(string $status)
+    {
+        $this->status = $status;
     }
 }
