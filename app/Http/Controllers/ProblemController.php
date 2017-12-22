@@ -17,14 +17,15 @@ class ProblemController extends Controller
 {
     private $patientService;
     private $cpmProblemService;
-    
+
     /**
      * ProblemController constructor.
      *
      */
-    public function __construct()
+    public function __construct(CpmProblemService $cpmProblemService, PatientService $patientService)
     {
-
+        $this->cpmProblemService = $cpmProblemService;
+        $this->patientService = $patientService;
     }
 
     public function index() {
