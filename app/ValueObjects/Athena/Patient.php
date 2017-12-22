@@ -89,7 +89,9 @@ class Patient
      */
     public function getDob()
     {
-        return $this->dob->toDateString() ?? false;
+        return is_a($this->dob, Carbon::class)
+            ? $this->dob->format('m/d/Y')
+            : false;
     }
 
     /**

@@ -364,7 +364,13 @@ class Calls
     //create method to create patient in athena (for testing), issue with date format
     public function createNewPatient(Patient $patient){
 
-        $response = $this->api->POST("{$patient->getPracticeId()}/patients", [
+        $practiceId = $patient->getPracticeId();
+
+        if (!$practiceId) {
+            throw new \Exception("practiceid is required.", 422);
+        }
+
+        $response = $this->api->POST("{$practiceId}/patients", [
             'departmentid' => $patient->getDepartmentId(),
             'dob' => $patient->getDob(),
             'firstname' => $patient->getFirstName(),

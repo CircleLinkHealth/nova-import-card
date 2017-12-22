@@ -68,10 +68,11 @@ class GetProblemsAndInsurances extends Command
             //array
             $demos = $this->api->getDemographics();
 
-            if ($demos) {
+            if ($demos['homephone'] or $demos['mobilephone']) {
                 $patient->status = 'eligible';
             }else {
                 $patient->status = 'error';
+                $patient->description = 'Homephone or mobile phone must be provided';
             }
 
             $practice = Practice::where('external_id'. '=', $patient->ehr_practice_id )->first();
@@ -82,7 +83,7 @@ class GetProblemsAndInsurances extends Command
                 'last_name' => $demos['lastname'],
                 'home_phone' => $demos['homephone'],
                 'cell_phone' => $demos['mobilephone'],
-                'practice_id' => $practice,
+                'practice_id' => $practice->id,
 
                 //notRequired
                 'address' => $demos['address1'],
