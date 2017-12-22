@@ -451,7 +451,7 @@ if (isset($patient) && ! empty($patient)) {
         </div>
         @include('partials.confirm-modal')
 
-        @if ($patient->isCcmEligible() && !$skippedAssessment)
+        <!--@if ($patient->isCcmEligible() && !$skippedAssessment)
             @push('scripts')
             <script type="text/html" name="ccm-enrollment-details">
                 <ul>
@@ -493,6 +493,6 @@ if (isset($patient) && ! empty($patient)) {
                 })
             </script>
             @endpush
-        @endif
+        @endif-->
     @endif
 @stop

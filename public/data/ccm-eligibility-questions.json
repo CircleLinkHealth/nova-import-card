@@ -70,7 +70,7 @@
     },
     {
         "name": "diabetes-screening-interval",
-        "text": "(2/4) Diabetes Screening to be done:",
+        "text": "(2/3) Diabetes Screening to be done:",
         "required": true,
         "options": [
             "Every 12 months",
