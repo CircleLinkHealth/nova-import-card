@@ -15,6 +15,9 @@ use Illuminate\Support\Facades\DB;
 
 class ProblemController extends Controller
 {
+    private $patientService;
+    private $cpmProblemService;
+    
     /**
      * ProblemController constructor.
      *
