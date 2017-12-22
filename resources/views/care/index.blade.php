@@ -26,13 +26,19 @@
             .main-form-block {
                 border: 1px solid lightgray;
                 box-shadow: 4px 4px #eee;
+                font-size: 16px;
+            }
+
+            .main-form-block p {
+                text-indent: 20px;
+                margin-bottom: 30px;
             }
         </style>
     @endpush
 
     <div class="main-form-block main-form-horizontal col-md-12">
         <h3 class="main-form-primary-horizontal text-center">
-            Enrollment to Personalized Care (CCM)
+            Enrollment and Advanced Care Planning for Personalized Care (CCM)
         </h3>
         <h4 class="color-red text-center">
             Reimbursement code G0506
