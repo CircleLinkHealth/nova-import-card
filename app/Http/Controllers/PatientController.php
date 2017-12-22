@@ -23,7 +23,7 @@ class PatientController extends Controller
      */
     public function __construct(PatientService $patientService)
     {   
-        $this->$patientService = $patientService;
+        $this->patientService = $patientService;
     }
 
     /**
@@ -34,68 +34,29 @@ class PatientController extends Controller
         return response()->json(null);
     }
 
-    /**
-    * note that the $patientId route parameter is actually userId
-    */
-    public function getPatient($patientId) {
-        $user = User::find($patientId);
-        $patient = $user->patientInfo()->get();
-        return response()->json($patient);
+    public function getPatient($userId) {
+        return response()->json($this->patientService->getPatientByUserId($userId));
     }
     
-    public function getProblems($patientId)
+    public function getProblems($userId)
     {
-        $user = User::find($patientId);
-        $mapTypeFn = function ($type) {
-            return function ($problem) use ($type) {
-                $problem['type'] = $type;
-                return $problem;
-            };
-        };
-        $cpmProblems = array_map($mapTypeFn('cpm'), $this->_getPatientCpmProblems($user, $patientId));
-        $ccdProblems = array_map($mapTypeFn('ccd'), $this->_getPatientCcdProblems($user, $patientId));
+        $cpmProblems = array_map($this->patientService->mapTypeFn('cpm'), $this->patientService->getCpmProblems($userId));
+        $ccdProblems = array_map($this->patientService->mapTypeFn('ccd'), $this->patientService->getCcdProblems($userId));
         return response()->json(array_merge($cpmProblems, $ccdProblems));
     }
     
-    public function getCpmProblems($patientId)
+    public function getCpmProblems($userId)
     {
-        $user = User::find($patientId);
-        $cpmProblems = $this->$patientService->getCpmProblems($patientId);
-        return response()->json($cpmProblems);
+        return response()->json($this->patientService->getCpmProblems($userId));
     }
     
-    public function getCcdProblems($patientId)
+    public function getCcdProblems($userId)
     {
-        $user = User::find($patientId);
-        $ccdProblems = $this->_getPatientCcdProblems($user);
-        return response()->json($ccdProblems);
+        return response()->json($this->patientService->getCcdProblems($userId));
     }
 
     public function addCpmProblem(Request $request) {
-        $patientId = $request->routes()->parameters()['patientId'];
+        $userId = $request->routes()->parameters()['userId'];
         /** not complete */
-    }
-
-    /** begin private functions */
-
-    function _getPatientCpmProblems($user, $patientId) {
-        return $user->cpmProblems()->get()->map(function ($p) use ($patientId) {
-            return [
-                'id'   => $p->id,
-                'name' => $p->name,
-                'code' => $p->default_icd_10_code,
-                'instructions' => $p->user()->where('patient_id', $patientId)->first()->instruction()->get()
-            ];
-        })->toArray();
-    }
-    
-    function _getPatientCcdProblems($user) {
-        return $user->ccdProblems()->get()->map(function ($p) {
-            return [
-                'id'   => $p->id,
-                'name' => $p->name,
-                'code' => $p->icd_10_code
-            ];
-        })->toArray();
     }
 }

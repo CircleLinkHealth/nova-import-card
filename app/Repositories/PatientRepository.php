@@ -10,9 +10,31 @@ namespace App\Repositories;
 
 
 use App\User;
+use App\Patient;
+use Prettus\Repository\Contracts\RepositoryInterface;
+use Prettus\Repository\Criteria\RequestCriteria;
+use Prettus\Repository\Eloquent\BaseRepository;
 
-class PatientRepository
+class PatientRepository extends BaseRepository implements RepositoryInterface
 {
+    public function model()
+    {
+        return Patient::class;
+    }
+
+    /**
+     * Boot up the repository, pushing criteria
+     */
+    public function boot()
+    {
+        $this->pushCriteria(app(RequestCriteria::class));
+    }
+
+    public function validator()
+    {
+        return null;
+    }
+
     public function storeCcdProblem(User $patient, array $args)
     {
         if ( ! $args['code']) {

@@ -21,6 +21,7 @@ use App\Repositories\LocationRepositoryEloquent;
 use App\Repositories\PracticeRepositoryEloquent;
 use App\Repositories\UserRepositoryEloquent;
 use App\Services\NoteService;
+use App\Services\PatientService;
 use Illuminate\Notifications\Channels\DatabaseChannel;
 use Illuminate\Notifications\DatabaseNotification;
 use Illuminate\Notifications\HasDatabaseNotifications;
@@ -119,6 +120,10 @@ class AppServiceProvider extends ServiceProvider
             ReportFormatter::class,
             WebixFormatter::class
         );
+
+        $this->app->bind(PatientService::class, function () {
+            return new PatientService(new \App\Repositories\PatientRepository(app()), new \App\Repositories\UserRepositoryEloquent(app()));
+        });
 
         $this->app->bind(WebixFormatter::class, function(){
             return new WebixFormatter(new NoteService());

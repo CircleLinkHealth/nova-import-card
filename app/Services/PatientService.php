@@ -3,13 +3,16 @@
 use App\User;
 use App\Patient;
 use App\Repositories\PatientRepository;
+use App\Repositories\UserRepositoryEloquent;
 
 class PatientService
 {
     private $patientRepo;
+    private $userRepo;
 
-    public function __construct(PatientRepository $patientRepo) {
+    public function __construct(PatientRepository $patientRepo, UserRepositoryEloquent $userRepo) {
         $this->patientRepo = $patientRepo;
+        $this->userRepo = $userRepo;
     }
 
     function mapTypeFn ($type) {
@@ -19,21 +22,27 @@ class PatientService
         };
     }
 
-    public function getCpmProblems($id) {
-        $patient = $this->$patientRepo->find($id)->with('user')->get();
-        return $patient->user->cpmProblems()->get()->map(function ($p) use ($patientId) {
+    public function getPatientByUserId($userId) {
+        return $this->userRepo->with(['patientInfo'])->find($userId)->patientInfo;
+    }
+
+    public function getCpmProblems($userId) {
+        $user = $this->userRepo->with(['patientInfo'])->find($userId);
+        $patient = $user->patientInfo;
+        return $user->cpmProblems()->with(['user'])->get()->map(function ($p) use ($user) {
             return [
                 'id'   => $p->id,
                 'name' => $p->name,
                 'code' => $p->default_icd_10_code,
-                'instructions' => $p->user()->where('patient_id', $patientId)->first()->instruction()->get()
+                'instructions' => $p->user->where('patient_id', $user->id)->first()->instruction()->get()
             ];
         })->toArray();
     }
     
-    public function getCcdProblems($id) {
-        $patient = $this->$patientRepo->find($id)->with('user')->get();
-        return $patient->user->ccdProblems()->get()->map(function ($p) {
+    public function getCcdProblems($userId) {
+        $user = $this->userRepo->with(['patientInfo'])->find($userId);
+        $patient = $user->patientInfo;
+        return $user->ccdProblems()->get()->map(function ($p) {
             return [
                 'id'   => $p->id,
                 'name' => $p->name,

@@ -283,7 +283,9 @@ return [
         'Slack'          => jeremykenedy\Slack\Laravel\Facade::class,
         'GoogleCalendar' => Spatie\GoogleCalendar\GoogleCalendarFacade::class,
         'Bugsnag'        => Bugsnag\BugsnagLaravel\Facades\Bugsnag::class,
-        'Swagger'        => L5Swagger\L5SwaggerServiceProvider::class
+        'Swagger'        => L5Swagger\L5SwaggerServiceProvider::class,
+
+        'PatientService' => \App\Services\PatientService::class
     ],
 
 ];

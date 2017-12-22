@@ -139,10 +139,10 @@ Route::group(['middleware' => 'auth'], function () {
                 'prefix' => 'patients',
                 'middleware' => ['patientProgramSecurity']
             ], function () {
-            Route::get('{patientId}', 'PatientController@getPatient');
-            Route::get('{patientId}/problems', 'PatientController@getProblems');
-            Route::get('{patientId}/problems/cpm', 'PatientController@getCpmProblems');
-            Route::get('{patientId}/problems/ccd', 'PatientController@getCcdProblems');
+            Route::get('{userId}', 'PatientController@getPatient');
+            Route::get('{userId}/problems', 'PatientController@getProblems');
+            Route::get('{userId}/problems/cpm', 'PatientController@getCpmProblems');
+            Route::get('{userId}/problems/ccd', 'PatientController@getCcdProblems');
             Route::post('{patientId}/problems/cpm/{cpmId}/instructions', 'ProblemInstructionController@addInstructionProblem');
             Route::delete('{patientId}/problems/cpm/{cpmId}/instructions/{instructionId}', 'ProblemInstructionController@removeInstructionProblem');
 
