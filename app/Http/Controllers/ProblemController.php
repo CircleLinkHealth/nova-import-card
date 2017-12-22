@@ -7,6 +7,8 @@ use App\Patient;
 use App\Http\Controllers\Controller;
 use App\Models\CCD\Problem;
 use App\Models\CPM\CpmProblem;
+use App\Services\CPM\CpmProblemService;
+use App\Services\PatientService;
 use App\Models\ProblemCode;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
@@ -30,7 +32,7 @@ class ProblemController extends Controller
 
     public function index() {
         return response()->json([
-            'cpm_count'   => CpmProblem::count(),
+            'cpm_count'   => $this->cpmProblemService->repo()->count(),
             'ccd_count'   => Problem::select('name', DB::raw('count(*) as total'))->groupBy('name')->pluck('total')->count()
         ]);
     }

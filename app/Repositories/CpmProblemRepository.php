@@ -35,4 +35,16 @@ class CpmProblemRepository extends BaseRepository implements RepositoryInterface
     {
         return null;
     }
+
+    public function count() {
+        $this->applyCriteria();
+        $this->applyScope();
+
+        $result = $this->model->count();
+
+        $this->resetModel();
+        $this->resetScope();
+
+        return $result;
+    }
 }
