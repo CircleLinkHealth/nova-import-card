@@ -17,6 +17,10 @@ function TimeTracker(now = () => (new Date())) {
 
         const key = this.key(info)
 
+        if (info.activity === '') {
+            info.activity = 'unknown'
+        }
+
         return users[key] = users[key] || this.create(info)
     }
 
