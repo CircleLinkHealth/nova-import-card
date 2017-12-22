@@ -43,13 +43,14 @@ class PatientController extends Controller
             $patients                       = auth()->user()->patientsPendingApproval()->get();
             $patientsPendingApproval        = $this->formatter->patientListing($patients);
         }
-
+        $noLiveCountTimeTracking = true;
         return view('wpUsers.patient.dashboard',
             array_merge(
                 compact([
                     'pendingApprovals',
                     'nurse',
                     'showPatientsPendingApprovalBox',
+                    'noLiveCountTimeTracking',
                 ]),
                 $patientsPendingApproval
             )
