@@ -2,7 +2,6 @@
 
 namespace Tests\Unit;
 
-use App\Enrollee;
 use App\Services\AthenaAPI\Calls;
 use App\ValueObjects\Athena\Patient;
 use Carbon\Carbon;
@@ -57,8 +56,8 @@ class AthenaApiCallsTest extends TestCase
         $patient->setState($this->faker()->randomElement(['NY', 'NJ', 'AR', 'CA']));
         $patient->setZip('07601');
         $patient->setGender($this->faker()->randomElement(['F', 'M']));
-        $patient->setHomePhone($this->faker()->phoneNumber);
-        $patient->setMobilePhone($this->faker()->phoneNumber);
+        $patient->setHomePhone(rand(1111111111, 9999999999));
+        $patient->setMobilePhone(rand(1111111111, 9999999999));
 
         return $patient;
     }
@@ -68,8 +67,12 @@ class AthenaApiCallsTest extends TestCase
         $patients = $this->api->createNewPatient($this->fakePatient);
 
         if (array_key_exists(0, $patients)) {
-            $this->athenaPatientId = $patients[0]['patientid'];
+            $this->assertTrue(true);
+
+            return $patients[0]['patientid'];
         }
+
+        $this->assertTrue(false);
     }
 
 
