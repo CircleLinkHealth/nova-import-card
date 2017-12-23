@@ -9,8 +9,6 @@
     else {
         $monthlyTime = "";
     }
-
-    $noLiveCountTimeTracking = $noLiveCountTimeTracking ?? true;
 ?>
 <nav class="navbar primary-navbar">
     <div class="container-fluid col-md-12" style="width: 100%;">
@@ -33,7 +31,7 @@
             <ul class="nav navbar-nav">
                 @if (!isset($patient))
                     <li data-monthly-time="{{$monthlyTime}}" style="padding-top: 15px; padding-bottom: 15px; line-height: 20px;">
-                        <time-tracker ref="TimeTrackerApp" :info="timeTrackerInfo" :hide-tracker="true" :no-live-count="{{$noLiveCountTimeTracking}}"></time-tracker>
+                        <time-tracker ref="TimeTrackerApp" :info="timeTrackerInfo" :hide-tracker="true" :no-live-count="{{$noLiveCountTimeTracking ?? true}}"></time-tracker>
                     </li>
                 @endif
                 <li>
