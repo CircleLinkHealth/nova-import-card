@@ -1,7 +1,9 @@
 @extends('partials.adminUI')
 
 @section('content')
-    <script type="text/javascript" src="{{ asset('/js/rules/rules.js') }}"></script>
+    @push('scripts')
+        <script type="text/javascript" src="{{ asset('/js/rules/rules.js') }}"></script>
+    @endpush
     {!! Form::open(array('url' => URL::route('roles.update', array('id' => $role->id)), 'class' => 'form-horizontal')) !!}
     <div class="container-fluid">
         <div class="row">
@@ -80,12 +82,10 @@
                                 </div>
                             </div>
                         </div>
-                        {!! Form::close() !!}
                     </div>
                 </div>
             </div>
         </div>
-
-
     </div>
+    {!! Form::close() !!}
 @stop

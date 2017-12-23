@@ -17,7 +17,7 @@ class PracticeController extends Controller
      */
     public function index()
     {
-        if (!Auth::user()->can('programs-view')) {
+        if (!Auth::user()->hasPermission('programs-view')) {
             abort(403);
         }
         // display view
@@ -32,7 +32,7 @@ class PracticeController extends Controller
      */
     public function create()
     {
-        if (!Auth::user()->can('programs-manage')) {
+        if (!Auth::user()->hasPermission('programs-manage')) {
             abort(403);
         }
 
@@ -52,7 +52,7 @@ class PracticeController extends Controller
      */
     public function store(Request $request)
     {
-        if (!Auth::user()->can('programs-manage')) {
+        if (!Auth::user()->hasPermission('programs-manage')) {
             abort(403);
         }
 
@@ -84,7 +84,7 @@ class PracticeController extends Controller
      */
     public function show($id)
     {
-        if (!Auth::user()->can('programs-view')) {
+        if (!Auth::user()->hasPermission('programs-view')) {
             abort(403);
         }
         // display view
@@ -104,7 +104,7 @@ class PracticeController extends Controller
      */
     public function edit($id)
     {
-        if (!Auth::user()->can('programs-manage')) {
+        if (!Auth::user()->hasPermission('programs-manage')) {
             abort(403);
         }
 
@@ -125,7 +125,7 @@ class PracticeController extends Controller
      */
     public function update(Request $request, $id)
     {
-        if (!Auth::user()->can('programs-manage')) {
+        if (!Auth::user()->hasPermission('programs-manage')) {
             abort(403);
         }
         // find program
@@ -159,7 +159,7 @@ class PracticeController extends Controller
      */
     public function destroy($id)
     {
-        if (!Auth::user()->can('programs-manage')) {
+        if (!Auth::user()->hasPermission('programs-manage')) {
             abort(403);
         }
         // find program

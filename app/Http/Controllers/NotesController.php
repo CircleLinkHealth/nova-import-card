@@ -1,7 +1,7 @@
 <?php namespace App\Http\Controllers;
 
 use App\Activity;
-use App\Formatters\WebixFormatter;
+use App\Contracts\ReportFormatter;
 use App\Note;
 use App\PatientContactWindow;
 use App\PatientMonthlySummary;
@@ -11,6 +11,7 @@ use App\User;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use Symfony\Component\HttpFoundation\ParameterBag;
 
 class NotesController extends Controller
@@ -21,9 +22,9 @@ class NotesController extends Controller
 
     public function __construct(
         NoteService $noteService,
-        WebixFormatter $formatter
+        ReportFormatter $formatter
     ) {
-        $this->service = $noteService;
+        $this->service   = $noteService;
         $this->formatter = $formatter;
     }
 
@@ -32,16 +33,28 @@ class NotesController extends Controller
         $patientId
     ) {
 
-        $patient = User::find($patientId);
+        $patient = User::where('id', $patientId)
+                       ->with([
+                           'activities' => function ($q) {
+                               return $q->where('logged_from', '=', 'manual_input')
+                                        ->with('meta')
+                                        ->groupBy(DB::raw('provider_id, DATE(performed_at),type'))
+                                        ->orderBy('performed_at', 'desc');
+                           },
+                           'appointments',
+                           'billingProvider',
+                           'notes.author',
+                           'notes.call',
+                           'notes.notifications',
+                           'patientInfo',
+                       ])->orderByDesc('created_at')
+                       ->firstOrFail();
+
         $messages = \Session::get('messages');
 
-        //test comment
+        $report_data = $this->formatter->formatDataForNotesAndOfflineActivitiesReport($patient);
 
-        $data = $this->service->getNotesAndOfflineActivitiesForPatient($patient);
-
-        $report_data = $this->formatter->formatDataForNotesAndOfflineActivitiesReport($data);
-
-        $ccm_complex = $patient->patientInfo->isCCMComplex() ?? false;
+        $ccm_complex = $patient->isCCMComplex() ?? false;
 
         return view(
             'wpUsers.patient.note.index',
@@ -49,7 +62,6 @@ class NotesController extends Controller
                 'activity_json' => $report_data,
                 'patient'       => $patient,
                 'messages'      => $messages,
-                'data'          => $data,
                 'ccm_complex'   => $ccm_complex,
             ]
         );
@@ -63,7 +75,7 @@ class NotesController extends Controller
         $session_user = auth()->user();
 
         $providers_for_blog = User::whereIn('id', $session_user->viewableProviderIds())
-            ->pluck('display_name', 'id')->sort();
+                                  ->pluck('display_name', 'id')->sort();
 
         //TIME FILTERS
 
@@ -71,13 +83,13 @@ class NotesController extends Controller
         if (isset($input['range'])) {
             //Sub no of months by input
             $months = $input['range'];
-            $start = Carbon::now()->startOfMonth()->subMonth($months)->format('Y-m-d');
-            $end = Carbon::now()->endOfMonth()->format('Y-m-d');
+            $start  = Carbon::now()->startOfMonth()->subMonth($months)->format('Y-m-d');
+            $end    = Carbon::now()->endOfMonth()->format('Y-m-d');
         } //if user resets time
         else {
             $months = 0;
-            $start = Carbon::now()->startOfMonth()->format('Y-m-d');
-            $end = Carbon::now()->endOfMonth()->format('Y-m-d');
+            $start  = Carbon::now()->startOfMonth()->format('Y-m-d');
+            $end    = Carbon::now()->endOfMonth()->format('Y-m-d');
         }
 
         $only_mailed_notes = (isset($input['mail_filter']))
@@ -101,7 +113,7 @@ class NotesController extends Controller
 
             $title = $provider->display_name;
 
-            if (!empty($notes)) {
+            if ( ! empty($notes)) {
                 $notes = $this->formatter->formatDataForNotesListingReport($notes, $request);
             }
 
@@ -127,12 +139,12 @@ class NotesController extends Controller
 
                 $title = 'All Forwarded Notes';
 
-                if (!empty($notes)) {
+                if ( ! empty($notes)) {
                     $notes = $this->formatter->formatDataForNotesListingReport($notes, $request);
                 }
 
                 $data = [
-                    'filter'             => $input['provider'],
+                    'filter'             => 0,
                     'notes'              => $notes,
                     'title'              => $title,
                     'dateFilter'         => $months,
@@ -152,6 +164,7 @@ class NotesController extends Controller
                     'providers_for_blog' => $providers_for_blog,
                     'isProviderSelected' => false,
                     'only_mailed_notes'  => false,
+                    'dateFilter'        => $months
                 ];
             }
         }
@@ -169,14 +182,14 @@ class NotesController extends Controller
         if ($patientId) {
             // patient view
             $patient = User::find($patientId);
-            if (!$patient) {
+            if ( ! $patient) {
                 return response("User not found", 401);
             }
 
             //set contact flag
             $patient_contact_window_exists = false;
 
-            if (count($patient->patientInfo->patientContactWindows) != 0) {
+            if (count($patient->patientInfo->contactWindows) != 0) {
                 $patient_contact_window_exists = true;
             }
 
@@ -204,19 +217,19 @@ class NotesController extends Controller
             //providers
             $provider_info = [];
 
-            $author = Auth::user();
-            $author_id = $author->id;
+            $author      = Auth::user();
+            $author_id   = $author->id;
             $author_name = $author->fullName;
 
             //Patient Call Windows:
             $window = PatientContactWindow::getPreferred($patient->patientInfo);
 
             $contact_days_array = [];
-            if (is_object($patient->patientInfo->patientContactWindows)) {
+            if (is_object($patient->patientInfo->contactWindows)) {
                 $contact_days_array = array_merge(explode(',', $patient->patientInfo->preferred_cc_contact_days));
             }
 
-            $ccm_complex = $patient->patientInfo->isCCMComplex() ?? false;
+            $ccm_complex = $patient->isCCMComplex() ?? false;
 
             asort($provider_info);
             asort($careteam_info);
@@ -317,16 +330,16 @@ class NotesController extends Controller
 
                 $seconds = $patient->patientInfo()->first()->cur_month_activity_time;
 
-                $ccm_complex = $patient->patientInfo->isCCMComplex() ?? false;
+                $ccm_complex = $patient->isCCMComplex() ?? false;
 
                 $ccm_above = false;
-                if ($seconds > 1199 && !$ccm_complex) {
+                if ($seconds > 1199 && ! $ccm_complex) {
                     $ccm_above = true;
                 } elseif ($seconds > 3599 && $ccm_complex) {
                     $ccm_above = true;
                 }
 
-                $prediction['ccm_above'] = $ccm_above;
+                $prediction['ccm_above']   = $ccm_above;
                 $prediction['ccm_complex'] = $ccm_complex;
 
 
@@ -398,9 +411,11 @@ class NotesController extends Controller
     ) {
 
         $patient = User::find($patientId);
-        $note = $this->service->getNoteWithCommunications($noteId);
+        $note    = Note::where('id', $noteId)
+                       ->with(['call', 'notifications'])
+                       ->first();
 
-        $this->service->updateMailLogsForNote(auth()->user()->id, $note);
+        $this->service->markNoteAsRead(auth()->user(), $note);
 
         $readers = $this->service->getSeenForwards($note);
 
@@ -408,50 +423,19 @@ class NotesController extends Controller
         $data = [];
 
         //Sets up tags for patient note tags
-        $meta_tags = [];
+        $meta_tags = $this->service->tags($note);
 
-        //Call Info
-        if (count($note->call) > 0) {
-            if ($note->call->is_cpm_inbound) {
-                $meta_tags[] = 'Inbound Call';
-            } else {
-                $meta_tags[] = 'Outbound Call';
-            }
-
-            if ($note->call->status == 'reached') {
-                $meta_tags[] = 'Successful Clinical Call';
-            }
-        }
-
-        if ($note->mail->count() > 0) {
-            $mailText = 'Forwarded';
-            foreach ($note->mail as $mail) {
-                if ($mail->receiverUser) {
-                    $mailText .= ' ' . $mail->receiverUser->display_name . ',';
-                }
-            }
-            $meta_tags[] = rtrim($mailText, ',');
-        }
-
-        if ($note->isTCM) {
-            $meta_tags[] = 'Patient Recently in Hospital/ER';
-        }
-
-        if ($note->did_medication_recon) {
-            $meta_tags[] = 'Medication Reconciliation';
-        }
-
-        $data['type'] = $note->type;
-        $data['id'] = $note->id;
+        $data['type']         = $note->type;
+        $data['id']           = $note->id;
         $data['performed_at'] = $note->performed_at;
-        $provider = User::find($note->author_id);
+        $provider             = User::find($note->author_id);
         if ($provider) {
             $data['provider_name'] = $provider->fullName;
         } else {
             $data['provider_name'] = '';
         }
 
-        $data['comment'] = $note->body;
+        $data['comment']   = $note->body;
         $data['addendums'] = $note->addendums->sortByDesc('created_at');
 
         $careteam_info = $this->service->getPatientCareTeamMembers($patientId);
@@ -465,7 +449,7 @@ class NotesController extends Controller
             'patient'       => $patient,
             'program_id'    => $patient->program_id,
             'meta'          => $meta_tags,
-            'hasReaders'    => $readers,
+            'hasReaders'    => $readers->all(),
         ];
 
         return view('wpUsers.patient.note.view', $view_data);
@@ -476,9 +460,9 @@ class NotesController extends Controller
         $patientId,
         $noteId
     ) {
-        $input = $input->all();
+        $note = Note::findOrFail($input['noteId']);
 
-        $this->service->forwardNote($input, $patientId);
+        $note->forward($input['notify_careteam'], $input['notify_circlelink_support']);
 
         return redirect()->route('patient.note.index', ['patient' => $patientId]);
     }
@@ -497,6 +481,7 @@ class NotesController extends Controller
             'author_user_id' => auth()->user()->id,
         ]);
 
-        return redirect()->to(route('patient.note.view', ['patientId' => $patientId, 'noteId' => $noteId]).'#create-addendum');
+        return redirect()->to(route('patient.note.view',
+                ['patientId' => $patientId, 'noteId' => $noteId]) . '#create-addendum');
     }
 }

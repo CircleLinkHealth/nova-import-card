@@ -85,10 +85,11 @@ class AlternativeCareTimePayableCalculator
 
         $toAddToAccuredTowardsCCM = 0;
         $toAddToAccuredAfterCCM = 0;
-        $patient = $activity->patient->patientInfo;
+        $user = $activity->patient;
+        $patient = $user->patientInfo;
 
         $ccm_after_activity = intval($patient->cur_month_activity_time);
-        $isComplex = $patient->isCCMComplex();
+        $isComplex = $user->isCCMComplex();
 
         $ccm_before_activity = $ccm_after_activity - $activity->duration;
 

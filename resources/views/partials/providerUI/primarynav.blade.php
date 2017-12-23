@@ -1,3 +1,15 @@
+<?php
+    if (isset($patient)) {
+        $seconds = optional($patient->patientInfo)->cur_month_activity_time ?? 0;
+        $H = floor($seconds / 3600);
+        $i = ($seconds / 60) % 60;
+        $s = $seconds % 60;
+        $monthlyTime = sprintf("%02d:%02d:%02d", $H, $i, $s);
+    }
+    else {
+        $monthlyTime = "";
+    }
+?>
 <nav class="navbar primary-navbar">
     <div class="container-fluid col-md-12" style="width: 100%;">
 
@@ -11,21 +23,23 @@
 
         </div>
 
-        <div class="col-md-4" id="search-bar-container">
+        <div class="col-md-5" id="search-bar-container">
             @include('partials.search')
         </div>
 
         <div class="navbar-right hidden-xs" style="">
             <ul class="nav navbar-nav">
-                <li></li>
-                {{--URL::route('patients.dashboard', array())--}}
-                <li><a href="{{ URL::route('patients.dashboard') }}"><i class="icon--home--white"></i> Home</a></li>
-                {{--<li><a href="{{ URL::route('patients.search') }}"><i class="icon--search--white"></i> Search Patient</a>--}}
-                {{--</li>--}}
-                <li><a href="{{ URL::route('patients.listing') }}"><i class="icon--patients"></i> Patient List</a>
+                @if (!isset($patient))
+                    <li data-monthly-time="{{$monthlyTime}}" style="padding-top: 15px; padding-bottom: 15px; line-height: 20px;">
+                        <time-tracker ref="TimeTrackerApp" :info="timeTrackerInfo" :hide-tracker="true" :no-live-count="{{$noLiveCountTimeTracking ? true : false}}"></time-tracker>
+                    </li>
+                @endif
+                <li>
+                    <a href="{{ URL::route('patients.dashboard') }}"><i class="icon--home--white"></i> Home</a>
                 </li>
-                {{--<li><a href="{{ URL::route('patients.demographics.show') }}"><i class="icon--add-user"></i> Add--}}
-                        {{--Patient</a></li>--}}
+                <li>
+                    <a href="{{ URL::route('patients.listing') }}"><i class="icon--patients"></i> Patient List</a>
+                </li>
 
                 <li class="dropdown">
                     <div class="dropdown-toggle" data-toggle="dropdown" role="button"
@@ -74,7 +88,7 @@
                             </li>
                         @endif
 
-                        @if ( !Auth::guest() && Auth::user()->can(['admin-access']))
+                        @if ( !Auth::guest() && Auth::user()->hasRole(['administrator']))
                             <li><a style="color: #47beab" href="{{ empty($patient->id) ? URL::route('admin.dashboard') : URL::route('admin.users.edit', array('patient' => $patient->id)) }}">
                                     Admin Panel
                                 </a>

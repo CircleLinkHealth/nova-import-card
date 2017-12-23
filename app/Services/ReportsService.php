@@ -101,8 +101,7 @@ class ReportsService
         $medications_categories = $user->cpmMedicationGroups()->get()->pluck('name')->all();
 
         //get all medication observations for the user
-        $medication_obs = DB::connection('mysql_no_prefix')
-            ->table('rules_questions')
+        $medication_obs = DB::table('rules_questions')
             ->select(
                 'lv_observations.id',
                 'rules_items.items_text',

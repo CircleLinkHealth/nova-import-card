@@ -35,6 +35,13 @@ class RolesPermissionsSeeder extends Seeder
         $this->command->info('That\'s all folks!');
     }
 
+    public function deletePermissions() {
+        return [
+            'activities-pagetimer-manage',
+
+        ];
+    }
+
     public function permissions()
     {
         return [

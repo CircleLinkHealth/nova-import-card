@@ -3,7 +3,7 @@
 use App\Location;
 use App\Practice;
 use Auth;
-use Entrust;
+use Cerberus;
 use Illuminate\Http\Request;
 
 class LocationController extends Controller
@@ -16,7 +16,7 @@ class LocationController extends Controller
      */
     public function index(Request $request)
     {
-        if (!Auth::user()->can('locations-view')) {
+        if (!Auth::user()->hasRole('administrator')) {
             abort(403);
         }
         $messages = \Session::get('messages');
@@ -34,7 +34,7 @@ class LocationController extends Controller
      */
     public function create()
     {
-        if (!Auth::user()->can('locations-manage')) {
+        if (!Auth::user()->hasRole('administrator')) {
             abort(403);
         }
 
@@ -50,7 +50,7 @@ class LocationController extends Controller
      */
     public function store(Request $request)
     {
-        if (!Auth::user()->can('locations-manage')) {
+        if (!Auth::user()->hasRole('administrator')) {
             abort(403);
         }
 
@@ -79,7 +79,7 @@ class LocationController extends Controller
      */
     public function show($id)
     {
-        if (!Auth::user()->can('locations-view')) {
+        if (!Auth::user()->hasRole('administrator')) {
             abort(403);
         }
         $messages = \Session::get('messages');
@@ -101,7 +101,7 @@ class LocationController extends Controller
      */
     public function edit($id)
     {
-        if (!Auth::user()->can('locations-manage')) {
+        if (!Auth::user()->hasRole('administrator')) {
             abort(403);
         }
 
@@ -123,7 +123,7 @@ class LocationController extends Controller
      */
     public function update(Request $request)
     {
-        if (!Auth::user()->can('locations-manage')) {
+        if (!Auth::user()->hasRole('administrator')) {
             abort(403);
         }
 
@@ -158,7 +158,7 @@ class LocationController extends Controller
      */
     public function destroy($id)
     {
-        if (!Auth::user()->can('locations-manage')) {
+        if (!Auth::user()->hasRole('administrator')) {
             abort(403);
         }
         Location::destroy($id);

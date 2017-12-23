@@ -21,23 +21,25 @@
                         @include('errors.errors')
 
                         <div class="row">
-                            {!! Form::open(array('url' => URL::route('admin.careplans.index', array()), 'method' => 'get', 'class' => 'form-horizontal')) !!}
-                        </div>
-
-                        <h2>Filter</h2>
-                        <div class="form-group">
-                            <div class="row">
-                                <div class="col-xs-2 text-right">{!! Form::label('filterUser', 'Find User:') !!}</div>
-                                <div class="col-xs-4">{!! Form::select('filterUser', array('all' => 'All Users', '' => 'No User') + $users, $filterUser, ['class' => 'form-control select-picker', 'style' => 'width:80%;']) !!}</div>
-                            </div>
-                        </div>
-                        <div class="row" style="margin-top:50px;">
                             <div class="col-sm-12">
-                                <div class="" style="text-align:center;">
-                                    {!! Form::hidden('action', 'filter') !!}
-                                    {!! Form::submit('Apply Filters', array('class' => 'btn btn-orange')) !!}
-                                    </form>
+                                {!! Form::open(array('url' => URL::route('admin.careplans.index', array()), 'method' => 'get', 'class' => 'form-horizontal')) !!}
+                                <h2>Filter</h2>
+                                <div class="form-group">
+                                    <div class="row">
+                                        <div class="col-xs-2 text-right">{!! Form::label('filterUser', 'Find User:') !!}</div>
+                                        <div class="col-xs-4">{!! Form::select('filterUser', array('all' => 'All Users', '' => 'No User') + $users, $filterUser, ['class' => 'form-control select-picker', 'style' => 'width:80%;']) !!}</div>
+                                    </div>
                                 </div>
+                                <div class="row" style="margin-top:50px;">
+                                    <div class="col-sm-12">
+                                        <div class="" style="text-align:center;">
+                                            {!! Form::hidden('action', 'filter') !!}
+                                            {!! Form::submit('Apply Filters', array('class' => 'btn btn-orange')) !!}
+                                            </form>
+                                        </div>
+                                    </div>
+                                </div>
+                                {!! Form::close() !!}
                             </div>
                         </div>
 

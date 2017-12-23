@@ -55,7 +55,7 @@ class PatientConditionsReportController extends Controller
                 });
                 $i = 0;
                 // header
-                $userColumns = array('Patient Name', 'Status', 'Program', 'Total Conditions', 'Conditions');
+                $userColumns = ['Patient Name', 'Status', 'Program', 'Total Conditions', 'Conditions'];
                 $sheet->appendRow($userColumns);
 
                 foreach ($patients as $patient) {
@@ -76,7 +76,7 @@ class PatientConditionsReportController extends Controller
                         }
                         $conditionsText = rtrim($conditionsText, ",");
                     }
-                    $columns = array($patient->display_name, $patient->patientInfo->ccm_status, $programName, $total, $conditionsText);
+                    $columns = [$patient->display_name, $patient->patientInfo->ccm_status, $programName, $total, $conditionsText];
                     $sheet->appendRow($columns);
                 }
             });

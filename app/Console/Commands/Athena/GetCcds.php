@@ -4,7 +4,7 @@ namespace App\Console\Commands\Athena;
 
 use App\ForeignId;
 use App\Models\CCD\CcdVendor;
-use App\Services\AthenaAPI\Service;
+use App\Services\AthenaAPI\CreateAndPostPdfCareplan;
 use Illuminate\Console\Command;
 use Maknz\Slack\Facades\Slack;
 
@@ -31,7 +31,7 @@ class GetCcds extends Command
      *
      * @return void
      */
-    public function __construct(Service $athenaApi)
+    public function __construct(CreateAndPostPdfCareplan $athenaApi)
     {
         parent::__construct();
 

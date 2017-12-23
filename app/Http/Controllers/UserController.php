@@ -24,7 +24,7 @@ class UserController extends Controller
     {
         $messages = \Session::get('messages');
 
-        if (!Auth::user()->can('users-view-all')) {
+        if (!Auth::user()->hasRole('administrator')) {
             abort(403);
         }
 
@@ -132,7 +132,7 @@ class UserController extends Controller
 
     public function quickAddForm($blogId)
     {
-        if (!Auth::user()->can('users-create')) {
+        if (!Auth::user()->hasRole('administrator')) {
             abort(403);
         }
         //if ( $request->header('Client') == 'ui' ) {}
@@ -197,7 +197,7 @@ class UserController extends Controller
 
     public function storeQuickPatient()
     {
-        if (!Auth::user()->can('users-create')) {
+        if (!Auth::user()->hasRole('administrator')) {
             abort(403);
         }
         $wpUser = new User;
@@ -217,7 +217,7 @@ class UserController extends Controller
      */
     public function create()
     {
-        if (!Auth::user()->can('users-create')) {
+        if (!Auth::user()->hasRole('administrator')) {
             abort(403);
         }
         $messages = \Session::get('messages');
@@ -326,7 +326,7 @@ class UserController extends Controller
      */
     public function store(Request $request)
     {
-        if (!Auth::user()->can('users-create')) {
+        if (!Auth::user()->hasRole('administrator')) {
             abort(403);
         }
         $params = new ParameterBag($request->input());
@@ -362,7 +362,7 @@ class UserController extends Controller
         Request $request,
         $id
     ) {
-        if (!Auth::user()->can('users-view-all')) {
+        if (!Auth::user()->hasRole('administrator')) {
             abort(403);
         }
         dd('user /edit to view user info');
@@ -379,7 +379,7 @@ class UserController extends Controller
         Request $request,
         $id
     ) {
-        if (!Auth::user()->can('users-edit-all')) {
+        if (!Auth::user()->hasRole('administrator')) {
             abort(403);
         }
         $messages = \Session::get('messages');
@@ -538,7 +538,7 @@ class UserController extends Controller
         Request $request,
         $id
     ) {
-        if (!Auth::user()->can('users-edit-all')) {
+        if (!Auth::user()->hasRole('administrator')) {
             abort(403);
         }
         // instantiate user
@@ -567,7 +567,7 @@ class UserController extends Controller
      */
     public function destroy($id)
     {
-        if (!Auth::user()->can('users-edit-all')) {
+        if (!Auth::user()->hasRole('administrator')) {
             abort(403);
         }
 
@@ -591,7 +591,7 @@ class UserController extends Controller
      */
     public function doAction(Request $request)
     {
-        if (!Auth::user()->can('users-edit-all')) {
+        if (!Auth::user()->hasRole('administrator')) {
             abort(403);
         }
 

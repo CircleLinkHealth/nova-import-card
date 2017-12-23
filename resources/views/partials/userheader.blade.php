@@ -1,34 +1,3 @@
-<?php
-// calculate display, fix bug where gmdate('i:s') doesnt work for > 24hrs
-$seconds = 0;
-if ($patient->patientInfo) {
-    $seconds = $patient->patientInfo()->first()->cur_month_activity_time;
-}
-$H = floor($seconds / 3600);
-$i = ($seconds / 60) % 60;
-$s = $seconds % 60;
-$monthlyTime = sprintf("%02d:%02d:%02d", $H, $i, $s);
-$ccm_above = false;
-
-$ccm_complex = false;
-if ($patient->patientInfo) {
-    $ccm_complex = $patient->patientInfo->isCCMComplex() ?? false;
-}
-
-if ($seconds > 1199 && !$ccm_complex) {
-    $ccm_above = true;
-} elseif ($seconds > 3599 && $ccm_complex) {
-    $ccm_above = true;
-}
-
-$provider = App\User::find($patient->billingProviderID)->fullName ?? 'No Provider Selected';
-
-$location = empty($patient->getPreferredLocationName())
-    ? 'Not Set'
-    : $patient->getPreferredLocationName();
-
-?>
-
 <div class="main-form-block main-form-horizontal main-form-primary-horizontal col-md-12" style="padding-bottom:9px">
     <div class="row">
         <div class="col-sm-12">
@@ -39,19 +8,19 @@ $location = empty($patient->getPreferredLocationName())
                     </a> </span>
                 @if($ccm_complex)
                     <span id="complex_tag"
-                      style="background-color: #ec683e;font-size: 15px; position: relative; top: -7px;"
-                      class="label label-warning"> Complex CCM</span>
+                          style="background-color: #ec683e;font-size: 15px; position: relative; top: -7px;"
+                          class="label label-warning"> Complex CCM</span>
                     @push('scripts')
-                        <script>
-                            (function () {
-                                // subscribe to jQuery event to know whether the complex-cscm checkbox value has been changed or not
-                                var $complexSpan = $("#complex_tag");
-                                $(document).on("complex-ccm-form-submit", function (e, status) {
-                                    if (status) $complexSpan.show();
-                                    else $complexSpan.hide();
-                                })
-                            })()
-                        </script>
+                    <script>
+                        (function () {
+                            // subscribe to jQuery event to know whether the complex-cscm checkbox value has been changed or not
+                            var $complexSpan = $("#complex_tag");
+                            $(document).on("complex-ccm-form-submit", function (e, status) {
+                                if (status) $complexSpan.show();
+                                else $complexSpan.hide();
+                            })
+                        })()
+                    </script>
                     @endpush
                 @endif
                 <a
@@ -81,8 +50,41 @@ $location = empty($patient->getPreferredLocationName())
             </div>
             <div class="col-sm-4" style="line-height: 22px; text-align: right">
 
-                <span style="font-size: 27px;{{$ccm_above ? 'color: #47beab;' : ''}}"><a style="color: inherit"
-                                                                                         href="{{ empty($patient->id) ? URL::route('patients.search') : URL::route('patient.activity.providerUIIndex', array('patient' => $patient->id)) }}">{{$monthlyTime}}</a></span>
+                <span style="font-size: 27px;{{$ccm_above ? 'color: #47beab;' : ''}}">
+                    <span data-monthly-time="{{$monthlyTime}}" style="color: inherit">
+                        @if (isset($disableTimeTracking) && $disableTimeTracking)
+                            <div class="color-grey">
+                                <a href="{{ empty($patient->id) ?: route('patient.activity.providerUIIndex', ['patient' => $patient->id]) }}">
+                                    <server-time-display url="{{env('WS_SERVER_URL')}}" patient-id="{{$patient->id}}" provider-id="{{Auth::user()->id}}" value="{{$monthlyTime}}"></server-time-display>
+                                </a>
+                            </div>
+                        @else
+                            <?php
+                                $noLiveCountTimeTracking = isset($noLiveCountTimeTracking) && $noLiveCountTimeTracking;
+                                $ccmCountableUser = auth()->user()->isCCMCountable();
+                             ?>
+                             @if ($noLiveCountTimeTracking)
+                                <div class="color-grey">
+                                    <a href="{{ empty($patient->id) ?: route('patient.activity.providerUIIndex', ['patient' => $patient->id]) }}">
+                                        {{$monthlyTime}}
+                                    </a>
+                                    <span style="display:none">
+                                        <time-tracker ref="TimeTrackerApp" class-name="{{$noLiveCountTimeTracking ? 'color-grey' : ($ccmCountableUser ? '' : 'color-grey')}}"
+                                        :info="timeTrackerInfo" 
+                                        :no-live-count="{{($noLiveCountTimeTracking ? true : ($ccmCountableUser ? false : true)) ? 1 : 0}}"></time-tracker>
+                                    </span>
+                                </div>
+                            @else
+                                <time-tracker ref="TimeTrackerApp" class-name="{{$noLiveCountTimeTracking ? 'color-grey' : ($ccmCountableUser ? '' : 'color-grey')}}"
+                                    :info="timeTrackerInfo" 
+                                    :no-live-count="{{($noLiveCountTimeTracking ? true : ($ccmCountableUser ? false : true)) ? 1 : 0}}">
+                                        @include('partials.tt-loader')
+                                </time-tracker>
+                             @endif
+                        @endif
+                    </span>
+                </span>
+
                 <span style="font-size:15px"></span><br/>
 
                 @if(Route::is('patient.note.create'))
@@ -117,7 +119,8 @@ $location = empty($patient->getPreferredLocationName())
         </div>
         @if(!empty($problems))
             <div style="clear:both"></div>
-            <ul id="user-header-problems-checkboxes" class="person-conditions-list inline-block text-medium" style="margin-top: -10px">
+            <ul id="user-header-problems-checkboxes" class="person-conditions-list inline-block text-medium"
+                style="margin-top: -10px">
                 @foreach($problems as $problem)
                     @if($problem != App\Models\CPM\CpmMisc::OTHER_CONDITIONS && $problem != 'Diabetes')
                         <li class="inline-block"><input type="checkbox" id="item27" name="condition27" value="Active"
@@ -134,20 +137,27 @@ $location = empty($patient->getPreferredLocationName())
 <meta name="is_ccm_complex" content="{{$ccm_complex}}">
 
 @push('scripts')
-    <script>
-        $(document).ready(function () {
+<script>
+    $(document).ready(function () {
 
-            if ($('meta[name="is_ccm_complex"]').attr('content')) {
-                $("#complex_tag").show();
-            } else {
-                $("#complex_tag").hide();
-            }
+        if ($('meta[name="is_ccm_complex"]').attr('content')) {
+            $("#complex_tag").show();
+        } else {
+            $("#complex_tag").hide();
+        }
 
-        });
+    });
 
-    </script>
+</script>
 @endpush
 
+@push('styles')
+    <style>
+        .color-grey {
+            color: #7b7d81;
+        }
+    </style>
+@endpush
 
 
 

@@ -7,7 +7,6 @@ use Carbon\Carbon;
 use Tests\Helpers\UserHelpers;
 use Tests\TestCase;
 
-
 class NurseScheduledCallsTest extends TestCase
 {
     use UserHelpers;

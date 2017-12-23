@@ -34,14 +34,14 @@ class RulesService
                     // if contains a bracket, assuming its an array
                     if (strpos($value, '[') !== false) {
                         // remove brackets now that we know
-                        $value = str_replace(array('[', ']'), "", $value);
+                        $value = str_replace(['[', ']'], "", $value);
                         // if comma, assume comma delimited
                         if (strpos($value, ',') !== false) {
                             $valueArgs = explode(',', $value);
                             if (!empty($valueArgs)) {
                                 foreach ($valueArgs as $valueArg) {
                                     $valueArg = trim($valueArg);
-                                    $valueArg = str_replace(array("'", '"'), "", $valueArg);
+                                    $valueArg = str_replace(["'", '"'], "", $valueArg);
                                     $quotedValue .= "'" . $valueArg . "', ";
                                 }
                                 // remove trailing comma

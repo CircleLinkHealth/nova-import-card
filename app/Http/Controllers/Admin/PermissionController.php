@@ -16,7 +16,7 @@ class PermissionController extends Controller
      */
     public function index()
     {
-        if (!Auth::user()->can('roles-permissions-view')) {
+        if (!Auth::user()->hasRole('administrator')) {
             abort(403);
         }
         // display view
@@ -31,12 +31,12 @@ class PermissionController extends Controller
      */
     public function create()
     {
-        if (!Auth::user()->can('roles-permissions-manage')) {
+        if (!Auth::user()->hasRole('administrator')) {
             abort(403);
         }
         // display view
         $roles = Role::all();
-        return view('admin.permissions.create', [ 'roles' => $roles, 'errors' => array(), 'messages' => array() ]);
+        return view('admin.permissions.create', [ 'roles' => $roles, 'errors' => [], 'messages' => [] ]);
     }
 
     /**
@@ -46,7 +46,7 @@ class PermissionController extends Controller
      */
     public function store(Request $request)
     {
-        if (!Auth::user()->can('roles-permissions-manage')) {
+        if (!Auth::user()->hasRole('administrator')) {
             abort(403);
         }
         $params = $request->input();
@@ -70,12 +70,12 @@ class PermissionController extends Controller
      */
     public function show($id)
     {
-        if (!Auth::user()->can('roles-permissions-view')) {
+        if (!Auth::user()->hasRole('administrator')) {
             abort(403);
         }
         // display view
         $permission = Permission::find($id);
-        return view('admin.permissions.show', [ 'permission' => $permission, 'errors' => array(), 'messages' => array() ]);
+        return view('admin.permissions.show', [ 'permission' => $permission, 'errors' => [], 'messages' => [] ]);
     }
 
     /**
@@ -86,7 +86,7 @@ class PermissionController extends Controller
      */
     public function edit($id)
     {
-        if (!Auth::user()->can('roles-permissions-manage')) {
+        if (!Auth::user()->hasRole('administrator')) {
             abort(403);
         }
         $permission = Permission::find($id);
@@ -103,7 +103,7 @@ class PermissionController extends Controller
      */
     public function update(Request $request, $id)
     {
-        if (!Auth::user()->can('roles-permissions-manage')) {
+        if (!Auth::user()->hasRole('administrator')) {
             abort(403);
         }
         $params = $request->input();
@@ -126,7 +126,7 @@ class PermissionController extends Controller
      */
     public function destroy($id)
     {
-        if (!Auth::user()->can('roles-permissions-manage')) {
+        if (!Auth::user()->hasRole('administrator')) {
             abort(403);
         }
         //

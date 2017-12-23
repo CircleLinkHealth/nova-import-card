@@ -1,0 +1,127 @@
+<template>
+    <div>
+        <div class="inactivity-tracker">{{time}}</div>
+        <inactivity-modal></inactivity-modal>
+    </div>
+</template>
+
+<script>
+    /**
+     * Inactivity Tracker keeps track of the time the user is inactive on the page.
+     */
+
+    import EventBus from './event-bus'
+    import { rootUrl } from '../../../app.config'
+    import InactivityModal from './modals/inactivity-modal'
+
+    export default {
+        data() {
+            return {
+                startTime: new Date(),
+                endTime: new Date(),
+                isModalShown: false
+            };
+        },
+        components: {
+            'inactivity-modal': InactivityModal
+        },
+        methods: {
+            pad(num, count) {
+                num = Math.floor(num);
+                count = count || Number.POSITIVE_INFINITY;
+                const $num = num + "";
+                return "0".repeat((count - $num.length) || 0) + $num;
+            },
+            start() {
+                if (this.interval) clearInterval(this.interval);
+                this.interval = setInterval(
+                    function() {
+                        this.endTime = new Date();
+                        const ALERT_INTERVAL = 120;
+                        const LOGOUT_INTERVAL = 600;
+                        if (this.totalSeconds && ((this.totalSeconds % ALERT_INTERVAL) === 0)) {
+                            /**
+                             * Stop Tracking Time
+                             * Show Modal asking the user why he/she has been inactive
+                             * 
+                             * Disable the window.onfocus handler
+                             */
+                            this.windowFocusHandler = window.onfocus
+                            window.onfocus = null;
+                            EventBus.$emit("tracker:show-inactive-modal")
+                            EventBus.$emit('modal-inactivity:show')
+                            this.isModalShown = true
+                        }
+                        else if (this.totalSeconds && (this.totalSeconds >= LOGOUT_INTERVAL)) {
+                            /**
+                             * Logout the user automatically
+                             */
+                            EventBus.$emit("tracker:stop")
+                            location.href = rootUrl('auth/logout')
+                        }
+                    }.bind(this),
+                    1000
+                );
+            },
+            stop() {
+                clearInterval(this.interval);
+            },
+            reset(e) {
+                if (!this.isModalShown) this.startTime = this.endTime;
+                else console.warn('attempt to reset inactivity-tracker rebuffed', this.time)
+            }
+        },
+        computed: {
+            elapsed() {
+                return this.endTime - this.startTime;
+            },
+            hours() {
+                return this.pad(Math.floor(this.elapsed / 1000 / 3600), 2);
+            },
+            minutes() {
+                return this.pad(
+                    Math.floor((this.elapsed / 1000 - this.hours * 3600) / 60),
+                    2
+                );
+            },
+            seconds() {
+                return this.pad(
+                    this.elapsed / 1000 - this.minutes * 60 - this.hours * 3600,
+                    2
+                );
+            },
+            totalSeconds() {
+                return Math.floor(this.elapsed / 1000);
+            },
+            time() {
+                return `${this.hours} : ${this.minutes} : ${this.seconds}`;
+            }
+        },
+        mounted() {
+            this.start();
+            EventBus.$on("inactivity:reset", this.reset.bind(this));
+            EventBus.$on("inactivity:stop", this.stop.bind(this));
+            EventBus.$on("inactivity:start", this.start.bind(this));
+
+            EventBus.$on('modal-inactivity:close', (preventEmit) => {
+                EventBus.$emit("tracker:hide-inactive-modal")
+                this.isModalShown = false
+                this.reset()
+                console.log('modal closed')
+                //restore the window.onfocus handler
+                if (this.windowFocusHandler) window.onfocus = this.windowFocusHandler
+            })
+
+            EventBus.$on('modal-inactivity:reset', (preventEmit) => {
+                this.reset()
+                if (this.windowFocusHandler) window.onfocus = this.windowFocusHandler
+            })
+        }
+    }
+</script>
+
+<style>
+    .inactivity-tracker {
+        display: none;
+    }
+</style>

@@ -4,7 +4,31 @@ use App\Contracts\Models\CPM\Biometric;
 use App\User;
 use Illuminate\Database\Eloquent\Model;
 
-class CpmBloodSugar extends Model implements Biometric
+/**
+ * App\Models\CPM\Biometrics\CpmBloodSugar
+ *
+ * @property int $id
+ * @property int $patient_id
+ * @property string $starting
+ * @property string $target
+ * @property string $starting_a1c
+ * @property string $high_alert
+ * @property string $low_alert
+ * @property \Carbon\Carbon $created_at
+ * @property \Carbon\Carbon $updated_at
+ * @property-read \App\User $patient
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\CPM\Biometrics\CpmBloodSugar whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\CPM\Biometrics\CpmBloodSugar whereHighAlert($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\CPM\Biometrics\CpmBloodSugar whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\CPM\Biometrics\CpmBloodSugar whereLowAlert($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\CPM\Biometrics\CpmBloodSugar wherePatientId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\CPM\Biometrics\CpmBloodSugar whereStarting($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\CPM\Biometrics\CpmBloodSugar whereStartingA1c($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\CPM\Biometrics\CpmBloodSugar whereTarget($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\CPM\Biometrics\CpmBloodSugar whereUpdatedAt($value)
+ * @mixin \Eloquent
+ */
+class CpmBloodSugar extends \App\BaseModel implements Biometric
 {
 
     public static $rules = [

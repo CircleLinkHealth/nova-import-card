@@ -6,7 +6,7 @@
  * Time: 3:54 PM
  */
 
-return array(
+return [
     /*
       |--------------------------------------------------------------------------
       | Absolute path to location where parsed swagger annotations will be stored
@@ -33,13 +33,13 @@ return array(
       | Absolute path to directories that you would like to exclude from swagger generation
       |--------------------------------------------------------------------------
     */
-    "excludes" => array(
+    "excludes" => [
         storage_path(),
         base_path()."/tests",
         base_path()."/resources/views",
         base_path()."/config",
         base_path()."/vendor"
-    ),
+    ],
 
     /*
       |--------------------------------------------------------------------------
@@ -94,4 +94,4 @@ return array(
     /*"requestHeaders" => array(
         'TestMe' => 'testValue'
     ),*/
-);
+];

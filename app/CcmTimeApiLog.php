@@ -4,7 +4,21 @@ use Illuminate\Database\Eloquent\Model;
 use Prettus\Repository\Contracts\Transformable;
 use Prettus\Repository\Traits\TransformableTrait;
 
-class CcmTimeApiLog extends Model implements Transformable
+/**
+ * App\CcmTimeApiLog
+ *
+ * @property int $id
+ * @property int $activity_id
+ * @property \Carbon\Carbon $created_at
+ * @property \Carbon\Carbon $updated_at
+ * @property-read \App\Activity $activity
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\CcmTimeApiLog whereActivityId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\CcmTimeApiLog whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\CcmTimeApiLog whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\CcmTimeApiLog whereUpdatedAt($value)
+ * @mixin \Eloquent
+ */
+class CcmTimeApiLog extends \App\BaseModel implements Transformable
 {
 
     use TransformableTrait;

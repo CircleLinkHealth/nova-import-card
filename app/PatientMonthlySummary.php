@@ -6,11 +6,49 @@ use App\Models\CCD\Problem;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
 
-class PatientMonthlySummary extends Model
+/**
+ * App\PatientMonthlySummary
+ *
+ * @property int $id
+ * @property int $patient_id
+ * @property int $ccm_time
+ * @property \Carbon\Carbon $month_year
+ * @property int $no_of_calls
+ * @property int $no_of_successful_calls
+ * @property string $billable_problem1
+ * @property string $billable_problem1_code
+ * @property string $billable_problem2
+ * @property string $billable_problem2_code
+ * @property int $is_ccm_complex
+ * @property int $approved
+ * @property int $rejected
+ * @property int|null $actor_id
+ * @property \Carbon\Carbon|null $created_at
+ * @property \Carbon\Carbon|null $updated_at
+ * @property-read \App\User $actor
+ * @property-read \App\Patient $patient_info
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\PatientMonthlySummary getCurrent()
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\PatientMonthlySummary getForMonth(\Carbon\Carbon $month)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\PatientMonthlySummary whereActorId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\PatientMonthlySummary whereApproved($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\PatientMonthlySummary whereBillableProblem1($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\PatientMonthlySummary whereBillableProblem1Code($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\PatientMonthlySummary whereBillableProblem2($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\PatientMonthlySummary whereBillableProblem2Code($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\PatientMonthlySummary whereCcmTime($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\PatientMonthlySummary whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\PatientMonthlySummary whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\PatientMonthlySummary whereIsCcmComplex($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\PatientMonthlySummary whereMonthYear($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\PatientMonthlySummary whereNoOfCalls($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\PatientMonthlySummary whereNoOfSuccessfulCalls($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\PatientMonthlySummary wherePatientInfoId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\PatientMonthlySummary whereRejected($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\PatientMonthlySummary whereUpdatedAt($value)
+ * @mixin \Eloquent
+ */
+class PatientMonthlySummary extends \App\BaseModel
 {
-
-    protected $table = 'patient_monthly_summaries';
-
     protected $dates = [
         'month_year'
     ];
@@ -20,15 +58,13 @@ class PatientMonthlySummary extends Model
         'ccm_time',
         'no_of_calls',
         'no_of_successful_calls',
-        'patient_info_id',
+        'patient_id',
         'is_ccm_complex',
         'approved',
         'rejected',
         'actor_id',
-        'billable_problem1',
-        'billable_problem2',
-        'billable_problem1_code',
-        'billable_problem2_code',
+        'problem_1',
+        'problem_2',
     ];
 
     public static function updateCallInfoForPatient(
@@ -38,7 +74,9 @@ class PatientMonthlySummary extends Model
 
         // get record for month
         $day_start = Carbon::parse(Carbon::now()->firstOfMonth())->format('Y-m-d');
-        $record = $patient->patientSummaries()->where('month_year', $day_start)->first();
+        $record = PatientMonthlySummary::where('patient_id', $patient->user_id)
+                                       ->where('month_year', $day_start)
+                                       ->first();
 
         // set increment var
         $successful_call_increment = 0;
@@ -55,7 +93,7 @@ class PatientMonthlySummary extends Model
         // Determine whether to add to record or not
         if (!$record) {
             $record = new PatientMonthlySummary;
-            $record->patient_info_id = $patient->id;
+            $record->patient_id = $patient->user_id;
             $record->ccm_time = 0;
             $record->month_year = $day_start;
             $record->no_of_calls = 1;
@@ -73,19 +111,19 @@ class PatientMonthlySummary extends Model
     //updates Call info for patient
 
     public static function updateCCMInfoForPatient(
-        Patient $patient,
+        $userId,
         $ccmTime
     ) {
-
-
         // get record for month
-        $day_start = Carbon::parse(Carbon::now()->firstOfMonth())->format('Y-m-d');
-        $record = $patient->patientSummaries()->where('month_year', $day_start)->first();
+        $day_start = Carbon::now()->startOfMonth()->toDateString();
+        $record = PatientMonthlySummary::where('patient_id', $userId)
+                                       ->where('month_year', $day_start)
+                                       ->first();
 
         //Detemine whether to add to record or not
         if (!$record) {
             $record = new PatientMonthlySummary;
-            $record->patient_info_id = $patient->id;
+            $record->patient_id = $userId;
             $record->ccm_time = $ccmTime;
             $record->month_year = $day_start;
             $record->no_of_calls = 0;
@@ -173,7 +211,7 @@ class PatientMonthlySummary extends Model
             }
 
             $report = PatientMonthlySummary::where('month_year', $month->firstOfMonth()->toDateString())
-                ->where('patient_info_id', $p->patientInfo->id)->first();
+                ->where('patient_id', $p->id)->first();
 
 
             if (!$report) {
@@ -200,21 +238,19 @@ class PatientMonthlySummary extends Model
 
     public function createCallReportsForCurrentMonth()
     {
+        $monthYear = Carbon::now()->startOfMonth()->toDateString();
 
-        $patients = Patient::all();
-
-        foreach ($patients as $patient) {
-            $day_start = Carbon::parse(Carbon::now()->firstOfMonth()->format('Y-m-d'));
-
-            PatientMonthlySummary::create([
-                'patient_info_id' => $patient->id,
-                'ccm_time' => 0,
-                'month_year' => $day_start,
-                'no_of_calls' => 0,
-                'no_of_successful_calls' => 0,
-
-            ]);
-        }
+        $patients = User::select('id')->ofType('participant')
+                                      ->get()
+                                    ->map(function ($patient) use ($monthYear) {
+                                        PatientMonthlySummary::create([
+                                            'patient_id' => $patient->id,
+                                            'ccm_time' => 0,
+                                            'month_year' => $monthYear,
+                                            'no_of_calls' => 0,
+                                            'no_of_successful_calls' => 0,
+                                        ]);
+                                    });
     }
 
     public function updateMonthlyReportForPatient(
@@ -242,7 +278,7 @@ class PatientMonthlySummary extends Model
             ->where('created_at', '<=', $day_start)
             ->where('created_at', '>=', $day_end)->count();
 
-        $report = PatientMonthlySummary::where('patient_info_id', $info->id)->where('month_year', $day_start)->first();
+        $report = PatientMonthlySummary::where('patient_id', $patient->id)->where('month_year', $day_start)->first();
 
         if ($report) {
             $report->ccm_time = $ccm_time;

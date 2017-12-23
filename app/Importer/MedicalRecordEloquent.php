@@ -21,7 +21,7 @@ use App\Practice;
 use App\Traits\Relationships\MedicalRecordItemLoggerRelationships;
 use Illuminate\Database\Eloquent\Model;
 
-abstract class MedicalRecordEloquent extends Model implements MedicalRecord
+abstract class MedicalRecordEloquent extends \App\BaseModel implements MedicalRecord
 {
     use MedicalRecordItemLoggerRelationships;
 

@@ -3,10 +3,74 @@
 use App\Models\Ehr;
 use App\Traits\HasSettings;
 use Carbon\Carbon;
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
-class Practice extends Model
+/**
+ * App\Practice
+ *
+ * @property int $id
+ * @property int|null $ehr_id
+ * @property int|null $user_id
+ * @property string $name
+ * @property string|null $display_name
+ * @property int $active
+ * @property float $clh_pppm
+ * @property int $term_days
+ * @property string|null $federal_tax_id
+ * @property int|null $same_ehr_login
+ * @property int|null $same_clinical_contact
+ * @property int $auto_approve_careplans
+ * @property int $send_alerts
+ * @property string|null $weekly_report_recipients
+ * @property string $invoice_recipients
+ * @property string $bill_to_name
+ * @property string|null $external_id
+ * @property string $outgoing_phone_number
+ * @property \Carbon\Carbon $created_at
+ * @property \Carbon\Carbon $updated_at
+ * @property string|null $deleted_at
+ * @property string|null $sms_marketing_number
+ * @property-read \Illuminate\Database\Eloquent\Collection|\App\CarePlanTemplate[] $careplan
+ * @property-read \App\Models\Ehr|null $ehr
+ * @property-read mixed $formatted_name
+ * @property-read mixed $primary_location_id
+ * @property-read mixed $subdomain
+ * @property-read \App\User|null $lead
+ * @property-read \Illuminate\Database\Eloquent\Collection|\App\Location[] $locations
+ * @property-read \Illuminate\Database\Eloquent\Collection|\App\CPRulesPCP[] $pcp
+ * @property-read \Illuminate\Database\Eloquent\Collection|\App\Settings[] $settings
+ * @property-read \Illuminate\Database\Eloquent\Collection|\App\User[] $users
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Practice active()
+ * @method static bool|null forceDelete()
+ * @method static \Illuminate\Database\Query\Builder|\App\Practice onlyTrashed()
+ * @method static bool|null restore()
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Practice whereActive($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Practice whereAutoApproveCareplans($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Practice whereBillToName($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Practice whereClhPppm($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Practice whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Practice whereDeletedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Practice whereDisplayName($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Practice whereEhrId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Practice whereExternalId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Practice whereFederalTaxId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Practice whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Practice whereInvoiceRecipients($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Practice whereName($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Practice whereOutgoingPhoneNumber($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Practice whereSameClinicalContact($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Practice whereSameEhrLogin($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Practice whereSendAlerts($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Practice whereSmsMarketingNumber($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Practice whereTermDays($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Practice whereUpdatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Practice whereUserId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Practice whereWeeklyReportRecipients($value)
+ * @method static \Illuminate\Database\Query\Builder|\App\Practice withTrashed()
+ * @method static \Illuminate\Database\Query\Builder|\App\Practice withoutTrashed()
+ * @mixin \Eloquent
+ */
+class Practice extends \App\BaseModel
 {
     use HasSettings,
         SoftDeletes;
@@ -43,85 +107,27 @@ class Practice extends Model
         return $providers;
     }
 
-    public static function getNonCCMCareCenterUsers($practiceId)
+    public function getInvoiceRecipients()
     {
-        $providers = User::whereHas('practices', function ($q) use (
-            $practiceId
-        ) {
-            $q->where('id', '=', $practiceId);
-        })->whereHas('roles', function ($q) {
-            $q->where('name', '=', 'no-ccm-care-center');
-        })->get();
-
-        return $providers;
-    }
-
-    public static function getCareCenterUsers($practiceId)
-    {
-        $providers = User::whereHas('practices', function ($q) use (
-            $practiceId
-        ) {
-            $q->where('id', '=', $practiceId);
-        })->whereHas('roles', function ($q) {
-            $q->where('name', '=', 'care-center');
-        })->get();
-
-        return $providers;
-    }
-
-    public static function getItemsForParent(
-        $item,
-        $blogId
-    ) {
-        $categories = [];
-        //PCP has the sections for each provider, get all sections for the user's blog
-        $pcp = CPRulesPCP::where('prov_id', '=', $blogId)->where('status', '=', 'Active')->where(
-            'section_text',
-            $item
-        )->first();
-        //Get all the items for each section
-        if ($pcp) {
-            $items = CPRulesItem::where('pcp_id', $pcp->pcp_id)->where('items_parent', 0)->pluck('items_id')->all();
-            for ($i = 0; $i < count($items); $i++) {
-                //get id's of all lifestyle items that are active for the given user
-                $item_for_user[$i] = CPRulesUCP::where('items_id', $items[$i])->where(
-                    'meta_value',
-                    'Active'
-                )->where('user_id', $blogId)->first();
-                if ($item_for_user[$i] != null) {
-                    //Find the items_text for the one's that are active
-                    $user_items = CPRulesItem::find($item_for_user[$i]->items_id);
-                    $categories[] = [
-                        'name'         => $user_items->items_text,
-                        'items_id'     => $user_items->items_id,
-                        'section_text' => $item,
-                        'items_text'   => $user_items->items_text,
-                    ];
-                }
-            }
-            if (count($categories) > 0) {
-                return $categories;
-            } else {
-                return false;
-            }
-        }
-    }
-
-    public function getInvoiceRecipients($return = 'collection')
-    {
-        $emails = $this->users()->where('send_billing_reports', '=', true)->pluck('email');
-
-        if ($return == 'string') {
-            return $emails->implode(', ');
-        }
-
-        return $emails;
+        return $this->users()->where('send_billing_reports', '=', true)->get();
     }
 
     public function users()
     {
-        return $this->belongsToMany(User::class, 'practice_user', 'program_id', 'user_id')
+        return $this->belongsToMany(User::class, 'practice_role_user', 'program_id', 'user_id')
             ->withPivot('role_id', 'has_admin_rights', 'send_billing_reports');
+    }
+
+    public function patients() {
+        return $this->users()->whereHas('roles', function ($q) {
+            $q->whereName('participant');
+        });
+    }
+    
+    public function nurses() {
+        return $this->users()->whereHas('roles', function ($q) {
+            $q->where('name', '=', 'care-center')->orWhere('name', 'registered-nurse');
+        });
     }
 
     public function getCountOfUserTypeAtPractice($role)
@@ -182,7 +188,8 @@ class Practice extends Model
     public function enrollmentByProgram(
         Carbon $start,
         Carbon $end
-    ) {
+    )
+    {
 
         $patients = Patient::whereHas('user', function ($q) {
 
@@ -194,8 +201,8 @@ class Practice extends Model
         $data = [
 
             'withdrawn' => 0,
-            'paused'    => 0,
-            'added'     => 0,
+            'paused' => 0,
+            'added' => 0,
 
         ];
 

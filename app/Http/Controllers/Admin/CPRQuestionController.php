@@ -16,7 +16,7 @@ class CPRQuestionController extends Controller
      */
     public function index(Request $request)
     {
-        if (!Auth::user()->can('programs-manage')) {
+        if (!Auth::user()->hasPermission('programs-manage')) {
             abort(403);
         }
         // display view
@@ -31,7 +31,7 @@ class CPRQuestionController extends Controller
      */
     public function create()
     {
-        if (!Auth::user()->can('programs-manage')) {
+        if (!Auth::user()->hasPermission('programs-manage')) {
             abort(403);
         }
         // display view
@@ -45,7 +45,7 @@ class CPRQuestionController extends Controller
      */
     public function store(Request $request)
     {
-        if (!Auth::user()->can('programs-manage')) {
+        if (!Auth::user()->hasPermission('programs-manage')) {
             abort(403);
         }
         $params = $request->input();
@@ -68,12 +68,12 @@ class CPRQuestionController extends Controller
      */
     public function show($id)
     {
-        if (!Auth::user()->can('programs-manage')) {
+        if (!Auth::user()->hasPermission('programs-manage')) {
             abort(403);
         }
         // display view
         $question = CPRulesQuestions::find($id);
-        return view('admin.questions.show', ['question' => $question, 'errors' => array(), 'messages' => array()]);
+        return view('admin.questions.show', ['question' => $question, 'errors' => [], 'messages' => []]);
     }
 
     /**
@@ -84,7 +84,7 @@ class CPRQuestionController extends Controller
      */
     public function edit($id)
     {
-        if (!Auth::user()->can('programs-manage')) {
+        if (!Auth::user()->hasPermission('programs-manage')) {
             abort(403);
         }
         $question = CPRulesQuestions::find($id);
@@ -107,7 +107,7 @@ class CPRQuestionController extends Controller
      */
     public function update(Request $request, $id)
     {
-        if (!Auth::user()->can('programs-manage')) {
+        if (!Auth::user()->hasPermission('programs-manage')) {
             abort(403);
         }
         $params = $request->input();
@@ -130,7 +130,7 @@ class CPRQuestionController extends Controller
      */
     public function destroy($id)
     {
-        if (!Auth::user()->can('programs-manage')) {
+        if (!Auth::user()->hasPermission('programs-manage')) {
             abort(403);
         }
         CPRulesQuestions::destroy($id);

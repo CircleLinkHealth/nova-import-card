@@ -2,6 +2,7 @@
 
 namespace App\Jobs;
 
+use App\Notifications\WeeklyPracticeReport;
 use App\Practice;
 use App\Reports\Sales\Practice\SalesByPracticeReport;
 use Illuminate\Bus\Queueable;
@@ -67,13 +68,9 @@ class EmailWeeklyPracticeReport implements ShouldQueue
 
         //handle leads
         foreach ($organizationSummaryRecipients as $recipient) {
-            Mail::send('sales.by-practice.report', ['data' => $practiceData], function ($message) use (
-                $recipient,
-                $subjectPractice
-            ) {
-                $message->from('notifications@careplanmanager.com', 'CircleLink Health');
-                $message->to($recipient)->subject($subjectPractice);
-            });
+
+            $recipient->notify(new WeeklyPracticeReport($practiceData, $subjectPractice));
+
         }
     }
 }

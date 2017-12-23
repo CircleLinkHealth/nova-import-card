@@ -650,7 +650,7 @@ class PhiMailConnector
         if (substr($response, 0, 4) == 'FAIL') {
             throw new \Exception('Send failed: ' . $response);
         }
-        $output = array();
+        $output = [];
         while ($response != null && $response != 'OK') {
             $rExplode = explode(' ', trim($response), 3);
             switch ($rExplode[0]) {
@@ -767,7 +767,7 @@ class PhiMailConnector
             throw new \Exception('Show ' . $messagePart . ' failed: ' . $response);
         }
 
-        $headers = array();
+        $headers = [];
         $filename = null;
         if ($messagePart == 0) {
             //get headers for part == 0
@@ -796,7 +796,7 @@ class PhiMailConnector
             }
         }
 
-        $ai = array();
+        $ai = [];
         if ($messagePart == 0) { //get attachment data
             $numAttach = (int) ($this->readLine());
             for ($n = 0; $n < $numAttach; $n++) {
@@ -832,7 +832,7 @@ class PhiMailConnector
         }
 
         $numResults = (int) ($this->readLine());
-        $searchResults = array();
+        $searchResults = [];
         while ($numResults-- > 0) {
             $searchResults[] = $this->readLine();
         }

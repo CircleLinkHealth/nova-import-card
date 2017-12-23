@@ -19,7 +19,7 @@ class Kernel extends HttpKernel
             \App\Http\Middleware\VerifyCsrfToken::class,
             \Illuminate\Routing\Middleware\SubstituteBindings::class,
             \App\Http\Middleware\LogoutIfAccessDisabled::class,
-            \App\Http\Middleware\ClearPatientSessions::class,
+            \Laravel\Passport\Http\Middleware\CreateFreshApiToken::class,
         ],
         'api' => [
             'throttle:60,1',
@@ -34,6 +34,7 @@ class Kernel extends HttpKernel
      */
     protected $middleware = [
         \Illuminate\Foundation\Http\Middleware\CheckForMaintenanceMode::class,
+        \App\Http\Middleware\TrustProxies::class,
     ];
 
     /**
@@ -51,15 +52,12 @@ class Kernel extends HttpKernel
         'throttle'                   => \Illuminate\Routing\Middleware\ThrottleRequests::class,
 
         //CLH Middleware
-        'ability'                    => \Zizaco\Entrust\Middleware\EntrustAbility::class,
+        'ability'                    => \Michalisantoniou6\Cerberus\Middleware\CerberusAbility::class,
         'aprima.ccdapi.auth.adapter' => Middleware\AprimaCcdApiAuthAdapter::class,
-        'authApiCall'                => \App\Http\Middleware\AuthenticateApiCall::class,
-        'getRedoxAccessToken'        => \App\Http\Middleware\GetRedoxAccessToken::class,
-        'permission'                 => \Zizaco\Entrust\Middleware\EntrustPermission::class,
+        'permission'                 => \Michalisantoniou6\Cerberus\Middleware\CerberusPermission::class,
         'patientProgramSecurity'     => \App\Http\Middleware\PatientProgramSecurity::class,
-        'patient.session'            => \App\Http\Middleware\CheckPatientSession::class,
         'providerDashboardACL'       => Middleware\ACL\ProviderDashboardACL::class,
-        'role'                       => \Zizaco\Entrust\Middleware\EntrustRole::class,
+        'role'                       => \Michalisantoniou6\Cerberus\Middleware\CerberusRole::class,
         'verify.invite'              => \App\Http\Middleware\CheckOnboardingInvite::class,
         'check.careplan.mode'        => \App\Http\Middleware\CheckCarePlanMode::class,
     ];

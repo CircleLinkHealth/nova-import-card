@@ -1,7 +1,9 @@
 @extends('partials.adminUI')
 
 @section('content')
-    <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/font-awesome/4.4.0/css/font-awesome.min.css">
+    @push('styles')
+        <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/font-awesome/4.4.0/css/font-awesome.min.css">
+    @endpush
     <div class="container-fluid">
         <div class="row">
             <div class="col-md-10 col-md-offset-1">
@@ -45,7 +47,7 @@
                                 <td>{{ $observation->obs_unit }}</td>
                                 <td>{{ $observation->program_id }}</td>
                                 <td>
-                                    @if(Entrust::can('observations-edit'))
+                                    @if(Cerberus::hasPermission('observations-edit'))
                                         <a href="{{ URL::route('admin.observations.edit', array('id' => $observation->id)) }}" class="btn btn-primary">Edit</a>
                                     @endif
                                 </td>

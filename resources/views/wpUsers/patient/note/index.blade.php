@@ -26,7 +26,7 @@
                 </div>
                 <div class="main-form-horizontal main-form-primary-horizontal col-md-12"
                      style="border-top: 3px solid #50b2e2">
-                    @if($data)
+                    @if($activity_json)
                         <div id="obs_alerts_container" class=""></div><br/>
                         <div id="paging_container"></div><br/>
 

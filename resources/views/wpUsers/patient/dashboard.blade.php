@@ -1,7 +1,7 @@
 @extends('partials.providerUI')
 
 @section('title', 'Dashboard')
-@section('activity', '')
+@section('activity', 'Dashboard')
 
 
 @section('content')
@@ -36,7 +36,7 @@
                     </li>
 
                     <li class="menu-item">
-                        <a id="add-patient" href="{{ URL::route('patients.demographics.show', array()) }}">
+                        <a dusk="add-patient-btn" href="{{ URL::route('patients.demographics.show', array()) }}">
                             <div class="icon-container column-centered">
                                 <i class="icon--add-patient--big icon--menu"></i>
                             </div>
@@ -58,7 +58,7 @@
                             </a>
                         </li>
                     @endif
-                    @if( auth()->user()->can(['ccd-import']) )
+                    @if( auth()->user()->hasPermission(['ccd-import']) )
                         <li class="menu-item">
                             <a id="patient-list" href="{{ route('import.ccd') }}">
                                 <div class="icon-container column-centered">

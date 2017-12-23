@@ -307,7 +307,7 @@ class WelcomeCallListGenerator
 
         $this->patientList = $this->patientList->reject(function ($row) {
             //Anything past this date is valid
-            $minEligibleDate = Carbon::createFromDate('2016', '02', '01');
+            $minEligibleDate = Carbon::now()->subYear();
 
             if (!isset($row['last_encounter'])) {
                 $this->ineligiblePatients->push($row);
@@ -321,7 +321,9 @@ class WelcomeCallListGenerator
                 return true;
             }
 
-            $lastEncounterDate = new Carbon($row['last_encounter']);
+            $lastEncounterDate = is_a($row['last_encounter'], Carbon::class)
+                ? $row['last_encounter']
+                : new Carbon($row['last_encounter']);
 
             if ($lastEncounterDate->lt($minEligibleDate)) {
                 $this->ineligiblePatients->push($row);

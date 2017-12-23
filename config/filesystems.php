@@ -3,32 +3,30 @@
 return [
 
     /*
-	|--------------------------------------------------------------------------
-	| Default Filesystem Disk
-	|--------------------------------------------------------------------------
-	|
-	| Here you may specify the default filesystem disk that should be used
-	| by the framework. A "local" driver, as well as a variety of cloud
-	| based drivers are available for your choosing. Just store away!
-	|
-	| Supported: "local", "s3", "rackspace"
-	|
-	*/
+    |--------------------------------------------------------------------------
+    | Default Filesystem Disk
+    |--------------------------------------------------------------------------
+    |
+    | Here you may specify the default filesystem disk that should be used
+    | by the framework. The "local" disk, as well as a variety of cloud
+    | based disks are available to your application. Just store away!
+    |
+    */
 
-    'default' => 'local',
+    'default' => env('FILESYSTEM_DRIVER', 'local'),
 
     /*
-	|--------------------------------------------------------------------------
-	| Default Cloud Filesystem Disk
-	|--------------------------------------------------------------------------
-	|
-	| Many applications store files both locally and in the cloud. For this
-	| reason, you may specify a default "cloud" driver here. This driver
-	| will be bound as the Cloud disk implementation in the container.
-	|
-	*/
+    |--------------------------------------------------------------------------
+    | Default Cloud Filesystem Disk
+    |--------------------------------------------------------------------------
+    |
+    | Many applications store files both locally and in the cloud. For this
+    | reason, you may specify a default "cloud" driver here. This driver
+    | will be bound as the Cloud disk implementation in the container.
+    |
+    */
 
-    'cloud' => 's3',
+    'cloud'   => env('FILESYSTEM_CLOUD', 's3'),
 
     /*
 	|--------------------------------------------------------------------------
@@ -51,15 +49,22 @@ return [
 
         'local' => [
             'driver' => 'local',
-            'root'   => storage_path().'/app',
+            'root'   => storage_path('app'),
+        ],
+
+        'public' => [
+            'driver'     => 'local',
+            'root'       => storage_path('app/public'),
+            'url'        => env('APP_URL') . '/storage',
+            'visibility' => 'public',
         ],
 
         's3' => [
             'driver' => 's3',
-            'key'    => 'your-key',
-            'secret' => 'your-secret',
-            'region' => 'your-region',
-            'bucket' => 'your-bucket',
+            'key'    => env('AWS_KEY'),
+            'secret' => env('AWS_SECRET'),
+            'region' => env('AWS_REGION'),
+            'bucket' => env('AWS_BUCKET'),
         ],
 
         'rackspace' => [
@@ -69,7 +74,7 @@ return [
             'container' => 'your-container',
             'endpoint'  => 'https://identity.api.rackspacecloud.com/v2.0/',
             'region'    => 'IAD',
-            'url_type'  => 'publicURL'
+            'url_type'  => 'publicURL',
         ],
 
     ],

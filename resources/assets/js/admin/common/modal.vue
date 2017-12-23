@@ -26,12 +26,8 @@
                         </div>
 
                         <div class="modal-footer close-footer">
-                            <button v-if="!noCancel" class="modal-button modal-cancel-button" @click="cancel()">
-                                {{cancelText || 'Cancel'}}
-                            </button>
-                            <button class="modal-button modal-ok-button" @click="ok()">
-                                {{okText || 'OK'}}
-                            </button>
+                            <input type="button" v-if="!noCancel" class="modal-button modal-cancel-button" @click="cancel()" :value="cancelText || 'Cancel'">
+                            <input type="button" class="modal-button modal-ok-button" @click="ok()" :value="okText || 'OK'">
                         </div>
                     </div>
                 </div>
@@ -93,6 +89,7 @@
                 this.footer = modal.footer || '';
                 this.show = true;
             })
+
             Event.$on(`modal${this.name ? '-' + this.name : ''}:hide`, () => {
                 this.close();
             })
@@ -164,6 +161,7 @@
         -webkit-transform: scale(1.1);
         transform: scale(1.1);
     }
+
     .modal-footer.close-footer {
         padding: 0px;
         border: none;

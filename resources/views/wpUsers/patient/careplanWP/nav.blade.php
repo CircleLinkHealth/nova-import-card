@@ -10,8 +10,8 @@
         </div>
         <div class="btn-group" role="group">
             <button type="button"
-                    dtarget="{{ URL::route('patient.careteam.show', array('patientId' => $patient->id)) }}"
-                    class="btn btn-primary submitFormBtn @if(Route::is('patient.careteam.show')) active @endif"><span
+                    dtarget="{{ URL::route('patient.demographics.show', array('patientId' => $patient->id)) }}"
+                    class="btn btn-primary submitFormBtn @if(Route::is('patient.demographics.show')) active @endif"><span
                         class="btn-number">2</span> <span class="btn-text">Patient Care Team</span></button>
         </div>
         <div class="btn-group" role="group">

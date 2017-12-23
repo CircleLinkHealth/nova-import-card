@@ -1,16 +1,29 @@
 <?php namespace App;
 
-use Zizaco\Entrust\EntrustPermission;
+use Michalisantoniou6\Cerberus\CerberusPermission;
 
-class Permission extends EntrustPermission
+/**
+ * App\Permission
+ *
+ * @property int $id
+ * @property string $name
+ * @property string|null $display_name
+ * @property string|null $description
+ * @property \Carbon\Carbon $created_at
+ * @property \Carbon\Carbon $updated_at
+ * @property-read \Illuminate\Database\Eloquent\Collection|\App\Role[] $roles
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Permission whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Permission whereDescription($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Permission whereDisplayName($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Permission whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Permission whereName($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Permission whereUpdatedAt($value)
+ * @mixin \Eloquent
+ */
+class Permission extends CerberusPermission
 {
 
-    /**
-     * The connection name for the model.
-     *
-     * @var string
-     */
-    protected $connection = 'mysql_no_prefix';
+
 
     /**
      * The database table used by the model.

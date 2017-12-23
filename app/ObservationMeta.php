@@ -2,15 +2,36 @@
 
 use Illuminate\Database\Eloquent\Model;
 
-class ObservationMeta extends Model
+/**
+ * App\ObservationMeta
+ *
+ * @property int $id
+ * @property int $obs_id
+ * @property int $comment_id
+ * @property string $message_id
+ * @property string $meta_key
+ * @property string $meta_value
+ * @property int $program_id
+ * @property int $legacy_meta_id
+ * @property \Carbon\Carbon $created_at
+ * @property \Carbon\Carbon $updated_at
+ * @property-read \App\Observation $observationMeta
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\ObservationMeta whereCommentId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\ObservationMeta whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\ObservationMeta whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\ObservationMeta whereLegacyMetaId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\ObservationMeta whereMessageId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\ObservationMeta whereMetaKey($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\ObservationMeta whereMetaValue($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\ObservationMeta whereObsId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\ObservationMeta whereProgramId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\ObservationMeta whereUpdatedAt($value)
+ * @mixin \Eloquent
+ */
+class ObservationMeta extends \App\BaseModel
 {
 
-    /**
-     * The connection name for the model.
-     *
-     * @var string
-     */
-    protected $connection = 'mysql_no_prefix';
+
 
     /**
      * The database table used by the model.
@@ -39,7 +60,7 @@ class ObservationMeta extends Model
     }
 
 
-    public function save(array $params = array())
+    public function save(array $params = [])
     {
         if (empty($this->obs_id)) {
             return false;
@@ -70,11 +91,11 @@ class ObservationMeta extends Model
 
         // updating or inserting?
         if($this->id) {
-            DB::connection('mysql_no_prefix')->table('ma_'.$wpUser->primaryProgramId().'_observationmeta')->where('comment_ID', $this->legacy_meta_id)->update($params);
+            DB::table('ma_'.$wpUser->primaryProgramId().'_observationmeta')->where('comment_ID', $this->legacy_meta_id)->update($params);
         } else {
             // add to legacy if doesnt already exist
             if(empty($this->legacy_meta_id)) {
-                $resultId = DB::connection('mysql_no_prefix')->table('ma_' . $wpUser->primaryProgramId() . '_observationmeta')->insertGetId($params);
+                $resultId = DB::table('ma_' . $wpUser->primaryProgramId() . '_observationmeta')->insertGetId($params);
                 $this->legacy_meta_id = $resultId;
             }
         }

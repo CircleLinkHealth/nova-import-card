@@ -3,6 +3,7 @@
 namespace App\Jobs;
 
 use App\CLH\Helpers\StringManipulation;
+use App\Contracts\DirectMail;
 use App\Contracts\Efax;
 use App\Reports\PatientDailyAuditReport;
 use App\Services\Phaxio\PhaxioService;
@@ -51,12 +52,12 @@ class MakeAndDispatchAuditReports implements ShouldQueue
      * @param PhiMail|null $phiMail
      *
      */
-    public function __construct(User $patient, Carbon $date = null, Efax $eFax = null, PhiMail $phiMail = null)
+    public function __construct(User $patient, Carbon $date = null)
     {
         $this->patient = $patient;
         $this->date = $date ?? Carbon::now();
-        $this->phiMail = $phiMail ?? new PhiMail();
-        $this->eFax = $eFax ?? new PhaxioService();
+        $this->phiMail = app(DirectMail::class);
+        $this->eFax = app(Efax::class);
     }
 
     /**

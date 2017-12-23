@@ -13,15 +13,15 @@ class AllergiesItemController extends Controller
 
     public function index(Request $request)
     {
-        $data   = array();
+        $data   = [];
         $patientId = $request->input('patient_id');
         $ccdAllergies = Allergy::where('patient_id', '=', $patientId)->orderBy('allergen_name')->get();
         if ($ccdAllergies->count() > 0) {
             foreach ($ccdAllergies as $ccdAllergy) {
-                $data[] = array(
+                $data[] = [
                     'id' => $ccdAllergy->id,
                     'patient_id' => $ccdAllergy->patient_id,
-                    'name' => $ccdAllergy->allergen_name);
+                    'name' => $ccdAllergy->allergen_name];
             }
         }
         // return a JSON response
@@ -40,7 +40,7 @@ class AllergiesItemController extends Controller
             $ccdAllergy->ccda_id = null;
             $ccdAllergy->save();
             $id = $ccdAllergy;
-            $result = array('id' => $id);
+            $result = ['id' => $id];
         }
         // return a JSON response
         return response()->json($result);

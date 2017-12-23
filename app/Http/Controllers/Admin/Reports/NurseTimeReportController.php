@@ -23,10 +23,6 @@ class NurseTimeReportController extends Controller
     {
         dd('This module has been disabled because the server blows up. If you need to run this, let the developers know on Slack. Thanks.');
 
-        if (!Auth::user()->can('report-nurse-time-view')) {
-            //abort(403);
-        }
-
         // get all users with paused ccm_status
         $users = User::with('meta')
             ->with('roles')

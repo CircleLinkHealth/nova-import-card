@@ -56,11 +56,11 @@
                                 </div>
                             </div>
 
-                        </form>
 
                     </div>
                 </div>
             </div>
         </div>
     </div>
+    {!! Form::close() !!}
 @stop

@@ -3,6 +3,7 @@
 namespace App\Console\Commands;
 
 use App\Activity;
+use App\Notifications\NurseDailyReport;
 use App\PageTimer;
 use App\User;
 use Carbon\Carbon;
@@ -114,21 +115,7 @@ class EmailRNDailyReport extends Command
                 'windowEnd'                  => $nextUpcomingWindow ? Carbon::parse($nextUpcomingWindow->window_time_end)->format('g:i A T') : null,
             ];
 
-            $recipients = [
-                $nurse->email,
-                //                                'raph@circlelinkhealth.com',
-                //                            'mantoniou@circlelinkhealth.com',
-            ];
-
-            $subject = 'CircleLink Daily Time Report';
-
-            Mail::send('emails.nurseDailyReport', $data, function ($message) use (
-                $recipients,
-                $subject
-            ) {
-                $message->from('notifications@careplanmanager.com', 'CircleLink Health');
-                $message->to($recipients)->subject($subject);
-            });
+            $nurse->notify(new NurseDailyReport($data));
 
             $emailsSent[] = [
                 'nurse' => $nurse->fullName,

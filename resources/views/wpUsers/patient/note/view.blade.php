@@ -9,6 +9,7 @@
     $userTime = $userTime->format('Y-m-d\TH:i');
     ?>
 
+    @push('styles')
     <style type="text/css">
         div.inline {
             float: left;
@@ -26,6 +27,7 @@
             line-height: 24px;
         }
     </style>
+    @endpush
 
     <div class="row" style="margin-top:30px;">
         <div class="main-form-container col-lg-6 col-lg-offset-3 col-md-10 col-md-offset-1">
@@ -111,36 +113,27 @@
                                     <div class="form-group">
                                         <div class="col-sm-12">
                                             @foreach($meta as $tag)
-                                                @if($tag == 'Patient Recently in Hospital/ER')
-                                                    <h5>
-                                                        <div class="label label-danger">{{ucwords($tag)}}</div>
-                                                    </h5>
-                                                @elseif(strpos($tag, 'Forward') !== false)
-                                                    <h5>
-                                                        <div class="label label-info" data-toggle="tooltip"
-                                                             title="{{$tag}}">Forwarded
-                                                        </div>
-                                                    </h5>
-                                                @else
-                                                    <h5>
-                                                        <div class="label label-info">{{ucwords($tag)}}</div>
-                                                    </h5>
-                                                @endif
+                                                <h5>
+                                                    <div class="label label-{{$tag->severity}} info" @isset($tag->tooltip) data-tooltip="{{$tag->tooltip}}" @endisset>
+                                                        {{ucwords($tag->title)}}
+                                                    </div>
+                                                </h5>
                                             @endforeach
                                             @if(is_array($hasReaders))
                                                 @foreach($hasReaders as $key => $value)
                                                     <h5>
                                                         <div style="margin-right: 2px; margin-bottom: 4px;"
-                                                             class="inline label label-success" data-toggle="tooltip"
-                                                             title="{{$value}}">
-                                                            <div style="padding: 1px; padding-left: 0px"
+                                                             class="inline label label-success"
+                                                             data-tooltip="{{$value}}">
+                                                            <div style="padding: 1px; padding-left: 0"
                                                                  class="label label-success">
                                                                 <span class="glyphicon glyphicon-eye-open"
                                                                       aria-hidden="true"></span>
                                                                 @if($key == $note['provider_name'])
                                                                     (B.P.)
                                                                 @endif
-                                                            </div>{{$key}}
+                                                            </div>
+                                                            {{$key}}
                                                         </div>
                                                     </h5>
                                                 @endforeach
@@ -171,7 +164,7 @@
                                     </div>
                                 </div>
                                 <div class="form-group col-sm-4">
-                                        <input type="hidden" name="patient_id" value="{{$patient->id}}">
+                                    <input type="hidden" name="patient_id" value="{{$patient->id}}">
                                     <input type="hidden" name="logger_id" value="{{Auth::user()->id}}">
                                     <input type="hidden" name="noteId" value="{{$note['id']}}">
                                     <input type="hidden" name="patientID" id="patientID" value="{{$patient->id}}">
@@ -189,6 +182,7 @@
                                     </div>
                                 </div>
 
+                                @push('scripts')
                                 <script>
                                     $(function () {
                                         $('[data-toggle="tooltip"]').tooltip()
@@ -212,6 +206,7 @@
                                         }
                                     });
                                 </script>
+                                @endpush
                                 {!! Form::close() !!}
 
                                 <div class="col-sm-12">

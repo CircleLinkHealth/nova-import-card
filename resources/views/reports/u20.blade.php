@@ -46,11 +46,16 @@
                     @if($data)
                         <div id="obs_alerts_container" class=""></div><br/>
                         <div id="paging_container"></div><br/>
+
+                        @push('styles')
                         <style>
                             .webix_hcell {
                                 background-color: #d2e3ef;
                             }
                         </style>
+                        @endpush
+
+                        @push('scripts')
                         <script>
                             function filterText(text) {
                                 // var text = node;
@@ -60,11 +65,13 @@
                                     return obj.ccm_status == text;
                                 })
                             }
+
                             function sortByParam(a, b) {
                                 a = a.patient_name_sort;
                                 b = b.patient_name_sort;
                                 return a > b ? 1 : (a < b ? -1 : 0);
                             }
+
                             function zeroPad(nr, base) {
                                 var len = (String(base).length - String(nr).length) + 1;
                                 return len > 0 ? new Array(len).join('0') + nr : nr;
@@ -75,6 +82,7 @@
                                 filter = '<' + filter.toString().toLowerCase();
                                 return value.indexOf(filter) === 0;
                             }
+
                             webix.locale.pager = {
                                 first: "<<",// the first button
                                 last: ">>",// the last button
@@ -95,16 +103,15 @@
                                     {
                                         id: "patient_name",
                                         header: ["Patient", {content: "textFilter", placeholder: "Filter"}],
-                                        // fillspace: true,
                                         width: 200,
                                         sort: 'string',
                                         template: "<a href='<?php echo URL::route('patient.activity.providerUIIndex',
-                                                array('patient' => '#patient_id#')); ?>'>#patient_name#</a>"
+                                            array('patient' => '#patient_id#')); ?>'>#patient_name#</a>"
 
                                     },
                                     {
                                         id: "site",
-                                        header: ["Program", {content: "selectFilter"}],
+                                        header: ["Practice", {content: "selectFilter"}],
                                         width: 150,
                                         sort: 'string'
                                     },
@@ -207,12 +214,6 @@
                                         }
                                     }
                                 ],
-                                ready: function () {
-                                    this.adjustRowHeight("obs_key");
-                                },
-                                /*ready:function(){
-                                 this.adjustRowHeight("obs_value");
-                                 },*/
                                 pager: {
                                     container: "paging_container",// the container where the pager controls will be placed into
                                     template: "{common.first()} {common.prev()} {common.pages()} {common.next()} {common.last()}",
@@ -221,6 +222,7 @@
                                 },
                                 {!! $activity_json !!}
                             });
+
                             function gby() {
                                 obs_alerts_dtable.ungroup();
                                 obs_alerts_dtable.group({
@@ -243,6 +245,7 @@
                                     row: "provider"
                                 });
                             }
+
                             function gbyp() {
                                 obs_alerts_dtable.ungroup();
                                 obs_alerts_dtable.group({
@@ -268,9 +271,11 @@
                                     row: "patient_name"
                                 });
                             }
+
                             function ug() {
                                 obs_alerts_dtable.ungroup();
                             }
+
                             obs_alerts_dtable.ungroup();
                             obs_alerts_dtable.sort('#patient_name#');
                             obs_alerts_dtable.hideColumn("site");
@@ -279,6 +284,8 @@
                                 obs_alerts_dtable.adjust();
                             })
                         </script>
+                        @endpush
+
                         @if(auth()->user()->hasRole(['administrator', 'med_assistant', 'provider']))
                             <input type="button" value="Export as PDF" class="btn btn-primary" style='margin:15px;'
                                    onclick="webix.toPDF($$(obs_alerts_dtable), {
@@ -351,7 +358,7 @@
                             <input type="button" value="Export as Excel" class="btn btn-primary" style='margin:15px;'
                                    onclick="webix.toExcel(obs_alerts_dtable);">
                         @endif
-                        @if ( !Auth::guest() && Auth::user()->can(['admin-access']))
+                        @if ( !Auth::guest() && Auth::user()->hasPermission(['admin-access']))
                             <input id='site_show_btn' type='button' class='btn btn-primary' value='Show Practice'
                                    style='margin:15px;'
                                    onclick='obs_alerts_dtable.showColumn("site");this.style.display = "none";getElementById("site_hide_btn").style.display = "inline-block";'>
@@ -359,9 +366,12 @@
                                    style='display:none;margin:15px;'
                                    onclick='obs_alerts_dtable.hideColumn("site");this.style.display = "none";getElementById("site_show_btn").style.display = "inline-block";'>
                         @endif
+                        @push('scripts')
                         <script type="text/javascript">
                             window.onload = filterText('Enrolled');
                         </script>
+                        @endpush
+
                     @else
                         <div style="text-align:center;margin:50px;">There are no patients under 20 minutes this month.
                         </div>

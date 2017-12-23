@@ -52,10 +52,11 @@ class ReschedulerHandler
 
         $calls = Call
             ::whereStatus('scheduled')
+            ->with(['inboundUser'])
             ->where('scheduled_date', '<=', Carbon::now()->toDateString())
             ->get();
 
-        $missed = array();
+        $missed = [];
 
         /*
          * Check to see if the call is dropped if it's the current day
@@ -91,7 +92,7 @@ class ReschedulerHandler
             $call->scheduler = 'rescheduler algorithm';
             $call->save();
 
-            $patient = Patient::where('user_id', $call->inbound_cpm_id)->first();
+            $patient = $call->inboundUser;
 
             if (is_object($patient)) {
                 //this will give us the first available call window from the date the logic offsets, per the patient's preferred times.

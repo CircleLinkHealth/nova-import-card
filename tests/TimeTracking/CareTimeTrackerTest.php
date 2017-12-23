@@ -94,9 +94,6 @@ class CareTimeTrackerTest extends TestCase
 
         ];
 
-
-        dd($data);
-
         $this->assertTrue(true, true);
     }
 }

@@ -55,9 +55,9 @@ $user_info = array();
                                 <input type=hidden name=hospital_reminder_time value="19:00">
                                 <input type=hidden name=hospital_reminder_areas value="TBD">
                                 <input type=hidden name=qualification value="">
-                                <input type=hidden name=specialty
+                                <input type=hidden name=specialty"
                                        value="<?php /*echo $validation['specialty']['value'];*/ ?>">
-                                <input type=hidden name=npi_number
+                                <input type=hidden name=npi_number"
                                        value="<?php /*echo $validation['npi_number']['value'];*/ ?>">
                                 <div class="row">
 
@@ -84,12 +84,12 @@ $user_info = array();
                                             </div>
                                             <div class="col-sm-8">
                                                 <div class="radio-inline">
-                                                    <input type="radio" id="radioMale" name="gender"
+                                                    <input dusk="male-gender" type="radio" id="radioMale" name="gender"
                                                            value="M" {{ ((old('gender') == 'M') ? 'checked="checked"' : (($patient->gender == 'M') ? 'checked="checked"' : '')) }}>
                                                     <label for="radioMale"><span> </span>Male</label>
                                                 </div>
                                                 <div class="radio-inline">
-                                                    <input type="radio" id="radioFemale" name="gender"
+                                                    <input dusk="female-gender" type="radio" id="radioFemale" name="gender"
                                                            value="F" {{ ((old('gender') == 'F') ? 'checked="checked"' : (($patient->gender == 'F') ? 'checked="checked"' : '')) }}>
                                                     <label for="radioFemale"><span> </span>Female</label>
                                                 </div>
@@ -129,11 +129,10 @@ $user_info = array();
                                     </div>
                                     <div class="form-group form-item form-item-spacing col-sm-12 {{ $errors->first('birth_date') ? 'has-error' : '' }}">
                                         <label for="birth_date">Date Of Birth<span class="attention">*</span>:</label>
-                                        <input id="birth_date" name="birth_date" type="input" class="form-control"
-                                               value="{{ (old('birth_date') ? old('birth_date') : ($patient->birth_date ? $patient->birth_date : '01-01-1960')) }}"
+                                        <input id="birth_date" name="birth_date" type="date" class="form-control"
+                                               value="{{ (old('birth_date') ? old('birth_date') : ($patient->birth_date ? $patient->birth_date : '1960-01-01')) }}"
                                                data-field="date" data-format="yyyy-MM-dd"/><br/>
                                         <span class="help-block">{{ $errors->first('birth_date') }}</span>
-                                        <div id="dtBox"></div>
                                     </div>
                                     <div class="form-item col-sm-12">
                                         <div class="row">
@@ -276,7 +275,7 @@ $user_info = array();
                                         <label for="mf-consent_date">Consent Date <span
                                                     class="attention">*</span>:</label>
                                         <input id="consent_date" name="consent_date" class="form-control"
-                                               type="input"
+                                               type="date"
                                                value="{{ (old('consent_date') ? old('consent_date') : ($patient->consent_date ? $patient->consent_date : '')) }}"
                                                data-field="date" data-format="yyyy-MM-dd"/><br/>
                                         <span class="help-block">{{ $errors->first('consent_date') }}</span>
@@ -354,12 +353,8 @@ $user_info = array();
             
     </div>
     @endif
-
-    {{--Added this to allow for testing, since submit is done via js--}}
-    @if(app()->environment('testing'))
-        {!! Form::submit('TestSubmit', ['id' => 'unit-test-submit']) !!}
-    @endif
+    </div>
 
     {!! Form::close() !!}
-    </div>
+    </div></div>
 @endsection

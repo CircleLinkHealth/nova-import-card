@@ -204,14 +204,13 @@ class CarePlanViewService
      */
     public function getProblemsToMonitor(User $patient)
     {
-        $problems = $patient->cpmProblems()
-            ->get()
+        $problems = $patient->cpmProblems
             ->sortBy('name')
             ->values()
             ->pluck('name', 'id')
             ->all();
 
-        $otherConditions = $patient->cpmMiscs()
+        $otherConditions = $patient->cpmMiscs
             ->where('name', CpmMisc::OTHER_CONDITIONS)
             ->pluck('name', 'cpm_misc_id')
             ->all();

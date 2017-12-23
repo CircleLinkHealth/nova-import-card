@@ -84,7 +84,11 @@ class CarePlanHelper
             return $this;
         }
 
-        $ccda = Ccda::find($this->importedMedicalRecord->medical_record_id);
+        $ccda = $this->importedMedicalRecord->medicalRecord();
+
+        if (!$ccda) {
+            return $this;
+        }
 
         //doing this here to not break View CCDA button
         $ccda->patient_id = $this->user->id;
@@ -464,7 +468,7 @@ class CarePlanHelper
         $this->carePlan = CarePlan::updateOrCreate([
             'user_id' => $this->user->id,
         ], [
-            'care_plan_template_id' => $this->user->service()->firstOrDefaultCarePlan($this->user)->getCarePlanTemplateIdAttribute(),
+            'care_plan_template_id' => $this->user->service()->firstOrDefaultCarePlan($this->user)->care_plan_template_id,
             'status'                => 'draft',
         ]);
 

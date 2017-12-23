@@ -47,31 +47,31 @@
         methods: Object.assign({},
             mapActions(['getPracticeLocations', 'deletePracticeLocation']),
             {
-                cellClicked(index, entry, entryIndex) {
-                    switch (index) {
+                cellClicked(action, entry) {
+                    switch (action) {
                         case 'trash':
-                            this.deleteRow(entryIndex)
+                            this.deleteRow(entry)
                             break;
                         case 'edit':
-                            this.editRow(entryIndex)
+                            this.editRow(entry)
                             break;
                         default:
                             break;
                     }
                 },
 
-                deleteRow(index) {
-                    let disassociate = confirm('Are you sure you want to delete ' + this.locations[index].name + '?');
+                deleteRow(entry) {
+                    let disassociate = confirm('Are you sure you want to delete ' + _.find(this.locations, ['id', entry.id]).name + '?');
 
                     if (!disassociate) {
                         return true;
                     }
 
-                    this.deletePracticeLocation(this.locations[index])
+                    this.deletePracticeLocation(_.find(this.locations, ['id', entry.id]))
                 },
 
-                editRow(index) {
-                    this.$emit('update-view', 'update-location', this.locations[index])
+                editRow(entry) {
+                    this.$emit('update-view', 'update-location', _.find(this.locations, ['id', entry.id]))
                 },
 
                 addLocation() {

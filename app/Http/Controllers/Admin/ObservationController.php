@@ -16,7 +16,7 @@ class ObservationController extends Controller
      */
     public function index(Request $request)
     {
-        if (!Auth::user()->can('observations-view')) {
+        if (!Auth::user()->hasPermission('observations-view')) {
             abort(403);
         }
         // display view
@@ -39,7 +39,7 @@ class ObservationController extends Controller
         }
 
         // filter key
-        $obsKeys = array('Severity' => 'Severity', 'Other' => 'Other', 'Blood_Pressure' => 'Blood_Pressure', 'Blood_Sugar' => 'Blood_Sugar', 'Cigarettes' => 'Cigarettes', 'Weight' => 'Weight', 'Adherence' => 'Adherence');
+        $obsKeys = ['Severity' => 'Severity', 'Other' => 'Other', 'Blood_Pressure' => 'Blood_Pressure', 'Blood_Sugar' => 'Blood_Sugar', 'Cigarettes' => 'Cigarettes', 'Weight' => 'Weight', 'Adherence' => 'Adherence'];
         $filterObsKey = 'all';
         if (!empty($params['filterObsKey'])) {
             $filterObsKey = $params['filterObsKey'];
@@ -59,7 +59,7 @@ class ObservationController extends Controller
      */
     public function create()
     {
-        if (!Auth::user()->can('observations-create')) {
+        if (!Auth::user()->hasPermission('observations-create')) {
             abort(403);
         }
         // display view
@@ -73,7 +73,7 @@ class ObservationController extends Controller
      */
     public function store(Request $request)
     {
-        if (!Auth::user()->can('observations-create')) {
+        if (!Auth::user()->hasPermission('observations-create')) {
             abort(403);
         }
         $params = $request->input();
@@ -96,12 +96,12 @@ class ObservationController extends Controller
      */
     public function show($id)
     {
-        if (!Auth::user()->can('observations-view')) {
+        if (!Auth::user()->hasPermission('observations-view')) {
             abort(403);
         }
         // display view
         $observation = Observation::find($id);
-        return view('admin.observations.show', [ 'observation' => $observation, 'errors' => array(), 'messages' => array() ]);
+        return view('admin.observations.show', [ 'observation' => $observation, 'errors' => [], 'messages' => [] ]);
     }
 
     /**
@@ -112,7 +112,7 @@ class ObservationController extends Controller
      */
     public function edit($id)
     {
-        if (!Auth::user()->can('observations-edit')) {
+        if (!Auth::user()->hasPermission('observations-edit')) {
             abort(403);
         }
         $observation = Observation::find($id);
@@ -127,7 +127,7 @@ class ObservationController extends Controller
      */
     public function update(Request $request, $id)
     {
-        if (!Auth::user()->can('observations-edit')) {
+        if (!Auth::user()->hasPermission('observations-edit')) {
             abort(403);
         }
         $params = $request->input();
@@ -150,7 +150,7 @@ class ObservationController extends Controller
      */
     public function destroy($id)
     {
-        if (!Auth::user()->can('observations-destroy')) {
+        if (!Auth::user()->hasPermission('observations-destroy')) {
             abort(403);
         }
         Observation::destroy($id);

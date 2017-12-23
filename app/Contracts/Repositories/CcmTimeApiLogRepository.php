@@ -16,5 +16,5 @@ interface CcmTimeApiLogRepository extends RepositoryInterface
      * @param array $values
      * @return mixed
      */
-    public function logSentActivity(array $attributes, array $values = array());
+    public function logSentActivity(array $attributes, array $values = []);
 }

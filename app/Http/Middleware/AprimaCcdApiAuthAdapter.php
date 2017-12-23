@@ -15,7 +15,7 @@ class AprimaCcdApiAuthAdapter
      */
     public function handle($request, Closure $next)
     {
-        if (!$request->has('access_token')) {
+        if (!$request->filled('access_token')) {
             return response()->json(['error' => 'Access token not found on the request.'], 400);
         }
 

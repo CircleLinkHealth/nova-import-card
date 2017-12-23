@@ -2,25 +2,24 @@
 
 use App\Activity;
 use App\Algorithms\Invoicing\AlternativeCareTimePayableCalculator;
-use App\Models\PatientSession;
 use App\PageTimer;
 use App\Services\ActivityService;
 use App\Services\TimeTracking\Service as TimeTrackingService;
 use App\User;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
-use Maknz\Slack\Facades\Slack;
 
 class PageTimerController extends Controller
 {
+    protected $activityService;
     protected $timeTrackingService;
 
     public function __construct(
         Request $request,
-        TimeTrackingService $timeTrackingService
+        TimeTrackingService $timeTrackingService,
+        ActivityService $activityService
     ) {
-        parent::__construct($request);
-
+        $this->activityService = $activityService;
         $this->timeTrackingService = $timeTrackingService;
     }
 
@@ -43,80 +42,47 @@ class PageTimerController extends Controller
      */
     public function store(Request $request)
     {
-
         $data = $request->input();
 
-        $patientId = $request->input('patientId');
+        $patientId  = $request->input('patientId');
         $providerId = $data['providerId'] ?? null;
 
-        $totalTime = $data['totalTime'] ?? 0;
+        foreach ($data['activities'] as $activity) {
+            $duration = $activity['duration'];
 
-        //We have the duration from two sources.
-        //On page JS timer
-        //Difference between start and end dates on the server
-        $duration = ceil($totalTime / 1000);
+            $startTime = Carbon::createFromFormat('Y-m-d H:i:s', $activity['start_time']);
+            $endTime   = $startTime->copy()->addSeconds($duration);
 
-        $startTime = Carbon::createFromFormat('Y-m-d H:i:s', $data['startTime']);
-        $endTime = $startTime->copy()->addSeconds($duration);
+            $redirectTo = $data['redirectLocation'] ?? null;
 
-        $loc = $data['redirectLocation'] ?? null;
-
-        $redirectTo = empty($loc)
-            ? null
-            : $loc;
-
-        $newActivity = new PageTimer();
-        $newActivity->redirect_to = $redirectTo;
-        $newActivity->billable_duration = 0;
-        $newActivity->duration = $duration;
-        $newActivity->duration_unit = 'seconds';
-        $newActivity->patient_id = $patientId;
-        $newActivity->provider_id = $providerId;
-        $newActivity->start_time = $startTime->toDateTimeString();
-        $newActivity->actual_start_time = $startTime->toDateTimeString();
-        $newActivity->actual_end_time = $endTime->toDateTimeString();
-        $newActivity->end_time = $endTime->toDateTimeString();
-        $newActivity->url_full = $data['urlFull'];
-        $newActivity->url_short = $data['urlShort'];
-        $newActivity->program_id = $data['programId'];
-        $newActivity->ip_addr = $data['ipAddr'];
-        $newActivity->activity_type = $data['activity'];
-        $newActivity->title = $data['title'];
-        $newActivity->user_agent = $request->userAgent();
-
-        $overlaps = PageTimer::where('provider_id', '=', $providerId)
-            ->where([
-                [
-                    'end_time',
-                    '>=',
-                    $startTime,
-                ],
-                [
-                    'start_time',
-                    '<=',
-                    $endTime,
-                ],
-            ])
-            ->where('start_time', '!=', '0000-00-00 00:00:00')
-            ->where('end_time', '!=', '0000-00-00 00:00:00')
-            ->get();
-
-        if (!$overlaps->isEmpty() && $startTime->diffInSeconds($endTime) > 0) {
-            $overlapsAsc = $overlaps->sortBy('start_time');
-            $this->timeTrackingService->figureOutOverlaps($newActivity, $overlapsAsc);
-        } else {
+            $newActivity                    = new PageTimer();
+            $newActivity->redirect_to       = $redirectTo;
             $newActivity->billable_duration = $duration;
-            $newActivity->end_time = $startTime->addSeconds($duration)->toDateTimeString();
+            $newActivity->duration          = $duration;
+            $newActivity->duration_unit     = 'seconds';
+            $newActivity->patient_id        = $patientId;
+            $newActivity->provider_id       = $providerId;
+            $newActivity->start_time        = $startTime->toDateTimeString();
+            $newActivity->actual_start_time = $startTime->toDateTimeString();
+            $newActivity->actual_end_time   = $endTime->toDateTimeString();
+            $newActivity->end_time          = $endTime->toDateTimeString();
+            $newActivity->url_full          = $activity['url'];
+            $newActivity->url_short         = $activity['url_short'];
+            $newActivity->program_id        = $data['programId'];
+            $newActivity->ip_addr           = $data['ipAddr'];
+            $newActivity->activity_type     = $activity['name'];
+            $newActivity->title             = $activity['title'];
+            $newActivity->user_agent        = $request->userAgent();
             $newActivity->save();
+
+            $activityId = $this->addPageTimerActivities($newActivity);
+
+            if ($activityId) {
+                $this->handleNurseLogs($activityId);
+            }
         }
 
-        $activityId = $this->addPageTimerActivities($newActivity);
-
-        if ($activityId) {
-            $this->handleNurseLogs($activityId);
-        }
-
-        return response("PageTimer Logged, duration:" . $duration, 201);
+        return response("PageTimer activities logged.", 201);
     }
 
     public function addPageTimerActivities(PageTimer $pageTimer)
@@ -127,15 +93,8 @@ class PageTimerController extends Controller
         //user
         $user = User::find($pageTimer->provider_id);
 
-        if (!(bool)$user->isCCMCountable() || $pageTimer->patient_id == 0) {
+        if ( ! (bool)$user->isCCMCountable() || $pageTimer->patient_id == 0) {
             return false;
-        }
-
-        // user role param
-        $params['role'] = '';
-        $role = $user->roles()->first();
-        if ($role) {
-            $params['role'] = $role->name;
         }
 
         // activity param
@@ -148,26 +107,24 @@ class PageTimerController extends Controller
 
         $is_ommited = in_array($pageTimer->title, $omitted_routes);
 
-        if (!$is_ommited) {
-            $activityParams = [];
-            $activityParams['type'] = $params['activity'];
-            $activityParams['provider_id'] = $pageTimer->provider_id;
-            $activityParams['performed_at'] = $pageTimer->start_time;
-            $activityParams['duration'] = $pageTimer->billable_duration;
+        if ( ! $is_ommited) {
+            $activityParams                  = [];
+            $activityParams['type']          = $params['activity'];
+            $activityParams['provider_id']   = $pageTimer->provider_id;
+            $activityParams['performed_at']  = $pageTimer->start_time;
+            $activityParams['duration']      = $pageTimer->billable_duration;
             $activityParams['duration_unit'] = 'seconds';
-            $activityParams['patient_id'] = $pageTimer->patient_id;
-            $activityParams['logged_from'] = 'pagetimer';
-            $activityParams['logger_id'] = $pageTimer->provider_id;
+            $activityParams['patient_id']    = $pageTimer->patient_id;
+            $activityParams['logged_from']   = 'pagetimer';
+            $activityParams['logger_id']     = $pageTimer->provider_id;
             $activityParams['page_timer_id'] = $pageTimer->id;
 
             // if rule exists, create activity
             $activityId = Activity::createNewActivity($activityParams);
 
-            $activityService = new ActivityService;
-            $result = $activityService->reprocessMonthlyActivityTime($pageTimer->patient_id);
+            $this->activityService->processMonthlyActivityTime([$pageTimer->patient_id]);
 
             $pageTimer->processed = 'Y';
-            $pageTimer->rule_params = serialize($params);
 
             $pageTimer->save();
 
@@ -176,7 +133,6 @@ class PageTimerController extends Controller
 
         // update pagetimer
         $pageTimer->processed = 'Y';
-        $pageTimer->rule_params = serialize($params);
 
         $pageTimer->save();
 
@@ -187,14 +143,16 @@ class PageTimerController extends Controller
     {
 
         $activity = Activity::find($activityId);
-        $nurse = User::find($activity->provider_id)->nurseInfo;
 
-        if ($nurse) {
-            $alternativePayComputer = new AlternativeCareTimePayableCalculator($nurse);
-
-            $alternativePayComputer->adjustCCMPaybleForActivity($activity);
+        if ($activity) {
+            $nurse    = User::find($activity->provider_id)->nurseInfo;
+            if ($nurse) {
+                $alternativePayComputer = new AlternativeCareTimePayableCalculator($nurse);
+    
+                $alternativePayComputer->adjustCCMPaybleForActivity($activity);
+            }
         }
-
+        
         return false;
     }
 
@@ -210,12 +168,5 @@ class PageTimerController extends Controller
         $pageTime = PageTimer::find($id);
 
         return view('pageTimer.show', ['pageTime' => $pageTime]);
-    }
-
-    public function closePatientSession(Request $request)
-    {
-        //This is intentionally left blank!
-        //All the logic happens in Controller, because of some restrictions with Laravel at the time I'm writing this,
-        //that's the best way I can come up with right now. Gross, I know, but it's 3:30am on a Saturday
     }
 }

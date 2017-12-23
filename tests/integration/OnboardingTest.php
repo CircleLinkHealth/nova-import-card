@@ -103,43 +103,43 @@ class OnboardingTest extends TestCase
 //        }
 //    }
 
-    /**
-     * Check that the form to create a User is there.
-     */
-    public function test_it_shows_create_lead_user_form()
-    {
-        $response = $this->get(route('get.onboarding.create.program.lead.user', [
-            'code' => $this->invite->code,
-        ]))
-            ->assertSee('firstName')
-            ->assertSee('lastName')
-            ->assertSee('email')
-            ->assertSee('password');
-    }
-
-
-    /**
-     * Check that the form to create a User is there.
-     */
-    public function test_it_shows_403_unauthorized_if_no_code_present()
-    {
-        $this->expectException(\Illuminate\Foundation\Testing\HttpException::class);
-
-        $response = $this->get(route('get.onboarding.create.program.lead.user', [
-            'code' => 'q',
-        ]))->assertStatus(403);
-    }
-
-    public function test_post_locations()
-    {
-        (new LocationFormRequest)->post();
-        $this->call('POST', route('post.onboarding.store.locations'), []);
-    }
-
-    protected function setUp()
-    {
-        parent::setUp();
-        $this->faker = Factory::create();
-        $this->invite = factory(Invite::class)->create();
-    }
+//    /**
+//     * Check that the form to create a User is there.
+//     */
+//    public function test_it_shows_create_lead_user_form()
+//    {
+//        $response = $this->get(route('get.onboarding.create.program.lead.user', [
+//            'code' => $this->invite->code,
+//        ]))
+//            ->assertSee('firstName')
+//            ->assertSee('lastName')
+//            ->assertSee('email')
+//            ->assertSee('password');
+//    }
+//
+//
+//    /**
+//     * Check that the form to create a User is there.
+//     */
+//    public function test_it_shows_403_unauthorized_if_no_code_present()
+//    {
+//        $this->expectException(\Illuminate\Foundation\Testing\HttpException::class);
+//
+//        $response = $this->get(route('get.onboarding.create.program.lead.user', [
+//            'code' => 'q',
+//        ]))->assertStatus(403);
+//    }
+//
+//    public function test_post_locations()
+//    {
+//        (new LocationFormRequest)->post();
+//        $this->call('POST', route('post.onboarding.store.locations'), []);
+//    }
+//
+//    protected function setUp()
+//    {
+//        parent::setUp();
+//        $this->faker = Factory::create();
+//        $this->invite = factory(Invite::class)->create();
+//    }
 }

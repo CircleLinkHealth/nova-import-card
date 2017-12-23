@@ -2,7 +2,27 @@
 
 use Illuminate\Database\Eloquent\Model;
 
-class CarePerson extends Model
+/**
+ * App\CarePerson
+ *
+ * @property int $id
+ * @property int $alert
+ * @property int $user_id
+ * @property int $member_user_id
+ * @property string $type
+ * @property \Carbon\Carbon $created_at
+ * @property \Carbon\Carbon $updated_at
+ * @property-read \App\User $user
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\CarePerson whereAlert($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\CarePerson whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\CarePerson whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\CarePerson whereMemberUserId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\CarePerson whereType($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\CarePerson whereUpdatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\CarePerson whereUserId($value)
+ * @mixin \Eloquent
+ */
+class CarePerson extends \App\BaseModel
 {
 
     const BILLING_PROVIDER = 'billing_provider';

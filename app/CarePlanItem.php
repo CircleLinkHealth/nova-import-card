@@ -2,17 +2,22 @@
 
 use Illuminate\Database\Eloquent\Model;
 
-class CarePlanItem extends Model
+/**
+ * App\CarePlanItem
+ *
+ * @property-read \App\CareItem $careItem
+ * @property-read \App\CarePlan $carePlan
+ * @property-read \App\CareSection $careSection
+ * @property-read \Illuminate\Database\Eloquent\Collection|\App\CarePlanItem[] $children
+ * @property-read \App\CarePlanItem $parents
+ * @mixin \Eloquent
+ */
+class CarePlanItem extends \App\BaseModel
 {
 
     public $timestamps = false;
 
-    /**
-     * The connection name for the model.
-     *
-     * @var string
-     */
-    protected $connection = 'mysql_no_prefix';
+
 
     /**
      * The database table used by the model.

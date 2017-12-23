@@ -13,28 +13,20 @@ use Phaxio\Phaxio;
 
 class PhaxioService implements Efax
 {
-    public function __construct($mode = null)
+    public $fax;
+
+    public function __construct(Phaxio $phaxio)
     {
-        $config = config('phaxio');
-
-        if (!$mode) {
-            $mode = (app()->environment('production') || app()->environment('worker'))
-                ? 'production'
-                : 'test';
-        }
-
-        $this->phaxio = new Phaxio($config[$mode]['key'], $config[$mode]['secret'], $config['host']);
+        $this->fax = $phaxio;
     }
 
     public function getStatus($faxId)
     {
-        return $this->phaxio->faxStatus($faxId);
+        return $this->fax->faxStatus($faxId);
     }
 
-    public function send(
-        $to,
-        $files
-    ) {
-        return $this->phaxio->sendFax($to, $files);
+    public function send($to, $files)
+    {
+        return $this->fax->sendFax($to, $files);
     }
 }

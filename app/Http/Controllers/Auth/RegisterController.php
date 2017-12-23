@@ -37,8 +37,6 @@ class RegisterController extends Controller
      */
     public function __construct(Request $request)
     {
-        parent::__construct($request);
-
         $this->middleware('guest');
     }
 

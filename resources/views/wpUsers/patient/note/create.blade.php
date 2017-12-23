@@ -234,9 +234,13 @@
                                     <div class="form-group">
                                         <div class="col-sm-12">
                                             <input type="hidden" name="body" value="body">
-                                            <textarea id="note" class="form-control" rows="10" cols="100"
+                                            <persistent-textarea storage-key="notes:add" id="note" class-name="form-control" :rows="10" :cols="100"
                                                       placeholder="Enter Note..."
-                                                      name="body" required></textarea> <br/>
+                                                      name="body" :required="true"></persistent-textarea>
+                                            <br>
+                                            {{--  <textarea id="note" class="form-control" rows="10" cols="100"
+                                                      placeholder="Enter Note..."
+                                                      name="body" required></textarea> <br/>  --}}
                                         </div>
                                     </div>
 

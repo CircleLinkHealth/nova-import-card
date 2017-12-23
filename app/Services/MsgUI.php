@@ -11,13 +11,13 @@ class MsgUI
 {
 
 
-    function getForm($arrBio = array(), $date, $offset = null)
+    function getForm($arrBio = [], $date, $offset = null)
     {
         date_default_timezone_set('America/New_York');
         $formOutput ="";
         $formOutput .= "<form action='' method=post>\n";
         $formOutput .= "<div class='row'>\n";
-        $msgIcon = array('icon' => '', 'color' => '');
+        $msgIcon = ['icon' => '', 'color' => ''];
         if (isset($arrBio['MessageIcon'])) {
             $msgIcon = $this->getMsgIcon($arrBio['MessageIcon']);
         } else {
@@ -137,8 +137,8 @@ class MsgUI
                 $icon = 'dICO';
                 break;
         }
-        $msgIcon = array('color' => $color,
-            'icon' => $icon);
+        $msgIcon = ['color' => $color,
+            'icon' => $icon];
         return $msgIcon;
     }
 
@@ -149,7 +149,7 @@ class MsgUI
         $msgUI = new MsgUI;
         if (!empty($cpFeed['CP_Feed'])) {
             foreach ($cpFeed['CP_Feed'] as $key => $value) {
-                $cpFeedSections = array('Symptoms', 'Biometric', 'DMS', 'Reminders');
+                $cpFeedSections = ['Symptoms', 'Biometric', 'DMS', 'Reminders'];
                 foreach ($cpFeedSections as $section) {
                     foreach ($cpFeed['CP_Feed'][$key]['Feed'][$section] as $keyBio => $arrBio) {
                         $cpFeed['CP_Feed'][$key]['Feed'][$section][$keyBio]['formHtml'] = $msgUI->getForm($arrBio, $value['Feed']['FeedDate'], null);

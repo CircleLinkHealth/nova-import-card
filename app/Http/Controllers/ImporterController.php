@@ -20,16 +20,7 @@ class ImporterController extends Controller
         $this->repo = $repo;
     }
 
-    /**
-     * Receives XML files, saves them in DB, and returns them JSON Encoded
-     *
-     * @param Request $request
-     *
-     * @return string
-     * @throws \Exception
-     */
-    public function uploadRawFiles(Request $request)
-    {
+    function handleCcdFilesUpload(Request $request) {
         if ( ! $request->hasFile('file')) {
             return response()->json('No file found', 400);
         }
@@ -48,8 +39,38 @@ class ImporterController extends Controller
             $ccda->import();
             \Log::info('End processing CCD ' . Carbon::now()->toDateTimeString());
         }
+    }
+
+    /**
+     * Receives XML files, saves them in DB, and returns them JSON Encoded
+     *
+     * @param Request $request
+     *
+     * @return string
+     * @throws \Exception
+     */
+    public function uploadRawFiles(Request $request)
+    {
+        $this::handleCcdFilesUpload($request);
 
         return redirect()->route('view.files.ready.to.import');
+    }
+    
+    /**
+     * Route: /api/ccd-importer/import-medical-records
+     * 
+     * Receives XML and XLSX files, saves them in DB, and returns them JSON Encoded
+     *
+     * @param Request $request
+     *
+     * @return string
+     * @throws \Exception
+     */
+    public function uploadRecords(Request $request) 
+    {    
+        $this::handleCcdFilesUpload($request);
+
+        return redirect()->route('view.records.ready.to.import');
     }
 
     /**
@@ -61,6 +82,46 @@ class ImporterController extends Controller
     {
         return view('CCDUploader.uploader');
     }
+    
+    /**
+        * Show the form to upload CCDs.
+        *
+        * @return \Illuminate\View\View
+        */
+    public function remix()
+    {
+        return view('CCDUploader.uploader-remix');
+    }
+
+    function getImportedRecords() {
+        return ImportedMedicalRecord::whereNull('patient_id')
+                ->with('demographics')
+                ->with('practice')
+                ->with('location')
+                ->with('billingProvider')
+                ->get()
+                ->map(function ($summary) {
+                    $summary['flag'] = false;
+
+                    $providers = $summary->medicalRecord()->providers()->where([
+                        ['first_name', '!=', null],
+                        ['last_name', '!=', null],
+                        ['ml_ignore', '=', false],
+                    ])->get()->unique(function ($m) {
+                        return $m->first_name . $m->last_name;
+                    });
+
+                    if ($providers->count() > 1) {
+                        $summary['flag'] = true;
+                    }
+
+                    return $summary;
+                })->values();
+    }
+
+    public function records() {
+        return $this::getImportedRecords();
+    }
 
     /**
      * Show all QASummaries that are related to a CCDA
@@ -70,32 +131,10 @@ class ImporterController extends Controller
         //get rid of orphans
         $delete = ImportedMedicalRecord::whereNull('medical_record_id')->delete();
 
-        $qaSummaries = ImportedMedicalRecord::whereNull('patient_id')
-                                            ->with('demographics')
-                                            ->with('practice')
-                                            ->with('location')
-                                            ->with('billingProvider')
-                                            ->get()
-                                            ->map(function ($summary) {
-                                                $summary['flag'] = false;
-
-                                                $providers = $summary->medicalRecord()->providers()->where([
-                                                    ['first_name', '!=', null],
-                                                    ['last_name', '!=', null],
-                                                    ['ml_ignore', '=', false],
-                                                ])->get()->unique(function ($m) {
-                                                    return $m->first_name . $m->last_name;
-                                                });
-
-                                                if ($providers->count() > 1) {
-                                                    $summary['flag'] = true;
-                                                }
-
-                                                return $summary;
-                                            })->values();
+        $importedRecords = $this::getImportedRecords();
 
         JavaScript::put([
-            'importedMedicalRecords' => $qaSummaries,
+            'importedMedicalRecords' => $importedRecords,
         ]);
 
         return view('CCDUploader.uploadedSummary');
@@ -168,14 +207,14 @@ class ImporterController extends Controller
 
     public function storeTrainingFeatures(Request $request)
     {
-        if ($request->has('documentId')) {
+        if ($request->filled('documentId')) {
             DocumentLog::whereId($request->input('documentId'))
                        ->update([
                            'ml_ignore' => true,
                        ]);
         }
 
-        if ($request->has('providerIds')) {
+        if ($request->filled('providerIds')) {
             ProviderLog::whereIn('id', $request->input('providerIds'))
                        ->update([
                            'ml_ignore' => true,
@@ -188,7 +227,7 @@ class ImporterController extends Controller
 
         $ids[] = $request->input('imported_medical_record_id');
 
-        if ($request->has('imported_medical_record_ids')) {
+        if ($request->filled('imported_medical_record_ids')) {
             $ids = $request->input('imported_medical_record_ids');
         }
 

@@ -1,14 +1,15 @@
-<html lang="en">
+<html lang="en-US">
 <head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-
+    <meta http-equiv="content-language" content="en-US"/>
     <meta http-equiv="cache-control" content="no-cache, must-revalidate, post-check=0, pre-check=0">
     <meta http-equiv="expires" content={{ Carbon\Carbon::now()->format('D M d Y H:i:s O') }}>
     <meta http-equiv="pragma" content="no-cache">
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <meta name="base-url" content="{{ url('/') }}">
+    <base href="{{asset('')}}">
 
     <script type="text/javascript">
         window.heap = window.heap || [], heap.load = function (e, t) {
@@ -49,7 +50,6 @@
         <link rel="stylesheet" href="{{ asset('/webix/codebase/webix.css') }}" type="text/css">
 
         <link href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.3/css/select2.min.css" rel="stylesheet"/>
-        @stack('styles')
     @endif
     <style>
         span.twitter-typeahead .twitter-typeahead {
@@ -84,7 +84,7 @@
 
     @yield('content')
 
-    @if(isset($showBanner) && !isset($isPdf))
+    @if(isset($patient) && showDiabetesBanner($patient) && !isset($isPdf))
         @include('partials.providerUI.notification-banner')
     @endif
 
@@ -106,16 +106,28 @@
     <script src='https://cdn.polyfill.io/v2/polyfill.min.js'></script>
 @endif
 
+@include('partials.providerUItimer')
+@stack('prescripts')
+
 <script type="text/javascript" src="{{asset('compiled/js/app-provider-ui.js')}}"></script>
 <script type="text/javascript" src="{{ asset('compiled/js/issue-688.js') }}"></script>
-
-@include('partials.providerUItimer')
 
 @stack('scripts')
 <script>
     $(function () {
         $('.selectpicker').selectpicker('refresh')
     })
+
+    if ('serviceWorker' in navigator) {
+        navigator.serviceWorker.register('/compiled/sw.js')
+        .then(function(registration) {
+            console.log('Service Worker registration successful with scope: ',
+            registration.scope);
+        })
+        .catch(function(err) {
+            console.log(err);
+        });
+    }
 </script>
 @endif
 </body>

@@ -7,7 +7,62 @@ use App\Constants;
 use App\Jobs\SendSlackMessage;
 use App\User;
 use Carbon\Carbon;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Collection;
+use Illuminate\Database\Eloquent\Collection as EloquentCollection;
+
+if (!function_exists('parseIds')) {
+    /**
+     * Get all of the IDs from the given mixed value.
+     *
+     * @param  mixed  $value
+     * @return array
+     */
+    function parseIds($value)
+    {
+        if ($value instanceof Model) {
+            return [$value->getKey()];
+        }
+
+        if ($value instanceof EloquentCollection) {
+            return $value->modelKeys();
+        }
+
+        if (is_array($value)) {
+            $value = collect($value);
+        }
+
+        if ($value instanceof Collection) {
+            return $value->map(function($el){
+                $id = parseIds($el);
+                return $id[0];
+            })->values()->toArray();
+        }
+
+        if (is_string($value) && str_contains($value, ',')) {
+            return explode(',', $value);
+        }
+
+        return array_filter((array) $value);
+    }
+}
+
+if (!function_exists('str_substr_after')) {
+    /**
+     * Get the substring after the given character
+     *
+     * @param $string
+     * @param string $character
+     *
+     * @return string
+     */
+    function str_substr_after($string, $character = '/')
+    {
+        $pos = strrpos($string, $character);
+
+        return $pos === false ? $string : substr($string, $pos + 1);
+    }
+}
 
 if (!function_exists('activeNurseNames')) {
     /**
@@ -230,6 +285,40 @@ if (!function_exists('validateBloodPressureString')) {
     }
 }
 
+if (!function_exists('carbonGetNext')) {
+    /**
+     * Get carbon instance of the next $day
+     *
+     * @param $day
+     *
+     * @return Carbon|false
+     */
+    function carbonGetNext($day = 'monday')
+    {
+        if (!is_numeric($day)) {
+            $dayOfWeek = clhToCarbonDayOfWeek(dayNameToClhDayOfWeek($day));
+            $dayName = $day;
+        }
+
+        if (is_numeric($day)) {
+            $dayOfWeek = clhToCarbonDayOfWeek($day);
+            $dayName = clhDayOfWeekToDayName($day);
+        }
+
+        if (!isset($dayOfWeek)) {
+            return false;
+        }
+
+        $now = Carbon::now();
+
+        if ($now->dayOfWeek == $dayOfWeek) {
+            return $now;
+        }
+
+        return $now->parse("next $dayName");
+    }
+}
+
 if (!function_exists('clhToCarbonDayOfWeek')) {
     /**
      * Convert CLH DayOfWeek to Carbon DayOfWeek.
@@ -313,7 +402,7 @@ if (!function_exists('dayNameToClhDayOfWeek')) {
             'Sunday'    => 7,
         ];
 
-        return $days[trim($clhDayOfWeek)] ?? false;
+        return $days[ucfirst(strtolower(trim($clhDayOfWeek)))] ?? false;
     }
 }
 
@@ -730,5 +819,22 @@ if (!function_exists('validProblemName')) {
     function validProblemName($name)
     {
         return !str_contains(strtolower($name), ['screening', 'history', 'scan']);
+    }
+}
+
+if (!function_exists('showDiabetesBanner')) {
+    function showDiabetesBanner($patient)
+    {
+        if ($patient
+            && is_a($patient, User::class)
+            && $patient->hasProblem('Diabetes')
+            && !$patient->hasProblem('Diabetes Type 1')
+            && !$patient->hasProblem('Diabetes Type 2')
+            && $patient->primaryPractice->name != 'northeast-georgia-diagnostic-clinic'
+        ) {
+            return true;
+        }
+
+        return false;
     }
 }

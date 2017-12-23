@@ -82,12 +82,18 @@
                                         seconds = seconds + parseInt(obj.duration);
                                     });
                                     var date = new Date(seconds * 1000);
-                                    var mm = Math.floor(seconds / 60);
+                                    var hh = Math.floor(seconds / 3600);
+                                    var mm = Math.floor(seconds / 60) % 60;
                                     var ss = date.getSeconds();
-                                    if (ss < 10) {
-                                        ss = "0" + ss;
+                                    function pad (num, count) {
+                                        count = count || 0;
+                                        const $num = num + '';
+                                        return '0'.repeat(Math.max(count - $num.length, 0)) + $num;
                                     }
-                                    var time = "" + mm + ":" + ss;
+                                    ss = pad(ss, 2)
+                                    mm = pad(mm, 2)
+                                    hh = pad(hh, 2)
+                                    var time = hh + ':' + mm + ":" + ss;
                                     result = "<span title='" + mm + ":" + ss + "' style='float:right;'><b>" + time + "</b></span>";
                                     node.firstChild.innerHTML = result;
                                 }
@@ -142,7 +148,7 @@
                                     },
                                     {
                                         id: "duration",
-                                        header: ["Total", "(Min:Sec)"],
+                                        header: ["Total", "(HH:MM:SS)"],
                                         width: 100,
                                         sort: 'string',
                                         css: {"color": "black", "text-align": "right"},
@@ -150,12 +156,18 @@
                                         template: function (obj) {
                                             var seconds = obj.duration;
                                             var date = new Date(seconds * 1000);
-                                            var mm = Math.floor(seconds / 60);
+                                            var hh = Math.floor(seconds / 3600);
+                                            var mm = Math.floor(seconds / 60) % 60;
                                             var ss = date.getSeconds();
-                                            if (ss < 10) {
-                                                ss = "0" + ss;
+                                            function pad (num, count) {
+                                                count = count || 0;
+                                                const $num = num + '';
+                                                return '0'.repeat(Math.max(count - $num.length, 0)) + $num;
                                             }
-                                            var time = mm + ":" + ss;
+                                            ss = pad(ss, 2)
+                                            mm = pad(mm, 2)
+                                            hh = pad(hh, 2)
+                                            var time = hh + ':' + mm + ":" + ss;
                                             return "<span title=':" + mm + ":" + ss + "' style='float:right;'>" + time + "</span>";
                                         }
                                     }

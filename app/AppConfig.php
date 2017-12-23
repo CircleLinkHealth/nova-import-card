@@ -2,17 +2,25 @@
 
 use Illuminate\Database\Eloquent\Model;
 
-class AppConfig extends Model
+/**
+ * App\AppConfig
+ *
+ * @property int $id
+ * @property string $config_key
+ * @property string $config_value
+ * @property \Carbon\Carbon $created_at
+ * @property \Carbon\Carbon $updated_at
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\AppConfig whereConfigKey($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\AppConfig whereConfigValue($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\AppConfig whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\AppConfig whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\AppConfig whereUpdatedAt($value)
+ * @mixin \Eloquent
+ */
+class AppConfig extends \App\BaseModel
 {
 
     public $timestamps = true;
-
-    /**
-     * The connection name for the model.
-     *
-     * @var string
-     */
-    protected $connection = 'mysql_no_prefix';
 
     /**
      * The database table used by the model.

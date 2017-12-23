@@ -1,154 +1,84 @@
 <?php namespace App\Services;
 
-use App\Activity;
 use App\Patient;
 use App\PatientMonthlySummary;
-use App\User;
+use App\Repositories\Eloquent\ActivityRepository;
 use Carbon\Carbon;
-use DB;
-use Illuminate\Support\Collection;
 
 class ActivityService
 {
+    protected $repo;
+
+    public function __construct(ActivityRepository $repo)
+    {
+        $this->repo = $repo;
+    }
+
     /**
-     * Get total activity for a range of two Carbon dates.
+     * Process activity time for month
      *
-     * @param $userId
-     * @param Carbon $from
-     * @param Carbon $to
+     * @param array|int $userIds
+     * @param Carbon|null $monthYear
+     */
+    public function processMonthlyActivityTime(
+        $userIds,
+        Carbon $monthYear = null
+    ) {
+        if ( ! $monthYear) {
+            $monthYear = Carbon::now();
+        }
+
+        if (!is_array($userIds)) {
+            $userIds = [$userIds];
+        }
+
+        $acts = $this->repo->totalCCMTime($userIds, $monthYear)
+                           ->pluck('total_time', 'patient_id');
+
+        foreach ($acts as $id => $ccmTime) {
+            $info = Patient::updateOrCreate([
+                'user_id' => $id,
+            ], [
+                'cur_month_activity_time' => $ccmTime,
+            ]);
+
+            (new PatientMonthlySummary())->updateCCMInfoForPatient($id, $ccmTime);
+        }
+    }
+
+    /**
+     * Get the CCM Time provided by a specific provider to a specific patient for a given month.
+     *
+     * @param $providerId
+     * @param array $patientIds
+     * @param Carbon|null $monthYear
      *
      * @return mixed
      */
-
-    public function getOfflineActivitiesForPatient(User $patient)
+    public function ccmTimeBetween($providerId, array $patientIds, Carbon $monthYear = null)
     {
+        if ( ! $monthYear) {
+            $monthYear = Carbon::now();
+        }
 
-        return Activity::select(DB::raw('*'))
-            ->where('patient_id', $patient->id)
-            ->where('logged_from', 'manual_input')
-            ->groupBy(DB::raw('provider_id, DATE(performed_at),type'))
-            ->orderBy('performed_at', 'desc')
-            ->get();
+        return $this->repo->ccmTimeBetween($providerId, $patientIds, $monthYear)
+                          ->pluck('total_time', 'patient_id');
     }
 
-    public function getTotalActivityTimeForRange(
-        $userId,
-        Carbon $from,
-        Carbon $to
-    ) {
-        $acts = new Collection(DB::table('lv_activities')
-            ->select(DB::raw('id,provider_id,logged_from,DATE(performed_at), type, SUM(duration) as duration'))
-            ->whereBetween('performed_at', [
-                $from,
-                $to,
-            ])
-            ->where('patient_id', $userId)
-            ->where(function ($q) {
-                $q->where('logged_from', 'activity')
-                    ->Orwhere('logged_from', 'manual_input')
-                    ->Orwhere('logged_from', 'pagetimer');
-            })
-            ->groupBy(DB::raw('provider_id, DATE(performed_at),type'))
-            ->orderBy('performed_at', 'desc')
-            ->get());
-
-        return $acts->map(function ($act) {
-            return $act->duration;
-        })->sum();
-    }
-
-    public function reprocessMonthlyActivityTime(
-        $userIds = false,
-        $month = false,
-        $year = false
-    ) {
-        // if no month, set to current month
-        if (!$month) {
-            $month = date('m');
-        }
-        if (!$year) {
-            $year = date('Y');
+    /**
+     * Get total CCM Time for a patient for a month. If no month is given, it defaults to the current month.
+     *
+     * @param $patientId
+     * @param Carbon|null $monthYear
+     *
+     * @return mixed
+     */
+    public function totalCcmTime($patientId, Carbon $monthYear = null)
+    {
+        if ( ! $monthYear) {
+            $monthYear = Carbon::now();
         }
 
-        if ($userIds) {
-            // cast userIds to array if string
-            if (!is_array($userIds)) {
-                $userIds = [$userIds];
-            }
-            $users = User::whereIn('id', $userIds)->orderBy('id', 'desc')->get();
-        } else {
-            // get all users
-            $users = User::whereHas('roles', function ($q) {
-                $q->where('name', '=', 'participant');
-            })->orderBy('id', 'desc')->get();
-        }
-
-        if (!empty($users)) {
-            // loop through each user
-            foreach ($users as $user) {
-                // get all activities for user for month
-                $totalDuration = $this->getTotalActivityTimeForMonth($user->id, $month, $year);
-
-                //update report
-                (new PatientMonthlySummary())->updateCCMInfoForPatient($user->patientInfo, $totalDuration);
-
-                // update cur_month_activity_time with total
-                Patient::updateOrCreate([
-                    'user_id' => $user->id,
-                ], [
-                    'cur_month_activity_time' => $totalDuration,
-                ]);
-            }
-        }
-
-        return true;
-    }
-
-    public function getTotalActivityTimeForMonth(
-        $userId,
-        $month = false,
-        $year = false
-    ) {
-        // if no month, set to current month
-        if (!$month) {
-            $month = date('m');
-        }
-        if (!$year) {
-            $year = date('Y');
-        }
-
-        $time = Carbon::createFromDate($year, $month, 15);
-        $start = $time->startOfMonth()->format('Y-m-d') . ' 00:00:00';
-        $end = $time->endOfMonth()->format('Y-m-d') . ' 23:59:59';
-        $month_selected = $time->format('m');
-        $month_selected_text = $time->format('F');
-        $year_selected = $time->format('Y');
-
-        $acts = DB::table('lv_activities')
-            ->select(DB::raw('id,provider_id,logged_from, performed_at, type, SUM(duration) as duration'))
-            ->whereBetween('performed_at', [
-                $start,
-                $end,
-            ])
-            ->where('patient_id', $userId)
-            ->where(function ($q) {
-                $q->where('logged_from', 'activity')
-                    ->Orwhere('logged_from', 'manual_input')
-                    ->Orwhere('logged_from', 'pagetimer');
-            })
-            ->groupBy(DB::raw('provider_id, performed_at,type'))
-            ->orderBy('performed_at', 'desc')
-            ->get();
-
-        $totalDuration = 0;
-        foreach ($acts as $act) {
-            $totalDuration = ($totalDuration + $act->duration);
-        }
-
-        /*
-        $totalDuration = Activity::where( \DB::raw('MONTH(performed_at)'), '=', $month )->where( \DB::raw('YEAR(performed_at)'), '=', $year )->where( 'patient_id', '=', $userId )->sum('duration');
-        */
-
-        return $totalDuration;
+        return $this->repo->totalCCMTime([$patientId], $monthYear)->pluck('total_time', 'patient_id');
     }
 }

@@ -170,46 +170,4 @@ class PracticeInvoiceGenerator
 
         return array_pop($args);
     }
-
-    public function checkForPendingQAForPractice()
-    {
-
-        $practice = $this->practice;
-        $count    = 0;
-
-        $users = User
-            ::where('program_id', $practice->id)
-            ->whereHas('patientActivities', function ($a) {
-                $a->where('performed_at', '>', $this->month->firstOfMonth()->toDateTimeString())
-                  ->where('performed_at', '<', $this->month->endOfMonth()->toDateTimeString());
-            })
-            ->whereHas('roles', function ($r) {
-                $r->whereName('participant');
-            })
-            ->get();
-
-        foreach ($users as $user) {
-            $sum = Activity::where('patient_id', $user->id)
-                           ->where('performed_at', '>', $this->month->firstOfMonth()->toDateTimeString())
-                           ->where('performed_at', '<', $this->month->endOfMonth()->toDateTimeString())
-                           ->sum('duration');
-
-            $summary = $user->patientInfo->patientSummaries()->where(
-                'month_year',
-                $this->month->firstOfMonth()->toDateString()
-            )->first();
-
-            if ($summary == null) {
-                continue;
-            }
-
-            if ($sum > 1199 && $summary->approved == 0 && $summary->rejected == 0 && $summary->no_of_successful_calls > 0) {
-                $count++;
-            }
-        }
-
-        return ($count > 0)
-            ? true
-            : false;
-    }
 }

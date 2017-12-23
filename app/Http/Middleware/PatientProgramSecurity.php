@@ -59,10 +59,10 @@ class PatientProgramSecurity
                 return response('Could not locate patient.', 401);
             } else {
                 // security
-                if ($user->id == Auth::user()->id && !Auth::user()->can('users-view-self')) {
+                if ($user->id == Auth::user()->id && !Auth::user()->hasPermission('users-view-self')) {
                     abort(403);
                 }
-                if ($user->id != Auth::user()->id && !Auth::user()->can('users-view-all')) {
+                if ($user->id != Auth::user()->id && !Auth::user()->hasPermission('users-view-all')) {
                     abort(403);
                 }
                 if (//                    count(array_intersect(

@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Jobs\GenerateNurseInvoice;
 use App\Mail\NurseInvoiceMailer;
+use App\Notifications\NurseInvoiceCreated;
 use App\Reports\NurseDailyReport;
 use App\User;
 use Carbon\Carbon;
@@ -57,7 +58,6 @@ class NurseController extends Controller
 
     public function sendInvoice(Request $request)
     {
-
         $invoices = (array)json_decode($request->input('links'));
         $month = $request->input('month');
 
@@ -66,7 +66,7 @@ class NurseController extends Controller
 
             $user = User::find($key);
 
-            Mail::to($user)->send(new NurseInvoiceMailer($key, $value['link'], $month));
+            $user->notify(new NurseInvoiceCreated($value['link'], $month));
         }
 
         return redirect()->route('admin.reports.nurse.invoice')->with(['success' => 'yes']);

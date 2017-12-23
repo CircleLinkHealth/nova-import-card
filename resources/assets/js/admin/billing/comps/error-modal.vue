@@ -1,5 +1,5 @@
 <template>
-    <modal name="error" :info="errorModalInfo" :no-footer="true" :no-title="true" class-name="modal-error">
+    <modal name="error" :info="errorModalInfo" :no-footer="true" :no-cancel="true" :no-title="true" class-name="modal-error">
     </modal>
 </template>
 

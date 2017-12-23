@@ -5,9 +5,9 @@ namespace App\Console\Commands;
 use App\Jobs\EmailWeeklyPracticeReport;
 use App\Jobs\EmailWeeklyProviderReport;
 use App\Practice;
+use App\User;
 use Carbon\Carbon;
 use Illuminate\Console\Command;
-use Maknz\Slack\Facades\Slack;
 
 class EmailWeeklyReports extends Command
 {
@@ -16,14 +16,14 @@ class EmailWeeklyReports extends Command
      *
      * @var string
      */
-    protected $signature = 'email:weeklyReports {--practice} {--provider} {email?} {practiceId?}';
+    protected $signature = 'email:weeklyReports {--practice} {--provider} {testerUserId?} {practiceId?}';
 
     /**
      * The console command description.
      *
      * @var string
      */
-    protected $description = 'Emails weekly practice reports to distributors and providers. If email is passed to the command, all emails will be sent to that email (ie. useful for testing)';
+    protected $description = 'Emails weekly practice reports to distributors and providers. If a tester user id is passed to the command, all emails will be sent to that user (ie. useful for testing)';
 
     protected $activePractices;
 
@@ -46,10 +46,10 @@ class EmailWeeklyReports extends Command
      */
     public function handle()
     {
-        $testerEmail = null;
+        $tester = null;
 
-        if ($this->argument('email')) {
-            $testerEmail = $this->argument('email');
+        if ($this->argument('testerUserId')) {
+            $tester = User::findOrFail($this->argument('testerUserId'));
         }
 
         if ($this->argument('practiceId')) {
@@ -60,10 +60,10 @@ class EmailWeeklyReports extends Command
         $endRange = Carbon::now()->endOfDay();
 
         if (isset($onlyForPractice)) {
-            dispatch(new EmailWeeklyPracticeReport($onlyForPractice, $startRange, $endRange, $testerEmail));
+            dispatch(new EmailWeeklyPracticeReport($onlyForPractice, $startRange, $endRange, $tester));
 
             if ($this->option('provider')) {
-                dispatch(new EmailWeeklyProviderReport($onlyForPractice, $startRange, $endRange, $testerEmail));
+                dispatch(new EmailWeeklyProviderReport($onlyForPractice, $startRange, $endRange, $tester));
             }
 
             return;
@@ -71,11 +71,11 @@ class EmailWeeklyReports extends Command
 
         foreach ($this->activePractices as $practice) {
             if ($practice->settings->first() && $practice->settings->first()->email_weekly_report && $this->option('provider')) {
-                dispatch(new EmailWeeklyProviderReport($practice, $startRange, $endRange, $testerEmail));
+                dispatch(new EmailWeeklyProviderReport($practice, $startRange, $endRange, $tester));
             }
 
             if ($this->option('practice')) {
-                dispatch(new EmailWeeklyPracticeReport($practice, $startRange, $endRange, $testerEmail));
+                dispatch(new EmailWeeklyPracticeReport($practice, $startRange, $endRange, $tester));
             }
         }
     }

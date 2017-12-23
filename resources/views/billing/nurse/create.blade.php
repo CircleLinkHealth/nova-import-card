@@ -123,14 +123,14 @@
 
 
                             </fieldset>
-                        </form>
+                        
 
                     </div>
                 </div>
             </div>
         </div>
     </div>
-
+    {!! Form::close() !!}
 
     @push('scripts')
         <script>

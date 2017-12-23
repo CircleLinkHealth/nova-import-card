@@ -38,8 +38,6 @@ class LoginController extends Controller
      */
     public function __construct(Request $request)
     {
-        parent::__construct($request);
-
         $this->middleware('guest', ['except' => 'logout']);
 
         $this->usernameOrEmail($request);
@@ -54,7 +52,7 @@ class LoginController extends Controller
      */
     public function usernameOrEmail(Request $request)
     {
-        if (!$request->has('email')) {
+        if (!$request->filled('email')) {
             return false;
         }
 

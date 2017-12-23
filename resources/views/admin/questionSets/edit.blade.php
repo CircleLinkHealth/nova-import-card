@@ -1,7 +1,9 @@
 @extends('partials.adminUI')
 
 @section('content')
-    <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/font-awesome/4.4.0/css/font-awesome.min.css">
+    @push('styles')
+        <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/font-awesome/4.4.0/css/font-awesome.min.css">
+    @endpush
     {!! Form::open(array('url' => URL::route('admin.questionSets.update', array('id' => $questionSet->qsid)), 'class' => 'form-horizontal')) !!}
     <div class="container-fluid">
         <div class="row">
@@ -57,11 +59,6 @@
                             <div class="col-sm-10">{!! Form::text('action', $questionSet->action, ['class' => 'form-control', 'style' => 'width:50%;']) !!}</div>
                         </div>
 
-
-
-
-
-
                         <div class="row" style="margin-top:50px;">
                             <div class="col-sm-12">
                                 <div class="pull-right">
@@ -70,12 +67,10 @@
                                 </div>
                             </div>
                         </div>
-                        {!! Form::close() !!}
                     </div>
                 </div>
             </div>
         </div>
-
-
     </div>
+    {!! Form::close() !!}
 @stop

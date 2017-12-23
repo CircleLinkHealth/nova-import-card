@@ -42,7 +42,7 @@ return [
         ],
 
         'api' => [
-            'driver' => 'token',
+            'driver' => 'passport',
             'provider' => 'users',
         ],
     ],
@@ -76,6 +76,8 @@ return [
         // ],
     ],
 
+    //entrust needs this
+    'model' => App\User::class,
     /*
     |--------------------------------------------------------------------------
     | Resetting Passwords

@@ -29,7 +29,7 @@ return [
     |
     */
 
-    'lifetime' => 60,
+    'lifetime' => env('SESSION_LIFETIME', 60),
 
     'expire_on_close' => true,
 
@@ -44,7 +44,7 @@ return [
     |
     */
 
-    'encrypt' => env('APP_ENV') == 'production',
+    'encrypt' => true,
 
     /*
     |--------------------------------------------------------------------------
@@ -57,7 +57,7 @@ return [
     |
     */
 
-    'files' => storage_path().'/framework/sessions',
+    'files' => storage_path('framework/sessions'),
 
     /*
     |--------------------------------------------------------------------------
@@ -87,6 +87,19 @@ return [
 
     /*
     |--------------------------------------------------------------------------
+    | Session Cache Store
+    |--------------------------------------------------------------------------
+    |
+    | When using the "apc" or "memcached" session drivers, you may specify a
+    | cache store that should be used for these sessions. This value must
+    | correspond with one of the application's configured cache stores.
+    |
+    */
+
+    'store' => null,
+
+    /*
+    |--------------------------------------------------------------------------
     | Session Sweeping Lottery
     |--------------------------------------------------------------------------
     |
@@ -109,7 +122,10 @@ return [
     |
     */
 
-    'cookie' => 'cpm_'.env('APP_ENV').'_laravel_session',
+    'cookie' => env(
+        'SESSION_COOKIE',
+        'cpm_' . env('APP_ENV') . '_laravel_session'
+    ),
 
     /*
     |--------------------------------------------------------------------------
@@ -125,15 +141,15 @@ return [
     'path' => '/',
 
     /*
-   |--------------------------------------------------------------------------
-   | Session Cookie Domain
-   |--------------------------------------------------------------------------
-   |
-   | Here you may change the domain of the cookie used to identify a session
-   | in your application. This will determine which domains the cookie is
-   | available to in your application. A sensible default has been set.
-   |
-   */
+    |--------------------------------------------------------------------------
+    | Session Cookie Domain
+    |--------------------------------------------------------------------------
+    |
+    | Here you may change the domain of the cookie used to identify a session
+    | in your application. This will determine which domains the cookie is
+    | available to in your application. A sensible default has been set.
+    |
+    */
 
     'domain' => env('SESSION_DOMAIN', null),
 
@@ -162,5 +178,20 @@ return [
     */
 
     'http_only' => true,
+
+    /*
+    |--------------------------------------------------------------------------
+    | Same-Site Cookies
+    |--------------------------------------------------------------------------
+    |
+    | This option determines how your cookies behave when cross-site requests
+    | take place, and can be used to mitigate CSRF attacks. By default, we
+    | do not enable this as other CSRF protection services are in place.
+    |
+    | Supported: "lax", "strict"
+    |
+    */
+
+    'same_site' => null,
 
 ];

@@ -1,19 +1,23 @@
 @extends('partials.adminUI')
 
 @section('content')
-    <script>
-        $(document).on("click", '.section-reload', function(event) {
-            var sectionId = $(this).attr('section');
-            var BASE = "{{ url() }}";
-            var carePlanId = "{{ $carePlan->id }}";
-            //alert(BASE + '/careplan/' + carePlanId + '/section/' + sectionId);
-            $('#section' + sectionId)
-                    .html('loading.....')
-                    .load(BASE + '/careplan/' + carePlanId + '/section/' + sectionId);
-            return false;
-        });
-    </script>
-    <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/font-awesome/4.4.0/css/font-awesome.min.css">
+    @push('scripts')
+        <script>
+            $(document).on("click", '.section-reload', function(event) {
+                var sectionId = $(this).attr('section');
+                var BASE = "{{ url() }}";
+                var carePlanId = "{{ $carePlan->id }}";
+                //alert(BASE + '/careplan/' + carePlanId + '/section/' + sectionId);
+                $('#section' + sectionId)
+                        .html('loading.....')
+                        .load(BASE + '/careplan/' + carePlanId + '/section/' + sectionId);
+                return false;
+            });
+        </script>
+    @endpush
+    @push('styles')
+        <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/font-awesome/4.4.0/css/font-awesome.min.css">
+    @endpush
     <div class="container-fluid">
         <div class="row">
             <div class="col-md-10 col-md-offset-1">

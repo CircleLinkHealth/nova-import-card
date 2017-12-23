@@ -1,8 +1,5 @@
 <?php namespace App\Providers;
 
-use App\AppConfig;
-use App\CarePlan;
-use App\Contracts\Efax;
 use App\Contracts\ReportFormatter;
 use App\Contracts\Repositories\ActivityRepository;
 use App\Contracts\Repositories\AprimaCcdApiRepository;
@@ -23,10 +20,13 @@ use App\Repositories\InviteRepositoryEloquent;
 use App\Repositories\LocationRepositoryEloquent;
 use App\Repositories\PracticeRepositoryEloquent;
 use App\Repositories\UserRepositoryEloquent;
-use App\Services\Phaxio\PhaxioService;
+use App\Services\NoteService;
+use Illuminate\Notifications\Channels\DatabaseChannel;
+use Illuminate\Notifications\DatabaseNotification;
+use Illuminate\Notifications\HasDatabaseNotifications;
+use Illuminate\Notifications\Notifiable;
 use Illuminate\Support\ServiceProvider;
 use Laravel\Dusk\DuskServiceProvider;
-use View;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -38,14 +38,7 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot()
     {
-        if (\Schema::hasTable((new AppConfig)->getTable())) {
-            $appConfigs = AppConfig::all();
-            $adminStylesheet = $appConfigs->where('config_key', 'admin_stylesheet')->first();
-            view()->share('app_config_admin_stylesheet', 'admin-bootswatch-default.css');
-            if ($adminStylesheet) {
-                view()->share('app_config_admin_stylesheet', $adminStylesheet->config_value);
-            }
-        }
+        //
     }
 
     /**
@@ -59,17 +52,18 @@ class AppServiceProvider extends ServiceProvider
      */
     public function register()
     {
+        //Bind database notification classes to local
+        $this->app->bind(DatabaseChannel::class, \App\Notifications\Channels\DatabaseChannel::class);
+        $this->app->bind(DatabaseNotification::class, \App\DatabaseNotification::class);
+        $this->app->bind(HasDatabaseNotifications::class, \App\Notifications\HasDatabaseNotifications::class);
+        $this->app->bind(Notifiable::class, \App\Notifications\Notifiable::class);
+
         if ($this->app->environment('local', 'testing', 'staging')) {
             $this->app->register(DuskServiceProvider::class);
         }
 
         $this->app->alias('bugsnag.multi', \Illuminate\Contracts\Logging\Log::class);
         $this->app->alias('bugsnag.multi', \Psr\Log\LoggerInterface::class);
-
-        $this->app->bind(
-            'Illuminate\Contracts\Auth\Registrar',
-            'App\Services\Registrar'
-        );
 
         $this->app->bind(
             ActivityRepository::class,
@@ -94,11 +88,6 @@ class AppServiceProvider extends ServiceProvider
         $this->app->bind(
             AprimaCcdApiRepository::class,
             AprimaCcdApiRepositoryEloquent::class
-        );
-
-        $this->app->bind(
-            Efax::class,
-            PhaxioService::class
         );
 
         $this->app->bind(
@@ -130,6 +119,10 @@ class AppServiceProvider extends ServiceProvider
             ReportFormatter::class,
             WebixFormatter::class
         );
+
+        $this->app->bind(WebixFormatter::class, function(){
+            return new WebixFormatter(new NoteService());
+        });
 
         if ($this->app->environment('local')) {
             $this->app->register('Orangehill\Iseed\IseedServiceProvider');

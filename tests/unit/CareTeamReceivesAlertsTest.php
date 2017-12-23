@@ -1,6 +1,7 @@
 <?php
 
 namespace Tests\unit;
+
 use Tests\TestCase;
 use App\CarePerson;
 use App\User;

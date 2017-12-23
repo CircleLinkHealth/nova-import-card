@@ -1,53 +1,36 @@
 <?php namespace App;
 
 use App\Services\DatamonitorService;
-use Illuminate\Database\Eloquent\Model;
 
-/**
- * @SWG\Definition(definition="observation",required={"primaryKey"},@SWG\Xml(name="Observation")))
- */
-
-class Observation extends Model
+class Observation extends \App\BaseModel
 {
 
     // for revisionable
     use \Venturecraft\Revisionable\RevisionableTrait;
-    /**
-     * The attributes that are mass assignable.
-     * @SWG\Property()
-     * @var array
-     */
+
     public $timestamps = true;
     protected $revisionCreationsEnabled = true;
-    /**
-     * The connection name for the model.
-     *
-     * @var string
-     */
-    protected $connection = 'mysql_no_prefix';
-    /**
-     * The database table used by the model.
-     * @SWG\Property()
-     * @var string
-     */
+
+
     protected $table = 'lv_observations';
-    /**
-     * The primary key for the model.
-     *@SWG\Property(format="int64")
-     * @var int
-     */
+
     protected $primaryKey = 'id';
-    /**
-     * The attributes that are mass assignable.
-     *@SWG\Property()
-     * @var array
-     */
-    protected $fillable = ['obs_date', 'obs_date_gmt', 'comment_id', 'sequence_id', 'obs_message_id', 'user_id', 'obs_method', 'obs_key', 'obs_value', 'obs_unit', 'program_id', 'legacy_obs_id'];
-    /**
-     * The attributes that are mass assignable.
-     *@SWG\Property()
-     * @var array
-     */
+
+    protected $fillable = [
+        'obs_date',
+        'obs_date_gmt',
+        'comment_id',
+        'sequence_id',
+        'obs_message_id',
+        'user_id',
+        'obs_method',
+        'obs_key',
+        'obs_value',
+        'obs_unit',
+        'program_id',
+        'legacy_obs_id',
+    ];
+
     protected $dates = ['deleted_at'];
 
 
@@ -62,7 +45,7 @@ class Observation extends Model
         $userId,
         $message_id
     ) {
-    
+
         /*
         $starting = Observation::whereHas('meta', function($q) use ($message_id)
         {
@@ -73,8 +56,7 @@ class Observation extends Model
         */
 
         $starting = Observation::where('user_id', $userId)
-            ->whereHas('meta', function ($q) use
-                (
+            ->whereHas('meta', function ($q) use (
                 $message_id
             ) {
                 $q->where('meta_key', 'starting_observation')
@@ -99,7 +81,7 @@ class Observation extends Model
 
     public function question()
     {
-        return $this->belongsTo('App\CPRulesQuestions', 'obs_message_id', 'msg_id');
+        return $this->belongsTo(CPRulesQuestions::class, 'obs_message_id', 'msg_id');
     }
 
     public function user()
@@ -108,75 +90,76 @@ class Observation extends Model
     }
 
 
-
-
-
-
-
     // START META ATTRIBUTES
 
     public function getAlertLevelAttribute()
     {
         $name = '';
-        $meta = $this->meta()->where('meta_key', '=', 'dm_alert_level')->first();
+        $meta = $this->meta->where('meta_key', '=', 'dm_alert_level')->first();
         if (isset($meta)) {
             $name = $meta->meta_value;
         }
+
         return $name;
     }
 
     public function meta()
     {
-        return $this->hasMany('App\ObservationMeta', 'obs_id', 'id');
+        return $this->hasMany(ObservationMeta::class, 'obs_id', 'id');
     }
 
     public function getAlertLogAttribute()
     {
         $name = '';
-        $meta = $this->meta()->where('meta_key', '=', 'dm_log')->first();
+        $meta = $this->meta->where('meta_key', '=', 'dm_log')->first();
         if (isset($meta)) {
             $name = $meta->meta_value;
         }
+
         return $name;
     }
 
     public function getAlertStatusHistoryAttribute()
     {
         $name = '';
-        $meta = $this->meta()->where('meta_key', '=', 'alert_status_hist')->first();
+        $meta = $this->meta->where('meta_key', '=', 'alert_status_hist')->first();
         if (isset($meta)) {
             $name = $meta->meta_value;
         }
+
         return $name;
     }
 
     public function getAlertStatusChangeAttribute()
     {
         $name = '';
-        $meta = $this->meta()->where('meta_key', '=', 'alert_status_change')->first();
+        $meta = $this->meta->where('meta_key', '=', 'alert_status_change')->first();
         if (isset($meta)) {
             $name = $meta->meta_value;
         }
+
         return $name;
     }
 
     public function getAlertSortWeightAttribute()
     {
         $name = '';
-        $meta = $this->meta()->where('meta_key', '=', 'alert_sort_weight')->first();
+        $meta = $this->meta->where('meta_key', '=', 'alert_sort_weight')->first();
         if (isset($meta)) {
             $name = $meta->meta_value;
         }
+
         return $name;
     }
 
     public function getTimezoneAttribute()
     {
         $name = '';
-        $meta = $this->meta()->where('meta_key', '=', 'timezone')->first();
+        $meta = $this->meta->where('meta_key', '=', 'timezone')->first();
         if (isset($meta)) {
             $name = $meta->meta_value;
         }
+
         return $name;
     }
 
@@ -185,16 +168,18 @@ class Observation extends Model
     public function getStartingObservationAttribute()
     {
         $name = 'no';
-        $meta = $this->meta()->where('meta_key', '=', 'starting_observation')->first();
+        $meta = $this->meta->where('meta_key', '=', 'starting_observation')->first();
         if (isset($meta)) {
             $name = $meta->meta_value;
         }
+
         return $name;
     }
 
     public function getObservation($obs_id)
     {
         $observation = Observation::where('obs_id', '=', $obs_id)->get();
+
         return $observation;
     }
 
@@ -209,7 +194,7 @@ class Observation extends Model
         return $observations;
     }
 
-    public function save(array $params = array())
+    public function save(array $params = [])
     {
         if (empty($this->user_id)) {
             return false;
@@ -245,11 +230,11 @@ class Observation extends Model
         // take programId(primaryProgramId) and add to wp_X_observations table
         /*
         if($updating) {
-            DB::connection('mysql_no_prefix')->table('ma_'.$wpUser->primaryProgramId().'_observations')->where('obs_id', $this->legacy_obs_id)->update($params);
+            DB::table('ma_'.$wpUser->primaryProgramId().'_observations')->where('obs_id', $this->legacy_obs_id)->update($params);
         } else {
             // add to legacy if doesnt already exist
             if(empty($this->legacy_obs_id)) {
-                $resultObsId = DB::connection('mysql_no_prefix')->table('ma_' . $wpUser->primaryProgramId() . '_observations')->insertGetId($params);
+                $resultObsId = DB::table('ma_' . $wpUser->primaryProgramId() . '_observations')->insertGetId($params);
                 $this->legacy_obs_id = $resultObsId;
             }
         }

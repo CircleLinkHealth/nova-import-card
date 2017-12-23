@@ -18,6 +18,12 @@ use Illuminate\Support\Facades\DB;
  */
 class ActivityController extends Controller
 {
+    private $activityService;
+
+    public function __construct(ActivityService $activityService)
+    {
+        $this->activityService = $activityService;
+    }
 
     public function providerUIIndex(
         Request $request,
@@ -31,19 +37,19 @@ class ActivityController extends Controller
         $messages = \Session::get('messages');
 
         if (isset($input['selectMonth'])) {
-            $time = Carbon::createFromDate($input['selectYear'], $input['selectMonth'], 15);
-            $start = $time->startOfMonth()->format('Y-m-d H:i:s');
-            $end = $time->endOfMonth()->format('Y-m-d H:i:s');
-            $month_selected = $time->format('m');
+            $time                = Carbon::createFromDate($input['selectYear'], $input['selectMonth'], 15);
+            $start               = $time->startOfMonth()->format('Y-m-d H:i:s');
+            $end                 = $time->endOfMonth()->format('Y-m-d H:i:s');
+            $month_selected      = $time->format('m');
             $month_selected_text = $time->format('F');
-            $year_selected = $time->format('Y');
+            $year_selected       = $time->format('Y');
         } else {
-            $time = Carbon::now();
-            $start = Carbon::now()->startOfMonth()->format('Y-m-d H:i:s');
-            $end = Carbon::now()->endOfMonth()->format('Y-m-d H:i:s');
-            $month_selected = $time->format('m');
+            $time                = Carbon::now();
+            $start               = Carbon::now()->startOfMonth()->format('Y-m-d H:i:s');
+            $end                 = Carbon::now()->endOfMonth()->format('Y-m-d H:i:s');
+            $month_selected      = $time->format('m');
             $month_selected_text = $time->format('F');
-            $year_selected = $time->format('Y');
+            $year_selected       = $time->format('Y');
         }
 
         //downloads patient audit
@@ -54,18 +60,18 @@ class ActivityController extends Controller
         }
 
         $acts = DB::table('lv_activities')
-            ->select(DB::raw('id,provider_id,logged_from,DATE(performed_at)as performed_at, type, SUM(duration) as duration'))
-            ->where('created_at', '>=', $start)
-            ->where('created_at', '<=', $end)
-            ->where('patient_id', $patientId)
-            ->where(function ($q) {
-                $q->where('logged_from', 'activity')
-                    ->Orwhere('logged_from', 'manual_input')
-                    ->Orwhere('logged_from', 'pagetimer');
-            })
-            ->groupBy(DB::raw('provider_id, DATE(performed_at),type'))
-            ->orderBy('created_at', 'desc')
-            ->get();
+                  ->select(DB::raw('id,provider_id,logged_from,DATE(performed_at)as performed_at, type, SUM(duration) as duration'))
+                  ->where('created_at', '>=', $start)
+                  ->where('created_at', '<=', $end)
+                  ->where('patient_id', $patientId)
+                  ->where(function ($q) {
+                      $q->where('logged_from', 'activity')
+                        ->Orwhere('logged_from', 'manual_input')
+                        ->Orwhere('logged_from', 'pagetimer');
+                  })
+                  ->groupBy(DB::raw('provider_id, DATE(performed_at),type'))
+                  ->orderBy('created_at', 'desc')
+                  ->get();
 
 
         $acts = json_decode(json_encode($acts), true);            //debug($acts);
@@ -109,15 +115,16 @@ class ActivityController extends Controller
         return view(
             'wpUsers.patient.activity.index',
             [
-                'activity_json'       => $reportData,
-                'years'               => array_reverse($years),
-                'month_selected'      => $month_selected,
-                'month_selected_text' => $month_selected_text,
-                'year_selected'       => $year_selected,
-                'months'              => $months,
-                'patient'             => $patient,
-                'data'                => $data,
-                'messages'            => $messages,
+                'activity_json'           => $reportData,
+                'years'                   => array_reverse($years),
+                'month_selected'          => $month_selected,
+                'month_selected_text'     => $month_selected_text,
+                'year_selected'           => $year_selected,
+                'months'                  => $months,
+                'patient'                 => $patient,
+                'data'                    => $data,
+                'messages'                => $messages,
+                'noLiveCountTimeTracking' => true,
             ]
         );
     }
@@ -141,7 +148,7 @@ class ActivityController extends Controller
         if ($patientId) {
             // patient view
             $user = User::find($patientId);
-            if (!$user) {
+            if ( ! $user) {
                 return response("User not found", 401);
             }
 
@@ -159,22 +166,22 @@ class ActivityController extends Controller
 
             //careteam
             $careteam_info = [];
-            $careteam_ids = $user->careTeam;
+            $careteam_ids  = $user->careTeam;
             if ((@unserialize($careteam_ids) !== false)) {
                 $careteam_ids = unserialize($careteam_ids);
             }
-            if (!empty($careteam_ids) && is_array($careteam_ids)) {
+            if ( ! empty($careteam_ids) && is_array($careteam_ids)) {
                 foreach ($careteam_ids as $id) {
                     $careteam_info[$id] = User::find($id)->getFullNameAttribute();
                 }
             }
 
             //providers
-            $providers = Practice::getProviders($user->program_id);
+            $providers     = Practice::getProviders($user->program_id);
             $provider_info = [];
 
             $nurse_ids = User::ofType('care-center')
-                ->pluck('id');
+                             ->pluck('id');
 
             foreach ($nurse_ids as $nurse_id) {
                 $nurse = User::find($nurse_id);
@@ -247,9 +254,9 @@ class ActivityController extends Controller
         if (array_key_exists('meta', $input)) {
             $meta = $input['meta'];
             unset($input['meta']);
-            $activity = Activity::find($actId);
+            $activity  = Activity::find($actId);
             $metaArray = [];
-            $i = 0;
+            $i         = 0;
             foreach ($meta as $actMeta) {
                 $metaArray[$i] = new ActivityMeta($actMeta);
 
@@ -259,9 +266,7 @@ class ActivityController extends Controller
             $activity->meta()->saveMany($metaArray);
         }
 
-        // update usermeta: cur_month_activity_time
-        $activityService = new ActivityService;
-        $activityService->reprocessMonthlyActivityTime($input['patient_id']);
+        $this->activityService->processMonthlyActivityTime($input['patient_id']);
 
         if ($nurse) {
             $activity = Activity::find($actId);
@@ -285,26 +290,25 @@ class ActivityController extends Controller
         $actId
     ) {
         $patient = User::find($patientId);
-        $act = Activity::find($actId);
+        $act     = Activity::find($actId);
         //Set up note pack for view
-        $activity = [];
-        $messages = \Session::get('messages');
-        $activity['type'] = $act->type;
-        $activity['performed_at'] = $act->performed_at;
+        $activity                  = [];
+        $messages                  = \Session::get('messages');
+        $activity['type']          = $act->type;
+        $activity['performed_at']  = $act->performed_at;
         $activity['provider_name'] = User::find($act->provider_id)
             ? (User::find($act->provider_id)->getFullNameAttribute())
             : '';
-        $activity['duration'] = intval($act->duration) / 60;
+        $activity['duration']      = intval($act->duration) / 60;
 
         $careteam_info = [];
-        $careteam_ids = $patient->careTeam;
+        $careteam_ids  = $patient->careTeam;
         if ((@unserialize($careteam_ids) !== false)) {
             $careteam_ids = unserialize($careteam_ids);
         }
-        if (!empty($careteam_ids) && is_array($careteam_ids)) {
+        if ( ! empty($careteam_ids) && is_array($careteam_ids)) {
             foreach ($careteam_ids as $id) {
-                $careteam_info[$id] = User::find($id)->getFullNameAttribute();
-                ;
+                $careteam_info[$id] = User::find($id)->getFullNameAttribute();;
             }
         }
 
@@ -354,8 +358,7 @@ class ActivityController extends Controller
         )->first();
         $actMeta->fill($meta['0'])->save();
 
-        $activityService = new ActivityService;
-        $result = $activityService->reprocessMonthlyActivityTime($input['patient_id']);
+        $this->activityService->processMonthlyActivityTime([$input['patient_id']]);
 
         return response("Activity Updated", 201);
     }

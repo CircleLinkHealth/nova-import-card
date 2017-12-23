@@ -1,7 +1,9 @@
 @extends('partials.adminUI')
 
 @section('content')
-    <link rel="stylesheet" href="//cdn.datatables.net/1.10.7/css/jquery.dataTables.min.css">
+    @push('styles')
+        <link rel="stylesheet" href="//cdn.datatables.net/1.10.7/css/jquery.dataTables.min.css">
+    @endpush
 
     <div class="container-fluid">
         <div class="row">
@@ -79,72 +81,73 @@
             </div>
         </div>
 
-        <script>
+        @push('scripts')
+            <script>
 
-            $(function () {
+                $(function () {
 
-                $("#start_date").change(function () {
-                    // whatever you need to be done on change of the input field
+                    $("#start_date").change(function () {
+                        // whatever you need to be done on change of the input field
+                    });
+
+                    $("#end_date").change(function () {
+                        // whatever you need to be done on change of the input field
+                    });
+
+                    $('#ambassador_kpis').DataTable({
+                        processing: true,
+                        serverSide: false,
+                        "scrollX": true,
+                        ajax: {
+                            "url": '{!! url('/admin/enrollment/ambassador/kpis/data') !!}',
+                            "type": "GET",
+                            "data": function (d) {
+                                d.start_date = $('#start_date').val();
+                                d.end_date = $('#end_date').val();
+                            }
+                        },
+                        columns: [
+
+                            {data: 'name', name: 'name'},
+                            {data: 'total_hours', name: 'total_hours'},
+                            {data: 'no_enrolled', name: 'no_enrolled'},
+                            {data: 'total_calls', name: 'total_calls'},
+                            {data: 'total_hours', name: 'total_hours'},
+                            {data: 'calls_per_hour', name: 'calls_per_hour'},
+                            {data: 'mins_per_enrollment', name: 'mins_per_enrollment'},
+                            {data: 'conversion', name: 'conversion'},
+                            {data: 'hourly_rate', name: 'hourly_rate'},
+                            {data: 'per_cost', name: 'per_cost'},
+                            {data: 'earnings', name: 'earnings'},
+
+                        ],
+                        "aaSorting": [2, 'desc'],
+                        "iDisplayLength": 15,
+                    });
+
                 });
 
-                $("#end_date").change(function () {
-                    // whatever you need to be done on change of the input field
+                $('#start_date').on('change', function () {
+                    console.log($('#start_date').val());
+                    $('#ambassador_kpis').DataTable().ajax.reload();
                 });
 
-                $('#ambassador_kpis').DataTable({
-                    processing: true,
-                    serverSide: false,
-                    "scrollX": true,
-                    ajax: {
-                        "url": '{!! url('/admin/enrollment/ambassador/kpis/data') !!}',
-                        "type": "GET",
-                        "data": function (d) {
-                            d.start_date = $('#start_date').val();
-                            d.end_date = $('#end_date').val();
-                        }
-                    },
-                    columns: [
-
-                        {data: 'name', name: 'name'},
-                        {data: 'total_hours', name: 'total_hours'},
-                        {data: 'no_enrolled', name: 'no_enrolled'},
-                        {data: 'total_calls', name: 'total_calls'},
-                        {data: 'total_hours', name: 'total_hours'},
-                        {data: 'calls_per_hour', name: 'calls_per_hour'},
-                        {data: 'mins_per_enrollment', name: 'mins_per_enrollment'},
-                        {data: 'conversion', name: 'conversion'},
-                        {data: 'hourly_rate', name: 'hourly_rate'},
-                        {data: 'per_cost', name: 'per_cost'},
-                        {data: 'earnings', name: 'earnings'},
-
-                    ],
-                    "aaSorting": [2, 'desc'],
-                    "iDisplayLength": 15,
+                $('#end_date').on('change', function () {
+                    console.log($('#end_date').val());
+                    $('#ambassador_kpis').DataTable().ajax.reload();
                 });
 
-            });
+                $.fn.dataTable.ext.errMode = 'none';
 
-            $('#start_date').on('change', function () {
-                console.log($('#start_date').val());
-                $('#ambassador_kpis').DataTable().ajax.reload();
-            });
-
-            $('#end_date').on('change', function () {
-                console.log($('#end_date').val());
-                $('#ambassador_kpis').DataTable().ajax.reload();
-            });
-
-            $.fn.dataTable.ext.errMode = 'none';
-
-            $('#ambassador_kpis')
-                .on('error.dt', function (e, settings, techNote, message) {
-                    console.log('An error has been reported by DataTables: ', message);
-                })
-                .DataTable();
+                $('#ambassador_kpis')
+                    .on('error.dt', function (e, settings, techNote, message) {
+                        console.log('An error has been reported by DataTables: ', message);
+                    })
+                    .DataTable();
 
 
-        </script>
-        <script src="//cdn.datatables.net/1.10.7/js/jquery.dataTables.min.js"></script>
-
-
+            </script>
+            <script src="//cdn.datatables.net/1.10.7/js/jquery.dataTables.min.js"></script>
+        @endpush
+        
 @stop
