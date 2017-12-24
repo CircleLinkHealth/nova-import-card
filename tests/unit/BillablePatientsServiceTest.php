@@ -2,6 +2,7 @@
 
 namespace Tests\Unit;
 
+use App\Http\Resources\ApprovableBillablePatient;
 use App\Models\CCD\Problem;
 use App\PatientMonthlySummary;
 use App\Practice;
@@ -60,7 +61,7 @@ class BillablePatientsServiceTest extends TestCase
 
         $this->assertTrue($list->count() == 1);
 
-        $row = $list->first();
+        $row = (new ApprovableBillablePatient($list->first()))->resolve();
 
         $this->assertEquals($row['report_id'], $this->summary->id);
         $this->assertEquals($row['practice'], $this->practice->display_name);
@@ -128,7 +129,7 @@ class BillablePatientsServiceTest extends TestCase
 
         $this->assertTrue($list->count() == 1);
 
-        $row = $list->first();
+        $row = (new ApprovableBillablePatient($list->first()))->resolve();
 
         $this->assertEquals($row['report_id'], $summary->id);
         $this->assertEquals($row['practice'], $this->practice->display_name);

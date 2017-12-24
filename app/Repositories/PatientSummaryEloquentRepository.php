@@ -29,6 +29,10 @@ class PatientSummaryEloquentRepository
      */
     public function attachBillableProblems(User $patient, PatientMonthlySummary $summary)
     {
+        if (!$this->lacksProblems($summary)) {
+            return $summary;
+        }
+
         if ($this->lacksProblems($summary)) {
             $this->fillProblems($patient, $summary, $patient->ccdProblems->where('billable', true));
         }
@@ -50,6 +54,20 @@ class PatientSummaryEloquentRepository
         if ( ! $this->validateSummaryProblems($summary, $patient)) {
             $patient->load(['billableProblems', 'ccdProblems']);
             $this->attachBillableProblems($patient, $summary);
+        }
+
+        $lacksProblems = $this->lacksProblems($summary);
+
+        $summary->approved = ! ($lacksProblems || $summary->rejected == 1);
+
+        $summary->save();
+
+        if ($summary->problem_1 && $summary->problem_2) {
+            Problem::whereNotIn('id',
+                array_filter([$summary->problem_1, $summary->problem_2]))
+                   ->update([
+                       'billable' => false,
+                   ]);
         }
 
         return $summary;
