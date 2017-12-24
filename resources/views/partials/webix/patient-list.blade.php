@@ -230,7 +230,7 @@
     @push('scripts')
         <script type="text/javascript">
             window.onload = function () { 
-                window.obs_alerts_dtable = filterText('');
+                filterText('');
             }
             // obs_alerts_dtable.hideColumn("ccm_status");
         </script>
