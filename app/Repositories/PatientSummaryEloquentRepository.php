@@ -56,28 +56,17 @@ class PatientSummaryEloquentRepository
     }
 
     /**
-     * Check whether the patient is lacking any billable problems
-     *
-     * @param PatientMonthlySummary $summary
-     *
-     * @return bool
-     */
-    public function lacksProblems(PatientMonthlySummary $summary)
-    {
-        return ! ($summary->problem_1 && $summary->problem_2);
-    }
-
-    /**
      * Attempt to fill report from the patient's billable problems
      *
      * @param User $patient
      * @param PatientMonthlySummary $summary
-     *
      * @param Collection|Collection $billableProblems
+     * @param int $tryCount
+     * @param int $maxTries
      *
      * @return bool
      */
-    private function fillProblems(User $patient, PatientMonthlySummary $summary, $billableProblems)
+    private function fillProblems(User $patient, PatientMonthlySummary $summary, $billableProblems, $tryCount = 0, $maxTries = 2)
     {
         if ($billableProblems->isEmpty()) {
             return;
@@ -116,8 +105,8 @@ class PatientSummaryEloquentRepository
 
         if ($summary->problem_1 == $summary->problem_2) {
             $summary->problem_2 = null;
-            if ($patient->cpmProblems->where('id', '>', 1)->count() >= 2) {
-                $this->fillProblems($patient, $summary, $billableProblems);
+            if ($patient->cpmProblems->where('id', '>', 1)->count() >= 2 && $tryCount < $maxTries) {
+                $this->fillProblems($patient, $summary, $billableProblems, ++$tryCount);
             }
         }
 
@@ -125,6 +114,18 @@ class PatientSummaryEloquentRepository
                ->update([
                    'billable' => true,
                ]);
+    }
+
+    /**
+     * Check whether the patient is lacking any billable problems
+     *
+     * @param PatientMonthlySummary $summary
+     *
+     * @return bool
+     */
+    public function lacksProblems(PatientMonthlySummary $summary)
+    {
+        return ! ($summary->problem_1 && $summary->problem_2);
     }
 
     /**
