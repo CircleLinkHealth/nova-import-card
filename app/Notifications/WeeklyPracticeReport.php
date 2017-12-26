@@ -6,13 +6,9 @@ use App\Mail\WeeklyPracticeReport as WeeklyPracticeReportMailable;
 use App\User;
 use Illuminate\Bus\Queueable;
 use Illuminate\Notifications\Notification;
-use Illuminate\Contracts\Queue\ShouldQueue;
-use Illuminate\Notifications\Messages\MailMessage;
 
 class WeeklyPracticeReport extends Notification
 {
-
-
     use Queueable;
 
     protected $data;
@@ -26,28 +22,36 @@ class WeeklyPracticeReport extends Notification
      */
     public function __construct(array $data, $subject)
     {
-        $this->data = $data;
+        $this->data    = $data;
         $this->subject = $subject;
     }
 
     /**
      * Get the notification's delivery channels.
      *
-     * @param  mixed  $notifiable
+     * @param  mixed $notifiable
+     *
      * @return array
      */
     public function via($notifiable)
     {
+        if (isset($notifiable->id)) {
+            return [
+                'mail',
+                'database',
+            ];
+        }
+
         return [
-        'mail',
-        'database',
-    ];
+            'mail',
+        ];
     }
 
     /**
      * Get the mail representation of the notification.
      *
-     * @param  mixed  $notifiable
+     * @param  mixed $notifiable
+     *
      * @return WeeklyPracticeReportMailable
      */
     public function toMail(User $notifiable)
@@ -58,7 +62,8 @@ class WeeklyPracticeReport extends Notification
     /**
      * Get the array representation of the notification.
      *
-     * @param  mixed  $notifiable
+     * @param  mixed $notifiable
+     *
      * @return array
      */
     public function toArray($notifiable)
