@@ -11,6 +11,7 @@ namespace App\Services\CCD;
 use App\User;
 use App\Repositories\UserRepositoryEloquent;
 use App\Repositories\CcdProblemRepository;
+use App\Repositories\Criteria\CriteriaFactory;
 
 class CcdProblemService
 {
@@ -27,13 +28,28 @@ class CcdProblemService
     }
         
     function setupProblem($p) {
-        return [
+        $problem = [
             'id'    => $p->id,
             'name'  => $p->name,
             'cpm_id'  => $p->cpm_problem_id,
-            'patients' => Problem::where('name', $p->name)->get([ 'patient_id' ])->map(function ($item) {
-                return $item->patient_id;
-            })
+            'patients' => array_values(array_unique(array_map(function ($problem) {
+                                return $problem->patient_id;
+                            }, $this->repo()->findWhere(['name' => $p->name ])->all(['patient_id']))))
         ];
+        return $problem;
+    }
+
+    function problems() {
+        $groupByNameCriteria = new CriteriaFactory(function ($model) {
+            return $model->groupBy('name')->orderBy('id');
+        });
+        $this->repo()->pushCriteria($groupByNameCriteria);
+        $problems = $this->repo()->paginate(30);
+        $this->repo()->popCriteria($groupByNameCriteria);
+        
+        $problems->getCollection()->transform(function ($value) {
+            return $this->setupProblem($value);
+        });
+        return $problems;
     }
 }

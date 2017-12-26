@@ -45,8 +45,7 @@ class ProblemController extends Controller
     }
 
     public function ccdProblems() {
-        $ccdProblems = $this->getCcdProblems();
-        return response()->json($ccdProblems);
+        return response()->json($this->ccdProblemService->problems());
     }
     
     public function cpmProblem($cpmId) {
@@ -69,14 +68,6 @@ class ProblemController extends Controller
         $problem = CpmProblem::where('id', $id)->first();
         if ($problem) return $this->setupCpmProblem($problem);
         else return null;
-    }
-
-    function getCcdProblems() {
-        $problems = Problem::groupBy('name')->orderBy('id')->paginate(30);
-        $problems->getCollection()->transform(function ($value) {
-            return $this->setupCcdProblem($value);
-        });
-        return $problems;
     }
     
     function getCcdProblem($id) {
