@@ -64,7 +64,7 @@ class EmailWeeklyProviderReport implements ShouldQueue
             $subjectProvider = 'Dr. ' . $provider->last_name . '\'s CCM Weekly Summary';
 
             if ($this->tester) {
-                $this->tester->notify(new WeeklyPrLoviderReport($providerData));
+                $this->tester->notify(new WeeklyProviderReport($providerData));
             } else {
                 $provider->notify(new WeeklyProviderReport($providerData));
             }

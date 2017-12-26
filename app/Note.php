@@ -175,7 +175,7 @@ class Note extends \App\BaseModel implements PdfReport
     public function scopeForwardedTo($builder, $notifiableType, $notifiableId, Carbon $from = null, Carbon $to = null)
     {
         $args = [
-            ['notifiable_type', '=', get_class($notifiableType)],
+            ['notifiable_type', '=', $notifiableType],
             ['notifiable_id', '=', $notifiableId],
         ];
 
