@@ -12,39 +12,19 @@ namespace App\Repositories;
 use App\User;
 use App\Patient;
 use App\Models\CPM\CpmProblem;
-use Prettus\Repository\Contracts\RepositoryInterface;
-use Prettus\Repository\Criteria\RequestCriteria;
-use Prettus\Repository\Eloquent\BaseRepository;
 
-class CpmProblemRepository extends BaseRepository implements RepositoryInterface
+class CpmProblemRepository
 {
     public function model()
     {
-        return CpmProblem::class;
-    }
-
-    /**
-     * Boot up the repository, pushing criteria
-     */
-    public function boot()
-    {
-        $this->pushCriteria(app(RequestCriteria::class));
-    }
-
-    public function validator()
-    {
-        return null;
+        return app(CpmProblem::class);
     }
 
     public function count() {
-        $this->applyCriteria();
-        $this->applyScope();
+        return $this->model()->count();
+    }
 
-        $result = $this->model->count();
-
-        $this->resetModel();
-        $this->resetScope();
-
-        return $result;
+    public function noDiabetesFilter() {
+        return $this->model()->where('name', '!=', 'Diabetes');
     }
 }

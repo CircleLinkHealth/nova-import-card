@@ -30,12 +30,7 @@ class CpmProblemService implements CpmModel
     }
 
     public function problems() {
-        $noDiabetesCriteria = new CriteriaFactory(function ($model) {
-            return $model->where('name', '!=', 'Diabetes');
-        });
-        $this->problemRepo->pushCriteria($noDiabetesCriteria);
-        $problems = $this->problemRepo->paginate(30);
-        $this->problemRepo->resetModel();
+        $problems = $this->problemRepo->noDiabetesFilter()->paginate(30);
         $problems->getCollection()->transform(function ($value) {
             return $this->setupProblem($value);
         });
@@ -52,7 +47,7 @@ class CpmProblemService implements CpmModel
     }
 
     public function problem($id) {
-        $problem = $this->repo()->find($id);
+        $problem = $this->repo()->model()->find($id);
         if ($problem) return $this->setupProblem($problem);
         else return null;
     }
