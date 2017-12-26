@@ -49,7 +49,7 @@ class ProblemController extends Controller
     }
     
     public function cpmProblem($cpmId) {
-        $cpmProblem = $this->getCpmProblem($cpmId);
+        $cpmProblem = $this->cpmProblemService->problem($cpmId);
         if ($cpmProblem) return response()->json($cpmProblem);
         else return response()->json([
             'message' => 'not found'
@@ -57,22 +57,10 @@ class ProblemController extends Controller
     }
     
     public function ccdProblem($ccdId) {
-        $ccdProblem = $this->getCcdProblem($ccdId);
+        $ccdProblem = $this->ccdProblemService->problem($ccdId);
         if ($ccdProblem) return response()->json($ccdProblem);
         else return response()->json([
             'message' => 'not found'
         ], 404);
-    }
-
-    function getCpmProblem($id) {
-        $problem = CpmProblem::where('id', $id)->first();
-        if ($problem) return $this->setupCpmProblem($problem);
-        else return null;
-    }
-    
-    function getCcdProblem($id) {
-        $problem = Problem::where('id', $id)->first();
-        if ($problem) return $this->setupCcdProblem($problem);
-        else return null;
     }
 }

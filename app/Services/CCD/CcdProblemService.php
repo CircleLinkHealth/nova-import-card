@@ -39,7 +39,7 @@ class CcdProblemService
         return $problem;
     }
 
-    function problems() {
+    public function problems() {
         $groupByNameCriteria = new CriteriaFactory(function ($model) {
             return $model->groupBy('name')->orderBy('id');
         });
@@ -51,5 +51,11 @@ class CcdProblemService
             return $this->setupProblem($value);
         });
         return $problems;
+    }
+
+    public function problem($id) {
+        $problem = $this->repo()->find($id);
+        if ($problem) return $this->setupProblem($problem);
+        else return null;
     }
 }

@@ -51,6 +51,12 @@ class CpmProblemService implements CpmModel
         ];
     }
 
+    public function problem($id) {
+        $problem = $this->repo()->find($id);
+        if ($problem) return $this->setupProblem($problem);
+        else return null;
+    }
+
     public function syncWithUser(User $user, array $ids = [], $page = null, array $instructions)
     {
         $user->cpmProblems()->sync($ids);
