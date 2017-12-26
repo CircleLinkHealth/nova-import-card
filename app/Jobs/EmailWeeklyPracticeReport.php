@@ -5,6 +5,7 @@ namespace App\Jobs;
 use App\Notifications\WeeklyPracticeReport;
 use App\Practice;
 use App\Reports\Sales\Practice\SalesByPracticeReport;
+use App\User;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Queue\InteractsWithQueue;
@@ -66,11 +67,17 @@ class EmailWeeklyPracticeReport implements ShouldQueue
         $practiceData['end'] = $this->endRange;
         $practiceData['isEmail'] = true;
 
-        //handle leads
         foreach ($organizationSummaryRecipients as $recipient) {
+            $user = User::where('email', $recipient)->first();
 
-            $recipient->notify(new WeeklyPracticeReport($practiceData, $subjectPractice));
+            if (!$user) {
+                $user = (new User)->forceFill([
+                    'name' => $recipient,
+                    'email' => $recipient,
+                ]);
+            }
 
+            $user->notify(new WeeklyPracticeReport($practiceData, $subjectPractice));
         }
     }
 }
