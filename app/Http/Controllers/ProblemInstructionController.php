@@ -36,8 +36,8 @@ class ProblemInstructionController extends Controller
 
     /** returns a single cpm-instruction */
     public function instruction($instructionId) {
-        $instruction = CpmInstruction::where('id', $instructionId)->first();
-        if ($instruction) return response()->json($this->setupInstruction($instruction));
+        $instruction = $this->cpmInstructionService->instruction($instructionId);
+        if ($instruction) return response()->json($instruction);
         else return $this->notFound();
     }
 

@@ -33,6 +33,12 @@ class CpmInstructionService
         return $instructions;
     }
 
+    public function instruction($id) {
+        $instruction = $this->repo()->find($id);
+        if ($instruction) return $this->setupInstruction($instruction);
+        else return null;
+    }
+
     function setupInstruction($value) {
         $value->problems = $value->cpmProblems()->get(['cpm_problems.id'])->map(function ($p) {
             return $p->id;
