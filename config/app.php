@@ -287,7 +287,8 @@ return [
 
         'PatientService' => \App\Services\PatientService::class,
         'CpmProblemService' => \App\Services\CPM\CpmProblemService::class,
-        'CcdProblemService' => \App\Services\CCD\CcdProblemService::class
+        'CcdProblemService' => \App\Services\CCD\CcdProblemService::class,
+        'CpmInstructionService' => \App\Services\CPM\CpmInstructionService::class
     ],
 
 ];

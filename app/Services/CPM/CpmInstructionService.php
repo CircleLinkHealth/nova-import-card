@@ -11,6 +11,7 @@ namespace App\Services\CPM;
 use App\User;
 use App\Models\CPM\CpmInstruction;
 use App\Repositories\CpmInstructionRepository;
+use App\Repositories\UserRepositoryEloquent;
 
 class CpmInstructionService
 {
@@ -24,6 +25,19 @@ class CpmInstructionService
 
     public function repo() {
         return $this->instructionsRepo;
+    }
+
+    public function instructions() {
+        $instructions = $this->repo()->paginate(15);
+        $instructions->getCollection()->transform([$this, 'setupInstruction']);
+        return $instructions;
+    }
+
+    function setupInstruction($value) {
+        $value->problems = $value->cpmProblems()->get(['cpm_problems.id'])->map(function ($p) {
+            return $p->id;
+        });
+        return $value;
     }
 
     public function syncWithUser(User $user, $relationship, $entityForeign, $entityId, $instructionInput)

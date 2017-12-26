@@ -13,24 +13,25 @@ use App\Models\CPM\CpmProblemUser;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use App\Services\CPM\CpmInstructionService;
 
 
 class ProblemInstructionController extends Controller
 {
+    private $cpmInstructionService;
+
     /**
      * ProblemInstructionController constructor.
      *
      */
-    public function __construct()
+    public function __construct(CpmInstructionService $cpmInstructionService)
     {
-
+        $this->cpmInstructionService = $cpmInstructionService;
     }
 
     /** returns paginated list of cpm-instructions */
     public function index() {
-        $instructions = CpmInstruction::paginate(15);
-        $instructions->getCollection()->transform([$this, 'setupInstruction']);
-        return response()->json($instructions);
+        return response()->json($this->cpmInstructionService->instructions());
     }
 
     /** returns a single cpm-instruction */

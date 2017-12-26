@@ -127,6 +127,10 @@ class AppServiceProvider extends ServiceProvider
             return new PatientService(new \App\Repositories\PatientRepository(app()), new \App\Repositories\UserRepositoryEloquent(app()));
         });
         
+        $this->app->bind(CpmInstructionService::class, function () {
+            return new CpmInstructionService(new \App\Repositories\CpmInstructionRepository(app()), new \App\Repositories\UserRepositoryEloquent(app()));
+        });
+        
         $this->app->bind(CpmProblemService::class, function () {
             return new CpmProblemService(new \App\Repositories\CpmProblemRepository(app()), new \App\Repositories\UserRepositoryEloquent(app()));
         });

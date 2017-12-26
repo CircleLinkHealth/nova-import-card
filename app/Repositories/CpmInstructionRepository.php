@@ -9,8 +9,6 @@
 namespace App\Repositories;
 
 
-use App\User;
-use App\Patient;
 use App\Models\CPM\CpmInstruction;
 use Prettus\Repository\Contracts\RepositoryInterface;
 use Prettus\Repository\Criteria\RequestCriteria;
