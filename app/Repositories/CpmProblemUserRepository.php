@@ -21,4 +21,13 @@ class CpmProblemUserRepository
     public function where($conditions) {
         return CpmProblemUser::where($conditions);
     }
+
+    public function create($patientId, $cpmProblemId, $instructionId) {
+        $cpmProblemUser= new CpmProblemUser();
+        $cpmProblemUser->patient_id = $patientId;
+        $cpmProblemUser->cpm_problem_id = $cpmProblemId;
+        $cpmProblemUser->cpm_instruction_id = $instructionId;
+        $cpmProblemUser->save();
+        return $cpmProblemUser;
+    }
 }

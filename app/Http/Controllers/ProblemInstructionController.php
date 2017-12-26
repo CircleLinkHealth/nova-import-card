@@ -97,22 +97,7 @@ class ProblemInstructionController extends Controller
             $instruction = $this->cpmInstructionService->repo()->find($instructionId);
     
             if ($patient && $problem && $instruction) {
-                $cpmProblemUser = $this->cpmProblemUserService->repo()->where([
-                    'patient_id' => $patientId,
-                    'cpm_problem_id' => $cpmProblemId,
-                    'cpm_instruction_id' => $instructionId
-                ])->first();
-                if (!$cpmProblemUser) {
-                    $cpmProblemUser= new CpmProblemUser();
-                    $cpmProblemUser->patient_id = $patientId;
-                    $cpmProblemUser->cpm_problem_id = $cpmProblemId;
-                    $cpmProblemUser->cpm_instruction_id = $instructionId;
-                    $cpmProblemUser->save();
-                    return response()->json($cpmProblemUser);
-                }
-                else {
-                    return $this->conflict('a similar instruction->problem relationship already exists');
-                }
+                return response()->json($this->cpmProblemUserService->addInstructionToProblem($patientId, $cpmProblemId, $instructionId));
             }
             else {
                 if (!$patient) return $this->notFound('patient not found');
@@ -130,29 +115,25 @@ class ProblemInstructionController extends Controller
         $cpmProblemId = $request->route()->cpmId;
         $instructionId = $request->route()->instructionId;
 
-        $patient = User::where('id', $patientId)->first();
-        $problem = CpmProblem::where('id', $cpmProblemId)->first();
-        $instruction = CpmInstruction::where('id', $instructionId)->first();
-
-        if ($patient && $problem && $instruction) {
-            $cpmInstructions = CpmProblemUser::where('patient_id', $patientId)
-                                        ->where('cpm_problem_id', $cpmProblemId)
-                                        ->where('cpm_instruction_id', $instructionId)->delete();
-            return response()->json([
-                'message' => 'success'
-            ]);
+        try {
+            $patient = $this->userService->repo()->find($patientId);
+            $problem = $this->cpmProblemService->repo()->find($cpmProblemId);
+            $instruction = $this->cpmInstructionService->repo()->find($instructionId);
+    
+            if ($patient && $problem && $instruction) {
+                $this->cpmProblemUserService->removeInstructionFromProblem($patientId, $cpmProblemId, $instructionId);
+                return response()->json([
+                    'message' => 'success'
+                ]);
+            }
+            else {
+                if (!$patient) return $this->notFound('patient not found');
+                else if (!$problem) return $this->notFound('cpm problem not found');
+                else return $this->notFound('instruction not found');
+            }
         }
-        else {
-            if (!$patient) return $this->notFound('patient not found');
-            else if (!$problem) return $this->notFound('cpm problem not found');
-            else return $this->notFound('instruction not found');
+        catch (Exception $ex) {
+            return $this->error($x);
         }
-    }
-
-    function setupInstruction($value) {
-        $value->problems = $value->cpmProblems()->get(['cpm_problems.id'])->map(function ($p) {
-            return $p->id;
-        });
-        return $value;
     }
 }
