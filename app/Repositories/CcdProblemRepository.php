@@ -15,6 +15,7 @@ use App\Models\CCD\Problem;
 use Prettus\Repository\Contracts\RepositoryInterface;
 use Prettus\Repository\Criteria\RequestCriteria;
 use Prettus\Repository\Eloquent\BaseRepository;
+use Illuminate\Support\Facades\DB;
 
 class CcdProblemRepository extends BaseRepository implements RepositoryInterface
 {

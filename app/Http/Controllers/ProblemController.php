@@ -8,6 +8,7 @@ use App\Http\Controllers\Controller;
 use App\Models\CCD\Problem;
 use App\Models\CPM\CpmProblem;
 use App\Services\CPM\CpmProblemService;
+use App\Services\CCD\CcdProblemService;
 use App\Services\PatientService;
 use App\Models\ProblemCode;
 use Carbon\Carbon;
@@ -19,21 +20,23 @@ class ProblemController extends Controller
 {
     private $patientService;
     private $cpmProblemService;
+    private $ccdProblemService;
 
     /**
      * ProblemController constructor.
      *
      */
-    public function __construct(CpmProblemService $cpmProblemService, PatientService $patientService)
+    public function __construct(CpmProblemService $cpmProblemService, CcdProblemService $ccdProblemService, PatientService $patientService)
     {
         $this->cpmProblemService = $cpmProblemService;
+        $this->ccdProblemService = $ccdProblemService;
         $this->patientService = $patientService;
     }
 
     public function index() {
         return response()->json([
             'cpm_count'   => $this->cpmProblemService->repo()->count(),
-            'ccd_count'   => Problem::select('name', DB::raw('count(*) as total'))->groupBy('name')->pluck('total')->count()
+            'ccd_count'   => $this->ccdProblemService->repo()->count() //Problem::select('name', DB::raw('count(*) as total'))->groupBy('name')->pluck('total')->count()
         ]);
     }
 

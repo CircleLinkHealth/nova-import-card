@@ -23,6 +23,7 @@ use App\Repositories\UserRepositoryEloquent;
 use App\Services\NoteService;
 use App\Services\PatientService;
 use App\Services\CPM\CpmProblemService;
+use App\Services\CCD\CcdProblemService;
 use Illuminate\Notifications\Channels\DatabaseChannel;
 use Illuminate\Notifications\DatabaseNotification;
 use Illuminate\Notifications\HasDatabaseNotifications;
@@ -128,6 +129,10 @@ class AppServiceProvider extends ServiceProvider
         
         $this->app->bind(CpmProblemService::class, function () {
             return new CpmProblemService(new \App\Repositories\CpmProblemRepository(app()), new \App\Repositories\UserRepositoryEloquent(app()));
+        });
+        
+        $this->app->bind(\App\Services\CCD\CcdProblemService::class, function () {
+            return new \App\Services\CCD\CcdProblemService(new \App\Repositories\CcdProblemRepository(app()), new \App\Repositories\UserRepositoryEloquent(app()));
         });
 
         $this->app->bind(WebixFormatter::class, function(){

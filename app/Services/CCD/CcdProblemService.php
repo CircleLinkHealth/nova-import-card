@@ -6,7 +6,7 @@
  * Time: 2:19 PM
  */
 
-namespace App\Services\CPM;
+namespace App\Services\CCD;
 
 use App\User;
 use App\Repositories\UserRepositoryEloquent;
