@@ -183,15 +183,12 @@ class WebixFormatter implements ReportFormatter
     {
 
         $careplanReport = [];
+        $cpmProblemService = (new \App\Services\CPM\CpmProblemService(new \App\Repositories\CpmProblemRepository(app()), new \App\Repositories\UserRepositoryEloquent(app())));
 
         foreach ($users as $user) {
-//            if (!is_object($user)) {
-//                $user = User::find($user);
-//            }
-
             $careplanReport[$user->id]['symptoms']    = $user->cpmSymptoms()->get()->pluck('name')->all();
             $careplanReport[$user->id]['problem']     = $user->cpmProblems()->get()->sortBy('name')->pluck('name')->all();
-            $careplanReport[$user->id]['problems']    = (new \App\Services\CPM\CpmProblemService())->getProblemsWithInstructionsForUser($user);
+            $careplanReport[$user->id]['problems']    = $cpmProblemService->getProblemsWithInstructionsForUser($user);
             $careplanReport[$user->id]['lifestyle']   = $user->cpmLifestyles()->get()->pluck('name')->all();
             $careplanReport[$user->id]['biometrics']  = $user->cpmBiometrics()->get()->pluck('name')->all();
             $careplanReport[$user->id]['medications'] = $user->cpmMedicationGroups()->get()->pluck('name')->all();

@@ -46,11 +46,9 @@ class ProblemInstructionController extends Controller
         $name = $request->input('name');
         if ($name && $name != '') {
             try {
-                $instruction = new CpmInstruction();
-                $instruction->name = $name;
-                $instruction->is_default = 0;
-                $instruction->save();
-                return response()->json($instruction);
+                $instruction = $this->cpmInstructionService->create($name);
+                if ($instruction) return response()->json($instruction);
+                else return $this->error('could not create instruction');
             }
             catch (Exception $ex) {
                 return $this->error('error when creating new instruction', $ex);

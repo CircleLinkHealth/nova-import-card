@@ -39,6 +39,16 @@ class CpmInstructionService
         else return null;
     }
 
+    public function create($name) {
+        if ($name) {
+            $instruction = new CpmInstruction();
+            $instruction->name = $name;
+            $instruction->is_default = 0;
+            $instruction->save();
+            return $instruction;
+        }
+    }
+
     function setupInstruction($value) {
         $value->problems = $value->cpmProblems()->get(['cpm_problems.id'])->map(function ($p) {
             return $p->id;
