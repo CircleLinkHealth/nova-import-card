@@ -63,7 +63,7 @@
                                         <input type="button" name="skip" class="btn btn-warning font-24" value="Skip">
                                     </div>
                                     <div>
-                                        <questionnaire-app :questions="questions" class-name="questionnaire"></questionnaire-app>
+                                        <questionnaire-app ref="questionnaireApp" :questions="questions" class-name="questionnaire"></questionnaire-app>
                                     </div>
                                     <div id="questionnaire-app"></div>
                                     <button class="btn btn-success font-24">Submit</button>
