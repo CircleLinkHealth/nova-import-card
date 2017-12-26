@@ -21,6 +21,7 @@ use App\Repositories\LocationRepositoryEloquent;
 use App\Repositories\PracticeRepositoryEloquent;
 use App\Repositories\UserRepositoryEloquent;
 use App\Services\NoteService;
+use App\Services\UserService;
 use App\Services\PatientService;
 use App\Services\CPM\CpmProblemService;
 use App\Services\CCD\CcdProblemService;
@@ -122,6 +123,10 @@ class AppServiceProvider extends ServiceProvider
             ReportFormatter::class,
             WebixFormatter::class
         );
+        
+        $this->app->bind(UserService::class, function () {
+            return new UserService(new \App\Repositories\UserRepositoryEloquent(app()));
+        });
 
         $this->app->bind(PatientService::class, function () {
             return new PatientService(new \App\Repositories\PatientRepository(app()), new \App\Repositories\UserRepositoryEloquent(app()));
@@ -133,6 +138,10 @@ class AppServiceProvider extends ServiceProvider
         
         $this->app->bind(CpmProblemService::class, function () {
             return new CpmProblemService(new \App\Repositories\CpmProblemRepository(app()), new \App\Repositories\UserRepositoryEloquent(app()));
+        });
+        
+        $this->app->bind(CpmProblemUserService::class, function () {
+            return new CpmProblemUserService(new \App\Repositories\CpmProblemUserRepository(), new \App\Repositories\UserRepositoryEloquent(app()));
         });
         
         $this->app->bind(\App\Services\CCD\CcdProblemService::class, function () {

@@ -18,6 +18,10 @@ class UserService
         $this->userRepo = $userRepo;
     }
 
+    public function repo() {
+        return $this->userRepo;
+    }
+
     /**
      * Get the User's first CarePlan, or relate the User to CLH's default CarePlan.
      *

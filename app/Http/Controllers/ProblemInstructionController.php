@@ -13,20 +13,30 @@ use App\Models\CPM\CpmProblemUser;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use App\Services\UserService;
+use App\Services\CPM\CpmProblemService;
+use App\Services\CPM\CpmProblemUserService;
 use App\Services\CPM\CpmInstructionService;
 
 
 class ProblemInstructionController extends Controller
 {
+    private $cpmProblemService;
+    private $cpmProblemUserService;
     private $cpmInstructionService;
+    private $userService;
 
     /**
      * ProblemInstructionController constructor.
      *
      */
-    public function __construct(CpmInstructionService $cpmInstructionService)
+    public function __construct(CpmInstructionService $cpmInstructionService, CpmProblemService $cpmProblemService, 
+                    CpmProblemUserService $cpmProblemUserService, UserService $userService)
     {
+        $this->userService = $userService;
         $this->cpmInstructionService = $cpmInstructionService;
+        $this->cpmProblemService = $cpmProblemService;
+        $this->cpmProblemUserService = $cpmProblemUserService;
     }
 
     /** returns paginated list of cpm-instructions */
@@ -81,30 +91,37 @@ class ProblemInstructionController extends Controller
         $cpmProblemId = $request->route()->cpmId;
         $instructionId = $request->input('instructionId');
 
-        $patient = User::where('id', $patientId)->first();
-        $problem = CpmProblem::where('id', $cpmProblemId)->first();
-        $instruction = CpmInstruction::where('id', $instructionId)->first();
-
-        if ($patient && $problem && $instruction) {
-            $cpmInstruction = CpmProblemUser::where('patient_id', $patientId)
-                                        ->where('cpm_problem_id', $cpmProblemId)
-                                        ->where('cpm_instruction_id', $instructionId)->first();
-            if (!$cpmInstruction) {
-                $cpmProblemUser= new CpmProblemUser();
-                $cpmProblemUser->patient_id = $patientId;
-                $cpmProblemUser->cpm_problem_id = $cpmProblemId;
-                $cpmProblemUser->cpm_instruction_id = $instructionId;
-                $cpmProblemUser->save();
-                return response()->json($cpmProblemUser);
+        try {
+            $patient = $this->userService->repo()->find($patientId);
+            $problem = $this->cpmProblemService->repo()->find($cpmProblemId);
+            $instruction = $this->cpmInstructionService->repo()->find($instructionId);
+    
+            if ($patient && $problem && $instruction) {
+                $cpmProblemUser = $this->cpmProblemUserService->repo()->where([
+                    'patient_id' => $patientId,
+                    'cpm_problem_id' => $cpmProblemId,
+                    'cpm_instruction_id' => $instructionId
+                ])->first();
+                if (!$cpmProblemUser) {
+                    $cpmProblemUser= new CpmProblemUser();
+                    $cpmProblemUser->patient_id = $patientId;
+                    $cpmProblemUser->cpm_problem_id = $cpmProblemId;
+                    $cpmProblemUser->cpm_instruction_id = $instructionId;
+                    $cpmProblemUser->save();
+                    return response()->json($cpmProblemUser);
+                }
+                else {
+                    return $this->conflict('a similar instruction->problem relationship already exists');
+                }
             }
             else {
-                return $this->conflict('a similar instruction->problem relationship already exists');
+                if (!$patient) return $this->notFound('patient not found');
+                else if (!$problem) return $this->notFound('cpm problem not found');
+                else return $this->notFound('instruction not found');
             }
         }
-        else {
-            if (!$patient) return $this->notFound('patient not found');
-            else if (!$problem) return $this->notFound('cpm problem not found');
-            else return $this->notFound('instruction not found');
+        catch (Exception $ex) {
+            return $this->error($ex);
         }
     }
 
