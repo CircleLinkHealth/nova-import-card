@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Billing;
 use App\AppConfig;
 use App\Billing\Practices\PracticeInvoiceGenerator;
 use App\Http\Controllers\Controller;
+use App\Http\Resources\ApprovableBillablePatient;
 use App\Models\CCD\Problem;
 use App\Models\CPM\CpmProblem;
 use App\Models\ProblemCode;
@@ -65,7 +66,7 @@ class PracticeInvoiceController extends Controller
      *
      * @param Request $request
      *
-     * @return \Illuminate\Http\JsonResponse
+     * @return \Illuminate\Http\Resources\Json\AnonymousResourceCollection
      */
     public function data(Request $request)
     {
@@ -75,7 +76,7 @@ class PracticeInvoiceController extends Controller
 
         $data = $this->service->patientsToApprove($request['practice_id'], Carbon::parse($request['date']));
 
-        return response()->json($data);
+        return ApprovableBillablePatient::collection($data);
     }
 
     public function updateStatus(Request $request)

@@ -269,7 +269,7 @@
                     practice_id: this.selectedPractice,
                     date: this.selectedMonth
                 }).then(response => {
-                    this.tableData = response.data.map((patient, index) => {
+                    this.tableData = response.data.data.map((patient, index) => {
                         return {
                             id: index,
                             MRN: patient.mrn,
