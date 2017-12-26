@@ -75,7 +75,7 @@
 
                 <h2>Encounters</h2>
                 <pre><code id="encounters" class="javascript">
-                        {!! json_encode($ccd->encounters, JSON_PRETTY_PRINT) !!}
+                        {!! json_encode($ccd->encounters ?? [], JSON_PRETTY_PRINT) !!}
                     </code></pre>
 
 
