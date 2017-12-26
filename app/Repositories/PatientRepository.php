@@ -15,24 +15,11 @@ use Prettus\Repository\Contracts\RepositoryInterface;
 use Prettus\Repository\Criteria\RequestCriteria;
 use Prettus\Repository\Eloquent\BaseRepository;
 
-class PatientRepository extends BaseRepository implements RepositoryInterface
+class PatientRepository
 {
     public function model()
     {
-        return Patient::class;
-    }
-
-    /**
-     * Boot up the repository, pushing criteria
-     */
-    public function boot()
-    {
-        $this->pushCriteria(app(RequestCriteria::class));
-    }
-
-    public function validator()
-    {
-        return null;
+        return app(Patient::class);
     }
 
     public function storeCcdProblem(User $patient, array $args)

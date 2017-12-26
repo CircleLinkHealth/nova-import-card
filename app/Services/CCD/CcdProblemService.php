@@ -32,21 +32,15 @@ class CcdProblemService
             'id'    => $p->id,
             'name'  => $p->name,
             'cpm_id'  => $p->cpm_problem_id,
-            'patients' => array_values(array_unique(array_map(function ($problem) {
-                                return $problem->patient_id;
-                            }, $this->repo()->findWhere(['name' => $p->name ])->all(['patient_id']))))
+            'patients' => $this->repo()->patientIds($p->name)->map(function ($patient) {
+                return $patient->patient_id;
+            })
         ];
         return $problem;
     }
 
     public function problems() {
-        $groupByNameCriteria = new CriteriaFactory(function ($model) {
-            return $model->groupBy('name')->orderBy('id');
-        });
-        $this->repo()->pushCriteria($groupByNameCriteria);
-        $problems = $this->repo()->paginate(30);
-        $this->repo()->popCriteria($groupByNameCriteria);
-        
+        $problems = $this->repo()->problems();
         $problems->getCollection()->transform(function ($value) {
             return $this->setupProblem($value);
         });
@@ -54,7 +48,7 @@ class CcdProblemService
     }
 
     public function problem($id) {
-        $problem = $this->repo()->find($id);
+        $problem = $this->repo()->model()->find($id);
         if ($problem) return $this->setupProblem($problem);
         else return null;
     }
