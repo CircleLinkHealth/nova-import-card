@@ -65,11 +65,9 @@ class ProblemInstructionController extends Controller
         $name = $request->input('name');
         $is_default = $request->input('is_default');
         if ($id && $id != '') {
-            $instructions = CpmInstruction::where('id', $id);
-            if ($name && $name != '') $instructions->update(['name' => $name]);
-            if ($is_default) $instructions->update(['is_default' => $is_default]);
-
-            $instruction = $instructions->first();
+            if ($name && $name != '') $this->cpmInstructionService->repo()->update(['name' => $name], $id);
+            if ($is_default) $this->cpmInstructionService->repo()->update(['is_default' => $is_default], $id);
+            $instruction = $this->cpmInstructionService->repo()->find($id);
             if ($instruction) return response()->json($instruction);
             else return $this->notFound();
         }
