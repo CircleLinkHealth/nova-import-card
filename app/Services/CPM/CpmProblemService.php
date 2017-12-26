@@ -13,6 +13,7 @@ use App\Contracts\Services\CpmModel;
 use App\User;
 use App\Repositories\UserRepositoryEloquent;
 use App\Repositories\CpmProblemRepository;
+use App\Repositories\Criteria\CriteriaFactory;
 
 class CpmProblemService implements CpmModel
 {
@@ -26,6 +27,28 @@ class CpmProblemService implements CpmModel
 
     public function repo() {
         return $this->problemRepo;
+    }
+
+    public function problems() {
+        $noDiabetesCriteria = new CriteriaFactory(function ($model) {
+            return $model->where('name', '!=', 'Diabetes');
+        });
+        $this->problemRepo->pushCriteria($noDiabetesCriteria);
+        $problems = $this->problemRepo->paginate(30);
+        $this->problemRepo->resetModel();
+        $problems->getCollection()->transform(function ($value) {
+            return $this->setupProblem($value);
+        });
+        return $problems;
+    }
+
+    function setupProblem($p) {
+        return [
+            'id'   => $p->id,
+            'name' => $p->name,
+            'code' => $p->default_icd_10_code,
+            'instructions' => $p->instructions()->get()
+        ];
     }
 
     public function syncWithUser(User $user, array $ids = [], $page = null, array $instructions)

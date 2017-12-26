@@ -25,4 +25,15 @@ class CcdProblemService
     public function repo() {
         return $this->problemRepo;
     }
+        
+    function setupProblem($p) {
+        return [
+            'id'    => $p->id,
+            'name'  => $p->name,
+            'cpm_id'  => $p->cpm_problem_id,
+            'patients' => Problem::where('name', $p->name)->get([ 'patient_id' ])->map(function ($item) {
+                return $item->patient_id;
+            })
+        ];
+    }
 }

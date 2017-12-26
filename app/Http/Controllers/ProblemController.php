@@ -36,13 +36,12 @@ class ProblemController extends Controller
     public function index() {
         return response()->json([
             'cpm_count'   => $this->cpmProblemService->repo()->count(),
-            'ccd_count'   => $this->ccdProblemService->repo()->count() //Problem::select('name', DB::raw('count(*) as total'))->groupBy('name')->pluck('total')->count()
+            'ccd_count'   => $this->ccdProblemService->repo()->count()
         ]);
     }
 
     public function cpmProblems() {
-        $cpmProblems = $this->getCpmProblems();
-        return response()->json($cpmProblems);
+        return response()->json($this->cpmProblemService->problems());
     }
 
     public function ccdProblems() {
@@ -64,38 +63,6 @@ class ProblemController extends Controller
         else return response()->json([
             'message' => 'not found'
         ], 404);
-    }
-    
-    /**
-    * private functions
-    */
-    function setupCpmProblem($p) {
-        return [
-            'id'   => $p->id,
-            'name' => $p->name,
-            'code' => $p->default_icd_10_code,
-            'instructions' => $p->instructions()->get()
-        ];
-    }
-    
-    function setupCcdProblem($p) {
-        return [
-            'id'    => $p->id,
-            'name'  => $p->name,
-            'cpm_id'  => $p->cpm_problem_id,
-            'patients' => Problem::where('name', $p->name)->get([ 'patient_id' ])->map(function ($item) {
-                return $item->patient_id;
-            })
-        ];
-    }
-
-    function getCpmProblems() {
-        $problems = CpmProblem::where('name', '!=', 'Diabetes')
-                    ->paginate(30);
-        $problems->getCollection()->transform(function ($value) {
-            return $this->setupCpmProblem($value);
-        });
-        return $problems;
     }
 
     function getCpmProblem($id) {
