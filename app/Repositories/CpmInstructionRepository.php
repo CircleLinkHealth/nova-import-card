@@ -10,24 +10,11 @@ namespace App\Repositories;
 
 
 use App\Models\CPM\CpmInstruction;
-use Prettus\Repository\Contracts\RepositoryInterface;
-use Prettus\Repository\Criteria\RequestCriteria;
-use Prettus\Repository\Eloquent\BaseRepository;
 
-class CpmInstructionRepository extends BaseRepository implements RepositoryInterface
+class CpmInstructionRepository
 {
     public function model()
     {
-        return CpmInstruction::class;
-    }
-
-    public function boot()
-    {
-        $this->pushCriteria(app(RequestCriteria::class));
-    }
-
-    public function validator()
-    {
-        return null;
+        return app(CpmInstruction::class);
     }
 }

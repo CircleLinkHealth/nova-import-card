@@ -28,13 +28,13 @@ class CpmInstructionService
     }
 
     public function instructions() {
-        $instructions = $this->repo()->paginate(15);
+        $instructions = $this->repo()->model()->paginate(15);
         $instructions->getCollection()->transform([$this, 'setupInstruction']);
         return $instructions;
     }
 
     public function instruction($id) {
-        $instruction = $this->repo()->find($id);
+        $instruction = $this->repo()->model()->find($id);
         if ($instruction) return $this->setupInstruction($instruction);
         else return null;
     }
