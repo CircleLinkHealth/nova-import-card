@@ -8,11 +8,24 @@
 
 namespace App\Services\CPM;
 
-use App\Models\CPM\CpmInstruction;
 use App\User;
+use App\Models\CPM\CpmInstruction;
+use App\Repositories\CpmInstructionRepository;
 
 class CpmInstructionService
 {
+    private $instructionsRepo;
+    private $userRepo;
+    
+    public function __construct(CpmInstructionRepository $instructionsRepo, UserRepositoryEloquent $userRepo) {
+        $this->instructionsRepo = $instructionsRepo;
+        $this->userRepo = $userRepo;
+    }
+
+    public function repo() {
+        return $this->instructionsRepo;
+    }
+
     public function syncWithUser(User $user, $relationship, $entityForeign, $entityId, $instructionInput)
     {
         if (!method_exists($user, $relationship)) {
