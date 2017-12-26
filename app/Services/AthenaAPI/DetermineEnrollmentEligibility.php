@@ -3,6 +3,7 @@
 namespace App\Services\AthenaAPI;
 
 use App\TargetPatient;
+use App\ValueObjects\Athena\ProblemsAndInsurances;
 use Carbon\Carbon;
 
 class DetermineEnrollmentEligibility
@@ -58,14 +59,21 @@ class DetermineEnrollmentEligibility
         }
     }
 
+    /**
+     * @param $patientId
+     * @param $practiceId
+     * @param $departmentId
+     *
+     * @return ProblemsAndInsurances
+     */
     public function getPatientProblemsAndInsurances($patientId, $practiceId, $departmentId)
     {
         $problemsResponse   = $this->api->getPatientProblems($patientId, $practiceId, $departmentId);
         $insurancesResponse = $this->api->getPatientInsurances($patientId, $practiceId, $departmentId);
 
-        $problemsAndInsurance = new \stdClass();
-        $problemsAndInsurance->problems = $problemsResponse['problems'];
-        $problemsAndInsurance->insurances = $insurancesResponse['insurances'];
+        $problemsAndInsurance = new ProblemsAndInsurances();
+        $problemsAndInsurance->setProblems($problemsResponse['problems']);
+        $problemsAndInsurance->setInsurances($insurancesResponse['insurances']);
 
         return $problemsAndInsurance;
     }
