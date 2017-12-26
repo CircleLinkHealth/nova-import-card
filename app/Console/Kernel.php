@@ -2,6 +2,7 @@
 
 use App\Algorithms\Calls\ReschedulerHandler;
 use App\Console\Commands\AttachBillableProblemsToLastMonthSummary;
+use App\Console\Commands\EmailWeeklyReports;
 use App\Services\Calls\SchedulerService;
 use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Foundation\Console\Kernel as ConsoleKernel;
@@ -22,7 +23,7 @@ class Kernel extends ConsoleKernel
 
             $handled = (new ReschedulerHandler())->handle();
 
-            if (!empty($handled)) {
+            if ( ! empty($handled)) {
                 $message = "The CPMbot just rescheduled some calls.\n";
 
                 foreach ($handled as $call) {
@@ -52,30 +53,29 @@ class Kernel extends ConsoleKernel
             (new SchedulerService())->removeScheduledCallsForWithdrawnAndPausedPatients();
         })->everyMinute();
 
-        //Comments out until we find all the bugs
-        $schedule->command('email:weeklyReports --practice --provider')
-            ->weeklyOn(1, '10:00');
+        $schedule->command(EmailWeeklyReports::class, ['--practice', '--provider'])
+                 ->weeklyOn(1, '10:00');
 
         $schedule->command('emailapprovalreminder:providers')
-            ->weekdays()
-            ->dailyAt('08:00');
+                 ->weekdays()
+                 ->dailyAt('08:00');
 
         $schedule->command('nurseSchedule:export')
-            ->hourly();
+                 ->hourly();
 
         $schedule->command('athena:getAppointments')
-            ->dailyAt('23:00');
+                 ->dailyAt('23:00');
 
         $schedule->command('athena:getCcds')
-            ->everyThirtyMinutes();
+                 ->everyThirtyMinutes();
 
         $schedule->command('nurses:emailDailyReport')
-            ->weekdays()
-            ->at('21:00');
+                 ->weekdays()
+                 ->at('21:00');
 
         //Run at 12:01am every 1st of month
         $schedule->command('ccm_time:reset')
-            ->cron('1 0 1 * *');
+                 ->cron('1 0 1 * *');
 
         //Run at 12:30am every 1st of month
         $schedule->command(AttachBillableProblemsToLastMonthSummary::class)
@@ -85,20 +85,20 @@ class Kernel extends ConsoleKernel
 //            ->dailyAt('05:00');
 
         $schedule->command('report:nurseInvoices')
-            ->dailyAt('04:00')
-            ->withoutOverlapping();
+                 ->dailyAt('04:00')
+                 ->withoutOverlapping();
 
         $schedule->command('report:nurseDaily')
-            ->dailyAt('23:50')
-            ->withoutOverlapping();
+                 ->dailyAt('23:50')
+                 ->withoutOverlapping();
 
 //        $schedule->command('ccda:toJson')
 //            ->everyMinute()
 //            ->withoutOverlapping();
 
         $schedule->command('ccda:determineEligibility')
-            ->everyFiveMinutes()
-            ->withoutOverlapping();
+                 ->everyFiveMinutes()
+                 ->withoutOverlapping();
 
 //        $schedule->command('ccda:process')
 //            ->everyMinute()
@@ -109,11 +109,11 @@ class Kernel extends ConsoleKernel
 //            ->cron('0 */2 * * *');
 
         $schedule->command('send:audit-reports')
-            ->monthlyOn(1, '02:00');
+                 ->monthlyOn(1, '02:00');
 
         $schedule->command('emrDirect:checkInbox')
-            ->everyFiveMinutes()
-            ->withoutOverlapping();
+                 ->everyFiveMinutes()
+                 ->withoutOverlapping();
     }
 
     /**
