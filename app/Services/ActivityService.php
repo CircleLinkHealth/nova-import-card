@@ -17,15 +17,19 @@ class ActivityService
     /**
      * Process activity time for month
      *
-     * @param array $userIds
+     * @param array|int $userIds
      * @param Carbon|null $monthYear
      */
     public function processMonthlyActivityTime(
-        array $userIds,
+        $userIds,
         Carbon $monthYear = null
     ) {
         if ( ! $monthYear) {
             $monthYear = Carbon::now();
+        }
+
+        if (!is_array($userIds)) {
+            $userIds = [$userIds];
         }
 
         $acts = $this->repo->totalCCMTime($userIds, $monthYear)

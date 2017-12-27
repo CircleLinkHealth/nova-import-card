@@ -3,7 +3,7 @@
 namespace App\Console\Commands\Athena;
 
 use App\Practice;
-use App\Services\AthenaAPI\Service;
+use App\Services\AthenaAPI\CreateAndPostPdfCareplan;
 use Carbon\Carbon;
 use Illuminate\Console\Command;
 
@@ -30,7 +30,7 @@ class GetAppointments extends Command
      *
      * @return void
      */
-    public function __construct(Service $athenaApi)
+    public function __construct(CreateAndPostPdfCareplan $athenaApi)
     {
         parent::__construct();
 

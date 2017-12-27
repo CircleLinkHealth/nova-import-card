@@ -5,11 +5,13 @@ namespace App\Http\Controllers\Billing;
 use App\AppConfig;
 use App\Billing\Practices\PracticeInvoiceGenerator;
 use App\Http\Controllers\Controller;
+use App\Http\Resources\ApprovableBillablePatient;
 use App\Models\CCD\Problem;
 use App\Models\CPM\CpmProblem;
 use App\Models\ProblemCode;
 use App\PatientMonthlySummary;
 use App\Practice;
+use App\Repositories\PatientSummaryEloquentRepository;
 use App\Services\ApproveBillablePatientsService;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
@@ -18,6 +20,7 @@ use Illuminate\Support\Facades\Mail;
 
 class PracticeInvoiceController extends Controller
 {
+    private $patientSummaryDBRepository;
     private $service;
 
     /**
@@ -25,9 +28,10 @@ class PracticeInvoiceController extends Controller
      *
      * @param ApproveBillablePatientsService $service
      */
-    public function __construct(ApproveBillablePatientsService $service)
+    public function __construct(ApproveBillablePatientsService $service, PatientSummaryEloquentRepository $patientSummaryDBRepository)
     {
         $this->service = $service;
+        $this->patientSummaryDBRepository = $patientSummaryDBRepository;
     }
 
     /**
@@ -62,7 +66,7 @@ class PracticeInvoiceController extends Controller
      *
      * @param Request $request
      *
-     * @return \Illuminate\Http\JsonResponse
+     * @return \Illuminate\Http\Resources\Json\AnonymousResourceCollection
      */
     public function data(Request $request)
     {
@@ -72,7 +76,7 @@ class PracticeInvoiceController extends Controller
 
         $data = $this->service->patientsToApprove($request['practice_id'], Carbon::parse($request['date']));
 
-        return response()->json($data);
+        return ApprovableBillablePatient::collection($data);
     }
 
     public function updateStatus(Request $request)
@@ -172,7 +176,7 @@ class PracticeInvoiceController extends Controller
             $problemId = $request['id'];
 
             if (in_array(strtolower($problemId), ['other', 'new'])) {
-                $problemId = $this->service->storeCcdProblem($summary->patient, [
+                $problemId = $this->patientSummaryDBRepository->storeCcdProblem($summary->patient, [
                     'name'             => $request['name'],
                     'cpm_problem_id'   => $request['cpm_problem_id'],
                     'billable'         => true,
@@ -218,7 +222,7 @@ class PracticeInvoiceController extends Controller
 
             $summary->$key = $problemId;
 
-            if ( ! $this->service->lacksProblems($summary)) {
+            if ( ! $this->patientSummaryDBRepository->lacksProblems($summary)) {
                 $summary->approved = true;
             }
 

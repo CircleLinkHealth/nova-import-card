@@ -63,10 +63,8 @@ class PatientMonthlySummary extends \App\BaseModel
         'approved',
         'rejected',
         'actor_id',
-        'billable_problem1',
-        'billable_problem2',
-        'billable_problem1_code',
-        'billable_problem2_code',
+        'problem_1',
+        'problem_2',
     ];
 
     public static function updateCallInfoForPatient(
@@ -117,7 +115,7 @@ class PatientMonthlySummary extends \App\BaseModel
         $ccmTime
     ) {
         // get record for month
-        $day_start = Carbon::parse(Carbon::now()->firstOfMonth())->format('Y-m-d');
+        $day_start = Carbon::now()->startOfMonth()->toDateString();
         $record = PatientMonthlySummary::where('patient_id', $userId)
                                        ->where('month_year', $day_start)
                                        ->first();

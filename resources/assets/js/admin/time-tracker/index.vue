@@ -1,6 +1,6 @@
 <template>
     <div>
-        <div v-if="showLoader || !visible">
+        <div v-if="showLoader || !visible" :class="{ 'hide-tracker': hideTracker }">
             <div class="loader-filler"></div>
             <div class="loader-container">
                 <loader></loader>
@@ -8,7 +8,7 @@
         </div>
         <span v-if="visible" class="time-tracker">
             <div v-if="noLiveCount" :class="{ hidden: showLoader }">{{info.monthlyTime}}</div>
-            <span :class="{ hidden: showLoader }">
+            <span :class="{ hidden: showLoader, 'hide-tracker': hideTracker }">
                 <time-display v-if="!noLiveCount" ref="timeDisplay" :seconds="totalTime" :no-live-count="!!noLiveCount" :redirect-url="'manage-patients/' + info.patientId + '/activities'" />
             </span>
             <inactivity-tracker ref="inactivityTracker" />
@@ -41,7 +41,8 @@
                  */
             },
             'no-live-count': Number,
-            'class-name': String
+            'class-name': String,
+            'hide-tracker': Boolean
         },
         data() {
             return {
@@ -243,5 +244,9 @@
 
     div.loader-filler {
         height: 30px;
+    }
+
+    .hide-tracker {
+        display: none;
     }
 </style>

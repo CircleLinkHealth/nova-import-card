@@ -2,6 +2,9 @@
 
 namespace App\Services\AthenaAPI;
 
+use App\ValueObjects\Athena\Patient;
+use App\ValueObjects\Athena\Problem;
+
 class Calls
 {
     protected $api;
@@ -11,8 +14,8 @@ class Calls
 
     public function __construct()
     {
-        $this->key = env('ATHENA_KEY');
-        $this->secret = env('ATHENA_SECRET');
+        $this->key     = env('ATHENA_KEY');
+        $this->secret  = env('ATHENA_SECRET');
         $this->version = env('ATHENA_VERSION');
 
         $this->api = new Connection($this->version, $this->key, $this->secret);
@@ -72,7 +75,7 @@ class Calls
 
             \Log::error(\GuzzleHttp\json_encode($response));
 
-            if (!empty($response)) {
+            if ( ! empty($response)) {
                 abort(400, json_encode($response));
             }
         }
@@ -117,11 +120,11 @@ class Calls
      *
      * @return mixed
      */
-    public function getPatientProblems($patientId, $practiceId, $departmentId, $showDiagnosisInfo = true) {
-
+    public function getPatientProblems($patientId, $practiceId, $departmentId, $showDiagnosisInfo = true)
+    {
         $response = $this->api->GET("$practiceId/chart/$patientId/problems", [
-            'departmentid' => $departmentId,
-            'showdiagnosisinfo' => $showDiagnosisInfo
+            'departmentid'      => $departmentId,
+            'showdiagnosisinfo' => $showDiagnosisInfo,
         ]);
 
         return $this->response($response);
@@ -137,7 +140,8 @@ class Calls
      *
      * @return mixed
      */
-    public function getPatientInsurances($patientId, $practiceId, $departmentId) {
+    public function getPatientInsurances($patientId, $practiceId, $departmentId)
+    {
 
         $response = $this->api->GET("$practiceId/patients/$patientId/insurances", [
             'departmentid' => $departmentId,
@@ -155,13 +159,13 @@ class Calls
      *
      * @return mixed
      */
-    public function getPatientNameAndPhone($patientId, $practiceId) {
+    public function getDemographics($patientId, $practiceId)
+    {
 
         $response = $this->api->GET("$practiceId/patients/$patientId");
 
         return $this->response($response);
     }
-
 
 
     /**
@@ -181,6 +185,7 @@ class Calls
      * @param null $homephone
      * @param null $workphone
      * @param null $departmentId
+     *
      * @return mixed
      * @throws \Exception
      */
@@ -196,21 +201,18 @@ class Calls
         $departmentId = null
     ) {
         $response = $this->api->GET("$practiceId/patients", [
-            'firstname' => $patientFirstName,
-            'middlename' => $patientMiddleName,
-            'lastname' => $patientLastName,
-            'dob' => $dob,
-            'mobilephone' => $mobilephone,
-            'homephone' => $homephone,
-            'workphone' => $workphone,
-            'departmentid' => $departmentId
+            'firstname'    => $patientFirstName,
+            'middlename'   => $patientMiddleName,
+            'lastname'     => $patientLastName,
+            'dob'          => $dob,
+            'mobilephone'  => $mobilephone,
+            'homephone'    => $homephone,
+            'workphone'    => $workphone,
+            'departmentid' => $departmentId,
         ]);
 
         return $this->response($response);
     }
-
-
-
 
 
     /**
@@ -354,6 +356,65 @@ class Calls
         $command = "curl -v -k 'https://api.athenahealth.com/$version/$practiceId/patients/$patientId/documents' -XPOST -F documentsubclass=$documentSubClass -F departmentid=$departmentId -F 'attachmentcontents=@$attachmentContent' -H 'Authorization: Bearer {$this->api->get_token()}'";
 
         $response = exec($command);
+
+        return $this->response($response);
+    }
+
+
+    //create method to create patient in athena (for testing), issue with date format
+    public function createNewPatient(Patient $patient)
+    {
+
+        $practiceId = $patient->getPracticeId();
+
+        if ( ! $practiceId) {
+            throw new \Exception("practiceid is required.", 422);
+        }
+
+        $response = $this->api->POST("{$practiceId}/patients", [
+            'departmentid' => $patient->getDepartmentId(),
+            'dob'          => $patient->getDob(),
+            'firstname'    => $patient->getFirstName(),
+            'lastname'     => $patient->getLastName(),
+            'address1'     => $patient->getAddress1(),
+            'address2'     => $patient->getAddress2(),
+            'donotcallyn'  => $patient->getDoNotCall(),
+            'city'         => $patient->getCity(),
+            'email'        => $patient->getEmail(),
+            'homephone'    => $patient->getHomePhone(),
+            'mobilephone'  => $patient->getMobilePhone(),
+            'state'        => $patient->getState(),
+            'zip'          => $patient->getZip(),
+            'sex'          => $patient->getGender(),
+        ]);
+
+        //returns patient Id
+        return $this->response($response);
+    }
+
+    /**
+     * List or add patient problems. - POST /v1/{practiceid}/chart/{patientid}/problems
+     * @see: https://developer.athenahealth.com/docs/read/chart/Problems#section-0
+     */
+    public function addProblem(Problem $problem)
+    {
+        $practiceId = $problem->getPracticeId();
+
+        if ( ! $practiceId) {
+            throw new \Exception("practiceid is required.", 422);
+        }
+
+        $patientId = $problem->getPatientId();
+
+        if ( ! $patientId) {
+            throw new \Exception("practiceid is required.", 422);
+        }
+
+        $response = $this->api->POST("{$practiceId}/chart/{$patientId}/problems", [
+            'departmentid' => $problem->getDepartmentId(),
+            'snomedcode'   => $problem->getSnomedCode(),
+            'status'       => $problem->getStatus(),
+        ]);
 
         return $this->response($response);
     }

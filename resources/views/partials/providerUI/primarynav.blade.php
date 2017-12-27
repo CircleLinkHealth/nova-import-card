@@ -30,8 +30,8 @@
         <div class="navbar-right hidden-xs" style="">
             <ul class="nav navbar-nav">
                 @if (!isset($patient))
-                    <li data-monthly-time="{{$monthlyTime}}" style="padding-top: 15px; padding-bottom: 15px; line-height: 20px;display: none;">
-                        <time-tracker ref="TimeTrackerApp" :info="timeTrackerInfo"></time-tracker>
+                    <li data-monthly-time="{{$monthlyTime}}" style="padding-top: 15px; padding-bottom: 15px; line-height: 20px;">
+                        <time-tracker ref="TimeTrackerApp" :info="timeTrackerInfo" :hide-tracker="true" :no-live-count="{{$noLiveCountTimeTracking ?? true}}"></time-tracker>
                     </li>
                 @endif
                 <li>

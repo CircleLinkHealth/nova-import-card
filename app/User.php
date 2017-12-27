@@ -2717,4 +2717,12 @@ class User extends \App\BaseModel implements AuthenticatableContract, CanResetPa
             $q->whereIn('id', $practiceId);
         });
     }
+
+    public function isCCMComplex()
+    {
+        return $this->patientSummaries
+                   ->where('month_year', Carbon::now()->startOfMonth())
+                   ->first()
+                   ->is_ccm_complex ?? false;
+    }
 }

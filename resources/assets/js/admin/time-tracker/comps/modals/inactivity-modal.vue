@@ -52,6 +52,8 @@
 <style>
     .i-modal .modal-container {
         width: 500px;
+        color: rgb(71, 190, 171);
+        font-weight: 100;
     }
 
     .i-modal .modal-header {

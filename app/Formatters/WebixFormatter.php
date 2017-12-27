@@ -140,18 +140,26 @@ class WebixFormatter implements ReportFormatter
             return $result;
         });
 
+        if ($notes->isEmpty()) {
+            $notes = collect([]);
+        }
+
         $appointments = $patient->appointments->map(function ($appointment) use ($billingProvider) {
             return [
                 'id'            => $appointment->id,
                 'logger_name'   => optional($appointment->author)->fullName,
                 'comment'       => $appointment->comment,
-                'logged_from'   => $appointment->type,
-                'type_name'     => 'appointment',
+                'logged_from'   => 'appointment',
+                'type_name'     => $appointment->type,
                 'performed_at'  => Carbon::parse($appointment->date)->toDateString(),
                 'provider_name' => $billingProvider,
                 'tags'          => '',
             ];
         });
+
+        if ($appointments->isEmpty()) {
+            $appointments = collect([]);
+        }
 
         $activities = $patient->activities->map(function ($activity) use ($billingProvider) {
             return [
@@ -165,6 +173,10 @@ class WebixFormatter implements ReportFormatter
                 'tags'          => '',
             ];
         });
+
+        if ($activities->isEmpty()) {
+            $activities = collect([]);
+        }
 
         $report_data = $notes->merge($appointments)
                              ->merge($activities)

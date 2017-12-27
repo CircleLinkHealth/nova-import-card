@@ -1,9 +1,9 @@
 <?php
 
-namespace App\Console\Commands;
+namespace App\Console\Commands\Athena;
 
 use App\Practice;
-use App\Services\AthenaAPI\Service;
+use App\Services\AthenaAPI\DetermineEnrollmentEligibility;
 use Carbon\Carbon;
 use Illuminate\Console\Command;
 
@@ -31,7 +31,7 @@ class GetPatientIdFromAppointments extends Command
      *
      * @return void
      */
-    public function __construct(Service $athenaApi)
+    public function __construct(DetermineEnrollmentEligibility $athenaApi)
     {
         parent::__construct();
 

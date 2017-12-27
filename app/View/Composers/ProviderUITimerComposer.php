@@ -71,10 +71,7 @@ class ProviderUITimerComposer extends ServiceProvider
             $monthlyTime = sprintf("%02d:%02d:%02d", $H, $i, $s);
             $ccm_above   = false;
 
-            $ccm_complex = false;
-            if ($patient->patientInfo) {
-                $ccm_complex = $patient->patientInfo->isCCMComplex() ?? false;
-            }
+            $ccm_complex = $patient->isCCMComplex() ?? false;
 
             if ($seconds > 1199 && ! $ccm_complex) {
                 $ccm_above = true;

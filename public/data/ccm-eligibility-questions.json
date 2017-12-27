@@ -2,7 +2,7 @@
     {
         "name": "risk",
         "text": "Risk level for your patient:",
-        "required": true,
+        "required": false,
         "options": [
             {
                 "text": "High",
@@ -23,9 +23,9 @@
         ]
     },
     {
-        "name": "risk-factors",
+        "name": "risk_factors",
         "text": "Risk Factors Present",
-        "required": true,
+        "required": false,
         "multi": true,
         "options": [
             "High level of resource use / utilization",
@@ -37,24 +37,24 @@
         ]
     },
     {
-        "name": "key-treatment",
+        "name": "key_treatment",
         "text": "Key Treatment Goals",
-        "required": true
+        "required": false
     },
     {
-        "name": "alcohol-misuse-counseling",
+        "name": "alcohol_misuse_counseling",
         "text": "Alcohol misuse counseling, if applicable, last done date and next due date",
-        "required": true
+        "required": false
     },
     {
-        "name": "tobacco-misuse-counseling",
+        "name": "tobacco_misuse_counseling",
         "text": "Tobacco misuse counseling, if applicable, last done date and next due date",
-        "required": true
+        "required": false
     },
     {
-        "name": "diabetes-screening-risk",
+        "name": "diabetes_screening_risk",
         "text": "(1/3) Diabetes screening, patient is at risk based on",
-        "required": true,
+        "required": false,
         "multi": true,
         "options": [
             "Family History",
@@ -69,9 +69,11 @@
         ]
     },
     {
-        "name": "diabetes-screening-interval",
-        "text": "(2/4) Diabetes Screening to be done:",
-        "required": true,
+        "name": "diabetes_screening_interval",
+        "text": "(2/3) Diabetes Screening to be done:",
+        "required": false,
+        "selected": null,
+        "other": null,
         "options": [
             "Every 12 months",
             "Every 6 months",
@@ -83,19 +85,19 @@
         ]
     },
     {
-        "name": "diabetes-screening-last-and-next-date",
+        "name": "diabetes_screening_last_and_next_date",
         "text": "(3/3) Diabetes screening: Last date and next screening due date",
-        "required": true
+        "required": false
     },
     {
-        "name": "eye-screening-last-and-next-date",
+        "name": "eye_screening_last_and_next_date",
         "text": "Eye Exam / Glaucoma Screening last date performed and next date due",
-        "required": true
+        "required": false
     },
     {
-        "name": "patient-functional-assistance-areas",
+        "name": "patient_functional_assistance_areas",
         "text": "Functional needs / areas where patient needs assistance:",
-        "required": true,
+        "required": false,
         "multi": true,
         "options": [
             "Bathing",
@@ -107,9 +109,9 @@
         ]
     },
     {
-        "name": "patient-psychosocial-areas-to-watch",
+        "name": "patient_psychosocial_areas_to_watch",
         "text": "Patient Psychosocial Areas to Watch:",
-        "required": true,
+        "required": false,
         "multi": true,
         "options": [
             "Patient does NOT have a good understanding of his / her illness",

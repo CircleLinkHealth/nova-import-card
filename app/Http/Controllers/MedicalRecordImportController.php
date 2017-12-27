@@ -41,6 +41,53 @@ class MedicalRecordImportController extends Controller
         return response()->json([ 'deleted' => $recordsToDelete, 'not_found' => $recordsNotFound ], 200);
     }
 
+    public function importDEPRECATED(Request $request) {
+        $import = $request->input('medicalRecordsToImport');
+        $delete = $request->input('medicalRecordsToDelete');
+
+
+        if (!empty($import)) {
+            foreach ($import as $id) {
+                $imr = ImportedMedicalRecord::find($id);
+
+                if (empty($imr)) {
+                    continue;
+                }
+
+                $carePlan = $imr->createCarePlan();
+
+                $imported[] = [
+                    'importedMedicalRecordId' => $id,
+                    'userId'                  => $carePlan->user_id,
+                ];
+            }
+        }
+
+
+        if (!empty($delete)) {
+            $deleted = [];
+
+            foreach ($delete as $id) {
+                if (empty($id)) {
+                    continue;
+                }
+
+                $imr = ImportedMedicalRecord::find($id);
+
+                $medicalRecord = app($imr->medical_record_type)->find($imr->medical_record_id);
+                $medicalRecord->update([
+                    'imported' => false
+                ]);
+
+                $imr->delete();
+
+                $deleted[] = $id;
+            }
+        }
+
+        return response()->json(compact('imported', 'deleted'), 200);
+    }
+
     public function import(Request $request) {
         $recordsToImport = $request->all();
 

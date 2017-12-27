@@ -53,19 +53,34 @@
                         @endif
                     </li>
                 </ul>
-                <div class="form-group  pull-right" style="margin-top:10px; ">
+                <div class="form-group pull-right" style="margin-top:10px; ">
 
-                    <span class="glyphicon glyphicon-user" aria-hidden="true"
+                    <!--<span class="glyphicon glyphicon-user" aria-hidden="true"
                           style="color: #63bbe8; font-size: 28px; top: 0.4em;"></span>
 
                     <label for="provider" class="sr-only">Select Month:</label>
 
-                    <select name="provider" id="provider" class="provider selectpicker" data-width="200px"
+                    -->
+
+                    <div class="inline-block">
+                        <label for="year" class="sr-only">Date Range:</label>
+                        <select name="range" id="range" class="range" data-width="250px">
+                            <option value="">Select Range</option>
+                            @for($i = 0; $i < 4; $i++)
+                                <option value={{$i}}
+                                @if(isset($dateFilter) && $dateFilter == $i)
+                                    {{'selected'}}
+                                        @endif
+                                >Since {{\Carbon\Carbon::now()->subMonth($i)->format('F, Y')}}</option>
+                            @endfor
+                        </select>
+                        <button type="submit" id="find" class="btn btn-primary">Go</button><br>
+                        <select name="provider" id="provider" class="provider" data-width="200px"
                             data-size="10" style="display: none;" @if(auth()->user()->hasRole('administrator') == false  &&
                                                           auth()->user()->hasRole('care-center') == false)
                             required
                             @endif>
-                        <option value="">Select Provider</option>
+                        <option value="" {{auth()->user()->hasRole('administrator') ? 'selected' : ''}}>Select Provider</option>
                         @foreach($providers_for_blog as $key => $value)
                             @if(isset($selected_provider) && $selected_provider->id == $key)
                                 <?php $selected = $selected_provider->display_name ?>
@@ -76,20 +91,6 @@
                             @endif
                         @endforeach
                     </select>
-
-                    <div class="inline-block">
-                        <label for="year" class="sr-only">Date Range:</label>
-                        <select name="range" id="range" class="range selectpicker" data-width="250px">
-                            <option value="">Select Range</option>
-                            @for($i = 0; $i < 4; $i++)
-                                <option value={{$i}}
-                                @if(isset($dateFilter) && $dateFilter == $i)
-                                    {{'selected'}}
-                                        @endif
-                                >Since {{\Carbon\Carbon::now()->subMonth($i)->format('F, Y')}}</option>
-                            @endfor
-                        </select>
-                        <button type="submit" id="find" class="btn btn-primary">Go</button>
                     </div>
                 </div>
                 @push('scripts')
