@@ -66,7 +66,7 @@ class SuccessfulCallHandler extends TestCase
     }
 
     /**
-     * Test that a patient who has reached 20 minutes in the first week of the month, and wants to be called once a month will get a scheduled call on next month
+     * Test that a patient who has reached 20 minutes in the second week of the month, and wants to be called once a month will get a scheduled call next month
      *
      * @return void
      */
@@ -83,5 +83,43 @@ class SuccessfulCallHandler extends TestCase
         $this->assertNotEmpty($prediction);
 
         $this->assertTrue($prediction['date'] > $called->copy()->endOfMonth()->toDateString() && $prediction['date'] <= $called->copy()->addMonth()->endOfMonth()->toDateString());
+    }
+
+    /**
+     * Test that a patient who has reached 20 minutes in the fourth week of the month, and wants to be called more than once will get a scheduled call next month
+     *
+     * @return void
+     */
+    public function test_patient_over_20_mins_in_fourth_week_call_more_than_once()
+    {
+        $called = Carbon::now()->endOfMonth()->subWeek()->addDays(3);
+        $patient = $this->fakePatient($called);
+
+        $prediction = (new SuccessfulHandler($patient->patientInfo, $called, false, $patient->inboundCalls->first()))
+            ->handle();
+
+        $this->assertNotEmpty($prediction);
+
+        $this->assertTrue($prediction['date'] <= $called->copy()->addMonth()->endOfMonth()->subWeek(2)->toDateString() && $prediction['date'] > $called->copy()->addWeek()->toDateString());
+    }
+
+    /**
+     * Test that a patient who has reached 20 minutes in the third week of the month, and wants to be called once a month will get a scheduled call on next month
+     *
+     * @return void
+     */
+    public function test_patient_over_20_mins_in_third_week_call_once()
+    {
+        $called = Carbon::now()->endOfMonth()->subWeeks(2)->addDay(4);
+        $patient = $this->fakePatient($called);
+
+        $patient->patientInfo->preferred_calls_per_month = 1;
+
+        $prediction = (new SuccessfulHandler($patient->patientInfo, $called, false, $patient->inboundCalls->first()))
+            ->handle();
+
+        $this->assertNotEmpty($prediction);
+
+        $this->assertTrue($prediction['date'] > $called->copy()->endOfMonth()->toDateString() && $prediction['date'] <= $called->copy()->addMonth()->endOfMonth()->subWeek(2)->toDateString());
     }
 }
