@@ -1,6 +1,7 @@
 <?php namespace App;
 
 use Illuminate\Database\Eloquent\Model;
+use Venturecraft\Revisionable\RevisionableTrait;
 
 /**
  * App\CarePerson
@@ -24,6 +25,7 @@ use Illuminate\Database\Eloquent\Model;
  */
 class CarePerson extends \App\BaseModel
 {
+    use RevisionableTrait;
 
     const BILLING_PROVIDER = 'billing_provider';
     const IN_ADDITION_TO_BILLING_PROVIDER = 'in_addition_to_billing_provider';
@@ -66,6 +68,11 @@ class CarePerson extends \App\BaseModel
         'type',
         'alert',
     ];
+
+    public static function boot()
+    {
+        parent::boot();
+    }
 
     // START RELATIONSHIPS
     public function user()
