@@ -85,8 +85,14 @@
                 include app_path() . '/../public/data/ccm-eligibility-questions.json';
             ?>
         </script>
+        <script type="application/json" id="assessment-script">
+            <?php 
+                echo json_encode($assessment);
+            ?>
+        </script>
         <script>
             var questions = JSON.parse(document.getElementById('questions-script').innerHTML);
+            var assessment = JSON.parse(document.getElementById('assessment-script').innerHTML);
         </script>
     @endpush
     @push('scripts')

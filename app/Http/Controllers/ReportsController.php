@@ -10,6 +10,7 @@ use App\Practice;
 use App\Services\CCD\CcdInsurancePolicyService;
 use App\Services\CPM\CpmProblemService;
 use App\Services\ReportsService;
+use App\Services\CareplanAssessmentService;
 use App\User;
 use Carbon\Carbon;
 use DateInterval;
@@ -22,15 +23,18 @@ use Illuminate\Support\Facades\DB;
 class ReportsController extends Controller
 {
     private $service;
+    private $assessmentService;
     private $formatter;
 
     public function __construct(
+        CareplanAssessmentService $assessmentService,
         ReportsService $service,
         ReportFormatter $formatter,
         Request $request
     ) {
         $this->service   = $service;
         $this->formatter = $formatter;
+        $this->assessmentService = $assessmentService;
     }
 
     //PROGRESS REPORT
@@ -502,6 +506,9 @@ class ReportsController extends Controller
 
             $showInsuranceReviewFlag = $insurances->checkPendingInsuranceApproval($patient);
 
+            $assessment = $this->assessmentService->repo()->model()->where([ 'careplan_id' => $patientId ])->first();
+            if ($assessment) $assessment->unload();
+
             return view(
                 'wpUsers.patient.careplan.assessment',
                 [
@@ -518,6 +525,7 @@ class ReportsController extends Controller
                     'appointments'            => $careplan[$patientId]['appointments'],
                     'other'                   => $careplan[$patientId]['other'],
                     'showInsuranceReviewFlag' => $showInsuranceReviewFlag,
+                    'assessment'              => $assessment
                 ]
             );
         }

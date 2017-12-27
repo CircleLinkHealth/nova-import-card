@@ -40,6 +40,14 @@ class CareplanAssessment extends \App\BaseModel
         if ($this->risk_factors) $this->risk_factors = json_encode(array_values($this->risk_factors));
     }
 
+    public function unload() { // decode these values from json
+        if (is_string($this->diabetes_screening_risk)) $this->diabetes_screening_risk = json_decode($this->diabetes_screening_risk);
+        if (is_string($this->patient_functional_assistance_areas)) $this->patient_functional_assistance_areas = json_decode($this->patient_functional_assistance_areas);
+        if (is_string($this->patient_psychosocial_areas_to_watch)) $this->patient_psychosocial_areas_to_watch = json_decode($this->patient_psychosocial_areas_to_watch);
+        if (is_string($this->risk_factors)) $this->risk_factors = json_decode($this->risk_factors);
+        return $this;
+    }
+
     public function approver() {
         $this->belongsTo(User::class, 'provider_approver_id');
     }
