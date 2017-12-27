@@ -9,10 +9,10 @@ use Illuminate\Support\Facades\App;
  *
  * @property int $id
  * @property int $careplan_id
+ * @property int $provider_approver_id
  * @property string $alcohol_misuse_counseling
  * @property string $diabetes_screening_interval
  * @property string $diabetes_screening_last_and_next_date
- * @property string $diabetes_screening_risk
  * @property array|string|null $diabetes_screening_risk
  * @property string $eye_screening_last_and_next_date
  * @property string $key_treatment
@@ -21,7 +21,6 @@ use Illuminate\Support\Facades\App;
  * @property string $risk
  * @property array|string|null $risk_factors
  * @property string $tobacco_misuse_counseling
- * @property int $provider_approver_id
  * @property \Carbon\Carbon $created_at
  * @property \Carbon\Carbon $updated_at
  * @property-read \App\CarePlan $carePlan
