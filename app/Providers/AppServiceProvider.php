@@ -135,7 +135,7 @@ class AppServiceProvider extends ServiceProvider
         });
         
         $this->app->bind(CareplanAssessmentService::class, function () {
-            return new CareplanAssessmentService(new \App\Repositories\CareplanAssessmentRepository());
+            return new CareplanAssessmentService(new \App\Repositories\CareplanAssessmentRepository(), new \App\Repositories\CareplanRepository());
         });
 
         $this->app->bind(PatientService::class, function () {

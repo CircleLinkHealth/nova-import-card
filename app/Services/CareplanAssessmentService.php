@@ -1,14 +1,17 @@
 <?php namespace App\Services;
 
 use App\CareplanAssessment;
+use App\Repositories\CareplanRepository;
 use App\Repositories\CareplanAssessmentRepository;
 
 class CareplanAssessmentService
 {
     private $assessmentRepo;
+    private $careplanRepo;
 
-    public function __construct(CareplanAssessmentRepository $assessmentRepo) {
+    public function __construct(CareplanAssessmentRepository $assessmentRepo, CareplanRepository $careplanRepo) {
         $this->assessmentRepo = $assessmentRepo;
+        $this->careplanRepo = $careplanRepo;
     }
 
     public function repo() {
@@ -41,6 +44,7 @@ class CareplanAssessmentService
                     'risk_factors' => $assessment->risk_factors,
                     'tobacco_misuse_counseling' => $assessment->tobacco_misuse_counseling
                 ]);
+                $this->careplanRepo->approve($assessment->careplan_id, $assessment->provider_approver_id);
                 return $savedAssessments->first();
             }
         }

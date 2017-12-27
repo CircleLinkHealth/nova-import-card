@@ -485,7 +485,7 @@ class ReportsController extends Controller
         if ( ! $patientId) {
             return "Patient Not Found..";
         } else {
-            $patient = User::find($patientId);
+            $patient = User::with('carePlan')->find($patientId);
 
             if ( ! $patient) {
                 return "Patient Not Found..";
