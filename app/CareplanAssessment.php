@@ -23,7 +23,8 @@ use Illuminate\Support\Facades\App;
  * @property string $tobacco_misuse_counseling
  * @property \Carbon\Carbon $created_at
  * @property \Carbon\Carbon $updated_at
- * @property-read \App\CarePlan $carePlan
+ * @property-read \App\User|null $approver
+ * @property-read \App\User|null $patient
  * @mixin \Eloquent
  */
 class CareplanAssessment extends \App\BaseModel
@@ -49,10 +50,10 @@ class CareplanAssessment extends \App\BaseModel
     }
 
     public function approver() {
-        $this->belongsTo(User::class, 'provider_approver_id');
+        return $this->belongsTo(User::class, 'provider_approver_id');
     }
     
     public function patient() {
-        $this->belongsTo(CarePlan::class, 'careplan_id', 'user_id');
+        return $this->belongsTo(CarePlan::class, 'careplan_id', 'user_id');
     }
 }

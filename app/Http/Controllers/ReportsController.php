@@ -509,6 +509,8 @@ class ReportsController extends Controller
             $assessment = $this->assessmentService->repo()->model()->where([ 'careplan_id' => $patientId ])->first();
             if ($assessment) $assessment->unload();
 
+            $approver = $assessment->approver()->first();
+
             return view(
                 'wpUsers.patient.careplan.assessment',
                 [
@@ -525,7 +527,8 @@ class ReportsController extends Controller
                     'appointments'            => $careplan[$patientId]['appointments'],
                     'other'                   => $careplan[$patientId]['other'],
                     'showInsuranceReviewFlag' => $showInsuranceReviewFlag,
-                    'assessment'              => $assessment
+                    'assessment'              => $assessment,
+                    'approver'              => $approver
                 ]
             );
         }
