@@ -23,6 +23,7 @@ use App\Repositories\UserRepositoryEloquent;
 use App\Services\NoteService;
 use App\Services\UserService;
 use App\Services\PatientService;
+use App\Services\CareplanAssessmentService;
 use App\Services\CPM\CpmProblemService;
 use App\Services\CCD\CcdProblemService;
 use Illuminate\Notifications\Channels\DatabaseChannel;
@@ -126,6 +127,10 @@ class AppServiceProvider extends ServiceProvider
         
         $this->app->bind(UserService::class, function () {
             return new UserService(new \App\Repositories\UserRepositoryEloquent(app()));
+        });
+        
+        $this->app->bind(CareplanAssessmentService::class, function () {
+            return new CareplanAssessmentService(new \App\Repositories\CareplanAssessmentRepository());
         });
 
         $this->app->bind(PatientService::class, function () {

@@ -423,6 +423,11 @@ Route::group(['middleware' => 'auth'], function () {
             'as'   => 'patient.careplan.assessment',
         ]);
 
+        Route::post('view-careplan/assessment', [
+            'uses' => 'CareplanAssessmentController@store',
+            'as'   => 'patient.careplan.assessment.create',
+        ]);
+
         Route::get('approve-careplan/{viewNext?}', [
             'uses' => 'ProviderController@approveCarePlan',
             'as'   => 'patient.careplan.approve',

@@ -290,7 +290,8 @@ return [
         'CpmProblemService' => \App\Services\CPM\CpmProblemService::class,
         'CcdProblemService' => \App\Services\CCD\CcdProblemService::class,
         'CpmProblemUserService' => \App\Services\CPM\CpmProblemUserService::class,
-        'CpmInstructionService' => \App\Services\CPM\CpmInstructionService::class
+        'CpmInstructionService' => \App\Services\CPM\CpmInstructionService::class,
+        'CareplanAssessmentService' => \App\Services\CareplanAssessmentService::class
     ],
 
 ];

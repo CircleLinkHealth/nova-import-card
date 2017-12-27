@@ -58,7 +58,7 @@
                     <div class="col-xs-12">
                         <div class="row">
                             <div class="col-xs-12">
-                                <form name="questionnaire-form">
+                                <form method="post" name="questionnaire-form">
                                     <div class="text-right">
                                         <input type="button" name="skip" class="btn btn-warning font-24" value="Skip">
                                     </div>
@@ -66,6 +66,7 @@
                                         <questionnaire-app ref="questionnaireApp" :questions="questions" class-name="questionnaire"></questionnaire-app>
                                     </div>
                                     <div id="questionnaire-app"></div>
+                                    {{ csrf_field() }}
                                     <button class="btn btn-success font-24">Submit</button>
                                 </form>
                             </div>

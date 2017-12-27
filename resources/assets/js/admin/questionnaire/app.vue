@@ -10,7 +10,7 @@
                 <label>
                     <span v-if="question.other" class="circle"></span>
                     <input type="radio" v-if="!question.multi && !question.other" v-model="question.selected" :name="question.name" :required="!!question.required" :value="(option && option.constructor.name === 'Object') ? option.text : option"> 
-                    <input type="checkbox" v-if="question.multi" :name="question.name" :required="!!question.required" :value="(option && option.constructor.name === 'Object') ? option.value : option"> 
+                    <input type="checkbox" v-if="question.multi" :name="question.name + ('[' + index + ']')" :required="!!question.required" :value="(option && option.constructor.name === 'Object') ? option.value : option"> 
                     <span>{{(option && option.constructor.name === 'Object') ? option.text : option}}</span>
                     <input class="width-200" v-if="question.selected === option.text && !!option.editable" v-model="question.other" type="text" :name="question.name" :required="!!question.required" placeholder="Enter text here">
                 </label>

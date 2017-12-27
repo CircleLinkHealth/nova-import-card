@@ -19,7 +19,7 @@ use Illuminate\Support\Facades\App;
  * @property string[]|string|null $patient_functional_assistance_areas
  * @property string[]|string|null $patient_psychosocial_areas_to_watch
  * @property string $risk
- * @property string[]|string|null $risk_factors
+ * @property array|string|null $risk_factors
  * @property string $tobacco_misuse_counseling
  * @property int|null $provider_approver_id
  * @property \Carbon\Carbon $created_at
@@ -29,5 +29,10 @@ use Illuminate\Support\Facades\App;
  */
 class CareplanAssessment extends \App\BaseModel
 {
-
+    public function load($object)
+    {   
+        foreach (get_object_vars($object) as $key => $value) {
+            if ($key != '_token') $this->$key = $value;
+        }
+    }
 }
