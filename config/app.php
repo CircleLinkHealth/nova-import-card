@@ -287,6 +287,7 @@ return [
         
         'UserService' => \App\Services\UserService::class,
         'PatientService' => \App\Services\PatientService::class,
+        'CareplanService' => \App\Services\CareplanService::class,
         'CpmProblemService' => \App\Services\CPM\CpmProblemService::class,
         'CcdProblemService' => \App\Services\CCD\CcdProblemService::class,
         'CpmProblemUserService' => \App\Services\CPM\CpmProblemUserService::class,
