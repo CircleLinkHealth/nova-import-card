@@ -122,12 +122,23 @@ class PatientMonthlySummary extends \App\BaseModel
 
         //Detemine whether to add to record or not
         if (!$record) {
+            $day_start = Carbon::now()->subMonth()->startOfMonth()->toDateString();
+            $existingRecord = PatientMonthlySummary::where('patient_id', $userId)
+                                           ->orderBy('id', 'DESC')
+                                           ->first();
+
             $record = new PatientMonthlySummary;
             $record->patient_id = $userId;
             $record->ccm_time = $ccmTime;
             $record->month_year = $day_start;
             $record->no_of_calls = 0;
             $record->no_of_successful_calls = 0;
+
+            if ($existingRecord) {
+                $record->problem_1 = $existingRecord->problem_1;
+                $record->problem_2 = $existingRecord->problem_2;
+            }
+
             $record->save();
         } else {
             $record->ccm_time = $ccmTime;
