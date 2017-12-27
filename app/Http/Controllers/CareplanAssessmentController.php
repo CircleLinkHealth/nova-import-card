@@ -35,6 +35,7 @@ class CareplanAssessmentController extends Controller
             return $this->badRequest('missing parameter "careplan_id"');
         }
         else {
+            //return response()->json($assessment);
             $this->assessmentService->save($assessment);
             return redirect()->route('patient.careplan.print', [ 'patientId' => $assessment->careplan_id ]);
         }

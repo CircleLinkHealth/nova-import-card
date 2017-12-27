@@ -34,6 +34,10 @@ class CareplanAssessment extends \App\BaseModel
         foreach (get_object_vars($object) as $key => $value) {
             if ($key != '_token') $this->$key = $value;
         }
+        if ($this->diabetes_screening_risk) $this->diabetes_screening_risk = json_encode(array_values($this->diabetes_screening_risk));
+        if ($this->patient_functional_assistance_areas) $this->patient_functional_assistance_areas = json_encode(array_values($this->patient_functional_assistance_areas));
+        if ($this->patient_psychosocial_areas_to_watch) $this->patient_psychosocial_areas_to_watch = json_encode(array_values($this->patient_psychosocial_areas_to_watch));
+        if ($this->risk_factors) $this->risk_factors = json_encode(array_values($this->risk_factors));
     }
 
     public function approver() {
