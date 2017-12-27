@@ -78,7 +78,7 @@ class CallsController extends ApiController
                      ->leftJoin('patient_monthly_summaries', function ($join) use (
                          $date
                      ) {
-                         $join->on('patient_monthly_summaries.patient_id', '=', 'users.id');
+                         $join->on('patient_monthly_summaries.patient_id', '=', 'patient_info.user_id');
                          $join->where('patient_monthly_summaries.month_year', '=', $date->format('Y-m-d'));
                      })
                      ->leftJoin('practices AS program', 'patient.program_id', '=', 'program.id')
