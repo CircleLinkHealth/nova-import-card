@@ -3,14 +3,14 @@
         <div class="form-group" v-for="(question, pIndex) in questions" :key="pIndex">
             <div class="question-text">{{pIndex + 1}}. {{question.text}}<span class="required" v-if="!!question.required">*</span></div>
             <div class="question-reply" v-if="!question.options">
-                <input v-if="!question.multi" type="text" :name="question.name" :required="!!question.required" placeholder="Enter text here">
-                <textarea v-if="question.multi" type="text" :name="question.name" :required="!!question.required" placeholder="Enter text here"></textarea>
+                <input v-if="!question.multi" type="text" :value="answers[question.name]" :name="question.name" :required="!!question.required" placeholder="Enter text here">
+                <textarea v-if="question.multi" type="text" :value="answers[question.name]" :name="question.name" :required="!!question.required" placeholder="Enter text here"></textarea>
             </div>
             <div class="question-option" v-for="(option, index) in question.options" :key="index">
                 <label>
                     <span v-if="question.other" class="circle"></span>
                     <input type="radio" v-if="!question.multi && !question.other" v-model="question.selected" :name="question.name" :required="!!question.required" :value="(option && option.constructor.name === 'Object') ? option.text : option"> 
-                    <input type="checkbox" v-if="question.multi" :name="question.name + ('[' + index + ']')" :required="!!question.required" :value="(option && option.constructor.name === 'Object') ? option.value : option"> 
+                    <input type="checkbox" v-if="question.multi" :name="question.name + ('[' + index + ']')" :required="!!question.required" :checked="answers[question.name].indexOf((option && option.constructor.name === 'Object') ? option.text : option) >= 0" :value="(option && option.constructor.name === 'Object') ? option.value : option"> 
                     <span>{{(option && option.constructor.name === 'Object') ? option.text : option}}</span>
                     <input class="width-200" v-if="question.selected === option.text && !!option.editable" v-model="question.other" type="text" :name="question.name" :required="!!question.required" placeholder="Enter text here">
                 </label>
@@ -29,10 +29,25 @@
             },
             'class-name': String
         },
+        data() {
+            return {
+                answers: window.answers || {}
+            }
+        },
         mounted() {
             if (!this.questions || !Array.isArray(this.questions)) {
                 throw new Error('[questions] prop value must be an array')
             }
+            this.questions.forEach(question => {
+                if (question.options) {
+                    if (!question.multi) {
+                        question.selected = this.answers[question.name]
+                    }
+                    else {
+                        
+                    }
+                }
+            })
         }
     }
 </script>

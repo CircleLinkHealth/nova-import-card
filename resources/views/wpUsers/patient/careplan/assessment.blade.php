@@ -92,7 +92,7 @@
         </script>
         <script>
             var questions = JSON.parse(document.getElementById('questions-script').innerHTML);
-            var assessment = JSON.parse(document.getElementById('assessment-script').innerHTML);
+            var answers = JSON.parse(document.getElementById('assessment-script').innerHTML);
         </script>
     @endpush
     @push('scripts')
