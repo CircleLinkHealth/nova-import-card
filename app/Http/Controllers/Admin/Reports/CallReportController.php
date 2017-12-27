@@ -69,7 +69,7 @@ class CallReportController extends Controller
             ->leftJoin('users AS scheduler_user', 'calls.scheduler', '=', 'scheduler_user.id')
             ->leftJoin('patient_info', 'calls.inbound_cpm_id', '=', 'patient_info.user_id')
             ->leftJoin('patient_monthly_summaries', function ($join) use ($date) {
-                $join->on('patient_monthly_summaries.patient_info_id', '=', 'patient_info.id');
+                $join->on('patient_monthly_summaries.patient_id', '=', 'users.id');
                 $join->where('patient_monthly_summaries.month_year', '=', $date->format('Y-m-d'));
             })
             ->leftJoin('practices AS program', 'patient.program_id', '=', 'program.id')

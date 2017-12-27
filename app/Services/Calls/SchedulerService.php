@@ -397,9 +397,9 @@ class SchedulerService
                         $last_attempted_time = $last_attempted_call->called_date;
 
                         if ($status) {
-                            $data = (new SuccessfulHandler($patient, Carbon::parse($last_attempted_time)));
+                            $data = (new SuccessfulHandler($patient, Carbon::parse($last_attempted_time), $patient->user->isCCMComplex(), $last_attempted_call));
                         } else {
-                            $data = (new UnsuccessfulHandler($patient, Carbon::parse($last_attempted_time)));
+                            $data = (new UnsuccessfulHandler($patient, Carbon::parse($last_attempted_time), $patient->user->isCCMComplex(), $last_attempted_call));
                         }
 
                         $scheduled_call->scheduler = 'refresher algorithm';
