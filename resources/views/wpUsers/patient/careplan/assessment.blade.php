@@ -67,6 +67,8 @@
                                     </div>
                                     <div id="questionnaire-app"></div>
                                     {{ csrf_field() }}
+                                    <input type="hidden" name="careplan_id" value="{{$patient->id}}" />
+                                    <input type="hidden" name="provider_approver_id" value="{{Auth::user()->id}}" />
                                     <button class="btn btn-success font-24">Submit</button>
                                 </form>
                             </div>
