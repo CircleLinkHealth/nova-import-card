@@ -69,6 +69,11 @@ class ProblemInstructionController extends Controller
         }
     }
 
+    public function search($term) {
+
+        return $this->error('not implemented yet');
+    }
+
     /** edits an existing cpm-instruction */
     public function edit(Request $request) {
         $id = $request->route()->id;
@@ -93,7 +98,7 @@ class ProblemInstructionController extends Controller
         $instructionId = $request->input('instructionId');
 
         try {
-            $patient = $this->userService->repo()->model()->find($patientId);
+            $patient = $this->userService->repo()->find($patientId);
             $problem = $this->cpmProblemService->repo()->model()->find($cpmProblemId);
             $instruction = $this->cpmInstructionService->repo()->model()->find($instructionId);
     
