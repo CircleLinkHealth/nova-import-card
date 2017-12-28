@@ -4,7 +4,7 @@ use App\Activity;
 use App\Contracts\ReportFormatter;
 use App\Note;
 use App\PatientContactWindow;
-use App\PatientMonthlySummary;
+use App\Repositories\PatientRepository;
 use App\Services\Calls\SchedulerService;
 use App\Services\NoteService;
 use App\User;
@@ -19,13 +19,16 @@ class NotesController extends Controller
 
     private $service;
     private $formatter;
+    private $patientRepo;
 
     public function __construct(
         NoteService $noteService,
-        ReportFormatter $formatter
+        ReportFormatter $formatter,
+        PatientRepository $patientRepository
     ) {
-        $this->service   = $noteService;
-        $this->formatter = $formatter;
+        $this->service     = $noteService;
+        $this->formatter   = $formatter;
+        $this->patientRepo = $patientRepository;
     }
 
     public function index(
@@ -164,7 +167,7 @@ class NotesController extends Controller
                     'providers_for_blog' => $providers_for_blog,
                     'isProviderSelected' => false,
                     'only_mailed_notes'  => false,
-                    'dateFilter'        => $months
+                    'dateFilter'         => $months,
                 ];
             }
         }
@@ -354,7 +357,7 @@ class NotesController extends Controller
                 if (auth()->user()->hasRole('provider')) {
                     $this->service->storeCallForNote($note, 'reached', $patient, Auth::user(), Auth::user()->id, null);
 
-                    (new PatientMonthlySummary())->updateCallInfoForPatient($patient->patientInfo, true);
+                    $this->patientRepo->updateCallInfo($patient->patientInfo, true);
 
                     $info->last_successful_contact_time = Carbon::now()->format('Y-m-d H:i:s');
                     $info->save();
