@@ -7,6 +7,7 @@ use App\Http\Controllers\Controller;
 use App\CareplanAssessment;
 use App\Services\CareplanService;
 use App\Services\CareplanAssessmentService;
+use App\Services\NoteService;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -16,11 +17,13 @@ class CareplanAssessmentController extends Controller
 {
     private $assessmentService;
     private $careplanService;
+    private $noteService;
 
-    public function __construct(CareplanAssessmentService $assessmentService, CareplanService $careplanService)
+    public function __construct(CareplanAssessmentService $assessmentService, CareplanService $careplanService, NoteService $noteService)
     {
         $this->assessmentService = $assessmentService;
         $this->careplanService = $careplanService;
+        $this->noteService = $noteService;
     }
 
     public function index() {
@@ -37,6 +40,7 @@ class CareplanAssessmentController extends Controller
         else {
             //return response()->json($assessment);
             $this->assessmentService->save($assessment);
+            $this->noteService->createAssessmentNote($assessment);
             return redirect()->route('patient.careplan.print', [ 'patientId' => $assessment->careplan_id ]);
         }
     }

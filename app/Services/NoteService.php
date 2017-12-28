@@ -9,6 +9,7 @@ use App\Note;
 use App\Patient;
 use App\PatientMonthlySummary;
 use App\User;
+use App\CareplanAssessment;
 use App\Repositories\NoteRepository;
 use App\View\MetaTag;
 use Carbon\Carbon;
@@ -46,6 +47,18 @@ class NoteService
 
         $note->forward($input['notify_careteam'] ?? false, $input['notify_circlelink_support'] ?? false);
 
+        return $note;
+    }
+
+    public function createAssessmentNote(CareplanAssessment $assessment) {
+        $note = new Note();
+        $note->patient_id = $assessment->careplan_id;
+        $note->author_id = $assessment->provider_approver_id;
+        $note->body = 'Created/Edited Assessment for ' . $assessment->patient()->first()->display_name;
+        $note->type = 'Edit Assessment';
+        $note->performed_at = Carbon::now();
+        $note->save();
+        $note->forward(true, true);
         return $note;
     }
 

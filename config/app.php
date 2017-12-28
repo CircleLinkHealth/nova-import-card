@@ -286,6 +286,7 @@ return [
         'Swagger'        => L5Swagger\L5SwaggerServiceProvider::class,
         
         'UserService' => \App\Services\UserService::class,
+        'NoteService' => \App\Services\NoteService::class,
         'PatientService' => \App\Services\PatientService::class,
         'CareplanService' => \App\Services\CareplanService::class,
         'CpmProblemService' => \App\Services\CPM\CpmProblemService::class,

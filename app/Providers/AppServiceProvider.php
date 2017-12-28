@@ -142,6 +142,10 @@ class AppServiceProvider extends ServiceProvider
             return new PatientService(new \App\Repositories\PatientRepository(app()), new \App\Repositories\UserRepositoryEloquent(app()));
         });
         
+        $this->app->bind(NoteService::class, function () {
+            return new NoteService(new \App\Repositories\NoteRepository());
+        });
+        
         $this->app->bind(CpmInstructionService::class, function () {
             return new CpmInstructionService(new \App\Repositories\CpmInstructionRepository(app()), new \App\Repositories\UserRepositoryEloquent(app()));
         });
