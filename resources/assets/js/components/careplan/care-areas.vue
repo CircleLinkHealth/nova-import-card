@@ -3,7 +3,7 @@
         <div class="row">
             <div class="col-xs-12">
                 <h2 class="patient-summary__subtitles patient-summary--careplan-background">We Are Managing
-                    <span class="btn btn-primary glyphicon glyphicon-edit" aria-hidden="true"></span>
+                    <span class="btn btn-primary glyphicon glyphicon-edit" @click="showModal" aria-hidden="true"></span>
                 </h2>
             </div>
         </div>
@@ -15,17 +15,23 @@
                 </ul>
             </div>
         </div>
+        <care-areas-modal ref="careAreasModal" :patient-id="patientId" :problems="problems"></care-areas-modal>
     </div>
 </template>
 
 <script>
     import { rootUrl } from '../../app.config'
+    import { Event } from 'vue-tables-2'
+    import CareAreasModal from './modals/care-areas.modal'
 
     export default {
         name: 'care-areas',
         props: [
             'patient-id'
         ],
+        components: {
+            'care-areas-modal': CareAreasModal
+        },
         data() {
             return {
                 problems: []
@@ -39,6 +45,9 @@
                 }).catch(err => {
                     console.error('care-areas:get-problems', err)
                 })
+            },
+            showModal() {
+                Event.$emit('modal-care-areas:show')
             }
         },
         mounted() {

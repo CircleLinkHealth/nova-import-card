@@ -147,7 +147,7 @@ if (isset($patient) && ! empty($patient)) {
                     </div>
                 </div>
                 <!-- CARE AREAS -->
-                <care-areas patient-id="{{$patient->id}}">
+                <care-areas ref="careAreas" patient-id="{{$patient->id}}">
                     <ul class="subareas__list">
                         @if($problemNames)
                             @foreach($problemNames as $prob)
