@@ -63,9 +63,17 @@ class PatientRepository
         return $newProblem;
     }
 
+    /**
+     * Updates the patient's call info based on the status of the last call
+     *
+     * @param Patient $patient
+     * @param $successfulLastCall
+     *
+     * @return PatientMonthlySummary|\Illuminate\Database\Eloquent\Model|null|static
+     */
     public function updateCallInfo(
         Patient $patient,
-        $ifSuccessful
+        bool $successfulLastCall
     ) {
 
         // get record for month
@@ -76,7 +84,7 @@ class PatientRepository
 
         // set increment var
         $successful_call_increment = 0;
-        if ($ifSuccessful) {
+        if ($successfulLastCall) {
             $successful_call_increment = 1;
             // reset call attempts back to 0
             $patient->no_call_attempts_since_last_success = 0;
@@ -84,7 +92,7 @@ class PatientRepository
             $patient->no_call_attempts_since_last_success = ($patient->no_call_attempts_since_last_success + 1);
 
             if ($patient->no_call_attempts_since_last_success == 5) {
-
+                $patient->ccm_status = 'paused';
             }
         }
         $patient->save();
