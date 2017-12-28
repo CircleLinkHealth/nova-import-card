@@ -46,4 +46,8 @@ class CpmProblemUserService
             'cpm_instruction_id' => $instructionId
         ])->delete();
     }
+
+    public function addProblemToPatient($patientId, $cpmProblemId) {
+        return $this->repo()->create($patientId, $cpmProblemId, null);
+    }
 }

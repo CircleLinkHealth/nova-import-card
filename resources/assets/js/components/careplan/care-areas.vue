@@ -52,6 +52,10 @@
         },
         mounted() {
             this.getProblems()
+
+            Event.$on('care-areas:problems', (problems) => {
+                this.problems = problems
+            })
         }
     }
 </script>

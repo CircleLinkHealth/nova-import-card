@@ -6,6 +6,7 @@ use App\AppConfig;
 use App\User;
 use App\Patient;
 use App\Services\PatientService;
+use App\Services\CPM\CpmProblemUserService;
 use App\Http\Controllers\Controller;
 use App\Models\CCD\Problem;
 use App\Models\CPM\CpmProblem;
@@ -17,13 +18,15 @@ use Illuminate\Http\Request;
 class PatientController extends Controller
 {
     private $patientService;
+    private $cpmProblemUserService;
     /**
      * CpmProblemController constructor.
      *
      */
-    public function __construct(PatientService $patientService)
+    public function __construct(PatientService $patientService, CpmProblemUserService $cpmProblemUserService)
     {   
         $this->patientService = $patientService;
+        $this->cpmProblemUserService = $cpmProblemUserService;
     }
 
     /**
@@ -55,8 +58,12 @@ class PatientController extends Controller
         return response()->json($this->patientService->getCcdProblems($userId));
     }
 
-    public function addCpmProblem(Request $request) {
-        $userId = $request->routes()->parameters()['userId'];
-        /** not complete */
+    public function addCpmProblem($userId, Request $request) {
+        $cpmProblemId = $request->input('cpmProblemId');
+        if ($userId && $cpmProblemId) {
+            $this->cpmProblemUserService->addProblemToPatient($userId, $cpmProblemId);
+            return $this->patientService->getCpmProblems($userId);
+        }
+        return $this->badRequest('"userId" and "cpmProblemId" are important');
     }
 }

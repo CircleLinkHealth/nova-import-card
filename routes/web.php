@@ -116,6 +116,7 @@ Route::group(['middleware' => 'auth'], function () {
             ], function () {
             Route::get('{userId}', 'PatientController@getPatient');
             Route::get('{userId}/problems', 'PatientController@getProblems');
+            Route::post('{userId}/problems', 'PatientController@addCpmProblem');
             Route::get('{userId}/problems/cpm', 'PatientController@getCpmProblems');
             Route::get('{userId}/problems/ccd', 'PatientController@getCcdProblems');
             Route::post('{patientId}/problems/cpm/{cpmId}/instructions', 'ProblemInstructionController@addInstructionProblem');

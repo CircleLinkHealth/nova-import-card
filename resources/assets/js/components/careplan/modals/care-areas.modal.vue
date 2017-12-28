@@ -15,6 +15,7 @@
                         <option v-for="(problem, index) in cpmProblems" :key="index" :value="problem.id">{{problem.name}}</option>
                     </select>
                     <div class="text-right top-20">
+                        <loader v-if="loaders.addProblem"></loader>
                         <input type="button" class="btn btn-secondary right-0 selected" value="Add" @click="addProblem" :disabled="!selectedCpmProblemId || patientHasSelectedProblem" />
                     </div>
                 </div>
@@ -35,6 +36,7 @@
 
 <script>
     import { rootUrl } from '../../../app.config'
+    import { Event } from 'vue-tables-2'
     import Modal from '../../../admin/common/modal'
 
     export default {
@@ -93,7 +95,15 @@
             },
             addProblem() {
                 if (this.selectedCpmProblemId) {
-
+                    this.loaders.addProblem = true
+                    return this.axios.post(rootUrl(`api/patients/${this.patientId}/problems`), { cpmProblemId: this.selectedCpmProblemId }).then(response => {
+                        console.log('care-areas:add-problem', response.data)
+                        this.loaders.addProblem = false
+                        Event.$emit('care-areas:problems', response.data)
+                    }).catch(err => {
+                        console.error('care-areas:add-problem', err)
+                        this.loaders.addProblem = false
+                    })
                 }
             },
             getCpmProblems(page = 1) {
