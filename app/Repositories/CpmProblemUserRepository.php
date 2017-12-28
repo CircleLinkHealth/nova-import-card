@@ -23,11 +23,21 @@ class CpmProblemUserRepository
     }
 
     public function create($patientId, $cpmProblemId, $instructionId) {
-        $cpmProblemUser= new CpmProblemUser();
-        $cpmProblemUser->patient_id = $patientId;
-        $cpmProblemUser->cpm_problem_id = $cpmProblemId;
-        $cpmProblemUser->cpm_instruction_id = $instructionId;
-        $cpmProblemUser->save();
+        $cpmProblemUsers = CpmProblemUser::where([ 'cpm_problem_id' => $cpmProblemId, 'patient_id' => $patientId ]);
+        $cpmProblemUser = $cpmProblemUsers->first();
+        if ($cpmProblemUser) {
+            $cpmProblemUsers->update([
+                'cpm_instruction_id' => $instructionId
+            ]);
+            $cpmProblemUser = $cpmProblemUsers->first();
+        }
+        else {
+            $cpmProblemUser = new CpmProblemUser();
+            $cpmProblemUser->patient_id = $patientId;
+            $cpmProblemUser->cpm_problem_id = $cpmProblemId;
+            $cpmProblemUser->cpm_instruction_id = $instructionId;
+            $cpmProblemUser->save();
+        }
         return $cpmProblemUser;
     }
 }

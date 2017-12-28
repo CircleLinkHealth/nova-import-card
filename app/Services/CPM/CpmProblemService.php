@@ -30,7 +30,7 @@ class CpmProblemService implements CpmModel
     }
 
     public function problems() {
-        $problems = $this->problemRepo->noDiabetesFilter()->paginate(30);
+        $problems = $this->repo()->noDiabetesFilter()->paginate(30);
         $problems->getCollection()->transform(function ($value) {
             return $this->setupProblem($value);
         });
