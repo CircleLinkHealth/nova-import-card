@@ -32,7 +32,7 @@ class CareplanAssessmentController extends Controller
     
     public function store(Request $request, CareplanAssessment $assessment) {
         $data = $request->all();
-        $assessment->load((object)$data);
+        $assessment->process((object)$data);
         $assessment->provider_approver_id = auth()->user()->id;
         if (!$assessment->careplan_id) {
             return $this->badRequest('missing parameter "careplan_id"');
