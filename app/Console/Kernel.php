@@ -1,8 +1,8 @@
 <?php namespace App\Console;
 
-use App\Algorithms\Calls\ReschedulerHandler;
 use App\Console\Commands\AttachBillableProblemsToLastMonthSummary;
 use App\Console\Commands\EmailWeeklyReports;
+use App\Console\Commands\RescheduleMissedCalls;
 use App\Services\Calls\SchedulerService;
 use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Foundation\Console\Kernel as ConsoleKernel;
@@ -19,20 +19,7 @@ class Kernel extends ConsoleKernel
     protected function schedule(Schedule $schedule)
     {
         //Reconciles missed calls and creates a new call for patient using algo
-        $schedule->call(function () {
-
-            $handled = (new ReschedulerHandler())->handle();
-
-            if ( ! empty($handled)) {
-                $message = "The CPMbot just rescheduled some calls.\n";
-
-                foreach ($handled as $call) {
-                    $message = "We just fixed call: {$call->id}. \n";
-                }
-
-                sendSlackMessage('#background-tasks', $message);
-            }
-        })->dailyAt('00:05');
+        $schedule->command(RescheduleMissedCalls::class)->dailyAt('00:05');
 
         //tunes scheduled call dates.
         $schedule->call(function () {
