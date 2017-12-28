@@ -149,4 +149,8 @@
         border: 1px solid red;
     }
 
+    .list-group {
+        font-size: 14px;
+    }
+
 </style>
