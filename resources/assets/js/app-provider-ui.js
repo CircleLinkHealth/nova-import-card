@@ -46,6 +46,7 @@ import TimeTracker from './admin/time-tracker'
 import ServerTimeDisplay from './admin/time-tracker/comps/server-time-display'
 import LoaderComponent from './components/loader'
 import PersistentTextArea from './components/persistent-textarea'
+import CareAreasComponent from './components/careplan/care-areas'
 
 import EventBus from './admin/time-tracker/comps/event-bus'
 import { BindWindowFocusChange, BindWindowVisibilityChange } from './admin/time-tracker/events/window.event'
@@ -69,6 +70,7 @@ Vue.component('time-tracker', TimeTracker)
 Vue.component('server-time-display', ServerTimeDisplay)
 Vue.component('loader', LoaderComponent)
 Vue.component('persistent-textarea', PersistentTextArea)
+Vue.component('care-areas', CareAreasComponent)
 
 const App = new Vue({
     el: '#app',

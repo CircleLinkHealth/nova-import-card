@@ -147,25 +147,15 @@ if (isset($patient) && ! empty($patient)) {
                     </div>
                 </div>
                 <!-- CARE AREAS -->
-                <div class="patient-info__subareas">
-                    <div class="row">
-                        <div class="col-xs-12">
-                            <h2 class="patient-summary__subtitles patient-summary--careplan-background">We Are
-                                Managing</h2>
-                        </div>
-                    </div>
-                    <div class="row gutter">
-                        <div class="col-xs-12">
-                            <ul class="subareas__list">
-                                @if($problemNames)
-                                    @foreach($problemNames as $prob)
-                                        <li class='subareas__item inline-block col-xs-6 col-sm-3 print-row'>{{$prob}}</li>
-                                    @endforeach
-                                @endif
-                            </ul>
-                        </div>
-                    </div>
-                </div>
+                <care-areas patient-id="{{$patient->id}}">
+                    <ul class="subareas__list">
+                        @if($problemNames)
+                            @foreach($problemNames as $prob)
+                                <li class='subareas__item inline-block col-xs-6 col-sm-3 print-row'>{{$prob}}</li>
+                            @endforeach
+                        @endif
+                    </ul>
+                </care-areas>
                 <!-- /CARE AREAS -->
                 <!-- BIOMETRICS -->
                 @if($biometrics)
