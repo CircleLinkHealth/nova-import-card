@@ -197,6 +197,6 @@ trait UserHelpers
     public function makePatientMonthlyRecord(Patient $patient)
     {
 
-        return (app(PatientRepository::class))->updateCallInfo($patient, true);
+        return (app(PatientRepository::class))->updateCallLogs($patient, true);
     }
 }

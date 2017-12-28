@@ -52,7 +52,7 @@ class SchedulerService
                 : 'not reached'
         );
 
-        $this->patientRepository->updateCallInfo($patient->patientInfo, $success);
+        $this->patientRepository->updateCallLogs($patient->patientInfo, $success);
 
         //last attempt
         $previousCall = $this->getPreviousCall($patient, $scheduled_call['id']);

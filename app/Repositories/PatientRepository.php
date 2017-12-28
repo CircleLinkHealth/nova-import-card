@@ -71,7 +71,7 @@ class PatientRepository
      *
      * @return PatientMonthlySummary|\Illuminate\Database\Eloquent\Model|null|static
      */
-    public function updateCallInfo(
+    public function updateCallLogs(
         Patient $patient,
         bool $successfulLastCall
     ) {

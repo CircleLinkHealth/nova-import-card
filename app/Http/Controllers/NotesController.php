@@ -357,7 +357,7 @@ class NotesController extends Controller
                 if (auth()->user()->hasRole('provider')) {
                     $this->service->storeCallForNote($note, 'reached', $patient, Auth::user(), Auth::user()->id, null);
 
-                    $this->patientRepo->updateCallInfo($patient->patientInfo, true);
+                    $this->patientRepo->updateCallLogs($patient->patientInfo, true);
 
                     $info->last_successful_contact_time = Carbon::now()->format('Y-m-d H:i:s');
                     $info->save();
