@@ -7,10 +7,10 @@ use App\Location;
 use App\Models\CPM\CpmProblem;
 use App\PageTimer;
 use App\Practice;
+use App\Services\CareplanAssessmentService;
 use App\Services\CCD\CcdInsurancePolicyService;
 use App\Services\CPM\CpmProblemService;
 use App\Services\ReportsService;
-use App\Services\CareplanAssessmentService;
 use App\User;
 use Carbon\Carbon;
 use DateInterval;
@@ -32,8 +32,8 @@ class ReportsController extends Controller
         ReportFormatter $formatter,
         Request $request
     ) {
-        $this->service   = $service;
-        $this->formatter = $formatter;
+        $this->service           = $service;
+        $this->formatter         = $formatter;
         $this->assessmentService = $assessmentService;
     }
 
@@ -149,7 +149,7 @@ class ReportsController extends Controller
                         ->ofType('participant')
                         ->with([
                             'primaryPractice',
-                            'activities' => function($q) use ($start, $end) {
+                            'activities' => function ($q) use ($start, $end) {
                                 $q->select(DB::raw('*,DATE(performed_at),provider_id, type, SUM(duration) as duration'))
                                   ->whereBetween('performed_at', [
                                       $start,
@@ -486,57 +486,60 @@ class ReportsController extends Controller
         $patientId = false,
         CcdInsurancePolicyService $insurances
     ) {
-        if(auth()->user()->hasRoleForSite(['provider', 'care-ambassador'], 8)) {
-            if ( ! $patientId) {
-                return "Patient Not Found..";
-            } else {
-                $patient = User::with('carePlan')->find($patientId);
-    
-                if ( ! $patient) {
-                    return "Patient Not Found..";
-                }
-                if ( ! $patient->isCcmEligible()) {
-                    return redirect()->route('patient.careplan.print', ['patientId' => $patientId]);
-                }
-    
-                $careplan = $this->formatter->formatDataForViewPrintCareplanReport([$patient]);
-    
-                if ( ! $careplan) {
-                    return 'Careplan not found...';
-                }
-    
-                $showInsuranceReviewFlag = $insurances->checkPendingInsuranceApproval($patient);
-    
-                $assessment = $this->assessmentService->repo()->model()->where([ 'careplan_id' => $patientId ])->first();
-                if ($assessment) $assessment->unload();
-    
-                $approver = $assessment->approver()->first();
-    
-                return view(
-                    'wpUsers.patient.careplan.assessment',
-                    [
-                        'patient'                 => $patient,
-                        'problems'                => $careplan[$patientId]['problems'],
-                        'problemNames'            => $careplan[$patientId]['problem'],
-                        'biometrics'              => $careplan[$patientId]['bio_data'],
-                        'symptoms'                => $careplan[$patientId]['symptoms'],
-                        'lifestyle'               => $careplan[$patientId]['lifestyle'],
-                        'medications_monitor'     => $careplan[$patientId]['medications'],
-                        'taking_medications'      => $careplan[$patientId]['taking_meds'],
-                        'allergies'               => $careplan[$patientId]['allergies'],
-                        'social'                  => $careplan[$patientId]['social'],
-                        'appointments'            => $careplan[$patientId]['appointments'],
-                        'other'                   => $careplan[$patientId]['other'],
-                        'showInsuranceReviewFlag' => $showInsuranceReviewFlag,
-                        'assessment'              => $assessment,
-                        'approver'              => $approver
-                    ]
-                );
-            }
-        }
-        else {
+        if ( ! auth()->user()->hasRoleForSite(['provider', 'care-ambassador'], 8)) {
             return abort(403);
         }
+
+        if ( ! $patientId) {
+            return "Patient Not Found..";
+        }
+
+        $patient = User::with('carePlan')->find($patientId);
+
+        if ( ! $patient) {
+            return "Patient Not Found..";
+        }
+
+        if ( ! $patient->isCcmEligible()) {
+            return redirect()->route('patient.careplan.print', ['patientId' => $patientId]);
+        }
+
+        $careplan = $this->formatter->formatDataForViewPrintCareplanReport([$patient]);
+
+        if ( ! $careplan) {
+            return 'Careplan not found...';
+        }
+
+        $showInsuranceReviewFlag = $insurances->checkPendingInsuranceApproval($patient);
+
+        $assessment = $this->assessmentService->repo()->model()->where(['careplan_id' => $patientId])->first();
+        if ($assessment) {
+            $assessment->unload();
+        }
+
+        $approver = $assessment->approver()->first();
+
+        return view(
+            'wpUsers.patient.careplan.assessment',
+            [
+                'patient'                 => $patient,
+                'problems'                => $careplan[$patientId]['problems'],
+                'problemNames'            => $careplan[$patientId]['problem'],
+                'biometrics'              => $careplan[$patientId]['bio_data'],
+                'symptoms'                => $careplan[$patientId]['symptoms'],
+                'lifestyle'               => $careplan[$patientId]['lifestyle'],
+                'medications_monitor'     => $careplan[$patientId]['medications'],
+                'taking_medications'      => $careplan[$patientId]['taking_meds'],
+                'allergies'               => $careplan[$patientId]['allergies'],
+                'social'                  => $careplan[$patientId]['social'],
+                'appointments'            => $careplan[$patientId]['appointments'],
+                'other'                   => $careplan[$patientId]['other'],
+                'showInsuranceReviewFlag' => $showInsuranceReviewFlag,
+                'assessment'              => $assessment,
+                'approver'                => $approver,
+            ]
+        );
+
     }
 
     public function viewPrintCareplan(
