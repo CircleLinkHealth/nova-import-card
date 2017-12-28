@@ -25,7 +25,7 @@
                         <input type="button" class="btn btn-secondary right-0 selected" value="Add" @click="addInstruction" :disabled="!newInstruction || newInstruction.length === 0" />
                     </div>
                     <ol class="list-group">
-                        <li class="list-group-item" v-for="(instruction, index) in selectedProblem.instructions" :key="index">{{instruction}}</li>
+                        <li class="list-group-item" v-for="(instruction, index) in selectedProblem.instructions" :key="index">{{instruction.name}}</li>
                     </ol>
                 </div>
             </div>
@@ -69,13 +69,24 @@
             addInstruction() {
                 if (this.newInstruction && this.newInstruction.length > 0) {
                     this.loaders.addInstruction = true
-                    return this.axios.post(rootUrl(`api/patients/${this.patientId}/problems/cpm/${this.selectedCpmProblemId}/instructions`), { name: this.newInstruction }).then(response => {
+                    return this.axios.post(rootUrl(`api/problems/instructions`), { name: this.newInstruction }).then(response => {
                         console.log('care-areas:add-instruction', response.data)
-                        this.selectedProblem.instructions.push(response.data)
+                        return this.addInstructionToProblem(response.data)
+                    }).catch(err => {
+                        console.error('care-areas:add-instruction', err)
+                        this.loaders.addInstruction = false
+                    })
+                }
+            },
+            addInstructionToProblem(instruction) {
+                if (this.newInstruction && this.newInstruction.length > 0) {
+                    return this.axios.post(rootUrl(`api/patients/${this.patientId}/problems/cpm/${this.selectedProblem.id}/instructions`), { instructionId: instruction.id }).then(response => {
+                        console.log('care-areas:add-instruction-to-problem', response.data)
+                        this.selectedProblem.instructions.push(instruction)
                         this.newInstruction = ''
                         this.loaders.addInstruction = false
                     }).catch(err => {
-                        console.error('care-areas:add-instruction', err)
+                        console.error('care-areas:add-instruction-to-problem', err)
                         this.loaders.addInstruction = false
                     })
                 }
@@ -118,6 +129,7 @@
         background: #ddd;
         padding: 10 20 10 20;
         margin-right: 15px; 
+        margin-bottom: 5px;
     }
 
     .btn.btn-secondary.selected {
