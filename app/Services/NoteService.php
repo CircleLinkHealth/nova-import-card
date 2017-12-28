@@ -54,7 +54,11 @@ class NoteService
         $note = new Note();
         $note->patient_id = $assessment->careplan_id;
         $note->author_id = $assessment->provider_approver_id;
-        $note->body = 'Created/Edited Assessment for ' . $assessment->patient()->first()->display_name;
+
+        $patient = User::find($note->patient_id);
+
+        $note->body = 'Created/Edited Assessment for ' . $patient->name() . ' (' . $assessment->careplan_id . ') ... See ' . 
+                        URL::to('/manage-patients/' . $assessment->careplan_id . '/view-careplan/assessment');
         $note->type = 'Edit Assessment';
         $note->performed_at = Carbon::now();
         $note->save();

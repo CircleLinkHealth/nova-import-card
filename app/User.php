@@ -2725,4 +2725,8 @@ class User extends \App\BaseModel implements AuthenticatableContract, CanResetPa
                    ->first()
                    ->is_ccm_complex ?? false;
     }
+
+    public function name() {
+        return $this->display_name ?? ($this->first_name . $this->last_name);
+    }
 }
