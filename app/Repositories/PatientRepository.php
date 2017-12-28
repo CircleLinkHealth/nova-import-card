@@ -1,25 +1,36 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: michalis
- * Date: 12/07/2017
- * Time: 12:32 PM
- */
 
 namespace App\Repositories;
 
 
-use App\User;
+use App\Exceptions\InvalidArgumentException;
 use App\Patient;
-use Prettus\Repository\Contracts\RepositoryInterface;
-use Prettus\Repository\Criteria\RequestCriteria;
-use Prettus\Repository\Eloquent\BaseRepository;
+use App\User;
 
 class PatientRepository
 {
-    public function model()
+    /**
+     * Set a patient's ccm_status to paused.
+     *
+     * @param $user
+     *
+     * @return bool
+     */
+    public function pause($user)
     {
-        return app(Patient::class);
+        if (is_a($user, User::class)) {
+            $userId = $user->id;
+        }
+
+        if (is_numeric($user)) {
+            $userId = $user;
+        }
+
+        if ( ! isset($userId)) {
+            throw new InvalidArgumentException();
+        }
+
+        return Patient::where('user_id', $userId)->update(['ccm_status' => 'paused']);
     }
 
     public function storeCcdProblem(User $patient, array $args)
@@ -30,7 +41,9 @@ class PatientRepository
 
         $newProblem = $patient->ccdProblems()->updateOrCreate([
             'name'           => $args['name'],
-            'cpm_problem_id' => empty($args['cpm_problem_id']) ? null : $args['cpm_problem_id'],
+            'cpm_problem_id' => empty($args['cpm_problem_id'])
+                ? null
+                : $args['cpm_problem_id'],
             'billable'       => $args['billable'] ?? null,
         ]);
 
