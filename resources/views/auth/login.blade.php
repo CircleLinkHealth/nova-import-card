@@ -14,7 +14,6 @@
 			display: inline-block;
 			margin-bottom: 0;
 			font-weight: normal;
-			text-align: center;
 			vertical-align: middle;
 			touch-action: manipulation;
 			background-image: none;

@@ -388,9 +388,9 @@ class Patient extends \App\BaseModel
      * @return array of PatientContactWindows
      */
     public function attachNewOrDefaultCallWindows(
-        array $days,
-        $fromTime,
-        $toTime
+        array $days = [],
+        $fromTime = null,
+        $toTime = null
     ) {
         $daysNumber = [
             1,

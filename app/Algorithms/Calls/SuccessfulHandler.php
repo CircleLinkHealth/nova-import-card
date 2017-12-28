@@ -69,7 +69,7 @@ class SuccessfulHandler implements CallHandler
         $this->week = $initTime->weekOfMonth;
         $this->patient = $calledPatient;
         $this->ccmTime = $calledPatient->cur_month_activity_time;
-        $this->nextCallDate = $initTime;
+        $this->nextCallDate = $initTime->copy();
         $this->logic = '';
         $this->attemptNote = '';
         $this->prediction = [];
@@ -204,7 +204,7 @@ class SuccessfulHandler implements CallHandler
                     $this->logic = 'Add a month, 1x preference override';
 
                     //handle all cases with 28 days, prevent jump on 31st to next+1 month
-                    return $this->nextCallDate->addDays(28);
+                    return $this->nextCallDate->addMonth()->startOfMonth();
                 } else {
                     $this->logic = 'Call patient in the last week of the month';
 
