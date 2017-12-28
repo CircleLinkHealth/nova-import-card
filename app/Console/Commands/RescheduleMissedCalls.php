@@ -25,7 +25,7 @@ class RescheduleMissedCalls extends Command
     /**
      * Create a new command instance.
      *
-     * @return void
+     * @param ReschedulerHandler $service
      */
     public function __construct(ReschedulerHandler $service)
     {

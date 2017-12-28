@@ -25,7 +25,7 @@ class TuneScheduledCalls extends Command
     /**
      * Create a new command instance.
      *
-     * @return void
+     * @param SchedulerService $schedulerService
      */
     public function __construct(SchedulerService $schedulerService)
     {
