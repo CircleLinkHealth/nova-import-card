@@ -125,46 +125,6 @@ class AppServiceProvider extends ServiceProvider
             ReportFormatter::class,
             WebixFormatter::class
         );
-        
-        $this->app->bind(UserService::class, function () {
-            return new UserService(new \App\Repositories\UserRepositoryEloquent(app()));
-        });
-        
-        $this->app->bind(CareplanService::class, function () {
-            return new CareplanService(new \App\Repositories\CareplanRepository());
-        });
-        
-        $this->app->bind(CareplanAssessmentService::class, function () {
-            return new CareplanAssessmentService(new \App\Repositories\CareplanAssessmentRepository(), new \App\Repositories\CareplanRepository());
-        });
-
-        $this->app->bind(PatientService::class, function () {
-            return new PatientService(new \App\Repositories\PatientRepository(app()), new \App\Repositories\UserRepositoryEloquent(app()));
-        });
-        
-        $this->app->bind(NoteService::class, function () {
-            return new NoteService(new \App\Repositories\NoteRepository());
-        });
-        
-        $this->app->bind(CpmInstructionService::class, function () {
-            return new CpmInstructionService(new \App\Repositories\CpmInstructionRepository(app()), new \App\Repositories\UserRepositoryEloquent(app()));
-        });
-        
-        $this->app->bind(CpmProblemService::class, function () {
-            return new CpmProblemService(new \App\Repositories\CpmProblemRepository(app()), new \App\Repositories\UserRepositoryEloquent(app()));
-        });
-        
-        $this->app->bind(CpmProblemUserService::class, function () {
-            return new CpmProblemUserService(new \App\Repositories\CpmProblemUserRepository(), new \App\Repositories\UserRepositoryEloquent(app()));
-        });
-        
-        $this->app->bind(\App\Services\CCD\CcdProblemService::class, function () {
-            return new \App\Services\CCD\CcdProblemService(new \App\Repositories\CcdProblemRepository(app()), new \App\Repositories\UserRepositoryEloquent(app()));
-        });
-
-        $this->app->bind(WebixFormatter::class, function(){
-            return new WebixFormatter(new NoteService());
-        });
 
         if ($this->app->environment('local')) {
             $this->app->register('Orangehill\Iseed\IseedServiceProvider');

@@ -284,16 +284,6 @@ return [
         'GoogleCalendar' => Spatie\GoogleCalendar\GoogleCalendarFacade::class,
         'Bugsnag'        => Bugsnag\BugsnagLaravel\Facades\Bugsnag::class,
         'Swagger'        => L5Swagger\L5SwaggerServiceProvider::class,
-        
-        'UserService' => \App\Services\UserService::class,
-        'NoteService' => \App\Services\NoteService::class,
-        'PatientService' => \App\Services\PatientService::class,
-        'CareplanService' => \App\Services\CareplanService::class,
-        'CpmProblemService' => \App\Services\CPM\CpmProblemService::class,
-        'CcdProblemService' => \App\Services\CCD\CcdProblemService::class,
-        'CpmProblemUserService' => \App\Services\CPM\CpmProblemUserService::class,
-        'CpmInstructionService' => \App\Services\CPM\CpmInstructionService::class,
-        'CareplanAssessmentService' => \App\Services\CareplanAssessmentService::class
     ],
 
 ];
